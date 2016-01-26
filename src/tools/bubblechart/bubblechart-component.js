@@ -92,7 +92,7 @@ var BubbleChartComp = Component.extend({
 
         if(path.indexOf("marker.size") !== -1) return;
 
-        if(path.indexOf("min") > -1 || path.indexOf("max") > -1) {
+        if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1) {
           _this.updateSize();
           _this.updateMarkerSizeLimits();
           _this._trails.run("findVisible");
@@ -100,13 +100,22 @@ var BubbleChartComp = Component.extend({
           _this._trails.run("resize");
           return;
         }
-        if(path.indexOf("fakeMin") > -1 || path.indexOf("fakeMax") > -1) {
+        if(path.indexOf("zoomedMin") > -1 || path.indexOf("zoomedMax") > -1) {
           if(_this.draggingNow)return;
+            
+          //avoid zooming again if values didn't change. 
+          //also prevents infinite loop on forced URL update from zoom.stop()
+          if(_this._zoomZoomedDomains.x.zoomedMin == _this.model.marker.axis_x.zoomedMin
+          && _this._zoomZoomedDomains.x.zoomedMax == _this.model.marker.axis_x.zoomedMax
+          && _this._zoomZoomedDomains.y.zoomedMin == _this.model.marker.axis_y.zoomedMin
+          && _this._zoomZoomedDomains.y.zoomedMax == _this.model.marker.axis_y.zoomedMax
+          ) return;
+            
             _this._panZoom.zoomToMaxMin(
-              _this.model.marker.axis_x.fakeMin,
-              _this.model.marker.axis_x.fakeMax,
-              _this.model.marker.axis_y.fakeMin,
-              _this.model.marker.axis_y.fakeMax,
+              _this.model.marker.axis_x.zoomedMin,
+              _this.model.marker.axis_x.zoomedMax,
+              _this.model.marker.axis_y.zoomedMin,
+              _this.model.marker.axis_y.zoomedMax,
               500
           )
           return;
@@ -154,7 +163,7 @@ var BubbleChartComp = Component.extend({
       'change:marker.size': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
         if(!_this._readyOnce) return;
-        if(path.indexOf("min") > -1 || path.indexOf("max") > -1) {
+        if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1) {
             _this.updateMarkerSizeLimits();
             _this._trails.run("findVisible");
             _this.redrawDataPointsOnlySize();
@@ -452,10 +461,10 @@ var BubbleChartComp = Component.extend({
     this._trails.run(["recolor", "opacityHandler", "reveal"]);
 
     this._panZoom.zoomToMaxMin(
-       this.model.marker.axis_x.fakeMin,
-       this.model.marker.axis_x.fakeMax,
-       this.model.marker.axis_y.fakeMin,
-       this.model.marker.axis_y.fakeMax
+       this.model.marker.axis_x.zoomedMin,
+       this.model.marker.axis_x.zoomedMax,
+       this.model.marker.axis_y.zoomedMin,
+       this.model.marker.axis_y.zoomedMax
     )
 
   },
@@ -490,7 +499,7 @@ var BubbleChartComp = Component.extend({
     var _this = this;
 
     this.translator = this.model.language.getTFunction();
-    this.timeFormatter = d3.time.format(_this.model.time.formatOutput);
+    this.timeFormat = utils.getTimeFormat(_this.model.time.unit);
     var indicatorsDB = globals.metadata.indicatorsDB;
 
     this.strings = {
@@ -576,7 +585,7 @@ var BubbleChartComp = Component.extend({
   },
 
   _updateDoubtOpacity: function(opacity) {
-    if(opacity == null) opacity = this.wScale(+this.timeFormatter(this.time));
+    if(opacity == null) opacity = this.wScale(+this.timeFormat(this.time));
     if(this.someSelected) opacity = 1;
     this.dataWarningEl.style("opacity", opacity);
   },
@@ -613,9 +622,8 @@ var BubbleChartComp = Component.extend({
     this.model.entities.setVisible(getKeys.call(this));
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
-      .data(this.model.entities.getVisible(), function(d) {
-        return d[KEY]
-      });
+      .data(this.model.entities.getVisible(), function(d) {return d[KEY]})
+      .order();
 
     //exit selection
     this.entityBubbles.exit().remove();
@@ -691,7 +699,11 @@ var BubbleChartComp = Component.extend({
         if(_this.draggingNow) return;
         var isSelected = _this.model.entities.isSelected(d);
         _this.model.entities.selectEntity(d);
-        if(isSelected) _this.highlightDataPoints();
+        //return to highlighted state
+        if(!utils.isTouchDevice() && isSelected) {
+            _this.model.entities.highlightEntity(d);    
+            _this.highlightDataPoints();
+        }
       }
     }
   },
@@ -709,8 +721,8 @@ var BubbleChartComp = Component.extend({
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
-    this.year.setText(this.timeFormatter(this.time));
-    //this.yearEl.text(this.timeFormatter(this.time));
+    this.year.setText(this.timeFormat(this.time));
+    //this.yearEl.text(this.timeFormat(this.time));
   },
 
   /*
@@ -806,6 +818,7 @@ var BubbleChartComp = Component.extend({
       .tickSizeMinor(3, 0)
       .labelerOptions({
         scaleType: this.model.marker.axis_y.scaleType,
+        timeFormat: this.timeFormat,
         toolMargin: margin,
         limitMaxTickNumber: 6,
         bump: this.activeProfile.maxRadius
@@ -817,6 +830,7 @@ var BubbleChartComp = Component.extend({
       .tickSizeMinor(3, 0)
       .labelerOptions({
         scaleType: this.model.marker.axis_x.scaleType,
+        timeFormat: this.timeFormat,
         toolMargin: margin,
         bump: this.activeProfile.maxRadius
       });
@@ -847,12 +861,7 @@ var BubbleChartComp = Component.extend({
     this.projectionX.attr("y1", _this.yScale.range()[0] + this.activeProfile.maxRadius);
     this.projectionY.attr("x2", _this.xScale.range()[0] - this.activeProfile.maxRadius);
 
-    var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
-    if(yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
 
-    var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
-
-    if(xTitleText.node().getBBox().width > this.width - 100) xTitleText.text(this.strings.title.X);
 
     // reset font size to remove jumpy measurement
     var sTitleText = this.sTitleEl.select("text")
@@ -879,6 +888,12 @@ var BubbleChartComp = Component.extend({
     this.sTitleEl
       .attr("transform", "translate(" + this.width + "," + 20 + ") rotate(-90)");
 
+
+    var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
+    if(yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
+
+    var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
+    if(xTitleText.node().getBBox().width > this.width - 100) xTitleText.text(this.strings.title.X);
 
     if(this.yInfoEl.select('svg').node()) {
       var titleBBox = this.yTitleEl.node().getBBox();
@@ -937,8 +952,8 @@ var BubbleChartComp = Component.extend({
     var minRadius = this.activeProfile.minRadius;
     var maxRadius = this.activeProfile.maxRadius;
 
-    this.minRadius = Math.max(maxRadius * this.model.marker.size.min, minRadius);
-    this.maxRadius = Math.max(maxRadius * this.model.marker.size.max, minRadius);
+    this.minRadius = Math.max(maxRadius * this.model.marker.size.domainMin, minRadius);
+    this.maxRadius = Math.max(maxRadius * this.model.marker.size.domainMax, minRadius);
 
     if(this.model.marker.size.scaleType !== "ordinal") {
       this.sScale.range([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)]);
@@ -956,7 +971,7 @@ var BubbleChartComp = Component.extend({
     valuesNow = this.model.marker.getFrame(this.time);
 
     if(this.model.time.lockNonSelected && this.someSelected) {
-      var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
+      var tLocked = this.timeFormat.parse("" + this.model.time.lockNonSelected);
       values = this.model.marker.getFrame(tLocked);
     } else {
       values = valuesNow;
@@ -993,7 +1008,7 @@ var BubbleChartComp = Component.extend({
     valuesNow = this.model.marker.getFrame(this.time);
 
     if(this.model.time.lockNonSelected && this.someSelected) {
-      var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
+      var tLocked = this.timeFormat.parse("" + this.model.time.lockNonSelected);
       values = this.model.marker.getFrame(tLocked);
     } else {
       values = valuesNow;
@@ -1026,7 +1041,7 @@ var BubbleChartComp = Component.extend({
           return f[KEY] == d[KEY]
         });
 
-        var trailStartTime = _this.timeFormatter.parse("" + select.trailStartTime);
+        var trailStartTime = _this.timeFormat.parse("" + select.trailStartTime);
 
         if(!_this.model.time.trails || trailStartTime - _this.time == 0) {
           cache.scaledS0 = scaledS;
@@ -1058,7 +1073,7 @@ var BubbleChartComp = Component.extend({
 
     //get values for locked and not locked
     if(this.model.time.lockNonSelected && this.someSelected) {
-      var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
+      var tLocked = this.timeFormat.parse("" + this.model.time.lockNonSelected);
       valuesLocked = this.model.marker.getFrame(tLocked);
     }
 
@@ -1158,11 +1173,11 @@ var BubbleChartComp = Component.extend({
       var select = utils.find(_this.model.entities.select, function(f) {
         return f[KEY] == d[KEY]
       });
-      var trailStartTime = _this.timeFormatter.parse("" + select.trailStartTime);
+      var trailStartTime = _this.timeFormat.parse("" + select.trailStartTime);
 
       if(!_this.model.time.trails || trailStartTime - _this.time > 0 || select.trailStartTime == null) {
 
-        select.trailStartTime = _this.timeFormatter(_this.time);
+        select.trailStartTime = _this.timeFormat(_this.time);
         //the events in model are not triggered here. to trigger uncomment the next line
         //_this.model.entities.triggerAll("change:select");
         cached.scaledS0 = scaledS;
@@ -1572,9 +1587,9 @@ var BubbleChartComp = Component.extend({
       var d = utils.clone(this.model.entities.highlight[0]);
 
       if(_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)) {
-        d[TIMEDIM] = _this.timeFormatter.parse("" + _this.model.time.lockNonSelected);
+        d[TIMEDIM] = _this.timeFormat.parse("" + _this.model.time.lockNonSelected);
       } else {
-        d[TIMEDIM] = _this.timeFormatter.parse("" + d.trailStartTime) || _this.time;
+        d[TIMEDIM] = _this.timeFormat.parse("" + d.trailStartTime) || _this.time;
       }
 
       this._axisProjections(d);
@@ -1584,7 +1599,7 @@ var BubbleChartComp = Component.extend({
       //show tooltip
       var text = "";
       if(_this.model.entities.isSelected(d) && _this.model.time.trails) {
-        text = _this.timeFormatter(_this.time);
+        text = _this.timeFormat(_this.time);
         var labelData = _this.entityLabels
           .filter(function(f) {
             return f[KEY] == d[KEY]

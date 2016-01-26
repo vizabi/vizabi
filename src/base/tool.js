@@ -88,7 +88,7 @@ var Tool = Component.extend({
         if(_this._ready) {
           _this.model.validate();
 
-          if (evt.persistent)
+          if (evt.source.persistent)
             _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'), _this.getMinState());
         }
       },
@@ -133,7 +133,7 @@ var Tool = Component.extend({
   },
 
   getMinState: function() {
-    var state = this.model.state.getPlainObject();
+    var state = this.model.state.getPlainObject(true); // true = get only persistent model values
     var d_state = this.default_options.state;
     //flattens _defs_ object
     d_state = utils.flattenDefaults(d_state);
@@ -253,8 +253,9 @@ var Tool = Component.extend({
     if(!utils.isDate(dateMin)) utils.warn("tool validation: min date looks wrong: " + dateMin);
     if(!utils.isDate(dateMax)) utils.warn("tool validation: max date looks wrong: " + dateMax);
 
-    if(time.start < dateMin && utils.isDate(dateMin)) time.start = dateMin;
-    if(time.end > dateMax && utils.isDate(dateMax)) time.end = dateMax;
+    // change is not persistent if it's splashscreen change
+    if(time.start < dateMin && utils.isDate(dateMin)) time.getModelObject('start').set(dateMin, false, !time.splash);
+    if(time.end > dateMax && utils.isDate(dateMax)) time.getModelObject('end').set(dateMax, false, !time.splash);
   },
 
   _setUIOptions: function() {

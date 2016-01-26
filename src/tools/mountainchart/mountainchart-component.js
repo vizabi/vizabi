@@ -123,7 +123,7 @@ var MountainChartComponent = Component.extend({
                     _this.ready();
                     return;
                 }
-                if (path.indexOf("fakeMin") > -1 || path.indexOf("fakeMax") > -1) {
+                if (path.indexOf("zoomedMin") > -1 || path.indexOf("zoomedMax") > -1) {
                     _this.zoomToMaxMin();
                     _this.redrawDataPoints();
                     _this._probe.redraw();
@@ -246,7 +246,7 @@ var MountainChartComponent = Component.extend({
 
         if (!yMax || !shape || shape.length === 0) return;
 
-        this.xScale = d3.scale.log().domain([this.model.marker.axis_x.min, this.model.marker.axis_x.max]);
+        this.xScale = d3.scale.log().domain([this.model.marker.axis_x.domainMin, this.model.marker.axis_x.domainMax]);
         this.yScale = d3.scale.linear().domain([0, +yMax]);
 
         _this.updateSize(shape.length);
@@ -451,10 +451,10 @@ var MountainChartComponent = Component.extend({
     zoomToMaxMin: function(){
         var _this = this;
 
-        if(this.model.marker.axis_x.fakeMin==null || this.model.marker.axis_x.fakeMax==null) return;
+        if(this.model.marker.axis_x.zoomedMin==null || this.model.marker.axis_x.zoomedMax==null) return;
 
-        var x1 = this.xScale(this.model.marker.axis_x.fakeMin);
-        var x2 = this.xScale(this.model.marker.axis_x.fakeMax);
+        var x1 = this.xScale(this.model.marker.axis_x.zoomedMin);
+        var x2 = this.xScale(this.model.marker.axis_x.zoomedMax);
 
         this.rangeRatio = this.width / (x2 - x1) * this.rangeRatio;
         this.rangeShift = (this.rangeShift - x1) / (x2 - x1) * this.width;

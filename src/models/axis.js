@@ -6,18 +6,6 @@ import globals from 'base/globals';
  * VIZABI Axis Model (hook)
  */
 
-//constant time formats
-var time_formats = {
-  "year": d3.time.format("%Y"),
-  "month": d3.time.format("%Y-%m"),
-  "week": d3.time.format("%Y-W%W"),
-  "day": d3.time.format("%Y-%m-%d"),
-  "hour": d3.time.format("%Y-%m-%d %H"),
-  "minute": d3.time.format("%Y-%m-%d %H:%M"),
-  "second": d3.time.format("%Y-%m-%d %H:%M:%S")
-};
-
-
 var allowTypes = {
     "indicator": ["linear", "log", "genericLog", "time", "pow"],
     "property": ["ordinal"],
@@ -32,10 +20,10 @@ var AxisModel = Model.extend({
   _defaults: {
     use: null,
     which: null,
-    min: null,
-    max: null,
-    fakeMin: null,
-    fakeMax: null
+    domainMin: null,
+    domainMax: null,
+    zoomedMin: null,
+    zoomedMax: null
   },
 
   /**
@@ -71,14 +59,14 @@ var AxisModel = Model.extend({
     if(this.scale && this._readyOnce && this.use === "indicator") {
 
       //min and max nonsense protection
-      if(this.min == null || this.min <= 0 && this.scaleType === "log") this.min = this.scale.domain()[0];
-      if(this.max == null || this.max <= 0 && this.scaleType === "log") this.max = this.scale.domain()[1];
+      if(this.domainMin == null || this.domainMin <= 0 && this.scaleType === "log") this.domainMin = this.scale.domain()[0];
+      if(this.domainMax == null || this.domainMax <= 0 && this.scaleType === "log") this.domainMax = this.scale.domain()[1];
 
-      //fakemin and fakemax nonsense protection    
-      if(this.fakeMin == null || this.fakeMin <= 0 && this.scaleType === "log") this.fakeMin = this.scale.domain()[0];
-      if(this.fakeMax == null || this.fakeMax <= 0 && this.scaleType === "log") this.fakeMax = this.scale.domain()[1];
+      //zoomedmin and zoomedmax nonsense protection    
+      if(this.zoomedMin == null || this.zoomedMin <= 0 && this.scaleType === "log") this.zoomedMin = this.scale.domain()[0];
+      if(this.zoomedMax == null || this.zoomedMax <= 0 && this.scaleType === "log") this.zoomedMax = this.scale.domain()[1];
 
-      this.scale.domain([this.min, this.max]);
+      this.scale.domain([this.domainMin, this.domainMax]);
     }
   },
 
@@ -107,7 +95,7 @@ var AxisModel = Model.extend({
 
     if(this.scaleType == "time") {
       var limits = this.getLimits(this.which);
-      this.scale = d3.time.scale().domain([limits.min, limits.max]);
+      this.scale = d3.time.scale.utc().domain([limits.min, limits.max]);
       return;
     }
 
@@ -119,7 +107,7 @@ var AxisModel = Model.extend({
         //domain from metadata can override it if defined
         domain = indicatorsDB[this.which].domain ? indicatorsDB[this.which].domain : domain;
         //min and max can override the domain if defined
-        domain = this.min!=null && this.max!=null ? [+this.min, +this.max] : domain;
+        domain = this.domainMin!=null && this.domainMax!=null ? [+this.domainMin, +this.domainMax] : domain;
         break;
       case "property":
         domain = this.getUnique(this.which);

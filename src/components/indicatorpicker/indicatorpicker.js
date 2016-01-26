@@ -41,7 +41,6 @@ var IndPicker = Component.extend({
                 _this.updateView();
             },
             "ready": function(evt) {
-                if(!_this._readyOnce) return;
                 _this.updateView();
             }
         };
@@ -73,6 +72,8 @@ var IndPicker = Component.extend({
 
     
     updateView: function() {
+        if(!this._readyOnce) return;
+
         var _this = this;
         this.translator = this.model.language.getTFunction();
         this.el_select.text(this.translator("indicator/" + this.model.marker[this.markerID].which));

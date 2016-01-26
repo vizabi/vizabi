@@ -19,12 +19,10 @@ export var DefaultEvent = Class.extend({
 
 export var ChangeEvent = DefaultEvent.extend('change', {
 
-  persistent: true,
   type: 'change',
 
-  init: function(source, persistent) {
+  init: function(source) {
     this._super(source);
-    this.persistent = (typeof persistent === 'undefined') ? true : persistent;
   }
 })
 

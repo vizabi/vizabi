@@ -1,7 +1,19 @@
 //d3.svg.colorPicker
 
+
+var instance = null;
+
 export default function colorPicker() {
-  return function d3_color_picker() {
+
+
+  return function getInstance() {
+    if (instance == null) {
+      instance = d3_color_picker();
+    }
+    return instance;
+  }();
+
+  function d3_color_picker() {
     // tuning defaults
     var nCellsH = 15;
     // number of cells by hues (angular)
@@ -21,6 +33,8 @@ export default function colorPicker() {
     // exceptional saturation at first angular segment. Set 0 to have shades of grey
     var minRadius = 15;
     //radius of the central hole in color wheel: px
+    var maxWidth = 280;
+    var maxHeight = 323;
     var margin = {
       top: .1,
       bottom: .1,
@@ -71,6 +85,7 @@ export default function colorPicker() {
       return 1;
     });
     var svg = null;
+    var container = null;
     var colorPointer = null;
     var showColorPicker = false;
     var sampleRect = null;
@@ -132,14 +147,27 @@ export default function colorPicker() {
     // container should be a D3 selection that has a div where we want to render color picker
     // that div should have !=0 width and height in its style
     function colorPicker(container) {
+      colorPicker.container = container;
+      svg = container.select('.' + css.COLOR_PICKER);
+      if(!svg.empty()) {
+        return;
+      }
+      container.on('click', function() {
+        colorPicker.show(false);
+        d3.event.stopPropagation();
+      });
       colorData = _generateColorData();
+
       svg = container.append('svg')
         .style('position', 'absolute')
         .style('top', '0')
         .style('left', '0')
         .style('width', '100%')
+        .style('max-width', maxWidth)
         .style('height', '100%')
-        .attr('class', css.COLOR_PICKER)
+        .style('max-height', maxHeight)
+        .style('z-index', 9999)
+        .attr('class', css.COLOR_PICKER + " vzb-dialog-shadow")
         .classed(css.INVISIBLE, !showColorPicker);
 
       var width = parseInt(svg.style('width'));
@@ -250,7 +278,8 @@ export default function colorPicker() {
 
       svg.selectAll('.' + css.COLOR_BUTTON)
         .on('click', function() {
-          _this.show(TOGGLE);
+          d3.event.stopPropagation();
+          _this.show(false);
         });
       _doTheStyling(svg);
     }
@@ -303,6 +332,9 @@ export default function colorPicker() {
       if(svg == null)
         console.warn('Color picker is missing SVG element. Was init sequence performed?');
       showColorPicker = arg == TOGGLE ? !showColorPicker : arg;
+      if (!showColorPicker) {
+        callback = function() {};
+      }
       svg.classed(css.INVISIBLE, !showColorPicker);
     };
     // getters and setters
@@ -383,6 +415,44 @@ export default function colorPicker() {
       svg.select('.' + css.COLOR_DEFAULT).style('fill', colorDef);
       return colorPicker;
     };
+    /**
+     * @param {ClientRect} screen parent element
+     * @param {int[]} arg [x,y] of color picker position
+     */
+    colorPicker.fitToScreen = function(arg) {
+      var screen = colorPicker.container.node().getBoundingClientRect();
+      var xPos, yPos;
+
+      var width = parseInt(svg.style('width'));
+      var height = parseInt(svg.style('height'));
+
+      if (!arg) {
+        xPos = screen.width - parseInt(svg.style('right')) - width;
+        yPos = parseInt(svg.style('top'));
+      } else {
+        xPos = arg[0] - screen.left;
+        yPos = arg[1] - screen.top;
+      }
+
+      var styles = {left: ''};
+      if (screen.width * 0.8 <= width) {
+        styles.right = (screen.width - width) * 0.5;
+      } else if (xPos + width > screen.width) {
+        styles.right = Math.min(screen.width * 0.1, 20);
+      } else {
+        styles.right = screen.width - xPos - width;
+      }
+      if (screen.height * 0.8 <= height) {
+        styles.top = (screen.height - height) * 0.5;
+      } else if (yPos + height * 1.2 > screen.height) {
+        styles.top = screen.height * 0.9 - height;
+      } else {
+        styles.top = yPos;
+      }
+
+      svg.style(styles);
+      return colorPicker;
+    };
     colorPicker.colorOld = function(arg) {
       if(!arguments.length)
         return colorOld;
@@ -395,6 +465,7 @@ export default function colorPicker() {
     };
 
     colorPicker.resize = function(arg) {
+
       if(!arguments.length)
         return resize;
       if (typeof arg !== 'undefined') {
@@ -408,8 +479,10 @@ export default function colorPicker() {
         defaultLabel.attr('x', width * .1)
                     .attr('y', height * (1 - margin.bottom));
       }
+      colorPicker.fitToScreen();
+
       return colorPicker;
     };
     return colorPicker;
-  }();
+  };
 };

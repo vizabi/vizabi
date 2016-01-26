@@ -772,20 +772,29 @@ export var mapRows = function(original, formatters) {
       return res;
     }
   }
+   
+  // default formatter turns empty strings in null and converts numeric values into number
+  //TODO: default formatter is moved to utils. need to return it to hook prototype class, but retest #1212 #1230 #1253
+  var defaultFormatter = function (val) {
+      var newVal = val;
+      if(val === ""){
+        newVal = null;
+      } else {
+        // check for numberic
+        var numericVal = parseFloat(val);
+        if (!isNaN(numericVal) && isFinite(val)) {
+          newVal = numericVal;
+        }
+      }  
+      return newVal;
+  }
   
   original = original.map(function(row) {
     var columns = Object.keys(row);
       
     for(var i = 0; i < columns.length; i++) {
-      var col = columns[i], new_val;
-      if(formatters.hasOwnProperty(col)) { 
-        try {
-          new_val = mapRow(row[col], formatters[col]);
-        } catch(e) {
-          new_val = row[col];
-        }
-        row[col] = new_val;
-      }
+      var col = columns[i];
+      row[col] = mapRow(row[col], formatters[col] || defaultFormatter);
     }
     return row;
   });
@@ -1097,17 +1106,21 @@ export var diffObject = function(obj2, obj1) {
 };
 
 /*
- * Time formats
+ * Time formats for internal data
+ * all in UTC
  */
-var timeFormats = {
-  "year": d3.time.format("%Y"),
-  "month": d3.time.format("%Y-%m"),
-  "week": d3.time.format("%Y-W%W"),
-  "day": d3.time.format("%Y-%m-%d"),
-  "hour": d3.time.format("%Y-%m-%d %H"),
-  "minute": d3.time.format("%Y-%m-%d %H:%M"),
-  "second": d3.time.format("%Y-%m-%d %H:%M:%S")
+export var timeFormats = {
+  "year": d3.time.format.utc("%Y"),
+  "month": d3.time.format.utc("%Y-%m"),
+  "week": d3.time.format.utc("%Y-W%W"),
+  "day": d3.time.format.utc("%Y-%m-%d"),
+  "hour": d3.time.format.utc("%Y-%m-%d %H"),
+  "minute": d3.time.format.utc("%Y-%m-%d %H:%M"),
+  "second": d3.time.format.utc("%Y-%m-%d %H:%M:%S")
 };
+
+// short-cut for developers to get UTC date strings
+Date.prototype.utc = Date.prototype.toUTCString;
 
 /*
  * Formats a Date Object to string format
@@ -1115,9 +1128,18 @@ var timeFormats = {
  * @param {String} unit
  * @returns {String}
  */
-export var formatDate = function(date, unit) {
-  if(!d3) return date;
-  return timeFormats[unit](date);
+export var formatTime = function(dateObject, unit) {
+  if(!d3) return dateObject;
+  return timeFormats[unit](dateObject);
+};
+
+export var parseTime = function(timeString, unit) {
+  if(!d3) return timeString;
+  return timeFormats[unit].parse(timeString);
+};
+
+export var getTimeFormat = function(unit) {
+  return timeFormats[unit];
 };
 
 /*
@@ -1151,13 +1173,13 @@ export var flattenDates = function(obj) {
     if(key === 'time') {
       var unit = val.unit || "year";
       if(typeof val.value === 'object') {
-        val.value = formatDate(val.value, unit);
+        val.value = formatTime(val.value, unit);
       }
       if(typeof val.start === 'object') {
-        val.start = formatDate(val.start, unit);
+        val.start = formatTime(val.start, unit);
       }
       if(typeof val.end === 'object') {
-        val.end = formatDate(val.end, unit);
+        val.end = formatTime(val.end, unit);
       }
     }
     if(isPlainObject(val)) {

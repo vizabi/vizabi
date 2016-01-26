@@ -16,7 +16,7 @@ var GraphReader = Reader.extend({
     this._name = 'graph';
     this._data = [];
     this._basepath = reader_info.path;
-    this._formatters = reader_info.formatters;
+    this._parsers = reader_info.parsers;
     if (!this._basepath) {
       utils.error("Missing base path for graph reader");
     }
@@ -104,12 +104,12 @@ var GraphReader = Reader.extend({
 
       function format(res) {
         //format data
-        res = utils.mapRows(res, _this._formatters);
+        res = utils.mapRows(res, _this._parsers);
 
         //TODO: fix this hack with appropriate ORDER BY
         //order by formatted
         //sort records by time
-        var keys = Object.keys(_this._formatters);
+        var keys = Object.keys(_this._parsers);
         var order_by = keys[0];
         res.sort(function (a, b) {
           return a[order_by] - b[order_by];
@@ -130,7 +130,7 @@ var GraphReader = Reader.extend({
         }
 
         //format values in the dataset and filters
-        where = utils.mapRows([where], _this._formatters)[0];
+        where = utils.mapRows([where], _this._parsers)[0];
 
         //make sure conditions don't contain invalid conditions
         var validConditions = [];

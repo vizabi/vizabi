@@ -28,7 +28,7 @@ var Dialogs = Component.extend({
     this.name = 'gapminder-dialogs';
     this._curr_dialog_index = 20;
 
-    
+
     this.model_expects = [{
       name: "state",
       type: "model"
@@ -39,7 +39,7 @@ var Dialogs = Component.extend({
       name: "language",
       type: "language"
     }];
-    
+
     this._available_dialogs = {
       'find': {
         dialog: dialogs.find,
@@ -73,13 +73,16 @@ var Dialogs = Component.extend({
       },
       'presentation': {
         dialog: dialogs.presentation
+      },
+      'about': {
+        dialog: dialogs.about
       }
     };
-    
+
     this._super(config, context);
 
   },
-  
+
   readyOnce: function() {
 
     var _this = this;
@@ -89,19 +92,19 @@ var Dialogs = Component.extend({
     this.element = d3.select(this.placeholder);
 
     this.element.selectAll("div").remove();
-  
+
     // if dialog_sidebar has been passed in with boolean param or array must check and covert to array
     if (dialog_sidebar === true) {
       dialog_sidebar = dialog_popup;
       (this.model.ui.dialogs||{}).sidebar = dialog_sidebar;
     }
-    
+
     if (dialog_sidebar.length !== 0) {
         d3.select(this.root.element).classed("vzb-dialog-expand-true", true);
     }
-    
+
     this._addDialogs(dialog_popup, dialog_sidebar);
-    
+
     this.resize();
 
     if((this.model.ui.dialogs||{}).popup) {
@@ -117,7 +120,7 @@ var Dialogs = Component.extend({
         });
 
       var popupDialogs = this.element.selectAll(".vzb-top-dialog").filter(function(d) {return dialog_popup.indexOf(d.id) > -1});
-      
+
       var close_buttons = popupDialogs.select(".vzb-top-dialog>.vzb-dialog-modal>.vzb-dialog-buttons>[data-click='closeDialog']");
       close_buttons.on('click', function(d, i) {
         _this.closeDialog(d.id);
@@ -134,7 +137,7 @@ var Dialogs = Component.extend({
 
       d3.select(this.root.element).on("mousedown", function(e) {
         if(!this._active_comp) return; //don't do anything if nothing is open
-  
+
         var target = d3.event.target;
         var closeDialog = true;
         while(target) {
@@ -149,19 +152,19 @@ var Dialogs = Component.extend({
         }
       });
     }
-  
+
     this.element.on('click', function() {
       d3.event.stopPropagation();
     });
-  
+
   },
-  
+
   resize: function() {
     var _this = this;
     var dialog_popup = (this.model.ui.dialogs||{}).popup || [];
     var dialog_sidebar = (this.model.ui.dialogs||{}).sidebar || [];
     var profile = this.getLayoutProfile();
-    
+
     this.element.selectAll(".vzb-top-dialog").each(function(d) {
       var dialogEl = d3.select(this);
       var cls = dialogEl.attr('class').replace('vzb-popup','').replace('vzb-sidebar','');
@@ -176,7 +179,7 @@ var Dialogs = Component.extend({
     });
 
   },
-  
+
   /*
    * adds dialogs configuration to the components and template_data
    * @param {Array} dialog_list list of dialogs to be added
@@ -185,10 +188,10 @@ var Dialogs = Component.extend({
 
     var profile = this.getLayoutProfile();
     var dialog_list = [];
-    
+
     dialog_list = dialog_popup ? dialog_list.concat(dialog_popup) : dialog_list;
     dialog_list = dialog_sidebar ? dialog_list.concat(dialog_sidebar) : dialog_list;
-    
+
     dialog_list = utils.unique(dialog_list);
 
     this._components_config = [];
@@ -223,7 +226,7 @@ var Dialogs = Component.extend({
       .attr('data-dlg', function(d) {
         return d.id;
       })
-      .attr('class', 'vzb-top-dialog vzb-dialogs-dialog');
+      .attr('class', 'vzb-top-dialog vzb-dialogs-dialog vzb-dialogs-dialog vzb-dialog-shadow');
 
     this.loadComponents();
 
@@ -244,9 +247,9 @@ var Dialogs = Component.extend({
         });
       });
     });
-    
+
   },
-  
+
   bringForward: function(id) {
     var dialog = this.element.select(".vzb-popup.vzb-dialogs-dialog[data-dlg='" + id + "']");
     dialog.style('z-index', this._curr_dialog_index);
@@ -260,7 +263,7 @@ var Dialogs = Component.extend({
    */
   openDialog: function(id) {
     //close pinned dialogs for small profile
-    var forceClose = this.getLayoutProfile() === 'small' ? true : false; 
+    var forceClose = this.getLayoutProfile() === 'small' ? true : false;
     this.closeAllDialogs(forceClose);
 
     var dialog = this.element.selectAll(".vzb-popup.vzb-dialogs-dialog[data-dlg='" + id + "']");
@@ -301,7 +304,7 @@ var Dialogs = Component.extend({
     this._active_comp = this.components[this._available_dialogs[id].component];
 
     if(this._active_comp && !this._active_comp.isOpen) return;
-    
+
     if(this._available_dialogs[id].ispin)
       this.pinDialog(id);
 
@@ -316,7 +319,7 @@ var Dialogs = Component.extend({
       this._active_comp.close();
     }
     this._active_comp = false;
-    
+
   },
 
   /*
@@ -324,14 +327,14 @@ var Dialogs = Component.extend({
    */
   closeAllDialogs: function(forceclose) {
     var _this = this;
-    //remove classes   
+    //remove classes
     var dialogClass = forceclose ? ".vzb-popup.vzb-dialogs-dialog.vzb-active" : ".vzb-popup.vzb-dialogs-dialog.vzb-active:not(.pinned)";
     var all_dialogs = this.element.selectAll(dialogClass);
       all_dialogs.each(function(d) {
         _this.closeDialog(d.id)
       });
   }
-  
+
 });
 
 export default Dialogs;

@@ -34,8 +34,8 @@ var Axes = Dialog.extend({
       model: ["state.marker", "language"],
       markerID: "axis_x",
       ui: {
-        selectMinMax: false,
-        selectFakeMinMax: true 
+        selectDomainMinMax: false,
+        selectZoomedMinMax: true 
       }
     }]
 

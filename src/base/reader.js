@@ -11,10 +11,10 @@ var Reader = Class.extend({
     this._name = this._name || reader_info.reader;
     this._data = reader_info.data || [];
     this._basepath = this._basepath || reader_info.path || null;
-    this._formatters = reader_info.formatters;
+    this._parsers = reader_info.parsers;
 
-    if(this._formatters) {
-      this._data = utils.mapRows(this._data, this._formatters);
+    if(this._parsers) {
+      this._data = utils.mapRows(this._data, this._parsers);
     }
   },
 

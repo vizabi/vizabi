@@ -73,7 +73,7 @@ var BubbleMapComponent = Component.extend({
       'change:marker.size': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
         if(!_this._readyOnce) return;
-        if(path.indexOf("min") > -1 || path.indexOf("max") > -1) {
+        if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1) {
           _this.updateMarkerSizeLimits();
           _this.redrawDataPoints(null, false);
           return;
@@ -167,40 +167,8 @@ var BubbleMapComponent = Component.extend({
 
 
   afterPreload: function(){
-      if(!this.world) utils.warn("bubble map afterPreload: missing country shapes " + this.world);
-  },
-
-  /**
-   * DOM is ready
-   */
-  readyOnce: function () {
-
-    this.element = d3.select(this.element);
-
-    this.graph = this.element.select('.vzb-bmc-graph');
-    this.mapSvg = this.element.select('.vzb-bmc-map-background');
-
-    this.bubbleContainerCrop = this.graph.select('.vzb-bmc-bubbles-crop');
-    this.bubbleContainer = this.graph.select('.vzb-bmc-bubbles');
-    this.labelListContainer = this.graph.select('.vzb-bmc-bubble-labels');
-    this.labelsContainer = this.graph.select('.vzb-bmc-labels');
-    this.linesContainer = this.graph.select('.vzb-bmc-lines');
-    this.dataWarningEl = this.graph.select(".vzb-data-warning");
-
-    this.yTitleEl = this.graph.select(".vzb-bmc-axis-y-title");
-    this.cTitleEl = this.graph.select(".vzb-bmc-axis-c-title");
-    this.infoEl = this.graph.select(".vzb-bmc-axis-info");
-
-    this.entityBubbles = null;
-    this.entityLabels = null;
-    this.tooltip = this.element.select('.vzb-bmc-tooltip');
-    this.entityLines = null;
-
-    // year background
-    this.yearEl = this.graph.select('.vzb-bmc-year');
-    this.year = new DynamicBackground(this.yearEl);
-    this.year.setConditions({xAlign: 'left', yAlign: 'bottom', bottomOffset: 5});
-
+    if(!this.world) utils.warn("bubble map afterPreload: missing country shapes " + this.world);
+      
     // http://bl.ocks.org/mbostock/d4021aa4dccfd65edffd patterson
     // http://bl.ocks.org/mbostock/3710566 robinson
     // map background
@@ -217,7 +185,7 @@ var BubbleMapComponent = Component.extend({
 
     var graticule = d3.geo.graticule();
 
-    var svg = this.mapGraph = d3.select(".vzb-bmc-map-graph")
+    var svg = this.mapGraph = d3.select(this.element).select(".vzb-bmc-map-graph")
         .attr("width", defaultWidth)
         .attr("height", defaultHeight);
     svg.html('');
@@ -251,8 +219,38 @@ var BubbleMapComponent = Component.extend({
         .datum(topojson.mesh(world, world.objects.countries, function(a, b) { return a !== b; }))
         .attr("class", "boundary")
         .attr("d", path);
+  },
 
+  /**
+   * DOM is ready
+   */
+  readyOnce: function () {
 
+    this.element = d3.select(this.element);
+
+    this.graph = this.element.select('.vzb-bmc-graph');
+    this.mapSvg = this.element.select('.vzb-bmc-map-background');
+
+    this.bubbleContainerCrop = this.graph.select('.vzb-bmc-bubbles-crop');
+    this.bubbleContainer = this.graph.select('.vzb-bmc-bubbles');
+    this.labelListContainer = this.graph.select('.vzb-bmc-bubble-labels');
+    this.labelsContainer = this.graph.select('.vzb-bmc-labels');
+    this.linesContainer = this.graph.select('.vzb-bmc-lines');
+    this.dataWarningEl = this.graph.select(".vzb-data-warning");
+
+    this.yTitleEl = this.graph.select(".vzb-bmc-axis-y-title");
+    this.cTitleEl = this.graph.select(".vzb-bmc-axis-c-title");
+    this.infoEl = this.graph.select(".vzb-bmc-axis-info");
+
+    this.entityBubbles = null;
+    this.entityLabels = null;
+    this.tooltip = this.element.select('.vzb-bmc-tooltip');
+    this.entityLines = null;
+
+    // year background
+    this.yearEl = this.graph.select('.vzb-bmc-year');
+    this.year = new DynamicBackground(this.yearEl);
+    this.year.setConditions({xAlign: 'left', yAlign: 'bottom', bottomOffset: 5});
 
     var _this = this;
     this.on("resize", function () {
@@ -300,7 +298,7 @@ var BubbleMapComponent = Component.extend({
       var _this = this;
 
       this.translator = this.model.language.getTFunction();
-      this.timeFormatter = d3.time.format(_this.model.time.formatOutput);      
+      this.timeFormat = utils.getTimeFormat(_this.model.time.unit);      
       var sizeMetadata = globals.metadata.indicatorsDB[this.model.marker.size.which];
 
       this.strings = {
@@ -506,7 +504,8 @@ var BubbleMapComponent = Component.extend({
 
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bmc-bubble')
-      .data(this.model.entities.getVisible(), function(d) { return d[KEY]; });
+      .data(this.model.entities.getVisible(), function(d) { return d[KEY]; })
+      .order();
 
     //exit selection
     this.entityBubbles.exit().remove();
@@ -594,7 +593,7 @@ var BubbleMapComponent = Component.extend({
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
-    this.year.setText(this.timeFormatter(this.time));
+    this.year.setText(this.timeFormat(this.time));
     this.values = this.model.marker.getFrame(this.time);
 
     //possibly update the exact value in size title
@@ -757,8 +756,8 @@ var BubbleMapComponent = Component.extend({
     var minRadius = this.activeProfile.minRadius;
     var maxRadius = this.activeProfile.maxRadius;
 
-    this.minRadius = Math.max(maxRadius * this.model.marker.size.min, minRadius);
-    this.maxRadius = Math.max(maxRadius * this.model.marker.size.max, minRadius);
+    this.minRadius = Math.max(maxRadius * this.model.marker.size.domainMin, minRadius);
+    this.maxRadius = Math.max(maxRadius * this.model.marker.size.domainMax, minRadius);
 
     if(this.model.marker.size.scaleType !== "ordinal") {
       this.sScale.range([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)]);
@@ -1079,6 +1078,12 @@ var BubbleMapComponent = Component.extend({
           d3.select(this).selectAll(".vzb-bmc-label-x")
             .classed("vzb-transparent", true);
         })
+        .on("click", function(d) {
+          if (!utils.isTouchDevice()) return;
+          var cross = d3.select(this).selectAll(".vzb-bmc-label-x");
+          cross.classed("vzb-transparent", !cross.classed("vzb-transparent"));
+        })
+      
 
         // hide recent hover tooltip
         if (!_this.hovered || _this.model.entities.isSelected(_this.hovered)) {
