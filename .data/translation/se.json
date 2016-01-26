@@ -89,9 +89,9 @@
     "color/_default": "Enkel färg",
     "check/adaptMinMaxZoom": "Följ bubblar med zoom",
     "check/presentation": "Göra texten stor och presentera",
-    "region/ame": "Amerika",
-    "region/asi": "Asien",
-    "region/afr": "Afrika",
-    "region/eur": "Europa",
+    "region/americas": "Amerika",
+    "region/asia": "Asien",
+    "region/africa": "Afrika",
+    "region/europe": "Europa",
     "region/all": "Värld"
 }

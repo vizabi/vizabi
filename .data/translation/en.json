@@ -90,9 +90,9 @@
     "color/_default": "Single color",
     "check/adaptMinMaxZoom": "Follow bubbles with zoom",
     "check/presentation": "Increase text size for presentation",
-    "region/ame": "America",
-    "region/asi": "Asia",
-    "region/afr": "Africa",
-    "region/eur": "Europe",
+    "region/americas": "Americas",
+    "region/asia": "Asia",
+    "region/africa": "Africa",
+    "region/europe": "Europe",
     "region/all": "World"
 }
