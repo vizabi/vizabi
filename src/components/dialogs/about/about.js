@@ -1,6 +1,6 @@
 import * as utils from 'base/utils';
 import Dialog from '../_dialog';
-import Vzb from 'vizabi';
+import globals from 'base/globals';
 
 /*
  * Size dialog
@@ -20,8 +20,8 @@ init: function(config, parent) {
 },
     
 readyOnce: function(){
-  var version = Vzb._version;
-  var updated = new Date(parseInt(Vzb._build));
+  var version = globals.version;
+  var updated = new Date(parseInt(globals.build));
     
   this.element = d3.select(this.element);
   this.element.select(".vzb-about-text0")
