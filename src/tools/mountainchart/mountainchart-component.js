@@ -233,8 +233,8 @@ var MountainChartComponent = Component.extend({
     afterPreload: function () {
         var _this = this;
 
-        var yearNow = _this.model.time.value.getFullYear();
-        var yearEnd = _this.model.time.end.getFullYear();
+        var yearNow = _this.model.time.value.getUTCFullYear();
+        var yearEnd = _this.model.time.end.getUTCFullYear();
 
         this._math.xScaleFactor = this.model.time.xScaleFactor;
         this._math.xScaleShift = this.model.time.xScaleShift;
@@ -501,7 +501,7 @@ var MountainChartComponent = Component.extend({
     },
 
     updateDoubtOpacity: function (opacity) {
-        if (opacity == null) opacity = this.wScale(+this.time.getFullYear().toString());
+        if (opacity == null) opacity = this.wScale(+this.time.getUTCFullYear().toString());
         if (this.someSelected) opacity = 1;
         this.dataWarningEl.style("opacity", opacity);
     },
@@ -780,7 +780,7 @@ var MountainChartComponent = Component.extend({
         this.time = this.model.time.value;
         if (time == null) time = this.time;
 
-        this.year.setText(time.getFullYear().toString());
+        this.year.setText(time.getUTCFullYear().toString());
 
         this.values = this.model.marker.getFrame(time);
         this.yMax = 0;
@@ -1019,7 +1019,7 @@ var MountainChartComponent = Component.extend({
 
         // exporting shapes for shape preloader. is needed once in a while
         // if (!this.shapes) this.shapes = {}
-        // this.shapes[this.model.time.value.getFullYear()] = {
+        // this.shapes[this.model.time.value.getUTCFullYear()] = {
         //     yMax: d3.format(".2e")(_this.yMax),
         //     shape: _this.cached["all"].map(function (d) {return d3.format(".2e")(d.y);})
         // }
@@ -1062,7 +1062,7 @@ var MountainChartComponent = Component.extend({
         if (this.model.time.record) this._export.write({
             type: "path",
             id: key,
-            time: this.model.time.value.getFullYear(),
+            time: this.model.time.value.getUTCFullYear(),
             fill: this.cScale(this.values.color[key]),
             d: this.area(this.cached[key])
         });

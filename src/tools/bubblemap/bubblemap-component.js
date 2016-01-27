@@ -393,7 +393,7 @@ var BubbleMapComponent = Component.extend({
   },
 
   updateDoubtOpacity: function (opacity) {
-      if (opacity == null) opacity = this.wScale(+this.time.getFullYear().toString());
+      if (opacity == null) opacity = this.wScale(+this.time.getUTCFullYear().toString());
       if (this.someSelected) opacity = 1;
       this.dataWarningEl.style("opacity", opacity);
   },

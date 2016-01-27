@@ -390,7 +390,7 @@ function changedObj(obj, compare) {
     } else if(utils.isDate(compare[name])) {
       var comp1 = val.toString();
       //TODO: workaround for years only
-      var comp2 = compare[name].getFullYear().toString();
+      var comp2 = compare[name].getUTCFullYear().toString();
       if(comp1 !== comp2) {
         acc[name] = val;
       }

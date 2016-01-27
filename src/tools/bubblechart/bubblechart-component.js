@@ -1142,7 +1142,7 @@ var BubbleChartComp = Component.extend({
       if(this.model.time.record) _this._export.write({
         type: "circle",
         id: d[KEY],
-        time: this.model.time.value.getFullYear(),
+        time: this.model.time.value.getUTCFullYear(),
         fill: valueC?_this.cScale(valueC):"transparent",
         cx: _this.xScale(valueX),
         cy: _this.yScale(valueY),

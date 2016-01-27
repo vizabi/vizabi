@@ -47,7 +47,7 @@ var GraphReader = Reader.extend({
         return time;
       }
 
-      return time.getFullYear();
+      return time.getUTCFullYear();
     }
 
     _this._data = [];
