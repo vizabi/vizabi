@@ -153,7 +153,8 @@
             "unit": "gdp_const_ppp2011_dollar",
             "interpolation": "exp",
             "scales": ["log", "linear"],
-            "sourceLink": "https://gapminder.org"
+            "sourceLink": "https://gapminder.org",
+            "domain": [1e6, 100e12]
         },
         "child_mortality_rate_per1000": {
             "allowCharts": ["bubblechart", "mountainchart", "bubblemap"],

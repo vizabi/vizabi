@@ -491,10 +491,10 @@ BubbleChart.define('default_options', {
     }
   },
   data: {
-    //reader: "waffle",
-    //path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
-    reader: "csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    reader: "waffle",
+    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    //reader: "csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   language: language,
