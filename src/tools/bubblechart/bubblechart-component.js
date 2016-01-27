@@ -1440,7 +1440,6 @@ var BubbleChartComp = Component.extend({
       })
       .on("mouseover", function(d) {
         if(utils.isTouchDevice()) return;
-        console.log('label over');
         _this.model.entities.highlightEntity(d);
         _this.entityLabels.sort(function (a, b) { // select the labels and sort the path's
           if (a.geo != d.geo) return -1;          // a is not the hovered element, send "a" to the back
