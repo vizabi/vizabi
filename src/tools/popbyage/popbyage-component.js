@@ -107,8 +107,6 @@ var PopByAge = Component.extend({
     this.AGEDIM = this.model.age.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
 
-    this.timeFormat = utils.getTimeFormat(this.model.time.unit);
-
     this.updateUIStrings();
     this._updateIndicators();
     this.resize();
@@ -235,7 +233,7 @@ var PopByAge = Component.extend({
           age = age + "-to-" + (age + group_by - 1);
         }
 
-        return age + yearOldsIn + " " + _this.timeFormat(time.value) + ": " + formatter(values.axis_x[d[ageDim]]);
+        return age + yearOldsIn + " " + _this.model.time.timeFormat(time.value) + ": " + formatter(values.axis_x[d[ageDim]]);
       })
       .attr("x", 7)
       .attr("y", function(d, i) {
@@ -253,7 +251,7 @@ var PopByAge = Component.extend({
 
     this.title.text(label);
 
-    this.year.text(this.timeFormat(this.model.time.value));
+    this.year.text(this.model.time.timeFormat(this.model.time.value));
 
     //update x axis again
     //TODO: remove this when grouping is done at data level

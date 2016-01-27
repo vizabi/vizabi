@@ -110,9 +110,6 @@ var LCComponent = Component.extend({
     this.projectionX = this.graph.select("g").select(".vzb-lc-projection-x");
     this.projectionY = this.graph.select("g").select(".vzb-lc-projection-y");
 
-    // set up time format
-    this.timeFormat = utils.getTimeFormat(this.model.time.unit);
-
     this.entityLines = null;
     this.entityLabels = null;
     this.totalLength_1 = {};
@@ -369,7 +366,7 @@ var LCComponent = Component.extend({
     this.yAxis.scale(this.yScale)
       .labelerOptions({
         scaleType: this.model.marker.axis_y.scaleType,
-        timeFormat: this.timeFormat,
+        timeFormat: this.model.time.timeFormat,
         toolMargin: {
           top: 0,
           right: this.margin.right,
@@ -383,7 +380,7 @@ var LCComponent = Component.extend({
     this.xAxis.scale(this.xScale)
       .labelerOptions({
         scaleType: this.model.marker.axis_x.scaleType,
-        timeFormat: this.timeFormat,
+        timeFormat: this.model.time.timeFormat,
         toolMargin: this.margin,
         limitMaxTickNumber: this.activeProfile.limitMaxTickNumberX
           //showOuter: true
@@ -772,7 +769,7 @@ var LCComponent = Component.extend({
 
   getValuesForYear: function(year) {
     if(!utils.isDate(year)) {
-      year = utils.parseTime(year, 'year');
+      year = this.model.time.timeFormat.parse(year);
     }
     return this.model.marker.getValues({
       time: year

@@ -134,7 +134,7 @@ var WSReader = Reader.extend({
     // todo: formatting date according to precision (year, month, etc)
     if (_params.time) {
       _params.time[0] = _params.time[0].map(function (year) {
-        return typeof year === 'object' ? year.getFullYear() : year;
+        return typeof year === 'object' ? year.getUTCFullYear() : year;
       });
     }
 

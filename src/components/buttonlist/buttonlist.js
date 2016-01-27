@@ -469,7 +469,8 @@ var ButtonList = Component.extend({
     if(this.model.state.entities.select.length == 0) return;
 
     var locked = this.model.state.time.lockNonSelected;
-    locked = locked ? 0 : utils.formatTime(this.model.state.time.value, this.model.state.time.unit);
+    var time = this.model.state.time;
+    locked = locked ? 0 : time.timeFormat(time.value);
     this.model.state.time.lockNonSelected = locked;
 
     this.setBubbleLock();

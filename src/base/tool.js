@@ -138,7 +138,7 @@ var Tool = Component.extend({
     //flattens _defs_ object
     d_state = utils.flattenDefaults(d_state);
     //compares with chart default options
-    var d = utils.flattenDates(utils.diffObject(state, d_state));
+    var d = utils.flattenDates(utils.diffObject(state, d_state), this.model.state.time.timeFormat);
     //compares with model's defaults
     return utils.diffObject(d, this.model.state.getDefaults());
   },
@@ -390,7 +390,7 @@ function changedObj(obj, compare) {
     } else if(utils.isDate(compare[name])) {
       var comp1 = val.toString();
       //TODO: workaround for years only
-      var comp2 = compare[name].getFullYear().toString();
+      var comp2 = compare[name].getUTCFullYear().toString();
       if(comp1 !== comp2) {
         acc[name] = val;
       }

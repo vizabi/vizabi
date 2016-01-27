@@ -297,8 +297,7 @@ var BubbleMapComponent = Component.extend({
   updateUIStrings: function () {
       var _this = this;
 
-      this.translator = this.model.language.getTFunction();
-      this.timeFormat = utils.getTimeFormat(_this.model.time.unit);      
+      this.translator = this.model.language.getTFunction();    
       var sizeMetadata = globals.metadata.indicatorsDB[this.model.marker.size.which];
 
       this.strings = {
@@ -394,7 +393,7 @@ var BubbleMapComponent = Component.extend({
   },
 
   updateDoubtOpacity: function (opacity) {
-      if (opacity == null) opacity = this.wScale(+this.time.getFullYear().toString());
+      if (opacity == null) opacity = this.wScale(+this.time.getUTCFullYear().toString());
       if (this.someSelected) opacity = 1;
       this.dataWarningEl.style("opacity", opacity);
   },
@@ -593,7 +592,7 @@ var BubbleMapComponent = Component.extend({
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
-    this.year.setText(this.timeFormat(this.time));
+    this.year.setText(this.model.time.timeFormat(this.time));
     this.values = this.model.marker.getFrame(this.time);
 
     //possibly update the exact value in size title

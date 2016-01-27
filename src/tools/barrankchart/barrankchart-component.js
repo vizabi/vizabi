@@ -70,7 +70,7 @@ var BarRankChart = Component.extend({
   },
 
   onTimeChange: function() {
-    //this.year.setText(this.timeFormat(this.model.time.value));
+    //this.year.setText(this.model.time.timeFormat(this.model.time.value));
 
     this.loadData();
     this.draw();
@@ -92,7 +92,6 @@ var BarRankChart = Component.extend({
     this.barContainer = this.element.select('.vzb-br-bars');
 
     // set up formatters
-    this.timeFormat = utils.getTimeFormat(this.model.time.unit);
     this.xAxis.tickFormat(this.model.marker.axis_x.tickFormatter);
 
     this.ready();
@@ -132,7 +131,7 @@ var BarRankChart = Component.extend({
     // change header titles for new data
     var translator = this.model.language.getTFunction();
     this.header.select('.vzb-br-title')
-      .text(translator("indicator/" + this.model.marker.axis_x.which) + ' ' + this.timeFormat(this.model.time.value))
+      .text(translator("indicator/" + this.model.marker.axis_x.which) + ' ' + this.model.time.timeFormat(this.model.time.value))
     this.header.select('.vzb-br-total')
       .text('Σ = ' + this.model.marker.axis_x.tickFormatter(this.total))
 

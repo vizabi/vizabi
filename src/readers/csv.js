@@ -46,7 +46,7 @@ var CSVReader = Reader.extend({
     //if only one year, files ending in "-YYYY.csv"
     var loadPath = this.path;
     if(query.where.time && query.where.time[0].length === 1) {
-      loadPath = loadPath.replace(".csv", "-" + query.where.time[0][0].getFullYear() + ".csv");
+      loadPath = loadPath.replace(".csv", "-" + query.where.time[0][0].getUTCFullYear() + ".csv");
     }
 
     _this._data = [];
