@@ -102,15 +102,15 @@ var BubbleChartComp = Component.extend({
         }
         if(path.indexOf("zoomedMin") > -1 || path.indexOf("zoomedMax") > -1) {
           if(_this.draggingNow)return;
-            
-          //avoid zooming again if values didn't change. 
+
+          //avoid zooming again if values didn't change.
           //also prevents infinite loop on forced URL update from zoom.stop()
           if(_this._zoomZoomedDomains.x.zoomedMin == _this.model.marker.axis_x.zoomedMin
           && _this._zoomZoomedDomains.x.zoomedMax == _this.model.marker.axis_x.zoomedMax
           && _this._zoomZoomedDomains.y.zoomedMin == _this.model.marker.axis_y.zoomedMin
           && _this._zoomZoomedDomains.y.zoomedMax == _this.model.marker.axis_y.zoomedMax
           ) return;
-            
+
             _this._panZoom.zoomToMaxMin(
               _this.model.marker.axis_x.zoomedMin,
               _this.model.marker.axis_x.zoomedMax,
@@ -700,7 +700,7 @@ var BubbleChartComp = Component.extend({
         _this.model.entities.selectEntity(d);
         //return to highlighted state
         if(!utils.isTouchDevice() && isSelected) {
-            _this.model.entities.highlightEntity(d);    
+            _this.model.entities.highlightEntity(d);
             _this.highlightDataPoints();
         }
       }
@@ -1077,7 +1077,6 @@ var BubbleChartComp = Component.extend({
     }
 
     values = this.model.marker.getFrame(this.time);
-
     this.entityBubbles.each(function(d, index) {
       var view = d3.select(this);
       _this._updateBubble(d, values, valuesLocked, index, view, duration);
@@ -1128,11 +1127,24 @@ var BubbleChartComp = Component.extend({
 
 
       if(duration) {
-        view.transition().duration(duration).ease("linear")
-          .attr("cy", _this.yScale(valueY))
-          .attr("cx", _this.xScale(valueX))
-          .attr("r", scaledS);
+        if (true || !d.transitionInProgress) {
+          d.transitionInProgress = true;
+          view.transition().duration(duration).ease("linear")
+            .attr("cy", _this.yScale(valueY))
+            .attr("cx", _this.xScale(valueX))
+            .attr("r", scaledS)
+            .each("end", function() {
+              d.transitionInProgress = false;
+            });
+        } else {
+          d.transitionInProgress = false;
+          view.interrupt()
+            .attr("cy", _this.yScale(valueY))
+            .attr("cx", _this.xScale(valueX))
+            .attr("r", scaledS);
+        }
       } else {
+        d.transitionInProgress = false;
         view.interrupt()
           .attr("cy", _this.yScale(valueY))
           .attr("cx", _this.xScale(valueX))
