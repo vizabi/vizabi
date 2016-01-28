@@ -211,8 +211,24 @@ var TimeModel = Model.extend({
    * @returns range between start and end
    */
   getRange: function() {
-    return d3.time[this.unit].utc.range(this.start, this.end, this.step);
+    var is = this.getIntervalAndStep();
+    return d3.time[is.interval].utc.range(this.start, this.end, is.step);
   },
+
+  /** 
+   * gets the d3 interval and stepsize for d3 time interval methods
+   * D3's week-interval starts on sunday and it does not support a quarter interval
+   * 
+   **/
+  getIntervalAndStep: function() {
+    var d3Interval, step;
+    switch (this.unit) {
+      case 'week': d3Interval = 'monday'; step = this.step; break;
+      case 'quarter': d3Interval = 'month'; step = this.step*3; break;
+      default: d3Interval = this.unit; step = this.step; break;
+    }
+    return { interval: d3Interval, step: step };
+  }
 
   /**
    * Gets filter for time
@@ -255,8 +271,9 @@ var TimeModel = Model.extend({
     this.allSteps[hash] = [];
     var curr = this.start;
     while(curr <= this.end) {
+      var is = this.getIntervalAndStep();
       this.allSteps[hash].push(curr);
-      curr = d3.time[this.unit].utc.offset(curr, this.step);
+      curr = d3.time[is.interval].utc.offset(curr, is.step);
     }
     return this.allSteps[hash];
   },
@@ -271,7 +288,8 @@ var TimeModel = Model.extend({
     var op = 'round';
     if(this.round === 'ceil') op = 'ceil';
     if(this.round === 'floor') op = 'floor';
-    var time = d3.time[this.unit].utc[op](this[what]);
+    var is = this.getIntervalAndStep();
+    var time = d3.time[is.interval].utc[op](this[what]);
     this.set(what, time, true); //3rd argumennt forces update
   },
 
@@ -329,10 +347,10 @@ var TimeModel = Model.extend({
           _this.postponePause = false;
           _this.getModelObject('value').set(_this.value, true, true /*force the change and make it persistent for URL and history*/);
         } else {
-          var step = _this.step;
+          var is = _this.getIntervalAndStep();
           if(_this.delay < _this.delayThresholdX2) step*=2;
           if(_this.delay < _this.delayThresholdX4) step*=2;
-          time = d3.time[_this.unit].utc.offset(time, step);
+          time = d3.time[is.interval].utc.offset(time, is.step);
           _this.getModelObject('value').set(time, null, false /*make change non-persistent for URL and history*/);
           _this.playInterval();
         }

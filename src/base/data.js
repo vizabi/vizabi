@@ -319,7 +319,7 @@ var Data = Class.extend({
           // If there is a time field in query.where clause, then we are dealing with indicators in this request
 
           // If time is restricted to a single point then override the input with that single point
-          if(query.where.time[0].length === 1) framesArray = query.where.time[0];
+          // if(query.where.time[0].length === 1) framesArray = query.where.time[0];
           
           // Put together a template for cached filtered sets (see below what's needed)
           for(k=0; k<kLength; k++){

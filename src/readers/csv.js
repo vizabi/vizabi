@@ -46,7 +46,7 @@ var CSVReader = Reader.extend({
     //if only one year, files ending in "-YYYY.csv"
     var loadPath = this.path;
     if(query.where.time && query.where.time[0].length === 1) {
-      loadPath = loadPath.replace(".csv", "-" + query.where.time[0][0].getUTCFullYear() + ".csv");
+      loadPath = loadPath.replace(".csv", "-" + query.where.time[0][0] + ".csv");
     }
 
     _this._data = [];
@@ -86,8 +86,12 @@ var CSVReader = Reader.extend({
               }
             };
           });
-          //only use valid conditions
-          where = utils.clone(where, validConditions);
+
+          // only use valid conditions
+          where = utils.clone(utils.deepClone(where), validConditions);
+
+          // 
+          where = utils.mapRows([where], _this._parsers)[0];
 
           //filter any rows that match where condition
           data = utils.filterAny(data, where);
@@ -141,7 +145,6 @@ var CSVReader = Reader.extend({
 
 
   format: function(res) {
-    var _this = this;
 
     //make category an array
     res = res.map(function(row) {
@@ -152,7 +155,7 @@ var CSVReader = Reader.extend({
     });
 
     //format data
-    res = utils.mapRows(res, _this._parsers);
+    res = utils.mapRows(res, this._parsers);
 
     return res;
   },
