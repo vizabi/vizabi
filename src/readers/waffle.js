@@ -131,13 +131,6 @@ var WSReader = Reader.extend({
       delete _params.geo;
     }
 
-    // todo: formatting date according to precision (year, month, etc)
-    if (_params.time) {
-      _params.time[0] = _params.time[0].map(function (year) {
-        return typeof year === 'object' ? year.getUTCFullYear() : year;
-      });
-    }
-
     var result = [];
 
     // create `key=value` pairs for url query string

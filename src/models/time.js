@@ -228,7 +228,7 @@ var TimeModel = Model.extend({
       default: d3Interval = this.unit; step = this.step; break;
     }
     return { interval: d3Interval, step: step };
-  }
+  },
 
   /**
    * Gets filter for time
