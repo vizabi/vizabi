@@ -88,8 +88,8 @@ export default Class.extend({
             var x = _this.xScale(values.axis_x[pointer[KEY]]);
             var y = _this.yScale(values.axis_y[pointer[KEY]]);
             var s = utils.areaToRadius(_this.sScale(values.size[pointer[KEY]]));
-            _this._setTooltip(text, x, y, s);
-          } 
+            _this._setTooltip(pointer);
+          }
           //change opacity to OPACITY_HIGHLT = 1.0;
           d3.select(this).style("opacity", 1.0);
         })
@@ -109,7 +109,7 @@ export default Class.extend({
 
       trail.each(function(segment, index) {
         //update segment data (maybe for new indicators)
-        
+
         segment.valueY = _this.model.marker.getFrame(segment.t).axis_y[d[KEY]];
         segment.valueX = _this.model.marker.getFrame(segment.t).axis_x[d[KEY]];
         segment.valueS = _this.model.marker.getFrame(segment.t).size[d[KEY]];
@@ -176,7 +176,7 @@ export default Class.extend({
       var next = this.parentNode.childNodes[(index + 1)];
       if(next == null) return;
       next = next.__data__;
-        
+
       var lineLength = Math.sqrt(
           Math.pow(_this.xScale(segment.valueX) - _this.xScale(next.valueX),2) +
           Math.pow(_this.yScale(segment.valueY) - _this.yScale(next.valueY),2)
@@ -199,15 +199,15 @@ export default Class.extend({
     trail.each(function(segment, index) {
 
       var view = d3.select(this);
-        
+
       var strokeColor = _this.model.marker.color.which == "geo.region"?
         _this.model.marker.color.getColorShade({
-          colorID: segment.valueC, 
+          colorID: segment.valueC,
           shadeID: "shade"
         })
         :
         _this.cScale(segment.valueC);
-      
+
       view.select("circle")
         //.transition().duration(duration).ease("linear")
         .style("fill", _this.cScale(segment.valueC));
