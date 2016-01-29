@@ -102,15 +102,15 @@ var BubbleChartComp = Component.extend({
         }
         if(path.indexOf("zoomedMin") > -1 || path.indexOf("zoomedMax") > -1) {
           if(_this.draggingNow)return;
-            
-          //avoid zooming again if values didn't change. 
+
+          //avoid zooming again if values didn't change.
           //also prevents infinite loop on forced URL update from zoom.stop()
           if(_this._zoomZoomedDomains.x.zoomedMin == _this.model.marker.axis_x.zoomedMin
           && _this._zoomZoomedDomains.x.zoomedMax == _this.model.marker.axis_x.zoomedMax
           && _this._zoomZoomedDomains.y.zoomedMin == _this.model.marker.axis_y.zoomedMin
           && _this._zoomZoomedDomains.y.zoomedMax == _this.model.marker.axis_y.zoomedMax
           ) return;
-            
+
             _this._panZoom.zoomToMaxMin(
               _this.model.marker.axis_x.zoomedMin,
               _this.model.marker.axis_x.zoomedMax,
@@ -700,7 +700,7 @@ var BubbleChartComp = Component.extend({
         _this.model.entities.selectEntity(d);
         //return to highlighted state
         if(!utils.isTouchDevice() && isSelected) {
-            _this.model.entities.highlightEntity(d);    
+            _this.model.entities.highlightEntity(d);
             _this.highlightDataPoints();
         }
       }
@@ -1128,6 +1128,11 @@ var BubbleChartComp = Component.extend({
 
 
       if(duration) {
+        if (_this.model.entities.isHighlighted(d) && !this.model.entities.isSelected(d)) {
+          d[TIMEDIM] = _this.time;
+          _this._setTooltip(d, duration);
+          _this._axisProjections(d, duration);
+        }
         view.transition().duration(duration).ease("linear")
           .attr("cy", _this.yScale(valueY))
           .attr("cx", _this.xScale(valueX))
@@ -1458,69 +1463,106 @@ var BubbleChartComp = Component.extend({
 
   },
 
+  _setTooltip: function(d, duration) {
+    if (!d) {
+      this.tooltip.classed("vzb-hidden", true);
+      return;
+    }
+    var tooltipText = null;
+    var TIMEDIM = this.TIMEDIM;
+    var KEY = this.KEY;
+    var values;
+    if(this.model.entities.isSelected(d) && this.model.time.trails) {
+      tooltipText = this.model.time.timeFormat(d[TIMEDIM]);
+      values = this.model.marker.getFrame(d[TIMEDIM]);
+      var labelData = this.entityLabels
+        .filter(function(f) {
+          return f[KEY] == d[KEY]
+        })
+        .classed("vzb-highlighted", true)
+        .datum();
+    } else {
+      values = this.model.marker.getFrame(this.time);
+      tooltipText = this.model.entities.isSelected(d) ? '': values.label[d[KEY]];
+    }
 
-  _setTooltip: function(tooltipText, x, y, offset) {
-    if(tooltipText) {
+    var x = this.xScale(values.axis_x[d[KEY]]);
+    var y = this.yScale(values.axis_y[d[KEY]]);
+    var offset = utils.areaToRadius(this.sScale(values.size[d[KEY]]));
+
+    if(!tooltipText) {
+      this.tooltip.classed("vzb-hidden", true);
+      return;
+
+    }
+/*
       var mouse = d3.mouse(this.graph.node()).map(function(d) {
         return parseInt(d)
       });
-      var xPos, yPos, xSign = -1,
-        ySign = -1,
-        xOffset = 0,
-        yOffset = 0;
+*/
+    var xPos, yPos, xSign = -1,
+      ySign = -1,
+      xOffset = 0,
+      yOffset = 0;
 
-      if(offset) {
-        xOffset = offset * .71; // .71 - sin and cos for 315
-        yOffset = offset * .71;
-      }
-      //position tooltip
-      this.tooltip.classed("vzb-hidden", false)
-        //.attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
-        .selectAll("text")
-        .text(tooltipText);
+    if(offset) {
+      xOffset = offset * .71; // .71 - sin and cos for 315
+      yOffset = offset * .71;
+    }
+    //position tooltip
+    this.tooltip.classed("vzb-hidden", false)
+      //.attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
+      .selectAll("text")
+      .text(tooltipText);
 
-      var contentBBox = this.tooltip.select('text')[0][0].getBBox();
-      if(x - xOffset - contentBBox.width < 0) {
-        xSign = 1;
-        x += contentBBox.width + 5; // corrective to the block Radius and text padding
-      } else {
-        x -= 5; // corrective to the block Radius and text padding
-      }
-      if(y - yOffset - contentBBox.height < 0) {
-        ySign = 1;
-        y += contentBBox.height;
-      } else {
-        y -= 11; // corrective to the block Radius and text padding
-      }
-      if(offset) {
-        xPos = x + xOffset * xSign;
-        yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
-      } else {
-        xPos = x + xOffset * xSign; // .71 - sin and cos for 315
-        yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
-      }
-      this.tooltip.attr("transform", "translate(" + (xPos ? xPos : mouse[0]) + "," + (yPos ? yPos : mouse[1]) +
+    var contentBBox = this.tooltip.select('text')[0][0].getBBox();
+    if(x - xOffset - contentBBox.width < 0) {
+      xSign = 1;
+      x += contentBBox.width + 5; // corrective to the block Radius and text padding
+    } else {
+      x -= 5; // corrective to the block Radius and text padding
+    }
+    if(y - yOffset - contentBBox.height < 0) {
+      ySign = 1;
+      y += contentBBox.height;
+    } else {
+      y -= 11; // corrective to the block Radius and text padding
+    }
+    if(offset) {
+      xPos = x + xOffset * xSign;
+      yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
+    } else {
+      xPos = x + xOffset * xSign; // .71 - sin and cos for 315
+      yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
+    }
+
+    this.tooltip.select('rect').attr("width", contentBBox.width + 8)
+      .attr("height", contentBBox.height * 1.2)
+      .attr("x", -contentBBox.width - 4)
+      .attr("y", -contentBBox.height * .85)
+      .attr("rx", contentBBox.height * .2)
+      .attr("ry", contentBBox.height * .2);
+    if (duration) {
+      this.tooltip
+        .transition()
+        .delay(0)
+        .duration(duration)
+        .ease("linear")
+        .attr("transform", "translate(" + xPos + "," + yPos +
+        ")")
+    } else {
+      this.tooltip.interrupt().attr("transform", "translate(" + xPos + "," + yPos +
         ")")
 
-      this.tooltip.select('rect').attr("width", contentBBox.width + 8)
-        .attr("height", contentBBox.height * 1.2)
-        .attr("x", -contentBBox.width - 4)
-        .attr("y", -contentBBox.height * .85)
-        .attr("rx", contentBBox.height * .2)
-        .attr("ry", contentBBox.height * .2);
-
-    } else {
-      this.tooltip.classed("vzb-hidden", true);
     }
   },
 
   /*
-   * Shows and hides axis projections
+   * Shows, hides and reposition axis projections
    */
-  _axisProjections: function(d) {
-    var TIMEDIM = this.TIMEDIM;
+  _axisProjections: function(d, duration) {
     var KEY = this.KEY;
-
+    var TIMEDIM = this.TIMEDIM;
     if(d != null) {
 
       var values = this.model.marker.getFrame(d[TIMEDIM]);
@@ -1528,35 +1570,58 @@ var BubbleChartComp = Component.extend({
       var valueX = values.axis_x[d[KEY]];
       var valueS = values.size[d[KEY]];
       var radius = utils.areaToRadius(this.sScale(valueS));
-
       if(!valueY || !valueX || !valueS) return;
 
       if(this.ui.whenHovering.showProjectionLineX
         && this.xScale(valueX) > 0 && this.xScale(valueX) < this.width
         && (this.yScale(valueY) + radius) < this.height) {
-        this.projectionX
-          .style("opacity", 1)
-          .attr("y2", this.yScale(valueY) + radius)
-          .attr("x1", this.xScale(valueX))
-          .attr("x2", this.xScale(valueX));
+        if (duration) {
+          this.projectionX
+            .transition()
+            .duration(duration)
+            .ease("linear")
+            .style("opacity", 1)
+            .attr("y2", this.yScale(valueY) + radius)
+            .attr("x1", this.xScale(valueX))
+            .attr("x2", this.xScale(valueX));
+
+        } else {
+          this.projectionX
+            .style("opacity", 1)
+            .attr("y2", this.yScale(valueY) + radius)
+            .attr("x1", this.xScale(valueX))
+            .attr("x2", this.xScale(valueX));
+
+        }
       }
 
       if(this.ui.whenHovering.showProjectionLineY
         && this.yScale(valueY) > 0 && this.yScale(valueY) < this.height
         && (this.xScale(valueX) - radius) > 0) {
-        this.projectionY
-          .style("opacity", 1)
-          .attr("y1", this.yScale(valueY))
-          .attr("y2", this.yScale(valueY))
-          .attr("x1", this.xScale(valueX) - radius);
+        if (duration) {
+          this.projectionY
+            .transition()
+            .duration(duration)
+            .ease("linear")
+            .style("opacity", 1)
+            .attr("y1", this.yScale(valueY))
+            .attr("y2", this.yScale(valueY))
+            .attr("x1", this.xScale(valueX) - radius);
+        } else {
+          this.projectionY
+            .style("opacity", 1)
+            .attr("y1", this.yScale(valueY))
+            .attr("y2", this.yScale(valueY))
+            .attr("x1", this.xScale(valueX) - radius);
+        }
       }
 
       if(this.ui.whenHovering.higlightValueX) this.xAxisEl.call(
-        this.xAxis.highlightValue(valueX)
+        this.xAxis.highlightValue(valueX).highlightTransDuration(duration)
       );
 
       if(this.ui.whenHovering.higlightValueY) this.yAxisEl.call(
-        this.yAxis.highlightValue(valueY)
+        this.yAxis.highlightValue(valueY).highlightTransDuration(duration)
       );
 
     } else {
@@ -1590,32 +1655,10 @@ var BubbleChartComp = Component.extend({
       } else {
         d[TIMEDIM] = _this.model.time.timeFormat.parse("" + d.trailStartTime) || _this.time;
       }
-
       this._axisProjections(d);
 
-      var values = _this.model.marker.getFrame(d[TIMEDIM]);
-
-      //show tooltip
-      var text = "";
-      if(_this.model.entities.isSelected(d) && _this.model.time.trails) {
-        text = _this.model.time.timeFormat(_this.time);
-        var labelData = _this.entityLabels
-          .filter(function(f) {
-            return f[KEY] == d[KEY]
-          })
-          .classed("vzb-highlighted", true)
-          .datum();
-        text = text !== labelData.trailStartTime && _this.time === d[TIMEDIM] ? text : '';
-      } else {
-        text = _this.model.entities.isSelected(d) ? '': values.label[d[KEY]];
-      }
       //set tooltip and show axis projections
-      if(text) {
-        var x = _this.xScale(values.axis_x[d[KEY]]);
-        var y = _this.yScale(values.axis_y[d[KEY]]);
-        var s = utils.areaToRadius(_this.sScale(values.size[d[KEY]]));
-        _this._setTooltip(text, x, y, s);
-      }
+      _this._setTooltip(d);
 
       var selectedData = utils.find(this.model.entities.select, function(f) {
         return f[KEY] == d[KEY];

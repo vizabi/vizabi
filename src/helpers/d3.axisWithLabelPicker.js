@@ -127,16 +127,36 @@ export default function axisSmart() {
               (axis.scale().range()[1] - axis.scale().range()[0]) * 5, 2)))
         })
 
+      var axisValues = g.select('.vzb-axis-value');
+      var axisValuesText = axisValues.select("text");
+      if (highlightTransDuration) {
+        axisValues
+          .transition()
+          .delay(0)
+          .duration(highlightTransDuration)
+          .ease("linear")
+          .attr("transform", highlightValue == "none" ? "translate(0,0)" : "translate(" + (orient == HORIZONTAL ?
+              axis.scale()(highlightValue) : 0) + "," + (orient == VERTICAL ? axis.scale()(highlightValue) : 0) + ")");
+        axisValuesText
+          .transition()
+          .delay(0)
+          .duration(highlightTransDuration)
+          .ease("linear")
+          .text(axis.tickFormat()(highlightValue == "none" ? 0 : highlightValue))
+          .style("opacity", (highlightValue == "none" ? 0 : 1));
 
-      g.select('.vzb-axis-value')
-        .attr("transform", highlightValue == "none" ? "translate(0,0)" : "translate(" + (orient == HORIZONTAL ?
-          axis.scale()(highlightValue) : 0) + "," + (orient == VERTICAL ? axis.scale()(highlightValue) : 0) + ")")
+      } else {
+        axisValues
+          .attr("transform", highlightValue == "none" ? "translate(0,0)" : "translate(" + (orient == HORIZONTAL ?
+            axis.scale()(highlightValue) : 0) + "," + (orient == VERTICAL ? axis.scale()(highlightValue) : 0) + ")");
+
+        axisValuesText
+          .text(axis.tickFormat()(highlightValue == "none" ? 0 : highlightValue))
+          .style("opacity", (highlightValue == "none" ? 0 : 1));
+
+      }
 
       g.select('.vzb-axis-value').select("text")
-        .transition()
-        .delay(0)
-        .duration(highlightTransDuration)
-        .ease("linear")
         .text(axis.tickFormat()(highlightValue == "none" ? 0 : highlightValue))
         .style("opacity", (highlightValue == "none" ? 0 : 1));
 
