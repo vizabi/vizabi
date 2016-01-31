@@ -23,7 +23,7 @@ export default Class.extend({
 
         this.zoomer.ratioX = 1;
         this.zoomer.ratioY = 1;
-        
+
         context._zoomZoomedDomains = {x:{zoomedMin: null, zoomedMax: null}, y:{zoomedMin: null, zoomedMax: null}};
     },
 
@@ -230,11 +230,11 @@ export default Class.extend({
                 zoomedXRange[1] = xRangeBounds[1] < xRange[1] ? xRangeBounds[1] : xRange[1];
                 zoomedYRange[0] = yRangeBounds[0] < yRange[0] ? yRangeBounds[0] : yRange[0];
                 zoomedYRange[1] = yRangeBounds[1] > yRange[1] ? yRangeBounds[1] : yRange[1];
-                
+
                 _this._zoomZoomedDomains = {
                     x: {
                      zoomedMin: formatter(_this.xScale.invert(zoomedXRange[0])),
-                     zoomedMax: formatter(_this.xScale.invert(zoomedXRange[1]))   
+                     zoomedMax: formatter(_this.xScale.invert(zoomedXRange[1]))
                     },
                     y: {
                      zoomedMin: formatter(_this.yScale.invert(zoomedYRange[0])),
@@ -265,7 +265,7 @@ export default Class.extend({
 
             stop: function(){
                 _this.draggingNow = false;
-                
+
                 //Force the update of the URL and history, with the same values
                 _this.model.marker.axis_x.set(_this._zoomZoomedDomains.x, true, true);
                 _this.model.marker.axis_y.set(_this._zoomZoomedDomains.y, true, true);
