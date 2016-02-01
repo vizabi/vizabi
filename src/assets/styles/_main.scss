@@ -155,6 +155,7 @@
     &.vzb-dialog-expand-true {
       .vzb-tool-sidebar {
         flex: 0 0 $vzb-button-expand-width;
+        max-width: $vzb-button-expand-width;
         .vzb-tool-dialogs {
           flex: 1 auto;
           display: flex;
