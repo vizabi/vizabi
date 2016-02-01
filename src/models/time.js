@@ -39,7 +39,6 @@ var TimeModel = Model.extend({
     loop: false,
     round: 'round',
     delay: 300,
-    delayAnimations: 300,
     delayStart: 1200,
     delayEnd: 75,
     delayThresholdX2: 300,
@@ -81,6 +80,7 @@ var TimeModel = Model.extend({
     this.dragging = false;
     this.postponePause = false;
     this.allSteps = {};
+    this.delayAnimations = this.delay;
 
     //bing play method to model change
     this.on({
@@ -304,7 +304,7 @@ var TimeModel = Model.extend({
 
     //go to start if we start from end point
     if(this.value >= this.end) {
-      _this.value = new Date(this.start);
+      _this.getModelObject('value').set(_this.start, null, false /*make change non-persistent for URL and history*/);
     } else {
       //the assumption is that the time is already snapped when we start playing
       //because only dragging the timeslider can un-snap the time, and it snaps on drag.end
@@ -327,9 +327,12 @@ var TimeModel = Model.extend({
     if(this.delay < this.delayThresholdX4) this.delayAnimations*=2;
 
     this._intervals.setInterval('playInterval_' + this._id, function() {
+      // when time is playing and it reached the end
       if(_this.value >= _this.end) {
+        // if looping
         if(_this.loop) {
-          _this.value = new Date(_this.start)
+          // reset time to start, silently
+          _this.getModelObject('value').set(_this.start, null, false /*make change non-persistent for URL and history*/);
         } else {
           _this.playing = false;
         }
@@ -344,10 +347,15 @@ var TimeModel = Model.extend({
           _this.getModelObject('value').set(_this.value, true, true /*force the change and make it persistent for URL and history*/);
         } else {
           var is = _this.getIntervalAndStep();
-          if(_this.delay < _this.delayThresholdX2) step*=2;
-          if(_this.delay < _this.delayThresholdX4) step*=2;
+          if(_this.delay < _this.delayThresholdX2) is.step*=2;
+          if(_this.delay < _this.delayThresholdX4) is.step*=2;
           var time = d3.time[is.interval].utc.offset(_this.value, is.step);
-          _this.getModelObject('value').set(time, null, false /*make change non-persistent for URL and history*/);
+          if(time >= _this.end) {
+            // if no playing needed anymore then make the last update persistent and not overshooting
+            _this.getModelObject('value').set(_this.end, null, true /*force the change and make it persistent for URL and history*/);
+          }else{
+            _this.getModelObject('value').set(time, null, false /*make change non-persistent for URL and history*/);
+          }
           _this.playInterval();
         }
       }
