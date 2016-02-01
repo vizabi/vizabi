@@ -1127,7 +1127,7 @@ var BubbleChartComp = Component.extend({
 
 
       if(duration) {
-        if (true || !d.transitionInProgress) {
+        if (!d.transitionInProgress) {
           d.transitionInProgress = true;
           view.transition().duration(duration).ease("linear")
             .attr("cy", _this.yScale(valueY))
