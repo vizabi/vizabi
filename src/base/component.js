@@ -70,7 +70,7 @@ var Component = Events.extend({
         }
       }
     });
-    this.triggerResize = utils.throttle(this.triggerResize);
+    this.triggerResize = utils.throttle(this.triggerResize, 100);
   },
 
   /**
@@ -119,7 +119,7 @@ var Component = Events.extend({
 
           //TODO: cleanup hardcoded splash screen
           timeMdl.splash = true;
-          var temp = utils.clone(timeMdl.getObject(), ['start', 'end']);
+          timeMdl.beyondSplash = utils.clone(timeMdl.getPlainObject(), ['start', 'end']);
 
           _this.model.load({
             splashScreen: true
@@ -129,13 +129,14 @@ var Component = Events.extend({
               //force loading because we're restoring time.
               _this.model.setLoading('restore_orig_time');
               //restore because validation kills the original start/end
-              timeMdl.start = temp.start;
-              timeMdl.end = temp.end;
+              timeMdl.start = timeMdl.beyondSplash.start;
+              timeMdl.end = timeMdl.beyondSplash.end;
+              delete timeMdl.beyondSplash;
 
               _this.model.load().then(function() {
                 _this.model.setLoadingDone('restore_orig_time');
                 timeMdl.splash = false;
-                timeMdl.trigger('change');
+                timeMdl.trigger('change', timeMdl.getPlainObject());
               });
             }, 300);
 
@@ -184,8 +185,8 @@ var Component = Events.extend({
 
   setReady: function(value) {
     if(!this._readyOnce) {
-      this.trigger('readyOnce');
       this._readyOnce = true;
+      this.trigger('readyOnce');
     }
 
     this._ready = true;
@@ -290,9 +291,6 @@ var Component = Events.extend({
       var subcomp = new comp(config, _this);
       var c_model = c.model || [];
       subcomp.model = _this._modelMapping(subcomp.name, c_model, subcomp.model_expects, subcomp.model_binds);
-      //subcomponent model is initialized in frozen state
-      //unfreeze to dispatch events
-      subcomp.model.unfreeze();
       _this.components.push(subcomp);
     });
   },
@@ -351,7 +349,7 @@ var Component = Events.extend({
   _uiMapping: function(id, ui) {
     //if overwritting UI
     if(ui) {
-      return new Model(ui);
+      return new Model('ui', ui);
     }
     if(id && this.ui) {
       id = id.replace('.', '');
@@ -434,7 +432,7 @@ var Component = Events.extend({
       return;
     }
     //return a new model with the defined submodels
-    return new Model(values, null, model_binds, true);
+    return new Model(subcomponent, values, null, model_binds);
     /**
      * Maps one model name to current submodel and returns info
      * @param {String} name Full model path. E.g.: "state.marker.color"

@@ -242,15 +242,17 @@ export var getViewportPosition = function(element) {
   };
 };
 
+
 export var findScrollableAncestor = function(node) {
-  var no = d3.select(node).node();
   var scrollable = ["scroll", "auto"];
-
-  while(no && no.tagName !== "HTML" && scrollable.indexOf(d3.select(no).style("overflow")) == -1) {
-    no = no.parentNode;
+  while(node = node.parentNode) {
+    var scrollHeight = node.scrollHeight,
+      height = node.clientHeight;
+      if (scrollHeight > height && scrollable.indexOf(d3.select(node).style("overflow")) !== -1) {
+        return node;
+      }
   }
-
-  return no;
+  return null;
 };
 
 export var roundStep = function(number, step) {
@@ -275,9 +277,10 @@ export var forEach = function(obj, callback, ctx) {
   if(!obj) {
     return;
   }
-  var i;
+  var i, size;
   if(isArray(obj)) {
-    for(i = 0; i < obj.length; i += 1) {
+    size = obj.length;
+    for(i = 0; i < size; i += 1) {
       if(callback.apply(ctx, [
           obj[i],
           i
@@ -287,7 +290,7 @@ export var forEach = function(obj, callback, ctx) {
     }
   } else {
     var keys = Object.keys(obj);
-    var size = keys.length;
+    size = keys.length;
     for(i = 0; i < size; i += 1) {
       if(callback.apply(ctx, [
           obj[keys[i]],
@@ -329,11 +332,7 @@ function isSpecificValue(val) {
 }
 
 function cloneSpecificValue(val) {
-  if (val instanceof Buffer) {
-    var x = new Buffer(val.length);
-    val.copy(x);
-    return x;
-  } else if (val instanceof Date) {
+  if (val instanceof Date) {
     return new Date(val.getTime());
   } else if (val instanceof RegExp) {
     return new RegExp(val);
@@ -695,6 +694,65 @@ export var matchAny = function(values, compare, wildc) {
   return match;
 };
 
+/**
+ * prevent scrolling parent scrollable elements for 2 second when element scrolled to end
+ * @param node
+ */
+
+export var preventAncestorScrolling = function(element) {
+  var preventScrolling = false;
+  element.on('mousewheel', function(d, i) {
+    var scrollTop = this.scrollTop,
+      scrollHeight = this.scrollHeight,
+      height = element.node().offsetHeight,
+      delta = d3.event.wheelDelta,
+      up = delta > 0;
+    var prevent = function() {
+      d3.event.stopPropagation();
+      d3.event.preventDefault();
+      d3.event.returnValue = false;
+      return false;
+    };
+
+    var scrollTopTween = function(scrollTop) {
+      return function () {
+        var i = d3.interpolateNumber(this.scrollTop, scrollTop);
+        return function (t) {
+          this.scrollTop = i(t);
+        };
+      }
+    };
+    if (!up) {
+      // Scrolling down
+      if (-delta > scrollHeight - height - scrollTop && scrollHeight != height + scrollTop) {
+        element.transition().delay(0).duration(0).tween("scrolltween", scrollTopTween(scrollHeight));
+        //freeze scrolling on 2 seconds on bottom position
+        preventScrolling = true;
+        setTimeout(function() {
+          preventScrolling = false;
+        }, 2000);
+      } else if (scrollTop == 0) { //unfreeze when direction changed
+        preventScrolling = false;
+      }
+    } else if (up) {
+      // Scrolling up
+      if (delta > scrollTop && scrollTop > 0) { //
+        //freeze scrolling on 2 seconds on top position
+        element.transition().delay(0).duration(0).tween("scrolltween", scrollTopTween(0));
+        preventScrolling = true;
+        setTimeout(function() {
+          preventScrolling = false;
+        }, 2000);
+      } else if (scrollHeight == height + scrollTop) { //unfreeze when direction changed
+        preventScrolling = false;
+      }
+    }
+    if (preventScrolling) {
+      return prevent();
+    }
+  });
+};
+
 /*
  * maps all rows according to the formatters
  * @param {Array} original original dataset
@@ -714,21 +772,29 @@ export var mapRows = function(original, formatters) {
       return res;
     }
   }
-
-  var columns = Object.keys(formatters);
-  var columns_s = columns.length;
-  original = original.map(function(row) {
-    for(var i = 0; i < columns_s; i++) {
-      var col = columns[i],
-        new_val;
-      if(row.hasOwnProperty(col)) {
-        try {
-          new_val = mapRow(row[col], formatters[col]);
-        } catch(e) {
-          new_val = row[col];
+   
+  // default formatter turns empty strings in null and converts numeric values into number
+  //TODO: default formatter is moved to utils. need to return it to hook prototype class, but retest #1212 #1230 #1253
+  var defaultFormatter = function (val) {
+      var newVal = val;
+      if(val === ""){
+        newVal = null;
+      } else {
+        // check for numberic
+        var numericVal = parseFloat(val);
+        if (!isNaN(numericVal) && isFinite(val)) {
+          newVal = numericVal;
         }
-        row[col] = new_val;
-      }
+      }  
+      return newVal;
+  }
+  
+  original = original.map(function(row) {
+    var columns = Object.keys(row);
+      
+    for(var i = 0; i < columns.length; i++) {
+      var col = columns[i];
+      row[col] = mapRow(row[col], formatters[col] || defaultFormatter);
     }
     return row;
   });
@@ -882,35 +948,49 @@ export var hasClass = function(el, className) {
  * Throttles a function
  * @param {Function} func
  * @param {Number} ms duration
+ * @return {Function}
+ * Function recallLast was added to prototype of returned function.
+ * Call Function.recallLast() - immediate recall func with last saved arguments,
+ *                              else func will be called automaticly after ms duration
  */
 export var throttle = function(func, ms) {
 
-  var isThrottled = false,
+  var throttled = false,
     savedArgs,
     savedThis,
+    nextTime,
     wrapper = function() {
-
-      if(isThrottled) {
+      
+      if(nextTime > Date.now()) {
+        throttled = true;        
         savedArgs = arguments;
         savedThis = this;
         return;
       }
 
+      nextTime = Date.now() + ms;
+      throttled = false;
+      
       func.apply(this, arguments);
 
-      isThrottled = true;
-
       setTimeout(function() {
-        isThrottled = false;
-        if(savedArgs) {
-          wrapper.apply(savedThis, savedArgs);
-          savedArgs = savedThis = null;
-        }
+        __recallLast();          
       }, ms);
-    }
+
+    },
+    
+    __recallLast = function() {
+      if(throttled) {
+        throttled = false;
+        func.apply(savedThis, savedArgs);
+      }     
+    };
+
+  wrapper.recallLast = __recallLast; 
 
   return wrapper;
 };
+
 
 /*
  * Returns keys of an object as array
@@ -1026,30 +1106,6 @@ export var diffObject = function(obj2, obj1) {
 };
 
 /*
- * Time formats
- */
-var timeFormats = {
-  "year": d3.time.format("%Y"),
-  "month": d3.time.format("%Y-%m"),
-  "week": d3.time.format("%Y-W%W"),
-  "day": d3.time.format("%Y-%m-%d"),
-  "hour": d3.time.format("%Y-%m-%d %H"),
-  "minute": d3.time.format("%Y-%m-%d %H:%M"),
-  "second": d3.time.format("%Y-%m-%d %H:%M:%S")
-};
-
-/*
- * Formats a Date Object to string format
- * @param {Date} date
- * @param {String} unit
- * @returns {String}
- */
-export var formatDate = function(date, unit) {
-  if(!d3) return date;
-  return timeFormats[unit](date);
-};
-
-/*
  * Returns the resulting object without _defs_ leveling
  * @param {Object} obj
  * @returns {Object}
@@ -1073,20 +1129,19 @@ export var flattenDefaults = function(obj) {
  * @param {Object} obj
  * @returns {Object}
  */
-export var flattenDates = function(obj) {
+export var flattenDates = function(obj, timeFormat) {
   var flattened = {};
   forEach(obj, function(val, key) {
     //todo: hack to flatten time unit objects to strings
     if(key === 'time') {
-      var unit = val.unit || "year";
       if(typeof val.value === 'object') {
-        val.value = formatDate(val.value, unit);
+        val.value = timeFormat(val.value);
       }
       if(typeof val.start === 'object') {
-        val.start = formatDate(val.start, unit);
+        val.start = timeFormat(val.start);
       }
       if(typeof val.end === 'object') {
-        val.end = formatDate(val.end, unit);
+        val.end = timeFormat(val.end);
       }
     }
     if(isPlainObject(val)) {
@@ -1136,6 +1191,112 @@ export var hashCode = function(str) {
   }
   return hash.toString();
 };
+
+
+/*
+ * Converts D3 nest array into the object with key-value pairs, recursively
+ * @param {Array} arr - array like this [{key: k, values: [a, b, ...]}, {...} ... {...}]
+ * @return {Object} object like this {k: [a, b, ...], ...}
+ */
+//
+export var nestArrayToObj = function(arr) {
+  if(!arr || !arr.length || !arr[0].key) return arr;
+  var res = {};
+  for(var i = 0; i < arr.length; i++) {
+    res[arr[i].key] = nestArrayToObj(arr[i].values);
+  };
+  return res;
+}
+
+
+/*
+ * A collection of interpolators
+ * @param {Number} x1, x2, y1, y2 - boundary points
+ * @param {Number} x - point of interpolation
+ * @return {Number} y - interpolated value
+ */
+//
+export var interpolator = {
+    linear: function(x1, x2, y1, y2, x) {
+      return +y1 + (y2 - y1) * (x - x1) / (x2 - x1);
+    },
+    exp: function(x1, x2, y1, y2, x) {
+      return Math.exp((Math.log(y1) * (x2 - x) - Math.log(y2) * (x1 - x)) / (x2 - x1));
+    }
+}
+
+
+export var interpolateVector = function(){
+    
+}
+
+/**
+ * interpolates the specific value 
+ * @param {Array} items -- an array of items, sorted by "dimTime", filtered so that no item[which] is null
+ * @param {String} use -- a use of hook that wants to interpolate. can be "indicator" or "property" or "constant"
+ * @param {String} which -- a hook pointer to indicator or property, e.g. "lex"
+ * @param {Number} next -- an index of next item in "items" array after the value to be interpolated. if omitted, then calculated here, but it's expensive
+ * @param {String} dimTime -- a pointer to time dimension, usually "time"
+ * @param {Date} time -- reference point for interpolation. here the valus is to be found
+ * @param {String} method refers to which formula to use. "linear" or "exp". Falls back to "linear" if undefined
+ * @param {Boolean} extrapolate indicates if we should use zero-order extrapolation outside the range of available data
+ * @returns {Number} interpolated value
+ */
+export var interpolatePoint = function(items, use, which, next, dimTime, time, method, extrapolate){
+
+    
+  if(!items || items.length === 0) {
+    warn('interpolatePoint failed because incoming array is empty. It was ' + which);
+    return null;
+  }
+  // return constant for the use of "constant"
+  if(use === 'constant') return which;
+    
+  // zero-order interpolation for the use of properties
+  if(use === 'property') return items[0][which];
+
+  // the rest is for the continuous measurements
+    
+  if (extrapolate){
+    // check if the desired value is out of range. 0-order extrapolation
+    if(time - items[0][dimTime] <= 0) return items[0][which];    
+    if(time - items[items.length - 1][dimTime] >= 0) return items[items.length - 1][which];
+  } else {
+    // no extrapolation according to Ola's request
+    if(time < items[0][dimTime] || time > items[items.length - 1][dimTime]) return null;
+  }
+    
+  if(!next && next !== 0) next = d3.bisectLeft(items.map(function(m){return m[dimTime]}), time);
+    
+  if(next === 0) return items[0][which];
+        
+  //return null if data is missing
+  if(items[next]===undefined || items[next][which] === null || items[next - 1][which] === null || items[next][which] === "") {
+    warn('interpolatePoint failed because next/previous points are bad in ' + which);
+    return null;
+  }
+    
+
+  //do the math to calculate a value between the two points
+  var result = interpolator[method||"linear"](
+    items[next - 1][dimTime],
+    items[next][dimTime],
+    items[next - 1][which],
+    items[next][which],
+    time
+  );
+
+  // cast to time object if we are interpolating time
+  if(which === dimTime) result = new Date(result);
+  if(isNaN(result)) {
+      warn('interpolatePoint failed because result is NaN. It was ' + which);
+      result = null;
+  }
+    
+  return result;
+
+}
+
 
 /*
  * Performs an ajax request

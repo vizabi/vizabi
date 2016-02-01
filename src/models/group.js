@@ -10,8 +10,8 @@ var GroupModel = Model.extend({
    * Default values for this model
    */
   _defaults: {
-    use: "property",
-    which: undefined,
+    use: null,
+    which: null,
     merge: false,
     manualSorting: null
   },
@@ -22,13 +22,13 @@ var GroupModel = Model.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(values, parent, bind) {
+  init: function(name, values, parent, bind) {
 
     this._type = "model";
     //TODO: add defaults extend to super
     var defaults = utils.deepClone(this._defaults);
     values = utils.extend(defaults, values);
-    this._super(values, parent, bind);
+    this._super(name, values, parent, bind);
   },
 
   /**
@@ -40,7 +40,7 @@ var GroupModel = Model.extend({
 
     //use must be "property" 
     if(this.use != "property") {
-      utils.warn("group model: use must not be 'property'. Resetting...")
+      utils.warn("group model: use must be 'property'. Resetting...")
       this.use = "property";
     }
   },

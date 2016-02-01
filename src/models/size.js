@@ -12,10 +12,10 @@ var SizeModel = Model.extend({
    * Default values for this model
    */
   _defaults: {
-    use: "value",
-    min: 0,
-    max: 1,
-    which: undefined
+    use: null,
+    domainMin: 0,
+    domainMax: 1,
+    which: null
   },
 
   /**
@@ -24,13 +24,13 @@ var SizeModel = Model.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(values, parent, bind) {
+  init: function(name, values, parent, bind) {
 
     this._type = "size";
     //TODO: add defaults extend to super
     var defaults = utils.deepClone(this._defaults);
     values = utils.extend(defaults, values);
-    this._super(values, parent, bind);
+    this._super(name, values, parent, bind);
   },
 
   /**
@@ -38,14 +38,14 @@ var SizeModel = Model.extend({
    */
   validate: function() {
     //there must be a min and a max
-    if(typeof this.min === 'undefined' || this.min < 0) this.min = 0;
-    if(typeof this.max === 'undefined' || this.max > 1) this.max = 1;
+    if(typeof this.domainMin === 'undefined' || this.domainMin < 0) this.domainMin = 0;
+    if(typeof this.domainMax === 'undefined' || this.domainMax > 1) this.domainMax = 1;
 
-    if(this.max < this.min) this.set('min', this.max, true);
+    if(this.domainMax < this.domainMin) this.set('domainMin', this.domainMax, true);
 
     //value must always be between min and max
-    if(this.use === "value" && this.which > this.max) this.which = this.max;
-    if(this.use === "value" && this.which < this.min) this.which = this.min;
+    if(this.use === "constant" && this.which > this.domainMax) this.which = this.domainMax;
+    if(this.use === "constant" && this.which < this.domainMin) this.which = this.domainMin;
     
     if(!this.scaleType) this.scaleType = 'linear';
     if(this.use === "property") this.scaleType = 'ordinal';
@@ -66,7 +66,7 @@ var SizeModel = Model.extend({
 
     if(this.scaleType == "time") {
       var limits = this.getLimits(this.which);
-      this.scale = d3.time.scale().domain([limits.min, limits.max]);
+      this.scale = d3.time.scale.utc().domain([limits.min, limits.max]);
       return;
     }
 
@@ -81,14 +81,14 @@ var SizeModel = Model.extend({
       case "property":
         domain = this.getUnique(this.which);
         break;
-      case "value":
+      case "constant":
       default:
         domain = [this.which];
         break;
     }
     
     var scaletype = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.scaleType === "log")? "genericLog" : this.scaleType;;
-    this.scale = d3.scale[scaletype || "linear"]().domain(domain);
+    this.scale = d3.scale[scaletype || "linear"]().domain(domain).clamp(true);
   }
 
 });

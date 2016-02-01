@@ -14,6 +14,7 @@ var ColorLegend = Component.extend({
   init: function(config, context) {
     var _this = this;
     this.template = '<div class="vzb-cl-outer"></div>';
+    this.name = 'colorlegend';
 
     this.model_expects = [{
       name: "color",
@@ -34,7 +35,7 @@ var ColorLegend = Component.extend({
       "change:color": function(evt) {
         _this.updateView();
       },
-      "change:language:strings": function(evt) {
+      "change:language.strings": function(evt) {
         _this.updateView();
       },
       "ready": function(evt) {
@@ -57,8 +58,8 @@ var ColorLegend = Component.extend({
     this.worldmapEl = this.listColorsEl.append("div").attr("class", "vzb-cl-worldmap");
 
     this.colorPicker = colorPicker();
-    this.element.call(this.colorPicker);
-
+    //this.element.call(this.colorPicker);
+    d3.select(this.root.element).call(this.colorPicker);
     this.worldMap = worldMap();
     this.worldmapEl.call(this.worldMap);
 
@@ -71,7 +72,8 @@ var ColorLegend = Component.extend({
     this.translator = this.model.language.getTFunction();
     var KEY = this.model.entities.getDimension();
 
-    var palette = this.model.color.palette._data;
+
+    var palette = this.model.color.palette.getPlainObject();
 
 
     var whichPalette = "_default";
@@ -114,23 +116,24 @@ var ColorLegend = Component.extend({
       .on("click", function(d) {
         //disable interaction if so stated in metadata
         if(!_this.model.color.isUserSelectable(whichPalette)) return;
-
         _this.colorPicker
           .colorOld(palette[d])
           .colorDef(paletteDefault[d])
           .callback(function(value) {
+
             _this.model.color.setColor(value, d)
           })
+          .fitToScreen([d3.event.pageX, d3.event.pageY])
           .show(true);
-      })
-    
+      });
+
     if(this.model.color.use == "indicator") {
       var gradientHeight;
       var colorOptions = this.listColorsEl.selectAll('.vzb-cl-option');
       if(colorOptions && colorOptions[0]) {
         var firstOptionSize = colorOptions[0][0].getBoundingClientRect();
         var lastOptionSize = colorOptions[0][colorOptions[0].length - 1].getBoundingClientRect();
-        gradientHeight = (lastOptionSize.top + lastOptionSize.height) - firstOptionSize.top;
+        gradientHeight = lastOptionSize.bottom - firstOptionSize.top;
       }
       if(!isFinite(gradientHeight))
         gradientHeight = utils.keys(palette).length * 25 + 5;
@@ -148,7 +151,7 @@ var ColorLegend = Component.extend({
       regions.each(function() {
           var view = d3.select(this);
           var color = palette[view.attr("id")];
-          view.style("fill", color);
+          view.style("fill", utils.isArray(color)? color[0] : color);
         })
         .style("opacity", .8)
         .on("mouseover", function() {
@@ -172,7 +175,7 @@ var ColorLegend = Component.extend({
               return utils.clone(d, [KEY])
             });
 
-          _this.model.entities.setHighlighted(highlight);
+          _this.model.entities.setHighlight(highlight);
         })
         .on("mouseout", function() {
           regions.style("opacity", .8);
@@ -196,9 +199,9 @@ var ColorLegend = Component.extend({
     } else {
       this.worldmapEl.classed("vzb-hidden", true);
       if(this.model.color.use === "property" && whichPalette === "_default") {
-        colors.classed("vzb-hidden", true);
+        colors.classed("vzb-cl-compact", true);
       } else {
-        colors.classed("vzb-hidden", false);
+        colors.classed("vzb-cl-compact", false);
       }
     }
 
@@ -217,6 +220,10 @@ var ColorLegend = Component.extend({
           .text(_this.translator("color/" + d));
       }
     });
+  },
+
+  resize: function() {
+    this.colorPicker.resize(d3.select('.vzb-colorpicker-svg'));
   }
 
 });

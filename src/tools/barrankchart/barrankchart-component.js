@@ -43,20 +43,16 @@ var BarRankChart = Component.extend({
 
     var _this = this;
     this.model_binds = {
-      "change:time:value": function(evt) {
+      "change:time.value": function(evt) {
         _this.onTimeChange();
       },
-      'change:color': function(evt) {
-        _this.drawColors();
-      },
-      "change:entities:select": function(evt) {
+      "change:entities.select": function(evt) {
         _this.selectBars();
       },
-      "change:marker:axis_x:scaleType": function(evt) {
+      "change:marker.axis_x.scaleType": function(evt) {
         _this.draw();
-        //if(evt.indexOf('scale'))
       },
-      'change:marker:color:palette': function() {
+      'change:marker.color.palette': function() {
         //console.log("EVENT change:marker:color:palette");
         //_this.drawColors();
       },
@@ -74,7 +70,7 @@ var BarRankChart = Component.extend({
   },
 
   onTimeChange: function() {
-    //this.year.setText(this.timeFormatter(this.model.time.value));
+    //this.year.setText(this.model.time.timeFormat(this.model.time.value));
 
     this.loadData();
     this.draw();
@@ -96,7 +92,6 @@ var BarRankChart = Component.extend({
     this.barContainer = this.element.select('.vzb-br-bars');
 
     // set up formatters
-    this.timeFormatter = d3.time.format(this.model.time.formatOutput);
     this.xAxis.tickFormat(this.model.marker.axis_x.tickFormatter);
 
     this.ready();
@@ -128,9 +123,7 @@ var BarRankChart = Component.extend({
   loadData: function() {
 
     // get data, for the active year. Nest them using the entity of the graph
-    var filter = {};
-    filter[this.model.time.dim] = this.model.time.value;
-    this.values = this.model.marker.getValues(filter, [this.model.entities.dim]);
+    this.values = this.model.marker.getFrame(this.model.time.value);
 
     // sort the data (also sets this.total)
     this.sortedEntities = this.sortByIndicator(this.values.axis_x);
@@ -138,9 +131,9 @@ var BarRankChart = Component.extend({
     // change header titles for new data
     var translator = this.model.language.getTFunction();
     this.header.select('.vzb-br-title')
-      .text(translator("indicator/" + this.model.marker.axis_x.which) + ' in ' + this.timeFormatter(this.model.time.value))
+      .text(translator("indicator/" + this.model.marker.axis_x.which) + ' ' + this.model.time.timeFormat(this.model.time.value))
     this.header.select('.vzb-br-total')
-      .text('Total: ' + this.model.marker.axis_x.tickFormatter(this.total))
+      .text('Σ = ' + this.model.marker.axis_x.tickFormatter(this.total))
 
     // new scales and axes
     this.xScale = this.model.marker.axis_x.getScale(false);

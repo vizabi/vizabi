@@ -1,7 +1,19 @@
 //d3.svg.colorPicker
 
+
+var instance = null;
+
 export default function colorPicker() {
-  return function d3_color_picker() {
+
+
+  return function getInstance() {
+    if (instance == null) {
+      instance = d3_color_picker();
+    }
+    return instance;
+  }();
+
+  function d3_color_picker() {
     // tuning defaults
     var nCellsH = 15;
     // number of cells by hues (angular)
@@ -21,6 +33,8 @@ export default function colorPicker() {
     // exceptional saturation at first angular segment. Set 0 to have shades of grey
     var minRadius = 15;
     //radius of the central hole in color wheel: px
+    var maxWidth = 280;
+    var maxHeight = 323;
     var margin = {
       top: .1,
       bottom: .1,
@@ -71,6 +85,7 @@ export default function colorPicker() {
       return 1;
     });
     var svg = null;
+    var container = null;
     var colorPointer = null;
     var showColorPicker = false;
     var sampleRect = null;
@@ -132,82 +147,175 @@ export default function colorPicker() {
     // container should be a D3 selection that has a div where we want to render color picker
     // that div should have !=0 width and height in its style
     function colorPicker(container) {
+      colorPicker.container = container;
+      svg = container.select('.' + css.COLOR_PICKER);
+      if(!svg.empty()) {
+        return;
+      }
+      container.on('click', function() {
+        colorPicker.show(false);
+        d3.event.stopPropagation();
+      });
       colorData = _generateColorData();
-      svg = container.append('svg').style('position', 'absolute').style('top', '0').style('left', '0').style('width',
-        '100%').style('height', '100%').attr('class', css.COLOR_PICKER).classed(css.INVISIBLE, !showColorPicker);
+
+      svg = container.append('svg')
+        .style('position', 'absolute')
+        .style('top', '0')
+        .style('left', '0')
+        .style('width', '100%')
+        .style('max-width', maxWidth)
+        .style('height', '100%')
+        .style('max-height', maxHeight)
+        .style('z-index', 9999)
+        .attr('class', css.COLOR_PICKER + " vzb-dialog-shadow")
+        .classed(css.INVISIBLE, !showColorPicker);
+
       var width = parseInt(svg.style('width'));
       var height = parseInt(svg.style('height'));
       var maxRadius = width / 2 * (1 - margin.left - margin.right);
-      background = svg.append('rect').attr('width', width).attr('height', height).attr('class', css.COLOR_BUTTON +
-        ' ' + css.COLOR_BACKGR).on('mouseover', function(d) {
-        _cellHover(colorOld);
-      });
-      var circles = svg.append('g').attr('transform', 'translate(' + (maxRadius + width * margin.left) + ',' + (
-        maxRadius + height * margin.top) + ')');
-      svg.append('rect').attr('class', css.COLOR_SAMPLE).attr('width', width / 2).attr('height', height * margin.top /
-        2);
-      sampleRect = svg.append('rect').attr('class', css.COLOR_SAMPLE).attr('width', width / 2).attr('x', width / 2).attr(
-        'height', height * margin.top / 2);
-      svg.append('text').attr('x', width * margin.left).attr('y', height * margin.top / 2).attr('dy', '0.5em').style(
-        'text-anchor', 'start').attr('class', css.COLOR_SAMPLE);
-      sampleText = svg.append('text').attr('x', width * (1 - margin.right)).attr('y', height * margin.top / 2).attr(
-        'dy', '0.5em').style('text-anchor', 'end').attr('class', css.COLOR_SAMPLE);
-      svg.append('text').attr('x', width * .1).attr('y', height * (1 - margin.bottom)).attr('dy', '0.3em').style(
-        'text-anchor', 'start').text('default');
-      svg.append('circle').attr('class', css.COLOR_DEFAULT + ' ' + css.COLOR_BUTTON).attr('r', width * margin.left /
-        2).attr('cx', width * margin.left * 1.5).attr('cy', height * (1 - margin.bottom * 1.5)).on('mouseover',
-        function() {
-          d3.select(this).style('stroke', '#444');
-          _cellHover(colorDef);
-        }).on('mouseout', function() {
-        d3.select(this).style('stroke', 'none');
-      });
-      circles.append('circle').attr('r', minRadius - 1).attr('fill', '#fff').attr('class', css.COLOR_BUTTON).on(
-        'mouseover',
-        function() {
-          d3.select(this).style('stroke', '#444');
-          _cellHover('#fff');
-        }).on('mouseout', function() {
-        d3.select(this).style('stroke', 'none');
-      });
-      circles.selectAll('.' + css.COLOR_CIRCLE).data(colorData).enter().append('g').attr('class', css.COLOR_CIRCLE).each(
-        function(circleData, index) {
-          arc.outerRadius(minRadius + (maxRadius - minRadius) / nCellsL * (nCellsL - index)).innerRadius(minRadius +
-            (maxRadius - minRadius) / nCellsL * (nCellsL - index - 1));
-          var segment = d3.select(this).selectAll('.' + css.COLOR_SEGMENT).data(pie(circleData)).enter().append('g')
-            .attr('class', css.COLOR_SEGMENT);
-          segment.append('path').attr('class', css.COLOR_BUTTON).attr('d', arc).style('fill', function(d) {
-            return d.data.display;
-          }).style('stroke', function(d) {
-            return d.data.display;
-          }).on('mouseover', function(d) {
-            _cellHover(d.data.meaning, this);
-          }).on('mouseout', function(d) {
-            _cellUnHover();
+      background = svg.append('rect')
+        .attr('width', width)
+        .attr('height', height)
+        .attr('class', css.COLOR_BUTTON +' '+ css.COLOR_BACKGR)
+        .on('mouseover',
+          function(d) {
+            _cellHover(colorOld);
           });
+      var circles = svg.append('g')
+        .attr('transform', 'translate(' + (maxRadius + width * margin.left) +
+        ',' + (maxRadius + height * margin.top) + ')');
+
+      svg.append('rect')
+        .attr('class', css.COLOR_SAMPLE)
+        .attr('width', width / 2)
+        .attr('height', height * margin.top / 2);
+
+      sampleRect = svg.append('rect')
+        .attr('class', css.COLOR_SAMPLE)
+        .attr('width', width / 2)
+        .attr('x', width / 2)
+        .attr('height', height * margin.top / 2);
+
+      svg.append('text')
+        .attr('x', width * margin.left)
+        .attr('y', height * margin.top / 2)
+        .attr('dy', '0.5em')
+        .attr('class', css.COLOR_SAMPLE)
+        .style('text-anchor', 'start');
+
+      sampleText = svg.append('text').attr('x', width * (1 - margin.right))
+        .attr('y', height * margin.top / 2)
+        .attr('dy', '0.5em')
+        .attr('class', css.COLOR_SAMPLE)
+        .style('text-anchor', 'end');
+
+      svg.append('text')
+        .attr('x', width * .1)
+        .attr('y', height * (1 - margin.bottom))
+        .attr('dy', '0.3em')
+        .attr('class', "vzb-default-label")
+        .style('text-anchor', 'start')
+        .text('default');
+
+      svg.append('circle')
+        .attr('class', css.COLOR_DEFAULT + ' ' + css.COLOR_BUTTON)
+        .attr('r', width * margin.left / 2)
+        .attr('cx', width * margin.left * 1.5)
+        .attr('cy', height * (1 - margin.bottom * 1.5))
+        .on('mouseover',
+          function() {
+            d3.select(this).style('stroke', '#444');
+            _cellHover(colorDef);
+        })
+        .on('mouseout', function() {
+          d3.select(this).style('stroke', 'none');
         });
-      colorPointer = circles.append('path').attr('class', css.COLOR_POINTER + ' ' + css.INVISIBLE);
-      svg.selectAll('.' + css.COLOR_BUTTON).on('click', function() {
-        _this.show(TOGGLE);
-      });
+
+      circles.append('circle')
+        .attr('r', minRadius - 1)
+        .attr('fill', '#fff')
+        .attr('class', css.COLOR_BUTTON)
+        .on('mouseover',
+          function() {
+            d3.select(this).style('stroke', '#444');
+            _cellHover('#fff');
+        })
+        .on('mouseout', function() {
+          d3.select(this).style('stroke', 'none');
+        });
+
+      circles.selectAll('.' + css.COLOR_CIRCLE)
+        .data(colorData).enter().append('g')
+          .attr('class', css.COLOR_CIRCLE)
+            .each(
+              function(circleData, index) {
+                arc.outerRadius(minRadius + (maxRadius - minRadius) / nCellsL *
+                  (nCellsL - index)).innerRadius(minRadius +
+                  (maxRadius - minRadius) / nCellsL * (nCellsL - index - 1));
+                var segment = d3.select(this).selectAll('.' + css.COLOR_SEGMENT)
+                  .data(pie(circleData)).enter().append('g')
+                    .attr('class', css.COLOR_SEGMENT);
+
+              segment.append('path')
+                .attr('class', css.COLOR_BUTTON)
+                .attr('d', arc)
+                .style('fill', function(d) {
+                  return d.data.display;
+                })
+                .style('stroke', function(d) {
+                  return d.data.display;
+                })
+                .on('mouseover', function(d) {
+                  _cellHover(d.data.meaning, this);
+                })
+                .on('mouseout', function(d) {
+                  _cellUnHover();
+                });
+            });
+
+      colorPointer = circles.append('path')
+        .attr('class', css.COLOR_POINTER + ' ' + css.INVISIBLE);
+
+      svg.selectAll('.' + css.COLOR_BUTTON)
+        .on('click', function() {
+          d3.event.stopPropagation();
+          _this.show(false);
+        });
       _doTheStyling(svg);
     }
 
     var _doTheStyling = function(svg) {
       //styling
-      svg.select('.' + css.COLOR_BACKGR).style('fill', 'white');
-      svg.select('.' + css.COLOR_POINTER).style('stroke-width', 2).style('stroke', 'white').style('pointer-events',
-        'none').style('fill', 'none');
-      svg.selectAll('.' + css.COLOR_BUTTON).style('cursor', 'pointer');
-      svg.selectAll('text').style('dominant-baseline', 'hanging').style('fill', '#D9D9D9').style('font-size',
-        '0.7em').style('text-transform', 'uppercase');
-      svg.selectAll('circle.' + css.COLOR_BUTTON).style('stroke-width', 2);
+      svg.select('.' + css.COLOR_BACKGR)
+        .style('fill', 'white');
+
+      svg.select('.' + css.COLOR_POINTER)
+        .style('stroke-width', 2)
+        .style('stroke', 'white')
+        .style('pointer-events', 'none')
+        .style('fill', 'none');
+
+      svg.selectAll('.' + css.COLOR_BUTTON)
+        .style('cursor', 'pointer');
+
+      svg.selectAll('text')
+        .style('dominant-baseline', 'hanging')
+        .style('fill', '#D9D9D9')
+        .style('font-size', '0.7em')
+        .style('text-transform', 'uppercase');
+
+      svg.selectAll('circle.' + css.COLOR_BUTTON)
+        .style('stroke-width', 2);
     };
+
     var _this = colorPicker;
     var _cellHover = function(value, view) {
       // show color pointer if the view is set (a cell of colorwheel)
       if(view != null)
-        colorPointer.classed(css.INVISIBLE, false).attr('d', d3.select(view).attr('d'));
+        colorPointer.classed(css.INVISIBLE, false)
+          .attr('d', d3.select(view)
+          .attr('d'));
+
       sampleRect.style('fill', value);
       sampleText.text(value);
       callback(value);
@@ -224,6 +332,9 @@ export default function colorPicker() {
       if(svg == null)
         console.warn('Color picker is missing SVG element. Was init sequence performed?');
       showColorPicker = arg == TOGGLE ? !showColorPicker : arg;
+      if (!showColorPicker) {
+        callback = function() {};
+      }
       svg.classed(css.INVISIBLE, !showColorPicker);
     };
     // getters and setters
@@ -304,6 +415,44 @@ export default function colorPicker() {
       svg.select('.' + css.COLOR_DEFAULT).style('fill', colorDef);
       return colorPicker;
     };
+    /**
+     * @param {ClientRect} screen parent element
+     * @param {int[]} arg [x,y] of color picker position
+     */
+    colorPicker.fitToScreen = function(arg) {
+      var screen = colorPicker.container.node().getBoundingClientRect();
+      var xPos, yPos;
+
+      var width = parseInt(svg.style('width'));
+      var height = parseInt(svg.style('height'));
+
+      if (!arg) {
+        xPos = screen.width - parseInt(svg.style('right')) - width;
+        yPos = parseInt(svg.style('top'));
+      } else {
+        xPos = arg[0] - screen.left;
+        yPos = arg[1] - screen.top;
+      }
+
+      var styles = {left: ''};
+      if (screen.width * 0.8 <= width) {
+        styles.right = (screen.width - width) * 0.5;
+      } else if (xPos + width > screen.width) {
+        styles.right = Math.min(screen.width * 0.1, 20);
+      } else {
+        styles.right = screen.width - xPos - width;
+      }
+      if (screen.height * 0.8 <= height) {
+        styles.top = (screen.height - height) * 0.5;
+      } else if (yPos + height * 1.2 > screen.height) {
+        styles.top = screen.height * 0.9 - height;
+      } else {
+        styles.top = yPos;
+      }
+
+      svg.style(styles);
+      return colorPicker;
+    };
     colorPicker.colorOld = function(arg) {
       if(!arguments.length)
         return colorOld;
@@ -314,6 +463,26 @@ export default function colorPicker() {
       svg.select('text.' + css.COLOR_SAMPLE).text(colorOld);
       return colorPicker;
     };
+
+    colorPicker.resize = function(arg) {
+
+      if(!arguments.length)
+        return resize;
+      if (typeof arg !== 'undefined') {
+        var svg = arg;
+        var width = parseInt(svg.style('width'));
+        var height = parseInt(svg.style('height'));
+        var selectedColor = svg.select('.'+css.COLOR_DEFAULT);
+        var defaultLabel = svg.select('.vzb-default-label');
+        selectedColor.attr('cx', width * margin.left * 1.5)
+                     .attr('cy', height * (1 - margin.bottom * 1.5));
+        defaultLabel.attr('x', width * .1)
+                    .attr('y', height * (1 - margin.bottom));
+      }
+      colorPicker.fitToScreen();
+
+      return colorPicker;
+    };
     return colorPicker;
-  }();
+  };
 };

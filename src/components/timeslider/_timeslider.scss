@@ -1,4 +1,4 @@
-$vzb-ts-btn-area: 50px;
+$vzb-ts-btn-area: 40px;
 $vzb-ts-btn-width: 40px;
 $vzb-ts-btn-bg: $vzb-color-primary;
 $vzb-ts-btn-bg-active: #2f7687;
@@ -45,7 +45,7 @@ $vzb-ts-value-width: 40px;
     }
   }
   .vzb-ts-slider-wrapper {
-    @include position(absolute, 5px 9px 5px $vzb-ts-btn-area+5);
+    @include position(absolute, 0 9px 0 $vzb-ts-btn-area+5);
     // margin: 17px 7px;
     // Slider
     .vzb-ts-slider {
@@ -152,32 +152,48 @@ $vzb-ts-value-width: 40px;
 }
 
 &.vzb-small {
-  .vzb-timeslider.vzb-ts-axis-aligned {
+  .vzb-timeslider {
     .vzb-ts-btns {
-      @include position(absolute, 0 0 5px 5px);
-      width: $vzb-ts-btn-area - 20;
-      min-height: $vzb-ts-btn-area - 20;
 
       .vzb-ts-btn {
-        width: $vzb-ts-btn-width - 14;
-        height: $vzb-ts-btn-width - 14;
+        width: $vzb-ts-btn-width - 5;
+        height: $vzb-ts-btn-width - 5;
         margin: 0;
 
         .vzb-icon {
-          width: $vzb-ts-btn-width - 14;
-          height: $vzb-ts-btn-width - 14;
-        }
-        &.vzb-ts-btn-play {
-          padding: 0;
-        }
-        &.vzb-ts-btn-pause {
-          padding: 0;
+          width: $vzb-ts-btn-width - 5;
+          height: $vzb-ts-btn-width - 5;
         }
       }
     }
-    .vzb-ts-slider-wrapper {
-      $pos-left: $vzb-ts-btn-area - 20 + 10;
-      @include position(absolute, 0 0 5px $pos-left);
+
+    &.vzb-ts-axis-aligned {
+      .vzb-ts-btns {
+        @include position(absolute, 0 0 5px 5px);
+        width: $vzb-ts-btn-area - 20;
+        min-height: $vzb-ts-btn-area - 20;
+
+        .vzb-ts-btn {
+          width: $vzb-ts-btn-width - 14;
+          height: $vzb-ts-btn-width - 14;
+          margin: 0;
+
+          .vzb-icon {
+            width: $vzb-ts-btn-width - 14;
+            height: $vzb-ts-btn-width - 14;
+          }
+          &.vzb-ts-btn-play {
+            padding: 0;
+          }
+          &.vzb-ts-btn-pause {
+            padding: 0;
+          }
+        }
+      }
+      .vzb-ts-slider-wrapper {
+        $pos-left: $vzb-ts-btn-area - 20 + 10;
+        @include position(absolute, 0 0 5px $pos-left);
+      }
     }
   }
 }
@@ -228,53 +244,5 @@ $vzb-ts-value-width: 40px;
         @include position(absolute, 0 0 5px $pos-left);
       }
     }
-  }
-}
-
-.vzb-ts-delay-slider {
-  @include position(absolute, $vzb-ts-btn-area*.7 0 0 5%);
-  font-size: $vzb-font-size-small;
-  overflow: visible;
-  color: $vzb-ts-slider-color;
-  width: 20%;
-  height: 20%;
-  opacity: .1;
-  &:hover {
-    opacity: 1;
-    .vzb-ts-delay-slider-handle {
-      opacity: 1;
-    }
-  }
-  .background {
-    cursor: pointer !important;
-  }
-  .vzb-ts-delay-slider-axis {
-    @include opacity(.6);
-    @include user-select(none);
-    fill: $vzb-ts-slider-color;
-    font-weight: bold;
-    cursor: pointer;
-
-    .domain {
-      @include opacity(1);
-      fill: none;
-      stroke: $vzb-ts-slider-color;
-      stroke-opacity: .3;
-      stroke-width: 5px;
-      stroke-linecap: round;
-    }
-  }
-  .vzb-ts-delay-slider-handle {
-    fill: $vzb-ts-slider-color;
-    stroke: #fff;
-    stroke-width: 4px;
-    cursor: pointer;
-    opacity: .3;
-  }
-  .vzb-ts-delay-slider-value {
-    @include user-select(none);
-    display: none;
-    fill: $vzb-ts-slider-color;
-    font-weight: bold;
   }
 }

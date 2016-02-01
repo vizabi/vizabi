@@ -14,7 +14,7 @@ var Data = Class.extend({
    * @param {Array} query Array with queries to be loaded
    * @param {String} language Language
    * @param {Object} reader Which reader to use - data reader info
-   * @param {String} path Where data is located
+   * @param {*} evts ?
    */
   load: function(query, language, reader, evts) {
     var _this = this;
@@ -76,7 +76,7 @@ var Data = Class.extend({
     // joining multiple queries
     // create a queue which this datamanager writes all queries to
     this.queryQueue = this.queryQueue || [];
-    this.queryQueue.push({ query: query, queryId: queryId, promise: promise });
+    this.queryQueue.push({ query: query, queryId: queryId, promise: promise, reader: reader});
 
     // wait one execution round for the queue to fill up
     utils.defer(function() {
@@ -103,11 +103,13 @@ var Data = Class.extend({
 
             // if so, merge the selects to the base query
             Array.prototype.push.apply(query.select, queueItem.query.select);
+            // merge parsers so the reader can parse the newly added columns
+            utils.extend(reader.parsers, queueItem.reader.parsers);
 
             // include query's promise to promises for base query
             mergedQueries.push(queueItem);
 
-            // remove from queue as it's merged in the current query
+            // remove queueItem from queue as it's merged in the current query
             return false;
           }
         } 
@@ -121,7 +123,21 @@ var Data = Class.extend({
       // promise = promises.length ? Promise.all(promises) : new Promise.resolve();
 
       // remove double columns from select (resulting from merging)
+      // no double columns in formatter because it's an object, extend would've overwritten doubles
       query.select = utils.unique(query.select);
+
+      //create hash for dimensions only query
+      var dim, dimQ, dimQId = 0; 
+      dimQ = utils.clone(query);
+      dim = utils.keys(dimQ.grouping);
+      if (utils.arrayEquals(dimQ.select.slice(0, dim.length), dim)) {
+        dimQ.select = dim;
+        dimQId = utils.hashCode([
+          dimQ,
+          lang,
+          reader
+        ]);
+      }
 
       // Create a new reader for this query
       var readerClass = Reader.get(reader_name);
@@ -155,14 +171,25 @@ var Data = Class.extend({
           col.nested = {};
           col.unique = {};
           col.limits = {};
+          col.limitsPerFrame = {};
+          col.frames = {};
+          col.query = q;
           // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
 
           // returning the query-id/values of the merged query without splitting the result up again per query
           // this is okay because the collection-object above will only be passed by reference to the cache and this will not take up more memory. 
           // On the contrary: it uses less because there is no need to duplicate the key-columns.
           utils.forEach(mergedQueries, function(mergedQuery) {
-            mergedQuery.promise.resolve(queryId);
+            // set the cache-location for each seperate query to the combined query's cache
+            _this._collection[mergedQuery.queryId] = _this._collection[queryId]; 
+            // resolve the query
+            mergedQuery.promise.resolve(mergedQuery.queryId);
           });
+  
+          //create cache record for dimension only query
+          if(dimQId !== 0) {
+            _this._collection[dimQId] = _this._collection[queryId];              
+          }
           //promise.resolve(queryId);
         }, //error reading
         function(err) { 
@@ -180,18 +207,16 @@ var Data = Class.extend({
   /**
    * get data
    */
-  get: function(queryId, what, whatId) {
+  get: function(queryId, what, whatId, args) {
     // if not specified data from what query, return nothing
-    if(!queryId) {
-      return;
-    }
+    if(!queryId) return utils.warn("Data.js 'get' method doesn't like the queryId you gave it: " + queryId);
 
     // if they want data, return the data
     if(!what || what == 'data') {
       return this._collection[queryId]['data'];
     }
 
-    // if they didn't give an ID, give them the whole thing
+    // if they didn't give an instruction, give them the whole thing
     // it's probably old code which modifies the data outside this class
     // TODO: move these methods inside (e.g. model.getNestedItems())
     if (!whatId) {
@@ -215,9 +240,199 @@ var Data = Class.extend({
       case 'limits':
         this._collection[queryId][what][id] = this._getLimits(queryId, whatId);
         break;
+      case 'limitsPerFrame':
+        this._collection[queryId][what][id] = this._getLimitsPerFrame(queryId, whatId, args);
+        break;
+      case 'frames':
+        this._collection[queryId][what][id] = this._getFrames(queryId, whatId, args);
+        break;
+      case 'nested':     
+        this._collection[queryId][what][id] = this._getNested(queryId, whatId);
+        break;
     }
     return this._collection[queryId][what][id];
   },
+
+    
+    
+  
+  /**
+   * Get regularised dataset (where gaps are filled)
+   * @param {Number} queryId hash code for query
+   * @param {Array} framesArray -- array of keyframes across animatable
+   * @param {Object} indicatorsDB -- indicators DB from globals.metadata
+   * @returns {Object} regularised dataset, nested by [animatable, column, key]
+   */
+  _getFrames: function(queryId, framesArray, indicatorsDB) {
+      var _this = this;
+      
+      if(!indicatorsDB) utils.warn("_getFrames in data.js is missing indicatorsDB, it's needed for gap filling")
+      if(!framesArray) utils.warn("_getFrames in data.js is missing framesArray, it's needed so much")
+            
+      //TODO: thses should come from state or from outside somehow
+      var KEY = "geo";
+      var TIME = "time";
+      var result = {};
+      var filtered = {};
+      var items, itemsIndex, oneFrame, method, use, next;
+      
+      // We _nest_ the flat dataset in two levels: first by “key” (example: geo), then by “animatable” (example: year)
+      // See the _getNested function for more details
+      var nested = this.get(queryId, 'nested', [KEY, TIME]);
+      var keys = Object.keys(nested);
+      
+      // Get the list of columns that are in the dataset, exclude key column and animatable column
+      // Example: [“lex”, “gdp”, “u5mr"]
+      var query = this._collection[queryId].query;
+      var columns = query.select.filter(function(f){return f != KEY && f != TIME && f !== "_default"});
+      
+      var fLength = framesArray.length;
+      var kLength = keys.length;
+      var cLength = columns.length;
+      var frame, f, key, k, column, c;
+      
+      // FramesArray in the input contains the array of keyframes in animatable dimension. 
+      // Example: array of years like [1800, 1801 … 2100]
+      // these will be the points where we need data 
+      // (some of which might already exist in the set. in regular datasets all the points would exist!)
+      
+      // Check if query.where clause is missing a time field
+      if(!query.where.time){          
+          // The query.where clause doesn't have time field for properties: 
+          // we populate the regular set with a single value (unpack properties into constant time series)
+          var dataset = _this._collection[queryId].data;
+          
+          for(f=0; f<fLength; f++){
+              frame = framesArray[f];
+              
+              result[frame] = {};
+              for(c=0; c<cLength; c++) result[frame][columns[c]] = {};
+              
+              for(var i=0; i<dataset.length; i++){   
+                  var d = dataset[i];
+                  for(c=0; c<cLength; c++) result[frame][columns[c]][d[KEY]] = d[columns[c]];
+              };
+          };
+          
+          
+      }else{
+          // If there is a time field in query.where clause, then we are dealing with indicators in this request
+          
+          // Put together a template for cached filtered sets (see below what's needed)
+          for(k=0; k<kLength; k++){
+              filtered[keys[k]] = {};
+              for(c=0; c<cLength; c++) filtered[keys[k]][columns[c]] = null;
+          };
+
+          // Now we run a 3-level loop: across frames, then across keys, then and across data columns (lex, gdp)
+          for(f=0; f<fLength; f++){
+            frame = framesArray[f];
+            result[frame] = {};
+            for(c=0; c<cLength; c++) result[frame][columns[c]] = {};
+
+            for(k=0; k<kLength; k++){
+                key = keys[k];
+                
+                for(c=0; c<cLength; c++){
+                    column = columns[c];       
+                    
+                    //If there are some points in the array with valid numbers, then
+                    //interpolate the missing point and save it to the “clean regular set” 
+                    method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
+                    use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
+                    
+
+                    // Inside of this 3-level loop is the following: 
+                    if(nested[key] && nested[key][frame] && (nested[key][frame][0][column] || nested[key][frame][0][column] === 0)){
+
+                        // Check if the piece of data for [this key][this frame][this column] exists 
+                        // and is valid. If so, then save it into a “clean regular set”
+                        result[frame][column][key] = nested[key][frame][0][column];
+                        
+                    }else{
+                        // If the piece of data doesn’t exist or is invalid, then we need to inter- or extapolate it
+
+                        // Let’s take a slice of the nested set, corresponding to the current key nested[key] 
+                        // As you remember it has the data nested further by frames. 
+                        // At every frame the data in the current column might or might not exist. 
+                        // Thus, let’s filter out all the frames which don’t have the data for the current column. 
+                        // Let’s cache it because we will most likely encounter another gap in the same column for the same key
+
+                        items = filtered[key][column];
+
+                        if(items == null){                            
+                            var givenFrames = Object.keys(nested[key]);
+                            items = new Array(givenFrames.length);
+                            itemsIndex = 0;
+
+                            for(var z = 0, length = givenFrames.length; z<length; z++){
+                                oneFrame = nested[key][givenFrames[z]];
+                                if(oneFrame[0][column] || oneFrame[0][column] === 0) items[itemsIndex++] = oneFrame[0];
+                            };
+                            
+                            //trim the length of the array
+                            items.length = itemsIndex;
+                        }
+
+
+                        // Now we are left with a fewer frames in the filtered array. Let's check its length. 
+                        //If the array is empty, then the entire column is missing for the key
+                        //So we let the key have missing values in this column for all frames
+                        if(items.length > 0) {
+                            next = null;
+                            result[frame][column][key] = utils.interpolatePoint(items, use, column, next, TIME, frame, method);
+                        }
+
+                    }
+                        
+
+                }; //loop across columns
+            }; //loop across keys
+          }; //loop across frameArray
+      }
+      
+      return result;
+  },
+
+
+  _getNested: function(queryId, order) {
+    // Nests are objects of key-value pairs
+    // Example: 
+    // 
+    // order = ["geo", "time"];
+    // 
+    // original_data = [
+    //   { geo: "afg", time: 1800, gdp: 23424, lex: 23}
+    //   { geo: "afg", time: 1801, gdp: 23424, lex: null}
+    //   { geo: "chn", time: 1800, gdp: 23587424, lex: 46}
+    //   { geo: "chn", time: 1801, gdp: null, lex: null}
+    // ];
+    //  
+    // nested_data = {
+    //   afg: {
+    //     1800: {gdp: 23424, lex: 23},
+    //     1801: {gdp: 23424, lex: null}
+    //   }
+    //   chn: {
+    //     1800: {gdp: 23587424, lex: 46 },
+    //     1801: {gdp: null, lex: null }
+    //   }
+    // };
+
+    var nest = d3.nest();
+    for(var i = 0; i < order.length; i++) {
+      nest = nest.key(
+        (function(k) {
+          return function(d) {
+            return d[k];
+          };
+        })(order[i])
+      );
+    };
+
+    return utils.nestArrayToObj(nest.entries(this._collection[queryId]['data']));
+  },
+    
 
   _getUnique: function(queryId, attr) {
     var uniq;
@@ -243,7 +458,28 @@ var Data = Class.extend({
   _getFiltered: function(queryId, filter) {
     return utils.filter(this._collection[queryId].data, filter);
   },
-
+    
+    
+  _getLimitsPerFrame: function(queryId, args, indicatorsDB) {
+    var result = {};
+    var values = [];
+      
+    var frames = this.get(queryId, 'frames', args.framesArray, indicatorsDB);
+      
+    utils.forEach(frames, function(frame, t){
+        result[t] = {};
+        
+        values = utils.values(frame[args.which]);
+        
+        result[t] = !values || !values.length ? {max: 0, min: 0} : {
+            max: d3.max(values), 
+            min: d3.min(values)
+        }
+    });    
+    
+    return result;
+  },
+    
   _getLimits: function(queryId, attr) {
 
     var items = this._collection[queryId].data;

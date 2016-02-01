@@ -1,24 +1,71 @@
 import * as utils from 'utils';
 import Promise from 'promise';
 import Data from 'data';
-import Events from 'events';
+import EventSource, {DefaultEvent, ChangeEvent} from 'events';
 import Intervals from 'intervals';
 import globals from 'globals';
 import * as models from 'models/_index';
 
-var time_formats = {
-  "year": "%Y",
-  "month": "%b",
-  "week": "week %U",
-  "day": "%d/%m/%Y",
-  "hour": "%d/%m/%Y %H",
-  "minute": "%d/%m/%Y %H:%M",
-  "second": "%d/%m/%Y %H:%M:%S"
-};
-
 var _DATAMANAGER = new Data();
 
-var Model = Events.extend({
+var ModelLeaf = EventSource.extend({
+
+  _name: '',
+  _parent: null,
+  _persistent: true,
+
+  init: function(name, value, parent, binds) {
+
+    // getter and setter for the value
+    Object.defineProperty(this, 'value', {
+      get: this.get,
+      set: this.set
+    });
+    Object.defineProperty(this, 'persistent', {
+      get: function() { return this._persistent; }
+    });
+
+    this._super();
+
+    this._name = name;
+    this._parent = parent;
+    this.value = value;
+    this.on(binds); // after super so there is an .events object
+  },
+
+  // if they want a persistent value and the current value is not persistent, return the last persistent value
+  get: function(persistent) {
+    return (persistent && !this._persistent) ? this._persistentVal : this._val;
+  },
+
+  set: function(val, force, persistent) {
+    if (force || (this._val !== val && JSON.stringify(this._val) !== JSON.stringify(val))) {
+
+      // persistent defaults to true
+      persistent = (typeof persistent !== 'undefined') ? persistent : true;
+ 
+      // set leaf properties
+      if (persistent) this._persistentVal = val; // set persistent value if change is persistent.
+      this._val = val;
+      this._persistent = persistent;
+
+      // trigger change event
+      this.trigger(new ChangeEvent(this), this._name);
+    }
+  },
+
+  // duplicate from Model. Should be in a shared parent class.
+  setTreeFreezer: function(freezerStatus) {
+    if (freezerStatus) {
+      this.freeze();
+    } else {
+      this.unfreeze();
+    }
+  }
+
+})
+
+var Model = EventSource.extend({
   /**
    * Initializes the model.
    * @param {Object} values The initial values of this model
@@ -26,13 +73,13 @@ var Model = Events.extend({
    * @param {Object} bind Initial events to bind
    * @param {Boolean} freeze block events from being dispatched
    */
-  init: function(values, parent, bind, freeze) {
+  init: function(name, values, parent, bind) {
     this._type = this._type || 'model';
     this._id = this._id || utils.uniqueId('m');
     this._data = {};
     //holds attributes of this model
     this._parent = parent;
-    this._set = false;
+    this._name = name;
     this._ready = false;
     this._readyOnce = false;
     //has this model ever been ready?
@@ -54,15 +101,12 @@ var Model = Events.extend({
     //stores limit values
     this._super();
 
-    if(freeze) {
-      //do not dispatch events
-      this.freeze();
-    }
     //initial values
     if(values) {
       this.set(values);
     }
-    //bind initial events
+    // bind initial events
+    // bind after setting, so no events are fired by setting initial values
     if(bind) {
       this.on(bind);
     }
@@ -82,7 +126,10 @@ var Model = Events.extend({
     if(!attr) {
       return this._data;
     }
-    return this._data[attr];
+    if (isModel(this._data[attr]))
+      return this._data[attr];
+    else
+      return this._data[attr].value; // return leaf value
   },
 
   /**
@@ -90,69 +137,86 @@ var Model = Events.extend({
    * @param attr property name
    * @param val property value (object or value)
    * @param {Boolean} force force setting of property to value and triggers set event
+   * @param {Boolean} persistent true if the change is a persistent change
    * @returns defer defer that will be resolved when set is done
    */
-  set: function(attr, val, force) {
-    var events = [];
-    var changes = [];
+  set: function(attr, val, force, persistent) {
     var setting = this._setting;
-    var _this = this;
     var attrs;
+    var freezeCall = false; // boolean, indicates if this .set()-call froze the modelTree
+    
     //expect object as default
     if(!utils.isPlainObject(attr)) {
       (attrs = {})[attr] = val;
     } else {
+      // move all arguments one place
       attrs = attr;
+      persistent = force;
       force = val;
     }
 
     //we are currently setting the model
     this._setting = true;
 
-    //compute each change
+    // Freeze the whole model tree if not frozen yet, so no events are fired while setting
+    if (!this._freeze) {
+      freezeCall = true;
+      this.setTreeFreezer(true);
+    }
+
+    // init/set all given values
+    var newSubmodels = false;
     for(var a in attrs) {
       val = attrs[a];
-      var curr = this._data[a];
-      //if its a regular value
-      if(!utils.isPlainObject(val) || utils.isArray(val)) {
-        //change if it's not the same value
-        if(curr !== val || force || JSON.stringify(curr) !== JSON.stringify(val)) {
-          var p = typeof curr === 'undefined' ? 'init' : 'change';
-          events.push(p + ':' + a);
-        }
-        this._data[a] = val;
-      } //if it's an object, it's a submodel
-      else {
-        if(curr && isModel(curr)) {
-          events.push('change:' + a);
-          this._data[a].set(val, force);
-        } //submodel doesnt exist, create it
-        else {
-          events.push('init:' + a);
-          this._data[a] = initSubmodel(a, val, this);
-          this._data[a].unfreeze();
-        }
+
+      var bothModel = utils.isPlainObject(val) && this._data[a] instanceof Model;
+      var bothModelLeaf = !utils.isPlainObject(val) && this._data[a] instanceof ModelLeaf;
+      
+      if (this._data[a] && (bothModel || bothModelLeaf)) {
+        // data type does not change (model or leaf and can be set through set-function)
+        this._data[a].set(val, force, persistent);
+      } else {
+        // data type has changed or is new, so initializing the model/leaf
+        this._data[a] = initSubmodel(a, val, this);
+        newSubmodels = true;
       }
     }
 
-    bindSettersGetters(this);
-    //for tool model when setting for the first time
+    // only if there's new submodels, we have to set new getters/setters
+    if (newSubmodels)
+      bindSettersGetters(this);
+
     if(this.validate && !setting) {
       this.validate();
     }
+
     if(!setting || force) {
-      //trigger set if not set
-      if(!this._set) {
-        this._set = true;
-        events.push('set');
-      } else if(events.length) {
-        events.push('change');
-      }
-      _this._setting = false;
-      _this.triggerAll(events, _this.getObject());
+      this._setting = false;
       if(!this.isHook()) {
         this.setReady();
       }
+    }
+    
+    // if this set()-call was the one freezing the tree, now the tree can be unfrozen (i.e. all setting is done)
+    if (freezeCall) {
+      this.setTreeFreezer(false);
+    }
+
+  },
+
+
+  setTreeFreezer: function(freezerStatus) {
+    // first traverse down
+    // this ensures deepest events are triggered first
+    utils.forEach(this._data, function(submodel) {
+      submodel.setTreeFreezer(freezerStatus);
+    });
+
+    // then freeze/unfreeze
+    if (freezerStatus) {
+      this.freeze();
+    } else {
+      this.unfreeze();
     }
   },
 
@@ -186,8 +250,9 @@ var Model = Events.extend({
     var fn = fn || function() {
       return true;
     };
+    var _this = this;
     utils.forEach(this._data, function(s, name) {
-      if(s && typeof s._id !== 'undefined' && fn(s)) {
+      if(s && typeof s._id !== 'undefined' && isModel(s) && fn(s)) {
         if(object) {
           submodels[name] = s;
         } else {
@@ -200,19 +265,33 @@ var Model = Events.extend({
 
   /**
    * Gets the current model and submodel values as a JS object
-   * @returns {Object} All model as JS object
+   * @returns {Object} All model as JS object, leafs will return their values
    */
-  getObject: function() {
+  getPlainObject: function(persistent) {
     var obj = {};
-    for(var i in this._data) {
-      //if it's a submodel
-      if(this._data[i] && typeof this._data[i].getObject === 'function') {
-        obj[i] = this._data[i].getObject();
-      } else {
-        obj[i] = this._data[i];
+    utils.forEach(this._data, function(dataItem, i) {
+      // if it's a submodel
+      if(dataItem instanceof Model) {
+        obj[i] = dataItem.getPlainObject(persistent);
+      } 
+      // if it's a modelLeaf
+      else {
+        obj[i] = dataItem.get(persistent);
       }
-    }
+    });
     return obj;
+  },
+
+
+  /**
+   * Gets the requested object, including the leaf-object, not the value
+   * @returns {Object} Model or ModelLeaf object.
+   */
+  getModelObject: function(name) {
+    if (name)
+      return this._data[name];
+    else
+      return this;
   },
 
   /**
@@ -225,7 +304,7 @@ var Model = Events.extend({
     }
     this._spaceDims = {};
     this.setReady(false);
-    this.unbindAll();
+    this.off();
     this._intervals.clearAllIntervals();
     this._data = {};
   },
@@ -311,6 +390,7 @@ var Model = Events.extend({
     //only ready if nothing is loading at all
     var prev_ready = this._ready;
     this._ready = !this.isLoading() && !this._setting && !this._loadCall;
+    // if now ready and wasn't ready yet
     if(this._ready && prev_ready !== this._ready) {
       if(!this._readyOnce) {
         this._readyOnce = true;
@@ -338,7 +418,6 @@ var Model = Events.extend({
     var data_hook = this._dataModel;
     var language_hook = this._languageModel;
     var query = this.getQuery(splashScreen);
-    var formatters = this._getAllFormatters();
     var promiseLoad = new Promise();
     var promises = [];
     //useful to check if in the middle of a load call
@@ -350,15 +429,15 @@ var Model = Events.extend({
       //hook changes, regardless of actual data loading
       this.trigger('hook_change');
       //get reader info
-      var reader = data_hook.getObject();
-      reader.formatters = formatters;
+      var reader = data_hook.getPlainObject();
+      reader.parsers = this._getAllParsers();
 
       var lang = language_hook ? language_hook.id : 'en';
       var promise = new Promise();
       var evts = {
         'load_start': function() {
           _this.setLoading('_hook_data');
-          Events.freezeAll([
+          EventSource.freezeAll([
             'load_start',
             'resize',
             'dom_ready'
@@ -426,7 +505,7 @@ var Model = Events.extend({
    * executes after data has actually been loaded
    */
   afterLoad: function() {
-    Events.unfreezeAll();
+    EventSource.unfreezeAll();
     this.setLoadingDone('_hook_data');
     interpIndexes = {};
   },
@@ -452,7 +531,7 @@ var Model = Events.extend({
    */
   getQuery: function(splashScreen) {
 
-    var dimensions, filters, select, grouping, q;
+    var dimensions, filters, select, grouping, orderBy, q;
 
     //if it's not a hook, no query is necessary
     if(!this.isHook()) return true;
@@ -465,19 +544,26 @@ var Model = Events.extend({
     var prop = globals.metadata.indicatorsDB[this.which] && globals.metadata.indicatorsDB[this.which].use === "property";
     var exceptions = (prop) ? { exceptType: 'time' } : {};
 
+    // select
     dimensions = this._getAllDimensions(exceptions);
-    filters = this._getAllFilters(exceptions, splashScreen);
-    grouping = this._getGrouping();
-
-    if(this.use !== 'value') dimensions = dimensions.concat([this.which]);
+    if(this.use !== 'constant') dimensions = dimensions.concat([this.which]);
     select = utils.unique(dimensions);
 
+    // where 
+    filters = this._getAllFilters(exceptions, splashScreen);
+    
+    // grouping
+    grouping = this._getGrouping();
+
+    // order by
+    orderBy = (!prop) ? this._space.time.dim : null;
 
     //return query
     return {
       'select': select,
       'where': filters,
       'grouping': grouping,
+      'orderBy': orderBy // should be _space.animatable, but that's time for now
     };
   },
 
@@ -533,7 +619,11 @@ var Model = Events.extend({
           //defer is necessary because other events might be queued.
           //load right after such events
           utils.defer(function() {
-            _this.load();
+            _this.load().then(function() {
+
+            }, function(err) {
+              utils.warn(err);
+            });
           });
         });
       }
@@ -606,6 +696,14 @@ var Model = Events.extend({
   },
 
   /**
+   * Gets the dimension (if entity) or which (if hook) of this model
+   * @returns {String|Boolean} dimension
+   */
+  getDimensionOrWhich: function() {
+    return this.dim || (this.use != 'constant' ? this.which : false); //defaults to dim or which if it exists
+  },
+
+  /**
    * Gets the filter for this model if it has one
    * @returns {Object} filters
    */
@@ -621,6 +719,7 @@ var Model = Events.extend({
    * @returns an array of values
    */
   getValues: function(filter, group_by, previous) {
+    var _this = this;
 
     if(this.isHook()) {
       return [];
@@ -651,13 +750,12 @@ var Model = Events.extend({
           next = next || d3.bisectLeft(hook.getUnique(dimTime), time);
         }
 
-        method = globals.metadata.indicatorsDB[w] ? globals.metadata.indicatorsDB[w].interpolation ||
-          "linear" : "linear";
-        filtered = hook.getNestedItems(f_keys);
+        method = globals.metadata.indicatorsDB[w].interpolation;
+        filtered = _DATAMANAGER.get(hook._dataId, 'nested', f_keys);
         utils.forEach(f_values, function(v) {
           filtered = filtered[v]; //get precise array (leaf)
         });
-        value = interpolatePoint(filtered, u, w, next, dimTime, time, method);
+        value = utils.interpolatePoint(filtered, u, w, next, dimTime, time, method);
         response[name] = hook.mapValue(value);
 
         //concat previous data points
@@ -674,23 +772,26 @@ var Model = Events.extend({
     //else, interpolate all with time
     else {
       utils.forEach(this._dataCube, function(hook, name) {
-        filtered = hook.getNestedItems(group_by);
-
+          
+        filtered = _DATAMANAGER.get(hook._dataId, 'nested', group_by);
+            
         response[name] = {};
         //find position from first hook
         u = hook.use;
         w = hook.which;
-
+          
         if(!globals.metadata.indicatorsDB[w] || globals.metadata.indicatorsDB[w].use !== "property") {
           next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
         }
 
-        method = globals.metadata.indicatorsDB[hook.which] ? globals.metadata.indicatorsDB[hook.which].interpolation ||
-          "linear" : "linear";
+        method = globals.metadata.indicatorsDB[w]?globals.metadata.indicatorsDB[w].interpolation:null;
 
 
         utils.forEach(filtered, function(arr, id) {
-          value = interpolatePoint(arr, u, w, next, dimTime, time, method);
+          //TODO: this saves when geos have different data length. line can be optimised. 
+          next = d3.bisectLeft(arr.map(function(m){return m.time}), time);
+            
+          value = utils.interpolatePoint(arr, u, w, next, dimTime, time, method);
           response[name][id] = hook.mapValue(value);
 
           //concat previous data points
@@ -709,6 +810,136 @@ var Model = Events.extend({
 
     return response;
   },
+    
+getFrame: function(time){
+    var _this = this;
+    var steps = this._parent.time.getAllSteps();
+    
+    var cachePath = "";
+    utils.forEach(this._dataCube, function(hook, name) {
+        cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start +" " + _this._parent.time.end;
+        });     
+    if(!this.cachedFrames || !this.cachedFrames[cachePath]) this.getFrames();
+    
+    if(this.cachedFrames[cachePath][time]) return this.cachedFrames[cachePath][time];
+    
+    if(time < steps[0] || time > steps[steps.length-1]){
+        //if the requested time point is out of the known range
+        //then send nulls in the response
+        var pValues = this.cachedFrames[cachePath][steps[0]];
+        var curr = {};
+        utils.forEach(pValues, function(keys, hook) {
+          curr[hook] = {};
+          utils.forEach(keys, function(val, key) {
+            curr[hook][key] = null;
+          });
+        });
+        return curr;
+    }
+    
+    
+    var next = d3.bisectLeft(steps, time);
+
+    if(next === 0) return this.cachedFrames[cachePath][steps[0]];
+
+    var fraction = (time - steps[next - 1]) / (steps[next] - steps[next - 1]);
+
+    var pValues = this.cachedFrames[cachePath][steps[next - 1]];
+    var nValues = this.cachedFrames[cachePath][steps[next]];
+
+    var curr = {};
+    utils.forEach(pValues, function(values, hook) {
+      curr[hook] = {};
+      utils.forEach(values, function(val, id) {
+        var val2 = nValues[hook][id];
+        curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val) * fraction);
+      });
+    });
+
+    return curr;
+},
+    
+    getFrames: function(){
+        var _this = this;
+        
+        var cachePath = "";
+        utils.forEach(this._dataCube, function(hook, name) {
+            cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start +" " + _this._parent.time.end;
+        });        
+        
+        if(!this.cachedFrames) this.cachedFrames = {};
+        if(this.cachedFrames[cachePath]) return this.cachedFrames[cachePath];
+        
+        var steps = this._parent.time.getAllSteps();
+        
+        this._dataCube = this._dataCube || this.getSubhooks(true)
+        
+        var result = {};
+        var resultKeys = [];
+        
+        // Assemble the list of keys as an intersection of keys in all queries of all hooks
+        utils.forEach(this._dataCube, function(hook, name) {
+            
+            // If hook use is constant, then we can provide no additional info about keys
+            // We can just hope that we have something else than constants =) 
+            if(hook.use==="constant")return;
+            
+            // Get keys in data of this hook
+            var nested = _DATAMANAGER.get(hook._dataId, 'nested', ["geo", "time"]);
+            var keys = Object.keys(nested);
+            
+            if(resultKeys.length==0){
+                // If ain't got nothing yet, set the list of keys to result
+                resultKeys = keys;
+            }else{
+                // If there is result accumulated aleready, remove the keys from it that are not in this hook
+                resultKeys = resultKeys.filter(function(f){ return keys.indexOf(f)>-1;})
+            }
+        });
+        
+        steps.forEach(function(t){ 
+            result[t] = {};
+        });
+        
+        utils.forEach(this._dataCube, function(hook, name) {
+            
+            if(hook.use === "constant") {
+                steps.forEach(function(t){ 
+                    result[t][name] = {};
+                    resultKeys.forEach(function(key){
+                        result[t][name][key] = hook.which;
+                    });
+                });
+                
+            }else if(hook.which==="geo"){
+                steps.forEach(function(t){ 
+                    result[t][name] = {};
+                    resultKeys.forEach(function(key){
+                        result[t][name][key] = key;
+                    });
+                });
+                
+            }else if(hook.which==="time"){
+                steps.forEach(function(t){ 
+                    result[t][name] = {};
+                    resultKeys.forEach(function(key){
+                        result[t][name][key] = new Date(t);
+                    });
+                });
+                
+            }else{
+                var frames = _DATAMANAGER.get(hook._dataId, 'frames', steps, globals.metadata.indicatorsDB);
+                utils.forEach(frames, function(frame, t){ 
+                    result[t][name] = frame[hook.which];
+                });    
+            }
+        });
+    
+        this.cachedFrames[cachePath] = result;
+        return result;
+    },
+    
+
 
   /**
    * gets the value of the hook point
@@ -723,15 +954,14 @@ var Model = Events.extend({
       return;
     }
     var value;
-    if(this.use === 'value') {
+    if(this.use === 'constant') {
       value = this.which;
     } else if(this._space.hasOwnProperty(this.use)) {
       value = this._space[this.use][this.which];
     } else {
       //TODO: get meta info about translatable data
-      var l = (this.use !== 'property') ? null : this._languageModel.id;
-      var method = globals.metadata.indicatorsDB[this.which].interpolation || "linear";
-      value = interpolateValue.call(this, filter, this.use, this.which, l, method);
+      var method = globals.metadata.indicatorsDB[this.which].interpolation;
+      value = interpolateValue.call(this, filter, this.use, this.which, method);
     }
     return this.mapValue(value);
   },
@@ -787,59 +1017,29 @@ var Model = Events.extend({
    * @returns {Object} filtered items object
    */
   getFilteredItems: function(filter) {
-    if(!filter) {
-      utils.warn("No filter provided to getFilteredItems(<filter>)");
-      return {};
-    }
+    if(!filter) return utils.warn("No filter provided to getFilteredItems(<filter>)");
     return _DATAMANAGER.get(this._dataId, 'filtered', filter);
   },
-
+    
   /**
    * gets nested dataset
-   * @param {Array} order
-   * @returns {Object} nest items object
+   * @param {Array} keys define how to nest the set
+   * @returns {Object} hash-map of key-value pairs
    */
-  getNestedItems: function(order) {
-    if(!order) {
-      utils.warn("No order array provided to getNestedItems(<order>). E.g.: getNestedItems(['geo'])");
-      return {};
-    }
-    //cache optimization
-    var order_id, nested, items, nest;
-    order_id = order.join("-");
-    nested = this._dataId ? _DATAMANAGER.get(this._dataId, 'nested') : false;
-    if(nested && order_id in nested) {
-      return nested[order_id];
-    }
-    items = this._dataId ? _DATAMANAGER.get(this._dataId) : this.getKeys();
-    nest = d3.nest();
-    for(var i = 0; i < order.length; i++) {
-      nest = nest.key(
-        (function(k) {
-          return function(d) {
-            return d[k];
-          };
-        })(order[i])
-      );
-    };
-
-    function nestToObj(arr) {
-      if(!arr || !arr.length || !arr[0].key) return arr;
-      var res = {};
-      for(var i = 0; i < arr.length; i++) {
-        res[arr[i].key] = nestToObj(arr[i].values);
-      };
-      return res;
-    }
-
-    return nested[order_id] = nestToObj(nest.entries(items));
+  getNestedItems: function(keys) {
+    if(!keys) return utils.warn("No keys provided to getNestedItems(<keys>)");
+    return _DATAMANAGER.get(this._dataId, 'nested', keys);
   },
+
 
   /**
    * Gets formatter for this model
    * @returns {Function|Boolean} formatter function
    */
-  getFormatter: function() {},
+  getParser: function() {
+    //TODO: default formatter is moved to utils. need to return it to hook prototype class, but retest #1212 #1230 #1253
+    return null;
+  },
 
   /**
    * Gets tick values for this hook
@@ -847,8 +1047,8 @@ var Model = Events.extend({
    */
   tickFormatter: function(x, formatterRemovePrefix) {
 
-    //TODO: generalize for any time unit
-    if(utils.isDate(x)) return d3.time.format(time_formats["year"])(x);
+    // Assumption: a hook has always time in its space
+    if(utils.isDate(x)) return this._space.time.timeFormat(x);
     if(utils.isString(x)) return x;
 
     var format = "f";
@@ -983,7 +1183,7 @@ var Model = Events.extend({
         break;
     }
     //TODO: d3 is global?
-    this.scale = scaleType === 'time' ? d3.time.scale().domain(domain) : d3.scale[scaleType]().domain(domain);
+    this.scale = scaleType === 'time' ? d3.time.scale.utc().domain(domain) : d3.scale[scaleType]().domain(domain);
   },
 
   /**
@@ -1025,44 +1225,44 @@ var Model = Events.extend({
     return _DATAMANAGER.get(this._dataId, 'unique', attr);
   },
 
-  //TODO: Is this supposed to be here?
+  //TODO: this should go down to datamanager, hook should only provide interface
   /**
    * gets maximum, minimum and mean values from the dataset of this certain hook
    */
-  getMaxMinMean: function(options) {
-    var _this = this;
+  gerLimitsPerFrame: function() {
+      
+    if(this.use === "property") return utils.warn("getMaxMinMean: strange that you ask min max mean of a property"); 
+    if(!this.isHook) return utils.warn("getMaxMinMean: only works for hooks");
+      
     var result = {};
-    //TODO: d3 is global?
-    //Can we do this without d3?
-    //yes if we copy d3 nest to out utils https://github.com/mbostock/d3/blob/master/src/arrays/nest.js
-    var dim = this._getFirstDimension({
-      type: 'time'
-    });
+    var values = [];
+    var value = null;
+      
+    var steps = this._parent._parent.time.getAllSteps();
+      
+    if(this.use === "constant") {
+        steps.forEach(function(t){ 
+            value = this.which;
+            result[t] = {
+                min: value,
+                max: value
+            }
+        });
 
-    d3.nest()
-      .key(function(d) {
-        return options.timeFormatter(d[dim]);
-      })
-      .entries(_DATAMANAGER.get(this._dataId))
-      .forEach(function(d) {
-        var values = d.values
-          .filter(function(f) {
-            return f[_this.which] !== null;
-          })
-          .map(function(m) {
-            return +m[_this.which];
-          });
+    }else if(this.which==="time"){
+        steps.forEach(function(t){ 
+            value = new Date(t);
+            result[t] = {
+                min: value,
+                max: value
+            }
+        });
 
-        if(options.skipZeros) values = values.filter(function(f) {
-          return f != 0
-        })
-
-        result[d.key] = {
-          max: d3.max(values),
-          min: d3.min(values),
-          mean: d3.mean(values)
-        };
-      });
+    }else{
+        var args = {framesArray: steps, which: this.which};
+        result = _DATAMANAGER.get(this._dataId, 'limitsPerFrame', args, globals.metadata.indicatorsDB);   
+    }
+      
     return result;
   },
 
@@ -1105,6 +1305,7 @@ var Model = Events.extend({
     });
 
     this._spaceDims[optsStr] = dims;
+
     return dims;
   },
 
@@ -1179,15 +1380,26 @@ var Model = Events.extend({
    * gets all hook filters
    * @returns {Object} filters
    */
-  _getAllFormatters: function() {
-    var formatters = {};
-    utils.forEach(this._space, function(h) {
-      var f = h.getFormatter();
-      if(f) {
-        formatters[h.getDimension()] = f;
+  _getAllParsers: function() {
+
+    var parsers = {};
+
+    function addParser(model) {
+      // get parsers from model
+      var parser = model.getParser();
+      var column = model.getDimensionOrWhich();
+      if (parser && column) {
+        parsers[column] = parser;
       }
+    }
+
+    // loop through all models which can have filters
+    utils.forEach(this._space, function(h) {
+      addParser(h);
     });
-    return formatters;
+    addParser(this);
+
+    return parsers;
   },
 
   getDefaults: function() {
@@ -1208,9 +1420,10 @@ var Model = Events.extend({
 
 /**
  * Checks whether an object is a model or not
+ * if includeLeaf is true, a leaf is also seen as a model
  */
-function isModel(model) {
-  return model.hasOwnProperty('_data');
+function isModel(model, includeLeaf) {
+  return model && (model.hasOwnProperty('_data') || (includeLeaf &&  model.hasOwnProperty('_val')));
 }
 
 /**
@@ -1244,49 +1457,78 @@ function bindSettersGetters(model) {
  */
 function initSubmodel(attr, val, ctx) {
 
-  var binds = {
-    //the submodel has changed (multiple times)
-    'change': function(evt, vals) {
-      if(!ctx._ready) return; //block change propagation if model isnt ready
-      evt = evt.replace('change', 'change:' + attr);
-      //if(attr === 'axis') console.log("")
-      ctx.triggerAll('change:' + attr, ctx.getObject(), evt);
-    },
-    //loading has started in this submodel (multiple times)
-    'hook_change': function(evt, vals) {
-      ctx.trigger(evt, ctx.getObject());
-    },
-    //loading has started in this submodel (multiple times)
-    'load_start': function(evt, vals) {
-      evt = evt.replace('load_start', 'load_start:' + attr);
-      ctx.setReady(false);
-      ctx.triggerAll('load_start:' + attr, ctx.getObject(), evt);
-    },
-    //loading has failed in this submodel (multiple times)
-    'load_error': function(evt, vals) {
-      evt = evt.replace('load_error', 'load_error:' + attr);
-      ctx.triggerAll('load_error' + attr, vals, evt);
-    },
-    //loading has ended in this submodel (multiple times)
-    'ready': function(evt, vals) {
-      //trigger only for submodel
-      evt = evt.replace('ready', 'ready:' + attr);
-      ctx.setReady(false);
-      //wait to make sure it's not set false again in the next execution loop
-      utils.defer(function() {
-        ctx.setReady();
-      });
-      //ctx.trigger(evt, vals);
+  var submodel;
+
+  // if value is a value -> leaf
+  if(!utils.isPlainObject(val) || utils.isArray(val)) {  
+
+    var binds = {
+      //the submodel has changed (multiple times)
+      'change': onChange
     }
-  };
-  if(isModel(val)) {
-    val.on(binds);
-    return val;
-  } else {
-    //special model
-    var modelType = attr.split('_')[0];
-    var Modl = Model.get(modelType, true) || models[modelType] || Model;
-    return new Modl(val, ctx, binds, true);
+    submodel = new ModelLeaf(attr, val, ctx, binds);
+  }
+
+  // if value is an object -> model
+  else {
+
+    var binds = {
+      //the submodel has changed (multiple times)
+      'change': onChange,
+      //loading has started in this submodel (multiple times)
+      'hook_change': onHookChange,
+      //loading has started in this submodel (multiple times)
+      'load_start': onLoadStart,
+      //loading has failed in this submodel (multiple times)
+      'load_error': onLoadError,
+        //loading has ended in this submodel (multiple times)
+      'ready': onReady
+    };
+
+    // if the value is an already instantiated submodel (Model or ModelLeaf)
+    // this is the case for example when a new componentmodel is made (in Component._modelMapping)
+    // it takes the submodels from the toolmodel and creates a new model for the component which refers 
+    // to the instantiated submodels (by passing them as model values, and thus they reach here)
+    if (isModel(val, true)) {
+      submodel = val;
+      submodel.on(binds);
+    } 
+    // if it's just a plain object, create a new model
+    else {
+      // construct model
+      var modelType = attr.split('_')[0];
+      var Modl = Model.get(modelType, true) || models[modelType] || Model;
+      submodel = new Modl(attr, val, ctx, binds);
+      // model is still frozen but will be unfrozen at end of original .set()
+    }
+  }
+
+  return submodel;
+
+  // Default event handlers for models
+  function onChange(evt, path) {
+    if(!ctx._ready) return; //block change propagation if model isnt ready
+    path = ctx._name + '.' + path
+    ctx.trigger(evt, path);    
+  }
+  function onHookChange(evt, vals) {
+    ctx.trigger(evt, vals);
+  }
+  function onLoadStart(evt, vals) {
+    ctx.setReady(false);
+    ctx.trigger(evt, vals);
+  }
+  function onLoadError(evt, vals) {
+    ctx.trigger(evt, vals);
+  }
+  function onReady(evt, vals) {
+    //trigger only for submodel
+    ctx.setReady(false);
+    //wait to make sure it's not set false again in the next execution loop
+    utils.defer(function() {
+      ctx.setReady();
+    });
+    //ctx.trigger(evt, vals);
   }
 }
 
@@ -1352,57 +1594,7 @@ function getSpace(model) {
 //TODO: what if there are 2 visualizations with 2 data sources?
 var interpIndexes = {};
 
-/**
- * interpolates the specific value missing
- * @param {Array} list
- * @param {String} use
- * @param {String} which
- * @param {Number} i the next item in the array
- * @param {String} method
- * @returns interpolated value
- */
-function interpolatePoint(arr, use, which, i, dimTime, time, method) {
 
-  if(arr === null || arr.length === 0) {
-    utils.warn('interpolatePoint returning NULL: array is empty');
-    return null;
-  }
-  // return constant for the use of "value"
-  if(use === 'value') {
-    return which;
-  }
-  // zero-order interpolation for the use of properties
-  if(use === 'property') {
-    return arr[0][which];
-  }
-
-  // the rest is for the continuous measurements
-  // check if the desired value is out of range. 0-order extrapolation
-  if(i === 0) {
-    return +arr[0][which];
-  }
-  if(i === arr.length) {
-    return +arr[arr.length - 1][which];
-  }
-  //return null if data is missing
-  if(arr[i][which] === null || arr[i - 1][which] === null || arr[i][which] === "") {
-    return null;
-  }
-
-  var result = _interpolator()[method](
-    arr[i - 1][dimTime],
-    arr[i][dimTime],
-    arr[i - 1][which],
-    arr[i][which],
-    time
-  );
-
-  // cast to time object if we are interpolating time
-  if(utils.isDate(arr[0][which])) result = new Date(result);
-  if(result.toString() === "NaN") result = null;
-
-  return result;
-}
 
 /**
  * interpolates the specific value if missing
@@ -1410,7 +1602,7 @@ function interpolatePoint(arr, use, which, i, dimTime, time, method) {
  * filter SHOULD contain time property
  * @returns interpolated value
  */
-function interpolateValue(_filter, use, which, l, method) {
+function interpolateValue(_filter, use, which, method) {
 
   var dimTime, time, filter, items, space_id, indexNext, result;
 
@@ -1427,8 +1619,12 @@ function interpolateValue(_filter, use, which, l, method) {
     return null;
   }
 
-  // return constant for the use of "value"
-  if(use === 'value') {
+  // return constant for the use of "constant"
+  if(use === 'constant') {
+    return items[0][which];
+  }
+  // zero-order interpolation for the use of properties
+  if(use === 'property') {
     return items[0][which];
   }
 
@@ -1446,10 +1642,6 @@ function interpolateValue(_filter, use, which, l, method) {
     };
   }
 
-  // zero-order interpolation for the use of properties
-  if(use === 'property') {
-    return items[0][which];
-  }
   // the rest is for the continuous measurements
   // check if the desired value is out of range. 0-order extrapolation
   if(indexNext === 0) {
@@ -1458,36 +1650,9 @@ function interpolateValue(_filter, use, which, l, method) {
   if(indexNext === items.length) {
     return +items[items.length - 1][which];
   }
-  //return null if data is missing
-  if(items[indexNext][which] === null || items[indexNext - 1][which] === null) {
-    return null;
-  }
 
-  result = _interpolator()[method](
-    items[indexNext - 1][dimTime],
-    items[indexNext][dimTime],
-    items[indexNext - 1][which],
-    items[indexNext][which],
-    time
-  );
-
-  // cast to time object if we are interpolating time
-  if(Object.prototype.toString.call(items[0][which]) === '[object Date]') {
-    result = new Date(result);
-  }
-  return result;
 };
 
-function _interpolator() {
 
-  return {
-    linear: function(x1, x2, y1, y2, x) {
-      return +y1 + (y2 - y1) * (x - x1) / (x2 - x1);
-    },
-    exp: function(x1, x2, y1, y2, x) {
-      return Math.exp((Math.log(y1) * (x2 - x) - Math.log(y2) * (x1 - x)) / (x2 - x1));
-    },
-  }
-}
 
 export default Model;

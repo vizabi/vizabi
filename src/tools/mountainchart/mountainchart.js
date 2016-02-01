@@ -4,7 +4,9 @@ import Tool from 'base/tool';
 import MountainChartComponent from './mountainchart-component';
 import {
   timeslider,
+  dialogs,
   buttonlist,
+  treemenu,
   datawarning
 }
 from 'components/_index';
@@ -32,9 +34,17 @@ var MountainChart = Tool.extend('MountainChart', {
       placeholder: '.vzb-tool-timeslider',
       model: ["state.time"]
     }, {
+      component: dialogs,
+      placeholder: '.vzb-tool-dialogs',
+      model: ['state', 'ui', 'language']
+    }, {
       component: buttonlist,
       placeholder: '.vzb-tool-buttonlist',
       model: ['state', 'ui', 'language']
+    }, {
+      component: treemenu,
+      placeholder: '.vzb-tool-treemenu',
+      model: ['state.marker', 'language']
     }, {
       component: datawarning,
       placeholder: '.vzb-tool-datawarning',

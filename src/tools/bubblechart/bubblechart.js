@@ -4,6 +4,7 @@ import Tool from 'base/tool';
 import BubbleChartComponent from './bubblechart-component';
 import {
   timeslider,
+  dialogs,
   buttonlist,
   treemenu,
   datawarning
@@ -30,6 +31,10 @@ var BubbleChart = Tool.extend('BubbleChart', {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
       model: ["state.time"]
+    }, {
+      component: dialogs,
+      placeholder: '.vzb-tool-dialogs',
+      model: ['state', 'ui', 'language']
     }, {
       component: buttonlist,
       placeholder: '.vzb-tool-buttonlist',
@@ -83,7 +88,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
         },
         axis_x: {
           use: "indicator",
-          which: "gdp_per_cap"
+          which: "gdp_pc"
         },
         color: {
           use: "property",

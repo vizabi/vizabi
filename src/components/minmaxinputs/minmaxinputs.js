@@ -6,10 +6,10 @@ import Component from 'base/component';
  * VIZABI MIN MAX INPUT FIELDS
  */
 
-var MIN = "min";
-var MAX = "max";
-var FAKEMIN = "fakeMin";
-var FAKEMAX = "fakeMax";
+var DOMAINMIN = "domainMin";
+var DOMAINMAX = "domainMax";
+var ZOOMEDMIN = "zoomedMin";
+var ZOOMEDMAX = "zoomedMax";
 
 var MinMaxInputs = Component.extend({
 
@@ -38,21 +38,23 @@ var MinMaxInputs = Component.extend({
         if(!config.markerID) utils.warn("minmaxinputs.js complains on 'markerID' property: " + config.markerID);
 
         this.model_binds = {};
-        this.model_binds["change:language:strings"] = function(evt) {
+        this.model_binds["change:language.strings"] = function(evt) {
             _this.updateView();
         };
-        this.model_binds["change:marker:" + this.markerID] = function(evt) {
+        this.model_binds["change:marker." + this.markerID] = function(evt) {
             _this.updateView();
         };
-
+        this.model_binds["ready"] = function(evt) {
+            _this.updateView();
+        };
 
         //contructor is the same as any component
         this._super(config, context);
 
         this.ui = utils.extend({
-            selectMinMax: false,
-            selectFakeMinMax: false
-        }, this.ui.getObject());
+            selectDomainMinMax: false,
+            selectZoomedMinMax: false
+        }, this.ui.getPlainObject());
 
     },
 
@@ -72,25 +74,30 @@ var MinMaxInputs = Component.extend({
 
         this.el_break = this.element.select('.vzb-mmi-break');
         
-        this.el_fake_labelMin = this.element.select('.vzb-mmi-fakemin-label');
-        this.el_fake_labelMax = this.element.select('.vzb-mmi-fakemax-label');
-        this.el_fake_fieldMin = this.element.select('.vzb-mmi-fakemin');
-        this.el_fake_fieldMax = this.element.select('.vzb-mmi-fakemax');
+        this.el_zoomed_labelMin = this.element.select('.vzb-mmi-zoomedmin-label');
+        this.el_zoomed_labelMax = this.element.select('.vzb-mmi-zoomedmax-label');
+        this.el_zoomed_fieldMin = this.element.select('.vzb-mmi-zoomedmin');
+        this.el_zoomed_fieldMax = this.element.select('.vzb-mmi-zoomedmax');
 
 
         _this.el_domain_fieldMin.on("change", function() {
-            _this._setModel(MIN, this.value)
+            _this._setModel(DOMAINMIN, this.value)
         });
         _this.el_domain_fieldMax.on("change", function() {
-            _this._setModel(MAX, this.value)
+            _this._setModel(DOMAINMAX, this.value)
         });
 
-        _this.el_fake_fieldMin.on("change", function() {
-            _this._setModel(FAKEMIN, this.value)
+        _this.el_zoomed_fieldMin.on("change", function() {
+            _this._setModel(ZOOMEDMIN, this.value)
         });
-        _this.el_fake_fieldMax.on("change", function() {
-            _this._setModel(FAKEMAX, this.value)
+        _this.el_zoomed_fieldMax.on("change", function() {
+            _this._setModel(ZOOMEDMAX, this.value)
         });
+        
+        this.element.selectAll("input")
+            .on("keypress", function(e) {
+                if(d3.event.which == 13) document.activeElement.blur();
+            });
     },
 
     updateView: function() {
@@ -99,27 +106,27 @@ var MinMaxInputs = Component.extend({
 
         this.el_domain_labelMin.text(this.translator("min") + ":");
         this.el_domain_labelMax.text(this.translator("max") + ":");
-        this.el_fake_labelMin.text(this.translator("min") + ":");
-        this.el_fake_labelMax.text(this.translator("max") + ":");
+        this.el_zoomed_labelMin.text(this.translator("min") + ":");
+        this.el_zoomed_labelMax.text(this.translator("max") + ":");
 
-        this.el_domain_labelMin.classed('vzb-hidden', !this.ui.selectMinMax);
-        this.el_domain_labelMax.classed('vzb-hidden', !this.ui.selectMinMax);
-        this.el_domain_fieldMin.classed('vzb-hidden', !this.ui.selectMinMax);
-        this.el_domain_fieldMax.classed('vzb-hidden', !this.ui.selectMinMax);
+        this.el_domain_labelMin.classed('vzb-hidden', !this.ui.selectDomainMinMax);
+        this.el_domain_labelMax.classed('vzb-hidden', !this.ui.selectDomainMinMax);
+        this.el_domain_fieldMin.classed('vzb-hidden', !this.ui.selectDomainMinMax);
+        this.el_domain_fieldMax.classed('vzb-hidden', !this.ui.selectDomainMinMax);
 
-        this.el_break.classed('vzb-hidden', !(this.ui.selectMinMax && this.ui.selectFakeMinMax));
+        this.el_break.classed('vzb-hidden', !(this.ui.selectDomainMinMax && this.ui.selectZoomedMinMax));
 
-        this.el_fake_labelMin.classed('vzb-hidden', !this.ui.selectFakeMinMax);
-        this.el_fake_labelMax.classed('vzb-hidden', !this.ui.selectFakeMinMax);
-        this.el_fake_fieldMin.classed('vzb-hidden', !this.ui.selectFakeMinMax);
-        this.el_fake_fieldMax.classed('vzb-hidden', !this.ui.selectFakeMinMax);
+        this.el_zoomed_labelMin.classed('vzb-hidden', !this.ui.selectZoomedMinMax);
+        this.el_zoomed_labelMax.classed('vzb-hidden', !this.ui.selectZoomedMinMax);
+        this.el_zoomed_fieldMin.classed('vzb-hidden', !this.ui.selectZoomedMinMax);
+        this.el_zoomed_fieldMax.classed('vzb-hidden', !this.ui.selectZoomedMinMax);
 
         var formatter = d3.format(".2r");
         this.el_domain_fieldMin.property("value", formatter(this.model.marker[this.markerID].getScale().domain()[0]));
         this.el_domain_fieldMax.property("value", formatter(this.model.marker[this.markerID].getScale().domain()[1]));
 
-        this.el_fake_fieldMin.property("value", formatter(this.model.marker[this.markerID].fakeMin));
-        this.el_fake_fieldMax.property("value", formatter(this.model.marker[this.markerID].fakeMax));
+        this.el_zoomed_fieldMin.property("value", formatter(this.model.marker[this.markerID].zoomedMin));
+        this.el_zoomed_fieldMax.property("value", formatter(this.model.marker[this.markerID].zoomedMax));
     },
 
     _setModel: function(what, value) {

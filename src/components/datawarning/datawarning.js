@@ -21,7 +21,7 @@ var DataWarning = Component.extend({
     this.context = context;
 
     this.model_binds = {
-      "change:language:strings": function(evt) {
+      "change:language.strings": function(evt) {
         _this.ready();
       }
     }
@@ -77,7 +77,7 @@ var DataWarning = Component.extend({
     }
 
     container.append("div")
-      .attr("class", "vzb-data-warning-body")
+      .attr("class", "vzb-data-warning-body vzb-dialog-scrollable")
       .html(this.parent.datawarning_content.body);
 
   },

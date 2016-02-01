@@ -33,10 +33,19 @@ var LCComponent = Component.extend({
 
 
     this.model_binds = {
-      'change:time:value': function() {
+      'change:time.value': function() {
         if(!_this._readyOnce) return;
         _this.updateTime();
         _this.redrawDataPoints();
+      },
+      'change:time.playing': function() {
+        // hide tooltip on touch devices when playing
+        if (_this.model.time.playing && utils.isTouchDevice() && !_this.tooltip.classed("vzb-hidden")) _this.tooltip.classed("vzb-hidden", true);
+      },
+      'change:marker': function(evt, path) {
+        if(!_this._readyOnce) return;
+        if(path.indexOf("which") > -1 || path.indexOf("use") > -1) return;
+        _this.ready();
       }
     };
 
@@ -166,7 +175,6 @@ var LCComponent = Component.extend({
     this.yScale = this.model.marker.axis_y.getScale();
     this.xScale = this.model.marker.axis_x.getScale();
     this.cScale = this.model.marker.color.getScale();
-    this.cShadeScale = this.model.marker.color_shadow.getScale();
 
     this.yAxis.tickSize(6, 0)
       .tickFormat(this.model.marker.axis_y.tickFormatter);
@@ -202,7 +210,7 @@ var LCComponent = Component.extend({
 
     var time_1 = (this.time === null) ? this.model.time.value : this.time;
     this.time = this.model.time.value;
-    this.duration = this.model.time.playing && (this.time - time_1 > 0) ? this.model.time.delayAnimations * .9 : 0;
+    this.duration = this.model.time.playing && (this.time - time_1 > 0) ? this.model.time.delayAnimations : 0;
 
     var timeDim = this.model.time.getDimension();
     var filter = {};
@@ -236,7 +244,7 @@ var LCComponent = Component.extend({
     this.profiles = {
       "small": {
         margin: {
-          top: 30, 
+          top: 30,
           right: 20,
           left: 55,
           bottom: 30
@@ -358,6 +366,7 @@ var LCComponent = Component.extend({
     this.yAxis.scale(this.yScale)
       .labelerOptions({
         scaleType: this.model.marker.axis_y.scaleType,
+        timeFormat: this.model.time.timeFormat,
         toolMargin: {
           top: 0,
           right: this.margin.right,
@@ -371,6 +380,7 @@ var LCComponent = Component.extend({
     this.xAxis.scale(this.xScale)
       .labelerOptions({
         scaleType: this.model.marker.axis_x.scaleType,
+        timeFormat: this.model.time.timeFormat,
         toolMargin: this.margin,
         limitMaxTickNumber: this.activeProfile.limitMaxTickNumberX
           //showOuter: true
@@ -402,7 +412,7 @@ var LCComponent = Component.extend({
       _this.graph.selectAll(".vzb-lc-entity").each(function() {
         d3.select(this).classed("vzb-dimmed", false).classed("vzb-hovered", false);
       });
-      
+
       _this.hoveringNow = null;
     }
 
@@ -440,17 +450,13 @@ var LCComponent = Component.extend({
       .attr("class", "vzb-lc-entity")
       .each(function(d, index) {
         var entity = d3.select(this);
-        var color = _this.cScale(values.color[d[KEY]]);
-        var colorShadow = _this.cShadeScale(values.color_shadow[d[KEY]]);
 
         entity.append("path")
           .attr("class", "vzb-lc-line-shadow")
-          .style("stroke", colorShadow)
           .attr("transform", "translate(0,2)");
 
         entity.append("path")
-          .attr("class", "vzb-lc-line")
-          .style("stroke", color);
+          .attr("class", "vzb-lc-line");
 
       });
 
@@ -458,25 +464,20 @@ var LCComponent = Component.extend({
       .attr("class", "vzb-lc-entity")
       .each(function(d, index) {
         var entity = d3.select(this);
-        var color = _this.cScale(values.color[d[KEY]]);
-        var colorShadow = _this.cShadeScale(values.color_shadow[d[KEY]]);
         var label = values.label[d[KEY]];
 
         entity.append("circle")
           .attr("class", "vzb-lc-circle")
-          .style("fill", color)
           .attr("cx", 0);
 
         var labelGroup = entity.append("g").attr("class", "vzb-lc-label");
 
         labelGroup.append("text")
           .attr("class", "vzb-lc-labelname")
-          .style("fill", colorShadow)
           .attr("dy", ".35em");
 
         labelGroup.append("text")
           .attr("class", "vzb-lc-label-value")
-          .style("fill", colorShadow)
           .attr("dy", "1.6em");
       });
 
@@ -486,6 +487,15 @@ var LCComponent = Component.extend({
       .each(function(d, index) {
         var entity = d3.select(this);
         var label = values.label[d[KEY]];
+
+        var color = _this.cScale(values.color[d[KEY]]);
+        var colorShadow = _this.model.marker.color.which == "geo.region"?
+            _this.model.marker.color.getColorShade({
+              colorID: values.color[d[KEY]],
+              shadeID: "shade"
+            })
+            :
+            d3.rgb(color).darker(0.5).toString();
 
         //TODO: optimization is possible if getValues would return both x and time
         //TODO: optimization is possible if getValues would return a limited number of points, say 1 point per screen pixel
@@ -501,37 +511,42 @@ var LCComponent = Component.extend({
           valueY: xy[xy.length - 1][1]
         };
 
+
         // the following fixes the ugly line butts sticking out of the axis line
         //if(x[0]!=null && x[1]!=null) xy.splice(1, 0, [(+x[0]*0.99+x[1]*0.01), y[0]]);
+        var path2 = entity.select(".vzb-lc-line");
+        var totalLength = path2.node().getTotalLength();
 
         var path1 = entity.select(".vzb-lc-line-shadow")
+          .attr("stroke-dasharray", totalLength)
+          .style("stroke", colorShadow)
           .attr("d", _this.line(xy));
-        var path2 = entity.select(".vzb-lc-line")
+        path2
           //.style("filter", "none")
+          .attr("stroke-dasharray", totalLength)
+          .style("stroke", color)
           .attr("d", _this.line(xy));
-
 
         // this section ensures the smooth transition while playing and not needed otherwise
         if(_this.model.time.playing) {
-
-          var totalLength = path2.node().getTotalLength();
 
           if(_this.totalLength_1[d[KEY]] === null) {
             _this.totalLength_1[d[KEY]] = totalLength;
           }
 
           path1
-            .attr("stroke-dasharray", totalLength)
+            .interrupt()
             .attr("stroke-dashoffset", totalLength - _this.totalLength_1[d[KEY]])
             .transition()
+            .delay(0)
             .duration(_this.duration)
             .ease("linear")
             .attr("stroke-dashoffset", 0);
-
           path2
-            .attr("stroke-dasharray", totalLength)
+            .interrupt()
             .attr("stroke-dashoffset", totalLength - _this.totalLength_1[d[KEY]])
             .transition()
+            .delay(0)
             .duration(_this.duration)
             .ease("linear")
             .attr("stroke-dashoffset", 0);
@@ -557,7 +572,18 @@ var LCComponent = Component.extend({
         var entity = d3.select(this);
         var label = values.label[d[KEY]];
 
+        var color = _this.cScale(values.color[d[KEY]]);
+        var colorShadow = _this.model.marker.color.which == "geo.region"?
+            _this.model.marker.color.getColorShade({
+              colorID: values.color[d[KEY]],
+              shadeID: "shade"
+            })
+            :
+            d3.rgb(color).darker(0.5).toString();
+
+
         entity.select(".vzb-lc-circle")
+          .style("fill", color)
           .transition()
           .duration(_this.duration)
           .ease("linear")
@@ -577,10 +603,12 @@ var LCComponent = Component.extend({
         var valueHideLimit = _this.ui.entity_labels.min_number_of_entities_when_values_hide;
 
         var t = entity.select(".vzb-lc-labelname")
+          .style("fill", colorShadow)
           .attr("dx", _this.activeProfile.text_padding)
           .text(name + " " + (_this.data.length < valueHideLimit ? value : ""));
 
         entity.select(".vzb-lc-label-value")
+          .style("fill", colorShadow)
           .attr("dx", _this.activeProfile.text_padding)
           .text("");
 
@@ -741,7 +769,7 @@ var LCComponent = Component.extend({
 
   getValuesForYear: function(year) {
     if(!utils.isDate(year)) {
-      year = new Date('00:00:00 ' + year);
+      year = this.model.time.timeFormat.parse(year);
     }
     return this.model.marker.getValues({
       time: year

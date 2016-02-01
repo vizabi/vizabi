@@ -15,7 +15,7 @@ var CSVReader = Reader.extend({
     this._name = 'csv';
     this._data = [];
     this._basepath = reader_info.path;
-    this._formatters = reader_info.formatters;
+    this._parsers = reader_info.parsers;
     if(!this._basepath) {
       utils.error("Missing base path for csv reader");
     }
@@ -76,9 +76,6 @@ var CSVReader = Reader.extend({
         // once done, continue parsing
         propertiesLoadPromise.then(function() {
 
-          //format values in the dataset and filters
-          where = utils.mapRows([where], _this._formatters)[0];
-
           //make sure conditions don't contain invalid conditions
           var validConditions = [];
           utils.forEach(where, function(v, p) {
@@ -89,8 +86,12 @@ var CSVReader = Reader.extend({
               }
             };
           });
-          //only use valid conditions
-          where = utils.clone(where, validConditions);
+
+          // only use valid conditions
+          where = utils.clone(utils.deepClone(where), validConditions);
+
+          // 
+          where = utils.mapRows([where], _this._parsers)[0];
 
           //filter any rows that match where condition
           data = utils.filterAny(data, where);
@@ -108,6 +109,18 @@ var CSVReader = Reader.extend({
 
           // grouping
           data = _this.groupData(data, query);
+
+          // sorting
+          // one column, one direction (ascending) for now
+          if(query.orderBy && data[0]) {
+            if (data[0][query.orderBy]) {
+              data.sort(function(a, b) {
+                return a[query.orderBy] - b[query.orderBy];
+              });
+            } else {
+              p.reject("Cannot sort by " + query.orderBy + ". Column does not exist in result.");
+            }
+          }
 
           _this._data = data;
           p.resolve();
@@ -132,35 +145,17 @@ var CSVReader = Reader.extend({
 
 
   format: function(res) {
-    var _this = this;
 
-    //make category an array and fix missing regions
+    //make category an array
     res = res.map(function(row) {
       if(row['geo.cat']) {
         row['geo.cat'] = [row['geo.cat']];
-      }
-      if(row['geo.region'] || row['geo']) {
-        row['geo.region'] = row['geo.region'] || row['geo'];
       }
       return row;
     });
 
     //format data
-    res = utils.mapRows(res, _this._formatters);
-
-    //TODO: fix this hack with appropriate ORDER BY
-    //      plus do it AFTER parsing so you dont sort unneeded rows
-    //order by formatted
-    //sort records by time
-    var keys = Object.keys(_this._formatters);
-    var order_by = keys[0];
-    //if it has time
-    if(res[0][order_by]) {
-      res.sort(function(a, b) {
-        return a[order_by] - b[order_by];
-      });
-    }
-    //end of hack
+    res = utils.mapRows(res, this._parsers);
 
     return res;
   },
@@ -200,7 +195,6 @@ var CSVReader = Reader.extend({
   },
 
   loadProperties: function(data, query) {
-
       var _this = this;
 
       // see if there are any properties used in the query and load them
@@ -271,10 +265,18 @@ var CSVReader = Reader.extend({
           utils.forEach(data, function(row, index) { // e.g. row = { geo: se, pop: 1000, gdp: 5 }
             // copy each property that was queried to the matching data-row (matching = same keyColumn)
             utils.forEach(queriedProperties, function(property) {
-              row[property] = properties[row[keyColumn]][property];
+                
+                // check if row exists in properties
+                if(properties[row[keyColumn]]){
+                    row[property] = properties[row[keyColumn]][property];
+                }else{
+                    // if not, then complain
+                    utils.warn(row[keyColumn] + " is missing from GEO-PROPERTIES.CSV");
+                }
+              
             })
           });
-
+            
           processedPromise.resolve();
 
         });

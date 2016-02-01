@@ -14,7 +14,8 @@ import BarRankChart from 'tools/barrankchart';
 import MountainChart from 'tools/mountainchart';
 import MCComponent from 'tools/mountainchart-component';
 import BarChart from 'tools/barchart';
-import BubbleMapChart from 'tools/bubblemapchart';
+import BubbleMap from 'tools/bubblemap';
+import BMComponent from 'tools/bubblemap-component';
 import LineChart from 'tools/linechart';
 import PopByAge from 'tools/popbyage';
 
@@ -55,7 +56,7 @@ BarChart.define('default_options', {
       show: {
         _defs_: {
           "geo": ["usa", "swe", "nor"],
-          "geo.cat": ["country"]
+          "geo.cat": ["country", "unstate"]
         }
       }
     },
@@ -67,7 +68,7 @@ BarChart.define('default_options', {
       },
       axis_y: {
         use: "indicator",
-        which: "pop",
+        which: "population",
         scaleType: "log",
         allow: {
           scales: ["linear", "log"]
@@ -77,7 +78,8 @@ BarChart.define('default_options', {
         use: "property",
         which: "geo.name",
         allow: {
-          scales: ["ordinal"]
+          scales: ["ordinal"],
+          names: ["!geo", "!_default"]
         }
       },
       color: {
@@ -88,13 +90,16 @@ BarChart.define('default_options', {
     }
   },
   data: {
-    reader: "csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv"
+    reader: "waffle",
+    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools"
+    //reader: "csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv"
   },
   language: language,
   ui: {
     buttons: [],
-    buttons_expand: []
+    dialogs: {popup: [], sidebar: [], moreoptions: []},
+    presentation: false
   }
 });
 
@@ -111,8 +116,7 @@ BarRankChart.define('default_options', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["*"],
-          "geo.cat": ["country"]
+          "geo.cat": ["country", "unstate"]
         }
       },
       opacitySelectDim: .3,
@@ -126,7 +130,7 @@ BarRankChart.define('default_options', {
       },
       axis_x: {
         use: "indicator",
-        which: "pop",
+        which: "population",
         scaleType: "log",
         allow: {
           scales: [
@@ -160,36 +164,37 @@ BarRankChart.define('default_options', {
   },
   ui: {
     buttons: [],
-    buttons_expand: [],
+    dialogs: {popup: [], sidebar: [], moreoptions: []},
     presentation: false
   }
 });
 
-BubbleMapChart.define('datawarning_content', {
+BubbleMap.define('datawarning_content', {
   title: "",
   body: "Comparing the size of economy across countries and time is not trivial. The methods vary and the prices change. Gapminder has adjusted the picture for many such differences, but still we recommend you take these numbers with a large grain of salt.<br/><br/> Countries on a lower income levels have lower data quality in general, as less resources are available for compiling statistics. Historic estimates of GDP before 1950 are generally also more rough. <br/><br/> Data for child mortality is more reliable than GDP per capita, as the unit of comparison, dead children, is universally comparable across time and place. This is one of the reasons this indicator has become so useful to measure social progress. But the historic estimates of child mortality are still suffering from large uncertainties.<br/><br/> Learn more about the datasets and methods in this <a href='http://www.gapminder.org/news/data-sources-dont-panic-end-poverty' target='_blank'>blog post</a>",
   doubtDomain: [1800, 1950, 2015],
   doubtRange: [1.0, .3, .2]
 });
 
-BubbleMapChart.define('default_options', {
+BubbleMap.define('default_options', {
   state: {
     time: {
       start: "1800",
       end: "2015",
-      value: "2000",
+      value: "2015",
       step: 1,
       speed: 300,
       formatInput: "%Y"
     },
     entities: {
       dim: "geo",
+      opacitySelectDim: .3,
+      opacityRegular: 1,
       show: {
         _defs_: {
-          "geo": ["*"],
-          //"geo.region": ["afr"]
+          "geo.cat": ["country", "unstate"]
         }
-      }
+      },
     },
     marker: {
       space: ["entities", "time"],
@@ -199,38 +204,43 @@ BubbleMapChart.define('default_options', {
       },
       size: {
         use: "indicator",
-        which: "pop",
+        which: "population",
         scaleType: "linear",
         allow: {
           scales: ["linear", "log"]
         },
-        min: .04,
-        max: .90
+        domainMin: .04,
+        domainMax: .90
       },
       lat: {
         use: "property",
-        which: "lat"
+        which: "geo.latitude"
       },
       lng: {
         use: "property",
-        which: "lng"
+        which: "geo.longitude"
       },
       color: {
         use: "property",
         which: "geo.region",
-        scaleType: "ordinal"
+        scaleType: "ordinal",
+        allow: {
+          names: ["!geo.name"]
+        }
       }
     }
   },
   data: {
+    //reader: "waffle",
+    //path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
     reader: "csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty-withlatlng.csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   language: language,
   ui: {
     buttons: [],
-    buttons_expand: [],
+    dialogs: {popup: [], sidebar: [], moreoptions: []},
     presentation: false
   }
 });
@@ -271,8 +281,8 @@ MountainChart.define('default_options', {
       opacityRegular: .6,
       show: {
         _defs_: {
-          "geo": ['*'], //['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
-          "geo.cat": ["country"]
+          "geo": ["*"],
+          "geo.cat": ["country", "unstate"]
         }
       }
     },
@@ -284,15 +294,15 @@ MountainChart.define('default_options', {
       },
       axis_y: {
         use: "indicator",
-        which: "pop",
+        which: "population",
         scaleType: 'linear'
       },
       axis_x: {
         use: "indicator",
-        which: "gdp_per_cap",
+        which: "gdp_p_cap_const_ppp2011_dollar",
         scaleType: 'log',
-        min: .11, //0
-        max: 500 //100
+        domainMin: .11, //0
+        domainMax: 500 //100
       },
       size: {
         use: "indicator",
@@ -302,28 +312,34 @@ MountainChart.define('default_options', {
       color: {
         use: "property",
         which: "geo.region",
-        scaleType: "ordinal"
+        scaleType: "ordinal",
+        allow: {
+          names: ["!geo.name"]
+        }
       },
       stack: {
-        use: "value",
+        use: "constant",
         which: "all" // set a property of data or values "all" or "none"
       },
       group: {
+        use: "property",
         which: "geo.region", // set a property of data
-        manualSorting: ["eur", "ame", "afr", "asi"],
+        manualSorting: ["asia", "africa", "americas", "europe"],
         merge: false
       }
     }
   },
   language: language,
   data: {
-    //reader: "waffle"
+    //reader: "waffle",
+    //path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
     reader: "csv",
     path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
-      //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/inc_mount_data_2015test/mountains-pop-gdp-gini-1800-2030.csv"
   },
   ui: {
+    buttons: [],
+    dialogs: {popup: [], sidebar: [], moreoptions: []},
     presentation: false
   }
 });
@@ -344,7 +360,7 @@ LineChart.define('default_options', {
       show: {
         _defs_: {
           "geo": ["usa", "swe", "chn"],
-          "geo.cat": ["country"]
+          "geo.cat": ["country", "unstate"]
         }
       }
     },
@@ -357,7 +373,7 @@ LineChart.define('default_options', {
       },
       axis_y: {
         use: "indicator",
-        which: "gdp_per_cap",
+        which: "gdp_p_cap_const_ppp2011_dollar",
         scaleType: "log"
       },
       axis_x: {
@@ -367,17 +383,10 @@ LineChart.define('default_options', {
       },
       color: {
         use: "property",
-        which: "geo.region"
-      },
-      color_shadow: {
-        use: "property",
         which: "geo.region",
-        palette: {
-          "asi": "#c34357",
-          "eur": "#c6b40b",
-          "ame": "#67b111",
-          "afr": "#0eb8c7",
-          "_default": "#cb950f"
+        allow: {
+          scales: ["ordinal"],
+          names: ["!geo.name"]
         }
       }
     }
@@ -404,7 +413,8 @@ LineChart.define('default_options', {
       }
     },
     buttons: [],
-    buttons_expand: []
+    dialogs: {popup: [], sidebar: [], moreoptions: []},
+    presentation: false
   }
 });
 
@@ -432,8 +442,7 @@ BubbleChart.define('default_options', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["*"],
-          "geo.cat": ["country"]
+          "geo.cat": ["country", "unstate"]
         }
       }
     },
@@ -447,7 +456,7 @@ BubbleChart.define('default_options', {
       },
       axis_y: {
         use: "indicator",
-        which: "u5mr",
+        which: "child_mortality_rate_per1000",
         scaleType: "linear",
         allow: {
           scales: ["linear", "log"]
@@ -455,7 +464,7 @@ BubbleChart.define('default_options', {
       },
       axis_x: {
         use: "indicator",
-        which: "gdp_per_cap",
+        which: "gdp_p_cap_const_ppp2011_dollar",
         scaleType: "log",
         allow: {
           scales: ["linear", "log"]
@@ -467,34 +476,26 @@ BubbleChart.define('default_options', {
         scaleType: "ordinal",
         allow: {
           names: ["!geo.name"]
-        },
-        palette: {
-          "asi": "#FF5872",
-          "eur": "#FFE700",
-          "ame": "#7FEB00",
-          "afr": "#00D5E9",
-          "_default": "#ffb600"
         }
       },
       size: {
         use: "indicator",
-        which: "pop",
+        which: "population",
         scaleType: "linear",
         allow: {
           scales: ["linear", "log"]
         },
-        min: .04,
-        max: .90
+        domainMin: .04,
+        domainMax: .90
       }
     }
   },
   data: {
-    //reader: "waffle",
-    reader: "csv",
-    //path: Vzb._globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    reader: "waffle",
+    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    //reader: "csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
-      //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/bub_data_u5mr_inc_etc_20150823.csv"
   },
   language: language,
   ui: {
@@ -511,7 +512,7 @@ BubbleChart.define('default_options', {
       }
     },
     buttons: [],
-    buttons_expand: [],
+    dialogs: {popup: [], sidebar: [], moreoptions: []},
     presentation: false
   }
 });
@@ -556,11 +557,19 @@ PopByAge.define('default_options', {
       },
       axis_x: {
         use: "indicator",
-        which: "pop"
+        which: "population"
       },
       color: {
+<<<<<<< HEAD
         use: "value",
         which: "_default"
+=======
+        use: "constant",
+        which: "#ffb600",
+        allow: {
+          names: ["!geo.name"]
+        }
+>>>>>>> upstream/develop
       }
     }
   },
@@ -572,7 +581,8 @@ PopByAge.define('default_options', {
   language: language,
   ui: {
     buttons: [],
-    buttons_expand: []
+    dialogs: {popup: [], sidebar: [], moreoptions: []},
+    presentation: false
   }
 });
 
@@ -590,6 +600,18 @@ MCComponent.define("preload", function(done) {
   });
 });
 
+//preloading bubble map country shapes
+BMComponent.define("preload", function(done) {
+  var shape_path = globals.gapminder_paths.baseUrl + "data/world-50m.json";
+
+  d3.json(shape_path, function(error, json) {
+    if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
+    BMComponent.define('world', json);
+    done.resolve();
+  });
+});
+
+
 //preloading metadata for all charts
 Tool.define("preload", function(promise) {
 
@@ -597,8 +619,10 @@ Tool.define("preload", function(promise) {
 
   var metadata_path = Vzb._globals.gapminder_paths.baseUrl + "data/waffles/metadata.json";
   var globals = Vzb._globals;
-
-
+    
+  Vzb._globals.version = Vzb._version;
+  Vzb._globals.build = Vzb._build;
+    
   //TODO: concurrent
   //load language first
   this.preloadLanguage().then(function() {
@@ -621,7 +645,7 @@ Tool.define("preload", function(promise) {
       addMinMax("axis_x");
       addMinMax("axis_y");
       addPalettes("color");
-      
+
       promise.resolve();
 
     });
@@ -644,10 +668,10 @@ Tool.define("preload", function(promise) {
     var axis = _this.default_options.state.marker[hook];
     if(axis.use === "indicator" && globals.metadata.indicatorsDB[axis.which] && globals.metadata.indicatorsDB[axis.which].domain) {
       var domain = globals.metadata.indicatorsDB[axis.which].domain;
-      axis.min = axis.min || domain[0];
-      axis.max = axis.max || domain[1];
-      axis.fakeMin = axis.fakeMin || axis.min || domain[0];
-      axis.fakeMax = axis.fakeMax || axis.max || domain[1];
+      axis.domainMin = axis.domainMin || domain[0];
+      axis.domainMax = axis.domainMax || domain[1];
+      axis.zoomedMin = axis.zoomedMin || axis.domainMin || domain[0];
+      axis.zoomedMax = axis.zoomedMax || axis.domainMax || domain[1];
     }
   }
 

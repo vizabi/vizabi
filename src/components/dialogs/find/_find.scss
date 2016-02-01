@@ -1,0 +1,86 @@
+.vzb-tool-dialogs {
+  .vzb-dialogs-dialog {
+    &[data-dlg='find'] {
+      .vzb-find-filter {
+        display: inline-block;
+        position: relative;
+        max-width: 170px;
+      }
+      &.vzb-moreoptions {
+        .vzb-dialog-title {
+          .vzb-find-filter {
+            padding-top: 20px;
+            margin-bottom: 0; 
+          }
+        }
+        .vzb-dialog-content {
+          padding-bottom: 0;
+          margin-bottom: 15px;
+        }
+      }
+    }
+  }
+}
+
+//responsiveness
+&.vzb-large {
+  &.vzb-dialog-expand-true {
+    .vzb-dialogs-dialog {
+      &.vzb-sidebar {
+        &[data-dlg="find"] {
+          display: flex;
+          flex-direction: column;
+          flex: auto;
+
+          .vzb-dialog-buttons {
+            display: block;
+            flex: none;
+          }
+
+          .vzb-dialog-button.vzb-label-primary {
+            display: none;
+          }
+
+          .vzb-dialog-content {
+            flex-grow: 1;
+
+            .vzb-dialog-content-fixed {
+              height: 310px;
+              max-height: 305px;
+              min-width: 140px;
+            }
+          }
+
+          .vzb-dialog-title {
+            display: inline-block;
+            padding: 0 0 0 20px;
+            vertical-align: top;
+            margin-top: 0;
+            flex: none;
+          }
+
+          .vzb-find-filter {
+            display: inline-block;
+            position: relative;
+            padding: 0 10px;
+            max-width: 210px;
+            top: 0;
+          }
+
+          .vzb-dialog-content-fixed {
+            min-height: 0;
+            max-height: initial;
+            height: auto;
+            margin-top: 10px;
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+

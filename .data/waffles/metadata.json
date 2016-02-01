@@ -1,14 +1,28 @@
 {
     "color": {
+        "shades": {
+            "geo.region": {
+                "fill1": 0,
+                "fill2": 1,
+                "fill3": 2,
+                "shade": 3,
+                "print_fill": 4,
+                "print_stroke": 5,
+                "_default": 0
+            },
+            "_default": {
+                "_default": 0
+            }
+        },
         "palettes": {
             "geo.region": {
-                "asi": "#FF5872",
-                "eur": "#FFE700",
-                "ame": "#7FEB00",
-                "afr": "#00D5E9",
-                "_default": "#ffb600"
+                "asia": ["#ff5872", "#ff5178", "#ff658a", "#da0025", "#fa4e73", "#b2043a"], 
+                "europe": ["#ffe700", "#fbdd00", "#fff400", "#fbaf09", "#ffe700", "#b17f4a"], 
+                "americas": ["#7feb00", "#5de200", "#81f201", "#00b900", "#b5ea32", "#008d36"], 
+                "africa": ["#00d5e9", "#00c8ec", "#00e1ec", "#0098df", "#77dff7", "#0586c6"], 
+                "_default": ["#ffb600", "#ffaa14", "#ffc500", "#fb6d19", "#ffb600", "#9b4838"] 
             },
-            "gdp_per_cap": {
+            "gdp_p_cap_const_ppp2011_dollar": {
                 "0": "#62CCE3",
                 "1": "#B4DE79",
                 "2": "#E1CE00",
@@ -64,6 +78,20 @@
             "scales": ["ordinal"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
         },
+        "geo.latitude": {
+            "allowCharts": ["*"],
+            "use": "property",
+            "unit": "",
+            "scales": ["linear"],
+            "sourceLink": "https://gapminder.org"
+        },
+        "geo.longitude": {
+            "allowCharts": ["*"],
+            "use": "property",
+            "unit": "",
+            "scales": ["linear"],
+            "sourceLink": "https://gapminder.org"
+        },
         "geo.region": {
             "allowCharts": ["*"],
             "use": "property",
@@ -78,75 +106,63 @@
             "scales": ["ordinal"],
             "sourceLink": ""
         },
-        "pop": {
-            "allowCharts": ["*"],
+        "population": {
+            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
             "use": "indicator",
-            "unit": "",
+            "unit": "population",
             "scaleType": "log",
             "scales": ["linear", "log"],
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
             "domain": [14000, 1400000000]
         },
-        "lex": {
-            "allowCharts": ["linechart", "barchart","barrankchart"],
+        "life_expectancy": {
+            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
             "use": "indicator",
-            "unit": "lex",
+            "unit": "life_expectancy",
             "scales": ["linear"],
+            "domain": [10, 83],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1H3nzTwbn8z4lJ5gJ_WfDgCeGEXK3PVGcNjQ_U5og8eo/pub?gid=1"
         },
+        "fertility_rate": {
+            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
+            "use": "indicator",
+            "unit": "fertility_rate",
+            "scales": ["linear"],
+            "domain": [0, 10],
+            "sourceLink": "https://gapminder.org"
+        },
         "gini": {
-            "allowCharts": ["mountainchart", "bubblechart", "bubblemapchart"],
+            "allowCharts": ["mountainchart", "bubblechart", "bubblemap"],
             "use": "indicator",
             "unit": "gini",
             "scales": ["linear"],
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
         },
-        "gdp_per_cap": {
-            "allowCharts": ["*"],
+        "gdp_p_cap_const_ppp2011_dollar": {
+            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
             "use": "indicator",
-            "unit": "gdp_per_cap",
+            "unit": "gdp_p_cap_const_ppp2011_dollar",
             "interpolation": "exp",
             "scales": ["log", "linear"],
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
-            "domain": [300, 130000]
+            "domain": [300, 140000]
         },
-        "gdppc_pday": {
-            "allowCharts": ["none"],
+        "gdp_const_ppp2011_dollar": {
+            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
             "use": "indicator",
-            "unit": "gdppc_pday",
+            "unit": "gdp_const_ppp2011_dollar",
             "interpolation": "exp",
             "scales": ["log", "linear"],
-            "sourceLink": "https://docs.google.com/spreadsheets/d/1PybxH399kK6OjJI4T2M33UsLqgutwj3SuYbk7Yt6sxE/pub?gid=1"
+            "sourceLink": "https://gapminder.org",
+            "domain": [1e6, 100e12]
         },
-        "inc_pday": {
-            "allowCharts": ["none"],
+        "child_mortality_rate_per1000": {
+            "allowCharts": ["bubblechart", "mountainchart", "bubblemap"],
             "use": "indicator",
-            "unit": "inc_pday",
-            "interpolation": "exp",
-            "scales": ["log", "linear"],
-            "sourceLink": "https://docs.google.com/spreadsheets/d/1PybxH399kK6OjJI4T2M33UsLqgutwj3SuYbk7Yt6sxE/pub?gid=1"
-        },
-        "u5mr_not": {
-            "allowCharts": ["none"],
-            "use": "indicator",
-            "unit": "u5mr",
-            "scales": ["linear", "log"],
-            "sourceLink": "https://docs.google.com/spreadsheets/d/1KqOcaDdM1rWQD8TnAEZpYDDQRJqlxqU7t_KT55pgd4U/pub?gid=1"
-        },
-        "u5mr": {
-            "allowCharts": ["bubblechart", "bubblemapchart"],
-            "use": "indicator",
-            "unit": "u5mr",
+            "unit": "child_mortality_rate_per1000",
             "scales": ["linear", "log"],
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
             "domain": [0, 550]
-        },
-        "childSurv": {
-            "allowCharts": ["none"],
-            "use": "indicator",
-            "unit": "childSurv",
-            "scales": ["linear", "log"],
-            "sourceLink": "https://docs.google.com/spreadsheets/d/1KqOcaDdM1rWQD8TnAEZpYDDQRJqlxqU7t_KT55pgd4U/pub?gid=1"
         },
         "age": {
             "allowCharts": ["popbyage"],
@@ -157,7 +173,7 @@
         },
         "_default": {
             "allowCharts": ["*"],
-            "use": "value",
+            "use": "constant",
             "unit": "",
             "scales": ["ordinal"],
             "sourceLink": ""
@@ -175,22 +191,18 @@
                 "id": "economy",
                 "children": [
                     {"id": "inequality", "children": [{"id":"gini"}]}, 
-                    {"id": "gdp_per_cap"}, 
-                    {"id": "gdppc_pday"}, 
-                    {"id": "inc_pday"}
+                    {"id": "gdp_p_cap_const_ppp2011_dollar"},
+                    {"id": "gdp_const_ppp2011_dollar"}
                 ]
             }, {
                 "id": "health",
                 "children": [
-                    {"id": "lex"}, 
-                    {"id": "u5mr"},
-                    {
-                        "id": "child_health_others",
-                        "children": [{"id": "u5mr_not"}, {"id": "childSurv"}]
-                    }
+                    {"id": "life_expectancy"}, 
+                    {"id": "child_mortality_rate_per1000"},
+                    {"id": "fertility_rate"}
                 ]
             }, {
-                "id": "pop"
+                "id": "population"
             }, {
                 "id": "_default"
             }
@@ -599,7 +611,7 @@
             "geo": "kor",
             "name": "South Korea"
         }, {
-            "geo": "sds",
+            "geo": "ssd",
             "name": "South Sudan"
         }, {
             "geo": "esp",

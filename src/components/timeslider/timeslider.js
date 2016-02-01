@@ -12,21 +12,11 @@ var class_axis_aligned = "vzb-ts-axis-aligned";
 var class_show_value = "vzb-ts-show-value";
 var class_show_value_when_drag_play = "vzb-ts-show-value-when-drag-play";
 
-var time_formats = {
-  "year": "%Y",
-  "month": "%b",
-  "week": "week %U",
-  "day": "%d/%m/%Y",
-  "hour": "%d/%m/%Y %H",
-  "minute": "%d/%m/%Y %H:%M",
-  "second": "%d/%m/%Y %H:%M:%S"
-};
-
 //margins for slider
 var profiles = {
   small: {
     margin: {
-      top: 9,
+      top: 7,
       right: 15,
       bottom: 10,
       left: 15
@@ -36,17 +26,17 @@ var profiles = {
   },
   medium: {
     margin: {
-      top: 9,
+      top: 16,
       right: 15,
       bottom: 10,
       left: 15
     },
-    radius: 10,
+    radius: 9,
     label_spacing: 12
   },
   large: {
     margin: {
-      top: 9,
+      top: 14,
       right: 15,
       bottom: 10,
       left: 15
@@ -58,10 +48,6 @@ var profiles = {
 
 
 var presentationProfileChanges = {
-  "small": {
-    margin: {
-    }
-  },
   "medium": {
     margin: {
       top: 9
@@ -84,12 +70,11 @@ var TimeSlider = Component.extend({
 
     this.name = "gapminder-timeslider";
     this.template = this.template || "timeslider.html";
-
+    this.prevPosition = null;
     //define expected models/hooks for this component
     this.model_expects = [{
       name: "time",
-      type: "time",
-      delay: "delay"
+      type: "time"
     }];
 
     var _this = this;
@@ -99,7 +84,7 @@ var TimeSlider = Component.extend({
 
     //binds methods to this model
     this.model_binds = {
-      'change:time': function(evt, original) {
+      'change:time': function(evt, path) {
 
         //TODO: readyOnce CANNOT be run twice
         if(_this._splash !== _this.model.time.splash) {
@@ -110,10 +95,14 @@ var TimeSlider = Component.extend({
 
         if(!_this._splash) {
 
-          if((['change:time:start', 'change:time:end']).indexOf(evt) !== -1) {
+          if((['time.start', 'time.end']).indexOf(path) !== -1) {
             _this.changeLimits();
           }
           _this._optionClasses();
+        }
+      },
+      'change:time.value': function(evt, path) {
+        if(!_this._splash) {
           //only set handle position if change is external
           if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
@@ -159,7 +148,7 @@ var TimeSlider = Component.extend({
     this.handle = this.slide.select(".vzb-ts-slider-handle");
     this.valueText = this.slide.select('.vzb-ts-slider-value');
     //Scale
-    this.xScale = d3.time.scale()
+    this.xScale = d3.time.scale.utc()
       .clamp(true);
 
     //Axis
@@ -167,7 +156,7 @@ var TimeSlider = Component.extend({
       .orient("bottom")
       .tickSize(0);
     //Value
-    this.valueText.attr("text-anchor", "middle").attr("dy", "-1em");
+    this.valueText.attr("text-anchor", "middle").attr("dy", "-0.7em");
 
     var brushed = _this._getBrushed(),
       brushedEnd = _this._getBrushedEnd();
@@ -213,18 +202,15 @@ var TimeSlider = Component.extend({
     var pause = this.element.select(".vzb-ts-btn-pause");
     var _this = this;
     var time = this.model.time;
-    var delay = this.model.time.delay;
 
     play.on('click', function () {
+
       _this.model.time.play();
     });
 
     pause.on('click', function () {
       _this.model.time.pause("soft");
     });
-
-    var fmt = time.formatOutput || time_formats[time.unit];
-    this.format = d3.time.format(fmt);
 
     this.changeLimits();
     this.changeTime();
@@ -239,7 +225,7 @@ var TimeSlider = Component.extend({
     this.xScale.domain([minValue, maxValue]);
     //axis
     this.xAxis.tickValues([minValue, maxValue])
-      .tickFormat(this.format);
+      .tickFormat(this.model.time.timeFormat);
   },
 
   changeTime: function() {
@@ -254,43 +240,43 @@ var TimeSlider = Component.extend({
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
    */
-   resize: function () {
+  resize: function () {
 
-     this.model.time.pause();
+    this.model.time.pause();
 
-     this.profile = this.getActiveProfile(profiles, presentationProfileChanges);
+    this.profile = this.getActiveProfile(profiles, presentationProfileChanges);
 
-     var slider_w = parseInt(this.slider_outer.style("width"), 10);
-     var slider_h = parseInt(this.slider_outer.style("height"), 10);
-     this.width = slider_w - this.profile.margin.left - this.profile.margin.right;
-     this.height = slider_h - this.profile.margin.bottom - this.profile.margin.top;
-     var _this = this;
+    var slider_w = parseInt(this.slider_outer.style("width"), 10);
+    var slider_h = parseInt(this.slider_outer.style("height"), 10);
+    this.width = slider_w - this.profile.margin.left - this.profile.margin.right;
+    this.height = slider_h - this.profile.margin.bottom - this.profile.margin.top;
+    var _this = this;
 
-     //translate according to margins
-     this.slider.attr("transform", "translate(" + this.profile.margin.left + "," + this.profile.margin.top + ")");
+    //translate according to margins
+    this.slider.attr("transform", "translate(" + this.profile.margin.left + "," + this.profile.margin.top + ")");
 
-     //adjust scale width if it was not set manually before
-     if (this.xScale.range()[1] = 1) this.xScale.range([0, this.width]);
+    //adjust scale width if it was not set manually before
+    if (this.xScale.range()[1] = 1) this.xScale.range([0, this.width]);
 
-     //adjust axis with scale
-     this.xAxis = this.xAxis.scale(this.xScale)
-       .tickPadding(this.profile.label_spacing);
+    //adjust axis with scale
+    this.xAxis = this.xAxis.scale(this.xScale)
+      .tickPadding(this.profile.label_spacing);
 
-     this.axis.attr("transform", "translate(0," + this.height / 2 + ")")
-       .call(this.xAxis);
+    this.axis.attr("transform", "translate(0," + this.height / 2 + ")")
+      .call(this.xAxis);
 
-     this.slide.select(".background")
-       .attr("height", this.height);
+    this.slide.select(".background")
+      .attr("height", this.height);
 
-     //size of handle
-     this.handle.attr("transform", "translate(0," + this.height / 2 + ")")
-       .attr("r", this.profile.radius);
+    //size of handle
+    this.handle.attr("transform", "translate(0," + this.height / 2 + ")")
+      .attr("r", this.profile.radius);
 
-     this.sliderWidth = _this.slider.node().getBoundingClientRect().width;
+    this.sliderWidth = _this.slider.node().getBoundingClientRect().width;
 
-     this._setHandle();
+    this._setHandle();
 
-   },
+  },
 
   /**
    * Returns width of slider text value.
@@ -307,7 +293,9 @@ var TimeSlider = Component.extend({
   _getBrushed: function() {
     var _this = this;
     return function() {
-      _this.model.time.pause();
+
+      if (_this.model.time.playing)
+        _this.model.time.pause();
 
       _this._optionClasses();
       _this.element.classed(class_dragging, true);
@@ -331,7 +319,7 @@ var TimeSlider = Component.extend({
         //set handle position
         _this.handle.attr("cx", posX);
         _this.valueText.attr("transform", "translate(" + posX + "," + (_this.height / 2) + ")");
-        _this.valueText.text(_this.format(value));
+        _this.valueText.text(_this.model.time.timeFormat(value));
       }
 
       //set time according to dragged position
@@ -348,6 +336,7 @@ var TimeSlider = Component.extend({
   _getBrushedEnd: function() {
     var _this = this;
     return function() {
+      _this._setTime.recallLast();
       _this.element.classed(class_dragging, false);
       _this.model.time.dragStop();
       _this.model.time.snap();
@@ -359,25 +348,23 @@ var TimeSlider = Component.extend({
    * @param {Boolean} transition whether to use transition or not
    */
   _setHandle: function(transition) {
+    var _this = this;
     var value = this.model.time.value;
     this.slide.call(this.brush.extent([value, value]));
+    this.valueText.text(this.model.time.timeFormat(value));
 
-    this.valueText.text(this.format(value));
-
-    var old_pos = this.handle.attr("cx");
+//    var old_pos = this.handle.attr("cx");
     var new_pos = this.xScale(value);
-    if(old_pos == null) old_pos = new_pos;
-    var delayAnimations = new_pos > old_pos ? this.model.time.delayAnimations : 0;
-
-
+    if(_this.prevPosition == null) _this.prevPosition = new_pos;
+    var delayAnimations = new_pos > _this.prevPosition ? this.model.time.delayAnimations : 0;
     if(transition) {
-      this.handle.attr("cx", old_pos)
+      this.handle.attr("cx", _this.prevPosition)
         .transition()
         .duration(delayAnimations)
         .ease("linear")
         .attr("cx", new_pos);
 
-      this.valueText.attr("transform", "translate(" + old_pos + "," + (this.height / 2) + ")")
+      this.valueText.attr("transform", "translate(" + _this.prevPosition + "," + (this.height / 2) + ")")
         .transition()
         .duration(delayAnimations)
         .ease("linear")
@@ -387,12 +374,13 @@ var TimeSlider = Component.extend({
         //cancel active transition
         .interrupt()
         .attr("cx", new_pos);
-        
+
       this.valueText
         //cancel active transition
         .interrupt()
         .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")");
     }
+    _this.prevPosition = new_pos;
 
   },
 
@@ -409,21 +397,10 @@ var TimeSlider = Component.extend({
     //var now = new Date();
     //if (this._updTime != null && now - this._updTime < frameRate) return;
     //this._updTime = now;
-
-    _this.model.time.value = time;
+    var persistent = !this.model.time.dragging && !this.model.time.playing;
+    _this.model.time.getModelObject('value').set(time, false, persistent); // non persistent
   },
 
-    /**
-   * Sets the current delay model to delay
-   * @param {number} time The time
-   */
-  _setDelay: function (delay) {
-    //update state
-    var _this = this;
-
-    _this.model.time.delay = delay;
-    _this.model.time.delaySet = true;
-  },
 
   /**
    * Applies some classes to the element according to options

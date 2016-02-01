@@ -60,8 +60,7 @@ var MCSelectList = Class.extend({
           });
         var labelCloseGroup = label.select("g.vzb-mc-label-x")
         if (!utils.isTouchDevice()){
-          labelCloseGroup
-            .html(iconClose)
+          utils.setIcon(labelCloseGroup, iconClose)
             .select("svg")
             .attr("class", "vzb-mc-label-x-icon")
             .attr("width", "0px")
@@ -105,7 +104,7 @@ var MCSelectList = Class.extend({
     var titleHeight = _this.yTitleEl.select("text").node().getBBox().height || 0;
 
     var maxFontHeight = (_this.height - titleHeight * 3) / (_this.selectList.data().length + 2);
-    if(fontHeight > maxFontHeight) fontHeight = maxFontHeight; 
+    if(fontHeight > maxFontHeight) fontHeight = maxFontHeight;
 
     var currentAggrLevel = "null";
     var aggrLevelSpacing = 0;

@@ -16,8 +16,8 @@ var StackModel = Model.extend({
    * Default values for this model
    */
   _defaults: {
-    use: "value",
-    which: undefined,
+    use: null,
+    which: null,
     merge: false
   },
   /**
@@ -26,13 +26,13 @@ var StackModel = Model.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(values, parent, bind) {
+  init: function(name, values, parent, bind) {
 
     this._type = "model";
     //TODO: add defaults extend to super
     var defaults = utils.deepClone(this._defaults);
     values = utils.extend(defaults, values);
-    this._super(values, parent, bind);
+    this._super(name, values, parent, bind);
   },
 
   /**
@@ -44,13 +44,13 @@ var StackModel = Model.extend({
 
     //use must not be "indicator" 
     if(this.use === "indicator") {
-      utils.warn("stack model: use must not be 'indicator'. Resetting use to 'value' and which to '" + palettes._default)
-      this.use = "value";
+      utils.warn("stack model: use must not be 'indicator'. Resetting use to 'constant' and which to '" + palettes._default)
+      this.use = "constant";
       this.which = palettes._default;
     }
 
-    //if use is "value"
-    if(this.use === "value" && utils.values(palettes).indexOf(this.which) == -1) {
+    //if use is "constant"
+    if(this.use === "constant" && utils.values(palettes).indexOf(this.which) == -1) {
       utils.warn("stack model: the requested value '" + this.which + "' is not allowed. resetting to '" +
         palettes._default)
       this.which == palettes._default;

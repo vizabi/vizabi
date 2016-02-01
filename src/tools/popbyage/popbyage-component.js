@@ -42,23 +42,20 @@ var PopByAge = Component.extend({
 
     var _this = this;
     this.model_binds = {
-      "change:time:value": function(evt) {
+      "change:time.value": function(evt) {
         _this._updateEntities();
       },
-      "change:entities:needUpdate": function(evt) {
-        _this._updateEntities();
-      },
-      "change:entities:show": function(evt) {
+      "change:entities.show": function(evt) {
         console.log('Trying to change show');
       },
-      "change:age:select": function(evt) {
+      "change:age.select": function(evt) {
         _this._selectBars();
       },
-      "change:marker:color:palette": function (evt) {
+      "change:marker.color.palette": function (evt) {
         if (!_this._readyOnce) return;
         _this._updateEntities();
       },
-      "change:marker:color:scaleType":function (evt) {
+      "change:marker.color.scaleType":function (evt) {
         if (!_this._readyOnce) return;
         _this._updateEntities();
       }
@@ -110,8 +107,6 @@ var PopByAge = Component.extend({
     this.AGEDIM = this.model.age.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
 
-    this.timeFormatter = d3.time.format(this.model.time.formatOutput);
-
     this.updateUIStrings();
     this._updateIndicators();
     this.resize();
@@ -152,7 +147,6 @@ var PopByAge = Component.extend({
 
     var _this = this;
     var time = this.model.time;
-    var timeFormatter = d3.time.format(this.model.time.formatInput);
     var ageDim = this.AGEDIM;
     var timeDim = this.TIMEDIM;
     var duration = (time.playing) ? time.delayAnimations : 0;
@@ -188,11 +182,16 @@ var PopByAge = Component.extend({
       .attr("id", function(d) {
         return "vzb-bc-bar-" + d[ageDim];
       })
-      .on("mousemove", highlight)
+      .on("mouseover", highlight)
       .on("mouseout", unhighlight)
       .on("click", function(d, i) {
+        if(utils.isTouchDevice()) return;
         _this.model.age.selectEntity(d);
       })
+      .onTap(function(d) {
+        d3.event.stopPropagation();
+        _this.model.age.selectEntity(d);
+      })    
       .append('rect');
 
     this.entityLabels.enter().append("g")
@@ -200,8 +199,6 @@ var PopByAge = Component.extend({
       .attr("id", function(d) {
         return "vzb-bc-label-" + d[ageDim];
       })
-      .on("mousemove", highlight)
-      .on("mouseout", unhighlight)
       .append('text')
       .attr("class", "vzb-bc-age");
 
@@ -236,7 +233,7 @@ var PopByAge = Component.extend({
           age = age + "-to-" + (age + group_by - 1);
         }
 
-        return age + yearOldsIn + " " + timeFormatter(time.value) + ": " + formatter(values.axis_x[d[ageDim]]);
+        return age + yearOldsIn + " " + _this.model.time.timeFormat(time.value) + ": " + formatter(values.axis_x[d[ageDim]]);
       })
       .attr("x", 7)
       .attr("y", function(d, i) {
@@ -254,7 +251,7 @@ var PopByAge = Component.extend({
 
     this.title.text(label);
 
-    this.year.text(this.timeFormatter(this.model.time.value));
+    this.year.text(this.model.time.timeFormat(this.model.time.value));
 
     //update x axis again
     //TODO: remove this when grouping is done at data level
@@ -283,12 +280,16 @@ var PopByAge = Component.extend({
    * Highlight and unhighlight labels
    */
   _unhighlightBars: function() {
+    if(utils.isTouchDevice()) return;
+      
     this.bars.classed('vzb-dimmed', false);
     this.bars.selectAll('.vzb-bc-bar.vzb-hovered').classed('vzb-hovered', false);
     this.labels.selectAll('.vzb-hovered').classed('vzb-hovered', false);
   },
 
   _highlightBar: function(d) {
+    if(utils.isTouchDevice()) return;
+      
     this.bars.classed('vzb-dimmed', true);
     var curr = this.bars.select("#vzb-bc-bar-" + d[this.AGEDIM]);
     curr.classed('vzb-hovered', true);

@@ -51,7 +51,7 @@ var MountainChartComponent = Component.extend({
 
         //attach event listeners to the model items
         this.model_binds = {
-            "change:time:value": function (evt) {
+            "change:time.value": function (evt) {
                 //console.log("MONT: " + evt);
                 _this.updateTime();
                 _this.redrawDataPoints();
@@ -59,44 +59,51 @@ var MountainChartComponent = Component.extend({
                 _this._probe.redraw();
                 _this.updateDoubtOpacity();
             },
-            "change:time:xScaleFactor": function () {
+            "change:time.playing": function (evt) {
+                // this listener is a patch for fixing #1228. time.js doesn't produce the last event
+                // with playing == false when paused softly
+                if(!_this.model.time.playing){
+                    _this.redrawDataPoints();
+                }
+            },
+            "change:time.xScaleFactor": function () {
                 _this.ready();
             },
-            "change:time:xScaleShift": function () {
+            "change:time.xScaleShift": function () {
                 _this.ready();
             },
-            "change:time:tailCutX": function () {
+            "change:time.tailCutX": function () {
                 _this.ready();
             },
-            "change:time:tailFade": function () {
+            "change:time.tailFade": function () {
                 _this.ready();
             },
-            "change:time:probeX": function () {
+            "change:time.probeX": function () {
                 _this.ready();
             },
-            "change:time:xPoints": function () {
+            "change:time.xPoints": function () {
                 _this.ready();
             },
-            "change:time:xLogStops": function () {
+            "change:time.xLogStops": function () {
                 _this.updateSize();
             },
-            "change:time:yMaxMethod": function () {
+            "change:time.yMaxMethod": function () {
                 _this._adjustMaxY({ force: true });
                 _this.redrawDataPoints();
             },
-            "change:time:record": function (evt) {
+            "change:time.record": function (evt) {
                 if (_this.model.time.record) {
                     _this._export.open(this.element, this.name);
                 } else {
                     _this._export.reset();
                 }
             },
-            "change:entities:highlight": function (evt) {
+            "change:entities.highlight": function (evt) {
                 if (!_this._readyOnce) return;
                 _this.highlightEntities();
                 _this.updateOpacity();
             },
-            "change:entities:select": function (evt) {
+            "change:entities.select": function (evt) {
                 if (!_this._readyOnce) return;
                 _this.selectEntities();
                 _this._selectlist.redraw();
@@ -104,35 +111,40 @@ var MountainChartComponent = Component.extend({
                 _this.updateDoubtOpacity();
                 _this.redrawDataPoints();
             },
-            "change:entities:opacitySelectDim": function (evt) {
+            "change:entities.opacitySelectDim": function (evt) {
                 _this.updateOpacity();
             },
-            "change:entities:opacityRegular": function (evt) {
+            "change:entities.opacityRegular": function (evt) {
                 _this.updateOpacity();
             },
-            "change:marker": function (evt) {
+            "change:marker": function (evt, path) {
                 if (!_this._readyOnce) return;
-                if (evt.indexOf("fakeMin") > -1 || evt.indexOf("fakeMax") > -1) {
+                if(path.indexOf("scaleType") > -1) {
+                    _this.ready();
+                    return;
+                }
+                if (path.indexOf("zoomedMin") > -1 || path.indexOf("zoomedMax") > -1) {
                     _this.zoomToMaxMin();
                     _this.redrawDataPoints();
                     _this._probe.redraw();
+                    return;
                 }
             },
-            "change:marker:group": function (evt) {
+            "change:marker.group": function (evt, path) {
                 if (!_this._readyOnce) return;
-                if (evt.indexOf("group:merge") > -1) return;
+                if (path.indexOf("group.merge") > -1) return;
                 _this.ready();
             },
-            "change:marker:group:merge": function (evt) {
+            "change:marker.group.merge": function (evt) {
                 if (!_this._readyOnce) return;
                 _this.updateTime();
                 _this.redrawDataPoints();
             },
-            "change:marker:stack": function (evt) {
+            "change:marker.stack": function (evt) {
                 if (!_this._readyOnce) return;
                 _this.ready();
             },
-            "change:marker:color:palette": function (evt) {
+            "change:marker.color.palette": function (evt) {
                 if (!_this._readyOnce) return;
                 _this.redrawDataPointsOnlyColors();
                 _this._selectlist.redraw();
@@ -221,8 +233,8 @@ var MountainChartComponent = Component.extend({
     afterPreload: function () {
         var _this = this;
 
-        var yearNow = _this.model.time.value.getFullYear();
-        var yearEnd = _this.model.time.end.getFullYear();
+        var yearNow = _this.model.time.value.getUTCFullYear();
+        var yearEnd = _this.model.time.end.getUTCFullYear();
 
         this._math.xScaleFactor = this.model.time.xScaleFactor;
         this._math.xScaleShift = this.model.time.xScaleShift;
@@ -234,7 +246,7 @@ var MountainChartComponent = Component.extend({
 
         if (!yMax || !shape || shape.length === 0) return;
 
-        this.xScale = d3.scale.log().domain([this.model.marker.axis_x.min, this.model.marker.axis_x.max]);
+        this.xScale = d3.scale.log().domain([this.model.marker.axis_x.domainMin, this.model.marker.axis_x.domainMax]);
         this.yScale = d3.scale.linear().domain([0, +yMax]);
 
         _this.updateSize(shape.length);
@@ -290,7 +302,7 @@ var MountainChartComponent = Component.extend({
 
     ready: function () {
         //console.log("ready")
-
+        
         this._math.xScaleFactor = this.model.time.xScaleFactor;
         this._math.xScaleShift = this.model.time.xScaleShift;
 
@@ -333,17 +345,13 @@ var MountainChartComponent = Component.extend({
         };
 
         var presentationProfileChanges = {
-          small: {
-            margin: { top: 10, right: 10, left: 10, bottom: 30 },
-            infoElHeight: 16
-          },
           medium: {
             margin: { top: 20, right: 20, left: 20, bottom: 50 },
-            infoElHeight: 20
+            infoElHeight: 26
           },
           large: {
             margin: { top: 30, right: 30, left: 30, bottom: 50 },
-            infoElHeight: 22
+            infoElHeight: 32
           }
         };
 
@@ -401,8 +409,9 @@ var MountainChartComponent = Component.extend({
             .attr("transform", "translate(" + this.width + "," + this.height + ")")
             .attr("dy", "-0.36em");
 
-        this.yTitleEl.select("text")
-            .attr("transform", "translate(0," + margin.top + ")")
+        this.yTitleEl
+          .style("font-size", infoElHeight)
+          .attr("transform", "translate(0," + margin.top + ")")
 
 
         var warnBB = this.dataWarningEl.select("text").node().getBBox();
@@ -426,7 +435,7 @@ var MountainChartComponent = Component.extend({
                 .attr("height", infoElHeight)
             this.infoEl.attr('transform', 'translate('
                 + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
-                + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
+                + (translate[1]-infoElHeight * .8) + ')');
         }
 
         this.eventAreaEl
@@ -442,10 +451,10 @@ var MountainChartComponent = Component.extend({
     zoomToMaxMin: function(){
         var _this = this;
 
-        if(this.model.marker.axis_x.fakeMin==null || this.model.marker.axis_x.fakeMax==null) return;
+        if(this.model.marker.axis_x.zoomedMin==null || this.model.marker.axis_x.zoomedMax==null) return;
 
-        var x1 = this.xScale(this.model.marker.axis_x.fakeMin);
-        var x2 = this.xScale(this.model.marker.axis_x.fakeMax);
+        var x1 = this.xScale(this.model.marker.axis_x.zoomedMin);
+        var x2 = this.xScale(this.model.marker.axis_x.zoomedMax);
 
         this.rangeRatio = this.width / (x2 - x1) * this.rangeRatio;
         this.rangeShift = (this.rangeShift - x1) / (x2 - x1) * this.width;
@@ -473,9 +482,7 @@ var MountainChartComponent = Component.extend({
         this.dataWarningEl.append("text")
             .text(this.translator("hints/dataWarning"));
 
-        this.infoEl
-            .html(iconQuestion)
-            .select("svg").attr("width", "0px").attr("height", "0px");
+        utils.setIcon(this.infoEl, iconQuestion).select("svg").attr("width", "0px").attr("height", "0px");
 
         //TODO: move away from UI strings, maybe to ready or ready once
         this.infoEl.on("click", function () {
@@ -494,7 +501,7 @@ var MountainChartComponent = Component.extend({
     },
 
     updateDoubtOpacity: function (opacity) {
-        if (opacity == null) opacity = this.wScale(+this.time.getFullYear().toString());
+        if (opacity == null) opacity = this.wScale(+this.time.getUTCFullYear().toString());
         if (this.someSelected) opacity = 1;
         this.dataWarningEl.style("opacity", opacity);
     },
@@ -513,19 +520,22 @@ var MountainChartComponent = Component.extend({
     updateEntities: function () {
         var _this = this;
 
-        var filter = {};
-        filter[_this.TIMEDIM] = this.model.time.end;
-        this.values = this.model.marker.getValues(filter, [_this.KEY]);
+        this.values = this.model.marker.getFrame(this.model.time.end);
 
         // construct pointers
         this.mountainPointers = this.model.marker.getKeys()
-            .map(function (d) {
+            .filter(function(d) { return 1
+                && _this.values.axis_y[d[_this.KEY]]
+                && _this.values.axis_y[d[_this.KEY]]
+                && _this.values.size[d[_this.KEY]];
+            })
+            .map(function(d) {
                 var pointer = {};
                 pointer[_this.KEY] = d[_this.KEY];
                 pointer.KEY = function () {
                     return this[_this.KEY];
                 };
-                pointer.sortValue = [_this.values.axis_y[pointer.KEY()], 0];
+                pointer.sortValue = [_this.values.axis_y[pointer.KEY()]||0, 0];
                 pointer.aggrLevel = 0;
                 return pointer;
             });
@@ -548,7 +558,7 @@ var MountainChartComponent = Component.extend({
                 return m.sortValue[0];
             }));
 
-            if (groupManualSort && groupManualSort.length > 1) groupSortValue = groupManualSort.indexOf(group.key);
+            if (groupManualSort && groupManualSort.length > 1) groupSortValue = groupManualSort.length-1 - groupManualSort.indexOf(group.key);
 
             group.values.forEach(function (d) {
                 d.sortValue[1] = groupSortValue;
@@ -659,7 +669,7 @@ var MountainChartComponent = Component.extend({
 
         return {
             _mousemove: function (d, i) {
-                if (_this.model.time.dragging) return;
+                if (_this.model.time.dragging || _this.model.time.playing) return;
 
                 _this.model.entities.highlightEntity(d);
 
@@ -672,12 +682,14 @@ var MountainChartComponent = Component.extend({
 
             },
             _mouseout: function (d, i) {
-                if (_this.model.time.dragging) return;
+                if (_this.model.time.dragging || _this.model.time.playing) return;
 
                 _this._setTooltip("");
                 _this.model.entities.clearHighlighted();
             },
             _click: function (d, i) {
+                if (_this.model.time.dragging || _this.model.time.playing) return;
+                
                 _this.model.entities.selectEntity(d);
             }
         };
@@ -768,11 +780,9 @@ var MountainChartComponent = Component.extend({
         this.time = this.model.time.value;
         if (time == null) time = this.time;
 
-        this.year.setText(time.getFullYear().toString());
+        this.year.setText(time.getUTCFullYear().toString());
 
-        var filter = {};
-        filter[_this.TIMEDIM] = time;
-        this.values = this.model.marker.getValues(filter, [_this.KEY]);
+        this.values = this.model.marker.getFrame(time);
         this.yMax = 0;
 
 
@@ -862,6 +872,8 @@ var MountainChartComponent = Component.extend({
             var first = visible[0];
             var last = visible[visible.length - 1];
         }
+        
+        if (!visible.length || (visible2 && !visible2.length)) utils.warn('mountain chart failed to generate shapes. check the incoming data');
 
         return {
             first: first,
@@ -1007,7 +1019,7 @@ var MountainChartComponent = Component.extend({
 
         // exporting shapes for shape preloader. is needed once in a while
         // if (!this.shapes) this.shapes = {}
-        // this.shapes[this.model.time.value.getFullYear()] = {
+        // this.shapes[this.model.time.value.getUTCFullYear()] = {
         //     yMax: d3.format(".2e")(_this.yMax),
         //     shape: _this.cached["all"].map(function (d) {return d3.format(".2e")(d.y);})
         // }
@@ -1017,7 +1029,7 @@ var MountainChartComponent = Component.extend({
     redrawDataPointsOnlyColors: function () {
         var _this = this;
         this.mountains.style("fill", function (d) {
-            return _this.cScale(_this.values.color[d.KEY()]);
+            return _this.values.color[d.KEY()]?_this.cScale(_this.values.color[d.KEY()]):"transparent";
         });
     },
 
@@ -1041,7 +1053,7 @@ var MountainChartComponent = Component.extend({
         }
 
         if (this.model.marker.color.use === "indicator") view
-            .style("fill", this.cScale(this.values.color[key]));
+            .style("fill", this.values.color[key] ? _this.cScale(this.values.color[key]) : "transparent");
 
         if (stack !== "none") view
             .transition().duration(Math.random() * 900 + 100).ease("circle")
@@ -1050,7 +1062,7 @@ var MountainChartComponent = Component.extend({
         if (this.model.time.record) this._export.write({
             type: "path",
             id: key,
-            time: this.model.time.value.getFullYear(),
+            time: this.model.time.value.getUTCFullYear(),
             fill: this.cScale(this.values.color[key]),
             d: this.area(this.cached[key])
         });
@@ -1085,13 +1097,12 @@ var MountainChartComponent = Component.extend({
             var translateY = (mouse[1] - contentBBox.height - 25) > 0 ? mouse[1] : (contentBBox.height + 25);
             this.tooltip
                 .attr("transform", "translate(" + translateX + "," + translateY + ")");
-            
+
         } else {
 
             this.tooltip.classed("vzb-hidden", true);
         }
     }
-
 
 });
 

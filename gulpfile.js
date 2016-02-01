@@ -125,7 +125,9 @@ function compileSass(src, dest) {
       style: 'compact'
     })
     .on('error', sass.logError)
-    .pipe(prefix("last 1 version", "> 1%", "ie 8", "ie 7"))
+    .pipe(prefix({
+      browsers: ["last 1 version", "> 1%", "ie 8", "ie 7", "safari 8"]
+    }))
     .pipe(minifycss())
     .pipe(gulp.dest(dest));
 }
@@ -230,10 +232,12 @@ function resolvePath(id, importer, options) {
 var buildLock = false;
 function buildJS(dev, cb) {
   buildLock = true;
+  var timestamp = new Date();
   getTemplates(function(templates) {
     var banner_str = ['/**',
       ' * ' + pkg.name + ' - ' + pkg.description,
       ' * @version v' + pkg.version,
+      ' * @build timestamp' + timestamp,
       ' * @link ' + pkg.homepage,
       ' * @license ' + pkg.license,
       ' */',
@@ -241,7 +245,7 @@ function buildJS(dev, cb) {
     ].join('\n');
 
     //var version = '; Vizabi._version = "' + pkg.version + '";';
-    var version = ';(function (Vizabi) {Vizabi._version = "' + pkg.version + '";})(typeof Vizabi !== "undefined"?Vizabi:{});';
+    var version = ';(function (Vizabi) {Vizabi._version = "' + pkg.version + '"; Vizabi._build = "' + timestamp.valueOf() + '";})(typeof Vizabi !== "undefined"?Vizabi:{});';
 
     var options = {
       format: 'umd',
@@ -310,7 +314,7 @@ function buildJS(dev, cb) {
 gulp.task('buildIndexes', ['clean:indexes'], function() {
   return q.all([
     buildImportIndex(path.join(config.src, '/components/'), true),
-    buildImportIndex(path.join(config.src, '/components/buttonlist/dialogs'), true),
+    buildImportIndex(path.join(config.src, '/components/dialogs'), true),
     buildImportIndex(path.join(config.src, '/models/')),
     buildImportIndex(path.join(config.src, '/readers/'))
   ]);

@@ -6,30 +6,31 @@ script.
   VIZABI_OPTIONS = {
     state: {},
     bind: {
-      "ready": function(evt, vals) {
+      'ready': function(evt, vals) {
         updateURL();
         updateStateEditor(VIZ.getOptions().state);
       },
-      "historyUpdate": function(evt, state) {
-        updateURL();
+      'persistentChange': function(evt, minState) {
+        updateURL(true, minState); // force update
       }
     },
     ui: {
-      buttons: #{chart_buttons},
-      buttons_expand: #{chart_buttons_expand}
+      buttons: #{chart_buttons || '[]'},
+      buttons_expand: #{chart_buttons_expand || '[]'},
+      dialogs: #{chart_dialogs || '[]'}
     }
   };
 
   VIZABI_OPTIONS.bind['change:state'] = function(evt, vals) {
-
-    updateStateEditor(VIZ.getOptions().state);
+      updateStateEditor(VIZ.getOptions().state);
   };
 
   var playButton = document.getElementById("vzbp-btn-play");
   var playButtonIcon = playButton.querySelectorAll("i")[0];
 
-  VIZABI_OPTIONS.bind['change:state:time'] = function(evt, state) {
-    if (state.time.playing) {
+  VIZABI_OPTIONS.bind['change:state.time.playing'] = function(evt, path) {
+    var playing = evt.source;
+    if (playing.value) {
       playButton.onclick = pause;
       playButton.setAttribute("data-tooltip", "Pause");
       removeClass(playButtonIcon, 'fa-play');
@@ -40,10 +41,13 @@ script.
       removeClass(playButtonIcon, 'fa-pause');
       addClass(playButtonIcon, 'fa-play');
     }
+  };
 
+  VIZABI_OPTIONS.bind['change:state.time.record'] = function(evt, path) {
     var recButton = document.getElementById("vzbp-btn-record");
     var recButtonIcon = recButton.querySelectorAll("i")[0];
-    if (state.time.record) {
+    var record = evt.source;
+    if (record.value) {
       recButton.onclick = recstop;
       recButton.setAttribute("data-tooltip", "Stop");
       removeClass(recButtonIcon, 'fa-bullseye');
@@ -58,8 +62,9 @@ script.
 
   var langButton = document.getElementById("vzbp-btn-lang");
 
-  VIZABI_OPTIONS.bind['change:language'] = function(evt, vals) {
-    if (vals.language.id === "en") {
+  VIZABI_OPTIONS.bind['change:language.id'] = function(evt, path) {
+    var lang = evt.source;
+    if (lang.value === "en") {
       langButton.onclick = function() { language('se'); };
       langButton.setAttribute("data-tooltip", "Set Lang: SE");
       langButton.setAttribute("data-next_lang", 'se');

@@ -2,6 +2,7 @@ import * as utils from 'utils'
 import Model from 'model'
 import Component from 'component'
 import Layout from 'layout'
+import { DefaultEvent } from 'events'
 import { warn as warnIcon } from 'iconset'
 import Promise from 'base/promise';
 
@@ -22,7 +23,7 @@ var ToolModel = Model.extend({
    * @param {Object} binds contains initial bindings for the model
    * @param {Function|Array} validade validate rules
    */
-  init: function(values, defaults, binds, validate) {
+  init: function(name, values, defaults, binds, validate) {
     this._id = utils.uniqueId('tm');
     this._type = 'tool';
     //generate validation function
@@ -32,11 +33,11 @@ var ToolModel = Model.extend({
     defaults = defaults || {};
     values = defaultOptions(values, defaults);
     //constructor is similar to model
-    this._super(values, null, binds, true);
+    this._super(name, values, null, binds);
     // change language
     if(values.language) {
       var _this = this;
-      this.on('change:language:id', function() {
+      this.on('change:language.id', function() {
         _this.trigger('translate');
       });
     }
@@ -51,24 +52,49 @@ var Tool = Component.extend({
    */
   init: function(placeholder, options) {
     this._id = utils.uniqueId('t');
-    this.template = this.template || '<div class="vzb-tool vzb-tool-' + this.name +
-      '"><div class="vzb-tool-content"><div class="vzb-tool-stage"><div class="vzb-tool-viz"></div><div class="vzb-tool-timeslider"></div></div><div class="vzb-tool-buttonlist"></div><div class="vzb-tool-treemenu vzb-hidden"></div><div class="vzb-tool-datawarning vzb-hidden"></div></div></div>';
+    this.template = this.template || 
+      '<div class="vzb-tool vzb-tool-' + this.name + '">' + 
+        '<div class="vzb-tool-stage">' + 
+          '<div class="vzb-tool-viz">' + 
+          '</div>' + 
+          '<div class="vzb-tool-timeslider">' + 
+          '</div>' + 
+        '</div>' + 
+        '<div class="vzb-tool-sidebar">' + 
+          '<div class="vzb-tool-dialogs">' + 
+          '</div>' +
+          '<div class="vzb-tool-buttonlist">' + 
+          '</div>' + 
+        '</div>' +         
+        '<div class="vzb-tool-treemenu vzb-hidden">' + 
+        '</div>' + 
+        '<div class="vzb-tool-datawarning vzb-hidden">' + 
+        '</div>' + 
+      '</div>';
     this.model_binds = this.model_binds || {};
-    var binds = options.bind || {};
+    
+    options = options || {}; //options can be undefined
+    options.bind = options.bind || {}; //bind functions can be undefined
 
     this.default_options = this.default_options || {};
+    
     //bind the validation function with the tool
     var validate = this.validate.bind(this);
     var _this = this;
-    var callbacks = utils.merge({
-      'change': function(evt, val) {
+
+    // callbacks has to be an array so that it will not be turned into a submodel when the toolmodel is made.
+    var callbacks = {
+      'change': function(evt, path) {
         if(_this._ready) {
           _this.model.validate();
-          _this.trigger(evt, val);
-          if(evt.indexOf("needUpdate") !== -1) {
-            _this.model.trigger('historyUpdate', _this.minState());
-          }
+
+          if (evt.source.persistent)
+            _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'), _this.getMinState());
         }
+      },
+      'change:ui.presentation': function() {
+        _this.layout.updatePresentation();
+        _this.trigger('resize');
       },
       'translate': function(evt, val) {
         if(_this._ready) {
@@ -82,23 +108,16 @@ var Tool = Component.extend({
       'load_start': function() {
         _this.beforeLoading();
       },
-      "change:ui:presentation": function() {
-        _this.layout.updatePresentation();
-        _this.trigger('resize');
-      },
       'ready': function(evt) {
         if(_this._ready) {
           _this.afterLoading();
-          _this.model.trigger('historyUpdate', _this.minState());
         }
       }
-    }, this.model_binds, binds);
+    };
+    utils.extend(callbacks, this.model_binds, options.bind);
+    delete options.bind;
 
-    options = options || {};
-    this.model = new ToolModel(options, this.default_options, callbacks, validate);
-
-    //ToolModel starts in frozen state. unfreeze;
-    this.model.unfreeze();
+    this.model = new ToolModel(this.name, options, this.default_options, callbacks, validate);
 
     this.ui = this.model.ui || {};
 
@@ -109,28 +128,17 @@ var Tool = Component.extend({
       name: this.name || this._id,
       placeholder: placeholder
     }, this);
-    this._bindEvents();
     this.render();
     this._setUIOptions();
   },
-    
-  /**
-   * Binds events in model to outside world
-   */
-  _bindEvents: function() {
-    if(!this.model.bind) {
-      return;
-    }
-    this.model.on(this.model.bind.get());
-  },
 
-  minState: function() {
-    var state = this.model.state.getObject();
+  getMinState: function() {
+    var state = this.model.state.getPlainObject(true); // true = get only persistent model values
     var d_state = this.default_options.state;
     //flattens _defs_ object
     d_state = utils.flattenDefaults(d_state);
     //compares with chart default options
-    var d = utils.flattenDates(utils.diffObject(state, d_state));
+    var d = utils.flattenDates(utils.diffObject(state, d_state), this.model.state.time.timeFormat);
     //compares with model's defaults
     return utils.diffObject(d, this.model.state.getDefaults());
   },
@@ -176,7 +184,7 @@ var Tool = Component.extend({
    * @return {Object} JSON object with options
    */
   getOptions: function() {
-    return this.model.getObject() || {};
+    return this.model.getPlainObject() || {};
   },
   /**
    * Displays loading class
@@ -245,8 +253,9 @@ var Tool = Component.extend({
     if(!utils.isDate(dateMin)) utils.warn("tool validation: min date looks wrong: " + dateMin);
     if(!utils.isDate(dateMax)) utils.warn("tool validation: max date looks wrong: " + dateMax);
 
-    if(time.start < dateMin) time.start = dateMin;
-    if(time.end > dateMax) time.end = dateMax;
+    // change is not persistent if it's splashscreen change
+    if(time.start < dateMin && utils.isDate(dateMin)) time.getModelObject('start').set(dateMin, false, !time.splash);
+    if(time.end > dateMax && utils.isDate(dateMax)) time.getModelObject('end').set(dateMax, false, !time.splash);
   },
 
   _setUIOptions: function() {
@@ -280,7 +289,7 @@ function generateValidate(m, validate) {
   var max = 10;
 
   function validate_func() {
-    var model = JSON.stringify(m.getObject());
+    var model = JSON.stringify(m.getPlainObject());
     var c = arguments[0] || 0;
     //TODO: remove validation hotfix
     //while setting this.model is not available
@@ -289,7 +298,7 @@ function generateValidate(m, validate) {
     } else {
       validate();
     }
-    var model2 = JSON.stringify(m.getObject());
+    var model2 = JSON.stringify(m.getPlainObject());
     if(c >= max) {
       utils.error('Max validation loop.');
     } else if(model !== model2) {
@@ -381,7 +390,7 @@ function changedObj(obj, compare) {
     } else if(utils.isDate(compare[name])) {
       var comp1 = val.toString();
       //TODO: workaround for years only
-      var comp2 = compare[name].getFullYear().toString();
+      var comp2 = compare[name].getUTCFullYear().toString();
       if(comp1 !== comp2) {
         acc[name] = val;
       }

@@ -55,8 +55,8 @@ export default function axisSmart() {
         .data([null])
         .enter().append('g')
         .attr("class", 'vzb-axis-value')
-        .append("text")
-        .style("opacity", 0);
+        .classed("vzb-hidden", true)
+        .append("text");
 
       // patch the label positioning after the view is generated
       g.selectAll("text")
@@ -103,7 +103,6 @@ export default function axisSmart() {
           rake.exit().remove();
           rake.enter().append("line")
               .attr("class", "vzb-axis-line");
-
           rake
             .attr("x1", orient == VERTICAL ? 0 : d3.min(scale.range()) - options.bump - 1)
             .attr("x2", orient == VERTICAL ? 0 : d3.max(scale.range()) + options.bump)
@@ -117,28 +116,50 @@ export default function axisSmart() {
     axis.highlightValueRun = function(g) {
       var orient = axis.orient() == "top" || axis.orient() == "bottom" ? HORIZONTAL : VERTICAL;
 
-      g.selectAll(".tick")
-        .each(function(d, t) {
+      g.select('.vzb-axis-value')
+        .classed("vzb-hidden", highlightValue == "none")
+        .select("text")
+        .text(axis.tickFormat()(highlightValue == "none" ? 0 : highlightValue));
+        
+      var getTransform = function(){
+        return highlightValue == "none" ? "translate(0,0)" : 
+            "translate(" 
+            + (orient == HORIZONTAL ? axis.scale()(highlightValue) : 0) + "," 
+            + (orient == VERTICAL ? axis.scale()(highlightValue) : 0) 
+            + ")"
+      }
+      
+      var getOpacity = function(d, t){
+        return highlightValue == "none" ? 1 : 
+            Math.min(1, Math.pow( Math.abs(axis.scale()(d) - axis.scale()(highlightValue)) / (axis.scale().range()[1] - axis.scale().range()[0]) * 5, 2))
+      }
+        
+      if(highlightTransDuration){
+        g.selectAll(".tick").each(function(d, t) {
           d3.select(this).select("text")
             .transition()
             .duration(highlightTransDuration)
             .ease("linear")
-            .style("opacity", highlightValue == "none" ? 1 : Math.min(1, Math.pow(
-              Math.abs(axis.scale()(d) - axis.scale()(highlightValue)) /
-              (axis.scale().range()[1] - axis.scale().range()[0]) * 5, 2)))
+            .style("opacity", getOpacity(d,t))
         })
-
-
-      g.select('.vzb-axis-value')
-        .transition()
-        .duration(highlightTransDuration)
-        .ease("linear")
-        .attr("transform", highlightValue == "none" ? "translate(0,0)" : "translate(" + (orient == HORIZONTAL ?
-          axis.scale()(highlightValue) : 0) + "," + (orient == VERTICAL ? axis.scale()(highlightValue) : 0) + ")")
-
-      g.select('.vzb-axis-value').select("text")
-        .text(axis.tickFormat()(highlightValue == "none" ? 0 : highlightValue))
-        .style("opacity", (highlightValue == "none" ? 0 : 1));
+          
+        g.select('.vzb-axis-value')
+          .transition()
+          .duration(highlightTransDuration)
+          .ease("linear")
+          .attr("transform", getTransform);
+          
+      }else{
+          
+        g.selectAll(".tick").each(function(d, t) {
+          d3.select(this).select("text")
+            .style("opacity", getOpacity(d,t))
+        })
+          
+        g.select('.vzb-axis-value')
+          .attr("transform", getTransform);
+          
+      }
 
       highlightValue = null;
     }
@@ -232,7 +253,7 @@ export default function axisSmart() {
 
         if(options.scaleType == "time") {
           if(!(d instanceof Date)) d = new Date(d);
-          return d3.time.format("%Y")(d);
+          return options.timeFormat(d);
         }
 
         var format = "f";
@@ -384,6 +405,9 @@ export default function axisSmart() {
       var ticksNumber = 5;
 
       function getBaseLog(x, base) {
+        if (x == 0 || base == 0) {
+          return 0;
+        }
         if(base == null) base = options.logBase;
         return Math.log(x) / Math.log(base);
       };
@@ -501,11 +525,6 @@ export default function axisSmart() {
         }
         return false;
       }
-
-
-
-
-
 
       if(options.scaleType == "genericLog" || options.scaleType == "log") {
         var eps = axis.scale().eps ? axis.scale().eps() : 0;
@@ -689,7 +708,11 @@ export default function axisSmart() {
         if(bothSidesUsed) tickValues.push(0);
         var avoidCollidingWith = [].concat(tickValues);
 
-        ticksNumber = Math.max(Math.floor(lengthRange / estLongestLabelLength), 2);
+        if(labelsStackOnTop){
+            ticksNumber = Math.max(Math.floor(lengthRange / (options.heightOfOneDigit + parseInt(options.cssMarginTop))), 2);
+        }else{
+            ticksNumber = Math.max(Math.floor(lengthRange / estLongestLabelLength), 2);
+        }
 
         // limit maximum ticks number
         if(options.limitMaxTickNumber != 0 && ticksNumber > options.limitMaxTickNumber) ticksNumber = options.limitMaxTickNumber;
@@ -872,7 +895,8 @@ export default function axisSmart() {
             dimension == "x") * options.formatter(d).length * options.widthOfOneDigit / 2 - (dimension == "y") *
           options.heightOfOneDigit / 2
           // we may consider or not the label margins to give them a bit of spacing from the edges
-          - (dimension == "x") * parseInt(options.cssMarginRight); - (dimension == "y") * parseInt(options.cssMarginTop);
+          - (dimension == "x") * parseInt(options.cssMarginRight) 
+          - (dimension == "y") * parseInt(options.cssMarginTop);
 
         // compute the influence of the axis tail
         var repositionTail = Math.min(margin.tail, options.widthOfOneDigit) + options.bump + (orient == VERTICAL ?
@@ -880,7 +904,8 @@ export default function axisSmart() {
             VERTICAL ? -1 : 1) * scale(d) - (dimension == "x") * options.formatter(d).length * options.widthOfOneDigit /
           2 - (dimension == "y") * options.heightOfOneDigit / 2
           // we may consider or not the label margins to give them a bit of spacing from the edges
-          - (dimension == "x") * parseInt(options.cssMarginLeft); - (dimension == "y") * parseInt(options.cssMarginBottom);
+          - (dimension == "x") * parseInt(options.cssMarginLeft) 
+          - (dimension == "y") * parseInt(options.cssMarginBottom);
 
         // apply limits in order to cancel repositioning of labels that are good
         if(repositionHead > 0) repositionHead = 0;
@@ -905,23 +930,37 @@ export default function axisSmart() {
         var repositionHead =
           // take the distance between head and the tick at hand
           Math.abs(scale(d) - scale(tickValues[tickValues.length - 1]))
-          // substract the shift of the tail
-          - (dimension == "y" && orient == HORIZONTAL ? -1 : 1) * result[tickValues.length - 1][dimension]
-
-        -(dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(d).length - (dimension == "x") *
-          options.widthOfOneDigit / 2 * options.formatter(tickValues[tickValues.length - 1]).length - (dimension ==
-            "y") * options.heightOfOneDigit * .7; //TODO remove magic constant - relation of actual font height to BBox-measured height
-
+        
+          // substract the shift of the head TODO: THE SIGN CHOICE HERE MIGHT BE WRONG. NEED TO TEST ALL CASES
+          - (dimension == "y") * (orient == HORIZONTAL ? -1 : 1) * result[tickValues.length - 1][dimension]
+          - (dimension == "x") * (orient == HORIZONTAL ? 1 : -1) * result[tickValues.length - 1][dimension]
+        
+          // substract half-length of the overlapping labels
+          - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(d).length 
+          - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(tickValues[tickValues.length - 1]).length 
+          - (dimension == "y") * options.heightOfOneDigit * .7 //TODO remove magic constant - relation of actual font height to BBox-measured height
+          
+          // we may consider or not the label margins to give them a bit of spacing from the edges
+          - (dimension == "x") * parseInt(options.cssMarginLeft) 
+          - (dimension == "y") * parseInt(options.cssMarginBottom);
+          
         // compute the influence of the tail-side outer label
         var repositionTail =
           // take the distance between tail and the tick at hand
           Math.abs(scale(d) - scale(tickValues[0]))
-          // substract the shift of the tail
-          - (dimension == "y" && orient == VERTICAL ? -1 : 1) * result[0][dimension]
-
-        -(dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(d).length - (dimension == "x") *
-          options.widthOfOneDigit / 2 * options.formatter(tickValues[0]).length - (dimension == "y") * options.heightOfOneDigit *
-          .7; //TODO remove magic constant - relation of actual font height to BBox-measured height
+        
+          // substract the shift of the tail TODO: THE SIGN CHOICE HERE MIGHT BE WRONG. NEED TO TEST ALL CASES
+          - (dimension == "y") * (orient == VERTICAL ? -1 : 1) * result[0][dimension]
+          - (dimension == "x") * (orient == VERTICAL ? 1 : -1) * result[0][dimension]
+        
+          // substract half-length of the overlapping labels
+          - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(d).length 
+          - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(tickValues[0]).length 
+          - (dimension == "y") * options.heightOfOneDigit * .7 //TODO remove magic constant - relation of actual font height to BBox-measured height
+        
+          // we may consider or not the label margins to give them a bit of spacing from the edges
+          - (dimension == "x") * parseInt(options.cssMarginLeft) 
+          - (dimension == "y") * parseInt(options.cssMarginBottom);
 
         // apply limits in order to cancel repositioning of labels that are good
         if(repositionHead > 0) repositionHead = 0;

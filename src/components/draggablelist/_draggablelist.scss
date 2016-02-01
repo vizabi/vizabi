@@ -2,18 +2,32 @@
   .vzb-draggable {
     @include user-select(none);
     margin: auto;
-    padding: 0;
+    padding: 5px 0;
     width: 200px;
+    [draggable=true] {
+      position: relative;
+      padding-bottom: 3px;
+      &.dragged {
+        z-index: 2;
+        //pointer-events: none;
+        li {
+          cursor: move;
+          //pointer-events: none;
+          background: $vzb-color-grey-light;
+          border-width: 1px 3px;
+          border-color: $vzb-color-grey-dark;
+        }
+      }
+    }
     li {
       cursor: move;
       background: $vzb-color-primary-lightest;
       border: 1px solid $vzb-color-primary-light;
-      height: 18px;
+      height: 12px;
       border-radius: 4px;
       list-style: none;
-      margin-bottom: 5px;
-      padding: 5px;
-      &:hover {
+      padding: 2px 8px 5px 6px;
+      &.hover {
         background: $vzb-color-grey-light;
         border-color: $vzb-color-grey-dark;
       }
