@@ -6,6 +6,31 @@ import Model from 'base/model';
  * VIZABI Color Model (hook)
  */
 
+var defaultPalettes = {
+  "_continuous": {
+    "0": "#F77481",
+    "1": "#E1CE00",
+    "2": "#B4DE79"
+  },
+  "_discrete": {
+    "0": "#bcfa83",
+    "1": "#4cd843",
+    "2": "#ff8684",
+    "3": "#e83739",
+    "4": "#ffb04b",
+    "5": "#ff7f00",
+    "6": "#f599f5",
+    "7": "#c027d4",
+    "8": "#f4f459",
+    "9": "#d66425",
+    "10": "#7fb5ed",
+    "11": "#0ab8d8"
+  },
+  "_default": {
+    "_default": "#fa5ed6"
+  }
+};
+
 var ColorModel = Model.extend({
 
   /**
@@ -13,7 +38,7 @@ var ColorModel = Model.extend({
    */
   _defaults: {
     use: null,
-    palette: null,
+    palette: {},
     scaleType: null,
     which: null
   },
@@ -35,6 +60,7 @@ var ColorModel = Model.extend({
 
     this._super(name, values, parent, bind);
 
+    this._palettes = defaultPalettes;
     this._firstLoad = true;
     this._hasDefaultColor = false;
   },
@@ -59,36 +85,17 @@ var ColorModel = Model.extend({
    * Get the above constants
    */
   getPalettes: function() {
-    var palettes = (globals.metadata) ? globals.metadata.color.palettes : {
-      "_continuous": {
-        "0": "#F77481",
-        "1": "#E1CE00",
-        "2": "#B4DE79"
-      },
-      "_discrete": {
-        "0": "#bcfa83",
-        "1": "#4cd843",
-        "2": "#ff8684",
-        "3": "#e83739",
-        "4": "#ffb04b",
-        "5": "#ff7f00",
-        "6": "#f599f5",
-        "7": "#c027d4",
-        "8": "#f4f459",
-        "9": "#d66425",
-        "10": "#7fb5ed",
-        "11": "#0ab8d8"
-      },
-      "_default": {
-        "_default": "#fa5ed6"
-      }
-    };
-
-    return palettes;
+    if (globals.metadata && globals.metadata.color && globals.metadata.color.palettes){
+        this._palettes = utils.extend(this._palettes, globals.metadata.color.palettes);
+    } else {
+        utils.warn("Color.js AfterPreload: palletes not found in metadata");
+    }
+      
+    return this._palettes;
   },
 
   afterPreload: function() {
-    this._resetPalette = true;
+    //TODO: extending this._palettes with the ones from metadata should actually be here, but metadats is undefined      
     this._super();
   },
   
@@ -108,8 +115,6 @@ var ColorModel = Model.extend({
    */
   validate: function() {
 
-    var palettes = this.getPalettes();
-
     var possibleScales = ["log", "genericLog", "linear", "time", "pow"];
     if(!this.scaleType || (this.use === "indicator" && possibleScales.indexOf(this.scaleType) === -1)) {
       this.scaleType = 'linear';
@@ -118,35 +123,11 @@ var ColorModel = Model.extend({
       this.scaleType = "ordinal";
     }
 
-    // reset palette in the following cases:
-    // first load and no palette supplied in the state
-    // or changing of the indicator
-    if(this.palette == null || this._firstLoad === false && this.which_1 != this.which || this._firstLoad ===
-      false && this.scaleType_1 != this.scaleType || this._resetPalette) {
+    // reset palette and scale in the following cases: indicator or scale type changed
+    if(this._firstLoad === false && (this.which_1 != this.which || this.scaleType_1 != this.scaleType)) {
 
-
-      //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
-      if(this.palette) {
-        this.palette._data = {};
-      }
-
-      if(palettes[this.which]) {
-        this.palette = utils.clone(palettes[this.which]);
-      } else if(this.use === "constant") {
-        this.palette = {
-          "_default": this.which
-        };
-      } else if(this.use === "indicator") {
-        this.palette = utils.clone(palettes["_continuous"]);
-      } else if(this.use === "property") {
-        this.palette = utils.clone(palettes["_discrete"]);
-      } else {
-        this.palette = utils.clone(palettes["_default"]);
-      }
-
-      this._resetPalette = false;
-
-      //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
+      //TODO a hack that kills the scale and palette, it will be rebuild upon getScale request in model.js
+      if(this.palette) this.palette._data = {};
       this.scale = null;
     }
 
@@ -159,7 +140,7 @@ var ColorModel = Model.extend({
    * set color
    */
   setColor: function(value, pointer) {
-    var temp = this.palette.getPlainObject();
+    var temp = this.getPalette();
     temp[pointer] = value;
     this.scale.range(utils.values(temp));
     this.palette[pointer] = value;
@@ -174,11 +155,32 @@ var ColorModel = Model.extend({
   mapValue: function(value) {
     //if the property value does not exist, supply the _default
     // otherwise the missing value would be added to the domain
-    if(this.scale != null && this.use == "property" && this._hasDefaultColor && this.scale.domain().indexOf(value) ==
-      -1) value = "_default";
+    if(this.scale != null && this.use == "property" && this._hasDefaultColor && this.scale.domain().indexOf(value) == -1) value = "_default";
     return this._super(value);
   },
 
+
+  buildPalette: function() {
+      var palettes = this.getPalettes();
+      
+      if(palettes[this.which]) {
+        this.palette = utils.clone(palettes[this.which]);
+      } else if(this.use === "constant") {
+        this.palette = {"_default": this.which};
+      } else if(this.use === "indicator") {
+        this.palette = utils.clone(palettes["_continuous"]);
+      } else if(this.use === "property") {
+        this.palette = utils.clone(palettes["_discrete"]);
+      } else {
+        this.palette = utils.clone(palettes["_default"]);
+      }
+      
+      return this.palette;
+  },
+    
+  getPalette: function(){
+    return (this.palette && Object.keys(this.palette._data).length>0? this.palette : this.buildPalette()).getPlainObject();
+  },
 
   /**
    * Gets the domain for this hook
@@ -189,7 +191,7 @@ var ColorModel = Model.extend({
 
     var indicatorsDB = globals.metadata.indicatorsDB;
 
-    var paletteObject = _this.palette.getPlainObject();
+    var paletteObject = _this.getPalette();
     var domain = Object.keys(paletteObject);
     var range = utils.values(paletteObject);
 

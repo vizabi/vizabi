@@ -73,7 +73,7 @@ var ColorLegend = Component.extend({
     var KEY = this.model.entities.getDimension();
 
 
-    var palette = this.model.color.palette.getPlainObject();
+    var palette = this.model.color.getPalette();
 
 
     var whichPalette = "_default";
