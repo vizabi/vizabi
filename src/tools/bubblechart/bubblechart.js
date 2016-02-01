@@ -101,7 +101,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
       path: "data/waffles/basic-indicators.csv"
     },
     ui: {
-      presentation: true
+      presentation: true 
     }
   }
 });

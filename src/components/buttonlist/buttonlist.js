@@ -133,13 +133,6 @@ var ButtonList = Component.extend({
         ispin: false,
         required: false
       },
-      'print': {
-        title: "buttons/print",
-        icon: "print",
-        dialog: false,
-        func: this.togglePrintVersion.bind(this),
-        required: true
-      },
       '_default': {
         title: "Button",
         icon: "asterisk",
@@ -711,9 +704,6 @@ var ButtonList = Component.extend({
       event.eventName = "resize";
       window.dispatchEvent(event);
     })();
-  },
-  togglePrintVersion: function(id) {
-    return true;
   }
 
 });
