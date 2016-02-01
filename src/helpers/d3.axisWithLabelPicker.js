@@ -55,8 +55,8 @@ export default function axisSmart() {
         .data([null])
         .enter().append('g')
         .attr("class", 'vzb-axis-value')
-        .append("text")
-        .style("opacity", 0);
+        .classed("vzb-hidden", true)
+        .append("text");
 
       // patch the label positioning after the view is generated
       g.selectAll("text")
@@ -116,28 +116,50 @@ export default function axisSmart() {
     axis.highlightValueRun = function(g) {
       var orient = axis.orient() == "top" || axis.orient() == "bottom" ? HORIZONTAL : VERTICAL;
 
-      g.selectAll(".tick")
-        .each(function(d, t) {
+      g.select('.vzb-axis-value')
+        .classed("vzb-hidden", highlightValue == "none")
+        .select("text")
+        .text(axis.tickFormat()(highlightValue == "none" ? 0 : highlightValue));
+        
+      var getTransform = function(){
+        return highlightValue == "none" ? "translate(0,0)" : 
+            "translate(" 
+            + (orient == HORIZONTAL ? axis.scale()(highlightValue) : 0) + "," 
+            + (orient == VERTICAL ? axis.scale()(highlightValue) : 0) 
+            + ")"
+      }
+      
+      var getOpacity = function(d, t){
+        return highlightValue == "none" ? 1 : 
+            Math.min(1, Math.pow( Math.abs(axis.scale()(d) - axis.scale()(highlightValue)) / (axis.scale().range()[1] - axis.scale().range()[0]) * 5, 2))
+      }
+        
+      if(highlightTransDuration){
+        g.selectAll(".tick").each(function(d, t) {
           d3.select(this).select("text")
             .transition()
             .duration(highlightTransDuration)
             .ease("linear")
-            .style("opacity", highlightValue == "none" ? 1 : Math.min(1, Math.pow(
-              Math.abs(axis.scale()(d) - axis.scale()(highlightValue)) /
-              (axis.scale().range()[1] - axis.scale().range()[0]) * 5, 2)))
+            .style("opacity", getOpacity(d,t))
         })
-
-
-      g.select('.vzb-axis-value')
-        .transition()
-        .duration(highlightTransDuration)
-        .ease("linear")
-        .attr("transform", highlightValue == "none" ? "translate(0,0)" : "translate(" + (orient == HORIZONTAL ?
-          axis.scale()(highlightValue) : 0) + "," + (orient == VERTICAL ? axis.scale()(highlightValue) : 0) + ")")
-
-      g.select('.vzb-axis-value').select("text")
-        .text(axis.tickFormat()(highlightValue == "none" ? 0 : highlightValue))
-        .style("opacity", (highlightValue == "none" ? 0 : 1));
+          
+        g.select('.vzb-axis-value')
+          .transition()
+          .duration(highlightTransDuration)
+          .ease("linear")
+          .attr("transform", getTransform);
+          
+      }else{
+          
+        g.selectAll(".tick").each(function(d, t) {
+          d3.select(this).select("text")
+            .style("opacity", getOpacity(d,t))
+        })
+          
+        g.select('.vzb-axis-value')
+          .attr("transform", getTransform);
+          
+      }
 
       highlightValue = null;
     }
