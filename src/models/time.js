@@ -153,7 +153,7 @@ var TimeModel = Model.extend({
     }
 
     if(this.step < 1) {
-      this.step = "year";
+      this.step = 1;
     }
 
     //make sure dates are transformed into dates at all times
@@ -163,13 +163,13 @@ var TimeModel = Model.extend({
 
     //end has to be >= than start
     if(this.end < this.start) {
-      this.end = this.start;
+      this.end = new Date(this.start);
     }
     //value has to be between start and end
     if(this.value < this.start) {
-      this.value = this.start;
+      this.value = new Date(this.start);
     } else if(this.value > this.end) {
-      this.value = this.end;
+      this.value = new Date(this.end);
     }
 
     if(this.playable === false && this.playing === true) {
@@ -301,12 +301,10 @@ var TimeModel = Model.extend({
     if(!this.playable) return;
 
     var _this = this;
-    var time = this.value;
 
     //go to start if we start from end point
-    if(_this.end - time <= 0) {
-      time = this.start;
-      _this.value = time;
+    if(this.value >= this.end) {
+      _this.value = new Date(this.start);
     } else {
       //the assumption is that the time is already snapped when we start playing
       //because only dragging the timeslider can un-snap the time, and it snaps on drag.end
@@ -324,16 +322,14 @@ var TimeModel = Model.extend({
   playInterval: function(){
     if(!this.playing) return;
     var _this = this;
-    var time = this.value;
     this.delayAnimations = this.delay;
     if(this.delay < this.delayThresholdX2) this.delayAnimations*=2;
     if(this.delay < this.delayThresholdX4) this.delayAnimations*=2;
 
     this._intervals.setInterval('playInterval_' + this._id, function() {
-      if(time >= _this.end) {
+      if(_this.value >= _this.end) {
         if(_this.loop) {
-          time = _this.start;
-          _this.value = time
+          _this.value = new Date(_this.start)
         } else {
           _this.playing = false;
         }
@@ -350,7 +346,7 @@ var TimeModel = Model.extend({
           var is = _this.getIntervalAndStep();
           if(_this.delay < _this.delayThresholdX2) step*=2;
           if(_this.delay < _this.delayThresholdX4) step*=2;
-          time = d3.time[is.interval].utc.offset(time, is.step);
+          var time = d3.time[is.interval].utc.offset(_this.value, is.step);
           _this.getModelObject('value').set(time, null, false /*make change non-persistent for URL and history*/);
           _this.playInterval();
         }
