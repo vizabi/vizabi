@@ -254,11 +254,12 @@ var BubbleMapComponent = Component.extend({
 
     var _this = this;
     this.on("resize", function () {
-
-      _this.updateSize();
-      _this.updateMarkerSizeLimits();
-      _this.redrawDataPoints();
-      //_this._selectlist.redraw();
+      utils.defer(function() {
+        _this.updateSize();
+        _this.updateMarkerSizeLimits();
+        _this.redrawDataPoints();
+        //_this._selectlist.redraw();
+      });
 
     });
 
