@@ -23,7 +23,7 @@ export default Class.extend({
 
         this.zoomer.ratioX = 1;
         this.zoomer.ratioY = 1;
-        
+
         context._zoomZoomedDomains = {x:{zoomedMin: null, zoomedMax: null}, y:{zoomedMin: null, zoomedMax: null}};
     },
 
@@ -162,10 +162,12 @@ export default Class.extend({
                 if(pan[1] > 0) pan[1] = 0;
                 if(pan[0] < (1 - zoom * ratioX) * _this.width) pan[0] = (1 - zoom * ratioX) * _this.width;
                 if(pan[1] < (1 - zoom * ratioY) * _this.height) pan[1] = (1 - zoom * ratioY) * _this.height;
-                zoomer.translate(pan);
 
-                var xRange = [0 * zoom * ratioX + pan[0], _this.width * zoom * ratioX + pan[0]];
-                var yRange = [_this.height * zoom * ratioY + pan[1], 0 * zoom * ratioY + pan[1]];
+                var xPanOffset = _this.width * zoom * ratioX;
+                var yPanOffset = _this.height * zoom * ratioY;
+
+                var xRange = [0 * zoom * ratioX + pan[0], xPanOffset + pan[0]];
+                var yRange = [yPanOffset + pan[1], 0 * zoom * ratioY + pan[1]];
 
                 var xRangeBumped = _this._rangeBump(xRange);
                 var yRangeBumped = _this._rangeBump(yRange);
@@ -196,14 +198,43 @@ export default Class.extend({
                 var yRangeBoundsBumped = _this._rangeBump(yRangeBounds);
 
                 /*
+                 * Set the pan to account for the range bump by subtracting
+                 * offsets and preventing panning past the range bump gutter.
+                 */
+                if(xRange[0] > xRangeBoundsBumped[0]) pan[0] = xRangeBoundsBumped[0] - xRangeMinOffset;
+                if(xRange[1] < xRangeBoundsBumped[1]) pan[0] = xRangeBoundsBumped[1] - xRangeMaxOffset - xPanOffset;
+                if(yRange[0] < yRangeBoundsBumped[0]) pan[1] = yRangeBoundsBumped[0] - yRangeMinOffset - yPanOffset;
+                if(yRange[1] > yRangeBoundsBumped[1]) pan[1] = yRangeBoundsBumped[1] - yRangeMaxOffset;
+
+                zoomer.translate(pan);
+
+                /*
                  * Clamp the xRange and yRange by the amount that the bounds
                  * that are range bumped.
+                 *
+                 * Additionally, take the amount clamped on the end of the range
+                 * and either subtract or add it to the range's other end. This
+                 * prevents visible stretching of the range when only panning.
                  */
-                if(xRange[0] > xRangeBoundsBumped[0]) xRange[0] = xRangeBoundsBumped[0];
-                if(xRange[1] < xRangeBoundsBumped[1]) xRange[1] = xRangeBoundsBumped[1];
+                if(xRange[0] > xRangeBoundsBumped[0]) {
+                    xRange[1] = xRange[1] - Math.abs(xRange[0] - xRangeBoundsBumped[0]);
+                    xRange[0] = xRangeBoundsBumped[0];
+                }
 
-                if(yRange[0] < yRangeBoundsBumped[0]) yRange[0] = yRangeBoundsBumped[0];
-                if(yRange[1] > yRangeBoundsBumped[1]) yRange[1] = yRangeBoundsBumped[1];
+                if(xRange[1] < xRangeBoundsBumped[1]) {
+                    xRange[0] = xRange[0] + Math.abs(xRange[1] - xRangeBoundsBumped[1]);
+                    xRange[1] = xRangeBoundsBumped[1];
+                }
+
+                if(yRange[0] < yRangeBoundsBumped[0]) {
+                    yRange[1] = yRange[1] + Math.abs(yRange[0] - yRangeBoundsBumped[0]);
+                    yRange[0] = yRangeBoundsBumped[0];
+                }
+
+                if(yRange[1] > yRangeBoundsBumped[1]) {
+                    yRange[0] = yRange[0] - Math.abs(yRange[1] - yRangeBoundsBumped[1]);
+                    yRange[1] = yRangeBoundsBumped[1];
+                }
 
                 if(_this.model.marker.axis_x.scaleType === 'ordinal'){
                     _this.xScale.rangeBands(xRange);
@@ -230,11 +261,11 @@ export default Class.extend({
                 zoomedXRange[1] = xRangeBounds[1] < xRange[1] ? xRangeBounds[1] : xRange[1];
                 zoomedYRange[0] = yRangeBounds[0] < yRange[0] ? yRangeBounds[0] : yRange[0];
                 zoomedYRange[1] = yRangeBounds[1] > yRange[1] ? yRangeBounds[1] : yRange[1];
-                
+
                 _this._zoomZoomedDomains = {
                     x: {
                      zoomedMin: formatter(_this.xScale.invert(zoomedXRange[0])),
-                     zoomedMax: formatter(_this.xScale.invert(zoomedXRange[1]))   
+                     zoomedMax: formatter(_this.xScale.invert(zoomedXRange[1]))
                     },
                     y: {
                      zoomedMin: formatter(_this.yScale.invert(zoomedYRange[0])),
@@ -265,7 +296,7 @@ export default Class.extend({
 
             stop: function(){
                 _this.draggingNow = false;
-                
+
                 //Force the update of the URL and history, with the same values
                 _this.model.marker.axis_x.set(_this._zoomZoomedDomains.x, true, true);
                 _this.model.marker.axis_y.set(_this._zoomZoomedDomains.y, true, true);
