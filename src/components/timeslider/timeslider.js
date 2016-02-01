@@ -240,7 +240,14 @@ var TimeSlider = Component.extend({
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
    */
-  resize: function () {
+  resize: function() {
+    var _this = this;
+    utils.defer(function() {
+      _this._resize();
+    });
+  },
+
+  _resize: function () {
 
     this.model.time.pause();
 

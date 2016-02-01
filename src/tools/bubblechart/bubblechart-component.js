@@ -381,10 +381,12 @@ var BubbleChartComp = Component.extend({
     //component events
     this.on("resize", function() {
       //console.log("EVENT: resize");
-      _this.updateSize();
-      _this.updateMarkerSizeLimits();
-      _this._trails.run("findVisible");
-      _this._panZoom.rerun(); // includes redraw data points and trail resize
+      utils.defer(function() {
+        _this.updateSize();
+        _this.updateMarkerSizeLimits();
+        _this._trails.run("findVisible");
+        _this._panZoom.rerun(); // includes redraw data points and trail resize
+      })
     });
 
     //keyboard listeners
