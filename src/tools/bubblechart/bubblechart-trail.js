@@ -88,7 +88,7 @@ export default Class.extend({
             var x = _this.xScale(values.axis_x[pointer[KEY]]);
             var y = _this.yScale(values.axis_y[pointer[KEY]]);
             var s = utils.areaToRadius(_this.sScale(values.size[pointer[KEY]]));
-            _this._setTooltip(text, x, y, s);
+            _this._setTooltip(pointer);
           }
           //change opacity to OPACITY_HIGHLT = 1.0;
           d3.select(this).style("opacity", 1.0);
