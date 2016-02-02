@@ -14,6 +14,7 @@ $vzb-dialog-content-height: 250px;
     text-align: left;
     display: block;
     position: absolute;
+    bottom: 0;
     overflow: hidden;
     &.vzb-popup {
       z-index: -2;
@@ -319,16 +320,15 @@ $vzb-dialog-content-height: 250px;
 }
 
 //responsiveness
-&.vzb-landscape,
 &.vzb-large,
 &.vzb-medium {
   .vzb-tool-dialogs {
     .vzb-dialogs-dialog {
       &.vzb-popup {
-        @include position(absolute, -2000px -10px auto auto);
+        @include position(absolute, auto -10px 2000px auto);
         margin-right: $size-button-list;
         &.vzb-active {
-          @include position(absolute, 20px -10px auto auto);
+          @include position(absolute, auto -10px 0 auto);
         }
       }
     }
@@ -381,6 +381,11 @@ $vzb-dialog-content-height: 250px;
   &.vzb-landscape {
     .vzb-dialogs-dialog {
       &.vzb-popup {
+        @include position(absolute, -1000px -10px auto auto);
+        margin-right: $size-button-list;
+        &.vzb-active {
+          @include position(absolute, 10px -10px auto auto);
+        }
         >.vzb-dialog-modal {
           >.vzb-dialog-content,
           >.vzb-dialog-content.vzb-dialog-content-fixed {
@@ -404,7 +409,13 @@ $vzb-dialog-content-height: 250px;
   &.vzb-dialog-expand-true {
     .vzb-tool-dialogs {
       >.vzb-dialogs-dialog {
-        margin-right: $vzb-button-expand-width;
+        margin-right: 30px;
+        &.vzb-popup {
+          @include position(absolute, auto -10px 70px auto);
+          &.vzb-active {
+            @include position(absolute, auto -10px 70px auto);
+          }
+        }
         &.vzb-sidebar {
           visibility: visible;
           display: block;
