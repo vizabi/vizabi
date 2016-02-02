@@ -13,7 +13,6 @@ function updateURL(force, minState) {
       state = minState || VIZ.getMinState();
       options = VIZ.getOptions();
     }
-    formatDates(state);
 
     if(options) {
       lang = options.language.id || document.getElementById('vzbp-btn-lang').getAttribute('data-next_lang');
