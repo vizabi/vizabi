@@ -520,7 +520,9 @@ BubbleChart.define('default_options', {
 PopByAge.define('default_options', {
   state: {
     time: {
-      value: '2013'
+      value: '2013',
+      start: '1950',
+      end: '2100'
     },
     entities: {
       dim: "geo",
@@ -535,7 +537,7 @@ PopByAge.define('default_options', {
       show: {
         _defs_: {
           "age": [
-              [0, 150]
+              [0, 95]
             ] //show 0 through 100
         }
       },
@@ -553,7 +555,11 @@ PopByAge.define('default_options', {
       },
       axis_y: {
         use: "indicator",
-        which: "age"
+        which: "age",
+        // domain Max should be set manually as age max from entites_age plus one grouping value (95 + 5 = 100)
+        // that way the last age group fits in on the scale
+        domainMax: 100,
+        domainMin: 0
       },
       axis_x: {
         use: "indicator",
