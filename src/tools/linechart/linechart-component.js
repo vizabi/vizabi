@@ -258,7 +258,7 @@ var LCComponent = Component.extend({
         margin: {
           top: 40,
           right: 60,
-          left: 55,
+          left: 65,
           bottom: 40
         },
         tick_spacing: 80,
@@ -270,7 +270,7 @@ var LCComponent = Component.extend({
         margin: {
           top: 50,
           right: 60,
-          left: 55,
+          left: 70,
           bottom: 50
         },
         tick_spacing: 100,
@@ -286,7 +286,7 @@ var LCComponent = Component.extend({
           top: 9,
           right: 15,
           bottom: 10,
-          left: 5
+          left: 10
         }
       },
       medium: {
@@ -294,7 +294,7 @@ var LCComponent = Component.extend({
           top: 9,
           right: 15,
           bottom: 10,
-          left: 5
+          left: 20
         }
       },
       large: {
@@ -302,7 +302,7 @@ var LCComponent = Component.extend({
           top: 9,
           right: 15,
           bottom: 10,
-          left: 10
+          left: 25
         }
       }
     };
