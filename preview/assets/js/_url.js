@@ -69,8 +69,7 @@ function parseURL() {
   if(hash) {
     options = URLON.parse(hash);
 
-    URL.state = options.state;
-    URL.lang = options.lang;
+    URL.model = options.model || {};
 
     if(options.width && options.height && placeholder && setDivSize) {
       setDivSize(placeholder, container, options.width, options.height);

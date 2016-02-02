@@ -59,7 +59,7 @@ script.
       addClass(recButtonIcon, 'fa-bullseye');
     }
   };
-
+ 
   var langButton = document.getElementById("vzbp-btn-lang");
 
   VIZABI_OPTIONS.bind['change:language.id'] = function(evt, path) {
@@ -75,13 +75,13 @@ script.
     }
   };
 
-  parseURL();
-
   if(!VIZABI_OPTIONS) {
     VIZABI_OPTIONS = { state: {}}; //fallback
   }
   VIZABI_OPTIONS.language = {};
-  if(URL.state) VIZABI_OPTIONS.state = URL.state;
-  if(URL.lang) VIZABI_OPTIONS.language.id = URL.lang;
+
+  parseURL();
+
+  extend(VIZABI_OPTIONS, URL.model);
 
   VIZ = Vizabi("#{tool}", placeholder, VIZABI_OPTIONS);
