@@ -160,20 +160,6 @@ export default function axisSmart() {
           .attr("transform", getTransform);
 
       }
-
-
-      g.select('.vzb-axis-value')
-        .attr("transform", highlightValue == "none" ? "translate(0,0)" : "translate(" + (orient == HORIZONTAL ?
-          axis.scale()(highlightValue) : 0) + "," + (orient == VERTICAL ? axis.scale()(highlightValue) : 0) + ")")
-
-      g.select('.vzb-axis-value').select("text")
-        .transition()
-        .delay(0)
-        .duration(highlightTransDuration)
-        .ease("linear")
-        .text(axis.tickFormat()(highlightValue == "none" ? 0 : highlightValue))
-        .style("opacity", (highlightValue == "none" ? 0 : 1));
-
       highlightValue = null;
     }
 
