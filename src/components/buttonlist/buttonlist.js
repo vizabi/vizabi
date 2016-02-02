@@ -189,9 +189,9 @@ var ButtonList = Component.extend({
     //     d3.select(this.root.element).classed("vzb-dialog-expand-true", true);
     // }
     
-    var button_list = [].concat(button_expand);
+    var button_list = [].concat(this.model.ui.buttons);
 
-    (this.model.ui.buttons||[]).forEach(function(button) {
+    (button_expand||[]).forEach(function(button) {
       if (button_list.indexOf(button) === -1) {
         button_list.push(button);
       }

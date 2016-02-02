@@ -1145,7 +1145,7 @@ export var flattenDates = function(obj, timeFormat) {
       }
     }
     if(isPlainObject(val)) {
-      flattened[key] = flattenDates(val);
+      flattened[key] = flattenDates(val, timeFormat);
     } else {
       flattened[key] = val;
     }

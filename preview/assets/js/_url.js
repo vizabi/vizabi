@@ -8,9 +8,9 @@ function updateURL(force, minState) {
 
   function update() {
 
-    var state, lang, options;
+    var model, lang, options;
     if(typeof VIZ !== 'undefined') {
-      state = minState || VIZ.getMinState();
+      model = minState || VIZ.getMinState();
       options = VIZ.getOptions();
     }
 
@@ -22,7 +22,6 @@ function updateURL(force, minState) {
       document.getElementById('vzbp-btn-lang').setAttribute('data-next_lang', 'se');
     }
     var url = {
-      lang: lang,
       width: parseInt(placeholder.style.width, 10),
       height: parseInt(placeholder.style.height, 10),
       fullscreen: hasClass(placeholder, 'fullscreen'),
@@ -43,8 +42,8 @@ function updateURL(force, minState) {
       el.setAttribute("href", href);
     });
 
-    if(state) {
-      url.state = state;
+    if(model && Object.keys(model).length > 0) {
+      url.model = model;
       url_string = URLON.stringify(url);
     }
 
