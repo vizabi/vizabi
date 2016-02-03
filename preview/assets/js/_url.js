@@ -10,7 +10,7 @@ function updateURL(force, minState) {
 
     var model, lang, options;
     if(typeof VIZ !== 'undefined') {
-      model = minState || VIZ.getMinState();
+      model = minState || VIZ.getMinModel();
       options = VIZ.getOptions();
     }
 

@@ -88,7 +88,7 @@ var Tool = Component.extend({
           _this.model.validate();
 
           if (evt.source.persistent)
-            _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'), _this.getMinState());
+            _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'), _this.getMinModel());
         }
       },
       'change:ui.presentation': function() {
@@ -137,15 +137,17 @@ var Tool = Component.extend({
     this._setUIOptions();
   },
 
-  getMinState: function() {
+  getMinModel: function() {
     var toolModel = this.model.getPlainObject(true); // true = get only persistent model values
     var d_toolModel = this.default_options;
     //flattens _defs_ object
     d_toolModel = utils.flattenDefaults(d_toolModel);
     //compares with chart default options
     var d = utils.diffObject(toolModel, d_toolModel);
-    //compares with chart external options
-    d = utils.flattenDates(utils.diffObject(d, this.external_options), this.model.state.time.timeFormat);
+    // compares with chart external options.
+    // TODO: commented out for now because external options includes URL options. URL options should not be excluded from MinModel but other external options should.
+    // d = utils.flattenDates(utils.diffObject(d, this.external_options), this.model.state.time.timeFormat);
+    d = utils.flattenDates(d, this.model.state.time.timeFormat);
     //compares with model's defaults
     return utils.diffObject(d, this.model.getDefaults());
   },
