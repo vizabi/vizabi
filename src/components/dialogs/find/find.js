@@ -94,7 +94,9 @@ var Find = Dialog.extend({
     var marker = this.model.state.marker;
     var time = this.model.state.time.value;
 
-    var values = marker.getFrame(time);
+    var values = marker.getFrame(time, function(values) {
+
+    });
 
     var data = marker.getKeys().map(function(d) {
       var pointer = {};
@@ -136,10 +138,10 @@ var Find = Dialog.extend({
       })
       .on("change", function(d) {
         //clear highlight so it doesn't get in the way when selecting an entity
-        if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();        
-        _this.model.state.entities.selectEntity(d);        
+        if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();
+        _this.model.state.entities.selectEntity(d);
         //return to highlighted state
-        if(!utils.isTouchDevice()) _this.model.state.entities.highlightEntity(d); 
+        if(!utils.isTouchDevice()) _this.model.state.entities.highlightEntity(d);
       });
 
     items.append("label")
