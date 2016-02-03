@@ -4,13 +4,13 @@ var URLON={stringify:function(a){function b(a){return encodeURI(a.replace(/([=:&
 var URL = {};
 
 //grabs width, height, tabs open, and updates the url
-function updateURL(force, minState) {
+function updateURL(force, minModel) {
 
   function update() {
 
     var model, lang, options;
     if(typeof VIZ !== 'undefined') {
-      model = minState || VIZ.getMinModel();
+      model = minModel || VIZ.getMinModel();
       options = VIZ.getOptions();
     }
 
