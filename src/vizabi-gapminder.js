@@ -231,16 +231,43 @@ BubbleMap.define('default_options', {
     }
   },
   data: {
-    //reader: "waffle",
+    reader: "waffle",
+    path: "//waffle-server.gapminderdev.org/api/graphs/stats/vizabi-tools",
     //path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
-    reader: "csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    //reader: "csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   language: language,
   ui: {
-    buttons: [],
-    dialogs: {popup: [], sidebar: [], moreoptions: []},
+    "buttons": [
+        "colors",
+        "find",
+        "size",
+        "moreoptions",
+        "fullscreen",
+        "presentation"
+    ],
+    "dialogs": {
+        "popup": [
+            "colors",
+            "find",
+            "size",
+            "moreoptions"
+        ],
+        "sidebar": [
+            "colors",
+            "find",
+            "size"
+        ],
+        "moreoptions": [
+            "opacity",
+            "speed",
+            "size",
+            "colors",
+            "presentation"
+        ]
+    },
     presentation: false
   }
 });
@@ -331,15 +358,45 @@ MountainChart.define('default_options', {
   },
   language: language,
   data: {
-    //reader: "waffle",
+    reader: "waffle",
+    path: "//waffle-server.gapminderdev.org/api/graphs/stats/vizabi-tools",
     //path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
-    reader: "csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    //reader: "csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   ui: {
-    buttons: [],
-    dialogs: {popup: [], sidebar: [], moreoptions: []},
+      "buttons": [
+          "colors",
+          "find",
+          "stack",
+          "show",
+          "moreoptions",
+          "fullscreen",
+          "presentation"
+      ],
+      "dialogs": {
+          "popup": [
+              "colors",
+              "find",
+              "stack",
+              "show",
+              "moreoptions"
+          ],
+          "sidebar": [
+              "colors",
+              "find",
+              "stack"
+          ],
+          "moreoptions": [
+              "opacity",
+              "speed",
+              "stack",
+              "axesmc",
+              "colors",
+              "presentation"
+          ]
+      },
     presentation: false
   }
 });
@@ -492,7 +549,8 @@ BubbleChart.define('default_options', {
   },
   data: {
     reader: "waffle",
-    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    path: "//waffle-server.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    //path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
     //reader: "csv",
     //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
@@ -511,8 +569,36 @@ BubbleChart.define('default_options', {
         dragging: true
       }
     },
-    buttons: [],
-    dialogs: {popup: [], sidebar: [], moreoptions: []},
+    "buttons": [
+        "colors",
+        "find",
+        "trails",
+        "lock",
+        "size",
+        "moreoptions",
+        "fullscreen"
+    ],
+    "dialogs": {
+        "popup": [
+            "colors",
+            "find",
+            "size",
+            "moreoptions"
+        ],
+        "sidebar": [
+            "colors",
+            "find",
+            "size"
+        ],
+        "moreoptions": [
+            "opacity",
+            "speed",
+            "axes",
+            "size",
+            "colors",
+            "presentation"
+        ]
+    },
     presentation: false
   }
 });
