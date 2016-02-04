@@ -1216,14 +1216,7 @@ export var nestArrayToObj = function(arr) {
  * @return {Number} y - interpolated value
  */
 //
-export var interpolator = {
-    linear: function(x1, x2, y1, y2, x) {
-      return +y1 + (y2 - y1) * (x - x1) / (x2 - x1);
-    },
-    exp: function(x1, x2, y1, y2, x) {
-      return Math.exp((Math.log(y1) * (x2 - x) - Math.log(y2) * (x1 - x)) / (x2 - x1));
-    }
-}
+export var interpolator = VizabiInterpolators;
 
 
 export var interpolateVector = function(){

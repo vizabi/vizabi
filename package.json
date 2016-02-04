@@ -19,7 +19,9 @@
     "url": "https://github.com/Gapminder/vizabi/issues"
   },
   "homepage": "http://vizabi.org",
-  "dependencies": {},
+  "dependencies": {
+    "vizabi-interpolators": "^1.0.1"
+  },
   "devDependencies": {
     "babel-eslint": "4.1.3",
     "bourbon": "^4.2.5",
