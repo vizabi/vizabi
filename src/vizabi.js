@@ -66,5 +66,6 @@ Vzb.Component = Component;
 Vzb.Model = Model;
 Vzb.Reader = Reader;
 Vzb.Events = Events;
+Vzb.utils = utils;
 
 export default Vzb;
