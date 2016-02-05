@@ -507,7 +507,6 @@ var Model = EventSource.extend({
   afterLoad: function() {
     EventSource.unfreezeAll();
     this.setLoadingDone('_hook_data');
-    interpIndexes = {};
   },
 
   /**
@@ -941,30 +940,7 @@ getFrame: function(time){
     
 
 
-  /**
-   * gets the value of the hook point
-   * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
-   * @returns hooked value
-   */
-  getValue: function(filter) {
-    //extract id from original filter
-    filter = utils.clone(filter, this._getAllDimensions());
-    if(!this.isHook()) {
-      utils.warn('getValue method needs the model to be hooked to data.');
-      return;
-    }
-    var value;
-    if(this.use === 'constant') {
-      value = this.which;
-    } else if(this._space.hasOwnProperty(this.use)) {
-      value = this._space[this.use][this.which];
-    } else {
-      //TODO: get meta info about translatable data
-      var method = globals.metadata.indicatorsDB[this.which].interpolation;
-      value = interpolateValue.call(this, filter, this.use, this.which, method);
-    }
-    return this.mapValue(value);
-  },
+
 
   /**
    * maps the value to this hook's specifications
@@ -1589,69 +1565,6 @@ function getSpace(model) {
     );
   }
 }
-
-//caches interpolation indexes globally.
-//TODO: what if there are 2 visualizations with 2 data sources?
-var interpIndexes = {};
-
-
-
-/**
- * interpolates the specific value if missing
- * @param {Object} _filter Id the row. e.g: {geo: "swe", time: "1999"}
- * filter SHOULD contain time property
- * @returns interpolated value
- */
-function interpolateValue(_filter, use, which, method) {
-
-  var dimTime, time, filter, items, space_id, indexNext, result;
-
-  dimTime = this._getFirstDimension({
-    type: 'time'
-  });
-  time = new Date(_filter[dimTime]); //clone date
-  filter = utils.clone(_filter, null, dimTime);
-
-
-  items = this.getFilteredItems(filter);
-  if(items === null || items.length === 0) {
-    utils.warn('interpolateValue returns ' + which + ' = NULL because items array is empty in ' + JSON.stringify(filter));
-    return null;
-  }
-
-  // return constant for the use of "constant"
-  if(use === 'constant') {
-    return items[0][which];
-  }
-  // zero-order interpolation for the use of properties
-  if(use === 'property') {
-    return items[0][which];
-  }
-
-  // search where the desired value should fall between the known points
-  space_id = this._spaceId || (this._spaceId = Object.keys(this._space).join('-'));
-  interpIndexes[space_id] = interpIndexes[space_id] || {};
-
-  if(time in interpIndexes[space_id]) {
-    indexNext = interpIndexes[space_id][time].next;
-  } else {
-    indexNext = d3.bisectLeft(this.getUnique(dimTime), time);
-    //store indexNext
-    interpIndexes[space_id][time] = {
-      next: indexNext
-    };
-  }
-
-  // the rest is for the continuous measurements
-  // check if the desired value is out of range. 0-order extrapolation
-  if(indexNext === 0) {
-    return +items[0][which];
-  }
-  if(indexNext === items.length) {
-    return +items[items.length - 1][which];
-  }
-
-};
 
 
 

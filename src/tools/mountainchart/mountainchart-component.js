@@ -678,7 +678,7 @@ var MountainChartComponent = Component.extend({
                 });
 
                 //position tooltip
-                _this._setTooltip(d.key ? _this.translator("region/" + d.key) : _this.model.marker.label.getValue(d));
+                _this._setTooltip(d.key ? _this.translator("region/" + d.key) : _this.values.label[d.KEY()]);
 
             },
             _mouseout: function (d, i) {

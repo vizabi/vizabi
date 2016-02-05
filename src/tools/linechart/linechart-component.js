@@ -132,7 +132,7 @@ var LCComponent = Component.extend({
     this.redrawDataPoints();
 
     this.graph
-      .on('mousemove', this.entityMousemove.bind(this, null, null, this, true))
+      .on('mousemove', this.entityMousemove.bind(this, null, null, this))
       .on('mouseleave', this.entityMouseout.bind(this, null, null, this));
   },
 
@@ -672,19 +672,13 @@ var LCComponent = Component.extend({
     }
     var resolvedValue;
     var timeDim = _this.model.time.getDimension();
-    if(closestToMouse) {
-      var mousePos = mouse[1] - _this.margin.bottom;
-      var data = this.getValuesForYear(resolvedTime);
-      var nearestKey = this.getNearestKey(mousePos, data.axis_y, _this.yScale.bind(_this));
-      resolvedValue = data.axis_y[nearestKey];
-      if(!me) me = {};
-      me[KEY] = nearestKey;
-    } else {
-      var pointer = {};
-      pointer[KEY] = me[KEY];
-      pointer[timeDim] = resolvedTime;
-      resolvedValue = _this.model.marker.axis_y.getValue(pointer);
-    }
+    
+    var mousePos = mouse[1] - _this.margin.bottom;
+    var data = this.getValuesForYear(resolvedTime);
+    var nearestKey = this.getNearestKey(mousePos, data.axis_y, _this.yScale.bind(_this));
+    resolvedValue = data.axis_y[nearestKey];
+    if(!me) me = {};
+    me[KEY] = nearestKey;
 
     _this.hoveringNow = me;
 
