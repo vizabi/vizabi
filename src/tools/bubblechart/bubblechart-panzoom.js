@@ -454,62 +454,69 @@ export default Class.extend({
         var xRange = [_this.xScale(minX), _this.xScale(maxX)];
         var yRange = [_this.yScale(minY), _this.yScale(maxY)];
 
+        this._zoomOnRectangle(_this.element, xRange[0], yRange[0], xRange[1], yRange[1], false, duration);
+    },
+
+    _zoomOnRectangle: function(element, zoomedX1, zoomedY1, zoomedX2, zoomedY2, compensateDragging, duration) {
+        var _this = this.context;
+        var zoomer = this.zoomer;
+
+        var x1 = zoomedX1;
+        var y1 = zoomedY1;
+        var x2 = zoomedX2;
+        var y2 = zoomedY2;
+
+        /*
+         * When dragging to draw a rectangle, the translate vector has (x2 - x1)
+         * added to zoomer.translate()[0], and (y2 - 1) added to
+         * zoomer.translate()[1].
+         *
+         * We need to compensate for this addition when
+         * zooming with a rectangle, because zooming with a rectangle will
+         * update the translate vector with new values based on the rectangle
+         * dimensions.
+         */
+        if(compensateDragging) {
+            zoomer.translate([
+                zoomer.translate()[0] + x1 - x2,
+                zoomer.translate()[1] + y1 - y2
+            ])
+        }
+
+        var xRangeBounds = [0, _this.width];
+        var yRangeBounds = [_this.height, 0];
+
+        var xRangeBoundsBumped = _this._rangeBump(xRangeBounds);
+        var yRangeBoundsBumped = _this._rangeBump(yRangeBounds);
+
         /*
          * If the min or max of one axis lies in the range bump region, then
          * changing the opposite end of that axis must correctly scale and
          * maintain the range bump region.
          */
-        if (minX < _this.xScale.domain()[0]) {
-            var xScaleMax = _this.xScale(maxX);
-            var xScaleDifference = xRangeBounds[1] - xScaleMax;
-            var xScalar = xScaleDifference / Math.abs(xRangeBoundsBumped[0] - xRangeBounds[1]);
-            var xDifferenceInverted = _this.xScale.invert(
-                (xRangeBounds[0] - xRangeBoundsBumped[0]) * (1 - xScalar) + xRangeBoundsBumped[0]
-            );
-
-            xRange[0] = _this.xScale(xDifferenceInverted);
+        if (_this.xScale.invert(x1) < _this.xScale.domain()[0]) {
+            x1 = this._scaleCoordinate(x1, xRangeBounds[1] - x2, _this.xScale.range()[0], xRangeBounds[1]);
+        } else if (_this.xScale.invert(x2) < _this.xScale.domain()[0]) {
+            x2 = this._scaleCoordinate(x2, xRangeBounds[1] - x1, _this.xScale.range()[0], xRangeBounds[1]);
         }
 
-        if (maxX > _this.xScale.domain()[1]) {
-            var xScaleMin = _this.xScale(minX);
-            var xScaleDifference = xScaleMin - xRangeBounds[0];
-            var xScalar = xScaleDifference / Math.abs(xRangeBoundsBumped[1] - xRangeBounds[0]);
-            var xDifferenceInverted = _this.xScale.invert(
-                (xRangeBounds[1] - xRangeBoundsBumped[1]) * (1 - xScalar) + xRangeBoundsBumped[1]
-            );
-
-            xRange[1] = _this.xScale(xDifferenceInverted);
+        if (_this.xScale.invert(x2) > _this.xScale.domain()[1]) {
+            x2 = this._scaleCoordinate(x2, x1 - xRangeBounds[0], _this.xScale.range()[1], xRangeBounds[0]);
+        } else if (_this.xScale.invert(x1) > _this.xScale.domain()[1]) {
+            x1 = this._scaleCoordinate(x1, x2 - xRangeBounds[0], _this.xScale.range()[1], xRangeBounds[0]);
         }
 
-        if (minY < _this.yScale.domain()[0]) {
-            var yScaleMax = _this.yScale(maxY);
-            var yScaleDifference = yScaleMax - yRangeBounds[1];
-            var yScalar = yScaleDifference / Math.abs(yRangeBoundsBumped[0] - yRangeBounds[1]);
-            var yDifferenceInverted = _this.yScale.invert(
-                (yRangeBounds[0] - yRangeBoundsBumped[0]) * (1 - yScalar) + yRangeBoundsBumped[0]
-            );
-
-            yRange[0] = _this.yScale(yDifferenceInverted);
+        if (_this.yScale.invert(y1) < _this.yScale.domain()[0]) {
+            y1 = this._scaleCoordinate(y1, y2 - yRangeBounds[1], _this.yScale.range()[0], yRangeBounds[1]);
+        } else if (_this.yScale.invert(y2) < _this.yScale.domain()[0]) {
+            y2 = this._scaleCoordinate(y2, y1 - yRangeBounds[1], _this.yScale.range()[0], yRangeBounds[1]);
         }
 
-        if (maxY > _this.yScale.domain()[1]) {
-            var yScaleMin = _this.yScale(minY);
-            var yScaleDifference = yRangeBounds[0] - yScaleMin;
-            var yScalar = yScaleDifference / Math.abs(yRangeBoundsBumped[1] - yRangeBounds[0]);
-            var yDifferenceInverted = _this.yScale.invert(
-                (yRangeBounds[1] - yRangeBoundsBumped[1]) * (1 - yScalar) + yRangeBoundsBumped[1]
-            );
-
-            yRange[1] = _this.yScale(yDifferenceInverted);
+        if (_this.yScale.invert(y2) > _this.yScale.domain()[1]) {
+            y2 = this._scaleCoordinate(y2, yRangeBounds[0] - y1, _this.yScale.range()[1], yRangeBounds[0]);
+        } else if (_this.yScale.invert(y1) > _this.yScale.domain()[1]) {
+            y1 = this._scaleCoordinate(y1, yRangeBounds[0] - y2, _this.yScale.range()[1], yRangeBounds[0]);
         }
-
-        this._zoomOnRectangle(_this.element, xRange[0], yRange[0], xRange[1], yRange[1], false, duration);
-
-    },
-
-    _zoomOnRectangle: function(element, x1, y1, x2, y2, compensateDragging, duration) {
-        var _this = this.context;
-        var zoomer = this.zoomer;
 
         if(Math.abs(x1 - x2) < 10 || Math.abs(y1 - y2) < 10) return;
 
@@ -539,13 +546,6 @@ export default Class.extend({
             var ratioX = zoomer.ratioX;
         }
 
-        if(compensateDragging) {
-            zoomer.translate([
-                zoomer.translate()[0] + x1 - x2,
-                zoomer.translate()[1] + y1 - y2
-            ])
-        }
-
         var pan = [
             (zoomer.translate()[0] - Math.min(x1, x2)) / zoomer.scale() / zoomer.ratioX * zoom * ratioX,
             (zoomer.translate()[1] - Math.min(y1, y2)) / zoomer.scale() / zoomer.ratioY * zoom * ratioY
@@ -558,6 +558,15 @@ export default Class.extend({
         zoomer.duration = duration ? duration : 0;
 
         zoomer.event(element);
+    },
+
+    /*
+     * Helper function that returns a scaled coordinate value based on the
+     * distance between the given coordinate and the data boundary.
+     */
+    _scaleCoordinate: function(coordValue, scaleDifference, dataBoundary, viewportBoundary) {
+        var scalar = scaleDifference / Math.abs(dataBoundary - viewportBoundary);
+        return (coordValue - dataBoundary) * (1 - scalar) + dataBoundary;
     },
 
     reset: function(element) {
