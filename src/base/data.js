@@ -209,55 +209,58 @@ var Data = Class.extend({
    */
   get: function(queryId, what, whatId, args, callback) {
     // if not specified data from what query, return nothing
-    if(!queryId) return utils.warn("Data.js 'get' method doesn't like the queryId you gave it: " + queryId);
+    var _this = this;
 
-    // if they want data, return the data
-    if(!what || what == 'data') {
-      return this._collection[queryId]['data'];
-    }
+    return new Promise(function(resolve, reject) {
+      if(!queryId) reject(utils.warn("Data.js 'get' method doesn't like the queryId you gave it: " + queryId));
 
-    // if they didn't give an instruction, give them the whole thing
-    // it's probably old code which modifies the data outside this class
-    // TODO: move these methods inside (e.g. model.getNestedItems())
-    if (!whatId) {
-      return this._collection[queryId][what];
-    }
+      // if they want data, return the data
+      if(!what || what == 'data') {
+        resolve(_this._collection[queryId]['data']);
+      }
 
-    // if they want a certain processing of the data, see if it's already in cache
-    var id = JSON.stringify(whatId);
-    if(this._collection[queryId][what][id]) {
-      return this._collection[queryId][what][id];
-    }
+      // if they didn't give an instruction, give them the whole thing
+      // it's probably old code which modifies the data outside this class
+      // TODO: move these methods inside (e.g. model.getNestedItems())
+      if (!whatId) {
+        resolve(_this._collection[queryId][what]);
+      }
 
-    // if it's not cached, process the data and then return it
-    switch(what) {
-      case 'unique':
-        this._collection[queryId][what][id] = this._getUnique(queryId, whatId);
-        break;
-      case 'filtered':
-        this._collection[queryId][what][id] = this._getFiltered(queryId, whatId);
-        break;
-      case 'limits':
-        this._collection[queryId][what][id] = this._getLimits(queryId, whatId);
-        break;
-      case 'limitsPerFrame':
-        this._collection[queryId][what][id] = this._getLimitsPerFrame(queryId, whatId, args);
-        break;
-      case 'frames':
-        var _this = this;
-        this._getFrames(queryId, whatId, args, function(response) {
-          _this._collection[queryId][what][id] = response;
-          if (typeof callback === "function") callback(_this._collection[queryId][what][id]);
+      // if they want a certain processing of the data, see if it's already in cache
+      var id = JSON.stringify(whatId);
+      if(_this._collection[queryId][what][id]) {
+        resolve(_this._collection[queryId][what][id]);
+      }
+
+      // if it's not cached, process the data and then return it
+      if (what == 'frames') {
+        _this._collection[queryId][what][id] = {};
+        _this._getFrames(queryId, whatId, args).then(function(frames) {
+          _this._collection[queryId][what][id] = frames;
+          resolve(_this._collection[queryId][what][id]);
         });
-        break;
-      case 'nested':
-        this._collection[queryId][what][id] = this._getNested(queryId, whatId);
-        break;
-    }
-    return this._collection[queryId][what][id];
+      } else {
+        switch(what) {
+          case 'unique':
+            _this._collection[queryId][what][id] = _this._getUnique(queryId, whatId);
+            break;
+          case 'filtered':
+            _this._collection[queryId][what][id] = _this._getFiltered(queryId, whatId);
+            break;
+          case 'limits':
+            _this._collection[queryId][what][id] = _this._getLimits(queryId, whatId);
+            break;
+          case 'limitsPerFrame':
+            _this._collection[queryId][what][id] = _this._getLimitsPerFrame(queryId, whatId, args);
+            break;
+          case 'nested':
+            _this._collection[queryId][what][id] = _this._getNested(queryId, whatId);
+            break;
+        }
+        resolve(_this._collection[queryId][what][id]);
+      }
+    });
   },
-
-
 
 
   /**
@@ -265,147 +268,147 @@ var Data = Class.extend({
    * @param {Number} queryId hash code for query
    * @param {Array} framesArray -- array of keyframes across animatable
    * @param {Object} indicatorsDB -- indicators DB from globals.metadata
+   * @param callback
    * @returns {Object} regularised dataset, nested by [animatable, column, key]
    */
-  _getFrames: function(queryId, framesArray, indicatorsDB, cb) {
+  _getFrames: function(queryId, framesArray, indicatorsDB) {
+      return new Promise(function(resolve, reject) {
+        //TODO: thses should come from state or from outside somehow
 
-      //TODO: thses should come from state or from outside somehow
+        // FramesArray in the input contains the array of keyframes in animatable dimension.
+        // Example: array of years like [1800, 1801 … 2100]
+        // these will be the points where we need data
+        // (some of which might already exist in the set. in regular datasets all the points would exist!)
 
-      // FramesArray in the input contains the array of keyframes in animatable dimension.
-      // Example: array of years like [1800, 1801 … 2100]
-      // these will be the points where we need data
-      // (some of which might already exist in the set. in regular datasets all the points would exist!)
+        // Check if query.where clause is missing a time field
+        var _this = this;
+        var result = {};
+        if(!indicatorsDB) utils.warn("_getFrames in data.js is missing indicatorsDB, it's needed for gap filling")
+        if(!framesArray) utils.warn("_getFrames in data.js is missing framesArray, it's needed so much")
 
-      // Check if query.where clause is missing a time field
+        var KEY = "geo";
+        var TIME = "time";
 
-      var _this = this;
-      var result = {};
-      if(!indicatorsDB) utils.warn("_getFrames in data.js is missing indicatorsDB, it's needed for gap filling")
-      if(!framesArray) utils.warn("_getFrames in data.js is missing framesArray, it's needed so much")
+        var filtered = {};
+        var items, itemsIndex, oneFrame, method, use, next;
 
-      var KEY = "geo";
-      var TIME = "time";
+        // We _nest_ the flat dataset in two levels: first by “key” (example: geo), then by “animatable” (example: year)
+        // See the _getNested function for more details
+        var nested = this.get(queryId, 'nested', [KEY, TIME]);
+        var keys = Object.keys(nested);
 
-      var filtered = {};
-      var items, itemsIndex, oneFrame, method, use, next;
+        // Get the list of columns that are in the dataset, exclude key column and animatable column
+        // Example: [“lex”, “gdp”, “u5mr"]
+        var query = this._collection[queryId].query;
+        var columns = query.select.filter(function(f){return f != KEY && f != TIME && f !== "_default"});
 
-      // We _nest_ the flat dataset in two levels: first by “key” (example: geo), then by “animatable” (example: year)
-      // See the _getNested function for more details
-      var nested = this.get(queryId, 'nested', [KEY, TIME]);
-      var keys = Object.keys(nested);
-
-      // Get the list of columns that are in the dataset, exclude key column and animatable column
-      // Example: [“lex”, “gdp”, “u5mr"]
-      var query = this._collection[queryId].query;
-      var columns = query.select.filter(function(f){return f != KEY && f != TIME && f !== "_default"});
-
-      var fLength = framesArray.length;
-      var kLength = keys.length;
-      var cLength = columns.length;
-      var key, k, column, c;
-
+        var fLength = framesArray.length;
+        var kLength = keys.length;
+        var cLength = columns.length;
+        var key, k, column, c;
 
 
-      var buildFrame = function(frameName, cb) {
-        var frame = {};
-        if (!query.where.time) {
-          // The query.where clause doesn't have time field for properties:
-          // we populate the regular set with a single value (unpack properties into constant time series)
-          var dataset = _this._collection[queryId].data;
-          for (c = 0; c < cLength; c++) frame[columns[c]] = {};
 
-          for (var i = 0; i < dataset.length; i++) {
-            var d = dataset[i];
-            for (c = 0; c < cLength; c++) frame[columns[c]][d[KEY]] = d[columns[c]];
-          }
+        var buildFrame = function(frameName, cb) {
+          var frame = {};
+          if (!query.where.time) {
+            // The query.where clause doesn't have time field for properties:
+            // we populate the regular set with a single value (unpack properties into constant time series)
+            var dataset = _this._collection[queryId].data;
+            for (c = 0; c < cLength; c++) frame[columns[c]] = {};
 
-        } else {
-          // If there is a time field in query.where clause, then we are dealing with indicators in this request
+            for (var i = 0; i < dataset.length; i++) {
+              var d = dataset[i];
+              for (c = 0; c < cLength; c++) frame[columns[c]][d[KEY]] = d[columns[c]];
+            }
 
-          // Put together a template for cached filtered sets (see below what's needed)
-          for (k = 0; k < kLength; k++) {
-            filtered[keys[k]] = {};
-            for (c = 0; c < cLength; c++) filtered[keys[k]][columns[c]] = null;
-          }
+          } else {
+            // If there is a time field in query.where clause, then we are dealing with indicators in this request
 
-          // Now we run a 3-level loop: across frames, then across keys, then and across data columns (lex, gdp)
-          for (c = 0; c < cLength; c++) frame[columns[c]] = {};
+            // Put together a template for cached filtered sets (see below what's needed)
+            for (k = 0; k < kLength; k++) {
+              filtered[keys[k]] = {};
+              for (c = 0; c < cLength; c++) filtered[keys[k]][columns[c]] = null;
+            }
 
-          for (k = 0; k < kLength; k++) {
-            key = keys[k];
+            // Now we run a 3-level loop: across frames, then across keys, then and across data columns (lex, gdp)
+            for (c = 0; c < cLength; c++) frame[columns[c]] = {};
 
-            for (c = 0; c < cLength; c++) {
-              column = columns[c];
+            for (k = 0; k < kLength; k++) {
+              key = keys[k];
 
-              //If there are some points in the array with valid numbers, then
-              //interpolate the missing point and save it to the “clean regular set”
-              method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
-              use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
+              for (c = 0; c < cLength; c++) {
+                column = columns[c];
+
+                //If there are some points in the array with valid numbers, then
+                //interpolate the missing point and save it to the “clean regular set”
+                method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
+                use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
 
 
-              // Inside of this 3-level loop is the following:
-              if (nested[key] && nested[key][frameName] && (nested[key][frameName][0][column] || nested[key][frameName][0][column] === 0)) {
+                // Inside of this 3-level loop is the following:
+                if (nested[key] && nested[key][frameName] && (nested[key][frameName][0][column] || nested[key][frameName][0][column] === 0)) {
 
-                // Check if the piece of data for [this key][this frame][this column] exists
-                // and is valid. If so, then save it into a “clean regular set”
-                frame[column][key] = nested[key][frameName][0][column];
+                  // Check if the piece of data for [this key][this frame][this column] exists
+                  // and is valid. If so, then save it into a “clean regular set”
+                  frame[column][key] = nested[key][frameName][0][column];
 
-              } else {
-                // If the piece of data doesn’t exist or is invalid, then we need to inter- or extapolate it
+                } else {
+                  // If the piece of data doesn’t exist or is invalid, then we need to inter- or extapolate it
 
-                // Let’s take a slice of the nested set, corresponding to the current key nested[key]
-                // As you remember it has the data nested further by frames.
-                // At every frame the data in the current column might or might not exist.
-                // Thus, let’s filter out all the frames which don’t have the data for the current column.
-                // Let’s cache it because we will most likely encounter another gap in the same column for the same key
+                  // Let’s take a slice of the nested set, corresponding to the current key nested[key]
+                  // As you remember it has the data nested further by frames.
+                  // At every frame the data in the current column might or might not exist.
+                  // Thus, let’s filter out all the frames which don’t have the data for the current column.
+                  // Let’s cache it because we will most likely encounter another gap in the same column for the same key
 
-                items = filtered[key][column];
+                  items = filtered[key][column];
 
-                if (items == null) {
-                  var givenFrames = Object.keys(nested[key]);
-                  items = new Array(givenFrames.length);
-                  itemsIndex = 0;
+                  if (items == null) {
+                    var givenFrames = Object.keys(nested[key]);
+                    items = new Array(givenFrames.length);
+                    itemsIndex = 0;
 
-                  for (var z = 0, length = givenFrames.length; z < length; z++) {
-                    oneFrame = nested[key][givenFrames[z]];
-                    if (oneFrame[0][column] || oneFrame[0][column] === 0) items[itemsIndex++] = oneFrame[0];
+                    for (var z = 0, length = givenFrames.length; z < length; z++) {
+                      oneFrame = nested[key][givenFrames[z]];
+                      if (oneFrame[0][column] || oneFrame[0][column] === 0) items[itemsIndex++] = oneFrame[0];
+                    }
+
+                    //trim the length of the array
+                    items.length = itemsIndex;
                   }
 
-                  //trim the length of the array
-                  items.length = itemsIndex;
+
+                  // Now we are left with a fewer frames in the filtered array. Let's check its length.
+                  //If the array is empty, then the entire column is missing for the key
+                  //So we let the key have missing values in this column for all frames
+                  if (items.length > 0) {
+                    next = null;
+                    frame[column][key] = utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
+                  }
+
                 }
-
-
-                // Now we are left with a fewer frames in the filtered array. Let's check its length.
-                //If the array is empty, then the entire column is missing for the key
-                //So we let the key have missing values in this column for all frames
-                if (items.length > 0) {
-                  next = null;
-                  frame[column][key] = utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
+              } //loop across columns
+            } //loop across keys
+          }
+          cb(frameName, frame);
+        };
+        var response = {};
+        var framesComplete = framesArray.length;
+        for (var f = 0; f < framesArray.length; f++) { //loop across frameArray
+          var frameName = framesArray[f];
+          (function(frame, resolve) {
+            utils.defer(function() {
+              buildFrame(frame, function(frameName, frameData) {
+                response[frameName] = frameData;
+                if (--framesComplete <= 0) {
+                  resolve(response);
                 }
-
-              }
-            } //loop across columns
-          } //loop across keys
-        }
-        cb(frameName, frame);
-      };
-      var response = {};
-      var framesComplete = framesArray.length;
-      for (var f = 0; f < framesArray.length; f++) { //loop across frameArray
-        var frameName = framesArray[f];
-        (function(frame, callback) {
-          utils.defer(function() {
-            buildFrame(frame, function(frameName, frameData) {
-              response[frameName] = frameData;
-              if (--framesComplete <= 0) {
-                callback(response);
-              }
+              });
             });
-          });
-        })(frameName, cb);
-      }
-      return result;
+          })(frameName, resolve);
+        }
+      });
   },
 
 
@@ -443,7 +446,9 @@ var Data = Class.extend({
         })(order[i])
       );
     };
-
+    console.log(nest);
+    console.log();
+    console.log(nest.entries(this._collection[queryId]['data']));
     return utils.nestArrayToObj(nest.entries(this._collection[queryId]['data']));
   },
 

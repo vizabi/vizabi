@@ -188,7 +188,6 @@ var Component = Events.extend({
       this._readyOnce = true;
       this.trigger('readyOnce');
     }
-
     this._ready = true;
     this.trigger('ready');
   },

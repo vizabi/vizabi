@@ -83,33 +83,34 @@ var BubbleChartComp = Component.extend({
       },
       "change:marker": function(evt, path) {
         // bubble size change is processed separately
-        if(!_this._readyOnce) return;
+        console.log("change marker promice");
+        _this.model.marker.getFrame().then(function(values) {
+          console.log("change marker resolve");
+          if(path.indexOf("scaleType") > -1) {
+            _this.ready();
+            return;
+          }
 
-        if(path.indexOf("scaleType") > -1) {
-          _this.ready();
-          return;
-        }
+          if(path.indexOf("marker.size") !== -1) return;
 
-        if(path.indexOf("marker.size") !== -1) return;
+          if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1) {
+            _this.updateSize();
+            _this.updateMarkerSizeLimits();
+            _this._trails.run("findVisible");
+            _this.redrawDataPoints();
+            _this._trails.run("resize");
+            return;
+          }
+          if(path.indexOf("zoomedMin") > -1 || path.indexOf("zoomedMax") > -1) {
+            if(_this.draggingNow)return;
 
-        if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1) {
-          _this.updateSize();
-          _this.updateMarkerSizeLimits();
-          _this._trails.run("findVisible");
-          _this.redrawDataPoints();
-          _this._trails.run("resize");
-          return;
-        }
-        if(path.indexOf("zoomedMin") > -1 || path.indexOf("zoomedMax") > -1) {
-          if(_this.draggingNow)return;
-
-          //avoid zooming again if values didn't change.
-          //also prevents infinite loop on forced URL update from zoom.stop()
-          if(_this._zoomZoomedDomains.x.zoomedMin == _this.model.marker.axis_x.zoomedMin
-          && _this._zoomZoomedDomains.x.zoomedMax == _this.model.marker.axis_x.zoomedMax
-          && _this._zoomZoomedDomains.y.zoomedMin == _this.model.marker.axis_y.zoomedMin
-          && _this._zoomZoomedDomains.y.zoomedMax == _this.model.marker.axis_y.zoomedMax
-          ) return;
+            //avoid zooming again if values didn't change.
+            //also prevents infinite loop on forced URL update from zoom.stop()
+            if(_this._zoomZoomedDomains.x.zoomedMin == _this.model.marker.axis_x.zoomedMin
+              && _this._zoomZoomedDomains.x.zoomedMax == _this.model.marker.axis_x.zoomedMax
+              && _this._zoomZoomedDomains.y.zoomedMin == _this.model.marker.axis_y.zoomedMin
+              && _this._zoomZoomedDomains.y.zoomedMax == _this.model.marker.axis_y.zoomedMax
+            ) return;
 
             _this._panZoom.zoomToMaxMin(
               _this.model.marker.axis_x.zoomedMin,
@@ -117,9 +118,9 @@ var BubbleChartComp = Component.extend({
               _this.model.marker.axis_y.zoomedMin,
               _this.model.marker.axis_y.zoomedMax,
               500
-          )
-          return;
-        }
+            );
+          }
+        });
 
         //console.log("EVENT change:marker", evt);
       },
@@ -162,14 +163,16 @@ var BubbleChartComp = Component.extend({
       },
       'change:marker.size': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
-        if(!_this._readyOnce) return;
-        if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1) {
+        console.log("change:marker.size promice");
+        _this.model.marker.getFrame().then(function(values) {
+          console.log("change:marker.size resolve");
+          if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1) {
             _this.updateMarkerSizeLimits();
             _this._trails.run("findVisible");
             _this.redrawDataPointsOnlySize();
             _this._trails.run("resize");
-            return;
-        }
+          }
+        });
       },
       'change:marker.color.palette': function(evt, path) {
         if(!_this._readyOnce) return;
@@ -283,13 +286,7 @@ var BubbleChartComp = Component.extend({
           _this.cached[d[KEY]].labelY_
         ]);
       });
-
-
-
   },
-
-
-
 
   _rangeBump: function(arg, undo) {
     var bump = this.activeProfile.maxRadius;
@@ -432,41 +429,45 @@ var BubbleChartComp = Component.extend({
       .range(this.parent.datawarning_content.doubtRange);
 
     this.updateIndicators();
-    this.updateEntities();
-    this.updateTime();
-    this.updateSize();
-    this.updateMarkerSizeLimits();
-    this.selectDataPoints();
-    this.updateBubbleOpacity();
-    this._updateDoubtOpacity();
-    this._trails.create();
-    this._panZoom.reset(); // includes redraw data points and trail resize
-    this._trails.run(["recolor", "opacityHandler", "findVisible", "reveal"]);
-    if(this.model.time.adaptMinMaxZoom) this._panZoom.expandCanvas();
+    var endTime = this.model.time.end;
+    this.model.marker.getFrame(endTime).then(function(values) {
+      _this.updateEntities();
+      _this.updateBubbleOpacity();
+      _this.updateTime();
+      _this.updateSize();
+      _this.updateMarkerSizeLimits();
+      _this.selectDataPoints();
+      _this._updateDoubtOpacity();
+      _this._trails.create();
+      _this._panZoom.reset(); // includes redraw data points and trail resize
+      _this._trails.run(["recolor", "opacityHandler", "findVisible", "reveal"]);
+      if(_this.model.time.adaptMinMaxZoom) _this._panZoom.expandCanvas();
+    });
   },
 
   ready: function() {
-
+    var _this = this;
     this.updateUIStrings();
+    var endTime = this.model.time.end;
+    this.model.marker.getFrame(endTime).then(function(values) {
+      _this.updateEntities();
+      _this.updateBubbleOpacity();
+      _this.updateIndicators();
+      _this.updateSize();
+      _this.cached = {};
+      _this.updateMarkerSizeLimits();
+      _this._trails.create();
+      _this._trails.run("findVisible");
+      _this._panZoom.reset(); // includes redraw data points and trail resize
+      _this._trails.run(["recolor", "opacityHandler", "reveal"]);
 
-    this.updateEntities();
-    this.updateBubbleOpacity();
-    this.updateIndicators();
-    this.updateSize();
-    this.cached = {};
-    this.updateMarkerSizeLimits();
-    this._trails.create();
-    this._trails.run("findVisible");
-    this._panZoom.reset(); // includes redraw data points and trail resize
-    this._trails.run(["recolor", "opacityHandler", "reveal"]);
-
-    this._panZoom.zoomToMaxMin(
-       this.model.marker.axis_x.zoomedMin,
-       this.model.marker.axis_x.zoomedMax,
-       this.model.marker.axis_y.zoomedMin,
-       this.model.marker.axis_y.zoomedMax
-    )
-
+      _this._panZoom.zoomToMaxMin(
+        _this.model.marker.axis_x.zoomedMin,
+        _this.model.marker.axis_x.zoomedMax,
+        _this.model.marker.axis_y.zoomedMin,
+        _this.model.marker.axis_y.zoomedMax
+      )
+    });
   },
 
   /*
@@ -593,19 +594,19 @@ var BubbleChartComp = Component.extend({
    * UPDATE ENTITIES:
    * Ideally should only update when show parameters change or data changes
    */
-  updateEntities: function() {
+  updateEntities: function(frame) {
     var _this = this;
     var KEY = this.KEY;
     var TIMEDIM = this.TIMEDIM;
 
     var getKeys = function(prefix) {
       prefix = prefix || "";
-      return this.model.marker.getKeys()
+      return _this.model.marker.getKeys()
         .map(function(d) {
           var pointer = {};
           pointer[KEY] = d[KEY];
           pointer[TIMEDIM] = endTime;
-          pointer.sortValue = values.size[d[KEY]]||0;
+          pointer.sortValue = frame.size[d[KEY]]||0;
           pointer[KEY] = prefix + d[KEY];
           return pointer;
         })
@@ -617,53 +618,54 @@ var BubbleChartComp = Component.extend({
     // get array of GEOs, sorted by the size hook
     // that makes larger bubbles go behind the smaller ones
     var endTime = this.model.time.end;
-    var values = this.model.marker.getFrame(endTime);
-    this.model.entities.setVisible(getKeys.call(this));
+    this.model.marker.getFrame(endTime).then(function(values) {
+      console.log(values);
+      _this.model.entities.setVisible(getKeys.call(this));
+      _this.entityBubbles = _this.bubbleContainer.selectAll('.vzb-bc-entity')
+        .data(_this.model.entities.getVisible(), function(d) {return d[KEY]})
+        .order();
 
-    this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
-      .data(this.model.entities.getVisible(), function(d) {return d[KEY]})
-      .order();
+      //exit selection
+      this.entityBubbles.exit().remove();
 
-    //exit selection
-    this.entityBubbles.exit().remove();
+      //enter selection -- init circles
+      this.entityBubbles.enter().append("circle")
+        .attr("class", function(d) {
+          return "vzb-bc-entity " + d[KEY];
+        })
+        .on("mouseover", function(d, i) {
+          if(utils.isTouchDevice()) return;
+          _this._bubblesInteract().mouseover(d, i);
+        })
+        .on("mouseout", function(d, i) {
+          if(utils.isTouchDevice()) return;
 
-    //enter selection -- init circles
-    this.entityBubbles.enter().append("circle")
-      .attr("class", function(d) {
-        return "vzb-bc-entity " + d[KEY];
-      })
-      .on("mouseover", function(d, i) {
-        if(utils.isTouchDevice()) return;
-        _this._bubblesInteract().mouseover(d, i);
-      })
-      .on("mouseout", function(d, i) {
-        if(utils.isTouchDevice()) return;
+          _this._bubblesInteract().mouseout(d, i);
+        })
+        .on("click", function(d, i) {
+          if(utils.isTouchDevice()) return;
 
-        _this._bubblesInteract().mouseout(d, i);
-      })
-      .on("click", function(d, i) {
-        if(utils.isTouchDevice()) return;
-
-        _this._bubblesInteract().click(d, i);
-      })
-      .onTap(function(d, i) {
-        d3.event.stopPropagation();
-        _this._bubblesInteract().click(d, i);
-      })
-      .onLongTap(function(d, i) {});
+          _this._bubblesInteract().click(d, i);
+        })
+        .onTap(function(d, i) {
+          d3.event.stopPropagation();
+          _this._bubblesInteract().click(d, i);
+        })
+        .onLongTap(function(d, i) {});
 
 
-    //TODO: no need to create trail group for all entities
-    //TODO: instead of :append an :insert should be used to keep order, thus only few trail groups can be inserted
-    this.entityTrails = this.bubbleContainer.selectAll(".vzb-bc-entity")
-      .data(getKeys.call(this, "trail-"), function(d) {
-        return d[KEY];
+      //TODO: no need to create trail group for all entities
+      //TODO: instead of :append an :insert should be used to keep order, thus only few trail groups can be inserted
+      _this.entityTrails = _this.bubbleContainer.selectAll(".vzb-bc-entity")
+        .data(getKeys.call(_this, "trail-"), function(d) {
+          return d[KEY];
+        });
+
+      _this.entityTrails.enter().insert("g", function(d) {
+        return document.querySelector(".vzb-bc-bubbles ." + d[KEY].replace("trail-", ""));
+      }).attr("class", function(d) {
+        return "vzb-bc-entity" + " " + d[KEY]
       });
-
-    this.entityTrails.enter().insert("g", function(d) {
-      return document.querySelector(".vzb-bc-bubbles ." + d[KEY].replace("trail-", ""));
-    }).attr("class", function(d) {
-      return "vzb-bc-entity" + " " + d[KEY]
     });
 
   },
