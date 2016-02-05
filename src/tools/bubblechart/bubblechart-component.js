@@ -630,7 +630,7 @@ var BubbleChartComp = Component.extend({
     //enter selection -- init circles
     this.entityBubbles.enter().append("circle")
       .attr("class", function(d) {
-        return "vzb-bc-entity " + d[KEY];
+        return "vzb-bc-entity " + "bubble-" + d[KEY];
       })
       .on("mouseover", function(d, i) {
         if(utils.isTouchDevice()) return;
@@ -661,9 +661,9 @@ var BubbleChartComp = Component.extend({
       });
 
     this.entityTrails.enter().insert("g", function(d) {
-      return document.querySelector(".vzb-bc-bubbles ." + d[KEY].replace("trail-", ""));
+      return document.querySelector(".vzb-bc-bubbles ." + d[KEY].replace("trail-", "bubble-"));
     }).attr("class", function(d) {
-      return "vzb-bc-entity" + " " + d[KEY]
+      return "vzb-bc-entity " + d[KEY]
     });
 
   },
