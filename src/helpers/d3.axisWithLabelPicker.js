@@ -120,20 +120,20 @@ export default function axisSmart() {
         .classed("vzb-hidden", highlightValue == "none")
         .select("text")
         .text(axis.tickFormat()(highlightValue == "none" ? 0 : highlightValue));
-        
+
       var getTransform = function(){
-        return highlightValue == "none" ? "translate(0,0)" : 
-            "translate(" 
-            + (orient == HORIZONTAL ? axis.scale()(highlightValue) : 0) + "," 
-            + (orient == VERTICAL ? axis.scale()(highlightValue) : 0) 
+        return highlightValue == "none" ? "translate(0,0)" :
+            "translate("
+            + (orient == HORIZONTAL ? axis.scale()(highlightValue) : 0) + ","
+            + (orient == VERTICAL ? axis.scale()(highlightValue) : 0)
             + ")"
       }
-      
+
       var getOpacity = function(d, t){
-        return highlightValue == "none" ? 1 : 
+        return highlightValue == "none" ? 1 :
             Math.min(1, Math.pow( Math.abs(axis.scale()(d) - axis.scale()(highlightValue)) / (axis.scale().range()[1] - axis.scale().range()[0]) * 5, 2))
       }
-        
+
       if(highlightTransDuration){
         g.selectAll(".tick").each(function(d, t) {
           d3.select(this).select("text")
@@ -142,25 +142,24 @@ export default function axisSmart() {
             .ease("linear")
             .style("opacity", getOpacity(d,t))
         })
-          
+
         g.select('.vzb-axis-value')
           .transition()
           .duration(highlightTransDuration)
           .ease("linear")
           .attr("transform", getTransform);
-          
+
       }else{
-          
+
         g.selectAll(".tick").each(function(d, t) {
           d3.select(this).select("text")
             .style("opacity", getOpacity(d,t))
         })
-          
+
         g.select('.vzb-axis-value')
           .attr("transform", getTransform);
-          
-      }
 
+      }
       highlightValue = null;
     }
 
@@ -895,7 +894,7 @@ export default function axisSmart() {
             dimension == "x") * options.formatter(d).length * options.widthOfOneDigit / 2 - (dimension == "y") *
           options.heightOfOneDigit / 2
           // we may consider or not the label margins to give them a bit of spacing from the edges
-          - (dimension == "x") * parseInt(options.cssMarginRight) 
+          - (dimension == "x") * parseInt(options.cssMarginRight)
           - (dimension == "y") * parseInt(options.cssMarginTop);
 
         // compute the influence of the axis tail
@@ -904,7 +903,7 @@ export default function axisSmart() {
             VERTICAL ? -1 : 1) * scale(d) - (dimension == "x") * options.formatter(d).length * options.widthOfOneDigit /
           2 - (dimension == "y") * options.heightOfOneDigit / 2
           // we may consider or not the label margins to give them a bit of spacing from the edges
-          - (dimension == "x") * parseInt(options.cssMarginLeft) 
+          - (dimension == "x") * parseInt(options.cssMarginLeft)
           - (dimension == "y") * parseInt(options.cssMarginBottom);
 
         // apply limits in order to cancel repositioning of labels that are good
@@ -930,36 +929,36 @@ export default function axisSmart() {
         var repositionHead =
           // take the distance between head and the tick at hand
           Math.abs(scale(d) - scale(tickValues[tickValues.length - 1]))
-        
+
           // substract the shift of the head TODO: THE SIGN CHOICE HERE MIGHT BE WRONG. NEED TO TEST ALL CASES
           - (dimension == "y") * (orient == HORIZONTAL ? -1 : 1) * result[tickValues.length - 1][dimension]
           - (dimension == "x") * (orient == HORIZONTAL ? 1 : -1) * result[tickValues.length - 1][dimension]
-        
+
           // substract half-length of the overlapping labels
-          - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(d).length 
-          - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(tickValues[tickValues.length - 1]).length 
+          - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(d).length
+          - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(tickValues[tickValues.length - 1]).length
           - (dimension == "y") * options.heightOfOneDigit * .7 //TODO remove magic constant - relation of actual font height to BBox-measured height
-          
+
           // we may consider or not the label margins to give them a bit of spacing from the edges
-          - (dimension == "x") * parseInt(options.cssMarginLeft) 
+          - (dimension == "x") * parseInt(options.cssMarginLeft)
           - (dimension == "y") * parseInt(options.cssMarginBottom);
-          
+
         // compute the influence of the tail-side outer label
         var repositionTail =
           // take the distance between tail and the tick at hand
           Math.abs(scale(d) - scale(tickValues[0]))
-        
+
           // substract the shift of the tail TODO: THE SIGN CHOICE HERE MIGHT BE WRONG. NEED TO TEST ALL CASES
           - (dimension == "y") * (orient == VERTICAL ? -1 : 1) * result[0][dimension]
           - (dimension == "x") * (orient == VERTICAL ? 1 : -1) * result[0][dimension]
-        
+
           // substract half-length of the overlapping labels
-          - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(d).length 
-          - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(tickValues[0]).length 
+          - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(d).length
+          - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(tickValues[0]).length
           - (dimension == "y") * options.heightOfOneDigit * .7 //TODO remove magic constant - relation of actual font height to BBox-measured height
-        
+
           // we may consider or not the label margins to give them a bit of spacing from the edges
-          - (dimension == "x") * parseInt(options.cssMarginLeft) 
+          - (dimension == "x") * parseInt(options.cssMarginLeft)
           - (dimension == "y") * parseInt(options.cssMarginBottom);
 
         // apply limits in order to cancel repositioning of labels that are good
