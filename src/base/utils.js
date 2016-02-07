@@ -1,3 +1,5 @@
+import interpolator from '../../node_modules/vizabi-interpolators/interpolators';
+
 /*
  * returns unique id with optional prefix
  * @param {String} prefix
@@ -1207,16 +1209,6 @@ export var nestArrayToObj = function(arr) {
   };
   return res;
 }
-
-
-/*
- * A collection of interpolators
- * @param {Number} x1, x2, y1, y2 - boundary points
- * @param {Number} x - point of interpolation
- * @return {Number} y - interpolated value
- */
-//
-export var interpolator = VizabiInterpolators;
 
 
 export var interpolateVector = function(){

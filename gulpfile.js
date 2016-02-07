@@ -377,8 +377,6 @@ gulp.task('preview:vendor', ['clean:preview:vendor'], function() {
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/fonts')));
   gulp.src(path.join(config.modules, 'd3/d3.min.js'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/js')));
-  gulp.src(path.join(config.modules, 'vizabi-interpolators/interpolators.js'))
-    .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/js')));
 });
 
 gulp.task('preview:data', ['clean:preview:data'], function() {
