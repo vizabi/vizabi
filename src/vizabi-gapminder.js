@@ -97,8 +97,6 @@ BarChart.define('default_options', {
   },
   language: language,
   ui: {
-    buttons: [],
-    dialogs: {popup: [], sidebar: [], moreoptions: []},
     presentation: false
   }
 });
@@ -163,8 +161,6 @@ BarRankChart.define('default_options', {
     path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv"
   },
   ui: {
-    buttons: [],
-    dialogs: {popup: [], sidebar: [], moreoptions: []},
     presentation: false
   }
 });
@@ -232,42 +228,13 @@ BubbleMap.define('default_options', {
   },
   data: {
     reader: "waffle",
-    path: "//waffle-server.gapminderdev.org/api/graphs/stats/vizabi-tools",
-    //path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
     //reader: "csv",
     //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   language: language,
   ui: {
-    "buttons": [
-        "colors",
-        "find",
-        "size",
-        "moreoptions",
-        "fullscreen",
-        "presentation"
-    ],
-    "dialogs": {
-        "popup": [
-            "colors",
-            "find",
-            "size",
-            "moreoptions"
-        ],
-        "sidebar": [
-            "colors",
-            "find",
-            "size"
-        ],
-        "moreoptions": [
-            "opacity",
-            "speed",
-            "size",
-            "colors",
-            "presentation"
-        ]
-    },
     presentation: false
   }
 });
@@ -359,44 +326,12 @@ MountainChart.define('default_options', {
   language: language,
   data: {
     reader: "waffle",
-    path: "//waffle-server.gapminderdev.org/api/graphs/stats/vizabi-tools",
-    //path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
     //reader: "csv",
     //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   ui: {
-      "buttons": [
-          "colors",
-          "find",
-          "stack",
-          "show",
-          "moreoptions",
-          "fullscreen",
-          "presentation"
-      ],
-      "dialogs": {
-          "popup": [
-              "colors",
-              "find",
-              "stack",
-              "show",
-              "moreoptions"
-          ],
-          "sidebar": [
-              "colors",
-              "find",
-              "stack"
-          ],
-          "moreoptions": [
-              "opacity",
-              "speed",
-              "stack",
-              "axesmc",
-              "colors",
-              "presentation"
-          ]
-      },
     presentation: false
   }
 });
@@ -469,8 +404,6 @@ LineChart.define('default_options', {
         showTooltip: 0
       }
     },
-    buttons: [],
-    dialogs: {popup: [], sidebar: [], moreoptions: []},
     presentation: false
   }
 });
@@ -549,8 +482,7 @@ BubbleChart.define('default_options', {
   },
   data: {
     reader: "waffle",
-    path: "//waffle-server.gapminderdev.org/api/graphs/stats/vizabi-tools",
-    //path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
     //reader: "csv",
     //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
@@ -568,36 +500,6 @@ BubbleChart.define('default_options', {
         autoResolveCollisions: true,
         dragging: true
       }
-    },
-    "buttons": [
-        "colors",
-        "find",
-        "trails",
-        "lock",
-        "size",
-        "moreoptions",
-        "fullscreen"
-    ],
-    "dialogs": {
-        "popup": [
-            "colors",
-            "find",
-            "size",
-            "moreoptions"
-        ],
-        "sidebar": [
-            "colors",
-            "find",
-            "size"
-        ],
-        "moreoptions": [
-            "opacity",
-            "speed",
-            "axes",
-            "size",
-            "colors",
-            "presentation"
-        ]
     },
     presentation: false
   }
@@ -667,8 +569,6 @@ PopByAge.define('default_options', {
   },
   language: language,
   ui: {
-    buttons: [],
-    dialogs: {popup: [], sidebar: [], moreoptions: []},
     presentation: false
   }
 });
