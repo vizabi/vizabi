@@ -11,6 +11,7 @@ function updateURL(force, minModel) {
     var model, lang, options;
     if(typeof VIZ !== 'undefined') {
       model = minModel || VIZ.getMinModel();
+      model = Vizabi.utils.diffObject(model, VIZABI_OPTIONS);
       options = VIZ.getOptions();
     }
 

@@ -1379,6 +1379,7 @@ getFrame: function(time){
   },
 
   getDefaults: function() {
+    // if defaults are set, does not care about defaults from children
     if(this._defaults) return this._defaults;
     var d = {};
     utils.forEach(this.getSubmodels(true), function(model, name) {

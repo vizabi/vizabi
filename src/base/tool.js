@@ -144,9 +144,7 @@ var Tool = Component.extend({
     d_toolModel = utils.flattenDefaults(d_toolModel);
     //compares with chart default options
     var d = utils.diffObject(toolModel, d_toolModel);
-    // compares with chart external options.
-    // TODO: commented out for now because external options includes URL options. URL options should not be excluded from MinModel but other external options should.
-    // d = utils.flattenDates(utils.diffObject(d, this.external_options), this.model.state.time.timeFormat);
+    // change date object to string according to current format
     d = utils.flattenDates(d, this.model.state.time.timeFormat);
     //compares with model's defaults
     return utils.diffObject(d, this.model.getDefaults());
