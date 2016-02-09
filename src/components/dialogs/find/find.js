@@ -19,7 +19,8 @@ var Find = Dialog.extend({
       component: simpleslider,
       placeholder: '.vzb-dialog-bubbleopacity',
       model: ["state.entities"],
-      arg: "opacitySelectDim"
+      arg: "opacitySelectDim",
+      properties: {step: 0.01}
     }];
 
     this.model_binds = {

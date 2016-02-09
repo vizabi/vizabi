@@ -1,4 +1,6 @@
 import Component from 'base/component';
+import * as utils from 'base/utils';
+
 /*!
  * VIZABI GENERIC SLIDER CONTROL
  * Reusable SLIDER
@@ -27,6 +29,8 @@ var SimpleSlider = Component.extend({
 
       //contructor is the same as any component
       this._super(config, context);
+        
+      this._setModel = utils.throttle(this._setModel, 50);
     },
 
     /**
@@ -51,10 +55,11 @@ var SimpleSlider = Component.extend({
       this.sliderSize = this.slider.node().getBoundingClientRect();
       this.slider.style('left', (this.elementSize.left - this.sliderSize.left) + 'px');
 
+      //TODO: replace this with utils.extend
       if(this.slider_properties){
-        min = this.slider_properties.min;
-        max = this.slider_properties.max;
-        step = this.slider_properties.step;
+        if(this.slider_properties.min != null) min = this.slider_properties.min;
+        if(this.slider_properties.max != null) max = this.slider_properties.max;
+        if(this.slider_properties.step != null) step = this.slider_properties.step;
 
         if(this.slider_properties.scale){
           value = this.slider_properties.scale(min);
@@ -73,10 +78,12 @@ var SimpleSlider = Component.extend({
         .attr('step', step)
         .attr('value', value)
         .on('input', function () {
-          _this._setModel(false, false); // on drag - non-persistent changes while dragging
+          var value = +d3.event.target.value;
+          _this._setModel(value, false, false); // on drag - non-persistent changes while dragging
         })
         .on('change', function() {
-          _this._setModel(true); // on drag end - value is probably same as last 'input'-event, so force change
+          var value = +d3.event.target.value;
+          _this._setModel(value, true); // on drag end - value is probably same as last 'input'-event, so force change
         });
 
       this.updateView();
@@ -98,18 +105,10 @@ var SimpleSlider = Component.extend({
       this.slider.node().value = value;
     },
 
-    _setModel: function (force, persistent) {
-      var slider_properties = this.slider_properties;
-      var scale;
-      var value = +d3.event.target.value;
-
-      if(slider_properties){
-        scale = this.slider_properties.scale;
-      }
-
-      if (scale){
-        value = scale(value);
-      }
+    _setModel: function (value, force, persistent) {
+      // rescale value if scale is supplied in slider_properties 
+      if(this.slider_properties && this.slider_properties.scale) value = this.slider_properties.scale(value);
+      
       this.model.submodel.getModelObject(this.arg).set(value, force, persistent);
     }
 
