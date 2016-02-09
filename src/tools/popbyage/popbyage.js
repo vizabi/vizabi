@@ -21,10 +21,10 @@ var PopByAge = Tool.extend('PopByAge', {
   /**
    * Initializes the tool (Bar Chart Tool).
    * Executed once before any template is rendered.
-   * @param {Object} config Initial config, with name and placeholder
-   * @param {Object} options Options such as state, data, etc
+   * @param {Object} placeholder Placeholder element for the tool
+   * @param {Object} external_model Model as given by the external page
    */
-  init: function(config, options) {
+  init: function(placeholder, external_model) {
 
     this.name = "popbyage";
 
@@ -52,7 +52,7 @@ var PopByAge = Tool.extend('PopByAge', {
     }];
 
     //constructor is the same as any tool
-    this._super(config, options);
+    this._super(placeholder, external_model);
   },
 
   /**

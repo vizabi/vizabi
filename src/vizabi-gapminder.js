@@ -42,7 +42,7 @@ globals.gapminder_paths = {
 
 //OVERWRITE OPTIONS
 
-BarChart.define('default_options', {
+BarChart.define('default_model', {
   state: {
     time: {
       start: "1800",
@@ -101,7 +101,7 @@ BarChart.define('default_options', {
   }
 });
 
-BarRankChart.define('default_options', {
+BarRankChart.define('default_model', {
   state: {
     time: {
       start: "1800",
@@ -172,7 +172,7 @@ BubbleMap.define('datawarning_content', {
   doubtRange: [1.0, .3, .2]
 });
 
-BubbleMap.define('default_options', {
+BubbleMap.define('default_model', {
   state: {
     time: {
       start: "1800",
@@ -246,7 +246,7 @@ MountainChart.define('datawarning_content', {
   doubtRange: [1.0, .8, .6]
 });
 
-MountainChart.define('default_options', {
+MountainChart.define('default_model', {
   state: {
     time: {
       start: 1800,
@@ -337,7 +337,7 @@ MountainChart.define('default_options', {
 });
 
 
-LineChart.define('default_options', {
+LineChart.define('default_model', {
   state: {
     time: {
       start: 1800,
@@ -415,7 +415,7 @@ BubbleChart.define('datawarning_content', {
   doubtRange: [1.0, .3, .2]
 });
 
-BubbleChart.define('default_options', {
+BubbleChart.define('default_model', {
 
   state: {
     time: {
@@ -505,7 +505,7 @@ BubbleChart.define('default_options', {
   }
 });
 
-PopByAge.define('default_options', {
+PopByAge.define('default_model', {
   state: {
     time: {
       value: '2013',
@@ -640,19 +640,19 @@ Tool.define("preload", function(promise) {
 
   // TODO: REMOVE THIS HACK (read above)
   function addPalettes(hook) {
-    if(!_this.default_options.state || !_this.default_options.state.marker[hook] || !globals.metadata.color) {
+    if(!_this.default_model.state || !_this.default_model.state.marker[hook] || !globals.metadata.color) {
       return;
     }
-    var color = _this.default_options.state.marker[hook];
+    var color = _this.default_model.state.marker[hook];
     var palette = globals.metadata.color.palettes['geo.region'];
     color.palette = utils.extend({}, color.palette, palette);
   }
 
   function addMinMax(hook) {
-    if(!_this.default_options.state || !_this.default_options.state.marker[hook]) {
+    if(!_this.default_model.state || !_this.default_model.state.marker[hook]) {
       return;
     }
-    var axis = _this.default_options.state.marker[hook];
+    var axis = _this.default_model.state.marker[hook];
     if(axis.use === "indicator" && globals.metadata.indicatorsDB[axis.which] && globals.metadata.indicatorsDB[axis.which].domain) {
       var domain = globals.metadata.indicatorsDB[axis.which].domain;
       axis.domainMin = axis.domainMin || domain[0];

@@ -2,7 +2,7 @@ import * as utils from 'base/utils';
 import Model from 'base/model';
 
 /*
- * VIZABI Data Model (options.data)
+ * VIZABI Stack Model
  */
 
 var palettes = {

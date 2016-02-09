@@ -11,7 +11,7 @@ import collisionResolver from 'helpers/d3.collisionResolver';
 //LINE CHART COMPONENT
 var LCComponent = Component.extend({
 
-  init: function(context, options) {
+  init: function(config, context) {
     var _this = this;
     this.name = 'linechart';
     this.template = 'linechart.html';
@@ -49,7 +49,7 @@ var LCComponent = Component.extend({
       }
     };
 
-    this._super(context, options);
+    this._super(config, context);
 
     this.xScale = null;
     this.yScale = null;

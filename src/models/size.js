@@ -3,7 +3,7 @@ import Model from 'base/model';
 import globals from 'base/globals';
 
 /*
- * VIZABI Data Model (options.data)
+ * VIZABI Size Model
  */
 
 var SizeModel = Model.extend({

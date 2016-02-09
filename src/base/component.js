@@ -364,13 +364,13 @@ var Component = Events.extend({
 
   /**
    * Maps the current model to the subcomponents
-   * @param {String} subcomponent name of the subcomponent
+   * @param {String} subcomponentName name of the subcomponent
    * @param {String|Array} model_config Configuration of model
    * @param {String|Array} model_expects Expected models
    * @param {Object} model_binds Initial model bindings
    * @returns {Object} the model
    */
-  _modelMapping: function(subcomponent, model_config, model_expects, model_binds) {
+  _modelMapping: function(subcomponentName, model_config, model_expects, model_binds) {
     var _this = this;
     var values = {};
     //If model_config is an array, we map it
@@ -379,9 +379,9 @@ var Component = Events.extend({
       //if there's a different number of models received and expected
       if(model_expects.length !== model_config.length) {
         utils.groupCollapsed('DIFFERENCE IN NUMBER OF MODELS EXPECTED AND RECEIVED');
-        utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponent +
+        utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponentName +
           '\' or check the models passed in \'' + _this.name + '\'.\n\nComponent: \'' + _this.name +
-          '\'\nSubcomponent: \'' + subcomponent + '\'\nNumber of Models Expected: ' + model_expects.length +
+          '\'\nSubcomponent: \'' + subcomponentName + '\'\nNumber of Models Expected: ' + model_expects.length +
           '\nNumber of Models Received: ' + model_config.length);
         utils.groupEnd();
       }
@@ -396,18 +396,18 @@ var Component = Events.extend({
 
             utils.groupCollapsed('UNEXPECTED MODEL TYPE: \'' + model_info.type + '\' instead of \'' +
               model_expects[i].type + '\'');
-            utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponent +
+            utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponentName +
               '\' or check the models passed in \'' + _this.name + '\'.\n\nComponent: \'' + _this.name +
-              '\'\nSubcomponent: \'' + subcomponent + '\'\nExpected Model: \'' + model_expects[i].type +
+              '\'\nSubcomponent: \'' + subcomponentName + '\'\nExpected Model: \'' + model_expects[i].type +
               '\'\nReceived Model\'' + model_info.type + '\'\nModel order: ' + i);
             utils.groupEnd();
           }
         } else {
 
           utils.groupCollapsed('UNEXPECTED MODEL: \'' + model_config[i] + '\'');
-          utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponent +
+          utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponentName +
             '\' or check the models passed in \'' + _this.name + '\'.\n\nComponent: \'' + _this.name +
-            '\'\nSubcomponent: \'' + subcomponent + '\'\nNumber of Models Expected: ' + model_expects.length +
+            '\'\nSubcomponent: \'' + subcomponentName + '\'\nNumber of Models Expected: ' + model_expects.length +
             '\nNumber of Models Received: ' + model_config.length);
           utils.groupEnd();
           new_name = model_info.name;
@@ -432,7 +432,7 @@ var Component = Events.extend({
       return;
     }
     //return a new model with the defined submodels
-    return new Model(subcomponent, values, null, model_binds);
+    return new Model(subcomponentName, values, null, model_binds);
     /**
      * Maps one model name to current submodel and returns info
      * @param {String} name Full model path. E.g.: "state.marker.color"

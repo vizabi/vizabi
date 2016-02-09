@@ -22,7 +22,7 @@ var BubbleChartComp = Component.extend({
   /**
    * Initializes the component (Bubble Chart).
    * Executed once before any template is rendered.
-   * @param {Object} config The options passed to the component
+   * @param {Object} config The config passed to the component
    * @param {Object} context The component's parent
    */
   init: function(config, context) {

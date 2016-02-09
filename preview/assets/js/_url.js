@@ -8,15 +8,15 @@ function updateURL(force, minModel) {
 
   function update() {
 
-    var model, lang, options;
+    var lang, model;
     if(typeof VIZ !== 'undefined') {
-      model = minModel || VIZ.getMinModel();
-      model = Vizabi.utils.diffObject(model, VIZABI_OPTIONS);
-      options = VIZ.getOptions();
+      minModel = minModel || VIZ.getMinModel();
+      minModel = Vizabi.utils.diffObject(minModel, VIZABI_INITIAL_MODEL);
+      model = VIZ.getModel();
     }
 
-    if(options) {
-      lang = options.language.id || document.getElementById('vzbp-btn-lang').getAttribute('data-next_lang');
+    if(model) {
+      lang = model.language.id || document.getElementById('vzbp-btn-lang').getAttribute('data-next_lang');
     }
     if(!lang) {
       lang = 'en';
@@ -43,8 +43,8 @@ function updateURL(force, minModel) {
       el.setAttribute("href", href);
     });
 
-    if(model && Object.keys(model).length > 0) {
-      url.model = model;
+    if(minModel && Object.keys(minModel).length > 0) {
+      url.model = minModel;
       url_string = URLON.stringify(url);
     }
 
@@ -68,28 +68,28 @@ function parseURL() {
   }
 
   if(hash) {
-    options = URLON.parse(hash);
+    parsedUrl = URLON.parse(hash);
 
-    URL.model = options.model || {};
+    URL.model = parsedUrl.model || {};
 
-    if(options.width && options.height && placeholder && setDivSize) {
-      setDivSize(placeholder, container, options.width, options.height);
-      if(options.fullscreen) {
+    if(parsedUrl.width && parsedUrl.height && placeholder && setDivSize) {
+      setDivSize(placeholder, container, parsedUrl.width, parsedUrl.height);
+      if(parsedUrl.fullscreen) {
         setFullscreen();
       }
     }
 
     forEachElement(".collapsible-section", function(el, i) {
       var id = el.getAttribute('id');
-      if(options[id]) {
+      if(parsedUrl[id]) {
         addClass(el, 'open');
       } else {
         removeClass(el, 'open');
       }
     });
 
-    if(options.bodyC) {
-      document.body.setAttribute('class', options.bodyC);
+    if(parsedUrl.bodyC) {
+      document.body.setAttribute('class', parsedUrl.bodyC);
     }
   }
 }

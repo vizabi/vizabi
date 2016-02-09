@@ -33,8 +33,9 @@ function setState() {
   try {
     state = JSON.parse(state);
     removeClass(editorTextArea, "invalid");
-    VIZABI_OPTIONS.state = state;
-    VIZ.setOptions(VIZABI_OPTIONS);
+    var newModel = {};
+    newModel.state = state;
+    VIZ.setModel(newModel);
     updateURL();
   } catch(err) {
     addClass(editorTextArea, "invalid");

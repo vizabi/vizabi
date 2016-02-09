@@ -12,7 +12,7 @@ import {
 var BarRankChart = Tool.extend('BarRankChart', {
 
   //Run when the tool is created
-  init: function(config, options) {
+  init: function(placeholder, external_model) {
 
     this.name = "barrankchart";
 
@@ -39,7 +39,7 @@ var BarRankChart = Tool.extend('BarRankChart', {
     }];
 
     //constructor is the same as any tool
-    this._super(config, options);
+    this._super(placeholder, external_model);
   }
 
 });

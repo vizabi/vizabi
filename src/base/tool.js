@@ -31,7 +31,7 @@ var ToolModel = Model.extend({
     //default submodels
     values = values || {};
     defaults = defaults || {};
-    values = defaultOptions(values, defaults);
+    values = defaultModel(values, defaults);
     //constructor is similar to model
     this._super(name, values, null, binds);
     // change language
@@ -48,9 +48,9 @@ var Tool = Component.extend({
   /**
    * Initializes the tool
    * @param {Object} placeholder object
-   * @param {Object} options Options such as state, data, etc
+   * @param {Object} external_model External model such as state, data, etc
    */
-  init: function(placeholder, options) {
+  init: function(placeholder, external_model) {
     this._id = utils.uniqueId('t');
     this.template = this.template || 
       '<div class="vzb-tool vzb-tool-' + this.name + '">' + 
@@ -73,8 +73,8 @@ var Tool = Component.extend({
       '</div>';
     this.model_binds = this.model_binds || {};
     
-    options = options || {}; //options can be undefined
-    options.bind = options.bind || {}; //bind functions can be undefined
+    external_model = external_model || {}; //external model can be undefined
+    external_model.bind = external_model.bind || {}; //bind functions can be undefined
 
     
     //bind the validation function with the tool
@@ -113,16 +113,13 @@ var Tool = Component.extend({
         }
       }
     };
-    utils.extend(callbacks, this.model_binds, options.bind);
-    delete options.bind;
+    utils.extend(callbacks, this.model_binds, external_model.bind);
+    delete external_model.bind;
 
-    this.model = new ToolModel(this.name, options, this.default_options, callbacks, validate);
+    this.model = new ToolModel(this.name, external_model, this.default_model, callbacks, validate);
 
-    // default options are the options set in the tool
-    this.default_options = this.default_options || {};
-
-    // external options are the options received from the external page
-    this.external_options = options || {};
+    // default model is the model set in the tool
+    this.default_model = this.default_model || {};
 
     this.ui = this.model.ui || {};
 
@@ -134,20 +131,21 @@ var Tool = Component.extend({
       placeholder: placeholder
     }, this);
     this.render();
-    this._setUIOptions();
+    this._setUIModel();
   },
 
   getMinModel: function() {
-    var toolModel = this.model.getPlainObject(true); // true = get only persistent model values
-    var d_toolModel = this.default_options;
+    var currentToolModel = this.model.getPlainObject(true); // true = get only persistent model values
+    var defaultToolModel = this.default_model;
+    var defaultsFromModels = this.model.getDefaults();
     //flattens _defs_ object
-    d_toolModel = utils.flattenDefaults(d_toolModel);
-    //compares with chart default options
-    var d = utils.diffObject(toolModel, d_toolModel);
+    defaultToolModel = utils.flattenDefaults(defaultToolModel);
+    // compares with chart default model
+    var modelChanges = utils.diffObject(currentToolModel, defaultToolModel);
     // change date object to string according to current format
-    d = utils.flattenDates(d, this.model.state.time.timeFormat);
+    modelChanges = utils.flattenDates(modelChanges, this.model.state.time.timeFormat);
     //compares with model's defaults
-    return utils.diffObject(d, this.model.getDefaults());
+    return utils.diffObject(modelChanges, defaultsFromModels);
   },
 
   /**
@@ -156,7 +154,7 @@ var Tool = Component.extend({
 
   clear: function() {
     this.layout.clear();
-    this.setOptions = this.getOptions = function() {
+    this.setModel = this.getModel = function() {
       return;
     };
     this._super();
@@ -173,24 +171,24 @@ var Tool = Component.extend({
   },
 
   /**
-   * Sets options from external page
-   * @param {Object} options new options
+   * Sets model from external page
+   * @param {Object} JSONModel new model in JSON format
    * @param {Boolean} overwrite overwrite everything instead of extending
    */
-  setOptions: function(options, overwrite) {
+  setModel: function(newModelJSON, overwrite) {
     if(overwrite) {
-      this.model.reset(options);
+      this.model.reset(newModelJSON);
     } else {
-      this.model.set(changedObj(options, this.getOptions()));
+      this.model.set(newModelJSON);
     }
-    this._setUIOptions();
+    this._setUIModel();
   },
 
   /**
-   * gets all options
-   * @return {Object} JSON object with options
+   * get model
+   * @return {Object} JSON object of model
    */
-  getOptions: function() {
+  getModel: function() {
     return this.model.getPlainObject() || {};
   },
   /**
@@ -265,7 +263,7 @@ var Tool = Component.extend({
     if(time.end > dateMax && utils.isDate(dateMax)) time.getModelObject('end').set(dateMax, false, !time.splash);
   },
 
-  _setUIOptions: function() {
+  _setUIModel: function() {
     //add placeholder class
     utils.addClass(this.placeholder, class_placeholder);
     //add-remove buttonlist class
@@ -317,14 +315,14 @@ function generateValidate(m, validate) {
 }
 
 /* ==========================
- * Default options methods
+ * Default model methods
  * ==========================
  */
 
 /**
- * Generates a valid state based on default options
+ * Generates a valid state based on default model
  */
-function defaultOptions(values, defaults) {
+function defaultModel(values, defaults) {
   var keys = Object.keys(defaults);
   var size = keys.length;
   var field;
@@ -347,7 +345,7 @@ function defaultOptions(values, defaults) {
       if(type !== 'object' && type !== 'model') {
         values[field] = blueprint;
       } else {
-        values[field] = defaultOptions({}, blueprint);
+        values[field] = defaultModel({}, blueprint);
       }
     }
     original = values[field];
@@ -361,7 +359,7 @@ function defaultOptions(values, defaults) {
       if(!utils.isObject(original)) {
         values[field] = {};
       }
-      values[field] = defaultOptions(values[field], blueprint);
+      values[field] = defaultModel(values[field], blueprint);
     } else if(type === 'object') {
       if(!utils.isObject(original) || Object.keys(original).length === 0) {
         original = false; //will be overwritten

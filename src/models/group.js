@@ -1,7 +1,7 @@
 import * as utils from 'base/utils';
 import Model from 'base/model';
 /*
- * VIZABI Data Model (options.data)
+ * VIZABI Group Model
  */
 
 var GroupModel = Model.extend({

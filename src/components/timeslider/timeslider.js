@@ -63,10 +63,10 @@ var TimeSlider = Component.extend({
   /**
    * Initializes the timeslider.
    * Executed once before any template is rendered.
-   * @param config The options passed to the component
+   * @param model The model passed to the component
    * @param context The component's parent
    */
-  init: function(config, context) {
+  init: function(model, context) {
 
     this.name = "gapminder-timeslider";
     this.template = this.template || "timeslider.html";
@@ -80,7 +80,7 @@ var TimeSlider = Component.extend({
     var _this = this;
 
     //starts as splash if this is the option
-    this._splash = config.ui.splash;
+    this._splash = model.ui.splash;
 
     //binds methods to this model
     this.model_binds = {
@@ -115,10 +115,10 @@ var TimeSlider = Component.extend({
       show_value_when_drag_play: true,
       show_button: true,
       class_axis_aligned: false
-    }, config.ui, this.ui);
+    }, model.ui, this.ui);
 
     // Same constructor as the superclass
-    this._super(config, context);
+    this._super(model, context);
 
     //defaults
     this.width = 0;

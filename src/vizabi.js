@@ -6,10 +6,10 @@ import Reader from 'base/reader';
 import Events from 'base/events';
 import globals from 'base/globals';
 
-var Vzb = function(name, placeholder, options) {
+var Vzb = function(name, placeholder, external_model) {
   var tool = Tool.get(name);
   if(tool) {
-    var t = new tool(placeholder, options);
+    var t = new tool(placeholder, external_model);
     Vzb._instances[t._id] = t;
     return t;
   } else {

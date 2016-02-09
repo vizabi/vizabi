@@ -12,7 +12,7 @@ var viz;
 document.getElementById("vzbp-btn-refresh").onclick = resetURL;
 document.getElementById("vzbp-btn-codepen").onclick = function() {
   //get state
-  var STATE = VIZ.getOptions().state;
+  var STATE = VIZ.getModel().state;
   formatDates(STATE);
   STATE = JSON.stringify(STATE, null, 2);
 
@@ -55,24 +55,24 @@ function shareLink() {
 }
 
 function setHook(params) {
-  var options = {
+  var model = {
     state: {
       marker: {}
     }
   };
-  options.state.marker[params.hook] = {
+  model.state.marker[params.hook] = {
     use: params.use,
     which: params.which
   };
   // for time only
-  if(params.scaleType != null) options.state.marker[params.hook].scaleType = params.scaleType;
+  if(params.scaleType != null) model.state.marker[params.hook].scaleType = params.scaleType;
   //for color only
-  if(params.palette) options.state.marker[params.hook].palette = params.palette;
-  VIZ.setOptions(options);
+  if(params.palette) model.state.marker[params.hook].palette = params.palette;
+  VIZ.setModel(model);
 }
 
 function setEntities(filterGeo, filterGeoCategory) {
-  var options = {
+  var model = {
     state: {
       entities: {
         show: {
@@ -81,9 +81,9 @@ function setEntities(filterGeo, filterGeoCategory) {
       }
     }
   };
-  options.state.entities.show.filter = {
+  model.state.entities.show.filter = {
     "geo": filterGeo,
     "geo.category": filterGeoCategory
   }
-  VIZ.setOptions(options);
+  VIZ.setModel(model);
 }
