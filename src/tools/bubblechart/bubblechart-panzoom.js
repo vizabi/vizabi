@@ -412,8 +412,14 @@ export default Class.extend({
         var xRangeBounds = [0, _this.width];
         var yRangeBounds = [_this.height, 0];
 
-        var xRangeBoundsBumped = _this._rangeBump(xRangeBounds);
-        var yRangeBoundsBumped = _this._rangeBump(yRangeBounds);
+        var xDomain = _this.xScale.domain();
+        var yDomain = _this.yScale.domain();
+
+        // Clamp zoomed values to maximum and minimum values.
+        if (minX < xDomain[0]) minX = xDomain[0];
+        if (maxX > xDomain[1]) maxX = xDomain[1];
+        if (minY < yDomain[0]) minY = yDomain[0];
+        if (maxY > yDomain[1]) maxY = yDomain[1];
 
         /*
          * Define TOLERANCE value as Number.EPSILON if exists, otherwise use
@@ -431,23 +437,23 @@ export default Class.extend({
          * values. These values are used to calculate the correct rectangle
          * points for zooming.
          */
-        if (_this.xScale.invert(xRangeBounds[0]) < _this.xScale.domain()[0]
-            && Math.abs(minX - _this.xScale.domain()[0]) < TOLERANCE) {
+        if (_this.xScale.invert(xRangeBounds[0]) < xDomain[0]
+            && Math.abs(minX - xDomain[0]) < TOLERANCE) {
             minX = _this.xScale.invert(xRangeBounds[0]);
         }
 
-        if (_this.xScale.invert(xRangeBounds[1]) > _this.xScale.domain()[1]
-            && Math.abs(maxX - _this.xScale.domain()[1]) < TOLERANCE) {
+        if (_this.xScale.invert(xRangeBounds[1]) > xDomain[1]
+            && Math.abs(maxX - xDomain[1]) < TOLERANCE) {
             maxX = _this.xScale.invert(xRangeBounds[1]);
         }
 
-        if (_this.yScale.invert(yRangeBounds[0]) < _this.yScale.domain()[0]
-            && Math.abs(minY - _this.yScale.domain()[0]) < TOLERANCE) {
+        if (_this.yScale.invert(yRangeBounds[0]) < yDomain[0]
+            && Math.abs(minY - yDomain[0]) < TOLERANCE) {
             minY = _this.yScale.invert(yRangeBounds[0]);
         }
 
-        if (_this.yScale.invert(yRangeBounds[1]) > _this.yScale.domain()[1]
-            && Math.abs(maxY - _this.yScale.domain()[1]) < TOLERANCE) {
+        if (_this.yScale.invert(yRangeBounds[1]) > yDomain[1]
+            && Math.abs(maxY - yDomain[1]) < TOLERANCE) {
             maxY = _this.yScale.invert(yRangeBounds[1]);
         }
 
@@ -486,35 +492,35 @@ export default Class.extend({
         var xRangeBounds = [0, _this.width];
         var yRangeBounds = [_this.height, 0];
 
-        var xRangeBoundsBumped = _this._rangeBump(xRangeBounds);
-        var yRangeBoundsBumped = _this._rangeBump(yRangeBounds);
+        var xDomain = _this.xScale.domain();
+        var yDomain = _this.yScale.domain();
 
         /*
          * If the min or max of one axis lies in the range bump region, then
          * changing the opposite end of that axis must correctly scale and
          * maintain the range bump region.
          */
-        if (_this.xScale.invert(x1) < _this.xScale.domain()[0]) {
+        if (_this.xScale.invert(x1) < xDomain[0]) {
             x1 = this._scaleCoordinate(x1, xRangeBounds[1] - x2, _this.xScale.range()[0], xRangeBounds[1]);
-        } else if (_this.xScale.invert(x2) < _this.xScale.domain()[0]) {
+        } else if (_this.xScale.invert(x2) < xDomain[0]) {
             x2 = this._scaleCoordinate(x2, xRangeBounds[1] - x1, _this.xScale.range()[0], xRangeBounds[1]);
         }
 
-        if (_this.xScale.invert(x2) > _this.xScale.domain()[1]) {
+        if (_this.xScale.invert(x2) > xDomain[1]) {
             x2 = this._scaleCoordinate(x2, x1 - xRangeBounds[0], _this.xScale.range()[1], xRangeBounds[0]);
-        } else if (_this.xScale.invert(x1) > _this.xScale.domain()[1]) {
+        } else if (_this.xScale.invert(x1) > xDomain[1]) {
             x1 = this._scaleCoordinate(x1, x2 - xRangeBounds[0], _this.xScale.range()[1], xRangeBounds[0]);
         }
 
-        if (_this.yScale.invert(y1) < _this.yScale.domain()[0]) {
+        if (_this.yScale.invert(y1) < yDomain[0]) {
             y1 = this._scaleCoordinate(y1, y2 - yRangeBounds[1], _this.yScale.range()[0], yRangeBounds[1]);
-        } else if (_this.yScale.invert(y2) < _this.yScale.domain()[0]) {
+        } else if (_this.yScale.invert(y2) < yDomain[0]) {
             y2 = this._scaleCoordinate(y2, y1 - yRangeBounds[1], _this.yScale.range()[0], yRangeBounds[1]);
         }
 
-        if (_this.yScale.invert(y2) > _this.yScale.domain()[1]) {
+        if (_this.yScale.invert(y2) > yDomain[1]) {
             y2 = this._scaleCoordinate(y2, yRangeBounds[0] - y1, _this.yScale.range()[1], yRangeBounds[0]);
-        } else if (_this.yScale.invert(y1) > _this.yScale.domain()[1]) {
+        } else if (_this.yScale.invert(y1) > yDomain[1]) {
             y1 = this._scaleCoordinate(y1, yRangeBounds[0] - y2, _this.yScale.range()[1], yRangeBounds[0]);
         }
 
