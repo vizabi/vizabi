@@ -26,7 +26,6 @@ var ModelLeaf = EventSource.extend({
     });
 
     this._super();
-
     this._name = name;
     this._parent = parent;
     this.value = value;
@@ -43,7 +42,7 @@ var ModelLeaf = EventSource.extend({
 
       // persistent defaults to true
       persistent = (typeof persistent !== 'undefined') ? persistent : true;
- 
+
       // set leaf properties
       if (persistent) this._persistentVal = val; // set persistent value if change is persistent.
       this._val = val;
@@ -97,6 +96,7 @@ var Model = EventSource.extend({
     this._spaceDims = {};
 
     this._dataId = false;
+    this.cachedFrames = {};
     this._limits = {};
     //stores limit values
     this._super();
@@ -144,7 +144,7 @@ var Model = EventSource.extend({
     var setting = this._setting;
     var attrs;
     var freezeCall = false; // boolean, indicates if this .set()-call froze the modelTree
-    
+
     //expect object as default
     if(!utils.isPlainObject(attr)) {
       (attrs = {})[attr] = val;
@@ -171,7 +171,7 @@ var Model = EventSource.extend({
 
       var bothModel = utils.isPlainObject(val) && this._data[a] instanceof Model;
       var bothModelLeaf = !utils.isPlainObject(val) && this._data[a] instanceof ModelLeaf;
-      
+
       if (this._data[a] && (bothModel || bothModelLeaf)) {
         // data type does not change (model or leaf and can be set through set-function)
         this._data[a].set(val, force, persistent);
@@ -196,7 +196,7 @@ var Model = EventSource.extend({
         this.setReady();
       }
     }
-    
+
     // if this set()-call was the one freezing the tree, now the tree can be unfrozen (i.e. all setting is done)
     if (freezeCall) {
       this.setTreeFreezer(false);
@@ -264,7 +264,7 @@ var Model = EventSource.extend({
       // if it's a submodel
       if(dataItem instanceof Model) {
         obj[i] = dataItem.getPlainObject(persistent);
-      } 
+      }
       // if it's a modelLeaf
       else {
         obj[i] = dataItem.get(persistent);
@@ -539,9 +539,9 @@ var Model = EventSource.extend({
     if(this.use !== 'constant') dimensions = dimensions.concat([this.which]);
     select = utils.unique(dimensions);
 
-    // where 
+    // where
     filters = this._getAllFilters(exceptions, splashScreen);
-    
+
     // grouping
     grouping = this._getGrouping();
 
@@ -721,7 +721,7 @@ var Model = EventSource.extend({
     if(!filter) return utils.warn("No filter provided to getFilteredItems(<filter>)");
     return _DATAMANAGER.get(this._dataId, 'filtered', filter);
   },
-    
+
   /**
    * gets nested dataset
    * @param {Array} keys define how to nest the set
@@ -950,7 +950,7 @@ function initSubmodel(attr, val, ctx) {
   var submodel;
 
   // if value is a value -> leaf
-  if(!utils.isPlainObject(val) || utils.isArray(val)) {  
+  if(!utils.isPlainObject(val) || utils.isArray(val)) {
 
     var binds = {
       //the submodel has changed (multiple times)
@@ -977,12 +977,12 @@ function initSubmodel(attr, val, ctx) {
 
     // if the value is an already instantiated submodel (Model or ModelLeaf)
     // this is the case for example when a new componentmodel is made (in Component._modelMapping)
-    // it takes the submodels from the toolmodel and creates a new model for the component which refers 
+    // it takes the submodels from the toolmodel and creates a new model for the component which refers
     // to the instantiated submodels (by passing them as model values, and thus they reach here)
     if (isModel(val, true)) {
       submodel = val;
       submodel.on(binds);
-    } 
+    }
     // if it's just a plain object, create a new model
     else {
       // construct model
@@ -999,7 +999,7 @@ function initSubmodel(attr, val, ctx) {
   function onChange(evt, path) {
     if(!ctx._ready) return; //block change propagation if model isnt ready
     path = ctx._name + '.' + path
-    ctx.trigger(evt, path);    
+    ctx.trigger(evt, path);
   }
   function onHookChange(evt, vals) {
     ctx.trigger(evt, vals);
