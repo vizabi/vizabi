@@ -218,7 +218,7 @@ var LCComponent = Component.extend({
     filter[timeDim] = this.time;
 
     this.data = this.model.marker.getKeys(filter);
-    this.values = this.model.marker.getValues(filter, [KEY]);
+    this.values = this.model.marker.getFrame(this.time);
     this.prev_values = this.model.marker.getValues(filter, [KEY], true);
 
     this.entityLines = this.linesContainer.selectAll('.vzb-lc-entity').data(this.data);
@@ -765,9 +765,7 @@ var LCComponent = Component.extend({
     if(!utils.isDate(year)) {
       year = this.model.time.timeFormat.parse(year);
     }
-    return this.model.marker.getValues({
-      time: year
-    }, [this.KEY]);
+    return this.model.marker.getFrame(year);
   },
 
   /**
