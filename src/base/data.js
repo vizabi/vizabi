@@ -244,6 +244,10 @@ var Data = Class.extend({
       // if it's not cached, process the data and then return it
       if (what == 'frames') {
         _this._collection[queryId][what][id] = {};
+        if (queryId == 260641080) {
+          console.log(queryId);
+          console.log(frames);
+        }
         _this._getFrames(queryId, whatId, args).then(function(frames) {
           _this._collection[queryId][what][id] = frames;
           resolve(_this._collection[queryId][what][id]);
