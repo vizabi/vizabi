@@ -1,6 +1,6 @@
 import * as utils from 'base/utils';
 import globals from 'base/globals';
-import Model from 'base/model';
+import Hook from 'hook';
 
 /*!
  * VIZABI Color Model (hook)
@@ -31,7 +31,7 @@ var defaultPalettes = {
   }
 };
 
-var ColorModel = Model.extend({
+var ColorModel = Hook.extend({
 
   /**
    * Default values for this model
