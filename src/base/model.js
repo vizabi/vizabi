@@ -26,7 +26,6 @@ var ModelLeaf = EventSource.extend({
     });
 
     this._super();
-
     this._name = name;
     this._parent = parent;
     this.value = value;
@@ -82,6 +81,8 @@ var Model = EventSource.extend({
     this._name = name;
     this._ready = false;
     this._readyOnce = false;
+    this.cachedFrames = {};
+
     //has this model ever been ready?
     this._loadedOnce = false;
     this._loading = [];
@@ -813,60 +814,63 @@ var Model = EventSource.extend({
 
   /**
    * @param time
-   * @param callback function
    */
   getFrame: function(time){
     var _this = this;
     var steps = this._parent.time.getAllSteps();
     var cachePath = "", pValues, curr;
+
+    this._dataCube = this._dataCube || this.getSubhooks(true);
+
     utils.forEach(this._dataCube, function(hook, name) {
       cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start +" " + _this._parent.time.end;
     });
-
-    this.getFrames(function() {
-      if(_this.cachedFrames[cachePath][time]) {
-        callback(_this.cachedFrames[cachePath][time]);
-      } else if(time < steps[0] || time > steps[steps.length-1]) {
-        //if the requested time point is out of the known range
-        //then send nulls in the response
-        pValues = _this.cachedFrames[cachePath][steps[0]];
-        curr = {};
-        utils.forEach(pValues, function(keys, hook) {
-          curr[hook] = {};
-          utils.forEach(keys, function(val, key) {
-            curr[hook][key] = null;
+    return new Promise(function(resolve, reject) {
+      _this.getFrames().then(function() {
+        if(_this.cachedFrames[cachePath][time]) {
+          resolve(_this.cachedFrames[cachePath][time]);
+        } else if(time < steps[0] || time > steps[steps.length-1]) {
+          //if the requested time point is out of the known range
+          //then send nulls in the response
+          pValues = _this.cachedFrames[cachePath][steps[0]];
+          curr = {};
+          utils.forEach(pValues, function(keys, hook) {
+            curr[hook] = {};
+            utils.forEach(keys, function(val, key) {
+              curr[hook][key] = null;
+            });
           });
-        });
-        console.log("callback 2");
-        callback(curr);
-      } else {
-        var next = d3.bisectLeft(steps, time);
+          resolve(curr);
+        } else {
+          var next = d3.bisectLeft(steps, time);
 
-        if(next === 0) return _this.cachedFrames[cachePath][steps[0]];
+          if(next === 0) return _this.cachedFrames[cachePath][steps[0]];
 
-        var fraction = (time - steps[next - 1]) / (steps[next] - steps[next - 1]);
+          var fraction = (time - steps[next - 1]) / (steps[next] - steps[next - 1]);
 
-        pValues = _this.cachedFrames[cachePath][steps[next - 1]];
-        var nValues = _this.cachedFrames[cachePath][steps[next]];
+          pValues = _this.cachedFrames[cachePath][steps[next - 1]];
+          var nValues = _this.cachedFrames[cachePath][steps[next]];
 
-        curr = {};
-        utils.forEach(pValues, function(values, hook) {
-          curr[hook] = {};
-          utils.forEach(values, function(val, id) {
-            var val2 = nValues[hook][id];
-            curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val) * fraction);
+          curr = {};
+          utils.forEach(pValues, function(values, hook) {
+            curr[hook] = {};
+            utils.forEach(values, function(val, id) {
+              var val2 = nValues[hook][id];
+              curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val) * fraction);
+            });
           });
-        });
-        console.log("callback 3");
-        callback(curr);
-      }
+          resolve(curr);
+        }
+      });
     });
   },
 
     getFrames: function() {
+      console.log("get frames");
       var _this = this;
 
       var cachePath = "";
+
       utils.forEach(this._dataCube, function(hook, name) {
           cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start +" " + _this._parent.time.end;
       });
@@ -874,7 +878,6 @@ var Model = EventSource.extend({
       var steps = this._parent.time.getAllSteps();
 
 
-      this._dataCube = this._dataCube || this.getSubhooks(true);
 
       var result = {};
       var resultKeys = [];
@@ -900,7 +903,7 @@ var Model = EventSource.extend({
             steps.forEach(function(t){
               result[t] = {};
             });
-
+            var hooks = 0;
             utils.forEach(_this._dataCube, function(hook, name) {
 
               if(hook.use === "constant") {
@@ -928,23 +931,24 @@ var Model = EventSource.extend({
                 });
 
               }else{
-                if (!_this._promicesPool) _this._promicesPool = {};
-                if (!_this._promicesPool[cachePath]) {
-                  _this._promicesPool[cachePath] = new Promise();
-                  _DATAMANAGER.get(hook._dataId, 'frames', steps, globals.metadata.indicatorsDB).then(function(frames) {
-                    utils.forEach(frames, function(frame, t){
-                      if (frame[hook.which]) {
-                        result[t][name] = frame[hook.which];
-                      }
-                    });
-                    _this.cachedFrames[cachePath] = result;
-                    for (var i = 0; i < _this._callbacksQueue[cachePath].length; i++) {
-                      resolve(_this.cachedFrames[cachePath]);
+                ++hooks;
+                _DATAMANAGER.get(hook._dataId, 'frames', steps, globals.metadata.indicatorsDB).then(function(frames) {
+                  utils.forEach(frames, function(frame, t){
+                    if (frame[hook.which]) {
+                      result[t][name] = frame[hook.which];
                     }
                   });
-                }
+                  _this.cachedFrames[cachePath] = result;
+                  if (--hooks <= 0) {
+                    resolve(_this.cachedFrames[cachePath]);
+                  }
+                });
               }
             });
+            if(hooks == 0) {
+              _this.cachedFrames[cachePath] = result;
+              resolve(result);
+            }
           });
         });
 
@@ -995,34 +999,38 @@ var Model = EventSource.extend({
    * @returns hooked value
    */
   getKeys: function(filter) {
-    if(this.isHook() && this._dataModel) {
-      //all dimensions except time (continuous)
-      var dimensions = this._getAllDimensions({
-        exceptType: 'time'
-      });
-      var excluded = this._getAllDimensions({
-        onlyType: 'time'
-      });
-
-      return this.getUnique(dimensions).map(function(item) {
-        utils.forEach(excluded, function(e) {
-          if(filter && filter[e]) {
-            item[e] = filter[e];
-          }
+    var _this = this;
+    return new Promise(function(resolve, reject) {
+      if(_this.isHook() && _this._dataModel) {
+        //all dimensions except time (continuous)
+        var dimensions = _this._getAllDimensions({
+          exceptType: 'time'
         });
-        return item;
-      });
-    } else {
-      var sub = this.getSubhooks();
-      var found = [];
-      if(sub.length > 1) {
-        utils.forEach(sub, function(s) {
-          found = s.getKeys();
-          return false;
+        var excluded = _this._getAllDimensions({
+          onlyType: 'time'
         });
+        _this.getUnique(dimensions).then(function(unique) {
+          unique.map(function(item) {
+            utils.forEach(excluded, function(e) {
+              if(filter && filter[e]) {
+                item[e] = filter[e];
+              }
+            });
+          });
+          resolve(unique) ;
+        });
+      } else {
+        var sub = _this.getSubhooks();
+        var found = [];
+        if(sub.length > 1) {
+          utils.forEach(sub, function(s) {
+            s.getKeys().then(function(keys) {
+              resolve(keys);
+            });
+          });
+        }
       }
-      return found;
-    }
+    });
   },
 
   /**
@@ -1206,20 +1214,25 @@ var Model = EventSource.extend({
    * @returns {Object} limits (min and max)
    */
   getLimits: function(attr) {
-    if(!this.isHook()) {
+    var _this = this;
+    return new Promise(function(resolve, reject) {
+    if(!_this.isHook()) {
       //if there's subhooks, find the one which is an indicator
       var limits = {};
-      utils.forEach(this.getSubhooks(), function(s) {
+      utils.forEach(_this.getSubhooks(), function(s) {
         var prop = globals.metadata.indicatorsDB[s.which].use === "property";
         if(!prop) {
-          limits = s.getLimits(attr);
-          return false;
+          s.getLimits(attr).then(function(limits) {
+            resolve(limits);
+          });
         }
       });
-      return limits;
+    } else {
+      _DATAMANAGER.get(_this._dataId, 'limits', attr).then(function (limits) {
+        resolve(limits);
+      });
     }
-
-    return _DATAMANAGER.get(this._dataId, 'limits', attr);
+  });
   },
 
   /**
@@ -1228,15 +1241,20 @@ var Model = EventSource.extend({
    * @returns {Array} unique values
    */
   getUnique: function(attr) {
-    if(!this.isHook()) {
-      return;
-    }
-    if(!attr) {
-      attr = this._getFirstDimension({
-        type: "time"
+    var _this = this;
+    return new Promise(function(resolve, reject) {
+      if(!_this.isHook()) {
+        resolve();
+      }
+      if(!attr) {
+        attr = _this._getFirstDimension({
+          type: "time"
+        });
+      }
+      _DATAMANAGER.get(_this._dataId, 'unique', attr).then(function(response) {
+        resolve(response);
       });
-    }
-    return _DATAMANAGER.get(this._dataId, 'unique', attr);
+    });
   },
 
   //TODO: this should go down to datamanager, hook should only provide interface

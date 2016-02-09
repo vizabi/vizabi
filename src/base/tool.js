@@ -246,16 +246,16 @@ var Tool = Component.extend({
 
     //don't validate anything if data hasn't been loaded
     if(model.isLoading()) return;
+    marker.getLimits(time.getDimension()).then(function(limits) {
+      var dateMin = limits.min;
+      var dateMax = limits.max;
+      if(!utils.isDate(dateMin)) utils.warn("tool validation: min date looks wrong: " + dateMin);
+      if(!utils.isDate(dateMax)) utils.warn("tool validation: max date looks wrong: " + dateMax);
 
-    var dateMin = marker.getLimits(time.getDimension()).min;
-    var dateMax = marker.getLimits(time.getDimension()).max;
-
-    if(!utils.isDate(dateMin)) utils.warn("tool validation: min date looks wrong: " + dateMin);
-    if(!utils.isDate(dateMax)) utils.warn("tool validation: max date looks wrong: " + dateMax);
-
-    // change is not persistent if it's splashscreen change
-    if(time.start < dateMin && utils.isDate(dateMin)) time.getModelObject('start').set(dateMin, false, !time.splash);
-    if(time.end > dateMax && utils.isDate(dateMax)) time.getModelObject('end').set(dateMax, false, !time.splash);
+      // change is not persistent if it's splashscreen change
+      if(time.start < dateMin && utils.isDate(dateMin)) time.getModelObject('start').set(dateMin, false, !time.splash);
+      if(time.end > dateMax && utils.isDate(dateMax)) time.getModelObject('end').set(dateMax, false, !time.splash);
+    });
   },
 
   _setUIOptions: function() {

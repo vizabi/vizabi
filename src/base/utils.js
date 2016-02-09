@@ -772,7 +772,7 @@ export var mapRows = function(original, formatters) {
       return res;
     }
   }
-   
+
   // default formatter turns empty strings in null and converts numeric values into number
   //TODO: default formatter is moved to utils. need to return it to hook prototype class, but retest #1212 #1230 #1253
   var defaultFormatter = function (val) {
@@ -785,13 +785,13 @@ export var mapRows = function(original, formatters) {
         if (!isNaN(numericVal) && isFinite(val)) {
           newVal = numericVal;
         }
-      }  
+      }
       return newVal;
   }
-  
+
   original = original.map(function(row) {
     var columns = Object.keys(row);
-      
+
     for(var i = 0; i < columns.length; i++) {
       var col = columns[i];
       row[col] = mapRow(row[col], formatters[col] || defaultFormatter);
@@ -960,9 +960,9 @@ export var throttle = function(func, ms) {
     savedThis,
     nextTime,
     wrapper = function() {
-      
+
       if(nextTime > Date.now()) {
-        throttled = true;        
+        throttled = true;
         savedArgs = arguments;
         savedThis = this;
         return;
@@ -970,23 +970,23 @@ export var throttle = function(func, ms) {
 
       nextTime = Date.now() + ms;
       throttled = false;
-      
+
       func.apply(this, arguments);
 
       setTimeout(function() {
-        __recallLast();          
+        __recallLast();
       }, ms);
 
     },
-    
+
     __recallLast = function() {
       if(throttled) {
         throttled = false;
         func.apply(savedThis, savedArgs);
-      }     
+      }
     };
 
-  wrapper.recallLast = __recallLast; 
+  wrapper.recallLast = __recallLast;
 
   return wrapper;
 };
@@ -1227,11 +1227,11 @@ export var interpolator = {
 
 
 export var interpolateVector = function(){
-    
+
 }
 
 /**
- * interpolates the specific value 
+ * interpolates the specific value
  * @param {Array} items -- an array of items, sorted by "dimTime", filtered so that no item[which] is null
  * @param {String} use -- a use of hook that wants to interpolate. can be "indicator" or "property" or "constant"
  * @param {String} which -- a hook pointer to indicator or property, e.g. "lex"
@@ -1244,38 +1244,38 @@ export var interpolateVector = function(){
  */
 export var interpolatePoint = function(items, use, which, next, dimTime, time, method, extrapolate){
 
-    
+
   if(!items || items.length === 0) {
     warn('interpolatePoint failed because incoming array is empty. It was ' + which);
     return null;
   }
   // return constant for the use of "constant"
   if(use === 'constant') return which;
-    
+
   // zero-order interpolation for the use of properties
   if(use === 'property') return items[0][which];
 
   // the rest is for the continuous measurements
-    
+
   if (extrapolate){
     // check if the desired value is out of range. 0-order extrapolation
-    if(time - items[0][dimTime] <= 0) return items[0][which];    
+    if(time - items[0][dimTime] <= 0) return items[0][which];
     if(time - items[items.length - 1][dimTime] >= 0) return items[items.length - 1][which];
   } else {
     // no extrapolation according to Ola's request
     if(time < items[0][dimTime] || time > items[items.length - 1][dimTime]) return null;
   }
-    
+
   if(!next && next !== 0) next = d3.bisectLeft(items.map(function(m){return m[dimTime]}), time);
-    
+
   if(next === 0) return items[0][which];
-        
+
   //return null if data is missing
   if(items[next]===undefined || items[next][which] === null || items[next - 1][which] === null || items[next][which] === "") {
     warn('interpolatePoint failed because next/previous points are bad in ' + which);
     return null;
   }
-    
+
 
   //do the math to calculate a value between the two points
   var result = interpolator[method||"linear"](
@@ -1292,7 +1292,7 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
       warn('interpolatePoint failed because result is NaN. It was ' + which);
       result = null;
   }
-    
+
   return result;
 
 }

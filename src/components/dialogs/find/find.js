@@ -95,70 +95,73 @@ var Find = Dialog.extend({
     var time = this.model.state.time.value;
     console.log("find get frame");
     marker.getFrame(time).then(function(values) {
-      console.log("find values");
-      var data = marker.getKeys().map(function(d) {
-        var pointer = {};
-        pointer[KEY] = d[KEY];
-        pointer.name = values.label[d[KEY]];
-        return pointer;
-      }).filter(function(d) {
-        var include = true;
-        utils.forEach(values, function(hook) {
-          if(!hook[d[KEY]]) {
-            include = false;
-            return false;
-          }
-        });
-        return include;
-      });
-
-      //sort data alphabetically
-      data.sort(function(a, b) {
-        return(a.name < b.name) ? -1 : 1;
-      });
-
-      _this.list.html("");
-
-      var items = _this.list.selectAll(".vzb-find-item")
-        .data(data)
-        .enter()
-        .append("div")
-        .attr("class", "vzb-find-item vzb-dialog-checkbox")
-
-      items.append("input")
-        .attr("type", "checkbox")
-        .attr("class", "vzb-find-item")
-        .attr("id", function(d) {
-          return "-find-" + d[KEY];
-        })
-        .property("checked", function(d) {
-          return(selected.indexOf(d[KEY]) !== -1);
-        })
-        .on("change", function(d) {
-          //clear highlight so it doesn't get in the way when selecting an entity
-          if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();
-          _this.model.state.entities.selectEntity(d);
-          //return to highlighted state
-          if(!utils.isTouchDevice()) _this.model.state.entities.highlightEntity(d);
+      marker.getKeys().then(function(keys) {
+        console.log("find values");
+        var data = keys.map(function(d) {
+          var pointer = {};
+          pointer[KEY] = d[KEY];
+          pointer.name = values.label[d[KEY]];
+          return pointer;
+        }).filter(function(d) {
+          var include = true;
+          utils.forEach(values, function(hook) {
+            if(!hook[d[KEY]]) {
+              include = false;
+              return false;
+            }
+          });
+          return include;
         });
 
-      items.append("label")
-        .attr("for", function(d) {
-          return "-find-" + d[KEY];
-        })
-        .text(function(d) {
-          return d.name;
-        })
-        .on("mouseover", function(d) {
-          if(!utils.isTouchDevice()) _this.model.state.entities.highlightEntity(d);
-        })
-        .on("mouseout", function(d) {
-          if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();
+        //sort data alphabetically
+        data.sort(function(a, b) {
+          return(a.name < b.name) ? -1 : 1;
         });
-      utils.preventAncestorScrolling(_this.element.select('.vzb-dialog-scrollable'));
 
-      _this.showHideSearch();
-      _this.showHideDeselect();
+        _this.list.html("");
+
+        var items = _this.list.selectAll(".vzb-find-item")
+          .data(data)
+          .enter()
+          .append("div")
+          .attr("class", "vzb-find-item vzb-dialog-checkbox")
+
+        items.append("input")
+          .attr("type", "checkbox")
+          .attr("class", "vzb-find-item")
+          .attr("id", function(d) {
+            return "-find-" + d[KEY];
+          })
+          .property("checked", function(d) {
+            return(selected.indexOf(d[KEY]) !== -1);
+          })
+          .on("change", function(d) {
+            //clear highlight so it doesn't get in the way when selecting an entity
+            if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();
+            _this.model.state.entities.selectEntity(d);
+            //return to highlighted state
+            if(!utils.isTouchDevice()) _this.model.state.entities.highlightEntity(d);
+          });
+
+        items.append("label")
+          .attr("for", function(d) {
+            return "-find-" + d[KEY];
+          })
+          .text(function(d) {
+            return d.name;
+          })
+          .on("mouseover", function(d) {
+            if(!utils.isTouchDevice()) _this.model.state.entities.highlightEntity(d);
+          })
+          .on("mouseout", function(d) {
+            if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();
+          });
+        utils.preventAncestorScrolling(_this.element.select('.vzb-dialog-scrollable'));
+
+        _this.showHideSearch();
+        _this.showHideDeselect();
+
+    });
 
     });
 

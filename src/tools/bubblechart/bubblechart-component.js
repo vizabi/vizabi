@@ -450,6 +450,7 @@ var BubbleChartComp = Component.extend({
     this.updateUIStrings();
     var endTime = this.model.time.end;
     this.model.marker.getFrame(endTime).then(function(values) {
+      console.log(values);
       _this.updateEntities();
       _this.updateBubbleOpacity();
       _this.updateIndicators();
@@ -600,27 +601,45 @@ var BubbleChartComp = Component.extend({
     var TIMEDIM = this.TIMEDIM;
 
     var getKeys = function(prefix) {
-      prefix = prefix || "";
-      return _this.model.marker.getKeys()
-        .map(function(d) {
-          var pointer = {};
-          pointer[KEY] = d[KEY];
-          pointer[TIMEDIM] = endTime;
-          pointer.sortValue = frame.size[d[KEY]]||0;
-          pointer[KEY] = prefix + d[KEY];
-          return pointer;
-        })
-        .sort(function(a, b) {
-          return b.sortValue - a.sortValue;
-        })
+      return new Promise(function(resolve, reject) {
+        prefix = prefix || "";
+        _this.model.marker.getKeys().then(function(keys) {
+          _this.model.marker.getFrame(endTime).then(function(values) {
+            resolve(keys.map(function(d) {
+              var pointer = {};
+              pointer[KEY] = d[KEY];
+              pointer[TIMEDIM] = endTime;
+              pointer.sortValue = values.size[d[KEY]]||0;
+              pointer[KEY] = prefix + d[KEY];
+              return pointer;
+            })
+            .sort(function(a, b) {
+              return b.sortValue - a.sortValue;
+            }));
+          });
+        });
+      })
     };
 
     // get array of GEOs, sorted by the size hook
     // that makes larger bubbles go behind the smaller ones
     var endTime = this.model.time.end;
-    this.model.marker.getFrame(endTime).then(function(values) {
-      console.log(values);
-      _this.model.entities.setVisible(getKeys.call(this));
+    getKeys().then(function(keys) {
+      _this.model.entities.setVisible(keys);
+    });
+    getKeys("trail-").then(function(keys) {
+      _this.entityTrails = _this.bubbleContainer.selectAll(".vzb-bc-entity")
+        .data(keys, function(d) {
+          return d[KEY];
+        });
+
+      _this.entityTrails.enter().insert("g", function(d) {
+        return document.querySelector(".vzb-bc-bubbles ." + d[KEY].replace("trail-", ""));
+      }).attr("class", function(d) {
+        return "vzb-bc-entity" + " " + d[KEY]
+      });
+    });
+
       _this.entityBubbles = _this.bubbleContainer.selectAll('.vzb-bc-entity')
         .data(_this.model.entities.getVisible(), function(d) {return d[KEY]})
         .order();
@@ -656,17 +675,6 @@ var BubbleChartComp = Component.extend({
 
       //TODO: no need to create trail group for all entities
       //TODO: instead of :append an :insert should be used to keep order, thus only few trail groups can be inserted
-      _this.entityTrails = _this.bubbleContainer.selectAll(".vzb-bc-entity")
-        .data(getKeys.call(_this, "trail-"), function(d) {
-          return d[KEY];
-        });
-
-      _this.entityTrails.enter().insert("g", function(d) {
-        return document.querySelector(".vzb-bc-bubbles ." + d[KEY].replace("trail-", ""));
-      }).attr("class", function(d) {
-        return "vzb-bc-entity" + " " + d[KEY]
-      });
-    });
 
   },
 
@@ -1078,22 +1086,23 @@ var BubbleChartComp = Component.extend({
       valuesLocked = this.model.marker.getFrame(tLocked);
     }
 
-    values = this.model.marker.getFrame(this.time);
-    this.entityBubbles.each(function(d, index) {
-      var view = d3.select(this);
-      _this._updateBubble(d, values, valuesLocked, index, view, duration);
+    this.model.marker.getFrame(this.time).then(function(values) {
+      _this.entityBubbles.each(function(d, index) {
+        var view = d3.select(this);
+        _this._updateBubble(d, values, valuesLocked, index, view, duration);
 
-    }); // each bubble
+      }); // each bubble
 
-    if(_this.ui.labels.autoResolveCollisions) {
-      // cancel previously queued simulation if we just ordered a new one
-      clearTimeout(_this.collisionTimeout);
+      if(_this.ui.labels.autoResolveCollisions) {
+        // cancel previously queued simulation if we just ordered a new one
+        clearTimeout(_this.collisionTimeout);
 
-      // place label layout simulation into a queue
-      _this.collisionTimeout = setTimeout(function() {
-        //  _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
-      }, _this.model.time.delayAnimations * 1.2)
-    }
+        // place label layout simulation into a queue
+        _this.collisionTimeout = setTimeout(function() {
+          //  _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
+        }, _this.model.time.delayAnimations * 1.2)
+      }
+    });
 
   },
 
