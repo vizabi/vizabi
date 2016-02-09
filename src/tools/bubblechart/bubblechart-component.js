@@ -1077,6 +1077,7 @@ var BubbleChartComp = Component.extend({
     }
 
     values = this.model.marker.getFrame(this.time);
+
     this.entityBubbles.each(function(d, index) {
       var view = d3.select(this);
       _this._updateBubble(d, values, valuesLocked, index, view, duration);
@@ -1127,24 +1128,11 @@ var BubbleChartComp = Component.extend({
 
 
       if(duration) {
-        if (!d.transitionInProgress) {
-          d.transitionInProgress = true;
-          view.transition().duration(duration).ease("linear")
-            .attr("cy", _this.yScale(valueY))
-            .attr("cx", _this.xScale(valueX))
-            .attr("r", scaledS)
-            .each("end", function() {
-              d.transitionInProgress = false;
-            });
-        } else {
-          d.transitionInProgress = false;
-          view.interrupt()
-            .attr("cy", _this.yScale(valueY))
-            .attr("cx", _this.xScale(valueX))
-            .attr("r", scaledS);
-        }
+        view.transition().duration(duration).ease("linear")
+          .attr("cy", _this.yScale(valueY))
+          .attr("cx", _this.xScale(valueX))
+          .attr("r", scaledS);
       } else {
-        d.transitionInProgress = false;
         view.interrupt()
           .attr("cy", _this.yScale(valueY))
           .attr("cx", _this.xScale(valueX))
