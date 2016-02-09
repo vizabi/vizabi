@@ -31,7 +31,7 @@ var ToolModel = Model.extend({
     //default submodels
     values = values || {};
     defaults = defaults || {};
-    values = defaultOptions(values, defaults);
+    values = defaultModel(values, defaults);
     //constructor is similar to model
     this._super(name, values, null, binds);
     // change language
@@ -48,36 +48,35 @@ var Tool = Component.extend({
   /**
    * Initializes the tool
    * @param {Object} placeholder object
-   * @param {Object} options Options such as state, data, etc
+   * @param {Object} external_model External model such as state, data, etc
    */
-  init: function(placeholder, options) {
+  init: function(placeholder, external_model) {
     this._id = utils.uniqueId('t');
-    this.template = this.template ||
-      '<div class="vzb-tool vzb-tool-' + this.name + '">' +
-        '<div class="vzb-tool-stage">' +
-          '<div class="vzb-tool-viz">' +
+    this.template = this.template || 
+      '<div class="vzb-tool vzb-tool-' + this.name + '">' + 
+        '<div class="vzb-tool-stage">' + 
+          '<div class="vzb-tool-viz">' + 
+          '</div>' + 
+          '<div class="vzb-tool-timeslider">' + 
+          '</div>' + 
+        '</div>' + 
+        '<div class="vzb-tool-sidebar">' + 
+          '<div class="vzb-tool-dialogs">' + 
           '</div>' +
-          '<div class="vzb-tool-timeslider">' +
-          '</div>' +
-        '</div>' +
-        '<div class="vzb-tool-sidebar">' +
-          '<div class="vzb-tool-dialogs">' +
-          '</div>' +
-          '<div class="vzb-tool-buttonlist">' +
-          '</div>' +
-        '</div>' +
-        '<div class="vzb-tool-treemenu vzb-hidden">' +
-        '</div>' +
-        '<div class="vzb-tool-datawarning vzb-hidden">' +
-        '</div>' +
+          '<div class="vzb-tool-buttonlist">' + 
+          '</div>' + 
+        '</div>' +         
+        '<div class="vzb-tool-treemenu vzb-hidden">' + 
+        '</div>' + 
+        '<div class="vzb-tool-datawarning vzb-hidden">' + 
+        '</div>' + 
       '</div>';
     this.model_binds = this.model_binds || {};
+    
+    external_model = external_model || {}; //external model can be undefined
+    external_model.bind = external_model.bind || {}; //bind functions can be undefined
 
-    options = options || {}; //options can be undefined
-    options.bind = options.bind || {}; //bind functions can be undefined
-
-    this.default_options = this.default_options || {};
-
+    
     //bind the validation function with the tool
     var validate = this.validate.bind(this);
     var _this = this;
@@ -89,7 +88,7 @@ var Tool = Component.extend({
           _this.model.validate();
 
           if (evt.source.persistent)
-            _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'), _this.getMinState());
+            _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'), _this.getMinModel());
         }
       },
       'change:ui.presentation': function() {
@@ -114,10 +113,13 @@ var Tool = Component.extend({
         }
       }
     };
-    utils.extend(callbacks, this.model_binds, options.bind);
-    delete options.bind;
+    utils.extend(callbacks, this.model_binds, external_model.bind);
+    delete external_model.bind;
 
-    this.model = new ToolModel(this.name, options, this.default_options, callbacks, validate);
+    this.model = new ToolModel(this.name, external_model, this.default_model, callbacks, validate);
+
+    // default model is the model set in the tool
+    this.default_model = this.default_model || {};
 
     this.ui = this.model.ui || {};
 
@@ -129,18 +131,21 @@ var Tool = Component.extend({
       placeholder: placeholder
     }, this);
     this.render();
-    this._setUIOptions();
+    this._setUIModel();
   },
 
-  getMinState: function() {
-    var state = this.model.state.getPlainObject(true); // true = get only persistent model values
-    var d_state = this.default_options.state;
+  getMinModel: function() {
+    var currentToolModel = this.model.getPlainObject(true); // true = get only persistent model values
+    var defaultToolModel = this.default_model;
+    var defaultsFromModels = this.model.getDefaults();
     //flattens _defs_ object
-    d_state = utils.flattenDefaults(d_state);
-    //compares with chart default options
-    var d = utils.flattenDates(utils.diffObject(state, d_state), this.model.state.time.timeFormat);
+    defaultToolModel = utils.flattenDefaults(defaultToolModel);
+    // compares with chart default model
+    var modelChanges = utils.diffObject(currentToolModel, defaultToolModel);
+    // change date object to string according to current format
+    modelChanges = utils.flattenDates(modelChanges, this.model.state.time.timeFormat);
     //compares with model's defaults
-    return utils.diffObject(d, this.model.state.getDefaults());
+    return utils.diffObject(modelChanges, defaultsFromModels);
   },
 
   /**
@@ -149,7 +154,7 @@ var Tool = Component.extend({
 
   clear: function() {
     this.layout.clear();
-    this.setOptions = this.getOptions = function() {
+    this.setModel = this.getModel = function() {
       return;
     };
     this._super();
@@ -166,24 +171,24 @@ var Tool = Component.extend({
   },
 
   /**
-   * Sets options from external page
-   * @param {Object} options new options
+   * Sets model from external page
+   * @param {Object} JSONModel new model in JSON format
    * @param {Boolean} overwrite overwrite everything instead of extending
    */
-  setOptions: function(options, overwrite) {
+  setModel: function(newModelJSON, overwrite) {
     if(overwrite) {
-      this.model.reset(options);
+      this.model.reset(newModelJSON);
     } else {
-      this.model.set(changedObj(options, this.getOptions()));
+      this.model.set(newModelJSON);
     }
-    this._setUIOptions();
+    this._setUIModel();
   },
 
   /**
-   * gets all options
-   * @return {Object} JSON object with options
+   * get model
+   * @return {Object} JSON object of model
    */
-  getOptions: function() {
+  getModel: function() {
     return this.model.getPlainObject() || {};
   },
   /**
@@ -245,20 +250,20 @@ var Tool = Component.extend({
     };
 
     //don't validate anything if data hasn't been loaded
-    if(model.isLoading()) return;
-    marker.getLimits(time.getDimension()).then(function(limits) {
-      var dateMin = limits.min;
-      var dateMax = limits.max;
-      if(!utils.isDate(dateMin)) utils.warn("tool validation: min date looks wrong: " + dateMin);
-      if(!utils.isDate(dateMax)) utils.warn("tool validation: max date looks wrong: " + dateMax);
+    if(model.isLoading() || !marker.getKeys() || marker.getKeys().length < 1) return;
 
-      // change is not persistent if it's splashscreen change
-      if(time.start < dateMin && utils.isDate(dateMin)) time.getModelObject('start').set(dateMin, false, !time.splash);
-      if(time.end > dateMax && utils.isDate(dateMax)) time.getModelObject('end').set(dateMax, false, !time.splash);
-    });
+    var dateMin = marker.getLimits(time.getDimension()).min;
+    var dateMax = marker.getLimits(time.getDimension()).max;
+
+    if(!utils.isDate(dateMin)) utils.warn("tool validation: min date looks wrong: " + dateMin);
+    if(!utils.isDate(dateMax)) utils.warn("tool validation: max date looks wrong: " + dateMax);
+
+    // change is not persistent if it's splashscreen change
+    if(time.start < dateMin && utils.isDate(dateMin)) time.getModelObject('start').set(dateMin, false, !time.splash);
+    if(time.end > dateMax && utils.isDate(dateMax)) time.getModelObject('end').set(dateMax, false, !time.splash);
   },
 
-  _setUIOptions: function() {
+  _setUIModel: function() {
     //add placeholder class
     utils.addClass(this.placeholder, class_placeholder);
     //add-remove buttonlist class
@@ -310,14 +315,14 @@ function generateValidate(m, validate) {
 }
 
 /* ==========================
- * Default options methods
+ * Default model methods
  * ==========================
  */
 
 /**
- * Generates a valid state based on default options
+ * Generates a valid state based on default model
  */
-function defaultOptions(values, defaults) {
+function defaultModel(values, defaults) {
   var keys = Object.keys(defaults);
   var size = keys.length;
   var field;
@@ -340,7 +345,7 @@ function defaultOptions(values, defaults) {
       if(type !== 'object' && type !== 'model') {
         values[field] = blueprint;
       } else {
-        values[field] = defaultOptions({}, blueprint);
+        values[field] = defaultModel({}, blueprint);
       }
     }
     original = values[field];
@@ -354,7 +359,7 @@ function defaultOptions(values, defaults) {
       if(!utils.isObject(original)) {
         values[field] = {};
       }
-      values[field] = defaultOptions(values[field], blueprint);
+      values[field] = defaultModel(values[field], blueprint);
     } else if(type === 'object') {
       if(!utils.isObject(original) || Object.keys(original).length === 0) {
         original = false; //will be overwritten

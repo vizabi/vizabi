@@ -4,26 +4,25 @@ var URLON={stringify:function(a){function b(a){return encodeURI(a.replace(/([=:&
 var URL = {};
 
 //grabs width, height, tabs open, and updates the url
-function updateURL(force, minState) {
+function updateURL(force, minModel) {
 
   function update() {
 
-    var state, lang, options;
+    var lang, model;
     if(typeof VIZ !== 'undefined') {
-      state = minState || VIZ.getMinState();
-      options = VIZ.getOptions();
+      minModel = minModel || VIZ.getMinModel();
+      minModel = Vizabi.utils.diffObject(minModel, VIZABI_INITIAL_MODEL);
+      model = VIZ.getModel();
     }
-    formatDates(state);
 
-    if(options) {
-      lang = options.language.id || document.getElementById('vzbp-btn-lang').getAttribute('data-next_lang');
+    if(model) {
+      lang = model.language.id || document.getElementById('vzbp-btn-lang').getAttribute('data-next_lang');
     }
     if(!lang) {
       lang = 'en';
       document.getElementById('vzbp-btn-lang').setAttribute('data-next_lang', 'se');
     }
     var url = {
-      lang: lang,
       width: parseInt(placeholder.style.width, 10),
       height: parseInt(placeholder.style.height, 10),
       fullscreen: hasClass(placeholder, 'fullscreen'),
@@ -44,8 +43,8 @@ function updateURL(force, minState) {
       el.setAttribute("href", href);
     });
 
-    if(state) {
-      url.state = state;
+    if(minModel && Object.keys(minModel).length > 0) {
+      url.model = minModel;
       url_string = URLON.stringify(url);
     }
 
@@ -69,29 +68,28 @@ function parseURL() {
   }
 
   if(hash) {
-    options = URLON.parse(hash);
+    parsedUrl = URLON.parse(hash);
 
-    URL.state = options.state;
-    URL.lang = options.lang;
+    URL.model = parsedUrl.model || {};
 
-    if(options.width && options.height && placeholder && setDivSize) {
-      setDivSize(placeholder, container, options.width, options.height);
-      if(options.fullscreen) {
+    if(parsedUrl.width && parsedUrl.height && placeholder && setDivSize) {
+      setDivSize(placeholder, container, parsedUrl.width, parsedUrl.height);
+      if(parsedUrl.fullscreen) {
         setFullscreen();
       }
     }
 
     forEachElement(".collapsible-section", function(el, i) {
       var id = el.getAttribute('id');
-      if(options[id]) {
+      if(parsedUrl[id]) {
         addClass(el, 'open');
       } else {
         removeClass(el, 'open');
       }
     });
 
-    if(options.bodyC) {
-      document.body.setAttribute('class', options.bodyC);
+    if(parsedUrl.bodyC) {
+      document.body.setAttribute('class', parsedUrl.bodyC);
     }
   }
 }

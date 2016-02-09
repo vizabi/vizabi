@@ -25,7 +25,7 @@ var MoreOptions = Dialog.extend({
    */
   init: function(config, parent) {
     this.name = 'moreoptions';
-    
+        
     this._super(config, parent);
   },
 
@@ -36,7 +36,7 @@ var MoreOptions = Dialog.extend({
     
     var dialog_popup = (this.model.ui.dialogs||{}).popup || [];
     var dialog_moreoptions = (this.model.ui.dialogs||{}).moreoptions || [];
-    
+            
     // if dialog_moreoptions has been passed in with boolean param or array must check and covert to array
     if (dialog_moreoptions === true) {
       dialog_moreoptions = dialog_popup;
@@ -44,8 +44,6 @@ var MoreOptions = Dialog.extend({
     }
     
     this._addDialogs(dialog_moreoptions);
-
-    this.resize();
     
     //accordion
     this.accordionEl = this.element.select('.vzb-accordion');
@@ -53,23 +51,47 @@ var MoreOptions = Dialog.extend({
       var titleEl = this.accordionEl.selectAll('.vzb-accordion-section')
         .select('.vzb-dialog-title>span:first-child')
       titleEl.on('click', function(d) {
-          var sectionEl = _this.components[d.component].placeholderEl;
-          var activeEl = _this.accordionEl.select('.vzb-accordion-active');
-          if(activeEl) {
-            activeEl.classed('vzb-accordion-active', false);
-          }
-          if(sectionEl.node() !== activeEl.node()) {
-            sectionEl.classed('vzb-accordion-active', true);
-          }
-        })
+        _this._setMaxHeight();
+        var sectionEl = _this.components[d.component].placeholderEl;
+        var activeEl = _this.accordionEl.select('.vzb-accordion-active');
+        if(activeEl) {
+          activeEl.classed('vzb-accordion-active', false);
+        }
+        if(sectionEl.node() !== activeEl.node()) {
+          sectionEl.classed('vzb-accordion-active', true);
+        }
+      })
     }
   },
 
-  resize: function() {
-    var totalHeight = this.root.element.offsetHeight - 200;
-    this.contentEl.style('max-height', totalHeight + 'px');
-
+  ready:function() {
     this._super();
+    this._setMaxHeight();    
+  },
+  
+  resize: function() {
+    this._super();
+    if(this.placeholderEl) {
+      this.nonContentHeight = this.placeholderEl[0][0].offsetHeight - this.contentEl[0][0].offsetHeight;
+      var totalHeight = this.root.element.offsetHeight - this.nonContentHeight;
+      var dialogBottom = parseInt(this.placeholderEl.style('bottom'), 10);
+      if(this.getLayoutProfile() !== 'small' && dialogBottom < 0) { 
+        this.placeholderEl.style('bottom', '0');
+        dialogBottom = -dialogBottom;
+      }      
+      if(utils.isNumber(dialogBottom)) totalHeight = totalHeight - dialogBottom;
+      var maxHeight = parseInt(this.contentEl.style('max-height'), 10);
+      if(this.getLayoutProfile() === 'small' || totalHeight < maxHeight) this.contentEl.style('max-height', totalHeight + 'px');
+    }
+
+  },
+  
+  _setMaxHeight: function() {
+    this.nonContentHeight = this.placeholderEl[0][0].offsetHeight - this.contentEl[0][0].offsetHeight;
+    var totalHeight = this.root.element.offsetHeight - this.nonContentHeight;
+    var dialogBottom = parseInt(this.placeholderEl.style('bottom'), 10);
+    if(utils.isNumber(dialogBottom)) totalHeight = totalHeight - dialogBottom;
+    this.contentEl.style('max-height', totalHeight + 'px');
   },
   
   _addDialogs: function(dialog_list) {

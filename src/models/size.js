@@ -1,12 +1,12 @@
 import * as utils from 'base/utils';
-import Model from 'base/model';
+import Hook from 'hook';
 import globals from 'base/globals';
 
 /*
- * VIZABI Data Model (options.data)
+ * VIZABI Size Model
  */
 
-var SizeModel = Model.extend({
+var SizeModel = Hook.extend({
 
   /**
    * Default values for this model

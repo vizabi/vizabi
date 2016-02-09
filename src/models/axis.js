@@ -1,5 +1,5 @@
 import * as utils from 'base/utils';
-import Model from 'base/model';
+import Hook from 'hook';
 import globals from 'base/globals';
 
 /*!
@@ -12,7 +12,7 @@ var allowTypes = {
     "value": ["ordinal"]
 };
 
-var AxisModel = Model.extend({
+var AxisModel = Hook.extend({
 
   /**
    * Default values for this model
@@ -37,7 +37,7 @@ var AxisModel = Model.extend({
     this._type = "axis";
     //TODO: add defaults extend to super
     var defaults = utils.deepClone(this._defaults);
-    values = utils.extend(defaults, values);
+    values = utils.extend(defaults, values);      
     this._super(name, values, parent, bind);
   },
 

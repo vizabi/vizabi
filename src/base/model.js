@@ -26,6 +26,7 @@ var ModelLeaf = EventSource.extend({
     });
 
     this._super();
+
     this._name = name;
     this._parent = parent;
     this.value = value;
@@ -42,7 +43,7 @@ var ModelLeaf = EventSource.extend({
 
       // persistent defaults to true
       persistent = (typeof persistent !== 'undefined') ? persistent : true;
-
+ 
       // set leaf properties
       if (persistent) this._persistentVal = val; // set persistent value if change is persistent.
       this._val = val;
@@ -81,8 +82,6 @@ var Model = EventSource.extend({
     this._name = name;
     this._ready = false;
     this._readyOnce = false;
-    this.cachedFrames = {};
-
     //has this model ever been ready?
     this._loadedOnce = false;
     this._loading = [];
@@ -145,7 +144,7 @@ var Model = EventSource.extend({
     var setting = this._setting;
     var attrs;
     var freezeCall = false; // boolean, indicates if this .set()-call froze the modelTree
-
+    
     //expect object as default
     if(!utils.isPlainObject(attr)) {
       (attrs = {})[attr] = val;
@@ -172,7 +171,7 @@ var Model = EventSource.extend({
 
       var bothModel = utils.isPlainObject(val) && this._data[a] instanceof Model;
       var bothModelLeaf = !utils.isPlainObject(val) && this._data[a] instanceof ModelLeaf;
-
+      
       if (this._data[a] && (bothModel || bothModelLeaf)) {
         // data type does not change (model or leaf and can be set through set-function)
         this._data[a].set(val, force, persistent);
@@ -197,7 +196,7 @@ var Model = EventSource.extend({
         this.setReady();
       }
     }
-
+    
     // if this set()-call was the one freezing the tree, now the tree can be unfrozen (i.e. all setting is done)
     if (freezeCall) {
       this.setTreeFreezer(false);
@@ -229,16 +228,7 @@ var Model = EventSource.extend({
     return this._type;
   },
 
-  /**
-   * Gets the metadata of the hooks
-   * @returns {Object} metadata
-   */
-  getMetadata: function() {
-    if(!this.isHook()) return {};
-    return(globals.metadata && globals.metadata.indicators && (this.use === 'indicator' || this.use ===
-        'property')) ?
-      globals.metadata.indicators[this.which] : {};
-  },
+
 
   /**
    * Gets all submodels of the current model
@@ -274,7 +264,7 @@ var Model = EventSource.extend({
       // if it's a submodel
       if(dataItem instanceof Model) {
         obj[i] = dataItem.getPlainObject(persistent);
-      }
+      } 
       // if it's a modelLeaf
       else {
         obj[i] = dataItem.get(persistent);
@@ -508,7 +498,6 @@ var Model = EventSource.extend({
   afterLoad: function() {
     EventSource.unfreezeAll();
     this.setLoadingDone('_hook_data');
-    interpIndexes = {};
   },
 
   /**
@@ -550,9 +539,9 @@ var Model = EventSource.extend({
     if(this.use !== 'constant') dimensions = dimensions.concat([this.which]);
     select = utils.unique(dimensions);
 
-    // where
+    // where 
     filters = this._getAllFilters(exceptions, splashScreen);
-
+    
     // grouping
     grouping = this._getGrouping();
 
@@ -712,277 +701,6 @@ var Model = EventSource.extend({
     return {}; //defaults to no filter
   },
 
-  /**
-   * gets multiple values from the hook
-   * @param {Object} filter Reference to the row. e.g: {geo: "swe", time: "1999", ... }
-   * @param {Array} group_by How to nest e.g: ["geo"]
-   * @param {Boolean} [previous = false] previous Append previous data points
-   * @returns an array of values
-   */
-  getValues: function(filter, group_by, previous) {
-    var _this = this;
-
-    if(this.isHook()) {
-      return [];
-    }
-
-    var dimTime, time, filtered, next, method, u, w, value, method;
-    this._dataCube = this._dataCube || this.getSubhooks(true);
-    filter = utils.clone(filter, this._getAllDimensions());
-    dimTime = this._getFirstDimension({
-      type: 'time'
-    });
-    time = new Date(filter[dimTime]); //clone date
-    filter = utils.clone(filter, null, dimTime);
-
-    var response = {};
-    var f_keys = Object.keys(filter);
-    var f_values = f_keys.map(function(k) {
-      return filter[k];
-    });
-
-    //if there's a filter, interpolate only that
-    if(f_keys.length) {
-      utils.forEach(this._dataCube, function(hook, name) {
-        u = hook.use;
-        w = hook.which;
-
-        if(!globals.metadata.indicatorsDB[w] || globals.metadata.indicatorsDB[w].use !== "property") {
-          next = next || d3.bisectLeft(hook.getUnique(dimTime), time);
-        }
-
-        method = globals.metadata.indicatorsDB[w].interpolation;
-        filtered = _DATAMANAGER.get(hook._dataId, 'nested', f_keys);
-        utils.forEach(f_values, function(v) {
-          filtered = filtered[v]; //get precise array (leaf)
-        });
-        value = utils.interpolatePoint(filtered, u, w, next, dimTime, time, method);
-        response[name] = hook.mapValue(value);
-
-        //concat previous data points
-        if(previous) {
-          var values = utils.filter(filtered, filter).filter(function(d) {
-            return d[dimTime] <= time;
-          }).map(function(d) {
-            return hook.mapValue(d[w]);
-          }).concat(response[name]);
-          response[name] = values;
-        }
-      });
-    }
-    //else, interpolate all with time
-    else {
-      utils.forEach(this._dataCube, function(hook, name) {
-
-        filtered = _DATAMANAGER.get(hook._dataId, 'nested', group_by);
-
-        response[name] = {};
-        //find position from first hook
-        u = hook.use;
-        w = hook.which;
-
-        if(!globals.metadata.indicatorsDB[w] || globals.metadata.indicatorsDB[w].use !== "property") {
-          next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
-        }
-
-        method = globals.metadata.indicatorsDB[w]?globals.metadata.indicatorsDB[w].interpolation:null;
-
-
-        utils.forEach(filtered, function(arr, id) {
-          //TODO: this saves when geos have different data length. line can be optimised.
-          next = d3.bisectLeft(arr.map(function(m){return m.time}), time);
-
-          value = utils.interpolatePoint(arr, u, w, next, dimTime, time, method);
-          response[name][id] = hook.mapValue(value);
-
-          //concat previous data points
-          if(previous) {
-            var values = utils.filter(arr, filter).filter(function(d) {
-              return d[dimTime] <= time;
-            }).map(function(d) {
-              return hook.mapValue(d[w]);
-            }).concat(response[name][id]);
-            response[name][id] = values;
-          }
-
-        });
-      });
-    }
-
-    return response;
-  },
-
-  /**
-   * @param time
-   */
-  getFrame: function(time){
-    var _this = this;
-    var steps = this._parent.time.getAllSteps();
-    var cachePath = "", pValues, curr;
-
-    this._dataCube = this._dataCube || this.getSubhooks(true);
-
-    utils.forEach(this._dataCube, function(hook, name) {
-      cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start +" " + _this._parent.time.end;
-    });
-    return new Promise(function(resolve, reject) {
-      _this.getFrames().then(function() {
-        if(_this.cachedFrames[cachePath][time]) {
-          resolve(_this.cachedFrames[cachePath][time]);
-        } else if(time < steps[0] || time > steps[steps.length-1]) {
-          //if the requested time point is out of the known range
-          //then send nulls in the response
-          pValues = _this.cachedFrames[cachePath][steps[0]];
-          curr = {};
-          utils.forEach(pValues, function(keys, hook) {
-            curr[hook] = {};
-            utils.forEach(keys, function(val, key) {
-              curr[hook][key] = null;
-            });
-          });
-          resolve(curr);
-        } else {
-          var next = d3.bisectLeft(steps, time);
-
-          if(next === 0) return _this.cachedFrames[cachePath][steps[0]];
-
-          var fraction = (time - steps[next - 1]) / (steps[next] - steps[next - 1]);
-
-          pValues = _this.cachedFrames[cachePath][steps[next - 1]];
-          var nValues = _this.cachedFrames[cachePath][steps[next]];
-
-          curr = {};
-          utils.forEach(pValues, function(values, hook) {
-            curr[hook] = {};
-            utils.forEach(values, function(val, id) {
-              var val2 = nValues[hook][id];
-              curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val) * fraction);
-            });
-          });
-          resolve(curr);
-        }
-      });
-    });
-  },
-
-    getFrames: function() {
-      console.log("get frames");
-      var _this = this;
-
-      var cachePath = "";
-
-      utils.forEach(this._dataCube, function(hook, name) {
-          cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start +" " + _this._parent.time.end;
-      });
-
-      var steps = this._parent.time.getAllSteps();
-
-
-
-      var result = {};
-      var resultKeys = [];
-
-      return new Promise(function(resolve, reject) {
-        utils.forEach(_this._dataCube, function(hook, name) {
-
-          // If hook use is constant, then we can provide no additional info about keys
-          // We can just hope that we have something else than constants =)
-          if(hook.use==="constant") resolve();
-
-          // Get keys in data of this hook
-          _DATAMANAGER.get(hook._dataId, 'nested', ["geo", "time"]).then(function(nested) {
-            var keys = Object.keys(nested);
-
-            if(resultKeys.length==0){
-              // If ain't got nothing yet, set the list of keys to result
-              resultKeys = keys;
-            }else{
-              // If there is result accumulated aleready, remove the keys from it that are not in this hook
-              resultKeys = resultKeys.filter(function(f){ return keys.indexOf(f)>-1;})
-            }
-            steps.forEach(function(t){
-              result[t] = {};
-            });
-            var hooks = 0;
-            utils.forEach(_this._dataCube, function(hook, name) {
-
-              if(hook.use === "constant") {
-                steps.forEach(function(t){
-                  result[t][name] = {};
-                  resultKeys.forEach(function(key){
-                    result[t][name][key] = hook.which;
-                  });
-                });
-
-              }else if(hook.which==="geo"){
-                steps.forEach(function(t){
-                  result[t][name] = {};
-                  resultKeys.forEach(function(key){
-                    result[t][name][key] = key;
-                  });
-                });
-
-              }else if(hook.which==="time"){
-                steps.forEach(function(t){
-                  result[t][name] = {};
-                  resultKeys.forEach(function(key){
-                    result[t][name][key] = new Date(t);
-                  });
-                });
-
-              }else{
-                ++hooks;
-                _DATAMANAGER.get(hook._dataId, 'frames', steps, globals.metadata.indicatorsDB).then(function(frames) {
-                  utils.forEach(frames, function(frame, t){
-                    if (frame[hook.which]) {
-                      result[t][name] = frame[hook.which];
-                    }
-                  });
-                  _this.cachedFrames[cachePath] = result;
-                  if (--hooks <= 0) {
-                    resolve(_this.cachedFrames[cachePath]);
-                  }
-                });
-              }
-            });
-            if(hooks == 0) {
-              _this.cachedFrames[cachePath] = result;
-              resolve(result);
-            }
-          });
-        });
-
-      });
-
-      // Assemble the list of keys as an intersection of keys in all queries of all hooks
-    },
-
-
-
-  /**
-   * gets the value of the hook point
-   * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
-   * @returns hooked value
-   */
-  getValue: function(filter) {
-    //extract id from original filter
-    filter = utils.clone(filter, this._getAllDimensions());
-    if(!this.isHook()) {
-      utils.warn('getValue method needs the model to be hooked to data.');
-      return;
-    }
-    var value;
-    if(this.use === 'constant') {
-      value = this.which;
-    } else if(this._space.hasOwnProperty(this.use)) {
-      value = this._space[this.use][this.which];
-    } else {
-      //TODO: get meta info about translatable data
-      var method = globals.metadata.indicatorsDB[this.which].interpolation;
-      value = interpolateValue.call(this, filter, this.use, this.which, method);
-    }
-    return this.mapValue(value);
-  },
 
   /**
    * maps the value to this hook's specifications
@@ -993,45 +711,6 @@ var Model = EventSource.extend({
     return value;
   },
 
-  /**
-   * gets the items associated with this hook without values
-   * @param filter filter
-   * @returns hooked value
-   */
-  getKeys: function(filter) {
-    var _this = this;
-    return new Promise(function(resolve, reject) {
-      if(_this.isHook() && _this._dataModel) {
-        //all dimensions except time (continuous)
-        var dimensions = _this._getAllDimensions({
-          exceptType: 'time'
-        });
-        var excluded = _this._getAllDimensions({
-          onlyType: 'time'
-        });
-        _this.getUnique(dimensions).then(function(unique) {
-          unique.map(function(item) {
-            utils.forEach(excluded, function(e) {
-              if(filter && filter[e]) {
-                item[e] = filter[e];
-              }
-            });
-          });
-          resolve(unique) ;
-        });
-      } else {
-        var sub = _this.getSubhooks();
-        var found = [];
-        if(sub.length > 1) {
-          utils.forEach(sub, function(s) {
-            s.getKeys().then(function(keys) {
-              resolve(keys);
-            });
-          });
-        }
-      }
-    });
-  },
 
   /**
    * gets filtered dataset with fewer keys
@@ -1042,7 +721,7 @@ var Model = EventSource.extend({
     if(!filter) return utils.warn("No filter provided to getFilteredItems(<filter>)");
     return _DATAMANAGER.get(this._dataId, 'filtered', filter);
   },
-
+    
   /**
    * gets nested dataset
    * @param {Array} keys define how to nest the set
@@ -1063,149 +742,8 @@ var Model = EventSource.extend({
     return null;
   },
 
-  /**
-   * Gets tick values for this hook
-   * @returns {Number|String} value The value for this tick
-   */
-  tickFormatter: function(x, formatterRemovePrefix) {
-
-    // Assumption: a hook has always time in its space
-    if(utils.isDate(x)) return this._space.time.timeFormat(x);
-    if(utils.isString(x)) return x;
-
-    var format = "f";
-    var prec = 0;
-    if(Math.abs(x) < 1) {
-      prec = 1;
-      format = "r"
-    };
-
-    var prefix = "";
-    if(formatterRemovePrefix) return d3.format("." + prec + format)(x);
-
-//    switch(Math.floor(Math.log10(Math.abs(x)))) {
-    switch(Math.floor(Math.log(Math.abs(x))/Math.LN10)) {
-      case -13:
-        x = x * 1000000000000;
-        prefix = "p";
-        break; //0.1p
-      case -10:
-        x = x * 1000000000;
-        prefix = "n";
-        break; //0.1n
-      case -7:
-        x = x * 1000000;
-        prefix = "µ";
-        break; //0.1µ
-      case -6:
-        x = x * 1000000;
-        prefix = "µ";
-        break; //1µ
-      case -5:
-        x = x * 1000000;
-        prefix = "µ";
-        break; //10µ
-      case -4:
-        break; //0.0001
-      case -3:
-        break; //0.001
-      case -2:
-        break; //0.01
-      case -1:
-        break; //0.1
-      case 0:
-        break; //1
-      case 1:
-        break; //10
-      case 2:
-        break; //100
-      case 3:
-        break; //1000
-      case 4:
-        break; //10000
-      case 5:
-        x = x / 1000;
-        prefix = "k";
-        break; //0.1M
-      case 6:
-        x = x / 1000000;
-        prefix = "M";
-        prec = 1;
-        break; //1M
-      case 7:
-        x = x / 1000000;
-        prefix = "M";
-        break; //10M
-      case 8:
-        x = x / 1000000;
-        prefix = "M";
-        break; //100M
-      case 9:
-        x = x / 1000000000;
-        prefix = "B";
-        prec = 1;
-        break; //1B
-      case 10:
-        x = x / 1000000000;
-        prefix = "B";
-        break; //10B
-      case 11:
-        x = x / 1000000000;
-        prefix = "B";
-        break; //100B
-      case 12:
-        x = x / 1000000000000;
-        prefix = "T";
-        prec = 1;
-        break; //1T
-        //use the D3 SI formatting for the extreme cases
-      default:
-        return(d3.format("." + prec + "s")(x)).replace("G", "B");
-    }
-
-    // use manual formatting for the cases above
-    return(d3.format("." + prec + format)(x) + prefix).replace("G", "B");
-
-  },
-
-  /**
-   * Gets the d3 scale for this hook. if no scale then builds it
-   * @returns {Array} domain
-   */
-  getScale: function(margins) {
-    if(!this.scale) {
-      this.buildScale(margins);
-    }
-    return this.scale;
-  },
-
-  /**
-   * Gets the domain for this hook
-   * @returns {Array} domain
-   */
-  buildScale: function() {
-    if(!this.isHook()) {
-      return;
-    }
-    var domain;
-    var scaleType = this.scaleType || 'linear';
-    switch(this.use) {
-      case 'indicator':
-        var limits = this.getLimits(this.which);
-        domain = [
-          limits.min,
-          limits.max
-        ];
-        break;
-      case 'property':
-        domain = this.getUnique(this.which);
-        break;
-      default:
-        domain = [this.which];
-        break;
-    }
-    //TODO: d3 is global?
-    this.scale = scaleType === 'time' ? d3.time.scale.utc().domain(domain) : d3.scale[scaleType]().domain(domain);
+  getDataManager: function(){
+    return _DATAMANAGER;
   },
 
   /**
@@ -1214,88 +752,7 @@ var Model = EventSource.extend({
    * @returns {Object} limits (min and max)
    */
   getLimits: function(attr) {
-    var _this = this;
-    return new Promise(function(resolve, reject) {
-    if(!_this.isHook()) {
-      //if there's subhooks, find the one which is an indicator
-      var limits = {};
-      utils.forEach(_this.getSubhooks(), function(s) {
-        var prop = globals.metadata.indicatorsDB[s.which].use === "property";
-        if(!prop) {
-          s.getLimits(attr).then(function(limits) {
-            resolve(limits);
-          });
-        }
-      });
-    } else {
-      _DATAMANAGER.get(_this._dataId, 'limits', attr).then(function (limits) {
-        resolve(limits);
-      });
-    }
-  });
-  },
-
-  /**
-   * Gets unique values in a column
-   * @param {String|Array} attr parameter
-   * @returns {Array} unique values
-   */
-  getUnique: function(attr) {
-    var _this = this;
-    return new Promise(function(resolve, reject) {
-      if(!_this.isHook()) {
-        resolve();
-      }
-      if(!attr) {
-        attr = _this._getFirstDimension({
-          type: "time"
-        });
-      }
-      _DATAMANAGER.get(_this._dataId, 'unique', attr).then(function(response) {
-        resolve(response);
-      });
-    });
-  },
-
-  //TODO: this should go down to datamanager, hook should only provide interface
-  /**
-   * gets maximum, minimum and mean values from the dataset of this certain hook
-   */
-  gerLimitsPerFrame: function() {
-
-    if(this.use === "property") return utils.warn("getMaxMinMean: strange that you ask min max mean of a property");
-    if(!this.isHook) return utils.warn("getMaxMinMean: only works for hooks");
-
-    var result = {};
-    var values = [];
-    var value = null;
-
-    var steps = this._parent._parent.time.getAllSteps();
-
-    if(this.use === "constant") {
-        steps.forEach(function(t){
-            value = this.which;
-            result[t] = {
-                min: value,
-                max: value
-            }
-        });
-
-    }else if(this.which==="time"){
-        steps.forEach(function(t){
-            value = new Date(t);
-            result[t] = {
-                min: value,
-                max: value
-            }
-        });
-
-    }else{
-        var args = {framesArray: steps, which: this.which};
-        result = _DATAMANAGER.get(this._dataId, 'limitsPerFrame', args, globals.metadata.indicatorsDB);
-    }
-
-    return result;
+    return _DATAMANAGER.get(this._dataId, 'limits', attr);
   },
 
   /**
@@ -1435,6 +892,7 @@ var Model = EventSource.extend({
   },
 
   getDefaults: function() {
+    // if defaults are set, does not care about defaults from children
     if(this._defaults) return this._defaults;
     var d = {};
     utils.forEach(this.getSubmodels(true), function(model, name) {
@@ -1492,7 +950,7 @@ function initSubmodel(attr, val, ctx) {
   var submodel;
 
   // if value is a value -> leaf
-  if(!utils.isPlainObject(val) || utils.isArray(val)) {
+  if(!utils.isPlainObject(val) || utils.isArray(val)) {  
 
     var binds = {
       //the submodel has changed (multiple times)
@@ -1519,12 +977,12 @@ function initSubmodel(attr, val, ctx) {
 
     // if the value is an already instantiated submodel (Model or ModelLeaf)
     // this is the case for example when a new componentmodel is made (in Component._modelMapping)
-    // it takes the submodels from the toolmodel and creates a new model for the component which refers
+    // it takes the submodels from the toolmodel and creates a new model for the component which refers 
     // to the instantiated submodels (by passing them as model values, and thus they reach here)
     if (isModel(val, true)) {
       submodel = val;
       submodel.on(binds);
-    }
+    } 
     // if it's just a plain object, create a new model
     else {
       // construct model
@@ -1541,7 +999,7 @@ function initSubmodel(attr, val, ctx) {
   function onChange(evt, path) {
     if(!ctx._ready) return; //block change propagation if model isnt ready
     path = ctx._name + '.' + path
-    ctx.trigger(evt, path);
+    ctx.trigger(evt, path);    
   }
   function onHookChange(evt, vals) {
     ctx.trigger(evt, vals);
@@ -1621,69 +1079,6 @@ function getSpace(model) {
     );
   }
 }
-
-//caches interpolation indexes globally.
-//TODO: what if there are 2 visualizations with 2 data sources?
-var interpIndexes = {};
-
-
-
-/**
- * interpolates the specific value if missing
- * @param {Object} _filter Id the row. e.g: {geo: "swe", time: "1999"}
- * filter SHOULD contain time property
- * @returns interpolated value
- */
-function interpolateValue(_filter, use, which, method) {
-
-  var dimTime, time, filter, items, space_id, indexNext, result;
-
-  dimTime = this._getFirstDimension({
-    type: 'time'
-  });
-  time = new Date(_filter[dimTime]); //clone date
-  filter = utils.clone(_filter, null, dimTime);
-
-
-  items = this.getFilteredItems(filter);
-  if(items === null || items.length === 0) {
-    utils.warn('interpolateValue returns ' + which + ' = NULL because items array is empty in ' + JSON.stringify(filter));
-    return null;
-  }
-
-  // return constant for the use of "constant"
-  if(use === 'constant') {
-    return items[0][which];
-  }
-  // zero-order interpolation for the use of properties
-  if(use === 'property') {
-    return items[0][which];
-  }
-
-  // search where the desired value should fall between the known points
-  space_id = this._spaceId || (this._spaceId = Object.keys(this._space).join('-'));
-  interpIndexes[space_id] = interpIndexes[space_id] || {};
-
-  if(time in interpIndexes[space_id]) {
-    indexNext = interpIndexes[space_id][time].next;
-  } else {
-    indexNext = d3.bisectLeft(this.getUnique(dimTime), time);
-    //store indexNext
-    interpIndexes[space_id][time] = {
-      next: indexNext
-    };
-  }
-
-  // the rest is for the continuous measurements
-  // check if the desired value is out of range. 0-order extrapolation
-  if(indexNext === 0) {
-    return +items[0][which];
-  }
-  if(indexNext === items.length) {
-    return +items[items.length - 1][which];
-  }
-
-};
 
 
 

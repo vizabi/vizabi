@@ -24,6 +24,7 @@ export var ChangeEvent = DefaultEvent.extend('change', {
   init: function(source) {
     this._super(source);
   }
+
 })
 
 var EventSource = Class.extend({

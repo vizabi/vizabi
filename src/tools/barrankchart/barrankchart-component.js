@@ -15,7 +15,7 @@ var BarRankChart = Component.extend({
   /**
    * Initializes the component (Bar Chart).
    * Executed once before any template is rendered.
-   * @param {Object} config The options passed to the component
+   * @param {Object} config The config passed to the component
    * @param {Object} context The component's parent
    */
   init: function(config, context) {

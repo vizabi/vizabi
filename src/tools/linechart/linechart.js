@@ -20,10 +20,10 @@ from 'components/_index';
 var LineChart = Tool.extend('LineChart', {
     /**
      * Initialized the tool
-     * @param config tool configurations, such as placeholder div
-     * @param options tool options, such as state, data, etc
+     * @param {Object} placeholder Placeholder element for the tool
+     * @param {Object} external_model Model as given by the external page
      */
-    init: function (config, options) {
+    init: function(placeholder, external_model) {
 
       this.name = 'linechart';
 
@@ -50,10 +50,10 @@ var LineChart = Tool.extend('LineChart', {
         model: ['state.marker', 'language']
       }];
 
-      this._super(config, options);
+      this._super(placeholder, external_model);
     },
 
-    default_options: {
+    default_model: {
     state: {
       time: {
         start: 1990,

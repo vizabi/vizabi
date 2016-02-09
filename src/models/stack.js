@@ -1,8 +1,8 @@
 import * as utils from 'base/utils';
-import Model from 'base/model';
+import Hook from 'hook';
 
 /*
- * VIZABI Data Model (options.data)
+ * VIZABI Stack Model
  */
 
 var palettes = {
@@ -10,7 +10,7 @@ var palettes = {
   _default: "none"
 };
 
-var StackModel = Model.extend({
+var StackModel = Hook.extend({
 
   /**
    * Default values for this model

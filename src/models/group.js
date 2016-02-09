@@ -1,10 +1,10 @@
 import * as utils from 'base/utils';
-import Model from 'base/model';
+import Hook from 'hook';
 /*
- * VIZABI Data Model (options.data)
+ * VIZABI Group Model
  */
 
-var GroupModel = Model.extend({
+var GroupModel = Hook.extend({
 
   /**
    * Default values for this model

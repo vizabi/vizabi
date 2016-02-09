@@ -11,7 +11,7 @@ import collisionResolver from 'helpers/d3.collisionResolver';
 //LINE CHART COMPONENT
 var LCComponent = Component.extend({
 
-  init: function(context, options) {
+  init: function(config, context) {
     var _this = this;
     this.name = 'linechart';
     this.template = 'linechart.html';
@@ -49,7 +49,7 @@ var LCComponent = Component.extend({
       }
     };
 
-    this._super(context, options);
+    this._super(config, context);
 
     this.xScale = null;
     this.yScale = null;
@@ -132,7 +132,7 @@ var LCComponent = Component.extend({
     this.redrawDataPoints();
 
     this.graph
-      .on('mousemove', this.entityMousemove.bind(this, null, null, this, true))
+      .on('mousemove', this.entityMousemove.bind(this, null, null, this))
       .on('mouseleave', this.entityMouseout.bind(this, null, null, this));
   },
 
@@ -218,7 +218,7 @@ var LCComponent = Component.extend({
     filter[timeDim] = this.time;
 
     this.data = this.model.marker.getKeys(filter);
-    this.values = this.model.marker.getValues(filter, [KEY]);
+    this.values = this.model.marker.getFrame(this.time);
     this.prev_values = this.model.marker.getValues(filter, [KEY], true);
 
     this.entityLines = this.linesContainer.selectAll('.vzb-lc-entity').data(this.data);
@@ -672,19 +672,13 @@ var LCComponent = Component.extend({
     }
     var resolvedValue;
     var timeDim = _this.model.time.getDimension();
-    if(closestToMouse) {
-      var mousePos = mouse[1] - _this.margin.bottom;
-      var data = this.getValuesForYear(resolvedTime);
-      var nearestKey = this.getNearestKey(mousePos, data.axis_y, _this.yScale.bind(_this));
-      resolvedValue = data.axis_y[nearestKey];
-      if(!me) me = {};
-      me[KEY] = nearestKey;
-    } else {
-      var pointer = {};
-      pointer[KEY] = me[KEY];
-      pointer[timeDim] = resolvedTime;
-      resolvedValue = _this.model.marker.axis_y.getValue(pointer);
-    }
+    
+    var mousePos = mouse[1] - _this.margin.bottom;
+    var data = this.getValuesForYear(resolvedTime);
+    var nearestKey = this.getNearestKey(mousePos, data.axis_y, _this.yScale.bind(_this));
+    resolvedValue = data.axis_y[nearestKey];
+    if(!me) me = {};
+    me[KEY] = nearestKey;
 
     _this.hoveringNow = me;
 
@@ -771,9 +765,7 @@ var LCComponent = Component.extend({
     if(!utils.isDate(year)) {
       year = this.model.time.timeFormat.parse(year);
     }
-    return this.model.marker.getValues({
-      time: year
-    }, [this.KEY]);
+    return this.model.marker.getFrame(year);
   },
 
   /**
