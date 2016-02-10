@@ -63,7 +63,6 @@ var Marker = Model.extend({
           resolve(_this.cachedFrames[cachePath][time]);
         } else {
           _this.getFrames().then(function() {
-            console.log("get frames after");
             var pValues, curr = {};
             if(_this.cachedFrames[cachePath][time]) {
               resolve(_this.cachedFrames[cachePath][time]);

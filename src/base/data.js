@@ -243,11 +243,6 @@ var Data = Class.extend({
 
       // if it's not cached, process the data and then return it
       if (what == 'frames') {
-        _this._collection[queryId][what][id] = {};
-        if (queryId == 260641080) {
-          console.log(queryId);
-          console.log(frames);
-        }
         _this._getFrames(queryId, whatId, args).then(function(frames) {
           _this._collection[queryId][what][id] = frames;
           resolve(_this._collection[queryId][what][id]);
@@ -285,7 +280,10 @@ var Data = Class.extend({
    * @returns {Object} regularised dataset, nested by [animatable, column, key]
    */
   _getFrames: function(queryId, framesArray, indicatorsDB) {
-      var _this = this;
+    if (["14521820", "-513239637", "-415595953"].indexOf(queryId) != -1  && framesArray.length > 200) {
+      console.log("frames");
+    }
+    var _this = this;
       return new Promise(function(resolve, reject) {
         //TODO: thses should come from state or from outside somehow
 
@@ -326,6 +324,9 @@ var Data = Class.extend({
                 buildFrame(frame, keys, queryId, function(frameName, frameData) {
                   response[frameName] = frameData;
                   if (--framesComplete <= 0) {
+                    if (columns.indexOf("child_mortality_rate_per1000") != -1 && framesArray.length > 200) {
+                      console.log(response);
+                    }
                     resolve(response);
                   }
                 });
@@ -462,12 +463,12 @@ var Data = Class.extend({
   },
 
 
-  _getUnique: function(queryId, attr) {
-    var uniq;
+  getUnique: function(queryId, attr) {
+    var uniq, values;
     var items = this._collection[queryId].data;
     //if it's an array, it will return a list of unique combinations.
     if(utils.isArray(attr)) {
-      var values = items.map(function(d) {
+      values = items.map(function(d) {
         return utils.clone(d, attr); //pick attrs
       });
       uniq = utils.unique(values, function(n) {
@@ -475,7 +476,7 @@ var Data = Class.extend({
       });
     } //if it's a string, it will return a list of values
     else {
-      var values = items.map(function(d) {
+      values = items.map(function(d) {
         return d[attr];
       });
       uniq = utils.unique(values);

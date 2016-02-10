@@ -422,12 +422,13 @@ var BubbleChartComp = Component.extend({
 
     this.updateIndicators();
     var endTime = this.model.time.end;
+    this.updateSize();
+    this.updateTime();
+    this.updateMarkerSizeLimits();
+
     this.model.marker.getFrame(endTime).then(function(values) {
-      _this.updateEntities();
+      _this.updateEntities(values);
       _this.updateBubbleOpacity();
-      _this.updateTime();
-      _this.updateSize();
-      _this.updateMarkerSizeLimits();
       _this.selectDataPoints();
       _this._updateDoubtOpacity();
       _this._trails.create();
@@ -441,13 +442,13 @@ var BubbleChartComp = Component.extend({
     var _this = this;
     this.updateUIStrings();
     var endTime = this.model.time.end;
+    this.updateSize();
+    this.updateMarkerSizeLimits();
     this.model.marker.getFrame(endTime).then(function(values) {
-      _this.updateEntities();
+      _this.updateEntities(values);
       _this.updateBubbleOpacity();
       _this.updateIndicators();
-      _this.updateSize();
       _this.cached = {};
-      _this.updateMarkerSizeLimits();
       _this._trails.create();
       _this._trails.run("findVisible");
       _this._panZoom.reset(); // includes redraw data points and trail resize
@@ -586,86 +587,77 @@ var BubbleChartComp = Component.extend({
    * UPDATE ENTITIES:
    * Ideally should only update when show parameters change or data changes
    */
-  updateEntities: function(frame) {
+  updateEntities: function(values) {
     var _this = this;
     var KEY = this.KEY;
     var TIMEDIM = this.TIMEDIM;
 
     var getKeys = function(prefix) {
-      return new Promise(function(resolve, reject) {
-        prefix = prefix || "";
-        _this.model.marker.getKeys().then(function(keys) {
-          _this.model.marker.getFrame(endTime).then(function(values) {
-            resolve(keys.map(function(d) {
-              var pointer = {};
-              pointer[KEY] = d[KEY];
-              pointer[TIMEDIM] = endTime;
-              pointer.sortValue = values.size[d[KEY]]||0;
-              pointer[KEY] = prefix + d[KEY];
-              return pointer;
-            })
-            .sort(function(a, b) {
-              return b.sortValue - a.sortValue;
-            }));
-          });
+      prefix = prefix || "";
+      return _this.model.marker.getKeys()
+        .map(function(d) {
+          var pointer = {};
+          pointer[KEY] = d[KEY];
+          pointer[TIMEDIM] = endTime;
+          pointer.sortValue = values.size[d[KEY]]||0;
+          pointer[KEY] = prefix + d[KEY];
+          return pointer;
+        })
+        .sort(function(a, b) {
+          return b.sortValue - a.sortValue;
         });
-      })
     };
 
     // get array of GEOs, sorted by the size hook
     // that makes larger bubbles go behind the smaller ones
     var endTime = this.model.time.end;
-    getKeys().then(function(keys) {
-      _this.model.entities.setVisible(keys);
-    });
-    getKeys("trail-").then(function(keys) {
-      _this.entityTrails = _this.bubbleContainer.selectAll(".vzb-bc-entity")
-        .data(keys, function(d) {
-          return d[KEY];
-        });
+    this.model.entities.setVisible(getKeys.call(this));
 
-      _this.entityTrails.enter().insert("g", function(d) {
-        return document.querySelector(".vzb-bc-bubbles ." + d[KEY].replace("trail-", ""));
-      }).attr("class", function(d) {
-        return "vzb-bc-entity" + " " + d[KEY]
+    this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
+      .data(this.model.entities.getVisible(), function(d) {return d[KEY]})
+      .order();
+
+    //exit selection
+    this.entityBubbles.exit().remove();
+
+    //enter selection -- init circles
+    this.entityBubbles.enter().append("circle")
+      .attr("class", function(d) {
+        return "vzb-bc-entity " + "bubble-" + d[KEY];
+      })
+      .on("mouseover", function(d, i) {
+        if(utils.isTouchDevice()) return;
+        _this._bubblesInteract().mouseover(d, i);
+      })
+      .on("mouseout", function(d, i) {
+        if(utils.isTouchDevice()) return;
+
+        _this._bubblesInteract().mouseout(d, i);
+      })
+      .on("click", function(d, i) {
+        if(utils.isTouchDevice()) return;
+
+        _this._bubblesInteract().click(d, i);
+      })
+      .onTap(function(d, i) {
+        d3.event.stopPropagation();
+        _this._bubblesInteract().click(d, i);
+      })
+      .onLongTap(function(d, i) {});
+
+
+    //TODO: no need to create trail group for all entities
+    //TODO: instead of :append an :insert should be used to keep order, thus only few trail groups can be inserted
+    this.entityTrails = this.bubbleContainer.selectAll(".vzb-bc-entity")
+      .data(getKeys.call(this, "trail-"), function(d) {
+        return d[KEY];
       });
+
+    this.entityTrails.enter().insert("g", function(d) {
+      return document.querySelector(".vzb-bc-bubbles ." + d[KEY].replace("trail-", "bubble-"));
+    }).attr("class", function(d) {
+      return "vzb-bc-entity " + d[KEY]
     });
-
-      _this.entityBubbles = _this.bubbleContainer.selectAll('.vzb-bc-entity')
-        .data(_this.model.entities.getVisible(), function(d) {return d[KEY]})
-        .order();
-
-      //exit selection
-      this.entityBubbles.exit().remove();
-
-      //enter selection -- init circles
-      this.entityBubbles.enter().append("circle")
-        .attr("class", function(d) {
-          return "vzb-bc-entity " + d[KEY];
-        })
-        .on("mouseover", function(d, i) {
-          if(utils.isTouchDevice()) return;
-          _this._bubblesInteract().mouseover(d, i);
-        })
-        .on("mouseout", function(d, i) {
-          if(utils.isTouchDevice()) return;
-
-          _this._bubblesInteract().mouseout(d, i);
-        })
-        .on("click", function(d, i) {
-          if(utils.isTouchDevice()) return;
-
-          _this._bubblesInteract().click(d, i);
-        })
-        .onTap(function(d, i) {
-          d3.event.stopPropagation();
-          _this._bubblesInteract().click(d, i);
-        })
-        .onLongTap(function(d, i) {});
-
-
-      //TODO: no need to create trail group for all entities
-      //TODO: instead of :append an :insert should be used to keep order, thus only few trail groups can be inserted
 
   },
 
@@ -730,7 +722,6 @@ var BubbleChartComp = Component.extend({
    * Executed whenever the container is resized
    */
   updateSize: function() {
-
 
     var profiles = {
       small: {
@@ -990,70 +981,60 @@ var BubbleChartComp = Component.extend({
   redrawDataPointsOnlySize: function() {
     var _this = this;
 
-    // if (this.someSelected) {
-    //   _this.entityBubbles.each(function (d, index) {
-    //     _this._updateBubble(d, index, d3.select(this), 0);
-    //   });
-    // } else {
-    //   this.entityBubbles.each(function (d, index) {
-    //     var valueS = _this.model.marker.size.getValue(d);
-    //     if (valueS == null) return;
-
-    //     d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)));
-    //   });
-    // }
     var values, valuesNow;
     var KEY = this.KEY;
 
-    valuesNow = this.model.marker.getFrame(this.time);
+
+    values = [this.model.marker.getFrame(this.time)];
 
     if(this.model.time.lockNonSelected && this.someSelected) {
       var tLocked = this.model.time.timeFormat.parse("" + this.model.time.lockNonSelected);
-      values = this.model.marker.getFrame(tLocked);
-    } else {
-      values = valuesNow;
+      values.push(this.model.marker.getFrame(tLocked));
     }
+    Promise.all(values).then(function(response) {
+      valuesNow = response[0];
+      values = response.length > 1 ? response[1]: valuesNow;
+      _this.entityBubbles.each(function(d, index) {
 
-    this.entityBubbles.each(function(d, index) {
+        var cache = _this.cached[d[KEY]];
 
-      var cache = _this.cached[d[KEY]];
+        var valueS = cache && _this.model.time.lockNonSelected ? valuesNow.size[d[KEY]] : values.size[d[KEY]];
+        if(valueS == null) return;
 
-      var valueS = cache && _this.model.time.lockNonSelected ? valuesNow.size[d[KEY]] : values.size[d[KEY]];
-      if(valueS == null) return;
+        var scaledS = utils.areaToRadius(_this.sScale(valueS));
+        d3.select(this).attr("r", scaledS);
 
-      var scaledS = utils.areaToRadius(_this.sScale(valueS));
-      d3.select(this).attr("r", scaledS);
+        //update lines of labels
+        if(cache) {
 
-      //update lines of labels
-      if(cache) {
+          var resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
+          var resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
 
-        var resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
-        var resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
+          var resolvedX0 = _this.xScale(cache.labelX0);
+          var resolvedY0 = _this.yScale(cache.labelY0);
 
-        var resolvedX0 = _this.xScale(cache.labelX0);
-        var resolvedY0 = _this.yScale(cache.labelY0);
+          var lineGroup = _this.entityLines.filter(function(f) {
+            return f[KEY] == d[KEY];
+          });
 
-        var lineGroup = _this.entityLines.filter(function(f) {
-          return f[KEY] == d[KEY];
-        });
+          var select = utils.find(_this.model.entities.select, function(f) {
+            return f[KEY] == d[KEY]
+          });
 
-        var select = utils.find(_this.model.entities.select, function(f) {
-          return f[KEY] == d[KEY]
-        });
+          var trailStartTime = _this.model.time.timeFormat.parse("" + select.trailStartTime);
 
-        var trailStartTime = _this.model.time.timeFormat.parse("" + select.trailStartTime);
+          if(!_this.model.time.trails || trailStartTime - _this.time == 0) {
+            cache.scaledS0 = scaledS;
+          }
 
-        if(!_this.model.time.trails || trailStartTime - _this.time == 0) {
-          cache.scaledS0 = scaledS;
+          _this.entityLabels.filter(function(f) {
+            return f[KEY] == d[KEY]
+          })
+            .each(function(groupData) {
+              _this._repositionLabels(d, index, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0, lineGroup);
+            });
         }
-
-        _this.entityLabels.filter(function(f) {
-          return f[KEY] == d[KEY]
-        })
-        .each(function(groupData) {
-          _this._repositionLabels(d, index, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0, lineGroup);
-        });
-      }
+      });
     });
   },
 
@@ -1478,9 +1459,11 @@ var BubbleChartComp = Component.extend({
 
   _setTooltip: function(tooltipText, x, y, offset) {
     if(tooltipText) {
+/*
       var mouse = d3.mouse(this.graph.node()).map(function(d) {
         return parseInt(d)
       });
+*/
       var xPos, yPos, xSign = -1,
         ySign = -1,
         xOffset = 0,
@@ -1516,7 +1499,7 @@ var BubbleChartComp = Component.extend({
         xPos = x + xOffset * xSign; // .71 - sin and cos for 315
         yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
       }
-      this.tooltip.attr("transform", "translate(" + (xPos ? xPos : mouse[0]) + "," + (yPos ? yPos : mouse[1]) +
+      this.tooltip.attr("transform", "translate(" + xPos + "," + yPos +
         ")")
 
       this.tooltip.select('rect').attr("width", contentBBox.width + 8)
@@ -1535,46 +1518,48 @@ var BubbleChartComp = Component.extend({
    * Shows and hides axis projections
    */
   _axisProjections: function(d) {
+    var _this = this;
     var TIMEDIM = this.TIMEDIM;
     var KEY = this.KEY;
 
     if(d != null) {
 
-      var values = this.model.marker.getFrame(d[TIMEDIM]);
-      var valueY = values.axis_y[d[KEY]];
-      var valueX = values.axis_x[d[KEY]];
-      var valueS = values.size[d[KEY]];
-      var radius = utils.areaToRadius(this.sScale(valueS));
+      this.model.marker.getFrame(d[TIMEDIM]).then(function(values) {
+        var valueY = values.axis_y[d[KEY]];
+        var valueX = values.axis_x[d[KEY]];
+        var valueS = values.size[d[KEY]];
+        var radius = utils.areaToRadius(_this.sScale(valueS));
 
-      if(!valueY || !valueX || !valueS) return;
+        if(!valueY || !valueX || !valueS) return;
 
-      if(this.ui.whenHovering.showProjectionLineX
-        && this.xScale(valueX) > 0 && this.xScale(valueX) < this.width
-        && (this.yScale(valueY) + radius) < this.height) {
-        this.projectionX
-          .style("opacity", 1)
-          .attr("y2", this.yScale(valueY) + radius)
-          .attr("x1", this.xScale(valueX))
-          .attr("x2", this.xScale(valueX));
-      }
+        if(_this.ui.whenHovering.showProjectionLineX
+          && _this.xScale(valueX) > 0 && _this.xScale(valueX) < _this.width
+          && (_this.yScale(valueY) + radius) < _this.height) {
+          _this.projectionX
+            .style("opacity", 1)
+            .attr("y2", _this.yScale(valueY) + radius)
+            .attr("x1", _this.xScale(valueX))
+            .attr("x2", _this.xScale(valueX));
+        }
 
-      if(this.ui.whenHovering.showProjectionLineY
-        && this.yScale(valueY) > 0 && this.yScale(valueY) < this.height
-        && (this.xScale(valueX) - radius) > 0) {
-        this.projectionY
-          .style("opacity", 1)
-          .attr("y1", this.yScale(valueY))
-          .attr("y2", this.yScale(valueY))
-          .attr("x1", this.xScale(valueX) - radius);
-      }
+        if(_this.ui.whenHovering.showProjectionLineY
+          && _this.yScale(valueY) > 0 && _this.yScale(valueY) < _this.height
+          && (_this.xScale(valueX) - radius) > 0) {
+          _this.projectionY
+            .style("opacity", 1)
+            .attr("y1", _this.yScale(valueY))
+            .attr("y2", _this.yScale(valueY))
+            .attr("x1", _this.xScale(valueX) - radius);
+        }
 
-      if(this.ui.whenHovering.higlightValueX) this.xAxisEl.call(
-        this.xAxis.highlightValue(valueX)
-      );
+        if(_this.ui.whenHovering.higlightValueX) _this.xAxisEl.call(
+          _this.xAxis.highlightValue(valueX)
+        );
 
-      if(this.ui.whenHovering.higlightValueY) this.yAxisEl.call(
-        this.yAxis.highlightValue(valueY)
-      );
+        if(_this.ui.whenHovering.higlightValueY) _this.yAxisEl.call(
+          _this.yAxis.highlightValue(valueY)
+        );
+      });
 
     } else {
 
@@ -1610,46 +1595,47 @@ var BubbleChartComp = Component.extend({
 
       this._axisProjections(d);
 
-      var values = _this.model.marker.getFrame(d[TIMEDIM]);
+      _this.model.marker.getFrame(d[TIMEDIM]).then(function(values) {
+          //show tooltip
+          var text = "";
+          if(_this.model.entities.isSelected(d) && _this.model.time.trails) {
+            text = _this.model.time.timeFormat(_this.time);
+            var labelData = _this.entityLabels
+              .filter(function(f) {
+                return f[KEY] == d[KEY]
+              })
+              .classed("vzb-highlighted", true)
+              .datum();
+            text = text !== labelData.trailStartTime && _this.time === d[TIMEDIM] ? text : '';
+          } else {
+            text = _this.model.entities.isSelected(d) ? '': values.label[d[KEY]];
+          }
+          //set tooltip and show axis projections
+          if(text) {
+            var x = _this.xScale(values.axis_x[d[KEY]]);
+            var y = _this.yScale(values.axis_y[d[KEY]]);
+            var s = utils.areaToRadius(_this.sScale(values.size[d[KEY]]));
+            _this._setTooltip(text, x, y, s);
+          }
 
-      //show tooltip
-      var text = "";
-      if(_this.model.entities.isSelected(d) && _this.model.time.trails) {
-        text = _this.model.time.timeFormat(_this.time);
-        var labelData = _this.entityLabels
-          .filter(function(f) {
-            return f[KEY] == d[KEY]
-          })
-          .classed("vzb-highlighted", true)
-          .datum();
-        text = text !== labelData.trailStartTime && _this.time === d[TIMEDIM] ? text : '';
+          var selectedData = utils.find(_this.model.entities.select, function(f) {
+            return f[KEY] == d[KEY];
+          });
+          if(selectedData) {
+            var clonedSelectedData = utils.clone(selectedData);
+            //change opacity to OPACITY_HIGHLT = 1.0;
+            clonedSelectedData.opacity = 1.0;
+            _this._trails.run(["opacityHandler"], clonedSelectedData);
+          }
+        });
       } else {
-        text = _this.model.entities.isSelected(d) ? '': values.label[d[KEY]];
-      }
-      //set tooltip and show axis projections
-      if(text) {
-        var x = _this.xScale(values.axis_x[d[KEY]]);
-        var y = _this.yScale(values.axis_y[d[KEY]]);
-        var s = utils.areaToRadius(_this.sScale(values.size[d[KEY]]));
-        _this._setTooltip(text, x, y, s);
+        this._axisProjections();
+        this._trails.run(["opacityHandler"]);
+        //hide tooltip
+        _this._setTooltip();
+        _this.entityLabels.classed("vzb-highlighted", false);
       }
 
-      var selectedData = utils.find(this.model.entities.select, function(f) {
-        return f[KEY] == d[KEY];
-      });
-      if(selectedData) {
-        var clonedSelectedData = utils.clone(selectedData);
-        //change opacity to OPACITY_HIGHLT = 1.0;
-        clonedSelectedData.opacity = 1.0;
-        this._trails.run(["opacityHandler"], clonedSelectedData);
-      }
-    } else {
-      this._axisProjections();
-      this._trails.run(["opacityHandler"]);
-      //hide tooltip
-      _this._setTooltip();
-      _this.entityLabels.classed("vzb-highlighted", false);
-    }
   },
 
   updateBubbleOpacity: function(duration) {

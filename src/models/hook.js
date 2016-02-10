@@ -146,39 +146,35 @@ var Hook = Model.extend({
   },
 
 
-     /**
-     * Gets unique values in a column
-     * @param {String|Array} attr parameter
-     * @returns {Array} unique values
-     */
-    getUnique: function(attr) {
-        if(!this.isHook()) return;
-        if(!attr) attr = this._getFirstDimension({type: "time"});
-        return this.getDataManager().get(this._dataId, 'unique', attr);
-    },
+   /**
+   * Gets unique values in a column
+   * @param {String|Array} attr parameter
+   * @returns {Array} unique values
+   */
+  getUnique: function(attr) {
+    if(!this.isHook()) return;
+    if(!attr) attr = this._getFirstDimension({type: "time"});
+    return this.getDataManager().getUnique(this._dataId, attr);
+  },
 
 
   /**
    * gets the items associated with this hook without values
    * @param filter filter
-   * @returns Promise hooked value
+   * @returns {Array} keys
    */
   getKeys: function(filter) {
-    var _this = this;
-    return new Promise(function(resolve, reject) {
-      //all dimensions except time (continuous)
-      var dimensions = _this._getAllDimensions({exceptType: 'time'});
-      var excluded = _this._getAllDimensions({onlyType: 'time'});
-      _this.getUnique(dimensions).then(function(unique) {
-        unique.map(function(item) {
-          utils.forEach(excluded, function(e) {
-            if(filter && filter[e]) {
-              item[e] = filter[e];
-            }
-          });
-        });
-        resolve(unique) ;
+    //all dimensions except time (continuous)
+    var dimensions = this._getAllDimensions({exceptType: 'time'});
+    var excluded = this._getAllDimensions({onlyType: 'time'});
+
+    return this.getUnique(dimensions).map(function(item) {
+      utils.forEach(excluded, function(e) {
+        if(filter && filter[e]) {
+          item[e] = filter[e];
+        }
       });
+      return item;
     });
   },
 
