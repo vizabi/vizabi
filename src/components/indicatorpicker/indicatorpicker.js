@@ -61,10 +61,21 @@ var IndPicker = Component.extend({
         this.el_select = d3.select(this.element);
 
         this.el_select.on("click", function() {
-            _this.root.findChildByName("gapminder-treemenu")
+            var rect = _this.el_select.node().getBoundingClientRect();
+            var rootRect = _this.root.element.getBoundingClientRect();
+            var treemenuComp = _this.root.findChildByName("gapminder-treemenu");
+            var treemenuColWidth = treemenuComp.activeProfile.col_width; 
+            var treemenuPaddLeft = parseInt(treemenuComp.wrapper.style('padding-left'), 10) || 0; 
+            var treemenuPaddRight = parseInt(treemenuComp.wrapper.style('padding-right'), 10) || 0; 
+            var topPos = rect.bottom - rootRect.top;
+            var leftPos = rect.left - rootRect.left - (treemenuPaddLeft + treemenuPaddRight + treemenuColWidth - rect.width) * .5;
+            
+            treemenuComp
                 .markerID(_this.markerID)
                 .alignX("left")
                 .alignY("top")
+                .top(topPos)
+                .left(leftPos)
                 .updateView()
                 .toggle();
         });
