@@ -1,6 +1,5 @@
 import * as utils from 'base/utils';
 import Model from 'base/model';
-import globals from 'base/globals';
 
 /*!
  * HOOK MODEL
@@ -139,7 +138,7 @@ var Hook = Model.extend({
 
     }else{
         var args = {framesArray: steps, which: this.which};
-        result = this.getDataManager().get(this._dataId, 'limitsPerFrame', args, globals.metadata.indicatorsDB);   
+        result = this.getDataManager().get(this._dataId, 'limitsPerFrame', args);   
     }
       
     return result;
@@ -179,15 +178,12 @@ var Hook = Model.extend({
   },
     
   /**
-   * Gets the metadata of the hooks
+   * Gets the metadata of the hook's "which"
    * @returns {Object} metadata
    */
   getMetadata: function() {
-    if(!this.isHook()) return {};
-    return(globals.metadata && globals.metadata.indicators && (this.use === 'indicator' || this.use ===
-        'property')) ?
-      globals.metadata.indicators[this.which] : {};
-  },    
+    return this.use !== 'constant' ? this.getDataManager().getMetadata(this.which) : {};
+  }    
 });
 
 export default Hook;

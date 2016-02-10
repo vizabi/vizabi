@@ -1,6 +1,5 @@
 import * as utils from 'base/utils';
 import Hook from 'hook';
-import globals from 'base/globals';
 
 /*
  * VIZABI Data Model (options.data)

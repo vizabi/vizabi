@@ -1,6 +1,5 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
-import globals from 'base/globals'; // to get map data path
 import {
   warn as iconWarn,
   question as iconQuestion,
@@ -298,7 +297,7 @@ var BubbleMapComponent = Component.extend({
       var _this = this;
 
       this.translator = this.model.language.getTFunction();    
-      var sizeMetadata = globals.metadata.indicatorsDB[this.model.marker.size.which];
+      var sizeMetadata = this.model.marker.size.getMetadata();
 
       this.strings = {
           title: {

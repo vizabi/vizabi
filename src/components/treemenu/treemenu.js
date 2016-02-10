@@ -1,7 +1,6 @@
 import { extend, pruneTree, isTouchDevice } from 'base/utils';
 import Component from 'base/component';
 import Class from 'class';
-import globals from 'base/globals';
 import {close as iconClose} from 'base/iconset';
 
 /*!
@@ -764,9 +763,9 @@ var TreeMenu = Component.extend({
     if(data == null) data = tree;
     this.wrapper.select('ul').remove();
 
-    var indicatorsDB = globals.metadata.indicatorsDB;
+    var indicatorsDB = _this.model.marker.getMetadata();         
 
-    var allowedIDs = globals.metadata.indicatorsArray.filter(function(f) {
+    var allowedIDs = utils.keys(indicatorsDB).filter(function(f) {
       //check if indicator is denied to show with allow->names->!indicator
       if(_this.model.marker[markerID].allow && _this.model.marker[markerID].allow.names
         && _this.model.marker[markerID].allow.names.indexOf('!' + f) != -1) return false;
@@ -896,7 +895,7 @@ var TreeMenu = Component.extend({
     this.langStrings(strings)
       .lang(languageID)
       .callback(setModel)
-      .tree(globals.metadata.indicatorsTree)
+      .tree(this.model.marker.getIndicatorsTree())
       .redraw();
 
     return this;
@@ -904,7 +903,7 @@ var TreeMenu = Component.extend({
 
   _setModel: function(what, value, markerID) {
 
-    var indicatorsDB = globals.metadata.indicatorsDB;
+    var indicatorsDB = this.model.marker.getMetadata();
 
     var mdl = this.model.marker[markerID];
 

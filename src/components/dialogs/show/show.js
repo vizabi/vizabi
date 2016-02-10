@@ -1,7 +1,6 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
 import Dialog from '../_dialog';
-import globals from 'base/globals';
 
 import { bubbleopacity } from 'components/_index'
 
@@ -74,7 +73,7 @@ var Show = Dialog.extend({
       
 
 
-    var data = globals.metadata.entities;
+    var data = this.model.entities.getAllPossibleEntities();
 
     //sort data alphabetically
     data.sort(function(a, b) {

@@ -2,6 +2,7 @@ import * as utils from 'utils';
 import Promise from 'promise';
 import Class from 'class';
 import Reader from 'reader';
+import globals from 'base/globals';
 
 var Data = Class.extend({
 
@@ -253,7 +254,18 @@ var Data = Class.extend({
     return this._collection[queryId][what][id];
   },
 
+  getMetadata(which){
+      if(!globals.metadata || !globals.metadata.indicatorsDB) return {};
+      return which ? globals.metadata.indicatorsDB[which] : globals.metadata.indicatorsDB;
+  },
     
+  /**
+   * Gets the metadata of all hooks
+   * @returns {Object} metadata
+   */
+  getIndicatorsTree: function() {
+    return globals.metadata && globals.metadata.indicatorsTree ? globals.metadata.indicatorsTree : {};
+  },
     
   
   /**
@@ -263,8 +275,10 @@ var Data = Class.extend({
    * @param {Object} indicatorsDB -- indicators DB from globals.metadata
    * @returns {Object} regularised dataset, nested by [animatable, column, key]
    */
-  _getFrames: function(queryId, framesArray, indicatorsDB) {
+  _getFrames: function(queryId, framesArray) {
       var _this = this;
+      
+      var indicatorsDB = this.getMetadata();
       
       if(!indicatorsDB) utils.warn("_getFrames in data.js is missing indicatorsDB, it's needed for gap filling")
       if(!framesArray) utils.warn("_getFrames in data.js is missing framesArray, it's needed so much")
@@ -460,11 +474,11 @@ var Data = Class.extend({
   },
     
     
-  _getLimitsPerFrame: function(queryId, args, indicatorsDB) {
+  _getLimitsPerFrame: function(queryId, args) {
     var result = {};
     var values = [];
       
-    var frames = this.get(queryId, 'frames', args.framesArray, indicatorsDB);
+    var frames = this.get(queryId, 'frames', args.framesArray);
       
     utils.forEach(frames, function(frame, t){
         result[t] = {};

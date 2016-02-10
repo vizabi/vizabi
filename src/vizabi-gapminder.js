@@ -618,13 +618,6 @@ Tool.define("preload", function(promise) {
 
       globals.metadata = metadata;
 
-      //TODO: this is a hack that helps to hide indicators which are not present in data
-      globals.metadata.indicatorsArray = utils.keys(metadata.indicatorsDB)
-        .filter(function(f) {
-          var one = metadata.indicatorsDB[f];
-          return one.allowCharts.indexOf(_this.name) != -1 || one.allowCharts.indexOf("*") != -1;
-        });
-
       // TODO: REMOVE THIS HACK
       // We are currently saving metadata info to default state manually in order
       // to produce small URLs considering some of the info in metadata to be default

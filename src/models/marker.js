@@ -1,6 +1,5 @@
 import * as utils from 'base/utils';
 import Model from 'base/model';
-import globals from 'base/globals';
 
 /*!
  * HOOK MODEL
@@ -13,13 +12,14 @@ var Marker = Model.extend({
    * Gets limits
    * @param {String} attr parameter
    * @returns {Object} limits (min and max)
+   * this function is only needed to route the "time" to some indicator, to adjust time start and end to the max and min time available in data
    */
   getLimits: function(attr) {
     if(!this.isHook()) {
       //if there's subhooks, find the one which is an indicator
       var limits = {};
       utils.forEach(this.getSubhooks(), function(s) {
-        var prop = globals.metadata.indicatorsDB[s.which].use === "property";
+        var prop = (s.use === "property");
         if(!prop) {
           limits = s.getLimits(attr);
           return false;
@@ -170,7 +170,7 @@ var Marker = Model.extend({
                 });
 
             } else {
-                var frames = _this.getDataManager().get(hook._dataId, 'frames', steps, globals.metadata.indicatorsDB);
+                var frames = _this.getDataManager().get(hook._dataId, 'frames', steps);
                 utils.forEach(frames, function(frame, t) {
                     result[t][name] = frame[hook.which];
                 });
@@ -218,11 +218,9 @@ var Marker = Model.extend({
         u = hook.use;
         w = hook.which;
 
-        if(!globals.metadata.indicatorsDB[w] || globals.metadata.indicatorsDB[w].use !== "property") {
-          next = next || d3.bisectLeft(hook.getUnique(dimTime), time);
-        }
+        if(hook.use !== "property") next = next || d3.bisectLeft(hook.getUnique(dimTime), time);        
 
-        method = globals.metadata.indicatorsDB[w].interpolation;
+        method = hook.getMetadata().interpolation;
         filtered = _this.getDataManager().get(hook._dataId, 'nested', f_keys);
         utils.forEach(f_values, function(v) {
           filtered = filtered[v]; //get precise array (leaf)
@@ -252,11 +250,9 @@ var Marker = Model.extend({
         u = hook.use;
         w = hook.which;
           
-        if(!globals.metadata.indicatorsDB[w] || globals.metadata.indicatorsDB[w].use !== "property") {
-          next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
-        }
-
-        method = globals.metadata.indicatorsDB[w]?globals.metadata.indicatorsDB[w].interpolation:null;
+        if(hook.use !== "property") next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
+        
+        method = hook.getMetadata().interpolation;
 
 
         utils.forEach(filtered, function(arr, id) {
@@ -283,7 +279,21 @@ var Marker = Model.extend({
     return response;
   },
 
-
+  /**
+   * Gets the metadata of all hooks
+   * @returns {Object} metadata
+   */
+  getMetadata: function() {
+    return this.getDataManager().getMetadata();
+  },
+    
+  /**
+   * Gets the metadata of all hooks
+   * @returns {Object} metadata
+   */
+  getIndicatorsTree: function() {
+    return this.getDataManager().getIndicatorsTree();
+  } 
     
 
 });

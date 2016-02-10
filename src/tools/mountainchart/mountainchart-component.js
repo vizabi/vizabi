@@ -13,7 +13,6 @@
 */
 
 import * as utils from 'base/utils';
-import globals from 'base/globals';
 import Component from 'base/component';
 import { warn as iconWarn, question as iconQuestion } from 'base/iconset';
 
@@ -469,7 +468,7 @@ var MountainChartComponent = Component.extend({
         var _this = this;
 
         this.translator = this.model.language.getTFunction();
-        var xMetadata = globals.metadata.indicatorsDB[this.model.marker.axis_x.which];
+        var xMetadata = this.model.marker.axis_x.getMetadata();
 
 
         this.xTitleEl.select("text")

@@ -1,7 +1,5 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
-import globals from 'base/globals';
-
 import Trail from './bubblechart-trail';
 import PanZoom from './bubblechart-panzoom';
 import Exporter from 'helpers/svgexport';
@@ -499,7 +497,6 @@ var BubbleChartComp = Component.extend({
     var _this = this;
 
     this.translator = this.model.language.getTFunction();
-    var indicatorsDB = globals.metadata.indicatorsDB;
 
     this.strings = {
       title: {
@@ -509,10 +506,10 @@ var BubbleChartComp = Component.extend({
         C: this.translator("indicator/" + this.model.marker.color.which)
       },
       unit: {
-        Y: this.translator("unit/" + indicatorsDB[this.model.marker.axis_y.which].unit) || "",
-        X: this.translator("unit/" + indicatorsDB[this.model.marker.axis_x.which].unit) || "",
-        S: this.translator("unit/" + indicatorsDB[this.model.marker.size.which].unit) || "",
-        C: this.translator("unit/" + indicatorsDB[this.model.marker.color.which].unit) || ""
+        Y: this.translator("unit/" + this.model.marker.axis_y.getMetadata().unit) || "",
+        X: this.translator("unit/" + this.model.marker.axis_x.getMetadata().unit) || "",
+        S: this.translator("unit/" + this.model.marker.size.getMetadata().unit) || "",
+        C: this.translator("unit/" + this.model.marker.color.getMetadata().unit) || ""
       }
     }
     if(!!this.strings.unit.Y) this.strings.unit.Y = ", " + this.strings.unit.Y;
@@ -566,10 +563,10 @@ var BubbleChartComp = Component.extend({
 
     //TODO: move away from UI strings, maybe to ready or ready once
     this.yInfoEl.on("click", function() {
-      window.open(indicatorsDB[_this.model.marker.axis_y.which].sourceLink, '_blank').focus();
+      window.open(_this.model.marker.axis_y.getMetadata().sourceLink, '_blank').focus();
     })
     this.xInfoEl.on("click", function() {
-      window.open(indicatorsDB[_this.model.marker.axis_x.which].sourceLink, '_blank').focus();
+      window.open(_this.model.marker.axis_x.getMetadata().sourceLink, '_blank').focus();
     })
     this.dataWarningEl
       .on("click", function() {
