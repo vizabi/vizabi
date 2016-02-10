@@ -166,6 +166,7 @@ var Data = Class.extend({
           });
 
           _this._collection[queryId] = {};
+          _this._data[queryId] = {};
           var col = _this._collection[queryId];
           col.data = values;
           col.filtered = {};
@@ -183,6 +184,7 @@ var Data = Class.extend({
           utils.forEach(mergedQueries, function(mergedQuery) {
             // set the cache-location for each seperate query to the combined query's cache
             _this._collection[mergedQuery.queryId] = _this._collection[queryId];
+            _this._data[mergedQuery.queryId] = _this._data[queryId];
             // resolve the query
             mergedQuery.promise.resolve(mergedQuery.queryId);
           });
@@ -212,7 +214,6 @@ var Data = Class.extend({
     // if not specified data from what query, return nothing
     var _this = this;
     var id = JSON.stringify(whatId);
-    if (!this._data[queryId]) this._data[queryId] = {};
     if (!this._data[queryId][what]) this._data[queryId][what] = {};
     if (this._data[queryId][what][id]) {
       if (this._data[queryId][what][id] instanceof Promise) {

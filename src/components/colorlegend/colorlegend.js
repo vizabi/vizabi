@@ -159,23 +159,23 @@ var ColorLegend = Component.extend({
           var region = view.attr("id");
           regions.style("opacity", .5);
           view.style("opacity", 1);
+          _this.model.color.getNestedItems([KEY]).then(function(filtered) {
+            var highlight = utils.values(filtered)
+              //returns a function over time. pick the last time-value
+              .map(function(d) {
+                return d[d.length - 1]
+              })
+              //filter so that only countries of the correct region remain
+              .filter(function(f) {
+                return f["geo.region"] == region
+              })
+              //fish out the "key" field, leave the rest behind
+              .map(function(d) {
+                return utils.clone(d, [KEY])
+              });
 
-          var filtered = _this.model.color.getNestedItems([KEY]);
-          var highlight = utils.values(filtered)
-            //returns a function over time. pick the last time-value
-            .map(function(d) {
-              return d[d.length - 1]
-            })
-            //filter so that only countries of the correct region remain
-            .filter(function(f) {
-              return f["geo.region"] == region
-            })
-            //fish out the "key" field, leave the rest behind
-            .map(function(d) {
-              return utils.clone(d, [KEY])
-            });
-
-          _this.model.entities.setHighlight(highlight);
+            _this.model.entities.setHighlight(highlight);
+          });
         })
         .on("mouseout", function() {
           regions.style("opacity", .8);
@@ -194,7 +194,7 @@ var ColorLegend = Component.extend({
               _this.model.color.setColor(value, region)
             })
             .show(true);
-        })
+        });
       colors.classed("vzb-hidden", true);
     } else {
       this.worldmapEl.classed("vzb-hidden", true);
