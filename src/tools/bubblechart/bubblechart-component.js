@@ -26,6 +26,7 @@ var BubbleChartComp = Component.extend({
    * @param {Object} context The component's parent
    */
   init: function(config, context) {
+    console.log('init');
     var _this = this;
     this.name = 'bubblechart';
     this.template = 'bubblechart.html';

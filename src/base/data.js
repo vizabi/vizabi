@@ -318,110 +318,109 @@ var Data = Class.extend({
           var key, k, column, c;
           var response = {};
           var framesComplete = framesArray.length;
-          for (var f = 0; f < framesArray.length; f++) { //loop across frameArray
-            var frameName = framesArray[f];
-            (function(frame, keys, queryId, resolve) {
-              utils.defer(function() {
-                buildFrame(frame, keys, queryId, function(frameName, frameData) {
-                  response[frameName] = frameData;
-                  if (--framesComplete <= 0) {
-                    if (columns.indexOf("child_mortality_rate_per1000") != -1 && framesArray.length > 200) {
-                      console.log(response);
-                    }
-                    resolve(response);
-                  }
-                });
-              });
-            })(frameName, keys, queryId, resolve);
-          }
+          var buildFrame = function(frameName, keys, queryId) {
+            return new Promise(function(resolve, reject) {
+              var frame = {};
+              if (!query.where.time) {
+                // The query.where clause doesn't have time field for properties:
+                // we populate the regular set with a single value (unpack properties into constant time series)
+                var dataset = _this._collection[queryId].data;
+                for (c = 0; c < cLength; c++) frame[columns[c]] = {};
 
-          var buildFrame = function(frameName, keys, queryId, cb) {
-            var frame = {};
-            if (!query.where.time) {
-              // The query.where clause doesn't have time field for properties:
-              // we populate the regular set with a single value (unpack properties into constant time series)
-              var dataset = _this._collection[queryId].data;
-              for (c = 0; c < cLength; c++) frame[columns[c]] = {};
+                for (var i = 0; i < dataset.length; i++) {
+                  var d = dataset[i];
+                  for (c = 0; c < cLength; c++) frame[columns[c]][d[KEY]] = d[columns[c]];
+                }
 
-              for (var i = 0; i < dataset.length; i++) {
-                var d = dataset[i];
-                for (c = 0; c < cLength; c++) frame[columns[c]][d[KEY]] = d[columns[c]];
-              }
+              } else {
+                // If there is a time field in query.where clause, then we are dealing with indicators in this request
 
-            } else {
-              // If there is a time field in query.where clause, then we are dealing with indicators in this request
+                // Put together a template for cached filtered sets (see below what's needed)
+                for (k = 0; k < keys.length; k++) {
+                  filtered[keys[k]] = {};
+                  for (c = 0; c < cLength; c++) filtered[keys[k]][columns[c]] = null;
+                }
 
-              // Put together a template for cached filtered sets (see below what's needed)
-              for (k = 0; k < keys.length; k++) {
-                filtered[keys[k]] = {};
-                for (c = 0; c < cLength; c++) filtered[keys[k]][columns[c]] = null;
-              }
+                // Now we run a 3-level loop: across frames, then across keys, then and across data columns (lex, gdp)
+                for (c = 0; c < cLength; c++) frame[columns[c]] = {};
 
-              // Now we run a 3-level loop: across frames, then across keys, then and across data columns (lex, gdp)
-              for (c = 0; c < cLength; c++) frame[columns[c]] = {};
+                for (k = 0; k < keys.length; k++) {
+                  key = keys[k];
 
-              for (k = 0; k < keys.length; k++) {
-                key = keys[k];
+                  for (c = 0; c < cLength; c++) {
+                    column = columns[c];
 
-                for (c = 0; c < cLength; c++) {
-                  column = columns[c];
-
-                  //If there are some points in the array with valid numbers, then
-                  //interpolate the missing point and save it to the “clean regular set”
-                  method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
-                  use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
+                    //If there are some points in the array with valid numbers, then
+                    //interpolate the missing point and save it to the “clean regular set”
+                    method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
+                    use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
 
 
-                  // Inside of this 3-level loop is the following:
-                  if (nested[key] && nested[key][frameName] && (nested[key][frameName][0][column] || nested[key][frameName][0][column] === 0)) {
+                    // Inside of this 3-level loop is the following:
+                    if (nested[key] && nested[key][frameName] && (nested[key][frameName][0][column] || nested[key][frameName][0][column] === 0)) {
 
-                    // Check if the piece of data for [this key][this frame][this column] exists
-                    // and is valid. If so, then save it into a “clean regular set”
-                    frame[column][key] = nested[key][frameName][0][column];
+                      // Check if the piece of data for [this key][this frame][this column] exists
+                      // and is valid. If so, then save it into a “clean regular set”
+                      frame[column][key] = nested[key][frameName][0][column];
 
-                  } else {
-                    // If the piece of data doesn’t exist or is invalid, then we need to inter- or extapolate it
+                    } else {
+                      // If the piece of data doesn’t exist or is invalid, then we need to inter- or extapolate it
 
-                    // Let’s take a slice of the nested set, corresponding to the current key nested[key]
-                    // As you remember it has the data nested further by frames.
-                    // At every frame the data in the current column might or might not exist.
-                    // Thus, let’s filter out all the frames which don’t have the data for the current column.
-                    // Let’s cache it because we will most likely encounter another gap in the same column for the same key
+                      // Let’s take a slice of the nested set, corresponding to the current key nested[key]
+                      // As you remember it has the data nested further by frames.
+                      // At every frame the data in the current column might or might not exist.
+                      // Thus, let’s filter out all the frames which don’t have the data for the current column.
+                      // Let’s cache it because we will most likely encounter another gap in the same column for the same key
 
-                    items = filtered[key][column];
+                      items = filtered[key][column];
 
-                    if (items == null) {
-                      var givenFrames = Object.keys(nested[key]);
-                      items = new Array(givenFrames.length);
-                      itemsIndex = 0;
+                      if (items == null) {
+                        var givenFrames = Object.keys(nested[key]);
+                        items = new Array(givenFrames.length);
+                        itemsIndex = 0;
 
-                      for (var z = 0, length = givenFrames.length; z < length; z++) {
-                        oneFrame = nested[key][givenFrames[z]];
-                        if (oneFrame[0][column] || oneFrame[0][column] === 0) items[itemsIndex++] = oneFrame[0];
+                        for (var z = 0, length = givenFrames.length; z < length; z++) {
+                          oneFrame = nested[key][givenFrames[z]];
+                          if (oneFrame[0][column] || oneFrame[0][column] === 0) items[itemsIndex++] = oneFrame[0];
+                        }
+
+                        //trim the length of the array
+                        items.length = itemsIndex;
                       }
 
-                      //trim the length of the array
-                      items.length = itemsIndex;
+
+                      // Now we are left with a fewer frames in the filtered array. Let's check its length.
+                      //If the array is empty, then the entire column is missing for the key
+                      //So we let the key have missing values in this column for all frames
+                      if (items.length > 0) {
+                        next = null;
+                        frame[column][key] = utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
+                      }
+
                     }
-
-
-                    // Now we are left with a fewer frames in the filtered array. Let's check its length.
-                    //If the array is empty, then the entire column is missing for the key
-                    //So we let the key have missing values in this column for all frames
-                    if (items.length > 0) {
-                      next = null;
-                      frame[column][key] = utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
-                    }
-
-                  }
-                } //loop across columns
-              } //loop across keys
-            }
-            cb(frameName, frame);
+                  } //loop across columns
+                } //loop across keys
+              }
+              resolve({name:frameName, data: frame});
+            });
           };
+          var promises = [];
+          for (var f = 0; f < framesArray.length; f++) { //loop across frameArray
+            var frameName = framesArray[f];
+            promises.push(buildFrame(frameName, keys, queryId));
+          }
+          Promise.all(promises).then(function (frames) {
+            for (let frame of frames) {
+              response[frame.name] = frame.data;
+            }
+            if (["14521820", "-513239637", "-415595953"].indexOf(queryId) != -1  && framesArray.length > 200) {
+              console.log(response);
+            }
 
+
+            resolve(response);
+          });
         });
-
       });
   },
 
