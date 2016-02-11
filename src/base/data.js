@@ -254,7 +254,7 @@ var Data = Class.extend({
     return this._collection[queryId][what][id];
   },
 
-  getMetadata(which){
+  getMetadata: function(which){
       if(!globals.metadata || !globals.metadata.indicatorsDB) return {};
       return which ? globals.metadata.indicatorsDB[which] : globals.metadata.indicatorsDB;
   },
