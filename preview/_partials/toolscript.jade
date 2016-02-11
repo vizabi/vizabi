@@ -14,11 +14,11 @@ script.
         updateURL(true, minModel); // force update
       }
     },
-   ui: {
-        buttons: #{chart_buttons || '[]'},
-        buttons_expand: #{chart_buttons_expand || '[]'},
-        dialogs: #{chart_dialogs || '[]'}
-      }
+    ui: {
+      buttons: #{chart_buttons || '[]'},
+      buttons_expand: #{chart_buttons_expand || '[]'},
+      dialogs: #{chart_dialogs || '[]'}
+    }
   };
 
   VIZABI_INITIAL_MODEL.bind['change:state'] = function(evt, vals) {
@@ -75,13 +75,10 @@ script.
     }
   };
 
-  if(!VIZABI_INITIAL_MODEL) {
-    VIZABI_INITIAL_MODEL = { state: {}}; //fa-bullseyeback
-  }
-  VIZABI_INITIAL_MODEL.language = {};
-
   parseURL();
 
-  Vizabi.utils.extend(VIZABI_INITIAL_MODEL, URL.model);
+  initialAndURLModel = Vizabi.utils.deepClone(VIZABI_INITIAL_MODEL);
 
-  VIZ = Vizabi("#{tool}", placeholder, VIZABI_INITIAL_MODEL);
+  Vizabi.utils.extend(initialAndURLModel, URL.model);
+
+  VIZ = Vizabi("#{tool}", placeholder, initialAndURLModel);
