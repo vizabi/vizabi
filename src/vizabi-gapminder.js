@@ -554,16 +554,11 @@ PopByAge.define('default_model', {
         which: "population"
       },
       color: {
-<<<<<<< HEAD
-        use: "value",
-        which: "_default"
-=======
         use: "constant",
         which: "#ffb600",
         allow: {
           names: ["!geo.name"]
         }
->>>>>>> upstream/develop
       }
     }
   },
