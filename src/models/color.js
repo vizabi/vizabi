@@ -26,7 +26,7 @@ var defaultPalettes = {
     "11": "#0ab8d8"
   },
   "_default": {
-    "_default": "#fa5ed6"
+    "_default": "#93daec"
   }
 };
 
@@ -150,8 +150,13 @@ var ColorModel = Hook.extend({
       var palette;
       
       if(metaColor && metaColor.palette) {
+        //specific color palette from hook metadata
         palette = utils.clone(metaColor.palette);
-      } else if(this.use === "constant") {
+      } else if(defaultPalettes[this.which]) {
+        //color palette for this.which exists in palette defaults
+        palette = utils.clone(defaultPalettes[this.which]);
+      } else if(this.use === "constant" && /^#([0-9a-f]{3}|[0-9a-f]{6})$/.test(this.which)) {
+        //an explicit hex color constant #abc or #adcdef is provided
         palette = {"_default": this.which};
       } else if(this.use === "indicator") {
         palette = utils.clone(defaultPalettes["_continuous"]);

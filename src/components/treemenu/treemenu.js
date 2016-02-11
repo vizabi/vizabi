@@ -1,4 +1,4 @@
-import { extend, pruneTree, isTouchDevice } from 'base/utils';
+import * as utils from 'base/utils';
 import Component from 'base/component';
 import Class from 'class';
 import {close as iconClose} from 'base/iconset';
@@ -323,12 +323,12 @@ var MenuItem = Class.extend({
       this.submenu = new Menu(this, submenu);
     }
     this.entity.on('mouseenter', function() {
-      if(isTouchDevice()) return;
+      if(utils.isTouchDevice()) return;
       if (_this.parentMenu.direction == MENU_HORIZONTAL) {
         _this.openSubmenu();
       }
     }).on('click', function() {
-      if(isTouchDevice()) return;
+      if(utils.isTouchDevice()) return;
       d3.event.stopPropagation();
       _this.toggleSubmenu();
     }).onTap(function() {
@@ -477,7 +477,7 @@ var TreeMenu = Component.extend({
     //contructor is the same as any component
     this._super(config, context);
 
-    this.ui = extend({
+    this.ui = utils.extend({
       //...add properties here
     }, this.ui);
 
@@ -782,7 +782,7 @@ var TreeMenu = Component.extend({
       return false;
     })
 
-    var dataFiltered = pruneTree(data, function(f) {
+    var dataFiltered = utils.pruneTree(data, function(f) {
       return allowedIDs.indexOf(f.id) > -1
     });
 
