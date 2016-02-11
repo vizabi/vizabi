@@ -1,42 +1,36 @@
 {
     "indicatorsDB": {
         "time": {
-            "allowCharts": ["*"],
             "use": "indicator",
             "unit": "time",
             "scales": ["time"],
             "sourceLink": ""
         },
         "geo": {
-            "allowCharts": ["*"],
             "use": "property",
             "unit": "",
             "scales": ["ordinal"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
         },
         "geo.name": {
-            "allowCharts": ["*"],
             "use": "property",
             "unit": "",
             "scales": ["ordinal"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
         },
         "geo.latitude": {
-            "allowCharts": ["*"],
             "use": "property",
             "unit": "",
             "scales": ["linear"],
             "sourceLink": "https://gapminder.org"
         },
         "geo.longitude": {
-            "allowCharts": ["*"],
             "use": "property",
             "unit": "",
             "scales": ["linear"],
             "sourceLink": "https://gapminder.org"
         },
         "geo.region": {
-            "allowCharts": ["*"],
             "use": "property",
             "unit": "",
             "scales": ["ordinal"],
@@ -61,14 +55,12 @@
             }
         },
         "size": {
-            "allowCharts": ["none"],
             "use": "property",
             "unit": "",
             "scales": ["ordinal"],
             "sourceLink": ""
         },
         "population": {
-            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
             "use": "indicator",
             "unit": "population",
             "scaleType": "log",
@@ -77,7 +69,6 @@
             "domain": [14000, 1400000000]
         },
         "life_expectancy": {
-            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
             "use": "indicator",
             "unit": "life_expectancy",
             "scales": ["linear"],
@@ -85,7 +76,6 @@
             "sourceLink": "https://docs.google.com/spreadsheets/d/1H3nzTwbn8z4lJ5gJ_WfDgCeGEXK3PVGcNjQ_U5og8eo/pub?gid=1"
         },
         "fertility_rate": {
-            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
             "use": "indicator",
             "unit": "fertility_rate",
             "scales": ["linear"],
@@ -93,14 +83,12 @@
             "sourceLink": "https://gapminder.org"
         },
         "gini": {
-            "allowCharts": ["mountainchart", "bubblechart", "bubblemap"],
             "use": "indicator",
             "unit": "gini",
             "scales": ["linear"],
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
         },
         "gdp_p_cap_const_ppp2011_dollar": {
-            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
             "use": "indicator",
             "unit": "gdp_p_cap_const_ppp2011_dollar",
             "interpolation": "exp",
@@ -117,7 +105,6 @@
             }
         },
         "gdp_const_ppp2011_dollar": {
-            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
             "use": "indicator",
             "unit": "gdp_const_ppp2011_dollar",
             "interpolation": "exp",
@@ -126,7 +113,6 @@
             "domain": [1e6, 100e12]
         },
         "child_mortality_rate_per1000": {
-            "allowCharts": ["bubblechart", "mountainchart", "bubblemap"],
             "use": "indicator",
             "unit": "child_mortality_rate_per1000",
             "scales": ["linear", "log"],
@@ -134,14 +120,12 @@
             "domain": [0, 550]
         },
         "age": {
-            "allowCharts": ["popbyage"],
             "use": "indicator",
             "unit": "year",
             "scales": ["linear", "log"],
             "sourceLink": ""
         },
         "_default": {
-            "allowCharts": ["*"],
             "use": "constant",
             "unit": "",
             "scales": ["ordinal"],
