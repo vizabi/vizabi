@@ -11,7 +11,7 @@ import collisionResolver from 'helpers/d3.collisionResolver';
 //LINE CHART COMPONENT
 var LCComponent = Component.extend({
 
-  init: function(context, options) {
+  init: function(config, context) {
     var _this = this;
     this.name = 'linechart';
     this.template = 'linechart.html';
@@ -49,7 +49,7 @@ var LCComponent = Component.extend({
       }
     };
 
-    this._super(context, options);
+    this._super(config, context);
 
     this.xScale = null;
     this.yScale = null;
@@ -125,14 +125,14 @@ var LCComponent = Component.extend({
   },
 
   ready: function() {
-    this.updateTime();
     this.updateUIStrings();
     this.updateShow();
+    this.updateTime();
     this.updateSize();
     this.redrawDataPoints();
 
     this.graph
-      .on('mousemove', this.entityMousemove.bind(this, null, null, this, true))
+      .on('mousemove', this.entityMousemove.bind(this, null, null, this))
       .on('mouseleave', this.entityMouseout.bind(this, null, null, this));
   },
 
@@ -196,6 +196,9 @@ var LCComponent = Component.extend({
       .y(function(d) {
         return _this.yScale(d[1]);
       });
+      
+    this.all_values = this.model.marker.getFrames();
+    this.all_steps = this.model.time.getAllSteps();
 
   },
 
@@ -218,8 +221,8 @@ var LCComponent = Component.extend({
     filter[timeDim] = this.time;
 
     this.data = this.model.marker.getKeys(filter);
-    this.values = this.model.marker.getValues(filter, [KEY]);
-    this.prev_values = this.model.marker.getValues(filter, [KEY], true);
+    this.values = this.model.marker.getFrame(this.time);
+    this.prev_steps = this.all_steps.filter(function(f){return f < _this.time;});
 
     this.entityLines = this.linesContainer.selectAll('.vzb-lc-entity').data(this.data);
     this.entityLabels = this.labelsContainer.selectAll('.vzb-lc-entity').data(this.data);
@@ -258,7 +261,7 @@ var LCComponent = Component.extend({
         margin: {
           top: 40,
           right: 60,
-          left: 55,
+          left: 65,
           bottom: 40
         },
         tick_spacing: 80,
@@ -270,7 +273,7 @@ var LCComponent = Component.extend({
         margin: {
           top: 50,
           right: 60,
-          left: 55,
+          left: 70,
           bottom: 50
         },
         tick_spacing: 100,
@@ -286,7 +289,7 @@ var LCComponent = Component.extend({
           top: 9,
           right: 15,
           bottom: 10,
-          left: 5
+          left: 10
         }
       },
       medium: {
@@ -294,7 +297,7 @@ var LCComponent = Component.extend({
           top: 9,
           right: 15,
           bottom: 10,
-          left: 5
+          left: 20
         }
       },
       large: {
@@ -302,7 +305,7 @@ var LCComponent = Component.extend({
           top: 9,
           right: 15,
           bottom: 10,
-          left: 10
+          left: 25
         }
       }
     };
@@ -481,8 +484,6 @@ var LCComponent = Component.extend({
           .attr("dy", "1.6em");
       });
 
-    var prev_values = this.prev_values;
-
     this.entityLines
       .each(function(d, index) {
         var entity = d3.select(this);
@@ -499,14 +500,11 @@ var LCComponent = Component.extend({
 
         //TODO: optimization is possible if getValues would return both x and time
         //TODO: optimization is possible if getValues would return a limited number of points, say 1 point per screen pixel
-        var x = prev_values.axis_x[d[KEY]];
-        var y = prev_values.axis_y[d[KEY]];
-        var xy = x.map(function(d, i) {
-          return [+x[i], +y[i]];
-        });
-        xy = xy.filter(function(d) {
-          return !utils.isNaN(d[1]);
-        });
+        var xy = _this.prev_steps.map(function(frame, i) {
+                return [+frame, +_this.all_values[frame].axis_y[d[KEY]]];
+            })
+            .filter(function(d) {return !utils.isNaN(d[1]);});
+        
         _this.cached[d[KEY]] = {
           valueY: xy[xy.length - 1][1]
         };
@@ -672,19 +670,13 @@ var LCComponent = Component.extend({
     }
     var resolvedValue;
     var timeDim = _this.model.time.getDimension();
-    if(closestToMouse) {
-      var mousePos = mouse[1] - _this.margin.bottom;
-      var data = this.getValuesForYear(resolvedTime);
-      var nearestKey = this.getNearestKey(mousePos, data.axis_y, _this.yScale.bind(_this));
-      resolvedValue = data.axis_y[nearestKey];
-      if(!me) me = {};
-      me[KEY] = nearestKey;
-    } else {
-      var pointer = {};
-      pointer[KEY] = me[KEY];
-      pointer[timeDim] = resolvedTime;
-      resolvedValue = _this.model.marker.axis_y.getValue(pointer);
-    }
+    
+    var mousePos = mouse[1] - _this.margin.bottom;
+    var data = this.getValuesForYear(resolvedTime);
+    var nearestKey = this.getNearestKey(mousePos, data.axis_y, _this.yScale.bind(_this));
+    resolvedValue = data.axis_y[nearestKey];
+    if(!me) me = {};
+    me[KEY] = nearestKey;
 
     _this.hoveringNow = me;
 
@@ -771,9 +763,7 @@ var LCComponent = Component.extend({
     if(!utils.isDate(year)) {
       year = this.model.time.timeFormat.parse(year);
     }
-    return this.model.marker.getValues({
-      time: year
-    }, [this.KEY]);
+    return this.model.marker.getFrame(year);
   },
 
   /**

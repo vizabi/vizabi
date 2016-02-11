@@ -1,19 +1,43 @@
 import * as utils from 'base/utils';
-import globals from 'base/globals';
-import Model from 'base/model';
+import Hook from 'hook';
 
 /*!
  * VIZABI Color Model (hook)
  */
 
-var ColorModel = Model.extend({
+var defaultPalettes = {
+  "_continuous": {
+    "0": "#F77481",
+    "1": "#E1CE00",
+    "2": "#B4DE79"
+  },
+  "_discrete": {
+    "0": "#bcfa83",
+    "1": "#4cd843",
+    "2": "#ff8684",
+    "3": "#e83739",
+    "4": "#ffb04b",
+    "5": "#ff7f00",
+    "6": "#f599f5",
+    "7": "#c027d4",
+    "8": "#f4f459",
+    "9": "#d66425",
+    "10": "#7fb5ed",
+    "11": "#0ab8d8"
+  },
+  "_default": {
+    "_default": "#fa5ed6"
+  }
+};
+
+var ColorModel = Hook.extend({
 
   /**
    * Default values for this model
    */
   _defaults: {
     use: null,
-    palette: null,
+    palette: {},
     scaleType: null,
     which: null
   },
@@ -39,76 +63,42 @@ var ColorModel = Model.extend({
     this._hasDefaultColor = false;
   },
 
+  // args: {colorID, shadeID}
   getColorShade: function(args){
-    var palettes = globals.metadata.color.palettes;
-    var shades = globals.metadata.color.shades;
+    var palette = this.getPalette();
       
-    if(!palettes) return utils.warn("getColorShade() is missing globals.metadata.color.palettes");
-    if(!shades) return utils.warn("getColorShade() is missing globals.metadata.color.shades");
-    if(!args) return utils.warn("getColorShade() is missing arguments");
+    if(!args) return utils.warn("getColorShade() is missing arguments");  
       
-    if(!args.paletteID) args.paletteID = this.which;
-    if(!shades[args.paletteID] || !palettes[args.paletteID]) args.paletteID = "_default";
-    if(!args.shadeID || !shades[args.paletteID][args.shadeID]) args.shadeID = "_default";
-    if(!args.colorID || !palettes[args.paletteID][args.colorID]) args.colorID = "_default";
+    // if colorID is not given or not found in the palette, replace it with default color
+    if(!args.colorID || !palette[args.colorID]) args.colorID = "_default";
     
-    return palettes[args.paletteID][args.colorID][ shades[args.paletteID][args.shadeID] ];
+    // if the resolved colr value is not an array (has only one shade) -- return it
+    if( !utils.isArray(palette[args.colorID]) ) return palette[args.colorID];
+      
+    var colorMeta = this.getMetadata().color;
+    var shade = args.shadeID && colorMeta && colorMeta.shades && colorMeta.shades[args.shadeID] ? colorMeta.shades[args.shadeID] : 0;
+        
+    return palette[args.colorID][shade];
+    
   },
     
-  /**
-   * Get the above constants
-   */
-  getPalettes: function() {
-    var palettes = (globals.metadata) ? globals.metadata.color.palettes : {
-      "_continuous": {
-        "0": "#F77481",
-        "1": "#E1CE00",
-        "2": "#B4DE79"
-      },
-      "_discrete": {
-        "0": "#bcfa83",
-        "1": "#4cd843",
-        "2": "#ff8684",
-        "3": "#e83739",
-        "4": "#ffb04b",
-        "5": "#ff7f00",
-        "6": "#f599f5",
-        "7": "#c027d4",
-        "8": "#f4f459",
-        "9": "#d66425",
-        "10": "#7fb5ed",
-        "11": "#0ab8d8"
-      },
-      "_default": {
-        "_default": "#fa5ed6"
-      }
-    };
-
-    return palettes;
-  },
 
   afterPreload: function() {
-    this._resetPalette = true;
     this._super();
   },
   
   /**
    * Get the above constants
    */
-  isUserSelectable: function(whichPalette) {
-
-    var userSelectable = (globals.metadata) ? globals.metadata.color.selectable : {};
-
-    if(userSelectable[whichPalette] == null) return true;
-    return userSelectable[whichPalette];
+  isUserSelectable: function() {
+    var metaColor = this.getMetadata().color;
+    return metaColor == null || metaColor.selectable == null || metaColor.selectable;
   },
 
   /**
    * Validates a color hook
    */
   validate: function() {
-
-    var palettes = this.getPalettes();
 
     var possibleScales = ["log", "genericLog", "linear", "time", "pow"];
     if(!this.scaleType || (this.use === "indicator" && possibleScales.indexOf(this.scaleType) === -1)) {
@@ -118,35 +108,11 @@ var ColorModel = Model.extend({
       this.scaleType = "ordinal";
     }
 
-    // reset palette in the following cases:
-    // first load and no palette supplied in the state
-    // or changing of the indicator
-    if(this.palette == null || this._firstLoad === false && this.which_1 != this.which || this._firstLoad ===
-      false && this.scaleType_1 != this.scaleType || this._resetPalette) {
+    // reset palette and scale in the following cases: indicator or scale type changed
+    if(this._firstLoad === false && (this.which_1 != this.which || this.scaleType_1 != this.scaleType)) {
 
-
-      //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
-      if(this.palette) {
-        this.palette._data = {};
-      }
-
-      if(palettes[this.which]) {
-        this.palette = utils.clone(palettes[this.which]);
-      } else if(this.use === "constant") {
-        this.palette = {
-          "_default": this.which
-        };
-      } else if(this.use === "indicator") {
-        this.palette = utils.clone(palettes["_continuous"]);
-      } else if(this.use === "property") {
-        this.palette = utils.clone(palettes["_discrete"]);
-      } else {
-        this.palette = utils.clone(palettes["_default"]);
-      }
-
-      this._resetPalette = false;
-
-      //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
+      //TODO a hack that kills the scale and palette, it will be rebuild upon getScale request in model.js
+      if(this.palette) this.palette._data = {};
       this.scale = null;
     }
 
@@ -159,7 +125,7 @@ var ColorModel = Model.extend({
    * set color
    */
   setColor: function(value, pointer) {
-    var temp = this.palette.getPlainObject();
+    var temp = this.getPalette();
     temp[pointer] = value;
     this.scale.range(utils.values(temp));
     this.palette[pointer] = value;
@@ -174,12 +140,36 @@ var ColorModel = Model.extend({
   mapValue: function(value) {
     //if the property value does not exist, supply the _default
     // otherwise the missing value would be added to the domain
-    if(this.scale != null && this.use == "property" && this._hasDefaultColor && this.scale.domain().indexOf(value) ==
-      -1) value = "_default";
+    if(this.scale != null && this.use == "property" && this._hasDefaultColor && this.scale.domain().indexOf(value) == -1) value = "_default";
     return this._super(value);
   },
 
 
+  getDefaultPalette: function() {     
+      var metaColor = this.getMetadata().color;
+      var palette;
+      
+      if(metaColor && metaColor.palette) {
+        palette = utils.clone(metaColor.palette);
+      } else if(this.use === "constant") {
+        palette = {"_default": this.which};
+      } else if(this.use === "indicator") {
+        palette = utils.clone(defaultPalettes["_continuous"]);
+      } else if(this.use === "property") {
+        palette = utils.clone(defaultPalettes["_discrete"]);
+      } else {
+        palette = utils.clone(defaultPalettes["_default"]);
+      }
+      
+      return palette;
+  },
+    
+  getPalette: function(){
+    //rebuild palette if it's empty
+    if (!this.palette || Object.keys(this.palette._data).length===0) this.palette = this.getDefaultPalette();
+    return this.palette.getPlainObject(); 
+  },
+    
   /**
    * Gets the domain for this hook
    * @returns {Array} domain
@@ -187,9 +177,7 @@ var ColorModel = Model.extend({
   buildScale: function() {
     var _this = this;
 
-    var indicatorsDB = globals.metadata.indicatorsDB;
-
-    var paletteObject = _this.palette.getPlainObject();
+    var paletteObject = _this.getPalette();
     var domain = Object.keys(paletteObject);
     var range = utils.values(paletteObject);
 
@@ -224,7 +212,7 @@ var ColorModel = Model.extend({
         //default domain is based on limits
         domain = [limits.min, limits.max];
         //domain from metadata can override it if defined
-        domain = indicatorsDB[this.which].domain ? indicatorsDB[this.which].domain : domain;
+        domain = this.getMetadata().domain ? this.getMetadata().domain : domain;
           
         var limitMin = domain[0];
         var limitMax = domain[1];

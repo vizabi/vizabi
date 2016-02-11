@@ -1,54 +1,54 @@
 function play() {
-  var options = {
+  var model = {
     state: {
       time: {
         playing: true
       }
     }
   };
-  VIZ.setOptions(options);
+  VIZ.setModel(model);
 }
 
 function pause() {
-  var options = {
+  var model = {
     state: {
       time: {
         playing: false
       }
     }
   };
-  VIZ.setOptions(options);
+  VIZ.setModel(model);
 }
 
 function language(lang) {
-  var options = {
+  var model = {
     language: {
       id: lang
     }
   };
-  VIZ.setOptions(options);
+  VIZ.setModel(model);
 }
 
 function recstart() {
-  var options = {
+  var model = {
     state: {
       time: {
         record: true
       }
     }
   };
-  VIZ.setOptions(options);
+  VIZ.setModel(model);
 }
 
 function recstop() {
-  var options = {
+  var model = {
     state: {
       time: {
         record: false
       }
     }
   };
-  VIZ.setOptions(options);
+  VIZ.setModel(model);
 }
 
 document.getElementById("vzbp-btn-play").onclick = play;

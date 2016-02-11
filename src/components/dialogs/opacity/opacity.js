@@ -24,12 +24,14 @@ init: function(config, parent) {
     component: simpleslider,
     placeholder: '.vzb-dialog-bubbleopacity-regular',
     model: ["state.entities"],
-    arg: "opacityRegular"
+    arg: "opacityRegular",
+    properties: {step: 0.01}
   }, {
     component: simpleslider,
     placeholder: '.vzb-dialog-bubbleopacity-selectdim',
     model: ["state.entities"],
-    arg: "opacitySelectDim"
+    arg: "opacitySelectDim",
+    properties: {step: 0.01}
   }
   ];
 

@@ -1,3 +1,5 @@
+import interpolator from '../../node_modules/vizabi-interpolators/interpolators';
+
 /*
  * returns unique id with optional prefix
  * @param {String} prefix
@@ -1145,7 +1147,7 @@ export var flattenDates = function(obj, timeFormat) {
       }
     }
     if(isPlainObject(val)) {
-      flattened[key] = flattenDates(val);
+      flattened[key] = flattenDates(val, timeFormat);
     } else {
       flattened[key] = val;
     }
@@ -1206,23 +1208,6 @@ export var nestArrayToObj = function(arr) {
     res[arr[i].key] = nestArrayToObj(arr[i].values);
   };
   return res;
-}
-
-
-/*
- * A collection of interpolators
- * @param {Number} x1, x2, y1, y2 - boundary points
- * @param {Number} x - point of interpolation
- * @return {Number} y - interpolated value
- */
-//
-export var interpolator = {
-    linear: function(x1, x2, y1, y2, x) {
-      return +y1 + (y2 - y1) * (x - x1) / (x2 - x1);
-    },
-    exp: function(x1, x2, y1, y2, x) {
-      return Math.exp((Math.log(y1) * (x2 - x) - Math.log(y2) * (x1 - x)) / (x2 - x1));
-    }
 }
 
 

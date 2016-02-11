@@ -13,7 +13,6 @@
 */
 
 import * as utils from 'base/utils';
-import globals from 'base/globals';
 import Component from 'base/component';
 import { warn as iconWarn, question as iconQuestion } from 'base/iconset';
 
@@ -32,7 +31,7 @@ var MountainChartComponent = Component.extend({
     /**
      * Initialize the component
      * Executed once before any template is rendered.
-     * @param {Object} config The options passed to the component
+     * @param {Object} config The config passed to the component
      * @param {Object} context The component's parent
      */
     init: function (config, context) {
@@ -469,7 +468,7 @@ var MountainChartComponent = Component.extend({
         var _this = this;
 
         this.translator = this.model.language.getTFunction();
-        var xMetadata = globals.metadata.indicatorsDB[this.model.marker.axis_x.which];
+        var xMetadata = this.model.marker.axis_x.getMetadata();
 
 
         this.xTitleEl.select("text")
@@ -678,7 +677,7 @@ var MountainChartComponent = Component.extend({
                 });
 
                 //position tooltip
-                _this._setTooltip(d.key ? _this.translator("region/" + d.key) : _this.model.marker.label.getValue(d));
+                _this._setTooltip(d.key ? _this.translator("region/" + d.key) : _this.values.label[d.KEY()]);
 
             },
             _mouseout: function (d, i) {

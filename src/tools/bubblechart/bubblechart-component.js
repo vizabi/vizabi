@@ -1,7 +1,5 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
-import globals from 'base/globals';
-
 import Trail from './bubblechart-trail';
 import PanZoom from './bubblechart-panzoom';
 import Exporter from 'helpers/svgexport';
@@ -22,7 +20,7 @@ var BubbleChartComp = Component.extend({
   /**
    * Initializes the component (Bubble Chart).
    * Executed once before any template is rendered.
-   * @param {Object} config The options passed to the component
+   * @param {Object} config The config passed to the component
    * @param {Object} context The component's parent
    */
   init: function(config, context) {
@@ -499,7 +497,6 @@ var BubbleChartComp = Component.extend({
     var _this = this;
 
     this.translator = this.model.language.getTFunction();
-    var indicatorsDB = globals.metadata.indicatorsDB;
 
     this.strings = {
       title: {
@@ -509,10 +506,10 @@ var BubbleChartComp = Component.extend({
         C: this.translator("indicator/" + this.model.marker.color.which)
       },
       unit: {
-        Y: this.translator("unit/" + indicatorsDB[this.model.marker.axis_y.which].unit) || "",
-        X: this.translator("unit/" + indicatorsDB[this.model.marker.axis_x.which].unit) || "",
-        S: this.translator("unit/" + indicatorsDB[this.model.marker.size.which].unit) || "",
-        C: this.translator("unit/" + indicatorsDB[this.model.marker.color.which].unit) || ""
+        Y: this.translator("unit/" + this.model.marker.axis_y.getMetadata().unit) || "",
+        X: this.translator("unit/" + this.model.marker.axis_x.getMetadata().unit) || "",
+        S: this.translator("unit/" + this.model.marker.size.getMetadata().unit) || "",
+        C: this.translator("unit/" + this.model.marker.color.getMetadata().unit) || ""
       }
     }
     if(!!this.strings.unit.Y) this.strings.unit.Y = ", " + this.strings.unit.Y;
@@ -566,10 +563,10 @@ var BubbleChartComp = Component.extend({
 
     //TODO: move away from UI strings, maybe to ready or ready once
     this.yInfoEl.on("click", function() {
-      window.open(indicatorsDB[_this.model.marker.axis_y.which].sourceLink, '_blank').focus();
+      window.open(_this.model.marker.axis_y.getMetadata().sourceLink, '_blank').focus();
     })
     this.xInfoEl.on("click", function() {
-      window.open(indicatorsDB[_this.model.marker.axis_x.which].sourceLink, '_blank').focus();
+      window.open(_this.model.marker.axis_x.getMetadata().sourceLink, '_blank').focus();
     })
     this.dataWarningEl
       .on("click", function() {
@@ -630,7 +627,7 @@ var BubbleChartComp = Component.extend({
     //enter selection -- init circles
     this.entityBubbles.enter().append("circle")
       .attr("class", function(d) {
-        return "vzb-bc-entity " + d[KEY];
+        return "vzb-bc-entity " + "bubble-" + d[KEY];
       })
       .on("mouseover", function(d, i) {
         if(utils.isTouchDevice()) return;
@@ -661,9 +658,9 @@ var BubbleChartComp = Component.extend({
       });
 
     this.entityTrails.enter().insert("g", function(d) {
-      return document.querySelector(".vzb-bc-bubbles ." + d[KEY].replace("trail-", ""));
+      return document.querySelector(".vzb-bc-bubbles ." + d[KEY].replace("trail-", "bubble-"));
     }).attr("class", function(d) {
-      return "vzb-bc-entity" + " " + d[KEY]
+      return "vzb-bc-entity " + d[KEY]
     });
 
   },
@@ -1077,6 +1074,7 @@ var BubbleChartComp = Component.extend({
     }
 
     values = this.model.marker.getFrame(this.time);
+
     this.entityBubbles.each(function(d, index) {
       var view = d3.select(this);
       _this._updateBubble(d, values, valuesLocked, index, view, duration);
@@ -1127,24 +1125,11 @@ var BubbleChartComp = Component.extend({
 
 
       if(duration) {
-        if (!d.transitionInProgress) {
-          d.transitionInProgress = true;
-          view.transition().duration(duration).ease("linear")
-            .attr("cy", _this.yScale(valueY))
-            .attr("cx", _this.xScale(valueX))
-            .attr("r", scaledS)
-            .each("end", function() {
-              d.transitionInProgress = false;
-            });
-        } else {
-          d.transitionInProgress = false;
-          view.interrupt()
-            .attr("cy", _this.yScale(valueY))
-            .attr("cx", _this.xScale(valueX))
-            .attr("r", scaledS);
-        }
+        view.transition().duration(duration).ease("linear")
+          .attr("cy", _this.yScale(valueY))
+          .attr("cx", _this.xScale(valueX))
+          .attr("r", scaledS);
       } else {
-        d.transitionInProgress = false;
         view.interrupt()
           .attr("cy", _this.yScale(valueY))
           .attr("cx", _this.xScale(valueX))

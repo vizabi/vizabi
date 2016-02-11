@@ -32,7 +32,7 @@
             }
             &.vzb-accordion-active {
               max-height: 500px;
-              transition: all .3s ease-in-out;
+              transition: max-height .3s ease-in-out;
               .vzb-dialog-title>span:first-child::after {
                 @include rotate(135deg);
               }

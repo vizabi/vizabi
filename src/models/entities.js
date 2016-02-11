@@ -264,6 +264,10 @@ var EntitiesModel = Model.extend({
   clearHighlighted: function() {
     this.setHighlight([]);
   },
+    
+  getAllPossibleEntities: function() {
+    return globals.metadata.entities;
+  },
 
 });
 

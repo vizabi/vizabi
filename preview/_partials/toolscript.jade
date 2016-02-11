@@ -3,15 +3,15 @@ script.
   var TOOL = "#{tool}";
   var DESCRIPTION = "#{description}";
 
-  VIZABI_OPTIONS = {
+  VIZABI_MODEL = {
     state: {},
     bind: {
       'ready': function(evt, vals) {
         updateURL();
-        updateStateEditor(VIZ.getOptions().state);
+        updateStateEditor(VIZ.getModel().state);
       },
-      'persistentChange': function(evt, minState) {
-        updateURL(true, minState); // force update
+      'persistentChange': function(evt, minModel) {
+        updateURL(true, minModel); // force update
       }
     },
     ui: {
@@ -21,14 +21,14 @@ script.
     }
   };
 
-  VIZABI_OPTIONS.bind['change:state'] = function(evt, vals) {
-      updateStateEditor(VIZ.getOptions().state);
+  VIZABI_MODEL.bind['change:state'] = function(evt, vals) {
+      updateStateEditor(VIZ.getModel().state);
   };
 
   var playButton = document.getElementById("vzbp-btn-play");
   var playButtonIcon = playButton.querySelectorAll("i")[0];
 
-  VIZABI_OPTIONS.bind['change:state.time.playing'] = function(evt, path) {
+  VIZABI_MODEL.bind['change:state.time.playing'] = function(evt, path) {
     var playing = evt.source;
     if (playing.value) {
       playButton.onclick = pause;
@@ -43,7 +43,7 @@ script.
     }
   };
 
-  VIZABI_OPTIONS.bind['change:state.time.record'] = function(evt, path) {
+  VIZABI_MODEL.bind['change:state.time.record'] = function(evt, path) {
     var recButton = document.getElementById("vzbp-btn-record");
     var recButtonIcon = recButton.querySelectorAll("i")[0];
     var record = evt.source;
@@ -59,10 +59,10 @@ script.
       addClass(recButtonIcon, 'fa-bullseye');
     }
   };
-
+ 
   var langButton = document.getElementById("vzbp-btn-lang");
 
-  VIZABI_OPTIONS.bind['change:language.id'] = function(evt, path) {
+  VIZABI_MODEL.bind['change:language.id'] = function(evt, path) {
     var lang = evt.source;
     if (lang.value === "en") {
       langButton.onclick = function() { language('se'); };
@@ -77,11 +77,8 @@ script.
 
   parseURL();
 
-  if(!VIZABI_OPTIONS) {
-    VIZABI_OPTIONS = { state: {}}; //fallback
-  }
-  VIZABI_OPTIONS.language = {};
-  if(URL.state) VIZABI_OPTIONS.state = URL.state;
-  if(URL.lang) VIZABI_OPTIONS.language.id = URL.lang;
+  VIZABI_INITIAL_MODEL = Vizabi.utils.deepClone(VIZABI_MODEL);
 
-  VIZ = Vizabi("#{tool}", placeholder, VIZABI_OPTIONS);
+  Vizabi.utils.extend(VIZABI_MODEL, URL.model);
+
+  VIZ = Vizabi("#{tool}", placeholder, VIZABI_MODEL);

@@ -1,6 +1,5 @@
 import * as utils from 'base/utils';
-import Model from 'base/model';
-import globals from 'base/globals';
+import Hook from 'hook';
 
 /*!
  * VIZABI Axis Model (hook)
@@ -12,7 +11,7 @@ var allowTypes = {
     "value": ["ordinal"]
 };
 
-var AxisModel = Model.extend({
+var AxisModel = Hook.extend({
 
   /**
    * Default values for this model
@@ -37,7 +36,7 @@ var AxisModel = Model.extend({
     this._type = "axis";
     //TODO: add defaults extend to super
     var defaults = utils.deepClone(this._defaults);
-    values = utils.extend(defaults, values);
+    values = utils.extend(defaults, values);      
     this._super(name, values, parent, bind);
   },
 
@@ -70,28 +69,12 @@ var AxisModel = Model.extend({
     }
   },
 
-//  _getBroadest: function(a1, a2){
-//      if(!a1 || !a2 || !a1.length && !a2.length) return utils.warn("_getBroadest: bad input");
-//      if(!a1.length) return a2;
-//      if(!a2.length) return a1;
-//      return Math.abs(a1[0]-a1[a1.length-1]) > Math.abs(a2[0]-a2[a2.length-1])? a1 : a2;
-//  },
-//
-//
-//  _getNarrowest: function(a1, a2){
-//      if(!a1 || !a2 || !a1.length && !a2.length) return utils.warn("_getNarrowest: bad input");
-//      if(!a1.length) return a2;
-//      if(!a2.length) return a1;
-//      return Math.abs(a1[0]-a1[a1.length-1]) > Math.abs(a2[0]-a2[a2.length-1])? a2 : a1;
-//  },
-
   /**
    * Gets the domain for this hook
    * @returns {Array} domain
    */
   buildScale: function(margins) {
     var domain;
-    var indicatorsDB = globals.metadata.indicatorsDB;
 
     if(this.scaleType == "time") {
       var limits = this.getLimits(this.which);
@@ -105,7 +88,7 @@ var AxisModel = Model.extend({
         //default domain is based on limits
         domain = [limits.min, limits.max];
         //domain from metadata can override it if defined
-        domain = indicatorsDB[this.which].domain ? indicatorsDB[this.which].domain : domain;
+        domain = this.getMetadata().domain ? this.getMetadata().domain : domain;
         //min and max can override the domain if defined
         domain = this.domainMin!=null && this.domainMax!=null ? [+this.domainMin, +this.domainMax] : domain;
         break;

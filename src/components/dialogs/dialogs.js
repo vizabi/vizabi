@@ -167,7 +167,7 @@ var Dialogs = Component.extend({
 
     this.element.selectAll(".vzb-top-dialog").each(function(d) {
       var dialogEl = d3.select(this);
-      var cls = dialogEl.attr('class').replace('vzb-popup','').replace('vzb-sidebar','');
+      var cls = dialogEl.attr('class').replace(' vzb-popup','').replace(' vzb-sidebar','');
 
       if (profile === 'large' && dialog_sidebar.indexOf(d.id) > -1) {
         cls += ' vzb-sidebar';

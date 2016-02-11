@@ -7,8 +7,6 @@ import worldMap from 'helpers/d3.worldMap';
  * VIZABI BUBBLE COLOR LEGEND COMPONENT
  */
 
-var INDICATOR = "which";
-
 var ColorLegend = Component.extend({
 
   init: function(config, context) {
@@ -73,15 +71,8 @@ var ColorLegend = Component.extend({
     var KEY = this.model.entities.getDimension();
 
 
-    var palette = this.model.color.palette.getPlainObject();
-
-
-    var whichPalette = "_default";
-    if(Object.keys(this.model.color.getPalettes()).indexOf(this.model.color[INDICATOR]) > -1) {
-      whichPalette = this.model.color[INDICATOR];
-    }
-
-    var paletteDefault = this.model.color.getPalettes()[whichPalette];
+    var palette = this.model.color.getPalette();
+    var paletteDefault = this.model.color.getDefaultPalette();
 
     this.listColorsEl.selectAll(".vzb-cl-option").remove();
 
@@ -98,7 +89,7 @@ var ColorLegend = Component.extend({
       })
       .on("mouseover", function() {
         //disable interaction if so stated in metadata
-        if(!_this.model.color.isUserSelectable(whichPalette)) return;
+        if(!_this.model.color.isUserSelectable()) return;
 
         var sample = d3.select(this).select(".vzb-cl-color-sample");
         sample.style("border-width", "5px");
@@ -107,7 +98,7 @@ var ColorLegend = Component.extend({
       })
       .on("mouseout", function(d) {
         //disable interaction if so stated in metadata
-        if(!_this.model.color.isUserSelectable(whichPalette)) return;
+        if(!_this.model.color.isUserSelectable()) return;
 
         var sample = d3.select(this).select(".vzb-cl-color-sample");
         sample.style("border-width", "0px");
@@ -115,7 +106,7 @@ var ColorLegend = Component.extend({
       })
       .on("click", function(d) {
         //disable interaction if so stated in metadata
-        if(!_this.model.color.isUserSelectable(whichPalette)) return;
+        if(!_this.model.color.isUserSelectable()) return;
         _this.colorPicker
           .colorOld(palette[d])
           .colorDef(paletteDefault[d])
@@ -145,7 +136,7 @@ var ColorLegend = Component.extend({
     }
 
     //TODO: is it okay that "geo.region" is hardcoded?
-    if(this.model.color[INDICATOR] == "geo.region") {
+    if(this.model.color.which == "geo.region") {
       var regions = this.worldmapEl.classed("vzb-hidden", false)
         .select("svg").selectAll("path");
       regions.each(function() {
@@ -183,7 +174,7 @@ var ColorLegend = Component.extend({
         })
         .on("click", function(d) {
           //disable interaction if so stated in metadata
-          if(!_this.model.color.isUserSelectable(whichPalette)) return;
+          if(!_this.model.color.isUserSelectable()) return;
           var view = d3.select(this);
           var region = view.attr("id")
 
@@ -198,7 +189,8 @@ var ColorLegend = Component.extend({
       colors.classed("vzb-hidden", true);
     } else {
       this.worldmapEl.classed("vzb-hidden", true);
-      if(this.model.color.use === "property" && whichPalette === "_default") {
+      //if using a discrete palette that is not supplied from metadata but from defaults
+      if(this.model.color.use === "property" && (!this.model.color.getMetadata().color || this.model.color.getMetadata().color.palette)) {
         colors.classed("vzb-cl-compact", true);
       } else {
         colors.classed("vzb-cl-compact", false);

@@ -42,7 +42,7 @@ globals.gapminder_paths = {
 
 //OVERWRITE OPTIONS
 
-BarChart.define('default_options', {
+BarChart.define('default_model', {
   state: {
     time: {
       start: "1800",
@@ -97,13 +97,11 @@ BarChart.define('default_options', {
   },
   language: language,
   ui: {
-    buttons: [],
-    dialogs: {popup: [], sidebar: [], moreoptions: []},
     presentation: false
   }
 });
 
-BarRankChart.define('default_options', {
+BarRankChart.define('default_model', {
   state: {
     time: {
       start: "1800",
@@ -163,8 +161,6 @@ BarRankChart.define('default_options', {
     path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv"
   },
   ui: {
-    buttons: [],
-    dialogs: {popup: [], sidebar: [], moreoptions: []},
     presentation: false
   }
 });
@@ -176,7 +172,7 @@ BubbleMap.define('datawarning_content', {
   doubtRange: [1.0, .3, .2]
 });
 
-BubbleMap.define('default_options', {
+BubbleMap.define('default_model', {
   state: {
     time: {
       start: "1800",
@@ -231,16 +227,14 @@ BubbleMap.define('default_options', {
     }
   },
   data: {
-    //reader: "waffle",
-    //path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
-    reader: "csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    reader: "waffle",
+    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    //reader: "csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   language: language,
   ui: {
-    buttons: [],
-    dialogs: {popup: [], sidebar: [], moreoptions: []},
     presentation: false
   }
 });
@@ -252,7 +246,7 @@ MountainChart.define('datawarning_content', {
   doubtRange: [1.0, .8, .6]
 });
 
-MountainChart.define('default_options', {
+MountainChart.define('default_model', {
   state: {
     time: {
       start: 1800,
@@ -331,21 +325,19 @@ MountainChart.define('default_options', {
   },
   language: language,
   data: {
-    //reader: "waffle",
-    //path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
-    reader: "csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    reader: "waffle",
+    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    //reader: "csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   ui: {
-    buttons: [],
-    dialogs: {popup: [], sidebar: [], moreoptions: []},
     presentation: false
   }
 });
 
 
-LineChart.define('default_options', {
+LineChart.define('default_model', {
   state: {
     time: {
       start: 1800,
@@ -412,8 +404,6 @@ LineChart.define('default_options', {
         showTooltip: 0
       }
     },
-    buttons: [],
-    dialogs: {popup: [], sidebar: [], moreoptions: []},
     presentation: false
   }
 });
@@ -425,7 +415,7 @@ BubbleChart.define('datawarning_content', {
   doubtRange: [1.0, .3, .2]
 });
 
-BubbleChart.define('default_options', {
+BubbleChart.define('default_model', {
 
   state: {
     time: {
@@ -511,16 +501,16 @@ BubbleChart.define('default_options', {
         dragging: true
       }
     },
-    buttons: [],
-    dialogs: {popup: [], sidebar: [], moreoptions: []},
     presentation: false
   }
 });
 
-PopByAge.define('default_options', {
+PopByAge.define('default_model', {
   state: {
     time: {
-      value: '2013'
+      value: '2013',
+      start: '1950',
+      end: '2100'
     },
     entities: {
       dim: "geo",
@@ -535,7 +525,7 @@ PopByAge.define('default_options', {
       show: {
         _defs_: {
           "age": [
-              [0, 150]
+              [0, 95]
             ] //show 0 through 100
         }
       },
@@ -553,7 +543,11 @@ PopByAge.define('default_options', {
       },
       axis_y: {
         use: "indicator",
-        which: "age"
+        which: "age",
+        // domain Max should be set manually as age max from entites_age plus one grouping value (95 + 5 = 100)
+        // that way the last age group fits in on the scale
+        domainMax: 100,
+        domainMin: 0
       },
       axis_x: {
         use: "indicator",
@@ -580,8 +574,6 @@ PopByAge.define('default_options', {
   },
   language: language,
   ui: {
-    buttons: [],
-    dialogs: {popup: [], sidebar: [], moreoptions: []},
     presentation: false
   }
 });
@@ -631,13 +623,6 @@ Tool.define("preload", function(promise) {
 
       globals.metadata = metadata;
 
-      //TODO: this is a hack that helps to hide indicators which are not present in data
-      globals.metadata.indicatorsArray = utils.keys(metadata.indicatorsDB)
-        .filter(function(f) {
-          var one = metadata.indicatorsDB[f];
-          return one.allowCharts.indexOf(_this.name) != -1 || one.allowCharts.indexOf("*") != -1;
-        });
-
       // TODO: REMOVE THIS HACK
       // We are currently saving metadata info to default state manually in order
       // to produce small URLs considering some of the info in metadata to be default
@@ -653,19 +638,19 @@ Tool.define("preload", function(promise) {
 
   // TODO: REMOVE THIS HACK (read above)
   function addPalettes(hook) {
-    if(!_this.default_options.state || !_this.default_options.state.marker[hook] || !globals.metadata.color) {
+    if(!_this.default_model.state || !_this.default_model.state.marker[hook] || !globals.metadata.color) {
       return;
     }
-    var color = _this.default_options.state.marker[hook];
+    var color = _this.default_model.state.marker[hook];
     var palette = globals.metadata.color.palettes['geo.region'];
     color.palette = utils.extend({}, color.palette, palette);
   }
 
   function addMinMax(hook) {
-    if(!_this.default_options.state || !_this.default_options.state.marker[hook]) {
+    if(!_this.default_model.state || !_this.default_model.state.marker[hook]) {
       return;
     }
-    var axis = _this.default_options.state.marker[hook];
+    var axis = _this.default_model.state.marker[hook];
     if(axis.use === "indicator" && globals.metadata.indicatorsDB[axis.which] && globals.metadata.indicatorsDB[axis.which].domain) {
       var domain = globals.metadata.indicatorsDB[axis.which].domain;
       axis.domainMin = axis.domainMin || domain[0];

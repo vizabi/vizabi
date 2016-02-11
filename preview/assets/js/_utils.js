@@ -36,35 +36,6 @@ function toggle(el, className, ifTrue, ifFalse) {
   }
 }
 
-function formatDate(date, unit) {
-  var timeFormats = {
-    "year": d3.time.format("%Y"),
-    "month": d3.time.format("%Y-%m"),
-    "week": d3.time.format("%Y-W%W"),
-    "day": d3.time.format("%Y-%m-%d"),
-    "hour": d3.time.format("%Y-%m-%d %H"),
-    "minute": d3.time.format("%Y-%m-%d %H:%M"),
-    "second": d3.time.format("%Y-%m-%d %H:%M:%S")
-  };
-  return timeFormats[unit](date);
-}
-
-function formatDates(state) {
-  // Format date objects according to the unit
-  if(state && state.time) {
-    var unit = state.time.unit || "year";
-    if(typeof state.time.value === 'object') {
-      state.time.value = formatDate(state.time.value, unit);
-    }
-    if(typeof state.time.start === 'object') {
-      state.time.start = formatDate(state.time.start, unit);
-    }
-    if(typeof state.time.end === 'object') {
-      state.time.end = formatDate(state.time.end, unit);
-    }
-  }
-}
-
 function getJSON(url, param, callback, err) {
   var request = new XMLHttpRequest();
   var pars = [];
@@ -104,3 +75,4 @@ var throttle = (function throttle() {
     func();
   }
 })();
+

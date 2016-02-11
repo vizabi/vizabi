@@ -1,12 +1,11 @@
 import * as utils from 'base/utils';
-import Model from 'base/model';
-import globals from 'base/globals';
+import Hook from 'hook';
 
 /*
- * VIZABI Data Model (options.data)
+ * VIZABI Size Model
  */
 
-var SizeModel = Model.extend({
+var SizeModel = Hook.extend({
 
   /**
    * Default values for this model
@@ -62,7 +61,6 @@ var SizeModel = Model.extend({
    */
   buildScale: function(margins) {
     var domain;
-    var indicatorsDB = globals.metadata.indicatorsDB;
 
     if(this.scaleType == "time") {
       var limits = this.getLimits(this.which);
@@ -76,7 +74,7 @@ var SizeModel = Model.extend({
         //default domain is based on limits
         domain = [limits.min, limits.max];
         //domain from metadata can override it if defined
-        domain = indicatorsDB[this.which].domain ? indicatorsDB[this.which].domain : domain;
+        domain = this.getMetadata().domain ? this.getMetadata().domain : domain;
         break;
       case "property":
         domain = this.getUnique(this.which);

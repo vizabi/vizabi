@@ -15,6 +15,7 @@
     }
     .vzb-bc-label {
       display: none;
+      pointer-events: none;
       &.vzb-hovered {
         display: block;
       }
