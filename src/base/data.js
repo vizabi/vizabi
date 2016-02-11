@@ -281,9 +281,6 @@ var Data = Class.extend({
    * @returns {Object} regularised dataset, nested by [animatable, column, key]
    */
   _getFrames: function(queryId, framesArray, indicatorsDB) {
-    if (["14521820", "-513239637", "-415595953"].indexOf(queryId) != -1  && framesArray.length > 200) {
-      console.log("frames");
-    }
     var _this = this;
       return new Promise(function(resolve, reject) {
         //TODO: thses should come from state or from outside somehow
@@ -336,13 +333,20 @@ var Data = Class.extend({
                 // If there is a time field in query.where clause, then we are dealing with indicators in this request
 
                 // Put together a template for cached filtered sets (see below what's needed)
-                for (k = 0; k < keys.length; k++) {
-                  filtered[keys[k]] = {};
-                  for (c = 0; c < cLength; c++) filtered[keys[k]][columns[c]] = null;
-                }
+                var columnNames = Object.keys(columns)                //get the keys as an array
+                  .reduce(function(obj, key) {                  //build up new object
+                    obj[columns[key]] = null;
+                    return obj;
+                  }, {});
+
+                var filtered = Object.keys(keys)                //get the keys as an array
+                  .reduce(function(obj, key) {                  //build up new object
+                    obj[keys[key]] = Object.assign({}, columnNames);
+                    return obj;
+                  }, {});                                       //{} is the starting value of obj
 
                 // Now we run a 3-level loop: across frames, then across keys, then and across data columns (lex, gdp)
-                for (c = 0; c < cLength; c++) frame[columns[c]] = {};
+                frame = Object.assign({}, columnNames);
 
                 for (k = 0; k < keys.length; k++) {
                   key = keys[k];
@@ -371,7 +375,6 @@ var Data = Class.extend({
                       // At every frame the data in the current column might or might not exist.
                       // Thus, let’s filter out all the frames which don’t have the data for the current column.
                       // Let’s cache it because we will most likely encounter another gap in the same column for the same key
-
                       items = filtered[key][column];
 
                       if (items == null) {

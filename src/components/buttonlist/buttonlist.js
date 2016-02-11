@@ -153,9 +153,9 @@ var ButtonList = Component.extend({
           _this.scrollToEnd();
         }
         _this.entitiesSelected_1 = _this.model.state.entities.select.length > 0;
-      }      
+      }
     }
-    
+
     Object.keys(this._available_buttons).forEach(function(buttonId) {
       var button = _this._available_buttons[buttonId];
       if(button.statebind) {
@@ -164,7 +164,7 @@ var ButtonList = Component.extend({
         }
       }
     });
-    
+
     this.validatePopupButtons(config.ui.buttons, config.ui.dialogs.popup);
 
     this._super(config, context);
@@ -188,7 +188,7 @@ var ButtonList = Component.extend({
     // if (button_expand && button_expand.length !== 0) {
     //     d3.select(this.root.element).classed("vzb-dialog-expand-true", true);
     // }
-    
+
     var button_list = [].concat(this.model.ui.buttons);
 
     (button_expand||[]).forEach(function(button) {
@@ -207,7 +207,7 @@ var ButtonList = Component.extend({
     this._toggleButtons();
     //clicking the button
     buttons.on('click', function() {
-
+      console.log("click");
       d3.event.preventDefault();
       d3.event.stopPropagation();
       var btn = d3.select(this),
@@ -237,11 +237,11 @@ var ButtonList = Component.extend({
     this.setPresentationMode();
 
   },
-  
+
   validatePopupButtons: function (buttons, popupDialogs) {
     var _this = this;
     var popupButtons = buttons.filter(function(d) {
-      return (!_this._available_buttons[d].func); 
+      return (!_this._available_buttons[d].func);
       });
     for(var i = 0, j = popupButtons.length; i < j; i++) {
        if(popupDialogs.indexOf(popupButtons[i]) == -1) {
