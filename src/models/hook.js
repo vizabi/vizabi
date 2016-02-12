@@ -153,8 +153,7 @@ var Hook = Model.extend({
     getUnique: function(attr) {
         if(!this.isHook()) return;
         if(!attr) attr = this._getFirstDimension({type: "time"});
-        // If there is no _dataId, then no data was loaded
-        return this._dataId ? this.getDataManager().get(this._dataId, 'unique', attr) : [];
+        return this.getDataManager().get(this._dataId, 'unique', attr);
     },
     
     
