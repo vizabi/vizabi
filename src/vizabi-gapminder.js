@@ -120,6 +120,22 @@ BarRankChart.define('default_model', {
       opacitySelectDim: .3,
       opacityRegular: 1
     },
+    entities_allpossible: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo": ["*"],
+          "geo.cat": ["country", "unstate"]
+        }
+      }
+    },
+    marker_allpossible: {
+      space: ["entities_allpossible"],
+      label: {
+        use: "property",
+        which: "geo.name"
+      }    
+    },      
     marker: {
       space: ["entities", "time"],
       label: {
@@ -276,9 +292,25 @@ MountainChart.define('default_model', {
       show: {
         _defs_: {
           "geo": ["*"],
-          "geo.cat": ["country", "unstate"]
+          "geo.cat": ["unstate"]
         }
       }
+    },
+    entities_allpossible: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo": ["*"],
+          "geo.cat": ["unstate"]
+        }
+      }
+    },
+    marker_allpossible: {
+      space: ["entities_allpossible"],
+      label: {
+        use: "property",
+        which: "geo.name"
+      }    
     },
     marker: {
       space: ["entities", "time"],
