@@ -243,12 +243,7 @@ var Tool = Component.extend({
       utils.warn("tool validation aborted: marker looks wrong: " + marker);
       return;
     };
-
-    if(!marker) {
-      utils.warn("tool validation aborted: marker looks wrong: " + label);
-      return;
-    };
-
+    
     //don't validate anything if data hasn't been loaded
     if(model.isLoading() || !marker.getKeys() || marker.getKeys().length < 1) return;
 

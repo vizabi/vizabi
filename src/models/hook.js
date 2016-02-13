@@ -1,12 +1,106 @@
 import * as utils from 'base/utils';
 import Model from 'base/model';
+import Promise from 'promise';
+import EventSource from 'events';
 
 /*!
  * HOOK MODEL
  */
 
-
 var Hook = Model.extend({
+
+
+  /**
+   * loads data (if hook)
+   * Hooks loads data, models ask children to load data
+   * Basically, this method:
+   * loads is theres something to be loaded:
+   * does not load if there's nothing to be loaded
+   * @param {Object} options (includes splashScreen)
+   * @returns defer
+   */
+  loadData: function(opts) {
+
+    opts = opts || {};
+    var splashScreen = opts.splashScreen || false;
+
+    var _this = this;
+    var data_hook = this._dataModel;
+    var language_hook = this._languageModel;
+    var query = this.getQuery(splashScreen);
+
+    //useful to check if in the middle of a load call
+    this._loadCall = true;
+
+    this._spaceDims = {};
+    this.setReady(false);
+
+    //get reader info
+    var reader = data_hook.getPlainObject();
+    reader.parsers = this._getAllParsers();
+
+    var lang = language_hook ? language_hook.id : 'en';
+    var promise = new Promise();
+    var evts = {
+      'load_start': function() {
+        _this.setLoading('_hook_data');
+        EventSource.freezeAll([
+          'load_start',
+          'resize',
+          'dom_ready'
+        ]);
+      }
+    };
+
+    utils.timeStamp('Vizabi Model: Loading Data: ' + _this._id);
+    this.getDataManager().load(query, lang, reader, evts).then(function(dataId) {
+      _this._dataId = dataId;
+      utils.timeStamp('Vizabi Model: Data loaded: ' + _this._id);
+      _this.afterLoad();
+      promise.resolve();
+    }, function(err) {
+      utils.warn('Problem with query: ', JSON.stringify(query));
+      promise.reject(err);
+    });
+
+    return promise;
+    
+  },
+
+  /**
+   * executes after data has actually been loaded
+   */
+  afterLoad: function() {
+    EventSource.unfreezeAll();
+    this.setLoadingDone('_hook_data');
+  },
+
+  /**
+   * gets all hook filters
+   * @returns {Object} filters
+   */
+  _getAllParsers: function() {
+
+    var parsers = {};
+
+    function addParser(model) {
+      // get parsers from model
+      var parser = model.getParser();
+      var column = model.getDimensionOrWhich();
+      if (parser && column) {
+        parsers[column] = parser;
+      }
+    }
+
+    // loop through all models which can have filters
+    utils.forEach(this._space, function(h) {
+      addParser(h);
+    });
+    addParser(this);
+
+    return parsers;
+  },
+
     /**
    * Gets tick values for this hook
    * @returns {Number|String} value The value for this tick
@@ -145,16 +239,16 @@ var Hook = Model.extend({
   },
     
     
-     /**
-     * Gets unique values in a column
-     * @param {String|Array} attr parameter
-     * @returns {Array} unique values
-     */
-    getUnique: function(attr) {
-        if(!this.isHook()) return;
-        if(!attr) attr = this._getFirstDimension({type: "time"});
-        return this.getDataManager().get(this._dataId, 'unique', attr);
-    },
+   /**
+   * Gets unique values in a column
+   * @param {String|Array} attr parameter
+   * @returns {Array} unique values
+   */
+  getUnique: function(attr) {
+     if(!this.isHook()) return;
+    if(!attr) attr = this._getFirstDimension({type: "time"});
+     return this.getDataManager().get(this._dataId, 'unique', attr);
+  },
     
     
   /**
@@ -185,6 +279,22 @@ var Hook = Model.extend({
    * @returns {Object} metadata
    */
   getMetadata: function() {
+
+    if (this.use === 'constant')
+      return {};
+
+    var select = '*';
+    var from = (this.use === 'property') ? 'entities' : 'datapoints';
+    var where = { concept: this.which }
+
+    return {
+      select: select,
+      from: from,
+      where: where
+    }
+
+    this.getDataManager().load(query)
+
     return this.use !== 'constant' ? this.getDataManager().getMetadata(this.which) : {};
   }    
 });

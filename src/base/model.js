@@ -65,6 +65,9 @@ var ModelLeaf = EventSource.extend({
 })
 
 var Model = EventSource.extend({
+
+  readyPromise: new Promise(),
+
   /**
    * Initializes the model.
    * @param {Object} values The initial values of this model
@@ -79,6 +82,7 @@ var Model = EventSource.extend({
     //holds attributes of this model
     this._parent = parent;
     this._name = name;
+    this.readyPromise = new Promise();
     this._ready = false;
     this._readyOnce = false;
     //has this model ever been ready?
@@ -235,18 +239,18 @@ var Model = EventSource.extend({
    * @param {Function} fn Validation function
    * @returns {Array} submodels
    */
-  getSubmodels: function(object, fn) {
+  getSubmodels: function(object, validationFunction) {
     var submodels = (object) ? {} : [];
-    var fn = fn || function() {
+    var validationFunction = validationFunction || function() {
       return true;
     };
     var _this = this;
-    utils.forEach(this._data, function(s, name) {
-      if(s && typeof s._id !== 'undefined' && isModel(s) && fn(s)) {
+    utils.forEach(this._data, function(subModel, name) {
+      if(subModel && typeof subModel._id !== 'undefined' && isModel(subModel) && validationFunction(subModel)) {
         if(object) {
-          submodels[name] = s;
+          submodels[name] = subModel;
         } else {
-          submodels.push(s);
+          submodels.push(subModel);
         }
       }
     });
@@ -398,88 +402,63 @@ var Model = EventSource.extend({
    * does not load if there's nothing to be loaded
    * @param {Object} options (includes splashScreen)
    * @returns defer
-   */
+   */  
   load: function(opts) {
 
-    opts = opts || {};
-    var splashScreen = opts.splashScreen || false;
+    var _this = this;
+
+    this.readyPromise = new Promise();
+
+    var promises = [];
+
+    promises.push(this.loadData(opts));
+    promises.push(this.loadSubmodels(opts));
+    
+    var everythingLoaded = Promise.all(promises);
+    everythingLoaded.then(
+      function() { _this.onSuccessfullLoad(); },
+      function() { _this.triggerLoadError(); }
+    );
+
+    return this.readyPromise;
+  },
+
+  loadData: function(opts) {
+    return new Promise().resolve();
+  },
+
+  loadSubmodels: function(options) {
+    var promises = [];
+    var subModels = this.getSubmodels();
+    utils.forEach(subModels, function(subModel) {
+      promises.push(subModel.load(options));
+    });
+    return promises.length > 0 ? Promise.all(promises) : new Promise().resolve();
+  },  
+
+  onSuccessfullLoad: function() {
 
     var _this = this;
-    var data_hook = this._dataModel;
-    var language_hook = this._languageModel;
-    var query = this.getQuery(splashScreen);
-    var promiseLoad = new Promise();
-    var promises = [];
-    //useful to check if in the middle of a load call
-    this._loadCall = true;
 
-    //load hook
-    //if its not a hook, the promise will not be created
-    if(this.isHook() && data_hook && query) {
-      //hook changes, regardless of actual data loading
-      this.trigger('hook_change');
-      //get reader info
-      var reader = data_hook.getPlainObject();
-      reader.parsers = this._getAllParsers();
+    this.validate();
+    utils.timeStamp('Vizabi Model: Model loaded: ' + this.name + '(' + this._id + ')');
+    //end this load call
+    this._loadedOnce = true;
+    this.readyPromise.resolve();
 
-      var lang = language_hook ? language_hook.id : 'en';
-      var promise = new Promise();
-      var evts = {
-        'load_start': function() {
-          _this.setLoading('_hook_data');
-          EventSource.freezeAll([
-            'load_start',
-            'resize',
-            'dom_ready'
-          ]);
-        }
-      };
-
-      utils.timeStamp('Vizabi Model: Loading Data: ' + _this._id);
-      _DATAMANAGER.load(query, lang, reader, evts).then(function(dataId) {
-        _this._dataId = dataId;
-        utils.timeStamp('Vizabi Model: Data loaded: ' + _this._id);
-        _this.afterLoad();
-        promise.resolve();
-      }, function(err) {
-        utils.warn('Problem with query: ', JSON.stringify(query));
-        promise.reject(err);
-      });
-      promises.push(promise);
-    }
-
-    //load submodels as well
-    utils.forEach(this.getSubmodels(true), function(sm, name) {
-      promises.push(sm.load(opts));
-    });
-
-    //when all promises/loading have been done successfully
-    //we will consider this done
-    var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
-    wait.then(function() {
-
-      //only validate if not showing splash screen to avoid fixing the year
-      if(_this.validate) {
-        _this.validate();
-      }
-      utils.timeStamp('Vizabi Model: Model loaded: ' + _this._id);
-      //end this load call
-      _this._loadedOnce = true;
-
-      //we need to defer to make sure all other submodels
-      //have a chance to call loading for the second time
-      _this._loadCall = false;
-      promiseLoad.resolve();
-      utils.defer(function() {
-        _this.setReady();
-      });
-    }, function() {
-      _this.trigger('load_error');
-      promiseLoad.reject();
-    });
-
-    return promiseLoad;
+    //we need to defer to make sure all other submodels
+    //have a chance to call loading for the second time
+    this._loadCall = false;
+    utils.defer(
+      function() { _this.setReady(); }
+    );    
   },
+
+  triggerLoadError: function() {
+    this.trigger('load_error');
+    this.readyPromise.reject();
+  },
+
 
   /**
    * executes after preloading processing is done
@@ -489,14 +468,6 @@ var Model = EventSource.extend({
     utils.forEach(submodels, function(s) {
       s.afterPreload();
     });
-  },
-
-  /**
-   * executes after data has actually been loaded
-   */
-  afterLoad: function() {
-    EventSource.unfreezeAll();
-    this.setLoadingDone('_hook_data');
   },
 
   /**
@@ -520,7 +491,7 @@ var Model = EventSource.extend({
    */
   getQuery: function(splashScreen) {
 
-    var dimensions, filters, select, grouping, orderBy, q;
+    var dimensions, filters, select, datatype, grouping, orderBy, q;
 
     //if it's not a hook, no query is necessary
     if(!this.isHook()) return true;
@@ -538,6 +509,9 @@ var Model = EventSource.extend({
     if(this.use !== 'constant') dimensions = dimensions.concat([this.which]);
     select = utils.unique(dimensions);
 
+    // from
+    datatype = prop ? 'entities' : 'datapoints';
+
     // where 
     filters = this._getAllFilters(exceptions, splashScreen);
     
@@ -550,6 +524,7 @@ var Model = EventSource.extend({
     //return query
     return {
       'select': select,
+      'from': datatype,
       'where': filters,
       'grouping': grouping,
       'orderBy': orderBy // should be _space.animatable, but that's time for now
@@ -622,11 +597,6 @@ var Model = EventSource.extend({
       //defer is necessary because other events might be queued.
       //load right after such events
       _this.load();
-    });
-    //this is a hook, therefore it needs to reload when data changes
-    this.on('hook_change', function() {
-      _this._spaceDims = {};
-      _this.setReady(false);
     });
   },
 
@@ -864,32 +834,6 @@ var Model = EventSource.extend({
     return groupings;
   },
 
-  /**
-   * gets all hook filters
-   * @returns {Object} filters
-   */
-  _getAllParsers: function() {
-
-    var parsers = {};
-
-    function addParser(model) {
-      // get parsers from model
-      var parser = model.getParser();
-      var column = model.getDimensionOrWhich();
-      if (parser && column) {
-        parsers[column] = parser;
-      }
-    }
-
-    // loop through all models which can have filters
-    utils.forEach(this._space, function(h) {
-      addParser(h);
-    });
-    addParser(this);
-
-    return parsers;
-  },
-
   getDefaults: function() {
     // if defaults are set, does not care about defaults from children
     if(this._defaults) return this._defaults;
@@ -964,8 +908,6 @@ function initSubmodel(attr, val, ctx) {
     var binds = {
       //the submodel has changed (multiple times)
       'change': onChange,
-      //loading has started in this submodel (multiple times)
-      'hook_change': onHookChange,
       //loading has started in this submodel (multiple times)
       'load_start': onLoadStart,
       //loading has failed in this submodel (multiple times)
@@ -1078,7 +1020,5 @@ function getSpace(model) {
     );
   }
 }
-
-
 
 export default Model;
