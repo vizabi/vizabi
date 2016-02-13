@@ -104,7 +104,7 @@ BarChart.define('default_model', {
 BarRankChart.define('default_model', {
   state: {
     time: {
-      start: "1800",
+      start: "1950",
       end: "2015",
       value: "2000",
       step: 1,
@@ -172,9 +172,11 @@ BarRankChart.define('default_model', {
   },
   language: language,
   data: {
-    //reader: "waffle",
-    reader: "csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv"
+    reader: "waffle",
+    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    //reader: "csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv"
+    splash: true
   },
   ui: {
     presentation: false
