@@ -163,6 +163,9 @@ var Hook = Model.extend({
    * @returns hooked value
    */
   getKeys: function(filter) {
+      // If there is no _dataId, then no data was loaded
+      if (!this._dataId) return utils.warn("hook:getKeys() -- returning nothing since no data is loaded");
+      
       //all dimensions except time (continuous)
       var dimensions = this._getAllDimensions({exceptType: 'time'});
       var excluded = this._getAllDimensions({onlyType: 'time'});
