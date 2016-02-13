@@ -506,10 +506,10 @@ var BubbleChartComp = Component.extend({
         C: this.translator("indicator/" + this.model.marker.color.which)
       },
       unit: {
-        Y: this.translator("unit/" + this.model.marker.axis_y.getMetadata().unit) || "",
-        X: this.translator("unit/" + this.model.marker.axis_x.getMetadata().unit) || "",
-        S: this.translator("unit/" + this.model.marker.size.getMetadata().unit) || "",
-        C: this.translator("unit/" + this.model.marker.color.getMetadata().unit) || ""
+        Y: this.translator("unit/" + this.model.marker.axis_y.which),
+        X: this.translator("unit/" + this.model.marker.axis_x.which),
+        S: this.translator("unit/" + this.model.marker.size.which),
+        C: this.translator("unit/" + this.model.marker.color.which)
       }
     }
     if(!!this.strings.unit.Y) this.strings.unit.Y = ", " + this.strings.unit.Y;

@@ -2,37 +2,31 @@
     "indicatorsDB": {
         "time": {
             "use": "indicator",
-            "unit": "time",
             "scales": ["time"],
             "sourceLink": ""
         },
         "geo": {
             "use": "property",
-            "unit": "",
             "scales": ["ordinal"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
         },
         "geo.name": {
             "use": "property",
-            "unit": "",
             "scales": ["ordinal"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
         },
         "geo.latitude": {
             "use": "property",
-            "unit": "",
             "scales": ["linear"],
             "sourceLink": "https://gapminder.org"
         },
         "geo.longitude": {
             "use": "property",
-            "unit": "",
             "scales": ["linear"],
             "sourceLink": "https://gapminder.org"
         },
         "geo.region": {
             "use": "property",
-            "unit": "",
             "scales": ["ordinal"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub",
             "color": {
@@ -56,13 +50,11 @@
         },
         "size": {
             "use": "property",
-            "unit": "",
             "scales": ["ordinal"],
             "sourceLink": ""
         },
         "population": {
             "use": "indicator",
-            "unit": "population",
             "scaleType": "log",
             "scales": ["linear", "log"],
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
@@ -70,27 +62,23 @@
         },
         "life_expectancy": {
             "use": "indicator",
-            "unit": "life_expectancy",
             "scales": ["linear"],
             "domain": [10, 83],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1H3nzTwbn8z4lJ5gJ_WfDgCeGEXK3PVGcNjQ_U5og8eo/pub?gid=1"
         },
         "fertility_rate": {
             "use": "indicator",
-            "unit": "fertility_rate",
             "scales": ["linear"],
             "domain": [0, 10],
             "sourceLink": "https://gapminder.org"
         },
         "gini": {
             "use": "indicator",
-            "unit": "gini",
             "scales": ["linear"],
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
         },
         "gdp_p_cap_const_ppp2011_dollar": {
             "use": "indicator",
-            "unit": "gdp_p_cap_const_ppp2011_dollar",
             "interpolation": "exp",
             "scales": ["log", "linear"],
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
@@ -106,7 +94,6 @@
         },
         "gdp_const_ppp2011_dollar": {
             "use": "indicator",
-            "unit": "gdp_const_ppp2011_dollar",
             "interpolation": "exp",
             "scales": ["log", "linear"],
             "sourceLink": "https://gapminder.org",
@@ -114,20 +101,17 @@
         },
         "child_mortality_rate_per1000": {
             "use": "indicator",
-            "unit": "child_mortality_rate_per1000",
             "scales": ["linear", "log"],
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
             "domain": [0, 550]
         },
         "age": {
             "use": "indicator",
-            "unit": "year",
             "scales": ["linear", "log"],
             "sourceLink": ""
         },
         "_default": {
             "use": "constant",
-            "unit": "",
             "scales": ["ordinal"],
             "sourceLink": ""
         }
