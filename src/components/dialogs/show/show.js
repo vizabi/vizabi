@@ -73,7 +73,7 @@ var Show = Dialog.extend({
       
 
 
-    var data = this.model.entities.getAllPossibleEntities();
+    var data = this.model.state.entities.getAllPossibleEntities();
 
     //sort data alphabetically
     data.sort(function(a, b) {
