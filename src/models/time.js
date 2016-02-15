@@ -75,6 +75,8 @@ var TimeModel = Model.extend({
     //same constructor
     this._super(name, values, parent, bind);
 
+    this._formatToDates();
+
     var _this = this;
     this.timeFormat = formats[this.unit];
     this.dragging = false;

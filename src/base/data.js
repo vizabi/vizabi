@@ -17,7 +17,7 @@ var Data = Class.extend({
    * @param {Object} reader Which reader to use - data reader info
    * @param {*} evts ?
    */
-  load: function(query, language, reader, evts) {
+  load: function(query, language, reader) {
     var _this = this;
     var promise = new Promise();
     var wait = new Promise().resolve();
@@ -26,9 +26,6 @@ var Data = Class.extend({
     //if result is cached, dont load anything
     if(!cached) {
       utils.timeStamp('Vizabi Data: Loading Data');
-      if(evts && typeof evts.load_start === 'function') {
-        evts.load_start();
-      }
       wait = new Promise();
       this.loadFromReader(query, language, reader).then(function(queryId) {
         loaded = true;
@@ -42,16 +39,8 @@ var Data = Class.extend({
     wait.then(function() {
       //pass the data forward
       var data = _this._collection[cached].data;
-      //not loading anymore
-      if(loaded && evts && typeof evts.load_end === 'function') {
-        evts.load_end();
-      }
       promise.resolve(cached);
     }, function() {
-      //not loading anymore
-      if(loaded && evts && typeof evts.load_end === 'function') {
-        evts.load_end();
-      }
       promise.reject();
     });
     return promise;

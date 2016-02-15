@@ -228,7 +228,7 @@ var Dialogs = Component.extend({
       })
       .attr('class', 'vzb-top-dialog vzb-dialogs-dialog vzb-dialogs-dialog vzb-dialog-shadow');
 
-    this.loadComponents();
+    this.loadSubComponents();
 
     var _this = this;
     //render each subcomponent

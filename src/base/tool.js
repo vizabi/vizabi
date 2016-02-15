@@ -103,14 +103,6 @@ var Tool = Component.extend({
               _this.translateStrings();
             });
         }
-      },
-      'load_start': function() {
-        _this.beforeLoading();
-      },
-      'ready': function(evt) {
-        if(_this._ready) {
-          _this.afterLoading();
-        }
       }
     };
     utils.extend(callbacks, this.model_binds, external_model.bind);
@@ -130,8 +122,21 @@ var Tool = Component.extend({
       name: this.name || this._id,
       placeholder: placeholder
     }, this);
+
     this.render();
     this._setUIModel();
+
+    preloader(this).then(
+      this.loadModels.bind(this)
+    );
+
+  },
+
+  loadModels: function() {
+    var _this = this;
+    this.loadComponentModels().then(function() {
+      _this.model.state.time.trigger('change', _this.model.state.time.getPlainObject());
+    });
   },
 
   getMinModel: function() {
@@ -191,30 +196,7 @@ var Tool = Component.extend({
   getModel: function() {
     return this.model.getPlainObject() || {};
   },
-  /**
-   * Displays loading class
-   */
-  beforeLoading: function() {
-    if(!this._readyOnce) {
-      utils.addClass(this.placeholder, class_loading_first);
-    }
-    if(!utils.hasClass(this.placeholder, class_loading_data)) {
-      utils.addClass(this.placeholder, class_loading_data);
-    }
-  },
-  /**
-   * Removes loading class
-   */
-  afterLoading: function() {
-    utils.removeClass(this.placeholder, class_loading_data);
-    utils.removeClass(this.placeholder, class_loading_first);
-  },
-  /**
-   * Adds loading error class
-   */
-  errorLoading: function() {
-    utils.addClass(this.placeholder, class_loading_error);
-  },
+
   /* ==========================
    * Validation and query
    * ==========================
@@ -244,8 +226,7 @@ var Tool = Component.extend({
       return;
     };
     
-    //don't validate anything if data hasn't been loaded
-    if(model.isLoading() || !marker.getKeys() || marker.getKeys().length < 1) return;
+    if(!marker.getKeys() || marker.getKeys().length < 1) return;
 
     var dateMin = marker.getLimits(time.getDimension()).min;
     var dateMax = marker.getLimits(time.getDimension()).max;
@@ -406,5 +387,32 @@ function changedObj(obj, compare) {
 Tool.isTool = function(c) {
   return c._id && c._id[0] === 't';
 };
+
+/**
+ * Preloader implementation with promises
+ * @param {Object} comp any component
+ * @returns {Promise}
+ */
+function preloader(comp) {
+  var promise = new Promise();
+  var promises = []; //holds all promises
+
+  //preload all subcomponents first
+  utils.forEach(comp.components, function(subcomp) {
+    promises.push(preloader(subcomp));
+  });
+
+  var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
+  wait.then(function() {
+    comp.preload(promise);
+  }, function(err) {
+    utils.error("Error preloading data:", err);
+  });
+
+  return promise.then(function() {
+    comp.afterPreload();
+    return true;
+  });
+}
 
 export default Tool;

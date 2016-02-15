@@ -485,7 +485,7 @@ BubbleChart.define('default_model', {
     path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
     //reader: "csv",
     //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
-    splash: true
+    splash: false
   },
   language: language,
   ui: {

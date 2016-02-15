@@ -135,7 +135,7 @@ var MoreOptions = Dialog.extend({
         return d.id;
       });
 
-    this.loadComponents();
+    this.loadSubComponents();
 
     var _this = this;
     //render each subcomponent

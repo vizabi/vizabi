@@ -17,7 +17,7 @@ function Promise(resolver) {
 }
 
 Promise.prototype.then = function(resolve, reject) {
-  var next = this._next || (this._next = Promise());
+  var next = this._next || (this._next = new Promise());
   var status = this.status;
   var x;
   if('pending' === status) {

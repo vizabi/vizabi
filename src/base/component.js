@@ -8,6 +8,20 @@ var class_loading_first = 'vzb-loading-first';
 var class_error = 'vzb-error';
 
 var templates = {};
+
+
+var ComponentModel = Model.extend({
+  loadSubmodels: function() {
+    var promises = [];
+    var subModels = this.getSubmodels();
+    utils.forEach(subModels, function(subModel) {
+      // don't load them submodels, just listen to their promises
+      promises.push(subModel._loadPromise);
+    });
+    return promises.length > 0 ? Promise.all(promises) : new Promise().resolve();
+  }
+});
+
 var Component = Events.extend({
 
   /**
@@ -17,8 +31,9 @@ var Component = Events.extend({
    */
   init: function(config, parent) {
     this._id = this._id || utils.uniqueId('c');
-    this._ready = false;
-    this._readyOnce = false;
+    this._ready = new Promise();
+    this._readyOnce = new Promise();
+    this._domReady = new Promise();
     this.name = this.name || config.name;
     this.template = this.template || '<div></div>';
     this.placeholder = this.placeholder || config.placeholder;
@@ -48,22 +63,14 @@ var Component = Events.extend({
     this._super();
     //readyOnce alias
     var _this = this;
+
+    this._ready.then(function() {
+      _this.ready();
+    });
+    this._readyOnce.then(this.readyOnce.bind(this));
+    this._domReady.then(this.domReady.bind(this));
+
     this.on({
-      'readyOnce': function() {
-        if(typeof _this.readyOnce === 'function') {
-          _this.readyOnce();
-        }
-      },
-      'ready': function() {
-        if(typeof _this.ready === 'function') {
-          _this.ready();
-        }
-      },
-      'domReady': function() {
-        if(typeof _this.domReady === 'function') {
-          _this.domReady();
-        }
-      },
       'resize': function() {
         if(typeof _this.resize === 'function') {
           _this.resize();
@@ -89,13 +96,22 @@ var Component = Events.extend({
     }
   },
 
+
+  loadComponentModels: function() {
+    utils.forEach(this.components, function(subcomp) {
+      subcomp.loadComponentModels();
+    });
+
+    return this.model.load();
+  },
+
   /**
    * Renders the component (after data is ready)
    */
   render: function() {
     var _this = this;
     this.loadTemplate();
-    this.loadComponents();
+    this.loadSubComponents();
     //render each subcomponent
     utils.forEach(this.components, function(subcomp) {
       subcomp.render();
@@ -104,12 +120,14 @@ var Component = Events.extend({
       });
     });
 
+    this.model._readyPromise.then(
+      this.setReady.bind(this),
+      renderError.bind(this)
+    );
+
+/*
     //if it's a root component with model
     if(this.isRoot() && this.model) {
-      this.model.on('ready', function() {
-        done();
-      });
-      this.model.setHooks();
 
       var splashScreen = this.model && this.model.data && this.model.data.splash;
 
@@ -143,54 +161,35 @@ var Component = Events.extend({
           }, function() {
             renderError();
           });
-        } else {
-          _this.model.load().then(function() {
-            utils.delay(function() {
-              timeMdl.trigger('change');
-            }, 300);
-          }, function() {
-            renderError();
-          });
         }
       });
 
-    } else if(this.model && this.model.isLoading()) {
-      this.model.on('ready', function() {
-        done();
-      });
-    } else {
-      done();
     }
+*/
+
 
     function renderError() {
-      utils.removeClass(_this.placeholder, class_loading);
-      utils.addClass(_this.placeholder, class_error);
-      _this.setError({
+      utils.removeClass(this.placeholder, class_loading);
+      utils.addClass(this.placeholder, class_error);
+      this.setError({
         type: 'data'
       });
     }
 
-    function done() {
-      utils.removeClass(_this.placeholder, class_loading);
-      utils.removeClass(_this.placeholder, class_loading_first);
-      _this.setReady();
-    }
   },
+
+  setReady: function() {
+    utils.removeClass(this.placeholder, class_loading);
+    utils.removeClass(this.placeholder, class_loading_first);
+    this._readyOnce.resolve();
+    this._ready.resolve();  
+  },
+
 
   setError: function(opts) {
     if(typeof this.error === 'function') {
       this.error(opts);
     }
-  },
-
-  setReady: function(value) {
-    if(!this._readyOnce) {
-      this._readyOnce = true;
-      this.trigger('readyOnce');
-    }
-
-    this._ready = true;
-    this.trigger('ready');
   },
 
   /**
@@ -237,8 +236,8 @@ var Component = Events.extend({
         }
       });
     }
-    //template is ready
-    this.trigger('domReady');
+
+    this._domReady.resolve();
   },
 
   triggerResize: function() {
@@ -262,7 +261,7 @@ var Component = Events.extend({
   /*
    * Loads all subcomponents
    */
-  loadComponents: function() {
+  loadSubComponents: function() {
     var _this = this;
     var config;
     var comp;
@@ -287,7 +286,7 @@ var Component = Events.extend({
         name: c.component,
         ui: _this._uiMapping(c.placeholder, c.ui)
       });
-      //instantiate new subcomponent
+      //instantiate new subcomponent TODO: move model to component constructor
       var subcomp = new comp(config, _this);
       var c_model = c.model || [];
       subcomp.model = _this._modelMapping(subcomp.name, c_model, subcomp.model_expects, subcomp.model_binds);
@@ -405,10 +404,10 @@ var Component = Events.extend({
         } else {
 
           utils.groupCollapsed('UNEXPECTED MODEL: \'' + model_config[i] + '\'');
-          utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponentName +
-            '\' or check the models passed in \'' + _this.name + '\'.\n\nComponent: \'' + _this.name +
-            '\'\nSubcomponent: \'' + subcomponentName + '\'\nNumber of Models Expected: ' + model_expects.length +
-            '\nNumber of Models Received: ' + model_config.length);
+          utils.warn("Please, configure the 'model_expects' attribute accordingly in '" + subcomponentName + 
+            "' or check the models passed in '" + _this.name + "'.\n\nComponent: '" + _this.name +
+            "\nSubcomponent: '" + subcomponentName + "'\nNumber of Models Expected: " + model_expects.length +
+            "\nNumber of Models Received: " + model_config.length);
           utils.groupEnd();
           new_name = model_info.name;
         }
@@ -432,7 +431,7 @@ var Component = Events.extend({
       return;
     }
     //return a new model with the defined submodels
-    return new Model(subcomponentName, values, null, model_binds);
+    return new ComponentModel(subcomponentName, values, null, model_binds);
     /**
      * Maps one model name to current submodel and returns info
      * @param {String} name Full model path. E.g.: "state.marker.color"
@@ -528,7 +527,12 @@ var Component = Events.extend({
   /**
    * Executes after the template and model (if any) are ready
    */
-  ready: function() {},
+  ready: function() {},  
+
+  /**
+   * Executes after template is done loading
+   */
+  domReady: function() {},
 
   /**
    * Executes when the resize event is triggered.
@@ -547,33 +551,6 @@ var Component = Events.extend({
     });
   }
 });
-
-/**
- * Preloader implementation with promises
- * @param {Object} comp any component
- * @returns {Promise}
- */
-function preloader(comp) {
-  var promise = new Promise();
-  var promises = []; //holds all promises
-
-  //preload all subcomponents first
-  utils.forEach(comp.components, function(subcomp) {
-    promises.push(preloader(subcomp));
-  });
-
-  var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
-  wait.then(function() {
-    comp.preload(promise);
-  }, function(err) {
-    utils.error("Error preloading data:", err);
-  });
-
-  return promise.then(function() {
-    comp.afterPreload();
-    return true;
-  });
-}
 
 // Based on Simple JavaScript Templating by John Resig
 //generic templating function
