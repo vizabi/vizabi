@@ -75,50 +75,53 @@ var TimeSlider = Component.extend({
     this.model_expects = [{
       name: "time",
       type: "time"
+    },{
+      name: "ui",
+      type: "ui"
     }];
 
-    var _this = this;
+
+    // Same constructor as the superclass
+    this._super(model, context);
 
     //starts as splash if this is the option
-    this._splash = model.ui.splash;
+    this._splash = this.model.ui.splash;
 
+    var _this = this;
     //binds methods to this model
     this.model_binds = {
       'change:time': function(evt, path) {
 
         //TODO: readyOnce CANNOT be run twice
-        if(_this._splash !== _this.model.time.splash) {
+        //if(_this._splash !== _this.model.time.splash) {
           _this._splash = _this.model.time.splash;
           _this.readyOnce();
           _this.ready();
-        }
+        //}
 
-        if(!_this._splash) {
+        //if(!_this._splash) {
 
           if((['time.start', 'time.end']).indexOf(path) !== -1) {
             _this.changeLimits();
           }
           _this._optionClasses();
-        }
+        //}
       },
       'change:time.value': function(evt, path) {
-        if(!_this._splash) {
+        //if(!_this._splash) {
           //only set handle position if change is external
           if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
-        }
+        //}
       }
     };
 
-    this.ui = utils.extend({
+    this.model.ui = utils.extend({
       show_limits: false,
       show_value: false,
       show_value_when_drag_play: true,
       show_button: true,
       class_axis_aligned: false
-    }, model.ui, this.ui);
-
-    // Same constructor as the superclass
-    this._super(model, context);
+    }, this.model.ui.getPlainObject());
 
     //defaults
     this.width = 0;
@@ -229,7 +232,7 @@ var TimeSlider = Component.extend({
   },
 
   changeTime: function() {
-    this.ui.format = this.model.time.unit;
+    this.model.ui.format = this.model.time.unit;
     //time slider should always receive a time model
     var time = this.model.time.value;
     //special classes
@@ -408,11 +411,11 @@ var TimeSlider = Component.extend({
   _optionClasses: function() {
     //show/hide classes
 
-    var show_limits = this.ui.show_limits;
-    var show_value = this.ui.show_value;
-    var show_value_when_drag_play = this.ui.show_value_when_drag_play;
-    var axis_aligned = this.ui.axis_aligned;
-    var show_play = (this.ui.show_button) && (this.model.time.playable);
+    var show_limits = this.model.ui.show_limits;
+    var show_value = this.model.ui.show_value;
+    var show_value_when_drag_play = this.model.ui.show_value_when_drag_play;
+    var axis_aligned = this.model.ui.axis_aligned;
+    var show_play = (this.model.ui.show_button) && (this.model.time.playable);
 
     if(!show_limits) {
       this.xAxis.tickValues([]).ticks(0);

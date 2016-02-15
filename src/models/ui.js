@@ -1,5 +1,5 @@
 import * as utils from 'utils';
-import Events from 'events';
+import Model from 'model';
 
 //classes are vzb-portrait, vzb-landscape...
 var class_prefix = 'vzb-';
@@ -7,7 +7,7 @@ var class_presentation = 'presentation';
 var class_portrait = 'vzb-portrait';
 var class_lansdcape = 'vzb-landscape';
 
-var Layout = Events.extend({
+var UI = Model.extend({
 
   screen_profiles: {
     small: {
@@ -24,12 +24,18 @@ var Layout = Events.extend({
     }
   },
 
+  _defaults: {
+    presentation: false,
+    buttons: [],
+    dialogs: []
+  },
+
   /**
    * Initializes the layout manager
    */
-  init: function(ui) {
-    this.ui = ui || {};
-
+  init: function(name, values, parent, bind) {
+    
+    this._type = 'ui';
     this._container = null;
     //dom element
     this._curr_profile = null;
@@ -40,7 +46,7 @@ var Layout = Events.extend({
     this.resizeHandler = this.resizeHandler || resize.bind(this);
 
     window.addEventListener('resize', this.resizeHandler);
-    this._super();
+    this._super(name, values, parent, bind);
   },
 
   /**
@@ -114,7 +120,7 @@ var Layout = Events.extend({
    * @param {Bool} presentation mode on or off
    */
   updatePresentation: function() {
-    if (this.ui.presentation) {
+    if (this.presentation) {
         utils.addClass(this._container, class_prefix + class_presentation);
     } else {
         utils.removeClass(this._container, class_prefix + class_presentation);
@@ -122,7 +128,7 @@ var Layout = Events.extend({
   },
 
   getPresentationMode: function() {
-    return this.ui.presentation;
+    return this.presentation;
   },
 
   /**
@@ -145,4 +151,4 @@ function resize() {
   }
 }
 
-export default Layout;
+export default UI;

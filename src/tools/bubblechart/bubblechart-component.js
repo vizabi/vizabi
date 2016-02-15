@@ -43,20 +43,10 @@ var BubbleChartComp = Component.extend({
       type: "language"
     }, {
       name: "ui",
-      type: "model"
+      type: "ui"
     }];
 
-    //starts as splash if this is the option
-    this._splash = config.ui.splash;
-
     this.model_binds = {
-      'change:time': function(evt, original) {
-        if(_this._splash !== _this.model.time.splash) {
-          if(!_this._readyOnce) return;
-          _this._splash = _this.model.time.splash;
-          //TODO: adjust X & Y axis here
-        }
-      },
       'change:time.start': function(evt, original) {
         if(_this.model.marker.color.scaleType === 'time') {
           _this.model.marker.color.scale = null;
@@ -209,22 +199,22 @@ var BubbleChartComp = Component.extend({
     this.draggingNow = null;
 
     // default UI settings
-    this.ui = utils.extend({
+    this.model.ui = utils.extend({
       whenHovering: {},
       labels: {}
-    }, this.ui["vzb-tool-" + this.name]);
+    }, this.model.ui["vzb-tool-" + this.name]);
 
-    this.ui.whenHovering = utils.extend({
+    this.model.ui.whenHovering = utils.extend({
       showProjectionLineX: true,
       showProjectionLineY: true,
       higlightValueX: true,
       higlightValueY: true
-    }, this.ui.whenHovering);
+    }, this.model.ui.whenHovering.getPlainObject());
 
-    this.ui.labels = utils.extend({
+    this.model.ui.labels = utils.extend({
       autoResolveCollisions: false,
       dragging: true
-    }, this.ui.labels);
+    }, this.model.ui.labels.getPlainObject());
 
     this._trails = new Trail(this);
     this._panZoom = new PanZoom(this);
@@ -253,7 +243,7 @@ var BubbleChartComp = Component.extend({
       })
       .on("drag", function(d, i) {
         var KEY = _this.KEY;
-        if(!_this.ui.labels.dragging) return;
+        if(!_this.model.ui.labels.dragging) return;
         var cache = _this.cached[d[KEY]];
         cache.labelFixed = true;
 
@@ -1081,7 +1071,7 @@ var BubbleChartComp = Component.extend({
 
     }); // each bubble
 
-    if(_this.ui.labels.autoResolveCollisions) {
+    if(_this.model.ui.labels.autoResolveCollisions) {
       // cancel previously queued simulation if we just ordered a new one
       clearTimeout(_this.collisionTimeout);
 
@@ -1532,7 +1522,7 @@ var BubbleChartComp = Component.extend({
 
       if(!valueY || !valueX || !valueS) return;
 
-      if(this.ui.whenHovering.showProjectionLineX
+      if(this.model.ui.whenHovering.showProjectionLineX
         && this.xScale(valueX) > 0 && this.xScale(valueX) < this.width
         && (this.yScale(valueY) + radius) < this.height) {
         this.projectionX
@@ -1542,7 +1532,7 @@ var BubbleChartComp = Component.extend({
           .attr("x2", this.xScale(valueX));
       }
 
-      if(this.ui.whenHovering.showProjectionLineY
+      if(this.model.ui.whenHovering.showProjectionLineY
         && this.yScale(valueY) > 0 && this.yScale(valueY) < this.height
         && (this.xScale(valueX) - radius) > 0) {
         this.projectionY
@@ -1552,11 +1542,11 @@ var BubbleChartComp = Component.extend({
           .attr("x1", this.xScale(valueX) - radius);
       }
 
-      if(this.ui.whenHovering.higlightValueX) this.xAxisEl.call(
+      if(this.model.ui.whenHovering.higlightValueX) this.xAxisEl.call(
         this.xAxis.highlightValue(valueX)
       );
 
-      if(this.ui.whenHovering.higlightValueY) this.yAxisEl.call(
+      if(this.model.ui.whenHovering.higlightValueY) this.yAxisEl.call(
         this.yAxis.highlightValue(valueY)
       );
 

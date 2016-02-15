@@ -1,7 +1,6 @@
 import * as utils from 'utils'
 import Model from 'model'
 import Component from 'component'
-import Layout from 'layout'
 import { DefaultEvent } from 'events'
 import { warn as warnIcon } from 'iconset'
 import Promise from 'base/promise';
@@ -19,21 +18,20 @@ var toolsList = {};
 var ToolModel = Model.extend({
   /**
    * Initializes the tool model.
+   * @param {Tool} tool The tool this model is bound to
    * @param {Object} values The initial values of this model
    * @param {Object} binds contains initial bindings for the model
-   * @param {Function|Array} validade validate rules
    */
-  init: function(name, values, defaults, binds, validate) {
+  init: function(tool, values, binds) {
     this._id = utils.uniqueId('tm');
     this._type = 'tool';
-    //generate validation function
-    this.validate = generateValidate(this, validate);
+    this._component = tool;
     //default submodels
     values = values || {};
-    defaults = defaults || {};
+    var defaults = tool.default_model || {};
     values = defaultModel(values, defaults);
     //constructor is similar to model
-    this._super(name, values, null, binds);
+    this._super(tool.name, values, null, binds);
     // change language
     if(values.language) {
       var _this = this;
@@ -41,8 +39,32 @@ var ToolModel = Model.extend({
         _this.trigger('translate');
       });
     }
+  },
+
+  validate: function() {
+
+    var max = 10;
+    var c = 0;
+    var _this = this;
+
+
+    function validate_func(c) {
+      // toolmodel uses validate on the tool so new tools can use their own validation
+      var model = JSON.stringify(_this.getPlainObject());
+      _this._component.validate(_this);
+      var model2 = JSON.stringify(_this.getPlainObject());
+
+      if(c >= max) {
+        utils.error('Max validation loop.');
+      } else if(model !== model2) {
+        validate_func(c++);
+      }
+    }
+
+    validate_func(c);
   }
 });
+
 //tool
 var Tool = Component.extend({
   /**
@@ -51,85 +73,31 @@ var Tool = Component.extend({
    * @param {Object} external_model External model such as state, data, etc
    */
   init: function(placeholder, external_model) {
+
     this._id = utils.uniqueId('t');
-    this.template = this.template || 
-      '<div class="vzb-tool vzb-tool-' + this.name + '">' + 
-        '<div class="vzb-tool-stage">' + 
-          '<div class="vzb-tool-viz">' + 
-          '</div>' + 
-          '<div class="vzb-tool-timeslider">' + 
-          '</div>' + 
-        '</div>' + 
-        '<div class="vzb-tool-sidebar">' + 
-          '<div class="vzb-tool-dialogs">' + 
-          '</div>' +
-          '<div class="vzb-tool-buttonlist">' + 
-          '</div>' + 
-        '</div>' +         
-        '<div class="vzb-tool-treemenu vzb-hidden">' + 
-        '</div>' + 
-        '<div class="vzb-tool-datawarning vzb-hidden">' + 
-        '</div>' + 
-      '</div>';
-    this.model_binds = this.model_binds || {};
-    
-    external_model = external_model || {}; //external model can be undefined
-    external_model.bind = external_model.bind || {}; //bind functions can be undefined
+    this.default_model  = this.default_model || {}; // default model is the model set in the tool
+    this.external_model = external_model     || {}; // external model can be undefined
+    this.name           = this.name || this._id;
 
-    
-    //bind the validation function with the tool
-    var validate = this.validate.bind(this);
-    var _this = this;
+    this.setToolTemplate();
 
-    // callbacks has to be an array so that it will not be turned into a submodel when the toolmodel is made.
-    var callbacks = {
-      'change': function(evt, path) {
-        if(_this._ready) {
-          _this.model.validate();
-
-          if (evt.source.persistent)
-            _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'), _this.getMinModel());
-        }
-      },
-      'change:ui.presentation': function() {
-        _this.layout.updatePresentation();
-        _this.trigger('resize');
-      },
-      'translate': function(evt, val) {
-        if(_this._ready) {
-          Promise.all([_this.preloadLanguage(), _this.model.load()])
-            .then(function() {
-              _this.model.validate();
-              _this.translateStrings();
-            });
-        }
-      }
-    };
-    utils.extend(callbacks, this.model_binds, external_model.bind);
-    delete external_model.bind;
-
-    this.model = new ToolModel(this.name, external_model, this.default_model, callbacks, validate);
-
-    // default model is the model set in the tool
-    this.default_model = this.default_model || {};
-
-    this.ui = this.model.ui || {};
-
-    this.layout = new Layout(this.ui);
-    //splash
-    this.ui.splash = this.model && this.model.data && this.model.data.splash;
     this._super({
-      name: this.name || this._id,
+      name: this.name,
       placeholder: placeholder
     }, this);
 
     this.render();
-    this._setUIModel();
+    this._setCSSClasses();
 
     preloader(this).then(
       this.loadModels.bind(this)
     );
 
+  },
+
+  initiateModel: function(callbacks) {
+    var callbacks = this.getCallbacks();
+    this.model = new ToolModel(this, this.external_model, callbacks);
   },
 
   loadModels: function() {
@@ -153,12 +121,80 @@ var Tool = Component.extend({
     return utils.diffObject(modelChanges, defaultsFromModels);
   },
 
+  setToolTemplate: function() {
+    this.template = this.template || 
+      '<div class="vzb-tool vzb-tool-' + this.name + '">' + 
+        '<div class="vzb-tool-stage">' + 
+          '<div class="vzb-tool-viz">' + 
+          '</div>' + 
+          '<div class="vzb-tool-timeslider">' + 
+          '</div>' + 
+        '</div>' + 
+        '<div class="vzb-tool-sidebar">' + 
+          '<div class="vzb-tool-dialogs">' + 
+          '</div>' +
+          '<div class="vzb-tool-buttonlist">' + 
+          '</div>' + 
+        '</div>' +         
+        '<div class="vzb-tool-treemenu vzb-hidden">' + 
+        '</div>' + 
+        '<div class="vzb-tool-datawarning vzb-hidden">' + 
+        '</div>' + 
+      '</div>';
+  },
+
+  handleResize: function() {
+    //only tools manage resizing
+    this.model.ui.setContainer(this.element);
+    this.model.ui.on('resize', function() {
+      if(_this._ready) {
+        _this.triggerResize();
+      }
+    });
+  },
+
+  triggerResize: utils.throttle(function() {
+    this.trigger('resize');
+  }, 100),
+
+  getCallbacks: function() {
+    this.model_binds         = this.model_binds         || {};
+    this.external_model.bind = this.external_model.bind || {};
+    var _this = this;
+    var callbacks = {
+      'change': function(evt, path) {
+        if(_this._ready) {
+          _this.model.validate();
+
+          if (evt.source.persistent)
+            _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'), _this.getMinModel());
+        }
+      },
+      'change:ui.presentation': function() {
+        _this.layout.updatePresentation();
+        _this.trigger('resize');
+      },
+      'translate': function(evt, val) {
+        if(_this._ready) {
+          Promise.all([_this.preloadLanguage(), _this.model.load()])
+            .then(function() {
+              _this.model.validate();
+              _this.translateStrings();
+            });
+        }
+      }
+    };  
+    utils.extend(callbacks, this.model_binds, this.external_model.bind);
+    delete this.external_model.binds;
+    return callbacks; 
+  },
+
   /**
    * Clears a tool
    */
 
   clear: function() {
-    this.layout.clear();
+    this.model.ui.clear();
     this.setModel = this.getModel = function() {
       return;
     };
@@ -186,7 +222,7 @@ var Tool = Component.extend({
     } else {
       this.model.set(newModelJSON);
     }
-    this._setUIModel();
+    this._setCSSClasses();
   },
 
   /**
@@ -239,11 +275,11 @@ var Tool = Component.extend({
     if(time.end > dateMax && utils.isDate(dateMax)) time.getModelObject('end').set(dateMax, false, !time.splash);
   },
 
-  _setUIModel: function() {
+  _setCSSClasses: function() {
     //add placeholder class
     utils.addClass(this.placeholder, class_placeholder);
     //add-remove buttonlist class
-    if(!this.ui || !this.ui.buttons || !this.ui.buttons.length) {
+    if(!this.model.ui || !this.model.ui.buttons || !this.model.ui.buttons.length) {
       utils.addClass(this.element, class_buttons_off);
     } else {
       utils.removeClass(this.element, class_buttons_off);
@@ -255,40 +291,6 @@ var Tool = Component.extend({
   }
 });
 
-/* ==========================
- * Validation methods
- * ==========================
- */
-
-/**
- * Generates a validation function based on specific model validation
- * @param {Object} m model
- * @param {Function} validate validation function
- * @returns {Function} validation
- */
-function generateValidate(m, validate) {
-  var max = 10;
-
-  function validate_func() {
-    var model = JSON.stringify(m.getPlainObject());
-    var c = arguments[0] || 0;
-    //TODO: remove validation hotfix
-    //while setting this.model is not available
-    if(!this._readyOnce) {
-      validate(this);
-    } else {
-      validate();
-    }
-    var model2 = JSON.stringify(m.getPlainObject());
-    if(c >= max) {
-      utils.error('Max validation loop.');
-    } else if(model !== model2) {
-      validate_func.call(this, [c += 1]);
-    }
-  }
-
-  return validate_func;
-}
 
 /* ==========================
  * Default model methods

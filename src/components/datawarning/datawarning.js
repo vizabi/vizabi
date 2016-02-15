@@ -28,10 +28,6 @@ var DataWarning = Component.extend({
     //contructor is the same as any component
     this._super(config, context);
 
-    this.ui = utils.extend({
-      //...add properties here
-    }, this.ui);
-
   },
 
   ready: function() {},

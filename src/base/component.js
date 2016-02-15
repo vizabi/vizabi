@@ -58,16 +58,17 @@ var Component = Events.extend({
     this._frameRate = 10;
     //define expected models for this component
     this.model_expects = this.model_expects || [];
-    this.model_binds = this.model_binds || {};
-    this.ui = this.ui || config.ui;
+    this.model_binds   = this.model_binds   || {};
+    this.initiateModel(config.model);
+
     this._super();
-    //readyOnce alias
+
     var _this = this;
 
+    this._readyOnce.then(this.readyOnce.bind(this));
     this._ready.then(function() {
       _this.ready();
     });
-    this._readyOnce.then(this.readyOnce.bind(this));
     this._domReady.then(this.domReady.bind(this));
 
     this.on({
@@ -77,7 +78,10 @@ var Component = Events.extend({
         }
       }
     });
-    this.triggerResize = utils.throttle(this.triggerResize, 100);
+  },
+
+  initiateModel: function(configModel) {
+    this.model = this._modelMapping(configModel);
   },
 
   /**
@@ -227,21 +231,14 @@ var Component = Events.extend({
     utils.addClass(this.placeholder, class_loading_first);
     this.placeholder.innerHTML = rendered;
     this.element = this.placeholder.children[0];
-    //only tools have layout (manage sizes)
-    if(this.layout) {
-      this.layout.setContainer(this.element);
-      this.layout.on('resize', function() {
-        if(_this._ready) {
-          _this.triggerResize();
-        }
-      });
-    }
+
+    this.handleResize();
 
     this._domReady.resolve();
   },
 
-  triggerResize: function() {
-    this.trigger('resize');
+  handleResize: function() {
+    // tool handles resize
   },
 
   getActiveProfile: function(profiles, presentationProfileChanges) {
@@ -273,23 +270,21 @@ var Component = Events.extend({
       this.model.resetDeps();
     }
     // Loops through components, loading them.
-    utils.forEach(this._components_config, function(c) {
-      if(!c.component) {
-        utils.error('Error loading component: name not provided');
+    utils.forEach(this._components_config, function(component_config) {
+
+      component_config.model = component_config.model || [];
+
+      if(!component_config.component) {
+        utils.error('Error loading component: component not provided');
         return;
       }
-      comp = (utils.isString(c.component)) ? Component.get(c.component) : c.component;
+
+      comp = (utils.isString(component_config.component)) ? Component.get(component_config.component) : component_config.component;
 
       if(!comp) return;
 
-      config = utils.extend(c, {
-        name: c.component,
-        ui: _this._uiMapping(c.placeholder, c.ui)
-      });
       //instantiate new subcomponent TODO: move model to component constructor
-      var subcomp = new comp(config, _this);
-      var c_model = c.model || [];
-      subcomp.model = _this._modelMapping(subcomp.name, c_model, subcomp.model_expects, subcomp.model_binds);
+      var subcomp = new comp(component_config, _this);
       _this.components.push(subcomp);
     });
   },
@@ -318,8 +313,8 @@ var Component = Events.extend({
    */
   getLayoutProfile: function() {
     //get profile from parent if layout is not available
-    if(this.layout) {
-      return this.layout.currentProfile();
+    if(this.model.ui) {
+      return this.model.ui.currentProfile();
     } else {
       return this.parent.getLayoutProfile();
     }
@@ -331,82 +326,57 @@ var Component = Events.extend({
    */
   getPresentationMode: function() {
     //get profile from parent if layout is not available
-    if(this.layout) {
-      return this.layout.getPresentationMode();
+    if(this.model.ui) {
+      return this.model.ui.getPresentationMode();
     } else {
       return this.parent.getPresentationMode();
     }
   },
 
-  //TODO: make ui mapping more powerful
-  /**
-   * Maps the current ui to the subcomponents
-   * @param {String} id subcomponent id (placeholder)
-   * @param {Object} ui Optional ui parameters to overwrite existing
-   * @returns {Object} the UI object
-   */
-  _uiMapping: function(id, ui) {
-    //if overwritting UI
-    if(ui) {
-      return new Model('ui', ui);
-    }
-    if(id && this.ui) {
-      id = id.replace('.', '');
-      //remove trailing period
-      var sub_ui = this.ui[id];
-      if(sub_ui) {
-        return sub_ui;
-      }
-    }
-    return this.ui;
-  },
-
   /**
    * Maps the current model to the subcomponents
-   * @param {String} subcomponentName name of the subcomponent
    * @param {String|Array} model_config Configuration of model
-   * @param {String|Array} model_expects Expected models
-   * @param {Object} model_binds Initial model bindings
    * @returns {Object} the model
    */
-  _modelMapping: function(subcomponentName, model_config, model_expects, model_binds) {
+  _modelMapping: function(model_config) {
+
     var _this = this;
     var values = {};
     //If model_config is an array, we map it
-    if(utils.isArray(model_config) && utils.isArray(model_expects)) {
+    if(utils.isArray(model_config) && utils.isArray(this.model_expects)) {
 
       //if there's a different number of models received and expected
-      if(model_expects.length !== model_config.length) {
+      if(this.model_expects.length !== model_config.length) {
         utils.groupCollapsed('DIFFERENCE IN NUMBER OF MODELS EXPECTED AND RECEIVED');
-        utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponentName +
-          '\' or check the models passed in \'' + _this.name + '\'.\n\nComponent: \'' + _this.name +
-          '\'\nSubcomponent: \'' + subcomponentName + '\'\nNumber of Models Expected: ' + model_expects.length +
+        utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + this.name +
+          '\' or check the models passed in \'' + this.parent.name + '\'.\n\nComponent: \'' + this.parent.name +
+          '\'\nSubcomponent: \'' + this.name + '\'\nNumber of Models Expected: ' + this.model_expects.length +
           '\nNumber of Models Received: ' + model_config.length);
         utils.groupEnd();
       }
       utils.forEach(model_config, function(m, i) {
         var model_info = _mapOne(m);
         var new_name;
-        if(model_expects[i]) {
-          new_name = model_expects[i].name;
-          if(model_expects[i].type && model_info.type !== model_expects[i].type && (!utils.isArray(
-                model_expects[i].type) ||
-              model_expects[i].type.indexOf(model_info.type) === -1)) {
+        if(_this.model_expects[i]) {
+          new_name = _this.model_expects[i].name;
+          if(_this.model_expects[i].type && model_info.type !== _this.model_expects[i].type && (!utils.isArray(
+                _this.model_expects[i].type) ||
+              _this.model_expects[i].type.indexOf(model_info.type) === -1)) {
 
             utils.groupCollapsed('UNEXPECTED MODEL TYPE: \'' + model_info.type + '\' instead of \'' +
-              model_expects[i].type + '\'');
-            utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponentName +
-              '\' or check the models passed in \'' + _this.name + '\'.\n\nComponent: \'' + _this.name +
-              '\'\nSubcomponent: \'' + subcomponentName + '\'\nExpected Model: \'' + model_expects[i].type +
+              _this.model_expects[i].type + '\'');
+            utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + _this.name +
+              '\' or check the models passed in \'' + _this.parent.name + '\'.\n\nComponent: \'' + _this.parent.name +
+              '\'\nSubcomponent: \'' + _this.name + '\'\nExpected Model: \'' + _this.model_expects[i].type +
               '\'\nReceived Model\'' + model_info.type + '\'\nModel order: ' + i);
             utils.groupEnd();
           }
         } else {
 
           utils.groupCollapsed('UNEXPECTED MODEL: \'' + model_config[i] + '\'');
-          utils.warn("Please, configure the 'model_expects' attribute accordingly in '" + subcomponentName + 
-            "' or check the models passed in '" + _this.name + "'.\n\nComponent: '" + _this.name +
-            "\nSubcomponent: '" + subcomponentName + "'\nNumber of Models Expected: " + model_expects.length +
+          utils.warn("Please, configure the 'model_expects' attribute accordingly in '" + _this.name + 
+            "' or check the models passed in '" + _this.parent.name + "'.\n\nComponent: '" + _this.parent.name +
+            "\nSubcomponent: '" + _this.name + "'\nNumber of Models Expected: " + _this.model_expects.length +
             "\nNumber of Models Received: " + model_config.length);
           utils.groupEnd();
           new_name = model_info.name;
@@ -418,10 +388,10 @@ var Component = Events.extend({
       // e.g. if expected = [ui, language, color] and passed/existing = [ui, language]
       // it will fill values up to [ui, language, {}]
       var existing = model_config.length;
-      var expected = model_expects.length;
+      var expected = this.model_expects.length;
       if(expected > existing) {
         //skip existing
-        model_expects.splice(0, existing);
+        this.model_expects.splice(0, existing);
         //adds new expected models if needed
         utils.forEach(expected, function(m) {
           values[m.name] = {};
@@ -431,7 +401,8 @@ var Component = Events.extend({
       return;
     }
     //return a new model with the defined submodels
-    return new ComponentModel(subcomponentName, values, null, model_binds);
+    return new ComponentModel(this.name, values, null, this.model_binds);
+
     /**
      * Maps one model name to current submodel and returns info
      * @param {String} name Full model path. E.g.: "state.marker.color"
@@ -439,7 +410,7 @@ var Component = Events.extend({
      */
     function _mapOne(name) {
       var parts = name.split('.');
-      var current = _this.model;
+      var current = _this.parent.model;
       var current_name = '';
       while(parts.length) {
         current_name = parts.shift();

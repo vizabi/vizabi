@@ -35,7 +35,7 @@ var ButtonList = Component.extend({
       type: "model"
     }, {
       name: "ui",
-      type: "model"
+      type: "ui"
     }, {
       name: "language",
       type: "language"
@@ -164,10 +164,10 @@ var ButtonList = Component.extend({
         }
       }
     });
-    
-    this.validatePopupButtons(config.ui.buttons, config.ui.dialogs.popup);
 
     this._super(config, context);
+
+    this.validatePopupButtons(this.model.ui.buttons, this.model.ui.dialogs.popup);
 
   },
 

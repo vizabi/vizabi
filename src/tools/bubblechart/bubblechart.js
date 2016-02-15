@@ -30,7 +30,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
-      model: ["state.time"]
+      model: ["state.time", "ui"]
     }, {
       component: dialogs,
       placeholder: '.vzb-tool-dialogs',
