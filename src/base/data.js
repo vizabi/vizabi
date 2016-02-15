@@ -282,149 +282,154 @@ var Data = Class.extend({
    */
   _getFrames: function(queryId, framesArray, indicatorsDB) {
     var _this = this;
-      return new Promise(function(resolve, reject) {
-        //TODO: thses should come from state or from outside somehow
+    return new Promise(function(resolve, reject) {
+      //TODO: thses should come from state or from outside somehow
+      // FramesArray in the input contains the array of keyframes in animatable dimension.
+      // Example: array of years like [1800, 1801 … 2100]
+      // these will be the points where we need data
+      // (some of which might already exist in the set. in regular datasets all the points would exist!)
 
-        // FramesArray in the input contains the array of keyframes in animatable dimension.
-        // Example: array of years like [1800, 1801 … 2100]
-        // these will be the points where we need data
-        // (some of which might already exist in the set. in regular datasets all the points would exist!)
+      // Check if query.where clause is missing a time field
+      var result = {};
+      if(!indicatorsDB) utils.warn("_getFrames in data.js is missing indicatorsDB, it's needed for gap filling")
+      if(!framesArray) utils.warn("_getFrames in data.js is missing framesArray, it's needed so much")
 
-        // Check if query.where clause is missing a time field
-        var result = {};
-        if(!indicatorsDB) utils.warn("_getFrames in data.js is missing indicatorsDB, it's needed for gap filling")
-        if(!framesArray) utils.warn("_getFrames in data.js is missing framesArray, it's needed so much")
+      var KEY = "geo";
+      var TIME = "time";
 
-        var KEY = "geo";
-        var TIME = "time";
+      _this.filtered = {};
+      var items, itemsIndex, oneFrame, method, use, next;
 
-        var filtered = {};
-        var items, itemsIndex, oneFrame, method, use, next;
+      // We _nest_ the flat dataset in two levels: first by “key” (example: geo), then by “animatable” (example: year)
+      // See the _getNested function for more details
+      _this.get(queryId, 'nested', [KEY, TIME]).then(function(nested) {
+        var keys = Object.keys(nested);
 
-        // We _nest_ the flat dataset in two levels: first by “key” (example: geo), then by “animatable” (example: year)
-        // See the _getNested function for more details
-        _this.get(queryId, 'nested', [KEY, TIME]).then(function(nested) {
-          var keys = Object.keys(nested);
+        // Get the list of columns that are in the dataset, exclude key column and animatable column
+        // Example: [“lex”, “gdp”, “u5mr"]
+        var query = _this._collection[queryId].query;
+        var columns = query.select.filter(function(f){return f != KEY && f != TIME && f !== "_default"});
 
-          // Get the list of columns that are in the dataset, exclude key column and animatable column
-          // Example: [“lex”, “gdp”, “u5mr"]
-          var query = _this._collection[queryId].query;
-          var columns = query.select.filter(function(f){return f != KEY && f != TIME && f !== "_default"});
+        var cLength = columns.length;
+        var key, k, column, c;
+        var response = {};
+        var framesComplete = framesArray.length;
 
-          var cLength = columns.length;
-          var key, k, column, c;
-          var response = {};
-          var framesComplete = framesArray.length;
-          var buildFrame = function(frameName, keys, queryId) {
-            return new Promise(function(resolve, reject) {
-              var frame = {};
-              if (!query.where.time) {
-                // The query.where clause doesn't have time field for properties:
-                // we populate the regular set with a single value (unpack properties into constant time series)
-                var dataset = _this._collection[queryId].data;
-                for (c = 0; c < cLength; c++) frame[columns[c]] = {};
+        for (k = 0; k < keys.length; k++) {
+          _this.filtered[keys[k]] = {};
+          for (c = 0; c < cLength; c++) _this.filtered[keys[k]][columns[c]] = null;
+        }
 
-                for (var i = 0; i < dataset.length; i++) {
-                  var d = dataset[i];
-                  for (c = 0; c < cLength; c++) frame[columns[c]][d[KEY]] = d[columns[c]];
-                }
+        var buildFrame = function(framesArray, keys, queryId, frameId) {
+//          return new Promise(function(resolve, reject) {
+            var frameName = framesArray[frameId];
+            var frame = {};
+            if (!query.where.time) {
+              // The query.where clause doesn't have time field for properties:
+              // we populate the regular set with a single value (unpack properties into constant time series)
+              var dataset = _this._collection[queryId].data;
+              for (c = 0; c < cLength; c++) frame[columns[c]] = {};
 
-              } else {
-                // If there is a time field in query.where clause, then we are dealing with indicators in this request
-
-                // Put together a template for cached filtered sets (see below what's needed)
-                var columnNames = Object.keys(columns)                //get the keys as an array
-                  .reduce(function(obj, key) {                  //build up new object
-                    obj[columns[key]] = null;
-                    return obj;
-                  }, {});
-
-                var filtered = Object.keys(keys)                //get the keys as an array
-                  .reduce(function(obj, key) {                  //build up new object
-                    obj[keys[key]] = Object.assign({}, columnNames);
-                    return obj;
-                  }, {});                                       //{} is the starting value of obj
-
-                // Now we run a 3-level loop: across frames, then across keys, then and across data columns (lex, gdp)
-                frame = Object.assign({}, columnNames);
-
-                for (k = 0; k < keys.length; k++) {
-                  key = keys[k];
-
-                  for (c = 0; c < cLength; c++) {
-                    column = columns[c];
-
-                    //If there are some points in the array with valid numbers, then
-                    //interpolate the missing point and save it to the “clean regular set”
-                    method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
-                    use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
-
-
-                    // Inside of this 3-level loop is the following:
-                    if (nested[key] && nested[key][frameName] && (nested[key][frameName][0][column] || nested[key][frameName][0][column] === 0)) {
-
-                      // Check if the piece of data for [this key][this frame][this column] exists
-                      // and is valid. If so, then save it into a “clean regular set”
-                      frame[column][key] = nested[key][frameName][0][column];
-
-                    } else {
-                      // If the piece of data doesn’t exist or is invalid, then we need to inter- or extapolate it
-
-                      // Let’s take a slice of the nested set, corresponding to the current key nested[key]
-                      // As you remember it has the data nested further by frames.
-                      // At every frame the data in the current column might or might not exist.
-                      // Thus, let’s filter out all the frames which don’t have the data for the current column.
-                      // Let’s cache it because we will most likely encounter another gap in the same column for the same key
-                      items = filtered[key][column];
-
-                      if (items == null) {
-                        var givenFrames = Object.keys(nested[key]);
-                        items = new Array(givenFrames.length);
-                        itemsIndex = 0;
-
-                        for (var z = 0, length = givenFrames.length; z < length; z++) {
-                          oneFrame = nested[key][givenFrames[z]];
-                          if (oneFrame[0][column] || oneFrame[0][column] === 0) items[itemsIndex++] = oneFrame[0];
-                        }
-
-                        //trim the length of the array
-                        items.length = itemsIndex;
-                      }
-
-
-                      // Now we are left with a fewer frames in the filtered array. Let's check its length.
-                      //If the array is empty, then the entire column is missing for the key
-                      //So we let the key have missing values in this column for all frames
-                      if (items.length > 0) {
-                        next = null;
-                        frame[column][key] = utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
-                      }
-
-                    }
-                  } //loop across columns
-                } //loop across keys
+              for (var i = 0; i < dataset.length; i++) {
+                var d = dataset[i];
+                for (c = 0; c < cLength; c++) frame[columns[c]][d[KEY]] = d[columns[c]];
               }
-              resolve({name:frameName, data: frame});
-            });
-          };
-          var promises = [];
-          for (var f = 0; f < framesArray.length; f++) { //loop across frameArray
-            var frameName = framesArray[f];
-            promises.push(buildFrame(frameName, keys, queryId));
-          }
-          Promise.all(promises).then(function (frames) {
-            for (let frame of frames) {
-              response[frame.name] = frame.data;
-            }
-            if (["14521820", "-513239637", "-415595953"].indexOf(queryId) != -1  && framesArray.length > 200) {
-              console.log(response);
-            }
+
+            } else {
+              // If there is a time field in query.where clause, then we are dealing with indicators in this request
+
+              // Put together a template for cached filtered sets (see below what's needed)
+
+              // Now we run a 3-level loop: across frames, then across keys, then and across data columns (lex, gdp)
+
+              for (c = 0; c < cLength; c++) frame[columns[c]] = {};
+
+              for (k = 0; k < keys.length; k++) {
+                key = keys[k];
+
+                for (c = 0; c < cLength; c++) {
+                  column = columns[c];
+
+                  //If there are some points in the array with valid numbers, then
+                  //interpolate the missing point and save it to the “clean regular set”
+                  method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
+                  use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
 
 
-            resolve(response);
+                  // Inside of this 3-level loop is the following:
+                  if (nested[key] && nested[key][frameName] && (nested[key][frameName][0][column] || nested[key][frameName][0][column] === 0)) {
+
+                    // Check if the piece of data for [this key][this frame][this column] exists
+                    // and is valid. If so, then save it into a “clean regular set”
+                    frame[column][key] = nested[key][frameName][0][column];
+
+                  } else {
+                    // If the piece of data doesn’t exist or is invalid, then we need to inter- or extapolate it
+
+                    // Let’s take a slice of the nested set, corresponding to the current key nested[key]
+                    // As you remember it has the data nested further by frames.
+                    // At every frame the data in the current column might or might not exist.
+                    // Thus, let’s filter out all the frames which don’t have the data for the current column.
+                    // Let’s cache it because we will most likely encounter another gap in the same column for the same key
+                    frame[column][key] = 0;
+                    items = _this.filtered[key][column];
+                    if (items === null) {
+                      var givenFrames = Object.keys(nested[key]);
+                      items = new Array(givenFrames.length);
+                      itemsIndex = 0;
+
+                      for (var z = 0, length = givenFrames.length; z < length; z++) {
+                        oneFrame = nested[key][givenFrames[z]];
+                        if (oneFrame[0][column] || oneFrame[0][column] === 0) items[itemsIndex++] = oneFrame[0];
+                      }
+
+                      //trim the length of the array
+                      items.length = itemsIndex;
+                      if (itemsIndex === 0) {
+                        _this.filtered[key][column] = [];
+                      }
+                    }
+
+                    // Now we are left with a fewer frames in the filtered array. Let's check its length.
+                    //If the array is empty, then the entire column is missing for the key
+                    //So we let the key have missing values in this column for all frames
+                    if (items.length > 0) {
+                      next = null;
+                      frame[column][key] = utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
+                    }
+                  }
+                } //loop across columns
+              } //loop across keys
+            }
+            response[frameName] = frame;
+            if (++frameId < framesArray.length) {
+              utils.defer(function() {
+                buildFrame(framesArray, keys, queryId, frameId);
+              });
+            } else {
+              resolve(response);
+            }
+        };
+        var promises = [];
+        var frameId = 0;
+        buildFrame(framesArray, keys, queryId, frameId);
+/*
+        for (var f = 0; f < framesArray.length; f++) { //loop across frameArray
+          var frameName = framesArray[f];
+          utils.defer(function() {
+            response[frame.name] = buildFrame(framesArray, keys, queryId);
           });
+          promises.push(buildFrame(frameName, keys, queryId));
+        }
+        Promise.all(promises).then(function (frames) {
+          for (let frame of frames) {
+            response[frame.name] = frame.data;
+          }
+          resolve(response);
         });
+*/
       });
+    });
   },
 
 
