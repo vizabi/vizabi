@@ -125,9 +125,9 @@ var LCComponent = Component.extend({
   },
 
   ready: function() {
-    this.updateTime();
     this.updateUIStrings();
     this.updateShow();
+    this.updateTime();
     this.updateSize();
     this.redrawDataPoints();
 
@@ -196,6 +196,9 @@ var LCComponent = Component.extend({
       .y(function(d) {
         return _this.yScale(d[1]);
       });
+      
+    this.all_values = this.model.marker.getFrames();
+    this.all_steps = this.model.time.getAllSteps();
 
   },
 
@@ -219,7 +222,7 @@ var LCComponent = Component.extend({
 
     this.data = this.model.marker.getKeys(filter);
     this.values = this.model.marker.getFrame(this.time);
-    this.prev_values = this.model.marker.getValues(filter, [KEY], true);
+    this.prev_steps = this.all_steps.filter(function(f){return f < _this.time;});
 
     this.entityLines = this.linesContainer.selectAll('.vzb-lc-entity').data(this.data);
     this.entityLabels = this.labelsContainer.selectAll('.vzb-lc-entity').data(this.data);
@@ -481,8 +484,6 @@ var LCComponent = Component.extend({
           .attr("dy", "1.6em");
       });
 
-    var prev_values = this.prev_values;
-
     this.entityLines
       .each(function(d, index) {
         var entity = d3.select(this);
@@ -499,14 +500,11 @@ var LCComponent = Component.extend({
 
         //TODO: optimization is possible if getValues would return both x and time
         //TODO: optimization is possible if getValues would return a limited number of points, say 1 point per screen pixel
-        var x = prev_values.axis_x[d[KEY]];
-        var y = prev_values.axis_y[d[KEY]];
-        var xy = x.map(function(d, i) {
-          return [+x[i], +y[i]];
-        });
-        xy = xy.filter(function(d) {
-          return !utils.isNaN(d[1]);
-        });
+        var xy = _this.prev_steps.map(function(frame, i) {
+                return [+frame, +_this.all_values[frame].axis_y[d[KEY]]];
+            })
+            .filter(function(d) {return !utils.isNaN(d[1]);});
+        
         _this.cached[d[KEY]] = {
           valueY: xy[xy.length - 1][1]
         };

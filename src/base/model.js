@@ -3,7 +3,6 @@ import Promise from 'promise';
 import Data from 'data';
 import EventSource, {DefaultEvent, ChangeEvent} from 'events';
 import Intervals from 'intervals';
-import globals from 'globals';
 import * as models from 'models/_index';
 
 var _DATAMANAGER = new Data();
@@ -531,7 +530,7 @@ var Model = EventSource.extend({
       return true;
     }
 
-    var prop = globals.metadata.indicatorsDB[this.which] && globals.metadata.indicatorsDB[this.which].use === "property";
+    var prop = (this.use === "property");
     var exceptions = (prop) ? { exceptType: 'time' } : {};
 
     // select

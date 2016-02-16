@@ -263,8 +263,8 @@ var EntitiesModel = Model.extend({
    */
   clearHighlighted: function() {
     this.setHighlight([]);
-  },
-
+  }
+    
 });
 
 export default EntitiesModel;

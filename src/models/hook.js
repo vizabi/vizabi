@@ -1,6 +1,5 @@
 import * as utils from 'base/utils';
 import Model from 'base/model';
-import globals from 'base/globals';
 
 /*!
  * HOOK MODEL
@@ -140,22 +139,23 @@ var Hook = Model.extend({
     }else{
         var args = {framesArray: steps, which: this.which};
         result = this.getDataManager().get(this._dataId, 'limitsPerFrame', args, globals.metadata.indicatorsDB);
+        result = this.getDataManager().get(this._dataId, 'limitsPerFrame', args);
     }
 
     return result;
   },
 
 
-   /**
-   * Gets unique values in a column
-   * @param {String|Array} attr parameter
-   * @returns {Array} unique values
-   */
-  getUnique: function(attr) {
-    if(!this.isHook()) return;
-    if(!attr) attr = this._getFirstDimension({type: "time"});
-    return this.getDataManager().getUnique(this._dataId, attr);
-  },
+     /**
+     * Gets unique values in a column
+     * @param {String|Array} attr parameter
+     * @returns {Array} unique values
+     */
+    getUnique: function(attr) {
+        if(!this.isHook()) return;
+        if(!attr) attr = this._getFirstDimension({type: "time"});
+        return this.getDataManager().get(this._dataId, 'unique', attr);
+    },
 
 
   /**
@@ -164,30 +164,30 @@ var Hook = Model.extend({
    * @returns {Array} keys
    */
   getKeys: function(filter) {
-    //all dimensions except time (continuous)
-    var dimensions = this._getAllDimensions({exceptType: 'time'});
-    var excluded = this._getAllDimensions({onlyType: 'time'});
+      // If there is no _dataId, then no data was loaded
+      if (!this._dataId) return utils.warn("hook:getKeys() -- returning nothing since no data is loaded");
 
-    return this.getUnique(dimensions).map(function(item) {
-      utils.forEach(excluded, function(e) {
-        if(filter && filter[e]) {
-          item[e] = filter[e];
-        }
+      //all dimensions except time (continuous)
+      var dimensions = this._getAllDimensions({exceptType: 'time'});
+      var excluded = this._getAllDimensions({onlyType: 'time'});
+
+      return this.getUnique(dimensions).map(function(item) {
+        utils.forEach(excluded, function(e) {
+          if(filter && filter[e]) {
+            item[e] = filter[e];
+          }
+        });
+        return item;
       });
-      return item;
-    });
   },
 
   /**
-   * Gets the metadata of the hooks
+   * Gets the metadata of the hook's "which"
    * @returns {Object} metadata
    */
   getMetadata: function() {
-    if(!this.isHook()) return {};
-    return(globals.metadata && globals.metadata.indicators && (this.use === 'indicator' || this.use ===
-        'property')) ?
-      globals.metadata.indicators[this.which] : {};
-  },
+    return this.use !== 'constant' ? this.getDataManager().getMetadata(this.which) : {};
+  }
 });
 
 export default Hook;

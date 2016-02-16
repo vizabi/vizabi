@@ -2,6 +2,7 @@ import * as utils from 'utils';
 import Promise from 'promise';
 import Class from 'class';
 import Reader from 'reader';
+import globals from 'base/globals';
 
 var Data = Class.extend({
 
@@ -167,7 +168,6 @@ var Data = Class.extend({
 
           _this._collection[queryId] = {};
           _this._data[queryId] = {};
-          _this._frames = {};
           var col = _this._collection[queryId];
           col.data = values;
           col.filtered = {};
@@ -314,9 +314,19 @@ var Data = Class.extend({
     return this.queues[queueId];
   },
 
-  getCachePath: function(dataCube) {
-
+  getMetadata: function(which){
+      if(!globals.metadata || !globals.metadata.indicatorsDB) return {};
+      return which ? globals.metadata.indicatorsDB[which] : globals.metadata.indicatorsDB;
   },
+
+  /**
+   * Gets the metadata of all hooks
+   * @returns {Object} metadata
+   */
+  getIndicatorsTree: function() {
+    return globals.metadata && globals.metadata.indicatorsTree ? globals.metadata.indicatorsTree : {};
+  },
+
 
   /**
    * Get regularised dataset (where gaps are filled)
@@ -543,10 +553,11 @@ var Data = Class.extend({
   },
 
 
-  _getLimitsPerFrame: function(queryId, args, indicatorsDB) {
-    var _this = this;
+  _getLimitsPerFrame: function(queryId, args) {
     var result = {};
     var values = [];
+
+    var frames = this.get(queryId, 'frames', args.framesArray);
 
     return new Promise(function(resolve, reject) {
       _this.get(queryId, 'frames', args.framesArray, indicatorsDB).then(function(frames) {

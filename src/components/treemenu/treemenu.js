@@ -1,7 +1,6 @@
-import { extend, pruneTree, isTouchDevice } from 'base/utils';
+import * as utils from 'base/utils';
 import Component from 'base/component';
 import Class from 'class';
-import globals from 'base/globals';
 import {close as iconClose} from 'base/iconset';
 
 /*!
@@ -39,7 +38,11 @@ var css = {
   alignXr: 'vzb-align-x-right',
   alignXc: 'vzb-align-x-center',
   menuHorizontal: 'vzb-treemenu-horizontal',
-  menuVertical: 'vzb-treemenu-vertical'
+  menuVertical: 'vzb-treemenu-vertical',
+  absPosVert: 'vzb-treemenu-abs-pos-vert',
+  absPosHoriz: 'vzb-treemenu-abs-pos-horiz',
+  menuOpenLeftSide: 'vzb-treemenu-open-left-side',
+  noTransition: 'notransition'   
 };
 
 //options and globals
@@ -58,7 +61,8 @@ var OPTIONS = {
   CURRENT_PATH: [], //current active path
   MIN_COL_WIDTH: 50, //minimal column size
   MENU_DIRECTION: MENU_HORIZONTAL,
-  MAX_MENU_WIDTH: 300
+  MAX_MENU_WIDTH: 300,
+  MENU_OPEN_LEFTSIDE: false
 };
 
 var Menu = Class.extend({
@@ -205,7 +209,7 @@ var Menu = Class.extend({
       cb(width);
     } else {
 
-      var newElementWidth = Math.max(OPTIONS.MIN_COL_WIDTH, (_this.width - width));
+      var newElementWidth = Math.max(OPTIONS.MIN_COL_WIDTH, Math.abs(_this.width - width));
       var duration = 250 / (_this.width / newElementWidth);
       this.entity.transition()
         .delay(0)
@@ -319,12 +323,12 @@ var MenuItem = Class.extend({
       this.submenu = new Menu(this, submenu);
     }
     this.entity.on('mouseenter', function() {
-      if(isTouchDevice()) return;
+      if(utils.isTouchDevice()) return;
       if (_this.parentMenu.direction == MENU_HORIZONTAL) {
         _this.openSubmenu();
       }
     }).on('click', function() {
-      if(isTouchDevice()) return;
+      if(utils.isTouchDevice()) return;
       d3.event.stopPropagation();
       _this.toggleSubmenu();
     }).onTap(function() {
@@ -392,6 +396,8 @@ var lang;
 var markerID;
 var alignX = "center";
 var alignY = "center";
+var top;
+var left;
 
 var TreeMenu = Component.extend({
 
@@ -431,6 +437,16 @@ var TreeMenu = Component.extend({
     alignY = input;
     return this;
   },
+  top: function(input) {
+    if(!arguments.length) return top;
+    top = input;
+    return this;
+  },
+  left: function(input) {
+    if(!arguments.length) return left;
+    left = input;
+    return this;
+  },
 
   init: function(config, context) {
 
@@ -461,7 +477,7 @@ var TreeMenu = Component.extend({
     //contructor is the same as any component
     this._super(config, context);
 
-    this.ui = extend({
+    this.ui = utils.extend({
       //...add properties here
     }, this.ui);
 
@@ -485,17 +501,25 @@ var TreeMenu = Component.extend({
     this.element.append("div")
       .attr("class", css.background)
       .on("click", function() {
+        d3.event.stopPropagation();
         _this.toggle()
       });
 
     this.wrapper = this.element
       .append('div')
       .classed(css.wrapper, true)
+      .classed(css.noTransition, true)
       .classed("vzb-dialog-scrollable", true);
+
+    this.wrapper
+      .on("click", function() {
+        d3.event.stopPropagation();
+      })
 
     this.wrapper.append("div")
       .html(iconClose)
       .on("click", function() {
+        d3.event.stopPropagation();
         _this.toggle()
       })
       .select("svg")
@@ -546,19 +570,43 @@ var TreeMenu = Component.extend({
       }
     };
     this.activeProfile = this.profiles[this.getLayoutProfile()];
+    
+    this.wrapper.classed(css.noTransition, true);        
+    
     this.width = _this.element.node().offsetWidth;
-    var containerWidth = this.wrapper.node().getBoundingClientRect().width;
+    this.height = _this.element.node().offsetHeight;
+    var rect = this.wrapper.node().getBoundingClientRect();
+    var containerWidth = rect.width;
+    var containerHeight = rect.height;
     OPTIONS.IS_MOBILE = this.getLayoutProfile() === "small";
     if (containerWidth) {
+      if(top || left) {
+        if(OPTIONS.IS_MOBILE) {
+          this.clearPos();
+        } else {
+          if( this.wrapper.node().offsetTop < 0) {
+            this.wrapper.style('bottom', (this.height - containerHeight - 10) + 'px');
+          }
+          if(this.height - _this.wrapper.node().offsetTop - containerHeight < 0) {
+            this.wrapper.style('bottom', '10px');
+          }
+        }
+      }
+      
       this.wrapper.classed(css.alignXc, alignX === "center");
       this.wrapper.style("margin-left",alignX === "center"? "-" + containerWidth/2 + "px" : null);
       if (alignX === "center") {
         OPTIONS.MAX_MENU_WIDTH = this.width/2 - containerWidth * 0.5;
       } else {
-        OPTIONS.MAX_MENU_WIDTH = this.width - parseInt(_this.wrapper.style('left')) - containerWidth - 50; // 50 - padding around wrapper
+        OPTIONS.MAX_MENU_WIDTH = this.width - this.wrapper.node().offsetLeft - containerWidth - 10; // 10 - padding around wrapper
+        OPTIONS.MENU_OPEN_LEFTSIDE = OPTIONS.MAX_MENU_WIDTH < this.activeProfile.col_width + OPTIONS.MIN_COL_WIDTH;
+        if(OPTIONS.MENU_OPEN_LEFTSIDE) OPTIONS.MAX_MENU_WIDTH = _this.wrapper.node().offsetLeft - 10; // 10 - padding around wrapper
+        this.wrapper.classed('vzb-treemenu-open-left-side', !OPTIONS.IS_MOBILE && OPTIONS.MENU_OPEN_LEFTSIDE);
       }
     }
-
+    
+    this.wrapper.classed(css.noTransition, false);        
+   
     if (this.menuEntity) {
       this.menuEntity.setWidth(this.activeProfile.col_width, true);
       if (OPTIONS.IS_MOBILE) {
@@ -580,12 +628,19 @@ var TreeMenu = Component.extend({
     this.element.classed(css.hidden, hidden);
 
     if(hidden) {
+      if(top || left) this.clearPos();
       this.menuEntity.marqueeToggle(false);
     } else {
+      if(top || left) this.setPos();
       this.resize();
     }
 
+    this.wrapper.classed(css.noTransition, hidden);    
+
     this.parent.components.forEach(function(c) {
+      if(c.name == "gapminder-dialogs") {
+        d3.select(c.placeholder.parentNode).classed("vzb-blur", !hidden);
+      } else 
       if(c.element.classed) {
         c.element.classed("vzb-blur", c != _this && !hidden);
       } else {
@@ -595,7 +650,31 @@ var TreeMenu = Component.extend({
 
     this.width = _this.element.node().offsetWidth;
   },
+  
+  setPos: function() {
+    var rect = this.wrapper.node().getBoundingClientRect();      
+    
+    if(top) {
+      var bottom = this.element.node().offsetHeight - top - rect.height;
+      this.wrapper.style({'bottom': bottom + 'px', 'top': 'auto'});
+      this.wrapper.classed(css.absPosVert, bottom);
+    }
+    if(left) {
+      var right = this.element.node().offsetWidth - left - rect.width; 
+      this.wrapper.style({'right': right + 'px', 'left': 'auto'});    
+      this.wrapper.classed(css.absPosHoriz, right);
+    }
 
+  },
+
+  clearPos: function() {
+    top = '';
+    left = '';
+    this.wrapper.attr("style", "");
+    this.wrapper.classed(css.absPosVert, '');
+    this.wrapper.classed(css.absPosHoriz, '');
+    this.wrapper.classed(css.menuOpenLeftSide, '');
+  },
   //search listener
   _enableSearch: function() {
     var _this = this;
@@ -684,9 +763,9 @@ var TreeMenu = Component.extend({
     if(data == null) data = tree;
     this.wrapper.select('ul').remove();
 
-    var indicatorsDB = globals.metadata.indicatorsDB;
+    var indicatorsDB = _this.model.marker.getMetadata();         
 
-    var allowedIDs = globals.metadata.indicatorsArray.filter(function(f) {
+    var allowedIDs = utils.keys(indicatorsDB).filter(function(f) {
       //check if indicator is denied to show with allow->names->!indicator
       if(_this.model.marker[markerID].allow && _this.model.marker[markerID].allow.names
         && _this.model.marker[markerID].allow.names.indexOf('!' + f) != -1) return false;
@@ -703,7 +782,7 @@ var TreeMenu = Component.extend({
       return false;
     })
 
-    var dataFiltered = pruneTree(data, function(f) {
+    var dataFiltered = utils.pruneTree(data, function(f) {
       return allowedIDs.indexOf(f.id) > -1
     });
 
@@ -771,7 +850,8 @@ var TreeMenu = Component.extend({
 
     scaleTypes.enter().append("span")
         .on("click", function(d){
-            _this._setModel("scaleType", d, markerID)
+          d3.event.stopPropagation();
+          _this._setModel("scaleType", d, markerID)
         });
 
     scaleTypes
@@ -798,10 +878,13 @@ var TreeMenu = Component.extend({
 
     if(!markerID) return;
 
-    this.wrapper.classed(css.alignYt, alignY === "top");
-    this.wrapper.classed(css.alignYb, alignY === "bottom");
-    this.wrapper.classed(css.alignXl, alignX === "left");
-    this.wrapper.classed(css.alignXr, alignX === "right");
+      this.wrapper.classed(css.absPosVert, top);
+      this.wrapper.classed(css.alignYt, alignY === "top");
+      this.wrapper.classed(css.alignYb, alignY === "bottom");
+      this.wrapper.classed(css.absPosHoriz, left);
+      this.wrapper.classed(css.alignXl, alignX === "left");
+      this.wrapper.classed(css.alignXr, alignX === "right");
+    
 
     var strings = langStrings ? langStrings : {};
     strings[languageID] = _this.model.language.strings[languageID];
@@ -812,7 +895,7 @@ var TreeMenu = Component.extend({
     this.langStrings(strings)
       .lang(languageID)
       .callback(setModel)
-      .tree(globals.metadata.indicatorsTree)
+      .tree(this.model.marker.getIndicatorsTree())
       .redraw();
 
     return this;
@@ -820,7 +903,7 @@ var TreeMenu = Component.extend({
 
   _setModel: function(what, value, markerID) {
 
-    var indicatorsDB = globals.metadata.indicatorsDB;
+    var indicatorsDB = this.model.marker.getMetadata();
 
     var mdl = this.model.marker[markerID];
 

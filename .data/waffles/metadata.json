@@ -1,180 +1,117 @@
 {
-    "color": {
-        "shades": {
-            "geo.region": {
-                "fill1": 0,
-                "fill2": 1,
-                "fill3": 2,
-                "shade": 3,
-                "print_fill": 4,
-                "print_stroke": 5,
-                "_default": 0
-            },
-            "_default": {
-                "_default": 0
-            }
-        },
-        "palettes": {
-            "geo.region": {
-                "asia": ["#ff5872", "#ff5178", "#ff658a", "#da0025", "#fa4e73", "#b2043a"], 
-                "europe": ["#ffe700", "#fbdd00", "#fff400", "#fbaf09", "#ffe700", "#b17f4a"], 
-                "americas": ["#7feb00", "#5de200", "#81f201", "#00b900", "#b5ea32", "#008d36"], 
-                "africa": ["#00d5e9", "#00c8ec", "#00e1ec", "#0098df", "#77dff7", "#0586c6"], 
-                "_default": ["#ffb600", "#ffaa14", "#ffc500", "#fb6d19", "#ffb600", "#9b4838"] 
-            },
-            "gdp_p_cap_const_ppp2011_dollar": {
-                "0": "#62CCE3",
-                "1": "#B4DE79",
-                "2": "#E1CE00",
-                "3": "#F77481"
-            },
-            "_continuous": {
-                "0": "#F77481",
-                "1": "#E1CE00",
-                "2": "#B4DE79"
-            },
-            "_discrete": {
-                "0": "#bcfa83",
-                "1": "#4cd843",
-                "2": "#ff8684",
-                "3": "#e83739",
-                "4": "#ffb04b",
-                "5": "#ff7f00",
-                "6": "#f599f5",
-                "7": "#c027d4",
-                "8": "#f4f459",
-                "9": "#d66425",
-                "10": "#7fb5ed",
-                "11": "#0ab8d8"
-            },
-            "_default": {
-                "_default": "#fa5ed6"
-            }
-        },
-        "selectable": {
-            "geo.region": false
-        }
-    },
-
     "indicatorsDB": {
         "time": {
-            "allowCharts": ["*"],
             "use": "indicator",
-            "unit": "time",
             "scales": ["time"],
             "sourceLink": ""
         },
         "geo": {
-            "allowCharts": ["*"],
             "use": "property",
-            "unit": "",
             "scales": ["ordinal"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
         },
         "geo.name": {
-            "allowCharts": ["*"],
             "use": "property",
-            "unit": "",
             "scales": ["ordinal"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
         },
         "geo.latitude": {
-            "allowCharts": ["*"],
             "use": "property",
-            "unit": "",
             "scales": ["linear"],
             "sourceLink": "https://gapminder.org"
         },
         "geo.longitude": {
-            "allowCharts": ["*"],
             "use": "property",
-            "unit": "",
             "scales": ["linear"],
             "sourceLink": "https://gapminder.org"
         },
         "geo.region": {
-            "allowCharts": ["*"],
             "use": "property",
-            "unit": "",
             "scales": ["ordinal"],
-            "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub",
+            "color": {
+                "shades": {
+                    "fill1": 0,
+                    "fill2": 1,
+                    "fill3": 2,
+                    "shade": 3,
+                    "print_fill": 4,
+                    "print_stroke": 5
+                },
+                "palette": {
+                    "asia": ["#ff5872", "#ff5178", "#ff658a", "#da0025", "#fa4e73", "#b2043a"], 
+                    "europe": ["#ffe700", "#fbdd00", "#fff400", "#fbaf09", "#ffe700", "#b17f4a"], 
+                    "americas": ["#7feb00", "#5de200", "#81f201", "#00b900", "#b5ea32", "#008d36"], 
+                    "africa": ["#00d5e9", "#00c8ec", "#00e1ec", "#0098df", "#77dff7", "#0586c6"], 
+                    "_default": ["#ffb600", "#ffaa14", "#ffc500", "#fb6d19", "#ffb600", "#9b4838"] 
+                },
+                "selectable": false
+            }
         },
         "size": {
-            "allowCharts": ["none"],
             "use": "property",
-            "unit": "",
             "scales": ["ordinal"],
             "sourceLink": ""
         },
         "population": {
-            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
             "use": "indicator",
-            "unit": "population",
             "scaleType": "log",
             "scales": ["linear", "log"],
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
             "domain": [14000, 1400000000]
         },
         "life_expectancy": {
-            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
             "use": "indicator",
-            "unit": "life_expectancy",
             "scales": ["linear"],
             "domain": [10, 83],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1H3nzTwbn8z4lJ5gJ_WfDgCeGEXK3PVGcNjQ_U5og8eo/pub?gid=1"
         },
         "fertility_rate": {
-            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
             "use": "indicator",
-            "unit": "fertility_rate",
             "scales": ["linear"],
             "domain": [0, 10],
             "sourceLink": "https://gapminder.org"
         },
         "gini": {
-            "allowCharts": ["mountainchart", "bubblechart", "bubblemap"],
             "use": "indicator",
-            "unit": "gini",
             "scales": ["linear"],
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
         },
         "gdp_p_cap_const_ppp2011_dollar": {
-            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
             "use": "indicator",
-            "unit": "gdp_p_cap_const_ppp2011_dollar",
             "interpolation": "exp",
             "scales": ["log", "linear"],
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
-            "domain": [300, 140000]
+            "domain": [300, 140000],
+            "color": {
+                "palette": {
+                    "0": "#62CCE3",
+                    "1": "#B4DE79",
+                    "2": "#E1CE00",
+                    "3": "#F77481"
+                }
+            }
         },
         "gdp_const_ppp2011_dollar": {
-            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
             "use": "indicator",
-            "unit": "gdp_const_ppp2011_dollar",
             "interpolation": "exp",
             "scales": ["log", "linear"],
             "sourceLink": "https://gapminder.org",
             "domain": [1e6, 100e12]
         },
         "child_mortality_rate_per1000": {
-            "allowCharts": ["bubblechart", "mountainchart", "bubblemap"],
             "use": "indicator",
-            "unit": "child_mortality_rate_per1000",
             "scales": ["linear", "log"],
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
             "domain": [0, 550]
         },
         "age": {
-            "allowCharts": ["popbyage"],
             "use": "indicator",
-            "unit": "year",
             "scales": ["linear", "log"],
             "sourceLink": ""
         },
         "_default": {
-            "allowCharts": ["*"],
             "use": "constant",
-            "unit": "",
             "scales": ["ordinal"],
             "sourceLink": ""
         }
@@ -207,501 +144,5 @@
                 "id": "_default"
             }
         ]
-    },
-    "entities": [{
-            "geo": "afg",
-            "name": "Afghanistan"
-        }, {
-            "geo": "alb",
-            "name": "Albania"
-        }, {
-            "geo": "dza",
-            "name": "Algeria"
-        }, {
-            "geo": "ago",
-            "name": "Angola"
-        }, {
-            "geo": "arg",
-            "name": "Argentina"
-        }, {
-            "geo": "arm",
-            "name": "Armenia"
-        }, {
-            "geo": "aus",
-            "name": "Australia"
-        }, {
-            "geo": "aut",
-            "name": "Austria"
-        }, {
-            "geo": "aze",
-            "name": "Azerbaijan"
-        }, {
-            "geo": "bhr",
-            "name": "Bahrain"
-        }, {
-            "geo": "bgd",
-            "name": "Bangladesh"
-        }, {
-            "geo": "blr",
-            "name": "Belarus"
-        }, {
-            "geo": "bel",
-            "name": "Belgium"
-        }, {
-            "geo": "ben",
-            "name": "Benin"
-        }, {
-            "geo": "btn",
-            "name": "Bhutan"
-        }, {
-            "geo": "bol",
-            "name": "Bolivia"
-        }, {
-            "geo": "bih",
-            "name": "Bosnia and Herzegovina"
-        }, {
-            "geo": "bwa",
-            "name": "Botswana"
-        }, {
-            "geo": "bra",
-            "name": "Brazil"
-        }, {
-            "geo": "bgr",
-            "name": "Bulgaria"
-        }, {
-            "geo": "bfa",
-            "name": "Burkina Faso"
-        }, {
-            "geo": "bdi",
-            "name": "Burundi"
-        }, {
-            "geo": "khm",
-            "name": "Cambodia"
-        }, {
-            "geo": "cmr",
-            "name": "Cameroon"
-        }, {
-            "geo": "can",
-            "name": "Canada"
-        }, {
-            "geo": "cpv",
-            "name": "Cape Verde"
-        }, {
-            "geo": "caf",
-            "name": "Central African Republic"
-        }, {
-            "geo": "tcd",
-            "name": "Chad"
-        }, {
-            "geo": "chl",
-            "name": "Chile"
-        }, {
-            "geo": "chn",
-            "name": "China"
-        }, {
-            "geo": "col",
-            "name": "Colombia"
-        }, {
-            "geo": "com",
-            "name": "Comoros"
-        }, {
-            "geo": "cod",
-            "name": "Congo, Dem. Rep."
-        }, {
-            "geo": "cog",
-            "name": "Congo, Rep."
-        }, {
-            "geo": "cri",
-            "name": "Costa Rica"
-        }, {
-            "geo": "civ",
-            "name": "Cote d'Ivoire"
-        }, {
-            "geo": "cub",
-            "name": "Cuba"
-        }, {
-            "geo": "cyp",
-            "name": "Cyprus"
-        }, {
-            "geo": "cze",
-            "name": "Czech Republic"
-        }, {
-            "geo": "dnk",
-            "name": "Denmark"
-        }, {
-            "geo": "dji",
-            "name": "Djibouti"
-        }, {
-            "geo": "dom",
-            "name": "Dominican Republic"
-        }, {
-            "geo": "ecu",
-            "name": "Ecuador"
-        }, {
-            "geo": "egy",
-            "name": "Egypt"
-        }, {
-            "geo": "slv",
-            "name": "El Salvador"
-        }, {
-            "geo": "gnq",
-            "name": "Equatorial Guinea"
-        }, {
-            "geo": "eri",
-            "name": "Eritrea"
-        }, {
-            "geo": "est",
-            "name": "Estonia"
-        }, {
-            "geo": "eth",
-            "name": "Ethiopia"
-        }, {
-            "geo": "fji",
-            "name": "Fiji"
-        }, {
-            "geo": "fin",
-            "name": "Finland"
-        }, {
-            "geo": "fra",
-            "name": "France"
-        }, {
-            "geo": "gab",
-            "name": "Gabon"
-        }, {
-            "geo": "gmb",
-            "name": "Gambia"
-        }, {
-            "geo": "geo",
-            "name": "Georgia"
-        }, {
-            "geo": "deu",
-            "name": "Germany"
-        }, {
-            "geo": "gha",
-            "name": "Ghana"
-        }, {
-            "geo": "grc",
-            "name": "Greece"
-        }, {
-            "geo": "gtm",
-            "name": "Guatemala"
-        }, {
-            "geo": "gin",
-            "name": "Guinea"
-        }, {
-            "geo": "gnb",
-            "name": "Guinea-Bissau"
-        }, {
-            "geo": "guy",
-            "name": "Guyana"
-        }, {
-            "geo": "hti",
-            "name": "Haiti"
-        }, {
-            "geo": "hnd",
-            "name": "Honduras"
-        }, {
-            "geo": "hun",
-            "name": "Hungary"
-        }, {
-            "geo": "ind",
-            "name": "India"
-        }, {
-            "geo": "idn",
-            "name": "Indonesia"
-        }, {
-            "geo": "irn",
-            "name": "Iran"
-        }, {
-            "geo": "irq",
-            "name": "Iraq"
-        }, {
-            "geo": "irl",
-            "name": "Ireland"
-        }, {
-            "geo": "isr",
-            "name": "Israel"
-        }, {
-            "geo": "ita",
-            "name": "Italy"
-        }, {
-            "geo": "jam",
-            "name": "Jamaica"
-        }, {
-            "geo": "jpn",
-            "name": "Japan"
-        }, {
-            "geo": "jor",
-            "name": "Jordan"
-        }, {
-            "geo": "kaz",
-            "name": "Kazakhstan"
-        }, {
-            "geo": "ken",
-            "name": "Kenya"
-        }, {
-            "geo": "kwt",
-            "name": "Kuwait"
-        }, {
-            "geo": "kgz",
-            "name": "Kyrgyz Republic"
-        }, {
-            "geo": "lao",
-            "name": "Lao"
-        }, {
-            "geo": "lva",
-            "name": "Latvia"
-        }, {
-            "geo": "lbn",
-            "name": "Lebanon"
-        }, {
-            "geo": "lso",
-            "name": "Lesotho"
-        }, {
-            "geo": "lbr",
-            "name": "Liberia"
-        }, {
-            "geo": "lby",
-            "name": "Libya"
-        }, {
-            "geo": "ltu",
-            "name": "Lithuania"
-        }, {
-            "geo": "lux",
-            "name": "Luxembourg"
-        }, {
-            "geo": "mkd",
-            "name": "Macedonia, FYR"
-        }, {
-            "geo": "mdg",
-            "name": "Madagascar"
-        }, {
-            "geo": "mwi",
-            "name": "Malawi"
-        }, {
-            "geo": "mys",
-            "name": "Malaysia"
-        }, {
-            "geo": "mli",
-            "name": "Mali"
-        }, {
-            "geo": "mrt",
-            "name": "Mauritania"
-        }, {
-            "geo": "mus",
-            "name": "Mauritius"
-        }, {
-            "geo": "mex",
-            "name": "Mexico"
-        }, {
-            "geo": "mda",
-            "name": "Moldova"
-        }, {
-            "geo": "mng",
-            "name": "Mongolia"
-        }, {
-            "geo": "mne",
-            "name": "Montenegro"
-        }, {
-            "geo": "mar",
-            "name": "Morocco"
-        }, {
-            "geo": "moz",
-            "name": "Mozambique"
-        }, {
-            "geo": "mmr",
-            "name": "Myanmar"
-        }, {
-            "geo": "nam",
-            "name": "Namibia"
-        }, {
-            "geo": "npl",
-            "name": "Nepal"
-        }, {
-            "geo": "nld",
-            "name": "Netherlands"
-        }, {
-            "geo": "nzl",
-            "name": "New Zealand"
-        }, {
-            "geo": "nic",
-            "name": "Nicaragua"
-        }, {
-            "geo": "ner",
-            "name": "Niger"
-        }, {
-            "geo": "nga",
-            "name": "Nigeria"
-        }, {
-            "geo": "prk",
-            "name": "North Korea"
-        }, {
-            "geo": "nor",
-            "name": "Norway"
-        }, {
-            "geo": "omn",
-            "name": "Oman"
-        }, {
-            "geo": "pak",
-            "name": "Pakistan"
-        }, {
-            "geo": "pan",
-            "name": "Panama"
-        }, {
-            "geo": "png",
-            "name": "Papua New Guinea"
-        }, {
-            "geo": "pry",
-            "name": "Paraguay"
-        }, {
-            "geo": "per",
-            "name": "Peru"
-        }, {
-            "geo": "phl",
-            "name": "Philippines"
-        }, {
-            "geo": "pol",
-            "name": "Poland"
-        }, {
-            "geo": "prt",
-            "name": "Portugal"
-        }, {
-            "geo": "qat",
-            "name": "Qatar"
-        }, {
-            "geo": "rou",
-            "name": "Romania"
-        }, {
-            "geo": "rus",
-            "name": "Russia"
-        }, {
-            "geo": "rwa",
-            "name": "Rwanda"
-        }, {
-            "geo": "sau",
-            "name": "Saudi Arabia"
-        }, {
-            "geo": "sen",
-            "name": "Senegal"
-        }, {
-            "geo": "srb",
-            "name": "Serbia"
-        }, {
-            "geo": "sle",
-            "name": "Sierra Leone"
-        }, {
-            "geo": "sgp",
-            "name": "Singapore"
-        }, {
-            "geo": "svk",
-            "name": "Slovak Republic"
-        }, {
-            "geo": "svn",
-            "name": "Slovenia"
-        }, {
-            "geo": "slb",
-            "name": "Solomon Islands"
-        }, {
-            "geo": "som",
-            "name": "Somalia"
-        }, {
-            "geo": "zaf",
-            "name": "South Africa"
-        }, {
-            "geo": "kor",
-            "name": "South Korea"
-        }, {
-            "geo": "ssd",
-            "name": "South Sudan"
-        }, {
-            "geo": "esp",
-            "name": "Spain"
-        }, {
-            "geo": "lka",
-            "name": "Sri Lanka"
-        }, {
-            "geo": "sdn",
-            "name": "Sudan"
-        }, {
-            "geo": "sur",
-            "name": "Suriname"
-        }, {
-            "geo": "swz",
-            "name": "Swaziland"
-        }, {
-            "geo": "swe",
-            "name": "Sweden"
-        }, {
-            "geo": "che",
-            "name": "Switzerland"
-        }, {
-            "geo": "syr",
-            "name": "Syria"
-        }, {
-            "geo": "tjk",
-            "name": "Tajikistan"
-        }, {
-            "geo": "tza",
-            "name": "Tanzania"
-        }, {
-            "geo": "tha",
-            "name": "Thailand"
-        }, {
-            "geo": "tls",
-            "name": "Timor-Leste"
-        }, {
-            "geo": "tgo",
-            "name": "Togo"
-        }, {
-            "geo": "tto",
-            "name": "Trinidad and Tobago"
-        }, {
-            "geo": "tun",
-            "name": "Tunisia"
-        }, {
-            "geo": "tur",
-            "name": "Turkey"
-        }, {
-            "geo": "tkm",
-            "name": "Turkmenistan"
-        }, {
-            "geo": "uga",
-            "name": "Uganda"
-        }, {
-            "geo": "ukr",
-            "name": "Ukraine"
-        }, {
-            "geo": "are",
-            "name": "United Arab Emirates"
-        }, {
-            "geo": "gbr",
-            "name": "United Kingdom"
-        }, {
-            "geo": "usa",
-            "name": "United States"
-        }, {
-            "geo": "ury",
-            "name": "Uruguay"
-        }, {
-            "geo": "uzb",
-            "name": "Uzbekistan"
-        }, {
-            "geo": "ven",
-            "name": "Venezuela"
-        }, {
-            "geo": "vnm",
-            "name": "Vietnam"
-        }, {
-            "geo": "pse",
-            "name": "West Bank and Gaza"
-        }, {
-            "geo": "yem",
-            "name": "Yemen"
-        }, {
-            "geo": "zmb",
-            "name": "Zambia"
-        }, {
-            "geo": "zwe",
-            "name": "Zimbabwe"
-        }]
+    }
 }

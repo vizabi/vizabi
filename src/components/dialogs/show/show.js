@@ -1,7 +1,6 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
 import Dialog from '../_dialog';
-import globals from 'base/globals';
 
 import { bubbleopacity } from 'components/_index'
 
@@ -72,13 +71,18 @@ var Show = Dialog.extend({
     var _this = this;
     this.translator = this.model.language.getTFunction();
       
-
-
-    var data = globals.metadata.entities;
+    var values = this.model.state.marker_allpossible.getFrame();
+    var data = utils.keys(values.label)
+        .map(function(d){
+            var result = {};
+            result[_this.KEY] = d;
+            result["label"] = values.label[d];
+            return result;
+        });
 
     //sort data alphabetically
     data.sort(function(a, b) {
-      return(a.name < b.name) ? -1 : 1;
+      return(a.label < b.label) ? -1 : 1;
     });
 
     this.list.html("");
@@ -108,7 +112,7 @@ var Show = Dialog.extend({
         return "-show-" + d[_this.KEY];
       })
       .text(function(d) {
-        return d.name;
+        return d.label;
       });
 
     this.input_search.attr("placeholder", this.translator("placeholder/search") + "...");
@@ -126,7 +130,7 @@ var Show = Dialog.extend({
 
     this.list.selectAll(".vzb-show-item")
       .classed("vzb-hidden", function(d) {
-        var lower = d.name.toLowerCase();
+        var lower = d.label.toLowerCase();
         return(lower.indexOf(search) === -1);
       });
   },

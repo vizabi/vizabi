@@ -1,5 +1,4 @@
 import * as utils from 'base/utils';
-import globals from 'base/globals';
 import Hook from 'hook';
 
 /*!
@@ -27,7 +26,7 @@ var defaultPalettes = {
     "11": "#0ab8d8"
   },
   "_default": {
-    "_default": "#fa5ed6"
+    "_default": "#93daec"
   }
 };
 
@@ -60,54 +59,40 @@ var ColorModel = Hook.extend({
 
     this._super(name, values, parent, bind);
 
-    this._palettes = defaultPalettes;
     this._firstLoad = true;
     this._hasDefaultColor = false;
   },
 
+  // args: {colorID, shadeID}
   getColorShade: function(args){
-    var palettes = globals.metadata.color.palettes;
-    var shades = globals.metadata.color.shades;
+    var palette = this.getPalette();
       
-    if(!palettes) return utils.warn("getColorShade() is missing globals.metadata.color.palettes");
-    if(!shades) return utils.warn("getColorShade() is missing globals.metadata.color.shades");
-    if(!args) return utils.warn("getColorShade() is missing arguments");
+    if(!args) return utils.warn("getColorShade() is missing arguments");  
       
-    if(!args.paletteID) args.paletteID = this.which;
-    if(!shades[args.paletteID] || !palettes[args.paletteID]) args.paletteID = "_default";
-    if(!args.shadeID || !shades[args.paletteID][args.shadeID]) args.shadeID = "_default";
-    if(!args.colorID || !palettes[args.paletteID][args.colorID]) args.colorID = "_default";
+    // if colorID is not given or not found in the palette, replace it with default color
+    if(!args.colorID || !palette[args.colorID]) args.colorID = "_default";
     
-    return palettes[args.paletteID][args.colorID][ shades[args.paletteID][args.shadeID] ];
+    // if the resolved colr value is not an array (has only one shade) -- return it
+    if( !utils.isArray(palette[args.colorID]) ) return palette[args.colorID];
+      
+    var colorMeta = this.getMetadata().color;
+    var shade = args.shadeID && colorMeta && colorMeta.shades && colorMeta.shades[args.shadeID] ? colorMeta.shades[args.shadeID] : 0;
+        
+    return palette[args.colorID][shade];
+    
   },
     
-  /**
-   * Get the above constants
-   */
-  getPalettes: function() {
-    if (globals.metadata && globals.metadata.color && globals.metadata.color.palettes){
-        this._palettes = utils.extend(this._palettes, globals.metadata.color.palettes);
-    } else {
-        utils.warn("Color.js AfterPreload: palletes not found in metadata");
-    }
-      
-    return this._palettes;
-  },
 
   afterPreload: function() {
-    //TODO: extending this._palettes with the ones from metadata should actually be here, but metadats is undefined      
     this._super();
   },
   
   /**
    * Get the above constants
    */
-  isUserSelectable: function(whichPalette) {
-
-    var userSelectable = (globals.metadata) ? globals.metadata.color.selectable : {};
-
-    if(userSelectable[whichPalette] == null) return true;
-    return userSelectable[whichPalette];
+  isUserSelectable: function() {
+    var metaColor = this.getMetadata().color;
+    return metaColor == null || metaColor.selectable == null || metaColor.selectable;
   },
 
   /**
@@ -160,36 +145,42 @@ var ColorModel = Hook.extend({
   },
 
 
-  buildPalette: function() {
-      var palettes = this.getPalettes();
+  getDefaultPalette: function() {     
+      var metaColor = this.getMetadata().color;
+      var palette;
       
-      if(palettes[this.which]) {
-        this.palette = utils.clone(palettes[this.which]);
-      } else if(this.use === "constant") {
-        this.palette = {"_default": this.which};
+      if(metaColor && metaColor.palette) {
+        //specific color palette from hook metadata
+        palette = utils.clone(metaColor.palette);
+      } else if(defaultPalettes[this.which]) {
+        //color palette for this.which exists in palette defaults
+        palette = utils.clone(defaultPalettes[this.which]);
+      } else if(this.use === "constant" && /^#([0-9a-f]{3}|[0-9a-f]{6})$/.test(this.which)) {
+        //an explicit hex color constant #abc or #adcdef is provided
+        palette = {"_default": this.which};
       } else if(this.use === "indicator") {
-        this.palette = utils.clone(palettes["_continuous"]);
+        palette = utils.clone(defaultPalettes["_continuous"]);
       } else if(this.use === "property") {
-        this.palette = utils.clone(palettes["_discrete"]);
+        palette = utils.clone(defaultPalettes["_discrete"]);
       } else {
-        this.palette = utils.clone(palettes["_default"]);
+        palette = utils.clone(defaultPalettes["_default"]);
       }
       
-      return this.palette;
+      return palette;
   },
     
   getPalette: function(){
-    return (this.palette && Object.keys(this.palette._data).length>0? this.palette : this.buildPalette()).getPlainObject();
+    //rebuild palette if it's empty
+    if (!this.palette || Object.keys(this.palette._data).length===0) this.palette = this.getDefaultPalette();
+    return this.palette.getPlainObject(); 
   },
-
+    
   /**
    * Gets the domain for this hook
    * @returns {Array} domain
    */
   buildScale: function() {
     var _this = this;
-
-    var indicatorsDB = globals.metadata.indicatorsDB;
 
     var paletteObject = _this.getPalette();
     var domain = Object.keys(paletteObject);
@@ -226,7 +217,7 @@ var ColorModel = Hook.extend({
         //default domain is based on limits
         domain = [limits.min, limits.max];
         //domain from metadata can override it if defined
-        domain = indicatorsDB[this.which].domain ? indicatorsDB[this.which].domain : domain;
+        domain = this.getMetadata().domain ? this.getMetadata().domain : domain;
           
         var limitMin = domain[0];
         var limitMax = domain[1];

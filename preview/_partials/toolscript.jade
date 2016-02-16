@@ -3,7 +3,7 @@ script.
   var TOOL = "#{tool}";
   var DESCRIPTION = "#{description}";
 
-  VIZABI_INITIAL_MODEL = {
+  VIZABI_MODEL = {
     state: {},
     bind: {
       'ready': function(evt, vals) {
@@ -14,21 +14,21 @@ script.
         updateURL(true, minModel); // force update
       }
     },
-   ui: {
-        buttons: #{chart_buttons || '[]'},
-        buttons_expand: #{chart_buttons_expand || '[]'},
-        dialogs: #{chart_dialogs || '[]'}
-      }
+    ui: {
+      buttons: #{chart_buttons || '[]'},
+      buttons_expand: #{chart_buttons_expand || '[]'},
+      dialogs: #{chart_dialogs || '[]'}
+    }
   };
 
-  VIZABI_INITIAL_MODEL.bind['change:state'] = function(evt, vals) {
+  VIZABI_MODEL.bind['change:state'] = function(evt, vals) {
       updateStateEditor(VIZ.getModel().state);
   };
 
   var playButton = document.getElementById("vzbp-btn-play");
   var playButtonIcon = playButton.querySelectorAll("i")[0];
 
-  VIZABI_INITIAL_MODEL.bind['change:state.time.playing'] = function(evt, path) {
+  VIZABI_MODEL.bind['change:state.time.playing'] = function(evt, path) {
     var playing = evt.source;
     if (playing.value) {
       playButton.onclick = pause;
@@ -43,7 +43,7 @@ script.
     }
   };
 
-  VIZABI_INITIAL_MODEL.bind['change:state.time.record'] = function(evt, path) {
+  VIZABI_MODEL.bind['change:state.time.record'] = function(evt, path) {
     var recButton = document.getElementById("vzbp-btn-record");
     var recButtonIcon = recButton.querySelectorAll("i")[0];
     var record = evt.source;
@@ -62,7 +62,7 @@ script.
  
   var langButton = document.getElementById("vzbp-btn-lang");
 
-  VIZABI_INITIAL_MODEL.bind['change:language.id'] = function(evt, path) {
+  VIZABI_MODEL.bind['change:language.id'] = function(evt, path) {
     var lang = evt.source;
     if (lang.value === "en") {
       langButton.onclick = function() { language('se'); };
@@ -75,13 +75,10 @@ script.
     }
   };
 
-  if(!VIZABI_INITIAL_MODEL) {
-    VIZABI_INITIAL_MODEL = { state: {}}; //fa-bullseyeback
-  }
-  VIZABI_INITIAL_MODEL.language = {};
-
   parseURL();
 
-  Vizabi.utils.extend(VIZABI_INITIAL_MODEL, URL.model);
+  VIZABI_INITIAL_MODEL = Vizabi.utils.deepClone(VIZABI_MODEL);
 
-  VIZ = Vizabi("#{tool}", placeholder, VIZABI_INITIAL_MODEL);
+  Vizabi.utils.extend(VIZABI_MODEL, URL.model);
+
+  VIZ = Vizabi("#{tool}", placeholder, VIZABI_MODEL);

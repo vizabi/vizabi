@@ -104,7 +104,7 @@ BarChart.define('default_model', {
 BarRankChart.define('default_model', {
   state: {
     time: {
-      start: "1800",
+      start: "1950",
       end: "2015",
       value: "2000",
       step: 1,
@@ -120,6 +120,22 @@ BarRankChart.define('default_model', {
       opacitySelectDim: .3,
       opacityRegular: 1
     },
+    entities_allpossible: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo": ["*"],
+          "geo.cat": ["country", "unstate"]
+        }
+      }
+    },
+    marker_allpossible: {
+      space: ["entities_allpossible"],
+      label: {
+        use: "property",
+        which: "geo.name"
+      }    
+    },      
     marker: {
       space: ["entities", "time"],
       label: {
@@ -156,9 +172,11 @@ BarRankChart.define('default_model', {
   },
   language: language,
   data: {
-    //reader: "waffle",
-    reader: "csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv"
+    reader: "waffle",
+    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    //reader: "csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv"
+    splash: true
   },
   ui: {
     presentation: false
@@ -276,9 +294,25 @@ MountainChart.define('default_model', {
       show: {
         _defs_: {
           "geo": ["*"],
-          "geo.cat": ["country", "unstate"]
+          "geo.cat": ["unstate"]
         }
       }
+    },
+    entities_allpossible: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo": ["*"],
+          "geo.cat": ["unstate"]
+        }
+      }
+    },
+    marker_allpossible: {
+      space: ["entities_allpossible"],
+      label: {
+        use: "property",
+        which: "geo.name"
+      }    
     },
     marker: {
       space: ["entities", "time"],
@@ -617,13 +651,6 @@ Tool.define("preload", function(promise) {
     d3.json(metadata_path, function(metadata) {
 
       globals.metadata = metadata;
-
-      //TODO: this is a hack that helps to hide indicators which are not present in data
-      globals.metadata.indicatorsArray = utils.keys(metadata.indicatorsDB)
-        .filter(function(f) {
-          var one = metadata.indicatorsDB[f];
-          return one.allowCharts.indexOf(_this.name) != -1 || one.allowCharts.indexOf("*") != -1;
-        });
 
       // TODO: REMOVE THIS HACK
       // We are currently saving metadata info to default state manually in order
