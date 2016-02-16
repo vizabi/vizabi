@@ -36,7 +36,7 @@ var Marker = Model.extend({
   /**
    * gets the items associated with this hook without values
    * @param filter filter
-   * @returns hooked value
+   * @returns Array keys
    */
   getKeys: function(filter) {
       var sub = this.getSubhooks();
@@ -47,7 +47,7 @@ var Marker = Model.extend({
           return false;
         });
       }
-      return found;
+    return found;
   },
 
     getFrame: function(time) {
@@ -58,9 +58,14 @@ var Marker = Model.extend({
       utils.forEach(this._dataCube, function(hook, name) {
           cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start + " " + _this._parent.time.end;
       });
+      //cachePath = this.getDataManager().getCachePath(this._dataCube);
       return new Promise(function(resolve, reject) {
         if(_this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
           resolve(_this.cachedFrames[cachePath][time]);
+        } else if (_this.getDataManager().getFrame(cachePath, time) instanceof Promise){
+          _this.getDataManager().getFrame(cachePath, time).then(function(frame) {
+            resolve(frame);
+          });
         } else {
           _this.getFrames().then(function() {
             var pValues, curr = {};
@@ -114,86 +119,56 @@ var Marker = Model.extend({
 
       var steps = this._parent.time.getAllSteps();
       var result = {};
-      var getResultKeys = function () {
-        var resultKeys = [];
-        return new Promise(function(resolve, reject) {
-          var promises = [];
-          utils.forEach(_this._dataCube, function(hook, name) {
-
-            // If hook use is constant, then we can provide no additional info about keys
-            // We can just hope that we have something else than constants =)
-            if(hook.use === "constant") return;
-
-            // Get keys in data of this hook
-            promises.push(_this.getDataManager().get(hook._dataId, 'nested', ["geo", "time"]))
-          });
-          Promise.all(promises).then(function(submodels) {
-            utils.forEach(submodels, function(nested) {
-              var keys = Object.keys(nested);
-
-              if(resultKeys.length == 0) {
-                // If ain't got nothing yet, set the list of keys to result
-                resultKeys = keys;
-              } else {
-                // If there is result accumulated already, remove the keys from it that are not in this hook
-                resultKeys = resultKeys.filter(function(f) {
-                  return keys.indexOf(f) > -1;
-                })
-              }
-            });
-            resolve(resultKeys);
-          });
-        });
-      };
 
       this._dataCube = this._dataCube || this.getSubhooks(true);
       return new Promise(function(resolve, reject) {
         // Assemble the list of keys as an intersection of keys in all queries of all hooks
-        getResultKeys().then(function(resultKeys) {
 
-          steps.forEach(function(t) {
-            result[t] = {};
-          });
-          var promisesLength = 0;
-          utils.forEach(_this._dataCube, function(hook, name) {
+        var resultKeys = _this.getKeys().map(function(val) {
+          return val[Object.keys(val)[0]];
+        });
+        steps.forEach(function(t) {
+          result[t] = {};
+        });
+        var promisesLength = 0;
+        utils.forEach(_this._dataCube, function(hook, name) {
 
-            if(hook.use === "constant") {
-              steps.forEach(function(t) {
-                result[t][name] = {};
-                resultKeys.forEach(function(key) {
-                  result[t][name][key] = hook.which;
-                });
+          if(hook.use === "constant") {
+            steps.forEach(function(t) {
+              result[t][name] = {};
+              resultKeys.forEach(function(key) {
+                result[t][name][key] = hook.which;
               });
+            });
 
-            } else if(hook.which === "geo") {
-              steps.forEach(function(t) {
-                result[t][name] = {};
-                resultKeys.forEach(function(key) {
-                  result[t][name][key] = key;
-                });
+          } else if(hook.which === "geo") {
+            steps.forEach(function(t) {
+              result[t][name] = {};
+              resultKeys.forEach(function(key) {
+                result[t][name][key] = key;
               });
+            });
 
-            } else if(hook.which === "time") {
-              steps.forEach(function(t) {
-                result[t][name] = {};
-                resultKeys.forEach(function(key) {
-                  result[t][name][key] = new Date(t);
-                });
+          } else if(hook.which === "time") {
+            steps.forEach(function(t) {
+              result[t][name] = {};
+              resultKeys.forEach(function(key) {
+                result[t][name][key] = new Date(t);
               });
+            });
 
-            } else {
-              ++promisesLength;
-              _this.getDataManager().get(hook._dataId, 'frames', steps, globals.metadata.indicatorsDB).then(function(frames) {
-                utils.forEach(frames, function(frame, t) {
-                  result[t][name] = frame[hook.which];
-                });
-                _this.cachedFrames[cachePath] = result;
-                if (--promisesLength == 0) {
-                  resolve(result);
-                }
+          } else {
+            ++promisesLength;
+            _this.getDataManager().get(hook._dataId, 'frames', steps, globals.metadata.indicatorsDB).then(function(frames) {
+              utils.forEach(frames, function(frame, t) {
+                result[t][name] = frame[hook.which];
               });
-            }
-          });
+              _this.cachedFrames[cachePath] = result;
+              if (--promisesLength == 0) {
+                resolve(result);
+              }
+            });
+          }
           if (promisesLength == 0) { // we have no pending promises resolve data
             _this.cachedFrames[cachePath] = result;
             resolve(result);

@@ -167,6 +167,7 @@ var Data = Class.extend({
 
           _this._collection[queryId] = {};
           _this._data[queryId] = {};
+          _this._frames = {};
           var col = _this._collection[queryId];
           col.data = values;
           col.filtered = {};
@@ -272,6 +273,50 @@ var Data = Class.extend({
     return this._data[queryId][what][id];
   },
 
+  getKeys: function() {
+
+  },
+
+  getFrame: function(time, fields) {
+    return false;
+    var frameId = time.toString() + JSON.stringify(fields);
+    if (this._frames && this._frames[frameId] && this._frames[frameId] instanceof Promise) {
+      return this._frames[frameId];
+    } else {
+      return false;
+    }
+  },
+  /**
+   * feature in future we can change priority for calculating frames for each frame
+   * @param framesArray
+   * @param fields
+   * @returns {*}
+   */
+  framesQueue: function(framesArray, fields) {
+    if (!this.queues) {
+      this.queues = {};
+    }
+    var queueId = JSON.stringify([framesArray[0], framesArray[framesArray.length - 1]]) + JSON.stringify(fields);
+    if (!this.queues[queueId]) {
+      this.queues[queueId] = new function(){
+        this.queue = framesArray.slice(0);
+        this.queue.splice(0, 0, this.queue.splice(this.queue.length - 1, 1)[0]);
+        this.key = 0;
+        this.getNext = function() {
+          if (this.queue.length == 0) return false;
+          if (this.key >= this.queue.length - 1) {
+            this.key = 0;
+          }
+          return this.queue.splice(this.key, 1).pop();
+        }
+      }();
+    }
+    return this.queues[queueId];
+  },
+
+  getCachePath: function(dataCube) {
+
+  },
 
   /**
    * Get regularised dataset (where gaps are filled)
@@ -283,6 +328,7 @@ var Data = Class.extend({
   _getFrames: function(queryId, framesArray, indicatorsDB) {
     var _this = this;
     return new Promise(function(resolve, reject) {
+
       //TODO: thses should come from state or from outside somehow
       // FramesArray in the input contains the array of keyframes in animatable dimension.
       // Example: array of years like [1800, 1801 … 2100]
@@ -291,8 +337,8 @@ var Data = Class.extend({
 
       // Check if query.where clause is missing a time field
       var result = {};
-      if(!indicatorsDB) utils.warn("_getFrames in data.js is missing indicatorsDB, it's needed for gap filling")
-      if(!framesArray) utils.warn("_getFrames in data.js is missing framesArray, it's needed so much")
+      if(!indicatorsDB) utils.warn("_getFrames in data.js is missing indicatorsDB, it's needed for gap filling");
+      if(!framesArray) utils.warn("_getFrames in data.js is missing framesArray, it's needed so much");
 
       var KEY = "geo";
       var TIME = "time";
@@ -320,9 +366,8 @@ var Data = Class.extend({
           for (c = 0; c < cLength; c++) _this.filtered[keys[k]][columns[c]] = null;
         }
 
-        var buildFrame = function(framesArray, keys, queryId, frameId) {
+        var buildFrame = function(frameName, keys, queryId) {
 //          return new Promise(function(resolve, reject) {
-            var frameName = framesArray[frameId];
             var frame = {};
             if (!query.where.time) {
               // The query.where clause doesn't have time field for properties:
@@ -402,17 +447,18 @@ var Data = Class.extend({
               } //loop across keys
             }
             response[frameName] = frame;
-            if (++frameId < framesArray.length) {
+            var newFrame = _this.framesQueue(framesArray, columns).getNext();
+            if (newFrame) {
               utils.defer(function() {
-                buildFrame(framesArray, keys, queryId, frameId);
-              });
+                buildFrame(newFrame, keys, queryId);
+                  });
             } else {
               resolve(response);
             }
         };
         var promises = [];
         var frameId = 0;
-        buildFrame(framesArray, keys, queryId, frameId);
+        buildFrame(_this.framesQueue(framesArray, columns).getNext(), keys, queryId);
 /*
         for (var f = 0; f < framesArray.length; f++) { //loop across frameArray
           var frameName = framesArray[f];
