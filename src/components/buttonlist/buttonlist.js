@@ -9,6 +9,7 @@ import * as iconset from 'base/iconset';
 
 //default existing buttons
 var class_active = "vzb-active";
+var class_hidden = "vzb-hidden";
 var class_active_locked = "vzb-active-locked";
 var class_expand_dialog = "vzb-dialog-side";
 var class_hide_btn = "vzb-dialog-side-btn";
@@ -27,7 +28,7 @@ var ButtonList = Component.extend({
 
     //set properties
     var _this = this;
-    this.name = 'gapminder-buttonlist';
+    this.name = this.name || 'gapminder-buttonlist';
 //    this.template = '<div class="vzb-buttonlist"></div>';
 
     this.model_expects = [{
@@ -45,99 +46,89 @@ var ButtonList = Component.extend({
       'find': {
         title: "buttons/find",
         icon: "search",
-        required: false,
-        isgraph: false
+        required: false
       },
       'show': {
         title: "buttons/show",
         icon: "asterisk",
-        required: false,
-        isgraph: false
+        required: false
       },
       'moreoptions': {
         title: "buttons/more_options",
         icon: "gear",
-        required: true,
-        isgraph: false
+        required: true
       },
       'colors': {
         title: "buttons/colors",
         icon: "paintbrush",
-        required: false,
-        isgraph: false
+        required: false
       },
       'size': {
         title: "buttons/size",
         icon: "circle",
-        required: false,
-        isgraph: false
+        required: false
       },
       'fullscreen': {
         title: "buttons/expand",
         icon: "expand",
         func: this.toggleFullScreen.bind(this),
-        required: true,
-        isgraph: false
+        required: true
       },
       'trails': {
         title: "buttons/trails",
         icon: "trails",
         func: this.toggleBubbleTrails.bind(this),
         required: false,
-        isgraph: true
+        statebind: "state.time.trails",
+        statebindfunc: this.setBubbleTrails.bind(this)
       },
       'lock': {
         title: "buttons/lock",
         icon: "lock",
         func: this.toggleBubbleLock.bind(this),
         required: false,
-        isgraph: true
+        statebind: "state.time.lockNonSelected",
+        statebindfunc: this.setBubbleLock.bind(this)
       },
       'presentation': {
         title: "buttons/presentation",
         icon: "presentation",
         func: this.togglePresentationMode.bind(this),
         required: false,
-        isgraph: false,
         statebind: "ui.presentation",
         statebindfunc: this.setPresentationMode.bind(this)
       },
       'about': {
         title: "buttons/about",
         icon: "about",
-        required: false,
-        isgraph: false
+        required: false
       },
       'axes': {
         title: "buttons/axes",
         icon: "axes",
-        required: false,
-        isgraph: false
+        required: false
       },
       'axesmc': {
         title: "buttons/axesmc",
         icon: "axes",
-        required: false,
-        isgraph: false
+        required: false
       },
       'stack': {
         title: "buttons/stack",
         icon: "stack",
-        required: false,
-        isgraph: false
+        required: false
       },
       '_default': {
         title: "Button",
         icon: "asterisk",
-        required: false,
-        isgraph: false
+        required: false
       }
     };
 
     this._active_comp = false;
 
     this.model_binds = {
-      "change:state.entities.select": function() {
+      "change:state.entities.select": function(evt) {
         if(!_this._readyOnce) return;
 
         if(_this.model.state.entities.select.length === 0) {
@@ -149,10 +140,10 @@ var ButtonList = Component.extend({
 
 
         //scroll button list to end if bottons appeared or disappeared
-        if(_this.entitiesSelected_1 !== (_this.model.state.entities.select.length > 0)) {
-          _this.scrollToEnd();
-        }
-        _this.entitiesSelected_1 = _this.model.state.entities.select.length > 0;
+        // if(_this.entitiesSelected_1 !== (_this.model.state.entities.select.length > 0)) {
+        //   _this.scrollToEnd();
+        // }
+        // _this.entitiesSelected_1 = _this.model.state.entities.select.length > 0;
       }      
     }
     
@@ -174,6 +165,12 @@ var ButtonList = Component.extend({
   readyOnce: function() {
 
     var _this = this;
+    
+    this.root.findChildByName("gapminder-dialogs").on('close', function( evt, params) {
+      _this.setButtonActive(params.id, false);
+    });
+
+    
     var button_expand = (this.model.ui.dialogs||{}).sidebar || [];
 
     this.element = d3.select(this.placeholder);
@@ -204,29 +201,14 @@ var ButtonList = Component.extend({
 
     var buttons = this.element.selectAll(".vzb-buttonlist-btn");
 
-    this._toggleButtons();
     //clicking the button
     buttons.on('click', function() {
 
       d3.event.preventDefault();
       d3.event.stopPropagation();
-      var btn = d3.select(this),
-        id = btn.attr("data-btn"),
-        classes = btn.attr("class"),
-        btn_config = _this._available_buttons[id];
-
-
-      if(btn_config && btn_config.func) {
-        btn_config.func(id);
-      } else {
-        var btn_active = classes.indexOf(class_active) === -1;
-
-        btn.classed(class_active, btn_active);
-        var evt = {};
-        evt['id'] = id;
-        evt['active'] = btn_active;
-        _this.trigger('click', evt);
-      }
+      
+      var id = d3.select(this).attr("data-btn");
+      _this.proceedClick(id);
     });
 
     //store body overflow
@@ -236,12 +218,33 @@ var ButtonList = Component.extend({
     this.setBubbleLock();
     this.setPresentationMode();
 
+    this._toggleButtons();
+
+  },
+  
+  proceedClick: function(id) {
+    var _this = this;
+    var btn = _this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
+      classes = btn.attr("class"),
+      btn_config = _this._available_buttons[id];
+
+    if(btn_config && btn_config.func) {
+      btn_config.func(id);
+    } else {
+      var btn_active = classes.indexOf(class_active) === -1;
+
+      btn.classed(class_active, btn_active);
+      var evt = {};
+      evt['id'] = id;
+      evt['active'] = btn_active;
+      _this.trigger('click', evt);
+    }    
   },
   
   validatePopupButtons: function (buttons, popupDialogs) {
     var _this = this;
     var popupButtons = buttons.filter(function(d) {
-      return (!_this._available_buttons[d].func); 
+      return (_this._available_buttons[d] && !_this._available_buttons[d].func); 
       });
     for(var i = 0, j = popupButtons.length; i < j; i++) {
        if(popupDialogs.indexOf(popupButtons[i]) == -1) {
@@ -254,117 +257,108 @@ var ButtonList = Component.extend({
   /*
    * reset buttons show state
    */
-   _showAllButtons: function() {
-     // show all existing buttons
-     var _this = this;
-     var buttons = this.element.selectAll(".vzb-buttonlist-btn");
-     buttons.each(function(d,i) {
-       var button = d3.select(this);
-       if (button.style("display") == "none"){
-         if(!d.isgraph){
-           button.style("display", "inline-block");
-         } else if ((_this.model.state.entities.select.length > 0)){
-           button.style("display", "inline-block");
-         }
-       }
-     });
-   },
+  _showAllButtons: function() {
+    // show all existing buttons
+    var _this = this;
+    var buttons = this.element.selectAll(".vzb-buttonlist-btn");
+    buttons.each(function(d,i) {
+      var button = d3.select(this);
+      button.style('display', '');
+    });
+  },
 
   /*
-   * determine which buttons are shown on the buttonlist
-   */
-   _toggleButtons: function() {
-     var _this = this;
-     var parent = d3.select(this.parent.element);
+  * determine which buttons are shown on the buttonlist
+  */
+  _toggleButtons: function() {
+    var _this = this;
+    var parent = this.parent.element.node ? this.parent.element : d3.select(this.parent.element);
 
-     //HERE
-     var button_expand = (this.model.ui.dialogs||{}).sidebar || [];
-     _this._showAllButtons();
+    //HERE
+    var button_expand = (this.model.ui.dialogs||{}).sidebar || [];
+    _this._showAllButtons();
 
-     var buttons = this.element.selectAll(".vzb-buttonlist-btn");
+    var buttons = this.element.selectAll(".vzb-buttonlist-btn");
 
-     var container = this.element.node().getBoundingClientRect();
+    var container = this.element.node().getBoundingClientRect();
 
-     var not_required = [];
-     var required = [];
+    var not_required = [];
+    var required = [];
 
-     var button_width = 80;
-     var button_height = 80;
-     var container_width = this.element.node().getBoundingClientRect().width;
-     var container_height = this.element.node().getBoundingClientRect().height;
-     var buttons_width = 0;
-     var buttons_height = 0;
+    var button_width = 80;
+    var button_height = 80;
+    var container_width = this.element.node().getBoundingClientRect().width;
+    var container_height = this.element.node().getBoundingClientRect().height;
+    var buttons_width = 0;
+    var buttons_height = 0;
 
-     buttons.each(function(d,i) {
-       var button_data = d;
-       var button = d3.select(this);
-       var expandable = button_expand.indexOf(button_data.id) !== -1;
-       var button_margin = {top: parseInt(button.style("margin-top")), right: parseInt(button.style("margin-right")), left: parseInt(button.style("margin-left")), bottom: parseInt(button.style("margin-bottom"))};
-       button_width = button.node().getBoundingClientRect().width + button_margin.right + button_margin.left;
-       button_height = button.node().getBoundingClientRect().height + button_margin.top + button_margin.bottom;
+    buttons.each(function(d,i) {
+      var button_data = d;
+      var button = d3.select(this);
+      var expandable = button_expand.indexOf(button_data.id) !== -1;
+      var button_margin = {top: parseInt(button.style("margin-top")), right: parseInt(button.style("margin-right")), left: parseInt(button.style("margin-left")), bottom: parseInt(button.style("margin-bottom"))};
+      button_width = button.node().getBoundingClientRect().width + button_margin.right + button_margin.left;
+      button_height = button.node().getBoundingClientRect().height + button_margin.top + button_margin.bottom;
 
-       if(!button_data.isgraph){
-         if(!expandable || (_this.getLayoutProfile() !== 'large')){
-           buttons_width += button_width;
-           buttons_height += button_height;
-           //sort buttons between required and not required buttons.
-           // Not required buttons will only be shown if there is space available
-           if(button_data.required){
-             required.push(button);
-           } else {
-             not_required.push(button);
-           }
-         } else {
-            button.style("display", "none");
-         }
-       } else if (_this.model.state.entities.select.length > 0){
-         buttons_width += button_width;
-         buttons_height += button_height;
-         //sort buttons between required and not required buttons.
-         // Not required buttons will only be shown if there is space available
-         if(button_data.required){
-           required.push(button);
-         } else {
-           not_required.push(button);
-         }
-       }
-     });
-     var width_diff = buttons_width - container_width;
-     var height_diff = buttons_height - container_height;
-     var number_of_buttons = 1;
+      if(!button.classed(class_hidden)) {
+        if(!expandable || (_this.getLayoutProfile() !== 'large')){
+          buttons_width += button_width;
+          buttons_height += button_height;
+          //sort buttons between required and not required buttons.
+          // Not required buttons will only be shown if there is space available
+          if(button_data.required){
+            required.push(button);
+          } else {
+            not_required.push(button);
+          }
+        } else {
+          button.style("display", "none");
+        }
+      }
+    });
+    var width_diff = buttons_width - container_width;
+    var height_diff = buttons_height - container_height;
+    var number_of_buttons = 1;
 
-     //check if container is landscape or portrait
+    //check if container is landscape or portrait
     // if portrait small or large with expand, use width
-     if(parent.classed("vzb-large") && parent.classed("vzb-dialog-expand-true")
-      || parent.classed("vzb-small") && parent.classed("vzb-portrait")) {
-       //check if the width_diff is small. If it is, add to the container
-       // width, to allow more buttons in a way that is still usable
-       if(width_diff > 0 && width_diff <=10){
-         container_width += width_diff;
-       }
-       number_of_buttons = Math.floor(container_width / button_width) - required.length;
-       if(number_of_buttons < 0){
-         number_of_buttons = 0;
-       }
-     // else, use height
-     } else {
-       //check if the width_diff is small. If it is, add to the container
-       // width, to allow more buttons in a way that is still usable
-       if(height_diff > 0 && height_diff <=10){
-         container_height += height_diff;
-       }
-       number_of_buttons = Math.floor(container_height / button_height) - required.length;
-       if(number_of_buttons < 0){
-         number_of_buttons = 0;
-       }
-     }
-     //change the display property of non required buttons, from right to
-     // left
-     not_required.reverse();
-     for (var i = 0 ; i < not_required.length-number_of_buttons ; i++) {
-         not_required[i].style("display", "none");
-     }
-   },
+    if(parent.classed("vzb-large") && parent.classed("vzb-dialog-expand-true")
+    || parent.classed("vzb-small") && parent.classed("vzb-portrait")) {
+      //check if the width_diff is small. If it is, add to the container
+      // width, to allow more buttons in a way that is still usable
+      if(width_diff > 0 && width_diff <=10){
+        container_width += width_diff;
+      }
+      number_of_buttons = Math.floor(container_width / button_width) - required.length;
+      if(number_of_buttons < 0){
+        number_of_buttons = 0;
+      }
+    // else, use height
+    } else {
+      //check if the width_diff is small. If it is, add to the container
+      // width, to allow more buttons in a way that is still usable
+      if(height_diff > 0 && height_diff <=10){
+        container_height += height_diff;
+      }
+      number_of_buttons = Math.floor(container_height / button_height) - required.length;
+      if(number_of_buttons < 0){
+        number_of_buttons = 0;
+      }
+    }
+    //change the display property of non required buttons, from right to
+    // left
+    not_required.reverse();
+    var hiddenButtons = [];
+    for (var i = 0, j = not_required.length - number_of_buttons; i < j ; i++) {
+        not_required[i].style("display", "none");
+        hiddenButtons.push(not_required[i].attr("data-btn"));
+    }
+    
+    var evt = {};
+    evt['hiddenButtons'] = hiddenButtons;
+    _this.trigger('toggle', evt);
+
+  },
 
   /*
    * adds buttons configuration to the components and template_data
@@ -385,7 +379,7 @@ var ButtonList = Component.extend({
 
       //add template data
       var d = (btn_config) ? btn : "_default";
-      var details_btn = this._available_buttons[d];
+      var details_btn = utils.clone(this._available_buttons[d]);
 
       details_btn.id = btn;
       details_btn.icon = iconset[details_btn.icon];
@@ -463,7 +457,7 @@ var ButtonList = Component.extend({
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
 
     btn.classed(class_active_locked, this.model.state.time.trails);
-    btn.style("display", this.model.state.entities.select.length == 0 ? "none" : "inline-block")
+    btn.classed(class_hidden, this.model.state.entities.select.length == 0);
   },
   toggleBubbleLock: function(id) {
     if(this.model.state.entities.select.length == 0) return;
@@ -483,7 +477,7 @@ var ButtonList = Component.extend({
     var locked = this.model.state.time.lockNonSelected;
 
     btn.classed(class_unavailable, this.model.state.entities.select.length == 0);
-    btn.style("display", this.model.state.entities.select.length == 0 ? "none" : "inline-block")
+    btn.classed(class_hidden, this.model.state.entities.select.length == 0);
 
     btn.classed(class_active_locked, locked)
     btn.select(".vzb-buttonlist-btn-title")
@@ -515,7 +509,7 @@ var ButtonList = Component.extend({
     var body_overflow = (fs) ? "hidden" : this._prev_body_overflow;
 
     while(!(pholder_found = utils.hasClass(pholder, 'vzb-placeholder'))) {
-      component = this.parent;
+      component = component.parent;
       pholder = component.placeholder;
     }
 

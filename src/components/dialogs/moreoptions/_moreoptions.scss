@@ -1,7 +1,34 @@
 .vzb-tool-dialogs {
   .vzb-dialogs-dialog {
     &[data-dlg='moreoptions'] {
+      @import '../../buttonlist/optionsbuttonlist/optionsbuttonlist';
+      >.vzb-dialog-modal {
+        display: flex;
+        flex-direction: column;
+        >.thumb-tack-class {
+          position: absolute;
+          right: 0;
+          &.thumb-tack-class-ico-drag {
+            right: 34px;
+          }
+        }
+        >.vzb-dialog-options-buttonlist {
+          margin-top: 40px;
+          flex: 1 10 auto;
+          min-height: 53px;
+          max-height: 53px;
+          overflow-y: auto;
+        }
+        >.vzb-dialog-title {
+          padding-top: 16px;
+          flex: 0 0 50px;
+        }
+        >.vzb-dialog-buttons {
+          flex: 0 0 70px;
+        }
+      }
       .vzb-dialog-content {
+        flex: 1 1 auto;
         &.vzb-accordion {
           padding: 0 0 5px;
           .vzb-accordion-section { 
@@ -43,3 +70,34 @@
     }
   }
 }
+
+&.vzb-small {
+  .vzb-tool-dialogs {
+    .vzb-dialogs-dialog {
+      &[data-dlg='moreoptions'] {
+        >.vzb-dialog-modal {
+          >.vzb-dialog-options-buttonlist {
+            margin-top: 0;
+          }
+        }
+      }
+    }
+  }  
+}
+
+&.vzb-large {
+  &.vzb-dialog-expand-true {
+    .vzb-tool-dialogs {
+      .vzb-dialogs-dialog {
+        &[data-dlg='moreoptions'] {
+          >.vzb-dialog-modal {
+            >.vzb-dialog-options-buttonlist {
+              min-height: 106px;
+            }
+          }
+        }
+      }
+    }
+  }
+}  
+

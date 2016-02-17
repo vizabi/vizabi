@@ -1,0 +1,32 @@
+
+
+.vzb-dialog-options-buttonlist {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  background-color: $vzb-color-primary-lightest;
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+  width: 100%;
+  white-space: nowrap;
+
+  input,
+  textarea,
+  keygen,
+  select,
+  button {
+    font-family: $vzb-font-family;
+  }
+
+  &:-webkit-scrollbar {
+    display: none;
+  }
+  
+  .vzb-buttonlist-btn {
+    > .vzb-buttonlist-btn-icon {
+      @include transition(background-color 100ms ease-in, 
+      color 100ms ease-in, border 100ms ease-in, opacity 100ms ease-in);
+    }
+  }
+}

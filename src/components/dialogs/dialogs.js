@@ -226,7 +226,7 @@ var Dialogs = Component.extend({
       .attr('data-dlg', function(d) {
         return d.id;
       })
-      .attr('class', 'vzb-top-dialog vzb-dialogs-dialog vzb-dialogs-dialog vzb-dialog-shadow');
+      .attr('class', 'vzb-top-dialog vzb-dialogs-dialog vzb-dialog-shadow');
 
     this.loadComponents();
 
@@ -242,8 +242,9 @@ var Dialogs = Component.extend({
       });
       subcomp.on('close', function() {
         this.placeholderEl.each( function(d) {
-          _this.root.findChildByName("gapminder-buttonlist")
-            .setButtonActive(d.id, false);
+          var evt = {};
+          evt.id = d.id;
+          _this.trigger('close', evt);
         });
       });
     });

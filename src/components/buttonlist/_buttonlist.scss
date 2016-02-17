@@ -10,7 +10,8 @@ $vzb-button-color-title-active: $vzb-button-color;
 $vzb-button-color-border: #cce6ed;
 
 
-.vzb-tool-buttonlist {
+.vzb-tool-buttonlist,
+.vzb-dialog-options-buttonlist {
   .vzb-buttonlist-btn {
     outline: none;
     background: none;
