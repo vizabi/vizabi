@@ -585,10 +585,10 @@ var TreeMenu = Component.extend({
           this.clearPos();
         } else {
           if( this.wrapper.node().offsetTop < 0) {
-            this.wrapper.style('bottom', (this.height - containerHeight - 10) + 'px');
+            this.wrapper.style('top', '10px'); 
           }
           if(this.height - _this.wrapper.node().offsetTop - containerHeight < 0) {
-            this.wrapper.style('bottom', '10px');
+            this.wrapper.style('top', (this.height - containerHeight - 10) + 'px');
           }
         }
       }
@@ -655,9 +655,8 @@ var TreeMenu = Component.extend({
     var rect = this.wrapper.node().getBoundingClientRect();      
     
     if(top) {
-      var bottom = this.element.node().offsetHeight - top - rect.height;
-      this.wrapper.style({'bottom': bottom + 'px', 'top': 'auto'});
-      this.wrapper.classed(css.absPosVert, bottom);
+      this.wrapper.style({'top': top + 'px', 'bottom': 'auto'});
+      this.wrapper.classed(css.absPosVert, top);
     }
     if(left) {
       var right = this.element.node().offsetWidth - left - rect.width; 
