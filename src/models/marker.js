@@ -159,7 +159,7 @@ var Marker = Model.extend({
 
           } else {
             ++promisesLength;
-            _this.getDataManager().get(hook._dataId, 'frames', steps, globals.metadata.indicatorsDB).then(function(frames) {
+            _this.getDataManager().get(hook._dataId, 'frames', steps).then(function(frames) {
               utils.forEach(frames, function(frame, t) {
                 result[t][name] = frame[hook.which];
               });

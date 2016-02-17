@@ -252,7 +252,7 @@ var Data = Class.extend({
       } else {
         switch(what) {
           case 'unique':
-            _this._collection[queryId][what][id] = _this._getUnique(queryId, whatId);
+            _this._collection[queryId][what][id] = _this.getUnique(queryId, whatId);
             break;
           case 'filtered':
             _this._collection[queryId][what][id] = _this._getFiltered(queryId, whatId);
@@ -332,10 +332,9 @@ var Data = Class.extend({
    * Get regularised dataset (where gaps are filled)
    * @param {Number} queryId hash code for query
    * @param {Array} framesArray -- array of keyframes across animatable
-   * @param {Object} indicatorsDB -- indicators DB from globals.metadata
    * @returns {Object} regularised dataset, nested by [animatable, column, key]
    */
-  _getFrames: function(queryId, framesArray, indicatorsDB) {
+  _getFrames: function(queryId, framesArray) {
     var _this = this;
     return new Promise(function(resolve, reject) {
 
@@ -346,7 +345,9 @@ var Data = Class.extend({
       // (some of which might already exist in the set. in regular datasets all the points would exist!)
 
       // Check if query.where clause is missing a time field
-      var result = {};
+
+      var indicatorsDB = _this.getMetadata();
+
       if(!indicatorsDB) utils.warn("_getFrames in data.js is missing indicatorsDB, it's needed for gap filling");
       if(!framesArray) utils.warn("_getFrames in data.js is missing framesArray, it's needed so much");
 
@@ -554,13 +555,14 @@ var Data = Class.extend({
 
 
   _getLimitsPerFrame: function(queryId, args) {
+    var _this = this;
     var result = {};
     var values = [];
 
     var frames = this.get(queryId, 'frames', args.framesArray);
 
     return new Promise(function(resolve, reject) {
-      _this.get(queryId, 'frames', args.framesArray, indicatorsDB).then(function(frames) {
+      _this.get(queryId, 'frames', args.framesArray).then(function(frames) {
         utils.forEach(frames, function(frame, t){
           result[t] = {};
 

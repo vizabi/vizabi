@@ -138,7 +138,6 @@ var Hook = Model.extend({
 
     }else{
         var args = {framesArray: steps, which: this.which};
-        result = this.getDataManager().get(this._dataId, 'limitsPerFrame', args, globals.metadata.indicatorsDB);
         result = this.getDataManager().get(this._dataId, 'limitsPerFrame', args);
     }
 
@@ -154,7 +153,7 @@ var Hook = Model.extend({
     getUnique: function(attr) {
         if(!this.isHook()) return;
         if(!attr) attr = this._getFirstDimension({type: "time"});
-        return this.getDataManager().get(this._dataId, 'unique', attr);
+        return this.getDataManager().getUnique(this._dataId, attr);
     },
 
 

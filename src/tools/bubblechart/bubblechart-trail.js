@@ -109,18 +109,19 @@ export default Class.extend({
 
       trail.each(function(segment, index) {
         //update segment data (maybe for new indicators)
+        _this.model.marker.getFrame(segment.t).then(function(frame) {
+          segment.valueY = frame.axis_y[d[KEY]];
+          segment.valueX = frame.axis_x[d[KEY]];
+          segment.valueS = frame.size[d[KEY]];
+          segment.valueC = frame.color[d[KEY]];
 
-        segment.valueY = _this.model.marker.getFrame(segment.t).axis_y[d[KEY]];
-        segment.valueX = _this.model.marker.getFrame(segment.t).axis_x[d[KEY]];
-        segment.valueS = _this.model.marker.getFrame(segment.t).size[d[KEY]];
-        segment.valueC = _this.model.marker.getFrame(segment.t).color[d[KEY]];
-
-        //update min max frame: needed to zoom in on the trail
-        if(segment.valueX > maxmin.valueXmax || maxmin.valueXmax == null) maxmin.valueXmax = segment.valueX;
-        if(segment.valueX < maxmin.valueXmin || maxmin.valueXmin == null) maxmin.valueXmin = segment.valueX;
-        if(segment.valueY > maxmin.valueYmax || maxmin.valueYmax == null) maxmin.valueYmax = segment.valueY;
-        if(segment.valueY < maxmin.valueYmin || maxmin.valueYmin == null) maxmin.valueYmin = segment.valueY;
-        if(segment.valueS > maxmin.valueSmax || maxmin.valueSmax == null) maxmin.valueSmax = segment.valueS;
+          //update min max frame: needed to zoom in on the trail
+          if(segment.valueX > maxmin.valueXmax || maxmin.valueXmax == null) maxmin.valueXmax = segment.valueX;
+          if(segment.valueX < maxmin.valueXmin || maxmin.valueXmin == null) maxmin.valueXmin = segment.valueX;
+          if(segment.valueY > maxmin.valueYmax || maxmin.valueYmax == null) maxmin.valueYmax = segment.valueY;
+          if(segment.valueY < maxmin.valueYmin || maxmin.valueYmin == null) maxmin.valueYmin = segment.valueY;
+          if(segment.valueS > maxmin.valueSmax || maxmin.valueSmax == null) maxmin.valueSmax = segment.valueS;
+        });
       });
 
     });
