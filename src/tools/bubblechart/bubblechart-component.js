@@ -24,7 +24,6 @@ var BubbleChartComp = Component.extend({
    * @param {Object} context The component's parent
    */
   init: function(config, context) {
-    console.log('init');
     var _this = this;
     this.name = 'bubblechart';
     this.template = 'bubblechart.html';
@@ -448,17 +447,18 @@ var BubbleChartComp = Component.extend({
       _this.updateBubbleOpacity();
       _this.updateIndicators();
       _this.cached = {};
-      _this._trails.create();
-      _this._trails.run("findVisible");
-      _this._panZoom.reset(); // includes redraw data points and trail resize
-      _this._trails.run(["recolor", "opacityHandler", "reveal"]);
+      _this._trails.create().then(function() {
+        _this._trails.run("findVisible");
+        _this._panZoom.reset(); // includes redraw data points and trail resize
+        _this._trails.run(["recolor", "opacityHandler", "reveal"]);
 
-      _this._panZoom.zoomToMaxMin(
-        _this.model.marker.axis_x.zoomedMin,
-        _this.model.marker.axis_x.zoomedMax,
-        _this.model.marker.axis_y.zoomedMin,
-        _this.model.marker.axis_y.zoomedMax
-      )
+        _this._panZoom.zoomToMaxMin(
+          _this.model.marker.axis_x.zoomedMin,
+          _this.model.marker.axis_x.zoomedMax,
+          _this.model.marker.axis_y.zoomedMin,
+          _this.model.marker.axis_y.zoomedMax
+        )
+      });
     });
   },
 

@@ -203,7 +203,6 @@ var ButtonList = Component.extend({
     this._addButtons();
 
     var buttons = this.element.selectAll(".vzb-buttonlist-btn");
-    console.log("ready once");
     this._toggleButtons();
     //clicking the button
     buttons.on('click', function() {
