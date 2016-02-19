@@ -425,6 +425,7 @@ var BubbleChartComp = Component.extend({
     this.updateMarkerSizeLimits();
 
     this.model.marker.getFrame(endTime).then(function(values) {
+
       _this.updateEntities(values);
       _this.updateBubbleOpacity();
       _this.selectDataPoints();
@@ -444,6 +445,7 @@ var BubbleChartComp = Component.extend({
     this.updateMarkerSizeLimits();
     this.model.marker.getFrame(endTime).then(function(values) {
       _this.updateEntities(values);
+      _this.redrawDataPoints();
       _this.updateBubbleOpacity();
       _this.updateIndicators();
       _this.cached = {};

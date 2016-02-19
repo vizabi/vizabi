@@ -48,18 +48,6 @@ export default Class.extend({
           }
         });
 
-        if(context.cached[d[KEY]] == null) context.cached[d[KEY]] = {};
-
-        context.cached[d[KEY]].maxMinValues = {
-          valueXmax: null,
-          valueXmin: null,
-          valueYmax: null,
-          valueYmin: null,
-          valueSmax: null
-        };
-
-        var maxmin = context.cached[d[KEY]].maxMinValues;
-
         var trail = context.entityTrails
           .filter(function(f) {
             return f[KEY] == "trail-" + d[KEY]
@@ -124,11 +112,6 @@ export default Class.extend({
             segment.valueC = frame.color[d[KEY]];
 
             //update min max frame: needed to zoom in on the trail
-            if(segment.valueX > maxmin.valueXmax || maxmin.valueXmax == null) maxmin.valueXmax = segment.valueX;
-            if(segment.valueX < maxmin.valueXmin || maxmin.valueXmin == null) maxmin.valueXmin = segment.valueX;
-            if(segment.valueY > maxmin.valueYmax || maxmin.valueYmax == null) maxmin.valueYmax = segment.valueY;
-            if(segment.valueY < maxmin.valueYmin || maxmin.valueYmin == null) maxmin.valueYmin = segment.valueY;
-            if(segment.valueS > maxmin.valueSmax || maxmin.valueSmax == null) maxmin.valueSmax = segment.valueS;
           });
         });
         if (promises.length > 0) {
@@ -145,31 +128,34 @@ export default Class.extend({
 
 
   run: function(actions, selection, duration) {
-    var _this = this.context;
-    var KEY = _this.KEY;
+    var _this = this;
+    var context = this.context;
+    var KEY = context.KEY;
 
+    this._isCreated.then(function() {
 
-    //quit if function is called accidentally
-    if((!_this.model.time.trails || !_this.model.entities.select.length) && actions != "remove") return;
-    if(!duration) duration = 0;
+      //quit if function is called accidentally
+      if((!context.model.time.trails || !context.model.entities.select.length) && actions != "remove") return;
 
-    actions = [].concat(actions);
+      if(!duration) duration = 0;
 
-    //work with entities.select (all selected entities), if no particular selection is specified
-    selection = selection == null ? _this.model.entities.select : [selection];
-    selection.forEach(function(d) {
+      actions = [].concat(actions);
 
-      var trail = _this.entityTrails
-        .filter(function(f) {
-          return f[KEY] == "trail-" + d[KEY]
+      //work with entities.select (all selected entities), if no particular selection is specified
+      selection = selection == null ? context.model.entities.select : [selection];
+      selection.forEach(function(d) {
+
+        var trail = context.entityTrails
+          .filter(function(f) {
+            return f[KEY] == "trail-" + d[KEY]
+          })
+          .selectAll("g")
+
+        //do all the actions over "trail"
+        actions.forEach(function(action) {
+          context._trails["_" + action](trail, duration, d);
         })
-        .selectAll("g")
-
-      //do all the actions over "trail"
-      actions.forEach(function(action) {
-        _this._trails["_" + action](trail, duration, d);
-      })
-
+      });
     });
   },
 
@@ -183,8 +169,9 @@ export default Class.extend({
     if (context.model.time.splash) {
       return;
     }
-    this._isCreated.then(function() {
-      trail.each(function(segment, index) {
+//    this._isCreated.then(function() {
+
+      trail.each(function (segment, index) {
 
         var view = d3.select(this);
         view.select("circle")
@@ -194,13 +181,13 @@ export default Class.extend({
           .attr("r", utils.areaToRadius(context.sScale(segment.valueS)));
 
         var next = this.parentNode.childNodes[(index + 1)];
-        if(next == null) return;
+        if (next == null) return;
         next = next.__data__;
 
         var lineLength = Math.sqrt(
-          Math.pow(context.xScale(segment.valueX) - context.xScale(next.valueX),2) +
-          Math.pow(context.yScale(segment.valueY) - context.yScale(next.valueY),2)
-        )
+          Math.pow(context.xScale(segment.valueX) - context.xScale(next.valueX), 2) +
+          Math.pow(context.yScale(segment.valueY) - context.yScale(next.valueY), 2)
+        );
 
         view.select("line")
           //.transition().duration(duration).ease("linear")
@@ -211,31 +198,29 @@ export default Class.extend({
           .style("stroke-dasharray", lineLength)
           .style("stroke-dashoffset", utils.areaToRadius(context.sScale(segment.valueS)));
       });
-    });
+//    });
   },
 
   _recolor: function(trail, duration, d) {
     var _this = this.context;
-    this._isCreated.then(function() {
-      trail.each(function(segment, index) {
+    trail.each(function(segment, index) {
 
-        var view = d3.select(this);
+      var view = d3.select(this);
 
-        var strokeColor = _this.model.marker.color.which == "geo.region"?
-          _this.model.marker.color.getColorShade({
-            colorID: segment.valueC,
-            shadeID: "shade"
-          })
-          :
-          _this.cScale(segment.valueC);
+      var strokeColor = _this.model.marker.color.which == "geo.region"?
+        _this.model.marker.color.getColorShade({
+          colorID: segment.valueC,
+          shadeID: "shade"
+        })
+        :
+        _this.cScale(segment.valueC);
 
-        view.select("circle")
-          //.transition().duration(duration).ease("linear")
-          .style("fill", _this.cScale(segment.valueC));
-        view.select("line")
-          //.transition().duration(duration).ease("linear")
-          .style("stroke", strokeColor);
-      });
+      view.select("circle")
+        //.transition().duration(duration).ease("linear")
+        .style("fill", _this.cScale(segment.valueC));
+      view.select("line")
+        //.transition().duration(duration).ease("linear")
+        .style("stroke", strokeColor);
     });
   },
 
@@ -256,7 +241,6 @@ export default Class.extend({
   _findVisible: function(trail, duration, d) {
     var _this = this.context;
     var KEY = _this.KEY;
-
     var firstVisible = true;
     var trailStartTime = _this.model.time.timeFormat.parse("" + d.trailStartTime);
 
@@ -264,13 +248,31 @@ export default Class.extend({
 
       // segment is transparent if it is after current time or before trail StartTime
       segment.transparent = (segment.t - _this.time >= 0) || (trailStartTime - segment.t > 0)
-        //no trail segment should be visible if leading bubble is shifted backwards
+          //no trail segment should be visible if leading bubble is shifted backwards
         || (d.trailStartTime - _this.model.time.timeFormat(_this.time) >= 0);
 
       if(firstVisible && !segment.transparent) {
+        if(_this.cached[d[KEY]] == null) _this.cached[d[KEY]] = {};
+        _this.cached[d[KEY]].maxMinValues = {
+          valueXmax: null,
+          valueXmin: null,
+          valueYmax: null,
+          valueYmin: null,
+          valueSmax: null
+        };
+
         _this.cached[d[KEY]].labelX0 = segment.valueX;
         _this.cached[d[KEY]].labelY0 = segment.valueY;
         _this.cached[d[KEY]].scaledS0 = utils.areaToRadius(_this.sScale(segment.valueS));
+
+        var maxmin = _this.cached[d[KEY]].maxMinValues;
+
+        if(segment.valueX > maxmin.valueXmax || maxmin.valueXmax == null) maxmin.valueXmax = segment.valueX;
+        if(segment.valueX < maxmin.valueXmin || maxmin.valueXmin == null) maxmin.valueXmin = segment.valueX;
+        if(segment.valueY > maxmin.valueYmax || maxmin.valueYmax == null) maxmin.valueYmax = segment.valueY;
+        if(segment.valueY < maxmin.valueYmin || maxmin.valueYmin == null) maxmin.valueYmin = segment.valueY;
+        if(segment.valueS > maxmin.valueSmax || maxmin.valueSmax == null) maxmin.valueSmax = segment.valueS;
+
         firstVisible = false;
       }
     });
@@ -313,7 +315,7 @@ export default Class.extend({
       }
     });
 
-  },
+  }
 
 
 });

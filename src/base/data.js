@@ -449,7 +449,7 @@ var Data = Class.extend({
                     // Now we are left with a fewer frames in the filtered array. Let's check its length.
                     //If the array is empty, then the entire column is missing for the key
                     //So we let the key have missing values in this column for all frames
-                    if (items.length > 0) {
+                    if (items && items.length > 0) {
                       next = null;
                       frame[column][key] = utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
                     }
@@ -462,7 +462,7 @@ var Data = Class.extend({
             if (newFrame) {
               utils.defer(function() {
                 buildFrame(newFrame, keys, queryId);
-                  });
+              });
             } else {
               resolve(response);
             }
