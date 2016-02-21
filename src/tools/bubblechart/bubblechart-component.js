@@ -225,7 +225,8 @@ var BubbleChartComp = Component.extend({
 
     this.ui.labels = utils.extend({
       autoResolveCollisions: false,
-      dragging: true
+      dragging: true,
+      nearestCornerLeash: false
     }, this.ui.labels);
 
     this._trails = new Trail(this);
@@ -1313,30 +1314,15 @@ var BubbleChartComp = Component.extend({
 
     var diffX1 = resolvedX0 - resolvedX;
     var diffY1 = resolvedY0 - resolvedY;
-    var diffX2 = 0;
-    var diffY2 = 0;
-
-    var angle = Math.atan2(diffX1 + width / 2, diffY1 + height / 2) * 180 / Math.PI;
-    // middle bottom
-    if(Math.abs(angle) <= 45) {
-      diffX2 = width / 2;
-      diffY2 = 0
-    }
-    // right middle
-    if(angle > 45 && angle < 135) {
-      diffX2 = 0;
-      diffY2 = height / 4;
-    }
-    // middle top
-    if(angle < -45 && angle > -135) {
-      diffX2 = width - 4;
-      diffY2 = height / 4;
-    }
-    // left middle
-    if(Math.abs(angle) >= 135) {
-      diffX2 = width / 2;
-      diffY2 = height / 2
-    }
+    var textWidth = labelGroup.select('text').node().getBBox().width;
+    var diffX2 = textWidth / 2;
+    var diffY2 = height / 4;
+    
+    if(this.ui.labels.nearestCornerLeash) {
+      var angle = Math.atan2(diffX1 + diffX2, diffY1 + diffY2) * 180 / Math.PI;
+      diffX2 += (angle >= 0 && angle <= 180) ? (-width * .45) : (width * .45);
+      diffY2 += (Math.abs(angle) <= 90) ? (-height * .45) : (height * .45);
+    }      
 
     var longerSideCoeff = Math.abs(diffX1) > Math.abs(diffY1) ? Math.abs(diffX1) / this.width : Math.abs(diffY1) / this.height;
     lineGroup.select("line").style("stroke-dasharray", "0 " + (cache.scaledS0 + 2) + " " + ~~(longerSideCoeff + 2) + "00%");
