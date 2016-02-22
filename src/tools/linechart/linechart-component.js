@@ -34,9 +34,11 @@ var LCComponent = Component.extend({
 
     this.model_binds = {
       'change:time.value': function() {
-        if(!_this._readyOnce) return;
-        _this.updateTime();
-        _this.redrawDataPoints();
+        _this.model.marker.getFrame(_this.model.time.value).then(function(values) {
+          _this.values = values;
+          _this.updateTime();
+          _this.redrawDataPoints();
+        });
       },
       'change:time.playing': function() {
         // hide tooltip on touch devices when playing
@@ -118,22 +120,31 @@ var LCComponent = Component.extend({
 
     //component events
     this.on("resize", function() {
+/*
       _this.updateSize();
       _this.updateTime();
       _this.redrawDataPoints();
+*/
     });
   },
 
   ready: function() {
+    var _this = this;
     this.updateUIStrings();
-    this.updateShow();
-    this.updateTime();
-    this.updateSize();
-    this.redrawDataPoints();
+    this.model.marker.getFrames().then(function(allValues) {
+      _this.all_values = allValues;
+      _this.model.marker.getFrame(_this.model.time.value).then(function(values) {
+        _this.values = values;
+        _this.updateShow();
+        _this.updateTime();
+        _this.updateSize();
+        _this.redrawDataPoints();
 
-    this.graph
-      .on('mousemove', this.entityMousemove.bind(this, null, null, this))
-      .on('mouseleave', this.entityMouseout.bind(this, null, null, this));
+        _this.graph
+          .on('mousemove', _this.entityMousemove.bind(_this, null, null, _this))
+          .on('mouseleave', _this.entityMouseout.bind(_this, null, null, _this));
+      });
+    });
   },
 
   updateUIStrings: function() {
@@ -196,8 +207,7 @@ var LCComponent = Component.extend({
       .y(function(d) {
         return _this.yScale(d[1]);
       });
-      
-    this.all_values = this.model.marker.getFrames();
+
     this.all_steps = this.model.time.getAllSteps();
 
   },
@@ -221,7 +231,6 @@ var LCComponent = Component.extend({
     filter[timeDim] = this.time;
 
     this.data = this.model.marker.getKeys(filter);
-    this.values = this.model.marker.getFrame(this.time);
     this.prev_steps = this.all_steps.filter(function(f){return f < _this.time;});
 
     this.entityLines = this.linesContainer.selectAll('.vzb-lc-entity').data(this.data);
@@ -504,7 +513,7 @@ var LCComponent = Component.extend({
                 return [+frame, +_this.all_values[frame].axis_y[d[KEY]]];
             })
             .filter(function(d) {return !utils.isNaN(d[1]);});
-        
+
         _this.cached[d[KEY]] = {
           valueY: xy[xy.length - 1][1]
         };
@@ -670,7 +679,7 @@ var LCComponent = Component.extend({
     }
     var resolvedValue;
     var timeDim = _this.model.time.getDimension();
-    
+
     var mousePos = mouse[1] - _this.margin.bottom;
     var data = this.getValuesForYear(resolvedTime);
     var nearestKey = this.getNearestKey(mousePos, data.axis_y, _this.yScale.bind(_this));
