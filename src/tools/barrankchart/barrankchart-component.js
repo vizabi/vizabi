@@ -71,9 +71,12 @@ var BarRankChart = Component.extend({
 
   onTimeChange: function() {
     //this.year.setText(this.model.time.timeFormat(this.model.time.value));
-
-    this.loadData();
-    this.draw();
+    var _this = this;
+    this.model.marker.getFrame(this.model.time.value).then(function(values) {
+      _this.values = values;
+      _this.loadData();
+      _this.draw();
+    });
   },
 
   /**
@@ -106,14 +109,16 @@ var BarRankChart = Component.extend({
    * Both model and DOM are ready
    */
   ready: function() {
-
+    var _this = this;
     // hack: second run is right after readyOnce (in which ready() is also called)
     // then it's not necessary to run ready()
     // (without hack it's impossible to run things in readyOnce áfter ready has ran)
     if (++this.readyRuns == 2) return;
-
-    this.loadData();
-    this.draw();
+    this.model.marker.getFrame(this.model.time.value).then(function(values) {
+      _this.values =values;
+      _this.loadData();
+      _this.draw();
+    });
   },
 
   resize: function() {
@@ -123,7 +128,7 @@ var BarRankChart = Component.extend({
   loadData: function() {
 
     // get data, for the active year. Nest them using the entity of the graph
-    this.values = this.model.marker.getFrame(this.model.time.value);
+
 
     // sort the data (also sets this.total)
     this.sortedEntities = this.sortByIndicator(this.values.axis_x);
@@ -152,7 +157,7 @@ var BarRankChart = Component.extend({
   drawAxes: function() {
 
     // these should go in some style-config
-    this.barHeight = 20; 
+    this.barHeight = 20;
     var margin = {top: 60, bottom: 40, left: 90, right: 20}; // need right margin for scroll bar
 
     // draw the stage - copied from popbyage, should figure out what it exactly does and what is necessary.
@@ -205,9 +210,9 @@ var BarRankChart = Component.extend({
     // update the shown bars for new data-set
     this.createAndDeleteBars(updatedBars);
 
-   
+
     this.barContainer
-      .selectAll('.vzb-br-bar') 
+      .selectAll('.vzb-br-bar')
       .data(this.sortedEntities, getDataKey)
       .order()
       .each(function (d, i) {
@@ -215,7 +220,7 @@ var BarRankChart = Component.extend({
         var bar = d3.select(this);
         var barWidth = _this.xScale(d.value);
         var xValue = _this.model.marker.axis_x.tickFormatter(d.value);
-        
+
         // save the current index in the bar datum
         d.index = i;
 
@@ -282,17 +287,17 @@ var BarRankChart = Component.extend({
     function getBarPosition(d, i) {
         return (_this.barHeight+bar_margin)*i;
     }
-    function getDataKey(d) {          
-      return d.entity;  
-    } 
+    function getDataKey(d) {
+      return d.entity;
+    }
     // http://stackoverflow.com/questions/10692100/invoke-a-callback-at-the-end-of-a-transition
-    function endAll(transition, callback) { 
+    function endAll(transition, callback) {
       if (transition.size() === 0) { callback() }
-      var n = 0; 
-      transition 
-          .each(function() { ++n; }) 
-          .each("end", function() { if (!--n) callback.apply(this, arguments); }); 
-    } 
+      var n = 0;
+      transition
+          .each(function() { ++n; })
+          .each("end", function() { if (!--n) callback.apply(this, arguments); });
+    }
 
   },
 
@@ -336,7 +341,7 @@ var BarRankChart = Component.extend({
 
     // draw new labels per group
     newGroups.append('text')
-        .attr("class", "vzb-br-label") 
+        .attr("class", "vzb-br-label")
         .attr("x", -5)
         .attr("y", this.barHeight/2)
         .attr("text-anchor", "end")
@@ -353,7 +358,7 @@ var BarRankChart = Component.extend({
 
     // draw new values on each bar
     newGroups.append('text')
-        .attr("class", "vzb-br-value") 
+        .attr("class", "vzb-br-value")
         .attr("x", 5)
         .attr("y", this.barHeight/2)
         .attr("dominant-baseline", "middle")
@@ -383,7 +388,7 @@ var BarRankChart = Component.extend({
 
   /**
   * DATA HELPER FUNCTIONS
-  */  
+  */
 
   sortByIndicator: function(values) {
 
@@ -398,13 +403,13 @@ var BarRankChart = Component.extend({
       data_array.push(row);
 
       // setting this.total for efficiency at the same time
-      _this.total += indicator_value; 
+      _this.total += indicator_value;
     });
     data_array.sort(function(a, b) {
       // if a is bigger, a comes first, i.e. descending sort
       return b.value - a.value;
-    });  
-    return data_array;  
+    });
+    return data_array;
   },
 
   /**
