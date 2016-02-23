@@ -676,69 +676,72 @@ var LCComponent = Component.extend({
     var timeDim = _this.model.time.getDimension();
 
     var mousePos = mouse[1] - _this.margin.bottom;
-    var data = this.getValuesForYear(resolvedTime);
-    var nearestKey = this.getNearestKey(mousePos, data.axis_y, _this.yScale.bind(_this));
-    resolvedValue = data.axis_y[nearestKey];
-    if(!me) me = {};
-    me[KEY] = nearestKey;
 
-    _this.hoveringNow = me;
 
-    _this.graph.selectAll(".vzb-lc-entity").each(function() {
-      d3.select(this)
-        .classed("vzb-dimmed", function(d) {
-          return d[KEY] !== _this.hoveringNow[KEY];
-        })
-        .classed("vzb-hovered", function(d) {
-          return d[KEY] === _this.hoveringNow[KEY];
-        });
+
+    this.getValuesForYear(resolvedTime).then(function(data) {
+      var nearestKey = _this.getNearestKey(mousePos, data.axis_y, _this.yScale.bind(_this));
+      if(!me) me = {};
+      me[KEY] = nearestKey;
+      _this.hoveringNow = me;
+
+      resolvedValue = data.axis_y[nearestKey];
+
+      _this.graph.selectAll(".vzb-lc-entity").each(function() {
+        d3.select(this)
+          .classed("vzb-dimmed", function(d) {
+            return d[KEY] !== _this.hoveringNow[KEY];
+          })
+          .classed("vzb-hovered", function(d) {
+            return d[KEY] === _this.hoveringNow[KEY];
+          });
+      });
+
+      if(utils.isNaN(resolvedValue)) return;
+      var scaledTime = _this.xScale(resolvedTime);
+      var scaledValue = _this.yScale(resolvedValue);
+
+      if(_this.ui.whenHovering.showTooltip) {
+        //position tooltip
+        _this.tooltip
+          //.style("right", (_this.width - scaledTime + _this.margin.right ) + "px")
+          .style("left", (scaledTime + _this.margin.left) + "px")
+          .style("bottom", (_this.height - scaledValue + _this.margin.bottom) + "px")
+          .text(_this.yAxis.tickFormat()(resolvedValue))
+          .classed("vzb-hidden", false);
+      }
+
+      // bring the projection lines to the hovering point
+      if(_this.ui.whenHovering.hideVerticalNow) {
+        _this.verticalNow.style("opacity", 0);
+      }
+
+      if(_this.ui.whenHovering.showProjectionLineX) {
+        _this.projectionX
+          .style("opacity", 1)
+          .attr("y2", scaledValue)
+          .attr("x1", scaledTime)
+          .attr("x2", scaledTime);
+      }
+      if(_this.ui.whenHovering.showProjectionLineY) {
+        _this.projectionY
+          .style("opacity", 1)
+          .attr("y1", scaledValue)
+          .attr("y2", scaledValue)
+          .attr("x1", scaledTime);
+      }
+
+      if(_this.ui.whenHovering.higlightValueX) _this.xAxisEl.call(
+        _this.xAxis.highlightValue(resolvedTime).highlightTransDuration(0)
+      );
+
+      if(_this.ui.whenHovering.higlightValueY) _this.yAxisEl.call(
+        _this.yAxis.highlightValue(resolvedValue).highlightTransDuration(0)
+      );
+
+      clearTimeout(_this.unhoverTimeout);
+
     });
-
-    if(utils.isNaN(resolvedValue)) return;
-
-    var scaledTime = _this.xScale(resolvedTime);
-    var scaledValue = _this.yScale(resolvedValue);
-
-    if(_this.ui.whenHovering.showTooltip) {
-      //position tooltip
-      _this.tooltip
-        //.style("right", (_this.width - scaledTime + _this.margin.right ) + "px")
-        .style("left", (scaledTime + _this.margin.left) + "px")
-        .style("bottom", (_this.height - scaledValue + _this.margin.bottom) + "px")
-        .text(_this.yAxis.tickFormat()(resolvedValue))
-        .classed("vzb-hidden", false);
-    }
-
-    // bring the projection lines to the hovering point
-    if(_this.ui.whenHovering.hideVerticalNow) {
-      _this.verticalNow.style("opacity", 0);
-    }
-
-    if(_this.ui.whenHovering.showProjectionLineX) {
-      _this.projectionX
-        .style("opacity", 1)
-        .attr("y2", scaledValue)
-        .attr("x1", scaledTime)
-        .attr("x2", scaledTime);
-    }
-    if(_this.ui.whenHovering.showProjectionLineY) {
-      _this.projectionY
-        .style("opacity", 1)
-        .attr("y1", scaledValue)
-        .attr("y2", scaledValue)
-        .attr("x1", scaledTime);
-    }
-
-    if(_this.ui.whenHovering.higlightValueX) _this.xAxisEl.call(
-      _this.xAxis.highlightValue(resolvedTime).highlightTransDuration(0)
-    );
-
-    if(_this.ui.whenHovering.higlightValueY) _this.yAxisEl.call(
-      _this.yAxis.highlightValue(resolvedValue).highlightTransDuration(0)
-    );
-
-    clearTimeout(_this.unhoverTimeout);
-
   },
 
   entityMouseout: function(me, index, context) {

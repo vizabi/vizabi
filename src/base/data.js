@@ -423,7 +423,6 @@ var Data = Class.extend({
                   // At every frame the data in the current column might or might not exist.
                   // Thus, let’s filter out all the frames which don’t have the data for the current column.
                   // Let’s cache it because we will most likely encounter another gap in the same column for the same key
-                  frame[column][key] = 0;
                   items = _this.filtered[key][column];
                   if (items === null) {
                     var givenFrames = Object.keys(nested[key]);
