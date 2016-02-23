@@ -14,7 +14,6 @@ $vzb-dialog-content-height: 250px;
     text-align: left;
     display: block;
     position: absolute;
-    bottom: 0;
     overflow: hidden;
     &.vzb-popup {
       z-index: -2;
@@ -239,7 +238,7 @@ $vzb-dialog-content-height: 250px;
     }
 
     &.notransition {
-      @include transition(none);
+      @include transition(max-height);
     }
 
     .vzb-dialog-sublabel {
@@ -324,11 +323,15 @@ $vzb-dialog-content-height: 250px;
 &.vzb-medium {
   .vzb-tool-dialogs {
     .vzb-dialogs-dialog {
+      &.vzb-top-dialog {
+        top: 20px;
+        bottom: auto;
+      }
       &.vzb-popup {
-        @include position(absolute, auto -10px 2000px auto);
+        @include position(absolute, 20px -10px auto auto);
         margin-right: $size-button-list;
         &.vzb-active {
-          @include position(absolute, auto -10px 0 auto);
+          @include position(absolute, 20px -10px auto auto);
         }
       }
     }
@@ -397,7 +400,7 @@ $vzb-dialog-content-height: 250px;
           }
 
           >.vzb-dialog-title {
-            padding: 30px 25px 10px;
+            padding: 15px 25px 10px;
           }
         }
       }
@@ -409,7 +412,12 @@ $vzb-dialog-content-height: 250px;
   &.vzb-dialog-expand-true {
     .vzb-tool-dialogs {
       >.vzb-dialogs-dialog {
-        margin-right: 30px;
+        &.vzb-top-dialog {
+          margin-right: 30px;
+          top: auto;
+          bottom: 70px;
+          left: 110%;
+        }
         &.vzb-popup {
           @include position(absolute, auto -10px 70px auto);
           &.vzb-active {

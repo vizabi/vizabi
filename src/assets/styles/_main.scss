@@ -53,8 +53,7 @@
 
   .vzb-tool-sidebar {
     display: flex;
-    flex-direction: column;
-    flex: 0 auto;
+    flex: 0 0 auto;
 
     .vzb-tool-buttonlist {
       flex: 1 0 auto;
@@ -113,10 +112,13 @@
     &.vzb-portrait {
       flex-direction: column;
         
-      .vzb-tool-buttonlist {
-        height: $size-button-list-small;
-        width: auto;
-        white-space: nowrap;
+      .vzb-tool-sidebar {
+        flex-direction: column;
+        .vzb-tool-buttonlist {
+          height: $size-button-list-small;
+          width: auto;
+          white-space: nowrap;
+        }
       }
     }
 
@@ -154,6 +156,7 @@
   &.vzb-large {
     &.vzb-dialog-expand-true {
       .vzb-tool-sidebar {
+        flex-direction: column;
         flex: 0 0 $vzb-button-expand-width;
         max-width: $vzb-button-expand-width;
         .vzb-tool-dialogs {

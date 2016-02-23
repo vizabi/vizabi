@@ -123,7 +123,7 @@
                 "id": "time"
             }, {
                 "id": "_properties",
-                "children": [{"id": "geo"}, {"id": "geo.name"}, {"id": "geo.region"}, {"id": "size"}]
+                "children": [{"id": "geo"}, {"id": "geo.name"}, {"id": "geo.region"}]
             }, {
                 "id": "economy",
                 "children": [

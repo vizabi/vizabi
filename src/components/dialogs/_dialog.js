@@ -48,12 +48,14 @@ var Dialog = Component.extend({
     this.pinIcon = this.placeholderEl.select("[data-click='pinDialog']");
     this.pinIcon.html(iconPin);
     this.dragContainerEl = d3.select('.vzb-tool');
-    this.bottomPos = '';
+    this.topPos = '';
     var profile = this.getLayoutProfile();
 
     var dg = dialogDrag(this.placeholderEl, this.dragContainerEl, 10);
     var dragBehavior = d3.behavior.drag()
       .on('dragstart', function D3dialogDragStart() {
+        var topPos = _this.placeholderEl.node().offsetTop;
+        _this.placeholderEl.style({'top': topPos + 'px', 'bottom': 'auto'});
         _this.trigger('dragstart');
         dg.dragStart(d3.event);
       })
@@ -62,9 +64,9 @@ var Dialog = Component.extend({
         dg.drag(d3.event);
       })
       .on('dragend', function D3dialogDrag() {
-        _this.trigger('dragend');
         _this.rightPos = _this.placeholderEl.style('right');
-        _this.bottomPos = _this.placeholderEl.style('bottom');
+        _this.topPos = _this.placeholderEl.style('top');
+        _this.trigger('dragend');
       });
     this.dragHandler.call(dragBehavior);
 
@@ -79,7 +81,7 @@ var Dialog = Component.extend({
       var chartWidth = parseInt(this.dragContainerEl.style('width'), 10);
       var dialogRight = parseInt(this.rightPos, 10);
       var chartHeight = parseInt(this.rootEl.style('height'), 10);
-      var dialogTop = parseInt(this.bottomPos, 10);
+      var dialogTop = parseInt(this.topPos, 10);
       var dialogWidth = parseInt(this.placeholderEl.style('width'), 10);
       var dialogHeight = parseInt(this.placeholderEl.style('height'), 10);
       var dialogRightMargin = parseInt(this.placeholderEl.style('margin-right'), 10) || 0;
@@ -90,43 +92,37 @@ var Dialog = Component.extend({
         }
       }
       if(utils.isNumber(dialogTop) && utils.isNumber(dialogHeight) && dialogTop >= 0 && dialogTop > chartHeight - dialogHeight) {
-        if(this.bottomPos) {
-          this.bottomPos = ((chartHeight - dialogHeight) > 0 ? (chartHeight - dialogHeight) : 0)  + 'px';
-          if(this.isOpen) this.placeholderEl.style('bottom', this.bottomPos);
+        if(this.topPos) {
+          this.topPos = ((chartHeight - dialogHeight) > 0 ? (chartHeight - dialogHeight) : 0)  + 'px';
+          if(this.isOpen) this.placeholderEl.style('top', this.topPos);
         }
       }
-      if(!this.bottomPos && this.isOpen) {
-        if(!(this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true"))) {
-          var contentHeight = parseInt(this.rootEl.style('height'));
-          var placeholderHeight = parseInt(this.placeholderEl.style('height'));
-          var topPos = (contentHeight - placeholderHeight - 20) + 'px';
-          this.placeholderEl.style('bottom', topPos);        
-        } else { 
-          this.placeholderEl.style('bottom', '');        
-        }
+      
+      if(this.topPos && (this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true"))) {
+          this.placeholderEl.style('bottom', 'auto');
       }
 
       if(profile === 'small') {
         this.rightPos = '';
-        this.bottomPos = '';
+        this.topPos = '';
         this.placeholderEl.attr('style', '');
       } else {
-        if(!this.isOpen) this.placeholderEl.style('right', '');
+        //if(!this.isOpen) this.placeholderEl.style('right', '');
             
         if(this.rootEl.classed('vzb-landscape')) {
           // var contentHeight = parseInt(this.rootEl.style('height'));
           // var placeholderHeight = parseInt(this.placeholderEl.style('height'));
           // if (contentHeight < placeholderHeight) {
-          //   this.bottomPos = (-contentHeight + 50) + 'px';
+          //   this.topPos = (-contentHeight + 50) + 'px';
           //   this.rightPos = '';
           //   this.placeholderEl.style('right', this.rightPos);
           //   this.placeholderEl.style('bottom', 'auto');
           // } else {
-          //   //this.bottomPos = '';
+          //   //this.topPos = '';
           //   this.placeholderEl.style('bottom', '');
           // }
         }
-        //this.placeholderEl.style('bottom', this.bottomPos);
+        //this.placeholderEl.style('top', this.topPos);
       }
 
       this.dragHandler.classed("vzb-hidden", profile === 'small');
@@ -143,27 +139,35 @@ var Dialog = Component.extend({
       _this.placeholderEl.on(event, _this.transitionEnd.bind(_this, event));
     });
 
-    if(this.rightPos && this.getLayoutProfile() !== 'small' && !(this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true"))) {
-      this.placeholderEl.classed('notransition', true);
-      this.placeholderEl.style('right', this.rightPos);
-      this.placeholderEl.node().offsetHeight; // trigger a reflow (flushing the css changes)
-      this.placeholderEl.classed('notransition', false);
+    this.placeholderEl.classed('notransition', true);
+    
+    this.placeholderEl.style({'top': '', 'bottom': ''}); // issues: 369 & 442
+    
+    if(this.topPos && this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true")) {
+      var topPos = this.placeholderEl.node().offsetTop;
+      this.placeholderEl.style({'top': topPos + 'px', 'bottom': 'auto'}); // issues: 369 & 442
+    } else if(this.getLayoutProfile() !== 'small') {
+      //if(this.rightPos) this.placeholderEl.style('right', this.rightPos);
     }
+
+    this.placeholderEl.node().offsetTop;            
+    this.placeholderEl.classed('notransition', false);
+
     if(this.getLayoutProfile() === 'small') {
       this.placeholderEl.style('top', ''); // issues: 369 & 442
     } else if(this.rootEl.classed('vzb-landscape')) { // need to recalculate popup position (Safari 8 bug)
       // var contentHeight = parseInt(this.rootEl.style('height'));
       // var placeholderHeight = parseInt(this.placeholderEl.style('height'));
       // if (contentHeight < placeholderHeight) {
-      //   this.bottomPos = (-contentHeight + 50) + 'px';
+      //   this.topPos = (-contentHeight + 50) + 'px';
       //   this.rightPos = '';
       //   this.placeholderEl.style('right', this.rightPos);
       //   this.placeholderEl.style('bottom', 'auto');
       // } else {
-      //   this.bottomPos = '';
+      //   this.topPos = '';
       //   this.placeholderEl.style('bottom', '');
       // }
-      //this.placeholderEl.style('bottom', this.bottomPos);
+      //this.placeholderEl.style('top', this.topPos);
     }
     
   },
@@ -174,14 +178,9 @@ var Dialog = Component.extend({
   open: function() {
     this.isOpen = true;
     if(this.getLayoutProfile() !== 'small') {
-      if(this.bottomPos) {
-        this.placeholderEl.style('bottom', this.bottomPos);
+      if(this.topPos) {
+        this.placeholderEl.style('top', this.topPos);
         this.placeholderEl.style('right', this.rightPos);
-      } else if(!(this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true"))) {
-        var contentHeight = parseInt(this.rootEl.style('height'));
-        var placeholderHeight = parseInt(this.placeholderEl.style('height'));
-        var topPos = (contentHeight - placeholderHeight - 20) + 'px';
-        this.placeholderEl.style('bottom', topPos);        
       }
     }
   },
@@ -191,6 +190,9 @@ var Dialog = Component.extend({
     if(this.rootEl.classed('vzb-portrait') && this.getLayoutProfile() === 'small') {
       this.placeholderEl.style('top', 'auto'); // issues: 369 & 442
     } 
+    if(this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true")) {
+      this.topPos0 = this.topPos ? (this.placeholderEl.node().parentNode.offsetHeight - this.placeholderEl.node().offsetHeight) + 'px' : '';
+    }   
     this.placeholderEl.classed('notransition', false);
     this.placeholderEl.node().offsetHeight; // trigger a reflow (flushing the css changes)
   },
@@ -201,11 +203,12 @@ var Dialog = Component.extend({
   close: function() {
 //issues: 369 & 442
     if(!(this.rootEl.classed('vzb-portrait') && this.getLayoutProfile() === 'small')) {
-      this.placeholderEl.style('bottom', ''); // issues: 369 & 442
+      this.placeholderEl.style('top', ''); // issues: 369 & 442
+      this.placeholderEl.style('right', ''); // issues: 369 & 442
     }
     
     if(this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true")) {
-      this.placeholderEl.style('right', '');    
+      this.placeholderEl.style({'top' : this.topPos0, 'right' : ''});    
     }
     this.isOpen = false;
     this.trigger('close');
@@ -231,7 +234,7 @@ function dialogDrag(element, container, xOffset) {
   return {
     move: function(x, y) {
       element.style('right', x + 'px');
-      element.style('bottom', y + 'px');
+      element.style('top', y + 'px');
     },
 
     dragStart: function(evt) {
@@ -243,7 +246,7 @@ function dialogDrag(element, container, xOffset) {
         posX = touchCoord[0][0];
         posY = touchCoord[0][1];
       }
-      divTop = parseInt(element.style('bottom')) || 0;
+      divTop = parseInt(element.style('top')) || 0;
       divRight = parseInt(element.style('right')) || 0;
       marginRight = parseInt(element.style('margin-right')) || 0;
       eWi = parseInt(element.style('width'));
@@ -251,7 +254,7 @@ function dialogDrag(element, container, xOffset) {
       cWi = parseInt(container.style('width')) - marginRight;
       cHe = parseInt(container.style('height'));
       diffX = posX + divRight;
-      diffY = posY + divTop;
+      diffY = posY - divTop;
     },
 
     drag: function(evt) {
@@ -264,7 +267,7 @@ function dialogDrag(element, container, xOffset) {
         posY = touchCoord[0][1];
       }
       var aX = -posX + diffX,
-        aY = -posY + diffY;
+        aY = posY - diffY;
       if(aX < -xOffset) aX = -xOffset;
       if(aY < 0) aY = 0;
       if(aX + eWi > cWi) aX = cWi - eWi;
