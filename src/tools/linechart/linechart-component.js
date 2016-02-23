@@ -34,11 +34,9 @@ var LCComponent = Component.extend({
 
     this.model_binds = {
       'change:time.value': function() {
-        _this.model.marker.getFrame(_this.model.time.value).then(function(values) {
-          _this.values = values;
-          _this.updateTime();
-          _this.redrawDataPoints();
-        });
+        if(!_this._readyOnce) return;
+        _this.updateTime();
+        _this.redrawDataPoints();
       },
       'change:time.playing': function() {
         // hide tooltip on touch devices when playing
@@ -120,17 +118,15 @@ var LCComponent = Component.extend({
 
     //component events
     this.on("resize", function() {
-/*
       _this.updateSize();
       _this.updateTime();
       _this.redrawDataPoints();
-*/
     });
   },
 
   ready: function() {
-    var _this = this;
     this.updateUIStrings();
+    var _this = this;
     this.model.marker.getFrames().then(function(allValues) {
       _this.all_values = allValues;
       _this.model.marker.getFrame(_this.model.time.value).then(function(values) {
@@ -139,12 +135,11 @@ var LCComponent = Component.extend({
         _this.updateTime();
         _this.updateSize();
         _this.redrawDataPoints();
-
-        _this.graph
-          .on('mousemove', _this.entityMousemove.bind(_this, null, null, _this))
-          .on('mouseleave', _this.entityMouseout.bind(_this, null, null, _this));
       });
     });
+    this.graph
+      .on('mousemove', this.entityMousemove.bind(this, null, null, this))
+      .on('mouseleave', this.entityMouseout.bind(this, null, null, this));
   },
 
   updateUIStrings: function() {

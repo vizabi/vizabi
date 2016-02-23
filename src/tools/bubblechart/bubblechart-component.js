@@ -325,7 +325,7 @@ var BubbleChartComp = Component.extend({
    */
   readyOnce: function() {
     var _this = this;
-
+    this._readyOnce = false;
     this.scrollableAncestor = utils.findScrollableAncestor(this.element);
     this.element = d3.select(this.element);
 
@@ -418,15 +418,17 @@ var BubbleChartComp = Component.extend({
       .domain(this.parent.datawarning_content.doubtDomain)
       .range(this.parent.datawarning_content.doubtRange);
 
-    this.updateIndicators();
     var endTime = this.model.time.end;
-    this.updateSize();
-    this.updateTime();
-    this.updateMarkerSizeLimits();
 
-    this.model.marker.getFrame(endTime).then(function(values) {
 
-      _this.updateEntities(values);
+    this.model.marker.getFrame(endTime).then(function(frame) {
+      _this.frame = frame;
+      _this.updateIndicators();
+      _this.updateSize();
+      _this.updateEntities();
+      _this.updateTime();
+      _this.updateMarkerSizeLimits();
+
       _this.updateBubbleOpacity();
       _this.selectDataPoints();
       _this._updateDoubtOpacity();
@@ -434,6 +436,7 @@ var BubbleChartComp = Component.extend({
       _this._panZoom.reset(); // includes redraw data points and trail resize
       _this._trails.run(["recolor", "opacityHandler", "findVisible", "reveal"]);
       if(_this.model.time.adaptMinMaxZoom) _this._panZoom.expandCanvas();
+       _this._readyOnce = true;
     });
   },
 
@@ -441,13 +444,14 @@ var BubbleChartComp = Component.extend({
     var _this = this;
     this.updateUIStrings();
     var endTime = this.model.time.end;
-    this.updateSize();
-    this.updateMarkerSizeLimits();
-    this.model.marker.getFrame(endTime).then(function(values) {
-      _this.updateEntities(values);
+    this.model.marker.getFrame(endTime).then(function(frame) {
+      _this.frame = frame;
+      _this.updateIndicators();
+      _this.updateSize();
+      _this.updateMarkerSizeLimits();
+      _this.updateEntities();
       _this.redrawDataPoints();
       _this.updateBubbleOpacity();
-      _this.updateIndicators();
       _this.cached = {};
       _this._trails.create().then(function() {
         _this._trails.run("findVisible");
@@ -467,7 +471,7 @@ var BubbleChartComp = Component.extend({
   /*
    * UPDATE INDICATORS
    */
-  updateIndicators: function() {
+  updateIndicators: function(values) {
     var _this = this;
 
     //scales
@@ -587,7 +591,7 @@ var BubbleChartComp = Component.extend({
    * UPDATE ENTITIES:
    * Ideally should only update when show parameters change or data changes
    */
-  updateEntities: function(values) {
+  updateEntities: function() {
     var _this = this;
     var KEY = this.KEY;
     var TIMEDIM = this.TIMEDIM;
@@ -599,7 +603,7 @@ var BubbleChartComp = Component.extend({
           var pointer = {};
           pointer[KEY] = d[KEY];
           pointer[TIMEDIM] = endTime;
-          pointer.sortValue = values.size[d[KEY]]||0;
+          pointer.sortValue = _this.frame.size[d[KEY]]||0;
           pointer[KEY] = prefix + d[KEY];
           return pointer;
         })
@@ -766,7 +770,7 @@ var BubbleChartComp = Component.extend({
         xAxisTitleBottomMargin: 20,
         infoElHeight: 32,
       }
-    }
+    };
 
     var _this = this;
 
