@@ -302,11 +302,11 @@ var Data = Class.extend({
    * @param fields
    * @returns {*}
    */
-  framesQueue: function(framesArray, fields) {
+  framesQueue: function(queryId, framesArray, fields) {
     if (!this.queues) {
       this.queues = {};
     }
-    var queueId = JSON.stringify([framesArray[0], framesArray[framesArray.length - 1]]) + JSON.stringify(fields);
+    var queueId = queryId + JSON.stringify([framesArray[0], framesArray[framesArray.length - 1]]) + JSON.stringify(fields);
     if (!this.queues[queueId]) {
       this.queues[queueId] = new function(){
         this.queue = framesArray.slice(0);
@@ -453,7 +453,7 @@ var Data = Class.extend({
             } //loop across keys
           }
           response[frameName] = frame;
-          var newFrame = _this.framesQueue(framesArray, columns).getNext();
+          var newFrame = _this.framesQueue(queryId, framesArray, columns).getNext();
           if (newFrame) {
             utils.defer(function() {
               buildFrame(newFrame, keys, queryId);
@@ -464,7 +464,7 @@ var Data = Class.extend({
       };
       var promises = [];
       var frameId = 0;
-      buildFrame(_this.framesQueue(framesArray, columns).getNext(), keys, queryId);
+      buildFrame(_this.framesQueue(queryId, framesArray, columns).getNext(), keys, queryId);
 /*
       for (var f = 0; f < framesArray.length; f++) { //loop across frameArray
         var frameName = framesArray[f];

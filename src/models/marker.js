@@ -132,7 +132,6 @@ var Marker = Model.extend({
         });
         var promisesLength = 0;
         utils.forEach(_this._dataCube, function(hook, name) {
-
           if(hook.use === "constant") {
             steps.forEach(function(t) {
               result[t][name] = {};
@@ -159,8 +158,8 @@ var Marker = Model.extend({
 
           } else {
             ++promisesLength;
-            _this.getDataManager().getFrames(hook._dataId, steps).then(function(frames) {
-              utils.forEach(frames, function(frame, t) {
+            _this.getDataManager().getFrames(hook._dataId, steps).then(function(response) {
+              utils.forEach(response, function(frame, t) {
                 result[t][name] = frame[hook.which];
               });
               _this.cachedFrames[cachePath] = result;
