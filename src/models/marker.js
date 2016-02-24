@@ -62,47 +62,14 @@ var Marker = Model.extend({
       return new Promise(function(resolve, reject) {
         if(_this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
           resolve(_this.cachedFrames[cachePath][time]);
-        } else if (_this.getDataManager().getFrame(cachePath, time) instanceof Promise){
-          _this.getDataManager().getFrame(cachePath, time).then(function(frame) {
-            resolve(frame);
-          });
         } else {
           _this.getFrames().then(function() {
             var pValues, curr = {};
             if(_this.cachedFrames[cachePath][time]) {
               resolve(_this.cachedFrames[cachePath][time]);
-            } else if(time < steps[0] || time > steps[steps.length - 1]) {
-              //if the requested time point is out of the known range
-              //then send nulls in the response
-              pValues = this.cachedFrames[cachePath][steps[0]];
-              utils.forEach(pValues, function(keys, hook) {
-                curr[hook] = {};
-                utils.forEach(keys, function(val, key) {
-                  curr[hook][key] = null;
-                });
-              });
-              resolve(curr);
             } else {
-              var next = d3.bisectLeft(steps, time);
-
-              if(next === 0) {
-                resolve(_this.cachedFrames[cachePath][steps[0]]);
-              } else {
-                var fraction = (time - steps[next - 1]) / (steps[next] - steps[next - 1]);
-
-                pValues = _this.cachedFrames[cachePath][steps[next - 1]];
-                var nValues = _this.cachedFrames[cachePath][steps[next]];
-
-                utils.forEach(pValues, function(values, hook) {
-                  curr[hook] = {};
-                  utils.forEach(values, function(val, id) {
-                    var val2 = nValues[hook][id];
-                    curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val) *
-                    fraction);
-                  });
-                });
-                resolve(curr);
-              }
+              utils.warn("Frame was not built for timestamp: " + time + " : " + cachePath);
+              resolve({});
             }
           });
         }
@@ -111,69 +78,76 @@ var Marker = Model.extend({
 
     getFrames: function() {
       var _this = this;
-
+      if (!this.frameQueues) {
+        this.frameQueues = {};
+      }
       var cachePath = "";
+
+
       utils.forEach(this._dataCube, function(hook, name) {
           cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start + " " + _this._parent.time.end;
       });
 
+      this._dataCube = this._dataCube || this.getSubhooks(true);
+
       var steps = this._parent.time.getAllSteps();
       var result = {};
 
-      this._dataCube = this._dataCube || this.getSubhooks(true);
-      return new Promise(function(resolve, reject) {
-        // Assemble the list of keys as an intersection of keys in all queries of all hooks
+      if (!this.frameQueues[cachePath] || !this.frameQueues[cachePath] instanceof Promise) {
+        this.frameQueues[cachePath] = new Promise(function(resolve, reject) {
+          // Assemble the list of keys as an intersection of keys in all queries of all hooks
 
-        var resultKeys = _this.getKeys().map(function(val) {
-          return val[Object.keys(val)[0]];
-        });
-        steps.forEach(function(t) {
-          result[t] = {};
-        });
-        var promisesLength = 0;
-        utils.forEach(_this._dataCube, function(hook, name) {
-          if(hook.use === "constant") {
-            steps.forEach(function(t) {
-              result[t][name] = {};
-              resultKeys.forEach(function(key) {
-                result[t][name][key] = hook.which;
-              });
-            });
+          var resultKeys = _this.getKeys().map(function(val) {
+            return val[Object.keys(val)[0]];
+          });
+          steps.forEach(function(t) {
+            result[t] = {};
+          });
+          var promises = [];
+          utils.forEach(_this._dataCube, function(hook, name) {
 
-          } else if(hook.which === "geo") {
-            steps.forEach(function(t) {
-              result[t][name] = {};
-              resultKeys.forEach(function(key) {
-                result[t][name][key] = key;
-              });
-            });
-
-          } else if(hook.which === "time") {
-            steps.forEach(function(t) {
-              result[t][name] = {};
-              resultKeys.forEach(function(key) {
-                result[t][name][key] = new Date(t);
-              });
-            });
-
-          } else {
-            ++promisesLength;
-            _this.getDataManager().getFrames(hook._dataId, steps).then(function(response) {
-              utils.forEach(response, function(frame, t) {
-                result[t][name] = frame[hook.which];
-              });
-              _this.cachedFrames[cachePath] = result;
-              if (--promisesLength == 0) {
-                resolve(result);
+            promises.push(new Promise(function(hook_resolve, hook_reject) {
+              if(hook.use === "constant") {
+                steps.forEach(function(t) {
+                  result[t][name] = {};
+                  resultKeys.forEach(function(key) {
+                    result[t][name][key] = hook.which;
+                  });
+                });
+                hook_resolve(result);
+              } else if(hook.which === "geo") {
+                steps.forEach(function(t) {
+                  result[t][name] = {};
+                  resultKeys.forEach(function(key) {
+                    result[t][name][key] = key;
+                  });
+                });
+                hook_resolve(result);
+              } else if(hook.which === "time") {
+                steps.forEach(function(t) {
+                  result[t][name] = {};
+                  resultKeys.forEach(function(key) {
+                    result[t][name][key] = new Date(t);
+                  });
+                });
+                hook_resolve(result);
+              } else {
+                _this.getDataManager().getFrames(hook._dataId, steps).then(function (response) {
+                  utils.forEach(response, function (frame, t) {
+                    result[t][name] = frame[hook.which];
+                  });
+                  hook_resolve(result);
+                });
               }
-            });
-          }
-          if (promisesLength == 0) { // we have no pending promises resolve data
+            }));
+          });
+          Promise.all(promises).then(function(response) {
             _this.cachedFrames[cachePath] = result;
-            resolve(result);
-          }
+            resolve();
+          });
         });
-      });
+      }
+      return this.frameQueues[cachePath];
     },
 
 

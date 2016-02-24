@@ -155,14 +155,15 @@ var BubbleChartComp = Component.extend({
         }
       },
       'change:marker.size': function(evt, path) {
-        if(!_this._readyOnce) return;
+        _this.model.marker.getFrame(_this.model.time.value).then(function(frame) {
+          if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1) {
+            _this.updateMarkerSizeLimits();
+            _this._trails.run("findVisible");
+            _this.redrawDataPointsOnlySize();
+            _this._trails.run("resize");
+          }
+        });
         //console.log("EVENT change:marker:size:max");
-        if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1) {
-          _this.updateMarkerSizeLimits();
-          _this._trails.run("findVisible");
-          _this.redrawDataPointsOnlySize();
-          _this._trails.run("resize");
-        }
       },
       'change:marker.color.palette': function(evt, path) {
         if(!_this._readyOnce) return;
@@ -418,10 +419,8 @@ var BubbleChartComp = Component.extend({
       .domain(this.parent.datawarning_content.doubtDomain)
       .range(this.parent.datawarning_content.doubtRange);
 
-    var endTime = this.model.time.end;
 
-
-    this.model.marker.getFrame(endTime).then(function(frame) {
+    this.model.marker.getFrame(this.model.time.value).then(function(frame) {
       _this.frame = frame;
       _this.updateIndicators();
       _this.updateSize();

@@ -285,12 +285,6 @@ var Data = Class.extend({
       });
     });
     return this._data[queryId][id];
-    var frameId = time.toString() + JSON.stringify(fields);
-    if (this._frames && this._frames[frameId] && this._frames[frameId] instanceof Promise) {
-      return this._frames[frameId];
-    } else {
-      return false;
-    }
   },
 
   getFrame: function(cachePath, time) {
@@ -298,6 +292,7 @@ var Data = Class.extend({
   },
   /**
    * feature in future we can change priority for calculating frames for each frame
+   * @param queryId
    * @param framesArray
    * @param fields
    * @returns {*}
@@ -332,6 +327,10 @@ var Data = Class.extend({
    */
   _getFrames: function(queryId, framesArray) {
     var _this = this;
+    var id = JSON.stringify(framesArray);
+    if (!_this._collection[queryId]["frames"][id]) {
+      _this._collection[queryId]["frames"][id] = {};
+    }
     return new Promise(function(resolve, reject) {
 
       //TODO: thses should come from state or from outside somehow
@@ -452,14 +451,14 @@ var Data = Class.extend({
               } //loop across columns
             } //loop across keys
           }
-          response[frameName] = frame;
+          _this._collection[queryId]["frames"][id][frameName] = frame;
           var newFrame = _this.framesQueue(queryId, framesArray, columns).getNext();
           if (newFrame) {
             utils.defer(function() {
               buildFrame(newFrame, keys, queryId);
             });
           } else {
-            resolve(response);
+            resolve(_this._collection[queryId]["frames"][id]);
           }
       };
       var promises = [];
