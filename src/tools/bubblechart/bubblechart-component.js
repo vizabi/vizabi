@@ -132,8 +132,9 @@ var BubbleChartComp = Component.extend({
         _this.highlightDataPoints();
       },
       'change:time.value': function() {
-        //console.log("EVENT change:time:value");
+
         _this.model.marker.getFrame(_this.model.time.value).then(function(frame) {
+          if (!frame) return false;
           _this.frame = frame;
           _this.updateTime();
           _this._updateDoubtOpacity();
@@ -446,7 +447,8 @@ var BubbleChartComp = Component.extend({
     var _this = this;
     this.updateUIStrings();
     var endTime = this.model.time.end;
-    this.model.marker.getFrame(endTime).then(function(frame) {
+    this.model.marker.getFrame(this.model.time.value).then(function(frame) {
+      if (!frame) return;
       _this.frame = frame;
       _this.updateIndicators();
       _this.updateSize();
@@ -715,7 +717,6 @@ var BubbleChartComp = Component.extend({
    */
   updateTime: function() {
     var _this = this;
-
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
