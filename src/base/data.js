@@ -279,7 +279,7 @@ var Data = Class.extend({
     }
     this._data[queryId][id] = new Promise(function(resolve, reject) {
       if (!queryId) reject(utils.warn("Data.js 'get' method doesn't like the queryId you gave it: " + queryId));
-      _this._getFrames(queryId, whatId, args).then(function (frames) {
+      _this._getFrames(queryId, whatId).then(function (frames) {
         _this._collection[queryId]["frames"][id] = frames;
         resolve(_this._collection[queryId]["frames"][id]);
       });
@@ -287,8 +287,22 @@ var Data = Class.extend({
     return this._data[queryId][id];
   },
 
-  getFrame: function(cachePath, time) {
-    return false;
+  getFrame: function(queryId, framesArray, neededFrame) {
+    var _this = this;
+    var query = _this._collection[queryId].query;
+    var id = JSON.stringify(framesArray);
+    var columns = query.select.filter(function(f){return f != "geo" && f != "time" && f !== "_default"});
+
+    return new Promise(function(resolve, reject) {
+      if (_this._collection[queryId]["frames"][id][neededFrame]) {
+        resolve(_this._collection[queryId]["frames"][id]);
+      } else {
+        _this.framesQueue(queryId, framesArray, columns).forceFrame(neededFrame, function() {
+          resolve(_this._collection[queryId]["frames"][id]);
+        });
+      }
+    });
+
   },
   /**
    * feature in future we can change priority for calculating frames for each frame
@@ -304,6 +318,8 @@ var Data = Class.extend({
     var queueId = queryId + JSON.stringify([framesArray[0], framesArray[framesArray.length - 1]]) + JSON.stringify(fields);
     if (!this.queues[queueId]) {
       this.queues[queueId] = new function(){
+        this.queryId = JSON.stringify(framesArray);
+        this.callbacks = {};
         this.queue = framesArray.slice(0);
         this.queue.splice(0, 0, this.queue.splice(this.queue.length - 1, 1)[0]);
         this.key = 0;
@@ -312,7 +328,35 @@ var Data = Class.extend({
           if (this.key >= this.queue.length - 1) {
             this.key = 0;
           }
-          return this.queue.splice(this.key, 1).pop();
+          var response = {
+            frameName: this.queue.splice(this.key, 1).pop()
+          };
+          if (this.callbacks[response.frameName]) {
+            var _this = this;
+            response["callback"] = function() {
+              for (var  i = 0; i < _this.callbacks[response.frameName].length; i++) {
+                _this.callbacks[response.frameName][i]();
+              }
+              _this.callbacks[response.frameName] = [];
+            };
+          }
+          return response;
+        };
+        this.forceFrame = function(frameName, cb) {
+          var newKey = this.queue.indexOf(frameName.toString());
+          if (newKey !== -1) {
+            if (typeof cb === "function") {
+              if (typeof this.callbacks[frameName] != "object") {
+                this.callbacks[frameName] = [];
+              }
+              this.callbacks[frameName].push(cb);
+            }
+            this.key = newKey;
+          } else {
+            if (typeof this.callbacks[frameName] != "object") {
+              this.callbacks[frameName].push(cb);
+            }
+          }
         }
       }();
     }
@@ -372,7 +416,7 @@ var Data = Class.extend({
         for (c = 0; c < cLength; c++) _this.filtered[keys[k]][columns[c]] = null;
       }
 
-      var buildFrame = function(frameName, keys, queryId) {
+      var buildFrame = function(frameName, keys, queryId, callback) {
 //          return new Promise(function(resolve, reject) {
           var frame = {};
           if (!query.where.time) {
@@ -452,10 +496,13 @@ var Data = Class.extend({
             } //loop across keys
           }
           _this._collection[queryId]["frames"][id][frameName] = frame;
+          if (typeof callback === "function") {
+            callback();
+          }
           var newFrame = _this.framesQueue(queryId, framesArray, columns).getNext();
           if (newFrame) {
             utils.defer(function() {
-              buildFrame(newFrame, keys, queryId);
+              buildFrame(newFrame.frameName, keys, queryId, newFrame.callback);
             });
           } else {
             resolve(_this._collection[queryId]["frames"][id]);
@@ -463,7 +510,11 @@ var Data = Class.extend({
       };
       var promises = [];
       var frameId = 0;
-      buildFrame(_this.framesQueue(queryId, framesArray, columns).getNext(), keys, queryId);
+      var nextFrame = _this.framesQueue(queryId, framesArray, columns).getNext();
+      if (nextFrame) {
+        buildFrame(nextFrame.frameName, keys, queryId, nextFrame.callback);
+
+      }
 /*
       for (var f = 0; f < framesArray.length; f++) { //loop across frameArray
         var frameName = framesArray[f];

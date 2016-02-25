@@ -63,8 +63,7 @@ var Marker = Model.extend({
         if(_this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
           resolve(_this.cachedFrames[cachePath][time]);
         } else {
-          _this.getFrames().then(function() {
-            var pValues, curr = {};
+          _this.getFrames(time).then(function() {
             if(_this.cachedFrames[cachePath][time]) {
               resolve(_this.cachedFrames[cachePath][time]);
             } else {
@@ -76,10 +75,13 @@ var Marker = Model.extend({
       });
     },
 
-    getFrames: function() {
+    getFrames: function(forceFrame) {
       var _this = this;
       if (!this.frameQueues) {
         this.frameQueues = {};
+      }
+      if (!this.partialResult) {
+        this.partialResult = {};
       }
       var cachePath = "";
 
@@ -91,63 +93,102 @@ var Marker = Model.extend({
       this._dataCube = this._dataCube || this.getSubhooks(true);
 
       var steps = this._parent.time.getAllSteps();
-      var result = {};
 
       if (!this.frameQueues[cachePath] || !this.frameQueues[cachePath] instanceof Promise) {
         this.frameQueues[cachePath] = new Promise(function(resolve, reject) {
           // Assemble the list of keys as an intersection of keys in all queries of all hooks
-
+          _this.partialResult[cachePath] = {};
+          steps.forEach(function(t) {
+            _this.partialResult[cachePath][t] = {};
+          });
           var resultKeys = _this.getKeys().map(function(val) {
             return val[Object.keys(val)[0]];
           });
-          steps.forEach(function(t) {
-            result[t] = {};
-          });
-          var promises = [];
-          utils.forEach(_this._dataCube, function(hook, name) {
 
-            promises.push(new Promise(function(hook_resolve, hook_reject) {
-              if(hook.use === "constant") {
-                steps.forEach(function(t) {
-                  result[t][name] = {};
-                  resultKeys.forEach(function(key) {
-                    result[t][name][key] = hook.which;
-                  });
+          var deferredHooks = [];
+          utils.forEach(_this._dataCube, function(hook, name) {
+            if(hook.use === "constant") {
+              steps.forEach(function(t) {
+                _this.partialResult[cachePath][t][name] = {};
+                resultKeys.forEach(function(key) {
+                  _this.partialResult[cachePath][t][name][key] = hook.which;
                 });
-                hook_resolve(result);
-              } else if(hook.which === "geo") {
-                steps.forEach(function(t) {
-                  result[t][name] = {};
-                  resultKeys.forEach(function(key) {
-                    result[t][name][key] = key;
-                  });
+              });
+            } else if(hook.which === "geo") {
+              steps.forEach(function(t) {
+                _this.partialResult[cachePath][t][name] = {};
+                resultKeys.forEach(function(key) {
+                  _this.partialResult[cachePath][t][name][key] = key;
                 });
-                hook_resolve(result);
-              } else if(hook.which === "time") {
-                steps.forEach(function(t) {
-                  result[t][name] = {};
-                  resultKeys.forEach(function(key) {
-                    result[t][name][key] = new Date(t);
-                  });
+              });
+            } else if(hook.which === "time") {
+              steps.forEach(function(t) {
+                _this.partialResult[cachePath][t][name] = {};
+                resultKeys.forEach(function(key) {
+                  _this.partialResult[cachePath][t][name][key] = new Date(t);
                 });
-                hook_resolve(result);
-              } else {
-                _this.getDataManager().getFrames(hook._dataId, steps).then(function (response) {
-                  utils.forEach(response, function (frame, t) {
-                    result[t][name] = frame[hook.which];
-                  });
-                  hook_resolve(result);
-                });
-              }
-            }));
+              });
+            } else {
+              deferredHooks.push({hook: hook, name: name});
+            }
           });
-          Promise.all(promises).then(function(response) {
-            _this.cachedFrames[cachePath] = result;
+          if (deferredHooks.length > 0) {
+            var promises = [];
+            for (var hookId = 0; hookId < deferredHooks.length; hookId++) {
+              (function(hookKey) {
+                var defer = deferredHooks[hookKey];
+                promises.push(new Promise(function(res, rej) {
+                  _this.getDataManager().getFrames(defer.hook._dataId, steps).then(function(response) {
+                    utils.forEach(response, function (frame, t) {
+                      _this.partialResult[cachePath][t][defer.name] = frame[defer.hook.which];
+                    });
+                    res();
+                  })
+                }));
+              }(hookId));
+            }
+            Promise.all(promises).then(function() {
+              _this.cachedFrames[cachePath] = _this.partialResult[cachePath];
+              resolve();
+            });
+          } else {
+            _this.cachedFrames[cachePath] = _this.partialResult[cachePath];
             resolve();
-          });
+          }
+
         });
       }
-      return this.frameQueues[cachePath];
+      return new Promise(function(resolve, reject) {
+        if (steps.length < 2) {
+          _this.frameQueues[cachePath].then(function() {
+            resolve();
+          });
+        } else {
+          var promises = [];
+          utils.forEach(_this._dataCube, function(hook, name) {
+            if(hook.use !== "constant" && hook.which !== "geo" && hook.which !== "time") {
+              (function(_hook, _name) {
+                promises.push(new Promise(function(res, rej) {
+                  _this.getDataManager().getFrame(_hook._dataId, steps, forceFrame).then(function(response) {
+                    _this.partialResult[cachePath][forceFrame][_name] = response[forceFrame][_hook.which];
+                    res();
+                  })
+                }));
+              }(hook, name));
+            }
+          });
+          if (promises.length > 0) {
+            Promise.all(promises).then(function() {
+              if (!_this.cachedFrames[cachePath]) {
+                _this.cachedFrames[cachePath] = {};
+              }
+              _this.cachedFrames[cachePath][forceFrame] = _this.partialResult[cachePath][forceFrame];
+              resolve();
+            });
+          }
+        }
+      });
+
     },
 
 
