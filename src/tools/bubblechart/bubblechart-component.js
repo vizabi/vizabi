@@ -133,18 +133,21 @@ var BubbleChartComp = Component.extend({
       },
       'change:time.value': function() {
         //console.log("EVENT change:time:value");
-        _this.updateTime();
-        _this._updateDoubtOpacity();
+        _this.model.marker.getFrame(_this.model.time.value).then(function(frame) {
+          _this.frame = frame;
+          _this.updateTime();
+          _this._updateDoubtOpacity();
 
-        _this._trails.run("findVisible");
-        if(_this.model.time.adaptMinMaxZoom) {
-          _this._panZoom.expandCanvas();
-        } else {
-          _this.redrawDataPoints();
-        }
-        _this._trails.run("reveal");
-        _this.tooltipMobile.classed('vzb-hidden', true);
-        //_this._bubblesInteract().mouseout();
+          _this._trails.run("findVisible");
+          if(_this.model.time.adaptMinMaxZoom) {
+            _this._panZoom.expandCanvas();
+          } else {
+            _this.redrawDataPoints();
+          }
+          _this._trails.run("reveal");
+          _this.tooltipMobile.classed('vzb-hidden', true);
+          //_this._bubblesInteract().mouseout();
+        });
       },
       'change:time.adaptMinMaxZoom': function() {
         //console.log("EVENT change:time:adaptMinMaxZoom");
