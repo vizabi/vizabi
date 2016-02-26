@@ -43,6 +43,7 @@ var Data = Class.extend({
     wait.then(function() {
       //pass the data forward
       var data = _this._collection[cached].data;
+
       //not loading anymore
       if(loaded && evts && typeof evts.load_end === 'function') {
         evts.load_end();
@@ -371,6 +372,7 @@ var Data = Class.extend({
    */
   _getFrames: function(queryId, framesArray) {
     var _this = this;
+
     var id = JSON.stringify(framesArray);
     if (!_this._collection[queryId]["frames"][id]) {
       _this._collection[queryId]["frames"][id] = {};
@@ -393,7 +395,7 @@ var Data = Class.extend({
       var KEY = "geo";
       var TIME = "time";
 
-      _this.filtered = {};
+      var filtered = {};
       var items, itemsIndex, oneFrame, method, use, next;
 
       // We _nest_ the flat dataset in two levels: first by “key” (example: geo), then by “animatable” (example: year)
@@ -412,13 +414,14 @@ var Data = Class.extend({
       var framesComplete = framesArray.length;
 
       for (k = 0; k < keys.length; k++) {
-        _this.filtered[keys[k]] = {};
-        for (c = 0; c < cLength; c++) _this.filtered[keys[k]][columns[c]] = null;
+        filtered[keys[k]] = {};
+        for (c = 0; c < cLength; c++) filtered[keys[k]][columns[c]] = null;
       }
 
       var buildFrame = function(frameName, keys, queryId, callback) {
 //          return new Promise(function(resolve, reject) {
           var frame = {};
+
           if (!query.where.time) {
             // The query.where clause doesn't have time field for properties:
             // we populate the regular set with a single value (unpack properties into constant time series)
@@ -466,7 +469,7 @@ var Data = Class.extend({
                   // At every frame the data in the current column might or might not exist.
                   // Thus, let’s filter out all the frames which don’t have the data for the current column.
                   // Let’s cache it because we will most likely encounter another gap in the same column for the same key
-                  items = _this.filtered[key][column];
+                  items = filtered[key][column];
                   if (items === null) {
                     var givenFrames = Object.keys(nested[key]);
                     items = new Array(givenFrames.length);
@@ -479,8 +482,11 @@ var Data = Class.extend({
 
                     //trim the length of the array
                     items.length = itemsIndex;
+
                     if (itemsIndex === 0) {
-                      _this.filtered[key][column] = [];
+                      filtered[key][column] = [];
+                    } else {
+                      filtered[key][column] = items;
                     }
                   }
 

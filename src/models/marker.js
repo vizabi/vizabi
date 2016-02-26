@@ -93,7 +93,6 @@ var Marker = Model.extend({
       this._dataCube = this._dataCube || this.getSubhooks(true);
 
       var steps = this._parent.time.getAllSteps();
-
       if (!this.frameQueues[cachePath] || !this.frameQueues[cachePath] instanceof Promise) {
         this.frameQueues[cachePath] = new Promise(function(resolve, reject) {
           // Assemble the list of keys as an intersection of keys in all queries of all hooks
@@ -158,6 +157,7 @@ var Marker = Model.extend({
 
         });
       }
+
       return new Promise(function(resolve, reject) {
         if (steps.length < 2) {
           _this.frameQueues[cachePath].then(function() {
