@@ -89,10 +89,12 @@ var BubbleChartComp = Component.extend({
         }
 
         if(path.indexOf("marker.size") !== -1) return;
+        if(path.indexOf("marker.size_label") !== -1) return;
 
         if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1) {
           _this.updateSize();
           _this.updateMarkerSizeLimits();
+          _this.updateLabelSizeLimits();
           _this._trails.run("findVisible");
           _this.redrawDataPoints();
           _this._trails.run("resize");
@@ -169,6 +171,24 @@ var BubbleChartComp = Component.extend({
             return;
         }
       },
+      'change:marker.size_label': function(evt, path) {
+        //console.log("EVENT change:marker:size:max");
+        if(!_this._readyOnce) return;
+        if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1) {
+            _this.updateLabelSizeLimits();
+            _this._trails.run("findVisible");
+            _this.redrawDataPoints();
+            _this._trails.run("resize");
+            return;
+        }
+      },
+      'change:ui.vzb-tool-bubblechart.labels.removeLabelBox': function(evt, path) {
+        //console.log("EVENT change:marker:size:max");
+        if(!_this._readyOnce) return;
+        _this._trails.run("findVisible");
+        _this.redrawDataPoints();
+        _this._trails.run("resize");
+      },
       'change:marker.color.palette': function(evt, path) {
         if(!_this._readyOnce) return;
         //console.log("EVENT change:marker:color:palette");
@@ -225,7 +245,8 @@ var BubbleChartComp = Component.extend({
 
     this.ui.labels = utils.extend({
       autoResolveCollisions: false,
-      dragging: true
+      dragging: true,
+      removeLabelBox: false
     }, this.ui.labels);
 
     this._trails = new Trail(this);
@@ -383,6 +404,7 @@ var BubbleChartComp = Component.extend({
       //console.log("EVENT: resize");
       _this.updateSize();
       _this.updateMarkerSizeLimits();
+      _this.updateLabelSizeLimits();
       _this._trails.run("findVisible");
       _this._panZoom.rerun(); // includes redraw data points and trail resize
     });
@@ -436,6 +458,7 @@ var BubbleChartComp = Component.extend({
     this.updateTime();
     this.updateSize();
     this.updateMarkerSizeLimits();
+    this.updateLabelSizeLimits();
     this.selectDataPoints();
     this.updateBubbleOpacity();
     this._updateDoubtOpacity();
@@ -455,6 +478,7 @@ var BubbleChartComp = Component.extend({
     this.updateSize();
     this.cached = {};
     this.updateMarkerSizeLimits();
+    this.updateLabelSizeLimits();
     this._trails.create();
     this._trails.run("findVisible");
     this._panZoom.reset(); // includes redraw data points and trail resize
@@ -480,6 +504,7 @@ var BubbleChartComp = Component.extend({
     this.xScale = this.model.marker.axis_x.getScale();
     this.sScale = this.model.marker.size.getScale();
     this.cScale = this.model.marker.color.getScale();
+    this.labelSizeTextScale = this.model.marker.size_label.getScale();
 
     //            this.collisionResolver.scale(this.yScale);
 
@@ -736,6 +761,9 @@ var BubbleChartComp = Component.extend({
         padding: 2,
         minRadius: 0.5,
         maxRadius: 30,
+        minLabelTextSize: 7,
+        maxLabelTextSize: 19,
+        defaultLabelTextSize: 13,
         infoElHeight: 16,
         yAxisTitleBottomMargin: 6,
         xAxisTitleBottomMargin: 4
@@ -745,6 +773,9 @@ var BubbleChartComp = Component.extend({
         padding: 2,
         minRadius: 1,
         maxRadius: 55,
+        minLabelTextSize: 10,
+        maxLabelTextSize: 22,
+        defaultLabelTextSize: 16,
         infoElHeight: 20,
         yAxisTitleBottomMargin: 6,
         xAxisTitleBottomMargin: 5
@@ -754,6 +785,9 @@ var BubbleChartComp = Component.extend({
         padding: 2,
         minRadius: 1,
         maxRadius: 70,
+        minLabelTextSize: 14,
+        maxLabelTextSize: 26,
+        defaultLabelTextSize: 20,
         infoElHeight: 22,
         yAxisTitleBottomMargin: 6,
         xAxisTitleBottomMargin: 5
@@ -961,6 +995,32 @@ var BubbleChartComp = Component.extend({
 
   },
 
+  updateLabelSizeLimits: function() {
+    var _this = this;
+    var minLabelTextSize = this.activeProfile.minLabelTextSize;
+    var maxLabelTextSize = this.activeProfile.maxLabelTextSize;
+    var minMaxDelta = maxLabelTextSize - minLabelTextSize;
+
+    this.minLabelTextSize = Math.max(minLabelTextSize + minMaxDelta * this.model.marker.size_label.domainMin, minLabelTextSize);
+    this.maxLabelTextSize = Math.max(minLabelTextSize + minMaxDelta * this.model.marker.size_label.domainMax, minLabelTextSize);
+
+    if(this.model.marker.size_label.use == 'constant') {
+      // if(!this.model.marker.size_label.which) {
+      //   this.minLabelTextSize = this.activeProfile.defaultLabelTextSize;
+      //   this.model.marker.size_label.set({'domainMin': (this.minLabelTextSize - minLabelTextSize) / minMaxDelta, 'which': '_default'});
+      //   return; 
+      // }
+      this.maxLabelTextSize = this.minLabelTextSize;
+    } 
+
+    if(this.model.marker.size_label.scaleType !== "ordinal") {
+      this.labelSizeTextScale.range([_this.minLabelTextSize, _this.maxLabelTextSize]);
+    } else {
+      this.labelSizeTextScale.rangePoints([_this.minLabelTextSize, _this.maxLabelTextSize], 0).range();
+    }
+
+  },
+
   redrawDataPointsOnlyColors: function() {
     var _this = this;
     var values, valuesNow;
@@ -1110,6 +1170,7 @@ var BubbleChartComp = Component.extend({
     var valueS = values.size[d[KEY]];
     var valueL = values.label[d[KEY]];
     var valueC = values.color[d[KEY]];
+    var valueLST = values.size_label[d[KEY]];
 
     // check if fetching data succeeded
     //TODO: what if values are ACTUALLY 0 ?
@@ -1148,13 +1209,13 @@ var BubbleChartComp = Component.extend({
         r: scaledS
       });
 
-      _this._updateLabel(d, index, valueX, valueY, scaledS, valueL, duration);
+      _this._updateLabel(d, index, valueX, valueY, scaledS, valueL, valueLST, duration);
 
     } // data exists
   },
 
 
-  _updateLabel: function(d, index, valueX, valueY, scaledS, valueL, duration) {
+  _updateLabel: function(d, index, valueX, valueY, scaledS, valueL, valueLST, duration) {
     var _this = this;
     var KEY = this.KEY;
     if(d[KEY] == _this.druging)
@@ -1206,27 +1267,35 @@ var BubbleChartComp = Component.extend({
 
           var text = labelGroup.selectAll(".vzb-bc-label-content")
             .text(valueL + (_this.model.time.trails ? " " + select.trailStartTime : ""));
-
+          
+          var labels = _this.model.ui.get('vzb-tool-bubblechart').labels;
+          labelGroup.classed('vzb-label-boxremoved', labels.removeLabelBox);
+          var fontSize = _this.labelSizeTextScale(valueLST) + 'px';
+          text.attr('font-size', fontSize);
+          
           var rect = labelGroup.select("rect");
 
           var contentBBox = text[0][0].getBBox();
           if(!cached.contentBBox || cached.contentBBox.width != contentBBox.width) {
             cached.contentBBox = contentBBox;
+            
+            var labelCloseHeight = _this.activeProfile.infoElHeight * 1.2;//contentBBox.height;
 
             var labelCloseGroup = labelGroup.select(".vzb-bc-label-x")
-              .attr("x", /*contentBBox.height * .0 + */ 4)
-              .attr("y", contentBBox.height * -1);
+              .attr('transform', 'translate(' + 4 + ',' + (-contentBBox.height * .85) + ')');
+              //.attr("x", /*contentBBox.height * .0 + */ 4)
+              //.attr("y", contentBBox.height * -1);
 
             labelCloseGroup.select("circle")
-              .attr("cx", /*contentBBox.height * .0 + */ 4)
-              .attr("cy", contentBBox.height * -1)
-              .attr("r", contentBBox.height * .5);
+              .attr("cx", /*contentBBox.height * .0 + */ 0)
+              .attr("cy", 0)
+              .attr("r", labelCloseHeight * .5);
 
             labelCloseGroup.select("svg")
-              .attr("x", -contentBBox.height * .5 + 4)
-              .attr("y", contentBBox.height * -1.5)
-              .attr("width", contentBBox.height)
-              .attr("height", contentBBox.height)
+              .attr("x", -labelCloseHeight * .5 )
+              .attr("y", labelCloseHeight * -.5)
+              .attr("width", labelCloseHeight)
+              .attr("height", labelCloseHeight)
 
             rect.attr("width", contentBBox.width + 8)
               .attr("height", contentBBox.height * 1.2)
@@ -1313,30 +1382,16 @@ var BubbleChartComp = Component.extend({
 
     var diffX1 = resolvedX0 - resolvedX;
     var diffY1 = resolvedY0 - resolvedY;
-    var diffX2 = 0;
-    var diffY2 = 0;
-
-    var angle = Math.atan2(diffX1 + width / 2, diffY1 + height / 2) * 180 / Math.PI;
-    // middle bottom
-    if(Math.abs(angle) <= 45) {
-      diffX2 = width / 2;
-      diffY2 = 0
-    }
-    // right middle
-    if(angle > 45 && angle < 135) {
-      diffX2 = 0;
-      diffY2 = height / 4;
-    }
-    // middle top
-    if(angle < -45 && angle > -135) {
-      diffX2 = width - 4;
-      diffY2 = height / 4;
-    }
-    // left middle
-    if(Math.abs(angle) >= 135) {
-      diffX2 = width / 2;
-      diffY2 = height / 2
-    }
+    var textBBox = labelGroup.select('text').node().getBBox();
+    var diffX2 = textBBox.width * .5;
+    var diffY2 = height * .25;
+    
+    var labels = this.model.ui.get('vzb-tool-bubblechart').labels;
+    if(labels.removeLabelBox) {
+      var angle = Math.atan2(diffX1 + diffX2, diffY1 + diffY2) * 180 / Math.PI;
+      diffX2 += (angle >= 0 && angle <= 180) ? (-textBBox.width * .5) : (textBBox.width * .5);
+      diffY2 += (Math.abs(angle) <= 90) ? (-textBBox.height * .55) : (textBBox.height * .45);
+    }      
 
     var longerSideCoeff = Math.abs(diffX1) > Math.abs(diffY1) ? Math.abs(diffX1) / this.width : Math.abs(diffY1) / this.height;
     lineGroup.select("line").style("stroke-dasharray", "0 " + (cache.scaledS0 + 2) + " " + ~~(longerSideCoeff + 2) + "00%");

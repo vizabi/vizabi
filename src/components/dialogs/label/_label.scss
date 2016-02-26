@@ -1,0 +1,47 @@
+
+.vzb-tool-dialogs {
+  .vzb-dialogs-dialog {
+    &[data-dlg="label"] {
+      .vzb-dialog-content {
+        .vzb-bs-slider-thumb-arc {
+          display: none; 
+        }
+      }
+    }
+  }
+}
+
+//responsiveness
+&.vzb-large {
+  &.vzb-dialog-expand-true {
+    .vzb-dialogs-dialog {
+      &[data-dlg="label"] {
+        &.vzb-sidebar {
+          flex: none;
+          
+          .vzb-dialog-title {
+            display: inline-block;
+          }
+          
+          .vzb-saxis-selector {
+            display: inline-block;
+          }
+        }
+      }
+    }
+  }
+}
+
+//hiding elements when in popup mode
+// .vzb-tool-dialogs {
+//   .vzb-dialogs-dialog {
+//     &[data-dlg="label"] {
+//       &.vzb-sidebar {
+//         .vzb-dialog-bubblesize {
+//           display: none;
+//         }
+//   	  }
+// 	  }
+//   }
+// }
+

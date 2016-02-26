@@ -473,6 +473,10 @@ BubbleChart.define('default_model', {
         use: "property",
         which: "geo.name"
       },
+      size_label: {
+          use: "constant"
+        },
+
       axis_y: {
         use: "indicator",
         which: "child_mortality_rate_per1000",
@@ -518,7 +522,7 @@ BubbleChart.define('default_model', {
   },
   language: language,
   ui: {
-    'vzb-tool-bubble-chart': {
+    'vzb-tool-bubblechart': {
       whenHovering: {
         showProjectionLineX: true,
         showProjectionLineY: true,
@@ -527,7 +531,8 @@ BubbleChart.define('default_model', {
       },
       labels: {
         autoResolveCollisions: true,
-        dragging: true
+        dragging: true,
+        removeLabelBox: false
       }
     },
     presentation: false

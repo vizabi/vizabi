@@ -47,7 +47,7 @@ var SizeModel = Hook.extend({
     if(this.use === "constant" && this.which < this.domainMin) this.which = this.domainMin;
     
     if(!this.scaleType) this.scaleType = 'linear';
-    if(this.use === "property") this.scaleType = 'ordinal';
+    if(this.use === "property" || this.use === "constant") this.scaleType = 'ordinal';
     
     //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
     if(this.which_1 != this.which || this.scaleType_1 != this.scaleType) this.scale = null;
@@ -86,7 +86,8 @@ var SizeModel = Hook.extend({
     }
     
     var scaletype = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.scaleType === "log")? "genericLog" : this.scaleType;;
-    this.scale = d3.scale[scaletype || "linear"]().domain(domain).clamp(true);
+    this.scale = d3.scale[scaletype || "linear"]().domain(domain);
+    if(this.scaleType !== 'ordinal') this.scale.clamp(true);
   }
 
 });

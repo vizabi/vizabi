@@ -69,6 +69,12 @@
           &.vzb-highlighted rect {
             fill: rgb(255, 252, 185);
           }
+          &.vzb-label-boxremoved {
+            rect {
+              stroke: none;
+              fill: none;              
+            }
+          }
         }
       } 
         
