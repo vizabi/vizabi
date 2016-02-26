@@ -201,7 +201,7 @@ var BubbleChartComp = Component.extend({
 
     this.xAxis = axisSmart();
     this.yAxis = axisSmart();
-      
+
     _this.COLOR_BLACKISH = "#333";
     _this.COLOR_WHITEISH = "#fdfdfd";
 
@@ -1059,31 +1059,28 @@ var BubbleChartComp = Component.extend({
 
     var TIMEDIM = this.TIMEDIM;
     var KEY = this.KEY;
-    var values, valuesLocked;
+    var values = _this.frame, valuesLocked;
 
     //get values for locked and not locked
     if(this.model.time.lockNonSelected && this.someSelected) {
       var tLocked = this.model.time.timeFormat.parse("" + this.model.time.lockNonSelected);
       valuesLocked = this.model.marker.getFrame(tLocked);
     }
-    this.model.marker.getFrame(this.time).then(function(values) {
-      _this.entityBubbles.each(function(d, index) {
-        var view = d3.select(this);
-        _this._updateBubble(d, values, valuesLocked, index, view, duration);
+    _this.entityBubbles.each(function(d, index) {
+      var view = d3.select(this);
+      _this._updateBubble(d, values, valuesLocked, index, view, duration);
 
-      }); // each bubble
+    }); // each bubble
 
-      if(_this.ui.labels.autoResolveCollisions) {
-        // cancel previously queued simulation if we just ordered a new one
-        clearTimeout(_this.collisionTimeout);
+    if(_this.ui.labels.autoResolveCollisions) {
+      // cancel previously queued simulation if we just ordered a new one
+      clearTimeout(_this.collisionTimeout);
 
-        // place label layout simulation into a queue
-        _this.collisionTimeout = setTimeout(function() {
-          //  _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
-        }, _this.model.time.delayAnimations * 1.2)
-      }
-    });
-
+      // place label layout simulation into a queue
+      _this.collisionTimeout = setTimeout(function() {
+        //  _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
+      }, _this.model.time.delayAnimations * 1.2)
+    }
   },
 
   //redraw Data Points

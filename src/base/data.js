@@ -295,7 +295,7 @@ var Data = Class.extend({
     var columns = query.select.filter(function(f){return f != "geo" && f != "time" && f !== "_default"});
 
     return new Promise(function(resolve, reject) {
-      if (_this._collection[queryId]["frames"][id][neededFrame]) {
+      if (_this._collection[queryId]["frames"][id] && _this._collection[queryId]["frames"][id][neededFrame]) {
         resolve(_this._collection[queryId]["frames"][id]);
       } else {
         _this.framesQueue(queryId, framesArray, columns).forceFrame(neededFrame, function() {
@@ -303,7 +303,6 @@ var Data = Class.extend({
         });
       }
     });
-
   },
   /**
    * feature in future we can change priority for calculating frames for each frame
@@ -325,37 +324,47 @@ var Data = Class.extend({
         this.queue.splice(0, 0, this.queue.splice(this.queue.length - 1, 1)[0]);
         this.key = 0;
         this.getNext = function() {
+          var queue = this;
           if (this.queue.length == 0) return false;
           if (this.key >= this.queue.length - 1) {
             this.key = 0;
           }
-          var response = {
-            frameName: this.queue.splice(this.key, 1).pop()
-          };
-          if (this.callbacks[response.frameName]) {
-            var _this = this;
-            response["callback"] = function() {
-              for (var  i = 0; i < _this.callbacks[response.frameName].length; i++) {
-                _this.callbacks[response.frameName][i]();
-              }
-              _this.callbacks[response.frameName] = [];
-            };
+          var frameName = this.queue.splice(this.key, 1).pop();
+          if (!this.callbacks[frameName]) {
+            this.callbacks[frameName] = [];
           }
-          return response;
+          var frameComplete = function(frameName) {
+            if (queue.callbacks[frameName]) {
+              for (var  i = 0; i < queue.callbacks[frameName].length; i++) {
+                queue.callbacks[frameName][i]();
+              }
+              delete queue.callbacks[frameName];
+            }
+          };
+          return {
+            frameName: frameName,
+            callback: frameComplete
+          };
         };
         this.forceFrame = function(frameName, cb) {
-          var newKey = this.queue.indexOf(frameName.toString());
-          if (newKey !== -1) {
-            if (typeof cb === "function") {
-              if (typeof this.callbacks[frameName] != "object") {
-                this.callbacks[frameName] = [];
-              }
-              this.callbacks[frameName].push(cb);
-            }
-            this.key = newKey;
+          if (this.callbacks[frameName]) {
+            this.callbacks[frameName].push(cb);
           } else {
-            if (typeof this.callbacks[frameName] != "object") {
-              this.callbacks[frameName].push(cb);
+            var newKey = this.queue.indexOf(frameName.toString());
+            if (newKey !== -1) {
+              if (typeof cb === "function") {
+                if (typeof this.callbacks[frameName] != "object") {
+                  this.callbacks[frameName] = [];
+                }
+                this.callbacks[frameName].push(cb);
+              }
+              this.key = newKey;
+            } else {
+              if (typeof this.callbacks[frameName] === "object") {
+                this.callbacks[frameName].push(cb);
+              } else {
+                this.callbacks[frameName] = [cb];
+              }
             }
           }
         }
@@ -495,7 +504,13 @@ var Data = Class.extend({
                   //So we let the key have missing values in this column for all frames
                   if (items && items.length > 0) {
                     next = null;
+                    if (frameName.toString() == "Sun Jan 01 1854 02:00:00 GMT+0200 (FLE Standard Time)" && key == "usa") {
+                      console.log(frameName);
+                      console.log(items);
+                      console.log(frame[column][key]);
+                    }
                     frame[column][key] = utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
+
                   }
                 }
               } //loop across columns
@@ -503,7 +518,7 @@ var Data = Class.extend({
           }
           _this._collection[queryId]["frames"][id][frameName] = frame;
           if (typeof callback === "function") {
-            callback();
+            callback(frameName);
           }
           var newFrame = _this.framesQueue(queryId, framesArray, columns).getNext();
           if (newFrame) {
@@ -625,14 +640,13 @@ var Data = Class.extend({
           min: d3.min(values)
         }
       } catch (err) {
-        utils.warn("Frame for " + frameName + " are not ready yet");
+        //utils.warn("Frame for " + frameName + " are not ready yet");
       }
     });
     return result;
   },
 
   _getLimits: function(queryId, attr) {
-
     var items = this._collection[queryId].data;
     // get only column attr and only rows with number or date
     var filtered = items.reduce(function(filtered, d) {
