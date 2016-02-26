@@ -428,6 +428,9 @@ var Data = Class.extend({
       }
 
       var buildFrame = function(frameName, keys, queryId, callback) {
+          if (typeof frameName === "string") {
+            frameName = new Date(frameName);
+          }
 //          return new Promise(function(resolve, reject) {
           var frame = {};
 
@@ -504,13 +507,7 @@ var Data = Class.extend({
                   //So we let the key have missing values in this column for all frames
                   if (items && items.length > 0) {
                     next = null;
-                    if (frameName.toString() == "Sun Jan 01 1854 02:00:00 GMT+0200 (FLE Standard Time)" && key == "usa") {
-                      console.log(frameName);
-                      console.log(items);
-                      console.log(frame[column][key]);
-                    }
                     frame[column][key] = utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
-
                   }
                 }
               } //loop across columns
