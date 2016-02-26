@@ -18,6 +18,7 @@ import BubbleMap from 'tools/bubblemap';
 import BMComponent from 'tools/bubblemap-component';
 import LineChart from 'tools/linechart';
 import PopByAge from 'tools/popbyage';
+import DonutChart from 'tools/donutchart';
 
 //waffle reader
 import {
@@ -606,6 +607,55 @@ PopByAge.define('default_model', {
     presentation: false
   }
 });
+
+
+DonutChart.define('default_model', {
+  state: {
+        // available time would have the range of 1990-2012 years (%Y), with the deafult position at 2000
+        time: {
+          start: "1990",
+          end: "2012",
+          value: "2000"
+        },
+        //Entities include all ("*") geo's of category "regions" -- equivalent to 'geo: ["asi", "ame", "eur", "afr"]'
+        entities: {
+          dim: "geo",
+          show: {
+            _defs_: {
+              "geo": ["*"],
+              "geo.cat": ["region"]
+            }
+          }
+        },
+        //Markers correspond to visuals that we want to show. We have label, axis and color
+        marker: {
+          space: ["entities", "time"],
+          label: {
+            use: "property",
+            which: "geo.name"
+          },
+          axis: {
+            use: "indicator",
+            which: "population"
+          },
+          color: {
+            use: "property",
+            which: "geo.name"
+          }
+        }
+  },  
+  data: {
+    reader: "csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv",
+    splash: false
+  },
+  language: language,
+  ui: {
+    presentation: false
+  }
+    
+});
+
 
 //Waffle Server Reader custom path
 WaffleReader.define('basepath', "http://52.18.235.31:8001/values/waffle");

@@ -1,0 +1,51 @@
+.vzb-tool-donutchart {
+  .vzb-donutchart {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
+    width: 100%;
+    height: 100%;  
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+    text {
+      text-anchor: middle;
+      fill: rgb(96, 120, 137);
+    }
+    .year {
+      dominant-baseline: hanging;
+      fill: #ddd;
+    }
+  }
+  .vzb-large .vzb-donutchart .year {
+    font-size: 8em;
+  }
+  .vzb-large .vzb-donutchart .title {
+    font-size: 4em;
+  }
+  .vzb-large .vzb-donutchart .label {
+    font-size: 2em;
+  }
+  .vzb-medium .vzb-donutchart .year {
+    font-size: 8em;
+  }
+  .vzb-medium .vzb-donutchart .title {
+    font-size: 4em;
+  }
+  .vzb-medium .vzb-donutchart .label {
+    font-size: 2em;
+  }
+  .vzb-small .vzb-donutchart .year {
+    font-size: 4em;
+  }
+  .vzb-small .vzb-donutchart .title {
+    font-size: 2em;
+  }
+  .vzb-small .vzb-donutchart .label {
+    font-size: 1em;
+  }
+}
