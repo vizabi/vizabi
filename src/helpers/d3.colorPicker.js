@@ -44,6 +44,7 @@ export default function colorPicker() {
     //margins in % of container's width and height
     var colorOld = '#000';
     var colorDef = '#000';
+    var colorWhite = '#f8f8f8';
     // names of CSS classes
     var css = {
       INVISIBLE: 'vzb-invisible',
@@ -231,19 +232,6 @@ export default function colorPicker() {
           d3.select(this).style('stroke', 'none');
         });
 
-      circles.append('circle')
-        .attr('r', minRadius - 1)
-        .attr('fill', '#fff')
-        .attr('class', css.COLOR_BUTTON)
-        .on('mouseover',
-          function() {
-            d3.select(this).style('stroke', '#444');
-            _cellHover('#fff');
-        })
-        .on('mouseout', function() {
-          d3.select(this).style('stroke', 'none');
-        });
-
       circles.selectAll('.' + css.COLOR_CIRCLE)
         .data(colorData).enter().append('g')
           .attr('class', css.COLOR_CIRCLE)
@@ -273,6 +261,19 @@ export default function colorPicker() {
                 });
             });
 
+      circles.append('circle')
+        .attr('r', minRadius)
+        .attr('fill', colorWhite)
+        .attr('class', css.COLOR_BUTTON)
+        .on('mouseover',
+          function() {
+            d3.select(this).style('stroke', "#555");
+            _cellHover(colorWhite);
+        })
+        .on('mouseout', function() {
+          d3.select(this).style('stroke', 'none');
+        });        
+
       colorPointer = circles.append('path')
         .attr('class', css.COLOR_POINTER + ' ' + css.INVISIBLE);
 
@@ -291,7 +292,7 @@ export default function colorPicker() {
 
       svg.select('.' + css.COLOR_POINTER)
         .style('stroke-width', 2)
-        .style('stroke', 'white')
+        .style('stroke', colorWhite)
         .style('pointer-events', 'none')
         .style('fill', 'none');
 

@@ -491,7 +491,7 @@ BubbleChart.define('default_model', {
         which: "gdp_p_cap_const_ppp2011_dollar",
         scaleType: "log",
         allow: {
-          scales: ["linear", "log"]
+          scales: ["linear", "log", "time"]
         }
       },
       color: {
