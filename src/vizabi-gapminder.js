@@ -221,7 +221,7 @@ BubbleMap.define('default_model', {
         which: "population",
         scaleType: "linear",
         allow: {
-          scales: ["linear", "log"]
+          scales: ["linear"]
         },
         domainMin: .04,
         domainMax: .90
@@ -507,7 +507,7 @@ BubbleChart.define('default_model', {
         which: "population",
         scaleType: "linear",
         allow: {
-          scales: ["linear", "log"]
+          scales: ["linear"]
         },
         domainMin: .04,
         domainMax: .90
