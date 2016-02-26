@@ -49,8 +49,7 @@ BarChart.define('default_model', {
       start: "1800",
       end: "2012",
       value: "2000",
-      step: 1,
-      formatInput: "%Y"
+      step: 1
     },
     entities: {
       dim: "geo",
@@ -108,8 +107,7 @@ BarRankChart.define('default_model', {
       start: "1950",
       end: "2015",
       value: "2000",
-      step: 1,
-      formatInput: "%Y"
+      step: 1
     },
     entities: {
       dim: "geo",
@@ -198,8 +196,7 @@ BubbleMap.define('default_model', {
       end: "2015",
       value: "2015",
       step: 1,
-      speed: 300,
-      formatInput: "%Y"
+      speed: 300
     },
     entities: {
       dim: "geo",
@@ -275,7 +272,6 @@ MountainChart.define('default_model', {
       delay: 100,
       delayThresholdX2: 50,
       delayThresholdX4: 25,
-      formatInput: "%Y",
       xLogStops: [1, 2, 5],
       yMaxMethod: "latest",
       probeX: 1.85,
@@ -379,7 +375,6 @@ LineChart.define('default_model', {
       end: 2012,
       value: 2012,
       step: 1,
-      formatInput: "%Y"
     },
     //entities we want to show
     entities: {
@@ -458,7 +453,6 @@ BubbleChart.define('default_model', {
       end: "2015",
       value: "2015",
       step: 1,
-      formatInput: "%Y",
       trails: true,
       lockNonSelected: 0,
       adaptMinMaxZoom: false
