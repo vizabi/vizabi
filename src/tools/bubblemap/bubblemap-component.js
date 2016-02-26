@@ -106,6 +106,7 @@ var BubbleMapComponent = Component.extend({
     this.sScale = null;
     this.cScale = d3.scale.category10();
 
+    _this.COLOR_WHITEISH = "#fdfdfd";
 
     this.cached = {};
     // default UI settings
@@ -558,7 +559,7 @@ var BubbleMapComponent = Component.extend({
           d.label = valueL;
           
           view.classed("vzb-hidden", false)
-              .attr("fill", valueC?_this.cScale(valueC):"transparent")
+              .attr("fill", valueC?_this.cScale(valueC):_this.COLOR_WHITEISH)
           
           if(reposition){
               d.cLoc = _this.skew(_this.projection([valueX, valueY]));

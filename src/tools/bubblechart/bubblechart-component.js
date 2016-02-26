@@ -201,7 +201,9 @@ var BubbleChartComp = Component.extend({
 
     this.xAxis = axisSmart();
     this.yAxis = axisSmart();
-
+      
+    _this.COLOR_BLACKISH = "#333";
+    _this.COLOR_WHITEISH = "#fdfdfd";
 
     this.cached = {};
     this.xyMaxMinMean = {};
@@ -979,7 +981,7 @@ var BubbleChartComp = Component.extend({
 
       var valueC = cache && _this.model.time.lockNonSelected ? valuesNow.color[d[KEY]] : values.color[d[KEY]];
 
-      return valueC?_this.cScale(valueC):"transparent";
+      return valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH;
     });
   },
 
@@ -1121,7 +1123,7 @@ var BubbleChartComp = Component.extend({
       var scaledS = utils.areaToRadius(_this.sScale(valueS));
 
       view.classed("vzb-invisible", false)
-        .style("fill", valueC?_this.cScale(valueC):"transparent");
+        .style("fill", valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH);
 
 
       if(duration) {
@@ -1140,7 +1142,7 @@ var BubbleChartComp = Component.extend({
         type: "circle",
         id: d[KEY],
         time: this.model.time.value.getUTCFullYear(),
-        fill: valueC?_this.cScale(valueC):"transparent",
+        fill: valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH,
         cx: _this.xScale(valueX),
         cy: _this.yScale(valueY),
         r: scaledS
