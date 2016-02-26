@@ -75,7 +75,7 @@ var SizeSlider = Component.extend({
           _this.model.size.domainMin,
           _this.model.size.domainMax
       ];
-      _this._updateArcs(size);
+      //_this._updateArcs(size);
       _this._updateLabels(size);
       _this.sliderEl.call(_this.brush.extent(size));
       if(size[0] == size[1]){
@@ -98,11 +98,16 @@ var SizeSlider = Component.extend({
         ];
         _this.sliderEl.call(_this.brush.extent(size));
       } else {
-        //_this.sizeScaleMinMax = []['default' + _this.propertyName], _this.getMinMaxBubbleRadius().max];
         _this.sliderEl.selectAll('.e').classed('vzb-hidden', true);
         _this.sliderEl.select('.extent').classed('vzb-hidden', true);
         _this.sliderEl.select('.background').classed('vzb-pointerevents-none', true);
-        _this.sliderEl.call(_this.brush.extent([_this.model.size.domainMin, OPTIONS.DOMAIN_MAX]));
+        var domainMin = _this.model.size.domainMin;
+        if(!_this.model.size.which) {
+          var p = _this.propertyActiveProfile;
+          domainMin = (p.default - p.min) / (p.max - p.min);
+          _this.model.size.which = '_default';
+        }      
+        _this.sliderEl.call(_this.brush.extent([domainMin, OPTIONS.DOMAIN_MAX]));
       }
       _this.sliderEl.call(_this.brush.event);      
     }
@@ -142,12 +147,11 @@ var SizeSlider = Component.extend({
     this.padding = padding;
     
     
-
-    var minMaxBubbleRadius = this.getMinMaxBubbleRadius();
+    this.propertyActiveProfile = this.getPropertyActiveProfile();
 
     this.xScale = d3.scale.linear()
       .domain([OPTIONS.DOMAIN_MIN, OPTIONS.DOMAIN_MAX])
-      .range([minMaxBubbleRadius.min * 4, minMaxBubbleRadius.max * 4])
+      .range([this.propertyActiveProfile.min * 4, this.propertyActiveProfile.max * 4])
       .clamp(true)
 
     this.brush = d3.svg.brush()
@@ -178,14 +182,6 @@ var SizeSlider = Component.extend({
     this.sliderThumbs.append("g")
       .attr("class", "vzb-bs-slider-thumb-badge")
       .append("path")
-      //.attr("d", "M0 " + (barWidth * .5) + "l" + (-thumbRadius) + " " + (thumbRadius * 1.5) + "h" + (thumbRadius * 2) + "Z")
-
-      //For return to circles
-      //.attr("d", "M0 0 l" + (thumbRadius * 2) + " " + (-thumbRadius) + "v" + (thumbRadius * 2) + "Z")
-
-      //For return to round thumbs
-      //.attr("d", thumbArc)
-
       .attr('d', function(d,i) {
         if(i) return "M0 0 l" + (thumbRadius) + " " + (-thumbRadius * .6) + "v" + (thumbRadius * 1.2) + "Z";
         //i=0
@@ -216,17 +212,11 @@ var SizeSlider = Component.extend({
     this.sliderEl.select(".extent")
       .classed("vzb-bs-slider-extent", true)
 
-    //For return to circles
-    // var circleLabelTransform = function(d, i) {
-    //    var dX = i ? textMargin.h + _this.xScale(d) : -textMargin.h,
-    //        dY = -textMargin.v;
-    //    return "translate(" + (dX) + "," + (dY) + ")";
-    // }
-
     this.on("resize", function() {
       //console.log("EVENT: resize");
+      _this.propertyActiveProfile = this.getPropertyActiveProfile();
 
-      _this.xScale.range([_this.getMinMaxBubbleRadius().min * 4, _this.getMinMaxBubbleRadius().max * 4]);
+      _this.xScale.range([_this.propertyActiveProfile.min * 4, _this.propertyActiveProfile.max * 4]);
       _this._updateSize();
 
       _this.sliderEl
@@ -251,8 +241,9 @@ var SizeSlider = Component.extend({
     var i = 0;
   },
 
-  getMinMaxBubbleRadius: function() {
-    return { min: profiles[this.getLayoutProfile()]['min' + this.propertyName], max: profiles[this.getLayoutProfile()]['max' + this.propertyName]};
+  getPropertyActiveProfile: function() {
+    var profile = profiles[this.getLayoutProfile()];
+    return { min: profile['min' + this.propertyName], max: profile['max' + this.propertyName], default: profile['default' + this.propertyName]};
   },
 
   /*
@@ -261,25 +252,25 @@ var SizeSlider = Component.extend({
    */
   _updateSize: function() {
     this.sliderSvg
-      .attr("height", this.getMinMaxBubbleRadius().max + this.padding.top + this.padding.bottom)
-      .attr("width", this.getMinMaxBubbleRadius().max * 4 + this.padding.left + this.padding.right)
+      .attr("height", this.propertyActiveProfile.max + this.padding.top + this.padding.bottom)
+      .attr("width", this.propertyActiveProfile.max * 4 + this.padding.left + this.padding.right)
     this.sliderWrap
-      .attr("transform", "translate(" + this.padding.left * .5 + "," + (this.getMinMaxBubbleRadius().max + this.padding.top) + ")")
+      .attr("transform", "translate(" + this.padding.left * .5 + "," + (this.propertyActiveProfile.max + this.padding.top) + ")")
   },
 
-  _updateArcs: function(s) {
-    var _this = this;
-    var valueArc = d3.svg.arc()
-      .outerRadius(function (d) { return _this.xScale(d) * 0.5 })
-      .innerRadius(function (d) { return _this.xScale(d) * 0.5 })
-      .startAngle(-Math.PI * 0.5)
-      .endAngle(Math.PI * 0.5);
-
-    this.sliderThumbs.select('.vzb-bs-slider-thumb-arc').data(s)
-      .attr("d", valueArc)
-      .attr("transform", function (d) {return "translate(" + (-_this.xScale(d) * 0.25) + ",0)"; })
-  },
-
+//   _updateArcs: function(s) {
+//     var _this = this;
+//     var valueArc = d3.svg.arc()
+//       .outerRadius(function (d) { return _this.xScale(d) * 0.5 })
+//       .innerRadius(function (d) { return _this.xScale(d) * 0.5 })
+//       .startAngle(-Math.PI * 0.5)
+//       .endAngle(Math.PI * 0.5);
+// 
+//     this.sliderThumbs.select('.vzb-bs-slider-thumb-arc').data(s)
+//       .attr("d", valueArc)
+//       .attr("transform", function (d) {return "translate(" + (-_this.xScale(d) * 0.25) + ",0)"; })
+//   },
+// 
   _updateLabels: function(s) {
     var _this = this;
     var arcLabelTransform = function(d, i) {
@@ -313,7 +304,7 @@ var SizeSlider = Component.extend({
    */
   _setFromExtent: function(force, persistent) {
     var s = this.brush.extent();
-    this._updateArcs(s);
+//    this._updateArcs(s);
     this._updateLabels(s);
     this._setModel(s, force, persistent);
   },

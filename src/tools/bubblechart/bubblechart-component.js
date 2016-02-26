@@ -1005,11 +1005,11 @@ var BubbleChartComp = Component.extend({
     this.maxLabelTextSize = Math.max(minLabelTextSize + minMaxDelta * this.model.marker.size_label.domainMax, minLabelTextSize);
 
     if(this.model.marker.size_label.use == 'constant') {
-      if(!this.model.marker.size_label.which) {
-        this.minLabelTextSize = this.activeProfile.defaultLabelTextSize;
-        this.model.marker.size_label.set({'domainMin': (this.minLabelTextSize - minLabelTextSize) / minMaxDelta, 'which': '_default'});
-        return; 
-      }
+      // if(!this.model.marker.size_label.which) {
+      //   this.minLabelTextSize = this.activeProfile.defaultLabelTextSize;
+      //   this.model.marker.size_label.set({'domainMin': (this.minLabelTextSize - minLabelTextSize) / minMaxDelta, 'which': '_default'});
+      //   return; 
+      // }
       this.maxLabelTextSize = this.minLabelTextSize;
     } 
 
