@@ -562,7 +562,7 @@ var BubbleMapComponent = Component.extend({
           d.label = valueL;
 
           view.classed("vzb-hidden", false)
-              .attr("fill", valueC?_this.cScale(valueC):"transparent")
+              .attr("fill", valueC?_this.cScale(valueC):_this.COLOR_WHITEISH)
 
           if(reposition){
               d.cLoc = _this.skew(_this.projection([valueX, valueY]));
@@ -596,11 +596,10 @@ var BubbleMapComponent = Component.extend({
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
     this.year.setText(this.model.time.timeFormat(this.time));
-    this.model.marker.getFrame(this.time).then(function(values) {
-      //possibly update the exact value in size title
-      _this.values = values;
-      _this.updateTitleNumbers();
-    });
+    this.values = this.model.marker.getFrame(this.time);
+
+    //possibly update the exact value in size title
+    this.updateTitleNumbers();
   },
 
 

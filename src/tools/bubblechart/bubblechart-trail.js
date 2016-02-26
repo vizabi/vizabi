@@ -208,16 +208,18 @@ export default Class.extend({
       var view = d3.select(this);
 
       var strokeColor = _this.model.marker.color.which == "geo.region"?
+        //use predefined shades for color palette for "geo.region" (hardcoded)
         _this.model.marker.color.getColorShade({
           colorID: segment.valueC,
           shadeID: "shade"
         })
         :
-        _this.cScale(segment.valueC);
+        //otherwise use color of the bubble with a fallback to bubble stroke color (blackish)
+        (segment.valueC!=null?_this.cScale(segment.valueC):_this.COLOR_BLACKISH);
 
       view.select("circle")
         //.transition().duration(duration).ease("linear")
-        .style("fill", _this.cScale(segment.valueC));
+        .style("fill", segment.valueC!=null?_this.cScale(segment.valueC):_this.COLOR_WHITEISH);
       view.select("line")
         //.transition().duration(duration).ease("linear")
         .style("stroke", strokeColor);
