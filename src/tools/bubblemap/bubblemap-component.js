@@ -544,27 +544,27 @@ var BubbleMapComponent = Component.extend({
     this.entityBubbles.each(function(d, index){
       var view = d3.select(this);
 
-      var valueX = _this.values.lng[d[_this.KEY]]||0;
-      var valueY = _this.values.lat[d[_this.KEY]]||0;
-      var valueS = _this.values.size[d[_this.KEY]]||0;
+      var valueX = _this.values.lng[d[_this.KEY]];
+      var valueY = _this.values.lat[d[_this.KEY]];
+      var valueS = _this.values.size[d[_this.KEY]];
       var valueC = _this.values.color[d[_this.KEY]];
       var valueL = _this.values.label[d[_this.KEY]];
 
       d.hidden_1 = d.hidden;
-      d.hidden = !valueS || !valueX || !valueY;
+      d.hidden = !valueS || valueX==null || valueY==null;
 
       if(d.hidden !== d.hidden_1) view.classed("vzb-hidden", d.hidden);
         
       if(!d.hidden){
           
-          d.r = utils.areaToRadius(_this.sScale(valueS));
+          d.r = utils.areaToRadius(_this.sScale(valueS||0));
           d.label = valueL;
           
           view.classed("vzb-hidden", false)
               .attr("fill", valueC?_this.cScale(valueC):_this.COLOR_WHITEISH)
           
           if(reposition){
-              d.cLoc = _this.skew(_this.projection([valueX, valueY]));
+              d.cLoc = _this.skew(_this.projection([valueX||0, valueY||0]));
               
               view.attr("cx", d.cLoc[0])
                   .attr("cy", d.cLoc[1]);
