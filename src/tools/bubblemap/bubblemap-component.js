@@ -551,7 +551,7 @@ var BubbleMapComponent = Component.extend({
       var valueL = _this.values.label[d[_this.KEY]];
 
       d.hidden_1 = d.hidden;
-      d.hidden = !valueS || valueX==null || valueY==null;
+      d.hidden = !valueS || !valueX || !valueY;
 
       if(d.hidden !== d.hidden_1) view.classed("vzb-hidden", d.hidden);
         
