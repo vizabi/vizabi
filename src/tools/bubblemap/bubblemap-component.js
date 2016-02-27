@@ -107,17 +107,19 @@ var BubbleMapComponent = Component.extend({
     this.cScale = d3.scale.category10();
 
     _this.COLOR_WHITEISH = "#fdfdfd";
+      
+    var externalUiModel = this.ui["vzb-tool-" + this.name].getPlainObject();
 
     this.cached = {};
     // default UI settings
     this.ui = utils.extend({
       labels: {}
-    }, this.ui["vzb-tool-" + this.name]);
+    }, externalUiModel);
 
     this.ui.labels = utils.extend({
       autoResolveCollisions: false,
       dragging: true
-    }, this.ui.labels);
+    }, externalUiModel.labels);
 
     this.labelDragger = d3.behavior.drag()
       .on("dragstart", function(d, i) {

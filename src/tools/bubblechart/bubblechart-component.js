@@ -230,24 +230,26 @@ var BubbleChartComp = Component.extend({
     this.isCanvasPreviouslyExpanded = false;
     this.draggingNow = null;
 
+    var externalUiModel = this.ui["vzb-tool-" + this.name].getPlainObject();
+      
     // default UI settings
     this.ui = utils.extend({
       whenHovering: {},
       labels: {}
-    }, this.ui["vzb-tool-" + this.name]);
+    }, externalUiModel);
 
     this.ui.whenHovering = utils.extend({
       showProjectionLineX: true,
       showProjectionLineY: true,
       higlightValueX: true,
       higlightValueY: true
-    }, this.ui.whenHovering);
+    }, externalUiModel.whenHovering);
 
-    this.ui.labels = utils.extend({
+    this.ui.labels = utils.deepExtend({
       autoResolveCollisions: false,
       dragging: true,
       removeLabelBox: false
-    }, this.ui.labels);
+    }, externalUiModel.labels);
 
     this._trails = new Trail(this);
     this._panZoom = new PanZoom(this);
