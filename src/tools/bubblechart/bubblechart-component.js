@@ -1391,10 +1391,12 @@ var BubbleChartComp = Component.extend({
     var labels = this.model.ui.get('vzb-tool-bubblechart').labels;
     if(labels.removeLabelBox) {
       var angle = Math.atan2(diffX1 + diffX2, diffY1 + diffY2) * 180 / Math.PI;
-      diffX2 += (angle >= 0 && angle <= 180) ? (-textBBox.width * .5) : (textBBox.width * .5);
-      diffY2 += (Math.abs(angle) <= 90) ? (-textBBox.height * .55) : (textBBox.height * .45);
-    }      
-
+      var deltaDiffX2 = (angle >= 0 && angle <= 180) ? (-textBBox.width * .5) : (textBBox.width * .5);
+      var deltaDiffY2 = (Math.abs(angle) <= 90) ? (-textBBox.height * .55) : (textBBox.height * .45);
+      diffX2 += Math.abs(-diffX2 - diffX1) > textBBox.width * .5 ? deltaDiffX2 : 0; 
+      diffY2 += Math.abs(-diffY2 - diffY1) > textBBox.height * .5 ? deltaDiffY2 : (-textBBox.height * .05); 
+    }
+          
     var longerSideCoeff = Math.abs(diffX1) > Math.abs(diffY1) ? Math.abs(diffX1) / this.width : Math.abs(diffY1) / this.height;
     lineGroup.select("line").style("stroke-dasharray", "0 " + (cache.scaledS0 + 2) + " " + ~~(longerSideCoeff + 2) + "00%");
 
