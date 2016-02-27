@@ -251,6 +251,7 @@ BubbleMap.define('default_model', {
   },
   language: language,
   ui: {
+    'vzb-tool-bubblemap': {},
     presentation: false
   }
 });
