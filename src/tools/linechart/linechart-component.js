@@ -224,7 +224,7 @@ var LCComponent = Component.extend({
 
     this.data = this.model.marker.getKeys(filter);
     this.values = this.model.marker.getFrame(this.time);
-    this.prev_steps = this.all_steps.filter(function(f){return f < _this.time;});
+    this.prev_steps = this.all_steps.filter(function(f){return f <= _this.time;});
 
     this.entityLines = this.linesContainer.selectAll('.vzb-lc-entity').data(this.data);
     this.entityLabels = this.labelsContainer.selectAll('.vzb-lc-entity').data(this.data);
