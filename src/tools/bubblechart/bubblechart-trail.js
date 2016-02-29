@@ -169,6 +169,8 @@ export default Class.extend({
     }
 
     trail.each(function(segment, index) {
+        
+      if(segment.valueY==null || segment.valueX==null || segment.valueS==null) return;
 
       var view = d3.select(this);
       view.select("circle")
@@ -181,11 +183,12 @@ export default Class.extend({
       if(next == null) return;
       next = next.__data__;
 
+      if(next.valueY==null || next.valueX==null) return;
+        
       var lineLength = Math.sqrt(
           Math.pow(_this.xScale(segment.valueX) - _this.xScale(next.valueX),2) +
           Math.pow(_this.yScale(segment.valueY) - _this.yScale(next.valueY),2)
           )
-
       view.select("line")
         //.transition().duration(duration).ease("linear")
         .attr("x1", _this.xScale(next.valueX))
@@ -248,8 +251,10 @@ export default Class.extend({
 
       // segment is transparent if it is after current time or before trail StartTime
       segment.transparent = (segment.t - _this.time >= 0) || (trailStartTime - segment.t > 0)
-        //no trail segment should be visible if leading bubble is shifted backwards
-        || (d.trailStartTime - _this.model.time.timeFormat(_this.time) >= 0);
+        //no trail segment should be visible if leading bubble is shifted backwards, beyond start time
+        || (d.trailStartTime - _this.model.time.timeFormat(_this.time) >= 0)
+        //additionally, segment should not be visible if it has broken data
+        || segment.valueX == null || segment.valueY == null || segment.valueS == null;
 
       if(firstVisible && !segment.transparent) {
         _this.cached[d[KEY]].labelX0 = segment.valueX;
@@ -276,6 +281,8 @@ export default Class.extend({
       var next = this.parentNode.childNodes[(index + 1)];
       if(next == null) return;
       next = next.__data__;
+        
+      if(next.valueY==null || next.valueX==null) return;
 
       if(segment.t - _this.time <= 0 && _this.time - next.t <= 0) {
         next = _this.cached[d[KEY]];

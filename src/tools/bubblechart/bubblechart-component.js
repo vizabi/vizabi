@@ -289,8 +289,8 @@ var BubbleChartComp = Component.extend({
         var resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
         var resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
 
-        var resolvedX0 = _this.xScale(cache.labelX0);
-        var resolvedY0 = _this.yScale(cache.labelY0);
+        var resolvedX0 = cache.labelX0 == null? null : _this.xScale(cache.labelX0);
+        var resolvedY0 = cache.labelY0 == null? null : _this.yScale(cache.labelY0);
 
         var lineGroup = _this.entityLines.filter(function(f) {
           return f[KEY] == d[KEY];
@@ -1092,8 +1092,8 @@ var BubbleChartComp = Component.extend({
         var resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
         var resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
 
-        var resolvedX0 = _this.xScale(cache.labelX0);
-        var resolvedY0 = _this.yScale(cache.labelY0);
+        var resolvedX0 = cache.labelX0 == null? null : _this.xScale(cache.labelX0);
+        var resolvedY0 = cache.labelY0 == null? null : _this.yScale(cache.labelY0);
 
         var lineGroup = _this.entityLines.filter(function(f) {
           return f[KEY] == d[KEY];
@@ -1213,9 +1213,9 @@ var BubbleChartComp = Component.extend({
         r: scaledS
       });
 
-      _this._updateLabel(d, index, valueX, valueY, scaledS, valueL, valueLST, duration);
-
     } // data exists
+      
+    _this._updateLabel(d, index, valueX, valueY, scaledS, valueL, valueLST, duration);
   },
 
 
@@ -1309,8 +1309,8 @@ var BubbleChartComp = Component.extend({
               .attr("ry", contentBBox.height * .2);
           }
 
-          limitedX0 = _this.xScale(cached.labelX0);
-          limitedY0 = _this.yScale(cached.labelY0);
+          limitedX0 = cached.labelX0 == null? null : _this.xScale(cached.labelX0);
+          limitedY0 = cached.labelY0 == null? null : _this.yScale(cached.labelY0);
 
           cached.labelX_ = select.labelOffset[0] || (-cached.scaledS0 * .75 - 5) / _this.width;
           cached.labelY_ = select.labelOffset[1] || (-cached.scaledS0 * .75 - 11) / _this.height;
@@ -1349,6 +1349,12 @@ var BubbleChartComp = Component.extend({
     var cache = this.cached[d[this.KEY]];
 
     var labelGroup = d3.select(context);
+          
+    //protect label and line from the broken data      
+    var brokenInputs = (resolvedX0 == null || resolvedY0 == null);
+    labelGroup.classed("vzb-invisible", brokenInputs);
+    lineGroup.classed("vzb-invisible", brokenInputs);
+    if(brokenInputs) return;
 
     var width = parseInt(labelGroup.select("rect").attr("width"));
     var height = parseInt(labelGroup.select("rect").attr("height"));

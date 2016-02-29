@@ -90,9 +90,12 @@ var Marker = Model.extend({
         utils.forEach(pValues, function(values, hook) {
             curr[hook] = {};
             utils.forEach(values, function(val, id) {
-                var val2 = nValues[hook][id];
-                curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val) *
-                    fraction);
+                if( !utils.isNumber(val) ){
+                    curr[hook][id] = val;
+                }else{
+                    var val2 = nValues[hook][id];
+                    curr[hook][id] = (val==null||val2==null)? null : val + ((val2 - val) * fraction);
+                }
             });
         });
 
