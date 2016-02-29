@@ -52,7 +52,6 @@ var Marker = Model.extend({
 
     getFrame: function(time) {
       var _this = this;
-      var steps = this._parent.time.getAllSteps();
       var cachePath = "";
       utils.forEach(this._dataCube, function(hook, name) {
           cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start + " " + _this._parent.time.end;
