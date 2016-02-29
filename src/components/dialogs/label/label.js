@@ -22,7 +22,7 @@ init: function(config, parent) {
   this.components = [
   {
     component: sizeslider,
-    placeholder: '.vzb-dialog-bubblesize',
+    placeholder: '.vzb-dialog-sizeslider',
     model: ["state.marker.size_label"],
     propertyname: 'LabelTextSize',
     ui: {
