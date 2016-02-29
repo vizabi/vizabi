@@ -524,7 +524,7 @@ var MountainChartComponent = Component.extend({
         // construct pointers
         this.mountainPointers = this.model.marker.getKeys()
             .filter(function(d) { return 1
-                && _this.values.axis_y[d[_this.KEY]]
+                && _this.values.axis_x[d[_this.KEY]]
                 && _this.values.axis_y[d[_this.KEY]]
                 && _this.values.size[d[_this.KEY]];
             })
