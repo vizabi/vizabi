@@ -62,7 +62,7 @@ var LCComponent = Component.extend({
     this.sizeUpdatedOnce = false;
 
     var externalUiModel = this.ui["vzb-tool-" + this.name].getPlainObject();
-      
+
     // default UI settings
     this.ui = utils.extend({
       entity_labels: {},
@@ -228,7 +228,7 @@ var LCComponent = Component.extend({
     filter[timeDim] = this.time;
 
     this.data = this.model.marker.getKeys(filter);
-    this.prev_steps = this.all_steps.filter(function(f){return f < _this.time;});
+     this.prev_steps = this.all_steps.filter(function(f){return f < _this.time;});
 
     this.entityLines = this.linesContainer.selectAll('.vzb-lc-entity').data(this.data);
     this.entityLabels = this.labelsContainer.selectAll('.vzb-lc-entity').data(this.data);

@@ -353,10 +353,21 @@ var Data = Class.extend({
           };
         };
         this.forceFrame = function(frameName, cb) {
+          var objIndexOf = function(obj, need) {
+            var search = need.toString();
+            var index = -1;
+            for(var i = 0, len = obj.length; i < len; i++) {
+              if (obj[i].toString() == search) {
+                index = i;
+                break;
+              }
+            }
+            return index;
+          };
           if (this.callbacks[frameName]) {
             this.callbacks[frameName].push(cb);
           } else {
-            var newKey = this.queue.indexOf(frameName.toString());
+            var newKey = objIndexOf(this.queue, frameName);//this.queue.indexOf(frameName.toString());
             if (newKey !== -1) {
               this.forcedQueue.push(this.queue.splice(newKey, 1).pop());
               if (typeof cb === "function") {
@@ -666,18 +677,30 @@ var Data = Class.extend({
       //filter
       return filtered;
     }, []);
-
     // get min/max for the filtered rows
     var min;
     var max;
     var limits = {};
-    for(var i = 0; i < filtered.length; i += 1) {
-      var c = filtered[i];
-      if(typeof min === 'undefined' || c < min) {
-        min = c;
+    if (filtered.length > 0) {
+      for(var i = 0; i < filtered.length; i += 1) {
+        var c = filtered[i];
+        if(typeof min === 'undefined' || c < min) {
+          min = c;
+        }
+        if(typeof max === 'undefined' || c > max) {
+          max = c;
+        }
       }
-      if(typeof max === 'undefined' || c > max) {
-        max = c;
+    } else { // try to find time limits from query when data empty
+      if (attr == "time") {
+        if (this._collection[queryId].query.where.time && this._collection[queryId].query.where.time[0]) {
+          min = d3.time.format.utc('%Y').parse(this._collection[queryId].query.where.time[0][0]);
+          if (this._collection[queryId].query.where.time[0][1]) {
+            max = d3.time.format.utc('%Y').parse(this._collection[queryId].query.where.time[0][1]);
+          } else {
+            max = min;
+          }
+        }
       }
     }
     limits.min = min || 0;

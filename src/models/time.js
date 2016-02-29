@@ -277,7 +277,7 @@ var TimeModel = Model.extend({
     var curr = this.start;
     while(curr <= this.end) {
       var is = this.getIntervalAndStep();
-      this.allSteps[hash].push(curr.toString());
+      this.allSteps[hash].push(curr);
       curr = d3.time[is.interval].utc.offset(curr, is.step);
     }
     return this.allSteps[hash];

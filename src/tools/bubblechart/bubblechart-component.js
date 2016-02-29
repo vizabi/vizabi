@@ -638,12 +638,12 @@ var BubbleChartComp = Component.extend({
 
     var getKeys = function(prefix) {
       prefix = prefix || "";
-      return this.model.marker.getKeys()
+      return _this.model.marker.getKeys()
         .map(function(d) {
           var pointer = {};
           pointer[KEY] = d[KEY];
           pointer[TIMEDIM] = endTime;
-          pointer.sortValue = values.size[d[KEY]]||0;
+          pointer.sortValue = _this.frame.size[d[KEY]]||0;
           pointer[KEY] = prefix + d[KEY];
           return pointer;
         })

@@ -58,11 +58,15 @@ var Marker = Model.extend({
           cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start + " " + _this._parent.time.end;
       });
       return new Promise(function(resolve, reject) {
-        if(_this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
+        if (!time && _this.cachedFrames[cachePath]) {
+          resolve(_this.cachedFrames[cachePath]);
+        } else if(_this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
           resolve(_this.cachedFrames[cachePath][time]);
         } else {
           _this.getFrames(time).then(function() {
-            if(_this.cachedFrames[cachePath][time]) {
+            if (!time && _this.cachedFrames[cachePath]) {
+              resolve(_this.cachedFrames[cachePath]);
+            } else if(_this.cachedFrames[cachePath][time]) {
               resolve(_this.cachedFrames[cachePath][time]);
             } else {
               utils.warn("Frame was not built for timestamp: " + time + " : " + cachePath);

@@ -54,9 +54,12 @@ var BubbleMapComponent = Component.extend({
     var _this = this;
     this.model_binds = {
       "change:time.value": function (evt) {
-        _this.updateTime();
-        _this.updateDoubtOpacity();
-        _this.redrawDataPoints(null, false);
+        _this.model.marker.getFrame(_this.model.time.value).then(function(values) {
+          _this.values = values;
+          _this.updateTime();
+          _this.updateDoubtOpacity();
+          _this.redrawDataPoints(null, false);
+        });
       },
       "change:entities.highlight": function (evt) {
         if (!_this._readyOnce) return;
@@ -71,11 +74,10 @@ var BubbleMapComponent = Component.extend({
       },
       'change:marker.size': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
-        if(!_this._readyOnce) return;
+        if(!_this._readyOnce || !_this.values) return;
         if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1) {
           _this.updateMarkerSizeLimits();
           _this.redrawDataPoints(null, false);
-          return;
         }
       },
       "change:marker.color.palette": function (evt, path) {
@@ -287,7 +289,7 @@ var BubbleMapComponent = Component.extend({
     this.updateIndicators();
     this.updateSize();
     this.updateMarkerSizeLimits();
-    this.model.marker.getFrame(this.model.time.end).then(function(values) {
+    this.model.marker.getFrame(this.model.time.value).then(function(values) {
       _this.values = values;
       _this.updateEntities();
       _this.updateTime();
@@ -473,7 +475,7 @@ var BubbleMapComponent = Component.extend({
 
     var getKeys = function(prefix) {
       prefix = prefix || "";
-      return this.model.marker.getKeys()
+      return _this.model.marker.getKeys()
         .map(function(d) {
           var pointer = {};
           pointer[KEY] = d[KEY];
@@ -599,7 +601,6 @@ var BubbleMapComponent = Component.extend({
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
     this.year.setText(this.model.time.timeFormat(this.time));
-    this.values = this.model.marker.getFrame(this.time);
 
     //possibly update the exact value in size title
     this.updateTitleNumbers();
