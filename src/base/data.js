@@ -305,7 +305,7 @@ var Data = Class.extend({
     });
   },
   /**
-   * feature in future we can change priority for calculating frames for each frame
+   * set priority for generate each year frame
    * @param queryId
    * @param framesArray
    * @param fields
@@ -320,20 +320,26 @@ var Data = Class.extend({
       this.queues[queueId] = new function(){
         this.queryId = JSON.stringify(framesArray);
         this.callbacks = {};
+        this.forcedQueue = [];
         this.queue = framesArray.slice(0);
         this.queue.splice(0, 0, this.queue.splice(this.queue.length - 1, 1)[0]);
         this.key = 0;
         this.getNext = function() {
           var queue = this;
-          if (this.queue.length == 0) return false;
-          if (this.key >= this.queue.length - 1) {
-            this.key = 0;
+          var frameName = null;
+          if (this.forcedQueue.length > 0) {
+            frameName = this.forcedQueue.shift();
+          } else {
+            if (this.queue.length == 0) return false;
+            if (this.forcedQueue.length == 0 && this.key >= this.queue.length - 1) {
+              this.key = 0;
+            }
+            frameName = this.queue.splice(this.key, 1).pop();
           }
-          var frameName = this.queue.splice(this.key, 1).pop();
           if (!this.callbacks[frameName]) {
             this.callbacks[frameName] = [];
           }
-          var frameComplete = function(frameName) {
+          var frameComplete = function(frameName) { //function called after build each frame with name of frame build
             if (queue.callbacks[frameName]) {
               for (var  i = 0; i < queue.callbacks[frameName].length; i++) {
                 queue.callbacks[frameName][i]();
@@ -352,13 +358,14 @@ var Data = Class.extend({
           } else {
             var newKey = this.queue.indexOf(frameName.toString());
             if (newKey !== -1) {
+              this.forcedQueue.push(this.queue.splice(newKey, 1).pop());
               if (typeof cb === "function") {
                 if (typeof this.callbacks[frameName] != "object") {
                   this.callbacks[frameName] = [];
                 }
                 this.callbacks[frameName].push(cb);
               }
-              this.key = newKey;
+              this.key = newKey; //set key to next year after gorced element (preload if user click play)
             } else {
               if (typeof this.callbacks[frameName] === "object") {
                 this.callbacks[frameName].push(cb);
