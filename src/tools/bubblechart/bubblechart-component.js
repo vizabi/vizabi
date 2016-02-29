@@ -1522,9 +1522,6 @@ var BubbleChartComp = Component.extend({
 
   _setTooltip: function(tooltipText, x, y, offset) {
     if(tooltipText) {
-      var mouse = d3.mouse(this.graph.node()).map(function(d) {
-        return parseInt(d)
-      });
       var xPos, yPos, xSign = -1,
         ySign = -1,
         xOffset = 0,

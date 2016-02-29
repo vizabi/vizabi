@@ -310,7 +310,7 @@ var MountainChartComponent = Component.extend({
 
         this.updateUIStrings();
         this.updateIndicators();
-        this.model.marker.getFrame(this.model.time.end).then(function(values) {
+        this.model.marker.getFrame(this.model.time.value).then(function(values) {
           _this.values = values;
           _this.updateEntities();
           _this.updateSize();
@@ -528,7 +528,7 @@ var MountainChartComponent = Component.extend({
         // construct pointers
         this.mountainPointers = this.model.marker.getKeys()
             .filter(function(d) { return 1
-                && _this.values.axis_y[d[_this.KEY]]
+                && _this.values.axis_x[d[_this.KEY]]
                 && _this.values.axis_y[d[_this.KEY]]
                 && _this.values.size[d[_this.KEY]];
             })
@@ -784,9 +784,6 @@ var MountainChartComponent = Component.extend({
         if (time == null) time = this.time;
 
         this.year.setText(time.getUTCFullYear().toString());
-
-
-        this.yMax = 0;
 
 
         //spawn the original mountains

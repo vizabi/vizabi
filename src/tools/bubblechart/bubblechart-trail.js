@@ -102,25 +102,27 @@ export default Class.extend({
 
         //update segment data (maybe for new indicators)
         var promises = [];
-        trail.each(function(segment, index) {
-          var promise = context.model.marker.getFrame(segment.t)
-          promises.push(promise);
-          promise.then(function(frame) {
-            segment.valueY = frame.axis_y[d[KEY]];
-            segment.valueX = frame.axis_x[d[KEY]];
-            segment.valueS = frame.size[d[KEY]];
-            segment.valueC = frame.color[d[KEY]];
-
-            //update min max frame: needed to zoom in on the trail
+        context.model.marker.getFrame().then(function(frames) { //call without time parameter to use cache instead force frame calculation
+          trail.each(function(segment, index) {
+            promises.push(new Promise(function(res, rej) {
+              context.model.marker.getFrame(segment.t).then(function(frame) {
+                segment.valueY = frame.axis_y[d[KEY]];
+                segment.valueX = frame.axis_x[d[KEY]];
+                segment.valueS = frame.size[d[KEY]];
+                segment.valueC = frame.color[d[KEY]];
+                res();
+              });
+            }));
           });
-        });
-        if (promises.length > 0) {
-          Promise.all(promises).then(function (segments) {
+          if (promises.length > 0) {
+            Promise.all(promises).then(function (segments) {
+              resolve(true);
+            });
+          } else {
             resolve(true);
-          });
-        } else {
-          resolve(true);
-        }
+          }
+
+        });
       });
     });
     return this._isCreated;
@@ -165,40 +167,45 @@ export default Class.extend({
   },
 
   _resize: function(trail, duration, d) {
-    var context = this.context;
-    if (context.model.time.splash) {
+    var _this = this;
+    if (this.context.model.time.splash) {
       return;
     }
 //    this._isCreated.then(function() {
 
       trail.each(function (segment, index) {
-
-        var view = d3.select(this);
-        view.select("circle")
-          //.transition().duration(duration).ease("linear")
-          .attr("cy", context.yScale(segment.valueY))
-          .attr("cx", context.xScale(segment.valueX))
-          .attr("r", utils.areaToRadius(context.sScale(segment.valueS)));
-
-        var next = this.parentNode.childNodes[(index + 1)];
-        if (next == null) return;
-        next = next.__data__;
-
-        var lineLength = Math.sqrt(
-          Math.pow(context.xScale(segment.valueX) - context.xScale(next.valueX), 2) +
-          Math.pow(context.yScale(segment.valueY) - context.yScale(next.valueY), 2)
-        );
-
-        view.select("line")
-          //.transition().duration(duration).ease("linear")
-          .attr("x1", context.xScale(next.valueX))
-          .attr("y1", context.yScale(next.valueY))
-          .attr("x2", context.xScale(segment.valueX))
-          .attr("y2", context.yScale(segment.valueY))
-          .style("stroke-dasharray", lineLength)
-          .style("stroke-dashoffset", utils.areaToRadius(context.sScale(segment.valueS)));
+        _this._redrawPoint(this, segment, index);
       });
+
 //    });
+  },
+
+  _redrawPoint:function(node, segment, index) {
+    var context = this.context;
+    var view = d3.select(node);
+    view.select("circle")
+      //.transition().duration(duration).ease("linear")
+      .attr("cy", context.yScale(segment.valueY))
+      .attr("cx", context.xScale(segment.valueX))
+      .attr("r", utils.areaToRadius(context.sScale(segment.valueS)));
+
+    var next = node.parentNode.childNodes[(index + 1)];
+    if (next == null) return;
+    next = next.__data__;
+
+    var lineLength = Math.sqrt(
+      Math.pow(context.xScale(segment.valueX) - context.xScale(next.valueX), 2) +
+      Math.pow(context.yScale(segment.valueY) - context.yScale(next.valueY), 2)
+    );
+
+    view.select("line")
+      //.transition().duration(duration).ease("linear")
+      .attr("x1", context.xScale(next.valueX))
+      .attr("y1", context.yScale(next.valueY))
+      .attr("x2", context.xScale(segment.valueX))
+      .attr("y2", context.yScale(segment.valueY))
+      .style("stroke-dasharray", lineLength)
+      .style("stroke-dashoffset", utils.areaToRadius(context.sScale(segment.valueS)));
   },
 
   _recolor: function(trail, duration, d) {
