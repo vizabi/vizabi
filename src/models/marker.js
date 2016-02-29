@@ -159,7 +159,7 @@ var Marker = Model.extend({
       }
 
       return new Promise(function(resolve, reject) {
-        if (steps.length < 2) {
+        if (steps.length < 2 || !forceFrame) {
           _this.frameQueues[cachePath].then(function() {
             resolve();
           });

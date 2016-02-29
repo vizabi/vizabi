@@ -129,7 +129,7 @@ var LCComponent = Component.extend({
   ready: function() {
     this.updateUIStrings();
     var _this = this;
-    this.model.marker.getFrames().then(function(allValues) {
+    this.model.marker.getFrame().then(function(allValues) {
       _this.all_values = allValues;
       _this.model.marker.getFrame(_this.model.time.value).then(function(values) {
         _this.values = values;
