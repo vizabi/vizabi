@@ -82,6 +82,9 @@ var BubbleChart = Tool.extend('BubbleChart', {
           use: "property",
           which: "geo.name"
         },
+        size_label: {
+            use: "constant"
+        },
         axis_y: {
           use: "indicator",
           which: "lex"

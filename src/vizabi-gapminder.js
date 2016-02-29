@@ -18,6 +18,7 @@ import BubbleMap from 'tools/bubblemap';
 import BMComponent from 'tools/bubblemap-component';
 import LineChart from 'tools/linechart';
 import PopByAge from 'tools/popbyage';
+import DonutChart from 'tools/donutchart';
 
 //waffle reader
 import {
@@ -48,8 +49,7 @@ BarChart.define('default_model', {
       start: "1800",
       end: "2012",
       value: "2000",
-      step: 1,
-      formatInput: "%Y"
+      step: 1
     },
     entities: {
       dim: "geo",
@@ -107,8 +107,7 @@ BarRankChart.define('default_model', {
       start: "1950",
       end: "2015",
       value: "2000",
-      step: 1,
-      formatInput: "%Y"
+      step: 1
     },
     entities: {
       dim: "geo",
@@ -197,8 +196,7 @@ BubbleMap.define('default_model', {
       end: "2015",
       value: "2015",
       step: 1,
-      speed: 300,
-      formatInput: "%Y"
+      speed: 300
     },
     entities: {
       dim: "geo",
@@ -253,6 +251,7 @@ BubbleMap.define('default_model', {
   },
   language: language,
   ui: {
+    'vzb-tool-bubblemap': {},
     presentation: false
   }
 });
@@ -274,7 +273,6 @@ MountainChart.define('default_model', {
       delay: 100,
       delayThresholdX2: 50,
       delayThresholdX4: 25,
-      formatInput: "%Y",
       xLogStops: [1, 2, 5],
       yMaxMethod: "latest",
       probeX: 1.85,
@@ -378,7 +376,6 @@ LineChart.define('default_model', {
       end: 2012,
       value: 2012,
       step: 1,
-      formatInput: "%Y"
     },
     //entities we want to show
     entities: {
@@ -425,7 +422,7 @@ LineChart.define('default_model', {
   },
   language: language,
   ui: {
-    'vzb-tool-line-chart': {
+    'vzb-tool-linechart': {
       entity_labels: {
         min_number_of_entities_when_values_hide: 2 //values hide when showing 2 entities or more
       },
@@ -457,7 +454,6 @@ BubbleChart.define('default_model', {
       end: "2015",
       value: "2015",
       step: 1,
-      formatInput: "%Y",
       trails: true,
       lockNonSelected: 0,
       adaptMinMaxZoom: false
@@ -478,6 +474,10 @@ BubbleChart.define('default_model', {
         use: "property",
         which: "geo.name"
       },
+      size_label: {
+          use: "constant"
+        },
+
       axis_y: {
         use: "indicator",
         which: "child_mortality_rate_per1000",
@@ -523,7 +523,7 @@ BubbleChart.define('default_model', {
   },
   language: language,
   ui: {
-    'vzb-tool-bubble-chart': {
+    'vzb-tool-bubblechart': {
       whenHovering: {
         showProjectionLineX: true,
         showProjectionLineY: true,
@@ -532,7 +532,8 @@ BubbleChart.define('default_model', {
       },
       labels: {
         autoResolveCollisions: true,
-        dragging: true
+        dragging: true,
+        removeLabelBox: false
       }
     },
     presentation: false
@@ -606,6 +607,55 @@ PopByAge.define('default_model', {
     presentation: false
   }
 });
+
+
+DonutChart.define('default_model', {
+  state: {
+        // available time would have the range of 1990-2012 years (%Y), with the deafult position at 2000
+        time: {
+          start: "1990",
+          end: "2012",
+          value: "2000"
+        },
+        //Entities include all ("*") geo's of category "regions" -- equivalent to 'geo: ["asi", "ame", "eur", "afr"]'
+        entities: {
+          dim: "geo",
+          show: {
+            _defs_: {
+              "geo": ["*"],
+              "geo.cat": ["region"]
+            }
+          }
+        },
+        //Markers correspond to visuals that we want to show. We have label, axis and color
+        marker: {
+          space: ["entities", "time"],
+          label: {
+            use: "property",
+            which: "geo.name"
+          },
+          axis: {
+            use: "indicator",
+            which: "population"
+          },
+          color: {
+            use: "property",
+            which: "geo.name"
+          }
+        }
+  },  
+  data: {
+    reader: "csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv",
+    splash: false
+  },
+  language: language,
+  ui: {
+    presentation: false
+  }
+    
+});
+
 
 //Waffle Server Reader custom path
 WaffleReader.define('basepath', "http://52.18.235.31:8001/values/waffle");

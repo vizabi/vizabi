@@ -59,8 +59,7 @@ var LineChart = Tool.extend('LineChart', {
         start: 1990,
         end: 2012,
         value: 2012,
-        step: 1,
-        formatInput: "%Y"
+        step: 1
       },
       //entities we want to show
       entities: {

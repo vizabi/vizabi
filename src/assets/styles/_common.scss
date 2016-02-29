@@ -70,6 +70,10 @@ $vzb-loader-bgcolor: $vzb-color-white;
   visibility: hidden !important;
 }
 
+.vzb-pointerevents-none {
+  pointer-events: none !important;
+}
+
 .vzb-blur {
   filter: blur(3px);
 }
