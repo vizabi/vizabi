@@ -96,18 +96,26 @@ export default function axisSmart() {
         .attr("x1", orient == VERTICAL ? (axis.orient() == "right" ? -1 : 1) * tickLengthIn : scale)
         .attr("x2", orient == VERTICAL ? (axis.orient() == "right" ? 1 : -1) * tickLengthOut : scale)
 
-      if(options.bump){
 
-          g.selectAll("path").remove();
-          var rake = g.selectAll(".vzb-axis-line").data([0]);
-          rake.exit().remove();
-          rake.enter().append("line")
-              .attr("class", "vzb-axis-line");
-          rake
-            .attr("x1", orient == VERTICAL ? 0 : d3.min(scale.range()) - options.bump - 1)
-            .attr("x2", orient == VERTICAL ? 0 : d3.max(scale.range()) + options.bump)
-            .attr("y1", orient == HORIZONTAL ? 0 : d3.min(scale.range()) - options.bump)
-            .attr("y2", orient == HORIZONTAL ? 0 : d3.max(scale.range()) + options.bump)
+      //adjust axis rake 
+      g.selectAll("path").remove();
+      var rake = g.selectAll(".vzb-axis-line").data([0]);
+      rake.exit().remove();
+      rake.enter().append("line")
+          .attr("class", "vzb-axis-line");
+        
+      if(options.constantRakeLength){
+          rake 
+            .attr("x1", orient == VERTICAL ? 0 : -1)
+            .attr("x2", orient == VERTICAL ? 0 : options.constantRakeLength)
+            .attr("y1", orient == HORIZONTAL ? 0 : 0)
+            .attr("y2", orient == HORIZONTAL ? 0 : options.constantRakeLength)      
+      }else{
+          rake 
+            .attr("x1", orient == VERTICAL ? 0 : d3.min(scale.range()) - options.bump||0 - 1)
+            .attr("x2", orient == VERTICAL ? 0 : d3.max(scale.range()) + options.bump||0)
+            .attr("y1", orient == HORIZONTAL ? 0 : d3.min(scale.range()) - options.bump||0)
+            .attr("y2", orient == HORIZONTAL ? 0 : d3.max(scale.range()) + options.bump||0)
       }
 
     };
@@ -365,6 +373,7 @@ export default function axisSmart() {
         top: 30
       };
       if(options.bump == null) options.bump = 0;
+      if(options.constantRakeLength == null) options.constantRakeLength = 0;
 
       if(options.pivotingLimit == null) options.pivotingLimit = options.toolMargin[this.orient()];
 

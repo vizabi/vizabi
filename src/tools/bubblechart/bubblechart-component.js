@@ -855,7 +855,8 @@ var BubbleChartComp = Component.extend({
         timeFormat: this.model.time.timeFormat,
         toolMargin: margin,
         limitMaxTickNumber: 6,
-        bump: this.activeProfile.maxRadius
+        bump: this.activeProfile.maxRadius,
+        constantRakeLength: this.height
       });
 
     this.xAxis.scale(this.xScale)
@@ -866,7 +867,8 @@ var BubbleChartComp = Component.extend({
         scaleType: this.model.marker.axis_x.scaleType,
         timeFormat: this.model.time.timeFormat,
         toolMargin: margin,
-        bump: this.activeProfile.maxRadius
+        bump: this.activeProfile.maxRadius,
+        constantRakeLength: this.width
       });
 
 
