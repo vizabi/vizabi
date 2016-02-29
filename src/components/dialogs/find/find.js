@@ -92,7 +92,7 @@ var Find = Dialog.extend({
     var selected = this.model.state.entities.getSelected();
     var marker = this.model.state.marker;
     var time = this.model.state.time.value;
-    marker.getFrame(time).then(function(values) {
+    marker.getFrame(time, function(values) {
       var data = marker.getKeys().map(function(d) {
         var pointer = {};
         pointer[KEY] = d[KEY];

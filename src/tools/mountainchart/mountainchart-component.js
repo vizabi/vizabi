@@ -52,7 +52,7 @@ var MountainChartComponent = Component.extend({
         this.model_binds = {
             "change:time.value": function (evt) {
                 //console.log("MONT: " + evt);
-              _this.model.marker.getFrame(_this.model.time.value).then(function(values) {
+              _this.model.marker.getFrame(_this.model.time.value, function(values) {
                 _this.values = values;
                 _this.updateTime();
                 _this.redrawDataPoints();
@@ -242,13 +242,13 @@ var MountainChartComponent = Component.extend({
 
         if (!this.precomputedShapes || !this.precomputedShapes[yearNow] || !this.precomputedShapes[yearEnd]) return;
 
-        var yMax = this.precomputedShapes[this.model.time.yMaxMethod == "immediate" ? yearNow : yearEnd].yMax;
+        this.yMax = this.precomputedShapes[this.model.time.yMaxMethod == "immediate" ? yearNow : yearEnd].yMax;
         var shape = this.precomputedShapes[yearNow].shape;
 
-        if (!yMax || !shape || shape.length === 0) return;
+        if (!this.yMax || !shape || shape.length === 0) return;
 
         this.xScale = d3.scale.log().domain([this.model.marker.axis_x.domainMin, this.model.marker.axis_x.domainMax]);
-        this.yScale = d3.scale.linear().domain([0, +yMax]);
+        this.yScale = d3.scale.linear().domain([0, +this.yMax]);
 
         _this.updateSize(shape.length);
         _this.zoomToMaxMin();
@@ -310,7 +310,7 @@ var MountainChartComponent = Component.extend({
 
         this.updateUIStrings();
         this.updateIndicators();
-        this.model.marker.getFrame(this.model.time.value).then(function(values) {
+        this.model.marker.getFrame(this.model.time.value, function(values) {
           _this.values = values;
           _this.updateEntities();
           _this.updateSize();

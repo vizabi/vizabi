@@ -50,31 +50,29 @@ var Marker = Model.extend({
     return found;
   },
 
-    getFrame: function(time) {
+    getFrame: function(time, cb) {
       var _this = this;
       var cachePath = "";
       var steps = this._parent.time.getAllSteps();
       utils.forEach(this._dataCube, function(hook, name) {
           cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start + " " + _this._parent.time.end;
       });
-      return new Promise(function(resolve, reject) {
         if (!time && _this.cachedFrames[cachePath] && steps.length ==  _this.cachedFrames[cachePath].length) { // also check if all frames already calculated
-          resolve(_this.cachedFrames[cachePath]);
+          cb(_this.cachedFrames[cachePath]);
         } else if(_this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
-          resolve(_this.cachedFrames[cachePath][time]);
+          cb(_this.cachedFrames[cachePath][time]);
         } else {
           _this.getFrames(time).then(function() {
             if (!time && _this.cachedFrames[cachePath]) {
-              resolve(_this.cachedFrames[cachePath]);
+              cb(_this.cachedFrames[cachePath]);
             } else if(_this.cachedFrames[cachePath][time]) {
-              resolve(_this.cachedFrames[cachePath][time]);
+              cb(_this.cachedFrames[cachePath][time]);
             } else {
               utils.warn("Frame was not built for timestamp: " + time + " : " + cachePath);
-              resolve({});
+              cb({});
             }
           });
         }
-      });
     },
 
     getFrames: function(forceFrame) {
