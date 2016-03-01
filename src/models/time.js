@@ -175,11 +175,6 @@ var TimeModel = Model.extend({
     if(this.playable === false && this.playing === true) {
       this.playing = false;
     }
-    if(this.round) {
-      var is = this.getIntervalAndStep();
-      this.value = d3.time[is.interval].utc[this.round](this.value);
-    }
-
   },
 
   /**

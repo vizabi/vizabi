@@ -107,11 +107,10 @@ var Hook = Model.extend({
   /**
    * gets maximum, minimum and mean values from the dataset of this certain hook
    */
-  gerLimitsPerFrame: function() {
-
+  gerLimitsPerFrame: function(frameName) {
     if(this.use === "property") return utils.warn("getMaxMinMean: strange that you ask min max mean of a property");
     if(!this.isHook) return utils.warn("getMaxMinMean: only works for hooks");
-
+    var _this = this;
     var result = {};
     var values = [];
     var value = null;
@@ -119,25 +118,39 @@ var Hook = Model.extend({
     var steps = this._parent._parent.time.getAllSteps();
 
     if(this.use === "constant") {
+      if (frameName) {
+        value = _this.which;
+        result[frameName] = {
+          min: value,
+          max: value
+        }
+      } else {
         steps.forEach(function(t){
-            value = this.which;
-            result[t] = {
-                min: value,
-                max: value
-            }
+          value = _this.which;
+          result[t] = {
+            min: value,
+            max: value
+          }
         });
+      }
 
     }else if(this.which==="time"){
-        steps.forEach(function(t){
-            value = new Date(t);
-            result[t] = {
-                min: value,
-                max: value
-            }
-        });
+      if (frameName) {
+        result[frameName] = {
+          min: frameName,
+          max: frameName
+        }
+      } else {
+        steps.forEach(function (t) {
+          result[t] = {
+            min: t,
+            max: t
+          }
 
+        });
+      }
     }else{
-        var args = {framesArray: steps, which: this.which};
+        var args = {framesArray: steps, which: this.which, frame: frameName};
         result = this.getDataManager().get(this._dataId, 'limitsPerFrame', args);
     }
 

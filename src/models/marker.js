@@ -53,14 +53,25 @@ var Marker = Model.extend({
     getFrame: function(time, cb) {
       var _this = this;
       var cachePath = "";
-      var steps = this._parent.time.getAllSteps();
       utils.forEach(this._dataCube, function(hook, name) {
           cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start + " " + _this._parent.time.end;
       });
-        if (!time && _this.cachedFrames[cachePath] && steps.length ==  _this.cachedFrames[cachePath].length) { // also check if all frames already calculated
-          cb(_this.cachedFrames[cachePath]);
-        } else if(_this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
+      var steps = this._parent.time.getAllSteps();
+      if(_this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
           cb(_this.cachedFrames[cachePath][time]);
+      } else {
+        var timeId = d3.bisectLeft(steps, time);
+        var frameTime = steps[timeId];
+        if(frameTime.toString() != time.toString()) {
+          if (timeId == 0) {
+            this.getFrame(steps[timeId], function(response) {
+              cb(response);
+            });
+          } else {
+            this._shiftFrame(time, timeId, steps, function(response) {
+              cb(response);
+            });
+          }
         } else {
           _this.getFrames(time).then(function() {
             if (!time && _this.cachedFrames[cachePath]) {
@@ -73,6 +84,28 @@ var Marker = Model.extend({
             }
           });
         }
+      }
+    },
+    _shiftFrame(time, timeId, steps, cb) {
+      var _this = this;
+      this.getFrame(steps[timeId], function(nValues) {
+        _this.getFrame(steps[timeId - 1], function(pValues) {
+          var fraction = (time - steps[timeId - 1]) / (steps[timeId] - steps[timeId - 1]);
+          var curr = {};
+          utils.forEach(pValues, function(values, hook) {
+            curr[hook] = {};
+            utils.forEach(values, function(val, id) {
+              var val2 = nValues[hook][id];
+              curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val) *
+              fraction);
+            });
+          });
+          cb(curr);
+        })
+      })
+    },
+    getLimitsPerFrame() {
+
     },
 
     getFrames: function(forceFrame) {

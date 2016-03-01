@@ -398,8 +398,7 @@ var TimeSlider = Component.extend({
     //if (this._updTime != null && now - this._updTime < frameRate) return;
     //this._updTime = now;
     var persistent = !this.model.time.dragging && !this.model.time.playing;
-    _this.model.time.value = time;
-    //_this.model.time.getModelObject('value').set(time, false, persistent); // non persistent
+    _this.model.time.getModelObject('value').set(time, false, persistent); // non persistent
   },
 
 

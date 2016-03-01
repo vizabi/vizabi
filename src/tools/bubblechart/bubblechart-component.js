@@ -24,6 +24,7 @@ var BubbleChartComp = Component.extend({
    * @param {Object} context The component's parent
    */
   init: function(config, context) {
+    console.log("init");
     var _this = this;
     this.name = 'bubblechart';
     this.template = 'bubblechart.html';
@@ -136,7 +137,6 @@ var BubbleChartComp = Component.extend({
         _this.highlightDataPoints();
       },
       'change:time.value': function() {
-
         _this.model.marker.getFrame(_this.model.time.value, function(frame) {
           if (!frame) return false;
           _this.frame = frame;

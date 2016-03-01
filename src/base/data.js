@@ -691,17 +691,6 @@ var Data = Class.extend({
           max = c;
         }
       }
-    } else { // try to find time limits from query when data empty
-      if (attr == "time") {
-        if (this._collection[queryId].query.where.time && this._collection[queryId].query.where.time[0]) {
-          min = d3.time.format.utc('%Y').parse(this._collection[queryId].query.where.time[0][0]);
-          if (this._collection[queryId].query.where.time[0][1]) {
-            max = d3.time.format.utc('%Y').parse(this._collection[queryId].query.where.time[0][1]);
-          } else {
-            max = min;
-          }
-        }
-      }
     }
     limits.min = min || 0;
     limits.max = max || 100;
