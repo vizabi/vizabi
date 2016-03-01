@@ -72,7 +72,7 @@ var BarRankChart = Component.extend({
   onTimeChange: function() {
     //this.year.setText(this.model.time.timeFormat(this.model.time.value));
     var _this = this;
-    this.model.marker.getFrame(this.model.time.value).then(function(values) {
+    this.model.marker.getFrame(this.model.time.value, function(values) {
       _this.values = values;
       _this.loadData();
       _this.draw();
@@ -114,7 +114,7 @@ var BarRankChart = Component.extend({
     // then it's not necessary to run ready()
     // (without hack it's impossible to run things in readyOnce áfter ready has ran)
     if (++this.readyRuns == 2) return;
-    this.model.marker.getFrame(this.model.time.value).then(function(values) {
+    this.model.marker.getFrame(this.model.time.value, function(values) {
       _this.values =values;
       _this.loadData();
       _this.draw();

@@ -47,8 +47,8 @@ var MountainChartComponent = Component.extend({
             { name: "marker", type: "model" },
             { name: "language", type: "language" }
         ];
-
         //attach event listeners to the model items
+
         this.model_binds = {
             "change:time.value": function (evt) {
                 //console.log("MONT: " + evt);

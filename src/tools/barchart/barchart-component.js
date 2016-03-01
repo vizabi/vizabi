@@ -36,7 +36,7 @@ var BarComponent = Component.extend({
 
     this.model_binds = {
       "change:time.value": function(evt) {
-        _this.model.marker.getFrame(_this.model.time.value).then(function(values) {
+        _this.model.marker.getFrame(_this.model.time.value, function(values) {
           _this.values = values;
           _this.updateEntities();
         });
@@ -81,7 +81,7 @@ var BarComponent = Component.extend({
 
     var _this = this;
     this.on("resize", function() {
-        _this.model.marker.getFrame(_this.model.time.value).then(function(values) {
+        _this.model.marker.getFrame(_this.model.time.value, function(values) {
           _this.values = values;
           _this.updateEntities();
         });
@@ -93,7 +93,7 @@ var BarComponent = Component.extend({
    */
   ready: function() {
     var _this = this;
-    this.model.marker.getFrame(this.model.time.value).then(function(values) {
+    this.model.marker.getFrame(this.model.time.value, function(values) {
       _this.values = values;
       _this.updateIndicators();
       _this.resize();

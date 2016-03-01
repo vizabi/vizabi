@@ -340,11 +340,11 @@ var Data = Class.extend({
             this.callbacks[frameName] = [];
           }
           var frameComplete = function(frameName) { //function called after build each frame with name of frame build
-            if (queue.callbacks[frameName]) {
+            if (queue.callbacks[frameName].length > 0) {
               for (var  i = 0; i < queue.callbacks[frameName].length; i++) {
                 queue.callbacks[frameName][i]();
               }
-              delete queue.callbacks[frameName];
+              //delete queue.callbacks[frameName];
             }
           };
           return {
@@ -446,9 +446,6 @@ var Data = Class.extend({
       }
 
       var buildFrame = function(frameName, keys, queryId, callback) {
-          if (typeof frameName === "string") {
-            frameName = new Date(frameName);
-          }
 //          return new Promise(function(resolve, reject) {
           var frame = {};
 

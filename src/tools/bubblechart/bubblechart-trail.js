@@ -76,7 +76,7 @@ export default Class.extend({
               .classed("vzb-highlighted", true)
               .datum();
             if(text !== labelData.trailStartTime) {
-              context.model.marker.getFrame(pointer.time).then(function(values) {
+              context.model.marker.getFrame(pointer.time, function(values) {
                 var x = context.xScale(values.axis_x[pointer[KEY]]);
                 var y = context.yScale(values.axis_y[pointer[KEY]]);
                 var s = utils.areaToRadius(context.sScale(values.size[pointer[KEY]]));
@@ -102,10 +102,10 @@ export default Class.extend({
 
         //update segment data (maybe for new indicators)
         var promises = [];
-        context.model.marker.getFrame().then(function(frames) { //call without time parameter to use cache instead force frame calculation
+        context.model.marker.getFrame(null, function(frames) { //call without time parameter to use cache instead force frame calculation
           trail.each(function(segment, index) {
             promises.push(new Promise(function(res, rej) {
-              context.model.marker.getFrame(segment.t).then(function(frame) {
+              context.model.marker.getFrame(segment.t, function(frame) {
                 segment.valueY = frame.axis_y[d[KEY]];
                 segment.valueX = frame.axis_x[d[KEY]];
                 segment.valueS = frame.size[d[KEY]];

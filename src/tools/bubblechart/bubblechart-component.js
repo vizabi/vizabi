@@ -137,7 +137,7 @@ var BubbleChartComp = Component.extend({
       },
       'change:time.value': function() {
 
-        _this.model.marker.getFrame(_this.model.time.value).then(function(frame) {
+        _this.model.marker.getFrame(_this.model.time.value, function(frame) {
           if (!frame) return false;
           _this.frame = frame;
           _this.updateTime();
@@ -458,7 +458,7 @@ var BubbleChartComp = Component.extend({
       .range(this.parent.datawarning_content.doubtRange);
 
 
-    this.model.marker.getFrame(this.model.time.value).then(function(frame) {
+    this.model.marker.getFrame(this.model.time.value, function(frame) {
       _this.frame = frame;
       _this.updateIndicators();
       _this.updateSize();
@@ -481,7 +481,7 @@ var BubbleChartComp = Component.extend({
     var _this = this;
     this.updateUIStrings();
     var endTime = this.model.time.end;
-    this.model.marker.getFrame(this.model.time.value).then(function(frame) {
+    this.model.marker.getFrame(this.model.time.value, function(frame) {
       if (!frame) return;
       _this.frame = frame;
       _this.updateIndicators();
@@ -1041,23 +1041,22 @@ var BubbleChartComp = Component.extend({
     var values, valuesNow;
     var KEY = this.KEY;
 
-    valuesNow = this.model.marker.getFrame(this.time);
+    var time = this.time;
 
     if(this.model.time.lockNonSelected && this.someSelected) {
-      var tLocked = this.model.time.timeFormat.parse("" + this.model.time.lockNonSelected);
-      values = this.model.marker.getFrame(tLocked);
-    } else {
-      values = valuesNow;
+      time = this.model.time.timeFormat.parse("" + this.model.time.lockNonSelected);
     }
+    this.model.marker.getFrame(time, function(valuesLocked) {
+      this.entityBubbles.style("fill", function(d) {
 
-    this.entityBubbles.style("fill", function(d) {
+        var cache = _this.cached[d[KEY]];
 
-      var cache = _this.cached[d[KEY]];
+        var valueC = cache && _this.model.time.lockNonSelected ? valuesLocked.color[d[KEY]] : _this.frame.color[d[KEY]];
 
-      var valueC = cache && _this.model.time.lockNonSelected ? valuesNow.color[d[KEY]] : values.color[d[KEY]];
-
-      return valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH;
+        return valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH;
+      });
     });
+
   },
 
   redrawDataPointsOnlySize: function() {
@@ -1067,15 +1066,14 @@ var BubbleChartComp = Component.extend({
     var KEY = this.KEY;
 
 
-    values = [this.model.marker.getFrame(this.time)];
+    var time = this.time;
 
     if(this.model.time.lockNonSelected && this.someSelected) {
-      var tLocked = this.model.time.timeFormat.parse("" + this.model.time.lockNonSelected);
-      values.push(this.model.marker.getFrame(tLocked));
+      time = this.model.time.timeFormat.parse("" + this.model.time.lockNonSelected);
     }
-    Promise.all(values).then(function(response) {
-      valuesNow = response[0];
-      values = response.length > 1 ? response[1]: valuesNow;
+    this.model.marker.getFrame(time, function(valuesLocked) {
+      valuesNow = _this.frame;
+      values = valuesLocked;
       _this.entityBubbles.each(function(d, index) {
 
         var cache = _this.cached[d[KEY]];
@@ -1133,27 +1131,28 @@ var BubbleChartComp = Component.extend({
     var TIMEDIM = this.TIMEDIM;
     var KEY = this.KEY;
     var values = _this.frame, valuesLocked;
-
+    var time = this.time;
     //get values for locked and not locked
     if(this.model.time.lockNonSelected && this.someSelected) {
-      var tLocked = this.model.time.timeFormat.parse("" + this.model.time.lockNonSelected);
-      valuesLocked = this.model.marker.getFrame(tLocked);
+      time = this.model.time.timeFormat.parse("" + this.model.time.lockNonSelected);
     }
-    _this.entityBubbles.each(function(d, index) {
-      var view = d3.select(this);
-      _this._updateBubble(d, values, valuesLocked, index, view, duration);
+    this.model.marker.getFrame(time, function(valuesLocked) {
+      _this.entityBubbles.each(function(d, index) {
+        var view = d3.select(this);
+        _this._updateBubble(d, values, valuesLocked, index, view, duration);
 
-    }); // each bubble
+      }); // each bubble
 
-    if(_this.ui.labels.autoResolveCollisions) {
-      // cancel previously queued simulation if we just ordered a new one
-      clearTimeout(_this.collisionTimeout);
+      if(_this.ui.labels.autoResolveCollisions) {
+        // cancel previously queued simulation if we just ordered a new one
+        clearTimeout(_this.collisionTimeout);
 
-      // place label layout simulation into a queue
-      _this.collisionTimeout = setTimeout(function() {
-        //  _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
-      }, _this.model.time.delayAnimations * 1.2)
-    }
+        // place label layout simulation into a queue
+        _this.collisionTimeout = setTimeout(function() {
+          //  _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
+        }, _this.model.time.delayAnimations * 1.2)
+      }
+    });
   },
 
   //redraw Data Points
@@ -1582,7 +1581,7 @@ var BubbleChartComp = Component.extend({
 
     if(d != null) {
 
-      this.model.marker.getFrame(d[TIMEDIM]).then(function(values) {
+      this.model.marker.getFrame(d[TIMEDIM], function(values) {
         var valueY = values.axis_y[d[KEY]];
         var valueX = values.axis_x[d[KEY]];
         var valueS = values.size[d[KEY]];
@@ -1653,7 +1652,7 @@ var BubbleChartComp = Component.extend({
 
       this._axisProjections(d);
 
-      _this.model.marker.getFrame(d[TIMEDIM]).then(function(values) {
+      _this.model.marker.getFrame(d[TIMEDIM], function(values) {
           //show tooltip
           var text = "";
           if(_this.model.entities.isSelected(d) && _this.model.time.trails) {

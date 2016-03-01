@@ -54,7 +54,7 @@ var BubbleMapComponent = Component.extend({
     var _this = this;
     this.model_binds = {
       "change:time.value": function (evt) {
-        _this.model.marker.getFrame(_this.model.time.value).then(function(values) {
+        _this.model.marker.getFrame(_this.model.time.value, function(values) {
           _this.values = values;
           _this.updateTime();
           _this.updateDoubtOpacity();
@@ -289,7 +289,7 @@ var BubbleMapComponent = Component.extend({
     this.updateIndicators();
     this.updateSize();
     this.updateMarkerSizeLimits();
-    this.model.marker.getFrame(this.model.time.value).then(function(values) {
+    this.model.marker.getFrame(this.model.time.value, function(values) {
       _this.values = values;
       _this.updateEntities();
       _this.updateTime();
