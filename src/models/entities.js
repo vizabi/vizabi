@@ -123,7 +123,6 @@ var EntitiesModel = Model.extend({
     } else {
       var added = {};
       added[dimension] = value;
-      added["labelOffset"] = [0, 0];
       if(timeDim && timeFormatter) {
         added["trailStartTime"] = timeFormatter(d[timeDim]);
       }
@@ -143,7 +142,6 @@ var EntitiesModel = Model.extend({
     var select = this._visible.map(function(d) {
       added = {};
       added[dimension] = d[dimension];
-      added["labelOffset"] = [0, 0];
       if(timeDim && timeFormatter) {
         added["trailStartTime"] = timeFormatter(d[timeDim]);
       }
@@ -180,6 +178,8 @@ var EntitiesModel = Model.extend({
   },
 
   setLabelOffset: function(d, xy) {
+    if(xy[0]===0 && xy[1]===1) return;
+      
     var dimension = this.getDimension();
     var value = d[dimension];
 
