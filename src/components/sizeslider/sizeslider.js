@@ -29,14 +29,14 @@ var profiles = {
     "medium": {
       minRadius: 1,
       maxRadius: 55,
-      minLabelTextSize: 10,
+      minLabelTextSize: 7,
       maxLabelTextSize: 22,
       defaultLabelTextSize: 16
     },
     "large": {
       minRadius: 1,
       maxRadius: 70,
-      minLabelTextSize: 14,
+      minLabelTextSize: 7,
       maxLabelTextSize: 26,
       defaultLabelTextSize: 20
     }
