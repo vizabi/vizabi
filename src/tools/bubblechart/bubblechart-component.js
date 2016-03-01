@@ -1177,8 +1177,7 @@ var BubbleChartComp = Component.extend({
     var valueLST = values.size_label[d[KEY]];
 
     // check if fetching data succeeded
-    //TODO: what if values are ACTUALLY 0 ?
-    if(!valueL || !valueY || !valueX || !valueS) {
+    if(!valueL && valueL!==0 || !valueY && valueY!==0 || !valueX && valueX!==0 || !valueS && valueS!==0) {
       // if entity is missing data it should hide
       view.classed("vzb-invisible", true)
 
@@ -1344,14 +1343,14 @@ var BubbleChartComp = Component.extend({
     }
   },
 
-  _repositionLabels: function(d, i, context, resolvedX, resolvedY, resolvedX0, resolvedY0, duration, lineGroup) {
+  _repositionLabels: function(d, i, context, _X, _Y, _X0, _Y0, duration, lineGroup) {
 
     var cache = this.cached[d[this.KEY]];
 
     var labelGroup = d3.select(context);
           
-    //protect label and line from the broken data      
-    var brokenInputs = (resolvedX0 == null || resolvedY0 == null);
+    //protect label and line from the broken data
+    var brokenInputs = !_X && _X !==0 || !_Y && _Y !==0 || !_X0 && _X0 !==0 || !_Y0 && _Y0 !==0;
     labelGroup.classed("vzb-invisible", brokenInputs);
     lineGroup.classed("vzb-invisible", brokenInputs);
     if(brokenInputs) return;
@@ -1360,38 +1359,38 @@ var BubbleChartComp = Component.extend({
     var height = parseInt(labelGroup.select("rect").attr("height"));
     var heightDelta = labelGroup.node().getBBox().height - height;
 
-    if(resolvedX - width <= 0) { //check left
+    if(_X - width <= 0) { //check left
       cache.labelX_ = (width - this.xScale(cache.labelX0)) / this.width;
-      resolvedX = this.xScale(cache.labelX0) + cache.labelX_ * this.width;
-    } else if(resolvedX + 23 > this.width) { //check right
+      _X = this.xScale(cache.labelX0) + cache.labelX_ * this.width;
+    } else if(_X + 23 > this.width) { //check right
       cache.labelX_ = (this.width - 23 - this.xScale(cache.labelX0)) / this.width;
-      resolvedX = this.xScale(cache.labelX0) + cache.labelX_ * this.width;
+      _X = this.xScale(cache.labelX0) + cache.labelX_ * this.width;
     }
-    if(resolvedY - height * .75 - heightDelta <= 0) { // check top
+    if(_Y - height * .75 - heightDelta <= 0) { // check top
       cache.labelY_ = (height * .75 + heightDelta - this.yScale(cache.labelY0)) / this.height;
-      resolvedY = this.yScale(cache.labelY0) + cache.labelY_ * this.height;
-    } else if(resolvedY + 13 > this.height) { //check bottom
+      _Y = this.yScale(cache.labelY0) + cache.labelY_ * this.height;
+    } else if(_Y + 13 > this.height) { //check bottom
       cache.labelY_ = (this.height - 13 - this.yScale(cache.labelY0)) / this.height;
-      resolvedY = this.yScale(cache.labelY0) + cache.labelY_ * this.height;
+      _Y = this.yScale(cache.labelY0) + cache.labelY_ * this.height;
     }
 
     if(duration) {
       labelGroup
         .transition().duration(duration).ease("linear")
-        .attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
+        .attr("transform", "translate(" + _X + "," + _Y + ")");
       lineGroup.transition().duration(duration).ease("linear")
-        .attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
+        .attr("transform", "translate(" + _X + "," + _Y + ")");
     } else {
       labelGroup
           .interrupt()
-          .attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
+          .attr("transform", "translate(" + _X + "," + _Y + ")");
       lineGroup
           .interrupt()
-          .attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
+          .attr("transform", "translate(" + _X + "," + _Y + ")");
     }
 
-    var diffX1 = resolvedX0 - resolvedX;
-    var diffY1 = resolvedY0 - resolvedY;
+    var diffX1 = _X0 - _X;
+    var diffY1 = _Y0 - _Y;
     var textBBox = labelGroup.select('text').node().getBBox();
     var diffX2 = textBBox.width * .5;
     var diffY2 = height * .25;
