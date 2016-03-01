@@ -185,7 +185,7 @@ var EntitiesModel = Model.extend({
 
     utils.find(this.select, function(d) {
       return d[dimension] === value;
-    }).labelOffset = xy;
+    }).labelOffset = [Math.round(xy[0]*1000)/1000, Math.round(xy[1]*1000)/1000];
 
     //force the model to trigger events even if value is the same
     this.set("select", this.select, true);
