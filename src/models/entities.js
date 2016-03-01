@@ -132,6 +132,28 @@ var EntitiesModel = Model.extend({
   },
     
   /**
+   * Select all entities
+   */
+  selectAll: function(timeDim, timeFormatter) {
+    if(!this._multiple) return;
+    
+    var added,
+      dimension = this.getDimension();
+    
+    var select = this._visible.map(function(d) {
+      added = {};
+      added[dimension] = d[dimension];
+      added["labelOffset"] = [0, 0];
+      if(timeDim && timeFormatter) {
+        added["trailStartTime"] = timeFormatter(d[timeDim]);
+      }
+      return added;
+    });
+
+    this.select = select;
+  },
+    
+  /**
    * Shows or unshows an entity from the set
    */
   showEntity: function(d) {
