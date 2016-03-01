@@ -1047,7 +1047,7 @@ var BubbleChartComp = Component.extend({
       time = this.model.time.timeFormat.parse("" + this.model.time.lockNonSelected);
     }
     this.model.marker.getFrame(time, function(valuesLocked) {
-      this.entityBubbles.style("fill", function(d) {
+      _this.entityBubbles.style("fill", function(d) {
 
         var cache = _this.cached[d[KEY]];
 
@@ -1689,8 +1689,8 @@ var BubbleChartComp = Component.extend({
         this._axisProjections();
         this._trails.run(["opacityHandler"]);
         //hide tooltip
-        _this._setTooltip();
-        _this.entityLabels.classed("vzb-highlighted", false);
+        this._setTooltip();
+        this.entityLabels.classed("vzb-highlighted", false);
       }
 
   },

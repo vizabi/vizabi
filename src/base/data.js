@@ -369,7 +369,7 @@ var Data = Class.extend({
           } else {
             var newKey = objIndexOf(this.queue, frameName);//this.queue.indexOf(frameName.toString());
             if (newKey !== -1) {
-              this.forcedQueue.push(this.queue.splice(newKey, 1).pop());
+              this.forcedQueue.unshift(this.queue.splice(newKey, 1).pop());
               if (typeof cb === "function") {
                 if (typeof this.callbacks[frameName] != "object") {
                   this.callbacks[frameName] = [];
@@ -538,6 +538,9 @@ var Data = Class.extend({
               buildFrame(newFrame.frameName, keys, queryId, newFrame.callback);
             });
           } else {
+            if (framesArray.length > 10) {
+              console.log("complete");
+            }
             resolve(_this._collection[queryId]["frames"][id]);
           }
       };
