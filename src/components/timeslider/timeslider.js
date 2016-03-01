@@ -176,10 +176,11 @@ var TimeSlider = Component.extend({
     this.slide.call(this.brush);
       
     this.slider_outer.on("mousewheel", function () {
-        console.log("scroll")
         //do nothing and dont pass the event on
+        d3.event.stopPropagation();
         d3.event.preventDefault();
-        d3.event.stopPropagation(); 
+        d3.event.returnValue = false;
+        return false;
     });
       
     this.slide.selectAll(".extent,.resize")
