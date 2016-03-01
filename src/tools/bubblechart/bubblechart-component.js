@@ -1010,14 +1010,14 @@ var BubbleChartComp = Component.extend({
 
     if(this.model.marker.size_label.use == 'constant') {
       // if(!this.model.marker.size_label.which) {
-      //   this.minLabelTextSize = this.activeProfile.defaultLabelTextSize;
-      //   this.model.marker.size_label.set({'domainMin': (this.minLabelTextSize - minLabelTextSize) / minMaxDelta, 'which': '_default'});
+      //   this.maxLabelTextSize = this.activeProfile.defaultLabelTextSize;
+      //   this.model.marker.size_label.set({'domainMax': (this.maxLabelTextSize - minLabelTextSize) / minMaxDelta, 'which': '_default'});
       //   return; 
       // }
-      this.maxLabelTextSize = this.minLabelTextSize;
+      this.minLabelTextSize = this.maxLabelTextSize;
     } 
 
-    if(this.model.marker.size_label.scaleType !== "ordinal") {
+    if(this.model.marker.size_label.scaleType !== "ordinal" || this.model.marker.size_label.use == 'constant') {
       this.labelSizeTextScale.range([_this.minLabelTextSize, _this.maxLabelTextSize]);
     } else {
       this.labelSizeTextScale.rangePoints([_this.minLabelTextSize, _this.maxLabelTextSize], 0).range();
