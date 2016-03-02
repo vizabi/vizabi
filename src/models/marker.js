@@ -131,7 +131,7 @@ var Marker = Model.extend({
       })
     },
     getLimitsPerFrame() {
-
+      
     },
 
     getFrames: function(forceFrame) {

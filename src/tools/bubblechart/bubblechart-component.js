@@ -229,7 +229,6 @@ var BubbleChartComp = Component.extend({
     _this.COLOR_WHITEISH = "#fdfdfd";
 
     this.cached = {};
-    this.xyMaxMinMean = {};
     this.isCanvasPreviouslyExpanded = false;
     this.draggingNow = null;
 
@@ -526,12 +525,6 @@ var BubbleChartComp = Component.extend({
 
     this.yAxis.tickFormat(_this.model.marker.axis_y.tickFormatter);
     this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
-
-    this.xyMaxMinMean = {
-      x: this.model.marker.axis_x.gerLimitsPerFrame(),
-      y: this.model.marker.axis_y.gerLimitsPerFrame(),
-      s: this.model.marker.size.gerLimitsPerFrame()
-    };
   },
 
 
