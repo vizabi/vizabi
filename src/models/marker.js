@@ -76,7 +76,8 @@ var Marker = Model.extend({
   },
     
     getFrame: function(time, cb) {
-        var _this = this;
+      var _this = this;
+      if (!this.cachedFrames) this.cachedFrames = {};
       var cachePath = "";
       utils.forEach(this._dataCube, function(hook, name) {
           cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start + " " + _this._parent.time.end;

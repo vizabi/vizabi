@@ -435,8 +435,6 @@ var Data = Class.extend({
 
       var cLength = columns.length;
       var key, k, column, c;
-      var response = {};
-      var framesComplete = framesArray.length;
 
       for (k = 0; k < keys.length; k++) {
         filtered[keys[k]] = {};
@@ -536,18 +534,12 @@ var Data = Class.extend({
               buildFrame(newFrame.frameName, keys, queryId, newFrame.callback);
             });
           } else {
-            if (framesArray.length > 10) {
-              console.log("complete");
-            }
             resolve(_this._collection[queryId]["frames"][id]);
           }
       };
-      var promises = [];
-      var frameId = 0;
       var nextFrame = _this.framesQueue(queryId, framesArray, columns).getNext();
       if (nextFrame) {
         buildFrame(nextFrame.frameName, keys, queryId, nextFrame.callback);
-
       }
     });
   },
