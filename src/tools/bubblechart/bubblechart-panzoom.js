@@ -307,13 +307,14 @@ export default Class.extend({
     expandCanvas: function(duration) {
         var _this = this.context;
         if (!duration) duration = _this.duration;
-
         var timeRounded = _this.model.time.timeFormat.parse( _this.model.time.timeFormat(_this.time) );
 
         var mmmX = utils.getLimits(_this.frame.axis_x);
         var mmmY = utils.getLimits(_this.frame.axis_y);
         var radiusMax = utils.areaToRadius(_this.sScale(utils.getLimits(_this.frame.size).max));
-
+        if (isNaN(mmmX.min) || isNaN(mmmX.max) || isNaN(mmmY.min) || isNaN(mmmY.max) || isNaN(radiusMax)) {
+          return false;
+        }
         /*
          * Use a range bumped scale to correctly accommodate the range bump
          * gutter.
@@ -324,7 +325,6 @@ export default Class.extend({
             x2: _this.xScale(mmmX.max) + radiusMax,
             y2: _this.yScale(mmmY.max) - radiusMax
         };
-
         var xBounds = [0, _this.width];
         var yBounds = [_this.height, 0];
 
