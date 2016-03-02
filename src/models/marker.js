@@ -50,6 +50,31 @@ var Marker = Model.extend({
       return found;
   },
 
+  getResultKeys: function() {
+    var _this = this;
+    var resultKeys = [];
+    utils.forEach(this._dataCube, function(hook, name) {
+
+      // If hook use is constant, then we can provide no additional info about keys
+      // We can just hope that we have something else than constants =)
+      if(hook.use === "constant") return;
+
+      // Get keys in data of this hook
+      var nested = _this.getDataManager().get(hook._dataId, 'nested', ["geo", "time"]);
+      var keys = Object.keys(nested);
+
+      if(resultKeys.length == 0) {
+        // If ain't got nothing yet, set the list of keys to result
+        resultKeys = keys;
+      } else {
+        // If there is result accumulated aleready, remove the keys from it that are not in this hook
+        resultKeys = resultKeys.filter(function(f) {
+          return keys.indexOf(f) > -1;
+        })
+      }
+    });
+    return resultKeys;
+  },
     getFrame: function(time, cb) {
       var _this = this;
       var cachePath = "";
@@ -133,9 +158,9 @@ var Marker = Model.extend({
           steps.forEach(function(t) {
             _this.partialResult[cachePath][t] = {};
           });
-          var resultKeys = _this.getKeys().map(function(val) {
-            return val[Object.keys(val)[0]];
-          });
+
+          var resultKeys = _this.getResultKeys();
+
           var deferredHooks = [];
           utils.forEach(_this._dataCube, function(hook, name) {
             if(hook.use === "constant") {
