@@ -36,7 +36,7 @@ var Marker = Model.extend({
   /**
    * gets the items associated with this hook without values
    * @param filter filter
-   * @returns Array keys
+   * @returns hooked value
    */
   getKeys: function(filter) {
       var sub = this.getSubhooks();
@@ -47,7 +47,7 @@ var Marker = Model.extend({
           return false;
         });
       }
-    return found;
+      return found;
   },
 
     getFrame: function(time, cb) {
@@ -239,7 +239,7 @@ var Marker = Model.extend({
       return [];
     }
 
-    var dimTime, time, filtered, next, u, w, value, method;
+    var dimTime, time, filtered, next, method, u, w, value, method;
     this._dataCube = this._dataCube || this.getSubhooks(true);
     filter = utils.clone(filter, this._getAllDimensions());
     dimTime = this._getFirstDimension({

@@ -55,6 +55,17 @@ var Find = Dialog.extend({
     this.KEY = this.model.state.entities.getDimension();
 
     var _this = this;
+
+    this.input_search.on("keyup", function() {
+      var event = d3.event;
+      if(event.keyCode == 13 && _this.input_search.node().value == "select all") {
+        _this.input_search.node().value = "";
+        //clear highlight so it doesn't get in the way when selecting an entity
+        if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();
+        _this.model.state.entities.selectAll();
+      }
+    });
+
     this.input_search.on("input", function() {
       _this.showHideSearch();
     });

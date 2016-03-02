@@ -14,7 +14,8 @@ var OPTIONS = {
   BAR_WIDTH: 6,
   THUMB_RADIUS: 10,
   THUMB_STROKE_WIDTH: 4,
-  INTRO_DURATION: 250
+  INTRO_DURATION: 250,
+  MARGIN: { TOP: 2, LEFT: 5, RIGHT:5}  
 }
 
 var profiles = {
@@ -28,14 +29,14 @@ var profiles = {
     "medium": {
       minRadius: 1,
       maxRadius: 55,
-      minLabelTextSize: 10,
+      minLabelTextSize: 7,
       maxLabelTextSize: 22,
       defaultLabelTextSize: 16
     },
     "large": {
       minRadius: 1,
       maxRadius: 70,
-      minLabelTextSize: 14,
+      minLabelTextSize: 7,
       maxLabelTextSize: 26,
       defaultLabelTextSize: 20
     }
@@ -88,7 +89,7 @@ var SizeSlider = Component.extend({
       _this.modelUse = _this.model.size.use; 
       if(_this.modelUse != 'constant') {
         _this.sizeScaleMinMax = _this.model.size.getScale().domain();
-        _this.sliderEl.selectAll('.e').classed('vzb-hidden', false);
+        _this.sliderEl.selectAll('.w').classed('vzb-hidden', false);
         _this.sliderEl.select('.extent').classed('vzb-hidden', false);
         _this.sliderEl.select('.background').classed('vzb-pointerevents-none', false);
         _this._setLabelsText();
@@ -98,16 +99,16 @@ var SizeSlider = Component.extend({
         ];
         _this.sliderEl.call(_this.brush.extent(size));
       } else {
-        _this.sliderEl.selectAll('.e').classed('vzb-hidden', true);
+        _this.sliderEl.selectAll('.w').classed('vzb-hidden', true);
         _this.sliderEl.select('.extent').classed('vzb-hidden', true);
         _this.sliderEl.select('.background').classed('vzb-pointerevents-none', true);
-        var domainMin = _this.model.size.domainMin;
+        var domainMax = _this.model.size.domainMax;
         if(!_this.model.size.which) {
           var p = _this.propertyActiveProfile;
-          domainMin = (p.default - p.min) / (p.max - p.min);
+          domainMax = (p.default - p.min) / (p.max - p.min);
           _this.model.size.which = '_default';
         }      
-        _this.sliderEl.call(_this.brush.extent([domainMin, OPTIONS.DOMAIN_MAX]));
+        _this.sliderEl.call(_this.brush.extent([OPTIONS.DOMAIN_MIN, domainMax]));
       }
       _this.sliderEl.call(_this.brush.event);      
     }
@@ -126,9 +127,9 @@ var SizeSlider = Component.extend({
     var values = [this.model.size.domainMin, this.model.size.domainMax],
       _this = this;
     this.element = d3.select(this.element);
-    this.sliderSvg = this.element.select(".vzb-bs-svg");
-    this.sliderWrap = this.sliderSvg.select(".vzb-bs-slider-wrap");
-    this.sliderEl = this.sliderWrap.select(".vzb-bs-slider");
+    this.sliderSvg = this.element.select(".vzb-szs-svg");
+    this.sliderWrap = this.sliderSvg.select(".vzb-szs-slider-wrap");
+    this.sliderEl = this.sliderWrap.select(".vzb-szs-slider");
 
     var
       textMargin = {v: OPTIONS.TEXT_PARAMS.TOP, h: OPTIONS.TEXT_PARAMS.LEFT},
@@ -138,20 +139,26 @@ var SizeSlider = Component.extend({
       thumbRadius = OPTIONS.THUMB_RADIUS,
       thumbStrokeWidth = OPTIONS.THUMB_STROKE_WIDTH,
       padding = {
-        top: thumbStrokeWidth,
-        left: textMargin.h + textMaxWidth * 1.2,
-        right: textMargin.h + textMaxWidth * 1.5,
+        top: OPTIONS.MARGIN.TOP + barWidth * 1.25,
+        left: thumbRadius,
+        right: thumbRadius,
         bottom: barWidth + textMaxHeight
       }
+    
+    var componentWidth = this.element.node().offsetWidth; 
 
     this.padding = padding;
     
-    
     this.propertyActiveProfile = this.getPropertyActiveProfile();
+
+    this.propertyScale = d3.scale.linear()
+      .domain([OPTIONS.DOMAIN_MIN, OPTIONS.DOMAIN_MAX])
+      .range([this.propertyActiveProfile.min, this.propertyActiveProfile.max])
+      .clamp(true)
 
     this.xScale = d3.scale.linear()
       .domain([OPTIONS.DOMAIN_MIN, OPTIONS.DOMAIN_MAX])
-      .range([this.propertyActiveProfile.min * 4, this.propertyActiveProfile.max * 4])
+      .range([0, componentWidth - padding.left - padding.right])
       .clamp(true)
 
     this.brush = d3.svg.brush()
@@ -177,32 +184,28 @@ var SizeSlider = Component.extend({
     //  .endAngle(2 * Math.PI)
 
     this.sliderThumbs = this.sliderEl.selectAll(".resize").sort(d3.descending)
-      .classed("vzb-bs-slider-thumb", true)
+      .classed("vzb-szs-slider-thumb", true)
 
     this.sliderThumbs.append("g")
-      .attr("class", "vzb-bs-slider-thumb-badge")
+      .attr("class", "vzb-szs-slider-thumb-badge")
       .append("path")
       .attr('d', function(d,i) {
-        if(i) return "M0 0 l" + (thumbRadius) + " " + (-thumbRadius * .6) + "v" + (thumbRadius * 1.2) + "Z";
-        //i=0
-        return "M0 0 l" + (-thumbRadius) + " " + (-thumbRadius * .6) + "v" + (thumbRadius * 1.2) + "Z";
+        return "M0 " + (barWidth * .5) + "l" + (-thumbRadius) + " " + (thumbRadius * 1.5) + "h" + (thumbRadius * 2) + "Z";
       })
 
+//
 
     this.sliderThumbs.append("path")
-      .attr("class", "vzb-bs-slider-thumb-arc")
+      .attr("class", "vzb-szs-slider-thumb-arc")
     this.sliderEl.selectAll("text").data([0,0]).enter()
       .append("text")
       .attr("class", function(d, i) {
-        return "vzb-bs-slider-thumb-label " + (i ? 'e' : 'w');})
-//      .attr("dy", "0.35em")
+        return "vzb-szs-slider-thumb-label " + (i ? 'e' : 'w');})
+      .attr("dy", (-barWidth * 1.25) + 'px')
       .attr("text-anchor", function(d, i) {
-        return i ? "start" : "end"})
-//      .attr("dominant-baseline", function(d, i) {
-//        return i ? "text-after-edge" : "text-before-edge"})
-      .attr("dominant-baseline",'middle')
+        return 1 - i ? "start" : "end"})
 
-    this.sliderLabelsEl = this.sliderEl.selectAll("text.vzb-bs-slider-thumb-label");
+    this.sliderLabelsEl = this.sliderEl.selectAll("text.vzb-szs-slider-thumb-label");
 
     this.sliderEl.selectAll("rect")
       .attr("height", barWidth)
@@ -210,18 +213,21 @@ var SizeSlider = Component.extend({
       .attr("ry", barWidth * 0.25)
       .attr("transform", "translate(0," + (-barWidth * 0.5) + ")")
     this.sliderEl.select(".extent")
-      .classed("vzb-bs-slider-extent", true)
+      .classed("vzb-szs-slider-extent", true)
 
     this.on("resize", function() {
       //console.log("EVENT: resize");
-      _this.propertyActiveProfile = this.getPropertyActiveProfile();
+      _this.propertyActiveProfile = _this.getPropertyActiveProfile();
+      _this.propertyScale.range([_this.propertyActiveProfile.min, _this.propertyActiveProfile.max])
+      
+      var componentWidth = _this.element.node().offsetWidth; 
 
-      _this.xScale.range([_this.propertyActiveProfile.min * 4, _this.propertyActiveProfile.max * 4]);
-      _this._updateSize();
+       _this.xScale.range([0, componentWidth - _this.padding.left - _this.padding.right])
+       _this._updateSize();
 
-      _this.sliderEl
-        .call(_this.brush.extent(_this.brush.extent()))
-        .call(_this.brush.event);
+       _this.sliderEl
+         .call(_this.brush.extent(_this.brush.extent()))
+         .call(_this.brush.event);
 
     });
 
@@ -237,10 +243,6 @@ var SizeSlider = Component.extend({
     }
   },
   
-  ready: function() {
-    var i = 0;
-  },
-
   getPropertyActiveProfile: function() {
     var profile = profiles[this.getLayoutProfile()];
     return { min: profile['min' + this.propertyName], max: profile['max' + this.propertyName], default: profile['default' + this.propertyName]};
@@ -253,9 +255,9 @@ var SizeSlider = Component.extend({
   _updateSize: function() {
     this.sliderSvg
       .attr("height", this.propertyActiveProfile.max + this.padding.top + this.padding.bottom)
-      .attr("width", this.propertyActiveProfile.max * 4 + this.padding.left + this.padding.right)
+      .attr("width", '100%')
     this.sliderWrap
-      .attr("transform", "translate(" + this.padding.left * .5 + "," + (this.propertyActiveProfile.max + this.padding.top) + ")")
+      .attr("transform", "translate(" + this.padding.left + "," + (this.propertyActiveProfile.max + this.padding.top) + ")")
   },
 
 //   _updateArcs: function(s) {
@@ -266,7 +268,7 @@ var SizeSlider = Component.extend({
 //       .startAngle(-Math.PI * 0.5)
 //       .endAngle(Math.PI * 0.5);
 // 
-//     this.sliderThumbs.select('.vzb-bs-slider-thumb-arc').data(s)
+//     this.sliderThumbs.select('.vzb-szs-slider-thumb-arc').data(s)
 //       .attr("d", valueArc)
 //       .attr("transform", function (d) {return "translate(" + (-_this.xScale(d) * 0.25) + ",0)"; })
 //   },
@@ -274,19 +276,18 @@ var SizeSlider = Component.extend({
   _updateLabels: function(s) {
     var _this = this;
     var arcLabelTransform = function(d, i) {
-      var textMargin = { v: OPTIONS.TEXT_PARAMS.TOP, h: OPTIONS.TEXT_PARAMS.LEFT },
-          dX = textMargin.h * (i ? 1 : -1.1) + _this.xScale(d),
+      var dX = _this.xScale(i),
           dY = 0;//i ? -textMargin.v : 0;
-       return "translate(" + (dX) + "," + (dY) + ")";
+      return "translate(" + (dX) + "," + (dY) + ")";
     }
     this.sliderLabelsEl.data(s)
       .attr("transform", arcLabelTransform)
       .attr("font-size", function(d, i) {
-        return _this.xScale(d) * 0.25;
+        return _this.propertyScale(d);
       })
     if(_this.model.size.use === 'constant')
       this.sliderLabelsEl.data(s).text(function(d) {
-        return ~~(_this.xScale(d) * 0.25);
+        return ~~(_this.propertyScale(d));
       })    
   },
 

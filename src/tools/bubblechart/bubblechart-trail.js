@@ -304,6 +304,8 @@ export default Class.extend({
       if(next == null) return;
       next = next.__data__;
 
+      if(next.valueY==null || next.valueX==null) return;
+
       if(segment.t - _this.time <= 0 && _this.time - next.t <= 0) {
         next = _this.cached[d[KEY]];
 
@@ -324,7 +326,7 @@ export default Class.extend({
       }
     });
 
-  }
+  },
 
 
 });
