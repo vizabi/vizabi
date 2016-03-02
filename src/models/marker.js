@@ -59,7 +59,7 @@ var Marker = Model.extend({
       var steps = this._parent.time.getAllSteps();
       if(_this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
           cb(_this.cachedFrames[cachePath][time]);
-      } else {
+      } else if (time) {
         var timeId = d3.bisectLeft(steps, time);
         var frameTime = steps[timeId];
         if(frameTime.toString() != time.toString()) {
