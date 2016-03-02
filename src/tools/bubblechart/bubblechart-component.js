@@ -139,6 +139,9 @@ var BubbleChartComp = Component.extend({
       },
       'change:time.value': function() {
         //console.log("EVENT change:time:value");
+        var frame =  _this.model.marker.getFrame(_this.model.time.value);
+        if (!_this) return false;
+        _this.frame = frame;
         _this.updateTime();
         _this._updateDoubtOpacity();
 
@@ -226,7 +229,6 @@ var BubbleChartComp = Component.extend({
     _this.COLOR_WHITEISH = "#fdfdfd";
 
     this.cached = {};
-    this.xyMaxMinMean = {};
     this.isCanvasPreviouslyExpanded = false;
     this.draggingNow = null;
 
@@ -454,7 +456,9 @@ var BubbleChartComp = Component.extend({
     this.wScale = d3.scale.linear()
       .domain(this.parent.datawarning_content.doubtDomain)
       .range(this.parent.datawarning_content.doubtRange);
-
+    var frame =  this.model.marker.getFrame(this.model.time.value);
+    if (!frame) return false;
+    _this.frame = frame;
     this.updateIndicators();
     this.updateEntities();
     this.updateTime();
@@ -473,6 +477,9 @@ var BubbleChartComp = Component.extend({
   ready: function() {
 
     this.updateUIStrings();
+    var frame =  this.model.marker.getFrame(this.model.time.value);
+    if (!frame) return false;
+    this.frame = frame;
 
     this.updateEntities();
     this.updateBubbleOpacity();
@@ -513,12 +520,6 @@ var BubbleChartComp = Component.extend({
 
     this.yAxis.tickFormat(_this.model.marker.axis_y.tickFormatter);
     this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
-
-    this.xyMaxMinMean = {
-      x: this.model.marker.axis_x.gerLimitsPerFrame(),
-      y: this.model.marker.axis_y.gerLimitsPerFrame(),
-      s: this.model.marker.size.gerLimitsPerFrame()
-    };
   },
 
 
@@ -631,7 +632,7 @@ var BubbleChartComp = Component.extend({
           var pointer = {};
           pointer[KEY] = d[KEY];
           pointer[TIMEDIM] = endTime;
-          pointer.sortValue = values.size[d[KEY]]||0;
+          pointer.sortValue = _this.frame.size[d[KEY]]||0;
           pointer[KEY] = prefix + d[KEY];
           return pointer;
         })
@@ -643,7 +644,6 @@ var BubbleChartComp = Component.extend({
     // get array of GEOs, sorted by the size hook
     // that makes larger bubbles go behind the smaller ones
     var endTime = this.model.time.end;
-    var values = this.model.marker.getFrame(endTime);
     this.model.entities.setVisible(getKeys.call(this));
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
@@ -1030,7 +1030,7 @@ var BubbleChartComp = Component.extend({
     var values, valuesNow;
     var KEY = this.KEY;
 
-    valuesNow = this.model.marker.getFrame(this.time);
+    valuesNow = _this.frame;
 
     if(this.model.time.lockNonSelected && this.someSelected) {
       var tLocked = this.model.time.timeFormat.parse("" + this.model.time.lockNonSelected);
@@ -1067,7 +1067,7 @@ var BubbleChartComp = Component.extend({
     var values, valuesNow;
     var KEY = this.KEY;
 
-    valuesNow = this.model.marker.getFrame(this.time);
+    valuesNow = _this.frame;
 
     if(this.model.time.lockNonSelected && this.someSelected) {
       var tLocked = this.model.time.timeFormat.parse("" + this.model.time.lockNonSelected);
@@ -1139,7 +1139,7 @@ var BubbleChartComp = Component.extend({
       valuesLocked = this.model.marker.getFrame(tLocked);
     }
 
-    values = this.model.marker.getFrame(this.time);
+    values = _this.frame;
 
     this.entityBubbles.each(function(d, index) {
       var view = d3.select(this);
