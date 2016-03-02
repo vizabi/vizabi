@@ -150,6 +150,7 @@ var ColorLegend = Component.extend({
           var region = view.attr("id");
           regions.style("opacity", .5);
           view.style("opacity", 1);
+
           var filtered = _this.model.color.getNestedItems([KEY]);
           var highlight = utils.values(filtered)
             //returns a function over time. pick the last time-value
@@ -184,7 +185,7 @@ var ColorLegend = Component.extend({
               _this.model.color.setColor(value, region)
             })
             .show(true);
-        });
+        })
       colors.classed("vzb-hidden", true);
     } else {
       this.worldmapEl.classed("vzb-hidden", true);

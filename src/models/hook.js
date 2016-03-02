@@ -62,7 +62,7 @@ var Hook = Model.extend({
     return(d3.format("." + prec + format)(x) + prefix).replace("G", "B");
 
   },
-
+    
   /**
    * Gets the d3 scale for this hook. if no scale then builds it
    * @returns {Array} domain
@@ -102,62 +102,49 @@ var Hook = Model.extend({
     //TODO: d3 is global?
     this.scale = scaleType === 'time' ? d3.time.scale.utc().domain(domain) : d3.scale[scaleType]().domain(domain);
   },
-
+    
       //TODO: this should go down to datamanager, hook should only provide interface
   /**
    * gets maximum, minimum and mean values from the dataset of this certain hook
    */
-  gerLimitsPerFrame: function(frameName) {
-    if(this.use === "property") return utils.warn("getMaxMinMean: strange that you ask min max mean of a property");
+  gerLimitsPerFrame: function() {
+      
+    if(this.use === "property") return utils.warn("getMaxMinMean: strange that you ask min max mean of a property"); 
     if(!this.isHook) return utils.warn("getMaxMinMean: only works for hooks");
-    var _this = this;
+      
     var result = {};
     var values = [];
     var value = null;
-
+      
     var steps = this._parent._parent.time.getAllSteps();
-
+      
     if(this.use === "constant") {
-      if (frameName) {
-        value = _this.which;
-        result[frameName] = {
-          min: value,
-          max: value
-        }
-      } else {
-        steps.forEach(function(t){
-          value = _this.which;
-          result[t] = {
-            min: value,
-            max: value
-          }
+        steps.forEach(function(t){ 
+            value = this.which;
+            result[t] = {
+                min: value,
+                max: value
+            }
         });
-      }
 
     }else if(this.which==="time"){
-      if (frameName) {
-        result[frameName] = {
-          min: frameName,
-          max: frameName
-        }
-      } else {
-        steps.forEach(function (t) {
-          result[t] = {
-            min: t,
-            max: t
-          }
-
+        steps.forEach(function(t){ 
+            value = new Date(t);
+            result[t] = {
+                min: value,
+                max: value
+            }
         });
-      }
-    }else{
-        var args = {framesArray: steps, which: this.which, frame: frameName};
-        result = this.getDataManager().get(this._dataId, 'limitsPerFrame', args);
-    }
 
+    }else{
+        var args = {framesArray: steps, which: this.which};
+        result = this.getDataManager().get(this._dataId, 'limitsPerFrame', args);   
+    }
+      
     return result;
   },
-
-
+    
+    
      /**
      * Gets unique values in a column
      * @param {String|Array} attr parameter
@@ -166,19 +153,19 @@ var Hook = Model.extend({
     getUnique: function(attr) {
         if(!this.isHook()) return;
         if(!attr) attr = this._getFirstDimension({type: "time"});
-        return this.getDataManager().getUnique(this._dataId, attr);
+        return this.getDataManager().get(this._dataId, 'unique', attr);
     },
-
-
+    
+    
   /**
    * gets the items associated with this hook without values
    * @param filter filter
-   * @returns {Array} keys
+   * @returns hooked value
    */
   getKeys: function(filter) {
       // If there is no _dataId, then no data was loaded
       if (!this._dataId) return utils.warn("hook:getKeys() -- returning nothing since no data is loaded");
-
+      
       //all dimensions except time (continuous)
       var dimensions = this._getAllDimensions({exceptType: 'time'});
       var excluded = this._getAllDimensions({onlyType: 'time'});
@@ -192,14 +179,14 @@ var Hook = Model.extend({
         return item;
       });
   },
-
+    
   /**
    * Gets the metadata of the hook's "which"
    * @returns {Object} metadata
    */
   getMetadata: function() {
     return this.use !== 'constant' ? this.getDataManager().getMetadata(this.which) : {};
-  }
+  }    
 });
 
 export default Hook;

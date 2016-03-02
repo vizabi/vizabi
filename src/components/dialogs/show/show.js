@@ -72,48 +72,48 @@ var Show = Dialog.extend({
     this.translator = this.model.language.getTFunction();
 
     this.model.state.marker_allpossible.getFrame(this.model.state.time.value, function(values) {
-      var data = utils.keys(values.label)
+    var data = utils.keys(values.label)
         .map(function(d){
-          var result = {};
-          result[_this.KEY] = d;
-          result["label"] = values.label[d];
-          return result;
+            var result = {};
+            result[_this.KEY] = d;
+            result["label"] = values.label[d];
+            return result;
         });
 
-      //sort data alphabetically
-      data.sort(function(a, b) {
-        return(a.label < b.label) ? -1 : 1;
-      });
+    //sort data alphabetically
+    data.sort(function(a, b) {
+      return(a.label < b.label) ? -1 : 1;
+    });
 
       _this.list.html("");
 
-      var items = _this.list.selectAll(".vzb-show-item")
-        .data(data)
-        .enter()
-        .append("div")
-        .attr("class", "vzb-show-item vzb-dialog-checkbox")
+    var items = _this.list.selectAll(".vzb-show-item")
+      .data(data)
+      .enter()
+      .append("div")
+      .attr("class", "vzb-show-item vzb-dialog-checkbox")
 
-      items.append("input")
-        .attr("type", "checkbox")
-        .attr("class", "vzb-show-item")
-        .attr("id", function(d) {
-          return "-show-" + d[_this.KEY];
-        })
-        .property("checked", function(d) {
-          return _this.model.state.entities.isShown(d);
-        })
-        .on("change", function(d) {
-          _this.model.state.entities.showEntity(d);
-          _this.showHideDeselect();
-        });
+    items.append("input")
+      .attr("type", "checkbox")
+      .attr("class", "vzb-show-item")
+      .attr("id", function(d) {
+        return "-show-" + d[_this.KEY];
+      })
+      .property("checked", function(d) {
+        return _this.model.state.entities.isShown(d);
+      })
+      .on("change", function(d) {
+        _this.model.state.entities.showEntity(d);
+        _this.showHideDeselect();
+      });
 
-      items.append("label")
-        .attr("for", function(d) {
-          return "-show-" + d[_this.KEY];
-        })
-        .text(function(d) {
-          return d.label;
-        });
+    items.append("label")
+      .attr("for", function(d) {
+        return "-show-" + d[_this.KEY];
+      })
+      .text(function(d) {
+        return d.label;
+      });
 
       _this.input_search.attr("placeholder", _this.translator("placeholder/search") + "...");
 

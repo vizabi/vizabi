@@ -416,6 +416,7 @@ var TimeSlider = Component.extend({
    */
   _optionClasses: function() {
     //show/hide classes
+
     var show_limits = this.ui.show_limits;
     var show_value = this.ui.show_value;
     var show_value_when_drag_play = this.ui.show_value_when_drag_play;

@@ -62,7 +62,7 @@ var LCComponent = Component.extend({
     this.sizeUpdatedOnce = false;
 
     var externalUiModel = this.ui["vzb-tool-" + this.name].getPlainObject();
-
+      
     // default UI settings
     this.ui = utils.extend({
       entity_labels: {},
@@ -228,7 +228,7 @@ var LCComponent = Component.extend({
     filter[timeDim] = this.time;
 
     this.data = this.model.marker.getKeys(filter);
-     this.prev_steps = this.all_steps.filter(function(f){return f < _this.time;});
+    this.prev_steps = this.all_steps.filter(function(f){return f <= _this.time;});
 
     this.entityLines = this.linesContainer.selectAll('.vzb-lc-entity').data(this.data);
     this.entityLabels = this.labelsContainer.selectAll('.vzb-lc-entity').data(this.data);
@@ -510,7 +510,7 @@ var LCComponent = Component.extend({
                 return [+frame, +_this.all_values[frame].axis_y[d[KEY]]];
             })
             .filter(function(d) {return !utils.isNaN(d[1]);});
-
+        
         _this.cached[d[KEY]] = {
           valueY: xy[xy.length - 1][1]
         };
@@ -676,72 +676,73 @@ var LCComponent = Component.extend({
     }
     var resolvedValue;
     var timeDim = _this.model.time.getDimension();
-
+    
     var mousePos = mouse[1] - _this.margin.bottom;
 
 
 
     this.getValuesForYear(resolvedTime).then(function(data) {
       var nearestKey = _this.getNearestKey(mousePos, data.axis_y, _this.yScale.bind(_this));
-      if(!me) me = {};
-      me[KEY] = nearestKey;
-      _this.hoveringNow = me;
+    resolvedValue = data.axis_y[nearestKey];
+    if(!me) me = {};
+    me[KEY] = nearestKey;
 
-      resolvedValue = data.axis_y[nearestKey];
+    _this.hoveringNow = me;
 
-      _this.graph.selectAll(".vzb-lc-entity").each(function() {
-        d3.select(this)
-          .classed("vzb-dimmed", function(d) {
-            return d[KEY] !== _this.hoveringNow[KEY];
-          })
-          .classed("vzb-hovered", function(d) {
-            return d[KEY] === _this.hoveringNow[KEY];
-          });
-      });
+    _this.graph.selectAll(".vzb-lc-entity").each(function() {
+      d3.select(this)
+        .classed("vzb-dimmed", function(d) {
+          return d[KEY] !== _this.hoveringNow[KEY];
+        })
+        .classed("vzb-hovered", function(d) {
+          return d[KEY] === _this.hoveringNow[KEY];
+        });
+    });
 
-      if(utils.isNaN(resolvedValue)) return;
-      var scaledTime = _this.xScale(resolvedTime);
-      var scaledValue = _this.yScale(resolvedValue);
+    if(utils.isNaN(resolvedValue)) return;
 
-      if(_this.ui.whenHovering.showTooltip) {
-        //position tooltip
-        _this.tooltip
-          //.style("right", (_this.width - scaledTime + _this.margin.right ) + "px")
-          .style("left", (scaledTime + _this.margin.left) + "px")
-          .style("bottom", (_this.height - scaledValue + _this.margin.bottom) + "px")
-          .text(_this.yAxis.tickFormat()(resolvedValue))
-          .classed("vzb-hidden", false);
-      }
+    var scaledTime = _this.xScale(resolvedTime);
+    var scaledValue = _this.yScale(resolvedValue);
 
-      // bring the projection lines to the hovering point
-      if(_this.ui.whenHovering.hideVerticalNow) {
-        _this.verticalNow.style("opacity", 0);
-      }
+    if(_this.ui.whenHovering.showTooltip) {
+      //position tooltip
+      _this.tooltip
+        //.style("right", (_this.width - scaledTime + _this.margin.right ) + "px")
+        .style("left", (scaledTime + _this.margin.left) + "px")
+        .style("bottom", (_this.height - scaledValue + _this.margin.bottom) + "px")
+        .text(_this.yAxis.tickFormat()(resolvedValue))
+        .classed("vzb-hidden", false);
+    }
 
-      if(_this.ui.whenHovering.showProjectionLineX) {
-        _this.projectionX
-          .style("opacity", 1)
-          .attr("y2", scaledValue)
-          .attr("x1", scaledTime)
-          .attr("x2", scaledTime);
-      }
-      if(_this.ui.whenHovering.showProjectionLineY) {
-        _this.projectionY
-          .style("opacity", 1)
-          .attr("y1", scaledValue)
-          .attr("y2", scaledValue)
-          .attr("x1", scaledTime);
-      }
+    // bring the projection lines to the hovering point
+    if(_this.ui.whenHovering.hideVerticalNow) {
+      _this.verticalNow.style("opacity", 0);
+    }
 
-      if(_this.ui.whenHovering.higlightValueX) _this.xAxisEl.call(
-        _this.xAxis.highlightValue(resolvedTime).highlightTransDuration(0)
-      );
+    if(_this.ui.whenHovering.showProjectionLineX) {
+      _this.projectionX
+        .style("opacity", 1)
+        .attr("y2", scaledValue)
+        .attr("x1", scaledTime)
+        .attr("x2", scaledTime);
+    }
+    if(_this.ui.whenHovering.showProjectionLineY) {
+      _this.projectionY
+        .style("opacity", 1)
+        .attr("y1", scaledValue)
+        .attr("y2", scaledValue)
+        .attr("x1", scaledTime);
+    }
 
-      if(_this.ui.whenHovering.higlightValueY) _this.yAxisEl.call(
-        _this.yAxis.highlightValue(resolvedValue).highlightTransDuration(0)
-      );
+    if(_this.ui.whenHovering.higlightValueX) _this.xAxisEl.call(
+      _this.xAxis.highlightValue(resolvedTime).highlightTransDuration(0)
+    );
 
-      clearTimeout(_this.unhoverTimeout);
+    if(_this.ui.whenHovering.higlightValueY) _this.yAxisEl.call(
+      _this.yAxis.highlightValue(resolvedValue).highlightTransDuration(0)
+    );
+
+    clearTimeout(_this.unhoverTimeout);
 
     });
   },

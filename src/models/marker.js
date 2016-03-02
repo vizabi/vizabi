@@ -31,8 +31,33 @@ var Marker = Model.extend({
   },
 
 
+    getResultKeys: function() {
+        var _this = this;
+        var resultKeys = [];
+        utils.forEach(this._dataCube, function(hook, name) {
 
+            // If hook use is constant, then we can provide no additional info about keys
+            // We can just hope that we have something else than constants =)
+            if(hook.use === "constant") return;
 
+            // Get keys in data of this hook
+            var nested = _this.getDataManager().get(hook._dataId, 'nested', ["geo", "time"]);
+            var keys = Object.keys(nested);
+
+            if(resultKeys.length == 0) {
+                // If ain't got nothing yet, set the list of keys to result
+                resultKeys = keys;
+            } else {
+                // If there is result accumulated aleready, remove the keys from it that are not in this hook
+                resultKeys = resultKeys.filter(function(f) {
+                    return keys.indexOf(f) > -1;
+                })
+            }
+        });
+        return resultKeys;
+    },
+    
+    
   /**
    * gets the items associated with this hook without values
    * @param filter filter
@@ -49,34 +74,9 @@ var Marker = Model.extend({
       }
       return found;
   },
-
-  getResultKeys: function() {
-    var _this = this;
-    var resultKeys = [];
-    utils.forEach(this._dataCube, function(hook, name) {
-
-      // If hook use is constant, then we can provide no additional info about keys
-      // We can just hope that we have something else than constants =)
-      if(hook.use === "constant") return;
-
-      // Get keys in data of this hook
-      var nested = _this.getDataManager().get(hook._dataId, 'nested', ["geo", "time"]);
-      var keys = Object.keys(nested);
-
-      if(resultKeys.length == 0) {
-        // If ain't got nothing yet, set the list of keys to result
-        resultKeys = keys;
-      } else {
-        // If there is result accumulated aleready, remove the keys from it that are not in this hook
-        resultKeys = resultKeys.filter(function(f) {
-          return keys.indexOf(f) > -1;
-        })
-      }
-    });
-    return resultKeys;
-  },
+    
     getFrame: function(time, cb) {
-      var _this = this;
+        var _this = this;
       var cachePath = "";
       utils.forEach(this._dataCube, function(hook, name) {
           cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start + " " + _this._parent.time.end;
@@ -285,7 +285,7 @@ var Marker = Model.extend({
         u = hook.use;
         w = hook.which;
 
-        if(hook.use !== "property") next = next || d3.bisectLeft(hook.getUnique(dimTime), time);
+        if(hook.use !== "property") next = next || d3.bisectLeft(hook.getUnique(dimTime), time);        
 
         method = hook.getMetadata().interpolation;
         filtered = _this.getDataManager().get(hook._dataId, 'nested', f_keys);
@@ -309,23 +309,23 @@ var Marker = Model.extend({
     //else, interpolate all with time
     else {
       utils.forEach(this._dataCube, function(hook, name) {
-
+          
         filtered = _this.getDataManager().get(hook._dataId, 'nested', group_by);
-
+            
         response[name] = {};
         //find position from first hook
         u = hook.use;
         w = hook.which;
-
+          
         if(hook.use !== "property") next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
-
+        
         method = hook.getMetadata().interpolation;
 
 
         utils.forEach(filtered, function(arr, id) {
-          //TODO: this saves when geos have different data length. line can be optimised.
+          //TODO: this saves when geos have different data length. line can be optimised. 
           next = d3.bisectLeft(arr.map(function(m){return m.time}), time);
-
+            
           value = utils.interpolatePoint(arr, u, w, next, dimTime, time, method);
           response[name][id] = hook.mapValue(value);
 
@@ -353,15 +353,15 @@ var Marker = Model.extend({
   getMetadata: function() {
     return this.getDataManager().getMetadata();
   },
-
+    
   /**
    * Gets the metadata of all hooks
    * @returns {Object} metadata
    */
   getIndicatorsTree: function() {
     return this.getDataManager().getIndicatorsTree();
-  }
-
+  } 
+    
 
 });
 

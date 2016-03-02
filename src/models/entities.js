@@ -129,7 +129,7 @@ var EntitiesModel = Model.extend({
       this.select = (this._multiple) ? this.select.concat(added) : [added];
     }
   },
-
+    
   /**
    * Select all entities
    */
@@ -157,21 +157,21 @@ var EntitiesModel = Model.extend({
   showEntity: function(d) {
     //clear selected countries when showing something new
     this.clearSelected();
-
+    
     var dimension = this.getDimension();
     var value = d[dimension];
     var show = this.show[dimension];
-
+      
     if(!show || show[0] === "*") show = [];
-
+      
     show = show.concat([]); //clone array
-
+      
     if(this.isShown(d)) {
       show = show.filter(function(d) { return d !== value; });
     } else {
       show = show.concat(value);
     }
-
+      
     if(show.length === 0) show = ["*"];
     this.show[dimension] = show.concat([]);
 
@@ -203,7 +203,7 @@ var EntitiesModel = Model.extend({
         .map(function(d) {return d[dimension];})
         .indexOf(value) !== -1;
   },
-
+    
   /**
    * Selects an entity from the set
    * @returns {Boolean} whether the item is shown or not

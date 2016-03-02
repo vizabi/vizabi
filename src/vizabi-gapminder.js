@@ -133,8 +133,8 @@ BarRankChart.define('default_model', {
       label: {
         use: "property",
         which: "geo.name"
-      }
-    },
+      }    
+    },      
     marker: {
       space: ["entities", "time"],
       label: {
@@ -310,7 +310,7 @@ MountainChart.define('default_model', {
       label: {
         use: "property",
         which: "geo.name"
-      }
+      }    
     },
     marker: {
       space: ["entities", "time"],
@@ -690,10 +690,10 @@ Tool.define("preload", function(promise) {
 
   var metadata_path = Vzb._globals.gapminder_paths.baseUrl + "data/waffles/metadata.json";
   var globals = Vzb._globals;
-
+    
   Vzb._globals.version = Vzb._version;
   Vzb._globals.build = Vzb._build;
-
+    
   //TODO: concurrent
   //load language first
   this.preloadLanguage().then(function() {

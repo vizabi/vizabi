@@ -43,7 +43,6 @@ var Data = Class.extend({
     wait.then(function() {
       //pass the data forward
       var data = _this._collection[cached].data;
-
       //not loading anymore
       if(loaded && evts && typeof evts.load_end === 'function') {
         evts.load_end();
@@ -91,7 +90,7 @@ var Data = Class.extend({
       // check every query in the queue
       _this.queryQueue = _this.queryQueue.filter(function(queueItem) {
         if (queueItem.query == query) {
-          // Query is still in the queue so this is the first deferred query with same requested rows (where & group) to reach here.
+          // Query is still in the queue so this is the first deferred query with same requested rows (where & group) to reach here. 
           // This will be the base query which will be executed; It will be extended by other queries in the queue.
           mergedQueries.push(queueItem);
           willExecute = true;
@@ -115,7 +114,7 @@ var Data = Class.extend({
             // remove queueItem from queue as it's merged in the current query
             return false;
           }
-        }
+        } 
         // otherwise keep it in the queue, so it can be joined with another query
         return true;
       });
@@ -130,7 +129,7 @@ var Data = Class.extend({
       query.select = utils.unique(query.select);
 
       //create hash for dimensions only query
-      var dim, dimQ, dimQId = 0;
+      var dim, dimQ, dimQId = 0; 
       dimQ = utils.clone(query);
       dim = utils.keys(dimQ.grouping);
       if (utils.arrayEquals(dimQ.select.slice(0, dim.length), dim)) {
@@ -181,7 +180,7 @@ var Data = Class.extend({
           // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
 
           // returning the query-id/values of the merged query without splitting the result up again per query
-          // this is okay because the collection-object above will only be passed by reference to the cache and this will not take up more memory.
+          // this is okay because the collection-object above will only be passed by reference to the cache and this will not take up more memory. 
           // On the contrary: it uses less because there is no need to duplicate the key-columns.
           utils.forEach(mergedQueries, function(mergedQuery) {
             // set the cache-location for each seperate query to the combined query's cache
@@ -190,14 +189,14 @@ var Data = Class.extend({
             // resolve the query
             mergedQuery.promise.resolve(mergedQuery.queryId);
           });
-
+  
           //create cache record for dimension only query
           if(dimQId !== 0) {
-            _this._collection[dimQId] = _this._collection[queryId];
+            _this._collection[dimQId] = _this._collection[queryId];              
           }
           //promise.resolve(queryId);
         }, //error reading
-        function(err) {
+        function(err) { 
           utils.forEach(mergedQueries, function(mergedQuery) {
             mergedQuery.promise.reject(err);
           });
@@ -248,19 +247,18 @@ var Data = Class.extend({
       case 'limitsPerFrame':
         this._collection[queryId][what][id] = this._getLimitsPerFrame(queryId, whatId, args);
         break;
-      case 'nested':
+      case 'nested':     
         this._collection[queryId][what][id] = this._getNested(queryId, whatId);
         break;
     }
     return this._collection[queryId][what][id];
   },
 
-
   getMetadata: function(which){
       if(!globals.metadata || !globals.metadata.indicatorsDB) return {};
       return which ? globals.metadata.indicatorsDB[which] : globals.metadata.indicatorsDB;
   },
-
+    
   /**
    * Gets the metadata of all hooks
    * @returns {Object} metadata
@@ -551,38 +549,23 @@ var Data = Class.extend({
         buildFrame(nextFrame.frameName, keys, queryId, nextFrame.callback);
 
       }
-/*
-      for (var f = 0; f < framesArray.length; f++) { //loop across frameArray
-        var frameName = framesArray[f];
-        utils.defer(function() {
-          response[frame.name] = buildFrame(framesArray, keys, queryId);
-        });
-        promises.push(buildFrame(frameName, keys, queryId));
-      }
-      Promise.all(promises).then(function (frames) {
-        for (let frame of frames) {
-          response[frame.name] = frame.data;
-        }
-        resolve(response);
-      });
-*/
     });
   },
 
 
   _getNested: function(queryId, order) {
     // Nests are objects of key-value pairs
-    // Example:
-    //
+    // Example: 
+    // 
     // order = ["geo", "time"];
-    //
+    // 
     // original_data = [
     //   { geo: "afg", time: 1800, gdp: 23424, lex: 23}
     //   { geo: "afg", time: 1801, gdp: 23424, lex: null}
     //   { geo: "chn", time: 1800, gdp: 23587424, lex: 46}
     //   { geo: "chn", time: 1801, gdp: null, lex: null}
     // ];
-    //
+    //  
     // nested_data = {
     //   afg: {
     //     1800: {gdp: 23424, lex: 23},
@@ -603,17 +586,18 @@ var Data = Class.extend({
           };
         })(order[i])
       );
-    }
+    };
+
     return utils.nestArrayToObj(nest.entries(this._collection[queryId]['data']));
   },
+    
 
-
-  getUnique: function(queryId, attr) {
-    var uniq, values;
+  _getUnique: function(queryId, attr) {
+    var uniq;
     var items = this._collection[queryId].data;
     //if it's an array, it will return a list of unique combinations.
     if(utils.isArray(attr)) {
-      values = items.map(function(d) {
+      var values = items.map(function(d) {
         return utils.clone(d, attr); //pick attrs
       });
       uniq = utils.unique(values, function(n) {
@@ -621,7 +605,7 @@ var Data = Class.extend({
       });
     } //if it's a string, it will return a list of values
     else {
-      values = items.map(function(d) {
+      var values = items.map(function(d) {
         return d[attr];
       });
       uniq = utils.unique(values);
@@ -632,8 +616,8 @@ var Data = Class.extend({
   _getFiltered: function(queryId, filter) {
     return utils.filter(this._collection[queryId].data, filter);
   },
-
-
+    
+    
   _getLimitsPerFrame: function(queryId, args) {
     var _this = this;
     var result = {};
@@ -660,12 +644,13 @@ var Data = Class.extend({
     });
     return result;
   },
-
+    
   _getLimits: function(queryId, attr) {
+
     var items = this._collection[queryId].data;
     // get only column attr and only rows with number or date
     var filtered = items.reduce(function(filtered, d) {
-
+      
       // check for dates
       var f = (utils.isDate(d[attr])) ? d[attr] : parseFloat(d[attr]);
 
@@ -677,24 +662,23 @@ var Data = Class.extend({
       //filter
       return filtered;
     }, []);
+
     // get min/max for the filtered rows
     var min;
     var max;
     var limits = {};
-    if (filtered.length > 0) {
-      for(var i = 0; i < filtered.length; i += 1) {
-        var c = filtered[i];
-        if(typeof min === 'undefined' || c < min) {
-          min = c;
-        }
-        if(typeof max === 'undefined' || c > max) {
-          max = c;
-        }
+    for(var i = 0; i < filtered.length; i += 1) {
+      var c = filtered[i];
+      if(typeof min === 'undefined' || c < min) {
+        min = c;
+      }
+      if(typeof max === 'undefined' || c > max) {
+        max = c;
       }
     }
     limits.min = min || 0;
     limits.max = max || 100;
-    return limits;
+    return limits;    
   },
 
   /**

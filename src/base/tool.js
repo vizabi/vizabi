@@ -52,31 +52,31 @@ var Tool = Component.extend({
    */
   init: function(placeholder, external_model) {
     this._id = utils.uniqueId('t');
-    this.template = this.template ||
-      '<div class="vzb-tool vzb-tool-' + this.name + '">' +
-        '<div class="vzb-tool-stage">' +
-          '<div class="vzb-tool-viz">' +
+    this.template = this.template || 
+      '<div class="vzb-tool vzb-tool-' + this.name + '">' + 
+        '<div class="vzb-tool-stage">' + 
+          '<div class="vzb-tool-viz">' + 
+          '</div>' + 
+          '<div class="vzb-tool-timeslider">' + 
+          '</div>' + 
+        '</div>' + 
+        '<div class="vzb-tool-sidebar">' + 
+          '<div class="vzb-tool-dialogs">' + 
           '</div>' +
-          '<div class="vzb-tool-timeslider">' +
-          '</div>' +
-        '</div>' +
-        '<div class="vzb-tool-sidebar">' +
-          '<div class="vzb-tool-dialogs">' +
-          '</div>' +
-          '<div class="vzb-tool-buttonlist">' +
-          '</div>' +
-        '</div>' +
-        '<div class="vzb-tool-treemenu vzb-hidden">' +
-        '</div>' +
-        '<div class="vzb-tool-datawarning vzb-hidden">' +
-        '</div>' +
+          '<div class="vzb-tool-buttonlist">' + 
+          '</div>' + 
+        '</div>' +         
+        '<div class="vzb-tool-treemenu vzb-hidden">' + 
+        '</div>' + 
+        '<div class="vzb-tool-datawarning vzb-hidden">' + 
+        '</div>' + 
       '</div>';
     this.model_binds = this.model_binds || {};
-
+    
     external_model = external_model || {}; //external model can be undefined
     external_model.bind = external_model.bind || {}; //bind functions can be undefined
 
-
+    
     //bind the validation function with the tool
     var validate = this.validate.bind(this);
     var _this = this;
@@ -254,14 +254,13 @@ var Tool = Component.extend({
 
     var dateMin = marker.getLimits(time.getDimension()).min;
     var dateMax = marker.getLimits(time.getDimension()).max;
-    var limits = marker.getLimits(time.getDimension())
-    if(!utils.isDate(limits.min)) utils.warn("tool validation: min date looks wrong: " + dateMin);
-    if(!utils.isDate(limits.max)) utils.warn("tool validation: max date looks wrong: " + dateMax);
+
+    if(!utils.isDate(dateMin)) utils.warn("tool validation: min date looks wrong: " + dateMin);
+    if(!utils.isDate(dateMax)) utils.warn("tool validation: max date looks wrong: " + dateMax);
 
     // change is not persistent if it's splashscreen change
-    if(time.start < limits.min && utils.isDate(limits.min)) time.getModelObject('start').set(limits.min, false, !time.splash);
-    if(time.end > limits.max && utils.isDate(limits.max)) time.getModelObject('end').set(limits.max, false, !time.splash);
-
+    if(time.start < dateMin && utils.isDate(dateMin)) time.getModelObject('start').set(dateMin, false, !time.splash);
+    if(time.end > dateMax && utils.isDate(dateMax)) time.getModelObject('end').set(dateMax, false, !time.splash);
   },
 
   _setUIModel: function() {

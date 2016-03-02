@@ -141,18 +141,18 @@ var BubbleChartComp = Component.extend({
         _this.model.marker.getFrame(_this.model.time.value, function(frame) {
           if (!frame) return false;
           _this.frame = frame;
-          _this.updateTime();
-          _this._updateDoubtOpacity();
+        _this.updateTime();
+        _this._updateDoubtOpacity();
 
-          _this._trails.run("findVisible");
-          if(_this.model.time.adaptMinMaxZoom) {
-            _this._panZoom.expandCanvas();
-          } else {
-            _this.redrawDataPoints();
-          }
-          _this._trails.run("reveal");
-          _this.tooltipMobile.classed('vzb-hidden', true);
-          //_this._bubblesInteract().mouseout();
+        _this._trails.run("findVisible");
+        if(_this.model.time.adaptMinMaxZoom) {
+          _this._panZoom.expandCanvas();
+        } else {
+          _this.redrawDataPoints();
+        }
+        _this._trails.run("reveal");
+        _this.tooltipMobile.classed('vzb-hidden', true);
+        //_this._bubblesInteract().mouseout();
         });
       },
       'change:time.adaptMinMaxZoom': function() {
@@ -224,7 +224,7 @@ var BubbleChartComp = Component.extend({
 
     this.xAxis = axisSmart();
     this.yAxis = axisSmart();
-
+      
     _this.COLOR_BLACKISH = "#333";
     _this.COLOR_WHITEISH = "#fdfdfd";
 
@@ -234,7 +234,7 @@ var BubbleChartComp = Component.extend({
     this.draggingNow = null;
 
     var externalUiModel = this.ui["vzb-tool-" + this.name].getPlainObject();
-
+      
     // default UI settings
     this.ui = utils.extend({
       whenHovering: {},
@@ -1024,10 +1024,10 @@ var BubbleChartComp = Component.extend({
       // if(!this.model.marker.size_label.which) {
       //   this.maxLabelTextSize = this.activeProfile.defaultLabelTextSize;
       //   this.model.marker.size_label.set({'domainMax': (this.maxLabelTextSize - minLabelTextSize) / minMaxDelta, 'which': '_default'});
-      //   return;
+      //   return; 
       // }
       this.minLabelTextSize = this.maxLabelTextSize;
-    }
+    } 
 
     if(this.model.marker.size_label.scaleType !== "ordinal" || this.model.marker.size_label.use == 'constant') {
       this.labelSizeTextScale.range([_this.minLabelTextSize, _this.maxLabelTextSize]);
@@ -1039,22 +1039,20 @@ var BubbleChartComp = Component.extend({
 
   redrawDataPointsOnlyColors: function() {
     var _this = this;
-    var values, valuesNow;
     var KEY = this.KEY;
 
-    valuesNow = this.model.marker.getFrame(this.time);
-
+    var values = _this.frame;
     if(this.model.time.lockNonSelected && this.someSelected) {
       time = this.model.time.timeFormat.parse("" + this.model.time.lockNonSelected);
     }
-    this.model.marker.getFrame(time, function(valuesLocked) {
+    this.model.marker.getFrame(time, function(valuesNow) {
       _this.entityBubbles.style("fill", function(d) {
 
-        var cache = _this.cached[d[KEY]];
+      var cache = _this.cached[d[KEY]];
 
-        var valueC = cache && _this.model.time.lockNonSelected ? valuesLocked.color[d[KEY]] : _this.frame.color[d[KEY]];
+      var valueC = cache && _this.model.time.lockNonSelected ? valuesNow.color[d[KEY]] : values.color[d[KEY]];
 
-        return valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH;
+      return valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH;
       });
     });
 
@@ -1089,45 +1087,45 @@ var BubbleChartComp = Component.extend({
       values = valuesLocked;
       _this.entityBubbles.each(function(d, index) {
 
-        var cache = _this.cached[d[KEY]];
+      var cache = _this.cached[d[KEY]];
 
-        var valueS = cache && _this.model.time.lockNonSelected ? valuesNow.size[d[KEY]] : values.size[d[KEY]];
-        if(valueS == null) return;
+      var valueS = cache && _this.model.time.lockNonSelected ? valuesNow.size[d[KEY]] : values.size[d[KEY]];
+      if(valueS == null) return;
 
-        var scaledS = utils.areaToRadius(_this.sScale(valueS));
-        d3.select(this).attr("r", scaledS);
+      var scaledS = utils.areaToRadius(_this.sScale(valueS));
+      d3.select(this).attr("r", scaledS);
 
-        //update lines of labels
-        if(cache) {
+      //update lines of labels
+      if(cache) {
 
-          var resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
-          var resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
+        var resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
+        var resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
 
-          var resolvedX0 = _this.xScale(cache.labelX0);
-          var resolvedY0 = _this.yScale(cache.labelY0);
+        var resolvedX0 = cache.labelX0 == null? null : _this.xScale(cache.labelX0);
+        var resolvedY0 = cache.labelY0 == null? null : _this.yScale(cache.labelY0);
 
-          var lineGroup = _this.entityLines.filter(function(f) {
-            return f[KEY] == d[KEY];
-          });
+        var lineGroup = _this.entityLines.filter(function(f) {
+          return f[KEY] == d[KEY];
+        });
 
-          var select = utils.find(_this.model.entities.select, function(f) {
-            return f[KEY] == d[KEY]
-          });
+        var select = utils.find(_this.model.entities.select, function(f) {
+          return f[KEY] == d[KEY]
+        });
 
-          var trailStartTime = _this.model.time.timeFormat.parse("" + select.trailStartTime);
+        var trailStartTime = _this.model.time.timeFormat.parse("" + select.trailStartTime);
 
-          if(!_this.model.time.trails || trailStartTime - _this.time == 0) {
-            cache.scaledS0 = scaledS;
-          }
-
-          _this.entityLabels.filter(function(f) {
-            return f[KEY] == d[KEY]
-          })
-            .each(function(groupData) {
-              _this._repositionLabels(d, index, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0, lineGroup);
-            });
+        if(!_this.model.time.trails || trailStartTime - _this.time == 0) {
+          cache.scaledS0 = scaledS;
         }
-      });
+
+        _this.entityLabels.filter(function(f) {
+          return f[KEY] == d[KEY]
+        })
+        .each(function(groupData) {
+          _this._repositionLabels(d, index, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0, lineGroup);
+        });
+      }
+    });
     });
   },
 
@@ -1151,20 +1149,20 @@ var BubbleChartComp = Component.extend({
     }
     this.model.marker.getFrame(time, function(valuesLocked) {
       _this.entityBubbles.each(function(d, index) {
-        var view = d3.select(this);
-        _this._updateBubble(d, values, valuesLocked, index, view, duration);
+      var view = d3.select(this);
+      _this._updateBubble(d, values, valuesLocked, index, view, duration);
 
-      }); // each bubble
+    }); // each bubble
 
-      if(_this.ui.labels.autoResolveCollisions) {
-        // cancel previously queued simulation if we just ordered a new one
-        clearTimeout(_this.collisionTimeout);
+    if(_this.ui.labels.autoResolveCollisions) {
+      // cancel previously queued simulation if we just ordered a new one
+      clearTimeout(_this.collisionTimeout);
 
-        // place label layout simulation into a queue
-        _this.collisionTimeout = setTimeout(function() {
-          //  _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
-        }, _this.model.time.delayAnimations * 1.2)
-      }
+      // place label layout simulation into a queue
+      _this.collisionTimeout = setTimeout(function() {
+        //  _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
+      }, _this.model.time.delayAnimations * 1.2)
+    }
     });
   },
 
@@ -1222,7 +1220,7 @@ var BubbleChartComp = Component.extend({
       });
 
     } // data exists
-
+      
     _this._updateLabel(d, index, valueX, valueY, scaledS, valueL, valueLST, duration);
   },
 
@@ -1279,18 +1277,18 @@ var BubbleChartComp = Component.extend({
 
           var text = labelGroup.selectAll(".vzb-bc-label-content")
             .text(valueL + (_this.model.time.trails ? " " + select.trailStartTime : ""));
-
+          
           var labels = _this.model.ui.get('vzb-tool-bubblechart').labels;
           labelGroup.classed('vzb-label-boxremoved', labels.removeLabelBox);
           var fontSize = _this.labelSizeTextScale(valueLST) + 'px';
           text.attr('font-size', fontSize);
-
+          
           var rect = labelGroup.select("rect");
 
           var contentBBox = text[0][0].getBBox();
           if(!cached.contentBBox || cached.contentBBox.width != contentBBox.width) {
             cached.contentBBox = contentBBox;
-
+            
             var labelCloseHeight = _this.activeProfile.infoElHeight * 1.2;//contentBBox.height;
 
             var labelCloseGroup = labelGroup.select(".vzb-bc-label-x")
@@ -1319,7 +1317,7 @@ var BubbleChartComp = Component.extend({
 
           limitedX0 = cached.labelX0 == null? null : _this.xScale(cached.labelX0);
           limitedY0 = cached.labelY0 == null? null : _this.yScale(cached.labelY0);
-
+          
           var labelOffset = select.labelOffset || [0,0];
 
           cached.labelX_ = labelOffset[0] || (-cached.scaledS0 * .75 - 5) / _this.width;
@@ -1359,7 +1357,7 @@ var BubbleChartComp = Component.extend({
     var cache = this.cached[d[this.KEY]];
 
     var labelGroup = d3.select(context);
-
+          
     //protect label and line from the broken data
     var brokenInputs = !_X && _X !==0 || !_Y && _Y !==0 || !_X0 && _X0 !==0 || !_Y0 && _Y0 !==0;
     labelGroup.classed("vzb-invisible", brokenInputs);
@@ -1405,16 +1403,16 @@ var BubbleChartComp = Component.extend({
     var textBBox = labelGroup.select('text').node().getBBox();
     var diffX2 = textBBox.width * .5;
     var diffY2 = height * .25;
-
+    
     var labels = this.model.ui.get('vzb-tool-bubblechart').labels;
     if(labels.removeLabelBox) {
       var angle = Math.atan2(diffX1 + diffX2, diffY1 + diffY2) * 180 / Math.PI;
       var deltaDiffX2 = (angle >= 0 && angle <= 180) ? (-textBBox.width * .5) : (textBBox.width * .5);
       var deltaDiffY2 = (Math.abs(angle) <= 90) ? (-textBBox.height * .55) : (textBBox.height * .45);
-      diffX2 += Math.abs(-diffX2 - diffX1) > textBBox.width * .5 ? deltaDiffX2 : 0;
-      diffY2 += Math.abs(-diffY2 - diffY1) > textBBox.height * .5 ? deltaDiffY2 : (-textBBox.height * .05);
+      diffX2 += Math.abs(-diffX2 - diffX1) > textBBox.width * .5 ? deltaDiffX2 : 0; 
+      diffY2 += Math.abs(-diffY2 - diffY1) > textBBox.height * .5 ? deltaDiffY2 : (-textBBox.height * .05); 
     }
-
+          
     var longerSideCoeff = Math.abs(diffX1) > Math.abs(diffY1) ? Math.abs(diffX1) / this.width : Math.abs(diffY1) / this.height;
     lineGroup.select("line").style("stroke-dasharray", "0 " + (cache.scaledS0 + 2) + " " + ~~(longerSideCoeff + 2) + "00%");
 
@@ -1576,8 +1574,7 @@ var BubbleChartComp = Component.extend({
         xPos = x + xOffset * xSign; // .71 - sin and cos for 315
         yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
       }
-      this.tooltip.attr("transform", "translate(" + xPos + "," + yPos +
-        ")")
+      this.tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")")
 
       this.tooltip.select('rect').attr("width", contentBBox.width + 8)
         .attr("height", contentBBox.height * 1.2)

@@ -69,15 +69,16 @@ var BubbleMapComponent = Component.extend({
       "change:marker": function(evt, path) {
         // bubble size change is processed separately
         if(!_this._readyOnce) return;
-
+          
         if(path.indexOf("scaleType") > -1) _this.ready();
       },
       'change:marker.size': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
-        if(!_this._readyOnce || !_this.values) return;
+        if(!_this._readyOnce) return;
         if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1) {
           _this.updateMarkerSizeLimits();
           _this.redrawDataPoints(null, false);
+          return;
         }
       },
       "change:marker.color.palette": function (evt, path) {
@@ -90,7 +91,7 @@ var BubbleMapComponent = Component.extend({
           _this.redrawDataPoints(null, false);
           _this.updateOpacity();
           _this.updateDoubtOpacity();
-
+          
       },
       "change:entities.opacitySelectDim": function (evt) {
           _this.updateOpacity();
@@ -109,7 +110,7 @@ var BubbleMapComponent = Component.extend({
     this.cScale = d3.scale.category10();
 
     _this.COLOR_WHITEISH = "#fdfdfd";
-
+      
     var externalUiModel = this.ui["vzb-tool-" + this.name].getPlainObject();
 
     this.cached = {};
@@ -172,7 +173,7 @@ var BubbleMapComponent = Component.extend({
 
   afterPreload: function(){
     if(!this.world) utils.warn("bubble map afterPreload: missing country shapes " + this.world);
-
+      
     // http://bl.ocks.org/mbostock/d4021aa4dccfd65edffd patterson
     // http://bl.ocks.org/mbostock/3710566 robinson
     // map background
@@ -258,25 +259,25 @@ var BubbleMapComponent = Component.extend({
 
     var _this = this;
     this.on("resize", function () {
-
+      
       _this.updateSize();
       _this.updateMarkerSizeLimits();
       _this.redrawDataPoints();
       //_this._selectlist.redraw();
-
+      
     });
 
     this.KEY = this.model.entities.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
-
-
+      
+      
     this.updateUIStrings();
 
     this.wScale = d3.scale.linear()
         .domain(this.parent.datawarning_content.doubtDomain)
         .range(this.parent.datawarning_content.doubtRange);
-
-
+      
+      
 
   },
 
@@ -306,7 +307,7 @@ var BubbleMapComponent = Component.extend({
   updateUIStrings: function () {
       var _this = this;
 
-      this.translator = this.model.language.getTFunction();
+      this.translator = this.model.language.getTFunction();    
       var sizeMetadata = this.model.marker.size.getMetadata();
 
       this.strings = {
@@ -488,7 +489,7 @@ var BubbleMapComponent = Component.extend({
           return b.sortValue - a.sortValue;
         })
     };
-
+      
     // get array of GEOs, sorted by the size hook
     // that makes larger bubbles go behind the smaller ones
     var endTime = this.model.time.end;
@@ -541,12 +542,12 @@ var BubbleMapComponent = Component.extend({
       })
 
   },
-
+    
   redrawDataPoints: function(duration, reposition){
-    var _this = this;
+    var _this = this;  
     if(!duration) duration = this.duration;
     if(!reposition) reposition = true;
-
+      
     this.entityBubbles.each(function(d, index){
       var view = d3.select(this);
 
@@ -560,18 +561,18 @@ var BubbleMapComponent = Component.extend({
       d.hidden = !valueS || valueX==null || valueY==null;
 
       if(d.hidden !== d.hidden_1) view.classed("vzb-hidden", d.hidden);
-
+        
       if(!d.hidden){
-
+          
           d.r = utils.areaToRadius(_this.sScale(valueS||0));
           d.label = valueL;
-
+          
           view.classed("vzb-hidden", false)
               .attr("fill", valueC?_this.cScale(valueC):_this.COLOR_WHITEISH)
-
+          
           if(reposition){
               d.cLoc = _this.skew(_this.projection([valueX||0, valueY||0]));
-
+              
               view.attr("cx", d.cLoc[0])
                   .attr("cy", d.cLoc[1]);
           }
@@ -606,14 +607,14 @@ var BubbleMapComponent = Component.extend({
     this.updateTitleNumbers();
   },
 
-
+    
   fitSizeOfTitles: function(){
-
+      
     //reset font sizes first to make the measurement consistent
     var yTitleText = this.yTitleEl.select("text")
       .style("font-size", null);
     var cTitleText = this.cTitleEl.select("text")
-      .style("font-size", null);
+      .style("font-size", null);    
 
     var yTitleText = this.yTitleEl.select("text");
     var cTitleText = this.cTitleEl.select("text");
@@ -621,23 +622,23 @@ var BubbleMapComponent = Component.extend({
     var yTitleBB = yTitleText.node().getBBox();
     var cTitleBB = cTitleText.classed('vzb-hidden') ? yTitleBB : cTitleText.node().getBBox();
 
-    var font =
-        Math.max(parseInt(yTitleText.style("font-size")), parseInt(cTitleText.style("font-size")))
+    var font = 
+        Math.max(parseInt(yTitleText.style("font-size")), parseInt(cTitleText.style("font-size"))) 
         * this.width / Math.max(yTitleBB.width, cTitleBB.width);
-
+      
     if(Math.max(yTitleBB.width, cTitleBB.width) > this.width) {
       yTitleText.style("font-size", font + "px");
       cTitleText.style("font-size", font + "px");
     } else {
-
+      
       // Else - reset the font size to default so it won't get stuck
       yTitleText.style("font-size", null);
       cTitleText.style("font-size", null);
     }
-
+      
   },
-
-
+    
+    
   /**
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
@@ -916,7 +917,7 @@ var BubbleMapComponent = Component.extend({
             limitedX = limitedX0 + cached.labelX_ * _this.width;
           }
           limitedY = limitedY0 + cached.labelY_ * _this.height;
-          if(limitedY - cached.contentBBox.height <= 0) { // check top
+          if(limitedY - cached.contentBBox.height <= 0) { // check top 
             cached.labelY_ = (cached.scaledS0 * .75 + cached.contentBBox.height) / _this.height;
             limitedY = limitedY0 + cached.labelY_ * _this.height;
           } else if(limitedY + 10 > _this.height) { //check bottom
@@ -1089,7 +1090,7 @@ var BubbleMapComponent = Component.extend({
           var cross = d3.select(this).selectAll(".vzb-bmc-label-x");
           cross.classed("vzb-transparent", !cross.classed("vzb-transparent"));
         })
-
+      
 
         // hide recent hover tooltip
         if (!_this.hovered || _this.model.entities.isSelected(_this.hovered)) {

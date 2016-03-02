@@ -47,8 +47,8 @@ var MountainChartComponent = Component.extend({
             { name: "marker", type: "model" },
             { name: "language", type: "language" }
         ];
-        //attach event listeners to the model items
 
+        //attach event listeners to the model items
         this.model_binds = {
             "change:time.value": function (evt) {
                 //console.log("MONT: " + evt);
@@ -129,6 +129,7 @@ var MountainChartComponent = Component.extend({
                     _this.zoomToMaxMin();
                     _this.redrawDataPoints();
                     _this._probe.redraw();
+                    return;
                 }
             },
             "change:marker.group": function (evt, path) {
@@ -149,7 +150,7 @@ var MountainChartComponent = Component.extend({
                 if (!_this._readyOnce) return;
                 _this.redrawDataPointsOnlyColors();
                 _this._selectlist.redraw();
-            }
+            },
         };
 
         this._super(config, context);
@@ -242,13 +243,13 @@ var MountainChartComponent = Component.extend({
 
         if (!this.precomputedShapes || !this.precomputedShapes[yearNow] || !this.precomputedShapes[yearEnd]) return;
 
-        this.yMax = this.precomputedShapes[this.model.time.yMaxMethod == "immediate" ? yearNow : yearEnd].yMax;
+        var yMax = this.precomputedShapes[this.model.time.yMaxMethod == "immediate" ? yearNow : yearEnd].yMax;
         var shape = this.precomputedShapes[yearNow].shape;
 
-        if (!this.yMax || !shape || shape.length === 0) return;
+        if (!yMax || !shape || shape.length === 0) return;
 
         this.xScale = d3.scale.log().domain([this.model.marker.axis_x.domainMin, this.model.marker.axis_x.domainMax]);
-        this.yScale = d3.scale.linear().domain([0, +this.yMax]);
+        this.yScale = d3.scale.linear().domain([0, +yMax]);
 
         _this.updateSize(shape.length);
         _this.zoomToMaxMin();
@@ -692,7 +693,7 @@ var MountainChartComponent = Component.extend({
             },
             _click: function (d, i) {
                 if (_this.model.time.dragging || _this.model.time.playing) return;
-
+                
                 _this.model.entities.selectEntity(d);
             }
         };
@@ -785,6 +786,8 @@ var MountainChartComponent = Component.extend({
 
         this.year.setText(time.getUTCFullYear().toString());
 
+        this.yMax = 0;
+
 
         //spawn the original mountains
         this.mountainPointers.forEach(function (d, i) {
@@ -872,7 +875,7 @@ var MountainChartComponent = Component.extend({
             var first = visible[0];
             var last = visible[visible.length - 1];
         }
-
+        
         if (!visible.length || (visible2 && !visible2.length)) utils.warn('mountain chart failed to generate shapes. check the incoming data');
 
         return {
