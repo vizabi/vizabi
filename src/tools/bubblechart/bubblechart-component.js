@@ -1442,7 +1442,7 @@ var BubbleChartComp = Component.extend({
    *  height: height
    * }
    */
-  circleRectIntersects(circle, rect) {
+  circleRectIntersects: function(circle, rect) {
     var circleDistanceX = Math.abs(circle.x - rect.x);
     var circleDistanceY = Math.abs(circle.y - rect.y);    
     var halfRectWidth = rect.width * .5;
