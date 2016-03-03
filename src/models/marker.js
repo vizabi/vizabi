@@ -74,7 +74,12 @@ var Marker = Model.extend({
       }
       return found;
   },
-    
+  /**
+   * 
+   * @param time
+   * @param cb
+   * @return null
+   */
     getFrame: function(time, cb) {
       var _this = this;
       if (!this.cachedFrames) this.cachedFrames = {};
@@ -83,40 +88,45 @@ var Marker = Model.extend({
           cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start + " " + _this._parent.time.end;
       });
       var steps = this._parent.time.getAllSteps();
-      if(_this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
-          cb(_this.cachedFrames[cachePath][time]);
-      } else if (time) {
-        var timeId = d3.bisectLeft(steps, time);
-        var frameTime = steps[timeId];
-        if(frameTime.toString() != time.toString()) {
-          if (timeId == 0) {
-            this.getFrame(steps[timeId], function(response) {
-              cb(response);
-            });
-          } else {
-            this._shiftFrame(time, timeId, steps, function(response) {
-              cb(response);
+      if(time && _this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
+        return cb(_this.cachedFrames[cachePath][time]);
+      } else {
+        if (time && steps.length > 1) { // if time is not valid step we calculate values between existing frames 
+          var leftTimeId = d3.bisectLeft(steps, time);
+          var frameTime = steps[leftTimeId];
+          if (frameTime.toString() != time.toString()) {
+            this._shiftFrame(time, leftTimeId, steps, function (response) {
+              return cb(response);
             });
           }
-        } else {
-          _this.getFrames(time).then(function() {
-            if (!time && _this.cachedFrames[cachePath]) {
-              cb(_this.cachedFrames[cachePath]);
-            } else if(_this.cachedFrames[cachePath][time]) {
-              cb(_this.cachedFrames[cachePath][time]);
-            } else {
-              utils.warn("Frame was not built for timestamp: " + time + " : " + cachePath);
-              cb({});
-            }
-          });
         }
+        _this.getFrames(time).then(function() {
+          if (!time && _this.cachedFrames[cachePath]) {
+            return cb(_this.cachedFrames[cachePath]);
+          } else if(_this.cachedFrames[cachePath][time]) {
+            return cb(_this.cachedFrames[cachePath][time]);
+          } else {
+            utils.warn("Frame was not built for timestamp: " + time + " : " + cachePath);
+            return cb({});
+          }
+        });
       }
     },
-    _shiftFrame(time, timeId, steps, cb) {
+    _shiftFrame(time, leftTimeId, steps, cb) {
       var _this = this;
-      this.getFrame(steps[timeId], function(nValues) {
-        _this.getFrame(steps[timeId - 1], function(pValues) {
-          var fraction = (time - steps[timeId - 1]) / (steps[timeId] - steps[timeId - 1]);
+      var firstTimeFrame, secondTimeFrame;
+      console.log(leftTimeId);
+      if (leftTimeId == 0) {
+        firstTimeFrame = steps[leftTimeId];
+        secondTimeFrame = steps[leftTimeId + 1]
+      } else {
+        firstTimeFrame = steps[leftTimeId - 1];
+        secondTimeFrame = steps[leftTimeId]
+      }
+      this.getFrame(firstTimeFrame, function(nValues) {
+        _this.getFrame(secondTimeFrame, function(pValues) {
+          var fraction = (time - firstTimeFrame) / (secondTimeFrame - firstTimeFrame);
+          console.log(fraction);
           var curr = {};
           utils.forEach(pValues, function(values, hook) {
             curr[hook] = {};
