@@ -898,9 +898,11 @@ var BubbleMapComponent = Component.extend({
 
           limitedX0 = cached.labelX0 * _this.width;
           limitedY0 = cached.labelY0 * _this.height;
+          
+          var labelOffset = select.labelOffset || [0,0];
 
-          cached.labelX_ = select.labelOffset[0] || (-cached.scaledS0 * .75 - 5) / _this.width;
-          cached.labelY_ = select.labelOffset[1] || (-cached.scaledS0 * .75 - 11) / _this.height;
+          cached.labelX_ = labelOffset[0] || (-cached.scaledS0 * .75 - 5) / _this.width;
+          cached.labelY_ = labelOffset[1] || (-cached.scaledS0 * .75 - 11) / _this.height;
 
           limitedX = limitedX0 + cached.labelX_ * _this.width;
           if(limitedX - cached.contentBBox.width <= 0) { //check left
