@@ -1318,7 +1318,7 @@ var BubbleChartComp = Component.extend({
 
           limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
           if(limitedX - cached.contentBBox.width <= 0) { //check left
-            cached.labelX_ = (cached.scaledS0 * .75 + cached.contentBBox.width + 10) / _this.width;
+            cached.labelX_ = (cached.contentBBox.width - _this.xScale(cached.labelX0)) / _this.width;
             limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
           } else if(limitedX + 15 > _this.width) { //check right
             cached.labelX_ = (_this.width - 15 - _this.xScale(cached.labelX0)) / _this.width;
@@ -1326,7 +1326,7 @@ var BubbleChartComp = Component.extend({
           }
           limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
           if(limitedY - cached.contentBBox.height <= 0) { // check top
-            cached.labelY_ = (cached.scaledS0 * .75 + cached.contentBBox.height) / _this.height;
+            cached.labelY_ = (cached.contentBBox.height - _this.yScale(cached.labelY0)) / _this.height;
             limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
           } else if(limitedY + 10 > _this.height) { //check bottom
             cached.labelY_ = (_this.height - 10 - _this.yScale(cached.labelY0)) / _this.height;

@@ -133,6 +133,8 @@ var BubbleSize = Component.extend({
 
     this.sliderEl
       .call(_this.brush);
+      
+    this.sliderEl.selectAll('.background').attr('style','');
 
     //For return to round thumbs
     //var thumbArc = d3.svg.arc()
