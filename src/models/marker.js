@@ -115,33 +115,29 @@ var Marker = Model.extend({
     _shiftFrame(time, leftTimeId, steps, cb) {
       var _this = this;
       var firstTimeFrame, secondTimeFrame;
-      console.log(leftTimeId);
       if (leftTimeId == 0) {
-        firstTimeFrame = steps[leftTimeId];
-        secondTimeFrame = steps[leftTimeId + 1]
+        this.getFrame(steps[leftTimeId], function(values) {
+          return cb(values);
+        });
       } else {
         firstTimeFrame = steps[leftTimeId - 1];
-        secondTimeFrame = steps[leftTimeId]
-      }
-      this.getFrame(firstTimeFrame, function(nValues) {
-        _this.getFrame(secondTimeFrame, function(pValues) {
-          var fraction = (time - firstTimeFrame) / (secondTimeFrame - firstTimeFrame);
-          console.log(fraction);
-          var curr = {};
-          utils.forEach(pValues, function(values, hook) {
-            curr[hook] = {};
-            utils.forEach(values, function(val, id) {
-              var val2 = nValues[hook][id];
-              curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val) *
-              fraction);
+        secondTimeFrame = steps[leftTimeId];
+        this.getFrame(firstTimeFrame, function(pValues) {
+          _this.getFrame(secondTimeFrame, function(nValues) {
+            var fraction = (time - firstTimeFrame) / (secondTimeFrame - firstTimeFrame);
+            var curr = {};
+            utils.forEach(pValues, function(values, hook) {
+              curr[hook] = {};
+              utils.forEach(values, function(val, id) {
+                var val2 = nValues[hook][id];
+                curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val) *
+                fraction);
+              });
             });
-          });
-          cb(curr);
+            cb(curr);
+          })
         })
-      })
-    },
-    getLimitsPerFrame() {
-      
+      }
     },
 
     getFrames: function(forceFrame) {
