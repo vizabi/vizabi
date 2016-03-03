@@ -36,8 +36,10 @@ var BarComponent = Component.extend({
 
     this.model_binds = {
       "change:time.value": function(evt) {
-        if(!_this._readyOnce) return;
+        _this.model.marker.getFrame(_this.model.time.value, function(values) {
+        _this.values = values;
         _this.updateEntities();
+        });
       },
       'change:marker': function(evt, path) {
         if(!_this._readyOnce) return;
@@ -79,7 +81,7 @@ var BarComponent = Component.extend({
 
     var _this = this;
     this.on("resize", function() {
-      _this.updateEntities();
+        _this.updateEntities();
     });
   },
 
@@ -87,9 +89,14 @@ var BarComponent = Component.extend({
    * Both model and DOM are ready
    */
   ready: function() {
-    this.updateIndicators();
-    this.resize();
-    this.updateEntities();
+    var _this = this;
+    this.model.marker.getFrame(this.model.time.value, function(values) {
+      _this.values = values;
+      _this.updateIndicators();
+      _this.resize();
+      _this.updateEntities();
+    });
+
   },
 
   /**
@@ -166,7 +173,6 @@ var BarComponent = Component.extend({
     var filter = {};
     filter[timeDim] = time.value;
     var items = this.model.marker.getKeys(filter);
-    var values = this.model.marker.getFrame(time.value);
 
     this.entityBars = this.bars.selectAll('.vzb-bc-bar')
       .data(items);
@@ -189,17 +195,17 @@ var BarComponent = Component.extend({
     this.bars.selectAll('.vzb-bc-bar')
       .attr("width", barWidth)
       .attr("fill", function(d) {
-        return _this.cScale(values.color[d[entityDim]]);
+        return _this.cScale(_this.values.color[d[entityDim]]);
       })
       .attr("x", function(d) {
-        return _this.xScale(values.axis_x[d[entityDim]]);
+        return _this.xScale(_this.values.axis_x[d[entityDim]]);
       })
       .transition().duration(duration).ease("linear")
       .attr("y", function(d) {
-        return _this.yScale(values.axis_y[d[entityDim]]);
+        return _this.yScale(_this.values.axis_y[d[entityDim]]);
       })
       .attr("height", function(d) {
-        return _this.height - _this.yScale(values.axis_y[d[entityDim]]);
+        return _this.height - _this.yScale(_this.values.axis_y[d[entityDim]]);
       });
       this.year.text(this.model.time.timeFormat(this.model.time.value));
   },

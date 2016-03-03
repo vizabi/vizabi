@@ -78,7 +78,6 @@ var Find = Dialog.extend({
     this.input_search.attr("placeholder", this.translator("placeholder/search") + "...");
 
     //make sure it refreshes when all is reloaded
-    var _this = this;
     this.root.on('ready', function() {
       _this.ready();
     })
@@ -105,9 +104,7 @@ var Find = Dialog.extend({
     var selected = this.model.state.entities.getSelected();
     var marker = this.model.state.marker;
     var time = this.model.state.time.value;
-
-    var values = marker.getFrame(time);
-
+    marker.getFrame(time, function(values) {
     var data = marker.getKeys().map(function(d) {
       var pointer = {};
       pointer[KEY] = d[KEY];
@@ -128,10 +125,10 @@ var Find = Dialog.extend({
     data.sort(function(a, b) {
       return(a.name < b.name) ? -1 : 1;
     });
-    
-    this.list.html("");
 
-    var items = this.list.selectAll(".vzb-find-item")
+      _this.list.html("");
+
+    var items = _this.list.selectAll(".vzb-find-item")
       .data(data)
       .enter()
       .append("div")
@@ -169,8 +166,10 @@ var Find = Dialog.extend({
       });
     utils.preventAncestorScrolling(_this.element.select('.vzb-dialog-scrollable'));
 
-    this.showHideSearch();
-    this.showHideDeselect();
+      _this.showHideSearch();
+      _this.showHideDeselect();
+    });
+
   },
   resize: function() {
     if (this.getLayoutProfile() == 'small') {
