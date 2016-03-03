@@ -1357,8 +1357,9 @@ var BubbleChartComp = Component.extend({
     lineGroup.classed("vzb-invisible", brokenInputs);
     if(brokenInputs) return;
 
-    var width = parseInt(labelGroup.select("rect").attr("width"));
-    var height = parseInt(labelGroup.select("rect").attr("height"));
+    var rectBBox = labelGroup.select("rect").node().getBBox();
+    var width = rectBBox.width;
+    var height = rectBBox.height;
     var heightDelta = labelGroup.node().getBBox().height - height;
 
     if(_X - width <= 0) { //check left
@@ -1394,16 +1395,23 @@ var BubbleChartComp = Component.extend({
     var diffX1 = _X0 - _X;
     var diffY1 = _Y0 - _Y;
     var textBBox = labelGroup.select('text').node().getBBox();
-    var diffX2 = textBBox.width * .5;
-    var diffY2 = height * .25;
-    
+    var diffX2 = -textBBox.width * .5;
+    var diffY2 = -height * .2;
     var labels = this.model.ui.get('vzb-tool-bubblechart').labels;
+
+    var bBox = labels.removeLabelBox ? textBBox : rectBBox;
+    
+    var lineHidden = this.circleRectIntersects({x: diffX1, y: diffY1, r: cache.scaledS0}, 
+      {x: diffX2, y: diffY2, width: (bBox.height * 2 + bBox.width), height: (bBox.height * 3)});
+    lineGroup.classed("vzb-invisible", lineHidden);
+    if(lineHidden) return;
+
     if(labels.removeLabelBox) {
-      var angle = Math.atan2(diffX1 + diffX2, diffY1 + diffY2) * 180 / Math.PI;
-      var deltaDiffX2 = (angle >= 0 && angle <= 180) ? (-textBBox.width * .5) : (textBBox.width * .5);
-      var deltaDiffY2 = (Math.abs(angle) <= 90) ? (-textBBox.height * .55) : (textBBox.height * .45);
-      diffX2 += Math.abs(-diffX2 - diffX1) > textBBox.width * .5 ? deltaDiffX2 : 0; 
-      diffY2 += Math.abs(-diffY2 - diffY1) > textBBox.height * .5 ? deltaDiffY2 : (-textBBox.height * .05); 
+      var angle = Math.atan2(diffX1 - diffX2, diffY1 - diffY2) * 180 / Math.PI;
+      var deltaDiffX2 = (angle >= 0 && angle <= 180) ? (bBox.width * .5) : (-bBox.width * .5);
+      var deltaDiffY2 = (Math.abs(angle) <= 90) ? (bBox.height * .55) : (-bBox.height * .45);
+      diffX2 += Math.abs(diffX1 - diffX2) > textBBox.width * .5 ? deltaDiffX2 : 0; 
+      diffY2 += Math.abs(diffY1 - diffY2) > textBBox.height * .5 ? deltaDiffY2 : (textBBox.height * .05);
     }
           
     var longerSideCoeff = Math.abs(diffX1) > Math.abs(diffY1) ? Math.abs(diffX1) / this.width : Math.abs(diffY1) / this.height;
@@ -1412,11 +1420,45 @@ var BubbleChartComp = Component.extend({
     lineGroup.selectAll("line")
       .attr("x1", diffX1)
       .attr("y1", diffY1)
-      .attr("x2", -diffX2)
-      .attr("y2", -diffY2);
+      .attr("x2", diffX2)
+      .attr("y2", diffY2);
 
   },
+ 
+  /*
+   * Adapted from 
+   * http://stackoverflow.com/questions/401847/circle-rectangle-collision-detection-intersection
+   * 
+   * circle { 
+   *  x: center X 
+   *  y: center Y
+   *  r: radius
+   * }
+   * 
+   * rect {
+   *  x: center X
+   *  y: center Y
+   *  width: width
+   *  height: height
+   * }
+   */
+  circleRectIntersects(circle, rect) {
+    var circleDistanceX = Math.abs(circle.x - rect.x);
+    var circleDistanceY = Math.abs(circle.y - rect.y);    
+    var halfRectWidth = rect.width * .5;
+    var halfRectHeight = rect.height * .5;
 
+    if (circleDistanceX > (halfRectWidth + circle.r)) { return false; }
+    if (circleDistanceY > (halfRectHeight + circle.r)) { return false; }
+
+    if (circleDistanceX <= halfRectWidth) { return true; } 
+    if (circleDistanceY <= halfRectHeight) { return true; }
+
+    var cornerDistance_sq = Math.pow(circleDistanceX - halfRectWidth, 2) +
+                         Math.pow(circleDistanceY - halfRectHeight, 2);
+
+    return (cornerDistance_sq <= Math.pow(circle.r,2));
+  },
 
   selectDataPoints: function() {
     var _this = this;
