@@ -534,9 +534,6 @@ var Data = Class.extend({
               buildFrame(newFrame.frameName, keys, queryId, newFrame.callback);
             });
           } else {
-            if (framesArray.length > 10) {
-              console.log("frames built");
-            }
             resolve(_this._collection[queryId]["frames"][id]);
           }
       };

@@ -105,13 +105,12 @@ export default Class.extend({
         context.model.marker.getFrame(null, function(frames) { //call without time parameter to use cache instead force frame calculation
           trail.each(function(segment, index) {
             promises.push(new Promise(function(res, rej) {
-              context.model.marker.getFrame(segment.t, function(frame) {
-                segment.valueY = frame.axis_y[d[KEY]];
-                segment.valueX = frame.axis_x[d[KEY]];
-                segment.valueS = frame.size[d[KEY]];
-                segment.valueC = frame.color[d[KEY]];
-                res();
-              });
+              var frame = frames[segment.t];
+              segment.valueY = frame.axis_y[d[KEY]];
+              segment.valueX = frame.axis_x[d[KEY]];
+              segment.valueS = frame.size[d[KEY]];
+              segment.valueC = frame.color[d[KEY]];
+              res();
             }));
           });
           if (promises.length > 0) {
