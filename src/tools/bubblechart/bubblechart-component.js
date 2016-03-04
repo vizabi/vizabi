@@ -908,11 +908,11 @@ var BubbleChartComp = Component.extend({
 
     var yaxisWidth = this.yAxisElContainer.select("g").node().getBBox().width;
     this.yTitleEl
-      .style("font-size", infoElHeight)
+      .style("font-size", infoElHeight + "px")
       .attr("transform", "translate(" + (-yaxisWidth) + ", -" + this.activeProfile.yAxisTitleBottomMargin + ")");
 
     this.xTitleEl
-      .style("font-size", infoElHeight)
+      .style("font-size", infoElHeight + "px")
       .attr("transform", "translate(" + (0) + "," + (this.height + margin.bottom - this.activeProfile.xAxisTitleBottomMargin) + ")");
 
     this.sTitleEl
@@ -930,8 +930,8 @@ var BubbleChartComp = Component.extend({
       var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
 
       this.yInfoEl.select('svg')
-        .attr("width", infoElHeight)
-        .attr("height", infoElHeight)
+        .attr("width", infoElHeight + "px")
+        .attr("height", infoElHeight + "px")
       this.yInfoEl.attr('transform', 'translate('
         + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
         + (translate[1] - infoElHeight * 0.8) + ')');
@@ -942,8 +942,8 @@ var BubbleChartComp = Component.extend({
       var translate = d3.transform(this.xTitleEl.attr('transform')).translate;
 
       this.xInfoEl.select('svg')
-        .attr("width", infoElHeight)
-        .attr("height", infoElHeight)
+        .attr("width", infoElHeight + "px")
+        .attr("height", infoElHeight + "px")
       this.xInfoEl.attr('transform', 'translate('
         + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
         + (translate[1] - infoElHeight * 0.8) + ')');

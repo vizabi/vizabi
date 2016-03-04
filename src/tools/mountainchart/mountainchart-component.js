@@ -409,7 +409,7 @@ var MountainChartComponent = Component.extend({
             .attr("dy", "-0.36em");
 
         this.yTitleEl
-          .style("font-size", infoElHeight)
+          .style("font-size", infoElHeight + "px")
           .attr("transform", "translate(0," + margin.top + ")")
 
 
@@ -430,8 +430,8 @@ var MountainChartComponent = Component.extend({
             var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
 
             this.infoEl.select('svg')
-                .attr("width", infoElHeight)
-                .attr("height", infoElHeight)
+                .attr("width", infoElHeight + "px")
+                .attr("height", infoElHeight + "px");
             this.infoEl.attr('transform', 'translate('
                 + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
                 + (translate[1]-infoElHeight * .8) + ')');
