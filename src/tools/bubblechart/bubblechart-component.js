@@ -892,12 +892,17 @@ var BubbleChartComp = Component.extend({
     this.projectionY.attr("x2", _this.xScale.range()[0] - this.activeProfile.maxRadius);
 
 
-
-    // reset font size to remove jumpy measurement
+    // vertical text about size and color
+    var sTitleContentON = this.model.marker.size.use !== "constant";
+    var cTitleContentON = this.model.marker.color.use !== "constant";
     var sTitleText = this.sTitleEl.select("text")
+      // reset font size to remove jumpy measurement
       .style("font-size", null)
-      .text(this.translator("buttons/size") + ": " + this.strings.title.S + ", " +
-        this.translator("buttons/colors") + ": " + this.strings.title.C);
+      .text(
+        (sTitleContentON ? this.translator("buttons/size") + ": " + this.strings.title.S : "") +
+        (sTitleContentON && cTitleContentON ? ", " : "") +
+        (cTitleContentON ? this.translator("buttons/colors") + ": " + this.strings.title.C : "")
+      );
 
     // reduce font size if the caption doesn't fit
     var sTitleWidth = sTitleText.node().getBBox().width;
