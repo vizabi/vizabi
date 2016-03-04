@@ -70,8 +70,8 @@ var Show = Dialog.extend({
 
     var _this = this;
     this.translator = this.model.language.getTFunction();
-      
-    var values = this.model.state.marker_allpossible.getFrame();
+
+    this.model.state.marker_allpossible.getFrame(this.model.state.time.value, function(values) {
     var data = utils.keys(values.label)
         .map(function(d){
             var result = {};
@@ -85,9 +85,9 @@ var Show = Dialog.extend({
       return(a.label < b.label) ? -1 : 1;
     });
 
-    this.list.html("");
+      _this.list.html("");
 
-    var items = this.list.selectAll(".vzb-show-item")
+    var items = _this.list.selectAll(".vzb-show-item")
       .data(data)
       .enter()
       .append("div")
@@ -115,12 +115,12 @@ var Show = Dialog.extend({
         return d.label;
       });
 
-    this.input_search.attr("placeholder", this.translator("placeholder/search") + "...");
+      _this.input_search.attr("placeholder", _this.translator("placeholder/search") + "...");
 
-    this.showHideSearch();
-    this.showHideDeselect();
+      _this.showHideSearch();
+      _this.showHideDeselect();
 
-
+    });
   },
 
   showHideSearch: function() {

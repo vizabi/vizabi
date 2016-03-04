@@ -29,8 +29,33 @@ var Marker = Model.extend({
     }
 
   },
-    
-    
+
+
+    getResultKeys: function() {
+        var _this = this;
+        var resultKeys = [];
+        utils.forEach(this._dataCube, function(hook, name) {
+
+            // If hook use is constant, then we can provide no additional info about keys
+            // We can just hope that we have something else than constants =)
+            if(hook.use === "constant") return;
+
+            // Get keys in data of this hook
+            var nested = _this.getDataManager().get(hook._dataId, 'nested', ["geo", "time"]);
+            var keys = Object.keys(nested);
+
+            if(resultKeys.length == 0) {
+                // If ain't got nothing yet, set the list of keys to result
+                resultKeys = keys;
+            } else {
+                // If there is result accumulated aleready, remove the keys from it that are not in this hook
+                resultKeys = resultKeys.filter(function(f) {
+                    return keys.indexOf(f) > -1;
+                })
+            }
+        });
+        return resultKeys;
+    },
     
     
   /**
@@ -49,142 +74,188 @@ var Marker = Model.extend({
       }
       return found;
   },
-    
-    getFrame: function(time) {
-        var _this = this;
-        var steps = this._parent.time.getAllSteps();
-
-        var cachePath = "";
-        utils.forEach(this._dataCube, function(hook, name) {
-            cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start + " " + _this._parent.time.end;
-        });
-        if(!this.cachedFrames || !this.cachedFrames[cachePath]) this.getFrames();
-
-        if(this.cachedFrames[cachePath][time]) return this.cachedFrames[cachePath][time];
-
-        if(time < steps[0] || time > steps[steps.length - 1]) {
-            //if the requested time point is out of the known range
-            //then send nulls in the response
-            var pValues = this.cachedFrames[cachePath][steps[0]];
-            var curr = {};
-            utils.forEach(pValues, function(keys, hook) {
-                curr[hook] = {};
-                utils.forEach(keys, function(val, key) {
-                    curr[hook][key] = null;
-                });
+  /**
+   * 
+   * @param time
+   * @param cb
+   * @return null
+   */
+    getFrame: function(time, cb) {
+      var _this = this;
+      if (!this.cachedFrames) this.cachedFrames = {};
+      var cachePath = "";
+      utils.forEach(this._dataCube, function(hook, name) {
+          cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start + " " + _this._parent.time.end;
+      });
+      var steps = this._parent.time.getAllSteps();
+      if(time && _this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
+        return cb(_this.cachedFrames[cachePath][time]);
+      } else {
+        if (time && steps.length > 1) { // if time is not valid step we calculate values between existing frames 
+          var leftTimeId = d3.bisectLeft(steps, time);
+          var frameTime = steps[leftTimeId];
+          if (frameTime.toString() != time.toString()) {
+            this._shiftFrame(time, leftTimeId, steps, function (response) {
+              return cb(response);
             });
-            return curr;
+          }
         }
-
-
-        var next = d3.bisectLeft(steps, time);
-
-        if(next === 0) return this.cachedFrames[cachePath][steps[0]];
-
-        var fraction = (time - steps[next - 1]) / (steps[next] - steps[next - 1]);
-
-        var pValues = this.cachedFrames[cachePath][steps[next - 1]];
-        var nValues = this.cachedFrames[cachePath][steps[next]];
-
-        var curr = {};
-        utils.forEach(pValues, function(values, hook) {
-            curr[hook] = {};
-            utils.forEach(values, function(val, id) {
-                if( !utils.isNumber(val) ){
-                    curr[hook][id] = val;
-                }else{
-                    var val2 = nValues[hook][id];
-                    curr[hook][id] = (val==null||val2==null)? null : val + ((val2 - val) * fraction);
-                }
+        _this.getFrames(time).then(function() {
+          if (!time && _this.cachedFrames[cachePath]) {
+            return cb(_this.cachedFrames[cachePath]);
+          } else if(_this.cachedFrames[cachePath][time]) {
+            return cb(_this.cachedFrames[cachePath][time]);
+          } else {
+            utils.warn("Frame was not built for timestamp: " + time + " : " + cachePath);
+            return cb({});
+          }
+        });
+      }
+    },
+    _shiftFrame(time, leftTimeId, steps, cb) {
+      var _this = this;
+      var firstTimeFrame, secondTimeFrame;
+      if (leftTimeId == 0) {
+        this.getFrame(steps[leftTimeId], function(values) {
+          return cb(values);
+        });
+      } else {
+        firstTimeFrame = steps[leftTimeId - 1];
+        secondTimeFrame = steps[leftTimeId];
+        this.getFrame(firstTimeFrame, function(pValues) {
+          _this.getFrame(secondTimeFrame, function(nValues) {
+            var fraction = (time - firstTimeFrame) / (secondTimeFrame - firstTimeFrame);
+            var curr = {};
+            utils.forEach(pValues, function(values, hook) {
+              curr[hook] = {};
+              utils.forEach(values, function(val, id) {
+                var val2 = nValues[hook][id];
+                curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val) *
+                fraction);
+              });
             });
-        });
-
-        return curr;
+            cb(curr);
+          })
+        })
+      }
     },
 
-    getFrames: function() {
-        var _this = this;
+    getFrames: function(forceFrame) {
+      var _this = this;
+      if (!this.frameQueues) {
+        this.frameQueues = {};
+      }
+      if (!this.partialResult) {
+        this.partialResult = {};
+      }
+      var cachePath = "";
 
-        var cachePath = "";
-        utils.forEach(this._dataCube, function(hook, name) {
-            cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start + " " + _this._parent.time.end;
-        });
 
-        if(!this.cachedFrames) this.cachedFrames = {};
-        if(this.cachedFrames[cachePath]) return this.cachedFrames[cachePath];
+      utils.forEach(this._dataCube, function(hook, name) {
+          cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start + " " + _this._parent.time.end;
+      });
 
-        var steps = this._parent.time.getAllSteps();
+      this._dataCube = this._dataCube || this.getSubhooks(true);
 
-        this._dataCube = this._dataCube || this.getSubhooks(true)
+      var steps = this._parent.time.getAllSteps();
+      if (!this.frameQueues[cachePath] || !this.frameQueues[cachePath] instanceof Promise) {
+        this.frameQueues[cachePath] = new Promise(function(resolve, reject) {
+          // Assemble the list of keys as an intersection of keys in all queries of all hooks
+          _this.partialResult[cachePath] = {};
+          steps.forEach(function(t) {
+            _this.partialResult[cachePath][t] = {};
+          });
 
-        var result = {};
-        var resultKeys = [];
+          var resultKeys = _this.getResultKeys();
 
-        // Assemble the list of keys as an intersection of keys in all queries of all hooks
-        utils.forEach(this._dataCube, function(hook, name) {
-
-            // If hook use is constant, then we can provide no additional info about keys
-            // We can just hope that we have something else than constants =) 
-            if(hook.use === "constant") return;
-
-            // Get keys in data of this hook
-            var nested = _this.getDataManager().get(hook._dataId, 'nested', ["geo", "time"]);
-            var keys = Object.keys(nested);
-
-            if(resultKeys.length == 0) {
-                // If ain't got nothing yet, set the list of keys to result
-                resultKeys = keys;
-            } else {
-                // If there is result accumulated aleready, remove the keys from it that are not in this hook
-                resultKeys = resultKeys.filter(function(f) {
-                    return keys.indexOf(f) > -1;
-                })
-            }
-        });
-
-        steps.forEach(function(t) {
-            result[t] = {};
-        });
-
-        utils.forEach(this._dataCube, function(hook, name) {
-
+          var deferredHooks = [];
+          utils.forEach(_this._dataCube, function(hook, name) {
             if(hook.use === "constant") {
-                steps.forEach(function(t) {
-                    result[t][name] = {};
-                    resultKeys.forEach(function(key) {
-                        result[t][name][key] = hook.which;
-                    });
+              steps.forEach(function(t) {
+                _this.partialResult[cachePath][t][name] = {};
+                resultKeys.forEach(function(key) {
+                  _this.partialResult[cachePath][t][name][key] = hook.which;
                 });
-
+              });
             } else if(hook.which === "geo") {
-                steps.forEach(function(t) {
-                    result[t][name] = {};
-                    resultKeys.forEach(function(key) {
-                        result[t][name][key] = key;
-                    });
+              steps.forEach(function(t) {
+                _this.partialResult[cachePath][t][name] = {};
+                resultKeys.forEach(function(key) {
+                  _this.partialResult[cachePath][t][name][key] = key;
                 });
-
+              });
             } else if(hook.which === "time") {
-                steps.forEach(function(t) {
-                    result[t][name] = {};
-                    resultKeys.forEach(function(key) {
-                        result[t][name][key] = new Date(t);
-                    });
+              steps.forEach(function(t) {
+                _this.partialResult[cachePath][t][name] = {};
+                resultKeys.forEach(function(key) {
+                  _this.partialResult[cachePath][t][name][key] = new Date(t);
                 });
-
+              });
             } else {
-                var frames = _this.getDataManager().get(hook._dataId, 'frames', steps);
-                utils.forEach(frames, function(frame, t) {
-                    result[t][name] = frame[hook.which];
-                });
+              deferredHooks.push({hook: hook, name: name});
             }
-        });
+          });
+          if (deferredHooks.length > 0) {
+            var promises = [];
+            for (var hookId = 0; hookId < deferredHooks.length; hookId++) {
+              (function(hookKey) {
+                var defer = deferredHooks[hookKey];
+                promises.push(new Promise(function(res, rej) {
+                  _this.getDataManager().getFrames(defer.hook._dataId, steps).then(function(response) {
+                    utils.forEach(response, function (frame, t) {
+                      _this.partialResult[cachePath][t][defer.name] = frame[defer.hook.which];
+                    });
+                    res();
+                  })
+                }));
+              }(hookId));
+            }
+            Promise.all(promises).then(function() {
+              _this.cachedFrames[cachePath] = _this.partialResult[cachePath];
+              resolve();
+            });
+          } else {
+            _this.cachedFrames[cachePath] = _this.partialResult[cachePath];
+            resolve();
+          }
 
-        this.cachedFrames[cachePath] = result;
-        return result;
+        });
+      }
+
+      return new Promise(function(resolve, reject) {
+        if (steps.length < 2 || !forceFrame) {
+          _this.frameQueues[cachePath].then(function() {
+            resolve();
+          });
+        } else {
+          var promises = [];
+          utils.forEach(_this._dataCube, function(hook, name) {
+            if(hook.use !== "constant" && hook.which !== "geo" && hook.which !== "time") {
+              (function(_hook, _name) {
+                promises.push(new Promise(function(res, rej) {
+                  _this.getDataManager().getFrame(_hook._dataId, steps, forceFrame).then(function(response) {
+                    _this.partialResult[cachePath][forceFrame][_name] = response[forceFrame][_hook.which];
+                    res();
+                  })
+                }));
+              }(hook, name));
+            }
+          });
+          if (promises.length > 0) {
+            Promise.all(promises).then(function() {
+              if (!_this.cachedFrames[cachePath]) {
+                _this.cachedFrames[cachePath] = {};
+              }
+              _this.cachedFrames[cachePath][forceFrame] = _this.partialResult[cachePath][forceFrame];
+              resolve();
+            });
+          }
+        }
+      });
+
     },
-    
-    
+
+
 
   /**
    * gets multiple values from the hook

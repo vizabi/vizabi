@@ -94,7 +94,7 @@ var TimeModel = Model.extend({
       },
 
       "change:unit": function() {
-        this.timeFormat = formats[this.unit];
+        _this.timeFormat = formats[_this.unit];
       }
 
     });

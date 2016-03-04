@@ -52,11 +52,14 @@ var MountainChartComponent = Component.extend({
         this.model_binds = {
             "change:time.value": function (evt) {
                 //console.log("MONT: " + evt);
+              _this.model.marker.getFrame(_this.model.time.value, function(values) {
+                _this.values = values;
                 _this.updateTime();
                 _this.redrawDataPoints();
                 _this._selectlist.redraw();
                 _this._probe.redraw();
                 _this.updateDoubtOpacity();
+              });
             },
             "change:time.playing": function (evt) {
                 // this listener is a patch for fixing #1228. time.js doesn't produce the last event
@@ -301,26 +304,30 @@ var MountainChartComponent = Component.extend({
 
     ready: function () {
         //console.log("ready")
-        
+        var _this= this;
+
         this._math.xScaleFactor = this.model.time.xScaleFactor;
         this._math.xScaleShift = this.model.time.xScaleShift;
 
         this.updateUIStrings();
         this.updateIndicators();
-        this.updateEntities();
-        this.updateSize();
-        this.zoomToMaxMin();
-        this._spawnMasks();
-        this.updateTime();
-        this._adjustMaxY({force: true});
-        this.redrawDataPoints();
-        this.redrawDataPointsOnlyColors();
-        this.highlightEntities();
-        this.selectEntities();
-        this._selectlist.redraw();
-        this.updateOpacity();
-        this.updateDoubtOpacity();
-        this._probe.redraw();
+        this.model.marker.getFrame(this.model.time.value, function(values) {
+          _this.values = values;
+          _this.updateEntities();
+          _this.updateSize();
+          _this.zoomToMaxMin();
+          _this._spawnMasks();
+          _this.updateTime();
+          _this._adjustMaxY({force: true});
+          _this.redrawDataPoints();
+          _this.redrawDataPointsOnlyColors();
+          _this.highlightEntities();
+          _this.selectEntities();
+          _this._selectlist.redraw();
+          _this.updateOpacity();
+          _this.updateDoubtOpacity();
+          _this._probe.redraw();
+        });
     },
 
     updateSize: function (meshLength) {
@@ -518,8 +525,6 @@ var MountainChartComponent = Component.extend({
 
     updateEntities: function () {
         var _this = this;
-
-        this.values = this.model.marker.getFrame(this.model.time.end);
 
         // construct pointers
         this.mountainPointers = this.model.marker.getKeys()
@@ -781,7 +786,6 @@ var MountainChartComponent = Component.extend({
 
         this.year.setText(time.getUTCFullYear().toString());
 
-        this.values = this.model.marker.getFrame(time);
         this.yMax = 0;
 
 

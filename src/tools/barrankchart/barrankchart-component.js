@@ -71,9 +71,12 @@ var BarRankChart = Component.extend({
 
   onTimeChange: function() {
     //this.year.setText(this.model.time.timeFormat(this.model.time.value));
-
-    this.loadData();
-    this.draw();
+    var _this = this;
+    this.model.marker.getFrame(this.model.time.value, function(values) {
+      _this.values = values;
+      _this.loadData();
+      _this.draw();
+    });
   },
 
   /**
@@ -106,14 +109,16 @@ var BarRankChart = Component.extend({
    * Both model and DOM are ready
    */
   ready: function() {
-
+    var _this = this;
     // hack: second run is right after readyOnce (in which ready() is also called)
     // then it's not necessary to run ready()
     // (without hack it's impossible to run things in readyOnce áfter ready has ran)
     if (++this.readyRuns == 2) return;
-
-    this.loadData();
-    this.draw();
+    this.model.marker.getFrame(this.model.time.value, function(values) {
+      _this.values =values;
+      _this.loadData();
+      _this.draw();
+    });
   },
 
   resize: function() {
@@ -123,7 +128,7 @@ var BarRankChart = Component.extend({
   loadData: function() {
 
     // get data, for the active year. Nest them using the entity of the graph
-    this.values = this.model.marker.getFrame(this.model.time.value);
+
 
     // sort the data (also sets this.total)
     this.sortedEntities = this.sortByIndicator(this.values.axis_x);
