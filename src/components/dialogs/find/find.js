@@ -115,10 +115,11 @@ var Find = Dialog.extend({
       return pointer;
     }).filter(function(d) {
       var include = true;
-      utils.forEach(values, function(hook) {
-        if(!hook[d[KEY]]) {
+      utils.forEach(values, function(hook, name) {
+        //TODO: remove the hack with hardcoded hook names (see discussion in #1389)
+        if(name!=="color" && name!=="size_label" && !hook[d[KEY]] && hook[d[KEY]] !== 0) {
           include = false;
-          return false;
+          return;
         }
       });
       return include;
