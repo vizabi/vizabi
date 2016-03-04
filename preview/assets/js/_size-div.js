@@ -173,7 +173,7 @@ function setDivRandomSize(div, container) {
   var maxWidth = container.offsetWidth - MARGINS;
   var maxHeight = container.offsetHeight - MARGINS;
   var minWidth = 300;
-  var minHeight = 300;
+  var minHeight = 250;
 
   var width = Math.round(Math.random() * (maxWidth - minWidth)) + minWidth;
   var height = Math.round(Math.random() * (maxHeight - minHeight)) + minHeight;
@@ -186,7 +186,7 @@ function getNormalDivSize(div, container, divWidth, divHeight) {
   var maxWidth = container.offsetWidth - MARGINS;
   var maxHeight = container.offsetHeight - MARGINS;
   var minWidth = 300;
-  var minHeight = 300;
+  var minHeight = 250;
 
   var width = Math.min(Math.max(divWidth, minWidth), maxWidth);
   var height = Math.min(Math.max(divHeight, minHeight), maxHeight);
@@ -223,7 +223,7 @@ function updateSizePanel(div, width, height) {
 //update size
 setDivSize(placeholder, container, 320, 568);
 //resize div
-resizableDiv(placeholder, container, 300, 300, function() {
+resizableDiv(placeholder, container, 300, 250, function() {
   forceResizeEvt();
   updateSizePanel(placeholder);
 }, function() {
