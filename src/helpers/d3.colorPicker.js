@@ -164,9 +164,9 @@ export default function colorPicker() {
         .style('top', '0')
         .style('left', '0')
         .style('width', '100%')
-        .style('max-width', maxWidth)
+        .style('max-width', maxWidth + "px")
         .style('height', '100%')
-        .style('max-height', maxHeight)
+        .style('max-height', maxHeight + "px")
         .style('z-index', 9999)
         .attr('class', css.COLOR_PICKER + " vzb-dialog-shadow")
         .classed(css.INVISIBLE, !showColorPicker);
@@ -437,18 +437,18 @@ export default function colorPicker() {
 
       var styles = {left: ''};
       if (screen.width * 0.8 <= width) {
-        styles.right = (screen.width - width) * 0.5;
+        styles.right = (screen.width - width) * 0.5 + "px";
       } else if (xPos + width > screen.width) {
-        styles.right = Math.min(screen.width * 0.1, 20);
+        styles.right = Math.min(screen.width * 0.1, 20) + "px";
       } else {
-        styles.right = screen.width - xPos - width;
+        styles.right = screen.width - xPos - width + "px";
       }
       if (screen.height * 0.8 <= height) {
-        styles.top = (screen.height - height) * 0.5;
+        styles.top = (screen.height - height) * 0.5 + "px";
       } else if (yPos + height * 1.2 > screen.height) {
-        styles.top = screen.height * 0.9 - height;
+        styles.top = screen.height * 0.9 - height + "px";
       } else {
-        styles.top = yPos;
+        styles.top = yPos + "px";
       }
 
       svg.style(styles);
