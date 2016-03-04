@@ -943,7 +943,7 @@ var BubbleMapComponent = Component.extend({
 
     var labelX0 = cache.labelX0 * _this.width;
     var labelY0 = cache.labelY0 * _this.height;
-
+    var labelMarginTop = this.activeProfile.margin.top + this.activeProfile.infoElHeight * 1.2; //0.2 - space between tooltip and axis label   
     if(resolvedX - width <= 0) { //check left
       cache.labelX_ = (width - labelX0) / this.width;
       resolvedX = labelX0 + cache.labelX_ * this.width;
@@ -951,8 +951,8 @@ var BubbleMapComponent = Component.extend({
       cache.labelX_ = (this.width - 20 - labelX0) / this.width;
       resolvedX = labelX0 + cache.labelX_ * this.width;
     }
-    if(resolvedY - (height + 30) <= 0) { // check top // not conflict with color label, 25
-      cache.labelY_ = (height + 30 - labelY0) / this.height;
+    if(resolvedY - (height * 0.5 + labelMarginTop) <= 0) { // 0.5 - is size of close corcke
+      cache.labelY_ = (height *0.5 + labelMarginTop - labelY0) / this.height;
       resolvedY = labelY0 + cache.labelY_ * this.height;
     } else if(resolvedY + 13 > this.height) { //check bottom
       cache.labelY_ = (this.height - 13 - labelY0) / this.height;
