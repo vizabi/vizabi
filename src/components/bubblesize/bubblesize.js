@@ -8,8 +8,8 @@ import Component from 'base/component';
  */
 
 var OPTIONS = {
-  DOMAIN_MIN: 0,
-  DOMAIN_MAX: 1,
+  EXTENT_MIN: 0,
+  EXTENT_MAX: 1,
   TEXT_PARAMS: { TOP: 18, LEFT: 10, MAX_WIDTH: 42, MAX_HEIGHT: 16 },
   BAR_WIDTH: 6,
   THUMB_RADIUS: 10,
@@ -56,14 +56,12 @@ var BubbleSize = Component.extend({
     this.model_binds = {
       'change:size.domainMin': changeMinMaxHandler,
       'change:size.domainMax': changeMinMaxHandler,
+      'change:size.extent': changeMinMaxHandler,
       'ready': readyHandler
     };
 
     function changeMinMaxHandler(evt, path) {
-      var size = [
-          _this.model.size.domainMin,
-          _this.model.size.domainMax
-      ];
+      var size = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
       _this._updateArcs(size);
       _this._updateLabels(size);
       _this.sliderEl.call(_this.brush.extent(size));
@@ -88,8 +86,8 @@ var BubbleSize = Component.extend({
    * At this point, this.element and this.placeholder are available as a d3 object
    */
   readyOnce: function () {
-    var values = [this.model.size.domainMin, this.model.size.domainMax],
-      _this = this;
+    var _this = this;
+    var values = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
     this.element = d3.select(this.element);
     this.sliderSvg = this.element.select(".vzb-bs-svg");
     this.sliderWrap = this.sliderSvg.select(".vzb-bs-slider-wrap");
@@ -114,13 +112,13 @@ var BubbleSize = Component.extend({
     var minMaxBubbleRadius = this.getMinMaxBubbleRadius();
 
     this.xScale = d3.scale.linear()
-      .domain([OPTIONS.DOMAIN_MIN, OPTIONS.DOMAIN_MAX])
+      .domain([OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX])
       .range([minMaxBubbleRadius.min * 2, minMaxBubbleRadius.max * 2])
       .clamp(true)
 
     this.brush = d3.svg.brush()
       .x(this.xScale)
-      .extent([OPTIONS.DOMAIN_MIN, OPTIONS.DOMAIN_MIN])
+      .extent([OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MIN])
       .on("brush", function () {
         _this._setFromExtent(false, false); // non persistent change
       })
@@ -275,9 +273,8 @@ var BubbleSize = Component.extend({
    * @param {boolean} persistent sets the persistency of the change event
    */
   _setModel: function (value, force, persistent) {
-    var _this = this;
-    _this.model.size.getModelObject('domainMin').set(value[0], force, persistent);
-    _this.model.size.getModelObject('domainMax').set(value[1], force, persistent);
+    value = [+value[0].toFixed(2), +value[1].toFixed(2)];
+    this.model.size.set({"extent": value}, force, persistent);
   }
 
 });

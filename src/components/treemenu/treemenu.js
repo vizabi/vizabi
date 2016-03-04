@@ -915,7 +915,7 @@ var TreeMenu = Component.extend({
       obj.scaleType = indicatorsDB[value].scales[0];
     }
 
-    if(mdl.getType() == 'axis') {
+    if(mdl.getType() === 'axis' || mdl.getType() === 'size') {
       obj.domainMin = null;
       obj.domainMax = null;
       obj.zoomedMin = null;

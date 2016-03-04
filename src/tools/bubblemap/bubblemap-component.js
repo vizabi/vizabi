@@ -69,14 +69,11 @@ var BubbleMapComponent = Component.extend({
           
         if(path.indexOf("scaleType") > -1) _this.ready();
       },
-      'change:marker.size': function(evt, path) {
+      'change:marker.size.extent': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
         if(!_this._readyOnce) return;
-        if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1) {
-          _this.updateMarkerSizeLimits();
-          _this.redrawDataPoints(null, false);
-          return;
-        }
+        _this.updateMarkerSizeLimits();
+        _this.redrawDataPoints(null, false);
       },
       "change:marker.color.palette": function (evt, path) {
           if (!_this._readyOnce) return;
@@ -754,11 +751,13 @@ var BubbleMapComponent = Component.extend({
 
   updateMarkerSizeLimits: function() {
     var _this = this;
+    var extent = this.model.marker.size.extent || [0,1];
+      
     var minRadius = this.activeProfile.minRadius;
     var maxRadius = this.activeProfile.maxRadius;
 
-    this.minRadius = Math.max(maxRadius * this.model.marker.size.domainMin, minRadius);
-    this.maxRadius = Math.max(maxRadius * this.model.marker.size.domainMax, minRadius);
+    this.minRadius = Math.max(maxRadius * extent[0], minRadius);
+    this.maxRadius = Math.max(maxRadius * extent[1], minRadius);
 
     if(this.model.marker.size.scaleType !== "ordinal") {
       this.sScale.range([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)]);

@@ -8,7 +8,7 @@ import Hook from 'hook';
 var allowTypes = {
     "indicator": ["linear", "log", "genericLog", "time", "pow"],
     "property": ["ordinal"],
-    "value": ["ordinal"]
+    "constant": ["ordinal"]
 };
 
 var AxisModel = Hook.extend({
@@ -24,6 +24,8 @@ var AxisModel = Hook.extend({
     zoomedMin: null,
     zoomedMax: null
   },
+    
+  _type: "axis",
 
   /**
    * Initializes the color hook
@@ -33,7 +35,6 @@ var AxisModel = Hook.extend({
    */
   init: function(name, values, parent, bind) {
 
-    this._type = "axis";
     //TODO: add defaults extend to super
     var defaults = utils.deepClone(this._defaults);
     values = utils.extend(defaults, values);      

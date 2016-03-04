@@ -221,8 +221,7 @@ BubbleMap.define('default_model', {
         allow: {
           scales: ["linear"]
         },
-        domainMin: .04,
-        domainMax: .90
+        extent: [0.04, 0.90]
       },
       lat: {
         use: "property",
@@ -509,8 +508,7 @@ BubbleChart.define('default_model', {
         allow: {
           scales: ["linear"]
         },
-        domainMin: .04,
-        domainMax: .90
+        extent: [0.04, 0.90]
       }
     }
   },

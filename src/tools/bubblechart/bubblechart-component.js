@@ -160,27 +160,21 @@ var BubbleChartComp = Component.extend({
           _this._panZoom.reset();
         }
       },
-      'change:marker.size': function(evt, path) {
+      'change:marker.size.extent': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
         if(!_this._readyOnce) return;
-        if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1) {
-            _this.updateMarkerSizeLimits();
-            _this._trails.run("findVisible");
-            _this.redrawDataPointsOnlySize();
-            _this._trails.run("resize");
-            return;
-        }
+        _this.updateMarkerSizeLimits();
+        _this._trails.run("findVisible");
+        _this.redrawDataPointsOnlySize();
+        _this._trails.run("resize");
       },
-      'change:marker.size_label': function(evt, path) {
+      'change:marker.size_label.extent': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
         if(!_this._readyOnce) return;
-        if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1) {
-            _this.updateLabelSizeLimits();
-            _this._trails.run("findVisible");
-            _this.redrawDataPoints();
-            _this._trails.run("resize");
-            return;
-        }
+        _this.updateLabelSizeLimits();
+        _this._trails.run("findVisible");
+        _this.redrawDataPoints();
+        _this._trails.run("resize");
       },
       'change:ui.vzb-tool-bubblechart.labels.removeLabelBox': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
@@ -985,11 +979,13 @@ var BubbleChartComp = Component.extend({
 
   updateMarkerSizeLimits: function() {
     var _this = this;
+    var extent = this.model.marker.size.extent || [0,1];
+      
     var minRadius = this.activeProfile.minRadius;
     var maxRadius = this.activeProfile.maxRadius;
 
-    this.minRadius = Math.max(maxRadius * this.model.marker.size.domainMin, minRadius);
-    this.maxRadius = Math.max(maxRadius * this.model.marker.size.domainMax, minRadius);
+    this.minRadius = Math.max(maxRadius * extent[0], minRadius);
+    this.maxRadius = Math.max(maxRadius * extent[1], minRadius);
 
     if(this.model.marker.size.scaleType !== "ordinal") {
       this.sScale.range([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)]);
@@ -1001,12 +997,14 @@ var BubbleChartComp = Component.extend({
 
   updateLabelSizeLimits: function() {
     var _this = this;
+    var extent = this.model.marker.size_label.extent || [0,1];
+      
     var minLabelTextSize = this.activeProfile.minLabelTextSize;
     var maxLabelTextSize = this.activeProfile.maxLabelTextSize;
     var minMaxDelta = maxLabelTextSize - minLabelTextSize;
 
-    this.minLabelTextSize = Math.max(minLabelTextSize + minMaxDelta * this.model.marker.size_label.domainMin, minLabelTextSize);
-    this.maxLabelTextSize = Math.max(minLabelTextSize + minMaxDelta * this.model.marker.size_label.domainMax, minLabelTextSize);
+    this.minLabelTextSize = Math.max(minLabelTextSize + minMaxDelta * extent[0], minLabelTextSize);
+    this.maxLabelTextSize = Math.max(minLabelTextSize + minMaxDelta * extent[1], minLabelTextSize);
 
     if(this.model.marker.size_label.use == 'constant') {
       // if(!this.model.marker.size_label.which) {
