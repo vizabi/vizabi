@@ -283,8 +283,8 @@ var BubbleChartComp = Component.extend({
         var resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
         var resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
 
-        var resolvedX0 = cache.labelX0 == null? null : _this.xScale(cache.labelX0);
-        var resolvedY0 = cache.labelY0 == null? null : _this.yScale(cache.labelY0);
+        var resolvedX0 = _this.xScale(cache.labelX0);
+        var resolvedY0 = _this.yScale(cache.labelY0);
 
         var lineGroup = _this.entityLines.filter(function(f) {
           return f[KEY] == d[KEY];
@@ -1090,8 +1090,8 @@ var BubbleChartComp = Component.extend({
         var resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
         var resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
 
-        var resolvedX0 = cache.labelX0 == null? null : _this.xScale(cache.labelX0);
-        var resolvedY0 = cache.labelY0 == null? null : _this.yScale(cache.labelY0);
+        var resolvedX0 = _this.xScale(cache.labelX0);
+        var resolvedY0 = _this.yScale(cache.labelY0);
 
         var lineGroup = _this.entityLines.filter(function(f) {
           return f[KEY] == d[KEY];
@@ -1258,7 +1258,6 @@ var BubbleChartComp = Component.extend({
           cached.valueX = valueX;
           cached.valueY = valueY;
 
-          var limitedX, limitedY, limitedX0, limitedY0;
           if(cached.scaledS0 == null || cached.labelX0 == null || cached.labelX0 == null) { //initialize label once
             cached.scaledS0 = scaledS;
             cached.labelX0 = valueX;
@@ -1305,33 +1304,18 @@ var BubbleChartComp = Component.extend({
               .attr("rx", contentBBox.height * .2)
               .attr("ry", contentBBox.height * .2);
           }
-
-          limitedX0 = cached.labelX0 == null? null : _this.xScale(cached.labelX0);
-          limitedY0 = cached.labelY0 == null? null : _this.yScale(cached.labelY0);
           
           var labelOffset = select.labelOffset || [0,0];
 
           cached.labelX_ = labelOffset[0] || (-cached.scaledS0 * .75 - 5) / _this.width;
           cached.labelY_ = labelOffset[1] || (-cached.scaledS0 * .75 - 11) / _this.height;
 
-          limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
-          if(limitedX - cached.contentBBox.width <= 0) { //check left
-            cached.labelX_ = (cached.contentBBox.width - _this.xScale(cached.labelX0)) / _this.width;
-            limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
-          } else if(limitedX + 15 > _this.width) { //check right
-            cached.labelX_ = (_this.width - 15 - _this.xScale(cached.labelX0)) / _this.width;
-            limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
-          }
-          limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
-          if(limitedY - cached.contentBBox.height <= 0) { // check top
-            cached.labelY_ = (cached.contentBBox.height - _this.yScale(cached.labelY0)) / _this.height;
-            limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
-          } else if(limitedY + 10 > _this.height) { //check bottom
-            cached.labelY_ = (_this.height - 10 - _this.yScale(cached.labelY0)) / _this.height;
-            limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
-          }
+          var resolvedX0 = _this.xScale(cached.labelX0);
+          var resolvedY0 = _this.yScale(cached.labelY0);
+          var resolvedX = resolvedX0 + cached.labelX_ * _this.width;
+          var resolvedY = resolvedY0 + cached.labelY_ * _this.height;
 
-          _this._repositionLabels(d, index, this, limitedX, limitedY, limitedX0, limitedY0, duration, lineGroup);
+          _this._repositionLabels(d, index, this, resolvedX, resolvedY, resolvedX0, resolvedY0, duration, lineGroup);
 
         })
     } else {
@@ -1360,6 +1344,7 @@ var BubbleChartComp = Component.extend({
     var height = rectBBox.height;
     var heightDelta = labelGroup.node().getBBox().height - height;
 
+    //apply limits so that the label doesn't stick out of the visible field
     if(_X - width <= 0) { //check left
       cache.labelX_ = (width - this.xScale(cache.labelX0)) / this.width;
       _X = this.xScale(cache.labelX0) + cache.labelX_ * this.width;
