@@ -460,7 +460,7 @@ gulp.task('connect', ['styles', 'bundle', 'preview'], function() {
       os.platform() === 'win32' ? 'chrome' : 'firefox'));
 
   connect.server(webserver);
-  opn('http://localhost:' + webserver.port + '/preview/', {
+  opn('http://localhost:' + webserver.port + '/preview/index.html', {
     app: browser
   });
 });
