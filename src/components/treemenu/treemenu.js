@@ -539,7 +539,7 @@ var TreeMenu = Component.extend({
       .classed(css.search_wrap, true)
       .append('input')
       .classed(css.search, true)
-      .attr('type', 'text')
+      .attr('type', 'search')
       .attr('id', css.search);
 
 

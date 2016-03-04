@@ -75,7 +75,8 @@ $vzb-dialog-content-height: 250px;
       }
     }
 
-    input[type=text] {
+    input[type=text], 
+    input[type=search] {
       @include border-radius(4px);
       @include box-sizing(border-box);
       font-size: 1em; //inherit from dialog content
