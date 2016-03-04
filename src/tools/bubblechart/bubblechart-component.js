@@ -138,7 +138,9 @@ var BubbleChartComp = Component.extend({
         _this.highlightDataPoints();
       },
       'change:time.value': function() {
-        //console.log("EVENT change:time:value");
+        _this.model.marker.getFrame(_this.model.time.value, function(frame) {
+          if (!frame) return false;
+          _this.frame = frame;
         _this.updateTime();
         _this._updateDoubtOpacity();
 
@@ -151,6 +153,7 @@ var BubbleChartComp = Component.extend({
         _this._trails.run("reveal");
         _this.tooltipMobile.classed('vzb-hidden', true);
         //_this._bubblesInteract().mouseout();
+        });
       },
       'change:time.adaptMinMaxZoom': function() {
         //console.log("EVENT change:time:adaptMinMaxZoom");
@@ -220,7 +223,6 @@ var BubbleChartComp = Component.extend({
     _this.COLOR_WHITEISH = "#fdfdfd";
 
     this.cached = {};
-    this.xyMaxMinMean = {};
     this.isCanvasPreviouslyExpanded = false;
     this.draggingNow = null;
 
@@ -355,7 +357,7 @@ var BubbleChartComp = Component.extend({
    */
   readyOnce: function() {
     var _this = this;
-
+    this._readyOnce = false;
     this.scrollableAncestor = utils.findScrollableAncestor(this.element);
     this.element = d3.select(this.element);
 
@@ -449,44 +451,54 @@ var BubbleChartComp = Component.extend({
       .domain(this.parent.datawarning_content.doubtDomain)
       .range(this.parent.datawarning_content.doubtRange);
 
-    this.updateIndicators();
-    this.updateEntities();
-    this.updateTime();
-    this.updateSize();
-    this.updateMarkerSizeLimits();
-    this.updateLabelSizeLimits();
-    this.selectDataPoints();
-    this.updateBubbleOpacity();
-    this._updateDoubtOpacity();
-    this._trails.create();
-    this._panZoom.reset(); // includes redraw data points and trail resize
-    this._trails.run(["recolor", "opacityHandler", "findVisible", "reveal"]);
-    if(this.model.time.adaptMinMaxZoom) this._panZoom.expandCanvas();
+
+    this.model.marker.getFrame(this.model.time.value, function(frame) {
+      _this.frame = frame;
+      _this.updateIndicators();
+      _this.updateSize();
+      _this.updateEntities();
+      _this.updateTime();
+      _this.updateMarkerSizeLimits();
+      _this.updateLabelSizeLimits();
+      _this.updateBubbleOpacity();
+      _this.selectDataPoints();
+      _this._updateDoubtOpacity();
+      _this._trails.create();
+      _this._panZoom.reset(); // includes redraw data points and trail resize
+      _this._trails.run(["recolor", "opacityHandler", "findVisible", "reveal"]);
+       _this._readyOnce = true;
+    });
   },
 
   ready: function() {
-
+    var _this = this;
     this.updateUIStrings();
+    var endTime = this.model.time.end;
+    this.model.marker.getFrame(this.model.time.value, function(frame) {
+      if (!frame) return;
+      _this.frame = frame;
+      _this.updateIndicators();
+      _this.updateSize();
+      _this.updateMarkerSizeLimits();
+      _this.updateLabelSizeLimits();
+      _this.updateEntities();
+      _this.redrawDataPoints();
+      _this.updateBubbleOpacity();
+      _this.cached = {};
+      if(_this.model.time.adaptMinMaxZoom) _this._panZoom.expandCanvas();
 
-    this.updateEntities();
-    this.updateBubbleOpacity();
-    this.updateIndicators();
-    this.updateSize();
-    this.cached = {};
-    this.updateMarkerSizeLimits();
-    this.updateLabelSizeLimits();
-    this._trails.create();
-    this._trails.run("findVisible");
-    this._panZoom.reset(); // includes redraw data points and trail resize
-    this._trails.run(["recolor", "opacityHandler", "reveal"]);
+      _this._trails.create();
+      _this._trails.run("findVisible");
+      _this._panZoom.reset(); // includes redraw data points and trail resize
+      _this._trails.run(["recolor", "opacityHandler", "reveal"]);
 
-    this._panZoom.zoomToMaxMin(
-       this.model.marker.axis_x.zoomedMin,
-       this.model.marker.axis_x.zoomedMax,
-       this.model.marker.axis_y.zoomedMin,
-       this.model.marker.axis_y.zoomedMax
-    )
-
+      _this._panZoom.zoomToMaxMin(
+        _this.model.marker.axis_x.zoomedMin,
+        _this.model.marker.axis_x.zoomedMax,
+        _this.model.marker.axis_y.zoomedMin,
+        _this.model.marker.axis_y.zoomedMax
+      )
+    });
   },
 
   /*
@@ -507,12 +519,6 @@ var BubbleChartComp = Component.extend({
 
     this.yAxis.tickFormat(_this.model.marker.axis_y.tickFormatter);
     this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
-
-    this.xyMaxMinMean = {
-      x: this.model.marker.axis_x.gerLimitsPerFrame(),
-      y: this.model.marker.axis_y.gerLimitsPerFrame(),
-      s: this.model.marker.size.gerLimitsPerFrame()
-    };
   },
 
 
@@ -625,7 +631,7 @@ var BubbleChartComp = Component.extend({
           var pointer = {};
           pointer[KEY] = d[KEY];
           pointer[TIMEDIM] = endTime;
-          pointer.sortValue = values.size[d[KEY]]||0;
+          pointer.sortValue = _this.frame.size[d[KEY]]||0;
           pointer[KEY] = prefix + d[KEY];
           return pointer;
         })
@@ -637,7 +643,6 @@ var BubbleChartComp = Component.extend({
     // get array of GEOs, sorted by the size hook
     // that makes larger bubbles go behind the smaller ones
     var endTime = this.model.time.end;
-    var values = this.model.marker.getFrame(endTime);
     this.model.entities.setVisible(getKeys.call(this));
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
@@ -1030,26 +1035,24 @@ var BubbleChartComp = Component.extend({
 
   redrawDataPointsOnlyColors: function() {
     var _this = this;
-    var values, valuesNow;
     var KEY = this.KEY;
 
-    valuesNow = this.model.marker.getFrame(this.time);
-
+    var values = _this.frame;
+    var time = this.model.time.value;
     if(this.model.time.lockNonSelected && this.someSelected) {
-      var tLocked = this.model.time.timeFormat.parse("" + this.model.time.lockNonSelected);
-      values = this.model.marker.getFrame(tLocked);
-    } else {
-      values = valuesNow;
+      time = this.model.time.timeFormat.parse("" + this.model.time.lockNonSelected);
     }
-
-    this.entityBubbles.style("fill", function(d) {
+    this.model.marker.getFrame(time, function(valuesNow) {
+      _this.entityBubbles.style("fill", function(d) {
 
       var cache = _this.cached[d[KEY]];
 
       var valueC = cache && _this.model.time.lockNonSelected ? valuesNow.color[d[KEY]] : values.color[d[KEY]];
 
       return valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH;
+      });
     });
+
   },
 
   redrawDataPointsOnlySize: function() {
@@ -1070,16 +1073,16 @@ var BubbleChartComp = Component.extend({
     var values, valuesNow;
     var KEY = this.KEY;
 
-    valuesNow = this.model.marker.getFrame(this.time);
+
+    var time = this.time;
 
     if(this.model.time.lockNonSelected && this.someSelected) {
-      var tLocked = this.model.time.timeFormat.parse("" + this.model.time.lockNonSelected);
-      values = this.model.marker.getFrame(tLocked);
-    } else {
-      values = valuesNow;
+      time = this.model.time.timeFormat.parse("" + this.model.time.lockNonSelected);
     }
-
-    this.entityBubbles.each(function(d, index) {
+    this.model.marker.getFrame(time, function(valuesLocked) {
+      valuesNow = _this.frame;
+      values = valuesLocked;
+      _this.entityBubbles.each(function(d, index) {
 
       var cache = _this.cached[d[KEY]];
 
@@ -1120,6 +1123,7 @@ var BubbleChartComp = Component.extend({
         });
       }
     });
+    });
   },
 
   /*
@@ -1134,17 +1138,14 @@ var BubbleChartComp = Component.extend({
 
     var TIMEDIM = this.TIMEDIM;
     var KEY = this.KEY;
-    var values, valuesLocked;
-
+    var values = _this.frame, valuesLocked;
+    var time = this.time;
     //get values for locked and not locked
     if(this.model.time.lockNonSelected && this.someSelected) {
-      var tLocked = this.model.time.timeFormat.parse("" + this.model.time.lockNonSelected);
-      valuesLocked = this.model.marker.getFrame(tLocked);
+      time = this.model.time.timeFormat.parse("" + this.model.time.lockNonSelected);
     }
-
-    values = this.model.marker.getFrame(this.time);
-
-    this.entityBubbles.each(function(d, index) {
+    this.model.marker.getFrame(time, function(valuesLocked) {
+      _this.entityBubbles.each(function(d, index) {
       var view = d3.select(this);
       _this._updateBubble(d, values, valuesLocked, index, view, duration);
 
@@ -1159,7 +1160,7 @@ var BubbleChartComp = Component.extend({
         //  _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
       }, _this.model.time.delayAnimations * 1.2)
     }
-
+    });
   },
 
   //redraw Data Points
@@ -1562,9 +1563,6 @@ var BubbleChartComp = Component.extend({
 
   _setTooltip: function(tooltipText, x, y, offset) {
     if(tooltipText) {
-      var mouse = d3.mouse(this.graph.node()).map(function(d) {
-        return parseInt(d)
-      });
       var xPos, yPos, xSign = -1,
         ySign = -1,
         xOffset = 0,
@@ -1600,8 +1598,7 @@ var BubbleChartComp = Component.extend({
         xPos = x + xOffset * xSign; // .71 - sin and cos for 315
         yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
       }
-      this.tooltip.attr("transform", "translate(" + (xPos ? xPos : mouse[0]) + "," + (yPos ? yPos : mouse[1]) +
-        ")")
+      this.tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")")
 
       this.tooltip.select('rect').attr("width", contentBBox.width + 8)
         .attr("height", contentBBox.height * 1.2)
@@ -1619,46 +1616,48 @@ var BubbleChartComp = Component.extend({
    * Shows and hides axis projections
    */
   _axisProjections: function(d) {
+    var _this = this;
     var TIMEDIM = this.TIMEDIM;
     var KEY = this.KEY;
 
     if(d != null) {
 
-      var values = this.model.marker.getFrame(d[TIMEDIM]);
-      var valueY = values.axis_y[d[KEY]];
-      var valueX = values.axis_x[d[KEY]];
-      var valueS = values.size[d[KEY]];
-      var radius = utils.areaToRadius(this.sScale(valueS));
+      this.model.marker.getFrame(d[TIMEDIM], function(values) {
+        var valueY = values.axis_y[d[KEY]];
+        var valueX = values.axis_x[d[KEY]];
+        var valueS = values.size[d[KEY]];
+        var radius = utils.areaToRadius(_this.sScale(valueS));
 
-      if(!valueY || !valueX || !valueS) return;
+        if(!valueY || !valueX || !valueS) return;
 
-      if(this.ui.whenHovering.showProjectionLineX
-        && this.xScale(valueX) > 0 && this.xScale(valueX) < this.width
-        && (this.yScale(valueY) + radius) < this.height) {
-        this.projectionX
-          .style("opacity", 1)
-          .attr("y2", this.yScale(valueY) + radius)
-          .attr("x1", this.xScale(valueX))
-          .attr("x2", this.xScale(valueX));
-      }
+        if(_this.ui.whenHovering.showProjectionLineX
+          && _this.xScale(valueX) > 0 && _this.xScale(valueX) < _this.width
+          && (_this.yScale(valueY) + radius) < _this.height) {
+          _this.projectionX
+            .style("opacity", 1)
+            .attr("y2", _this.yScale(valueY) + radius)
+            .attr("x1", _this.xScale(valueX))
+            .attr("x2", _this.xScale(valueX));
+        }
 
-      if(this.ui.whenHovering.showProjectionLineY
-        && this.yScale(valueY) > 0 && this.yScale(valueY) < this.height
-        && (this.xScale(valueX) - radius) > 0) {
-        this.projectionY
-          .style("opacity", 1)
-          .attr("y1", this.yScale(valueY))
-          .attr("y2", this.yScale(valueY))
-          .attr("x1", this.xScale(valueX) - radius);
-      }
+        if(_this.ui.whenHovering.showProjectionLineY
+          && _this.yScale(valueY) > 0 && _this.yScale(valueY) < _this.height
+          && (_this.xScale(valueX) - radius) > 0) {
+          _this.projectionY
+            .style("opacity", 1)
+            .attr("y1", _this.yScale(valueY))
+            .attr("y2", _this.yScale(valueY))
+            .attr("x1", _this.xScale(valueX) - radius);
+        }
 
-      if(this.ui.whenHovering.higlightValueX) this.xAxisEl.call(
-        this.xAxis.highlightValue(valueX)
-      );
+        if(_this.ui.whenHovering.higlightValueX) _this.xAxisEl.call(
+          _this.xAxis.highlightValue(valueX)
+        );
 
-      if(this.ui.whenHovering.higlightValueY) this.yAxisEl.call(
-        this.yAxis.highlightValue(valueY)
-      );
+        if(_this.ui.whenHovering.higlightValueY) _this.yAxisEl.call(
+          _this.yAxis.highlightValue(valueY)
+        );
+      });
 
     } else {
 
@@ -1694,46 +1693,47 @@ var BubbleChartComp = Component.extend({
 
       this._axisProjections(d);
 
-      var values = _this.model.marker.getFrame(d[TIMEDIM]);
+      _this.model.marker.getFrame(d[TIMEDIM], function(values) {
+          //show tooltip
+          var text = "";
+          if(_this.model.entities.isSelected(d) && _this.model.time.trails) {
+            text = _this.model.time.timeFormat(_this.time);
+            var labelData = _this.entityLabels
+              .filter(function(f) {
+                return f[KEY] == d[KEY]
+              })
+              .classed("vzb-highlighted", true)
+              .datum();
+            text = text !== labelData.trailStartTime && _this.time === d[TIMEDIM] ? text : '';
+          } else {
+            text = _this.model.entities.isSelected(d) ? '': values.label[d[KEY]];
+          }
+          //set tooltip and show axis projections
+          if(text) {
+            var x = _this.xScale(values.axis_x[d[KEY]]);
+            var y = _this.yScale(values.axis_y[d[KEY]]);
+            var s = utils.areaToRadius(_this.sScale(values.size[d[KEY]]));
+            _this._setTooltip(text, x, y, s);
+          }
 
-      //show tooltip
-      var text = "";
-      if(_this.model.entities.isSelected(d) && _this.model.time.trails) {
-        text = _this.model.time.timeFormat(_this.time);
-        var labelData = _this.entityLabels
-          .filter(function(f) {
-            return f[KEY] == d[KEY]
-          })
-          .classed("vzb-highlighted", true)
-          .datum();
-        text = text !== labelData.trailStartTime && _this.time === d[TIMEDIM] ? text : '';
+          var selectedData = utils.find(_this.model.entities.select, function(f) {
+            return f[KEY] == d[KEY];
+          });
+          if(selectedData) {
+            var clonedSelectedData = utils.clone(selectedData);
+            //change opacity to OPACITY_HIGHLT = 1.0;
+            clonedSelectedData.opacity = 1.0;
+            _this._trails.run(["opacityHandler"], clonedSelectedData);
+          }
+        });
       } else {
-        text = _this.model.entities.isSelected(d) ? '': values.label[d[KEY]];
-      }
-      //set tooltip and show axis projections
-      if(text) {
-        var x = _this.xScale(values.axis_x[d[KEY]]);
-        var y = _this.yScale(values.axis_y[d[KEY]]);
-        var s = utils.areaToRadius(_this.sScale(values.size[d[KEY]]));
-        _this._setTooltip(text, x, y, s);
+        this._axisProjections();
+        this._trails.run(["opacityHandler"]);
+        //hide tooltip
+        this._setTooltip();
+        this.entityLabels.classed("vzb-highlighted", false);
       }
 
-      var selectedData = utils.find(this.model.entities.select, function(f) {
-        return f[KEY] == d[KEY];
-      });
-      if(selectedData) {
-        var clonedSelectedData = utils.clone(selectedData);
-        //change opacity to OPACITY_HIGHLT = 1.0;
-        clonedSelectedData.opacity = 1.0;
-        this._trails.run(["opacityHandler"], clonedSelectedData);
-      }
-    } else {
-      this._axisProjections();
-      this._trails.run(["opacityHandler"]);
-      //hide tooltip
-      _this._setTooltip();
-      _this.entityLabels.classed("vzb-highlighted", false);
-    }
   },
 
   updateBubbleOpacity: function(duration) {
