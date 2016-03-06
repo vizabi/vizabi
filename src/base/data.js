@@ -244,9 +244,6 @@ var Data = Class.extend({
       case 'limits':
         this._collection[queryId][what][id] = this._getLimits(queryId, whatId);
         break;
-      case 'limitsPerFrame':
-        this._collection[queryId][what][id] = this._getLimitsPerFrame(queryId, whatId, args);
-        break;
       case 'nested':     
         this._collection[queryId][what][id] = this._getNested(queryId, whatId);
         break;
@@ -610,26 +607,6 @@ var Data = Class.extend({
     return utils.filter(this._collection[queryId].data, filter);
   },
     
-    
-  _getLimitsPerFrame: function(queryId, args) {
-    var result = {};
-    var values = [];
-      
-    var frames = this.get(queryId, 'frames', args.framesArray);
-      
-    utils.forEach(frames, function(frame, t){
-        result[t] = {};
-        
-        values = utils.values(frame[args.which]);
-        
-        result[t] = !values || !values.length ? {max: 0, min: 0} : {
-            max: d3.max(values), 
-            min: d3.min(values)
-        }
-    });    
-    
-    return result;
-  },
     
   _getLimits: function(queryId, attr) {
 
