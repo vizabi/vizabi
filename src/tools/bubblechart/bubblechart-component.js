@@ -215,7 +215,7 @@ var BubbleChartComp = Component.extend({
 
     this.xAxis = axisSmart();
     this.yAxis = axisSmart();
-      
+
     _this.COLOR_BLACKISH = "#333";
     _this.COLOR_WHITEISH = "#fdfdfd";
 
@@ -225,7 +225,7 @@ var BubbleChartComp = Component.extend({
     this.draggingNow = null;
 
     var externalUiModel = this.ui["vzb-tool-" + this.name].getPlainObject();
-      
+
     // default UI settings
     this.ui = utils.extend({
       whenHovering: {},
@@ -985,7 +985,7 @@ var BubbleChartComp = Component.extend({
   updateMarkerSizeLimits: function() {
     var _this = this;
     var extent = this.model.marker.size.extent || [0,1];
-      
+
     var minRadius = this.activeProfile.minRadius;
     var maxRadius = this.activeProfile.maxRadius;
 
@@ -1003,7 +1003,7 @@ var BubbleChartComp = Component.extend({
   updateLabelSizeLimits: function() {
     var _this = this;
     var extent = this.model.marker.size_label.extent || [0,1];
-      
+
     var minLabelTextSize = this.activeProfile.minLabelTextSize;
     var maxLabelTextSize = this.activeProfile.maxLabelTextSize;
     var minMaxDelta = maxLabelTextSize - minLabelTextSize;
@@ -1216,7 +1216,7 @@ var BubbleChartComp = Component.extend({
       });
 
     } // data exists
-      
+
     _this._updateLabel(d, index, valueX, valueY, scaledS, valueL, valueLST, duration);
   },
 
@@ -1272,18 +1272,18 @@ var BubbleChartComp = Component.extend({
 
           var text = labelGroup.selectAll(".vzb-bc-label-content")
             .text(valueL + (_this.model.time.trails ? " " + select.trailStartTime : ""));
-          
+
           var labels = _this.model.ui.get('vzb-tool-bubblechart').labels;
           labelGroup.classed('vzb-label-boxremoved', labels.removeLabelBox);
           var fontSize = _this.labelSizeTextScale(valueLST) + 'px';
           text.attr('font-size', fontSize);
-          
+
           var rect = labelGroup.select("rect");
 
           var contentBBox = text[0][0].getBBox();
           if(!cached.contentBBox || cached.contentBBox.width != contentBBox.width) {
             cached.contentBBox = contentBBox;
-            
+
             var labelCloseHeight = _this.activeProfile.infoElHeight * 1.2;//contentBBox.height;
 
             var labelCloseGroup = labelGroup.select(".vzb-bc-label-x")
@@ -1309,7 +1309,7 @@ var BubbleChartComp = Component.extend({
               .attr("rx", contentBBox.height * .2)
               .attr("ry", contentBBox.height * .2);
           }
-          
+
           var labelOffset = select.labelOffset || [0,0];
 
           cached.labelX_ = labelOffset[0] || (-cached.scaledS0 * .75 - 5) / _this.width;
@@ -1337,7 +1337,7 @@ var BubbleChartComp = Component.extend({
     var cache = this.cached[d[this.KEY]];
 
     var labelGroup = d3.select(context);
-          
+
     //protect label and line from the broken data
     var brokenInputs = !_X && _X !==0 || !_Y && _Y !==0 || !_X0 && _X0 !==0 || !_Y0 && _Y0 !==0;
     labelGroup.classed("vzb-invisible", brokenInputs);
@@ -1388,7 +1388,7 @@ var BubbleChartComp = Component.extend({
     var labels = this.model.ui.get('vzb-tool-bubblechart').labels;
 
     var bBox = labels.removeLabelBox ? textBBox : rectBBox;
-    
+
     var lineHidden = this.circleRectIntersects({x: diffX1, y: diffY1, r: cache.scaledS0}, 
       {x: diffX2, y: diffY2, width: (bBox.height * 2 + bBox.width), height: (bBox.height * 3)});
     lineGroup.classed("vzb-invisible", lineHidden);
@@ -1401,7 +1401,7 @@ var BubbleChartComp = Component.extend({
       diffX2 += Math.abs(diffX1 - diffX2) > textBBox.width * .5 ? deltaDiffX2 : 0; 
       diffY2 += Math.abs(diffY1 - diffY2) > textBBox.height * .5 ? deltaDiffY2 : (textBBox.height * .05);
     }
-          
+
     var longerSideCoeff = Math.abs(diffX1) > Math.abs(diffY1) ? Math.abs(diffX1) / this.width : Math.abs(diffY1) / this.height;
     lineGroup.select("line").style("stroke-dasharray", "0 " + (cache.scaledS0 + 2) + " " + ~~(longerSideCoeff + 2) + "00%");
 
@@ -1412,17 +1412,17 @@ var BubbleChartComp = Component.extend({
       .attr("y2", diffY2);
 
   },
- 
+
   /*
-   * Adapted from 
+   * Adapted from
    * http://stackoverflow.com/questions/401847/circle-rectangle-collision-detection-intersection
-   * 
-   * circle { 
-   *  x: center X 
+   *
+   * circle {
+   *  x: center X
    *  y: center Y
    *  r: radius
    * }
-   * 
+   *
    * rect {
    *  x: center X
    *  y: center Y
@@ -1432,14 +1432,14 @@ var BubbleChartComp = Component.extend({
    */
   circleRectIntersects: function(circle, rect) {
     var circleDistanceX = Math.abs(circle.x - rect.x);
-    var circleDistanceY = Math.abs(circle.y - rect.y);    
+    var circleDistanceY = Math.abs(circle.y - rect.y);
     var halfRectWidth = rect.width * .5;
     var halfRectHeight = rect.height * .5;
 
     if (circleDistanceX > (halfRectWidth + circle.r)) { return false; }
     if (circleDistanceY > (halfRectHeight + circle.r)) { return false; }
 
-    if (circleDistanceX <= halfRectWidth) { return true; } 
+    if (circleDistanceX <= halfRectWidth) { return true; }
     if (circleDistanceY <= halfRectHeight) { return true; }
 
     var cornerDistance_sq = Math.pow(circleDistanceX - halfRectWidth, 2) +
