@@ -459,7 +459,9 @@ var BubbleChartComp = Component.extend({
     this.updateBubbleOpacity();
     this._updateDoubtOpacity();
     this._trails.create();
-    this._panZoom.reset(); // includes redraw data points and trail resize
+    this.zoomToMarkerMaxMin();
+
+    // includes redraw data points and trail resize
     this._trails.run(["recolor", "opacityHandler", "findVisible", "reveal"]);
     if(this.model.time.adaptMinMaxZoom) this._panZoom.expandCanvas();
   },
@@ -477,16 +479,38 @@ var BubbleChartComp = Component.extend({
     this.updateLabelSizeLimits();
     this._trails.create();
     this._trails.run("findVisible");
-    this._panZoom.reset(); // includes redraw data points and trail resize
+    this.zoomToMarkerMaxMin();
+
+    // includes redraw data points and trail resize
     this._trails.run(["recolor", "opacityHandler", "reveal"]);
+  },
 
-    this._panZoom.zoomToMaxMin(
-       this.model.marker.axis_x.zoomedMin,
-       this.model.marker.axis_x.zoomedMax,
-       this.model.marker.axis_y.zoomedMin,
-       this.model.marker.axis_y.zoomedMax
-    )
+  /*
+   * Zoom to the min and max values given in the URL axes markers.
+   */
+  zoomToMarkerMaxMin: function() {
+    /*
+     * Reset just the zoom values without triggering a zoom event. This ensures
+     * a clean zoom state for the subsequent zoom event.
+     */
+    this._panZoom.resetZoomState()
 
+    var xAxis = this.model.marker.axis_x;
+    var yAxis = this.model.marker.axis_y;
+
+    var xDomain = xAxis.getScale().domain();
+    var yDomain = yAxis.getScale().domain();
+
+    /*
+     * The axes may return null when there is no value given for the zoomed
+     * min and max values. In that case, fall back to the axes' domain values.
+     */
+    var zoomedMinX = xAxis.zoomedMin ? xAxis.zoomedMin : xDomain[0];
+    var zoomedMaxX = xAxis.zoomedMax ? xAxis.zoomedMax : xDomain[1];
+    var zoomedMinY = yAxis.zoomedMin ? yAxis.zoomedMin : yDomain[0];
+    var zoomedMaxY = yAxis.zoomedMax ? yAxis.zoomedMax : yDomain[1];
+
+    this._panZoom.zoomToMaxMin(zoomedMinX, zoomedMaxX, zoomedMinY, zoomedMaxY);
   },
 
   /*
