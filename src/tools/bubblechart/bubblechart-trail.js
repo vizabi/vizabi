@@ -5,6 +5,8 @@ export default Class.extend({
 
   init: function(context) {
     this.context = context;
+    this._isCreated = null;
+
   },
 
   toggle: function(arg) {
@@ -23,107 +25,105 @@ export default Class.extend({
 
   create: function(selection) {
     var _this = this.context;
-    var KEY = _this.KEY;
+    this._isCreated = new Promise(function(resolve, reject) {
+      var KEY = _this.KEY;
 
-    //quit if the function is called accidentally
-    if(!_this.model.time.trails || !_this.model.entities.select.length) return;
+      //quit if the function is called accidentally
+      if(!_this.model.time.trails || !_this.model.entities.select.length) return;
 
-    var start = +_this.model.time.timeFormat(_this.model.time.start);
-    var end = +_this.model.time.timeFormat(_this.model.time.end);
-    var step = _this.model.time.step;
-    var timePoints = [];
-    for(var time = start; time <= end; time += step) timePoints.push(time);
+      var start = +_this.model.time.timeFormat(_this.model.time.start);
+      var end = +_this.model.time.timeFormat(_this.model.time.end);
+      var step = _this.model.time.step;
+      var timePoints = [];
+      for(var time = start; time <= end; time += step) timePoints.push(time);
 
-    //work with entities.select (all selected entities), if no particular selection is specified
-    selection = selection == null ? _this.model.entities.select : [selection];
-    selection.forEach(function(d) {
+      //work with entities.select (all selected entities), if no particular selection is specified
+      selection = selection == null ? _this.model.entities.select : [selection];
+      selection.forEach(function(d) {
 
-      var trailSegmentData = timePoints.map(function(m) {
-        return {
-          t: _this.model.time.timeFormat.parse("" + m)
-        }
-      });
-
-      if(_this.cached[d[KEY]] == null) _this.cached[d[KEY]] = {};
-
-      _this.cached[d[KEY]].maxMinValues = {
-        valueXmax: null,
-        valueXmin: null,
-        valueYmax: null,
-        valueYmin: null,
-        valueSmax: null
-      };
-
-      var maxmin = _this.cached[d[KEY]].maxMinValues;
-
-      var trail = _this.entityTrails
-        .filter(function(f) {
-          return f[KEY] == "trail-" + d[KEY]
-        })
-        .selectAll("g")
-        .data(trailSegmentData);
-
-      trail.exit().remove();
-
-      trail.enter().append("g")
-        .attr("class", "vzb-bc-trailsegment")
-        .on("mouseover", function(segment, index) {
-          if(utils.isTouchDevice()) return;
-          var _key = d3.select(this.parentNode).data()[0][KEY];
-
-          var pointer = {};
-          pointer[KEY] = _key.replace("trail-", "");
-          pointer.time = segment.t;
-
-          _this._axisProjections(pointer);
-          var text = _this.model.time.timeFormat(segment.t);
-          var labelData = _this.entityLabels
-            .filter(function(f) {
-              return f[KEY] == pointer[KEY]
-            })
-            .classed("vzb-highlighted", true)
-            .datum();
-          if(text !== labelData.trailStartTime) {
-            var values = _this.model.marker.getFrame(pointer.time);
-            var x = _this.xScale(values.axis_x[pointer[KEY]]);
-            var y = _this.yScale(values.axis_y[pointer[KEY]]);
-            var s = utils.areaToRadius(_this.sScale(values.size[pointer[KEY]]));
-            _this._setTooltip(text, x, y, s);
+        var trailSegmentData = timePoints.map(function(m) {
+          return {
+            t: _this.model.time.timeFormat.parse("" + m)
           }
-          //change opacity to OPACITY_HIGHLT = 1.0;
-          d3.select(this).style("opacity", 1.0);
-        })
-        .on("mouseout", function(segment, index) {
-          if(utils.isTouchDevice()) return;
-          _this._axisProjections();
-          _this._setTooltip();
-          _this.entityLabels.classed("vzb-highlighted", false);
-          d3.select(this).style("opacity", _this.model.entities.opacityRegular);
-        })
-        .each(function(segment, index) {
-          var view = d3.select(this);
-          view.append("circle");
-          view.append("line");
         });
 
+        var trail = _this.entityTrails
+          .filter(function(f) {
+            return f[KEY] == "trail-" + d[KEY]
+          })
+          .selectAll("g")
+          .data(trailSegmentData);
 
-      trail.each(function(segment, index) {
+        trail.exit().remove();
+
+        trail.enter().append("g")
+          .attr("class", "vzb-bc-trailsegment")
+          .on("mouseover", function(segment, index) {
+            if(utils.isTouchDevice()) return;
+            var _key = d3.select(this.parentNode).data()[0][KEY];
+
+            var pointer = {};
+            pointer[KEY] = _key.replace("trail-", "");
+            pointer.time = segment.t;
+
+            _this._axisProjections(pointer);
+            var text = _this.model.time.timeFormat(segment.t);
+            var labelData = _this.entityLabels
+              .filter(function(f) {
+                return f[KEY] == pointer[KEY]
+              })
+              .classed("vzb-highlighted", true)
+              .datum();
+            if(text !== labelData.trailStartTime) {
+              _this.model.marker.getFrame(pointer.time, function(values) {
+                var x = _this.xScale(values.axis_x[pointer[KEY]]);
+                var y = _this.yScale(values.axis_y[pointer[KEY]]);
+                var s = utils.areaToRadius(_this.sScale(values.size[pointer[KEY]]));
+                _this._setTooltip(text, x, y, s);
+              });
+            }
+            //change opacity to OPACITY_HIGHLT = 1.0;
+            d3.select(this).style("opacity", 1.0);
+          })
+          .on("mouseout", function(segment, index) {
+            if(utils.isTouchDevice()) return;
+            _this._axisProjections();
+            _this._setTooltip();
+            _this.entityLabels.classed("vzb-highlighted", false);
+            d3.select(this).style("opacity", _this.model.entities.opacityRegular);
+          })
+          .each(function(segment, index) {
+            var view = d3.select(this);
+            view.append("circle");
+            view.append("line");
+          });
+
+
         //update segment data (maybe for new indicators)
+        var promises = [];
+        _this.model.marker.getFrame(null, function(frames) { //call without time parameter to use cache instead force frame calculation
+          trail.each(function(segment, index) {
+            promises.push(new Promise(function(res, rej) {
+              var frame = frames[segment.t];
+              segment.valueY = frame.axis_y[d[KEY]];
+              segment.valueX = frame.axis_x[d[KEY]];
+              segment.valueS = frame.size[d[KEY]];
+              segment.valueC = frame.color[d[KEY]];
+              res();
+            }));
+          });
+          if (promises.length > 0) {
+            Promise.all(promises).then(function (segments) {
+              resolve(true);
+            });
+          } else {
+            resolve(true);
+          }
 
-        segment.valueY = _this.model.marker.getFrame(segment.t).axis_y[d[KEY]];
-        segment.valueX = _this.model.marker.getFrame(segment.t).axis_x[d[KEY]];
-        segment.valueS = _this.model.marker.getFrame(segment.t).size[d[KEY]];
-        segment.valueC = _this.model.marker.getFrame(segment.t).color[d[KEY]];
-
-        //update min max frame: needed to zoom in on the trail
-        if(segment.valueX > maxmin.valueXmax || maxmin.valueXmax == null) maxmin.valueXmax = segment.valueX;
-        if(segment.valueX < maxmin.valueXmin || maxmin.valueXmin == null) maxmin.valueXmin = segment.valueX;
-        if(segment.valueY > maxmin.valueYmax || maxmin.valueYmax == null) maxmin.valueYmax = segment.valueY;
-        if(segment.valueY < maxmin.valueYmin || maxmin.valueYmin == null) maxmin.valueYmin = segment.valueY;
-        if(segment.valueS > maxmin.valueSmax || maxmin.valueSmax == null) maxmin.valueSmax = segment.valueS;
+        });
       });
-
     });
+    return this._isCreated;
   },
 
 
@@ -131,28 +131,30 @@ export default Class.extend({
     var _this = this.context;
     var KEY = _this.KEY;
 
+    this._isCreated.then(function() {
 
-    //quit if function is called accidentally
-    if((!_this.model.time.trails || !_this.model.entities.select.length) && actions != "remove") return;
-    if(!duration) duration = 0;
+      //quit if function is called accidentally
+      if((!_this.model.time.trails || !_this.model.entities.select.length) && actions != "remove") return;
 
-    actions = [].concat(actions);
+      if(!duration) duration = 0;
 
-    //work with entities.select (all selected entities), if no particular selection is specified
-    selection = selection == null ? _this.model.entities.select : [selection];
-    selection.forEach(function(d) {
+      actions = [].concat(actions);
 
-      var trail = _this.entityTrails
-        .filter(function(f) {
-          return f[KEY] == "trail-" + d[KEY]
+      //work with entities.select (all selected entities), if no particular selection is specified
+      selection = selection == null ? _this.model.entities.select : [selection];
+      selection.forEach(function(d) {
+
+        var trail = _this.entityTrails
+          .filter(function(f) {
+            return f[KEY] == "trail-" + d[KEY]
+          })
+          .selectAll("g")
+
+        //do all the actions over "trail"
+        actions.forEach(function(action) {
+          _this._trails["_" + action](trail, duration, d);
         })
-        .selectAll("g")
-
-      //do all the actions over "trail"
-      actions.forEach(function(action) {
-        _this._trails["_" + action](trail, duration, d);
-      })
-
+      });
     });
   },
 
@@ -163,10 +165,10 @@ export default Class.extend({
 
   _resize: function(trail, duration, d) {
     var _this = this.context;
-
     if (_this.model.time.splash) {
       return;
     }
+//    this._isCreated.then(function() {
 
     trail.each(function(segment, index) {
         

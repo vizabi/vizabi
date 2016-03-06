@@ -1424,4 +1424,11 @@ export var setIcon = function(element, icon) {
         icon, 'application/xml').documentElement, true)
   );
   return element;
-}
+};
+
+export var getLimits = function(frame) {
+  return {
+    min: d3.min(d3.values(frame)),
+    max: d3.max(d3.values(frame))
+  }
+};
