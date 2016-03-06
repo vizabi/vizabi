@@ -575,6 +575,16 @@ export default Class.extend({
         return (coordValue - dataBoundary) * (1 - scalar) + dataBoundary;
     },
 
+    /*
+     * Reset zoom values without triggering a zoom event.
+     */
+     resetZoomState: function(element) {
+        this.zoomer.scale(1);
+        this.zoomer.ratioY = 1;
+        this.zoomer.ratioX = 1;
+        this.zoomer.translate([0, 0]);
+    },
+
     reset: function(element) {
         var _this = this.context;
         _this.isCanvasPreviouslyExpanded = false;
