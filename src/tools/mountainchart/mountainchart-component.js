@@ -324,7 +324,7 @@ var MountainChartComponent = Component.extend({
 
   frameChanged: function(frame, time) {
     if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
-    this.values = values;
+    this.values = frame;
     this.updateTime();
     this.redrawDataPoints();
     this._selectlist.redraw();
