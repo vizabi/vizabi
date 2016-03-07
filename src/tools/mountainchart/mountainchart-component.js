@@ -51,12 +51,7 @@ var MountainChartComponent = Component.extend({
         //attach event listeners to the model items
         this.model_binds = {
             "change:time.value": function (evt) {
-                //console.log("MONT: " + evt);
-                _this.updateTime();
-                _this.redrawDataPoints();
-                _this._selectlist.redraw();
-                _this._probe.redraw();
-                _this.updateDoubtOpacity();
+              _this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
             },
             "change:time.playing": function (evt) {
                 // this listener is a patch for fixing #1228. time.js doesn't produce the last event
@@ -301,29 +296,44 @@ var MountainChartComponent = Component.extend({
 
     ready: function () {
         //console.log("ready")
-        
+        var _this= this;
+
         this._math.xScaleFactor = this.model.time.xScaleFactor;
         this._math.xScaleShift = this.model.time.xScaleShift;
 
         this.updateUIStrings();
         this.updateIndicators();
-        this.updateEntities();
-        this.updateSize();
-        this.zoomToMaxMin();
-        this._spawnMasks();
-        this.updateTime();
-        this._adjustMaxY({force: true});
-        this.redrawDataPoints();
-        this.redrawDataPointsOnlyColors();
-        this.highlightEntities();
-        this.selectEntities();
-        this._selectlist.redraw();
-        this.updateOpacity();
-        this.updateDoubtOpacity();
-        this._probe.redraw();
+        this.model.marker.getFrame(this.model.time.value, function(values) {
+          _this.values = values;
+          _this.updateEntities();
+          _this.updateSize();
+          _this.zoomToMaxMin();
+          _this._spawnMasks();
+          _this.updateTime();
+          _this._adjustMaxY({force: true});
+          _this.redrawDataPoints();
+          _this.redrawDataPointsOnlyColors();
+          _this.highlightEntities();
+          _this.selectEntities();
+          _this._selectlist.redraw();
+          _this.updateOpacity();
+          _this.updateDoubtOpacity();
+          _this._probe.redraw();
+        });
     },
 
-    updateSize: function (meshLength) {
+  frameChanged: function(frame, time) {
+    if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
+    this.values = values;
+    this.updateTime();
+    this.redrawDataPoints();
+    this._selectlist.redraw();
+    this._probe.redraw();
+    this.updateDoubtOpacity();
+  },
+  
+
+updateSize: function (meshLength) {
 
         var margin, infoElHeight;
         var padding = 2;
@@ -518,8 +528,6 @@ var MountainChartComponent = Component.extend({
 
     updateEntities: function () {
         var _this = this;
-
-        this.values = this.model.marker.getFrame(this.model.time.end);
 
         // construct pointers
         this.mountainPointers = this.model.marker.getKeys()
@@ -781,7 +789,6 @@ var MountainChartComponent = Component.extend({
 
         this.year.setText(time.getUTCFullYear().toString());
 
-        this.values = this.model.marker.getFrame(time);
         this.yMax = 0;
 
 
@@ -952,13 +959,19 @@ var MountainChartComponent = Component.extend({
         var method = this.model.time.yMaxMethod;
 
         if (method !== "immediate" && !options.force) return;
-
-        if (method === "latest") _this.updateTime(_this.model.time.end);
-
-        if (!_this.yMax) utils.warn("Setting yMax to " + _this.yMax + ". You failed again :-/");
-        this.yScale.domain([0, _this.yMax]);
-
-        if (method === "latest") _this.updateTime();
+        if (method === "latest") {
+          var prevValues = _this.values;
+          _this.model.marker.getFrame(_this.model.time.end, function(values) {
+            _this.values = values;
+            _this.updateTime();
+            _this.values = prevValues;
+            _this.yScale.domain([0, _this.yMax]);
+            _this.updateTime();
+          });
+        } else {
+          if (!_this.yMax) utils.warn("Setting yMax to " + _this.yMax + ". You failed again :-/");
+          _this.yScale.domain([0, _this.yMax]);
+        }
     },
 
     redrawDataPoints: function () {

@@ -48,7 +48,7 @@ var TimeModel = Model.extend({
     step: 1, //step must be integer
     adaptMinMaxZoom: false, //TODO: remove from here. only for bubble chart
     xLogStops: [], //TODO: remove from here. only for mountain chart
-    yMaxMethod: "latest", //TODO: remove from here. only for mountain chart
+    yMaxMethod: "immediate", //TODO: remove from here. only for mountain chart
     record: false,
     probeX: 0, //TODO: remove from here. only for mountain chart
     tailFatX: 1, //TODO: remove from here. only for mountain chart
@@ -94,7 +94,7 @@ var TimeModel = Model.extend({
       },
 
       "change:unit": function() {
-        this.timeFormat = formats[this.unit];
+        _this.timeFormat = formats[_this.unit];
       }
 
     });

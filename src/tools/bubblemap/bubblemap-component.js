@@ -54,9 +54,7 @@ var BubbleMapComponent = Component.extend({
     var _this = this;
     this.model_binds = {
       "change:time.value": function (evt) {
-        _this.updateTime();
-        _this.updateDoubtOpacity();
-        _this.redrawDataPoints(null, false);
+        _this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
       },
       "change:entities.highlight": function (evt) {
         if (!_this._readyOnce) return;
@@ -279,20 +277,34 @@ var BubbleMapComponent = Component.extend({
    * Both model and DOM are ready
    */
   ready: function () {
+    var _this = this;
     this.updateUIStrings();
     this.updateIndicators();
     this.updateSize();
     this.updateMarkerSizeLimits();
-    this.updateEntities();
-    this.updateTime();
-    this.redrawDataPoints();
-    this.highlightEntities();
-    this.selectEntities();
+    this.model.marker.getFrame(this.model.time.value, function(values) {
+      _this.values = values;
+      _this.updateEntities();
+      _this.updateTime();
+      _this.redrawDataPoints();
+      _this.highlightEntities();
+      _this.selectEntities();
 //    this._selectlist.redraw();
-    this.updateDoubtOpacity();
-    this.updateOpacity();
+      _this.updateDoubtOpacity();
+      _this.updateOpacity();
+    });
+
   },
 
+  frameChanged: function(frame, time) {
+    if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
+    this.values = frame;
+    this.updateTime();
+    this.updateDoubtOpacity();
+    this.redrawDataPoints(null, false);
+
+  },
+  
   updateUIStrings: function () {
       var _this = this;
 
@@ -465,7 +477,7 @@ var BubbleMapComponent = Component.extend({
 
     var getKeys = function(prefix) {
       prefix = prefix || "";
-      return this.model.marker.getKeys()
+      return _this.model.marker.getKeys()
         .map(function(d) {
           var pointer = {};
           pointer[KEY] = d[KEY];
@@ -482,7 +494,6 @@ var BubbleMapComponent = Component.extend({
     // get array of GEOs, sorted by the size hook
     // that makes larger bubbles go behind the smaller ones
     var endTime = this.model.time.end;
-    _this.values = this.model.marker.getFrame(endTime);
     this.model.entities.setVisible(getKeys.call(this));
 
 
@@ -592,7 +603,6 @@ var BubbleMapComponent = Component.extend({
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
     this.year.setText(this.model.time.timeFormat(this.time));
-    this.values = this.model.marker.getFrame(this.time);
 
     //possibly update the exact value in size title
     this.updateTitleNumbers();

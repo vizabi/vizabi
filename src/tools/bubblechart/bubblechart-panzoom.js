@@ -308,23 +308,25 @@ export default Class.extend({
         var _this = this.context;
         if (!duration) duration = _this.duration;
 
-        var timeRounded = _this.model.time.timeFormat.parse( _this.model.time.timeFormat(_this.time) );
-
-        var mmmX = _this.xyMaxMinMean.x[timeRounded];
-        var mmmY = _this.xyMaxMinMean.y[timeRounded];
-        var radiusMax = utils.areaToRadius(_this.sScale(_this.xyMaxMinMean.s[timeRounded].max));
-
+        //d3 extent returns min and max of the input array as [min, max]
+        var mmX = d3.extent(utils.values(_this.frame.axis_x));
+        var mmY = d3.extent(utils.values(_this.frame.axis_y));
+        var radiusMax = utils.areaToRadius(_this.sScale( d3.extent(utils.values(_this.frame.size))[1] )) || 0;
+        
+        //protection agains unreasonable min-max results -- abort function
+        if (!mmX[0] && mmX[0]!==0 || !mmX[1] && mmX[1]!==0 || !mmY[0] && mmY[0]!==0 || !mmY[1] && mmY[1]!==0) {
+          return utils.warn("panZoom.expandCanvas: X or Y min/max are broken. Aborting with no action");
+        }
         /*
          * Use a range bumped scale to correctly accommodate the range bump
          * gutter.
          */
         var suggestedFrame = {
-            x1: _this.xScale(mmmX.min) - radiusMax,
-            y1: _this.yScale(mmmY.min) + radiusMax,
-            x2: _this.xScale(mmmX.max) + radiusMax,
-            y2: _this.yScale(mmmY.max) - radiusMax
+            x1: _this.xScale(mmX[0]) - radiusMax,
+            y1: _this.yScale(mmY[0]) + radiusMax,
+            x2: _this.xScale(mmX[1]) + radiusMax,
+            y2: _this.yScale(mmY[1]) - radiusMax
         };
-
         var xBounds = [0, _this.width];
         var yBounds = [_this.height, 0];
 
