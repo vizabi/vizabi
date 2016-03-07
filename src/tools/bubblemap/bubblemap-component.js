@@ -54,12 +54,7 @@ var BubbleMapComponent = Component.extend({
     var _this = this;
     this.model_binds = {
       "change:time.value": function (evt) {
-        _this.model.marker.getFrame(_this.model.time.value, function(values) {
-          _this.values = values;
-          _this.updateTime();
-          _this.updateDoubtOpacity();
-          _this.redrawDataPoints(null, false);
-        });
+        _this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
       },
       "change:entities.highlight": function (evt) {
         if (!_this._readyOnce) return;
@@ -301,6 +296,15 @@ var BubbleMapComponent = Component.extend({
 
   },
 
+  frameChanged: function(frame, time) {
+    if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
+    this.values = frame;
+    this.updateTime();
+    this.updateDoubtOpacity();
+    this.redrawDataPoints(null, false);
+
+  },
+  
   updateUIStrings: function () {
       var _this = this;
 

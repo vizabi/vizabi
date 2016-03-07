@@ -51,15 +51,7 @@ var MountainChartComponent = Component.extend({
         //attach event listeners to the model items
         this.model_binds = {
             "change:time.value": function (evt) {
-                //console.log("MONT: " + evt);
-              _this.model.marker.getFrame(_this.model.time.value, function(values) {
-                _this.values = values;
-                _this.updateTime();
-                _this.redrawDataPoints();
-                _this._selectlist.redraw();
-                _this._probe.redraw();
-                _this.updateDoubtOpacity();
-              });
+              _this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
             },
             "change:time.playing": function (evt) {
                 // this listener is a patch for fixing #1228. time.js doesn't produce the last event
@@ -330,7 +322,18 @@ var MountainChartComponent = Component.extend({
         });
     },
 
-    updateSize: function (meshLength) {
+  frameChanged: function(frame, time) {
+    if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
+    this.values = values;
+    this.updateTime();
+    this.redrawDataPoints();
+    this._selectlist.redraw();
+    this._probe.redraw();
+    this.updateDoubtOpacity();
+  },
+  
+
+updateSize: function (meshLength) {
 
         var margin, infoElHeight;
         var padding = 2;

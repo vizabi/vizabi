@@ -82,7 +82,6 @@ var LCComponent = Component.extend({
       showTooltip: true
     }, this.ui.whenHovering);
 
-    this.getValuesForYear = utils.memoize(this.getValuesForYear);
     this.getNearestKey = utils.memoize(this.getNearestKey);
   },
 
