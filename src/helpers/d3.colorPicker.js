@@ -54,6 +54,7 @@ export default function colorPicker() {
       COLOR_SAMPLE: 'vzb-colorpicker-sample',
       COLOR_PICKER: 'vzb-colorpicker-svg',
       COLOR_CIRCLE: 'vzb-colorpicker-circle',
+      COLOR_CIRCLES: 'vzb-colorpicker-circles',
       COLOR_SEGMENT: 'vzb-colorpicker-segment',
       COLOR_BACKGR: 'vzb-colorpicker-background'
     };
@@ -176,13 +177,14 @@ export default function colorPicker() {
       var maxRadius = width / 2 * (1 - margin.left - margin.right);
       background = svg.append('rect')
         .attr('width', width)
-        .attr('height', height)
+        .attr('height', maxHeight)
         .attr('class', css.COLOR_BUTTON +' '+ css.COLOR_BACKGR)
         .on('mouseover',
           function(d) {
             _cellHover(colorOld);
-          });
+          });          
       var circles = svg.append('g')
+        .attr('class', css.COLOR_CIRCLES)
         .attr('transform', 'translate(' + (maxRadius + width * margin.left) +
         ',' + (maxRadius + height * margin.top) + ')');
 
@@ -283,6 +285,7 @@ export default function colorPicker() {
           _this.show(false);
         });
       _doTheStyling(svg);
+      colorPicker.resize(svg);
     }
 
     var _doTheStyling = function(svg) {
@@ -473,8 +476,16 @@ export default function colorPicker() {
         var svg = arg;
         var width = parseInt(svg.style('width'));
         var height = parseInt(svg.style('height'));
+        var maxRadius = width / 2 * (1 - margin.left - margin.right);
         var selectedColor = svg.select('.'+css.COLOR_DEFAULT);
         var defaultLabel = svg.select('.vzb-default-label');
+        var circles = svg.select('.' + css.COLOR_CIRCLES);
+       
+        var hPos = maxRadius + height * margin.top;
+        var hPosCenter = (1 + margin.top * .5) * height * .5;
+        hPos = hPos > hPosCenter ? hPosCenter : hPos; 
+        circles.attr('transform', 'translate(' + (maxRadius + width * margin.left) +
+        ',' + hPos + ')');
         selectedColor.attr('cx', width * margin.left * 1.5)
                      .attr('cy', height * (1 - margin.bottom * 1.5));
         defaultLabel.attr('x', width * .1)
