@@ -3,65 +3,42 @@
     &[data-dlg='moreoptions'] {
       @import '../../buttonlist/optionsbuttonlist/optionsbuttonlist';
       >.vzb-dialog-modal {
-        display: flex;
-        flex-direction: column;
-        >.thumb-tack-class {
-          position: absolute;
-          right: 0;
-          &.thumb-tack-class-ico-drag {
-            right: 34px;
-          }
-        }
-        >.vzb-dialog-options-buttonlist {
-          margin-top: 40px;
-          flex: 1 10 auto;
-          min-height: 53px;
-          max-height: 53px;
-          overflow-y: auto;
-        }
-        >.vzb-dialog-title {
-          padding-top: 16px;
-          flex: 0 0 50px;
-        }
-        >.vzb-dialog-buttons {
-          flex: 0 0 70px;
-        }
-      }
-      .vzb-dialog-content {
-        flex: 1 1 auto;
-        &.vzb-accordion {
-          padding: 0 0 5px;
-          .vzb-accordion-section { 
-            transition: none;
-            overflow: hidden;
-            max-height: 41px;
-            padding-bottom: 10px;
-            width: auto;
-            border: 0;
-            .vzb-dialog-title>span:first-child {
-              display: block;     
-              padding: 9px 15px 10px 10px;
-              height: 40px;
-              background-color: $vzb-color-primary-lightest;
-              cursor: pointer;
-              text-transform: uppercase;
-              &::after {
-                @include rotate(45deg);
-                content: '';
-                position: absolute;
-                top: 18px;
-                right: 20px;
-                width: 5px;
-                height: 5px;
-                border-right: 1px solid $vzb-color-primary;
-                border-top: 1px solid $vzb-color-primary;
+        >.vzb-dialog-content {
+          padding: 0;
+          >.vzb-accordion {
+            margin-top: 1px;
+            .vzb-accordion-section { 
+              transition: none;
+              overflow: hidden;
+              max-height: 41px;
+              padding-bottom: 10px;
+              width: auto;
+              border: 0;
+              .vzb-dialog-title>span:first-child {
+                display: block;     
+                padding: 9px 15px 10px 10px;
+                height: 40px;
+                background-color: $vzb-color-primary-lightest;
+                cursor: pointer;
+                text-transform: uppercase;
+                &::after {
+                  @include rotate(45deg);
+                  content: '';
+                  position: absolute;
+                  top: 18px;
+                  right: 20px;
+                  width: 5px;
+                  height: 5px;
+                  border-right: 1px solid $vzb-color-primary;
+                  border-top: 1px solid $vzb-color-primary;
+                }
               }
-            }
-            &.vzb-accordion-active {
-              max-height: 500px;
-              transition: max-height .3s ease-in-out;
-              .vzb-dialog-title>span:first-child::after {
-                @include rotate(135deg);
+              &.vzb-accordion-active {
+                max-height: 500px;
+                transition: max-height .3s ease-in-out;
+                .vzb-dialog-title>span:first-child::after {
+                  @include rotate(135deg);
+                }
               }
             }
           }
@@ -70,34 +47,3 @@
     }
   }
 }
-
-&.vzb-small {
-  .vzb-tool-dialogs {
-    .vzb-dialogs-dialog {
-      &[data-dlg='moreoptions'] {
-        >.vzb-dialog-modal {
-          >.vzb-dialog-options-buttonlist {
-            margin-top: 0;
-          }
-        }
-      }
-    }
-  }  
-}
-
-&.vzb-large {
-  &.vzb-dialog-expand-true {
-    .vzb-tool-dialogs {
-      .vzb-dialogs-dialog {
-        &[data-dlg='moreoptions'] {
-          >.vzb-dialog-modal {
-            >.vzb-dialog-options-buttonlist {
-              min-height: 106px;
-            }
-          }
-        }
-      }
-    }
-  }
-}  
-

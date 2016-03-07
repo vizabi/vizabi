@@ -15,14 +15,6 @@ $vzb-dialog-content-height: 250px;
     display: block;
     position: absolute;
     overflow: hidden;
-    &.vzb-popup {
-      z-index: -2;
-      visibility: hidden;
-      &.vzb-active {
-        z-index: 20;
-        visibility: visible;
-      }
-    }
 
     .vzb-dialog-title {
       color: $vzb-color-primary;
@@ -95,7 +87,7 @@ $vzb-dialog-content-height: 250px;
     .vzb-dialog-buttons {
       display: table;
       width: 100%;
-      padding: 15px 25px 20px;
+      padding: 15px 25px;
     }
 
     .vzb-dialog-control {
@@ -272,8 +264,36 @@ $vzb-dialog-content-height: 250px;
       }
     }
 
+    &.vzb-popup {
+      z-index: -2;
+      visibility: hidden;
+      &.vzb-active {
+        z-index: 20;
+        visibility: visible;
+      }
+      >.vzb-dialog-modal {
+        display: flex;
+        flex-direction: column;
+        >.thumb-tack-class {
+          position: absolute;
+          right: 0;
+          &.thumb-tack-class-ico-drag {
+            right: 34px;
+          }
+        }
+        >.vzb-dialog-title {
+          flex: none;
+        }
+        >.vzb-dialog-buttons {
+          flex: none;
+        }
+        >.vzb-dialog-content {
+          flex: 1 1 auto;
+        }
+      }  
+    }
   }
-
+  
   .vzb-moreoptions {
     position: static;
     box-shadow: none;
@@ -309,7 +329,7 @@ $vzb-dialog-content-height: 250px;
       }
     }
   }
-
+  
   @import '../bubblesize/bubblesize';
   @import '../sizeslider/sizeslider';
   @import '../indicatorpicker/indicatorpicker';
@@ -374,11 +394,6 @@ $vzb-dialog-content-height: 250px;
           &.vzb-active {
             @include position(absolute, null 0 45px 0);
           }
-          >.vzb-dialog-modal {
-            >.vzb-dialog-content.vzb-dialog-content-fixed {
-              max-height: $vzb-dialog-content-height - 50px;
-            }
-          }
         }
       }
     }
@@ -389,16 +404,11 @@ $vzb-dialog-content-height: 250px;
         @include position(absolute, -1000px -10px auto auto);
         margin-right: $size-button-list;
         &.vzb-active {
-          @include position(absolute, 10px -10px auto auto);
+          @include position(absolute, 5px -10px auto auto);
         }
         >.vzb-dialog-modal {
-          >.vzb-dialog-content,
-          >.vzb-dialog-content.vzb-dialog-content-fixed {
-            max-height: $vzb-dialog-content-height - 100px !important;
-          }
-
           >.vzb-dialog-buttons {
-            padding: 5px 25px 6px;
+            padding: 3px 25px;
           }
 
           >.vzb-dialog-title {

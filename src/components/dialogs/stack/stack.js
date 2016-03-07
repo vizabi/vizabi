@@ -48,17 +48,6 @@ var Stack = Dialog.extend({
         this._super(config, parent);
     },
 
-    resize: function() {
-      if (this.getLayoutProfile() == 'small') {
-        var height = this.root.element.offsetHeight;
-        var titleHeight = this.element.select(".vzb-dialog-title").node().offsetHeight;
-        var buttonsHeight = this.element.select(".vzb-dialog-buttons").node().offsetHeight;
-        this.element.select(".vzb-dialog-content.vzb-dialog-scrollable").style('max-height', height - 90 - titleHeight - buttonsHeight + 'px');
-      } else {
-        this.element.select(".vzb-dialog-content").style('max-height', '');
-      }
-      this._super();
-    },
 
     readyOnce: function() {
       this._super();
