@@ -8,7 +8,7 @@ var Data = Class.extend({
 
   init: function() {
     this._collection = {};
-    this._data = {};
+    this._collectionPromises = {};// stores promises, making sure we don't do one calulation twice 
   },
 
   /**
@@ -167,7 +167,7 @@ var Data = Class.extend({
           });
 
           _this._collection[queryId] = {};
-          _this._data[queryId] = {};
+          _this._collectionPromises[queryId] = {};
           var col = _this._collection[queryId];
           col.data = values;
           col.filtered = {};
@@ -185,7 +185,7 @@ var Data = Class.extend({
           utils.forEach(mergedQueries, function(mergedQuery) {
             // set the cache-location for each seperate query to the combined query's cache
             _this._collection[mergedQuery.queryId] = _this._collection[queryId];
-            _this._data[mergedQuery.queryId] = _this._data[queryId];
+            _this._collectionPromises[mergedQuery.queryId] = _this._collectionPromises[queryId];
             // resolve the query
             mergedQuery.promise.resolve(mergedQuery.queryId);
           });
@@ -264,37 +264,38 @@ var Data = Class.extend({
     return globals.metadata && globals.metadata.indicatorsTree ? globals.metadata.indicatorsTree : {};
   },
 
-  getFrames: function(queryId, whatId, args) {
+  getFrames: function(queryId, framesArray) {
     var _this = this;
-    var id = JSON.stringify(whatId);
-    if (!this._data[queryId]) this._data[queryId] = {};
-    if (this._data[queryId][id]) {
-      if (this._data[queryId][id] instanceof Promise) {
-        return this._data[queryId][id];
+    var whatId = framesArray[0] + " - " + framesArray[framesArray.length-1];
+    if (!this._collectionPromises[queryId]) this._collectionPromises[queryId] = {};
+    if (this._collectionPromises[queryId][whatId]) {
+      if (this._collectionPromises[queryId][whatId] instanceof Promise) {
+        return this._collectionPromises[queryId][whatId];
       }
     }
-    this._data[queryId][id] = new Promise(function(resolve, reject) {
+    this._collectionPromises[queryId][whatId] = new Promise(function(resolve, reject) {
       if (!queryId) reject(utils.warn("Data.js 'get' method doesn't like the queryId you gave it: " + queryId));
-      _this._getFrames(queryId, whatId).then(function (frames) {
-        _this._collection[queryId]["frames"][id] = frames;
-        resolve(_this._collection[queryId]["frames"][id]);
+      _this._getFrames(queryId, whatId, framesArray).then(function (frames) {
+        _this._collection[queryId]["frames"][whatId] = frames;
+        resolve(_this._collection[queryId]["frames"][whatId]);
       });
     });
-    return this._data[queryId][id];
+    return this._collectionPromises[queryId][whatId];
   },
 
   getFrame: function(queryId, framesArray, neededFrame) {
+    //can only be called after getFrames()
     var _this = this;
     var query = _this._collection[queryId].query;
-    var id = JSON.stringify(framesArray);
+    var whatId = framesArray[0] + " - " + framesArray[framesArray.length-1];
     var columns = query.select.filter(function(f){return f != "geo" && f != "time" && f !== "_default"});
 
     return new Promise(function(resolve, reject) {
-      if (_this._collection[queryId]["frames"][id] && _this._collection[queryId]["frames"][id][neededFrame]) {
-        resolve(_this._collection[queryId]["frames"][id]);
+      if (_this._collection[queryId]["frames"][whatId] && _this._collection[queryId]["frames"][whatId][neededFrame]) {
+        resolve(_this._collection[queryId]["frames"][whatId]);
       } else {
-        _this.framesQueue(queryId, framesArray, columns).forceFrame(neededFrame, function() {
-          resolve(_this._collection[queryId]["frames"][id]);
+        _this.framesQueue(queryId, whatId, framesArray, columns).forceFrame(neededFrame, function() {
+          resolve(_this._collection[queryId]["frames"][whatId]);
         });
       }
     });
@@ -306,19 +307,21 @@ var Data = Class.extend({
    * @param fields
    * @returns {*}
    */
-  framesQueue: function(queryId, framesArray, fields) {
-    if (!this.queues) {
-      this.queues = {};
-    }
-    var queueId = JSON.stringify([framesArray[0], framesArray[framesArray.length - 1]]) + JSON.stringify(fields);
+  framesQueue: function(queryId, whatId, framesArray, fields) {
+    if (!this.queues) this.queues = {};
+
+    var queueId = whatId + JSON.stringify(fields);
     if (!this.queues[queueId]) {
       this.queues[queueId] = new function(){
-        this.queryId = JSON.stringify(framesArray);
         this.callbacks = {};
         this.forcedQueue = [];
-        this.queue = framesArray.slice(0);
+        this.queue = framesArray.slice(0); //clone array
+          
+        //put the last element to the start of the queue because we are likely to need it first
         this.queue.splice(0, 0, this.queue.splice(this.queue.length - 1, 1)[0]);
         this.key = 0;
+          
+        // returns the next frame in a queue
         this.getNext = function() {
           var queue = this;
           var frameName = null;
@@ -347,6 +350,8 @@ var Data = Class.extend({
             callback: frameComplete
           };
         };
+          
+        // force the particular frame up the queue
         this.forceFrame = function(frameName, cb) {
           var objIndexOf = function(obj, need) {
             var search = need.toString();
@@ -365,7 +370,7 @@ var Data = Class.extend({
           } else {
             var newKey = objIndexOf(this.queue, frameName);//this.queue.indexOf(frameName.toString());
             if (newKey !== -1) {
-              this.forcedQueue.unshift(this.queue.splice(newKey, 1).pop());
+              this.forcedQueue.push(this.queue.splice(newKey, 1).pop());
               if (typeof cb === "function") {
                 if (typeof this.callbacks[frameName] != "object") {
                   this.callbacks[frameName] = [];
@@ -393,12 +398,11 @@ var Data = Class.extend({
    * @param {Array} framesArray -- array of keyframes across animatable
    * @returns {Object} regularised dataset, nested by [animatable, column, key]
    */
-  _getFrames: function(queryId, framesArray) {
+  _getFrames: function(queryId, whatId, framesArray) {
     var _this = this;
 
-    var id = JSON.stringify(framesArray);
-    if (!_this._collection[queryId]["frames"][id]) {
-      _this._collection[queryId]["frames"][id] = {};
+    if (!_this._collection[queryId]["frames"][whatId]) {
+      _this._collection[queryId]["frames"][whatId] = {};
     }
     return new Promise(function(resolve, reject) {
 
@@ -440,7 +444,6 @@ var Data = Class.extend({
       }
 
       var buildFrame = function(frameName, keys, queryId, callback) {
-//          return new Promise(function(resolve, reject) {
           var frame = {};
 
           if (!query.where.time) {
@@ -522,20 +525,30 @@ var Data = Class.extend({
               } //loop across columns
             } //loop across keys
           }
-          _this._collection[queryId]["frames"][id][frameName] = frame;
+          
+          // save the calcualted frame to global datamanager cache
+          _this._collection[queryId]["frames"][whatId][frameName] = frame;
+          
+          // fire the callback
           if (typeof callback === "function") {
-            callback(frameName);
+            // runs the function frameComplete inside framesQueue.getNext()
+            callback(frameName); 
           }
-          var newFrame = _this.framesQueue(queryId, framesArray, columns).getNext();
-          if (newFrame) {
+          
+          // recursively call the buildFrame again, this time for the next frame
+          //QUESTION: FramesArray is probably not needed at this point. queryId and whatId is enough
+          var nextFrame = _this.framesQueue(queryId, whatId, framesArray, columns).getNext(); 
+          if (nextFrame) {
+            // defer allows other interactions to squeeze in between buildFrame executions
             utils.defer(function() {
-              buildFrame(newFrame.frameName, keys, queryId, newFrame.callback);
+              buildFrame(nextFrame.frameName, keys, queryId, nextFrame.callback);
             });
           } else {
-            resolve(_this._collection[queryId]["frames"][id]);
+            //this goes to marker.js as a "response"
+            resolve(_this._collection[queryId]["frames"][whatId]); 
           }
       };
-      var nextFrame = _this.framesQueue(queryId, framesArray, columns).getNext();
+      var nextFrame = _this.framesQueue(queryId, whatId, framesArray, columns).getNext();
       if (nextFrame) {
         buildFrame(nextFrame.frameName, keys, queryId, nextFrame.callback);
       }
