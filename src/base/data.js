@@ -370,7 +370,7 @@ var Data = Class.extend({
           } else {
             var newKey = objIndexOf(this.queue, frameName);//this.queue.indexOf(frameName.toString());
             if (newKey !== -1) {
-              this.forcedQueue.push(this.queue.splice(newKey, 1).pop());
+              this.forcedQueue.unshift(this.queue.splice(newKey, 1).pop());
               if (typeof cb === "function") {
                 if (typeof this.callbacks[frameName] != "object") {
                   this.callbacks[frameName] = [];

@@ -101,7 +101,7 @@ var Marker = Model.extend({
       if(time && _this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
         // if it does, then return that frame directly and stop here
         //QUESTION: can we call the callback and return the frame? this will allow callbackless API too
-        return cb(_this.cachedFrames[cachePath][time]);
+        return cb(_this.cachedFrames[cachePath][time], time);
       } else {
         // if it doesn't (the requested time point falls between animation frames or frame is not cached yet)
         // check if interpolation makes sense: we've requested a particular time and we have more than one frame
@@ -115,7 +115,7 @@ var Marker = Model.extend({
             
             //interpolate between frames and fire the callback
             this._interpolateBetweenFrames(time, nextFrameIndex, steps, function (response) {
-              return cb(response); 
+              return cb(response, time); 
             }); 
           }
         }
@@ -125,13 +125,13 @@ var Marker = Model.extend({
         _this.getFrames(time).then(function() {
           if (!time && _this.cachedFrames[cachePath]) {
             //time can be null: then return all frames
-            return cb(_this.cachedFrames[cachePath]);
+            return cb(_this.cachedFrames[cachePath], time);
           } else if(_this.cachedFrames[cachePath][time]) {
             //time can be !null: then a particular frame calculation was forced and now it's done  
-            return cb(_this.cachedFrames[cachePath][time]);
+            return cb(_this.cachedFrames[cachePath][time], time);
           } else {
             utils.warn("marker.js getFrame: Frame was not built for time: " + time + ": " + cachePath);
-            return cb({});
+            return cb({}, time);
           }
         }); 
       }
