@@ -42,9 +42,11 @@ var MoreOptions = Dialog.extend({
   },
 
   readyOnce: function() {
+    this._super();
+    
     var _this = this;
-    this.element = d3.select(this.element);
     this.contentEl = this.element.select('.vzb-dialog-content');
+    this.accordionEl = this.element.select('.vzb-accordion');
 
     this.on('dragend', function() {
       _this._setMaxHeight();
@@ -62,7 +64,6 @@ var MoreOptions = Dialog.extend({
     this._addDialogs(dialog_moreoptions);
     
     //accordion
-    this.accordionEl = this.element.select('.vzb-accordion');
     if(this.accordionEl) {
       var titleEl = this.accordionEl.selectAll('.vzb-accordion-section')
         .select('.vzb-dialog-title>span:first-child')
@@ -78,30 +79,6 @@ var MoreOptions = Dialog.extend({
         }
       })
     }
-  },
-  
-  resize: function() {
-    this._super();
-    if(this.placeholderEl) {
-      this._setMaxHeight();
-    }
-  },
-  
-  _setMaxHeight: function() {
-    var totalHeight = this.root.element.offsetHeight;
-    if(this.getLayoutProfile() !== 'small') {
-      if(!this.topPos && (this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true"))) {
-        var dialogBottom = parseInt(this.placeholderEl.style('bottom'), 10);
-        totalHeight = totalHeight - dialogBottom;
-      } else {
-        var topPos = this.topPos ? parseInt(this.topPos, 10) : this.placeholderEl[0][0].offsetTop; 
-        totalHeight = totalHeight - topPos;
-      }
-    } else {
-      totalHeight = totalHeight - 50;
-    }
-
-    this.element.style('max-height', totalHeight + 'px');
   },
   
   _addDialogs: function(dialog_list) {
@@ -135,7 +112,7 @@ var MoreOptions = Dialog.extend({
       }
     };
 
-    this.contentEl.selectAll('div').data(details_dlgs)
+    this.accordionEl.selectAll('div').data(details_dlgs)
       .enter().append("div")
       .attr('class', function (d) {
         var cls = 'vzb-dialogs-dialog vzb-moreoptions vzb-accordion-section';

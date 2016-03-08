@@ -16,8 +16,6 @@ var class_active = "vzb-active";
 // var class_vzb_fullscreen = "vzb-force-fullscreen";
 // var class_container_fullscreen = "vzb-container-fullscreen";
 
-var BUTTON_IN_ROW = 4;
-
 var OptionsButtonList = ButtonList.extend({
 
   /**
@@ -57,16 +55,6 @@ var OptionsButtonList = ButtonList.extend({
         button.style('display', isHidden ? 'none' : '');
         if(!isHidden) visibleButton++; 
       });
-      
-      var minHeight = '';
-      
-      if(visibleButton == 0) { minHeight = '0';}
-      else if(visibleButton <= BUTTON_IN_ROW) { minHeight = '53px';}
-      
-      _this.element.style('min-height', minHeight);
-      _this.element.offsetHeight;
-      _this.element[0][0].scrollTop = 0;
-
     });
 
     this._super();

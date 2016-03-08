@@ -44,8 +44,9 @@ var Axes = Dialog.extend({
   },
 
   readyOnce: function() {
+    this._super();
+
     var _this = this;
-    this.element = d3.select(this.element);
 
     this.yMaxRadio = this.element.select('.vzb-yaxis-container').selectAll('input')
       .on("change", function() {
@@ -70,7 +71,6 @@ var Axes = Dialog.extend({
 
     this.updateView();
 
-    this._super();
   },
 
   updateView: function() {

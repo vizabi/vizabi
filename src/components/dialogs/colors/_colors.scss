@@ -2,7 +2,12 @@
   .vzb-dialogs-dialog {
     &[data-dlg="colors"] {
       .vzb-dialog-content {
-        min-height: 140px;
+        min-height: 120px;
+      }
+      &.vzb-popup {
+        .vzb-dialog-content {
+          overflow: visible;
+        }
       }
     }
   }
