@@ -56,6 +56,9 @@ var SizeSlider = Component.extend({
     this.model_expects = [{
       name: "size",
       type: "size"
+    },{
+      name: "language",
+      type: "language"
     }];
 
     var _this = this;
@@ -137,6 +140,7 @@ var SizeSlider = Component.extend({
     this.padding = padding;
     
     this.propertyActiveProfile = this.getPropertyActiveProfile();
+    this.translator = this.model.language.getTFunction();
 
     this.propertyScale = d3.scale.linear()
       .domain([OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX])
@@ -276,7 +280,7 @@ var SizeSlider = Component.extend({
       })
     if(_this.model.size.use === 'constant')
       this.sliderLabelsEl.data(s).text(function(d) {
-        return ~~(_this.propertyScale(d));
+        return ~~(_this.propertyScale(d)) + (_this.translator(_this.ui.constantUnit)||"");
       })    
   },
 

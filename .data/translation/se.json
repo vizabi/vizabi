@@ -82,6 +82,7 @@
     "unit/time": "",
     "unit/child_mortality_rate_per1000": "dödsfallen under 5 år per 1000 födslar",
     "unit/gini": "",
+    "unit/pixels": "px",
     "unit/mountainchart_hardcoded_income_per_day": "$/dag",
     "scaletype/linear": "linjär",
     "scaletype/log": "log",

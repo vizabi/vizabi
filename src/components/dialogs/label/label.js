@@ -23,10 +23,10 @@ init: function(config, parent) {
   {
     component: sizeslider,
     placeholder: '.vzb-dialog-sizeslider',
-    model: ["state.marker.size_label"],
+    model: ["state.marker.size_label",  "language"],
     propertyname: 'LabelTextSize',
     ui: {
-      show_button: false
+      constantUnit: "unit/pixels"
     }
   },
   {

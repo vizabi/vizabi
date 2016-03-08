@@ -83,6 +83,7 @@
     "unit/time": "",
     "unit/child_mortality_rate_per1000": "deaths under age 5 per 1000 births",
     "unit/gini": "",
+    "unit/pixels": "px",
     "unit/mountainchart_hardcoded_income_per_day": "$/day",
     "scaletype/linear": "linear",
     "scaletype/log": "log",
