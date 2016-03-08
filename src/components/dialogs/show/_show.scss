@@ -1,12 +1,10 @@
 .vzb-tool-dialogs {
   .vzb-dialogs-dialog {
     &[data-dlg='show'] {
-  
       .vzb-show-filter {
-        display: block;
+        display: inline-block;
         position: relative;
-        padding-left: 0;
-        padding-right: 0;
+        max-width: 170px; 
       }
     }
   }
