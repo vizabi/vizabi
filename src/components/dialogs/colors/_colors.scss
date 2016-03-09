@@ -2,7 +2,7 @@
   .vzb-dialogs-dialog {
     &[data-dlg="colors"] {
       .vzb-dialog-content {
-        min-height: 120px;
+        //min-height: 120px;
       }
       &.vzb-popup {
         .vzb-dialog-content {
@@ -25,7 +25,7 @@
           .vzb-dialog-content {
             //max-height: 190px;
             max-height: '';
-            min-height: 120px;
+            //min-height: 120px;
           
             .vzb-colorpicker-svg {
               z-index: 10;

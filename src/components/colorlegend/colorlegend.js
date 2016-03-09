@@ -186,7 +186,6 @@ var ColorLegend = Component.extend({
             })
             .show(true);
         })
-      colors.classed("vzb-hidden", true);
     } else {
       this.worldmapEl.classed("vzb-hidden", true);
       //if using a discrete palette that is not supplied from metadata but from defaults
@@ -196,6 +195,8 @@ var ColorLegend = Component.extend({
         colors.classed("vzb-cl-compact", false);
       }
     }
+      
+    colors.classed("vzb-hidden", this.model.color.which == "geo.region" || this.model.color.which == "_default");
 
     colors.each(function(d, index) {
       d3.select(this).select(".vzb-cl-color-sample")
