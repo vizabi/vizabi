@@ -1053,13 +1053,14 @@ var BubbleChartComp = Component.extend({
       time = this.model.time.timeFormat.parse("" + this.model.ui.chart.lockNonSelected);
     }
     this.model.marker.getFrame(time, function(valuesLocked) {
+      if(!valuesLocked) return utils.warn("redrawDataPointsOnlySize: empty data received from marker.getFrames(). doing nothing");
+        
       valuesNow = _this.frame;
-      values = valuesLocked;
       _this.entityBubbles.each(function(d, index) {
 
       var cache = _this.cached[d[KEY]];
 
-      var valueS = cache && _this.model.ui.chart.lockNonSelected ? valuesNow.size[d[KEY]] : values.size[d[KEY]];
+      var valueS = cache && _this.model.ui.chart.lockNonSelected ? valuesNow.size[d[KEY]] : valuesLocked.size[d[KEY]];
       if(valueS == null) return;
 
       var scaledS = utils.areaToRadius(_this.sScale(valueS));
@@ -1118,6 +1119,9 @@ var BubbleChartComp = Component.extend({
       time = this.model.time.timeFormat.parse("" + this.model.ui.chart.lockNonSelected);
     }
     this.model.marker.getFrame(time, function(valuesLocked) {
+    
+      if(!valuesLocked) return utils.warn("redrawDataPoints: empty data received from marker.getFrames(). doing nothing");
+        
       _this.entityBubbles.each(function(d, index) {
       var view = d3.select(this);
       _this._updateBubble(d, values, valuesLocked, index, view, duration);

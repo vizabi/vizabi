@@ -130,8 +130,8 @@ var Marker = Model.extend({
             //time can be !null: then a particular frame calculation was forced and now it's done  
             return cb(_this.cachedFrames[cachePath][time], time);
           } else {
-            utils.warn("marker.js getFrame: Frame was not built for time: " + time + ": " + cachePath);
-            return cb({}, time);
+            utils.warn("marker.js getFrame: Data is not available for frame: " + time);
+            return cb(null, time);
           }
         }); 
       }
