@@ -29,7 +29,7 @@ export default Class.extend({
       var KEY = _this.KEY;
 
       //quit if the function is called accidentally
-      if(!_this.model.time.trails || !_this.model.entities.select.length) return;
+      if(!_this.model.ui.chart.trails || !_this.model.entities.select.length) return;
 
       var start = +_this.model.time.timeFormat(_this.model.time.start);
       var end = +_this.model.time.timeFormat(_this.model.time.end);
@@ -134,7 +134,7 @@ export default Class.extend({
     this._isCreated.then(function() {
 
       //quit if function is called accidentally
-      if((!_this.model.time.trails || !_this.model.entities.select.length) && actions != "remove") return;
+      if((!_this.model.ui.chart.trails || !_this.model.entities.select.length) && actions != "remove") return;
 
       if(!duration) duration = 0;
 

@@ -250,7 +250,11 @@ BubbleMap.define('default_model', {
   },
   language: language,
   ui: {
-    'vzb-tool-bubblemap': {},
+    chart: {
+      labels: {
+        dragging: true
+      }
+    },
     presentation: false
   }
 });
@@ -271,18 +275,7 @@ MountainChart.define('default_model', {
       step: 1,
       delay: 100,
       delayThresholdX2: 50,
-      delayThresholdX4: 25,
-      xLogStops: [1, 2, 5],
-      yMaxMethod: "latest",
-      probeX: 1.85,
-      tailFatX: 1.85,
-      tailCutX: .2,
-      tailFade: .7,
-      xScaleFactor: 1.039781626,
-      //0.9971005335,
-      xScaleShift: -1.127066411,
-      //-1.056221322,
-      xPoints: 50
+      delayThresholdX4: 25
     },
     entities: {
       dim: "geo",
@@ -327,7 +320,12 @@ MountainChart.define('default_model', {
         which: "gdp_p_cap_const_ppp2011_dollar",
         scaleType: 'log',
         domainMin: .11, //0
-        domainMax: 500 //100
+        domainMax: 500, //100
+        tailFatX: 1.85,
+        tailCutX: .2,
+        tailFade: .7,
+        xScaleFactor: 1.039781626,
+        xScaleShift: -1.127066411
       },
       size: {
         use: "indicator",
@@ -363,6 +361,12 @@ MountainChart.define('default_model', {
     splash: true
   },
   ui: {
+    chart: {
+      yMaxMethod: "latest",
+      probeX: 1.85,
+      xLogStops: [1, 2, 5],
+      xPoints: 50
+    },
     presentation: false
   }
 });
@@ -421,17 +425,17 @@ LineChart.define('default_model', {
   },
   language: language,
   ui: {
-    'vzb-tool-linechart': {
-      entity_labels: {
+    chart: {
+      labels: {
         min_number_of_entities_when_values_hide: 2 //values hide when showing 2 entities or more
       },
       whenHovering: {
-        hideVerticalNow: 0,
+        hideVerticalNow: false,
         showProjectionLineX: true,
         showProjectionLineY: true,
         higlightValueX: true,
         higlightValueY: true,
-        showTooltip: 0
+        showTooltip: false
       }
     },
     presentation: false
@@ -452,10 +456,7 @@ BubbleChart.define('default_model', {
       start: "1800",
       end: "2015",
       value: "2015",
-      step: 1,
-      trails: true,
-      lockNonSelected: 0,
-      adaptMinMaxZoom: false
+      step: 1
     },
     entities: {
       dim: "geo",
@@ -521,7 +522,7 @@ BubbleChart.define('default_model', {
   },
   language: language,
   ui: {
-    'vzb-tool-bubblechart': {
+    chart: {
       whenHovering: {
         showProjectionLineX: true,
         showProjectionLineY: true,
@@ -529,10 +530,12 @@ BubbleChart.define('default_model', {
         higlightValueY: true
       },
       labels: {
-        autoResolveCollisions: true,
         dragging: true,
         removeLabelBox: false
-      }
+      },
+      trails: true,
+      lockNonSelected: 0,
+      adaptMinMaxZoom: false
     },
     presentation: false
   }

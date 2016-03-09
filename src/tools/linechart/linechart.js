@@ -103,16 +103,16 @@ var LineChart = Tool.extend('LineChart', {
 
     ui: {
       'vzb-tool-line-chart': {
-        entity_labels: {
-          min_number_of_entities_when_values_hide: 2 //values hide when showing 2 entities or more
+        labels: {
+          min_number_of_entities_when_values_hide: 10 //values hide when showing 10 entities or more
         },
         whenHovering: {
-          hideVerticalNow: 0,
+          hideVerticalNow: true,
           showProjectionLineX: true,
           showProjectionLineY: true,
           higlightValueX: true,
           higlightValueY: true,
-          showTooltip: 0
+          showTooltip: true
         }
       }
     }

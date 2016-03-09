@@ -38,7 +38,7 @@ init: function(config, parent) {
   {
     component: simplecheckbox,
     placeholder: '.vzb-removelabelbox-switch',
-    model: ["ui.vzb-tool-bubblechart", "language"],
+    model: ["ui.chart", "language"],
     checkbox: 'removeLabelBox',
     submodel: 'labels'
   }

@@ -99,6 +99,11 @@ var BubbleMap = Tool.extend('BubbleMap', {
       path: "data/waffles/basic-indicators.csv"
     },
     ui: {
+      chart: {
+        labels: {
+          dragging: true
+        }
+      },
       presentation: true
     }
   }

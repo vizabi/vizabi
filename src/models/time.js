@@ -38,25 +38,12 @@ var TimeModel = Model.extend({
     playing: false,
     loop: false,
     round: 'round',
-    delay: 300,
-    delayStart: 1200,
-    delayEnd: 75,
-    delayThresholdX2: 300,
-    delayThresholdX4: 150,
-    delaySet: false,
+    delay: 300, //delay between animation frames
+    delayThresholdX2: 300, //delay X2 boundary: if less -- then every other frame will be dropped and animation dely will be double the value
+    delayThresholdX4: 150, //delay X4 boundary: if less -- then 3/4 frame will be dropped and animation dely will be 4x the value
     unit: "year",
-    step: 1, //step must be integer
-    adaptMinMaxZoom: false, //TODO: remove from here. only for bubble chart
-    xLogStops: [], //TODO: remove from here. only for mountain chart
-    yMaxMethod: "immediate", //TODO: remove from here. only for mountain chart
-    record: false,
-    probeX: 0, //TODO: remove from here. only for mountain chart
-    tailFatX: 1, //TODO: remove from here. only for mountain chart
-    tailCutX: 0, //TODO: remove from here. only for mountain chart
-    tailFade: 1, //TODO: remove from here. only for mountain chart
-    xScaleFactor: 1, //TODO: remove from here. only for mountain chart
-    xScaleShift: 0, //TODO: remove from here. only for mountain chart
-    xPoints: 50 //TODO: remove from here. only for mountain chart
+    step: 1, //step must be integer, and expressed in units
+    record: false
   },
 
   /**

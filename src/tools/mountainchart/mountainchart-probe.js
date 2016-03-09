@@ -12,7 +12,7 @@ var MCProbe = Class.extend({
             var _this = this.context;
             if (!options) options = {};
 
-            if (!options.level) options.level = _this.model.time.probeX;
+            if (!options.level) options.level = _this.model.ui.chart.probeX;
 
             _this.probeEl.classed("vzb-hidden", !options.level);
             if (!options.level) return;
@@ -41,13 +41,13 @@ var MCProbe = Class.extend({
 
             var formatter1 = d3.format(".3r");
             var formatter2 = _this.model.marker.axis_y.tickFormatter;
-            _this.heightOfLabels = _this.heightOfLabels || (.66 * this.height);
+            _this.heightOfLabels = _this.heightOfLabels || (.66 * _this.height);
 
             _this.probeTextEl.each(function (d, i) {
                 if (i !== 8) return;
                 var view = d3.select(this);
 
-                if (!options.full && _this.model.time.probeX == _this.model.time.tailFatX) {
+                if (!options.full && _this.model.ui.chart.probeX == _this.model.marker.axis_x.tailFatX) {
 
                     view.text(_this.translator("mount/extremepoverty"))
                         .classed("vzb-hidden", false)

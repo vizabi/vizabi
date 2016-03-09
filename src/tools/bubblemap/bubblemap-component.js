@@ -103,29 +103,17 @@ var BubbleMapComponent = Component.extend({
 
     _this.COLOR_WHITEISH = "#fdfdfd";
       
-    var externalUiModel = this.ui["vzb-tool-" + this.name].getPlainObject();
-
-    this.cached = {};
-    // default UI settings
-    this.ui = utils.extend({
-      labels: {}
-    }, externalUiModel);
-
-    this.ui.labels = utils.extend({
-      autoResolveCollisions: false,
-      dragging: true
-    }, externalUiModel.labels);
-
     this.labelDragger = d3.behavior.drag()
       .on("dragstart", function(d, i) {
         d3.event.sourceEvent.stopPropagation();
+        if(!_this.ui.chart.labels.dragging) return;
         var KEY = _this.KEY;
         _this.druging = d[KEY];
       })
       .on("drag", function(d, i) {
+        if(!_this.ui.chart.labels.dragging) return;
 
         var KEY = _this.KEY;
-        if(!_this.ui.labels.dragging) return;
         //_this.cached[d[KEY]].scaledS0 = 0; // to extend line when radius shorten
         var cache = _this.cached[d[KEY]];
         cache.labelFixed = true;
@@ -146,6 +134,8 @@ var BubbleMapComponent = Component.extend({
         _this._repositionLabels(d, i, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0, lineGroup);
       })
       .on("dragend", function(d, i) {
+        if(!_this.ui.chart.labels.dragging) return;
+        
         var KEY = _this.KEY;
         _this.druging = null;
         _this.model.entities.setLabelOffset(d, [
@@ -261,6 +251,7 @@ var BubbleMapComponent = Component.extend({
 
     this.KEY = this.model.entities.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
+    this.cached = {};
       
       
     this.updateUIStrings();
@@ -836,13 +827,11 @@ var BubbleMapComponent = Component.extend({
   _updateLabel: function(d, index, valueX, valueY, scaledS, valueL, duration) {
     var _this = this;
     var KEY = this.KEY;
-    if(d[KEY] == _this.druging)
-      return;
+    if(d[KEY] == _this.druging) return;
+    if(duration == null) duration = _this.duration;
 
     if(_this.cached[d[KEY]] == null) _this.cached[d[KEY]] = {};
-
     var cached = _this.cached[d[KEY]];
-    if(duration == null) duration = _this.duration;
 
     // only for selected entities
     if(_this.model.entities.isSelected(d) && _this.entityLabels != null) {

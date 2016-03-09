@@ -61,27 +61,6 @@ var LCComponent = Component.extend({
     this.timeUpdatedOnce = false;
     this.sizeUpdatedOnce = false;
 
-    var externalUiModel = this.ui["vzb-tool-" + this.name].getPlainObject();
-      
-    // default UI settings
-    this.ui = utils.extend({
-      entity_labels: {},
-      whenHovering: {}
-    }, externalUiModel);
-
-    this.ui.entity_labels = utils.extend({
-      min_number_of_entities_when_values_hide: 10
-    }, externalUiModel.entity_labels);
-
-    this.ui.whenHovering = utils.extend({
-      hideVerticalNow: true,
-      showProjectionLineX: true,
-      showProjectionLineY: true,
-      higlightValueX: true,
-      higlightValueY: true,
-      showTooltip: true
-    }, this.ui.whenHovering);
-
     this.getNearestKey = utils.memoize(this.getNearestKey);
   },
 
@@ -605,7 +584,7 @@ var LCComponent = Component.extend({
 
         var value = _this.yAxis.tickFormat()(_this.cached[d[KEY]].valueY);
         var name = label.length < 13 ? label : label.substring(0, 10) + '...';
-        var valueHideLimit = _this.ui.entity_labels.min_number_of_entities_when_values_hide;
+        var valueHideLimit = _this.ui.chart.labels.min_number_of_entities_when_values_hide;
 
         var t = entity.select(".vzb-lc-labelname")
           .style("fill", colorShadow)
@@ -707,7 +686,7 @@ var LCComponent = Component.extend({
     var scaledTime = _this.xScale(resolvedTime);
     var scaledValue = _this.yScale(resolvedValue);
 
-    if(_this.ui.whenHovering.showTooltip) {
+    if(_this.ui.chart.whenHovering.showTooltip) {
       //position tooltip
       _this.tooltip
         //.style("right", (_this.width - scaledTime + _this.margin.right ) + "px")
@@ -718,18 +697,18 @@ var LCComponent = Component.extend({
     }
 
     // bring the projection lines to the hovering point
-    if(_this.ui.whenHovering.hideVerticalNow) {
+    if(_this.ui.chart.whenHovering.hideVerticalNow) {
       _this.verticalNow.style("opacity", 0);
     }
 
-    if(_this.ui.whenHovering.showProjectionLineX) {
+    if(_this.ui.chart.whenHovering.showProjectionLineX) {
       _this.projectionX
         .style("opacity", 1)
         .attr("y2", scaledValue)
         .attr("x1", scaledTime)
         .attr("x2", scaledTime);
     }
-    if(_this.ui.whenHovering.showProjectionLineY) {
+    if(_this.ui.chart.whenHovering.showProjectionLineY) {
       _this.projectionY
         .style("opacity", 1)
         .attr("y1", scaledValue)
@@ -737,11 +716,11 @@ var LCComponent = Component.extend({
         .attr("x1", scaledTime);
     }
 
-    if(_this.ui.whenHovering.higlightValueX) _this.xAxisEl.call(
+    if(_this.ui.chart.whenHovering.higlightValueX) _this.xAxisEl.call(
       _this.xAxis.highlightValue(resolvedTime).highlightTransDuration(0)
     );
 
-    if(_this.ui.whenHovering.higlightValueY) _this.yAxisEl.call(
+    if(_this.ui.chart.whenHovering.higlightValueY) _this.yAxisEl.call(
       _this.yAxis.highlightValue(resolvedValue).highlightTransDuration(0)
     );
 

@@ -45,7 +45,8 @@ var MountainChartComponent = Component.extend({
             { name: "time", type: "time" },
             { name: "entities", type: "entities" },
             { name: "marker", type: "model" },
-            { name: "language", type: "language" }
+            { name: "language", type: "language" },
+            { name: "ui", type: "model" }
         ];
 
         //attach event listeners to the model items
@@ -60,28 +61,31 @@ var MountainChartComponent = Component.extend({
                     _this.redrawDataPoints();
                 }
             },
-            "change:time.xScaleFactor": function () {
+            "change:marker.axis_x.xScaleFactor": function () {
                 _this.ready();
             },
-            "change:time.xScaleShift": function () {
+            "change:marker.axis_x.xScaleShift": function () {
                 _this.ready();
             },
-            "change:time.tailCutX": function () {
+            "change:marker.axis_x.tailFatX": function () {
                 _this.ready();
             },
-            "change:time.tailFade": function () {
+            "change:marker.axis_x.tailCutX": function () {
                 _this.ready();
             },
-            "change:time.probeX": function () {
+            "change:marker.axis_x.tailFade": function () {
                 _this.ready();
             },
-            "change:time.xPoints": function () {
+            "change:ui.chart.probeX": function () {
                 _this.ready();
             },
-            "change:time.xLogStops": function () {
+            "change:ui.chart.xPoints": function () {
+                _this.ready();
+            },
+            "change:ui.chart.xLogStops": function () {
                 _this.updateSize();
             },
-            "change:time.yMaxMethod": function () {
+            "change:ui.chart.yMaxMethod": function () {
                 _this._adjustMaxY({ force: true });
                 _this.redrawDataPoints();
             },
@@ -230,12 +234,12 @@ var MountainChartComponent = Component.extend({
         var yearNow = _this.model.time.value.getUTCFullYear();
         var yearEnd = _this.model.time.end.getUTCFullYear();
 
-        this._math.xScaleFactor = this.model.time.xScaleFactor;
-        this._math.xScaleShift = this.model.time.xScaleShift;
+        this._math.xScaleFactor = this.model.marker.axis_x.xScaleFactor;
+        this._math.xScaleShift = this.model.marker.axis_x.xScaleShift;
 
         if (!this.precomputedShapes || !this.precomputedShapes[yearNow] || !this.precomputedShapes[yearEnd]) return;
 
-        var yMax = this.precomputedShapes[this.model.time.yMaxMethod == "immediate" ? yearNow : yearEnd].yMax;
+        var yMax = this.precomputedShapes[this.model.ui.chart.yMaxMethod == "immediate" ? yearNow : yearEnd].yMax;
         var shape = this.precomputedShapes[yearNow].shape;
 
         if (!yMax || !shape || shape.length === 0) return;
@@ -298,8 +302,8 @@ var MountainChartComponent = Component.extend({
         //console.log("ready")
         var _this= this;
 
-        this._math.xScaleFactor = this.model.time.xScaleFactor;
-        this._math.xScaleShift = this.model.time.xScaleShift;
+        this._math.xScaleFactor = this.model.marker.axis_x.xScaleFactor;
+        this._math.xScaleShift = this.model.marker.axis_x.xScaleShift;
 
         this.updateUIStrings();
         this.updateIndicators();
@@ -406,7 +410,7 @@ updateSize: function (meshLength) {
                 toolMargin: margin,
                 pivotingLimit: margin.bottom * 1.5,
                 method: this.xAxis.METHOD_REPEATING,
-                stops: this._readyOnce ? this.model.time.xLogStops : [1]
+                stops: this._readyOnce ? this.model.ui.chart.xLogStops : [1]
             });
 
 
@@ -452,7 +456,7 @@ updateSize: function (meshLength) {
             .attr("width", this.width)
             .attr("height", margin.bottom);
 
-        if (!meshLength) meshLength = this.model.time.xPoints;
+        if (!meshLength) meshLength = this.model.ui.chart.xPoints;
         this.mesh = this._math.generateMesh(meshLength, scaleType, this.xScale.domain());
     },
 
@@ -907,9 +911,9 @@ updateSize: function (meshLength) {
     _spawnMasks: function () {
         var _this = this;
 
-        var tailFatX = this._math.unscale(this.model.time.tailFatX);
-        var tailCutX = this._math.unscale(this.model.time.tailCutX);
-        var tailFade = this.model.time.tailFade;
+        var tailFatX = this._math.unscale(this.model.marker.axis_x.tailFatX);
+        var tailCutX = this._math.unscale(this.model.marker.axis_x.tailCutX);
+        var tailFade = this.model.marker.axis_x.tailFade;
         var k = 2 * Math.PI / (Math.log(tailFatX) - Math.log(tailCutX));
         var m = Math.PI - Math.log(tailFatX) * k;
 
@@ -956,7 +960,7 @@ updateSize: function (meshLength) {
     _adjustMaxY: function (options) {
         if (!options) options = {};
         var _this = this;
-        var method = this.model.time.yMaxMethod;
+        var method = this.model.ui.chart.yMaxMethod;
 
         if (method !== "immediate" && !options.force) return;
         if (method === "latest") {

@@ -20,10 +20,10 @@ var Axes = Dialog.extend({
     var _this = this;
 
     this.model_binds = {
-      'change:state.time.xLogStops': function() {
+      'change:ui.chart.xLogStops': function() {
         _this.updateView();
       },
-      'change:state.time.yMaxMethod': function() {
+      'change:ui.chart.yMaxMethod': function() {
         _this.updateView();
       }
     };
@@ -61,8 +61,8 @@ var Axes = Dialog.extend({
     this.probeFieldEl = this.element.select(".vzb-probe-field")
       .on("change", function() {
         var result = parseFloat(this.value.replace(",", "."));
-        if(!result || result <= _this.model.state.time.tailCutX) {
-          this.value = _this.model.state.time.probeX;
+        if(!result || result <= _this.model.state.marker.axis_x.tailCutX) {
+          this.value = _this.model.ui.chart.probeX;
           return;
         }
         this.value = result;
@@ -77,12 +77,12 @@ var Axes = Dialog.extend({
     var _this = this;
 
     this.yMaxRadio.property('checked', function() {
-      return d3.select(this).node().value === _this.model.state.time.yMaxMethod;
+      return d3.select(this).node().value === _this.model.ui.chart.yMaxMethod;
     })
     this.xLogStops.property('checked', function() {
-      return _this.model.state.time.xLogStops.indexOf(+d3.select(this).node().value) !== -1;
+      return _this.model.ui.chart.xLogStops.indexOf(+d3.select(this).node().value) !== -1;
     })
-    this.probeFieldEl.property("value", this.model.state.time.probeX);
+    this.probeFieldEl.property("value", this.model.ui.chart.probeX);
   },
 
   setModel: function(what, value) {
@@ -101,7 +101,7 @@ var Axes = Dialog.extend({
       result = value;
     }
 
-    this.model.state.time[what] = result;
+    this.model.ui.chart[what] = result;
   }
 });
 

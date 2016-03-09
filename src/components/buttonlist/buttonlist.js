@@ -79,7 +79,7 @@ var ButtonList = Component.extend({
         icon: "trails",
         func: this.toggleBubbleTrails.bind(this),
         required: false,
-        statebind: "state.time.trails",
+        statebind: "ui.chart.trails",
         statebindfunc: this.setBubbleTrails.bind(this)
       },
       'lock': {
@@ -87,7 +87,7 @@ var ButtonList = Component.extend({
         icon: "lock",
         func: this.toggleBubbleLock.bind(this),
         required: false,
-        statebind: "state.time.lockNonSelected",
+        statebind: "ui.chart.lockNonSelected",
         statebindfunc: this.setBubbleLock.bind(this)
       },
       'presentation': {
@@ -132,7 +132,7 @@ var ButtonList = Component.extend({
         if(!_this._readyOnce) return;
 
         if(_this.model.state.entities.select.length === 0) {
-          _this.model.state.time.lockNonSelected = 0;
+          _this.model.ui.chart.lockNonSelected = 0;
         }
         _this.setBubbleTrails();
         _this.setBubbleLock();
@@ -449,32 +449,35 @@ var ButtonList = Component.extend({
   },
 
   toggleBubbleTrails: function() {
-    this.model.state.time.trails = !this.model.state.time.trails;
+    this.model.ui.chart.trails = !this.model.ui.chart.trails;
     this.setBubbleTrails();
   },
   setBubbleTrails: function() {
     var id = "trails";
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
+    if(!btn.node()) return utils.warn("setBubbleTrails: no button '" +id+ "' found in DOM. doing nothing");
 
-    btn.classed(class_active_locked, this.model.state.time.trails);
+    btn.classed(class_active_locked, this.model.ui.chart.trails);
     btn.classed(class_hidden, this.model.state.entities.select.length == 0);
   },
   toggleBubbleLock: function(id) {
     if(this.model.state.entities.select.length == 0) return;
 
-    var locked = this.model.state.time.lockNonSelected;
+    var locked = this.model.ui.chart.lockNonSelected;
     var time = this.model.state.time;
     locked = locked ? 0 : time.timeFormat(time.value);
-    this.model.state.time.lockNonSelected = locked;
+    this.model.ui.chart.lockNonSelected = locked;
 
     this.setBubbleLock();
   },
   setBubbleLock: function() {
     var id = "lock";
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
+    if(!btn.node()) return utils.warn("setBubbleLock: no button '" +id+ "' found in DOM. doing nothing");
+      
     var translator = this.model.language.getTFunction();
 
-    var locked = this.model.state.time.lockNonSelected;
+    var locked = this.model.ui.chart.lockNonSelected;
 
     btn.classed(class_unavailable, this.model.state.entities.select.length == 0);
     btn.classed(class_hidden, this.model.state.entities.select.length == 0);

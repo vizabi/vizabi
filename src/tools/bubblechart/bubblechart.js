@@ -59,10 +59,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
   default_model: {
     state: {
       time: {
-        round: "ceil",
-        trails: true,
-        lockNonSelected: 0,
-        adaptMinMaxZoom: false
+        round: "ceil"
       },
       entities: {
         dim: "geo",
@@ -109,6 +106,21 @@ var BubbleChart = Tool.extend('BubbleChart', {
       path: "data/waffles/basic-indicators.csv"
     },
     ui: {
+      chart: {
+        whenHovering: {
+          showProjectionLineX: true,
+          showProjectionLineY: true,
+          higlightValueX: true,
+          higlightValueY: true
+        },
+        labels: {
+          dragging: true,
+          removeLabelBox: false
+        },
+        trails: true,
+        lockNonSelected: 0,
+        adaptMinMaxZoom: false
+      },
       presentation: true 
     }
   }
