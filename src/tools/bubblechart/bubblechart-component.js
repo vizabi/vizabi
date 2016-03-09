@@ -470,12 +470,11 @@ var BubbleChartComp = Component.extend({
       _this.redrawDataPoints();
       _this.updateBubbleOpacity();
       _this.cached = {};
-      if(_this.model.time.adaptMinMaxZoom) _this._panZoom.expandCanvas();
-
       _this._trails.create();
       _this._trails.run("findVisible");
       _this.zoomToMarkerMaxMin(); // includes redraw data points and trail resize
       _this._trails.run(["recolor", "opacityHandler", "reveal"]);
+      if(_this.model.time.adaptMinMaxZoom) _this._panZoom.expandCanvas();
     });
   },
     
