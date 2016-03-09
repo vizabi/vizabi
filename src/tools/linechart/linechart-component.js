@@ -682,7 +682,9 @@ var LCComponent = Component.extend({
 
 
 
-    this.getValuesForYear(resolvedTime).then(function(data) {
+    if(!utils.isDate(resolvedTime)) resolvedTime = this.model.time.timeFormat.parse(resolvedTime);
+      
+    this.model.marker.getFrame(resolvedTime, function(data) {
       var nearestKey = _this.getNearestKey(mousePos, data.axis_y, _this.yScale.bind(_this));
     resolvedValue = data.axis_y[nearestKey];
     if(!me) me = {};
@@ -768,13 +770,6 @@ var LCComponent = Component.extend({
       _this.hoveringNow = null;
     }, 300);
 
-  },
-
-  getValuesForYear: function(year) {
-    if(!utils.isDate(year)) {
-      year = this.model.time.timeFormat.parse(year);
-    }
-    return this.model.marker.getFrame(year);
   },
 
   /**
