@@ -65,6 +65,9 @@ var SimpleSlider = Component.extend({
           value = this.slider_properties.scale(min);
         }
       }
+        
+      //step also defines the rounding of values that willbe sent to model: 0.1 --> 1 digit, 0.01 --> 2, 1 and up --> 0
+      this.roundTo = step > 1 ? 0 : Math.round(Math.abs(Math.log(step)/Math.LN10));
 
       //check and change the slider's thumb size
       if(this.thumb_size){
@@ -109,7 +112,7 @@ var SimpleSlider = Component.extend({
       // rescale value if scale is supplied in slider_properties 
       if(this.slider_properties && this.slider_properties.scale) value = this.slider_properties.scale(value);
       
-      this.model.submodel.getModelObject(this.arg).set(value, force, persistent);
+      this.model.submodel.getModelObject(this.arg).set(value.toFixed(this.roundTo), force, persistent);
     }
 
   });
