@@ -7,7 +7,7 @@
     "build/dist"
   ],
   "scripts": {
-    "prepublish": "gulp build"
+    "build": "sh ./docker_run.sh"
   },
   "repository": {
     "type": "git",
