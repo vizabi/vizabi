@@ -378,7 +378,7 @@ var LCComponent = Component.extend({
         scaleType: this.model.marker.axis_y.scaleType,
         timeFormat: this.model.time.timeFormat,
         toolMargin: {
-          top: 0,
+          top: 5,
           right: this.margin.right,
           left: this.margin.left,
           bottom: this.margin.bottom

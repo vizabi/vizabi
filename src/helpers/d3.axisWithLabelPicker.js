@@ -70,15 +70,17 @@ export default function axisSmart() {
           view.attr("y", dimension == X ? (orient == VERTICAL ? -1 : 1) * (axis.tickPadding() + axis.tickSize()) :
             0);
           view.attr("dy", dimension == X ? (orient == VERTICAL ? 0 : ".72em") : ".32em");
-
-          if(axis.repositionLabels() == null) return;
-          var shift = axis.repositionLabels()[i] || {
-            x: 0,
-            y: 0
-          };
-          view.attr("x", +view.attr("x") + shift.x);
-          view.attr("y", +view.attr("y") + shift.y);
         })
+      
+      if(axis.repositionLabels() != null){
+          g.selectAll(".tick")
+            .each(function(d, i) {
+              var view = d3.select(this).select("text");
+              var shift = axis.repositionLabels()[i] || {x: 0, y: 0};
+              view.attr("x", +view.attr("x") + shift.x);
+              view.attr("y", +view.attr("y") + shift.y);
+            })
+      }
 
       if(axis.tickValuesMinor() == null) axis.tickValuesMinor([]);
       // add minor ticks
@@ -900,19 +902,22 @@ export default function axisSmart() {
         if(i != 0 && i != tickValues.length - 1) return;
 
         // compute the influence of the axis head
-        var repositionHead = margin.head + options.bump + (orient == HORIZONTAL ? 1 : 0) * d3.max(scale.range()) -
-          (orient == HORIZONTAL ? 0 : 1) * d3.min(scale.range()) + (orient == HORIZONTAL ? -1 : 1) * scale(d) - (
-            dimension == "x") * options.formatter(d).length * options.widthOfOneDigit / 2 - (dimension == "y") *
-          options.heightOfOneDigit / 2
+        var repositionHead = margin.head + options.bump 
+          + (orient == HORIZONTAL ? 1 : 0) * d3.max(scale.range()) 
+          - (orient == HORIZONTAL ? 0 : 1) * d3.min(scale.range()) 
+          + (orient == HORIZONTAL ? -1 : 1) * scale(d) 
+          - (dimension == "x") * options.formatter(d).length * options.widthOfOneDigit / 2 
+          - (dimension == "y") * options.heightOfOneDigit / 2
           // we may consider or not the label margins to give them a bit of spacing from the edges
           - (dimension == "x") * parseInt(options.cssMarginRight) 
           - (dimension == "y") * parseInt(options.cssMarginTop);
 
         // compute the influence of the axis tail
-        var repositionTail = Math.min(margin.tail, options.widthOfOneDigit) + options.bump + (orient == VERTICAL ?
-            1 : 0) * d3.max(scale.range()) - (orient == VERTICAL ? 0 : 1) * d3.min(scale.range()) + (orient ==
-            VERTICAL ? -1 : 1) * scale(d) - (dimension == "x") * options.formatter(d).length * options.widthOfOneDigit /
-          2 - (dimension == "y") * options.heightOfOneDigit / 2
+        var repositionTail = Math.min(margin.tail, options.widthOfOneDigit) + options.bump 
+          + (orient == VERTICAL ? 1 : 0) * d3.max(scale.range()) 
+          - (orient == VERTICAL ? 0 : 1) * d3.min(scale.range()) 
+          + (orient == VERTICAL ? -1 : 1) * scale(d) - (dimension == "x") 
+          * options.formatter(d).length * options.widthOfOneDigit / 2 - (dimension == "y") * options.heightOfOneDigit / 2
           // we may consider or not the label margins to give them a bit of spacing from the edges
           - (dimension == "x") * parseInt(options.cssMarginLeft) 
           - (dimension == "y") * parseInt(options.cssMarginBottom);
