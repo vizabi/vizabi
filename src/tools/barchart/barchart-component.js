@@ -296,7 +296,8 @@ var BarComponent = Component.extend({
       .labelerOptions({
         scaleType: this.model.marker.axis_x.scaleType,
         timeFormat: this.model.time.timeFormat,
-        toolMargin: margin
+        toolMargin: margin,
+        constantRakeLength: this.width
       });
 
     this.xAxisEl.attr("transform", "translate(0," + this.height + ")")

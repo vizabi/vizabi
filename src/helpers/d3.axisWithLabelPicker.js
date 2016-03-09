@@ -111,11 +111,12 @@ export default function axisSmart() {
             .attr("y1", orient == HORIZONTAL ? 0 : 0)
             .attr("y2", orient == HORIZONTAL ? 0 : options.constantRakeLength)      
       }else{
+          //TODO: this will not work for the "ordinal" scaleType
           rake 
-            .attr("x1", orient == VERTICAL ? 0 : d3.min(scale.range()) - options.bump||0 - 1)
-            .attr("x2", orient == VERTICAL ? 0 : d3.max(scale.range()) + options.bump||0)
-            .attr("y1", orient == HORIZONTAL ? 0 : d3.min(scale.range()) - options.bump||0)
-            .attr("y2", orient == HORIZONTAL ? 0 : d3.max(scale.range()) + options.bump||0)
+            .attr("x1", orient == VERTICAL ? 0 : d3.min(scale.range()) - (options.bump||0) - 1)
+            .attr("x2", orient == VERTICAL ? 0 : d3.max(scale.range()) + (options.bump||0))
+            .attr("y1", orient == HORIZONTAL ? 0 : d3.min(scale.range()) - (options.bump||0))
+            .attr("y2", orient == HORIZONTAL ? 0 : d3.max(scale.range()) + (options.bump||0))
       }
 
     };
