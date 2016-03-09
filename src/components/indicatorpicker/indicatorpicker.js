@@ -86,7 +86,12 @@ var IndPicker = Component.extend({
 
         var _this = this;
         this.translator = this.model.language.getTFunction();
-        this.el_select.text(this.translator("indicator/" + this.model.marker[this.markerID].which));
+        
+        var which = this.model.marker[this.markerID].which;
+        var type = this.model.marker[this.markerID]._type;
+        
+        //Let the indicator "_default" in tree menu be translated differnetly for every hook type
+        this.el_select.text(this.translator("indicator" + (which==="_default" ? "/" + type : "") + "/" + which));
     }
     
 });

@@ -209,7 +209,7 @@ var ColorLegend = Component.extend({
       } else {
 
         d3.select(this).select(".vzb-cl-color-legend")
-          .text(_this.translator("color/" + d));
+          .text(_this.translator("indicator/color/" + d));
       }
     });
   },

@@ -84,7 +84,7 @@ var Menu = Class.extend({
     return this;
   },
   setWidth: function(width, recursive) {
-    if (this.width != width) {
+    if (this.width != width && this.entity.node()) {
       this.width = width;
       if (this.entity.classed('active')) {
         this.entity.transition()
@@ -693,10 +693,11 @@ var TreeMenu = Component.extend({
         if(_this.langStrings()) {
           for(var language in _this.langStrings()) {
             for(var key in _this.langStrings()[language]) {
+                console.log(key.replace(/.*\//,""))
               if(key.indexOf('indicator/') == 0 &&
-                key.replace(/indicator\//g,"") == data[i][OPTIONS.SEARCH_PROPERTY] &&
-                _this.langStrings()[language][key].toLowerCase().indexOf(
-                  value.toLowerCase()) >= 0) {
+                //regexp: match everything until the last occurence of "/"
+                key.replace(/.*\//,"") == data[i][OPTIONS.SEARCH_PROPERTY] &&
+                _this.langStrings()[language][key].toLowerCase().indexOf(value.toLowerCase()) >= 0) {
                 return true;
               };
             };
@@ -762,7 +763,9 @@ var TreeMenu = Component.extend({
     if(data == null) data = tree;
     this.wrapper.select('ul').remove();
 
-    var indicatorsDB = _this.model.marker.getMetadata();         
+    var indicatorsDB = _this.model.marker.getMetadata();    
+      
+    var hookType = _this.model.marker[markerID]._type;
 
     var allowedIDs = utils.keys(indicatorsDB).filter(function(f) {
       //check if indicator is denied to show with allow->names->!indicator
@@ -800,7 +803,8 @@ var TreeMenu = Component.extend({
       li.append('span')
         .classed(css.list_item_label, true)
         .text(function(d) {
-          return _this.translator("indicator/" + d.id);
+          //Let the indicator "_default" in tree menu be translated differnetly for every hook type
+          return _this.translator("indicator" + (d.id==="_default" ? "/" + hookType : "") + "/" + d.id);
         })
         .attr("info", function(d) {
           return d.id;
@@ -830,9 +834,9 @@ var TreeMenu = Component.extend({
       OPTIONS.MENU_DIRECTION = MENU_VERTICAL;
     }
     createSubmeny(this.wrapper, dataFiltered, true);
-    this.menuEntity = new Menu(null, this.wrapper.select('.' + css.list_top_level))
-      .setWidth(this.activeProfile.col_width, true)
-      .setDirection(OPTIONS.MENU_DIRECTION);
+    this.menuEntity = new Menu(null, this.wrapper.select('.' + css.list_top_level));
+    if(this.menuEntity) this.menuEntity.setWidth(this.activeProfile.col_width, true)
+    if(this.menuEntity) this.menuEntity.setDirection(OPTIONS.MENU_DIRECTION);
 
     var pointer = "_default";
     if(allowedIDs.indexOf(this.model.marker[markerID].which) > -1) pointer = this.model.marker[markerID].which;
