@@ -245,7 +245,7 @@ var MountainChartComponent = Component.extend({
         if (!yMax || !shape || shape.length === 0) return;
 
         this.xScale = d3.scale.log().domain([this.model.marker.axis_x.domainMin, this.model.marker.axis_x.domainMax]);
-        this.yScale = d3.scale.linear().domain([0, +yMax]);
+        this.yScale = d3.scale.linear().domain([0, Math.round(yMax)]);
 
         _this.updateSize(shape.length);
         _this.zoomToMaxMin();
@@ -538,7 +538,7 @@ updateSize: function (meshLength) {
             .filter(function(d) { return 1
                 && _this.values.axis_x[d[_this.KEY]]
                 && _this.values.axis_y[d[_this.KEY]]
-                && _this.values.size[d[_this.KEY]];
+                && _this.values.axis_s[d[_this.KEY]];
             })
             .map(function(d) {
                 var pointer = {};
@@ -933,7 +933,7 @@ updateSize: function (meshLength) {
         var _this = this;
 
         var norm = values.axis_y[d.KEY()];
-        var sigma = _this._math.giniToSigma(values.size[d.KEY()]);
+        var sigma = _this._math.giniToSigma(values.axis_s[d.KEY()]);
         var mu = _this._math.gdpToMu(values.axis_x[d.KEY()], sigma);
 
         if (!norm || !mu || !sigma) return [];
@@ -969,12 +969,12 @@ updateSize: function (meshLength) {
             _this.values = values;
             _this.updateTime();
             _this.values = prevValues;
-            _this.yScale.domain([0, _this.yMax]);
+            _this.yScale.domain([0, Math.round(_this.yMax)]);
             _this.updateTime();
           });
         } else {
           if (!_this.yMax) utils.warn("Setting yMax to " + _this.yMax + ". You failed again :-/");
-          _this.yScale.domain([0, _this.yMax]);
+          _this.yScale.domain([0, Math.round(_this.yMax)]);
         }
     },
 

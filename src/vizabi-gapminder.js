@@ -327,7 +327,7 @@ MountainChart.define('default_model', {
         xScaleFactor: 1.039781626,
         xScaleShift: -1.127066411
       },
-      size: {
+      axis_s: {
         use: "indicator",
         which: "gini",
         scaleType: 'linear'
