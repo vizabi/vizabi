@@ -34,7 +34,7 @@
     "hints/mount/howtostack": "Stack mountains:",
     "hints/mount/howtomerge": "Merge mountains:",
     "hints/mount/xlimits": "X-axis limits:",
-    "hints/mount/probe": "X-probe (extreme poverty at 1.85):",
+    "hints/mount/probe": "X-line: extreme poverty at 1.85",
     "hints/mount/onlyshowthefollowing": "Hide all shapes except:",
     "hints/min": "min",
     "hints/max": "max",
