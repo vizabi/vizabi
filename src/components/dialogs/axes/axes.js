@@ -50,8 +50,7 @@ var Axes = Dialog.extend({
     }, {
       component: simplecheckbox,
       placeholder: '.vzb-axes-options',
-      model: ["state", "language"],
-      submodel: 'time',
+      model: ["ui.chart", "language"],
       checkbox: 'adaptMinMaxZoom'
     }];
 
