@@ -480,7 +480,7 @@ BubbleChart.define('default_model', {
 
       axis_y: {
         use: "indicator",
-        which: "child_mortality_rate_per1000",
+        which: "life_expectancy",
         scaleType: "linear",
         allow: {
           scales: ["linear", "log"]
