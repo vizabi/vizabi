@@ -19,8 +19,8 @@ var Layout = Events.extend({
       min_height: 400
     },
     large: {
-      min_width: 1000,
-      min_height: 700
+      min_width: 900,
+      min_height: 600
     }
   },
 
