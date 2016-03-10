@@ -1658,11 +1658,19 @@ var BubbleChartComp = Component.extend({
         d[TIMEDIM] = _this.model.time.timeFormat.parse("" + d.trailStartTime) || _this.time;
       }
 
-      this._axisProjections(d);
-
       _this.model.marker.getFrame(d[TIMEDIM], function(values) {
+          var x = _this.xScale(values.axis_x[d[KEY]]);
+          var y = _this.yScale(values.axis_y[d[KEY]]);
+          var s = utils.areaToRadius(_this.sScale(values.size[d[KEY]]));
+          var entityOutOfView = false;
+          
+          if(x + s < 0 || x - s > _this.width || y + s < 0 || y - s > _this.height) {
+            entityOutOfView = true;
+          }
+          
           //show tooltip
           var text = "";
+          var hoverTrail = false;
           if(_this.model.entities.isSelected(d) && _this.model.ui.chart.trails) {
             text = _this.model.time.timeFormat(_this.time);
             var labelData = _this.entityLabels
@@ -1671,15 +1679,18 @@ var BubbleChartComp = Component.extend({
               })
               .classed("vzb-highlighted", true)
               .datum();
+            hoverTrail = text !== labelData.trailStartTime && !d3.select(d3.event.target).classed('bubble-' + d[KEY]);
             text = text !== labelData.trailStartTime && _this.time === d[TIMEDIM] ? text : '';
           } else {
             text = _this.model.entities.isSelected(d) ? '': values.label[d[KEY]];
           }
+
+          if(!entityOutOfView && !hoverTrail) {
+            _this._axisProjections(d);
+          }
+
           //set tooltip and show axis projections
-          if(text) {
-            var x = _this.xScale(values.axis_x[d[KEY]]);
-            var y = _this.yScale(values.axis_y[d[KEY]]);
-            var s = utils.areaToRadius(_this.sScale(values.size[d[KEY]]));
+          if(text && !entityOutOfView && !hoverTrail) {
             _this._setTooltip(text, x, y, s);
           }
 
