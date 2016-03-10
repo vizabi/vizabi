@@ -34,8 +34,14 @@ var language = {
 // http://static.gapminderdev.org/vizabi/develop/preview/
 
 //TODO: remove hardcoded path from source code
+
+// Keep compatibility::feature, no internet connection - requesting data from local host.
+var locationArray = window.location.href.split("/");
+var localUrl = locationArray.splice(0, locationArray.indexOf("preview")).join("/") + "/preview/";
+
 globals.gapminder_paths = {
-  wsUrl: 'http://waffle-server-dev.gapminderdev.org'
+  wsUrl: 'http://waffle-server-dev.gapminderdev.org',
+  baseUrl: localUrl
 };
 
 //OVERWRITE OPTIONS
@@ -89,6 +95,8 @@ BarChart.define('default_model', {
   data: {
     reader: "waffle",
     path: globals.gapminder_paths.wsUrl + "/api/graphs/stats/vizabi-tools"
+    //reader: "csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv"
   },
   language: language,
   ui: {
@@ -168,6 +176,8 @@ BarRankChart.define('default_model', {
   data: {
     reader: "waffle",
     path: globals.gapminder_paths.wsUrl + "/api/graphs/stats/vizabi-tools",
+    //reader: "csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv"
     splash: true
   },
   ui: {
@@ -237,6 +247,8 @@ BubbleMap.define('default_model', {
   data: {
     reader: "waffle",
     path: globals.gapminder_paths.wsUrl + "/api/graphs/stats/vizabi-tools",
+    //reader: "csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   language: language,
@@ -349,6 +361,8 @@ MountainChart.define('default_model', {
   data: {
     reader: "waffle",
     path: globals.gapminder_paths.wsUrl + "/api/graphs/stats/vizabi-tools",
+    //reader: "csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   ui: {
@@ -406,6 +420,7 @@ LineChart.define('default_model', {
   data: {
     reader: "csv",
     path: globals.gapminder_paths.wsUrl + "/api/vizabi/geo_properties.csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: false
   },
   language: language,
@@ -504,6 +519,8 @@ BubbleChart.define('default_model', {
   data: {
     reader: "waffle",
     path: globals.gapminder_paths.wsUrl + "/api/graphs/stats/vizabi-tools",
+    //reader: "csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   language: language,
@@ -585,6 +602,7 @@ PopByAge.define('default_model', {
   data: {
     reader: "csv",
     path: globals.gapminder_paths.wsUrl + "/{{geo}}.csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/{{geo}}.csv",
     splash: false
   },
   language: language,
@@ -632,6 +650,7 @@ DonutChart.define('default_model', {
   data: {
     reader: "csv",
     path: globals.gapminder_paths.wsUrl + "/api/vizabi/basic-indicators.csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv",
     splash: false
   },
   language: language,
@@ -647,6 +666,7 @@ WaffleReader.define('basepath', "http://52.18.235.31:8001/values/waffle");
 
 //preloading mountain chart precomputed shapes
 MCComponent.define("preload", function(done) {
+  //var shape_path = globals.gapminder_paths.baseUrl + "data/mc_precomputed_shapes.json";
   var shape_path = globals.gapminder_paths.wsUrl + "/api/vizabi/mc_precomputed_shapes.json";
 
   d3.json(shape_path, function(error, json) {
@@ -658,6 +678,7 @@ MCComponent.define("preload", function(done) {
 
 //preloading bubble map country shapes
 BMComponent.define("preload", function(done) {
+  //var shape_path = globals.gapminder_paths.baseUrl + "data/world-50m.json";
   var shape_path = globals.gapminder_paths.wsUrl + "/api/vizabi/world-50m.json";
 
   d3.json(shape_path, function(error, json) {
@@ -673,6 +694,7 @@ Tool.define("preload", function(promise) {
 
   var _this = this;
 
+  //var metadata_path = Vzb._globals.gapminder_paths.baseUrl + "data/waffles/metadata.json";
   var metadata_path = Vzb._globals.gapminder_paths.wsUrl + "/api/vizabi/metadata.json";
   var globals = Vzb._globals;
 
@@ -731,6 +753,7 @@ Tool.define("preloadLanguage", function() {
   var promise = new Promise();
 
   var langModel = this.model.language;
+  //var translation_path = Vzb._globals.gapminder_paths.baseUrl + "data/translation/" + langModel.id + ".json";
   var translation_path = Vzb._globals.gapminder_paths.wsUrl + "/api/vizabi/translation/" + langModel.id + ".json";
 
   if(langModel && !langModel.strings[langModel.id]) {
