@@ -131,9 +131,6 @@ var ButtonList = Component.extend({
       "change:state.entities.select": function(evt) {
         if(!_this._readyOnce) return;
 
-        if(_this.model.state.entities.select.length === 0) {
-          _this.model.ui.chart.lockNonSelected = 0;
-        }
         _this.setBubbleTrails();
         _this.setBubbleLock();
         _this._toggleButtons();
@@ -147,7 +144,7 @@ var ButtonList = Component.extend({
       }      
     }
     
-    Object.keys(this._available_buttons).forEach(function(buttonId) {
+    config.ui.buttons.forEach(function(buttonId) {
       var button = _this._available_buttons[buttonId];
       if(button.statebind) {
         _this.model_binds['change:' + button.statebind] = function(evt) {
@@ -155,6 +152,8 @@ var ButtonList = Component.extend({
         }
       }
     });
+    
+    
     
     this.validatePopupButtons(config.ui.buttons, config.ui.dialogs.popup);
 
@@ -453,11 +452,13 @@ var ButtonList = Component.extend({
     this.setBubbleTrails();
   },
   setBubbleTrails: function() {
+    var trails = this.model.ui.chart.trails;
+    if(!trails && trails !== false) return; 
     var id = "trails";
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
     if(!btn.node()) return utils.warn("setBubbleTrails: no button '" +id+ "' found in DOM. doing nothing");
 
-    btn.classed(class_active_locked, this.model.ui.chart.trails);
+    btn.classed(class_active_locked, trails);
     btn.classed(class_hidden, this.model.state.entities.select.length == 0);
   },
   toggleBubbleLock: function(id) {
@@ -471,13 +472,18 @@ var ButtonList = Component.extend({
     this.setBubbleLock();
   },
   setBubbleLock: function() {
+    var locked = this.model.ui.chart.lockNonSelected;
+    if(!locked && locked !== 0) return;
+
+    if(locked !== 0 && this.model.state.entities.select.length === 0) {
+       locked = this.model.ui.chart.lockNonSelected = 0;
+    }
+
     var id = "lock";
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
     if(!btn.node()) return utils.warn("setBubbleLock: no button '" +id+ "' found in DOM. doing nothing");
       
     var translator = this.model.language.getTFunction();
-
-    var locked = this.model.ui.chart.lockNonSelected;
 
     btn.classed(class_unavailable, this.model.state.entities.select.length == 0);
     btn.classed(class_hidden, this.model.state.entities.select.length == 0);
