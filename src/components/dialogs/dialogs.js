@@ -59,6 +59,9 @@ var Dialogs = Component.extend({
       'label': {
         dialog: dialogs.label,
       },
+      'zoom': {
+        dialog: dialogs.zoom,
+      },
       'axes': {
         dialog: dialogs.axes,
       },

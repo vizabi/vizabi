@@ -1,0 +1,71 @@
+$vzb-button-color: $vzb-color-primary-dark;
+$vzb-button-bg: $vzb-color-white;
+
+.vzb-dialog-zoom-buttonlist {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  background-color: $vzb-color-white;
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+  width: 100%;
+  white-space: nowrap;
+  padding-left: 15px;
+
+  input,
+  textarea,
+  keygen,
+  select,
+  button {
+    font-family: $vzb-font-family;
+  }
+
+  &:-webkit-scrollbar {
+    display: none;
+  }
+  
+  .vzb-buttonlist-btn {
+    width: 40px;
+    &[data-btn="hundredpercent"] {
+      &:active {
+        > .vzb-buttonlist-btn-icon {
+          background-color: $vzb-button-color;
+          border: 1px solid $vzb-button-color;
+          color: $vzb-button-bg;
+
+          .vzb-icon {
+            path,
+            text {
+              fill: $vzb-button-bg;
+            }
+          }
+        }
+      }
+      .fa {
+        padding-left: 0;
+        padding-right: 0;
+        .vzb-icon {
+          width: 26px;
+          vertical-align: top;
+          font-size: 10px;
+          font-weight: 900;
+          text {
+            text-anchor: end;
+          }
+          .percent {
+            text-anchor: start;
+            transform: scale(.6, 1);
+          }
+        }
+      }
+    }
+    >.vzb-buttonlist-btn-icon {
+      @include transition(background-color 100ms ease-in, 
+      color 100ms ease-in, border 100ms ease-in, opacity 100ms ease-in);
+    }
+    >.vzb-buttonlist-btn-title {
+      display: none;
+    }
+  }
+}
