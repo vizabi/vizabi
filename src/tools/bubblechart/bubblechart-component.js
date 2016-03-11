@@ -1155,7 +1155,7 @@ var BubbleChartComp = Component.extend({
         
       if(showhide) view.classed("vzb-invisible", d.hidden);
     } else {
-        if(d.hidden) {
+        if(d.hidden || view.classed("vzb-invisible")) {
            d.hidden = false;
            showhide = true;
        }
