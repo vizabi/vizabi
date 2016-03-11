@@ -1221,8 +1221,10 @@ var BubbleChartComp = Component.extend({
         return f[KEY] == d[KEY]
       });
       var trailStartTime = _this.model.time.timeFormat.parse("" + select.trailStartTime);
+        
+      var brokenInputs = !valueX && valueX !==0 || !valueY && valueY !==0 || !scaledS && scaledS !==0;
 
-      if(!_this.model.ui.chart.trails || trailStartTime - _this.time > 0 || select.trailStartTime == null) {
+      if(!brokenInputs && (!_this.model.ui.chart.trails || trailStartTime - _this.time > 0 || select.trailStartTime == null)) {
 
         select.trailStartTime = _this.model.time.timeFormat(_this.time);
         //the events in model are not triggered here. to trigger uncomment the next line
