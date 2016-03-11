@@ -141,41 +141,38 @@ var ButtonList = Component.extend({
         //   _this.scrollToEnd();
         // }
         // _this.entitiesSelected_1 = _this.model.state.entities.select.length > 0;
-      }      
-    }
-    
+      }
+    }      
+        
     config.ui.buttons.forEach(function(buttonId) {
       var button = _this._available_buttons[buttonId];
-      if(button.statebind) {
+      if(button && button.statebind) {
         _this.model_binds['change:' + button.statebind] = function(evt) {
           button.statebindfunc(buttonId, evt.source.value);
         }
       }
-    });
+    });    
+
+
     
-    
-    
-    this.validatePopupButtons(config.ui.buttons, config.ui.dialogs.popup);
+    this.validatePopupButtons(config.ui.buttons, config.ui.dialogs);
 
     this._super(config, context);
 
   },
 
   readyOnce: function() {
-
     var _this = this;
+    
+    this.element = d3.select(this.placeholder);
+    this.element.selectAll("div").remove();
     
     this.root.findChildByName("gapminder-dialogs").on('close', function( evt, params) {
       _this.setButtonActive(params.id, false);
     });
-
     
     var button_expand = (this.model.ui.dialogs||{}).sidebar || [];
-
-    this.element = d3.select(this.placeholder);
-
-    this.element.selectAll("div").remove();
-
+    
     // // if button_expand has been passed in with boolean param or array must check and covert to array
     // if (button_expand){
     //   this.model.ui.dialogs.sidebar = (button_expand === true) ? this.model.ui.buttons : button_expand;
@@ -187,28 +184,16 @@ var ButtonList = Component.extend({
     
     var button_list = [].concat(this.model.ui.buttons);
 
-    (button_expand||[]).forEach(function(button) {
-      if (button_list.indexOf(button) === -1) {
-        button_list.push(button);
-      }
-    });
+    // (button_expand||[]).forEach(function(button) {
+    //   if (button_list.indexOf(button) === -1) {
+    //     button_list.push(button);
+    //   }
+    // });
 
     this.model.ui.buttons = button_list;
 
     //add buttons and render components
-    this._addButtons();
-
-    var buttons = this.element.selectAll(".vzb-buttonlist-btn");
-
-    //clicking the button
-    buttons.on('click', function() {
-
-      d3.event.preventDefault();
-      d3.event.stopPropagation();
-      
-      var id = d3.select(this).attr("data-btn");
-      _this.proceedClick(id);
-    });
+    this._addButtons(button_list, button_expand);
 
     //store body overflow
     this._prev_body_overflow = document.body.style.overflow;
@@ -240,8 +225,10 @@ var ButtonList = Component.extend({
     }    
   },
   
-  validatePopupButtons: function (buttons, popupDialogs) {
+  validatePopupButtons: function (buttons, dialogs) {
     var _this = this;
+    
+    var popupDialogs = dialogs.popup;
     var popupButtons = buttons.filter(function(d) {
       return (_this._available_buttons[d] && !_this._available_buttons[d].func); 
       });
@@ -363,12 +350,10 @@ var ButtonList = Component.extend({
    * adds buttons configuration to the components and template_data
    * @param {Array} button_list list of buttons to be added
    */
-  _addButtons: function() {
-
+  _addButtons: function(button_list, button_expand) {
+    var _this = this;
     this._components_config = [];
-    var button_list = this.model.ui.buttons||[];
     var details_btns = [];
-    var button_expand = (this.model.ui.dialogs||{}).sidebar || [];
     if(!button_list.length) return;
     //add a component for each button
     for(var i = 0; i < button_list.length; i++) {
@@ -407,6 +392,18 @@ var ButtonList = Component.extend({
           btn.icon + "</span><span class='vzb-buttonlist-btn-title'>" +
           t(btn.title) + "</span>";
       });
+
+    var buttons = this.element.selectAll(".vzb-buttonlist-btn");
+
+    //clicking the button
+    buttons.on('click', function() {
+
+      d3.event.preventDefault();
+      d3.event.stopPropagation();
+      
+      var id = d3.select(this).attr("data-btn");
+      _this.proceedClick(id);
+    });
 
   },
 

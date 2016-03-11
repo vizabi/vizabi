@@ -11,6 +11,7 @@ $vzb-button-color-border: #cce6ed;
 
 
 .vzb-tool-buttonlist,
+.vzb-dialog-zoom-buttonlist,
 .vzb-dialog-options-buttonlist {
   .vzb-buttonlist-btn {
     outline: none;
@@ -42,7 +43,8 @@ $vzb-button-color-border: #cce6ed;
         width: 14px;
         vertical-align: top;
 
-        path {
+        path,
+        text {
           fill: $vzb-button-color;
         }
       }
@@ -67,8 +69,11 @@ $vzb-button-color-border: #cce6ed;
         border: 1px solid $vzb-button-color;
         color: $vzb-button-bg;
 
-        .vzb-icon path {
-          fill: $vzb-button-bg;
+        .vzb-icon {
+          path,
+          text {
+            fill: $vzb-button-bg;
+          }
         }
       }
 

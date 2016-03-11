@@ -4,7 +4,7 @@ import Dialog from '../_dialog';
 
 import { sizeslider, indicatorpicker, simplecheckbox } from 'components/_index'
 /*
- * Size dialog
+ * Label dialog
  */
 
 var Label = Dialog.extend({

@@ -1,0 +1,41 @@
+
+.vzb-tool-dialogs {
+  .vzb-dialogs-dialog {
+    &[data-dlg="zoom"] {
+      @import '../../zoombuttonlist/zoombuttonlist';
+      .vzb-dialog-title {
+        margin-bottom: 10px;
+      }          
+      &.vzb-moreoptions {
+        .vzb-dialog-content {
+          padding-top: 15px;
+        }
+      }
+      &.vzb-sidebar {
+        .vzb-dialog-zoom-buttonlist {
+          background-color: $vzb-color-primary-lightest;
+        }
+        .vzb-zoomonscrolling-switch {
+          display: none;
+        }
+  	  }
+    }
+  }
+}
+
+//responsiveness
+&.vzb-large {
+  &.vzb-dialog-expand-true {
+    .vzb-dialogs-dialog {
+      &[data-dlg="zoom"] {
+        &.vzb-sidebar {
+          flex: none;
+          
+          .vzb-dialog-title {
+            display: none;
+          }          
+        }
+      }
+    }
+  }
+}
