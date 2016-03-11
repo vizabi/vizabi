@@ -236,7 +236,7 @@ var BubbleChartComp = Component.extend({
           return f[KEY] == d[KEY];
         });
 
-        _this._repositionLabels(d, i, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0, lineGroup);
+        _this._repositionLabels(d, i, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0, null, lineGroup);
       })
       .on("dragend", function(d, i) {
         var KEY = _this.KEY;
@@ -1093,7 +1093,7 @@ var BubbleChartComp = Component.extend({
           return f[KEY] == d[KEY]
         })
         .each(function(groupData) {
-          _this._repositionLabels(d, index, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0, lineGroup);
+          _this._repositionLabels(d, index, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0, null, lineGroup);
         });
       }
     });
@@ -1107,38 +1107,36 @@ var BubbleChartComp = Component.extend({
    */
   redrawDataPoints: function(duration) {
     var _this = this;
-
-    if(duration == null) duration = _this.duration;
-
-    var TIMEDIM = this.TIMEDIM;
     var KEY = this.KEY;
-    var values = _this.frame, valuesLocked;
-    var time = this.time;
-    //get values for locked and not locked
+    if(duration == null) duration = _this.duration;
+      
     if(this.model.ui.chart.lockNonSelected && this.someSelected) {
-      time = this.model.time.timeFormat.parse("" + this.model.ui.chart.lockNonSelected);
-    }
-    this.model.marker.getFrame(time, function(valuesLocked) {
-    
-      if(!valuesLocked) return utils.warn("redrawDataPoints: empty data received from marker.getFrames(). doing nothing");
-        
-      _this.entityBubbles.each(function(d, index) {
-      var view = d3.select(this);
-      _this._updateBubble(d, values, valuesLocked, index, view, duration);
+        var time = this.model.time.timeFormat.parse("" + this.model.ui.chart.lockNonSelected);
 
-    }); // each bubble
-    });
+        //get values for locked frames
+        this.model.marker.getFrame(time, function(lockedFrame) {
+            if(!lockedFrame) return utils.warn("redrawDataPoints: empty data received from marker.getFrames(). doing nothing");
+
+            // each bubble
+            _this.entityBubbles.each(function(d, index) {
+                var frame = _this.model.entities.isSelected(d) ? _this.frame : lockedFrame
+                _this._updateBubble(d, frame, index, d3.select(this), duration);
+            });
+        });
+    } else {
+        // each bubble
+        _this.entityBubbles.each(function(d, index) {
+            _this._updateBubble(d, _this.frame, index, d3.select(this), duration);
+        });
+    }
   },
 
   //redraw Data Points
-  _updateBubble: function(d, values, valuesL, index, view, duration) {
-
+  _updateBubble: function(d, values, index, view, duration) {
     var _this = this;
-    var TIMEDIM = this.TIMEDIM;
     var KEY = this.KEY;
-    if(_this.model.ui.chart.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)) {
-      values = valuesL;
-    }
+      
+    var showhide = false;
 
     var valueY = values.axis_y[d[KEY]];
     var valueX = values.axis_x[d[KEY]];
@@ -1150,27 +1148,44 @@ var BubbleChartComp = Component.extend({
     // check if fetching data succeeded
     if(!valueL && valueL!==0 || !valueY && valueY!==0 || !valueX && valueX!==0 || !valueS && valueS!==0) {
       // if entity is missing data it should hide
-      view.classed("vzb-invisible", true)
-
+       if(!d.hidden) {
+           d.hidden = true;
+           showhide = true;
+       }
+        
+      if(showhide) view.classed("vzb-invisible", d.hidden);
     } else {
+        if(d.hidden) {
+           d.hidden = false;
+           showhide = true;
+       }
+    
 
       // if entity has all the data we update the visuals
       var scaledS = utils.areaToRadius(_this.sScale(valueS));
 
-      view.classed("vzb-invisible", false)
-        .style("fill", valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH);
-
+      view.style("fill", valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH);
 
       if(duration) {
         view.transition().duration(duration).ease("linear")
-          .attr("cy", _this.yScale(valueY))
-          .attr("cx", _this.xScale(valueX))
-          .attr("r", scaledS);
+            .attr("cy", _this.yScale(valueY))
+            .attr("cx", _this.xScale(valueX))
+            .attr("r", scaledS)
+            .each("end", function() {
+                //to avoid transition from null state show entity with a delay if it was hidden
+                if(showhide) view.classed("vzb-invisible", d.hidden);
+            })
+        
       } else {
+        
+        //interrupt the ongoing transition and immediately do the visual updates
         view.interrupt()
           .attr("cy", _this.yScale(valueY))
           .attr("cx", _this.xScale(valueX))
           .attr("r", scaledS);
+          
+        //show entity if it was hidden  
+        if(showhide) view.classed("vzb-invisible", d.hidden);
       }
 
       if(this.model.time.record) _this._export.write({
@@ -1185,11 +1200,11 @@ var BubbleChartComp = Component.extend({
 
     } // data exists
       
-    _this._updateLabel(d, index, valueX, valueY, scaledS, valueL, valueLST, duration);
+    _this._updateLabel(d, index, valueX, valueY, scaledS, valueL, valueLST, duration, showhide);
   },
 
 
-  _updateLabel: function(d, index, valueX, valueY, scaledS, valueL, valueLST, duration) {
+  _updateLabel: function(d, index, valueX, valueY, scaledS, valueL, valueLST, duration, showhide) {
     var _this = this;
     var KEY = this.KEY;
     if(d[KEY] == _this.druging)
@@ -1198,7 +1213,6 @@ var BubbleChartComp = Component.extend({
     if(_this.cached[d[KEY]] == null) _this.cached[d[KEY]] = {};
 
     var cached = _this.cached[d[KEY]];
-    if(duration == null) duration = _this.duration;
 
     // only for selected entities
     if(_this.model.entities.isSelected(d) && _this.entityLabels != null) {
@@ -1288,7 +1302,7 @@ var BubbleChartComp = Component.extend({
           var resolvedX = resolvedX0 + cached.labelX_ * _this.width;
           var resolvedY = resolvedY0 + cached.labelY_ * _this.height;
 
-          _this._repositionLabels(d, index, this, resolvedX, resolvedY, resolvedX0, resolvedY0, duration, lineGroup);
+          _this._repositionLabels(d, index, this, resolvedX, resolvedY, resolvedX0, resolvedY0, duration, showhide, lineGroup);
 
         })
     } else {
@@ -1300,7 +1314,7 @@ var BubbleChartComp = Component.extend({
     }
   },
 
-  _repositionLabels: function(d, i, context, _X, _Y, _X0, _Y0, duration, lineGroup) {
+  _repositionLabels: function(d, i, context, _X, _Y, _X0, _Y0, duration, showhide, lineGroup) {
 
     var cache = this.cached[d[this.KEY]];
 
@@ -1308,9 +1322,11 @@ var BubbleChartComp = Component.extend({
           
     //protect label and line from the broken data
     var brokenInputs = !_X && _X !==0 || !_Y && _Y !==0 || !_X0 && _X0 !==0 || !_Y0 && _Y0 !==0;
-    labelGroup.classed("vzb-invisible", brokenInputs);
-    lineGroup.classed("vzb-invisible", brokenInputs);
-    if(brokenInputs) return;
+    if(brokenInputs) {
+        labelGroup.classed("vzb-invisible", brokenInputs);
+        lineGroup.classed("vzb-invisible", brokenInputs);
+        return;
+    }
 
     var rectBBox = labelGroup.select("rect").node().getBBox();
     var width = rectBBox.width;
@@ -1333,12 +1349,20 @@ var BubbleChartComp = Component.extend({
       _Y = this.yScale(cache.labelY0) + cache.labelY_ * this.height;
     }
 
+    if(duration == null) duration = _this.duration;
     if(duration) {
       labelGroup
-        .transition().duration(duration).ease("linear")
-        .attr("transform", "translate(" + _X + "," + _Y + ")");
-      lineGroup.transition().duration(duration).ease("linear")
-        .attr("transform", "translate(" + _X + "," + _Y + ")");
+          .transition().duration(duration).ease("linear")
+          .attr("transform", "translate(" + _X + "," + _Y + ")")
+          .each("end", function(){
+                if(showhide) labelGroup.classed("vzb-invisible", d.hidden);
+          })
+      lineGroup
+          .transition().duration(duration).ease("linear")
+          .attr("transform", "translate(" + _X + "," + _Y + ")")
+          .each("end", function(){
+                if(showhide) lineGroup.classed("vzb-invisible", d.hidden);
+          })
     } else {
       labelGroup
           .interrupt()
@@ -1346,6 +1370,8 @@ var BubbleChartComp = Component.extend({
       lineGroup
           .interrupt()
           .attr("transform", "translate(" + _X + "," + _Y + ")");
+      if(showhide) labelGroup.classed("vzb-invisible", d.hidden);
+      if(showhide) lineGroup.classed("vzb-invisible", d.hidden);
     }
 
     var diffX1 = _X0 - _X;
