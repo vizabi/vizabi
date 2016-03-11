@@ -128,7 +128,25 @@ var BubbleChartComp = Component.extend({
         _this.highlightDataPoints();
       },
       'change:time.value': function() {
-        _this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
+        if (!_this.calculationQueue) { // collect timestamp that we request
+          _this.calculationQueue = [_this.model.time.value.toString()]
+        } else {
+          _this.calculationQueue.push(_this.model.time.value.toString());
+        }
+        (function(time) { // isolate timestamp
+        //_this._bubblesInteract().mouseout();
+          _this.model.marker.getFrame(time, function(frame, time) {
+            if (!frame) return false;
+            var index = _this.calculationQueue.indexOf(time.toString()); //
+            if (index == -1) { // we was receive more recent frame before so we pass this frame  
+              return;
+            } else {
+              _this.calculationQueue.splice(0, index + 1); // remove timestamps that added to queue before current timestamp
+            }
+            _this.frameChanged(frame, time);
+          });
+
+        }(_this.model.time.value));
       },
       'change:ui.chart.adaptMinMaxZoom': function() {
         //console.log("EVENT change:ui:adaptMinMaxZoom");
@@ -483,7 +501,7 @@ var BubbleChartComp = Component.extend({
   },
 
   frameChanged: function(frame, time) {
-    if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
+//    if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
     this.frame = frame;
     this.updateTime();
     this._updateDoubtOpacity();

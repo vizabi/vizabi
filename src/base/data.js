@@ -267,20 +267,25 @@ var Data = Class.extend({
   getFrames: function(queryId, framesArray) {
     var _this = this;
     var whatId = framesArray[0] + " - " + framesArray[framesArray.length-1];
-    if (!this._collectionPromises[queryId]) this._collectionPromises[queryId] = {};
-    if (this._collectionPromises[queryId][whatId]) {
-      if (this._collectionPromises[queryId][whatId] instanceof Promise) {
-        return this._collectionPromises[queryId][whatId];
-      }
+    if (!this._collectionPromises[queryId][whatId]) {
+      this._collectionPromises[queryId][whatId] = {
+        queue: this.framesQueue(framesArray),
+        promise: null
+      };
     }
-    this._collectionPromises[queryId][whatId] = new Promise(function(resolve, reject) {
-      if (!queryId) reject(utils.warn("Data.js 'get' method doesn't like the queryId you gave it: " + queryId));
-      _this._getFrames(queryId, whatId, framesArray).then(function (frames) {
-        _this._collection[queryId]["frames"][whatId] = frames;
-        resolve(_this._collection[queryId]["frames"][whatId]);
-      });
-    });
-    return this._collectionPromises[queryId][whatId];
+    if (this._collectionPromises[queryId][whatId] && this._collectionPromises[queryId][whatId]["promise"] instanceof Promise) {
+      return this._collectionPromises[queryId][whatId]["promise"];
+    } else {
+      this._collectionPromises[queryId][whatId]["promise"] = new Promise(function (resolve, reject) {
+        if (!queryId) reject(utils.warn("Data.js 'get' method doesn't like the queryId you gave it: " + queryId));
+        _this._getFrames(queryId, whatId, framesArray).then(function (frames) {
+          _this._collection[queryId]["frames"][whatId] = frames;
+          resolve(_this._collection[queryId]["frames"][whatId]);
+        });
+      })
+     
+    }
+    return this._collectionPromises[queryId][whatId]["promise"];
   },
 
   getFrame: function(queryId, framesArray, neededFrame) {
@@ -294,7 +299,7 @@ var Data = Class.extend({
       if (_this._collection[queryId]["frames"][whatId] && _this._collection[queryId]["frames"][whatId][neededFrame]) {
         resolve(_this._collection[queryId]["frames"][whatId]);
       } else {
-        _this.framesQueue(queryId, whatId, framesArray, columns).forceFrame(neededFrame, function() {
+        _this._collectionPromises[queryId][whatId]["queue"].forceFrame(neededFrame, function() {
           resolve(_this._collection[queryId]["frames"][whatId]);
         });
       }
@@ -302,94 +307,86 @@ var Data = Class.extend({
   },
   /**
    * set priority for generate each year frame
-   * @param queryId
    * @param framesArray
-   * @param fields
    * @returns {*}
    */
-  framesQueue: function(queryId, whatId, framesArray, fields) {
-    if (!this.queues) this.queues = {};
-
-    var queueId = whatId + JSON.stringify(fields);
-    if (!this.queues[queueId]) {
-      this.queues[queueId] = new function(){
-        this.callbacks = {};
-        this.forcedQueue = [];
-        this.queue = framesArray.slice(0); //clone array
-          
-        //put the last element to the start of the queue because we are likely to need it first
-        this.queue.splice(0, 0, this.queue.splice(this.queue.length - 1, 1)[0]);
-        this.key = 0;
-          
-        // returns the next frame in a queue
-        this.getNext = function() {
-          var queue = this;
-          var frameName = null;
-          if (this.forcedQueue.length > 0) {
-            frameName = this.forcedQueue.shift();
-          } else {
-            if (this.queue.length == 0) return false;
-            if (this.forcedQueue.length == 0 && this.key >= this.queue.length - 1) {
-              this.key = 0;
-            }
-            frameName = this.queue.splice(this.key, 1).pop();
+  framesQueue: function(framesArray) {
+    return new function(){
+      this.callbacks = {};
+      this.forcedQueue = [];
+      this.queue = framesArray.slice(0); //clone array
+        
+      //put the last element to the start of the queue because we are likely to need it first
+      this.queue.splice(0, 0, this.queue.splice(this.queue.length - 1, 1)[0]);
+      this.key = 0;
+        
+      // returns the next frame in a queue
+      this.getNext = function() {
+        var queue = this;
+        var frameName = null;
+        if (this.forcedQueue.length > 0) {
+          frameName = this.forcedQueue.shift();
+        } else {
+          if (this.queue.length == 0) return false;
+          if (this.forcedQueue.length == 0 && this.key >= this.queue.length - 1) {
+            this.key = 0;
           }
-          if (!this.callbacks[frameName]) {
-            this.callbacks[frameName] = [];
-          }
-          var frameComplete = function(frameName) { //function called after build each frame with name of frame build
-            if (queue.callbacks[frameName].length > 0) {
-              for (var  i = 0; i < queue.callbacks[frameName].length; i++) {
-                queue.callbacks[frameName][i]();
-              }
-              //delete queue.callbacks[frameName];
+          frameName = this.queue.splice(this.key, 1).pop();
+        }
+        if (!this.callbacks[frameName]) {
+          this.callbacks[frameName] = [];
+        }
+        var frameComplete = function(frameName) { //function called after build each frame with name of frame build
+          if (queue.callbacks[frameName].length > 0) {
+            for (var  i = 0; i < queue.callbacks[frameName].length; i++) {
+              queue.callbacks[frameName][i]();
             }
-          };
-          return {
-            frameName: frameName,
-            callback: frameComplete
-          };
+            //delete queue.callbacks[frameName];
+          }
         };
-          
-        // force the particular frame up the queue
-        this.forceFrame = function(frameName, cb) {
-          var objIndexOf = function(obj, need) {
-            var search = need.toString();
-            var index = -1;
-            for(var i = 0, len = obj.length; i < len; i++) {
-              if (obj[i].toString() == search) {
-                index = i;
-                break;
-              }
+        return {
+          frameName: frameName,
+          callback: frameComplete
+        };
+      };
+        
+      // force the particular frame up the queue
+      this.forceFrame = function(frameName, cb) {
+        var objIndexOf = function(obj, need) {
+          var search = need.toString();
+          var index = -1;
+          for(var i = 0, len = obj.length; i < len; i++) {
+            if (obj[i].toString() == search) {
+              index = i;
+              break;
             }
-            return index;
-          };
-          if (this.callbacks[frameName]) {
+          }
+          return index;
+        };
+        if (this.callbacks[frameName]) {
 
-            this.callbacks[frameName].push(cb);
+          this.callbacks[frameName].push(cb);
+        } else {
+          var newKey = objIndexOf(this.queue, frameName);//this.queue.indexOf(frameName.toString());
+          if (newKey !== -1) {
+            this.forcedQueue.unshift(this.queue.splice(newKey, 1).pop());
+            if (typeof cb === "function") {
+              if (typeof this.callbacks[frameName] != "object") {
+                this.callbacks[frameName] = [];
+              }
+              this.callbacks[frameName].push(cb);
+            }
+            this.key = newKey; //set key to next year after gorced element (preload if user click play)
           } else {
-            var newKey = objIndexOf(this.queue, frameName);//this.queue.indexOf(frameName.toString());
-            if (newKey !== -1) {
-              this.forcedQueue.unshift(this.queue.splice(newKey, 1).pop());
-              if (typeof cb === "function") {
-                if (typeof this.callbacks[frameName] != "object") {
-                  this.callbacks[frameName] = [];
-                }
-                this.callbacks[frameName].push(cb);
-              }
-              this.key = newKey; //set key to next year after gorced element (preload if user click play)
+            if (typeof this.callbacks[frameName] === "object") {
+              this.callbacks[frameName].push(cb);
             } else {
-              if (typeof this.callbacks[frameName] === "object") {
-                this.callbacks[frameName].push(cb);
-              } else {
-                this.callbacks[frameName] = [cb];
-              }
+              this.callbacks[frameName] = [cb];
             }
           }
         }
-      }();
-    }
-    return this.queues[queueId];
+      }
+    }();
   },
 
   /**
@@ -537,7 +534,7 @@ var Data = Class.extend({
           
           // recursively call the buildFrame again, this time for the next frame
           //QUESTION: FramesArray is probably not needed at this point. queryId and whatId is enough
-          var nextFrame = _this.framesQueue(queryId, whatId, framesArray, columns).getNext(); 
+          var nextFrame = _this._collectionPromises[queryId][whatId]["queue"].getNext(); 
           if (nextFrame) {
             // defer allows other interactions to squeeze in between buildFrame executions
             utils.defer(function() {
@@ -548,7 +545,7 @@ var Data = Class.extend({
             resolve(_this._collection[queryId]["frames"][whatId]); 
           }
       };
-      var nextFrame = _this.framesQueue(queryId, whatId, framesArray, columns).getNext();
+      var nextFrame = _this._collectionPromises[queryId][whatId]["queue"].getNext();
       if (nextFrame) {
         buildFrame(nextFrame.frameName, keys, queryId, nextFrame.callback);
       }
