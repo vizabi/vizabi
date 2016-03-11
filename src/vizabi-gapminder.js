@@ -24,7 +24,7 @@ import DonutChart from 'tools/donutchart';
 import {
   waffle as WaffleReader
 }
-from 'readers/_index';
+  from 'readers/_index';
 
 var language = {
   id: "en",
@@ -40,7 +40,9 @@ var locationArray = window.location.href.split("/");
 var localUrl = locationArray.splice(0, locationArray.indexOf("preview")).join("/") + "/preview/";
 
 globals.gapminder_paths = {
-  wsUrl: 'http://waffle-server-dev.gapminderdev.org',
+  // Explanation what is going on in the code below:
+  // In order to use WS server other than specified in WS_SERVER you need to fill it in manually
+  wsUrl: typeof WS_SERVER === 'undefined' ? 'https://waffle-server-stage.gapminderdev.org' : WS_SERVER
   baseUrl: localUrl
 };
 
@@ -478,8 +480,8 @@ BubbleChart.define('default_model', {
         which: "geo.name"
       },
       size_label: {
-          use: "constant"
-        },
+        use: "constant"
+      },
 
       axis_y: {
         use: "indicator",
@@ -562,8 +564,8 @@ PopByAge.define('default_model', {
       show: {
         _defs_: {
           "age": [
-              [0, 95]
-            ] //show 0 through 100
+            [0, 95]
+          ] //show 0 through 100
         }
       },
       grouping: 5
@@ -614,38 +616,38 @@ PopByAge.define('default_model', {
 
 DonutChart.define('default_model', {
   state: {
-        // available time would have the range of 1990-2012 years (%Y), with the deafult position at 2000
-        time: {
-          start: "1990",
-          end: "2012",
-          value: "2000"
-        },
-        //Entities include all ("*") geo's of category "regions" -- equivalent to 'geo: ["asi", "ame", "eur", "afr"]'
-        entities: {
-          dim: "geo",
-          show: {
-            _defs_: {
-              "geo": ["*"],
-              "geo.cat": ["region"]
-            }
-          }
-        },
-        //Markers correspond to visuals that we want to show. We have label, axis and color
-        marker: {
-          space: ["entities", "time"],
-          label: {
-            use: "property",
-            which: "geo.name"
-          },
-          axis: {
-            use: "indicator",
-            which: "population"
-          },
-          color: {
-            use: "property",
-            which: "geo.name"
-          }
+    // available time would have the range of 1990-2012 years (%Y), with the deafult position at 2000
+    time: {
+      start: "1990",
+      end: "2012",
+      value: "2000"
+    },
+    //Entities include all ("*") geo's of category "regions" -- equivalent to 'geo: ["asi", "ame", "eur", "afr"]'
+    entities: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo": ["*"],
+          "geo.cat": ["region"]
         }
+      }
+    },
+    //Markers correspond to visuals that we want to show. We have label, axis and color
+    marker: {
+      space: ["entities", "time"],
+      label: {
+        use: "property",
+        which: "geo.name"
+      },
+      axis: {
+        use: "indicator",
+        which: "population"
+      },
+      color: {
+        use: "property",
+        which: "geo.name"
+      }
+    }
   },
   data: {
     reader: "csv",
@@ -662,7 +664,7 @@ DonutChart.define('default_model', {
 
 
 //Waffle Server Reader custom path
-WaffleReader.define('basepath', "http://52.18.235.31:8001/values/waffle");
+WaffleReader.define('basepath', globals.gapminder_paths.wsUrl + "/api/graphs/stats/vizabi-tools");
 
 //preloading mountain chart precomputed shapes
 MCComponent.define("preload", function(done) {
