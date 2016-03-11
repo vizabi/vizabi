@@ -94,7 +94,7 @@ var Marker = Model.extend({
         
       var cachePath = steps[0] + " - " + steps[steps.length-1];
       utils.forEach(this._dataCube, function(hook, name) {
-          cachePath = cachePath + ", " + name + ":" + hook.which;
+          cachePath = cachePath + ", " + name + ":" + hook.which + ":" + hook._dataId;
       });
     
       // check if the requested time point has a cached animation frame
@@ -188,7 +188,7 @@ var Marker = Model.extend({
         
       var cachePath = steps[0] + " - " + steps[steps.length-1];
       utils.forEach(this._dataCube, function(hook, name) {
-          cachePath = cachePath + ", " + name + ":" + hook.which;
+        cachePath = cachePath + ", " + name + ":" + hook.which + ":" + hook._dataId;
       });
 
       //if the collection of frames for this data cube is not scheduled yet (otherwise no need to repeat calculation)
