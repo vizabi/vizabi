@@ -252,7 +252,7 @@ export default Class.extend({
     trail.each(function(segment, index) {
 
       // segment is transparent if it is after current time or before trail StartTime
-      segment.transparent = (segment.t - _this.time >= 0) || (trailStartTime - segment.t > 0)
+      segment.transparent = d.trailStartTime == null || (segment.t - _this.time >= 0) || (trailStartTime - segment.t > 0)
         //no trail segment should be visible if leading bubble is shifted backwards, beyond start time
         || (d.trailStartTime - _this.model.time.timeFormat(_this.time) >= 0)
         //additionally, segment should not be visible if it has broken data

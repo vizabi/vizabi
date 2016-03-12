@@ -1322,6 +1322,9 @@ var BubbleChartComp = Component.extend({
           var resolvedX = resolvedX0 + cached.labelX_ * _this.width;
           var resolvedY = resolvedY0 + cached.labelY_ * _this.height;
 
+          if(showhide && d.hidden && _this.model.ui.chart.trails && trailStartTime && (trailStartTime < _this.time)) showhide = false;
+          if(d.hidden && !_this.model.ui.chart.trails) showhide = true;  
+          
           _this._repositionLabels(d, index, this, resolvedX, resolvedY, resolvedX0, resolvedY0, duration, showhide, lineGroup);
 
         })
@@ -1405,7 +1408,7 @@ var BubbleChartComp = Component.extend({
     
     var lineHidden = this.circleRectIntersects({x: diffX1, y: diffY1, r: cache.scaledS0}, 
       {x: diffX2, y: diffY2, width: (bBox.height * 2 + bBox.width), height: (bBox.height * 3)});
-    lineGroup.classed("vzb-invisible", lineHidden);
+    lineGroup.select('line').classed("vzb-invisible", lineHidden);
     if(lineHidden) return;
 
     if(labels.removeLabelBox) {
