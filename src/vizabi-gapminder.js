@@ -480,7 +480,7 @@ BubbleChart.define('default_model', {
 
       axis_y: {
         use: "indicator",
-        which: "child_mortality_rate_per1000",
+        which: "life_expectancy",
         scaleType: "linear",
         allow: {
           scales: ["linear", "log"]
@@ -514,10 +514,10 @@ BubbleChart.define('default_model', {
     }
   },
   data: {
-    //reader: "waffle",
-    //path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
-    reader: "csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    reader: "waffle",
+    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    //reader: "csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   language: language,
