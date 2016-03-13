@@ -2,7 +2,7 @@ $vzb-button-color: $vzb-color-primary-dark;
 $vzb-button-bg: $vzb-color-white;
 
 .vzb-dialog-zoom-buttonlist {
-  display: flex;
+  display: inline-flex;
   flex-wrap: wrap;
   justify-content: flex-start;
   background-color: $vzb-color-white;
