@@ -3,17 +3,23 @@
   .vzb-dialogs-dialog {
     &[data-dlg="zoom"] {
       @import '../../zoombuttonlist/zoombuttonlist';
-      .vzb-dialog-title {
-        margin-bottom: 10px;
-      }          
       &.vzb-moreoptions {
-        .vzb-dialog-content {
-          padding-top: 15px;
-        }
+        .vzb-dialog-title {
+          margin-bottom: 15px;
+          .vzb-dialog-zoom-buttonlist {
+            padding-top: 10px;
+          }
+        }          
       }
       &.vzb-sidebar {
-        .vzb-dialog-zoom-buttonlist {
-          background-color: $vzb-color-primary-lightest;
+        >.vzb-dialog-modal {
+          >.vzb-dialog-title {
+            padding-top: 0;
+            .vzb-dialog-zoom-buttonlist {
+              background-color: $vzb-color-primary-lightest;
+              padding-left: 5px;
+            }
+          }
         }
         .vzb-zoomonscrolling-switch {
           display: none;
@@ -30,10 +36,6 @@
       &[data-dlg="zoom"] {
         &.vzb-sidebar {
           flex: none;
-          
-          .vzb-dialog-title {
-            display: none;
-          }          
         }
       }
     }
