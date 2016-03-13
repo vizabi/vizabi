@@ -9,25 +9,21 @@ import Model from 'base/model';
 var Marker = Model.extend({
 
   /**
-   * Gets limits
-   * @param {String} attr parameter
+   * Gets the narrowest limits of the subhooks with respect to the provided data column
+   * @param {String} attr parameter (data column)
    * @returns {Object} limits (min and max)
-   * this function is only needed to route the "time" to some indicator, to adjust time start and end to the max and min time available in data
+   * this function is only needed to route the "time" to some indicator, 
+   * to adjust time start and end to the max and min time available in data
    */
   getLimits: function(attr) {
-    if(!this.isHook()) {
-      //if there's subhooks, find the one which is an indicator
-      var limits = {};
-      utils.forEach(this.getSubhooks(), function(s) {
-        var prop = (s.use === "property");
-        if(!prop) {
-          limits = s.getLimits(attr);
-          return false;
-        }
+      var minArray = [], maxArray = [], subLimits = {};
+      utils.forEach(this.getSubhooks(), function(hook) {
+        if(hook.use !== "indicator") return;
+        subLimits = hook.getLimits(attr);
+        minArray.push(subLimits.min);
+        maxArray.push(subLimits.max);
       });
-      return limits;
-    }
-
+      return {min: d3.max(minArray), max: d3.min(maxArray)};
   },
 
 

@@ -251,16 +251,15 @@ var Tool = Component.extend({
 
     //don't validate anything if data hasn't been loaded
     if(model.isLoading() || !marker.getKeys() || marker.getKeys().length < 1) return;
+    
+    var tLimits = marker.getLimits(time.getDimension())
 
-    var dateMin = marker.getLimits(time.getDimension()).min;
-    var dateMax = marker.getLimits(time.getDimension()).max;
-
-    if(!utils.isDate(dateMin)) utils.warn("tool validation: min date looks wrong: " + dateMin);
-    if(!utils.isDate(dateMax)) utils.warn("tool validation: max date looks wrong: " + dateMax);
+    if(!utils.isDate(tLimits.min)) utils.warn("tool validation: min date looks wrong: " + tLimits.min);
+    if(!utils.isDate(tLimits.max)) utils.warn("tool validation: max date looks wrong: " + tLimits.max);
 
     // change is not persistent if it's splashscreen change
-    if(time.start < dateMin && utils.isDate(dateMin)) time.getModelObject('start').set(dateMin, false, !time.splash);
-    if(time.end > dateMax && utils.isDate(dateMax)) time.getModelObject('end').set(dateMax, false, !time.splash);
+    if(time.start < tLimits.min && utils.isDate(tLimits.min)) time.getModelObject('start').set(tLimits.min, false, !time.splash);
+    if(time.end > tLimits.max && utils.isDate(tLimits.max)) time.getModelObject('end').set(tLimits.max, false, !time.splash);
   },
 
   _setUIModel: function() {
