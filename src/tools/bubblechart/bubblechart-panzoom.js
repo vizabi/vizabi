@@ -11,6 +11,8 @@ export default Class.extend({
         this.dragRectangle = d3.behavior.drag();
         this.zoomer = d3.behavior.zoom();
 
+        this.dragLock = false;
+
         this.dragRectangle
             .on("dragstart", this.drag().start)
             .on("drag", this.drag().go)
@@ -33,19 +35,43 @@ export default Class.extend({
 
         return {
             start: function(d, i) {
-                if(!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
+                /*
+                 * Do not drag if the Ctrl key, Meta key, or plus cursor mode is
+                 * not enabled. Also do not drag if zoom-pinching on touchmove
+                 * events.
+                 */
+                if(!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey ||
+                     _this.ui.cursorMode === "plus") ||
+                     (d3.event.sourceEvent.type === "touchmove" || d3.event.sourceEvent.type === "touchstart") &&
+                     (d3.event.sourceEvent.touches.length > 1 || d3.event.sourceEvent.targetTouches.length > 1)) {
+                    return;
+                }
 
-                this.ctrlKeyLock = true;
+                self.dragLock = true;
                 this.origin = {
                     x: d3.mouse(this)[0],
                     y: d3.mouse(this)[1]
                 };
                 _this.zoomRect.classed("vzb-invisible", false);
-
             },
 
             go: function(d, i) {
-                if(!this.ctrlKeyLock) return;
+                /*
+                 * Cancel drag if drag lock is false, or when zoom-pinching via
+                 * touchmove events.
+                 */
+                if(!self.dragLock || (d3.event.sourceEvent.type === "touchmove" || d3.event.sourceEvent.type === "touchstart") &&
+                    (d3.event.sourceEvent.touches.length > 1 || d3.event.sourceEvent.targetTouches.length > 1)) {
+                    self.dragLock = false;
+
+                    _this.zoomRect
+                        .attr("width", 0)
+                        .attr("height", 0)
+                        .classed("vzb-invisible", true);
+
+                    return;
+                }
+
                 var origin = this.origin;
                 var mouse = {
                     x: d3.event.x,
@@ -60,8 +86,8 @@ export default Class.extend({
             },
 
             stop: function(e) {
-                if(!this.ctrlKeyLock) return;
-                this.ctrlKeyLock = false;
+                if(!self.dragLock) return;
+                self.dragLock = false;
 
                 _this.zoomRect
                     .attr("width", 0)
@@ -73,13 +99,21 @@ export default Class.extend({
                     y: d3.mouse(this)[1]
                 };
 
+                /*
+                 * Only compensate for dragging when the Ctrl key or Meta key
+                 * are pressed, or if the cursorMode is not in plus mode.
+                 */
+                var compensateDragging = d3.event.sourceEvent.ctrlKey ||
+                    d3.event.sourceEvent.metaKey ||
+                    _this.ui.cursorMode === "plus";
+
                 self._zoomOnRectangle(
                     d3.select(this),
                     this.origin.x,
                     this.origin.y,
                     this.target.x,
                     this.target.y,
-                    true, 500
+                    compensateDragging, 500
                 );
             }
         };
@@ -93,7 +127,18 @@ export default Class.extend({
         return {
             go: function() {
 
-                if(d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
+                var sourceEvent = d3.event.sourceEvent;
+
+                if(sourceEvent != null && (sourceEvent.ctrlKey || sourceEvent.metaKey)) return;
+
+                // Cancel drag lock when zoom-pinching via touchmove events.
+                if (sourceEvent !== null &&
+                    (sourceEvent.type === "touchmove" || sourceEvent.type === "touchstart") &&
+                    (sourceEvent.touches.length > 1 || sourceEvent.targetTouches.length > 1)) {
+                    self.dragLock = false;
+                }
+
+                if (self.dragLock) return;
 
                 //send the event to the page if fully zoomed our or page not scrolled into view
 //
@@ -103,9 +148,23 @@ export default Class.extend({
 //                        _this.scrollableAncestor.scrollTop += d3.event.sourceEvent.deltaY;
 //                        return;
 //                    }
-                if(d3.event.sourceEvent != null && _this.scrollableAncestor) {
-                    if(d3.event.sourceEvent != null && !self.enabled){
-                        _this.scrollableAncestor.scrollTop += d3.event.sourceEvent.deltaY;
+                /*
+                 * Do not zoom on the chart if the scroll event is a wheel
+                 * scroll. Instead, redirect the scroll event to the scrollable
+                 * ancestor
+                 */
+                if (sourceEvent != null && _this.ui.zoomOnScrolling &&
+                    sourceEvent.type === "wheel") {
+                    if (_this.scrollableAncestor && !self.enabled) {
+                        _this.scrollableAncestor.scrollTop += sourceEvent.deltaY;
+                    }
+
+                    return;
+                }
+
+                if(sourceEvent != null && _this.scrollableAncestor) {
+                    if(sourceEvent != null && !self.enabled){
+                        _this.scrollableAncestor.scrollTop += sourceEvent.deltaY;
                         zoomer.scale(1)
                         return;
                     }
@@ -124,8 +183,6 @@ export default Class.extend({
                 //value protections and fallbacks
                 if(isNaN(zoom) || zoom == null) zoom = zoomer.scale();
                 if(isNaN(zoom) || zoom == null) zoom = 1;
-
-                var sourceEvent = d3.event.sourceEvent;
 
                 //TODO: this is a patch to fix #221. A proper code review of zoom and zoomOnRectangle logic is needed
                 /*
@@ -312,7 +369,7 @@ export default Class.extend({
         var mmX = d3.extent(utils.values(_this.frame.axis_x));
         var mmY = d3.extent(utils.values(_this.frame.axis_y));
         var radiusMax = utils.areaToRadius(_this.sScale( d3.extent(utils.values(_this.frame.size))[1] )) || 0;
-        
+
         //protection agains unreasonable min-max results -- abort function
         if (!mmX[0] && mmX[0]!==0 || !mmX[1] && mmX[1]!==0 || !mmY[0] && mmY[0]!==0 || !mmY[1] && mmY[1]!==0) {
           return utils.warn("panZoom.expandCanvas: X or Y min/max are broken. Aborting with no action");
@@ -576,7 +633,93 @@ export default Class.extend({
         var scalar = scaleDifference / Math.abs(dataBoundary - viewportBoundary);
         return (coordValue - dataBoundary) * (1 - scalar) + dataBoundary;
     },
-    
+
+    /*
+     * Calculate a proportional reduction of the scalar value. Also,
+     * calculate the reduction of the value by a constant of 1.
+     *
+     * Return the larger of the two calculated values.
+     */
+    _scaleToMin: function(scalar, minScalar, proportion, constant) {
+        var scalarProportionDelta = (scalar - minScalar) * proportion;
+        var scalarDifferenceDelta = Math.max(constant, minScalar - constant);
+        var scalarDelta = Math.max(scalarProportionDelta, scalarDifferenceDelta);
+
+        return scalarDelta;
+    },
+
+    /*
+     * Incrementally zoom out of the current zoom rectangle by a proportion. If
+     * the calculated zoom rectangle would cause the zoom scalar to be less than
+     * or equal to its minimum zoom value, then completely zoom out.
+     */
+    zoomOutIncrement: function(element) {
+        var _this = this.context;
+
+        var zoomRatio = 0.75;
+        var zoomDuration = 500;
+        var zoom = this.zoomer.scale();
+        var minZoom = this.zoomer.scaleExtent()[0];
+
+        /*
+         * Calculate a proportional reduction in zoom (currently 75%). Also,
+         * calculate the reduction of zoom by a constant of 1.
+         *
+         * Zoom out to the larger of the proportional zoom and constant
+         * difference zoom.
+         */
+        var zoomDelta = this._scaleToMin(zoom, minZoom, zoomRatio, minZoom);
+
+        /*
+         * If the calculated zoom delta is less than or equal to the minimum
+         * completely zoom out.
+         */
+        if (zoomDelta <= minZoom) {
+            this.resetZoomState();
+            this.zoomer.duration = zoomDuration;
+            this.zoomer.event(element || _this.element);
+            return;
+        }
+
+        var xBounds = [0, _this.width];
+        var yBounds = [_this.height, 0];
+
+        var xBoundsBumped = _this._rangeBump(xBounds);
+        var yBoundsBumped = _this._rangeBump(yBounds);
+
+        var xScaleBoundsBumped = _this.xScale.copy()
+            .range(xBoundsBumped);
+        var yScaleBoundsBumped = _this.yScale.copy()
+            .range(yBoundsBumped);
+
+        var xDataBounds = [xScaleBoundsBumped.invert(xBounds[0]), xScaleBoundsBumped.invert(xBounds[1])];
+        var yDataBounds = [yScaleBoundsBumped.invert(yBounds[0]), yScaleBoundsBumped.invert(yBounds[1])];
+
+        var xValues = [_this.xScale.invert(xBounds[0]), _this.xScale.invert(xBounds[1])];
+        var yValues = [_this.yScale.invert(yBounds[0]), _this.yScale.invert(yBounds[1])];
+
+        /*
+         * Calculate the difference between the current data ranges and the
+         * maximum possible data range including the range bump.
+         *
+         * Proportionally reduce the difference by the zoom ratio and zoom out
+         * to the new calculated zoom rectangle.
+         */
+        var minDifferenceX = (xValues[0] - xDataBounds[0]) * zoomRatio;
+        var maxDifferenceX = (xDataBounds[1] - xValues[1]) * zoomRatio;
+
+        var minDifferenceY = (yDataBounds[0] - yValues[0]) * zoomRatio;
+        var maxDifferenceY = (yValues[1] - yDataBounds[1]) * zoomRatio;
+
+        var zoomedMinX = _this.xScale(xDataBounds[0] + minDifferenceX);
+        var zoomedMaxX = _this.xScale(xDataBounds[1] - maxDifferenceX);
+
+        var zoomedMinY = _this.yScale(yDataBounds[0] - minDifferenceY);
+        var zoomedMaxY = _this.yScale(yDataBounds[1] + maxDifferenceY);
+
+        this._zoomOnRectangle(_this.element, zoomedMinX, zoomedMinY, zoomedMaxX, zoomedMaxY, false, zoomDuration);
+    },
+
     /*
      * Reset zoom values without triggering a zoom event.
      */
