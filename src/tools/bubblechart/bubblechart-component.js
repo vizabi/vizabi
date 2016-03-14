@@ -762,8 +762,18 @@ var BubbleChartComp = Component.extend({
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
-    this.year.setText(this.model.time.timeFormat(this.time));
-    //this.yearEl.text(this.model.time.timeFormat(this.time));
+    if(this.duration) {
+      var time = _this.time;
+      this.yearDelayId = utils.delay(function() {
+        _this.year.setText(_this.model.time.timeFormat(time));
+      }, this.duration);
+    } else {
+      if(this.yearDelayId) {
+        utils.clearDelay(this.yearDelayId);
+        this.yearDelayId = null;
+      }
+      _this.year.setText(_this.model.time.timeFormat(_this.time));
+    }
   },
 
   /*

@@ -1168,7 +1168,11 @@ export var defer = function(func) {
  * @param {Function} func
  */
 export var delay = function(func, delay) {
-  setTimeout(func, delay);
+  return setTimeout(func, delay);
+};
+
+export var clearDelay = function(delayId) {
+  return clearTimeout(delayId);
 };
 
 /*

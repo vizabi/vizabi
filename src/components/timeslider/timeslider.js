@@ -362,7 +362,7 @@ var TimeSlider = Component.extend({
     var _this = this;
     var value = this.model.time.value;
     this.slide.call(this.brush.extent([value, value]));
-    this.valueText.text(this.model.time.timeFormat(value));
+//    this.valueText.text(this.model.time.timeFormat(value));
 
 //    var old_pos = this.handle.attr("cx");
     var new_pos = this.xScale(value);
@@ -376,6 +376,10 @@ var TimeSlider = Component.extend({
         .attr("cx", new_pos);
 
       this.valueText.attr("transform", "translate(" + _this.prevPosition + "," + (this.height / 2) + ")")
+        .transition('text')
+        .delay(delayAnimations)
+        .text(this.model.time.timeFormat(value));
+      this.valueText
         .transition()
         .duration(delayAnimations)
         .ease("linear")
@@ -389,7 +393,11 @@ var TimeSlider = Component.extend({
       this.valueText
         //cancel active transition
         .interrupt()
-        .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")");
+        .interrupt('text')
+        .transition('text');
+      this.valueText        
+        .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")")
+        .text(this.model.time.timeFormat(value));
     }
     _this.prevPosition = new_pos;
 
