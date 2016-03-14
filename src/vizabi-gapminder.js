@@ -42,7 +42,7 @@ var localUrl = locationArray.splice(0, locationArray.indexOf("preview")).join("/
 globals.gapminder_paths = {
   // Explanation what is going on in the code below:
   // In order to use WS server other than specified in WS_SERVER you need to fill it in manually
-  wsUrl: typeof WS_SERVER === 'undefined' ? 'https://waffle-server-stage.gapminderdev.org' : WS_SERVER
+  wsUrl: typeof WS_SERVER === 'undefined' ? 'https://waffle-server-stage.gapminderdev.org' : WS_SERVER,
   baseUrl: localUrl
 };
 
@@ -424,8 +424,9 @@ LineChart.define('default_model', {
   },
 
   data: {
-    reader: "csv",
-    path: globals.gapminder_paths.wsUrl + "/api/vizabi/geo_properties.csv",
+    reader: "waffle",
+    path: globals.gapminder_paths.wsUrl + "/api/graphs/stats/vizabi-tools",
+    //reader: "csv",
     //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: false
   },
@@ -606,8 +607,7 @@ PopByAge.define('default_model', {
   },
   data: {
     reader: "csv",
-    path: globals.gapminder_paths.wsUrl + "/{{geo}}.csv",
-    //path: globals.gapminder_paths.baseUrl + "data/waffles/{{geo}}.csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/{{geo}}.csv",
     splash: false
   },
   language: language,
@@ -654,8 +654,7 @@ DonutChart.define('default_model', {
   },
   data: {
     reader: "csv",
-    path: globals.gapminder_paths.wsUrl + "/api/vizabi/basic-indicators.csv",
-    //path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv",
     splash: false
   },
   language: language,
