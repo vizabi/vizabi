@@ -13,6 +13,7 @@ Vizabi depends on [Git] (http://git-scm.com/), [Npm](https://github.com/npm/npm)
 3. Install Gulp `npm install --global gulp` (run with sudo if needed)
 4. Install sass `gem install sass` (run with sudo if needed)
 5. Install scss_lint `gem install scss_lint` (run with sudo if needed)
+6. Install [docker](https://docs.docker.com/engine/installation/)
 
 
 **Clone this repo** and run the following commands in vizabi root folder:
@@ -21,7 +22,7 @@ Vizabi depends on [Git] (http://git-scm.com/), [Npm](https://github.com/npm/npm)
 npm install
 ```
 
-If you are still puzzled what it is or it just doesn't work, read a [more detailed instruction](https://github.com/Gapminder/vizabi/wiki/Quickstart-for-Windows) 
+If you are still puzzled what it is or it just doesn't work, read a [more detailed instruction](https://github.com/Gapminder/vizabi/wiki/Quickstart-for-Windows)
 (it's for Windows, but you'll figure things out if you have a Mac or Linux)
 
 ## Build the project
@@ -34,10 +35,19 @@ gulp
 
 The browser will open on `http://localhost:8080/preview/`
 
-In order to only build the project, type the following (you'll rarely need this):
+In order to only build the project, type the following (you'll rarely need this).
+Build will be created using Docker (Image of Ubuntu 14.04):
+
+```shell
+npm run build
+```
+
+Build without Docker can be done via:
 
 ```shell
 gulp build
 ```
 
-You can find the build output under ```build/``` folder.
+In both cases find the build output under ```build/``` folder.
+
+**Note:** On Vizabi publishing build will be done using Docker (```npm run build```).
