@@ -1,9 +1,9 @@
 geo,geo.name,geo.cat,geo.region
 world,World,planet,world
-europe,europeope,region,europe
-asia,asiaa,region,asia
-africa,africaica,region,africa
-americas,America,region,americas
+europe,Europe,region,europe
+asia,Asia,region,asia
+africa,Africa,region,africa
+americas,Americas,region,americas
 _abk,Abkhazia,country,europe
 afg,Afghanistan,country,asia
 and,Andorra,country,europe
