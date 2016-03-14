@@ -263,10 +263,12 @@ $vzb-dialog-content-height: 250px;
 
       }
     }
-
+  }
+  
+  .vzb-top-dialog {
+    visibility: hidden;
     &.vzb-popup {
       z-index: -2;
-      visibility: hidden;
       &.vzb-active {
         z-index: 20;
         visibility: visible;
