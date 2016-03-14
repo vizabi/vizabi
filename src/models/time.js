@@ -34,6 +34,8 @@ var TimeModel = Model.extend({
     value: "2015",
     start: "1800",
     end: "2015",
+    startOriginal: "1800",
+    endOriginal: "2015",
     playable: true,
     playing: false,
     loop: false,
@@ -92,7 +94,7 @@ var TimeModel = Model.extend({
    */
   _formatToDates: function() {
 
-    var date_attr = ["value", "start", "end"];
+    var date_attr = ["value", "start", "end", "startOriginal", "endOriginal"];
     for(var i = 0; i < date_attr.length; i++) {
       var attr = date_attr[i];
       if(!utils.isDate(this[attr])) {
@@ -223,8 +225,8 @@ var TimeModel = Model.extend({
    * @returns {Object} time filter
    */
   getFilter: function(firstScreen) {
-    var start = this.timeFormat(this.start);
-    var end = this.timeFormat(this.end);
+    var startOriginal = this.timeFormat(this.startOriginal);
+    var endOriginal = this.timeFormat(this.endOriginal);
     var value = this.timeFormat(this.value);
     var dim = this.getDimension();
     var filter = {};
@@ -232,7 +234,7 @@ var TimeModel = Model.extend({
     filter[dim] = (firstScreen) ? [
       [value]
     ] : [
-      [start, end]
+      [startOriginal, endOriginal]
     ];
     return filter;
   },

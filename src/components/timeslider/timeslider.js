@@ -106,6 +106,18 @@ var TimeSlider = Component.extend({
           //only set handle position if change is external
           if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
+      },
+      'change:time.start': function(evt, path) {
+        if(!_this._splash) {
+          //only set handle position if change is external
+          if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
+        }
+      },
+      'change:time.end': function(evt, path) {
+        if(!_this._splash) {
+          //only set handle position if change is external
+          if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
+        }
       }
     };
 

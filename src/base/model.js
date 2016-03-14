@@ -711,15 +711,7 @@ var Model = EventSource.extend({
   },
 
 
-  /**
-   * gets filtered dataset with fewer keys
-   * @param {Object} filter
-   * @returns {Object} filtered items object
-   */
-  getFilteredItems: function(filter) {
-    if(!filter) return utils.warn("No filter provided to getFilteredItems(<filter>)");
-    return _DATAMANAGER.get(this._dataId, 'filtered', filter);
-  },
+
     
   /**
    * gets nested dataset

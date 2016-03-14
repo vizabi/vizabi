@@ -170,7 +170,7 @@ var Data = Class.extend({
           _this._collectionPromises[queryId] = {};
           var col = _this._collection[queryId];
           col.data = values;
-          col.filtered = {};
+          col.valid = {};
           col.nested = {};
           col.unique = {};
           col.limits = {};
@@ -238,8 +238,8 @@ var Data = Class.extend({
       case 'unique':
         this._collection[queryId][what][id] = this._getUnique(queryId, whatId);
         break;
-      case 'filtered':
-        this._collection[queryId][what][id] = this._getFiltered(queryId, whatId);
+      case 'valid':
+        this._collection[queryId][what][id] = this._getValid(queryId, whatId);
         break;
       case 'limits':
         this._collection[queryId][what][id] = this._getLimits(queryId, whatId);
@@ -613,8 +613,8 @@ var Data = Class.extend({
     return uniq;
   },
 
-  _getFiltered: function(queryId, filter) {
-    return utils.filter(this._collection[queryId].data, filter);
+  _getValid: function(queryId, column) {
+    return this._collection[queryId].data.filter(function(f){return f[column] || f[column]===0});
   },
     
     

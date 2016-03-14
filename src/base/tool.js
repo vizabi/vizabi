@@ -134,6 +134,27 @@ var Tool = Component.extend({
     this._setUIModel();
   },
 
+  ready: function(){
+    this.checkTimeLimits();  
+  },
+    
+  checkTimeLimits: function() {
+    var time = this.model.state.time;
+    var tLimits = this.model.state.marker.getTimeLimits(time.getDimension());
+      
+    if(!tLimits || !utils.isDate(tLimits.min) || !utils.isDate(tLimits.max)) 
+        return utils.warn("checkTimeLimits(): min-max dates look wrong: " + tLimits);
+
+    // change start and end (but keep startOrigin and endOrigin for furhter requests)
+    // change is not persistent if it's splashscreen change
+    if(time.start - tLimits.min != 0) time.getModelObject('start').set(tLimits.min, false, !time.splash);
+    if(time.end - tLimits.max != 0) time.getModelObject('end').set(tLimits.max, false, !time.splash);
+      
+    //force time validation because time.value might now fall outside of start-end
+    time.validate(); 
+  },
+    
+
   getMinModel: function() {
     var currentToolModel = this.model.getPlainObject(true); // true = get only persistent model values
     var defaultToolModel = this.default_model;
@@ -224,42 +245,11 @@ var Tool = Component.extend({
    * @param model the current tool model to be validated
    */
   validate: function(model) {
-
     model = this.model || model;
 
-    if(!model || !model.state) {
-      utils.warn("tool validation aborted: model.state looks wrong: " + model);
-      return;
-    };
-
-    var time = model.state.time;
-    var marker = model.state.marker;
-
-    if(!time) {
-      utils.warn("tool validation aborted: time looks wrong: " + time);
-      return;
-    };
-    if(!marker) {
-      utils.warn("tool validation aborted: marker looks wrong: " + marker);
-      return;
-    };
-
-    if(!marker) {
-      utils.warn("tool validation aborted: marker looks wrong: " + label);
-      return;
-    };
-
-    //don't validate anything if data hasn't been loaded
-    if(model.isLoading() || !marker.getKeys() || marker.getKeys().length < 1) return;
-    
-    var tLimits = marker.getLimits(time.getDimension())
-
-    if(!utils.isDate(tLimits.min)) utils.warn("tool validation: min date looks wrong: " + tLimits.min);
-    if(!utils.isDate(tLimits.max)) utils.warn("tool validation: max date looks wrong: " + tLimits.max);
-
-    // change is not persistent if it's splashscreen change
-    if(time.start < tLimits.min && utils.isDate(tLimits.min)) time.getModelObject('start').set(tLimits.min, false, !time.splash);
-    if(time.end > tLimits.max && utils.isDate(tLimits.max)) time.getModelObject('end').set(tLimits.max, false, !time.splash);
+    if(!model || !model.state) return utils.warn("tool validation aborted: model.state looks wrong: " + model);
+    if(!model.state.time) return utils.warn("tool validation aborted: time looks wrong: " + time);
+    if(!model.state.marker) return utils.warn("tool validation aborted: marker looks wrong: " + marker);
   },
 
   _setUIModel: function() {

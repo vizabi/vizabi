@@ -157,6 +157,18 @@ var Hook = Model.extend({
     },
     
     
+    
+    
+      /**
+   * gets dataset without null or nan values with respect to this hook's which
+   * @returns {Object} filtered items object
+   */
+  getValidItems: function() {
+    return this.getDataManager().get(this._dataId, 'valid', this.which);
+  },
+    
+    
+    
   /**
    * gets the items associated with this hook without values
    * @param filter filter

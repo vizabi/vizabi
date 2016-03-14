@@ -15,15 +15,44 @@ var Marker = Model.extend({
    * this function is only needed to route the "time" to some indicator, 
    * to adjust time start and end to the max and min time available in data
    */
-  getLimits: function(attr) {
-      var minArray = [], maxArray = [], subLimits = {};
+  getTimeLimits: function(attr) {
+      var _this = this;
+      var time = this._parent.time;
+      var min, max, minArray = [], maxArray = [], items = {};      
+      if (!this.cachedTimeLimits) this.cachedTimeLimits = {};      
+      
       utils.forEach(this.getSubhooks(), function(hook) {
-        if(hook.use !== "indicator") return;
-        subLimits = hook.getLimits(attr);
-        minArray.push(subLimits.min);
-        maxArray.push(subLimits.max);
+        if(hook.use !== "indicator") return;          
+        var availability = hook.getMetadata().availability;
+        var availabilityForHook = _this.cachedTimeLimits[hook._dataId + hook.which];
+          
+          
+        if (availabilityForHook){
+            min = availabilityForHook.min;
+            max = availabilityForHook.max;
+        }else if (availability){
+            //if date limits are supplied by the metadata then use them
+            min = time.timeFormat.parse(availability[0]+"");
+            max = time.timeFormat.parse(availability[1]+"");
+        }else{ 
+            //otherwise calculate own date limits (a costly operation)
+            items = hook.getValidItems().map(function(m){return m[time.getDimension()];});
+            min = d3.min(items);
+            max = d3.max(items);
+        }
+        _this.cachedTimeLimits[hook._dataId + hook.which] = {min: min, max: max};
+        minArray.push(min);
+        maxArray.push(max);
       });
-      return {min: d3.max(minArray), max: d3.min(maxArray)};
+      
+      var resultMin = d3.max(minArray);
+      var resultMax = d3.min(maxArray);
+      if(resultMin > resultMax) {
+          resultMin = d3.min(minArray);
+          resultMax = d3.max(maxArray);
+          utils.warn("getTimeLimits(): Availability of the indicator's data has no intersection. I give up and just return some valid time range where you'll find no data points. Enjoy!")
+      }
+      return {min: resultMin, max: resultMax}
   },
 
 
@@ -106,6 +135,8 @@ var Marker = Model.extend({
           //find the next frame after the requested time point
           var nextFrameIndex = d3.bisectLeft(steps, time);
           
+          if(!steps[nextFrameIndex]) utils.warn("The requested frame is out of range");
+            
           //if "time" doesn't hit the frame precisely 
           if (steps[nextFrameIndex].toString() != time.toString()) {
             
