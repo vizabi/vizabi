@@ -385,6 +385,11 @@ var BubbleChartComp = Component.extend({
       .on("mouseup", function() {
         _this.draggingNow = false;
       })
+      .on("click", function() {
+        if (!d3.event.defaultPrevented && _this.model.ui.cursorMode === "minus") {
+          _this._panZoom.zoomOutIncrement();
+        }
+      });
 
     d3.select(this.parent.placeholder)
       .onTap(function() {
