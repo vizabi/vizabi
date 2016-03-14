@@ -206,16 +206,7 @@ var ZoomButtonList = Component.extend({
   },
   
   toggleHundredPercent: function(id) {
-    var _this = this;
-    var obj = {};
-      obj.axis_x = {};
-      obj.axis_x.zoomedMin = null;
-      obj.axis_x.zoomedMax = null;
-      obj.axis_y = {};
-      obj.axis_y.zoomedMin = null;
-      obj.axis_y.zoomedMax = null;
-
-    this.model.state.marker.set(obj);
+    this.root.trigger("resetZoom");
   }
   
 });

@@ -730,7 +730,7 @@ export default Class.extend({
         this.zoomer.translate([0, 0]);
     },
 
-    reset: function(element) {
+    reset: function(element, duration) {
         var _this = this.context;
         _this.isCanvasPreviouslyExpanded = false;
 
@@ -738,7 +738,7 @@ export default Class.extend({
         this.zoomer.ratioY = 1;
         this.zoomer.ratioX = 1;
         this.zoomer.translate([0, 0]);
-        this.zoomer.duration = 0;
+        this.zoomer.duration = duration||0;
         this.zoomer.event(element || _this.element);
     },
 

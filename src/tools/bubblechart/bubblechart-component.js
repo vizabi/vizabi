@@ -214,7 +214,7 @@ var BubbleChartComp = Component.extend({
         // }
       }
     };
-
+      
     this._super(config, context);
 
     this.xScale = null;
@@ -392,6 +392,10 @@ var BubbleChartComp = Component.extend({
         if(_this.model.ui.cursorMode !== 'arrow') return;
         if(!d3.event.metaKey && !d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", false);
       });
+        
+    this.root.on('resetZoom', function(){
+        _this._panZoom.reset(null, 500);
+    });
 
     this.bubbleContainerCrop
       .call(this._panZoom.zoomer)
