@@ -29,9 +29,9 @@ init: function(config, parent) {
   },
   {
     component: simplecheckbox,
-    placeholder: '.vzb-zoomonscrolling-switch',
+    placeholder: '.vzb-nozoomonscrolling-switch',
     model: ["ui", "language"],
-    checkbox: 'zoomOnScrolling'
+    checkbox: 'noZoomOnScrolling'
   }
   ];
 

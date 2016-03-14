@@ -153,7 +153,7 @@ export default Class.extend({
                  * scroll. Instead, redirect the scroll event to the scrollable
                  * ancestor
                  */
-                if (sourceEvent != null && _this.ui.zoomOnScrolling &&
+                if (sourceEvent != null && _this.ui.noZoomOnScrolling &&
                     sourceEvent.type === "wheel") {
                     if (_this.scrollableAncestor && !self.enabled) {
                         _this.scrollableAncestor.scrollTop += sourceEvent.deltaY;

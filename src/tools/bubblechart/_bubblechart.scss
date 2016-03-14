@@ -8,6 +8,15 @@
 
     .vzb-zoomin {
       cursor: zoom-in;
+      .vzb-bc-entity {
+        cursor: zoom-in !important;
+      }
+    }    
+    .vzb-zoomout {
+      cursor: zoom-out;
+      .vzb-bc-entity {
+        cursor: zoom-out !important;
+      }
     }
     .vzb-bubblechart-svg {
       @extend %vzb-chart-svg;

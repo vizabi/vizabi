@@ -544,7 +544,9 @@ BubbleChart.define('default_model', {
       lockNonSelected: 0,
       adaptMinMaxZoom: false
     },
-    presentation: false
+    presentation: false,
+    cursorMode: 'arrow',
+    noZoomOnScrolling: true
   }
 });
 

@@ -193,7 +193,7 @@ var ZoomButtonList = Component.extend({
   },
   
   toggleCursorMode: function(id) {
-    var value = id == 'arrow' ? null : id;
+    var value = id;
     this.model.ui.set('cursorMode', value, false, false);
   },
   

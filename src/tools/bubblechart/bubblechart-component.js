@@ -192,6 +192,19 @@ var BubbleChartComp = Component.extend({
         _this.updateBubbleOpacity();
         _this._trails.run("opacityHandler");
       },
+      'change:ui.cursorMode': function() {
+        var svg = _this.element.select("svg");
+        if(_this.model.ui.cursorMode === "plus"){
+            svg.classed("vzb-zoomin", true);
+            svg.classed("vzb-zoomout", false);
+        }else if(_this.model.ui.cursorMode === "minus"){
+            svg.classed("vzb-zoomin", false);
+            svg.classed("vzb-zoomout", true);
+        }else{
+            svg.classed("vzb-zoomin", false);
+            svg.classed("vzb-zoomout", false);
+        }
+      },
       'ready': function() {
         // if(_this.model.marker.color.scaleType === 'time') {
         //   _this.model.marker.color.scale = null;
@@ -372,9 +385,11 @@ var BubbleChartComp = Component.extend({
     //keyboard listeners
     d3.select("body")
       .on("keydown", function() {
+        if(_this.model.ui.cursorMode !== 'arrow') return;
         if(d3.event.metaKey || d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", true);
       })
       .on("keyup", function() {
+        if(_this.model.ui.cursorMode !== 'arrow') return;
         if(!d3.event.metaKey && !d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", false);
       });
 
@@ -656,16 +671,16 @@ var BubbleChartComp = Component.extend({
         return "vzb-bc-entity " + "bubble-" + d[KEY];
       })
       .on("mouseover", function(d, i) {
-        if(utils.isTouchDevice()) return;
+        if(utils.isTouchDevice() || _this.model.ui.cursorMode !== 'arrow') return;
         _this._bubblesInteract().mouseover(d, i);
       })
       .on("mouseout", function(d, i) {
-        if(utils.isTouchDevice()) return;
+        if(utils.isTouchDevice() || _this.model.ui.cursorMode !== 'arrow') return;
 
         _this._bubblesInteract().mouseout(d, i);
       })
       .on("click", function(d, i) {
-        if(utils.isTouchDevice()) return;
+        if(utils.isTouchDevice() || _this.model.ui.cursorMode !== 'arrow') return;
 
         _this._bubblesInteract().click(d, i);
       })

@@ -96,7 +96,7 @@
     "check/adaptMinMaxZoom": "Follow bubbles with zoom",
     "check/presentation": "Increase text size for presentation",
     "check/removeLabelBox": "Remove label boxes",
-    "check/zoomOnScrolling": "Disable zoom on scrolling",
+    "check/noZoomOnScrolling": "Disable mousewheel zoom",
     "region/americas": "Americas",
     "region/asia": "Asia",
     "region/africa": "Africa",
