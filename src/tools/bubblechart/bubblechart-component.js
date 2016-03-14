@@ -1015,7 +1015,9 @@ var BubbleChartComp = Component.extend({
   updateMarkerSizeLimits: function() {
     var _this = this;
     var extent = this.model.marker.size.extent || [0,1];
-
+      
+    if(!this.activeProfile) return utils.warn("updateMarkerSizeLimits() is called before ready(). This can happen if events get unfrozen and getFrame() still didn't return data");
+      
     var minRadius = this.activeProfile.minRadius;
     var maxRadius = this.activeProfile.maxRadius;
 
