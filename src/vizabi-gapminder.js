@@ -24,20 +24,25 @@ import DonutChart from 'tools/donutchart';
 import {
   waffle as WaffleReader
 }
-from 'readers/_index';
+  from 'readers/_index';
 
 var language = {
   id: "en",
   strings: {}
 };
 
-var locationArray = window.location.href.split("/");
-var localUrl = locationArray.splice(0, locationArray.indexOf("preview")).join("/");
-localUrl += "/preview/";
-var onlineUrl = "http://static.gapminderdev.org/vizabi/develop/preview/";
+// http://static.gapminderdev.org/vizabi/develop/preview/
 
 //TODO: remove hardcoded path from source code
+
+// Keep compatibility::feature, no internet connection - requesting data from local host.
+var locationArray = window.location.href.split("/");
+var localUrl = locationArray.splice(0, locationArray.indexOf("preview")).join("/") + "/preview/";
+
 globals.gapminder_paths = {
+  // Explanation what is going on in the code below:
+  // In order to use WS server other than specified in WS_SERVER you need to fill it in manually
+  wsUrl: typeof WS_SERVER === 'undefined' ? 'https://waffle-server-stage.gapminderdev.org' : WS_SERVER
   baseUrl: localUrl
 };
 
@@ -91,7 +96,7 @@ BarChart.define('default_model', {
   },
   data: {
     reader: "waffle",
-    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools"
+    path: globals.gapminder_paths.wsUrl + "/api/graphs/stats/vizabi-tools"
     //reader: "csv",
     //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv"
   },
@@ -133,8 +138,8 @@ BarRankChart.define('default_model', {
       label: {
         use: "property",
         which: "geo.name"
-      }    
-    },      
+      }
+    },
     marker: {
       space: ["entities", "time"],
       label: {
@@ -172,7 +177,7 @@ BarRankChart.define('default_model', {
   language: language,
   data: {
     reader: "waffle",
-    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    path: globals.gapminder_paths.wsUrl + "/api/graphs/stats/vizabi-tools",
     //reader: "csv",
     //path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv"
     splash: true
@@ -243,7 +248,7 @@ BubbleMap.define('default_model', {
   },
   data: {
     reader: "waffle",
-    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    path: globals.gapminder_paths.wsUrl + "/api/graphs/stats/vizabi-tools",
     //reader: "csv",
     //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
@@ -302,7 +307,7 @@ MountainChart.define('default_model', {
       label: {
         use: "property",
         which: "geo.name"
-      }    
+      }
     },
     marker: {
       space: ["entities", "time"],
@@ -355,7 +360,7 @@ MountainChart.define('default_model', {
   language: language,
   data: {
     reader: "waffle",
-    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    path: globals.gapminder_paths.wsUrl + "/api/graphs/stats/vizabi-tools",
     //reader: "csv",
     //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
@@ -420,7 +425,8 @@ LineChart.define('default_model', {
 
   data: {
     reader: "csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    path: globals.gapminder_paths.wsUrl + "/api/vizabi/geo_properties.csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: false
   },
   language: language,
@@ -475,8 +481,8 @@ BubbleChart.define('default_model', {
         which: "geo.name"
       },
       size_label: {
-          use: "constant"
-        },
+        use: "constant"
+      },
 
       axis_y: {
         use: "indicator",
@@ -515,7 +521,7 @@ BubbleChart.define('default_model', {
   },
   data: {
     reader: "waffle",
-    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    path: globals.gapminder_paths.wsUrl + "/api/graphs/stats/vizabi-tools",
     //reader: "csv",
     //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
@@ -561,8 +567,8 @@ PopByAge.define('default_model', {
       show: {
         _defs_: {
           "age": [
-              [0, 95]
-            ] //show 0 through 100
+            [0, 95]
+          ] //show 0 through 100
         }
       },
       grouping: 5
@@ -600,7 +606,8 @@ PopByAge.define('default_model', {
   },
   data: {
     reader: "csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/{{geo}}.csv",
+    path: globals.gapminder_paths.wsUrl + "/{{geo}}.csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/{{geo}}.csv",
     splash: false
   },
   language: language,
@@ -612,58 +619,60 @@ PopByAge.define('default_model', {
 
 DonutChart.define('default_model', {
   state: {
-        // available time would have the range of 1990-2012 years (%Y), with the deafult position at 2000
-        time: {
-          start: "1990",
-          end: "2012",
-          value: "2000"
-        },
-        //Entities include all ("*") geo's of category "regions" -- equivalent to 'geo: ["asi", "ame", "eur", "afr"]'
-        entities: {
-          dim: "geo",
-          show: {
-            _defs_: {
-              "geo": ["*"],
-              "geo.cat": ["region"]
-            }
-          }
-        },
-        //Markers correspond to visuals that we want to show. We have label, axis and color
-        marker: {
-          space: ["entities", "time"],
-          label: {
-            use: "property",
-            which: "geo.name"
-          },
-          axis: {
-            use: "indicator",
-            which: "population"
-          },
-          color: {
-            use: "property",
-            which: "geo.name"
-          }
+    // available time would have the range of 1990-2012 years (%Y), with the deafult position at 2000
+    time: {
+      start: "1990",
+      end: "2012",
+      value: "2000"
+    },
+    //Entities include all ("*") geo's of category "regions" -- equivalent to 'geo: ["asi", "ame", "eur", "afr"]'
+    entities: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo": ["*"],
+          "geo.cat": ["region"]
         }
-  },  
+      }
+    },
+    //Markers correspond to visuals that we want to show. We have label, axis and color
+    marker: {
+      space: ["entities", "time"],
+      label: {
+        use: "property",
+        which: "geo.name"
+      },
+      axis: {
+        use: "indicator",
+        which: "population"
+      },
+      color: {
+        use: "property",
+        which: "geo.name"
+      }
+    }
+  },
   data: {
     reader: "csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv",
+    path: globals.gapminder_paths.wsUrl + "/api/vizabi/basic-indicators.csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv",
     splash: false
   },
   language: language,
   ui: {
     presentation: false
   }
-    
+
 });
 
 
 //Waffle Server Reader custom path
-WaffleReader.define('basepath', "http://52.18.235.31:8001/values/waffle");
+WaffleReader.define('basepath', globals.gapminder_paths.wsUrl + "/api/graphs/stats/vizabi-tools");
 
 //preloading mountain chart precomputed shapes
 MCComponent.define("preload", function(done) {
-  var shape_path = globals.gapminder_paths.baseUrl + "data/mc_precomputed_shapes.json";
+  //var shape_path = globals.gapminder_paths.baseUrl + "data/mc_precomputed_shapes.json";
+  var shape_path = globals.gapminder_paths.wsUrl + "/api/vizabi/mc_precomputed_shapes.json";
 
   d3.json(shape_path, function(error, json) {
     if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
@@ -674,7 +683,8 @@ MCComponent.define("preload", function(done) {
 
 //preloading bubble map country shapes
 BMComponent.define("preload", function(done) {
-  var shape_path = globals.gapminder_paths.baseUrl + "data/world-50m.json";
+  //var shape_path = globals.gapminder_paths.baseUrl + "data/world-50m.json";
+  var shape_path = globals.gapminder_paths.wsUrl + "/api/vizabi/world-50m.json";
 
   d3.json(shape_path, function(error, json) {
     if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
@@ -689,12 +699,13 @@ Tool.define("preload", function(promise) {
 
   var _this = this;
 
-  var metadata_path = Vzb._globals.gapminder_paths.baseUrl + "data/waffles/metadata.json";
+  //var metadata_path = Vzb._globals.gapminder_paths.baseUrl + "data/waffles/metadata.json";
+  var metadata_path = Vzb._globals.gapminder_paths.wsUrl + "/api/vizabi/metadata.json";
   var globals = Vzb._globals;
-    
+
   Vzb._globals.version = Vzb._version;
   Vzb._globals.build = Vzb._build;
-    
+
   //TODO: concurrent
   //load language first
   this.preloadLanguage().then(function() {
@@ -747,7 +758,8 @@ Tool.define("preloadLanguage", function() {
   var promise = new Promise();
 
   var langModel = this.model.language;
-  var translation_path = Vzb._globals.gapminder_paths.baseUrl + "data/translation/" + langModel.id + ".json";
+  //var translation_path = Vzb._globals.gapminder_paths.baseUrl + "data/translation/" + langModel.id + ".json";
+  var translation_path = Vzb._globals.gapminder_paths.wsUrl + "/api/vizabi/translation/" + langModel.id + ".json";
 
   if(langModel && !langModel.strings[langModel.id]) {
     d3.json(translation_path, function(langdata) {
