@@ -53,34 +53,8 @@ var PopByAge = Tool.extend('PopByAge', {
 
     //constructor is the same as any tool
     this._super(placeholder, external_model);
-  },
-
-  /**
-   * Validating the tool model
-   * @param model the current tool model to be validated
-   */
-  validate: function(model) {
-
-    model = this.model || model;
-
-    var time = model.state.time;
-    var marker = model.state.marker.label;
-
-    //don't validate anything if data hasn't been loaded
-    if(!marker.getKeys() || marker.getKeys().length < 1) {
-      return;
-    }
-
-    var dateMin = marker.getLimits(time.getDimension()).min;
-    var dateMax = marker.getLimits(time.getDimension()).max;
-
-    if(time.start < dateMin) {
-      time.start = dateMin;
-    }
-    if(time.end > dateMax) {
-      time.end = dateMax;
-    }
   }
+
 });
 
 export default PopByAge;
