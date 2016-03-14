@@ -312,7 +312,7 @@ export default Class.extend({
         var mmX = d3.extent(utils.values(_this.frame.axis_x));
         var mmY = d3.extent(utils.values(_this.frame.axis_y));
         var radiusMax = utils.areaToRadius(_this.sScale( d3.extent(utils.values(_this.frame.size))[1] )) || 0;
-        
+
         //protection agains unreasonable min-max results -- abort function
         if (!mmX[0] && mmX[0]!==0 || !mmX[1] && mmX[1]!==0 || !mmY[0] && mmY[0]!==0 || !mmY[1] && mmY[1]!==0) {
           return utils.warn("panZoom.expandCanvas: X or Y min/max are broken. Aborting with no action");
@@ -576,7 +576,7 @@ export default Class.extend({
         var scalar = scaleDifference / Math.abs(dataBoundary - viewportBoundary);
         return (coordValue - dataBoundary) * (1 - scalar) + dataBoundary;
     },
-    
+
     /*
      * Reset zoom values without triggering a zoom event.
      */

@@ -138,7 +138,7 @@ var BubbleChartComp = Component.extend({
           _this.model.marker.getFrame(time, function(frame, time) {
             if (!frame) return false;
             var index = _this.calculationQueue.indexOf(time.toString()); //
-            if (index == -1) { // we was receive more recent frame before so we pass this frame  
+            if (index == -1) { // we was receive more recent frame before so we pass this frame
               return;
             } else {
               _this.calculationQueue.splice(0, index + 1); // remove timestamps that added to queue before current timestamp
@@ -211,7 +211,7 @@ var BubbleChartComp = Component.extend({
 
     this.xAxis = axisSmart();
     this.yAxis = axisSmart();
-      
+
     _this.COLOR_BLACKISH = "#333";
     _this.COLOR_WHITEISH = "#fdfdfd";
 
@@ -454,7 +454,7 @@ var BubbleChartComp = Component.extend({
       if(_this.model.ui.chart.adaptMinMaxZoom) _this._panZoom.expandCanvas();
     });
   },
-    
+
     /*
      * Zoom to the min and max values given in the URL axes markers.
      */
@@ -981,7 +981,7 @@ var BubbleChartComp = Component.extend({
   updateMarkerSizeLimits: function() {
     var _this = this;
     var extent = this.model.marker.size.extent || [0,1];
-      
+
     var minRadius = this.activeProfile.minRadius;
     var maxRadius = this.activeProfile.maxRadius;
 
@@ -999,7 +999,7 @@ var BubbleChartComp = Component.extend({
   updateLabelSizeLimits: function() {
     var _this = this;
     var extent = this.model.marker.size_label.extent || [0,1];
-      
+
     var minLabelTextSize = this.activeProfile.minLabelTextSize;
     var maxLabelTextSize = this.activeProfile.maxLabelTextSize;
     var minMaxDelta = maxLabelTextSize - minLabelTextSize;
@@ -1072,7 +1072,7 @@ var BubbleChartComp = Component.extend({
     }
     this.model.marker.getFrame(time, function(valuesLocked) {
       if(!valuesLocked) return utils.warn("redrawDataPointsOnlySize: empty data received from marker.getFrames(). doing nothing");
-        
+
       valuesNow = _this.frame;
       _this.entityBubbles.each(function(d, index) {
 
@@ -1127,7 +1127,7 @@ var BubbleChartComp = Component.extend({
     var _this = this;
     var KEY = this.KEY;
     if(duration == null) duration = _this.duration;
-      
+
     if(this.model.ui.chart.lockNonSelected && this.someSelected) {
         var time = this.model.time.timeFormat.parse("" + this.model.ui.chart.lockNonSelected);
 
@@ -1153,7 +1153,7 @@ var BubbleChartComp = Component.extend({
   _updateBubble: function(d, values, index, view, duration) {
     var _this = this;
     var KEY = this.KEY;
-      
+
     var showhide = false;
 
     var valueY = values.axis_y[d[KEY]];
@@ -1170,14 +1170,14 @@ var BubbleChartComp = Component.extend({
            d.hidden = true;
            showhide = true;
        }
-        
+
       if(showhide) view.classed("vzb-invisible", d.hidden);
     } else {
         if(d.hidden || view.classed("vzb-invisible")) {
            d.hidden = false;
            showhide = true;
        }
-    
+
 
       // if entity has all the data we update the visuals
       var scaledS = utils.areaToRadius(_this.sScale(valueS));
@@ -1193,16 +1193,16 @@ var BubbleChartComp = Component.extend({
                 //to avoid transition from null state show entity with a delay if it was hidden
                 if(showhide) view.classed("vzb-invisible", d.hidden);
             })
-        
+
       } else {
-        
+
         //interrupt the ongoing transition and immediately do the visual updates
         view.interrupt()
           .attr("cy", _this.yScale(valueY))
           .attr("cx", _this.xScale(valueX))
           .attr("r", scaledS);
-          
-        //show entity if it was hidden  
+
+        //show entity if it was hidden
         if(showhide) view.classed("vzb-invisible", d.hidden);
       }
 
@@ -1217,7 +1217,7 @@ var BubbleChartComp = Component.extend({
       });
 
     } // data exists
-      
+
     _this._updateLabel(d, index, valueX, valueY, scaledS, valueL, valueLST, duration, showhide);
   },
 
@@ -1239,7 +1239,7 @@ var BubbleChartComp = Component.extend({
         return f[KEY] == d[KEY]
       });
       var trailStartTime = _this.model.time.timeFormat.parse("" + select.trailStartTime);
-        
+
       var brokenInputs = !valueX && valueX !==0 || !valueY && valueY !==0 || !scaledS && scaledS !==0;
 
       if(!brokenInputs && (!_this.model.ui.chart.trails || trailStartTime - _this.time > 0 || select.trailStartTime == null)) {
@@ -1274,18 +1274,18 @@ var BubbleChartComp = Component.extend({
 
           var text = labelGroup.selectAll(".vzb-bc-label-content")
             .text(valueL + (_this.model.ui.chart.trails ? " " + select.trailStartTime : ""));
-          
+
           var labels = _this.model.ui.chart.labels;
           labelGroup.classed('vzb-label-boxremoved', labels.removeLabelBox);
           var fontSize = _this.labelSizeTextScale(valueLST) + 'px';
           text.attr('font-size', fontSize);
-          
+
           var rect = labelGroup.select("rect");
 
           var contentBBox = text[0][0].getBBox();
           if(!cached.contentBBox || cached.contentBBox.width != contentBBox.width) {
             cached.contentBBox = contentBBox;
-            
+
             var labelCloseHeight = _this.activeProfile.infoElHeight * 1.2;//contentBBox.height;
 
             var labelCloseGroup = labelGroup.select(".vzb-bc-label-x")
@@ -1311,7 +1311,7 @@ var BubbleChartComp = Component.extend({
               .attr("rx", contentBBox.height * .2)
               .attr("ry", contentBBox.height * .2);
           }
-          
+
           var labelOffset = select.labelOffset || [0,0];
 
           cached.labelX_ = labelOffset[0] || (-cached.scaledS0 * .75 - 5) / _this.width;
@@ -1323,8 +1323,8 @@ var BubbleChartComp = Component.extend({
           var resolvedY = resolvedY0 + cached.labelY_ * _this.height;
 
           if(showhide && d.hidden && _this.model.ui.chart.trails && trailStartTime && (trailStartTime < _this.time)) showhide = false;
-          if(d.hidden && !_this.model.ui.chart.trails) showhide = true;  
-          
+          if(d.hidden && !_this.model.ui.chart.trails) showhide = true;
+
           _this._repositionLabels(d, index, this, resolvedX, resolvedY, resolvedX0, resolvedY0, duration, showhide, lineGroup);
 
         })
@@ -1342,7 +1342,7 @@ var BubbleChartComp = Component.extend({
     var cache = this.cached[d[this.KEY]];
 
     var labelGroup = d3.select(context);
-          
+
     //protect label and line from the broken data
     var brokenInputs = !_X && _X !==0 || !_Y && _Y !==0 || !_X0 && _X0 !==0 || !_Y0 && _Y0 !==0;
     if(brokenInputs) {
@@ -1405,8 +1405,8 @@ var BubbleChartComp = Component.extend({
     var labels = this.model.ui.chart.labels;
 
     var bBox = labels.removeLabelBox ? textBBox : rectBBox;
-    
-    var lineHidden = this.circleRectIntersects({x: diffX1, y: diffY1, r: cache.scaledS0}, 
+
+    var lineHidden = this.circleRectIntersects({x: diffX1, y: diffY1, r: cache.scaledS0},
       {x: diffX2, y: diffY2, width: (bBox.height * 2 + bBox.width), height: (bBox.height * 3)});
     lineGroup.select('line').classed("vzb-invisible", lineHidden);
     if(lineHidden) return;
@@ -1415,10 +1415,10 @@ var BubbleChartComp = Component.extend({
       var angle = Math.atan2(diffX1 - diffX2, diffY1 - diffY2) * 180 / Math.PI;
       var deltaDiffX2 = (angle >= 0 && angle <= 180) ? (bBox.width * .5) : (-bBox.width * .5);
       var deltaDiffY2 = (Math.abs(angle) <= 90) ? (bBox.height * .55) : (-bBox.height * .45);
-      diffX2 += Math.abs(diffX1 - diffX2) > textBBox.width * .5 ? deltaDiffX2 : 0; 
+      diffX2 += Math.abs(diffX1 - diffX2) > textBBox.width * .5 ? deltaDiffX2 : 0;
       diffY2 += Math.abs(diffY1 - diffY2) > textBBox.height * .5 ? deltaDiffY2 : (textBBox.height * .05);
     }
-          
+
     var longerSideCoeff = Math.abs(diffX1) > Math.abs(diffY1) ? Math.abs(diffX1) / this.width : Math.abs(diffY1) / this.height;
     lineGroup.select("line").style("stroke-dasharray", "0 " + (cache.scaledS0 + 2) + " " + ~~(longerSideCoeff + 2) + "00%");
 
@@ -1429,17 +1429,17 @@ var BubbleChartComp = Component.extend({
       .attr("y2", diffY2);
 
   },
- 
+
   /*
-   * Adapted from 
+   * Adapted from
    * http://stackoverflow.com/questions/401847/circle-rectangle-collision-detection-intersection
-   * 
-   * circle { 
-   *  x: center X 
+   *
+   * circle {
+   *  x: center X
    *  y: center Y
    *  r: radius
    * }
-   * 
+   *
    * rect {
    *  x: center X
    *  y: center Y
@@ -1449,14 +1449,14 @@ var BubbleChartComp = Component.extend({
    */
   circleRectIntersects: function(circle, rect) {
     var circleDistanceX = Math.abs(circle.x - rect.x);
-    var circleDistanceY = Math.abs(circle.y - rect.y);    
+    var circleDistanceY = Math.abs(circle.y - rect.y);
     var halfRectWidth = rect.width * .5;
     var halfRectHeight = rect.height * .5;
 
     if (circleDistanceX > (halfRectWidth + circle.r)) { return false; }
     if (circleDistanceY > (halfRectHeight + circle.r)) { return false; }
 
-    if (circleDistanceX <= halfRectWidth) { return true; } 
+    if (circleDistanceX <= halfRectWidth) { return true; }
     if (circleDistanceY <= halfRectHeight) { return true; }
 
     var cornerDistance_sq = Math.pow(circleDistanceX - halfRectWidth, 2) +
@@ -1712,11 +1712,11 @@ var BubbleChartComp = Component.extend({
           var y = _this.yScale(values.axis_y[d[KEY]]);
           var s = utils.areaToRadius(_this.sScale(values.size[d[KEY]]));
           var entityOutOfView = false;
-          
+
           if(x + s < 0 || x - s > _this.width || y + s < 0 || y - s > _this.height) {
             entityOutOfView = true;
           }
-          
+
           //show tooltip
           var text = "";
           var hoverTrail = false;
