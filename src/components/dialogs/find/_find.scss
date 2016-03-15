@@ -5,6 +5,7 @@
         display: inline-block;
         position: relative;
         max-width: 170px;
+        padding: 0 10px;
       }
       &.vzb-moreoptions {
         .vzb-dialog-title {
@@ -62,7 +63,6 @@
           .vzb-find-filter {
             display: inline-block;
             position: relative;
-            padding: 0 10px;
             max-width: 210px;
             top: 0;
           }

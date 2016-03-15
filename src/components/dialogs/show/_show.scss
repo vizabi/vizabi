@@ -4,7 +4,8 @@
       .vzb-show-filter {
         display: inline-block;
         position: relative;
-        max-width: 170px; 
+        max-width: 170px;
+        padding: 0 10px;
       }
     }
   }
@@ -33,7 +34,6 @@
           .vzb-show-filter {
             display: inline-block;
             position: relative;
-            padding: 10px;
             max-width: 210px;
           }
         }
