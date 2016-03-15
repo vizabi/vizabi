@@ -1,0 +1,53 @@
+We'd like you to download this repo
+https://github.com/Gapminder/waffle-server-importers-exporters/tree/world-legacy-with-data
+and convert these JSON files to datapoints and entities
+https://github.com/Gapminder/waffle-server-importers-exporters/tree/world-legacy-with-data/data/out/gw/indicators
+indicator names and entity hiearchy can be found here
+https://github.com/Gapminder/waffle-server-importers-exporters/tree/world-legacy-with-data/data/out/gw/meta
+
+
+
+mapping from geo ids to more informative names (geo properties)
+https://github.com/Gapminder/waffle-server-importers-exporters/blob/world-legacy-with-data/data/synonym/country_synonyms.xlsx
+
+btw, here's more data on the concepts
+https://docs.google.com/spreadsheets/d/192pjt2vtwAQzi154LJ3Eb5RF8W9Fx3ZAiUZy-zXgyJo/edit#gid=3
+
+
+
+so, moreover, we need you to take this file:
+
+https://github.com/Gapminder/vizabi/blob/develop/.data/translation/en.json
+
+and extend the part where the indicator/ are with the new indicators and their names.
+
+
+and in this file:
+
+https://github.com/Gapminder/vizabi/blob/develop/.data/waffles/metadata.json
+
+add the new indicators to the indicatorsDB part of the file. Each indicator will have 
+use: "indicator"
+scales: take it from https://docs.google.com/spreadsheets/d/192pjt2vtwAQzi154LJ3Eb5RF8W9Fx3ZAiUZy-zXgyJo/edit#gid=3
+
+That same file (metadata.json) has an indicatorsTree section. We need the indicators there too.
+The tree structure can be found here: https://docs.google.com/spreadsheets/d/192pjt2vtwAQzi154LJ3Eb5RF8W9Fx3ZAiUZy-zXgyJo/edit#gid=3
+Menu level 1 and menu level 2 columns
+
+
+
+or the grouping: start with the 4regions in the bottom of the file: https://github.com/Gapminder/waffle-server-importers-exporters/blob/world-legacy-with-data/data/out/gw/meta/area_categorizarion.json
+
+make every region an entity in the geo domain, the names of the regions are here: https://github.com/Gapminder/waffle-server-importers-exporters/blob/world-legacy-with-data/data/synonym/regions.json
+group them in an entity set, with the name from https://github.com/Gapminder/waffle-server-importers-exporters/blob/world-legacy-with-data/data/synonym/area_id.json
+the id of the entity_set can be the lower case alphanumeric/underscore version of the name
+
+You'll also need an entity set country which all the countries are in
+
+then, in concepts, country entity set concept should have a drill_up property with value to all those other entity sets (put them in an array form [world_4region, oecd, landlocked etc]
+
+then in entities--geo--countries you can assign per entity set (world_4region) to which member of that set they drill up
+
+I think it's not much more work to do this for every grouping than for one right? If it is much more work, do it only for 4 regions, (CATID4), otherwise, do it for all.
+
+
