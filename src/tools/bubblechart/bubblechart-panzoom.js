@@ -20,6 +20,7 @@ export default Class.extend({
 
         this.zoomer
             .scaleExtent([1, 100])
+            .on("zoomstart", this.zoom().start)
             .on("zoom", this.zoom().go)
             .on('zoomend', this.zoom().stop);
 
@@ -125,6 +126,9 @@ export default Class.extend({
         var self = this;
 
         return {
+            start: function() {
+                this.savedScale = zoomer.scale();
+            },
             go: function() {
 
                 var sourceEvent = d3.event.sourceEvent;
@@ -158,7 +162,9 @@ export default Class.extend({
                     if (_this.scrollableAncestor && !self.enabled) {
                         _this.scrollableAncestor.scrollTop += sourceEvent.deltaY;
                     }
-
+                    d3.event.scale = null;
+                    zoomer.scale(this.savedScale);
+                    this.quitZoom = true;
                     return;
                 }
 
@@ -166,9 +172,11 @@ export default Class.extend({
                     if(sourceEvent != null && !self.enabled){
                         _this.scrollableAncestor.scrollTop += sourceEvent.deltaY;
                         zoomer.scale(1)
+                        this.quitZoom = true;
                         return;
                     }
                 }
+                this.quitZoom = false;
 
                 _this.model._data.entities.clearHighlighted();
                 _this._setTooltip();
@@ -353,6 +361,8 @@ export default Class.extend({
 
             stop: function(){
                 _this.draggingNow = false;
+                
+                if (this.quitZoom) return; 
 
                 //Force the update of the URL and history, with the same values
                 _this.model.marker.axis_x.set(_this._zoomZoomedDomains.x, true, true);
