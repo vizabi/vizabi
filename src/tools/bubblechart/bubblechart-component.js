@@ -1313,8 +1313,9 @@ var BubbleChartComp = Component.extend({
 
           var labels = _this.model.ui.chart.labels;
           labelGroup.classed('vzb-label-boxremoved', labels.removeLabelBox);
-          var fontSize = _this.labelSizeTextScale(valueLST) + 'px';
-          text.attr('font-size', fontSize);
+          var range = _this.labelSizeTextScale.range();
+          var fontSize = range[0] + Math.sqrt((_this.labelSizeTextScale(valueLST) - range[0]) * (range[1] - range[0]));
+          text.attr('font-size', fontSize + 'px');
 
           var rect = labelGroup.select("rect");
 
