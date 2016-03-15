@@ -21,17 +21,17 @@ var OPTIONS = {
 var profiles = {
     "small": {
       minLabelTextSize: 7,
-      maxLabelTextSize: 19,
-      defaultLabelTextSize: 13
+      maxLabelTextSize: 21,
+      defaultLabelTextSize: 12
     },
     "medium": {
       minLabelTextSize: 7,
-      maxLabelTextSize: 22,
-      defaultLabelTextSize: 16
+      maxLabelTextSize: 30,
+      defaultLabelTextSize: 15
     },
     "large": {
-      minLabelTextSize: 7,
-      maxLabelTextSize: 26,
+      minLabelTextSize: 6,
+      maxLabelTextSize: 48,
       defaultLabelTextSize: 20
     }
 };
