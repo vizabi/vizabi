@@ -128,6 +128,7 @@ var BubbleChartComp = Component.extend({
         _this.highlightDataPoints();
       },
       'change:time.value': function() {
+        if (!_this._readyOnce) return;
         if (!_this.calculationQueue) { // collect timestamp that we request
           _this.calculationQueue = [_this.model.time.value.toString()]
         } else {
@@ -436,6 +437,8 @@ var BubbleChartComp = Component.extend({
     this.wScale = d3.scale.linear()
       .domain(this.parent.datawarning_content.doubtDomain)
       .range(this.parent.datawarning_content.doubtRange);
+    
+    this._trails.create();
 
 
     this.model.marker.getFrame(this.model.time.value, function(frame) {
@@ -449,10 +452,9 @@ var BubbleChartComp = Component.extend({
       _this.updateBubbleOpacity();
       _this.selectDataPoints();
       _this._updateDoubtOpacity();
-      _this._trails.create();
       _this.zoomToMarkerMaxMin(); // includes redraw data points and trail resize
       _this._trails.run(["recolor", "opacityHandler", "findVisible", "reveal"]);
-       _this._readyOnce = true;
+      _this._readyOnce = true;
     });
   },
 
@@ -1101,7 +1103,7 @@ var BubbleChartComp = Component.extend({
     var KEY = this.KEY;
 
 
-    var time = this.time;
+    var time = this.model.time.value;
 
     if(this.model.ui.chart.lockNonSelected && this.someSelected) {
       time = this.model.time.timeFormat.parse("" + this.model.ui.chart.lockNonSelected);
