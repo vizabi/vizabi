@@ -410,7 +410,7 @@ var BubbleMapComponent = Component.extend({
 
       var OPACITY_HIGHLT = 1.0;
       var OPACITY_HIGHLT_DIM = .3;
-      var OPACITY_SELECT = 1.0;
+      var OPACITY_SELECT = this.model.entities.opacityRegular;
       var OPACITY_REGULAR = this.model.entities.opacityRegular;
       var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
 
