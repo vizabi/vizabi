@@ -401,12 +401,13 @@ var BubbleChartComp = Component.extend({
     this.bubbleContainerCrop
       .call(this._panZoom.zoomer)
       .call(this._panZoom.dragRectangle)
-      //.on('dblclick.zoom', null)
+      .on('dblclick.zoom', null)
       .on("mouseup", function() {
         _this.draggingNow = false;
       })
       .on("click", function() {
-        if (!d3.event.defaultPrevented) {
+        var cursor = _this.model.ui.cursorMode;
+        if (!d3.event.defaultPrevented && cursor!=="arrow") {
           _this._panZoom.zoomByIncrement(_this.model.ui.cursorMode, 500);
         }
       });
