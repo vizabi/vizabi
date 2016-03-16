@@ -446,6 +446,7 @@ var BubbleChartComp = Component.extend({
       _this.updateIndicators();
       _this.updateSize();
       _this.updateEntities();
+      _this._trails.create();
       _this.updateTime();
       _this.updateMarkerSizeLimits();
       _this.updateLabelSizeLimits();
