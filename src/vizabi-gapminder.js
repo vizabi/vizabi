@@ -745,9 +745,7 @@ Tool.define("preload", function(promise) {
     }
     var color = _this.default_model.state.marker[hook];
     var palette = ((globals.metadata.indicatorsDB[color.which]||{}).color||{}).palette||{};
-      console.log(color.palette)
     color.palette = utils.extend({}, color.palette, palette);
-      console.log(color.palette)
   }
 
   function addMinMax(hook) {

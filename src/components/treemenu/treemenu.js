@@ -693,7 +693,7 @@ var TreeMenu = Component.extend({
         if(_this.langStrings()) {
           for(var language in _this.langStrings()) {
             for(var key in _this.langStrings()[language]) {
-                console.log(key.replace(/.*\//,""))
+                
               if(key.indexOf('indicator/') == 0 &&
                 //regexp: match everything until the last occurence of "/"
                 key.replace(/.*\//,"") == data[i][OPTIONS.SEARCH_PROPERTY] &&
