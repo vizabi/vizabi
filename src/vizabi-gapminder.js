@@ -285,7 +285,7 @@ MountainChart.define('default_model', {
     entities: {
       dim: "geo",
       opacitySelectDim: .3,
-      opacityRegular: 1,
+      opacityRegular: .7,
       show: {
         _defs_: {
           "geo": ["*"],
@@ -498,7 +498,7 @@ BubbleChart.define('default_model', {
         which: "gdp_p_cap_const_ppp2011_dollar",
         scaleType: "log",
         allow: {
-          scales: ["linear", "log", "time"]
+          scales: ["linear", "log"]
         }
       },
       color: {
