@@ -446,13 +446,13 @@ var BubbleChartComp = Component.extend({
       _this.updateIndicators();
       _this.updateSize();
       _this.updateEntities();
+      _this._trails.create();
       _this.updateTime();
       _this.updateMarkerSizeLimits();
       _this.updateLabelSizeLimits();
       _this.updateBubbleOpacity();
       _this.selectDataPoints();
       _this._updateDoubtOpacity();
-      _this._trails.create();
       _this.zoomToMarkerMaxMin(); // includes redraw data points and trail resize
       _this._trails.run(["recolor", "opacityHandler", "findVisible", "reveal"]);
       _this._readyOnce = true;
