@@ -439,7 +439,6 @@ var BubbleChartComp = Component.extend({
       .domain(this.parent.datawarning_content.doubtDomain)
       .range(this.parent.datawarning_content.doubtRange);
     
-    this._trails.create();
 
 
     this.model.marker.getFrame(this.model.time.value, function(frame) {
@@ -453,6 +452,7 @@ var BubbleChartComp = Component.extend({
       _this.updateBubbleOpacity();
       _this.selectDataPoints();
       _this._updateDoubtOpacity();
+      _this._trails.create();
       _this.zoomToMarkerMaxMin(); // includes redraw data points and trail resize
       _this._trails.run(["recolor", "opacityHandler", "findVisible", "reveal"]);
       _this._readyOnce = true;
