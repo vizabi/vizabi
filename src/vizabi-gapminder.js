@@ -42,7 +42,8 @@ var localUrl = locationArray.splice(0, locationArray.indexOf("preview")).join("/
 globals.gapminder_paths = {
   // Explanation what is going on in the code below:
   // In order to use WS server other than specified in WS_SERVER you need to fill it in manually
-  wsUrl: typeof WS_SERVER === 'undefined' ? 'https://waffle-server-stage.gapminderdev.org' : WS_SERVER,
+  //systema globalis wsUrl: typeof WS_SERVER === 'undefined' ? 'https://waffle-server-stage.gapminderdev.org' : WS_SERVER,
+  wsUrl: typeof WS_SERVER === 'undefined' ? 'https://waffle-server-dev-new-ddf.gapminderdev.org' : WS_SERVER,
   baseUrl: localUrl
 };
 
@@ -221,7 +222,8 @@ BubbleMap.define('default_model', {
       },
       size: {
         use: "indicator",
-        which: "population",
+        //which: "population",//systema globalis
+        which: "population_total",
         scaleType: "linear",
         allow: {
           scales: ["linear"]
@@ -317,12 +319,14 @@ MountainChart.define('default_model', {
       },
       axis_y: {
         use: "indicator",
-        which: "population",
+        //which: "population",//systema globalis
+        which: "population_total",
         scaleType: 'linear'
       },
       axis_x: {
         use: "indicator",
-        which: "gdp_p_cap_const_ppp2011_dollar",
+        //which: "gdp_p_cap_const_ppp2011_dollar",//systema globalis
+        which: "income_per_person_gdppercapita_ppp_inflation_adjusted",
         scaleType: 'log',
         domainMin: .11, //0
         domainMax: 500, //100
@@ -334,7 +338,8 @@ MountainChart.define('default_model', {
       },
       axis_s: {
         use: "indicator",
-        which: "gini",
+        //which: "gini", //systema globalis
+        which: "inequality_index_gini",
         scaleType: 'linear'
       },
       color: {
@@ -487,7 +492,8 @@ BubbleChart.define('default_model', {
 
       axis_y: {
         use: "indicator",
-        which: "life_expectancy",
+        //which: "life_expectancy", //systema globalis
+        which: "life_expectancy_years",
         scaleType: "linear",
         allow: {
           scales: ["linear", "log"]
@@ -495,7 +501,8 @@ BubbleChart.define('default_model', {
       },
       axis_x: {
         use: "indicator",
-        which: "gdp_p_cap_const_ppp2011_dollar",
+        //which: "gdp_p_cap_const_ppp2011_dollar",//systema globalis
+        which: "income_per_person_gdppercapita_ppp_inflation_adjusted", 
         scaleType: "log",
         allow: {
           scales: ["linear", "log"]
@@ -511,7 +518,8 @@ BubbleChart.define('default_model', {
       },
       size: {
         use: "indicator",
-        which: "population",
+        //which: "population",//systema globalis
+        which: "population_total", 
         scaleType: "linear",
         allow: {
           scales: ["linear"]
