@@ -721,6 +721,8 @@ Tool.define("preload", function(promise) {
       // we need a consistent way to add metadata to Vizabi
       addMinMax("axis_x");
       addMinMax("axis_y");
+      addMinMax("size");
+      addMinMax("size_label");
       addPalettes("color");
 
       promise.resolve();
@@ -730,12 +732,14 @@ Tool.define("preload", function(promise) {
 
   // TODO: REMOVE THIS HACK (read above)
   function addPalettes(hook) {
-    if(!_this.default_model.state || !_this.default_model.state.marker[hook] || !globals.metadata.color) {
+    if(!_this.default_model.state || !_this.default_model.state.marker[hook]) {
       return;
     }
     var color = _this.default_model.state.marker[hook];
-    var palette = globals.metadata.color.palettes['geo.region'];
+    var palette = ((globals.metadata.indicatorsDB[color.which]||{}).color||{}).palette||{};
+      console.log(color.palette)
     color.palette = utils.extend({}, color.palette, palette);
+      console.log(color.palette)
   }
 
   function addMinMax(hook) {
