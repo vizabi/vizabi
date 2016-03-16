@@ -776,6 +776,9 @@ var TreeMenu = Component.extend({
       //keep indicator if any scale is allowed in tool properties
       if(_this.model.marker[markerID].allow.scales[0] == "*") return true;
 
+      // if no scales defined, all are allowed
+      if (!indicatorsDB[f].scales) return true
+      
       //check if there is an intersection between the allowed tool scale types and the ones of indicator
       for(var i = indicatorsDB[f].scales.length - 1; i >= 0; i--) {
         if(_this.model.marker[markerID].allow.scales.indexOf(indicatorsDB[f].scales[i]) > -1) return true;
