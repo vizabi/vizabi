@@ -131,7 +131,7 @@ export default Class.extend({
   run: function(actions, selection, duration) {
     var _this = this.context;
     var KEY = _this.KEY;
-
+    if (!this._isCreated) return;
     this._isCreated.then(function() {
 
       //quit if function is called accidentally
