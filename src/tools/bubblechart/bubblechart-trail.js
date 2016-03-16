@@ -1,5 +1,6 @@
 import * as utils from 'base/utils';
 import Class from 'base/class';
+import Promise from 'promise';
 
 export default Class.extend({
 
