@@ -763,8 +763,8 @@ Tool.define("preloadLanguage", function() {
   var promise = new Promise();
 
   var langModel = this.model.language;
-  var translation_path = Vzb._globals.gapminder_paths.baseUrl + "data/translation/" + langModel.id + ".json";
-  //var translation_path = Vzb._globals.gapminder_paths.wsUrl + "/api/vizabi/translation/" + langModel.id + ".json";
+  //var translation_path = Vzb._globals.gapminder_paths.baseUrl + "data/translation/" + langModel.id + ".json";
+  var translation_path = Vzb._globals.gapminder_paths.wsUrl + "/api/vizabi/translation/" + langModel.id + ".json";
 
   if(langModel && !langModel.strings[langModel.id]) {
     d3.json(translation_path, function(langdata) {
