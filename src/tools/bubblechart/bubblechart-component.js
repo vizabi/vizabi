@@ -408,7 +408,7 @@ var BubbleChartComp = Component.extend({
       .on("click", function() {
         var cursor = _this.model.ui.cursorMode;
         if (!d3.event.defaultPrevented && cursor!=="arrow") {
-          _this._panZoom.zoomByIncrement(_this.model.ui.cursorMode, 500);
+          _this._panZoom.zoomByIncrement(cursor, 500);
         }
       });
 

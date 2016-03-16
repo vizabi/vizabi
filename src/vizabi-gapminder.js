@@ -285,7 +285,7 @@ MountainChart.define('default_model', {
     entities: {
       dim: "geo",
       opacitySelectDim: .3,
-      opacityRegular: .6,
+      opacityRegular: 1,
       show: {
         _defs_: {
           "geo": ["*"],
