@@ -1,6 +1,10 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
 
+import {
+  question as iconQuestion
+} from 'base/iconset';
+
 /*!
  * VIZABI INDICATOR PICKER
  * Reusable indicator picker component
@@ -17,7 +21,7 @@ var IndPicker = Component.extend({
     init: function(config, context) {
 
         this.name = 'gapminder-indicatorpicker';
-        this.template = '<span class="vzb-ip-select"></span>';
+        this.template = '<span class="vzb-ip-holder"><span class="vzb-ip-select"></span><span class="vzb-ip-info"></span></span>';
 
         var _this = this;
 
@@ -57,7 +61,7 @@ var IndPicker = Component.extend({
     readyOnce: function() {
         var _this = this;
 
-        this.el_select = d3.select(this.element);
+        this.el_select = d3.select(this.element).select('.vzb-ip-select');
 
         this.el_select.on("click", function() {
             var rect = _this.el_select.node().getBoundingClientRect();
@@ -68,7 +72,7 @@ var IndPicker = Component.extend({
             var treemenuPaddRight = parseInt(treemenuComp.wrapper.style('padding-right'), 10) || 0; 
             var topPos = rect.bottom - rootRect.top;
             var leftPos = rect.left - rootRect.left - (treemenuPaddLeft + treemenuPaddRight + treemenuColWidth - rect.width) * .5;
-            
+        
             treemenuComp
                 .markerID(_this.markerID)
                 .alignX("left")
@@ -78,6 +82,11 @@ var IndPicker = Component.extend({
                 .updateView()
                 .toggle();
         });
+
+        this.infoEl = d3.select(this.element).select('.vzb-ip-info');
+        utils.setIcon(this.infoEl, iconQuestion)
+          .select("svg").attr("width", "0px").attr("height", "0px");
+
     },
 
     
@@ -92,6 +101,10 @@ var IndPicker = Component.extend({
         
         //Let the indicator "_default" in tree menu be translated differnetly for every hook type
         this.el_select.text(this.translator("indicator" + (which==="_default" ? "/" + type : "") + "/" + which));
+
+        this.infoEl.on("click", function() {
+          window.open(_this.model.marker[_this.markerID].getMetadata().sourceLink, '_blank').focus();
+        })
     }
     
 });

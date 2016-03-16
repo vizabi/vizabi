@@ -311,11 +311,13 @@ $vzb-dialog-content-height: 250px;
         position: relative;
         margin: 0 0 20px;
         padding: 0;
-        .vzb-ip-select {
-          font-weight: normal;
+        .vzb-ip-holder {
           margin-top: 25px;
           margin-left: 38px;
-          line-height: 20px;
+          vzb-ip-select {
+            font-weight: normal;
+            line-height: 20px;            
+          }
         }
       }
       >.vzb-dialog-content {
