@@ -671,6 +671,8 @@ var BubbleChartComp = Component.extend({
     // that makes larger bubbles go behind the smaller ones
     var endTime = this.model.time.end;
     this.model.entities.setVisible(getKeys.call(this));
+      
+    this.unselectBubblesWithNoData();
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
       .data(this.model.entities.getVisible(), function(d) {return d[KEY]})
@@ -718,6 +720,21 @@ var BubbleChartComp = Component.extend({
       return "vzb-bc-entity " + d[KEY]
     });
 
+  },
+    
+  unselectBubblesWithNoData: function(frame){
+      var _this = this;
+      var KEY = this.KEY;
+      if(!frame) frame = this.frame;
+      
+      if(!frame || !frame.axis_y || !frame.axis_x || !frame.size) return;
+      
+      this.model.entities.select.forEach(function(d){
+        if(!frame.axis_y[d[KEY]] && frame.axis_y[d[KEY]] !== 0
+        || !frame.axis_x[d[KEY]] && frame.axis_x[d[KEY]] !== 0
+        || !frame.size[d[KEY]] && frame.size[d[KEY]] !== 0) 
+            _this.model.entities.selectEntity(d);
+      })
   },
 
   _bubblesInteract: function() {

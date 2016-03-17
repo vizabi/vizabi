@@ -492,6 +492,7 @@ var BubbleMapComponent = Component.extend({
     var endTime = this.model.time.end;
     this.model.entities.setVisible(getKeys.call(this));
 
+    this.unselectBubblesWithNoData();
 
     // TODO: add to csv
     //Africa 9.1021° N, 18.2812°E
@@ -539,6 +540,19 @@ var BubbleMapComponent = Component.extend({
       })
 
   },
+    
+  unselectBubblesWithNoData: function(frame){
+      var _this = this;
+      var KEY = this.KEY;
+      if(!frame) frame = this.values;
+      
+      if(!frame || !frame.size) return;
+      
+      this.model.entities.select.forEach(function(d){
+        if(!frame.size[d[KEY]] && frame.size[d[KEY]] !== 0) 
+            _this.model.entities.selectEntity(d);
+      })
+  },    
     
   redrawDataPoints: function(duration, reposition){
     var _this = this;  
