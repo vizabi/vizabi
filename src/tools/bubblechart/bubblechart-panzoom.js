@@ -157,9 +157,9 @@ export default Class.extend({
                  * scroll. Instead, redirect the scroll event to the scrollable
                  * ancestor
                  */
-                if (sourceEvent != null && _this.ui.noZoomOnScrolling &&
-                    sourceEvent.type === "wheel") {
-                    if (_this.scrollableAncestor && !self.enabled) {
+                if (sourceEvent != null && sourceEvent.type === "wheel" && 
+                    _this.ui.noZoomOnScrolling) {
+                    if (_this.scrollableAncestor) {
                         _this.scrollableAncestor.scrollTop += sourceEvent.deltaY;
                     }
                     d3.event.scale = null;
@@ -168,13 +168,11 @@ export default Class.extend({
                     return;
                 }
 
-                if(sourceEvent != null && _this.scrollableAncestor) {
-                    if(sourceEvent != null && !self.enabled){
-                        _this.scrollableAncestor.scrollTop += sourceEvent.deltaY;
-                        zoomer.scale(1)
-                        this.quitZoom = true;
-                        return;
-                    }
+                if(sourceEvent != null && _this.scrollableAncestor && !self.enabled) {
+                    _this.scrollableAncestor.scrollTop += sourceEvent.deltaY;
+                    zoomer.scale(1)
+                    this.quitZoom = true;
+                    return;
                 }
                 this.quitZoom = false;
 
