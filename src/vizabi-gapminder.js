@@ -291,7 +291,7 @@ MountainChart.define('default_model', {
       show: {
         _defs_: {
           "geo": ["*"],
-          "geo.cat": ["unstate"]
+          "geo.cat": ["country", "unstate"]
         }
       }
     },
@@ -300,7 +300,7 @@ MountainChart.define('default_model', {
       show: {
         _defs_: {
           "geo": ["*"],
-          "geo.cat": ["unstate"]
+          "geo.cat": ["country", "unstate"]
         }
       }
     },
