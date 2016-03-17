@@ -52,6 +52,7 @@ var MountainChartComponent = Component.extend({
         //attach event listeners to the model items
         this.model_binds = {
             "change:time.value": function (evt) {
+              if (!_this._readyOnce) return;
               _this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
             },
             "change:time.playing": function (evt) {
