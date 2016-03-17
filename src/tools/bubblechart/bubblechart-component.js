@@ -561,6 +561,13 @@ var BubbleChartComp = Component.extend({
         C: this.translator("unit/" + this.model.marker.color.which)
       }
     }
+    
+    //suppress unit strings that found no translation (returns same thing as requested)
+    if(this.strings.unit.Y === "unit/" + this.model.marker.axis_y.which) this.strings.unit.Y = "";
+    if(this.strings.unit.X === "unit/" + this.model.marker.axis_x.which) this.strings.unit.X = "";
+    if(this.strings.unit.S === "unit/" + this.model.marker.size.which) this.strings.unit.S = "";
+    if(this.strings.unit.C === "unit/" + this.model.marker.color.which) this.strings.unit.C = "";
+    
     if(!!this.strings.unit.Y) this.strings.unit.Y = ", " + this.strings.unit.Y;
     if(!!this.strings.unit.X) this.strings.unit.X = ", " + this.strings.unit.X;
     if(!!this.strings.unit.S) this.strings.unit.S = ", " + this.strings.unit.S;

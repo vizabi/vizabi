@@ -373,15 +373,20 @@ var BubbleMapComponent = Component.extend({
         var formatterS = _this.model.marker.size.tickFormatter;
         var formatterC = _this.model.marker.color.tickFormatter;
 
+        var unitY = _this.translator("unit/" + _this.model.marker.size.which);
+        var unitC = _this.translator("unit/" + _this.model.marker.color.which);
+          
+        //suppress unit strings that found no translation (returns same thing as requested)
+        if(unitY === "unit/" + _this.model.marker.size.which) unitY = "";
+        if(unitC === "unit/" + _this.model.marker.color.which) unitC = "";
+          
         _this.yTitleEl.select("text")
           .text(_this.translator("buttons/size") + ": " +
-                formatterS(_this.values.size[hovered[_this.KEY]]) + " " +
-                _this.translator("unit/" + _this.model.marker.size.which));
-
+            formatterS(_this.values.size[hovered[_this.KEY]]) + " " + unitY);
+          
         _this.cTitleEl.select("text")
           .text(_this.translator("buttons/color") + ": " +
-                formatterC(_this.values.color[hovered[_this.KEY]]) + " " +
-                _this.translator("unit/" + _this.model.marker.color.which));
+            formatterC(_this.values.color[hovered[_this.KEY]]) + " " + unitC);
 
         this.infoEl.classed("vzb-hidden", true);
       }else{
