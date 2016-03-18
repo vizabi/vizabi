@@ -819,7 +819,9 @@ var TreeMenu = Component.extend({
         .classed(css.list_item_label, true)
         .text(function(d) {
           //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-          return _this.translator("indicator" + (d.id==="_default" ? "/" + hookType : "") + "/" + d.id);
+          var translated = _this.translator("indicator" + (d.id==="_default" ? "/" + hookType : "") + "/" + d.id);
+          if(translated.indexOf("indicator/")!==-1)utils.warn("translation missing: " + translated);
+          return translated;
         })
         .attr("info", function(d) {
           return d.id;
