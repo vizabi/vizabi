@@ -16,6 +16,8 @@
     border-top: 1px solid #f7f7f7;
     background-color: #fff;
     padding: 0 25px 10px;
+    //overflow-x: initial;
+    //overflow-y: auto;
 
     * {
       box-sizing: border-box;
@@ -117,7 +119,66 @@
       padding: 0;
       margin: 0;
       left: 100%;
+      &.vzb-treemenu-horizontal {
+        > .vzb-treemenu-list-item-children {
+          height: 40px; 
+          &::after {
+            content: '';
+            display: block;
+            position: relative;
+            left: calc(100% - 17px);
+            top: -50px;
+            width: 0;
+            height: 0;
+            border: 6px solid transparent;
+            border-left: 6px solid $vzb-color-grey-dark;
+            z-index: 1;          
+          }
+          &:hover > .vzb-treemenu-list-item-label-mask {
+            background-color: $vzb-color-grey-light;
+          }
+          > .vzb-treemenu-list-item-label-mask {
+            display: block;
+            position: relative;
+            width: 23px;
+            height: 100%;
+            left: calc(100% - 23px);
+            top: -100%;
+            background-color: $vzb-color-white;
+          }
+        }
+      }
+      &.vzb-treemenu-vertical {
+        > .vzb-treemenu-list-item-children {
+          position: relative; 
+          &::before {
+            content: '';
+            display: block;
+            position: absolute;
+            right: 5px;
+            width: 0;
+            height: 0;
+            border: 6px solid transparent;
+            border-left: 6px solid $vzb-color-grey-dark;
+            margin-top: 9px;
+            z-index: 1;
+          }
+          &.marquee:hover > .vzb-treemenu-list-item-label-mask {
+            background-color: $vzb-color-grey-light;
+          }
+          &.marquee > .vzb-treemenu-list-item-label-mask {
+            display: inline-block;
+            position: absolute;
+            width: 23px;
+            height: 100%;
+            right: 0;
+            top: 0;
+            background-color: $vzb-color-white;
+          }
+        }
+      }
     }
+ 
     .vzb-treemenu-list {
       @include box-shadow(4px, 8px, 15px, rgba(0, 0, 0, .2));
       position: absolute;
@@ -149,6 +210,7 @@
         }
       }
     }
+    
     .vzb-treemenu-list.active,
     .vzb-treemenu-list-top {
       //overflow-y: scroll;
@@ -158,19 +220,26 @@
       background-color: $vzb-color-white;
       overflow: hidden;
       white-space: nowrap;
+      > .vzb-treemenu-list-item-label {
+        left: 0;
+      }
 
       &:hover {
         background-color: $vzb-color-grey-light;
       }
-      &.marquee {
+      &.marquee:not(:hover) {
+        > .vzb-treemenu-list-item-label {
+          left: 0 !important;
+        }
+      }
+      &.marquee:hover {
         > .vzb-treemenu-list-item-label {
           text-overflow: inherit;
           overflow: visible;
           animation: marquee 5s linear infinite;
           &::after {
             content: attr(data-content);
-            left: 153%;
-            position: absolute;
+            padding-left: 30px; //must be equal owner 'span' padding-left+padding-right; 
           }
         }
       }
@@ -191,41 +260,12 @@
       font-family: $vzb-font-family-alt;
     }
 
-    .vzb-treemenu-list-top,
-    .vzb-treemenu-list {
-      > .vzb-treemenu-list-item-children {
-        &::before {
-          content: '';
-          display: block;
-          position: absolute;
-          right: 5px;
-          width: 0;
-          height: 0;
-          border: 6px solid transparent;
-          border-left: 6px solid $vzb-color-grey-dark;
-          margin-top: 9px;
-          z-index: 1;
-        }
-        &.marquee:hover > .vzb-treemenu-list-item-label-mask {
-          background-color: $vzb-color-grey-light;
-        }
-        &.marquee > .vzb-treemenu-list-item-label-mask {
-          display: block;
-          position: absolute;
-          width: 23px;
-          height: 20px;
-          right: 0;
-          top: 10px;
-          background-color: $vzb-color-white;
-        }
-      }
-    }
 
-    .vzb-treemenu-list-top {
-      > .vzb-treemenu-list-item-children::before {
-        right: 30px;
-      }
-    }
+    // .vzb-treemenu-list-top {
+    //   > .vzb-treemenu-list-item-children::before {
+    //     right: 30px !important;
+    //   }
+    // }
       
     &.vzb-treemenu-open-left-side {
       .vzb-treemenu-list {
@@ -257,13 +297,11 @@
   }
 }
 
+
 //marquee animation
 @keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-150%);
+  from {
+    left: 0;
   }
 }
 
@@ -294,6 +332,14 @@
     margin-right: $size-button-list;
     margin-bottom: $size-timeslider;
 
+//TODO:
+//
+    overflow: auto;
+    width: 400px;
+    .vzb-treemenu-list-item {
+      padding-bottom: 0;
+    }
+//
     &.vzb-align-y-top {
       top: 40px;
     }
@@ -318,6 +364,15 @@
   .vzb-treemenu-wrap {
     margin-right: $size-button-list;
     margin-bottom: $size-timeslider;
+
+//TODO:
+//
+    overflow: auto;
+    width: 400px;
+    .vzb-treemenu-list-item {
+      padding-bottom: 0;
+    }
+//
 
     &.vzb-align-y-top {
       top: 50px;
