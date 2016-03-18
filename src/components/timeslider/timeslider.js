@@ -328,6 +328,9 @@ var TimeSlider = Component.extend({
       //set brushed properties
 
       if(d3.event.sourceEvent) {
+        // Prevent window scrolling on cursor drag in Chrome/Chromium.
+        d3.event.sourceEvent.preventDefault();
+
         _this.model.time.dragStart();
         var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
         value = _this.xScale.invert(posX);
