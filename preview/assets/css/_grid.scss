@@ -5,7 +5,8 @@ body {
   background-color: $vzbp-color-background;
   font-family: $vzbp-font-family;
   font-size: 12px;
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 p {
@@ -66,7 +67,7 @@ a {
 #vzbp-state-editor {
   $posRight: $vzbp-width-state-editor * -1;
   @include prefixer(box-sizing, border-box, webkit moz spec);
-  @include position(absolute, 0 $posRight 0 null);
+  @include position(absolute, 0 $posRight -100px null);
   width: $vzbp-width-state-editor;
   background-color: $vzbp-color-editor;
   color: white;
