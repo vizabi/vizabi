@@ -359,8 +359,8 @@ export default Class.extend({
 
             stop: function(){
                 _this.draggingNow = false;
-                
-                if (this.quitZoom) return; 
+
+                if (this.quitZoom) return;
 
                 //Force the update of the URL and history, with the same values
                 _this.model.marker.axis_x.set(_this._zoomZoomedDomains.x, true, true);
@@ -553,7 +553,7 @@ export default Class.extend({
             zoomer.translate([
                 zoomer.translate()[0] + x1 - x2,
                 zoomer.translate()[1] + y1 - y2
-            ])
+            ]);
         }
 
         var xRangeBounds = [0, _this.width];
