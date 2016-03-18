@@ -186,7 +186,7 @@ var TimeSlider = Component.extend({
 
     //Slide
     this.slide.call(this.brush);
-      
+
     this.slider_outer.on("mousewheel", function () {
         //do nothing and dont pass the event on if we are currently dragging the slider
         if(_this.model.time.dragging){
@@ -196,7 +196,7 @@ var TimeSlider = Component.extend({
             return false;
         }
     });
-      
+
     this.slide.selectAll(".extent,.resize")
       .remove();
 
@@ -407,7 +407,7 @@ var TimeSlider = Component.extend({
         .interrupt()
         .interrupt('text')
         .transition('text');
-      this.valueText        
+      this.valueText
         .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")")
         .text(this.model.time.timeFormat(value));
     }
