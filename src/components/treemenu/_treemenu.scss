@@ -332,6 +332,14 @@
     margin-right: $size-button-list;
     margin-bottom: $size-timeslider;
 
+//TODO:
+//
+    overflow: auto;
+    width: 400px;
+    .vzb-treemenu-list-item {
+      padding-bottom: 0;
+    }
+//
     &.vzb-align-y-top {
       top: 40px;
     }
@@ -356,6 +364,15 @@
   .vzb-treemenu-wrap {
     margin-right: $size-button-list;
     margin-bottom: $size-timeslider;
+
+//TODO:
+//
+    overflow: auto;
+    width: 400px;
+    .vzb-treemenu-list-item {
+      padding-bottom: 0;
+    }
+//
 
     &.vzb-align-y-top {
       top: 50px;

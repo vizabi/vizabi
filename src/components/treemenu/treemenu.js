@@ -592,10 +592,11 @@ var TreeMenu = Component.extend({
           if(this.height - _this.wrapper.node().offsetTop - containerHeight < 0) {
             if(containerHeight > this.height) {
               containerHeight = this.height - 20;
-              this.wrapper.style('max-height', containerHeight + 'px');              
             }
             this.wrapper.style({'top' : (this.height - containerHeight - 10) + 'px', 'bottom' : 'auto'});
           }
+          //TODO:
+          this.wrapper.style('max-height', containerHeight + 'px');              
         }
       //}
       
@@ -605,9 +606,10 @@ var TreeMenu = Component.extend({
         OPTIONS.MAX_MENU_WIDTH = this.width/2 - containerWidth * 0.5;
       } else {
         OPTIONS.MAX_MENU_WIDTH = this.width - this.wrapper.node().offsetLeft - containerWidth - 10; // 10 - padding around wrapper
-        OPTIONS.MENU_OPEN_LEFTSIDE = OPTIONS.MAX_MENU_WIDTH < this.activeProfile.col_width + OPTIONS.MIN_COL_WIDTH;
-        if(OPTIONS.MENU_OPEN_LEFTSIDE) OPTIONS.MAX_MENU_WIDTH = _this.wrapper.node().offsetLeft - 10; // 10 - padding around wrapper
-        this.wrapper.classed('vzb-treemenu-open-left-side', !OPTIONS.IS_MOBILE && OPTIONS.MENU_OPEN_LEFTSIDE);
+        //TODO:
+        // OPTIONS.MENU_OPEN_LEFTSIDE = OPTIONS.MAX_MENU_WIDTH < this.activeProfile.col_width + OPTIONS.MIN_COL_WIDTH;
+        // if(OPTIONS.MENU_OPEN_LEFTSIDE) OPTIONS.MAX_MENU_WIDTH = _this.wrapper.node().offsetLeft - 10; // 10 - padding around wrapper
+        // this.wrapper.classed('vzb-treemenu-open-left-side', !OPTIONS.IS_MOBILE && OPTIONS.MENU_OPEN_LEFTSIDE);
       }
     }
     
@@ -615,15 +617,16 @@ var TreeMenu = Component.extend({
    
     if (this.menuEntity) {
       this.menuEntity.setWidth(this.activeProfile.col_width, true);
-      if (OPTIONS.IS_MOBILE) {
+//TODO:
+//      if (OPTIONS.IS_MOBILE) {
         if (this.menuEntity.direction != MENU_VERTICAL) {
           this.menuEntity.setDirection(MENU_VERTICAL, true);
         }
-      } else {
-        if (this.menuEntity.direction != MENU_HORIZONTAL) {
-          this.menuEntity.setDirection(MENU_HORIZONTAL, true);
-        }
-      }
+      // } else {
+      //   if (this.menuEntity.direction != MENU_HORIZONTAL) {
+      //     this.menuEntity.setDirection(MENU_HORIZONTAL, true);
+      //   }
+      // }
       this.menuEntity.marqueeToggle(true);
     }
     
@@ -842,9 +845,10 @@ var TreeMenu = Component.extend({
           createSubmeny(view, d);
         });
     };
-    if (OPTIONS.IS_MOBILE) {
+//TODO:
+//    if (OPTIONS.IS_MOBILE) {
       OPTIONS.MENU_DIRECTION = MENU_VERTICAL;
-    }
+//    }
     createSubmeny(this.wrapper, dataFiltered, true);
     this.menuEntity = new Menu(null, this.wrapper.select('.' + css.list_top_level));
     if(this.menuEntity) this.menuEntity.setWidth(this.activeProfile.col_width, true)
