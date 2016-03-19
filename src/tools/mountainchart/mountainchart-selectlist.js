@@ -99,7 +99,7 @@ var MCSelectList = Class.extend({
     var fontHeight = sample[0][0].getBBox().height*1.2;
     var fontSizeToFontHeight = parseFloat(sample.style("font-size")) / fontHeight;
     d3.select(sample[0][0].parentNode).remove();
-    var formatter = _this.model.marker.axis_y.tickFormatter;
+    var formatter = _this.model.marker.axis_y.getTickFormatter();
 
     var titleHeight = _this.yTitleEl.select("text").node().getBBox().height || 0;
 

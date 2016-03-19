@@ -95,7 +95,7 @@ var BarRankChart = Component.extend({
     this.barContainer = this.element.select('.vzb-br-bars');
 
     // set up formatters
-    this.xAxis.tickFormat(this.model.marker.axis_x.tickFormatter);
+    this.xAxis.tickFormat(this.model.marker.axis_x.getTickFormatter());
 
     this.ready();
 
@@ -138,7 +138,7 @@ var BarRankChart = Component.extend({
     this.header.select('.vzb-br-title')
       .text(translator("indicator/" + this.model.marker.axis_x.which) + ' ' + this.model.time.timeFormat(this.model.time.value))
     this.header.select('.vzb-br-total')
-      .text('Σ = ' + this.model.marker.axis_x.tickFormatter(this.total))
+      .text('Σ = ' + this.model.marker.axis_x.getTickFormatter()(this.total))
 
     // new scales and axes
     this.xScale = this.model.marker.axis_x.getScale(false);
@@ -219,7 +219,7 @@ var BarRankChart = Component.extend({
 
         var bar = d3.select(this);
         var barWidth = _this.xScale(d.value);
-        var xValue = _this.model.marker.axis_x.tickFormatter(d.value);
+        var xValue = _this.model.marker.axis_x.getTickFormatter()(d.value);
         
         // save the current index in the bar datum
         d.index = i;

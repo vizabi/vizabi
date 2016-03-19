@@ -11,13 +11,25 @@ var Hook = Model.extend({
    * Gets tick values for this hook
    * @returns {Number|String} value The value for this tick
    */
-  tickFormatter: function(x, formatterRemovePrefix) {
+  getTickFormatter: function() {
+      
+    var _this = this;
+      
+    return function format(x, index, removePrefix){
 
+    // Format time values
     // Assumption: a hook has always time in its space
-    if(utils.isDate(x)) return this._space.time.timeFormat(x);
+    if(utils.isDate(x)) return _this._space.time.timeFormat(x);
+      
+    // Dealing with values that are supposed to be time
+    if(_this.scaleType === "time" && !utils.isDate(x)) {
+        return _this._space.time.timeFormat(new Date(d));
+    }
+      
+    // Strings are bypassing any formatter
     if(utils.isString(x)) return x;
 
-    var format = "f";
+    var format = "f"; //fixed format
     var prec = 0;
     if(Math.abs(x) < 1) {
       prec = 1;
@@ -25,13 +37,14 @@ var Hook = Model.extend({
     };
 
     var prefix = "";
-    if(formatterRemovePrefix) return d3.format("." + prec + format)(x);
+    if(removePrefix) return d3.format("." + prec + format)(x);
 
     //---------------------
     // BEAUTIFIERS GO HOME!
     // don't break formatting please
     //---------------------
-    switch(Math.floor(Math.log(Math.abs(x))/Math.LN10)) {
+    // the tiny constant compensates epsilon-error when doing logsrithms
+    switch(Math.floor(Math.log(Math.abs(x))/Math.LN10 + 0.00000000000001)) {
       case -13: x = x * 1000000000000; prefix = "p"; break; //0.1p
       case -10: x = x * 1000000000; prefix = "n"; break; //0.1n
       case -7: x = x * 1000000; prefix = "µ"; break; //0.1µ
@@ -53,14 +66,17 @@ var Hook = Model.extend({
       case 9:  x = x / 1000000000; prefix = "B"; prec = 1; break; //1B
       case 10: x = x / 1000000000; prefix = "B"; break; //10B
       case 11: x = x / 1000000000; prefix = "B"; break; //100B
-      case 12: x = x / 1000000000000; prefix = "T"; prec = 1; break; //1T
+      case 12: x = x / 1000000000000; prefix = "TR"; prec = 1; break; //1TR
+      case 13: x = x / 1000000000000; prefix = "TR"; break; //10TR
+      case 14: x = x / 1000000000000; prefix = "TR"; break; //100TR
       //use the D3 SI formatting for the extreme cases
       default: return(d3.format("." + prec + "s")(x)).replace("G", "B");
     }
+        
 
     // use manual formatting for the cases above
     return(d3.format("." + prec + format)(x) + prefix).replace("G", "B");
-
+    }
   },
     
   /**

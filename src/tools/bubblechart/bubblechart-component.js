@@ -523,8 +523,8 @@ var BubbleChartComp = Component.extend({
     this.cScale = this.model.marker.color.getScale();
     this.labelSizeTextScale = this.model.marker.size_label.getScale();
 
-    this.yAxis.tickFormat(_this.model.marker.axis_y.tickFormatter);
-    this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
+    this.yAxis.tickFormat(_this.model.marker.axis_y.getTickFormatter());
+    this.xAxis.tickFormat(_this.model.marker.axis_x.getTickFormatter());
   },
 
   frameChanged: function(frame, time) {
@@ -903,11 +903,11 @@ var BubbleChartComp = Component.extend({
       .tickSizeMinor(3, 0)
       .labelerOptions({
         scaleType: this.model.marker.axis_y.scaleType,
-        timeFormat: this.model.time.timeFormat,
         toolMargin: margin,
         limitMaxTickNumber: 6,
         bump: this.activeProfile.maxRadius,
-        constantRakeLength: this.height
+        constantRakeLength: this.height,
+        formatter: this.model.marker.axis_y.getTickFormatter()
       });
 
     this.xAxis.scale(this.xScale)
@@ -916,10 +916,10 @@ var BubbleChartComp = Component.extend({
       .tickSizeMinor(3, 0)
       .labelerOptions({
         scaleType: this.model.marker.axis_x.scaleType,
-        timeFormat: this.model.time.timeFormat,
         toolMargin: margin,
         bump: this.activeProfile.maxRadius,
-        constantRakeLength: this.width
+        constantRakeLength: this.width,
+        formatter: this.model.marker.axis_x.getTickFormatter()
       });
 
 

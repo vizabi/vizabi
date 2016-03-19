@@ -411,7 +411,8 @@ updateSize: function (meshLength) {
                 toolMargin: margin,
                 pivotingLimit: margin.bottom * 1.5,
                 method: this.xAxis.METHOD_REPEATING,
-                stops: this._readyOnce ? this.model.ui.chart.xLogStops : [1]
+                stops: this._readyOnce ? this.model.ui.chart.xLogStops : [1],
+                formatter: this.model.marker.axis_x.getTickFormatter()
             });
 
 
@@ -528,7 +529,7 @@ updateSize: function (meshLength) {
         this.xScale = this.model.marker.axis_x.getScale();
         this.cScale = this.model.marker.color.getScale();
 
-        this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
+        this.xAxis.tickFormat(_this.model.marker.axis_x.getTickFormatter());
     },
 
     updateEntities: function () {

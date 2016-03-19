@@ -287,7 +287,7 @@ var SizeSlider = Component.extend({
   _setLabelsText: function() {
       var _this = this;
       _this.sliderLabelsEl
-        .data([_this.model.size.tickFormatter(_this.sizeScaleMinMax[0]),_this.model.size.tickFormatter(_this.sizeScaleMinMax[1])])
+        .data([_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[0]),_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[1])])
         .text(function (d) { return d; });
   },
 

@@ -371,8 +371,8 @@ var BubbleMapComponent = Component.extend({
 
       if(_this.hovered || mobile) {
         var hovered = _this.hovered || mobile;
-        var formatterS = _this.model.marker.size.tickFormatter;
-        var formatterC = _this.model.marker.color.tickFormatter;
+        var formatterS = _this.model.marker.size.getTickFormatter();
+        var formatterC = _this.model.marker.color.getTickFormatter();
 
         var unitY = _this.translator("unit/" + _this.model.marker.size.which);
         var unitC = _this.translator("unit/" + _this.model.marker.color.which);

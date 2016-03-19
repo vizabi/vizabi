@@ -165,9 +165,9 @@ var LCComponent = Component.extend({
     this.cScale = this.model.marker.color.getScale();
 
     this.yAxis.tickSize(6, 0)
-      .tickFormat(this.model.marker.axis_y.tickFormatter);
+      .tickFormat(this.model.marker.axis_y.getTickFormatter());
     this.xAxis.tickSize(6, 0)
-      .tickFormat(this.model.marker.axis_x.tickFormatter);
+      .tickFormat(this.model.marker.axis_x.getTickFormatter());
 
     this.collisionResolver = collisionResolver()
       .selector(".vzb-lc-label")

@@ -153,9 +153,9 @@ var BarComponent = Component.extend({
     var xFormatter = this.model.marker.axis_x.which == "geo.region"?
         function(x){return _this.translator("region/" + x)}
         :
-        _this.model.marker.axis_x.tickFormatter;
+        _this.model.marker.axis_x.getTickFormatter();
 
-    this.yAxis.tickFormat(_this.model.marker.axis_y.tickFormatter);
+    this.yAxis.tickFormat(_this.model.marker.axis_y.getTickFormatter());
     this.xAxis.tickFormat(xFormatter);
 
   },
