@@ -23,7 +23,7 @@ var Hook = Model.extend({
       
     // Dealing with values that are supposed to be time
     if(_this.scaleType === "time" && !utils.isDate(x)) {
-        return _this._space.time.timeFormat(new Date(d));
+        return _this._space.time.timeFormat(new Date(x));
     }
       
     // Strings are bypassing any formatter
@@ -72,10 +72,13 @@ var Hook = Model.extend({
       //use the D3 SI formatting for the extreme cases
       default: return(d3.format("." + prec + "s")(x)).replace("G", "B");
     }
-        
+    
+    var formatted = d3.format("." + prec + format)(x);
+    //remove trailing zero for prec 1 to avoid numbers like 1.0M, 3.0B
+    if (prec === 1) formatted = formatted.replace(/(?:\.0)$/m,"");
 
     // use manual formatting for the cases above
-    return(d3.format("." + prec + format)(x) + prefix).replace("G", "B");
+    return(formatted + prefix);
     }
   },
     

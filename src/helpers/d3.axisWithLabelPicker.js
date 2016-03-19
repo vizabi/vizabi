@@ -258,7 +258,8 @@ export default function axisSmart() {
 
       if(options.removeAllLabels == null) options.removeAllLabels = false;
 
-      if(options.formatter == null) options.formatter = function(d) {return d;}
+      if(options.formatter == null) options.formatter = axis.tickFormat()?
+        axis.tickFormat() : function(d) {return d+"";}
       options.cssLabelMarginLimit = 5; //px
       if(options.cssMarginLeft == null || parseInt(options.cssMarginLeft) < options.cssLabelMarginLimit) options.cssMarginLeft =
         options.cssLabelMarginLimit + "px";

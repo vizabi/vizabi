@@ -44,12 +44,15 @@ var BarRankChart = Component.extend({
     var _this = this;
     this.model_binds = {
       "change:time.value": function(evt) {
+        if(!_this._readyOnce) return;
         _this.onTimeChange();
       },
       "change:entities.select": function(evt) {
+        if(!_this._readyOnce) return;
         _this.selectBars();
       },
       "change:marker.axis_x.scaleType": function(evt) {
+        if(!_this._readyOnce) return;
         _this.draw();
       },
       'change:marker.color.palette': function() {
