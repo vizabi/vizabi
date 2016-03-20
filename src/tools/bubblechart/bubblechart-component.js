@@ -466,6 +466,7 @@ var BubbleChartComp = Component.extend({
     this.model.marker.getFrame(this.model.time.value, function(frame) {
       if (!frame) return;
       _this.frame = frame;
+      _this.cached = {};
       _this.updateIndicators();
       _this.updateSize();
       _this.updateMarkerSizeLimits();
@@ -473,7 +474,6 @@ var BubbleChartComp = Component.extend({
       _this.updateEntities();
       _this.redrawDataPoints();
       _this.updateBubbleOpacity();
-      _this.cached = {};
       _this._trails.create();
       _this._trails.run("findVisible");
       _this.zoomToMarkerMaxMin(); // includes redraw data points and trail resize
