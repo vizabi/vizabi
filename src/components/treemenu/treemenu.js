@@ -919,6 +919,8 @@ var TreeMenu = Component.extend({
       .callback(setModel)
       .tree(this.model.marker.getIndicatorsTree())
       .redraw();
+      
+    this.wrapper.select('.' + css.search).node().value = "";
 
     return this;
   },
