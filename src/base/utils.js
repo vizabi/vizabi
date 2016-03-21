@@ -1429,3 +1429,15 @@ export var setIcon = function(element, icon) {
   );
   return element;
 }
+
+//http://stackoverflow.com/questions/26049488/how-to-get-absolute-coordinates-of-object-inside-a-g-group
+export function makeAbsoluteContext(element, svgDocument) {
+  return function(x,y) {
+    var offset = svgDocument.getBoundingClientRect();
+    var matrix = element.getScreenCTM();
+    return {
+      x: (matrix.a * x) + (matrix.c * y) + matrix.e - offset.left,
+      y: (matrix.b * x) + (matrix.d * y) + matrix.f - offset.top
+    };
+  };
+}
