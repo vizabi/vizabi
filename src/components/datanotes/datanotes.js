@@ -83,7 +83,7 @@ var DataNotes = Component.extend({
     }  
   },
   
-  setHook(hook) {
+  setHook: function(hook) {
     if(pin) return this;
     which = hook.which;
     //description = hook.getMetadata().description;
@@ -96,7 +96,7 @@ var DataNotes = Component.extend({
     return this;
   },
   
-  setValues() {
+  setValues: function() {
     var description = this.translator('description/' + which);
     var showDescription = description != ('description/' + which);  
     if(showDescription) this.element.select('.vzb-data-notes-body').text(description);
@@ -112,7 +112,7 @@ var DataNotes = Component.extend({
     showNotes = sourceLink || showDescription;
   },
   
-  setPos(_left, _top, force) {
+  setPos: function(_left, _top, force) {
     if(pin && !force) return this;
     left = _left;
     top = _top;

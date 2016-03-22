@@ -1428,7 +1428,7 @@ export var setIcon = function(element, icon) {
         icon, 'application/xml').documentElement, true)
   );
   return element;
-}
+};
 
 //http://stackoverflow.com/questions/26049488/how-to-get-absolute-coordinates-of-object-inside-a-g-group
 export function makeAbsoluteContext(element, svgDocument) {
