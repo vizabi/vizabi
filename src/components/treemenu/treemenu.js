@@ -571,7 +571,7 @@ var TreeMenu = Component.extend({
     //init functions
     d3.select('body').on('mousemove', _this._mousemoveDocument);
     this.wrapper.on('mouseleave', function() {
-      _this.menuEntity.closeAllChildren();
+      if(_this.menuEntity.direction != MENU_VERTICAL) _this.menuEntity.closeAllChildren();
     });
 
     _this._enableSearch();
