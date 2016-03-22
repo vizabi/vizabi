@@ -1252,8 +1252,22 @@ var BubbleChartComp = Component.extend({
            d.hidden = true;
            showhide = true;
        }
-
-      if(showhide) view.classed("vzb-invisible", d.hidden);
+        
+       if(showhide) {
+           if(duration) {
+               var opacity = view.style("opacity");
+               view.transition().duration(duration).ease("exp")
+                .style("opacity", 0)
+                .each("end", function() {
+                    //to avoid transition from null state add class with a delay
+                    view.classed("vzb-invisible", d.hidden);
+                    view.style("opacity", opacity);
+                })
+           }else{
+               //immediately hide the bubble
+               view.classed("vzb-invisible", d.hidden);
+           }
+       }
     } else {
         if(d.hidden || view.classed("vzb-invisible")) {
            d.hidden = false;
@@ -1267,14 +1281,21 @@ var BubbleChartComp = Component.extend({
       view.style("fill", valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH);
 
       if(duration) {
-        view.transition().duration(duration).ease("linear")
-            .attr("cy", _this.yScale(valueY))
-            .attr("cx", _this.xScale(valueX))
-            .attr("r", scaledS)
-            .each("end", function() {
-                //to avoid transition from null state show entity with a delay if it was hidden
-                if(showhide) view.classed("vzb-invisible", d.hidden);
-            })
+        if(showhide) {
+            var opacity = view.style("opacity");
+            view.classed("vzb-invisible", d.hidden);
+            view.style("opacity", 0)
+                .attr("cy", _this.yScale(valueY))
+                .attr("cx", _this.xScale(valueX))
+                .attr("r", scaledS)
+                .transition().duration(duration).ease("exp")
+                .style("opacity", opacity);
+        }else{
+            view.transition().duration(duration).ease("linear")
+                .attr("cy", _this.yScale(valueY))
+                .attr("cx", _this.xScale(valueX))
+                .attr("r", scaledS);
+        }
 
       } else {
 
