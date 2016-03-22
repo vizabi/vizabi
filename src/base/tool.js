@@ -93,6 +93,11 @@ var Tool = Component.extend({
             _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'), _this.getMinModel());
         }
       },
+      'hook_change': function() {
+        if (!(_this.model && _this.model.data && _this.model.data.splash)) {
+          utils.addClass(_this.placeholder, class_loading_first);
+        }
+      },
       'change:ui.presentation': function() {
         _this.layout.updatePresentation();
         _this.trigger('resize');
