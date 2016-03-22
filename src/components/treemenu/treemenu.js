@@ -86,7 +86,7 @@ var Menu = Class.extend({
   setWidth: function(width, recursive) {
     if (this.width != width && this.entity.node()) {
       this.width = width;
-      if (this.entity.classed('active')) {
+      if (this.entity.classed('active') && this.direction == MENU_HORIZONTAL) {
         this.entity.transition()
           .delay(0)
           .duration(100)
@@ -310,6 +310,11 @@ var Menu = Class.extend({
     for (var i = 0; i < this.menuItems.length; i++) {
       this.menuItems[i].marqueeToggle(toggle);
     }
+  },
+  marqueeToggleAll: function(toggle) {
+    for (var i = 0; i < this.menuItems.length; i++) {
+      this.menuItems[i].marqueeToggleAll(toggle);
+    }
   }
 });
 
@@ -371,7 +376,24 @@ var MenuItem = Class.extend({
   isActive: function() {
     return this.submenu && this.submenu.isActive();
   },
-
+  marqueeToggleAll: function(toggle) {
+    var _this = this;
+    var labels = this.entity.selectAll('.' + css.list_item_label);
+    labels.each(function() {
+      var label = d3.select(this);
+      var parent = d3.select(this.parentNode);
+      if(toggle) {
+        if(label.node().scrollWidth > this.parentNode.offsetWidth) {
+          label.attr("data-content", label.text());
+          label.style("left", (-label.node().scrollWidth) + 'px');
+          parent.classed('marquee', true);
+        }
+      } else {
+        parent.classed('marquee', false);
+        label.style("left", '');
+      }
+    });
+  },
   marqueeToggle: function(toggle) {
     var label = this.entity.select('.' + css.list_item_label);
     if(toggle) {
@@ -400,6 +422,7 @@ var alignX = "center";
 var alignY = "center";
 var top;
 var left;
+var selectedNode;
 
 var TreeMenu = Component.extend({
 
@@ -573,7 +596,8 @@ var TreeMenu = Component.extend({
     };
     this.activeProfile = this.profiles[this.getLayoutProfile()];
     
-    this.wrapper.classed(css.noTransition, true);        
+    this.wrapper.classed(css.noTransition, true); 
+    this.wrapper.node().scrollTop = 0;       
     
     this.width = _this.element.node().offsetWidth;
     this.height = _this.element.node().offsetHeight;
@@ -627,7 +651,11 @@ var TreeMenu = Component.extend({
       //     this.menuEntity.setDirection(MENU_HORIZONTAL, true);
       //   }
       // }
-      this.menuEntity.marqueeToggle(true);
+      this.menuEntity.marqueeToggleAll(true);
+      
+      var itemRect = selectedNode.getBoundingClientRect();
+      var scrollTop = itemRect.bottom - rect.top - this.wrapper.node().offsetHeight + 10;     
+      this.wrapper.node().scrollTop = scrollTop;
     }
     
     return this;
@@ -844,6 +872,22 @@ var TreeMenu = Component.extend({
         })
         .each(function(d) {
           var view = d3.select(this);
+          if(d.id == _this.model.marker[markerID].which) {
+            var parent = this.parentNode;
+            d3.select(this).classed('item-active', true);
+            while(!(utils.hasClass(parent, css.list_top_level))) {
+              if(parent.tagName == 'UL') {
+                d3.select(parent)
+                  .classed('active', true)
+                  .style('height', 'auto');
+              }
+              if(parent.tagName == 'LI') {
+                d3.select(parent).classed('item-active', true);
+              }
+              parent = parent.parentNode;
+            }
+            selectedNode = this; 
+          }
           createSubmeny(view, d);
         });
     };
@@ -853,8 +897,8 @@ var TreeMenu = Component.extend({
 //    }
     createSubmeny(this.wrapper, dataFiltered, true);
     this.menuEntity = new Menu(null, this.wrapper.select('.' + css.list_top_level));
-    if(this.menuEntity) this.menuEntity.setWidth(this.activeProfile.col_width, true)
     if(this.menuEntity) this.menuEntity.setDirection(OPTIONS.MENU_DIRECTION);
+    if(this.menuEntity) this.menuEntity.setWidth(this.activeProfile.col_width, true);
 
     var pointer = "_default";
     if(allowedIDs.indexOf(this.model.marker[markerID].which) > -1) pointer = this.model.marker[markerID].which;
