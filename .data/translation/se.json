@@ -40,6 +40,7 @@
     "hints/max": "max",
     "hints/dataWarning": "Data tvivel",
     "hints/dataWarning-little": "Data",
+    "hints/source": "Mer info och källa",
     "mount/maxYmode/immediate": "Direkt",
     "mount/maxYmode/latest": "Senast",
     "mount/maxYmode/total": "Totalt",
