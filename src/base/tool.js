@@ -6,9 +6,8 @@ import { DefaultEvent } from 'events'
 import { warn as warnIcon } from 'iconset'
 import Promise from 'base/promise';
 
-var class_loading = 'vzb-loading';
 var class_loading_first = 'vzb-loading-first';
-var class_loading_data = 'vzb-loading';
+var class_loading_data = 'vzb-loading-data';
 var class_loading_error = 'vzb-loading-error';
 var class_placeholder = 'vzb-placeholder';
 var class_buttons_off = 'vzb-buttonlist-off';
@@ -93,11 +92,11 @@ var Tool = Component.extend({
             _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'), _this.getMinModel());
         }
       },
-      'hook_change': function() {
-        if (!(_this.model && _this.model.data && _this.model.data.splash)) {
-          utils.addClass(_this.placeholder, class_loading_first);
-        }
-      },
+//      'hook_change': function() {
+//        if (!(_this.model && _this.model.data && _this.model.data.splash)) {
+//          utils.addClass(_this.placeholder, class_loading_first);
+//        }
+//      },
       'change:ui.presentation': function() {
         _this.layout.updatePresentation();
         _this.trigger('resize');
@@ -222,20 +221,20 @@ var Tool = Component.extend({
   /**
    * Displays loading class
    */
-  beforeLoading: function() {
+  beforeLoading: function(loadingData) {
     if(!this._readyOnce) {
-      utils.addClass(this.placeholder, class_loading_first);
+        utils.addClass(this.placeholder, class_loading_first);    
     }
-    if(!utils.hasClass(this.placeholder, class_loading_data)) {
-      utils.addClass(this.placeholder, class_loading_data);
+    if(loadingData) {
+        utils.addClass(this.placeholder, class_loading_data);    
     }
   },
   /**
    * Removes loading class
    */
   afterLoading: function() {
-    utils.removeClass(this.placeholder, class_loading_data);
     utils.removeClass(this.placeholder, class_loading_first);
+    utils.removeClass(this.placeholder, class_loading_data);
   },
   /**
    * Adds loading error class

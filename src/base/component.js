@@ -3,8 +3,8 @@ import Events from 'events';
 import Model from 'model';
 import Promise from 'promise';
 
-var class_loading = 'vzb-loading';
 var class_loading_first = 'vzb-loading-first';
+var class_loading_data = 'vzb-loading-data';
 var class_error = 'vzb-error';
 
 var templates = {};
@@ -136,7 +136,7 @@ var Component = Events.extend({
               _this.model.load().then(function() {
                 _this.model.setLoadingDone('restore_orig_time');
                 timeMdl.splash = false;
-                _this.model.data.splash = false;
+                //_this.model.data.splash = false;
                 timeMdl.trigger('change', timeMdl.getPlainObject());
               });
             }, 300);
@@ -164,7 +164,8 @@ var Component = Events.extend({
     }
 
     function renderError() {
-      utils.removeClass(_this.placeholder, class_loading);
+      utils.removeClass(_this.placeholder, class_loading_first);
+      utils.removeClass(_this.placeholder, class_loading_data);
       utils.addClass(_this.placeholder, class_error);
       _this.setError({
         type: 'data'
@@ -172,8 +173,8 @@ var Component = Events.extend({
     }
 
     function done() {
-      utils.removeClass(_this.placeholder, class_loading);
       utils.removeClass(_this.placeholder, class_loading_first);
+      utils.removeClass(_this.placeholder, class_loading_data);        
       _this.setReady();
     }
   },
@@ -216,7 +217,7 @@ var Component = Events.extend({
         utils.error('Templating error for component: \'' + this.name +
           '\' - Check if template name is unique and correct. E.g.: \'bubblechart\'');
 
-        utils.removeClass(this.placeholder, class_loading);
+        utils.removeClass(this.placeholder, class_loading_data);
         utils.addClass(this.placeholder, class_error);
         this.setError({
           type: 'template'
@@ -224,7 +225,7 @@ var Component = Events.extend({
       }
     }
     //add loading class and html
-    utils.addClass(this.placeholder, class_loading);
+    utils.addClass(this.placeholder, class_loading_data);
     utils.addClass(this.placeholder, class_loading_first);
     this.placeholder.innerHTML = rendered;
     this.element = this.placeholder.children[0];
