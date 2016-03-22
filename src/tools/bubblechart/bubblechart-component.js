@@ -1485,9 +1485,11 @@ var BubbleChartComp = Component.extend({
     var labels = this.model.ui.chart.labels;
 
     var bBox = labels.removeLabelBox ? textBBox : rectBBox;
+    
+    var FAR_COEFF = .7;
 
     var lineHidden = this.circleRectIntersects({x: diffX1, y: diffY1, r: cache.scaledS0},
-      {x: diffX2, y: diffY2, width: (bBox.height * 2 + bBox.width), height: (bBox.height * 3)});
+      {x: diffX2, y: diffY2, width: (bBox.height * 2 * FAR_COEFF + bBox.width), height: (bBox.height * (2 * FAR_COEFF + 1))});
     lineGroup.select('line').classed("vzb-invisible", lineHidden);
     if(lineHidden) return;
 

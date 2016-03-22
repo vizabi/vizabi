@@ -227,6 +227,12 @@
       &:hover {
         background-color: $vzb-color-grey-light;
       }
+      &.item-active {
+        background-color: $vzb-color-primary-lightest;
+        &:hover {
+          background-color: $vzb-color-grey-light;
+        }
+      }
       &.marquee:not(:hover) {
         > .vzb-treemenu-list-item-label {
           left: 0 !important;
