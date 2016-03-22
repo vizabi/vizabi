@@ -319,14 +319,14 @@ MountainChart.define('default_model', {
       },
       axis_y: {
         use: "indicator",
-        //which: "population",//systema globalis
-        which: "population_total",
+        which: "sg_population",//systema globalis
+        //which: "population_total",
         scaleType: 'linear'
       },
       axis_x: {
         use: "indicator",
-        //which: "gdp_p_cap_const_ppp2011_dollar",//systema globalis
-        which: "income_per_person_gdppercapita_ppp_inflation_adjusted",
+        which: "sg_gdp_p_cap_const_ppp2011_dollar",//systema globalis
+        //which: "income_per_person_gdppercapita_ppp_inflation_adjusted",
         scaleType: 'log',
         domainMin: .11, //0
         domainMax: 500, //100
@@ -338,8 +338,8 @@ MountainChart.define('default_model', {
       },
       axis_s: {
         use: "indicator",
-        //which: "gini", //systema globalis
-        which: "inequality_index_gini",
+        which: "sg_gini", //systema globalis
+        //which: "inequality_index_gini",
         scaleType: 'linear'
       },
       color: {
