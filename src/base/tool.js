@@ -70,6 +70,8 @@ var Tool = Component.extend({
         '</div>' + 
         '<div class="vzb-tool-datawarning vzb-hidden">' + 
         '</div>' + 
+        '<div class="vzb-tool-datanotes vzb-hidden">' + 
+        '</div>' + 
       '</div>';
     this.model_binds = this.model_binds || {};
     

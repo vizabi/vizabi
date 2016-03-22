@@ -86,6 +86,22 @@ var IndPicker = Component.extend({
         this.infoEl = d3.select(this.element).select('.vzb-ip-info');
         utils.setIcon(this.infoEl, iconQuestion)
           .select("svg").attr("width", "0px").attr("height", "0px");
+          
+        this.infoEl.on("click", function() {
+          _this.root.findChildByName("gapminder-datanotes").pin();
+        })
+        this.infoEl.on("mouseover", function() {
+          var rect = _this.el_select.node().getBoundingClientRect();
+          var rootRect = _this.root.element.getBoundingClientRect();
+          var topPos = rect.bottom - rootRect.top;
+          var leftPos = rect.left - rootRect.left + rect.width;
+          
+          _this.root.findChildByName("gapminder-datanotes").setHook(_this.model.marker[_this.markerID]).toggle().setPos(leftPos, topPos);
+        })
+        this.infoEl.on("mouseout", function() {
+          _this.root.findChildByName("gapminder-datanotes").toggle();
+        })
+
 
     },
 
@@ -101,10 +117,6 @@ var IndPicker = Component.extend({
         
         //Let the indicator "_default" in tree menu be translated differnetly for every hook type
         this.el_select.text(this.translator("indicator" + (which==="_default" ? "/" + type : "") + "/" + which));
-
-        this.infoEl.on("click", function() {
-          window.open(_this.model.marker[_this.markerID].getMetadata().sourceLink, '_blank').focus();
-        })
     }
     
 });
