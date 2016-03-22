@@ -228,9 +228,8 @@
         background-color: $vzb-color-grey-light;
       }
       &.item-active {
-        background-color: $vzb-color-primary-lightest;
-        &:hover {
-          background-color: $vzb-color-grey-light;
+        > span {
+          font-weight: bold;
         }
       }
       &.marquee:not(:hover) {
