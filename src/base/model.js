@@ -435,15 +435,18 @@ var Model = EventSource.extend({
         }
       };
 
-      utils.timeStamp('Vizabi Model: Loading Data: ' + _this._id);
-      _DATAMANAGER.load(query, lang, reader, evts).then(function(dataId) {
-        _this._dataId = dataId;
-        utils.timeStamp('Vizabi Model: Data loaded: ' + _this._id);
-        _this.afterLoad();
-        promise.resolve();
-      }, function(err) {
-        utils.warn('Problem with query: ', JSON.stringify(query));
-        promise.reject(err);
+      utils.defer(function() { //defer require to fire "hook_change" event
+        utils.timeStamp('Vizabi Model: Loading Data: ' + _this._id);
+        _DATAMANAGER.load(query, lang, reader, evts).then(function(dataId) {
+          _this._dataId = dataId;
+          utils.timeStamp('Vizabi Model: Data loaded: ' + _this._id);
+          _this.afterLoad();
+          promise.resolve();
+        }, function(err) {
+          utils.warn('Problem with query: ', JSON.stringify(query));
+          promise.reject(err);
+        });
+        
       });
       promises.push(promise);
     }
