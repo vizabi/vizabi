@@ -487,7 +487,9 @@ BubbleChart.define('default_model', {
         which: "geo.name"
       },
       size_label: {
-        use: "constant"
+        use: "constant",
+        which: "_default",
+        extent: [0, 0.33]
       },
 
       axis_y: {

@@ -837,7 +837,8 @@ var BubbleChartComp = Component.extend({
         defaultLabelTextSize: 12,
         infoElHeight: 16,
         yAxisTitleBottomMargin: 6,
-        xAxisTitleBottomMargin: 4
+        xAxisTitleBottomMargin: 4,
+        labelsLeashCoeff: 0.4
       },
       medium: {
         margin: { top: 40, right: 15, left: 60, bottom: 55 },
@@ -849,7 +850,8 @@ var BubbleChartComp = Component.extend({
         defaultLabelTextSize: 15,
         infoElHeight: 20,
         yAxisTitleBottomMargin: 6,
-        xAxisTitleBottomMargin: 5
+        xAxisTitleBottomMargin: 5,
+        labelsLeashCoeff: 0.35
       },
       large: {
         margin: { top: 50, right: 20, left: 60, bottom: 60 },
@@ -861,7 +863,8 @@ var BubbleChartComp = Component.extend({
         defaultLabelTextSize: 20,
         infoElHeight: 22,
         yAxisTitleBottomMargin: 6,
-        xAxisTitleBottomMargin: 5
+        xAxisTitleBottomMargin: 5,
+        labelsLeashCoeff: 0.3
       }
     };
 
@@ -1486,7 +1489,7 @@ var BubbleChartComp = Component.extend({
 
     var bBox = labels.removeLabelBox ? textBBox : rectBBox;
     
-    var FAR_COEFF = .7;
+    var FAR_COEFF = this.activeProfile.labelsLeashCoeff||0;
 
     var lineHidden = this.circleRectIntersects({x: diffX1, y: diffY1, r: cache.scaledS0},
       {x: diffX2, y: diffY2, width: (bBox.height * 2 * FAR_COEFF + bBox.width), height: (bBox.height * (2 * FAR_COEFF + 1))});
