@@ -8,6 +8,11 @@ var FILE_REQUESTED = {}; //caches files from this reader
 
 var WSReader = Reader.extend({
 
+  ERROR_NETWORK     : 'Connection Problem',
+  ERROR_RESPONSE    : 'Bad Response',
+  ERROR_ORDERING    : 'Cannot sort response. Column does not exist in result.',
+  ERROR_PARAM_PATH  : 'Missing base path for waffle reader',
+
   /**
    * Initializes the reader.
    * @param {Object} reader_info Information about the reader
@@ -17,8 +22,9 @@ var WSReader = Reader.extend({
     this._data = [];
     this._basepath = reader_info.path;
     this._parsers = reader_info.parsers;
+
     if (!this._basepath) {
-      utils.error("Missing base path for graph reader");
+      utils.error(this.ERROR_PARAM_PATH);
     }
   },
 
@@ -29,91 +35,33 @@ var WSReader = Reader.extend({
    * @returns a promise that will be resolved when data is read
    */
   read: function (query, language) {
-    var _this = this;
+
     var p = new Promise();
     var path = this._basepath;
 
-    path += '?' + _this._encodeQuery(query);
+    path += '?' + this._encodeQuery(query);
 
-    _this._data = [];
+    this._data = [];
 
-    (function (query, p) {
-      //if cached, retrieve and parse
-      if (FILE_CACHED.hasOwnProperty(path)) {
-        parse(FILE_CACHED[path]);
-        return p;
-      }
-      //if requested by another hook, wait for the response
-      if (FILE_REQUESTED.hasOwnProperty(path)) {
-        FILE_REQUESTED[path].then(function () {
-          parse(FILE_CACHED[path]);
-        });
-        return p;
-      }
-      //if not, request and parse
-      FILE_REQUESTED[path] = new Promise();
-      utils.get(path, [], onSuccess, console.error.bind(console), true);
-      function onSuccess(resp) {
-        if (!resp) {
-          utils.error("Empty json: " + path, error);
-          return;
-        }
-
-        //format data
-        resp = utils.mapRows(uzip(resp.data || resp), _this._parsers);
-
-        //cache and resolve
-        FILE_CACHED[path] = resp;
-        FILE_REQUESTED[path].resolve();
-        FILE_REQUESTED[path] = void 0;
-
-        parse(resp);
-      }
-
+    //if cached, retrieve and parse
+    if (FILE_CACHED.hasOwnProperty(path)) {
+      this._parse(p, query, FILE_CACHED[path]);
       return p;
+    }
+    //if requested by another hook, wait for the response
+    if (FILE_REQUESTED.hasOwnProperty(path)) {
+      return FILE_REQUESTED[path];
+    }
+    //if not, request and parse
+    FILE_REQUESTED[path] = p;
 
-      function uzip(table) {
-        var rows = table.rows;
-        var headers = table.headers;
-        var result = new Array(rows.length);
-        // unwrap compact data into json collection
-        for (var i = 0; i < rows.length; i++) {
-          result[i] = {};
-          for (var j = 0; j < headers.length; j++) {
-            if (typeof rows[i][j] === undefined || rows[i][j] === null) {
-              result[i][headers[j]] = '';
-            } else {
-              result[i][headers[j]] = rows[i][j].toString();
-            }
-            if (headers[j] === 'geo.cat') {
-              result[i][headers[j]] = [result[i][headers[j]]];
-            }
-          }
-        }
-        return result;
-      }
-
-      function parse(res) {
-
-        var data = res;
-
-        // sorting
-        // one column, one direction (ascending) for now
-        if(query.orderBy && data[0]) {
-          if (data[0][query.orderBy]) {
-            data.sort(function(a, b) {
-              return a[query.orderBy] - b[query.orderBy];
-            });
-          } else {
-            p.reject("Cannot sort by " + query.orderBy + ". Column does not exist in result.");
-          }
-        }
-
-        _this._data = data;
-        p.resolve();
-      }
-
-    })(query, p);
+    utils.get(
+      path,
+      [],
+      this._readCallbackSuccess.bind(this, p, path, query),
+      this._readCallbackError.bind(this, p, path, query),
+      true
+    );
 
     return p;
   },
@@ -154,7 +102,81 @@ var WSReader = Reader.extend({
    */
   getData: function () {
     return this._data;
+  },
+
+  _readCallbackSuccess: function (p, path, query, resp) {
+
+    if (!resp) {
+      utils.error("Empty json: " + path);
+      p.reject({
+        'message' : this.ERROR_RESPONSE,
+        'data': path
+      });
+      return;
+    }
+
+    //format data
+    resp = utils.mapRows(this._uzip(resp.data || resp), this._parsers);
+
+    //cache and resolve
+    FILE_CACHED[path] = resp;
+
+    this._parse(p, query, resp);
+    FILE_REQUESTED[path] = void 0;
+  },
+
+  _readCallbackError: function (p, path, query, resp) {
+    p.reject({
+      'message' : this.ERROR_NETWORK,
+      'data': path
+    });
+  },
+
+  _uzip: function (table) {
+    var header;
+    var rows = table.rows;
+    var headers = table.headers;
+    var result = new Array(rows.length);
+    // unwrap compact data into json collection
+    for (var i = 0; i < rows.length; i++) {
+      result[i] = {};
+      for (var headerIndex = 0; headerIndex < headers.length; headerIndex++) {
+        header = headers[headerIndex];
+        result[i][header] = '';
+        if (!(typeof rows[i][headerIndex] == 'undefined' || rows[i][headerIndex] === null)) {
+          result[i][header] = rows[i][headerIndex].toString();
+        }
+        if (header === 'geo.cat') {
+          result[i][header] = [result[i][header]];
+        }
+      }
+    }
+    return result;
+  },
+
+  _parse: function (p, query, resp) {
+
+    var data = resp;
+
+    // sorting
+    // one column, one direction (ascending) for now
+    if(query.orderBy && data[0]) {
+      if (data[0][query.orderBy]) {
+        data.sort(function(a, b) {
+          return a[query.orderBy] - b[query.orderBy];
+        });
+      } else {
+        return p.reject({
+          'message' : this.ERROR_ORDERING,
+          'data': query.orderBy
+        });
+      }
+    }
+
+    this._data = data;
+    p.resolve();
   }
+
 });
 
 var QueryEncoder = (function() {

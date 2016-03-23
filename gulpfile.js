@@ -317,7 +317,7 @@ gulp.task('buildIndexes', ['clean:indexes'], function() {
     buildImportIndex(path.join(config.src, '/components/dialogs'), true),
     buildImportIndex(path.join(config.src, '/components/buttonlist'), true),
     buildImportIndex(path.join(config.src, '/models/')),
-    buildImportIndex(path.join(config.src, '/readers/'))
+    buildImportIndex(path.join(config.src, '/readers/'), true)
   ]);
 });
 

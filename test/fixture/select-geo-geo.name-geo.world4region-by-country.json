@@ -1,0 +1,1377 @@
+[
+  {
+    "geo": "abkh",
+    "geo.name": "Abkhazia",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "afg",
+    "geo.name": "Afghanistan",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "akr_a_dhe",
+    "geo.name": "Akrotiri and Dhekelia",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "alb",
+    "geo.name": "Albania",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "dza",
+    "geo.name": "Algeria",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "asm",
+    "geo.name": "American Samoa",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "and",
+    "geo.name": "Andorra",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "ago",
+    "geo.name": "Angola",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "aia",
+    "geo.name": "Anguilla",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "ata",
+    "geo.name": "Antarctica",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "atg",
+    "geo.name": "Antigua and Barbuda",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "arg",
+    "geo.name": "Argentina",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "arm",
+    "geo.name": "Armenia",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "abw",
+    "geo.name": "Aruba",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "aus",
+    "geo.name": "Australia",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "aut",
+    "geo.name": "Austria",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "aze",
+    "geo.name": "Azerbaijan",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "bhs",
+    "geo.name": "Bahamas",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "bhr",
+    "geo.name": "Bahrain",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "bgd",
+    "geo.name": "Bangladesh",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "brb",
+    "geo.name": "Barbados",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "blr",
+    "geo.name": "Belarus",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "bel",
+    "geo.name": "Belgium",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "blz",
+    "geo.name": "Belize",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "ben",
+    "geo.name": "Benin",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "bmu",
+    "geo.name": "Bermuda",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "btn",
+    "geo.name": "Bhutan",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "bol",
+    "geo.name": "Bolivia",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "bih",
+    "geo.name": "Bosnia and Herzegovina",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "bwa",
+    "geo.name": "Botswana",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "bouisl",
+    "geo.name": "Bouvet Island",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "bra",
+    "geo.name": "Brazil",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "iot",
+    "geo.name": "British Indian Ocean Territory",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "vgb",
+    "geo.name": "British Virgin Islands",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "brn",
+    "geo.name": "Brunei",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "bgr",
+    "geo.name": "Bulgaria",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "bfa",
+    "geo.name": "Burkina Faso",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "bdi",
+    "geo.name": "Burundi",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "khm",
+    "geo.name": "Cambodia",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "cmr",
+    "geo.name": "Cameroon",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "can",
+    "geo.name": "Canada",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "cpv",
+    "geo.name": "Cape Verde",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "cym",
+    "geo.name": "Cayman Islands",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "caf",
+    "geo.name": "Central African Republic",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "tcd",
+    "geo.name": "Chad",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "chanisl",
+    "geo.name": "Channel Islands",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "chl",
+    "geo.name": "Chile",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "chn",
+    "geo.name": "China",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "cxr",
+    "geo.name": "Christmas Island",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "fra_clipperton",
+    "geo.name": "Clipperton",
+    "geo.world_4region": ""
+  },
+  {
+    "geo": "cck",
+    "geo.name": "Cocos Island",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "col",
+    "geo.name": "Colombia",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "com",
+    "geo.name": "Comoros",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "cod",
+    "geo.name": "Congo, Dem. Rep.",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "cog",
+    "geo.name": "Congo, Rep.",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "cok",
+    "geo.name": "Cook Is",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "cri",
+    "geo.name": "Costa Rica",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "civ",
+    "geo.name": "Cote d'Ivoire",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "hrv",
+    "geo.name": "Croatia",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "cub",
+    "geo.name": "Cuba",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "nld_curacao",
+    "geo.name": "Curaçao",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "cyp",
+    "geo.name": "Cyprus",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "cze",
+    "geo.name": "Czech Republic",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "cheslo",
+    "geo.name": "Czechoslovakia",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "dnk",
+    "geo.name": "Denmark",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "dji",
+    "geo.name": "Djibouti",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "dma",
+    "geo.name": "Dominica",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "dom",
+    "geo.name": "Dominican Republic",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "deu_east",
+    "geo.name": "East Germany",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "ecu",
+    "geo.name": "Ecuador",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "egy",
+    "geo.name": "Egypt",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "slv",
+    "geo.name": "El Salvador",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "gnq",
+    "geo.name": "Equatorial Guinea",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "eri",
+    "geo.name": "Eritrea",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "eri_a_eth",
+    "geo.name": "Eritrea and Ethiopia",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "est",
+    "geo.name": "Estonia",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "eth",
+    "geo.name": "Ethiopia",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "fro",
+    "geo.name": "Faeroe Islands",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "flk",
+    "geo.name": "Falkland Is (Malvinas)",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "fji",
+    "geo.name": "Fiji",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "fin",
+    "geo.name": "Finland",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "fra",
+    "geo.name": "France",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "guf",
+    "geo.name": "French Guiana",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "pyf",
+    "geo.name": "French Polynesia",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "fra_antarc",
+    "geo.name": "French Southern and Antarctic Lands",
+    "geo.world_4region": ""
+  },
+  {
+    "geo": "gab",
+    "geo.name": "Gabon",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "gmb",
+    "geo.name": "Gambia",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "pse_gaza",
+    "geo.name": "Gaza Strip",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "geo",
+    "geo.name": "Georgia",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "deu",
+    "geo.name": "Germany",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "gha",
+    "geo.name": "Ghana",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "gib",
+    "geo.name": "Gibraltar",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "grc",
+    "geo.name": "Greece",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "grl",
+    "geo.name": "Greenland",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "grd",
+    "geo.name": "Grenada",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "glp",
+    "geo.name": "Guadeloupe",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "gum",
+    "geo.name": "Guam",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "gtm",
+    "geo.name": "Guatemala",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "gbg",
+    "geo.name": "Guernsey",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "gin",
+    "geo.name": "Guinea",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "gnb",
+    "geo.name": "Guinea-Bissau",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "guy",
+    "geo.name": "Guyana",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "hti",
+    "geo.name": "Haiti",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "heard_a_mcd",
+    "geo.name": "Heard and McDonald Islands",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "hos",
+    "geo.name": "Holy See",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "hnd",
+    "geo.name": "Honduras",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "hkg",
+    "geo.name": "Hong Kong, China",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "hun",
+    "geo.name": "Hungary",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "isl",
+    "geo.name": "Iceland",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "ind",
+    "geo.name": "India",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "idn",
+    "geo.name": "Indonesia",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "irn",
+    "geo.name": "Iran",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "irq",
+    "geo.name": "Iraq",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "irl",
+    "geo.name": "Ireland",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "gbm",
+    "geo.name": "Isle of Man",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "isr",
+    "geo.name": "Israel",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "ita",
+    "geo.name": "Italy",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "jam",
+    "geo.name": "Jamaica",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "jpn",
+    "geo.name": "Japan",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "jey",
+    "geo.name": "Jersey",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "jor",
+    "geo.name": "Jordan",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "kaz",
+    "geo.name": "Kazakhstan",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "ken",
+    "geo.name": "Kenya",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "kir",
+    "geo.name": "Kiribati",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "kos",
+    "geo.name": "Kosovo",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "kwt",
+    "geo.name": "Kuwait",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "kgz",
+    "geo.name": "Kyrgyz Republic",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "lao",
+    "geo.name": "Lao",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "lva",
+    "geo.name": "Latvia",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "lbn",
+    "geo.name": "Lebanon",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "lso",
+    "geo.name": "Lesotho",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "lbr",
+    "geo.name": "Liberia",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "lby",
+    "geo.name": "Libya",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "lie",
+    "geo.name": "Liechtenstein",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "ltu",
+    "geo.name": "Lithuania",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "lux",
+    "geo.name": "Luxembourg",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "mac",
+    "geo.name": "Macao, China",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "mkd",
+    "geo.name": "Macedonia, FYR",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "mdg",
+    "geo.name": "Madagascar",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "mwi",
+    "geo.name": "Malawi",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "mys",
+    "geo.name": "Malaysia",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "mdv",
+    "geo.name": "Maldives",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "mli",
+    "geo.name": "Mali",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "mlt",
+    "geo.name": "Malta",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "mhl",
+    "geo.name": "Marshall Islands",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "mtq",
+    "geo.name": "Martinique",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "mrt",
+    "geo.name": "Mauritania",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "mus",
+    "geo.name": "Mauritius",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "myt",
+    "geo.name": "Mayotte",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "mex",
+    "geo.name": "Mexico",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "fsm",
+    "geo.name": "Micronesia, Fed. Sts.",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "mda",
+    "geo.name": "Moldova",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "mco",
+    "geo.name": "Monaco",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "mng",
+    "geo.name": "Mongolia",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "mne",
+    "geo.name": "Montenegro",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "msr",
+    "geo.name": "Montserrat",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "mar",
+    "geo.name": "Morocco",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "moz",
+    "geo.name": "Mozambique",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "mmr",
+    "geo.name": "Myanmar",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "nam",
+    "geo.name": "Namibia",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "nru",
+    "geo.name": "Nauru",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "npl",
+    "geo.name": "Nepal",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "nld",
+    "geo.name": "Netherlands",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "ant",
+    "geo.name": "Netherlands Antilles",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "ncl",
+    "geo.name": "New Caledonia",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "nzl",
+    "geo.name": "New Zealand",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "ngokar",
+    "geo.name": "Ngorno-Karabakh",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "nic",
+    "geo.name": "Nicaragua",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "ner",
+    "geo.name": "Niger",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "nga",
+    "geo.name": "Nigeria",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "niu",
+    "geo.name": "Niue",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "nfk",
+    "geo.name": "Norfolk Island",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "prk",
+    "geo.name": "North Korea",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "yem_north",
+    "geo.name": "North Yemen (former)",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "cyp_nor",
+    "geo.name": "Northern Cyprus",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "mnp",
+    "geo.name": "Northern Mariana Islands",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "north_mar",
+    "geo.name": "Northern Marianas",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "nor",
+    "geo.name": "Norway",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "omn",
+    "geo.name": "Oman",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "pak",
+    "geo.name": "Pakistan",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "plw",
+    "geo.name": "Palau",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "pan",
+    "geo.name": "Panama",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "png",
+    "geo.name": "Papua New Guinea",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "pry",
+    "geo.name": "Paraguay",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "per",
+    "geo.name": "Peru",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "phl",
+    "geo.name": "Philippines",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "pcn",
+    "geo.name": "Pitcairn",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "pol",
+    "geo.name": "Poland",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "prt",
+    "geo.name": "Portugal",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "pri",
+    "geo.name": "Puerto Rico",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "qat",
+    "geo.name": "Qatar",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "reu",
+    "geo.name": "Reunion",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "rou",
+    "geo.name": "Romania",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "rus",
+    "geo.name": "Russia",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "rwa",
+    "geo.name": "Rwanda",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "wsm",
+    "geo.name": "Samoa",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "smr",
+    "geo.name": "San Marino",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "stp",
+    "geo.name": "Sao Tome and Principe",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "sau",
+    "geo.name": "Saudi Arabia",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "sen",
+    "geo.name": "Senegal",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "srb",
+    "geo.name": "Serbia",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "scg",
+    "geo.name": "Serbia and Montenegro",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "scg_ex_kos",
+    "geo.name": "Serbia excluding Kosovo",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "syc",
+    "geo.name": "Seychelles",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "sle",
+    "geo.name": "Sierra Leone",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "sgp",
+    "geo.name": "Singapore",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "sxm",
+    "geo.name": "Sint Maarten (Dutch part)",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "svk",
+    "geo.name": "Slovak Republic",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "svn",
+    "geo.name": "Slovenia",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "slb",
+    "geo.name": "Solomon Islands",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "som",
+    "geo.name": "Somalia",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "som_somland",
+    "geo.name": "Somaliland",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "zaf",
+    "geo.name": "South Africa",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "sgero_a_ssandw",
+    "geo.name": "South Georgia and the South Sandwich Islands",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "kor",
+    "geo.name": "South Korea",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "sosset",
+    "geo.name": "South Ossetia",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "ssd",
+    "geo.name": "South Sudan",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "yem_south",
+    "geo.name": "South Yemen (former)",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "esp",
+    "geo.name": "Spain",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "lka",
+    "geo.name": "Sri Lanka",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "stbar",
+    "geo.name": "St. Barthélemy",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "shn",
+    "geo.name": "St. Helena",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "kna",
+    "geo.name": "St. Kitts and Nevis",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "lca",
+    "geo.name": "St. Lucia",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "stmar",
+    "geo.name": "St. Martin",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "maf",
+    "geo.name": "St. Martin (French part)",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "vct",
+    "geo.name": "St. Vincent and the Grenadines",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "spm",
+    "geo.name": "St.-Pierre-et-Miquelon",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "sdn",
+    "geo.name": "Sudan",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "sur",
+    "geo.name": "Suriname",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "sjm",
+    "geo.name": "Svalbard",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "swz",
+    "geo.name": "Swaziland",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "swe",
+    "geo.name": "Sweden",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "che",
+    "geo.name": "Switzerland",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "syr",
+    "geo.name": "Syria",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "twn",
+    "geo.name": "Taiwan",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "tjk",
+    "geo.name": "Tajikistan",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "tza",
+    "geo.name": "Tanzania",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "tha",
+    "geo.name": "Thailand",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "tls",
+    "geo.name": "Timor-Leste",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "tgo",
+    "geo.name": "Togo",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "tkl",
+    "geo.name": "Tokelau",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "ton",
+    "geo.name": "Tonga",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "transn",
+    "geo.name": "Transnistria",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "tto",
+    "geo.name": "Trinidad and Tobago",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "tun",
+    "geo.name": "Tunisia",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "tur",
+    "geo.name": "Turkey",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "tkm",
+    "geo.name": "Turkmenistan",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "tca",
+    "geo.name": "Turks and Caicos Islands",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "tuv",
+    "geo.name": "Tuvalu",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "usa_minor_out_isl",
+    "geo.name": "US Minor Outlying Islands",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "ussr",
+    "geo.name": "USSR",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "uga",
+    "geo.name": "Uganda",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "ukr",
+    "geo.name": "Ukraine",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "are",
+    "geo.name": "United Arab Emirates",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "gbr",
+    "geo.name": "United Kingdom",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "korea_union",
+    "geo.name": "United Korea (former)",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "usa",
+    "geo.name": "United States",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "ury",
+    "geo.name": "Uruguay",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "uzb",
+    "geo.name": "Uzbekistan",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "vut",
+    "geo.name": "Vanuatu",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "ven",
+    "geo.name": "Venezuela",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "vnm",
+    "geo.name": "Vietnam",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "virg_isl",
+    "geo.name": "Virgin Islands",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "vir",
+    "geo.name": "Virgin Islands (U.S.)",
+    "geo.world_4region": "americas"
+  },
+  {
+    "geo": "wlf",
+    "geo.name": "Wallis et Futuna",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "pse_west_bank",
+    "geo.name": "West Bank",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "pse",
+    "geo.name": "West Bank and Gaza",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "deu_west",
+    "geo.name": "West Germany",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "esh",
+    "geo.name": "Western Sahara",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "yem",
+    "geo.name": "Yemen",
+    "geo.world_4region": "asia"
+  },
+  {
+    "geo": "yug",
+    "geo.name": "Yugoslavia",
+    "geo.world_4region": "europe"
+  },
+  {
+    "geo": "zmb",
+    "geo.name": "Zambia",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "zwe",
+    "geo.name": "Zimbabwe",
+    "geo.world_4region": "africa"
+  },
+  {
+    "geo": "ala",
+    "geo.name": "Åland",
+    "geo.world_4region": "europe"
+  }
+]
