@@ -43,7 +43,8 @@ globals.gapminder_paths = {
   // Explanation what is going on in the code below:
   // In order to use WS server other than specified in WS_SERVER you need to fill it in manually
   //systema globalis wsUrl: typeof WS_SERVER === 'undefined' ? 'https://waffle-server-stage.gapminderdev.org' : WS_SERVER,
-  wsUrl: typeof WS_SERVER === 'undefined' ? 'https://waffle-server-dev-new-ddf.gapminderdev.org' : WS_SERVER,
+  //wsUrl: typeof WS_SERVER === 'undefined' ? 'https://waffle-server-dev-new-ddf.gapminderdev.org' : WS_SERVER,
+  wsUrl: 'https://waffle-server-dev-new-ddf.gapminderdev.org',
   baseUrl: localUrl
 };
 
@@ -711,7 +712,8 @@ Tool.define("preload", function(promise) {
   var _this = this;
 
   //var metadata_path = Vzb._globals.gapminder_paths.baseUrl + "data/waffles/metadata.json";
-  var metadata_path = Vzb._globals.gapminder_paths.wsUrl + "/api/vizabi/metadata.json";
+  //var metadata_path = Vzb._globals.gapminder_paths.wsUrl + "/api/vizabi/metadata.json";
+  var metadata_path = "https://raw.githubusercontent.com/open-numbers/ddf--gapminder_world/master/output/vizabi/metadata_one_set.json";
   var globals = Vzb._globals;
 
   Vzb._globals.version = Vzb._version;
@@ -723,6 +725,8 @@ Tool.define("preload", function(promise) {
     //then metadata
     d3.json(metadata_path, function(metadata) {
 
+        metadata.indicatorsDB["geo.region"] = metadata.indicatorsDB["geo.world_4region"];
+        
       globals.metadata = metadata;
 
       // TODO: REMOVE THIS HACK
@@ -772,7 +776,8 @@ Tool.define("preloadLanguage", function() {
 
   var langModel = this.model.language;
   //var translation_path = Vzb._globals.gapminder_paths.baseUrl + "data/translation/" + langModel.id + ".json";
-  var translation_path = Vzb._globals.gapminder_paths.wsUrl + "/api/vizabi/translation/" + langModel.id + ".json";
+  //var translation_path = Vzb._globals.gapminder_paths.wsUrl + "/api/vizabi/translation/" + langModel.id + ".json";
+  var translation_path = "https://raw.githubusercontent.com/open-numbers/ddf--gapminder_world/master/output/vizabi/en.json";
 
   if(langModel && !langModel.strings[langModel.id]) {
     d3.json(translation_path, function(langdata) {
