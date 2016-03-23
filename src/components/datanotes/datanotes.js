@@ -88,7 +88,7 @@ var DataNotes = Component.extend({
     which = hook.which;
     //description = hook.getMetadata().description;
     //sourceName = hook.getMetadata().sourceName;
-    sourceLink = hook.getMetadata().sourcelink;
+    sourceLink = hook.getMetadata().sourceLink;
     this.element.select('.vzb-data-notes-link').classed('vzb-hidden', !sourceLink);
 
     this.setValues();    
