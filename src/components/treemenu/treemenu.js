@@ -899,36 +899,42 @@ var TreeMenu = Component.extend({
     this.menuEntity = new Menu(null, this.wrapper.select('.' + css.list_top_level));
     if(this.menuEntity) this.menuEntity.setDirection(OPTIONS.MENU_DIRECTION);
     if(this.menuEntity) this.menuEntity.setWidth(this.activeProfile.col_width, true);
-
     var pointer = "_default";
     if(allowedIDs.indexOf(this.model.marker[markerID].which) > -1) pointer = this.model.marker[markerID].which;
-    if(!indicatorsDB[pointer].scales) return true;
+    if(!indicatorsDB[pointer].scales) {
+      this.element.select('.' + css.scaletypes).classed(css.hidden, true);
+      return true;
+    }
     var scaleTypesData = indicatorsDB[pointer].scales.filter(function(f) {
       if(!_this.model.marker[markerID].allow || !_this.model.marker[markerID].allow.scales) return true;
       if(_this.model.marker[markerID].allow.scales[0] == "*") return true;
       return _this.model.marker[markerID].allow.scales.indexOf(f) > -1;
     });
-
-    var scaleTypes = this.element.select('.' + css.scaletypes).selectAll("span")
-        .data(scaleTypesData, function(d){return d});
-
-    scaleTypes.exit().remove();
-
-    scaleTypes.enter().append("span")
-        .on("click", function(d){
-          d3.event.stopPropagation();
-          _this._setModel("scaleType", d, markerID)
-        });
-
-    scaleTypes
-        .classed(css.scaletypesDisabled, scaleTypesData.length < 2)
-        .classed(css.scaletypesActive, function(d){
-            return d == _this.model.marker[markerID].scaleType && scaleTypesData.length > 1;
-        })
-        .text(function(d){
-            return _this.translator("scaletype/" + d);
-        });
-
+    if(scaleTypesData.length == 0) {
+      this.element.select('.' + css.scaletypes).classed(css.hidden, true);
+    } else {  
+  
+      var scaleTypes = this.element.select('.' + css.scaletypes).classed(css.hidden, false).selectAll("span")
+          .data(scaleTypesData, function(d){return d});
+  
+      scaleTypes.exit().remove();
+  
+      scaleTypes.enter().append("span")
+          .on("click", function(d){
+            d3.event.stopPropagation();
+            _this._setModel("scaleType", d, markerID)
+          });
+  
+      scaleTypes
+          .classed(css.scaletypesDisabled, scaleTypesData.length < 2)
+          .classed(css.scaletypesActive, function(d){
+              return d == _this.model.marker[markerID].scaleType && scaleTypesData.length > 1;
+          })
+          .text(function(d){
+              return _this.translator("scaletype/" + d);
+          });
+  
+    }
 
     return this;
   },
