@@ -983,9 +983,6 @@ var TreeMenu = Component.extend({
       obj.use = indicatorsDB[value].use;
       if(indicatorsDB[value].scales) obj.scaleType = indicatorsDB[value].scales[0];
         
-      //TODO: this should be removed when we can propertly set it from model/tool beforeLoad event. 
-      //right now the beforeLoad is called, then frozen, then undrozen after data arrives from WS
-      this.root.beforeLoading(true);
     }
 
     if(mdl.getType() === 'axis' || mdl.getType() === 'size') {
