@@ -1478,18 +1478,59 @@ var BubbleChartComp = Component.extend({
 
     if(duration == null) duration = _this.duration;
     if(duration) {
-      labelGroup
-          .transition().duration(duration).ease("linear")
-          .attr("transform", "translate(" + _X + "," + _Y + ")")
-          .each("end", function(){
-                if(showhide) labelGroup.classed("vzb-invisible", d.hidden);
-          })
-      lineGroup
-          .transition().duration(duration).ease("linear")
-          .attr("transform", "translate(" + _X + "," + _Y + ")")
-          .each("end", function(){
-                if(showhide) lineGroup.classed("vzb-invisible", d.hidden);
-          })
+      if(showhide && !d.hidden){
+          //if need to show label
+         
+          labelGroup.classed("vzb-invisible", d.hidden);
+          labelGroup
+              .attr("transform", "translate(" + _X + "," + _Y + ")")
+              .style("opacity", 0)
+              .transition().duration(duration).ease("exp")
+              .style("opacity", 1);
+              //i would like to set opactiy to null in the end of transition. 
+              //but then fade in animation is not working for some reason
+          lineGroup.classed("vzb-invisible", d.hidden);
+          lineGroup
+              .attr("transform", "translate(" + _X + "," + _Y + ")")
+              .style("opacity", 0)
+              .transition().duration(duration).ease("exp")
+              .style("opacity", 1);
+              //i would like to set opactiy to null in the end of transition. 
+              //but then fade in animation is not working for some reason
+          
+      } else if(showhide && d.hidden) {
+          //if need to hide label
+          
+          labelGroup
+              .style("opacity", 1)
+              .transition().duration(duration).ease("exp")
+              .style("opacity", 0)
+              .each("end", function(){
+                  labelGroup
+                      .style("opacity", 1) //i would like to set it to null. but then fade in animation is not working for some reason
+                      .classed("vzb-invisible", d.hidden);
+              })
+          lineGroup
+              .style("opacity", 1)
+              .transition().duration(duration).ease("exp")
+              .style("opacity", 0)
+              .each("end", function(){
+                  lineGroup
+                      .style("opacity", 1) //i would like to set it to null. but then fade in animation is not working for some reason
+                      .classed("vzb-invisible", d.hidden);
+              })      
+          
+      } else {
+          // just update the position
+          
+          labelGroup
+              .transition().duration(duration).ease("linear")
+              .attr("transform", "translate(" + _X + "," + _Y + ")");
+          lineGroup
+              .transition().duration(duration).ease("linear")
+              .attr("transform", "translate(" + _X + "," + _Y + ")");
+      }
+        
     } else {
       labelGroup
           .interrupt()
