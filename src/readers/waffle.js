@@ -15,7 +15,7 @@ var WSReader = Reader.extend({
   init: function (reader_info) {
     this._name = 'waffle';
     this._data = [];
-    this._basepath = reader_info.path.replace("stage","dev");
+    this._basepath = reader_info.path.replace("stage","dev-new-ddf");
     this._parsers = reader_info.parsers;
     if (!this._basepath) {
       utils.error("Missing base path for graph reader");
