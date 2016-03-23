@@ -52,6 +52,7 @@ var MountainChartComponent = Component.extend({
         //attach event listeners to the model items
         this.model_binds = {
             "change:time.value": function (evt) {
+              if (!_this._readyOnce) return;
               _this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
             },
             "change:time.playing": function (evt) {
@@ -410,7 +411,8 @@ updateSize: function (meshLength) {
                 toolMargin: margin,
                 pivotingLimit: margin.bottom * 1.5,
                 method: this.xAxis.METHOD_REPEATING,
-                stops: this._readyOnce ? this.model.ui.chart.xLogStops : [1]
+                stops: this._readyOnce ? this.model.ui.chart.xLogStops : [1],
+                formatter: this.model.marker.axis_x.getTickFormatter()
             });
 
 
@@ -527,7 +529,7 @@ updateSize: function (meshLength) {
         this.xScale = this.model.marker.axis_x.getScale();
         this.cScale = this.model.marker.color.getScale();
 
-        this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
+        this.xAxis.tickFormat(_this.model.marker.axis_x.getTickFormatter());
     },
 
     updateEntities: function () {
@@ -746,7 +748,7 @@ updateSize: function (meshLength) {
 
         var OPACITY_HIGHLT = 1.0;
         var OPACITY_HIGHLT_DIM = .3;
-        var OPACITY_SELECT = 1.0;
+        var OPACITY_SELECT = this.model.entities.opacityRegular;
         var OPACITY_REGULAR = this.model.entities.opacityRegular;
         var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
 

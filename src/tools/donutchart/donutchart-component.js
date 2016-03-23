@@ -27,6 +27,7 @@ var DonutComponent = Component.extend('donut', {
         //bind the function updateTime() to the change of time value in the model
         this.model_binds = {
           "change:time:value": function(evt) {
+            if(!_this._readyOnce) return;
             //fetch the time from the model and update the text on screen
             _this.time = _this.model.time.value;
             _this.yearEl.text(_this.timeFormatter(_this.time));

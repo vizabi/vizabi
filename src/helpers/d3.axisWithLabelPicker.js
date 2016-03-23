@@ -130,7 +130,7 @@ export default function axisSmart() {
       g.select('.vzb-axis-value')
         .classed("vzb-hidden", highlightValue == "none")
         .select("text")
-        .text(axis.tickFormat()(highlightValue == "none" ? 0 : highlightValue));
+        .text(options.formatter(highlightValue == "none" ? 0 : highlightValue));
         
       var getTransform = function(){
         return highlightValue == "none" ? "translate(0,0)" : 
@@ -258,108 +258,8 @@ export default function axisSmart() {
 
       if(options.removeAllLabels == null) options.removeAllLabels = false;
 
-      if(options.formatterRemovePrefix == null) options.formatterRemovePrefix = false;
-
-      if(options.formatter == null) options.formatter = function(d) {
-
-        if(options.scaleType == "time") {
-          if(!(d instanceof Date)) d = new Date(d);
-          return options.timeFormat(d);
-        }
-
-        var format = "f";
-        var prec = 0;
-        if(Math.abs(d) < 1) {
-          prec = 1;
-          format = "r"
-        };
-
-        var prefix = "";
-        if(options.formatterRemovePrefix) return d3.format("." + prec + format)(d);
-        //switch(Math.floor(Math.log10(Math.abs(d)))) {
-        switch(Math.floor(Math.log(Math.abs(d))/Math.LN10)) {
-          case -13:
-            d = d * 1000000000000;
-            prefix = "p";
-            break; //0.1p
-          case -10:
-            d = d * 1000000000;
-            prefix = "n";
-            break; //0.1n
-          case -7:
-            d = d * 1000000;
-            prefix = "µ";
-            break; //0.1µ
-          case -6:
-            d = d * 1000000;
-            prefix = "µ";
-            break; //1µ
-          case -5:
-            d = d * 1000000;
-            prefix = "µ";
-            break; //10µ
-          case -4:
-            break; //0.0001
-          case -3:
-            break; //0.001
-          case -2:
-            break; //0.01
-          case -1:
-            break; //0.1
-          case 0:
-            break; //1
-          case 1:
-            break; //10
-          case 2:
-            break; //100
-          case 3:
-            break; //1000
-          case 4:
-            break; //10000
-          case 5:
-            d = d / 1000;
-            prefix = "k";
-            break; //0.1M
-          case 6:
-            d = d / 1000000;
-            prefix = "M";
-            prec = 1;
-            break; //1M
-          case 7:
-            d = d / 1000000;
-            prefix = "M";
-            break; //10M
-          case 8:
-            d = d / 1000000;
-            prefix = "M";
-            break; //100M
-          case 9:
-            d = d / 1000000000;
-            prefix = "B";
-            prec = 1;
-            break; //1B
-          case 10:
-            d = d / 1000000000;
-            prefix = "B";
-            break; //10B
-          case 11:
-            d = d / 1000000000;
-            prefix = "B";
-            break; //100B
-          case 12:
-            d = d / 1000000000000;
-            prefix = "T";
-            prec = 1;
-            break; //1T
-            //use the D3 SI formatting for the extreme cases
-          default:
-            return(d3.format("." + prec + "s")(d)).replace("G", "B");
-        }
-
-
-        // use manual formatting for the cases above
-        return(d3.format("." + prec + format)(d) + prefix).replace("G", "B");
-      }
+      if(options.formatter == null) options.formatter = axis.tickFormat()?
+        axis.tickFormat() : function(d) {return d+"";}
       options.cssLabelMarginLimit = 5; //px
       if(options.cssMarginLeft == null || parseInt(options.cssMarginLeft) < options.cssLabelMarginLimit) options.cssMarginLeft =
         options.cssLabelMarginLimit + "px";

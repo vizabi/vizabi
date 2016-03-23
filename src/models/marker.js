@@ -1,4 +1,5 @@
 import * as utils from 'base/utils';
+import Promise from 'promise';
 import Model from 'base/model';
 
 /*!

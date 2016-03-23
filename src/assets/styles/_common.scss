@@ -102,12 +102,9 @@ $vzb-loader-bgcolor: $vzb-color-white;
   background-color: $vzb-color-white;
   position: relative;
 
-  &.vzb-loading-first {
-
-    > div {
-      visibility: hidden;
-    }
-
+  &.vzb-loading-first,
+  &.vzb-loading-data {
+      
     &::before {
       background-color: $vzb-loader-bgcolor;
       bottom: 0;
@@ -124,17 +121,15 @@ $vzb-loader-bgcolor: $vzb-color-white;
       @extend %vzb-loader;
     }
   }
-  //loading data specifically
-  &.vzb-loading-data {
-    &::before {
-      @include opacity(.9);
-    }
+
+  //the first load would hide the internal div, so no chart will be visible
+  &.vzb-loading-first {
+    > div {
+      visibility: hidden;
+    }      
   }
-  //loading anything
-  &.vzb-loading {
-    // * {
-    //     visibility: hidden;
-    // }
+  //all other loadings would not hide the div and be semi-transparent
+  &.vzb-loading-data {
     &::before {
       @include opacity(.8);
     }

@@ -482,6 +482,11 @@ var Data = Class.extend({
                   // and is valid. If so, then save it into a “clean regular set”
                   frame[column][key] = nested[key][frameName][0][column];
 
+                } else if (method === "none") {
+                    
+                  // the piece of data is not available and the interpolation is set to "none"
+                  frame[column][key] = null;
+                    
                 } else {
                   // If the piece of data doesn’t exist or is invalid, then we need to inter- or extapolate it
 

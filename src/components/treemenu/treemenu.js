@@ -86,7 +86,7 @@ var Menu = Class.extend({
   setWidth: function(width, recursive) {
     if (this.width != width && this.entity.node()) {
       this.width = width;
-      if (this.entity.classed('active')) {
+      if (this.entity.classed('active') && this.direction == MENU_HORIZONTAL) {
         this.entity.transition()
           .delay(0)
           .duration(100)
@@ -310,6 +310,11 @@ var Menu = Class.extend({
     for (var i = 0; i < this.menuItems.length; i++) {
       this.menuItems[i].marqueeToggle(toggle);
     }
+  },
+  marqueeToggleAll: function(toggle) {
+    for (var i = 0; i < this.menuItems.length; i++) {
+      this.menuItems[i].marqueeToggleAll(toggle);
+    }
   }
 });
 
@@ -371,16 +376,35 @@ var MenuItem = Class.extend({
   isActive: function() {
     return this.submenu && this.submenu.isActive();
   },
-
+  marqueeToggleAll: function(toggle) {
+    var _this = this;
+    var labels = this.entity.selectAll('.' + css.list_item_label);
+    labels.each(function() {
+      var label = d3.select(this);
+      var parent = d3.select(this.parentNode);
+      if(toggle) {
+        if(label.node().scrollWidth > this.parentNode.offsetWidth) {
+          label.attr("data-content", label.text());
+          label.style("left", (-label.node().scrollWidth) + 'px');
+          parent.classed('marquee', true);
+        }
+      } else {
+        parent.classed('marquee', false);
+        label.style("left", '');
+      }
+    });
+  },
   marqueeToggle: function(toggle) {
+    var label = this.entity.select('.' + css.list_item_label);
     if(toggle) {
-      var label = this.entity.select('.' + css.list_item_label);
       if(label.node().scrollWidth > this.entity.node().offsetWidth) {
         label.attr("data-content", label.text());
+        label.style("left", (-label.node().scrollWidth) + 'px');
         this.entity.classed('marquee', true);
       }
     } else {
       this.entity.classed('marquee', false);
+      label.style("left", '');
     }
   }
 });
@@ -398,6 +422,7 @@ var alignX = "center";
 var alignY = "center";
 var top;
 var left;
+var selectedNode;
 
 var TreeMenu = Component.extend({
 
@@ -546,7 +571,7 @@ var TreeMenu = Component.extend({
     //init functions
     d3.select('body').on('mousemove', _this._mousemoveDocument);
     this.wrapper.on('mouseleave', function() {
-      _this.menuEntity.closeAllChildren();
+      if(_this.menuEntity.direction != MENU_VERTICAL) _this.menuEntity.closeAllChildren();
     });
 
     _this._enableSearch();
@@ -571,7 +596,8 @@ var TreeMenu = Component.extend({
     };
     this.activeProfile = this.profiles[this.getLayoutProfile()];
     
-    this.wrapper.classed(css.noTransition, true);        
+    this.wrapper.classed(css.noTransition, true); 
+    this.wrapper.node().scrollTop = 0;       
     
     this.width = _this.element.node().offsetWidth;
     this.height = _this.element.node().offsetHeight;
@@ -580,18 +606,23 @@ var TreeMenu = Component.extend({
     var containerHeight = rect.height;
     OPTIONS.IS_MOBILE = this.getLayoutProfile() === "small";
     if (containerWidth) {
-      if(top || left) {
+      //if(top || left) {
         if(OPTIONS.IS_MOBILE) {
           this.clearPos();
         } else {
-          if( this.wrapper.node().offsetTop < 0) {
+          if( this.wrapper.node().offsetTop < 10) {
             this.wrapper.style('top', '10px'); 
           }
           if(this.height - _this.wrapper.node().offsetTop - containerHeight < 0) {
-            this.wrapper.style('top', (this.height - containerHeight - 10) + 'px');
+            if(containerHeight > this.height) {
+              containerHeight = this.height - 20;
+            }
+            this.wrapper.style({'top' : (this.height - containerHeight - 10) + 'px', 'bottom' : 'auto'});
           }
+          //TODO:
+          this.wrapper.style('max-height', containerHeight + 'px');              
         }
-      }
+      //}
       
       this.wrapper.classed(css.alignXc, alignX === "center");
       this.wrapper.style("margin-left",alignX === "center"? "-" + containerWidth/2 + "px" : null);
@@ -599,9 +630,10 @@ var TreeMenu = Component.extend({
         OPTIONS.MAX_MENU_WIDTH = this.width/2 - containerWidth * 0.5;
       } else {
         OPTIONS.MAX_MENU_WIDTH = this.width - this.wrapper.node().offsetLeft - containerWidth - 10; // 10 - padding around wrapper
-        OPTIONS.MENU_OPEN_LEFTSIDE = OPTIONS.MAX_MENU_WIDTH < this.activeProfile.col_width + OPTIONS.MIN_COL_WIDTH;
-        if(OPTIONS.MENU_OPEN_LEFTSIDE) OPTIONS.MAX_MENU_WIDTH = _this.wrapper.node().offsetLeft - 10; // 10 - padding around wrapper
-        this.wrapper.classed('vzb-treemenu-open-left-side', !OPTIONS.IS_MOBILE && OPTIONS.MENU_OPEN_LEFTSIDE);
+        //TODO:
+        // OPTIONS.MENU_OPEN_LEFTSIDE = OPTIONS.MAX_MENU_WIDTH < this.activeProfile.col_width + OPTIONS.MIN_COL_WIDTH;
+        // if(OPTIONS.MENU_OPEN_LEFTSIDE) OPTIONS.MAX_MENU_WIDTH = _this.wrapper.node().offsetLeft - 10; // 10 - padding around wrapper
+        // this.wrapper.classed('vzb-treemenu-open-left-side', !OPTIONS.IS_MOBILE && OPTIONS.MENU_OPEN_LEFTSIDE);
       }
     }
     
@@ -609,16 +641,23 @@ var TreeMenu = Component.extend({
    
     if (this.menuEntity) {
       this.menuEntity.setWidth(this.activeProfile.col_width, true);
-      if (OPTIONS.IS_MOBILE) {
+//TODO:
+//      if (OPTIONS.IS_MOBILE) {
         if (this.menuEntity.direction != MENU_VERTICAL) {
           this.menuEntity.setDirection(MENU_VERTICAL, true);
         }
-      } else {
-        if (this.menuEntity.direction != MENU_HORIZONTAL) {
-          this.menuEntity.setDirection(MENU_HORIZONTAL, true);
-        }
-      }
+      // } else {
+      //   if (this.menuEntity.direction != MENU_HORIZONTAL) {
+      //     this.menuEntity.setDirection(MENU_HORIZONTAL, true);
+      //   }
+      // }
+      this.menuEntity.marqueeToggleAll(true);
+      
+      var itemRect = selectedNode.getBoundingClientRect();
+      var scrollTop = itemRect.bottom - rect.top - this.wrapper.node().offsetHeight + 10;     
+      this.wrapper.node().scrollTop = scrollTop;
     }
+    
     return this;
   },
 
@@ -659,7 +698,8 @@ var TreeMenu = Component.extend({
       this.wrapper.classed(css.absPosVert, top);
     }
     if(left) {
-      var right = this.element.node().offsetWidth - left - rect.width; 
+      var right = this.element.node().offsetWidth - left - rect.width;
+      right = right < 10 ? 10 : right;
       this.wrapper.style({'right': right + 'px', 'left': 'auto'});    
       this.wrapper.classed(css.absPosHoriz, right);
     }
@@ -693,7 +733,7 @@ var TreeMenu = Component.extend({
         if(_this.langStrings()) {
           for(var language in _this.langStrings()) {
             for(var key in _this.langStrings()[language]) {
-                console.log(key.replace(/.*\//,""))
+                
               if(key.indexOf('indicator/') == 0 &&
                 //regexp: match everything until the last occurence of "/"
                 key.replace(/.*\//,"") == data[i][OPTIONS.SEARCH_PROPERTY] &&
@@ -776,6 +816,9 @@ var TreeMenu = Component.extend({
       //keep indicator if any scale is allowed in tool properties
       if(_this.model.marker[markerID].allow.scales[0] == "*") return true;
 
+      // if no scales defined, all are allowed
+      if (!indicatorsDB[f].scales) return true
+      
       //check if there is an intersection between the allowed tool scale types and the ones of indicator
       for(var i = indicatorsDB[f].scales.length - 1; i >= 0; i--) {
         if(_this.model.marker[markerID].allow.scales.indexOf(indicatorsDB[f].scales[i]) > -1) return true;
@@ -804,7 +847,9 @@ var TreeMenu = Component.extend({
         .classed(css.list_item_label, true)
         .text(function(d) {
           //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-          return _this.translator("indicator" + (d.id==="_default" ? "/" + hookType : "") + "/" + d.id);
+          var translated = _this.translator("indicator" + (d.id==="_default" ? "/" + hookType : "") + "/" + d.id);
+          if(translated.indexOf("indicator/")!==-1)utils.warn("translation missing: " + translated);
+          return translated;
         })
         .attr("info", function(d) {
           return d.id;
@@ -817,7 +862,7 @@ var TreeMenu = Component.extend({
         });
       li.append('div')
         .classed(css.list_item_label + '-mask', true);
-
+                
       li.classed(css.list_item, true)
         .classed(css.hasChild, function(d) {
           return d['children'];
@@ -827,45 +872,69 @@ var TreeMenu = Component.extend({
         })
         .each(function(d) {
           var view = d3.select(this);
+          if(d.id == _this.model.marker[markerID].which) {
+            var parent = this.parentNode;
+            d3.select(this).classed('item-active', true);
+            while(!(utils.hasClass(parent, css.list_top_level))) {
+              if(parent.tagName == 'UL') {
+                d3.select(parent)
+                  .classed('active', true)
+                  .style('height', 'auto');
+              }
+              if(parent.tagName == 'LI') {
+                d3.select(parent).classed('item-active', true);
+              }
+              parent = parent.parentNode;
+            }
+            selectedNode = this; 
+          }
           createSubmeny(view, d);
         });
     };
-    if (OPTIONS.IS_MOBILE) {
+//TODO:
+//    if (OPTIONS.IS_MOBILE) {
       OPTIONS.MENU_DIRECTION = MENU_VERTICAL;
-    }
+//    }
     createSubmeny(this.wrapper, dataFiltered, true);
     this.menuEntity = new Menu(null, this.wrapper.select('.' + css.list_top_level));
-    if(this.menuEntity) this.menuEntity.setWidth(this.activeProfile.col_width, true)
     if(this.menuEntity) this.menuEntity.setDirection(OPTIONS.MENU_DIRECTION);
-
+    if(this.menuEntity) this.menuEntity.setWidth(this.activeProfile.col_width, true);
     var pointer = "_default";
     if(allowedIDs.indexOf(this.model.marker[markerID].which) > -1) pointer = this.model.marker[markerID].which;
+    if(!indicatorsDB[pointer].scales) {
+      this.element.select('.' + css.scaletypes).classed(css.hidden, true);
+      return true;
+    }
     var scaleTypesData = indicatorsDB[pointer].scales.filter(function(f) {
       if(!_this.model.marker[markerID].allow || !_this.model.marker[markerID].allow.scales) return true;
       if(_this.model.marker[markerID].allow.scales[0] == "*") return true;
       return _this.model.marker[markerID].allow.scales.indexOf(f) > -1;
     });
-
-    var scaleTypes = this.element.select('.' + css.scaletypes).selectAll("span")
-        .data(scaleTypesData, function(d){return d});
-
-    scaleTypes.exit().remove();
-
-    scaleTypes.enter().append("span")
-        .on("click", function(d){
-          d3.event.stopPropagation();
-          _this._setModel("scaleType", d, markerID)
-        });
-
-    scaleTypes
-        .classed(css.scaletypesDisabled, scaleTypesData.length < 2)
-        .classed(css.scaletypesActive, function(d){
-            return d == _this.model.marker[markerID].scaleType && scaleTypesData.length > 1;
-        })
-        .text(function(d){
-            return _this.translator("scaletype/" + d);
-        });
-
+    if(scaleTypesData.length == 0) {
+      this.element.select('.' + css.scaletypes).classed(css.hidden, true);
+    } else {  
+  
+      var scaleTypes = this.element.select('.' + css.scaletypes).classed(css.hidden, false).selectAll("span")
+          .data(scaleTypesData, function(d){return d});
+  
+      scaleTypes.exit().remove();
+  
+      scaleTypes.enter().append("span")
+          .on("click", function(d){
+            d3.event.stopPropagation();
+            _this._setModel("scaleType", d, markerID)
+          });
+  
+      scaleTypes
+          .classed(css.scaletypesDisabled, scaleTypesData.length < 2)
+          .classed(css.scaletypesActive, function(d){
+              return d == _this.model.marker[markerID].scaleType && scaleTypesData.length > 1;
+          })
+          .text(function(d){
+              return _this.translator("scaletype/" + d);
+          });
+  
+    }
 
     return this;
   },
@@ -900,6 +969,8 @@ var TreeMenu = Component.extend({
       .callback(setModel)
       .tree(this.model.marker.getIndicatorsTree())
       .redraw();
+      
+    this.wrapper.select('.' + css.search).node().value = "";
 
     return this;
   },
@@ -916,7 +987,8 @@ var TreeMenu = Component.extend({
 
     if(what == "which") {
       obj.use = indicatorsDB[value].use;
-      obj.scaleType = indicatorsDB[value].scales[0];
+      if(indicatorsDB[value].scales) obj.scaleType = indicatorsDB[value].scales[0];
+        
     }
 
     if(mdl.getType() === 'axis' || mdl.getType() === 'size') {

@@ -136,8 +136,8 @@ var PopByAge = Component.extend({
     this.duration = this.model.time.delayAnimations;
     this.yScale = this.model.marker.axis_y.getScale();
     this.xScale = this.model.marker.axis_x.getScale(false);
-    this.yAxis.tickFormat(_this.model.marker.axis_y.tickFormatter);
-    this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
+    this.yAxis.tickFormat(_this.model.marker.axis_y.getTickFormatter());
+    this.xAxis.tickFormat(_this.model.marker.axis_x.getTickFormatter());
   },
 
   /**
@@ -224,7 +224,7 @@ var PopByAge = Component.extend({
 
     this.labels.selectAll('.vzb-bc-label > .vzb-bc-age')
       .text(function(d, i) {
-        var formatter = _this.model.marker.axis_x.tickFormatter;
+        var formatter = _this.model.marker.axis_x.getTickFormatter();
         var yearOldsIn = _this.translator("popbyage/yearOldsIn");
 
         var age = parseInt(d[ageDim], 10);

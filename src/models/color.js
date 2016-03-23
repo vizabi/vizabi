@@ -171,7 +171,7 @@ var ColorModel = Hook.extend({
     
   getPalette: function(){
     //rebuild palette if it's empty
-    if (!this.palette || Object.keys(this.palette._data).length===0) this.palette = this.getDefaultPalette();
+    if (!this.palette || Object.keys(this.palette._data).length===0) this.palette.set(this.getDefaultPalette(), false, false);
     return this.palette.getPlainObject(); 
   },
     

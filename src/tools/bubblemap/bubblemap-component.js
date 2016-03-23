@@ -54,6 +54,7 @@ var BubbleMapComponent = Component.extend({
     var _this = this;
     this.model_binds = {
       "change:time.value": function (evt) {
+        if (!_this._readyOnce) return;
         _this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
       },
       "change:entities.highlight": function (evt) {
@@ -370,18 +371,23 @@ var BubbleMapComponent = Component.extend({
 
       if(_this.hovered || mobile) {
         var hovered = _this.hovered || mobile;
-        var formatterS = _this.model.marker.size.tickFormatter;
-        var formatterC = _this.model.marker.color.tickFormatter;
+        var formatterS = _this.model.marker.size.getTickFormatter();
+        var formatterC = _this.model.marker.color.getTickFormatter();
 
+        var unitY = _this.translator("unit/" + _this.model.marker.size.which);
+        var unitC = _this.translator("unit/" + _this.model.marker.color.which);
+          
+        //suppress unit strings that found no translation (returns same thing as requested)
+        if(unitY === "unit/" + _this.model.marker.size.which) unitY = "";
+        if(unitC === "unit/" + _this.model.marker.color.which) unitC = "";
+          
         _this.yTitleEl.select("text")
           .text(_this.translator("buttons/size") + ": " +
-                formatterS(_this.values.size[hovered[_this.KEY]]) + " " +
-                _this.translator("unit/" + _this.model.marker.size.which));
-
+            formatterS(_this.values.size[hovered[_this.KEY]]) + " " + unitY);
+          
         _this.cTitleEl.select("text")
           .text(_this.translator("buttons/color") + ": " +
-                formatterC(_this.values.color[hovered[_this.KEY]]) + " " +
-                _this.translator("unit/" + _this.model.marker.color.which));
+            formatterC(_this.values.color[hovered[_this.KEY]]) + " " + unitC);
 
         this.infoEl.classed("vzb-hidden", true);
       }else{
@@ -410,7 +416,7 @@ var BubbleMapComponent = Component.extend({
 
       var OPACITY_HIGHLT = 1.0;
       var OPACITY_HIGHLT_DIM = .3;
-      var OPACITY_SELECT = 1.0;
+      var OPACITY_SELECT = this.model.entities.opacityRegular;
       var OPACITY_REGULAR = this.model.entities.opacityRegular;
       var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
 
@@ -487,6 +493,7 @@ var BubbleMapComponent = Component.extend({
     var endTime = this.model.time.end;
     this.model.entities.setVisible(getKeys.call(this));
 
+    this.unselectBubblesWithNoData();
 
     // TODO: add to csv
     //Africa 9.1021° N, 18.2812°E
@@ -534,6 +541,19 @@ var BubbleMapComponent = Component.extend({
       })
 
   },
+    
+  unselectBubblesWithNoData: function(frame){
+      var _this = this;
+      var KEY = this.KEY;
+      if(!frame) frame = this.values;
+      
+      if(!frame || !frame.size) return;
+      
+      this.model.entities.select.forEach(function(d){
+        if(!frame.size[d[KEY]] && frame.size[d[KEY]] !== 0) 
+            _this.model.entities.selectEntity(d);
+      })
+  },    
     
   redrawDataPoints: function(duration, reposition){
     var _this = this;  

@@ -32,10 +32,8 @@ var TimeModel = Model.extend({
   _defaults: {
     dim: "time",
     value: "2015",
-    start: "1800",
-    end: "2015",
-    startOriginal: null,
-    endOriginal: null,
+    start: "1800", //mandatory defaults! 
+    end: "2015", //mandatory defaults! 
     playable: true,
     playing: false,
     loop: false,
@@ -94,7 +92,7 @@ var TimeModel = Model.extend({
    */
   _formatToDates: function() {
 
-    var date_attr = ["value", "start", "end", "startOriginal", "endOriginal"];
+    var date_attr = ["value", "start", "end"];
     for(var i = 0; i < date_attr.length; i++) {
       var attr = date_attr[i];
       if(!utils.isDate(this[attr])) {
@@ -145,12 +143,8 @@ var TimeModel = Model.extend({
       this.step = 1;
     }
       
-    //TODO: this is an ugly patch that fixes #1485. Need to find out why startOriginal/endOriginal are not retained in URL on refresh
-    if(!this.startOriginal) this.startOriginal = "1800";
-    if(!this.endOriginal) this.endOriginal = "2015";
-
     //make sure dates are transformed into dates at all times
-    if(!utils.isDate(this.startOriginal) || !utils.isDate(this.endOriginal) || !utils.isDate(this.start) || !utils.isDate(this.end) || !utils.isDate(this.value)) {
+    if(!utils.isDate(this.start) || !utils.isDate(this.end) || !utils.isDate(this.value)) {
       this._formatToDates();
     }
 
@@ -229,8 +223,11 @@ var TimeModel = Model.extend({
    * @returns {Object} time filter
    */
   getFilter: function(firstScreen) {
-    var start = this.timeFormat(this.startOriginal);
-    var end = this.timeFormat(this.endOriginal);
+    var defaultStart = this.parseToUnit(this._defaults.start, this.unit);
+    var defaultEnd = this.parseToUnit(this._defaults.end, this.unit);
+      
+    var start = this.timeFormat(defaultStart || this.start);
+    var end = this.timeFormat(defaultEnd || this.end);
     var value = this.timeFormat(this.value);
     var dim = this.getDimension();
     var filter = {};

@@ -165,9 +165,9 @@ var LCComponent = Component.extend({
     this.cScale = this.model.marker.color.getScale();
 
     this.yAxis.tickSize(6, 0)
-      .tickFormat(this.model.marker.axis_y.tickFormatter);
+      .tickFormat(this.model.marker.axis_y.getTickFormatter());
     this.xAxis.tickSize(6, 0)
-      .tickFormat(this.model.marker.axis_x.tickFormatter);
+      .tickFormat(this.model.marker.axis_x.getTickFormatter());
 
     this.collisionResolver = collisionResolver()
       .selector(".vzb-lc-label")
@@ -360,7 +360,8 @@ var LCComponent = Component.extend({
           top: 5,
           right: this.margin.right,
           left: this.margin.left,
-          bottom: this.margin.bottom
+          bottom: this.margin.bottom,
+          formatter: this.model.marker.axis_y.getTickFormatter()
         },
         limitMaxTickNumber: 6
           //showOuter: true
@@ -369,10 +370,10 @@ var LCComponent = Component.extend({
     this.xAxis.scale(this.xScale)
       .labelerOptions({
         scaleType: this.model.marker.axis_x.scaleType,
-        timeFormat: this.model.time.timeFormat,
         toolMargin: this.margin,
-        limitMaxTickNumber: this.activeProfile.limitMaxTickNumberX
-          //showOuter: true
+        limitMaxTickNumber: this.activeProfile.limitMaxTickNumberX,
+        formatter: this.model.marker.axis_x.getTickFormatter()
+        //showOuter: true
       });
 
 

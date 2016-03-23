@@ -157,9 +157,9 @@ export default Class.extend({
                  * scroll. Instead, redirect the scroll event to the scrollable
                  * ancestor
                  */
-                if (sourceEvent != null && _this.ui.noZoomOnScrolling &&
-                    sourceEvent.type === "wheel") {
-                    if (_this.scrollableAncestor && !self.enabled) {
+                if (sourceEvent != null && sourceEvent.type === "wheel" && 
+                    _this.ui.noZoomOnScrolling) {
+                    if (_this.scrollableAncestor) {
                         _this.scrollableAncestor.scrollTop += sourceEvent.deltaY;
                     }
                     d3.event.scale = null;
@@ -168,13 +168,11 @@ export default Class.extend({
                     return;
                 }
 
-                if(sourceEvent != null && _this.scrollableAncestor) {
-                    if(sourceEvent != null && !self.enabled){
-                        _this.scrollableAncestor.scrollTop += sourceEvent.deltaY;
-                        zoomer.scale(1)
-                        this.quitZoom = true;
-                        return;
-                    }
+                if(sourceEvent != null && _this.scrollableAncestor && !self.enabled) {
+                    _this.scrollableAncestor.scrollTop += sourceEvent.deltaY;
+                    zoomer.scale(1)
+                    this.quitZoom = true;
+                    return;
                 }
                 this.quitZoom = false;
 
@@ -361,8 +359,8 @@ export default Class.extend({
 
             stop: function(){
                 _this.draggingNow = false;
-                
-                if (this.quitZoom) return; 
+
+                if (this.quitZoom) return;
 
                 //Force the update of the URL and history, with the same values
                 _this.model.marker.axis_x.set(_this._zoomZoomedDomains.x, true, true);
@@ -555,7 +553,7 @@ export default Class.extend({
             zoomer.translate([
                 zoomer.translate()[0] + x1 - x2,
                 zoomer.translate()[1] + y1 - y2
-            ])
+            ]);
         }
 
         var xRangeBounds = [0, _this.width];
@@ -659,76 +657,43 @@ export default Class.extend({
     },
 
     /*
-     * Incrementally zoom out of the current zoom rectangle by a proportion. If
-     * the calculated zoom rectangle would cause the zoom scalar to be less than
-     * or equal to its minimum zoom value, then completely zoom out.
+     * Incrementally zoom in or out and pan the view so that it never looses the point where click happened
+     * this function is a modified d3's own zoom behavior on double click
+     * for the original code see https://github.com/mbostock/d3/blob/master/src/behavior/zoom.js
+     * function dblclicked() and what it refers to 
      */
-    zoomOutIncrement: function(element) {
+    zoomByIncrement: function(direction, duration) {
         var _this = this.context;
+        
+        var ratio = this.zoomer.scale();
+        var pan = [this.zoomer.translate()[0], this.zoomer.translate()[1]];
+        
+        var mouse = d3.mouse(_this.element.node());
+        var k = Math.log(ratio) / Math.LN2;
+        
+        //change factor direction based on the input. default is no direction supplied
+        if(direction=="plus" || !direction) k = Math.floor(k) + 1;
+        if(direction=="minus") k = Math.ceil(k) - 1;
 
-        var zoomRatio = 0.75;
-        var zoomDuration = 500;
-        var zoom = this.zoomer.scale();
-        var minZoom = this.zoomer.scaleExtent()[0];
+        //decode panning
+        var locus = [(mouse[0] - pan[0]) / ratio, (mouse[1] - pan[1]) / ratio];
 
-        /*
-         * Calculate a proportional reduction in zoom (currently 75%). Also,
-         * calculate the reduction of zoom by a constant of 1.
-         *
-         * Zoom out to the larger of the proportional zoom and constant
-         * difference zoom.
-         */
-        var zoomDelta = this._scaleToMin(zoom, minZoom, zoomRatio, minZoom);
-
-        /*
-         * If the calculated zoom delta is less than or equal to the minimum
-         * completely zoom out.
-         */
-        if (zoomDelta <= minZoom) {
-            this.resetZoomState();
-            this.zoomer.duration = zoomDuration;
-            this.zoomer.event(element || _this.element);
-            return;
-        }
-
-        var xBounds = [0, _this.width];
-        var yBounds = [_this.height, 0];
-
-        var xBoundsBumped = _this._rangeBump(xBounds);
-        var yBoundsBumped = _this._rangeBump(yBounds);
-
-        var xScaleBoundsBumped = _this.xScale.copy()
-            .range(xBoundsBumped);
-        var yScaleBoundsBumped = _this.yScale.copy()
-            .range(yBoundsBumped);
-
-        var xDataBounds = [xScaleBoundsBumped.invert(xBounds[0]), xScaleBoundsBumped.invert(xBounds[1])];
-        var yDataBounds = [yScaleBoundsBumped.invert(yBounds[0]), yScaleBoundsBumped.invert(yBounds[1])];
-
-        var xValues = [_this.xScale.invert(xBounds[0]), _this.xScale.invert(xBounds[1])];
-        var yValues = [_this.yScale.invert(yBounds[0]), _this.yScale.invert(yBounds[1])];
-
-        /*
-         * Calculate the difference between the current data ranges and the
-         * maximum possible data range including the range bump.
-         *
-         * Proportionally reduce the difference by the zoom ratio and zoom out
-         * to the new calculated zoom rectangle.
-         */
-        var minDifferenceX = (xValues[0] - xDataBounds[0]) * zoomRatio;
-        var maxDifferenceX = (xDataBounds[1] - xValues[1]) * zoomRatio;
-
-        var minDifferenceY = (yDataBounds[0] - yValues[0]) * zoomRatio;
-        var maxDifferenceY = (yValues[1] - yDataBounds[1]) * zoomRatio;
-
-        var zoomedMinX = _this.xScale(xDataBounds[0] + minDifferenceX);
-        var zoomedMaxX = _this.xScale(xDataBounds[1] - maxDifferenceX);
-
-        var zoomedMinY = _this.yScale(yDataBounds[0] - minDifferenceY);
-        var zoomedMaxY = _this.yScale(yDataBounds[1] + maxDifferenceY);
-
-        this._zoomOnRectangle(_this.element, zoomedMinX, zoomedMinY, zoomedMaxX, zoomedMaxY, false, zoomDuration);
-    },
+        //recalculate zoom ratio
+        var scaleExtent = this.zoomer.scaleExtent();
+        ratio = Math.max(scaleExtent[0], Math.min( scaleExtent[1], Math.pow(2, k) ));
+        
+        //recalculate panning
+        locus = [locus[0] * ratio + pan[0], locus[1] * ratio + pan[1]];
+        pan[0] += mouse[0] - locus[0];
+        pan[1] += mouse[1] - locus[1];
+        
+        //save changes to the zoom behavior and run the event
+        this.zoomer.scale(ratio);
+        this.zoomer.translate([pan[0], pan[1]]);
+        this.zoomer.duration = duration||0;
+        this.zoomer.event(_this.element);
+    },    
+    
 
     /*
      * Reset zoom values without triggering a zoom event.

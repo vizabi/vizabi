@@ -128,6 +128,7 @@ var BubbleChartComp = Component.extend({
         _this.highlightDataPoints();
       },
       'change:time.value': function() {
+        if (!_this._readyOnce) return;
         if (!_this.calculationQueue) { // collect timestamp that we request
           _this.calculationQueue = [_this.model.time.value.toString()]
         } else {
@@ -405,8 +406,9 @@ var BubbleChartComp = Component.extend({
         _this.draggingNow = false;
       })
       .on("click", function() {
-        if (!d3.event.defaultPrevented && _this.model.ui.cursorMode === "minus") {
-          _this._panZoom.zoomOutIncrement();
+        var cursor = _this.model.ui.cursorMode;
+        if (!d3.event.defaultPrevented && cursor!=="arrow") {
+          _this._panZoom.zoomByIncrement(cursor, 500);
         }
       });
 
@@ -436,6 +438,7 @@ var BubbleChartComp = Component.extend({
     this.wScale = d3.scale.linear()
       .domain(this.parent.datawarning_content.doubtDomain)
       .range(this.parent.datawarning_content.doubtRange);
+    
 
 
     this.model.marker.getFrame(this.model.time.value, function(frame) {
@@ -443,16 +446,16 @@ var BubbleChartComp = Component.extend({
       _this.updateIndicators();
       _this.updateSize();
       _this.updateEntities();
+      _this._trails.create();
       _this.updateTime();
       _this.updateMarkerSizeLimits();
       _this.updateLabelSizeLimits();
       _this.updateBubbleOpacity();
       _this.selectDataPoints();
       _this._updateDoubtOpacity();
-      _this._trails.create();
       _this.zoomToMarkerMaxMin(); // includes redraw data points and trail resize
       _this._trails.run(["recolor", "opacityHandler", "findVisible", "reveal"]);
-       _this._readyOnce = true;
+      _this._readyOnce = true;
     });
   },
 
@@ -463,6 +466,7 @@ var BubbleChartComp = Component.extend({
     this.model.marker.getFrame(this.model.time.value, function(frame) {
       if (!frame) return;
       _this.frame = frame;
+      _this.cached = {};
       _this.updateIndicators();
       _this.updateSize();
       _this.updateMarkerSizeLimits();
@@ -470,7 +474,6 @@ var BubbleChartComp = Component.extend({
       _this.updateEntities();
       _this.redrawDataPoints();
       _this.updateBubbleOpacity();
-      _this.cached = {};
       _this._trails.create();
       _this._trails.run("findVisible");
       _this.zoomToMarkerMaxMin(); // includes redraw data points and trail resize
@@ -520,8 +523,8 @@ var BubbleChartComp = Component.extend({
     this.cScale = this.model.marker.color.getScale();
     this.labelSizeTextScale = this.model.marker.size_label.getScale();
 
-    this.yAxis.tickFormat(_this.model.marker.axis_y.tickFormatter);
-    this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
+    this.yAxis.tickFormat(_this.model.marker.axis_y.getTickFormatter());
+    this.xAxis.tickFormat(_this.model.marker.axis_x.getTickFormatter());
   },
 
   frameChanged: function(frame, time) {
@@ -558,6 +561,13 @@ var BubbleChartComp = Component.extend({
         C: this.translator("unit/" + this.model.marker.color.which)
       }
     }
+    
+    //suppress unit strings that found no translation (returns same thing as requested)
+    if(this.strings.unit.Y === "unit/" + this.model.marker.axis_y.which) this.strings.unit.Y = "";
+    if(this.strings.unit.X === "unit/" + this.model.marker.axis_x.which) this.strings.unit.X = "";
+    if(this.strings.unit.S === "unit/" + this.model.marker.size.which) this.strings.unit.S = "";
+    if(this.strings.unit.C === "unit/" + this.model.marker.color.which) this.strings.unit.C = "";
+    
     if(!!this.strings.unit.Y) this.strings.unit.Y = ", " + this.strings.unit.Y;
     if(!!this.strings.unit.X) this.strings.unit.X = ", " + this.strings.unit.X;
     if(!!this.strings.unit.S) this.strings.unit.S = ", " + this.strings.unit.S;
@@ -609,10 +619,26 @@ var BubbleChartComp = Component.extend({
 
     //TODO: move away from UI strings, maybe to ready or ready once
     this.yInfoEl.on("click", function() {
-      window.open(_this.model.marker.axis_y.getMetadata().sourceLink, '_blank').focus();
+      _this.parent.findChildByName("gapminder-datanotes").pin();
+    })
+    this.yInfoEl.on("mouseover", function() {
+      var rect = this.getBBox();
+      var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+      _this.parent.findChildByName("gapminder-datanotes").setHook(_this.model.marker.axis_y).toggle().setPos(coord.x, coord.y);
+    })
+    this.yInfoEl.on("mouseout", function() {
+      _this.parent.findChildByName("gapminder-datanotes").toggle();
     })
     this.xInfoEl.on("click", function() {
-      window.open(_this.model.marker.axis_x.getMetadata().sourceLink, '_blank').focus();
+      _this.parent.findChildByName("gapminder-datanotes").pin();
+    })
+    this.xInfoEl.on("mouseover", function() {
+      var rect = this.getBBox();
+      var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+      _this.parent.findChildByName("gapminder-datanotes").setHook(_this.model.marker.axis_x).toggle().setPos(coord.x, coord.y);
+    })
+    this.xInfoEl.on("mouseout", function() {
+      _this.parent.findChildByName("gapminder-datanotes").toggle();
     })
     this.dataWarningEl
       .on("click", function() {
@@ -661,6 +687,8 @@ var BubbleChartComp = Component.extend({
     // that makes larger bubbles go behind the smaller ones
     var endTime = this.model.time.end;
     this.model.entities.setVisible(getKeys.call(this));
+      
+    this.unselectBubblesWithNoData();
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
       .data(this.model.entities.getVisible(), function(d) {return d[KEY]})
@@ -708,6 +736,21 @@ var BubbleChartComp = Component.extend({
       return "vzb-bc-entity " + d[KEY]
     });
 
+  },
+    
+  unselectBubblesWithNoData: function(frame){
+      var _this = this;
+      var KEY = this.KEY;
+      if(!frame) frame = this.frame;
+      
+      if(!frame || !frame.axis_y || !frame.axis_x || !frame.size) return;
+      
+      this.model.entities.select.forEach(function(d){
+        if(!frame.axis_y[d[KEY]] && frame.axis_y[d[KEY]] !== 0
+        || !frame.axis_x[d[KEY]] && frame.axis_x[d[KEY]] !== 0
+        || !frame.size[d[KEY]] && frame.size[d[KEY]] !== 0) 
+            _this.model.entities.selectEntity(d);
+      })
   },
 
   _bubblesInteract: function() {
@@ -790,11 +833,12 @@ var BubbleChartComp = Component.extend({
         minRadius: 0.5,
         maxRadius: 30,
         minLabelTextSize: 7,
-        maxLabelTextSize: 19,
-        defaultLabelTextSize: 13,
+        maxLabelTextSize: 21,
+        defaultLabelTextSize: 12,
         infoElHeight: 16,
         yAxisTitleBottomMargin: 6,
-        xAxisTitleBottomMargin: 4
+        xAxisTitleBottomMargin: 4,
+        labelsLeashCoeff: 0.4
       },
       medium: {
         margin: { top: 40, right: 15, left: 60, bottom: 55 },
@@ -802,23 +846,25 @@ var BubbleChartComp = Component.extend({
         minRadius: 1,
         maxRadius: 55,
         minLabelTextSize: 7,
-        maxLabelTextSize: 22,
-        defaultLabelTextSize: 16,
+        maxLabelTextSize: 30,
+        defaultLabelTextSize: 15,
         infoElHeight: 20,
         yAxisTitleBottomMargin: 6,
-        xAxisTitleBottomMargin: 5
+        xAxisTitleBottomMargin: 5,
+        labelsLeashCoeff: 0.35
       },
       large: {
         margin: { top: 50, right: 20, left: 60, bottom: 60 },
         padding: 2,
         minRadius: 1,
         maxRadius: 70,
-        minLabelTextSize: 7,
-        maxLabelTextSize: 26,
+        minLabelTextSize: 6,
+        maxLabelTextSize: 48,
         defaultLabelTextSize: 20,
         infoElHeight: 22,
         yAxisTitleBottomMargin: 6,
-        xAxisTitleBottomMargin: 5
+        xAxisTitleBottomMargin: 5,
+        labelsLeashCoeff: 0.3
       }
     };
 
@@ -876,11 +922,11 @@ var BubbleChartComp = Component.extend({
       .tickSizeMinor(3, 0)
       .labelerOptions({
         scaleType: this.model.marker.axis_y.scaleType,
-        timeFormat: this.model.time.timeFormat,
         toolMargin: margin,
         limitMaxTickNumber: 6,
         bump: this.activeProfile.maxRadius,
-        constantRakeLength: this.height
+        constantRakeLength: this.height,
+        formatter: this.model.marker.axis_y.getTickFormatter()
       });
 
     this.xAxis.scale(this.xScale)
@@ -889,10 +935,10 @@ var BubbleChartComp = Component.extend({
       .tickSizeMinor(3, 0)
       .labelerOptions({
         scaleType: this.model.marker.axis_x.scaleType,
-        timeFormat: this.model.time.timeFormat,
         toolMargin: margin,
         bump: this.activeProfile.maxRadius,
-        constantRakeLength: this.width
+        constantRakeLength: this.width,
+        formatter: this.model.marker.axis_x.getTickFormatter()
       });
 
 
@@ -1101,7 +1147,7 @@ var BubbleChartComp = Component.extend({
     var KEY = this.KEY;
 
 
-    var time = this.time;
+    var time = this.model.time.value;
 
     if(this.model.ui.chart.lockNonSelected && this.someSelected) {
       time = this.model.time.timeFormat.parse("" + this.model.ui.chart.lockNonSelected);
@@ -1206,8 +1252,22 @@ var BubbleChartComp = Component.extend({
            d.hidden = true;
            showhide = true;
        }
-
-      if(showhide) view.classed("vzb-invisible", d.hidden);
+        
+       if(showhide) {
+           if(duration) {
+               var opacity = view.style("opacity");
+               view.transition().duration(duration).ease("exp")
+                .style("opacity", 0)
+                .each("end", function() {
+                    //to avoid transition from null state add class with a delay
+                    view.classed("vzb-invisible", d.hidden);
+                    view.style("opacity", opacity);
+                })
+           }else{
+               //immediately hide the bubble
+               view.classed("vzb-invisible", d.hidden);
+           }
+       }
     } else {
         if(d.hidden || view.classed("vzb-invisible")) {
            d.hidden = false;
@@ -1221,14 +1281,21 @@ var BubbleChartComp = Component.extend({
       view.style("fill", valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH);
 
       if(duration) {
-        view.transition().duration(duration).ease("linear")
-            .attr("cy", _this.yScale(valueY))
-            .attr("cx", _this.xScale(valueX))
-            .attr("r", scaledS)
-            .each("end", function() {
-                //to avoid transition from null state show entity with a delay if it was hidden
-                if(showhide) view.classed("vzb-invisible", d.hidden);
-            })
+        if(showhide) {
+            var opacity = view.style("opacity");
+            view.classed("vzb-invisible", d.hidden);
+            view.style("opacity", 0)
+                .attr("cy", _this.yScale(valueY))
+                .attr("cx", _this.xScale(valueX))
+                .attr("r", scaledS)
+                .transition().duration(duration).ease("exp")
+                .style("opacity", opacity);
+        }else{
+            view.transition().duration(duration).ease("linear")
+                .attr("cy", _this.yScale(valueY))
+                .attr("cx", _this.xScale(valueX))
+                .attr("r", scaledS);
+        }
 
       } else {
 
@@ -1411,18 +1478,59 @@ var BubbleChartComp = Component.extend({
 
     if(duration == null) duration = _this.duration;
     if(duration) {
-      labelGroup
-          .transition().duration(duration).ease("linear")
-          .attr("transform", "translate(" + _X + "," + _Y + ")")
-          .each("end", function(){
-                if(showhide) labelGroup.classed("vzb-invisible", d.hidden);
-          })
-      lineGroup
-          .transition().duration(duration).ease("linear")
-          .attr("transform", "translate(" + _X + "," + _Y + ")")
-          .each("end", function(){
-                if(showhide) lineGroup.classed("vzb-invisible", d.hidden);
-          })
+      if(showhide && !d.hidden){
+          //if need to show label
+         
+          labelGroup.classed("vzb-invisible", d.hidden);
+          labelGroup
+              .attr("transform", "translate(" + _X + "," + _Y + ")")
+              .style("opacity", 0)
+              .transition().duration(duration).ease("exp")
+              .style("opacity", 1);
+              //i would like to set opactiy to null in the end of transition. 
+              //but then fade in animation is not working for some reason
+          lineGroup.classed("vzb-invisible", d.hidden);
+          lineGroup
+              .attr("transform", "translate(" + _X + "," + _Y + ")")
+              .style("opacity", 0)
+              .transition().duration(duration).ease("exp")
+              .style("opacity", 1);
+              //i would like to set opactiy to null in the end of transition. 
+              //but then fade in animation is not working for some reason
+          
+      } else if(showhide && d.hidden) {
+          //if need to hide label
+          
+          labelGroup
+              .style("opacity", 1)
+              .transition().duration(duration).ease("exp")
+              .style("opacity", 0)
+              .each("end", function(){
+                  labelGroup
+                      .style("opacity", 1) //i would like to set it to null. but then fade in animation is not working for some reason
+                      .classed("vzb-invisible", d.hidden);
+              })
+          lineGroup
+              .style("opacity", 1)
+              .transition().duration(duration).ease("exp")
+              .style("opacity", 0)
+              .each("end", function(){
+                  lineGroup
+                      .style("opacity", 1) //i would like to set it to null. but then fade in animation is not working for some reason
+                      .classed("vzb-invisible", d.hidden);
+              })      
+          
+      } else {
+          // just update the position
+          
+          labelGroup
+              .transition().duration(duration).ease("linear")
+              .attr("transform", "translate(" + _X + "," + _Y + ")");
+          lineGroup
+              .transition().duration(duration).ease("linear")
+              .attr("transform", "translate(" + _X + "," + _Y + ")");
+      }
+        
     } else {
       labelGroup
           .interrupt()
@@ -1442,9 +1550,11 @@ var BubbleChartComp = Component.extend({
     var labels = this.model.ui.chart.labels;
 
     var bBox = labels.removeLabelBox ? textBBox : rectBBox;
+    
+    var FAR_COEFF = this.activeProfile.labelsLeashCoeff||0;
 
     var lineHidden = this.circleRectIntersects({x: diffX1, y: diffY1, r: cache.scaledS0},
-      {x: diffX2, y: diffY2, width: (bBox.height * 2 + bBox.width), height: (bBox.height * 3)});
+      {x: diffX2, y: diffY2, width: (bBox.height * 2 * FAR_COEFF + bBox.width), height: (bBox.height * (2 * FAR_COEFF + 1))});
     lineGroup.select('line').classed("vzb-invisible", lineHidden);
     if(lineHidden) return;
 

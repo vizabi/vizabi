@@ -5,7 +5,8 @@ body {
   background-color: $vzbp-color-background;
   font-family: $vzbp-font-family;
   font-size: 12px;
-  overflow: hidden;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 p {
@@ -32,14 +33,14 @@ a {
 
 #vzbp-nav {
   @include prefixer(box-sizing, border-box, webkit moz spec);
-  @include position(absolute, 0 null 0 0);
+  @include position(absolute, 0 null -100px 0);
   width: $vzbp-width-nav;
   background-color: $vzbp-color-nav;
 }
 
 #vzbp-main {
   @include prefixer(box-sizing, border-box, webkit moz spec);
-  @include position(absolute, 0 $vzbp-width-sidebar 0 $vzbp-width-nav);
+  @include position(absolute, -100px $vzbp-width-sidebar -100px $vzbp-width-nav);
   @include transition(right 0.2s linear);
   @include prefixer(transform, translate3d(0, 0, 0), webkit moz spec);
   &.vzbp-fullscreen {
@@ -55,7 +56,7 @@ a {
 
 #vzbp-sidebar {
   @include prefixer(box-sizing, border-box, webkit moz spec);
-  @include position(absolute, 0 0 0 null);
+  @include position(absolute, 0 0 -100px null);
   width: $vzbp-width-sidebar;
   background-color: $vzbp-color-sidebar;
   padding: 20px;
@@ -66,7 +67,7 @@ a {
 #vzbp-state-editor {
   $posRight: $vzbp-width-state-editor * -1;
   @include prefixer(box-sizing, border-box, webkit moz spec);
-  @include position(absolute, 0 $posRight 0 null);
+  @include position(absolute, 0 $posRight -100px null);
   width: $vzbp-width-state-editor;
   background-color: $vzbp-color-editor;
   color: white;

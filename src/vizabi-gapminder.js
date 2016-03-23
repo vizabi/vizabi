@@ -31,13 +31,18 @@ var language = {
   strings: {}
 };
 
-var locationArray = window.location.href.split("/");
-var localUrl = locationArray.splice(0, locationArray.indexOf("preview")).join("/");
-localUrl += "/preview/";
-var onlineUrl = "http://static.gapminderdev.org/vizabi/develop/preview/";
-
 //TODO: remove hardcoded path from source code
+
+// Keep compatibility::feature, no internet connection - requesting data from local host.
+var locationArray = window.location.href.split("/");
+var localUrl = locationArray.splice(0, locationArray.indexOf("preview")).join("/") + "/preview/";
+
 globals.gapminder_paths = {
+//TODO: remove hardcoded path from source code
+  // Explanation what is going on in the code below:
+  // In order to use WS server other than specified in WS_SERVER you need to fill it in manually
+  //systema globalis wsUrl: typeof WS_SERVER === 'undefined' ? 'https://waffle-server-stage.gapminderdev.org' : WS_SERVER,
+  wsUrl: typeof WS_SERVER === 'undefined' ? 'https://waffle-server-dev-new-ddf.gapminderdev.org' : WS_SERVER,
   baseUrl: localUrl
 };
 
@@ -216,7 +221,8 @@ BubbleMap.define('default_model', {
       },
       size: {
         use: "indicator",
-        which: "population",
+        //which: "population",//systema globalis
+        which: "population_total",
         scaleType: "linear",
         allow: {
           scales: ["linear"]
@@ -280,11 +286,11 @@ MountainChart.define('default_model', {
     entities: {
       dim: "geo",
       opacitySelectDim: .3,
-      opacityRegular: .6,
+      opacityRegular: .7,
       show: {
         _defs_: {
           "geo": ["*"],
-          "geo.cat": ["unstate"]
+          "geo.cat": ["country", "unstate"]
         }
       }
     },
@@ -293,7 +299,7 @@ MountainChart.define('default_model', {
       show: {
         _defs_: {
           "geo": ["*"],
-          "geo.cat": ["unstate"]
+          "geo.cat": ["country", "unstate"]
         }
       }
     },
@@ -312,12 +318,14 @@ MountainChart.define('default_model', {
       },
       axis_y: {
         use: "indicator",
-        which: "population",
+        which: "sg_population",//systema globalis
+        //which: "population_total",
         scaleType: 'linear'
       },
       axis_x: {
         use: "indicator",
-        which: "gdp_p_cap_const_ppp2011_dollar",
+        which: "sg_gdp_p_cap_const_ppp2011_dollar",//systema globalis
+        //which: "income_per_person_gdppercapita_ppp_inflation_adjusted",
         scaleType: 'log',
         domainMin: .11, //0
         domainMax: 500, //100
@@ -329,7 +337,8 @@ MountainChart.define('default_model', {
       },
       axis_s: {
         use: "indicator",
-        which: "gini",
+        which: "sg_gini", //systema globalis
+        //which: "inequality_index_gini",
         scaleType: 'linear'
       },
       color: {
@@ -475,12 +484,14 @@ BubbleChart.define('default_model', {
         which: "geo.name"
       },
       size_label: {
-        use: "constant"
+        use: "constant",
+        which: "_default",
+        extent: [0, 0.33]
       },
 
       axis_y: {
         use: "indicator",
-        which: "life_expectancy_at_birth_data_from_ihme",
+        which: "life_expectancy_years",
         scaleType: "linear",
         allow: {
           scales: ["linear", "log"]
@@ -488,10 +499,11 @@ BubbleChart.define('default_model', {
       },
       axis_x: {
         use: "indicator",
-        which: "gdppercapita_us_inflation_adjusted",
+        //which: "gdp_p_cap_const_ppp2011_dollar",//systema globalis
+        which: "income_per_person_gdppercapita_ppp_inflation_adjusted", 
         scaleType: "log",
         allow: {
-          scales: ["linear", "log", "time"]
+          scales: ["linear", "log"]
         }
       },
       color: {
@@ -505,6 +517,8 @@ BubbleChart.define('default_model', {
       size: {
         use: "indicator",
         which: "population_total",
+        //which: "population",//systema globalis
+        which: "population_total", 
         scaleType: "linear",
         allow: {
           scales: ["linear"]
@@ -715,6 +729,8 @@ Tool.define("preload", function(promise) {
       // we need a consistent way to add metadata to Vizabi
       addMinMax("axis_x");
       addMinMax("axis_y");
+      addMinMax("size");
+      addMinMax("size_label");
       addPalettes("color");
 
       promise.resolve();
@@ -724,11 +740,11 @@ Tool.define("preload", function(promise) {
 
   // TODO: REMOVE THIS HACK (read above)
   function addPalettes(hook) {
-    if(!_this.default_model.state || !_this.default_model.state.marker[hook] || !globals.metadata.color) {
+    if(!_this.default_model.state || !_this.default_model.state.marker[hook]) {
       return;
     }
     var color = _this.default_model.state.marker[hook];
-    var palette = globals.metadata.color.palettes['geo.region'];
+    var palette = ((globals.metadata.indicatorsDB[color.which]||{}).color||{}).palette||{};
     color.palette = utils.extend({}, color.palette, palette);
   }
 

@@ -7,7 +7,8 @@ import {
   dialogs,
   buttonlist,
   treemenu,
-  datawarning
+  datawarning,
+  datanotes
 } from 'components/_index';
 
 var BubbleChart = Tool.extend('BubbleChart', {
@@ -46,6 +47,10 @@ var BubbleChart = Tool.extend('BubbleChart', {
     }, {
       component: datawarning,
       placeholder: '.vzb-tool-datawarning',
+      model: ['language']
+    }, {
+      component: datanotes,
+      placeholder: '.vzb-tool-datanotes',
       model: ['language']
     }];
 

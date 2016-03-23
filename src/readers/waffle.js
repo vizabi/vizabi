@@ -80,7 +80,11 @@ var WSReader = Reader.extend({
         for (var i = 0; i < rows.length; i++) {
           result[i] = {};
           for (var j = 0; j < headers.length; j++) {
-            result[i][headers[j]] = (rows[i][j] || '').toString();
+            if (typeof rows[i][j] === undefined || rows[i][j] === null) {
+              result[i][headers[j]] = '';
+            } else {
+              result[i][headers[j]] = rows[i][j].toString();
+            }
             if (headers[j] === 'geo.cat') {
               result[i][headers[j]] = [result[i][headers[j]]];
             }

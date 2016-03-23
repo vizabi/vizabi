@@ -6,9 +6,8 @@ import { DefaultEvent } from 'events'
 import { warn as warnIcon } from 'iconset'
 import Promise from 'base/promise';
 
-var class_loading = 'vzb-loading';
 var class_loading_first = 'vzb-loading-first';
-var class_loading_data = 'vzb-loading';
+var class_loading_data = 'vzb-loading-data';
 var class_loading_error = 'vzb-loading-error';
 var class_placeholder = 'vzb-placeholder';
 var class_buttons_off = 'vzb-buttonlist-off';
@@ -70,6 +69,8 @@ var Tool = Component.extend({
         '</div>' + 
         '<div class="vzb-tool-datawarning vzb-hidden">' + 
         '</div>' + 
+        '<div class="vzb-tool-datanotes vzb-hidden">' + 
+        '</div>' + 
       '</div>';
     this.model_binds = this.model_binds || {};
     
@@ -89,6 +90,11 @@ var Tool = Component.extend({
 
           if (evt.source.persistent)
             _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'), _this.getMinModel());
+        }
+      },
+      'hook_change': function() {
+        if (!_this.model.state.time.splash) { // not block when it initial splash screen
+          _this.beforeLoading(true);
         }
       },
       'change:ui.presentation': function() {
@@ -215,20 +221,20 @@ var Tool = Component.extend({
   /**
    * Displays loading class
    */
-  beforeLoading: function() {
+  beforeLoading: function(loadingData) {
     if(!this._readyOnce) {
-      utils.addClass(this.placeholder, class_loading_first);
+        utils.addClass(this.placeholder, class_loading_first);    
     }
-    if(!utils.hasClass(this.placeholder, class_loading_data)) {
-      utils.addClass(this.placeholder, class_loading_data);
+    if(loadingData) {
+        utils.addClass(this.placeholder, class_loading_data);    
     }
   },
   /**
    * Removes loading class
    */
   afterLoading: function() {
-    utils.removeClass(this.placeholder, class_loading_data);
     utils.removeClass(this.placeholder, class_loading_first);
+    utils.removeClass(this.placeholder, class_loading_data);
   },
   /**
    * Adds loading error class
