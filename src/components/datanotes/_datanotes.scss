@@ -11,11 +11,12 @@
   flex-direction: column;
   width: 300px;
   //height: 100%;
+  min-height: 100px;
 
 
   .vzb-data-notes-link {
     font-size: $vzb-font-size-medium;
-    margin: 10px 5px 0;
+    margin: 5px 5px 10px;
     svg {
       height: 25px;
       margin-bottom: -1px;
@@ -79,9 +80,6 @@
   }
 
   &:not(.vzb-data-notes-pinned) {
-    .vzb-data-notes-link {
-      display: none;
-    }
     &::after {
       content: '';
       display: block;
