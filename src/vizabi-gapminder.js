@@ -723,6 +723,8 @@ Tool.define("preload", function(promise) {
     //then metadata
     d3.json(metadata_path, function(metadata) {
 
+      metadata.indicatorsDB["geo.region"] = metadata.indicatorsDB["geo.world_4region"];
+        
       globals.metadata = metadata;
 
       // TODO: REMOVE THIS HACK
