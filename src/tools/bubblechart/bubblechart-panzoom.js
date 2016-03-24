@@ -345,7 +345,8 @@ export default Class.extend({
 
                 var optionsY = _this.yAxis.labelerOptions();
                 var optionsX = _this.xAxis.labelerOptions();
-                optionsY.limitMaxTickNumber = zoom * ratioY < 2 ? 7 : 14;
+                optionsY.limitMaxTickNumber = zoom * ratioY < 2 ? 7 : zoom * ratioY * 7;
+                optionsX.limitMaxTickNumber = zoom * ratioX < 2 ? 7 : zoom * ratioX * 7;
                 optionsY.transitionDuration = zoomer.duration;
                 optionsX.transitionDuration = zoomer.duration;
 
