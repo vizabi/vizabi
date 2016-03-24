@@ -987,8 +987,12 @@ var TreeMenu = Component.extend({
 
     if(what == "which") {
       obj.use = indicatorsDB[value].use;
-      if(indicatorsDB[value].scales) obj.scaleType = indicatorsDB[value].scales[0];
-        
+              
+      if(indicatorsDB[value].scales) {
+          // change scale without triggering events (non-persistent)
+          // otherwise ready is called via bubblechart:72 change:marker:scaleType before data arrives
+          mdl.getModelObject('scaleType').set(indicatorsDB[value].scales[0], false, false); 
+      }
     }
 
     if(mdl.getType() === 'axis' || mdl.getType() === 'size') {
