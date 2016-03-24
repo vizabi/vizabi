@@ -90,7 +90,7 @@ var LineChart = Tool.extend('LineChart', {
         },
         color: {
           use: "property",
-          which: "geo.region"
+          which: "geo.world_4region"
         }
       }
     },

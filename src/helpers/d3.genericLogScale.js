@@ -2,7 +2,7 @@
 export default function genericLog() {
     return function d3_scale_genericLog(logScale) {
         var _this = this;
-        var eps = 1;
+        var eps = 0.1;
         var delta = 5;
         var domain = logScale.domain();
         var range = logScale.range();

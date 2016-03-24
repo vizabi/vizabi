@@ -150,7 +150,7 @@ var BarComponent = Component.extend({
     this.xScale = this.model.marker.axis_x.getScale();
     this.cScale = this.model.marker.color.getScale();
 
-    var xFormatter = this.model.marker.axis_x.which == "geo.region"?
+    var xFormatter = this.model.marker.axis_x.which == "geo.world_4region"?
         function(x){return _this.translator("region/" + x)}
         :
         _this.model.marker.axis_x.getTickFormatter();

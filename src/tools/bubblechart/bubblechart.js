@@ -97,7 +97,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
         },
         color: {
           use: "property",
-          which: "geo.region"
+          which: "geo.world_4region"
         },
         size: {
           use: "indicator",
