@@ -17,10 +17,12 @@ var MENU_VERTICAL = 2;
 //css custom classes
 var css = {
   wrapper: 'vzb-treemenu-wrap',
+  wrapper_outer: 'vzb-treemenu-wrap-outer',
   background: 'vzb-treemenu-background',
   close: 'vzb-treemenu-close',
   search: 'vzb-treemenu-search',
   list: 'vzb-treemenu-list',
+  list_outer: 'vzb-treemenu-list-outer',
   list_item: 'vzb-treemenu-list-item',
   hasChild: 'vzb-treemenu-list-item-children',
   list_item_label: 'vzb-treemenu-list-item-label',
@@ -74,27 +76,38 @@ var Menu = Class.extend({
     this.direction = OPTIONS.MENU_DIRECTION;
     this._setDirectionClass();
     this.menuItems = [];
+    var menuItemsHolder;
+    this.entity.each(function() {
+      menuItemsHolder = d3.selectAll(this.childNodes).filter(function() {
+        return d3.select(this).classed(css.list);  
+      });
+    });
+    if(menuItemsHolder.empty()) menuItemsHolder = this.entity;
     menu.selectAll('.' + css.list_item)
       .filter(function() {
-        return this.parentNode == _this.entity.node();
+        return this.parentNode == menuItemsHolder.node();
       })
       .each(function() {
         _this.addSubmenu(d3.select(this));
       });
     return this;
   },
-  setWidth: function(width, recursive) {
+  setWidth: function(width, recursive, immediate) {
     if (this.width != width && this.entity.node()) {
       this.width = width;
       if (this.entity.classed('active') && this.direction == MENU_HORIZONTAL) {
-        this.entity.transition()
-          .delay(0)
-          .duration(100)
-          .style('width', this.width + "px")
+        if(!immediate) {
+          this.entity.transition()
+            .delay(0)
+            .duration(100)
+            .style('width', this.width + "px")
+        } else {
+          this.entity.style('width', this.width + "px");
+        }
       }
       if (recursive) {
         for (var i = 0; i < this.menuItems.length; i++) {
-          this.menuItems[i].setWidth(this.width, recursive);
+          this.menuItems[i].setWidth(this.width, recursive, immediate);
         }
       }
       return this;
@@ -222,7 +235,8 @@ var Menu = Class.extend({
   },
   _openHorizontal: function() {
     var _this = this;
-    _this.entity.transition()
+    _this.entity
+      .transition()
       .delay(0)
       .duration(250)
       .style('width', _this.width + "px")
@@ -233,6 +247,7 @@ var Menu = Class.extend({
   },
   _openVertical: function() {
     var _this = this;
+    _this.entity.style('height','0px');
     _this.entity.transition()
       .delay(0)
       .duration(250)
@@ -241,7 +256,7 @@ var Menu = Class.extend({
         _this.entity.style('height', 'auto');
         _this.marqueeToggle(true);
       });
-    _this.entity.classed('active', true);
+      _this.entity.classed('active', true);
   },
   closeAllChildren: function(cb) {
     var callbacks = 0;
@@ -293,9 +308,10 @@ var Menu = Class.extend({
   },
   _closeVertical: function(cb) {
     var _this = this;
-    _this.entity.transition()
+    _this.entity
+      .transition()
       .delay(0)
-      .duration(10)
+      .duration(100)
       .style('height', 0 + "px")
       .each('end', function() {
         _this.marqueeToggle(false);
@@ -315,7 +331,20 @@ var Menu = Class.extend({
     for (var i = 0; i < this.menuItems.length; i++) {
       this.menuItems[i].marqueeToggleAll(toggle);
     }
+  },
+  findItemByName(name) {
+    for (var i = 0; i < this.menuItems.length; i++) {
+      if(this.menuItems[i].entity.select('.' + css.list_item_label).text() == name) { 
+        return this.menuItems[i];
+      }
+      if(this.menuItems[i].submenu) {
+        var item = this.menuItems[i].submenu.findItemByName(name);
+        if(item) return item;
+      }
+    }
+    return null;   
   }
+
 });
 
 var MenuItem = Class.extend({
@@ -323,7 +352,7 @@ var MenuItem = Class.extend({
     var _this = this;
     this.parentMenu = parent;
     this.entity = item;
-    var submenu = item.select('.' + css.list);
+    var submenu = item.select('.' + css.list_outer);
     if (submenu.node()) {
       this.submenu = new Menu(this, submenu);
     }
@@ -331,6 +360,7 @@ var MenuItem = Class.extend({
       if(utils.isTouchDevice()) return;
       if (_this.parentMenu.direction == MENU_HORIZONTAL) {
         _this.openSubmenu();
+        _this.marqueeToggle(true);
       }
     }).on('click', function() {
       if(utils.isTouchDevice()) return;
@@ -342,9 +372,9 @@ var MenuItem = Class.extend({
     });
     return this;
   },
-  setWidth: function(width, recursive) {
+  setWidth: function(width, recursive, immediate) {
     if (this.submenu && recursive) {
-      this.submenu.setWidth(width, recursive);
+      this.submenu.setWidth(width, recursive, immediate);
     }
     return this;
   },
@@ -382,29 +412,29 @@ var MenuItem = Class.extend({
     labels.each(function() {
       var label = d3.select(this);
       var parent = d3.select(this.parentNode);
+      parent.classed('marquee', false);
+      label.style("left", '');
       if(toggle) {
-        if(label.node().scrollWidth > this.parentNode.offsetWidth) {
+        if(label.node().scrollWidth > label.node().offsetWidth) {
           label.attr("data-content", label.text());
-          label.style("left", (-label.node().scrollWidth) + 'px');
+          var space = 30;
+          label.style("left", (-space - label.node().scrollWidth) + 'px');
           parent.classed('marquee', true);
         }
-      } else {
-        parent.classed('marquee', false);
-        label.style("left", '');
       }
     });
   },
   marqueeToggle: function(toggle) {
     var label = this.entity.select('.' + css.list_item_label);
+    this.entity.classed('marquee', false);
+    label.style("left", '');
     if(toggle) {
-      if(label.node().scrollWidth > this.entity.node().offsetWidth) {
+      if(label.node().scrollWidth > label.node().offsetWidth) {
         label.attr("data-content", label.text());
-        label.style("left", (-label.node().scrollWidth) + 'px');
+        var space = 30;
+        label.style("left", (-space - label.node().scrollWidth) + 'px');
         this.entity.classed('marquee', true);
       }
-    } else {
-      this.entity.classed('marquee', false);
-      label.style("left", '');
     }
   }
 });
@@ -530,7 +560,12 @@ var TreeMenu = Component.extend({
         _this.toggle()
       });
 
-    this.wrapper = this.element
+    this.wrapperOuter = this.element
+      .append('div')
+      .classed(css.wrapper_outer, true)
+      .classed(css.noTransition, true);
+    
+    this.wrapper = this.wrapperOuter
       .append('div')
       .classed(css.wrapper, true)
       .classed(css.noTransition, true)
@@ -542,6 +577,7 @@ var TreeMenu = Component.extend({
       })
 
     this.wrapper.append("div")
+      .attr("class", css.close)
       .html(iconClose)
       .on("click", function() {
         d3.event.stopPropagation();
@@ -550,14 +586,13 @@ var TreeMenu = Component.extend({
       .select("svg")
       .attr("width", "0px")
       .attr("height", "0px")
-      .attr("class", css.close)
-
-    this.wrapper.append('div')
-      .classed(css.title, true)
-      .append('span');
+      .attr("class", css.close + '-icon');
 
     this.wrapper.append('div')
       .classed(css.scaletypes, true)
+      .append('span');
+    this.wrapper.append('div')
+      .classed(css.title, true)
       .append('span');
 
     this.wrapper.append('div')
@@ -571,7 +606,7 @@ var TreeMenu = Component.extend({
     //init functions
     d3.select('body').on('mousemove', _this._mousemoveDocument);
     this.wrapper.on('mouseleave', function() {
-      if(_this.menuEntity.direction != MENU_VERTICAL) _this.menuEntity.closeAllChildren();
+      //if(_this.menuEntity.direction != MENU_VERTICAL) _this.menuEntity.closeAllChildren();
     });
 
     _this._enableSearch();
@@ -601,61 +636,60 @@ var TreeMenu = Component.extend({
     
     this.width = _this.element.node().offsetWidth;
     this.height = _this.element.node().offsetHeight;
-    var rect = this.wrapper.node().getBoundingClientRect();
+    var rect = this.wrapperOuter.node().getBoundingClientRect();
     var containerWidth = rect.width;
     var containerHeight = rect.height;
     OPTIONS.IS_MOBILE = this.getLayoutProfile() === "small";
     if (containerWidth) {
-      //if(top || left) {
-        if(OPTIONS.IS_MOBILE) {
-          this.clearPos();
-        } else {
-          if( this.wrapper.node().offsetTop < 10) {
-            this.wrapper.style('top', '10px'); 
+      if(OPTIONS.IS_MOBILE) {
+        this.clearPos();
+      } else {
+        if(top || left) {
+          if(this.wrapperOuter.node().offsetTop < 10) {
+            this.wrapperOuter.style('top', '10px'); 
           }
-          if(this.height - _this.wrapper.node().offsetTop - containerHeight < 0) {
+          if(this.height - _this.wrapperOuter.node().offsetTop - containerHeight < 0) {
             if(containerHeight > this.height) {
               containerHeight = this.height - 20;
             }
-            this.wrapper.style({'top' : (this.height - containerHeight - 10) + 'px', 'bottom' : 'auto'});
+            this.wrapperOuter.style({'top' : (this.height - containerHeight - 10) + 'px', 'bottom' : 'auto'});
           }
-          //TODO:
-          this.wrapper.style('max-height', containerHeight + 'px');              
         }
-      //}
+        var maxHeight;
+        if(this.wrapperOuter.classed(css.alignYb)) {
+          maxHeight = this.wrapperOuter.node().offsetTop + this.wrapperOuter.node().offsetHeight;
+        } else {
+          maxHeight = this.height - this.wrapperOuter.node().offsetTop;
+        }
+        this.wrapper.style('max-height', (maxHeight - 10) + 'px');
+      }
       
-      this.wrapper.classed(css.alignXc, alignX === "center");
-      this.wrapper.style("margin-left",alignX === "center"? "-" + containerWidth/2 + "px" : null);
+      this.wrapperOuter.classed(css.alignXc, alignX === "center");
+      this.wrapperOuter.style("margin-left",alignX === "center"? "-" + containerWidth/2 + "px" : null);
       if (alignX === "center") {
         OPTIONS.MAX_MENU_WIDTH = this.width/2 - containerWidth * 0.5;
       } else {
-        OPTIONS.MAX_MENU_WIDTH = this.width - this.wrapper.node().offsetLeft - containerWidth - 10; // 10 - padding around wrapper
-        //TODO:
-        // OPTIONS.MENU_OPEN_LEFTSIDE = OPTIONS.MAX_MENU_WIDTH < this.activeProfile.col_width + OPTIONS.MIN_COL_WIDTH;
-        // if(OPTIONS.MENU_OPEN_LEFTSIDE) OPTIONS.MAX_MENU_WIDTH = _this.wrapper.node().offsetLeft - 10; // 10 - padding around wrapper
-        // this.wrapper.classed('vzb-treemenu-open-left-side', !OPTIONS.IS_MOBILE && OPTIONS.MENU_OPEN_LEFTSIDE);
+        OPTIONS.MAX_MENU_WIDTH = this.width - this.wrapperOuter.node().offsetLeft - containerWidth - 10; // 10 - padding around wrapper
+        OPTIONS.MENU_OPEN_LEFTSIDE = OPTIONS.MAX_MENU_WIDTH < (this.activeProfile.col_width + OPTIONS.MIN_COL_WIDTH);
+        if(OPTIONS.MENU_OPEN_LEFTSIDE) OPTIONS.MAX_MENU_WIDTH = _this.wrapperOuter.node().offsetLeft - 10; // 10 - padding around wrapper
+        this.wrapperOuter.classed('vzb-treemenu-open-left-side', !OPTIONS.IS_MOBILE && OPTIONS.MENU_OPEN_LEFTSIDE);
       }
     }
     
     this.wrapper.classed(css.noTransition, false);        
    
     if (this.menuEntity) {
-      this.menuEntity.setWidth(this.activeProfile.col_width, true);
-//TODO:
-//      if (OPTIONS.IS_MOBILE) {
+      this.menuEntity.setWidth(this.activeProfile.col_width, true, true);
+      
+      if (OPTIONS.IS_MOBILE) {
         if (this.menuEntity.direction != MENU_VERTICAL) {
           this.menuEntity.setDirection(MENU_VERTICAL, true);
         }
-      // } else {
-      //   if (this.menuEntity.direction != MENU_HORIZONTAL) {
-      //     this.menuEntity.setDirection(MENU_HORIZONTAL, true);
-      //   }
-      // }
-      this.menuEntity.marqueeToggleAll(true);
-      
-      var itemRect = selectedNode.getBoundingClientRect();
-      var scrollTop = itemRect.bottom - rect.top - this.wrapper.node().offsetHeight + 10;     
-      this.wrapper.node().scrollTop = scrollTop;
+      } else {
+        if (this.menuEntity.direction != MENU_HORIZONTAL) {
+          this.menuEntity.setDirection(MENU_HORIZONTAL, true);
+        }
+      }
     }
     
     return this;
@@ -672,6 +706,7 @@ var TreeMenu = Component.extend({
     } else {
       if(top || left) this.setPos();
       this.resize();
+      this.scrollToSelected();
     }
 
     this.wrapper.classed(css.noTransition, hidden);    
@@ -690,18 +725,48 @@ var TreeMenu = Component.extend({
     this.width = _this.element.node().offsetWidth;
   },
   
+  scrollToSelected: function() {
+    
+    var scrollToItem = function(listNode, itemNode) {
+      listNode.scrollTop = 0;
+      var rect = listNode.getBoundingClientRect();
+      var itemRect = itemNode.getBoundingClientRect();
+      var scrollTop = itemRect.bottom - rect.top - listNode.offsetHeight + 10;     
+      listNode.scrollTop = scrollTop;
+    }
+                 
+    if (this.menuEntity.direction == MENU_VERTICAL) {
+      scrollToItem(this.wrapper.node(), selectedNode);
+    } else {
+      var selectedItem = this.menuEntity.findItemByName(d3.select(selectedNode).text());
+      selectedItem.parentMenu.calculateMissingWidth(0);
+
+      var parent = selectedNode;
+      var listNode;
+      while(!(utils.hasClass(parent, css.list_top_level))) {
+        if(parent.tagName == 'LI') {
+          listNode = utils.hasClass(parent.parentNode, css.list_top_level) ? parent.parentNode.parentNode : parent.parentNode; 
+          scrollToItem(listNode , parent);
+        }
+        parent = parent.parentNode;
+      }
+    }
+    
+    this.menuEntity.marqueeToggleAll(true);
+  },
+  
   setPos: function() {
-    var rect = this.wrapper.node().getBoundingClientRect();      
+    var rect = this.wrapperOuter.node().getBoundingClientRect();      
     
     if(top) {
-      this.wrapper.style({'top': top + 'px', 'bottom': 'auto'});
-      this.wrapper.classed(css.absPosVert, top);
+      this.wrapperOuter.style({'top': top + 'px', 'bottom': 'auto'});
+      this.wrapperOuter.classed(css.absPosVert, top);
     }
     if(left) {
       var right = this.element.node().offsetWidth - left - rect.width;
       right = right < 10 ? 10 : right;
-      this.wrapper.style({'right': right + 'px', 'left': 'auto'});    
-      this.wrapper.classed(css.absPosHoriz, right);
+      this.wrapperOuter.style({'right': right + 'px', 'left': 'auto'});    
+      this.wrapperOuter.classed(css.absPosHoriz, right);
     }
 
   },
@@ -709,10 +774,11 @@ var TreeMenu = Component.extend({
   clearPos: function() {
     top = '';
     left = '';
-    this.wrapper.attr("style", "");
-    this.wrapper.classed(css.absPosVert, '');
-    this.wrapper.classed(css.absPosHoriz, '');
-    this.wrapper.classed(css.menuOpenLeftSide, '');
+    this.wrapperOuter.attr("style", "");
+    this.wrapperOuter.classed(css.absPosVert, '');
+    this.wrapperOuter.classed(css.absPosHoriz, '');
+    this.wrapperOuter.classed(css.menuOpenLeftSide, '');
+    this.wrapper.style('max-height', '');
   },
   //search listener
   _enableSearch: function() {
@@ -833,9 +899,13 @@ var TreeMenu = Component.extend({
 
     var createSubmeny = function(select, data, toplevel) {
       if(!data.children) return;
-      var li = select.append('ul')
+      var _select = toplevel ? select : select.append('div')
+        .classed(css.list_outer, true);
+              
+      var li = _select.append('ul')
         .classed(css.list, !toplevel)
         .classed(css.list_top_level, toplevel)
+        .classed("vzb-dialog-scrollable", true)
         .selectAll('li')
         .data(data.children, function(d) {
           return d['id'];
@@ -860,8 +930,6 @@ var TreeMenu = Component.extend({
         .on('click', function(d) {
           _this._selectIndicator(d, this)
         });
-      li.append('div')
-        .classed(css.list_item_label + '-mask', true);
                 
       li.classed(css.list_item, true)
         .classed(css.hasChild, function(d) {
@@ -877,9 +945,8 @@ var TreeMenu = Component.extend({
             d3.select(this).classed('item-active', true);
             while(!(utils.hasClass(parent, css.list_top_level))) {
               if(parent.tagName == 'UL') {
-                d3.select(parent)
+                d3.select(parent.parentNode)
                   .classed('active', true)
-                  .style('height', 'auto');
               }
               if(parent.tagName == 'LI') {
                 d3.select(parent).classed('item-active', true);
@@ -891,14 +958,15 @@ var TreeMenu = Component.extend({
           createSubmeny(view, d);
         });
     };
-//TODO:
-//    if (OPTIONS.IS_MOBILE) {
+    if (OPTIONS.IS_MOBILE) {
       OPTIONS.MENU_DIRECTION = MENU_VERTICAL;
-//    }
+    } else {
+      OPTIONS.MENU_DIRECTION = MENU_HORIZONTAL;      
+    }
     createSubmeny(this.wrapper, dataFiltered, true);
     this.menuEntity = new Menu(null, this.wrapper.select('.' + css.list_top_level));
     if(this.menuEntity) this.menuEntity.setDirection(OPTIONS.MENU_DIRECTION);
-    if(this.menuEntity) this.menuEntity.setWidth(this.activeProfile.col_width, true);
+    if(this.menuEntity) this.menuEntity.setWidth(this.activeProfile.col_width, true, true);
     var pointer = "_default";
     if(allowedIDs.indexOf(this.model.marker[markerID].which) > -1) pointer = this.model.marker[markerID].which;
     if(!indicatorsDB[pointer].scales) {
@@ -950,12 +1018,12 @@ var TreeMenu = Component.extend({
 
     if(!markerID) return;
 
-      this.wrapper.classed(css.absPosVert, top);
-      this.wrapper.classed(css.alignYt, alignY === "top");
-      this.wrapper.classed(css.alignYb, alignY === "bottom");
-      this.wrapper.classed(css.absPosHoriz, left);
-      this.wrapper.classed(css.alignXl, alignX === "left");
-      this.wrapper.classed(css.alignXr, alignX === "right");
+      this.wrapperOuter.classed(css.absPosVert, top);
+      this.wrapperOuter.classed(css.alignYt, alignY === "top");
+      this.wrapperOuter.classed(css.alignYb, alignY === "bottom");
+      this.wrapperOuter.classed(css.absPosHoriz, left);
+      this.wrapperOuter.classed(css.alignXl, alignX === "left");
+      this.wrapperOuter.classed(css.alignXr, alignX === "right");
     
 
     var strings = langStrings ? langStrings : {};
