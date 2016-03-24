@@ -186,7 +186,9 @@ Ddf.prototype.getHeaderDescriptor = function (select, firstRecord) {
   });
 
   return {
-    needed: count === select.length,
+    // this entity file is expected for future processing
+    // if at least one criteria was matched
+    needed: count > 0,
     convert: convert
   };
 };
@@ -213,9 +215,28 @@ Ddf.prototype.applyFilter = function (record, filter) {
   return Object.keys(filter).length === matches;
 };
 
+// get information for entity correction by filter
+// for example rule `geo.is--country: true` will be generate pair: `geo: "country"`
+// it will be needed when geo column in the entity css is 'country', but Vizabi expects only "geo"
+Ddf.prototype.getFilterConvertPairs = function (filter) {
+  var result = {};
+
+  for (var k in filter) {
+    if (filter.hasOwnProperty(k)) {
+      var pos = k.indexOf('.');
+      if (pos >= 0) {
+        result[k.substr(0, pos)] = k.substr(pos).replace(/^.is--/, '');
+      }
+    }
+  }
+
+  return result;
+};
+
 Ddf.prototype.normalizeAndFilter = function (headerDescriptor, content, filter) {
   var _this = this;
   var result = [];
+  var convertPairs = _this.getFilterConvertPairs(filter);
 
   content.forEach(function (record) {
     if (!_this.applyFilter(record, filter)) {
@@ -230,6 +251,13 @@ Ddf.prototype.normalizeAndFilter = function (headerDescriptor, content, filter) 
         // for example, correct:
         // transform (in `geo` file) column `name` to `geo.name` field in `Vizabi's data`
         var _field = headerDescriptor.convert[field];
+
+        // add Vizabi oriented data if related concepts are not same in the csv file
+        for (var convertPairKey in convertPairs) {
+          if (convertPairs.hasOwnProperty(convertPairKey) && record[convertPairs[convertPairKey]]) {
+            _record[convertPairKey] = record[convertPairs[convertPairKey]];
+          }
+        }
 
         if (_field) {
           _record[_field] = record[field];
