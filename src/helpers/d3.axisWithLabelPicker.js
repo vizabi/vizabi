@@ -308,10 +308,6 @@ export default function axisSmart() {
       var max = d3.max([domain[0], domain[domain.length - 1]]);
       var bothSidesUsed = (min <= 0 && max >= 0) && options.scaleType != "time";
 
-      if(bothSidesUsed && options.scaleType == "log") console.error("It looks like your " + orient +
-        " log scale domain is crossing ZERO. Classic log scale can only be one-sided. If need crossing zero try using genericLog scale instead"
-      )
-
       var tickValues = options.showOuter ? [min, max] : [];
       var tickValuesMinor = []; //[min, max];
       var ticksNumber = 5;

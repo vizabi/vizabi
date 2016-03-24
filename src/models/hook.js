@@ -29,7 +29,7 @@ var Hook = Model.extend({
     // Strings are bypassing any formatter
     if(utils.isString(x)) return x;
 
-    if(x<0.00000000000001) return "0";
+    if(Math.abs(x)<0.00000000000001) return "0";
         
     var format = "r"; //rounded format. use "f" for fixed
     var prec = 3; //round to so many significant digits
