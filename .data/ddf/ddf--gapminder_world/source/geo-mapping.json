@@ -1,0 +1,23 @@
+{
+  "sds": "ssd",
+  "_ngo": "ngokar",
+  "_yug": "yug",
+  "_soy": "yem_south",
+  "_noy": "yem_north",
+  "_brd": "deu_west",
+  "_ussr": "ussr",
+  "_tra": "transn",
+  "_sos": "sosset",
+  "_sol": "som_somland",
+  "_srbek": "scg_ex_kos",
+  "_stm": "stmar",
+  "_stb": "stbar",
+  "_ncy": "cyp_nor",
+  "_unk": "kos",
+  "_eae": "eri_a_eth",
+  "_ddr": "deu_east",
+  "_csk": "cheslo",
+  "_cis": "chanisl",
+  "_akr": "akr_a_dhe",
+  "_abk": "abkh"
+}

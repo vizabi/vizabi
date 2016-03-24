@@ -1,9 +1,0 @@
-concept,name,concept_type,drill_up,domain
-geographic_regions,Geographic regions,entity_set,,geo
-income_groups,Income groups,entity_set,,geo
-landlocked,Landlocked,entity_set,,geo
-g77_and_oecd_countries,G77 and OECD countries,entity_set,,geo
-geographic_regions_in_4_colors,Geographic regions in 4 colors,entity_set,,geo
-main_religion_2008,Main religion 2008,entity_set,,geo
-geo,Geo,entity_domain,,
-country,Country,entity_set,"['geographic_regions', 'income_groups', 'landlocked', 'g77_and_oecd_countries', 'geographic_regions_in_4_colors', 'main_religion_2008']",geo

@@ -529,7 +529,7 @@ BubbleChart.define('default_model', {
   },
   data: {
     reader: "ddf1csv",
-    path: globals.gapminder_paths.baseUrl + "data/ddf/ddf--gapminder_world/output",
+    path: globals.gapminder_paths.baseUrl + "data/ddf/ddf--gapminder_world/output/ddf/",
     //path: "https://raw.githubusercontent.com/buchslava/ddf--gapminder--systema_globalis/master",
     //reader: "waffle",
     //path: "//waffle-server.gapminderdev.org/api/graphs/stats/vizabi-tools",

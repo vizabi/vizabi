@@ -1,0 +1,45 @@
+concept,type,domain,drillups,incomplete_drillups,name,name_short,name_long,link,description,usability,total_entity,total_name,default_entities,ordinal,measure,interval,cardinality,pattern,ddf_origin
+year,time,,,,Year,Year,Year,,,,,,,TRUE,,TRUE,,YYYY,"[{dataset:'ddf--gapminder--ontology', timestamp:'1/11/2016 10:14:22 PM +00:00',note:''}]"
+quarter,time,,,,Quarter,Quarter,Quarter (Three Month Periods),,,,,,,TRUE,,TRUE,,YYYYQQ,"[{dataset:'ddf--gapminder--ontology', timestamp:'1/11/2016 10:14:22 PM +00:00',note:''}]"
+month,time,,,,Month,Month,Month,,,,,,,TRUE,,TRUE,,YYYYMM,"[{dataset:'ddf--gapminder--ontology', timestamp:'1/11/2016 10:14:22 PM +00:00',note:''}]"
+week,time,,,,Week,Week,Week,,,,,,,TRUE,,TRUE,,YYYYWW,"[{dataset:'ddf--gapminder--ontology', timestamp:'1/11/2016 10:14:22 PM +00:00',note:''}]"
+date,time,,,,Day,Day,Day,,,,,,,TRUE,,TRUE,,YYYYMMDD,"[{dataset:'ddf--gapminder--ontology', timestamp:'1/11/2016 10:14:22 PM +00:00',note:''}]"
+geo,entity_domain,,,,Geography,Geo,,,Geographical & political divisions of the world.,,,,"world,asia,europe,africa,america",,,,,,"[{dataset:'ddf--gapminder--dim_geo_countries_and_groups', timestamp:'1/11/2016 10:14:22 PM +00:00',note:''}]"
+global,entity_set,geo,,,Global,Global,The Planet Earth,https://en.wikipedia.org/wiki/Earth,The complete planet earth and everything on it.,1,,,world,FALSE,FALSE,FALSE,1,,"[{dataset:'ddf--gapminder--dim_geo_countries_and_groups', timestamp:'1/11/2016 10:14:22 PM +00:00',note:''}]"
+world_4region,entity_set,geo,global,,World Regions,Regions,Four equal size world regions,,Gapminder's deivision of the world into four regions of similar land coverage.,1,world,All Regions,"asia,europe,africa,america",FALSE,FALSE,FALSE,4,,"[{dataset:'ddf--gapminder--dim_geo_countries_and_groups', timestamp:'1/11/2016 10:14:22 PM +00:00',note:''}]"
+country,entity_set,geo,world_4region,,Countries,Countries,Countries and Territories,,"Countries & Territories frequently found in international statistics, even if some of them politically are subdivisions of other countries.",2,world,All Countries,"chn,ind,usa,idn,bra,pak,nig,bgd,rus,mex",FALSE,FALSE,FALSE,,,"[{dataset:'ddf--gapminder--dim_geo_countries_and_groups', timestamp:'1/11/2016 10:14:22 PM +00:00',note:''}]"
+un_state,entity_set,geo,world_4region,,Countries of UN,Countries,UN recognized states,https://en.wikipedia.org/wiki/List_of_states_with_limited_recognition,UN Members and States recognized by at least one UN agency.,1,world,All  UN States,"chn,ind,usa,idn,bra,pak,nig,bgd,rus,mex",FALSE,FALSE,FALSE,,,"[{dataset:'ddf--gapminder--dim_geo_countries_and_groups', timestamp:'1/11/2016 10:14:22 PM +00:00',note:''}]"
+name,string,,,,Name,,,,,,,,,,,,,,
+name_short,string,,,,Short name,,,,,,,,,,,,,,
+name_long,string,,,,Long name,,,,,,,,,,,,,,
+description,string,,,,Description,,,,,,,,,,,,,,
+link,URL,,,,Link,,,,,,,,,,,,,,
+usability,integer,0<=x<=5,,,Usability rating,,,,,,,,,,,,,,
+total_entity,entity,,,,Total entity,,The entity which contains all entities in this set,,,,,,,,,,,,
+total_name,string,,,,Total name,,Name of all entities together,,,,,,,,,,,,
+default_entities,array of entities,,,,Default entities,,,,,,,,,,,,,,
+ordinal,boolean,,,,Ordinal,,,,,,,,,,,,,,
+measure,boolean ???,,,,Measure,,,,,,,,,,,,,,
+interval,boolean,,,,Interval,,,,,,,,,,,,,,
+cardinality,integer,0<=x,,,Cardinality,,,,,,,,,,,,,,
+aliases,array of strings,,,,Aliases,,,,,,,,,,,,,,
+pattern,string ???,,,,Pattern,,,,,,,,,,,,,,
+ddf_origin,json,,,,DDF Origin,,,,,,,,,,,,,,
+definition_snippet,string,,,,Definition snippet,,,,,,,,,,,,,,
+title,string,,,,Title,,,,,,,,,,,,,,
+low_label_short,string,,,,Low label short,,,,,,,,,,,,,,
+low_label,string,,,,Low label,,,,,,,,,,,,,,
+high_label_short,string,,,,High label short,,,,,,,,,,,,,,
+high_label,string,,,,High label,,,,,,,,,,,,,,
+good_direction,string,,,,Good direction,,,,,,,,,,,,,,
+tags,array of strings,,,,Tags,,,,,,,,,,,,,,
+unit,entity_domain,,,,Unit,,,,,,,,,,,,,,
+scales,array of strings,,,,Scales,,,,,,,,,,,,,,
+precision_maximum,integer,0<=x,,,Precision maximum,,,,,,,,,,,,,,
+decimals_maximum,integer,0<=x,,,Decimals maximum,,,,,,,,,,,,,,
+concept_hierarchy,entity_domain,,,,,,,,,,,,,,,,,,
+base,entity_set,concept_hierarchy,,,,,,,,,,,,,,,,,
+health,entity_set,concept_hierarchy,base,,,,,,,,,,,,,,,,
+wealth,entity_set,concept_hierarchy,base,,,,,,,,,,,,,,,,
+property,entity_set,concept_hierarchy,base,,,,,,,,,,,,,,,,
+income_distribution_and_equality,entity_set,concept_hierarchy,wealth,,,,,,,,,,,,,,,,
