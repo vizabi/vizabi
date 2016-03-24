@@ -74,7 +74,7 @@
     "indicator/gdp_p_cap_const_ppp2011_dollar": "BNP per invånare",
     "indicator/gdp_const_ppp2011_dollar": "BNP totalt",
     "indicator/population": "Befolkning",
-    "indicator/geo.region": "Regionen",
+    "indicator/geo.world_4region": "Regionen",
     "indicator/geo": "Enskild",
     "indicator/time": "Tid",
     "indicator/size": "Stor eller liten",

@@ -135,8 +135,8 @@ var ColorLegend = Component.extend({
       this.rainbowEl.classed("vzb-hidden", true);
     }
 
-    //TODO: is it okay that "geo.region" is hardcoded?
-    if(this.model.color.which == "geo.region") {
+    //TODO: is it okay that "geo.world_4region" is hardcoded?
+    if(this.model.color.which == "geo.world_4region") {
       var regions = this.worldmapEl.classed("vzb-hidden", false)
         .select("svg").selectAll("path");
       regions.each(function() {
@@ -159,7 +159,7 @@ var ColorLegend = Component.extend({
             })
             //filter so that only countries of the correct region remain
             .filter(function(f) {
-              return f["geo.region"] == region
+              return f["geo.world_4region"] == region
             })
             //fish out the "key" field, leave the rest behind
             .map(function(d) {
@@ -196,7 +196,7 @@ var ColorLegend = Component.extend({
       }
     }
       
-    colors.classed("vzb-hidden", this.model.color.which == "geo.region" || this.model.color.which == "_default");
+    colors.classed("vzb-hidden", this.model.color.which == "geo.world_4region" || this.model.color.which == "_default");
 
     colors.each(function(d, index) {
       d3.select(this).select(".vzb-cl-color-sample")

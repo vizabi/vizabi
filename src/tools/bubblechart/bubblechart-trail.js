@@ -211,8 +211,8 @@ export default Class.extend({
 
       var view = d3.select(this);
 
-      var strokeColor = _this.model.marker.color.which == "geo.region"?
-        //use predefined shades for color palette for "geo.region" (hardcoded)
+      var strokeColor = _this.model.marker.color.which == "geo.world_4region"?
+        //use predefined shades for color palette for "geo.world_4region" (hardcoded)
         _this.model.marker.color.getColorShade({
           colorID: segment.valueC,
           shadeID: "shade"

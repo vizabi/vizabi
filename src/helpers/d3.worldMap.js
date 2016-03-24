@@ -11,7 +11,7 @@ export default function worldMap() {
       container.selectAll('path').datum(function() {
         return {
           'geo.name': d3.select(this).attr('id'),
-          'geo.region': d3.select(this).attr('id')
+          'geo.world_4region': d3.select(this).attr('id')
         };
       });
     }

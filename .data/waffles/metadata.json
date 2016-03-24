@@ -25,7 +25,7 @@
             "scales": ["linear"],
             "sourceLink": "https://gapminder.org"
         },
-        "geo.region": {
+        "geo.world_4region": {
             "use": "property",
             "scales": ["ordinal"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub",
@@ -123,7 +123,7 @@
                 "id": "time"
             }, {
                 "id": "_properties",
-                "children": [{"id": "geo"}, {"id": "geo.name"}, {"id": "geo.region"}]
+                "children": [{"id": "geo"}, {"id": "geo.name"}, {"id": "geo.world_4region"}]
             }, {
                 "id": "economy",
                 "children": [
