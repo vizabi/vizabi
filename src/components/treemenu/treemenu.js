@@ -987,7 +987,10 @@ var TreeMenu = Component.extend({
 
     if(what == "which") {
       obj.use = indicatorsDB[value].use;
-      if(indicatorsDB[value].scales) obj.scaleType = indicatorsDB[value].scales[0];
+      if(indicatorsDB[value].scales) {
+        mdl.getModelObject('scaleType').set(indicatorsDB[value].scales[0], false, true); // non persistent
+      } 
+        
         
     }
 
