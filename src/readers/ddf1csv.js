@@ -418,8 +418,8 @@ Ddf.prototype.getDataPointDescriptorsByFilesList = function (query) {
     var found = [];
 
     criteria.forEach(function (_criteria) {
-      if (fileName.indexOf('--' + _criteria) > 0 ||
-        fileName.indexOf(_criteria + '--') > 0) {
+      if (fileName.indexOf('--' + _criteria) > 0 &&
+        (fileName.indexOf(_criteria + '--') > 0 || fileName.indexOf(_criteria + '.') > 0)) {
         found.push(_criteria);
       }
     });
