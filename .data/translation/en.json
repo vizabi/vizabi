@@ -74,7 +74,7 @@
     "indicator/gdp_p_cap_const_ppp2011_dollar": "GDP per capita",
     "indicator/gdp_const_ppp2011_dollar": "GDP total",
     "indicator/population": "Population",
-    "indicator/geo.region": "Region",
+    "indicator/geo.world_4region": "Region",
     "indicator/geo": "Individual",
     "indicator/time": "Time",
     "indicator/geo.category": "Geo category",

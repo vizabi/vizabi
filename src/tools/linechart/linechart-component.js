@@ -477,7 +477,7 @@ var LCComponent = Component.extend({
         var label = values.label[d[KEY]];
 
         var color = _this.cScale(values.color[d[KEY]]);
-        var colorShadow = _this.model.marker.color.which == "geo.region"?
+        var colorShadow = _this.model.marker.color.which == "geo.world_4region"?
             _this.model.marker.color.getColorShade({
               colorID: values.color[d[KEY]],
               shadeID: "shade"
@@ -558,7 +558,7 @@ var LCComponent = Component.extend({
         var label = values.label[d[KEY]];
 
         var color = _this.cScale(values.color[d[KEY]]);
-        var colorShadow = _this.model.marker.color.which == "geo.region"?
+        var colorShadow = _this.model.marker.color.which == "geo.world_4region"?
             _this.model.marker.color.getColorShade({
               colorID: values.color[d[KEY]],
               shadeID: "shade"

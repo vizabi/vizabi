@@ -90,7 +90,7 @@ var BubbleMap = Tool.extend('BubbleMap', {
         },
         color: {
           use: "property",
-          which: "geo.region"
+          which: "geo.world_4region"
         }
       }
     },

@@ -91,7 +91,7 @@ BarChart.define('default_model', {
       },
       color: {
         use: "property",
-        which: "geo.region",
+        which: "geo.world_4region",
         scaleType: "ordinal"
       }
     }
@@ -172,7 +172,7 @@ BarRankChart.define('default_model', {
       },
       color: {
         use: "property",
-        which: "geo.region"
+        which: "geo.world_4region"
       }
     }
   },
@@ -241,7 +241,7 @@ BubbleMap.define('default_model', {
       },
       color: {
         use: "property",
-        which: "geo.region",
+        which: "geo.world_4region",
         scaleType: "ordinal",
         allow: {
           names: ["!geo.name"]
@@ -345,7 +345,7 @@ MountainChart.define('default_model', {
       },
       color: {
         use: "property",
-        which: "geo.region",
+        which: "geo.world_4region",
         scaleType: "ordinal",
         allow: {
           names: ["!geo.name"]
@@ -357,7 +357,7 @@ MountainChart.define('default_model', {
       },
       group: {
         use: "property",
-        which: "geo.region", // set a property of data
+        which: "geo.world_4region", // set a property of data
         manualSorting: ["asia", "africa", "americas", "europe"],
         merge: false
       }
@@ -420,7 +420,7 @@ LineChart.define('default_model', {
       },
       color: {
         use: "property",
-        which: "geo.region",
+        which: "geo.world_4region",
         allow: {
           scales: ["ordinal"],
           names: ["!geo.name"]
@@ -513,7 +513,7 @@ BubbleChart.define('default_model', {
       },
       color: {
         use: "property",
-        which: "geo.region",
+        which: "geo.world_4region",
         scaleType: "ordinal",
         allow: {
           names: ["!geo.name"]

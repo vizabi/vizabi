@@ -85,7 +85,7 @@ var BarChart = Tool.extend('BarChart', {
         },
         color: {
           use: "property",
-          which: "geo.region"
+          which: "geo.world_4region"
         }
       }
     },

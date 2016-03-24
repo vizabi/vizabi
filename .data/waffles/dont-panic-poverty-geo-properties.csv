@@ -1,4 +1,4 @@
-"geo","geo.name","geo.cat","geo.region","geo.latitude","geo.longitude"
+"geo","geo.name","geo.cat","geo.world_4region","geo.latitude","geo.longitude"
 "abkh","Abkhazia","country","europe",,
 "abw","Aruba","country","americas",12.5,-69.96667
 "afg","Afghanistan","unstate","asia",33,66
