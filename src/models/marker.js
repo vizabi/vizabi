@@ -244,7 +244,7 @@ var Marker = Model.extend({
                   _this.partialResult[cachePath][t][name][key] = hook.which;
                 });
               });
-            } else if(hook.which === "geo") {
+            } else if(hook.which === "geo.world_4region") {
               //special case: fill data with keys to data itself
               //TODO: what if it's not "geo"? Treat any dimension alike
               steps.forEach(function(t) {
@@ -307,7 +307,7 @@ var Marker = Model.extend({
           var promises = [];
           utils.forEach(_this._dataCube, function(hook, name) {
             //exception: we know that these are knonwn, no need to calculate these
-            if(hook.use !== "constant" && hook.which !== "geo" && hook.which !== "time") {
+            if(hook.use !== "constant" && hook.which !== "geo.world_4region" && hook.which !== "time") {
               (function(_hook, _name) {
                 promises.push(new Promise(function(res, rej) {
                   _this.getDataManager().getFrame(_hook._dataId, steps, forceFrame).then(function(response) {
