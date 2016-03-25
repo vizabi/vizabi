@@ -43,8 +43,7 @@ globals.gapminder_paths = {
   // Explanation what is going on in the code below:
   // In order to use WS server other than specified in WS_SERVER you need to fill it in manually
   //systema globalis wsUrl: typeof WS_SERVER === 'undefined' ? 'https://waffle-server-stage.gapminderdev.org' : WS_SERVER,
-  //wsUrl: typeof WS_SERVER === 'undefined' ? 'https://waffle-server-dev-new-ddf.gapminderdev.org' : WS_SERVER,
-  wsUrl: 'https://waffle-server-dev-new-ddf.gapminderdev.org',
+  wsUrl: typeof WS_SERVER === 'undefined' ? 'https://waffle-server-dev-new-ddf.gapminderdev.org' : WS_SERVER,
   baseUrl: localUrl
 };
 
@@ -722,7 +721,7 @@ Tool.define("preload", function(promise) {
   //load language first
   this.preloadLanguage().then(function() {
     //then metadata
-    d3.json(metadata_path, function(metadata) {
+    d3.json(metadata_path.replace("stage","dev-new-ddf"), function(metadata) {
 
       globals.metadata = metadata;
 
@@ -776,7 +775,7 @@ Tool.define("preloadLanguage", function() {
   var translation_path = Vzb._globals.gapminder_paths.wsUrl + "/api/vizabi/translation/" + langModel.id + ".json";
 
   if(langModel && !langModel.strings[langModel.id]) {
-    d3.json(translation_path, function(langdata) {
+    d3.json(translation_path.replace("stage","dev-new-ddf"), function(langdata) {
       langModel.strings[langModel.id] = langdata;
       _this.model.language.strings.trigger("change");
       promise.resolve();
