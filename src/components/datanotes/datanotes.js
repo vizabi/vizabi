@@ -113,9 +113,9 @@ var DataNotes = Component.extend({
   },
   
   setPos: function(_left, _top, force) {
-    if(pin && !force) return this;
     left = _left;
     top = _top;
+    if(pin && !force) return this;
     var parentHeight = this.parent.element.offsetHeight; 
     var width = this.element.node().offsetWidth;
     var height = this.element.node().offsetHeight;
@@ -143,11 +143,11 @@ var DataNotes = Component.extend({
   
   pin: function(arg) {
     if(hidden) return this;
-    pin = true;
+    pin = !pin;
     if(arg != null) pin = arg;    
     this.element.select('.vzb-data-notes-close').classed('vzb-hidden', !pin);
     this.element.classed('vzb-data-notes-pinned', pin);
-    if(pin) this.setPos(left, top, true);
+    this.setPos(left, top, true);
     return this;
   },
 
