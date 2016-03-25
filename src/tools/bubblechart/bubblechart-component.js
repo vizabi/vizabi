@@ -851,7 +851,7 @@ var BubbleChartComp = Component.extend({
         infoElHeight: 20,
         yAxisTitleBottomMargin: 6,
         xAxisTitleBottomMargin: 5,
-        labelsLeashCoeff: 0.35
+        labelsLeashCoeff: 0.3
       },
       large: {
         margin: { top: 50, right: 20, left: 60, bottom: 60 },
@@ -864,7 +864,7 @@ var BubbleChartComp = Component.extend({
         infoElHeight: 22,
         yAxisTitleBottomMargin: 6,
         xAxisTitleBottomMargin: 5,
-        labelsLeashCoeff: 0.3
+        labelsLeashCoeff: 0.2
       }
     };
 
