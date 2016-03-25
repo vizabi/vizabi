@@ -12,7 +12,8 @@ import {
   dialogs,
   buttonlist,
   treemenu,
-  datawarning
+  datawarning,
+  datanotes
 }
 from 'components/_index';
 
@@ -54,6 +55,10 @@ var BubbleMap = Tool.extend('BubbleMap', {
     }, {
       component: datawarning,
       placeholder: '.vzb-tool-datawarning',
+      model: ['language']
+    }, {
+      component: datanotes,
+      placeholder: '.vzb-tool-datanotes',
       model: ['language']
     }
     ];

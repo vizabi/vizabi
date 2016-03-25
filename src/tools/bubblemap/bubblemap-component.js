@@ -344,10 +344,19 @@ var BubbleMapComponent = Component.extend({
           .select("svg").attr("width", "0px").attr("height", "0px");
 
       //TODO: move away from UI strings, maybe to ready or ready once
-      this.infoEl.on("click", function () {
-          window.open(sizeMetadata.sourceLink, "_blank").focus();
+      this.infoEl.on("click", function() {
+        _this.parent.findChildByName("gapminder-datanotes").pin();
       })
-
+      this.infoEl.on("mouseover", function() {
+        var rect = this.getBBox();
+        var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+        _this.parent.findChildByName("gapminder-datanotes").setHook(_this.model.marker.size).show().setPos(coord.x, coord.y);
+      })
+      this.infoEl.on("mouseout", function() {
+        _this.parent.findChildByName("gapminder-datanotes").hide();
+      })
+    
+    
       this.dataWarningEl
           .on("click", function () {
               _this.parent.findChildByName("gapminder-datawarning").toggle();
