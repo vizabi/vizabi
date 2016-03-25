@@ -157,7 +157,15 @@ var DataNotes = Component.extend({
     hidden = arg;
     this.element.classed("vzb-hidden", hidden);
     return this;
-  }
+  },
+  
+  show: function() {
+    return this.toggle(false);
+  },
+  
+  hide: function() {
+    return this.toggle(true);
+  } 
 
 });
 

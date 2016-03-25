@@ -96,10 +96,10 @@ var IndPicker = Component.extend({
           var topPos = rect.bottom - rootRect.top;
           var leftPos = rect.left - rootRect.left + rect.width;
           
-          _this.root.findChildByName("gapminder-datanotes").setHook(_this.model.marker[_this.markerID]).toggle().setPos(leftPos, topPos);
+          _this.root.findChildByName("gapminder-datanotes").setHook(_this.model.marker[_this.markerID]).show().setPos(leftPos, topPos);
         })
         this.infoEl.on("mouseout", function() {
-          _this.root.findChildByName("gapminder-datanotes").toggle();
+          _this.root.findChildByName("gapminder-datanotes").hide();
         })
 
 
