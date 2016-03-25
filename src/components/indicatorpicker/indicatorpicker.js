@@ -110,13 +110,19 @@ var IndPicker = Component.extend({
         if(!this._readyOnce) return;
 
         var _this = this;
-        this.translator = this.model.language.getTFunction();
+        var translator = this.model.language.getTFunction();
         
         var which = this.model.marker[this.markerID].which;
         var type = this.model.marker[this.markerID]._type;
         
         //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-        this.el_select.text(this.translator("indicator" + (which==="_default" ? "/" + type : "") + "/" + which));
+        this.el_select.text(translator("indicator" + (which==="_default" ? "/" + type : "") + "/" + which));
+        
+        // hide info el if no data is available for it to make sense
+        var hideInfoEl = ((translator("description/" + which) == "description/" + which)
+            && (translator("sourceName/" + which) == "sourceName/" + which)
+            && !_this.model.marker[_this.markerID].getMetadata().sourceLink); 
+        this.infoEl.classed("vzb-hidden", hideInfoEl);
     }
     
 });

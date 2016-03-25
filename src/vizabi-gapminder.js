@@ -489,6 +489,7 @@ BubbleChart.define('default_model', {
       size_label: {
         use: "constant",
         which: "_default",
+        scaleType: "ordinal",
         extent: [0, 0.33]
       },
 
@@ -724,6 +725,14 @@ Tool.define("preload", function(promise) {
     d3.json(metadata_path, function(metadata) {
 
       globals.metadata = metadata;
+        
+      if(!globals.metadata.indicatorsDB["_default"]) globals.metadata.indicatorsDB["_default"] = {
+          "use": "constant",
+          "scales": ["ordinal"]
+      }
+      if(globals.metadata.indicatorsTree.children.map(function(m){return m.id}).indexOf("_default")===-1) {
+          globals.metadata.indicatorsTree.children.push({"id": "_default"});
+      }
 
       // TODO: REMOVE THIS HACK
       // We are currently saving metadata info to default state manually in order
