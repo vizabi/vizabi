@@ -624,10 +624,10 @@ var BubbleChartComp = Component.extend({
     this.yInfoEl.on("mouseover", function() {
       var rect = this.getBBox();
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-      _this.parent.findChildByName("gapminder-datanotes").setHook(_this.model.marker.axis_y).toggle().setPos(coord.x, coord.y);
+      _this.parent.findChildByName("gapminder-datanotes").setHook(_this.model.marker.axis_y).show().setPos(coord.x, coord.y);
     })
     this.yInfoEl.on("mouseout", function() {
-      _this.parent.findChildByName("gapminder-datanotes").toggle();
+      _this.parent.findChildByName("gapminder-datanotes").hide();
     })
     this.xInfoEl.on("click", function() {
       _this.parent.findChildByName("gapminder-datanotes").pin();
@@ -635,10 +635,10 @@ var BubbleChartComp = Component.extend({
     this.xInfoEl.on("mouseover", function() {
       var rect = this.getBBox();
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-      _this.parent.findChildByName("gapminder-datanotes").setHook(_this.model.marker.axis_x).toggle().setPos(coord.x, coord.y);
+      _this.parent.findChildByName("gapminder-datanotes").setHook(_this.model.marker.axis_x).show().setPos(coord.x, coord.y);
     })
     this.xInfoEl.on("mouseout", function() {
-      _this.parent.findChildByName("gapminder-datanotes").toggle();
+      _this.parent.findChildByName("gapminder-datanotes").hide();
     })
     this.dataWarningEl
       .on("click", function() {
