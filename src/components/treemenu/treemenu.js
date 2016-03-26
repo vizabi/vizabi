@@ -332,7 +332,7 @@ var Menu = Class.extend({
       this.menuItems[i].marqueeToggleAll(toggle);
     }
   },
-  findItemByName(name) {
+  findItemByName: function(name) {
     for (var i = 0; i < this.menuItems.length; i++) {
       if(this.menuItems[i].entity.select('.' + css.list_item_label).text() == name) { 
         return this.menuItems[i];
