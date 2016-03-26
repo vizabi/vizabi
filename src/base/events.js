@@ -80,7 +80,7 @@ var EventSource = Class.extend({
     }
 
     // if parameters had to be split up in seperate calls, don't continue with this call
-    if (this.splitEventparameters(type, path, func, this.off))
+    if (this.splitEventParameters(type, path, func, this.off))
       return;
 
     // get target model
@@ -88,15 +88,15 @@ var EventSource = Class.extend({
     if (!target) return;
 
     // unbind events
-    if(this._events.hasOwnProperty(type)) {
+    if(target._events.hasOwnProperty(type)) {
       // if function not given, remove all events of type
       if (typeof func === 'undefined') {
-        this._events[type] = [];
+        target._events[type] = [];
         return;
       }
-      var index = this._events[type].indexOf(func);
+      var index = target._events[type].indexOf(func);
       if (index > -1) {
-        array.splice(index, 1);
+        target._events[type].splice(index, 1);
       } else {
         utils.warn('Could not unbind function ' + func.name + '. Function not in bound function list.');
       }
