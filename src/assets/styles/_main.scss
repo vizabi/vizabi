@@ -204,14 +204,16 @@
     background: transparent;
     cursor: pointer;
     height: 0;
+    border: 0;
   }
 
   input[type=range]::-ms-track {
     background: transparent;
     border-color: transparent;
-    border-width: 16px 0;
+    border-width: 10px 0;
     color: transparent;
     cursor: pointer;
+    height: 0;
   }
 
   input[type=range]::-ms-fill-lower {
@@ -229,10 +231,14 @@
   input[type=range]:focus::-ms-fill-upper {
     background: transparent;
   }
-
+  
+  input[type=range]::-ms-tooltip {
+    display: none;  
+  }
+  
   input[type=range]::-moz-focus-outer {
     border: 0;
-  }
+  }    
   //Data warning
   .vzb-data-warning {
     cursor: pointer;
