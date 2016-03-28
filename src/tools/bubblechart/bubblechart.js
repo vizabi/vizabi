@@ -51,7 +51,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
     }, {
       component: datanotes,
       placeholder: '.vzb-tool-datanotes',
-      model: ['language']
+      model: ['state.marker', 'language']
     }];
 
     this._super(placeholder, external_model);

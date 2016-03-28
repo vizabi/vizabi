@@ -350,7 +350,7 @@ var BubbleMapComponent = Component.extend({
       this.infoEl.on("mouseover", function() {
         var rect = this.getBBox();
         var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-        _this.parent.findChildByName("gapminder-datanotes").setHook(_this.model.marker.size).show().setPos(coord.x, coord.y);
+        _this.parent.findChildByName("gapminder-datanotes").setHook('size').show().setPos(coord.x, coord.y);
       })
       this.infoEl.on("mouseout", function() {
         _this.parent.findChildByName("gapminder-datanotes").hide();

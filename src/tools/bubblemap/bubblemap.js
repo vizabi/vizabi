@@ -59,7 +59,7 @@ var BubbleMap = Tool.extend('BubbleMap', {
     }, {
       component: datanotes,
       placeholder: '.vzb-tool-datanotes',
-      model: ['language']
+      model: ['state.marker', 'language']
     }
     ];
 
