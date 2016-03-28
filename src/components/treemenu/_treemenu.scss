@@ -12,18 +12,19 @@
   .vzb-treemenu-wrap-outer {
     @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, .24));
     position: absolute;
+    background-color: #fff;
+    border-top: 1px solid #f7f7f7;
     padding: 0;
+    z-index: 9998;
     .vzb-treemenu-wrap {
       @include transition(all 300ms ease-in-out);
-      border-top: 1px solid #f7f7f7;
-      background-color: #fff;
       padding: 0 25px 10px;    
       overflow-y: auto;
 
       * {
         box-sizing: border-box;
       }
-  
+   
       &.notransition {
         @include transition(none);
       }
@@ -184,7 +185,6 @@
       }
   
       .vzb-treemenu-list-outer {
-        @include box-shadow(4px, 8px, 15px, rgba(0, 0, 0, .2));
         position: absolute;
         background-color: #fff;
         .vzb-treemenu-list {
@@ -192,6 +192,7 @@
         }
 
         &.vzb-treemenu-horizontal {
+          @include box-shadow(4px, 8px, 15px, rgba(0, 0, 0, .2));
           width: 0;
           top: 0;
           bottom: 0;
