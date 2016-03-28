@@ -229,7 +229,11 @@
   input[type=range]:focus::-ms-fill-upper {
     background: transparent;
   }
-
+  
+  input[type=range]::-ms-tooltip {
+    display: none;  
+  }
+  
   input[type=range]::-moz-focus-outer {
     border: 0;
   }
