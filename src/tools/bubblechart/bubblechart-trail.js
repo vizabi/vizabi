@@ -39,9 +39,11 @@ export default Class.extend({
       for(var time = start; time <= end; time += step) timePoints.push(time);
 
       //work with entities.select (all selected entities), if no particular selection is specified
+      var promises = [];
       selection = selection == null ? _this.model.entities.select : [selection];
       selection.forEach(function(d) {
-
+        var defer = new Promise();
+        promises.push(defer);
         var trailSegmentData = timePoints.map(function(m) {
           return {
             t: _this.model.time.timeFormat.parse("" + m)
@@ -101,28 +103,28 @@ export default Class.extend({
 
 
         //update segment data (maybe for new indicators)
-        var promises = [];
+
+        defer.resolve();
+        
+/*
         _this.model.marker.getFrame(null, function(frames) { //call without time parameter to use cache instead force frame calculation
           trail.each(function(segment, index) {
-            promises.push(new Promise(function(res, rej) {
-              var frame = frames[segment.t];
-              segment.valueY = frame.axis_y[d[KEY]];
-              segment.valueX = frame.axis_x[d[KEY]];
-              segment.valueS = frame.size[d[KEY]];
-              segment.valueC = frame.color[d[KEY]];
-              res();
-            }));
+            var frame = frames[segment.t];
+            segment.valueY = frame.axis_y[d[KEY]];
+            segment.valueX = frame.axis_x[d[KEY]];
+            segment.valueS = frame.size[d[KEY]];
+            segment.valueC = frame.color[d[KEY]];
           });
-          if (promises.length > 0) {
-            Promise.all(promises).then(function (segments) {
-              resolve(true);
-            });
-          } else {
-            resolve(true);
-          }
-
         });
+*/
       });
+      if (promises.length > 0) {
+        Promise.all(promises).then(function (segments) {
+          resolve(true);
+        });
+      } else {
+        resolve(true);
+      }
     });
     return this._isCreated;
   },
@@ -177,11 +179,6 @@ export default Class.extend({
       if(segment.valueY==null || segment.valueX==null || segment.valueS==null) return;
 
       var view = d3.select(this);
-      view.select("circle")
-        //.transition().duration(duration).ease("linear")
-        .attr("cy", _this.yScale(segment.valueY))
-        .attr("cx", _this.xScale(segment.valueX))
-        .attr("r", utils.areaToRadius(_this.sScale(segment.valueS)));
 
       var next = this.parentNode.childNodes[(index + 1)];
       if(next == null) return;
@@ -252,20 +249,21 @@ export default Class.extend({
     var trailStartTime = _this.model.time.timeFormat.parse("" + d.trailStartTime);
 
     trail.each(function(segment, index) {
-
       // segment is transparent if it is after current time or before trail StartTime
       segment.transparent = d.trailStartTime == null || (segment.t - _this.time >= 0) || (trailStartTime - segment.t > 0)
         //no trail segment should be visible if leading bubble is shifted backwards, beyond start time
         || (d.trailStartTime - _this.model.time.timeFormat(_this.time) >= 0)
         //additionally, segment should not be visible if it has broken data
-        || segment.valueX == null || segment.valueY == null || segment.valueS == null;
+//        || segment.valueX == null || segment.valueY == null || segment.valueS == null;
 
+/*
       if(firstVisible && !segment.transparent) {
         _this.cached[d[KEY]].labelX0 = segment.valueX;
         _this.cached[d[KEY]].labelY0 = segment.valueY;
         _this.cached[d[KEY]].scaledS0 = utils.areaToRadius(_this.sScale(segment.valueS));
         firstVisible = false;
       }
+*/
     });
   },
 
@@ -273,41 +271,45 @@ export default Class.extend({
   _reveal: function(trail, duration, d) {
     var _this = this.context;
     var KEY = _this.KEY;
-
+    
     trail.each(function(segment, index) {
-
       var view = d3.select(this);
 
-      view.classed("vzb-invisible", segment.transparent);
+      if(segment.transparent) {
+        view.classed("vzb-invisible", segment.transparent);
+        return;
+      } 
 
-      if(segment.transparent) return;
+      (function(_view, _segment) {
+        _this.model.marker.getFrame(_segment.t, function(frame) {
 
-      var next = this.parentNode.childNodes[(index + 1)];
-      if(next == null) return;
-      next = next.__data__;
-        
-      if(next.valueY==null || next.valueX==null) return;
+          var next = _this.parentNode.childNodes[(index + 1)];
+          if(next == null) return;
+          next = next.__data__;
 
-      if(segment.t - _this.time <= 0 && _this.time - next.t <= 0) {
-        next = _this.cached[d[KEY]];
+          _segment.valueY = frame.axis_y[d[KEY]];
+          _segment.valueX = frame.axis_x[d[KEY]];
+          _segment.valueS = frame.size[d[KEY]];
+          _segment.valueC = frame.color[d[KEY]];
 
-        view.select("line")
-          .attr("x2", _this.xScale(segment.valueX))
-          .attr("y2", _this.yScale(segment.valueY))
-          .attr("x1", _this.xScale(segment.valueX))
-          .attr("y1", _this.yScale(segment.valueY))
-          //.transition().duration(duration).ease("linear")
-          .attr("x1", _this.xScale(next.valueX))
-          .attr("y1", _this.yScale(next.valueY));
-      } else {
-        view.select("line")
-          .attr("x2", _this.xScale(segment.valueX))
-          .attr("y2", _this.yScale(segment.valueY))
-          .attr("x1", _this.xScale(next.valueX))
-          .attr("y1", _this.yScale(next.valueY));
-      }
+          if(_segment.t - _this.time <= 0 && _this.time - next.t <= 0) {
+            next = _this.cached[d[KEY]];
+          }
+          _view.select("line")
+            .attr("x2", _this.xScale(_segment.valueX))
+            .attr("y2", _this.yScale(_segment.valueY))
+            .attr("x1", _this.xScale(next.valueX))
+            .attr("y1", _this.yScale(next.valueY));
+          _view.select("circle")
+            //.transition().duration(duration).ease("linear")
+            .attr("cy", _this.yScale(_segment.valueY))
+            .attr("cx", _this.xScale(_segment.valueX))
+            .attr("r", utils.areaToRadius(_this.sScale(_segment.valueS)));
+
+          _view.classed("vzb-invisible", _segment.transparent);          
+        });
+      }(view, segment));
     });
-
   },
 
 
