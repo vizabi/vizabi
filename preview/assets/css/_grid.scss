@@ -1,6 +1,10 @@
 $vzbp-width-nav: 110px;
 $vzbp-width-sidebar: 190px;
 $vzbp-width-state-editor: 250px;
+html {
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
 body {
   background-color: $vzbp-color-background;
   font-family: $vzbp-font-family;
