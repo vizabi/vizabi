@@ -157,10 +157,10 @@ export default Class.extend({
                  * scroll. Instead, redirect the scroll event to the scrollable
                  * ancestor
                  */
-                if (sourceEvent != null && sourceEvent.type === "wheel" && 
+                if (sourceEvent != null && (sourceEvent.type === "wheel" || sourceEvent.type === "mousewheel") && 
                     _this.ui.noZoomOnScrolling) {
                     if (_this.scrollableAncestor) {
-                        _this.scrollableAncestor.scrollTop += sourceEvent.deltaY;
+                        _this.scrollableAncestor.scrollTop += (sourceEvent.deltaY || -sourceEvent.wheelDelta);
                     }
                     d3.event.scale = null;
                     zoomer.scale(this.savedScale);
@@ -169,8 +169,8 @@ export default Class.extend({
                 }
 
                 if(sourceEvent != null && _this.scrollableAncestor && !self.enabled) {
-                    _this.scrollableAncestor.scrollTop += sourceEvent.deltaY;
-                    zoomer.scale(1)
+                    _this.scrollableAncestor.scrollTop += (sourceEvent.deltaY || -sourceEvent.wheelDelta);
+                    zoomer.scale(1);
                     this.quitZoom = true;
                     return;
                 }
@@ -199,7 +199,7 @@ export default Class.extend({
                  * ratios to 1 as well, which will fully zoom out.
                  */
                 if(zoom === 1 && sourceEvent !== null &&
-                    (sourceEvent.type === "wheel" && sourceEvent.deltaY > 0 ||
+                    ((sourceEvent.type === "wheel" || sourceEvent.type === "mousewheel") && (sourceEvent.deltaY || -sourceEvent.wheelDelta) > 0 ||
                      sourceEvent.type === "touchmove" && sourceEvent.touches.length > 1)) {
                     zoomer.ratioX = 1;
                     ratioX = 1;
