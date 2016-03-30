@@ -688,7 +688,7 @@ var BubbleChartComp = Component.extend({
     var endTime = this.model.time.end;
     this.model.entities.setVisible(getKeys.call(this));
       
-    this.unselectBubblesWithNoData();
+    //this.unselectBubblesWithNoData();
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
       .data(this.model.entities.getVisible(), function(d) {return d[KEY]})
@@ -721,20 +721,6 @@ var BubbleChartComp = Component.extend({
         _this._bubblesInteract().click(d, i);
       })
       .onLongTap(function(d, i) {});
-
-
-    //TODO: no need to create trail group for all entities
-    //TODO: instead of :append an :insert should be used to keep order, thus only few trail groups can be inserted
-    this.entityTrails = this.bubbleContainer.selectAll(".vzb-bc-entity")
-      .data(getKeys.call(this, "trail-"), function(d) {
-        return d[KEY];
-      });
-
-    this.entityTrails.enter().insert("g", function(d) {
-      return document.querySelector(".vzb-bc-bubbles ." + d[KEY].replace("trail-", "bubble-"));
-    }).attr("class", function(d) {
-      return "vzb-bc-entity " + d[KEY]
-    });
 
   },
     
