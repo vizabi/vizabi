@@ -131,7 +131,7 @@
       }
 
       .vzb-mc-year {
-        @include opacity(.1);
+        @include opacity(.3);
         fill: $vzb-color-primary;
         text-anchor: end;
         -webkit-touch-callout: none;

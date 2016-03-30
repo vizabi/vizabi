@@ -23,7 +23,7 @@
       width: 100%;
 
       .vzb-br-year {
-        @include opacity(.1);
+        @include opacity(.3);
         font-size: $vzb-br-year-size;
         fill: $vzb-color-grey;
         text-anchor: middle;
