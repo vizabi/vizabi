@@ -6,9 +6,6 @@
   "files": [
     "build/dist"
   ],
-  "scripts": {
-    "build": "sh ./docker_run.sh"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Gapminder/vizabi"
@@ -62,6 +59,8 @@
     "opn": "4.0.1",
     "q": "1.4.1",
     "rollup": "0.19.1",
-    "slash": "1.0.0"
+    "slash": "1.0.0",
+    "shelljs": "0.6.0",
+    "compare-version": "0.1.2"
   }
 }
