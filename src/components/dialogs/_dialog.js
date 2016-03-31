@@ -150,10 +150,13 @@ var Dialog = Component.extend({
     }
 
     this.element.style('max-height', totalHeight + 'px');
+    
     //set 'max-height' to content for IE11
-    var contentHeight = totalHeight - this.element.selectAll('.vzb-top-dialog > .vzb-dialog-modal > .vzb-dialog-title').node().offsetHeight - 
-      this.element.selectAll('.vzb-top-dialog > .vzb-dialog-modal > .vzb-dialog-buttons').node().offsetHeight;
-    this.element.selectAll('.vzb-top-dialog > .vzb-dialog-modal > .vzb-dialog-content').style('max-height', contentHeight + 'px');
+    var dialogTitle = this.element.selectAll('.vzb-top-dialog > .vzb-dialog-modal > .vzb-dialog-title');
+    var dialogButtons = this.element.selectAll('.vzb-top-dialog > .vzb-dialog-modal > .vzb-dialog-buttons');
+    var dialogContent = this.element.selectAll('.vzb-top-dialog > .vzb-dialog-modal > .vzb-dialog-buttons');
+    var contentHeight = totalHeight - dialogTitle.node().offsetHeight - dialogButtons.node().offsetHeight;
+    dialogContent.style('max-height', contentHeight + 'px');
   },
 
   beforeOpen: function() {
