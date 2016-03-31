@@ -152,7 +152,6 @@ export default Class.extend({
 
 
   _remove: function(trail, duration, d) {
-    console.log("remove");
     if (trail) { // TODO: in some reason run twice 
       trail.remove();
       this.entityTrails[d[this.context.KEY]] = null;
