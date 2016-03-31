@@ -688,7 +688,7 @@ var BubbleChartComp = Component.extend({
     var endTime = this.model.time.end;
     this.model.entities.setVisible(getKeys.call(this));
       
-    this.unselectBubblesWithNoData();
+    //this.unselectBubblesWithNoData();
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
       .data(this.model.entities.getVisible(), function(d) {return d[KEY]})
@@ -721,20 +721,6 @@ var BubbleChartComp = Component.extend({
         _this._bubblesInteract().click(d, i);
       })
       .onLongTap(function(d, i) {});
-
-
-    //TODO: no need to create trail group for all entities
-    //TODO: instead of :append an :insert should be used to keep order, thus only few trail groups can be inserted
-    this.entityTrails = this.bubbleContainer.selectAll(".vzb-bc-entity")
-      .data(getKeys.call(this, "trail-"), function(d) {
-        return d[KEY];
-      });
-
-    this.entityTrails.enter().insert("g", function(d) {
-      return document.querySelector(".vzb-bc-bubbles ." + d[KEY].replace("trail-", "bubble-"));
-    }).attr("class", function(d) {
-      return "vzb-bc-entity " + d[KEY]
-    });
 
   },
     
@@ -1345,17 +1331,6 @@ var BubbleChartComp = Component.extend({
 
       var brokenInputs = !valueX && valueX !==0 || !valueY && valueY !==0 || !scaledS && scaledS !==0;
 
-      if(!brokenInputs && (!_this.model.ui.chart.trails || trailStartTime - _this.time > 0 || select.trailStartTime == null)) {
-
-        select.trailStartTime = _this.model.time.timeFormat(_this.time);
-        //the events in model are not triggered here. to trigger uncomment the next line
-        //_this.model.entities.triggerAll("change:select");
-        cached.scaledS0 = scaledS;
-        cached.labelX0 = valueX;
-        cached.labelY0 = valueY;
-
-      }
-
       var lineGroup = _this.entityLines.filter(function(f) {
         return f[KEY] == d[KEY];
       });
@@ -1365,6 +1340,23 @@ var BubbleChartComp = Component.extend({
         })
         .each(function(groupData) {
 
+          var labelGroup = d3.select(this);
+
+          if(!_this.model.ui.chart.trails || trailStartTime - _this.time > 0 || select.trailStartTime == null) {
+            if (!brokenInputs) {
+              select.trailStartTime = _this.model.time.timeFormat(_this.time);
+              //the events in model are not triggered here. to trigger uncomment the next line
+              //_this.model.entities.triggerAll("change:select");
+              cached.scaledS0 = scaledS;
+              cached.labelX0 = valueX;
+              cached.labelY0 = valueY;
+            } else {
+              labelGroup.classed("vzb-invisible", brokenInputs);
+              lineGroup.classed("vzb-invisible", brokenInputs);
+              return;
+            }
+          }
+          
           cached.valueX = valueX;
           cached.valueY = valueY;
 
@@ -1373,11 +1365,9 @@ var BubbleChartComp = Component.extend({
             cached.labelX0 = valueX;
             cached.labelY0 = valueY;
           }
-          var labelGroup = d3.select(this);
 
           var text = labelGroup.selectAll(".vzb-bc-label-content")
             .text(valueL + (_this.model.ui.chart.trails ? " " + select.trailStartTime : ""));
-
           var labels = _this.model.ui.chart.labels;
           labelGroup.classed('vzb-label-boxremoved', labels.removeLabelBox);
           var range = _this.labelSizeTextScale.range();
