@@ -30,12 +30,12 @@ Promise.prototype.then = function(resolve, reject) {
       next.resolve(resolve);
     } else {
       
-//      try {
+      try {
         x = resolve(this.value);
         resolveX(next, x);
-//      } catch(e) {
-//        this.reject(e);
-//      }
+      } catch(e) {
+        this.reject(e);
+      }
     }
     return next;
   }
