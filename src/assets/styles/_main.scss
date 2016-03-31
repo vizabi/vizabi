@@ -1,0 +1,268 @@
+@import 'mixins';
+@import 'common';
+@import 'reset';
+@import 'chart';
+
+.vzb-tool {
+  $height-title: 8px;
+  $size-button-list: 60px;
+  $size-button-list-small: 50px;
+  $size-timeslider: 80px;
+  $size-timeslider-medium: 50px;
+  $size-timeslider-small: 40px;
+  $vzb-button-expand-width: 290px;
+ 
+
+  @include user-select(none);
+  display: flex;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  font-family: $vzb-font-family;
+  font-size: $vzb-font-size-base; //important to set the base in px
+  overflow: hidden;
+  text-align: left;
+
+  .vzb-tool-title {
+    @include position(absolute, 0 0 null 0);
+    background-color: $vzb-color-primary-lightest;
+    color: $vzb-color-grey-dark;
+    display: none !important;
+    font-size: $vzb-font-size-small;
+    height: $height-title;
+    padding: 10px;
+  }
+
+  .vzb-tool-stage {
+    flex: 1 auto;
+    display: flex;
+    flex-direction: column;
+
+    transform: translate3d(0, 0, 0);
+
+    .vzb-tool-viz {
+      flex: 1 auto;
+      position: relative;
+    }
+
+    .vzb-tool-timeslider {
+      flex: 0 0 $size-timeslider; 
+      height: $size-timeslider;
+    }
+  }
+
+  .vzb-tool-sidebar {
+    display: flex;
+    flex: 0 0 auto;
+
+    .vzb-tool-buttonlist {
+      flex: 1 0 auto;
+      background-color: $vzb-color-primary-lightest;
+      width: $size-button-list;
+      overflow: hidden;
+      white-space: normal;
+      position: relative;
+      //overflow: visible;
+      text-align: center;
+    
+      input,
+      textarea,
+      keygen,
+      select,
+      button {
+        font-family: $vzb-font-family;
+      }
+    
+      &:-webkit-scrollbar {
+        display: none;
+      }
+    }
+  }
+  // hide sections
+  &.vzb-title-off {
+    .vzb-tool-title {
+      display: none;
+    }
+  }
+
+  &.vzb-timeslider-off {
+    .vzb-tool-timeslider {
+      display: none;
+    }
+  }
+
+  &.vzb-buttonlist-off {
+    .vzb-tool-buttonlist {
+      display: none;
+    }
+  }
+
+  //Responsiveness
+  &.vzb-small {
+    //$pos-top: $height-title - 8px;
+    //@include position(absolute, $pos-top 0 0 0);
+
+    .vzb-tool-stage {
+      .vzb-tool-timeslider {
+        flex: 0 0 $size-timeslider-small;
+        height: $size-timeslider-small;
+      }
+    }
+
+    &.vzb-portrait {
+      flex-direction: column;
+        
+      .vzb-tool-sidebar {
+        flex-direction: column;
+        .vzb-tool-buttonlist {
+          height: $size-button-list-small;
+          width: auto;
+          white-space: nowrap;
+        }
+      }
+    }
+
+    .vzb-tool-title {
+      font-size: $vzb-font-size-small;
+      height: $height-title - 8px;
+    }
+
+    &.vzb-buttonlist-off {
+      .vzb-tool-buttonlist {
+        display: none;
+      }
+    }
+
+    &.vzb-timeslider-off {
+      .vzb-tool-timeslider {
+        display: none;
+      }
+    }
+
+    .vzb-data-warning text {
+      font-size: $vzb-font-size-tiny;
+    }
+  }
+  
+  &.vzb-medium {
+    .vzb-tool-stage {
+      .vzb-tool-timeslider {
+        flex: 0 0 $size-timeslider-medium; 
+        height: $size-timeslider-medium;
+      }
+    }
+  }
+
+  &.vzb-large {
+    &.vzb-dialog-expand-true {
+      .vzb-tool-sidebar {
+        flex-direction: column;
+        flex: 0 0 $vzb-button-expand-width;
+        max-width: $vzb-button-expand-width;
+        .vzb-tool-dialogs {
+          flex: 1 auto;
+          display: flex;
+          flex-direction: column;
+          position: static;
+          background-color: $vzb-color-primary-lightest;
+          overflow-x: hidden;
+          overflow-y: auto;
+        }
+  
+        .vzb-tool-buttonlist {
+          flex: 0 0 auto;
+          width: $vzb-button-expand-width;
+          padding: 10px 0;
+        }
+      }
+    }
+  }
+  
+  //tooltip
+  .vzb-tooltip {
+    @include border-radius(3px);
+    @include opacity(.9);
+    background: $vzb-color-grey-dark;
+    color: $vzb-color-white;
+    font-size: $vzb-font-size-regular;
+    font-weight: 300;
+    padding: 7px 10px;
+    position: absolute;
+    z-index: 11;
+  }
+
+  input[type=range]::-webkit-slider-runnable-track {
+    background: transparent;
+    cursor: pointer;
+  }
+
+  input[type=range]:focus::-webkit-slider-runnable-track {
+    background: transparent;
+  }
+
+  input[type=range]::-moz-range-track {
+    background: transparent;
+    cursor: pointer;
+    height: 0;
+    border: 0;
+  }
+
+  input[type=range]::-ms-track {
+    background: transparent;
+    border-color: transparent;
+    border-width: 10px 0;
+    color: transparent;
+    cursor: pointer;
+    height: 0;
+  }
+
+  input[type=range]::-ms-fill-lower {
+    background: transparent;
+  }
+
+  input[type=range]:focus::-ms-fill-lower {
+    background: transparent;
+  }
+
+  input[type=range]::-ms-fill-upper {
+    background: transparent;
+  }
+
+  input[type=range]:focus::-ms-fill-upper {
+    background: transparent;
+  }
+  
+  input[type=range]::-ms-tooltip {
+    display: none;  
+  }
+  
+  input[type=range]::-moz-focus-outer {
+    border: 0;
+  }    
+  //Data warning
+  .vzb-data-warning {
+    cursor: pointer;
+    fill: $vzb-color-accent-orange;
+
+    path {
+      fill: $vzb-color-accent-orange;
+    }
+
+    text {
+      text-transform: uppercase;
+      font-size: $vzb-font-size-small;
+    }
+
+    &:hover text {
+      text-decoration: underline;
+    }
+  }
+
+  //common tool components
+  @import '../../components/timeslider/timeslider';
+  @import '../../components/dialogs/dialog';
+  @import '../../components/buttonlist/buttonlist';
+  @import '../../components/treemenu/treemenu';
+  @import '../../components/datawarning/datawarning';
+  @import '../../components/datanotes/datanotes';
+}

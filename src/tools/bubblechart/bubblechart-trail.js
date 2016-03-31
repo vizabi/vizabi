@@ -131,7 +131,6 @@ export default Class.extend({
     var _context = this.context;
     var _this = this;
     var KEY = _context.KEY;
-      
     if (!this._isCreated) return;
     this._isCreated.then(function() {
 
@@ -141,7 +140,6 @@ export default Class.extend({
       if(!duration) duration = 0;
 
       actions = [].concat(actions);
-      console.log(actions);
       //work with entities.select (all selected entities), if no particular selection is specified
       selection = selection == null ? _context.model.entities.select : [selection];
       selection.forEach(function(d) {
@@ -172,7 +170,10 @@ export default Class.extend({
 
 
   _remove: function(trail, duration, d) {
-    trail.remove();
+    if (trail) { // TODO: in some reason run twice 
+      trail.remove();
+      this.entityTrails[d[this.context.KEY]] = null;
+    }
   },
 
   _resize: function(trail, duration, d) {
@@ -187,17 +188,21 @@ export default Class.extend({
       if(segment.valueY==null || segment.valueX==null || segment.valueS==null) return;
 
       var view = d3.select(this);
+      view.select("circle")
+        //.transition().duration(duration).ease("linear")
+        .attr("cy", _context.yScale(segment.valueY))
+        .attr("cx", _context.xScale(segment.valueX))
+        .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)));
 
-      var next = view.parentNode.childNodes[(index + 1)];
+      var next = d3.select(this.nextSibling).node();
       if(next == null) return;
       next = next.__data__;
-
       if(next.valueY==null || next.valueX==null) return;
         
       var lineLength = Math.sqrt(
           Math.pow(_context.xScale(segment.valueX) - _context.xScale(next.valueX),2) +
           Math.pow(_context.yScale(segment.valueY) - _context.yScale(next.valueY),2)
-          )
+      );
       view.select("line")
         //.transition().duration(duration).ease("linear")
         .attr("x1", _context.xScale(next.valueX))
@@ -279,10 +284,9 @@ export default Class.extend({
   _reveal: function(trail, duration, d) {
     var _context = this.context;
     var KEY = _context.KEY;
-    
+    var trailStartTime = _context.model.time.timeFormat.parse("" + d.trailStartTime);
     trail.each(function(segment, index) {
       var view = d3.select(this);
-
       if(segment.transparent) {
         view.classed("vzb-invisible", segment.transparent);
         return;
@@ -294,8 +298,30 @@ export default Class.extend({
           _segment.valueX = frame.axis_x[d[KEY]];
           _segment.valueS = frame.size[d[KEY]];
           _segment.valueC = frame.color[d[KEY]];
-
           if(_segment.valueY==null || _segment.valueX==null || _segment.valueS==null) return;
+
+          if (trailStartTime && trailStartTime.toString() == _segment.t.toString()) {
+            _context.cached[d[KEY]].labelX0 = _segment.valueX;
+            _context.cached[d[KEY]].labelY0 = _segment.valueY;
+            _context.cached[d[KEY]].scaledS0 = utils.areaToRadius(_context.sScale(_segment.valueS));
+
+            _context._updateLabel(d, _index, _segment.valueX, _segment.valueY, _segment.valueS, frame.label[d[KEY]], frame.size_label[d[KEY]], 0, true);
+          }
+          _view.select("circle")
+            //.transition().duration(duration).ease("linear")
+            .attr("cy", _context.yScale(_segment.valueY))
+            .attr("cx", _context.xScale(_segment.valueX))
+            .attr("r", utils.areaToRadius(_context.sScale(_segment.valueS)))
+            .style("fill", _segment.valueC!=null?_context.cScale(_segment.valueC):_context.COLOR_WHITEISH);
+
+          _view.select("line")
+            .attr("x2", _context.xScale(_segment.valueX))
+            .attr("y2", _context.yScale(_segment.valueY))
+            .attr("x1", _context.xScale(_segment.valueX))
+            .attr("y1", _context.yScale(_segment.valueY));
+
+          _view.classed("vzb-invisible", _segment.transparent);
+          
           var next = trail[0][_index + 1];
           if(next == null) return;
           next = next.__data__;
@@ -318,6 +344,7 @@ export default Class.extend({
             );
 
             _view.select("line")
+              .transition().duration(duration).ease("linear")
               .attr("x2", _context.xScale(_segment.valueX))
               .attr("y2", _context.yScale(_segment.valueY))
               .attr("x1", _context.xScale(nextFrame.axis_x[d[KEY]]))
@@ -325,14 +352,6 @@ export default Class.extend({
               .style("stroke-dasharray", lineLength)
               .style("stroke-dashoffset", utils.areaToRadius(_context.sScale(_segment.valueS)))
               .style("stroke", strokeColor);
-            _view.select("circle")
-              //.transition().duration(duration).ease("linear")
-              .attr("cy", _context.yScale(_segment.valueY))
-              .attr("cx", _context.xScale(_segment.valueX))
-              .attr("r", utils.areaToRadius(_context.sScale(_segment.valueS)))
-              .style("fill", _segment.valueC!=null?_context.cScale(_segment.valueC):_context.COLOR_WHITEISH);
-
-            _view.classed("vzb-invisible", _segment.transparent);
 
           });
         });
