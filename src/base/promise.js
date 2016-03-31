@@ -29,6 +29,7 @@ Promise.prototype.then = function(resolve, reject) {
     if(!isFn(resolve)) {
       next.resolve(resolve);
     } else {
+      
       try {
         x = resolve(this.value);
         resolveX(next, x);
