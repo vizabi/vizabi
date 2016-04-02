@@ -201,7 +201,7 @@ var forcedResize = false;
 
 function forceResizeEvt() {
   //force resize
-  event = document.createEvent("HTMLEvents");
+  var event = document.createEvent("HTMLEvents");
   event.initEvent("resize", true, true);
   event.eventName = "resize";
   forcedResize = true;
