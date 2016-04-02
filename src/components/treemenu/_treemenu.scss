@@ -16,6 +16,15 @@
     border-top: 1px solid #f7f7f7;
     padding: 0;
     z-index: 9998;
+    &.vzb-treemenu-abs-pos-vert {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+    &.vzb-treemenu-abs-pos-horiz {
+      margin-right: 0;
+      margin-left: 0;
+    }
+
     .vzb-treemenu-wrap {
       @include transition(all 300ms ease-in-out);
       padding: 0 25px 10px;    
@@ -29,14 +38,6 @@
         @include transition(none);
       }
       
-      &.vzb-treemenu-abs-pos-vert {
-        margin-top: 0;
-        margin-bottom: 0;
-      }
-      &.vzb-treemenu-abs-pos-horiz {
-        margin-right: 0;
-        margin-left: 0;
-      }
       .vzb-treemenu-close {
         position: relative;
         float: right;
@@ -354,20 +355,17 @@
 
 &.vzb-medium {
   .vzb-treemenu-wrap-outer {
-    margin-right: $size-button-list;
-    margin-bottom: $size-timeslider;
-
     &.vzb-align-y-top {
       top: 40px;
     }
     &.vzb-align-y-bottom {
-      bottom: 55px;
+      bottom: 5px + $size-timeslider;
     }
     &.vzb-align-x-left {
       left: 60px;
     }
     &.vzb-align-x-right {
-      right: 15px;
+      right: 60px;
     }
     &.vzb-align-x-center {
       left: 50%;
@@ -379,20 +377,17 @@
 &.vzb-large,
 &.vzb-presentation {
   .vzb-treemenu-wrap-outer {
-    margin-right: $size-button-list;
-    margin-bottom: $size-timeslider;
-
     &.vzb-align-y-top {
       top: 50px;
     }
     &.vzb-align-y-bottom {
-      bottom: 60px;
+      bottom: 30px + $size-timeslider;
     }
     &.vzb-align-x-left {
       left: 60px;
     }
     &.vzb-align-x-right {
-      right: 20px;
+      right: 60px;
     }
     &.vzb-align-x-center {
       left: 50%;

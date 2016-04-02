@@ -61,7 +61,7 @@ var OPTIONS = {
   RESIZE_TIMEOUT: null, //container resize timeout
   MOBILE_BREAKPOINT: 400, //mobile breakpoint
   CURRENT_PATH: [], //current active path
-  MIN_COL_WIDTH: 50, //minimal column size
+  MIN_COL_WIDTH: 100, //minimal column size
   MENU_DIRECTION: MENU_HORIZONTAL,
   MAX_MENU_WIDTH: 300,
   MENU_OPEN_LEFTSIDE: false
@@ -95,7 +95,7 @@ var Menu = Class.extend({
   setWidth: function(width, recursive, immediate) {
     if (this.width != width && this.entity.node()) {
       this.width = width;
-      if (this.entity.classed('active') && this.direction == MENU_HORIZONTAL) {
+      if ((this.entity.classed(css.list_top_level) || this.entity.classed('active')) && this.direction == MENU_HORIZONTAL) {
         if(!immediate) {
           this.entity.transition()
             .delay(0)
@@ -147,6 +147,7 @@ var Menu = Class.extend({
   open: function() {
     var _this = this;
     if (!this.isActive()) {
+      _this.parent.parentMenu.openSubmenuNow = true;
       this.closeNeighbors(function() {
         if (_this.direction == MENU_HORIZONTAL) {
           _this._openHorizontal();
@@ -155,6 +156,7 @@ var Menu = Class.extend({
           _this._openVertical();
         }
       });
+      _this.parent.parentMenu.openSubmenuNow = false;      
     }
     return this;
   },
@@ -167,7 +169,7 @@ var Menu = Class.extend({
     var _this = this;
     if (this.entity.classed(css.list_top_level)) {
       if (width > OPTIONS.MAX_MENU_WIDTH) {
-        cb(width - OPTIONS.MAX_MENU_WIDTH);
+        if (typeof cb === "function") cb(width - OPTIONS.MAX_MENU_WIDTH);
       }
     } else {
       this.parent.parentMenu.calculateMissingWidth(width + this.width, function(widthToReduce) {
@@ -295,6 +297,7 @@ var Menu = Class.extend({
   _closeHorizontal: function(cb) {
     var elementWidth = this.entity.node().offsetWidth;
     var _this = this;
+    var openSubmenuNow = _this.parent.parentMenu.openSubmenuNow;
     _this.entity.transition()
       .delay(0)
       .duration(20)
@@ -302,9 +305,13 @@ var Menu = Class.extend({
       .each('end', function() {
         _this.marqueeToggle(false);
         _this.entity.classed('active', false);
-        _this.restoreWidth(elementWidth, true, function() {
+        if(!openSubmenuNow) {
+          _this.restoreWidth(elementWidth, true, function() {
+            if (typeof cb === "function") cb();
+          });
+        } else {
           if (typeof cb === "function") cb();
-        });
+        }
       });
   },
   _closeVertical: function(cb) {
@@ -556,7 +563,7 @@ var TreeMenu = Component.extend({
     this.menuEntity = null;
     this.model_binds = {
       "change:marker": function(evt, path) {
-        if(path.indexOf(markerID)==-1) return;
+        if(path.indexOf(markerID + '.which')==-1) return;
         _this.updateView();
       },
       "change:language.strings": function(evt) {
@@ -664,54 +671,12 @@ var TreeMenu = Component.extend({
         col_width: 200
       }
     };
-    this.activeProfile = this.profiles[this.getLayoutProfile()];
 
     this.wrapper.classed(css.noTransition, true);
     this.wrapper.node().scrollTop = 0;
 
-    this.width = _this.element.node().offsetWidth;
-    this.height = _this.element.node().offsetHeight;
-    var rect = this.wrapperOuter.node().getBoundingClientRect();
-    var containerWidth = rect.width;
-    var containerHeight = rect.height;
+    this.activeProfile = this.profiles[this.getLayoutProfile()];
     OPTIONS.IS_MOBILE = this.getLayoutProfile() === "small";
-    if (containerWidth) {
-      if(OPTIONS.IS_MOBILE) {
-        this.clearPos();
-      } else {
-        if(top || left) {
-          if(this.wrapperOuter.node().offsetTop < 10) {
-            this.wrapperOuter.style('top', '10px');
-          }
-          if(this.height - _this.wrapperOuter.node().offsetTop - containerHeight < 0) {
-            if(containerHeight > this.height) {
-              containerHeight = this.height - 20;
-            }
-            this.wrapperOuter.style({'top' : (this.height - containerHeight - 10) + 'px', 'bottom' : 'auto'});
-          }
-        }
-        var maxHeight;
-        if(this.wrapperOuter.classed(css.alignYb)) {
-          maxHeight = this.wrapperOuter.node().offsetTop + this.wrapperOuter.node().offsetHeight;
-        } else {
-          maxHeight = this.height - this.wrapperOuter.node().offsetTop;
-        }
-        this.wrapper.style('max-height', (maxHeight - 10) + 'px');
-      }
-
-      this.wrapperOuter.classed(css.alignXc, alignX === "center");
-      this.wrapperOuter.style("margin-left",alignX === "center"? "-" + containerWidth/2 + "px" : null);
-      if (alignX === "center") {
-        OPTIONS.MAX_MENU_WIDTH = this.width/2 - containerWidth * 0.5;
-      } else {
-        OPTIONS.MAX_MENU_WIDTH = this.width - this.wrapperOuter.node().offsetLeft - containerWidth - 10; // 10 - padding around wrapper
-        OPTIONS.MENU_OPEN_LEFTSIDE = OPTIONS.MAX_MENU_WIDTH < (this.activeProfile.col_width + OPTIONS.MIN_COL_WIDTH);
-        if(OPTIONS.MENU_OPEN_LEFTSIDE) OPTIONS.MAX_MENU_WIDTH = _this.wrapperOuter.node().offsetLeft - 10; // 10 - padding around wrapper
-        this.wrapperOuter.classed('vzb-treemenu-open-left-side', !OPTIONS.IS_MOBILE && OPTIONS.MENU_OPEN_LEFTSIDE);
-      }
-    }
-
-    this.wrapper.classed(css.noTransition, false);
 
     if (this.menuEntity) {
       this.menuEntity.setWidth(this.activeProfile.col_width, true, true);
@@ -727,6 +692,74 @@ var TreeMenu = Component.extend({
       }
     }
 
+    this.width = _this.element.node().offsetWidth;
+    this.height = _this.element.node().offsetHeight;
+    var rect = this.wrapperOuter.node().getBoundingClientRect();
+    var containerWidth = rect.width;
+    var containerHeight = rect.height;
+    if (containerWidth) {
+      if(OPTIONS.IS_MOBILE) {
+        this.clearPos();
+      } else {
+        if(top || left) {
+          if(this.wrapperOuter.node().offsetTop < 10) {
+            this.wrapperOuter.style('top', '10px');
+          }
+          if(this.height - _this.wrapperOuter.node().offsetTop - containerHeight < 0) {
+            if(containerHeight > this.height) {
+              containerHeight = this.height - 20;
+            }
+            this.wrapperOuter.style({'top' : (this.height - containerHeight - 10) + 'px', 'bottom' : 'auto'});
+          }
+          if(top) top = _this.wrapperOuter.node().offsetTop;
+        }
+        
+        var maxHeight;
+        if(this.wrapperOuter.classed(css.alignYb)) {
+          maxHeight = this.wrapperOuter.node().offsetTop + this.wrapperOuter.node().offsetHeight;
+        } else {
+          maxHeight = this.height - this.wrapperOuter.node().offsetTop;
+        }
+        this.wrapper.style('max-height', (maxHeight - 10) + 'px');
+      
+        this.wrapperOuter.classed(css.alignXc, alignX === "center");
+        this.wrapperOuter.style("margin-left",alignX === "center"? "-" + containerWidth/2 + "px" : null);
+        if (alignX === "center") {
+          OPTIONS.MAX_MENU_WIDTH = this.width/2 - containerWidth * 0.5 - 10;
+        } else {
+          OPTIONS.MAX_MENU_WIDTH = this.width - this.wrapperOuter.node().offsetLeft - containerWidth - 10; // 10 - padding around wrapper
+        }
+
+        var minMenuWidth = this.activeProfile.col_width + OPTIONS.MIN_COL_WIDTH;
+        var leftPos = this.wrapperOuter.node().offsetLeft;
+        OPTIONS.MENU_OPEN_LEFTSIDE = OPTIONS.MAX_MENU_WIDTH < minMenuWidth && leftPos > (OPTIONS.MAX_MENU_WIDTH + 10);
+        if(OPTIONS.MENU_OPEN_LEFTSIDE) {
+          if(leftPos <  (minMenuWidth + 10)) leftPos = (minMenuWidth + 10);
+          OPTIONS.MAX_MENU_WIDTH = leftPos - 10; // 10 - padding around wrapper        
+        } else {
+          if (OPTIONS.MAX_MENU_WIDTH < minMenuWidth) { 
+            leftPos = leftPos - (minMenuWidth - OPTIONS.MAX_MENU_WIDTH);
+            OPTIONS.MAX_MENU_WIDTH = minMenuWidth;
+          } 
+        }
+       
+        if(left) {
+          left = leftPos;
+        } else {
+          if(leftPos != this.wrapperOuter.node().offsetLeft) {
+            this.wrapperOuter.style({'left': 'auto', 'right': (this.width - leftPos - rect.width) + 'px'}); 
+          }
+        }
+        
+        if(left || top) this.setPos();
+        
+        this.wrapperOuter.classed('vzb-treemenu-open-left-side', !OPTIONS.IS_MOBILE && OPTIONS.MENU_OPEN_LEFTSIDE);        
+      }
+    }
+
+    this.wrapper.node().offsetHeight;
+    this.wrapper.classed(css.noTransition, false);
+
     return this;
   },
 
@@ -736,7 +769,7 @@ var TreeMenu = Component.extend({
     this.element.classed(css.hidden, hidden);
 
     if(hidden) {
-      if(top || left) this.clearPos();
+      this.clearPos();
       this.menuEntity.marqueeToggle(false);
     } else {
       if(top || left) this.setPos();
