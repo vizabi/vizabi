@@ -1,71 +1,12 @@
 import * as utils from 'base/utils';
 import Promise from 'base/promise';
-import Reader from 'base/reader';
-
-var DDF1CSVReader = Reader.extend({
-
-  /**
-   * Initializes the reader.
-   * @param {Object} reader_info Information about the reader
-   */
-  init: function (reader_info) {
-    this._name = 'ddf1-csv';
-    this._data = [];
-    this._ddfPath = reader_info.path;
-    this.ddf = new Ddf(this._ddfPath);
-  },
-
-  /**
-   * Reads from source
-   * @param {Object} query to be performed
-   * @param {String} language language
-   * @returns a promise that will be resolved when data is read
-   */
-  read: function (queryPar, language) {
-    var _this = this;
-    var query = utils.deepExtend({}, queryPar);
-    var p = new Promise();
-
-    _this.ddf.getIndex(function () {
-      // get `concepts` and `entries` in any case
-      // this data needed for query's kind (service, data point) detection
-      _this.ddf.getConceptsAndEntities(query, function () {
-        // service query: it was detected by next criteria:
-        // all of `select` section of query parts are NOT measures
-        if (_this.ddf.divideByQuery(query).measures.length <= 0) {
-          _this._data = entities;
-          p.resolve();
-        }
-
-        // data point query: it was detected by next criteria:
-        // at least one measure was detected in `select` section of the query
-        if (_this.ddf.divideByQuery(query).measures.length > 0) {
-          _this.ddf.getDataPoints(query, function (data) {
-            _this._data = data;
-            p.resolve();
-          });
-        }
-      });
-    });
-
-    return p;
-  },
-
-  /**
-   * Gets the data
-   * @returns all data
-   */
-  getData: function () {
-    return this._data;
-  }
-});
 
 /// DDF specific
 
 var index = null;
 var concepts = null;
 var conceptTypeHash = {};
-var entities = null;
+var entities = [];
 
 function Ddf(ddfPath) {
   this.ddfPath = ddfPath;
@@ -75,7 +16,7 @@ function Ddf(ddfPath) {
 
   this.ddfPathPrefix = parser.protocol + '//' + parser.host;
   this.filesList = this.getFilesList();
-}
+};
 
 Ddf.prototype.getFilesList = function () {
   var result = [];
@@ -92,6 +33,10 @@ Ddf.prototype.getFilesList = function () {
   }
 
   return result;
+};
+
+Ddf.prototype.getAllEntities = function () {
+  return entities;
 };
 
 Ddf.prototype.getIndex = function (cb) {
@@ -280,6 +225,10 @@ Ddf.prototype.getEntities = function (query, cb) {
     entityActions.push(load(fileName));
   });
 
+  if(!entityActions.length) {
+    return cb();
+  }
+
   // secondly we should get entities
   Promise.all(entityActions).then(function () {
     var _entities = [];
@@ -312,6 +261,10 @@ Ddf.prototype.getConcepts = function (query, cb) {
   conceptFileNames.forEach(function (fileName) {
     conceptActions.push(load(fileName));
   });
+
+  if(!conceptActions.length) {
+    return cb();
+  }
 
   // first of all we need concepts
   Promise.all(conceptActions).then(function () {
@@ -412,6 +365,10 @@ Ddf.prototype.getDataPointDescriptorsByFilesList = function (query) {
   var descriptors = [];
   var fileNames = [];
 
+  if(!_this.categorizedQuery) {
+    return [];
+  }
+
   // how many matches in of given criteria
   // (measure or other concept) was found in the file name
   function matchByArray(criteria, fileName) {
@@ -478,6 +435,10 @@ Ddf.prototype.getDataPointsContent = function (query, cb) {
     actions.push(load(dataPointDescriptor.fileName));
   });
 
+  if(!actions.length) {
+    return cb();
+  }
+
   Promise.all(actions).then(function () {
     _this.dataPointDescriptors.forEach(function (dataPointDescriptor) {
       dataPointDescriptor.content = CACHE.FILE_CACHED[dataPointDescriptor.fileName];
@@ -517,20 +478,21 @@ Ddf.prototype.getDataPoints = function (query, cb) {
     // fill hash (measure by entity_domain and time)
     _this.dataPointDescriptors.forEach(function (pointDescriptor) {
       pointDescriptor.contentHash = {};
+      if(pointDescriptor.content) {
+        pointDescriptor.content.forEach(function (record) {
+          if (!pointDescriptor.contentHash[record[entityDomainConcept]]) {
+            pointDescriptor.contentHash[record[entityDomainConcept]] = {};
+          }
 
-      pointDescriptor.content.forEach(function (record) {
-        if (!pointDescriptor.contentHash[record[entityDomainConcept]]) {
-          pointDescriptor.contentHash[record[entityDomainConcept]] = {};
-        }
-
-        pointDescriptor.contentHash[record[entityDomainConcept]][record[timeConcept]] =
-          record[pointDescriptor.measure];
-      });
+          pointDescriptor.contentHash[record[entityDomainConcept]][record[timeConcept]] =
+            record[pointDescriptor.measure];
+        });
+      }
     });
 
     var result = [];
     // get range for entity_domain
-    var entityDomainValues = getExpectedEntityDomainValues(_this.getEntityDomainConcept());
+    var entityDomainValues = _this.getExpectedEntityDomainValues(_this.getEntityDomainConcept());
     // get range for time
     var timeRangeValues = getTimeRange(query.where[_this.getTimeConcept()]);
 
@@ -560,6 +522,16 @@ Ddf.prototype.getDataPoints = function (query, cb) {
 
     cb(result);
   });
+};
+
+Ddf.prototype.getExpectedEntityDomainValues = function (entityName) {
+  return entities.map(function (entity) {
+    return entity[entityName];
+  })
+};
+
+Ddf.prototype.cachedFileExists = function (path) {
+  return typeof CACHE.FILE_CACHED[path] != 'undefined';
 };
 
 //// csv utils
@@ -596,43 +568,7 @@ function csvToObject(res) {
   });
 }
 
-function load(path) {
-  if (CACHE.FILE_REQUESTED[path]) {
-    return CACHE.FILE_REQUESTED[path];
-  }
 
-  CACHE.FILE_REQUESTED[path] = new Promise();
-
-  // checks if eval() statements are allowed. They are needed for fast parsing by D3.
-  if (EVALALLOWED == null) {
-    defineEvalAllowed();
-  }
-
-  // true:  load using csv, which uses d3.csv.parse, is faster but doesn't comply with CSP
-  // false: load using text and d3.csv.parseRows to circumvent d3.csv.parse and comply with CSP
-  var loader = (EVALALLOWED) ? d3.csv : d3.text;
-  var parser = (EVALALLOWED) ? null : csvToObject;
-
-  loader(path, function (error, res) {
-
-    if (!res) {
-      console.log('No permissions or empty file: ' + path, error);
-    }
-
-    if (error) {
-      console.log('Error Happened While Loading CSV File: ' + path, error);
-    }
-
-    if (parser) {
-      res = parser(res);
-    }
-
-    CACHE.FILE_CACHED[path] = res;
-    CACHE.FILE_REQUESTED[path].resolve();
-  });
-
-  return CACHE.FILE_REQUESTED[path];
-}
 
 //// time utils
 
@@ -798,12 +734,42 @@ function getTimeRange(query) {
   return result;
 }
 
-//// entity set utils
+function load(path) {
+  if (CACHE.FILE_REQUESTED[path]) {
+    return CACHE.FILE_REQUESTED[path];
+  }
 
-function getExpectedEntityDomainValues(entityName) {
-  return entities.map(function (entity) {
-    return entity[entityName];
-  })
+  CACHE.FILE_REQUESTED[path] = new Promise();
+
+  // checks if eval() statements are allowed. They are needed for fast parsing by D3.
+  if (EVALALLOWED == null) {
+    defineEvalAllowed();
+  }
+
+  // true:  load using csv, which uses d3.csv.parse, is faster but doesn't comply with CSP
+  // false: load using text and d3.csv.parseRows to circumvent d3.csv.parse and comply with CSP
+  var loader = (EVALALLOWED) ? d3.csv : d3.text;
+  var parser = (EVALALLOWED) ? null : csvToObject;
+
+  loader(path, function (error, res) {
+
+    if (!res) {
+      utils.error('No permissions or empty file: ' + path, JSON.stringify(error));
+    }
+
+    if (error) {
+      utils.error('Error Happened While Loading CSV File: ' + path, JSON.stringify(error));
+    }
+
+    if (parser) {
+      res = parser(res);
+    }
+
+    CACHE.FILE_CACHED[path] = res;
+    CACHE.FILE_REQUESTED[path].resolve();
+  });
+
+  return CACHE.FILE_REQUESTED[path];
 }
 
-export default DDF1CSVReader;
+export default Ddf;

@@ -12,3 +12,4 @@ test.html
 npm-debug.log
 **/*/_index.js
 .DS_Store
+test/coverage-report/
