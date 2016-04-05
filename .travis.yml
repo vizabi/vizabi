@@ -28,5 +28,5 @@ deploy:
     secure: "OXicljfGIGTenI9y58GhN+LjFSIB89UxbOrTFNItqNvvtED3bISSsCFpBXzI1258KoODmvIQOicu2pRFliXgshmF41MHKYBy2EjHgIlg85+wi+DGEr2vZEKRXeoHvFfC6QTCf56B0wRJbYma8oHiqpoevVKQNlCfBl3hoTb45us="
   on:
     branch: develop
-    node: 4
+    node: 4.1
     condition: "-e /tmp/deployment.flag"
