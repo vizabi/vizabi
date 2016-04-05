@@ -25,7 +25,7 @@ deploy:
   provider: npm
   email: "konzeptmeister@gmail.com"
   api_key:
-    secure: "OXicljfGIGTenI9y58GhN+LjFSIB89UxbOrTFNItqNvvtED3bISSsCFpBXzI1258KoODmvIQOicu2pRFliXgshmF41MHKYBy2EjHgIlg85+wi+DGEr2vZEKRXeoHvFfC6QTCf56B0wRJbYma8oHiqpoevVKQNlCfBl3hoTb45us="
+    secure: "c9zX0E1LJMAjy3BYTQYT6dI3WRJ/QWD7mUMwtY4PysGCOEbAL+k4P7XAaS4N6l5rBgmN9QsZMDvh18NHKlEnwtNIfBBUq9yc4EvIMynGLbkEwJ/c9JPlRn4U1ND8dBdBbXefYWjUHqXKkRvQfDgDafhmHbJmVPPVnYqlz/HOmb0="
   on:
     branch: develop
     node: 4.1
