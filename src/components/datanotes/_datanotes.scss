@@ -18,6 +18,7 @@
   }
 
   .vzb-data-notes-link {
+    flex: 0 0 25px;
     font-size: $vzb-font-size-medium;
     margin: 5px 5px 10px;
     svg {
@@ -49,11 +50,11 @@
 
   .vzb-data-notes-body {
     font-size: $vzb-font-size-regular;
+    flex: 1 auto;
     padding: 0 30px 0 5px;
     color: $vzb-color-black;
     white-space: normal;
     line-height: 150%;
-    height: 80%;
     overflow: auto;
 
     a {
@@ -89,7 +90,7 @@
       position: absolute;
       width: 100%;
       height: 50px; 
-      bottom: 0; 
+      bottom: 50px; 
       box-shadow: inset 0 -50px 30px -20px $vzb-color-white;
     }
   }
