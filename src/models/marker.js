@@ -124,10 +124,13 @@ var Marker = Model.extend({
       var steps = this._parent.time.getAllSteps();
         
       var cachePath = steps[0] + " - " + steps[steps.length-1];
+      var dataLoading = false;
       utils.forEach(this._dataCube, function(hook, name) {
-          cachePath = cachePath + ", " + name + ":" + hook.which + ":" + hook._dataId;
+        if (hook._loadCall) dataLoading = true;  
+        cachePath = cachePath + "_" +  hook._dataId;
       });
-    
+      // prevent calculating corrupted frames when one of models is loading 
+      if (dataLoading) return cb(null, time);
       // check if the requested time point has a cached animation frame
       if(time && _this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
         // if it does, then return that frame directly and stop here
@@ -221,7 +224,7 @@ var Marker = Model.extend({
         
       var cachePath = steps[0] + " - " + steps[steps.length-1];
       utils.forEach(this._dataCube, function(hook, name) {
-        cachePath = cachePath + ", " + name + ":" + hook.which + ":" + hook._dataId;
+        cachePath = cachePath + "_" + hook._dataId;
       });
 
       //if the collection of frames for this data cube is not scheduled yet (otherwise no need to repeat calculation)
