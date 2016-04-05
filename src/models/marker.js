@@ -23,12 +23,17 @@ var Marker = Model.extend({
       if (!this.cachedTimeLimits) this.cachedTimeLimits = {};      
       
       utils.forEach(this.getSubhooks(), function(hook) {
-        if(hook.use !== "indicator") return;          
-        var availability = hook.getMetadata().availability;
+        if(hook.use !== "indicator") return;
+        var hookMeta = hook.getMetadata();
+        if(!hookMeta) return utils.warn(hook._name + ": " + hook.which + " is not found in metadata.json. \
+            Check that you read the correct file or server instance... \
+            Check that the pointer 'which' of the hook is correct too");
+                                        
+        var availability = hookMeta.availability;
         var availabilityForHook = _this.cachedTimeLimits[hook._dataId + hook.which];
           
-          
         if (availabilityForHook){
+            //if already calculated the limits then no ned to do it again
             min = availabilityForHook.min;
             max = availabilityForHook.max;
         }else if (availability){
