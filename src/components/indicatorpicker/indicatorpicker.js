@@ -40,14 +40,16 @@ var IndPicker = Component.extend({
             "change:language.strings": function(evt) {
                 _this.updateView();
             },
-            "change:marker": function(evt) {
-                _this.updateView();
-            },
             "ready": function(evt) {
                 _this.updateView();
             }
         };
-
+        
+        if(this.markerID) {
+          this.model_binds["change:marker." + this.markerID + ".which"] = function(evt) {
+              _this.updateView();
+            } 
+        }
 
         //contructor is the same as any component
         this._super(config, context);
