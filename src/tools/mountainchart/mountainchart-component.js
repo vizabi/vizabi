@@ -309,6 +309,7 @@ var MountainChartComponent = Component.extend({
         this.updateUIStrings();
         this.updateIndicators();
         this.model.marker.getFrame(this.model.time.value, function(values) {
+          if (!values) return;
           _this.values = values;
           _this.updateEntities();
           _this.updateSize();
