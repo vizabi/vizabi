@@ -41,6 +41,7 @@
     "hints/dataWarning": "Data doubts",
     "hints/dataWarning-little": "Data",
     "hints/source": "More info and source",
+    "hints/nodata": "No data",
     "mount/maxYmode/immediate": "Immediate",
     "mount/maxYmode/latest": "Latest",
     "mount/maxYmode/total": "Total",

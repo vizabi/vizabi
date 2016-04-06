@@ -392,13 +392,15 @@ var BubbleMapComponent = Component.extend({
         if(unitY === "unit/" + _this.model.marker.size.which) unitY = "";
         if(unitC === "unit/" + _this.model.marker.color.which) unitC = "";
           
+        var valueS = _this.values.size[hovered[_this.KEY]];
+        var valueC = _this.values.color[hovered[_this.KEY]];
+          
         _this.yTitleEl.select("text")
-          .text(_this.translator("buttons/size") + ": " +
-            formatterS(_this.values.size[hovered[_this.KEY]]) + " " + unitY);
+          .text(_this.translator("buttons/size") + ": " + formatterS(valueS) + " " + unitY);
           
         _this.cTitleEl.select("text")
-          .text(_this.translator("buttons/color") + ": " +
-            formatterC(_this.values.color[hovered[_this.KEY]]) + " " + unitC);
+          .text(_this.translator("buttons/color") + ": " + 
+            (valueC || valueC===0 ? formatterC(valueC) + " " + unitC : _this.translator("hints/nodata")));
 
         this.infoEl.classed("vzb-hidden", true);
       }else{
@@ -594,7 +596,7 @@ var BubbleMapComponent = Component.extend({
           d.label = valueL;
           
           view.classed("vzb-hidden", false)
-              .attr("fill", valueC?_this.cScale(valueC):_this.COLOR_WHITEISH)
+              .attr("fill", valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH);
           
           if(reposition){
               d.cLoc = _this.skew(_this.projection([valueX||0, valueY||0]));

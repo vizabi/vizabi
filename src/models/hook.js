@@ -26,8 +26,8 @@ var Hook = Model.extend({
         return _this._space.time.timeFormat(new Date(x));
     }
       
-    // Strings are bypassing any formatter
-    if(utils.isString(x)) return x;
+    // Strings, null, NaN and undefined are bypassing any formatter
+    if(utils.isString(x) || !x && x!==0) return x;
 
     if(Math.abs(x)<0.00000000000001) return "0";
         
