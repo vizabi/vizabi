@@ -20,6 +20,9 @@ var DraggableList = Component.extend({
     }];
     
     this.groupID = config.groupID;
+    this.isEnabled = config.isEnabled;
+    this.draggable = true; 
+
     if(!config.groupID) utils.warn("draggablelist.js complains on 'groupID' property: " + config.groupID);
 
     this.model_binds = {
@@ -31,6 +34,10 @@ var DraggableList = Component.extend({
     this.model_binds["change:group." + this.groupID] = function(evt) {
         _this.updateView();
     };
+    this.model_binds["change:group." + this.isEnabled] = function(evt) {
+      _this.draggable = _this.model.group[_this.isEnabled];
+      _this.updateView();
+    };
     
 
     this._super(config, context);
@@ -39,7 +46,7 @@ var DraggableList = Component.extend({
     
     this.itemDragger = d3.behavior.drag()
       .on('dragstart', function(draggedData, i) {
-        if(_this.dataUpdateFlag) return;
+        if(_this.dataUpdateFlag || !_this.draggable) return;
         d3.event.sourceEvent.stopPropagation();
         _this.parentBoundRect = _this.element.node().getBoundingClientRect();
         _this.element
@@ -58,7 +65,7 @@ var DraggableList = Component.extend({
       })
       
       .on('drag', function(draggedData, draggedIndex) {
-        if(_this.dataUpdateFlag) return;
+        if(_this.dataUpdateFlag || !_this.draggable) return;
         draggedData._top += d3.event.dy;
         var newDraggedY = draggedData._y + draggedData._top;
         if(newDraggedY > _this.parentBoundRect.top 
@@ -82,7 +89,7 @@ var DraggableList = Component.extend({
       })
       
       .on('dragend', function(d, i) {
-        if(_this.dataUpdateFlag) return;
+        if(_this.dataUpdateFlag || !_this.draggable) return;
         _this.getData();     
       })
       
@@ -118,9 +125,9 @@ var DraggableList = Component.extend({
 
     this.items = this.element.selectAll('div').data(function() {
       return _this.dataArrFn().map( function(d) { return {data:d};})});
+    var draggable = _this.draggable?true:null;
     this.items.enter()
       .append('div')
-      .attr('draggable', true)
       .append('li');
     this.items.select('li').classed('hover', false).each(function(val, index) {
         d3.select(this).attr('data', val['data']).text(_this.translator(_this.lang + val['data']));
@@ -128,6 +135,7 @@ var DraggableList = Component.extend({
     this.items.exit().remove();
     this.element.selectAll('div')
       .style('top', '')
+      .attr('draggable', draggable)
       .classed('dragged', false);
     this.dataUpdateFlag = false;
      
