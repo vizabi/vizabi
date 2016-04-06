@@ -55,7 +55,7 @@ var BubbleMapComponent = Component.extend({
     this.model_binds = {
       "change:time.value": function (evt) {
         if (!_this._readyOnce) return;
-        this.year.setText(_this.model.time.timeFormat(_this.model.time.value));
+        _this.year.setText(_this.model.time.timeFormat(_this.model.time.value));
         _this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
       },
       "change:entities.highlight": function (evt) {
@@ -285,6 +285,7 @@ var BubbleMapComponent = Component.extend({
 //    this._selectlist.redraw();
       _this.updateDoubtOpacity();
       _this.updateOpacity();
+      _this.year.setText(_this.model.time.timeFormat(_this.model.time.value));        
     });
 
   },
