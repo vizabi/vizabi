@@ -4,8 +4,13 @@
     margin: auto;
     padding: 5px 0;
     width: 200px;
+    > div {
+      padding-bottom: 3px;
+      opacity: .6;
+    }
     [draggable=true] {
       position: relative;
+      opacity: 1;
       padding-bottom: 3px;
       &.dragged {
         z-index: 2;
@@ -18,19 +23,24 @@
           border-color: $vzb-color-grey-dark;
         }
       }
+      li {
+        cursor: move;
+        background: $vzb-color-primary-lightest;
+        border: 1px solid $vzb-color-primary-light;
+        &.hover {
+          background: $vzb-color-grey-light;
+          border-color: $vzb-color-grey-dark;
+        }
+      }
     }
     li {
-      cursor: move;
-      background: $vzb-color-primary-lightest;
-      border: 1px solid $vzb-color-primary-light;
+      cursor: default;
       height: 12px;
       border-radius: 4px;
+      background: $vzb-color-primary-lightest;
+      border: 1px solid $vzb-color-primary-light;
       list-style: none;
       padding: 2px 8px 5px 6px;
-      &.hover {
-        background: $vzb-color-grey-light;
-        border-color: $vzb-color-grey-dark;
-      }
     }
   }
 

@@ -30,6 +30,7 @@ var Stack = Dialog.extend({
             placeholder: '.vzb-dialog-draggablelist',
             model: ["state.marker.group", "language"],
             groupID: "manualSorting",
+            isEnabled: "manualSortingEnabled",
             dataArrFn: _this.manualSorting.bind(_this),
             lang: 'region/'
         }];
@@ -75,7 +76,9 @@ var Stack = Dialog.extend({
             .property('checked', function() {
                 return d3.select(this).node().value === _this.stack.which;
             });
-
+        
+        _this.group.manualSortingEnabled = _this.stack.which == "all";
+        
         this.howToMergeEl
             .property('checked', function() {
                 if(d3.select(this).node().value === "none")  return !_this.group.merge && !_this.stack.merge;
