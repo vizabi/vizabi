@@ -266,7 +266,7 @@ export default Class.extend({
       }
       (function(_view, _segment, _index) {
         _context.model.marker.getFrame(_segment.t, function(frame) {
-
+          if (!frame) return;
           _segment.valueY = frame.axis_y[d[KEY]];
           _segment.valueX = frame.axis_x[d[KEY]];
           _segment.valueS = frame.size[d[KEY]];
@@ -279,9 +279,6 @@ export default Class.extend({
             _context.cached[d[KEY]].scaledS0 = utils.areaToRadius(_context.sScale(_segment.valueS));
 
             _context._updateLabel(d, _index, _segment.valueX, _segment.valueY, _segment.valueS, frame.label[d[KEY]], frame.size_label[d[KEY]], 0, true);
-          }
-          if (isNaN(_context.xScale(_segment.valueX))) {
-            console.log("2");
           }
 
           _view.select("circle")
@@ -310,7 +307,7 @@ export default Class.extend({
             _segment.valueS = frame.size[d[KEY]];
             _segment.valueC = frame.color[d[KEY]];
 
-            if(_segment.valueY==null || _segment.valueX==null || _segment.valueS==null) return;
+            if(!nextFrame || _segment.valueY==null || _segment.valueX==null || _segment.valueS==null) return;
 
             if(nextFrame.axis_x[d[KEY]]==null || nextFrame.axis_y[d[KEY]]==null) return;
             var strokeColor = _context.model.marker.color.which == "geo.world_4region"?
@@ -327,15 +324,12 @@ export default Class.extend({
               Math.pow(_context.xScale(_segment.valueX) - _context.xScale(nextFrame.axis_x[d[KEY]]),2) +
               Math.pow(_context.yScale(_segment.valueY) - _context.yScale(nextFrame.axis_y[d[KEY]]),2)
             );
-            if (isNaN(_context.xScale(_segment.valueX))) {
-              console.log("1");
-            }
             _view.select("line")
               .transition().duration(duration).ease("linear")
-              .attr("x1", _context.xScale(_segment.valueX))
-              .attr("y1", _context.yScale(_segment.valueY))
-              .attr("x2", _context.xScale(nextFrame.axis_x[d[KEY]]))
-              .attr("y2", _context.yScale(nextFrame.axis_y[d[KEY]]))
+              .attr("x1", _context.xScale(nextFrame.axis_x[d[KEY]]))
+              .attr("y1", _context.yScale(nextFrame.axis_y[d[KEY]]))
+              .attr("x2", _context.xScale(_segment.valueX))
+              .attr("y2", _context.yScale(_segment.valueY))
               .style("stroke-dasharray", lineLength)
               .style("stroke-dashoffset", utils.areaToRadius(_context.sScale(_segment.valueS)))
               .style("stroke", strokeColor);
