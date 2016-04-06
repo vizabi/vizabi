@@ -74,7 +74,7 @@ BarChart.define('default_model', {
       },
       axis_y: {
         use: "indicator",
-        which: "population",
+        which: "population_total",
         scaleType: "log",
         allow: {
           scales: ["linear", "log"]
@@ -149,7 +149,7 @@ BarRankChart.define('default_model', {
       },
       axis_x: {
         use: "indicator",
-        which: "population",
+        which: "population_total",
         scaleType: "log",
         allow: {
           scales: [
@@ -409,7 +409,7 @@ LineChart.define('default_model', {
       },
       axis_y: {
         use: "indicator",
-        which: "gdp_p_cap_const_ppp2011_dollar",
+        which: "income_per_person_gdppercapita_ppp_inflation_adjusted",
         scaleType: "log"
       },
       axis_x: {
@@ -657,7 +657,7 @@ DonutChart.define('default_model', {
       },
       axis: {
         use: "indicator",
-        which: "population"
+        which: "population_total"
       },
       color: {
         use: "property",
