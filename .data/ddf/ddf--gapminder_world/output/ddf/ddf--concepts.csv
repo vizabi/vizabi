@@ -5,14 +5,20 @@ landlocked,Landlocked,entity_set,,,,,,geo,
 g77_and_oecd_countries,G77 and OECD countries,entity_set,,,,,,geo,
 geographic_regions_in_4_colors,Geographic regions in 4 colors,entity_set,,,,,,geo,
 main_religion_2008,Main religion 2008,entity_set,,,,,,geo,
+description,Description,string,,,,,,,
+indicator_url,Indicator url,string,,,,,,,
+name,Name,string,,,,,,,
+unit,Unit,string,,,,,,,
+interpolation,interpolation,string,,,,,,,
 geo,Geo,entity_domain,,,,,,,
 country,Country,entity_set,,,,,"['geographic_regions', 'income_groups', 'landlocked', 'g77_and_oecd_countries', 'geographic_regions_in_4_colors', 'main_religion_2008']",geo,
-time,Time,time,,,,,,,
-name,Name,string,,,,,,,
-gwid,Gwid,string,,,,,,,
 name_short,Name Short,string,,,,,,,
 name_long,Name Long,string,,,,,,,
-description,Description,string,,,,,,,
+world_4region,World Regions,entity_set,,,,,,geo,
+latitude,Latitude,measure,,,degrees,,,,
+longitude,Longitude,measure,,,degrees,,,,
+global,World,entity_set,,,,,,geo,
+color,Color,string,,,,,,,
 gapminder_list,Gapminder list,string,,,,,,,
 alternative_1,Alternative 1,string,,,,,,,
 alternative_2,Alternative 2,string,,,,,,,
@@ -31,13 +37,6 @@ arb3,arb3,string,,,,,,,
 arb4,arb4,string,,,,,,,
 arb5,arb5,string,,,,,,,
 arb6,arb6,string,,,,,,,
-indicator_url,Indicator Url,string,,,,,,,
-scales,Scales,string,,,,,,,
-unit,Unit,string,,,,,,,
-interpolation,Interpolation,string,,,,,,,
-world_4region,World Regions,entity_set,,,,,,geo,
-latitude,Latitude,measure,,,degrees,,,,
-longitude,Longitude,measure,,,degrees,,,,
 children_per_woman_total_fertility,Babies per woman,measure,Total fertility rate. The number of children that would be born to each woman with prevailing age-specific fertility rates. ,http://spreadsheets.google.com/pub?key=phAwcNAVuyj0TAlJeCEzcGQ,,,,,"['linear', 'log']"
 co2_emissions_tonnes_per_person,CO2 emissions,measure,Carbon dioxide emissions from the burning of fossil fuels (metric tonnes of CO2 per person). ,http://spreadsheets.google.com/pub?key=phAwcNAVuyj1gkNuUEXOGag,tons per person,,,,"['linear', 'log']"
 income_per_person_gdppercapita_ppp_inflation_adjusted,Income per person,measure,"Gross domestic product per person adjusted for differences in purchasing power (in international dollars, fixed 2005 prices, PPP based on 2005 ICP). ",http://spreadsheets.google.com/pub?key=phAwcNAVuyj1jiMAkmq1iMg,$/year (GDP/capita),,,,"['log', 'linear']"
@@ -568,8 +567,8 @@ yearly_co2_emissions_1000_tonnes,Yearly CO2 emissions,measure,Total carbon dioxi
 child_mortality_0_5_year_olds_more_years_version_7,"Child mortality (More years, v.7)",measure,"Death of children under five years of age per 1,000 live births. More years are included in this indicator.",http://spreadsheets.google.com/pub?key=1qOyLQJxO8zBHvldD1tS1s9dYIHuCe8u72JZQ_LjI9qI,deaths under age 5 per 1 000 births,,,,"['linear', 'log']"
 number_of_people_in_poverty,Number of people in poverty,measure,Number of the poor population in millions living on less than $1.25 a day at 2005 international prices. Povcal data,https://docs.google.com/spreadsheet/pub?key=1edXplIOkF3Y5OuEWp_aVapd92-OD5aVFAPECZLgP8cA,millions,,,,"['linear', 'log']"
 income_per_person_long_series,Income per person (long series),measure,"Income per person, version 15, including historical data & projections",https://docs.google.com/spreadsheet/pub?key=1SKMoV61HUNwWfYNCZs2M9zgMWqVrs9YrbJxs5HQbJSQ,,,,,"['linear', 'log']"
-newborn_mortality_rate_per_1000,Newborn mortality rate per 1000,measure,Neonatal mortality rate. Children dying within the first 28 days per 1000 live births.,https://docs.google.com/spreadsheets/d/1S3Kcw96vp5-fZbaM7Lck_06IbJ8DagThGI5KHnzeSps/pub,,,,,"['linear', 'log']"
-newborn_deaths,Newborn deaths,measure,Neonatal deaths Children dying within the first 28 days.,https://docs.google.com/spreadsheets/d/1iTvolhgIMta3MmsoPkGnewJiaybev3MvR9e_7mxZ48o/pubhtml,,,,,"['linear', 'log']"
-sg_population,sg_population,measure,,http://www.gapminder.org/news/data-sources-dont-panic-end-poverty,,,,,"['linear', 'log']"
+newborn_mortality_rate_per_1000,Newborn mortality rate per 1000,measure,Neonatal mortality rate. Children dying within the first 28 days per 1000 live births.,https://docs.google.com/spreadsheet/pub?key=1S3Kcw96vp5-fZbaM7Lck_06IbJ8DagThGI5KHnzeSps,,,,,"['linear', 'log']"
+newborn_deaths,Newborn deaths,measure,Neonatal deaths Children dying within the first 28 days.,https://docs.google.com/spreadsheet/pub?key=1iTvolhgIMta3MmsoPkGnewJiaybev3MvR9e_7mxZ48o,,,,,"['linear', 'log']"
 sg_gdp_p_cap_const_ppp2011_dollar,sg_gdp_p_cap_const_ppp2011_dollar,measure,,http://www.gapminder.org/news/data-sources-dont-panic-end-poverty,,,,,"['log', 'linear']"
 sg_gini,sg_gini,measure,,http://www.gapminder.org/news/data-sources-dont-panic-end-poverty,,,,,['linear']
+sg_population,sg_population,measure,,http://www.gapminder.org/news/data-sources-dont-panic-end-poverty,,,,,"['linear', 'log']"

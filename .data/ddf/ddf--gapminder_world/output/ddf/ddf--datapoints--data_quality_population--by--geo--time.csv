@@ -1,6 +1,6 @@
 geo,data_quality_population,time
 afg,5,1800
-_akr,5,1800
+akr_a_dhe,5,1800
 asm,5,1700
 asm,4,1800
 asm,4,1850
@@ -124,8 +124,8 @@ caf,5,1820
 caf,2,1936
 tcd,5,1800
 tcd,2,1936
-_cis,5,1800
-_cis,5,1820
+chanisl,5,1800
+chanisl,5,1820
 chl,5,1800
 cxr,2,1600
 cxr,2,1888
@@ -193,7 +193,7 @@ dma,2,1911
 dma,2,1921
 dma,2,1946
 dom,5,1800
-_ddr,5,1800
+deu_east,5,1800
 ecu,5,1800
 egy,3,1820
 egy,3,1870
@@ -327,7 +327,7 @@ ken,2,1949
 kir,5,1800
 prk,5,1800
 kor,5,1800
-_unk,5,1800
+kos,5,1800
 kwt,5,1800
 kgz,5,1800
 lao,5,1800
@@ -464,8 +464,8 @@ shn,2,1911
 shn,2,1921
 shn,2,1931
 shn,2,1946
-_stm,5,1800
-_stm,5,1820
+stmar,5,1800
+stmar,5,1820
 spm,5,1800
 wsm,5,1700
 wsm,4,1800
@@ -487,8 +487,8 @@ sen,5,1820
 srb,5,1800
 srb,5,1820
 scg,5,1800
-_srbek,5,1800
-_srbek,5,1820
+scg_ex_kos,5,1800
+scg_ex_kos,5,1820
 syc,5,1800
 syc,5,1820
 syc,2,1891
@@ -628,7 +628,7 @@ pse,4,1918
 pse,3,1922
 pse,2,1931
 pse,3,1946
-_brd,5,1800
+deu_west,5,1800
 esh,5,1800
 esh,5,1820
 vnm,5,1800
@@ -644,8 +644,8 @@ vir,2,1911
 vir,2,1917
 vir,2,1930
 vir,2,1940
-_noy,5,1800
-_soy,5,1800
+yem_north,5,1800
+yem_south,5,1800
 yem,5,1800
 zmb,5,1800
 zmb,2,1904

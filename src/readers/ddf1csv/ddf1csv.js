@@ -27,19 +27,14 @@ var DDF1CSVReader = Reader.extend({
     var query = utils.deepExtend({}, queryPar);
     var p = new Promise();
 
-    if(!_this.ddf.filesList.length) {
-      p.reject();
-      return p;
-    }
-
     _this.ddf.getIndex(function () {
-      // get `concepts` and `entries` in any case
+      // get `concepts` and `entities` in any case
       // this data needed for query's kind (service, data point) detection
-      _this.ddf.getConceptsAndEntities(query, function (result) {
+      _this.ddf.getConceptsAndEntities(query, function (concepts, entities) {
         // service query: it was detected by next criteria:
         // all of `select` section of query parts are NOT measures
         if (_this.ddf.divideByQuery(query).measures.length <= 0) {
-          _this._data = _this.ddf.getAllEntities();
+          _this._data = entities;
           p.resolve();
         }
 
@@ -53,6 +48,7 @@ var DDF1CSVReader = Reader.extend({
         }
       });
     });
+
     return p;
   },
 
