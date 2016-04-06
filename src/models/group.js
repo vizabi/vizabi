@@ -13,7 +13,6 @@ var GroupModel = Hook.extend({
     use: null,
     which: null,
     merge: false,
-    manualSortingEnabled: true,
     manualSorting: null
   },
 

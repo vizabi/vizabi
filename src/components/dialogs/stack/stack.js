@@ -28,7 +28,7 @@ var Stack = Dialog.extend({
         this.components = [{
             component: draggablelist,
             placeholder: '.vzb-dialog-draggablelist',
-            model: ["state.marker.group", "language"],
+            model: ["state.marker.group", "language", "ui.chart"],
             groupID: "manualSorting",
             isEnabled: "manualSortingEnabled",
             dataArrFn: _this.manualSorting.bind(_this),
@@ -77,7 +77,7 @@ var Stack = Dialog.extend({
                 return d3.select(this).node().value === _this.stack.which;
             });
         
-        _this.group.manualSortingEnabled = _this.stack.which == "all";
+        _this.ui.chart.manualSortingEnabled = _this.stack.which == "all";
         
         this.howToMergeEl
             .property('checked', function() {

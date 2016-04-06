@@ -17,6 +17,9 @@ var DraggableList = Component.extend({
     }, {
       name: "language",
       type: "language"
+    }, {
+      name: "chart",
+      type: "model"
     }];
     
     this.groupID = config.groupID;
@@ -34,8 +37,8 @@ var DraggableList = Component.extend({
     this.model_binds["change:group." + this.groupID] = function(evt) {
         _this.updateView();
     };
-    this.model_binds["change:group." + this.isEnabled] = function(evt) {
-      _this.draggable = _this.model.group[_this.isEnabled];
+    this.model_binds["change:chart." + this.isEnabled] = function(evt) {
+      _this.draggable = _this.model.chart[_this.isEnabled];
       _this.updateView();
     };
     

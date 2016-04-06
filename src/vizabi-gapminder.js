@@ -372,6 +372,7 @@ MountainChart.define('default_model', {
   },
   ui: {
     chart: {
+      manualSortingEnabled: true,
       yMaxMethod: "latest",
       probeX: 1.85,
       xLogStops: [1, 2, 5],
