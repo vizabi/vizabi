@@ -503,6 +503,9 @@ var BubbleMapComponent = Component.extend({
     var endTime = this.model.time.end;
     this.model.entities.setVisible(getKeys.call(this));
 
+    //unselecting bubbles with no data is used for the scenario when
+    //some bubbles are selected and user would switch indicator.
+    //bubbles would disappear but selection would stay
     this.unselectBubblesWithNoData();
 
     // TODO: add to csv

@@ -688,7 +688,10 @@ var BubbleChartComp = Component.extend({
     var endTime = this.model.time.end;
     this.model.entities.setVisible(getKeys.call(this));
       
-    //this.unselectBubblesWithNoData();
+    //unselecting bubbles with no data is used for the scenario when
+    //some bubbles are selected and user would switch indicator.
+    //bubbles would disappear but selection would stay
+    this.unselectBubblesWithNoData();
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
       .data(this.model.entities.getVisible(), function(d) {return d[KEY]})
