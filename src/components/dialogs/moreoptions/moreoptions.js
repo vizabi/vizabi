@@ -45,8 +45,7 @@ var MoreOptions = Dialog.extend({
     this._super();
     
     var _this = this;
-    this.contentEl = this.element.select('.vzb-dialog-content');
-    this.accordionEl = this.element.select('.vzb-accordion');
+    this.accordionEl = this.contentEl.select('.vzb-accordion');
 
     this.on('dragend', function() {
       _this._setMaxHeight();

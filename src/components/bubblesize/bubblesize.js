@@ -10,7 +10,7 @@ import Component from 'base/component';
 var OPTIONS = {
   EXTENT_MIN: 0,
   EXTENT_MAX: 1,
-  TEXT_PARAMS: { TOP: 18, LEFT: 10, MAX_WIDTH: 42, MAX_HEIGHT: 16 },
+  TEXT_PARAMS: { TOP: 11, LEFT: 10, MAX_WIDTH: 42, MAX_HEIGHT: 16 },
   BAR_WIDTH: 6,
   THUMB_RADIUS: 10,
   THUMB_STROKE_WIDTH: 4,
@@ -159,11 +159,10 @@ var BubbleSize = Component.extend({
     this.sliderEl.selectAll("text").data([0,0]).enter()
       .append("text")
       .attr("class", "vzb-bs-slider-thumb-label")
-      .attr("dy", "0.35em")
       .attr("text-anchor", function(d, i) {
         return i ? "start" : "end"})
-      .attr("dominant-baseline", function(d, i) {
-        return i ? "text-after-edge" : "text-before-edge"})
+      .attr("dy", function(d, i) {
+        return i ? "-0.7em" : "1.4em"})
 
     this.sliderLabelsEl = this.sliderEl.selectAll("text.vzb-bs-slider-thumb-label");
 

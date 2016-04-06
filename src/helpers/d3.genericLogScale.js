@@ -15,6 +15,16 @@ export default function genericLog() {
                 });
             return Math.abs(arg);
         };
+        
+        //polyfill for IE11
+        Math.sign = Math.sign || function(x) {
+          x = +x;
+          if (x === 0 || isNaN(x)) {
+            return x;
+          }
+          return x > 0 ? 1 : -1;
+        }
+
         var oneside = function(arg) {
             var sign = Math.sign(arg[0]);
             for(var i = 0; i < arg.length; i++) {

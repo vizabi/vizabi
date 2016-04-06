@@ -52,10 +52,10 @@ $vzb-button-bg: $vzb-color-white;
           font-weight: 900;
           text {
             text-anchor: end;
+            font-family: $vzb-font-family;
           }
           .percent {
             text-anchor: start;
-            transform: scale(.6, 1);
           }
         }
       }

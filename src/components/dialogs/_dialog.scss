@@ -77,10 +77,26 @@ $vzb-dialog-content-height: 250px;
       display: block;
       width: 100%;
       outline: none;
-      font-family: $vzb-font-family-alt;
+      font-family: $vzb-font-family-alt;      
 
       &:focus {
         border: 1px solid rgba($vzb-color-grey, .6);
+      }
+    }
+
+    input[type=search] {
+      -webkit-appearance: none;
+      padding-right: 1px;
+      &::-webkit-search-decoration {
+        -webkit-appearance: none;
+      }
+      &::-ms-value {
+        margin-right: 8px;
+      }
+      &:focus {
+        &::-ms-value {
+          margin-right: 0;
+        }
       }
     }
 
