@@ -143,7 +143,8 @@
         @extend %vzb-chart-axis-title;
       }
 
-      .vzb-bmc-axis-info {
+      .vzb-bmc-axis-y-info,
+      .vzb-bmc-axis-c-info {
         @extend %vzb-chart-info;
       }
 

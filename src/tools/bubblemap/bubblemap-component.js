@@ -229,7 +229,8 @@ var BubbleMapComponent = Component.extend({
 
     this.yTitleEl = this.graph.select(".vzb-bmc-axis-y-title");
     this.cTitleEl = this.graph.select(".vzb-bmc-axis-c-title");
-    this.infoEl = this.graph.select(".vzb-bmc-axis-info");
+    this.yInfoEl = this.graph.select(".vzb-bmc-axis-y-info");
+    this.cInfoEl = this.graph.select(".vzb-bmc-axis-c-info");
 
     this.entityBubbles = null;
     this.entityLabels = null;
@@ -341,24 +342,6 @@ var BubbleMapComponent = Component.extend({
           .attr("text-anchor", "end")
           .text(this.translator("hints/dataWarning"));
 
-      this.infoEl
-          .html(iconQuestion)
-          .select("svg").attr("width", "0px").attr("height", "0px");
-
-      //TODO: move away from UI strings, maybe to ready or ready once
-      this.infoEl.on("click", function() {
-        _this.parent.findChildByName("gapminder-datanotes").pin();
-      })
-      this.infoEl.on("mouseover", function() {
-        var rect = this.getBBox();
-        var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-        _this.parent.findChildByName("gapminder-datanotes").setHook('size').show().setPos(coord.x, coord.y);
-      })
-      this.infoEl.on("mouseout", function() {
-        _this.parent.findChildByName("gapminder-datanotes").hide();
-      })
-    
-    
       this.dataWarningEl
           .on("click", function () {
               _this.parent.findChildByName("gapminder-datawarning").toggle();
@@ -369,6 +352,42 @@ var BubbleMapComponent = Component.extend({
           .on("mouseout", function () {
               _this.updateDoubtOpacity();
           })
+
+      this.yInfoEl
+          .html(iconQuestion)
+          .select("svg").attr("width", "0px").attr("height", "0px");
+
+      //TODO: move away from UI strings, maybe to ready or ready once
+      this.yInfoEl.on("click", function() {
+        _this.parent.findChildByName("gapminder-datanotes").pin();
+      })
+      this.yInfoEl.on("mouseover", function() {
+        var rect = this.getBBox();
+        var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+        _this.parent.findChildByName("gapminder-datanotes").setHook('size').show().setPos(coord.x, coord.y);
+      })
+      this.yInfoEl.on("mouseout", function() {
+        _this.parent.findChildByName("gapminder-datanotes").hide();
+      })
+
+      this.cInfoEl
+          .html(iconQuestion)
+          .select("svg").attr("width", "0px").attr("height", "0px");
+
+      //TODO: move away from UI strings, maybe to ready or ready once
+      this.cInfoEl.on("click", function() {
+        _this.parent.findChildByName("gapminder-datanotes").pin();
+      })
+      this.cInfoEl.on("mouseover", function() {
+        var rect = this.getBBox();
+        var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+        _this.parent.findChildByName("gapminder-datanotes").setHook('color').show().setPos(coord.x, coord.y);
+      })
+      this.cInfoEl.on("mouseout", function() {
+        _this.parent.findChildByName("gapminder-datanotes").hide();
+      })
+    
+    
   },
 
   // show size number on title when hovered on a bubble
@@ -402,14 +421,16 @@ var BubbleMapComponent = Component.extend({
           .text(_this.translator("buttons/color") + ": " + 
             (valueC || valueC===0 ? formatterC(valueC) + " " + unitC : _this.translator("hints/nodata")));
 
-        this.infoEl.classed("vzb-hidden", true);
-      }else{
+        this.yInfoEl.classed("vzb-hidden", true);
+        this.cInfoEl.classed("vzb-hidden", true);
+      } else {
         this.yTitleEl.select("text")
             .text(this.translator("buttons/size") + ": " + this.strings.title.S);
         this.cTitleEl.select("text")
             .text(this.translator("buttons/color") + ": " + this.strings.title.C);
 
-        this.infoEl.classed("vzb-hidden", false);
+        this.yInfoEl.classed("vzb-hidden", false);
+        this.cInfoEl.classed("vzb-hidden", false || this.cTitleEl.classed('vzb-hidden'));
       }
   },
 
@@ -647,7 +668,7 @@ var BubbleMapComponent = Component.extend({
     var cTitleText = this.cTitleEl.select("text");
 
     var yTitleBB = yTitleText.node().getBBox();
-    var cTitleBB = cTitleText.classed('vzb-hidden') ? yTitleBB : cTitleText.node().getBBox();
+    var cTitleBB = this.cTitleEl.classed('vzb-hidden') ? yTitleBB : cTitleText.node().getBBox();
 
     var font = 
         Math.max(parseInt(yTitleText.style("font-size")), parseInt(cTitleText.style("font-size"))) 
@@ -757,9 +778,8 @@ var BubbleMapComponent = Component.extend({
 
     var yTitleBB = this.yTitleEl.select("text").node().getBBox();
 
-    this.cTitleEl.select("text")
-        .attr("transform", "translate(" + 0 + "," + (margin.top + yTitleBB.height) + ")")
-        .classed("vzb-hidden", this.model.marker.color.which.indexOf("geo") != -1);
+    this.cTitleEl.attr("transform", "translate(" + 0 + "," + (margin.top + yTitleBB.height) + ")")
+        .classed("vzb-hidden", this.model.marker.color.which.indexOf("geo") != -1 || this.model.marker.color.use == "constant");
 
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl.select("svg")
@@ -772,14 +792,28 @@ var BubbleMapComponent = Component.extend({
         .attr("transform", "translate(" + (this.width) + "," + (this.height - warnBB.height * 0.5) + ")")
         .select("text");
 
-    if(this.infoEl.select('svg').node()) {
+    if(this.yInfoEl.select('svg').node()) {
         var titleBBox = this.yTitleEl.node().getBBox();
         var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
 
-        this.infoEl.select('svg')
+        this.yInfoEl.select('svg')
             .attr("width", infoElHeight)
             .attr("height", infoElHeight)
-        this.infoEl.attr('transform', 'translate('
+        this.yInfoEl.attr('transform', 'translate('
+            + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
+            + (translate[1] - infoElHeight * 0.8) + ')');
+    }
+    
+    this.cInfoEl.classed("vzb-hidden", this.cTitleEl.classed("vzb-hidden"));
+
+    if(!this.cInfoEl.classed("vzb-hidden") && this.cInfoEl.select('svg').node()) {
+        var titleBBox = this.cTitleEl.node().getBBox();
+        var translate = d3.transform(this.cTitleEl.attr('transform')).translate;
+
+        this.cInfoEl.select('svg')
+            .attr("width", infoElHeight)
+            .attr("height", infoElHeight)
+        this.cInfoEl.attr('transform', 'translate('
             + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
             + (translate[1] - infoElHeight * 0.8) + ')');
     }
