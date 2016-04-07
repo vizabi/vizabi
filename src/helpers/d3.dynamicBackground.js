@@ -56,7 +56,9 @@ export default Class.extend({
     if (leftOffset) {
       this.leftOffset = leftOffset;
     }
-
+    if (this.fontSize > this.height) {
+      this.fontSize = this.height;
+    }
     var sample = this.context.append("text").text("0").style("font-size", this.fontSize + "px");
     this.fontWidth = sample[0][0].getBBox().width;
     this.fontHeight = this.fontSize*0.72;
