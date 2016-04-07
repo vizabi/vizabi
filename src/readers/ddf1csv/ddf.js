@@ -1,7 +1,6 @@
 import * as utils from 'base/utils';
 import Promise from 'base/promise';
 
-/// DDF specific
 var index = null;
 var concepts = null;
 var conceptTypeHash = {};
@@ -9,6 +8,10 @@ var entities = null;
 
 function Ddf(ddfPath) {
   this.ddfPath = ddfPath;
+
+  if (this.ddfPath[this.ddfPath.length - 1] !== '/') {
+    this.ddfPath += '/';
+  }
 
   var parser = document.createElement('a');
   parser.href = ddfPath;
@@ -31,20 +34,57 @@ Ddf.prototype.getConceptFileNames = function () {
 
   index.forEach(function (indexRecord) {
     if (indexRecord.key === 'concept') {
-      result.push(_this.ddfPath + '/' + indexRecord.file);
+      result.push(_this.ddfPath + indexRecord.file);
     }
   });
 
   return utils.unique(result);
 };
 
-Ddf.prototype.getEntityFileNames = function () {
+function getSelectParts(query) {
+  return query.select.map(function (selectPart) {
+    var pos = selectPart.indexOf('.');
+
+    return pos >= 0 ? selectPart.substr(pos + 1) : selectPart;
+  });
+}
+
+function getWhereParts(query) {
+  var whereParts = [];
+
+  for (var whereKey in query.where) {
+    if (query.where.hasOwnProperty(whereKey)) {
+      var pos = whereKey.indexOf('.');
+      var value = pos >= 0 ? whereKey.substr(pos + 1) : whereKey;
+
+      value = value.replace(/is--/, '');
+      whereParts.push(value);
+    }
+  }
+
+  return whereParts;
+}
+
+Ddf.prototype.getEntitySetsByQuery = function (query) {
+  var selectPartsEntitySets = getSelectParts(query).filter(function (part) {
+    return conceptTypeHash[part] === 'entity_set';
+  });
+
+  var wherePartsEntitySets = getWhereParts(query).filter(function (part) {
+    return conceptTypeHash[part] === 'entity_set';
+  });
+
+  return wherePartsEntitySets.length > 0 ? wherePartsEntitySets : selectPartsEntitySets;
+};
+
+Ddf.prototype.getEntityFileNames = function (query) {
   var _this = this;
   var result = [];
+  var expectedEntities = this.getEntitySetsByQuery(query);
 
   index.forEach(function (indexRecord) {
-    if (conceptTypeHash[indexRecord.key] === 'entity_domain') {
-      result.push(_this.ddfPath + '/' + indexRecord.file);
+    if (expectedEntities.indexOf(indexRecord.key) >= 0) {
+      result.push(_this.ddfPath + indexRecord.file);
     }
   });
 
@@ -163,7 +203,7 @@ Ddf.prototype.normalizeAndFilter = function (headerDescriptor, content, filter) 
 Ddf.prototype.getEntities = function (query, cb) {
   var _this = this;
   var entityActions = [];
-  var entityFileNames = _this.getEntityFileNames();
+  var entityFileNames = _this.getEntityFileNames(query);
 
   entityFileNames.forEach(function (fileName) {
     entityActions.push(load(fileName));
@@ -277,9 +317,9 @@ Ddf.prototype.getDataPointDescriptorsByIndex = function (query) {
         });
 
         if (founded === parts.length) {
-          fileNames.push(_this.ddfPath + '/' + indexRecord.file);
+          fileNames.push(_this.ddfPath + indexRecord.file);
           descriptors.push({
-            fileName: _this.ddfPath + '/' + indexRecord.file,
+            fileName: _this.ddfPath + indexRecord.file,
             measures: [indexRecord.value],
             // only one measure should be present in DDF1 data point in case of Vizabi using?
             measure: indexRecord.value,
