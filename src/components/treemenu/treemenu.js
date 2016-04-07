@@ -563,7 +563,7 @@ var TreeMenu = Component.extend({
     this.menuEntity = null;
     this.model_binds = {
       "change:marker": function(evt, path) {
-        if(path.indexOf(markerID + '.which')==-1) return;
+        if(path.indexOf(markerID + '.which')==-1 && path.indexOf(markerID + '.scaleType')==-1) return;
         _this.updateView();
       },
       "change:language.strings": function(evt) {
