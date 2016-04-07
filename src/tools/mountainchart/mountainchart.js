@@ -7,7 +7,8 @@ import {
   dialogs,
   buttonlist,
   treemenu,
-  datawarning
+  datawarning,
+  datanotes
 }
 from 'components/_index';
 
@@ -49,6 +50,10 @@ var MountainChart = Tool.extend('MountainChart', {
       component: datawarning,
       placeholder: '.vzb-tool-datawarning',
       model: ['language']
+    }, {
+      component: datanotes,
+      placeholder: '.vzb-tool-datanotes',
+      model: ['state.marker', 'language']
     }];
 
     //constructor is the same as any tool
