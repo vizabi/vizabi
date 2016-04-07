@@ -633,11 +633,13 @@ var BubbleChartComp = Component.extend({
       _this.parent.findChildByName("gapminder-datanotes").pin();
     })
     this.xInfoEl.on("mouseover", function() {
+      if (_this.model.time.dragging) return;
       var rect = this.getBBox();
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
       _this.parent.findChildByName("gapminder-datanotes").setHook('axis_x').show().setPos(coord.x, coord.y);
     })
     this.xInfoEl.on("mouseout", function() {
+       if (_this.model.time.dragging) return;
       _this.parent.findChildByName("gapminder-datanotes").hide();
     })
     this.dataWarningEl
