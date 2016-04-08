@@ -2708,5 +2708,15 @@
         "-t-ind": "1SKMoV61HUNwWfYNCZs2M9zgMWqVrs9YrbJxs5HQbJSQ", 
         "-t-name": "Income per person, long series", 
         "-t-types": "{}"
+    }, 
+    {
+        "-t-ind": "1S3Kcw96vp5-fZbaM7Lck_06IbJ8DagThGI5KHnzeSps", 
+        "-t-name": "Newborn mortality rate per 1000", 
+        "-t-types": "{}"
+    }, 
+    {
+        "-t-ind": "1iTvolhgIMta3MmsoPkGnewJiaybev3MvR9e_7mxZ48o", 
+        "-t-name": "Newborn deaths", 
+        "-t-types": "{}"
     }
 ]

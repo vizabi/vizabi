@@ -24,14 +24,21 @@
 
 ## How to run the script
 
-For now you have to manually download all source files into one directory, and also symlink/download the indicators datapoints dir into the source dir.
+- change the symlink of indicators dir to your local copy of indicators dir
+- go to script dir and run update.py to update other source files. Before you run the script please fill in the token string in line 11.
 
-When data are ready, go to script directory and run main.py:
+  ```
+  cd script
+  python update.py
+  ```
+  
+- run main.py to generate files. you can choose which files you want to create: all, entities, concepts, datapoints, enjson, metadata
 
-```
-cd source
-python main.py
-```
+  ```
+  $ python main.py all  # all ddf files and en.json and metadata.json
+  $ python main.py entities  # only entities will be created
+  $ python main.py concepts datapoints  # create countries and datapoints
+  ```
 
 only python 3 is tested for now, will do more testing soon.
 
