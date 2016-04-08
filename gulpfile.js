@@ -202,7 +202,7 @@ function formatTemplateFile(str, filename) {
     "s.type = 'text/template';" +
     "s.setAttribute('id', '" + filename + "');" +
     "s.innerHTML = '" + content + "';" +
-    "root.document.body.appendChild(s);" +
+    "root.document.getElementById('vzbp-placeholder').appendChild(s);" +
     "}).call(this);";
 }
 
@@ -245,14 +245,15 @@ function buildJS(dev, cb) {
       ' */',
       ''
     ].join('\n');
-
+  
+    var templatesFunc = 'preloadTemplates = (function() {' + templates + '}).bind(this);'
     //var version = '; Vizabi._version = "' + pkg.version + '";';
     var version = ';(function (Vizabi) {Vizabi._version = "' + pkg.version + '"; Vizabi._build = "' + timestamp.valueOf() + '";})(typeof Vizabi !== "undefined"?Vizabi:{});';
 
     var options = {
       format: 'umd',
       banner: banner_str,
-      footer: version + templates,
+      footer: version + templatesFunc,
       moduleName: 'Vizabi',
       dest: path.join(config.destLib, 'vizabi.js')
     };
