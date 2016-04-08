@@ -25,16 +25,16 @@ export default Class.extend({
   },
 
   setConditions: function(conditions) {
-    if (conditions.rightOffset && !isNaN(parseFloat(conditions.rightOffset)) && isFinite(conditions.rightOffset)) {
+    if (!isNaN(parseFloat(conditions.rightOffset)) && isFinite(conditions.rightOffset)) {
       this.rifgtOffset = conditions.rightOffset;
     }
-    if (conditions.leftOffset && !isNaN(parseFloat(conditions.leftOffset)) && isFinite(conditions.leftOffset)) {
+    if (!isNaN(parseFloat(conditions.leftOffset)) && isFinite(conditions.leftOffset)) {
       this.leftOffset = conditions.leftOffset;
     }
-    if (conditions.topOffset && !isNaN(parseFloat(conditions.topOffset)) && isFinite(conditions.topOffset)) {
+    if (!isNaN(parseFloat(conditions.topOffset)) && isFinite(conditions.topOffset)) {
       this.topOffset = conditions.topOffset;
     }
-    if (conditions.bottomOffset && !isNaN(parseFloat(conditions.bottomOffset)) && isFinite(conditions.bottomOffset)) {
+    if (!isNaN(parseFloat(conditions.bottomOffset)) && isFinite(conditions.bottomOffset)) {
       this.bottomOffset = conditions.bottomOffset;
     }
     if (conditions.xAlign) {
