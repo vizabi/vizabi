@@ -7,6 +7,7 @@ export default Class.extend({
   init: function(context) {
     this.context = context;
     this._isCreated = null;
+    this.actionsQueue = {};
     this.entityTrails = {};
 
   },
@@ -112,29 +113,50 @@ export default Class.extend({
     return this._isCreated;
   },
 
+  /**
+   * add actions for each selected entities
+   * @param selections
+   * @param actions
+   * @private
+   */
+  _addActions: function(selections, actions) {
+    var _context = this.context;
+    var _this = this;
+    var KEY = _context.KEY;
 
+    selections.forEach(function(d) {
+      if (!_this.actionsQueue[d[KEY]]) _this.actionsQueue[d[KEY]] = [];
+      _this.actionsQueue[d[KEY]] = [].concat(_this.actionsQueue[d[KEY]].filter(function(value) {
+        return actions.indexOf(value) == -1;
+      }), actions);
+    });
+  },
+  _getNextAction(key) {
+    return this.actionsQueue[key].shift();
+  },
+  
   run: function(actions, selection, duration) {
     var _context = this.context;
     var _this = this;
     var KEY = _context.KEY;
     if (!this._isCreated) return;
     this._isCreated.then(function() {
-
       //quit if function is called accidentally
       if((!_context.model.ui.chart.trails || !_context.model.entities.select.length) && actions != "remove") return;
 
       if(!duration) duration = 0;
 
-      actions = [].concat(actions);
       //work with entities.select (all selected entities), if no particular selection is specified
       selection = selection == null ? _context.model.entities.select : [selection];
+      _this._addActions(selection, actions);
       selection.forEach(function(d) {
 
         var trail = _this.entityTrails[d[KEY]];
         //do all the actions over "trail"
         var executeSequential = function(index) { // some function can be async, but we should run next when previous completed
-          if (index < actions.length) {
-            var response = _context._trails["_" + actions[index]](trail, duration, d);
+          var action = _this._getNextAction(d[KEY]);
+          if (action) {
+            var response = _context._trails["_" + action](trail, duration, d);
             if (response && response instanceof Promise) {
               response.then(function() {
                 executeSequential(index + 1);
@@ -145,13 +167,14 @@ export default Class.extend({
           }
         };
         executeSequential(0);
-
       });
     });
+
   },
 
 
   _remove: function(trail, duration, d) {
+    this.actionsQueue[d[this.context.KEY]] = []; 
     if (trail) { // TODO: in some reason run twice 
       trail.remove();
       this.entityTrails[d[this.context.KEY]] = null;
@@ -243,6 +266,15 @@ export default Class.extend({
     var firstVisible = true;
     var trailStartTime = _context.model.time.timeFormat.parse("" + d.trailStartTime);
 
+    if (_context.time - trailStartTime < 0) { // move trail start time with trail label back if need
+      d.trailStartTime = _context.model.time.timeFormat(_context.time);
+      trailStartTime = _context.model.time.timeFormat.parse("" + d.trailStartTime);
+      _context.cached[d[KEY]].labelX0 = _context.frame.axis_x[d[KEY]];
+      _context.cached[d[KEY]].labelY0 = _context.frame.axis_y[d[KEY]];
+      _context.cached[d[KEY]].scaledS0 = utils.areaToRadius(_context.sScale(_context.frame.size[d[KEY]]));
+
+      _context._updateLabel(d, 0, _context.frame.axis_x[d[KEY]], _context.frame.axis_y[d[KEY]], _context.frame.size[d[KEY]], _context.frame.label[d[KEY]], _context.frame.size_label[d[KEY]], 0, true);
+    }
     trail.each(function(segment, index) {
       // segment is transparent if it is after current time or before trail StartTime
       segment.transparent = d.trailStartTime == null || (segment.t - _context.time >= 0) || (trailStartTime - segment.t > 0)
@@ -258,86 +290,119 @@ export default Class.extend({
     var _context = this.context;
     var KEY = _context.KEY;
     var trailStartTime = _context.model.time.timeFormat.parse("" + d.trailStartTime);
-    trail.each(function(segment, index) {
-      var view = d3.select(this);
-      if(segment.transparent) {
-        view.classed("vzb-invisible", segment.transparent);
-        return;
+    var generateTrailSegment = function(trail, index) {
+      return new Promise(function(resolve, reject) {
+        var view = d3.select(trail[0][index]);
+        var segment = view.datum();
+        if(segment.transparent) {
+          view.classed("vzb-invisible", segment.transparent);
+          resolve();
+        } else {
+          _context.model.marker.getFrame(segment.t, function(frame) {
+            if (!frame) return resolve();
+            segment.valueY = frame.axis_y[d[KEY]];
+            segment.valueX = frame.axis_x[d[KEY]];
+            segment.valueS = frame.size[d[KEY]];
+            segment.valueC = frame.color[d[KEY]];
+
+            if(segment.valueY==null || segment.valueX==null || segment.valueS==null) {
+              if (_context.time - trailStartTime > 0) { // move trail start time forward because previous values are empty
+                d.trailStartTime = _context.model.time.timeFormat(_context.model.time.incrementTime(trailStartTime));
+                trailStartTime = _context.model.time.timeFormat.parse("" + d.trailStartTime);
+              }
+              resolve();
+            } else {
+              // fix label position if it not in correct place
+              if (trailStartTime && trailStartTime.toString() == segment.t.toString() && _context.cached[d[KEY]].labelX0 != segment.valueX) {
+                _context.cached[d[KEY]].labelX0 = segment.valueX;
+                _context.cached[d[KEY]].labelY0 = segment.valueY;
+                _context.cached[d[KEY]].scaledS0 = utils.areaToRadius(_context.sScale(segment.valueS));
+                _context._updateLabel(d, index, segment.valueX, segment.valueY, segment.valueS, frame.label[d[KEY]], frame.size_label[d[KEY]], 0, true);
+              }
+              view.select("circle")
+                //.transition().duration(duration).ease("linear")
+                .attr("cy", _context.yScale(segment.valueY))
+                .attr("cx", _context.xScale(segment.valueX))
+                .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)))
+                .style("fill", segment.valueC!=null?_context.cScale(segment.valueC):_context.COLOR_WHITEISH);
+
+              view.select("line")
+                .attr("x2", _context.xScale(segment.valueX))
+                .attr("y2", _context.yScale(segment.valueY))
+                .attr("x1", _context.xScale(segment.valueX))
+                .attr("y1", _context.yScale(segment.valueY));
+
+              view.classed("vzb-invisible", segment.transparent);
+
+              var next = trail[0][index + 1];
+              if(next == null) {
+                resolve();
+              } else {
+                next = next.__data__;
+                _context.model.marker.getFrame(next.t, function(nextFrame) {
+
+                  // TODO: find why data in segment sometimes become null
+                  segment.valueY = frame.axis_y[d[KEY]];
+                  segment.valueX = frame.axis_x[d[KEY]];
+                  segment.valueS = frame.size[d[KEY]];
+                  segment.valueC = frame.color[d[KEY]];
+
+                  if(!nextFrame || segment.valueY==null || segment.valueX==null || segment.valueS==null) {
+                    resolve();
+                  } else {
+                    if(nextFrame.axis_x[d[KEY]]==null || nextFrame.axis_y[d[KEY]]==null) {
+                      resolve();
+                    } else {
+                      var strokeColor = _context.model.marker.color.which == "geo.world_4region"?
+                        //use predefined shades for color palette for "geo.world_4region" (hardcoded)
+                        _context.model.marker.color.getColorShade({
+                          colorID: segment.valueC,
+                          shadeID: "shade"
+                        })
+                        :
+                        //otherwise use color of the bubble with a fallback to bubble stroke color (blackish)
+                        (segment.valueC!=null?_context.cScale(segment.valueC):_context.COLOR_BLACKISH);
+
+                      var lineLength = Math.sqrt(
+                        Math.pow(_context.xScale(segment.valueX) - _context.xScale(nextFrame.axis_x[d[KEY]]),2) +
+                        Math.pow(_context.yScale(segment.valueY) - _context.yScale(nextFrame.axis_y[d[KEY]]),2)
+                      );
+                      view.select("line")
+                        .transition().duration(duration).ease("linear")
+                        .attr("x1", _context.xScale(nextFrame.axis_x[d[KEY]]))
+                        .attr("y1", _context.yScale(nextFrame.axis_y[d[KEY]]))
+                        .attr("x2", _context.xScale(segment.valueX))
+                        .attr("y2", _context.yScale(segment.valueY))
+                        .style("stroke-dasharray", lineLength)
+                        .style("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)))
+                        .style("stroke", strokeColor);
+                      resolve();
+                    }
+                  }
+                });
+              }
+
+            }
+          });          
+        }
+      });
+    };
+    var defer = new Promise();
+    /**
+     * update for generate next trail segment when previous segment finished
+     * @param trail
+     * @param index
+     */
+    var generateTrails = function(trail, index) {
+      if (index < 0 || index >= trail[0].length) {
+        return defer.resolve();
       }
-      (function(_view, _segment, _index) {
-        _context.model.marker.getFrame(_segment.t, function(frame) {
-          if (!frame) return;
-          _segment.valueY = frame.axis_y[d[KEY]];
-          _segment.valueX = frame.axis_x[d[KEY]];
-          _segment.valueS = frame.size[d[KEY]];
-          _segment.valueC = frame.color[d[KEY]];
-          if(_segment.valueY==null || _segment.valueX==null || _segment.valueS==null) return;
-
-          if (trailStartTime && trailStartTime.toString() == _segment.t.toString()) {
-            _context.cached[d[KEY]].labelX0 = _segment.valueX;
-            _context.cached[d[KEY]].labelY0 = _segment.valueY;
-            _context.cached[d[KEY]].scaledS0 = utils.areaToRadius(_context.sScale(_segment.valueS));
-
-            _context._updateLabel(d, _index, _segment.valueX, _segment.valueY, _segment.valueS, frame.label[d[KEY]], frame.size_label[d[KEY]], 0, true);
-          }
-
-          _view.select("circle")
-            //.transition().duration(duration).ease("linear")
-            .attr("cy", _context.yScale(_segment.valueY))
-            .attr("cx", _context.xScale(_segment.valueX))
-            .attr("r", utils.areaToRadius(_context.sScale(_segment.valueS)))
-            .style("fill", _segment.valueC!=null?_context.cScale(_segment.valueC):_context.COLOR_WHITEISH);
-
-          _view.select("line")
-            .attr("x2", _context.xScale(_segment.valueX))
-            .attr("y2", _context.yScale(_segment.valueY))
-            .attr("x1", _context.xScale(_segment.valueX))
-            .attr("y1", _context.yScale(_segment.valueY));
-
-          _view.classed("vzb-invisible", _segment.transparent);
-          
-          var next = trail[0][_index + 1];
-          if(next == null) return;
-          next = next.__data__;
-          _context.model.marker.getFrame(next.t, function(nextFrame) {
-            
-            // TODO: find why data in segment sometimes become null
-            _segment.valueY = frame.axis_y[d[KEY]];
-            _segment.valueX = frame.axis_x[d[KEY]];
-            _segment.valueS = frame.size[d[KEY]];
-            _segment.valueC = frame.color[d[KEY]];
-
-            if(!nextFrame || _segment.valueY==null || _segment.valueX==null || _segment.valueS==null) return;
-
-            if(nextFrame.axis_x[d[KEY]]==null || nextFrame.axis_y[d[KEY]]==null) return;
-            var strokeColor = _context.model.marker.color.which == "geo.world_4region"?
-              //use predefined shades for color palette for "geo.world_4region" (hardcoded)
-              _context.model.marker.color.getColorShade({
-                colorID: _segment.valueC,
-                shadeID: "shade"
-              })
-              :
-              //otherwise use color of the bubble with a fallback to bubble stroke color (blackish)
-              (_segment.valueC!=null?_context.cScale(_segment.valueC):_context.COLOR_BLACKISH);
-
-            var lineLength = Math.sqrt(
-              Math.pow(_context.xScale(_segment.valueX) - _context.xScale(nextFrame.axis_x[d[KEY]]),2) +
-              Math.pow(_context.yScale(_segment.valueY) - _context.yScale(nextFrame.axis_y[d[KEY]]),2)
-            );
-            _view.select("line")
-              .transition().duration(duration).ease("linear")
-              .attr("x1", _context.xScale(nextFrame.axis_x[d[KEY]]))
-              .attr("y1", _context.yScale(nextFrame.axis_y[d[KEY]]))
-              .attr("x2", _context.xScale(_segment.valueX))
-              .attr("y2", _context.yScale(_segment.valueY))
-              .style("stroke-dasharray", lineLength)
-              .style("stroke-dashoffset", utils.areaToRadius(_context.sScale(_segment.valueS)))
-              .style("stroke", strokeColor);
-
-          });
-        });
-      }(view, segment, index));
-    });
+      generateTrailSegment(trail, index).then(function() {
+        generateTrails(trail, index + 1);
+      });
+    };
+    generateTrails(trail, 0);
+    return defer;
   }
 
 

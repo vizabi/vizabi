@@ -114,7 +114,7 @@ var BubbleChartComp = Component.extend({
         //console.log("EVENT change:marker", evt);
       },
       "change:entities.select": function() {
-        if(!_this._readyOnce) return;
+        if(!_this._readyOnce || !_this.entityBubbles) return;
         //console.log("EVENT change:entities:select");
         _this.selectDataPoints();
         _this.redrawDataPoints();
@@ -278,13 +278,7 @@ var BubbleChartComp = Component.extend({
           _this.cached[d[KEY]].labelY_
         ]);
       });
-
-
-
   },
-
-
-
 
   _rangeBump: function(arg, undo) {
     var bump = this.activeProfile.maxRadius;
@@ -438,25 +432,7 @@ var BubbleChartComp = Component.extend({
     this.wScale = d3.scale.linear()
       .domain(this.parent.datawarning_content.doubtDomain)
       .range(this.parent.datawarning_content.doubtRange);
-    
-
-
-    this.model.marker.getFrame(this.model.time.value, function(frame) {
-      _this.frame = frame;
-      _this.updateIndicators();
-      _this.updateSize();
-      _this.updateEntities();
-      _this._trails.create();
-      _this.updateTime();
-      _this.updateMarkerSizeLimits();
-      _this.updateLabelSizeLimits();
-      _this.updateBubbleOpacity();
-      _this.selectDataPoints();
-      _this._updateDoubtOpacity();
-      _this.zoomToMarkerMaxMin(); // includes redraw data points and trail resize
-      _this._trails.run(["recolor", "opacityHandler", "findVisible", "reveal"]);
-      _this._readyOnce = true;
-    });
+    _this._readyOnce = true;
   },
 
   ready: function() {
@@ -464,20 +440,25 @@ var BubbleChartComp = Component.extend({
     this.updateUIStrings();
     var endTime = this.model.time.end;
     this.model.marker.getFrame(this.model.time.value, function(frame) {
-      if (!frame) return;
+        if (!frame
+          || Object.keys(frame.axis_y).length === 0
+          || Object.keys(frame.axis_x).length === 0
+          || Object.keys(frame.size).length === 0
+        ) return;
+
       _this.frame = frame;
       _this.cached = {};
       _this.updateIndicators();
       _this.updateSize();
+      _this.updateEntities();
+      _this.selectDataPoints();
+      _this._trails.create();
+      _this.updateTime();
       _this.updateMarkerSizeLimits();
       _this.updateLabelSizeLimits();
-      _this.updateEntities();
-      _this.redrawDataPoints();
       _this.updateBubbleOpacity();
-      _this._trails.create();
-      _this._trails.run("findVisible");
       _this.zoomToMarkerMaxMin(); // includes redraw data points and trail resize
-      _this._trails.run(["recolor", "opacityHandler", "reveal"]);
+      _this._trails.run(["recolor", "opacityHandler", "findVisible", "reveal"]);
       if(_this.model.ui.chart.adaptMinMaxZoom) _this._panZoom.expandCanvas();
     });
   },
@@ -1122,18 +1103,6 @@ var BubbleChartComp = Component.extend({
   redrawDataPointsOnlySize: function() {
     var _this = this;
 
-    // if (this.someSelected) {
-    //   _this.entityBubbles.each(function (d, index) {
-    //     _this._updateBubble(d, index, d3.select(this), 0);
-    //   });
-    // } else {
-    //   this.entityBubbles.each(function (d, index) {
-    //     var valueS = _this.model.marker.size.getValue(d);
-    //     if (valueS == null) return;
-
-    //     d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)));
-    //   });
-    // }
     var values, valuesNow;
     var KEY = this.KEY;
 
@@ -1347,19 +1316,16 @@ var BubbleChartComp = Component.extend({
 
           var labelGroup = d3.select(this);
 
-          if(!_this.model.ui.chart.trails || trailStartTime - _this.time > 0 || select.trailStartTime == null) {
-            if (!brokenInputs) {
-              select.trailStartTime = _this.model.time.timeFormat(_this.time);
-              //the events in model are not triggered here. to trigger uncomment the next line
-              //_this.model.entities.triggerAll("change:select");
-              cached.scaledS0 = scaledS;
-              cached.labelX0 = valueX;
-              cached.labelY0 = valueY;
-            } else {
-              labelGroup.classed("vzb-invisible", brokenInputs);
-              lineGroup.classed("vzb-invisible", brokenInputs);
-              return;
-            }
+          if(select.trailStartTime == null) {
+            select.trailStartTime = _this.model.time.timeFormat(_this.time); // need only when trailStartTime == null
+            cached.scaledS0 = scaledS;
+            cached.labelX0 = valueX;
+            cached.labelY0 = valueY;
+          }
+          if (brokenInputs) {
+            labelGroup.classed("vzb-invisible", brokenInputs);
+            lineGroup.classed("vzb-invisible", brokenInputs);
+            return;
           }
           
           cached.valueX = valueX;
