@@ -277,10 +277,11 @@ export default Class.extend({
     }
     trail.each(function(segment, index) {
       // segment is transparent if it is after current time or before trail StartTime
+      var segmentVisibility = segment.transparent; 
       segment.transparent = d.trailStartTime == null || (segment.t - _context.time >= 0) || (trailStartTime - segment.t > 0)
         //no trail segment should be visible if leading bubble is shifted backwards, beyond start time
         || (d.trailStartTime - _context.model.time.timeFormat(_context.time) >= 0);
-
+      if (segmentVisibility != segment.transparent) segment.visibilityChanged = true; // segment changed, so need to update it
 
     });
   },
@@ -297,6 +298,8 @@ export default Class.extend({
         if(segment.transparent) {
           view.classed("vzb-invisible", segment.transparent);
           resolve();
+        } else if (!segment.visibilityChanged) { // pass segment if it is not changed
+          resolve();            
         } else {
           _context.model.marker.getFrame(segment.t, function(frame) {
             if (!frame) return resolve();
@@ -312,6 +315,7 @@ export default Class.extend({
               }
               resolve();
             } else {
+              segment.visibilityChanged = false;
               // fix label position if it not in correct place
               if (trailStartTime && trailStartTime.toString() == segment.t.toString() && _context.cached[d[KEY]].labelX0 != segment.valueX) {
                 _context.cached[d[KEY]].labelX0 = segment.valueX;
