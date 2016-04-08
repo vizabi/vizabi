@@ -716,8 +716,8 @@ Tool.define("preload", function(promise) {
   var metadata_path = Vzb._globals.gapminder_paths.wsUrl + "/api/vizabi/metadata.json";
   var globals = Vzb._globals;
 
-  Vzb._globals.version = Vzb._version;
-  Vzb._globals.build = Vzb._build;
+  Vzb._globals.version = Vzb._version||"GULP_REPLACE_VERSION";
+  Vzb._globals.build = Vzb._build||"GULP_REPLACE_BUILD";
 
   //TODO: concurrent
   //load language first

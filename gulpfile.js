@@ -43,6 +43,8 @@ var jade = require('gulp-jade');
 var zip = require('gulp-zip');
 var bump = require('gulp-bump');
 
+var replace = require('gulp-replace');
+
 // ----------------------------------------------------------------------------
 //   Config
 // ----------------------------------------------------------------------------
@@ -290,6 +292,8 @@ function buildJS(dev, cb) {
         .pipe(uglify({
           preserveComments: 'license'
         }))
+        .pipe(replace("GULP_REPLACE_VERSION", pkg.version))
+        .pipe(replace("GULP_REPLACE_BUILD", timestamp.valueOf()))
         .pipe(rename('vizabi.min.js'))
         .on('error', function(err) {
           gutil.log(chalk.red("Bundling JS... ERROR!"));
