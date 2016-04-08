@@ -41,8 +41,7 @@ module.exports = function(config) {
 
       // fixtures
       {pattern: 'test/fixture/*.json', watched: false, included: false, served: true},
-      {pattern: 'test/fixture/*.csv', watched: false, included: false, served: true},
-      {pattern: 'test/fixture/*.html', watched: false, included: true, served: true}
+      {pattern: 'test/fixture/*.csv', watched: false, included: false, served: true}
     ],
 
     preprocessors: {
