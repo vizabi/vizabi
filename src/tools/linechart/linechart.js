@@ -94,13 +94,6 @@ var LineChart = Tool.extend('LineChart', {
         }
       }
     },
-
-    data: {
-      //reader: "waffle",
-      reader: "csv",
-      path: "data/waffles/basic-indicators.csv"
-    },
-
     ui: {
       'vzb-tool-line-chart': {
         labels: {

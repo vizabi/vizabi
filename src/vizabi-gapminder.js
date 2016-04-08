@@ -21,31 +21,22 @@ import PopByAge from 'tools/popbyage';
 import DonutChart from 'tools/donutchart';
 
 //waffle reader
-import {
-  waffle as WaffleReader
-}
-  from 'readers/_index';
+import {waffle as WaffleReader} from 'readers/_index';
 
 var language = {
   id: "en",
   strings: {}
 };
 
-// http://static.gapminderdev.org/vizabi/develop/preview/
-
-//TODO: remove hardcoded path from source code
-
-// Keep compatibility::feature, no internet connection - requesting data from local host.
+// Fallback in case if WS is not available - requesting data from local files
 var locationArray = window.location.href.split("/");
 var localUrl = locationArray.splice(0, locationArray.indexOf("preview")).join("/") + "/preview/";
 
-globals.gapminder_paths = {
-  // Explanation what is going on in the code below:
-  // In order to use WS server other than specified in WS_SERVER you need to fill it in manually
-  //systema globalis wsUrl: typeof WS_SERVER === 'undefined' ? 'https://waffle-server-stage.gapminderdev.org' : WS_SERVER,
-  wsUrl: typeof WS_SERVER === 'undefined' ? 'https://waffle-server-dev-new-ddf.gapminderdev.org' : WS_SERVER,
-  baseUrl: localUrl
-};
+globals.ext_resources = utils.deepExtend({
+  host: localUrl,
+  preloadPath: 'data/',
+  dataPath: 'data/waffles/'
+}, globals.ext_resources);
 
 //OVERWRITE OPTIONS
 
@@ -74,7 +65,8 @@ BarChart.define('default_model', {
       },
       axis_y: {
         use: "indicator",
-        which: "population_total",
+        which: "sg_population", // systema globalis
+        //which: "population_total",
         scaleType: "log",
         allow: {
           scales: ["linear", "log"]
@@ -96,10 +88,8 @@ BarChart.define('default_model', {
     }
   },
   data: {
-    reader: "waffle",
-    path: globals.gapminder_paths.wsUrl + "/api/graphs/stats/vizabi-tools"
-    //reader: "csv",
-    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv"
+    reader: "csv",
+    path: globals.ext_resources.host + globals.ext_resources.dataPath + "dont-panic-poverty.csv"
   },
   language: language,
   ui: {
@@ -149,7 +139,8 @@ BarRankChart.define('default_model', {
       },
       axis_x: {
         use: "indicator",
-        which: "population_total",
+        which: "sg_population", //systema globalis
+        //which: "population_total",
         scaleType: "log",
         allow: {
           scales: [
@@ -177,10 +168,8 @@ BarRankChart.define('default_model', {
   },
   language: language,
   data: {
-    reader: "waffle",
-    path: globals.gapminder_paths.wsUrl + "/api/graphs/stats/vizabi-tools",
-    //reader: "csv",
-    //path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv"
+    reader: "csv",
+    path: globals.ext_resources.host + globals.ext_resources.dataPath + "dont-panic-poverty.csv",
     splash: true
   },
   ui: {
@@ -222,7 +211,7 @@ BubbleMap.define('default_model', {
       },
       size: {
         use: "indicator",
-        //which: "population",//systema globalis
+        //which: "sg_population",//systema globalis
         which: "population_total",
         scaleType: "linear",
         allow: {
@@ -249,10 +238,8 @@ BubbleMap.define('default_model', {
     }
   },
   data: {
-    reader: "waffle",
-    path: globals.gapminder_paths.wsUrl + "/api/graphs/stats/vizabi-tools",
-    //reader: "csv",
-    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    reader: "csv",
+    path: globals.ext_resources.host + globals.ext_resources.dataPath + "dont-panic-poverty.csv",
     splash: true
   },
   language: language,
@@ -364,10 +351,8 @@ MountainChart.define('default_model', {
   },
   language: language,
   data: {
-    reader: "waffle",
-    path: globals.gapminder_paths.wsUrl + "/api/graphs/stats/vizabi-tools",
-    //reader: "csv",
-    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    reader: "csv",
+    path: globals.ext_resources.host + globals.ext_resources.dataPath + "dont-panic-poverty.csv",
     splash: true
   },
   ui: {
@@ -410,7 +395,8 @@ LineChart.define('default_model', {
       },
       axis_y: {
         use: "indicator",
-        which: "income_per_person_gdppercapita_ppp_inflation_adjusted",
+        which: "sg_gdp_p_cap_const_ppp2011_dollar",//systema globalis
+        //which: "income_per_person_gdppercapita_ppp_inflation_adjusted",
         scaleType: "log"
       },
       axis_x: {
@@ -430,10 +416,8 @@ LineChart.define('default_model', {
   },
 
   data: {
-    reader: "waffle",
-    path: globals.gapminder_paths.wsUrl + "/api/graphs/stats/vizabi-tools",
-    //reader: "csv",
-    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    reader: "csv",
+    path: globals.ext_resources.host + globals.ext_resources.dataPath + "dont-panic-poverty.csv",
     splash: false
   },
   language: language,
@@ -496,7 +480,7 @@ BubbleChart.define('default_model', {
 
       axis_y: {
         use: "indicator",
-        //which: "life_expectancy", //systema globalis
+        //which: "sg_child_mortality_rate_per1000", //systema globalis
         which: "life_expectancy_years",
         scaleType: "linear",
         allow: {
@@ -505,7 +489,7 @@ BubbleChart.define('default_model', {
       },
       axis_x: {
         use: "indicator",
-        //which: "gdp_p_cap_const_ppp2011_dollar",//systema globalis
+        //which: "sg_gdp_p_cap_const_ppp2011_dollar",//systema globalis
         which: "income_per_person_gdppercapita_ppp_inflation_adjusted", 
         scaleType: "log",
         allow: {
@@ -522,7 +506,7 @@ BubbleChart.define('default_model', {
       },
       size: {
         use: "indicator",
-        //which: "population",//systema globalis
+        //which: "sg_population",//systema globalis
         which: "population_total", 
         scaleType: "linear",
         allow: {
@@ -533,10 +517,8 @@ BubbleChart.define('default_model', {
     }
   },
   data: {
-    reader: "waffle",
-    path: globals.gapminder_paths.wsUrl + "/api/graphs/stats/vizabi-tools",
-    //reader: "csv",
-    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    reader: "csv",
+    path: globals.ext_resources.host + globals.ext_resources.dataPath + "dont-panic-poverty.csv",
     splash: true
   },
   language: language,
@@ -608,7 +590,7 @@ PopByAge.define('default_model', {
       },
       axis_x: {
         use: "indicator",
-        which: "population"
+        which: "sg_population"
       },
       color: {
         use: "constant",
@@ -621,7 +603,7 @@ PopByAge.define('default_model', {
   },
   data: {
     reader: "csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/{{geo}}.csv",
+    path: globals.ext_resources.host + globals.ext_resources.dataPath + "{{geo}}.csv",
     splash: false
   },
   language: language,
@@ -644,8 +626,8 @@ DonutChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["*"],
-          "geo.cat": ["region"]
+          "geo": ["usa", "bra", "chn", "ind", "idn"],
+          "geo.cat": ["country"]
         }
       }
     },
@@ -658,17 +640,17 @@ DonutChart.define('default_model', {
       },
       axis: {
         use: "indicator",
-        which: "population_total"
+        which: "sg_population"
       },
       color: {
         use: "property",
-        which: "geo.name"
+        which: "geo.world_4region"
       }
     }
   },
   data: {
     reader: "csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv",
+    path: globals.ext_resources.host + globals.ext_resources.dataPath + "basic-indicators.csv",
     splash: false
   },
   language: language,
@@ -680,12 +662,11 @@ DonutChart.define('default_model', {
 
 
 //Waffle Server Reader custom path
-WaffleReader.define('basepath', globals.gapminder_paths.wsUrl + "/api/graphs/stats/vizabi-tools");
+WaffleReader.define('basepath', globals.ext_resources.host + globals.ext_resources.dataPath);
 
 //preloading mountain chart precomputed shapes
 MCComponent.define("preload", function(done) {
-  //var shape_path = globals.gapminder_paths.baseUrl + "data/mc_precomputed_shapes.json";
-  var shape_path = globals.gapminder_paths.wsUrl + "/api/vizabi/mc_precomputed_shapes.json";
+  var shape_path = globals.ext_resources.host + globals.ext_resources.preloadPath + "mc_precomputed_shapes.json";     
 
   d3.json(shape_path, function(error, json) {
     if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
@@ -696,9 +677,8 @@ MCComponent.define("preload", function(done) {
 
 //preloading bubble map country shapes
 BMComponent.define("preload", function(done) {
-  //var shape_path = globals.gapminder_paths.baseUrl + "data/world-50m.json";
-  var shape_path = globals.gapminder_paths.wsUrl + "/api/vizabi/world-50m.json";
-
+  var shape_path = globals.ext_resources.host + globals.ext_resources.preloadPath + "world-50m.json"; 
+    
   d3.json(shape_path, function(error, json) {
     if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
     BMComponent.define('world', json);
@@ -711,13 +691,10 @@ BMComponent.define("preload", function(done) {
 Tool.define("preload", function(promise) {
 
   var _this = this;
+  var metadata_path = globals.ext_resources.host + globals.ext_resources.preloadPath + "metadata.json";    
 
-  //var metadata_path = Vzb._globals.gapminder_paths.baseUrl + "data/waffles/metadata.json";
-  var metadata_path = Vzb._globals.gapminder_paths.wsUrl + "/api/vizabi/metadata.json";
-  var globals = Vzb._globals;
-
-  Vzb._globals.version = Vzb._version||"GULP_REPLACE_VERSION";
-  Vzb._globals.build = Vzb._build||"GULP_REPLACE_BUILD";
+  globals.version = Vzb._version||"GULP_REPLACE_VERSION";
+  globals.build = Vzb._build||"GULP_REPLACE_BUILD";
 
   //TODO: concurrent
   //load language first
@@ -781,8 +758,7 @@ Tool.define("preloadLanguage", function() {
   var promise = new Promise();
 
   var langModel = this.model.language;
-  //var translation_path = Vzb._globals.gapminder_paths.baseUrl + "data/translation/" + langModel.id + ".json";
-  var translation_path = Vzb._globals.gapminder_paths.wsUrl + "/api/vizabi/translation/" + langModel.id + ".json";
+  var translation_path = globals.ext_resources.host + globals.ext_resources.preloadPath + "translation/" + langModel.id + ".json";
 
   if(langModel && !langModel.strings[langModel.id]) {
     d3.json(translation_path, function(langdata) {

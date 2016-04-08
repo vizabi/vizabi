@@ -1,4 +1,4 @@
-"geo","time","population","gdp_p_cap_const_ppp2011_dollar","gini","child_mortality_rate_per1000"
+"geo","time","sg_population","sg_gdp_p_cap_const_ppp2011_dollar","sg_gini","sg_child_mortality_rate_per1000"
 "abw",1993,72498,38477,,21.999
 "afg",1993,14824371,810,36.5,162
 "ago",1993,12246786,2663,57.2,225.8
