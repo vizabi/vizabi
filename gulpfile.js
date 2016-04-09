@@ -43,8 +43,6 @@ var jade = require('gulp-jade');
 var zip = require('gulp-zip');
 var bump = require('gulp-bump');
 
-var replace = require('gulp-replace');
-
 // ----------------------------------------------------------------------------
 //   Config
 // ----------------------------------------------------------------------------
@@ -196,14 +194,7 @@ function formatTemplateFile(str, filename) {
     .replace(/(\r\n|\n|\r)/gm, " ")
     .replace(/\s+/g, " ")
     .replace(/<!--[\s\S]*?-->/g, "");
-  return "(function() {" +
-    "var root = this;" +
-    "var s = root.document.createElement('script');" +
-    "s.type = 'text/template';" +
-    "s.setAttribute('id', '" + filename + "');" +
-    "s.innerHTML = '" + content + "';" +
-    "root.document.getElementById('vzbp-placeholder').appendChild(s);" +
-    "}).call(this);";
+  return "templates['"+ filename + "'] = '" + content + "';";
 }
 
 function getTemplates(cb) {
@@ -246,16 +237,14 @@ function buildJS(dev, cb) {
       ''
     ].join('\n');
   
-    var templatesFunc = 'preloadTemplates = (function() {' + templates + '}).bind(this);'
-    //var version = '; Vizabi._version = "' + pkg.version + '";';
-    var version = ';(function (Vizabi) {Vizabi._version = "' + pkg.version + '"; Vizabi._build = "' + timestamp.valueOf() + '";})(typeof Vizabi !== "undefined"?Vizabi:{});';
+    var templatesFunc = '(function(templates) {' + templates + ' return templates})({});';
 
     var options = {
       format: 'umd',
       banner: banner_str,
-      footer: version + templatesFunc,
       moduleName: 'Vizabi',
-      dest: path.join(config.destLib, 'vizabi.js')
+      dest: path.join(config.destLib, 'vizabi.js'),
+      outro: 'globals.version = "' + pkg.version + '"; globals.build = "' + timestamp.valueOf() + '"; globals.templates = ' + templatesFunc
     };
 
     gutil.log(chalk.yellow("Bundling JS..."));
@@ -293,8 +282,6 @@ function buildJS(dev, cb) {
         .pipe(uglify({
           preserveComments: 'license'
         }))
-        .pipe(replace("GULP_REPLACE_VERSION", pkg.version))
-        .pipe(replace("GULP_REPLACE_BUILD", timestamp.valueOf()))
         .pipe(rename('vizabi.min.js'))
         .on('error', function(err) {
           gutil.log(chalk.red("Bundling JS... ERROR!"));

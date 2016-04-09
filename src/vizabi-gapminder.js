@@ -693,9 +693,6 @@ Tool.define("preload", function(promise) {
   var _this = this;
   var metadata_path = globals.ext_resources.host + globals.ext_resources.preloadPath + "metadata.json";    
 
-  globals.version = Vzb._version||"GULP_REPLACE_VERSION";
-  globals.build = Vzb._build||"GULP_REPLACE_BUILD";
-
   //TODO: concurrent
   //load language first
   this.preloadLanguage().then(function() {

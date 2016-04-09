@@ -137,11 +137,6 @@ var Tool = Component.extend({
       placeholder: placeholder
     }, this);
 
-    this.on('domReady', function(evt) {
-        preloadTemplates();
-        preloadTemplates = null;
-      });
-
     this.render();
     this._setUIModel();
   },
