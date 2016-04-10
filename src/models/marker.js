@@ -82,15 +82,13 @@ var Marker = Model.extend({
             var keys = Object.keys(nested);
             var keysNoDP = Object.keys(noDataPoints || []);
 
-            if(resultKeys.length == 0) {
-                // If ain't got nothing yet, set the list of keys to result
-                resultKeys = keys;
-            } else {
-                // If there is result accumulated aleready, remove the keys from it that are not in this hook
-                resultKeys = resultKeys.filter(function(f) {
-                    return keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1;
-                })
-            }
+            // If ain't got nothing yet, set the list of keys to result
+            if(resultKeys.length == 0) resultKeys = keys;
+                
+            // Remove the keys from it that are not in this hook
+            resultKeys = resultKeys.filter(function(f) {
+              return keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1;
+            })
         });
         return resultKeys.map(function(d){return {geo: d}});
     },

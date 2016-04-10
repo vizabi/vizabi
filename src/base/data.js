@@ -229,7 +229,7 @@ var Data = Class.extend({
     }
 
     // if they want a certain processing of the data, see if it's already in cache
-    var id = JSON.stringify(whatId);
+    var id = (typeof whatId == "string")? whatId : JSON.stringify(whatId);
     if(this._collection[queryId][what][id]) {
       return this._collection[queryId][what][id];
     }
@@ -249,7 +249,7 @@ var Data = Class.extend({
         this._collection[queryId][what][id] = this._getNested(queryId, whatId);
         break;
       case 'haveNoDataPointsPerKey':     
-        this._collection[queryId][what][id] = this._getHaveNoDataPointsPerKey(queryId, whatId);
+        //do nothing. no caching is available for this option, served directly from collection
         break;
     }
     return this._collection[queryId][what][id];
@@ -627,12 +627,7 @@ var Data = Class.extend({
 
   _getValid: function(queryId, column) {
     return this._collection[queryId].data.filter(function(f){return f[column] || f[column]===0});
-  },
-    
-  _getHaveNoDataPointsPerKey: function(queryId, column) {
-    return this._collection[queryId].haveNoDataPointsPerKey[column];
-  },
-    
+  },    
     
   _getLimits: function(queryId, attr) {
 
