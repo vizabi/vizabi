@@ -27,6 +27,11 @@ var Find = Dialog.extend({
       "change:state.entities.select": function(evt) {
         _this.ready();
       },
+      "change:state.time.playing": function(evt) {
+        if(!_this.model.state.time.playing && !_this.model.state.time.dragging) {
+          _this.ready();
+        }
+      },
       "change:state.time.value": function(evt) {
         if(!_this.model.state.time.playing && !_this.model.state.time.dragging) {
           _this.ready();
@@ -150,7 +155,7 @@ var Find = Dialog.extend({
           if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();        
           _this.model.state.entities.selectEntity(d);        
           //return to highlighted state
-          if(!utils.isTouchDevice()) _this.model.state.entities.highlightEntity(d); 
+          if(!utils.isTouchDevice() && !d.brokenData) _this.model.state.entities.highlightEntity(d); 
         });
 
       items.append("label")
@@ -169,7 +174,7 @@ var Find = Dialog.extend({
           
         })
         .on("mouseover", function(d) {
-          if(!utils.isTouchDevice()) _this.model.state.entities.highlightEntity(d);
+          if(!utils.isTouchDevice() && !d.brokenData) _this.model.state.entities.highlightEntity(d);
         })
         .on("mouseout", function(d) {
           if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();
