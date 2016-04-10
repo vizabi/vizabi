@@ -2,6 +2,7 @@ import * as utils from 'utils';
 import Events from 'events';
 import Model from 'model';
 import Promise from 'promise';
+import globals from 'globals';
 
 var class_loading_first = 'vzb-loading-first';
 var class_loading_data = 'vzb-loading-data';
@@ -598,8 +599,7 @@ function templateFunc(str, data) {
   }
   // Figure out if we're getting a template, or if we need to
   // load the template - and be sure to cache the result.
-  var fn = !/<[a-z][\s\S]*>/i.test(str) ? templates[str] = templates[str] || templateFunc(document.getElementById(
-      str).innerHTML) : func;
+  var fn = !/<[a-z][\s\S]*>/i.test(str) ? templates[str] = templates[str] || templateFunc(globals.templates[str]) : func;
 
   // Provide some basic currying to the user
   return data ? fn(data) : fn;

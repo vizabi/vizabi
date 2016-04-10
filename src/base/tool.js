@@ -117,7 +117,7 @@ var Tool = Component.extend({
         if(_this._ready) {
           _this.afterLoading();
         }
-      }
+      }      
     };
     utils.extend(callbacks, this.model_binds, external_model.bind);
     delete external_model.bind;
@@ -136,6 +136,7 @@ var Tool = Component.extend({
       name: this.name || this._id,
       placeholder: placeholder
     }, this);
+
     this.render();
     this._setUIModel();
   },
