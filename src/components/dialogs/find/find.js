@@ -110,18 +110,18 @@ var Find = Dialog.extend({
         var pointer = {};
         pointer[KEY] = d[KEY];
         pointer.name = values.label[d[KEY]];
-        return pointer;
-      }).filter(function(d) {
-        var include = true;
+        pointer.brokenData = false;
+          
         utils.forEach(values, function(hook, name) {
           //TODO: remove the hack with hardcoded hook names (see discussion in #1389)
           if(name!=="color" && name!=="size_label" && !hook[d[KEY]] && hook[d[KEY]] !== 0) {
-            include = false;
+            pointer.brokenData = true;
             return;
           }
         });
-        return include;
-      })
+          
+        return pointer;
+      });
 
     //sort data alphabetically
       data.sort(function(a, b) {
@@ -157,8 +157,16 @@ var Find = Dialog.extend({
         .attr("for", function(d) {
           return "-find-" + d[KEY];
         })
-        .text(function(d) {
-          return d.name;
+        .each(function(d){
+          var view = d3.select(this);
+          view.append("span").text(d.name);
+          if(d.brokenData) {
+            view.append("span")
+              .attr("class", "vzb-find-item-brokendata")
+              .text(_this.model.state.time.timeFormat(time));
+            view.attr("title","No data available for " + _this.model.state.time.timeFormat(time));
+          }
+          
         })
         .on("mouseover", function(d) {
           if(!utils.isTouchDevice()) _this.model.state.entities.highlightEntity(d);

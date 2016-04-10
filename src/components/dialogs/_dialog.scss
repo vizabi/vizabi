@@ -218,6 +218,15 @@ $vzb-dialog-content-height: 250px;
         background: $vzb-color-primary-lightest;
         border: 1px solid rgba($vzb-color-primary, .2);
         text-indent: 26px;
+          
+        .vzb-find-item-brokendata {
+          margin-left: .5em;
+          position: relative; 
+          top: -.4em;
+          color: $vzb-color-grey;
+          text-decoration: line-through;
+          font-size: $vzb-font-size-tiny;
+        }
 
         &::after {
           @include position(absolute, 4px null null 4px);
