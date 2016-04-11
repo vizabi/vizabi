@@ -38,6 +38,9 @@ var Find = Dialog.extend({
         }
       },
       "change:state.time.value": function(evt) {
+        // hide changes if the dialog is not visible
+        if(!_this.placeholderEl.classed('vzb-active') && !_this.placeholderEl.classed('vzb-sidebar')) return;
+        
         _this.time = _this.model.state.time.value;
       
         _this.model.state.marker.getFrame(_this.time, function(values) {
@@ -98,10 +101,18 @@ var Find = Dialog.extend({
   },
 
   open: function() {
+    var _this = this;
     this._super();
 
     this.input_search.node().value = "";
     this.showHideSearch();
+      
+    this.time = this.model.state.time.value;
+      
+    this.model.state.marker.getFrame(this.time, function(values) {
+      if (!values) return;          
+      _this.redrawDataPoints(values);
+    });      
   },
 
   /**
