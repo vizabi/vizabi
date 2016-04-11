@@ -1454,7 +1454,6 @@ var BubbleChartComp = Component.extend({
     var width = rectBBox.width;
     var height = rectBBox.height;
     var heightDelta = labelGroup.node().getBBox().height - height;
-
     //apply limits so that the label doesn't stick out of the visible field
     if(_X - width <= 0) { //check left
       cache.labelX_ = (width - this.xScale(cache.labelX0)) / this.width;
@@ -1466,8 +1465,8 @@ var BubbleChartComp = Component.extend({
     if(_Y - height * .75 - heightDelta <= 0) { // check top
       cache.labelY_ = (height * .75 + heightDelta - this.yScale(cache.labelY0)) / this.height;
       _Y = this.yScale(cache.labelY0) + cache.labelY_ * this.height;
-    } else if(_Y + 13 > this.height) { //check bottom
-      cache.labelY_ = (this.height - 13 - this.yScale(cache.labelY0)) / this.height;
+    } else if(_Y + height * .35 > this.height) { //check bottom
+      cache.labelY_ = (this.height - height * .35 - this.yScale(cache.labelY0)) / this.height;
       _Y = this.yScale(cache.labelY0) + cache.labelY_ * this.height;
     }
 
