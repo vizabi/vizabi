@@ -50,8 +50,8 @@ export default Class.extend({
           }
         });
         if (!_this.entityTrails[d[KEY]]) {
-          _this.entityTrails[d[KEY]] = _context.trailsContainer
-            .insert("g")
+          _this.entityTrails[d[KEY]] = _context.bubbleContainer
+            .insert("g", ".bubble-" + d[KEY])
             .attr("class", "vzb-bc-entity trail-" + d[KEY])
             .selectAll("g").data(trailSegmentData);
           
@@ -177,6 +177,7 @@ export default Class.extend({
     this.actionsQueue[d[this.context.KEY]] = []; 
     if (trail) { // TODO: in some reason run twice 
       trail.remove();
+      d3.select(this.entityTrails[d[this.context.KEY]].node().parentNode).remove();
       this.entityTrails[d[this.context.KEY]] = null;
     }
   },
