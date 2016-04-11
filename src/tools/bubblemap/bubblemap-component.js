@@ -71,7 +71,7 @@ var BubbleMapComponent = Component.extend({
       },
       'change:marker.size.extent': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
-        if(!_this._readyOnce) return;
+        if(!_this._readyOnce || !_this.entityBubbles) return;
         _this.updateMarkerSizeLimits();
         _this.redrawDataPoints(null, false);
       },
@@ -277,6 +277,7 @@ var BubbleMapComponent = Component.extend({
     this.updateSize();
     this.updateMarkerSizeLimits();
     this.model.marker.getFrame(this.model.time.value, function(values) {
+      if (!values) return;
       _this.values = values;
       _this.updateEntities();
       _this.updateTime();
@@ -293,6 +294,7 @@ var BubbleMapComponent = Component.extend({
 
   frameChanged: function(frame, time) {
     if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
+    if (!frame) return;
     this.values = frame;
     this.updateTime();
     this.updateDoubtOpacity();
