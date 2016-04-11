@@ -53,31 +53,31 @@
             "scales": ["ordinal"],
             "sourceLink": ""
         },
-        "population": {
+        "sg_population": {
             "use": "indicator",
             "scaleType": "log",
             "scales": ["linear", "log"],
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
             "domain": [14000, 1400000000]
         },
-        "life_expectancy": {
+        "sg_life_expectancy": {
             "use": "indicator",
             "scales": ["linear"],
             "domain": [10, 83],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1H3nzTwbn8z4lJ5gJ_WfDgCeGEXK3PVGcNjQ_U5og8eo/pub?gid=1"
         },
-        "fertility_rate": {
+        "sg_fertility_rate": {
             "use": "indicator",
             "scales": ["linear"],
             "domain": [0, 10],
             "sourceLink": "https://gapminder.org"
         },
-        "gini": {
+        "sg_gini": {
             "use": "indicator",
             "scales": ["linear"],
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
         },
-        "gdp_p_cap_const_ppp2011_dollar": {
+        "sg_gdp_p_cap_const_ppp2011_dollar": {
             "use": "indicator",
             "interpolation": "exp",
             "scales": ["log", "linear"],
@@ -92,14 +92,14 @@
                 }
             }
         },
-        "gdp_const_ppp2011_dollar": {
+        "sg_gdp_const_ppp2011_dollar": {
             "use": "indicator",
             "interpolation": "exp",
             "scales": ["log", "linear"],
             "sourceLink": "https://gapminder.org",
             "domain": [1e6, 100e12]
         },
-        "child_mortality_rate_per1000": {
+        "sg_child_mortality_rate_per1000": {
             "use": "indicator",
             "scales": ["linear", "log"],
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
@@ -127,19 +127,19 @@
             }, {
                 "id": "economy",
                 "children": [
-                    {"id": "inequality", "children": [{"id":"gini"}]}, 
-                    {"id": "gdp_p_cap_const_ppp2011_dollar"},
-                    {"id": "gdp_const_ppp2011_dollar"}
+                    {"id": "inequality", "children": [{"id":"sg_gini"}]}, 
+                    {"id": "sg_gdp_p_cap_const_ppp2011_dollar"},
+                    {"id": "sg_gdp_const_ppp2011_dollar"}
                 ]
             }, {
                 "id": "health",
                 "children": [
-                    {"id": "life_expectancy"}, 
-                    {"id": "child_mortality_rate_per1000"},
-                    {"id": "fertility_rate"}
+                    {"id": "sg_life_expectancy"}, 
+                    {"id": "sg_child_mortality_rate_per1000"},
+                    {"id": "sg_fertility_rate"}
                 ]
             }, {
-                "id": "population"
+                "id": "sg_population"
             }, {
                 "id": "_default"
             }

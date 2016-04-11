@@ -105,11 +105,6 @@ var BubbleChart = Tool.extend('BubbleChart', {
         }
       }
     },
-    data: {
-      //reader: "waffle",
-      reader: "csv",
-      path: "data/waffles/basic-indicators.csv"
-    },
     ui: {
       chart: {
         whenHovering: {

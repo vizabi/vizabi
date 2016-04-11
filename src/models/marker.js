@@ -66,7 +66,7 @@ var Marker = Model.extend({
    * Computes the intersection of keys in all hooks: a set of keys that have data in each hook
    * @returns array of keys that have data in all hooks of this._datacube
    */
-    getIntersectionOfKeys: function() {
+    getKeys: function() {
         var _this = this;
         var resultKeys = [];
         utils.forEach(this._dataCube, function(hook, name) {
@@ -77,38 +77,22 @@ var Marker = Model.extend({
 
             // Get keys in data of this hook
             var nested = _this.getDataManager().get(hook._dataId, 'nested', ["geo", "time"]);
+            var noDataPoints = _this.getDataManager().get(hook._dataId, 'haveNoDataPointsPerKey', hook.which);
+            
             var keys = Object.keys(nested);
+            var keysNoDP = Object.keys(noDataPoints || []);
 
-            if(resultKeys.length == 0) {
-                // If ain't got nothing yet, set the list of keys to result
-                resultKeys = keys;
-            } else {
-                // If there is result accumulated aleready, remove the keys from it that are not in this hook
-                resultKeys = resultKeys.filter(function(f) {
-                    return keys.indexOf(f) > -1;
-                })
-            }
+            // If ain't got nothing yet, set the list of keys to result
+            if(resultKeys.length == 0) resultKeys = keys;
+                
+            // Remove the keys from it that are not in this hook
+            resultKeys = resultKeys.filter(function(f) {
+              return keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1;
+            })
         });
-        return resultKeys;
+        return resultKeys.map(function(d){return {geo: d}});
     },
     
-    
-  /**
-   * gets the items associated with this hook without values
-   * @param filter filter
-   * @returns hooked value
-   */
-  getKeys: function(filter) {
-      var sub = this.getSubhooks();
-      var found = [];
-      if(sub.length > 1) {
-        utils.forEach(sub, function(s) {
-          found = s.getKeys();
-          return false;
-        });
-      }
-      return found;
-  },
   /**
    * 
    * @param {String|null} time of a particularly requested data frame. Null if all frames are requested
@@ -237,7 +221,7 @@ var Marker = Model.extend({
           steps.forEach(function(t) { _this.partialResult[cachePath][t] = {}; });
 
           // Assemble the list of keys as an intersection of keys in all queries of all hooks
-          var keys = _this.getIntersectionOfKeys();
+          var keys = _this.getKeys();
 
           var deferredHooks = [];
         

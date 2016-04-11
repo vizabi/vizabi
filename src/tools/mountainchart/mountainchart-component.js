@@ -979,6 +979,8 @@ updateSize: function (meshLength) {
         if (method === "latest") {
           var prevValues = _this.values;
           _this.model.marker.getFrame(_this.model.time.end, function(values) {
+            if(!values) return;
+              
             _this.values = values;
             _this.updateTime();
             _this.values = prevValues;

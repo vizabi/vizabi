@@ -99,10 +99,6 @@ var BubbleMap = Tool.extend('BubbleMap', {
         }
       }
     },
-    data: {
-      reader: "csv",
-      path: "data/waffles/basic-indicators.csv"
-    },
     ui: {
       chart: {
         labels: {

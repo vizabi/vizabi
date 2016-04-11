@@ -88,10 +88,6 @@ var BarChart = Tool.extend('BarChart', {
           which: "geo.world_4region"
         }
       }
-    },
-    data: {
-      reader: "csv",
-      path: "data/waffles/basic-indicators.csv"
     }
   }
 });

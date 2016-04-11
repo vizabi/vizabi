@@ -1,6 +1,5 @@
 import * as utils from 'base/utils';
 import Model from 'base/model';
-import globals from 'base/globals';
 
 /*!
  * VIZABI Entities Model

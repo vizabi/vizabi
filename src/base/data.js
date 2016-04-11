@@ -176,6 +176,7 @@ var Data = Class.extend({
           col.limits = {};
           col.limitsPerFrame = {};
           col.frames = {};
+          col.haveNoDataPointsPerKey = {};
           col.query = q;
           // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
 
@@ -228,7 +229,7 @@ var Data = Class.extend({
     }
 
     // if they want a certain processing of the data, see if it's already in cache
-    var id = JSON.stringify(whatId);
+    var id = (typeof whatId == "string")? whatId : JSON.stringify(whatId);
     if(this._collection[queryId][what][id]) {
       return this._collection[queryId][what][id];
     }
@@ -246,6 +247,9 @@ var Data = Class.extend({
         break;
       case 'nested':     
         this._collection[queryId][what][id] = this._getNested(queryId, whatId);
+        break;
+      case 'haveNoDataPointsPerKey':     
+        //do nothing. no caching is available for this option, served directly from collection
         break;
     }
     return this._collection[queryId][what][id];
@@ -439,6 +443,7 @@ var Data = Class.extend({
         filtered[keys[k]] = {};
         for (c = 0; c < cLength; c++) filtered[keys[k]][columns[c]] = null;
       }
+      for (c = 0; c < cLength; c++) _this._collection[queryId].haveNoDataPointsPerKey[columns[c]] = {};
 
       var buildFrame = function(frameName, keys, queryId, callback) {
           var frame = {};
@@ -514,6 +519,8 @@ var Data = Class.extend({
                     } else {
                       filtered[key][column] = items;
                     }
+                      
+                    if(items.length==0) _this._collection[queryId].haveNoDataPointsPerKey[column][key] = items.length;
                   }
 
                   // Now we are left with a fewer frames in the filtered array. Let's check its length.
@@ -620,8 +627,7 @@ var Data = Class.extend({
 
   _getValid: function(queryId, column) {
     return this._collection[queryId].data.filter(function(f){return f[column] || f[column]===0});
-  },
-    
+  },    
     
   _getLimits: function(queryId, attr) {
 

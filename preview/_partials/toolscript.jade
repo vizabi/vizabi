@@ -77,8 +77,17 @@ script.
 
   parseURL();
 
+  Vizabi._globals.ext_resources = {
+    host: 'https://waffle-server-dev-new-ddf.gapminderdev.org/',
+    preloadPath: 'api/vizabi/',
+    dataPath: 'api/graphs/stats/vizabi-tools'
+  };
+  VIZABI_MODEL.data = {
+    reader: "waffle",
+    path: Vizabi._globals.ext_resources.host + Vizabi._globals.ext_resources.dataPath
+  },
+
   VIZABI_INITIAL_MODEL = Vizabi.utils.deepClone(VIZABI_MODEL);
-
   Vizabi.utils.deepExtend(VIZABI_MODEL, URL.model);
-
+  
   VIZ = Vizabi("#{tool}", placeholder, VIZABI_MODEL);

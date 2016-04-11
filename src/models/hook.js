@@ -185,30 +185,6 @@ var Hook = Model.extend({
   },
     
     
-    
-  /**
-   * gets the items associated with this hook without values
-   * @param filter filter
-   * @returns hooked value
-   */
-  getKeys: function(filter) {
-      // If there is no _dataId, then no data was loaded
-      if (!this._dataId) return utils.warn("hook:getKeys() -- returning nothing since no data is loaded");
-      
-      //all dimensions except time (continuous)
-      var dimensions = this._getAllDimensions({exceptType: 'time'});
-      var excluded = this._getAllDimensions({onlyType: 'time'});
-
-      return this.getUnique(dimensions).map(function(item) {
-        utils.forEach(excluded, function(e) {
-          if(filter && filter[e]) {
-            item[e] = filter[e];
-          }
-        });
-        return item;
-      });
-  },
-    
   /**
    * Gets the metadata of the hook's "which"
    * @returns {Object} metadata
