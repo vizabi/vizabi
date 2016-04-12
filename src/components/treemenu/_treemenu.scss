@@ -218,6 +218,42 @@
               display: block;            
             }
           }
+          &.vzb-treemenu-list-item-leaf {
+            background-color: $vzb-color-primary-lightest;
+            overflow: hidden;
+            .vzb-treemenu-leaf-content {
+              overflow-y: auto;
+              max-height: calc(100% - 60px);
+              .vzb-treemenu-leaf-content-item {
+                padding: 10px 15px 0;
+                display: block;
+                overflow: hidden;
+                white-space: normal;
+                text-overflow: ellipsis;
+                position: relative;
+                color: $vzb-color-grey-dark;
+                font-size: $vzb-font-size-small;
+                font-family: $vzb-font-family-alt;
+                &.vzb-treemenu-leaf-content-item-title {
+                  font-weight: bold;
+                }
+              }
+            }
+            .vzb-treemenu-leaf-button {
+              position: absolute;
+              bottom: 0;
+              height: 60px;
+              line-height: 16px;
+              padding: 22px 10px;
+              text-align: center;
+              cursor: pointer;
+              color: $vzb-color-primary;
+              font-weight: bold;
+              &:hover {
+                color: $vzb-color-primary-dark;
+              }
+            }
+          }
         }
         &.vzb-treemenu-vertical {
           position: relative;
@@ -233,6 +269,9 @@
             >.vzb-treemenu-list {
               display: block;            
             }
+          }
+          &.vzb-treemenu-list-item-leaf {
+            height: 0;
           }
         }
       }
@@ -276,7 +315,7 @@
         }
         + .vzb-treemenu-list-item-special {
           margin-top: 15px;
-        }
+        }        
       }
       .vzb-treemenu-list-item-label {
         padding: 5px 0;
@@ -291,8 +330,7 @@
         font-size: $vzb-font-size-small;
         font-family: $vzb-font-family-alt;
       }
-
-
+      
     }  
     &.vzb-treemenu-open-left-side {
       .vzb-treemenu-horizontal {
