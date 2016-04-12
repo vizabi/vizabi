@@ -1035,7 +1035,7 @@ var TreeMenu = Component.extend({
                 //Let the indicator "_default" in tree menu be translated differnetly for every hook type
                 var translated = _this.translator("unit" + (d.id==="_default" ? "/" + hookType : "") + "/" + d.id);
                 hideUnits = translated.indexOf("unit/") !== -1 || translated === ''; 
-                if(hideUnits) utils.warn("translation missing: " + translated);
+                if(translated.indexOf("unit/") !== -1) utils.warn("translation missing: " + translated);
                 return 'Units: ' + translated;
               });
             units.classed('vzb-hidden', hideUnits);
