@@ -132,7 +132,7 @@ export default Class.extend({
       }), actions);
     });
   },
-  _getNextAction(key) {
+  _getNextAction: function(key) {
     return this.actionsQueue[key].shift();
   },
   
