@@ -652,7 +652,7 @@ var BubbleChartComp = Component.extend({
 
     var getKeys = function(prefix) {
       prefix = prefix || "";
-      return this.model.marker.getKeys()
+      return _this.model.marker.getKeys()
         .map(function(d) {
           var pointer = {};
           pointer[KEY] = d[KEY];
@@ -677,7 +677,7 @@ var BubbleChartComp = Component.extend({
     this.unselectBubblesWithNoData();
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
-      .data(this.model.entities.getVisible(), function(d) {return d[KEY]})
+      .data(this.model.entities.getVisible(), function(d) {return d && d[KEY] ? d[KEY] : null}) // trails have not keys
       .order();
 
     //exit selection
