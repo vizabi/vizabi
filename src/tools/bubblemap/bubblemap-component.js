@@ -744,6 +744,9 @@ var BubbleMapComponent = Component.extend({
     //stage
     var height = this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
     var width = this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
+      
+    if(this.height<=0 || this.width<=0) return utils.warn("Bubble map updateSize() abort: vizabi container is too little");
+      
     var boundBox = this.boundBox;
     var viewBox = [ boundBox[0][0] * this.defaultWidth,
                     boundBox[0][1] * this.defaultHeight,

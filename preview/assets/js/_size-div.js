@@ -222,8 +222,10 @@ function updateSizePanel(div, width, height) {
 
 //update size
 setDivSize(placeholder, container, 320, 568);
+
 //resize div
-resizableDiv(placeholder, container, 300, 250, function() {
+//the least reasonable minWidth,minHeight, are 300,250, but here we set 0,0 to be able to test the extreme cases
+resizableDiv(placeholder, container, 0, 0, function() {
   forceResizeEvt();
   updateSizePanel(placeholder);
 }, function() {

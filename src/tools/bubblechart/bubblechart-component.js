@@ -872,6 +872,8 @@ var BubbleChartComp = Component.extend({
     //stage
     this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
     this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
+      
+    if(this.height<=0 || this.width<=0) return utils.warn("Bubble chart updateSize() abort: vizabi container is too little");
 
     //graph group is shifted according to margins (while svg element is at 100 by 100%)
     this.graph
