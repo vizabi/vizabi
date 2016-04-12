@@ -49,57 +49,58 @@ export default Class.extend({
             key: d[KEY]
           }
         });
-        if (!_this.entityTrails[d[KEY]]) {
-          _this.entityTrails[d[KEY]] = _context.bubbleContainer
-            .insert("g", ".bubble-" + d[KEY])
-            .attr("class", "vzb-bc-entity trail-" + d[KEY])
-            .selectAll("g").data(trailSegmentData);
-          
-          _this.entityTrails[d[KEY]].exit().remove();
-          
-          _this.entityTrails[d[KEY]]
-            .enter().append("g")
-            .attr("class", "vzb-bc-trailsegment")
-            .on("mouseover", function(segment, index) {
-              if(utils.isTouchDevice()) return;
-
-              var pointer = {};
-              pointer[KEY] = segment.key;
-              pointer.time = segment.t;
-
-              _context._axisProjections(pointer);
-              var text = _context.model.time.timeFormat(segment.t);
-              var labelData = _context.entityLabels
-                .filter(function(f) {
-                  return f[KEY] == pointer[KEY]
-                })
-                .classed("vzb-highlighted", true)
-                .datum();
-              if(text !== labelData.trailStartTime) {
-                _context.model.marker.getFrame(pointer.time, function(values) {
-                  var x = _context.xScale(values.axis_x[pointer[KEY]]);
-                  var y = _context.yScale(values.axis_y[pointer[KEY]]);
-                  var s = utils.areaToRadius(_context.sScale(values.size[pointer[KEY]]));
-                  _context._setTooltip(text, x, y, s);
-                });
-              }
-              //change opacity to OPACITY_HIGHLT = 1.0;
-              d3.select(this).style("opacity", 1.0);
-            })
-            .on("mouseout", function(segment, index) {
-              if(utils.isTouchDevice()) return;
-              _context._axisProjections();
-              _context._setTooltip();
-              _context.entityLabels.classed("vzb-highlighted", false);
-              d3.select(this).style("opacity", _context.model.entities.opacityRegular);
-            })
-            .each(function(segment, index) {
-              var view = d3.select(this);
-              view.append("circle");
-              view.append("line");
-            });
+        if (_this.entityTrails[d[KEY]]) {
+          _this._remove(_this.entityTrails[d[KEY]], null, d);  
         }
+        
+        _this.entityTrails[d[KEY]] = _context.bubbleContainer
+          .insert("g", ".bubble-" + d[KEY])
+          .attr("class", "vzb-bc-entity trail-" + d[KEY])
+          .selectAll("g").data(trailSegmentData);
+        
+        _this.entityTrails[d[KEY]].exit().remove();
+        
+        _this.entityTrails[d[KEY]]
+          .enter().append("g")
+          .attr("class", "vzb-bc-trailsegment")
+          .on("mouseover", function(segment, index) {
+            if(utils.isTouchDevice()) return;
 
+            var pointer = {};
+            pointer[KEY] = segment.key;
+            pointer.time = segment.t;
+
+            _context._axisProjections(pointer);
+            var text = _context.model.time.timeFormat(segment.t);
+            var labelData = _context.entityLabels
+              .filter(function(f) {
+                return f[KEY] == pointer[KEY]
+              })
+              .classed("vzb-highlighted", true)
+              .datum();
+            if(text !== labelData.trailStartTime) {
+              _context.model.marker.getFrame(pointer.time, function(values) {
+                var x = _context.xScale(values.axis_x[pointer[KEY]]);
+                var y = _context.yScale(values.axis_y[pointer[KEY]]);
+                var s = utils.areaToRadius(_context.sScale(values.size[pointer[KEY]]));
+                _context._setTooltip(text, x, y, s);
+              });
+            }
+            //change opacity to OPACITY_HIGHLT = 1.0;
+            d3.select(this).style("opacity", 1.0);
+          })
+          .on("mouseout", function(segment, index) {
+            if(utils.isTouchDevice()) return;
+            _context._axisProjections();
+            _context._setTooltip();
+            _context.entityLabels.classed("vzb-highlighted", false);
+            d3.select(this).style("opacity", _context.model.entities.opacityRegular);
+          })
+          .each(function(segment, index) {
+            var view = d3.select(this);
+            view.append("circle");
+            view.append("line");
+          });
         defer.resolve();
       });
       if (promises.length > 0) {
@@ -176,7 +177,6 @@ export default Class.extend({
   _remove: function(trail, duration, d) {
     this.actionsQueue[d[this.context.KEY]] = []; 
     if (trail) { // TODO: in some reason run twice 
-      trail.remove();
       d3.select(this.entityTrails[d[this.context.KEY]].node().parentNode).remove();
       this.entityTrails[d[this.context.KEY]] = null;
     }
