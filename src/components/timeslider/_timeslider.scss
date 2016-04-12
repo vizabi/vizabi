@@ -7,6 +7,21 @@ $vzb-ts-value-width: 40px;
 .vzb-timeslider {
   min-height: $vzb-ts-btn-area;
   position: relative;
+    
+  &.vzb-ts-disabled {
+    opacity: .4;
+    pointer-events: none;
+    .vzb-ts-slider-slide {
+      .background {
+        pointer-events: none;
+      }
+    }
+    .vzb-ts-slider-handle {
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+    
   .vzb-ts-btns {
     @include position(absolute, 0 null 0 5px);
     width: $vzb-ts-btn-area;

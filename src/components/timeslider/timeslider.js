@@ -377,6 +377,8 @@ var TimeSlider = Component.extend({
     var _this = this;
     var value = this.model.time.value;
     this.slide.call(this.brush.extent([value, value]));
+      
+    this.element.classed("vzb-ts-disabled", this.model.time.end <= this.model.time.start);
 //    this.valueText.text(this.model.time.timeFormat(value));
 
 //    var old_pos = this.handle.attr("cx");
