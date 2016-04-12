@@ -42,6 +42,8 @@
     "hints/dataWarning-little": "Data",
     "hints/source": "More info and source",
     "hints/nodata": "No data",
+    "hints/units": "Units",
+    "hints/nodescr": "No description",
     "mount/maxYmode/immediate": "Immediate",
     "mount/maxYmode/latest": "Latest",
     "mount/maxYmode/total": "Total",
