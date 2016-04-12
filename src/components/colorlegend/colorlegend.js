@@ -205,6 +205,7 @@ var ColorLegend = Component.extend({
 
       if(_this.model.color.use == "indicator") {
         var domain = _this.model.color.getScale().domain();
+        console.log(domain);
         d3.select(this).select(".vzb-cl-color-legend")
           .text(_this.model.color.getTickFormatter()(domain[index]))
       } else {

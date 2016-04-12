@@ -225,16 +225,21 @@ var ColorModel = Hook.extend({
         domain = d3.range(limitMin, limitMax, step).concat(limitMax);
         if (domain.length > range.length) domain.pop();
         domain = domain.reverse();
+        var scaletype = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.scaleType === "log")? "genericLog" : this.scaleType;
+/*
         if(this.scaleType == "log") {
-          var s = d3.scale.log()
-            .domain([limitMin === 0 ? 1 : limitMin, limitMax])
+          console.log(domain);
+          var s = d3.scale[scaletype || "linear"]()
+            .domain([limitMin, limitMax])
             .range([limitMin, limitMax]);
           domain = domain.map(function(d) {
             return s.invert(d)
           });
+          console.log(domain);
         }
+*/
 
-        this.scale = d3.scale[this.scaleType]()
+        this.scale = d3.scale[scaletype]()
           .domain(domain)
           .range(range)
           .interpolate(d3.interpolateRgb);
