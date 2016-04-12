@@ -439,7 +439,14 @@ var BubbleChartComp = Component.extend({
     var _this = this;
     this.updateUIStrings();
     var endTime = this.model.time.end;
-    this.model.marker.getFrame(this.model.time.value, function(frame) {
+    this.model.marker.getFrame(this.model.time.value, function(frame, time) {
+      // TODO: temporary fix for case when after data loading time changed on validation
+        if (time.toString() != _this.model.time.value.toString()) {  
+          utils.defer(function() {
+            _this.ready();
+          });
+          return;
+        } 
         if (!frame
           || Object.keys(frame.axis_y).length === 0
           || Object.keys(frame.axis_x).length === 0

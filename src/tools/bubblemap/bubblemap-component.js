@@ -66,8 +66,11 @@ var BubbleMapComponent = Component.extend({
       "change:marker": function(evt, path) {
         // bubble size change is processed separately
         if(!_this._readyOnce) return;
-          
-        if(path.indexOf("scaleType") > -1) _this.ready();
+
+        if(path.indexOf("scaleType") > -1) {
+          _this.redrawDataPoints(null, false);
+          // ready is not needed because new data are not needed, just reposition _this.ready(); 
+        }
       },
       'change:marker.size.extent': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
@@ -262,8 +265,6 @@ var BubbleMapComponent = Component.extend({
     this.wScale = d3.scale.linear()
         .domain(this.parent.datawarning_content.doubtDomain)
         .range(this.parent.datawarning_content.doubtRange);
-      
-      
 
   },
 
@@ -276,7 +277,15 @@ var BubbleMapComponent = Component.extend({
     this.updateIndicators();
     this.updateSize();
     this.updateMarkerSizeLimits();
-    this.model.marker.getFrame(this.model.time.value, function(values) {
+    this.model.marker.getFrame(this.model.time.value, function(values, time) {
+      // TODO: temporary fix for case when after data loading time changed on validation
+      if (time.toString() != _this.model.time.value.toString()) {
+        utils.defer(function() {
+          _this.ready();
+        });
+        return;
+      } // frame is outdated
+      
       if (!values) return;
       _this.values = values;
       _this.updateEntities();
@@ -295,6 +304,7 @@ var BubbleMapComponent = Component.extend({
   frameChanged: function(frame, time) {
     if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
     if (!frame) return;
+    
     this.values = frame;
     this.updateTime();
     this.updateDoubtOpacity();
@@ -598,7 +608,6 @@ var BubbleMapComponent = Component.extend({
     var _this = this;  
     if(!duration) duration = this.duration;
     if(!reposition) reposition = true;
-      
     this.entityBubbles.each(function(d, index){
       var view = d3.select(this);
 
