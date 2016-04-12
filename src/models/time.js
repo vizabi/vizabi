@@ -352,6 +352,11 @@ var TimeModel = Model.extend({
     }, this.delayAnimations);
 
   },
+  
+  incrementTime: function(time) {
+    var is = this.getIntervalAndStep();
+    return d3.time[is.interval].utc.offset(time, is.step);
+  },
 
   /**
    * Stops playing the time, clearing the interval
