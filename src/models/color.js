@@ -231,7 +231,7 @@ var ColorModel = Hook.extend({
             .domain([limitMin, limitMax])
             .range([limitMin, limitMax]);
           domain = domain.map(function(d) {
-            return s.invert(d)
+            return s(d)
           });
         }
         this.scale = d3.scale[scaletype]()
