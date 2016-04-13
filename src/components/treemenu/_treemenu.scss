@@ -131,8 +131,10 @@
         &.vzb-treemenu-horizontal {
           > .vzb-treemenu-list-item {
             height: 38px;
+            padding: 0;
             .vzb-treemenu-list-item-label {
               line-height: 17px;
+              padding: 10px 0;
             }
           }
           > .vzb-treemenu-list-item-children {
@@ -141,11 +143,12 @@
               display: block;
               position: relative;
               left: calc(100% - 17px);
-              top: -20px;
+              top: -25px;
               width: 0;
               height: 0;
               border: 6px solid transparent;
               border-left: 6px solid $vzb-color-grey-dark;
+              pointer-events: none;
               z-index: 1;          
             }
             &:hover::after {
@@ -159,7 +162,7 @@
           > .vzb-treemenu-list-item {
             .vzb-treemenu-list-item-label {
               line-height: 16px;
-              padding-bottom: 10px;
+              padding: 10px 0;
             }
           }
           > .vzb-treemenu-list-item-children {
@@ -174,7 +177,8 @@
               height: 0;
               border: 6px solid transparent;
               border-left: 6px solid $vzb-color-grey-dark;
-              margin-top: 7px;
+              margin-top: 12px;
+              pointer-events: none;
               z-index: 1;
             }
             &.marquee:hover::before {
@@ -197,12 +201,13 @@
           width: 0;
           top: 0;
           bottom: 0;
+          left: 100%;
           z-index: 2;
           .vzb-treemenu-list {
             overflow-y: auto;
             max-height: 100%;
             .vzb-treemenu-list-item:not(.vzb-treemenu-list-item-children) {
-              .vzb-treemenu-list-item-label {
+              .vzb-treemenu-list-item-label span {
                 margin-right: 5px;
               }
             }
@@ -211,7 +216,6 @@
             top: -1px;
             bottom: 0;
             clear: both;
-            left: 100%;
             border-left: 1px solid $vzb-color-grey-light;
             border-top: 1px solid #f7f7f7;
             >.vzb-treemenu-list {
@@ -221,6 +225,7 @@
           &.vzb-treemenu-list-item-leaf {
             background-color: $vzb-color-primary-lightest;
             overflow: hidden;
+            cursor: pointer;
             .vzb-treemenu-leaf-content {
               overflow-y: auto;
               max-height: calc(100% - 60px);
@@ -298,18 +303,21 @@
           }
         }
         &.marquee:not(:hover) {
-          > .vzb-treemenu-list-item-label {
+          > .vzb-treemenu-list-item-label span {
             left: 0 !important;
+            //text-overflow: ellipsis;
           }
         }
         &.marquee:hover {
           > .vzb-treemenu-list-item-label {
-            text-overflow: inherit;
-            overflow: visible;
-            animation: marquee 5s linear infinite;
-            &::after {
-              content: attr(data-content);
-              padding-left: 30px; //must be equal owner 'space' in marqueeToogle; 
+            span {
+              text-overflow: inherit;
+              overflow: visible;
+              animation: marquee 5s linear infinite;
+              &::after {
+                content: attr(data-content);
+                padding-left: 30px; //must be equal owner 'space' in marqueeToogle; 
+              }
             }
           }
         }
@@ -319,16 +327,20 @@
       }
       .vzb-treemenu-list-item-label {
         padding: 5px 0;
-        margin: 0 25px 0 5px;
+        margin: 0;
         display: block;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        position: relative;
         cursor: pointer;
         color: $vzb-color-grey-dark;
         font-size: $vzb-font-size-small;
         font-family: $vzb-font-family-alt;
+        span {
+          display: block;
+          position: relative;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          margin: 0 25px 0 5px;          
+        }
       }
       
     }  
@@ -343,7 +355,7 @@
         &.vzb-treemenu-list-top,
         .vzb-treemenu-list-outer .vzb-treemenu-list {
           > .vzb-treemenu-list-item {
-            > .vzb-treemenu-list-item-label {
+            > .vzb-treemenu-list-item-label span {
               margin-right: 5px;
             }
           }
@@ -378,7 +390,7 @@
     .vzb-treemenu-wrap {
       max-height: 100%;
       .vzb-treemenu-list-item {
-        padding-bottom: 0;
+        padding: 0;
       }
     }
 
