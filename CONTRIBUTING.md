@@ -13,7 +13,9 @@ Vizabi depends on [Git] (http://git-scm.com/), [Npm](https://github.com/npm/npm)
 3. Install Gulp `npm install --global gulp` (run with sudo if needed)
 4. Install sass `gem install sass` (run with sudo if needed)
 5. Install scss_lint `gem install scss_lint` (run with sudo if needed)
-6. Install [docker](https://docs.docker.com/engine/installation/)
+
+Alternative:
+Install [docker](https://docs.docker.com/engine/installation/)
 
 
 **Clone this repo** and run the following commands in vizabi root folder:
