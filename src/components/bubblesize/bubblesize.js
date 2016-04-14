@@ -28,7 +28,7 @@ var profiles = {
     },
     "large": {
       minRadius: 1,
-      maxRadius: 70
+      maxRadius: 65
     }
 };
 

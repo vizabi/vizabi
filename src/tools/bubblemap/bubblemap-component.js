@@ -724,7 +724,7 @@ var BubbleMapComponent = Component.extend({
         margin: { top: 30, right: 30, left: 30, bottom: 35 },
         infoElHeight: 22,
         minRadius: 1,
-        maxRadius: 70
+        maxRadius: 65
       }
     };
 

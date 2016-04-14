@@ -836,7 +836,7 @@ var BubbleChartComp = Component.extend({
         margin: { top: 50, right: 20, left: 60, bottom: 60 },
         padding: 2,
         minRadius: 1,
-        maxRadius: 70,
+        maxRadius: 65,
         minLabelTextSize: 6,
         maxLabelTextSize: 48,
         defaultLabelTextSize: 20,
