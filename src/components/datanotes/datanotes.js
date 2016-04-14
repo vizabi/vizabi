@@ -88,7 +88,7 @@ var DataNotes = Component.extend({
   },
 
   setHook: function(_hookName) {
-    if(!this.readyOnce) return this; 
+    if(!this._readyOnce) return this; 
     if(pin) {
       newHookName = _hookName;
       return this;
