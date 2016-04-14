@@ -26,6 +26,7 @@ var Find = Dialog.extend({
     this.model_binds = {
       "change:state.entities.select": function(evt) {
         _this.selectDataPoints();
+        _this.showHideDeselect();
       },
       "change:state.time.playing": function(evt) {
         if(!_this.model.state.time.playing) {
