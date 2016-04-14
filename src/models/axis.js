@@ -102,8 +102,15 @@ var AxisModel = Hook.extend({
         break;
     }
     
-    var scaletype = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.scaleType === "log")? "genericLog" : this.scaleType;;
-    this.scale = d3.scale[scaletype || "linear"]().domain(domain);
+    var scaletype = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.scaleType === "log")? "genericLogNew" : this.scaleType;
+    if (this._name == "axis_x" && this.scaleType !== "log") {
+      scaletype = "sqrt";
+      //this.scaleType === scaletype;
+      this.scale = d3.scale[scaletype || "linear"]().domain(domain).exponent(1);
+    } else {
+      this.scale = d3.scale[scaletype || "linear"]().domain(domain);
+    }
+
   }
 });
 

@@ -54,9 +54,12 @@ utils.forEach(components, function(component, name) {
 //d3 addons
 
 import genericLog from 'helpers/d3.genericLogScale';
+import genericLogNew from 'helpers/d3.genericLogScaleNew';
 import { onTap, onLongTap } from 'helpers/d3.touchEvents';
 
 d3.scale.genericLog = genericLog;
+d3.scale.genericLogNew = genericLogNew;
+
 d3.selection.prototype.onTap = onTap;
 d3.selection.prototype.onLongTap = onLongTap;
 

@@ -2,12 +2,16 @@
 export default function genericLog() {
     return function d3_scale_genericLog(logScale) {
         var _this = this;
+        var scales = {};
         var eps = 0.1;
         var delta = 5;
         var domain = logScale.domain();
         var range = logScale.range();
         var useLinear = false;
         var linScale = d3.scale.linear().domain([0,eps]).range([0,delta]);
+        var buildScaleParts = function(domain, range) {
+              
+        };
         var abs = function(arg) {
             if(arg instanceof Array)
                 return arg.map(function(d) {
@@ -107,6 +111,12 @@ export default function genericLog() {
             if(!arguments.length)
                 return domain;
             // this is an internal array, it will be modified. the input _arg should stay intact
+            console.log(_arg);
+            console.log(scale.range());
+            var newScale = d3.scale.sqrt().domain(scale.range()).range(_arg);
+            console.log(newScale.invert(0));
+            console.log(newScale(_arg[0]));
+            console.log(newScale(_arg[1]));
             var arg = [];
             if(_arg.length != 2)
                 console.warn(
