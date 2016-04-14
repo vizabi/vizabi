@@ -706,7 +706,7 @@ updateSize: function (meshLength) {
                 });
 
                 //position tooltip
-                _this._setTooltip(d.key ? _this.translator("region/" + d.key) : _this.values.label[d.KEY()]);
+                _this._setTooltip(d.key ? _this.translator("entity/geo.world_4region/" + d.key) : _this.values.label[d.KEY()]);
 
             },
             _mouseout: function (d, i) {

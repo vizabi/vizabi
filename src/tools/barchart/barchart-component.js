@@ -151,7 +151,7 @@ var BarComponent = Component.extend({
     this.cScale = this.model.marker.color.getScale();
 
     var xFormatter = this.model.marker.axis_x.which == "geo.world_4region"?
-        function(x){return _this.translator("region/" + x)}
+        function(x){return _this.translator("entity/geo.world_4region/" + x)}
         :
         _this.model.marker.axis_x.getTickFormatter();
 

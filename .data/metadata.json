@@ -8676,13 +8676,10 @@
     "id": "_properties",
     "children": [
      {
-      "id": "geo"
+      "id": "geo.world_4region"
      },
      {
       "id": "geo.name"
-     },
-     {
-      "id": "geo.geographic_regions"
      },
      {
       "id": "geo.income_groups"
@@ -8694,13 +8691,10 @@
       "id": "geo.g77_and_oecd_countries"
      },
      {
-      "id": "geo.geographic_regions_in_4_colors"
-     },
-     {
       "id": "geo.main_religion_2008"
      },
      {
-      "id": "geo.world_4region"
+      "id": "geo"
      }
     ]
    },

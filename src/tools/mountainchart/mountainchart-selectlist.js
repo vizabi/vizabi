@@ -119,7 +119,7 @@ var MCSelectList = Class.extend({
       .each(function (d, i) {
 
         var view = d3.select(this).attr("id", d.geo + '-label');
-        var name = d.key ? _this.translator("region/" + d.key) : _this.values.label[d.KEY()];
+        var name = d.key ? _this.translator("entity/geo.world_4region/" + d.key) : _this.values.label[d.KEY()];
         var number = _this.values.axis_y[d.KEY()];
 
         var string = name + ": " + formatter(number) + (i === 0 ? " "+ _this.translator("mount/people") : "");
