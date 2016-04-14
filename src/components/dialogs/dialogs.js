@@ -88,32 +88,33 @@ var Dialogs = Component.extend({
     this._super(config, context);
 
   },
-
-  readyOnce: function() {
-
-    var _this = this;
+  
+  domReady: function() {
     var dialog_popup = (this.model.ui.dialogs||{}).popup || [];
     var dialog_sidebar = (this.model.ui.dialogs||{}).sidebar || [];
-
-    this.element = d3.select(this.placeholder);
-
-    this.element.selectAll("div").remove();
-
     // if dialog_sidebar has been passed in with boolean param or array must check and covert to array
     if (dialog_sidebar === true) {
       dialog_sidebar = dialog_popup;
       (this.model.ui.dialogs||{}).sidebar = dialog_sidebar;
     }
-
     if (dialog_sidebar.length !== 0) {
-        d3.select(this.root.element).classed("vzb-dialog-expand-true", true);
+      d3.select(this.root.element).classed("vzb-dialog-expand-true", true);
     }
+    this.dialog_popup = dialog_popup;
+    this.dialog_sidebar = dialog_sidebar;
+  },
 
-    this._addDialogs(dialog_popup, dialog_sidebar);
+  readyOnce: function() {
+    var _this = this;
+
+    this.element = d3.select(this.placeholder);
+    this.element.selectAll("div").remove();
+
+    this._addDialogs(this.dialog_popup, this.dialog_sidebar);
 
     this.resize();
 
-    if((this.model.ui.dialogs||{}).popup) {
+    if(this.dialog_popup.length !== 0) {
       this.root.findChildByName("gapminder-buttonlist")
         .on("click", function(evt, button) {
           if(!_this._available_dialogs[button.id]) return;
@@ -125,7 +126,7 @@ var Dialogs = Component.extend({
           }
         });
 
-      var popupDialogs = this.element.selectAll(".vzb-top-dialog").filter(function(d) {return dialog_popup.indexOf(d.id) > -1});
+      var popupDialogs = this.element.selectAll(".vzb-top-dialog").filter(function(d) {return _this.dialog_popup.indexOf(d.id) > -1});
 
       var close_buttons = popupDialogs.select(".vzb-top-dialog>.vzb-dialog-modal>.vzb-dialog-buttons>[data-click='closeDialog']");
       close_buttons.on('click', function(d, i) {
@@ -167,17 +168,15 @@ var Dialogs = Component.extend({
 
   resize: function() {
     var _this = this;
-    var dialog_popup = (this.model.ui.dialogs||{}).popup || [];
-    var dialog_sidebar = (this.model.ui.dialogs||{}).sidebar || [];
     var profile = this.getLayoutProfile();
 
     this.element.selectAll(".vzb-top-dialog").each(function(d) {
       var dialogEl = d3.select(this);
       var cls = dialogEl.attr('class').replace(' vzb-popup','').replace(' vzb-sidebar','');
 
-      if (profile === 'large' && dialog_sidebar.indexOf(d.id) > -1) {
+      if (profile === 'large' && _this.dialog_sidebar.indexOf(d.id) > -1) {
         cls += ' vzb-sidebar';
-      } else if(dialog_popup.indexOf(d.id) > -1) {
+      } else if(_this.dialog_popup.indexOf(d.id) > -1) {
         cls += ' vzb-popup';
       }
 
