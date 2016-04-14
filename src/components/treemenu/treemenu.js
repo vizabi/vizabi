@@ -411,7 +411,7 @@ var MenuItem = Class.extend({
     var label = this.entity.select('.' + css.list_item_label).on('mouseenter', function() {
       if(utils.isTouchDevice()) return;
       if (_this.parentMenu.direction == MENU_HORIZONTAL) {
-        _this.toggleSubmenu();
+        _this.openSubmenu();
         _this.marqueeToggle(true);
       }
     }).on('click.item', function() {
@@ -1005,6 +1005,13 @@ var TreeMenu = Component.extend({
         })
         .on('click', function(d) {
           if(_this.menuEntity.direction != MENU_VERTICAL) return;
+          var view = d3.select(this);
+          //only for leaf nodes
+          if(view.attr("children")) return;
+          d3.event.stopPropagation();
+          _this._selectIndicator(d.id);
+        })
+        .on('dblclick', function(d) {
           var view = d3.select(this);
           //only for leaf nodes
           if(view.attr("children")) return;

@@ -245,8 +245,6 @@
               }
             }
             .vzb-treemenu-leaf-button {
-              position: absolute;
-              bottom: 0;
               height: 60px;
               line-height: 16px;
               padding: 22px 10px;
@@ -254,8 +252,10 @@
               cursor: pointer;
               color: $vzb-color-primary;
               font-weight: bold;
-              &:hover {
-                color: $vzb-color-primary-dark;
+            }
+            &:hover {
+              .vzb-treemenu-leaf-button {
+                color: $vzb-color-primary-darkest;
               }
             }
           }
