@@ -1325,7 +1325,7 @@ var BubbleChartComp = Component.extend({
 
           var labelGroup = d3.select(this);
 
-          if(select.trailStartTime == null) {
+          if(!_this.model.ui.chart.trails || select.trailStartTime == null) {
             select.trailStartTime = _this.model.time.timeFormat(_this.time); // need only when trailStartTime == null
             cached.scaledS0 = scaledS;
             cached.labelX0 = valueX;
