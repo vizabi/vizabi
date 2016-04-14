@@ -666,7 +666,8 @@ WaffleReader.define('basepath', globals.ext_resources.host + globals.ext_resourc
 
 //preloading mountain chart precomputed shapes
 MCComponent.define("preload", function(done) {
-  var shape_path = globals.ext_resources.host + globals.ext_resources.preloadPath + "mc_precomputed_shapes.json";     
+  var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
+      globals.ext_resources.host + globals.ext_resources.preloadPath + "mc_precomputed_shapes.json";     
 
   d3.json(shape_path, function(error, json) {
     if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
@@ -677,7 +678,8 @@ MCComponent.define("preload", function(done) {
 
 //preloading bubble map country shapes
 BMComponent.define("preload", function(done) {
-  var shape_path = globals.ext_resources.host + globals.ext_resources.preloadPath + "world-50m.json"; 
+  var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
+      globals.ext_resources.host + globals.ext_resources.preloadPath + "world-50m.json"; 
     
   d3.json(shape_path, function(error, json) {
     if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
@@ -691,7 +693,8 @@ BMComponent.define("preload", function(done) {
 Tool.define("preload", function(promise) {
 
   var _this = this;
-  var metadata_path = globals.ext_resources.host + globals.ext_resources.preloadPath + "metadata.json";    
+  var metadata_path = globals.ext_resources.metadataPath ? globals.ext_resources.metadataPath :
+      globals.ext_resources.host + globals.ext_resources.preloadPath + "metadata.json";    
 
   //TODO: concurrent
   //load language first
@@ -755,7 +758,8 @@ Tool.define("preloadLanguage", function() {
   var promise = new Promise();
 
   var langModel = this.model.language;
-  var translation_path = globals.ext_resources.host + globals.ext_resources.preloadPath + "translation/" + langModel.id + ".json";
+  var translation_path = globals.ext_resources.translationPath ? globals.ext_resources.translationPath :
+      globals.ext_resources.host + globals.ext_resources.preloadPath + "translation/" + langModel.id + ".json";
 
   if(langModel && !langModel.strings[langModel.id]) {
     d3.json(translation_path, function(langdata) {
