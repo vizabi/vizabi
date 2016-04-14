@@ -4193,8 +4193,8 @@
    ],
    "use": "indicator",
    "domain": [
-    1.0,
-    84.1
+    25,
+    83
    ],
    "availability": [
     1800,
