@@ -23,7 +23,7 @@ before_script:
   - sh -e /etc/init.d/xvfb start
   - gulp &
 
-script: 
+script:
   - .cicd/w4gulp.js
   - npm run e2e:local
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && sh deploy.sh || true'
