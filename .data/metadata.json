@@ -47,8 +47,8 @@
      "sourceLink": "http://spreadsheets.google.com/pub?key=phT4mwjvEuGCSmAe5aq7HKw",
      "color": {
          "palette": {
-             "lower_middle_income": "#4366f4",
-             "low_income": "#7ea1d1",
+             "low_income": "#4366f4",
+             "lower_middle_income": "#7ea1d1",
              "upper_middle_income": "#a7cb7d",
              "high_income": "#7bc135"
          }
