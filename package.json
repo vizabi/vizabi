@@ -3,6 +3,10 @@
   "version": "0.13.9-0",
   "description": "Vizabi Framework, Interactive charts and visualization tools animated through time",
   "main": "build/dist/vizabi.js",
+  "scripts": {
+      "e2e:local": "./node_modules/protractor/bin/webdriver-manager update && ./node_modules/.bin/protractor .cicd/protractor.conf.js",
+      "test": "echo tests"
+  },
   "files": [
     "build/dist"
   ],
@@ -61,6 +65,9 @@
     "rollup": "0.19.2",
     "slash": "1.0.0",
     "shelljs": "0.6.0",
-    "compare-version": "0.1.2"
+    "compare-version": "0.1.2",
+    "protractor": "3.1.1",
+    "jasmine": "2.4.1",
+    "jasmine-spec-reporter": "2.4.0"
   }
 }
