@@ -5,6 +5,7 @@ export default function genericLog() {
         var scales = {};
         var eps = 0.1;
         var delta = 5;
+        console.log("111");
         var domain = logScale.domain();
         var range = logScale.range();
         var useLinear = false;

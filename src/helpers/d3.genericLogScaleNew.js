@@ -8,89 +8,221 @@ export default function genericLogNew() {
     var delta = 5;
     var domain = logScale.domain();
     var range = logScale.range();
-    var maxRangePoint, controlRangePoint, minRangePoint, coefficient;
-    var rangeZeroPoint = logScale(0);  
-    var useLinear = false;
+    var rangePointingForward, domainPointingForward;
     
-    var abs = function(arg) {
-      if(arg instanceof Array)
-        return arg.map(function(d) {
+    var abs = function (arg) {
+      if (arg instanceof Array)
+        return arg.map(function (d) {
           return Math.abs(d);
         });
       return Math.abs(arg);
     };
-    
-    var getScale = function(scaleType, domain, range) {
-        
+
+    var _buildLinearScale = function(fakeDomain, fakeRange) {
+      return {
+          domain: fakeDomain,
+          range: fakeRange,
+          scale: d3.scale.linear().domain(fakeDomain).range(fakeRange)
+      };
     };
+
+    var _buildLogScale = function(fakeDomain, fakeRange, revertDomain) {
+      var absDomain = fakeDomain;
+      if (revertDomain) {
+        absDomain = abs(fakeDomain); 
+      }
+      return {
+        domain: fakeDomain,
+        range: fakeRange,
+        scale: d3.scale.linear().domain(absDomain).range(fakeRange)
+      };
+    };
+
     
-    var buildScale = function() {
-      if ((d3.min(domain) > 0 && d3.max(domain) > 0) || (d3.min(domain) < 0 && d3.max(domain) < 0)) {
-        if (d3.min(domain) > 0 && d3.max(domain) > 0) {
-          scaleParts = [{
-            domain: domain,
-            range: range
-          }];
+    var buildScales = function () {
+      rangePointingForward = range[0] < range[range.length - 1];
+      scales = [];
+      if (domainParts.length == 1) {
+        if (domainParts[0][0] <= 0 && domainParts[0][1] >= 0) {
+          scales = [_buildLinearScale(domainParts[0], range)];
+        } else {
+          scales = [_buildLogScale(domainParts[0], range, domainParts[0][0] <= 0)];
         }
-        rangeZeroPoint = null;
+      } else {
+        var domainLength = abs([d3.max(domain), d3.min(domain)]).reduce(function (a, b) { return a + b });
+        var rangeLength = abs([d3.max(range), d3.min(range)]).reduce(function (a, b) { return a + b });
+
+        var firstRangePoint = 0, secondRangePoint = 0, firstEps = 0, secondEps = 0;
+
+        var minRangePoint = logScale(eps * 2);
+          
+        if (domain[0] != 0) 
+          firstRangePoint = logScale(abs(domain[0]));
+        if (domain[domain.length - 1] != 0) 
+          secondRangePoint = logScale(abs(domain[domain.length - 1]));
+
+        if (abs(domain[0]) > eps)
+          firstEps = minRangePoint;
+        if (abs(domain[domain.length - 1]) > eps)
+          secondEps = minRangePoint;
+        
+        var rangePointLength = rangeLength / (firstRangePoint + secondRangePoint + firstEps + secondEps);
+
+        var point;
+        if (domainParts.length == 2) {
+          // example: [-eps..0,eps][eps, val]
+          if (domainParts[0][0] == 0 || abs(domainParts[0][0]) <= eps) {
+            point = range[0] + firstRangePoint * rangePointLength * domainPointingForward
+              + secondEps * rangePointLength * domainPointingForward;
+            scales = [
+              _buildLinearScale(domainParts[0], [range[0], point]),
+              _buildLogScale(domainParts[1], [point,  range[0]])
+            ];
+          } else if (domainParts[1][1] == 0 || abs(domainParts[1][1]) <= eps) {// example: [-val,-eps][-eps, 0..eps]
+            point = range[1] - rangePointLength * secondEps * domainPointingForward
+                      - rangePointLength * secondRangePoint * domainPointingForward;
+            scales = [
+              _buildLogScale(domainParts[0], [range[0], point]),
+              _buildLinearScale(domainParts[0], [point, range[1]])
+            ];
+           }
+        } else {
+          var point1 = range[0] + rangePointLength * firstRangePoint * domainPointingForward;
+          var point2 = range[1] - rangePointLength * secondRangePoint * domainPointingForward;
+          scales = [
+            _buildLogScale(domainParts[0], [range[0], point1]),
+            _buildLinearScale(domainParts[1], [point1, point2]),
+            _buildLogScale(domainParts[2], [point2, range[1]])
+          ];
+          
+        }
+      } 
+    };
+
+    var buildDomain = function () {
+      domainPointingForward = domain[0] < domain[domain.length - 1];
+
+      if ((d3.min(domain) > 0 && d3.max(domain) > 0) || (d3.min(domain) < 0 && d3.max(domain) < 0)) {
+        domainParts = [domain];
         return;
       }
-      var domainLength = abs(domain).reduce(function(a, b) {return a + b});
-      logScale.domain([eps, d3.max(abs(domain))]);
-      minRangePoint = logScale(eps * 2);
-      if (d3.min(domain) == 0 || d3.max(domain) == 0) { // zero point is domain extremum 
-        if (d3.min(domain) == 0) { // all values positive
-          if (domain[0] == 0) { //direction forward
-            if (domain[domain.length - 1] <= eps) {
-              domainParts = [domain];  
+
+      domainParts = [];
+      var start, end;
+      
+      if (domainPointingForward) {
+        start = domain[0];
+        end = domain[domain.length - 1];
+      } else {
+        start = domain[domain.length - 1];
+        end = domain[0];
+      }
+      var addSubdomain = function(first, second) {
+        if (domainPointingForward) {
+          domainParts.push([first, second]);
+        } else {
+          domainParts.unshift([second, first]);
+        }
+      };
+      while (start != end) {
+        if (start < 0) {
+          if (start >= -eps) {
+            if (end <= eps) {
+              addSubdomain(start, end);
+              start = end;
             } else {
-              domainParts = [[0, eps], [eps, domain[domain.length - 1]]];
+              addSubdomain(start, eps);
+              start = eps;
             }
-            rangeZeroPoint = range[0];
-          } else { // direction backward
-            if (domain[0] >= eps) {
-              domainParts = [domain];
-            } else {
-              domainParts = [[domain[0], -eps], [-eps, 0]];
-            }
-            rangeZeroPoint = range[range.length - 1];
+          } else {
+            addSubdomain(start, -eps);
+            start = -eps;
           }
-        } else { // all values negative include zero
-          if (domain[0] == 0) { //direction backward
-            rangeZeroPoint = range[0];
-          } else { // direction backward
-            rangeZeroPoint = range[range.length - 1];
+        } else if (start == 0) {
+          if (end <= eps) {
+            addSubdomain(start, end);
+            start = end;
+          } else {
+            addSubdomain(start, eps);
+            start = eps;
+          }
+        } else {
+          addSubdomain(start, end);
+          start = end;
+        }
+      }
+      buildScales();
+    };
+
+    var _getScaleByDomain = function(x) {
+      if (domainPointingForward) {
+        if (x < domain[0]) {
+          return scales[0];
+        } else if (x > domain[domain.length - 1]) {
+          return scales[scales.length - 1];
+        } else {
+          for (var i = 0; i < scales.length; i++) {
+            scale = scales[i];
+            if (x >= scale.domain[0] && x <= scale.domain[1]) {
+              return scale;  
+            }
           }
         }
-      } else { // zero somewhere on domain
-
-        var startRangePoint = logScale(abs(domain[0]));
-        var endRangePoint = logScale(abs(domain[domain.length - 1]));
-        var domainPointLength = domainLength / (startRangePoint + endRangePoint + minRangePoint * 2);
-        var pointSign = domain[0] < domain[domain.length - 1] ? 1 : -1; 
-        var rangeZeroPoint = range[0] + pointSign * startRangePoint * domainPointLength + pointSign * minRangePoint;
+      } else {
+        if (x > domain[0]) {
+          return scales[0];
+        } else if (x < domain[domain.length - 1]) {
+          return scales[scales.length - 1];
+        } else {
+          for (var i = 0; i < scales.length; i++) {
+            scale = scales[i];
+            if (x <= scale.domain[0] && x >= scale.domain[1]) {
+              return scale;
+            }
+          }
+        }
       }
-      
-    };
-    var getNumericDomain = function() {
-      console.log(logScale)
-    };
-    var buildScale = function() {
-      var domain = sqrtScale.range();
-      
-      console.log(sqrtScale.invert(0));
-      console.log(sqrtScale.domain());
-      console.log(domain);
     };
     
-    //polyfill for IE11
-    Math.sign = Math.sign || function(x) {
-        x = +x;
-        if (x === 0 || isNaN(x)) {
-          return x;
+    var getScaleByRange = function(x) {
+      if (rangePointingForward) {
+        if (x < range[0]) {
+          return scales[0].scale;
+        } else if (x > range[range.length - 1]) {
+          return scales[scales.length - 1].scale;
+        } else {
+          for (var i = 0; i < scales.length; i++) {
+            var scalePart = scales[i];
+            if (x >= scalePart.range[0] && x <= scalePart.range[1]) {
+              return scalePart.scale;
+            }
+          }
         }
-        return x > 0 ? 1 : -1;
+      } else {
+        if (x > range[0]) {
+          return scales[0].scale;
+        } else if (x < range[range.length - 1]) {
+          return scales[scales.length - 1].scale;
+        } else {
+          for (var i = 0; i < scales.length; i++) {
+            var scalePart = scales[i];
+            if (x <= scale.range[0] && x >= scale.range[1]) {
+              return scale;
+            }
+          }
+        }
       }
+      
+    };
+    
+  //polyfill for IE11
+  Math.sign = Math.sign || function (x) {
+      x = +x;
+      if (x === 0 || isNaN(x)) {
+        return x;
+      }
+      return x > 0 ? 1 : -1;
+    }
 
     var oneside = function(arg) {
       var sign = Math.sign(arg[0]);
@@ -100,60 +232,8 @@ export default function genericLogNew() {
       }
       return true;
     };
-
     function scale(x) {
-      var ratio = 1;
-      var shiftNeg = 0;
-      var shiftPos = 0;
-      var shiftAll = 0;
-      //console.log("DOMAIN log lin", logScale.domain(), linScale.domain());
-      //console.log("RANGE log lin", logScale.range(), linScale.range());
-      var domainPointingForward = domain[0] < domain[domain.length - 1];
-      var rangePointingForward = range[0] < range[range.length - 1];
-      if(d3.min(domain) < 0 && d3.max(domain) > 0) {
-        var minAbsDomain = d3.min(abs([
-          domain[0],
-          domain[domain.length - 1]
-        ]));
-        //var maxAbsDomain = d3.max(abs([ domain[0], domain[domain.length-1] ]));
-        //ratio shows how the + and - scale should fit as compared to a simple + or - scale
-        ratio = domainPointingForward != rangePointingForward ? (d3.max(range) + d3.max(range) - logScale(
-          Math.max(
-            eps, minAbsDomain))) / d3.max(range) : (d3.max(range) + logScale(Math.max(eps,
-          minAbsDomain))) / d3.max(
-          range);
-        if(domainPointingForward && !rangePointingForward) {
-          shiftNeg = (d3.max(range) + linScale(0)) / ratio;
-          // if the bottom is heavier we need to shift the entire chart
-          if(abs(domain[0]) > abs(domain[domain.length - 1]))
-            shiftAll -= logScale(Math.max(eps, minAbsDomain)) / ratio;
-        } else if(!domainPointingForward && !rangePointingForward) {
-          shiftAll = logScale(Math.max(eps, minAbsDomain)) / ratio;
-          //if the top is heavier we need to shift the entire chart
-          if(abs(domain[0]) < abs(domain[domain.length - 1]))
-            shiftAll += (d3.max(range) - logScale(Math.max(eps, minAbsDomain))) / ratio;
-        } else if(domainPointingForward && rangePointingForward) {
-          shiftAll = d3.max(range) / ratio;
-          // if the top is heavier we need to shift the entire chart
-          if(abs(domain[0]) < abs(domain[domain.length - 1]))
-            shiftAll -= (d3.max(range) - logScale(Math.max(eps, minAbsDomain))) / ratio;
-        } else if(!domainPointingForward && rangePointingForward) {
-          shiftNeg = (d3.max(range) + linScale(0)) / ratio;
-          //if the top is heavier we need to shift the entire chart
-          if(abs(domain[0]) < abs(domain[domain.length - 1]))
-            shiftAll -= logScale(Math.max(eps, minAbsDomain)) / ratio;
-        }
-      } else if(d3.min(domain) < 0 && d3.max(domain) < 0) {
-        shiftNeg = d3.max(range);
-      }
-      if(x > eps)
-        return logScale(x) / ratio + shiftAll + shiftPos;
-      if(x < -eps)
-        return -logScale(-x) / ratio + shiftAll + shiftNeg;
-      if(0 <= x && x <= eps)
-        return linScale(x) / ratio + shiftAll + shiftPos;
-      if(-eps <= x && x < 0)
-        return -linScale(-x) / ratio + shiftAll + shiftNeg;
+      return _getScaleByDomain(x).scale(x);
     }
 
     scale.eps = function(arg) {
@@ -223,102 +303,15 @@ export default function genericLogNew() {
         arg[0] = arg[0] / 2;
         arg[1] = arg[1] * 2;
       }
-      sqrtScale.range(arg);
-      buildScale();
-      //if the desired domain is one-seded
-      if(oneside(arg) && d3.min(abs(arg)) >= eps) {
-        //if the desired domain is above +epsilon
-        if(arg[0] > 0 && arg[1] > 0) {
-          //then fallback to a regular log scale. nothing special
-          logScale.domain(arg);
-        } else {
-          //otherwise it's all negative, we take absolute and swap the arguments
-          logScale.domain([-arg[1], -arg[0]]);
-        }
-        useLinear = false; //if the desired domain is one-sided and takes part of or falls within 0±epsilon
-      } else if(oneside(arg) && d3.min(abs(arg)) < eps) {
-        //if the desired domain is all positive
-        if(arg[0] > 0 && arg[1] > 0) {
-          //the domain is all positive
-          //check the direction of the domain
-          if(arg[0] <= arg[1]) {
-            //if the domain is pointing forward
-            logScale.domain([
-              eps,
-              arg[1]
-            ]);
-            linScale.domain([
-              0,
-              eps
-            ]);
-          } else {
-            //if the domain is pointing backward
-            logScale.domain([
-              arg[0],
-              eps
-            ]);
-            linScale.domain([
-              eps,
-              0
-            ]);
-          }
-        } else {
-          //otherwise it's all negative, we take absolute and swap the arguments
-          //check the direction of the domain
-          if(arg[0] <= arg[1]) {
-            //if the domain is pointing forward
-            logScale.domain([
-              eps, -arg[0]
-            ]);
-            linScale.domain([
-              0,
-              eps
-            ]);
-          } else {
-            //if the domain is pointing backward
-            logScale.domain([-arg[1],
-              eps
-            ]);
-            linScale.domain([
-              eps,
-              0
-            ]);
-          }
-        }
-        useLinear = true; // if the desired domain is two-sided and fully or partially covers 0±epsilon
-      } else if(!oneside(arg)) {
-        //check the direction of the domain
-        if(arg[0] <= arg[1]) {
-          //if the domain is pointing forward
-          logScale.domain([
-            eps,
-            d3.max(abs(arg))
-          ]);
-          linScale.domain([
-            0,
-            eps
-          ]);
-        } else {
-          //if the domain is pointing backward
-          logScale.domain([
-            d3.max(abs(arg)),
-            eps
-          ]);
-          linScale.domain([
-            eps,
-            0
-          ]);
-        }
-        useLinear = true;
-      }
-      //
-      //console.log("LOG scale domain:", logScale.domain());
-      //if(useLinear)console.log("LIN scale domain:", linScale.domain());
+      domain = arg;
+      buildDomain();
       return scale;
     };
+    
     scale.range = function(arg) {
       if(!arguments.length)
         return range;
+      range = arg;
       if(arg.length != 2)
         console.warn(
           'generic log scale is best for 2 values in range, but it tries to support other cases too');
@@ -336,7 +329,6 @@ export default function genericLogNew() {
           break;
         // two is the standard case. do nothing
         case 2:
-          arg = arg;
           break;
         // use the edge values as range, center as delta
         case 3:
@@ -357,74 +349,21 @@ export default function genericLogNew() {
           ];
           break;
       }
-      sqrtScale.domain(arg);
-      buildScale();
-      if(!useLinear) {
-        logScale.range(arg);
-      } else {
-        if(arg[0] < arg[1]) {
-          //range is pointing forward
-          //check where domain is pointing
-          if(domain[0] < domain[domain.length - 1]) {
-            //domain is pointing forward
-            logScale.range([
-              delta,
-              arg[1]
-            ]);
-            linScale.range([
-              0,
-              delta
-            ]);
-          } else {
-            //domain is pointing backward
-            logScale.range([
-              0,
-              arg[1] - delta
-            ]);
-            linScale.range([
-              arg[1] - delta,
-              arg[1]
-            ]);
-          }
-        } else {
-          //range is pointing backward
-          //check where domain is pointing
-          if(domain[0] < domain[domain.length - 1]) {
-            //domain is pointing forward
-            logScale.range([
-              arg[0] - delta,
-              0
-            ]);
-            linScale.range([
-              arg[0],
-              arg[0] - delta
-            ]);
-          } else {
-            //domain is pointing backward
-            logScale.range([
-              arg[0],
-              delta
-            ]);
-            linScale.range([
-              delta,
-              0
-            ]);
-          }
-        }
-      }
-      //
+      
       //console.log("LOG and LIN range:", logScale.range(), linScale.range());
       range = arg;
+      buildScales();
       return scale;
     };
+    
     scale.invert = function(arg) {
-      return sqrtScale(arg);
+      return getScaleByRange(arg).invert(arg);
     };
     scale.copy = function() {
       return d3_scale_genericLogNew(d3.scale.log().domain([
         1,
         10
-      ])).domain(domain).range(range).eps(eps).interpolate(scale.interpolate());
+      ])).domain(domain).range(range).eps(eps);
     };
     return d3.rebind(scale, logScale, 'base', 'rangeRound', 'interpolate', 'clamp', 'nice',
       'tickFormat',
