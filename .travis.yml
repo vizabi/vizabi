@@ -19,6 +19,7 @@ script:
 
 after_success:
   .cicd/beta_npm_ver.js
+  - gulp build
 
 deploy:
   skip_cleanup: true
