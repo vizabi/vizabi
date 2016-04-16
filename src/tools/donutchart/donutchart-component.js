@@ -145,8 +145,8 @@ var DonutComponent = Component.extend('donut', {
        */
       resize: function() {
 
-        var height = parseInt(this.element.style("height")||0, 10);
-        var width = parseInt(this.element.style("width")||0, 10);
+        var height = parseInt(this.element.style("height"), 10) || 0;
+        var width = parseInt(this.element.style("width"), 10) || 0;
         var min = Math.min(height, width);
           
         if(height<=0 || width<=0) return utils.warn("Donut chart resize() abort: vizabi container is too little or has display:none");

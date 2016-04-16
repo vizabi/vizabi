@@ -328,10 +328,10 @@ var LCComponent = Component.extend({
 
 
     //stage
-    this.height = parseInt(this.element.style("height")||0, 10) - this.margin.top - this.margin.bottom;
-    this.width = parseInt(this.element.style("width")||0, 10) - this.margin.left - this.margin.right;
+    this.height = (parseInt(this.element.style("height"), 10) - this.margin.top - this.margin.bottom) || this.height || 0;
+    this.width = (parseInt(this.element.style("width"), 10) - this.margin.left - this.margin.right) || this.width || 0;      
       
-    if(height<=0 || width<=0) return utils.warn("Line chart updateSize() abort: vizabi container is too little or has display:none");
+    if(this.height<=0 || this.width<=0) return utils.warn("Line chart updateSize() abort: vizabi container is too little or has display:none");
 
     this.collisionResolver.height(this.height);
 

@@ -164,8 +164,8 @@ var BarRankChart = Component.extend({
     var margin = {top: 60, bottom: 40, left: 90, right: 20}; // need right margin for scroll bar
 
     // draw the stage - copied from popbyage, should figure out what it exactly does and what is necessary.
-    this.height = parseInt(this.element.style("height")||0, 10) - margin.top - margin.bottom;
-    this.width = parseInt(this.element.style("width")||0, 10) - margin.left - margin.right;
+    this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || this.height || 0;
+    this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || this.width || 0;
       
     if(this.height<=0 || this.width<=0) return utils.warn("Bar rank chart drawAxes() abort: vizabi container is too little or has display:none");
 
