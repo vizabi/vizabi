@@ -376,8 +376,8 @@ updateSize: function (meshLength) {
         infoElHeight = this.activeProfile.infoElHeight;
 
         //mesure width and height
-        this.height = parseInt(this.element.style("height"), 10)||0 - margin.top - margin.bottom;
-        this.width = parseInt(this.element.style("width"), 10)||0 - margin.left - margin.right;
+        this.height = parseInt(this.element.style("height")||0, 10) - margin.top - margin.bottom;
+        this.width = parseInt(this.element.style("width")||0, 10) - margin.left - margin.right;
     
         if(this.height<=0 || this.width<=0) return utils.warn("Mountain chart updateSize() abort: vizabi container is too little or has display:none");
 

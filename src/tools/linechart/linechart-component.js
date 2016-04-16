@@ -328,8 +328,8 @@ var LCComponent = Component.extend({
 
 
     //stage
-    this.height = parseInt(this.element.style("height"), 10)||0 - this.margin.top - this.margin.bottom;
-    this.width = parseInt(this.element.style("width"), 10)||0 - this.margin.left - this.margin.right;
+    this.height = parseInt(this.element.style("height")||0, 10) - this.margin.top - this.margin.bottom;
+    this.width = parseInt(this.element.style("width")||0, 10) - this.margin.left - this.margin.right;
       
     if(height<=0 || width<=0) return utils.warn("Line chart updateSize() abort: vizabi container is too little or has display:none");
 
