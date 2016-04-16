@@ -269,8 +269,8 @@ var TimeSlider = Component.extend({
 
     this.profile = this.getActiveProfile(profiles, presentationProfileChanges);
 
-    var slider_w = parseInt(this.slider_outer.style("width"), 10);
-    var slider_h = parseInt(this.slider_outer.style("height"), 10);
+    var slider_w = parseInt(this.slider_outer.style("width"), 10)||0;
+    var slider_h = parseInt(this.slider_outer.style("height"), 10)||0;
     this.width = slider_w - this.profile.margin.left - this.profile.margin.right;
     this.height = slider_h - this.profile.margin.bottom - this.profile.margin.top;
     var _this = this;

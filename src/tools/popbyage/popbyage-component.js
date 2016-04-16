@@ -367,8 +367,10 @@ var PopByAge = Component.extend({
     var margin = this.activeProfile.margin;
 
     //stage
-    this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
-    this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
+    this.height = parseInt(this.element.style("height"), 10)||0 - margin.top - margin.bottom;
+    this.width = parseInt(this.element.style("width"), 10)||0 - margin.left - margin.right;
+      
+    if(height<=0 || width<=0) return utils.warn("Pop by age resize() abort: vizabi container is too little or has display:none");
 
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");

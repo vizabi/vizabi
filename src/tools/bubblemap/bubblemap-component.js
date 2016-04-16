@@ -742,10 +742,10 @@ var BubbleMapComponent = Component.extend({
     infoElHeight = this.activeProfile.infoElHeight;
 
     //stage
-    var height = this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
-    var width = this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
+    var height = this.height = parseInt(this.element.style("height"), 10)||0 - margin.top - margin.bottom;
+    var width = this.width = parseInt(this.element.style("width"), 10)||0 - margin.left - margin.right;
       
-    if(this.height<=0 || this.width<=0) return utils.warn("Bubble map updateSize() abort: vizabi container is too little");
+    if(this.height<=0 || this.width<=0) return utils.warn("Bubble map updateSize() abort: vizabi container is too little or has display:none");
       
     var boundBox = this.boundBox;
     var viewBox = [ boundBox[0][0] * this.defaultWidth,

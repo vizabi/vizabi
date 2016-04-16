@@ -43,8 +43,8 @@ export default Class.extend({
     if(!name) name = this.context.name;
     this.name = name;
 
-    var width = parseInt(element.style("width"), 10);
-    var height = parseInt(element.style("height"), 10);
+    var width = parseInt(element.style("width"), 10)||0;
+    var height = parseInt(element.style("height"), 10)||0;
 
     this.container = element.append("div").attr("class", "vzb-svg-export");
     this.svg = this.container.node().appendChild(element.select("svg").node().cloneNode(true));
