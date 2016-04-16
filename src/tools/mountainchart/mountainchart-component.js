@@ -283,7 +283,8 @@ var MountainChartComponent = Component.extend({
         var _this = this;
         this.on("resize", function () {
             //console.log("acting on resize");
-            _this.updateSize();
+            //return if updatesize exists with error
+            if(_this.updateSize()) return;
             _this.updateTime(); // respawn is needed
             _this.redrawDataPoints();
             _this._selectlist.redraw();
@@ -376,8 +377,8 @@ updateSize: function (meshLength) {
         infoElHeight = this.activeProfile.infoElHeight;
 
         //mesure width and height
-        this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || this.height || 0;
-        this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || this.width || 0;
+        this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
+        this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
     
         if(this.height<=0 || this.width<=0) return utils.warn("Mountain chart updateSize() abort: vizabi container is too little or has display:none");
 

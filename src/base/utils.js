@@ -841,6 +841,12 @@ export var warn = function(message) {
   if(console && typeof console.warn === 'function') {
     console.warn(message);
   }
+  // "return true" is needed to find out if a parent function is exited with warning
+  // example:
+  // myfunction = function() { if(brokenstuff) return utils.warn("broken stuff found") }
+  // if(myfunction()) return; // stopped execution after myfunction finds broken stuff
+  // ... or moving on
+  return true;
 };
 
 /*
