@@ -146,16 +146,21 @@ var Tool = Component.extend({
   },
     
   checkTimeLimits: function() {
+    if(!this.model.state.time) return;
+    
     var time = this.model.state.time;
-    var tLimits = this.model.state.marker.getTimeLimits(time.getDimension());
-      
-    if(!tLimits || !utils.isDate(tLimits.min) || !utils.isDate(tLimits.max)) 
-        return utils.warn("checkTimeLimits(): min-max date objects look wrong: " + tLimits.min + " " + tLimits.max);
+    
+    if(this.model.state.marker) {
+      var tLimits = this.model.state.marker.getTimeLimits(time.getDimension());
 
-    // change start and end (but keep startOrigin and endOrigin for furhter requests)
-    // change is not persistent if it's splashscreen change
-    if(time.start - tLimits.min != 0) time.getModelObject('start').set(tLimits.min, false, !time.splash);
-    if(time.end - tLimits.max != 0) time.getModelObject('end').set(tLimits.max, false, !time.splash);
+      if(!tLimits || !utils.isDate(tLimits.min) || !utils.isDate(tLimits.max)) 
+          return utils.warn("checkTimeLimits(): min-max date objects look wrong: " + tLimits.min + " " + tLimits.max);
+
+      // change start and end (but keep startOrigin and endOrigin for furhter requests)
+      // change is not persistent if it's splashscreen change
+      if(time.start - tLimits.min != 0) time.getModelObject('start').set(tLimits.min, false, !time.splash);
+      if(time.end - tLimits.max != 0) time.getModelObject('end').set(tLimits.max, false, !time.splash);
+    }
       
     //force time validation because time.value might now fall outside of start-end
     time.validate(); 
@@ -255,8 +260,6 @@ var Tool = Component.extend({
     model = this.model || model;
 
     if(!model || !model.state) return utils.warn("tool validation aborted: model.state looks wrong: " + model);
-    if(!model.state.time) return utils.warn("tool validation aborted: time looks wrong: " + time);
-    if(!model.state.marker) return utils.warn("tool validation aborted: marker looks wrong: " + marker);
   },
 
   _setUIModel: function() {
