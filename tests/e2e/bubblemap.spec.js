@@ -204,7 +204,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
       var initialLocationText = initiallocation.x;
 
       //Dragging tooltip
-      browser.actions().dragAndDrop(USALabel, {x: -100, y: 150}).click().perform();
+      browser.actions().dragAndDrop(USALabel, {x: -300, y: 40}).click().perform();
       browser.sleep(2000);
 
       //Getting tooltip text after drag
@@ -308,7 +308,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
       });
 
       //Bubble size after play ang before drag
-      USA.getCssValue("r").then(function (USAAsParameter1) {
+      USA.getAttribute("r").then(function (USAAsParameter1) {
         var heightAfter = USAAsParameter1;
 
         //Comparing sizes
@@ -319,10 +319,10 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
           var positionBefore = sliderAsParameter.x;
 
           //Dragging the slider ball
-          browser.actions().dragAndDrop(slider,{x:500,y:0}).perform();
+          browser.actions().dragAndDrop(slider,{x:500,y:10}).click().perform();
 
           //Bubble size after drag
-          USA.getCssValue("r").then(function (USAAsParameter11) {
+          USA.getAttribute("r").then(function (USAAsParameter11) {
             var heightAfterDrag = USAAsParameter11;
 
             //Comparing sizes
@@ -366,7 +366,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
       // dargging minimum pointer to the maximum
       var sliderOfSize = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content > div > div > svg > g > g > g.resize.w.vzb-bs-slider-thumb > g"));
       browser.wait(EC.visibilityOf(sliderOfSize), 5000);
-      browser.actions().dragAndDrop(sliderOfSize,{x:100,y:0}).perform();
+      browser.actions().dragAndDrop(sliderOfSize,{x:100,y:0}).click().perform();
 
       //Bubble size after dargging
       USA.getSize().then(function (USAAsParameter1) {
