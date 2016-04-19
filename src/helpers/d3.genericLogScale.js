@@ -5,9 +5,10 @@ export default function genericLog() {
     var scales = [];
     var domainParts = [];
     var eps = 0.1;
-    var delta = 50;
+    var delta = 5;
     var domain = logScale.domain();
     var range = logScale.range();
+    var interpolator = null;
     var rangePointingForward, domainPointingForward;
 
     var abs = function (arg) {
@@ -59,7 +60,7 @@ export default function genericLog() {
         var minRangePoint, rangePointKoef = 1;
         var firstRangePoint = 0, secondRangePoint = 0, firstEps = 0, secondEps = 0;
         logScale.domain([eps, maxDomain]).range([0, rangeLength]);
-        minRangePoint = logScale(eps * 2);
+        minRangePoint = delta;//logScale(eps * 2);
         if (domain[0] != 0 && abs(domain[0]) > eps)
           firstRangePoint = logScale(abs(domain[0]));
         if (domain[domain.length - 1] != 0  && abs(domain.length - 1) > eps)
@@ -84,11 +85,11 @@ export default function genericLog() {
               _buildLinearScale(domainParts[0], [range[0], point1]),
               _buildLogScale(domainParts[1], [point1,  range[1]], !domainPointingForward)
             ];
-          } else if (domain[1] == 0 || abs(domain[1]) <= eps) {// example: [-val,-eps][-eps, 0..eps]
-            point1 = range[1] - (firstEps + secondEps) * rangePointKoef * rangePointingSign
+          } else if (domain[domain.length - 1] == 0 || abs(domain[domain.length - 1]) <= eps) {// example: [-val,-eps][-eps, 0..eps]
+            point1 = range[range.length - 1] - (firstEps + secondEps) * rangePointKoef * rangePointingSign
             scales = [
               _buildLogScale(domainParts[0], [range[0], point1], domainPointingForward),
-              _buildLinearScale(domainParts[1], [point1, range[1]])
+              _buildLinearScale(domainParts[1], [point1, range[range.length - 1]])
             ];
           }
         } else {
@@ -214,7 +215,11 @@ export default function genericLog() {
 
     function scale(x) {
       var currScale = _getScaleByDomain(x);
-      return currScale.scale(x * currScale.sign);
+      if (interpolator) {
+        return interpolator(currScale.scale(x * currScale.sign));
+      } else {
+        return currScale.scale(x * currScale.sign);
+      }
     }
 
     scale.eps = function(arg) {
@@ -233,20 +238,20 @@ export default function genericLog() {
       return scale;
     };
 
-    scale.domain = function(_arg) {
+    scale.domain = function(arg) {
       if(!arguments.length)
         return domain;
+      
       // this is an internal array, it will be modified. the input _arg should stay intact
       var min = d3.min(abs(domain));
       if (min != 0) {
         eps = Math.min(eps, min/100);
       }
-      var arg = [];
-      if(_arg.length != 2)
+      if(arg.length != 2)
         console.warn(
           'generic log scale is best for 2 values in domain, but it tries to support other cases too'
         );
-      switch(_arg.length) {
+      switch(arg.length) {
         // if no values are given, reset input to the default domain (do nothing)
         case 0:
           arg = domain;
@@ -254,52 +259,29 @@ export default function genericLog() {
         // use the given value as a center, get the domain /2 and *2 around it
         case 1:
           arg = [
-            _arg[0] / 2,
-            _arg[0] * 2
+            arg[0] / 2,
+            arg[0] * 2
           ];
-          break;
-        // two is the standard case. just use these
-        case 2:
-          arg = [
-            _arg[0],
-            _arg[1]
-          ];
-          break;
-        // use the edge values as domain, center as ±epsilon
-        case 3:
-          arg = [
-            _arg[0],
-            _arg[2]
-          ];
-          eps = abs(_arg[1]);
-          break;
-        default:
-          arg = [
-            _arg[0],
-            _arg[_arg.length - 1]
-          ];
-          eps = d3.min(abs(_arg.filter(function(d, i) {
-            return i != 0 && i != _arg.length - 1;
-          })));
           break;
       }
       //if the domain is just a single value
-      if(arg[0] == arg[1]) {
+      if(arg[0] == arg[arg.length - 1]) {
         arg[0] = arg[0] / 2;
-        arg[1] = arg[1] * 2;
+        arg[arg.length - 1] = arg[arg.length - 1] * 2;
       }
       domain = arg;
       buildDomain();
       return scale;
     };
 
+    
     scale.range = function(arg) {
       if(!arguments.length)
         return range;
-      range = arg;
       if(arg.length != 2)
         console.warn(
           'generic log scale is best for 2 values in range, but it tries to support other cases too');
+      
       switch(arg.length) {
         // reset input to the default range
         case 0:
@@ -313,31 +295,17 @@ export default function genericLog() {
           ];
           break;
         // two is the standard case. do nothing
-        case 2:
-          break;
-        // use the edge values as range, center as delta
-        case 3:
-          delta = arg[1];
-          arg = [
-            arg[0],
-            arg[2]
-          ];
-          break;
-        // use the edge values as range, the minimum of the rest be the delta
-        default:
-          delta = d3.min(arg.filter(function(d, i) {
-            return i != 0 && i != arg.length - 1;
-          }));
-          arg = [
-            arg[0],
-            arg[arg.length - 1]
-          ];
-          break;
       }
 
       //console.log("LOG and LIN range:", logScale.range(), linScale.range());
       range = arg;
       buildScales();
+      return scale;
+    };
+
+    scale.interpolate = function(arg) {
+      interpolator = d3.scale.linear().domain(domain).range(range).interpolate(arg);
+      scale.range(interpolator.domain());
       return scale;
     };
 
@@ -366,7 +334,7 @@ export default function genericLog() {
       return d3_scale_genericLog(logScale).domain(domain).range(range).delta(delta).eps(eps);
     };
 
-    return d3.rebind(scale, logScale, 'base', 'rangeRound', 'interpolate', 'clamp', 'nice',
+    return d3.rebind(scale, logScale, 'base', 'rangeRound', 'clamp', 'nice',
       'tickFormat');
   }(d3.scale.log().domain([0.1, 200]).range([0, 1000]));
 };
