@@ -19,6 +19,7 @@ import BMComponent from 'tools/bubblemap-component';
 import LineChart from 'tools/linechart';
 import PopByAge from 'tools/popbyage';
 import DonutChart from 'tools/donutchart';
+import AxisLabeler from 'tools/axislabeler';
 
 //waffle reader
 import {waffle as WaffleReader} from 'readers/_index';
@@ -217,7 +218,7 @@ BubbleMap.define('default_model', {
         allow: {
           scales: ["linear"]
         },
-        extent: [0.04, 0.90]
+        extent: [0.04, 0.85]
       },
       lat: {
         use: "property",
@@ -512,7 +513,7 @@ BubbleChart.define('default_model', {
         allow: {
           scales: ["linear"]
         },
-        extent: [0.04, 0.90]
+        extent: [0.04, 0.85]
       }
     }
   },
@@ -666,7 +667,8 @@ WaffleReader.define('basepath', globals.ext_resources.host + globals.ext_resourc
 
 //preloading mountain chart precomputed shapes
 MCComponent.define("preload", function(done) {
-  var shape_path = globals.ext_resources.host + globals.ext_resources.preloadPath + "mc_precomputed_shapes.json";     
+  var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
+      globals.ext_resources.host + globals.ext_resources.preloadPath + "mc_precomputed_shapes.json";     
 
   d3.json(shape_path, function(error, json) {
     if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
@@ -677,7 +679,8 @@ MCComponent.define("preload", function(done) {
 
 //preloading bubble map country shapes
 BMComponent.define("preload", function(done) {
-  var shape_path = globals.ext_resources.host + globals.ext_resources.preloadPath + "world-50m.json"; 
+  var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
+      globals.ext_resources.host + globals.ext_resources.preloadPath + "world-50m.json"; 
     
   d3.json(shape_path, function(error, json) {
     if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
@@ -691,7 +694,8 @@ BMComponent.define("preload", function(done) {
 Tool.define("preload", function(promise) {
 
   var _this = this;
-  var metadata_path = globals.ext_resources.host + globals.ext_resources.preloadPath + "metadata.json";    
+  var metadata_path = globals.ext_resources.metadataPath ? globals.ext_resources.metadataPath :
+      globals.ext_resources.host + globals.ext_resources.preloadPath + "metadata.json";    
 
   //TODO: concurrent
   //load language first
@@ -726,18 +730,18 @@ Tool.define("preload", function(promise) {
 
   // TODO: REMOVE THIS HACK (read above)
   function addPalettes(hook) {
-    if(!_this.default_model.state || !_this.default_model.state.marker[hook]) {
-      return;
-    }
+    //protection in case id state or marker or [hook] is undefined
+    if(!((_this.default_model.state||{}).marker||{})[hook]) return;
+    
     var color = _this.default_model.state.marker[hook];
     var palette = ((globals.metadata.indicatorsDB[color.which]||{}).color||{}).palette||{};
     color.palette = utils.extend({}, color.palette, palette);
   }
 
   function addMinMax(hook) {
-    if(!_this.default_model.state || !_this.default_model.state.marker[hook]) {
-      return;
-    }
+    //protection in case id state or marker or [hook] is undefined
+    if(!((_this.default_model.state||{}).marker||{})[hook]) return;
+    
     var axis = _this.default_model.state.marker[hook];
     if(axis.use === "indicator" && globals.metadata.indicatorsDB[axis.which] && globals.metadata.indicatorsDB[axis.which].domain) {
       var domain = globals.metadata.indicatorsDB[axis.which].domain;
@@ -755,7 +759,8 @@ Tool.define("preloadLanguage", function() {
   var promise = new Promise();
 
   var langModel = this.model.language;
-  var translation_path = globals.ext_resources.host + globals.ext_resources.preloadPath + "translation/" + langModel.id + ".json";
+  var translation_path = globals.ext_resources.translationPath ? globals.ext_resources.translationPath :
+      globals.ext_resources.host + globals.ext_resources.preloadPath + "translation/" + langModel.id + ".json";
 
   if(langModel && !langModel.strings[langModel.id]) {
     d3.json(translation_path, function(langdata) {

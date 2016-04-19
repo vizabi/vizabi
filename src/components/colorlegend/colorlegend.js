@@ -189,7 +189,7 @@ var ColorLegend = Component.extend({
     } else {
       this.worldmapEl.classed("vzb-hidden", true);
       //if using a discrete palette that is not supplied from metadata but from defaults
-      if(this.model.color.use === "property" && (!this.model.color.getMetadata().color || this.model.color.getMetadata().color.palette)) {
+      if(this.model.color.use === "property" && !(this.model.color.getMetadata().color||{}).palette) {
         colors.classed("vzb-cl-compact", true);
       } else {
         colors.classed("vzb-cl-compact", false);
@@ -210,7 +210,7 @@ var ColorLegend = Component.extend({
       } else {
 
         d3.select(this).select(".vzb-cl-color-legend")
-          .text(_this.translator("indicator/color/" + d));
+          .text(_this.translator("entity/" + _this.model.color.which + "/" + d));
       }
     });
   },

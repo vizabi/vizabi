@@ -472,7 +472,7 @@ gulp.task('compress', ['styles', 'bundle:build', 'preview'], function() {
 // ----------------------------------------------------------------------------
 
 gulp.task('bump', function() {
-  var src = gulp.src(['./bower.json', './package.json']);
+  var src = gulp.src(['./package.json']);
   var version = gutil.env.version;
   var type = gutil.env.type;
 

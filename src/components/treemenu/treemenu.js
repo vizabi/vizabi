@@ -187,7 +187,7 @@ var Menu = Class.extend({
           _this.reduceWidth(widthToReduce, function(newWidth) {
             if (typeof cb === "function") cb(newWidth); // callback is not defined if it is emitted from this level
           });
-        }
+        } else if (typeof cb === "function") cb(widthToReduce);
       });
     }
   },
@@ -248,7 +248,7 @@ var Menu = Class.extend({
   },
   _openHorizontal: function() {
     var _this = this;
-    _this.entity
+    _this.entity.classed('active', true)
       .transition()
       .delay(0)
       .duration(250)
@@ -256,7 +256,6 @@ var Menu = Class.extend({
       .each('end', function() {
         _this.marqueeToggle(true);
       });
-    _this.entity.classed('active', true);
   },
   _openVertical: function() {
     var _this = this;
@@ -409,18 +408,30 @@ var MenuItem = Class.extend({
     if (submenu.node()) {
       this.submenu = new Menu(this, submenu);
     }
-    this.entity.on('mouseenter', function() {
+    var label = this.entity.select('.' + css.list_item_label).on('mouseenter', function() {
       if(utils.isTouchDevice()) return;
       if (_this.parentMenu.direction == MENU_HORIZONTAL) {
         _this.openSubmenu();
         _this.marqueeToggle(true);
       }
-    }).on('click', function() {
+    }).on('click.item', function() {
       if(utils.isTouchDevice()) return;
       d3.event.stopPropagation();
-      _this.toggleSubmenu();
-    }).onTap(function() {
+      if(_this.parentMenu.direction == MENU_HORIZONTAL) {
+        _this.openSubmenu();
+      } else {
+        var view = d3.select(this);
+        //only for leaf nodes
+        if(!view.attr("children")) return;
+        _this.toggleSubmenu();
+      }
+    }).onTap(function(evt) {
       d3.event.stopPropagation();
+      if(_this.parentMenu.direction == MENU_VERTICAL) {
+        var view = _this.entity.select('.' + css.list_item_label);
+        //only for leaf nodes
+        if(!view.attr("children")) return;
+      }
       _this.toggleSubmenu();
     });
     return this;
@@ -463,7 +474,7 @@ var MenuItem = Class.extend({
     var _this = this;
     var labels = this.entity.selectAll('.' + css.list_item_label);
     labels.each(function() {
-      var label = d3.select(this);
+      var label = d3.select(this).select('span');
       var parent = d3.select(this.parentNode);
       parent.classed('marquee', false);
       label.style("left", '');
@@ -478,7 +489,7 @@ var MenuItem = Class.extend({
     });
   },
   marqueeToggle: function(toggle) {
-    var label = this.entity.select('.' + css.list_item_label);
+    var label = this.entity.select('.' + css.list_item_label).select('span');
     this.entity.classed('marquee', false);
     label.style("left", '');
     if(toggle) {
@@ -805,7 +816,7 @@ var TreeMenu = Component.extend({
   },
 
   scrollToSelected: function() {
-
+    var _this = this;
     var scrollToItem = function(listNode, itemNode) {
       listNode.scrollTop = 0;
       var rect = listNode.getBoundingClientRect();
@@ -816,9 +827,12 @@ var TreeMenu = Component.extend({
 
     if (this.menuEntity.direction == MENU_VERTICAL) {
       scrollToItem(this.wrapper.node(), selectedNode);
+      _this.menuEntity.marqueeToggleAll(true);
     } else {
       var selectedItem = this.menuEntity.findItemByName(d3.select(selectedNode).select('span').text());
-      selectedItem.submenu.calculateMissingWidth(0);
+      selectedItem.submenu.calculateMissingWidth(0, function() {
+        _this.menuEntity.marqueeToggleAll(true);
+      });
 
       var parent = selectedNode;
       var listNode;
@@ -830,8 +844,6 @@ var TreeMenu = Component.extend({
         parent = parent.parentNode;
       }
     }
-
-    this.menuEntity.marqueeToggleAll(true);
   },
 
   setPos: function() {
@@ -920,15 +932,8 @@ var TreeMenu = Component.extend({
     input.on('keyup', searchIt);
   },
 
-
-  //this function process click on list item
-  _selectIndicator: function(item, view) {
-
-    view = d3.select(view);
-
-    //only for leaf nodes
-    if(view.attr("children")) return;
-    callback("which", view.attr("info"), markerID);
+  _selectIndicator: function(value) {
+    callback("which", value, markerID);
     this.toggle();
   },
 
@@ -992,21 +997,34 @@ var TreeMenu = Component.extend({
 
       li.append('span')
         .classed(css.list_item_label, true)
+        // .attr("info", function(d) {
+        //   return d.id;
+        // })
+        .attr("children", function(d) {
+          return d.children ? "true" : null;
+        })
+        .on('click', function(d) {
+          if(_this.menuEntity.direction != MENU_VERTICAL) return;
+          var view = d3.select(this);
+          //only for leaf nodes
+          if(view.attr("children")) return;
+          d3.event.stopPropagation();
+          _this._selectIndicator(d.id);
+        })
+        .on('dblclick', function(d) {
+          var view = d3.select(this);
+          //only for leaf nodes
+          if(view.attr("children")) return;
+          d3.event.stopPropagation();
+          _this._selectIndicator(d.id);
+        })
+        .append('span')
         .text(function(d) {
           //Let the indicator "_default" in tree menu be translated differnetly for every hook type
           var translated = _this.translator("indicator" + (d.id==="_default" ? "/" + hookType : "") + "/" + d.id);
           if(translated.indexOf("indicator/")!==-1)utils.warn("translation missing: " + translated);
           return translated;
-        })
-        .attr("info", function(d) {
-          return d.id;
-        })
-        .attr("children", function(d) {
-          return d.children ? "true" : null;
         });
-        // .on('click', function(d) {
-        //   _this._selectIndicator(d, this)
-        // });
       
       li.classed(css.list_item, true)
         .classed(css.hasChild, function(d) {
@@ -1021,6 +1039,9 @@ var TreeMenu = Component.extend({
           //deepLeaf
           if(!d.children) {
             var deepLeaf = view.append('div').attr('class', css.menuHorizontal + ' ' + css.list_outer + ' ' + css.list_item_leaf);
+            deepLeaf.on('click', function(d) {
+              _this._selectIndicator(d.id);
+            });
             var deepLeafContent = deepLeaf.append('div').classed(css.leaf + ' ' + css.leaf_content + " vzb-dialog-scrollable", true);
             deepLeafContent.append('span').classed(css.leaf_content_item + ' ' + css.leaf_content_item_title, true)
               .text(function(d) {
@@ -1036,7 +1057,7 @@ var TreeMenu = Component.extend({
                 var translated = _this.translator("unit" + (d.id==="_default" ? "/" + hookType : "") + "/" + d.id);
                 hideUnits = translated.indexOf("unit/") !== -1 || translated === ''; 
                 if(translated.indexOf("unit/") !== -1) utils.warn("translation missing: " + translated);
-                return 'Units: ' + translated;
+                return _this.translator('hints/units') + ': ' + translated;
               });
             units.classed('vzb-hidden', hideUnits);
             var hideDescription;
@@ -1046,17 +1067,13 @@ var TreeMenu = Component.extend({
                 var translated = _this.translator("description" + (d.id === "_default" ? "/" + hookType : "") + "/" + d.id);
                 hideDescription = translated.indexOf("description/") !== -1; 
                 if(hideDescription) utils.warn("translation missing: " + translated);
-                return (hideUnits && hideDescription) ? 'no description': translated;
+                return (hideUnits && hideDescription) ? _this.translator("hints/nodescr") : translated;
               });
             description.classed('vzb-hidden', hideDescription && !hideUnits);
-            
+
             var deepLeafButton = deepLeaf.append('div').classed(css.leaf + ' ' + css.leaf_button, true)
             deepLeafButton.append('div')//.classed('vzb-treemenu-leaf-button', true)
               .text('OK');
-            deepLeafButton.on('click', function(d) {
-              callback("which", d.id, markerID);
-              _this.toggle();
-            });
           }
           
           if(d.id == _this.model.marker[markerID].which) {

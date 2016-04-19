@@ -373,7 +373,8 @@ var BubbleChartComp = Component.extend({
     //component events
     this.on("resize", function() {
       //console.log("EVENT: resize");
-      _this.updateSize();
+      //return if updatesize exists with error
+      if(_this.updateSize()) return;
       _this.updateMarkerSizeLimits();
       _this.updateLabelSizeLimits();
       _this._trails.run("findVisible");
@@ -839,7 +840,7 @@ var BubbleChartComp = Component.extend({
         margin: { top: 50, right: 20, left: 60, bottom: 60 },
         padding: 2,
         minRadius: 1,
-        maxRadius: 70,
+        maxRadius: 65,
         minLabelTextSize: 6,
         maxLabelTextSize: 48,
         defaultLabelTextSize: 20,
@@ -873,10 +874,10 @@ var BubbleChartComp = Component.extend({
     var infoElHeight = this.activeProfile.infoElHeight;
 
     //stage
-    this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
-    this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
+    this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
+    this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
       
-    if(this.height<=0 || this.width<=0) return utils.warn("Bubble chart updateSize() abort: vizabi container is too little");
+    if(this.height<=0 || this.width<=0) return utils.warn("Bubble chart updateSize() abort: vizabi container is too little or has display:none");
 
     //graph group is shifted according to margins (while svg element is at 100 by 100%)
     this.graph
@@ -1328,7 +1329,7 @@ var BubbleChartComp = Component.extend({
 
           var labelGroup = d3.select(this);
 
-          if(select.trailStartTime == null) {
+          if(!_this.model.ui.chart.trails || select.trailStartTime == null) {
             select.trailStartTime = _this.model.time.timeFormat(_this.time); // need only when trailStartTime == null
             cached.scaledS0 = scaledS;
             cached.labelX0 = valueX;

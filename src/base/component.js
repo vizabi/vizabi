@@ -148,7 +148,11 @@ var Component = Events.extend({
         } else {
           _this.model.load().then(function() {
             utils.delay(function() {
-              timeMdl.trigger('change');
+              if(timeMdl) {
+                timeMdl.trigger('change');
+              } else {
+                done();
+              }
             }, 300);
           }, function() {
             renderError();

@@ -26,6 +26,7 @@ var Find = Dialog.extend({
     this.model_binds = {
       "change:state.entities.select": function(evt) {
         _this.selectDataPoints();
+        _this.showHideDeselect();
       },
       "change:state.time.playing": function(evt) {
         if(!_this.model.state.time.playing) {
@@ -204,7 +205,7 @@ var Find = Dialog.extend({
     
         view
           .classed("vzb-find-item-brokendata", d.brokenData)
-          .attr("title", d.brokenData? "No data available for " + _this.model.state.time.timeFormat(_this.time) : "");
+          .attr("title", d.brokenData? _this.model.state.time.timeFormat(_this.time) + ": " + _this.translator("hints/nodata") : "");
       })
   },
     

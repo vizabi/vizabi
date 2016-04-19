@@ -151,7 +151,7 @@ var BarComponent = Component.extend({
     this.cScale = this.model.marker.color.getScale();
 
     var xFormatter = this.model.marker.axis_x.which == "geo.world_4region"?
-        function(x){return _this.translator("region/" + x)}
+        function(x){return _this.translator("entity/geo.world_4region/" + x)}
         :
         _this.model.marker.axis_x.getTickFormatter();
 
@@ -259,9 +259,11 @@ var BarComponent = Component.extend({
 
 
     //stage
-    this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
-    this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
-
+    this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
+    this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
+      
+    if(this.height<=0 || this.width<=0) return utils.warn("Bar chart resize() abort: vizabi container is too little or has display:none");
+    
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 

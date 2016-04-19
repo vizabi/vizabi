@@ -233,7 +233,7 @@ var Marker = Model.extend({
               steps.forEach(function(t) {
                 _this.partialResult[cachePath][t][name] = {};
                 keys.forEach(function(key) {
-                  _this.partialResult[cachePath][t][name][key] = hook.which;
+                  _this.partialResult[cachePath][t][name][key["geo"]] = hook.which;
                 });
               });
             } else if(hook.which === "geo") {
@@ -242,7 +242,7 @@ var Marker = Model.extend({
               steps.forEach(function(t) {
                 _this.partialResult[cachePath][t][name] = {};
                 keys.forEach(function(key) {
-                  _this.partialResult[cachePath][t][name][key] = key;
+                  _this.partialResult[cachePath][t][name][key["geo"]] = key["geo"];
                 });
               });
             } else if(hook.which === "time") {
@@ -251,7 +251,7 @@ var Marker = Model.extend({
               steps.forEach(function(t) {
                 _this.partialResult[cachePath][t][name] = {};
                 keys.forEach(function(key) {
-                  _this.partialResult[cachePath][t][name][key] = new Date(t);
+                  _this.partialResult[cachePath][t][name][key["geo"]] = new Date(t);
                 });
               });
             } else {

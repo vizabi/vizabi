@@ -32,7 +32,7 @@ var Stack = Dialog.extend({
             groupID: "manualSorting",
             isEnabled: "manualSortingEnabled",
             dataArrFn: _this.manualSorting.bind(_this),
-            lang: 'region/'
+            lang: 'entity/geo.world_4region/'
         }];
 
         this.model_binds = {

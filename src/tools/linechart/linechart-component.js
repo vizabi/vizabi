@@ -98,7 +98,8 @@ var LCComponent = Component.extend({
 
     //component events
     this.on("resize", function() {
-      _this.updateSize();
+      //return if updatesize exists with error
+      if(_this.updateSize()) return;
       _this.updateTime();
       _this.redrawDataPoints();
     });
@@ -328,8 +329,10 @@ var LCComponent = Component.extend({
 
 
     //stage
-    this.height = parseInt(this.element.style("height"), 10) - this.margin.top - this.margin.bottom;
-    this.width = parseInt(this.element.style("width"), 10) - this.margin.left - this.margin.right;
+    this.height = (parseInt(this.element.style("height"), 10) - this.margin.top - this.margin.bottom) || 0;
+    this.width = (parseInt(this.element.style("width"), 10) - this.margin.left - this.margin.right) || 0;      
+      
+    if(this.height<=0 || this.width<=0) return utils.warn("Line chart updateSize() abort: vizabi container is too little or has display:none");
 
     this.collisionResolver.height(this.height);
 

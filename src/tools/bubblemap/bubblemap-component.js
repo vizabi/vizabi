@@ -247,8 +247,8 @@ var BubbleMapComponent = Component.extend({
 
     var _this = this;
     this.on("resize", function () {
-      
-      _this.updateSize();
+      //return if updatesize exists with error
+      if(_this.updateSize()) return;
       _this.updateMarkerSizeLimits();
       _this.redrawDataPoints();
       //_this._selectlist.redraw();
@@ -724,7 +724,7 @@ var BubbleMapComponent = Component.extend({
         margin: { top: 30, right: 30, left: 30, bottom: 35 },
         infoElHeight: 22,
         minRadius: 1,
-        maxRadius: 70
+        maxRadius: 65
       }
     };
 
@@ -742,10 +742,10 @@ var BubbleMapComponent = Component.extend({
     infoElHeight = this.activeProfile.infoElHeight;
 
     //stage
-    var height = this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
-    var width = this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
+    var height = this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
+    var width = this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;      
       
-    if(this.height<=0 || this.width<=0) return utils.warn("Bubble map updateSize() abort: vizabi container is too little");
+    if(this.height<=0 || this.width<=0) return utils.warn("Bubble map updateSize() abort: vizabi container is too little or has display:none");
       
     var boundBox = this.boundBox;
     var viewBox = [ boundBox[0][0] * this.defaultWidth,
