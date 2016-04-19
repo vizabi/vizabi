@@ -27,7 +27,7 @@ describe('Web - Vizabi e2e test :: All', function() {
     var expand =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(7) > span.vzb-buttonlist-btn-icon.fa"));
     browser.wait(EC.visibilityOf(expand), 5000);
     expand.click();
-
+    browser.sleep(2000);
 
     // Getting attributes of color dropdown
     var colorOption = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(1) > div > div.vzb-dialog-title > span.vzb-caxis-selector"));
@@ -75,6 +75,7 @@ describe('Web - Vizabi e2e test :: All', function() {
     var expand =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(6) > span.vzb-buttonlist-btn-icon.fa"));
     browser.wait(EC.visibilityOf(expand), 5000);
     expand.click();
+    browser.sleep(2000);
 
 
     // Getting attributes of color dropdown
@@ -117,12 +118,13 @@ describe('Web - Vizabi e2e test :: All', function() {
   it('LargeScreenBubbleMapChart', function(){
     browser.get(baseUrl + "bubblemap.html" + baseUrlHash);
     browser.refresh();
-    browser.wait(EC.visibilityOf(USABubbleMap), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
 
     //Clicking Expand
     var expand =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(5) > span.vzb-buttonlist-btn-icon.fa"));
     browser.wait(EC.visibilityOf(expand), 5000);
     expand.click();
+    browser.sleep(2000);
 
     // Getting attributes of color dropdown
     var colorOption = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(1) > div > div.vzb-dialog-title > span.vzb-caxis-selector"));
@@ -171,12 +173,12 @@ describe('Web - Vizabi e2e test :: All', function() {
     //Clicking USA bubble
     var USABubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
     browser.wait(EC.visibilityOf(USABubble), 5000);
-    browser.actions().dragAndDrop(USABubble,{x:0,y:-15}).click().perform();
+    browser.actions().dragAndDrop(USABubble,{x:0,y:0}).perform();
 
     //Clicking China bubble
     var chinaBubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-chn"));
     browser.wait(EC.visibilityOf(chinaBubble), 5000);
-    browser.actions().dragAndDrop(chinaBubble, {x:0 , y:20}).click().perform();
+    browser.actions().dragAndDrop(chinaBubble, {x:0 , y:5}).perform();
 
     //Clicking play
     browser.wait(EC.visibilityOf(play), 5000).then(function(){
