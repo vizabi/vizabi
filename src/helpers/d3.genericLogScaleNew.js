@@ -29,22 +29,23 @@ export default function genericLogNew() {
 
     var _buildLogScale = function(fakeDomain, fakeRange, revertDomain) {
       var normalizedDomain = fakeDomain;
-      var normalizedRange = fakeRange.slice(0);
+      //var normalizedRange = fakeRange.slice(0);
       if (revertDomain) {
-        normalizedDomain = abs(fakeDomain).reverse();
-        fakeRange.reverse();
+        normalizedDomain = abs(fakeDomain);
+        //fakeRange.reverse();
       }
       return {
         domain: fakeDomain,
         sign: revertDomain?-1:1, 
-        range: normalizedRange,
-        scale: d3.scale.linear().domain(normalizedDomain).range(fakeRange)
+        range: fakeRange,
+        scale: d3.scale.log().domain(normalizedDomain).range(fakeRange)
       };
     };
 
     
     var buildScales = function () {
       rangePointingForward = range[0] < range[range.length - 1];
+      var rangePointingSign = rangePointingForward ? 1 : -1; 
       scales = [];
       if (domainParts.length == 1) {
         if (domainParts[0][0] <= 0 && domainParts[0][1] >= 0) {
@@ -55,87 +56,52 @@ export default function genericLogNew() {
       } else {
         var maxDomain = d3.max(abs(domain));
         var rangeLength = abs(d3.max(range) - d3.min(range));
-        var minRangePoint, koef;
-        logScale.domain([eps, maxDomain]).range([delta, rangeLength]);
-        minRangePoint = logScale(eps);
-        firstRangePoint = logScale(abs(domain[0]));
-        secondRangePoint = logScale(abs(domain[domain.length - 1]));
-        koef = (firstRangePoint - minRangePoint) / (secondRangePoint - minRangePoint);
-        console.log("first: " + firstRangePoint + " second: " + secondRangePoint + " koef: " + koef);
-
-
-        logScale.range([delta + 1000, rangeLength + 1000]);
-        minRangePoint = logScale(eps);
-        firstRangePoint = logScale(abs(domain[0]));
-        secondRangePoint = logScale(abs(domain[domain.length - 1]));
-        koef = (firstRangePoint - minRangePoint) / (secondRangePoint - minRangePoint);
-        console.log("first: " + firstRangePoint + " second: " + secondRangePoint + " koef: " + koef);
-
-
+        var minRangePoint, rangePointKoef = 1;
         var firstRangePoint = 0, secondRangePoint = 0, firstEps = 0, secondEps = 0;
-        
-        
-        if (domain[0] != 0) 
+        logScale.domain([eps, maxDomain]).range([0, rangeLength]);
+        minRangePoint = delta;//logScale(eps * 2);
+        if (domain[0] != 0 && abs(domain[0]) > eps)
           firstRangePoint = logScale(abs(domain[0]));
-        if (domain[domain.length - 1] != 0) 
+        if (domain[domain.length - 1] != 0  && abs(domain.length - 1) > eps)
           secondRangePoint = logScale(abs(domain[domain.length - 1]));
 
         if (abs(domain[0]) > eps)
           firstEps = minRangePoint;
+        
         if (abs(domain[domain.length - 1]) > eps)
           secondEps = minRangePoint;
         
-        var rangePointKoef = firstRangePoint/secondRangePoint;
-        var point;
+        rangeLength = rangeLength - firstEps - secondEps;
+        if (secondRangePoint != 0) rangePointKoef = abs((firstRangePoint) / (secondRangePoint));
+
+        var point1, point2;
         if (domainParts.length == 2) {
           // example: [-eps..0,eps][eps, val]
           if (domainParts[0][0] == 0 || abs(domainParts[0][0]) <= eps) {
-            point = range[0] + firstRangePoint * rangePointKoef * domainPointingForward
+            point1 = range[0] + firstRangePoint * rangePointKoef * domainPointingForward
               + secondEps;
             scales = [
-              _buildLinearScale(domainParts[0], [range[0], point]),
-              _buildLogScale(domainParts[1], [point,  range[0]])
+              _buildLinearScale(domainParts[0], [range[0], point1]),
+              _buildLogScale(domainParts[1], [point1,  range[0]])
             ];
           } else if (domainParts[1][1] == 0 || abs(domainParts[1][1]) <= eps) {// example: [-val,-eps][-eps, 0..eps]
-            point = range[1] - secondEps * rangePointKoef * domainPointingForward
+            point1 = range[1] - secondEps * rangePointKoef * domainPointingForward
                       - rangePointKoef * secondRangePoint * domainPointingForward;
             scales = [
-              _buildLogScale(domainParts[0], [range[0], point]),
-              _buildLinearScale(domainParts[0], [point, range[1]])
+              _buildLogScale(domainParts[0], [range[0], point1]),
+              _buildLinearScale(domainParts[0], [point1, range[1]])
             ];
            }
         } else {
-          var point1 = range[0] + rangeLength / rangePointKoef - firstEps;
-          var point2 = range[0] +  + rangeLength / rangePointKoef + secondEps;
+          point1 = range[0] + rangeLength / (1/rangePointKoef + 1) * rangePointingSign;
+          point2 = range[0] + (rangeLength / (1/rangePointKoef + 1) + firstEps + secondEps) * rangePointingSign;
           scales = [
             _buildLogScale(domainParts[0], [range[0], point1], true),
             _buildLinearScale(domainParts[1], [point1, point2]),
             _buildLogScale(domainParts[2], [point2, range[1]])
           ];
-          
         }
       }
-      console.log(scales);
-      console.log("1: " + (scale(0) - scale(-70)) + " 2: " + (scale(70) - scale(0)));
-      
-/*
-      console.log("1: " + (scale(0) - scale(- 10)) + " 2: " +  (scale(10) - scale(0)));
-      console.log("1: " + (scale(0) - scale(-81.7)) + " 2: " +  (scale(81.7) - scale(0)));
-      var scale0 = scale(0);
-      console.log(scale0);
-      var scaleEps1 = scale(0 - eps*2);
-      var scaleEps2 = scale(eps*2);
-
-      console.log("-eps scale: " + scaleEps1 + " zero: " + scale0 + " eps scale: " + scaleEps2);
-      console.log("eps koef:" + (scale0 - scaleEps1)/(scaleEps2 - scale0));
-
-      console.log(scales);
-      var scale1 = scale(domain[0]);
-      console.log(scale1);
-      var scale2 = scale(domain[1]);
-      console.log("min scale: " + scale1 + " zero: " + scale0 + " max scale: " + scale2);
-      console.log("koef:" + (scale0 - scale1)/(scale2 - scale0));
-*/
     };
 
     var buildDomain = function () {
@@ -238,7 +204,7 @@ export default function genericLogNew() {
         }
       }
     };
-    
+     
   //polyfill for IE11
   Math.sign = Math.sign || function (x) {
       x = +x;
@@ -379,14 +345,28 @@ export default function genericLogNew() {
       var currScale = getScaleByRange(arg);
       return currScale.scale.invert(arg) * currScale.sign;
     };
-    scale.copy = function() {
-      return d3_scale_genericLogNew(d3.scale.log().domain([
-        1,
-        10
-      ])).domain(domain).range(range).eps(eps);
+
+    scale.ticks = function(arg) {
+      var ticks = [], partTicks;
+      for (var i = 0; i < scales.length; i++) {
+        if (scales[i].sign == -1) {
+          partTicks = scales[i].scale.ticks().reverse().map(function(val){ return val * -1 });
+        } else {
+          partTicks = scales[i].scale.ticks();
+        }
+        if (ticks.length > 0 && partTicks.length > 0 && ticks[ticks.length - 1] == partTicks[0]) {
+          partTicks.splice(0, 1);
+        }
+        ticks.push.apply(ticks, partTicks);
+      }
+      return ticks;
     };
+
+    scale.copy = function() {
+      return d3_scale_genericLogNew(logScale).domain(domain).range(range).delta(delta).eps(eps);
+    };
+    
     return d3.rebind(scale, logScale, 'base', 'rangeRound', 'interpolate', 'clamp', 'nice',
-      'tickFormat',
-      'ticks');
+      'tickFormat');
   }(d3.scale.log().domain([0.1, 200]).range([0, 1000]));
 };

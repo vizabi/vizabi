@@ -87,21 +87,11 @@ var AxisLabelerComponent = Component.extend({
     this.xScale = d3.scale[this.model.scales.xScaleType]();
     this.yScale = d3.scale[this.model.scales.yScaleType]();
 
-    if(this.model.scales.xScaleType == "genericLog") {
-      //this.xScale.eps(this.model.scales.xEps);
-      this.xScale.domain(domain);
-    } else {
-      this.xScale.domain([domain[0], domain[domain.length - 1]]);
-    }
+    this.xScale.domain(domain);
 
-    if(this.model.scales.yScaleType == "genericLog") {
-      //this.yScale.eps(this.model.scales.yEps);
-      this.yScale.domain(domain);
-    } else {
-      this.yScale.domain([domain[0], domain[domain.length - 1]]);
-    }
+    this.yScale.domain(domain);
 
-    this.mockData = d3.range(domain[0], domain[domain.length - 1], (domain[domain.length - 1] - domain[0]) / 100);
+    this.mockData = d3.range(domain[0], domain[domain.length - 1], (domain[domain.length - 1] - domain[0]) / 10000);
     this.mockData.push(domain[domain.length - 1]);
   },
 
@@ -131,7 +121,7 @@ var AxisLabelerComponent = Component.extend({
       .tickSizeMinor(3, 0)
       .labelerOptions({
         scaleType: this.model.scales.xScaleType,
-        toolMargin: margin,
+        toolMargin: margin
       });
 
     this.yAxis.scale(this.yScale)
@@ -140,7 +130,7 @@ var AxisLabelerComponent = Component.extend({
       .tickSizeMinor(3, 0)
       .labelerOptions({
         scaleType: this.model.scales.yScaleType,
-        toolMargin: margin,
+        toolMargin: margin
       });
 
 

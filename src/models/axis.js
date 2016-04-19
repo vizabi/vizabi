@@ -102,7 +102,7 @@ var AxisModel = Hook.extend({
         break;
     }
     
-    var scaletype = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.scaleType === "log")? "genericLogNew" : this.scaleType;
+    var scaletype = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.scaleType === "log")? "genericLog" : this.scaleType;
     if (this._name == "axis_x" && this.scaleType !== "log") {
       scaletype = "sqrt";
       //this.scaleType === scaletype;
