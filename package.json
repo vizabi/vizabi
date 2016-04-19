@@ -4,7 +4,7 @@
   "description": "Vizabi Framework, Interactive charts and visualization tools animated through time",
   "main": "build/dist/vizabi.js",
   "scripts": {
-    "e2e:local": "./node_modules/protractor/bin/webdriver-manager update && ./node_modules/.bin/protractor .cicd/protractor.conf.js && istanbul cover jasmine-node --captureExceptions spec && ./node_modules/.bin/codecov",
+    "e2e:local": "./node_modules/protractor/bin/webdriver-manager update && ./node_modules/.bin/protractor .cicd/protractor.conf.js && istanbul cover jasmine-node --captureExceptions spec/ && cat ./coverage/lcov.info | ./node_modules/.bin/codecov",
     "test": "echo tests"
   },
   "files": [
