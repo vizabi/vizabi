@@ -1,0 +1,70 @@
+$vzb-al-color-bubble:#999;
+$vzb-al-color-stroke:#666;
+$vzb-al-margin:10px;
+$vzb-al-margin-axis:60px;
+$vzb-al-color-axis:#999;
+$vzb-al-year-size:300px;
+
+.vzb-tool-axislabeler {
+  border-bottom: 1px solid #ccc;
+    
+  .vzb-axislabeler {
+    @extend %vzb-chart-svg;
+    margin: 0;
+    font-family: $vzb-font-family;
+    
+    .vzb-al-axis {
+      path,
+      line {
+        fill: none;
+        stroke: $vzb-al-color-axis;
+        shape-rendering: crispEdges;
+      }
+      text {
+        fill: $vzb-al-color-axis;
+        //@include font-size(15px);
+      }
+    }
+    
+    .vzb-al-axis-x,
+    .vzb-al-axis-y {
+      @extend .vzb-al-axis;
+    }
+    
+    .vzb-al-line {
+      fill: none;
+      stroke: #3fb500;
+      stroke-width: 1px;
+    }
+    .vzb-al-line-invert {
+      fill: none;
+      stroke: #00f;
+      stroke-width: 1px;
+    }
+    .vzb-al-dots {
+      fill: none;
+      stroke: #3fb500;
+      opacity: .5;
+    }
+  }
+  
+  &.vzb-medium {
+    .vzb-axis-labeler {
+      .vzb-al-year {
+        @include font-size($vzb-al-year-size / 3 * 2);
+      }
+    }
+  }
+  
+  &.vzb-small {
+    .vzb-axis-labeler {
+      .vzb-al-axis-x text,
+      .vzb-al-axis-y text {
+        //@include font-size(14px);
+      }
+      .vzb-al-year {
+        @include font-size($vzb-al-year-size / 3);
+      }
+    }
+  }
+}
