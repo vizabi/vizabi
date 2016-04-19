@@ -701,6 +701,12 @@ Tool.define("preload", function(promise) {
   //load language first
   this.preloadLanguage().then(function() {
     //then metadata
+    
+    if (!_this.model.data || _this.model.data.noMetadata) {
+      promise.resolve();
+      return;
+    }
+    
     d3.json(metadata_path, function(metadata) {
 
       globals.metadata = metadata;
@@ -759,10 +765,14 @@ Tool.define("preloadLanguage", function() {
   var promise = new Promise();
 
   var langModel = this.model.language;
+  
+  // quit if no language model is set (go translationless)
+  if(!langModel) return promise.resolve();
+  
   var translation_path = globals.ext_resources.translationPath ? globals.ext_resources.translationPath :
       globals.ext_resources.host + globals.ext_resources.preloadPath + "translation/" + langModel.id + ".json";
 
-  if(langModel && !langModel.strings[langModel.id]) {
+  if(!langModel.strings[langModel.id]) {
     d3.json(translation_path, function(langdata) {
       langModel.strings[langModel.id] = langdata;
       _this.model.language.strings.trigger("change");

@@ -80,7 +80,7 @@ var AxisLabeler = Tool.extend('AxisLabeler', {
       }
 
     },
-    language: {id: "en", strings: {}}
+    data: {noMetadata: true}
   }
 });
 
