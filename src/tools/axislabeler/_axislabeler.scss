@@ -42,9 +42,22 @@ $vzb-al-year-size:300px;
       stroke-width: 1px;
     }
     .vzb-al-dots {
+      cursor: pointer;
       fill: none;
       stroke: #3fb500;
       opacity: .5;
+      &:hover {
+        fill: #3fb500;
+      }
+    }
+    .vzb-al-dots-invert {
+      cursor: pointer;
+      fill: none;
+      stroke: #00f;
+      opacity: .5;
+      &:hover {
+        fill: #00f;
+      }
     }
   }
   

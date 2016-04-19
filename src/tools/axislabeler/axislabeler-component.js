@@ -56,13 +56,16 @@ var AxisLabelerComponent = Component.extend({
     this.yAxisEl = this.graph.select('.vzb-al-axis-y');
     
     //$(".vzb-bc-axis-x, .vzb-bc-axis-y").css('font-size',this.model.show.labelSize);
+    this.xInvert = function(d){return _this.xScale(_this.xScale.invert(_this.xScale(d)));}
+    this.yInvert = function(d){return _this.yScale(_this.yScale.invert(_this.yScale(d)));}
+    
     this.line = d3.svg.line()
       .x(function(d) { return _this.xScale(d); })
       .y(function(d) { return _this.yScale(d); });
 
     this.lineInvert = d3.svg.line()
-      .x(function(d) { return _this.xScale(_this.xScale.invert(_this.xScale(d))); })
-      .y(function(d) { return _this.yScale(_this.yScale.invert(_this.yScale(d))); });
+      .x(function(d) { return _this.xInvert(d); })
+      .y(function(d) { return _this.yInvert(d); });
 
     //component events
     this.on("resize", function() {
@@ -163,17 +166,37 @@ var AxisLabelerComponent = Component.extend({
     pathInvert.enter().append("path")
       .attr("class", "vzb-al-line-invert")
     pathInvert.datum(this.mockData).attr("d", this.lineInvert);
+    
+    var format = d3.format(".4r");
 
     var dots = this.graph.selectAll(".vzb-al-dots").data(this.mockData);
     dots.enter().append("circle")
       .attr("class", "vzb-al-dots")
-      .attr("r", 5);
+      .attr("r", 5)
+      .on("mouseenter", function(d, i){
+        console.log("Point #" + i + ": " + d + " x=" + format(_this.xScale(d)) + " y=" + format(_this.yScale(d)))
+      });
     dots.exit().remove();
     dots.attr("cx", function(d) {
         return _this.xScale(d)
       })
       .attr("cy", function(d) {
         return _this.yScale(d)
+      });
+    
+    var dotsInvert = this.graph.selectAll(".vzb-al-dots-invert").data(this.mockData);
+    dotsInvert.enter().append("circle")
+      .attr("class", "vzb-al-dots-invert")
+      .attr("r", 5)
+      .on("mouseenter", function(d, i){
+        console.log("Point #" + i + ": " + d + " x=" + format(_this.xScale(d)) + " y=" + format(_this.yScale(d)))
+      });
+    dotsInvert.exit().remove();
+    dotsInvert.attr("cx", function(d) {
+        return _this.xInvert(d)
+      })
+      .attr("cy", function(d) {
+        return _this.yInvert(d)
       });
   }
 });
