@@ -27,7 +27,7 @@ describe('Web - Vizabi e2e test :: All', function() {
     var expand =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(7) > span.vzb-buttonlist-btn-icon.fa"));
     browser.wait(EC.visibilityOf(expand), 5000);
     expand.click();
-
+    browser.sleep(2000);
 
     // Getting attributes of color dropdown
     var colorOption = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(1) > div > div.vzb-dialog-title > span.vzb-caxis-selector"));
@@ -75,6 +75,7 @@ describe('Web - Vizabi e2e test :: All', function() {
     var expand =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(6) > span.vzb-buttonlist-btn-icon.fa"));
     browser.wait(EC.visibilityOf(expand), 5000);
     expand.click();
+    browser.sleep(2000);
 
 
     // Getting attributes of color dropdown
@@ -123,6 +124,7 @@ describe('Web - Vizabi e2e test :: All', function() {
     var expand =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(5) > span.vzb-buttonlist-btn-icon.fa"));
     browser.wait(EC.visibilityOf(expand), 5000);
     expand.click();
+    browser.sleep(2000);
 
     // Getting attributes of color dropdown
     var colorOption = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(1) > div > div.vzb-dialog-title > span.vzb-caxis-selector"));
