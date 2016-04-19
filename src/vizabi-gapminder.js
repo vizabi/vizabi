@@ -19,6 +19,7 @@ import BMComponent from 'tools/bubblemap-component';
 import LineChart from 'tools/linechart';
 import PopByAge from 'tools/popbyage';
 import DonutChart from 'tools/donutchart';
+import AxisLabeler from 'tools/axislabeler';
 
 //waffle reader
 import {waffle as WaffleReader} from 'readers/_index';
@@ -729,18 +730,18 @@ Tool.define("preload", function(promise) {
 
   // TODO: REMOVE THIS HACK (read above)
   function addPalettes(hook) {
-    if(!_this.default_model.state || !_this.default_model.state.marker[hook]) {
-      return;
-    }
+    //protection in case id state or marker or [hook] is undefined
+    if(!((_this.default_model.state||{}).marker||{})[hook]) return;
+    
     var color = _this.default_model.state.marker[hook];
     var palette = ((globals.metadata.indicatorsDB[color.which]||{}).color||{}).palette||{};
     color.palette = utils.extend({}, color.palette, palette);
   }
 
   function addMinMax(hook) {
-    if(!_this.default_model.state || !_this.default_model.state.marker[hook]) {
-      return;
-    }
+    //protection in case id state or marker or [hook] is undefined
+    if(!((_this.default_model.state||{}).marker||{})[hook]) return;
+    
     var axis = _this.default_model.state.marker[hook];
     if(axis.use === "indicator" && globals.metadata.indicatorsDB[axis.which] && globals.metadata.indicatorsDB[axis.which].domain) {
       var domain = globals.metadata.indicatorsDB[axis.which].domain;
