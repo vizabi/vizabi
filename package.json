@@ -4,7 +4,7 @@
   "description": "Vizabi Framework, Interactive charts and visualization tools animated through time",
   "main": "build/dist/vizabi.js",
   "scripts": {
-    "e2e:local": "./node_modules/protractor/bin/webdriver-manager update && ./node_modules/.bin/protractor .cicd/protractor.conf.js && istanbul cover jasmine-node --captureExceptions spec && ./node_modules/.bin/codecov",
+    "e2e:local": "./node_modules/protractor/bin/webdriver-manager update && ./node_modules/.bin/protractor .cicd/protractor.conf.js && istanbul cover jasmine-node --captureExceptions tests/e2e/ && cat ./coverage/lcov.info | ./node_modules/.bin/codecov",
     "test": "echo tests"
   },
   "files": [
@@ -64,6 +64,7 @@
     "gulp-zip": "3.2.0",
     "istanbul": "0.4.3",
     "jasmine": "2.4.1",
+    "jasmine-node": "1.14.5",
     "jasmine-spec-reporter": "2.4.0",
     "opn": "4.0.1",
     "protractor": "3.1.1",
