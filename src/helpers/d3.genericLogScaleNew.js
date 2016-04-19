@@ -21,20 +21,24 @@ export default function genericLogNew() {
     var _buildLinearScale = function(fakeDomain, fakeRange) {
       return {
           domain: fakeDomain,
+          sign: 1,
           range: fakeRange,
           scale: d3.scale.linear().domain(fakeDomain).range(fakeRange)
       };
     };
 
     var _buildLogScale = function(fakeDomain, fakeRange, revertDomain) {
-      var absDomain = fakeDomain;
+      var normalizedDomain = fakeDomain;
+      var normalizedRange = fakeRange.slice(0);
       if (revertDomain) {
-        absDomain = abs(fakeDomain); 
+        normalizedDomain = abs(fakeDomain).reverse();
+        fakeRange.reverse();
       }
       return {
         domain: fakeDomain,
-        range: fakeRange,
-        scale: d3.scale.linear().domain(absDomain).range(fakeRange)
+        sign: revertDomain?-1:1, 
+        range: normalizedRange,
+        scale: d3.scale.linear().domain(normalizedDomain).range(fakeRange)
       };
     };
 
@@ -49,13 +53,28 @@ export default function genericLogNew() {
           scales = [_buildLogScale(domainParts[0], range, domainParts[0][0] <= 0)];
         }
       } else {
-        var domainLength = abs([d3.max(domain), d3.min(domain)]).reduce(function (a, b) { return a + b });
-        var rangeLength = abs([d3.max(range), d3.min(range)]).reduce(function (a, b) { return a + b });
+        var maxDomain = d3.max(abs(domain));
+        var rangeLength = abs(d3.max(range) - d3.min(range));
+        var minRangePoint, koef;
+        logScale.domain([eps, maxDomain]).range([delta, rangeLength]);
+        minRangePoint = logScale(eps);
+        firstRangePoint = logScale(abs(domain[0]));
+        secondRangePoint = logScale(abs(domain[domain.length - 1]));
+        koef = (firstRangePoint - minRangePoint) / (secondRangePoint - minRangePoint);
+        console.log("first: " + firstRangePoint + " second: " + secondRangePoint + " koef: " + koef);
+
+
+        logScale.range([delta + 1000, rangeLength + 1000]);
+        minRangePoint = logScale(eps);
+        firstRangePoint = logScale(abs(domain[0]));
+        secondRangePoint = logScale(abs(domain[domain.length - 1]));
+        koef = (firstRangePoint - minRangePoint) / (secondRangePoint - minRangePoint);
+        console.log("first: " + firstRangePoint + " second: " + secondRangePoint + " koef: " + koef);
+
 
         var firstRangePoint = 0, secondRangePoint = 0, firstEps = 0, secondEps = 0;
-
-        var minRangePoint = logScale(eps * 2);
-          
+        
+        
         if (domain[0] != 0) 
           firstRangePoint = logScale(abs(domain[0]));
         if (domain[domain.length - 1] != 0) 
@@ -66,37 +85,57 @@ export default function genericLogNew() {
         if (abs(domain[domain.length - 1]) > eps)
           secondEps = minRangePoint;
         
-        var rangePointLength = rangeLength / (firstRangePoint + secondRangePoint + firstEps + secondEps);
-
+        var rangePointKoef = firstRangePoint/secondRangePoint;
         var point;
         if (domainParts.length == 2) {
           // example: [-eps..0,eps][eps, val]
           if (domainParts[0][0] == 0 || abs(domainParts[0][0]) <= eps) {
-            point = range[0] + firstRangePoint * rangePointLength * domainPointingForward
-              + secondEps * rangePointLength * domainPointingForward;
+            point = range[0] + firstRangePoint * rangePointKoef * domainPointingForward
+              + secondEps;
             scales = [
               _buildLinearScale(domainParts[0], [range[0], point]),
               _buildLogScale(domainParts[1], [point,  range[0]])
             ];
           } else if (domainParts[1][1] == 0 || abs(domainParts[1][1]) <= eps) {// example: [-val,-eps][-eps, 0..eps]
-            point = range[1] - rangePointLength * secondEps * domainPointingForward
-                      - rangePointLength * secondRangePoint * domainPointingForward;
+            point = range[1] - secondEps * rangePointKoef * domainPointingForward
+                      - rangePointKoef * secondRangePoint * domainPointingForward;
             scales = [
               _buildLogScale(domainParts[0], [range[0], point]),
               _buildLinearScale(domainParts[0], [point, range[1]])
             ];
            }
         } else {
-          var point1 = range[0] + rangePointLength * firstRangePoint * domainPointingForward;
-          var point2 = range[1] - rangePointLength * secondRangePoint * domainPointingForward;
+          var point1 = range[0] + rangeLength / rangePointKoef - firstEps;
+          var point2 = range[0] +  + rangeLength / rangePointKoef + secondEps;
           scales = [
-            _buildLogScale(domainParts[0], [range[0], point1]),
+            _buildLogScale(domainParts[0], [range[0], point1], true),
             _buildLinearScale(domainParts[1], [point1, point2]),
             _buildLogScale(domainParts[2], [point2, range[1]])
           ];
           
         }
-      } 
+      }
+      console.log(scales);
+      console.log("1: " + (scale(0) - scale(-70)) + " 2: " + (scale(70) - scale(0)));
+      
+/*
+      console.log("1: " + (scale(0) - scale(- 10)) + " 2: " +  (scale(10) - scale(0)));
+      console.log("1: " + (scale(0) - scale(-81.7)) + " 2: " +  (scale(81.7) - scale(0)));
+      var scale0 = scale(0);
+      console.log(scale0);
+      var scaleEps1 = scale(0 - eps*2);
+      var scaleEps2 = scale(eps*2);
+
+      console.log("-eps scale: " + scaleEps1 + " zero: " + scale0 + " eps scale: " + scaleEps2);
+      console.log("eps koef:" + (scale0 - scaleEps1)/(scaleEps2 - scale0));
+
+      console.log(scales);
+      var scale1 = scale(domain[0]);
+      console.log(scale1);
+      var scale2 = scale(domain[1]);
+      console.log("min scale: " + scale1 + " zero: " + scale0 + " max scale: " + scale2);
+      console.log("koef:" + (scale0 - scale1)/(scale2 - scale0));
+*/
     };
 
     var buildDomain = function () {
@@ -117,7 +156,7 @@ export default function genericLogNew() {
         start = domain[domain.length - 1];
         end = domain[0];
       }
-      var addSubdomain = function(first, second) {
+      var _addSubdomain = function(first, second) {
         if (domainPointingForward) {
           domainParts.push([first, second]);
         } else {
@@ -125,29 +164,17 @@ export default function genericLogNew() {
         }
       };
       while (start != end) {
-        if (start < 0) {
-          if (start >= -eps) {
-            if (end <= eps) {
-              addSubdomain(start, end);
-              start = end;
-            } else {
-              addSubdomain(start, eps);
-              start = eps;
-            }
-          } else {
-            addSubdomain(start, -eps);
-            start = -eps;
-          }
-        } else if (start == 0) {
-          if (end <= eps) {
-            addSubdomain(start, end);
-            start = end;
-          } else {
-            addSubdomain(start, eps);
-            start = eps;
-          }
+        if (end <= -eps || (start >= -eps && end <= eps) || start >= eps) {
+          _addSubdomain(start, end);
+          start = end;
+        } else if (start < -eps && end >= -eps) {
+          _addSubdomain(start, -eps);
+          start = -eps;
+        } else if (start >= -eps && end >= eps) {
+          _addSubdomain(start, eps);
+          start = eps;
         } else {
-          addSubdomain(start, end);
+          console.warn("Something wrong while build subdomains: " + start + " " + end);
           start = end;
         }
       }
@@ -162,9 +189,8 @@ export default function genericLogNew() {
           return scales[scales.length - 1];
         } else {
           for (var i = 0; i < scales.length; i++) {
-            scale = scales[i];
-            if (x >= scale.domain[0] && x <= scale.domain[1]) {
-              return scale;  
+            if (x >= scales[i].domain[0] && x <= scales[i].domain[1]) {
+              return scales[i];  
             }
           }
         }
@@ -176,8 +202,8 @@ export default function genericLogNew() {
         } else {
           for (var i = 0; i < scales.length; i++) {
             scale = scales[i];
-            if (x <= scale.domain[0] && x >= scale.domain[1]) {
-              return scale;
+            if (x <= scales[i].domain[0] && x >= scales[i].domain[1]) {
+              return scales[i];
             }
           }
         }
@@ -187,32 +213,30 @@ export default function genericLogNew() {
     var getScaleByRange = function(x) {
       if (rangePointingForward) {
         if (x < range[0]) {
-          return scales[0].scale;
+          return scales[0];
         } else if (x > range[range.length - 1]) {
-          return scales[scales.length - 1].scale;
+          return scales[scales.length - 1];
         } else {
           for (var i = 0; i < scales.length; i++) {
-            var scalePart = scales[i];
-            if (x >= scalePart.range[0] && x <= scalePart.range[1]) {
-              return scalePart.scale;
+            if (x >= scales[i].range[0] && x <= scales[i].range[1]) {
+              return scales[i];
             }
           }
         }
       } else {
         if (x > range[0]) {
-          return scales[0].scale;
+          return scales[0];
         } else if (x < range[range.length - 1]) {
-          return scales[scales.length - 1].scale;
+          return scales[scales.length - 1];
         } else {
           for (var i = 0; i < scales.length; i++) {
             var scalePart = scales[i];
-            if (x <= scale.range[0] && x >= scale.range[1]) {
-              return scale;
+            if (x <= scales[i].range[0] && x >= scales[i].range[1]) {
+              return scales[i];
             }
           }
         }
       }
-      
     };
     
   //polyfill for IE11
@@ -224,16 +248,9 @@ export default function genericLogNew() {
       return x > 0 ? 1 : -1;
     }
 
-    var oneside = function(arg) {
-      var sign = Math.sign(arg[0]);
-      for(var i = 0; i < arg.length; i++) {
-        if(Math.sign(arg[i]) != sign)
-          return false;
-      }
-      return true;
-    };
     function scale(x) {
-      return _getScaleByDomain(x).scale(x);
+      var currScale = _getScaleByDomain(x);
+      return currScale.scale(x * currScale.sign);
     }
 
     scale.eps = function(arg) {
@@ -243,6 +260,7 @@ export default function genericLogNew() {
       scale.domain(domain);
       return scale;
     };
+    
     scale.delta = function(arg) {
       if(!arguments.length)
         return delta;
@@ -250,6 +268,7 @@ export default function genericLogNew() {
       scale.range(range);
       return scale;
     };
+    
     scale.domain = function(_arg) {
       if(!arguments.length)
         return domain;
@@ -357,7 +376,8 @@ export default function genericLogNew() {
     };
     
     scale.invert = function(arg) {
-      return getScaleByRange(arg).invert(arg);
+      var currScale = getScaleByRange(arg);
+      return currScale.scale.invert(arg) * currScale.sign;
     };
     scale.copy = function() {
       return d3_scale_genericLogNew(d3.scale.log().domain([
