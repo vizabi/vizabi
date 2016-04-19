@@ -4,8 +4,8 @@
   "description": "Vizabi Framework, Interactive charts and visualization tools animated through time",
   "main": "build/dist/vizabi.js",
   "scripts": {
-      "e2e:local": "./node_modules/protractor/bin/webdriver-manager update && ./node_modules/.bin/protractor .cicd/protractor.conf.js",
-      "test": "echo tests"
+    "e2e:local": "./node_modules/protractor/bin/webdriver-manager update && ./node_modules/.bin/protractor .cicd/protractor.conf.js",
+    "test": "echo tests"
   },
   "files": [
     "build/dist"

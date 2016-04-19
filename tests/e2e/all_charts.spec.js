@@ -171,12 +171,12 @@ describe('Web - Vizabi e2e test :: All', function() {
     //Clicking USA bubble
     var USABubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
     browser.wait(EC.visibilityOf(USABubble), 5000);
-    browser.actions().dragAndDrop(USABubble,{x:0,y:-15}).click().perform();
+    browser.actions().dragAndDrop(USABubble,{x:0,y:0}).perform();
 
     //Clicking China bubble
     var chinaBubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-chn"));
     browser.wait(EC.visibilityOf(chinaBubble), 5000);
-    browser.actions().dragAndDrop(chinaBubble, {x:0 , y:20}).click().perform();
+    browser.actions().dragAndDrop(chinaBubble, {x:0 , y:5}).perform();
 
     //Clicking play
     browser.wait(EC.visibilityOf(play), 5000).then(function(){

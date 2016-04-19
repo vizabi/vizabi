@@ -69,14 +69,16 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
     //Clicking USA bubble
     var USABubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
-    browser.wait(EC.visibilityOf(USABubble), 5000);
-    browser.actions().dragAndDrop(USABubble,{x:0,y:-15}).click().perform();
+    browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
+      browser.actions().dragAndDrop(USABubble, {x:0, y:-10}).click().perform();
+    });
+
 
     //Clicking China bubble
     var chinaBubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-chn"));
-    browser.wait(EC.visibilityOf(chinaBubble), 5000);
-    browser.actions().dragAndDrop(chinaBubble, {x:0 , y:20}).click().perform();
-
+    browser.wait(EC.visibilityOf(chinaBubble), 5000).then(function(){
+      browser.actions().dragAndDrop(chinaBubble, {x:-20, y: 20}).click().perform();
+    });
 
     //Clicking play
     browser.wait(EC.visibilityOf(play), 5000).then(function(){
@@ -94,7 +96,8 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     slider.getLocation().then(function (beforePlaySliderLocation) {
       var beforePlaySliderDivLocation = beforePlaySliderLocation.x;
       //Dragging slider
-      browser.actions().dragAndDrop(slider, {x:150, y:0}).perform();
+      browser.driver.actions().dragAndDrop(slider, {x:200, y:5}).click().perform();
+
       //Getting slider location after drag
       slider.getLocation().then(function (afterPlaySliderLocation) {
         var afterPlaySliderDivLocation = afterPlaySliderLocation.x;
@@ -213,8 +216,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
     //Unselecting the bubble to have hovering effect
     browser.actions().dragAndDrop(USABubble,{x:0,y:-15}).click().perform();
-
-    browser.sleep(5000);
+    browser.sleep(2000);
 
     // Getting attributes of tooltip
     var tooltip = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-bc-tooltip"));
@@ -264,7 +266,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     //Clicking USA bubble
     var USABubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
     browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
-      browser.actions().dragAndDrop(USABubble, {x: 0, y: -5}).click().perform();
+      browser.actions().dragAndDrop(USABubble, {x: 0, y: -10}).click().perform();
     });
 
     //Getting location before dragging label
@@ -277,7 +279,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
       browser.wait(EC.visibilityOf(USALabel), 5000).then(function(){
         browser.actions().mouseMove(USALabel, {x: 0, y: 0}).perform();
         browser.sleep(2000);
-        browser.actions().dragAndDrop(USALabel, {x: -100, y: 150}).click().perform();
+        browser.actions().dragAndDrop(USALabel, {x: -300, y:50}).click().perform();
         browser.sleep(2000);
       });
 
@@ -438,7 +440,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
     // Getting USA size before play
     var USA =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
-    USA.getCssValue('r').then(function(radius){
+    USA.getAttribute('r').then(function(radius){
       var rad=radius;
 
       // Click for Play
@@ -450,7 +452,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
       pause.click();
 
       // Getting USA size after play
-      USA.getCssValue('r').then(function(finlRadiusParameter){
+      USA.getAttribute('r').then(function(finlRadiusParameter){
         var finalRadius=finlRadiusParameter;
 
         // Comapring sizes
@@ -481,13 +483,13 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
       browser.sleep(2000);
 
       // Dragging the panel
-      browser.actions().dragAndDrop(hand,{x:-150,y:100}).click().perform();
-      browser.sleep(2000);
+      browser.actions().dragAndDrop(hand, {x:-300,y:40}).perform();
+      browser.sleep(1000);
 
       //Getting location of the panel after dargging
       hand.getLocation().then(function (afterDrag) {
         var aftrDrag = afterDrag;
-        browser.sleep(2000);
+        browser.sleep(1000);
 
         //Comparing positions
         expect(bforDrag).not.toEqual(aftrDrag);
@@ -650,18 +652,18 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
     // Hovering the US bubble
     var USABubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
-    browser.actions().dragAndDrop(USABubble,{x:0,y:-15}).click().perform();
+    browser.actions().dragAndDrop(USABubble,{x:0,y:-10}).click().perform();
 
     // Unselect country by clicking bubble
-    browser.actions().dragAndDrop(USABubble,{x:0,y:-15}).click().perform();
+    browser.actions().dragAndDrop(USABubble,{x:0,y:-10}).click().perform();
 
     // Select the US bubble again
-    browser.actions().dragAndDrop(USABubble,{x:0,y:-15}).click().perform();
+    browser.actions().dragAndDrop(USABubble,{x:0,y:-10}).click().perform();
 
     // Unselect country by click
     var cross = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-labels > g > g"));
     browser.wait(EC.visibilityOf(play), 5000);
-    browser.actions().dragAndDrop(cross,{x:0,y:0}).click().perform();
+    cross.click();
 
     // Getting USA opacity value
     USABubble.getCssValue('opacity').then(function(USAOpacityAsParameter){
