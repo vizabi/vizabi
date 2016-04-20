@@ -62,9 +62,10 @@ var AxisModel = Hook.extend({
       if(this.domainMin == null || this.domainMin <= 0 && this.scaleType === "log") this.domainMin = this.scale.domain()[0];
       if(this.domainMax == null || this.domainMax <= 0 && this.scaleType === "log") this.domainMax = this.scale.domain()[1];
 
+      
       //zoomedmin and zoomedmax nonsense protection    
-      if(this.zoomedMin == null || this.zoomedMin < 0 && this.scaleType === "log") this.zoomedMin = this.scale.domain()[0];
-      if(this.zoomedMax == null || this.zoomedMax < 0 && this.scaleType === "log") this.zoomedMax = this.scale.domain()[1];
+      if(this.zoomedMin == null && this.scaleType === "log") this.zoomedMin = this.scale.domain()[0];
+      if(this.zoomedMax == null && this.scaleType === "log") this.zoomedMax = this.scale.domain()[1];
 
       this.scale.domain([this.domainMin, this.domainMax]);
     }

@@ -13,8 +13,8 @@ var listPointer = 0;
 
 var listData = [
     [-123, -0.1, 0.002, 1540],
-
     [-0.0006, 1800.00],
+
     [-0.0006, -123.00],
     [-2611968678575, 4554545484715],
     [-123, 123],
@@ -39,7 +39,6 @@ var listData = [
     [5.00000, 8.00000],
     [42.0000, 42.0000],
     [-0.0020, 0.00200],
-    [-123, -0.001, 0.5, 1540],
     [123, 0.1, -0.002, -1540],
     [123, 0.001, -0.5, -1540]
 ];
@@ -72,7 +71,7 @@ var AxisLabeler = Tool.extend('AxisLabeler', {
     state: {
       scales:{
           domain: listData[listPointer],
-          xScaleType: 'genericLog',
+          xScaleType: 'linear',
           yScaleType: 'genericLog'
       },
       show:{

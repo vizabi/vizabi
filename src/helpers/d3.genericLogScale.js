@@ -98,7 +98,7 @@ export default function genericLog() {
           scales = [
             _buildLogScale(domainParts[0], [range[0], point1], domainPointingForward),
             _buildLinearScale(domainParts[1], [point1, point2]),
-            _buildLogScale(domainParts[2], [point2, range[1]], !domainPointingForward)
+            _buildLogScale(domainParts[2], [point2, range[range.length - 1]], !domainPointingForward)
           ];
         }
       }
@@ -247,10 +247,6 @@ export default function genericLog() {
       if (min != 0) {
         eps = Math.min(eps, min/100);
       }
-      if(arg.length != 2)
-        console.warn(
-          'generic log scale is best for 2 values in domain, but it tries to support other cases too'
-        );
       switch(arg.length) {
         // if no values are given, reset input to the default domain (do nothing)
         case 0:
@@ -278,10 +274,7 @@ export default function genericLog() {
     scale.range = function(arg) {
       if(!arguments.length)
         return range;
-      if(arg.length != 2)
-        console.warn(
-          'generic log scale is best for 2 values in range, but it tries to support other cases too');
-      
+
       switch(arg.length) {
         // reset input to the default range
         case 0:
@@ -311,6 +304,8 @@ export default function genericLog() {
 
     scale.invert = function(arg) {
       var currScale = getScaleByRange(arg);
+      var res = currScale.scale.invert(arg) * currScale.sign;
+     
       return currScale.scale.invert(arg) * currScale.sign;
     };
 
