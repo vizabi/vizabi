@@ -451,10 +451,13 @@ gulp.task('connect', ['styles', 'bundle', 'preview'], function() {
     os.platform() === 'darwin' ? 'google chrome' : (
       os.platform() === 'win32' ? 'chrome' : 'firefox'));
 
-  connect.server(webserver);
-  opn('http://localhost:' + webserver.port + '/preview/index.html', {
+    connect.server(webserver);
+
+  if (process.env.TRAVIS == 'undefined'){
+    opn('http://localhost:' + webserver.port + '/preview/index.html', {
     app: browser
-  });
+    });
+  };
 });
 
 // ----------------------------------------------------------------------------
