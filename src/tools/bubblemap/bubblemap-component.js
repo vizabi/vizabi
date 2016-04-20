@@ -2,13 +2,13 @@ import * as utils from 'base/utils';
 import Component from 'base/component';
 import {
   warn as iconWarn,
-  question as iconQuestion,
-  close as iconClose
+  question as iconQuestion
 } from 'base/iconset';
 
 import topojson from 'helpers/topojson';
 import d3_geo_projection from 'helpers/d3.geo.projection';
 import DynamicBackground from 'helpers/d3.dynamicBackground';
+
 //import Selectlist from './bubblemap-selectlist';
 
 //BUBBLE MAP CHART COMPONENT
@@ -108,48 +108,6 @@ var BubbleMapComponent = Component.extend({
 
     _this.COLOR_WHITEISH = "#fdfdfd";
       
-    this.labelDragger = d3.behavior.drag()
-      .on("dragstart", function(d, i) {
-        d3.event.sourceEvent.stopPropagation();
-        if(!_this.ui.chart.labels.dragging) return;
-        var KEY = _this.KEY;
-        _this.druging = d[KEY];
-      })
-      .on("drag", function(d, i) {
-        if(!_this.ui.chart.labels.dragging) return;
-
-        var KEY = _this.KEY;
-        //_this.cached[d[KEY]].scaledS0 = 0; // to extend line when radius shorten
-        var cache = _this.cached[d[KEY]];
-        cache.labelFixed = true;
-
-        cache.labelX_ += d3.event.dx / _this.width;
-        cache.labelY_ += d3.event.dy / _this.height;
-
-        var resolvedX = (cache.labelX0 + cache.labelX_) * _this.width;
-        var resolvedY = (cache.labelY0 + cache.labelY_) * _this.height;
-
-        var resolvedX0 = cache.labelX0 * _this.width;
-        var resolvedY0 = cache.labelY0 * _this.height;
-
-        var lineGroup = _this.entityLines.filter(function(f) {
-          return f[KEY] == d[KEY];
-        });
-
-        _this._repositionLabels(d, i, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0, lineGroup);
-      })
-      .on("dragend", function(d, i) {
-        if(!_this.ui.chart.labels.dragging) return;
-        
-        var KEY = _this.KEY;
-        _this.druging = null;
-        _this.model.entities.setLabelOffset(d, [
-          _this.cached[d[KEY]].labelX_,
-          _this.cached[d[KEY]].labelY_
-        ]);
-      });
-
-
     this.defaultWidth = 960;
     this.defaultHeight = 500;
     this.boundBox = [[0.02, 0], [1.0, 0.85]]; // two points to set box bound on 960 * 500 image;
@@ -211,6 +169,15 @@ var BubbleMapComponent = Component.extend({
         .datum(topojson.mesh(world, world.objects.countries, function(a, b) { return a !== b; }))
         .attr("class", "boundary")
         .attr("d", path);
+        
+    this.labels = this.parent.findChildByName('gapminder-labels');
+    this.labels.config({
+      CSS_PREFIX: 'vzb-bmc',
+      TOOL_CONTEXT: this,
+      LABELS_CONTAINER_CLASS: 'vzb-bmc-labels',
+      LINES_CONTAINER_CLASS: 'vzb-bmc-lines'
+    });
+    
   },
 
   /**
@@ -226,8 +193,6 @@ var BubbleMapComponent = Component.extend({
     this.bubbleContainerCrop = this.graph.select('.vzb-bmc-bubbles-crop');
     this.bubbleContainer = this.graph.select('.vzb-bmc-bubbles');
     this.labelListContainer = this.graph.select('.vzb-bmc-bubble-labels');
-    this.labelsContainer = this.graph.select('.vzb-bmc-labels');
-    this.linesContainer = this.graph.select('.vzb-bmc-lines');
     this.dataWarningEl = this.graph.select(".vzb-data-warning");
 
     this.yTitleEl = this.graph.select(".vzb-bmc-axis-y-title");
@@ -236,9 +201,7 @@ var BubbleMapComponent = Component.extend({
     this.cInfoEl = this.graph.select(".vzb-bmc-axis-c-info");
 
     this.entityBubbles = null;
-    this.entityLabels = null;
     this.tooltip = this.element.select('.vzb-bmc-tooltip');
-    this.entityLines = null;
 
     // year background
     this.yearEl = this.graph.select('.vzb-bmc-year');
@@ -250,6 +213,7 @@ var BubbleMapComponent = Component.extend({
       //return if updatesize exists with error
       if(_this.updateSize()) return;
       _this.updateMarkerSizeLimits();
+      _this.labels.updateSize();
       _this.redrawDataPoints();
       //_this._selectlist.redraw();
       
@@ -257,7 +221,6 @@ var BubbleMapComponent = Component.extend({
 
     this.KEY = this.model.entities.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
-    this.cached = {};
       
       
     this.updateUIStrings();
@@ -645,7 +608,9 @@ var BubbleMapComponent = Component.extend({
                   .attr("r", d.r);
           }
 
-          _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], d.r, d.label, duration);
+          _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], valueS, d.label, duration);
+        } else {
+          _this._updateLabel(d, index, 0, 0, valueS, valueL, duration);
         }
 
       });
@@ -907,188 +872,24 @@ var BubbleMapComponent = Component.extend({
 
   },
 
-  _updateLabel: function(d, index, valueX, valueY, scaledS, valueL, duration) {
+  _updateLabel: function(d, index, valueX, valueY, valueS, valueL, duration) {
     var _this = this;
     var KEY = this.KEY;
     if(d[KEY] == _this.druging) return;
     if(duration == null) duration = _this.duration;
 
-    if(_this.cached[d[KEY]] == null) _this.cached[d[KEY]] = {};
-    var cached = _this.cached[d[KEY]];
-
     // only for selected entities
-    if(_this.model.entities.isSelected(d) && _this.entityLabels != null) {
-
-      var select = utils.find(_this.model.entities.select, function(f) {
-        return f[KEY] == d[KEY]
-      });
-
-      var lineGroup = _this.entityLines.filter(function(f) {
-        return f[KEY] == d[KEY];
-      });
-      // reposition label
-      _this.entityLabels.filter(function(f) {
-          return f[KEY] == d[KEY]
-        })
-        .each(function(groupData) {
-
-          cached.valueX = valueX;
-          cached.valueY = valueY;
-
-          var limitedX, limitedY, limitedX0, limitedY0;
-          if(cached.scaledS0 == null || cached.labelX0 == null || cached.labelX0 == null) { //initialize label once
-            cached.scaledS0 = scaledS;
-            cached.labelX0 = valueX / _this.width;
-            cached.labelY0 = valueY / _this.height;
-          }
-          var labelGroup = d3.select(this);
-
-          var text = labelGroup.selectAll(".vzb-bmc-label-content")
-            .text(valueL);
-
-          lineGroup.select("line").style("stroke-dasharray", "0 " + scaledS + " 100%");
-
-          var rect = labelGroup.select("rect");
-
-          var contentBBox = text[0][0].getBBox();
-          if(!cached.contentBBox || cached.contentBBox.width != contentBBox.width) {
-            cached.contentBBox = contentBBox;
-
-            var labelCloseGroup = labelGroup.select(".vzb-bmc-label-x")
-              .attr("x", /*contentBBox.height * .0 + */ 4)
-              .attr("y", contentBBox.height * -1);
-
-            labelCloseGroup.select("circle")
-              .attr("cx", /*contentBBox.height * .0 + */ 4)
-              .attr("cy", contentBBox.height * -1)
-              .attr("r", contentBBox.height * .5);
-
-            labelCloseGroup.select("svg")
-              .attr("x", -contentBBox.height * .5 + 4)
-              .attr("y", contentBBox.height * -1.5)
-              .attr("width", contentBBox.height)
-              .attr("height", contentBBox.height)
-
-            rect.attr("width", contentBBox.width + 8)
-              .attr("height", contentBBox.height * 1.2)
-              .attr("x", -contentBBox.width - 4)
-              .attr("y", -contentBBox.height * .85)
-              .attr("rx", contentBBox.height * .2)
-              .attr("ry", contentBBox.height * .2);
-          }
-
-          limitedX0 = cached.labelX0 * _this.width;
-          limitedY0 = cached.labelY0 * _this.height;
-          
-          var labelOffset = select.labelOffset || [0,0];
-
-          cached.labelX_ = labelOffset[0] || (-cached.scaledS0 * .75 - 5) / _this.width;
-          cached.labelY_ = labelOffset[1] || (-cached.scaledS0 * .75 - 11) / _this.height;
-
-          limitedX = limitedX0 + cached.labelX_ * _this.width;
-          if(limitedX - cached.contentBBox.width <= 0) { //check left
-            cached.labelX_ = (cached.scaledS0 * .75 + cached.contentBBox.width + 10) / _this.width;
-            limitedX = limitedX0 + cached.labelX_ * _this.width;
-          } else if(limitedX + 15 > _this.width) { //check right
-            cached.labelX_ = (_this.width - 15 - limitedX0) / _this.width;
-            limitedX = limitedX0 + cached.labelX_ * _this.width;
-          }
-          limitedY = limitedY0 + cached.labelY_ * _this.height;
-          if(limitedY - cached.contentBBox.height <= 0) { // check top 
-            cached.labelY_ = (cached.scaledS0 * .75 + cached.contentBBox.height) / _this.height;
-            limitedY = limitedY0 + cached.labelY_ * _this.height;
-          } else if(limitedY + 10 > _this.height) { //check bottom
-            cached.labelY_ = (_this.height - 10 - limitedY0) / _this.height;
-            limitedY = limitedY0 + cached.labelY_ * _this.height;
-          }
-
-          _this._repositionLabels(d, index, this, limitedX, limitedY, limitedX0, limitedY0, duration, lineGroup);
-
-        })
-    } else {
-      //for non-selected bubbles
-      //make sure there is no cached data
-      if(_this.cached[d[KEY]] != null) {
-        _this.cached[d[KEY]] = void 0;
-      }
+    if(_this.model.entities.isSelected(d)) {
+      
+      var showhide = true;
+      var valueLST = null;
+      var cache = {};
+      cache.labelX0 = valueX / this.width;
+      cache.labelY0 = valueY / this.height;
+      cache.scaledS0 = valueS ? utils.areaToRadius(_this.sScale(valueS)) : null;
+             
+      this.labels.updateLabel(d, index, cache, valueX / this.width, valueY / this.height, valueS, valueL, valueLST, duration, showhide);
     }
-  },
-
-  _repositionLabels: function(d, index, context, resolvedX, resolvedY, resolvedX0, resolvedY0, duration, lineGroup) {
-    var _this = this;
-    var cache = this.cached[d[this.KEY]];
-
-    var labelGroup = d3.select(context);
-
-    var width = parseInt(labelGroup.select("rect").attr("width"));
-    var height = parseInt(labelGroup.select("rect").attr("height"));
-
-    var labelX0 = cache.labelX0 * _this.width;
-    var labelY0 = cache.labelY0 * _this.height;
-    var labelMarginTop = this.activeProfile.margin.top + this.activeProfile.infoElHeight * 1.2; //0.2 - space between tooltip and axis label   
-    if(resolvedX - width <= 0) { //check left
-      cache.labelX_ = (width - labelX0) / this.width;
-      resolvedX = labelX0 + cache.labelX_ * this.width;
-    } else if(resolvedX + 20 > this.width) { //check right
-      cache.labelX_ = (this.width - 20 - labelX0) / this.width;
-      resolvedX = labelX0 + cache.labelX_ * this.width;
-    }
-    if(resolvedY - (height * 0.5 + labelMarginTop) <= 0) { // 0.5 - is size of close corcke
-      cache.labelY_ = (height *0.5 + labelMarginTop - labelY0) / this.height;
-      resolvedY = labelY0 + cache.labelY_ * this.height;
-    } else if(resolvedY + 13 > this.height) { //check bottom
-      cache.labelY_ = (this.height - 13 - labelY0) / this.height;
-      resolvedY = cache.labelY0 + cache.labelY_ * this.height;
-    }
-
-    if(duration) {
-      labelGroup
-        .transition().duration(duration).ease("linear")
-        .attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
-      lineGroup.transition().duration(duration).ease("linear")
-        .attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
-    } else {
-      labelGroup
-          .interrupt()
-          .attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
-      lineGroup
-          .interrupt()
-          .attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
-    }
-
-    var diffX1 = resolvedX0 - resolvedX;
-    var diffY1 = resolvedY0 - resolvedY;
-    var diffX2 = 0;
-    var diffY2 = 0;
-
-    var angle = Math.atan2(diffX1 + width / 2, diffY1 + height / 2) * 180 / Math.PI;
-    // middle bottom
-    if(Math.abs(angle) <= 45) {
-      diffX2 = width / 2;
-      diffY2 = 0
-    }
-    // right middle
-    if(angle > 45 && angle < 135) {
-      diffX2 = 0;
-      diffY2 = height / 4;
-    }
-    // middle top
-    if(angle < -45 && angle > -135) {
-      diffX2 = width - 4;
-      diffY2 = height / 4;
-    }
-    // left middle
-    if(Math.abs(angle) >= 135) {
-      diffX2 = width / 2;
-      diffY2 = height / 2
-    }
-
-    lineGroup.selectAll("line")
-      .attr("x1", diffX1)
-      .attr("y1", diffY1)
-      .attr("x2", -diffX2)
-      .attr("y2", -diffY2);
-
   },
 
   selectEntities: function () {
@@ -1098,81 +899,10 @@ var BubbleMapComponent = Component.extend({
 
 //      this._selectlist.rebuild();
 
-      this.entityLabels = this.labelsContainer.selectAll('.vzb-bmc-entity')
-        .data(_this.model.entities.select, function(d) {
-          //console.log(_this.model.entities.select);
-          return(d[KEY]);
-        });
-      this.entityLines = this.linesContainer.selectAll('.vzb-bmc-entity')
-        .data(_this.model.entities.select, function(d) {
-          return(d[KEY]);
-        });
-
-      this.entityLabels.exit()
-        .remove();
-      this.entityLines.exit()
-        .remove();
-
-      this.entityLines
-        .enter().append('g')
-        .attr("class", "vzb-bmc-entity")
-        .each(function(d, index) {
-          d3.select(this).append("line").attr("class", "vzb-bmc-label-line");
-        });
-
-      this.entityLabels
-        .enter().append("g")
-        .attr("class", "vzb-bmc-entity")
-        .call(_this.labelDragger)
-        .each(function(d, index) {
-          var view = d3.select(this);
-
-          view.append("rect");
-
-          view.append("text").attr("class", "vzb-bmc-label-content vzb-label-shadow");
-
-          view.append("text").attr("class", "vzb-bmc-label-content");
-
-          var cross = view.append("g").attr("class", "vzb-bmc-label-x vzb-transparent");
-          utils.setIcon(cross, iconClose);
-
-          cross.insert("circle", "svg");
-
-          cross.select("svg")
-            .attr("class", "vzb-bmc-label-x-icon")
-            .attr("width", "0px")
-            .attr("height", "0px");
-
-          cross.on("click", function() {
-            _this.model.entities.clearHighlighted();
-            //default prevented is needed to distinguish click from drag
-            if(d3.event.defaultPrevented) return;
-            _this.model.entities.selectEntity(d);
-          });
-        })
-        .on("mouseover", function(d) {
-          if(utils.isTouchDevice()) return;
-          _this.model.entities.highlightEntity(d);
-          d3.select(this).selectAll(".vzb-bmc-label-x")
-            .classed("vzb-transparent", false);
-        })
-        .on("mouseout", function(d) {
-          if(utils.isTouchDevice()) return;
-          _this.model.entities.clearHighlighted();
-          d3.select(this).selectAll(".vzb-bmc-label-x")
-            .classed("vzb-transparent", true);
-        })
-        .on("click", function(d) {
-          if (!utils.isTouchDevice()) return;
-          var cross = d3.select(this).selectAll(".vzb-bmc-label-x");
-          cross.classed("vzb-transparent", !cross.classed("vzb-transparent"));
-        })
-      
-
-        // hide recent hover tooltip
-        if (!_this.hovered || _this.model.entities.isSelected(_this.hovered)) {
-          _this._setTooltip();
-        }
+      // hide recent hover tooltip
+      if (!_this.hovered || _this.model.entities.isSelected(_this.hovered)) {
+        _this._setTooltip();
+      }
 
   },
 
