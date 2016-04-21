@@ -304,8 +304,6 @@ export default function genericLog() {
 
     scale.invert = function(arg) {
       var currScale = getScaleByRange(arg);
-      var res = currScale.scale.invert(arg) * currScale.sign;
-     
       return currScale.scale.invert(arg) * currScale.sign;
     };
 
