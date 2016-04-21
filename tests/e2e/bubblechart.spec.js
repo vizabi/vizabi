@@ -77,7 +77,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     //Clicking China bubble
     var chinaBubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-chn"));
     browser.wait(EC.visibilityOf(chinaBubble), 5000).then(function(){
-      browser.actions().dragAndDrop(chinaBubble, {x:-20, y: 20}).click().perform();
+      browser.actions().dragAndDrop(chinaBubble, {x:0, y:-30}).click().perform();
     });
 
     //Clicking play
