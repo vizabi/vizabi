@@ -90,21 +90,11 @@ var AxisLabelerComponent = Component.extend({
     this.xScale = d3.scale[this.model.scales.xScaleType]();
     this.yScale = d3.scale[this.model.scales.yScaleType]();
 
-    if(this.model.scales.xScaleType == "genericLog") {
-      //this.xScale.eps(this.model.scales.xEps);
-      this.xScale.domain(domain);
-    } else {
-      this.xScale.domain([domain[0], domain[domain.length - 1]]);
-    }
+    this.xScale.domain(domain);
 
-    if(this.model.scales.yScaleType == "genericLog") {
-      //this.yScale.eps(this.model.scales.yEps);
-      this.yScale.domain(domain);
-    } else {
-      this.yScale.domain([domain[0], domain[domain.length - 1]]);
-    }
+    this.yScale.domain(domain);
 
-    this.mockData = d3.range(domain[0], domain[domain.length - 1], (domain[domain.length - 1] - domain[0]) / 100);
+    this.mockData = d3.range(domain[0], domain[domain.length - 1], (domain[domain.length - 1] - domain[0]) / 10000);
     this.mockData.push(domain[domain.length - 1]);
   },
 
@@ -125,8 +115,10 @@ var AxisLabelerComponent = Component.extend({
     this.graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     //update scales to the new range
-    this.xScale.range([0, width]) //.nice();
-    this.yScale.range([height, 0]) //.nice();
+    var xLength = this.xScale.domain().length;
+    var yLength = this.yScale.domain().length;
+    this.xScale.range(d3.range(xLength).map(function(n) { return width/(xLength-1) * n })) //.nice();
+    this.yScale.range(d3.range(yLength).map(function(n) { return height/(yLength-1) * n }).reverse()) //.nice();
 
     this.xAxis.scale(this.xScale)
       .orient("bottom")
@@ -134,7 +126,7 @@ var AxisLabelerComponent = Component.extend({
       .tickSizeMinor(3, 0)
       .labelerOptions({
         scaleType: this.model.scales.xScaleType,
-        toolMargin: margin,
+        toolMargin: margin
       });
 
     this.yAxis.scale(this.yScale)
@@ -143,7 +135,7 @@ var AxisLabelerComponent = Component.extend({
       .tickSizeMinor(3, 0)
       .labelerOptions({
         scaleType: this.model.scales.yScaleType,
-        toolMargin: margin,
+        toolMargin: margin
       });
 
 

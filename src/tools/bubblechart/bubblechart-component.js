@@ -128,6 +128,9 @@ var BubbleChartComp = Component.extend({
         _this.highlightDataPoints();
       },
       'change:time.value': function() {
+        var scale = d3.scale.log().domain([-100,-0.1], [0.1,100]).range([1, 1000]);
+        var scale2 = d3.scale.log().domain([0.1,100]).range([1, 500]);
+        
         if (!_this._readyOnce) return;
         if (!_this.calculationQueue) { // collect timestamp that we request
           _this.calculationQueue = [_this.model.time.value.toString()]
