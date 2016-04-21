@@ -187,7 +187,7 @@ var ColorModel = Hook.extend({
     var range = utils.values(paletteObject);
 
     this._hasDefaultColor = domain.indexOf("_default") > -1;
-
+    
     if(this.scaleType == "time") {
       
       var timeMdl = this._parent._parent.time;
@@ -225,16 +225,17 @@ var ColorModel = Hook.extend({
         domain = d3.range(limitMin, limitMax, step).concat(limitMax);
         if (domain.length > range.length) domain.pop();
         domain = domain.reverse();
+        var scaleType = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.scaleType === "log")? "genericLog" : this.scaleType;
+
         if(this.scaleType == "log") {
-          var s = d3.scale.log()
-            .domain([limitMin === 0 ? 1 : limitMin, limitMax])
+          var s = d3.scale.genericLog()
+            .domain([limitMin, limitMax])
             .range([limitMin, limitMax]);
           domain = domain.map(function(d) {
             return s.invert(d)
           });
         }
-
-        this.scale = d3.scale[this.scaleType]()
+        this.scale = d3.scale[scaleType || "linear"]()
           .domain(domain)
           .range(range)
           .interpolate(d3.interpolateRgb);
