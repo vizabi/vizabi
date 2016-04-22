@@ -57,7 +57,14 @@ var AxisModel = Hook.extend({
 
     //here the modified min and max may change the domain, if the scale is defined
     if(this.scale && this._readyOnce && this.use === "indicator") {
-
+      if(this.scaleType == "time") {
+        var limits = this.getLimits(this.which);
+        if (this.scale.domain()[0] != limits.min || this.scale.domain()[1] != limits.max) {
+          this.scale.domain([limits.min, limits.max]);
+        }
+        if(!utils.isDate(this.domainMin)) this.domainMin = this.scale.domain()[0];
+        if(!utils.isDate(this.domainMax)) this.domainMax = this.scale.domain()[1];
+      }
       //min and max nonsense protection
       if(this.domainMin == null || this.domainMin <= 0 && this.scaleType === "log") this.domainMin = this.scale.domain()[0];
       if(this.domainMax == null || this.domainMax <= 0 && this.scaleType === "log") this.domainMax = this.scale.domain()[1];
