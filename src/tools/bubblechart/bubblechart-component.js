@@ -137,7 +137,7 @@ var BubbleChartComp = Component.extend({
         (function(time) { // isolate timestamp
         //_this._bubblesInteract().mouseout();
           _this.model.marker.getFrame(time, function(frame, time) {
-            if (!frame) return false;
+            if (!_this._frameIsValid(frame)) return;
             var index = _this.calculationQueue.indexOf(time.toString()); //
             if (index == -1) { // we was receive more recent frame before so we pass this frame
               return;
@@ -435,7 +435,14 @@ var BubbleChartComp = Component.extend({
       .range(this.parent.datawarning_content.doubtRange);
     _this._readyOnce = true;
   },
-
+  
+  _frameIsValid: function(frame) {
+    return !(!frame
+    || Object.keys(frame.axis_y).length === 0
+    || Object.keys(frame.axis_x).length === 0
+    || Object.keys(frame.size).length === 0);
+  },
+  
   ready: function() {
     var _this = this;
     this.updateUIStrings();
@@ -448,17 +455,14 @@ var BubbleChartComp = Component.extend({
           });
           return;
         } 
-        if (!frame
-          || Object.keys(frame.axis_y).length === 0
-          || Object.keys(frame.axis_x).length === 0
-          || Object.keys(frame.size).length === 0
-        ) return;
+        if (!_this._frameIsValid(frame)) return;
 
       _this.frame = frame;
       _this.cached = {};
       _this.updateIndicators();
       _this.updateSize();
       _this.updateEntities();
+      _this.redrawDataPoints();
       _this.selectDataPoints();
       _this._trails.create();
       _this.updateTime();
@@ -1123,7 +1127,7 @@ var BubbleChartComp = Component.extend({
       time = this.model.time.timeFormat.parse("" + this.model.ui.chart.lockNonSelected);
     }
     this.model.marker.getFrame(time, function(valuesLocked) {
-      if(!valuesLocked) return utils.warn("redrawDataPointsOnlySize: empty data received from marker.getFrames(). doing nothing");
+      if(!_this._frameIsValid(valuesLocked)) return utils.warn("redrawDataPointsOnlySize: empty data received from marker.getFrames(). doing nothing");
 
       valuesNow = _this.frame;
       _this.entityBubbles.each(function(d, index) {

@@ -485,7 +485,7 @@ BubbleChart.define('default_model', {
         which: "life_expectancy_years",
         scaleType: "linear",
         allow: {
-          scales: ["linear", "log"]
+          scales: ["linear", "log", "time"]
         }
       },
       axis_x: {
@@ -494,7 +494,7 @@ BubbleChart.define('default_model', {
         which: "income_per_person_gdppercapita_ppp_inflation_adjusted", 
         scaleType: "log",
         allow: {
-          scales: ["linear", "log"]
+          scales: ["linear", "log", "time"]
         }
       },
       color: {
