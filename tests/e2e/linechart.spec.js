@@ -29,7 +29,13 @@ describe('Web - Vizabi e2e test :: Line Chart', function() {
 
     // Check that country is displaying on Chart
 
-    countries.all(by.tagName('path')).then(function(items) {
+    var countriesVisible = countries.all(by.tagName('path')).filter(function(element) {
+      return element.isDisplayed().then(function (visibility) {
+        return !!visibility;
+      });
+    });
+    
+    countriesVisible.then(function(items) {
       expect(items.length).not.toBe(0);
     });
 
