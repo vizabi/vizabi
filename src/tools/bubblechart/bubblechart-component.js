@@ -1541,7 +1541,7 @@ var BubbleChartComp = Component.extend({
     }
 
     var longerSideCoeff = Math.abs(diffX1) > Math.abs(diffY1) ? Math.abs(diffX1) / this.width : Math.abs(diffY1) / this.height;
-    lineGroup.select("line").style("stroke-dasharray", "0 " + (cache.scaledS0 + 2) + " " + ~~(longerSideCoeff + 2) + "00%");
+    lineGroup.select("line").style("stroke-dasharray", "0 " + (cache.scaledS0) + " " + ~~(longerSideCoeff + 2) + "00%");
 
     lineGroup.selectAll("line")
       .attr("x1", diffX1)
