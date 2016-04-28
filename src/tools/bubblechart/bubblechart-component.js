@@ -686,7 +686,9 @@ var BubbleChartComp = Component.extend({
     //unselecting bubbles with no data is used for the scenario when
     //some bubbles are selected and user would switch indicator.
     //bubbles would disappear but selection would stay
-    this.unselectBubblesWithNoData();
+    if (!this.model.time.splash) {
+      this.unselectBubblesWithNoData();
+    }
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
       .data(this.model.entities.getVisible(), function(d) {return d && d[KEY] ? d[KEY] : null}) // trails have not keys

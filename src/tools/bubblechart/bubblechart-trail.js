@@ -140,7 +140,7 @@ export default Class.extend({
     var _context = this.context;
     var _this = this;
     var KEY = _context.KEY;
-    if (!this._isCreated) return;
+    if (!this._isCreated || _context.model.time.splash) return;
     this._isCreated.then(function() {
       //quit if function is called accidentally
       if((!_context.model.ui.chart.trails || !_context.model.entities.select.length) && actions != "remove") return;
