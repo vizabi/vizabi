@@ -33,76 +33,84 @@ export default Class.extend({
     this._isCreated = new Promise(function(resolve, reject) {
 
       //quit if the function is called accidentally
-      if(!_context.model.ui.chart.trails || !_context.model.entities.select.length) return;
+      if(!_context.model.ui.chart.trails) return; // || !_context.model.entities.select.length) return;
 
       var timePoints = _context.model.time.getAllSteps();
 
       //work with entities.select (all selected entities), if no particular selection is specified
       var promises = [];
       selection = selection == null ? _context.model.entities.select : [selection];
-      selection.forEach(function(d) {
-        var defer = new Promise();
-        promises.push(defer);
-        var trailSegmentData = timePoints.map(function(m) {
-          return {
-            t: m,
-            key: d[KEY]
-          }
-        });
-        if (_this.entityTrails[d[KEY]]) {
-          _this._remove(_this.entityTrails[d[KEY]], null, d);  
-        }
+      
+      var _trails = _context.bubbleContainer.selectAll('g.vzb-bc-entity')
+        .data(_context.model.entities.select, function(d) {
+          return(d[KEY]);
+        })
         
-        _this.entityTrails[d[KEY]] = _context.bubbleContainer
-          .insert("g", ".bubble-" + d[KEY])
-          .attr("class", "vzb-bc-entity trail-" + d[KEY])
-          .selectAll("g").data(trailSegmentData);
-        
-        _this.entityTrails[d[KEY]].exit().remove();
-        
-        _this.entityTrails[d[KEY]]
-          .enter().append("g")
-          .attr("class", "vzb-bc-trailsegment")
-          .on("mouseover", function(segment, index) {
-            if(utils.isTouchDevice()) return;
-
-            var pointer = {};
-            pointer[KEY] = segment.key;
-            pointer.time = segment.t;
-
-            _context._axisProjections(pointer);
-            var text = _context.model.time.timeFormat(segment.t);
-            var labelData = _context.entityLabels
-              .filter(function(f) {
-                return f[KEY] == pointer[KEY]
-              })
-              .classed("vzb-highlighted", true)
-              .datum();
-            if(text !== labelData.trailStartTime) {
-              _context.model.marker.getFrame(pointer.time, function(values) {
-                var x = _context.xScale(values.axis_x[pointer[KEY]]);
-                var y = _context.yScale(values.axis_y[pointer[KEY]]);
-                var s = utils.areaToRadius(_context.sScale(values.size[pointer[KEY]]));
-                _context._setTooltip(text, x, y, s);
-              });
+      _trails.exit().remove();
+  
+      _trails.enter()
+        .insert("g", function(d) { 
+          return this.querySelector(".bubble-" + d[KEY]);
+        })
+        .attr("class", function(d) { 
+          return "vzb-bc-entity trail-" + d[KEY];
+        })
+        .each(function(d, index) {
+          var defer = new Promise();
+          promises.push(defer);
+          var trailSegmentData = timePoints.map(function(m) {
+            return {
+              t: m,
+              key: d[KEY]
             }
-            //change opacity to OPACITY_HIGHLT = 1.0;
-            d3.select(this).style("opacity", 1.0);
-          })
-          .on("mouseout", function(segment, index) {
-            if(utils.isTouchDevice()) return;
-            _context._axisProjections();
-            _context._setTooltip();
-            _context.entityLabels.classed("vzb-highlighted", false);
-            d3.select(this).style("opacity", _context.model.entities.opacityRegular);
-          })
-          .each(function(segment, index) {
-            var view = d3.select(this);
-            view.append("circle");
-            view.append("line");
           });
-        defer.resolve();
-      });
+          if (_this.entityTrails[d[KEY]]) {
+             _this._remove(_this.entityTrails[d[KEY]], null, d);  
+          }
+          _this.entityTrails[d[KEY]] = d3.select(this).selectAll("g").data(trailSegmentData);
+          
+          _this.entityTrails[d[KEY]].exit().remove();
+          
+          _this.entityTrails[d[KEY]].enter().append("g")
+            .attr("class", "vzb-bc-trailsegment")
+            .on("mouseover", function(segment, index) {
+              if(utils.isTouchDevice()) return;
+
+              var pointer = {};
+              pointer[KEY] = segment.key;
+              pointer.time = segment.t;
+
+              _context._axisProjections(pointer);
+              _context.labels.highlight(d, true);
+              var text = _context.model.time.timeFormat(segment.t);
+              var selectedData = utils.find(_context.model.entities.select, function(f) {
+                return f[KEY] == d[KEY]
+              });
+              if(text !== selectedData.trailStartTime) {
+                _context.model.marker.getFrame(pointer.time, function(values) {
+                  var x = _context.xScale(values.axis_x[pointer[KEY]]);
+                  var y = _context.yScale(values.axis_y[pointer[KEY]]);
+                  var s = utils.areaToRadius(_context.sScale(values.size[pointer[KEY]]));
+                  _context._setTooltip(text, x, y, s);
+                });
+              }
+              //change opacity to OPACITY_HIGHLT = 1.0;
+              d3.select(this).style("opacity", 1.0);
+            })
+            .on("mouseout", function(segment, index) {
+              if(utils.isTouchDevice()) return;
+              _context._axisProjections();
+              _context._setTooltip();
+              _context.labels.highlight(null, false);
+              d3.select(this).style("opacity", _context.model.entities.opacityRegular);
+            })
+            .each(function(segment, index) {
+              var view = d3.select(this);
+              view.append("circle");
+              view.append("line");
+            });
+          defer.resolve();
+        });
       if (promises.length > 0) {
         Promise.all(promises).then(function (segments) {
           resolve(true);
@@ -270,10 +278,11 @@ export default Class.extend({
     if (_context.time - trailStartTime < 0) { // move trail start time with trail label back if need
       d.trailStartTime = _context.model.time.timeFormat(_context.time);
       trailStartTime = _context.model.time.timeFormat.parse("" + d.trailStartTime);
-      _context.cached[d[KEY]].labelX0 = _context.frame.axis_x[d[KEY]];
-      _context.cached[d[KEY]].labelY0 = _context.frame.axis_y[d[KEY]];
-      _context.cached[d[KEY]].scaledS0 = utils.areaToRadius(_context.sScale(_context.frame.size[d[KEY]]));
-
+      var cache = _context.labels.cached[d[KEY]];
+      cache.labelX0 = _context.frame.axis_x[d[KEY]];
+      cache.labelY0 = _context.frame.axis_y[d[KEY]];
+      var valueS = _context.frame.size[d[KEY]];
+      cache.scaledS0 = valueS ? utils.areaToRadius(_context.sScale(valueS)) : null;
       _context._updateLabel(d, 0, _context.frame.axis_x[d[KEY]], _context.frame.axis_y[d[KEY]], _context.frame.size[d[KEY]], _context.frame.label[d[KEY]], _context.frame.size_label[d[KEY]], 0, true);
     }
     trail.each(function(segment, index) {
@@ -318,11 +327,14 @@ export default Class.extend({
             } else {
               segment.visibilityChanged = false;
               // fix label position if it not in correct place
-              if (trailStartTime && trailStartTime.toString() == segment.t.toString() && _context.cached[d[KEY]].labelX0 != segment.valueX) {
-                _context.cached[d[KEY]].labelX0 = segment.valueX;
-                _context.cached[d[KEY]].labelY0 = segment.valueY;
-                _context.cached[d[KEY]].scaledS0 = utils.areaToRadius(_context.sScale(segment.valueS));
-                _context._updateLabel(d, index, segment.valueX, segment.valueY, segment.valueS, frame.label[d[KEY]], frame.size_label[d[KEY]], 0, true);
+              var cache = _context.labels.cached[d[KEY]];
+              if (trailStartTime && trailStartTime.toString() == segment.t.toString()
+                && cache.labelX0 != segment.valueX) {
+                  cache.labelX0 = segment.valueX;
+                  cache.labelY0 = segment.valueY;
+                  var valueS = segment.valueS;
+                  cache.scaledS0 = valueS ? utils.areaToRadius(_context.sScale(valueS)) : null;
+                  _context._updateLabel(d, index, segment.valueX, segment.valueY, segment.valueS, frame.label[d[KEY]], frame.size_label[d[KEY]], 0, true);
               }
               view.select("circle")
                 //.transition().duration(duration).ease("linear")
