@@ -2,14 +2,12 @@ import * as utils from 'base/utils';
 import Component from 'base/component';
 import {
   warn as iconWarn,
-  question as iconQuestion,
-  close as iconClose
+  question as iconQuestion
 } from 'base/iconset';
 
 import topojson from 'helpers/topojson';
 import d3_geo_projection from 'helpers/d3.geo.projection';
 import DynamicBackground from 'helpers/d3.dynamicBackground';
-import label from 'helpers/d3.label';
 
 //import Selectlist from './bubblemap-selectlist';
 
@@ -110,9 +108,6 @@ var BubbleMapComponent = Component.extend({
 
     _this.COLOR_WHITEISH = "#fdfdfd";
       
-    this.label = label(this);
-    this.label.setCssPrefix('vzb-bmc');
-
     this.defaultWidth = 960;
     this.defaultHeight = 500;
     this.boundBox = [[0.02, 0], [1.0, 0.85]]; // two points to set box bound on 960 * 500 image;
@@ -174,6 +169,15 @@ var BubbleMapComponent = Component.extend({
         .datum(topojson.mesh(world, world.objects.countries, function(a, b) { return a !== b; }))
         .attr("class", "boundary")
         .attr("d", path);
+        
+    this.labels = this.parent.findChildByName('gapminder-labels');
+    this.labels.config({
+      CSS_PREFIX: 'vzb-bmc',
+      TOOL_CONTEXT: this,
+      LABELS_CONTAINER_CLASS: 'vzb-bmc-labels',
+      LINES_CONTAINER_CLASS: 'vzb-bmc-lines'
+    });
+    
   },
 
   /**
@@ -189,8 +193,6 @@ var BubbleMapComponent = Component.extend({
     this.bubbleContainerCrop = this.graph.select('.vzb-bmc-bubbles-crop');
     this.bubbleContainer = this.graph.select('.vzb-bmc-bubbles');
     this.labelListContainer = this.graph.select('.vzb-bmc-bubble-labels');
-    this.labelsContainer = this.graph.select('.vzb-bmc-labels');
-    this.linesContainer = this.graph.select('.vzb-bmc-lines');
     this.dataWarningEl = this.graph.select(".vzb-data-warning");
 
     this.yTitleEl = this.graph.select(".vzb-bmc-axis-y-title");
@@ -199,9 +201,7 @@ var BubbleMapComponent = Component.extend({
     this.cInfoEl = this.graph.select(".vzb-bmc-axis-c-info");
 
     this.entityBubbles = null;
-    this.entityLabels = null;
     this.tooltip = this.element.select('.vzb-bmc-tooltip');
-    this.entityLines = null;
 
     // year background
     this.yearEl = this.graph.select('.vzb-bmc-year');
@@ -213,6 +213,7 @@ var BubbleMapComponent = Component.extend({
       //return if updatesize exists with error
       if(_this.updateSize()) return;
       _this.updateMarkerSizeLimits();
+      _this.labels.updateSize();
       _this.redrawDataPoints();
       //_this._selectlist.redraw();
       
@@ -220,7 +221,6 @@ var BubbleMapComponent = Component.extend({
 
     this.KEY = this.model.entities.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
-    this.cached = {};
       
       
     this.updateUIStrings();
@@ -608,7 +608,9 @@ var BubbleMapComponent = Component.extend({
                   .attr("r", d.r);
           }
 
-          _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], d.r, d.label, duration);
+          _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], valueS, d.label, duration);
+        } else {
+          _this._updateLabel(d, index, 0, 0, valueS, valueL, duration);
         }
 
       });
@@ -870,35 +872,23 @@ var BubbleMapComponent = Component.extend({
 
   },
 
-  _updateLabel: function(d, index, valueX, valueY, scaledS, valueL, duration) {
+  _updateLabel: function(d, index, valueX, valueY, valueS, valueL, duration) {
     var _this = this;
     var KEY = this.KEY;
     if(d[KEY] == _this.druging) return;
     if(duration == null) duration = _this.duration;
 
-    if(_this.cached[d[KEY]] == null) _this.cached[d[KEY]] = {};
-    var cached = _this.cached[d[KEY]];
-
     // only for selected entities
-    if(_this.model.entities.isSelected(d) && _this.entityLabels != null) {
-
-      var select = utils.find(_this.model.entities.select, function(f) {
-        return f[KEY] == d[KEY]
-      });
+    if(_this.model.entities.isSelected(d)) {
       
-      var labelText = valueL;
-      var showhide = false;
+      var showhide = true;
       var valueLST = null;
-      cached.scaledS0 = scaledS;
-      
-      this.label.updateLabel(d, index, valueX / this.width, valueY / this.height, scaledS, valueL, valueLST, duration, showhide, select.labelOffset, labelText);
-
-    } else {
-      //for non-selected bubbles
-      //make sure there is no cached data
-      if(_this.cached[d[KEY]] != null) {
-        _this.cached[d[KEY]] = void 0;
-      }
+      var cache = {};
+      cache.labelX0 = valueX / this.width;
+      cache.labelY0 = valueY / this.height;
+      cache.scaledS0 = valueS ? utils.areaToRadius(_this.sScale(valueS)) : null;
+             
+      this.labels.updateLabel(d, index, cache, valueX / this.width, valueY / this.height, valueS, valueL, valueLST, duration, showhide);
     }
   },
 
@@ -909,40 +899,10 @@ var BubbleMapComponent = Component.extend({
 
 //      this._selectlist.rebuild();
 
-      this.entityLabels = this.labelsContainer.selectAll('.vzb-bmc-entity')
-        .data(_this.model.entities.select, function(d) {
-          //console.log(_this.model.entities.select);
-          return(d[KEY]);
-        });
-      this.entityLines = this.linesContainer.selectAll('.vzb-bmc-entity')
-        .data(_this.model.entities.select, function(d) {
-          return(d[KEY]);
-        });
-
-      this.entityLabels.exit()
-        .remove();
-      this.entityLines.exit()
-        .remove();
-
-      this.entityLines
-        .enter().append('g')
-        .attr("class", "vzb-bmc-entity")
-        .each(function(d, index) {
-          _this.label.line(d3.select(this));
-        });
-
-      this.entityLabels
-        .enter().append("g")
-        .attr("class", "vzb-bmc-entity")
-        .each(function(d, index) {
-          _this.label(d3.select(this));          
-        });
-      
-
-        // hide recent hover tooltip
-        if (!_this.hovered || _this.model.entities.isSelected(_this.hovered)) {
-          _this._setTooltip();
-        }
+      // hide recent hover tooltip
+      if (!_this.hovered || _this.model.entities.isSelected(_this.hovered)) {
+        _this._setTooltip();
+      }
 
   },
 

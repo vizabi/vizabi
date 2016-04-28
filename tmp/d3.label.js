@@ -5,7 +5,7 @@ import {
 } from 'base/iconset';
 
 
-export default function label1(context) {
+export default function label(context) {
 
   return function d3_label() {
   
@@ -16,26 +16,44 @@ export default function label1(context) {
       _cssPrefix = cssPrefix;
       return label;
     }    
-    // var __xScale = null;
-    // label.setXScale = function(xScale) {
-    //   __xScale = xScale;
-    //   return label;
-    // }
-    // var _xScale = function(x) {
-    //   return __xScale ? __xScale(x) : (x * context.width);
-    // }
-    // label.xScale = _xScale;
 
-    // var __yScale = null;
-    // label.setYScale = function(yScale) {
-    //   __yScale = yScale;
-    //   return label;
-    // }
+    var _sizeTextScale = null;
+    label.setSizeTextScale = function(sizeTextScale) {
+      _sizeTextScale = sizeTextScale;
+      return label;
+    }
     
-    // var _yScale = function(y) {
-    //   return __yScale ? __yScale(y) : (y * context.height);
-    // };
-    // label.yScale = _yScale;
+    var _leashCoeff = 0;
+    label.setLeashCoeff = function(leashCoeff) {
+      _leashCoeff = leashCoeff;
+      return label;
+    }
+    
+    var _closeCrossHeight = null;
+    label.setCloseCrossHeight = function(closeCrossHeight) {
+      _closeCrossHeight = closeCrossHeight;
+      return label;
+    }
+    
+    var __xScale = null;
+    label.setXScale = function(xScale) {
+      __xScale = xScale;
+      return label;
+    }
+    var _xScale = function(x) {
+      return __xScale ? __xScale(x) : (x * context.width);
+    };
+    label.xScale = _xScale;
+    
+    var __yScale = null;
+    label.setYScale = function(yScale) {
+      __yScale = yScale;
+      return label;
+    }
+    var _yScale = function(y) {
+      return __yScale ? __yScale(y) : (y * context.height);
+    };
+    label.yScale = _yScale;
 
     var labelDragger = d3.behavior.drag()
       .on("dragstart", function(d, i) {
@@ -49,17 +67,17 @@ export default function label1(context) {
         var cache = _this.cached[d[KEY]];
         cache.labelFixed = true;
         
-        var viewWidth = _this._toolContext.width;       
-        var viewHeight = _this._toolContext.height;       
+        var viewWidth = _this.toolContext.width;       
+        var viewHeight = _this.toolContext.height;       
 
         cache.labelX_ += d3.event.dx / viewWidth;
         cache.labelY_ += d3.event.dy / viewHeight;
 
-        var resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * viewWidth;
-        var resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * viewHeight;
+        var resolvedX = _xScale(cache.labelX0) + cache.labelX_ * viewWidth;
+        var resolvedY = _yScale(cache.labelY0) + cache.labelY_ * viewHeight;
 
-        var resolvedX0 = _this.xScale(cache.labelX0);
-        var resolvedY0 = _this.yScale(cache.labelY0);
+        var resolvedX0 = _xScale(cache.labelX0);
+        var resolvedY0 = _yScale(cache.labelY0);
 
         var lineGroup = _this.entityLines.filter(function(f) {
           return f[KEY] == d[KEY];
@@ -70,11 +88,11 @@ export default function label1(context) {
       .on("dragend", function(d, i) {
         var KEY = _this.KEY;
         if(_this.druging) {
-          var cache = _this.cached[d[KEY]];
           _this.druging = null;
-          cache.labelOffset[0] = cache.labelX_;
-          cache.labelOffset[1] = cache.labelY_;
-          _this.model.entities.setLabelOffset(d, [cache.labelX_, cache.labelY_]);
+          _this.model.entities.setLabelOffset(d, [
+            _this.cached[d[KEY]].labelX_,
+            _this.cached[d[KEY]].labelY_
+          ]);
         }
       });
     
@@ -153,16 +171,125 @@ export default function label1(context) {
     label.line = function(container) {
       container.append("line").attr("class", _cssPrefix + "-label-line");
     };
-            
+      
+    label.updateLabel = updateLabel.bind(context); 
+    function updateLabel(d, index, valueX, valueY, scaledS, valueL, valueLST, duration, showhide, labelOffset, labelText) {
+      // reposition label and leash
+      var KEY = this.KEY;
+      var cached = _this.cached[d[KEY]];
+      
+      var brokenInputs = !valueX && valueX !==0 || !valueY && valueY !==0 || !scaledS && scaledS !==0;
 
+      var lineGroup = _this.entityLines.filter(function(f) {
+        return f[KEY] == d[KEY];
+      });
+      // reposition label
+      _this.entityLabels.filter(function(f) {
+          return f[KEY] == d[KEY]
+        })
+        .each(function(groupData) {
 
+          var labelGroup = d3.select(this);
 
-    label._repositionLabels = _repositionLabels;
-    function _repositionLabels(d, i, labelContext, _X, _Y, _X0, _Y0, duration, showhide, lineGroup) {
+          if (brokenInputs) {
+            labelGroup.classed("vzb-invisible", brokenInputs);
+            lineGroup.classed("vzb-invisible", brokenInputs);
+            return;
+          }
+          
+          cached.valueX = valueX;
+          cached.valueY = valueY;
 
-      var cache = _this.cached[d[_this.KEY]];
+          if(cached.scaledS0 == null || cached.labelX0 == null || cached.labelX0 == null) { //initialize label once
+            cached.scaledS0 = scaledS;
+            cached.labelX0 = valueX;
+            cached.labelY0 = valueY;
+          }
 
-      var labelGroup = d3.select(labelContext);
+          var text = labelGroup.selectAll("." + _cssPrefix + "-label-content")
+            .text(labelText);
+          var labels = _this.model.ui.chart.labels || {};
+          labelGroup.classed('vzb-label-boxremoved', labels.removeLabelBox);
+          if(_sizeTextScale) {
+            var range = _sizeTextScale.range();
+            var fontSize = range[0] + Math.sqrt((_sizeTextScale(valueLST) - range[0]) * (range[1] - range[0]));
+            text.attr('font-size', fontSize + 'px');
+          }
+
+          var rect = labelGroup.select("rect");
+
+          var contentBBox = text[0][0].getBBox();
+          if(!cached.contentBBox || cached.contentBBox.width != contentBBox.width) {
+            cached.contentBBox = contentBBox;
+
+            var labelCloseHeight = _closeCrossHeight || contentBBox.height;//_this.activeProfile.infoElHeight * 1.2;//contentBBox.height;
+
+            var labelCloseGroup = labelGroup.select("." + _cssPrefix + "-label-x")
+              .attr('transform', 'translate(' + 4 + ',' + (-contentBBox.height * .85) + ')');
+              //.attr("x", /*contentBBox.height * .0 + */ 4)
+              //.attr("y", contentBBox.height * -1);
+
+            labelCloseGroup.select("circle")
+              .attr("cx", /*contentBBox.height * .0 + */ 0)
+              .attr("cy", 0)
+              .attr("r", labelCloseHeight * .5);
+
+            labelCloseGroup.select("svg")
+              .attr("x", -labelCloseHeight * .5 )
+              .attr("y", labelCloseHeight * -.5)
+              .attr("width", labelCloseHeight)
+              .attr("height", labelCloseHeight)
+
+            rect.attr("width", contentBBox.width + 8)
+              .attr("height", contentBBox.height * 1.2)
+              .attr("x", -contentBBox.width - 4)
+              .attr("y", -contentBBox.height * .85)
+              .attr("rx", contentBBox.height * .2)
+              .attr("ry", contentBBox.height * .2);
+          }
+          
+          var viewWidth = _this.toolContext.width;       
+          var viewHeight = _this.toolContext.height;       
+
+          var _labelOffset = labelOffset || [0,0];
+
+          cached.labelX_ = _labelOffset[0] || (-cached.scaledS0 * .75 - 5) / viewWidth;
+          cached.labelY_ = _labelOffset[1] || (-cached.scaledS0 * .75 - 11) / viewHeight;
+
+          var resolvedX0 = _xScale(cached.labelX0);
+          var resolvedY0 = _yScale(cached.labelY0);
+          var resolvedX = resolvedX0 + cached.labelX_ * viewWidth;
+          if(_labelOffset[0] == 0) {
+            if(resolvedX - cached.contentBBox.width <= 0) { //check left
+              cached.labelX_ = (cached.scaledS0 * .75 + cached.contentBBox.width + 10) / viewWidth;
+              resolvedX = resolvedX0 + cached.labelX_ * viewWidth;
+            } else if(resolvedX + 15 > viewWidth) { //check right
+              cached.labelX_ = (viewWidth - 15 - resolvedX0) / viewWidth;
+              resolvedX = resolvedX0 + cached.labelX_ * viewWidth;
+            }
+          }
+          var resolvedY = resolvedY0 + cached.labelY_ * viewHeight;
+          if(_labelOffset[1] == 0) {
+            if(resolvedY - cached.contentBBox.height <= 0) { // check top 
+              cached.labelY_ = (cached.scaledS0 * .75 + cached.contentBBox.height) / viewHeight;
+              resolvedY = resolvedY0 + cached.labelY_ * viewHeight;
+            } else if(resolvedY + 10 > viewHeight) { //check bottom
+              cached.labelY_ = (viewHeight - 10 - resolvedY0) / viewHeight;
+              resolvedY = resolvedY0 + cached.labelY_ * viewHeight;
+            }
+          }
+          label._repositionLabels(d, index, this, resolvedX, resolvedY, resolvedX0, resolvedY0, duration, showhide, lineGroup);
+
+        });
+      
+    };
+      
+    label._repositionLabels = _repositionLabels.bind(context);
+    function _repositionLabels(d, i, context, _X, _Y, _X0, _Y0, duration, showhide, lineGroup) {
+
+      var cache = this.cached[d[this.KEY]];
+
+      var labelGroup = d3.select(context);
 
       //protect label and line from the broken data
       var brokenInputs = !_X && _X !==0 || !_Y && _Y !==0 || !_X0 && _X0 !==0 || !_Y0 && _Y0 !==0;
@@ -171,28 +298,27 @@ export default function label1(context) {
           lineGroup.classed("vzb-invisible", brokenInputs);
           return;
       }
-      
-      var viewWidth = _this._toolContext.width;       
-      var viewHeight = _this._toolContext.height;       
-      var rectBBox = cache.rectBBox;//labelGroup.select("rect").node().getBBox();
+
+      var rectBBox = labelGroup.select("rect").node().getBBox();
       var width = rectBBox.width;
       var height = rectBBox.height;
-      var heightDelta = cache.heightDelta;//labelGroup.node().getBBox().height - height;
-
+      var viewWidth = _this.toolContext.width;       
+      var viewHeight = _this.toolContext.height;       
+      var heightDelta = labelGroup.node().getBBox().height - height;
       //apply limits so that the label doesn't stick out of the visible field
       if(_X - width <= 0) { //check left
         _X = width;
-        cache.labelX_ = (_X - _this.xScale(cache.labelX0)) / viewWidth;
+        cache.labelX_ = (_X - _xScale(cache.labelX0)) / viewWidth;
       } else if(_X + 23 > viewWidth) { //check right
         _X = viewWidth - 23; 
-        cache.labelX_ = (_X - _this.xScale(cache.labelX0)) / viewWidth;
+        cache.labelX_ = (_X - _xScale(cache.labelX0)) / viewWidth;
       }
       if(_Y - height * .75 - heightDelta <= 0) { // check top
         _Y = height * .75 + heightDelta;
-        cache.labelY_ = (_Y - _this.yScale(cache.labelY0)) / viewHeight;
+        cache.labelY_ = (_Y - _yScale(cache.labelY0)) / viewHeight;
       } else if(_Y + height * .35 > viewHeight) { //check bottom
         _Y = viewHeight - height * .35;
-        cache.labelY_ = (_Y - _this.yScale(cache.labelY0)) / viewHeight;
+        cache.labelY_ = (_Y - _yScale(cache.labelY0)) / viewHeight;
       }
 
       if(duration == null) duration = _this.duration;
@@ -266,11 +392,11 @@ export default function label1(context) {
       var textBBox = labelGroup.select('text').node().getBBox();
       var diffX2 = -textBBox.width * .5;
       var diffY2 = -height * .2;
-      var labels = _this.model.ui.chart.labels;
+      var labels = this.model.ui.chart.labels;
 
       var bBox = labels.removeLabelBox ? textBBox : rectBBox;
       
-      var FAR_COEFF = _this.activeProfile.labelLeashCoeff||0;
+      var FAR_COEFF = _leashCoeff||0;
 
       var lineHidden = circleRectIntersects({x: diffX1, y: diffY1, r: cache.scaledS0},
         {x: diffX2, y: diffY2, width: (bBox.height * 2 * FAR_COEFF + bBox.width), height: (bBox.height * (2 * FAR_COEFF + 1))});
