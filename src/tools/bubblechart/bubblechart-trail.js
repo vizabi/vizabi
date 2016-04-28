@@ -200,9 +200,8 @@ export default Class.extend({
         .attr("cx", _context.xScale(segment.valueX))
         .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)));
 
-      var next = d3.select(this.nextSibling).node();
+      var next = d3.select(this.nextSibling).datum();
       if(next == null) return;
-      next = next.__data__;
       if(next.valueY==null || next.valueX==null) return;
         
       var lineLength = Math.sqrt(
@@ -279,10 +278,11 @@ export default Class.extend({
     trail.each(function(segment, index) {
       // segment is transparent if it is after current time or before trail StartTime
       var segmentVisibility = segment.transparent; 
-      segment.transparent = d.trailStartTime == null || (segment.t - _context.time >= 0) || (trailStartTime - segment.t > 0)
+      segment.transparent = d.trailStartTime == null || (segment.t - _context.time > 0) || (trailStartTime - segment.t > 0)
         //no trail segment should be visible if leading bubble is shifted backwards, beyond start time
         || (d.trailStartTime - _context.model.time.timeFormat(_context.time) >= 0);
-      if (segmentVisibility != segment.transparent) segment.visibilityChanged = true; // segment changed, so need to update it
+      // always update nearest 2 points
+      if (segmentVisibility != segment.transparent || Math.abs(_context.model.time.timeFormat(segment.t) - _context.model.time.timeFormat(_context.time)) < 2) segment.visibilityChanged = true; // segment changed, so need to update it
 
     });
   },
@@ -316,7 +316,7 @@ export default Class.extend({
               }
               resolve();
             } else {
-              segment.visibilityChanged = false;
+              
               // fix label position if it not in correct place
               if (trailStartTime && trailStartTime.toString() == segment.t.toString() && _context.cached[d[KEY]].labelX0 != segment.valueX) {
                 _context.cached[d[KEY]].labelX0 = segment.valueX;
@@ -337,14 +337,22 @@ export default Class.extend({
                 .attr("x1", _context.xScale(segment.valueX))
                 .attr("y1", _context.yScale(segment.valueY));
 
-              view.classed("vzb-invisible", segment.transparent);
+              // last point should have data for line but it is invisible
+              if (_context.time - segment.t > 0) {
+                segment.visibilityChanged = false;
+                view.classed("vzb-invisible", segment.transparent);
+              } else {
+                view.classed("vzb-invisible", true);
+              }
 
               var next = trail[0][index + 1];
-              if(next == null) {
+              if(next == null || _context.time.toString() == segment.t.toString()) {
                 resolve();
               } else {
-                next = next.__data__;
-                _context.model.marker.getFrame(next.t, function(nextFrame) {
+                next = next.__data__; 
+                var nextTime = next.t;
+                if (_context.time - next.t < 0) nextTime = _context.time;   
+                _context.model.marker.getFrame(nextTime, function(nextFrame) {
 
                   // TODO: find why data in segment sometimes become null
                   segment.valueY = frame.axis_y[d[KEY]];
