@@ -225,7 +225,6 @@
           &.vzb-treemenu-list-item-leaf {
             background-color: $vzb-color-primary-lightest;
             overflow: hidden;
-            cursor: pointer;
             .vzb-treemenu-leaf-content {
               overflow-y: auto;
               max-height: calc(100% - 60px);

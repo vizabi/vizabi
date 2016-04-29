@@ -1039,9 +1039,6 @@ var TreeMenu = Component.extend({
           //deepLeaf
           if(!d.children) {
             var deepLeaf = view.append('div').attr('class', css.menuHorizontal + ' ' + css.list_outer + ' ' + css.list_item_leaf);
-            deepLeaf.on('click', function(d) {
-              _this._selectIndicator(d.id);
-            });
             var deepLeafContent = deepLeaf.append('div').classed(css.leaf + ' ' + css.leaf_content + " vzb-dialog-scrollable", true);
             deepLeafContent.append('span').classed(css.leaf_content_item + ' ' + css.leaf_content_item_title, true)
               .text(function(d) {
@@ -1074,6 +1071,10 @@ var TreeMenu = Component.extend({
             var deepLeafButton = deepLeaf.append('div').classed(css.leaf + ' ' + css.leaf_button, true)
             deepLeafButton.append('div')//.classed('vzb-treemenu-leaf-button', true)
               .text('OK');
+            deepLeafButton.on('click', function(d) {
+              _this._selectIndicator(d.id);
+            });
+            
           }
           
           if(d.id == _this.model.marker[markerID].which) {
