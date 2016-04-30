@@ -7,6 +7,7 @@ import {
   dialogs,
   buttonlist,
   treemenu,
+  labels,
   datawarning,
   datanotes
 } from 'components/_index';
@@ -28,6 +29,10 @@ var BubbleChart = Tool.extend('BubbleChart', {
       component: BubbleChartComponent,
       placeholder: '.vzb-tool-viz',
       model: ["state.time", "state.entities", "state.marker", "language", "ui"] //pass models to component
+    }, {
+      component: labels,
+      placeholder: '.vzb-tool-labels',
+      model: ["state.entities", "state.marker", "ui"]
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
