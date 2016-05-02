@@ -1,5 +1,6 @@
 .vzb-tool-treemenu {
   @include position(absolute, 0 0 null null);
+  z-index: 9998;
   width: 100%;
   height: 100%;
 
@@ -15,7 +16,6 @@
     background-color: #fff;
     border-top: 1px solid #f7f7f7;
     padding: 0;
-    z-index: 9998;
     &.vzb-treemenu-abs-pos-vert {
       margin-top: 0;
       margin-bottom: 0;
