@@ -97,6 +97,10 @@ gulp.task('clean:preview:js', function() {
   return del([path.join(config.destPreview, 'assets/js/*.js')]);
 });
 
+gulp.task('clean:preview:cursors', function() {
+  return del([path.join(config.destPreview, 'assets/*.cur')]);
+});
+
 gulp.task('clean:preview:vendor', function() {
   return del([path.join(config.destPreview, 'assets/vendor/**/*')]);
 });
@@ -363,6 +367,15 @@ gulp.task('preview:js', ['clean:preview:js'], function() {
     });
 });
 
+gulp.task('preview:cursors', ['clean:preview:cursors'], function() {
+  gutil.log(chalk.yellow("Copying preview IE cursors..."));
+  return gulp.src(path.join(config.srcPreview, 'assets/*.cur'))
+    .pipe(gulp.dest(path.join(config.destPreview, 'assets')))
+    .on('end', function() {
+      gutil.log(chalk.green("Copying preview IE cursors... DONE!"))
+    });
+});
+
 gulp.task('preview:vendor', ['clean:preview:vendor'], function() {
   gulp.src(path.join(config.modules, 'font-awesome/css/font-awesome.min.css'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/css')));
@@ -382,7 +395,7 @@ gulp.task('preview:data', ['clean:preview:data'], function() {
 });
 
 
-var previewDeps = ['preview:templates', 'preview:styles', 'preview:js', 'preview:vendor'];
+var previewDeps = ['preview:templates', 'preview:styles', 'preview:js', 'preview:cursors', 'preview:vendor'];
 if(!gutil.env.faster) {
   previewDeps.push('preview:data');
 }
