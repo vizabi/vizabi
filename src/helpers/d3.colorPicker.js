@@ -202,20 +202,20 @@ export default function colorPicker() {
       svg.append('text')
         .attr('x', width * margin.left)
         .attr('y', height * margin.top / 2)
-        .attr('dy', '0.5em')
+        .attr('dy', '1.3em')
         .attr('class', css.COLOR_SAMPLE)
         .style('text-anchor', 'start');
 
       sampleText = svg.append('text').attr('x', width * (1 - margin.right))
         .attr('y', height * margin.top / 2)
-        .attr('dy', '0.5em')
+        .attr('dy', '1.3em')
         .attr('class', css.COLOR_SAMPLE)
         .style('text-anchor', 'end');
 
       svg.append('text')
         .attr('x', width * .1)
         .attr('y', height * (1 - margin.bottom))
-        .attr('dy', '0.3em')
+        .attr('dy', '1.2em')
         .attr('class', "vzb-default-label")
         .style('text-anchor', 'start')
         .text('default');
@@ -303,7 +303,6 @@ export default function colorPicker() {
         .style('cursor', 'pointer');
 
       svg.selectAll('text')
-        .style('dominant-baseline', 'hanging')
         .style('fill', '#D9D9D9')
         .style('font-size', '0.7em')
         .style('text-transform', 'uppercase');
