@@ -647,8 +647,7 @@ var BubbleChartComp = Component.extend({
     }
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
-      .data(this.model.entities.getVisible(), function(d) {return d && !d['trailStartTime'] ? d[KEY] : null}) // trails have not keys
-      .order();
+      .data(this.model.entities.getVisible(), function(d) {return d && !d['trailStartTime'] ? d[KEY] : null}); // trails have not keys
 
     //exit selection
     this.entityBubbles.exit().remove();
@@ -678,6 +677,7 @@ var BubbleChartComp = Component.extend({
       })
       .onLongTap(function(d, i) {});
 
+      this.entityBubbles.order();
   },
     
   unselectBubblesWithNoData: function(frame){
