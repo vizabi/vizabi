@@ -10,7 +10,7 @@ var gulpif = require('gulp-if');
 var pkg = require('./package');
 
 var sass = require('gulp-ruby-sass');
-var minifycss = require('gulp-minify-css');
+var cleancss = require('gulp-clean-css');
 var scsslint = require('gulp-scss-lint');
 var cache = require('gulp-cached');
 var mem_cache = require('gulp-memory-cache');
@@ -24,14 +24,14 @@ var fs = require('fs');
 var q = require('q');
 
 //useful for ES5 build
-var concat = require('gulp-concat');
-var insert = require('gulp-insert');
-var foreach = require('gulp-foreach');
-var es = require('event-stream');
+//var concat = require('gulp-concat');
+//var insert = require('gulp-insert');
+//var foreach = require('gulp-foreach');
+//var es = require('event-stream');
 
 var rename = require('gulp-rename');
 var sourcemaps = require('gulp-sourcemaps');
-var wrapper = require('gulp-wrapper');
+//var wrapper = require('gulp-wrapper');
 
 var connect = require('gulp-connect');
 var opn = require('opn');
@@ -132,7 +132,7 @@ function compileSass(src, dest) {
     .pipe(prefix({
       browsers: ["last 1 version", "> 1%", "ie 8", "ie 7", "safari 8"]
     }))
-    .pipe(minifycss())
+    .pipe(cleancss())
     .pipe(gulp.dest(dest));
 }
 
@@ -260,7 +260,9 @@ function buildJS(dev, cb) {
 
     rollup.rollup({
       entry: './' + path.join(config.src, entryFile),
-      resolveId: resolvePath
+      plugins: [{
+        resolveId: resolvePath
+      }]
     }).then(function(bundle) {
       if(dev) {
         generateSourceMap(bundle, success);

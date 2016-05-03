@@ -5,6 +5,7 @@
 import globals from 'base/globals';
 import * as utils from 'base/utils';
 import Promise from 'base/promise';
+import * as models from 'models/_index'; //TODO: Fake import because Model is not included first to bundle due to a cyclical dependency.
 import Tool from 'base/tool';
 import Vzb from 'vizabi';
 
