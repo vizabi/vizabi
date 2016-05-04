@@ -10,7 +10,7 @@ var gulpif = require('gulp-if');
 var pkg = require('./package');
 
 var sass = require('gulp-ruby-sass');
-var minifycss = require('gulp-minify-css');
+var cleancss = require('gulp-clean-css');
 var scsslint = require('gulp-scss-lint');
 var cache = require('gulp-cached');
 var mem_cache = require('gulp-memory-cache');
@@ -24,14 +24,14 @@ var fs = require('fs');
 var q = require('q');
 
 //useful for ES5 build
-var concat = require('gulp-concat');
-var insert = require('gulp-insert');
-var foreach = require('gulp-foreach');
-var es = require('event-stream');
+//var concat = require('gulp-concat');
+//var insert = require('gulp-insert');
+//var foreach = require('gulp-foreach');
+//var es = require('event-stream');
 
 var rename = require('gulp-rename');
 var sourcemaps = require('gulp-sourcemaps');
-var wrapper = require('gulp-wrapper');
+//var wrapper = require('gulp-wrapper');
 
 var connect = require('gulp-connect');
 var opn = require('opn');
@@ -97,6 +97,10 @@ gulp.task('clean:preview:js', function() {
   return del([path.join(config.destPreview, 'assets/js/*.js')]);
 });
 
+gulp.task('clean:preview:cursors', function() {
+  return del([path.join(config.destPreview, 'assets/*.cur')]);
+});
+
 gulp.task('clean:preview:vendor', function() {
   return del([path.join(config.destPreview, 'assets/vendor/**/*')]);
 });
@@ -128,7 +132,7 @@ function compileSass(src, dest) {
     .pipe(prefix({
       browsers: ["last 1 version", "> 1%", "ie 8", "ie 7", "safari 8"]
     }))
-    .pipe(minifycss())
+    .pipe(cleancss())
     .pipe(gulp.dest(dest));
 }
 
@@ -256,7 +260,9 @@ function buildJS(dev, cb) {
 
     rollup.rollup({
       entry: './' + path.join(config.src, entryFile),
-      resolveId: resolvePath
+      plugins: [{
+        resolveId: resolvePath
+      }]
     }).then(function(bundle) {
       if(dev) {
         generateSourceMap(bundle, success);
@@ -363,6 +369,15 @@ gulp.task('preview:js', ['clean:preview:js'], function() {
     });
 });
 
+gulp.task('preview:cursors', ['clean:preview:cursors'], function() {
+  gutil.log(chalk.yellow("Copying preview IE cursors..."));
+  return gulp.src(path.join(config.srcPreview, 'assets/*.cur'))
+    .pipe(gulp.dest(path.join(config.destPreview, 'assets')))
+    .on('end', function() {
+      gutil.log(chalk.green("Copying preview IE cursors... DONE!"))
+    });
+});
+
 gulp.task('preview:vendor', ['clean:preview:vendor'], function() {
   gulp.src(path.join(config.modules, 'font-awesome/css/font-awesome.min.css'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/css')));
@@ -382,7 +397,7 @@ gulp.task('preview:data', ['clean:preview:data'], function() {
 });
 
 
-var previewDeps = ['preview:templates', 'preview:styles', 'preview:js', 'preview:vendor'];
+var previewDeps = ['preview:templates', 'preview:styles', 'preview:js', 'preview:cursors', 'preview:vendor'];
 if(!gutil.env.faster) {
   previewDeps.push('preview:data');
 }

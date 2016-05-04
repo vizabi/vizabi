@@ -6,18 +6,22 @@
   .vzb-bubblechart {
     @extend %vzb-chart-wrapper;
 
+    //ie11 support for zoom-in, zoom-out cursors
+    //ie11 only:The base URI is considered to be the URI of the document containing the element 
+    //and not the URI of the style sheet in which the declaration appears.
     .vzb-zoomin {
-      cursor: zoom-in;
+      cursor: url('assets/zoom-in.cur'), auto;
       .vzb-bc-entity {
-        cursor: zoom-in !important;
+        cursor: url('assets/zoom-in.cur'), auto !important;
       }
     }    
     .vzb-zoomout {
-      cursor: zoom-out;
+      cursor: url('assets/zoom-out.cur'), auto;
       .vzb-bc-entity {
-        cursor: zoom-out !important;
+        cursor: url('assets/zoom-out.cur'), auto !important;
       }
     }
+        
     .vzb-bubblechart-svg {
       @extend %vzb-chart-svg;
 
@@ -47,6 +51,19 @@
           pointer-events: visible;
         }
       }
+      
+      &.vzb-zoomin {
+        cursor: zoom-in;
+        .vzb-bc-entity {
+          cursor: zoom-in !important;
+        }
+      }    
+      &.vzb-zoomout {
+        cursor: zoom-out;
+        .vzb-bc-entity {
+          cursor: zoom-out !important;
+        }
+      }    
 
       .vzb-bc-labels {
         @extend %vzb-chart-tooltip;
