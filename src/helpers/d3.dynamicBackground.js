@@ -1,4 +1,4 @@
-//d3.svg.worldMap
+//d3.svg.dynamicBackground
 
 
 import Class from '../base/class'

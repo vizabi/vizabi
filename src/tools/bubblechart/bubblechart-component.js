@@ -786,7 +786,8 @@ var BubbleChartComp = Component.extend({
         maxRadius: 65,
         infoElHeight: 22,
         yAxisTitleBottomMargin: 6,
-        xAxisTitleBottomMargin: 5
+        xAxisTitleBottomMargin: 5,
+        hideSTitle: true 
       }
     };
 
@@ -802,13 +803,13 @@ var BubbleChartComp = Component.extend({
         yAxisTitleBottomMargin: 20,
         xAxisTitleBottomMargin: 20,
         infoElHeight: 32,
+        hideSTitle: true
       }
     }
 
     var _this = this;
 
     this.activeProfile = this.getActiveProfile(profiles, presentationProfileChanges);
-
     var margin = this.activeProfile.margin;
     var infoElHeight = this.activeProfile.infoElHeight;
     
@@ -895,23 +896,9 @@ var BubbleChartComp = Component.extend({
     this.projectionY.attr("x2", _this.xScale.range()[0] - this.activeProfile.maxRadius);
 
 
-    // vertical text about size and color
-    var sTitleContentON = this.model.marker.size.use !== "constant";
-    var cTitleContentON = this.model.marker.color.use !== "constant";
-    var sTitleText = this.sTitleEl.select("text")
-      // reset font size to remove jumpy measurement
-      .style("font-size", null)
-      .text(
-        (sTitleContentON ? this.translator("buttons/size") + ": " + this.strings.title.S : "") +
-        (sTitleContentON && cTitleContentON ? ", " : "") +
-        (cTitleContentON ? this.translator("buttons/colors") + ": " + this.strings.title.C : "")
-      );
 
     // reduce font size if the caption doesn't fit
-    var sTitleWidth = sTitleText.node().getBBox().width;
-    var remainigHeight = this.height - 30;
-    var font = parseInt(sTitleText.style("font-size")) * remainigHeight / sTitleWidth;
-    sTitleText.style("font-size", sTitleWidth > remainigHeight? font + "px" : null);
+    this._updateSTitle();
 
 
     var yaxisWidth = this.yAxisElContainer.select("g").node().getBBox().width;
@@ -1236,7 +1223,32 @@ var BubbleChartComp = Component.extend({
     }
   },
 
+  _updateSTitle: function(titleS, titleC) {
 
+    // vertical text about size and color
+    if (this.activeProfile.hideSTitle) {
+      this.sTitleEl.classed("vzb-invisible", true);
+      return;
+    }
+    if (this.sTitleEl.classed("vzb-invisible")) {
+      this.sTitleEl.classed("vzb-invisible", false);
+    }
+    var sTitleContentON = this.model.marker.size.use !== "constant";
+    var cTitleContentON = this.model.marker.color.use !== "constant";
+    var sTitleText = this.sTitleEl.select("text")
+      // reset font size to remove jumpy measurement
+      .style("font-size", null)
+      .text(
+      (sTitleContentON ? this.translator("buttons/size") + ": " + (titleS ? titleS : this.strings.title.S) : "") +
+      (sTitleContentON && cTitleContentON ? ", " : "") +
+      (cTitleContentON ? this.translator("buttons/colors") + ": " + (titleC ? titleC : this.strings.title.C) : "")
+    );
+    var sTitleWidth = sTitleText.node().getBBox().width;
+    var remainigHeight = this.height - 30;
+    var font = parseInt(sTitleText.style("font-size")) * remainigHeight / sTitleWidth;
+    sTitleText.style("font-size", sTitleWidth > remainigHeight? font + "px" : null);
+  },
+  
   selectDataPoints: function() {
     var _this = this;
     var KEY = this.KEY;
@@ -1384,7 +1396,20 @@ var BubbleChartComp = Component.extend({
           var y = _this.yScale(values.axis_y[d[KEY]]);
           var s = utils.areaToRadius(_this.sScale(values.size[d[KEY]]));
           var entityOutOfView = false;
-          
+
+          var unitY = _this.translator("unit/" + _this.model.marker.size.which);
+          var unitC = _this.translator("unit/" + _this.model.marker.color.which);
+  
+          //suppress unit strings that found no translation (returns same thing as requested)
+          if(unitY === "unit/" + _this.model.marker.size.which) unitY = "";
+          if(unitC === "unit/" + _this.model.marker.color.which) unitC = "";
+        
+          var formatterS = _this.model.marker.size.getTickFormatter();
+          var formatterC = _this.model.marker.color.getTickFormatter();
+          _this._updateSTitle(
+            formatterS(values.size[d[KEY]])  + " " + unitY,
+            values.color[d[KEY]] || values.color[d[KEY]]===0 ? formatterC(values.color[d[KEY]]) + " " + unitC : _this.translator("hints/nodata")
+          );
           if(x + s < 0 || x - s > _this.width || y + s < 0 || y - s > _this.height) {
             entityOutOfView = true;
           }
@@ -1427,6 +1452,7 @@ var BubbleChartComp = Component.extend({
         this._axisProjections();
         this._trails.run(["opacityHandler"]);
         //hide tooltip
+        _this._updateSTitle();  
         this._setTooltip();
         this.labels.highlight(null, false);
       }
