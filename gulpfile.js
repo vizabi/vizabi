@@ -8,6 +8,7 @@ var gutil = require('gulp-util');
 var chalk = require('chalk')
 var gulpif = require('gulp-if');
 var pkg = require('./package');
+var map = require('map-stream');
 
 var sass = require('gulp-ruby-sass');
 var cleancss = require('gulp-clean-css');
@@ -33,7 +34,14 @@ var rename = require('gulp-rename');
 var sourcemaps = require('gulp-sourcemaps');
 //var wrapper = require('gulp-wrapper');
 
-var connect = require('gulp-connect');
+//var connect = require('gulp-connect');
+
+var connect = require("connect");
+var livereload = require("connect-livereload");
+var serve_static = require('serve-static');
+var tiny_lr = require("tiny-lr");
+var lr = void 0;
+
 var opn = require('opn');
 var os = require('os');
 var watch = require('gulp-watch');
@@ -326,7 +334,7 @@ gulp.task('bundle', ['clean:js', 'buildIndexes'], function(cb) {
 
 gulp.task('buildJS', function() {
   if (!buildLock)
-    gulp.run('bundle');
+    gulp.start('bundle');
   else
     gutil.log(chalk.yellow('NEXT BUILD DISCONTINUED: previous build process is still running.'));
 });
@@ -426,10 +434,21 @@ function notLocked() {
   return reloadLock;
 }
 
+function reload(file) {
+  if(lr) return lr.changed({
+    body: {
+      files: file.path
+    }
+  });
+}
+
 function reloadOnChange(files) {
   watch(files)
     .pipe(wait(800))
-    .pipe(gulpif(notLocked, connect.reload()));
+    .pipe(gulpif(notLocked, map(function(file, cb) {
+      reload(file);
+      cb(null, file);
+    })));
 }
 
 gulp.task('watch', function() {
@@ -456,17 +475,34 @@ gulp.task('watch-lint', function() {
 // ----------------------------------------------------------------------------
 
 gulp.task('connect', ['styles', 'bundle', 'preview'], function() {
-  var webserver = {
-    port: 9000,
-    root: config.dest,
-    livereload: true
-  };
+  // var webserver = {
+  //   port: 9000,
+  //   root: config.dest,
+  //   livereload: true
+  // };
+  var port = 9000;
+  var lr_port = 35729;
+
+  var webserver = connect();
+  webserver.use(livereload({port: lr_port}));
+  webserver.use(serve_static(config.dest));
+  webserver.listen(port, function(err) {
+    if (err) {
+      return gutil.log(chalk.red("Error on starting server: " + err));
+    } else {
+      gutil.log(chalk.green("Server started on port " + port));
+      lr = tiny_lr();
+      lr.listen(lr_port, function() {
+        gutil.log(chalk.green('LiveReload started on port ' + lr_port));
+      });
+    }
+  });
 
   var browser = os.platform() === 'linux' ? 'google-chrome' : (
     os.platform() === 'darwin' ? 'google chrome' : (
       os.platform() === 'win32' ? 'chrome' : 'firefox'));
 
-    connect.server(webserver);
+  //  connect.server(webserver);
 
   if (process.env.TRAVIS == 'undefined'){
     opn('http://localhost:' + webserver.port + '/preview/index.html', {
