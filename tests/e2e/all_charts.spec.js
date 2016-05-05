@@ -21,11 +21,11 @@ describe('Web - Vizabi e2e test :: All', function() {
 
     browser.get(baseUrl + "bubblechart.html" + baseUrlHash);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking Expand
     var expand =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(7) > span.vzb-buttonlist-btn-icon.fa"));
-    browser.wait(EC.visibilityOf(expand), 5000);
+    browser.wait(EC.visibilityOf(expand), 10000);
     expand.click();
     browser.sleep(2000);
 
@@ -69,11 +69,11 @@ describe('Web - Vizabi e2e test :: All', function() {
 
     browser.get(baseUrl + "mountainchart.html" + baseUrlHash);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking Expand
     var expand =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(6) > span.vzb-buttonlist-btn-icon.fa"));
-    browser.wait(EC.visibilityOf(expand), 5000);
+    browser.wait(EC.visibilityOf(expand), 10000);
     expand.click();
     browser.sleep(2000);
 
@@ -118,11 +118,11 @@ describe('Web - Vizabi e2e test :: All', function() {
   it('LargeScreenBubbleMapChart', function(){
     browser.get(baseUrl + "bubblemap.html" + baseUrlHash);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking Expand
     var expand =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(5) > span.vzb-buttonlist-btn-icon.fa"));
-    browser.wait(EC.visibilityOf(expand), 5000);
+    browser.wait(EC.visibilityOf(expand), 10000);
     expand.click();
     browser.sleep(2000);
 
