@@ -6,7 +6,7 @@ const shell = require('shelljs');
 
 let ok = false;
 while (!ok){
-    let lines = shell.exec('netstat -nlp | grep 9000 | wc -l').output;
+    let lines = shell.exec('netstat -nlp | grep 9000 | wc -l').stdout;
     if(lines != 0){
 	ok = true;
     }

@@ -13,9 +13,9 @@ const project_dir = path.dirname(cwd);
 const FLAGFILE = "/tmp/deployment.flag";
 
 const pjson = require(path.join(project_dir, 'package.json'));
-const oldPjson = JSON.parse(shell.exec("git show HEAD~1:package.json").output);
+const oldPjson = JSON.parse(shell.exec("git show HEAD~1:package.json").stdout);
 
-const lastPublishedVersion = shell.exec("npm show "+pjson.name+" version").output.trim();
+const lastPublishedVersion = shell.exec("npm show "+pjson.name+" version").stdout.trim();
 
 if (process.env.TRAVIS_BRANCH !== "develop"){
     console.log("--- Not publishing.");
