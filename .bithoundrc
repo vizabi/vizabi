@@ -1,0 +1,10 @@
+ "ignore": [
+    "**/preview/**",
+    "**/node_modules/**",
+    "**/tests/**",
+    "**/.data/**",
+    "**/.cicd/**"
+  ]
+  "critics": {
+    "lint": {"engine": "none"}
+  }
