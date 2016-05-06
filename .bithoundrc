@@ -4,6 +4,15 @@
     "**/node_modules/**",
     "**/tests/**",
     "**/.data/**",
-    "**/.cicd/**"
+    "**/.cicd/**",
+    "**/src/assets/**",
+    "**/src/base/**",
+    "**/src/components/**",
+    "**/src/helpers/**",
+    "**/src/models/**",
+    "**/src/readers/**",
+    "**/src/tools/**",
+    "vizabi-gapminder.js",
+    "vizabi.js"
   ]
 }
