@@ -6,7 +6,4 @@
     "**/.data/**",
     "**/.cicd/**"
   ]
-  "critics": {
-    "lint": {"engine": "none"}
-  }
 }

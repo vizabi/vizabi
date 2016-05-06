@@ -4,6 +4,6 @@
   "extends": "airbnb",
   "rules": {
     "react/jsx-quotes": 0,
-    "comma-dangle": [2, "never"]
+    "space-before-function-paren": false
   }
 }
