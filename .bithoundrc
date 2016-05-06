@@ -13,6 +13,7 @@
     "**/src/readers/**",
     "**/src/tools/**",
     "vizabi-gapminder.js",
-    "vizabi.js"
+    "vizabi.js",
+    "gulpfile.js"
   ]
 }
