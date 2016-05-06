@@ -89,6 +89,10 @@ gulp.task('clean:indexes', function() {
   return del([path.join(config.src, '**/_index.js')]);
 });
 
+gulp.task('clean:cursors', function() {
+  return del([path.join(config.destLib, 'assets/cursors/*.cur')]);
+});
+
 gulp.task('clean:preview', function() {
   return del([config.destPreview]);
 });
@@ -103,10 +107,6 @@ gulp.task('clean:preview:styles', function() {
 
 gulp.task('clean:preview:js', function() {
   return del([path.join(config.destPreview, 'assets/js/*.js')]);
-});
-
-gulp.task('clean:preview:cursors', function() {
-  return del([path.join(config.destPreview, 'assets/*.cur')]);
 });
 
 gulp.task('clean:preview:vendor', function() {
@@ -344,6 +344,14 @@ gulp.task('bundle:build', ['clean:js', 'buildIndexes'], function(cb) {
   buildJS(false, cb);
 });
 
+gulp.task('copyCursors', ['clean:cursors'], function() {
+  gutil.log(chalk.yellow("Copying IE cursors..."));
+  return gulp.src(path.join(config.src, 'assets/cursors/*.cur'))
+    .pipe(gulp.dest(path.join(config.destLib, 'assets/cursors')))
+    .on('end', function() {
+      gutil.log(chalk.green("Copying IE cursors... DONE!"))
+    });
+});
 
 // ----------------------------------------------------------------------------
 //   Preview page
@@ -377,15 +385,6 @@ gulp.task('preview:js', ['clean:preview:js'], function() {
     });
 });
 
-gulp.task('preview:cursors', ['clean:preview:cursors'], function() {
-  gutil.log(chalk.yellow("Copying preview IE cursors..."));
-  return gulp.src(path.join(config.srcPreview, 'assets/*.cur'))
-    .pipe(gulp.dest(path.join(config.destPreview, 'assets')))
-    .on('end', function() {
-      gutil.log(chalk.green("Copying preview IE cursors... DONE!"))
-    });
-});
-
 gulp.task('preview:vendor', ['clean:preview:vendor'], function() {
   gulp.src(path.join(config.modules, 'font-awesome/css/font-awesome.min.css'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/css')));
@@ -405,7 +404,7 @@ gulp.task('preview:data', ['clean:preview:data'], function() {
 });
 
 
-var previewDeps = ['preview:templates', 'preview:styles', 'preview:js', 'preview:cursors', 'preview:vendor'];
+var previewDeps = ['preview:templates', 'preview:styles', 'preview:js', 'preview:vendor'];
 if(!gutil.env.faster) {
   previewDeps.push('preview:data');
 }
@@ -474,7 +473,7 @@ gulp.task('watch-lint', function() {
 //   Web Server
 // ----------------------------------------------------------------------------
 
-gulp.task('connect', ['styles', 'bundle', 'preview'], function() {
+gulp.task('connect', ['styles', 'bundle', 'copyCursors','preview'], function() {
   // var webserver = {
   //   port: 9000,
   //   root: config.dest,
@@ -515,7 +514,7 @@ gulp.task('connect', ['styles', 'bundle', 'preview'], function() {
 //   Compressed file (for download)
 // ----------------------------------------------------------------------------
 
-gulp.task('compress', ['styles', 'bundle:build', 'preview'], function() {
+gulp.task('compress', ['styles', 'bundle:build', 'copyCursors', 'preview'], function() {
   return gulp.src(path.join(config.destLib, '**/*'))
     .pipe(zip('vizabi.zip'))
     .pipe(gulp.dest(config.destDownload));
