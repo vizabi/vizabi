@@ -1,3 +1,4 @@
+{
  "ignore": [
     "**/preview/**",
     "**/node_modules/**",
@@ -8,3 +9,4 @@
   "critics": {
     "lint": {"engine": "none"}
   }
+}
