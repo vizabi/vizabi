@@ -3,6 +3,7 @@
 {
   "extends": "airbnb",
   "rules": {
-    "react/jsx-quotes": 0
+    "react/jsx-quotes": 0,
+    "comma-dangle": [2, "never"]
   }
 }
