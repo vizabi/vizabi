@@ -10,15 +10,15 @@
     //ie11 only:The base URI is considered to be the URI of the document containing the element 
     //and not the URI of the style sheet in which the declaration appears.
     .vzb-zoomin {
-      cursor: url('assets/zoom-in.cur'), auto;
+      cursor: url('../dist/assets/cursors/zoom-in.cur'), auto;
       .vzb-bc-entity {
-        cursor: url('assets/zoom-in.cur'), auto !important;
+        cursor: url('../dist/assets/cursors/zoom-in.cur'), auto !important;
       }
     }    
     .vzb-zoomout {
-      cursor: url('assets/zoom-out.cur'), auto;
+      cursor: url('../dist/assets/cursors/zoom-out.cur'), auto;
       .vzb-bc-entity {
-        cursor: url('assets/zoom-out.cur'), auto !important;
+        cursor: url('../dist/assets/cursors/zoom-out.cur'), auto !important;
       }
     }
         
