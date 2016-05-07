@@ -93,10 +93,10 @@ var BubbleChartComp = Component.extend({
 
           //avoid zooming again if values didn't change.
           //also prevents infinite loop on forced URL update from zoom.stop()
-          if(_this._zoomZoomedDomains.x.zoomedMin == _this.model.marker.axis_x.zoomedMin
-          && _this._zoomZoomedDomains.x.zoomedMax == _this.model.marker.axis_x.zoomedMax
-          && _this._zoomZoomedDomains.y.zoomedMin == _this.model.marker.axis_y.zoomedMin
-          && _this._zoomZoomedDomains.y.zoomedMax == _this.model.marker.axis_y.zoomedMax
+          if(_this._zoomedXYMinMax.axis_x.zoomedMin == _this.model.marker.axis_x.zoomedMin
+          && _this._zoomedXYMinMax.axis_x.zoomedMax == _this.model.marker.axis_x.zoomedMax
+          && _this._zoomedXYMinMax.axis_y.zoomedMin == _this.model.marker.axis_y.zoomedMin
+          && _this._zoomedXYMinMax.axis_y.zoomedMax == _this.model.marker.axis_y.zoomedMax
           ) return;
 
             _this._panZoom.zoomToMaxMin(
