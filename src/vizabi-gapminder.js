@@ -484,6 +484,7 @@ BubbleChart.define('default_model', {
         //which: "sg_child_mortality_rate_per1000", //systema globalis
         which: "life_expectancy_years",
         scaleType: "linear",
+        zoomedMin: 15,
         allow: {
           scales: ["linear", "log", "time"]
         }
