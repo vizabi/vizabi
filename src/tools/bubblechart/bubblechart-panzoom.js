@@ -27,7 +27,7 @@ export default Class.extend({
         this.zoomer.ratioX = 1;
         this.zoomer.ratioY = 1;
 
-        context._zoomZoomedDomains = {x:{zoomedMin: null, zoomedMax: null}, y:{zoomedMin: null, zoomedMax: null}};
+        context._zoomedXYMinMax = {axis_x:{zoomedMin: null, zoomedMax: null}, axis_y:{zoomedMin: null, zoomedMax: null}};
     },
 
     drag: function(){
@@ -325,19 +325,18 @@ export default Class.extend({
                 zoomedYRange[0] = yRangeBounds[0] < yRange[0] ? yRangeBounds[0] : yRange[0];
                 zoomedYRange[1] = yRangeBounds[1] > yRange[1] ? yRangeBounds[1] : yRange[1];
 
-                _this._zoomZoomedDomains = {
-                    x: {
+                _this._zoomedXYMinMax = {
+                    axis_x: {
                      zoomedMin: formatter(_this.xScale.invert(zoomedXRange[0])),
                      zoomedMax: formatter(_this.xScale.invert(zoomedXRange[1]))
                     },
-                    y: {
+                    axis_y: {
                      zoomedMin: formatter(_this.yScale.invert(zoomedYRange[0])),
                      zoomedMax: formatter(_this.yScale.invert(zoomedYRange[1]))
                     }
                 }
 
-                _this.model.marker.axis_x.set(_this._zoomZoomedDomains.x, null, false /*avoid storing it in URL*/);
-                _this.model.marker.axis_y.set(_this._zoomZoomedDomains.y, null, false /*avoid storing it in URL*/);
+                _this.model.marker.set(_this._zoomedXYMinMax, null, false /*avoid storing it in URL*/);
 
                 // Keep the min and max size (pixels) constant, when zooming.
                 //                    _this.sScale.range([utils.radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
@@ -364,8 +363,7 @@ export default Class.extend({
                 if (this.quitZoom) return;
 
                 //Force the update of the URL and history, with the same values
-                _this.model.marker.axis_x.set(_this._zoomZoomedDomains.x, true, true);
-                _this.model.marker.axis_y.set(_this._zoomZoomedDomains.y, true, true);
+                _this.model.marker.set(_this._zoomedXYMinMax, true, true);
             }
         };
     },
