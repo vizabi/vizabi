@@ -38,7 +38,7 @@
     "eslint-config-airbnb": "8.0.0",
     "eslint-plugin-react": "5.0.1",
     "eslint-plugin-import": "1.7.0",
-    "eslint-plugin-jsx-a11y": "1.1.0",
+    "eslint-plugin-jsx-a11y": "1.2.0",
     "font-awesome": "^4.4.0",
     "glob": "7.0.3",
     "gulp": "3.9.1",
@@ -66,7 +66,7 @@
     "opn": "4.0.1",
     "protractor": "3.3.0",
     "q": "1.4.1",
-    "rollup": "0.26.2",
+    "rollup": "0.22.0",
     "shelljs": "0.7.0",
     "slash": "1.0.0"
   }

@@ -15,5 +15,10 @@
     "vizabi-gapminder.js",
     "vizabi.js",
     "gulpfile.js"
-  ]
+  ],
+  "dependencies": {
+    "mute": [
+      "rollup"
+    ]
+  }
 }
