@@ -538,12 +538,12 @@ BubbleChart.define('default_model', {
         removeLabelBox: false
       },
       trails: true,
-      lockNonSelected: 0,
-      adaptMinMaxZoom: false
+      lockNonSelected: 0
     },
     presentation: false,
     cursorMode: 'arrow',
-    noZoomOnScrolling: true
+    zoomOnScrolling: false,
+    adaptMinMaxZoom: false
   }
 });
 

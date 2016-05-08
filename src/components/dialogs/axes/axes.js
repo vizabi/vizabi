@@ -2,7 +2,7 @@ import * as utils from 'base/utils';
 import Component from 'base/component';
 import Dialog from '../_dialog';
 
-import { indicatorpicker, minmaxinputs, simplecheckbox } from 'components/_index';
+import { indicatorpicker, minmaxinputs } from 'components/_index';
 
 /*
  * Axes dialog
@@ -47,11 +47,6 @@ var Axes = Dialog.extend({
         selectDomainMinMax: false,
         selectZoomedMinMax: true
       }
-    }, {
-      component: simplecheckbox,
-      placeholder: '.vzb-axes-options',
-      model: ["ui.chart", "language"],
-      checkbox: 'adaptMinMaxZoom'
     }];
 
     this._super(config, parent);

@@ -67,7 +67,7 @@
     "check/adaptMinMaxZoom": "Följ bubblar med zoom",
     "check/presentation": "Göra texten stor och presentera",
     "check/removeLabelBox": "Inga rutor på etikett",
-    "check/noZoomOnScrolling": "Zooma ej me hjulen",
+    "check/zoomOnScrolling": "Zooma med hjulen",
     "entity/geo.world_4region/americas": "Amerika",
     "entity/geo.world_4region/asia": "Asien",
     "entity/geo.world_4region/africa": "Afrika",

@@ -21,19 +21,21 @@ init: function(config, parent) {
 
   // in dialog, this.model_expects = ["state", "data"];
 
-  this.components = [
-  {
+  this.components = [{
     component: zoombuttonlist,
     placeholder: '.vzb-dialog-zoom-buttonlist',
     model: ["state", "ui", "language"]
-  },
-  {
+  }, {
     component: simplecheckbox,
-    placeholder: '.vzb-nozoomonscrolling-switch',
+    placeholder: '.vzb-zoomonscrolling-switch',
     model: ["ui", "language"],
-    checkbox: 'noZoomOnScrolling'
-  }
-  ];
+    checkbox: 'zoomOnScrolling'
+  }, {
+    component: simplecheckbox,
+    placeholder: '.vzb-adaptminmaxzoom-switch',
+    model: ["ui", "language"],
+    checkbox: 'adaptMinMaxZoom'
+  }];
 
   this._super(config, parent);
 }

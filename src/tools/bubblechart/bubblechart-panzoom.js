@@ -6,8 +6,6 @@ export default Class.extend({
     init: function(context) {
         this.context = context;
 
-        this.enabled = false;
-
         this.dragRectangle = d3.behavior.drag();
         this.zoomer = d3.behavior.zoom();
 
@@ -158,19 +156,12 @@ export default Class.extend({
                  * ancestor
                  */
                 if (sourceEvent != null && (sourceEvent.type === "wheel" || sourceEvent.type === "mousewheel") && 
-                    _this.ui.noZoomOnScrolling) {
+                    !_this.ui.zoomOnScrolling) {
                     if (_this.scrollableAncestor) {
                         _this.scrollableAncestor.scrollTop += (sourceEvent.deltaY || -sourceEvent.wheelDelta);
                     }
                     d3.event.scale = null;
                     zoomer.scale(this.savedScale);
-                    this.quitZoom = true;
-                    return;
-                }
-
-                if(sourceEvent != null && _this.scrollableAncestor && !self.enabled) {
-                    _this.scrollableAncestor.scrollTop += (sourceEvent.deltaY || -sourceEvent.wheelDelta);
-                    zoomer.scale(1);
                     this.quitZoom = true;
                     return;
                 }

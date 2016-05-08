@@ -123,10 +123,10 @@ var BubbleChart = Tool.extend('BubbleChart', {
           removeLabelBox: false
         },
         trails: true,
-        lockNonSelected: 0,
-        adaptMinMaxZoom: false
+        lockNonSelected: 0
       },
-      presentation: true 
+      presentation: true,
+      adaptMinMaxZoom: false
     }
   }
 });

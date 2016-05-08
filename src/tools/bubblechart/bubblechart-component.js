@@ -148,9 +148,9 @@ var BubbleChartComp = Component.extend({
 
         }(_this.model.time.value));
       },
-      'change:ui.chart.adaptMinMaxZoom': function() {
+      'change:ui.adaptMinMaxZoom': function() {
         //console.log("EVENT change:ui:adaptMinMaxZoom");
-        if(_this.model.ui.chart.adaptMinMaxZoom) {
+        if(_this.model.ui.adaptMinMaxZoom) {
           _this._panZoom.expandCanvas(500);
         } else {
           _this._panZoom.reset();
@@ -364,24 +364,6 @@ var BubbleChartComp = Component.extend({
         }
       });
 
-    d3.select(this.parent.placeholder)
-      .onTap(function() {
-        _this._panZoom.enabled = true;
-//        _this._bubblesInteract().mouseout();
-//        _this.tooltipMobile.classed('vzb-hidden', true);
-      })
-      .on("mousedown", function(){
-        _this._panZoom.enabled = true;
-      })
-      .on("mouseleave", function(){
-        clearTimeout(_this.timeoutMouseEnter);
-        _this.timeoutMouseLeave = setTimeout(function(){_this._panZoom.enabled = false;}, 800)
-      })
-      .on("mouseenter", function(){
-        clearTimeout(_this.timeoutMouseLeave);
-        _this.timeoutMouseEnter = setTimeout(function(){_this._panZoom.enabled = true;}, 2000)
-      });
-
     this.KEY = this.model.entities.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
 
@@ -427,7 +409,7 @@ var BubbleChartComp = Component.extend({
       _this.updateBubbleOpacity();
       _this.zoomToMarkerMaxMin(); // includes redraw data points and trail resize
       _this._trails.run(["recolor", "opacityHandler", "findVisible", "reveal"]);
-      if(_this.model.ui.chart.adaptMinMaxZoom) _this._panZoom.expandCanvas();
+      if(_this.model.ui.adaptMinMaxZoom) _this._panZoom.expandCanvas();
     });
   },
 
@@ -482,7 +464,7 @@ var BubbleChartComp = Component.extend({
     this.updateTime();
     this._updateDoubtOpacity();
     this._trails.run("findVisible");
-    if(this.model.ui.chart.adaptMinMaxZoom) {
+    if(this.model.ui.adaptMinMaxZoom) {
       this._panZoom.expandCanvas();
     } else {
       this.redrawDataPoints();
