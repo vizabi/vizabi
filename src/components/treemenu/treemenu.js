@@ -27,7 +27,6 @@ var css = {
   list_item_leaf: 'vzb-treemenu-list-item-leaf',
   leaf: 'vzb-treemenu-leaf',
   leaf_content: 'vzb-treemenu-leaf-content',
-  leaf_button: 'vzb-treemenu-leaf-button',
   leaf_content_item: 'vzb-treemenu-leaf-content-item',
   leaf_content_item_title: 'vzb-treemenu-leaf-content-item-title',
   leaf_content_item_descr: 'vzb-treemenu-leaf-content-item-descr',
@@ -1004,14 +1003,6 @@ var TreeMenu = Component.extend({
           return d.children ? "true" : null;
         })
         .on('click', function(d) {
-          if(_this.menuEntity.direction != MENU_VERTICAL) return;
-          var view = d3.select(this);
-          //only for leaf nodes
-          if(view.attr("children")) return;
-          d3.event.stopPropagation();
-          _this._selectIndicator(d.id);
-        })
-        .on('dblclick', function(d) {
           var view = d3.select(this);
           //only for leaf nodes
           if(view.attr("children")) return;
@@ -1070,10 +1061,6 @@ var TreeMenu = Component.extend({
                 return (hideUnits && hideDescription) ? _this.translator("hints/nodescr") : translated;
               });
             description.classed('vzb-hidden', hideDescription && !hideUnits);
-
-            var deepLeafButton = deepLeaf.append('div').classed(css.leaf + ' ' + css.leaf_button, true)
-            deepLeafButton.append('div')//.classed('vzb-treemenu-leaf-button', true)
-              .text('OK');
           }
           
           if(d.id == _this.model.marker[markerID].which) {

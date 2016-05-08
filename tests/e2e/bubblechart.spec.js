@@ -537,13 +537,6 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
         browser.sleep(3000);
       });
 
-      //Clicking OK for GDP\capita
-      var OKgdpButton = element(by.css("#vzbp-placeholder > div > div.vzb-tool-treemenu > div.vzb-treemenu-wrap-outer.notransition.vzb-treemenu-abs-pos-vert.vzb-align-y-top.vzb-treemenu-abs-pos-horiz.vzb-align-x-left.vzb-treemenu-open-left-side > div > ul > li:nth-child(3) > div > div.vzb-treemenu-leaf.vzb-treemenu-leaf-button > div"));
-      browser.wait(EC.visibilityOf(OKgdpButton), 5000).then(function(){
-        OKgdpButton.click();
-        browser.sleep(3000);
-      });
-
       //Clicking OK for Color popup button
       var OKcolorButton = element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-buttons > div"));
       browser.wait(EC.visibilityOf(OKcolorButton), 5000).then(function(){

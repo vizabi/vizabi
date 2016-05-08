@@ -244,20 +244,6 @@
                 }
               }
             }
-            .vzb-treemenu-leaf-button {
-              height: 60px;
-              line-height: 16px;
-              padding: 22px 10px;
-              text-align: center;
-              cursor: pointer;
-              color: $vzb-color-primary;
-              font-weight: bold;
-            }
-            &:hover {
-              .vzb-treemenu-leaf-button {
-                color: $vzb-color-primary-darkest;
-              }
-            }
           }
         }
         &.vzb-treemenu-vertical {
