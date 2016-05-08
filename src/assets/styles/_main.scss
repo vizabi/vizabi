@@ -7,7 +7,7 @@
   $height-title: 8px;
   $size-button-list: 60px;
   $size-button-list-small: 50px;
-  $size-timeslider: 80px;
+  $size-timeslider: 60px;
   $size-timeslider-medium: 50px;
   $size-timeslider-small: 40px;
   $vzb-button-expand-width: 290px;
@@ -172,7 +172,7 @@
         .vzb-tool-buttonlist {
           flex: 0 0 auto;
           width: $vzb-button-expand-width;
-          padding: 10px 0;
+          padding: 2px 0 5px;
         }
       }
     }
