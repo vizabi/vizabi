@@ -188,11 +188,8 @@ var BubbleSize = Component.extend({
       _this._updateSize();
 
       _this.sliderEl
-        .call(_this.brush.extent(_this.brush.extent()));
-      
-      var s = _this.brush.extent();
-      this._updateArcs(s);
-      this._updateLabels(s);
+        .call(_this.brush.extent(_this.brush.extent()))
+        .call(_this.brush.event);
 
     });
 
