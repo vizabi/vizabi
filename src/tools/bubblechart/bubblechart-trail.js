@@ -208,6 +208,7 @@ export default Class.extend({
         .attr("cx", _context.xScale(segment.valueX))
         .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)));
 
+      if(!this.nextSibling) return;
       var next = d3.select(this.nextSibling).datum();
       if(next == null) return;
       if(next.valueY==null || next.valueX==null) return;
