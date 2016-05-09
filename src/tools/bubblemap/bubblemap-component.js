@@ -881,7 +881,7 @@ var BubbleMapComponent = Component.extend({
     // only for selected entities
     if(_this.model.entities.isSelected(d)) {
       
-      var showhide = true;
+      var showhide = d.hidden !== d.hidden_1;
       var valueLST = null;
       var cache = {};
       cache.labelX0 = valueX / this.width;
