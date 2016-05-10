@@ -26,6 +26,7 @@
     "buttons/speed": "Speed",
     "buttons/label": "Labels",
     "buttons/zoom": "Zoom",
+    "dialogs/presentation": "Presentation",
     "hints/bubbl/setminsize": "Minimum bubble size:",
     "hints/bubbl/setmaxsize": "Maximum bubble size:",
     "hints/bubbl/setsize": "Bubble size:",
