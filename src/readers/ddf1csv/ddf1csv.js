@@ -30,10 +30,14 @@ var DDF1CSVReader = Reader.extend({
     _this.ddf.getIndex(function () {
       // get `concepts` and `entities` in any case
       // this data needed for query's kind (service, data point) detection
-      _this.ddf.getConceptsAndEntities(query, function (concepts, entities) {
+      _this.ddf.getConceptsAndEntities(query, function (err, concepts, entities) {
+        if (err) {
+          p.reject(err);
+        }
+
         // service query: it was detected by next criteria:
         // all of `select` section of query parts are NOT measures
-        if (_this.ddf.divideByQuery(query).measures.length <= 0) {
+        if (!err && _this.ddf.divideByQuery(query).measures.length <= 0) {
           _this._data = entities;
           p.resolve();
         }
@@ -41,9 +45,15 @@ var DDF1CSVReader = Reader.extend({
         // data point query: it was detected by next criteria:
         // at least one measure was detected in `select` section of the query
         if (_this.ddf.divideByQuery(query).measures.length > 0) {
-          _this.ddf.getDataPoints(query, function (data) {
-            _this._data = data;
-            p.resolve();
+          _this.ddf.getDataPoints(query, function (err, data) {
+            if (err) {
+              p.reject(err);
+            }
+
+            if (!err) {
+              _this._data = data;
+              p.resolve();
+            }
           });
         }
       });
