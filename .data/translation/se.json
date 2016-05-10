@@ -26,6 +26,7 @@
     "buttons/speed": "Hastighet",
     "buttons/label": "Etikett",
     "buttons/zoom": "Zoom",
+    "dialogs/presentation": "Presentation",
     "hints/bubbl/setminsize": "Min bubblar storlek:",
     "hints/bubbl/setmaxsize": "Max bubblar storlek:",
     "hints/bubbl/setsize": "Storlek av bubblar:",
