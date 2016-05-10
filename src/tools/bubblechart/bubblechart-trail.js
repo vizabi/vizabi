@@ -356,14 +356,16 @@ export default Class.extend({
               } else {
                 view.classed("vzb-invisible", true);
               }
-
               var next = trail[0][index + 1];
               if(next == null || _context.time.toString() == segment.t.toString()) {
                 resolve();
               } else {
                 next = next.__data__; 
                 var nextTime = next.t;
-                if (_context.time - next.t < 0) nextTime = _context.time;   
+                if (_context.time - next.t < 0) { // time is not equal start of year
+                  segment.visibilityChanged = true; // redraw needed next time because line not have full length
+                  nextTime = _context.time; 
+                }    
                 _context.model.marker.getFrame(nextTime, function(nextFrame) {
 
                   // TODO: find why data in segment sometimes become null
