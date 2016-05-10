@@ -3,6 +3,8 @@ describe('Web - Vizabi e2e test :: Bar rank Chart', function() {
   jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000000;
   browser.manage().window().setSize(1100, 750);
 
+	
+	
   var baseUrl = 'http://localhost:9000/preview/';
   var EC = protractor.ExpectedConditions;
 
