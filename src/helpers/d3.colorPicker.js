@@ -170,7 +170,8 @@ export default function colorPicker() {
         .style('max-height', maxHeight + "px")
         .style('z-index', 9999)
         .attr('class', css.COLOR_PICKER + " vzb-dialog-shadow")
-        .classed(css.INVISIBLE, !showColorPicker);
+        .classed(css.INVISIBLE, !showColorPicker)
+        .on('mouseout', function(d) { _cellHover(colorOld); });
 
       var width = parseInt(svg.style('width'));
       var height = parseInt(svg.style('height'));
