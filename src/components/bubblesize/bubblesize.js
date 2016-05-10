@@ -120,13 +120,13 @@ var BubbleSize = Component.extend({
       .x(this.xScale)
       .extent([OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MIN])
       .on("brush", function () {
-        _this._setFromExtent(false, false); // non persistent change
+        _this._setFromExtent(true, false, false); // non persistent change
       })
       .on("brushend", function () {
          _this.sliderEl.selectAll(".resize")
           .style("display", null);
 
-        _this._setFromExtent(true); // force a persistent change
+        _this._setFromExtent(true, true); // force a persistent change
       });
 
     this.sliderEl
@@ -188,15 +188,14 @@ var BubbleSize = Component.extend({
       _this._updateSize();
 
       _this.sliderEl
-        .call(_this.brush.extent(_this.brush.extent()))
-        .call(_this.brush.event);
-
+        .call(_this.brush.extent(_this.brush.extent()));
+      _this._setFromExtent(false, false, false); // non persistent change
     });
 
     this._updateSize();
     this.sliderEl
-      .call(this.brush.extent(values))
-      .call(this.brush.event);
+      .call(this.brush.extent(values));
+    _this._setFromExtent(false, false, false); // non persistent change
 
     _this.sizeScaleMinMax = _this.model.size.getScale().domain();
 
@@ -255,14 +254,15 @@ var BubbleSize = Component.extend({
 
   /**
    * Prepares setting of the current model with the values from extent.
+   * @param {boolean} set model
    * @param {boolean} force force firing the change event
    * @param {boolean} persistent sets the persistency of the change event
    */
-  _setFromExtent: function(force, persistent) {
+  _setFromExtent: function(setModel, force, persistent) {
     var s = this.brush.extent();
     this._updateArcs(s);
     this._updateLabels(s);
-    this._setModel(s, force, persistent);
+    if(setModel) this._setModel(s, force, persistent);
   },
 
   /**

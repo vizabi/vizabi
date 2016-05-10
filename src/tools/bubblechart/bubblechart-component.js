@@ -213,7 +213,6 @@ var BubbleChartComp = Component.extend({
     _this.COLOR_BLACKISH = "#333";
     _this.COLOR_WHITEISH = "#fdfdfd";
 
-    this.cached = {};
     this.isCanvasPreviouslyExpanded = false;
     this.draggingNow = null;
 
@@ -397,14 +396,13 @@ var BubbleChartComp = Component.extend({
         if (!_this._frameIsValid(frame)) return;
 
       _this.frame = frame;
-      _this.cached = {};
+      _this.updateTime();
       _this.updateIndicators();
       _this.updateSize();
       _this.updateEntities();
       _this.redrawDataPoints();
       _this.selectDataPoints();
       _this._trails.create();
-      _this.updateTime();
       _this.updateMarkerSizeLimits();
       _this.updateBubbleOpacity();
       _this.zoomToMarkerMaxMin(); // includes redraw data points and trail resize
@@ -1184,8 +1182,9 @@ var BubbleChartComp = Component.extend({
         return f[KEY] == d[KEY]
       });
 
-      if(!this.model.ui.chart.trails || select.trailStartTime == null) {
-        select.trailStartTime = _this.model.time.timeFormat(_this.time); // need only when trailStartTime == null
+      var time = _this.model.time.timeFormat(_this.time);
+      if(!this.model.ui.chart.trails || select.trailStartTime == time || select.trailStartTime == null) {
+        if(select.trailStartTime == null) select.trailStartTime = time; // need only when trailStartTime == null
 
         var cache = {};
         cache.labelX0 = valueX;
