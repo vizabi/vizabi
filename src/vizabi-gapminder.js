@@ -487,7 +487,7 @@ BubbleChart.define('default_model', {
         scaleType: "linear",
         zoomedMin: 15,
         allow: {
-          scales: ["linear", "log", "time"]
+          scales: ["linear", "log"]
         }
       },
       axis_x: {
@@ -496,7 +496,7 @@ BubbleChart.define('default_model', {
         which: "income_per_person_gdppercapita_ppp_inflation_adjusted", 
         scaleType: "log",
         allow: {
-          scales: ["linear", "log", "time"]
+          scales: ["linear", "log"]
         }
       },
       color: {
