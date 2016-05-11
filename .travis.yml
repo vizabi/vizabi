@@ -9,6 +9,18 @@ addons:
     packages:
     - s3cmd
     - ruby
+    
+notifications:
+  email: false
+  slack:
+    rooms:
+      - gapminder:siB4Z9ymsYR6qHnRPpgUoB2Q#vizabi-spam
+    on_success: change
+    on_failure: always
+  
+cache:
+  directories:
+    - node_modules
 
 before_install:
   - npm install -g npm@latest

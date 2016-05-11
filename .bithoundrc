@@ -14,7 +14,8 @@
     "**/src/tools/**",
     "vizabi-gapminder.js",
     "vizabi.js",
-    "gulpfile.js"
+    "gulpfile.js",
+    "karma.conf.js"
   ],
   "dependencies": {
     "mute": [
