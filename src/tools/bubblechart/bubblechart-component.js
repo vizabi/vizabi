@@ -314,6 +314,7 @@ var BubbleChartComp = Component.extend({
 
     this.trailsContainer = this.graph.select('.vzb-bc-trails');
     this.bubbleContainerCrop = this.graph.select('.vzb-bc-bubbles-crop');
+    this.labelsContainerCrop = this.graph.select('.vzb-bc-labels-crop');
     this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
     this.labelsContainer = this.graph.select('.vzb-bc-labels');
     this.linesContainer = this.graph.select('.vzb-bc-lines');
@@ -851,6 +852,10 @@ var BubbleChartComp = Component.extend({
 
 
     this.bubbleContainerCrop
+      .attr("width", this.width)
+      .attr("height", Math.max(0, this.height));
+
+    this.labelsContainerCrop
       .attr("width", this.width)
       .attr("height", Math.max(0, this.height));
 

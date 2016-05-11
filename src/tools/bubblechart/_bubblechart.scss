@@ -24,6 +24,10 @@
         
     .vzb-bubblechart-svg {
       @extend %vzb-chart-svg;
+      
+      .vzb-bc-labels-crop {
+        overflow: visible;
+      }
 
       .vzb-bc-zoom-rect {
         fill: none;
