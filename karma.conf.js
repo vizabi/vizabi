@@ -37,7 +37,7 @@ module.exports = function(config) {
       'tests/unit/**/**/*.js',
 
       // csv datapoints info
-      {pattern: '.data/ddf/ddf--gapminder_world/output/ddf/*.csv', watched: false, included: false, served: true},
+      {pattern: 'tests/fixture/ddf/*.csv', watched: false, included: false, served: true},
 
       // fixtures
       {pattern: 'tests/fixture/*.json', watched: false, included: false, served: true},

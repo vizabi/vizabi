@@ -3,6 +3,7 @@ var ddfcsvReader = require('src/readers/ddf1csv/ddf1csv');
 var Ddf = require('src/readers/ddf1csv/ddf');
 
 var lang = 'en';
+var ddfFixturePath = 'tests/fixture/ddf/';
 
 var filesDataJSON = {};
 var regexpFileJSON = /\/tests\/fixture.*\.json$/;
@@ -30,7 +31,7 @@ describe('Vizabi Readers', function () {
       };
 
       var defaultQuery = {
-        "select":["geo","time","children_per_woman_total_fertility"],
+        "select":["geo","time","females_aged_15_24_unemployment_rate_percent"],
         "where":{"geo.is--country":true,"time":[["1800","2015"]]},
         "grouping":{},
         "orderBy":"time"
@@ -64,14 +65,14 @@ describe('Vizabi Readers', function () {
         var ddfCsvReader = new ddfcsvReader.default(defaultReaderParams);
         ddfCsvReader.read(defaultQuery).then(function(){
 
-          var data = ddfCsvReader.getData();
-          expect(data.length).toBe(0);
-          expect(utils.error.calls.count()).toEqual(2);
+          fail("ddf-csv Reader, 'read' was resolved");
           done();
 
         }, function(){
 
-          fail("ddf-csv Reader, 'read' was rejected");
+          var data = ddfCsvReader.getData();
+          expect(data.length).toBe(0);
+          expect(utils.error.calls.count()).toEqual(1);
           done();
 
         });
@@ -85,13 +86,13 @@ describe('Vizabi Readers', function () {
         var ddfCsvReader = new ddfcsvReader.default(updatedReaderParams);
         ddfCsvReader.read(defaultQuery).then(function(){
 
-          var data = ddfCsvReader.getData();
-          expect(data.length).toBe(0);
+          fail("ddf-csv Reader, 'read' was resolved");
           done();
 
         }, function(){
 
-          fail("ddf-csv Reader, 'read' was rejected");
+          var data = ddfCsvReader.getData();
+          expect(data.length).toBe(0);
           done();
 
         });
@@ -99,7 +100,7 @@ describe('Vizabi Readers', function () {
 
       it("Should cache requested files", function (done) {
 
-        var cachedFile= '/base/.data/ddf/ddf--gapminder_world/output/ddf/ddf--index.csv';
+        var cachedFile= '/base/' + ddfFixturePath + 'ddf--index.csv';
 
         var updatedQuery = {
           "select":["geo","geo.name","geo.world_4region"],
@@ -109,7 +110,7 @@ describe('Vizabi Readers', function () {
         };
 
         var updatedReaderParams = utils.extend({}, defaultReaderParams);
-        updatedReaderParams.path = '/base/.data/ddf/ddf--gapminder_world/output/ddf/';
+        updatedReaderParams.path = '/base/' + ddfFixturePath;
 
         var ddfCsvReader = new ddfcsvReader.default(updatedReaderParams);
         var result = ddfCsvReader.ddf.cachedFileExists(cachedFile);
@@ -137,8 +138,8 @@ describe('Vizabi Readers', function () {
 
       var defaultReaderParams = {
         'parsers' : {},
-        'path': "/base/.data/ddf/ddf--gapminder_world/output/ddf/",
-        'reader': "ddf1-csv",
+        'path': '/base/' + ddfFixturePath,
+        'reader': 'ddf1-csv',
         'splash': false
       };
 
@@ -170,12 +171,12 @@ describe('Vizabi Readers', function () {
       it("Should resolve read method if provided file has incorrect datapoints", function (done) {
 
         spyOn(Ddf.default.prototype, 'getDataPointDescriptorsByIndex').and.callFake(function () {
-          var filename = '/base/tests/fixture/ddf--datapoints--child_mortality_0_5_year_olds_dying_per_1000_born--by--geo--time.csv';
+          var filename = '/base/tests/fixture/ddf--datapoints--falls_deaths_per_100000_people--by--geo--time.csv';
           return {
             descriptors: [{
               fileName: filename,
-              measures: ['child_mortality_0_5_year_olds_dying_per_1000_born'],
-              measure: 'child_mortality_0_5_year_olds_dying_per_1000_born',
+              measures: ['falls_deaths_per_100000_people'],
+              measure: 'falls_deaths_per_100000_people',
               other: ['geo', 'time']
             }],
             fileNames: [
@@ -185,7 +186,7 @@ describe('Vizabi Readers', function () {
         });
 
         var updatedQuery = {
-          "select":["geo","time","child_mortality_0_5_year_olds_dying_per_1000_born"],
+          "select":["geo","time","falls_deaths_per_100000_people"],
           "where":{"geo.is--country":true,"time":[["1800","2015"]]},
           "grouping":{},
           "orderBy":"time"
@@ -215,8 +216,8 @@ describe('Vizabi Readers', function () {
           return {
             descriptors: [{
               fileName: filename,
-              measures: ['child_mortality_0_5_year_olds_dying_per_1000_born'],
-              measure: 'child_mortality_0_5_year_olds_dying_per_1000_born',
+              measures: ['falls_deaths_per_100000_people'],
+              measure: 'falls_deaths_per_100000_people',
               other: ['geo', 'time']
             }],
             fileNames: [
@@ -235,14 +236,14 @@ describe('Vizabi Readers', function () {
         var ddfCsvReader = new ddfcsvReader.default(defaultReaderParams);
         ddfCsvReader.read(updatedQuery, lang).then(function(){
 
-          var data = ddfCsvReader.getData();
-          expect(data.length).toBe(0);
-          expect(utils.error.calls.count()).toEqual(2);
+          fail("ddf-csv Reader, 'read' was rejected");
           done();
 
         }, function(){
 
-          fail("ddf-csv Reader, 'read' was rejected");
+          var data = ddfCsvReader.getData();
+          expect(data.length).toBe(0);
+          expect(utils.error.calls.count()).toEqual(1);
           done();
 
         });
@@ -281,8 +282,8 @@ describe('Vizabi Readers', function () {
 
       var defaultReaderParams = {
         'parsers' : {},
-        'path': "/base/.data/ddf/ddf--gapminder_world/output/ddf/",
-        'reader': "ddf1-csv",
+        'path': '/base/' + ddfFixturePath,
+        'reader': 'ddf1-csv',
         'splash': false
       };
 
@@ -318,10 +319,10 @@ describe('Vizabi Readers', function () {
 
       });
 
-      it("Should correctly process request for :: Child mortality rate & Child mortality rate", function (done) {
+      it("Should correctly process request for :: Falls Deaths per 100000 People & Falls Deaths per 100000 People", function (done) {
 
         var defaultQuery = {
-          "select":["geo","time","child_mortality_0_5_year_olds_dying_per_1000_born","population_total"],
+          "select":["geo","time","falls_deaths_per_100000_people","population_total"],
           "where":{"geo.is--country":true,"time":[["1800","2015"]]},
           "grouping":{},
           "orderBy":"time"
@@ -332,7 +333,7 @@ describe('Vizabi Readers', function () {
 
           var data = ddfCsvReader.getData();
 
-          var fixtureIndex = 'datapoints-child-mortality-rate-vs-child-mortality-rate.json';
+          var fixtureIndex = 'datapoints-falls_deaths_per_100000_people.json';
           var fixturePath = filesDataJSON[fixtureIndex];
           var fixtureRaw = readJSON(fixturePath);
 
@@ -358,7 +359,7 @@ describe('Vizabi Readers', function () {
       it("Should correctly process request for :: Child mortality rate & Babies per woman", function (done) {
 
         var defaultQuery = {
-          "select":["geo","time","children_per_woman_total_fertility"],
+          "select":["geo","time","females_aged_15_24_unemployment_rate_percent"],
           "where":{"geo.is--country":true,"time":[["1800","2015"]]},
           "grouping":{},
           "orderBy":"time"
@@ -369,7 +370,7 @@ describe('Vizabi Readers', function () {
 
           var data = ddfCsvReader.getData();
 
-          var fixtureIndex = 'datapoints-child-mortality-rate-vs-babies-per-woman.json';
+          var fixtureIndex = 'datapoints-females_aged_15_24_unemployment_rate_percent.json';
           var fixturePath = filesDataJSON[fixtureIndex];
           var fixtureRaw = readJSON(fixturePath);
 
@@ -398,8 +399,8 @@ describe('Vizabi Readers', function () {
 
       var defaultReaderParams = {
         'parsers' : {},
-        'path': "/base/.data/ddf/ddf--gapminder_world/output/ddf/",
-        'reader': "ddf1-csv",
+        'path': '/base/' + ddfFixturePath,
+        'reader': 'ddf1-csv',
         'splash': false
       };
 
@@ -418,14 +419,14 @@ describe('Vizabi Readers', function () {
       it("Should find Entity File Names", function (done) {
 
         var defaultQuery = {
-          "select":["geo","time","children_per_woman_total_fertility"],
+          "select":["geo","time","females_aged_15_24_unemployment_rate_percent"],
           "where":{"geo.is--country":true,"time":[["1800","2015"]]},
           "grouping":{},
           "orderBy":"time"
         };
 
         var resultMock = [
-          '/base/.data/ddf/ddf--gapminder_world/output/ddf/ddf--entities--geo--country.csv'
+          '/base/' + ddfFixturePath + 'ddf--entities--geo--country.csv'
         ];
 
         var ddfCsvReader = new ddfcsvReader.default(defaultReaderParams);
@@ -442,7 +443,7 @@ describe('Vizabi Readers', function () {
 
         var ddfCsvReader = new ddfcsvReader.default(defaultReaderParams);
 
-        var paramSelect = ['geo', 'time', 'children_per_woman_total_fertility'];
+        var paramSelect = ['geo', 'time', 'females_aged_15_24_unemployment_rate_percent'];
         var paramRecord = {main_religion_2008: 'muslim', name: 'Muslim', gwid: 'i280', 'is--main_religion_2008': 'TRUE'};
         var resultMock = {needed: false, convert: {latitude: 'geo.latitude', longitude: 'geo.longitude'}};
 
@@ -457,7 +458,7 @@ describe('Vizabi Readers', function () {
 
         var ddfCsvReader = new ddfcsvReader.default(defaultReaderParams);
 
-        var paramSelect = ['geo', 'time', 'children_per_woman_total_fertility'];
+        var paramSelect = ['geo', 'time', 'females_aged_15_24_unemployment_rate_percent'];
         var paramRecord = {geo: 'africa', 'is--world_4region': 'TRUE', name: 'Africa', name_short: 'Africa', name_long: 'The African continent including Madagascar & other islands', description: 'The entire African continent, Madagascar and some islands make up roughly a quarter of the world\'s total land surface.', latitude: '-14.33333', longitude: '28.5', color: '#00d5e9'};
         var resultMock = {needed: true, convert: {geo: 'geo', latitude: 'geo.latitude', longitude: 'geo.longitude'}};
 
@@ -562,8 +563,8 @@ describe('Vizabi Readers', function () {
 
         var ddfCsvReader = new ddfcsvReader.default(defaultReaderParams);
 
-        var paramQuery = {select: ['geo', 'time', 'children_per_woman_total_fertility'], where: {'geo.is--country': true}, grouping: {}, orderBy: 'time'};
-        var resultMock = {measures: ['children_per_woman_total_fertility'], other: ['geo', 'time']};
+        var paramQuery = {select: ['geo', 'time', 'females_aged_15_24_unemployment_rate_percent'], where: {'geo.is--country': true}, grouping: {}, orderBy: 'time'};
+        var resultMock = {measures: ['females_aged_15_24_unemployment_rate_percent'], other: ['geo', 'time']};
 
         var result = ddfCsvReader.ddf.divideByQuery(paramQuery);
         expect(result).toEqual(resultMock);
@@ -576,16 +577,16 @@ describe('Vizabi Readers', function () {
 
         var ddfCsvReader = new ddfcsvReader.default(defaultReaderParams);
 
-        var paramQuery = {select: ['geo', 'time', 'children_per_woman_total_fertility'], where: {'geo.is--country': true, grouping: {}, orderBy: 'time'}};
+        var paramQuery = {select: ['geo', 'time', 'females_aged_15_24_unemployment_rate_percent'], where: {'geo.is--country': true, grouping: {}, orderBy: 'time'}};
         var resultMock = {
           descriptors: [{
-            fileName:"/base/.data/ddf/ddf--gapminder_world/output/ddf/ddf--datapoints--children_per_woman_total_fertility--by--geo--time.csv",
-            measures:["children_per_woman_total_fertility"],
-            measure:"children_per_woman_total_fertility",
+            fileName:'/base/' + ddfFixturePath + 'ddf--datapoints--females_aged_15_24_unemployment_rate_percent--by--geo--time.csv',
+            measures:["females_aged_15_24_unemployment_rate_percent"],
+            measure:"females_aged_15_24_unemployment_rate_percent",
             other:["geo","time"]
           }],
           fileNames: [
-          '/base/.data/ddf/ddf--gapminder_world/output/ddf/ddf--datapoints--children_per_woman_total_fertility--by--geo--time.csv'
+          '/base/' + ddfFixturePath + 'ddf--datapoints--females_aged_15_24_unemployment_rate_percent--by--geo--time.csv'
         ]};
 
         var result = ddfCsvReader.ddf.getDataPointDescriptorsByIndex(paramQuery);
@@ -599,11 +600,11 @@ describe('Vizabi Readers', function () {
 
         var ddfCsvReader = new ddfcsvReader.default(defaultReaderParams);
 
-        var paramQuery = {select: ['geo', 'time', 'children_per_woman_total_fertility'], where: {'geo.is--country': true}, grouping: {}, orderBy: 'time'};
+        var paramQuery = {select: ['geo', 'time', 'females_aged_15_24_unemployment_rate_percent'], where: {'geo.is--country': true}, grouping: {}, orderBy: 'time'};
         var resultMock = [{
-          fileName: '/base/.data/ddf/ddf--gapminder_world/output/ddf/ddf--datapoints--children_per_woman_total_fertility--by--geo--time.csv',
-          measures: ['children_per_woman_total_fertility'],
-          measure: 'children_per_woman_total_fertility',
+          fileName: '/base/' + ddfFixturePath + 'ddf--datapoints--females_aged_15_24_unemployment_rate_percent--by--geo--time.csv',
+          measures: ['females_aged_15_24_unemployment_rate_percent'],
+          measure: 'females_aged_15_24_unemployment_rate_percent',
           other: ['geo', 'time']
         }];
 
@@ -650,7 +651,7 @@ describe('Vizabi Readers', function () {
           {geo: 'vut', time: new Date('Wed Jan 01 1997 02:00:00 GMT+0200 (EET)'), tsunami_deaths_annual_number: 100}
         ];
 
-        ddfCsvReader.ddf.getDataPoints(paramQuery, function(result){
+        ddfCsvReader.ddf.getDataPoints(paramQuery, function(error, result){
 
           expect(result).toEqual(resultMock);
           done();
