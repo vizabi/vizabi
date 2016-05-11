@@ -4,7 +4,7 @@ import Promise from 'base/promise';
 var index = null;
 var concepts = null;
 var conceptTypeHash = {};
-var entities = null;
+var entities = [];
 
 function Ddf(ddfPath) {
   this.ddfPath = ddfPath;
@@ -17,11 +17,11 @@ function Ddf(ddfPath) {
   parser.href = ddfPath;
 }
 
-Ddf.reset = function () {
+Ddf.prototype.reset = function () {
   index = null;
-  concepts = null;
+  concepts = [];
   conceptTypeHash = {};
-  entities = null;
+  entities = [];
   CACHE.FILE_CACHED = {};
   CACHE.FILE_REQUESTED = {};
 };
@@ -43,11 +43,13 @@ Ddf.prototype.getConceptFileNames = function () {
   var _this = this;
   var result = [];
 
-  index.forEach(function (indexRecord) {
-    if (indexRecord.key === 'concept') {
-      result.push(_this.ddfPath + indexRecord.file);
-    }
-  });
+  if(index) {
+    index.forEach(function (indexRecord) {
+      if (indexRecord.key === 'concept') {
+        result.push(_this.ddfPath + indexRecord.file);
+      }
+    });
+  }
 
   return utils.unique(result);
 };
@@ -101,11 +103,13 @@ Ddf.prototype.getEntityFileNames = function (query) {
     return expectedEntities;
   }
 
-  index.forEach(function (indexRecord) {
-    if (expectedEntities.indexOf(indexRecord.key) >= 0) {
-      result.push(_this.ddfPath + indexRecord.file);
-    }
-  });
+  if(index) {
+    index.forEach(function (indexRecord) {
+      if (expectedEntities.indexOf(indexRecord.key) >= 0) {
+        result.push(_this.ddfPath + indexRecord.file);
+      }
+    });
+  }
 
   return utils.unique(result);
 };
@@ -118,16 +122,19 @@ Ddf.prototype.getHeaderDescriptor = function (select, firstRecord) {
   // following code answers next question:
   // `Is this set of entities contains all of selectable concepts?`
   // or `Is this entities file good for given query?`
-  select.map(function (field) {
-    // headers should not contain data before `.`
-    var pos = field.indexOf('.');
-    var _field = pos >= 0 ? field.substr(pos + 1) : field;
 
-    if (firstRecord[_field]) {
-      convert[_field] = field;
-      count++;
-    }
-  });
+  if(firstRecord) {
+    select.map(function (field) {
+      // headers should not contain data before `.`
+      var pos = field.indexOf('.');
+      var _field = pos >= 0 ? field.substr(pos + 1) : field;
+
+      if (firstRecord[_field]) {
+        convert[_field] = field;
+        count++;
+      }
+    });
+  }
 
   // todo: remove this ugly hack later
   convert.latitude = 'geo.latitude';
@@ -232,18 +239,23 @@ Ddf.prototype.getEntities = function (query, cb) {
     entityActions.push(load(fileName));
   });
 
+  if(!entityActions.length) {
+    cb([]);
+  }
+
   // secondly we should get entities
   Promise.all(entityActions).then(function () {
     var _entities = [];
 
     Object.keys(CACHE.FILE_CACHED).forEach(function (fileName) {
       if (entityFileNames.indexOf(fileName) >= 0) {
-        var headerDescriptor = _this.getHeaderDescriptor(query.select, CACHE.FILE_CACHED[fileName][0]);
-
-        // apply filter only for entities?
-        if (headerDescriptor.needed === true) {
-          _entities = _entities
-            .concat(_this.normalizeAndFilter(headerDescriptor, CACHE.FILE_CACHED[fileName], query.where));
+        if(CACHE.FILE_CACHED[fileName] && CACHE.FILE_CACHED[fileName][0]) {
+          var headerDescriptor = _this.getHeaderDescriptor(query.select, CACHE.FILE_CACHED[fileName][0]);
+          // apply filter only for entities?
+          if (headerDescriptor.needed === true) {
+            _entities = _entities
+              .concat(_this.normalizeAndFilter(headerDescriptor, CACHE.FILE_CACHED[fileName], query.where));
+          }
         }
       }
     });
@@ -262,6 +274,10 @@ Ddf.prototype.getConcepts = function (query, cb) {
   var _this = this;
   var conceptActions = [];
   var conceptFileNames = _this.getConceptFileNames();
+
+  if(!conceptFileNames.length) {
+    cb(conceptActions);
+  }
 
   conceptFileNames.forEach(function (fileName) {
     conceptActions.push(load(fileName));
@@ -386,6 +402,10 @@ Ddf.prototype.getDataPointsContent = function (query, cb) {
     actions.push(load(dataPointDescriptor.fileName));
   });
 
+  if(!actions.length) {
+    return cb();
+  }
+
   Promise.all(actions).then(function () {
     _this.dataPointDescriptors.forEach(function (dataPointDescriptor) {
       dataPointDescriptor.content = CACHE.FILE_CACHED[dataPointDescriptor.fileName];
@@ -476,6 +496,10 @@ Ddf.prototype.getDataPoints = function (query, cb) {
   });
 };
 
+Ddf.prototype.cachedFileExists = function (path) {
+  return typeof CACHE.FILE_CACHED[path] != 'undefined';
+};
+
 //// csv utils
 
 var EVALALLOWED = null;
@@ -541,6 +565,7 @@ function load(path) {
 
     if (!res) {
       reason = 'No permissions or empty file: ' + path + ': ' + error.message;
+      utils.error(reason);
 
       CACHE.FILE_CACHED[path] = null;
       CACHE.FILE_REQUESTED[path].reject(reason);
@@ -549,6 +574,7 @@ function load(path) {
 
     if (error) {
       reason = 'Error Happened While Loading CSV File: ' + path + ': ' + error.message;
+      utils.error(reason);
 
       CACHE.FILE_CACHED[path] = null;
       CACHE.FILE_REQUESTED[path].reject(reason);
@@ -569,6 +595,7 @@ function load(path) {
 //// time utils
 
 function flatten(arr) {
+  arr = arr || [];
   return arr.reduce(function (prev, cur) {
     var more = [].concat(cur).some(Array.isArray);
     return prev.concat(more ? cur.flatten() : cur);
