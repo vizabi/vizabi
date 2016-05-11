@@ -268,7 +268,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     });
 
     //Getting location before dragging label
-    var USALabel = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-labels > g > rect"));
+    var USALabel = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-labels-crop > g.vzb-bc-labels > g > rect"));
     USALabel.getLocation().then(function(initialLocation){
       var initialLocationText = initialLocation.x;
       browser.sleep(2000);
@@ -652,7 +652,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     browser.actions().mouseMove(USABubble).mouseMove({x:0,y:-10}).click().perform();
 
     // Unselect country by click
-    var cross = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-labels > g > g"));
+    var cross = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-labels-crop > g.vzb-bc-labels > g > g"));
     browser.wait(EC.visibilityOf(play), 5000);
     cross.click();
 
