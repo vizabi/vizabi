@@ -155,7 +155,6 @@ var label = function(context) {
       var rectBBox = cache.rectBBox;
       var width = rectBBox.width;
       var height = rectBBox.height;
-      var heightDelta = cache.heightDelta;
 
       //apply limits so that the label doesn't stick out of the visible field
       if(_X - width <= 0) { //check left
@@ -165,8 +164,8 @@ var label = function(context) {
         _X = viewWidth - 23; 
         cache.labelX_ = (_X - _this.xScale(cache.labelX0)) / viewWidth;
       }
-      if(_Y - height * .75 - heightDelta <= 0) { // check top
-        _Y = height * .75 + heightDelta;
+      if(_Y - height * .75 <= 0) { // check top
+        _Y = height * .75;
         cache.labelY_ = (_Y - _this.yScale(cache.labelY0)) / viewHeight;
       } else if(_Y + height * .35 > viewHeight) { //check bottom
         _Y = viewHeight - height * .35;
@@ -633,7 +632,6 @@ var Labels = Component.extend({
 
       //cache label bound rect for reposition
       cached.rectBBox = rect.node().getBBox();
-      cached.heightDelta = labelGroup.node().getBBox().height - cached.rectBBox.height;
       //cached.moveX = 5;
       //cached.moveY = contentBBox.height * .3;
     }
