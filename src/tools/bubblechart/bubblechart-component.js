@@ -468,7 +468,7 @@ var BubbleChartComp = Component.extend({
     } else {
       this.redrawDataPoints();
     }
-    this._trails.run("reveal");
+    this._trails.run("reveal", null, this.duration);
     this.tooltipMobile.classed('vzb-hidden', true);
   },
 
