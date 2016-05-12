@@ -62,6 +62,9 @@ var AxisModel = Hook.extend({
         if (this.scale.domain()[0] != limits.min || this.scale.domain()[1] != limits.max) {
           this.scale.domain([limits.min, limits.max]);
         }
+        if(this.zoomedMin != null && !utils.isDate(this.zoomedMin)) this.zoomedMin = this._parent._parent.time.parseToUnit(this.zoomedMin.toString());
+        if(this.zoomedMax != null && !utils.isDate(this.zoomedMax)) this.zoomedMax = this._parent._parent.time.parseToUnit(this.zoomedMax.toString());
+
         if(!utils.isDate(this.domainMin)) this.domainMin = this.scale.domain()[0];
         if(!utils.isDate(this.domainMax)) this.domainMax = this.scale.domain()[1];
       }
