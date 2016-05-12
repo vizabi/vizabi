@@ -95,8 +95,8 @@ var AxisModel = Hook.extend({
         var limits = this.getLimits(this.which);
         //default domain is based on limits
         domain = [limits.min, limits.max];
-        //domain from metadata can override it if defined
-        domain = this.getMetadata().domain ? this.getMetadata().domain : domain;
+        //domain from concept properties can override it if defined
+        domain = this.getConceptprops().domain ? this.getConceptprops().domain : domain;
         //min and max can override the domain if defined
         domain = this.domainMin!=null && this.domainMax!=null ? [+this.domainMin, +this.domainMax] : domain;
         

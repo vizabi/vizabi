@@ -186,11 +186,11 @@ var Hook = Model.extend({
     
     
   /**
-   * Gets the metadata of the hook's "which"
-   * @returns {Object} metadata
+   * Gets the concept properties of the hook's "which"
+   * @returns {Object} concept properties
    */
-  getMetadata: function() {
-    return this.use !== 'constant' ? this.getDataManager().getMetadata(this.which) : {};
+  getConceptprops: function() {
+    return this.use !== 'constant' ? this.getDataManager().getConceptprops(this.which) : {};
   }    
 });
 

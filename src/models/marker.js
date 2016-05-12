@@ -24,12 +24,12 @@ var Marker = Model.extend({
       
       utils.forEach(this.getSubhooks(), function(hook) {
         if(hook.use !== "indicator") return;
-        var hookMeta = hook.getMetadata();
-        if(!hookMeta) return utils.warn(hook._name + ": " + hook.which + " is not found in metadata.json. \
+        var hookConceptprops = hook.getConceptprops();
+        if(!hookConceptprops) return utils.warn(hook._name + ": " + hook.which + " is not found in conceptprops.json. \
             Check that you read the correct file or server instance... \
             Check that the pointer 'which' of the hook is correct too");
                                         
-        var availability = hookMeta.availability;
+        var availability = hookConceptprops.availability;
         var availabilityForHook = _this.cachedTimeLimits[hook._dataId + hook.which];
           
         if (availabilityForHook){
@@ -37,7 +37,7 @@ var Marker = Model.extend({
             min = availabilityForHook.min;
             max = availabilityForHook.max;
         }else if (availability){
-            //if date limits are supplied by the metadata then use them
+            //if date limits are supplied by the concept properties then use them
             min = time.timeFormat.parse(availability[0]+"");
             max = time.timeFormat.parse(availability[1]+"");
         }else{ 
@@ -363,7 +363,7 @@ var Marker = Model.extend({
 
         if(hook.use !== "property") next = next || d3.bisectLeft(hook.getUnique(dimTime), time);        
 
-        method = hook.getMetadata().interpolation;
+        method = hook.getConceptprops().interpolation;
         filtered = _this.getDataManager().get(hook._dataId, 'nested', f_keys);
         utils.forEach(f_values, function(v) {
           filtered = filtered[v]; //get precise array (leaf)
@@ -395,7 +395,7 @@ var Marker = Model.extend({
           
         if(hook.use !== "property") next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
         
-        method = hook.getMetadata().interpolation;
+        method = hook.getConceptprops().interpolation;
 
 
         utils.forEach(filtered, function(arr, id) {
@@ -423,16 +423,16 @@ var Marker = Model.extend({
   },
 
   /**
-   * Gets the metadata of all hooks
-   * @returns {Object} metadata
+   * Gets the concept properties of all hooks
+   * @returns {Object} concept properties
    */
-  getMetadata: function() {
-    return this.getDataManager().getMetadata();
+  getConceptprops: function() {
+    return this.getDataManager().getConceptprops();
   },
     
   /**
-   * Gets the metadata of all hooks
-   * @returns {Object} metadata
+   * Gets the concept properties of all hooks
+   * @returns {Object} concept properties
    */
   getIndicatorsTree: function() {
     return this.getDataManager().getIndicatorsTree();

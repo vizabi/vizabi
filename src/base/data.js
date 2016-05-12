@@ -255,17 +255,17 @@ var Data = Class.extend({
     return this._collection[queryId][what][id];
   },
 
-  getMetadata: function(which){
-      if(!globals.metadata || !globals.metadata.indicatorsDB) return {};
-      return which ? globals.metadata.indicatorsDB[which] : globals.metadata.indicatorsDB;
+  getConceptprops: function(which){
+      if(!globals.conceptprops || !globals.conceptprops.indicatorsDB) return {};
+      return which ? globals.conceptprops.indicatorsDB[which] : globals.conceptprops.indicatorsDB;
   },
     
   /**
-   * Gets the metadata of all hooks
-   * @returns {Object} metadata
+   * Gets the concept properties of all hooks
+   * @returns {Object} concept properties
    */
   getIndicatorsTree: function() {
-    return globals.metadata && globals.metadata.indicatorsTree ? globals.metadata.indicatorsTree : {};
+    return globals.conceptprops && globals.conceptprops.indicatorsTree ? globals.conceptprops.indicatorsTree : {};
   },
 
   getFrames: function(queryId, framesArray) {
@@ -415,7 +415,7 @@ var Data = Class.extend({
 
       // Check if query.where clause is missing a time field
 
-      var indicatorsDB = _this.getMetadata();
+      var indicatorsDB = _this.getConceptprops();
 
       if(!indicatorsDB) utils.warn("_getFrames in data.js is missing indicatorsDB, it's needed for gap filling");
       if(!framesArray) utils.warn("_getFrames in data.js is missing framesArray, it's needed so much");

@@ -279,7 +279,7 @@ var BubbleMapComponent = Component.extend({
       var _this = this;
 
       this.translator = this.model.language.getTFunction();    
-      var sizeMetadata = this.model.marker.size.getMetadata();
+      var sizeConceptprops = this.model.marker.size.getConceptprops();
 
       this.strings = {
           title: {

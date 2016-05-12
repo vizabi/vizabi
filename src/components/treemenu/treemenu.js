@@ -950,7 +950,7 @@ var TreeMenu = Component.extend({
     if(data == null) data = tree;
     this.wrapper.select('ul').remove();
 
-    var indicatorsDB = _this.model.marker.getMetadata();
+    var indicatorsDB = _this.model.marker.getConceptprops();
 
     var hookType = _this.model.marker[markerID]._type;
 
@@ -1170,7 +1170,7 @@ var TreeMenu = Component.extend({
 
   _setModel: function(what, value, markerID) {
 
-    var indicatorsDB = this.model.marker.getMetadata();
+    var indicatorsDB = this.model.marker.getConceptprops();
 
     var mdl = this.model.marker[markerID];
 

@@ -123,7 +123,7 @@ var IndPicker = Component.extend({
         // hide info el if no data is available for it to make sense
         var hideInfoEl = ((translator("description/" + which) == "description/" + which)
             && (translator("sourceName/" + which) == "sourceName/" + which)
-            && !_this.model.marker[_this.markerID].getMetadata().sourceLink); 
+            && !_this.model.marker[_this.markerID].getConceptprops().sourceLink); 
         this.infoEl.classed("vzb-hidden", hideInfoEl);
     }
     
