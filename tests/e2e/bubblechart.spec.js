@@ -43,11 +43,11 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     });
 
     buttonListAll.then(function(items) {
-      expect(items.length).toBe(7);
+      expect(items.length).toBe(8);
     });
 
     buttonListVisible.then(function(items) {
-      expect(items.length).toBe(5);
+      expect(items.length).toBe(6);
     });
 
   });
