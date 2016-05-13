@@ -12,7 +12,11 @@ var allowTypes = {
 };
 
 var AxisModel = Hook.extend({
-
+  
+  //some hooks can be important. like axis x and y
+  //that means, if X or Y doesn't have data at some point, we can't show markers
+  _important: true,
+  
   /**
    * Default values for this model
    */
