@@ -477,6 +477,7 @@ BubbleChart.define('default_model', {
         use: "constant",
         which: "_default",
         scaleType: "ordinal",
+        _important: false,
         extent: [0, 0.33]
       },
 

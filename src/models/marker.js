@@ -86,11 +86,9 @@ var Marker = Model.extend({
             if(resultKeys.length == 0) resultKeys = keys;
                 
             // Remove the keys from it that are not in this hook
-            if (["color", "size_label"].indexOf(hook._name) == -1) {
-              resultKeys = resultKeys.filter(function(f) {
-                return keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1;
-              })
-            }
+            if (hook._important) resultKeys = resultKeys.filter(function(f) {
+              return keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1;
+            })
         });
         return resultKeys.map(function(d){return {geo: d}});
     },
