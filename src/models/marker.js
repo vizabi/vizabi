@@ -21,9 +21,8 @@ var Marker = Model.extend({
       var time = this._parent.time;
       var min, max, minArray = [], maxArray = [], items = {};      
       if (!this.cachedTimeLimits) this.cachedTimeLimits = {};      
-      
       utils.forEach(this.getSubhooks(), function(hook) {
-        if(hook.use !== "indicator") return;
+        if(hook.use !== "indicator" || !hook._important) return;
         var hookConceptprops = hook.getConceptprops();
         if(!hookConceptprops) return utils.warn(hook._name + ": " + hook.which + " is not found in conceptprops.json. \
             Check that you read the correct file or server instance... \
@@ -73,7 +72,7 @@ var Marker = Model.extend({
 
             // If hook use is constant, then we can provide no additional info about keys
             // We can just hope that we have something else than constants =)
-            if(hook.use === "constant") return;
+            if(hook.use !== "indicator" || !hook._important) return;
 
             // Get keys in data of this hook
             var nested = _this.getDataManager().get(hook._dataId, 'nested', ["geo", "time"]);
@@ -86,7 +85,7 @@ var Marker = Model.extend({
             if(resultKeys.length == 0) resultKeys = keys;
                 
             // Remove the keys from it that are not in this hook
-            if (hook._important) resultKeys = resultKeys.filter(function(f) {
+            resultKeys = resultKeys.filter(function(f) {
               return keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1;
             })
         });
