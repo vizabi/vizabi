@@ -70,7 +70,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     //Clicking USA bubble
     var USABubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
     browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
-      browser.actions().mouseMove(USABubble).mouseMove({x:0, y:-10}).click().perform();
+      browser.actions().mouseMove(USABubble).mouseMove({x:0, y:-15}).click().perform();
     });
 
 
