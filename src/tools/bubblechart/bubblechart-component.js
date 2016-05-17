@@ -239,7 +239,7 @@ var BubbleChartComp = Component.extend({
   },
 
   _rangeBump: function(arg, undo) {
-    var bump = this.activeProfile.maxRadius;
+    var bump = this.activeProfile.maxRadius/2;
     undo = undo?-1:1;
     if(utils.isArray(arg) && arg.length > 1) {
       var z1 = arg[0];
@@ -266,7 +266,7 @@ var BubbleChartComp = Component.extend({
   },
 
 //  _marginUnBump: function(arg) {
-//    var bump = this.profiles[this.getLayoutProfile()].maxRadius;
+//    var bump = this.profiles[this.getLayoutProfile()].maxRadius/2;
 //    if(utils.isObject(arg)) {
 //      return {
 //        left: arg.left - bump,
@@ -833,7 +833,7 @@ var BubbleChartComp = Component.extend({
         scaleType: this.model.marker.axis_y.scaleType,
         toolMargin: margin,
         limitMaxTickNumber: 6,
-        bump: this.activeProfile.maxRadius,
+        bump: this.activeProfile.maxRadius/2,
         constantRakeLength: this.height,
         formatter: this.model.marker.axis_y.getTickFormatter()
       });
@@ -845,7 +845,7 @@ var BubbleChartComp = Component.extend({
       .labelerOptions({
         scaleType: this.model.marker.axis_x.scaleType,
         toolMargin: margin,
-        bump: this.activeProfile.maxRadius,
+        bump: this.activeProfile.maxRadius/2,
         constantRakeLength: this.width,
         formatter: this.model.marker.axis_x.getTickFormatter()
       });
@@ -877,8 +877,8 @@ var BubbleChartComp = Component.extend({
     this.yAxisEl.call(this.yAxis);
     this.xAxisEl.call(this.xAxis);
 
-    this.projectionX.attr("y1", _this.yScale.range()[0] + this.activeProfile.maxRadius);
-    this.projectionY.attr("x2", _this.xScale.range()[0] - this.activeProfile.maxRadius);
+    this.projectionX.attr("y1", _this.yScale.range()[0] + this.activeProfile.maxRadius/2);
+    this.projectionY.attr("x2", _this.xScale.range()[0] - this.activeProfile.maxRadius/2);
 
 
 
