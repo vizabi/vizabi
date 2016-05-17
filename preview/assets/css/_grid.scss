@@ -1,5 +1,5 @@
 $vzbp-width-nav: 110px;
-$vzbp-width-sidebar: 190px;
+$vzbp-width-sidebar: 163px;
 $vzbp-width-state-editor: 250px;
 html {
   overflow-y: scroll;
@@ -20,7 +20,7 @@ p {
 a {
   color: #404040;
   &:hover {
-    color: #333333;
+    color: #111111;
   }
 }
 
@@ -37,14 +37,14 @@ a {
 
 #vzbp-nav {
   @include prefixer(box-sizing, border-box, webkit moz spec);
-  @include position(absolute, 0 null -100px 0);
+  @include position(absolute, 20px null null 0);
   width: $vzbp-width-nav;
   background-color: $vzbp-color-nav;
 }
 
 #vzbp-main {
   @include prefixer(box-sizing, border-box, webkit moz spec);
-  @include position(absolute, 0 $vzbp-width-sidebar 0 $vzbp-width-nav);
+  @include position(absolute, 0 $vzbp-width-sidebar 0 0);
   @include transition(right 0.2s linear);
   @include prefixer(transform, translate3d(0, 0, 0), webkit moz spec);
   &.vzbp-fullscreen {
@@ -63,7 +63,7 @@ a {
   @include position(absolute, 0 0 -100px null);
   width: $vzbp-width-sidebar;
   background-color: $vzbp-color-sidebar;
-  padding: 20px;
+  padding: 20px 5px 20px 15px;
   @include transition(right 0.2s linear);
   @include prefixer(transform, translate3d(0, 0, 0), webkit moz spec);
 }
@@ -92,7 +92,7 @@ a {
   }
 }
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 500px) {
   #vzbp-nav {
     display: none;
   }

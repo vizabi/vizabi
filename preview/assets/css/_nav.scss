@@ -1,10 +1,11 @@
 .vzbp-nav-menu {
+  @include prefixer(user-select, none, webkit moz khtml ms);
   a,
   a:hover {
     display: block;
     text-decoration: none;
-    color: #f2f2f2;
-    padding: 12px;
+    color: #333333;
+    padding: 8px 10px 8px 15px;
     cursor: pointer;
     position: relative;
     &:hover {
@@ -13,18 +14,17 @@
     }
     &.active,
     &.active:hover {
-      background: #333333;
-      &::after {
+      &::before {
         position: absolute;
         content: '';
         display: block;
         width: 0;
         height: 0;
         border-style: solid;
-        border-width: 5px 6px 5px 0;
-        border-color: transparent #f0f1f5 transparent transparent;
-        right: 0px;
-        top: 14px;
+        border-width: 25px 9px 5px 0;
+        border-color: #333333;
+        left: 0px;
+        top: 0px;
       }
     }
   }
