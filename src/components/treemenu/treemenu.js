@@ -83,6 +83,9 @@ var Menu = Class.extend({
     this._setDirectionClass();
     this.menuItems = [];
     var menuItemsHolder;
+    
+    if(this.entity.empty()) return this;
+
     this.entity.each(function() {
       menuItemsHolder = d3.selectAll(this.childNodes).filter(function() {
         return d3.select(this).classed(css.list);
@@ -885,19 +888,12 @@ var TreeMenu = Component.extend({
 
       //translation integration
       var translationMatch = function(value, data, i) {
-        var arr = [];
-        if(_this.langStrings()) {
-          for(var language in _this.langStrings()) {
-            for(var key in _this.langStrings()[language]) {
+        var languageId = _this.model.language.id;
 
-              if(key.indexOf('indicator/') == 0 &&
-                //regexp: match everything until the last occurence of "/"
-                key.replace(/.*\//,"") == data[i][OPTIONS.SEARCH_PROPERTY] &&
-                _this.langStrings()[language][key].toLowerCase().indexOf(value.toLowerCase()) >= 0) {
-                return true;
-              };
-            };
-          };
+        if(_this.langStrings()) {
+          var translate = _this.langStrings()[languageId]['indicator/' + data[i][OPTIONS.SEARCH_PROPERTY]] ||
+            _this.langStrings()[languageId]['indicator' + '/' + _this.model.marker[markerID]._type + '/' + data[i][OPTIONS.SEARCH_PROPERTY]];
+          if(translate && translate.toLowerCase().indexOf(value.toLowerCase()) >= 0) return true;
         };
         return false;
       };
@@ -914,21 +910,21 @@ var TreeMenu = Component.extend({
           }
         }
       };
-      matching(tree.children);
+      matching(_this.dataFiltered.children);
       return matches;
     };
 
-    var searchIt = function() {
-      var value = input.node().value;
+    var searchIt = utils.debounce(function() {
+        var value = input.node().value;
 
-      if(value.length >= OPTIONS.SEARCH_MIN_STR) {
-        _this.redraw(getMatches(value));
-      } else {
-        _this.redraw();
-      }
-    };
+        if(value.length >= OPTIONS.SEARCH_MIN_STR) {
+          _this.redraw(getMatches(value), true);  
+        } else {
+          _this.redraw();
+        }
+      }, 250);
 
-    input.on('keyup', searchIt);
+    input.on('input', searchIt);
   },
 
   _selectIndicator: function(value) {
@@ -938,46 +934,55 @@ var TreeMenu = Component.extend({
 
 
   //function is redrawing data and built structure
-  redraw: function(data) {
+  redraw: function(data, useDataFiltered) {
     var _this = this;
+
+    var dataFiltered;
+    
+    var indicatorsDB = _this.model.marker.getConceptprops();
+
+    var hookType = _this.model.marker[markerID]._type;
+
+    if(useDataFiltered) {
+      dataFiltered = data;
+    } else {
+      if(data == null) data = tree;
+
+      var allowedIDs = utils.keys(indicatorsDB).filter(function(f) {
+        //check if indicator is denied to show with allow->names->!indicator
+        if(_this.model.marker[markerID].allow && _this.model.marker[markerID].allow.names
+          && _this.model.marker[markerID].allow.names.indexOf('!' + f) != -1) return false;
+        //keep indicator if nothing is specified in tool properties
+        if(!_this.model.marker[markerID].allow || !_this.model.marker[markerID].allow.scales) return true;
+        //keep indicator if any scale is allowed in tool properties
+        if(_this.model.marker[markerID].allow.scales[0] == "*") return true;
+
+        // if no scales defined, all are allowed
+        if (!indicatorsDB[f].scales) return true
+
+        //check if there is an intersection between the allowed tool scale types and the ones of indicator
+        for(var i = indicatorsDB[f].scales.length - 1; i >= 0; i--) {
+          if(_this.model.marker[markerID].allow.scales.indexOf(indicatorsDB[f].scales[i]) > -1) return true;
+        }
+
+        return false;
+      })
+
+      dataFiltered = utils.pruneTree(data, function(f) {
+        return allowedIDs.indexOf(f.id) > -1
+      });
+      
+      this.dataFiltered = dataFiltered;
+    }
+
+    this.wrapper.select('ul').remove();
+ 
     this.element.select('.' + css.title).select("span")
       .text(this.translator("buttons/" + markerID));
 
     this.element.select('.' + css.search)
       .attr("placeholder", this.translator("placeholder/search") + "...");
-
-
-    if(data == null) data = tree;
-    this.wrapper.select('ul').remove();
-
-    var indicatorsDB = _this.model.marker.getConceptprops();
-
-    var hookType = _this.model.marker[markerID]._type;
-
-    var allowedIDs = utils.keys(indicatorsDB).filter(function(f) {
-      //check if indicator is denied to show with allow->names->!indicator
-      if(_this.model.marker[markerID].allow && _this.model.marker[markerID].allow.names
-        && _this.model.marker[markerID].allow.names.indexOf('!' + f) != -1) return false;
-      //keep indicator if nothing is specified in tool properties
-      if(!_this.model.marker[markerID].allow || !_this.model.marker[markerID].allow.scales) return true;
-      //keep indicator if any scale is allowed in tool properties
-      if(_this.model.marker[markerID].allow.scales[0] == "*") return true;
-
-      // if no scales defined, all are allowed
-      if (!indicatorsDB[f].scales) return true
-
-      //check if there is an intersection between the allowed tool scale types and the ones of indicator
-      for(var i = indicatorsDB[f].scales.length - 1; i >= 0; i--) {
-        if(_this.model.marker[markerID].allow.scales.indexOf(indicatorsDB[f].scales[i]) > -1) return true;
-      }
-
-      return false;
-    })
-
-    var dataFiltered = utils.pruneTree(data, function(f) {
-      return allowedIDs.indexOf(f.id) > -1
-    });
-
+ 
     var createSubmeny = function(select, data, toplevel) {
       if(!data.children) return;
       var _select = toplevel ? select : select.append('div')
@@ -1089,43 +1094,46 @@ var TreeMenu = Component.extend({
       OPTIONS.MENU_DIRECTION = MENU_HORIZONTAL;
     }
     createSubmeny(this.wrapper, dataFiltered, true);
-    this.menuEntity = new Menu(null, this.wrapper.select('.' + css.list_top_level));
+    this.menuEntity = new Menu(null, this.wrapper.selectAll('.' + css.list_top_level));
     if(this.menuEntity) this.menuEntity.setDirection(OPTIONS.MENU_DIRECTION);
     if(this.menuEntity) this.menuEntity.setWidth(this.activeProfile.col_width, true, true);
-    var pointer = "_default";
-    if(allowedIDs.indexOf(this.model.marker[markerID].which) > -1) pointer = this.model.marker[markerID].which;
-    if(!indicatorsDB[pointer].scales) {
-      this.element.select('.' + css.scaletypes).classed(css.hidden, true);
-      return true;
-    }
-    var scaleTypesData = indicatorsDB[pointer].scales.filter(function(f) {
-      if(!_this.model.marker[markerID].allow || !_this.model.marker[markerID].allow.scales) return true;
-      if(_this.model.marker[markerID].allow.scales[0] == "*") return true;
-      return _this.model.marker[markerID].allow.scales.indexOf(f) > -1;
-    });
-    if(scaleTypesData.length == 0) {
-      this.element.select('.' + css.scaletypes).classed(css.hidden, true);
-    } else {
+    
+    if(!useDataFiltered) {
+      var pointer = "_default";
+      if(allowedIDs.indexOf(this.model.marker[markerID].which) > -1) pointer = this.model.marker[markerID].which;
+      if(!indicatorsDB[pointer].scales) {
+        this.element.select('.' + css.scaletypes).classed(css.hidden, true);
+        return true;
+      }
+      var scaleTypesData = indicatorsDB[pointer].scales.filter(function(f) {
+        if(!_this.model.marker[markerID].allow || !_this.model.marker[markerID].allow.scales) return true;
+        if(_this.model.marker[markerID].allow.scales[0] == "*") return true;
+        return _this.model.marker[markerID].allow.scales.indexOf(f) > -1;
+      });
+      if(scaleTypesData.length == 0) {
+        this.element.select('.' + css.scaletypes).classed(css.hidden, true);
+      } else {
 
-      var scaleTypes = this.element.select('.' + css.scaletypes).classed(css.hidden, false).selectAll("span")
-          .data(scaleTypesData, function(d){return d});
+        var scaleTypes = this.element.select('.' + css.scaletypes).classed(css.hidden, false).selectAll("span")
+            .data(scaleTypesData, function(d){return d});
 
-      scaleTypes.exit().remove();
+        scaleTypes.exit().remove();
 
-      scaleTypes.enter().append("span")
-        .on("click", function(d){
-          d3.event.stopPropagation();
-          _this._setModel("scaleType", d, markerID)
-        });
+        scaleTypes.enter().append("span")
+          .on("click", function(d){
+            d3.event.stopPropagation();
+            _this._setModel("scaleType", d, markerID)
+          });
 
-      scaleTypes
-        .classed(css.scaletypesDisabled, scaleTypesData.length < 2)
-        .classed(css.scaletypesActive, function(d){
-          return d == _this.model.marker[markerID].scaleType && scaleTypesData.length > 1;
-        })
-        .text(function(d){
-          return _this.translator("scaletype/" + d);
-        });
+        scaleTypes
+          .classed(css.scaletypesDisabled, scaleTypesData.length < 2)
+          .classed(css.scaletypesActive, function(d){
+            return d == _this.model.marker[markerID].scaleType && scaleTypesData.length > 1;
+          })
+          .text(function(d){
+            return _this.translator("scaletype/" + d);
+          });
+      }
 
     }
 
