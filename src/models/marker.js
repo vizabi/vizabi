@@ -72,7 +72,7 @@ var Marker = Model.extend({
 
             // If hook use is constant, then we can provide no additional info about keys
             // We can just hope that we have something else than constants =)
-            if(hook.use !== "indicator") return;
+            if(hook.use === "constant") return;
 
             // Get keys in data of this hook
             var nested = _this.getDataManager().get(hook._dataId, 'nested', ["geo", "time"]);
