@@ -72,7 +72,7 @@ var Marker = Model.extend({
 
             // If hook use is constant, then we can provide no additional info about keys
             // We can just hope that we have something else than constants =)
-            if(hook.use !== "indicator" || !hook._important) return;
+            if(hook.use !== "indicator") return;
 
             // Get keys in data of this hook
             var nested = _this.getDataManager().get(hook._dataId, 'nested', ["geo", "time"]);
@@ -85,7 +85,7 @@ var Marker = Model.extend({
             if(resultKeys.length == 0) resultKeys = keys;
                 
             // Remove the keys from it that are not in this hook
-            resultKeys = resultKeys.filter(function(f) {
+            if(hook._important) resultKeys = resultKeys.filter(function(f) {
               return keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1;
             })
         });
