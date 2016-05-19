@@ -465,6 +465,14 @@ BubbleChart.define('default_model', {
         }
       }
     },
+    entities_minimap: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo.cat": ["world_4region"]
+        }
+      }
+    },
     marker: {
       space: ["entities", "time"],
       type: "geometry",
@@ -518,6 +526,19 @@ BubbleChart.define('default_model', {
         },
         extent: [0.04, 0.85]
       }
+    },
+    marker_minimap:{
+      space: ["entities_minimap"],
+        type: "geometry",
+        shape: "svg",
+        label: {
+          use: "property",
+          which: "geo.name"
+        },
+        geoshape: {
+          use: "property",
+          which: "shape_lores_svg"
+        }
     }
   },
   data: {
