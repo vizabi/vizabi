@@ -23,7 +23,7 @@ var BarRankChart = Tool.extend('BarRankChart', {
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
-      model: ["state.time"]
+      model: ["state.time", "state.entities", "state.marker"]
     }, {
       component: dialogs,
       placeholder: '.vzb-tool-dialogs',
