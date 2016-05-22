@@ -81,6 +81,7 @@ var BubbleChartComp = Component.extend({
         if(path.indexOf("marker.size_label") !== -1) return;
 
         if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1) {
+          if(!_this.yScale || !_this.xScale) return; //abort if building of the scale is in progress
           _this.updateSize();
           _this.updateMarkerSizeLimits();
           _this._trails.run("findVisible");
