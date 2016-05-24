@@ -1142,20 +1142,13 @@ export var flattenDates = function(obj, timeFormat) {
   forEach(obj, function(val, key) {
     //todo: hack to flatten time unit objects to strings
     if (key === 'marker') {
-      ["x", "y"].map(function(name) {
-        if (val["axis_" + name] && val["axis_" + name].scaleType === "time") {
-          if(isDate(val["axis_" + name].domainMin)) {
-            val["axis_" + name].domainMin = timeFormat(val["axis_" + name].domainMin);
-          }
-          if(isDate(val["axis_" + name].domainMax)) {
-            val["axis_" + name].domainMax = timeFormat(val["axis_" + name].domainMax);
-          }
-          if(isDate(val["axis_" + name].zoomedMin)) {
-            val["axis_" + name].zoomedMin = timeFormat(val["axis_" + name].zoomedMin);
-          }
-          if(isDate(val["axis_" + name].zoomedMax)) {
-            val["axis_" + name].zoomedMax = timeFormat(val["axis_" + name].zoomedMax);
-          }
+      ["axis_x", "axis_y"].map(function(name) {
+        var hook = val[name];
+        if (hook && hook.scaleType === "time") {
+          if(isDate(hook.domainMin)) hook.domainMin = timeFormat(hook.domainMin);
+          if(isDate(hook.domainMax)) hook.domainMax = timeFormat(hook.domainMax);
+          if(isDate(hook.zoomedMin)) hook.zoomedMin = timeFormat(hook.zoomedMin);
+          if(isDate(hook.zoomedMax)) hook.zoomedMax = timeFormat(hook.zoomedMax);
         }
       });
     } else if(key === 'time') {

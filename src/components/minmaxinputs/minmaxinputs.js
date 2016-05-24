@@ -29,6 +29,9 @@ var MinMaxInputs = Component.extend({
             name: "marker",
             type: "model"
         }, {
+            name: "time",
+            type: "time"
+        }, {
             name: "language",
             type: "language"
         }];
@@ -120,35 +123,12 @@ var MinMaxInputs = Component.extend({
       this.el_zoomed_fieldMin.classed('vzb-hidden', !this.ui.selectZoomedMinMax);
       this.el_zoomed_fieldMax.classed('vzb-hidden', !this.ui.selectZoomedMinMax);
 
-      var formatter = d3.format(".2r");
-      var timeFormatter = this.model.marker._parent.time.timeFormat;          
+      var formatter = this.model.marker[this.markerID].scaleType==="time"? this.model.time.timeFormat : d3.format(".2r");
     
-      if (utils.isDate(this.model.marker[this.markerID].getScale().domain()[0])) {
-        this.el_domain_fieldMin.property("value", timeFormatter(this.model.marker[this.markerID].getScale().domain()[0]));
-      } else {
-        this.el_domain_fieldMin.property("value", formatter(this.model.marker[this.markerID].getScale().domain()[0]));
-      }
-      
-      if (utils.isDate(this.model.marker[this.markerID].getScale().domain()[1])) {
-        this.el_domain_fieldMax.property("value", timeFormatter(this.model.marker[this.markerID].getScale().domain()[1]));
-      } else {
-        this.el_domain_fieldMax.property("value", formatter(this.model.marker[this.markerID].getScale().domain()[1]));
-      }
-
-/*
+      this.el_domain_fieldMin.property("value", formatter(this.model.marker[this.markerID].getScale().domain()[0]));
+      this.el_domain_fieldMax.property("value", formatter(this.model.marker[this.markerID].getScale().domain()[1]));
       this.el_zoomed_fieldMin.property("value", formatter(this.model.marker[this.markerID].zoomedMin));
       this.el_zoomed_fieldMax.property("value", formatter(this.model.marker[this.markerID].zoomedMax));
-*/
-      if (utils.isDate(this.model.marker[this.markerID].zoomedMin)) {
-        this.el_zoomed_fieldMin.property("value", timeFormatter(this.model.marker[this.markerID].zoomedMin));
-      } else {
-        this.el_zoomed_fieldMin.property("value", formatter(this.model.marker[this.markerID].zoomedMin));
-      }
-      if (utils.isDate(this.model.marker[this.markerID].zoomedMax)) {
-        this.el_zoomed_fieldMax.property("value", timeFormatter(this.model.marker[this.markerID].zoomedMax));
-      } else {
-        this.el_zoomed_fieldMax.property("value", formatter(this.model.marker[this.markerID].zoomedMax));
-      }
     },
 
     _setModel: function(what, value) {

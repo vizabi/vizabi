@@ -302,7 +302,8 @@ export default Class.extend({
                     _this.yScale.range(yRange);
                 }
 
-                var formatter = function(n) { return d3.round(n, 2); };
+                var formatterX = function(n) { return _this.model.marker.axis_x.scaleType==="time"? n : d3.round(n, 2); };
+                var formatterY = function(n) { return _this.model.marker.axis_y.scaleType==="time"? n : d3.round(n, 2); };
 
                 var zoomedXRange = xRangeBoundsBumped;
                 var zoomedYRange = yRangeBoundsBumped;
@@ -315,24 +316,15 @@ export default Class.extend({
                 zoomedXRange[1] = xRangeBounds[1] < xRange[1] ? xRangeBounds[1] : xRange[1];
                 zoomedYRange[0] = yRangeBounds[0] < yRange[0] ? yRangeBounds[0] : yRange[0];
                 zoomedYRange[1] = yRangeBounds[1] > yRange[1] ? yRangeBounds[1] : yRange[1];
-                var zoomedMinMax = {
-                  axis_x: {
-                    zoomedMin: _this.xScale.invert(zoomedXRange[0]),
-                    zoomedMax: _this.xScale.invert(zoomedXRange[1])
-                  },
-                  axis_y: {
-                    zoomedMin: _this.yScale.invert(zoomedYRange[0]),
-                    zoomedMax: _this.yScale.invert(zoomedYRange[1])
-                  }
-                };
-              _this._zoomedXYMinMax = {
+              
+                _this._zoomedXYMinMax = {
                     axis_x: {
-                     zoomedMin: utils.isDate(zoomedMinMax.axis_x.zoomedMin)? zoomedMinMax.axis_x.zoomedMin :formatter(zoomedMinMax.axis_x.zoomedMin),
-                     zoomedMax: utils.isDate(zoomedMinMax.axis_x.zoomedMax)? zoomedMinMax.axis_x.zoomedMax :formatter(zoomedMinMax.axis_x.zoomedMax)
+                      zoomedMin: formatterX(_this.xScale.invert(zoomedXRange[0])),
+                      zoomedMax: formatterX(_this.xScale.invert(zoomedXRange[1]))
                     },
                     axis_y: {
-                      zoomedMin: utils.isDate(zoomedMinMax.axis_y.zoomedMin)? zoomedMinMax.axis_y.zoomedMin :formatter(zoomedMinMax.axis_y.zoomedMin),
-                      zoomedMax: utils.isDate(zoomedMinMax.axis_y.zoomedMax)? zoomedMinMax.axis_y.zoomedMax :formatter(zoomedMinMax.axis_y.zoomedMax)
+                      zoomedMin: formatterY(_this.yScale.invert(zoomedYRange[0])),
+                      zoomedMax: formatterY(_this.yScale.invert(zoomedYRange[1]))
                     }
                 };
 
