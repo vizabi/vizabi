@@ -7,8 +7,7 @@ import {
   bubblesize,
   colorlegend,
   indicatorpicker,
-  simplecheckbox,
-  minmaxinputs
+  simplecheckbox
 }
 from 'components/_index';
 

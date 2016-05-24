@@ -302,7 +302,8 @@ export default Class.extend({
                     _this.yScale.range(yRange);
                 }
 
-                var formatter = function(n) { return d3.round(n, 2); };
+                var formatterX = function(n) { return _this.model.marker.axis_x.scaleType==="time"? n : d3.round(n, 2); };
+                var formatterY = function(n) { return _this.model.marker.axis_y.scaleType==="time"? n : d3.round(n, 2); };
 
                 var zoomedXRange = xRangeBoundsBumped;
                 var zoomedYRange = yRangeBoundsBumped;
@@ -315,17 +316,17 @@ export default Class.extend({
                 zoomedXRange[1] = xRangeBounds[1] < xRange[1] ? xRangeBounds[1] : xRange[1];
                 zoomedYRange[0] = yRangeBounds[0] < yRange[0] ? yRangeBounds[0] : yRange[0];
                 zoomedYRange[1] = yRangeBounds[1] > yRange[1] ? yRangeBounds[1] : yRange[1];
-
+              
                 _this._zoomedXYMinMax = {
                     axis_x: {
-                     zoomedMin: formatter(_this.xScale.invert(zoomedXRange[0])),
-                     zoomedMax: formatter(_this.xScale.invert(zoomedXRange[1]))
+                      zoomedMin: formatterX(_this.xScale.invert(zoomedXRange[0])),
+                      zoomedMax: formatterX(_this.xScale.invert(zoomedXRange[1]))
                     },
                     axis_y: {
-                     zoomedMin: formatter(_this.yScale.invert(zoomedYRange[0])),
-                     zoomedMax: formatter(_this.yScale.invert(zoomedYRange[1]))
+                      zoomedMin: formatterY(_this.yScale.invert(zoomedYRange[0])),
+                      zoomedMax: formatterY(_this.yScale.invert(zoomedYRange[1]))
                     }
-                }
+                };
 
                 _this.model.marker.set(_this._zoomedXYMinMax, null, false /*avoid storing it in URL*/);
 

@@ -122,7 +122,7 @@ var TimeModel = Model.extend({
     var keys = Object.keys(formats), i = 0; 
     for (; i < keys.length; i++) {
       var dateObject = formats[keys[i]].parse(timeString);
-      if (date) return { unit: keys[i], time: dateObject };
+      if (dateObject) return { unit: keys[i], time: dateObject };
     }
     return null;
   },
