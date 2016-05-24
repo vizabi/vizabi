@@ -50,6 +50,10 @@ var BubbleChartComp = Component.extend({
         if(_this.model.marker.color.scaleType === 'time') {
           _this.model.marker.color.scale = null;
         }
+        _this.updateLockNonSelected();
+      },
+      'change:time.end': function(evt, original) {
+        _this.updateLockNonSelected();
       },
       "change:time.record": function() {
         //console.log("change time record");
@@ -411,6 +415,17 @@ var BubbleChartComp = Component.extend({
       _this._trails.run(["recolor", "opacityHandler", "findVisible", "reveal"]);
       if(_this.model.ui.adaptMinMaxZoom) _this._panZoom.expandCanvas();
     });
+  },
+  
+  /*
+    * Update lockNonSelected to current time start and end.
+    */
+  updateLockNonSelected: function() {
+    if(this.model.ui.chart.lockNonSelected) {
+      var time = this.model.time.timeFormat.parse("" + this.model.ui.chart.lockNonSelected);
+      if(time < this.model.time.start) this.model.ui.chart.lockNonSelected = this.model.time.timeFormat(this.model.time.start);
+      if(time > this.model.time.end) this.model.ui.chart.lockNonSelected = this.model.time.timeFormat(this.model.time.end);       
+    }
   },
 
     /*
