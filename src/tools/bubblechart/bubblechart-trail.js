@@ -57,6 +57,8 @@ export default Class.extend({
         })
         .each(function(d, index) {
           var defer = new Promise();
+          // used for prevent move trail start time forward when we have empty values at end of time range
+          d.firstAvailableSegment = null;
           promises.push(defer);
           var trailSegmentData = timePoints.map(function(m) {
             return {
@@ -320,13 +322,15 @@ export default Class.extend({
             segment.valueC = frame.color[d[KEY]];
 
             if(segment.valueY==null || segment.valueX==null || segment.valueS==null) {
-              if (_context.time - trailStartTime > 0) { // move trail start time forward because previous values are empty
+              if (_context.time - trailStartTime > 0 && (!d.firstAvailableSegment || d.firstAvailableSegment - segment.t > 0)) { // move trail start time forward because previous values are empty
                 d.trailStartTime = _context.model.time.timeFormat(_context.model.time.incrementTime(trailStartTime));
                 trailStartTime = _context.model.time.timeFormat.parse("" + d.trailStartTime);
               }
               resolve();
             } else {
-              
+              if (!d.firstAvailableSegment || d.firstAvailableSegment - segment.t > 0) {
+                d.firstAvailableSegment = segment.t;
+              }
               // fix label position if it not in correct place
               var cache = _context.labels.cached[d[KEY]];
               if (trailStartTime && trailStartTime.toString() == segment.t.toString()) {
