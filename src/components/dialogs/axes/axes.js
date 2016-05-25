@@ -27,7 +27,7 @@ var Axes = Dialog.extend({
     },{
       component: minmaxinputs,
       placeholder: '.vzb-xaxis-minmax',
-      model: ["state.marker", "language"],
+      model: ["state.marker", "state.time", "language"],
       markerID: "axis_x",
       ui: {
         selectDomainMinMax: false,
@@ -41,7 +41,7 @@ var Axes = Dialog.extend({
     }, {
       component: minmaxinputs,
       placeholder: '.vzb-yaxis-minmax',
-      model: ["state.marker", "language"],
+      model: ["state.marker", "state.time", "language"],
       markerID: "axis_y",
       ui: {
         selectDomainMinMax: false,

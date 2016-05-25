@@ -66,6 +66,9 @@ var AxisModel = Hook.extend({
         if (this.scale.domain()[0] != limits.min || this.scale.domain()[1] != limits.max) {
           this.scale.domain([limits.min, limits.max]);
         }
+        
+        //restore the correct object type for time values
+        //TODO: find a better way to get to the parser
         if(this.zoomedMin != null && !utils.isDate(this.zoomedMin)) this.zoomedMin = this._parent._parent.time.parseToUnit(this.zoomedMin.toString());
         if(this.zoomedMax != null && !utils.isDate(this.zoomedMax)) this.zoomedMax = this._parent._parent.time.parseToUnit(this.zoomedMax.toString());
 
