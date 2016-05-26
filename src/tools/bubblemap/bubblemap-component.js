@@ -608,9 +608,9 @@ var BubbleMapComponent = Component.extend({
                   .attr("r", d.r);
           }
 
-          _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], valueS, d.label, duration);
+          _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], valueS, valueC, d.label, duration);
         } else {
-          _this._updateLabel(d, index, 0, 0, valueS, valueL, duration);
+          _this._updateLabel(d, index, 0, 0, valueS, valueC, valueL, duration);
         }
 
       });
@@ -872,7 +872,7 @@ var BubbleMapComponent = Component.extend({
 
   },
 
-  _updateLabel: function(d, index, valueX, valueY, valueS, valueL, duration) {
+  _updateLabel: function(d, index, valueX, valueY, valueS, valueC, valueL, duration) {
     var _this = this;
     var KEY = this.KEY;
     if(d[KEY] == _this.druging) return;
@@ -887,8 +887,9 @@ var BubbleMapComponent = Component.extend({
       cache.labelX0 = valueX / this.width;
       cache.labelY0 = valueY / this.height;
       cache.scaledS0 = valueS ? utils.areaToRadius(_this.sScale(valueS)) : null;
+      cache.scaledC0 = valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH;
              
-      this.labels.updateLabel(d, index, cache, valueX / this.width, valueY / this.height, valueS, valueL, valueLST, duration, showhide);
+      this.labels.updateLabel(d, index, cache, valueX / this.width, valueY / this.height, valueS, valueC, valueL, valueLST, duration, showhide);
     }
   },
 

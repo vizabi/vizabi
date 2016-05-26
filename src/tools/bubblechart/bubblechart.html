@@ -14,6 +14,10 @@
         <g class="vzb-bc-trails"></g>
         <g class="vzb-bc-bubbles"></g>
         <g class="vzb-bc-lines"></g>
+        <g class="vzb-bc-bubble-crown vzb-hidden">
+          <circle class="vzb-crown-glow" filter="url(#vzb-glow-filter)"></circle>
+          <circle class="vzb-crown"></circle>
+        </g>        
       </svg>        
 
       <g class="vzb-bc-axis-y-title"></g>
@@ -35,10 +39,16 @@
 
       <rect class="vzb-bc-zoom-rect"></rect>
       <g class="vzb-bc-tooltip vzb-hidden">
-        <rect class="vzb-bc-tooltip-border"></rect>
-        <text class="vzb-bc-tooltip-text"></text>
+        <rect class="vzb-tooltip-glow" filter="url(#vzb-glow-filter)"></rect>
+        <rect class="vzb-tooltip-border"></rect>
+        <text class="vzb-tooltip-text"></text>
       </g>
     </g>
+    <defs>
+      <filter id="vzb-glow-filter" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2"></feGaussianBlur>
+      </filter>
+    </defs>
   </svg>
   <!-- This could possibly be another component -->
   <div class="vzb-tooltip vzb-hidden vzb-tooltip-mobile"></div>

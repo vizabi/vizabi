@@ -77,6 +77,7 @@ var BubbleChartComp = Component.extend({
           return;
         }
 
+        if(path.indexOf("marker.color") !== -1) return;
         if(path.indexOf("marker.size") !== -1) return;
         if(path.indexOf("marker.size_label") !== -1) return;
 
@@ -165,12 +166,18 @@ var BubbleChartComp = Component.extend({
         _this.redrawDataPointsOnlySize();
         _this._trails.run("resize");
       },
-      'change:marker.color.palette': function(evt, path) {
+      'change:marker.color': function(evt, path) {
         if(!_this._readyOnce) return;
         //console.log("EVENT change:marker:color:palette");
         _this.redrawDataPointsOnlyColors();
         _this._trails.run("recolor");
       },
+      // 'change:marker.color.palette': function(evt, path) {
+      //   if(!_this._readyOnce) return;
+      //   //console.log("EVENT change:marker:color:palette");
+      //   _this.redrawDataPointsOnlyColors();
+      //   _this._trails.run("recolor");
+      // },
       'change:entities.opacitySelectDim': function() {
         _this.updateBubbleOpacity();
       },
@@ -323,6 +330,7 @@ var BubbleChartComp = Component.extend({
     this.eventArea = this.element.select('.vzb-bc-eventarea');
     
     this.entityBubbles = null;
+    this.bubbleCrown = this.element.select('.vzb-bc-bubble-crown');
     this.tooltip = this.element.select('.vzb-bc-tooltip');
     this.tooltipMobile = this.element.select('.vzb-tooltip-mobile');
     //component events
@@ -700,8 +708,8 @@ var BubbleChartComp = Component.extend({
         var isSelected = _this.model.entities.isSelected(d);
         _this.model.entities.selectEntity(d);
         //return to highlighted state
-        if(!utils.isTouchDevice() && isSelected) {
-            _this.model.entities.highlightEntity(d);
+        if(!utils.isTouchDevice()) {
+            if(isSelected) _this.model.entities.highlightEntity(d);
             _this.highlightDataPoints();
         }
       }
@@ -980,20 +988,55 @@ var BubbleChartComp = Component.extend({
 
   redrawDataPointsOnlyColors: function() {
     var _this = this;
+
+    var valuesNow;
     var KEY = this.KEY;
 
-    var values = _this.frame;
+
     var time = this.model.time.value;
+
     if(this.model.ui.chart.lockNonSelected && this.someSelected) {
       time = this.model.time.timeFormat.parse("" + this.model.ui.chart.lockNonSelected);
     }
-    this.model.marker.getFrame(time, function(valuesNow) {
-      _this.entityBubbles.style("fill", function(d) {
+    this.model.marker.getFrame(time, function(valuesLocked) {
+      if(!_this._frameIsValid(valuesLocked)) return utils.warn("redrawDataPointsOnlyColor: empty data received from marker.getFrames(). doing nothing");
 
-      var valueC = _this.model.entities.isSelected(d) && _this.model.ui.chart.lockNonSelected ? valuesNow.color[d[KEY]] : values.color[d[KEY]];
+      valuesNow = _this.frame;
+      _this.entityBubbles.each(function(d, index) {
 
-      return valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH;
-      });
+      var selected = _this.model.entities.isSelected(d);
+
+      var valueC = selected && _this.model.ui.chart.lockNonSelected ? valuesLocked.color[d[KEY]] : valuesNow.color[d[KEY]];
+
+      var scaledC = valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH;
+
+      d3.select(this).style("fill", scaledC);
+
+      //update lines of labels
+      if(selected) {
+
+        var select = utils.find(_this.model.entities.select, function(f) {
+          return f[KEY] == d[KEY]
+        });
+
+        var trailStartTime = _this.model.time.timeFormat.parse("" + select.trailStartTime);
+
+        _this.model.marker.getFrame(trailStartTime, function(valuesTrailStart) {
+          if(!valuesTrailStart) return utils.warn("redrawDataPointsOnlyColor: empty data received from marker.getFrames(). doing nothing");
+          
+          var cache = {};
+          if(!_this.model.ui.chart.trails || trailStartTime - _this.time == 0) {
+            cache.scaledC0 = scaledC;
+          } else {
+            var valueC = valuesTrailStart.color[d[KEY]];
+            cache.scaledC0 = valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH;
+          }
+          
+          _this.labels.updateLabelOnlyColor(d, index, cache);
+
+        });
+      }
+    });
     });
 
   },
@@ -1001,7 +1044,7 @@ var BubbleChartComp = Component.extend({
   redrawDataPointsOnlySize: function() {
     var _this = this;
 
-    var values, valuesNow;
+    var valuesNow;
     var KEY = this.KEY;
 
 
@@ -1018,7 +1061,7 @@ var BubbleChartComp = Component.extend({
 
       var selected = _this.model.entities.isSelected(d);
 
-      var valueS = selected && _this.model.ui.chart.lockNonSelected ? valuesNow.size[d[KEY]] : valuesLocked.size[d[KEY]];
+      var valueS = selected && _this.model.ui.chart.lockNonSelected ? valuesLocked.size[d[KEY]] : valuesNow.size[d[KEY]];
       if(valueS == null) return;
 
       var scaledS = utils.areaToRadius(_this.sScale(valueS));
@@ -1172,10 +1215,10 @@ var BubbleChartComp = Component.extend({
 
     } // data exists
 
-    _this._updateLabel(d, index, valueX, valueY, valueS, valueL, valueLST, duration, showhide);
+    _this._updateLabel(d, index, valueX, valueY, valueS, valueC, valueL, valueLST, duration, showhide);
   },
 
-  _updateLabel: function(d, index, valueX, valueY, valueS, valueL, valueLST, duration, showhide) {
+  _updateLabel: function(d, index, valueX, valueY, valueS, valueC, valueL, valueLST, duration, showhide) {
     var _this = this;
     var KEY = this.KEY;
 
@@ -1190,11 +1233,12 @@ var BubbleChartComp = Component.extend({
 
       var time = _this.model.time.timeFormat(_this.time);
       if(!this.model.ui.chart.trails || select.trailStartTime == time || select.trailStartTime == null) {
-        if(select.trailStartTime == null) select.trailStartTime = time; // need only when trailStartTime == null
+        if(this.model.ui.chart.trails && select.trailStartTime == null) select.trailStartTime = time; // need only when trailStartTime == null
 
         var cache = {};
         cache.labelX0 = valueX;
         cache.labelY0 = valueY;
+        cache.scaledC0 = valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH,
         cache.scaledS0 = valueS ? utils.areaToRadius(_this.sScale(valueS)) : null;
       }
 
@@ -1205,7 +1249,7 @@ var BubbleChartComp = Component.extend({
       if(showhide && d.hidden && _this.model.ui.chart.trails && trailStartTime && (trailStartTime < _this.time)) showhide = false;
       if(d.hidden && !_this.model.ui.chart.trails) showhide = true;
 
-      this.labels.updateLabel(d, index, cache, valueX, valueY, valueS, labelText, valueLST, duration, showhide);
+      this.labels.updateLabel(d, index, cache, valueX, valueY, valueS, valueC, labelText, valueLST, duration, showhide);
 
     }
   },
@@ -1242,13 +1286,33 @@ var BubbleChartComp = Component.extend({
 
     //hide tooltip
     _this._setTooltip();
+    _this._setBubbleCrown();
 
     _this.someSelected = (_this.model.entities.select.length > 0);
 
   },
 
+  _setBubbleCrown: function(x, y, r, glow, skipInnerFill) {
+    if(x != null) {
+      this.bubbleCrown.classed("vzb-hidden", false);
+      this.bubbleCrown.select(".vzb-crown")
+        .attr("cx", x)
+        .attr("cy", y)
+        .attr("r", r)
+        .attr("fill", skipInnerFill ? "none" : glow);
+      this.bubbleCrown.selectAll(".vzb-crown-glow")
+        .attr("cx", x)
+        .attr("cy", y)
+        .attr("r", r + 10)
+        .attr("stroke", glow);
 
-  _setTooltip: function(tooltipText, x, y, offset) {
+    } else {
+      this.bubbleCrown.classed("vzb-hidden", true);
+    }
+
+  },
+  
+  _setTooltip: function(tooltipText, x, y, offset, glow) {
     if(tooltipText) {
       var xPos, yPos, xSign = -1,
         ySign = -1,
@@ -1287,12 +1351,16 @@ var BubbleChartComp = Component.extend({
       }
       this.tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")")
 
-      this.tooltip.select('rect').attr("width", contentBBox.width + 8)
+      this.tooltip.selectAll("rect")
+        .attr("width", contentBBox.width + 8)
         .attr("height", contentBBox.height * 1.2)
         .attr("x", -contentBBox.width - 4)
         .attr("y", -contentBBox.height * .85)
         .attr("rx", contentBBox.height * .2)
         .attr("ry", contentBBox.height * .2);
+
+      this.tooltip.select(".vzb-tooltip-glow")
+        .attr("stroke", glow);
 
     } else {
       this.tooltip.classed("vzb-hidden", true);
@@ -1382,6 +1450,7 @@ var BubbleChartComp = Component.extend({
           var x = _this.xScale(values.axis_x[d[KEY]]);
           var y = _this.yScale(values.axis_y[d[KEY]]);
           var s = utils.areaToRadius(_this.sScale(values.size[d[KEY]]));
+          var c = values.color[d[KEY]]!=null?_this.cScale(values.color[d[KEY]]):_this.COLOR_WHITEISH;
           var entityOutOfView = false;
 
           var unitY = _this.translator("unit/" + _this.model.marker.size.which);
@@ -1409,20 +1478,25 @@ var BubbleChartComp = Component.extend({
             var selectedData = utils.find(_this.model.entities.select, function(f) {
               return f[KEY] == d[KEY]
             });
-            _this.labels.highlight(d, true);
             hoverTrail = text !== selectedData.trailStartTime && !d3.select(d3.event.target).classed('bubble-' + d[KEY]);
             text = text !== selectedData.trailStartTime && _this.time === d[TIMEDIM] ? text : '';
           } else {
             text = _this.model.entities.isSelected(d) ? '': values.label[d[KEY]];
           }
 
+          _this.labels.highlight(d, true);
+          if(_this.model.entities.isSelected(d)) {
+            var skipCrownInnerFill = !d.trailStartTime || d.trailStartTime == _this.model.time.timeFormat(_this.time);
+            _this._setBubbleCrown(x, y, s, c, skipCrownInnerFill);
+          }
+          
           if(!entityOutOfView && !hoverTrail) {
             _this._axisProjections(d);
           }
 
           //set tooltip and show axis projections
           if(text && !entityOutOfView && !hoverTrail) {
-            _this._setTooltip(text, x, y, s);
+            _this._setTooltip(text, x, y, s + 3, c);
           }
 
           var selectedData = utils.find(_this.model.entities.select, function(f) {
@@ -1441,6 +1515,7 @@ var BubbleChartComp = Component.extend({
         //hide tooltip
         _this._updateSTitle();  
         this._setTooltip();
+        this._setBubbleCrown();
         this.labels.highlight(null, false);
       }
 

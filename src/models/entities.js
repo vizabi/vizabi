@@ -238,14 +238,18 @@ var EntitiesModel = Model.extend({
   /**
    * Highlights an entity from the set
    */
-  highlightEntity: function(d, timeDim, timeFormatter) {
+  highlightEntity: function(d, timeDim, timeFormatter, copyDatum) {
     var dimension = this.getDimension();
     var value = d[dimension];
     if(!this.isHighlighted(d)) {
       var added = {};
-      added[dimension] = value;
-      if(timeDim && timeFormatter) {
-        added["trailStartTime"] = timeFormatter(d[timeDim]);
+      if(copyDatum) {
+        added = utils.clone(d);                
+      } else {
+        added[dimension] = value;
+        if(timeDim && timeFormatter) {
+          added["trailStartTime"] = timeFormatter(d[timeDim]);
+        }
       }
       this.setHighlight(this.highlight.concat(added));
     }
