@@ -71,7 +71,7 @@
 
       .vzb-bc-labels {
         @extend %vzb-chart-tooltip;
-        rect {
+        .vzb-label-fill {
           pointer-events: visible;
         }
         .vzb-bc-entity {
@@ -85,10 +85,6 @@
             cursor: pointer;
             stroke: $vzb-color-white;
             stroke-width: 2px;
-
-            &.vzb-highlighted rect {
-              fill: rgb(255, 252, 185);
-            }
           }
 
           .vzb-bc-label-x-icon {
@@ -96,21 +92,49 @@
             fill: $vzb-color-white;
             //pointer-events: none;
           }
-
-          &.vzb-highlighted rect {
-            fill: rgb(255, 252, 185);
+                    
+          .vzb-label-glow {
+            stroke-width: 8px;
+            fill: none;
+            opacity: 0;
+          }
+          
+          &.vzb-highlighted .vzb-label-glow {
+            opacity: 1;
           }
           &.vzb-label-boxremoved {
-            rect {
-              stroke: none;
-              fill: none;              
+            &:not(.vzb-highlighted) {
+              .vzb-label-fill {
+                stroke: none;
+                fill: none;
+              }
+              .vzb-label-glow {
+                stroke: none;
+              }
             }
           }
         }
       } 
-        
+      
+      .vzb-bc-bubble-crown {
+        .vzb-crown,
+        .vzb-crown-glow {
+          pointer-events: none;
+        }
+        .vzb-crown {
+          stroke: $vzb-color-black;
+        }
+        .vzb-crown-glow {
+          stroke-width: 6px;
+          fill: none;
+        }
+      }  
       .vzb-bc-tooltip {
         @extend %vzb-chart-tooltip;
+        .vzb-tooltip-glow {
+          stroke-width: 8px;
+          fill: none;
+        }
       }
       
       .vzb-bc-label-shadow,

@@ -104,8 +104,11 @@
   rect {
     @include transition(opacity 200ms linear);
     cursor: pointer;
-    fill: $vzb-color-white;
     pointer-events: none;
+  }  
+
+  .vzb-tooltip-border {
+    fill: $vzb-color-white;
     stroke: $vzb-color-black;
     stroke-width: 1.5px;
   }
