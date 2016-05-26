@@ -3,7 +3,8 @@
 let config = {
     baseUrl: 'http://localhost:9000/',
   specs: [
-    '../tests/e2e/*.spec.js'
+//    '../tests/e2e/*.spec.js'
+      '../tests/e2e/excel_access.spec.js'
   ],
   exclude: [],
 
@@ -37,11 +38,14 @@ let config = {
    *
    */
   useAllAngular2AppRoots: true
-};
+};	
 
 config.multiCapabilities = [
     {
 	'browserName': 'firefox',
+//	'browserName': 'phantomjs',
+//	'phantomjs.binary.path': require('phantomjs').path,
+//	'phantomjs.ghostdriver.cli.args': ['--loglevel=DEBUG'],
     }
 ];
 
