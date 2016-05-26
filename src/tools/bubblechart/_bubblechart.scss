@@ -100,7 +100,7 @@
           }
           
           &.vzb-highlighted .vzb-label-glow {
-            opacity: 1;
+            opacity: .8;
           }
           &.vzb-label-boxremoved {
             &:not(.vzb-highlighted) {
@@ -127,6 +127,7 @@
         .vzb-crown-glow {
           stroke-width: 6px;
           fill: none;
+          opacity: .8;
         }
       }  
       .vzb-bc-tooltip {
@@ -134,6 +135,7 @@
         .vzb-tooltip-glow {
           stroke-width: 8px;
           fill: none;
+          opacity: 0;
         }
       }
       

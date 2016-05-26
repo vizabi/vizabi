@@ -102,7 +102,6 @@
   }
   
   rect {
-    @include transition(opacity 200ms linear);
     cursor: pointer;
     pointer-events: none;
   }  
