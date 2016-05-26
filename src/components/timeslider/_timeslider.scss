@@ -89,6 +89,20 @@ $vzb-ts-value-width: 40px;
           stroke-linecap: round;
         }
       }
+      .vzb-ts-slider-select {
+        @include user-select(none);
+        @include opacity(.8);
+        cursor: default;
+        .selected-start,
+        .selected-end {
+          @include opacity(1);
+          fill: none;
+          stroke: $vzb-ts-slider-color;
+          stroke-opacity: .8;
+          stroke-width: 5px;
+          stroke-linecap: round;
+        }
+      }
       .vzb-ts-slider-handle {
         fill: $vzb-ts-slider-color;
         stroke: #fff;
@@ -245,6 +259,12 @@ $vzb-ts-value-width: 40px;
       }
       .vzb-ts-slider-axis .domain {
         stroke-width: 9px;
+      }
+      .vzb-ts-slider-select {
+        .selected-start,
+        .selected-end {
+          stroke-width: 9px;
+        }
       }
       .vzb-ts-slider-handle {
         stroke-width: 6px;

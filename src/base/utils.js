@@ -1161,6 +1161,12 @@ export var flattenDates = function(obj, timeFormat) {
       if(typeof val.end === 'object') {
         val.end = timeFormat(val.end);
       }
+      if(typeof val.startSelected === 'object') {
+        val.startSelected = timeFormat(val.startSelected);
+      }
+      if(typeof val.endSelected === 'object') {
+        val.endSelected = timeFormat(val.endSelected);
+      }
     }
     if(isPlainObject(val)) {
       flattened[key] = flattenDates(val, timeFormat);

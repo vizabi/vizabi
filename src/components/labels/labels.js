@@ -172,7 +172,7 @@ var label = function(context) {
         cache.labelY_ = (_Y - _this.yScale(cache.labelY0)) / viewHeight;
       }
 
-      if(duration == null) duration = _this.duration;
+      if(duration == null) duration = _this._toolContext.duration;
       if(duration) {
         if(showhide && !d.hidden){
             //if need to show label
@@ -182,17 +182,25 @@ var label = function(context) {
                 .attr("transform", "translate(" + _X + "," + _Y + ")")
                 .style("opacity", 0)
                 .transition().duration(duration).ease("exp")
-                .style("opacity", 1);
+                .style("opacity", 1)
                 //i would like to set opactiy to null in the end of transition. 
                 //but then fade in animation is not working for some reason
+                .each("interrupt", function(){
+                    labelGroup
+                        .style("opacity", 1)
+                });
             lineGroup.classed("vzb-invisible", d.hidden);
             lineGroup
                 .attr("transform", "translate(" + _X + "," + _Y + ")")
                 .style("opacity", 0)
                 .transition().duration(duration).ease("exp")
-                .style("opacity", 1);
+                .style("opacity", 1)
                 //i would like to set opactiy to null in the end of transition. 
                 //but then fade in animation is not working for some reason
+                .each("interrupt", function(){
+                    lineGroup
+                        .style("opacity", 1)
+                });
             
         } else if(showhide && d.hidden) {
             //if need to hide label
