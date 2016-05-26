@@ -1,6 +1,6 @@
 {
   "name": "vizabi",
-  "version": "0.13.11-1",
+  "version": "0.13.11",
   "description": "Vizabi Framework, Interactive charts and visualization tools animated through time",
   "main": "build/dist/vizabi.js",
   "scripts": {
@@ -87,7 +87,7 @@
     "opn": "4.0.1",
     "phantomjs-prebuilt": "2.1.7",
     "protractor": "3.3.0",
-	"xlsx": "0.8.0",
+    "xlsx": "0.8.0",
     "q": "1.4.1",
     "rollup": "0.26.3",
     "serve-static": "1.10.2",
