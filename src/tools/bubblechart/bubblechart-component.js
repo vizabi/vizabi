@@ -331,7 +331,14 @@ var BubbleChartComp = Component.extend({
     
     this.entityBubbles = null;
     this.bubbleCrown = this.element.select('.vzb-bc-bubble-crown');
+    //set filter
+    this.bubbleCrown.selectAll(".vzb-crown-glow")
+      .attr("filter","url(" + location.pathname + "#vzb-glow-filter)");
     this.tooltip = this.element.select('.vzb-bc-tooltip');
+    //set filter 
+    this.tooltip.select(".vzb-tooltip-glow")
+      .attr("filter","url(" + location.pathname + "#vzb-glow-filter)");
+
     this.tooltipMobile = this.element.select('.vzb-tooltip-mobile');
     //component events
     this.on("resize", function() {
