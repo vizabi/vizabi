@@ -1006,7 +1006,7 @@ var BubbleChartComp = Component.extend({
 
       var selected = _this.model.entities.isSelected(d);
 
-      var valueC = selected && _this.model.ui.chart.lockNonSelected ? valuesLocked.color[d[KEY]] : valuesNow.color[d[KEY]];
+      var valueC = selected ? valuesNow.color[d[KEY]] : valuesLocked.color[d[KEY]];
 
       var scaledC = valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH;
 
@@ -1061,7 +1061,7 @@ var BubbleChartComp = Component.extend({
 
       var selected = _this.model.entities.isSelected(d);
 
-      var valueS = selected && _this.model.ui.chart.lockNonSelected ? valuesLocked.size[d[KEY]] : valuesNow.size[d[KEY]];
+      var valueS = selected ? valuesNow.size[d[KEY]] : valuesLocked.size[d[KEY]];
       if(valueS == null) return;
 
       var scaledS = utils.areaToRadius(_this.sScale(valueS));
