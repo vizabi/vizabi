@@ -66,8 +66,11 @@ var label = function(context) {
   // It's too easy to accidentally zoom
   // This feature will be activated later, by making the label into a "context menu" where users can click Split, or zoom,.. hide others etc....
 
-          view.append("rect").attr("class","vzb-label-glow").attr("filter", "url(#vzb-glow-filter)");
-          view.append("rect").attr("class","vzb-label-fill vzb-tooltip-border");
+          view.append("rect")
+            .attr("class","vzb-label-glow")
+            .attr("filter", "url(" + location.pathname + "#vzb-glow-filter)");
+          view.append("rect")
+            .attr("class","vzb-label-fill vzb-tooltip-border");
   //          .on("click", function(d, i) {
   //            //default prevented is needed to distinguish click from drag
   //            if(d3.event.defaultPrevented) return;
