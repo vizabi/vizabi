@@ -198,7 +198,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
       USABubble.click();
     });
     //Getting tooltip text before drag
-    var USALabel =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-labels > g > rect"));
+    var USALabel =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-labels > g > rect.vzb-label-fill.vzb-tooltip-border"));
     browser.wait(EC.visibilityOf(USALabel), 5000);
     USALabel.getLocation().then(function(initiallocation){
       var initialLocationText = initiallocation.x;
@@ -244,7 +244,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
     });
 
     //Hovering the label to get cross
-    var tooltip= element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-labels > g > rect"));
+    var tooltip= element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-labels > g > rect.vzb-label-fill.vzb-tooltip-border"));
     browser.wait(EC.visibilityOf(tooltip), 5000);
     browser.actions().mouseMove(tooltip).perform();
 

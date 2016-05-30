@@ -268,7 +268,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     });
 
     //Getting location before dragging label
-    var USALabel = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-labels-crop > g.vzb-bc-labels > g > rect"));
+    var USALabel = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-labels-crop > g > g > rect.vzb-label-fill.vzb-tooltip-border"));
     USALabel.getLocation().then(function(initialLocation){
       var initialLocationText = initialLocation.x;
       browser.sleep(2000);
