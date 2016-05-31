@@ -533,7 +533,7 @@ var Model = EventSource.extend({
       return true;
     }
 
-    var prop = (this.use === "property");
+    var prop = (this.use === "property") || (this.use === "constant");
     var exceptions = (prop) ? { exceptType: 'time' } : {};
 
     // select
