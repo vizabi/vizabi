@@ -279,12 +279,12 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
     browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
 
     //Clicking find
-    var find =element(by.css(Bubble_Chart['D38'].v));
+    var find =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));
     browser.wait(EC.visibilityOf(find), 20000).then(function(){
       find.click();
     });
     // Place Text in Search
-    var search =element(by.css(Bubble_Chart['D39'].v));
+    var search =element(by.css("#vzb-find-search"));
     browser.wait(EC.visibilityOf(search), 20000).then(function(){
       search.sendKeys("china");
     });
@@ -376,14 +376,14 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
     browser.refresh();
     browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
 
-    // Selecting Country by giving country name in Find
-    var find =element(by.css(Bubble_Chart['D38'].v));
+   //Clicking find
+    var find =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));
     browser.wait(EC.visibilityOf(find), 20000).then(function(){
       find.click();
     });
 
     // Giving country name in Search bar
-    var search =element(by.css(Bubble_Chart['D39'].v));
+    var search =element(by.css("#vzb-find-search"));
     browser.wait(EC.visibilityOf(search), 20000).then(function(){
       search.sendKeys("United States");
     });
@@ -447,14 +447,14 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
     browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
 
     // Selecting size icon
-    var sizeIcon =element(by.css(Bubble_Chart['D58'].v));
+    var sizeIcon =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(3) > span.vzb-buttonlist-btn-icon.fa"));
     browser.wait(EC.visibilityOf(sizeIcon), 20000).then(function(){
       sizeIcon.click();
       browser.sleep(5000);
     });
 
     //Getting location of the panel before dargging
-    var hand =element(by.css(Bubble_Chart['D59'].v));
+    var hand =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-active.notransition.vzb-popup > div > span.thumb-tack-class.thumb-tack-class-ico-drag.fa > svg"));
     hand.getLocation().then(function (beforeDrag) {
       var bforDrag = beforeDrag;
       browser.sleep(5000);
