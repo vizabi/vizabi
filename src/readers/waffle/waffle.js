@@ -115,7 +115,7 @@ var WSReader = Reader.extend({
       return;
     }
     
-    if(path == "https://waffle-server-dev-new-ddf.gapminderdev.org/api/graphs/stats/vizabi-tools?geo.cat=world_4region&select=geo,geo.name,shape_lores_svg") {
+    if(path.indexOf("?geo.cat=world_4region&select=geo,geo.name,shape_lores_svg")>-1) {
       utils.warn("WAFFLE READER: APPLYING STUB FUNCTIONALITY TO GET DATA world_4region, WHICH IS NOT YET IN WS");
       resp.rows = [[
           "africa",
@@ -138,7 +138,7 @@ var WSReader = Reader.extend({
     }
 
       
-    if(path == "https://waffle-server-dev-new-ddf.gapminderdev.org/api/graphs/stats/vizabi-tools?geo.cat=geographic_regions&select=geo,geo.name,shape_lores_svg") {
+    if(path.indexOf("?geo.cat=geographic_regions&select=geo,geo.name,shape_lores_svg")>-1) {
       utils.warn("WAFFLE READER: APPLYING STUB FUNCTIONALITY TO GET DATA geographic_regions, WHICH IS NOT YET IN WS");
       resp.rows = [[
           "america",
@@ -168,7 +168,7 @@ var WSReader = Reader.extend({
       console.log(resp);
     }      
     
-    if(path == "https://waffle-server-dev-new-ddf.gapminderdev.org/api/graphs/stats/vizabi-tools?geo.cat=income_groups&select=geo,geo.name,shape_lores_svg") {
+    if(path.indexOf("?geo.cat=income_groups&select=geo,geo.name,shape_lores_svg")>-1) {
       utils.warn("WAFFLE READER: APPLYING STUB FUNCTIONALITY TO GET DATA income_groups, WHICH IS NOT YET IN WS");
       resp.rows = [[
           "lower_middle_income",
@@ -190,7 +190,7 @@ var WSReader = Reader.extend({
       console.log(resp);
     }
     
-    if(path == "https://waffle-server-dev-new-ddf.gapminderdev.org/api/graphs/stats/vizabi-tools?geo.cat=landlocked&select=geo,geo.name,shape_lores_svg") {
+    if(path.indexOf("?geo.cat=landlocked&select=geo,geo.name,shape_lores_svg")>-1) {
       utils.warn("WAFFLE READER: APPLYING STUB FUNCTIONALITY TO GET DATA landlocked, WHICH IS NOT YET IN WS");
       resp.rows = [[
           "landlocked",
@@ -204,7 +204,7 @@ var WSReader = Reader.extend({
       console.log(resp);
     }
 
-    if(path == "https://waffle-server-dev-new-ddf.gapminderdev.org/api/graphs/stats/vizabi-tools?geo.cat=g77_and_oecd_countries&select=geo,geo.name,shape_lores_svg") {
+    if(path.indexOf("?geo.cat=g77_and_oecd_countries&select=geo,geo.name,shape_lores_svg")>-1) {
       utils.warn("WAFFLE READER: APPLYING STUB FUNCTIONALITY TO GET DATA g77_and_oecd_countries, WHICH IS NOT YET IN WS");
       resp.rows = [[
           "others",
@@ -222,7 +222,7 @@ var WSReader = Reader.extend({
       console.log(resp);
     }
 
-    if(path == "https://waffle-server-dev-new-ddf.gapminderdev.org/api/graphs/stats/vizabi-tools?geo.cat=main_religion_2008&select=geo,geo.name,shape_lores_svg") {
+    if(path.indexOf("?geo.cat=main_religion_2008&select=geo,geo.name,shape_lores_svg")>-1) {
       utils.warn("WAFFLE READER: APPLYING STUB FUNCTIONALITY TO GET DATA main_religion_2008, WHICH IS NOT YET IN WS");
       resp.rows = [[
           "eastern_religions",

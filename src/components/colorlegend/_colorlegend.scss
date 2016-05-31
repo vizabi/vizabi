@@ -20,7 +20,6 @@
     padding-left: 15px;
       
     .vzb-cl-color-sample {
-      @include transition(border-width 200ms ease-in-out);
       display: inline-block;
       width: 20px;
       height: 20px;
