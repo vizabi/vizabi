@@ -37,14 +37,14 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
     //Clicking USA bubble
     var USABubble = element(by.css(Bubble_Chart['D6'].v));
     browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
-        browser.actions().mouseMove(USABubble).mouseMove({x:0, y:-15}).click().perform();
+        browser.actions().mouseMove(USABubble).mouseMove({x:0, y:15}).click().perform();
     });
 
 
     //Clicking China bubble
     var chinaBubble = element(by.css(Bubble_Chart['D7'].v));
     browser.wait(EC.visibilityOf(chinaBubble), 5000).then(function(){
-        browser.actions().mouseMove(chinaBubble).mouseMove({x:0, y:-30}).click().perform();
+        browser.actions().mouseMove(chinaBubble).mouseMove({x:0, y:30}).click().perform();
     });
 
     //Clicking play
@@ -130,7 +130,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
             slider.getLocation().then(function (beforePlaySliderLocation) {
               var beforePlaySliderDivLocation = beforePlaySliderLocation.x;
               play.click();
-              browser.sleep(80000);
+              browser.sleep(100000);
 
               //Getting slider position after play
               slider.getLocation().then(function (afterPlaySliderLocation) {
@@ -157,11 +157,12 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     //Hovering USA bubble
      var USABubble = element(by.css(Bubble_Chart['D6'].v));
-    browser.actions().mouseMove(USABubble).mouseMove({x:0,y:-15}).perform();
+    browser.actions().mouseMove(USABubble).mouseMove({x:0,y:15}).perform();
+          browser.sleep(5000);
 
     // Getting attributes of X axis
     var axis = element(by.css(Bubble_Chart['D19'].v));
-    browser.wait(EC.visibilityOf(axis), 5000);
+    browser.wait(EC.visibilityOf(axis), 20000);
     axis.getText().then(function (axisAsParameter) {
         var axisText = axisAsParameter;
 
@@ -185,12 +186,12 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     //Hovering USA bubble
     var USABubble = element(by.css(Bubble_Chart['D6'].v));
-    browser.actions().mouseMove(USABubble).mouseMove({x:0, y:-15}).perform();
-    browser.sleep(2000);
+    browser.actions().mouseMove(USABubble).mouseMove({x:0, y:15}).perform();
+    browser.sleep(5000);
 
     // Getting attributes of tooltip
     var tooltip =element(by.css(Bubble_Chart['D24'].v));
-    browser.wait(EC.visibilityOf(tooltip), 5000);
+    browser.wait(EC.visibilityOf(tooltip), 20000);
     tooltip.getText().then(function (tooltipAsParameter) {
       var tooltipText = tooltipAsParameter;
       // Comparing the country name
@@ -241,7 +242,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
     //Clicking USA bubble
     var USABubble =element(by.css(Bubble_Chart['D6'].v));
     browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
-      browser.actions().mouseMove(USABubble).mouseMove({x: 0, y: -10}).click().perform();
+      browser.actions().mouseMove(USABubble).mouseMove({x: 0, y: 15}).click().perform();
     });
 
     //Getting location before dragging label
@@ -279,31 +280,31 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     //Clicking find
     var find =element(by.css(Bubble_Chart['D38'].v));
-    browser.wait(EC.visibilityOf(find), 5000).then(function(){
+    browser.wait(EC.visibilityOf(find), 20000).then(function(){
       find.click();
     });
     // Place Text in Search
     var search =element(by.css(Bubble_Chart['D39'].v));
-    browser.wait(EC.visibilityOf(search), 5000).then(function(){
+    browser.wait(EC.visibilityOf(search), 20000).then(function(){
       search.sendKeys("china");
     });
 
     // Check China Text Box
     var chinaBubble =element(by.css(Bubble_Chart['D40'].v));
-    browser.wait(EC.visibilityOf(chinaBubble), 5000).then(function(){
+    browser.wait(EC.visibilityOf(chinaBubble), 20000).then(function(){
       chinaBubble.click();
     });
     // Remove Text
     search.clear();
 
     // Place Text in Search / Find Field
-    browser.wait(EC.visibilityOf(search), 5000).then(function(){
+    browser.wait(EC.visibilityOf(search), 20000).then(function(){
       search.sendKeys("united states");
     });
 
     // Check United States Text Box
     var USABubble =element(by.css(Bubble_Chart['D41'].v));
-    browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
+    browser.wait(EC.visibilityOf(USABubble), 20000).then(function(){
       USABubble.click();
     });
     // Remove Text
@@ -311,7 +312,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     //Clicking OK
     var ok = element(by.css(Bubble_Chart['D42'].v));
-    browser.wait(EC.visibilityOf(ok), 5000).then(function(){
+    browser.wait(EC.visibilityOf(ok), 20000).then(function(){
       ok.click();
     });
 
@@ -326,16 +327,16 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
         var NGAOpacity = NGAOpacityAsParameter;
 
         //Clicking find	again to deselect
-        browser.wait(EC.visibilityOf(find), 5000).then(function(){
+        browser.wait(EC.visibilityOf(find), 20000).then(function(){
           find.click();
         });
         // Place Text in Search	again to deselect
-        browser.wait(EC.visibilityOf(search), 5000).then(function(){
+        browser.wait(EC.visibilityOf(search), 20000).then(function(){
           search.sendKeys("china");
         });
 
         // Check China Text Box	again to deselect
-        browser.wait(EC.visibilityOf(chinaBubble), 5000).then(function(){
+        browser.wait(EC.visibilityOf(chinaBubble), 20000).then(function(){
           chinaBubble.click();
         });
         // Remove Text
@@ -347,14 +348,14 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
         });
 
         // Check United States Text Box	again to deselect
-        browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
+        browser.wait(EC.visibilityOf(USABubble), 20000).then(function(){
           USABubble.click();
         });
         // Remove Text
         search.clear();
 
         //Clicking OK
-        browser.wait(EC.visibilityOf(ok), 5000).then(function(){
+        browser.wait(EC.visibilityOf(ok), 20000).then(function(){
           ok.click();
         });
         // Comapring Opacities
@@ -377,19 +378,19 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     // Selecting Country by giving country name in Find
     var find =element(by.css(Bubble_Chart['D38'].v));
-    browser.wait(EC.visibilityOf(find), 5000).then(function(){
+    browser.wait(EC.visibilityOf(find), 20000).then(function(){
       find.click();
     });
 
     // Giving country name in Search bar
     var search =element(by.css(Bubble_Chart['D39'].v));
-    browser.wait(EC.visibilityOf(search), 5000).then(function(){
+    browser.wait(EC.visibilityOf(search), 20000).then(function(){
       search.sendKeys("United States");
     });
 
     // Clicking Check box of USA
     var checkBox =element(by.css(Bubble_Chart['D41'].v));
-    browser.wait(EC.visibilityOf(checkBox), 5000).then(function(){
+    browser.wait(EC.visibilityOf(checkBox), 20000).then(function(){
       checkBox.click();
     });
 
@@ -398,7 +399,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     // Click OK
     var OK =element(by.css(Bubble_Chart['D42'].v));
-    browser.wait(EC.visibilityOf(OK), 5000).then(function(){
+    browser.wait(EC.visibilityOf(OK), 20000).then(function(){
       OK.click();
     });
       
@@ -408,7 +409,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
       
     // Click Lock
     var lock =element(by.css(Bubble_Chart['D53'].v));
-    browser.wait(EC.visibilityOf(lock), 5000).then(function(){
+    browser.wait(EC.visibilityOf(lock), 20000).then(function(){
       lock.click();
     });
 
@@ -447,25 +448,25 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     // Selecting size icon
     var sizeIcon =element(by.css(Bubble_Chart['D58'].v));
-    browser.wait(EC.visibilityOf(sizeIcon), 5000).then(function(){
+    browser.wait(EC.visibilityOf(sizeIcon), 20000).then(function(){
       sizeIcon.click();
-      browser.sleep(1000);
+      browser.sleep(5000);
     });
 
     //Getting location of the panel before dargging
     var hand =element(by.css(Bubble_Chart['D59'].v));
     hand.getLocation().then(function (beforeDrag) {
       var bforDrag = beforeDrag;
-      browser.sleep(2000);
+      browser.sleep(5000);
 
       // Dragging the panel
       browser.actions().dragAndDrop(hand, {x:-300,y:40}).perform();
-      browser.sleep(1000);
+      browser.sleep(5000);
 
       //Getting location of the panel after dargging
       hand.getLocation().then(function (afterDrag) {
         var aftrDrag = afterDrag;
-        browser.sleep(1000);
+        browser.sleep(5000);
 
         //Comparing positions
         expect(bforDrag).not.toEqual(aftrDrag);
