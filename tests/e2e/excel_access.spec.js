@@ -37,7 +37,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
     //Clicking USA bubble
     var USABubble = element(by.css(Bubble_Chart['D6'].v));
     browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
-        browser.actions().mouseMove(USABubble).mouseMove({x:0, y:15}).click().perform();
+        browser.actions().mouseMove(USABubble).mouseMove({x:0, y:20}).click().perform();
     });
 
 
@@ -74,7 +74,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
      });
   });
     
-    
+
     
 // If I click on play when I'm on the year 2015, the time slider handle
   // moves,, and the bubbles change position. It pauses automatically when it reached the final year.
@@ -157,7 +157,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     //Hovering USA bubble
      var USABubble = element(by.css(Bubble_Chart['D6'].v));
-    browser.actions().mouseMove(USABubble).mouseMove({x:0,y:15}).perform();
+    browser.actions().mouseMove(USABubble).mouseMove({x:0,y:20}).perform();
           browser.sleep(5000);
 
     // Getting attributes of X axis
@@ -186,7 +186,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     //Hovering USA bubble
     var USABubble = element(by.css(Bubble_Chart['D6'].v));
-    browser.actions().mouseMove(USABubble).mouseMove({x:0, y:15}).perform();
+    browser.actions().mouseMove(USABubble).mouseMove({x:0, y:20}).perform();
     browser.sleep(5000);
 
     // Getting attributes of tooltip
@@ -242,7 +242,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
     //Clicking USA bubble
     var USABubble =element(by.css(Bubble_Chart['D6'].v));
     browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
-      browser.actions().mouseMove(USABubble).mouseMove({x: 0, y: 15}).click().perform();
+      browser.actions().mouseMove(USABubble).mouseMove({x: 0, y: 20}).click().perform();
     });
 
     //Getting location before dragging label
