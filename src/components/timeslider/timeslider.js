@@ -444,7 +444,7 @@ var TimeSlider = Component.extend({
         .attr("id", "clip-start")
         .append('rect')
       this.select.append('path')
-        .attr("clip-path", "url(#clip-start)")
+        .attr("clip-path", "url(" + location.pathname + "#clip-start)")
         .classed('selected-start', true);
       this.resizeSelectedLimiters();
     }    
@@ -458,7 +458,7 @@ var TimeSlider = Component.extend({
         .attr("id", "clip-end")
         .append('rect')
       this.select.append('path')
-        .attr("clip-path", "url(#clip-end)")
+        .attr("clip-path", "url(" + location.pathname + "#clip-end)")
         .classed('selected-end', true);
       this.resizeSelectedLimiters();
     }              
