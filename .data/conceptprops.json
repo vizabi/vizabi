@@ -1,5 +1,13 @@
 {
 "indicatorsDB": {
+ "shape_w_subdiv_midres_topojson": {
+     "use": "property",
+     "name": "Geo shape with subdivisions in topojson format with medium resolution"
+ },
+ "shape_lores_svg": {
+     "use": "property",
+     "name": "Geo shape in svg format with low resolution"
+ },  
  "time": {
      "use": "indicator",
      "scales": ["time"],
@@ -4194,7 +4202,7 @@
    "use": "indicator",
    "domain": [
     1,
-    84.1
+    85
    ],
    "availability": [
     1800,

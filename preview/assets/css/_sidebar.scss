@@ -15,7 +15,7 @@
     border: 0;
     cursor: pointer;
     outline: none;
-    margin: 0 2px;
+    margin: 0 3px 0 0;
     &.vzbp-button-bigger {
       font-size: 16px;
     }
@@ -52,13 +52,14 @@
     text-align: center;
     width: 50px;
     color: #999;
+    padding: 8px 5px;
     background-color: #f2f2f2;
     &:focus {
       color: #333;
       background-color: white;
     }
   }
-  @media screen and (max-width: 700px) {
+  @media screen and (max-width: 500px) {
     display: none
   }
 }

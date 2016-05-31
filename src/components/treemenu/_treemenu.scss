@@ -93,6 +93,7 @@
           pointer-events: none;
         }
         .vzb-treemenu-scaletypes-disabled {
+          visibility: hidden;
           color: $vzb-color-grey-light;
           border: 0;
           pointer-events: none;

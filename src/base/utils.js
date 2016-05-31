@@ -1141,7 +1141,17 @@ export var flattenDates = function(obj, timeFormat) {
   var flattened = {};
   forEach(obj, function(val, key) {
     //todo: hack to flatten time unit objects to strings
-    if(key === 'time') {
+    if (key === 'marker') {
+      ["axis_x", "axis_y"].map(function(name) {
+        var hook = val[name];
+        if (hook && hook.scaleType === "time") {
+          if(isDate(hook.domainMin)) hook.domainMin = timeFormat(hook.domainMin);
+          if(isDate(hook.domainMax)) hook.domainMax = timeFormat(hook.domainMax);
+          if(isDate(hook.zoomedMin)) hook.zoomedMin = timeFormat(hook.zoomedMin);
+          if(isDate(hook.zoomedMax)) hook.zoomedMax = timeFormat(hook.zoomedMax);
+        }
+      });
+    } else if(key === 'time') {
       if(typeof val.value === 'object') {
         val.value = timeFormat(val.value);
       }
@@ -1150,6 +1160,12 @@ export var flattenDates = function(obj, timeFormat) {
       }
       if(typeof val.end === 'object') {
         val.end = timeFormat(val.end);
+      }
+      if(typeof val.startSelected === 'object') {
+        val.startSelected = timeFormat(val.startSelected);
+      }
+      if(typeof val.endSelected === 'object') {
+        val.endSelected = timeFormat(val.endSelected);
       }
     }
     if(isPlainObject(val)) {

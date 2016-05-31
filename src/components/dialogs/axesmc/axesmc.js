@@ -31,7 +31,7 @@ var Axes = Dialog.extend({
     this.components = [{
       component: minmaxinputs,
       placeholder: '.vzb-xlimits-container',
-      model: ["state.marker", "language"],
+      model: ["state.marker", "state.time", "language"],
       markerID: "axis_x",
       ui: {
         selectDomainMinMax: false,

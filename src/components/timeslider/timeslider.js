@@ -1,5 +1,6 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
+import Promise from 'promise';
 
 var precision = 1;
 
@@ -75,6 +76,12 @@ var TimeSlider = Component.extend({
     this.model_expects = [{
       name: "time",
       type: "time"
+    }, {
+      name: "entities",
+      type: "entities"
+    }, {
+      name: "marker",
+      type: "model"
     }];
 
     var _this = this;
@@ -118,6 +125,19 @@ var TimeSlider = Component.extend({
           //only set handle position if change is external
           if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
+      },
+      'change:time.startSelected': function(evt, path) {
+        if(!_this._splash) {
+          _this.updateSelectedStartLimiter();
+        }
+      },
+      'change:time.endSelected': function(evt, path) {
+        if(!_this._splash) {
+          _this.updateSelectedEndLimiter();
+        }
+      },
+      'change:entities.select': function(evt, path) {
+        _this.setSelectedLimits();
       }
     };
 
@@ -156,6 +176,7 @@ var TimeSlider = Component.extend({
     this.slider_outer = this.element.select(".vzb-ts-slider");
     this.slider = this.slider_outer.select("g");
     this.axis = this.element.select(".vzb-ts-slider-axis");
+    this.select = this.element.select(".vzb-ts-slider-select");
     this.slide = this.element.select(".vzb-ts-slider-slide");
     this.handle = this.slide.select(".vzb-ts-slider-handle");
     this.valueText = this.slide.select('.vzb-ts-slider-value');
@@ -200,7 +221,32 @@ var TimeSlider = Component.extend({
     this.slide.selectAll(".extent,.resize")
       .remove();
 
+    this._setSelectedLimitsId = 0; //counter for setSelectedLimits
+    this._needRecalcSelectedLimits = true;
+    
+    utils.forEach(_this.model.marker.getSubhooks(), function(hook) {
+      if(hook._important) hook.on('change:which', function() {
+        _this._needRecalcSelectedLimits = true;
+        _this.model.time.startSelected = _this.model.time.start;
+        _this.model.time.endSelected = _this.model.time.end; 
+      });
+    });
+    
+    this.root.on('ready', function() {     
+      if(_this._needRecalcSelectedLimits) {
+        _this._needRecalcSelectedLimits = false;
+        _this.setSelectedLimits(true);
+      }      
+    });
 
+    if(this.model.time.startSelected > this.model.time.start) {
+      _this.updateSelectedStartLimiter();
+    }
+   
+    if(this.model.time.endSelected < this.model.time.end) {
+      _this.updateSelectedEndLimiter();
+    }
+        
     this.parent.on('myEvent', function (evt, arg) {
       var layoutProfile = _this.getLayoutProfile();
 
@@ -212,7 +258,7 @@ var TimeSlider = Component.extend({
       _this.element.select(".vzb-ts-slider-wrapper")
         .style("right", (arg.mRight - profiles[layoutProfile].margin.right) + "px");
 
-      _this.xScale.range([0, arg.rangeMax]);
+      _this.xScale.range([0, arg.rangeMax]);      
       _this.resize();
     });
   },
@@ -288,6 +334,8 @@ var TimeSlider = Component.extend({
     this.axis.attr("transform", "translate(0," + this.height / 2 + ")")
       .call(this.xAxis);
 
+    this.select.attr("transform", "translate(0," + this.height / 2 + ")");
+
     this.slide.select(".background")
       .attr("height", this.height);
 
@@ -297,9 +345,142 @@ var TimeSlider = Component.extend({
 
     this.sliderWidth = _this.slider.node().getBoundingClientRect().width;
 
+    this.resizeSelectedLimiters();
+    
     this._setHandle();
 
   },
+  
+  setSelectedLimits: function(force) {
+    var _this = this;
+    this._setSelectedLimitsId++;
+    var _setSelectedLimitsId = this._setSelectedLimitsId;
+
+    var select = _this.model.entities.select;
+    if(select.length == 0) 
+    {
+      _this.model.time.startSelected = new Date(_this.model.time.start);
+      _this.model.time.endSelected = new Date(_this.model.time.end);
+      return;
+    }
+
+    var KEY = _this.model.entities.getDimension();
+    var timePoints = _this.model.time.getAllSteps();
+    var selectedEdgeTimes = [];
+    var hooks = [];
+    utils.forEach(_this.model.marker.getSubhooks(), function(hook) {
+      if(hook.use !== "indicator") return;
+      if(hook._important) hooks.push(hook._name);
+    });
+    
+    var findEntityWithCompleteHooks = function(values) {
+      for(var k = 0, l = select.length; k < l; k++) {
+        var complete = 0;
+        for(var i = 0, j = hooks.length; i < j; i++) {
+          if(values[hooks[i]][select[k][KEY]]) complete++;        
+        }
+        if(complete == hooks.length) return true;
+      }
+      return false;
+    }
+    
+    var findSelectedTime = function(iterator, findCB) {
+      var point = iterator();
+      if(point == null) return;
+      _this.model.marker.getFrame(timePoints[point], function(values) {
+        if(findEntityWithCompleteHooks(values)) {
+          findCB(point);
+        } else {
+          findSelectedTime(iterator, findCB);
+        }
+      });
+    }
+    
+    var promises = [];
+    
+    promises.push(new Promise());
+
+    //find startSelected time 
+    findSelectedTime(function(){
+      var max = timePoints.length;
+      var i = 0;
+      return function() {
+        return i < max ? i++ : null;
+      };
+    }(), function(point){
+      selectedEdgeTimes[0] = timePoints[point];
+      promises[0].resolve();
+    });
+    
+    promises.push(new Promise());
+    
+    //find endSelected time
+    findSelectedTime(function(){
+      var min = 0;
+      var i = timePoints.length - 1;
+      return function() {
+        return i >= 0 ? i-- : null;
+      };
+    }(), function(point){
+      selectedEdgeTimes[1] = timePoints[point];
+      promises[1].resolve();
+    });
+    
+    Promise.all(promises).then(function() {
+      //if another setSelectedLimits was started after this 
+      //then return without setup values
+      if(_setSelectedLimitsId != _this._setSelectedLimitsId) return;
+      _this.model.time.set(
+        {"startSelected": selectedEdgeTimes[0],"endSelected": selectedEdgeTimes[1]}, force);
+    });
+
+  },
+
+  updateSelectedStartLimiter: function() {
+    this.select.select('#clip-start').remove();
+    this.select.select(".selected-start").remove();
+    if(this.model.time.startSelected > this.model.time.start) {
+      this.select.append("clipPath")
+        .attr("id", "clip-start")
+        .append('rect')
+      this.select.append('path')
+        .attr("clip-path", "url(#clip-start)")
+        .classed('selected-start', true);
+      this.resizeSelectedLimiters();
+    }    
+  },
+
+  updateSelectedEndLimiter: function() {
+    this.select.select('#clip-end').remove();
+    this.select.select(".selected-end").remove();
+    if(this.model.time.endSelected < this.model.time.end) {
+      this.select.append("clipPath")
+        .attr("id", "clip-end")
+        .append('rect')
+      this.select.append('path')
+        .attr("clip-path", "url(#clip-end)")
+        .classed('selected-end', true);
+      this.resizeSelectedLimiters();
+    }              
+  },
+
+  resizeSelectedLimiters: function() {
+    this.select.select('.selected-start')              
+      .attr('d', "M0,0H" + this.xScale(this.model.time.startSelected));
+    this.select.select("#clip-start").select('rect')
+      .attr("x", -this.height / 2)
+      .attr("y", -this.height / 2)
+      .attr("height", this.height)
+      .attr("width", this.xScale(this.model.time.startSelected) + this.height / 2);
+    this.select.select('.selected-end')              
+      .attr('d', "M" + this.xScale(this.model.time.endSelected) + ",0H" + this.xScale(this.model.time.end));
+    this.select.select("#clip-end").select('rect')
+      .attr("x", this.xScale(this.model.time.endSelected))
+      .attr("y", -this.height / 2)
+      .attr("height", this.height)
+      .attr("width", this.xScale(this.model.time.end) - this.xScale(this.model.time.endSelected) + this.height / 2);
+  },
+  
 
   /**
    * Returns width of slider text value.

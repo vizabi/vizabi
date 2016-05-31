@@ -477,6 +477,7 @@ BubbleChart.define('default_model', {
         use: "constant",
         which: "_default",
         scaleType: "ordinal",
+        _important: false,
         extent: [0, 0.33]
       },
 
@@ -692,39 +693,39 @@ BMComponent.define("preload", function(done) {
 });
 
 
-//preloading metadata for all charts
+//preloading concept properties for all charts
 Tool.define("preload", function(promise) {
 
   var _this = this;
-  var metadata_path = globals.ext_resources.metadataPath ? globals.ext_resources.metadataPath :
-      globals.ext_resources.host + globals.ext_resources.preloadPath + "metadata.json";    
+  var conceptprops_path = globals.ext_resources.conceptpropsPath ? globals.ext_resources.conceptpropsPath :
+      globals.ext_resources.host + globals.ext_resources.preloadPath + "conceptprops.json";    
 
   //TODO: concurrent
   //load language first
   this.preloadLanguage().then(function() {
-    //then metadata
+    //then concept properties
     
-    if (!_this.model.data || _this.model.data.noMetadata) {
+    if (!_this.model.data || _this.model.data.noConceptprops) {
       promise.resolve();
       return;
     }
     
-    d3.json(metadata_path, function(metadata) {
+    d3.json(conceptprops_path, function(conceptprops) {
 
-      globals.metadata = metadata;
+      globals.conceptprops = conceptprops;
         
-      if(!globals.metadata.indicatorsDB["_default"]) globals.metadata.indicatorsDB["_default"] = {
+      if(!globals.conceptprops.indicatorsDB["_default"]) globals.conceptprops.indicatorsDB["_default"] = {
           "use": "constant",
           "scales": ["ordinal"]
       }
-      if(globals.metadata.indicatorsTree.children.map(function(m){return m.id}).indexOf("_default")===-1) {
-          globals.metadata.indicatorsTree.children.push({"id": "_default"});
+      if(globals.conceptprops.indicatorsTree.children.map(function(m){return m.id}).indexOf("_default")===-1) {
+          globals.conceptprops.indicatorsTree.children.push({"id": "_default"});
       }
 
       // TODO: REMOVE THIS HACK
-      // We are currently saving metadata info to default state manually in order
-      // to produce small URLs considering some of the info in metadata to be default
-      // we need a consistent way to add metadata to Vizabi
+      // We are currently saving concept properties info to default state manually in order
+      // to produce small URLs considering some of the info in concept properties to be default
+      // we need a consistent way to add concept properties to Vizabi
       addMinMax("axis_x");
       addMinMax("axis_y");
       addMinMax("size");
@@ -742,7 +743,7 @@ Tool.define("preload", function(promise) {
     if(!((_this.default_model.state||{}).marker||{})[hook]) return;
     
     var color = _this.default_model.state.marker[hook];
-    var palette = ((globals.metadata.indicatorsDB[color.which]||{}).color||{}).palette||{};
+    var palette = ((globals.conceptprops.indicatorsDB[color.which]||{}).color||{}).palette||{};
     color.palette = utils.extend({}, color.palette, palette);
   }
 
@@ -751,8 +752,8 @@ Tool.define("preload", function(promise) {
     if(!((_this.default_model.state||{}).marker||{})[hook]) return;
     
     var axis = _this.default_model.state.marker[hook];
-    if(axis.use === "indicator" && globals.metadata.indicatorsDB[axis.which] && globals.metadata.indicatorsDB[axis.which].domain) {
-      var domain = globals.metadata.indicatorsDB[axis.which].domain;
+    if(axis.use === "indicator" && globals.conceptprops.indicatorsDB[axis.which] && globals.conceptprops.indicatorsDB[axis.which].domain) {
+      var domain = globals.conceptprops.indicatorsDB[axis.which].domain;
       axis.domainMin = axis.domainMin || domain[0];
       axis.domainMax = axis.domainMax || domain[1];
       axis.zoomedMin = axis.zoomedMin || axis.domainMin || domain[0];

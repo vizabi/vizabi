@@ -489,7 +489,7 @@ updateSize: function (meshLength) {
         var _this = this;
 
         this.translator = this.model.language.getTFunction();
-        var xMetadata = this.model.marker.axis_x.getMetadata();
+        var xConceptprops = this.model.marker.axis_x.getConceptprops();
 
 
         this.xTitleEl.select("text")

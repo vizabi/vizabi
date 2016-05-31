@@ -33,7 +33,9 @@ var TimeModel = Model.extend({
     dim: "time",
     value: "2015",
     start: "1800", //mandatory defaults! 
-    end: "2015", //mandatory defaults! 
+    end: "2015", //mandatory defaults!
+    startSelected: "1800",
+    endSelected: "2015",
     playable: true,
     playing: false,
     loop: false,
@@ -92,7 +94,7 @@ var TimeModel = Model.extend({
    */
   _formatToDates: function() {
 
-    var date_attr = ["value", "start", "end"];
+    var date_attr = ["value", "start", "end", "startSelected", "endSelected"];
     for(var i = 0; i < date_attr.length; i++) {
       var attr = date_attr[i];
       if(!utils.isDate(this[attr])) {
@@ -122,7 +124,7 @@ var TimeModel = Model.extend({
     var keys = Object.keys(formats), i = 0; 
     for (; i < keys.length; i++) {
       var dateObject = formats[keys[i]].parse(timeString);
-      if (date) return { unit: keys[i], time: dateObject };
+      if (dateObject) return { unit: keys[i], time: dateObject };
     }
     return null;
   },
@@ -144,7 +146,8 @@ var TimeModel = Model.extend({
     }
       
     //make sure dates are transformed into dates at all times
-    if(!utils.isDate(this.start) || !utils.isDate(this.end) || !utils.isDate(this.value)) {
+    if(!utils.isDate(this.start) || !utils.isDate(this.end) || !utils.isDate(this.value) 
+      || !utils.isDate(this.startSelected) || !utils.isDate(this.endSelected)) {
       this._formatToDates();
     }
 
@@ -152,6 +155,23 @@ var TimeModel = Model.extend({
     if(this.end < this.start) {
       this.end = new Date(this.start);
     }
+    
+    if(this.value < this.startSelected) {
+      this.value = new Date(this.startSelected); 
+    }
+    
+    if(this.value > this.endSelected) {
+      this.value = new Date(this.endSelected);
+    }
+    
+    if(this.startSelected < this.start) {
+      this.startSelected = new Date(this.start);
+    }
+
+    if(this.endSelected > this.end) {
+      this.endSelected = new Date(this.end);
+    }
+  
     //value has to be between start and end
     if(this.value < this.start) {
       this.value = new Date(this.start);
@@ -293,8 +313,8 @@ var TimeModel = Model.extend({
     var _this = this;
 
     //go to start if we start from end point
-    if(this.value >= this.end) {
-      _this.getModelObject('value').set(_this.start, null, false /*make change non-persistent for URL and history*/);
+    if(this.value >= this.endSelected) {
+      _this.getModelObject('value').set(_this.startSelected, null, false /*make change non-persistent for URL and history*/);
     } else {
       //the assumption is that the time is already snapped when we start playing
       //because only dragging the timeslider can un-snap the time, and it snaps on drag.end
@@ -318,11 +338,11 @@ var TimeModel = Model.extend({
 
     this._intervals.setInterval('playInterval_' + this._id, function() {
       // when time is playing and it reached the end
-      if(_this.value >= _this.end) {
+      if(_this.value >= _this.endSelected) {
         // if looping
         if(_this.loop) {
           // reset time to start, silently
-          _this.getModelObject('value').set(_this.start, null, false /*make change non-persistent for URL and history*/);
+          _this.getModelObject('value').set(_this.startSelected, null, false /*make change non-persistent for URL and history*/);
         } else {
           _this.playing = false;
         }
@@ -340,9 +360,9 @@ var TimeModel = Model.extend({
           if(_this.delay < _this.delayThresholdX2) is.step*=2;
           if(_this.delay < _this.delayThresholdX4) is.step*=2;
           var time = d3.time[is.interval].utc.offset(_this.value, is.step);
-          if(time >= _this.end) {
+          if(time >= _this.endSelected) {
             // if no playing needed anymore then make the last update persistent and not overshooting
-            _this.getModelObject('value').set(_this.end, null, true /*force the change and make it persistent for URL and history*/);
+            _this.getModelObject('value').set(_this.endSelected, null, true /*force the change and make it persistent for URL and history*/);
           }else{
             _this.getModelObject('value').set(time, null, false /*make change non-persistent for URL and history*/);
           }

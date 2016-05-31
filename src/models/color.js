@@ -75,8 +75,8 @@ var ColorModel = Hook.extend({
     // if the resolved colr value is not an array (has only one shade) -- return it
     if( !utils.isArray(palette[args.colorID]) ) return palette[args.colorID];
       
-    var colorMeta = this.getMetadata().color;
-    var shade = args.shadeID && colorMeta && colorMeta.shades && colorMeta.shades[args.shadeID] ? colorMeta.shades[args.shadeID] : 0;
+    var conceptpropsColor = this.getConceptprops().color;
+    var shade = args.shadeID && conceptpropsColor && conceptpropsColor.shades && conceptpropsColor.shades[args.shadeID] ? conceptpropsColor.shades[args.shadeID] : 0;
         
     return palette[args.colorID][shade];
     
@@ -91,8 +91,8 @@ var ColorModel = Hook.extend({
    * Get the above constants
    */
   isUserSelectable: function() {
-    var metaColor = this.getMetadata().color;
-    return metaColor == null || metaColor.selectable == null || metaColor.selectable;
+    var conceptpropsColor = this.getConceptprops().color;
+    return conceptpropsColor == null || conceptpropsColor.selectable == null || conceptpropsColor.selectable;
   },
 
   /**
@@ -146,12 +146,12 @@ var ColorModel = Hook.extend({
 
 
   getDefaultPalette: function() {     
-      var metaColor = this.getMetadata().color;
+      var conceptpropsColor = this.getConceptprops().color;
       var palette;
       
-      if(metaColor && metaColor.palette) {
-        //specific color palette from hook metadata
-        palette = utils.clone(metaColor.palette);
+      if(conceptpropsColor && conceptpropsColor.palette) {
+        //specific color palette from hook concept properties
+        palette = utils.clone(conceptpropsColor.palette);
       } else if(defaultPalettes[this.which]) {
         //color palette for this.which exists in palette defaults
         palette = utils.clone(defaultPalettes[this.which]);
@@ -216,8 +216,8 @@ var ColorModel = Hook.extend({
         var limits = this.getLimits(this.which);
         //default domain is based on limits
         domain = [limits.min, limits.max];
-        //domain from metadata can override it if defined
-        domain = this.getMetadata().domain ? this.getMetadata().domain : domain;
+        //domain from concept properties can override it if defined
+        domain = this.getConceptprops().domain ? this.getConceptprops().domain : domain;
           
         var limitMin = domain[0];
         var limitMax = domain[1];

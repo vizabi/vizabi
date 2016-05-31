@@ -66,7 +66,8 @@ var label = function(context) {
   // It's too easy to accidentally zoom
   // This feature will be activated later, by making the label into a "context menu" where users can click Split, or zoom,.. hide others etc....
 
-          view.append("rect");
+          view.append("rect").attr("class","vzb-label-glow").attr("filter", "url(#vzb-glow-filter)");
+          view.append("rect").attr("class","vzb-label-fill vzb-tooltip-border");
   //          .on("click", function(d, i) {
   //            //default prevented is needed to distinguish click from drag
   //            if(d3.event.defaultPrevented) return;
@@ -105,7 +106,7 @@ var label = function(context) {
         })
         .on("mouseover", function(d) {
           if(utils.isTouchDevice()) return;
-          _this.model.entities.highlightEntity(d);
+          _this.model.entities.highlightEntity(d, null, null, true);
           _this.entityLabels.sort(function (a, b) { // select the labels and sort the path's
             if (a.geo != d.geo) return -1;          // a is not the hovered element, send "a" to the back
             else return 1;
@@ -155,25 +156,24 @@ var label = function(context) {
       var rectBBox = cache.rectBBox;
       var width = rectBBox.width;
       var height = rectBBox.height;
-      var heightDelta = cache.heightDelta;
 
       //apply limits so that the label doesn't stick out of the visible field
       if(_X - width <= 0) { //check left
         _X = width;
         cache.labelX_ = (_X - _this.xScale(cache.labelX0)) / viewWidth;
-      } else if(_X + 23 > viewWidth) { //check right
-        _X = viewWidth - 23; 
+      } else if(_X + 5 > viewWidth) { //check right
+        _X = viewWidth - 5; 
         cache.labelX_ = (_X - _this.xScale(cache.labelX0)) / viewWidth;
       }
-      if(_Y - height * .75 - heightDelta <= 0) { // check top
-        _Y = height * .75 + heightDelta;
+      if(_Y - height * .75 <= 0) { // check top
+        _Y = height * .75;
         cache.labelY_ = (_Y - _this.yScale(cache.labelY0)) / viewHeight;
       } else if(_Y + height * .35 > viewHeight) { //check bottom
         _Y = viewHeight - height * .35;
         cache.labelY_ = (_Y - _this.yScale(cache.labelY0)) / viewHeight;
       }
 
-      if(duration == null) duration = _this.duration;
+      if(duration == null) duration = _this._toolContext.duration;
       if(duration) {
         if(showhide && !d.hidden){
             //if need to show label
@@ -183,17 +183,25 @@ var label = function(context) {
                 .attr("transform", "translate(" + _X + "," + _Y + ")")
                 .style("opacity", 0)
                 .transition().duration(duration).ease("exp")
-                .style("opacity", 1);
+                .style("opacity", 1)
                 //i would like to set opactiy to null in the end of transition. 
                 //but then fade in animation is not working for some reason
+                .each("interrupt", function(){
+                    labelGroup
+                        .style("opacity", 1)
+                });
             lineGroup.classed("vzb-invisible", d.hidden);
             lineGroup
                 .attr("transform", "translate(" + _X + "," + _Y + ")")
                 .style("opacity", 0)
                 .transition().duration(duration).ease("exp")
-                .style("opacity", 1);
+                .style("opacity", 1)
                 //i would like to set opactiy to null in the end of transition. 
                 //but then fade in animation is not working for some reason
+                .each("interrupt", function(){
+                    lineGroup
+                        .style("opacity", 1)
+                });
             
         } else if(showhide && d.hidden) {
             //if need to hide label
@@ -517,7 +525,7 @@ var Labels = Component.extend({
     labels.classed("vzb-highlighted", highlight);
   },
   
-  updateLabel: function(d, index, cache, valueX, valueY, valueS, valueL, valueLST, duration, showhide) {
+  updateLabel: function(d, index, cache, valueX, valueY, valueS, valueC, valueL, valueLST, duration, showhide) {
     var _this = this;
     var KEY = this.KEY;
     if(d[KEY] == _this.druging)
@@ -534,11 +542,12 @@ var Labels = Component.extend({
       if(cache) utils.extend(cached, cache);
 
 
-      if(cached.scaledS0 == null || cached.labelX0 == null || cached.labelX0 == null) { //initialize label once
+      if(cached.scaledS0 == null || cached.labelX0 == null || cached.labelY0 == null) { //initialize label once
         if(valueS) cached.scaledS0 = utils.areaToRadius(this._toolContext.sScale(valueS));
         cached.labelX0 = valueX;
         cached.labelY0 = valueY;
         cached.valueLST = valueLST;
+        cached.scaledC0 = valueC!=null?this._toolContext.cScale(valueC):this._toolContext.COLOR_WHITEISH;
       }
 
       if(cached.labelX_ == null || cached.labelY_ == null)
@@ -593,14 +602,16 @@ var Labels = Component.extend({
     
     var _text = text || labelGroup.selectAll("." + _cssPrefix + "-label-content"); 
     
-    if(_this.labelSizeTextScale) {
+    if(valueLST != null && _this.labelSizeTextScale) {
       var range = _this.labelSizeTextScale.range();
       var fontSize = range[0] + Math.sqrt((_this.labelSizeTextScale(valueLST) - range[0]) * (range[1] - range[0]));
       _text.attr('font-size', fontSize + 'px');
     }
 
     var contentBBox = _text[0][0].getBBox();
-
+    
+    var rect = labelGroup.selectAll("rect");
+    
     if(!cached.textWidth || cached.textWidth != contentBBox.width) {
       cached.textWidth = contentBBox.width;
 
@@ -622,8 +633,6 @@ var Labels = Component.extend({
         .attr("width", labelCloseHeight)
         .attr("height", labelCloseHeight)
   
-      var rect = labelGroup.select("rect");
-
       rect.attr("width", contentBBox.width + 8)
         .attr("height", contentBBox.height * 1.2)
         .attr("x", -contentBBox.width - 4)
@@ -633,12 +642,16 @@ var Labels = Component.extend({
 
       //cache label bound rect for reposition
       cached.rectBBox = rect.node().getBBox();
-      cached.heightDelta = labelGroup.node().getBBox().height - cached.rectBBox.height;
       //cached.moveX = 5;
       //cached.moveY = contentBBox.height * .3;
     }
+    
+    var glowRect = labelGroup.select(".vzb-label-glow")
+    if(glowRect.attr("stroke") !== cached.scaledC0) {
+      glowRect.attr("stroke", cached.scaledC0);
+    }
   },
-  
+    
   updateLabelsOnlyTextSize: function() {
     var _this = this;
     var KEY = this.KEY;
@@ -669,6 +682,20 @@ var Labels = Component.extend({
       .each(function(groupData) {
         _this.positionLabel(d, index, this, 0, null, lineGroup);
       });
+  },
+
+  updateLabelOnlyColor: function(d, index, cache) {
+    var _this = this;
+    var KEY = this.KEY;
+    var cached = this.cached[d[KEY]];
+    if(cache) utils.extend(cached, cache);
+
+    var labelGroup = _this.entityLabels.filter(function(f) {
+      return f[KEY] == d[KEY];
+    });
+   
+    _this._updateLabelSize(d, index, labelGroup, null);
+    
   },
   
   positionLabel: function(d, index, context, duration, showhide, lineGroup) {

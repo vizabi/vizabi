@@ -35,7 +35,7 @@ In order to run the project in **development mode**, type the following:
 gulp
 ```
 
-The browser will open on `http://localhost:8080/preview/`
+Open browser on `http://localhost:9000/preview`
 
 In order to only build the project, type the following (you'll rarely need this).
 Build will be created using Docker (Image of Ubuntu 14.04):

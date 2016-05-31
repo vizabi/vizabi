@@ -1,0 +1,5 @@
+geo,is--world_4region,name,name_short,name_long,description,latitude,longitude,color
+africa,TRUE,Africa,Africa,The African continent including Madagascar & other islands,"The entire African continent, Madagascar and some islands make up roughly a quarter of the world's total land surface.",-14.33333,28.5,#00d5e9
+europe,TRUE,Europe,Europe,"Central Asia, East & West Europe ","West & East Europe including all of Russia and the Central Asian countries. The group is defined by Gapmidner, to make up roughly a quarter of the world's total land surface.",50.75,4.5,#ffe700
+americas,TRUE,The Americas,America,"North, South & Central America","North, South & central America make up roughly a quarter of the world's total land surface.",8.9936,-79.51973,#7feb00
+asia,TRUE,Asia,Asia,"Australia, Pacific Islands, South & South East Asia","Asia as defined by Gapmidner, to make up roughly a quarter of the world's total land surface.",16.16667,107.83333,#ff5872

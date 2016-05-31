@@ -2,15 +2,25 @@ language: node_js
 dist: trusty
 sudo: true
 node_js:
-  - '4.1'
+  - '5.1'
 addons:
   firefox: "42.0"
   apt:
     packages:
     - s3cmd
     - ruby
-env:
-  CXX=g++-4.8
+    
+notifications:
+  email: false
+  slack:
+    rooms:
+      - gapminder:siB4Z9ymsYR6qHnRPpgUoB2Q#vizabi-spam
+    on_success: change
+    on_failure: always
+  
+cache:
+  directories:
+    - node_modules
 
 before_install:
   - npm install -g npm@latest
@@ -39,5 +49,5 @@ deploy:
     secure: "XVJ/QwnTYMNEUMtAcvmVdh6EHndHcEqzdJUe7JYYRXmA2qxhRGIC8VlnK9GKZOS3ACSDygp1lCam+BA5ZYy4QhvsMsPQukWeon6K8Zcerg8Lg3XfxXBilKATf83DQ0PZslus1XgynZmNgUCkJ61rhAhLVOx0iIpetMOHTZ3oJak="
   on:
     branch: develop
-    node: 4.1
+    node: 5.1
     condition: "-e /tmp/deployment.flag"

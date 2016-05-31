@@ -39,7 +39,7 @@ var DonutChart = Tool.extend('DonutChart', {
     }, {
       component: 'timeslider',
       placeholder: '.vzb-tool-timeslider',
-      model: ["state.time"]
+      model: ["state.time", "state.entities", "state.marker"]
     }];
       
       this._super(placeholder, external_model);

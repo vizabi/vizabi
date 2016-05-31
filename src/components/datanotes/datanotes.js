@@ -110,7 +110,7 @@ var DataNotes = Component.extend({
     if(showDescription) this.element.select('.vzb-data-notes-body').text(description);
     this.element.select('.vzb-data-notes-body').classed('vzb-hidden', !showDescription);
    
-    var sourceLink = hook.getMetadata().sourceLink;
+    var sourceLink = hook.getConceptprops().sourceLink;
     this.element.select('.vzb-data-notes-link').classed('vzb-hidden', !sourceLink);
 
     if(sourceLink) {

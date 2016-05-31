@@ -36,7 +36,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
-      model: ["state.time"]
+      model: ["state.time", "state.entities", "state.marker"]
     }, {
       component: dialogs,
       placeholder: '.vzb-tool-dialogs',
@@ -61,6 +61,18 @@ var BubbleChart = Tool.extend('BubbleChart', {
 
     this._super(placeholder, external_model);
 
+  },
+  
+  validate: function(model){
+    model = this.model || model;
+    
+    this._super(model);
+    
+    if(model.ui.chart.lockNonSelected) {
+       var time = model.state.time.timeFormat.parse("" + model.ui.chart.lockNonSelected);
+       if(time < model.state.time.start) model.ui.chart.lockNonSelected = model.state.time.timeFormat(model.state.time.start);
+       if(time > model.state.time.end) model.ui.chart.lockNonSelected = model.state.time.timeFormat(model.state.time.end);       
+    }
   },
 
   /**

@@ -88,7 +88,7 @@ var ColorLegend = Component.extend({
         d3.select(this).append("div").attr("class", "vzb-cl-color-legend");
       })
       .on("mouseover", function() {
-        //disable interaction if so stated in metadata
+        //disable interaction if so stated in concept properties
         if(!_this.model.color.isUserSelectable()) return;
 
         var sample = d3.select(this).select(".vzb-cl-color-sample");
@@ -97,7 +97,7 @@ var ColorLegend = Component.extend({
 
       })
       .on("mouseout", function(d) {
-        //disable interaction if so stated in metadata
+        //disable interaction if so stated in concept properties
         if(!_this.model.color.isUserSelectable()) return;
 
         var sample = d3.select(this).select(".vzb-cl-color-sample");
@@ -105,7 +105,7 @@ var ColorLegend = Component.extend({
         sample.style("background-color", _this.model.color.palette[d]);
       })
       .on("click", function(d) {
-        //disable interaction if so stated in metadata
+        //disable interaction if so stated in concept properties
         if(!_this.model.color.isUserSelectable()) return;
         _this.colorPicker
           .colorOld(palette[d])
@@ -173,7 +173,7 @@ var ColorLegend = Component.extend({
           _this.model.entities.clearHighlighted();
         })
         .on("click", function(d) {
-          //disable interaction if so stated in metadata
+          //disable interaction if so stated in concept properties
           if(!_this.model.color.isUserSelectable()) return;
           var view = d3.select(this);
           var region = view.attr("id")
@@ -188,8 +188,8 @@ var ColorLegend = Component.extend({
         })
     } else {
       this.worldmapEl.classed("vzb-hidden", true);
-      //if using a discrete palette that is not supplied from metadata but from defaults
-      if(this.model.color.use === "property" && !(this.model.color.getMetadata().color||{}).palette) {
+      //if using a discrete palette that is not supplied from concept properties but from defaults
+      if(this.model.color.use === "property" && !(this.model.color.getConceptprops().color||{}).palette) {
         colors.classed("vzb-cl-compact", true);
       } else {
         colors.classed("vzb-cl-compact", false);

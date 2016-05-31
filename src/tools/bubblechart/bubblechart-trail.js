@@ -57,6 +57,8 @@ export default Class.extend({
         })
         .each(function(d, index) {
           var defer = new Promise();
+          // used for prevent move trail start time forward when we have empty values at end of time range
+          d.firstAvailableSegment = null;
           promises.push(defer);
           var trailSegmentData = timePoints.map(function(m) {
             return {
@@ -86,14 +88,16 @@ export default Class.extend({
               var selectedData = utils.find(_context.model.entities.select, function(f) {
                 return f[KEY] == d[KEY]
               });
-              if(text !== selectedData.trailStartTime) {
-                _context.model.marker.getFrame(pointer.time, function(values) {
-                  var x = _context.xScale(values.axis_x[pointer[KEY]]);
-                  var y = _context.yScale(values.axis_y[pointer[KEY]]);
-                  var s = utils.areaToRadius(_context.sScale(values.size[pointer[KEY]]));
-                  _context._setTooltip(text, x, y, s);
-                });
-              }
+              _context.model.marker.getFrame(pointer.time, function(values) {
+                var x = _context.xScale(values.axis_x[pointer[KEY]]);
+                var y = _context.yScale(values.axis_y[pointer[KEY]]);
+                var s = utils.areaToRadius(_context.sScale(values.size[pointer[KEY]]));
+                var c = values.color[pointer[KEY]]!=null?_context.cScale(values.color[pointer[KEY]]):_context.COLOR_BLACKISH;
+                if(text !== selectedData.trailStartTime) {
+                  _context._setTooltip(text, x, y, s + 3, c);
+                }
+                _context._setBubbleCrown(x, y, s, c);
+              });
               //change opacity to OPACITY_HIGHLT = 1.0;
               d3.select(this).style("opacity", 1.0);
             })
@@ -101,6 +105,7 @@ export default Class.extend({
               if(utils.isTouchDevice()) return;
               _context._axisProjections();
               _context._setTooltip();
+              _context._setBubbleCrown();
               _context.labels.highlight(null, false);
               d3.select(this).style("opacity", _context.model.entities.opacityRegular);
             })
@@ -283,7 +288,9 @@ export default Class.extend({
       cache.labelY0 = _context.frame.axis_y[d[KEY]];
       var valueS = _context.frame.size[d[KEY]];
       cache.scaledS0 = valueS ? utils.areaToRadius(_context.sScale(valueS)) : null;
-      _context._updateLabel(d, 0, _context.frame.axis_x[d[KEY]], _context.frame.axis_y[d[KEY]], _context.frame.size[d[KEY]], _context.frame.label[d[KEY]], _context.frame.size_label[d[KEY]], 0, true);
+      var valueC = _context.frame.color[d[KEY]];
+      cache.scaledC0 = valueC != null ? _context.cScale(valueC) : _context.COLOR_WHITEISH;
+      _context._updateLabel(d, 0, _context.frame.axis_x[d[KEY]], _context.frame.axis_y[d[KEY]], _context.frame.size[d[KEY]], _context.frame.color[d[KEY]], _context.frame.label[d[KEY]], _context.frame.size_label[d[KEY]], 0, true);
     }
     trail.each(function(segment, index) {
       // segment is transparent if it is after current time or before trail StartTime
@@ -320,13 +327,15 @@ export default Class.extend({
             segment.valueC = frame.color[d[KEY]];
 
             if(segment.valueY==null || segment.valueX==null || segment.valueS==null) {
-              if (_context.time - trailStartTime > 0) { // move trail start time forward because previous values are empty
+              if (_context.time - trailStartTime > 0 && (!d.firstAvailableSegment || d.firstAvailableSegment - segment.t > 0)) { // move trail start time forward because previous values are empty
                 d.trailStartTime = _context.model.time.timeFormat(_context.model.time.incrementTime(trailStartTime));
                 trailStartTime = _context.model.time.timeFormat.parse("" + d.trailStartTime);
               }
               resolve();
             } else {
-              
+              if (!d.firstAvailableSegment || d.firstAvailableSegment - segment.t > 0) {
+                d.firstAvailableSegment = segment.t;
+              }
               // fix label position if it not in correct place
               var cache = _context.labels.cached[d[KEY]];
               if (trailStartTime && trailStartTime.toString() == segment.t.toString()) {
@@ -334,7 +343,8 @@ export default Class.extend({
                   cache.labelY0 = segment.valueY;
                   var valueS = segment.valueS;
                   cache.scaledS0 = valueS ? utils.areaToRadius(_context.sScale(valueS)) : null;
-                  _context._updateLabel(d, index, segment.valueX, segment.valueY, segment.valueS, frame.label[d[KEY]], frame.size_label[d[KEY]], 0, true);
+                  cache.scaledC0 = segment.valueC!=null?_context.cScale(segment.valueC):_context.COLOR_WHITEISH;
+                  _context._updateLabel(d, index, segment.valueX, segment.valueY, segment.valueS, segment.valueC, frame.label[d[KEY]], frame.size_label[d[KEY]], 0, true);
               }
               view.select("circle")
                 //.transition().duration(duration).ease("linear")

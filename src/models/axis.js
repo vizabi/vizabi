@@ -12,7 +12,11 @@ var allowTypes = {
 };
 
 var AxisModel = Hook.extend({
-
+  
+  //some hooks can be important. like axis x and y
+  //that means, if X or Y doesn't have data at some point, we can't show markers
+  _important: true,
+  
   /**
    * Default values for this model
    */
@@ -62,6 +66,12 @@ var AxisModel = Hook.extend({
         if (this.scale.domain()[0] != limits.min || this.scale.domain()[1] != limits.max) {
           this.scale.domain([limits.min, limits.max]);
         }
+        
+        //restore the correct object type for time values
+        //TODO: find a better way to get to the parser
+        if(this.zoomedMin != null && !utils.isDate(this.zoomedMin)) this.zoomedMin = this._parent._parent.time.parseToUnit(this.zoomedMin.toString());
+        if(this.zoomedMax != null && !utils.isDate(this.zoomedMax)) this.zoomedMax = this._parent._parent.time.parseToUnit(this.zoomedMax.toString());
+
         if(!utils.isDate(this.domainMin)) this.domainMin = this.scale.domain()[0];
         if(!utils.isDate(this.domainMax)) this.domainMax = this.scale.domain()[1];
       }
@@ -95,8 +105,8 @@ var AxisModel = Hook.extend({
         var limits = this.getLimits(this.which);
         //default domain is based on limits
         domain = [limits.min, limits.max];
-        //domain from metadata can override it if defined
-        domain = this.getMetadata().domain ? this.getMetadata().domain : domain;
+        //domain from concept properties can override it if defined
+        domain = this.getConceptprops().domain ? this.getConceptprops().domain : domain;
         //min and max can override the domain if defined
         domain = this.domainMin!=null && this.domainMax!=null ? [+this.domainMin, +this.domainMax] : domain;
         
