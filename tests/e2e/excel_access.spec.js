@@ -36,16 +36,18 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     //Clicking USA bubble
     var USABubble = element(by.css(Bubble_Chart['D6'].v));
-    browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
-        browser.actions().mouseMove(USABubble).mouseMove({x:0, y:20}).click().perform();
-    });
+    var USABubbleIsDisplayed = USABubble.isDisplayed();
+//    browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
+        browser.actions().mouseMove(USABubbleIsDisplayed).mouseMove({x:0, y:20}).click().perform();
+//    });
 
 
     //Clicking China bubble
     var chinaBubble = element(by.css(Bubble_Chart['D7'].v));
-    browser.wait(EC.visibilityOf(chinaBubble), 5000).then(function(){
-        browser.actions().mouseMove(chinaBubble).mouseMove({x:0, y:30}).click().perform();
-    });
+    var chinaBubbleIsDisplayed = chinaBubble.isDisplayed();
+//    browser.wait(EC.visibilityOf(chinaBubble), 5000).then(function(){
+        browser.actions().mouseMove(chinaBubbleIsDisplayed).mouseMove({x:0, y:30}).click().perform();
+//    });
 
     //Clicking play
     browser.wait(EC.visibilityOf(play), 5000).then(function(){
@@ -74,7 +76,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
      });
   });
     
-
+/*
     
 // If I click on play when I'm on the year 2015, the time slider handle
   // moves,, and the bubbles change position. It pauses automatically when it reached the final year.
@@ -474,6 +476,6 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
     });
   });    
 
-
+*/
     
 });
