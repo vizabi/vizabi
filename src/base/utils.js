@@ -1142,7 +1142,7 @@ export var flattenDates = function(obj, timeFormat) {
   forEach(obj, function(val, key) {
     //todo: hack to flatten time unit objects to strings
     if (key === 'marker') {
-      ["axis_x", "axis_y"].map(function(name) {
+      ["axis_x", "axis_y", "size_label"].map(function(name) {
         var hook = val[name];
         if (hook && hook.scaleType === "time") {
           if(isDate(hook.domainMin)) hook.domainMin = timeFormat(hook.domainMin);

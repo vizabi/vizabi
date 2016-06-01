@@ -59,6 +59,14 @@ BarChart.define('default_model', {
         }
       }
     },
+    entities_minimap: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo.cat": ["world_4region"]
+        }
+      }
+    },
     marker: {
       space: ["entities", "time"],
       label: {
@@ -87,6 +95,19 @@ BarChart.define('default_model', {
         which: "geo.world_4region",
         scaleType: "ordinal"
       }
+    },
+    marker_minimap:{
+      space: ["entities_minimap"],
+        type: "geometry",
+        shape: "svg",
+        label: {
+          use: "property",
+          which: "geo.name"
+        },
+        geoshape: {
+          use: "property",
+          which: "shape_lores_svg"
+        }
     }
   },
   data: {
@@ -116,6 +137,14 @@ BarRankChart.define('default_model', {
       },
       opacitySelectDim: .3,
       opacityRegular: 1
+    },
+    entities_minimap: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo.cat": ["world_4region"]
+        }
+      }
     },
     entities_allpossible: {
       dim: "geo",
@@ -166,6 +195,19 @@ BarRankChart.define('default_model', {
         use: "property",
         which: "geo.world_4region"
       }
+    },
+    marker_minimap:{
+      space: ["entities_minimap"],
+        type: "geometry",
+        shape: "svg",
+        label: {
+          use: "property",
+          which: "geo.name"
+        },
+        geoshape: {
+          use: "property",
+          which: "shape_lores_svg"
+        }
     }
   },
   language: language,
@@ -205,6 +247,14 @@ BubbleMap.define('default_model', {
         }
       },
     },
+    entities_minimap: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo.cat": ["world_4region"]
+        }
+      }
+    },
     marker: {
       space: ["entities", "time"],
       label: {
@@ -223,11 +273,13 @@ BubbleMap.define('default_model', {
       },
       lat: {
         use: "property",
-        which: "geo.latitude"
+        which: "geo.latitude",
+        _important: true
       },
       lng: {
         use: "property",
-        which: "geo.longitude"
+        which: "geo.longitude",
+        _important: true
       },
       color: {
         use: "property",
@@ -237,6 +289,19 @@ BubbleMap.define('default_model', {
           names: ["!geo.name"]
         }
       }
+    },
+    marker_minimap:{
+      space: ["entities_minimap"],
+        type: "geometry",
+        shape: "svg",
+        label: {
+          use: "property",
+          which: "geo.name"
+        },
+        geoshape: {
+          use: "property",
+          which: "shape_lores_svg"
+        }
     }
   },
   data: {
@@ -290,6 +355,14 @@ MountainChart.define('default_model', {
         _defs_: {
           "geo": ["*"],
           "geo.cat": ["country", "unstate"]
+        }
+      }
+    },
+    entities_minimap: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo.cat": ["world_4region"]
         }
       }
     },
@@ -349,6 +422,19 @@ MountainChart.define('default_model', {
         manualSorting: ["asia", "africa", "americas", "europe"],
         merge: false
       }
+    },
+    marker_minimap:{
+      space: ["entities_minimap"],
+        type: "geometry",
+        shape: "svg",
+        label: {
+          use: "property",
+          which: "geo.name"
+        },
+        geoshape: {
+          use: "property",
+          which: "shape_lores_svg"
+        }
     }
   },
   language: language,
@@ -388,6 +474,14 @@ LineChart.define('default_model', {
         }
       }
     },
+    entities_minimap: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo.cat": ["world_4region"]
+        }
+      }
+    },
     //how we show it
     marker: {
       space: ["entities", "time"],
@@ -414,6 +508,19 @@ LineChart.define('default_model', {
           names: ["!geo.name"]
         }
       }
+    },
+    marker_minimap:{
+      space: ["entities_minimap"],
+        type: "geometry",
+        shape: "svg",
+        label: {
+          use: "property",
+          which: "geo.name"
+        },
+        geoshape: {
+          use: "property",
+          which: "shape_lores_svg"
+        }
     }
   },
 
@@ -462,6 +569,14 @@ BubbleChart.define('default_model', {
       show: {
         _defs_: {
           "geo.cat": ["country", "unstate"]
+        }
+      }
+    },
+    entities_minimap: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo.cat": ["world_4region"]
         }
       }
     },
@@ -518,6 +633,19 @@ BubbleChart.define('default_model', {
         },
         extent: [0.04, 0.85]
       }
+    },
+    marker_minimap:{
+      space: ["entities_minimap"],
+        type: "geometry",
+        shape: "svg",
+        label: {
+          use: "property",
+          which: "geo.name"
+        },
+        geoshape: {
+          use: "property",
+          which: "shape_lores_svg"
+        }
     }
   },
   data: {
