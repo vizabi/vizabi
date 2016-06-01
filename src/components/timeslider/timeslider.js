@@ -377,7 +377,7 @@ var TimeSlider = Component.extend({
       for(var k = 0, l = select.length; k < l; k++) {
         var complete = 0;
         for(var i = 0, j = hooks.length; i < j; i++) {
-          if(values[hooks[i]][select[k][KEY]]) complete++;        
+          if(values[hooks[i]][select[k][KEY]] || values[hooks[i]][select[k][KEY]]===0) complete++;        
         }
         if(complete == hooks.length) return true;
       }
