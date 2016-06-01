@@ -369,7 +369,7 @@ var TimeSlider = Component.extend({
     var selectedEdgeTimes = [];
     var hooks = [];
     utils.forEach(_this.model.marker.getSubhooks(), function(hook) {
-      if(hook.use !== "indicator") return;
+      if(hook.use == "constant") return;
       if(hook._important) hooks.push(hook._name);
     });
     
