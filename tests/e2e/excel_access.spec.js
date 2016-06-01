@@ -37,6 +37,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
     //Clicking USA bubble
     var USABubble = element(by.css(Bubble_Chart['D6'].v));
     var USABubbleIsDisplayed = USABubble.isDisplayed();
+
 //    browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
         browser.actions().mouseMove(USABubbleIsDisplayed).mouseMove({x:0, y:20}).click().perform();
 //    });
