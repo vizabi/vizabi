@@ -47,7 +47,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
     var chinaBubble = element(by.css(Bubble_Chart['D7'].v));
     var chinaBubbleIsDisplayed = chinaBubble.isDisplayed();
 //    browser.wait(EC.visibilityOf(chinaBubble), 5000).then(function(){
-        browser.actions().mouseMove(chinaBubbleIsDisplayed).mouseMove({x:0, y:40}).click().perform();
+        browser.actions().mouseMove(chinaBubbleIsDisplayed).mouseMove({x:0, y:45}).click().perform();
 //    });
 
     //Clicking play
