@@ -3,7 +3,7 @@
 let config = {
     baseUrl: 'http://localhost:9000/',
   specs: [
-//    '../tests/e2e/*.spec.js'
+//   '../tests/e2e/*.spec.js'
       '../tests/e2e/excel_access.spec.js'
   ],
   exclude: [],
