@@ -76,8 +76,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
         });
      });
   });
-    
-/*
+
     
 // If I click on play when I'm on the year 2015, the time slider handle
   // moves,, and the bubbles change position. It pauses automatically when it reached the final year.
@@ -477,6 +476,5 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
     });
   });    
 
-*/
     
 });
