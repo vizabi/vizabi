@@ -164,7 +164,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     // Getting attributes of X axis
     var axis = element(by.css(Bubble_Chart['D19'].v));
-    browser.wait(EC.visibilityOf(axis), 20000);
+    browser.wait(EC.visibilityOf(axis), 60000);
     axis.getText().then(function (axisAsParameter) {
         var axisText = axisAsParameter;
 
@@ -193,7 +193,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     // Getting attributes of tooltip
     var tooltip =element(by.css(Bubble_Chart['D24'].v));
-    browser.wait(EC.visibilityOf(tooltip), 20000);
+    browser.wait(EC.visibilityOf(tooltip), 60000);
     tooltip.getText().then(function (tooltipAsParameter) {
       var tooltipText = tooltipAsParameter;
       // Comparing the country name
@@ -282,31 +282,31 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     //Clicking find
     var find =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));
-    browser.wait(EC.visibilityOf(find), 20000).then(function(){
+    browser.wait(EC.visibilityOf(find), 60000).then(function(){
       find.click();
     });
     // Place Text in Search
     var search =element(by.css("#vzb-find-search"));
-    browser.wait(EC.visibilityOf(search), 20000).then(function(){
+    browser.wait(EC.visibilityOf(search), 60000).then(function(){
       search.sendKeys("china");
     });
 
     // Check China Text Box
     var chinaBubble =element(by.css(Bubble_Chart['D40'].v));
-    browser.wait(EC.visibilityOf(chinaBubble), 20000).then(function(){
+    browser.wait(EC.visibilityOf(chinaBubble), 60000).then(function(){
       chinaBubble.click();
     });
     // Remove Text
     search.clear();
 
     // Place Text in Search / Find Field
-    browser.wait(EC.visibilityOf(search), 20000).then(function(){
+    browser.wait(EC.visibilityOf(search), 60000).then(function(){
       search.sendKeys("united states");
     });
 
     // Check United States Text Box
     var USABubble =element(by.css(Bubble_Chart['D41'].v));
-    browser.wait(EC.visibilityOf(USABubble), 20000).then(function(){
+    browser.wait(EC.visibilityOf(USABubble), 60000).then(function(){
       USABubble.click();
     });
     // Remove Text
@@ -314,7 +314,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     //Clicking OK
     var ok = element(by.css(Bubble_Chart['D42'].v));
-    browser.wait(EC.visibilityOf(ok), 20000).then(function(){
+    browser.wait(EC.visibilityOf(ok), 60000).then(function(){
       ok.click();
     });
 
@@ -329,16 +329,16 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
         var NGAOpacity = NGAOpacityAsParameter;
 
         //Clicking find	again to deselect
-        browser.wait(EC.visibilityOf(find), 20000).then(function(){
+        browser.wait(EC.visibilityOf(find), 60000).then(function(){
           find.click();
         });
         // Place Text in Search	again to deselect
-        browser.wait(EC.visibilityOf(search), 20000).then(function(){
+        browser.wait(EC.visibilityOf(search), 60000).then(function(){
           search.sendKeys("china");
         });
 
         // Check China Text Box	again to deselect
-        browser.wait(EC.visibilityOf(chinaBubble), 20000).then(function(){
+        browser.wait(EC.visibilityOf(chinaBubble), 60000).then(function(){
           chinaBubble.click();
         });
         // Remove Text
@@ -350,14 +350,14 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
         });
 
         // Check United States Text Box	again to deselect
-        browser.wait(EC.visibilityOf(USABubble), 20000).then(function(){
+        browser.wait(EC.visibilityOf(USABubble), 60000).then(function(){
           USABubble.click();
         });
         // Remove Text
         search.clear();
 
         //Clicking OK
-        browser.wait(EC.visibilityOf(ok), 20000).then(function(){
+        browser.wait(EC.visibilityOf(ok), 60000).then(function(){
           ok.click();
         });
         // Comapring Opacities
@@ -380,19 +380,19 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
    //Clicking find
     var find =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));
-    browser.wait(EC.visibilityOf(find), 20000).then(function(){
+    browser.wait(EC.visibilityOf(find), 60000).then(function(){
       find.click();
     });
 
     // Giving country name in Search bar
     var search =element(by.css("#vzb-find-search"));
-    browser.wait(EC.visibilityOf(search), 20000).then(function(){
+    browser.wait(EC.visibilityOf(search), 60000).then(function(){
       search.sendKeys("United States");
     });
 
     // Clicking Check box of USA
     var checkBox =element(by.css(Bubble_Chart['D41'].v));
-    browser.wait(EC.visibilityOf(checkBox), 20000).then(function(){
+    browser.wait(EC.visibilityOf(checkBox), 60000).then(function(){
       checkBox.click();
     });
 
@@ -401,7 +401,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     // Click OK
     var OK =element(by.css(Bubble_Chart['D42'].v));
-    browser.wait(EC.visibilityOf(OK), 20000).then(function(){
+    browser.wait(EC.visibilityOf(OK), 60000).then(function(){
       OK.click();
     });
       
@@ -411,7 +411,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
       
     // Click Lock
     var lock =element(by.css(Bubble_Chart['D53'].v));
-    browser.wait(EC.visibilityOf(lock), 20000).then(function(){
+    browser.wait(EC.visibilityOf(lock), 60000).then(function(){
       lock.click();
     });
 
@@ -450,7 +450,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     // Selecting size icon
     var sizeIcon =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(3) > span.vzb-buttonlist-btn-icon.fa"));
-    browser.wait(EC.visibilityOf(sizeIcon), 20000).then(function(){
+    browser.wait(EC.visibilityOf(sizeIcon), 60000).then(function(){
       sizeIcon.click();
       browser.sleep(5000);
     });
