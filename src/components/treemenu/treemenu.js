@@ -913,9 +913,17 @@ var TreeMenu = Component.extend({
       matching(_this.dataFiltered.children);
       return matches;
     };
+    
+    var searchValueNonEmpty = false;
 
     var searchIt = utils.debounce(function() {
         var value = input.node().value;
+        
+        //Protection from unwanted IE11 input events.
+        //IE11 triggers an 'input' event when 'placeholder' attr is set to input element and
+        //on 'focusin' and on 'focusout', if nothing has been entered into the input.  
+        if(!searchValueNonEmpty && value == "") return;        
+        searchValueNonEmpty = value != "";
 
         if(value.length >= OPTIONS.SEARCH_MIN_STR) {
           _this.redraw(getMatches(value), true);  
