@@ -38,7 +38,8 @@ var Marker = Model.extend({
         }else if (availability){
             //if date limits are supplied by the concept properties then use them
             min = time.timeFormat.parse(availability[0]+"");
-            max = time.timeFormat.parse(availability[1]+"");
+            var timeEnd = time._defaults.end || availability[1];
+            max = time.timeFormat.parse(Math.min(timeEnd, availability[1])+"");
         }else{ 
             //otherwise calculate own date limits (a costly operation)
             items = hook.getValidItems().map(function(m){return m[time.getDimension()];});
