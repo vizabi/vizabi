@@ -6,7 +6,6 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 	var worksheet   = workbook.SheetNames[0];
 	var Bubble_Chart  = workbook.Sheets[worksheet];	
 
-
   jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000000;
   browser.manage().window().setSize(1100, 600);
 
