@@ -1,4 +1,4 @@
-describe('Web - Vizabi e2e test :: Bubble Chart', function() {
+describe('Web - Vizabi e2e test :: Bubble Chart - Excel Sheet', function() {
     
     if(typeof require !== 'undefined') XLSX = require('xlsx');
 var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
