@@ -4,7 +4,7 @@ sudo: true
 node_js:
   - '5.1'
 addons:
-  firefox: "42.0"
+#  firefox: "42.0"
   apt:
     packages:
     - s3cmd
