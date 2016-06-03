@@ -8,7 +8,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
 
   jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000000;
-  browser.manage().window().setSize(1100, 750);
+  browser.manage().window().setSize(1100, 600);
 
   var baseUrl = 'http://localhost:9000/preview/';
   var baseChartUrl = baseUrl + "bubblechart.html#_width:750&height:650&fullscreen:true&resp-sect:true&info-sect:true&butt-sect:true";
@@ -282,9 +282,9 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     //Clicking find
     var find =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));
-//    browser.wait(EC.visibilityOf(find), 60000).then(function(){
+    browser.wait(EC.visibilityOf(find), 60000).then(function(){
       find.click();
-//    });
+    });
     // Place Text in Search
     var search =element(by.css("#vzb-find-search"));
     browser.wait(EC.visibilityOf(search), 60000).then(function(){
