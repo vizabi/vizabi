@@ -271,7 +271,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
     });
   });   
  
- 
+
 // I can select and deselect countries using the button "Find" to the right.
 
   it('Deselect',function(){
@@ -282,9 +282,9 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     //Clicking find
     var find =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));
-    browser.wait(EC.visibilityOf(find), 60000).then(function(){
+//    browser.wait(EC.visibilityOf(find), 60000).then(function(){
       find.click();
-    });
+//    });
     // Place Text in Search
     var search =element(by.css("#vzb-find-search"));
     browser.wait(EC.visibilityOf(search), 60000).then(function(){
