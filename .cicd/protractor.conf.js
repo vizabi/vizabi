@@ -11,6 +11,7 @@ let config = {
   framework: 'jasmine',
 
   allScriptsTimeout: 110000,
+  getPageTimeout: 110000,
 
   jasmineNodeOpts: {
     showTiming: true,
