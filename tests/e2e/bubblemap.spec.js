@@ -78,7 +78,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
     });
 
     // Check China Text Box
-    var chinaBubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(44) > label"));
+    var chinaBubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(2) > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(42) > label"));
     browser.wait(EC.visibilityOf(chinaBubble), 5000).then(function(){
       chinaBubble.click();
     });
@@ -92,7 +92,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
     });
 
     // Check United States Text Box
-    var USABubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(240) > label"));
+    var USABubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(2) > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(226) > label"));
     browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
       USABubble.click();
     });
