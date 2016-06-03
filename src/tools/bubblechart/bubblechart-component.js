@@ -1390,7 +1390,7 @@ var BubbleChartComp = Component.extend({
         var valueS = values.size[d[KEY]];
         var radius = utils.areaToRadius(_this.sScale(valueS));
 
-        if(!valueY || !valueX || !valueS) return;
+        if(!valueY && valueY!==0 || !valueX && valueX!==0 || !valueS && valueS!==0) return;
 
         if(_this.ui.chart.whenHovering.showProjectionLineX
           && _this.xScale(valueX) > 0 && _this.xScale(valueX) < _this.width
