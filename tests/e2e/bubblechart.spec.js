@@ -65,7 +65,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking USA bubble
     var USABubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
@@ -115,7 +115,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     //browser.removeMockModule('modName');
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Getting year's 1st digit
     var firstDigit = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-bc-year > text:nth-child(1)"));
@@ -183,7 +183,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Hovering USA bubble
     var USABubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
@@ -208,7 +208,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Hovering USA bubble
     var USABubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
@@ -233,7 +233,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking Data Warning link
     var warning =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-data-warning > text"));
@@ -259,7 +259,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking USA bubble
     var USABubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
@@ -297,7 +297,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking find
     var find =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));
@@ -393,7 +393,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Selecting Country by giving country name in Find
     var find =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));
@@ -465,7 +465,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Selecting size icon
     var sizeIcon =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(3) > span.vzb-buttonlist-btn-icon.fa"));
@@ -502,7 +502,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Getting USA rgb value before changes
     var USA = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
@@ -561,7 +561,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Clicking the bubble of USA
     var USABubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
@@ -590,7 +590,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Getting year's 1st digit
     var firstDigit = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-bc-year > text:nth-child(1)"));
@@ -639,7 +639,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Hovering the US bubble
     var USABubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));

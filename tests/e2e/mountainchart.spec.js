@@ -65,7 +65,7 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
   it('MountainFind', function() {
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking find
     var find = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));
@@ -124,7 +124,7 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
   it('ShowMountain', function() {
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Clicking show icon
     var show = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(4) > span.vzb-buttonlist-btn-icon.fa"));
@@ -232,7 +232,7 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
   it('MountainSelect', function() {
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
 
     // Getting year's 1st digit
@@ -353,7 +353,7 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
   it('UncheckMountain', function() {
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking Show icon
     var showIcon = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(4) > span.vzb-buttonlist-btn-icon.fa"));

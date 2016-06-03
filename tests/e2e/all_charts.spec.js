@@ -21,7 +21,7 @@ describe('Web - Vizabi e2e test :: All', function() {
 
     browser.get(baseUrl + "bubblechart.html" + baseUrlHash);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking Expand
     var expand =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(7) > span.vzb-buttonlist-btn-icon.fa"));
@@ -69,7 +69,7 @@ describe('Web - Vizabi e2e test :: All', function() {
 
     browser.get(baseUrl + "mountainchart.html" + baseUrlHash);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking Expand
     var expand =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(6) > span.vzb-buttonlist-btn-icon.fa"));
@@ -118,7 +118,7 @@ describe('Web - Vizabi e2e test :: All', function() {
   it('LargeScreenBubbleMapChart', function(){
     browser.get(baseUrl + "bubblemap.html" + baseUrlHash);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking Expand
     var expand =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(5) > span.vzb-buttonlist-btn-icon.fa"));
@@ -168,7 +168,7 @@ describe('Web - Vizabi e2e test :: All', function() {
   it('URLPersistencyBubbleChart', function() {
     browser.get(baseUrl + "bubblechart.html" + baseUrlHash);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking USA bubble
     var USABubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
@@ -203,7 +203,7 @@ describe('Web - Vizabi e2e test :: All', function() {
   it('URLPersistencyMountainChart', function() {
     browser.get(baseUrl + "mountainchart.html" + baseUrlHash);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking find
     var find = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));

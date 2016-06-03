@@ -31,7 +31,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking USA bubble
     var USABubble = element(by.css(Bubble_Chart['D6'].v));
@@ -85,7 +85,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
     //browser.removeMockModule('modName');
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Getting year's 1st digit
     var firstDigit = element(by.css(Bubble_Chart['D11'].v));
@@ -183,7 +183,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Hovering USA bubble
     var USABubble = element(by.css(Bubble_Chart['D6'].v));
@@ -210,7 +210,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking Data Warning link
     var warning =element(by.css(Bubble_Chart['D28'].v));
@@ -238,7 +238,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking USA bubble
     var USABubble =element(by.css(Bubble_Chart['D6'].v));
@@ -277,7 +277,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking find
     var find =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));
@@ -375,7 +375,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
    //Clicking find
     var find =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));
@@ -445,7 +445,7 @@ var workbook = XLSX.readFile('CoreInteractions_Specs.xlsx');
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Selecting size icon
     var sizeIcon =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(3) > span.vzb-buttonlist-btn-icon.fa"));
