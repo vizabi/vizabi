@@ -42,10 +42,11 @@ let config = {
 
 config.multiCapabilities = [
     {
+    'browserName': 'chrome',
 //	'browserName': 'firefox',
-	'browserName': 'phantomjs',
-	'phantomjs.binary.path': require('phantomjs').path,
-	'phantomjs.ghostdriver.cli.args': ['--loglevel=DEBUG'],
+//	'browserName': 'phantomjs',
+//	'phantomjs.binary.path': require('phantomjs').path,
+//	'phantomjs.ghostdriver.cli.args': ['--loglevel=DEBUG'],
     }
 ];
 
