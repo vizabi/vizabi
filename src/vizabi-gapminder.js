@@ -691,6 +691,14 @@ PopByAge.define('default_model', {
         }
       }
     },
+    entities_minimap: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo.cat": ["world_4region"]
+        }
+      }
+    },
     entities_age: {
       dim: "age",
       show: {
@@ -731,6 +739,19 @@ PopByAge.define('default_model', {
           names: ["!geo.name"]
         }
       }
+    },
+    marker_minimap:{
+      space: ["entities_minimap"],
+        type: "geometry",
+        shape: "svg",
+        label: {
+          use: "property",
+          which: "geo.name"
+        },
+        geoshape: {
+          use: "property",
+          which: "shape_lores_svg"
+        }
     }
   },
   data: {
