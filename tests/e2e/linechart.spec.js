@@ -1,7 +1,7 @@
 describe('Web - Vizabi e2e test :: Line Chart', function() {
 
   jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000000;
-  browser.manage().window().setSize(1100, 750);
+  browser.manage().window().setSize(1100, 600);
 
   var baseUrl = 'http://localhost:9000/preview/';
   var EC = protractor.ExpectedConditions;

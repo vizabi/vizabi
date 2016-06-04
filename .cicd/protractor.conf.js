@@ -3,14 +3,15 @@
 let config = {
     baseUrl: 'http://localhost:9000/',
   specs: [
-//    '../tests/e2e/*.spec.js'
-      '../tests/e2e/excel_access.spec.js'
+        '../tests/e2e/*.spec.js'
+//      '../tests/e2e/excel_access.spec.js'
   ],
   exclude: [],
 
   framework: 'jasmine',
 
   allScriptsTimeout: 110000,
+  getPageTimeout: 110000,
 
   jasmineNodeOpts: {
     showTiming: true,
@@ -42,6 +43,7 @@ let config = {
 
 config.multiCapabilities = [
     {
+//    'browserName': 'chrome',
 	'browserName': 'firefox',
 //	'browserName': 'phantomjs',
 //	'phantomjs.binary.path': require('phantomjs').path,
