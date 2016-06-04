@@ -24,7 +24,7 @@ var Marker = Model.extend({
       utils.forEach(this.getSubhooks(), function(hook) {
         if(hook.use !== "indicator" || !hook._important) return;
         var hookConceptprops = hook.getConceptprops();
-        if(!hookConceptprops) return utils.warn(hook._name + ": " + hook.which + " is not found in conceptprops.json. \
+        if(!hookConceptprops) return utils.warn(hook._name + ": " + hook.which + " is not found in metadata.json. \
             Check that you read the correct file or server instance... \
             Check that the pointer 'which' of the hook is correct too");
                                         

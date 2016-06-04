@@ -826,7 +826,7 @@ Tool.define("preload", function(promise) {
 
   var _this = this;
   var conceptprops_path = globals.ext_resources.conceptpropsPath ? globals.ext_resources.conceptpropsPath :
-      globals.ext_resources.host + globals.ext_resources.preloadPath + "conceptprops.json";    
+      globals.ext_resources.host + globals.ext_resources.preloadPath + "metadata.json";    
 
   //TODO: concurrent
   //load language first
