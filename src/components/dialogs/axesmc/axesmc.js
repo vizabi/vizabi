@@ -64,6 +64,8 @@ var Axes = Dialog.extend({
         if(!result || result <= _this.model.state.marker.axis_x.tailCutX) {
           this.value = _this.model.ui.chart.probeX;
           return;
+        } else if(result > _this.model.state.marker.axis_x.domainMax) {
+          result = _this.model.state.marker.axis_x.domainMax;
         }
         this.value = result;
         _this.setModel("probeX", result);
