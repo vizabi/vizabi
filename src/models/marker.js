@@ -66,17 +66,18 @@ var Marker = Model.extend({
    * Computes the intersection of keys in all hooks: a set of keys that have data in each hook
    * @returns array of keys that have data in all hooks of this._datacube
    */
-    getKeys: function() {
+    getKeys: function(byDimension) {
         var _this = this;
         var resultKeys = [];
-        utils.forEach(this._dataCube, function(hook, name) {
+        byDimension = byDimension || "geo";
+        utils.forEach(this._dataCube||this.getSubhooks(true), function(hook, name) {
 
             // If hook use is constant, then we can provide no additional info about keys
             // We can just hope that we have something else than constants =)
             if(hook.use === "constant") return;
 
             // Get keys in data of this hook
-            var nested = _this.getDataManager().get(hook._dataId, 'nested', ["geo", "time"]);
+            var nested = _this.getDataManager().get(hook._dataId, 'nested', [byDimension, "time"]);
             var noDataPoints = _this.getDataManager().get(hook._dataId, 'haveNoDataPointsPerKey', hook.which);
             
             var keys = Object.keys(nested);
@@ -90,7 +91,7 @@ var Marker = Model.extend({
               return keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1;
             })
         });
-        return resultKeys.map(function(d){return {geo: d}});
+        return resultKeys.map(function(d){var r = {}; r[byDimension] = d; return r; });
     },
     
   /**
