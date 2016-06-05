@@ -109,10 +109,6 @@ var AxisModel = Hook.extend({
         domain = this.getConceptprops().domain ? this.getConceptprops().domain : domain;
         //min and max can override the domain if defined
         domain = this.domainMin!=null && this.domainMax!=null ? [+this.domainMin, +this.domainMax] : domain;
-        
-        //save the defined domain back to state to avoid excessive validations
-        this.domainMin = domain[0];
-        this.domainMax = domain[1];
         break;
       case "property":
         domain = this.getUnique(this.which);
