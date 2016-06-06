@@ -269,7 +269,7 @@ export default function genericLog() {
     };
 
     
-    scale.range = function(arg) {
+    scale.range = function(arg, force) {
       if(!arguments.length)
         return range;
 
@@ -289,14 +289,18 @@ export default function genericLog() {
       }
 
       //console.log("LOG and LIN range:", logScale.range(), linScale.range());
-      range = arg;
-      buildScales();
+      if (interpolator && !force) {
+        interpolator.range(arg);
+      } else {
+        range = arg;
+        buildScales();
+      }
       return scale;
     };
 
     scale.interpolate = function(arg) {
       interpolator = d3.scale.linear().domain(domain).range(range).interpolate(arg);
-      scale.range(interpolator.domain());
+      scale.range(interpolator.domain(), true);
       return scale;
     };
 
