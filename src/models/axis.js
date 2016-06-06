@@ -68,9 +68,8 @@ var AxisModel = Hook.extend({
         }
         
         //restore the correct object type for time values
-        //TODO: find a better way to get to the parser
-        if(this.zoomedMin != null && !utils.isDate(this.zoomedMin)) this.zoomedMin = this._parent._parent.time.parseToUnit(this.zoomedMin.toString());
-        if(this.zoomedMax != null && !utils.isDate(this.zoomedMax)) this.zoomedMax = this._parent._parent.time.parseToUnit(this.zoomedMax.toString());
+        if(this.zoomedMin != null && !utils.isDate(this.zoomedMin)) this.zoomedMin = this._space.time.parseToUnit(this.zoomedMin.toString());
+        if(this.zoomedMax != null && !utils.isDate(this.zoomedMax)) this.zoomedMax = this._space.time.parseToUnit(this.zoomedMax.toString());
 
         if(!utils.isDate(this.domainMin)) this.domainMin = this.scale.domain()[0];
         if(!utils.isDate(this.domainMax)) this.domainMax = this.scale.domain()[1];
@@ -95,8 +94,15 @@ var AxisModel = Hook.extend({
     var domain;
 
     if(this.scaleType == "time") {
-      var limits = this.getLimits(this.which);
-      this.scale = d3.time.scale.utc().domain([limits.min, limits.max]);
+      var tLimits = this._parent.getTimeLimits();
+      domain = [tLimits.min, tLimits.max];
+
+      //save the defined domain back to state to avoid excessive validations
+      this.domainMin = domain[0];
+      this.domainMax = domain[1];
+
+      this.scale = d3.time.scale.utc().domain(domain);
+
       return;
     }
 
@@ -108,7 +114,11 @@ var AxisModel = Hook.extend({
         //domain from concept properties can override it if defined
         domain = this.getConceptprops().domain ? this.getConceptprops().domain : domain;
         //min and max can override the domain if defined
+        this.domainMin = domain[0];
+        this.domainMax = domain[1];
+
         domain = this.domainMin!=null && this.domainMax!=null ? [+this.domainMin, +this.domainMax] : domain;
+
         break;
       case "property":
         domain = this.getUnique(this.which);

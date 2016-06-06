@@ -45,13 +45,13 @@ var Data = Class.extend({
       var data = _this._collection[cached].data;
       //not loading anymore
       if(loaded && evts && typeof evts.load_end === 'function') {
-        evts.load_end();
+        evts.load_end(cached);
       }
       promise.resolve(cached);
     }, function() {
       //not loading anymore
-      if(loaded && evts && typeof evts.load_end === 'function') {
-        evts.load_end();
+      if(loaded && evts && typeof evts.load_error === 'function') {
+        evts.load_error();
       }
       promise.reject();
     });

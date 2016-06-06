@@ -346,11 +346,11 @@ var Model = EventSource.extend({
 
   /**
    * specifies that the model is loading data
-   * @param {String} id of the loading process
+   * @param {String} p_id of the loading process
    */
   setLoading: function(p_id) {
     //if this is the first time we're loading anything
-    if(!this.isLoading()) {
+    if(!this._loadCall) {
       this.trigger('load_start');
     }
     //add id to the list of processes that are loading
@@ -359,9 +359,13 @@ var Model = EventSource.extend({
 
   /**
    * specifies that the model is done with loading data
-   * @param {String} id of the loading process
+   * @param {String} p_id of the loading process
    */
   setLoadingDone: function(p_id) {
+
+    if (this.isHook()) {
+      this.trigger('loading_done');
+    }
     this._loading = utils.without(this._loading, p_id);
     this.setReady();
   },
@@ -427,20 +431,20 @@ var Model = EventSource.extend({
       var evts = {
         'load_start': function() {
           _this.setLoading('_hook_data');
-          EventSource.freezeAll([
-            'load_start',
-            'resize',
-            'dom_ready'
-          ]);
         }
       };
 
       utils.defer(function() { //defer require to fire "hook_change" event
+        EventSource.freezeInstance(_this._name, [
+          'load_start',
+          'resize',
+          'dom_ready',
+          'loading_done'
+        ]);
         utils.timeStamp('Vizabi Model: Loading Data: ' + _this._id);
         _DATAMANAGER.load(query, lang, reader, evts).then(function(dataId) {
           _this._dataId = dataId;
           utils.timeStamp('Vizabi Model: Data loaded: ' + _this._id);
-          _this.afterLoad();
           promise.resolve();
         }, function(err) {
           utils.warn('Problem with query: ', JSON.stringify(query));
@@ -468,7 +472,9 @@ var Model = EventSource.extend({
       utils.timeStamp('Vizabi Model: Model loaded: ' + _this._id);
       //end this load call
       _this._loadedOnce = true;
-
+      // trigger event "loading done" before "ready"
+      _this.afterLoad();
+      EventSource.unfreezeInstance(_this._name);
       //we need to defer to make sure all other submodels
       //have a chance to call loading for the second time
       _this._loadCall = false;
@@ -498,7 +504,6 @@ var Model = EventSource.extend({
    * executes after data has actually been loaded
    */
   afterLoad: function() {
-    EventSource.unfreezeAll();
     this.setLoadingDone('_hook_data');
   },
 
@@ -963,6 +968,8 @@ function initSubmodel(attr, val, ctx) {
       'hook_change': onHookChange,
       //loading has started in this submodel (multiple times)
       'load_start': onLoadStart,
+      //loading has finished in this submodel (multiple times)
+      'loading_done': onLoadingDone,
       //loading has failed in this submodel (multiple times)
       'load_error': onLoadError,
         //loading has ended in this submodel (multiple times)
@@ -1000,6 +1007,9 @@ function initSubmodel(attr, val, ctx) {
   }
   function onLoadStart(evt, vals) {
     ctx.setReady(false);
+    ctx.trigger(evt, vals);
+  }
+  function onLoadingDone(evt, vals) {
     ctx.trigger(evt, vals);
   }
   function onLoadError(evt, vals) {

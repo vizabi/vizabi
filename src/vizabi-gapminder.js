@@ -491,14 +491,21 @@ LineChart.define('default_model', {
       },
       axis_y: {
         use: "indicator",
-        which: "sg_gdp_p_cap_const_ppp2011_dollar",//systema globalis
-        //which: "income_per_person_gdppercapita_ppp_inflation_adjusted",
-        scaleType: "log"
+        //which: "sg_gdp_p_cap_const_ppp2011_dollar",//systema globalis
+        which: "income_per_person_gdppercapita_ppp_inflation_adjusted",
+        scaleType: "log",
+        allow: {
+          scales: ["linear", "log", "time"]
+        }
+
       },
       axis_x: {
         use: "indicator",
         which: "time",
-        scaleType: "time"
+        scaleType: "time",
+        allow: {
+          scales: ["time"]
+        }
       },
       color: {
         use: "property",
@@ -507,6 +514,22 @@ LineChart.define('default_model', {
           scales: ["ordinal"],
           names: ["!geo.name"]
         }
+      }
+    },
+    entities_allpossible: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo": ["*"],
+          "geo.cat": ["country", "unstate"]
+        }
+      }
+    },
+    marker_allpossible: {
+      space: ["entities_allpossible"],
+      label: {
+        use: "property",
+        which: "geo.name"
       }
     },
     marker_minimap:{
