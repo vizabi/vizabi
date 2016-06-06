@@ -92,7 +92,7 @@ export default Class.extend({
                 var x = _context.xScale(values.axis_x[pointer[KEY]]);
                 var y = _context.yScale(values.axis_y[pointer[KEY]]);
                 var s = utils.areaToRadius(_context.sScale(values.size[pointer[KEY]]));
-                var c = values.color[pointer[KEY]]!=null?_context.cScale(values.color[pointer[KEY]]):_context.COLOR_BLACKISH;
+                var c = values.color[pointer[KEY]]!=null?_context.cScale(values.color[pointer[KEY]]):_context.COLOR_WHITEISH;
                 if(text !== selectedData.trailStartTime) {
                   _context._setTooltip(text, x, y, s + 3, c);
                 }
