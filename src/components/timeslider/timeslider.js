@@ -92,7 +92,7 @@ var TimeSlider = Component.extend({
     //binds methods to this model
     this.model_binds = {
       'change:time': function(evt, path) {
-
+        if(!_this._readyOnce) return;
         //TODO: readyOnce CANNOT be run twice
         if(_this._splash !== _this.model.time.splash) {
           _this._splash = _this.model.time.splash;
@@ -109,30 +109,30 @@ var TimeSlider = Component.extend({
         }
       },
       'change:time.value': function(evt, path) {
-        if(!_this._splash) {
+        if(_this._readyOnce) {
           //only set handle position if change is external
           if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
       'change:time.start': function(evt, path) {
-        if(!_this._splash) {
+        if(_this._readyOnce) {
           //only set handle position if change is external
           if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
       'change:time.end': function(evt, path) {
-        if(!_this._splash) {
+        if(_this._readyOnce) {
           //only set handle position if change is external
           if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
       'change:time.startSelected': function(evt, path) {
-        if(!_this._splash) {
+        if(_this._readyOnce) {
           _this.updateSelectedStartLimiter();
         }
       },
       'change:time.endSelected': function(evt, path) {
-        if(!_this._splash) {
+        if(_this._readyOnce) {
           _this.updateSelectedEndLimiter();
         }
       },
@@ -162,9 +162,6 @@ var TimeSlider = Component.extend({
 
   //template is ready
   readyOnce: function () {
-
-    if(this._splash) return;
-
     var _this = this;
 
     //DOM to d3
@@ -265,7 +262,6 @@ var TimeSlider = Component.extend({
 
   //template and model are ready
   ready: function () {
-    if(this._splash) return;
 
     var play = this.element.select(".vzb-ts-btn-play");
     var pause = this.element.select(".vzb-ts-btn-pause");
@@ -284,7 +280,7 @@ var TimeSlider = Component.extend({
     this.changeLimits();
     this.changeTime();
     this.resize();
-
+    this._optionClasses();
   },
 
   changeLimits: function() {

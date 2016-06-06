@@ -3,7 +3,10 @@ import Class from 'class';
 
 var _freezeAllEvents = false;
 var _frozenEventInstances = [];
+var _frozenInstances = [];
 var _freezeAllExceptions = {};
+var _frozenObjects = [];
+
 
 export var DefaultEvent = Class.extend({
 
@@ -254,8 +257,8 @@ var EventSource = Class.extend({
       //only execute if not frozen and exception doesnt exist
       if(_this._freeze || _freezeAllEvents) {
         //if exception exists for freezing, execute
-        if(_freezeAllEvents && _freezeAllExceptions.hasOwnProperty(name) || !_freezeAllEvents && _this._freeze &&
-          _this._freezeExceptions.hasOwnProperty(name)) {
+        if(_freezeAllEvents && _freezeAllExceptions.hasOwnProperty(evt.type) || !_freezeAllEvents && _this._freeze &&
+          _this._freezeExceptions.hasOwnProperty(evt.type)) {
           execute();
         } //otherwise, freeze it
         else {
@@ -310,10 +313,32 @@ var EventSource = Class.extend({
   }
 });
 
+
 EventSource.freezeAll = freezeAll;
 EventSource.unfreezeAll = unfreezeAll;
-
+EventSource.freezeInstance = freezeInstance;
+EventSource.unfreezeInstance = unfreezeInstance;
+EventSource.frozenInstances = _frozenInstances;
 //generic event functions
+
+function freezeInstance (instanceName, exceptions) {
+  if (_frozenInstances.indexOf(instanceName) > -1) {
+    utils.warn('instance ' + instanceName + "already frozen");
+  }
+  if (_frozenInstances.length == 0) {
+    EventSource.freezeAll(exceptions);
+  }
+  _frozenInstances.push(instanceName);
+}
+
+function unfreezeInstance (hookName) {
+  _frozenInstances = utils.without(_frozenInstances, hookName);
+  if (_frozenInstances.length == 0) {
+    EventSource.unfreezeAll();
+  }
+}
+
+
 /**
  * freezes all events
  */

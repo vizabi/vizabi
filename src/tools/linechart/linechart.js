@@ -11,7 +11,8 @@ import {
   timeslider,
   dialogs,
   buttonlist,
-  treemenu
+  treemenu,
+  datanotes
 }
 from 'components/_index';
 
@@ -47,6 +48,10 @@ var LineChart = Tool.extend('LineChart', {
       }, {
         component: treemenu,
         placeholder: '.vzb-tool-treemenu',
+        model: ['state.marker', 'language']
+      }, {
+        component: datanotes,
+        placeholder: '.vzb-tool-datanotes',
         model: ['state.marker', 'language']
       }];
 

@@ -2,7 +2,7 @@ import * as utils from 'utils'
 import Model from 'model'
 import Component from 'component'
 import Layout from 'layout'
-import { DefaultEvent } from 'events'
+import EventSource, {DefaultEvent} from 'events';
 import { warn as warnIcon } from 'iconset'
 import Promise from 'base/promise';
 
@@ -115,6 +115,12 @@ var Tool = Component.extend({
       'load_start': function() {
         _this.beforeLoading();
       },
+      'loading_done': function() {
+        // if we load multiple models, run check limits when last model loaded 
+        if (EventSource.frozenInstances.length <= 1) {
+          _this.checkTimeLimits();
+        }
+      },
       'ready': function(evt) {
         if(_this._ready) {
           _this.afterLoading();
@@ -144,7 +150,7 @@ var Tool = Component.extend({
   },
 
   ready: function(){
-    this.checkTimeLimits();  
+//    this.checkTimeLimits();  
   },
     
   checkTimeLimits: function() {
