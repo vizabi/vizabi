@@ -183,8 +183,9 @@ var Marker = Model.extend({
               //loop across the entities
               utils.forEach(values, function(val1, key) {
                 var val2 = nValues[hook][key];
-                  
-                if(!utils.isNumber(val1)){
+                if(utils.isDate(val1)){
+                  dataBetweenFrames[hook][key] = time;
+                } else if(!utils.isNumber(val1)){
                     //we can be interpolating string values
                     dataBetweenFrames[hook][key] = val1;
                 }else{
