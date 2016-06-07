@@ -266,7 +266,9 @@ var LCComponent = Component.extend({
 
     //line template
     this.line = d3.svg.line()
-      .interpolate("basis")
+      //see https://bl.ocks.org/mbostock/4342190
+      //"monotone" can also work. "basis" would skip the points on the sharp turns. "linear" is ugly
+      .interpolate("cardinal") 
       .x(function(d) {
         return _this.xScale(d[0]);
       })
