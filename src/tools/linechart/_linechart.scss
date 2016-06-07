@@ -9,61 +9,67 @@
     bottom: 0;
     width: 100%;
   }
-
   .vzb-linechart {
-    @extend %vzb-chart-svg;
+    @extend %vzb-chart-wrapper;
 
-    .vzb-lc-axis-x,
-    .vzb-lc-axis-y {
-      @extend %vzb-chart-axis;
-    }
+    .vzb-linechart-svg {
+      @extend %vzb-chart-svg;
 
-    .vzb-lc-axis-y-title,
-    .vzb-lc-axis-x-title {
-      @extend %vzb-chart-axis-title;
-    }
+      .vzb-lc-axis-x,
+      .vzb-lc-axis-y {
+        @extend %vzb-chart-axis;
+      }
 
-    .vzb-lc-vertical-now,
-    .vzb-lc-projection-x,
-    .vzb-lc-projection-y {
-      stroke-dasharray: 2 4;
-      stroke: $vzb-color-grey;
-      opacity: 0;
-    }
-    .vzb-lc-line {
-      fill: none;
-      stroke-linecap: round;
-      //filter:url(#vzb-lc-filter-dropshadow);
-    }
+      .vzb-lc-axis-y-title,
+      .vzb-lc-axis-x-title {
+        @extend %vzb-chart-axis-title;
+      }
+      .vzb-lc-axis-y-info {
+        @extend %vzb-chart-info;
+      }
+      .vzb-lc-vertical-now,
+      .vzb-lc-projection-x,
+      .vzb-lc-projection-y {
+        stroke-dasharray: 2 4;
+        stroke: $vzb-color-grey;
+        opacity: 0;
+      }
+      .vzb-lc-line {
+        fill: none;
+        stroke-linecap: round;
+        //filter:url(#vzb-lc-filter-dropshadow);
+      }
 
-    .vzb-lc-line-shadow {
-      fill: none;
-      stroke-linecap: round;
-    }
+      .vzb-lc-line-shadow {
+        fill: none;
+        stroke-linecap: round;
+      }
 
-    .vzb-lc-circle {
-      stroke: #000;
-    }
+      .vzb-lc-circle {
+        stroke: #000;
+      }
 
-    .vzb-lc-axis-value {
-      @extend %vzb-chart-ticks;
-    }
+      .vzb-lc-axis-value {
+        @extend %vzb-chart-ticks;
+      }
 
-    .vzb-lc-entity {
-      opacity: .9;
-
-      &.vzb-hovered {
+      .vzb-lc-entity {
         opacity: .9;
-      }
 
-      &.vzb-dimmed {
-        opacity: .3;
-      }
+        &.vzb-hovered {
+          opacity: .9;
+        }
 
-      &.vzb-selected {
-        opacity: 1;
+        &.vzb-dimmed {
+          opacity: .3;
+        }
+
+        &.vzb-selected {
+          opacity: 1;
+        }
       }
     }
+
   }
   &.vzb-large {
 
@@ -156,4 +162,21 @@
       }
     }
   }
+  &.vzb-presentation {
+
+    .vzb-linechart {
+
+      .vzb-lc-axis-x,
+      .vzb-lc-axis-y, {
+        text {
+          font-size: $vzb-font-size-larger;
+        }
+      }
+
+      .vzb-lc-labels {
+        font-size: $vzb-font-size-larger;
+      }
+    }
+  }
+
 }

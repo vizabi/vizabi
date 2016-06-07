@@ -1144,7 +1144,7 @@ export var flattenDates = function(obj, timeFormat) {
     if (key === 'marker') {
       ["axis_x", "axis_y", "size_label"].map(function(name) {
         var hook = val[name];
-        if (hook && hook.scaleType === "time") {
+        if(typeof hook === 'object') {
           if(isDate(hook.domainMin)) hook.domainMin = timeFormat(hook.domainMin);
           if(isDate(hook.domainMax)) hook.domainMax = timeFormat(hook.domainMax);
           if(isDate(hook.zoomedMin)) hook.zoomedMin = timeFormat(hook.zoomedMin);
