@@ -91,7 +91,7 @@ script.
   };
   
   //popbyage is an exception because it has no data on WS for age. need local data
-  if("#{tool}"!=="PopByAge"){
+  if("#{tool}"!=="PopByAge" && "#{tool}"!=="AgePyramid"){
     VIZABI_MODEL.data = {
       reader: "waffle",
       path: Vizabi._globals.ext_resources.host + Vizabi._globals.ext_resources.dataPath

@@ -21,6 +21,7 @@ import LineChart from 'tools/linechart';
 import PopByAge from 'tools/popbyage';
 import DonutChart from 'tools/donutchart';
 import AxisLabeler from 'tools/axislabeler';
+import AgePyramid from 'tools/agepyramid';
 
 //waffle reader
 import {waffle as WaffleReader} from 'readers/_index';
@@ -700,6 +701,95 @@ BubbleChart.define('default_model', {
 });
 
 PopByAge.define('default_model', {
+  state: {
+    time: {
+      value: '2013',
+      start: '1950',
+      end: '2100'
+    },
+    entities: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo": ["usa"]
+        }
+      }
+    },
+    entities_minimap: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo.cat": ["world_4region"]
+        }
+      }
+    },
+    entities_age: {
+      dim: "age",
+      show: {
+        _defs_: {
+          "age": [
+            [0, 95]
+          ] //show 0 through 100
+        }
+      },
+      grouping: 5
+    },
+    marker: {
+      space: ["entities", "entities_age", "time"],
+      label: {
+        use: "indicator",
+        which: "age"
+      },
+      label_name: {
+        use: "property",
+        which: "geo"
+      },
+      axis_y: {
+        use: "indicator",
+        which: "age",
+        // domain Max should be set manually as age max from entites_age plus one grouping value (95 + 5 = 100)
+        // that way the last age group fits in on the scale
+        domainMax: 100,
+        domainMin: 0
+      },
+      axis_x: {
+        use: "indicator",
+        which: "sg_population"
+      },
+      color: {
+        use: "constant",
+        which: "#ffb600",
+        allow: {
+          names: ["!geo.name"]
+        }
+      }
+    },
+    marker_minimap:{
+      space: ["entities_minimap"],
+        type: "geometry",
+        shape: "svg",
+        label: {
+          use: "property",
+          which: "geo.name"
+        },
+        geoshape: {
+          use: "property",
+          which: "shape_lores_svg"
+        }
+    }
+  },
+  data: {
+    reader: "csv",
+    path: globals.ext_resources.host + globals.ext_resources.dataPath + "usa.csv",
+    splash: false
+  },
+  language: language,
+  ui: {
+    presentation: false
+  }
+});
+
+AgePyramid.define('default_model', {
   state: {
     time: {
       value: '2013',
