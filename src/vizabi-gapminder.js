@@ -779,7 +779,7 @@ PopByAge.define('default_model', {
   },
   data: {
     reader: "csv",
-    path: globals.ext_resources.host + globals.ext_resources.dataPath + "{{geo}}.csv",
+    path: globals.ext_resources.host + globals.ext_resources.dataPath + "usa.csv",
     splash: false
   },
   language: language,
