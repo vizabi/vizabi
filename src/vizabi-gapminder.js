@@ -654,7 +654,7 @@ BubbleChart.define('default_model', {
         allow: {
           scales: ["linear"]
         },
-        extent: [0.04, 0.85]
+        extent: [0, 0.85]
       }
     },
     marker_minimap:{
