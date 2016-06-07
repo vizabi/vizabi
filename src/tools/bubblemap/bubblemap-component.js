@@ -729,6 +729,8 @@ var BubbleMapComponent = Component.extend({
       .attr('height', height)
       .attr('viewBox', viewBox.join(' '))
       .attr('preserveAspectRatio', 'none')
+      .attr('x', margin.left)
+      .attr('y', margin.top)
       .style("transform", "translate3d(" + margin.left + "px," + margin.top + "px,0)");
 
     //update scales to the new range

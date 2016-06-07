@@ -1,6 +1,6 @@
 <!-- Bubble Chart Component -->
 <div class="vzb-bubblechart">
-  <svg class="vzb-bubblechart-svg">
+  <svg class="vzb-bubblechart-svg vzb-export">
     <g class="vzb-bc-graph">
       <g class="vzb-bc-year"></g>
 
@@ -25,14 +25,14 @@
       <g class="vzb-bc-axis-s-title"></g>
       <g class="vzb-bc-axis-c-title"></g>
 
-      <g class="vzb-bc-axis-y-info"></g>
-      <g class="vzb-bc-axis-x-info"></g>
+      <g class="vzb-bc-axis-y-info vzb-noexport"></g>
+      <g class="vzb-bc-axis-x-info vzb-noexport"></g>
       
       <svg class="vzb-bc-labels-crop">
         <g class="vzb-bc-labels"></g>        
       </svg>       
 
-      <g class="vzb-data-warning">
+      <g class="vzb-data-warning vzb-noexport">
         <svg></svg>
         <text></text>
       </g>
@@ -44,7 +44,9 @@
         <text class="vzb-tooltip-text"></text>
       </g>
     </g>
-    <defs>
+  </svg>
+  <svg>
+      <defs>
       <filter id="vzb-glow-filter" x="-50%" y="-50%" width="200%" height="200%">
         <feGaussianBlur in="SourceGraphic" stdDeviation="2"></feGaussianBlur>
       </filter>
