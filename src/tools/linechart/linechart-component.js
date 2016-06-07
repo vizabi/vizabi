@@ -62,6 +62,7 @@ var LCComponent = Component.extend({
           _this.zoomToMaxMin();
           _this.updateShow();
           _this.updateSize();
+          _this.updateTime();
           _this.redrawDataPoints();
           return; 
         }
@@ -913,6 +914,10 @@ var LCComponent = Component.extend({
 
   zoomToMaxMin: function() {
     var _this = this;
+    // 
+    if(this.model.marker.axis_y.zoomedMin == null ) this.model.marker.axis_y.zoomedMin = this.yScale.domain()[0];
+    if(this.model.marker.axis_y.zoomedMin == null ) this.model.marker.axis_y.zoomedMin = this.yScale.domain()[1];
+
 
     if(
       this.model.marker.axis_x.zoomedMin != null && 
