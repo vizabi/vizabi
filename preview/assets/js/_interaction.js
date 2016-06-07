@@ -54,18 +54,11 @@ function recstop() {
 function download(){
   window.URL = null;
   var e = document.createElement('script');
-  e.setAttribute('src', 'https://nytimes.github.io/svg-crowbar/svg-crowbar-2.js');
+  e.setAttribute('src', '/preview/assets/js/svg-crowbar-2.js');
   e.setAttribute('class', 'svg-crowbar');
-  document.body.appendChild(e);
-  setTimeout(function(){
-    var element = document.querySelectorAll('[data-source-id="0"]');
-    if(element[0]){
-      element[0].click();
-    }
-    d3.selectAll('.svg-crowbar').remove();
-    
-  },1000)
-  
+  e.setAttribute('data-svg-select', 'div>svg.vzb-export');
+  e.setAttribute('data-exclude-element-select', '.vzb-noexport');
+  document.body.appendChild(e);  
 }
 
 document.getElementById("vzbp-btn-play").onclick = play;
