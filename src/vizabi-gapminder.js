@@ -491,8 +491,8 @@ LineChart.define('default_model', {
       },
       axis_y: {
         use: "indicator",
-        //which: "sg_gdp_p_cap_const_ppp2011_dollar",//systema globalis
-        which: "income_per_person_gdppercapita_ppp_inflation_adjusted",
+        which: "sg_gdp_p_cap_const_ppp2011_dollar",//systema globalis
+        //which: "income_per_person_gdppercapita_ppp_inflation_adjusted",
         scaleType: "log",
         allow: {
           scales: ["linear", "log", "time"]
