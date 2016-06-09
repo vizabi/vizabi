@@ -100,7 +100,7 @@ var TimeSlider = Component.extend({
           _this.ready();
         }
 
-        if(!_this._splash) {
+        if(!_this._splash && _this.slide) {
 
           if((['time.start', 'time.end']).indexOf(path) !== -1) {
             if (!_this.xScale) return;  
@@ -110,13 +110,13 @@ var TimeSlider = Component.extend({
         }
       },
       'change:time.value': function(evt, path) {
-        if(!_this._splash) {
+        if(!_this._splash && _this.slide) {
           //only set handle position if change is external
           if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
       'change:time.start': function(evt, path) {
-        if(!_this._splash) {
+        if(!_this._splash && _this.slide) {
           //only set handle position if change is external
           if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
@@ -128,12 +128,12 @@ var TimeSlider = Component.extend({
         }
       },
       'change:time.startSelected': function(evt, path) {
-        if(!_this._splash) {
+        if(!_this._splash && _this.slide) {
           _this.updateSelectedStartLimiter();
         }
       },
       'change:time.endSelected': function(evt, path) {
-        if(!_this._splash) {
+        if(!_this._splash && _this.slide) {
           _this.updateSelectedEndLimiter();
         }
       },
