@@ -1,17 +1,19 @@
 describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
-
+    
+  var testData = require('../../pageObjects.json');
   jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000000;
   browser.manage().window().setSize(1100, 600);
 
   var baseUrl = 'http://localhost:9000/preview/';
   var baseChartUrl = baseUrl + "bubblemap.html#_width:750&height:650&fullscreen:true&resp-sect:true&info-sect:true&butt-sect:true";
   var EC = protractor.ExpectedConditions;
+    testData.forEach( function (data) {
 
   // Base Selectors
 
-  var buttonPlay = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-btns > button.vzb-ts-btn-play.vzb-ts-btn > svg"));
-  var countries = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles"));
-  var buttonList = element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist"));
+  var buttonPlay = element(by.css(data.All_Global_Loctors.buttonPlay_Locator_CSS));
+  var countries = element(by.css(data.bubbleMap_Chart_Loctors.countriesBubbleMap_Locator_CSS));
+  var buttonList = element(by.css(data.All_Global_Loctors.buttonList_Locator_CSS));
 
   it('Loading Bubble Map Page', function() {
 
@@ -52,33 +54,34 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
 
   });
 
-  /***************************** BUBBLE MAP *************************************/
+ // ***************************** BUBBLE MAP *************************************
 
-  var play = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-btns > button.vzb-ts-btn-play.vzb-ts-btn"));
-  var pause = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-btns > button.vzb-ts-btn-pause.vzb-ts-btn"));
-  var slider = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-slider-wrapper > svg.vzb-ts-slider > g > g.vzb-ts-slider-slide > circle"));
-  var USABubbleMap = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(3)"));
+  var play = element(by.css(data.All_Global_Loctors.play_Locator_CSS));
+  var pause = element(by.css(data.All_Global_Loctors.pause_Locator_CSS));
+  var slider = element(by.css(data.All_Global_Loctors.slider_Locator_CSS));
+  var USABubbleMap = element(by.css(data.bubbleMap_Chart_Loctors.USABubbleMap_Locator_CSS));
+  var chinaBubbleMap =element(by.css(data.bubbleMap_Chart_Loctors.chinaBubbleMap_Locator_CSS));
 
   // I can select and deselect countries using the button "Find" to the right.
 
   it('Findmap',function(){
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
 
     //Clicking find
-    var find =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));
+    var find =element(by.css(data.bubbleMap_Chart_Loctors.find_Locator_CSS));
     browser.wait(EC.visibilityOf(find), 5000).then(function(){
       find.click();
     });
     //Placing text in search field
-    var search =element(by.css("#vzb-find-search"));
+    var search =element(by.css(data.bubbleMap_Chart_Loctors.search_Locator_CSS));
     browser.wait(EC.visibilityOf(search), 5000).then(function(){
       search.sendKeys("china");
     });
 
     // Check China Text Box
-    var chinaBubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(2) > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(42) > label"));
+    var chinaBubble =element(by.css(data.bubbleMap_Chart_Loctors.chinaBubbleCheckbox_Locator_CSS));
     browser.wait(EC.visibilityOf(chinaBubble), 5000).then(function(){
       chinaBubble.click();
     });
@@ -92,7 +95,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
     });
 
     // Check United States Text Box
-    var USABubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(2) > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(226) > label"));
+    var USABubble =element(by.css(data.bubbleMap_Chart_Loctors.USABubbleCheckbox_Locator_CSS));
     browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
       USABubble.click();
     });
@@ -102,19 +105,19 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
 
 
     //clicking ok
-    var ok =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-buttons > div.vzb-dialog-button.vzb-label-primary > span"));
+    var ok =element(by.css(data.bubbleMap_Chart_Loctors.okOfFind_Locator_CSS));
     browser.wait(EC.visibilityOf(ok), 5000).then(function(){
       ok.click();
     });
 
     // Getting USA opacity value
-    var USA =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(3)"));
+    var USA =element(by.css(data.bubbleMap_Chart_Loctors.USABubbleMap_Locator_CSS));
     browser.wait(EC.visibilityOf(USA), 5000);
     USA.getCssValue('opacity').then(function(USAOpacityAsParameter){
       var USAOpacity = USAOpacityAsParameter;
 
       // Getting Nigeria Opacity value
-      var nga =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(7)"));
+      var nga =element(by.css(data.bubbleMap_Chart_Loctors.NigeriaBubbleMap_Locator_CSS));
       browser.wait(EC.visibilityOf(nga), 5000);
       nga.getCssValue('opacity').then(function(NGAOpacityAsParameter){
         var NGAOpacity = NGAOpacityAsParameter;
@@ -132,16 +135,15 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
 
     // Hovering the China Bubble
-    var china = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(1)"));
-    browser.wait(EC.visibilityOf(china), 5000);
-    browser.actions().mouseMove(china).perform();
+    browser.wait(EC.visibilityOf(chinaBubbleMap), 5000);
+    browser.actions().mouseMove(chinaBubbleMap).perform();
     var findMe = "China";
 
     // Getting attributes of Tooltip
-    var tooltip = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-tooltip"));
+    var tooltip = browser.element(by.css(data.bubbleMap_Chart_Loctors.tooltipOfchinaBubbleMap_Locator_CSS));
     browser.wait(EC.visibilityOf(tooltip), 5000);
     tooltip.getText().then(function (tooltipAsParameter) {
       var tooltipText = tooltipAsParameter;
@@ -151,54 +153,51 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
     });
   });
 
-  /*
-   * Clicking the bubble of the United States should select it. The bubble
-   * gets full opacity, while the other bubbles get lower opacity.
-   */
 
-  it('OpacityMap',function(){
+  //  Clicking the bubble of the United States should select it. The bubble
+  //  gets full opacity, while the other bubbles get lower opacity.
+   
+
+   it('OpacityMap',function(){
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
 
     // Clicking the bubble of USA
-    var USABubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(3)"));
-    browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
-      USABubble.click();
+    browser.wait(EC.visibilityOf(USABubbleMap), 5000).then(function(){
+      USABubbleMap.click();
     });
 
     // Getting USA opacity value
-    var USA = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(3)"));
-    browser.wait(EC.visibilityOf(USA), 5000);
-    USA.getCssValue('opacity').then(function(USAOpacityAsParameter){
+    browser.wait(EC.visibilityOf(USABubbleMap), 5000);
+    USABubbleMap.getCssValue('opacity').then(function(USAOpacityAsParameter){
       var USAOpacity=USAOpacityAsParameter;
-
-      // Getting Nigeria Opacity value
-      var nga = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(7)"));
-      browser.wait(EC.visibilityOf(nga), 5000);
-      nga.getCssValue('opacity').then(function(NGAOpacityAsParameter){
-        var NGAOpacity=NGAOpacityAsParameter;
+        
+      // Getting China Opacity value
+      browser.wait(EC.visibilityOf(chinaBubbleMap), 5000);
+      chinaBubbleMap.getCssValue('opacity').then(function(chinaBubbleMapAsParameter){
+        var chinaBubbleMapOpacity=chinaBubbleMapAsParameter;
 
         // Comparing the opacities
-        expect(USAOpacity).not.toEqual(NGAOpacity);
+        expect(USAOpacity).not.toEqual(chinaBubbleMapOpacity);
       });
     });
   });
+
 
   // I can drag the label "United States" and drop it anywhere in the chart area
 
   it('DragLabelMap', function(){
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
 
     //Clicking USA bubble
-    var USABubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(3)"));
-    browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
-      USABubble.click();
+    browser.wait(EC.visibilityOf(USABubbleMap), 5000).then(function(){
+      USABubbleMap.click();
     });
     //Getting tooltip text before drag
-    var USALabel =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-labels > g > rect.vzb-label-fill.vzb-tooltip-border"));
+    var USALabel =element(by.css(data.bubbleMap_Chart_Loctors.tooltipOfUSABubbleMap_Locator_CSS));
     browser.wait(EC.visibilityOf(USALabel), 5000);
     USALabel.getLocation().then(function(initiallocation){
       var initialLocationText = initiallocation.x;
@@ -217,59 +216,56 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
     });
   });
 
-  /*
-   * I can unselect the bubble by clicking on the "x" of the label
-   * "United States", or by clicking on the bubble
-   */
+ 
+  //  I can unselect the bubble by clicking on the "x" of the label
+  //  "United States", or by clicking on the bubble
+   
 
   it('CrossLabelMap',function(){
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
 
     // Clicking the US bubble
-    var USABubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(3)"));
-    browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
-      USABubble.click();
+    browser.wait(EC.visibilityOf(USABubbleMap), 5000).then(function(){
+      USABubbleMap.click();
     });
 
     //Unselectiong the US bubble by clikcing bubble
-    browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
-      USABubble.click();
+    browser.wait(EC.visibilityOf(USABubbleMap), 5000).then(function(){
+      USABubbleMap.click();
     });
 
     // Clicking the US bubble again
-    browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
-      USABubble.click();
-    });
+      USABubbleMap.click();
+
 
     //Hovering the label to get cross
-    var tooltip= element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-labels > g > rect.vzb-label-fill.vzb-tooltip-border"));
+    var tooltip= element(by.css(data.bubbleMap_Chart_Loctors.tooltipOfUSABubbleMap_Locator_CSS));
     browser.wait(EC.visibilityOf(tooltip), 5000);
     browser.actions().mouseMove(tooltip).perform();
 
     // Unselect country by click
-    var cross = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-labels > g > g"));
+    var cross = element(by.css(data.bubbleMap_Chart_Loctors.crossOnTooltipOfUSABubbleMap_Locator_CSS));
     browser.wait(EC.visibilityOf(cross), 5000);
     browser.actions().mouseMove(cross).click().perform();
   });
 
-  /*
-   * bubbles react on hover
-   */
-
+    
+       
+  // bubbles react on hover
+   
   it('BubbleMapHover', function() {
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
 
     // Hovering the China Bubble
-    var china = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(1)"));
-    browser.wait(EC.visibilityOf(china), 5000);
-    browser.actions().mouseMove(china).perform();
+    browser.wait(EC.visibilityOf(chinaBubbleMap), 5000);
+    browser.actions().mouseMove(chinaBubbleMap).perform();
 
     // Getting attributes of Tooltip
-    var tooltip = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-tooltip"));
+    var tooltip = browser.element(by.css(data.bubbleMap_Chart_Loctors.tooltipOfchinaBubbleMap_Locator_CSS));
     browser.wait(EC.visibilityOf(tooltip), 5000);
     tooltip.getText().then(function (tooltipAsParameter) {
       var tooltipText = tooltipAsParameter;
@@ -285,14 +281,10 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
   it('BubbleMapdrag', function() {
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
-
-    //USA bubble element
-    var USA = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(3)"));
-    browser.wait(EC.visibilityOf(USA), 5000);
+    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
 
     //Bubble size before play
-    USA.getCssValue("r").then(function (USAAsParameter) {
+   USABubbleMap.getCssValue("r").then(function (USAAsParameter) {
       var heightBefore = USAAsParameter;
 
       //Clicking play
@@ -301,14 +293,13 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
         browser.sleep(3000);
       });
 
-      //Clicking pause
-      var pause = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-btns > button.vzb-ts-btn-pause.vzb-ts-btn > svg"));
+      //Clicking paus
       browser.wait(EC.visibilityOf(pause), 5000).then(function(){
         pause.click();
       });
 
       //Bubble size after play ang before drag
-      USA.getAttribute("r").then(function (USAAsParameter1) {
+      USABubbleMap.getAttribute("r").then(function (USAAsParameter1) {
         var heightAfter = USAAsParameter1;
 
         //Comparing sizes
@@ -322,7 +313,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
           browser.actions().dragAndDrop(slider,{x:500,y:10}).click().perform();
 
           //Bubble size after drag
-          USA.getAttribute("r").then(function (USAAsParameter11) {
+          USABubbleMap.getAttribute("r").then(function (USAAsParameter11) {
             var heightAfterDrag = USAAsParameter11;
 
             //Comparing sizes
@@ -347,33 +338,30 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
   it('Scale', function() {
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
 
-    //USA bubble element
-    var USA = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(3)"));
-    browser.wait(EC.visibilityOf(USA), 5000);
 
     // Clicking size icon
-    var size = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(3) > span.vzb-buttonlist-btn-icon.fa"));
+    var size = browser.element(by.css(data.bubbleMap_Chart_Loctors.sizeIcon_Locator_CSS));
     browser.wait(EC.visibilityOf(size), 5000).then(function(){
       size.click();
     });
 
     //Bubble size before dargging
-    USA.getSize().then(function (USAAsParameter) {
+    USABubbleMap.getSize().then(function (USAAsParameter) {
       var heightBefore = USAAsParameter.height;
 
       // dargging minimum pointer to the maximum
-      var sliderOfSize = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content > div > div > svg > g > g > g.resize.w.vzb-bs-slider-thumb > g"));
+      var sliderOfSize = browser.element(by.css(data.bubbleMap_Chart_Loctors.sliderOfSize_Locator_CSS));
       browser.wait(EC.visibilityOf(sliderOfSize), 5000);
       browser.actions().dragAndDrop(sliderOfSize,{x:100,y:0}).click().perform();
 
       //Bubble size after dargging
-      USA.getSize().then(function (USAAsParameter1) {
+      USABubbleMap.getSize().then(function (USAAsParameter1) {
         var heightAfter = USAAsParameter1.height;
 
         //clicking OK
-        var ok = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-buttons"));
+        var ok = browser.element(by.css(data.bubbleMap_Chart_Loctors.okOfSizePopup_Locator_CSS));
         browser.wait(EC.visibilityOf(ok), 5000);
 
         //Comparing sizes
@@ -388,15 +376,14 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
   it('HoverValueMap', function() {
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
 
     //Hovering USA bubble element
-    var USA = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(3)"));
-    browser.wait(EC.visibilityOf(USA), 5000);
-    browser.actions().mouseMove(USA).perform();
+    browser.wait(EC.visibilityOf(USABubbleMap), 5000);
+    browser.actions().mouseMove(USABubbleMap).perform();
 
     // Getting attributes of population
-    var population = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-axis-y-title"));
+    var population = browser.element(by.css(data.bubbleMap_Chart_Loctors.population_Locator_CSS));
     browser.wait(EC.visibilityOf(population), 5000);
     population.getText().then(function (populationAsParameter) {
       var populationText = populationAsParameter;
@@ -409,4 +396,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
     });
   });
 
+   
+        
+    });
 });
