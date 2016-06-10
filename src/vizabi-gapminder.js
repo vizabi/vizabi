@@ -875,19 +875,19 @@ Cartogram.define('default_model', {
     marker: {
       space: ["entities", "time"],
       size: {
-        use: "indicator",
+        use: "constant",
         //which: "sg_population",//systema globalis
-        which: "zaf_population",
-        scaleType: "linear",
+        which: "_default",
+        scaleType: "ordinal",
         _important: true,
         allow: {
-          scales: ["linear"]
+          scales: ["linear", "ordinal"]
         },
-        extent: [0.04, 0.85]
+        extent: [0, 1]
       },
       color: {
         use: "indicator",
-        which: "zaf_age",
+        which: "zaf_population",
         scaleType: "linear",
         _important: true
       },
@@ -899,7 +899,7 @@ Cartogram.define('default_model', {
   },
   data: {
     reader: "csv",
-    path: localUrl + "data/waffles/ddf--datapoints--population--by--year--province.csv",
+    path: localUrl + "data/waffles/ddf--datapoints--population--black_population--black_population_percentage--by--year--province.csv",
     splash: false
   },
   language: language,
@@ -907,7 +907,9 @@ Cartogram.define('default_model', {
     chart: {
       labels: {
         dragging: true
-      }
+      },
+      lockNonSelected: 0,
+      lockActive: 1
     },
     presentation: false
   }

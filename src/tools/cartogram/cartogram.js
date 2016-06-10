@@ -85,7 +85,8 @@ var Cartogram = Tool.extend('Cartogram', {
       chart: {
         labels: {
           dragging: true
-        }
+        },
+        lockNonSelected: 0
       },
       presentation: true
     }

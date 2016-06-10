@@ -28,7 +28,7 @@
    */
   d3.cartogram = function() {
 
-    function carto(topology, geometries) {
+    function carto(topology, geometries, totalValue) {
       // copy it first
       topology = copy(topology);
 
@@ -66,9 +66,10 @@
               geometry: geom
             };
           });
-
-      var values = objects.map(value),
-          totalValue = d3.sum(values);
+      var values = objects.map(value);
+      if (!totalValue) {
+        totalValue = d3.sum(values);
+      }
 
       // no iterations; just return the features
       if (iterations <= 0) {

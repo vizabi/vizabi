@@ -79,7 +79,14 @@ var CartogramComponent = Component.extend({
         if(!_this._readyOnce) return;
         _this.updateMarkerSizeLimits();
         _this.updateEntities();
+      },
+      "change:marker.color.palette": function(evt, path) {
+        _this.updateEntitityColor();
+      },
+      "change:ui.chart.lockNonSelected": function(evt) {
+        _this.updateEntities();
       }
+
     };
     //this._selectlist = new Selectlist(this);
 
@@ -91,6 +98,7 @@ var CartogramComponent = Component.extend({
 
     this.lands = null;
     this.features = null;
+    this.topo_features = null; 
     this.defaultWidth = 700;
     this.defaultHeight = 550;
     this.boundBox = [[0.05, 0.0], [0.95, 1.0]]; // two points to set box bound on 960 * 500 image;
@@ -99,7 +107,7 @@ var CartogramComponent = Component.extend({
 
     this.projection = d3.geo.mercator()
       .center([25, -29])
-      .scale(2000)
+      .scale(1500)
       .translate([this.defaultWidth / 2, this.defaultHeight / 2])
       .precision(.1);
 
@@ -130,11 +138,10 @@ var CartogramComponent = Component.extend({
     
     //var features = topojson.feature(world, world.objects.prov).features; 
     this.cartogram.iterations(0);
-
-    this.features = this.cartogram(world, world.objects.prov.geometries).features;
+    this.features = this.topo_features = this.cartogram(world, world.objects.prov.geometries);
     
     this.lands = svg.selectAll(".land")
-      .data(_this.features)
+      .data(this.topo_features.features)
       .enter().insert("path", ".graticule")
         .attr("class", function(d) { return "land " + d.id; })
         .attr("d", this.cartogram.path)
@@ -166,6 +173,17 @@ var CartogramComponent = Component.extend({
 
   },
   _getKey: function(d) {
+    switch (d.id) {
+      case 0: return 2;
+      case 1: return 4;
+      case 2: return 7;
+      case 3: return 5;
+      case 4: return 9;
+      case 5: return 8;
+      case 6: return 6;
+      case 7: return 3;
+      case 8: return 1;
+    }
     return d.id + 1;
   },
   /**
@@ -212,7 +230,6 @@ var CartogramComponent = Component.extend({
   frameChanged: function(frame, time) {
     if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
     if (!frame) return;
-
     this.values = frame;
     this.updateTime();
     this.updateEntities();
@@ -223,7 +240,8 @@ var CartogramComponent = Component.extend({
    */
   ready: function () {
     var _this = this;
-    this.updateIndicators();   
+    this.updateIndicators();
+    this.updateMarkerSizeLimits();
     this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
     this.year.setText(_this.model.time.timeFormat(_this.model.time.value));
     this.updateSize();
@@ -239,30 +257,60 @@ var CartogramComponent = Component.extend({
 
   updateMarkerSizeLimits: function() {
     var _this = this;
+/*
     var extent = this.model.marker.size.extent || [0,1];
 
     var minRadius = this.activeProfile.minRadius;
     var maxRadius = this.activeProfile.maxRadius;
-
+    console.log(minRadius);
+    console.log(maxRadius);
     this.minRadius = Math.max(maxRadius * extent[0], minRadius);
     this.maxRadius = Math.max(maxRadius * extent[1], minRadius);
+*/
 
     if(this.model.marker.size.scaleType !== "ordinal") {
-      this.sScale.range([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)]);
+      this.sScale.range([0, 100]);
     } else {
-      this.sScale.rangePoints([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)], 0).range();
+      this.sScale.rangePoints([0, 100], 0).range();
     }
   },
   
   updateEntities: function() {
     var _this = this;
+    var time = this.model.time.value;
+    if(this.model.ui.chart.lockNonSelected) {
+      time = this.model.time.timeFormat.parse("" + this.model.ui.chart.lockNonSelected);
+    }
+    this.model.marker.getFrame(time, function(lockedFrame) {
+      if (_this.model.marker.size.use == "constant") {
+        _this.cartogram.iterations(0);
+      } else {
+        _this.cartogram.iterations(8);
+        var areas = _this.topo_features.features.map(d3.geo.path().projection(null).area);
+        _this.cartogram.value(function(d) {
+          if (_this.model.ui.chart.lockNonSelected) {
+            var size1 = lockedFrame.size[_this._getKey(d)], 
+              size2 = _this.values.size[_this._getKey(d)];
+            if (!_this.values.size[_this._getKey(d)] ||
+              !lockedFrame.size[_this._getKey(d)] ||
+              _this.values.size[_this._getKey(d)] < 0 ||
+              lockedFrame.size[_this._getKey(d)] < 0
+            ) { // use scale if we have null or negative values  
+              size1 = _this.sScale(lockedFrame.size[_this._getKey(d)]);
+              size2 = _this.sScale(_this.values.size[_this._getKey(d)]);
+            }
+            return areas[d.id] * (size2 / size1);  
+          } else {
+            return _this.sScale(_this.values.size[_this._getKey(d)]);
+          }
+        });
+      }
+      var totValue = null;
+      if (_this.model.ui.chart.lockNonSelected) {
+        totValue = d3.sum(areas);
+      }
 
-    this.cartogram.value(function(d) {
-      return _this.sScale(_this.values.size[_this._getKey(d)]);
-    });
-    this.cartogram.iterations(8);
-    utils.defer(function() {
-      _this.features = _this.cartogram(_this.world, _this.world.objects.prov.geometries).features;
+      _this.features = _this.cartogram(_this.world, _this.world.objects.prov.geometries, totValue).features;
       _this.lands.data(_this.features);
       _this.lands.transition()
         .duration(_this.duration)
@@ -273,7 +321,17 @@ var CartogramComponent = Component.extend({
         .attr("d", _this.cartogram.path)
     });
   },
-  
+
+  updateEntitityColor: function() {
+    var _this = this;
+    this.lands.transition()
+      .duration(_this.duration)
+      .ease("linear")
+      .style("fill", function(d) {
+        return _this.values.color[_this._getKey(d)]!=null?_this.cScale(_this.values.color[_this._getKey(d)]):_this.COLOR_LAND_DEFAULT;
+      })
+    
+  },
   updateUIStrings: function () {
     var _this = this;
 
@@ -446,25 +504,6 @@ var CartogramComponent = Component.extend({
       .attr('x', margin.left)
       .attr('y', margin.top)
       .style("transform", "translate3d(" + margin.left + "px," + margin.top + "px,0)");
-
-    //update scales to the new range
-    //this.updateMarkerSizeLimits();
-    //this.sScale.range([0, this.height / 4]);
-
-    var skew = this.skew = (function () {
-      var vb = viewBox;
-      var w = width;
-      var h = height;
-      var vbCenter = [vb[0] + vb[2] / 2, vb[1] + vb[3] / 2];
-      var vbWidth = vb[2] || 0.001;
-      var vbHeight = vb[3] || 0.001;
-      //input pixel loc after projection, return pixel loc after skew;
-      return function (points) {
-        var x = (points[0] - vbCenter[0]) / vbWidth * width + width / 2;
-        var y = (points[1] - vbCenter[1]) / vbHeight * height + height / 2;
-        return [x, y];
-      }
-    }());
 
     this.yTitleEl
       .style("font-size", infoElHeight)

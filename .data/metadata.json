@@ -16,7 +16,8 @@
       2011
     ]
   },
-  "zaf_age": {
+  
+  "black_population": {
     "use": "indicator",
     "scales": [
       "linear",
@@ -24,14 +25,31 @@
     ],
     "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
     "domain": [
-      20,
-      100
+      400000,
+      10000000
     ],
     "availability": [
       1996,
       2011
     ]
   },
+  "black_population_percentage": {
+    "use": "indicator",
+    "scales": [
+      "linear",
+      "log"
+    ],
+    "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
+    "domain": [
+      0.2,
+      1
+    ],
+    "availability": [
+      1996,
+      2011
+    ]
+  },
+
  "shape_w_subdiv_midres_topojson": {
      "use": "property",
      "name": "Geo shape with subdivisions in topojson format with medium resolution"
@@ -8697,7 +8715,10 @@
       "id": "zaf_population"
     },
     {
-      "id": "zaf_age"
+      "id": "black_population"
+    },
+    {
+      "id": "black_population_percentage"
     },
    {
     "id": "time"

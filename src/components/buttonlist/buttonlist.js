@@ -459,7 +459,9 @@ var ButtonList = Component.extend({
     btn.classed(class_hidden, this.model.state.entities.select.length == 0);
   },
   toggleBubbleLock: function(id) {
-    if(this.model.state.entities.select.length == 0) return;
+    var active = (this.model.ui.chart||{}).lockActive;
+
+    if(this.model.state.entities.select.length == 0 && !active) return;
 
     var locked = this.model.ui.chart.lockNonSelected;
     var time = this.model.state.time;
@@ -470,9 +472,10 @@ var ButtonList = Component.extend({
   },
   setBubbleLock: function() {
     var locked = (this.model.ui.chart||{}).lockNonSelected;
+    var active = (this.model.ui.chart||{}).lockActive;
     if(!locked && locked !== 0) return;
 
-    if(locked !== 0 && this.model.state.entities.select.length === 0) {
+    if(locked !== 0 && this.model.state.entities.select.length === 0 && !active) {
        locked = this.model.ui.chart.lockNonSelected = 0;
     }
 
@@ -482,8 +485,8 @@ var ButtonList = Component.extend({
       
     var translator = this.model.language.getTFunction();
 
-    btn.classed(class_unavailable, this.model.state.entities.select.length == 0);
-    btn.classed(class_hidden, this.model.state.entities.select.length == 0);
+    btn.classed(class_unavailable, this.model.state.entities.select.length == 0 && !active);
+    btn.classed(class_hidden, this.model.state.entities.select.length == 0 && !active);
 
     btn.classed(class_active_locked, locked)
     btn.select(".vzb-buttonlist-btn-title")

@@ -55,6 +55,7 @@ var ColorLegend = Component.extend({
   readyOnce: function() {
     var _this = this;
     this.element = d3.select(this.element);
+    this.markerModel = this.model.state.marker_minimap ? this.model.state.marker_minimap : this.model.state.marker;
     this.listColorsEl = this.element
       .append("div").attr("class", "vzb-cl-holder")
       .append("div").attr("class","vzb-cl-colorlist");
@@ -78,14 +79,10 @@ var ColorLegend = Component.extend({
   
   ready: function(){
     var _this = this;
-    if (this.model.state.marker_minimap) {
-      this.model.state.marker_minimap.getFrame(this.model.state.time.value, function(frame, time) {
-        _this.frame = frame;
-        _this.updateView();
-      })
-    } else {
+    this.markerModel.getFrame(this.model.state.time.value, function(frame, time) {
+      _this.frame = frame;
       _this.updateView();
-    }
+    })
   },
 
 
