@@ -1,0 +1,157 @@
+.vzb-tool-cartogram {
+  $vzb-ct-year-size: 15em;
+  
+  .vzb-cartogram {
+    @extend %vzb-chart-wrapper;
+
+    .vzb-ct-map-background {
+
+      .stroke {
+        fill: none;
+        stroke: $vzb-color-grey;
+        stroke-width: .5px;
+        stroke-opacity: .3;
+      }
+
+      .fill {
+        fill: none;
+      }
+
+      .graticule {
+        fill: none;
+        stroke: $vzb-color-grey;
+        stroke-width: .5px;
+        stroke-opacity: .3;
+      }
+
+      .land {
+        fill: $vzb-color-grey;
+        opacity: .4;
+      }
+
+      .boundary {
+        fill: none;
+        stroke: #fff;
+        stroke-width: .5px;
+      }
+    }
+
+    .vzb-cartogram-svg {
+      @extend %vzb-chart-svg;
+
+      .vzb-ct-year {
+        @include opacity(.5);
+        font-size: $vzb-ct-year-size;
+        fill: $vzb-color-grey;
+        text-anchor: middle;
+        -webkit-touch-callout: none;
+        user-select: none;
+      }
+
+      .vzb-ct-labels text,
+      .vzb-ct-labels circle {
+        cursor: pointer;
+        fill: $vzb-color-primary;
+      }
+
+      .vzb-ct-labels .vzb-ct-label-shadow {
+        @extend %vzb-chart-label-shadow;
+      }
+
+      .vzb-ct-axis-y-title,
+      .vzb-ct-axis-c-title {
+        @extend %vzb-chart-axis-title;
+      }
+
+      .vzb-ct-axis-y-info,
+      .vzb-ct-axis-c-info {
+        @extend %vzb-chart-info;
+      }
+
+      .vzb-ct-tooltip {
+        @extend %vzb-chart-tooltip;
+        text {
+          text-anchor: end;
+        }
+      }
+    }
+  }
+  &.vzb-large {
+    .vzb-cartogram {
+      .vzb-ct-axis-y-title,
+      .vzb-ct-axis-c-title {
+        @extend %vzb-chart-axis-title-large;
+      }
+
+      .vzb-shadow,
+      .vzb-ct-label-shadow {
+        @extend %vzb-chart-label-shadow-large;
+      }
+
+      .vzb-ct-axis-info {
+        @extend %vzb-chart-ticks-large;
+      }
+    }
+  }
+  &.vzb-medium {
+    .vzb-cartogram {
+      .vzb-ct-axis-y-title,
+      .vzb-ct-axis-c-title {
+        @extend %vzb-chart-axis-title-medium;
+      }
+
+      .vzb-shadow,
+      .vzb-ct-label-shadow {
+        @extend %vzb-chart-label-shadow-medium;
+      }
+
+      .vzb-ct-axis-info {
+        @extend %vzb-chart-ticks-medium;
+      }
+    }
+  }
+  &.vzb-small {
+    .vzb-cartogram {
+      .vzb-ct-axis-y-title,
+      .vzb-ct-axis-c-title {
+        @extend %vzb-chart-axis-title-small;
+      }
+
+      .vzb-shadow,
+      .vzb-ct-label-shadow {
+        @extend %vzb-chart-label-shadow-small;
+      }
+
+      .vzb-ct-tooltip,
+      .vzb-ct-axis-info {
+        @extend %vzb-chart-ticks-small;
+      }
+    }
+  }
+  &.vzb-presentation {
+    .vzb-cartogram {
+      .vzb-ct-axis-y-title,
+      .vzb-ct-axis-c-title,
+      .vzb-ct-axis-info {
+        font-size: $vzb-font-size-largest;
+      }
+
+      .vzb-ct-tooltip {
+        text {
+          font-size: $vzb-font-size-larger;
+        }
+      }
+
+      .vzb-ct-labels {
+        font-size: $vzb-font-size-larger;
+      }
+    }
+
+    &.vzb-small {
+      .vzb-ct-axis-y-title,
+      .vzb-ct-axis-c-title {
+        font-size: $vzb-font-size-medium;
+      }
+    }
+  }
+}

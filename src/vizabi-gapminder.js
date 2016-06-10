@@ -20,6 +20,8 @@ import BMComponent from 'tools/bubblemap-component';
 import LineChart from 'tools/linechart';
 import PopByAge from 'tools/popbyage';
 import DonutChart from 'tools/donutchart';
+import Cartogram from 'tools/cartogram';
+import CartogramComponent from 'tools/cartogram-component';
 import AxisLabeler from 'tools/axislabeler';
 
 //waffle reader
@@ -836,6 +838,81 @@ DonutChart.define('default_model', {
 
 });
 
+Cartogram.define('datawarning_content', {
+  title: "",
+  body: "Comparing the size of economy across countries and time is not trivial. The methods vary and the prices change. Gapminder has adjusted the picture for many such differences, but still we recommend you take these numbers with a large grain of salt.<br/><br/> Countries on a lower income levels have lower data quality in general, as less resources are available for compiling statistics. Historic estimates of GDP before 1950 are generally also more rough. <br/><br/> Data for child mortality is more reliable than GDP per capita, as the unit of comparison, dead children, is universally comparable across time and place. This is one of the reasons this indicator has become so useful to measure social progress. But the historic estimates of child mortality are still suffering from large uncertainties.<br/><br/> Learn more about the datasets and methods in this <a href='http://www.gapminder.org/news/data-sources-dont-panic-end-poverty' target='_blank'>blog post</a>",
+  doubtDomain: [1800, 1950, 2015],
+  doubtRange: [1.0, .3, .2]
+});
+
+Cartogram.define('default_model', {
+  state: {
+    time: {
+      start: "1800",
+      end: "2015",
+      value: "2015",
+      step: 1,
+      speed: 300
+    },
+    entities: {
+      dim: "geo",
+      opacitySelectDim: .3,
+      opacityRegular: 1,
+      show: {
+        _defs_: {
+          "geo.cat": ["province", "unstate"]
+        }
+      },
+    },
+    entities_minimap: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo.cat": ["world_4region"]
+        }
+      }
+    },
+    marker: {
+      space: ["entities", "time"],
+      size: {
+        use: "indicator",
+        //which: "sg_population",//systema globalis
+        which: "zaf_population",
+        scaleType: "linear",
+        _important: true,
+        allow: {
+          scales: ["linear"]
+        },
+        extent: [0.04, 0.85]
+      },
+      color: {
+        use: "indicator",
+        which: "zaf_age",
+        scaleType: "linear",
+        _important: true
+      },
+      label: {
+        use: "property",
+        which: "geo.name"
+      }
+    }
+  },
+  data: {
+    reader: "csv",
+    path: localUrl + "data/waffles/ddf--datapoints--population--by--year--province.csv",
+    splash: false
+  },
+  language: language,
+  ui: {
+    chart: {
+      labels: {
+        dragging: true
+      }
+    },
+    presentation: false
+  }
+  
+});
 
 //Waffle Server Reader custom path
 WaffleReader.define('basepath', globals.ext_resources.host + globals.ext_resources.dataPath);
@@ -864,13 +941,26 @@ BMComponent.define("preload", function(done) {
   });
 });
 
+CartogramComponent.define("preload", function(done) {
+  var shape_path = localUrl + "data/za-all.topojson";
+
+  d3.json(shape_path, function(error, json) {
+    if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
+    CartogramComponent.define('world', json);
+    done.resolve();
+  });
+});
+
 
 //preloading concept properties for all charts
 Tool.define("preload", function(promise) {
 
   var _this = this;
+  var conceptprops_path = localUrl  + "data/metadata.json";
+/*
   var conceptprops_path = globals.ext_resources.conceptpropsPath ? globals.ext_resources.conceptpropsPath :
-      globals.ext_resources.host + globals.ext_resources.preloadPath + "metadata.json";    
+  globals.ext_resources.host + globals.ext_resources.preloadPath + "metadata.json";
+*/
 
   //TODO: concurrent
   //load language first

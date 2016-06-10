@@ -78,10 +78,14 @@ var ColorLegend = Component.extend({
   
   ready: function(){
     var _this = this;
-    this.model.state.marker_minimap.getFrame(this.model.state.time.value, function(frame, time) { 
-      _this.frame = frame;
+    if (this.model.state.marker_minimap) {
+      this.model.state.marker_minimap.getFrame(this.model.state.time.value, function(frame, time) {
+        _this.frame = frame;
+        _this.updateView();
+      })
+    } else {
       _this.updateView();
-    }) 
+    }
   },
 
 
@@ -92,7 +96,7 @@ var ColorLegend = Component.extend({
     var palette = this.colorModel.getPalette();
     var canShowMap = utils.keys((this.frame||{}).geoshape||{}).length && this.colorModel.use == "property";
 
-    var minimapKeys = this.model.state.marker_minimap.getKeys();
+    var minimapKeys = this.model.state.marker_minimap?this.model.state.marker_minimap.getKeys():[];
     
     minimapKeys.forEach(function(d){
       if(!((_this.frame||{}).geoshape||{})[d[_this.KEY]]) canShowMap = false;

@@ -1,5 +1,37 @@
 {
 "indicatorsDB": {
+  "zaf_population": {
+    "use": "indicator",
+    "scales": [
+      "linear",
+      "log"
+    ],
+    "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
+    "domain": [
+      900000,
+      13000000
+    ],
+    "availability": [
+      1996,
+      2011
+    ]
+  },
+  "zaf_age": {
+    "use": "indicator",
+    "scales": [
+      "linear",
+      "log"
+    ],
+    "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
+    "domain": [
+      20,
+      100
+    ],
+    "availability": [
+      1996,
+      2011
+    ]
+  },
  "shape_w_subdiv_midres_topojson": {
      "use": "property",
      "name": "Geo shape with subdivisions in topojson format with medium resolution"
@@ -8661,6 +8693,12 @@
  "indicatorsTree": {
   "id": "_root",
   "children": [
+    {
+      "id": "zaf_population"
+    },
+    {
+      "id": "zaf_age"
+    },
    {
     "id": "time"
    },

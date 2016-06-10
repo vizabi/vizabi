@@ -1,0 +1,13 @@
+geo,geo.name,geo.cat,geo.world_4region
+world,World,planet,world
+africa,Africa,region,africa
+zaf,South africaica,country,africa
+1,Eastern Cape,province, zaf
+2,Free State,province, zaf
+3,Gauteng,province, zaf
+4,KwaZulu-Natal,province, zaf
+5,Limpopo,province, zaf
+6,Mpumalanga,province, zaf
+7,North West,province, zaf
+8,Northern Cape,province, zaf
+9,Western Cape,province, zaf

@@ -6,6 +6,7 @@ import {
 } from 'base/iconset';
 
 import topojson from 'helpers/topojson';
+import cartogram from 'helpers/cartogram';
 import d3_geo_projection from 'helpers/d3.geo.projection';
 import DynamicBackground from 'helpers/d3.dynamicBackground';
 
@@ -132,8 +133,6 @@ var BubbleMapComponent = Component.extend({
 
     var path = this.bgPath = d3.geo.path()
         .projection(projection);
-
-    var graticule = d3.geo.graticule();
 
     var svg = this.mapGraph = d3.select(this.element).select(".vzb-bmc-map-graph")
         .attr("width", defaultWidth)
@@ -361,8 +360,6 @@ var BubbleMapComponent = Component.extend({
       this.cInfoEl.on("mouseout", function() {
         _this.parent.findChildByName("gapminder-datanotes").hide();
       })
-    
-    
   },
 
   // show size number on title when hovered on a bubble
