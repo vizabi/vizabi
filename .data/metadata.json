@@ -1,5 +1,47 @@
 {
 "indicatorsDB": {
+ "zaf_population": {
+    "use": "indicator",
+    "scales": [
+        "linear",
+        "log"
+    ],
+    "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
+    "domain": [
+        900000,
+        13000000
+    ],
+    "availability": [
+        1996,
+        2011
+    ]
+ },
+ "age": {
+    "use": "indicator",
+    "scales": [
+        "linear",
+        "log"
+    ],
+    "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
+    "domain": [
+        20,
+        100
+    ],
+    "availability": [
+        1996,
+        2011
+    ]
+ },   
+ "side": {
+     "use": "property",
+     "scales": ["ordinal"],
+     "sourceLink": "https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv"
+ },
+ "stack": {
+     "use": "property",
+     "scales": ["ordinal"],
+     "sourceLink": "https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv"
+ },
  "shape_w_subdiv_midres_topojson": {
      "use": "property",
      "name": "Geo shape with subdivisions in topojson format with medium resolution"
@@ -8662,7 +8704,16 @@
   "id": "_root",
   "children": [
    {
-    "id": "time"
+    "id": "age"
+   },
+   {
+    "id": "stack"
+   },
+   {
+    "id": "side"
+   },
+   {
+    "id": "zaf_population"
    },
    {
     "id": "child_mortality_0_5_year_olds_dying_per_1000_born"

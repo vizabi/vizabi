@@ -792,15 +792,15 @@ PopByAge.define('default_model', {
 AgePyramid.define('default_model', {
   state: {
     time: {
-      value: '2013',
+      value: '2011',
       start: '1950',
       end: '2100'
     },
     entities: {
-      dim: "geo",
+      dim: "side",
       show: {
         _defs_: {
-          "geo": ["usa"]
+          "side": ["*"]
         }
       }
     },
@@ -808,7 +808,7 @@ AgePyramid.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["world_4region"]
+          "geo.cat": ["country"]
         }
       }
     },
@@ -823,15 +823,22 @@ AgePyramid.define('default_model', {
       },
       grouping: 5
     },
+    entities_stack: {
+      dim: "stack"
+    },
     marker: {
-      space: ["entities", "entities_age", "time"],
+      space: ["entities", "entities_stack", "entities_age", "time"],
       label: {
         use: "indicator",
         which: "age"
       },
       label_name: {
         use: "property",
-        which: "geo"
+        which: "side"
+      },
+      group_name: {
+        use: "property",
+        which: "stack"
       },
       axis_y: {
         use: "indicator",
@@ -843,14 +850,20 @@ AgePyramid.define('default_model', {
       },
       axis_x: {
         use: "indicator",
-        which: "sg_population"
+        which: "zaf_population",
+        domainMin: 0,
+        domainMax: 1400000000
       },
       color: {
-        use: "constant",
-        which: "#ffb600",
-        allow: {
-          names: ["!geo.name"]
-        }
+        use: "property",
+        which: "stack"
+        // allow: {
+        //   names: ["!stack.name"]
+        // }
+      },
+      hook_side: {
+        use: "property",
+        which: "side"
       }
     },
     marker_minimap:{
@@ -869,11 +882,12 @@ AgePyramid.define('default_model', {
   },
   data: {
     reader: "csv",
-    path: globals.ext_resources.host + globals.ext_resources.dataPath + "usa.csv",
+    path: globals.ext_resources.host + globals.ext_resources.dataPath + "ddf--datapoints--population--by--year--age--education-gender.csv",
     splash: false
   },
   language: language,
   ui: {
+    stacked: true,
     presentation: false
   }
 });
@@ -959,8 +973,11 @@ BMComponent.define("preload", function(done) {
 Tool.define("preload", function(promise) {
 
   var _this = this;
-  var conceptprops_path = globals.ext_resources.conceptpropsPath ? globals.ext_resources.conceptpropsPath :
-      globals.ext_resources.host + globals.ext_resources.preloadPath + "metadata.json";    
+  
+  var conceptprops_path = localUrl + "data/metadata.json";
+
+  // var conceptprops_path = globals.ext_resources.conceptpropsPath ? globals.ext_resources.conceptpropsPath :
+  //     globals.ext_resources.host + globals.ext_resources.preloadPath + "metadata.json";    
 
   //TODO: concurrent
   //load language first
