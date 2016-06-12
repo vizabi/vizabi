@@ -447,7 +447,7 @@ var AgePyramid = Component.extend({
         },
         minRadius: 2,
         maxRadius: 40,
-        centerWidth: 50
+        centerWidth: 2
       },
       "medium": {
         margin: {
@@ -458,7 +458,7 @@ var AgePyramid = Component.extend({
         },
         minRadius: 3,
         maxRadius: 60,
-        centerWidth: 80
+        centerWidth: 2
       },
       "large": {
         margin: {
@@ -469,7 +469,7 @@ var AgePyramid = Component.extend({
         },
         minRadius: 4,
         maxRadius: 80,
-        centerWidth: 100
+        centerWidth: 2
       }
     };
 
@@ -526,7 +526,7 @@ var AgePyramid = Component.extend({
     this.xAxisEl.attr("transform", "translate(" + translateX + "," + this.height + ")")
       .call(this.xAxis);
 
-    this.yAxisEl.attr("transform", "translate(" + translateX + ",0)")
+    this.yAxisEl.attr("transform", "translate(" + 0 + ",0)")
       .call(this.yAxis);
     //this.xAxisEl.call(this.xAxis);
 
@@ -554,8 +554,12 @@ var AgePyramid = Component.extend({
     this.bars.attr("transform", "translate(" + translateX + ",0)");
     this.labels.attr("transform", "translate(" + translateX + ",0)");
 
-    this.title.attr('x', margin.right).attr('y', margin.top / 2);
-    this.titleRight.attr('x', (this.width * .5 + _this.activeProfile.centerWidth))
+    this.title
+      .attr('x', margin.left + (this.twoSided ? translateX - 5 : 0))
+      .style('text-anchor', this.twoSided ? "end":"null")
+      .attr('y', margin.top / 2);
+    this.titleRight
+      .attr('x', margin.left + translateX + 5)
       .attr('y', margin.top / 2);
 
     this.year.attr('x', this.width + margin.left).attr('y', margin.top / 2);
