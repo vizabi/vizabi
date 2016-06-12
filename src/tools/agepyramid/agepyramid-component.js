@@ -191,20 +191,15 @@ var AgePyramid = Component.extend({
     } else {
       stackKeys = [this.totalFieldName];
     }
-//    filter[stackDim] = stacks[1][stackDim];
-//    filter[sideDim] = sides[1][sideDim];
+
+    var values1 = this.model.marker.getValues(filter,[ sideDim, ageDim, stackDim]);
     var sideValues = this.model.marker.getValues(filter,[sideDim]);
     var stackValues = this.model.marker.getValues(filter,[stackDim]);
     var values = this.model.marker.getValues(filter,[this.AGEDIM]);
-//    var values = this.model.marker.getValues(filter,[timeDim, "geo", this.AGEDIM]);
     var domain = this.yScale.domain();
 
-    var data = (this.model.marker.axis_x.getNestedItems([timeDim, sideDim, ageDim, stackDim]))[timeValue];
+    //var data = (this.model.marker.axis_x.getNestedItems([timeDim, sideDim, ageDim, stackDim]))[timeValue];
     
-    //var dKey = Object.keys(data);
-    this.model.marker.getFrame(time.value, function(values) {
-      var i = 0;
-    });
     this.cScale = this.model.marker.color.getScale();
     this.model.age.setVisible(markers);
 
@@ -279,7 +274,7 @@ var AgePyramid = Component.extend({
         })
       .selectAll('.vzb-bc-stack')
       .attr("width", function(d, i) {
-        var width = _this.xScale(data[d[sideDim]][d[ageDim]][d[stackDim]][0][_this.model.marker.axis_x.which]);
+        var width = _this.xScale(values1.axis_x[d[sideDim]][d[ageDim]][d[stackDim]]);
         return width;
       })    
       .attr("x", function(d, i){
