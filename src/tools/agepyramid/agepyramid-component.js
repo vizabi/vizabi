@@ -30,6 +30,9 @@ var AgePyramid = Component.extend({
       name: "entities",
       type: "entities"
     }, {
+      name: "side",
+      type: "entities"
+    }, {
       name: "stack",
       type: "entities"
     }, {
@@ -112,7 +115,7 @@ var AgePyramid = Component.extend({
    * Both model and DOM are ready
    */
   ready: function() {
-    this.SIDEDIM = this.model.entities.getDimension();
+    this.SIDEDIM = this.model.side.getDimension();
     this.AGEDIM = this.model.age.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
     this.STACKDIM = this.model.stack.getDimension();
@@ -262,8 +265,7 @@ var AgePyramid = Component.extend({
           .attr("class", function(d, i) {
             return "vzb-bc-stack " + "vzb-bc-stack-" + i;
           })
-          .attr("y", 0)
-          .attr("height", bar_height);
+          .attr("y", 0);
         
     this.bars.selectAll('.vzb-bc-bar')
       .attr("transform", function(d, i) {
@@ -273,26 +275,30 @@ var AgePyramid = Component.extend({
           return i ? ("scale(-1,1) translate(" + _this.activeProfile.centerWidth + ",0)") : "";
         })
       .selectAll('.vzb-bc-stack')
-      .attr("width", function(d, i) {
-        var width = _this.xScale(values1.axis_x[d[sideDim]][d[ageDim]][d[stackDim]]);
-        return width;
-      })    
-      .attr("x", function(d, i){
-        var prevSbl = this.previousSibling;
-        if(prevSbl) {
-          var bBox = prevSbl.getBBox();
-          return bBox.x + bBox.width;          
-        } else {
-          return 0;
-        }
-      })
-      .attr("fill", function(d) {
-        //return _this._temporaryBarsColorAdapter(values, d, ageDim);
-        //return _this.cScale(values.color[d[ageDim]]);
-        return _this.cScale(d[stackDim]);
-      });
-        
-      
+        .attr("fill", function(d) {
+          //return _this._temporaryBarsColorAdapter(values, d, ageDim);
+          //return _this.cScale(values.color[d[ageDim]]);
+          return _this.cScale(d[stackDim]);
+        })
+        //.attr("shape-rendering", "crispEdges") // this makes sure there are no gaps between the bars, but also disables anti-aliasing
+        .each(function(d, i) {
+          d["width"] = _this.xScale(values1.axis_x[d[sideDim]][d[ageDim]][d[stackDim]]);
+          var prevSbl = this.previousSibling;
+          if(prevSbl) {
+            var prevSblDatum = d3.select(prevSbl).datum();
+            d["x"] = prevSblDatum.x + prevSblDatum.width;          
+          } else {
+            d["x"] = 0;
+          }
+        })
+        .transition().duration(duration).ease("linear")
+        .attr("width", function(d, i) {
+          return d.width;
+        })    
+        .attr("x", function(d, i){
+          return d.x;
+        })
+        .attr("height", bar_height);
 
     this.entityLabels.enter().append("g")
       .attr("class", "vzb-bc-label")

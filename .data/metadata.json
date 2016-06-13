@@ -32,6 +32,11 @@
         2011
     ]
  },   
+ "sex": {
+     "use": "property",
+     "scales": ["ordinal"],
+     "sourceLink": "https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv"
+ },
  "side": {
      "use": "property",
      "scales": ["ordinal"],
@@ -40,7 +45,22 @@
  "stack": {
      "use": "property",
      "scales": ["ordinal"],
-     "sourceLink": "https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv"
+     "sourceLink": "https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv",
+     "color": {
+         "palette": {
+            "No schooling": "#bcfa83",
+            "Some primary": "#4cd843",
+            "Complete primary": "#ff8684",
+            "Some secondary": "#e83739",
+            "Grade 12/Std 10": "#ffb04b",
+            "Higher": "#ff7f00",
+            "Unspecified": "#f599f5",
+            "Not applicable": "#c027d4",
+            "Total": "#f4f459"
+         },
+         "selectable": false
+     }
+
  },
  "shape_w_subdiv_midres_topojson": {
      "use": "property",

@@ -365,7 +365,7 @@ var Marker = Model.extend({
 
         if(hook.use !== "property") next = next || d3.bisectLeft(hook.getUnique(dimTime), time);        
 
-        method = hook.getConceptprops().interpolation;
+        method = hook.getConceptprops ? hook.getConceptprops().interpolation : null;
         filtered = _this.getDataManager().get(hook._dataId, 'nested', f_keys);
         utils.forEach(f_values, function(v) {
           filtered = filtered[v]; //get precise array (leaf)
@@ -397,7 +397,7 @@ var Marker = Model.extend({
           
         if(hook.use !== "property") next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
         
-        method = hook.getConceptprops().interpolation;
+        method = hook.getConceptprops ? hook.getConceptprops().interpolation : null;
                 
         var interpolate = function(arr, result, id) {
           //TODO: this saves when geos have different data length. line can be optimised. 

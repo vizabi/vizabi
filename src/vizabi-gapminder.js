@@ -797,10 +797,10 @@ AgePyramid.define('default_model', {
       end: '2100'
     },
     entities: {
-      dim: "side",
+      dim: "geo",
       show: {
         _defs_: {
-          "side": ["*"]
+          "geo": ["*"]
         }
       }
     },
@@ -826,8 +826,11 @@ AgePyramid.define('default_model', {
     entities_stack: {
       dim: "stack"
     },
+    entities_side: {
+      dim: "side"
+    },
     marker: {
-      space: ["entities", "entities_stack", "entities_age", "time"],
+      space: ["entities", "entities_side", "entities_stack", "entities_age", "time"],
       label: {
         use: "indicator",
         which: "age"
@@ -867,12 +870,12 @@ AgePyramid.define('default_model', {
       }
     },
     marker_minimap:{
-      space: ["entities_minimap"],
+      space: ["entities_stack"],
         type: "geometry",
         shape: "svg",
         label: {
           use: "property",
-          which: "geo.name"
+          which: "stack"
         },
         geoshape: {
           use: "property",
