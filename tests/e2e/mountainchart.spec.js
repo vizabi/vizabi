@@ -1,17 +1,19 @@
 describe('Web - Vizabi e2e test :: Mountain Chart', function() {
-
+    
+  var testData = require('../../pageObjects.json');
   jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000000;
   browser.manage().window().setSize(1100, 600);
 
   var baseUrl = 'http://localhost:9000/preview/';
   var baseChartUrl = baseUrl + "mountainchart.html#_width:750&height:650&fullscreen:true&resp-sect:true&info-sect:true&butt-sect:true";
   var EC = protractor.ExpectedConditions;
+  testData.forEach( function (data) {
 
   // Base Selectors
 
-  var buttonPlay = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-btns > button.vzb-ts-btn-play.vzb-ts-btn > svg"));
-  var countries = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-mc-mountains"));
-  var buttonList = element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist"));
+  var buttonPlay = element(by.css(data.All_Global_Loctors.buttonPlay_Locator_CSS));
+  var countries = element(by.css(data.mountain_Chart_Loctors.countriesMountain_Locator_CSS));
+  var buttonList = element(by.css(data.All_Global_Loctors.buttonList_Locator_CSS));
 
   it('Loading Mountain Chart Page', function() {
 
@@ -54,9 +56,9 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
 
   //**************************MOUNTAIN CHART*************************************
 
-  var play = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-btns > button.vzb-ts-btn-play.vzb-ts-btn"));
-  var pause = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-btns > button.vzb-ts-btn-pause.vzb-ts-btn"));
-  var slider = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-slider-wrapper > svg.vzb-ts-slider > g > g.vzb-ts-slider-slide > circle"));
+    var play = element(by.css(data.All_Global_Loctors.play_Locator_CSS));
+    var pause = element(by.css(data.All_Global_Loctors.pause_Locator_CSS));
+    var slider = element(by.css(data.All_Global_Loctors.slider_Locator_CSS));
 
   // Click "find" and check a few countries there, they should get selected on
   // the visualization and their names should appear as a list on top left.
@@ -65,26 +67,26 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
   it('MountainFind', function() {
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
 
     //Clicking find
-    var find = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));
+    var find = browser.element(by.css(data.mountain_Chart_Loctors.findIcon_Locator_CSS));
     browser.wait(EC.visibilityOf(find), 5000).then(function(){
       find.click();
     });
     // Place Text in Search
-    var search = browser.element(by.css("#vzb-find-search"));
+    var search = browser.element(by.css(data.mountain_Chart_Loctors.searchOfFind_Locator_CSS));
     browser.wait(EC.visibilityOf(search), 5000).then(function(){
       search.sendKeys("china");
     });
     //Clicking China
-    var china = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(30) > label"));
+    var china = browser.element(by.css(data.mountain_Chart_Loctors.chinaCheckboxFind_Locator_CSS));
     browser.wait(EC.visibilityOf(china), 5000).then(function(){
       china.click();
     });
 
     // Getting name from check box
-    var chinaCheckBox = element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(30)"));
+    var chinaCheckBox = element(by.css(data.mountain_Chart_Loctors.chinaCheckboxText_Locator_CSS));
     browser.wait(EC.visibilityOf(chinaCheckBox), 5000);
 
     //Getting text from China check box
@@ -92,13 +94,13 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
       var chinaCheckBoxText = chinaCheckBoxTextAsParameter;
 
       // Clicking OK of Find pop up
-      var ok = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-buttons > div.vzb-dialog-button.vzb-label-primary > span"));
+      var ok = browser.element(by.css(data.mountain_Chart_Loctors.okOnFindPopup_Locator_CSS));
       browser.wait(EC.visibilityOf(chinaCheckBox), 5000).then(function(){
         ok.click();
       });
 
       // Getting atrributes of population
-      var chinaBall = element(by.css("#chn-label > text:nth-child(3)"));
+      var chinaBall = element(by.css(data.mountain_Chart_Loctors.chinaPopulationBall_Locator_CSS));
       browser.wait(EC.visibilityOf(chinaBall), 5000);
 
       //Getting text from china ball
@@ -124,22 +126,22 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
   it('ShowMountain', function() {
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
 
     // Clicking show icon
-    var show = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(4) > span.vzb-buttonlist-btn-icon.fa"));
+    var show = browser.element(by.css(data.mountain_Chart_Loctors.showIcon_Locator_CSS));
     browser.wait(EC.visibilityOf(show), 5000).then(function(){
       show.click();
     });
 
     // Giving the country name to search bar
-    var search=browser.element(by.css("#vzb-show-search"));
+    var search=browser.element(by.css(data.mountain_Chart_Loctors.searchOfShow_Locator_CSS));
     browser.wait(EC.visibilityOf(search), 5000).then(function(){
       search.sendKeys("china");
     });
 
     // Clicking the check box of china
-    var checkBox = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(48) > label"));
+    var checkBox = browser.element(by.css(data.mountain_Chart_Loctors.chinaCheckboxShow_Locator_CSS));
     browser.wait(EC.visibilityOf(checkBox), 5000 , "Check box is not clicked").then(function(){
       checkBox.click();
     });
@@ -155,38 +157,38 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
     });
 
     // Clicking the check box of USA
-    var checkUSA = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(258) > label"));
+    var checkUSA = browser.element(by.css(data.mountain_Chart_Loctors.USACheckboxShow_Locator_CSS));
     browser.wait(EC.visibilityOf(checkUSA), 5000).then(function(){
       checkUSA.click();
       browser.sleep(2000);
     });
 
     //Clicking OK of show pop up
-    var ok = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-buttons > div.vzb-dialog-button.vzb-label-primary > span"));
+    var ok = browser.element(by.css(data.mountain_Chart_Loctors.okOnShowPopup_Locator_CSS));
     browser.wait(EC.visibilityOf(ok), 5000).then(function(){
       ok.click();
     });
 
     //Clicking find
-    var find = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));
+    var find = browser.element(by.css(data.mountain_Chart_Loctors.findIcon_Locator_CSS));
     browser.wait(EC.visibilityOf(find), 5000).then(function(){
       find.click();
     });
 
     // Check China Text Box
-    var checkChn = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(1) > label"));
+    var checkChn = browser.element(by.css(data.mountain_Chart_Loctors.chinaCheckboxFindAfterShow_Locator_CSS));
     browser.wait(EC.visibilityOf(checkChn), 5000).then(function(){
       checkChn.click();
     });
 
     //Getting China Text from check box field
-    var chinaCheckBox = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(1)"));
+    var chinaCheckBox = browser.element(by.css(data.mountain_Chart_Loctors.chinaCheckboxFindAfterShowText_Locator_CSS));
     browser.wait(EC.visibilityOf(chinaCheckBox), 5000);
     chinaCheckBox.getText().then(function (chinaCheckBoxTextAsParameter) {
       var chinaCheckBoxText = chinaCheckBoxTextAsParameter;
 
       //Getting China Text from population
-      var chinaBall = element(by.css("#chn-label > text:nth-child(3)"));
+      var chinaBall = element(by.css(data.mountain_Chart_Loctors.chinaPopulationBall_Locator_CSS));
       browser.wait(EC.visibilityOf(chinaBall), 5000);
       chinaBall.getText().then(function (chinaBallAsParameter) {
         var chinaBallText = chinaBallAsParameter;
@@ -195,19 +197,19 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
         var subStrChn = chinaBallText.substring(0, 5);
 
         // Check USA Text Box
-        var checkUSA1 = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(2) > label"));
+        var checkUSA1 = browser.element(by.css(data.mountain_Chart_Loctors.USACheckboxFindAfterShow_Locator_CSS));
         browser.wait(EC.visibilityOf(checkUSA1), 5000).then(function(){
           checkUSA1.click();
         });
 
         //Getting USA Text from check box field
-        var USACheckBoxText = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(2)"));
+        var USACheckBoxText = browser.element(by.css(data.mountain_Chart_Loctors.USACheckboxFindAfterShowText_Locator_CSS));
         browser.wait(EC.visibilityOf(USACheckBoxText), 5000);
         USACheckBoxText.getText().then(function (USACheckBoxTextAsParameter) {
           var USACheckBoxText = USACheckBoxTextAsParameter;
 
           //Getting USA Text from population
-          var usaBall = browser.element(by.css("#usa-label > text:nth-child(3)"));
+          var usaBall = browser.element(by.css(data.mountain_Chart_Loctors.USAPopulationBall_Locator_CSS));
           browser.wait(EC.visibilityOf(usaBall), 5000);
           usaBall.getText().then(function (usaBallAsParameter) {
             var usaBallText = usaBallAsParameter;
@@ -226,17 +228,18 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
     });
   });
 
+
   // in 2015, the percentage of people living in the extreme poverty should be
   // 11.5 � 0.3%, and the world population should be 7.3B.
 
   it('MountainSelect', function() {
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
 
 
     // Getting year's 1st digit
-    var firstDigit = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-mc-year > text:nth-child(1)"));
+    var firstDigit = browser.element(by.css(data.mountain_Chart_Loctors.firstDigitOfYear_Locator_CSS));
     browser.wait(EC.visibilityOf(firstDigit), 5000);
     firstDigit.getText().then(function (firstDigitAsParameter) {
       var firstDigitText = firstDigitAsParameter;
@@ -246,7 +249,7 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
       expect(firstDigitText).toBe(firstDigitOfYear);
 
       // Getting year's 2nd digit
-      var secondDigit = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-mc-year > text:nth-child(2)"));
+      var secondDigit = browser.element(by.css(data.mountain_Chart_Loctors.secondDigitOfYear_Locator_CSS));
       browser.wait(EC.visibilityOf(secondDigit), 5000);
       secondDigit.getText().then(function (secondDigitAsParameter) {
         var secondDigitText = secondDigitAsParameter;
@@ -256,7 +259,7 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
         expect(secondDigitText).toBe(secondDigitOfYear);
 
         // Getting year's 3rd digit
-        var thirdDigit = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-mc-year > text:nth-child(3)"));
+        var thirdDigit = browser.element(by.css(data.mountain_Chart_Loctors.thirdDigitOfYear_Locator_CSS));
         browser.wait(EC.visibilityOf(thirdDigit), 5000);
         thirdDigit.getText().then(function (thirdDigitAsParameter) {
           var thirdDigitText = thirdDigitAsParameter;
@@ -266,7 +269,7 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
           expect(thirdDigitText).toBe(thirdDigitOfYear);
 
           // Getting year's 4th digit
-          var fourthDigit = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-mc-year > text:nth-child(4)"));
+          var fourthDigit = browser.element(by.css(data.mountain_Chart_Loctors.fourthDigitOfYear_Locator_CSS));
           browser.wait(EC.visibilityOf(fourthDigit), 5000);
           fourthDigit.getText().then(function (fourthDigitAsParameter) {
             var fourthDigitText = fourthDigitAsParameter;
@@ -276,19 +279,19 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
             expect(fourthDigitText).toBe(fourthDigitOfYear);
 
             // Clicking Options icon
-            var options = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(5) > span.vzb-buttonlist-btn-icon.fa"));
+            var options = browser.element(by.css(data.mountain_Chart_Loctors.optionsIcon_Locator_CSS));
             browser.wait(EC.visibilityOf(options), 5000).then(function(){
               options.click();
             });
 
             // Clicking X and Y
-            var XandY = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-active.notransition.vzb-popup > div > div.vzb-dialog-content.vzb-dialog-scrollable > div.vzb-accordion > div:nth-child(4) > div > div.vzb-dialog-title"));
+            var XandY = browser.element(by.css(data.mountain_Chart_Loctors.XandYIcon_Locator_CSS));
             browser.wait(EC.visibilityOf(XandY), 5000).then(function(){
               XandY.click();
             });
 
             // Clicking probeline search bar
-            var searchBar = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-active.notransition.vzb-popup > div > div.vzb-dialog-content.vzb-dialog-scrollable > div.vzb-accordion > div.vzb-dialogs-dialog.vzb-moreoptions.vzb-accordion-section.vzb-accordion-active > div > div.vzb-dialog-content > div.vzb-probe-container > input"));
+            var searchBar = browser.element(by.css(data.mountain_Chart_Loctors.problineSearchbar_Locator_CSS));
             browser.wait(EC.visibilityOf(searchBar), 5000).then(function(){
               searchBar.click();
             });
@@ -303,35 +306,35 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
               expect(downVal).toBeLessThan(searchBarText);
 
               // Clicking Option pop up OK
-              var optionsPopUpOk = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-buttons > div"));
+              var optionsPopUpOk = browser.element(by.css(data.mountain_Chart_Loctors.okOFOptionsPopup_Locator_CSS));
               browser.wait(EC.visibilityOf(optionsPopUpOk), 5000).then(function(){
                 optionsPopUpOk.click();
               });
 
               // Clicking Stack
-              var stack = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(3) > span.vzb-buttonlist-btn-icon.fa > svg"));
+              var stack = browser.element(by.css(data.mountain_Chart_Loctors.stackIcon_Locator_CSS));
               browser.wait(EC.visibilityOf(stack), 5000).then(function(){
                 stack.click();
               });
               // Clicking the world radio button
-              var world = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-active.notransition.vzb-popup > div > div.vzb-dialog-content.vzb-dialog-scrollable > form.vzb-howtomerge.vzb-dialog-paragraph > label:nth-child(4) > input[type=radio]"));
+              var world = browser.element(by.css(data.mountain_Chart_Loctors.worldRadioButton_Locator_CSS));
               browser.wait(EC.visibilityOf(world), 5000).then(function(){
                 world.click();
               });
 
               // Clicking stack pop up OK
-              var stackPopUpOk = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-buttons > div"));
+              var stackPopUpOk = browser.element(by.css(data.mountain_Chart_Loctors.okOFStackPopup_Locator_CSS));
               browser.wait(EC.visibilityOf(stackPopUpOk), 5000).then(function(){
                 stackPopUpOk.click();
               });
               //Clicking the curve of mountain
-              var mountain = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-mc-mountains"));
+              var mountain = browser.element(by.css(data.mountain_Chart_Loctors.mountainCurve_Locator_CSS));
               browser.wait(EC.visibilityOf(mountain), 5000).then(function(){
                 mountain.click();
               });
 
               // Getting atrributes of population
-              var worldBall = element(by.css(".vzb-mc-mountains-labels .vzb-mc-label text.vzb-mc-label-text:nth-child(3)"));
+              var worldBall = element(by.css(data.mountain_Chart_Loctors.worldBallOfPopulation_Locator_CSS));
               browser.wait(EC.visibilityOf(worldBall), 5000);
               worldBall.getText().then(function (worldBallAsParameter) {
                 var worldBallText = worldBallAsParameter;
@@ -353,28 +356,28 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
   it('UncheckMountain', function() {
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
 
     //Clicking Show icon
-    var showIcon = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(4) > span.vzb-buttonlist-btn-icon.fa"));
+    var showIcon = browser.element(by.css(data.mountain_Chart_Loctors.showIcon_Locator_CSS));
     browser.wait(EC.visibilityOf(showIcon), 5000).then(function(){
       showIcon.click();
     });
     //Clicking check box of Afghanistan
-    var afg = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(2) > label"));
+    var afg = browser.element(by.css(data.mountain_Chart_Loctors.checkboxAfghanistanShow_Locator_CSS));
     browser.wait(EC.visibilityOf(afg), 5000).then(function(){
       afg.click();
       browser.sleep(2000);
     });
     //Clicking check box of Algeria
-    var alg = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(5) > label"));
+    var alg = browser.element(by.css(data.mountain_Chart_Loctors.checkboxAlgeriaShow_Locator_CSS));
     browser.wait(EC.visibilityOf(alg), 5000).then(function(){
       alg.click();
       browser.sleep(2000);
     });
 
     //Clicking OK of show pop up
-    var ok = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-buttons > div.vzb-dialog-button.vzb-label-primary > span"));
+    var ok = browser.element(by.css(data.mountain_Chart_Loctors.okOnShowPopup_Locator_CSS));
     browser.wait(EC.visibilityOf(ok), 5000).then(function(){
       ok.click();
     });
@@ -401,13 +404,13 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
     });
 
     //Clicking find
-    var find = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));
+    var find = browser.element(by.css(data.mountain_Chart_Loctors.findIcon_Locator_CSS));
     browser.wait(EC.visibilityOf(find), 5000).then(function(){
       find.click();
     });
 
     //Clicking Search bar of find
-    var search = browser.element(by.css("#vzb-find-search"));
+    var search = browser.element(by.css(data.mountain_Chart_Loctors.searchOfFind_Locator_CSS));
     browser.wait(EC.visibilityOf(search), 5000);
 
     //Entering China to searchbar
@@ -416,13 +419,13 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
     });
 
     // Check China Text Box
-    var checkChn = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(30) > label"));
+    var checkChn = browser.element(by.css(data.mountain_Chart_Loctors.chinaCheckboxFind_Locator_CSS));
     browser.wait(EC.visibilityOf(checkChn), 5000).then(function(){
       checkChn.click();
     });
 
     //Getting China Terxt from check box field
-    var chinaCheckBox = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(30)"));
+    var chinaCheckBox = browser.element(by.css(data.mountain_Chart_Loctors.chinaCheckboxText_Locator_CSS));
     browser.wait(EC.visibilityOf(chinaCheckBox), 5000);
     chinaCheckBox.getText().then(function (chinaCheckBoxTextAsParameter) {
       var chinaCheckBoxText = chinaCheckBoxTextAsParameter;
@@ -443,18 +446,18 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
         search.sendKeys("united states");
 
         //Clicking check box of USA
-        var checkUSA = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(157) > label"));
+        var checkUSA = browser.element(by.css(data.mountain_Chart_Loctors.USACheckboxFind_Locator_CSS));
         browser.wait(EC.visibilityOf(checkUSA), 5000).then(function(){
           checkUSA.click();
         });
         //Getting USA Text from check box field
-        var USACheckBoxText = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(157)"));
+        var USACheckBoxText = browser.element(by.css(data.mountain_Chart_Loctors.USACheckboxText_Locator_CSS));
         browser.wait(EC.visibilityOf(USACheckBoxText), 5000);
         USACheckBoxText.getText().then(function (USACheckBoxTextAsParameter) {
           var USACheckBoxText = USACheckBoxTextAsParameter;
 
           //Getting USA Text from population
-          var usaBall = browser.element(by.css("#usa-label > text:nth-child(3)"));
+          var usaBall = browser.element(by.css(data.mountain_Chart_Loctors.USAPopulationBall_Locator_CSS));
           browser.wait(EC.visibilityOf(usaBall), 5000);
           usaBall.getText().then(function (usaBallAsParameter) {
             var usaBallText = usaBallAsParameter;
@@ -473,4 +476,6 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
     });
   });
 
+      
+});      
 });
