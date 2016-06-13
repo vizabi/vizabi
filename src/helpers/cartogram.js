@@ -1,3 +1,4 @@
+import topojson from '../helpers/topojson'
 (function(exports) {
 
   /*
@@ -335,7 +336,7 @@
     };
 
     return o.type === "GeometryCollection"
-        ? (o = Object.create(o), o.geometries = o.geometries.map(geometry), o)
+        ? (o = Object.create(o), o.geometries = o.geometries.map(geometry), o.properties = o.properties, o)
         : geometry(o);
   }
 

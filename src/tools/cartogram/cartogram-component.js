@@ -111,8 +111,6 @@ var CartogramComponent = Component.extend({
       .translate([this.defaultWidth / 2, this.defaultHeight / 2])
       .precision(.1);
 
-    this.cartogram = d3.cartogram()
-      .projection(this.projection);
 
   },
 
@@ -128,10 +126,14 @@ var CartogramComponent = Component.extend({
     var defaultHeight = this.defaultHeight;
     var world = this.world;
     var geometries = this.geometries;
-    
     this.bgPath = d3.geo.path()
       .projection(this.projection);
 
+    this.cartogram = d3.cartogram()
+      .projection(this.projection)
+      .properties(function(d) {
+        return d.properties;
+      });
 
     var svg = this.mapGraph = d3.select(this.element).select(".vzb-ct-map-graph")
       .attr("width", defaultWidth)
@@ -140,12 +142,12 @@ var CartogramComponent = Component.extend({
     
     //var features = topojson.feature(world, world.objects.prov).features; 
     this.cartogram.iterations(0);
-    this.features = this.topo_features = this.cartogram(world, geometries);
+    this.features = this.topo_features = this.cartogram.features(world, geometries);
     
     this.lands = svg.selectAll(".land")
-      .data(this.topo_features.features)
+      .data(this.topo_features)
       .enter().insert("path", ".graticule")
-        .attr("class", function(d) { return "land " + d.id; })
+        .attr("class", function(d) { return "land " + d.id?d.id:d.MN_CODE; })
         .attr("d", this.cartogram.path)
         .on("mouseover", function (d, i) {
           if (utils.isTouchDevice()) return;
@@ -175,6 +177,9 @@ var CartogramComponent = Component.extend({
 
   },
   _getKey: function(d) {
+    // use for municipalities
+    if (d.properties.MN_CODE) return d.properties.MN_CODE; 
+    
     switch (d.id) {
       case 0: return 2;
       case 1: return 4;
@@ -302,7 +307,7 @@ var CartogramComponent = Component.extend({
         _this.cartogram.iterations(0);
       } else {
         _this.cartogram.iterations(8);
-        var areas = _this.topo_features.features.map(d3.geo.path().projection(null).area);
+        var areas = _this.topo_features.map(d3.geo.path().projection(null).area);
         _this.cartogram.value(function(d) {
           if (_this.model.ui.chart.lockNonSelected) {
             var size1 = _this.sScale(lockedFrame.size[_this._getKey(d)])/* * _this._calculateTotalSize(_this.model.time.value, _this.values.size)*/,
