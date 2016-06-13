@@ -104,7 +104,7 @@ var CartogramComponent = Component.extend({
     this.boundBox = [[0.05, 0.0], [0.95, 1.0]]; // two points to set box bound on 960 * 500 image;
 
     d3_geo_projection();
-
+    this.cached = [];
     this.projection = d3.geo.mercator()
       .center([25, -29])
       .scale(1500)
@@ -240,6 +240,7 @@ var CartogramComponent = Component.extend({
    */
   ready: function () {
     var _this = this;
+    this.cached = [];
     this.updateIndicators();
     this.updateMarkerSizeLimits();
     this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
@@ -275,6 +276,18 @@ var CartogramComponent = Component.extend({
     }
   },
   
+  _calculateTotalSize(year, frame) {
+    if (this.cached[year]) {
+      return this.cached[year];
+    }
+    var _this = this;
+    this.cached[year] = 0;
+    utils.forEach(frame, function(val) {
+      _this.cached[year] += _this.sScale(val);
+    });
+    return this.cached[year];
+  },
+   
   updateEntities: function() {
     var _this = this;
     var time = this.model.time.value;
@@ -282,6 +295,7 @@ var CartogramComponent = Component.extend({
       time = this.model.time.timeFormat.parse("" + this.model.ui.chart.lockNonSelected);
     }
     this.model.marker.getFrame(time, function(lockedFrame) {
+      var totValue = null;
       if (_this.model.marker.size.use == "constant") {
         _this.cartogram.iterations(0);
       } else {
@@ -289,25 +303,16 @@ var CartogramComponent = Component.extend({
         var areas = _this.topo_features.features.map(d3.geo.path().projection(null).area);
         _this.cartogram.value(function(d) {
           if (_this.model.ui.chart.lockNonSelected) {
-            var size1 = lockedFrame.size[_this._getKey(d)], 
-              size2 = _this.values.size[_this._getKey(d)];
-            if (!_this.values.size[_this._getKey(d)] ||
-              !lockedFrame.size[_this._getKey(d)] ||
-              _this.values.size[_this._getKey(d)] < 0 ||
-              lockedFrame.size[_this._getKey(d)] < 0
-            ) { // use scale if we have null or negative values  
-              size1 = _this.sScale(lockedFrame.size[_this._getKey(d)]);
-              size2 = _this.sScale(_this.values.size[_this._getKey(d)]);
-            }
+            var size1 = _this.sScale(lockedFrame.size[_this._getKey(d)]) * _this._calculateTotalSize(_this.model.time.value, _this.values.size),
+              size2 = _this.sScale(_this.values.size[_this._getKey(d)]) * _this._calculateTotalSize(time, lockedFrame.size);
             return areas[d.id] * (size2 / size1);  
           } else {
             return _this.sScale(_this.values.size[_this._getKey(d)]);
           }
         });
-      }
-      var totValue = null;
-      if (_this.model.ui.chart.lockNonSelected) {
-        totValue = d3.sum(areas);
+        if (_this.model.ui.chart.lockNonSelected) {
+          totValue = d3.sum(areas);
+        }
       }
 
       _this.features = _this.cartogram(_this.world, _this.world.objects.prov.geometries, totValue).features;
