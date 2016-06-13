@@ -55,6 +55,7 @@ var ColorLegend = Component.extend({
   readyOnce: function() {
     var _this = this;
     this.element = d3.select(this.element);
+    this.markerModel = this.model.state.marker_minimap ? this.model.state.marker_minimap : this.model.state.marker;
     this.listColorsEl = this.element
       .append("div").attr("class", "vzb-cl-holder")
       .append("div").attr("class","vzb-cl-colorlist");
@@ -78,10 +79,6 @@ var ColorLegend = Component.extend({
   
   ready: function(){
     var _this = this;
-    // this.model.state.marker_minimap.getFrame(this.model.state.time.value, function(frame, time) { 
-    //   _this.frame = frame;
-    //   _this.updateView();
-    // })
     var minimapDim = this.model.state.marker_minimap._getFirstDimension();
     var timeModel = this.model.state.time;
     var filter = {};
@@ -98,8 +95,12 @@ var ColorLegend = Component.extend({
     var palette = this.colorModel.getPalette();
     var canShowMap = utils.keys((this.frame||{}).geoshape||{}).length && this.colorModel.use == "property";
 
-    var minimapDim = this.model.state.marker_minimap._getFirstDimension();
-    var minimapKeys = this.model.state.marker_minimap.getKeys(minimapDim);
+    var minimapKeys = [];
+
+    if(this.model.state.marker_minimap){
+      var minimapDim = this.model.state.marker_minimap._getFirstDimension();
+      var minimapKeys = this.model.state.marker_minimap.getKeys(minimapDim);
+    }
     
     minimapKeys.forEach(function(d){
       if(!((_this.frame||{}).geoshape||{})[d[_this.KEY]]) canShowMap = false;

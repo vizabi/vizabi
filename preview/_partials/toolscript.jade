@@ -87,12 +87,27 @@ script.
       dataPath: 'data/zaf/waffles/',
       conceptpropsPath: localUrl + 'data/zaf/metadata.json'
     };
+
     VIZABI_MODEL.data = {
       reader: "csv",
       path: localUrl + 'data/zaf/waffles/' + "ddf--datapoints--population--by--year--age--education-gender.csv",
       splash: false
     }  
     
+  }else if("#{tool}"=="Cartogram"){
+    Vizabi._globals.ext_resources = {
+      host: localUrl,
+      preloadPath: 'data/zaf/',
+      dataPath: 'data/zaf/waffles/',
+      conceptpropsPath: localUrl + 'data/zaf/metadata.json'
+    };
+
+    VIZABI_MODEL.data = {
+      reader: "csv",
+      //path: localUrl + "data/zaf/waffles/ddf--datapoints--population--black_population--black_population_percentage--by--year--province.csv",
+      path: localUrl + "data/zaf/waffles/ddf--datapoints--population--black_population--black_population_percentage--by--year--municipality.csv",
+      splash: false
+    }  
   }else{
   
     Vizabi._globals.ext_resources = {
