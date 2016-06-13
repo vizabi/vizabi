@@ -79,10 +79,12 @@ var ColorLegend = Component.extend({
   
   ready: function(){
     var _this = this;
-    this.markerModel.getFrame(this.model.state.time.value, function(frame, time) {
-      _this.frame = frame;
-      _this.updateView();
-    })
+    var minimapDim = this.model.state.marker_minimap._getFirstDimension();
+    var timeModel = this.model.state.time;
+    var filter = {};
+    filter[timeModel.getDimension()] = timeModel.value;
+    _this.frame = this.model.state.marker_minimap.getValues(filter,[minimapDim]);
+    _this.updateView();
   },
 
 
@@ -93,7 +95,12 @@ var ColorLegend = Component.extend({
     var palette = this.colorModel.getPalette();
     var canShowMap = utils.keys((this.frame||{}).geoshape||{}).length && this.colorModel.use == "property";
 
-    var minimapKeys = this.model.state.marker_minimap?this.model.state.marker_minimap.getKeys():[];
+    var minimapKeys = [];
+
+    if(this.model.state.marker_minimap){
+      var minimapDim = this.model.state.marker_minimap._getFirstDimension();
+      var minimapKeys = this.model.state.marker_minimap.getKeys(minimapDim);
+    }
     
     minimapKeys.forEach(function(d){
       if(!((_this.frame||{}).geoshape||{})[d[_this.KEY]]) canShowMap = false;
@@ -116,7 +123,7 @@ var ColorLegend = Component.extend({
       if(this.colorModel.use == "indicator" || !minimapKeys.length) {
         colorOptions = colorOptions.data(utils.keys(palette), function(d) {return d});
       }else{
-        colorOptions = colorOptions.data(minimapKeys, function(d) {return d[KEY]});
+        colorOptions = colorOptions.data(minimapKeys, function(d) {return d[minimapDim]});
       }
 
       colorOptions.exit().remove();
@@ -132,8 +139,8 @@ var ColorLegend = Component.extend({
 
       colorOptions.each(function(d, index) {
         d3.select(this).select(".vzb-cl-color-sample")
-          .style("background-color", palette[d[_this.KEY]||d])
-          .style("border", "1px solid " + palette[d[_this.KEY]||d]);
+          .style("background-color", palette[d[_this.KEY]||d[minimapDim]||d])
+          .style("border", "1px solid " + palette[d[_this.KEY]||d[minimapDim]||d]);
       }); 
       
       if(this.colorModel.use == "indicator") {
@@ -164,7 +171,7 @@ var ColorLegend = Component.extend({
         //Apply names to color legend entries if color is a property
         colorOptions.each(function(d, index) {
           d3.select(this).select(".vzb-cl-color-legend")
-            .text(_this.frame.label[d[_this.KEY]]);
+            .text(_this.frame.label[d[_this.KEY]||d[minimapDim]]);
         });
         
         

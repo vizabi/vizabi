@@ -1,0 +1,3267 @@
+geo,time,age,stack,zaf_population
+zaf,1996,0,No schooling,0
+zaf,1996,0,Some primary,0
+zaf,1996,0,Complete primary,0
+zaf,1996,0,Some secondary,0
+zaf,1996,0,Grade 12/Std 10,0
+zaf,1996,0,Higher,0
+zaf,1996,0,Unspecified,0
+zaf,1996,0,Not applicable,856238.7084
+zaf,1996,0,Total,856238.7084
+zaf,1996,1,No schooling,0
+zaf,1996,1,Some primary,0
+zaf,1996,1,Complete primary,0
+zaf,1996,1,Some secondary,0
+zaf,1996,1,Grade 12/Std 10,0
+zaf,1996,1,Higher,0
+zaf,1996,1,Unspecified,0
+zaf,1996,1,Not applicable,841169.4688
+zaf,1996,1,Total,841169.4688
+zaf,1996,2,No schooling,0
+zaf,1996,2,Some primary,0
+zaf,1996,2,Complete primary,0
+zaf,1996,2,Some secondary,0
+zaf,1996,2,Grade 12/Std 10,0
+zaf,1996,2,Higher,0
+zaf,1996,2,Unspecified,0
+zaf,1996,2,Not applicable,892179.2964
+zaf,1996,2,Total,892179.2964
+zaf,1996,3,No schooling,0
+zaf,1996,3,Some primary,0
+zaf,1996,3,Complete primary,0
+zaf,1996,3,Some secondary,0
+zaf,1996,3,Grade 12/Std 10,0
+zaf,1996,3,Higher,0
+zaf,1996,3,Unspecified,0
+zaf,1996,3,Not applicable,918951.0091
+zaf,1996,3,Total,918951.0091
+zaf,1996,4,No schooling,0
+zaf,1996,4,Some primary,0
+zaf,1996,4,Complete primary,0
+zaf,1996,4,Some secondary,0
+zaf,1996,4,Grade 12/Std 10,0
+zaf,1996,4,Higher,0
+zaf,1996,4,Unspecified,0
+zaf,1996,4,Not applicable,935082.4099
+zaf,1996,4,Total,935082.4099
+zaf,1996,5,No schooling,850016.7662
+zaf,1996,5,Some primary,31010.93452
+zaf,1996,5,Complete primary,0
+zaf,1996,5,Some secondary,0
+zaf,1996,5,Grade 12/Std 10,0
+zaf,1996,5,Higher,21.627
+zaf,1996,5,Unspecified,79110.68391
+zaf,1996,5,Not applicable,0
+zaf,1996,5,Total,960160.0116
+zaf,1996,6,No schooling,807590.156
+zaf,1996,6,Some primary,120611.9565
+zaf,1996,6,Complete primary,0
+zaf,1996,6,Some secondary,0
+zaf,1996,6,Grade 12/Std 10,0
+zaf,1996,6,Higher,12.2083
+zaf,1996,6,Unspecified,58318.80362
+zaf,1996,6,Not applicable,0
+zaf,1996,6,Total,986533.1244
+zaf,1996,7,No schooling,580453.7432
+zaf,1996,7,Some primary,304367.2776
+zaf,1996,7,Complete primary,0
+zaf,1996,7,Some secondary,0
+zaf,1996,7,Grade 12/Std 10,0
+zaf,1996,7,Higher,20.3318
+zaf,1996,7,Unspecified,44563.22805
+zaf,1996,7,Not applicable,0
+zaf,1996,7,Total,929404.5807
+zaf,1996,8,No schooling,377429.1989
+zaf,1996,8,Some primary,485953.3759
+zaf,1996,8,Complete primary,2784.56928
+zaf,1996,8,Some secondary,0
+zaf,1996,8,Grade 12/Std 10,0
+zaf,1996,8,Higher,16.824
+zaf,1996,8,Unspecified,36464.28156
+zaf,1996,8,Not applicable,0
+zaf,1996,8,Total,902648.2496
+zaf,1996,9,No schooling,240836.3735
+zaf,1996,9,Some primary,610018.3455
+zaf,1996,9,Complete primary,4093.52985
+zaf,1996,9,Some secondary,2798.90074
+zaf,1996,9,Grade 12/Std 10,0
+zaf,1996,9,Higher,13.2222
+zaf,1996,9,Unspecified,32216.08786
+zaf,1996,9,Not applicable,0
+zaf,1996,9,Total,889976.4596
+zaf,1996,10,No schooling,163346.7907
+zaf,1996,10,Some primary,735011.7627
+zaf,1996,10,Complete primary,8085.75869
+zaf,1996,10,Some secondary,6107.14415
+zaf,1996,10,Grade 12/Std 10,0
+zaf,1996,10,Higher,23.6223
+zaf,1996,10,Unspecified,29384.57858
+zaf,1996,10,Not applicable,0
+zaf,1996,10,Total,941959.6572
+zaf,1996,11,No schooling,105092.38
+zaf,1996,11,Some primary,762927.7133
+zaf,1996,11,Complete primary,20036.67929
+zaf,1996,11,Some secondary,9982.03951
+zaf,1996,11,Grade 12/Std 10,0
+zaf,1996,11,Higher,11.1676
+zaf,1996,11,Unspecified,25849.67273
+zaf,1996,11,Not applicable,0
+zaf,1996,11,Total,923899.6524
+zaf,1996,12,No schooling,77661.64232
+zaf,1996,12,Some primary,731696.3264
+zaf,1996,12,Complete primary,81763.26238
+zaf,1996,12,Some secondary,24991.35755
+zaf,1996,12,Grade 12/Std 10,0
+zaf,1996,12,Higher,11.9899
+zaf,1996,12,Unspecified,25057.11946
+zaf,1996,12,Not applicable,0
+zaf,1996,12,Total,941181.698
+zaf,1996,13,No schooling,56981.06577
+zaf,1996,13,Some primary,563650.8972
+zaf,1996,13,Complete primary,183810.138
+zaf,1996,13,Some secondary,96100.69114
+zaf,1996,13,Grade 12/Std 10,0
+zaf,1996,13,Higher,11.1135
+zaf,1996,13,Unspecified,20873.68733
+zaf,1996,13,Not applicable,0
+zaf,1996,13,Total,921427.593
+zaf,1996,14,No schooling,46529.91628
+zaf,1996,14,Some primary,390966.9966
+zaf,1996,14,Complete primary,210137.3301
+zaf,1996,14,Some secondary,256599.2264
+zaf,1996,14,Grade 12/Std 10,1311.72063
+zaf,1996,14,Higher,12.4988
+zaf,1996,14,Unspecified,20073.59804
+zaf,1996,14,Not applicable,0
+zaf,1996,14,Total,925631.2869
+zaf,1996,15,No schooling,40364.82511
+zaf,1996,15,Some primary,249941.0414
+zaf,1996,15,Complete primary,146342.8951
+zaf,1996,15,Some secondary,402547.504
+zaf,1996,15,Grade 12/Std 10,2206.16686
+zaf,1996,15,Higher,38.66067
+zaf,1996,15,Unspecified,18736.96631
+zaf,1996,15,Not applicable,0
+zaf,1996,15,Total,860178.0594
+zaf,1996,16,No schooling,40026.97813
+zaf,1996,16,Some primary,191053.6344
+zaf,1996,16,Complete primary,123959.6723
+zaf,1996,16,Some secondary,508348.6857
+zaf,1996,16,Grade 12/Std 10,6752.92453
+zaf,1996,16,Higher,97.14203
+zaf,1996,16,Unspecified,19218.41267
+zaf,1996,16,Not applicable,0
+zaf,1996,16,Total,889457.4498
+zaf,1996,17,No schooling,33683.63615
+zaf,1996,17,Some primary,121275.7664
+zaf,1996,17,Complete primary,89546.94466
+zaf,1996,17,Some secondary,523209.9929
+zaf,1996,17,Grade 12/Std 10,31236.74365
+zaf,1996,17,Higher,1349.83299
+zaf,1996,17,Unspecified,16967.11175
+zaf,1996,17,Not applicable,0
+zaf,1996,17,Total,817270.0286
+zaf,1996,18,No schooling,36242.04382
+zaf,1996,18,Some primary,98537.38046
+zaf,1996,18,Complete primary,69808.36937
+zaf,1996,18,Some secondary,490763.3092
+zaf,1996,18,Grade 12/Std 10,91884.60098
+zaf,1996,18,Higher,4236.52493
+zaf,1996,18,Unspecified,17500.50717
+zaf,1996,18,Not applicable,0
+zaf,1996,18,Total,808972.7359
+zaf,1996,19,No schooling,38164.0835
+zaf,1996,19,Some primary,87997.73871
+zaf,1996,19,Complete primary,59151.96069
+zaf,1996,19,Some secondary,438015.9327
+zaf,1996,19,Grade 12/Std 10,153355.8128
+zaf,1996,19,Higher,9977.41149
+zaf,1996,19,Unspecified,18174.74951
+zaf,1996,19,Not applicable,0
+zaf,1996,19,Total,804837.6893
+zaf,1996,20,No schooling,45990.288
+zaf,1996,20,Some primary,85997.07144
+zaf,1996,20,Complete primary,52774.17309
+zaf,1996,20,Some secondary,410409.1384
+zaf,1996,20,Grade 12/Std 10,197676.4717
+zaf,1996,20,Higher,17339.27266
+zaf,1996,20,Unspecified,21454.35554
+zaf,1996,20,Not applicable,0
+zaf,1996,20,Total,831640.7708
+zaf,1996,21,No schooling,46616.5283
+zaf,1996,21,Some primary,85637.21118
+zaf,1996,21,Complete primary,49467.22579
+zaf,1996,21,Some secondary,374894.7169
+zaf,1996,21,Grade 12/Std 10,216026.4279
+zaf,1996,21,Higher,26170.86957
+zaf,1996,21,Unspecified,22405.36083
+zaf,1996,21,Not applicable,0
+zaf,1996,21,Total,821218.3405
+zaf,1996,22,No schooling,48259.64199
+zaf,1996,22,Some primary,84878.42631
+zaf,1996,22,Complete primary,45195.29511
+zaf,1996,22,Some secondary,330233.4506
+zaf,1996,22,Grade 12/Std 10,217674.9845
+zaf,1996,22,Higher,36693.75436
+zaf,1996,22,Unspecified,23166.76963
+zaf,1996,22,Not applicable,0
+zaf,1996,22,Total,786102.3225
+zaf,1996,23,No schooling,49248.43978
+zaf,1996,23,Some primary,85087.9024
+zaf,1996,23,Complete primary,45302.93561
+zaf,1996,23,Some secondary,298321.2063
+zaf,1996,23,Grade 12/Std 10,211331.211
+zaf,1996,23,Higher,45222.92721
+zaf,1996,23,Unspecified,23924.86111
+zaf,1996,23,Not applicable,0
+zaf,1996,23,Total,758439.4834
+zaf,1996,24,No schooling,55800.27608
+zaf,1996,24,Some primary,93590.75404
+zaf,1996,24,Complete primary,48176.1207
+zaf,1996,24,Some secondary,294278.7217
+zaf,1996,24,Grade 12/Std 10,213747.6414
+zaf,1996,24,Higher,53476.01098
+zaf,1996,24,Unspecified,25882.76192
+zaf,1996,24,Not applicable,0
+zaf,1996,24,Total,784952.2869
+zaf,1996,25,No schooling,52161.04557
+zaf,1996,25,Some primary,82517.82279
+zaf,1996,25,Complete primary,42197.04671
+zaf,1996,25,Some secondary,242801.2334
+zaf,1996,25,Grade 12/Std 10,187783.1998
+zaf,1996,25,Higher,55396.26184
+zaf,1996,25,Unspecified,24388.79751
+zaf,1996,25,Not applicable,0
+zaf,1996,25,Total,687245.4076
+zaf,1996,26,No schooling,63406.14982
+zaf,1996,26,Some primary,100754.35
+zaf,1996,26,Complete primary,52354.59384
+zaf,1996,26,Some secondary,278077.3651
+zaf,1996,26,Grade 12/Std 10,194680.0255
+zaf,1996,26,Higher,59929.24456
+zaf,1996,26,Unspecified,27833.6022
+zaf,1996,26,Not applicable,0
+zaf,1996,26,Total,777035.331
+zaf,1996,27,No schooling,58615.62734
+zaf,1996,27,Some primary,91744.84622
+zaf,1996,27,Complete primary,49063.09109
+zaf,1996,27,Some secondary,244532.2332
+zaf,1996,27,Grade 12/Std 10,165386.5069
+zaf,1996,27,Higher,58882.22658
+zaf,1996,27,Unspecified,25314.92101
+zaf,1996,27,Not applicable,0
+zaf,1996,27,Total,693539.4524
+zaf,1996,28,No schooling,65195.9289
+zaf,1996,28,Some primary,100855.957
+zaf,1996,28,Complete primary,52855.35088
+zaf,1996,28,Some secondary,248156.7854
+zaf,1996,28,Grade 12/Std 10,154379.0644
+zaf,1996,28,Higher,60148.22335
+zaf,1996,28,Unspecified,26386.63336
+zaf,1996,28,Not applicable,0
+zaf,1996,28,Total,707977.9433
+zaf,1996,29,No schooling,52718.5781
+zaf,1996,29,Some primary,82811.41153
+zaf,1996,29,Complete primary,44281.81471
+zaf,1996,29,Some secondary,205470.3225
+zaf,1996,29,Grade 12/Std 10,125904.1192
+zaf,1996,29,Higher,56559.0365
+zaf,1996,29,Unspecified,22184.70285
+zaf,1996,29,Not applicable,0
+zaf,1996,29,Total,589929.9854
+zaf,1996,30,No schooling,75911.4103
+zaf,1996,30,Some primary,103953.6026
+zaf,1996,30,Complete primary,53019.62735
+zaf,1996,30,Some secondary,226020.2821
+zaf,1996,30,Grade 12/Std 10,124101.4182
+zaf,1996,30,Higher,58842.41791
+zaf,1996,30,Unspecified,26168.79853
+zaf,1996,30,Not applicable,0
+zaf,1996,30,Total,668017.5571
+zaf,1996,31,No schooling,64582.83604
+zaf,1996,31,Some primary,97023.25424
+zaf,1996,31,Complete primary,52862.34737
+zaf,1996,31,Some secondary,208141.219
+zaf,1996,31,Grade 12/Std 10,104605.6057
+zaf,1996,31,Higher,53284.5839
+zaf,1996,31,Unspecified,22825.90715
+zaf,1996,31,Not applicable,0
+zaf,1996,31,Total,603325.7534
+zaf,1996,32,No schooling,73798.69039
+zaf,1996,32,Some primary,107998.1132
+zaf,1996,32,Complete primary,55662.37359
+zaf,1996,32,Some secondary,217941.396
+zaf,1996,32,Grade 12/Std 10,100580.6305
+zaf,1996,32,Higher,54483.28268
+zaf,1996,32,Unspecified,24666.03398
+zaf,1996,32,Not applicable,0
+zaf,1996,32,Total,635130.5202
+zaf,1996,33,No schooling,70944.32282
+zaf,1996,33,Some primary,102332.0025
+zaf,1996,33,Complete primary,52788.49292
+zaf,1996,33,Some secondary,199267.627
+zaf,1996,33,Grade 12/Std 10,88317.5597
+zaf,1996,33,Higher,50988.26183
+zaf,1996,33,Unspecified,22906.97138
+zaf,1996,33,Not applicable,0
+zaf,1996,33,Total,587545.2381
+zaf,1996,34,No schooling,74743.8885
+zaf,1996,34,Some primary,104412.653
+zaf,1996,34,Complete primary,52248.13641
+zaf,1996,34,Some secondary,192760.1097
+zaf,1996,34,Grade 12/Std 10,82824.17465
+zaf,1996,34,Higher,50250.32176
+zaf,1996,34,Unspecified,22942.26146
+zaf,1996,34,Not applicable,0
+zaf,1996,34,Total,580181.5455
+zaf,1996,35,No schooling,77493.2547
+zaf,1996,35,Some primary,95647.62625
+zaf,1996,35,Complete primary,46840.55962
+zaf,1996,35,Some secondary,177293.4975
+zaf,1996,35,Grade 12/Std 10,76723.57002
+zaf,1996,35,Higher,48758.92029
+zaf,1996,35,Unspecified,22672.381
+zaf,1996,35,Not applicable,0
+zaf,1996,35,Total,545429.8094
+zaf,1996,36,No schooling,89131.62306
+zaf,1996,36,Some primary,110594.9608
+zaf,1996,36,Complete primary,54498.68281
+zaf,1996,36,Some secondary,200473.3841
+zaf,1996,36,Grade 12/Std 10,78831.63568
+zaf,1996,36,Higher,50406.87568
+zaf,1996,36,Unspecified,24774.95486
+zaf,1996,36,Not applicable,0
+zaf,1996,36,Total,608712.117
+zaf,1996,37,No schooling,72720.43486
+zaf,1996,37,Some primary,90653.12735
+zaf,1996,37,Complete primary,43439.21616
+zaf,1996,37,Some secondary,159669.1536
+zaf,1996,37,Grade 12/Std 10,59832.46056
+zaf,1996,37,Higher,44025.66056
+zaf,1996,37,Unspecified,20156.09724
+zaf,1996,37,Not applicable,0
+zaf,1996,37,Total,490496.1503
+zaf,1996,38,No schooling,90530.36113
+zaf,1996,38,Some primary,105958.294
+zaf,1996,38,Complete primary,49010.89302
+zaf,1996,38,Some secondary,175889.0449
+zaf,1996,38,Grade 12/Std 10,60274.60398
+zaf,1996,38,Higher,44171.03298
+zaf,1996,38,Unspecified,23018.2488
+zaf,1996,38,Not applicable,0
+zaf,1996,38,Total,548852.4787
+zaf,1996,39,No schooling,74627.82916
+zaf,1996,39,Some primary,87625.64854
+zaf,1996,39,Complete primary,40471.29774
+zaf,1996,39,Some secondary,148897.9967
+zaf,1996,39,Grade 12/Std 10,50278.66693
+zaf,1996,39,Higher,38999.31876
+zaf,1996,39,Unspecified,19363.75974
+zaf,1996,39,Not applicable,0
+zaf,1996,39,Total,460264.5176
+zaf,1996,40,No schooling,99583.64053
+zaf,1996,40,Some primary,95554.32691
+zaf,1996,40,Complete primary,41887.98729
+zaf,1996,40,Some secondary,156536.7139
+zaf,1996,40,Grade 12/Std 10,52019.87229
+zaf,1996,40,Higher,40511.08175
+zaf,1996,40,Unspecified,22911.06078
+zaf,1996,40,Not applicable,0
+zaf,1996,40,Total,509004.6835
+zaf,1996,41,No schooling,73978.30326
+zaf,1996,41,Some primary,77694.63254
+zaf,1996,41,Complete primary,33532.64228
+zaf,1996,41,Some secondary,122476.4663
+zaf,1996,41,Grade 12/Std 10,39974.38759
+zaf,1996,41,Higher,33752.95351
+zaf,1996,41,Unspecified,17545.28791
+zaf,1996,41,Not applicable,0
+zaf,1996,41,Total,398954.6734
+zaf,1996,42,No schooling,84483.9095
+zaf,1996,42,Some primary,87617.35503
+zaf,1996,42,Complete primary,37080.81368
+zaf,1996,42,Some secondary,135002.2591
+zaf,1996,42,Grade 12/Std 10,42269.27502
+zaf,1996,42,Higher,33821.65958
+zaf,1996,42,Unspecified,18812.80445
+zaf,1996,42,Not applicable,0
+zaf,1996,42,Total,439088.0764
+zaf,1996,43,No schooling,75553.65992
+zaf,1996,43,Some primary,80554.05401
+zaf,1996,43,Complete primary,33287.30802
+zaf,1996,43,Some secondary,118349.6404
+zaf,1996,43,Grade 12/Std 10,36436.95919
+zaf,1996,43,Higher,30038.66529
+zaf,1996,43,Unspecified,16943.7714
+zaf,1996,43,Not applicable,0
+zaf,1996,43,Total,391164.0583
+zaf,1996,44,No schooling,84386.87578
+zaf,1996,44,Some primary,85899.55408
+zaf,1996,44,Complete primary,33951.46255
+zaf,1996,44,Some secondary,116236.158
+zaf,1996,44,Grade 12/Std 10,34720.08157
+zaf,1996,44,Higher,28137.86476
+zaf,1996,44,Unspecified,17082.01401
+zaf,1996,44,Not applicable,0
+zaf,1996,44,Total,400414.0107
+zaf,1996,45,No schooling,80220.14185
+zaf,1996,45,Some primary,67501.80893
+zaf,1996,45,Complete primary,26947.62173
+zaf,1996,45,Some secondary,98025.75832
+zaf,1996,45,Grade 12/Std 10,33326.65742
+zaf,1996,45,Higher,25847.67403
+zaf,1996,45,Unspecified,15675.20914
+zaf,1996,45,Not applicable,0
+zaf,1996,45,Total,347544.8714
+zaf,1996,46,No schooling,91336.56654
+zaf,1996,46,Some primary,77838.32129
+zaf,1996,46,Complete primary,30651.236
+zaf,1996,46,Some secondary,108203.3702
+zaf,1996,46,Grade 12/Std 10,32967.47143
+zaf,1996,46,Higher,25225.42536
+zaf,1996,46,Unspecified,16761.74977
+zaf,1996,46,Not applicable,0
+zaf,1996,46,Total,382984.1406
+zaf,1996,47,No schooling,72044.86557
+zaf,1996,47,Some primary,63485.22241
+zaf,1996,47,Complete primary,24506.90276
+zaf,1996,47,Some secondary,91040.90583
+zaf,1996,47,Grade 12/Std 10,29234.76759
+zaf,1996,47,Higher,22683.20296
+zaf,1996,47,Unspecified,14137.25741
+zaf,1996,47,Not applicable,0
+zaf,1996,47,Total,317133.1245
+zaf,1996,48,No schooling,79128.7651
+zaf,1996,48,Some primary,67237.08191
+zaf,1996,48,Complete primary,25941.83269
+zaf,1996,48,Some secondary,94420.53606
+zaf,1996,48,Grade 12/Std 10,30247.03354
+zaf,1996,48,Higher,22649.52164
+zaf,1996,48,Unspecified,15019.51436
+zaf,1996,48,Not applicable,0
+zaf,1996,48,Total,334644.2853
+zaf,1996,49,No schooling,68537.83204
+zaf,1996,49,Some primary,57982.46643
+zaf,1996,49,Complete primary,22345.45042
+zaf,1996,49,Some secondary,83586.47682
+zaf,1996,49,Grade 12/Std 10,28130.20983
+zaf,1996,49,Higher,21100.66541
+zaf,1996,49,Unspecified,13535.64069
+zaf,1996,49,Not applicable,0
+zaf,1996,49,Total,295218.7416
+zaf,1996,50,No schooling,80400.73336
+zaf,1996,50,Some primary,56014.24652
+zaf,1996,50,Complete primary,21885.70461
+zaf,1996,50,Some secondary,81551.77014
+zaf,1996,50,Grade 12/Std 10,27511.62513
+zaf,1996,50,Higher,20263.04407
+zaf,1996,50,Unspecified,14543.81167
+zaf,1996,50,Not applicable,0
+zaf,1996,50,Total,302170.9355
+zaf,1996,51,No schooling,60196.72305
+zaf,1996,51,Some primary,46011.99337
+zaf,1996,51,Complete primary,18374.19331
+zaf,1996,51,Some secondary,68352.49659
+zaf,1996,51,Grade 12/Std 10,23101.24726
+zaf,1996,51,Higher,17291.95513
+zaf,1996,51,Unspecified,11405.18297
+zaf,1996,51,Not applicable,0
+zaf,1996,51,Total,244733.7917
+zaf,1996,52,No schooling,63484.82803
+zaf,1996,52,Some primary,45506.12453
+zaf,1996,52,Complete primary,16569.11613
+zaf,1996,52,Some secondary,65419.34254
+zaf,1996,52,Grade 12/Std 10,22631.20283
+zaf,1996,52,Higher,17312.52515
+zaf,1996,52,Unspecified,11526.12982
+zaf,1996,52,Not applicable,0
+zaf,1996,52,Total,242449.269
+zaf,1996,53,No schooling,57450.25837
+zaf,1996,53,Some primary,42146.31065
+zaf,1996,53,Complete primary,15705.34656
+zaf,1996,53,Some secondary,61088.21226
+zaf,1996,53,Grade 12/Std 10,20024.18012
+zaf,1996,53,Higher,15179.18608
+zaf,1996,53,Unspecified,10365.3957
+zaf,1996,53,Not applicable,0
+zaf,1996,53,Total,221958.8897
+zaf,1996,54,No schooling,74162.04182
+zaf,1996,54,Some primary,53047.89354
+zaf,1996,54,Complete primary,18344.5956
+zaf,1996,54,Some secondary,66155.32971
+zaf,1996,54,Grade 12/Std 10,19608.22356
+zaf,1996,54,Higher,14712.08368
+zaf,1996,54,Unspecified,11552.10983
+zaf,1996,54,Not applicable,0
+zaf,1996,54,Total,257582.2777
+zaf,1996,55,No schooling,67259.62915
+zaf,1996,55,Some primary,38675.80777
+zaf,1996,55,Complete primary,13546.08067
+zaf,1996,55,Some secondary,53352.51309
+zaf,1996,55,Grade 12/Std 10,17770.3147
+zaf,1996,55,Higher,13459.92842
+zaf,1996,55,Unspecified,10283.74532
+zaf,1996,55,Not applicable,0
+zaf,1996,55,Total,214348.0191
+zaf,1996,56,No schooling,101375.2854
+zaf,1996,56,Some primary,54475.08306
+zaf,1996,56,Complete primary,18007.30592
+zaf,1996,56,Some secondary,63656.07642
+zaf,1996,56,Grade 12/Std 10,18358.97956
+zaf,1996,56,Higher,13734.31408
+zaf,1996,56,Unspecified,12333.7423
+zaf,1996,56,Not applicable,0
+zaf,1996,56,Total,281940.7867
+zaf,1996,57,No schooling,62745.52903
+zaf,1996,57,Some primary,34480.05311
+zaf,1996,57,Complete primary,12260.56065
+zaf,1996,57,Some secondary,49993.19716
+zaf,1996,57,Grade 12/Std 10,15664.26316
+zaf,1996,57,Higher,11820.84599
+zaf,1996,57,Unspecified,9158.08616
+zaf,1996,57,Not applicable,0
+zaf,1996,57,Total,196122.5353
+zaf,1996,58,No schooling,64531.48824
+zaf,1996,58,Some primary,35583.58205
+zaf,1996,58,Complete primary,12492.81544
+zaf,1996,58,Some secondary,50937.33857
+zaf,1996,58,Grade 12/Std 10,15462.65073
+zaf,1996,58,Higher,11498.49737
+zaf,1996,58,Unspecified,9238.59742
+zaf,1996,58,Not applicable,0
+zaf,1996,58,Total,199744.9698
+zaf,1996,59,No schooling,57442.05645
+zaf,1996,59,Some primary,31944.20812
+zaf,1996,59,Complete primary,10805.91827
+zaf,1996,59,Some secondary,45448.30319
+zaf,1996,59,Grade 12/Std 10,13848.82697
+zaf,1996,59,Higher,10088.68237
+zaf,1996,59,Unspecified,8201.91181
+zaf,1996,59,Not applicable,0
+zaf,1996,59,Total,177779.9072
+zaf,1996,60,No schooling,93740.96097
+zaf,1996,60,Some primary,39904.3185
+zaf,1996,60,Complete primary,12517.93923
+zaf,1996,60,Some secondary,49775.65176
+zaf,1996,60,Grade 12/Std 10,14712.60445
+zaf,1996,60,Higher,10552.02455
+zaf,1996,60,Unspecified,10289.32659
+zaf,1996,60,Not applicable,0
+zaf,1996,60,Total,231492.8261
+zaf,1996,61,No schooling,57869.63935
+zaf,1996,61,Some primary,27756.88092
+zaf,1996,61,Complete primary,9439.29693
+zaf,1996,61,Some secondary,39117.32878
+zaf,1996,61,Grade 12/Std 10,12191.38137
+zaf,1996,61,Higher,8630.78701
+zaf,1996,61,Unspecified,7156.71911
+zaf,1996,61,Not applicable,0
+zaf,1996,61,Total,162162.0335
+zaf,1996,62,No schooling,62897.03794
+zaf,1996,62,Some primary,27990.55062
+zaf,1996,62,Complete primary,8841.23015
+zaf,1996,62,Some secondary,37777.8563
+zaf,1996,62,Grade 12/Std 10,11566.61184
+zaf,1996,62,Higher,7986.90672
+zaf,1996,62,Unspecified,7195.19776
+zaf,1996,62,Not applicable,0
+zaf,1996,62,Total,164255.3913
+zaf,1996,63,No schooling,67502.54577
+zaf,1996,63,Some primary,30089.58566
+zaf,1996,63,Complete primary,8898.05594
+zaf,1996,63,Some secondary,36417.46001
+zaf,1996,63,Grade 12/Std 10,11100.00785
+zaf,1996,63,Higher,7453.41216
+zaf,1996,63,Unspecified,7280.96488
+zaf,1996,63,Not applicable,0
+zaf,1996,63,Total,168742.0323
+zaf,1996,64,No schooling,62553.74519
+zaf,1996,64,Some primary,29878.71926
+zaf,1996,64,Complete primary,9258.81007
+zaf,1996,64,Some secondary,36825.86864
+zaf,1996,64,Grade 12/Std 10,11002.06623
+zaf,1996,64,Higher,7255.51489
+zaf,1996,64,Unspecified,7109.38638
+zaf,1996,64,Not applicable,0
+zaf,1996,64,Total,163884.1107
+zaf,1996,65,No schooling,72833.85608
+zaf,1996,65,Some primary,26416.37541
+zaf,1996,65,Complete primary,7822.59862
+zaf,1996,65,Some secondary,34609.28242
+zaf,1996,65,Grade 12/Std 10,11525.30606
+zaf,1996,65,Higher,7054.82012
+zaf,1996,65,Unspecified,7574.23359
+zaf,1996,65,Not applicable,0
+zaf,1996,65,Total,167836.4723
+zaf,1996,66,No schooling,94045.55145
+zaf,1996,66,Some primary,29365.36489
+zaf,1996,66,Complete primary,8120.54253
+zaf,1996,66,Some secondary,34043.5932
+zaf,1996,66,Grade 12/Std 10,10829.36327
+zaf,1996,66,Higher,6767.01579
+zaf,1996,66,Unspecified,7984.66043
+zaf,1996,66,Not applicable,0
+zaf,1996,66,Total,191156.0916
+zaf,1996,67,No schooling,67129.76891
+zaf,1996,67,Some primary,22532.05547
+zaf,1996,67,Complete primary,6261.94571
+zaf,1996,67,Some secondary,28728.81778
+zaf,1996,67,Grade 12/Std 10,9898.86689
+zaf,1996,67,Higher,6079.73134
+zaf,1996,67,Unspecified,6515.79836
+zaf,1996,67,Not applicable,0
+zaf,1996,67,Total,147146.9845
+zaf,1996,68,No schooling,60493.77215
+zaf,1996,68,Some primary,21250.20149
+zaf,1996,68,Complete primary,6135.2258
+zaf,1996,68,Some secondary,27451.32614
+zaf,1996,68,Grade 12/Std 10,9555.17421
+zaf,1996,68,Higher,5646.12226
+zaf,1996,68,Unspecified,6303.96405
+zaf,1996,68,Not applicable,0
+zaf,1996,68,Total,136835.7861
+zaf,1996,69,No schooling,49285.20723
+zaf,1996,69,Some primary,17842.73943
+zaf,1996,69,Complete primary,5071.83996
+zaf,1996,69,Some secondary,24221.25054
+zaf,1996,69,Grade 12/Std 10,8861.69032
+zaf,1996,69,Higher,5170.5937
+zaf,1996,69,Unspecified,5458.35836
+zaf,1996,69,Not applicable,0
+zaf,1996,69,Total,115911.6795
+zaf,1996,70,No schooling,63448.61107
+zaf,1996,70,Some primary,18073.07285
+zaf,1996,70,Complete primary,4745.66563
+zaf,1996,70,Some secondary,24202.60052
+zaf,1996,70,Grade 12/Std 10,8588.77743
+zaf,1996,70,Higher,5156.97536
+zaf,1996,70,Unspecified,6476.76648
+zaf,1996,70,Not applicable,0
+zaf,1996,70,Total,130692.4693
+zaf,1996,71,No schooling,46477.91978
+zaf,1996,71,Some primary,15022.7278
+zaf,1996,71,Complete primary,4234.14626
+zaf,1996,71,Some secondary,20329.13532
+zaf,1996,71,Grade 12/Std 10,7661.85666
+zaf,1996,71,Higher,4571.67288
+zaf,1996,71,Unspecified,4998.63048
+zaf,1996,71,Not applicable,0
+zaf,1996,71,Total,103296.0892
+zaf,1996,72,No schooling,43295.92614
+zaf,1996,72,Some primary,14176.15511
+zaf,1996,72,Complete primary,3818.75206
+zaf,1996,72,Some secondary,19724.745
+zaf,1996,72,Grade 12/Std 10,7504.70178
+zaf,1996,72,Higher,4227.0127
+zaf,1996,72,Unspecified,4959.16687
+zaf,1996,72,Not applicable,0
+zaf,1996,72,Total,97706.45966
+zaf,1996,73,No schooling,28428.93194
+zaf,1996,73,Some primary,10478.26543
+zaf,1996,73,Complete primary,2942.91824
+zaf,1996,73,Some secondary,16496.66758
+zaf,1996,73,Grade 12/Std 10,6847.9885
+zaf,1996,73,Higher,3767.33812
+zaf,1996,73,Unspecified,4042.6906
+zaf,1996,73,Not applicable,0
+zaf,1996,73,Total,73004.80041
+zaf,1996,74,No schooling,31960.73912
+zaf,1996,74,Some primary,11628.90881
+zaf,1996,74,Complete primary,3013.25151
+zaf,1996,74,Some secondary,16285.21907
+zaf,1996,74,Grade 12/Std 10,6648.94901
+zaf,1996,74,Higher,3597.41602
+zaf,1996,74,Unspecified,4328.76676
+zaf,1996,74,Not applicable,0
+zaf,1996,74,Total,77463.2503
+zaf,1996,75,No schooling,41380.44255
+zaf,1996,75,Some primary,11144.04554
+zaf,1996,75,Complete primary,2784.92505
+zaf,1996,75,Some secondary,15672.01929
+zaf,1996,75,Grade 12/Std 10,6157.21575
+zaf,1996,75,Higher,3489.43748
+zaf,1996,75,Unspecified,4501.32351
+zaf,1996,75,Not applicable,0
+zaf,1996,75,Total,85129.40917
+zaf,1996,76,No schooling,54603.39443
+zaf,1996,76,Some primary,12072.35677
+zaf,1996,76,Complete primary,2827.44021
+zaf,1996,76,Some secondary,15303.72858
+zaf,1996,76,Grade 12/Std 10,5830.22042
+zaf,1996,76,Higher,3160.38788
+zaf,1996,76,Unspecified,5082.15829
+zaf,1996,76,Not applicable,0
+zaf,1996,76,Total,98879.68658
+zaf,1996,77,No schooling,32947.00063
+zaf,1996,77,Some primary,7691.05048
+zaf,1996,77,Complete primary,1922.69449
+zaf,1996,77,Some secondary,11421.02127
+zaf,1996,77,Grade 12/Std 10,4263.12429
+zaf,1996,77,Higher,2375.94248
+zaf,1996,77,Unspecified,3577.14557
+zaf,1996,77,Not applicable,0
+zaf,1996,77,Total,64197.97921
+zaf,1996,78,No schooling,52587.34405
+zaf,1996,78,Some primary,12058.42537
+zaf,1996,78,Complete primary,2520.57102
+zaf,1996,78,Some secondary,12918.69641
+zaf,1996,78,Grade 12/Std 10,4324.77481
+zaf,1996,78,Higher,2331.41755
+zaf,1996,78,Unspecified,4439.95912
+zaf,1996,78,Not applicable,0
+zaf,1996,78,Total,91181.18833
+zaf,1996,79,No schooling,15758.86939
+zaf,1996,79,Some primary,4041.85714
+zaf,1996,79,Complete primary,1222.50524
+zaf,1996,79,Some secondary,9060.42552
+zaf,1996,79,Grade 12/Std 10,3446.20763
+zaf,1996,79,Higher,1881.05802
+zaf,1996,79,Unspecified,2628.548
+zaf,1996,79,Not applicable,0
+zaf,1996,79,Total,38039.47094
+zaf,1996,80,No schooling,21029.40179
+zaf,1996,80,Some primary,4737.90555
+zaf,1996,80,Complete primary,1185.35526
+zaf,1996,80,Some secondary,8756.51061
+zaf,1996,80,Grade 12/Std 10,3485.20668
+zaf,1996,80,Higher,1802.68522
+zaf,1996,80,Unspecified,3089.17986
+zaf,1996,80,Not applicable,0
+zaf,1996,80,Total,44086.24497
+zaf,1996,81,No schooling,14264.39702
+zaf,1996,81,Some primary,3435.19779
+zaf,1996,81,Complete primary,967.11221
+zaf,1996,81,Some secondary,7101.10574
+zaf,1996,81,Grade 12/Std 10,2936.01274
+zaf,1996,81,Higher,1512.935
+zaf,1996,81,Unspecified,2556.3283
+zaf,1996,81,Not applicable,0
+zaf,1996,81,Total,32773.0888
+zaf,1996,82,No schooling,25227.88865
+zaf,1996,82,Some primary,5734.41633
+zaf,1996,82,Complete primary,1367.41886
+zaf,1996,82,Some secondary,7723.05465
+zaf,1996,82,Grade 12/Std 10,2806.23395
+zaf,1996,82,Higher,1519.81156
+zaf,1996,82,Unspecified,3221.56648
+zaf,1996,82,Not applicable,0
+zaf,1996,82,Total,47600.39048
+zaf,1996,83,No schooling,9802.00332
+zaf,1996,83,Some primary,2792.96362
+zaf,1996,83,Complete primary,772.25511
+zaf,1996,83,Some secondary,6014.15368
+zaf,1996,83,Grade 12/Std 10,2426.39789
+zaf,1996,83,Higher,1252.7407
+zaf,1996,83,Unspecified,2341.03384
+zaf,1996,83,Not applicable,0
+zaf,1996,83,Total,25401.54816
+zaf,1996,84,No schooling,13496.7456
+zaf,1996,84,Some primary,3387.87145
+zaf,1996,84,Complete primary,854.84714
+zaf,1996,84,Some secondary,5690.60245
+zaf,1996,84,Grade 12/Std 10,2055.12679
+zaf,1996,84,Higher,1129.1923
+zaf,1996,84,Unspecified,2426.76558
+zaf,1996,84,Not applicable,0
+zaf,1996,84,Total,29041.15131
+zaf,1996,85,No schooling,11255.24931
+zaf,1996,85,Some primary,2510.11132
+zaf,1996,85,Complete primary,651.46523
+zaf,1996,85,Some secondary,4433.93472
+zaf,1996,85,Grade 12/Std 10,1660.79957
+zaf,1996,85,Higher,898.95627
+zaf,1996,85,Unspecified,2133.47922
+zaf,1996,85,Not applicable,0
+zaf,1996,85,Total,23543.99564
+zaf,1996,86,No schooling,17389.33701
+zaf,1996,86,Some primary,3425.52097
+zaf,1996,86,Complete primary,835.79654
+zaf,1996,86,Some secondary,4140.19888
+zaf,1996,86,Grade 12/Std 10,1412.81414
+zaf,1996,86,Higher,856.46301
+zaf,1996,86,Unspecified,2322.84727
+zaf,1996,86,Not applicable,0
+zaf,1996,86,Total,30382.97782
+zaf,1996,87,No schooling,6767.19795
+zaf,1996,87,Some primary,1418.74025
+zaf,1996,87,Complete primary,347.68985
+zaf,1996,87,Some secondary,2828.09574
+zaf,1996,87,Grade 12/Std 10,1064.49928
+zaf,1996,87,Higher,629.11883
+zaf,1996,87,Unspecified,1578.25915
+zaf,1996,87,Not applicable,0
+zaf,1996,87,Total,14633.60105
+zaf,1996,88,No schooling,4906.33325
+zaf,1996,88,Some primary,1144.44902
+zaf,1996,88,Complete primary,369.06662
+zaf,1996,88,Some secondary,2399.99685
+zaf,1996,88,Grade 12/Std 10,927.07869
+zaf,1996,88,Higher,581.99459
+zaf,1996,88,Unspecified,1375.39545
+zaf,1996,88,Not applicable,0
+zaf,1996,88,Total,11704.31447
+zaf,1996,89,No schooling,4770.68521
+zaf,1996,89,Some primary,1122.35144
+zaf,1996,89,Complete primary,315.92589
+zaf,1996,89,Some secondary,1958.73235
+zaf,1996,89,Grade 12/Std 10,777.06228
+zaf,1996,89,Higher,469.87226
+zaf,1996,89,Unspecified,1180.03248
+zaf,1996,89,Not applicable,0
+zaf,1996,89,Total,10594.66191
+zaf,1996,90,No schooling,5708.32015
+zaf,1996,90,Some primary,1011.69285
+zaf,1996,90,Complete primary,245.12458
+zaf,1996,90,Some secondary,1514.49748
+zaf,1996,90,Grade 12/Std 10,591.74613
+zaf,1996,90,Higher,419.7288
+zaf,1996,90,Unspecified,1072.33394
+zaf,1996,90,Not applicable,0
+zaf,1996,90,Total,10563.44393
+zaf,1996,91,No schooling,2881.93745
+zaf,1996,91,Some primary,670.53293
+zaf,1996,91,Complete primary,173.32063
+zaf,1996,91,Some secondary,1051.97632
+zaf,1996,91,Grade 12/Std 10,471.54334
+zaf,1996,91,Higher,308.79716
+zaf,1996,91,Unspecified,845.06005
+zaf,1996,91,Not applicable,0
+zaf,1996,91,Total,6403.16788
+zaf,1996,92,No schooling,3324.57389
+zaf,1996,92,Some primary,657.66595
+zaf,1996,92,Complete primary,155.57687
+zaf,1996,92,Some secondary,846.35817
+zaf,1996,92,Grade 12/Std 10,305.46108
+zaf,1996,92,Higher,254.12522
+zaf,1996,92,Unspecified,724.1527
+zaf,1996,92,Not applicable,0
+zaf,1996,92,Total,6267.91388
+zaf,1996,93,No schooling,2377.74365
+zaf,1996,93,Some primary,451.01599
+zaf,1996,93,Complete primary,105.41839
+zaf,1996,93,Some secondary,606.85651
+zaf,1996,93,Grade 12/Std 10,262.77516
+zaf,1996,93,Higher,157.16841
+zaf,1996,93,Unspecified,509.07788
+zaf,1996,93,Not applicable,0
+zaf,1996,93,Total,4470.05599
+zaf,1996,94,No schooling,3512.14342
+zaf,1996,94,Some primary,524.90748
+zaf,1996,94,Complete primary,117.51628
+zaf,1996,94,Some secondary,495.71511
+zaf,1996,94,Grade 12/Std 10,173.91596
+zaf,1996,94,Higher,138.10204
+zaf,1996,94,Unspecified,438.62299
+zaf,1996,94,Not applicable,0
+zaf,1996,94,Total,5400.92328
+zaf,1996,95,No schooling,3628.08853
+zaf,1996,95,Some primary,434.40782
+zaf,1996,95,Complete primary,118.78094
+zaf,1996,95,Some secondary,331.42854
+zaf,1996,95,Grade 12/Std 10,130.43153
+zaf,1996,95,Higher,81.27333
+zaf,1996,95,Unspecified,496.85873
+zaf,1996,95,Not applicable,0
+zaf,1996,95,Total,5221.26942
+zaf,1996,96,No schooling,2125.77079
+zaf,1996,96,Some primary,212.3554
+zaf,1996,96,Complete primary,43.3296
+zaf,1996,96,Some secondary,154.76644
+zaf,1996,96,Grade 12/Std 10,60.62254
+zaf,1996,96,Higher,52.0665
+zaf,1996,96,Unspecified,249.18491
+zaf,1996,96,Not applicable,0
+zaf,1996,96,Total,2898.09618
+zaf,1996,97,No schooling,498.0998
+zaf,1996,97,Some primary,64.2913
+zaf,1996,97,Complete primary,20.76104
+zaf,1996,97,Some secondary,61.98007
+zaf,1996,97,Grade 12/Std 10,15.8068
+zaf,1996,97,Higher,21.5534
+zaf,1996,97,Unspecified,63.00834
+zaf,1996,97,Not applicable,0
+zaf,1996,97,Total,745.50075
+zaf,1996,98,No schooling,490.3458
+zaf,1996,98,Some primary,66.9328
+zaf,1996,98,Complete primary,16.0532
+zaf,1996,98,Some secondary,59.81174
+zaf,1996,98,Grade 12/Std 10,6.3146
+zaf,1996,98,Higher,17.1568
+zaf,1996,98,Unspecified,38.7602
+zaf,1996,98,Not applicable,0
+zaf,1996,98,Total,695.37514
+zaf,1996,99,No schooling,558.46665
+zaf,1996,99,Some primary,186.96879
+zaf,1996,99,Complete primary,49.77517
+zaf,1996,99,Some secondary,141.57218
+zaf,1996,99,Grade 12/Std 10,66.39787
+zaf,1996,99,Higher,52.82684
+zaf,1996,99,Unspecified,640.78079
+zaf,1996,99,Not applicable,0
+zaf,1996,99,Total,1696.78829
+zaf,1996,100,No schooling,525.62126
+zaf,1996,100,Some primary,68.5462
+zaf,1996,100,Complete primary,5.3461
+zaf,1996,100,Some secondary,25.2907
+zaf,1996,100,Grade 12/Std 10,4.2293
+zaf,1996,100,Higher,3.2587
+zaf,1996,100,Unspecified,28.5277
+zaf,1996,100,Not applicable,0
+zaf,1996,100,Total,660.81996
+zaf,1996,101,No schooling,134.719
+zaf,1996,101,Some primary,53.9686
+zaf,1996,101,Complete primary,2.2098
+zaf,1996,101,Some secondary,11.0009
+zaf,1996,101,Grade 12/Std 10,1.0638
+zaf,1996,101,Higher,5.2917
+zaf,1996,101,Unspecified,19.8065
+zaf,1996,101,Not applicable,0
+zaf,1996,101,Total,228.0603
+zaf,1996,102,No schooling,159.37651
+zaf,1996,102,Some primary,26.712
+zaf,1996,102,Complete primary,6.49009
+zaf,1996,102,Some secondary,4.3083
+zaf,1996,102,Grade 12/Std 10,1.05
+zaf,1996,102,Higher,2.311
+zaf,1996,102,Unspecified,15.2586
+zaf,1996,102,Not applicable,0
+zaf,1996,102,Total,215.5065
+zaf,1996,103,No schooling,79.3413
+zaf,1996,103,Some primary,11.9182
+zaf,1996,103,Complete primary,1.0655
+zaf,1996,103,Some secondary,7.4352
+zaf,1996,103,Grade 12/Std 10,0
+zaf,1996,103,Higher,2.129
+zaf,1996,103,Unspecified,5.2902
+zaf,1996,103,Not applicable,0
+zaf,1996,103,Total,107.1794
+zaf,1996,104,No schooling,100.1287
+zaf,1996,104,Some primary,6.3609
+zaf,1996,104,Complete primary,2.2679
+zaf,1996,104,Some secondary,0
+zaf,1996,104,Grade 12/Std 10,0
+zaf,1996,104,Higher,2.17064
+zaf,1996,104,Unspecified,10.8121
+zaf,1996,104,Not applicable,0
+zaf,1996,104,Total,121.74024
+zaf,1996,105,No schooling,109.24126
+zaf,1996,105,Some primary,9.833
+zaf,1996,105,Complete primary,3.2279
+zaf,1996,105,Some secondary,4.6435
+zaf,1996,105,Grade 12/Std 10,1.0638
+zaf,1996,105,Higher,2.11777
+zaf,1996,105,Unspecified,7.5414
+zaf,1996,105,Not applicable,0
+zaf,1996,105,Total,137.66863
+zaf,1996,106,No schooling,139.801
+zaf,1996,106,Some primary,4.2973
+zaf,1996,106,Complete primary,3.34659
+zaf,1996,106,Some secondary,0
+zaf,1996,106,Grade 12/Std 10,1.1685
+zaf,1996,106,Higher,2.311
+zaf,1996,106,Unspecified,5.3909
+zaf,1996,106,Not applicable,0
+zaf,1996,106,Total,156.31529
+zaf,1996,107,No schooling,77.7445
+zaf,1996,107,Some primary,9.9758
+zaf,1996,107,Complete primary,0
+zaf,1996,107,Some secondary,3.2839
+zaf,1996,107,Grade 12/Std 10,0
+zaf,1996,107,Higher,1.0174
+zaf,1996,107,Unspecified,0
+zaf,1996,107,Not applicable,0
+zaf,1996,107,Total,92.0216
+zaf,1996,108,No schooling,66.1194
+zaf,1996,108,Some primary,7.9842
+zaf,1996,108,Complete primary,1.0638
+zaf,1996,108,Some secondary,2.3371
+zaf,1996,108,Grade 12/Std 10,0
+zaf,1996,108,Higher,0
+zaf,1996,108,Unspecified,3.86028
+zaf,1996,108,Not applicable,0
+zaf,1996,108,Total,81.36478
+zaf,1996,109,No schooling,36.8669
+zaf,1996,109,Some primary,6.4932
+zaf,1996,109,Complete primary,1.0655
+zaf,1996,109,Some secondary,1.0174
+zaf,1996,109,Grade 12/Std 10,0
+zaf,1996,109,Higher,1.3252
+zaf,1996,109,Unspecified,4.2752
+zaf,1996,109,Not applicable,0
+zaf,1996,109,Total,51.0434
+zaf,1996,110,No schooling,76.3983
+zaf,1996,110,Some primary,3.2941
+zaf,1996,110,Complete primary,1.0958
+zaf,1996,110,Some secondary,2.0935
+zaf,1996,110,Grade 12/Std 10,2.0984
+zaf,1996,110,Higher,0
+zaf,1996,110,Unspecified,4.2649
+zaf,1996,110,Not applicable,0
+zaf,1996,110,Total,89.245
+zaf,1996,111,No schooling,11.7521
+zaf,1996,111,Some primary,7.4839
+zaf,1996,111,Complete primary,0
+zaf,1996,111,Some secondary,0
+zaf,1996,111,Grade 12/Std 10,0
+zaf,1996,111,Higher,1.05
+zaf,1996,111,Unspecified,2.1204
+zaf,1996,111,Not applicable,0
+zaf,1996,111,Total,22.4064
+zaf,1996,112,No schooling,16.1077
+zaf,1996,112,Some primary,6.4077
+zaf,1996,112,Complete primary,0
+zaf,1996,112,Some secondary,0
+zaf,1996,112,Grade 12/Std 10,0
+zaf,1996,112,Higher,0
+zaf,1996,112,Unspecified,3.2262
+zaf,1996,112,Not applicable,0
+zaf,1996,112,Total,25.7416
+zaf,1996,113,No schooling,3.2778
+zaf,1996,113,Some primary,0
+zaf,1996,113,Complete primary,0
+zaf,1996,113,Some secondary,0
+zaf,1996,113,Grade 12/Std 10,0
+zaf,1996,113,Higher,0
+zaf,1996,113,Unspecified,0
+zaf,1996,113,Not applicable,0
+zaf,1996,113,Total,3.2778
+zaf,1996,114,No schooling,11.0978
+zaf,1996,114,Some primary,1.1237
+zaf,1996,114,Complete primary,0
+zaf,1996,114,Some secondary,0
+zaf,1996,114,Grade 12/Std 10,0
+zaf,1996,114,Higher,1.3252
+zaf,1996,114,Unspecified,2.106
+zaf,1996,114,Not applicable,0
+zaf,1996,114,Total,15.6527
+zaf,1996,115,No schooling,12.8203
+zaf,1996,115,Some primary,0
+zaf,1996,115,Complete primary,0
+zaf,1996,115,Some secondary,0
+zaf,1996,115,Grade 12/Std 10,0
+zaf,1996,115,Higher,0
+zaf,1996,115,Unspecified,1.0655
+zaf,1996,115,Not applicable,0
+zaf,1996,115,Total,13.8858
+zaf,1996,116,No schooling,8.8465
+zaf,1996,116,Some primary,2.3463
+zaf,1996,116,Complete primary,0
+zaf,1996,116,Some secondary,2.107
+zaf,1996,116,Grade 12/Std 10,0
+zaf,1996,116,Higher,0
+zaf,1996,116,Unspecified,0
+zaf,1996,116,Not applicable,0
+zaf,1996,116,Total,13.2998
+zaf,1996,117,No schooling,9.657
+zaf,1996,117,Some primary,0
+zaf,1996,117,Complete primary,0
+zaf,1996,117,Some secondary,0
+zaf,1996,117,Grade 12/Std 10,0
+zaf,1996,117,Higher,1.0532
+zaf,1996,117,Unspecified,0
+zaf,1996,117,Not applicable,0
+zaf,1996,117,Total,10.7102
+zaf,1996,118,No schooling,5.3258
+zaf,1996,118,Some primary,0
+zaf,1996,118,Complete primary,0
+zaf,1996,118,Some secondary,1.0174
+zaf,1996,118,Grade 12/Std 10,0
+zaf,1996,118,Higher,1.0532
+zaf,1996,118,Unspecified,0
+zaf,1996,118,Not applicable,0
+zaf,1996,118,Total,7.3964
+zaf,1996,119,No schooling,5.3092
+zaf,1996,119,Some primary,0
+zaf,1996,119,Complete primary,0
+zaf,1996,119,Some secondary,1.05
+zaf,1996,119,Grade 12/Std 10,2.0804
+zaf,1996,119,Higher,0
+zaf,1996,119,Unspecified,0
+zaf,1996,119,Not applicable,0
+zaf,1996,119,Total,8.4396
+zaf,1996,120,No schooling,0
+zaf,1996,120,Some primary,0
+zaf,1996,120,Complete primary,0
+zaf,1996,120,Some secondary,0
+zaf,1996,120,Grade 12/Std 10,0
+zaf,1996,120,Higher,0
+zaf,1996,120,Unspecified,0
+zaf,1996,120,Not applicable,0
+zaf,1996,120,Total,0
+zaf,2001,0,No schooling,0
+zaf,2001,0,Some primary,0
+zaf,2001,0,Complete primary,0
+zaf,2001,0,Some secondary,0
+zaf,2001,0,Grade 12/Std 10,0
+zaf,2001,0,Higher,0
+zaf,2001,0,Unspecified,0
+zaf,2001,0,Not applicable,908406.3085
+zaf,2001,0,Total,908406.3085
+zaf,2001,1,No schooling,0
+zaf,2001,1,Some primary,0
+zaf,2001,1,Complete primary,0
+zaf,2001,1,Some secondary,0
+zaf,2001,1,Grade 12/Std 10,0
+zaf,2001,1,Higher,0
+zaf,2001,1,Unspecified,0
+zaf,2001,1,Not applicable,870638.1059
+zaf,2001,1,Total,870638.1059
+zaf,2001,2,No schooling,0
+zaf,2001,2,Some primary,0
+zaf,2001,2,Complete primary,0
+zaf,2001,2,Some secondary,0
+zaf,2001,2,Grade 12/Std 10,0
+zaf,2001,2,Higher,0
+zaf,2001,2,Unspecified,0
+zaf,2001,2,Not applicable,877409.0157
+zaf,2001,2,Total,877409.0157
+zaf,2001,3,No schooling,0
+zaf,2001,3,Some primary,0
+zaf,2001,3,Complete primary,0
+zaf,2001,3,Some secondary,0
+zaf,2001,3,Grade 12/Std 10,0
+zaf,2001,3,Higher,0
+zaf,2001,3,Unspecified,0
+zaf,2001,3,Not applicable,875410.3643
+zaf,2001,3,Total,875410.3643
+zaf,2001,4,No schooling,0
+zaf,2001,4,Some primary,0
+zaf,2001,4,Complete primary,0
+zaf,2001,4,Some secondary,0
+zaf,2001,4,Grade 12/Std 10,0
+zaf,2001,4,Higher,0
+zaf,2001,4,Unspecified,0
+zaf,2001,4,Not applicable,917951.9681
+zaf,2001,4,Total,917951.9681
+zaf,2001,5,No schooling,821327.535
+zaf,2001,5,Some primary,147067.9801
+zaf,2001,5,Complete primary,0
+zaf,2001,5,Some secondary,0
+zaf,2001,5,Grade 12/Std 10,0
+zaf,2001,5,Higher,0
+zaf,2001,5,Unspecified,0
+zaf,2001,5,Not applicable,0
+zaf,2001,5,Total,968395.515
+zaf,2001,6,No schooling,521948.9132
+zaf,2001,6,Some primary,428645.9771
+zaf,2001,6,Complete primary,0
+zaf,2001,6,Some secondary,0
+zaf,2001,6,Grade 12/Std 10,0
+zaf,2001,6,Higher,0
+zaf,2001,6,Unspecified,0
+zaf,2001,6,Not applicable,0
+zaf,2001,6,Total,950594.8903
+zaf,2001,7,No schooling,127194.2877
+zaf,2001,7,Some primary,846997.022
+zaf,2001,7,Complete primary,0
+zaf,2001,7,Some secondary,0
+zaf,2001,7,Grade 12/Std 10,0
+zaf,2001,7,Higher,0
+zaf,2001,7,Unspecified,0
+zaf,2001,7,Not applicable,0
+zaf,2001,7,Total,974191.3097
+zaf,2001,8,No schooling,46975.88314
+zaf,2001,8,Some primary,900492.5288
+zaf,2001,8,Complete primary,0
+zaf,2001,8,Some secondary,0
+zaf,2001,8,Grade 12/Std 10,0
+zaf,2001,8,Higher,0
+zaf,2001,8,Unspecified,0
+zaf,2001,8,Not applicable,0
+zaf,2001,8,Total,947468.412
+zaf,2001,9,No schooling,34288.53506
+zaf,2001,9,Some primary,978615.8641
+zaf,2001,9,Complete primary,0
+zaf,2001,9,Some secondary,0
+zaf,2001,9,Grade 12/Std 10,0
+zaf,2001,9,Higher,0
+zaf,2001,9,Unspecified,0
+zaf,2001,9,Not applicable,0
+zaf,2001,9,Total,1012904.399
+zaf,2001,10,No schooling,35652.82486
+zaf,2001,10,Some primary,1023516.196
+zaf,2001,10,Complete primary,0
+zaf,2001,10,Some secondary,0
+zaf,2001,10,Grade 12/Std 10,0
+zaf,2001,10,Higher,0
+zaf,2001,10,Unspecified,0
+zaf,2001,10,Not applicable,0
+zaf,2001,10,Total,1059169.021
+zaf,2001,11,No schooling,28956.89353
+zaf,2001,11,Some primary,993174.9613
+zaf,2001,11,Complete primary,22366.92392
+zaf,2001,11,Some secondary,0
+zaf,2001,11,Grade 12/Std 10,0
+zaf,2001,11,Higher,0
+zaf,2001,11,Unspecified,0
+zaf,2001,11,Not applicable,0
+zaf,2001,11,Total,1044498.779
+zaf,2001,12,No schooling,17734.67148
+zaf,2001,12,Some primary,844828.2667
+zaf,2001,12,Complete primary,105576.3232
+zaf,2001,12,Some secondary,21851.48016
+zaf,2001,12,Grade 12/Std 10,0
+zaf,2001,12,Higher,0
+zaf,2001,12,Unspecified,0
+zaf,2001,12,Not applicable,0
+zaf,2001,12,Total,989990.7415
+zaf,2001,13,No schooling,17716.53602
+zaf,2001,13,Some primary,631316.4653
+zaf,2001,13,Complete primary,226876.6671
+zaf,2001,13,Some secondary,115503.4831
+zaf,2001,13,Grade 12/Std 10,0
+zaf,2001,13,Higher,0
+zaf,2001,13,Unspecified,0
+zaf,2001,13,Not applicable,0
+zaf,2001,13,Total,991413.1516
+zaf,2001,14,No schooling,17266.24541
+zaf,2001,14,Some primary,409455.3399
+zaf,2001,14,Complete primary,239248.0895
+zaf,2001,14,Some secondary,310876.0316
+zaf,2001,14,Grade 12/Std 10,0
+zaf,2001,14,Higher,0
+zaf,2001,14,Unspecified,0
+zaf,2001,14,Not applicable,0
+zaf,2001,14,Total,976845.7065
+zaf,2001,15,No schooling,20722.64102
+zaf,2001,15,Some primary,279906.4128
+zaf,2001,15,Complete primary,191286.0075
+zaf,2001,15,Some secondary,515887.2026
+zaf,2001,15,Grade 12/Std 10,0
+zaf,2001,15,Higher,0
+zaf,2001,15,Unspecified,0
+zaf,2001,15,Not applicable,0
+zaf,2001,15,Total,1007802.264
+zaf,2001,16,No schooling,24429.72779
+zaf,2001,16,Some primary,191180.7075
+zaf,2001,16,Complete primary,150788.4483
+zaf,2001,16,Some secondary,648561.1254
+zaf,2001,16,Grade 12/Std 10,11679.5651
+zaf,2001,16,Higher,1117.050453
+zaf,2001,16,Unspecified,0
+zaf,2001,16,Not applicable,0
+zaf,2001,16,Total,1027756.625
+zaf,2001,17,No schooling,27998.99982
+zaf,2001,17,Some primary,129660.0145
+zaf,2001,17,Complete primary,105607.8076
+zaf,2001,17,Some secondary,667004.0446
+zaf,2001,17,Grade 12/Std 10,49460.44245
+zaf,2001,17,Higher,2301.408704
+zaf,2001,17,Unspecified,0
+zaf,2001,17,Not applicable,0
+zaf,2001,17,Total,982032.7177
+zaf,2001,18,No schooling,36451.90494
+zaf,2001,18,Some primary,104994.461
+zaf,2001,18,Complete primary,80551.41099
+zaf,2001,18,Some secondary,618696.9955
+zaf,2001,18,Grade 12/Std 10,140000.7442
+zaf,2001,18,Higher,10360.73031
+zaf,2001,18,Unspecified,0
+zaf,2001,18,Not applicable,0
+zaf,2001,18,Total,991056.2469
+zaf,2001,19,No schooling,43483.67198
+zaf,2001,19,Some primary,90755.12752
+zaf,2001,19,Complete primary,64063.0437
+zaf,2001,19,Some secondary,531581.0783
+zaf,2001,19,Grade 12/Std 10,219849.1888
+zaf,2001,19,Higher,23340.95846
+zaf,2001,19,Unspecified,0
+zaf,2001,19,Not applicable,0
+zaf,2001,19,Total,973073.0688
+zaf,2001,20,No schooling,47731.77056
+zaf,2001,20,Some primary,82343.65042
+zaf,2001,20,Complete primary,49741.6961
+zaf,2001,20,Some secondary,439018.5653
+zaf,2001,20,Grade 12/Std 10,259384.6858
+zaf,2001,20,Higher,35490.02924
+zaf,2001,20,Unspecified,0
+zaf,2001,20,Not applicable,0
+zaf,2001,20,Total,913710.3974
+zaf,2001,21,No schooling,56917.45515
+zaf,2001,21,Some primary,84530.6864
+zaf,2001,21,Complete primary,47684.0386
+zaf,2001,21,Some secondary,406746.0397
+zaf,2001,21,Grade 12/Std 10,283595.1244
+zaf,2001,21,Higher,46946.58411
+zaf,2001,21,Unspecified,0
+zaf,2001,21,Not applicable,0
+zaf,2001,21,Total,926419.9284
+zaf,2001,22,No schooling,58928.57235
+zaf,2001,22,Some primary,67750.08415
+zaf,2001,22,Complete primary,39419.15554
+zaf,2001,22,Some secondary,345995.7047
+zaf,2001,22,Grade 12/Std 10,280410.4571
+zaf,2001,22,Higher,55615.06995
+zaf,2001,22,Unspecified,0
+zaf,2001,22,Not applicable,0
+zaf,2001,22,Total,848119.0438
+zaf,2001,23,No schooling,58209.78802
+zaf,2001,23,Some primary,64925.21817
+zaf,2001,23,Complete primary,36141.82273
+zaf,2001,23,Some secondary,300105.824
+zaf,2001,23,Grade 12/Std 10,271607.2662
+zaf,2001,23,Higher,62221.07771
+zaf,2001,23,Unspecified,0
+zaf,2001,23,Not applicable,0
+zaf,2001,23,Total,793210.9969
+zaf,2001,24,No schooling,64498.79525
+zaf,2001,24,Some primary,72080.91616
+zaf,2001,24,Complete primary,38319.4258
+zaf,2001,24,Some secondary,294635.0882
+zaf,2001,24,Grade 12/Std 10,274601.5708
+zaf,2001,24,Higher,68927.20965
+zaf,2001,24,Unspecified,0
+zaf,2001,24,Not applicable,0
+zaf,2001,24,Total,813063.0059
+zaf,2001,25,No schooling,67143.41681
+zaf,2001,25,Some primary,74937.7941
+zaf,2001,25,Complete primary,39543.52923
+zaf,2001,25,Some secondary,283095.4647
+zaf,2001,25,Grade 12/Std 10,274187.5831
+zaf,2001,25,Higher,76664.77705
+zaf,2001,25,Unspecified,0
+zaf,2001,25,Not applicable,0
+zaf,2001,25,Total,815572.565
+zaf,2001,26,No schooling,69631.6294
+zaf,2001,26,Some primary,81365.92726
+zaf,2001,26,Complete primary,42422.24861
+zaf,2001,26,Some secondary,277618.6198
+zaf,2001,26,Grade 12/Std 10,264530.7572
+zaf,2001,26,Higher,77121.33724
+zaf,2001,26,Unspecified,0
+zaf,2001,26,Not applicable,0
+zaf,2001,26,Total,812690.5196
+zaf,2001,27,No schooling,67210.24588
+zaf,2001,27,Some primary,82090.2864
+zaf,2001,27,Complete primary,41008.17737
+zaf,2001,27,Some secondary,262080.3337
+zaf,2001,27,Grade 12/Std 10,248018.7171
+zaf,2001,27,Higher,78570.83928
+zaf,2001,27,Unspecified,0
+zaf,2001,27,Not applicable,0
+zaf,2001,27,Total,778978.5998
+zaf,2001,28,No schooling,67291.01939
+zaf,2001,28,Some primary,85226.38065
+zaf,2001,28,Complete primary,41726.3614
+zaf,2001,28,Some secondary,249616.9714
+zaf,2001,28,Grade 12/Std 10,229014.1402
+zaf,2001,28,Higher,78194.04392
+zaf,2001,28,Unspecified,0
+zaf,2001,28,Not applicable,0
+zaf,2001,28,Total,751068.9169
+zaf,2001,29,No schooling,73425.63732
+zaf,2001,29,Some primary,94625.83132
+zaf,2001,29,Complete primary,44696.92535
+zaf,2001,29,Some secondary,255657.5298
+zaf,2001,29,Grade 12/Std 10,226537.1809
+zaf,2001,29,Higher,81684.93918
+zaf,2001,29,Unspecified,0
+zaf,2001,29,Not applicable,0
+zaf,2001,29,Total,776628.0439
+zaf,2001,30,No schooling,65996.73307
+zaf,2001,30,Some primary,83223.32747
+zaf,2001,30,Complete primary,38584.19358
+zaf,2001,30,Some secondary,212898.8797
+zaf,2001,30,Grade 12/Std 10,191081.4472
+zaf,2001,30,Higher,77472.27633
+zaf,2001,30,Unspecified,0
+zaf,2001,30,Not applicable,0
+zaf,2001,30,Total,669256.8573
+zaf,2001,31,No schooling,79440.83886
+zaf,2001,31,Some primary,101742.1213
+zaf,2001,31,Complete primary,47448.95217
+zaf,2001,31,Some secondary,240305.5729
+zaf,2001,31,Grade 12/Std 10,191474.1123
+zaf,2001,31,Higher,78847.36941
+zaf,2001,31,Unspecified,0
+zaf,2001,31,Not applicable,0
+zaf,2001,31,Total,739258.967
+zaf,2001,32,No schooling,76112.62653
+zaf,2001,32,Some primary,97747.78174
+zaf,2001,32,Complete primary,45801.84078
+zaf,2001,32,Some secondary,220301.6767
+zaf,2001,32,Grade 12/Std 10,166771.9388
+zaf,2001,32,Higher,73738.97003
+zaf,2001,32,Unspecified,0
+zaf,2001,32,Not applicable,0
+zaf,2001,32,Total,680474.8346
+zaf,2001,33,No schooling,76972.315
+zaf,2001,33,Some primary,101006.0528
+zaf,2001,33,Complete primary,47750.33657
+zaf,2001,33,Some secondary,217341.8839
+zaf,2001,33,Grade 12/Std 10,154460.2426
+zaf,2001,33,Higher,72179.11102
+zaf,2001,33,Unspecified,0
+zaf,2001,33,Not applicable,0
+zaf,2001,33,Total,669709.9418
+zaf,2001,34,No schooling,66133.54531
+zaf,2001,34,Some primary,86861.85053
+zaf,2001,34,Complete primary,41170.81752
+zaf,2001,34,Some secondary,188669.7467
+zaf,2001,34,Grade 12/Std 10,131806.1199
+zaf,2001,34,Higher,67558.15119
+zaf,2001,34,Unspecified,0
+zaf,2001,34,Not applicable,0
+zaf,2001,34,Total,582200.2311
+zaf,2001,35,No schooling,81883.5722
+zaf,2001,35,Some primary,101692.2543
+zaf,2001,35,Complete primary,46219.99718
+zaf,2001,35,Some secondary,195484.7409
+zaf,2001,35,Grade 12/Std 10,124065.6709
+zaf,2001,35,Higher,66116.80121
+zaf,2001,35,Unspecified,0
+zaf,2001,35,Not applicable,0
+zaf,2001,35,Total,615463.0367
+zaf,2001,36,No schooling,89238.4718
+zaf,2001,36,Some primary,110977.835
+zaf,2001,36,Complete primary,50400.35763
+zaf,2001,36,Some secondary,201029.8494
+zaf,2001,36,Grade 12/Std 10,116384.4436
+zaf,2001,36,Higher,63354.19741
+zaf,2001,36,Unspecified,0
+zaf,2001,36,Not applicable,0
+zaf,2001,36,Total,631385.1549
+zaf,2001,37,No schooling,88386.81796
+zaf,2001,37,Some primary,110699.6721
+zaf,2001,37,Complete primary,48509.19398
+zaf,2001,37,Some secondary,193916.8681
+zaf,2001,37,Grade 12/Std 10,107107.1477
+zaf,2001,37,Higher,60348.49949
+zaf,2001,37,Unspecified,0
+zaf,2001,37,Not applicable,0
+zaf,2001,37,Total,608968.1993
+zaf,2001,38,No schooling,96594.0416
+zaf,2001,38,Some primary,119250.1211
+zaf,2001,38,Complete primary,50593.1562
+zaf,2001,38,Some secondary,193670.151
+zaf,2001,38,Grade 12/Std 10,102589.373
+zaf,2001,38,Higher,59152.75721
+zaf,2001,38,Unspecified,0
+zaf,2001,38,Not applicable,0
+zaf,2001,38,Total,621849.6001
+zaf,2001,39,No schooling,96266.43598
+zaf,2001,39,Some primary,116550.1191
+zaf,2001,39,Complete primary,47885.88996
+zaf,2001,39,Some secondary,181032.363
+zaf,2001,39,Grade 12/Std 10,95605.74631
+zaf,2001,39,Higher,56763.92085
+zaf,2001,39,Unspecified,0
+zaf,2001,39,Not applicable,0
+zaf,2001,39,Total,594104.4752
+zaf,2001,40,No schooling,92920.43992
+zaf,2001,40,Some primary,105151.4326
+zaf,2001,40,Complete primary,41797.01039
+zaf,2001,40,Some secondary,161702.6158
+zaf,2001,40,Grade 12/Std 10,87919.27619
+zaf,2001,40,Higher,54645.9828
+zaf,2001,40,Unspecified,0
+zaf,2001,40,Not applicable,0
+zaf,2001,40,Total,544136.7577
+zaf,2001,41,No schooling,101991.331
+zaf,2001,41,Some primary,115859.0766
+zaf,2001,41,Complete primary,46457.28474
+zaf,2001,41,Some secondary,169916.7219
+zaf,2001,41,Grade 12/Std 10,84424.08568
+zaf,2001,41,Higher,54485.26365
+zaf,2001,41,Unspecified,0
+zaf,2001,41,Not applicable,0
+zaf,2001,41,Total,573133.7635
+zaf,2001,42,No schooling,94305.44603
+zaf,2001,42,Some primary,108256.7359
+zaf,2001,42,Complete primary,41978.02743
+zaf,2001,42,Some secondary,152578.8844
+zaf,2001,42,Grade 12/Std 10,72578.11179
+zaf,2001,42,Higher,49656.87085
+zaf,2001,42,Unspecified,0
+zaf,2001,42,Not applicable,0
+zaf,2001,42,Total,519354.0764
+zaf,2001,43,No schooling,99625.52002
+zaf,2001,43,Some primary,114208.8077
+zaf,2001,43,Complete primary,43765.7109
+zaf,2001,43,Some secondary,151722.319
+zaf,2001,43,Grade 12/Std 10,67032.00224
+zaf,2001,43,Higher,47799.97152
+zaf,2001,43,Unspecified,0
+zaf,2001,43,Not applicable,0
+zaf,2001,43,Total,524154.3314
+zaf,2001,44,No schooling,88061.05989
+zaf,2001,44,Some primary,98339.10653
+zaf,2001,44,Complete primary,37471.40411
+zaf,2001,44,Some secondary,133172.0959
+zaf,2001,44,Grade 12/Std 10,58527.59631
+zaf,2001,44,Higher,43114.68992
+zaf,2001,44,Unspecified,0
+zaf,2001,44,Not applicable,0
+zaf,2001,44,Total,458685.9527
+zaf,2001,45,No schooling,91911.86955
+zaf,2001,45,Some primary,95928.62458
+zaf,2001,45,Complete primary,36485.57154
+zaf,2001,45,Some secondary,127216.8286
+zaf,2001,45,Grade 12/Std 10,55472.6626
+zaf,2001,45,Higher,41053.96748
+zaf,2001,45,Unspecified,0
+zaf,2001,45,Not applicable,0
+zaf,2001,45,Total,448069.5243
+zaf,2001,46,No schooling,87972.73871
+zaf,2001,46,Some primary,90866.8547
+zaf,2001,46,Complete primary,33008.49842
+zaf,2001,46,Some secondary,113645.7959
+zaf,2001,46,Grade 12/Std 10,48587.42814
+zaf,2001,46,Higher,37386.87243
+zaf,2001,46,Unspecified,0
+zaf,2001,46,Not applicable,0
+zaf,2001,46,Total,411468.1883
+zaf,2001,47,No schooling,88372.79539
+zaf,2001,47,Some primary,90815.82507
+zaf,2001,47,Complete primary,32666.16926
+zaf,2001,47,Some secondary,112619.3332
+zaf,2001,47,Grade 12/Std 10,46423.3226
+zaf,2001,47,Higher,35031.54802
+zaf,2001,47,Unspecified,0
+zaf,2001,47,Not applicable,0
+zaf,2001,47,Total,405928.9935
+zaf,2001,48,No schooling,91983.47179
+zaf,2001,48,Some primary,94950.46856
+zaf,2001,48,Complete primary,32536.02331
+zaf,2001,48,Some secondary,108899.6754
+zaf,2001,48,Grade 12/Std 10,43868.57461
+zaf,2001,48,Higher,32756.02131
+zaf,2001,48,Unspecified,0
+zaf,2001,48,Not applicable,0
+zaf,2001,48,Total,404994.235
+zaf,2001,49,No schooling,100772.723
+zaf,2001,49,Some primary,101364.7256
+zaf,2001,49,Complete primary,33274.25173
+zaf,2001,49,Some secondary,107644.2647
+zaf,2001,49,Grade 12/Std 10,42853.61974
+zaf,2001,49,Higher,31009.33121
+zaf,2001,49,Unspecified,0
+zaf,2001,49,Not applicable,0
+zaf,2001,49,Total,416918.916
+zaf,2001,50,No schooling,88361.08909
+zaf,2001,50,Some primary,77382.75608
+zaf,2001,50,Complete primary,25618.47412
+zaf,2001,50,Some secondary,89019.4574
+zaf,2001,50,Grade 12/Std 10,39391.17666
+zaf,2001,50,Higher,28776.25287
+zaf,2001,50,Unspecified,0
+zaf,2001,50,Not applicable,0
+zaf,2001,50,Total,348549.2062
+zaf,2001,51,No schooling,98551.73969
+zaf,2001,51,Some primary,84752.04961
+zaf,2001,51,Complete primary,27342.62756
+zaf,2001,51,Some secondary,90167.00215
+zaf,2001,51,Grade 12/Std 10,36915.24674
+zaf,2001,51,Higher,26244.76904
+zaf,2001,51,Unspecified,0
+zaf,2001,51,Not applicable,0
+zaf,2001,51,Total,363973.4348
+zaf,2001,52,No schooling,86655.3143
+zaf,2001,52,Some primary,75559.40408
+zaf,2001,52,Complete primary,24129.76812
+zaf,2001,52,Some secondary,82148.11018
+zaf,2001,52,Grade 12/Std 10,34942.40381
+zaf,2001,52,Higher,24525.96888
+zaf,2001,52,Unspecified,0
+zaf,2001,52,Not applicable,0
+zaf,2001,52,Total,327960.9694
+zaf,2001,53,No schooling,80818.42555
+zaf,2001,53,Some primary,71268.63141
+zaf,2001,53,Complete primary,23321.55664
+zaf,2001,53,Some secondary,78638.05493
+zaf,2001,53,Grade 12/Std 10,33304.69131
+zaf,2001,53,Higher,23389.50854
+zaf,2001,53,Unspecified,0
+zaf,2001,53,Not applicable,0
+zaf,2001,53,Total,310740.8684
+zaf,2001,54,No schooling,74334.20385
+zaf,2001,54,Some primary,64062.22219
+zaf,2001,54,Complete primary,20904.41605
+zaf,2001,54,Some secondary,72239.33544
+zaf,2001,54,Grade 12/Std 10,32481.58712
+zaf,2001,54,Higher,22773.82451
+zaf,2001,54,Unspecified,0
+zaf,2001,54,Not applicable,0
+zaf,2001,54,Total,286795.5892
+zaf,2001,55,No schooling,68614.89354
+zaf,2001,55,Some primary,56750.68068
+zaf,2001,55,Complete primary,18639.14473
+zaf,2001,55,Some secondary,65374.96361
+zaf,2001,55,Grade 12/Std 10,29621.41234
+zaf,2001,55,Higher,20826.31829
+zaf,2001,55,Unspecified,0
+zaf,2001,55,Not applicable,0
+zaf,2001,55,Total,259827.4132
+zaf,2001,56,No schooling,67547.94169
+zaf,2001,56,Some primary,53414.62534
+zaf,2001,56,Complete primary,17615.87012
+zaf,2001,56,Some secondary,61437.58786
+zaf,2001,56,Grade 12/Std 10,28005.31525
+zaf,2001,56,Higher,18797.13663
+zaf,2001,56,Unspecified,0
+zaf,2001,56,Not applicable,0
+zaf,2001,56,Total,246818.4769
+zaf,2001,57,No schooling,62774.00899
+zaf,2001,57,Some primary,48304.68856
+zaf,2001,57,Complete primary,14881.79289
+zaf,2001,57,Some secondary,54903.08195
+zaf,2001,57,Grade 12/Std 10,25607.6216
+zaf,2001,57,Higher,18017.71371
+zaf,2001,57,Unspecified,0
+zaf,2001,57,Not applicable,0
+zaf,2001,57,Total,224488.9077
+zaf,2001,58,No schooling,65849.24659
+zaf,2001,58,Some primary,49329.79618
+zaf,2001,58,Complete primary,14977.73355
+zaf,2001,58,Some secondary,54632.36815
+zaf,2001,58,Grade 12/Std 10,24211.42003
+zaf,2001,58,Higher,16359.75282
+zaf,2001,58,Unspecified,0
+zaf,2001,58,Not applicable,0
+zaf,2001,58,Total,225360.3173
+zaf,2001,59,No schooling,79524.36071
+zaf,2001,59,Some primary,57865.78923
+zaf,2001,59,Complete primary,16634.85022
+zaf,2001,59,Some secondary,56355.12909
+zaf,2001,59,Grade 12/Std 10,23202.73076
+zaf,2001,59,Higher,15188.22611
+zaf,2001,59,Unspecified,0
+zaf,2001,59,Not applicable,0
+zaf,2001,59,Total,248771.0861
+zaf,2001,60,No schooling,79485.82021
+zaf,2001,60,Some primary,46760.72902
+zaf,2001,60,Complete primary,12833.57345
+zaf,2001,60,Some secondary,48565.22212
+zaf,2001,60,Grade 12/Std 10,21680.14911
+zaf,2001,60,Higher,14641.8925
+zaf,2001,60,Unspecified,0
+zaf,2001,60,Not applicable,0
+zaf,2001,60,Total,223967.3864
+zaf,2001,61,No schooling,109241.119
+zaf,2001,61,Some primary,59033.00149
+zaf,2001,61,Complete primary,15186.51742
+zaf,2001,61,Some secondary,52886.06657
+zaf,2001,61,Grade 12/Std 10,21305.70411
+zaf,2001,61,Higher,14026.79696
+zaf,2001,61,Unspecified,0
+zaf,2001,61,Not applicable,0
+zaf,2001,61,Total,271679.2056
+zaf,2001,62,No schooling,74375.16576
+zaf,2001,62,Some primary,41300.96172
+zaf,2001,62,Complete primary,11696.45105
+zaf,2001,62,Some secondary,44744.49102
+zaf,2001,62,Grade 12/Std 10,19129.14229
+zaf,2001,62,Higher,12808.27791
+zaf,2001,62,Unspecified,0
+zaf,2001,62,Not applicable,0
+zaf,2001,62,Total,204054.4897
+zaf,2001,63,No schooling,69015.8434
+zaf,2001,63,Some primary,38708.99225
+zaf,2001,63,Complete primary,11237.60018
+zaf,2001,63,Some secondary,43093.65587
+zaf,2001,63,Grade 12/Std 10,18479.61469
+zaf,2001,63,Higher,11475.52611
+zaf,2001,63,Unspecified,0
+zaf,2001,63,Not applicable,0
+zaf,2001,63,Total,192011.2325
+zaf,2001,64,No schooling,61893.85053
+zaf,2001,64,Some primary,35104.26555
+zaf,2001,64,Complete primary,9957.888534
+zaf,2001,64,Some secondary,39489.70876
+zaf,2001,64,Grade 12/Std 10,16634.4381
+zaf,2001,64,Higher,10501.07412
+zaf,2001,64,Unspecified,0
+zaf,2001,64,Not applicable,0
+zaf,2001,64,Total,173581.2256
+zaf,2001,65,No schooling,75030.44602
+zaf,2001,65,Some primary,37550.51252
+zaf,2001,65,Complete primary,10160.4978
+zaf,2001,65,Some secondary,39051.16676
+zaf,2001,65,Grade 12/Std 10,16090.28041
+zaf,2001,65,Higher,9965.506341
+zaf,2001,65,Unspecified,0
+zaf,2001,65,Not applicable,0
+zaf,2001,65,Total,187848.4098
+zaf,2001,66,No schooling,61000.77561
+zaf,2001,66,Some primary,30095.68444
+zaf,2001,66,Complete primary,8417.492737
+zaf,2001,66,Some secondary,33625.89566
+zaf,2001,66,Grade 12/Std 10,14309.01774
+zaf,2001,66,Higher,8732.488391
+zaf,2001,66,Unspecified,0
+zaf,2001,66,Not applicable,0
+zaf,2001,66,Total,156181.3546
+zaf,2001,67,No schooling,62615.60818
+zaf,2001,67,Some primary,28462.20118
+zaf,2001,67,Complete primary,7399.010452
+zaf,2001,67,Some secondary,30730.25897
+zaf,2001,67,Grade 12/Std 10,13369.26846
+zaf,2001,67,Higher,7946.783489
+zaf,2001,67,Unspecified,0
+zaf,2001,67,Not applicable,0
+zaf,2001,67,Total,150523.1307
+zaf,2001,68,No schooling,62804.01784
+zaf,2001,68,Some primary,30058.00031
+zaf,2001,68,Complete primary,7186.156602
+zaf,2001,68,Some secondary,29631.06403
+zaf,2001,68,Grade 12/Std 10,12629.10456
+zaf,2001,68,Higher,7350.022264
+zaf,2001,68,Unspecified,0
+zaf,2001,68,Not applicable,0
+zaf,2001,68,Total,149658.3656
+zaf,2001,69,No schooling,58758.14455
+zaf,2001,69,Some primary,28587.14661
+zaf,2001,69,Complete primary,7517.806807
+zaf,2001,69,Some secondary,29453.80786
+zaf,2001,69,Grade 12/Std 10,12548.0739
+zaf,2001,69,Higher,6850.542426
+zaf,2001,69,Unspecified,0
+zaf,2001,69,Not applicable,0
+zaf,2001,69,Total,143715.5221
+zaf,2001,70,No schooling,58049.59337
+zaf,2001,70,Some primary,23321.69947
+zaf,2001,70,Complete primary,5424.187721
+zaf,2001,70,Some secondary,25579.30948
+zaf,2001,70,Grade 12/Std 10,12399.83701
+zaf,2001,70,Higher,6878.328405
+zaf,2001,70,Unspecified,0
+zaf,2001,70,Not applicable,0
+zaf,2001,70,Total,131652.9554
+zaf,2001,71,No schooling,89079.04775
+zaf,2001,71,Some primary,28885.15093
+zaf,2001,71,Complete primary,6572.24041
+zaf,2001,71,Some secondary,26807.76437
+zaf,2001,71,Grade 12/Std 10,11986.96327
+zaf,2001,71,Higher,6756.315533
+zaf,2001,71,Unspecified,0
+zaf,2001,71,Not applicable,0
+zaf,2001,71,Total,170087.4823
+zaf,2001,72,No schooling,59158.35778
+zaf,2001,72,Some primary,21851.21788
+zaf,2001,72,Complete primary,5171.95463
+zaf,2001,72,Some secondary,22212.12813
+zaf,2001,72,Grade 12/Std 10,10886.20514
+zaf,2001,72,Higher,5892.624181
+zaf,2001,72,Unspecified,0
+zaf,2001,72,Not applicable,0
+zaf,2001,72,Total,125172.4877
+zaf,2001,73,No schooling,49352.56758
+zaf,2001,73,Some primary,19836.81692
+zaf,2001,73,Complete primary,4724.714066
+zaf,2001,73,Some secondary,20612.46576
+zaf,2001,73,Grade 12/Std 10,10026.22467
+zaf,2001,73,Higher,5348.98619
+zaf,2001,73,Unspecified,0
+zaf,2001,73,Not applicable,0
+zaf,2001,73,Total,109901.7752
+zaf,2001,74,No schooling,41025.479
+zaf,2001,74,Some primary,16892.85058
+zaf,2001,74,Complete primary,4144.357614
+zaf,2001,74,Some secondary,18453.20856
+zaf,2001,74,Grade 12/Std 10,9219.335857
+zaf,2001,74,Higher,4919.386456
+zaf,2001,74,Unspecified,0
+zaf,2001,74,Not applicable,0
+zaf,2001,74,Total,94654.61806
+zaf,2001,75,No schooling,41488.43493
+zaf,2001,75,Some primary,15305.44301
+zaf,2001,75,Complete primary,3640.795952
+zaf,2001,75,Some secondary,17138.41302
+zaf,2001,75,Grade 12/Std 10,8628.752926
+zaf,2001,75,Higher,4721.114867
+zaf,2001,75,Unspecified,0
+zaf,2001,75,Not applicable,0
+zaf,2001,75,Total,90922.95471
+zaf,2001,76,No schooling,39897.96507
+zaf,2001,76,Some primary,14553.07485
+zaf,2001,76,Complete primary,3224.10096
+zaf,2001,76,Some secondary,15657.22606
+zaf,2001,76,Grade 12/Std 10,7894.029238
+zaf,2001,76,Higher,4204.711742
+zaf,2001,76,Unspecified,0
+zaf,2001,76,Not applicable,0
+zaf,2001,76,Total,85431.10791
+zaf,2001,77,No schooling,33484.53978
+zaf,2001,77,Some primary,12216.42559
+zaf,2001,77,Complete primary,2937.437451
+zaf,2001,77,Some secondary,13919.98418
+zaf,2001,77,Grade 12/Std 10,7284.924454
+zaf,2001,77,Higher,3897.731181
+zaf,2001,77,Unspecified,0
+zaf,2001,77,Not applicable,0
+zaf,2001,77,Total,73741.04263
+zaf,2001,78,No schooling,23990.82413
+zaf,2001,78,Some primary,9664.659717
+zaf,2001,78,Complete primary,2265.110545
+zaf,2001,78,Some secondary,12194.52133
+zaf,2001,78,Grade 12/Std 10,6609.695321
+zaf,2001,78,Higher,3425.13987
+zaf,2001,78,Unspecified,0
+zaf,2001,78,Not applicable,0
+zaf,2001,78,Total,58149.95092
+zaf,2001,79,No schooling,25875.30617
+zaf,2001,79,Some primary,10069.90221
+zaf,2001,79,Complete primary,2223.607383
+zaf,2001,79,Some secondary,11475.58468
+zaf,2001,79,Grade 12/Std 10,6292.548767
+zaf,2001,79,Higher,3355.019977
+zaf,2001,79,Unspecified,0
+zaf,2001,79,Not applicable,0
+zaf,2001,79,Total,59291.96919
+zaf,2001,80,No schooling,33074.2879
+zaf,2001,80,Some primary,9835.034471
+zaf,2001,80,Complete primary,2106.206137
+zaf,2001,80,Some secondary,10935.77509
+zaf,2001,80,Grade 12/Std 10,5956.022469
+zaf,2001,80,Higher,3142.021998
+zaf,2001,80,Unspecified,0
+zaf,2001,80,Not applicable,0
+zaf,2001,80,Total,65049.34807
+zaf,2001,81,No schooling,41816.11836
+zaf,2001,81,Some primary,10308.40189
+zaf,2001,81,Complete primary,2078.336972
+zaf,2001,81,Some secondary,10170.23001
+zaf,2001,81,Grade 12/Std 10,5175.405216
+zaf,2001,81,Higher,2735.772207
+zaf,2001,81,Unspecified,0
+zaf,2001,81,Not applicable,0
+zaf,2001,81,Total,72284.26466
+zaf,2001,82,No schooling,26021.73997
+zaf,2001,82,Some primary,6891.8479
+zaf,2001,82,Complete primary,1444.846983
+zaf,2001,82,Some secondary,7401.32752
+zaf,2001,82,Grade 12/Std 10,3904.727161
+zaf,2001,82,Higher,2049.592193
+zaf,2001,82,Unspecified,0
+zaf,2001,82,Not applicable,0
+zaf,2001,82,Total,47714.08172
+zaf,2001,83,No schooling,35599.67408
+zaf,2001,83,Some primary,9329.44898
+zaf,2001,83,Complete primary,1751.981576
+zaf,2001,83,Some secondary,7805.256516
+zaf,2001,83,Grade 12/Std 10,3759.968005
+zaf,2001,83,Higher,1876.644681
+zaf,2001,83,Unspecified,0
+zaf,2001,83,Not applicable,0
+zaf,2001,83,Total,60122.97383
+zaf,2001,84,No schooling,10931.92801
+zaf,2001,84,Some primary,3558.279467
+zaf,2001,84,Complete primary,858.247966
+zaf,2001,84,Some secondary,5525.67286
+zaf,2001,84,Grade 12/Std 10,2934.676449
+zaf,2001,84,Higher,1965.808131
+zaf,2001,84,Unspecified,0
+zaf,2001,84,Not applicable,0
+zaf,2001,84,Total,25774.61289
+zaf,2001,85,No schooling,9911.249679
+zaf,2001,85,Some primary,2953.154757
+zaf,2001,85,Complete primary,742.777592
+zaf,2001,85,Some secondary,4357.82494
+zaf,2001,85,Grade 12/Std 10,2300.102788
+zaf,2001,85,Higher,1225.031547
+zaf,2001,85,Unspecified,0
+zaf,2001,85,Not applicable,0
+zaf,2001,85,Total,21490.1413
+zaf,2001,86,No schooling,9364.131523
+zaf,2001,86,Some primary,2679.538651
+zaf,2001,86,Complete primary,627.149542
+zaf,2001,86,Some secondary,3706.919663
+zaf,2001,86,Grade 12/Std 10,2074.226311
+zaf,2001,86,Higher,1106.001569
+zaf,2001,86,Unspecified,0
+zaf,2001,86,Not applicable,0
+zaf,2001,86,Total,19557.96726
+zaf,2001,87,No schooling,14733.42253
+zaf,2001,87,Some primary,3768.438242
+zaf,2001,87,Complete primary,758.082359
+zaf,2001,87,Some secondary,3764.809289
+zaf,2001,87,Grade 12/Std 10,1789.370258
+zaf,2001,87,Higher,1017.709272
+zaf,2001,87,Unspecified,0
+zaf,2001,87,Not applicable,0
+zaf,2001,87,Total,25831.83195
+zaf,2001,88,No schooling,5986.131806
+zaf,2001,88,Some primary,1759.374094
+zaf,2001,88,Complete primary,430.716041
+zaf,2001,88,Some secondary,2681.510212
+zaf,2001,88,Grade 12/Std 10,1509.898604
+zaf,2001,88,Higher,747.025326
+zaf,2001,88,Unspecified,0
+zaf,2001,88,Not applicable,0
+zaf,2001,88,Total,13114.65608
+zaf,2001,89,No schooling,7587.919383
+zaf,2001,89,Some primary,1917.084799
+zaf,2001,89,Complete primary,414.749457
+zaf,2001,89,Some secondary,2492.761738
+zaf,2001,89,Grade 12/Std 10,1129.827714
+zaf,2001,89,Higher,685.872625
+zaf,2001,89,Unspecified,0
+zaf,2001,89,Not applicable,0
+zaf,2001,89,Total,14228.21572
+zaf,2001,90,No schooling,6500.748173
+zaf,2001,90,Some primary,1588.707635
+zaf,2001,90,Complete primary,331.421749
+zaf,2001,90,Some secondary,1930.301836
+zaf,2001,90,Grade 12/Std 10,923.128169
+zaf,2001,90,Higher,505.41914
+zaf,2001,90,Unspecified,0
+zaf,2001,90,Not applicable,0
+zaf,2001,90,Total,11779.7267
+zaf,2001,91,No schooling,9256.489324
+zaf,2001,91,Some primary,1847.521686
+zaf,2001,91,Complete primary,355.763473
+zaf,2001,91,Some secondary,1609.190348
+zaf,2001,91,Grade 12/Std 10,798.207853
+zaf,2001,91,Higher,441.957024
+zaf,2001,91,Unspecified,0
+zaf,2001,91,Not applicable,0
+zaf,2001,91,Total,14309.12971
+zaf,2001,92,No schooling,3840.352141
+zaf,2001,92,Some primary,893.55323
+zaf,2001,92,Complete primary,207.805247
+zaf,2001,92,Some secondary,1077.867043
+zaf,2001,92,Grade 12/Std 10,573.244442
+zaf,2001,92,Higher,294.334627
+zaf,2001,92,Unspecified,0
+zaf,2001,92,Not applicable,0
+zaf,2001,92,Total,6887.15673
+zaf,2001,93,No schooling,2496.184721
+zaf,2001,93,Some primary,629.277809
+zaf,2001,93,Complete primary,168.128453
+zaf,2001,93,Some secondary,877.376092
+zaf,2001,93,Grade 12/Std 10,397.934589
+zaf,2001,93,Higher,275.964715
+zaf,2001,93,Unspecified,0
+zaf,2001,93,Not applicable,0
+zaf,2001,93,Total,4844.866379
+zaf,2001,94,No schooling,1988.235897
+zaf,2001,94,Some primary,543.856996
+zaf,2001,94,Complete primary,153.062267
+zaf,2001,94,Some secondary,638.273071
+zaf,2001,94,Grade 12/Std 10,365.000346
+zaf,2001,94,Higher,206.109179
+zaf,2001,94,Unspecified,0
+zaf,2001,94,Not applicable,0
+zaf,2001,94,Total,3894.537756
+zaf,2001,95,No schooling,2306.558721
+zaf,2001,95,Some primary,476.561715
+zaf,2001,95,Complete primary,99.583018
+zaf,2001,95,Some secondary,539.305462
+zaf,2001,95,Grade 12/Std 10,252.075429
+zaf,2001,95,Higher,147.630149
+zaf,2001,95,Unspecified,0
+zaf,2001,95,Not applicable,0
+zaf,2001,95,Total,3821.714494
+zaf,2001,96,No schooling,1689.338844
+zaf,2001,96,Some primary,382.457843
+zaf,2001,96,Complete primary,95.756302
+zaf,2001,96,Some secondary,491.791284
+zaf,2001,96,Grade 12/Std 10,162.141126
+zaf,2001,96,Higher,115.159339
+zaf,2001,96,Unspecified,0
+zaf,2001,96,Not applicable,0
+zaf,2001,96,Total,2936.644738
+zaf,2001,97,No schooling,1677.358195
+zaf,2001,97,Some primary,369.363202
+zaf,2001,97,Complete primary,70.796189
+zaf,2001,97,Some secondary,379.902851
+zaf,2001,97,Grade 12/Std 10,152.627584
+zaf,2001,97,Higher,69.676136
+zaf,2001,97,Unspecified,0
+zaf,2001,97,Not applicable,0
+zaf,2001,97,Total,2719.724157
+zaf,2001,98,No schooling,1378.24933
+zaf,2001,98,Some primary,347.433663
+zaf,2001,98,Complete primary,60.969073
+zaf,2001,98,Some secondary,307.889782
+zaf,2001,98,Grade 12/Std 10,115.438982
+zaf,2001,98,Higher,59.294354
+zaf,2001,98,Unspecified,0
+zaf,2001,98,Not applicable,0
+zaf,2001,98,Total,2269.275184
+zaf,2001,99,No schooling,2651.82009
+zaf,2001,99,Some primary,499.251114
+zaf,2001,99,Complete primary,75.588027
+zaf,2001,99,Some secondary,298.26004
+zaf,2001,99,Grade 12/Std 10,113.814114
+zaf,2001,99,Higher,51.010322
+zaf,2001,99,Unspecified,0
+zaf,2001,99,Not applicable,0
+zaf,2001,99,Total,3689.743707
+zaf,2001,100,No schooling,1626.731663
+zaf,2001,100,Some primary,348.542865
+zaf,2001,100,Complete primary,46.90444
+zaf,2001,100,Some secondary,226.223229
+zaf,2001,100,Grade 12/Std 10,85.614232
+zaf,2001,100,Higher,46.609731
+zaf,2001,100,Unspecified,0
+zaf,2001,100,Not applicable,0
+zaf,2001,100,Total,2380.62616
+zaf,2001,101,No schooling,1001.399539
+zaf,2001,101,Some primary,217.096464
+zaf,2001,101,Complete primary,29.575602
+zaf,2001,101,Some secondary,147.589677
+zaf,2001,101,Grade 12/Std 10,63.863922
+zaf,2001,101,Higher,36.663984
+zaf,2001,101,Unspecified,0
+zaf,2001,101,Not applicable,0
+zaf,2001,101,Total,1496.189188
+zaf,2001,102,No schooling,381.986403
+zaf,2001,102,Some primary,48.676175
+zaf,2001,102,Complete primary,12.927094
+zaf,2001,102,Some secondary,29.691944
+zaf,2001,102,Grade 12/Std 10,12.006409
+zaf,2001,102,Higher,3.880118
+zaf,2001,102,Unspecified,0
+zaf,2001,102,Not applicable,0
+zaf,2001,102,Total,489.168143
+zaf,2001,103,No schooling,191.339489
+zaf,2001,103,Some primary,17.108709
+zaf,2001,103,Complete primary,1
+zaf,2001,103,Some secondary,11.369665
+zaf,2001,103,Grade 12/Std 10,3.220072
+zaf,2001,103,Higher,3.113719
+zaf,2001,103,Unspecified,0
+zaf,2001,103,Not applicable,0
+zaf,2001,103,Total,227.151654
+zaf,2001,104,No schooling,148.650278
+zaf,2001,104,Some primary,24.522213
+zaf,2001,104,Complete primary,3.30484
+zaf,2001,104,Some secondary,10.498327
+zaf,2001,104,Grade 12/Std 10,9.183545
+zaf,2001,104,Higher,4.364381
+zaf,2001,104,Unspecified,0
+zaf,2001,104,Not applicable,0
+zaf,2001,104,Total,200.523584
+zaf,2001,105,No schooling,167.939715
+zaf,2001,105,Some primary,35.461412
+zaf,2001,105,Complete primary,6.662832
+zaf,2001,105,Some secondary,12.326761
+zaf,2001,105,Grade 12/Std 10,4.701006
+zaf,2001,105,Higher,0
+zaf,2001,105,Unspecified,0
+zaf,2001,105,Not applicable,0
+zaf,2001,105,Total,227.091726
+zaf,2001,106,No schooling,105.481487
+zaf,2001,106,Some primary,10.092081
+zaf,2001,106,Complete primary,2.07957
+zaf,2001,106,Some secondary,4.503214
+zaf,2001,106,Grade 12/Std 10,0
+zaf,2001,106,Higher,2.314677
+zaf,2001,106,Unspecified,0
+zaf,2001,106,Not applicable,0
+zaf,2001,106,Total,124.471029
+zaf,2001,107,No schooling,53.996659
+zaf,2001,107,Some primary,10.851678
+zaf,2001,107,Complete primary,1.263292
+zaf,2001,107,Some secondary,6.856646
+zaf,2001,107,Grade 12/Std 10,1
+zaf,2001,107,Higher,0
+zaf,2001,107,Unspecified,0
+zaf,2001,107,Not applicable,0
+zaf,2001,107,Total,73.968275
+zaf,2001,108,No schooling,41.988819
+zaf,2001,108,Some primary,6.745553
+zaf,2001,108,Complete primary,2.377481
+zaf,2001,108,Some secondary,3.331471
+zaf,2001,108,Grade 12/Std 10,0
+zaf,2001,108,Higher,0
+zaf,2001,108,Unspecified,0
+zaf,2001,108,Not applicable,0
+zaf,2001,108,Total,54.443324
+zaf,2001,109,No schooling,50.566154
+zaf,2001,109,Some primary,16.420428
+zaf,2001,109,Complete primary,3.330187
+zaf,2001,109,Some secondary,4.797928
+zaf,2001,109,Grade 12/Std 10,1
+zaf,2001,109,Higher,1.07957
+zaf,2001,109,Unspecified,0
+zaf,2001,109,Not applicable,0
+zaf,2001,109,Total,77.194267
+zaf,2001,110,No schooling,70.336788
+zaf,2001,110,Some primary,22.053923
+zaf,2001,110,Complete primary,2.328071
+zaf,2001,110,Some secondary,0
+zaf,2001,110,Grade 12/Std 10,1
+zaf,2001,110,Higher,2
+zaf,2001,110,Unspecified,0
+zaf,2001,110,Not applicable,0
+zaf,2001,110,Total,97.718782
+zaf,2001,111,No schooling,94.1283
+zaf,2001,111,Some primary,23.888239
+zaf,2001,111,Complete primary,3.247767
+zaf,2001,111,Some secondary,8.733444
+zaf,2001,111,Grade 12/Std 10,1.157356
+zaf,2001,111,Higher,1.137476
+zaf,2001,111,Unspecified,0
+zaf,2001,111,Not applicable,0
+zaf,2001,111,Total,132.292582
+zaf,2001,112,No schooling,33.77266
+zaf,2001,112,Some primary,13.27003
+zaf,2001,112,Complete primary,3.257968
+zaf,2001,112,Some secondary,4.552409
+zaf,2001,112,Grade 12/Std 10,1.137476
+zaf,2001,112,Higher,0
+zaf,2001,112,Unspecified,0
+zaf,2001,112,Not applicable,0
+zaf,2001,112,Total,55.990543
+zaf,2001,113,No schooling,18.964427
+zaf,2001,113,Some primary,14.427242
+zaf,2001,113,Complete primary,9.943429
+zaf,2001,113,Some secondary,5.359664
+zaf,2001,113,Grade 12/Std 10,2.099157
+zaf,2001,113,Higher,1.178791
+zaf,2001,113,Unspecified,0
+zaf,2001,113,Not applicable,0
+zaf,2001,113,Total,51.97271
+zaf,2001,114,No schooling,15.020306
+zaf,2001,114,Some primary,6.640947
+zaf,2001,114,Complete primary,1.220072
+zaf,2001,114,Some secondary,12.241079
+zaf,2001,114,Grade 12/Std 10,0
+zaf,2001,114,Higher,0
+zaf,2001,114,Unspecified,0
+zaf,2001,114,Not applicable,0
+zaf,2001,114,Total,35.122404
+zaf,2001,115,No schooling,16.706391
+zaf,2001,115,Some primary,5.860617
+zaf,2001,115,Complete primary,1.137476
+zaf,2001,115,Some secondary,10.060059
+zaf,2001,115,Grade 12/Std 10,1.154188
+zaf,2001,115,Higher,1.220072
+zaf,2001,115,Unspecified,0
+zaf,2001,115,Not applicable,0
+zaf,2001,115,Total,36.138803
+zaf,2001,116,No schooling,7.525535
+zaf,2001,116,Some primary,3.837156
+zaf,2001,116,Complete primary,1.178791
+zaf,2001,116,Some secondary,8.84777
+zaf,2001,116,Grade 12/Std 10,1.137476
+zaf,2001,116,Higher,1.113719
+zaf,2001,116,Unspecified,0
+zaf,2001,116,Not applicable,0
+zaf,2001,116,Total,23.640447
+zaf,2001,117,No schooling,7.866994
+zaf,2001,117,Some primary,2.427502
+zaf,2001,117,Complete primary,2.114189
+zaf,2001,117,Some secondary,13.108279
+zaf,2001,117,Grade 12/Std 10,5.711395
+zaf,2001,117,Higher,1.137712
+zaf,2001,117,Unspecified,0
+zaf,2001,117,Not applicable,0
+zaf,2001,117,Total,32.366071
+zaf,2001,118,No schooling,10.301349
+zaf,2001,118,Some primary,6.539659
+zaf,2001,118,Complete primary,3.471737
+zaf,2001,118,Some secondary,17.856423
+zaf,2001,118,Grade 12/Std 10,2.137712
+zaf,2001,118,Higher,2.314549
+zaf,2001,118,Unspecified,0
+zaf,2001,118,Not applicable,0
+zaf,2001,118,Total,42.621429
+zaf,2001,119,No schooling,14.307738
+zaf,2001,119,Some primary,3.044622
+zaf,2001,119,Complete primary,1.137354
+zaf,2001,119,Some secondary,8.946829
+zaf,2001,119,Grade 12/Std 10,1.154188
+zaf,2001,119,Higher,0
+zaf,2001,119,Unspecified,0
+zaf,2001,119,Not applicable,0
+zaf,2001,119,Total,28.590731
+zaf,2001,120,No schooling,41.248359
+zaf,2001,120,Some primary,7.091391
+zaf,2001,120,Complete primary,1.099157
+zaf,2001,120,Some secondary,8.341194
+zaf,2001,120,Grade 12/Std 10,9.095386
+zaf,2001,120,Higher,3.352902
+zaf,2001,120,Unspecified,0
+zaf,2001,120,Not applicable,0
+zaf,2001,120,Total,70.228389
+zaf,2011,0,No schooling,0
+zaf,2011,0,Some primary,0
+zaf,2011,0,Complete primary,0
+zaf,2011,0,Some secondary,0
+zaf,2011,0,Grade 12/Std 10,0
+zaf,2011,0,Higher,0
+zaf,2011,0,Unspecified,0
+zaf,2011,0,Not applicable,1159124.929
+zaf,2011,0,Total,1159124.929
+zaf,2011,1,No schooling,0
+zaf,2011,1,Some primary,0
+zaf,2011,1,Complete primary,0
+zaf,2011,1,Some secondary,0
+zaf,2011,1,Grade 12/Std 10,0
+zaf,2011,1,Higher,0
+zaf,2011,1,Unspecified,0
+zaf,2011,1,Not applicable,1134381.686
+zaf,2011,1,Total,1134381.686
+zaf,2011,2,No schooling,0
+zaf,2011,2,Some primary,0
+zaf,2011,2,Complete primary,0
+zaf,2011,2,Some secondary,0
+zaf,2011,2,Grade 12/Std 10,0
+zaf,2011,2,Higher,0
+zaf,2011,2,Unspecified,0
+zaf,2011,2,Not applicable,1150531.73
+zaf,2011,2,Total,1150531.73
+zaf,2011,3,No schooling,0
+zaf,2011,3,Some primary,0
+zaf,2011,3,Complete primary,0
+zaf,2011,3,Some secondary,0
+zaf,2011,3,Grade 12/Std 10,0
+zaf,2011,3,Higher,0
+zaf,2011,3,Unspecified,0
+zaf,2011,3,Not applicable,1135910.17
+zaf,2011,3,Total,1135910.17
+zaf,2011,4,No schooling,0
+zaf,2011,4,Some primary,0
+zaf,2011,4,Complete primary,0
+zaf,2011,4,Some secondary,0
+zaf,2011,4,Grade 12/Std 10,0
+zaf,2011,4,Higher,0
+zaf,2011,4,Unspecified,0
+zaf,2011,4,Not applicable,1105503.267
+zaf,2011,4,Total,1105503.267
+zaf,2011,5,No schooling,279017.3152
+zaf,2011,5,Some primary,774391.9592
+zaf,2011,5,Complete primary,0
+zaf,2011,5,Some secondary,0
+zaf,2011,5,Grade 12/Std 10,0
+zaf,2011,5,Higher,0
+zaf,2011,5,Unspecified,297.06847
+zaf,2011,5,Not applicable,2270
+zaf,2011,5,Total,1055976.343
+zaf,2011,6,No schooling,83911.30798
+zaf,2011,6,Some primary,949750.7476
+zaf,2011,6,Complete primary,0
+zaf,2011,6,Some secondary,0
+zaf,2011,6,Grade 12/Std 10,0
+zaf,2011,6,Higher,0
+zaf,2011,6,Unspecified,121.96024
+zaf,2011,6,Not applicable,2252
+zaf,2011,6,Total,1036036.016
+zaf,2011,7,No schooling,24069.46158
+zaf,2011,7,Some primary,927650.029
+zaf,2011,7,Complete primary,0
+zaf,2011,7,Some secondary,0
+zaf,2011,7,Grade 12/Std 10,0
+zaf,2011,7,Higher,0
+zaf,2011,7,Unspecified,46.46217
+zaf,2011,7,Not applicable,2896
+zaf,2011,7,Total,954661.9527
+zaf,2011,8,No schooling,11550.20617
+zaf,2011,8,Some primary,883299.8576
+zaf,2011,8,Complete primary,0
+zaf,2011,8,Some secondary,0
+zaf,2011,8,Grade 12/Std 10,0
+zaf,2011,8,Higher,0
+zaf,2011,8,Unspecified,82.61605
+zaf,2011,8,Not applicable,3134
+zaf,2011,8,Total,898066.6798
+zaf,2011,9,No schooling,8965.56597
+zaf,2011,9,Some primary,862546.0246
+zaf,2011,9,Complete primary,0
+zaf,2011,9,Some secondary,0
+zaf,2011,9,Grade 12/Std 10,0
+zaf,2011,9,Higher,0
+zaf,2011,9,Unspecified,95.67108
+zaf,2011,9,Not applicable,3403
+zaf,2011,9,Total,875010.2617
+zaf,2011,10,No schooling,12759.73999
+zaf,2011,10,Some primary,896815.9898
+zaf,2011,10,Complete primary,772.13654
+zaf,2011,10,Some secondary,0
+zaf,2011,10,Grade 12/Std 10,0
+zaf,2011,10,Higher,0
+zaf,2011,10,Unspecified,126.34668
+zaf,2011,10,Not applicable,3751
+zaf,2011,10,Total,914225.213
+zaf,2011,11,No schooling,8291.30281
+zaf,2011,11,Some primary,925138.9981
+zaf,2011,11,Complete primary,1806.57784
+zaf,2011,11,Some secondary,0
+zaf,2011,11,Grade 12/Std 10,0
+zaf,2011,11,Higher,0
+zaf,2011,11,Unspecified,107.36178
+zaf,2011,11,Not applicable,4861
+zaf,2011,11,Total,940205.2406
+zaf,2011,12,No schooling,6677.43059
+zaf,2011,12,Some primary,698193.564
+zaf,2011,12,Complete primary,159054.1827
+zaf,2011,12,Some secondary,27836.03154
+zaf,2011,12,Grade 12/Std 10,0
+zaf,2011,12,Higher,0
+zaf,2011,12,Unspecified,126.10573
+zaf,2011,12,Not applicable,5379
+zaf,2011,12,Total,897266.3146
+zaf,2011,13,No schooling,5955.57925
+zaf,2011,13,Some primary,450129.4654
+zaf,2011,13,Complete primary,284780.0844
+zaf,2011,13,Some secondary,157016.5467
+zaf,2011,13,Grade 12/Std 10,22.10869
+zaf,2011,13,Higher,0
+zaf,2011,13,Unspecified,136.80978
+zaf,2011,13,Not applicable,7238
+zaf,2011,13,Total,905278.5943
+zaf,2011,14,No schooling,6040.99858
+zaf,2011,14,Some primary,245967.8116
+zaf,2011,14,Complete primary,238986.0924
+zaf,2011,14,Some secondary,435437.2105
+zaf,2011,14,Grade 12/Std 10,7.00922
+zaf,2011,14,Higher,0
+zaf,2011,14,Unspecified,144.60833
+zaf,2011,14,Not applicable,11327
+zaf,2011,14,Total,937910.7306
+zaf,2011,15,No schooling,6353.31331
+zaf,2011,15,Some primary,142182.3068
+zaf,2011,15,Complete primary,141741.7677
+zaf,2011,15,Some secondary,675115.4471
+zaf,2011,15,Grade 12/Std 10,11.43253
+zaf,2011,15,Higher,0
+zaf,2011,15,Unspecified,198.56446
+zaf,2011,15,Not applicable,15633
+zaf,2011,15,Total,981235.8319
+zaf,2011,16,No schooling,7145.56246
+zaf,2011,16,Some primary,83957.19075
+zaf,2011,16,Complete primary,87701.9573
+zaf,2011,16,Some secondary,782933.3305
+zaf,2011,16,Grade 12/Std 10,437.01863
+zaf,2011,16,Higher,1257.24838
+zaf,2011,16,Unspecified,251.05195
+zaf,2011,16,Not applicable,17805
+zaf,2011,16,Total,981488.3599
+zaf,2011,17,No schooling,8409.81199
+zaf,2011,17,Some primary,54838.39934
+zaf,2011,17,Complete primary,56542.30889
+zaf,2011,17,Some secondary,802848.1067
+zaf,2011,17,Grade 12/Std 10,60148.45969
+zaf,2011,17,Higher,3316.39438
+zaf,2011,17,Unspecified,322.77618
+zaf,2011,17,Not applicable,18732
+zaf,2011,17,Total,1005158.257
+zaf,2011,18,No schooling,10265.94423
+zaf,2011,18,Some primary,39751.98929
+zaf,2011,18,Complete primary,40177.98967
+zaf,2011,18,Some secondary,658107.7973
+zaf,2011,18,Grade 12/Std 10,211766.1578
+zaf,2011,18,Higher,16723.61947
+zaf,2011,18,Unspecified,497.05495
+zaf,2011,18,Not applicable,23720
+zaf,2011,18,Total,1001010.553
+zaf,2011,19,No schooling,13369.44028
+zaf,2011,19,Some primary,34442.50971
+zaf,2011,19,Complete primary,35312.15364
+zaf,2011,19,Some secondary,554308.5677
+zaf,2011,19,Grade 12/Std 10,319301.9689
+zaf,2011,19,Higher,45269.24005
+zaf,2011,19,Unspecified,882.56691
+zaf,2011,19,Not applicable,31698
+zaf,2011,19,Total,1034584.447
+zaf,2011,20,No schooling,16677.95973
+zaf,2011,20,Some primary,39457.02791
+zaf,2011,20,Complete primary,26124.10433
+zaf,2011,20,Some secondary,510965.7799
+zaf,2011,20,Grade 12/Std 10,409012.7452
+zaf,2011,20,Higher,59049.36681
+zaf,2011,20,Unspecified,1919.10161
+zaf,2011,20,Not applicable,36280
+zaf,2011,20,Total,1099486.085
+zaf,2011,21,No schooling,19884.8004
+zaf,2011,21,Some primary,43857.8978
+zaf,2011,21,Complete primary,28743.55633
+zaf,2011,21,Some secondary,475591.245
+zaf,2011,21,Grade 12/Std 10,443893.0097
+zaf,2011,21,Higher,77650.98554
+zaf,2011,21,Unspecified,2382.90516
+zaf,2011,21,Not applicable,39250
+zaf,2011,21,Total,1131254.4
+zaf,2011,22,No schooling,20624.49336
+zaf,2011,22,Some primary,42946.49701
+zaf,2011,22,Complete primary,27884.08568
+zaf,2011,22,Some secondary,413916.4423
+zaf,2011,22,Grade 12/Std 10,426292.7292
+zaf,2011,22,Higher,93953.98395
+zaf,2011,22,Unspecified,3104.10903
+zaf,2011,22,Not applicable,31344
+zaf,2011,22,Total,1060066.341
+zaf,2011,23,No schooling,22524.59278
+zaf,2011,23,Some primary,47172.77334
+zaf,2011,23,Complete primary,30222.43158
+zaf,2011,23,Some secondary,395097.4529
+zaf,2011,23,Grade 12/Std 10,425240.6782
+zaf,2011,23,Higher,106136.8529
+zaf,2011,23,Unspecified,3190.17264
+zaf,2011,23,Not applicable,27194
+zaf,2011,23,Total,1056778.954
+zaf,2011,24,No schooling,21952.12041
+zaf,2011,24,Some primary,46625.49138
+zaf,2011,24,Complete primary,29951.39499
+zaf,2011,24,Some secondary,376474.6955
+zaf,2011,24,Grade 12/Std 10,408667.3738
+zaf,2011,24,Higher,114788.0287
+zaf,2011,24,Unspecified,3390.25893
+zaf,2011,24,Not applicable,25107
+zaf,2011,24,Total,1026956.364
+zaf,2011,25,No schooling,25054.3188
+zaf,2011,25,Some primary,56032.52629
+zaf,2011,25,Complete primary,34184.22108
+zaf,2011,25,Some secondary,379648.8277
+zaf,2011,25,Grade 12/Std 10,399611.3456
+zaf,2011,25,Higher,127399.9293
+zaf,2011,25,Unspecified,3866.74063
+zaf,2011,25,Not applicable,23992
+zaf,2011,25,Total,1049789.909
+zaf,2011,26,No schooling,26233.93951
+zaf,2011,26,Some primary,57124.96746
+zaf,2011,26,Complete primary,34490.82072
+zaf,2011,26,Some secondary,380745.5998
+zaf,2011,26,Grade 12/Std 10,395119.6132
+zaf,2011,26,Higher,132789.1556
+zaf,2011,26,Unspecified,3755.43186
+zaf,2011,26,Not applicable,24762
+zaf,2011,26,Total,1055021.528
+zaf,2011,27,No schooling,25362.52935
+zaf,2011,27,Some primary,55228.877
+zaf,2011,27,Complete primary,33551.45203
+zaf,2011,27,Some secondary,362603.6001
+zaf,2011,27,Grade 12/Std 10,368930.6867
+zaf,2011,27,Higher,129545.0005
+zaf,2011,27,Unspecified,3639.54011
+zaf,2011,27,Not applicable,19985
+zaf,2011,27,Total,998846.6858
+zaf,2011,28,No schooling,26003.64323
+zaf,2011,28,Some primary,57155.54834
+zaf,2011,28,Complete primary,33315.31192
+zaf,2011,28,Some secondary,363209.478
+zaf,2011,28,Grade 12/Std 10,358454.8272
+zaf,2011,28,Higher,129918.6577
+zaf,2011,28,Unspecified,3713.06694
+zaf,2011,28,Not applicable,19610
+zaf,2011,28,Total,991380.5334
+zaf,2011,29,No schooling,27076.62221
+zaf,2011,29,Some primary,58130.03041
+zaf,2011,29,Complete primary,33126.75985
+zaf,2011,29,Some secondary,355063.0661
+zaf,2011,29,Grade 12/Std 10,343102.1275
+zaf,2011,29,Higher,126271.9462
+zaf,2011,29,Unspecified,3491.59884
+zaf,2011,29,Not applicable,18016
+zaf,2011,29,Total,964278.1511
+zaf,2011,30,No schooling,25408.02841
+zaf,2011,30,Some primary,51787.16324
+zaf,2011,30,Complete primary,29394.937
+zaf,2011,30,Some secondary,311872.2045
+zaf,2011,30,Grade 12/Std 10,310293.1588
+zaf,2011,30,Higher,121118.0391
+zaf,2011,30,Unspecified,3320.00626
+zaf,2011,30,Not applicable,15740
+zaf,2011,30,Total,868933.5374
+zaf,2011,31,No schooling,28210.15915
+zaf,2011,31,Some primary,56619.51322
+zaf,2011,31,Complete primary,31332.93545
+zaf,2011,31,Some secondary,318498.5566
+zaf,2011,31,Grade 12/Std 10,302446.0503
+zaf,2011,31,Higher,117030.0311
+zaf,2011,31,Unspecified,3205.6551
+zaf,2011,31,Not applicable,18037
+zaf,2011,31,Total,875379.9009
+zaf,2011,32,No schooling,27675.92598
+zaf,2011,32,Some primary,55111.43973
+zaf,2011,32,Complete primary,29459.65517
+zaf,2011,32,Some secondary,290630.7874
+zaf,2011,32,Grade 12/Std 10,280444.1488
+zaf,2011,32,Higher,110515.9649
+zaf,2011,32,Unspecified,2948.9606
+zaf,2011,32,Not applicable,13121
+zaf,2011,32,Total,809907.8826
+zaf,2011,33,No schooling,24941.11124
+zaf,2011,33,Some primary,50190.44258
+zaf,2011,33,Complete primary,26472.78515
+zaf,2011,33,Some secondary,252602.4413
+zaf,2011,33,Grade 12/Std 10,255510.0535
+zaf,2011,33,Higher,105353.9942
+zaf,2011,33,Unspecified,2629.44515
+zaf,2011,33,Not applicable,13849
+zaf,2011,33,Total,731549.2732
+zaf,2011,34,No schooling,28469.90982
+zaf,2011,34,Some primary,56836.73868
+zaf,2011,34,Complete primary,28359.30875
+zaf,2011,34,Some secondary,255509.4142
+zaf,2011,34,Grade 12/Std 10,253515.1395
+zaf,2011,34,Higher,105919.2506
+zaf,2011,34,Unspecified,2738.69938
+zaf,2011,34,Not applicable,11891
+zaf,2011,34,Total,743239.4608
+zaf,2011,35,No schooling,29417.35658
+zaf,2011,35,Some primary,58366.94399
+zaf,2011,35,Complete primary,28710.96072
+zaf,2011,35,Some secondary,246649.0457
+zaf,2011,35,Grade 12/Std 10,247807.7249
+zaf,2011,35,Higher,106723.1617
+zaf,2011,35,Unspecified,2576.27908
+zaf,2011,35,Not applicable,12101
+zaf,2011,35,Total,732352.4726
+zaf,2011,36,No schooling,32026.16416
+zaf,2011,36,Some primary,64242.30783
+zaf,2011,36,Complete primary,31192.05317
+zaf,2011,36,Some secondary,241949.5902
+zaf,2011,36,Grade 12/Std 10,236384.1445
+zaf,2011,36,Higher,103218.5016
+zaf,2011,36,Unspecified,2550.55361
+zaf,2011,36,Not applicable,11958
+zaf,2011,36,Total,723521.3151
+zaf,2011,37,No schooling,30243.28126
+zaf,2011,37,Some primary,62160.88218
+zaf,2011,37,Complete primary,29276.56998
+zaf,2011,37,Some secondary,221913.9151
+zaf,2011,37,Grade 12/Std 10,216850.8054
+zaf,2011,37,Higher,101554.8537
+zaf,2011,37,Unspecified,2306.61243
+zaf,2011,37,Not applicable,10232
+zaf,2011,37,Total,674538.92
+zaf,2011,38,No schooling,31833.40301
+zaf,2011,38,Some primary,66963.65291
+zaf,2011,38,Complete primary,30706.96866
+zaf,2011,38,Some secondary,219154.2483
+zaf,2011,38,Grade 12/Std 10,205356.265
+zaf,2011,38,Higher,99784.23103
+zaf,2011,38,Unspecified,2312.45781
+zaf,2011,38,Not applicable,9808
+zaf,2011,38,Total,665919.2268
+zaf,2011,39,No schooling,35566.7589
+zaf,2011,39,Some primary,73092.16766
+zaf,2011,39,Complete primary,32714.25076
+zaf,2011,39,Some secondary,218218.9808
+zaf,2011,39,Grade 12/Std 10,199718.3619
+zaf,2011,39,Higher,99961.10182
+zaf,2011,39,Unspecified,2436.29871
+zaf,2011,39,Not applicable,9727
+zaf,2011,39,Total,671434.9205
+zaf,2011,40,No schooling,32714.36275
+zaf,2011,40,Some primary,65342.39248
+zaf,2011,40,Complete primary,28764.13426
+zaf,2011,40,Some secondary,188500.3444
+zaf,2011,40,Grade 12/Std 10,174202.9987
+zaf,2011,40,Higher,96444.92754
+zaf,2011,40,Unspecified,2317.41534
+zaf,2011,40,Not applicable,9918
+zaf,2011,40,Total,598204.5755
+zaf,2011,41,No schooling,40624.07117
+zaf,2011,41,Some primary,81822.48197
+zaf,2011,41,Complete primary,34811.31241
+zaf,2011,41,Some secondary,208538.3239
+zaf,2011,41,Grade 12/Std 10,171335.8396
+zaf,2011,41,Higher,93323.05325
+zaf,2011,41,Unspecified,2328.77015
+zaf,2011,41,Not applicable,10089
+zaf,2011,41,Total,642872.8524
+zaf,2011,42,No schooling,40520.79158
+zaf,2011,42,Some primary,81384.59109
+zaf,2011,42,Complete primary,34553.94363
+zaf,2011,42,Some secondary,197062.083
+zaf,2011,42,Grade 12/Std 10,154838.8401
+zaf,2011,42,Higher,89834.96331
+zaf,2011,42,Unspecified,2196.06776
+zaf,2011,42,Not applicable,9592
+zaf,2011,42,Total,609983.2804
+zaf,2011,43,No schooling,41765.28036
+zaf,2011,43,Some primary,84634.22671
+zaf,2011,43,Complete primary,35152.27807
+zaf,2011,43,Some secondary,193479.3997
+zaf,2011,43,Grade 12/Std 10,142689.3353
+zaf,2011,43,Higher,85636.5433
+zaf,2011,43,Unspecified,2067.87565
+zaf,2011,43,Not applicable,8778
+zaf,2011,43,Total,594202.9391
+zaf,2011,44,No schooling,35503.98893
+zaf,2011,44,Some primary,72393.39607
+zaf,2011,44,Complete primary,29711.90309
+zaf,2011,44,Some secondary,161087.2936
+zaf,2011,44,Grade 12/Std 10,118522.1122
+zaf,2011,44,Higher,75746.2882
+zaf,2011,44,Unspecified,1761.5442
+zaf,2011,44,Not applicable,8628
+zaf,2011,44,Total,503354.5263
+zaf,2011,45,No schooling,42399.3799
+zaf,2011,45,Some primary,83508.85975
+zaf,2011,45,Complete primary,33161.41245
+zaf,2011,45,Some secondary,168033.603
+zaf,2011,45,Grade 12/Std 10,113760.8271
+zaf,2011,45,Higher,73728.94423
+zaf,2011,45,Unspecified,1881.53537
+zaf,2011,45,Not applicable,8279
+zaf,2011,45,Total,524753.5618
+zaf,2011,46,No schooling,46456.78724
+zaf,2011,46,Some primary,90019.40784
+zaf,2011,46,Complete primary,35728.81544
+zaf,2011,46,Some secondary,169387.3324
+zaf,2011,46,Grade 12/Std 10,107166.4158
+zaf,2011,46,Higher,70527.84036
+zaf,2011,46,Unspecified,1773.11591
+zaf,2011,46,Not applicable,8365
+zaf,2011,46,Total,529424.715
+zaf,2011,47,No schooling,49168.48825
+zaf,2011,47,Some primary,95750.01604
+zaf,2011,47,Complete primary,36579.7295
+zaf,2011,47,Some secondary,169721.9725
+zaf,2011,47,Grade 12/Std 10,101683.3095
+zaf,2011,47,Higher,68684.41071
+zaf,2011,47,Unspecified,1809.84302
+zaf,2011,47,Not applicable,8611
+zaf,2011,47,Total,532008.7695
+zaf,2011,48,No schooling,54004.13393
+zaf,2011,48,Some primary,101505.1882
+zaf,2011,48,Complete primary,37584.04048
+zaf,2011,48,Some secondary,166774.1626
+zaf,2011,48,Grade 12/Std 10,95302.53259
+zaf,2011,48,Higher,64792.76971
+zaf,2011,48,Unspecified,1751.32854
+zaf,2011,48,Not applicable,8585
+zaf,2011,48,Total,530299.1561
+zaf,2011,49,No schooling,53723.75595
+zaf,2011,49,Some primary,98840.38666
+zaf,2011,49,Complete primary,34718.13456
+zaf,2011,49,Some secondary,155077.1691
+zaf,2011,49,Grade 12/Std 10,89578.32127
+zaf,2011,49,Higher,62076.37061
+zaf,2011,49,Unspecified,1667.88371
+zaf,2011,49,Not applicable,8115
+zaf,2011,49,Total,503797.0219
+zaf,2011,50,No schooling,49834.9262
+zaf,2011,50,Some primary,87376.11569
+zaf,2011,50,Complete primary,29688.04005
+zaf,2011,50,Some secondary,136443.6956
+zaf,2011,50,Grade 12/Std 10,80584.68013
+zaf,2011,50,Higher,59239.41987
+zaf,2011,50,Unspecified,1676.80236
+zaf,2011,50,Not applicable,6636
+zaf,2011,50,Total,451479.6799
+zaf,2011,51,No schooling,60676.26213
+zaf,2011,51,Some primary,101060.1446
+zaf,2011,51,Complete primary,33055.93189
+zaf,2011,51,Some secondary,145485.0791
+zaf,2011,51,Grade 12/Std 10,78200.87627
+zaf,2011,51,Higher,57441.92664
+zaf,2011,51,Unspecified,1643.38592
+zaf,2011,51,Not applicable,7720
+zaf,2011,51,Total,485283.6065
+zaf,2011,52,No schooling,55275.65707
+zaf,2011,52,Some primary,93253.37281
+zaf,2011,52,Complete primary,29355.24252
+zaf,2011,52,Some secondary,130562.8416
+zaf,2011,52,Grade 12/Std 10,68842.15244
+zaf,2011,52,Higher,53896.43446
+zaf,2011,52,Unspecified,1573.14535
+zaf,2011,52,Not applicable,6801
+zaf,2011,52,Total,439559.8462
+zaf,2011,53,No schooling,60390.93055
+zaf,2011,53,Some primary,99623.14372
+zaf,2011,53,Complete primary,30228.25834
+zaf,2011,53,Some secondary,131134.0778
+zaf,2011,53,Grade 12/Std 10,63887.43223
+zaf,2011,53,Higher,51548.24772
+zaf,2011,53,Unspecified,1585.72561
+zaf,2011,53,Not applicable,6514
+zaf,2011,53,Total,444911.816
+zaf,2011,54,No schooling,54344.45522
+zaf,2011,54,Some primary,88493.08528
+zaf,2011,54,Complete primary,26373.4582
+zaf,2011,54,Some secondary,117078.1018
+zaf,2011,54,Grade 12/Std 10,56708.46677
+zaf,2011,54,Higher,46506.54054
+zaf,2011,54,Unspecified,1406.03471
+zaf,2011,54,Not applicable,6144
+zaf,2011,54,Total,397054.1425
+zaf,2011,55,No schooling,57428.32722
+zaf,2011,55,Some primary,86446.1989
+zaf,2011,55,Complete primary,24458.54736
+zaf,2011,55,Some secondary,111082.4758
+zaf,2011,55,Grade 12/Std 10,53435.56237
+zaf,2011,55,Higher,44082.41034
+zaf,2011,55,Unspecified,1399.87806
+zaf,2011,55,Not applicable,5496
+zaf,2011,55,Total,383829.4
+zaf,2011,56,No schooling,57289.27977
+zaf,2011,56,Some primary,84849.99085
+zaf,2011,56,Complete primary,23012.1254
+zaf,2011,56,Some secondary,103614.3492
+zaf,2011,56,Grade 12/Std 10,49671.15978
+zaf,2011,56,Higher,41514.88641
+zaf,2011,56,Unspecified,1466.81824
+zaf,2011,56,Not applicable,5867
+zaf,2011,56,Total,367285.6096
+zaf,2011,57,No schooling,56529.56401
+zaf,2011,57,Some primary,82966.24853
+zaf,2011,57,Complete primary,21999.74068
+zaf,2011,57,Some secondary,99418.96466
+zaf,2011,57,Grade 12/Std 10,45443.62099
+zaf,2011,57,Higher,38056.80919
+zaf,2011,57,Unspecified,1283.73582
+zaf,2011,57,Not applicable,5270
+zaf,2011,57,Total,350968.6839
+zaf,2011,58,No schooling,58590.21467
+zaf,2011,58,Some primary,86131.11774
+zaf,2011,58,Complete primary,22059.13104
+zaf,2011,58,Some secondary,96305.99534
+zaf,2011,58,Grade 12/Std 10,43128.71969
+zaf,2011,58,Higher,35286.65922
+zaf,2011,58,Unspecified,1263.10754
+zaf,2011,58,Not applicable,4226
+zaf,2011,58,Total,346990.9452
+zaf,2011,59,No schooling,63263.85617
+zaf,2011,59,Some primary,89154.69789
+zaf,2011,59,Complete primary,22085.68436
+zaf,2011,59,Some secondary,93345.01997
+zaf,2011,59,Grade 12/Std 10,41150.70879
+zaf,2011,59,Higher,33527.46335
+zaf,2011,59,Unspecified,1304.27432
+zaf,2011,59,Not applicable,4502
+zaf,2011,59,Total,348333.7049
+zaf,2011,60,No schooling,56814.45755
+zaf,2011,60,Some primary,69631.25778
+zaf,2011,60,Complete primary,16775.25877
+zaf,2011,60,Some secondary,76246.18905
+zaf,2011,60,Grade 12/Std 10,37490.67398
+zaf,2011,60,Higher,29714.36498
+zaf,2011,60,Unspecified,1204.21973
+zaf,2011,60,Not applicable,3501
+zaf,2011,60,Total,291377.4218
+zaf,2011,61,No schooling,68370.7194
+zaf,2011,61,Some primary,77879.10774
+zaf,2011,61,Complete primary,18336.13082
+zaf,2011,61,Some secondary,79296.22918
+zaf,2011,61,Grade 12/Std 10,35617.11435
+zaf,2011,61,Higher,27683.5127
+zaf,2011,61,Unspecified,1138.56601
+zaf,2011,61,Not applicable,3627
+zaf,2011,61,Total,311948.3802
+zaf,2011,62,No schooling,56453.81784
+zaf,2011,62,Some primary,66960.17008
+zaf,2011,62,Complete primary,15789.58848
+zaf,2011,62,Some secondary,71169.99111
+zaf,2011,62,Grade 12/Std 10,33317.54131
+zaf,2011,62,Higher,25839.95139
+zaf,2011,62,Unspecified,1199.15725
+zaf,2011,62,Not applicable,3886
+zaf,2011,62,Total,274616.2175
+zaf,2011,63,No schooling,54303.45071
+zaf,2011,63,Some primary,65571.6601
+zaf,2011,63,Complete primary,15193.11711
+zaf,2011,63,Some secondary,68812.49696
+zaf,2011,63,Grade 12/Std 10,32676.29385
+zaf,2011,63,Higher,25044.75114
+zaf,2011,63,Unspecified,1195.04182
+zaf,2011,63,Not applicable,3306
+zaf,2011,63,Total,266102.8117
+zaf,2011,64,No schooling,49766.63176
+zaf,2011,64,Some primary,57941.52762
+zaf,2011,64,Complete primary,13395.71552
+zaf,2011,64,Some secondary,61424.50751
+zaf,2011,64,Grade 12/Std 10,30683.30738
+zaf,2011,64,Higher,23659.93316
+zaf,2011,64,Unspecified,1171.51886
+zaf,2011,64,Not applicable,3680
+zaf,2011,64,Total,241723.1418
+zaf,2011,65,No schooling,46303.16073
+zaf,2011,65,Some primary,50404.38857
+zaf,2011,65,Complete primary,11966.74919
+zaf,2011,65,Some secondary,55872.34378
+zaf,2011,65,Grade 12/Std 10,28327.32046
+zaf,2011,65,Higher,21282.46889
+zaf,2011,65,Unspecified,1039.64548
+zaf,2011,65,Not applicable,3037
+zaf,2011,65,Total,218233.0771
+zaf,2011,66,No schooling,43379.558
+zaf,2011,66,Some primary,44388.52177
+zaf,2011,66,Complete primary,10575.73675
+zaf,2011,66,Some secondary,48752.71638
+zaf,2011,66,Grade 12/Std 10,25123.52209
+zaf,2011,66,Higher,18302.07831
+zaf,2011,66,Unspecified,958.64392
+zaf,2011,66,Not applicable,3218
+zaf,2011,66,Total,194698.7772
+zaf,2011,67,No schooling,42241.18394
+zaf,2011,67,Some primary,41671.31652
+zaf,2011,67,Complete primary,9388.70426
+zaf,2011,67,Some secondary,45073.7181
+zaf,2011,67,Grade 12/Std 10,23864.27806
+zaf,2011,67,Higher,18126.97054
+zaf,2011,67,Unspecified,981.01458
+zaf,2011,67,Not applicable,3152
+zaf,2011,67,Total,184499.186
+zaf,2011,68,No schooling,43379.17265
+zaf,2011,68,Some primary,40668.30392
+zaf,2011,68,Complete primary,8987.72754
+zaf,2011,68,Some secondary,42697.75932
+zaf,2011,68,Grade 12/Std 10,21557.05452
+zaf,2011,68,Higher,15940.15206
+zaf,2011,68,Unspecified,873.89597
+zaf,2011,68,Not applicable,3094
+zaf,2011,68,Total,177198.066
+zaf,2011,69,No schooling,47852.52584
+zaf,2011,69,Some primary,44809.17885
+zaf,2011,69,Complete primary,9304.23453
+zaf,2011,69,Some secondary,42452.92012
+zaf,2011,69,Grade 12/Std 10,20335.94936
+zaf,2011,69,Higher,14589.77905
+zaf,2011,69,Unspecified,897.9624
+zaf,2011,69,Not applicable,2933
+zaf,2011,69,Total,183175.5502
+zaf,2011,70,No schooling,43553.35512
+zaf,2011,70,Some primary,34856.70704
+zaf,2011,70,Complete primary,7234.57565
+zaf,2011,70,Some secondary,35676.50925
+zaf,2011,70,Grade 12/Std 10,18631.93119
+zaf,2011,70,Higher,13506.47927
+zaf,2011,70,Unspecified,837.4188
+zaf,2011,70,Not applicable,3108
+zaf,2011,70,Total,157404.9763
+zaf,2011,71,No schooling,65133.27721
+zaf,2011,71,Some primary,45272.01058
+zaf,2011,71,Complete primary,8659.30436
+zaf,2011,71,Some secondary,38535.49551
+zaf,2011,71,Grade 12/Std 10,17976.52737
+zaf,2011,71,Higher,12790.45816
+zaf,2011,71,Unspecified,822.12338
+zaf,2011,71,Not applicable,3313
+zaf,2011,71,Total,192502.1966
+zaf,2011,72,No schooling,43430.11407
+zaf,2011,72,Some primary,31601.34814
+zaf,2011,72,Complete primary,6538.09641
+zaf,2011,72,Some secondary,32264.19474
+zaf,2011,72,Grade 12/Std 10,16768.95572
+zaf,2011,72,Higher,11768.45469
+zaf,2011,72,Unspecified,854.44364
+zaf,2011,72,Not applicable,3430
+zaf,2011,72,Total,146655.6074
+zaf,2011,73,No schooling,39097.30622
+zaf,2011,73,Some primary,29122.08118
+zaf,2011,73,Complete primary,6108.75683
+zaf,2011,73,Some secondary,30339.68653
+zaf,2011,73,Grade 12/Std 10,15123.94271
+zaf,2011,73,Higher,10252.06913
+zaf,2011,73,Unspecified,713.13895
+zaf,2011,73,Not applicable,2989
+zaf,2011,73,Total,133745.9816
+zaf,2011,74,No schooling,33684.72532
+zaf,2011,74,Some primary,25612.73812
+zaf,2011,74,Complete primary,5370.23011
+zaf,2011,74,Some secondary,26606.46062
+zaf,2011,74,Grade 12/Std 10,13668.54376
+zaf,2011,74,Higher,9196.61344
+zaf,2011,74,Unspecified,629.47657
+zaf,2011,74,Not applicable,3253
+zaf,2011,74,Total,118021.7879
+zaf,2011,75,No schooling,38212.71794
+zaf,2011,75,Some primary,25829.49417
+zaf,2011,75,Complete primary,5123.18526
+zaf,2011,75,Some secondary,25942.62628
+zaf,2011,75,Grade 12/Std 10,12912.58397
+zaf,2011,75,Higher,8678.51931
+zaf,2011,75,Unspecified,596.25623
+zaf,2011,75,Not applicable,3170
+zaf,2011,75,Total,120465.3832
+zaf,2011,76,No schooling,30959.80097
+zaf,2011,76,Some primary,20863.91987
+zaf,2011,76,Complete primary,4241.26515
+zaf,2011,76,Some secondary,21739.37747
+zaf,2011,76,Grade 12/Std 10,11421.75576
+zaf,2011,76,Higher,7085.86638
+zaf,2011,76,Unspecified,523.75359
+zaf,2011,76,Not applicable,2516
+zaf,2011,76,Total,99351.73919
+zaf,2011,77,No schooling,31196.20362
+zaf,2011,77,Some primary,18912.56111
+zaf,2011,77,Complete primary,3657.87807
+zaf,2011,77,Some secondary,18329.73504
+zaf,2011,77,Grade 12/Std 10,10065.93847
+zaf,2011,77,Higher,6144.86481
+zaf,2011,77,Unspecified,510.86739
+zaf,2011,77,Not applicable,2537
+zaf,2011,77,Total,91355.04851
+zaf,2011,78,No schooling,29978.42368
+zaf,2011,78,Some primary,19475.78258
+zaf,2011,78,Complete primary,3415.49131
+zaf,2011,78,Some secondary,17679.16048
+zaf,2011,78,Grade 12/Std 10,9393.23661
+zaf,2011,78,Higher,5502.68631
+zaf,2011,78,Unspecified,458.58998
+zaf,2011,78,Not applicable,2423
+zaf,2011,78,Total,88326.37095
+zaf,2011,79,No schooling,27373.78542
+zaf,2011,79,Some primary,17930.40345
+zaf,2011,79,Complete primary,3336.63679
+zaf,2011,79,Some secondary,16234.24715
+zaf,2011,79,Grade 12/Std 10,8624.4318
+zaf,2011,79,Higher,5048.12305
+zaf,2011,79,Unspecified,429.62203
+zaf,2011,79,Not applicable,2791
+zaf,2011,79,Total,81768.24969
+zaf,2011,80,No schooling,24813.36085
+zaf,2011,80,Some primary,13657.20598
+zaf,2011,80,Complete primary,2435.2615
+zaf,2011,80,Some secondary,13642.41232
+zaf,2011,80,Grade 12/Std 10,8075.67668
+zaf,2011,80,Higher,4672.8891
+zaf,2011,80,Unspecified,441.47107
+zaf,2011,80,Not applicable,2740
+zaf,2011,80,Total,70478.2775
+zaf,2011,81,No schooling,41483.30135
+zaf,2011,81,Some primary,17314.08453
+zaf,2011,81,Complete primary,2927.94533
+zaf,2011,81,Some secondary,14003.95023
+zaf,2011,81,Grade 12/Std 10,7422.93475
+zaf,2011,81,Higher,4288.96569
+zaf,2011,81,Unspecified,380.50443
+zaf,2011,81,Not applicable,2895
+zaf,2011,81,Total,90716.68631
+zaf,2011,82,No schooling,25361.98111
+zaf,2011,82,Some primary,11995.3742
+zaf,2011,82,Complete primary,2072.42367
+zaf,2011,82,Some secondary,10990.28618
+zaf,2011,82,Grade 12/Std 10,6327.90994
+zaf,2011,82,Higher,3651.23253
+zaf,2011,82,Unspecified,321.76971
+zaf,2011,82,Not applicable,2901
+zaf,2011,82,Total,63621.97734
+zaf,2011,83,No schooling,20265.40115
+zaf,2011,83,Some primary,10661.52473
+zaf,2011,83,Complete primary,1874.59889
+zaf,2011,83,Some secondary,9378.44771
+zaf,2011,83,Grade 12/Std 10,5422.67624
+zaf,2011,83,Higher,2997.0509
+zaf,2011,83,Unspecified,281.98589
+zaf,2011,83,Not applicable,2673
+zaf,2011,83,Total,53554.68551
+zaf,2011,84,No schooling,16274.05582
+zaf,2011,84,Some primary,8543.84813
+zaf,2011,84,Complete primary,1562.64665
+zaf,2011,84,Some secondary,7959.20131
+zaf,2011,84,Grade 12/Std 10,4572.35237
+zaf,2011,84,Higher,2568.9355
+zaf,2011,84,Unspecified,256.2198
+zaf,2011,84,Not applicable,2807
+zaf,2011,84,Total,44544.25958
+zaf,2011,85,No schooling,15454.76404
+zaf,2011,85,Some primary,7383.95657
+zaf,2011,85,Complete primary,1230.81777
+zaf,2011,85,Some secondary,6750.04673
+zaf,2011,85,Grade 12/Std 10,3932.32545
+zaf,2011,85,Higher,2245.07731
+zaf,2011,85,Unspecified,230.1844
+zaf,2011,85,Not applicable,2530
+zaf,2011,85,Total,39757.17227
+zaf,2011,86,No schooling,14197.11391
+zaf,2011,86,Some primary,6474.09815
+zaf,2011,86,Complete primary,1128.15446
+zaf,2011,86,Some secondary,5703.39545
+zaf,2011,86,Grade 12/Std 10,3309.50699
+zaf,2011,86,Higher,1796.63534
+zaf,2011,86,Unspecified,204.69782
+zaf,2011,86,Not applicable,2480
+zaf,2011,86,Total,35293.60212
+zaf,2011,87,No schooling,12105.0617
+zaf,2011,87,Some primary,5278.4043
+zaf,2011,87,Complete primary,876.67669
+zaf,2011,87,Some secondary,4694.08259
+zaf,2011,87,Grade 12/Std 10,2788.92687
+zaf,2011,87,Higher,1502.19204
+zaf,2011,87,Unspecified,191.41957
+zaf,2011,87,Not applicable,2454
+zaf,2011,87,Total,29890.76376
+zaf,2011,88,No schooling,7732.21281
+zaf,2011,88,Some primary,3912.20169
+zaf,2011,88,Complete primary,640.75408
+zaf,2011,88,Some secondary,3549.01019
+zaf,2011,88,Grade 12/Std 10,2315.90134
+zaf,2011,88,Higher,1122.09103
+zaf,2011,88,Unspecified,124.28878
+zaf,2011,88,Not applicable,2163
+zaf,2011,88,Total,21559.45992
+zaf,2011,89,No schooling,7715.47507
+zaf,2011,89,Some primary,3757.79762
+zaf,2011,89,Complete primary,574.27039
+zaf,2011,89,Some secondary,3168.21878
+zaf,2011,89,Grade 12/Std 10,1947.95517
+zaf,2011,89,Higher,972.51487
+zaf,2011,89,Unspecified,96.27797
+zaf,2011,89,Not applicable,2000
+zaf,2011,89,Total,20232.50987
+zaf,2011,90,No schooling,8936.63602
+zaf,2011,90,Some primary,3341.57774
+zaf,2011,90,Complete primary,494.5315
+zaf,2011,90,Some secondary,2640.20059
+zaf,2011,90,Grade 12/Std 10,1443.52376
+zaf,2011,90,Higher,815.42509
+zaf,2011,90,Unspecified,74.06487
+zaf,2011,90,Not applicable,1814
+zaf,2011,90,Total,19559.95957
+zaf,2011,91,No schooling,12235.12366
+zaf,2011,91,Some primary,3516.82897
+zaf,2011,91,Complete primary,478.66162
+zaf,2011,91,Some secondary,2209.52148
+zaf,2011,91,Grade 12/Std 10,1257.70054
+zaf,2011,91,Higher,624.31099
+zaf,2011,91,Unspecified,84.54119
+zaf,2011,91,Not applicable,1487
+zaf,2011,91,Total,21893.68845
+zaf,2011,92,No schooling,6508.91207
+zaf,2011,92,Some primary,2127.00997
+zaf,2011,92,Complete primary,294.56575
+zaf,2011,92,Some secondary,1406.85528
+zaf,2011,92,Grade 12/Std 10,734.50694
+zaf,2011,92,Higher,360.43893
+zaf,2011,92,Unspecified,57.04903
+zaf,2011,92,Not applicable,1019
+zaf,2011,92,Total,12508.33797
+zaf,2011,93,No schooling,8251.29867
+zaf,2011,93,Some primary,2661.65054
+zaf,2011,93,Complete primary,341.78146
+zaf,2011,93,Some secondary,1431.45258
+zaf,2011,93,Grade 12/Std 10,649.17429
+zaf,2011,93,Higher,294.31482
+zaf,2011,93,Unspecified,42.44764
+zaf,2011,93,Not applicable,906
+zaf,2011,93,Total,14578.12
+zaf,2011,94,No schooling,2291.7711
+zaf,2011,94,Some primary,872.98761
+zaf,2011,94,Complete primary,140.1208
+zaf,2011,94,Some secondary,633.57312
+zaf,2011,94,Grade 12/Std 10,375.87816
+zaf,2011,94,Higher,172.45947
+zaf,2011,94,Unspecified,30.39297
+zaf,2011,94,Not applicable,701
+zaf,2011,94,Total,5218.18323
+zaf,2011,95,No schooling,2145.59475
+zaf,2011,95,Some primary,676.1475
+zaf,2011,95,Complete primary,125.78744
+zaf,2011,95,Some secondary,659.49904
+zaf,2011,95,Grade 12/Std 10,353.16015
+zaf,2011,95,Higher,163.21033
+zaf,2011,95,Unspecified,21.0514
+zaf,2011,95,Not applicable,551
+zaf,2011,95,Total,4695.45061
+zaf,2011,96,No schooling,1890.05596
+zaf,2011,96,Some primary,622.78844
+zaf,2011,96,Complete primary,113.12685
+zaf,2011,96,Some secondary,566.66409
+zaf,2011,96,Grade 12/Std 10,267.24064
+zaf,2011,96,Higher,137.64501
+zaf,2011,96,Unspecified,15.71972
+zaf,2011,96,Not applicable,551
+zaf,2011,96,Total,4164.24071
+zaf,2011,97,No schooling,2902.93536
+zaf,2011,97,Some primary,834.37952
+zaf,2011,97,Complete primary,112.25451
+zaf,2011,97,Some secondary,593.53354
+zaf,2011,97,Grade 12/Std 10,255.33708
+zaf,2011,97,Higher,107.04425
+zaf,2011,97,Unspecified,6.89437
+zaf,2011,97,Not applicable,363
+zaf,2011,97,Total,5175.37863
+zaf,2011,98,No schooling,1348.94138
+zaf,2011,98,Some primary,432.96464
+zaf,2011,98,Complete primary,60.16789
+zaf,2011,98,Some secondary,407.76059
+zaf,2011,98,Grade 12/Std 10,232.09979
+zaf,2011,98,Higher,129.69234
+zaf,2011,98,Unspecified,9.75415
+zaf,2011,98,Not applicable,216
+zaf,2011,98,Total,2837.38078
+zaf,2011,99,No schooling,1347.148
+zaf,2011,99,Some primary,425.82019
+zaf,2011,99,Complete primary,74.67982
+zaf,2011,99,Some secondary,353.18106
+zaf,2011,99,Grade 12/Std 10,187.46122
+zaf,2011,99,Higher,84.00428
+zaf,2011,99,Unspecified,3.4311
+zaf,2011,99,Not applicable,229
+zaf,2011,99,Total,2704.72567
+zaf,2011,100,No schooling,988.91195
+zaf,2011,100,Some primary,290.53743
+zaf,2011,100,Complete primary,37.52863
+zaf,2011,100,Some secondary,223.76881
+zaf,2011,100,Grade 12/Std 10,132.98082
+zaf,2011,100,Higher,54.66426
+zaf,2011,100,Unspecified,1.09308
+zaf,2011,100,Not applicable,175
+zaf,2011,100,Total,1904.48498
+zaf,2011,101,No schooling,1443.1188
+zaf,2011,101,Some primary,366.88395
+zaf,2011,101,Complete primary,50.83431
+zaf,2011,101,Some secondary,246.60888
+zaf,2011,101,Grade 12/Std 10,132.96539
+zaf,2011,101,Higher,52.43416
+zaf,2011,101,Unspecified,2.20379
+zaf,2011,101,Not applicable,105
+zaf,2011,101,Total,2400.04928
+zaf,2011,102,No schooling,633.05476
+zaf,2011,102,Some primary,317.6727
+zaf,2011,102,Complete primary,70.67503
+zaf,2011,102,Some secondary,216.32178
+zaf,2011,102,Grade 12/Std 10,136.99981
+zaf,2011,102,Higher,64.04729
+zaf,2011,102,Unspecified,5.41212
+zaf,2011,102,Not applicable,65
+zaf,2011,102,Total,1509.18349
+zaf,2011,103,No schooling,352.99049
+zaf,2011,103,Some primary,192.27849
+zaf,2011,103,Complete primary,87.08385
+zaf,2011,103,Some secondary,219.48061
+zaf,2011,103,Grade 12/Std 10,125.93653
+zaf,2011,103,Higher,55.06728
+zaf,2011,103,Unspecified,0
+zaf,2011,103,Not applicable,67
+zaf,2011,103,Total,1099.83725
+zaf,2011,104,No schooling,271.52029
+zaf,2011,104,Some primary,175.22124
+zaf,2011,104,Complete primary,71.23002
+zaf,2011,104,Some secondary,226.61549
+zaf,2011,104,Grade 12/Std 10,137.45164
+zaf,2011,104,Higher,59.35473
+zaf,2011,104,Unspecified,1.24629
+zaf,2011,104,Not applicable,74
+zaf,2011,104,Total,1016.6397
+zaf,2011,105,No schooling,298.37647
+zaf,2011,105,Some primary,171.93035
+zaf,2011,105,Complete primary,38.12618
+zaf,2011,105,Some secondary,246.24208
+zaf,2011,105,Grade 12/Std 10,110.79988
+zaf,2011,105,Higher,54.76748
+zaf,2011,105,Unspecified,1.03616
+zaf,2011,105,Not applicable,50
+zaf,2011,105,Total,971.2786
+zaf,2011,106,No schooling,200.30452
+zaf,2011,106,Some primary,156.9145
+zaf,2011,106,Complete primary,55.48391
+zaf,2011,106,Some secondary,294.18217
+zaf,2011,106,Grade 12/Std 10,126.7361
+zaf,2011,106,Higher,31.39265
+zaf,2011,106,Unspecified,5.78721
+zaf,2011,106,Not applicable,66
+zaf,2011,106,Total,936.80106
+zaf,2011,107,No schooling,263.83208
+zaf,2011,107,Some primary,169.71088
+zaf,2011,107,Complete primary,35.0533
+zaf,2011,107,Some secondary,278.67125
+zaf,2011,107,Grade 12/Std 10,97.25553
+zaf,2011,107,Higher,55.15522
+zaf,2011,107,Unspecified,5.76546
+zaf,2011,107,Not applicable,67
+zaf,2011,107,Total,972.44372
+zaf,2011,108,No schooling,178.74861
+zaf,2011,108,Some primary,148.72947
+zaf,2011,108,Complete primary,45.21875
+zaf,2011,108,Some secondary,263.33436
+zaf,2011,108,Grade 12/Std 10,153.11219
+zaf,2011,108,Higher,62.58028
+zaf,2011,108,Unspecified,2.33035
+zaf,2011,108,Not applicable,68
+zaf,2011,108,Total,922.05401
+zaf,2011,109,No schooling,218.53012
+zaf,2011,109,Some primary,165.00646
+zaf,2011,109,Complete primary,43.99168
+zaf,2011,109,Some secondary,270.14532
+zaf,2011,109,Grade 12/Std 10,208.16883
+zaf,2011,109,Higher,56.83247
+zaf,2011,109,Unspecified,1.08197
+zaf,2011,109,Not applicable,92
+zaf,2011,109,Total,1055.75685
+zaf,2011,110,No schooling,275.03536
+zaf,2011,110,Some primary,161.17078
+zaf,2011,110,Complete primary,40.6145
+zaf,2011,110,Some secondary,270.32522
+zaf,2011,110,Grade 12/Std 10,207.07016
+zaf,2011,110,Higher,44.86084
+zaf,2011,110,Unspecified,9.30978
+zaf,2011,110,Not applicable,95
+zaf,2011,110,Total,1103.38664
+zaf,2011,111,No schooling,201.67434
+zaf,2011,111,Some primary,155.14836
+zaf,2011,111,Complete primary,38.06439
+zaf,2011,111,Some secondary,311.37119
+zaf,2011,111,Grade 12/Std 10,244.27354
+zaf,2011,111,Higher,54.62931
+zaf,2011,111,Unspecified,4.63506
+zaf,2011,111,Not applicable,114
+zaf,2011,111,Total,1123.79619
+zaf,2011,112,No schooling,27.1205
+zaf,2011,112,Some primary,26.11146
+zaf,2011,112,Complete primary,4.22172
+zaf,2011,112,Some secondary,14.58527
+zaf,2011,112,Grade 12/Std 10,11.73868
+zaf,2011,112,Higher,5.57896
+zaf,2011,112,Unspecified,0
+zaf,2011,112,Not applicable,9
+zaf,2011,112,Total,98.35659
+zaf,2011,113,No schooling,13.25068
+zaf,2011,113,Some primary,20.14515
+zaf,2011,113,Complete primary,5.50793
+zaf,2011,113,Some secondary,7.87235
+zaf,2011,113,Grade 12/Std 10,3.39085
+zaf,2011,113,Higher,4.77551
+zaf,2011,113,Unspecified,0
+zaf,2011,113,Not applicable,5
+zaf,2011,113,Total,59.94247
+zaf,2011,114,No schooling,14.24966
+zaf,2011,114,Some primary,16.32425
+zaf,2011,114,Complete primary,3.31157
+zaf,2011,114,Some secondary,18.31227
+zaf,2011,114,Grade 12/Std 10,2.15992
+zaf,2011,114,Higher,2.18198
+zaf,2011,114,Unspecified,0
+zaf,2011,114,Not applicable,6
+zaf,2011,114,Total,62.53965
+zaf,2011,115,No schooling,16.16019
+zaf,2011,115,Some primary,16.60786
+zaf,2011,115,Complete primary,5.45743
+zaf,2011,115,Some secondary,38.65276
+zaf,2011,115,Grade 12/Std 10,5.96262
+zaf,2011,115,Higher,1.20522
+zaf,2011,115,Unspecified,0
+zaf,2011,115,Not applicable,10
+zaf,2011,115,Total,94.04608
+zaf,2011,116,No schooling,13.03454
+zaf,2011,116,Some primary,5.66317
+zaf,2011,116,Complete primary,1.14924
+zaf,2011,116,Some secondary,23.83391
+zaf,2011,116,Grade 12/Std 10,3.27112
+zaf,2011,116,Higher,1.24629
+zaf,2011,116,Unspecified,0
+zaf,2011,116,Not applicable,8
+zaf,2011,116,Total,56.19827
+zaf,2011,117,No schooling,12.09203
+zaf,2011,117,Some primary,8.62309
+zaf,2011,117,Complete primary,3.40706
+zaf,2011,117,Some secondary,25.75812
+zaf,2011,117,Grade 12/Std 10,4.07709
+zaf,2011,117,Higher,1.06684
+zaf,2011,117,Unspecified,0
+zaf,2011,117,Not applicable,10
+zaf,2011,117,Total,65.02423
+zaf,2011,118,No schooling,3.24249
+zaf,2011,118,Some primary,4.38015
+zaf,2011,118,Complete primary,0
+zaf,2011,118,Some secondary,14.13672
+zaf,2011,118,Grade 12/Std 10,7.57814
+zaf,2011,118,Higher,1.18706
+zaf,2011,118,Unspecified,0
+zaf,2011,118,Not applicable,6
+zaf,2011,118,Total,36.52456
+zaf,2011,119,No schooling,4.34001
+zaf,2011,119,Some primary,8.97463
+zaf,2011,119,Complete primary,2.17684
+zaf,2011,119,Some secondary,15.47274
+zaf,2011,119,Grade 12/Std 10,10.16236
+zaf,2011,119,Higher,2.24295
+zaf,2011,119,Unspecified,0
+zaf,2011,119,Not applicable,15
+zaf,2011,119,Total,58.36953
+zaf,2011,120,No schooling,7.70223
+zaf,2011,120,Some primary,4.61986
+zaf,2011,120,Complete primary,2.14924
+zaf,2011,120,Some secondary,15.57662
+zaf,2011,120,Grade 12/Std 10,13.23951
+zaf,2011,120,Higher,2.12109
+zaf,2011,120,Unspecified,0
+zaf,2011,120,Not applicable,12
