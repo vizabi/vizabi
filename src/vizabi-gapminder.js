@@ -963,7 +963,7 @@ Cartogram.define('default_model', {
       opacityRegular: 1,
       show: {
         _defs_: {
-          "geo.cat": ["province", "unstate"]
+          "geo.cat": ["province", "municipality"]
         }
       },
     },
@@ -971,7 +971,7 @@ Cartogram.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["world_4region"]
+          "geo.cat": ["municipality"]
         }
       }
     },
