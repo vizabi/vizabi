@@ -80,21 +80,37 @@ script.
   var locationArray = window.location.href.split("/");
   var localUrl = locationArray.splice(0, locationArray.indexOf("preview")).join("/") + "/preview/";
   
-  Vizabi._globals.ext_resources = {
-    host: 'https://waffle-server-dev-new-ddf.gapminderdev.org/',
-    preloadPath: 'api/vizabi/',
-    dataPath: 'api/graphs/stats/vizabi-tools',
-    //conceptpropsPath: localUrl + "data/metadata.json",
-    //translationPath: localUrl + "data/translation/en.json",
-    //shapePath: localUrl + "data/mc_precomputed_shapes.json"
-    //shapePath: localUrl + "data/world-50m.json"
-  };
-  
-  //popbyage is an exception because it has no data on WS for age. need local data
-  if("#{tool}"!=="PopByAge" && "#{tool}"!=="AgePyramid"){
+  if("#{tool}"=="AgePyramid"){
+    Vizabi._globals.ext_resources = {
+      host: localUrl,
+      preloadPath: 'data/zaf/',
+      dataPath: 'data/zaf/waffles/',
+      conceptpropsPath: localUrl + 'data/zaf/metadata.json'
+    };
     VIZABI_MODEL.data = {
-      reader: "waffle",
-      path: Vizabi._globals.ext_resources.host + Vizabi._globals.ext_resources.dataPath
+      reader: "csv",
+      path: localUrl + 'data/zaf/waffles/' + "ddf--datapoints--population--by--year--age--education-gender.csv",
+      splash: false
+    }  
+    
+  }else{
+  
+    Vizabi._globals.ext_resources = {
+      host: 'https://waffle-server-dev-new-ddf.gapminderdev.org/',
+      preloadPath: 'api/vizabi/',
+      dataPath: 'api/graphs/stats/vizabi-tools',
+      //conceptpropsPath: localUrl + "data/metadata.json",
+      //translationPath: localUrl + "data/translation/en.json",
+      //shapePath: localUrl + "data/mc_precomputed_shapes.json"
+      //shapePath: localUrl + "data/world-50m.json"
+    };
+  
+    //popbyage is an exception because it has no data on WS for age. need local data
+    if("#{tool}"!=="PopByAge"){
+      VIZABI_MODEL.data = {
+        reader: "waffle",
+        path: Vizabi._globals.ext_resources.host + Vizabi._globals.ext_resources.dataPath
+      }
     }
   }
 
