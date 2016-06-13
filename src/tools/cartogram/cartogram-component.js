@@ -111,7 +111,11 @@ var CartogramComponent = Component.extend({
       .translate([this.defaultWidth / 2, this.defaultHeight / 2])
       .precision(.1);
 
-
+    this.cartogram = d3.cartogram()
+      .projection(this.projection)
+      .properties(function(d) {
+        return d.properties;
+      });
   },
 
   afterPreload: function(){
@@ -129,11 +133,6 @@ var CartogramComponent = Component.extend({
     this.bgPath = d3.geo.path()
       .projection(this.projection);
 
-    this.cartogram = d3.cartogram()
-      .projection(this.projection)
-      .properties(function(d) {
-        return d.properties;
-      });
 
     var svg = this.mapGraph = d3.select(this.element).select(".vzb-ct-map-graph")
       .attr("width", defaultWidth)
@@ -142,13 +141,13 @@ var CartogramComponent = Component.extend({
     
     //var features = topojson.feature(world, world.objects.prov).features; 
     this.cartogram.iterations(0);
-    this.features = this.topo_features = this.cartogram.features(world, geometries);
-    
-    this.lands = svg.selectAll(".land")
-      .data(this.topo_features)
-      .enter().insert("path", ".graticule")
-        .attr("class", function(d) { return "land " + d.id?d.id:d.MN_CODE; })
-        .attr("d", this.cartogram.path)
+    this.cartogram(world, geometries).then(function(response) {
+      _this.features = _this.topo_features = response.features;
+      _this.lands = svg.selectAll(".land")
+        .data(_this.topo_features)
+        .enter().insert("path", ".graticule")
+        .attr("class", function(d) { return "land " + (d.id?d.id:d.MN_CODE); })
+        .attr("d", _this.cartogram.path)
         .on("mouseover", function (d, i) {
           if (utils.isTouchDevice()) return;
           _this._interact()._mouseover(d, i);
@@ -157,6 +156,7 @@ var CartogramComponent = Component.extend({
           if (utils.isTouchDevice()) return;
           _this._interact()._mouseout(d, i);
         });
+    });
 
 /*
     this.paths = svg.insert("path")
@@ -249,6 +249,7 @@ var CartogramComponent = Component.extend({
     var _this = this;
     this.cached = [];
     this.updateIndicators();
+    this.updateUIStrings();
     this.updateMarkerSizeLimits();
     this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
     this.year.setText(_this.model.time.timeFormat(_this.model.time.value));
@@ -307,12 +308,11 @@ var CartogramComponent = Component.extend({
         _this.cartogram.iterations(0);
       } else {
         _this.cartogram.iterations(8);
-        var areas = _this.topo_features.map(d3.geo.path().projection(null).area);
         _this.cartogram.value(function(d) {
           if (_this.model.ui.chart.lockNonSelected) {
             var size1 = _this.sScale(lockedFrame.size[_this._getKey(d)])/* * _this._calculateTotalSize(_this.model.time.value, _this.values.size)*/,
               size2 = _this.sScale(_this.values.size[_this._getKey(d)])/* * _this._calculateTotalSize(time, lockedFrame.size)*/;
-            return areas[d.id] * (size2 / size1);  
+            return d3.geo.path().projection(null).area(d) * (size2 / size1);  
           } else {
             return _this.sScale(_this.values.size[_this._getKey(d)]);
           }
@@ -323,16 +323,18 @@ var CartogramComponent = Component.extend({
         }
 */
       }
-
-      _this.features = _this.cartogram(_this.world, _this.geometries, totValue).features;
-      _this.lands.data(_this.features);
-      _this.lands.transition()
-        .duration(_this.duration)
-        .ease("linear")
-        .style("fill", function(d) {
-          return _this.values.color[_this._getKey(d)]!=null?_this.cScale(_this.values.color[_this._getKey(d)]):_this.COLOR_LAND_DEFAULT;
-        })
-        .attr("d", _this.cartogram.path)
+      _this.cartogram(_this.world, _this.geometries, totValue).then(function(response) {
+        _this.features = response.features;
+        _this.lands.data(_this.features);
+        _this.lands.interrupt()
+          .transition()
+          .duration(_this.duration)
+          .ease("linear")
+          .style("fill", function(d) {
+            return _this.values.color[_this._getKey(d)]!=null?_this.cScale(_this.values.color[_this._getKey(d)]):_this.COLOR_LAND_DEFAULT;
+          })
+          .attr("d", _this.cartogram.path)
+      });
     });
   },
 
@@ -674,7 +676,9 @@ var CartogramComponent = Component.extend({
   _setTooltip: function (d) {
     var _this = this;
     if (d) {
-      var tooltipText = this.values.label[this._getKey(d)];
+      var tooltipText = this.values.label[this._getKey(d)]?
+        this.values.label[this._getKey(d)]
+        :d.properties.MN_NAME;
       var offset = 10;
       var mouse = d3.mouse(this.graph.node()).map(function(d) {
         return parseInt(d)

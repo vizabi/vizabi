@@ -8,7 +8,7 @@
     ],
     "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
     "domain": [
-      0,
+      900000,
       13000000
     ],
     "availability": [
@@ -25,7 +25,7 @@
     ],
     "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
     "domain": [
-      0,
+      400000,
       10000000
     ],
     "availability": [
@@ -41,7 +41,7 @@
     ],
     "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
     "domain": [
-      0,
+      0.2,
       1
     ],
     "availability": [

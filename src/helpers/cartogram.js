@@ -1,4 +1,6 @@
 import topojson from '../helpers/topojson'
+import Promise from 'promise';
+import * as utils from 'base/utils';
 (function(exports) {
 
   /*
@@ -31,132 +33,173 @@ import topojson from '../helpers/topojson'
 
     function carto(topology, geometries, totalValue) {
       // copy it first
-      topology = copy(topology);
+      return new Promise(function(resolve, reject) {
+        topology = copy(topology);
 
-      // objects are projected into screen coordinates
+        // objects are projected into screen coordinates
 
-      // project the arcs into screen space
-      var tf = transformer(topology.transform),x,y,len1,i1,out1,len2=topology.arcs.length,i2=0,
+        // project the arcs into screen space
+        var tf = transformer(topology.transform),x,y,len1,i1,out1,len2=topology.arcs.length,i2=0,
           projectedArcs = new Array(len2);
-          while(i2<len2){
-            x = 0;
-            y = 0;
-            len1 = topology.arcs[i2].length;
+        var projectedArcsDefer = new Promise();
+        var generateTopologySegment = function(segmentIndex, segmentLength) {
+          return new Promise(function(resolve, reject) {
             i1 = 0;
-            out1 = new Array(len1);
-            while(i1<len1){
-              topology.arcs[i2][i1][0] = (x += topology.arcs[i2][i1][0]);
-              topology.arcs[i2][i1][1] = (y += topology.arcs[i2][i1][1]);
-              out1[i1] = projection === null ? tf(topology.arcs[i2][i1]) : projection(tf(topology.arcs[i2][i1]));
+            while(i1<segmentLength){
+              topology.arcs[segmentIndex][i1][0] = (x += topology.arcs[segmentIndex][i1][0]);
+              topology.arcs[segmentIndex][i1][1] = (y += topology.arcs[segmentIndex][i1][1]);
+              out1[i1] = projection === null ? tf(topology.arcs[segmentIndex][i1]) : projection(tf(topology.arcs[segmentIndex][i1]));
               i1++;
             }
-            projectedArcs[i2++]=out1;
-            
-          }
-
-      // path with identity projection
-      var path = d3.geo.path()
-        .projection(null);
-
-      var objects = object(projectedArcs, {type: "GeometryCollection", geometries: geometries})
-          .geometries.map(function(geom) {
-            return {
-              type: "Feature",
-              id: geom.id,
-              properties: properties.call(null, geom, topology),
-              geometry: geom
-            };
+            resolve(out1);
           });
-      var values = objects.map(value);
-      if (!totalValue) {
-        totalValue = d3.sum(values);
-      }
-
-      // no iterations; just return the features
-      if (iterations <= 0) {
-        return {
-          features: objects,
-          arcs: projectedArcs
+          
         };
-      }
+        var generateTopologyArcs = function(index, totalLength) {
+          if (index >= totalLength) {
+            return projectedArcsDefer.resolve(projectedArcs);
+          }
+          x = 0;
+          y = 0;
+          len1 = topology.arcs[index].length;
+          i1 = 0;
+          out1 = new Array(len1);
 
-     var i = 0;
-      while (i++ < iterations) {
-        var areas = objects.map(path.area);
+          generateTopologySegment(index, len1).then(function(segment) {
+            projectedArcs[index++]=segment;
+            if (index % 100 == 0) {
+              utils.defer(function() {
+                generateTopologyArcs(index, totalLength);
+              })
+            } else {
+              generateTopologyArcs(index, totalLength);
+            }
+          });
+        };
+        generateTopologyArcs(0, len2);
+
+        projectedArcsDefer.then(function(projectedArcs) {
+          // path with identity projection
+          var path = d3.geo.path()
+            .projection(null);
+          var objects = object(projectedArcs, {type: "GeometryCollection", geometries: geometries})
+            .geometries.map(function(geom) {
+              return {
+                type: "Feature",
+                id: geom.id,
+                properties: properties.call(null, geom, topology),
+                geometry: geom
+              };
+            });
+          var values = objects.map(value);
+          if (!totalValue) {
+            totalValue = d3.sum(values);
+          }
+          // no iterations; just return the features
+          if (iterations <= 0) {
+            resolve( {
+              features: objects,
+              arcs: projectedArcs
+            });
+          }
+          var i = 0;
+          while (i++ < iterations) {
+            var areas = objects.map(path.area);
             var totalArea = d3.sum(areas),
-            sizeErrorsTot =0,
-            sizeErrorsNum=0,
-            meta = objects.map(function(o, j) {
-              var area = Math.abs(areas[j]), // XXX: why do we have negative areas?
+              sizeErrorsTot =0,
+              sizeErrorsNum=0,
+              meta = objects.map(function(o, j) {
+                var area = Math.abs(areas[j]), // XXX: why do we have negative areas?
                   v = +values[j],
                   desired = totalArea * v / totalValue,
                   radius = Math.sqrt(area / Math.PI),
                   mass = Math.sqrt(desired / Math.PI) - radius,
                   sizeError = Math.max(area, desired) / Math.min(area, desired);
-              sizeErrorsTot+=sizeError;
-              sizeErrorsNum++;
-              // console.log(o.id, "@", j, "area:", area, "value:", v, "->", desired, radius, mass, sizeError);
-              return {
-                id:         o.id,
-                area:       area,
-                centroid:   path.centroid(o),
-                value:      v,
-                desired:    desired,
-                radius:     radius,
-                mass:       mass,
-                sizeError:  sizeError
-              };
-            });
+                sizeErrorsTot+=sizeError;
+                sizeErrorsNum++;
+                // console.log(o.id, "@", j, "area:", area, "value:", v, "->", desired, radius, mass, sizeError);
+                return {
+                  id:         o.id,
+                  area:       area,
+                  centroid:   path.centroid(o),
+                  value:      v,
+                  desired:    desired,
+                  radius:     radius,
+                  mass:       mass,
+                  sizeError:  sizeError
+                };
+              });
 
-        var sizeError = sizeErrorsTot/sizeErrorsNum,
-            forceReductionFactor = 1 / (1 + sizeError);
+            var sizeError = sizeErrorsTot/sizeErrorsNum,
+              forceReductionFactor = 1 / (1 + sizeError);
 
-        // console.log("meta:", meta);
-        // console.log("  total area:", totalArea);
-        // console.log("  force reduction factor:", forceReductionFactor, "mean error:", sizeError);
+            // console.log("meta:", meta);
+            // console.log("  total area:", totalArea);
+            // console.log("  force reduction factor:", forceReductionFactor, "mean error:", sizeError);
 
-        var len1,i1,delta,len2=projectedArcs.length,i2=0,delta,len3,i3,centroid,mass,radius,rSquared,dx,dy,distSquared,dist,Fij;
-        while(i2<len2){
-            len1=projectedArcs[i2].length;
-            i1=0;
-            while(i1<len1){
-              // create an array of vectors: [x, y]
-              delta = [0,0];
-              len3 = meta.length;
-              i3=0;
-              while(i3<len3) {
-                centroid =  meta[i3].centroid;
-                mass =      meta[i3].mass;
-                radius =    meta[i3].radius;
-                rSquared = (radius*radius);
-                dx = projectedArcs[i2][i1][0] - centroid[0];
-                dy = projectedArcs[i2][i1][1] - centroid[1];
-                distSquared = dx * dx + dy * dy;
-                dist=Math.sqrt(distSquared);
-                Fij = (dist > radius)
-                  ? mass * radius / dist
-                  : mass *
-                    (distSquared / rSquared) *
-                    (4 - 3 * dist / radius);
-                delta[0]+=(Fij * cosArctan(dy,dx));
-                delta[1]+=(Fij * sinArctan(dy,dx));
-                i3++;
+            var len1,i1,delta,len2=projectedArcs.length,i2=0,delta,len3,i3,centroid,mass,radius,rSquared,dx,dy,distSquared,dist,Fij;
+            while(i2<len2){
+              len1=projectedArcs[i2].length;
+              i1=0;
+              while(i1<len1){
+                // create an array of vectors: [x, y]
+                delta = [0,0];
+                len3 = meta.length;
+                i3=0;
+                while(i3<len3) {
+                  centroid =  meta[i3].centroid;
+                  mass =      meta[i3].mass;
+                  radius =    meta[i3].radius;
+                  rSquared = (radius*radius);
+                  dx = projectedArcs[i2][i1][0] - centroid[0];
+                  dy = projectedArcs[i2][i1][1] - centroid[1];
+                  distSquared = dx * dx + dy * dy;
+                  dist=Math.sqrt(distSquared);
+                  Fij = (dist > radius)
+                    ? mass * radius / dist
+                    : mass *
+                  (distSquared / rSquared) *
+                  (4 - 3 * dist / radius);
+                  delta[0]+=(Fij * cosArctan(dy,dx));
+                  delta[1]+=(Fij * sinArctan(dy,dx));
+                  i3++;
+                }
+                projectedArcs[i2][i1][0] += (delta[0]*forceReductionFactor);
+                projectedArcs[i2][i1][1] += (delta[1]*forceReductionFactor);
+                i1++;
               }
-            projectedArcs[i2][i1][0] += (delta[0]*forceReductionFactor);
-            projectedArcs[i2][i1][1] += (delta[1]*forceReductionFactor);
+              i2++;
+            }
+
+            // break if we hit the target size error
+            if (sizeError <= 1) break;
+          }
+
+          resolve( {
+            features: objects,
+            arcs: projectedArcs
+          });
+        });
+
+/*
+        while(i2<len2){
+          x = 0;
+          y = 0;
+          len1 = topology.arcs[i2].length;
+          i1 = 0;
+          out1 = new Array(len1);
+          while(i1<len1){
+            topology.arcs[i2][i1][0] = (x += topology.arcs[i2][i1][0]);
+            topology.arcs[i2][i1][1] = (y += topology.arcs[i2][i1][1]);
+            out1[i1] = projection === null ? tf(topology.arcs[i2][i1]) : projection(tf(topology.arcs[i2][i1]));
             i1++;
           }
-          i2++;
+          projectedArcs[i2++]=out1;
+
         }
-
-        // break if we hit the target size error
-        if (sizeError <= 1) break;
-      }
-
-      return {
-        features: objects,
-        arcs: projectedArcs
-      };
+*/
+      });
+      
     }
 
     var iterations = 8,
