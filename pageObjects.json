@@ -12,7 +12,6 @@
             
   },
     
-    
     "bubble_Chart_Loctors": {
     "_comment": "Locators belong to Bubble chart",
             
@@ -47,10 +46,8 @@
           
     },
            
-        
     "bubbleMap_Chart_Loctors": {
      "_comment": "Locators belong to Bubble chart",
-        
         
          "countriesBubbleMap_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles", 
             "USABubbleMap_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(3)",
@@ -73,7 +70,6 @@
         
      "mountain_Chart_Loctors": {
      "_comment": "Locators belong to mountain chart",
-        
         
             "countriesMountain_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-mc-mountains", 
             "findIcon_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa", 
@@ -108,8 +104,7 @@
             "checkboxAfghanistanShow_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(2) > label",
             "checkboxAlgeriaShow_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(5) > label",
             "USACheckboxFind_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(157) > label",           
-            "USACheckboxText_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(157)"   
-       
+            "USACheckboxText_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(157)"
          
      }
     }

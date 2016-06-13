@@ -19,6 +19,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
 
     browser.get(baseChartUrl);
 
+	  
     // Check that elements were loaded
 
     browser.wait(EC.visibilityOf(buttonPlay), 60000, "Chart is not Loaded");
