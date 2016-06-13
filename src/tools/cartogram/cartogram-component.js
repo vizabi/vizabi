@@ -107,7 +107,7 @@ var CartogramComponent = Component.extend({
     this.cached = [];
     this.projection = d3.geo.mercator()
       .center([25, -29])
-      .scale(1500)
+      .scale(1900)
       .translate([this.defaultWidth / 2, this.defaultHeight / 2])
       .precision(.1);
 
@@ -119,6 +119,7 @@ var CartogramComponent = Component.extend({
   afterPreload: function(){
     var _this = this;
     if(!this.world) utils.warn("cartogram afterPreload: missing country shapes " + this.world);
+    if(!this.geometries) utils.warn("cartogram afterPreload: missing country shapes " + this.geometries);
 
     // http://bl.ocks.org/mbostock/d4021aa4dccfd65edffd patterson
     // http://bl.ocks.org/mbostock/3710566 robinson
@@ -126,6 +127,7 @@ var CartogramComponent = Component.extend({
     var defaultWidth = this.defaultWidth;
     var defaultHeight = this.defaultHeight;
     var world = this.world;
+    var geometries = this.geometries;
     
     this.bgPath = d3.geo.path()
       .projection(this.projection);
@@ -138,7 +140,7 @@ var CartogramComponent = Component.extend({
     
     //var features = topojson.feature(world, world.objects.prov).features; 
     this.cartogram.iterations(0);
-    this.features = this.topo_features = this.cartogram(world, world.objects.prov.geometries);
+    this.features = this.topo_features = this.cartogram(world, geometries);
     
     this.lands = svg.selectAll(".land")
       .data(this.topo_features.features)
@@ -310,12 +312,14 @@ var CartogramComponent = Component.extend({
             return _this.sScale(_this.values.size[_this._getKey(d)]);
           }
         });
+/*
         if (_this.model.ui.chart.lockNonSelected) {
           totValue = d3.sum(areas);
         }
+*/
       }
 
-      _this.features = _this.cartogram(_this.world, _this.world.objects.prov.geometries, totValue).features;
+      _this.features = _this.cartogram(_this.world, _this.geometries, totValue).features;
       _this.lands.data(_this.features);
       _this.lands.transition()
         .duration(_this.duration)

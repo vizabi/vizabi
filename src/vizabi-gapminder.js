@@ -949,6 +949,7 @@ CartogramComponent.define("preload", function(done) {
   d3.json(shape_path, function(error, json) {
     if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
     CartogramComponent.define('world', json);
+    CartogramComponent.define('geometries', json.objects.prov.geometries);
     done.resolve();
   });
 });
