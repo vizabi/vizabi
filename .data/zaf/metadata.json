@@ -48,15 +48,15 @@
      "sourceLink": "https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv",
      "color": {
          "palette": {
-            "No schooling": "#bcfa83",
-            "Some primary": "#4cd843",
-            "Complete primary": "#ff8684",
-            "Some secondary": "#e83739",
-            "Grade 12/Std 10": "#ffb04b",
-            "Higher": "#ff7f00",
-            "Unspecified": "#f599f5",
-            "Not applicable": "#c027d4",
-            "Total": "#f4f459"
+            "No schooling": "#9a1db1",
+            "Some primary": "#e83739",
+            "Complete primary": "#ffa6eb",
+            "Some secondary": "#ffb43d",
+            "Grade 12/Std 10": "#8ee8a0",
+            "Higher": "#4cd843", 
+            "Unspecified": "#000000",
+            "Not applicable": "#c7c7c7",
+            "Total":"#fff37b"
          },
          "selectable": false
      }
