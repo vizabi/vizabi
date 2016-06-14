@@ -80,7 +80,7 @@ script.
   var locationArray = window.location.href.split("/");
   var localUrl = locationArray.splice(0, locationArray.indexOf("preview")).join("/") + "/preview/";
   
-  if("#{tool}"=="AgePyramid"){
+  if("#{tool}"=="AgePyramid" || "#{tool}"=="JOINTPyramidLine"){
     Vizabi._globals.ext_resources = {
       host: localUrl,
       preloadPath: 'data/zaf/',
