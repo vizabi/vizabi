@@ -119,8 +119,9 @@ var ColorLegend = Component.extend({
     
     //Check if geoshape is provided
     if(!canShowMap) {
-      
-      if(this.colorModel.use == "indicator" || !minimapKeys.length) {
+      if(this.colorModel.which == "_default") {
+        colorOptions = colorOptions.data([]); 
+      }else if(this.colorModel.use == "indicator" || !minimapKeys.length) {
         colorOptions = colorOptions.data(utils.keys(palette), function(d) {return d});
       }else{
         colorOptions = colorOptions.data(minimapKeys, function(d) {return d[minimapDim]});
