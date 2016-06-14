@@ -98,8 +98,8 @@ var ColorLegend = Component.extend({
     var minimapKeys = [];
 
     if(this.model.state.marker_minimap){
-      var minimapDim = this.markerModel._getFirstDimension();
-      minimapKeys = this.markerModel.getKeys(minimapDim);
+      var minimapDim = this.model.state.marker_minimap._getFirstDimension();
+      var minimapKeys = this.model.state.marker_minimap.getKeys(minimapDim);
     }
     
     minimapKeys.forEach(function(d){
