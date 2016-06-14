@@ -21,20 +21,22 @@ init: function(config, parent) {
 
   this.components = [
   {
-    component: bubblesize,
-    placeholder: '.vzb-dialog-bubblesize',
-    model: ["state.marker.size"],
-    ui: {
-      show_button: false
-    }
-  },
-  {
     component: indicatorpicker,
     placeholder: '.vzb-saxis-selector',
     model: ["state.marker", "language"],
     markerID: "size"
   }
   ];
+  if (!config.ui.chart || config.ui.chart.sizeSelectorActive !== 0) {
+    this.components.push(  {
+      component: bubblesize,
+      placeholder: '.vzb-dialog-bubblesize',
+      model: ["state.marker.size"],
+      ui: {
+        show_button: false
+      }
+    })
+  }
 
   this._super(config, parent);
 }
