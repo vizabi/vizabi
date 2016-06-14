@@ -1174,7 +1174,8 @@ Cartogram.define('default_model', {
         dragging: true
       },
       lockNonSelected: 0,
-      lockActive: 1
+      lockActive: 1,
+      sizeSelectorActive:0
     },
     presentation: false
   }
