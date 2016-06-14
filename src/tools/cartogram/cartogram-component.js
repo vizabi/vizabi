@@ -86,7 +86,7 @@ var CartogramComponent = Component.extend({
         _this.updateEntitityColor();
       },
       "change:ui.chart.lockNonSelected": function(evt) {
-        _this.updateEntities();
+        _this.updateEntities(900);
       },
       "change:entities.select": function() {
         if(!_this._readyOnce) return;
@@ -249,7 +249,7 @@ var CartogramComponent = Component.extend({
     if (!frame) return;
     this.values = frame;
     this.updateTime();
-    this.updateEntities();
+    this.updateEntities(this.duration);
   },
   
   /*
@@ -300,7 +300,7 @@ var CartogramComponent = Component.extend({
     return this.cached[year];
   },
    
-  updateEntities: function() {
+  updateEntities: function(duration) {
     var _this = this;
     var time = this.model.time.value;
     if(this.model.ui.chart.lockNonSelected) {
@@ -333,14 +333,23 @@ var CartogramComponent = Component.extend({
           .each(function(d) {
             d[_this.KEY] = _this._getKey(d);
           });
-        _this.lands.interrupt()
-          .transition()
-          .duration(_this.duration)
-          .ease("linear")
-          .style("fill", function(d) {
-            return _this.values.color[_this._getKey(d)]!=null?_this.cScale(_this.values.color[_this._getKey(d)]):_this.COLOR_LAND_DEFAULT;
-          })
-          .attr("d", _this.cartogram.path);
+        if (duration) {
+          _this.lands.interrupt()
+            .transition()
+            .duration(duration)
+            .ease("linear")
+            .style("fill", function(d) {
+              return _this.values.color[_this._getKey(d)]!=null?_this.cScale(_this.values.color[_this._getKey(d)]):_this.COLOR_LAND_DEFAULT;
+            })
+            .attr("d", _this.cartogram.path);
+        } else {
+          _this.lands
+            .style("fill", function(d) {
+              return _this.values.color[_this._getKey(d)]!=null?_this.cScale(_this.values.color[_this._getKey(d)]):_this.COLOR_LAND_DEFAULT;
+            })
+            .attr("d", _this.cartogram.path);
+          
+        }
         _this.updateLandOpacity();
       });
     });
@@ -456,7 +465,6 @@ var CartogramComponent = Component.extend({
    */
   updateTime: function() {
     var _this = this;
-    this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
