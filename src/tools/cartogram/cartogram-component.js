@@ -79,6 +79,9 @@ var CartogramComponent = Component.extend({
         _this.updateMarkerSizeLimits();
         _this.updateEntities();
       },
+      'change:marker.size.use': function(evt, path) {
+        _this.model.ui.chart.lockActive = _this.model.marker.size.use != "constant";
+      },
       "change:marker.color.palette": function(evt, path) {
         _this.updateEntitityColor();
       },
@@ -359,10 +362,10 @@ var CartogramComponent = Component.extend({
 
     this.translator = this.model.language.getTFunction();
     var sizeConceptprops = this.model.marker.size.getConceptprops();
-
+    var sizeStr = this.model.marker.size.use == "constant" ? "indicator/size/" : "indicator/";  
     this.strings = {
       title: {
-        S: this.translator("indicator/" + _this.model.marker.size.which),
+        S: this.translator(sizeStr + _this.model.marker.size.which),
         C: this.translator("indicator/" + _this.model.marker.color.which)
       }
     };
@@ -646,25 +649,25 @@ var CartogramComponent = Component.extend({
 
     if(_this.hovered || mobile) {
       var hovered = _this.hovered || mobile;
-      var formatterS = _this.model.marker.size.getTickFormatter();
       var formatterC = _this.model.marker.color.getTickFormatter();
 
-      var unitY = _this.translator("unit/" + _this.model.marker.size.which);
       var unitC = _this.translator("unit/" + _this.model.marker.color.which);
 
       //suppress unit strings that found no translation (returns same thing as requested)
-      if(unitY === "unit/" + _this.model.marker.size.which) unitY = "";
       if(unitC === "unit/" + _this.model.marker.color.which) unitC = "";
-
-      var valueS = _this.values.size[_this._getKey(hovered)];
       var valueC = _this.values.color[_this._getKey(hovered)];
-
-      _this.yTitleEl.select("text")
-        .text(_this.translator("buttons/size") + ": " + formatterS(valueS) + " " + unitY);
-
       _this.cTitleEl.select("text")
         .text(_this.translator("buttons/color") + ": " +
         (valueC || valueC===0 ? formatterC(valueC) + " " + unitC : _this.translator("hints/nodata")));
+
+      if (this.model.marker.size.use !== "constant") {
+        var formatterS = _this.model.marker.size.getTickFormatter();
+        var unitY = _this.translator("unit/" + _this.model.marker.size.which);
+        if(unitY === "unit/" + _this.model.marker.size.which) unitY = "";
+        var valueS = _this.values.size[_this._getKey(hovered)];
+        _this.yTitleEl.select("text")
+          .text(_this.translator("buttons/size") + ": " + formatterS(valueS) + " " + unitY);
+      }
 
       this.yInfoEl.classed("vzb-hidden", true);
       this.cInfoEl.classed("vzb-hidden", true);

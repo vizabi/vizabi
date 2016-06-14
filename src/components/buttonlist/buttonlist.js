@@ -141,6 +141,9 @@ var ButtonList = Component.extend({
         //   _this.scrollToEnd();
         // }
         // _this.entitiesSelected_1 = _this.model.state.entities.select.length > 0;
+      },
+      "change:ui.chart.lockActive": function(evt) {
+        _this.setBubbleLock(); 
       }
     }      
         
@@ -486,7 +489,11 @@ var ButtonList = Component.extend({
     var translator = this.model.language.getTFunction();
 
     btn.classed(class_unavailable, this.model.state.entities.select.length == 0 && !active);
-    btn.classed(class_hidden, this.model.state.entities.select.length == 0 && !active);
+    if (typeof active == "undefined") {
+      btn.classed(class_hidden, this.model.state.entities.select.length == 0);
+    } else {
+      btn.classed(class_hidden, !active);
+    }
 
     btn.classed(class_active_locked, locked)
     btn.select(".vzb-buttonlist-btn-title")
