@@ -365,7 +365,7 @@ var Marker = Model.extend({
 
         if(hook.use !== "property") next = next || d3.bisectLeft(hook.getUnique(dimTime), time);        
 
-        method = hook.getConceptprops().interpolation;
+        method = hook.getConceptprops ? hook.getConceptprops().interpolation : null;
         filtered = _this.getDataManager().get(hook._dataId, 'nested', f_keys);
         utils.forEach(f_values, function(v) {
           filtered = filtered[v]; //get precise array (leaf)
@@ -397,15 +397,14 @@ var Marker = Model.extend({
           
         if(hook.use !== "property") next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
         
-        method = hook.getConceptprops().interpolation;
-
-
-        utils.forEach(filtered, function(arr, id) {
+        method = hook.getConceptprops ? hook.getConceptprops().interpolation : null;
+                
+        var interpolate = function(arr, result, id) {
           //TODO: this saves when geos have different data length. line can be optimised. 
           next = d3.bisectLeft(arr.map(function(m){return m.time}), time);
             
           value = utils.interpolatePoint(arr, u, w, next, dimTime, time, method);
-          response[name][id] = hook.mapValue(value);
+          result[id] = hook.mapValue(value);
 
           //concat previous data points
           if(previous) {
@@ -413,11 +412,26 @@ var Marker = Model.extend({
               return d[dimTime] <= time;
             }).map(function(d) {
               return hook.mapValue(d[w]);
-            }).concat(response[name][id]);
-            response[name][id] = values;
+            }).concat(result[id]);
+            result[id] = values;
           }
 
-        });
+        }
+        
+        var iterateGroupKeys = function(data, deep, result, cb) {
+          deep--;
+          utils.forEach(data, function(d, id) {
+            if(deep) {
+              result[id] = {};
+              iterateGroupKeys(d, deep, result[id], cb);
+            } else {
+              cb(d, result, id);
+            }
+          });
+        }
+        
+        iterateGroupKeys(filtered, group_by.length, response[name], interpolate);
+        
       });
     }
 
