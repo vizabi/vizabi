@@ -100,6 +100,7 @@ var CartogramComponent = Component.extend({
       'change:entities.opacityRegular': function() {
         _this.updateLandOpacity();
       },
+      
     };
     //this._selectlist = new Selectlist(this);
 

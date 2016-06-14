@@ -162,7 +162,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
             slider.getLocation().then(function (beforePlaySliderLocation) {
               var beforePlaySliderDivLocation = beforePlaySliderLocation.x;
               play.click();
-              browser.sleep(80000);
+              browser.sleep(180000);
 
               //Getting slider position after play
               slider.getLocation().then(function (afterPlaySliderLocation) {
