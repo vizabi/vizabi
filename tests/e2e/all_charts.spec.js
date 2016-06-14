@@ -1,15 +1,17 @@
 describe('Web - Vizabi e2e test :: All', function() {
 
+  var testData = require('../../pageObjects.json');    
   jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000000;
   browser.manage().window().setSize(1100, 600);
 
   var baseUrl = 'http://localhost:9000/preview/';
   var baseUrlHash = "#_width:750&height:650&fullscreen:true&resp-sect:true&info-sect:true&butt-sect:true";
 
-  var play = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-btns > button.vzb-ts-btn-play.vzb-ts-btn"));
-  var pause = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-btns > button.vzb-ts-btn-pause.vzb-ts-btn"));
-  var slider = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-slider-wrapper > svg.vzb-ts-slider > g > g.vzb-ts-slider-slide > circle"));
-  var USABubbleMap = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(3)"));
+  testData.forEach( function (data) {
+  var play = element(by.css(data.All_Global_Loctors.play_Locator_CSS));
+  var pause = element(by.css(data.All_Global_Loctors.pause_Locator_CSS));
+  var slider = element(by.css(data.All_Global_Loctors.slider_Locator_CSS));
+  var USABubbleMap = element(by.css(data.bubbleMap_Chart_Loctors.USABubbleMap_Locator_CSS));
   var EC = protractor.ExpectedConditions;
 
   /***************************** All CHARTS *************************************/
@@ -24,13 +26,13 @@ describe('Web - Vizabi e2e test :: All', function() {
     browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking Expand
-    var expand =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(7) > span.vzb-buttonlist-btn-icon.fa"));
+    var expand =element(by.css(data.All_Charts_Loctors.expandIconBubble_Locator_CSS));
     browser.wait(EC.visibilityOf(expand), 5000);
     expand.click();
     browser.sleep(2000);
 
     // Getting attributes of color dropdown
-    var colorOption = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(1) > div > div.vzb-dialog-title > span.vzb-caxis-selector"));
+    var colorOption = browser.element(by.css(data.All_Charts_Loctors.colorDropdownIcon_Locator_CSS));
     browser.wait(EC.visibilityOf(colorOption), 5000);
     colorOption.getText().then(function (colorOptionAsParameter) {
       var colorOptionText = colorOptionAsParameter;
@@ -41,7 +43,7 @@ describe('Web - Vizabi e2e test :: All', function() {
 
 
     // Getting Afghnistan name under expanded find
-    var afg = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(2) > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(1)"));
+    var afg = browser.element(by.css(data.All_Charts_Loctors.afgCheckboxLabel_Locator_CSS));
     browser.wait(EC.visibilityOf(afg), 5000);
     afg.getText().then(function (afgAsParameter) {
       var afgText = afgAsParameter;
@@ -52,7 +54,7 @@ describe('Web - Vizabi e2e test :: All', function() {
 
 
     // Getting attributes of size dropdown
-    var sizeOption = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(3) > div > div.vzb-dialog-title > span.vzb-saxis-selector"));
+    var sizeOption = browser.element(by.css(data.All_Charts_Loctors.sizeOptionLabel_Locator_CSS));
     browser.wait(EC.visibilityOf(sizeOption), 5000);
     sizeOption.getText().then(function (sizeOptionAsParameter) {
       var sizeOptionText = sizeOptionAsParameter;
@@ -72,14 +74,14 @@ describe('Web - Vizabi e2e test :: All', function() {
     browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking Expand
-    var expand =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(6) > span.vzb-buttonlist-btn-icon.fa"));
+    var expand =element(by.css(data.All_Charts_Loctors.expandIconMountain_Locator_CSS));
     browser.wait(EC.visibilityOf(expand), 5000);
     expand.click();
     browser.sleep(2000);
 
 
     // Getting attributes of color dropdown
-    var colorOption = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(1) > div > div.vzb-dialog-title > span.vzb-caxis-selector"));
+    var colorOption = browser.element(by.css(data.All_Charts_Loctors.colorDropdownIcon_Locator_CSS));
     browser.wait(EC.visibilityOf(colorOption), 5000);
     colorOption.getText().then(function (colorOptionAsParameter) {
       var colorOptionText = colorOptionAsParameter;
@@ -90,7 +92,7 @@ describe('Web - Vizabi e2e test :: All', function() {
 
 
     // Getting Afghnistan name under expanded find
-    var afg = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(2) > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(1)"));
+    var afg = browser.element(by.css(data.All_Charts_Loctors.afgCheckboxLabel_Locator_CSS));
     browser.wait(EC.visibilityOf(afg), 5000);
     afg.getText().then(function (afgAsParameter) {
       var afgText = afgAsParameter;
@@ -101,7 +103,7 @@ describe('Web - Vizabi e2e test :: All', function() {
 
 
     // Getting attributes of stack options
-    var stackOption = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(3) > div > div.vzb-dialog-content.vzb-dialog-scrollable > form.vzb-howtostack.vzb-dialog-paragraph > label:nth-child(3) > span"));
+    var stackOption = browser.element(by.css(data.All_Charts_Loctors.stackIconMountain_Locator_CSS));
     browser.wait(EC.visibilityOf(stackOption), 5000);
     stackOption.getText().then(function (stackOptionAsParameter) {
       var stackOptionText = stackOptionAsParameter;
@@ -121,13 +123,13 @@ describe('Web - Vizabi e2e test :: All', function() {
     browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking Expand
-    var expand =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(5) > span.vzb-buttonlist-btn-icon.fa"));
+    var expand =element(by.css(data.All_Charts_Loctors.expandIconBubbleMap_Locator_CSS));
     browser.wait(EC.visibilityOf(expand), 5000);
     expand.click();
     browser.sleep(2000);
 
     // Getting attributes of color dropdown
-    var colorOption = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(1) > div > div.vzb-dialog-title > span.vzb-caxis-selector"));
+    var colorOption = browser.element(by.css(data.All_Charts_Loctors.colorDropdownIcon_Locator_CSS));
     browser.wait(EC.visibilityOf(colorOption), 5000);
     colorOption.getText().then(function (colorOptionAsParameter) {
       var colorOptionText = colorOptionAsParameter;
@@ -138,7 +140,7 @@ describe('Web - Vizabi e2e test :: All', function() {
 
 
     // Getting Afghnistan name under expanded find
-    var afg = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(2) > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(1)"));
+    var afg = browser.element(by.css(data.All_Charts_Loctors.afgCheckboxLabel_Locator_CSS));
     browser.wait(EC.visibilityOf(afg), 5000);
     afg.getText().then(function (afgAsParameter) {
       var afgText = afgAsParameter;
@@ -149,7 +151,7 @@ describe('Web - Vizabi e2e test :: All', function() {
 
 
     // Getting attributes of size dropdown
-    var sizeOption = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(3) > div > div.vzb-dialog-title > span.vzb-saxis-selector"));
+    var sizeOption = browser.element(by.css(data.All_Charts_Loctors.sizeOptionLabel_Locator_CSS));
     browser.wait(EC.visibilityOf(sizeOption), 5000);
     sizeOption.getText().then(function (sizeOptionAsParameter) {
       var sizeOptionText = sizeOptionAsParameter;
@@ -171,14 +173,14 @@ describe('Web - Vizabi e2e test :: All', function() {
     browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking USA bubble
-    var USABubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
+    var USABubble = element(by.css(data.bubble_Chart_Loctors.USA_Bubble_Locator_CSS));
     browser.wait(EC.visibilityOf(USABubble), 5000);
-    browser.actions().dragAndDrop(USABubble,{x:0,y:0}).perform();
+    browser.actions().mouseMove(USABubble).mouseMove({x:0, y:-15}).click().perform();
 
     //Clicking China bubble
-    var chinaBubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-chn"));
+    var chinaBubble = element(by.css(data.bubble_Chart_Loctors.China_Bubble_Locator_CSS));
     browser.wait(EC.visibilityOf(chinaBubble), 5000);
-    browser.actions().dragAndDrop(chinaBubble, {x:0 , y:5}).perform();
+    browser.actions().mouseMove(chinaBubble).mouseMove({x:0, y:-30}).click().perform();
 
     //Clicking play
     browser.wait(EC.visibilityOf(play), 5000).then(function(){
@@ -206,30 +208,30 @@ describe('Web - Vizabi e2e test :: All', function() {
     browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking find
-    var find = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));
+    var find = browser.element(by.css(data.mountain_Chart_Loctors.findIcon_Locator_CSS));
     browser.wait(EC.visibilityOf(find), 5000).then(function(){
       find.click();
     });
     // Place Text in Search
-    var search = browser.element(by.css("#vzb-find-search"));
+    var search = browser.element(by.css(data.mountain_Chart_Loctors.searchOfFind_Locator_CSS));
     browser.wait(EC.visibilityOf(search), 5000).then(function(){
       search.sendKeys("china");
     });
     //Clicking China
-    var china = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(30) > label"));
+    var china = browser.element(by.css(data.mountain_Chart_Loctors.chinaCheckboxFind_Locator_CSS));
     browser.wait(EC.visibilityOf(china), 5000).then(function(){
       china.click();
     });
 
     // Getting name from check box
-    var chinaCheckBox = element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(30)"));
+    var chinaCheckBox = element(by.css(data.mountain_Chart_Loctors.chinaCheckboxText_Locator_CSS));
     browser.wait(EC.visibilityOf(chinaCheckBox), 5000);
 
     //Getting text from China check box
     chinaCheckBox.getText().then(function (chinaCheckBoxTextAsParameter) {
       var chinaCheckBoxText = chinaCheckBoxTextAsParameter;
       // Clicking OK of Find pop up
-      var ok = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-buttons > div.vzb-dialog-button.vzb-label-primary > span"));
+      var ok = browser.element(by.css(data.mountain_Chart_Loctors.okOnFindPopup_Locator_CSS));
       browser.wait(EC.visibilityOf(chinaCheckBox), 5000).then(function(){
         ok.click();
       });
@@ -255,24 +257,24 @@ describe('Web - Vizabi e2e test :: All', function() {
     browser.wait(EC.visibilityOf(USABubbleMap), 60000 , "Chart is not Loaded");
 
     //Clicking find
-    var find =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));
+    var find =element(by.css(data.bubbleMap_Chart_Loctors.find_Locator_CSS));
     browser.wait(EC.visibilityOf(find), 5000).then(function(){
       find.click();
     });
     //Placing text in search field
-    var search =element(by.css("#vzb-find-search"));
+    var search =element(by.css(data.bubbleMap_Chart_Loctors.search_Locator_CSS));
     browser.wait(EC.visibilityOf(search), 5000).then(function(){
       search.sendKeys("china");
     });
 
     // Check China Text Box
-    var chinaBubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(2) > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(42) > label"));
+    var chinaBubble =element(by.css(data.bubbleMap_Chart_Loctors.chinaBubbleCheckbox_Locator_CSS));
     browser.wait(EC.visibilityOf(chinaBubble), 5000).then(function(){
       chinaBubble.click();
     });
 
     //clicking ok
-    var ok =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-buttons > div.vzb-dialog-button.vzb-label-primary > span"));
+    var ok =element(by.css(data.bubbleMap_Chart_Loctors.okOfFind_Locator_CSS));
     browser.wait(EC.visibilityOf(ok), 5000).then(function(){
       ok.click();
     });
@@ -286,4 +288,5 @@ describe('Web - Vizabi e2e test :: All', function() {
     browser.sleep(2000);
   });
 
+});
 });
