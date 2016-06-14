@@ -24,14 +24,15 @@
       }
       > .vzb-bc-age {
         fill: $vzb-color-grey-darkest;
+        &.vzb-text-left {
+          text-anchor: end;
+        }
       }
     }
     .vzb-dimmed {
-      > .vzb-bc-bar {
-        opacity: .8;
-        &.vzb-hovered {
-          opacity: 1;
-        }
+      opacity: .8;
+      &.vzb-hovered {
+        opacity: 1;
       }
     }
     .vzb-dimmed-selected {

@@ -60,6 +60,7 @@
     "mount/title": "Number of people by income",
     "mount/extremepoverty": "extreme poverty",
     "popbyage/yearOldsIn": "-year-olds in",
+    "agepyramid/yearOlds": "-year-olds",
     "placeholder/search": "Search",
     "scaletype/linear": "linear",
     "scaletype/log": "log",
