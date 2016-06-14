@@ -61,7 +61,6 @@ var CartogramComponent = Component.extend({
           _this.calculationQueue.push(_this.model.time.value.toString());
         }
         (function(time) { // isolate timestamp
-          //_this._bubblesInteract().mouseout();
           _this.model.marker.getFrame(time, function(frame, time) {
             var index = _this.calculationQueue.indexOf(time.toString()); //
             if (index == -1) { // we was receive more recent frame before so we pass this frame
@@ -101,7 +100,6 @@ var CartogramComponent = Component.extend({
       'change:entities.opacityRegular': function() {
         _this.updateLandOpacity();
       },
-      
     };
     //this._selectlist = new Selectlist(this);
 
@@ -170,7 +168,13 @@ var CartogramComponent = Component.extend({
         .on("mouseout", function (d, i) {
           if (utils.isTouchDevice()) return;
           _this._interact()._mouseout(d, i);
-        }).each(function(d) {
+        })
+        .on("click", function(d, i) {
+          if(utils.isTouchDevice()) return;
+          _this._interact()._click(d, i);
+        })
+
+        .each(function(d) {
           d[_this.KEY] = _this._getKey(d);
         });
     });
@@ -269,22 +273,15 @@ var CartogramComponent = Component.extend({
 
   updateMarkerSizeLimits: function() {
     var _this = this;
-/*
     var extent = this.model.marker.size.extent || [0,1];
-
-    var minRadius = this.activeProfile.minRadius;
-    var maxRadius = this.activeProfile.maxRadius;
-    console.log(minRadius);
-    console.log(maxRadius);
-    this.minRadius = Math.max(maxRadius * extent[0], minRadius);
-    this.maxRadius = Math.max(maxRadius * extent[1], minRadius);
-*/
+    this.minRadius = Math.max(100 * extent[0], 0);
+    this.maxRadius = Math.max(100 * extent[1], 0);
 
     this.sScale.domain([0, this.sScale.domain()[1]]);
     if(this.model.marker.size.scaleType !== "ordinal") {
-      this.sScale.range([0, 100]);
+      this.sScale.range([this.minRadius, this.maxRadius]);
     } else {
-      this.sScale.rangePoints([0, 100], 0).range();
+      this.sScale.rangePoints([this.minRadius, this.maxRadius], 0).range();
     }
   },
   
