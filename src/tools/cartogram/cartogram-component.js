@@ -85,8 +85,23 @@ var CartogramComponent = Component.extend({
       },
       "change:ui.chart.lockNonSelected": function(evt) {
         _this.updateEntities();
-      }
-
+      },
+      "change:entities.select": function() {
+        if(!_this._readyOnce) return;
+        _this.updateLandOpacity();
+      },
+      "change:entities.highlight": function() {
+        if(!_this._readyOnce) return;
+        //console.log("EVENT change:entities:highlight");
+        _this.updateLandOpacity();
+      },
+      'change:entities.opacitySelectDim': function() {
+        _this.updateLandOpacity();
+      },
+      'change:entities.opacityRegular': function() {
+        _this.updateLandOpacity();
+      },
+      
     };
     //this._selectlist = new Selectlist(this);
 
@@ -155,6 +170,8 @@ var CartogramComponent = Component.extend({
         .on("mouseout", function (d, i) {
           if (utils.isTouchDevice()) return;
           _this._interact()._mouseout(d, i);
+        }).each(function(d) {
+          d[_this.KEY] = _this._getKey(d);
         });
     });
 
@@ -177,7 +194,7 @@ var CartogramComponent = Component.extend({
 
   },
   _getKey: function(d) {
-    return d.properties[this.id_lookup]? d.properties[this.id_lookup] : d.id; 
+    return d.properties[this.id_lookup]? d.properties[this.id_lookup].toString() : d.id.toString(); 
   },
   /**
    * DOM is ready
@@ -312,7 +329,10 @@ var CartogramComponent = Component.extend({
       }
       _this.cartogram(_this.world, _this.geometries, totValue).then(function(response) {
         _this.features = response.features;
-        _this.lands.data(_this.features);
+        _this.lands.data(_this.features)
+          .each(function(d) {
+            d[_this.KEY] = _this._getKey(d);
+          });
         _this.lands.interrupt()
           .transition()
           .duration(_this.duration)
@@ -320,7 +340,8 @@ var CartogramComponent = Component.extend({
           .style("fill", function(d) {
             return _this.values.color[_this._getKey(d)]!=null?_this.cScale(_this.values.color[_this._getKey(d)]):_this.COLOR_LAND_DEFAULT;
           })
-          .attr("d", _this.cartogram.path)
+          .attr("d", _this.cartogram.path);
+        _this.updateLandOpacity();
       });
     });
   },
@@ -722,8 +743,52 @@ var CartogramComponent = Component.extend({
 
       this.tooltip.classed("vzb-hidden", true);
     }
-  }  
+  },
   
+  updateLandOpacity: function() {
+    var _this = this;
+    //if(!duration)duration = 0;
+
+    var OPACITY_HIGHLT = 1.0;
+    var OPACITY_HIGHLT_DIM = .3;
+    var OPACITY_SELECT = this.model.entities.opacityRegular;
+    var OPACITY_REGULAR = this.model.entities.opacityRegular;
+    var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
+    this.someHighlighted = (this.model.entities.highlight.length > 0);
+    this.someSelected = (this.model.entities.select.length > 0);
+    this.lands
+      .style("opacity", function(d) {
+
+        if(_this.someHighlighted) {
+          //highlight or non-highlight
+          if(_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
+        }
+
+        if(_this.someSelected) {
+          //selected or non-selected
+          return _this.model.entities.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
+        }
+
+        if(_this.someHighlighted) return OPACITY_HIGHLT_DIM;
+
+        return OPACITY_REGULAR;
+      });
+
+
+    var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
+
+    // when pointer events need update...
+    if(someSelectedAndOpacityZero != this.someSelectedAndOpacityZero_1) {
+      this.lands.style("pointer-events", function(d) {
+        return(!someSelectedAndOpacityZero || _this.model.entities.isSelected(d)) ?
+          "visible" : "none";
+      });
+    }
+
+    this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
+  }
+
+
 });
 
 
