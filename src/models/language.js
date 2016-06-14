@@ -39,9 +39,10 @@ var LanguageModel = Model.extend({
     lang = lang || this.id;
     strings = strings || this.strings;
 
-    if(strings && strings.hasOwnProperty(lang) && strings[lang].hasOwnProperty(id)) {
+    if(strings && strings[lang] && (strings[lang][id] || strings[lang][id]==="")) {
       return strings[lang][id];
     } else {
+      if(!strings || !strings[lang]) utils.warn("Strings are not loaded for the " + lang + " language. Check if translation JSON is valid");
       return id;
     }
   },

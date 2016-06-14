@@ -46,7 +46,7 @@ function shareLink() {
       longUrl: encodeURIComponent(document.URL)
     };
   getJSON(address, params, function(response) {
-    if(response.status_code == "200") {
+    if(+response.status_code == 200) {
       prompt("Copy the following link: ", response.data.url);
     } else {
       prompt("Copy the following link: ", window.location);

@@ -23,6 +23,7 @@ import DonutChart from 'tools/donutchart';
 import Cartogram from 'tools/cartogram';
 import CartogramComponent from 'tools/cartogram-component';
 import AxisLabeler from 'tools/axislabeler';
+import AgePyramid from 'tools/agepyramid';
 
 //waffle reader
 import {waffle as WaffleReader} from 'readers/_index';
@@ -493,8 +494,8 @@ LineChart.define('default_model', {
       },
       axis_y: {
         use: "indicator",
-        //which: "sg_gdp_p_cap_const_ppp2011_dollar",//systema globalis
-        which: "income_per_person_gdppercapita_ppp_inflation_adjusted",
+        which: "sg_gdp_p_cap_const_ppp2011_dollar",//systema globalis
+        //which: "income_per_person_gdppercapita_ppp_inflation_adjusted",
         scaleType: "log",
         allow: {
           scales: ["linear", "log", "time"]
@@ -656,7 +657,7 @@ BubbleChart.define('default_model', {
         allow: {
           scales: ["linear"]
         },
-        extent: [0.04, 0.85]
+        extent: [0, 0.85]
       }
     },
     marker_minimap:{
@@ -781,11 +782,113 @@ PopByAge.define('default_model', {
   },
   data: {
     reader: "csv",
-    path: globals.ext_resources.host + globals.ext_resources.dataPath + "{{geo}}.csv",
+    path: globals.ext_resources.host + globals.ext_resources.dataPath + "usa.csv",
     splash: false
   },
   language: language,
   ui: {
+    presentation: false
+  }
+});
+
+AgePyramid.define('default_model', {
+  state: {
+    time: {
+      value: '2011',
+      start: '1950',
+      end: '2100'
+    },
+    entities: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo": ["*"]
+        }
+      }
+    },
+    entities_minimap: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo.cat": ["country"]
+        }
+      }
+    },
+    entities_age: {
+      dim: "age",
+      show: {
+        _defs_: {
+          "age": [
+            [0, 95]
+          ] //show 0 through 100
+        }
+      },
+      grouping: 5
+    },
+    entities_stack: {
+      dim: "stack"
+    },
+    entities_side: {
+      dim: "side"
+    },
+    marker: {
+      space: ["entities", "entities_side", "entities_stack", "entities_age", "time"],
+      label: {
+        use: "indicator",
+        which: "age"
+      },
+      label_name: {
+        use: "property",
+        which: "side"
+      },
+      group_name: {
+        use: "property",
+        which: "stack"
+      },
+      axis_y: {
+        use: "indicator",
+        which: "age",
+        // domain Max should be set manually as age max from entites_age plus one grouping value (95 + 5 = 100)
+        // that way the last age group fits in on the scale
+        domainMax: 100,
+        domainMin: 0
+      },
+      axis_x: {
+        use: "indicator",
+        which: "zaf_population",
+        domainMin: 0,
+        domainMax: 1400000000
+      },
+      color: {
+        use: "property",
+        which: "stack"
+        // allow: {
+        //   names: ["!stack.name"]
+        // }
+      },
+      hook_side: {
+        use: "property",
+        which: "side"
+      }
+    },
+    marker_minimap:{
+      space: ["entities_stack"],
+        type: "geometry",
+        shape: "svg",
+        label: {
+          use: "property",
+          which: "stack"
+        },
+        geoshape: {
+          use: "property",
+          which: "shape_lores_svg"
+        }
+    }
+  },
+  language: language,
+  //NO DEFAULT DATA SOURCE. DATA COMES FROM EXTERNAL PAGE
+  ui: {
+    stacked: true,
     presentation: false
   }
 });
@@ -860,7 +963,7 @@ Cartogram.define('default_model', {
       opacityRegular: 1,
       show: {
         _defs_: {
-          "geo.cat": ["province", "unstate"]
+          "geo.cat": ["province", "municipality"]
         }
       },
     },
@@ -868,7 +971,7 @@ Cartogram.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["world_4region"]
+          "geo.cat": ["municipality"]
         }
       }
     },
@@ -895,6 +998,19 @@ Cartogram.define('default_model', {
         use: "property",
         which: "geo.name"
       }
+    },
+    marker_minimap:{
+      space: ["entities_minimap"],
+        type: "geometry",
+        shape: "svg",
+        label: {
+          use: "property",
+          which: "geo.name"
+        },
+        geoshape: {
+          use: "property",
+          which: "shape_lores_svg"
+        }
     }
   },
   data: {
@@ -903,6 +1019,7 @@ Cartogram.define('default_model', {
     //path: localUrl + "data/waffles/ddf--datapoints--population--black_population--black_population_percentage--by--year--municipality.csv",
     splash: false
   },
+  //NO DEFAULT DATA SOURCE. DATA COMES FROM EXTERNAL PAGE
   language: language,
   ui: {
     chart: {
@@ -944,27 +1061,26 @@ BMComponent.define("preload", function(done) {
 });
 
 CartogramComponent.define("preload", function(done) {
-  var shape_path = localUrl + "data/za-all.topojson";
-  //var shape_path = localUrl + "data/municipalities.json";
+  //var shape_path = localUrl + "data/zaf/za-all.topojson";
+  var shape_path = localUrl + "data/zaf/municipalities.json";
   d3.json(shape_path, function(error, json) {
     if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
     CartogramComponent.define('world', json);
-    //CartogramComponent.define('geometries', json.objects.MN_SA_2011.geometries);
-    CartogramComponent.define('geometries', json.objects.prov.geometries);
+    CartogramComponent.define('geometries', json.objects.MN_SA_2011.geometries);
+    //CartogramComponent.define('geometries', json.objects.prov.geometries);
     done.resolve();
   });
 });
+
 
 //preloading concept properties for all charts
 Tool.define("preload", function(promise) {
 
   var _this = this;
-  var conceptprops_path = localUrl  + "data/metadata.json";
-/*
-  var conceptprops_path = globals.ext_resources.conceptpropsPath ? globals.ext_resources.conceptpropsPath :
-  globals.ext_resources.host + globals.ext_resources.preloadPath + "metadata.json";
-*/
 
+  var conceptprops_path = globals.ext_resources.conceptpropsPath ? globals.ext_resources.conceptpropsPath :
+      globals.ext_resources.host + globals.ext_resources.preloadPath + "metadata.json";    
+  
   //TODO: concurrent
   //load language first
   this.preloadLanguage().then(function() {

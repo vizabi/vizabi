@@ -188,6 +188,10 @@ var Hook = Model.extend({
   getValidItems: function() {
     return this.getDataManager().get(this._dataId, 'valid', this.which);
   },
+
+  getNestedItems: function(groupBy) {
+    return this.getDataManager().get(this._dataId, 'nested', groupBy);
+  },
     
     
   /**

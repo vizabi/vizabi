@@ -284,7 +284,7 @@ var CartogramComponent = Component.extend({
     }
   },
   
-  _calculateTotalSize(year, frame) {
+  _calculateTotalSize: function(year, frame) {
     if (this.cached[year]) {
       return this.cached[year];
     }
