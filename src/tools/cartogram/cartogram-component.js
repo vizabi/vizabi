@@ -276,7 +276,7 @@ var CartogramComponent = Component.extend({
     this.minRadius = Math.max(maxRadius * extent[0], minRadius);
     this.maxRadius = Math.max(maxRadius * extent[1], minRadius);
 */
-
+    this.sScale.domain([0, this.sScale.domain()[1]]);
     if(this.model.marker.size.scaleType !== "ordinal") {
       this.sScale.range([0, 100]);
     } else {
