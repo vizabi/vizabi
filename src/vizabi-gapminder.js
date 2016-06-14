@@ -983,6 +983,7 @@ Cartogram.define('default_model', {
         which: "_default",
         scaleType: "ordinal",
         _important: true,
+        showArcs: false,
         allow: {
           scales: ["linear", "ordinal"]
         },
