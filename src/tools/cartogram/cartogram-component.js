@@ -146,7 +146,7 @@ var CartogramComponent = Component.extend({
       _this.lands = svg.selectAll(".land")
         .data(_this.topo_features)
         .enter().insert("path", ".graticule")
-        .attr("class", function(d) { return "land " + (d.id?d.id:d.MN_CODE); })
+        .attr("class", function(d) { return "land " + (_this.id_lookup?_this.id_lookup:d.id); })
         .attr("d", _this.cartogram.path)
         .on("mouseover", function (d, i) {
           if (utils.isTouchDevice()) return;
@@ -177,21 +177,7 @@ var CartogramComponent = Component.extend({
 
   },
   _getKey: function(d) {
-    // use for municipalities
-    if (d.properties.MN_CODE) return d.properties.MN_CODE; 
-    
-    switch (d.id) {
-      case 0: return 2;
-      case 1: return 4;
-      case 2: return 7;
-      case 3: return 5;
-      case 4: return 9;
-      case 5: return 8;
-      case 6: return 6;
-      case 7: return 3;
-      case 8: return 1;
-    }
-    return d.id + 1;
+    return d.properties[this.id_lookup]? d.properties[this.id_lookup] : d.id; 
   },
   /**
    * DOM is ready
@@ -276,6 +262,7 @@ var CartogramComponent = Component.extend({
     this.minRadius = Math.max(maxRadius * extent[0], minRadius);
     this.maxRadius = Math.max(maxRadius * extent[1], minRadius);
 */
+
     this.sScale.domain([0, this.sScale.domain()[1]]);
     if(this.model.marker.size.scaleType !== "ordinal") {
       this.sScale.range([0, 100]);
