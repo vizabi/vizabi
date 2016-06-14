@@ -971,7 +971,7 @@ Cartogram.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["municipality"]
+          "geo.cat": ["province", "municipality"]
         }
       }
     },
@@ -1055,13 +1055,14 @@ BMComponent.define("preload", function(done) {
 });
 
 CartogramComponent.define("preload", function(done) {
-  //var shape_path = localUrl + "data/zaf/za-all.topojson";
-  var shape_path = localUrl + "data/zaf/municipalities.json";
+  var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
+      globals.ext_resources.host + globals.ext_resources.preloadPath + "municipalities.json"; 
+  
   d3.json(shape_path, function(error, json) {
     if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
     CartogramComponent.define('world', json);
-    CartogramComponent.define('geometries', json.objects.MN_SA_2011.geometries);
-    //CartogramComponent.define('geometries', json.objects.prov.geometries);
+    CartogramComponent.define('geometries', json.objects.topo.geometries);
+    CartogramComponent.define('id_lookup', json.objects.id_lookup);
     done.resolve();
   });
 });
