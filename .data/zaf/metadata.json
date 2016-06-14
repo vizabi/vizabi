@@ -114,12 +114,7 @@
       "scales": ["ordinal"],
       "sourceLink": "https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv"
     },
-    "side": {
-      "use": "property",
-      "scales": ["ordinal"],
-      "sourceLink": "https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv"
-    },
-    "stack": {
+    "education": {
       "use": "property",
       "scales": ["ordinal"],
       "sourceLink": "https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv",
