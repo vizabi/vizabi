@@ -998,25 +998,12 @@ Cartogram.define('default_model', {
         use: "property",
         which: "geo.name"
       }
-    },
-    marker_minimap:{
-      space: ["entities_minimap"],
-        type: "geometry",
-        shape: "svg",
-        label: {
-          use: "property",
-          which: "geo.name"
-        },
-        geoshape: {
-          use: "property",
-          which: "shape_lores_svg"
-        }
     }
   },
   data: {
     reader: "csv",
-    path: localUrl + "data/waffles/ddf--datapoints--population--black_population--black_population_percentage--by--year--province.csv",
-    //path: localUrl + "data/waffles/ddf--datapoints--population--black_population--black_population_percentage--by--year--municipality.csv",
+    path: localUrl + "data/zaf/waffles/ddf--datapoints--population--black_population--black_population_percentage--by--year--province.csv",
+    //path: localUrl + "data/zaf/waffles/ddf--datapoints--population--black_population--black_population_percentage--by--year--municipality.csv",
     splash: false
   },
   //NO DEFAULT DATA SOURCE. DATA COMES FROM EXTERNAL PAGE
@@ -1061,13 +1048,13 @@ BMComponent.define("preload", function(done) {
 });
 
 CartogramComponent.define("preload", function(done) {
-  //var shape_path = localUrl + "data/zaf/za-all.topojson";
-  var shape_path = localUrl + "data/zaf/municipalities.json";
+  var shape_path = localUrl + "data/zaf/za-all.topojson";
+  //var shape_path = localUrl + "data/zaf/municipalities.json";
   d3.json(shape_path, function(error, json) {
     if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
     CartogramComponent.define('world', json);
-    CartogramComponent.define('geometries', json.objects.MN_SA_2011.geometries);
-    //CartogramComponent.define('geometries', json.objects.prov.geometries);
+    //CartogramComponent.define('geometries', json.objects.MN_SA_2011.geometries);
+    CartogramComponent.define('geometries', json.objects.prov.geometries);
     done.resolve();
   });
 });
