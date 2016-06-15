@@ -115,11 +115,11 @@ var CartogramComponent = Component.extend({
 
     this.lands = null;
     this.features = null;
-    this.topo_features = null; 
+    this.topo_features = null;
+    this.borderArcs = null;
     this.defaultWidth = 700;
     this.defaultHeight = 550;
     this.boundBox = [[0.05, 0.0], [0.95, 1.0]]; // two points to set box bound on 960 * 500 image;
-
     d3_geo_projection();
     this.cached = [];
     this.projection = d3.geo.mercator()
@@ -155,15 +155,19 @@ var CartogramComponent = Component.extend({
       .attr("width", defaultWidth)
       .attr("height", defaultHeight);
     svg.html('');
+
+    this.borderArcs = _this.cartogram.meshArcs(world, world.objects.topo, function(a, b) {
+      return a.properties.PR_NAME !== b.properties.PR_NAME;
+    });
     
-    //var features = topojson.feature(world, world.objects.prov).features; 
+
     this.cartogram.iterations(0);
     this.cartogram(world, geometries).then(function(response) {
       _this.features = _this.topo_features = response.features;
       _this.lands = svg.selectAll(".land")
         .data(_this.topo_features)
-        .enter().insert("path", ".graticule")
-        .attr("class", function(d) { return "land " + (_this.id_lookup?_this.id_lookup:d.id); })
+        .enter().append("path")
+        .attr("class", function(d) { return "land " + (d.properties[_this.id_lookup]?d.properties[_this.id_lookup]:d.id); })
         .attr("d", _this.cartogram.path)
         .on("mouseover", function (d, i) {
           if (utils.isTouchDevice()) return;
@@ -177,20 +181,18 @@ var CartogramComponent = Component.extend({
           if(utils.isTouchDevice()) return;
           _this._interact()._click(d, i);
         })
-
         .each(function(d) {
           d[_this.KEY] = _this._getKey(d);
         });
-    });
 
-/*
-    this.paths = svg.insert("path")
-      .datum(topojson.mesh(world, world.objects.prov, function(a, b) { 
-        return a !== b; 
-      }))
-      .attr("class", "boundary")
-      .attr("d", this.bgPath);
-*/
+      if (_this.borderArcs) {
+        var data = _this.cartogram.stitchArcs(response, _this.borderArcs);
+        _this.borders = svg.append("path")
+          .datum(data)
+          .attr("class", "boundary")
+          .attr("d", _this.cartogram.path);
+      }
+    });
 
     this.labels = this.parent.findChildByName('gapminder-labels');
     this.labels.config({
@@ -330,6 +332,14 @@ var CartogramComponent = Component.extend({
       }
       _this.cartogram(_this.world, _this.geometries, totValue).then(function(response) {
         _this.features = response.features;
+        if (_this.borderArcs) {
+          var data = _this.cartogram.stitchArcs(response, _this.borderArcs);
+          _this.borders.datum(data)
+            .transition()
+            .duration(duration)
+            .ease("linear")
+            .attr("d", _this.cartogram.path);
+        }
         _this.lands.data(_this.features)
           .each(function(d) {
             d[_this.KEY] = _this._getKey(d);
@@ -343,7 +353,18 @@ var CartogramComponent = Component.extend({
               return _this.values.color[_this._getKey(d)]!=null?_this.cScale(_this.values.color[_this._getKey(d)]):_this.COLOR_LAND_DEFAULT;
             })
             .attr("d", _this.cartogram.path);
+          if (_this.borderArcs) {
+            _this.borders.interrupt()
+              .transition()
+              .duration(duration)
+              .ease("linear")
+              .attr("d", _this.cartogram.path);
+          }
+
         } else {
+          _this.borders
+            .attr("d", _this.cartogram.path);
+
           _this.lands
             .style("fill", function(d) {
               return _this.values.color[_this._getKey(d)]!=null?_this.cScale(_this.values.color[_this._getKey(d)]):_this.COLOR_LAND_DEFAULT;
@@ -758,7 +779,7 @@ var CartogramComponent = Component.extend({
     var _this = this;
     //if(!duration)duration = 0;
 
-    var OPACITY_HIGHLT = 1.0;
+    var OPACITY_HIGHLT = 0.8;
     var OPACITY_HIGHLT_DIM = .3;
     var OPACITY_SELECT = this.model.entities.opacityRegular;
     var OPACITY_REGULAR = this.model.entities.opacityRegular;
