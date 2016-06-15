@@ -150,8 +150,10 @@ var ButtonList = Component.extend({
         // }
         // _this.entitiesSelected_1 = _this.model.state.entities.select.length > 0;
       },
-      "change:ui.chart.lockActive": function(evt) {
-        _this.setBubbleLock(); 
+      "change:ui.chart": function(evt, path) {
+        if(path.indexOf("lockActive") > -1) {
+          _this.setBubbleLock();
+        }
       }
     }      
         
