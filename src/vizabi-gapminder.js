@@ -868,6 +868,13 @@ AgePyramid.define('default_model', {
         which: "sex"
       }
     },
+    marker_side: {
+      space: ["entities", "entities_side", "time"],
+      hook_total: {
+        use: "indicator",
+        which: "zaf_population"
+      }      
+    },
     marker_minimap:{
       space: ["entities_stack"],
         type: "geometry",
@@ -885,7 +892,10 @@ AgePyramid.define('default_model', {
   language: language,
   //NO DEFAULT DATA SOURCE. DATA COMES FROM EXTERNAL PAGE
   ui: {
-    stacked: true,
+    chart: {
+      stacked: true,
+      inpercent: false
+    },
     presentation: false
   }
 });
@@ -1001,9 +1011,10 @@ JOINTPyramidLine.define('default_model', {
         higlightValueX: true,
         higlightValueY: true,
         showTooltip: false
-      }
+      },
+      stacked: true,
+      inpercent: false
     },    
-    stacked: true,
     presentation: false
   }
 });
