@@ -24,6 +24,7 @@ import Cartogram from 'tools/cartogram';
 import CartogramComponent from 'tools/cartogram-component';
 import AxisLabeler from 'tools/axislabeler';
 import AgePyramid from 'tools/agepyramid';
+import JOINTPyramidLine from 'tools/joint_pyramidline';
 
 //waffle reader
 import {waffle as WaffleReader} from 'readers/_index';
@@ -826,10 +827,10 @@ AgePyramid.define('default_model', {
       grouping: 5
     },
     entities_stack: {
-      dim: "stack"
+      dim: "education"
     },
     entities_side: {
-      dim: "side"
+      dim: "sex"
     },
     marker: {
       space: ["entities", "entities_side", "entities_stack", "entities_age", "time"],
@@ -839,11 +840,7 @@ AgePyramid.define('default_model', {
       },
       label_name: {
         use: "property",
-        which: "side"
-      },
-      group_name: {
-        use: "property",
-        which: "stack"
+        which: "sex"
       },
       axis_y: {
         use: "indicator",
@@ -861,15 +858,22 @@ AgePyramid.define('default_model', {
       },
       color: {
         use: "property",
-        which: "stack"
+        which: "education"
         // allow: {
         //   names: ["!stack.name"]
         // }
       },
-      hook_side: {
+      side: {
         use: "property",
-        which: "side"
+        which: "sex"
       }
+    },
+    marker_side: {
+      space: ["entities", "entities_side", "time"],
+      hook_total: {
+        use: "indicator",
+        which: "zaf_population"
+      }      
     },
     marker_minimap:{
       space: ["entities_stack"],
@@ -877,7 +881,7 @@ AgePyramid.define('default_model', {
         shape: "svg",
         label: {
           use: "property",
-          which: "stack"
+          which: "education"
         },
         geoshape: {
           use: "property",
@@ -888,7 +892,136 @@ AgePyramid.define('default_model', {
   language: language,
   //NO DEFAULT DATA SOURCE. DATA COMES FROM EXTERNAL PAGE
   ui: {
-    stacked: true,
+    chart: {
+      stacked: true,
+      inpercent: false
+    },
+    presentation: false
+  }
+});
+
+JOINTPyramidLine.define('default_model', {
+  state: {
+    time: {
+      value: '2011',
+      start: '1996',
+      end: '2011'
+    },
+    entities: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo": ["*"]
+        }
+      }
+    },
+    entities_age: {
+      dim: "age",
+      show: {
+        _defs_: {
+          "age": [
+            [0, 95]
+          ] //show 0 through 100
+        }
+      },
+      grouping: 5
+    },
+    entities_stack: {
+      dim: "education"
+    },
+    entities_side: {
+      dim: "sex"
+    },
+    marker_pyramid: {
+      space: ["entities", "entities_side", "entities_stack", "entities_age", "time"],
+      label: {
+        use: "indicator",
+        which: "age"
+      },
+      label_name: {
+        use: "property",
+        which: "sex"
+      },
+      axis_y: {
+        use: "indicator",
+        which: "age",
+        // domain Max should be set manually as age max from entites_age plus one grouping value (95 + 5 = 100)
+        // that way the last age group fits in on the scale
+        domainMax: 100,
+        domainMin: 0
+      },
+      axis_x: {
+        use: "indicator",
+        which: "zaf_population",
+        domainMin: 0,
+        domainMax: 1400000000
+      },
+      color: {
+        use: "property",
+        which: "education"
+      },
+      side: {
+        use: "property",
+        which: "sex"
+      }
+    },
+    marker_line: {
+      space: ["entities", "time"],
+      label: {
+        use: "property",
+        which: "geo.name"
+      },
+      axis_y: {
+        use: "indicator",
+        which: "tfr",
+        scaleType: "linear",
+        allow: {
+          scales: ["linear", "log"]
+        }
+      },
+      axis_x: {
+        use: "indicator",
+        which: "time",
+        scaleType: "time",
+        allow: {
+          scales: ["time"]
+        }
+      },
+      color: {
+        use: "property",
+        which: "geo.world_4region",
+        allow: {
+          scales: ["ordinal"],
+          names: ["!geo.name"]
+        }
+      }
+    },
+    marker_side: {
+      space: ["entities", "entities_side", "time"],
+      hook_total: {
+        use: "indicator",
+        which: "zaf_population"
+      }      
+    }
+  },
+  language: language,
+  //NO DEFAULT DATA SOURCE. DATA COMES FROM EXTERNAL PAGE
+  ui: {
+    chart: {
+      labels: {
+        min_number_of_entities_when_values_hide: 2 //values hide when showing 2 entities or more
+      },
+      whenHovering: {
+        hideVerticalNow: false,
+        showProjectionLineX: true,
+        showProjectionLineY: true,
+        higlightValueX: true,
+        higlightValueY: true,
+        showTooltip: false
+      },
+      stacked: true,
+      inpercent: false
+    },    
     presentation: false
   }
 });

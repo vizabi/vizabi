@@ -124,6 +124,27 @@
             "stackIconMountain_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(3) > div > div.vzb-dialog-content.vzb-dialog-scrollable > form.vzb-howtostack.vzb-dialog-paragraph > label:nth-child(3) > span",
             "expandIconBubbleMap_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(5) > span.vzb-buttonlist-btn-icon.fa"
       
-      }                                                               
+      },
+        
+      "Bar_Chart_Loctors": {
+      "_comment": "Locators belong to Bar chart",
+
+            "countriesBarChart_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > svg > g > g.vzb-bc-bars"
+       
+       },
+        
+      "Barrank_Chart_Loctors": {
+      "_comment": "Locators belong to Bar Rank chart",
+
+            "countriesBarRankChart_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > div > svg > g"
+            
+        },
+        
+      "line_Chart_Loctors": {
+      "_comment": "Locators belong to line chart",
+
+            "countriesLineChart_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg > svg.vzb-lc-lines"
+            
+        }
     }   
 ]

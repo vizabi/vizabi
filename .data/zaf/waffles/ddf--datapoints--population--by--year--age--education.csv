@@ -1,4 +1,4 @@
-geo,time,age,stack,zaf_population
+geo,time,age,education,zaf_population
 zaf,1996,0,No schooling,0
 zaf,1996,0,Some primary,0
 zaf,1996,0,Complete primary,0

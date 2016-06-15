@@ -346,11 +346,10 @@ var CSVReader = Reader.extend({
             leaf = leaf[val[entity]];
             // if the leaf already had values, apply the aggregrate functions for each property
             utils.forEach(query.select, function(property, key) {
-              // TO-DO replace with more generic grouping/aggregrate
-              if (property == 'pop') {
-                // aggregrate the un-grouped data (now only sum population)
-                leaf[property] = parseFloat(leaf[property]) + parseFloat(val['pop']);
-              }
+              if(keys.indexOf(property) != -1) return;
+              // aggregrate the un-grouped data (now only sum population)
+              // leaf[property] = parseFloat(leaf[property]) + parseFloat(val[property]);
+              leaf[property] = leaf[property] + val[property];
             });  
             keep = false;
 

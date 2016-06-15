@@ -61,6 +61,7 @@ var CartogramComponent = Component.extend({
           _this.calculationQueue.push(_this.model.time.value.toString());
         }
         (function(time) { // isolate timestamp
+          //_this._bubblesInteract().mouseout();
           _this.model.marker.getFrame(time, function(frame, time) {
             var index = _this.calculationQueue.indexOf(time.toString()); //
             if (index == -1) { // we was receive more recent frame before so we pass this frame
@@ -103,7 +104,6 @@ var CartogramComponent = Component.extend({
       'change:entities.opacityRegular': function() {
         _this.updateLandOpacity();
       },
-      
     };
     //this._selectlist = new Selectlist(this);
 
@@ -220,9 +220,9 @@ var CartogramComponent = Component.extend({
     this.labelsContainer = this.graph.select('.vzb-ct-labels');
 
     this.yTitleEl = this.graph.select(".vzb-ct-axis-y-title");
-    this.cTitleEl = this.graph.select(".vzb-ct-axis-c-title");
+    this.sTitleEl = this.graph.select(".vzb-ct-axis-c-title");
     this.yInfoEl = this.graph.select(".vzb-ct-axis-y-info");
-    this.cInfoEl = this.graph.select(".vzb-ct-axis-c-info");
+    this.sInfoEl = this.graph.select(".vzb-ct-axis-c-info");
     this.dataWarningEl = this.graph.select(".vzb-data-warning");
     this.entityBubbles = null;
     this.tooltip = this.element.select('.vzb-ct-tooltip');
@@ -401,23 +401,23 @@ var CartogramComponent = Component.extend({
     };
 
     this.yTitleEl.select("text")
-      .text(this.translator("buttons/size") + ": " + this.strings.title.S)
+      .text(this.translator("buttons/color") + ": " + this.strings.title.C)
       .on("click", function() {
         _this.parent
           .findChildByName("gapminder-treemenu")
-          .markerID("size")
+          .markerID("color")
           .alignX("left")
           .alignY("top")
           .updateView()
           .toggle();
       });
 
-    this.cTitleEl.select("text")
-      .text(this.translator("buttons/color") + ": " + this.strings.title.C)
+    this.sTitleEl.select("text")
+      .text(this.translator("buttons/size") + ": " + this.strings.title.S)
       .on("click", function() {
         _this.parent
           .findChildByName("gapminder-treemenu")
-          .markerID("color")
+          .markerID("size")
           .alignX("left")
           .alignY("top")
           .updateView()
@@ -457,20 +457,20 @@ var CartogramComponent = Component.extend({
       _this.parent.findChildByName("gapminder-datanotes").hide();
     })
 
-    this.cInfoEl
+    this.sInfoEl
       .html(iconQuestion)
       .select("svg").attr("width", "0px").attr("height", "0px");
 
     //TODO: move away from UI strings, maybe to ready or ready once
-    this.cInfoEl.on("click", function() {
+    this.sInfoEl.on("click", function() {
       _this.parent.findChildByName("gapminder-datanotes").pin();
     })
-    this.cInfoEl.on("mouseover", function() {
+    this.sInfoEl.on("mouseover", function() {
       var rect = this.getBBox();
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
       _this.parent.findChildByName("gapminder-datanotes").setHook('color').show().setPos(coord.x, coord.y);
     })
-    this.cInfoEl.on("mouseout", function() {
+    this.sInfoEl.on("mouseout", function() {
       _this.parent.findChildByName("gapminder-datanotes").hide();
     })
   },
@@ -554,7 +554,7 @@ var CartogramComponent = Component.extend({
       .attr('width', width)
       .attr('height', height)
       .attr('viewBox', viewBox.join(' '))
-      .attr('preserveAspectRatio', 'none')
+      .attr('preserveAspectRatio', 'xMidYMid')
       .attr('x', margin.left)
       .attr('y', margin.top)
       .style("transform", "translate3d(" + margin.left + "px," + margin.top + "px,0)");
@@ -565,8 +565,8 @@ var CartogramComponent = Component.extend({
 
     var yTitleBB = this.yTitleEl.select("text").node().getBBox();
 
-    this.cTitleEl.attr("transform", "translate(" + 0 + "," + (margin.top + yTitleBB.height) + ")")
-      .classed("vzb-hidden", this.model.marker.color.which.indexOf("geo") != -1 || this.model.marker.color.use == "constant");
+    this.sTitleEl.attr("transform", "translate(" + 0 + "," + (margin.top + yTitleBB.height) + ")")
+      .classed("vzb-hidden", this.model.marker.size.use == "constant");
 
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl.select("svg")
@@ -591,16 +591,16 @@ var CartogramComponent = Component.extend({
         + (translate[1] - infoElHeight * 0.8) + ')');
     }
 
-    this.cInfoEl.classed("vzb-hidden", this.cTitleEl.classed("vzb-hidden"));
+    this.sInfoEl.classed("vzb-hidden", this.sTitleEl.classed("vzb-hidden"));
 
-    if(!this.cInfoEl.classed("vzb-hidden") && this.cInfoEl.select('svg').node()) {
-      var titleBBox = this.cTitleEl.node().getBBox();
-      var translate = d3.transform(this.cTitleEl.attr('transform')).translate;
+    if(!this.sInfoEl.classed("vzb-hidden") && this.sInfoEl.select('svg').node()) {
+      var titleBBox = this.sTitleEl.node().getBBox();
+      var translate = d3.transform(this.sTitleEl.attr('transform')).translate;
 
-      this.cInfoEl.select('svg')
+      this.sInfoEl.select('svg')
         .attr("width", infoElHeight)
         .attr("height", infoElHeight)
-      this.cInfoEl.attr('transform', 'translate('
+      this.sInfoEl.attr('transform', 'translate('
         + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
         + (translate[1] - infoElHeight * 0.8) + ')');
     }
@@ -611,24 +611,24 @@ var CartogramComponent = Component.extend({
     //reset font sizes first to make the measurement consistent
     var yTitleText = this.yTitleEl.select("text")
       .style("font-size", null);
-    var cTitleText = this.cTitleEl.select("text")
+    var sTitleText = this.sTitleEl.select("text")
       .style("font-size", null);
 
 
     var yTitleBB = yTitleText.node().getBBox();
-    var cTitleBB = this.cTitleEl.classed('vzb-hidden') ? yTitleBB : cTitleText.node().getBBox();
+    var sTitleBB = this.sTitleEl.classed('vzb-hidden') ? yTitleBB : sTitleText.node().getBBox();
 
     var font =
-      Math.max(parseInt(yTitleText.style("font-size")), parseInt(cTitleText.style("font-size")))
-      * this.width / Math.max(yTitleBB.width, cTitleBB.width);
+      Math.max(parseInt(yTitleText.style("font-size")), parseInt(sTitleText.style("font-size")))
+      * this.width / Math.max(yTitleBB.width, sTitleBB.width);
 
-    if(Math.max(yTitleBB.width, cTitleBB.width) > this.width) {
+    if(Math.max(yTitleBB.width, sTitleBB.width) > this.width) {
       yTitleText.style("font-size", font + "px");
-      cTitleText.style("font-size", font + "px");
+      sTitleText.style("font-size", font + "px");
     } else {
       // Else - reset the font size to default so it won't get stuck
       yTitleText.style("font-size", null);
-      cTitleText.style("font-size", null);
+      sTitleText.style("font-size", null);
     }
   },
   _interact: function () {
@@ -678,6 +678,7 @@ var CartogramComponent = Component.extend({
 
     if(_this.hovered || mobile) {
       var hovered = _this.hovered || mobile;
+      var formatterS = _this.model.marker.size.getTickFormatter();
       var formatterC = _this.model.marker.color.getTickFormatter();
 
       var unitC = _this.translator("unit/" + _this.model.marker.color.which);
@@ -685,7 +686,7 @@ var CartogramComponent = Component.extend({
       //suppress unit strings that found no translation (returns same thing as requested)
       if(unitC === "unit/" + _this.model.marker.color.which) unitC = "";
       var valueC = _this.values.color[_this._getKey(hovered)];
-      _this.cTitleEl.select("text")
+      _this.yTitleEl.select("text")
         .text(_this.translator("buttons/color") + ": " +
         (valueC || valueC===0 ? formatterC(valueC) + " " + unitC : _this.translator("hints/nodata")));
 
@@ -694,20 +695,20 @@ var CartogramComponent = Component.extend({
         var unitY = _this.translator("unit/" + _this.model.marker.size.which);
         if(unitY === "unit/" + _this.model.marker.size.which) unitY = "";
         var valueS = _this.values.size[_this._getKey(hovered)];
-        _this.yTitleEl.select("text")
+        _this.sTitleEl.select("text")
           .text(_this.translator("buttons/size") + ": " + formatterS(valueS) + " " + unitY);
       }
 
       this.yInfoEl.classed("vzb-hidden", true);
-      this.cInfoEl.classed("vzb-hidden", true);
+      this.sInfoEl.classed("vzb-hidden", true);
     } else {
       this.yTitleEl.select("text")
-        .text(this.translator("buttons/size") + ": " + this.strings.title.S);
-      this.cTitleEl.select("text")
         .text(this.translator("buttons/color") + ": " + this.strings.title.C);
+      this.sTitleEl.select("text")
+        .text(this.translator("buttons/size") + ": " + this.strings.title.S);
 
       this.yInfoEl.classed("vzb-hidden", false);
-      this.cInfoEl.classed("vzb-hidden", false);
+      this.sInfoEl.classed("vzb-hidden", false);
     }
   },
   
