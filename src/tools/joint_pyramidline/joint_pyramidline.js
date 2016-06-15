@@ -54,7 +54,7 @@ var JOINTPyramidLine = Tool.extend('JOINTPyramidLine', {
     this.components = [{
       component: AgePyramidComponent,
       placeholder: '.vzb-tool-viz-pyramid',
-      model: ["state.time", "state.entities", "state.entities_side", "state.entities_stack", "state.entities_age", "state.marker_pyramid", "language"] //pass models to component
+      model: ["state.time", "state.entities", "state.entities_side", "state.entities_stack", "state.entities_age", "state.marker_pyramid", "state.marker_side", "language", "ui"] //pass models to component
     }, {      
       component: LCComponent,
       placeholder: '.vzb-tool-viz-line',

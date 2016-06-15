@@ -995,6 +995,13 @@ JOINTPyramidLine.define('default_model', {
           names: ["!geo.name"]
         }
       }
+    },
+    marker_side: {
+      space: ["entities", "entities_side", "time"],
+      hook_total: {
+        use: "indicator",
+        which: "zaf_population"
+      }      
     }
   },
   language: language,
