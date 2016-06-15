@@ -349,6 +349,9 @@ var CSVReader = Reader.extend({
               if(keys.indexOf(property) != -1) return;
               // aggregrate the un-grouped data (now only sum population)
               // leaf[property] = parseFloat(leaf[property]) + parseFloat(val[property]);
+              
+              //never aggregate strings!
+              if(val[property]!=="" && !+val[property] && +val[property]!==0) return;
               leaf[property] = leaf[property] + val[property];
             });  
             keep = false;
