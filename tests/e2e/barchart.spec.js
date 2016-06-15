@@ -1,16 +1,18 @@
 describe('Web - Vizabi e2e test :: Bar Chart', function() {
-
+    
+  var testData = require('../../pageObjects.json');
   jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000000;
   browser.manage().window().setSize(1100, 600);
 
   var baseUrl = 'http://localhost:9000/preview/';
   var EC = protractor.ExpectedConditions;
+  testData.forEach( function (data) {
 
   // Base Selectors
 
-  var buttonPlay = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-btns > button.vzb-ts-btn-play.vzb-ts-btn > svg"));
-  var countries = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > svg > g > g.vzb-bc-bars"));
-  var buttonList = element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist"));
+  var buttonPlay = element(by.css(data.All_Global_Loctors.buttonPlay_Locator_CSS));
+  var countries = element(by.css(data.Bar_Chart_Loctors.countriesBarChart_Locator_CSS));
+  var buttonList = element(by.css(data.All_Global_Loctors.buttonList_Locator_CSS));
 
   it('Loading Bar Chart Page', function() {
 
@@ -51,4 +53,5 @@ describe('Web - Vizabi e2e test :: Bar Chart', function() {
 
   });
 
+});
 });
