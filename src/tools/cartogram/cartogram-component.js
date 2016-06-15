@@ -61,7 +61,6 @@ var CartogramComponent = Component.extend({
           _this.calculationQueue.push(_this.model.time.value.toString());
         }
         (function(time) { // isolate timestamp
-          //_this._bubblesInteract().mouseout();
           _this.model.marker.getFrame(time, function(frame, time) {
             var index = _this.calculationQueue.indexOf(time.toString()); //
             if (index == -1) { // we was receive more recent frame before so we pass this frame
@@ -80,13 +79,30 @@ var CartogramComponent = Component.extend({
         _this.updateMarkerSizeLimits();
         _this.updateEntities();
       },
+      'change:marker.size.use': function(evt, path) {
+        _this.model.ui.chart.lockActive = _this.model.marker.size.use != "constant";
+      },
       "change:marker.color.palette": function(evt, path) {
         _this.updateEntitityColor();
       },
       "change:ui.chart.lockNonSelected": function(evt) {
-        _this.updateEntities();
-      }
-
+        _this.updateEntities(900);
+      },
+      "change:entities.select": function() {
+        if(!_this._readyOnce) return;
+        _this.updateLandOpacity();
+      },
+      "change:entities.highlight": function() {
+        if(!_this._readyOnce) return;
+        //console.log("EVENT change:entities:highlight");
+        _this.updateLandOpacity();
+      },
+      'change:entities.opacitySelectDim': function() {
+        _this.updateLandOpacity();
+      },
+      'change:entities.opacityRegular': function() {
+        _this.updateLandOpacity();
+      },
     };
     //this._selectlist = new Selectlist(this);
 
@@ -155,6 +171,14 @@ var CartogramComponent = Component.extend({
         .on("mouseout", function (d, i) {
           if (utils.isTouchDevice()) return;
           _this._interact()._mouseout(d, i);
+        })
+        .on("click", function(d, i) {
+          if(utils.isTouchDevice()) return;
+          _this._interact()._click(d, i);
+        })
+
+        .each(function(d) {
+          d[_this.KEY] = _this._getKey(d);
         });
     });
 
@@ -177,7 +201,7 @@ var CartogramComponent = Component.extend({
 
   },
   _getKey: function(d) {
-    return d.properties[this.id_lookup]? d.properties[this.id_lookup] : d.id; 
+    return d.properties[this.id_lookup]? d.properties[this.id_lookup].toString() : d.id.toString(); 
   },
   /**
    * DOM is ready
@@ -225,7 +249,7 @@ var CartogramComponent = Component.extend({
     if (!frame) return;
     this.values = frame;
     this.updateTime();
-    this.updateEntities();
+    this.updateEntities(this.duration);
   },
   
   /*
@@ -252,22 +276,15 @@ var CartogramComponent = Component.extend({
 
   updateMarkerSizeLimits: function() {
     var _this = this;
-/*
     var extent = this.model.marker.size.extent || [0,1];
-
-    var minRadius = this.activeProfile.minRadius;
-    var maxRadius = this.activeProfile.maxRadius;
-    console.log(minRadius);
-    console.log(maxRadius);
-    this.minRadius = Math.max(maxRadius * extent[0], minRadius);
-    this.maxRadius = Math.max(maxRadius * extent[1], minRadius);
-*/
+    this.minRadius = Math.max(100 * extent[0], 0);
+    this.maxRadius = Math.max(100 * extent[1], 0);
 
     this.sScale.domain([0, this.sScale.domain()[1]]);
     if(this.model.marker.size.scaleType !== "ordinal") {
-      this.sScale.range([0, 100]);
+      this.sScale.range([this.minRadius, this.maxRadius]);
     } else {
-      this.sScale.rangePoints([0, 100], 0).range();
+      this.sScale.rangePoints([this.minRadius, this.maxRadius], 0).range();
     }
   },
   
@@ -283,7 +300,7 @@ var CartogramComponent = Component.extend({
     return this.cached[year];
   },
    
-  updateEntities: function() {
+  updateEntities: function(duration) {
     var _this = this;
     var time = this.model.time.value;
     if(this.model.ui.chart.lockNonSelected) {
@@ -312,15 +329,28 @@ var CartogramComponent = Component.extend({
       }
       _this.cartogram(_this.world, _this.geometries, totValue).then(function(response) {
         _this.features = response.features;
-        _this.lands.data(_this.features);
-        _this.lands.interrupt()
-          .transition()
-          .duration(_this.duration)
-          .ease("linear")
-          .style("fill", function(d) {
-            return _this.values.color[_this._getKey(d)]!=null?_this.cScale(_this.values.color[_this._getKey(d)]):_this.COLOR_LAND_DEFAULT;
-          })
-          .attr("d", _this.cartogram.path)
+        _this.lands.data(_this.features)
+          .each(function(d) {
+            d[_this.KEY] = _this._getKey(d);
+          });
+        if (duration) {
+          _this.lands.interrupt()
+            .transition()
+            .duration(duration)
+            .ease("linear")
+            .style("fill", function(d) {
+              return _this.values.color[_this._getKey(d)]!=null?_this.cScale(_this.values.color[_this._getKey(d)]):_this.COLOR_LAND_DEFAULT;
+            })
+            .attr("d", _this.cartogram.path);
+        } else {
+          _this.lands
+            .style("fill", function(d) {
+              return _this.values.color[_this._getKey(d)]!=null?_this.cScale(_this.values.color[_this._getKey(d)]):_this.COLOR_LAND_DEFAULT;
+            })
+            .attr("d", _this.cartogram.path);
+          
+        }
+        _this.updateLandOpacity();
       });
     });
   },
@@ -340,10 +370,10 @@ var CartogramComponent = Component.extend({
 
     this.translator = this.model.language.getTFunction();
     var sizeConceptprops = this.model.marker.size.getConceptprops();
-
+    var sizeStr = this.model.marker.size.use == "constant" ? "indicator/size/" : "indicator/";  
     this.strings = {
       title: {
-        S: this.translator("indicator/" + _this.model.marker.size.which),
+        S: this.translator(sizeStr + _this.model.marker.size.which),
         C: this.translator("indicator/" + _this.model.marker.color.which)
       }
     };
@@ -435,7 +465,6 @@ var CartogramComponent = Component.extend({
    */
   updateTime: function() {
     var _this = this;
-    this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
@@ -627,25 +656,25 @@ var CartogramComponent = Component.extend({
 
     if(_this.hovered || mobile) {
       var hovered = _this.hovered || mobile;
-      var formatterS = _this.model.marker.size.getTickFormatter();
       var formatterC = _this.model.marker.color.getTickFormatter();
 
-      var unitY = _this.translator("unit/" + _this.model.marker.size.which);
       var unitC = _this.translator("unit/" + _this.model.marker.color.which);
 
       //suppress unit strings that found no translation (returns same thing as requested)
-      if(unitY === "unit/" + _this.model.marker.size.which) unitY = "";
       if(unitC === "unit/" + _this.model.marker.color.which) unitC = "";
-
-      var valueS = _this.values.size[_this._getKey(hovered)];
       var valueC = _this.values.color[_this._getKey(hovered)];
-
-      _this.yTitleEl.select("text")
-        .text(_this.translator("buttons/size") + ": " + formatterS(valueS) + " " + unitY);
-
       _this.cTitleEl.select("text")
         .text(_this.translator("buttons/color") + ": " +
         (valueC || valueC===0 ? formatterC(valueC) + " " + unitC : _this.translator("hints/nodata")));
+
+      if (this.model.marker.size.use !== "constant") {
+        var formatterS = _this.model.marker.size.getTickFormatter();
+        var unitY = _this.translator("unit/" + _this.model.marker.size.which);
+        if(unitY === "unit/" + _this.model.marker.size.which) unitY = "";
+        var valueS = _this.values.size[_this._getKey(hovered)];
+        _this.yTitleEl.select("text")
+          .text(_this.translator("buttons/size") + ": " + formatterS(valueS) + " " + unitY);
+      }
 
       this.yInfoEl.classed("vzb-hidden", true);
       this.cInfoEl.classed("vzb-hidden", true);
@@ -722,8 +751,52 @@ var CartogramComponent = Component.extend({
 
       this.tooltip.classed("vzb-hidden", true);
     }
-  }  
+  },
   
+  updateLandOpacity: function() {
+    var _this = this;
+    //if(!duration)duration = 0;
+
+    var OPACITY_HIGHLT = 1.0;
+    var OPACITY_HIGHLT_DIM = .3;
+    var OPACITY_SELECT = this.model.entities.opacityRegular;
+    var OPACITY_REGULAR = this.model.entities.opacityRegular;
+    var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
+    this.someHighlighted = (this.model.entities.highlight.length > 0);
+    this.someSelected = (this.model.entities.select.length > 0);
+    this.lands
+      .style("opacity", function(d) {
+
+        if(_this.someHighlighted) {
+          //highlight or non-highlight
+          if(_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
+        }
+
+        if(_this.someSelected) {
+          //selected or non-selected
+          return _this.model.entities.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
+        }
+
+        if(_this.someHighlighted) return OPACITY_HIGHLT_DIM;
+
+        return OPACITY_REGULAR;
+      });
+
+
+    var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
+
+    // when pointer events need update...
+    if(someSelectedAndOpacityZero != this.someSelectedAndOpacityZero_1) {
+      this.lands.style("pointer-events", function(d) {
+        return(!someSelectedAndOpacityZero || _this.model.entities.isSelected(d)) ?
+          "visible" : "none";
+      });
+    }
+
+    this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
+  }
+
+
 });
 
 
