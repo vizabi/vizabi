@@ -156,7 +156,7 @@ var CartogramComponent = Component.extend({
     svg.html('');
 
     this.borderArcs = _this.cartogram.meshArcs(world, world.objects.topo, function(a, b) {
-      return a.properties.PR_NAME !== b.properties.PR_NAME;
+      return a.properties.MN_NAME && a.properties.PR_NAME !== b.properties.PR_NAME;
     });
     
 
