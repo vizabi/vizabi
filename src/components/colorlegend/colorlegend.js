@@ -79,11 +79,11 @@ var ColorLegend = Component.extend({
   
   ready: function(){
     var _this = this;
-    var minimapDim = this.model.state.marker_minimap._getFirstDimension();
+    var minimapDim = this.markerModel._getFirstDimension();
     var timeModel = this.model.state.time;
     var filter = {};
     filter[timeModel.getDimension()] = timeModel.value;
-    _this.frame = this.model.state.marker_minimap.getValues(filter,[minimapDim]);
+    _this.frame = this.markerModel.getValues(filter,[minimapDim]);
     _this.updateView();
   },
 

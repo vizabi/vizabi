@@ -61,6 +61,7 @@ var CartogramComponent = Component.extend({
           _this.calculationQueue.push(_this.model.time.value.toString());
         }
         (function(time) { // isolate timestamp
+          //_this._bubblesInteract().mouseout();
           _this.model.marker.getFrame(time, function(frame, time) {
             var index = _this.calculationQueue.indexOf(time.toString()); //
             if (index == -1) { // we was receive more recent frame before so we pass this frame
@@ -392,9 +393,10 @@ var CartogramComponent = Component.extend({
 
     this.translator = this.model.language.getTFunction();
     var sizeConceptprops = this.model.marker.size.getConceptprops();
+    var sizeStr = this.model.marker.size.use == "constant" ? "indicator/size/" : "indicator/";  
     this.strings = {
       title: {
-        S: this.translator("indicator/" + _this.model.marker.size.which),
+        S: this.translator(sizeStr + _this.model.marker.size.which),
         C: this.translator("indicator/" + _this.model.marker.color.which)
       }
     };
@@ -677,6 +679,7 @@ var CartogramComponent = Component.extend({
 
     if(_this.hovered || mobile) {
       var hovered = _this.hovered || mobile;
+      var formatterS = _this.model.marker.size.getTickFormatter();
       var formatterC = _this.model.marker.color.getTickFormatter();
 
       var unitC = _this.translator("unit/" + _this.model.marker.color.which);

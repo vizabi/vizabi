@@ -1132,19 +1132,6 @@ Cartogram.define('default_model', {
         use: "property",
         which: "geo.name"
       }
-    },
-    marker_minimap:{
-      space: ["entities_minimap"],
-        type: "geometry",
-        shape: "svg",
-        label: {
-          use: "property",
-          which: "geo.name"
-        },
-        geoshape: {
-          use: "property",
-          which: "shape_lores_svg"
-        }
     }
   },
   //NO DEFAULT DATA SOURCE. DATA COMES FROM EXTERNAL PAGE
