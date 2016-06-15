@@ -532,7 +532,7 @@ var CartogramComponent = Component.extend({
       .attr('width', width)
       .attr('height', height)
       .attr('viewBox', viewBox.join(' '))
-      .attr('preserveAspectRatio', 'none')
+      .attr('preserveAspectRatio', 'xMidYMid')
       .attr('x', margin.left)
       .attr('y', margin.top)
       .style("transform", "translate3d(" + margin.left + "px," + margin.top + "px,0)");
