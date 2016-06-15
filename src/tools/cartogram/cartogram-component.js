@@ -252,6 +252,7 @@ var CartogramComponent = Component.extend({
     if (!frame) return;
     this.values = frame;
     this.updateTime();
+    this.updateTitleNumbers();
     this.updateEntities(this.duration);
   },
   
