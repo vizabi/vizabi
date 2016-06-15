@@ -80,7 +80,7 @@ script.
   var locationArray = window.location.href.split("/");
   var localUrl = locationArray.splice(0, locationArray.indexOf("preview")).join("/") + "/preview/";
   
-  if("#{tool}"=="AgePyramid" || "#{tool}"=="JOINTPyramidLine"){
+  if("#{tool}"=="AgePyramid"){
     Vizabi._globals.ext_resources = {
       host: localUrl,
       preloadPath: 'data/zaf/',
@@ -91,6 +91,20 @@ script.
     VIZABI_MODEL.data = {
       reader: "csv",
       path: localUrl + 'data/zaf/waffles/' + "ddf--datapoints--population--by--year--age--education-gender.csv",
+      splash: false
+    }   
+    
+  }else if("#{tool}"=="JOINTPyramidLine"){
+    Vizabi._globals.ext_resources = {
+      host: localUrl,
+      preloadPath: 'data/zaf/',
+      dataPath: 'data/zaf/waffles/',
+      conceptpropsPath: localUrl + 'data/zaf/metadata.json'
+    };
+
+    VIZABI_MODEL.data = {
+      reader: "csv",
+      path: localUrl + 'data/zaf/waffles/' + "ddf--datapoints--population--by--year--age--education-gender-add-tfr.csv",
       splash: false
     }  
     

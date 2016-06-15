@@ -1,5 +1,18 @@
 {
   "indicatorsDB": {
+    "tfr": {
+      "use": "indicator",
+        "scales": [
+          "linear",
+          "log"
+        ],
+        "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
+        "domain": [0.5, 9.5],
+        "availability": [
+          1996,
+          2011
+        ]
+    },
     "piped_water_percentage": {
       "use": "indicator",
       "scales": [

@@ -894,23 +894,14 @@ JOINTPyramidLine.define('default_model', {
   state: {
     time: {
       value: '2011',
-      start: '1950',
-      end: '2100'
+      start: '1996',
+      end: '2011'
     },
     entities: {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["*"],
-          //"geo.cat": ["country", "unstate"]
-        }
-      }
-    },
-    entities_minimap: {
-      dim: "geo",
-      show: {
-        _defs_: {
-          "geo.cat": ["country"]
+          "geo": ["*"]
         }
       }
     },
@@ -926,10 +917,10 @@ JOINTPyramidLine.define('default_model', {
       grouping: 5
     },
     entities_stack: {
-      dim: "stack"
+      dim: "education"
     },
     entities_side: {
-      dim: "side"
+      dim: "sex"
     },
     marker_pyramid: {
       space: ["entities", "entities_side", "entities_stack", "entities_age", "time"],
@@ -939,11 +930,7 @@ JOINTPyramidLine.define('default_model', {
       },
       label_name: {
         use: "property",
-        which: "side"
-      },
-      group_name: {
-        use: "property",
-        which: "stack"
+        which: "sex"
       },
       axis_y: {
         use: "indicator",
@@ -961,17 +948,13 @@ JOINTPyramidLine.define('default_model', {
       },
       color: {
         use: "property",
-        which: "stack"
-        // allow: {
-        //   names: ["!stack.name"]
-        // }
+        which: "education"
       },
-      hook_side: {
+      side: {
         use: "property",
-        which: "side"
+        which: "sex"
       }
     },
-    
     marker_line: {
       space: ["entities", "time"],
       label: {
@@ -980,13 +963,11 @@ JOINTPyramidLine.define('default_model', {
       },
       axis_y: {
         use: "indicator",
-        which: "sg_gdp_p_cap_const_ppp2011_dollar",//systema globalis
-        //which: "income_per_person_gdppercapita_ppp_inflation_adjusted",
-        scaleType: "log",
+        which: "tfr",
+        scaleType: "linear",
         allow: {
-          scales: ["linear", "log", "time"]
+          scales: ["linear", "log"]
         }
-
       },
       axis_x: {
         use: "indicator",
@@ -1004,20 +985,6 @@ JOINTPyramidLine.define('default_model', {
           names: ["!geo.name"]
         }
       }
-    },
-    
-    marker_minimap:{
-      space: ["entities_stack"],
-        type: "geometry",
-        shape: "svg",
-        label: {
-          use: "property",
-          which: "stack"
-        },
-        geoshape: {
-          use: "property",
-          which: "shape_lores_svg"
-        }
     }
   },
   language: language,

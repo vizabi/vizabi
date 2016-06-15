@@ -1869,14 +1869,17 @@
     "indicator/black_population_percentage":"Black population share",
     "indicator/piped_water_percentage":"Piped water access",
     "indicator/electricity_lighting_total":"Electricity lighting access",
+    "indicator/tfr":"Babies per woman",
     "unit/zaf_population":"",
     "unit/black_population":"",
     "unit/black_population_percentage":"",
     "unit/piped_water_percentage":"",
     "unit/electricity_lighting_total":"",
+    "unit/tfr":"",
     "description/zaf_population":"",
     "description/black_population":"",
     "description/black_population_percentage":"",
     "description/piped_water_percentage":"",
-    "description/electricity_lighting_total":""
+    "description/electricity_lighting_total":"",
+    "description/tfr":"Total fertility rate. The number of children that would be born to each woman with prevailing age-specific fertility rates. "
 }
