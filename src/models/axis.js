@@ -62,8 +62,14 @@ var AxisModel = Hook.extend({
     //here the modified min and max may change the domain, if the scale is defined
     if(this.scale && this._readyOnce && this.use === "indicator") {
       if(this.scaleType == "time") {
-        var limits = this.getLimits(this.which);
-        if (this.scale.domain()[0] != limits.min || this.scale.domain()[1] != limits.max) {
+        
+        var timeMdl = this._space.time;
+        var limits = timeMdl.beyondSplash ? 
+            {min: timeMdl.beyondSplash.start, max: timeMdl.beyondSplash.end}
+            :
+            {min: timeMdl.start, max: timeMdl.end};
+        
+        if (this.scale.domain()[0] < limits.min || this.scale.domain()[1] > limits.max) {
           this.scale.domain([limits.min, limits.max]);
         }
         
