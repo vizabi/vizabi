@@ -47,7 +47,7 @@ var ColorLegend = Component.extend({
   
   forwardModelUpdate: function(){
     if(this.colorModel.use === "property"){
-      this.model.state.entities_minimap.show["geo.cat"] = [this.colorModel.which.replace("geo.","")];
+      this.model.state.entities_minimap.show[this.KEY + ".cat"] = [this.colorModel.which.replace(this.KEY+".","")];
     }
   },
 
