@@ -25,9 +25,9 @@ readyOnce: function(){
     
   this.element = d3.select(this.element);
   this.element.select(".vzb-about-text0")
-      .html("Vizabi, a project")
+      .html("This chart is made with Vizabi,")
   this.element.select(".vzb-about-text1")
-      .html("by <a href='http://gapminder.org'>Gapminder Foundation</a>")
+      .html("a project by <a href='http://gapminder.org'>Gapminder Foundation</a>")
   this.element.select(".vzb-about-version")
       .html("<a href='https://github.com/Gapminder/vizabi/releases/tag/v"+version+"'>Version: "+version+" (alpha)</a>");  
   this.element.select(".vzb-about-updated")
