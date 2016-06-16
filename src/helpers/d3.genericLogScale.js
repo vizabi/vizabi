@@ -241,10 +241,6 @@ export default function genericLog() {
         return domain;
       
       // this is an internal array, it will be modified. the input _arg should stay intact
-      var min = d3.min(abs(domain));
-      if (min != 0) {
-        eps = Math.min(eps, min/100);
-      }
       switch(arg.length) {
         // if no values are given, reset input to the default domain (do nothing)
         case 0:
@@ -264,6 +260,8 @@ export default function genericLog() {
         arg[arg.length - 1] = arg[arg.length - 1] * 2;
       }
       domain = arg;
+      var min = d3.min(abs(domain).filter(function(val){ return !!val}));
+      if (min) eps = Math.min(eps, min / 100);
       buildDomain();
       return scale;
     };
@@ -293,6 +291,9 @@ export default function genericLog() {
         interpolator.range(arg);
       } else {
         range = arg;
+        var min = d3.min(abs(range).filter(function(val){ return !!val}));
+
+        if (min) delta = Math.min(delta, min/100);
         buildScales();
       }
       return scale;
