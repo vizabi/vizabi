@@ -190,7 +190,7 @@ var ColorModel = Hook.extend({
     
     if(this.scaleType == "time") {
       
-      var timeMdl = this._parent._parent.time;
+      var timeMdl = this._space.time;
       var limits = timeMdl.beyondSplash ? 
           {min: timeMdl.beyondSplash.start, max: timeMdl.beyondSplash.end}
           :
