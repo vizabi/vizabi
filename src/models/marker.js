@@ -71,7 +71,7 @@ var Marker = Model.extend({
         var resultKeys = [];
         
         KEY = KEY || this._getFirstDimension();
-        var TIME = this._parent.time.getDimension();
+        var TIME = this._getFirstDimension({type: "time"});
       
         utils.forEach(this._dataCube||this.getSubhooks(true), function(hook, name) {
 
@@ -207,7 +207,7 @@ var Marker = Model.extend({
       var _this = this;
       
       var KEY = this._getFirstDimension();
-      var TIME = this._parent.time.getDimension();
+      var TIME = this._getFirstDimension({type: "time"});
       
       if (!this.frameQueues) this.frameQueues = {}; //static queue of frames
       if (!this.partialResult) this.partialResult = {};

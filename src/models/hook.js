@@ -137,6 +137,7 @@ var Hook = Model.extend({
     var result = {};
     var values = [];
     var value = null;
+    var TIME = this._getFirstDimension({type: "time"});
       
     var steps = this._parent._parent.time.getAllSteps();
       
@@ -149,7 +150,7 @@ var Hook = Model.extend({
             }
         });
 
-    }else if(this.which==="time"){
+    }else if(this.which===TIME){
         steps.forEach(function(t){ 
             value = new Date(t);
             result[t] = {
