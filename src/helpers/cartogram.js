@@ -38,30 +38,49 @@ import * as utils from 'base/utils';
           var areas = objects.map(path.area);
           var totalArea = d3.sum(areas),
             sizeErrorsTot =0,
-            sizeErrorsNum=0,
-            meta = objects.map(function(o, j) {
-              var area = Math.abs(areas[j]), // XXX: why do we have negative areas?
-                v = +values[j],
+            sizeErrorsNum=0;
+          
+          var calculateMeta = function(index) {
+            return new Promise(function(res, reject) {
+              var area = Math.abs(areas[index]), // XXX: why do we have negative areas?
+                v = + values[index],
                 desired = totalArea * v / totalValue,
                 radius = Math.sqrt(area / Math.PI),
                 mass = Math.sqrt(desired / Math.PI) - radius,
                 sizeError = Math.max(area, desired) / Math.min(area, desired);
-              sizeErrorsTot+=sizeError;
-              sizeErrorsNum++;
               // console.log(o.id, "@", j, "area:", area, "value:", v, "->", desired, radius, mass, sizeError);
-              return {
-                id:         o.id,
+              res( {
+                id:         objects[index].id,
                 area:       area,
-                centroid:   path.centroid(o),
+                centroid:   path.centroid(objects[index]),
                 value:      v,
                 desired:    desired,
                 radius:     radius,
                 mass:       mass,
                 sizeError:  sizeError
-              };
+              });
             });
-          
-          resolve({meta: meta, sizeError: (sizeErrorsTot/sizeErrorsNum)});
+
+          };
+          var calculateMetaSequence = function(index) {
+            if (index >= objects.length) {
+              return resolve({meta: meta, sizeError: (sizeErrorsTot/sizeErrorsNum)})
+            }
+            calculateMeta(index).then(function(response) {
+              meta.push(response);
+              sizeErrorsTot+=response.sizeError;
+              sizeErrorsNum++;
+              if (index % 100 == 0) {
+                utils.defer(function() {
+                  calculateMetaSequence(++index);
+                });
+              } else {
+                calculateMetaSequence(++index);
+              }
+            });
+          };
+          var meta = [];
+          calculateMetaSequence(0);
         });
       };
       // copy it first
@@ -145,7 +164,7 @@ import * as utils from 'base/utils';
               // console.log("  total area:", totalArea);
               // console.log("  force reduction factor:", forceReductionFactor, "mean error:", sizeError);
               utils.defer(function() {
-                var len1,i1,delta,len2=projectedArcs.length,i2=0,delta,len3,i3,centroid,mass,radius,rSquared,dx,dy,distSquared,dist,Fij;
+                var len1,i1,len2=projectedArcs.length,i2=0,delta,len3,i3,centroid,mass,radius,rSquared,dx,dy,distSquared,dist,Fij;
                 while(i2<len2){
                   len1=projectedArcs[i2].length;
                   i1=0;
