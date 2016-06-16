@@ -735,7 +735,7 @@ PopByAge.define('default_model', {
           ] //show 0 through 100
         }
       },
-      grouping: 5
+      grouping: 5,
     },
     marker: {
       space: ["entities", "entities_age", "time"],
@@ -824,10 +824,54 @@ AgePyramid.define('default_model', {
           ] //show 0 through 100
         }
       },
-      grouping: 5
+      grouping: 5,
+      _multiple: true
     },
     entities_stack: {
-      dim: "education"
+      space: ["entities_age", "entities_side"],
+      dim: "education",
+      _multiple: true,
+      select: [{
+        "education": "Some secondary",
+        "sex": "Male",
+        "age": "0"
+      },{
+        "education": "Some secondary",
+        "sex": "Male",
+        "age": "5"
+      },{
+        "education": "Some secondary",
+        "sex": "Male",
+        "age": "10"
+      },{
+        "education": "Some secondary",
+        "sex": "Male",
+        "age": "15"
+      },{
+        "education": "Some secondary",
+        "sex": "Male",
+        "age": "20"
+      },{
+        "education": "Some secondary",
+        "sex": "Male",
+        "age": "25"
+      },{
+        "education": "Some secondary",
+        "sex": "Male",
+        "age": "30"
+      },{
+        "education": "Some secondary",
+        "sex": "Male",
+        "age": "35"
+      },{
+        "education": "Grade 12/Std 10",
+        "sex": "Male",
+        "age": "35"      
+      },{
+        "education": "Some primary",
+        "sex": "Female",
+        "age": "10"        
+      }]
     },
     entities_side: {
       dim: "sex"
