@@ -546,6 +546,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     });
   });
 
+
   // Clicking the bubble of the United States should select it. The bubble
   // gets full opacity, while the other bubbles get lower opacity.
 
