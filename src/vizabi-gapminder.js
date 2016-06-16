@@ -1088,23 +1088,24 @@ Cartogram.define('default_model', {
       end: "2015",
       value: "2015",
       step: 1,
-      speed: 300
+      speed: 300,
+      dim: "year"
     },
     entities: {
-      dim: "geo",
+      dim: "municipality",
       opacitySelectDim: .3,
       opacityRegular: 1,
       show: {
         _defs_: {
-          "geo.cat": ["province", "municipality"]
+          "municipality.cat": ["province", "municipality"]
         }
       },
     },
     entities_minimap: {
-      dim: "geo",
+      dim: "municipality",
       show: {
         _defs_: {
-          "geo.cat": ["province", "municipality"]
+          "municipality.cat": ["province", "municipality"]
         }
       }
     },
@@ -1130,7 +1131,7 @@ Cartogram.define('default_model', {
       },
       label: {
         use: "property",
-        which: "geo.name"
+        which: "municipality.name"
       }
     },
     marker_minimap:{
@@ -1139,7 +1140,7 @@ Cartogram.define('default_model', {
         shape: "svg",
         label: {
           use: "property",
-          which: "geo.name"
+          which: "municipality.name"
         },
         geoshape: {
           use: "property",

@@ -297,7 +297,7 @@ var Data = Class.extend({
     var _this = this;
     var query = _this._collection[queryId].query;
     var whatId = framesArray[0] + " - " + framesArray[framesArray.length-1];
-    var columns = query.select.filter(function(f){return f != "geo" && f != "time" && f !== "_default"});
+    var columns = query.select.filter(function(f){return f != "municipality" && f != "year" && f !== "_default"});
 
     return new Promise(function(resolve, reject) {
       if (_this._collection[queryId]["frames"][whatId] && _this._collection[queryId]["frames"][whatId][neededFrame]) {
@@ -420,8 +420,19 @@ var Data = Class.extend({
       if(!indicatorsDB) utils.warn("_getFrames in data.js is missing indicatorsDB, it's needed for gap filling");
       if(!framesArray) utils.warn("_getFrames in data.js is missing framesArray, it's needed so much");
 
-      var KEY = "geo";
-      var TIME = "time";
+      // HARD CODED KEY/TIME. Added "flexibility" for StatsSA assignment. 
+      // This should be replaced by getting key/time dimensions from query or model.
+      var possibleKeyDimensions = ["geo","municipality","province"];
+      var possibleTimeDimensions = ["time","year"];
+
+      var KEY = getAvailableDimension(possibleKeyDimensions);
+      var TIME = getAvailableDimension(possibleTimeDimensions);
+      function getAvailableDimension(options) {
+        for (var i = 0; i<options.length; i++) {
+          if (_this._collection[queryId].query.select.indexOf(options[i]) !== -1)
+            return options[i];
+        }
+      }
 
       var filtered = {};
       var items, itemsIndex, oneFrame, method, use, next;
@@ -448,7 +459,7 @@ var Data = Class.extend({
       var buildFrame = function(frameName, keys, queryId, callback) {
           var frame = {};
 
-          if (!query.where.time) {
+          if (!query.where[TIME]) {
             // The query.where clause doesn't have time field for properties:
             // we populate the regular set with a single value (unpack properties into constant time series)
             var dataset = _this._collection[queryId].data;
