@@ -519,13 +519,14 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
         search.click();
       });
       // Giving GDP in search bar
-      search.sendKeys("GDP/capita");
+      search.sendKeys("child mortality rate");
+      browser.sleep(3000);
 
       // Clicking GDP button
-      var gdpButton = element(by.css(data.bubble_Chart_Loctors.gdpButton_Locator_CSS));
-      browser.wait(EC.visibilityOf(gdpButton), 5000).then(function(){
-        gdpButton.click();
-        browser.sleep(3000);
+      var childMortality = element(by.css(data.bubble_Chart_Loctors.childMotalityRate_Locator_CSS));
+      browser.wait(EC.visibilityOf(childMortality), 5000).then(function(){
+        childMortality.click();
+        browser.sleep(10000);
       });
 
       //Clicking OK for Color popup button
