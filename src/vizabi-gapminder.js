@@ -735,7 +735,7 @@ PopByAge.define('default_model', {
           ] //show 0 through 100
         }
       },
-      grouping: 5,
+      grouping: 5
     },
     marker: {
       space: ["entities", "entities_age", "time"],
@@ -968,10 +968,13 @@ JOINTPyramidLine.define('default_model', {
           ] //show 0 through 100
         }
       },
-      grouping: 5
+      grouping: 5,
+      _multiple: true
     },
     entities_stack: {
-      dim: "education"
+      space: ["entities_age", "entities_side"],
+      dim: "education",
+      _multiple: true
     },
     entities_side: {
       dim: "sex"
