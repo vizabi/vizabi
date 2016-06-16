@@ -159,16 +159,41 @@
       "use": "indicator",
       "scales": ["time"],
       "sourceLink": ""
-    },
+    }, 
+    "year": {
+      "use": "indicator",
+      "scales": ["time"],
+      "sourceLink": ""
+    },    
     "geo": {
       "use": "property",
       "scales": ["ordinal"],
       "sourceLink": "https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv"
     },
+    "municipality": {
+      "use": "property",
+      "scales": ["ordinal"],
+      "sourceLink": ""
+    },
+    "province": {
+      "use": "property",
+      "scales": ["ordinal"],
+      "sourceLink": ""
+    },
     "geo.name": {
       "use": "property",
       "scales": ["ordinal"],
       "sourceLink": "https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv"
+    },
+    "municipality.name": {
+      "use": "property",
+      "scales": ["ordinal"],
+      "sourceLink": ""
+    },
+    "province.name": {
+      "use": "property",
+      "scales": ["ordinal"],
+      "sourceLink": ""
     },
     "geo.latitude": {
       "use": "property",
