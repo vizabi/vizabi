@@ -193,6 +193,65 @@ var Hook = Model.extend({
     return this.getDataManager().get(this._dataId, 'nested', groupBy);
   },
     
+  getLimitsByDimensions: function(dims) {
+    var filtered = this.getDataManager().get(this._dataId, 'nested', dims);
+    var values = {};
+    var limitsDim = {};
+    var attr = this.which;
+    
+    var countLimits = function(items, limitsDim, id) {
+ 
+      var filtered = items.reduce(function(filtered, d) {
+        
+        // check for dates
+        var f = (utils.isDate(d[attr])) ? d[attr] : parseFloat(d[attr]);
+
+        // if it is a number
+        if(!isNaN(f)) {
+          filtered.push(f);
+        }
+
+        //filter
+        return filtered;
+      }, []);
+      
+      // get min/max for the filtered rows
+      var min;
+      var max;
+      var limits = {};
+      for(var i = 0; i < filtered.length; i += 1) {
+        var c = filtered[i];
+        if(typeof min === 'undefined' || c < min) {
+          min = c;
+        }
+        if(typeof max === 'undefined' || c > max) {
+          max = c;
+        }
+      }
+      limits.min = min || 0;
+      limits.max = max || 100;
+      limitsDim[id] = limits;    
+    
+    }
+    
+    var iterateGroupKeys = function(data, deep, result, cb) {
+      deep--;
+      utils.forEach(data, function(d, id) {
+        if(deep) {
+          result[id] = {};
+          iterateGroupKeys(d, deep, result[id], cb);
+        } else {
+          cb(d, result, id);
+        }
+      });
+    }
+    
+    iterateGroupKeys(filtered, dims.length, limitsDim, countLimits);
+    
+    return limitsDim;
+  },
+  
+  
     
   /**
    * Gets the concept properties of the hook's "which"
