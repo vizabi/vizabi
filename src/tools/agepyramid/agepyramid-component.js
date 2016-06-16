@@ -60,7 +60,7 @@ var AgePyramid = Component.extend({
       "change:entities.show": function(evt) {
         console.log('Trying to change show');
       },
-      "change:age.select": function(evt) {
+      "change:stack.select": function(evt) {
         _this._selectBars();
       },
       "change:marker.color.palette": function (evt) {
@@ -146,6 +146,7 @@ var AgePyramid = Component.extend({
     this._updateLimits();
     this.resize();
     this._updateEntities();
+    this._selectBars();
   },
 
   updateUIStrings: function() {
@@ -334,11 +335,11 @@ var AgePyramid = Component.extend({
           .on("mouseout", _this.interaction.unhighlightBars)
           .on("click", function(d, i) {
             if(utils.isTouchDevice()) return;
-//            _this.model.age.selectEntity(d);
+            _this.model.stack.selectEntityMD(d);
           })
           .onTap(function(d) {
             d3.event.stopPropagation();
-//            _this.model.age.selectEntity(d);
+            _this.model.stack.selectEntityMD(d);
           })
 
         
@@ -479,24 +480,29 @@ var AgePyramid = Component.extend({
    */
   _selectBars: function() {
     var _this = this;
-    var AGEDIM = this.AGEDIM;
-    var selected = this.model.age.select;
+    var stackDim = this.STACKDIM;
+    var ageDim = this.AGEDIM;
+    var sideDim = this.SIDEDIM;
+    var selected = this.model.stack.select;
 
     this._unselectBars();
 
     if(selected.length) {
-      this.bars.classed('vzb-dimmed-selected', true);
-      utils.forEach(selected, function(s) {
-        _this.bars.select("#vzb-bc-bar-" + s[AGEDIM]).classed('vzb-selected', true);
-        _this.labels.select("#vzb-bc-label-" + s[AGEDIM]).classed('vzb-selected', true);
+      this.stackBars.classed('vzb-dimmed-selected', true);
+      utils.forEach(selected, function(d) {
+        var indexSide = _this.sideKeys.indexOf(d[sideDim]);
+        var indexStack = _this.stackKeys.indexOf(d[stackDim]);
+        var side = indexSide ? "right": "left";
+        _this.bars.selectAll(".vzb-bc-bar-" + d[ageDim]).selectAll(".vzb-bc-side-" + side).selectAll(".vzb-bc-stack-" + indexStack).classed('vzb-selected', true);
+        //_this.labels.select("#vzb-bc-label-" + d[ageDim]).classed('vzb-selected', true);
       });
     }
   },
 
   _unselectBars: function() {
-    this.bars.classed('vzb-dimmed-selected', false);
-    this.bars.selectAll('.vzb-bc-bar.vzb-selected').classed('vzb-selected', false);
-    this.labels.selectAll('.vzb-selected').classed('vzb-selected', false);
+    this.stackBars.classed('vzb-dimmed-selected', false);
+    this.stackBars.classed('vzb-selected', false);
+    //this.labels.selectAll('.vzb-selected').classed('vzb-selected', false);
   },
 
   /**
