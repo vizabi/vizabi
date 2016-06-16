@@ -79,6 +79,11 @@ var CartogramComponent = Component.extend({
         _this.updateMarkerSizeLimits();
         _this.updateEntities();
       },
+      "change:marker.color.scaleType": function(evt, path) {
+        _this.updateIndicators();
+        _this.updateEntitityColor();
+      },
+      
       'change:marker.size.use': function(evt, path) {
         _this.model.ui.chart.lockActive = _this.model.marker.size.use != "constant";
       },
