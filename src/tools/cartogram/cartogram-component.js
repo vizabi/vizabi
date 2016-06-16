@@ -142,55 +142,9 @@ var CartogramComponent = Component.extend({
     // http://bl.ocks.org/mbostock/d4021aa4dccfd65edffd patterson
     // http://bl.ocks.org/mbostock/3710566 robinson
     // map background
-    var defaultWidth = this.defaultWidth;
-    var defaultHeight = this.defaultHeight;
-    var world = this.world;
-    var geometries = this.geometries;
-    this.bgPath = d3.geo.path()
-      .projection(this.projection);
 
-
-    var svg = this.mapGraph = d3.select(this.element).select(".vzb-ct-map-graph")
-      .attr("width", defaultWidth)
-      .attr("height", defaultHeight);
-    svg.html('');
-
-    this.borderArcs = _this.cartogram.meshArcs(world, world.objects.topo, function(a, b) {
+    this.borderArcs = _this.cartogram.meshArcs(this.world, this.world.objects.topo, function(a, b) {
       return a.properties.MN_NAME && a.properties.PR_NAME !== b.properties.PR_NAME;
-    });
-    
-
-    this.cartogram.iterations(0);
-    this.cartogram(world, geometries).then(function(response) {
-      _this.features = _this.topo_features = response.features;
-      _this.lands = svg.selectAll(".land")
-        .data(_this.topo_features)
-        .enter().append("path")
-        .attr("class", function(d) { return "land " + (d.properties[_this.id_lookup]?d.properties[_this.id_lookup]:d.id); })
-        .attr("d", _this.cartogram.path)
-        .on("mouseover", function (d, i) {
-          if (utils.isTouchDevice()) return;
-          _this._interact()._mouseover(d, i);
-        })
-        .on("mouseout", function (d, i) {
-          if (utils.isTouchDevice()) return;
-          _this._interact()._mouseout(d, i);
-        })
-        .on("click", function(d, i) {
-          if(utils.isTouchDevice()) return;
-          _this._interact()._click(d, i);
-        })
-        .each(function(d) {
-          d[_this.KEY] = _this._getKey(d);
-        });
-
-      if (_this.borderArcs) {
-        var data = _this.cartogram.stitchArcs(response, _this.borderArcs);
-        _this.borders = svg.append("path")
-          .datum(data)
-          .attr("class", "boundary")
-          .attr("d", _this.cartogram.path);
-      }
     });
 
     this.labels = this.parent.findChildByName('gapminder-labels');
@@ -230,6 +184,10 @@ var CartogramComponent = Component.extend({
     this.yearEl = this.graph.select('.vzb-ct-year');
     this.year = new DynamicBackground(this.yearEl);
     this.year.setConditions({xAlign: 'left', yAlign: 'bottom', bottomOffset: 5});
+    this.mapGraph = this.element.select(".vzb-ct-map-graph")
+      .attr("width", this.defaultWidth)
+      .attr("height", this.defaultHeight);
+    this.mapGraph.html('');
 
 
     this.KEY = this.model.entities.getDimension();
@@ -244,6 +202,38 @@ var CartogramComponent = Component.extend({
       .domain(this.parent.datawarning_content.doubtDomain)
       .range(this.parent.datawarning_content.doubtRange);
 
+    this.cartogram.iterations(0);
+    this.cartogram(this.world, this.geometries).then(function(response) {
+      _this.features = _this.topo_features = response.features;
+      _this.lands = _this.mapGraph.selectAll(".land")
+        .data(_this.topo_features)
+        .enter().append("path")
+        .attr("class", function(d) { return "land " + (d.properties[_this.id_lookup]?d.properties[_this.id_lookup]:d.id); })
+        .attr("d", _this.cartogram.path)
+        .on("mouseover", function (d, i) {
+          if (utils.isTouchDevice()) return;
+          _this._interact()._mouseover(d, i);
+        })
+        .on("mouseout", function (d, i) {
+          if (utils.isTouchDevice()) return;
+          _this._interact()._mouseout(d, i);
+        })
+        .on("click", function(d, i) {
+          if(utils.isTouchDevice()) return;
+          _this._interact()._click(d, i);
+        })
+        .each(function(d) {
+          d[_this.KEY] = _this._getKey(d);
+        });
+
+      if (_this.borderArcs) {
+        var data = _this.cartogram.stitchArcs(response, _this.borderArcs);
+        _this.borders = _this.mapGraph.append("path")
+          .datum(data)
+          .attr("class", "boundary")
+          .attr("d", _this.cartogram.path);
+      }
+    });
   },
   
   frameChanged: function(frame, time) {
@@ -264,9 +254,9 @@ var CartogramComponent = Component.extend({
     this.updateIndicators();
     this.updateUIStrings();
     this.updateMarkerSizeLimits();
+    this.updateSize();
     this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
     this.year.setText(_this.model.time.timeFormat(_this.model.time.value));
-    this.updateSize();
   },
 
   /**
