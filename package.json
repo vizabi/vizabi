@@ -22,7 +22,7 @@
   },
   "homepage": "http://vizabi.org",
   "dependencies": {
-    "vizabi-interpolators": "^1.1.0"
+    "vizabi-interpolators": "^1.2.0"
   },
   "devDependencies": {
     "babel": "6.5.2",
