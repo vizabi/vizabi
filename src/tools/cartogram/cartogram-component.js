@@ -123,6 +123,7 @@ var CartogramComponent = Component.extend({
     this.borderArcs = null;
     this.defaultWidth = 700;
     this.defaultHeight = 550;
+    this.updateEntitiesQueue = [];
     this.boundBox = [[0.05, 0.0], [0.95, 1.0]]; // two points to set box bound on 960 * 500 image;
     d3_geo_projection();
     this.cached = [];
@@ -208,7 +209,11 @@ var CartogramComponent = Component.extend({
       .range(this.parent.datawarning_content.doubtRange);
 
     this.cartogram.iterations(0);
+    this.redrawInProgress = true;
+
     this.cartogram(this.world, this.geometries).then(function(response) {
+      _this.redrawInProgress = false;
+
       _this.features = _this.topo_features = response.features;
       _this.lands = _this.mapGraph.selectAll(".land")
         .data(_this.topo_features)
@@ -298,9 +303,19 @@ var CartogramComponent = Component.extend({
     return this.cached[year];
   },
    
-  updateEntities: function(duration) {
+  _redrawEntities: function() {
     var _this = this;
-    var time = this.model.time.value;
+    if (this.updateEntitiesQueue.length == 0) return;
+    if (this.redrawInProgress) {
+      setTimeout(function() {
+        _this._redrawEntities();
+      }, 100);
+      return;
+    }
+    this.redrawInProgress = true;
+    var time = this.updateEntitiesQueue[this.updateEntitiesQueue.length - 1].time;
+    var duration = this.updateEntitiesQueue[this.updateEntitiesQueue.length - 1].duration;
+    this.updateEntitiesQueue = [];
     if(this.model.ui.chart.lockNonSelected) {
       time = this.model.time.timeFormat.parse("" + this.model.ui.chart.lockNonSelected);
     }
@@ -315,16 +330,16 @@ var CartogramComponent = Component.extend({
           if (_this.model.ui.chart.lockNonSelected) {
             var size1 = _this.sScale(lockedFrame.size[_this._getKey(d)])/* * _this._calculateTotalSize(_this.model.time.value, _this.values.size)*/,
               size2 = _this.sScale(_this.values.size[_this._getKey(d)])/* * _this._calculateTotalSize(time, lockedFrame.size)*/;
-            return d3.geo.path().projection(null).area(d) * Math.pow((size2 / size1), 3);  
+            return d3.geo.path().projection(null).area(d) * Math.pow((size2 / size1), 3);
           } else {
             return _this.sScale(_this.values.size[_this._getKey(d)]);
           }
         });
-/*
-        if (_this.model.ui.chart.lockNonSelected) {
-          totValue = d3.sum(areas);
-        }
-*/
+        /*
+         if (_this.model.ui.chart.lockNonSelected) {
+         totValue = d3.sum(areas);
+         }
+         */
       }
       _this.cartogram(_this.world, _this.geometries, totValue).then(function(response) {
         _this.features = response.features;
@@ -366,11 +381,21 @@ var CartogramComponent = Component.extend({
               return _this.values.color[_this._getKey(d)]!=null?_this.cScale(_this.values.color[_this._getKey(d)]):_this.COLOR_LAND_DEFAULT;
             })
             .attr("d", _this.cartogram.path);
-          
+
         }
+        console.log("_redrawEntities finish");
         _this.updateLandOpacity();
+        _this.redrawInProgress = false;
+        _this._redrawEntities();
       });
     });
+  },
+    
+  updateEntities: function(duration) {
+    var time = this.model.time.value;
+    
+    this.updateEntitiesQueue.push({time:time, duration: duration});
+    this._redrawEntities();
   },
 
   updateEntitityColor: function() {

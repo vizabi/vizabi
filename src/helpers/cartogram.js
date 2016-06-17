@@ -40,33 +40,30 @@ import * as utils from 'base/utils';
             sizeErrorsTot =0,
             sizeErrorsNum=0;
           
-          var calculateMeta = function(index) {
-            return new Promise(function(res, reject) {
-              var area = Math.abs(areas[index]), // XXX: why do we have negative areas?
-                v = + values[index],
-                desired = totalArea * v / totalValue,
-                radius = Math.sqrt(area / Math.PI),
-                mass = Math.sqrt(desired / Math.PI) - radius,
-                sizeError = Math.max(area, desired) / Math.min(area, desired);
-              // console.log(o.id, "@", j, "area:", area, "value:", v, "->", desired, radius, mass, sizeError);
-              res( {
-                id:         objects[index].id,
-                area:       area,
-                centroid:   path.centroid(objects[index]),
-                value:      v,
-                desired:    desired,
-                radius:     radius,
-                mass:       mass,
-                sizeError:  sizeError
-              });
+          var calculateMeta = function(index, cb) {
+            var area = Math.abs(areas[index]), // XXX: why do we have negative areas?
+              v = + values[index],
+              desired = totalArea * v / totalValue,
+              radius = Math.sqrt(area / Math.PI),
+              mass = Math.sqrt(desired / Math.PI) - radius,
+              sizeError = Math.max(area, desired) / Math.min(area, desired);
+            // console.log(o.id, "@", j, "area:", area, "value:", v, "->", desired, radius, mass, sizeError);
+            cb( {
+              id:         objects[index].id,
+              area:       area,
+              centroid:   path.centroid(objects[index]),
+              value:      v,
+              desired:    desired,
+              radius:     radius,
+              mass:       mass,
+              sizeError:  sizeError
             });
-
           };
           var calculateMetaSequence = function(index) {
             if (index >= objects.length) {
               return resolve({meta: meta, sizeError: (sizeErrorsTot/sizeErrorsNum)})
             }
-            calculateMeta(index).then(function(response) {
+            calculateMeta(index, function(response) {
               meta.push(response);
               sizeErrorsTot+=response.sizeError;
               sizeErrorsNum++;
@@ -160,51 +157,65 @@ import * as utils from 'base/utils';
             }
             calculateObjectsMeta(objects, values, path).then(function(response) {
               var forceReductionFactor = 1 / (1 + response.sizeError);
+              console.log(forceReductionFactor);
+
               // console.log("meta:", meta);
               // console.log("  total area:", totalArea);
               // console.log("  force reduction factor:", forceReductionFactor, "mean error:", sizeError);
+              var delta,centroid,mass,radius,rSquared,dx,dy,distSquared,dist,Fij;
+              var updatePoint = function(i1, i2) {
+                delta = [0,0];
+                response.meta.map(function(meta, i3) {
+                  centroid =  meta.centroid;
+                  mass =      meta.mass;
+                  radius =    meta.radius;
+                  rSquared = (radius*radius);
+                  dx = projectedArcs[i2][i1][0] - centroid[0];
+                  dy = projectedArcs[i2][i1][1] - centroid[1];
+                  distSquared = dx * dx + dy * dy;
+                  dist=Math.sqrt(distSquared);
+                  Fij = (dist > radius)
+                    ? mass * radius / dist
+                    : mass *
+                  (distSquared / rSquared) *
+                  (4 - 3 * dist / radius);
+                  delta[0]+=(Fij * cosArctan(dy,dx));
+                  delta[1]+=(Fij * sinArctan(dy,dx));
+                });
+                projectedArcs[i2][i1][0] += (delta[0]*forceReductionFactor);
+                projectedArcs[i2][i1][1] += (delta[1]*forceReductionFactor);
+              };
+              var getNextPoint = function(l1, l2, cb) {
+                if (++l2 >= projectedArcs[l1].length) {
+                  l1++; l2 = 0;
+                }
+                if (++l % 500 == 0) {
+                  console.log(l);
+                  //utils.defer(function() {
+                    cb(l1, l2)
+                  //});
+                } else {
+                  cb(l1, l2)
+                }
+              };
+              var updatePointSequence = function(l1, l2) {
+                if (l1 >= projectedArcs.length) return;
+                updatePoint(l2, l1);
+                getNextPoint(l1, l2, function(l1, l2) {
+                  updatePointSequence(l1, l2);
+                });
+              };
+              var l1=0, l2=0, l=0;
+              console.log("upd point" + index);
+              updatePointSequence(l1, l2);
+              console.log("upd point sequence after" + index);
+              // break if we hit the target size error
+              if (response.sizeError <= 1) {
+                resizeSegments(iterations, iterations);
+              }
               utils.defer(function() {
-                var len1,i1,len2=projectedArcs.length,i2=0,delta,len3,i3,centroid,mass,radius,rSquared,dx,dy,distSquared,dist,Fij;
-                while(i2<len2){
-                  len1=projectedArcs[i2].length;
-                  i1=0;
-                  while(i1<len1){
-                    // create an array of vectors: [x, y]
-                    delta = [0,0];
-                    len3 = response.meta.length;
-                    i3=0;
-                    while(i3<len3) {
-                      centroid =  response.meta[i3].centroid;
-                      mass =      response.meta[i3].mass;
-                      radius =    response.meta[i3].radius;
-                      rSquared = (radius*radius);
-                      dx = projectedArcs[i2][i1][0] - centroid[0];
-                      dy = projectedArcs[i2][i1][1] - centroid[1];
-                      distSquared = dx * dx + dy * dy;
-                      dist=Math.sqrt(distSquared);
-                      Fij = (dist > radius)
-                        ? mass * radius / dist
-                        : mass *
-                      (distSquared / rSquared) *
-                      (4 - 3 * dist / radius);
-                      delta[0]+=(Fij * cosArctan(dy,dx));
-                      delta[1]+=(Fij * sinArctan(dy,dx));
-                      i3++;
-                    }
-                    projectedArcs[i2][i1][0] += (delta[0]*forceReductionFactor);
-                    projectedArcs[i2][i1][1] += (delta[1]*forceReductionFactor);
-                    i1++;
-                  }
-                  i2++;
-                }
-                // break if we hit the target size error
-                if (response.sizeError <= 1) {
-                  resizeSegments(iterations, iterations);
-                }
-                utils.defer(function() {
-                  resizeSegments(++index, iterations);
-                })
-              });
+                resizeSegments(++index, iterations);
+              })
             });
           };
           var iterationsDefer = new Promise();
@@ -253,6 +264,7 @@ import * as utils from 'base/utils';
       .projection(null);
 
     carto.iterations = function(i) {
+      console.log("iterations");
       if (arguments.length) {
         iterations = i;
         return carto;
