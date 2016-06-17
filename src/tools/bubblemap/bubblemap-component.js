@@ -757,7 +757,7 @@ var BubbleMapComponent = Component.extend({
     var yTitleBB = this.yTitleEl.select("text").node().getBBox();
 
     this.cTitleEl.attr("transform", "translate(" + 0 + "," + (margin.top + yTitleBB.height) + ")")
-        .classed("vzb-hidden", this.model.marker.color.which.indexOf("geo") != -1 || this.model.marker.color.use == "constant");
+        .classed("vzb-hidden", this.model.marker.color.which.indexOf(_this.KEY) != -1 || this.model.marker.color.use == "constant");
 
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl.select("svg")

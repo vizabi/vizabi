@@ -110,6 +110,23 @@ var CSVReader = Reader.extend({
           // grouping
           data = _this.groupData(data, query);
 
+
+          // hack: if no year queried, add it, vizabi expects it
+          if (typeof data[0].year === 'undefined' && typeof data[0].time === 'undefined') {
+            var isDatapointQuery = true;
+            utils.forEach(query.select,function(column) {
+              // heuristic: if properties are mentioned, it's not a datapoint query
+              if (column.indexOf('.') !== -1) {
+                isDatapointQuery = false;
+              }
+            });
+            if (isDatapointQuery) {
+              utils.forEach(data, function(row) {
+                row.year = new Date("2011");
+              })
+            }
+          }
+
           // sorting
           // one column, one direction (ascending) for now
           if(query.orderBy && data[0]) {
@@ -121,6 +138,7 @@ var CSVReader = Reader.extend({
               p.reject("Cannot sort by " + query.orderBy + ". Column does not exist in result.");
             }
           }
+
 
           _this._data = data;
           p.resolve();

@@ -643,10 +643,6 @@ updateSize: function (meshLength) {
             });
         }
 
-        //console.log(JSON.stringify(this.mountainPointers.map(function(m){return m.geo})))
-        //console.log(this.stackedPointers)
-
-
         //bind the data to DOM elements
         this.mountainsMergeStacked = this.mountainAtomicContainer.selectAll(".vzb-mc-mountain.vzb-mc-aggrlevel2")
             .data(this.stackedPointers);

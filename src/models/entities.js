@@ -128,6 +128,21 @@ var EntitiesModel = Model.extend({
       this.select = (this._multiple) ? this.select.concat(added) : [added];
     }
   },
+
+  selectEntityMD: function(d, timeDim, timeFormatter) {
+    var _this = this;
+    var value = this._createValue(d);
+    if(this.isSelectedMD(d)) {
+      this.select = this.select.filter(function(d) {
+        return JSON.stringify(_this._createValue(d)) !== JSON.stringify(value);
+      });
+    } else {
+      if(timeDim && timeFormatter) {
+        value["trailStartTime"] = timeFormatter(d[timeDim]);
+      }
+      this.select = (this._multiple) ? this.select.concat(value) : [value];
+    }
+  },
     
   /**
    * Select all entities
@@ -203,6 +218,25 @@ var EntitiesModel = Model.extend({
         .indexOf(value) !== -1;
   },
     
+  isSelectedMD: function(d) {
+    var _this = this;
+    var value = this._createValue(d);
+        
+    return this.select
+      .map(function(d) {
+        return JSON.stringify(_this._createValue(d)) === JSON.stringify(value);
+      })
+      .indexOf(true) !== -1;
+  },
+  
+  _createValue: function(d) {
+    var dims = [this.getDimension()].concat(this._getAllDimensions());
+    return dims.reduce(function(value, key) {
+      value[key] = d[key];
+      return value;
+    }, {});
+  },
+   
   /**
    * Selects an entity from the set
    * @returns {Boolean} whether the item is shown or not

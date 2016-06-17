@@ -110,10 +110,9 @@ var label = function(context) {
         .on("mouseover", function(d) {
           if(utils.isTouchDevice()) return;
           _this.model.entities.highlightEntity(d, null, null, true);
-          _this.entityLabels.sort(function (a, b) { // select the labels and sort the path's
-            if (a.geo != d.geo) return -1;          // a is not the hovered element, send "a" to the back
-            else return 1;
-          });
+          var KEY = _this.KEY || _this.model.entities.getDimension();
+          // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
+          _this.entityLabels.sort(function (a, b) { return a[KEY] != d[KEY]? -1 : 1; });
           d3.select(this).selectAll("." + _cssPrefix + "-label-x")
             .classed("vzb-transparent", false);
         })

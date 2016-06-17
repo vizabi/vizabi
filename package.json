@@ -1,6 +1,6 @@
 {
   "name": "vizabi",
-  "version": "0.14.0-1",
+  "version": "0.15.0-1",
   "description": "Vizabi Framework, Interactive charts and visualization tools animated through time",
   "main": "build/dist/vizabi.js",
   "scripts": {
@@ -22,7 +22,7 @@
   },
   "homepage": "http://vizabi.org",
   "dependencies": {
-    "vizabi-interpolators": "^1.1.0"
+    "vizabi-interpolators": "^1.2.0"
   },
   "devDependencies": {
     "babel": "6.5.2",

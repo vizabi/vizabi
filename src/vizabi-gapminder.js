@@ -824,10 +824,13 @@ AgePyramid.define('default_model', {
           ] //show 0 through 100
         }
       },
-      grouping: 5
+      grouping: 5,
+      _multiple: true
     },
     entities_stack: {
-      dim: "education"
+      space: ["entities_age", "entities_side"],
+      dim: "education",
+      _multiple: true
     },
     entities_side: {
       dim: "sex"
@@ -924,10 +927,18 @@ JOINTPyramidLine.define('default_model', {
           ] //show 0 through 100
         }
       },
-      grouping: 5
+      grouping: 5,
+      _multiple: true
     },
     entities_stack: {
-      dim: "education"
+      space: ["entities_age", "entities_side"],
+      dim: "education",
+      _multiple: true,
+      select: [{
+        "education": "Some primary",
+        "sex": "Male",
+        "age": "10"
+      }]
     },
     entities_side: {
       dim: "sex"
@@ -1088,23 +1099,24 @@ Cartogram.define('default_model', {
       end: "2015",
       value: "2015",
       step: 1,
-      speed: 300
+      speed: 300,
+      dim: "year"
     },
     entities: {
-      dim: "geo",
+      dim: "municipality",
       opacitySelectDim: .3,
       opacityRegular: 1,
       show: {
         _defs_: {
-          "geo.cat": ["province", "municipality"]
+          "municipality.cat": ["province", "municipality"]
         }
       },
     },
     entities_minimap: {
-      dim: "geo",
+      dim: "municipality",
       show: {
         _defs_: {
-          "geo.cat": ["province", "municipality"]
+          "municipality.cat": ["province", "municipality"]
         }
       }
     },
@@ -1130,7 +1142,7 @@ Cartogram.define('default_model', {
       },
       label: {
         use: "property",
-        which: "geo.name"
+        which: "municipality.name"
       }
     },
     marker_minimap:{
@@ -1139,7 +1151,7 @@ Cartogram.define('default_model', {
         shape: "svg",
         label: {
           use: "property",
-          which: "geo.name"
+          which: "municipality.name"
         },
         geoshape: {
           use: "property",
@@ -1155,7 +1167,7 @@ Cartogram.define('default_model', {
         dragging: true
       },
       lockNonSelected: 0,
-      lockActive: 1,
+      lockActive: 0,
       sizeSelectorActive:0
     },
     presentation: false
