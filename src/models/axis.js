@@ -62,8 +62,14 @@ var AxisModel = Hook.extend({
     //here the modified min and max may change the domain, if the scale is defined
     if(this.scale && this._readyOnce && this.use === "indicator") {
       if(this.scaleType == "time") {
-        var limits = this.getLimits(this.which);
-        if (this.scale.domain()[0] != limits.min || this.scale.domain()[1] != limits.max) {
+        
+        var timeMdl = this._space.time;
+        var limits = timeMdl.beyondSplash ? 
+            {min: timeMdl.beyondSplash.start, max: timeMdl.beyondSplash.end}
+            :
+            {min: timeMdl.start, max: timeMdl.end};
+        
+        if (this.scale.domain()[0] < limits.min || this.scale.domain()[1] > limits.max) {
           this.scale.domain([limits.min, limits.max]);
         }
         
@@ -94,13 +100,14 @@ var AxisModel = Hook.extend({
     var domain;
 
     if(this.scaleType == "time") {
-      var tLimits = this._parent.getTimeLimits();
-      domain = [tLimits.min, tLimits.max];
-
-      //save the defined domain back to state to avoid excessive validations
-      this.domainMin = domain[0];
-      this.domainMax = domain[1];
-
+      
+      var timeMdl = this._space.time;
+      var limits = timeMdl.beyondSplash ? 
+          {min: timeMdl.beyondSplash.start, max: timeMdl.beyondSplash.end}
+          :
+          {min: timeMdl.start, max: timeMdl.end};
+      
+      domain = [limits.min, limits.max];
       this.scale = d3.time.scale.utc().domain(domain);
 
       return;

@@ -46,7 +46,7 @@ var Layout = Events.extend({
   /**
    * Calculates the size of the newly resized container
    */
-  setSize: function() {
+  setSize: function(force) {
     var _this = this;
     var width = this._container.clientWidth;
     var height = this._container.clientHeight;
@@ -70,7 +70,7 @@ var Layout = Events.extend({
       }
     }
 
-    if(this._prev_size && this._prev_size.width === width && this._prev_size.height === height) {
+    if(!force && this._prev_size && this._prev_size.width === width && this._prev_size.height === height) {
       return;
     }
 

@@ -43,14 +43,12 @@
       }
     }
     .vzb-dimmed-selected {
-      > .vzb-bc-bar {
-        opacity: .5;
-        &.vzb-hovered {
-          opacity: .8;
-        }
-        &.vzb-selected {
-          opacity: 1;
-        }
+      opacity: .5;
+      &.vzb-hovered {
+        opacity: .8;
+      }
+      &.vzb-selected {
+        opacity: 1;
       }
     }
     .vzb-bc-title {

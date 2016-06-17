@@ -7,9 +7,9 @@ import Hook from 'hook';
 
 var defaultPalettes = {
   "_continuous": {
-    "0": "#F77481",
-    "1": "#E1CE00",
-    "2": "#B4DE79"
+    "0": "#B4DE79",
+    "50": "#E1CE00",
+    "100": "#F77481"
   },
   "_discrete": {
     "0": "#bcfa83",
@@ -190,19 +190,21 @@ var ColorModel = Hook.extend({
     
     if(this.scaleType == "time") {
       
-      var timeMdl = this._parent._parent.time;
+      var timeMdl = this._space.time;
       var limits = timeMdl.beyondSplash ? 
           {min: timeMdl.beyondSplash.start, max: timeMdl.beyondSplash.end}
           :
           {min: timeMdl.start, max: timeMdl.end};
+      
+      var singlePoint = (limits.max - limits.min == 0);
         
-      var step = ((limits.max.valueOf() - limits.min.valueOf()) / (range.length - 1));
-      domain = d3.range(limits.min.valueOf(), limits.max.valueOf(), step).concat(limits.max.valueOf());
-
-      if(step === 0) {
-        domain.push(domain[0]);
-        range = [range[range.length - 1]];             
-      }
+      domain = domain.sort(function(a,b){return a-b});
+      range = domain.map(function(m){
+        return singlePoint? paletteObject[domain[0]] : paletteObject[m]
+      });
+      domain = domain.map(function(m){
+        return limits.min.valueOf() + m/100 * (limits.max.valueOf() - limits.min.valueOf())
+      });
       
       this.scale = d3.time.scale.utc()
         .domain(domain)
@@ -215,22 +217,26 @@ var ColorModel = Hook.extend({
       case "indicator":
         var limits = this.getLimits(this.which);
         //default domain is based on limits
-        domain = [limits.min, limits.max];
+        limits = [limits.min, limits.max];
         //domain from concept properties can override it if defined
-        domain = this.getConceptprops().domain ? this.getConceptprops().domain : domain;
+        limits = this.getConceptprops().domain ? this.getConceptprops().domain : limits;
           
-        var limitMin = domain[0];
-        var limitMax = domain[1];
-        var step = (limitMax - limitMin) / (range.length - 1);
-        domain = d3.range(limitMin, limitMax, step).concat(limitMax);
-        if (domain.length > range.length) domain.pop();
-        domain = domain.reverse();
+        var singlePoint = (limits[1] - limits[0] == 0);
+
+        domain = domain.sort(function(a,b){return a-b});
+        range = domain.map(function(m){
+          return singlePoint? paletteObject[domain[0]] : paletteObject[m]
+        });
+        domain = domain.map(function(m){
+          return limits[0] + m/100 * (limits[1] - limits[0])
+        });        
+        
         var scaleType = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.scaleType === "log")? "genericLog" : this.scaleType;
 
-        if(this.scaleType == "log") {
+        if(this.scaleType == "log" || this.scaleType == "genericLog") {
           var s = d3.scale.genericLog()
-            .domain([limitMin, limitMax])
-            .range([limitMin, limitMax]);
+            .domain(limits)
+            .range(limits);
           domain = domain.map(function(d) {
             return s.invert(d)
           });

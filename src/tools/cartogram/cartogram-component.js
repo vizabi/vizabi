@@ -115,7 +115,7 @@ var CartogramComponent = Component.extend({
     this._super(config, context);
 
 
-    _this.COLOR_LAND_DEFAULT = "#999";
+    _this.COLOR_LAND_DEFAULT = "#fdfdfd";
 
     this.lands = null;
     this.features = null;
@@ -310,11 +310,12 @@ var CartogramComponent = Component.extend({
         _this.cartogram.iterations(0);
       } else {
         _this.cartogram.iterations(8);
+        //var areas = _this.topo_features.map(d3.geo.path().projection(null).area);
         _this.cartogram.value(function(d) {
           if (_this.model.ui.chart.lockNonSelected) {
             var size1 = _this.sScale(lockedFrame.size[_this._getKey(d)])/* * _this._calculateTotalSize(_this.model.time.value, _this.values.size)*/,
               size2 = _this.sScale(_this.values.size[_this._getKey(d)])/* * _this._calculateTotalSize(time, lockedFrame.size)*/;
-            return d3.geo.path().projection(null).area(d) * (size2 / size1);  
+            return d3.geo.path().projection(null).area(d) * Math.pow((size2 / size1), 3);  
           } else {
             return _this.sScale(_this.values.size[_this._getKey(d)]);
           }

@@ -824,10 +824,13 @@ AgePyramid.define('default_model', {
           ] //show 0 through 100
         }
       },
-      grouping: 5
+      grouping: 5,
+      _multiple: true
     },
     entities_stack: {
-      dim: "education"
+      space: ["entities_age", "entities_side"],
+      dim: "education",
+      _multiple: true
     },
     entities_side: {
       dim: "sex"
@@ -924,10 +927,18 @@ JOINTPyramidLine.define('default_model', {
           ] //show 0 through 100
         }
       },
-      grouping: 5
+      grouping: 5,
+      _multiple: true
     },
     entities_stack: {
-      dim: "education"
+      space: ["entities_age", "entities_side"],
+      dim: "education",
+      _multiple: true,
+      select: [{
+        "education": "Some primary",
+        "sex": "Male",
+        "age": "10"
+      }]
     },
     entities_side: {
       dim: "sex"
@@ -1093,19 +1104,23 @@ Cartogram.define('default_model', {
     },
     entities: {
       dim: "municipality",
+      //dim: "province",
       opacitySelectDim: .3,
       opacityRegular: 1,
       show: {
         _defs_: {
-          "municipality.cat": ["province", "municipality"]
+          "municipality.cat": ["province", "municipality"],
+          //"province.cat": ["province", "municipality"]
         }
       },
     },
     entities_minimap: {
       dim: "municipality",
+      //dim: "province",
       show: {
         _defs_: {
-          "municipality.cat": ["province", "municipality"]
+          "municipality.cat": ["province", "municipality"],
+          //"province.cat": ["province", "municipality"]
         }
       }
     },
@@ -1132,6 +1147,7 @@ Cartogram.define('default_model', {
       label: {
         use: "property",
         which: "municipality.name"
+        //which: "province.name"
       }
     },
     marker_minimap:{
@@ -1141,6 +1157,7 @@ Cartogram.define('default_model', {
         label: {
           use: "property",
           which: "municipality.name"
+          //which: "province.name"
         },
         geoshape: {
           use: "property",
