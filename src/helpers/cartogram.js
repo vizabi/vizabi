@@ -38,30 +38,46 @@ import * as utils from 'base/utils';
           var areas = objects.map(path.area);
           var totalArea = d3.sum(areas),
             sizeErrorsTot =0,
-            sizeErrorsNum=0,
-            meta = objects.map(function(o, j) {
-              var area = Math.abs(areas[j]), // XXX: why do we have negative areas?
-                v = +values[j],
-                desired = totalArea * v / totalValue,
-                radius = Math.sqrt(area / Math.PI),
-                mass = Math.sqrt(desired / Math.PI) - radius,
-                sizeError = Math.max(area, desired) / Math.min(area, desired);
-              sizeErrorsTot+=sizeError;
-              sizeErrorsNum++;
-              // console.log(o.id, "@", j, "area:", area, "value:", v, "->", desired, radius, mass, sizeError);
-              return {
-                id:         o.id,
-                area:       area,
-                centroid:   path.centroid(o),
-                value:      v,
-                desired:    desired,
-                radius:     radius,
-                mass:       mass,
-                sizeError:  sizeError
-              };
-            });
+            sizeErrorsNum=0;
           
-          resolve({meta: meta, sizeError: (sizeErrorsTot/sizeErrorsNum)});
+          var calculateMeta = function(index, cb) {
+            var area = Math.abs(areas[index]), // XXX: why do we have negative areas?
+              v = + values[index],
+              desired = totalArea * v / totalValue,
+              radius = Math.sqrt(area / Math.PI),
+              mass = Math.sqrt(desired / Math.PI) - radius,
+              sizeError = Math.max(area, desired) / Math.min(area, desired);
+            // console.log(o.id, "@", j, "area:", area, "value:", v, "->", desired, radius, mass, sizeError);
+            cb( {
+              id:         objects[index].id,
+              area:       area,
+              centroid:   path.centroid(objects[index]),
+              value:      v,
+              desired:    desired,
+              radius:     radius,
+              mass:       mass,
+              sizeError:  sizeError
+            });
+          };
+          var calculateMetaSequence = function(index) {
+            if (index >= objects.length) {
+              return resolve({meta: meta, sizeError: (sizeErrorsTot/sizeErrorsNum)})
+            }
+            calculateMeta(index, function(response) {
+              meta.push(response);
+              sizeErrorsTot+=response.sizeError;
+              sizeErrorsNum++;
+              if (index % 400 == 0) {
+                utils.defer(function() {
+                  calculateMetaSequence(++index);
+                });
+              } else {
+                calculateMetaSequence(++index);
+              }
+            });
+          };
+          var meta = [];
+          calculateMetaSequence(0);
         });
       };
       // copy it first
@@ -99,7 +115,7 @@ import * as utils from 'base/utils';
 
           generateTopologySegment(index, len1).then(function(segment) {
             projectedArcs[index++]=segment;
-            if (index % 100 == 0) {
+            if (index % 400 == 0) {
               utils.defer(function() {
                 generateTopologyArcs(index, totalLength);
               })
@@ -141,11 +157,13 @@ import * as utils from 'base/utils';
             }
             calculateObjectsMeta(objects, values, path).then(function(response) {
               var forceReductionFactor = 1 / (1 + response.sizeError);
+
               // console.log("meta:", meta);
               // console.log("  total area:", totalArea);
               // console.log("  force reduction factor:", forceReductionFactor, "mean error:", sizeError);
-              utils.defer(function() {
-                var len1,i1,delta,len2=projectedArcs.length,i2=0,delta,len3,i3,centroid,mass,radius,rSquared,dx,dy,distSquared,dist,Fij;
+              var delta,centroid,mass,radius,rSquared,dx,dy,distSquared,dist,Fij;
+              var updatePoint = function(i2, len2) {
+                var len1,i1,delta,len3,i3,centroid,mass,radius,rSquared,dx,dy,distSquared,dist,Fij;
                 while(i2<len2){
                   len1=projectedArcs[i2].length;
                   i1=0;
@@ -177,15 +195,27 @@ import * as utils from 'base/utils';
                     i1++;
                   }
                   i2++;
-                }
-                // break if we hit the target size error
-                if (response.sizeError <= 1) {
-                  resizeSegments(iterations, iterations);
-                }
+                }              
+              };
+              var updatePointSequence = function(start) {
+                if (start >= projectedArcs.length) {
+                  if (response.sizeError <= 1) {
+                    resizeSegments(iterations, iterations);
+                    return;
+                  }
+                  utils.defer(function() {
+                    resizeSegments(++index, iterations);
+                  })
+                  return;
+                } 
+                var end = Math.min(start + 400, projectedArcs.length);
+                updatePoint(start, end);
                 utils.defer(function() {
-                  resizeSegments(++index, iterations);
-                })
-              });
+                  updatePointSequence(end);
+                });
+              };
+              updatePointSequence(0);
+              // break if we hit the target size error
             });
           };
           var iterationsDefer = new Promise();
