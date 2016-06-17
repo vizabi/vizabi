@@ -164,10 +164,12 @@ export default function axisSmart() {
           
         g.selectAll(".tick").each(function(d, t) {
           d3.select(this).select("text")
+            .interrupt()
             .style("opacity", getOpacity(d,t))
         })
           
         g.select('.vzb-axis-value')
+          .interrupt()
           .attr("transform", getTransform);
           
       }
