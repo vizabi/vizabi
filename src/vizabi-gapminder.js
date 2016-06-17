@@ -1104,19 +1104,23 @@ Cartogram.define('default_model', {
     },
     entities: {
       dim: "municipality",
+      //dim: "province",
       opacitySelectDim: .3,
       opacityRegular: 1,
       show: {
         _defs_: {
-          "municipality.cat": ["province", "municipality"]
+          "municipality.cat": ["province", "municipality"],
+          //"province.cat": ["province", "municipality"]
         }
       },
     },
     entities_minimap: {
       dim: "municipality",
+      //dim: "province",
       show: {
         _defs_: {
-          "municipality.cat": ["province", "municipality"]
+          "municipality.cat": ["province", "municipality"],
+          //"province.cat": ["province", "municipality"]
         }
       }
     },
@@ -1143,6 +1147,7 @@ Cartogram.define('default_model', {
       label: {
         use: "property",
         which: "municipality.name"
+        //which: "province.name"
       }
     },
     marker_minimap:{
@@ -1152,6 +1157,7 @@ Cartogram.define('default_model', {
         label: {
           use: "property",
           which: "municipality.name"
+          //which: "province.name"
         },
         geoshape: {
           use: "property",
