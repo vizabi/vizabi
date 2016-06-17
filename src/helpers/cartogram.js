@@ -67,7 +67,7 @@ import * as utils from 'base/utils';
               meta.push(response);
               sizeErrorsTot+=response.sizeError;
               sizeErrorsNum++;
-              if (index % 100 == 0) {
+              if (index % 400 == 0) {
                 utils.defer(function() {
                   calculateMetaSequence(++index);
                 });
@@ -115,7 +115,7 @@ import * as utils from 'base/utils';
 
           generateTopologySegment(index, len1).then(function(segment) {
             projectedArcs[index++]=segment;
-            if (index % 100 == 0) {
+            if (index % 400 == 0) {
               utils.defer(function() {
                 generateTopologyArcs(index, totalLength);
               })
@@ -157,65 +157,65 @@ import * as utils from 'base/utils';
             }
             calculateObjectsMeta(objects, values, path).then(function(response) {
               var forceReductionFactor = 1 / (1 + response.sizeError);
-              console.log(forceReductionFactor);
 
               // console.log("meta:", meta);
               // console.log("  total area:", totalArea);
               // console.log("  force reduction factor:", forceReductionFactor, "mean error:", sizeError);
               var delta,centroid,mass,radius,rSquared,dx,dy,distSquared,dist,Fij;
-              var updatePoint = function(i1, i2) {
-                delta = [0,0];
-                response.meta.map(function(meta, i3) {
-                  centroid =  meta.centroid;
-                  mass =      meta.mass;
-                  radius =    meta.radius;
-                  rSquared = (radius*radius);
-                  dx = projectedArcs[i2][i1][0] - centroid[0];
-                  dy = projectedArcs[i2][i1][1] - centroid[1];
-                  distSquared = dx * dx + dy * dy;
-                  dist=Math.sqrt(distSquared);
-                  Fij = (dist > radius)
-                    ? mass * radius / dist
-                    : mass *
-                  (distSquared / rSquared) *
-                  (4 - 3 * dist / radius);
-                  delta[0]+=(Fij * cosArctan(dy,dx));
-                  delta[1]+=(Fij * sinArctan(dy,dx));
+              var updatePoint = function(i2, len2) {
+                var len1,i1,delta,len3,i3,centroid,mass,radius,rSquared,dx,dy,distSquared,dist,Fij;
+                while(i2<len2){
+                  len1=projectedArcs[i2].length;
+                  i1=0;
+                  while(i1<len1){
+                    // create an array of vectors: [x, y]
+                    delta = [0,0];
+                    len3 = response.meta.length;
+                    i3=0;
+                    while(i3<len3) {
+                      centroid =  response.meta[i3].centroid;
+                      mass =      response.meta[i3].mass;
+                      radius =    response.meta[i3].radius;
+                      rSquared = (radius*radius);
+                      dx = projectedArcs[i2][i1][0] - centroid[0];
+                      dy = projectedArcs[i2][i1][1] - centroid[1];
+                      distSquared = dx * dx + dy * dy;
+                      dist=Math.sqrt(distSquared);
+                      Fij = (dist > radius)
+                        ? mass * radius / dist
+                        : mass *
+                      (distSquared / rSquared) *
+                      (4 - 3 * dist / radius);
+                      delta[0]+=(Fij * cosArctan(dy,dx));
+                      delta[1]+=(Fij * sinArctan(dy,dx));
+                      i3++;
+                    }
+                    projectedArcs[i2][i1][0] += (delta[0]*forceReductionFactor);
+                    projectedArcs[i2][i1][1] += (delta[1]*forceReductionFactor);
+                    i1++;
+                  }
+                  i2++;
+                }              
+              };
+              var updatePointSequence = function(start) {
+                if (start >= projectedArcs.length) {
+                  if (response.sizeError <= 1) {
+                    resizeSegments(iterations, iterations);
+                    return;
+                  }
+                  utils.defer(function() {
+                    resizeSegments(++index, iterations);
+                  })
+                  return;
+                } 
+                var end = Math.min(start + 400, projectedArcs.length);
+                updatePoint(start, end);
+                utils.defer(function() {
+                  updatePointSequence(end);
                 });
-                projectedArcs[i2][i1][0] += (delta[0]*forceReductionFactor);
-                projectedArcs[i2][i1][1] += (delta[1]*forceReductionFactor);
               };
-              var getNextPoint = function(l1, l2, cb) {
-                if (++l2 >= projectedArcs[l1].length) {
-                  l1++; l2 = 0;
-                }
-                if (++l % 500 == 0) {
-                  console.log(l);
-                  //utils.defer(function() {
-                    cb(l1, l2)
-                  //});
-                } else {
-                  cb(l1, l2)
-                }
-              };
-              var updatePointSequence = function(l1, l2) {
-                if (l1 >= projectedArcs.length) return;
-                updatePoint(l2, l1);
-                getNextPoint(l1, l2, function(l1, l2) {
-                  updatePointSequence(l1, l2);
-                });
-              };
-              var l1=0, l2=0, l=0;
-              console.log("upd point" + index);
-              updatePointSequence(l1, l2);
-              console.log("upd point sequence after" + index);
+              updatePointSequence(0);
               // break if we hit the target size error
-              if (response.sizeError <= 1) {
-                resizeSegments(iterations, iterations);
-              }
-              utils.defer(function() {
-                resizeSegments(++index, iterations);
-              })
             });
           };
           var iterationsDefer = new Promise();
@@ -264,7 +264,6 @@ import * as utils from 'base/utils';
       .projection(null);
 
     carto.iterations = function(i) {
-      console.log("iterations");
       if (arguments.length) {
         iterations = i;
         return carto;

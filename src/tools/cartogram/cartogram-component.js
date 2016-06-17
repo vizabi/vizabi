@@ -341,7 +341,13 @@ var CartogramComponent = Component.extend({
          }
          */
       }
+      var calcDuration = 0;
+      var start = new Date().getTime();
       _this.cartogram(_this.world, _this.geometries, totValue).then(function(response) {
+        var end = new Date().getTime();
+        if (duration) { // increale duration for prevent gaps between frames
+          duration = Math.max(duration, end - start);
+        }
         _this.features = response.features;
         if (_this.borderArcs) {
           var data = _this.cartogram.stitchArcs(response, _this.borderArcs);
@@ -383,7 +389,6 @@ var CartogramComponent = Component.extend({
             .attr("d", _this.cartogram.path);
 
         }
-        console.log("_redrawEntities finish");
         _this.updateLandOpacity();
         _this.redrawInProgress = false;
         _this._redrawEntities();
