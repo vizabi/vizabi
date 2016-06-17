@@ -115,7 +115,7 @@ var CartogramComponent = Component.extend({
     this._super(config, context);
 
 
-    _this.COLOR_LAND_DEFAULT = "#999";
+    _this.COLOR_LAND_DEFAULT = "#fdfdfd";
 
     this.lands = null;
     this.features = null;
