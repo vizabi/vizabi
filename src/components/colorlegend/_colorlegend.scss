@@ -13,6 +13,8 @@
   }
 
   .vzb-cl-option {
+    display: inline-block;
+    position: relative;
     padding-bottom: 5px;
     padding-top: 5px;
     cursor: pointer;
@@ -27,7 +29,7 @@
       cursor: pointer;
     }
     .vzb-cl-color-legend {
-      display: inline-block;
+      //display: inline-block;
       vertical-align: super;
       cursor: pointer;
       &:hover {
@@ -44,10 +46,26 @@
     }
   }
 
+  .vzb-cl-labelscale {
+    position: relative;
+    top: 5px;
+    padding-top: 20px;
+    padding-bottom: 10px;
+    svg {
+      height: 20px;
+    }
+    .vzb-cl-unit {
+      height: 20px;
+      border-top: 1px solid $vzb-color-grey-dark;
+    }
+  }
+
   .vzb-cl-rainbow {
-    width: 20px;
+    height: 20px;
     position: absolute;
-    left: 15px;
+    left: 10px;
+    right: 10px;
+    top: 5px;
   }
   .vzb-cl-minimap {
     height: 145px;

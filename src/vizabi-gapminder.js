@@ -1140,7 +1140,7 @@ Cartogram.define('default_model', {
       },
       color: {
         use: "indicator",
-        which: "zaf_population",
+        which: "piped_water_percentage",
         scaleType: "linear",
         _important: true
       },
@@ -1273,7 +1273,9 @@ Tool.define("preload", function(promise) {
     
     var color = _this.default_model.state.marker[hook];
     var palette = ((globals.conceptprops.indicatorsDB[color.which]||{}).color||{}).palette||{};
+    var paletteLabels = ((globals.conceptprops.indicatorsDB[color.which]||{}).color||{}).paletteLabels||{};
     color.palette = utils.extend({}, color.palette, palette);
+    color.paletteLabels = utils.clone(paletteLabels);
   }
 
   function addMinMax(hook) {
