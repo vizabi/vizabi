@@ -201,24 +201,25 @@ var AgePyramid = Component.extend({
 
   _updateLimits: function() {
     var _this = this; 
-    var limits, maxLimit;
+    var limits, domain;
+    var axisX = this.model.marker.axis_x;
     if(this.ui.chart.inpercent) {
-      limits = this.model.marker.axis_x.getLimitsByDimensions([this.SIDEDIM, this.TIMEDIM]);      
+      limits = axisX.getLimitsByDimensions([this.SIDEDIM, this.TIMEDIM]);      
       var totalLimits = this.model.marker_side.hook_total.getLimitsByDimensions([this.SIDEDIM, this.TIMEDIM]);
       var totalCoeff = this.dataWithTotal ? .5 : 1;
-      var timeKeys = this.model.marker.axis_x.getUnique();
+      var timeKeys = axisX.getUnique();
       var maxLimits = []; 
       utils.forEach(this.sideKeys, function(key) {
         utils.forEach(timeKeys, function(time) {
           maxLimits.push(limits[key][time].max / (totalLimits[key][time].max * totalCoeff));          
         });
       });
-      maxLimit = Math.max.apply(Math, maxLimits);
+      domain = [0, Math.max.apply(Math, maxLimits)];
     } else {
-      limits = this.model.marker.axis_x.getLimits(this.model.marker.axis_x.which);
-      maxLimit = Math.min(limits.max, this.model.marker.axis_x.domainMax);     
+      limits = axisX.getLimits(axisX.which);
+      domain = (axisX.domainMin!=null && axisX.domainMax!=null) ? [+axisX.domainMin, +axisX.domainMax] : limits;
     }
-    this.xScale.domain([0, maxLimit]);
+    this.xScale.domain(domain);
     if(this.xScaleLeft) this.xScaleLeft.domain(this.xScale.domain());
   },
 
