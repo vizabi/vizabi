@@ -8862,6 +8862,8 @@
     }, { 
       "id": "black_population_percentage"
     }, {
+      "id": "education_attainment"
+    }, {
       "id": "piped_water_percentage"
     }, { 
       "id": "electricity_lighting_total"
