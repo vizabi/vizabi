@@ -127,6 +127,23 @@ var CSVReader = Reader.extend({
             }
           }
 
+          // hack for Stats SA: if no geo queried, add it, agepyramid expects it even if there's only 1 country.
+          // heuristic: check age or age_by_1_year to apply it only to age pyramid
+          if (typeof data[0].geo === 'undefined' && (typeof data[0].age !== "undefined" || typeof data[0].age_by_1_year !== "undefined")) {
+            var isDatapointQuery = true;
+            utils.forEach(query.select,function(column) {
+              // heuristic: if properties are mentioned, it's not a datapoint query
+              if (column.indexOf('.') !== -1) {
+                isDatapointQuery = false;
+              }
+            });
+            if (isDatapointQuery) {
+              utils.forEach(data, function(row) {
+                row.geo = "zaf";
+              })
+            }
+          }
+
           // sorting
           // one column, one direction (ascending) for now
           if(query.orderBy && data[0]) {
@@ -323,7 +340,7 @@ var CSVReader = Reader.extend({
         var group_index;
 
         // TO-DO: only age is grouped together for now, should be more generic
-        if (entity == 'age') {
+        if (entity == 'age' || entity == 'age_by_1_year') {
 
           var group_by = grouping;
           var group_offset = 0;
