@@ -137,7 +137,8 @@ var AgePyramid = Component.extend({
    */
   ready: function() {
     this.SIDEDIM = this.model.marker.side.which;//this.model.side.getDimension();
-    this.STACKDIM = this.model.marker.color.which;//this.model.stack.getDimension();
+    //this.STACKDIM = this.model.marker.color.which;
+    this.STACKDIM = this.model.stack.getDimension();
     this.AGEDIM = this.model.age.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
 
@@ -184,12 +185,12 @@ var AgePyramid = Component.extend({
       });
     var stacks = this.model.marker.getKeys(stackDim);
     _this.stackKeys = [];
-    if(this.ui.chart.stacked || this.model.marker.color.use == "constant") {
-      _this.stackKeys = utils.without(stacks.map(function(m) {
-        if(m[stackDim] == _this.totalFieldName) _this.dataWithTotal = true;
-        return m[stackDim];
-      }), this.totalFieldName);
-    } else {
+    _this.stackKeys = utils.without(stacks.map(function(m) {
+      if(m[stackDim] == _this.totalFieldName) _this.dataWithTotal = true;
+      return m[stackDim];
+    }), this.totalFieldName);
+
+    if(_this.dataWithTotal && (!this.ui.chart.stacked || this.model.marker.color.use == "constant")) {
       _this.stackKeys = [this.totalFieldName];
     }
     
@@ -217,7 +218,7 @@ var AgePyramid = Component.extend({
       domain = [0, Math.max.apply(Math, maxLimits)];
     } else {
       limits = axisX.getLimits(axisX.which);
-      domain = (axisX.domainMin!=null && axisX.domainMax!=null) ? [+axisX.domainMin, +axisX.domainMax] : limits;
+      domain = (axisX.domainMin!=null && axisX.domainMax!=null) ? [+axisX.domainMin, +axisX.domainMax] : [limits.min, limits.max];
     }
     this.xScale.domain(domain);
     if(this.xScaleLeft) this.xScaleLeft.domain(this.xScale.domain());
@@ -285,7 +286,7 @@ var AgePyramid = Component.extend({
     var first_bar_y_offset = this.height - bar_height;
 
     //enter selection -- init bars
-    var ageBars = this.entityBars.enter().append("g")
+    this.entityBars.enter().append("g")
       .attr("class", function(d) {
         return "vzb-bc-bar " + "vzb-bc-bar-" + d[ageDim];
       })
@@ -300,7 +301,7 @@ var AgePyramid = Component.extend({
       //   _this.model.age.selectEntity(d);
       // })
       
-    var sideBars = ageBars.selectAll('.vzb-bc-side').data(function(d) {
+    var sideBars = this.entityBars.selectAll('.vzb-bc-side').data(function(d) {
       return sides.map(function(m) {
           var r = {};    
           r[ageDim] = d[ageDim];

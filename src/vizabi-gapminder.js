@@ -829,11 +829,11 @@ AgePyramid.define('default_model', {
     },
     entities_stack: {
       space: ["entities_age", "entities_side"],
-      dim: "education",
+      dim: "education_attainment",
       _multiple: true
     },
     entities_side: {
-      dim: "sex"
+      dim: "population_group"
     },
     marker: {
       space: ["entities", "entities_side", "entities_stack", "entities_age", "time"],
@@ -843,7 +843,7 @@ AgePyramid.define('default_model', {
       },
       label_name: {
         use: "property",
-        which: "sex"
+        which: "population_group"
       },
       axis_y: {
         use: "indicator",
@@ -855,27 +855,27 @@ AgePyramid.define('default_model', {
       },
       axis_x: {
         use: "indicator",
-        which: "zaf_population",
-        domainMin: 0,
-        domainMax: 1400000000
+        which: "population",
+        //domainMin: 0,
+        //domainMax: 1400000000
       },
       color: {
         use: "property",
-        which: "education"
+        which: "education_attainment"
         // allow: {
         //   names: ["!stack.name"]
         // }
       },
       side: {
         use: "property",
-        which: "sex"
+        which: "population_group"
       }
     },
     marker_side: {
       space: ["entities", "entities_side", "time"],
       hook_total: {
         use: "indicator",
-        which: "zaf_population"
+        which: "population"
       }      
     },
     marker_minimap:{
@@ -884,7 +884,7 @@ AgePyramid.define('default_model', {
         shape: "svg",
         label: {
           use: "property",
-          which: "education"
+          which: "education_attainment"
         },
         geoshape: {
           use: "property",
