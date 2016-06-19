@@ -856,8 +856,8 @@ AgePyramid.define('default_model', {
       axis_x: {
         use: "indicator",
         which: "zaf_population",
-        domainMin: 0,
-        domainMax: 1400000000
+        //domainMin: 0,
+        //domainMax: 1400000000
       },
       color: {
         use: "property",
