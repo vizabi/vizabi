@@ -406,7 +406,7 @@ var Marker = Model.extend({
                 
         var interpolate = function(arr, result, id) {
           //TODO: this saves when geos have different data length. line can be optimised. 
-          next = d3.bisectLeft(arr.map(function(m){return m.time}), time);
+          next = d3.bisectLeft(arr.map(function(m){return m[dimTime]}), time);
             
           value = utils.interpolatePoint(arr, u, w, next, dimTime, time, method);
           result[id] = hook.mapValue(value);
