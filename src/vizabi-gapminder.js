@@ -934,11 +934,7 @@ JOINTPyramidLine.define('default_model', {
       space: ["entities_age", "entities_side"],
       dim: "education",
       _multiple: true,
-      select: [{
-        "education": "Some primary",
-        "sex": "Male",
-        "age": "10"
-      }]
+      select: []
     },
     entities_side: {
       dim: "sex"
@@ -963,9 +959,7 @@ JOINTPyramidLine.define('default_model', {
       },
       axis_x: {
         use: "indicator",
-        which: "zaf_population",
-        domainMin: 0,
-        domainMax: 1400000000
+        which: "zaf_population"
       },
       color: {
         use: "property",
