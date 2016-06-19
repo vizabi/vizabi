@@ -216,8 +216,7 @@ var AgePyramid = Component.extend({
       maxLimit = Math.max.apply(Math, maxLimits);
     } else {
       limits = this.model.marker.axis_x.getLimits(this.model.marker.axis_x.which);
-      maxLimit = limits.max;
-      
+      maxLimit = Math.min(limits.max, this.model.marker.axis_x.domainMax);     
     }
     this.xScale.domain([0, maxLimit]);
     if(this.xScaleLeft) this.xScaleLeft.domain(this.xScale.domain());
