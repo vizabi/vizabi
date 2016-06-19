@@ -113,6 +113,18 @@
         2011
       ]
     },
+    "population": {
+      "use": "indicator",
+      "scales": [
+        "linear",
+        "log"
+      ],
+      "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
+      "availability": [
+        1996,
+        2011
+      ]
+    },
     "age": {
       "use": "indicator",
       "scales": [
@@ -134,7 +146,32 @@
       "scales": ["ordinal"],
       "sourceLink": "https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv"
     },
+    "population_group": {
+      "use": "property",
+      "scales": ["ordinal"],
+      "sourceLink": ""
+    },
     "education": {
+      "use": "property",
+      "scales": ["ordinal"],
+      "sourceLink": "https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv",
+      "color": {
+        "palette": {
+          "No schooling": "#9a1db1",
+          "Some primary": "#e83739",
+          "Complete primary": "#ffa6eb",
+          "Some secondary": "#ffb43d",
+          "Grade 12/Std 10": "#8ee8a0",
+          "Higher": "#4cd843",
+          "Unspecified": "#000000",
+          "Not applicable": "#c7c7c7",
+          "Total": "#fff37b"
+        },
+        "selectable": false
+      }
+
+    },
+    "education_attainment": {
       "use": "property",
       "scales": ["ordinal"],
       "sourceLink": "https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv",
