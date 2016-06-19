@@ -13,8 +13,6 @@
   }
 
   .vzb-cl-option {
-    display: inline-block;
-    position: relative;
     padding-bottom: 5px;
     padding-top: 5px;
     cursor: pointer;
@@ -29,7 +27,7 @@
       cursor: pointer;
     }
     .vzb-cl-color-legend {
-      //display: inline-block;
+      display: inline-block;
       vertical-align: super;
       cursor: pointer;
       &:hover {
