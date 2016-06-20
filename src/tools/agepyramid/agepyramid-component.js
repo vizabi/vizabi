@@ -55,6 +55,7 @@ var AgePyramid = Component.extend({
     var _this = this;
     this.model_binds = {
       "change:time.value": function(evt) {
+        if (!_this._readyOnce) return;
         _this._updateEntities();
       },
       "change:entities.show": function(evt) {
