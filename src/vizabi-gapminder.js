@@ -829,11 +829,11 @@ AgePyramid.define('default_model', {
     },
     entities_stack: {
       space: ["entities_age", "entities_side"],
-      dim: "education",
+      dim: "education_attainment",
       _multiple: true
     },
     entities_side: {
-      dim: "sex"
+      dim: "population_group"
     },
     marker: {
       space: ["entities", "entities_side", "entities_stack", "entities_age", "time"],
@@ -843,7 +843,7 @@ AgePyramid.define('default_model', {
       },
       label_name: {
         use: "property",
-        which: "sex"
+        which: "population_group"
       },
       axis_y: {
         use: "indicator",
@@ -855,27 +855,27 @@ AgePyramid.define('default_model', {
       },
       axis_x: {
         use: "indicator",
-        which: "zaf_population",
-        domainMin: 0,
-        domainMax: 1400000000
+        which: "population",
+        //domainMin: 0,
+        //domainMax: 1400000000
       },
       color: {
         use: "property",
-        which: "education"
+        which: "education_attainment"
         // allow: {
         //   names: ["!stack.name"]
         // }
       },
       side: {
         use: "property",
-        which: "sex"
+        which: "population_group"
       }
     },
     marker_side: {
       space: ["entities", "entities_side", "time"],
       hook_total: {
         use: "indicator",
-        which: "zaf_population"
+        which: "population"
       }      
     },
     marker_minimap:{
@@ -884,7 +884,7 @@ AgePyramid.define('default_model', {
         shape: "svg",
         label: {
           use: "property",
-          which: "education"
+          which: "education_attainment"
         },
         geoshape: {
           use: "property",
@@ -934,11 +934,7 @@ JOINTPyramidLine.define('default_model', {
       space: ["entities_age", "entities_side"],
       dim: "education",
       _multiple: true,
-      select: [{
-        "education": "Some primary",
-        "sex": "Male",
-        "age": "10"
-      }]
+      select: []
     },
     entities_side: {
       dim: "sex"
@@ -963,9 +959,7 @@ JOINTPyramidLine.define('default_model', {
       },
       axis_x: {
         use: "indicator",
-        which: "zaf_population",
-        domainMin: 0,
-        domainMax: 1400000000
+        which: "zaf_population"
       },
       color: {
         use: "property",
@@ -1104,19 +1098,23 @@ Cartogram.define('default_model', {
     },
     entities: {
       dim: "municipality",
+      //dim: "province",
       opacitySelectDim: .3,
       opacityRegular: 1,
       show: {
         _defs_: {
-          "municipality.cat": ["province", "municipality"]
+          "municipality.cat": ["province", "municipality"],
+          //"province.cat": ["province", "municipality"]
         }
       },
     },
     entities_minimap: {
       dim: "municipality",
+      //dim: "province",
       show: {
         _defs_: {
-          "municipality.cat": ["province", "municipality"]
+          "municipality.cat": ["province", "municipality"],
+          //"province.cat": ["province", "municipality"]
         }
       }
     },
@@ -1136,13 +1134,14 @@ Cartogram.define('default_model', {
       },
       color: {
         use: "indicator",
-        which: "zaf_population",
+        which: "piped_water_percentage",
         scaleType: "linear",
         _important: true
       },
       label: {
         use: "property",
         which: "municipality.name"
+        //which: "province.name"
       }
     },
     marker_minimap:{
@@ -1152,6 +1151,7 @@ Cartogram.define('default_model', {
         label: {
           use: "property",
           which: "municipality.name"
+          //which: "province.name"
         },
         geoshape: {
           use: "property",
@@ -1267,7 +1267,9 @@ Tool.define("preload", function(promise) {
     
     var color = _this.default_model.state.marker[hook];
     var palette = ((globals.conceptprops.indicatorsDB[color.which]||{}).color||{}).palette||{};
+    var paletteLabels = ((globals.conceptprops.indicatorsDB[color.which]||{}).color||{}).paletteLabels||{};
     color.palette = utils.extend({}, color.palette, palette);
+    color.paletteLabels = utils.clone(paletteLabels);
   }
 
   function addMinMax(hook) {

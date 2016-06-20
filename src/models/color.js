@@ -38,6 +38,7 @@ var ColorModel = Hook.extend({
   _defaults: {
     use: null,
     palette: {},
+    paletteLabels: null,
     scaleType: null,
     which: null
   },
@@ -168,10 +169,29 @@ var ColorModel = Hook.extend({
       
       return palette;
   },
-    
+
+  _getPaletteLabels: function() {
+      var conceptpropsColor = this.getConceptprops().color;
+      var paletteLabels;
+      
+      if(conceptpropsColor && conceptpropsColor.paletteLabels) {
+        //specific color palette from hook concept properties
+        paletteLabels = utils.clone(conceptpropsColor.paletteLabels);
+      }
+      return paletteLabels;
+  },
+
+  getPaletteLabels: function() {
+    return this.paletteLabels.getPlainObject(); 
+  },
+
   getPalette: function(){
     //rebuild palette if it's empty
-    if (!this.palette || Object.keys(this.palette._data).length===0) this.palette.set(this.getDefaultPalette(), false, false);
+    if (!this.palette || Object.keys(this.palette._data).length===0){
+      this.palette.set(this.getDefaultPalette(), false, false);
+      this.getModelObject("paletteLabels").set(this._getPaletteLabels(), false, false);
+    }
+    
     return this.palette.getPlainObject(); 
   },
     

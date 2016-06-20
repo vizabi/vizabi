@@ -164,10 +164,12 @@ export default function axisSmart() {
           
         g.selectAll(".tick").each(function(d, t) {
           d3.select(this).select("text")
+            .interrupt()
             .style("opacity", getOpacity(d,t))
         })
           
         g.select('.vzb-axis-value')
+          .interrupt()
           .attr("transform", getTransform);
           
       }
@@ -294,7 +296,8 @@ export default function axisSmart() {
         parseInt(options.cssFontSize) * options.widthToFontsizeRatio;
       if(options.heightOfOneDigit == null) options.heightOfOneDigit =
         parseInt(options.cssFontSize) * options.heightToFontsizeRatio;
-
+      if(options.fitIntoScale == null || options.fitIntoScale == 'pessimistic') options.fitIntoScale = PESSIMISTIC;
+      if(options.fitIntoScale == 'optimistic') options.fitIntoScale = OPTIMISTIC;
 
 
       meow("********** " + orient + " **********");
@@ -396,7 +399,7 @@ export default function axisSmart() {
               }))
 
           } else {
-            return lengthRange >
+            return lengthRange + options.toolMargin.left + options.toolMargin.right >
               tickValues.length * marginsLR + (approximationStyle == PESSIMISTIC ?
                 options.widthOfOneDigit * tickValues.length * maxLength : 0) + (approximationStyle == OPTIMISTIC ?
                 options.widthOfOneDigit * (
@@ -646,7 +649,7 @@ export default function axisSmart() {
             .filter(onlyUnique);
 
           // stop populating if labels don't fit
-          if(!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC, "none")) break;
+          if(!labelsFitIntoScale(trytofit, lengthRange, options.fitIntoScale, "none")) break;
 
           // apply changes if no blocking instructions
           tickValues = trytofit
