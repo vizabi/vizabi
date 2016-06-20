@@ -1,6 +1,7 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
 import colorPicker from 'helpers/d3.colorPicker';
+import axisSmart from 'helpers/d3.axisWithLabelPicker';
 
 /*!
  * VIZABI BUBBLE COLOR LEGEND COMPONENT
@@ -20,6 +21,9 @@ var ColorLegend = Component.extend({
     this.model_expects = [{
       name: "state",
       type: "model"
+    }, {
+      name: "language",
+      type: "language"
     }];
 
     this.needsUpdate = false;
@@ -38,6 +42,10 @@ var ColorLegend = Component.extend({
       "change:state.marker.color.palette": function(evt, path) {
         if(!_this._readyOnce) return;
         _this.updateView();
+      },
+      "change:language.strings": function(evt) {
+        this.translator = this.model.language.getTFunction();
+        _this.updateView();
       }
     }
     
@@ -47,7 +55,7 @@ var ColorLegend = Component.extend({
   
   forwardModelUpdate: function(){
     if(this.colorModel.use === "property"){
-      this.model.state.entities_minimap.show["geo.cat"] = [this.colorModel.which.replace("geo.","")];
+      this.model.state.entities_minimap.show[this.KEY + ".cat"] = [this.colorModel.which.replace(this.KEY+".","")];
     }
   },
 
@@ -55,12 +63,21 @@ var ColorLegend = Component.extend({
   readyOnce: function() {
     var _this = this;
     this.element = d3.select(this.element);
+    
+    this.translator = this.model.language.getTFunction();
+    
     this.markerModel = this.model.state.marker_minimap ? this.model.state.marker_minimap : this.model.state.marker;
     this.listColorsEl = this.element
       .append("div").attr("class", "vzb-cl-holder")
       .append("div").attr("class","vzb-cl-colorlist");
     this.rainbowEl = this.listColorsEl.append("div").attr("class", "vzb-cl-rainbow");
     this.minimapEl = this.listColorsEl.append("div").attr("class", "vzb-cl-minimap");
+    this.labelScaleEl = this.listColorsEl.append("div").attr("class", "vzb-cl-labelscale");
+    this.labelScaleSVG = this.labelScaleEl.append("svg");
+    this.labelScaleG = this.labelScaleSVG.append("g");
+    this.unitDiv = this.labelScaleEl.append("div").attr("class", "vzb-cl-unit");
+    this.unitText = this.unitDiv.append("text").attr("class", "vzb-cl-unit-text");
+
     this.minimapSVG = this.minimapEl.append("svg");
     this.minimapG = this.minimapSVG.append("g");
 
@@ -106,6 +123,8 @@ var ColorLegend = Component.extend({
       if(!((_this.frame||{}).geoshape||{})[d[_this.KEY]]) canShowMap = false;
     });
     
+    this.labelScaleEl.classed("vzb-hidden", true); 
+
     var colorOptions = this.listColorsEl.selectAll(".vzb-cl-option");
     
     //Hide and show elements of the color legend
@@ -122,7 +141,7 @@ var ColorLegend = Component.extend({
       if(this.colorModel.which == "_default") {
         colorOptions = colorOptions.data([]); 
       }else if(this.colorModel.use == "indicator" || !minimapKeys.length) {
-        colorOptions = colorOptions.data(utils.keys(palette), function(d) {return d});
+        colorOptions = colorOptions.data(utils.keys(this.colorModel.getScale().range()), function(d) {return d});
       }else{
         colorOptions = colorOptions.data(minimapKeys, function(d) {return d[minimapDim]});
       }
@@ -146,27 +165,106 @@ var ColorLegend = Component.extend({
       
       if(this.colorModel.use == "indicator") {
         
-        //Calculate the hight for the rainbow gradient
-        var gradientHeight;
-        if(colorOptions && colorOptions[0]) {
-          var firstOptionSize = colorOptions[0][0].getBoundingClientRect();
-          var lastOptionSize = colorOptions[0][colorOptions[0].length - 1].getBoundingClientRect();
-          gradientHeight = lastOptionSize.bottom - firstOptionSize.top;
+        var gradientWidth = this.rainbowEl.node().getBoundingClientRect().width;
+        var paletteKeys = Object.keys(palette).map(parseFloat);
+        
+        var domain;
+        var range;
+        var labelScale;
+        var formatter = this.colorModel.getTickFormatter();
+        var fitIntoScale = null;
+          
+        var paletteLabels = this.colorModel.paletteLabels;
+
+        if(paletteLabels) {
+
+          var divider = 1;
+          if(paletteLabels[0].indexOf("%") != -1) {
+            formatter = d3.format("%");
+            fitIntoScale = "optimistic";
+            divider = 100;
+          }
+          domain = paletteLabels.map(function(val) {
+            return parseFloat(val) / divider;
+          });
+          var paletteMax = d3.max(domain);
+          range = domain.map(function(val) {
+            return val / paletteMax * gradientWidth;
+          });  
+
+        } else {
+
+          domain = _this.colorModel.getScale().domain();
+          var paletteMax = d3.max(paletteKeys);
+          range = paletteKeys.map(function(val) {
+            return val / paletteMax * gradientWidth;
+          });
+
         }
-        if(!isFinite(gradientHeight)) gradientHeight = utils.keys(palette).length * 25 + 5;
+          
+        labelScale = d3.scale[this.colorModel.scaleType == "time" ? "linear" : this.colorModel.scaleType]()
+          .domain(domain)
+          .range(range);
+          
+        var marginLeft = parseInt(this.rainbowEl.style('left') || 0, 10);
+        var marginRight = parseInt(this.rainbowEl.style('right') || 0, 10);
+
+        this.labelScaleSVG.style("width", marginLeft + gradientWidth + marginRight + "px");
+        this.labelScaleG.attr("transform","translate(" + marginLeft + ",0)");
+
+        var labelsAxis = axisSmart();
+        labelsAxis.scale(labelScale)
+          .orient("bottom")
+          //.tickFormat(formatter)
+          .tickSize(6, 0)
+          .tickSizeMinor(3, 0)
+          .labelerOptions({
+            scaleType: this.colorModel.scaleType,
+            toolMargin: {
+              right: marginRight,
+              left: marginLeft
+            },
+            showOuter: true,
+            //bump: this.activeProfile.maxRadius/2,
+            //constantRakeLength: gradientWidth,
+            formatter: formatter,
+            cssFontSize: "11px",
+            fitIntoScale: fitIntoScale
+          });
+      
+        
+        this.labelScaleEl.classed("vzb-hidden", false);
+        this.labelScaleG.call(labelsAxis);
+
+        var colorRange = _this.colorModel.getScale().range();
+        var gColors = paletteKeys.map(function(val, i) {
+          return colorRange[i] + " " + d3.format("%")(val * .01);
+        }).join(", ");
+
+        //Calculate the hight for the rainbow gradient
+        // var gradientHeight;
+        // if(colorOptions && colorOptions[0]) {
+        //   var firstOptionSize = colorOptions[0][0].getBoundingClientRect();
+        //   var  = colorOptions[0][colorOptions[0].length - 1].getBoundingClientRect();
+        //   gradientHeight = lastOptionSize.bottom - firstOptionSize.top;
+        // }
+        // if(!isFinite(gradientHeight)) gradientHeight = utils.keys(palette).length * 25 + 5;
         
         this.rainbowEl
-          .style("height", gradientHeight + 2 + "px")
-          .style("background", "linear-gradient(" + utils.values(palette).join(", ") + ")");
+          .style("background", "linear-gradient(90deg," + gColors + ")");
         
-        var domain = _this.colorModel.getScale().domain();
+        var unit = this.translator("unit/" + this.colorModel.which)
         
+        this.unitDiv.classed("vzb-hidden", unit == "");
+        this.unitText.text(unit);
+
         //Apply names as formatted numbers 
-        colorOptions.each(function(d, index) {
-          d3.select(this).select(".vzb-cl-color-legend")
-            .text(_this.colorModel.getTickFormatter()(domain[index]))
-        });
-        
+        // colorOptions.each(function(d, index) {
+        //   d3.select(this).select(".vzb-cl-color-legend")
+        //     .text(_this.colorModel.getTickFormatter()(domain[index]))
+        // });
+        colorOptions.classed("vzb-hidden", true);
+
       } else {
         
         //Apply names to color legend entries if color is a property

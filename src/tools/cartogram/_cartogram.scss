@@ -1,4 +1,4 @@
-.vzb-tool-cartogram {
+.vzb-tool {
   $vzb-ct-year-size: 15em;
   
   .vzb-cartogram {
@@ -23,15 +23,16 @@
       }
 
       .land {
-        fill: $vzb-color-grey;
+        fill: $vzb-color-whiteish;
         stroke: $vzb-color-black;
         opacity: .8;
+        stroke-width: .3px;
       }
 
       .boundary {
         fill: none;
         stroke: #fff;
-        stroke-width: .5px;
+        stroke-width: 2px;
       }
     }
 

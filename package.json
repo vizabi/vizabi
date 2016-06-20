@@ -1,6 +1,6 @@
 {
   "name": "vizabi",
-  "version": "0.14.0-1",
+  "version": "0.15.0-12",
   "description": "Vizabi Framework, Interactive charts and visualization tools animated through time",
   "main": "build/dist/vizabi.js",
   "scripts": {
@@ -22,7 +22,7 @@
   },
   "homepage": "http://vizabi.org",
   "dependencies": {
-    "vizabi-interpolators": "^1.1.0"
+    "vizabi-interpolators": "^1.2.0"
   },
   "devDependencies": {
     "babel": "6.5.2",
@@ -38,16 +38,16 @@
     "connect-livereload": "0.5.4",
     "d3": "^3.5.6",
     "del": "2.2.0",
-    "es5-shim": "4.5.8",
+    "es5-shim": "4.5.9",
     "es6-shim": "0.35.1",
     "eslint": "2.12.0",
     "eslint-config-airbnb": "9.0.1",
     "eslint-plugin-import": "1.8.1",
-    "eslint-plugin-jsx-a11y": "1.4.2",
-    "eslint-plugin-react": "5.1.1",
+    "eslint-plugin-jsx-a11y": "1.5.3",
+    "eslint-plugin-react": "5.2.1",
     "event-stream": "3.3.2",
     "font-awesome": "^4.4.0",
-    "glob": "7.0.3",
+    "glob": "7.0.4",
     "gulp": "3.9.1",
     "gulp-autoprefixer": "3.1.0",
     "gulp-bump": "2.1.0",

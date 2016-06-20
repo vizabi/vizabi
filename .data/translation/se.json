@@ -26,6 +26,7 @@
     "buttons/speed": "Hastighet",
     "buttons/label": "Etikett",
     "buttons/zoom": "Zoom",
+    "buttons/inpercent": "Procent",
     "dialogs/find": "Välj",
     "dialogs/presentation": "Presentation",
     "hints/bubbl/setminsize": "Min bubblar storlek:",

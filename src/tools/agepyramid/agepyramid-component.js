@@ -42,8 +42,14 @@ var AgePyramid = Component.extend({
       name: "marker",
       type: "model"
     }, {
+      name: "marker_side",
+      type: "model"
+    }, {
       name: "language",
       type: "language"
+    }, {
+      name: "ui",
+      type: "model"
     }];
 
     var _this = this;
@@ -54,7 +60,7 @@ var AgePyramid = Component.extend({
       "change:entities.show": function(evt) {
         console.log('Trying to change show');
       },
-      "change:age.select": function(evt) {
+      "change:stack.select": function(evt) {
         _this._selectBars();
       },
       "change:marker.color.palette": function (evt) {
@@ -63,6 +69,12 @@ var AgePyramid = Component.extend({
       },
       "change:marker.color.scaleType":function (evt) {
         if (!_this._readyOnce) return;
+        _this._updateEntities();
+      },
+      "change:ui.chart.inpercent":function (evt) {
+        if (!_this._readyOnce) return;
+        _this._updateLimits();
+        _this.resize();
         _this._updateEntities();
       }
     };
@@ -82,6 +94,13 @@ var AgePyramid = Component.extend({
     this.totalFieldName = "Total";
   },
 
+  // afterPreload: function() {
+  //   var obj = {};
+  //   obj["which"] = this.model.marker.axis_x.which;
+  //   obj["use"] = this.model.marker.axis_x.use;
+  //   this.model.marker_side.hook_total.set(obj);
+  // },
+  
   /**
    * DOM is ready
    */
@@ -118,15 +137,17 @@ var AgePyramid = Component.extend({
    */
   ready: function() {
     this.SIDEDIM = this.model.marker.side.which;//this.model.side.getDimension();
-    this.STACKDIM = this.model.marker.color.which;//this.model.stack.getDimension();
+    //this.STACKDIM = this.model.marker.color.which;
+    this.STACKDIM = this.model.stack.getDimension();
     this.AGEDIM = this.model.age.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
 
     this.updateUIStrings();
     this._updateIndicators();
+    this._updateLimits();
     this.resize();
     this._updateEntities();
-    this._updateEntities();
+    this._selectBars();
   },
 
   updateUIStrings: function() {
@@ -158,23 +179,49 @@ var AgePyramid = Component.extend({
     var sideDim = this.SIDEDIM;
     var stackDim = this.STACKDIM;
     var sides = this.model.marker.getKeys(sideDim);
-    _this.sidesKeys = [];
-    _this.sidesKeys = sides.map(function(m) {
+    _this.sideKeys = [];
+    _this.sideKeys = sides.map(function(m) {
         return m[sideDim];
       });
     var stacks = this.model.marker.getKeys(stackDim);
     _this.stackKeys = [];
-    if(this.ui.stacked || this.model.marker.color.use == "constant") {
-      _this.stackKeys = utils.without(stacks.map(function(m) {
-        return m[stackDim];
-      }), this.totalFieldName);
-    } else {
+    _this.stackKeys = utils.without(stacks.map(function(m) {
+      if(m[stackDim] == _this.totalFieldName) _this.dataWithTotal = true;
+      return m[stackDim];
+    }), this.totalFieldName);
+
+    if(_this.dataWithTotal && (!this.ui.chart.stacked || this.model.marker.color.use == "constant")) {
       _this.stackKeys = [this.totalFieldName];
     }
+    
     this.twoSided = sides.length > 1; 
     if(this.twoSided) {
       this.xScaleLeft = this.xScale.copy();
-    }      
+    }  
+  },
+
+  _updateLimits: function() {
+    var _this = this; 
+    var limits, domain;
+    var axisX = this.model.marker.axis_x;
+    if(this.ui.chart.inpercent) {
+      limits = axisX.getLimitsByDimensions([this.SIDEDIM, this.TIMEDIM]);      
+      var totalLimits = this.model.marker_side.hook_total.getLimitsByDimensions([this.SIDEDIM, this.TIMEDIM]);
+      var totalCoeff = this.dataWithTotal ? .5 : 1;
+      var timeKeys = axisX.getUnique();
+      var maxLimits = []; 
+      utils.forEach(this.sideKeys, function(key) {
+        utils.forEach(timeKeys, function(time) {
+          maxLimits.push(limits[key][time].max / (totalLimits[key][time].max * totalCoeff));          
+        });
+      });
+      domain = [0, Math.max.apply(Math, maxLimits)];
+    } else {
+      limits = axisX.getLimits(axisX.which);
+      domain = (axisX.domainMin!=null && axisX.domainMax!=null) ? [+axisX.domainMin, +axisX.domainMax] : [limits.min, limits.max];
+    }
+    this.xScale.domain(domain);
+    if(this.xScaleLeft) this.xScaleLeft.domain(this.xScale.domain());
   },
 
   /**
@@ -184,7 +231,6 @@ var AgePyramid = Component.extend({
 
     var _this = this;
     var time = this.model.time;
-    var timeValue = time.timeFormat.parse(time.timeFormat(time.value));
     var sideDim = this.SIDEDIM;
     var ageDim = this.AGEDIM;
     var stackDim = this.STACKDIM;
@@ -193,6 +239,18 @@ var AgePyramid = Component.extend({
 
     var group_by = this.model.age.grouping || 1;
     //var group_offset = this.model.marker.group_offset ? Math.abs(this.model.marker.group_offset % group_by) : 0;
+
+    if(this.ui.chart.inpercent) {
+      var filter = {};
+      filter[this.TIMEDIM] = this.model.time.value;
+      
+      this.totalValues = this.model.marker_side.getValues(filter,[this.SIDEDIM]).hook_total;
+      if(this.dataWithTotal) {
+        utils.forEach(this.sideKeys, function(key) {
+          _this.totalValues[key] *= .5;
+        });
+      }
+    } 
 
     var filter = {};
     filter[timeDim] = time.value;
@@ -205,13 +263,10 @@ var AgePyramid = Component.extend({
     var stackValues = this.model.marker.getValues(filter,[stackDim]);
     var values = this.model.marker.getValues(filter,[this.AGEDIM]);
     var domain = this.yScale.domain();
-
-    //var data = (this.model.marker.axis_x.getNestedItems([timeDim, sideDim, ageDim, stackDim]))[timeValue];
-    
+        
     this.cScale = this.model.marker.color.getScale();
+ 
     this.model.age.setVisible(markers);
-
-
 
     this.entityBars = this.bars.selectAll('.vzb-bc-bar')
       .data(markers);
@@ -231,7 +286,7 @@ var AgePyramid = Component.extend({
     var first_bar_y_offset = this.height - bar_height;
 
     //enter selection -- init bars
-    var ageBars = this.entityBars.enter().append("g")
+    this.entityBars.enter().append("g")
       .attr("class", function(d) {
         return "vzb-bc-bar " + "vzb-bc-bar-" + d[ageDim];
       })
@@ -246,14 +301,17 @@ var AgePyramid = Component.extend({
       //   _this.model.age.selectEntity(d);
       // })
       
-    var sideBars = ageBars.selectAll('.vzb-bc-side').data(function(d) {
+    var sideBars = this.entityBars.selectAll('.vzb-bc-side').data(function(d) {
       return sides.map(function(m) {
           var r = {};    
           r[ageDim] = d[ageDim];
           r[sideDim] = m[sideDim];
           return r;
         });
-      }).enter().append("g")
+      })
+    
+    sideBars.exit().remove();  
+    sideBars.enter().append("g")
         .attr("class", function(d, i) {
           return "vzb-bc-side " + "vzb-bc-side-" + (i ? "right": "left");
         })
@@ -266,7 +324,10 @@ var AgePyramid = Component.extend({
             r[stackDim] = m;
             return r;  
           });
-        }).enter().append("rect")
+        })
+        
+    stackBars.exit().remove();    
+    stackBars.enter().append("rect")
           .attr("class", function(d, i) {
             return "vzb-bc-stack " + "vzb-bc-stack-" + i;
           })
@@ -275,11 +336,11 @@ var AgePyramid = Component.extend({
           .on("mouseout", _this.interaction.unhighlightBars)
           .on("click", function(d, i) {
             if(utils.isTouchDevice()) return;
-//            _this.model.age.selectEntity(d);
+            _this.model.stack.selectEntityMD(d);
           })
           .onTap(function(d) {
             d3.event.stopPropagation();
-//            _this.model.age.selectEntity(d);
+            _this.model.stack.selectEntityMD(d);
           })
 
         
@@ -298,7 +359,8 @@ var AgePyramid = Component.extend({
         })
         //.attr("shape-rendering", "crispEdges") // this makes sure there are no gaps between the bars, but also disables anti-aliasing
         .each(function(d, i) {
-          d["width_"] = _this.xScale(_this.values1.axis_x[d[ageDim]][d[sideDim]][d[stackDim]]);
+          var total = _this.ui.chart.inpercent ? _this.totalValues[d[sideDim]] : 1;
+          d["width_"] = _this.xScale(_this.values1.axis_x[d[ageDim]][d[sideDim]][d[stackDim]] / total);
           var prevSbl = this.previousSibling;
           if(prevSbl) {
             var prevSblDatum = d3.select(prevSbl).datum();
@@ -365,29 +427,6 @@ var AgePyramid = Component.extend({
     //var x_domain_max = Math.max.apply(null, utils.values(values.axis_x));
     //if(x_domain_max > this.xScale.domain()[1]) this.xScale = this.xScale.domain([x_domain[0], x_domain_max]);
 
-    // should not be here
-    var limits = this.model.marker.axis_x.getLimits(this.model.marker.axis_x.which);
-    if (group_by == 1) {
-      this.xScale.domain([limits.min, limits.max]);
-    } else {
-      var values = utils.values(values.axis_x);
-      // var values = []; 
-      // utils.forEach(utils.values(_this.values1.axis_x), function(m) {
-      //   utils.forEach(_this.sidesKeys, function(side) {
-      //     var stackSum = 0;
-      //     utils.forEach(_this.stackKeys, function(stack) {
-      //       stackSum += m[side][stack];
-      //     });
-      //     values.push(stackSum);
-      //   });
-      // });
-      
-      values.push(limits.max);
-      this.xScale.domain([limits.min, Math.max.apply(Math, values)]);
-    }
-    if(this.xScaleLeft) this.xScaleLeft.domain(this.xScale.domain());    
-    this.resize();
-
   },
 
   _temporaryBarsColorAdapter: function(values, d, ageDim) {
@@ -411,7 +450,7 @@ var AgePyramid = Component.extend({
       highlightBar: function(d) {
         if(utils.isTouchDevice()) return;
           
-        var formatter = _this.model.marker.axis_x.getTickFormatter();
+        var formatter = _this.ui.chart.inpercent ? d3.format(".1%") : _this.model.marker.axis_x.getTickFormatter();
         var sideDim = _this.SIDEDIM;
         var ageDim = _this.AGEDIM;
         var stackDim = _this.STACKDIM;
@@ -420,13 +459,14 @@ var AgePyramid = Component.extend({
         var curr = d3.select(this); 
         //_this.bars.select("#vzb-bc-bar-" + d[this.AGEDIM]);
         curr.classed('vzb-hovered', true);
-        var left = _this.sidesKeys.indexOf(d[sideDim]);
+        var left = _this.sideKeys.indexOf(d[sideDim]);
         var label = _this.labels.select("#vzb-bc-label-" + d[ageDim]);
         label.selectAll('.vzb-bc-age')
-          .text(function(textData) {          
+          .text(function(textData) { 
+            var total = _this.ui.chart.inpercent ? _this.totalValues[d[sideDim]] : 1;
             var text = _this.stackKeys.length > 1 ? d[stackDim]: textData.text;
             text = _this.twoSided ? text : textData.text + " " + d[stackDim];
-            return text + ": " + formatter(_this.values1.axis_x[d[ageDim]][d[sideDim]][d[stackDim]]);
+            return text + ": " + formatter(_this.values1.axis_x[d[ageDim]][d[sideDim]][d[stackDim]] / total);
           })
           .attr("x", (left?-1:1) * (_this.activeProfile.centerWidth * .5 + 7))
           .classed("vzb-text-left", left);
@@ -441,24 +481,29 @@ var AgePyramid = Component.extend({
    */
   _selectBars: function() {
     var _this = this;
-    var AGEDIM = this.AGEDIM;
-    var selected = this.model.age.select;
+    var stackDim = this.STACKDIM;
+    var ageDim = this.AGEDIM;
+    var sideDim = this.SIDEDIM;
+    var selected = this.model.stack.select;
 
     this._unselectBars();
 
     if(selected.length) {
-      this.bars.classed('vzb-dimmed-selected', true);
-      utils.forEach(selected, function(s) {
-        _this.bars.select("#vzb-bc-bar-" + s[AGEDIM]).classed('vzb-selected', true);
-        _this.labels.select("#vzb-bc-label-" + s[AGEDIM]).classed('vzb-selected', true);
+      this.stackBars.classed('vzb-dimmed-selected', true);
+      utils.forEach(selected, function(d) {
+        var indexSide = _this.sideKeys.indexOf(d[sideDim]);
+        var indexStack = _this.stackKeys.indexOf(d[stackDim]);
+        var side = indexSide ? "right": "left";
+        _this.bars.selectAll(".vzb-bc-bar-" + d[ageDim]).selectAll(".vzb-bc-side-" + side).selectAll(".vzb-bc-stack-" + indexStack).classed('vzb-selected', true);
+        //_this.labels.select("#vzb-bc-label-" + d[ageDim]).classed('vzb-selected', true);
       });
     }
   },
 
   _unselectBars: function() {
-    this.bars.classed('vzb-dimmed-selected', false);
-    this.bars.selectAll('.vzb-bc-bar.vzb-selected').classed('vzb-selected', false);
-    this.labels.selectAll('.vzb-selected').classed('vzb-selected', false);
+    this.stackBars.classed('vzb-dimmed-selected', false);
+    this.stackBars.classed('vzb-selected', false);
+    //this.labels.selectAll('.vzb-selected').classed('vzb-selected', false);
   },
 
   /**
@@ -543,8 +588,11 @@ var AgePyramid = Component.extend({
         limitMaxTickNumber: 19
       });
 
+    var format = this.ui.chart.inpercent ? d3.format("%") : this.model.marker.axis_x.getTickFormatter();  
+
     this.xAxis.scale(this.xScale)
       .orient("bottom")
+      .tickFormat(format)
       .tickSize(6, 0)
       .tickSizeMinor(3, 0)
       .labelerOptions({
@@ -571,6 +619,7 @@ var AgePyramid = Component.extend({
 
       this.xAxisLeft.scale(this.xScaleLeft)
         .orient("bottom")
+        .tickFormat(format)
         .tickSize(6, 0)
         .tickSizeMinor(3, 0)
         .labelerOptions({
@@ -581,7 +630,7 @@ var AgePyramid = Component.extend({
 
       this.xAxisLeftEl.attr("transform", "translate(0," + this.height + ")")
         .call(this.xAxisLeft);
-    }
+    }    
     
     this.bars.attr("transform", "translate(" + translateX + ",0)");
     this.labels.attr("transform", "translate(" + translateX + ",0)");

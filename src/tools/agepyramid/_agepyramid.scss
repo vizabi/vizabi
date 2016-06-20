@@ -1,4 +1,4 @@
-.vzb-tool-agepyramid {
+.vzb-tool {
   .vzb-agepyramid {
     @extend %vzb-chart-svg;
     .vzb-bc-axis-x,
@@ -9,6 +9,13 @@
     .vzb-bc-axis-y-title {
       @extend %vzb-chart-axis-title;
     }
+    
+    .vzb-bc-axis-x-left {
+      g:nth-last-of-type(2) {
+        visibility: hidden; 
+      }
+    }
+    
     .vzb-bc-bar {
       stroke: none;
       cursor: pointer;
@@ -30,20 +37,18 @@
       }
     }
     .vzb-dimmed {
-      opacity: .8;
+      opacity: .3;
       &.vzb-hovered {
         opacity: 1;
       }
     }
     .vzb-dimmed-selected {
-      > .vzb-bc-bar {
-        opacity: .5;
-        &.vzb-hovered {
-          opacity: .8;
-        }
-        &.vzb-selected {
-          opacity: 1;
-        }
+      opacity: .5;
+      &.vzb-hovered {
+        opacity: .8;
+      }
+      &.vzb-selected {
+        opacity: 1;
       }
     }
     .vzb-bc-title {

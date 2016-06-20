@@ -79,6 +79,11 @@ var CartogramComponent = Component.extend({
         _this.updateMarkerSizeLimits();
         _this.updateEntities();
       },
+      "change:marker.color.scaleType": function(evt, path) {
+        _this.updateIndicators();
+        _this.updateEntitityColor();
+      },
+      
       'change:marker.size.use': function(evt, path) {
         _this.model.ui.chart.lockActive = _this.model.marker.size.use != "constant";
       },
@@ -110,15 +115,16 @@ var CartogramComponent = Component.extend({
     this._super(config, context);
 
 
-    _this.COLOR_LAND_DEFAULT = "#999";
+    _this.COLOR_LAND_DEFAULT = "#fdfdfd";
 
     this.lands = null;
     this.features = null;
-    this.topo_features = null; 
+    this.topo_features = null;
+    this.borderArcs = null;
     this.defaultWidth = 700;
     this.defaultHeight = 550;
+    this.updateEntitiesQueue = [];
     this.boundBox = [[0.05, 0.0], [0.95, 1.0]]; // two points to set box bound on 960 * 500 image;
-
     d3_geo_projection();
     this.cached = [];
     this.projection = d3.geo.mercator()
@@ -142,54 +148,10 @@ var CartogramComponent = Component.extend({
     // http://bl.ocks.org/mbostock/d4021aa4dccfd65edffd patterson
     // http://bl.ocks.org/mbostock/3710566 robinson
     // map background
-    var defaultWidth = this.defaultWidth;
-    var defaultHeight = this.defaultHeight;
-    var world = this.world;
-    var geometries = this.geometries;
-    this.bgPath = d3.geo.path()
-      .projection(this.projection);
 
-
-    var svg = this.mapGraph = d3.select(this.element).select(".vzb-ct-map-graph")
-      .attr("width", defaultWidth)
-      .attr("height", defaultHeight);
-    svg.html('');
-    
-    //var features = topojson.feature(world, world.objects.prov).features; 
-    this.cartogram.iterations(0);
-    this.cartogram(world, geometries).then(function(response) {
-      _this.features = _this.topo_features = response.features;
-      _this.lands = svg.selectAll(".land")
-        .data(_this.topo_features)
-        .enter().insert("path", ".graticule")
-        .attr("class", function(d) { return "land " + (_this.id_lookup?_this.id_lookup:d.id); })
-        .attr("d", _this.cartogram.path)
-        .on("mouseover", function (d, i) {
-          if (utils.isTouchDevice()) return;
-          _this._interact()._mouseover(d, i);
-        })
-        .on("mouseout", function (d, i) {
-          if (utils.isTouchDevice()) return;
-          _this._interact()._mouseout(d, i);
-        })
-        .on("click", function(d, i) {
-          if(utils.isTouchDevice()) return;
-          _this._interact()._click(d, i);
-        })
-
-        .each(function(d) {
-          d[_this.KEY] = _this._getKey(d);
-        });
+    this.borderArcs = _this.cartogram.meshArcs(this.world, this.world.objects.topo, function(a, b) {
+      return a.properties.MN_NAME && a.properties.PR_NAME !== b.properties.PR_NAME;
     });
-
-/*
-    this.paths = svg.insert("path")
-      .datum(topojson.mesh(world, world.objects.prov, function(a, b) { 
-        return a !== b; 
-      }))
-      .attr("class", "boundary")
-      .attr("d", this.bgPath);
-*/
 
     this.labels = this.parent.findChildByName('gapminder-labels');
     this.labels.config({
@@ -217,9 +179,9 @@ var CartogramComponent = Component.extend({
     this.labelsContainer = this.graph.select('.vzb-ct-labels');
 
     this.yTitleEl = this.graph.select(".vzb-ct-axis-y-title");
-    this.cTitleEl = this.graph.select(".vzb-ct-axis-c-title");
+    this.sTitleEl = this.graph.select(".vzb-ct-axis-c-title");
     this.yInfoEl = this.graph.select(".vzb-ct-axis-y-info");
-    this.cInfoEl = this.graph.select(".vzb-ct-axis-c-info");
+    this.sInfoEl = this.graph.select(".vzb-ct-axis-c-info");
     this.dataWarningEl = this.graph.select(".vzb-data-warning");
     this.entityBubbles = null;
     this.tooltip = this.element.select('.vzb-ct-tooltip');
@@ -228,6 +190,10 @@ var CartogramComponent = Component.extend({
     this.yearEl = this.graph.select('.vzb-ct-year');
     this.year = new DynamicBackground(this.yearEl);
     this.year.setConditions({xAlign: 'left', yAlign: 'bottom', bottomOffset: 5});
+    this.mapGraph = this.element.select(".vzb-ct-map-graph")
+      .attr("width", this.defaultWidth)
+      .attr("height", this.defaultHeight);
+    this.mapGraph.html('');
 
 
     this.KEY = this.model.entities.getDimension();
@@ -242,6 +208,42 @@ var CartogramComponent = Component.extend({
       .domain(this.parent.datawarning_content.doubtDomain)
       .range(this.parent.datawarning_content.doubtRange);
 
+    this.cartogram.iterations(0);
+    this.redrawInProgress = true;
+
+    this.cartogram(this.world, this.geometries).then(function(response) {
+      _this.redrawInProgress = false;
+
+      _this.features = _this.topo_features = response.features;
+      _this.lands = _this.mapGraph.selectAll(".land")
+        .data(_this.topo_features)
+        .enter().append("path")
+        .attr("class", function(d) { return "land " + (d.properties[_this.id_lookup]?d.properties[_this.id_lookup]:d.id); })
+        .attr("d", _this.cartogram.path)
+        .on("mouseover", function (d, i) {
+          if (utils.isTouchDevice()) return;
+          _this._interact()._mouseover(d, i);
+        })
+        .on("mouseout", function (d, i) {
+          if (utils.isTouchDevice()) return;
+          _this._interact()._mouseout(d, i);
+        })
+        .on("click", function(d, i) {
+          if(utils.isTouchDevice()) return;
+          _this._interact()._click(d, i);
+        })
+        .each(function(d) {
+          d[_this.KEY] = _this._getKey(d);
+        });
+
+      if (_this.borderArcs) {
+        var data = _this.cartogram.stitchArcs(response, _this.borderArcs);
+        _this.borders = _this.mapGraph.append("path")
+          .datum(data)
+          .attr("class", "boundary")
+          .attr("d", _this.cartogram.path);
+      }
+    });
   },
   
   frameChanged: function(frame, time) {
@@ -249,6 +251,7 @@ var CartogramComponent = Component.extend({
     if (!frame) return;
     this.values = frame;
     this.updateTime();
+    this.updateTitleNumbers();
     this.updateEntities(this.duration);
   },
   
@@ -261,9 +264,9 @@ var CartogramComponent = Component.extend({
     this.updateIndicators();
     this.updateUIStrings();
     this.updateMarkerSizeLimits();
+    this.updateSize();
     this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
     this.year.setText(_this.model.time.timeFormat(_this.model.time.value));
-    this.updateSize();
   },
 
   /**
@@ -300,9 +303,19 @@ var CartogramComponent = Component.extend({
     return this.cached[year];
   },
    
-  updateEntities: function(duration) {
+  _redrawEntities: function() {
     var _this = this;
-    var time = this.model.time.value;
+    if (this.updateEntitiesQueue.length == 0) return;
+    if (this.redrawInProgress) {
+      setTimeout(function() {
+        _this._redrawEntities();
+      }, 100);
+      return;
+    }
+    this.redrawInProgress = true;
+    var time = this.updateEntitiesQueue[this.updateEntitiesQueue.length - 1].time;
+    var duration = this.updateEntitiesQueue[this.updateEntitiesQueue.length - 1].duration;
+    this.updateEntitiesQueue = [];
     if(this.model.ui.chart.lockNonSelected) {
       time = this.model.time.timeFormat.parse("" + this.model.ui.chart.lockNonSelected);
     }
@@ -312,23 +325,38 @@ var CartogramComponent = Component.extend({
         _this.cartogram.iterations(0);
       } else {
         _this.cartogram.iterations(8);
+        //var areas = _this.topo_features.map(d3.geo.path().projection(null).area);
         _this.cartogram.value(function(d) {
           if (_this.model.ui.chart.lockNonSelected) {
             var size1 = _this.sScale(lockedFrame.size[_this._getKey(d)])/* * _this._calculateTotalSize(_this.model.time.value, _this.values.size)*/,
               size2 = _this.sScale(_this.values.size[_this._getKey(d)])/* * _this._calculateTotalSize(time, lockedFrame.size)*/;
-            return d3.geo.path().projection(null).area(d) * (size2 / size1);  
+            return d3.geo.path().projection(null).area(d) * Math.pow((size2 / size1), 2);  
           } else {
             return _this.sScale(_this.values.size[_this._getKey(d)]);
           }
         });
-/*
-        if (_this.model.ui.chart.lockNonSelected) {
-          totValue = d3.sum(areas);
-        }
-*/
+        /*
+         if (_this.model.ui.chart.lockNonSelected) {
+         totValue = d3.sum(areas);
+         }
+         */
       }
+      var calcDuration = 0;
+      var start = new Date().getTime();
       _this.cartogram(_this.world, _this.geometries, totValue).then(function(response) {
+        var end = new Date().getTime();
+        if (duration) { // increale duration for prevent gaps between frames
+          duration = Math.max(duration, end - start);
+        }
         _this.features = response.features;
+        if (_this.borderArcs) {
+          var data = _this.cartogram.stitchArcs(response, _this.borderArcs);
+          _this.borders.datum(data)
+            .transition()
+            .duration(duration)
+            .ease("linear")
+            .attr("d", _this.cartogram.path);
+        }
         _this.lands.data(_this.features)
           .each(function(d) {
             d[_this.KEY] = _this._getKey(d);
@@ -342,17 +370,37 @@ var CartogramComponent = Component.extend({
               return _this.values.color[_this._getKey(d)]!=null?_this.cScale(_this.values.color[_this._getKey(d)]):_this.COLOR_LAND_DEFAULT;
             })
             .attr("d", _this.cartogram.path);
+          if (_this.borderArcs) {
+            _this.borders.interrupt()
+              .transition()
+              .duration(duration)
+              .ease("linear")
+              .attr("d", _this.cartogram.path);
+          }
+
         } else {
+          _this.borders
+            .attr("d", _this.cartogram.path);
+
           _this.lands
             .style("fill", function(d) {
               return _this.values.color[_this._getKey(d)]!=null?_this.cScale(_this.values.color[_this._getKey(d)]):_this.COLOR_LAND_DEFAULT;
             })
             .attr("d", _this.cartogram.path);
-          
+
         }
         _this.updateLandOpacity();
+        _this.redrawInProgress = false;
+        _this._redrawEntities();
       });
     });
+  },
+    
+  updateEntities: function(duration) {
+    var time = this.model.time.value;
+    
+    this.updateEntitiesQueue.push({time:time, duration: duration});
+    this._redrawEntities();
   },
 
   updateEntitityColor: function() {
@@ -370,32 +418,31 @@ var CartogramComponent = Component.extend({
 
     this.translator = this.model.language.getTFunction();
     var sizeConceptprops = this.model.marker.size.getConceptprops();
-    var sizeStr = this.model.marker.size.use == "constant" ? "indicator/size/" : "indicator/";  
     this.strings = {
       title: {
-        S: this.translator(sizeStr + _this.model.marker.size.which),
+        S: this.translator("indicator/" + _this.model.marker.size.which),
         C: this.translator("indicator/" + _this.model.marker.color.which)
       }
     };
 
     this.yTitleEl.select("text")
-      .text(this.translator("buttons/size") + ": " + this.strings.title.S)
+      .text(this.translator("buttons/color") + ": " + this.strings.title.C)
       .on("click", function() {
         _this.parent
           .findChildByName("gapminder-treemenu")
-          .markerID("size")
+          .markerID("color")
           .alignX("left")
           .alignY("top")
           .updateView()
           .toggle();
       });
 
-    this.cTitleEl.select("text")
-      .text(this.translator("buttons/color") + ": " + this.strings.title.C)
+    this.sTitleEl.select("text")
+      .text(this.translator("buttons/size") + ": " + this.strings.title.S)
       .on("click", function() {
         _this.parent
           .findChildByName("gapminder-treemenu")
-          .markerID("color")
+          .markerID("size")
           .alignX("left")
           .alignY("top")
           .updateView()
@@ -435,20 +482,20 @@ var CartogramComponent = Component.extend({
       _this.parent.findChildByName("gapminder-datanotes").hide();
     })
 
-    this.cInfoEl
+    this.sInfoEl
       .html(iconQuestion)
       .select("svg").attr("width", "0px").attr("height", "0px");
 
     //TODO: move away from UI strings, maybe to ready or ready once
-    this.cInfoEl.on("click", function() {
+    this.sInfoEl.on("click", function() {
       _this.parent.findChildByName("gapminder-datanotes").pin();
     })
-    this.cInfoEl.on("mouseover", function() {
+    this.sInfoEl.on("mouseover", function() {
       var rect = this.getBBox();
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
       _this.parent.findChildByName("gapminder-datanotes").setHook('color').show().setPos(coord.x, coord.y);
     })
-    this.cInfoEl.on("mouseout", function() {
+    this.sInfoEl.on("mouseout", function() {
       _this.parent.findChildByName("gapminder-datanotes").hide();
     })
   },
@@ -532,7 +579,7 @@ var CartogramComponent = Component.extend({
       .attr('width', width)
       .attr('height', height)
       .attr('viewBox', viewBox.join(' '))
-      .attr('preserveAspectRatio', 'none')
+      .attr('preserveAspectRatio', 'xMidYMid')
       .attr('x', margin.left)
       .attr('y', margin.top)
       .style("transform", "translate3d(" + margin.left + "px," + margin.top + "px,0)");
@@ -543,8 +590,8 @@ var CartogramComponent = Component.extend({
 
     var yTitleBB = this.yTitleEl.select("text").node().getBBox();
 
-    this.cTitleEl.attr("transform", "translate(" + 0 + "," + (margin.top + yTitleBB.height) + ")")
-      .classed("vzb-hidden", this.model.marker.color.which.indexOf("geo") != -1 || this.model.marker.color.use == "constant");
+    this.sTitleEl.attr("transform", "translate(" + 0 + "," + (margin.top + yTitleBB.height) + ")")
+      .classed("vzb-hidden", this.model.marker.size.use == "constant");
 
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl.select("svg")
@@ -569,16 +616,16 @@ var CartogramComponent = Component.extend({
         + (translate[1] - infoElHeight * 0.8) + ')');
     }
 
-    this.cInfoEl.classed("vzb-hidden", this.cTitleEl.classed("vzb-hidden"));
+    this.sInfoEl.classed("vzb-hidden", this.sTitleEl.classed("vzb-hidden"));
 
-    if(!this.cInfoEl.classed("vzb-hidden") && this.cInfoEl.select('svg').node()) {
-      var titleBBox = this.cTitleEl.node().getBBox();
-      var translate = d3.transform(this.cTitleEl.attr('transform')).translate;
+    if(!this.sInfoEl.classed("vzb-hidden") && this.sInfoEl.select('svg').node()) {
+      var titleBBox = this.sTitleEl.node().getBBox();
+      var translate = d3.transform(this.sTitleEl.attr('transform')).translate;
 
-      this.cInfoEl.select('svg')
+      this.sInfoEl.select('svg')
         .attr("width", infoElHeight)
         .attr("height", infoElHeight)
-      this.cInfoEl.attr('transform', 'translate('
+      this.sInfoEl.attr('transform', 'translate('
         + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
         + (translate[1] - infoElHeight * 0.8) + ')');
     }
@@ -589,24 +636,24 @@ var CartogramComponent = Component.extend({
     //reset font sizes first to make the measurement consistent
     var yTitleText = this.yTitleEl.select("text")
       .style("font-size", null);
-    var cTitleText = this.cTitleEl.select("text")
+    var sTitleText = this.sTitleEl.select("text")
       .style("font-size", null);
 
 
     var yTitleBB = yTitleText.node().getBBox();
-    var cTitleBB = this.cTitleEl.classed('vzb-hidden') ? yTitleBB : cTitleText.node().getBBox();
+    var sTitleBB = this.sTitleEl.classed('vzb-hidden') ? yTitleBB : sTitleText.node().getBBox();
 
     var font =
-      Math.max(parseInt(yTitleText.style("font-size")), parseInt(cTitleText.style("font-size")))
-      * this.width / Math.max(yTitleBB.width, cTitleBB.width);
+      Math.max(parseInt(yTitleText.style("font-size")), parseInt(sTitleText.style("font-size")))
+      * this.width / Math.max(yTitleBB.width, sTitleBB.width);
 
-    if(Math.max(yTitleBB.width, cTitleBB.width) > this.width) {
+    if(Math.max(yTitleBB.width, sTitleBB.width) > this.width) {
       yTitleText.style("font-size", font + "px");
-      cTitleText.style("font-size", font + "px");
+      sTitleText.style("font-size", font + "px");
     } else {
       // Else - reset the font size to default so it won't get stuck
       yTitleText.style("font-size", null);
-      cTitleText.style("font-size", null);
+      sTitleText.style("font-size", null);
     }
   },
   _interact: function () {
@@ -663,7 +710,7 @@ var CartogramComponent = Component.extend({
       //suppress unit strings that found no translation (returns same thing as requested)
       if(unitC === "unit/" + _this.model.marker.color.which) unitC = "";
       var valueC = _this.values.color[_this._getKey(hovered)];
-      _this.cTitleEl.select("text")
+      _this.yTitleEl.select("text")
         .text(_this.translator("buttons/color") + ": " +
         (valueC || valueC===0 ? formatterC(valueC) + " " + unitC : _this.translator("hints/nodata")));
 
@@ -672,20 +719,20 @@ var CartogramComponent = Component.extend({
         var unitY = _this.translator("unit/" + _this.model.marker.size.which);
         if(unitY === "unit/" + _this.model.marker.size.which) unitY = "";
         var valueS = _this.values.size[_this._getKey(hovered)];
-        _this.yTitleEl.select("text")
+        _this.sTitleEl.select("text")
           .text(_this.translator("buttons/size") + ": " + formatterS(valueS) + " " + unitY);
       }
 
       this.yInfoEl.classed("vzb-hidden", true);
-      this.cInfoEl.classed("vzb-hidden", true);
+      this.sInfoEl.classed("vzb-hidden", true);
     } else {
       this.yTitleEl.select("text")
-        .text(this.translator("buttons/size") + ": " + this.strings.title.S);
-      this.cTitleEl.select("text")
         .text(this.translator("buttons/color") + ": " + this.strings.title.C);
+      this.sTitleEl.select("text")
+        .text(this.translator("buttons/size") + ": " + this.strings.title.S);
 
       this.yInfoEl.classed("vzb-hidden", false);
-      this.cInfoEl.classed("vzb-hidden", false);
+      this.sInfoEl.classed("vzb-hidden", false);
     }
   },
   
@@ -757,7 +804,7 @@ var CartogramComponent = Component.extend({
     var _this = this;
     //if(!duration)duration = 0;
 
-    var OPACITY_HIGHLT = 1.0;
+    var OPACITY_HIGHLT = 0.8;
     var OPACITY_HIGHLT_DIM = .3;
     var OPACITY_SELECT = this.model.entities.opacityRegular;
     var OPACITY_REGULAR = this.model.entities.opacityRegular;

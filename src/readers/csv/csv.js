@@ -110,6 +110,40 @@ var CSVReader = Reader.extend({
           // grouping
           data = _this.groupData(data, query);
 
+
+          // hack: if no year queried, add it, vizabi expects it
+          if (typeof data[0].year === 'undefined' && typeof data[0].time === 'undefined') {
+            var isDatapointQuery = true;
+            utils.forEach(query.select,function(column) {
+              // heuristic: if properties are mentioned, it's not a datapoint query
+              if (column.indexOf('.') !== -1) {
+                isDatapointQuery = false;
+              }
+            });
+            if (isDatapointQuery) {
+              utils.forEach(data, function(row) {
+                row.year = new Date("2011");
+              })
+            }
+          }
+
+          // hack for Stats SA: if no geo queried, add it, agepyramid expects it even if there's only 1 country.
+          // heuristic: check age or age_by_1_year to apply it only to age pyramid
+          if (typeof data[0].geo === 'undefined' && (typeof data[0].age !== "undefined" || typeof data[0].age_by_1_year !== "undefined")) {
+            var isDatapointQuery = true;
+            utils.forEach(query.select,function(column) {
+              // heuristic: if properties are mentioned, it's not a datapoint query
+              if (column.indexOf('.') !== -1) {
+                isDatapointQuery = false;
+              }
+            });
+            if (isDatapointQuery) {
+              utils.forEach(data, function(row) {
+                row.geo = "zaf";
+              })
+            }
+          }
+
           // sorting
           // one column, one direction (ascending) for now
           if(query.orderBy && data[0]) {
@@ -121,6 +155,7 @@ var CSVReader = Reader.extend({
               p.reject("Cannot sort by " + query.orderBy + ". Column does not exist in result.");
             }
           }
+
 
           _this._data = data;
           p.resolve();
@@ -305,7 +340,7 @@ var CSVReader = Reader.extend({
         var group_index;
 
         // TO-DO: only age is grouped together for now, should be more generic
-        if (entity == 'age') {
+        if (entity == 'age' || entity == 'age_by_1_year') {
 
           var group_by = grouping;
           var group_offset = 0;
@@ -346,11 +381,13 @@ var CSVReader = Reader.extend({
             leaf = leaf[val[entity]];
             // if the leaf already had values, apply the aggregrate functions for each property
             utils.forEach(query.select, function(property, key) {
-              // TO-DO replace with more generic grouping/aggregrate
-              if (property == 'pop') {
-                // aggregrate the un-grouped data (now only sum population)
-                leaf[property] = parseFloat(leaf[property]) + parseFloat(val['pop']);
-              }
+              if(keys.indexOf(property) != -1) return;
+              // aggregrate the un-grouped data (now only sum population)
+              // leaf[property] = parseFloat(leaf[property]) + parseFloat(val[property]);
+              
+              //never aggregate strings!
+              if(val[property]!=="" && !+val[property] && +val[property]!==0) return;
+              leaf[property] = leaf[property] + val[property];
             });  
             keep = false;
 

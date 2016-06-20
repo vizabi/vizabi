@@ -160,8 +160,8 @@ var Tool = Component.extend({
 
       // change start and end (but keep startOrigin and endOrigin for furhter requests)
       // change is not persistent if it's splashscreen change
-      if(time.start - tLimits.min != 0) time.getModelObject('start').set(tLimits.min, false, !time.splash);
-      if(time.end - tLimits.max != 0) time.getModelObject('end').set(tLimits.max, false, !time.splash);
+      if(time.start < tLimits.min) time.getModelObject('start').set(tLimits.min, false, !time.splash);
+      if(time.end > tLimits.max) time.getModelObject('end').set(tLimits.max, false, !time.splash);
     }
       
     //force time validation because time.value might now fall outside of start-end

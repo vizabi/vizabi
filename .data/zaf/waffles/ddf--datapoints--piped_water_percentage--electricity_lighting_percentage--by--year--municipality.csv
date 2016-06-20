@@ -1,4 +1,4 @@
-time,geo,piped_water_percentage,electricity_lighting_total
+year,municipality,piped_water_percentage,electricity_lighting_total
 1996,261,0.983335285,0.75974069
 1996,262,0.853500979,0.43351783
 1996,263,0.895137583,0.634054024

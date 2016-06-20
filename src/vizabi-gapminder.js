@@ -824,13 +824,16 @@ AgePyramid.define('default_model', {
           ] //show 0 through 100
         }
       },
-      grouping: 5
+      grouping: 5,
+      _multiple: true
     },
     entities_stack: {
-      dim: "education"
+      space: ["entities_age", "entities_side"],
+      dim: "education_attainment",
+      _multiple: true
     },
     entities_side: {
-      dim: "sex"
+      dim: "population_group"
     },
     marker: {
       space: ["entities", "entities_side", "entities_stack", "entities_age", "time"],
@@ -840,7 +843,7 @@ AgePyramid.define('default_model', {
       },
       label_name: {
         use: "property",
-        which: "sex"
+        which: "population_group"
       },
       axis_y: {
         use: "indicator",
@@ -852,21 +855,28 @@ AgePyramid.define('default_model', {
       },
       axis_x: {
         use: "indicator",
-        which: "zaf_population",
-        domainMin: 0,
-        domainMax: 1400000000
+        which: "population",
+        //domainMin: 0,
+        //domainMax: 1400000000
       },
       color: {
         use: "property",
-        which: "education"
+        which: "education_attainment"
         // allow: {
         //   names: ["!stack.name"]
         // }
       },
       side: {
         use: "property",
-        which: "sex"
+        which: "population_group"
       }
+    },
+    marker_side: {
+      space: ["entities", "entities_side", "time"],
+      hook_total: {
+        use: "indicator",
+        which: "population"
+      }      
     },
     marker_minimap:{
       space: ["entities_stack"],
@@ -874,7 +884,7 @@ AgePyramid.define('default_model', {
         shape: "svg",
         label: {
           use: "property",
-          which: "education"
+          which: "education_attainment"
         },
         geoshape: {
           use: "property",
@@ -885,7 +895,10 @@ AgePyramid.define('default_model', {
   language: language,
   //NO DEFAULT DATA SOURCE. DATA COMES FROM EXTERNAL PAGE
   ui: {
-    stacked: true,
+    chart: {
+      stacked: true,
+      inpercent: false
+    },
     presentation: false
   }
 });
@@ -894,23 +907,14 @@ JOINTPyramidLine.define('default_model', {
   state: {
     time: {
       value: '2011',
-      start: '1950',
-      end: '2100'
+      start: '1996',
+      end: '2011'
     },
     entities: {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["*"],
-          //"geo.cat": ["country", "unstate"]
-        }
-      }
-    },
-    entities_minimap: {
-      dim: "geo",
-      show: {
-        _defs_: {
-          "geo.cat": ["country"]
+          "geo": ["*"]
         }
       }
     },
@@ -923,13 +927,17 @@ JOINTPyramidLine.define('default_model', {
           ] //show 0 through 100
         }
       },
-      grouping: 5
+      grouping: 5,
+      _multiple: true
     },
     entities_stack: {
-      dim: "stack"
+      space: ["entities_age", "entities_side"],
+      dim: "education",
+      _multiple: true,
+      select: []
     },
     entities_side: {
-      dim: "side"
+      dim: "sex"
     },
     marker_pyramid: {
       space: ["entities", "entities_side", "entities_stack", "entities_age", "time"],
@@ -939,11 +947,7 @@ JOINTPyramidLine.define('default_model', {
       },
       label_name: {
         use: "property",
-        which: "side"
-      },
-      group_name: {
-        use: "property",
-        which: "stack"
+        which: "sex"
       },
       axis_y: {
         use: "indicator",
@@ -955,23 +959,17 @@ JOINTPyramidLine.define('default_model', {
       },
       axis_x: {
         use: "indicator",
-        which: "zaf_population",
-        domainMin: 0,
-        domainMax: 1400000000
+        which: "zaf_population"
       },
       color: {
         use: "property",
-        which: "stack"
-        // allow: {
-        //   names: ["!stack.name"]
-        // }
+        which: "education"
       },
-      hook_side: {
+      side: {
         use: "property",
-        which: "side"
+        which: "sex"
       }
     },
-    
     marker_line: {
       space: ["entities", "time"],
       label: {
@@ -980,13 +978,11 @@ JOINTPyramidLine.define('default_model', {
       },
       axis_y: {
         use: "indicator",
-        which: "sg_gdp_p_cap_const_ppp2011_dollar",//systema globalis
-        //which: "income_per_person_gdppercapita_ppp_inflation_adjusted",
-        scaleType: "log",
+        which: "tfr",
+        scaleType: "linear",
         allow: {
-          scales: ["linear", "log", "time"]
+          scales: ["linear", "log"]
         }
-
       },
       axis_x: {
         use: "indicator",
@@ -1005,19 +1001,12 @@ JOINTPyramidLine.define('default_model', {
         }
       }
     },
-    
-    marker_minimap:{
-      space: ["entities_stack"],
-        type: "geometry",
-        shape: "svg",
-        label: {
-          use: "property",
-          which: "stack"
-        },
-        geoshape: {
-          use: "property",
-          which: "shape_lores_svg"
-        }
+    marker_side: {
+      space: ["entities", "entities_side", "time"],
+      hook_total: {
+        use: "indicator",
+        which: "zaf_population"
+      }      
     }
   },
   language: language,
@@ -1034,9 +1023,10 @@ JOINTPyramidLine.define('default_model', {
         higlightValueX: true,
         higlightValueY: true,
         showTooltip: false
-      }
+      },
+      stacked: true,
+      inpercent: false
     },    
-    stacked: true,
     presentation: false
   }
 });
@@ -1103,23 +1093,28 @@ Cartogram.define('default_model', {
       end: "2015",
       value: "2015",
       step: 1,
-      speed: 300
+      speed: 300,
+      dim: "year"
     },
     entities: {
-      dim: "geo",
+      dim: "municipality",
+      //dim: "province",
       opacitySelectDim: .3,
       opacityRegular: 1,
       show: {
         _defs_: {
-          "geo.cat": ["province", "municipality"]
+          "municipality.cat": ["province", "municipality"],
+          //"province.cat": ["province", "municipality"]
         }
       },
     },
     entities_minimap: {
-      dim: "geo",
+      dim: "municipality",
+      //dim: "province",
       show: {
         _defs_: {
-          "geo.cat": ["province", "municipality"]
+          "municipality.cat": ["province", "municipality"],
+          //"province.cat": ["province", "municipality"]
         }
       }
     },
@@ -1139,13 +1134,14 @@ Cartogram.define('default_model', {
       },
       color: {
         use: "indicator",
-        which: "zaf_population",
+        which: "piped_water_percentage",
         scaleType: "linear",
         _important: true
       },
       label: {
         use: "property",
-        which: "geo.name"
+        which: "municipality.name"
+        //which: "province.name"
       }
     },
     marker_minimap:{
@@ -1154,7 +1150,8 @@ Cartogram.define('default_model', {
         shape: "svg",
         label: {
           use: "property",
-          which: "geo.name"
+          which: "municipality.name"
+          //which: "province.name"
         },
         geoshape: {
           use: "property",
@@ -1170,7 +1167,7 @@ Cartogram.define('default_model', {
         dragging: true
       },
       lockNonSelected: 0,
-      lockActive: 1,
+      lockActive: 0,
       sizeSelectorActive:0
     },
     presentation: false
@@ -1270,7 +1267,9 @@ Tool.define("preload", function(promise) {
     
     var color = _this.default_model.state.marker[hook];
     var palette = ((globals.conceptprops.indicatorsDB[color.which]||{}).color||{}).palette||{};
+    var paletteLabels = ((globals.conceptprops.indicatorsDB[color.which]||{}).color||{}).paletteLabels||{};
     color.palette = utils.extend({}, color.palette, palette);
+    color.paletteLabels = utils.clone(paletteLabels);
   }
 
   function addMinMax(hook) {

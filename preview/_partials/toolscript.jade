@@ -80,7 +80,7 @@ script.
   var locationArray = window.location.href.split("/");
   var localUrl = locationArray.splice(0, locationArray.indexOf("preview")).join("/") + "/preview/";
   
-  if("#{tool}"=="AgePyramid" || "#{tool}"=="JOINTPyramidLine"){
+  if("#{tool}"=="AgePyramid"){
     Vizabi._globals.ext_resources = {
       host: localUrl,
       preloadPath: 'data/zaf/',
@@ -90,7 +90,21 @@ script.
 
     VIZABI_MODEL.data = {
       reader: "csv",
-      path: localUrl + 'data/zaf/waffles/' + "ddf--datapoints--population--by--year--age--education-gender.csv",
+      path: localUrl + 'data/zaf/waffles/' + "ddf--datapoints--population--by--year--age--population_group--education_attainment.csv",
+      splash: false
+    }   
+    
+  }else if("#{tool}"=="JOINTPyramidLine"){
+    Vizabi._globals.ext_resources = {
+      host: localUrl,
+      preloadPath: 'data/zaf/',
+      dataPath: 'data/zaf/waffles/',
+      conceptpropsPath: localUrl + 'data/zaf/metadata.json'
+    };
+
+    VIZABI_MODEL.data = {
+      reader: "csv",
+      path: localUrl + 'data/zaf/waffles/' + "ddf--datapoints--population--by--year--age--education-gender-add-tfr.csv",
       splash: false
     }  
     
@@ -107,7 +121,8 @@ script.
     VIZABI_MODEL.data = {
       reader: "csv",
       //path: localUrl + "data/zaf/waffles/ddf--datapoints--population--black_population--black_population_percentage--by--year--province.csv",
-      path: localUrl + "data/zaf/waffles/ddf--datapoints--population--black_population--black_population_percentage--by--year--municipality.csv",
+      //path: localUrl + "data/zaf/waffles/ddf--datapoints--population--black_population--black_population_percentage--by--year--municipality.csv",
+      path: localUrl + "data/zaf/waffles/ddf--datapoints--piped_water_percentage--electricity_lighting_percentage--by--year--municipality.csv",
       splash: false
     }  
   }else{
