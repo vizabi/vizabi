@@ -897,7 +897,8 @@ AgePyramid.define('default_model', {
   ui: {
     chart: {
       stacked: true,
-      inpercent: false
+      inpercent: false,
+      flipSides: true
     },
     presentation: false
   }

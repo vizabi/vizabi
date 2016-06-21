@@ -192,14 +192,28 @@ var AgePyramid = Component.extend({
         return m[sideDim];
       });
     if(_this.sideKeys.length > 1) {
-      _this.sideKeys.sort(d3.descending);
+      var sortFunc = this.ui.chart.flipSides ? d3.ascending : d3.descending; 
+      _this.sideKeys.sort(sortFunc);
     }
     var stacks = this.model.marker.getKeys(stackDim);
-    _this.stackKeys = [];
-    _this.stackKeys = utils.without(stacks.map(function(m) {
+    var stackKeys = [];
+    var stackKeys = utils.without(stacks.map(function(m) {
       if(m[stackDim] == _this.totalFieldName) _this.dataWithTotal = true;
       return m[stackDim];
     }), this.totalFieldName);
+
+    var sortedStackKeys = utils.keys(this.model.marker.color.getPalette()).reduce(function(arr, val) {
+      if(stackKeys.indexOf(val) != -1) arr.push(val);
+      return arr;
+    }, []);
+
+    if(sortedStackKeys.length != stackKeys.length) {
+      sortedStackKeys = stackKeys.reduce(function(arr, val) {
+        if(arr.indexOf(val) == -1) arr.push(val);
+        return arr;
+      }, sortedStackKeys);
+    }
+    this.stackKeys = sortedStackKeys;
 
     this.stacked = this.ui.chart.stacked && this.model.marker.color.use != "constant";
     
