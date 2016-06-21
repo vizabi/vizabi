@@ -33,7 +33,7 @@ var TimeModel = Model.extend({
     dim: "time",
     value: "2015",
     start: "1800", //mandatory defaults! 
-    end: "2015", //mandatory defaults!
+    end: "2016", //mandatory defaults!
     startSelected: "1800",
     endSelected: "2015",
     playable: true,

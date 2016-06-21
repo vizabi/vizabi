@@ -185,18 +185,29 @@ describe('Web - Vizabi e2e test :: All', function() {
     //Clicking play
     browser.wait(EC.visibilityOf(play), 5000).then(function(){
       play.click();
+      browser.sleep(10000);
     });
 
     //Clicking Pause
     browser.wait(EC.visibilityOf(pause), 5000).then(function(){
       pause.click();
+      browser.sleep(5000);
     });
 
-    //Dragging slider
-    browser.actions().dragAndDrop(slider, {x:1000, y:0}).perform();
-    browser.sleep(1000);
-  });
-
+    //Getting Url Before Refreshing the page
+    var urlBefore = browser.getCurrentUrl();
+      
+    //Refreshing the page  
+    browser.refresh();
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Refreshed");
+    browser.sleep(5000);
+      
+    //Getting Url After Refreshing the page  
+    var urlAfter = browser.getCurrentUrl();
+      
+    //Comparing URLs before and after refreshing  
+    expect(urlBefore).toBe(urlAfter);
+  });   
   // URL persistency: set time slider to some point, refresh,
   // timeslider should keep the point you gave it, and chart should load at the state of that point
   // URL persistency: select a few entities, refresh, entities should be selected
@@ -244,6 +255,20 @@ describe('Web - Vizabi e2e test :: All', function() {
       pause.click();
       browser.sleep(2000);
     });
+      
+    //Getting Url Before Refreshing the page
+    var urlBefore = browser.getCurrentUrl();
+      
+    //Refreshing the page  
+    browser.refresh();
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Refreshed");
+    browser.sleep(5000);
+      
+    //Getting Url After Refreshing the page  
+    var urlAfter = browser.getCurrentUrl();
+      
+    //Comparing URLs before and after refreshing  
+    expect(urlBefore).toBe(urlAfter);  
   });
 
   // URL persistency: set time slider to some point, refresh,
@@ -286,6 +311,20 @@ describe('Web - Vizabi e2e test :: All', function() {
     //clicking pause
     pause.click();
     browser.sleep(2000);
+      
+    //Getting Url Before Refreshing the page
+    var urlBefore = browser.getCurrentUrl();
+      
+    //Refreshing the page  
+    browser.refresh();
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Refreshed");
+    browser.sleep(5000);
+      
+    //Getting Url After Refreshing the page  
+    var urlAfter = browser.getCurrentUrl();
+      
+    //Comparing URLs before and after refreshing  
+    expect(urlBefore).toBe(urlAfter);  
   });
 
 });
