@@ -798,7 +798,8 @@ AgePyramid.define('default_model', {
     time: {
       value: '2011',
       start: '1950',
-      end: '2100'
+      end: '2100',
+      step: 5
     },
     entities: {
       dim: "geo",
