@@ -1205,8 +1205,9 @@ JOINTCartogramLine.define('default_model', {
       labels: {
         min_number_of_entities_when_values_hide: 0 //values hide when showing 2 entities or more
       },
+      hideXAxisValue: true,
       whenHovering: {
-        hideVerticalNow: false,
+        hideVerticalNow: true,
         showProjectionLineX: true,
         showProjectionLineY: true,
         higlightValueX: true,
@@ -1216,7 +1217,7 @@ JOINTCartogramLine.define('default_model', {
       stacked: true,
       inpercent: false
     },    
-    presentation: false
+    presentation: true
   }
 });
 

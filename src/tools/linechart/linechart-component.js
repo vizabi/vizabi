@@ -766,14 +766,16 @@ var LCComponent = Component.extend({
         .ease("linear")
         .attr("transform", "translate(" + _this.xScale(d3.min([_this.model.marker.axis_x.zoomedMax, _this.time])) + ",0)");
 
-      _this.verticalNow
-        .style("opacity", _this.time - _this.model.time.start === 0 || _this.hoveringNow ? 0 : 1);
 
+        
 
-      if(!_this.hoveringNow) {
-        _this.xAxisEl.call(
-          _this.xAxis.highlightValue(time).highlightTransDuration(_this.duration)
+      if(!_this.hoveringNow && _this.time - _this.model.time.start !== 0) {
+        if (!_this.ui.chart.hideXAxisValue) _this.xAxisEl.call(
+           _this.xAxis.highlightValue(time).highlightTransDuration(_this.duration)
         );
+        _this.verticalNow.style("opacity", 1);
+      }else{
+        _this.verticalNow.style("opacity", 0);
       }
 
       // Call flush() after any zero-duration transitions to synchronously flush the timer queue
