@@ -19,8 +19,16 @@ var Hook = Model.extend({
   getTickFormatter: function() {
       
     var _this = this;
+    var SHARE = "share";
+    var PERCENT = "percent";
+    
+    // percentageMode works like rounded if set to SHARE, but multiplies by 100 and suffixes with "%"
+    // percentageMode works like rounded if set to PERCENT, but suffixes with "%"
       
-    return function format(x, index, removePrefix){
+    return function format(x, index, removePrefix, percentageMode){
+      
+    percentageMode = _this.getConceptprops().format;
+    if(percentageMode===SHARE) x*=100;
 
     // Format time values
     // Assumption: a hook has always time in its space
@@ -74,14 +82,16 @@ var Hook = Model.extend({
       case 14: x = x / 1000000000000; prefix = "TR"; break; //100TR
       //use the D3 SI formatting for the extreme cases
       default: return(d3.format("." + prec + "s")(x)).replace("G", "B");
-    }
-
+    }  
+    
     var formatted = d3.format("." + prec + format)(x);
     //remove trailing zeros if dot exists to avoid numbers like 1.0M, 3.0B, 1.500, 0.9700, 0.0
     if (formatted.indexOf(".")>-1) formatted = formatted.replace(/0+$/,"").replace(/\.$/,"");
-
+      
+    
+    
     // use manual formatting for the cases above
-    return(formatted + prefix);
+    return(formatted + prefix + (percentageMode===PERCENT || percentageMode===SHARE?"%":""));
     }
   },
     
