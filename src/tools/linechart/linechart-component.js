@@ -470,8 +470,9 @@ var LCComponent = Component.extend({
       .labelerOptions({
         scaleType: this.model.marker.axis_y.scaleType,
         timeFormat: this.model.time.timeFormat,
-        toolMargin: this.margin,
-        limitMaxTickNumber: 6
+        toolMargin: {top: 5, bottom: 5, left: this.margin.left, right: this.margin.right},
+        limitMaxTickNumber: 6,
+        formatter: this.model.marker.axis_y.getTickFormatter()
           //showOuter: true
       });
 
@@ -479,7 +480,7 @@ var LCComponent = Component.extend({
       .labelerOptions({
         scaleType: this.model.marker.axis_x.scaleType,
         limitMaxTickNumber: this.activeProfile.limitMaxTickNumberX,
-        toolMargin: this.margin,
+        toolMargin: {left: 5, right: 5, top: this.margin.top, bottom: this.margin.bottom},
         formatter: this.model.marker.axis_x.getTickFormatter()
         //showOuter: true
       });

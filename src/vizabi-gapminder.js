@@ -25,6 +25,7 @@ import CartogramComponent from 'tools/cartogram-component';
 import AxisLabeler from 'tools/axislabeler';
 import AgePyramid from 'tools/agepyramid';
 import JOINTPyramidLine from 'tools/joint_pyramidline';
+import JOINTCartogramLine from 'tools/joint_cartogramline';
 
 //waffle reader
 import {waffle as WaffleReader} from 'readers/_index';
@@ -1033,6 +1034,194 @@ JOINTPyramidLine.define('default_model', {
 });
 
 
+
+
+JOINTCartogramLine.define('datawarning_content', {
+  title: "",
+  body: "Comparing the size of economy across countries and time is not trivial. The methods vary and the prices change. Gapminder has adjusted the picture for many such differences, but still we recommend you take these numbers with a large grain of salt.<br/><br/> Countries on a lower income levels have lower data quality in general, as less resources are available for compiling statistics. Historic estimates of GDP before 1950 are generally also more rough. <br/><br/> Data for child mortality is more reliable than GDP per capita, as the unit of comparison, dead children, is universally comparable across time and place. This is one of the reasons this indicator has become so useful to measure social progress. But the historic estimates of child mortality are still suffering from large uncertainties.<br/><br/> Learn more about the datasets and methods in this <a href='http://www.gapminder.org/news/data-sources-dont-panic-end-poverty' target='_blank'>blog post</a>",
+  doubtDomain: [1800, 1950, 2015],
+  doubtRange: [1.0, .3, .2]
+});
+
+JOINTCartogramLine.define('default_model', {
+//  state: {
+//    time: {
+//      start: "1800",
+//      end: "2015",
+//      value: "2015",
+//      step: 1,
+//      speed: 300,
+//      dim: "year"
+//    },
+//    entities: {
+//      dim: "municipality",
+//      //dim: "province",
+//      opacitySelectDim: .3,
+//      opacityRegular: 1,
+//      show: {
+//        _defs_: {
+//          "municipality.cat": ["province", "municipality"],
+//          //"province.cat": ["province", "municipality"]
+//        }
+//      },
+//    },
+//    entities_minimap: {
+//      dim: "municipality",
+//      //dim: "province",
+//      show: {
+//        _defs_: {
+//          "municipality.cat": ["province", "municipality"],
+//          //"province.cat": ["province", "municipality"]
+//        }
+//      }
+//    },
+//
+//    marker_minimap:{
+//      space: ["entities_minimap"],
+//        type: "geometry",
+//        shape: "svg",
+//        label: {
+//          use: "property",
+//          which: "municipality.name"
+//          //which: "province.name"
+//        },
+//        geoshape: {
+//          use: "property",
+//          which: "shape_lores_svg"
+//        }
+//    }
+//  },
+//  //NO DEFAULT DATA SOURCE. DATA COMES FROM EXTERNAL PAGE
+//  language: language,
+//  ui: {
+//    chart: {
+//      labels: {
+//        dragging: true
+//      },
+//      lockNonSelected: 0,
+//      lockActive: 0,
+//      sizeSelectorActive:0
+//    },
+//    presentation: false
+//  }
+//  
+  
+  
+  
+  
+  
+  
+  
+  state: {
+    time: {
+      value: '2011',
+      start: '1996',
+      end: '2011'
+    },
+    entities: {
+      dim: "geo",
+      opacitySelectDim: .3,
+      opacityRegular: 1,
+      show: {
+        _defs_: {
+          "geo": ["*"]
+        }
+      },
+    },
+    entities_line: {
+      dim: "geo",
+      opacitySelectDim: .3,
+      opacityRegular: 1,
+      show: {
+        _defs_: {
+          "geo": ["zaf"]
+        }
+      },
+    },
+    marker_cartogram: {
+      space: ["entities", "time"],
+      size: {
+        use: "constant",
+        //which: "sg_population",//systema globalis
+        which: "_default",
+        scaleType: "ordinal",
+        _important: true,
+        showArcs: false,
+        allow: {
+          scales: ["linear", "ordinal"]
+        },
+        extent: [0, 1]
+      },
+      color: {
+        use: "indicator",
+        which: "piped_water_percentage",
+        scaleType: "linear",
+        _important: true
+      },
+      label: {
+        use: "property",
+        which: "geo.name"
+        //which: "province.name"
+      }
+    },
+    marker_line: {
+      space: ["entities_line", "time"],
+      label: {
+        use: "property",
+        which: "geo.name"
+      },
+      axis_y: {
+        use: "indicator",
+        which: "piped_water_percentage",
+        scaleType: "linear",
+        allow: {
+          scales: ["linear", "log"]
+        }
+      },
+      axis_x: {
+        use: "indicator",
+        which: "time",
+        scaleType: "time",
+        allow: {
+          scales: ["time"]
+        }
+      },
+      color: {
+        use: "property",
+        which: "geo.world_4region",
+        allow: {
+          scales: ["ordinal"],
+          names: ["!geo.name"]
+        }
+      }
+    }
+  },
+  language: language,
+  //NO DEFAULT DATA SOURCE. DATA COMES FROM EXTERNAL PAGE
+  ui: {
+    chart: {
+      labels: {
+        min_number_of_entities_when_values_hide: 0 //values hide when showing 2 entities or more
+      },
+      whenHovering: {
+        hideVerticalNow: false,
+        showProjectionLineX: true,
+        showProjectionLineY: true,
+        higlightValueX: true,
+        higlightValueY: true,
+        showTooltip: false
+      },
+      stacked: true,
+      inpercent: false
+    },    
+    presentation: false
+  }
+});
+
+
+
+
+
 DonutChart.define('default_model', {
   state: {
     // available time would have the range of 1990-2012 years (%Y), with the deafult position at 2000
@@ -1198,6 +1387,19 @@ BMComponent.define("preload", function(done) {
   d3.json(shape_path, function(error, json) {
     if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
     BMComponent.define('world', json);
+    done.resolve();
+  });
+});
+
+CartogramComponent.define("preload", function(done) {
+  var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
+      globals.ext_resources.host + globals.ext_resources.preloadPath + "municipalities.json"; 
+  
+  d3.json(shape_path, function(error, json) {
+    if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
+    CartogramComponent.define('world', json);
+    CartogramComponent.define('geometries', json.objects.topo.geometries);
+    CartogramComponent.define('id_lookup', json.objects.id_lookup);
     done.resolve();
   });
 });

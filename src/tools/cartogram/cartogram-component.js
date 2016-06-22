@@ -154,7 +154,7 @@ var CartogramComponent = Component.extend({
     });
 
     this.labels = this.parent.findChildByName('gapminder-labels');
-    this.labels.config({
+    if(this.labels) this.labels.config({
       CSS_PREFIX: 'vzb-ct',
       TOOL_CONTEXT: this,
       LABELS_CONTAINER_CLASS: 'vzb-ct-labels',

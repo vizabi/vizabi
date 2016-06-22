@@ -106,6 +106,20 @@ script.
       reader: "csv",
       path: localUrl + 'data/zaf/waffles/' + "ddf--datapoints--population--by--year--age--education-gender-add-tfr.csv",
       splash: false
+    }      
+    
+  }else if("#{tool}"=="JOINTCartogramLine"){
+    Vizabi._globals.ext_resources = {
+      host: localUrl,
+      preloadPath: 'data/zaf/',
+      dataPath: 'data/zaf/waffles/',
+      conceptpropsPath: localUrl + 'data/zaf/metadata.json'
+    };
+
+    VIZABI_MODEL.data = {
+      reader: "csv",
+      path: localUrl + "data/zaf/waffles/ddf--datapoints--piped_water_percentage--electricity_lighting_percentage--by--time--geo-add-zaf.csv",
+      splash: false
     }  
     
   }else if("#{tool}"=="Cartogram"){
