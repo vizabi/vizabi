@@ -475,7 +475,146 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
       });
     });
   });
-
       
+// In 2015 there is roughly the same amount of people living in the extreme
+// poverty as there was in 1800 (827 and 812 Millions). Hover the X Axis to
+// check the number of people.
+
+it('povertyPopulation', function() {
+    browser.get(baseChartUrl);
+    browser.refresh();
+    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+
+    // Getting year's 1st digit  at 2015
+    var firstDigit = browser.element(by.css(data.mountain_Chart_Loctors.firstDigitOfYear_Locator_CSS));
+    browser.wait(EC.visibilityOf(firstDigit), 5000);
+    firstDigit.getText().then(function (firstDigitAsParameter) {
+        var firstDigitText = firstDigitAsParameter;
+
+        // Comparing the year's 1st digit
+        var firstDigitOfYear= "2";
+        expect(firstDigitText).toBe(firstDigitOfYear);
+
+        // Getting year's 2nd digit at 2015
+        var secondDigit = browser.element(by.css(data.mountain_Chart_Loctors.secondDigitOfYear_Locator_CSS));
+        browser.wait(EC.visibilityOf(secondDigit), 5000);
+        secondDigit.getText().then(function (secondDigitAsParameter) {
+            var secondDigitText = secondDigitAsParameter;
+
+            // Comparing the year's 2nd digit
+            var secondDigitOfYear= "0";
+            expect(secondDigitText).toBe(secondDigitOfYear);
+
+            // Getting year's 3rd digit at 2015
+            var thirdDigit = browser.element(by.css(data.mountain_Chart_Loctors.thirdDigitOfYear_Locator_CSS));
+            browser.wait(EC.visibilityOf(thirdDigit), 5000);
+            thirdDigit.getText().then(function (thirdDigitAsParameter) {
+                var thirdDigitText = thirdDigitAsParameter;
+
+                // Comparing the year's 3rd digit
+                var thirdDigitOfYear= "1";
+                expect(thirdDigitText).toBe(thirdDigitOfYear);
+
+
+                // Getting year's 4th digit at 2015
+                var fourthDigit = browser.element(by.css(data.mountain_Chart_Loctors.fourthDigitOfYear_Locator_CSS));
+                browser.wait(EC.visibilityOf(fourthDigit), 5000);
+                fourthDigit.getText().then(function (fourthDigitAsParameter) {
+                    var fourthDigitText = fourthDigitAsParameter;
+
+                    // Comparing the year's 4th digit
+                    var fourthDigitOfYear= "5";
+                    expect(fourthDigitText).toBe(fourthDigitOfYear);
+
+                    // Hovering the poverty line at default place at 2015
+                    var axis = browser.element(by.css(data.mountain_Chart_Loctors.axis_Locator_CSS));
+                    browser.wait(EC.visibilityOf(axis), 5000);
+                    browser.actions().mouseMove(axis,{x:260,y:1}).perform();
+                    browser.sleep(5000);
+
+                    // Getting attributes of poverty line at 2015
+                    var line = browser.element(by.css(data.mountain_Chart_Loctors.proLine_Locator_CSS));
+                    browser.wait(EC.visibilityOf(line), 5000);
+                    line.getText().then(function (lineAsParameter) {
+                        var lineText = lineAsParameter;
+
+                        //Getting population at 2015
+                        var subStr = lineText.substring(12, 16);
+
+                        // Comparing the population at 2015
+                        var peakVal = "828";
+                        var downVal = "826";
+                        expect(peakVal).toBeGreaterThan(subStr);
+                        expect(downVal).toBeLessThan(subStr);
+
+                        // Drag the Slider ball to 1800
+                        browser.wait(EC.visibilityOf(slider), 5000);
+                        browser.driver.actions().dragAndDrop(slider, {x:-1000, y:0}).click().perform();
+                        browser.sleep(5000);
+                        // Getting year's 1st digit  at 1800
+                        firstDigit.getText().then(function (firstDigitAsParameter) {
+                            var firstDigitText = firstDigitAsParameter;
+
+                            // Comparing the year's 1st digit
+                            var firstDigitOfYear1= "1";
+                            expect(firstDigitText).toBe(firstDigitOfYear1);
+
+                            // Getting year's 2nd digit at 1800
+                            secondDigit.getText().then(function (secondDigitAsParameter) {
+                                var secondDigitText = secondDigitAsParameter;
+
+                                // Comparing the year's 2nd digit
+                                var secondDigitOfYear1= "8";
+                                expect(secondDigitText).toBe(secondDigitOfYear1);
+
+
+                                // Getting year's 3rd digit at 1800
+                                thirdDigit.getText().then(function (thirdDigitAsParameter) {
+                                    var thirdDigitText = thirdDigitAsParameter;
+
+                                    // Comparing the year's 3rd digit
+                                    var thirdDigitOfYear1= "0";
+                                    expect(thirdDigitText).toBe(thirdDigitOfYear1);
+
+
+                                    // Getting year's 4th digit at 1800
+                                    fourthDigit.getText().then(function (fourthDigitAsParameter) {
+                                        var fourthDigitText = fourthDigitAsParameter;
+
+                                        // Comparing the year's 4th digit
+                                        var fourthDigitOfYear1= "0";
+                                        expect(fourthDigitText).toBe(fourthDigitOfYear1);
+
+                                        // Hovering the poverty line at 1800
+                                        browser.actions().mouseMove(axis,{x:260,y:1}).perform();
+
+
+                                        // Getting attributes of poverty line at 1800
+                                        line.getText().then(function (lineAsParameter1) {
+                                            var lineTextAfterDrag = lineAsParameter1;
+
+                                            //Getting population at 1800
+                                            var subStrAfterDrag = lineTextAfterDrag.substring(12, 16);
+
+                                            // Comparing the population at 1800
+                                            var findMe = "812M";
+
+                                            // Comparing value of probline search bar
+                                            peakVal = "813";
+                                            downVal = "811";
+                                            expect(peakVal).toBeGreaterThan(subStrAfterDrag);
+                                            expect(downVal).toBeLessThan(subStrAfterDrag);
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+});
+
 });      
 });
