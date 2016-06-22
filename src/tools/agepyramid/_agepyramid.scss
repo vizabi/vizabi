@@ -94,4 +94,22 @@
       @extend %vzb-chart-axis-title-small;
     }
   }
+  &.vzb-presentation {
+
+    .vzb-agepyramid {
+
+      .vzb-bc-axis-x,
+      .vzb-bc-axis-y,
+      .vzb-bc-tooltip,
+      .vzb-bc-header {
+        text {
+          font-size: $vzb-font-size-largest;
+        }
+      }
+
+      .vzb-bc-labels {
+        font-size: $vzb-font-size-largest;
+      }
+    }
+  }
 }
