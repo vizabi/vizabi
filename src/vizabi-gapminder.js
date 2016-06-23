@@ -1046,50 +1046,6 @@ JOINTCartogramLine.define('datawarning_content', {
 });
 
 JOINTCartogramLine.define('default_model', {
-//  state: {
-//    time: {
-//      start: "1800",
-//      end: "2015",
-//      value: "2015",
-//      step: 1,
-//      speed: 300,
-//      dim: "year"
-//    },
-//    entities: {
-//      dim: "municipality",
-//      //dim: "province",
-//      opacitySelectDim: .3,
-//      opacityRegular: 1,
-//      show: {
-//        _defs_: {
-//          "municipality.cat": ["province", "municipality"],
-//          //"province.cat": ["province", "municipality"]
-//        }
-//      },
-//    },
-
-//  },
-//  //NO DEFAULT DATA SOURCE. DATA COMES FROM EXTERNAL PAGE
-//  language: language,
-//  ui: {
-//    chart: {
-//      labels: {
-//        dragging: true
-//      },
-//      lockNonSelected: 0,
-//      lockActive: 0,
-//      sizeSelectorActive:0
-//    },
-//    presentation: false
-//  }
-//  
-  
-  
-  
-  
-  
-  
-  
   state: {
     time: {
       value: '2011',
@@ -1115,31 +1071,6 @@ JOINTCartogramLine.define('default_model', {
           "geo": ["zaf"]
         }
       },
-    },
-    entities_minimap: {
-      dim: "geo",
-      //dim: "province",
-      show: {
-        _defs_: {
-          "geo.cat": ["province", "municipality"],
-          //"province.cat": ["province", "municipality"]
-        }
-      }
-    },
-
-    marker_minimap:{
-      space: ["entities_minimap"],
-        type: "geometry",
-        shape: "svg",
-        label: {
-          use: "property",
-          which: "geo.name"
-          //which: "province.name"
-        },
-        geoshape: {
-          use: "property",
-          which: "shape_lores_svg"
-        }
     },
     marker: {
       space: ["entities", "time"],
