@@ -67,7 +67,8 @@ var IndPicker = Component.extend({
 
         this.el_select.on("click", function() {
             var rect = _this.el_select.node().getBoundingClientRect();
-            var rootRect = _this.root.element.getBoundingClientRect();
+            var rootEl = _this.root.element instanceof Array? _this.root.element : d3.select(_this.root.element);
+            var rootRect = root.getBoundingClientRect();
             var treemenuComp = _this.root.findChildByName("gapminder-treemenu");
             var treemenuColWidth = treemenuComp.activeProfile.col_width; 
             var treemenuPaddLeft = parseInt(treemenuComp.wrapper.style('padding-left'), 10) || 0; 

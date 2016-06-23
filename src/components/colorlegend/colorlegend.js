@@ -82,7 +82,10 @@ var ColorLegend = Component.extend({
     this.minimapG = this.minimapSVG.append("g");
 
     this.colorPicker = colorPicker();
-    d3.select(this.root.element).call(this.colorPicker);
+    
+    // append color picker to the tool DOM. need to check if element is already a d3 selection to not do it twice
+    this.root.element instanceof Array? this.root.element : d3.select(this.root.element)
+      .call(this.colorPicker);
 
     this.KEY = this.model.state.entities.getDimension();
     this.colorModel = this.model.state.marker.color;

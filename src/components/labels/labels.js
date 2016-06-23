@@ -401,8 +401,10 @@ var Labels = Component.extend({
     this._toolContext = OPTIONS.TOOL_CONTEXT;
     this._cssPrefix = OPTIONS.CSS_PREFIX;
     this.label.setCssPrefix(OPTIONS.CSS_PREFIX);
-    this.labelsContainer = d3.select(this.root.element).select("." + OPTIONS.LABELS_CONTAINER_CLASS);
-    this.linesContainer = d3.select(this.root.element).select("." + OPTIONS.LINES_CONTAINER_CLASS);
+    
+    this.rootEl = this.root.element instanceof Array? this.root.element : d3.select(this.root.element);
+    this.labelsContainer = this.rootEl.select("." + OPTIONS.LABELS_CONTAINER_CLASS);
+    this.linesContainer = this.rootEl.select("." + OPTIONS.LINES_CONTAINER_CLASS);
     this.updateIndicators();
     this.updateSize();
     this.selectDataPoints();
