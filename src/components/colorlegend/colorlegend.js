@@ -181,14 +181,10 @@ var ColorLegend = Component.extend({
 
         if(paletteLabels) {
 
-          var divider = 1;
-          if(paletteLabels[0].indexOf("%") != -1) {
-            formatter = d3.format("%");
-            fitIntoScale = "optimistic";
-            divider = 100;
-          }
+          fitIntoScale = "optimistic";
+          
           domain = paletteLabels.map(function(val) {
-            return parseFloat(val) / divider;
+            return parseFloat(val);
           });
           var paletteMax = d3.max(domain);
           range = domain.map(function(val) {
