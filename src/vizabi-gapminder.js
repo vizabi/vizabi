@@ -800,6 +800,7 @@ AgePyramid.define('default_model', {
       start: '1950',
       end: '2100',
       step: 5,
+      immediatePlay: true,
       delay: 1500
     },
     entities: {
