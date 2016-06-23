@@ -799,7 +799,10 @@ AgePyramid.define('default_model', {
       value: '2011',
       start: '1950',
       end: '2100',
-      step: 5,
+      step: 1,
+      delayThresholdX2: 0,
+      delayThresholdX4: 0,
+      immediatePlay: true,
       delay: 1500
     },
     entities: {
@@ -827,7 +830,7 @@ AgePyramid.define('default_model', {
           ] //show 0 through 100
         }
       },
-      grouping: 5,
+      grouping: 1,
       _multiple: true
     },
     entities_stack: {
