@@ -44,7 +44,7 @@
              "9": "#fd4759",
              "0": "#fd4759"         
           },
-          "paletteLabels" : ["0","20","40","60","80","100%"]
+          "paletteLabels" : ["0","0.25","0.50","0.75","1"]
       }
     },
     "electricity_lighting_total": {

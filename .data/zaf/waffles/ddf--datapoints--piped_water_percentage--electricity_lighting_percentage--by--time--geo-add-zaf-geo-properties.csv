@@ -1,5 +1,5 @@
 "geo","geo.cat","geo.name","geo.mn_name_c","geo.mn_mdb_c","geo.category","geo.dc","geo.dc_mdb_c","geo.dc_name","geo.dc_name_c","geo.pr","geo.pr_mdb_c","geo.pr_name","geo.albers_are","geo.shape_leng","geo.shape_area","shape_lores_svg","geo.world_4region"
-zaf,"country","national",,,,,,,,,,,,,,africa
+zaf,"country","SA",,,,,,,,,,,,,,africa
 288,"municipality","Maletswai","Maletswai(EC143 )","EC143","Local Municipality",214,"DC14","Joe Gqabi","Joe Gqabi(DC14 )",2,"EC","Eastern Cape","4357,652471","4,444939654","0,4115755309",,africa
 289,"municipality","Gariep","Gariep(EC144 )","EC144","Local Municipality",214,"DC14","Joe Gqabi","Joe Gqabi(DC14 )",2,"EC","Eastern Cape","8911,059573","5,872840262","0,8414387412",,africa
 290,"municipality","Ngquza Hill","Ngquza Hill(EC153 )","EC153","Local Municipality",215,"DC15","O.R.Tambo","O.R.Tambo(DC15 )",2,"EC","Eastern Cape","2476,830036","3,957653203","0,2344992797",,africa

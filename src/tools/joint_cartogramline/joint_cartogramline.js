@@ -12,7 +12,9 @@ import {
   timeslider,
   dialogs,
   buttonlist,
-  treemenu
+  treemenu,
+  datawarning,
+  datanotes
 }
 from 'components/_index';
 
@@ -46,22 +48,42 @@ var JOINTCartogramLine = Tool.extend('JOINTCartogramLine', {
         '<div class="vzb-tool-treemenu vzb-hidden"></div>' + 
         '<div class="vzb-tool-datawarning vzb-hidden"></div>' + 
         '<div class="vzb-tool-labels vzb-hidden"></div>' + 
-      '</div>';    
-
+      '</div>';
+    
     
     //specifying components
     this.components = [{
       component: CartogramComponent,
       placeholder: '.vzb-tool-viz-cartogram',
-      model: ["state.time", "state.entities", "state.marker_cartogram", "language", "ui"] //pass models to component
-    }, {      
+      model: ["state.time", "state.entities", "state.marker", "language", "ui"] //pass models to component
+    }, {
       component: LCComponent,
       placeholder: '.vzb-tool-viz-line',
       model: ["state.time", "state.entities_line", "state.marker_line", "language"]
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
-      model: ["state.time", "state.entities", "state.marker_cartogram"]
+      model: ["state.time", "state.entities", "state.marker"]
+    }, {
+      component: dialogs,
+      placeholder: '.vzb-tool-dialogs',
+      model: ['state', 'ui', 'language']
+    }, {
+      component: buttonlist,
+      placeholder: '.vzb-tool-buttonlist',
+      model: ['state', 'ui', 'language']
+    }, {
+      component: treemenu,
+      placeholder: '.vzb-tool-treemenu',
+      model: ['state.marker', 'language']
+    }, {
+      component: datawarning,
+      placeholder: '.vzb-tool-datawarning',
+      model: ['language']
+    }, {
+      component: datanotes,
+      placeholder: '.vzb-tool-datanotes',
+      model: ['state.marker', 'language']
     }];
 
     //constructor is the same as any tool

@@ -1067,31 +1067,7 @@ JOINTCartogramLine.define('default_model', {
 //        }
 //      },
 //    },
-//    entities_minimap: {
-//      dim: "municipality",
-//      //dim: "province",
-//      show: {
-//        _defs_: {
-//          "municipality.cat": ["province", "municipality"],
-//          //"province.cat": ["province", "municipality"]
-//        }
-//      }
-//    },
-//
-//    marker_minimap:{
-//      space: ["entities_minimap"],
-//        type: "geometry",
-//        shape: "svg",
-//        label: {
-//          use: "property",
-//          which: "municipality.name"
-//          //which: "province.name"
-//        },
-//        geoshape: {
-//          use: "property",
-//          which: "shape_lores_svg"
-//        }
-//    }
+
 //  },
 //  //NO DEFAULT DATA SOURCE. DATA COMES FROM EXTERNAL PAGE
 //  language: language,
@@ -1140,7 +1116,32 @@ JOINTCartogramLine.define('default_model', {
         }
       },
     },
-    marker_cartogram: {
+    entities_minimap: {
+      dim: "geo",
+      //dim: "province",
+      show: {
+        _defs_: {
+          "geo.cat": ["province", "municipality"],
+          //"province.cat": ["province", "municipality"]
+        }
+      }
+    },
+
+    marker_minimap:{
+      space: ["entities_minimap"],
+        type: "geometry",
+        shape: "svg",
+        label: {
+          use: "property",
+          which: "geo.name"
+          //which: "province.name"
+        },
+        geoshape: {
+          use: "property",
+          which: "shape_lores_svg"
+        }
+    },
+    marker: {
       space: ["entities", "time"],
       size: {
         use: "constant",
