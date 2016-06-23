@@ -399,8 +399,6 @@ var Data = Class.extend({
   // arg = "key" or "time"
   getAvailableDimension: function(query, arg){
     
-    console.log(query)
-  
     // HARD CODED KEY/TIME. Added "flexibility" for StatsSA assignment. 
     // This should be replaced by getting key/time dimensions from query or model.
     var possibleDimensions = {
