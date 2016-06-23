@@ -37,7 +37,11 @@ var ColorLegend = Component.extend({
       },
       "change:state.marker.color.which": function(evt, path) {
         if(!_this._readyOnce) return;
-        _this.forwardModelUpdate();
+        if(_this.model.state.entities_minimap) {
+          _this.forwardModelUpdate();
+        }else{
+          _this.updateView();
+        }
       },
       "change:state.marker.color.palette": function(evt, path) {
         if(!_this._readyOnce) return;
@@ -99,11 +103,13 @@ var ColorLegend = Component.extend({
   
   ready: function(){
     var _this = this;
-    var minimapDim = this.model.state.marker_minimap._getFirstDimension();
-    var timeModel = this.model.state.time;
-    var filter = {};
-    filter[timeModel.getDimension()] = timeModel.value;
-    _this.frame = this.model.state.marker_minimap.getValues(filter,[minimapDim]);
+    if(this.model.state.marker_minimap){
+      var minimapDim = this.model.state.marker_minimap._getFirstDimension();
+      var timeModel = this.model.state.time;
+      var filter = {};
+      filter[timeModel.getDimension()] = timeModel.value;
+      _this.frame = this.model.state.marker_minimap.getValues(filter,[minimapDim]);
+    }
     _this.updateView();
   },
 
