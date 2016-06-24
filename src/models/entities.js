@@ -14,6 +14,7 @@ var EntitiesModel = Model.extend({
     show: {},
     select: [],
     highlight: [],
+    opacityHighlightDim: .1,
     opacitySelectDim: .3,
     opacityRegular: 1
   },
