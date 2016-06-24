@@ -750,56 +750,58 @@ var AgePyramid = Component.extend({
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
    */
+
+
+  presentationProfileChanges: {
+    medium: {
+      margin: { right: 80, bottom: 80 },
+      infoElHeight: 32
+    },
+    large: {
+      margin: { top: 100, right: 100, left: 100, bottom: 80 },
+      infoElHeight: 32
+    }
+  },
+
+  profiles: {
+    "small": {
+      margin: {
+        top: 70,
+        right: 20,
+        left: 40,
+        bottom: 40
+      },
+      minRadius: 2,
+      maxRadius: 40,
+      centerWidth: 2
+    },
+    "medium": {
+      margin: {
+        top: 80,
+        right: 60,
+        left: 60,
+        bottom: 40
+      },
+      minRadius: 3,
+      maxRadius: 60,
+      centerWidth: 2
+    },
+    "large": {
+      margin: {
+        top: 100,
+        right: 60,
+        left: 60,
+        bottom: 40
+      },
+      minRadius: 4,
+      maxRadius: 80,
+      centerWidth: 2
+    }
+  },
+
   resize: function() {
 
     var _this = this;
-
-    this.profiles = {
-      "small": {
-        margin: {
-          top: 70,
-          right: 20,
-          left: 40,
-          bottom: 40
-        },
-        minRadius: 2,
-        maxRadius: 40,
-        centerWidth: 2
-      },
-      "medium": {
-        margin: {
-          top: 80,
-          right: 60,
-          left: 60,
-          bottom: 40
-        },
-        minRadius: 3,
-        maxRadius: 60,
-        centerWidth: 2
-      },
-      "large": {
-        margin: {
-          top: 100,
-          right: 60,
-          left: 60,
-          bottom: 40
-        },
-        minRadius: 4,
-        maxRadius: 80,
-        centerWidth: 2
-      }
-    };
-
-    this.presentationProfileChanges = {
-      medium: {
-        margin: { right: 80, bottom: 80 },
-        infoElHeight: 32
-      },
-      large: {
-        margin: { top: 100, right: 100, left: 100, bottom: 80 },
-        infoElHeight: 32
-      }
-    };
 
     this.activeProfile = this.getActiveProfile(this.profiles, this.presentationProfileChanges);
 
