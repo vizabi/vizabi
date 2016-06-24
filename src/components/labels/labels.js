@@ -502,7 +502,7 @@ var Labels = Component.extend({
 
     this.entityLabels
       .enter().append("g")
-      .attr("class", _cssPrefix + "-entity")
+      .attr("class", function(d, index){return _cssPrefix + "-entity label-" + d[KEY]})
       .each(function(d, index) {
         _this.cached[d[KEY]] = {};      
         _this.label(d3.select(this));
