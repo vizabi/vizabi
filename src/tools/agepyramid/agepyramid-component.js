@@ -202,6 +202,7 @@ var AgePyramid = Component.extend({
     var sideDim = this.SIDEDIM;
     var stackDim = this.STACKDIM;
     var ageDim = this.AGEDIM;
+    var group_by = this.model.age.grouping || 1;
 
     var ages = this.model.marker.getKeys(ageDim);
     var ageKeys = [];
@@ -209,18 +210,32 @@ var AgePyramid = Component.extend({
         return m[ageDim];
       });
     this.ageKeys = ageKeys;
-    
-    this.shiftedAgeKeys = this.ageKeys.slice(1, this.timeSteps.length).reverse().map(function(m) { return -m;}).concat(ageKeys);
+
+    this.shiftedAgeKeys = this.timeSteps.map(function(m, i) {return -i * group_by;}).slice(1).reverse().concat(ageKeys);
 
     var sides = this.model.marker.getKeys(sideDim);
-    this.sideKeys = [];
-    this.sideKeys = sides.map(function(m) {
+    var sideKeys = [];
+    sideKeys = sides.map(function(m) {
         return m[sideDim];
       });
-    if(this.sideKeys.length > 1) {
-      var sortFunc = this.ui.chart.flipSides ? d3.ascending : d3.descending; 
-      this.sideKeys.sort(sortFunc);
+      
+    var sideFilter = this.model.side.getFilter;
+    if(sideFilter[sideDim] && sideFilter[sideDim][0] != "*") {
+      sideKeys = sideKeys.filter(function(m) {
+        var f = {};
+        f[sideDim] = m;
+        return _this.model.side.isShown(f);
+      });
     }
+
+    if(sideKeys.length > 1) {
+      var sortFunc = this.ui.chart.flipSides ? d3.ascending : d3.descending; 
+      sideKeys.sort(sortFunc);
+    }
+    if(sideKeys.length > 2) sideKeys.length = 2;
+
+    this.sideKeys = sideKeys;
+
     var stacks = this.model.marker.getKeys(stackDim);
     var stackKeys = [];
     var stackKeys = utils.without(stacks.map(function(m) {
