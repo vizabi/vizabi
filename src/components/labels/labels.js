@@ -495,7 +495,7 @@ var Labels = Component.extend({
       .remove();
     this.entityLines
       .enter().append('g')
-      .attr("class", _cssPrefix + "-entity")
+      .attr("class", function(d, index){return _cssPrefix + "-entity line-" + d[KEY]})
       .each(function(d, index) {
         _this.label.line(d3.select(this));
       });
