@@ -801,7 +801,7 @@ var AgePyramid = Component.extend({
       }
     };
 
-    this.activeProfile = this.getActiveProfile(this.profiles, presentationProfileChanges);
+    this.activeProfile = this.getActiveProfile(this.profiles, this.presentationProfileChanges);
 
     //this.activeProfile = this.profiles[this.getLayoutProfile()];
     var margin = this.activeProfile.margin;
