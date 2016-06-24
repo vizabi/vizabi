@@ -790,7 +790,7 @@ var AgePyramid = Component.extend({
       }
     };
 
-    var presentationProfileChanges = {
+    this.presentationProfileChanges = {
       medium: {
         margin: { right: 80, bottom: 80 },
         infoElHeight: 32
