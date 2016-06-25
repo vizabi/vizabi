@@ -748,7 +748,7 @@ var AgePyramid = Component.extend({
       utils.forEach(selected, function(d) {
         var indexSide = _this.sideKeys.indexOf(d[sideDim]);
         var indexStack = _this.stacked ? _this.stackKeys.indexOf(d[stackDim]) : 0;
-        var side = indexSide ? "left": "right";
+        var side = _this.twoSided != !indexSide ? "left": "right";
         _this.bars.selectAll(".vzb-bc-bar-" + d[ageDim]).selectAll(".vzb-bc-side-" + side).selectAll(".vzb-bc-stack-" + indexStack).classed('vzb-selected', true);
         //_this.labels.select("#vzb-bc-label-" + d[ageDim]).classed('vzb-selected', true);
       });
