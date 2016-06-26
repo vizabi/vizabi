@@ -287,7 +287,8 @@ var AgePyramid = Component.extend({
           utils.forEach(_this.ageKeys, function(age) {
             var stackSum = 0;
             utils.forEach(_this.stackKeys, function(stack) {
-              stackSum += limits[key][time][age][stack].max;
+              if (limits[key][time][age][stack])
+                stackSum += limits[key][time][age][stack].max;
             });
             maxLimits.push(stackSum / (totalLimits[key][time].max * totalCoeff));
           });          
@@ -303,7 +304,8 @@ var AgePyramid = Component.extend({
           utils.forEach(_this.ageKeys, function(age) {
             var stackSum = 0;
             utils.forEach(_this.stackKeys, function(stack) {
-              stackSum += limits[key][time][age][stack].max;
+              if (limits[key][time][age][stack])
+                stackSum += limits[key][time][age][stack].max;
             });
             maxLimits.push(stackSum);
           });          
