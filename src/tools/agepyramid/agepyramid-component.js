@@ -159,7 +159,7 @@ var AgePyramid = Component.extend({
 
     this.SIDEDIM = this.model.marker.side.which;//this.model.side.getDimension();
     //this.STACKDIM = this.model.marker.color.which;
-    this.STACKDIM = this.model.stack.getDimension();
+    this.STACKDIM = this.model.stack.getDimension() || this.model.marker.color.which;
     this.AGEDIM = this.model.age.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
 
@@ -256,7 +256,7 @@ var AgePyramid = Component.extend({
     }
     this.stackKeys = sortedStackKeys;
 
-    this.stacked = this.ui.chart.stacked && this.model.marker.color.use != "constant";
+    this.stacked = this.ui.chart.stacked && this.model.marker.color.use != "constant" && this.model.stack.getDimension();
     
     this.twoSided = this.sideKeys.length > 1; 
     if(this.twoSided) {
@@ -667,8 +667,14 @@ var AgePyramid = Component.extend({
       //   var color = _this.cScale(values.color[d[ageDim]]);
       //   return d3.rgb(color).darker(2);
       // });
-
-    this.year.text(time.timeFormat(time.value));
+    
+    if(duration) {
+      this.year.transition().duration(duration).ease("linear")
+        .each("end", this._setYear(time.value));
+    } else {
+      this.year.interrupt().text(time.timeFormat(time.value));
+    }
+      
 
     //update x axis again
     //TODO: remove this when grouping is done at data level
@@ -678,6 +684,10 @@ var AgePyramid = Component.extend({
     this._selectBars();
   },
 
+  _setYear: function(timeValue) {
+      var year = this.model.time.timeFormat(timeValue);
+      return function() { d3.select(this).text(year);};
+  },
   // _temporaryBarsColorAdapter: function(values, d, ageDim) {
   //   return this.cScale(values.color[d[ageDim]]);
   // },
