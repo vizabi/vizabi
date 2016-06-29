@@ -402,7 +402,7 @@ var Data = Class.extend({
     // HARD CODED KEY/TIME. Added "flexibility" for StatsSA assignment. 
     // This should be replaced by getting key/time dimensions from query or model.
     var possibleDimensions = {
-      key: ["geo","municipality","province"],
+      key: ["geo","municipality","province","district"],
       time: ["time","year"]
     }
 
