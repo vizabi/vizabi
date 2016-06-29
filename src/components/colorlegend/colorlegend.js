@@ -79,7 +79,7 @@ var ColorLegend = Component.extend({
     this.labelScaleEl = this.listColorsEl.append("div").attr("class", "vzb-cl-labelscale");
     this.labelScaleSVG = this.labelScaleEl.append("svg");
     this.labelScaleG = this.labelScaleSVG.append("g");
-    this.unitDiv = this.labelScaleEl.append("div").attr("class", "vzb-cl-unit");
+    this.unitDiv = this.listColorsEl.append("div").attr("class", "vzb-cl-unit");
     this.unitText = this.unitDiv.append("text").attr("class", "vzb-cl-unit-text");
 
     this.minimapSVG = this.minimapEl.append("svg");
@@ -132,7 +132,6 @@ var ColorLegend = Component.extend({
       if(!((_this.frame||{}).geoshape||{})[d[_this.KEY]]) canShowMap = false;
     });
     
-    this.labelScaleEl.classed("vzb-hidden", true); 
 
     var colorOptions = this.listColorsEl.selectAll(".vzb-cl-option");
     
@@ -145,6 +144,9 @@ var ColorLegend = Component.extend({
     //Hide minimap if no data to draw it
     this.minimapEl.classed("vzb-hidden", !canShowMap);
     
+    this.labelScaleEl.classed("vzb-hidden", canShowMap || this.colorModel.use !== "indicator")
+    this.unitDiv.classed("vzb-hidden", true);
+
     //Check if geoshape is provided
     if(!canShowMap) {
       if(this.colorModel.which == "_default") {
@@ -173,7 +175,7 @@ var ColorLegend = Component.extend({
       }); 
       
       if(this.colorModel.use == "indicator") {
-        
+  
         var gradientWidth = this.rainbowEl.node().getBoundingClientRect().width;
         var paletteKeys = Object.keys(palette).map(parseFloat);
         
@@ -211,8 +213,8 @@ var ColorLegend = Component.extend({
           .domain(domain)
           .range(range);
           
-        var marginLeft = parseInt(this.rainbowEl.style('left') || 0, 10);
-        var marginRight = parseInt(this.rainbowEl.style('right') || 0, 10);
+        var marginLeft = parseInt(this.rainbowEl.style('left'), 10) || 0;
+        var marginRight = parseInt(this.rainbowEl.style('right'), 10) || marginLeft;
 
         this.labelScaleSVG.style("width", marginLeft + gradientWidth + marginRight + "px");
         this.labelScaleG.attr("transform","translate(" + marginLeft + ",0)");
@@ -233,12 +235,11 @@ var ColorLegend = Component.extend({
             //bump: this.activeProfile.maxRadius/2,
             //constantRakeLength: gradientWidth,
             formatter: formatter,
+            bump: marginLeft,
             cssFontSize: "11px",
             fitIntoScale: fitIntoScale
           });
-      
-        
-        this.labelScaleEl.classed("vzb-hidden", false);
+              
         this.labelScaleG.call(labelsAxis);
 
         var colorRange = _this.colorModel.getScale().range();
@@ -382,6 +383,9 @@ var ColorLegend = Component.extend({
   
 
   resize: function() {
+    if(this.colorModel.use == "indicator") {
+      this.updateView();
+    }
     this.colorPicker.resize(d3.select('.vzb-colorpicker-svg'));
   }
 
