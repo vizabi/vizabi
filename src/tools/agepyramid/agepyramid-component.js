@@ -800,7 +800,8 @@ var AgePyramid = Component.extend({
       },
       minRadius: 2,
       maxRadius: 40,
-      centerWidth: 2
+      centerWidth: 2,
+      titlesSpacing: 5
     },
     "medium": {
       margin: {
@@ -811,7 +812,8 @@ var AgePyramid = Component.extend({
       },
       minRadius: 3,
       maxRadius: 60,
-      centerWidth: 2
+      centerWidth: 2,
+      titlesSpacing: 10
     },
     "large": {
       margin: {
@@ -822,7 +824,8 @@ var AgePyramid = Component.extend({
       },
       minRadius: 4,
       maxRadius: 80,
-      centerWidth: 2
+      centerWidth: 2,
+      titlesSpacing: 20
     }
   },
 
@@ -924,11 +927,11 @@ var AgePyramid = Component.extend({
     this.labels.attr("transform", "translate(" + translateX + ",0)");
 
     this.title
-      .attr('x', margin.left + (this.twoSided ? translateX - 5 : 0))
+      .attr('x', margin.left + (this.twoSided ? translateX - this.activeProfile.titlesSpacing : 0))
       .style('text-anchor', this.twoSided ? "end":"null")
       .attr('y', margin.top / 2);
     this.titleRight
-      .attr('x', margin.left + translateX + 5)
+      .attr('x', margin.left + translateX + this.activeProfile.titlesSpacing)
       .attr('y', margin.top / 2);
 
     this.year.attr('x', this.width + margin.left).attr('y', margin.top / 2);
