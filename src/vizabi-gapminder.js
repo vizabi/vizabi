@@ -130,7 +130,7 @@ BarRankChart.define('default_model', {
     time: {
       start: "1950",
       end: "2015",
-      value: "2000",
+      value: "2015",
       step: 1
     },
     entities: {
