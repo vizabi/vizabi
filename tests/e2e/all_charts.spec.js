@@ -264,7 +264,6 @@ describe('Web - Vizabi e2e test :: All', function() {
     browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Refreshed");
     browser.sleep(15000);
 
-      
     //Getting Url After Refreshing the page  
     var urlAfter = browser.getCurrentUrl();
       
