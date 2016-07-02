@@ -154,7 +154,7 @@ var CartogramComponent = Component.extend({
     });
 
     this.labels = this.parent.findChildByName('gapminder-labels');
-    this.labels.config({
+    if(this.labels) this.labels.config({
       CSS_PREFIX: 'vzb-ct',
       TOOL_CONTEXT: this,
       LABELS_CONTAINER_CLASS: 'vzb-ct-labels',
@@ -420,13 +420,14 @@ var CartogramComponent = Component.extend({
     var sizeConceptprops = this.model.marker.size.getConceptprops();
     this.strings = {
       title: {
-        S: this.translator("indicator/" + _this.model.marker.size.which),
-        C: this.translator("indicator/" + _this.model.marker.color.which)
+        C: (_this.model.marker.size.use !== "constant"? this.translator("buttons/color") + ": " : "") + this.translator("indicator/" + _this.model.marker.color.which),
+        S: this.translator("buttons/size") + ": " + this.translator("indicator/" + _this.model.marker.size.which)
       }
     };
-
+    
     this.yTitleEl.select("text")
-      .text(this.translator("buttons/color") + ": " + this.strings.title.C)
+      //don't show "Color:" when the size is constant and we are only showing color
+      .text(this.strings.title.C)
       .on("click", function() {
         _this.parent
           .findChildByName("gapminder-treemenu")
@@ -438,7 +439,7 @@ var CartogramComponent = Component.extend({
       });
 
     this.sTitleEl.select("text")
-      .text(this.translator("buttons/size") + ": " + this.strings.title.S)
+      .text(this.strings.title.S)
       .on("click", function() {
         _this.parent
           .findChildByName("gapminder-treemenu")
@@ -706,30 +707,33 @@ var CartogramComponent = Component.extend({
       var formatterC = _this.model.marker.color.getTickFormatter();
 
       var unitC = _this.translator("unit/" + _this.model.marker.color.which);
-
       //suppress unit strings that found no translation (returns same thing as requested)
       if(unitC === "unit/" + _this.model.marker.color.which) unitC = "";
+      
       var valueC = _this.values.color[_this._getKey(hovered)];
       _this.yTitleEl.select("text")
-        .text(_this.translator("buttons/color") + ": " +
+        .text(this.strings.title.C + ": " +
         (valueC || valueC===0 ? formatterC(valueC) + " " + unitC : _this.translator("hints/nodata")));
 
       if (this.model.marker.size.use !== "constant") {
         var formatterS = _this.model.marker.size.getTickFormatter();
-        var unitY = _this.translator("unit/" + _this.model.marker.size.which);
-        if(unitY === "unit/" + _this.model.marker.size.which) unitY = "";
+        
+        var unitS = _this.translator("unit/" + _this.model.marker.size.which);
+        //suppress unit strings that found no translation (returns same thing as requested)
+        if(unitS === "unit/" + _this.model.marker.size.which) unitS = "";
+        
         var valueS = _this.values.size[_this._getKey(hovered)];
         _this.sTitleEl.select("text")
-          .text(_this.translator("buttons/size") + ": " + formatterS(valueS) + " " + unitY);
+          .text(this.strings.title.S + ": " + formatterS(valueS) + " " + unitS);
       }
 
       this.yInfoEl.classed("vzb-hidden", true);
       this.sInfoEl.classed("vzb-hidden", true);
     } else {
       this.yTitleEl.select("text")
-        .text(this.translator("buttons/color") + ": " + this.strings.title.C);
+        .text(this.strings.title.C);
       this.sTitleEl.select("text")
-        .text(this.translator("buttons/size") + ": " + this.strings.title.S);
+        .text(this.strings.title.S);
 
       this.yInfoEl.classed("vzb-hidden", false);
       this.sInfoEl.classed("vzb-hidden", false);

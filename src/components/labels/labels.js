@@ -401,8 +401,10 @@ var Labels = Component.extend({
     this._toolContext = OPTIONS.TOOL_CONTEXT;
     this._cssPrefix = OPTIONS.CSS_PREFIX;
     this.label.setCssPrefix(OPTIONS.CSS_PREFIX);
-    this.labelsContainer = d3.select(this.root.element).select("." + OPTIONS.LABELS_CONTAINER_CLASS);
-    this.linesContainer = d3.select(this.root.element).select("." + OPTIONS.LINES_CONTAINER_CLASS);
+    
+    this.rootEl = this.root.element instanceof Array? this.root.element : d3.select(this.root.element);
+    this.labelsContainer = this.rootEl.select("." + OPTIONS.LABELS_CONTAINER_CLASS);
+    this.linesContainer = this.rootEl.select("." + OPTIONS.LINES_CONTAINER_CLASS);
     this.updateIndicators();
     this.updateSize();
     this.selectDataPoints();
@@ -493,14 +495,14 @@ var Labels = Component.extend({
       .remove();
     this.entityLines
       .enter().append('g')
-      .attr("class", _cssPrefix + "-entity")
+      .attr("class", function(d, index){return _cssPrefix + "-entity line-" + d[KEY]})
       .each(function(d, index) {
         _this.label.line(d3.select(this));
       });
 
     this.entityLabels
       .enter().append("g")
-      .attr("class", _cssPrefix + "-entity")
+      .attr("class", function(d, index){return _cssPrefix + "-entity label-" + d[KEY]})
       .each(function(d, index) {
         _this.cached[d[KEY]] = {};      
         _this.label(d3.select(this));

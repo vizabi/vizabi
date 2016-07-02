@@ -14,6 +14,7 @@ var EntitiesModel = Model.extend({
     show: {},
     select: [],
     highlight: [],
+    opacityHighlightDim: .1,
     opacitySelectDim: .3,
     opacityRegular: 1
   },
@@ -230,7 +231,7 @@ var EntitiesModel = Model.extend({
   },
   
   _createValue: function(d) {
-    var dims = [this.getDimension()].concat(this._getAllDimensions());
+    var dims = this.getDimension() ? [this.getDimension()].concat(this._getAllDimensions()) : this._getAllDimensions(); 
     return dims.reduce(function(value, key) {
       value[key] = d[key];
       return value;

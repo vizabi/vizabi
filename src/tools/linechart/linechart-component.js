@@ -304,6 +304,95 @@ var LCComponent = Component.extend({
 
   },
 
+
+
+  profiles: {
+    "small": {
+      margin: {
+        top: 30,
+        right: 20,
+        left: 55,
+        bottom: 30
+      },
+      infoElHeight: 16,
+      yAxisTitleBottomMargin: 6,
+      tick_spacing: 60,
+      text_padding: 8,
+      lollipopRadius: 6,
+      limitMaxTickNumberX: 5
+    },
+    "medium": {
+      margin: {
+        top: 40,
+        right: 60,
+        left: 65,
+        bottom: 40
+      },
+      infoElHeight: 20,
+      yAxisTitleBottomMargin: 6,
+      tick_spacing: 80,
+      text_padding: 12,
+      lollipopRadius: 7,
+      limitMaxTickNumberX: 10
+    },
+    "large": {
+      margin: {
+        top: 50,
+        right: 60,
+        left: 70,
+        bottom: 50
+      },
+      infoElHeight: 22,
+      yAxisTitleBottomMargin: 6,
+      tick_spacing: 100,
+      text_padding: 20,
+      lollipopRadius: 9,
+      limitMaxTickNumberX: 0 // unlimited
+    }
+  },
+  presentationProfileChanges: {
+    "medium": {
+      margin: { top: 80, bottom: 80, left: 100 },
+      yAxisTitleBottomMargin: 20,
+      xAxisTitleBottomMargin: 20,
+      infoElHeight: 26,
+    },
+    "large": {
+      margin: { top: 80, bottom: 100, left: 100 },
+      yAxisTitleBottomMargin: 20,
+      xAxisTitleBottomMargin: 20,
+      infoElHeight: 32,
+      hideSTitle: true
+    }
+  },
+
+  timeSliderProfiles: {
+    small: {
+      margin: {
+        top: 9,
+        right: 15,
+        bottom: 10,
+        left: 10
+      }
+    },
+    medium: {
+      margin: {
+        top: 9,
+        right: 15,
+        bottom: 10,
+        left: 20
+      }
+    },
+    large: {
+      margin: {
+        top: 9,
+        right: 15,
+        bottom: 10,
+        left: 25
+      }
+    }
+  },
+
   /*
    * RESIZE:
    * Executed whenever the container is resized
@@ -317,93 +406,7 @@ var LCComponent = Component.extend({
 
     var padding = 2;
 
-    var profiles = {
-      "small": {
-        margin: {
-          top: 30,
-          right: 20,
-          left: 55,
-          bottom: 30
-        },
-        infoElHeight: 16,
-        yAxisTitleBottomMargin: 6,
-        tick_spacing: 60,
-        text_padding: 8,
-        lollipopRadius: 6,
-        limitMaxTickNumberX: 5
-      },
-      "medium": {
-        margin: {
-          top: 40,
-          right: 60,
-          left: 65,
-          bottom: 40
-        },
-        infoElHeight: 20,
-        yAxisTitleBottomMargin: 6,
-        tick_spacing: 80,
-        text_padding: 12,
-        lollipopRadius: 7,
-        limitMaxTickNumberX: 10
-      },
-      "large": {
-        margin: {
-          top: 50,
-          right: 60,
-          left: 70,
-          bottom: 50
-        },
-        infoElHeight: 22,
-        yAxisTitleBottomMargin: 6,
-        tick_spacing: 100,
-        text_padding: 20,
-        lollipopRadius: 9,
-        limitMaxTickNumberX: 0 // unlimited
-      }
-    };
-    var presentationProfileChanges = {
-      "medium": {
-        margin: { top: 80, bottom: 80, left: 100 },
-        yAxisTitleBottomMargin: 20,
-        xAxisTitleBottomMargin: 20,
-        infoElHeight: 26,
-      },
-      "large": {
-        margin: { top: 80, bottom: 100, left: 100 },
-        yAxisTitleBottomMargin: 20,
-        xAxisTitleBottomMargin: 20,
-        infoElHeight: 32,
-        hideSTitle: true
-      }
-    };
-
-    var timeSliderProfiles = {
-      small: {
-        margin: {
-          top: 9,
-          right: 15,
-          bottom: 10,
-          left: 10
-        }
-      },
-      medium: {
-        margin: {
-          top: 9,
-          right: 15,
-          bottom: 10,
-          left: 20
-        }
-      },
-      large: {
-        margin: {
-          top: 9,
-          right: 15,
-          bottom: 10,
-          left: 25
-        }
-      }
-    };
-    this.activeProfile = this.getActiveProfile(profiles, presentationProfileChanges);
+    this.activeProfile = this.getActiveProfile(this.profiles, this.presentationProfileChanges);
     this.margin = this.activeProfile.margin;
     this.tick_spacing = this.activeProfile.tick_spacing;
     
@@ -470,8 +473,9 @@ var LCComponent = Component.extend({
       .labelerOptions({
         scaleType: this.model.marker.axis_y.scaleType,
         timeFormat: this.model.time.timeFormat,
-        toolMargin: this.margin,
-        limitMaxTickNumber: 6
+        toolMargin: {top: 5, bottom: 5, left: this.margin.left, right: this.margin.right},
+        limitMaxTickNumber: 6,
+        formatter: this.model.marker.axis_y.getTickFormatter()
           //showOuter: true
       });
 
@@ -479,7 +483,7 @@ var LCComponent = Component.extend({
       .labelerOptions({
         scaleType: this.model.marker.axis_x.scaleType,
         limitMaxTickNumber: this.activeProfile.limitMaxTickNumberX,
-        toolMargin: this.margin,
+        toolMargin: {left: 5, right: 5, top: this.margin.top, bottom: this.margin.bottom},
         formatter: this.model.marker.axis_x.getTickFormatter()
         //showOuter: true
       });
@@ -557,7 +561,7 @@ var LCComponent = Component.extend({
     var opts = {
       rangeMax: this.xScale.range()[1],
       mRight: this.margin.right,
-      profile: timeSliderProfiles[this.getLayoutProfile()]
+      profile: this.timeSliderProfiles[this.getLayoutProfile()]
     };
     this.parent.trigger('myEvent', opts);
 
@@ -765,14 +769,16 @@ var LCComponent = Component.extend({
         .ease("linear")
         .attr("transform", "translate(" + _this.xScale(d3.min([_this.model.marker.axis_x.zoomedMax, _this.time])) + ",0)");
 
-      _this.verticalNow
-        .style("opacity", _this.time - _this.model.time.start === 0 || _this.hoveringNow ? 0 : 1);
 
+        
 
-      if(!_this.hoveringNow) {
-        _this.xAxisEl.call(
-          _this.xAxis.highlightValue(time).highlightTransDuration(_this.duration)
+      if(!_this.hoveringNow && _this.time - _this.model.time.start !== 0) {
+        if (!_this.ui.chart.hideXAxisValue) _this.xAxisEl.call(
+           _this.xAxis.highlightValue(time).highlightTransDuration(_this.duration)
         );
+        _this.verticalNow.style("opacity", 1);
+      }else{
+        _this.verticalNow.style("opacity", 0);
       }
 
       // Call flush() after any zero-duration transitions to synchronously flush the timer queue

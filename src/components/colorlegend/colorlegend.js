@@ -37,7 +37,11 @@ var ColorLegend = Component.extend({
       },
       "change:state.marker.color.which": function(evt, path) {
         if(!_this._readyOnce) return;
-        _this.forwardModelUpdate();
+        if(_this.model.state.entities_minimap) {
+          _this.forwardModelUpdate();
+        }else{
+          _this.updateView();
+        }
       },
       "change:state.marker.color.palette": function(evt, path) {
         if(!_this._readyOnce) return;
@@ -82,7 +86,10 @@ var ColorLegend = Component.extend({
     this.minimapG = this.minimapSVG.append("g");
 
     this.colorPicker = colorPicker();
-    d3.select(this.root.element).call(this.colorPicker);
+    
+    // append color picker to the tool DOM. need to check if element is already a d3 selection to not do it twice
+    this.root.element instanceof Array? this.root.element : d3.select(this.root.element)
+      .call(this.colorPicker);
 
     this.KEY = this.model.state.entities.getDimension();
     this.colorModel = this.model.state.marker.color;
@@ -96,11 +103,13 @@ var ColorLegend = Component.extend({
   
   ready: function(){
     var _this = this;
-    var minimapDim = this.model.state.marker_minimap._getFirstDimension();
-    var timeModel = this.model.state.time;
-    var filter = {};
-    filter[timeModel.getDimension()] = timeModel.value;
-    _this.frame = this.model.state.marker_minimap.getValues(filter,[minimapDim]);
+    if(this.model.state.marker_minimap){
+      var minimapDim = this.model.state.marker_minimap._getFirstDimension();
+      var timeModel = this.model.state.time;
+      var filter = {};
+      filter[timeModel.getDimension()] = timeModel.value;
+      _this.frame = this.model.state.marker_minimap.getValues(filter,[minimapDim]);
+    }
     _this.updateView();
   },
 
@@ -178,14 +187,10 @@ var ColorLegend = Component.extend({
 
         if(paletteLabels) {
 
-          var divider = 1;
-          if(paletteLabels[0].indexOf("%") != -1) {
-            formatter = d3.format("%");
-            fitIntoScale = "optimistic";
-            divider = 100;
-          }
+          fitIntoScale = "optimistic";
+          
           domain = paletteLabels.map(function(val) {
-            return parseFloat(val) / divider;
+            return parseFloat(val);
           });
           var paletteMax = d3.max(domain);
           range = domain.map(function(val) {

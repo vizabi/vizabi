@@ -107,6 +107,8 @@ var Data = Class.extend({
             Array.prototype.push.apply(query.select, queueItem.query.select);
             // merge parsers so the reader can parse the newly added columns
             utils.extend(reader.parsers, queueItem.reader.parsers);
+            
+            reader.parsers[_this.getAvailableDimension(query, "key")] = function(d){return ""+d};
 
             // include query's promise to promises for base query
             mergedQueries.push(queueItem);
@@ -392,6 +394,24 @@ var Data = Class.extend({
       }
     }();
   },
+  
+  
+  // arg = "key" or "time"
+  getAvailableDimension: function(query, arg){
+    
+    // HARD CODED KEY/TIME. Added "flexibility" for StatsSA assignment. 
+    // This should be replaced by getting key/time dimensions from query or model.
+    var possibleDimensions = {
+      key: ["geo","municipality","province","district"],
+      time: ["time","year"]
+    }
+
+    for (var i = 0; i<possibleDimensions[arg].length; i++) {
+      if (query.select.indexOf(possibleDimensions[arg][i]) !== -1)
+        return possibleDimensions[arg][i];
+    }
+    
+  },
 
   /**
    * Get regularised dataset (where gaps are filled)
@@ -420,19 +440,8 @@ var Data = Class.extend({
       if(!indicatorsDB) utils.warn("_getFrames in data.js is missing indicatorsDB, it's needed for gap filling");
       if(!framesArray) utils.warn("_getFrames in data.js is missing framesArray, it's needed so much");
 
-      // HARD CODED KEY/TIME. Added "flexibility" for StatsSA assignment. 
-      // This should be replaced by getting key/time dimensions from query or model.
-      var possibleKeyDimensions = ["geo","municipality","province"];
-      var possibleTimeDimensions = ["time","year"];
-
-      var KEY = getAvailableDimension(possibleKeyDimensions);
-      var TIME = getAvailableDimension(possibleTimeDimensions);
-      function getAvailableDimension(options) {
-        for (var i = 0; i<options.length; i++) {
-          if (_this._collection[queryId].query.select.indexOf(options[i]) !== -1)
-            return options[i];
-        }
-      }
+      var KEY = _this.getAvailableDimension(_this._collection[queryId].query, "key");
+      var TIME = _this.getAvailableDimension(_this._collection[queryId].query, "time");
 
       var filtered = {};
       var items, itemsIndex, oneFrame, method, use, next;

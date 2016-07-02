@@ -45,6 +45,7 @@ var TimeModel = Model.extend({
     delayThresholdX4: 600, //delay X4 boundary: if less -- then 3/4 frame will be dropped and animation dely will be 4x the value
     unit: "year",
     step: 1, //step must be integer, and expressed in units
+    immediatePlay: false,
     record: false
   },
 
@@ -324,17 +325,19 @@ var TimeModel = Model.extend({
       //this.snap();
     }
     this.playing = true;
-    this.playInterval();
+    this.playInterval(this.immediatePlay);
 
     this.trigger("play");
   },
 
-  playInterval: function(){
+  playInterval: function(immediatePlay){
     if(!this.playing) return;
     var _this = this;
     this.delayAnimations = this.delay;
     if(this.delay < this.delayThresholdX2) this.delayAnimations*=2;
     if(this.delay < this.delayThresholdX4) this.delayAnimations*=2;
+
+    var delayAnimations = immediatePlay ? 1 : this.delayAnimations;
 
     this._intervals.setInterval('playInterval_' + this._id, function() {
       // when time is playing and it reached the end
@@ -369,7 +372,7 @@ var TimeModel = Model.extend({
           _this.playInterval();
         }
       }
-    }, this.delayAnimations);
+    }, delayAnimations);
 
   },
   
