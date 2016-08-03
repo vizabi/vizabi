@@ -53,18 +53,22 @@
           }
 
           .vzb-dialog-title {
-            display: inline-block;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
             padding: 0 0 0 20px;
-            vertical-align: top;
-            margin-top: 0;
-            flex: none;
+            > span:first-child {
+              display: block;
+              flex: 0 0 auto;
+            } 
           }
 
           .vzb-find-filter {
-            display: inline-block;
-            position: relative;
-            max-width: 210px;
-            top: 0;
+            display: block;
+            flex: 1 1 auto;
+            min-width: 1px;            
+            max-width: 260px;
+            padding-right: 20px;
           }
 
           .vzb-dialog-content-fixed {

@@ -45,24 +45,29 @@
   }
 
   .vzb-cl-labelscale {
-    position: relative;
     top: 5px;
     padding-top: 20px;
     padding-bottom: 10px;
+    height: 50px;
     svg {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 25px;
       height: 20px;
     }
     .vzb-cl-unit {
-      height: 20px;
-      border-top: 1px solid $vzb-color-grey-dark;
+      top: 30px;
+      position: relative;
+      padding-bottom: 5px;
     }
   }
 
   .vzb-cl-rainbow {
     height: 20px;
     position: absolute;
-    left: 5px;
-    right: 5px;
+    left: 0;
+    right: 0;
     top: 5px;
   }
   .vzb-cl-minimap {

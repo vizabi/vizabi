@@ -22,7 +22,7 @@ $vzb-dialog-content-height: 250px;
       //font-weight: bold;
       padding: 45px 25px 16px;
       display: inline-block;
-      align-self: flex-start;
+      //align-self: flex-start;
 
       span {
         vertical-align: middle;
@@ -335,10 +335,12 @@ $vzb-dialog-content-height: 250px;
         padding: 0;
         .vzb-ip-holder {
           margin-top: 25px;
-          margin-left: 38px;
-          vzb-ip-select {
-            font-weight: normal;
-            line-height: 20px;            
+          margin-left: 15px;
+          margin-right: 10px;
+          .vzb-ip-select {
+            //margin-left: 0;
+            //font-weight: normal;
+            //line-height: 20px;            
           }
         }
       }
@@ -492,7 +494,8 @@ $vzb-dialog-content-height: 250px;
           }
 
           .vzb-dialog-title {
-            padding: 5px 25px;
+            padding: 5px 0 5px 20px;
+            flex: none;
           }
 
           .vzb-dialog-button {
