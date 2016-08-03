@@ -32,8 +32,8 @@ var Find = Dialog.extend({
         if(!_this.model.state.time.playing) {
           _this.time = _this.model.state.time.value;
       
-          _this.model.state.marker.getFrame(_this.time, function(values) {
-            if (!values) return;          
+          _this.model.state.marker.getFrame(_this.time, function(values, time) {
+            if (!values || (_this.time - time)) return;          
             _this.redrawDataPoints(values);
           });
         }
