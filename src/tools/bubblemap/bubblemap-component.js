@@ -502,7 +502,9 @@ var BubbleMapComponent = Component.extend({
     //unselecting bubbles with no data is used for the scenario when
     //some bubbles are selected and user would switch indicator.
     //bubbles would disappear but selection would stay
-    this.unselectBubblesWithNoData();
+    if (!this.model.time.splash) {
+      this.unselectBubblesWithNoData();
+    }
 
     // TODO: add to csv
     //Africa 9.1021° N, 18.2812°E

@@ -518,6 +518,7 @@ var ButtonList = Component.extend({
     this.setInpercent();
   },
   setInpercent: function() {
+    if (typeof((this.model.ui.chart||{}).inpercent) == "undefined") return;
     var id = 'inpercent';
     var translator = this.model.language.getTFunction();
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
