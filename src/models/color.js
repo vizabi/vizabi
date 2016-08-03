@@ -172,7 +172,7 @@ var ColorModel = Hook.extend({
 
   _getPaletteLabels: function() {
       var conceptpropsColor = this.getConceptprops().color;
-      var paletteLabels;
+      var paletteLabels = null;
       
       if(conceptpropsColor && conceptpropsColor.paletteLabels) {
         //specific color palette from hook concept properties

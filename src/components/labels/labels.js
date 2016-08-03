@@ -362,6 +362,7 @@ var Labels = Component.extend({
         //console.log("EVENT change:marker:size:max");
         if(!_this._readyOnce) return;
         _this.updateLabelSizeLimits();
+        if(_this._toolContext.model.time.splash) return;
         _this.updateLabelsOnlyTextSize();
       }
     if(context.model.ui.chart.labels.hasOwnProperty('removeLabelBox'))
@@ -453,7 +454,6 @@ var Labels = Component.extend({
   },
   
   setScales: function(xScale, yScale) {
-    if(!this._readyOnce) return;
     this._xScale = xScale;
     this._yScale = yScale;
   },
