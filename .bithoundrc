@@ -18,8 +18,5 @@
     "karma.conf.js"
   ],
   "dependencies": {
-    "mute": [
-      "rollup"
-    ]
   }
 }
