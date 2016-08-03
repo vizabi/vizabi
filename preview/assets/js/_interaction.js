@@ -54,7 +54,7 @@ function recstop() {
 function download(){
   window.URL = null;
   var e = document.createElement('script');
-  e.setAttribute('src', '/preview/assets/js/svg-crowbar-2.js');
+  e.setAttribute('src', 'assets/js/svg-crowbar-2.js');
   e.setAttribute('class', 'svg-crowbar');
   e.setAttribute('data-svg-select', 'div>svg.vzb-export');
   e.setAttribute('data-exclude-element-select', '.vzb-noexport');
