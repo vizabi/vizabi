@@ -100,39 +100,40 @@ var TimeSlider = Component.extend({
           _this.ready();
         }
 
-        if(!_this._splash) {
+        if(!_this._splash && _this.slide) {
 
           if((['time.start', 'time.end']).indexOf(path) !== -1) {
+            if (!_this.xScale) return;  
             _this.changeLimits();
           }
           _this._optionClasses();
         }
       },
       'change:time.value': function(evt, path) {
-        if(!_this._splash) {
+        if(!_this._splash && _this.slide) {
           //only set handle position if change is external
           if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
       'change:time.start': function(evt, path) {
-        if(!_this._splash) {
+        if(!_this._splash && _this.slide) {
           //only set handle position if change is external
           if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
       'change:time.end': function(evt, path) {
-        if(!_this._splash) {
+        if(!_this._splash && _this.slide) {
           //only set handle position if change is external
           if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
       'change:time.startSelected': function(evt, path) {
-        if(!_this._splash) {
+        if(!_this._splash && _this.slide) {
           _this.updateSelectedStartLimiter();
         }
       },
       'change:time.endSelected': function(evt, path) {
-        if(!_this._splash) {
+        if(!_this._splash && _this.slide) {
           _this.updateSelectedEndLimiter();
         }
       },
@@ -369,7 +370,7 @@ var TimeSlider = Component.extend({
     var selectedEdgeTimes = [];
     var hooks = [];
     utils.forEach(_this.model.marker.getSubhooks(), function(hook) {
-      if(hook.use !== "indicator") return;
+      if(hook.use == "constant") return;
       if(hook._important) hooks.push(hook._name);
     });
     
@@ -377,7 +378,7 @@ var TimeSlider = Component.extend({
       for(var k = 0, l = select.length; k < l; k++) {
         var complete = 0;
         for(var i = 0, j = hooks.length; i < j; i++) {
-          if(values[hooks[i]][select[k][KEY]]) complete++;        
+          if(values[hooks[i]][select[k][KEY]] || values[hooks[i]][select[k][KEY]]===0) complete++;        
         }
         if(complete == hooks.length) return true;
       }
@@ -444,7 +445,7 @@ var TimeSlider = Component.extend({
         .attr("id", "clip-start")
         .append('rect')
       this.select.append('path')
-        .attr("clip-path", "url(#clip-start)")
+        .attr("clip-path", "url(" + location.pathname + "#clip-start)")
         .classed('selected-start', true);
       this.resizeSelectedLimiters();
     }    
@@ -458,7 +459,7 @@ var TimeSlider = Component.extend({
         .attr("id", "clip-end")
         .append('rect')
       this.select.append('path')
-        .attr("clip-path", "url(#clip-end)")
+        .attr("clip-path", "url(" + location.pathname + "#clip-end)")
         .classed('selected-end', true);
       this.resizeSelectedLimiters();
     }              

@@ -331,7 +331,14 @@ var BubbleChartComp = Component.extend({
     
     this.entityBubbles = null;
     this.bubbleCrown = this.element.select('.vzb-bc-bubble-crown');
+    //set filter
+    this.bubbleCrown.selectAll(".vzb-crown-glow")
+      .attr("filter","url(" + location.pathname + "#vzb-glow-filter)");
     this.tooltip = this.element.select('.vzb-bc-tooltip');
+    //set filter 
+    this.tooltip.select(".vzb-tooltip-glow")
+      .attr("filter","url(" + location.pathname + "#vzb-glow-filter)");
+
     this.tooltipMobile = this.element.select('.vzb-tooltip-mobile');
     //component events
     this.on("resize", function() {
@@ -1383,7 +1390,7 @@ var BubbleChartComp = Component.extend({
         var valueS = values.size[d[KEY]];
         var radius = utils.areaToRadius(_this.sScale(valueS));
 
-        if(!valueY || !valueX || !valueS) return;
+        if(!valueY && valueY!==0 || !valueX && valueX!==0 || !valueS && valueS!==0) return;
 
         if(_this.ui.chart.whenHovering.showProjectionLineX
           && _this.xScale(valueX) > 0 && _this.xScale(valueX) < _this.width

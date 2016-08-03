@@ -1,7 +1,7 @@
 describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
 
   jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000000;
-  browser.manage().window().setSize(1100, 750);
+  browser.manage().window().setSize(1100, 600);
 
   var baseUrl = 'http://localhost:9000/preview/';
   var baseChartUrl = baseUrl + "bubblemap.html#_width:750&height:650&fullscreen:true&resp-sect:true&info-sect:true&butt-sect:true";
@@ -64,7 +64,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
   it('Findmap',function(){
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking find
     var find =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));
@@ -78,7 +78,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
     });
 
     // Check China Text Box
-    var chinaBubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(44) > label"));
+    var chinaBubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(2) > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(42) > label"));
     browser.wait(EC.visibilityOf(chinaBubble), 5000).then(function(){
       chinaBubble.click();
     });
@@ -92,7 +92,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
     });
 
     // Check United States Text Box
-    var USABubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(240) > label"));
+    var USABubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(2) > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(226) > label"));
     browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
       USABubble.click();
     });
@@ -132,7 +132,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
 
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Hovering the China Bubble
     var china = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(1)"));
@@ -159,7 +159,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
   it('OpacityMap',function(){
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Clicking the bubble of USA
     var USABubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(3)"));
@@ -190,7 +190,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
   it('DragLabelMap', function(){
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking USA bubble
     var USABubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(3)"));
@@ -198,7 +198,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
       USABubble.click();
     });
     //Getting tooltip text before drag
-    var USALabel =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-labels > g > rect"));
+    var USALabel =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-labels > g > rect.vzb-label-fill.vzb-tooltip-border"));
     browser.wait(EC.visibilityOf(USALabel), 5000);
     USALabel.getLocation().then(function(initiallocation){
       var initialLocationText = initiallocation.x;
@@ -225,7 +225,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
   it('CrossLabelMap',function(){
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Clicking the US bubble
     var USABubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(3)"));
@@ -244,7 +244,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
     });
 
     //Hovering the label to get cross
-    var tooltip= element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-labels > g > rect"));
+    var tooltip= element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-labels > g > rect.vzb-label-fill.vzb-tooltip-border"));
     browser.wait(EC.visibilityOf(tooltip), 5000);
     browser.actions().mouseMove(tooltip).perform();
 
@@ -261,7 +261,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
   it('BubbleMapHover', function() {
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Hovering the China Bubble
     var china = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(1)"));
@@ -285,7 +285,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
   it('BubbleMapdrag', function() {
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //USA bubble element
     var USA = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(3)"));
@@ -347,7 +347,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
   it('Scale', function() {
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //USA bubble element
     var USA = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(3)"));
@@ -388,7 +388,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
   it('HoverValueMap', function() {
     browser.get(baseChartUrl);
     browser.refresh();
-    browser.wait(EC.visibilityOf(play), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Hovering USA bubble element
     var USA = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(3)"));

@@ -105,8 +105,7 @@
           &.vzb-label-boxremoved {
             &:not(.vzb-highlighted) {
               .vzb-label-fill {
-                stroke: none;
-                fill: none;
+                opacity: 0;
               }
               .vzb-label-glow {
                 stroke: none;

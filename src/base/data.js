@@ -456,7 +456,14 @@ var Data = Class.extend({
 
             for (var i = 0; i < dataset.length; i++) {
               var d = dataset[i];
-              for (c = 0; c < cLength; c++) frame[columns[c]][d[KEY]] = d[columns[c]];
+              for (c = 0; c < cLength; c++) {
+                frame[columns[c]][d[KEY]] = d[columns[c]];
+                //check data for properties with missed data. If founded then write key to haveNoDataPointsPerKey with 
+                //count of broken datapoints  
+                if(d[columns[c]] == null) {
+                  _this._collection[queryId].haveNoDataPointsPerKey[columns[c]][d[KEY]] = dataset.length;
+                }
+              }
             }
 
           } else {

@@ -254,8 +254,8 @@ var EventSource = Class.extend({
       //only execute if not frozen and exception doesnt exist
       if(_this._freeze || _freezeAllEvents) {
         //if exception exists for freezing, execute
-        if(_freezeAllEvents && _freezeAllExceptions.hasOwnProperty(name) || !_freezeAllEvents && _this._freeze &&
-          _this._freezeExceptions.hasOwnProperty(name)) {
+        if(_freezeAllEvents && _freezeAllExceptions.hasOwnProperty(evt.type) || !_freezeAllEvents && _this._freeze &&
+          _this._freezeExceptions.hasOwnProperty(evt.type)) {
           execute();
         } //otherwise, freeze it
         else {

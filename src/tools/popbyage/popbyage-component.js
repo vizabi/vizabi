@@ -156,7 +156,7 @@ var PopByAge = Component.extend({
 
     var filter = {};
     filter[timeDim] = time.value;
-    var markers = this.model.marker.getKeys(filter);
+    var markers = this.model.marker.getKeys(ageDim);
     var values = this.model.marker.getValues(filter, [ageDim]);
     var domain = this.yScale.domain();
 

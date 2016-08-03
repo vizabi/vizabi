@@ -346,7 +346,7 @@ var Model = EventSource.extend({
 
   /**
    * specifies that the model is loading data
-   * @param {String} id of the loading process
+   * @param {String} p_id of the loading process
    */
   setLoading: function(p_id) {
     //if this is the first time we're loading anything
@@ -359,7 +359,7 @@ var Model = EventSource.extend({
 
   /**
    * specifies that the model is done with loading data
-   * @param {String} id of the loading process
+   * @param {String} p_id of the loading process
    */
   setLoadingDone: function(p_id) {
     this._loading = utils.without(this._loading, p_id);
@@ -533,7 +533,7 @@ var Model = EventSource.extend({
       return true;
     }
 
-    var prop = (this.use === "property");
+    var prop = (this.use === "property") || (this.use === "constant");
     var exceptions = (prop) ? { exceptType: 'time' } : {};
 
     // select

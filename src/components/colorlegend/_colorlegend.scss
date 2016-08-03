@@ -20,7 +20,6 @@
     padding-left: 15px;
       
     .vzb-cl-color-sample {
-      @include transition(border-width 200ms ease-in-out);
       display: inline-block;
       width: 20px;
       height: 20px;
@@ -51,7 +50,7 @@
     position: absolute;
     left: 15px;
   }
-  .vzb-cl-worldmap {
+  .vzb-cl-minimap {
     height: 145px;
     width: 100%;
     svg {height: 100%;}

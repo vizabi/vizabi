@@ -24,7 +24,7 @@ var Marker = Model.extend({
       utils.forEach(this.getSubhooks(), function(hook) {
         if(hook.use !== "indicator" || !hook._important) return;
         var hookConceptprops = hook.getConceptprops();
-        if(!hookConceptprops) return utils.warn(hook._name + ": " + hook.which + " is not found in conceptprops.json. \
+        if(!hookConceptprops) return utils.warn(hook._name + ": " + hook.which + " is not found in metadata.json. \
             Check that you read the correct file or server instance... \
             Check that the pointer 'which' of the hook is correct too");
                                         
@@ -38,7 +38,8 @@ var Marker = Model.extend({
         }else if (availability){
             //if date limits are supplied by the concept properties then use them
             min = time.timeFormat.parse(availability[0]+"");
-            max = time.timeFormat.parse(availability[1]+"");
+            var timeEnd = time._defaults.end || availability[1];
+            max = time.timeFormat.parse(Math.min(timeEnd, availability[1])+"");
         }else{ 
             //otherwise calculate own date limits (a costly operation)
             items = hook.getValidItems().map(function(m){return m[time.getDimension()];});
@@ -65,17 +66,18 @@ var Marker = Model.extend({
    * Computes the intersection of keys in all hooks: a set of keys that have data in each hook
    * @returns array of keys that have data in all hooks of this._datacube
    */
-    getKeys: function() {
+    getKeys: function(byDimension) {
         var _this = this;
         var resultKeys = [];
-        utils.forEach(this._dataCube, function(hook, name) {
+        byDimension = byDimension || "geo";
+        utils.forEach(this._dataCube||this.getSubhooks(true), function(hook, name) {
 
             // If hook use is constant, then we can provide no additional info about keys
             // We can just hope that we have something else than constants =)
             if(hook.use === "constant") return;
 
             // Get keys in data of this hook
-            var nested = _this.getDataManager().get(hook._dataId, 'nested', ["geo", "time"]);
+            var nested = _this.getDataManager().get(hook._dataId, 'nested', [byDimension, "time"]);
             var noDataPoints = _this.getDataManager().get(hook._dataId, 'haveNoDataPointsPerKey', hook.which);
             
             var keys = Object.keys(nested);
@@ -89,7 +91,7 @@ var Marker = Model.extend({
               return keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1;
             })
         });
-        return resultKeys.map(function(d){return {geo: d}});
+        return resultKeys.map(function(d){var r = {}; r[byDimension] = d; return r; });
     },
     
   /**
@@ -181,8 +183,9 @@ var Marker = Model.extend({
               //loop across the entities
               utils.forEach(values, function(val1, key) {
                 var val2 = nValues[hook][key];
-                  
-                if(!utils.isNumber(val1)){
+                if(utils.isDate(val1)){
+                  dataBetweenFrames[hook][key] = time;
+                } else if(!utils.isNumber(val1)){
                     //we can be interpolating string values
                     dataBetweenFrames[hook][key] = val1;
                 }else{

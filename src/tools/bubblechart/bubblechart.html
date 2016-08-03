@@ -1,6 +1,6 @@
 <!-- Bubble Chart Component -->
 <div class="vzb-bubblechart">
-  <svg class="vzb-bubblechart-svg">
+  <svg class="vzb-bubblechart-svg vzb-export">
     <g class="vzb-bc-graph">
       <g class="vzb-bc-year"></g>
 
@@ -15,7 +15,7 @@
         <g class="vzb-bc-bubbles"></g>
         <g class="vzb-bc-lines"></g>
         <g class="vzb-bc-bubble-crown vzb-hidden">
-          <circle class="vzb-crown-glow" filter="url(#vzb-glow-filter)"></circle>
+          <circle class="vzb-crown-glow"></circle>
           <circle class="vzb-crown"></circle>
         </g>        
       </svg>        
@@ -25,26 +25,28 @@
       <g class="vzb-bc-axis-s-title"></g>
       <g class="vzb-bc-axis-c-title"></g>
 
-      <g class="vzb-bc-axis-y-info"></g>
-      <g class="vzb-bc-axis-x-info"></g>
+      <g class="vzb-bc-axis-y-info vzb-noexport"></g>
+      <g class="vzb-bc-axis-x-info vzb-noexport"></g>
       
       <svg class="vzb-bc-labels-crop">
         <g class="vzb-bc-labels"></g>        
       </svg>       
 
-      <g class="vzb-data-warning">
+      <g class="vzb-data-warning vzb-noexport">
         <svg></svg>
         <text></text>
       </g>
 
       <rect class="vzb-bc-zoom-rect"></rect>
       <g class="vzb-bc-tooltip vzb-hidden">
-        <rect class="vzb-tooltip-glow" filter="url(#vzb-glow-filter)"></rect>
+        <rect class="vzb-tooltip-glow"></rect>
         <rect class="vzb-tooltip-border"></rect>
         <text class="vzb-tooltip-text"></text>
       </g>
     </g>
-    <defs>
+  </svg>
+  <svg>
+      <defs>
       <filter id="vzb-glow-filter" x="-50%" y="-50%" width="200%" height="200%">
         <feGaussianBlur in="SourceGraphic" stdDeviation="2"></feGaussianBlur>
       </filter>

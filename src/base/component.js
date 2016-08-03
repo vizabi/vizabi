@@ -105,11 +105,13 @@ var Component = Events.extend({
       });
     });
 
+    // if a componente's model is ready, the component is ready
+    this.model.on('ready', function() {
+      done();
+    });
+
     //if it's a root component with model
     if(this.isRoot() && this.model) {
-      this.model.on('ready', function() {
-        done();
-      });
       this.model.setHooks();
 
       var splashScreen = this.model && this.model.data && this.model.data.splash;
@@ -161,9 +163,7 @@ var Component = Events.extend({
       });
 
     } else if(this.model && this.model.isLoading()) {
-      this.model.on('ready', function() {
-        done();
-      });
+      // nothing
     } else {
       done();
     }
