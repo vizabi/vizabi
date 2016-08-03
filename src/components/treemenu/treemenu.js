@@ -1109,6 +1109,8 @@ var TreeMenu = Component.extend({
     if(!useDataFiltered) {
       var pointer = "_default";
       if(allowedIDs.indexOf(this.model.marker[markerID].which) > -1) pointer = this.model.marker[markerID].which;
+      if(!indicatorsDB[pointer]) utils.error("Concept properties of " + pointer + " are missing from the set, or the set is empty. Put a breakpoint here and check what you have in indicatorsDB");
+      
       if(!indicatorsDB[pointer].scales) {
         this.element.select('.' + css.scaletypes).classed(css.hidden, true);
         return true;
