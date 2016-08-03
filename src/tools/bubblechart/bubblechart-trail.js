@@ -287,7 +287,7 @@ export default Class.extend({
       cache.labelX0 = _context.frame.axis_x[d[KEY]];
       cache.labelY0 = _context.frame.axis_y[d[KEY]];
       var valueS = _context.frame.size[d[KEY]];
-      cache.scaledS0 = valueS ? utils.areaToRadius(_context.sScale(valueS)) : null;
+      cache.scaledS0 = (valueS || valueS===0) ? utils.areaToRadius(_context.sScale(valueS)) : null;
       var valueC = _context.frame.color[d[KEY]];
       cache.scaledC0 = valueC != null ? _context.cScale(valueC) : _context.COLOR_WHITEISH;
       _context._updateLabel(d, 0, _context.frame.axis_x[d[KEY]], _context.frame.axis_y[d[KEY]], _context.frame.size[d[KEY]], _context.frame.color[d[KEY]], _context.frame.label[d[KEY]], _context.frame.size_label[d[KEY]], 0, true);
@@ -342,7 +342,7 @@ export default Class.extend({
                   cache.labelX0 = segment.valueX;
                   cache.labelY0 = segment.valueY;
                   var valueS = segment.valueS;
-                  cache.scaledS0 = valueS ? utils.areaToRadius(_context.sScale(valueS)) : null;
+                  cache.scaledS0 = (valueS || valueS===0) ? utils.areaToRadius(_context.sScale(valueS)) : null;
                   cache.scaledC0 = segment.valueC!=null?_context.cScale(segment.valueC):_context.COLOR_WHITEISH;
                   _context._updateLabel(d, index, segment.valueX, segment.valueY, segment.valueS, segment.valueC, frame.label[d[KEY]], frame.size_label[d[KEY]], 0, true);
               }

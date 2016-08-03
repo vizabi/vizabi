@@ -1246,7 +1246,7 @@ var BubbleChartComp = Component.extend({
         cache.labelX0 = valueX;
         cache.labelY0 = valueY;
         cache.scaledC0 = valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH,
-        cache.scaledS0 = valueS ? utils.areaToRadius(_this.sScale(valueS)) : null;
+        cache.scaledS0 = (valueS || valueS===0) ? utils.areaToRadius(_this.sScale(valueS)) : null;
       }
 
       var trailStartTime = _this.model.time.timeFormat.parse("" + select.trailStartTime);
