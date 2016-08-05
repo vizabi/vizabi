@@ -74,6 +74,10 @@ script.
       langButton.setAttribute("data-next_lang", 'en');
     }
   };
+  
+  //WS reader integration
+  var wsReader = new WSReader.WSReader().getReader();
+  Vizabi.Reader.extend("waffle", wsReader);
 
   parseURL();
   
