@@ -522,8 +522,9 @@ var Model = EventSource.extend({
    * @returns {Array} query
    */
   getQuery: function(splashScreen) {
+    var _this = this;
 
-    var dimensions, filters, select, grouping, orderBy, q;
+    var dimensions, filters, select, from, grouping, orderBy, q, key, animatable;
 
     //if it's not a hook, no query is necessary
     if(!this.isHook()) return true;
@@ -540,6 +541,15 @@ var Model = EventSource.extend({
     dimensions = this._getAllDimensions(exceptions);
     if(this.use !== 'constant') dimensions = dimensions.concat([this.which]);
     select = utils.unique(dimensions);
+    
+    // key
+    key = Object.keys(this._space).map(function(m){return _this._space[m].dim});
+    
+    // animatable
+    animatable = this._getFirstDimension({type: "time"});
+    
+    // from
+    from = prop? "entities" : "datapoints";
 
     // where 
     filters = this._getAllFilters(exceptions, splashScreen);
@@ -552,6 +562,9 @@ var Model = EventSource.extend({
 
     //return query
     return {
+      'from': from,
+      'key': key,
+      'animatable': animatable,
       'select': select,
       'where': filters,
       'grouping': grouping,
