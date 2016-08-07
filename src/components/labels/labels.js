@@ -393,6 +393,8 @@ var Labels = Component.extend({
   },
 
   readyOnce: function() {
+    if(this._readyRace) return;
+
     var _this = this;
     
     this.KEY = this.model.entities.getDimension();
@@ -530,6 +532,11 @@ var Labels = Component.extend({
   },
   
   updateLabel: function(d, index, cache, valueX, valueY, valueS, valueC, valueL, valueLST, duration, showhide) {
+    if(!this._readyOnce) {
+      this.readyOnce(); //run readyOnce if tool component is ready but labels component is not ready
+      this._readyRace = true;
+    }
+  
     var _this = this;
     var KEY = this.KEY;
     if(d[KEY] == _this.druging)
