@@ -170,6 +170,17 @@ var Tool = Component.extend({
     
 
   getMinModel: function() {
+    //try to find functions in properties of model. 
+    var findFunc = function(parent, key) {
+      var child = parent[key];
+      for(var childKey in child) {        
+        if(typeof child[childKey] === 'function') {
+          delete parent[key];
+          utils.warn('minModel validation. Function found in enumerable properties of ' + key + ". This key is deleted from minModel");
+        } else if(typeof child[childKey] === 'object') findFunc(child, childKey);
+      }
+    }
+   
     var currentToolModel = this.model.getPlainObject(true); // true = get only persistent model values
     var defaultToolModel = this.default_model;
     var defaultsFromModels = this.model.getDefaults();
@@ -180,7 +191,10 @@ var Tool = Component.extend({
     // change date object to string according to current format
     modelChanges = utils.flattenDates(modelChanges, this.model.state.time.timeFormat);
     //compares with model's defaults
-    return utils.diffObject(modelChanges, defaultsFromModels);
+
+    var result = utils.diffObject(modelChanges, defaultsFromModels);
+    for (var key in result) findFunc(result, key);
+    return result;
   },
 
   /**
