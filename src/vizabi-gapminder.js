@@ -593,10 +593,7 @@ BubbleChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "$or": [ 
-            {"geo.is--unstate": true},
-            {"geo.is--country": true}
-          ]
+            "geo.is--country": true
         }
       }
     },
