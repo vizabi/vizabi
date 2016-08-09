@@ -74,8 +74,14 @@ var ColorLegend = Component.extend({
     this.listColorsEl = this.element
       .append("div").attr("class", "vzb-cl-holder")
       .append("div").attr("class","vzb-cl-colorlist");
+
     this.rainbowEl = this.listColorsEl.append("div").attr("class", "vzb-cl-rainbow");
     this.minimapEl = this.listColorsEl.append("div").attr("class", "vzb-cl-minimap");
+    this.rainbowLegendEl = this.listColorsEl.append("div").attr("class", "vzb-cl-rainbow-legend");
+    this.rainbowLegendSVG = this.rainbowLegendEl.append("svg");
+    this.rainbowLegendG = this.rainbowLegendSVG.append("g");
+    this.rainbowLegend = null;
+
     this.labelScaleEl = this.listColorsEl.append("div").attr("class", "vzb-cl-labelscale");
     this.labelScaleSVG = this.labelScaleEl.append("svg");
     this.labelScaleG = this.labelScaleSVG.append("g");
@@ -218,7 +224,8 @@ var ColorLegend = Component.extend({
 
         this.labelScaleSVG.style("width", marginLeft + gradientWidth + marginRight + "px");
         this.labelScaleG.attr("transform","translate(" + marginLeft + ",0)");
-
+        this.rainbowLegendSVG.style("width", marginLeft + gradientWidth + marginRight + "px");
+        this.rainbowLegendG.attr("transform","translate(" + marginLeft + ", " + 7 + ")");
         var labelsAxis = axisSmart();
         labelsAxis.scale(labelScale)
           .orient("bottom")
@@ -243,10 +250,26 @@ var ColorLegend = Component.extend({
         this.labelScaleG.call(labelsAxis);
 
         var colorRange = _this.colorModel.getScale().range();
+
+        var gIndicators = range.map(function(val, i) {
+          return {val: val, color: colorRange[i], paletteKey: paletteKeys[i]}
+        });
+        this.rainbowLegend = this.rainbowLegendG.selectAll('circle')
+          .data(gIndicators);
+        this.rainbowLegend.exit().remove();
+        this.rainbowLegend.enter().append("circle")
+          .attr('r', "6px")
+          .attr('stroke', '#000')
+          .on("click", _this._interact().click);
+
+        this.rainbowLegend.each(function(d, i) {
+          d3.select(this).attr('fill', d.color);
+          d3.select(this).attr('cx', d.val);
+        });
+
         var gColors = paletteKeys.map(function(val, i) {
           return colorRange[i] + " " + d3.format("%")(val * .01);
         }).join(", ");
-
         //Calculate the hight for the rainbow gradient
         // var gradientHeight;
         // if(colorOptions && colorOptions[0]) {
@@ -367,7 +390,7 @@ var ColorLegend = Component.extend({
         //disable interaction if so stated in concept properties
         if(!_this.colorModel.isUserSelectable()) return;
         var view = d3.select(this);
-        var target = _this.colorModel.use === "indicator"? d : (d[KEY]||d);
+        var target = _this.colorModel.use === "indicator"? d.paletteKey : (d[KEY]||d);
 
         _this.colorPicker
           .colorOld(palette[target])
@@ -381,7 +404,6 @@ var ColorLegend = Component.extend({
     }
   },
   
-
   resize: function() {
     if(this.colorModel.use == "indicator") {
       this.updateView();
