@@ -605,6 +605,9 @@ BubbleChart.define('default_model', {
         }
       }
     },
+    entities_tags: {
+      dim: "tag"
+    },
     marker: {
       space: ["entities", "time"],
       type: "geometry",
@@ -671,6 +674,17 @@ BubbleChart.define('default_model', {
           use: "property",
           which: "shape_lores_svg"
         }
+    },
+    marker_tags: {
+      space: ["entities_tags"],
+      label: {
+        use: "property",
+        which: "name"
+      },
+      parent: {
+        use: "property",
+        which: "parent"
+      }
     }
   },
   data: {
@@ -1375,9 +1389,6 @@ Tool.define("preload", function(promise) {
       if(!globals.conceptprops.indicatorsDB["_default"]) globals.conceptprops.indicatorsDB["_default"] = {
           "use": "constant",
           "scales": ["ordinal"]
-      }
-      if(globals.conceptprops.indicatorsTree.children.map(function(m){return m.id}).indexOf("_default")===-1) {
-          globals.conceptprops.indicatorsTree.children.push({"id": "_default"});
       }
 
       // TODO: REMOVE THIS HACK

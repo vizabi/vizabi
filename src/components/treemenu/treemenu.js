@@ -519,6 +519,8 @@ var alignY = "center";
 var top;
 var left;
 var selectedNode;
+var tags;
+var indicatorsTree;
 
 var TreeMenu = Component.extend({
 
@@ -577,6 +579,12 @@ var TreeMenu = Component.extend({
     this.model_expects = [{
       name: "marker",
       type: "model"
+    }, {      
+      name: "marker_tags",
+      type: "model"
+    }, {      
+      name: "time",
+      type: "time"
     }, {
         name: "language",
         type: "language"
@@ -675,9 +683,61 @@ var TreeMenu = Component.extend({
       //if(_this.menuEntity.direction != MENU_VERTICAL) _this.menuEntity.closeAllChildren();
     });
 
+    
+    this.model.marker_tags.getFrame(this.model.time.value, function(tagProps) { 
+      var tagKeys = _this.model.marker_tags.getKeys();
+      _this._buildIndicatorsTree(tagKeys, tagProps);
+    })
+    
     _this._enableSearch();
 
     _this.resize();
+  },
+  
+  
+  _buildIndicatorsTree: function(tagKeys, tagProps){
+      
+      var ROOT = "_root";
+      var DEFAULT = "_default";
+      var UNCLASSIFIED = "_unclassified";
+      
+      //init the dictionary of tags
+      var tags = {};
+      tags[ROOT] = {id: ROOT, children: []};
+      tags[UNCLASSIFIED] = {id: UNCLASSIFIED, children:[]};
+      
+      //populate the dictionary of tags
+      tagKeys.forEach(function(tag){tags[tag] = {id: tag, children: []};})
+      
+      //init the tag tree
+      indicatorsTree = tags[ROOT];
+      indicatorsTree.children.push({"id": DEFAULT});
+      indicatorsTree.children.push(tags[UNCLASSIFIED]);
+      
+      //populate the tag tree
+      tagKeys.forEach(function(tag){
+        if(!tagProps.parent[tag]) {
+          // add tag to a root
+          indicatorsTree.children.push(tags[tag]);
+        } else {
+          //add tag to a branch
+          tags[tagProps.parent[tag]].children.push(tags[tag])
+        }
+      })
+      
+      //add entries to different branches in the tree according to their tags
+      utils.forEach(this.model.marker.getConceptprops(), function(entry, id){
+        if(!entry.tags) entry.tags = ROOT;
+        entry.tags.split(",").forEach(function(tag){
+          if(tags[tag.trim()]) {
+            tags[tag.trim()].children.push({id: id});
+          } else {
+            //if entry's tag is not found in the tag dictionary
+            tags[UNCLASSIFIED].children.push({id: id});
+          }
+        });  
+      })
+  
   },
 
   //happens on resizing of the container
@@ -1178,7 +1238,7 @@ var TreeMenu = Component.extend({
     this.langStrings(strings)
       .lang(languageID)
       .callback(setModel)
-      .tree(this.model.marker.getIndicatorsTree())
+      .tree(indicatorsTree)
       .redraw();
 
     this.wrapper.select('.' + css.search).node().value = "";
