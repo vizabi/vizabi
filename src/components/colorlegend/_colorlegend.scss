@@ -1,9 +1,13 @@
 //general styles
 
-.vzb-sidebar {
-  .vzb-cl-rainbow-legend {
-    display: none;
-  }
+.vzb-cl-rainbow-legend {
+ display: none;
+}
+
+[data-dlg="moreoptions"] {
+ .vzb-cl-rainbow-legend {
+   display: block;
+ }
 }
 
 .vzb-cl-outer {
