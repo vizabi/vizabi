@@ -147,6 +147,7 @@ var ColorLegend = Component.extend({
     //Hide rainbow element if showing minimap or if color is discrete
     //TODO: indocators-properties are incorrectly used here.
     this.rainbowEl.classed("vzb-hidden", canShowMap || this.colorModel.use !== "indicator");
+    this.rainbowLegendEl.classed("vzb-hidden", canShowMap || this.colorModel.use !== "indicator");
     //Hide minimap if no data to draw it
     this.minimapEl.classed("vzb-hidden", !canShowMap);
     
