@@ -111,7 +111,7 @@ var Data = Class.extend({
             
             // the first entry in the "key" array of the query is the key of 1-dimensional set
             //TODO: what if the set is multidimenstional?
-            reader.parsers[query.key[0]] = function(d){return ""+d};
+            reader.parsers[query.select.key[0]] = function(d){return ""+d};
 
             // include query's promise to promises for base query
             mergedQueries.push(queueItem);
