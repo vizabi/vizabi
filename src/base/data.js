@@ -268,21 +268,40 @@ var Data = Class.extend({
       from: "concepts",
       select: {
         key: ["concept"],
-        value: ["conceptType"]
+        value: ["concept","name","concept_type","domain","indicator_url","color","scales","drill_up","unit","interpolation","description","tags"]
       }
     };
     
     this.load(query, "en", reader).then(function(dataId) {
       _this.conceptPropsDataID = dataId;
+      _this.conceptDictionary = {_default: {concept_type: "string", scales: ["ordinal"]} };
+      _this.get(dataId).forEach(function(d){
+        var concept = {};
+        concept["use"] = d.concept_type=="measure"?"indicator":"property";
+        concept["interpolation"] = d.interpolation;
+        concept["scales"] = JSON.parse(d.scales);
+        concept["sourceLink"] = d.indicator_url;
+        concept["color"] = JSON.parse(d.color);
+        concept["tags"] = d.tags;
+        _this.conceptDictionary[d.concept] = concept;
+      });
       
-      callback( _this.get(this.conceptPropsDataID) );
+      callback(_this.conceptDictionary);
     }, function(err) {
       utils.warn('Problem with query: ', JSON.stringify(query));
     });
   },
   
   getConceptprops: function(which){
-     this.get(this.conceptPropsDataID)
+     if(which) {
+       if(this.conceptDictionary[which]) {
+         return this.conceptDictionary[which];
+       }else{
+         return utils.warn("The concept " + which + " is not found in the dictionary");
+       }
+     }else{
+       return this.conceptDictionary;
+     }
   },
     
 
