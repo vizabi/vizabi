@@ -614,7 +614,7 @@ BubbleChart.define('default_model', {
       shape: "circle",
       label: {
         use: "property",
-        which: "geo.name"
+        which: "name"
       },
       size_label: {
         use: "constant",
@@ -645,10 +645,10 @@ BubbleChart.define('default_model', {
       },
       color: {
         use: "property",
-        which: "geo.world_4region",
+        which: "world_4region",
         scaleType: "ordinal",
         allow: {
-          names: ["!geo.name"]
+          names: ["!name"]
         }
       },
       size: {
@@ -668,7 +668,7 @@ BubbleChart.define('default_model', {
         shape: "svg",
         label: {
           use: "property",
-          which: "geo.name"
+          which: "name"
         },
         geoshape: {
           use: "property",
