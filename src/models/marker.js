@@ -449,15 +449,7 @@ var Marker = Model.extend({
    */
   getConceptprops: function() {
     return this.getDataManager().getConceptprops();
-  },
-    
-  /**
-   * Gets the concept properties of all hooks
-   * @returns {Object} concept properties
-   */
-  getIndicatorsTree: function() {
-    return this.getDataManager().getIndicatorsTree();
-  } 
+  }
     
 
 });

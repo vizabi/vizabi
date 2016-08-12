@@ -260,18 +260,31 @@ var Data = Class.extend({
     return this._collection[queryId][what][id];
   },
 
+  loadConceptProps: function(reader, callback){
+    var _this = this;
+    
+    var query = {
+      grouping: [],
+      from: "concepts",
+      select: {
+        key: ["concept"],
+        value: ["conceptType"]
+      }
+    };
+    
+    this.load(query, "en", reader).then(function(dataId) {
+      _this.conceptPropsDataID = dataId;
+      
+      callback( _this.get(this.conceptPropsDataID) );
+    }, function(err) {
+      utils.warn('Problem with query: ', JSON.stringify(query));
+    });
+  },
+  
   getConceptprops: function(which){
-      if(!globals.conceptprops || !globals.conceptprops.indicatorsDB) return {};
-      return which ? globals.conceptprops.indicatorsDB[which] : globals.conceptprops.indicatorsDB;
+     this.get(this.conceptPropsDataID)
   },
     
-  /**
-   * Gets the concept properties of all hooks
-   * @returns {Object} concept properties
-   */
-  getIndicatorsTree: function() {
-    return globals.conceptprops && globals.conceptprops.indicatorsTree ? globals.conceptprops.indicatorsTree : {};
-  },
 
   getFrames: function(queryId, framesArray) {
     var _this = this;

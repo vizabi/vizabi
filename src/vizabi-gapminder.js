@@ -1382,7 +1382,9 @@ Tool.define("preload", function(promise) {
       return;
     }
     
-    d3.json(conceptprops_path, function(conceptprops) {
+    var reader = _this.model.data.getPlainObject();
+    
+    _this.model.getDataManager().loadConceptProps(reader, function(conceptprops) {
 
       globals.conceptprops = conceptprops;
         
