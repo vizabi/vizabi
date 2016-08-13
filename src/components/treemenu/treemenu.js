@@ -705,7 +705,6 @@ var TreeMenu = Component.extend({
       var tags = {};
       tags[ROOT] = {id: ROOT, children: []};
       tags[UNCLASSIFIED] = {id: UNCLASSIFIED, children:[]};
-      tags[ADVANCED] = {id: ADVANCED, children:[]};
       
       //populate the dictionary of tags
       tagsArray.forEach(function(tag){tags[tag.tag] = {id: tag.tag, children: []};})
@@ -714,27 +713,28 @@ var TreeMenu = Component.extend({
       indicatorsTree = tags[ROOT];
       indicatorsTree.children.push({"id": DEFAULT});
       indicatorsTree.children.push(tags[UNCLASSIFIED]);
-      indicatorsTree.children.push(tags[ADVANCED]);
       
       //populate the tag tree
       tagsArray.forEach(function(tag){
-        if(!tag["tag.parent"]) {
+        if(!tag.parent || !tags[tag.parent]) {
           // add tag to a root
           indicatorsTree.children.push(tags[tag.tag]);
         } else {
           //add tag to a branch
-          tags[tag["tag.parent"]].children.push(tags[tag.tag])
+          tags[tag.parent].children.push(tags[tag.tag])
         }
       })
       
       //add entries to different branches in the tree according to their tags
       utils.forEach(this.model.marker.getConceptprops(), function(entry, id){
-        if(!entry.tags) entry.tags = ADVANCED;
+        //if entry's tag are empty don't include it in the menu
+        if(!entry.tags) return; //entry.tags = UNCLASSIFIED;
         entry.tags.split(",").forEach(function(tag){
           if(tags[tag.trim()]) {
             tags[tag.trim()].children.push({id: id});
           } else {
             //if entry's tag is not found in the tag dictionary
+            console.log(tag, "not found")
             tags[UNCLASSIFIED].children.push({id: id});
           }
         });  
