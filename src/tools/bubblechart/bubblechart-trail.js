@@ -289,9 +289,16 @@ export default Class.extend({
     var firstVisible = true;
     var trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
 
-    if (_context.time - trailStartTime < 0) { // move trail start time with trail label back if need
-      d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(_context.time);
-      trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+    if (_context.time - trailStartTime < 0 || _context.model.time.start - trailStartTime > 0) {
+      if (_context.time - trailStartTime < 0) { 
+        // move trail start time with trail label back if need
+        d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(_context.time);
+        trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+      } else {
+        // move trail start time with trail label to start time if need
+        d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(_context.model.time.start);
+        trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+      }
       var cache = _context._labels.cached[d[KEY]];
       cache.labelX0 = _context.frame.axis_x[d[KEY]];
       cache.labelY0 = _context.frame.axis_y[d[KEY]];
