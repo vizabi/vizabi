@@ -1,5 +1,6 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
+import Labels from 'helpers/labels';
 import {
   warn as iconWarn,
   question as iconQuestion
@@ -114,6 +115,13 @@ var BubbleMapComponent = Component.extend({
     this.boundBox = [[0.02, 0], [1.0, 0.85]]; // two points to set box bound on 960 * 500 image;
 
     d3_geo_projection();
+
+    this._labels = new Labels(this);
+    this._labels.config({
+      CSS_PREFIX: 'vzb-bmc',
+      LABELS_CONTAINER_CLASS: 'vzb-bmc-labels',
+      LINES_CONTAINER_CLASS: 'vzb-bmc-lines'
+    });    
   },
 
 
@@ -169,14 +177,6 @@ var BubbleMapComponent = Component.extend({
         .attr("class", "boundary")
         .attr("d", path);
         
-    this.labels = this.parent.findChildByName('gapminder-labels');
-    this.labels.config({
-      CSS_PREFIX: 'vzb-bmc',
-      TOOL_CONTEXT: this,
-      LABELS_CONTAINER_CLASS: 'vzb-bmc-labels',
-      LINES_CONTAINER_CLASS: 'vzb-bmc-lines'
-    });
-    
   },
 
   /**
@@ -212,7 +212,7 @@ var BubbleMapComponent = Component.extend({
       //return if updatesize exists with error
       if(_this.updateSize()) return;
       _this.updateMarkerSizeLimits();
-      _this.labels.updateSize();
+      _this._labels.updateSize();
       _this.redrawDataPoints();
       //_this._selectlist.redraw();
       
@@ -228,6 +228,7 @@ var BubbleMapComponent = Component.extend({
         .domain(this.parent.datawarning_content.doubtDomain)
         .range(this.parent.datawarning_content.doubtRange);
 
+    this._labels.readyOnce();
   },
 
   /*
@@ -252,6 +253,7 @@ var BubbleMapComponent = Component.extend({
       _this.values = values;
       _this.updateEntities();
       _this.updateTime();
+      _this._labels.ready();
       _this.redrawDataPoints();
       _this.highlightEntities();
       _this.selectEntities();
@@ -890,7 +892,7 @@ var BubbleMapComponent = Component.extend({
       cache.scaledS0 = valueS ? utils.areaToRadius(_this.sScale(valueS)) : null;
       cache.scaledC0 = valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH;
              
-      this.labels.updateLabel(d, index, cache, valueX / this.width, valueY / this.height, valueS, valueC, valueL, valueLST, duration, showhide);
+      this._labels.updateLabel(d, index, cache, valueX / this.width, valueY / this.height, valueS, valueC, valueL, valueLST, duration, showhide);
     }
   },
 

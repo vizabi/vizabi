@@ -92,7 +92,7 @@ export default Class.extend({
               pointer.time = segment.t;
 
               _context._axisProjections(pointer);
-              _context.labels.highlight(d, true);
+              _context._labels.highlight(d, true);
               var text = _context.model.time.timeFormat(segment.t);
               var selectedData = utils.find(_context.model.entities.select, function(f) {
                 return f[KEY] == d[KEY]
@@ -115,7 +115,7 @@ export default Class.extend({
               _context._axisProjections();
               _context._setTooltip();
               _context._setBubbleCrown();
-              _context.labels.highlight(null, false);
+              _context._labels.highlight(null, false);
               d3.select(this).style("opacity", _context.model.entities.opacityRegular);
             })
             .each(function(segment, index) {
@@ -292,7 +292,7 @@ export default Class.extend({
     if (_context.time - trailStartTime < 0) { // move trail start time with trail label back if need
       d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(_context.time);
       trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
-      var cache = _context.labels.cached[d[KEY]];
+      var cache = _context._labels.cached[d[KEY]];
       cache.labelX0 = _context.frame.axis_x[d[KEY]];
       cache.labelY0 = _context.frame.axis_y[d[KEY]];
       var valueS = _context.frame.size[d[KEY]];
@@ -301,6 +301,7 @@ export default Class.extend({
       cache.scaledC0 = valueC != null ? _context.cScale(valueC) : _context.COLOR_WHITEISH;
       _context._updateLabel(d, 0, _context.frame.axis_x[d[KEY]], _context.frame.axis_y[d[KEY]], _context.frame.size[d[KEY]], _context.frame.color[d[KEY]], _context.frame.label[d[KEY]], _context.frame.size_label[d[KEY]], 0, true);
     }
+
     trail.each(function(segment, index) {
       // segment is transparent if it is after current time or before trail StartTime
       var segmentVisibility = segment.transparent; 
@@ -346,7 +347,7 @@ export default Class.extend({
                 d.firstAvailableSegment = segment.t;
               }
               // fix label position if it not in correct place
-              var cache = _context.labels.cached[d[KEY]];
+              var cache = _context._labels.cached[d[KEY]];
               if (trailStartTime && trailStartTime.toString() == segment.t.toString()) {
                   cache.labelX0 = segment.valueX;
                   cache.labelY0 = segment.valueY;

@@ -1,5 +1,5 @@
 import * as utils from 'base/utils';
-import Component from 'base/component';
+import Class from 'base/class';
 
 import {close as iconClose} from 'base/iconset';
 
@@ -27,8 +27,8 @@ var label = function(context) {
         var cache = _this.cached[d[KEY]];
         cache.labelFixed = true;
         
-        var viewWidth = _this._toolContext.width;       
-        var viewHeight = _this._toolContext.height;       
+        var viewWidth = _this.context.width;       
+        var viewHeight = _this.context.height;       
 
         cache.labelX_ += d3.event.dx / viewWidth;
         cache.labelY_ += d3.event.dy / viewHeight;
@@ -153,8 +153,8 @@ var label = function(context) {
           return;
       }
       
-      var viewWidth = _this._toolContext.width;       
-      var viewHeight = _this._toolContext.height;       
+      var viewWidth = _this.context.width;       
+      var viewHeight = _this.context.height;       
       var rectBBox = cache.rectBBox;
       var width = rectBBox.width;
       var height = rectBBox.height;
@@ -175,7 +175,7 @@ var label = function(context) {
         cache.labelY_ = (_Y - _this.yScale(cache.labelY0)) / viewHeight;
       }
 
-      if(duration == null) duration = _this._toolContext.duration;
+      if(duration == null) duration = _this.context.duration;
       if(duration) {
         if(showhide && !d.hidden){
             //if need to show label
@@ -324,60 +324,16 @@ var label = function(context) {
 }
 
 var OPTIONS = {
-  TOOL_CONTEXT: null,
   LABELS_CONTAINER_CLASS: '',
   LINES_CONTAINER_CLASS: '',
   CSS_PREFIX: ''
 }; 
 
-var Labels = Component.extend({
+var Labels = Class.extend({
 
-  init: function(config, context) {
+  init: function(context, conditions) {
     var _this = this;
-
-    this.name = 'gapminder-labels';
-
-    this.model_expects = [{
-      name: "entities",
-      type: "entities"
-    }, {
-      name: "marker",
-      type: "model"
-    }, {
-      name: "ui",
-      type: "model"
-    }];
-
     this.context = context;
-
-    this.model_binds = {
-      "change:entities.select": function() {
-        if(!_this._readyOnce) return;
-        //console.log("EVENT change:entities:select");
-        _this.selectDataPoints();
-      }
-    }
-    if(context.model.state.marker.size_label)
-      this.model_binds['change:marker.size_label.extent'] = function(evt, path) {
-        //console.log("EVENT change:marker:size:max");
-        if(!_this._readyOnce) return;
-        _this.updateLabelSizeLimits();
-        if(_this._toolContext.model.time.splash) return;
-        _this.updateLabelsOnlyTextSize();
-      }
-    if(context.model.ui.chart.labels.hasOwnProperty('removeLabelBox'))
-      this.model_binds['change:ui.chart.labels.removeLabelBox'] = function(evt, path) {
-        //console.log("EVENT change:marker:size:max");
-        if(!_this._readyOnce) return;
-        _this.updateLabelsOnlyTextSize();
-      }
-
-    //contructor is the same as any component
-    this._super(config, context);
-
-    this.ui = utils.extend({
-      //...add properties here
-    }, this.ui);
 
     this.label = label(this);
     this._xScale = null;
@@ -387,25 +343,46 @@ var Labels = Component.extend({
   },
 
   ready: function() {
-    this.updateLabelSizeLimits();
     this.updateIndicators();
+    this.updateLabelSizeLimits();
     //this.updateLabelsOnlyTextSize();
   },
 
   readyOnce: function() {
-    if(this._readyRace) return;
-
     var _this = this;
     
-    this.KEY = this.model.entities.getDimension();
+    this.model = this.context.model;
+
+    this.model.on("change:entities.select", function() {
+        if(!_this.context._readyOnce) return;
+        //console.log("EVENT change:entities:select");
+        _this.selectDataPoints();
+      });
+
+    if(this.model.marker.size_label)
+      this.model.on('change:marker.size_label.extent', function(evt, path) {
+        //console.log("EVENT change:marker:size:max");
+        if(!_this.context._readyOnce) return;
+        _this.updateLabelSizeLimits();
+        if(_this.model.time.splash) return;
+        _this.updateLabelsOnlyTextSize();
+      });
+
+    if(this.model.ui.chart.labels.hasOwnProperty('removeLabelBox'))
+      this.model.on('change:ui.chart.labels.removeLabelBox', function(evt, path) {
+        //console.log("EVENT change:marker:size:max");
+        if(!_this.context._readyOnce) return;
+        _this.updateLabelsOnlyTextSize();
+      });
+
+    this.KEY = this.context.model.entities.getDimension();
     
     this.cached = {};
 
-    this._toolContext = OPTIONS.TOOL_CONTEXT;
     this._cssPrefix = OPTIONS.CSS_PREFIX;
     this.label.setCssPrefix(OPTIONS.CSS_PREFIX);
     
-    this.rootEl = this.root.element instanceof Array? this.root.element : d3.select(this.root.element);
+    this.rootEl = this.context.root.element instanceof Array? this.context.root.element : d3.select(this.context.root.element);
     this.labelsContainer = this.rootEl.select("." + OPTIONS.LABELS_CONTAINER_CLASS);
     this.linesContainer = this.rootEl.select("." + OPTIONS.LINES_CONTAINER_CLASS);
     this.updateIndicators();
@@ -465,11 +442,11 @@ var Labels = Component.extend({
   },
  
   xScale: function(x) {
-    return this._xScale ? this._xScale(x) : (x * this._toolContext.width);
+    return this._xScale ? this._xScale(x) : (x * this.context.width);
   },
 
   yScale: function(y) {
-    return this._yScale ? this._yScale(y) : (y * this._toolContext.height);
+    return this._yScale ? this._yScale(y) : (y * this.context.height);
   },
 
   selectDataPoints: function() {
@@ -532,11 +509,6 @@ var Labels = Component.extend({
   },
   
   updateLabel: function(d, index, cache, valueX, valueY, valueS, valueC, valueL, valueLST, duration, showhide) {
-    if(!this._readyOnce) {
-      this.readyOnce(); //run readyOnce if tool component is ready but labels component is not ready
-      this._readyRace = true;
-    }
-  
     var _this = this;
     var KEY = this.KEY;
     if(d[KEY] == _this.druging)
@@ -554,11 +526,11 @@ var Labels = Component.extend({
 
 
       if(cached.scaledS0 == null || cached.labelX0 == null || cached.labelY0 == null) { //initialize label once
-        if(valueS || valueS === 0) cached.scaledS0 = utils.areaToRadius(this._toolContext.sScale(valueS));
+        if(valueS || valueS === 0) cached.scaledS0 = utils.areaToRadius(this.context.sScale(valueS));
         cached.labelX0 = valueX;
         cached.labelY0 = valueY;
         cached.valueLST = valueLST;
-        cached.scaledC0 = valueC!=null?this._toolContext.cScale(valueC):this._toolContext.COLOR_WHITEISH;
+        cached.scaledC0 = valueC!=null?this.context.cScale(valueC):this.context.COLOR_WHITEISH;
       }
 
       if(cached.labelX_ == null || cached.labelY_ == null)
@@ -669,7 +641,7 @@ var Labels = Component.extend({
     
     this.entityLabels.each(function(d, index) {
       var cached = _this.cached[d[KEY]];
-        _this._updateLabelSize(d, index, d3.select(this), _this._toolContext.frame.size_label[d[KEY]]);
+        _this._updateLabelSize(d, index, d3.select(this), _this.context.frame.size_label[d[KEY]]);
         var lineGroup = _this.entityLines.filter(function(f) {
           return f[KEY] == d[KEY];
         });
@@ -713,8 +685,8 @@ var Labels = Component.extend({
     var KEY = this.KEY;
     var cached = this.cached[d[KEY]];
 
-    var viewWidth = this._toolContext.width;       
-    var viewHeight = this._toolContext.height;       
+    var viewWidth = this.context.width;       
+    var viewHeight = this.context.height;       
 
     var resolvedX0 = this.xScale(cached.labelX0);
     var resolvedY0 = this.yScale(cached.labelY0);
@@ -773,7 +745,7 @@ var Labels = Component.extend({
 
     var _this = this;
 
-    this.activeProfile = this.getActiveProfile(profiles);
+    this.activeProfile = this.context.getActiveProfile(profiles);
     
     this.updateLabelSizeLimits();
   }

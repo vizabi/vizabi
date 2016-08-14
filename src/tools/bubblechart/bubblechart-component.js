@@ -3,6 +3,7 @@ import Component from 'base/component';
 import Trail from './bubblechart-trail';
 import PanZoom from './bubblechart-panzoom';
 import Exporter from 'helpers/svgexport';
+import Labels from 'helpers/labels';
 import axisSmart from 'helpers/d3.axisWithLabelPicker';
 import DynamicBackground from 'helpers/d3.dynamicBackground';
 
@@ -232,18 +233,16 @@ var BubbleChartComp = Component.extend({
       .deleteClasses(["vzb-bc-bubbles-crop", "vzb-hidden", "vzb-bc-year", "vzb-bc-zoom-rect",
         "vzb-bc-projection-x", "vzb-bc-projection-y", "vzb-bc-axis-c-title"
       ]);
-
+    this._labels = new Labels(this);
+    this._labels.config({
+      CSS_PREFIX: 'vzb-bc',
+      LABELS_CONTAINER_CLASS: 'vzb-bc-labels',
+      LINES_CONTAINER_CLASS: 'vzb-bc-lines'
+    });
   },
   
   afterPreload: function() {
     var _this = this;
-    this.labels = this.parent.findChildByName('gapminder-labels');
-    this.labels.config({
-      CSS_PREFIX: 'vzb-bc',
-      TOOL_CONTEXT: this,
-      LABELS_CONTAINER_CLASS: 'vzb-bc-labels',
-      LINES_CONTAINER_CLASS: 'vzb-bc-lines'
-    });
   },
 
   _rangeBump: function(arg, undo) {
@@ -346,7 +345,7 @@ var BubbleChartComp = Component.extend({
       //return if updatesize exists with error
       if(_this.updateSize()) return;
       _this.updateMarkerSizeLimits();
-      _this.labels.updateSize();
+      _this._labels.updateSize();
       _this._trails.run("findVisible");
       _this._panZoom.rerun(); // includes redraw data points and trail resize
     });
@@ -388,6 +387,9 @@ var BubbleChartComp = Component.extend({
     this.wScale = d3.scale.linear()
       .domain(this.parent.datawarning_content.doubtDomain)
       .range(this.parent.datawarning_content.doubtRange);
+    
+    this._labels.readyOnce();
+
     _this._readyOnce = true;
   },
   
@@ -417,6 +419,7 @@ var BubbleChartComp = Component.extend({
       _this.updateIndicators();
       _this.updateSize();
       _this.updateEntities();
+      _this._labels.ready();
       _this.redrawDataPoints();
       _this.selectDataPoints();
       _this._trails.create();
@@ -467,7 +470,7 @@ var BubbleChartComp = Component.extend({
     this.xScale = this.model.marker.axis_x.getScale();
     this.sScale = this.model.marker.size.getScale();
     this.cScale = this.model.marker.color.getScale();
-    this.labels.setScales(this.xScale, this.yScale);
+    this._labels.setScales(this.xScale, this.yScale);
 
     this.yAxis.tickFormat(_this.model.marker.axis_y.getTickFormatter());
     this.xAxis.tickFormat(_this.model.marker.axis_x.getTickFormatter());
@@ -701,13 +704,13 @@ var BubbleChartComp = Component.extend({
       mouseover: function(d, i) {
         _this.model.entities.highlightEntity(d);
 
-        _this.labels.showCloseCross(d, true);
+        _this._labels.showCloseCross(d, true);
       },
 
       mouseout: function(d, i) {
         _this.model.entities.clearHighlighted();
 
-        _this.labels.showCloseCross(d, false);
+        _this._labels.showCloseCross(d, false);
       },
 
       click: function(d, i) {
@@ -811,7 +814,7 @@ var BubbleChartComp = Component.extend({
     var infoElHeight = this.activeProfile.infoElHeight;
     
     //labels
-    _this.labels.setCloseCrossHeight(_this.activeProfile.infoElHeight * 1.2);
+    _this._labels.setCloseCrossHeight(_this.activeProfile.infoElHeight * 1.2);
 
     //stage
     this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
@@ -1039,7 +1042,7 @@ var BubbleChartComp = Component.extend({
             cache.scaledC0 = valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH;
           }
           
-          _this.labels.updateLabelOnlyColor(d, index, cache);
+          _this._labels.updateLabelOnlyColor(d, index, cache);
 
         });
       }
@@ -1093,7 +1096,7 @@ var BubbleChartComp = Component.extend({
             cache.scaledS0 = utils.areaToRadius(_this.sScale(valuesTrailStart.size[d[KEY]]));
           }
           
-          _this.labels.updateLabelOnlyPosition(d, index, cache);
+          _this._labels.updateLabelOnlyPosition(d, index, cache);
 
         });
       }
@@ -1256,7 +1259,7 @@ var BubbleChartComp = Component.extend({
       if(showhide && d.hidden && _this.model.ui.chart.trails && trailStartTime && (trailStartTime < _this.time)) showhide = false;
       if(d.hidden && !_this.model.ui.chart.trails) showhide = true;
 
-      this.labels.updateLabel(d, index, cache, valueX, valueY, valueS, valueC, labelText, valueLST, duration, showhide);
+      this._labels.updateLabel(d, index, cache, valueX, valueY, valueS, valueC, labelText, valueLST, duration, showhide);
 
     }
   },
@@ -1491,7 +1494,7 @@ var BubbleChartComp = Component.extend({
             text = _this.model.entities.isSelected(d) ? '': values.label[d[KEY]];
           }
 
-          _this.labels.highlight(d, true);
+          _this._labels.highlight(d, true);
           if(_this.model.entities.isSelected(d)) {
             var skipCrownInnerFill = !d.trailStartTime || d.trailStartTime == _this.model.time.timeFormat(_this.time);
             _this._setBubbleCrown(x, y, s, c, skipCrownInnerFill);
@@ -1523,7 +1526,7 @@ var BubbleChartComp = Component.extend({
         _this._updateSTitle();  
         this._setTooltip();
         this._setBubbleCrown();
-        this.labels.highlight(null, false);
+        this._labels.highlight(null, false);
       }
 
   },
