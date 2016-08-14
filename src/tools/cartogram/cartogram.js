@@ -12,7 +12,6 @@ import {
   dialogs,
   buttonlist,
   treemenu,
-  labels,
   datawarning,
   datanotes
 }
@@ -39,10 +38,6 @@ var Cartogram = Tool.extend('Cartogram', {
         component: timeslider,
         placeholder: '.vzb-tool-timeslider',
         model: ["state.time", "state.entities", "state.marker"]
-      }, {
-        component: labels,
-        placeholder: '.vzb-tool-labels',
-        model: ["state.entities", "state.marker", "ui"]
       }, {
         component: dialogs,
         placeholder: '.vzb-tool-dialogs',

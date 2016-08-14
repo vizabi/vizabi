@@ -12,7 +12,6 @@ import {
   dialogs,
   buttonlist,
   treemenu,
-  labels,
   datawarning,
   datanotes
 }
@@ -37,10 +36,6 @@ var BubbleMap = Tool.extend('BubbleMap', {
       component: BubbleMapComponent,
       placeholder: '.vzb-tool-viz',
       model: ["state.time", "state.entities", "state.marker", "language", "ui"] //pass models to component
-    }, {
-      component: labels,
-      placeholder: '.vzb-tool-labels',
-      model: ["state.entities", "state.marker", "ui"]
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
