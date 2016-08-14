@@ -585,10 +585,14 @@ var Labels = Class.extend({
     
     var _text = text || labelGroup.selectAll("." + _cssPrefix + "-label-content"); 
     
-    if(valueLST != null && _this.labelSizeTextScale) {
+    if(_this.labelSizeTextScale) {
+      if(valueLST != null) {
       var range = _this.labelSizeTextScale.range();
       var fontSize = range[0] + Math.sqrt((_this.labelSizeTextScale(valueLST) - range[0]) * (range[1] - range[0]));
-      _text.attr('font-size', fontSize + 'px');
+        _text.attr('font-size', fontSize + 'px');
+      } else {
+        _text.attr('font-size', '');        
+      }
     }
 
     var contentBBox = _text[0][0].getBBox();
