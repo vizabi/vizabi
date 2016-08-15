@@ -9,13 +9,15 @@
     //ie11 support for zoom-in, zoom-out cursors
     //ie11 only:The base URI is considered to be the URI of the document containing the element 
     //and not the URI of the style sheet in which the declaration appears.
-    .vzb-zoomin {
+    .vzb-zoomin .vzb-bc-bubbles-crop,
+    .vzb-zoomin .vzb-bc-labels-crop {
       cursor: url('../dist/assets/cursors/zoom-in.cur'), auto;
       .vzb-bc-entity {
         cursor: url('../dist/assets/cursors/zoom-in.cur'), auto !important;
       }
     }    
-    .vzb-zoomout {
+    .vzb-zoomout .vzb-bc-bubbles-crop,
+    .vzb-zoomout .vzb-bc-labels-crop {
       cursor: url('../dist/assets/cursors/zoom-out.cur'), auto;
       .vzb-bc-entity {
         cursor: url('../dist/assets/cursors/zoom-out.cur'), auto !important;
@@ -39,7 +41,6 @@
       }
 
       .vzb-bc-entity .vzb-bc-trailsegment {
-        cursor: pointer;
         line {
           pointer-events: none;
           stroke-width: 2;
@@ -56,16 +57,27 @@
         }
       }
       
-      &.vzb-zoomin {
+      &.vzb-zoomin .vzb-bc-bubbles-crop,
+      &.vzb-zoomin .vzb-bc-labels-crop {
         cursor: zoom-in;
         .vzb-bc-entity {
           cursor: zoom-in !important;
+          pointer-events: none !important;          
         }
-      }    
-      &.vzb-zoomout {
+        .vzb-bc-labels .vzb-label-fill {
+          pointer-events: none;
+        }
+      }
+
+      &.vzb-zoomout .vzb-bc-bubbles-crop,
+      &.vzb-zoomout .vzb-bc-labels-crop {
         cursor: zoom-out;
         .vzb-bc-entity {
           cursor: zoom-out !important;
+          pointer-events: none !important;
+        }
+        .vzb-bc-labels .vzb-label-fill {
+          pointer-events: none;
         }
       }    
 
@@ -80,7 +92,7 @@
             fill: $vzb-color-primary;
             text-anchor: middle;
             dominant-baseline: middle;
-            pointer-events: visible;
+            pointer-events: none;
             font-size: .9em;
             cursor: pointer;
             stroke: $vzb-color-white;
@@ -99,8 +111,13 @@
             opacity: 0;
           }
           
-          &.vzb-highlighted .vzb-label-glow {
-            opacity: .8;
+          &.vzb-highlighted {
+            .vzb-bc-label-x {
+              pointer-events: visible;
+            }
+            .vzb-label-glow {
+              opacity: .8;
+            }
           }
           &.vzb-label-boxremoved {
             &:not(.vzb-highlighted) {
