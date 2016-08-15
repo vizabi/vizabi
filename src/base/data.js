@@ -268,7 +268,7 @@ var Data = Class.extend({
       from: "concepts",
       select: {
         key: ["concept"],
-        value: ["concept","name","concept_type","domain","indicator_url","color","scales","drill_up","unit","interpolation","description","tags"]
+        value: ["concept","concept_type","indicator_url","color","scales","interpolation","tags"]
       }
     };
     
@@ -278,10 +278,10 @@ var Data = Class.extend({
       _this.get(dataId).forEach(function(d){
         var concept = {};
         concept["use"] = d.concept_type=="measure"?"indicator":"property";
-        concept["interpolation"] = d.interpolation;
-        concept["scales"] = JSON.parse(d.scales);
         concept["sourceLink"] = d.indicator_url;
         concept["color"] = JSON.parse(d.color);
+        concept["scales"] = JSON.parse(d.scales);
+        concept["interpolation"] = d.interpolation;
         concept["tags"] = d.tags;
         _this.conceptDictionary[d.concept] = concept;
       });
