@@ -438,7 +438,10 @@ var Labels = Class.extend({
   },
   
   setCloseCrossHeight: function(closeCrossHeight) {
-    this._closeCrossHeight = closeCrossHeight;
+    if(this._closeCrossHeight != closeCrossHeight) {
+      this._closeCrossHeight = closeCrossHeight;
+      this.updateLabelCloseGroupSize(this.entityLabels.selectAll("." + this._cssPrefix + "-label-x"), this._closeCrossHeight);
+    }
   },
  
   xScale: function(x) {
@@ -606,20 +609,9 @@ var Labels = Class.extend({
 
       var labelCloseGroup = labelGroup.select("." + _cssPrefix + "-label-x")
         .attr('transform', 'translate(' + 4 + ',' + (-contentBBox.height * .85) + ')');
-        //.attr("x", /*contentBBox.height * .0 + */ 4)
-        //.attr("y", contentBBox.height * -1);
+      
+      this.updateLabelCloseGroupSize(labelCloseGroup, labelCloseHeight);
 
-      labelCloseGroup.select("circle")
-        .attr("cx", /*contentBBox.height * .0 + */ 0)
-        .attr("cy", 0)
-        .attr("r", labelCloseHeight * .5);
-
-      labelCloseGroup.select("svg")
-        .attr("x", -labelCloseHeight * .5 )
-        .attr("y", labelCloseHeight * -.5)
-        .attr("width", labelCloseHeight)
-        .attr("height", labelCloseHeight)
-  
       rect.attr("width", contentBBox.width + 8)
         .attr("height", contentBBox.height * 1.2)
         .attr("x", -contentBBox.width - 4)
@@ -637,6 +629,20 @@ var Labels = Class.extend({
     if(glowRect.attr("stroke") !== cached.scaledC0) {
       glowRect.attr("stroke", cached.scaledC0);
     }
+  },
+
+  updateLabelCloseGroupSize: function(labelCloseGroup, labelCloseHeight) {
+    labelCloseGroup.select("circle")
+      .attr("cx", /*contentBBox.height * .0 + */ 0)
+      .attr("cy", 0)
+      .attr("r", labelCloseHeight * .5);
+
+    labelCloseGroup.select("svg")
+      .attr("x", -labelCloseHeight * .5 )
+      .attr("y", labelCloseHeight * -.5)
+      .attr("width", labelCloseHeight)
+      .attr("height", labelCloseHeight)
+
   },
     
   updateLabelsOnlyTextSize: function() {
