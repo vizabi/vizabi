@@ -100,7 +100,7 @@ var ColorLegend = Component.extend({
     this.KEY = this.model.state.entities.getDimension();
     this.colorModel = this.model.state.marker.color;
     
-    OPACITY_REGULAR = this.model.state.entities.opacityRegular;
+    OPACITY_REGULAR = 1;
     OPACITY_DIM = this.model.state.entities.opacitySelectDim;
     OPACITY_HIGHLIGHT = 1;
     
