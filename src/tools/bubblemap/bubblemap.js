@@ -56,7 +56,7 @@ var BubbleMap = Tool.extend('BubbleMap', {
     }, {
       component: treemenu,
       placeholder: '.vzb-tool-treemenu',
-      model: ['state.marker', 'language']
+      model: ['state.marker', 'state.marker_tags', 'state.time', 'language']
     }, {
       component: datawarning,
       placeholder: '.vzb-tool-datawarning',
@@ -74,35 +74,6 @@ var BubbleMap = Tool.extend('BubbleMap', {
 
   default_model: {
     state: {
-      time: {},
-      entities: {
-        dim: "geo",
-        show: {
-          _defs_: {
-            "geo": ["*"],
-            "geo.cat": ["region"]
-          }
-        }
-      },
-      marker: {
-        space: ["entities", "time"],
-        label: {
-          use: "property",
-          which: "geo.name"
-        },
-        axis_y: {
-          use: "indicator",
-          which: "lex"
-        },
-        axis_x: {
-          use: "property",
-          which: "geo.name"
-        },
-        color: {
-          use: "property",
-          which: "geo.world_4region"
-        }
-      }
     },
     ui: {
       chart: {

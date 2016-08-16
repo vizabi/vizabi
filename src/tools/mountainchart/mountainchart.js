@@ -45,7 +45,7 @@ var MountainChart = Tool.extend('MountainChart', {
     }, {
       component: treemenu,
       placeholder: '.vzb-tool-treemenu',
-      model: ['state.marker', 'language']
+      model: ['state.marker', 'state.marker_tags', 'state.time', 'language']
     }, {
       component: datawarning,
       placeholder: '.vzb-tool-datawarning',
