@@ -115,8 +115,16 @@ var Component = Events.extend({
       this.model.setHooks();
 
       var splashScreen = this.model && this.model.data && this.model.data.splash;
+      var promise = new Promise();
 
-      preloader(this).then(function() {
+      this.preload(promise);
+      var promises = []; //holds all promises
+      utils.forEach(_this.components, function(subcomp) {
+        promises.push(preloader(subcomp, promise));
+      });
+      var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
+      wait.then(function() {
+        _this.afterPreload();
         var timeMdl = _this.model.state.time;
         if(splashScreen) {
 
@@ -557,15 +565,16 @@ var Component = Events.extend({
 /**
  * Preloader implementation with promises
  * @param {Object} comp any component
+ * @param {Object} rootPromise promise fot tool preloader
  * @returns {Promise}
  */
-function preloader(comp) {
+function preloader(comp, rootPromise) {
   var promise = new Promise();
   var promises = []; //holds all promises
 
   //preload all subcomponents first
   utils.forEach(comp.components, function(subcomp) {
-    promises.push(preloader(subcomp));
+    promises.push(preloader(subcomp, rootPromise));
   });
 
   var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
@@ -575,7 +584,7 @@ function preloader(comp) {
     utils.error("Error preloading data:", err);
   });
 
-  return promise.then(function() {
+  return Promise.all([promise, rootPromise]).then(function() {
     comp.afterPreload();
     return true;
   });
