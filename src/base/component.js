@@ -118,58 +118,56 @@ var Component = Events.extend({
       var promise = new Promise();
 
       this.preload(promise);
-      promise.then(function() {
-        var promises = []; //holds all promises
-        utils.forEach(_this.components, function(subcomp) {
-          promises.push(preloader(subcomp));
-        });
-        var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
-        wait.then(function() {
-          _this.afterPreload();
-          var timeMdl = _this.model.state.time;
-          if(splashScreen) {
+      var promises = []; //holds all promises
+      utils.forEach(_this.components, function(subcomp) {
+        promises.push(preloader(subcomp, promise));
+      });
+      var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
+      wait.then(function() {
+        _this.afterPreload();
+        var timeMdl = _this.model.state.time;
+        if(splashScreen) {
 
-            //TODO: cleanup hardcoded splash screen
-            timeMdl.splash = true;
-            timeMdl.beyondSplash = utils.clone(timeMdl.getPlainObject(), ['start', 'end']);
+          //TODO: cleanup hardcoded splash screen
+          timeMdl.splash = true;
+          timeMdl.beyondSplash = utils.clone(timeMdl.getPlainObject(), ['start', 'end']);
 
-            _this.model.load({
-              splashScreen: true
-            }).then(function() {
-              //delay to avoid conflicting with setReady
-              utils.delay(function() {
-                //force loading because we're restoring time.
-                _this.model.setLoading('restore_orig_time');
-                //restore because validation kills the original start/end
-                timeMdl.start = timeMdl.beyondSplash.start;
-                timeMdl.end = timeMdl.beyondSplash.end;
-                delete timeMdl.beyondSplash;
+          _this.model.load({
+            splashScreen: true
+          }).then(function() {
+            //delay to avoid conflicting with setReady
+            utils.delay(function() {
+              //force loading because we're restoring time.
+              _this.model.setLoading('restore_orig_time');
+              //restore because validation kills the original start/end
+              timeMdl.start = timeMdl.beyondSplash.start;
+              timeMdl.end = timeMdl.beyondSplash.end;
+              delete timeMdl.beyondSplash;
 
-                _this.model.load().then(function() {
-                  _this.model.setLoadingDone('restore_orig_time');
-                  timeMdl.splash = false;
-                  //_this.model.data.splash = false;
-                  timeMdl.trigger('change', timeMdl.getPlainObject());
-                });
-              }, 300);
+              _this.model.load().then(function() {
+                _this.model.setLoadingDone('restore_orig_time');
+                timeMdl.splash = false;
+                //_this.model.data.splash = false;
+                timeMdl.trigger('change', timeMdl.getPlainObject());
+              });
+            }, 300);
 
-            }, function() {
-              renderError();
-            });
-          } else {
-            _this.model.load().then(function() {
-              utils.delay(function() {
-                if(timeMdl) {
-                  timeMdl.trigger('change');
-                } else {
-                  done();
-                }
-              }, 300);
-            }, function() {
-              renderError();
-            });
-          }
-        });
+          }, function() {
+            renderError();
+          });
+        } else {
+          _this.model.load().then(function() {
+            utils.delay(function() {
+              if(timeMdl) {
+                timeMdl.trigger('change');
+              } else {
+                done();
+              }
+            }, 300);
+          }, function() {
+            renderError();
+          });
+        }
       });
 
     } else if(this.model && this.model.isLoading()) {
@@ -567,15 +565,16 @@ var Component = Events.extend({
 /**
  * Preloader implementation with promises
  * @param {Object} comp any component
+ * @param {Object} rootPromise promise fot tool preloader
  * @returns {Promise}
  */
-function preloader(comp) {
+function preloader(comp, rootPromise) {
   var promise = new Promise();
   var promises = []; //holds all promises
 
   //preload all subcomponents first
   utils.forEach(comp.components, function(subcomp) {
-    promises.push(preloader(subcomp));
+    promises.push(preloader(subcomp, rootPromise));
   });
 
   var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
@@ -585,7 +584,7 @@ function preloader(comp) {
     utils.error("Error preloading data:", err);
   });
 
-  return promise.then(function() {
+  return Promise.all([promise, rootPromise]).then(function() {
     comp.afterPreload();
     return true;
   });
