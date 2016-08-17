@@ -655,7 +655,9 @@ BubbleChart.define('default_model', {
         //which: "sg_child_mortality_rate_per1000", //systema globalis
         which: "life_expectancy_years",
         scaleType: "linear",
-        zoomedMin: 15,
+        zoomedMin: 19,
+        domainMax: 85,
+        domainMin: 0,
         allow: {
           scales: ["linear", "log", "time"]
         }
@@ -665,6 +667,8 @@ BubbleChart.define('default_model', {
         //which: "sg_gdp_p_cap_const_ppp2011_dollar",//systema globalis
         which: "income_per_person_gdppercapita_ppp_inflation_adjusted", 
         scaleType: "log",
+        domainMax: 150000,
+        domainMin: 300,
         allow: {
           scales: ["linear", "log", "time"]
         }
