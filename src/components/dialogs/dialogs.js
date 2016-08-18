@@ -92,13 +92,16 @@ var Dialogs = Component.extend({
   domReady: function() {
     var dialog_popup = (this.model.ui.dialogs||{}).popup || [];
     var dialog_sidebar = (this.model.ui.dialogs||{}).sidebar || [];
+    
+    this.rootEl = this.root.element instanceof Array? this.root.element : d3.select(this.root.element);
+    
     // if dialog_sidebar has been passed in with boolean param or array must check and covert to array
     if (dialog_sidebar === true) {
       dialog_sidebar = dialog_popup;
       (this.model.ui.dialogs||{}).sidebar = dialog_sidebar;
     }
     if (dialog_sidebar.length !== 0) {
-      d3.select(this.root.element).classed("vzb-dialog-expand-true", true);
+      this.rootEl.classed("vzb-dialog-expand-true", true);
     }
     this.dialog_popup = dialog_popup;
     this.dialog_sidebar = dialog_sidebar;
@@ -138,11 +141,11 @@ var Dialogs = Component.extend({
         _this.pinDialog(d.id);
       });
 
-      this.root.element.addEventListener('click', function() {
+      this.rootEl.node().addEventListener('click', function() {
         _this.closeAllDialogs();
       });
 
-      d3.select(this.root.element).on("mousedown", function(e) {
+      this.rootEl.on("mousedown", function(e) {
         if(!this._active_comp) return; //don't do anything if nothing is open
 
         var target = d3.event.target;

@@ -1,12 +1,33 @@
 .vzb-tool-dialogs {
   .vzb-dialogs-dialog {
     &[data-dlg="axes"] {
+      .vzb-dialog-sublabel {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        > span:first-child {
+          display: block;
+          flex: 0 0 auto;
+        } 
+      }
+      .vzb-xaxis-selector,
+      .vzb-yaxis-selector {
+        display: block;
+        flex: 1 1 auto;
+        min-width: 1px;
+      }
+
       &.vzb-popup {
         .vzb-xaxis-minmax,
         .vzb-yaxis-minmax {
           display: none;
         }
   	  }
+      &.vzb-moreoptions {
+        .vzb-dialog-content {
+          padding-right: 10px;
+        }
+      }
 	  }
   }
 }

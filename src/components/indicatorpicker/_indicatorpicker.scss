@@ -1,19 +1,22 @@
 .vzb-ip-holder {
-  display: inline-block;
-  vertical-align: middle;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   .vzb-ip-select {
-    display: inline-block;
+    display: block;
+    flex: 1 1 auto;
+    min-width: 0;
     position: relative;
     margin: 0 5px 0 11px;
     padding: 5px 21px 5px 5px;
     border: 1px solid $vzb-color-primary-darkest;
     border-radius: 4px;
     cursor: pointer;
-    max-width: 170px;
+    //max-width: 170px;
     overflow: hidden;
     text-overflow: ellipsis;
-    vertical-align: middle;
     line-height: 20px;
+    text-align: center;
     &::after {
       content: '';
       position: absolute;
@@ -30,8 +33,8 @@
   }
   .vzb-ip-info {
     @extend %vzb-chart-info;
-    display: inline-block;
-    vertical-align: middle;
+    display: block;
+    flex: 0 0 auto;
     height: 1.1em;
     width: 1.1em;
     .vzb-icon {
@@ -39,5 +42,11 @@
       width: 1.1em;
       height: 1.1em;
     }  
+  }
+}
+
+.vzb-sidebar {
+  .vzb-ip-select {
+    margin-right: 2px;
   }
 }

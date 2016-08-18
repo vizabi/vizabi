@@ -66,10 +66,13 @@ var Marker = Model.extend({
    * Computes the intersection of keys in all hooks: a set of keys that have data in each hook
    * @returns array of keys that have data in all hooks of this._datacube
    */
-    getKeys: function(byDimension) {
+    getKeys: function(KEY) {
         var _this = this;
         var resultKeys = [];
-        byDimension = byDimension || "geo";
+        
+        KEY = KEY || this._getFirstDimension();
+        var TIME = this._getFirstDimension({type: "time"});
+      
         utils.forEach(this._dataCube||this.getSubhooks(true), function(hook, name) {
 
             // If hook use is constant, then we can provide no additional info about keys
@@ -77,7 +80,7 @@ var Marker = Model.extend({
             if(hook.use === "constant") return;
 
             // Get keys in data of this hook
-            var nested = _this.getDataManager().get(hook._dataId, 'nested', [byDimension, "time"]);
+            var nested = _this.getDataManager().get(hook._dataId, 'nested', [KEY, TIME]);
             var noDataPoints = _this.getDataManager().get(hook._dataId, 'haveNoDataPointsPerKey', hook.which);
             
             var keys = Object.keys(nested);
@@ -91,7 +94,7 @@ var Marker = Model.extend({
               return keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1;
             })
         });
-        return resultKeys.map(function(d){var r = {}; r[byDimension] = d; return r; });
+        return resultKeys.map(function(d){var r = {}; r[KEY] = d; return r; });
     },
     
   /**
@@ -202,6 +205,10 @@ var Marker = Model.extend({
 
     getFrames: function(forceFrame) {
       var _this = this;
+      
+      var KEY = this._getFirstDimension();
+      var TIME = this._getFirstDimension({type: "time"});
+      
       if (!this.frameQueues) this.frameQueues = {}; //static queue of frames
       if (!this.partialResult) this.partialResult = {};
         
@@ -235,25 +242,23 @@ var Marker = Model.extend({
               steps.forEach(function(t) {
                 _this.partialResult[cachePath][t][name] = {};
                 keys.forEach(function(key) {
-                  _this.partialResult[cachePath][t][name][key["geo"]] = hook.which;
+                  _this.partialResult[cachePath][t][name][key[KEY]] = hook.which;
                 });
               });
-            } else if(hook.which === "geo") {
+            } else if(hook.which === KEY) {
               //special case: fill data with keys to data itself
-              //TODO: what if it's not "geo"? Treat any dimension alike
               steps.forEach(function(t) {
                 _this.partialResult[cachePath][t][name] = {};
                 keys.forEach(function(key) {
-                  _this.partialResult[cachePath][t][name][key["geo"]] = key["geo"];
+                  _this.partialResult[cachePath][t][name][key[KEY]] = key[KEY];
                 });
               });
-            } else if(hook.which === "time") {
+            } else if(hook.which === TIME) {
               //special case: fill data with time points
-              //TODO: what if it's not "time"? Treat any animatable alike
               steps.forEach(function(t) {
                 _this.partialResult[cachePath][t][name] = {};
                 keys.forEach(function(key) {
-                  _this.partialResult[cachePath][t][name][key["geo"]] = new Date(t);
+                  _this.partialResult[cachePath][t][name][key[KEY]] = new Date(t);
                 });
               });
             } else {
@@ -301,7 +306,7 @@ var Marker = Model.extend({
           var promises = [];
           utils.forEach(_this._dataCube, function(hook, name) {
             //exception: we know that these are knonwn, no need to calculate these
-            if(hook.use !== "constant" && hook.which !== "geo" && hook.which !== "time") {
+            if(hook.use !== "constant" && hook.which !== KEY && hook.which !== TIME) {
               (function(_hook, _name) {
                 promises.push(new Promise(function(res, rej) {
                   _this.getDataManager().getFrame(_hook._dataId, steps, forceFrame).then(function(response) {
@@ -365,7 +370,7 @@ var Marker = Model.extend({
 
         if(hook.use !== "property") next = next || d3.bisectLeft(hook.getUnique(dimTime), time);        
 
-        method = hook.getConceptprops().interpolation;
+        method = hook.getConceptprops ? hook.getConceptprops().interpolation : null;
         filtered = _this.getDataManager().get(hook._dataId, 'nested', f_keys);
         utils.forEach(f_values, function(v) {
           filtered = filtered[v]; //get precise array (leaf)
@@ -397,15 +402,14 @@ var Marker = Model.extend({
           
         if(hook.use !== "property") next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
         
-        method = hook.getConceptprops().interpolation;
-
-
-        utils.forEach(filtered, function(arr, id) {
+        method = hook.getConceptprops ? hook.getConceptprops().interpolation : null;
+                
+        var interpolate = function(arr, result, id) {
           //TODO: this saves when geos have different data length. line can be optimised. 
-          next = d3.bisectLeft(arr.map(function(m){return m.time}), time);
+          next = d3.bisectLeft(arr.map(function(m){return m[dimTime]}), time);
             
           value = utils.interpolatePoint(arr, u, w, next, dimTime, time, method);
-          response[name][id] = hook.mapValue(value);
+          result[id] = hook.mapValue(value);
 
           //concat previous data points
           if(previous) {
@@ -413,11 +417,26 @@ var Marker = Model.extend({
               return d[dimTime] <= time;
             }).map(function(d) {
               return hook.mapValue(d[w]);
-            }).concat(response[name][id]);
-            response[name][id] = values;
+            }).concat(result[id]);
+            result[id] = values;
           }
 
-        });
+        }
+        
+        var iterateGroupKeys = function(data, deep, result, cb) {
+          deep--;
+          utils.forEach(data, function(d, id) {
+            if(deep) {
+              result[id] = {};
+              iterateGroupKeys(d, deep, result[id], cb);
+            } else {
+              cb(d, result, id);
+            }
+          });
+        }
+        
+        iterateGroupKeys(filtered, group_by.length, response[name], interpolate);
+        
       });
     }
 

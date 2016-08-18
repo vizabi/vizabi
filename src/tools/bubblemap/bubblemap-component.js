@@ -6,6 +6,7 @@ import {
 } from 'base/iconset';
 
 import topojson from 'helpers/topojson';
+import cartogram from 'helpers/cartogram';
 import d3_geo_projection from 'helpers/d3.geo.projection';
 import DynamicBackground from 'helpers/d3.dynamicBackground';
 
@@ -132,8 +133,6 @@ var BubbleMapComponent = Component.extend({
 
     var path = this.bgPath = d3.geo.path()
         .projection(projection);
-
-    var graticule = d3.geo.graticule();
 
     var svg = this.mapGraph = d3.select(this.element).select(".vzb-bmc-map-graph")
         .attr("width", defaultWidth)
@@ -361,8 +360,6 @@ var BubbleMapComponent = Component.extend({
       this.cInfoEl.on("mouseout", function() {
         _this.parent.findChildByName("gapminder-datanotes").hide();
       })
-    
-    
   },
 
   // show size number on title when hovered on a bubble
@@ -505,7 +502,9 @@ var BubbleMapComponent = Component.extend({
     //unselecting bubbles with no data is used for the scenario when
     //some bubbles are selected and user would switch indicator.
     //bubbles would disappear but selection would stay
-    this.unselectBubblesWithNoData();
+    if (!this.model.time.splash) {
+      this.unselectBubblesWithNoData();
+    }
 
     // TODO: add to csv
     //Africa 9.1021° N, 18.2812°E
@@ -760,7 +759,7 @@ var BubbleMapComponent = Component.extend({
     var yTitleBB = this.yTitleEl.select("text").node().getBBox();
 
     this.cTitleEl.attr("transform", "translate(" + 0 + "," + (margin.top + yTitleBB.height) + ")")
-        .classed("vzb-hidden", this.model.marker.color.which.indexOf("geo") != -1 || this.model.marker.color.use == "constant");
+        .classed("vzb-hidden", this.model.marker.color.which.indexOf(_this.KEY) != -1 || this.model.marker.color.use == "constant");
 
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl.select("svg")

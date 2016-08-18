@@ -19,8 +19,16 @@ var Hook = Model.extend({
   getTickFormatter: function() {
       
     var _this = this;
+    var SHARE = "share";
+    var PERCENT = "percent";
+    
+    // percentageMode works like rounded if set to SHARE, but multiplies by 100 and suffixes with "%"
+    // percentageMode works like rounded if set to PERCENT, but suffixes with "%"
       
-    return function format(x, index, removePrefix){
+    return function format(x, index, removePrefix, percentageMode){
+      
+    percentageMode = _this.getConceptprops().format;
+    if(percentageMode===SHARE) x*=100;
 
     // Format time values
     // Assumption: a hook has always time in its space
@@ -74,14 +82,16 @@ var Hook = Model.extend({
       case 14: x = x / 1000000000000; prefix = "TR"; break; //100TR
       //use the D3 SI formatting for the extreme cases
       default: return(d3.format("." + prec + "s")(x)).replace("G", "B");
-    }
-
+    }  
+    
     var formatted = d3.format("." + prec + format)(x);
     //remove trailing zeros if dot exists to avoid numbers like 1.0M, 3.0B, 1.500, 0.9700, 0.0
     if (formatted.indexOf(".")>-1) formatted = formatted.replace(/0+$/,"").replace(/\.$/,"");
-
+      
+    
+    
     // use manual formatting for the cases above
-    return(formatted + prefix);
+    return(formatted + prefix + (percentageMode===PERCENT || percentageMode===SHARE?"%":""));
     }
   },
     
@@ -137,6 +147,7 @@ var Hook = Model.extend({
     var result = {};
     var values = [];
     var value = null;
+    var TIME = this._getFirstDimension({type: "time"});
       
     var steps = this._parent._parent.time.getAllSteps();
       
@@ -149,7 +160,7 @@ var Hook = Model.extend({
             }
         });
 
-    }else if(this.which==="time"){
+    }else if(this.which===TIME){
         steps.forEach(function(t){ 
             value = new Date(t);
             result[t] = {
@@ -188,7 +199,70 @@ var Hook = Model.extend({
   getValidItems: function() {
     return this.getDataManager().get(this._dataId, 'valid', this.which);
   },
+
+  getNestedItems: function(groupBy) {
+    return this.getDataManager().get(this._dataId, 'nested', groupBy);
+  },
     
+  getLimitsByDimensions: function(dims) {
+    var filtered = this.getDataManager().get(this._dataId, 'nested', dims);
+    var values = {};
+    var limitsDim = {};
+    var attr = this.which;
+    
+    var countLimits = function(items, limitsDim, id) {
+ 
+      var filtered = items.reduce(function(filtered, d) {
+        
+        // check for dates
+        var f = (utils.isDate(d[attr])) ? d[attr] : parseFloat(d[attr]);
+
+        // if it is a number
+        if(!isNaN(f)) {
+          filtered.push(f);
+        }
+
+        //filter
+        return filtered;
+      }, []);
+      
+      // get min/max for the filtered rows
+      var min;
+      var max;
+      var limits = {};
+      for(var i = 0; i < filtered.length; i += 1) {
+        var c = filtered[i];
+        if(typeof min === 'undefined' || c < min) {
+          min = c;
+        }
+        if(typeof max === 'undefined' || c > max) {
+          max = c;
+        }
+      }
+      limits.min = min || 0;
+      limits.max = max || 100;
+      limitsDim[id] = limits;    
+    
+    }
+    
+    var iterateGroupKeys = function(data, deep, result, cb) {
+      deep--;
+      utils.forEach(data, function(d, id) {
+        if(deep) {
+          result[id] = {};
+          iterateGroupKeys(d, deep, result[id], cb);
+        } else {
+          cb(d, result, id);
+        }
+      });
+    }
+    
+    iterateGroupKeys(filtered, dims.length, limitsDim, countLimits);
+    
+    return limitsDim;
+  },
+  
+  
     
   /**
    * Gets the concept properties of the hook's "which"

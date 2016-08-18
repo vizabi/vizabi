@@ -1,3 +1,43 @@
+.vzb-tool-dialogs {
+  .vzb-dialogs-dialog {
+    &[data-dlg="size"] {
+      &.vzb-popup {
+        .vzb-dialog-modal {        
+          .vzb-dialog-title {
+            padding-right: 5px;
+          }
+        }
+      }
+
+      &.vzb-popup,
+      &.vzb-sidebar {
+        .vzb-dialog-title {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          > span:first-child {
+            display: block;
+            flex: 0 0 auto;
+          } 
+        }
+
+        .vzb-saxis-selector {
+          display: block;
+          flex: 1 1 auto;
+          min-width: 1px;
+        }
+      }
+
+      //hiding elements when in sidebar mode
+      &.vzb-sidebar {
+        .vzb-dialog-bubblesize {
+          display: none;
+        }
+  	  }
+    }
+  }
+}
+
 //responsiveness
 &.vzb-large {
   &.vzb-dialog-expand-true {
@@ -5,30 +45,8 @@
       &[data-dlg="size"] {
         &.vzb-sidebar {
           flex: none;
-          
-          .vzb-dialog-title {
-            display: inline-block;
-          }
-          
-          .vzb-saxis-selector {
-            display: inline-block;
-          }
         }
       }
     }
   }
 }
-
-//hiding elements when in popup mode
-.vzb-tool-dialogs {
-  .vzb-dialogs-dialog {
-    &[data-dlg="size"] {
-      &.vzb-sidebar {
-        .vzb-dialog-bubblesize {
-          display: none;
-        }
-  	  }
-	  }
-  }
-}
-

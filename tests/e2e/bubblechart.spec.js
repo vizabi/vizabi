@@ -1,17 +1,19 @@
 describe('Web - Vizabi e2e test :: Bubble Chart', function() {
-
+    
+  var testData = require('../../pageObjects.json');
   jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000000;
   browser.manage().window().setSize(1100, 600);
 
   var baseUrl = 'http://localhost:9000/preview/';
   var baseChartUrl = baseUrl + "bubblechart.html#_width:750&height:650&fullscreen:true&resp-sect:true&info-sect:true&butt-sect:true";
   var EC = protractor.ExpectedConditions;
+  testData.forEach( function (data) {
 
   // Base Selectors
 
-  var buttonPlay = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-btns > button.vzb-ts-btn-play.vzb-ts-btn > svg"));
-  var countries = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles"));
-  var buttonList = element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist"));
+  var buttonPlay = element(by.css(data.All_Global_Loctors.buttonPlay_Locator_CSS));
+  var countries = element(by.css(data.bubble_Chart_Loctors.countriesBubblechart_Locator_CSS));
+  var buttonList = element(by.css(data.All_Global_Loctors.buttonList_Locator_CSS));
 
   it('Loading Bubble Chart Page', function() {
 
@@ -28,13 +30,13 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     });
 
     // Check that country is displaying on Chart
-
+      
     countries.all(by.tagName('circle')).then(function(items) {
       expect(items.length).not.toBe(0);
     });
 
     // Check that navigate buttons are available
-
+      
     var buttonListAll = buttonList.all(by.tagName('button'));
     var buttonListVisible = buttonList.all(by.tagName('button')).filter(function(element){
       return element.isDisplayed().then(function(visibility) {
@@ -52,11 +54,13 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
   });
 
-  /***************************** BUBBLE CHART *************************************/
+//  **************************** BUBBLE CHART ************************************
 
-  var play = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-btns > button.vzb-ts-btn-play.vzb-ts-btn"));
-  var pause = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-btns > button.vzb-ts-btn-pause.vzb-ts-btn"));
-  var slider = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-slider-wrapper > svg.vzb-ts-slider > g > g.vzb-ts-slider-slide > circle"));
+  var play = element(by.css(data.All_Global_Loctors.play_Locator_CSS));
+  var pause = element(by.css(data.All_Global_Loctors.pause_Locator_CSS));
+  var slider = element(by.css(data.All_Global_Loctors.slider_Locator_CSS));
+  var USABubble = element(by.css(data.bubble_Chart_Loctors.USA_Bubble_Locator_CSS));
+  var chinaBubble = element(by.css(data.bubble_Chart_Loctors.China_Bubble_Locator_CSS));
 
   // If I select China and the United States bubbles and drag the timeslider,
   // we see the trails being left for those two countries.
@@ -68,14 +72,12 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking USA bubble
-    var USABubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
     browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
       browser.actions().mouseMove(USABubble).mouseMove({x:0, y:-15}).click().perform();
     });
 
 
     //Clicking China bubble
-    var chinaBubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-chn"));
     browser.wait(EC.visibilityOf(chinaBubble), 5000).then(function(){
       browser.actions().mouseMove(chinaBubble).mouseMove({x:0, y:-30}).click().perform();
     });
@@ -112,13 +114,12 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
   it('Play', function() {
 
-    //browser.removeMockModule('modName');
     browser.get(baseChartUrl);
     browser.refresh();
     browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Getting year's 1st digit
-    var firstDigit = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-bc-year > text:nth-child(1)"));
+    var firstDigit = browser.element(by.css(data.bubble_Chart_Loctors.firstDigitOfYear_Locator_CSS));
     browser.wait(EC.visibilityOf(firstDigit), 5000);
     firstDigit.getText().then(function (firstDigitIntro) {
       var firstDigitText = firstDigitIntro;
@@ -128,7 +129,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
       expect(firstDigitText).toBe(val1);
 
       // Getting year's 2nd digit
-      var secondDigit = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-bc-year > text:nth-child(2)"));
+      var secondDigit = browser.element(by.css(data.bubble_Chart_Loctors.secondDigitOfYear_Locator_CSS));
       browser.wait(EC.visibilityOf(secondDigit), 5000);
       secondDigit.getText().then(function (secondDigitIntro) {
         var secondDigitText = secondDigitIntro;
@@ -138,7 +139,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
         expect(secondDigitText).toBe(val2);
 
         // Getting year's 3rd digit
-        var thirdDigit = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-bc-year > text:nth-child(3)"));
+        var thirdDigit = browser.element(by.css(data.bubble_Chart_Loctors.thirdDigitOfYear_Locator_CSS));
         browser.wait(EC.visibilityOf(thirdDigit), 5000);
         thirdDigit.getText().then(function (thirdDigitIntro) {
           var thirdDigitText = thirdDigitIntro;
@@ -148,7 +149,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
           expect(thirdDigitText).toBe(val3);
 
           // Getting year's 4th digit
-          var fourthDigit = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-bc-year > text:nth-child(4)"));
+          var fourthDigit = browser.element(by.css(data.bubble_Chart_Loctors.fourthDigitOfYear_Locator_CSS));
           browser.wait(EC.visibilityOf(fourthDigit), 5000);
           fourthDigit.getText().then(function (fourthDigitIntro) {
             var fourthDigitText = fourthDigitIntro;
@@ -161,7 +162,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
             slider.getLocation().then(function (beforePlaySliderLocation) {
               var beforePlaySliderDivLocation = beforePlaySliderLocation.x;
               play.click();
-              browser.sleep(80000);
+              browser.sleep(180000);
 
               //Getting slider position after play
               slider.getLocation().then(function (afterPlaySliderLocation) {
@@ -186,11 +187,10 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Hovering USA bubble
-    var USABubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
     browser.actions().mouseMove(USABubble).mouseMove({x:0,y:-15}).perform();
 
     // Getting attributes of X axis
-    var axis = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-axis-x > g"));
+    var axis = browser.element(by.css(data.bubble_Chart_Loctors.axis_Locator_CSS));
     browser.wait(EC.visibilityOf(axis), 5000);
     axis.getText().then(function (axisAsParameter) {
       var axisText = axisAsParameter;
@@ -211,13 +211,11 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Hovering USA bubble
-    var USABubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
-
     browser.actions().mouseMove(USABubble).mouseMove({x:0, y:-15}).perform();
     browser.sleep(2000);
 
     // Getting attributes of tooltip
-    var tooltip = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-bc-tooltip"));
+    var tooltip = browser.element(by.css(data.bubble_Chart_Loctors.tooltip_Locator_CSS));
     browser.wait(EC.visibilityOf(tooltip), 5000);
     tooltip.getText().then(function (tooltipAsParameter) {
       var tooltipText = tooltipAsParameter;
@@ -236,13 +234,13 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking Data Warning link
-    var warning =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-data-warning > text"));
+    var warning =element(by.css(data.bubble_Chart_Loctors.warning_Locator_CSS));
     browser.wait(EC.visibilityOf(warning), 5000).then(function(){
       warning.click();
     });
 
     //Getting text heading from data warning pop up
-    var warningTextElememnt =element(by.css("#vzbp-placeholder > div > div.vzb-tool-datawarning > div.vzb-data-warning-box > div.vzb-data-warning-link > div"));
+    var warningTextElememnt =element(by.css(data.bubble_Chart_Loctors.warningTextElememnt_Locator_CSS));
     browser.wait(EC.visibilityOf(warningTextElememnt), 5000);
     warningTextElememnt.getText().then(function (warningTextAsParameter) {
       var warningText = warningTextAsParameter;
@@ -262,13 +260,12 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking USA bubble
-    var USABubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
     browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
       browser.actions().mouseMove(USABubble).mouseMove({x: 0, y: -10}).click().perform();
     });
 
     //Getting location before dragging label
-    var USALabel = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-labels-crop > g > g > rect.vzb-label-fill.vzb-tooltip-border"));
+    var USALabel = element(by.css(data.bubble_Chart_Loctors.USALabel_Locator_CSS));
     USALabel.getLocation().then(function(initialLocation){
       var initialLocationText = initialLocation.x;
       browser.sleep(2000);
@@ -300,18 +297,18 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     //Clicking find
-    var find =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));
+    var find =element(by.css(data.bubble_Chart_Loctors.find_Locator_CSS));
     browser.wait(EC.visibilityOf(find), 5000).then(function(){
       find.click();
     });
     // Place Text in Search
-    var search =element(by.css("#vzb-find-search"));
+    var search =element(by.css(data.bubble_Chart_Loctors.search_Locator_CSS));
     browser.wait(EC.visibilityOf(search), 5000).then(function(){
       search.sendKeys("china");
     });
 
     // Check China Text Box
-    var chinaBubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(37) > label"));
+    var chinaBubble =element(by.css(data.bubble_Chart_Loctors.chinaBubble_Checkbox_Locator_CSS));
     browser.wait(EC.visibilityOf(chinaBubble), 5000).then(function(){
       chinaBubble.click();
     });
@@ -324,7 +321,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     });
 
     // Check United States Text Box
-    var USABubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(184) > label"));
+    var USABubble =element(by.css(data.bubble_Chart_Loctors.USABubble_Checkbox_Locator_CSS));
     browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
       USABubble.click();
     });
@@ -332,18 +329,18 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     search.clear();
 
     //Clicking OK
-    var ok =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-active.notransition.vzb-popup > div > div.vzb-dialog-buttons > div.vzb-dialog-button.vzb-label-primary > span"));
+    var ok =element(by.css(data.bubble_Chart_Loctors.okOfFindPopup_Locator_CSS));
     browser.wait(EC.visibilityOf(ok), 5000).then(function(){
       ok.click();
     });
 
     // Getting USA opacity value
-    var USA =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
+    var USA =element(by.css(data.bubble_Chart_Loctors.USA_Bubble_Locator_CSS));
     USA.getCssValue('opacity').then(function(USAOpacityAsParameter){
       var USAOpacity = USAOpacityAsParameter;
 
       // Getting Nigeria Opacity value
-      var nga =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-nga"));
+      var nga =element(by.css(data.bubble_Chart_Loctors.Nigeria_Bubble_Locator_CSS));
       nga.getCssValue('opacity').then(function(NGAOpacityAsParameter){
         var NGAOpacity = NGAOpacityAsParameter;
 
@@ -391,12 +388,12 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
   it('Lock',function(){
 
-    browser.get(baseChartUrl);
+     browser.get(baseChartUrl);
     browser.refresh();
     browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Selecting Country by giving country name in Find
-    var find =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa"));
+    var find =element(by.css(data.bubble_Chart_Loctors.find_Locator_CSS));
     browser.wait(EC.visibilityOf(find), 5000).then(function(){
       find.click();
     });
@@ -408,7 +405,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     });
 
     // Clicking Check box of USA
-    var checkBox =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(184) > label"));
+    var checkBox =element(by.css(data.bubble_Chart_Loctors.USABubble_Checkbox_Locator_CSS));
     browser.wait(EC.visibilityOf(checkBox), 5000).then(function(){
       checkBox.click();
     });
@@ -417,27 +414,23 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     search.clear();
 
     // Click OK
-    var OK =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-buttons > div.vzb-dialog-button.vzb-label-primary"));
+    var OK =element(by.css(data.bubble_Chart_Loctors.okOfFindPopup_Locator_CSS));
     browser.wait(EC.visibilityOf(OK), 5000).then(function(){
       OK.click();
     });
 
-    //Removing hovering effect
-    var USBubble =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
-    browser.actions().mouseMove(USBubble,{x:15, y:15}).perform();
-
     // Click Lock
-    var lock =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(5) > span.vzb-buttonlist-btn-icon.fa"));
+    var lock =element(by.css(data.bubble_Chart_Loctors.lock_Locator_CSS));
     browser.wait(EC.visibilityOf(lock), 5000).then(function(){
       lock.click();
     });
 
     // Get co-ordinates of Slider ball
-    var circle =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-slider-wrapper > svg > g > g.vzb-ts-slider-slide > circle"));
+    var circle =element(by.css(data.bubble_Chart_Loctors.circle_Locator_CSS));
     circle.getLocation();
 
     // Getting USA size before play
-    var USA =element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
+    var USA =element(by.css(data.bubble_Chart_Loctors.USA_Bubble_Locator_CSS));
     USA.getAttribute('r').then(function(radius){
       var rad=radius;
 
@@ -446,7 +439,6 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
       browser.sleep(5000);
 
       //Clicking pause
-      var pause =element(by.css("button.vzb-ts-btn-pause.vzb-ts-btn"));
       pause.click();
 
       // Getting USA size after play
@@ -468,14 +460,14 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Selecting size icon
-    var sizeIcon =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(3) > span.vzb-buttonlist-btn-icon.fa"));
+    var sizeIcon =element(by.css(data.bubble_Chart_Loctors.sizeIcon_Locator_CSS));
     browser.wait(EC.visibilityOf(sizeIcon), 5000).then(function(){
       sizeIcon.click();
       browser.sleep(1000);
     });
 
     //Getting location of the panel before dargging
-    var hand =element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-active.notransition.vzb-popup > div > span.thumb-tack-class.thumb-tack-class-ico-drag.fa > svg"));
+    var hand =element(by.css(data.bubble_Chart_Loctors.hand_Locator_CSS));
     hand.getLocation().then(function (beforeDrag) {
       var bforDrag = beforeDrag;
       browser.sleep(2000);
@@ -505,47 +497,47 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Getting USA rgb value before changes
-    var USA = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
-    browser.wait(EC.visibilityOf(play), 5000);
-    USA.getCssValue('fill').then(function (bforchang) {
+    browser.wait(EC.visibilityOf(USABubble), 5000);
+    USABubble.getCssValue('fill').then(function (bforchang) {
       var beforeChange = bforchang;
 
       // Clicking color icon
-      var colorIcon = element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(1) > span.vzb-buttonlist-btn-icon.fa"));
+      var colorIcon = element(by.css(data.bubble_Chart_Loctors.colorIcon_Locator_CSS));
       browser.wait(EC.visibilityOf(colorIcon), 5000).then(function(){
         colorIcon.click();
       });
 
       // Clicking dropDown
-      var dropDown = element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-title > span.vzb-caxis-selector"));
+      var dropDown = element(by.css(data.bubble_Chart_Loctors.dropDownOfColor_Locator_CSS));
       browser.wait(EC.visibilityOf(dropDown), 5000).then(function(){
         dropDown.click();
       });
 
       // Clicking search bar
-      var search = element(by.css("#vzb-treemenu-search"));
+      var search = element(by.css(data.bubble_Chart_Loctors.searchOfColors_Locator_CSS));
       browser.wait(EC.visibilityOf(search), 5000).then(function(){
         search.click();
       });
       // Giving GDP in search bar
-      search.sendKeys("GDP/capita");
+      search.sendKeys("child mortality rate");
+      browser.sleep(3000);
 
       // Clicking GDP button
-      var gdpButton = element(by.css("#vzbp-placeholder > div > div.vzb-tool-treemenu > div.vzb-treemenu-wrap-outer.notransition.vzb-treemenu-abs-pos-vert.vzb-align-y-top.vzb-treemenu-abs-pos-horiz.vzb-align-x-left.vzb-treemenu-open-left-side > div > ul > li:nth-child(3) > span"));
-      browser.wait(EC.visibilityOf(gdpButton), 5000).then(function(){
-        gdpButton.click();
-        browser.sleep(3000);
+      var childMortality = element(by.css(data.bubble_Chart_Loctors.childMotalityRate_Locator_CSS));
+      browser.wait(EC.visibilityOf(childMortality), 5000).then(function(){
+        childMortality.click();
+        browser.sleep(10000);
       });
 
       //Clicking OK for Color popup button
-      var OKcolorButton = element(by.css("#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-buttons > div"));
+      var OKcolorButton = element(by.css(data.bubble_Chart_Loctors.OKcolorButton_Locator_CSS));
       browser.wait(EC.visibilityOf(OKcolorButton), 5000).then(function(){
         OKcolorButton.click();
         browser.sleep(3000);
       });
 
       // Getting USA rgb value after changes
-      USA.getCssValue('fill').then(function (afterChangParameter) {
+      USABubble.getCssValue('fill').then(function (afterChangParameter) {
         var afterChange = afterChangParameter;
 
         //Comparing color values
@@ -564,18 +556,16 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Clicking the bubble of USA
-    var USABubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
     browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
       browser.actions().mouseMove(USABubble).mouseMove({x:0,y:-5}).click().perform();
     });
     browser.sleep(3000);
 
     // Getting USA opacity value
-    var USA = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
-    USA.getCssValue('opacity').then(function(USAOpacityAsParameter){
+    USABubble.getCssValue('opacity').then(function(USAOpacityAsParameter){
       var USAOpacity=USAOpacityAsParameter;
       // Getting Nigeria Opacity value
-      var nga = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-nga"));
+      var nga = element(by.css(data.bubble_Chart_Loctors.Nigeria_Bubble_Locator_CSS));
       nga.getCssValue('opacity').then(function(NGAOpacityAsParameter){
         var NGAOpacity=NGAOpacityAsParameter;
         //Comparing opacities
@@ -593,7 +583,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Getting year's 1st digit
-    var firstDigit = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-bc-year > text:nth-child(1)"));
+    var firstDigit = browser.element(by.css(data.bubble_Chart_Loctors.firstDigitOfYear_Locator_CSS));
     browser.wait(EC.visibilityOf(firstDigit), 5000);
     firstDigit.getText().then(function (firstDigitAsParameter) {
       var firstDigitText = firstDigitAsParameter;
@@ -602,7 +592,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
       expect(firstDigitText).toBe(firstDigitOfYear);
 
       // Getting year's 2nd digit
-      var secondDigit = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-bc-year > text:nth-child(2)"));
+      var secondDigit = browser.element(by.css(data.bubble_Chart_Loctors.secondDigitOfYear_Locator_CSS));
       browser.wait(EC.visibilityOf(secondDigit), 5000);
       secondDigit.getText().then(function (secondDigitAsParameter) {
         var secondDigitText = secondDigitAsParameter;
@@ -611,7 +601,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
         expect(secondDigitText).toBe(secondDigitOfYear);
 
         // Getting year's 3rd digit
-        var thirdDigit = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-bc-year > text:nth-child(3)"));
+        var thirdDigit = browser.element(by.css(data.bubble_Chart_Loctors.thirdDigitOfYear_Locator_CSS));
         browser.wait(EC.visibilityOf(thirdDigit), 5000);
         thirdDigit.getText().then(function (thirdDigitAsParameter) {
           var thirdDigitText = thirdDigitAsParameter;
@@ -619,7 +609,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
           var thirdDigitOfYear= "1";
           expect(thirdDigitText).toBe(thirdDigitOfYear);
           // Getting year's 4th digit
-          var fourthDigit = browser.element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-bc-year > text:nth-child(4)"));
+          var fourthDigit = browser.element(by.css(data.bubble_Chart_Loctors.fourthDigitOfYear_Locator_CSS));
           browser.wait(EC.visibilityOf(fourthDigit), 5000);
           fourthDigit.getText().then(function (fourthDigitAsParameter) {
             var fourthDigitText = fourthDigitAsParameter;
@@ -642,7 +632,6 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     browser.wait(EC.visibilityOf(play), 120000 , "Chart is not Loaded");
 
     // Hovering the US bubble
-    var USABubble = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa"));
     browser.actions().mouseMove(USABubble).mouseMove({x:0,y:-10}).click().perform();
 
     // Unselect country by clicking bubble
@@ -652,18 +641,20 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
     browser.actions().mouseMove(USABubble).mouseMove({x:0,y:-10}).click().perform();
 
     // Unselect country by click
-    var cross = element(by.css("#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-labels-crop > g.vzb-bc-labels > g > g"));
+    var cross = element(by.css(data.bubble_Chart_Loctors.cross_Locator_CSS));
     browser.wait(EC.visibilityOf(play), 5000);
     cross.click();
 
     // Getting USA opacity value
     USABubble.getCssValue('opacity').then(function(USAOpacityAsParameter){
       var USAOpacity=USAOpacityAsParameter;
+        
       //Value for comparing with opacity
       var findMe = 1 ;
+        
       //Comparing opacities
       expect(USAOpacity).not.toEqual(findMe);
     });
-  });
-
+  });        
+ });
 });

@@ -59,10 +59,8 @@ var BubbleSize = Component.extend({
       'change:size.extent': changeMinMaxHandler,
       'ready': readyHandler
     };
-
     function changeMinMaxHandler(evt, path) {
       var size = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
-      _this._updateArcs(size);
       _this._updateLabels(size);
       _this.sliderEl.call(_this.brush.extent(size));
       if(size[0] == size[1]){
@@ -88,6 +86,8 @@ var BubbleSize = Component.extend({
   readyOnce: function () {
     var _this = this;
     var values = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
+    this.showArcs = _this.model.size.showArcs !== false;
+
     this.element = d3.select(this.element);
     this.sliderSvg = this.element.select(".vzb-bs-svg");
     this.sliderWrap = this.sliderSvg.select(".vzb-bs-slider-wrap");
@@ -154,8 +154,10 @@ var BubbleSize = Component.extend({
       //For return to round thumbs
       //.attr("d", thumbArc)
 
-    this.sliderThumbs.append("path")
-      .attr("class", "vzb-bs-slider-thumb-arc")
+    if (_this.showArcs) {
+      this.sliderThumbs.append("path")
+        .attr("class", "vzb-bs-slider-thumb-arc")
+    }
     this.sliderEl.selectAll("text").data([0,0]).enter()
       .append("text")
       .attr("class", "vzb-bs-slider-thumb-label")
@@ -213,21 +215,22 @@ var BubbleSize = Component.extend({
    * Executed whenever the container is resized
    */
   _updateSize: function() {
+    var maxBubbleRadius = this.showArcs ? this.getMinMaxBubbleRadius().max : OPTIONS.TEXT_PARAMS.TOP * 2;
     this.sliderSvg
-      .attr("height", this.getMinMaxBubbleRadius().max + this.padding.top + this.padding.bottom)
+      .attr("height", maxBubbleRadius + this.padding.top + this.padding.bottom)
       .attr("width", this.getMinMaxBubbleRadius().max * 2 + this.padding.left + this.padding.right)
     this.sliderWrap
-      .attr("transform", "translate(" + this.padding.left + "," + (this.getMinMaxBubbleRadius().max + this.padding.top) + ")")
+      .attr("transform", "translate(" + this.padding.left + "," + (maxBubbleRadius + this.padding.top) + ")")
   },
 
   _updateArcs: function(s) {
+    if (!this.showArcs) return;
     var _this = this;
     var valueArc = d3.svg.arc()
       .outerRadius(function (d) { return _this.xScale(d) * 0.5 })
       .innerRadius(function (d) { return _this.xScale(d) * 0.5 })
       .startAngle(-Math.PI * 0.5)
       .endAngle(Math.PI * 0.5);
-
     this.sliderThumbs.select('.vzb-bs-slider-thumb-arc').data(s)
       .attr("d", valueArc)
       .attr("transform", function (d) {return "translate(" + (-_this.xScale(d) * 0.5) + ",0)"; })
@@ -238,7 +241,7 @@ var BubbleSize = Component.extend({
     var arcLabelTransform = function(d, i) {
       var textMargin = { v: OPTIONS.TEXT_PARAMS.TOP, h: OPTIONS.TEXT_PARAMS.LEFT },
           dX = textMargin.h * (i ? .5 : -1.0) + _this.xScale(d),
-          dY = i ? -textMargin.v : 0;
+          dY = 0;
        return "translate(" + (dX) + "," + (dY) + ")";
     }
     this.sliderLabelsEl.data(s)

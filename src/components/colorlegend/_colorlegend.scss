@@ -3,7 +3,6 @@
 .vzb-cl-outer {
 
   .vzb-cl-holder {
-    height: 100%;
     width: 100%;
     overflow: hidden;
     position: relative;
@@ -45,10 +44,31 @@
     }
   }
 
+  .vzb-cl-labelscale {
+    top: 5px;
+    padding-top: 20px;
+    padding-bottom: 10px;
+    height: 50px;
+    svg {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 25px;
+      height: 20px;
+    }
+    .vzb-cl-unit {
+      top: 30px;
+      position: relative;
+      padding-bottom: 5px;
+    }
+  }
+
   .vzb-cl-rainbow {
-    width: 20px;
+    height: 20px;
     position: absolute;
-    left: 15px;
+    left: 0;
+    right: 0;
+    top: 5px;
   }
   .vzb-cl-minimap {
     height: 145px;

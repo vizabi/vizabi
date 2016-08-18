@@ -110,10 +110,9 @@ var label = function(context) {
         .on("mouseover", function(d) {
           if(utils.isTouchDevice()) return;
           _this.model.entities.highlightEntity(d, null, null, true);
-          _this.entityLabels.sort(function (a, b) { // select the labels and sort the path's
-            if (a.geo != d.geo) return -1;          // a is not the hovered element, send "a" to the back
-            else return 1;
-          });
+          var KEY = _this.KEY || _this.model.entities.getDimension();
+          // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
+          _this.entityLabels.sort(function (a, b) { return a[KEY] != d[KEY]? -1 : 1; });
           d3.select(this).selectAll("." + _cssPrefix + "-label-x")
             .classed("vzb-transparent", false);
         })
@@ -363,6 +362,7 @@ var Labels = Component.extend({
         //console.log("EVENT change:marker:size:max");
         if(!_this._readyOnce) return;
         _this.updateLabelSizeLimits();
+        if(_this._toolContext.model.time.splash) return;
         _this.updateLabelsOnlyTextSize();
       }
     if(context.model.ui.chart.labels.hasOwnProperty('removeLabelBox'))
@@ -393,6 +393,8 @@ var Labels = Component.extend({
   },
 
   readyOnce: function() {
+    if(this._readyRace) return;
+
     var _this = this;
     
     this.KEY = this.model.entities.getDimension();
@@ -402,8 +404,10 @@ var Labels = Component.extend({
     this._toolContext = OPTIONS.TOOL_CONTEXT;
     this._cssPrefix = OPTIONS.CSS_PREFIX;
     this.label.setCssPrefix(OPTIONS.CSS_PREFIX);
-    this.labelsContainer = d3.select(this.root.element).select("." + OPTIONS.LABELS_CONTAINER_CLASS);
-    this.linesContainer = d3.select(this.root.element).select("." + OPTIONS.LINES_CONTAINER_CLASS);
+    
+    this.rootEl = this.root.element instanceof Array? this.root.element : d3.select(this.root.element);
+    this.labelsContainer = this.rootEl.select("." + OPTIONS.LABELS_CONTAINER_CLASS);
+    this.linesContainer = this.rootEl.select("." + OPTIONS.LINES_CONTAINER_CLASS);
     this.updateIndicators();
     this.updateSize();
     this.selectDataPoints();
@@ -452,7 +456,6 @@ var Labels = Component.extend({
   },
   
   setScales: function(xScale, yScale) {
-    if(!this._readyOnce) return;
     this._xScale = xScale;
     this._yScale = yScale;
   },
@@ -494,14 +497,14 @@ var Labels = Component.extend({
       .remove();
     this.entityLines
       .enter().append('g')
-      .attr("class", _cssPrefix + "-entity")
+      .attr("class", function(d, index){return _cssPrefix + "-entity line-" + d[KEY]})
       .each(function(d, index) {
         _this.label.line(d3.select(this));
       });
 
     this.entityLabels
       .enter().append("g")
-      .attr("class", _cssPrefix + "-entity")
+      .attr("class", function(d, index){return _cssPrefix + "-entity label-" + d[KEY]})
       .each(function(d, index) {
         _this.cached[d[KEY]] = {};      
         _this.label(d3.select(this));
@@ -529,6 +532,11 @@ var Labels = Component.extend({
   },
   
   updateLabel: function(d, index, cache, valueX, valueY, valueS, valueC, valueL, valueLST, duration, showhide) {
+    if(!this._readyOnce) {
+      this.readyOnce(); //run readyOnce if tool component is ready but labels component is not ready
+      this._readyRace = true;
+    }
+  
     var _this = this;
     var KEY = this.KEY;
     if(d[KEY] == _this.druging)
@@ -546,7 +554,7 @@ var Labels = Component.extend({
 
 
       if(cached.scaledS0 == null || cached.labelX0 == null || cached.labelY0 == null) { //initialize label once
-        if(valueS) cached.scaledS0 = utils.areaToRadius(this._toolContext.sScale(valueS));
+        if(valueS || valueS === 0) cached.scaledS0 = utils.areaToRadius(this._toolContext.sScale(valueS));
         cached.labelX0 = valueX;
         cached.labelY0 = valueY;
         cached.valueLST = valueLST;

@@ -644,7 +644,7 @@ var BubbleChartComp = Component.extend({
     }
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
-      .data(this.model.entities.getVisible(), function(d) {return d && !d['trailStartTime'] ? d[KEY] : null}); // trails have not keys
+      .data(this.model.entities.getVisible(), function(d) {return d && !d['selectedEntityData'] ? d[KEY] : null}); // trails have not keys
 
     //exit selection
     this.entityBubbles.exit().remove();
@@ -1246,7 +1246,7 @@ var BubbleChartComp = Component.extend({
         cache.labelX0 = valueX;
         cache.labelY0 = valueY;
         cache.scaledC0 = valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH,
-        cache.scaledS0 = valueS ? utils.areaToRadius(_this.sScale(valueS)) : null;
+        cache.scaledS0 = (valueS || valueS===0) ? utils.areaToRadius(_this.sScale(valueS)) : null;
       }
 
       var trailStartTime = _this.model.time.timeFormat.parse("" + select.trailStartTime);
@@ -1533,7 +1533,7 @@ var BubbleChartComp = Component.extend({
     //if(!duration)duration = 0;
 
     var OPACITY_HIGHLT = 1.0;
-    var OPACITY_HIGHLT_DIM = .3;
+    var OPACITY_HIGHLT_DIM = this.model.entities.opacityHighlightDim;
     var OPACITY_SELECT = this.model.entities.opacityRegular;
     var OPACITY_REGULAR = this.model.entities.opacityRegular;
     var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;

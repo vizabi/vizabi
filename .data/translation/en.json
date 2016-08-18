@@ -26,6 +26,7 @@
     "buttons/speed": "Speed",
     "buttons/label": "Labels",
     "buttons/zoom": "Zoom",
+    "buttons/inpercent": "Percent",
     "dialogs/find": "Select",
     "dialogs/presentation": "Presentation",
     "hints/bubbl/setminsize": "Minimum bubble size:",

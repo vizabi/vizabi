@@ -90,6 +90,14 @@ var ButtonList = Component.extend({
         statebind: "ui.chart.lockNonSelected",
         statebindfunc: this.setBubbleLock.bind(this)
       },
+      'inpercent': {
+        title: "buttons/inpercent",
+        icon: "percent",
+        func: this.toggleInpercent.bind(this),
+        required: false,
+        statebind: "ui.chart.inpercent",
+        statebindfunc: this.setInpercent.bind(this)
+      },
       'presentation': {
         title: "buttons/presentation",
         icon: "presentation",
@@ -141,6 +149,11 @@ var ButtonList = Component.extend({
         //   _this.scrollToEnd();
         // }
         // _this.entitiesSelected_1 = _this.model.state.entities.select.length > 0;
+      },
+      "change:ui.chart": function(evt, path) {
+        if(path.indexOf("lockActive") > -1) {
+          _this.setBubbleLock();
+        }
       }
     }      
         
@@ -200,6 +213,7 @@ var ButtonList = Component.extend({
 
     this.setBubbleTrails();
     this.setBubbleLock();
+    this.setInpercent();
     this.setPresentationMode();
 
     this._toggleButtons();
@@ -459,7 +473,9 @@ var ButtonList = Component.extend({
     btn.classed(class_hidden, this.model.state.entities.select.length == 0);
   },
   toggleBubbleLock: function(id) {
-    if(this.model.state.entities.select.length == 0) return;
+    var active = (this.model.ui.chart||{}).lockActive;
+
+    if(this.model.state.entities.select.length == 0 && !active) return;
 
     var locked = this.model.ui.chart.lockNonSelected;
     var time = this.model.state.time;
@@ -470,9 +486,10 @@ var ButtonList = Component.extend({
   },
   setBubbleLock: function() {
     var locked = (this.model.ui.chart||{}).lockNonSelected;
+    var active = (this.model.ui.chart||{}).lockActive;
     if(!locked && locked !== 0) return;
 
-    if(locked !== 0 && this.model.state.entities.select.length === 0) {
+    if(locked !== 0 && this.model.state.entities.select.length === 0 && !active) {
        locked = this.model.ui.chart.lockNonSelected = 0;
     }
 
@@ -482,8 +499,12 @@ var ButtonList = Component.extend({
       
     var translator = this.model.language.getTFunction();
 
-    btn.classed(class_unavailable, this.model.state.entities.select.length == 0);
-    btn.classed(class_hidden, this.model.state.entities.select.length == 0);
+    btn.classed(class_unavailable, this.model.state.entities.select.length == 0 && !active);
+    if (typeof active == "undefined") {
+      btn.classed(class_hidden, this.model.state.entities.select.length == 0);
+    } else {
+      btn.classed(class_hidden, !active);
+    }
 
     btn.classed(class_active_locked, locked)
     btn.select(".vzb-buttonlist-btn-title")
@@ -491,6 +512,18 @@ var ButtonList = Component.extend({
 
     btn.select(".vzb-buttonlist-btn-icon")
       .html(iconset[locked ? "lock" : "unlock"]);
+  },
+  toggleInpercent: function() {
+    this.model.ui.chart.inpercent = !this.model.ui.chart.inpercent;
+    this.setInpercent();
+  },
+  setInpercent: function() {
+    if (typeof((this.model.ui.chart||{}).inpercent) == "undefined") return;
+    var id = 'inpercent';
+    var translator = this.model.language.getTFunction();
+    var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
+
+    btn.classed(class_active_locked, this.model.ui.chart.inpercent);
   },
   togglePresentationMode: function() {
     this.model.ui.presentation = !this.model.ui.presentation;

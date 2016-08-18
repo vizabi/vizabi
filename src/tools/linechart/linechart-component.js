@@ -295,13 +295,102 @@ var LCComponent = Component.extend({
     filter[timeDim] = this.time;
 
     this.data = this.model.marker.getKeys();
-    this.prev_steps = this.all_steps.filter(function(f){return f <= _this.time;});
+    this.prev_steps = this.all_steps.filter(function(f){return f < _this.time;});
 
     this.entityLines = this.linesContainer.selectAll('.vzb-lc-entity').data(this.data);
     this.entityLabels = this.labelsContainer.selectAll('.vzb-lc-entity').data(this.data);
 
     this.timeUpdatedOnce = true;
 
+  },
+
+
+
+  profiles: {
+    "small": {
+      margin: {
+        top: 30,
+        right: 20,
+        left: 55,
+        bottom: 30
+      },
+      infoElHeight: 16,
+      yAxisTitleBottomMargin: 6,
+      tick_spacing: 60,
+      text_padding: 8,
+      lollipopRadius: 6,
+      limitMaxTickNumberX: 5
+    },
+    "medium": {
+      margin: {
+        top: 40,
+        right: 60,
+        left: 65,
+        bottom: 40
+      },
+      infoElHeight: 20,
+      yAxisTitleBottomMargin: 6,
+      tick_spacing: 80,
+      text_padding: 12,
+      lollipopRadius: 7,
+      limitMaxTickNumberX: 10
+    },
+    "large": {
+      margin: {
+        top: 50,
+        right: 60,
+        left: 70,
+        bottom: 50
+      },
+      infoElHeight: 22,
+      yAxisTitleBottomMargin: 6,
+      tick_spacing: 100,
+      text_padding: 20,
+      lollipopRadius: 9,
+      limitMaxTickNumberX: 0 // unlimited
+    }
+  },
+  presentationProfileChanges: {
+    "medium": {
+      margin: { top: 80, bottom: 80, left: 100 },
+      yAxisTitleBottomMargin: 20,
+      xAxisTitleBottomMargin: 20,
+      infoElHeight: 26,
+    },
+    "large": {
+      margin: { top: 80, bottom: 100, left: 100 },
+      yAxisTitleBottomMargin: 20,
+      xAxisTitleBottomMargin: 20,
+      infoElHeight: 32,
+      hideSTitle: true
+    }
+  },
+
+  timeSliderProfiles: {
+    small: {
+      margin: {
+        top: 9,
+        right: 15,
+        bottom: 10,
+        left: 10
+      }
+    },
+    medium: {
+      margin: {
+        top: 9,
+        right: 15,
+        bottom: 10,
+        left: 20
+      }
+    },
+    large: {
+      margin: {
+        top: 9,
+        right: 15,
+        bottom: 10,
+        left: 25
+      }
+    }
   },
 
   /*
@@ -317,93 +406,7 @@ var LCComponent = Component.extend({
 
     var padding = 2;
 
-    var profiles = {
-      "small": {
-        margin: {
-          top: 30,
-          right: 20,
-          left: 55,
-          bottom: 30
-        },
-        infoElHeight: 16,
-        yAxisTitleBottomMargin: 6,
-        tick_spacing: 60,
-        text_padding: 8,
-        lollipopRadius: 6,
-        limitMaxTickNumberX: 5
-      },
-      "medium": {
-        margin: {
-          top: 40,
-          right: 60,
-          left: 65,
-          bottom: 40
-        },
-        infoElHeight: 20,
-        yAxisTitleBottomMargin: 6,
-        tick_spacing: 80,
-        text_padding: 12,
-        lollipopRadius: 7,
-        limitMaxTickNumberX: 10
-      },
-      "large": {
-        margin: {
-          top: 50,
-          right: 60,
-          left: 70,
-          bottom: 50
-        },
-        infoElHeight: 22,
-        yAxisTitleBottomMargin: 6,
-        tick_spacing: 100,
-        text_padding: 20,
-        lollipopRadius: 9,
-        limitMaxTickNumberX: 0 // unlimited
-      }
-    };
-    var presentationProfileChanges = {
-      "medium": {
-        margin: { top: 80, bottom: 80, left: 100 },
-        yAxisTitleBottomMargin: 20,
-        xAxisTitleBottomMargin: 20,
-        infoElHeight: 26,
-      },
-      "large": {
-        margin: { top: 80, bottom: 100, left: 100 },
-        yAxisTitleBottomMargin: 20,
-        xAxisTitleBottomMargin: 20,
-        infoElHeight: 32,
-        hideSTitle: true
-      }
-    };
-
-    var timeSliderProfiles = {
-      small: {
-        margin: {
-          top: 9,
-          right: 15,
-          bottom: 10,
-          left: 10
-        }
-      },
-      medium: {
-        margin: {
-          top: 9,
-          right: 15,
-          bottom: 10,
-          left: 20
-        }
-      },
-      large: {
-        margin: {
-          top: 9,
-          right: 15,
-          bottom: 10,
-          left: 25
-        }
-      }
-    };
-    this.activeProfile = this.getActiveProfile(profiles, presentationProfileChanges);
+    this.activeProfile = this.getActiveProfile(this.profiles, this.presentationProfileChanges);
     this.margin = this.activeProfile.margin;
     this.tick_spacing = this.activeProfile.tick_spacing;
     
@@ -470,8 +473,9 @@ var LCComponent = Component.extend({
       .labelerOptions({
         scaleType: this.model.marker.axis_y.scaleType,
         timeFormat: this.model.time.timeFormat,
-        toolMargin: this.margin,
-        limitMaxTickNumber: 6
+        toolMargin: {top: 5, bottom: 5, left: this.margin.left, right: this.margin.right},
+        limitMaxTickNumber: 6,
+        formatter: this.model.marker.axis_y.getTickFormatter()
           //showOuter: true
       });
 
@@ -479,7 +483,7 @@ var LCComponent = Component.extend({
       .labelerOptions({
         scaleType: this.model.marker.axis_x.scaleType,
         limitMaxTickNumber: this.activeProfile.limitMaxTickNumberX,
-        toolMargin: this.margin,
+        toolMargin: {left: 5, right: 5, top: this.margin.top, bottom: this.margin.bottom},
         formatter: this.model.marker.axis_x.getTickFormatter()
         //showOuter: true
       });
@@ -557,7 +561,7 @@ var LCComponent = Component.extend({
     var opts = {
       rangeMax: this.xScale.range()[1],
       mRight: this.margin.right,
-      profile: timeSliderProfiles[this.getLayoutProfile()]
+      profile: this.timeSliderProfiles[this.getLayoutProfile()]
     };
     this.parent.trigger('myEvent', opts);
 
@@ -571,218 +575,226 @@ var LCComponent = Component.extend({
   redrawDataPoints: function() {
     var _this = this;
     var KEY = this.KEY;
-    var values = this.values;
+//    var values = this.values;
 
-    if(!this.timeUpdatedOnce) {
-      this.updateTime();
-    }
+    this.model.marker.getFrame(this.time, function(values, time) {
 
-    if(!this.sizeUpdatedOnce) {
-      this.updateSize();
-    }
+      if(!_this.timeUpdatedOnce) {
+        _this.updateTime();
+      }
 
-    this.entityLabels.exit().remove();
-    this.entityLines.exit().remove();
+      if(!_this.sizeUpdatedOnce) {
+        _this.updateSize();
+      }    
+      
+      _this.entityLabels.exit().remove();
+      _this.entityLines.exit().remove();
 
-    this.entityLines.enter().append("g")
-      .attr("class", "vzb-lc-entity")
-      .each(function(d, index) {
-        var entity = d3.select(this);
+      _this.entityLines.enter().append("g")
+        .attr("class", "vzb-lc-entity")
+        .each(function(d, index) {
+          var entity = d3.select(this);
 
-        entity.append("path")
-          .attr("class", "vzb-lc-line-shadow")
-          .attr("transform", "translate(0,2)");
+          entity.append("path")
+            .attr("class", "vzb-lc-line-shadow")
+            .attr("transform", "translate(0,2)");
 
-        entity.append("path")
-          .attr("class", "vzb-lc-line");
+          entity.append("path")
+            .attr("class", "vzb-lc-line");
 
-      });
+        });
 
-    this.entityLabels.enter().append("g")
-      .attr("class", "vzb-lc-entity")
-      .each(function(d, index) {
-        var entity = d3.select(this);
-        var label = values.label[d[KEY]];
+      _this.entityLabels.enter().append("g")
+        .attr("class", "vzb-lc-entity")
+        .each(function(d, index) {
+          var entity = d3.select(this);
+          var label = values.label[d[KEY]];
 
-        entity.append("circle")
-          .attr("class", "vzb-lc-circle")
-          .attr("cx", 0);
+          entity.append("circle")
+            .attr("class", "vzb-lc-circle")
+            .attr("cx", 0);
 
-        var labelGroup = entity.append("g").attr("class", "vzb-lc-label");
+          var labelGroup = entity.append("g").attr("class", "vzb-lc-label");
 
-        labelGroup.append("text")
-          .attr("class", "vzb-lc-labelname")
-          .attr("dy", ".35em");
+          labelGroup.append("text")
+            .attr("class", "vzb-lc-labelname")
+            .attr("dy", ".35em");
 
-        labelGroup.append("text")
-          .attr("class", "vzb-lc-label-value")
-          .attr("dy", "1.6em");
-      });
+          labelGroup.append("text")
+            .attr("class", "vzb-lc-label-value")
+            .attr("dy", "1.6em");
+        });
+            
+      _this.entityLines
+        .each(function(d, index) {
+          var entity = d3.select(this);
+          var label = values.label[d[KEY]];
 
-    this.entityLines
-      .each(function(d, index) {
-        var entity = d3.select(this);
-        var label = values.label[d[KEY]];
+          var color = _this.cScale(values.color[d[KEY]]);
+          var colorShadow = _this.model.marker.color.which == "geo.world_4region"?
+              _this.model.marker.color.getColorShade({
+                colorID: values.color[d[KEY]],
+                shadeID: "shade"
+              })
+              :
+              d3.rgb(color).darker(0.5).toString();
 
-        var color = _this.cScale(values.color[d[KEY]]);
-        var colorShadow = _this.model.marker.color.which == "geo.world_4region"?
-            _this.model.marker.color.getColorShade({
-              colorID: values.color[d[KEY]],
-              shadeID: "shade"
-            })
-            :
-            d3.rgb(color).darker(0.5).toString();
-
-        //TODO: optimization is possible if getValues would return both x and time
-        //TODO: optimization is possible if getValues would return a limited number of points, say 1 point per screen pixel
-        var xy = _this.prev_steps.map(function(frame, i) {
-                return [+frame,  _this.all_values[frame] ? +_this.all_values[frame].axis_y[d[KEY]] : null] ;
-            })
-            .filter(function(d) { return d[1] || d[1] === 0; });
-        _this.cached[d[KEY]] = {
-          valueY: xy[xy.length - 1][1]
-        };
+          //TODO: optimization is possible if getValues would return both x and time
+          //TODO: optimization is possible if getValues would return a limited number of points, say 1 point per screen pixel
+          var xy = _this.prev_steps.map(function(frame, i) {
+                  return [+frame,  _this.all_values[frame] ? +_this.all_values[frame].axis_y[d[KEY]] : null] ;
+              })
+              .filter(function(d) { return d[1] || d[1] === 0; });
+          xy.push([+time, +values.axis_y[d[KEY]]]);
+          _this.cached[d[KEY]] = {
+            valueY: xy[xy.length - 1][1]
+          };
 
 
-        // the following fixes the ugly line butts sticking out of the axis line
-        //if(x[0]!=null && x[1]!=null) xy.splice(1, 0, [(+x[0]*0.99+x[1]*0.01), y[0]]);
-        var path2 = entity.select(".vzb-lc-line");
-        var totalLength = path2.node().getTotalLength();
+          // the following fixes the ugly line butts sticking out of the axis line
+          //if(x[0]!=null && x[1]!=null) xy.splice(1, 0, [(+x[0]*0.99+x[1]*0.01), y[0]]);
+          var path2 = entity.select(".vzb-lc-line");
 
-        var path1 = entity.select(".vzb-lc-line-shadow")
-          .attr("stroke-dasharray", totalLength)
-          .style("stroke", colorShadow)
-          .attr("d", _this.line(xy));
-        path2
-          //.style("filter", "none")
-          .attr("stroke-dasharray", totalLength)
-          .style("stroke", color)
-          .attr("d", _this.line(xy));
+          if(_this.model.time.playing && _this.totalLength_1[d[KEY]] === null) {
+            _this.totalLength_1[d[KEY]] = path2.node().getTotalLength();
+          }
 
-        // this section ensures the smooth transition while playing and not needed otherwise
-        if(_this.model.time.playing) {
+          var path1 = entity.select(".vzb-lc-line-shadow")
+            .style("stroke", colorShadow)
+            .attr("d", _this.line(xy));
+          path2
+            //.style("filter", "none")
+            .style("stroke", color)
+            .attr("d", _this.line(xy));
 
-          if(_this.totalLength_1[d[KEY]] === null) {
+          var totalLength = path2.node().getTotalLength();
+
+          // this section ensures the smooth transition while playing and not needed otherwise
+          if(_this.model.time.playing) {
+
+            path1
+              .interrupt()
+              .attr("stroke-dasharray", totalLength)
+              .attr("stroke-dashoffset", totalLength - _this.totalLength_1[d[KEY]])
+              .transition()
+              .delay(0)
+              .duration(_this.duration)
+              .ease("linear")
+              .attr("stroke-dashoffset", 0);
+            path2
+              .interrupt()
+              .attr("stroke-dasharray", totalLength)
+              .attr("stroke-dashoffset", totalLength - _this.totalLength_1[d[KEY]])
+              .transition()
+              .delay(0)
+              .duration(_this.duration)
+              .ease("linear")
+              .attr("stroke-dashoffset", 0);
+
             _this.totalLength_1[d[KEY]] = totalLength;
+          } else {
+            //reset saved line lengths
+            _this.totalLength_1[d[KEY]] = null;
+
+            path1
+              .attr("stroke-dasharray", "none")
+              .attr("stroke-dashoffset", "none");
+
+            path2
+              .attr("stroke-dasharray", "none")
+              .attr("stroke-dashoffset", "none");
           }
 
-          path1
-            .interrupt()
-            .attr("stroke-dashoffset", totalLength - _this.totalLength_1[d[KEY]])
+        });
+
+      _this.entityLabels
+        .each(function(d, index) {
+          var entity = d3.select(this);
+          var label = values.label[d[KEY]];
+
+          var color = _this.cScale(values.color[d[KEY]]);
+          var colorShadow = _this.model.marker.color.which == "geo.world_4region"?
+              _this.model.marker.color.getColorShade({
+                colorID: values.color[d[KEY]],
+                shadeID: "shade"
+              })
+              :
+              d3.rgb(color).darker(0.5).toString();
+
+
+          entity.select(".vzb-lc-circle")
+            .style("fill", color)
             .transition()
-            .delay(0)
             .duration(_this.duration)
             .ease("linear")
-            .attr("stroke-dashoffset", 0);
-          path2
-            .interrupt()
-            .attr("stroke-dashoffset", totalLength - _this.totalLength_1[d[KEY]])
+            .attr("r", _this.activeProfile.lollipopRadius)
+            .attr("cy", _this.yScale(_this.cached[d[KEY]].valueY) + 1);
+
+
+          entity.select(".vzb-lc-label")
             .transition()
-            .delay(0)
             .duration(_this.duration)
             .ease("linear")
-            .attr("stroke-dashoffset", 0);
-
-          _this.totalLength_1[d[KEY]] = totalLength;
-        } else {
-          //reset saved line lengths
-          _this.totalLength_1[d[KEY]] = null;
-
-          path1
-            .attr("stroke-dasharray", "none")
-            .attr("stroke-dashoffset", "none");
-
-          path2
-            .attr("stroke-dasharray", "none")
-            .attr("stroke-dashoffset", "none");
-        }
-
-      });
-
-    this.entityLabels
-      .each(function(d, index) {
-        var entity = d3.select(this);
-        var label = values.label[d[KEY]];
-
-        var color = _this.cScale(values.color[d[KEY]]);
-        var colorShadow = _this.model.marker.color.which == "geo.world_4region"?
-            _this.model.marker.color.getColorShade({
-              colorID: values.color[d[KEY]],
-              shadeID: "shade"
-            })
-            :
-            d3.rgb(color).darker(0.5).toString();
+            .attr("transform", "translate(0," + _this.yScale(_this.cached[d[KEY]].valueY) + ")");
 
 
-        entity.select(".vzb-lc-circle")
-          .style("fill", color)
-          .transition()
-          .duration(_this.duration)
-          .ease("linear")
-          .attr("r", _this.activeProfile.lollipopRadius)
-          .attr("cy", _this.yScale(_this.cached[d[KEY]].valueY) + 1);
+          var value = _this.yAxis.tickFormat()(_this.cached[d[KEY]].valueY);
+          var name = label.length < 13 ? label : label.substring(0, 10) + '...';
+          var valueHideLimit = _this.ui.chart.labels.min_number_of_entities_when_values_hide;
 
+          var t = entity.select(".vzb-lc-labelname")
+            .style("fill", colorShadow)
+            .attr("dx", _this.activeProfile.text_padding)
+            .text(name + " " + (_this.data.length < valueHideLimit ? value : ""));
 
-        entity.select(".vzb-lc-label")
-          .transition()
-          .duration(_this.duration)
-          .ease("linear")
-          .attr("transform", "translate(0," + _this.yScale(_this.cached[d[KEY]].valueY) + ")");
+          entity.select(".vzb-lc-label-value")
+            .style("fill", colorShadow)
+            .attr("dx", _this.activeProfile.text_padding)
+            .text("");
 
+          if(_this.data.length < valueHideLimit) {
 
-        var value = _this.yAxis.tickFormat()(_this.cached[d[KEY]].valueY);
-        var name = label.length < 13 ? label : label.substring(0, 10) + '...';
-        var valueHideLimit = _this.ui.chart.labels.min_number_of_entities_when_values_hide;
+            var size = _this.xScale(_this.time) + t[0][0].getComputedTextLength() + _this.activeProfile.text_padding;
+            var width = _this.width + _this.margin.right;
 
-        var t = entity.select(".vzb-lc-labelname")
-          .style("fill", colorShadow)
-          .attr("dx", _this.activeProfile.text_padding)
-          .text(name + " " + (_this.data.length < valueHideLimit ? value : ""));
-
-        entity.select(".vzb-lc-label-value")
-          .style("fill", colorShadow)
-          .attr("dx", _this.activeProfile.text_padding)
-          .text("");
-
-        if(_this.data.length < valueHideLimit) {
-
-          var size = _this.xScale(_this.time) + t[0][0].getComputedTextLength() + _this.activeProfile.text_padding;
-          var width = _this.width + _this.margin.right;
-
-          if(size > width) {
-            entity.select(".vzb-lc-labelname").text(name);
-            entity.select(".vzb-lc-label-value").text(value);
+            if(size > width) {
+              entity.select(".vzb-lc-labelname").text(name);
+              entity.select(".vzb-lc-label-value").text(value);
+            }
           }
-        }
-      });
-    this.labelsContainer
-      .transition()
-      .duration(_this.duration)
-      .ease("linear")
-      .attr("transform", "translate(" + _this.xScale(d3.min([_this.model.marker.axis_x.zoomedMax, _this.time])) + ",0)");
-
-    this.verticalNow
-      .style("opacity", this.time - this.model.time.start === 0 || _this.hoveringNow ? 0 : 1);
+        });
+      _this.labelsContainer
+        .transition()
+        .duration(_this.duration)
+        .ease("linear")
+        .attr("transform", "translate(" + _this.xScale(d3.min([_this.model.marker.axis_x.zoomedMax, _this.time])) + ",0)");
 
 
-    if(!this.hoveringNow) {
-      this.xAxisEl.call(
-        this.xAxis.highlightValue(_this.time).highlightTransDuration(_this.duration)
-      );
-    }
+        
 
-    // Call flush() after any zero-duration transitions to synchronously flush the timer queue
-    // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
-    if(_this.duration == 0) {
-      d3.timer.flush();
-    }
+      if(!_this.hoveringNow && _this.time - _this.model.time.start !== 0) {
+        if (!_this.ui.chart.hideXAxisValue) _this.xAxisEl.call(
+           _this.xAxis.highlightValue(time).highlightTransDuration(_this.duration)
+        );
+        _this.verticalNow.style("opacity", 1);
+      }else{
+        _this.verticalNow.style("opacity", 0);
+      }
 
-    // cancel previously queued simulation if we just ordered a new one
-    // then order a new collision resolving
-    clearTimeout(_this.collisionTimeout);
-    _this.collisionTimeout = setTimeout(function() {
-      _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
-    }, _this.model.time.delayAnimations * 1.5);
+      // Call flush() after any zero-duration transitions to synchronously flush the timer queue
+      // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
+      if(_this.duration == 0) {
+        d3.timer.flush();
+      }
+
+      // cancel previously queued simulation if we just ordered a new one
+      // then order a new collision resolving
+      clearTimeout(_this.collisionTimeout);
+      _this.collisionTimeout = setTimeout(function() {
+        _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
+      }, _this.model.time.delayAnimations * 1.5);
+    
+    });  
   },
 
   entityMousemove: function(me, index, context, closestToMouse) {

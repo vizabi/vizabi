@@ -1,6 +1,7 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
 import colorPicker from 'helpers/d3.colorPicker';
+import axisSmart from 'helpers/d3.axisWithLabelPicker';
 
 /*!
  * VIZABI BUBBLE COLOR LEGEND COMPONENT
@@ -20,6 +21,9 @@ var ColorLegend = Component.extend({
     this.model_expects = [{
       name: "state",
       type: "model"
+    }, {
+      name: "language",
+      type: "language"
     }];
 
     this.needsUpdate = false;
@@ -33,10 +37,18 @@ var ColorLegend = Component.extend({
       },
       "change:state.marker.color.which": function(evt, path) {
         if(!_this._readyOnce) return;
-        _this.forwardModelUpdate();
+        if(_this.model.state.entities_minimap) {
+          _this.forwardModelUpdate();
+        }else{
+          _this.updateView();
+        }
       },
       "change:state.marker.color.palette": function(evt, path) {
         if(!_this._readyOnce) return;
+        _this.updateView();
+      },
+      "change:language.strings": function(evt) {
+        this.translator = this.model.language.getTFunction();
         _this.updateView();
       }
     }
@@ -47,7 +59,7 @@ var ColorLegend = Component.extend({
   
   forwardModelUpdate: function(){
     if(this.colorModel.use === "property"){
-      this.model.state.entities_minimap.show["geo.cat"] = [this.colorModel.which.replace("geo.","")];
+      this.model.state.entities_minimap.show[this.KEY + ".cat"] = [this.colorModel.which.replace(this.KEY+".","")];
     }
   },
 
@@ -55,16 +67,29 @@ var ColorLegend = Component.extend({
   readyOnce: function() {
     var _this = this;
     this.element = d3.select(this.element);
+    
+    this.translator = this.model.language.getTFunction();
+    
+    this.markerModel = this.model.state.marker_minimap ? this.model.state.marker_minimap : this.model.state.marker;
     this.listColorsEl = this.element
       .append("div").attr("class", "vzb-cl-holder")
       .append("div").attr("class","vzb-cl-colorlist");
     this.rainbowEl = this.listColorsEl.append("div").attr("class", "vzb-cl-rainbow");
     this.minimapEl = this.listColorsEl.append("div").attr("class", "vzb-cl-minimap");
+    this.labelScaleEl = this.listColorsEl.append("div").attr("class", "vzb-cl-labelscale");
+    this.labelScaleSVG = this.labelScaleEl.append("svg");
+    this.labelScaleG = this.labelScaleSVG.append("g");
+    this.unitDiv = this.listColorsEl.append("div").attr("class", "vzb-cl-unit");
+    this.unitText = this.unitDiv.append("text").attr("class", "vzb-cl-unit-text");
+
     this.minimapSVG = this.minimapEl.append("svg");
     this.minimapG = this.minimapSVG.append("g");
 
     this.colorPicker = colorPicker();
-    d3.select(this.root.element).call(this.colorPicker);
+    
+    // append color picker to the tool DOM. need to check if element is already a d3 selection to not do it twice
+    this.root.element instanceof Array? this.root.element : d3.select(this.root.element)
+      .call(this.colorPicker);
 
     this.KEY = this.model.state.entities.getDimension();
     this.colorModel = this.model.state.marker.color;
@@ -78,10 +103,14 @@ var ColorLegend = Component.extend({
   
   ready: function(){
     var _this = this;
-    this.model.state.marker_minimap.getFrame(this.model.state.time.value, function(frame, time) { 
-      _this.frame = frame;
-      _this.updateView();
-    }) 
+    if(this.model.state.marker_minimap){
+      var minimapDim = this.model.state.marker_minimap._getFirstDimension();
+      var timeModel = this.model.state.time;
+      var filter = {};
+      filter[timeModel.getDimension()] = timeModel.value;
+      _this.frame = this.model.state.marker_minimap.getValues(filter,[minimapDim]);
+    }
+    _this.updateView();
   },
 
 
@@ -92,12 +121,18 @@ var ColorLegend = Component.extend({
     var palette = this.colorModel.getPalette();
     var canShowMap = utils.keys((this.frame||{}).geoshape||{}).length && this.colorModel.use == "property";
 
-    var minimapKeys = this.model.state.marker_minimap.getKeys();
+    var minimapKeys = [];
+
+    if(this.model.state.marker_minimap){
+      var minimapDim = this.model.state.marker_minimap._getFirstDimension();
+      var minimapKeys = this.model.state.marker_minimap.getKeys(minimapDim);
+    }
     
     minimapKeys.forEach(function(d){
       if(!((_this.frame||{}).geoshape||{})[d[_this.KEY]]) canShowMap = false;
     });
     
+
     var colorOptions = this.listColorsEl.selectAll(".vzb-cl-option");
     
     //Hide and show elements of the color legend
@@ -109,13 +144,17 @@ var ColorLegend = Component.extend({
     //Hide minimap if no data to draw it
     this.minimapEl.classed("vzb-hidden", !canShowMap);
     
+    this.labelScaleEl.classed("vzb-hidden", canShowMap || this.colorModel.use !== "indicator")
+    this.unitDiv.classed("vzb-hidden", true);
+
     //Check if geoshape is provided
     if(!canShowMap) {
-      
-      if(this.colorModel.use == "indicator" || !minimapKeys.length) {
-        colorOptions = colorOptions.data(utils.keys(palette), function(d) {return d});
+      if(this.colorModel.which == "_default") {
+        colorOptions = colorOptions.data([]); 
+      }else if(this.colorModel.use == "indicator" || !minimapKeys.length) {
+        colorOptions = colorOptions.data(utils.keys(this.colorModel.getScale().range()), function(d) {return d});
       }else{
-        colorOptions = colorOptions.data(minimapKeys, function(d) {return d[KEY]});
+        colorOptions = colorOptions.data(minimapKeys, function(d) {return d[minimapDim]});
       }
 
       colorOptions.exit().remove();
@@ -131,39 +170,113 @@ var ColorLegend = Component.extend({
 
       colorOptions.each(function(d, index) {
         d3.select(this).select(".vzb-cl-color-sample")
-          .style("background-color", palette[d[_this.KEY]||d])
-          .style("border", "1px solid " + palette[d[_this.KEY]||d]);
+          .style("background-color", palette[d[_this.KEY]||d[minimapDim]||d])
+          .style("border", "1px solid " + palette[d[_this.KEY]||d[minimapDim]||d]);
       }); 
       
       if(this.colorModel.use == "indicator") {
+  
+        var gradientWidth = this.rainbowEl.node().getBoundingClientRect().width;
+        var paletteKeys = Object.keys(palette).map(parseFloat);
         
-        //Calculate the hight for the rainbow gradient
-        var gradientHeight;
-        if(colorOptions && colorOptions[0]) {
-          var firstOptionSize = colorOptions[0][0].getBoundingClientRect();
-          var lastOptionSize = colorOptions[0][colorOptions[0].length - 1].getBoundingClientRect();
-          gradientHeight = lastOptionSize.bottom - firstOptionSize.top;
+        var domain;
+        var range;
+        var labelScale;
+        var formatter = this.colorModel.getTickFormatter();
+        var fitIntoScale = null;
+          
+        var paletteLabels = this.colorModel.paletteLabels;
+
+        if(paletteLabels) {
+
+          fitIntoScale = "optimistic";
+          
+          domain = paletteLabels.map(function(val) {
+            return parseFloat(val);
+          });
+          var paletteMax = d3.max(domain);
+          range = domain.map(function(val) {
+            return val / paletteMax * gradientWidth;
+          });  
+
+        } else {
+
+          domain = _this.colorModel.getScale().domain();
+          var paletteMax = d3.max(paletteKeys);
+          range = paletteKeys.map(function(val) {
+            return val / paletteMax * gradientWidth;
+          });
+
         }
-        if(!isFinite(gradientHeight)) gradientHeight = utils.keys(palette).length * 25 + 5;
+          
+        labelScale = d3.scale[this.colorModel.scaleType == "time" ? "linear" : this.colorModel.scaleType]()
+          .domain(domain)
+          .range(range);
+          
+        var marginLeft = parseInt(this.rainbowEl.style('left'), 10) || 0;
+        var marginRight = parseInt(this.rainbowEl.style('right'), 10) || marginLeft;
+
+        this.labelScaleSVG.style("width", marginLeft + gradientWidth + marginRight + "px");
+        this.labelScaleG.attr("transform","translate(" + marginLeft + ",0)");
+
+        var labelsAxis = axisSmart();
+        labelsAxis.scale(labelScale)
+          .orient("bottom")
+          //.tickFormat(formatter)
+          .tickSize(6, 0)
+          .tickSizeMinor(3, 0)
+          .labelerOptions({
+            scaleType: this.colorModel.scaleType,
+            toolMargin: {
+              right: marginRight,
+              left: marginLeft
+            },
+            showOuter: true,
+            //bump: this.activeProfile.maxRadius/2,
+            //constantRakeLength: gradientWidth,
+            formatter: formatter,
+            bump: marginLeft,
+            cssFontSize: "11px",
+            fitIntoScale: fitIntoScale
+          });
+              
+        this.labelScaleG.call(labelsAxis);
+
+        var colorRange = _this.colorModel.getScale().range();
+        var gColors = paletteKeys.map(function(val, i) {
+          return colorRange[i] + " " + d3.format("%")(val * .01);
+        }).join(", ");
+
+        //Calculate the hight for the rainbow gradient
+        // var gradientHeight;
+        // if(colorOptions && colorOptions[0]) {
+        //   var firstOptionSize = colorOptions[0][0].getBoundingClientRect();
+        //   var  = colorOptions[0][colorOptions[0].length - 1].getBoundingClientRect();
+        //   gradientHeight = lastOptionSize.bottom - firstOptionSize.top;
+        // }
+        // if(!isFinite(gradientHeight)) gradientHeight = utils.keys(palette).length * 25 + 5;
         
         this.rainbowEl
-          .style("height", gradientHeight + 2 + "px")
-          .style("background", "linear-gradient(" + utils.values(palette).join(", ") + ")");
+          .style("background", "linear-gradient(90deg," + gColors + ")");
         
-        var domain = _this.colorModel.getScale().domain();
+        var unit = this.translator("unit/" + this.colorModel.which)
         
+        this.unitDiv.classed("vzb-hidden", unit == "");
+        this.unitText.text(unit);
+
         //Apply names as formatted numbers 
-        colorOptions.each(function(d, index) {
-          d3.select(this).select(".vzb-cl-color-legend")
-            .text(_this.colorModel.getTickFormatter()(domain[index]))
-        });
-        
+        // colorOptions.each(function(d, index) {
+        //   d3.select(this).select(".vzb-cl-color-legend")
+        //     .text(_this.colorModel.getTickFormatter()(domain[index]))
+        // });
+        colorOptions.classed("vzb-hidden", true);
+
       } else {
         
         //Apply names to color legend entries if color is a property
         colorOptions.each(function(d, index) {
           d3.select(this).select(".vzb-cl-color-legend")
-            .text(_this.frame.label[d[_this.KEY]]);
+            .text(_this.frame.label[d[_this.KEY]||d[minimapDim]]);
         });
         
         
@@ -270,6 +383,9 @@ var ColorLegend = Component.extend({
   
 
   resize: function() {
+    if(this.colorModel.use == "indicator") {
+      this.updateView();
+    }
     this.colorPicker.resize(d3.select('.vzb-colorpicker-svg'));
   }
 

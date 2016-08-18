@@ -1,0 +1,152 @@
+[
+    {
+
+     "All_Global_Loctors": {
+    "_comment": "Locators belong to All charts", 
+            
+          "buttonPlay_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-btns > button.vzb-ts-btn-play.vzb-ts-btn > svg", 
+          "buttonList_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist",       
+          "play_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-btns > button.vzb-ts-btn-play.vzb-ts-btn", 
+          "pause_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-btns > button.vzb-ts-btn-pause.vzb-ts-btn", 
+          "slider_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-slider-wrapper > svg.vzb-ts-slider > g > g.vzb-ts-slider-slide > circle"
+            
+  },
+    
+    
+    "bubble_Chart_Loctors": {
+    "_comment": "Locators belong to Bubble chart",
+            
+        "countriesBubblechart_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles",
+          "USA_Bubble_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-usa", 
+          "China_Bubble_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-chn",
+          "Nigeria_Bubble_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-bubbles-crop > g.vzb-bc-bubbles > circle.vzb-bc-entity.bubble-nga", 
+          "chinaBubble_Checkbox_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(37) > label",
+          "USABubble_Checkbox_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(184) > label",
+          "firstDigitOfYear_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-bc-year > text:nth-child(1)",
+          "secondDigitOfYear_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-bc-year > text:nth-child(2)",
+          "thirdDigitOfYear_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-bc-year > text:nth-child(3)",
+          "fourthDigitOfYear_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-bc-year > text:nth-child(4)",
+          "axis_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-axis-x > g",
+          "tooltip_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-bc-tooltip",
+          "warning_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-data-warning > text",
+          "warningTextElememnt_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-datawarning > div.vzb-data-warning-box > div.vzb-data-warning-link > div",
+          "USALabel_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-labels-crop > g > g > rect.vzb-label-fill.vzb-tooltip-border",
+          "find_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa",
+          "okOfFindPopup_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-active.notransition.vzb-popup > div > div.vzb-dialog-buttons > div.vzb-dialog-button.vzb-label-primary > span",
+          "search_Locator_CSS" : "#vzb-find-search",
+          "lock_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(5) > span.vzb-buttonlist-btn-icon.fa",
+          "sizeIcon_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(3) > span.vzb-buttonlist-btn-icon.fa",
+          "hand_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-active.notransition.vzb-popup > div > span.thumb-tack-class.thumb-tack-class-ico-drag.fa > svg",
+          "colorIcon_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(1) > span.vzb-buttonlist-btn-icon.fa",
+          "dropDownOfColor_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-title > span.vzb-caxis-selector",
+          "childMotalityRate_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-treemenu > div.vzb-treemenu-wrap-outer.notransition.vzb-treemenu-abs-pos-vert.vzb-align-y-top.vzb-treemenu-abs-pos-horiz.vzb-align-x-left.vzb-treemenu-open-left-side > div > ul > li > span",
+          "OKcolorButton_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-buttons > div",
+          "cross_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg.vzb-bc-labels-crop > g.vzb-bc-labels > g > g",
+          "circle_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-timeslider > div > div.vzb-ts-slider-wrapper > svg > g > g.vzb-ts-slider-slide > circle",
+          "searchOfColors_Locator_CSS" : "#vzb-treemenu-search"     
+          
+    },
+
+        
+    "bubbleMap_Chart_Loctors": {
+     "_comment": "Locators belong to BubbleMap chart",
+        
+        
+         "countriesBubbleMap_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles", 
+            "USABubbleMap_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(3)",
+            "find_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa",
+            "search_Locator_CSS" : "#vzb-find-search",
+            "chinaBubbleCheckbox_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-active.notransition.vzb-popup > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(42) > label",
+            "USABubbleCheckbox_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-active.notransition.vzb-popup > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(226) > label",
+            "okOfFind_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-buttons > div.vzb-dialog-button.vzb-label-primary > span",
+            "NigeriaBubbleMap_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(7)",
+            "chinaBubbleMap_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-bubbles > circle:nth-child(1)",
+            "tooltipOfchinaBubbleMap_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-tooltip",
+            "tooltipOfUSABubbleMap_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-labels > g > rect.vzb-label-fill.vzb-tooltip-border",
+            "crossOnTooltipOfUSABubbleMap_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-labels > g > g",
+            "sizeIcon_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(3) > span.vzb-buttonlist-btn-icon.fa",
+            "sliderOfSize_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content > div > div > svg > g > g > g.resize.w.vzb-bs-slider-thumb > g",
+            "okOfSizePopup_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-buttons",
+            "population_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg.vzb-bubblemap-svg > g > g.vzb-bmc-axis-y-title"
+                 
+     },
+
+     "mountain_Chart_Loctors": {
+     "_comment": "Locators belong to mountain chart",
+
+
+            "countriesMountain_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-mc-mountains",
+            "findIcon_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(2) > span.vzb-buttonlist-btn-icon.fa",
+            "searchOfFind_Locator_CSS" : "#vzb-find-search",
+            "chinaCheckboxFind_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(30) > label",
+            "chinaCheckboxText_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(30)",
+            "okOnFindPopup_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-buttons > div.vzb-dialog-button.vzb-label-primary > span",
+            "chinaPopulationBall_Locator_CSS" : "#chn-label > text:nth-child(3)",
+            "showIcon_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(4) > span.vzb-buttonlist-btn-icon.fa",
+            "searchOfShow_Locator_CSS" : "#vzb-show-search",
+            "chinaCheckboxShow_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(48) > label",
+            "USACheckboxShow_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(258) > label",
+            "okOnShowPopup_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-buttons > div.vzb-dialog-button.vzb-label-primary > span",
+            "chinaCheckboxFindAfterShow_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(1) > label",
+            "chinaCheckboxFindAfterShowText_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(1)",
+            "USACheckboxFindAfterShow_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(2) > label",
+            "USACheckboxFindAfterShowText_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(2)",
+            "USAPopulationBall_Locator_CSS" : "#usa-label > text:nth-child(3)",
+            "firstDigitOfYear_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-mc-year > text:nth-child(1)",
+            "secondDigitOfYear_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-mc-year > text:nth-child(2)",
+            "thirdDigitOfYear_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-mc-year > text:nth-child(3)",
+            "fourthDigitOfYear_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-mc-year > text:nth-child(4)",
+            "optionsIcon_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(5) > span.vzb-buttonlist-btn-icon.fa",
+            "XandYIcon_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-active.notransition.vzb-popup > div > div.vzb-dialog-content.vzb-dialog-scrollable > div.vzb-accordion > div:nth-child(4) > div > div.vzb-dialog-title",
+            "problineSearchbar_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-active.notransition.vzb-popup > div > div.vzb-dialog-content.vzb-dialog-scrollable > div.vzb-accordion > div.vzb-dialogs-dialog.vzb-moreoptions.vzb-accordion-section.vzb-accordion-active > div > div.vzb-dialog-content > div.vzb-probe-container > input",
+            "okOFOptionsPopup_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-buttons > div",
+            "stackIcon_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(3) > span.vzb-buttonlist-btn-icon.fa > svg",
+            "worldRadioButton_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-active.notransition.vzb-popup > div > div.vzb-dialog-content.vzb-dialog-scrollable > form.vzb-howtomerge.vzb-dialog-paragraph > label:nth-child(4) > input[type=radio]",
+            "okOFStackPopup_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-buttons > div",
+            "mountainCurve_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-mc-mountains",
+            "worldBallOfPopulation_Locator_CSS" : ".vzb-mc-mountains-labels .vzb-mc-label text.vzb-mc-label-text:nth-child(3)",
+            "checkboxAfghanistanShow_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(2) > label",
+            "checkboxAlgeriaShow_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(5) > label",
+            "USACheckboxFind_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(157) > label",
+            "USACheckboxText_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div.vzb-top-dialog.vzb-dialogs-dialog.vzb-dialog-shadow.vzb-popup.vzb-active.notransition > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(157)",
+            "axis_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > rect",
+            "proLine_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > g.vzb-mc-probe"
+
+         
+     },
+        
+      "All_Charts_Loctors": {
+     "_comment": "Locators belong to All charts",
+
+            "expandIconBubble_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(7) > span.vzb-buttonlist-btn-icon.fa",
+            "colorDropdownIcon_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(1) > div > div.vzb-dialog-title > span.vzb-caxis-selector",
+            "afgCheckboxLabel_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(2) > div > div.vzb-dialog-content.vzb-dialog-content-fixed.vzb-dialog-scrollable > div > div:nth-child(1)",
+            "sizeOptionLabel_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(3) > div > div.vzb-dialog-title > span.vzb-saxis-selector",
+            "expandIconMountain_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(6) > span.vzb-buttonlist-btn-icon.fa",
+            "stackIconMountain_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-dialogs > div:nth-child(3) > div > div.vzb-dialog-content.vzb-dialog-scrollable > form.vzb-howtostack.vzb-dialog-paragraph > label:nth-child(3) > span",
+            "expandIconBubbleMap_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-sidebar > div.vzb-tool-buttonlist > button:nth-child(5) > span.vzb-buttonlist-btn-icon.fa"
+      
+      },
+        
+      "Bar_Chart_Loctors": {
+      "_comment": "Locators belong to Bar chart",
+
+            "countriesBarChart_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > svg > g > g.vzb-bc-bars"
+       
+       },
+        
+      "Barrank_Chart_Loctors": {
+      "_comment": "Locators belong to Bar Rank chart",
+
+            "countriesBarRankChart_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > div > svg > g"
+            
+        },
+        
+      "line_Chart_Loctors": {
+      "_comment": "Locators belong to line chart",
+
+            "countriesLineChart_Locator_CSS" : "#vzbp-placeholder > div > div.vzb-tool-stage > div.vzb-tool-viz > div > svg > g > svg > svg.vzb-lc-lines"
+            
+        }
+    }   
+]
