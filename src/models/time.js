@@ -42,7 +42,7 @@ var TimeModel = Model.extend({
     round: 'round',
     delay: 600, //delay between animation frames
     delayThresholdX2: 600, //delay X2 boundary: if less -- then every other frame will be dropped and animation dely will be double the value
-    delayThresholdX4: 600, //delay X4 boundary: if less -- then 3/4 frame will be dropped and animation dely will be 4x the value
+    delayThresholdX4: 300, //delay X4 boundary: if less -- then 3/4 frame will be dropped and animation dely will be 4x the value
     unit: "year",
     step: 1, //step must be integer, and expressed in units
     immediatePlay: false,
