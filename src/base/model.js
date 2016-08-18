@@ -439,6 +439,7 @@ var Model = EventSource.extend({
         utils.timeStamp('Vizabi Model: Loading Data: ' + _this._id);
         _DATAMANAGER.load(query, lang, reader, evts).then(function(dataId) {
           _this._dataId = dataId;
+          _this.scale = null;
           utils.timeStamp('Vizabi Model: Data loaded: ' + _this._id);
           _this.afterLoad();
           promise.resolve();
