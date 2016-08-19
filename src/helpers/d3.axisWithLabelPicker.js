@@ -47,16 +47,18 @@ export default function axisSmart() {
        _super(g);
       }
       //if(axis.orient()=="bottom") console.log("received", g.selectAll("text").each(function(d){console.log(d)}))
-
       var orient = axis.orient() == "top" || axis.orient() == "bottom" ? HORIZONTAL : VERTICAL;
       var dimension = (orient == HORIZONTAL && axis.pivot() || orient == VERTICAL && !axis.pivot()) ? Y : X;
+      var boxSize = g.select('.tick').select('text').node().getBBox();
 
       g.selectAll('.vzb-axis-value')
         .data([null])
         .enter().append('g')
         .attr("class", 'vzb-axis-value')
         .classed("vzb-hidden", true)
-        .append("text");
+        .append("text")
+        .attr("x", dimension == X ? 0 : (-axis.tickPadding() - axis.tickSize()))
+        .attr("y", dimension == X ? (orient == VERTICAL ? 0 : boxSize.height/3) : 0);
 
       // patch the label positioning after the view is generated
       g.selectAll("text")
@@ -66,9 +68,8 @@ export default function axisSmart() {
           if(axis.pivot() == null) return;
           view.attr("transform", "rotate(" + (axis.pivot() ? -90 : 0) + ")");
           view.style("text-anchor", dimension == X ? "middle" : "end");
-
           view.attr("dx", dimension == X ? (orient == VERTICAL ? axis.tickPadding() + axis.tickSize() : 0) : 0);
-          view.attr("dy", dimension == X ? (orient == VERTICAL ? -1:1.25) * (axis.tickPadding() + axis.tickSize()) : axis.tickSize());
+          view.attr("dy", dimension == X ? (orient == VERTICAL ? -0.35:0.5) * (boxSize.height) : boxSize.height/4);
         })
       
       if(axis.repositionLabels() != null){
@@ -76,8 +77,8 @@ export default function axisSmart() {
             .each(function(d, i) {
               var view = d3.select(this).select("text");
               var shift = axis.repositionLabels()[i] || {x: 0, y: 0};
-              view.attr("dx", +view.attr("dx") + shift.x);
-              view.attr("dy", +view.attr("dy") + shift.y);
+              view.attr("x", +view.attr("x") + shift.x);
+              view.attr("y", +view.attr("y") + shift.y);
             })
       }
 
