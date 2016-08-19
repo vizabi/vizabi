@@ -93,7 +93,7 @@
     "shelljs": "0.7.3",
     "slash": "1.0.0",
     "tiny-lr": "0.2.1",
-    "vizabi-ws-reader": "0.0.9",
+    "vizabi-ws-reader": "0.0.10",
     "watchify": "3.7.0"
   }
 }
