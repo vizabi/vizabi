@@ -256,7 +256,7 @@ function buildJS(dev, cb) {
       banner: banner_str,
       moduleName: 'Vizabi',
       dest: path.join(config.destLib, 'vizabi.js'),
-      outro: 'globals.version = "' + pkg.version + '"; globals.build = "' + timestamp.valueOf() + '"; globals.templates = ' + templatesFunc
+      outro: 'function __setupGlobals(){globals.version = "' + pkg.version + '"; globals.build = "' + timestamp.valueOf() + '"; globals.templates = ' + templatesFunc + '};'
     };
 
     gutil.log(chalk.yellow("Bundling JS..."));
