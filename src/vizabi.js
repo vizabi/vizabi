@@ -68,4 +68,6 @@ Vzb.Reader = Reader;
 Vzb.Events = Events;
 Vzb.utils = utils;
 
+__setupGlobals();
+
 export default Vzb;
