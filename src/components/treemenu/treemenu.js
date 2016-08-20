@@ -74,12 +74,13 @@ var OPTIONS = {
 };
 
 var Menu = Class.extend({
-  init: function (parent, menu) {
+  init: function (parent, menu, options) {
     var _this = this;
     this.parent = parent;
     this.entity = menu;
-    this.width = OPTIONS.MIN_COL_WIDTH;
-    this.direction = OPTIONS.MENU_DIRECTION;
+    this.OPTIONS = options;
+    this.width = this.OPTIONS.MIN_COL_WIDTH;
+    this.direction = this.OPTIONS.MENU_DIRECTION;
     this._setDirectionClass();
     this.menuItems = [];
     var menuItemsHolder;
@@ -154,7 +155,7 @@ var Menu = Class.extend({
     }
   },
   addSubmenu: function(item) {
-    this.menuItems.push(new MenuItem(this, item))
+    this.menuItems.push(new MenuItem(this, item, this.OPTIONS))
   },
   open: function() {
     var _this = this;
@@ -180,8 +181,8 @@ var Menu = Class.extend({
   calculateMissingWidth: function(width, cb) {
     var _this = this;
     if (this.entity.classed(css.list_top_level)) {
-      if (width > OPTIONS.MAX_MENU_WIDTH) {
-        if (typeof cb === "function") cb(width - OPTIONS.MAX_MENU_WIDTH);
+      if (width > this.OPTIONS.MAX_MENU_WIDTH) {
+        if (typeof cb === "function") cb(width - this.OPTIONS.MAX_MENU_WIDTH);
       }
     } else {
       this.parent.parentMenu.calculateMissingWidth(width + this.width, function(widthToReduce) {
@@ -233,11 +234,11 @@ var Menu = Class.extend({
     var _this = this;
     var currWidth = this.entity.node().offsetWidth;
 
-    if (currWidth <= OPTIONS.MIN_COL_WIDTH) {
+    if (currWidth <= this.OPTIONS.MIN_COL_WIDTH) {
       cb(width - _this.width + currWidth);
     } else {
 
-      var newElementWidth = Math.max(OPTIONS.MIN_COL_WIDTH, _this.width - width);
+      var newElementWidth = Math.max(this.OPTIONS.MIN_COL_WIDTH, _this.width - width);
       var duration = 250 / (_this.width / newElementWidth);
       this.entity.transition()
         .delay(0)
@@ -318,7 +319,7 @@ var Menu = Class.extend({
         _this.marqueeToggle(false);
         _this.entity.classed('active', false);
         if(!openSubmenuNow) {
-          _this.restoreWidth(OPTIONS.MAX_MENU_WIDTH, true, function() {
+          _this.restoreWidth(_this.OPTIONS.MAX_MENU_WIDTH, true, function() {
             if (typeof cb === "function") cb();
           });
         } else {
@@ -402,13 +403,13 @@ var Menu = Class.extend({
 });
 
 var MenuItem = Class.extend({
-  init: function (parent, item) {
+  init: function (parent, item, options) {
     var _this = this;
     this.parentMenu = parent;
     this.entity = item;
     var submenu = item.select('.' + css.list_outer);
     if (submenu.node()) {
-      this.submenu = new Menu(this, submenu);
+      this.submenu = new Menu(this, submenu, options);
     }
     var label = this.entity.select('.' + css.list_item_label).on('mouseenter', function() {
       if(utils.isTouchDevice()) return;
@@ -505,69 +506,52 @@ var MenuItem = Class.extend({
   }
 });
 
-//default callback
-var callback = function(indicator) {
-  console.log("Indicator selector: stub callback fired. New indicator is ", indicator);
-};
-
-var tree;
-var langStrings;
-var lang;
-var markerID;
-var alignX = "center";
-var alignY = "center";
-var top;
-var left;
-var selectedNode;
-var tags;
-var indicatorsTree;
-
 var TreeMenu = Component.extend({
 
   //setters-getters
   tree: function(input) {
-    if(!arguments.length) return tree;
-    tree = input;
+    if(!arguments.length) return this._tree;
+    this._tree = input;
     return this;
   },
   lang: function(input) {
-    if(!arguments.length) return lang;
-    lang = input;
+    if(!arguments.length) return this._lang;
+    this._lang = input;
     return this;
   },
   langStrings: function(input) {
-    if(!arguments.length) return langStrings;
-    langStrings = input;
+    if(!arguments.length) return this._langStrings;
+    this._langStrings = input;
     return this;
   },
   callback: function(input) {
-    if(!arguments.length) return callback;
-    callback = input;
+    if(!arguments.length) return this._callback;
+    this._callback = input;
     return this;
   },
   markerID: function(input) {
-    if(!arguments.length) return markerID;
-    markerID = input;
+    if(!arguments.length) return this._markerID;
+    this._markerID = input;
     return this;
   },
   alignX: function(input) {
-    if(!arguments.length) return alignX;
-    alignX = input;
+    if(!arguments.length) return this._alignX;
+    this._alignX = input;
     return this;
   },
   alignY: function(input) {
-    if(!arguments.length) return alignY;
-    alignY = input;
+    if(!arguments.length) return this._alignY;
+    this._alignY = input;
     return this;
   },
   top: function(input) {
-    if(!arguments.length) return top;
-    top = input;
+    if(!arguments.length) return this._top;
+    this._top = input;
     return this;
   },
   left: function(input) {
-    if(!arguments.length) return left;
-    left = input;
+    if(!arguments.length) return this._left;
+    this._left = input;
     return this;
   },
 
@@ -595,7 +579,7 @@ var TreeMenu = Component.extend({
     this.menuEntity = null;
     this.model_binds = {
       "change:marker": function(evt, path) {
-        if(path.indexOf(markerID + '.which')==-1 && path.indexOf(markerID + '.scaleType')==-1) return;
+        if(path.indexOf(_this._markerID + '.which')==-1 && path.indexOf(_this._markerID + '.scaleType')==-1) return;
         _this.updateView();
       },
       "change:language.strings": function(evt) {
@@ -609,6 +593,16 @@ var TreeMenu = Component.extend({
     this.ui = utils.extend({
       //...add properties here
     }, this.ui);
+
+    //default callback
+    this._callback = function(indicator) {
+      console.log("Indicator selector: stub callback fired. New indicator is ", indicator);
+    };
+    this._alignX = "center";
+    this._alignY = "center";
+
+    //options
+    this.OPTIONS = utils.deepClone(OPTIONS);
 
   },
 
@@ -700,7 +694,9 @@ var TreeMenu = Component.extend({
       var DEFAULT = "_default";
       var UNCLASSIFIED = "_unclassified";
       var ADVANCED = "advanced";
-      
+
+      var indicatorsTree;
+
       //init the dictionary of tags
       var tags = {};
       tags[ROOT] = {id: ROOT, children: []};
@@ -738,8 +734,9 @@ var TreeMenu = Component.extend({
             tags[UNCLASSIFIED].children.push({id: id});
           }
         });  
-      })
-  
+      });
+
+    this.indicatorsTree = indicatorsTree;
   },
 
   //happens on resizing of the container
@@ -758,16 +755,19 @@ var TreeMenu = Component.extend({
       }
     };
 
+    var top = this._top;
+    var left = this._left;
+
     this.wrapper.classed(css.noTransition, true);
     this.wrapper.node().scrollTop = 0;
 
     this.activeProfile = this.profiles[this.getLayoutProfile()];
-    OPTIONS.IS_MOBILE = this.getLayoutProfile() === "small";
+    this.OPTIONS.IS_MOBILE = this.getLayoutProfile() === "small";
 
     if (this.menuEntity) {
       this.menuEntity.setWidth(this.activeProfile.col_width, true, true);
 
-      if (OPTIONS.IS_MOBILE) {
+      if (this.OPTIONS.IS_MOBILE) {
         if (this.menuEntity.direction != MENU_VERTICAL) {
           this.menuEntity.setDirection(MENU_VERTICAL, true);
         }
@@ -784,7 +784,7 @@ var TreeMenu = Component.extend({
     var containerWidth = rect.width;
     var containerHeight = rect.height;
     if (containerWidth) {
-      if(OPTIONS.IS_MOBILE) {
+      if(this.OPTIONS.IS_MOBILE) {
         this.clearPos();
       } else {
         if(top || left) {
@@ -808,24 +808,24 @@ var TreeMenu = Component.extend({
         }
         this.wrapper.style('max-height', (maxHeight - 10) + 'px');
       
-        this.wrapperOuter.classed(css.alignXc, alignX === "center");
-        this.wrapperOuter.style("margin-left",alignX === "center"? "-" + containerWidth/2 + "px" : null);
-        if (alignX === "center") {
-          OPTIONS.MAX_MENU_WIDTH = this.width/2 - containerWidth * 0.5 - 10;
+        this.wrapperOuter.classed(css.alignXc, this._alignX === "center");
+        this.wrapperOuter.style("margin-left", this._alignX === "center"? "-" + containerWidth/2 + "px" : null);
+        if (this._alignX === "center") {
+          this.OPTIONS.MAX_MENU_WIDTH = this.width/2 - containerWidth * 0.5 - 10;
         } else {
-          OPTIONS.MAX_MENU_WIDTH = this.width - this.wrapperOuter.node().offsetLeft - containerWidth - 10; // 10 - padding around wrapper
+          this.OPTIONS.MAX_MENU_WIDTH = this.width - this.wrapperOuter.node().offsetLeft - containerWidth - 10; // 10 - padding around wrapper
         }
 
-        var minMenuWidth = this.activeProfile.col_width + OPTIONS.MIN_COL_WIDTH * 2;
+        var minMenuWidth = this.activeProfile.col_width + this.OPTIONS.MIN_COL_WIDTH * 2;
         var leftPos = this.wrapperOuter.node().offsetLeft;
-        OPTIONS.MENU_OPEN_LEFTSIDE = OPTIONS.MAX_MENU_WIDTH < minMenuWidth && leftPos > (OPTIONS.MAX_MENU_WIDTH + 10);
-        if(OPTIONS.MENU_OPEN_LEFTSIDE) {
+        this.OPTIONS.MENU_OPEN_LEFTSIDE = this.OPTIONS.MAX_MENU_WIDTH < minMenuWidth && leftPos > (this.OPTIONS.MAX_MENU_WIDTH + 10);
+        if(this.OPTIONS.MENU_OPEN_LEFTSIDE) {
           if(leftPos <  (minMenuWidth + 10)) leftPos = (minMenuWidth + 10);
-          OPTIONS.MAX_MENU_WIDTH = leftPos - 10; // 10 - padding around wrapper        
+          this.OPTIONS.MAX_MENU_WIDTH = leftPos - 10; // 10 - padding around wrapper        
         } else {
-          if (OPTIONS.MAX_MENU_WIDTH < minMenuWidth) { 
-            leftPos = leftPos - (minMenuWidth - OPTIONS.MAX_MENU_WIDTH);
-            OPTIONS.MAX_MENU_WIDTH = minMenuWidth;
+          if (this.OPTIONS.MAX_MENU_WIDTH < minMenuWidth) { 
+            leftPos = leftPos - (minMenuWidth - this.OPTIONS.MAX_MENU_WIDTH);
+            this.OPTIONS.MAX_MENU_WIDTH = minMenuWidth;
           } 
         }
        
@@ -837,9 +837,12 @@ var TreeMenu = Component.extend({
           }
         }
         
+        this._top = top;
+        this._left = left;
+
         if(left || top) this.setPos();
         
-        this.wrapperOuter.classed('vzb-treemenu-open-left-side', !OPTIONS.IS_MOBILE && OPTIONS.MENU_OPEN_LEFTSIDE);        
+        this.wrapperOuter.classed('vzb-treemenu-open-left-side', !this.OPTIONS.IS_MOBILE && this.OPTIONS.MENU_OPEN_LEFTSIDE);        
       }
     }
 
@@ -890,15 +893,15 @@ var TreeMenu = Component.extend({
     }
 
     if (this.menuEntity.direction == MENU_VERTICAL) {
-      scrollToItem(this.wrapper.node(), selectedNode);
+      scrollToItem(this.wrapper.node(), this.selectedNode);
       _this.menuEntity.marqueeToggleAll(true);
     } else {
-      var selectedItem = this.menuEntity.findItemByName(d3.select(selectedNode).select('span').text());
+      var selectedItem = this.menuEntity.findItemByName(d3.select(this.selectedNode).select('span').text());
       selectedItem.submenu.calculateMissingWidth(0, function() {
         _this.menuEntity.marqueeToggleAll(true);
       });
 
-      var parent = selectedNode;
+      var parent = this.selectedNode;
       var listNode;
       while(!(utils.hasClass(parent, css.list_top_level))) {
         if(parent.tagName == 'LI') {
@@ -911,6 +914,8 @@ var TreeMenu = Component.extend({
   },
 
   setPos: function() {
+    var top = this._top;
+    var left = this._left;
     var rect = this.wrapperOuter.node().getBoundingClientRect();
 
     if(top) {
@@ -927,8 +932,8 @@ var TreeMenu = Component.extend({
   },
 
   clearPos: function() {
-    top = '';
-    left = '';
+    this._top = '';
+    this._left = '';
     this.wrapperOuter.attr("style", "");
     this.wrapperOuter.classed(css.absPosVert, '');
     this.wrapperOuter.classed(css.absPosHoriz, '');
@@ -953,22 +958,23 @@ var TreeMenu = Component.extend({
         var languageId = _this.model.language.id;
 
         if(_this.langStrings()) {
-          var translate = _this.langStrings()[languageId]['indicator/' + data[i][OPTIONS.SEARCH_PROPERTY]] ||
-            _this.langStrings()[languageId]['indicator' + '/' + _this.model.marker[markerID]._type + '/' + data[i][OPTIONS.SEARCH_PROPERTY]];
+          var translate = _this.langStrings()[languageId]['indicator/' + data[i][_this.OPTIONS.SEARCH_PROPERTY]] ||
+            _this.langStrings()[languageId]['indicator' + '/' + _this.model.marker[_this._markerID]._type + '/' + data[i][_this.OPTIONS.SEARCH_PROPERTY]];
           if(translate && translate.toLowerCase().indexOf(value.toLowerCase()) >= 0) return true;
         };
         return false;
       };
 
       var matching = function(data) {
+        var SUBMENUS = _this.OPTIONS.SUBMENUS;
         for(var i = 0; i < data.length; i++) {
           var match = false;
           match =  translationMatch(value, data, i);
           if(match) {
             matches.children.push(data[i]);
           }
-          if(!match && data[i][OPTIONS.SUBMENUS]) {
-            matching(data[i][OPTIONS.SUBMENUS]);
+          if(!match && data[i][SUBMENUS]) {
+            matching(data[i][SUBMENUS]);
           }
         }
       };
@@ -987,7 +993,7 @@ var TreeMenu = Component.extend({
         if(!searchValueNonEmpty && value == "") return;        
         searchValueNonEmpty = value != "";
 
-        if(value.length >= OPTIONS.SEARCH_MIN_STR) {
+        if(value.length >= _this.OPTIONS.SEARCH_MIN_STR) {
           _this.redraw(getMatches(value), true);  
         } else {
           _this.redraw();
@@ -998,7 +1004,7 @@ var TreeMenu = Component.extend({
   },
 
   _selectIndicator: function(value) {
-    callback("which", value, markerID);
+    this._callback("which", value, this._markerID);
     this.toggle();
   },
 
@@ -1006,6 +1012,8 @@ var TreeMenu = Component.extend({
   //function is redrawing data and built structure
   redraw: function(data, useDataFiltered) {
     var _this = this;
+
+    var markerID = this._markerID;
 
     var dataFiltered;
     
@@ -1016,7 +1024,7 @@ var TreeMenu = Component.extend({
     if(useDataFiltered) {
       dataFiltered = data;
     } else {
-      if(data == null) data = tree;
+      if(data == null) data = this._tree;
 
       var allowedIDs = utils.keys(indicatorsDB).filter(function(f) {
         //check if indicator is denied to show with allow->names->!indicator
@@ -1152,20 +1160,20 @@ var TreeMenu = Component.extend({
               }
               parent = parent.parentNode;
             }
-            selectedNode = this;
+            _this.selectedNode = this;
           }
           createSubmeny(view, d);
         });
     };
     
-    if(OPTIONS.IS_MOBILE) {
-      OPTIONS.MENU_DIRECTION = MENU_VERTICAL;
+    if(this.OPTIONS.IS_MOBILE) {
+      this.OPTIONS.MENU_DIRECTION = MENU_VERTICAL;
     } else {
-      OPTIONS.MENU_DIRECTION = MENU_HORIZONTAL;
+      this.OPTIONS.MENU_DIRECTION = MENU_HORIZONTAL;
     }
     createSubmeny(this.wrapper, dataFiltered, true);
-    this.menuEntity = new Menu(null, this.wrapper.selectAll('.' + css.list_top_level));
-    if(this.menuEntity) this.menuEntity.setDirection(OPTIONS.MENU_DIRECTION);
+    this.menuEntity = new Menu(null, this.wrapper.selectAll('.' + css.list_top_level), this.OPTIONS);
+    if(this.menuEntity) this.menuEntity.setDirection(this.OPTIONS.MENU_DIRECTION);
     if(this.menuEntity) this.menuEntity.setWidth(this.activeProfile.col_width, true, true);
     
     if(!useDataFiltered) {
@@ -1221,17 +1229,17 @@ var TreeMenu = Component.extend({
     var _this = this;
     var languageID = _this.model.language.id;
 
-    if(!markerID) return;
+    if(!this._markerID) return;
 
-    this.wrapperOuter.classed(css.absPosVert, top);
-    this.wrapperOuter.classed(css.alignYt, alignY === "top");
-    this.wrapperOuter.classed(css.alignYb, alignY === "bottom");
-    this.wrapperOuter.classed(css.absPosHoriz, left);
-    this.wrapperOuter.classed(css.alignXl, alignX === "left");
-    this.wrapperOuter.classed(css.alignXr, alignX === "right");
+    this.wrapperOuter.classed(css.absPosVert, this._top);
+    this.wrapperOuter.classed(css.alignYt, this._alignY === "top");
+    this.wrapperOuter.classed(css.alignYb, this._alignY === "bottom");
+    this.wrapperOuter.classed(css.absPosHoriz, this._left);
+    this.wrapperOuter.classed(css.alignXl, this._alignX === "left");
+    this.wrapperOuter.classed(css.alignXr, this._alignX === "right");
 
 
-    var strings = langStrings ? langStrings : {};
+    var strings = this._langStrings ? this._langStrings : {};
     strings[languageID] = _this.model.language.strings[languageID];
 
     this.translator = this.model.language.getTFunction();
@@ -1240,7 +1248,7 @@ var TreeMenu = Component.extend({
     this.langStrings(strings)
       .lang(languageID)
       .callback(setModel)
-      .tree(indicatorsTree)
+      .tree(this.indicatorsTree)
       .redraw();
 
     this.wrapper.select('.' + css.search).node().value = "";

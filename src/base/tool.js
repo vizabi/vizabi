@@ -127,7 +127,7 @@ var Tool = Component.extend({
     this.model = new ToolModel(this.name, external_model, this.default_model, callbacks, validate);
 
     // default model is the model set in the tool
-    this.default_model = this.default_model || {};
+    this.default_model = utils.deepClone(this.default_model) || {};
 
     this.ui = this.model.ui || {};
 
