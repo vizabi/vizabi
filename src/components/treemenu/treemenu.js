@@ -1147,20 +1147,35 @@ var TreeMenu = Component.extend({
           }
           
           if(d.id == _this.model.marker[markerID].which) {
-            var parent = this.parentNode;
-            d3.select(this).classed('item-active', true)
-              .select('.' + css.list_item_leaf).classed('active', true);
-            while(!(utils.hasClass(parent, css.list_top_level))) {
-              if(parent.tagName == 'UL') {
-                d3.select(parent.parentNode)
-                  .classed('active', true);
-              }
-              if(parent.tagName == 'LI') {
-                d3.select(parent).classed('item-active', true);
-              }
-              parent = parent.parentNode;
+            var parent;
+            if(_this.selectedNode && toplevel) {
+              parent = _this.selectedNode.parentNode;
+              d3.select(_this.selectedNode)
+                .select('.' + css.list_item_leaf).classed('active', false);
+              while(!(utils.hasClass(parent, css.list_top_level))) {
+                if(parent.tagName == 'UL') {
+                  d3.select(parent.parentNode)
+                    .classed('active', false);
+                }
+                parent = parent.parentNode;
+              }                    
             }
-            _this.selectedNode = this;
+            if(!_this.selectedNode || toplevel) {
+              parent = this.parentNode;
+              d3.select(this).classed('item-active', true)
+                .select('.' + css.list_item_leaf).classed('active', true);
+              while(!(utils.hasClass(parent, css.list_top_level))) {
+                if(parent.tagName == 'UL') {
+                  d3.select(parent.parentNode)
+                    .classed('active', true);
+                }
+                if(parent.tagName == 'LI') {
+                  d3.select(parent).classed('item-active', true);
+                }
+                parent = parent.parentNode;
+              }
+              _this.selectedNode = this;
+            }
           }
           createSubmeny(view, d);
         });
@@ -1171,6 +1186,7 @@ var TreeMenu = Component.extend({
     } else {
       this.OPTIONS.MENU_DIRECTION = MENU_HORIZONTAL;
     }
+    this.selectedNode = null;
     createSubmeny(this.wrapper, dataFiltered, true);
     this.menuEntity = new Menu(null, this.wrapper.selectAll('.' + css.list_top_level), this.OPTIONS);
     if(this.menuEntity) this.menuEntity.setDirection(this.OPTIONS.MENU_DIRECTION);
