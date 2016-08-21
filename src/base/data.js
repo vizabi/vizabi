@@ -274,7 +274,7 @@ var Data = Class.extend({
     
     this.load(query, "en", reader).then(function(dataId) {
       _this.conceptPropsDataID = dataId;
-      _this.conceptDictionary = {_default: {concept_type: "string", scales: ["ordinal"], tags: "_root"} };
+      _this.conceptDictionary = {_default: {concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root"} };
       _this.get(dataId).forEach(function(d){
         var concept = {};
         concept["use"] = d.concept_type=="measure"?"indicator":"property";
