@@ -352,6 +352,7 @@ export default Class.extend({
 
   _reveal: function(trail, duration, d) {
     var _context = this.context;
+    var _this = this;
     var KEY = _context.KEY;
     var trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
     var generateTrailSegment = function(trail, index) {
