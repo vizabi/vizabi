@@ -10,7 +10,7 @@ export default Class.extend({
     this.actionsQueue = {};
     this.entityTrails = {};
     this.trailsData = [];
-
+    this.trailTransitions = {};
   },
 
   toggle: function(arg) {
@@ -49,7 +49,7 @@ export default Class.extend({
         r["selectedEntityData"] = d;
         return r;
       });
-      
+      _this.trailTransitions = {};
       var _trails = _context.bubbleContainer.selectAll('g.vzb-bc-entity')
         .data(_this.trailsData, function(d) {
           return(d[KEY]);
@@ -216,11 +216,19 @@ export default Class.extend({
       if(segment.valueY==null || segment.valueX==null || segment.valueS==null) return;
 
       var view = d3.select(this);
-      view.select("circle")
-        //.transition().duration(duration).ease("linear")
-        .attr("cy", _context.yScale(segment.valueY))
-        .attr("cx", _context.xScale(segment.valueX))
-        .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)));
+      if (duration) {
+        view.select("circle").interrupt()
+          .transition().duration(duration).ease("linear")
+          .attr("cy", _context.yScale(segment.valueY))
+          .attr("cx", _context.xScale(segment.valueX))
+          .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)));
+      } else {
+        view.select("circle")
+          .transition().duration(duration).ease("linear")
+          .attr("cy", _context.yScale(segment.valueY))
+          .attr("cx", _context.xScale(segment.valueX))
+          .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)));
+      }
 
       if(!this.nextSibling) return;
       var next = d3.select(this.nextSibling).datum();
@@ -231,14 +239,24 @@ export default Class.extend({
           Math.pow(_context.xScale(segment.valueX) - _context.xScale(next.valueX),2) +
           Math.pow(_context.yScale(segment.valueY) - _context.yScale(next.valueY),2)
       );
-      view.select("line")
-        //.transition().duration(duration).ease("linear")
-        .attr("x1", _context.xScale(next.valueX))
-        .attr("y1", _context.yScale(next.valueY))
-        .attr("x2", _context.xScale(segment.valueX))
-        .attr("y2", _context.yScale(segment.valueY))
-        .style("stroke-dasharray", lineLength)
-        .style("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)));
+      if (duration) {
+        view.select("line").interrupt()
+          .transition().duration(duration).ease("linear")
+          .attr("x1", _context.xScale(next.valueX))
+          .attr("y1", _context.yScale(next.valueY))
+          .attr("x2", _context.xScale(segment.valueX))
+          .attr("y2", _context.yScale(segment.valueY))
+          .style("stroke-dasharray", lineLength)
+          .style("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)));
+      } else {
+        view.select("line")
+          .attr("x1", _context.xScale(next.valueX))
+          .attr("y1", _context.yScale(next.valueY))
+          .attr("x2", _context.xScale(segment.valueX))
+          .attr("y2", _context.yScale(segment.valueY))
+          .style("stroke-dasharray", lineLength)
+          .style("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)));
+      }
     });
   },
 
@@ -321,6 +339,16 @@ export default Class.extend({
     });
   },
 
+  _abortAnimation: function() {
+    var _context = this.context;
+    var _this = this;
+    var KEY = _context.KEY;
+    _this.trailsData.forEach(function(d) {
+      if (_this.trailTransitions[d[KEY]]) {
+        _this.trailTransitions[d[KEY]].select('line').interrupt();
+      }
+    });
+  },
 
   _reveal: function(trail, duration, d) {
     var _context = this.context;
@@ -407,6 +435,7 @@ export default Class.extend({
                     if(nextFrame.axis_x[d[KEY]]==null || nextFrame.axis_y[d[KEY]]==null) {
                       resolve();
                     } else {
+                      _this.trailTransitions[d[KEY]] = view;
                       var strokeColor = _context.model.marker.color.which == "geo.world_4region"?
                         //use predefined shades for color palette for "geo.world_4region" (hardcoded)
                         _context.model.marker.color.getColorShade({

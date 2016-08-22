@@ -88,7 +88,7 @@ var BubbleChartComp = Component.extend({
           _this.updateMarkerSizeLimits();
           _this._trails.run("findVisible");
           _this.redrawDataPoints();
-          _this._trails.run("resize");
+          _this._trails.run("resize", null, 500);
           return;
         }
         if(path.indexOf("zoomedMin") > -1 || path.indexOf("zoomedMax") > -1) {
@@ -101,14 +101,22 @@ var BubbleChartComp = Component.extend({
           && _this._zoomedXYMinMax.axis_y.zoomedMin == _this.model.marker.axis_y.zoomedMin
           && _this._zoomedXYMinMax.axis_y.zoomedMax == _this.model.marker.axis_y.zoomedMax
           ) return;
-
-            _this._panZoom.zoomToMaxMin(
-              _this.model.marker.axis_x.zoomedMin,
-              _this.model.marker.axis_x.zoomedMax,
-              _this.model.marker.axis_y.zoomedMin,
-              _this.model.marker.axis_y.zoomedMax,
-              500
-          )
+          var playAfterZoom = false;
+          if (_this.model.time.playing) {
+            playAfterZoom = true;
+            _this.model.time.pause(true);
+          }
+          _this._trails.run("abortAnimation");  
+          _this._panZoom.zoomToMaxMin(
+            _this.model.marker.axis_x.zoomedMin,
+            _this.model.marker.axis_x.zoomedMax,
+            _this.model.marker.axis_y.zoomedMin,
+            _this.model.marker.axis_y.zoomedMax,
+            500
+          );
+          if (playAfterZoom) {
+            _this.model.time.postponePause = false;
+          }
           return;
         }
 
