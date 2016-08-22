@@ -57,8 +57,10 @@ export default function axisSmart() {
         .attr("class", 'vzb-axis-value')
         .classed("vzb-hidden", true)
         .append("text")
-        .attr("x", dimension == X ? 0 : (-axis.tickPadding() - axis.tickSize()))
-        .attr("y", dimension == X ? (orient == VERTICAL ? 0 : boxSize.height/3) : 0);
+        .style("text-anchor", dimension == X ? "middle" : "end")
+        .attr("dominant-baseline", orient == VERTICAL ? "text-after-edge" :"text-before-edge")
+        .attr("x", dimension == X ? (orient == VERTICAL ? -(axis.tickPadding() + axis.tickSize()) : 0) : -(axis.tickPadding() + axis.tickSize()))
+        .attr("y", dimension == X ? (orient == VERTICAL ? 0: axis.tickPadding() + axis.tickSize()) : 0);
 
       // patch the label positioning after the view is generated
       g.selectAll("text")
@@ -68,8 +70,9 @@ export default function axisSmart() {
           if(axis.pivot() == null) return;
           view.attr("transform", "rotate(" + (axis.pivot() ? -90 : 0) + ")");
           view.style("text-anchor", dimension == X ? "middle" : "end");
-          view.attr("dx", dimension == X ? (orient == VERTICAL ? axis.tickPadding() + axis.tickSize() : 0) : 0);
-          view.attr("dy", dimension == X ? (orient == VERTICAL ? -0.35:0.5) * (boxSize.height) : boxSize.height/4);
+          view.attr("dominant-baseline", dimension == X ? (orient == VERTICAL ? "text-after-edge" :"text-before-edge") : "middle")
+              .attr("dx", dimension == X ? (orient == VERTICAL ? axis.tickPadding() + axis.tickSize() : 0) : 0)
+              .attr("dy", dimension == X ? (orient == VERTICAL ? -axis.tickSize() : -axis.tickSize()) : 0);
         })
       
       if(axis.repositionLabels() != null){
