@@ -98,7 +98,11 @@ var AxisModel = Hook.extend({
    */
   buildScale: function(margins) {
     var domain;
+    
+    var conceptprops = this.getConceptprops();
 
+    if(conceptprops.scales) this.scaleType = conceptprops.scales[0];
+    
     if(this.scaleType == "time") {
       
       var timeMdl = this._space.time;
@@ -119,7 +123,7 @@ var AxisModel = Hook.extend({
         //default domain is based on limits
         domain = [limits.min, limits.max];
         //domain from concept properties can override it if defined
-        domain = this.getConceptprops().domain ? this.getConceptprops().domain : domain;
+        domain = conceptprops.domain ? conceptprops.domain : domain;
         //min and max can override the domain if defined
         domain = this.domainMin!=null && this.domainMax!=null ? [+this.domainMin, +this.domainMax] : domain;
         break;
