@@ -59,12 +59,11 @@ var TimeModel = Model.extend({
 
     this._type = "time";
     //default values for time model
-    var defaults = utils.deepClone(this._defaults);
-    values = utils.extend(defaults, values);
+
+    this._defaults = utils.extend(this._defaults, values);
 
     //same constructor
-    this._super(name, values, parent, bind);
-
+    this._super(name, this._defaults, parent, bind);
     var _this = this;
     this.timeFormat = formats[this.unit];
     this.dragging = false;
@@ -105,6 +104,10 @@ var TimeModel = Model.extend({
     }
   },
 
+  getDefaults: function() {
+    return this._defaults;
+  },
+  
   /*
    * Formatting and parsing functions
    * @param {Date} date
