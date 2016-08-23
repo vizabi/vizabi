@@ -101,8 +101,6 @@ var AxisModel = Hook.extend({
     
     var conceptprops = this.getConceptprops();
 
-    if(conceptprops.scales) this.scaleType = conceptprops.scales[0];
-    
     if(this.scaleType == "time") {
       
       var timeMdl = this._space.time;

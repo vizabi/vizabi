@@ -216,7 +216,9 @@ var ColorLegend = Component.extend({
 
         }
           
-        labelScale = d3.scale[this.colorModel.scaleType == "time" ? "linear" : this.colorModel.scaleType]()
+        var labelScaletype = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.colorModel.scaleType === "log")? "genericLog" : this.colorModel.scaleType;
+        
+        labelScale = d3.scale[labelScaletype == "time" ? "linear" : labelScaletype]()
           .domain(domain)
           .range(range);
           
