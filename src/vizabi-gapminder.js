@@ -694,16 +694,16 @@ BubbleChart.define('default_model', {
     },
     marker_minimap:{
       space: ["entities_minimap"],
-        type: "geometry",
-        shape: "svg",
-        label: {
-          use: "property",
-          which: "name"
-        },
-        geoshape: {
-          use: "property",
-          which: "shape_lores_svg"
-        }
+      type: "geometry",
+      shape: "svg",
+      label: {
+        use: "property",
+        which: "name"
+      },
+      geoshape: {
+        use: "property",
+        which: "shape_lores_svg"
+      }
     },
     marker_tags: {
       space: ["entities_tags"],
@@ -1315,17 +1315,17 @@ Cartogram.define('default_model', {
     },
     marker_minimap:{
       space: ["entities_minimap"],
-        type: "geometry",
-        shape: "svg",
-        label: {
-          use: "property",
-          which: "municipality.name"
-          //which: "province.name"
-        },
-        geoshape: {
-          use: "property",
-          which: "shape_lores_svg"
-        }
+      type: "geometry",
+      shape: "svg",
+      label: {
+        use: "property",
+        which: "municipality.name"
+        //which: "province.name"
+      },
+      geoshape: {
+        use: "property",
+        which: "shape_lores_svg"
+      }
     }
   },
   //NO DEFAULT DATA SOURCE. DATA COMES FROM EXTERNAL PAGE
