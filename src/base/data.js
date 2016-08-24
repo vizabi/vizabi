@@ -274,13 +274,10 @@ var Data = Class.extend({
     
     this.load(query, "en", reader).then(function(dataId) {
       _this.conceptPropsDataID = dataId;
-      _this.conceptDictionary = {
-        _default: {concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root"},
-        time: {concept_type: "measure", use: "indicator", scales: ["time"], tags: "_root"} 
-      };
+      _this.conceptDictionary = {_default: {concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root"}};
       _this.get(dataId).forEach(function(d){
         var concept = {};
-        concept["use"] = d.concept_type=="measure"?"indicator":"property";
+        concept["use"] = (d.concept_type=="measure" || d.concept_type=="time")?"indicator":"property";
         concept["sourceLink"] = d.indicator_url;
         concept["color"] = JSON.parse(d.color);
         concept["scales"] = JSON.parse(d.scales);
