@@ -58,8 +58,12 @@ var ColorLegend = Component.extend({
   },
   
   forwardModelUpdate: function(){
-    if(this.colorModel.use === "property"){
-      this.model.state.entities_minimap.show[ this.colorModel.which.replace(this.KEY+".", this.KEY+".is--") ] = true;
+    if(this.colorModel.use === "property") {
+      var val = {};
+      val[this.KEY+".is--" + this.colorModel.which] = true;
+      this.model.state.entities_minimap.show = null;
+      this.model.state.entities_minimap.show = val;
+      this.model.state.marker_minimap.load();
     }
   },
 
@@ -125,6 +129,7 @@ var ColorLegend = Component.extend({
     var KEY = this.KEY;
 
     var palette = this.colorModel.getPalette();
+    console.log(palette);
     var canShowMap = utils.keys((this.frame||{}).geoshape||{}).length && this.colorModel.use == "property";
 
     var minimapKeys = [];
