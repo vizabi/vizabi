@@ -553,10 +553,18 @@ var Model = EventSource.extend({
     animatable = this._getFirstDimension({type: "time"});
     
     // from
-    from = prop? "entities" : "datapoints";
+    from = prop ? "entities" : "datapoints";
 
     // where 
     filters = this._getAllFilters(exceptions, splashScreen);
+
+    // make root $and explicit
+    var explicitAndFilters = { '$and': [] };
+    for (var filterKey in filters) {
+      var filter = {};
+      filter[filterKey] = filters[filterKey];
+      explicitAndFilters['$and'].push(filter);
+    }
     
     // grouping
     grouping = this._getGrouping();
@@ -569,7 +577,7 @@ var Model = EventSource.extend({
       'from': from,
       'animatable': animatable,
       'select': select,
-      'where': filters,
+      'where': explicitAndFilters,
       'grouping': grouping,
       'orderBy': orderBy // should be _space.animatable, but that's time for now
     };
