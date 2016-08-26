@@ -270,7 +270,7 @@ var Data = Class.extend({
       from: "concepts",
       select: {
         key: ["concept"],
-        value: ["concept","concept_type","indicator_url","color","scales","interpolation","tags"]
+        value: ["concept_type","indicator_url","color","scales","interpolation","tags"]
       }
     };
     
