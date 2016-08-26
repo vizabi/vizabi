@@ -210,6 +210,7 @@ export default Class.extend({
       return;
     }
 //    this._isCreated.then(function() {
+    var updateLabel = false;
 
     trail.each(function(segment, index) {
         
@@ -228,6 +229,11 @@ export default Class.extend({
           .attr("cy", _context.yScale(segment.valueY))
           .attr("cx", _context.xScale(segment.valueX))
           .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)));
+      }
+
+      if(!updateLabel && !segment.transparent) {
+        updateLabel = true;
+        _context._labels.updateLabelOnlyPosition(d, null, {'scaledS0': utils.areaToRadius(_context.sScale(segment.valueS))});
       }
 
       if(!this.nextSibling) return;
