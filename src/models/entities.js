@@ -11,7 +11,7 @@ var EntitiesModel = Model.extend({
    * Default values for this model
    */
   _defaults: {
-    show: [],
+    show: {},
     select: [],
     highlight: [],
     opacityHighlightDim: .1,
@@ -98,8 +98,8 @@ var EntitiesModel = Model.extend({
   getFilter: function() {
     var _this = this;
     var response = {};
-    this.show.map(function(val, id) {
-      response[_this.getDimension() + ".is--" + val] = true;
+    utils.forEach(this.show.getPlainObject(), function(val, key) {
+      response[key + ".is--" + val] = true;
     });
     return response;
   },
