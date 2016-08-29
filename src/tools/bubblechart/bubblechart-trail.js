@@ -11,6 +11,7 @@ export default Class.extend({
     this.entityTrails = {};
     this.trailsData = [];
     this.trailTransitions = {};
+    this.lastTrailSize = {};
   },
 
   toggle: function(arg) {
@@ -55,7 +56,10 @@ export default Class.extend({
           return(d[KEY]);
         });
         
-      _trails.exit().remove();
+      _trails.exit().each(function(d){
+        delete _this.lastTrailSize[d[KEY]];
+        delete _this.entityTrails[d[KEY]];
+      }).remove();
   
       _trails.enter()
         .insert("g", function(d) { 
@@ -78,6 +82,7 @@ export default Class.extend({
           if (_this.entityTrails[d[KEY]]) {
              _this._remove(_this.entityTrails[d[KEY]], null, d);  
           }
+          _this.lastTrailSize[d[KEY]] = 0;
           _this.entityTrails[d[KEY]] = d3.select(this).selectAll("g").data(trailSegmentData);
           
           _this.entityTrails[d[KEY]].exit().remove();
@@ -429,6 +434,8 @@ export default Class.extend({
                   segment.valueX = frame.axis_x[d[KEY]];
                   segment.valueS = frame.size[d[KEY]];
                   segment.valueC = frame.color[d[KEY]];
+
+                  if(!_this.lastTrailSize[d[_context.KEY]] && nextFrame && (nextFrame.axis_x[d[KEY]]==null||nextFrame.axis_y[d[KEY]]==null||nextFrame.size[d[KEY]]==null)) _this.lastTrailSize[d[_context.KEY]] = segment.valueS;
 
                   if(!nextFrame || segment.valueY==null || segment.valueX==null || segment.valueS==null) {
                     resolve();

@@ -219,6 +219,8 @@ var BubbleChartComp = Component.extend({
       
     this._super(config, context);
 
+    this.resortDataPoints = utils.debounce(this.resortDataPoints, 100);
+
     this.xScale = null;
     this.yScale = null;
     this.sScale = null;
@@ -496,6 +498,7 @@ var BubbleChartComp = Component.extend({
       this.redrawDataPoints();
     }
     this._trails.run("reveal", null, this.duration);
+    if(!this.model.time.playing) this.resortDataPoints();
     this.tooltipMobile.classed('vzb-hidden', true);
   },
 
@@ -694,13 +697,17 @@ var BubbleChartComp = Component.extend({
       if(!frame) frame = this.frame;
       
       if(!frame || !frame.axis_y || !frame.axis_x || !frame.size) return;
+
+      var _select = [];
       
       this.model.entities.select.forEach(function(d){
-        if(!frame.axis_y[d[KEY]] && frame.axis_y[d[KEY]] !== 0
-        || !frame.axis_x[d[KEY]] && frame.axis_x[d[KEY]] !== 0
-        || !frame.size[d[KEY]] && frame.size[d[KEY]] !== 0) 
-            _this.model.entities.selectEntity(d);
+        if((frame.axis_y[d[KEY]] || frame.axis_y[d[KEY]] === 0)
+        && (frame.axis_x[d[KEY]] || frame.axis_x[d[KEY]] === 0)
+        && (frame.size[d[KEY]] || frame.size[d[KEY]] === 0)) 
+            _select.push(d);      
       })
+
+      if(_select.length != _this.model.entities.select.length) _this.model.entities.select = _select;
   },
 
   _bubblesInteract: function() {
@@ -1141,6 +1148,28 @@ var BubbleChartComp = Component.extend({
             _this._updateBubble(d, _this.frame, index, d3.select(this), duration);
         });
     }
+  },
+
+  resortDataPoints: function() {
+    var _this = this;
+    var KEY = this.KEY;
+
+    var _visible = this.model.entities.getVisible();
+    var d;
+
+    for(var i = 0, j = _visible.length; i < j; i++) {
+      d = _visible[i];
+      d.sortValue = _this.frame.size[d[KEY]]||_this._trails.lastTrailSize[d[KEY]]||0;
+    }
+
+    this.entityBubbles.sort(function(a, b) {
+      return b.sortValue - a.sortValue;
+    });
+
+    this.bubbleContainer.selectAll("g.vzb-bc-entity").each(function(d) {
+      this.parentNode.insertBefore(this, this.parentNode.querySelector(".bubble-" + d[KEY]));
+    });
+
   },
 
   //redraw Data Points
