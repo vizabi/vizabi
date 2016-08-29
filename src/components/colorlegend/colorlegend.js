@@ -51,15 +51,15 @@ var ColorLegend = Component.extend({
         this.translator = this.model.language.getTFunction();
         _this.updateView();
       }
-    }
-    
+    };
+
     //contructor is the same as any component
     this._super(config, context);
   },
   
   forwardModelUpdate: function(){
     if(this.colorModel.use === "property"){
-      this.model.state.entities_minimap.show[ this.colorModel.which.replace(this.KEY+".", this.KEY+".is--") ] = true;
+      this.model.state.entities_minimap.show = [this.colorModel.which];
     }
   },
 
@@ -349,8 +349,6 @@ var ColorLegend = Component.extend({
   _interact: function() {
     var _this = this;
     var KEY = this.KEY;
-    var palette = this.colorModel.getPalette();
-    var paletteDefault = this.colorModel.getDefaultPalette();
 
     return {
       mouseover: function(d, i) {
@@ -392,13 +390,13 @@ var ColorLegend = Component.extend({
       click: function(d, i) {
         //disable interaction if so stated in concept properties
         if(!_this.colorModel.isUserSelectable()) return;
+        var palette = _this.colorModel.getPalette();
         var view = d3.select(this);
         var target = _this.colorModel.use === "indicator"? d.paletteKey : (d[KEY]||d);
-
         _this.colorPicker
           .colorOld(palette[target])
-          .colorDef(paletteDefault[target])
-          .callback(function(value) {
+          .colorDef(palette[target])
+          .callback(function(value, permanent) {
             _this.colorModel.setColor(value, target)
           })
           .fitToScreen([d3.event.pageX, d3.event.pageY])

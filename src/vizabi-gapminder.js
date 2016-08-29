@@ -617,19 +617,20 @@ BubbleChart.define('default_model', {
     },
     entities: {
       dim: "geo",
-      show: {
+      show: ["country"]/*{
         _defs_: {
             "geo.is--country": true
         }
-      }
+      }*/
     },
+
     entities_minimap: {
       dim: "geo",
-      show: {
+      show: ["world_4region"], /*{
         _defs_: {
           "geo.is--world_4region": true
         }
-      }
+      }*/
     },
     entities_tags: {
       dim: "tag"
