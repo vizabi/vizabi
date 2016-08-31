@@ -1465,6 +1465,7 @@ var BubbleChartComp = Component.extend({
       }
 
       _this.model.marker.getFrame(d[TIMEDIM], function(values) {
+          if(!values) return;
           var x = _this.xScale(values.axis_x[d[KEY]]);
           var y = _this.yScale(values.axis_y[d[KEY]]);
           var s = utils.areaToRadius(_this.sScale(values.size[d[KEY]]));
