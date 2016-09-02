@@ -56,11 +56,10 @@ var TimeModel = Model.extend({
    * @param {Object} bind Initial events to bind
    */
   init: function(name, values, parent, bind) {
-
     this._type = "time";
-    //default values for time model
 
-    this._defaults = utils.extend(this._defaults, values);
+    //default values for time model
+    this._initDefaults(values);
 
     //same constructor
     this._super(name, this._defaults, parent, bind);
@@ -104,6 +103,21 @@ var TimeModel = Model.extend({
     }
   },
 
+  /*
+   * Convert default values to string
+   * @param {String} values
+   */
+  _initDefaults: function(values) {
+    this._defaults = utils.extend(this._defaults, values);
+    var date_attr = ["value", "start", "end", "startSelected", "endSelected"];
+    for(var i = 0; i < date_attr.length; i++) {
+      var attr = date_attr[i];
+      if(!utils.isString(this._defaults[attr])) {
+        this._defaults[attr] = this._defaults[attr].toString();
+      }
+    }
+  },
+  
   getDefaults: function() {
     return this._defaults;
   },
