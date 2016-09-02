@@ -390,7 +390,7 @@ describe('Web - Vizabi e2e test :: Bubble Map Chart', function() {
       var populationText = populationAsParameter;
 
       // Comparing the population
-      var findMe = "322M";
+      var findMe = "324M";
       var populationInMillion = populationText.substring(6, 10);
 
       expect(findMe).toBe(populationInMillion);
