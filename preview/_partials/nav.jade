@@ -17,4 +17,4 @@
 #vzbp-nav
   .vzbp-nav-menu
     each item in menuitems
-      a(href=item[0] class={active: item[1] === title}) #{item[1]}
+      a(href=item[0] class={active: item[1] === (menu_title || title)}) #{item[1]}
