@@ -328,11 +328,21 @@ var ColorLegend = Component.extend({
         .on("mouseout", _this._interact().mouseout)
         .on("click", _this._interact().click)
         .each(function(d){
-          tempdivEl.html(_this.frame.geoshape[d[_this.KEY]]);
           var color = palette[d[_this.KEY]];
+        
+          var shapeString = _this.frame.geoshape[d[_this.KEY]].trim();
+        
+          //check if shape string starts with svg tag -- then it's a complete svg
+          if(shapeString.slice(0,4) == "<svg"){
+            //append svg element from string to the temporary div
+            tempdivEl.html(_this.frame.geoshape[d[_this.KEY]]);
+            //replace the shape string with just the path data from svg
+            //TODO: potentially only the first path will be taken!
+            shapeString = tempdivEl.select("svg").select("path").attr("d")
+          }
           
           d3.select(this)
-            .attr("d", tempdivEl.select("svg").select("path").attr("d"))
+            .attr("d", shapeString)
             .style("fill", utils.isArray(color)? color[0] : color)
         
           tempdivEl.html("");
