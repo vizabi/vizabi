@@ -156,7 +156,7 @@ var Tool = Component.extend({
       var tLimits = this.model.state.marker.getTimeLimits(time.getDimension());
 
       if(!tLimits || !utils.isDate(tLimits.min) || !utils.isDate(tLimits.max)) 
-          return utils.warn("checkTimeLimits(): min-max date objects look wrong: " + tLimits.min + " " + tLimits.max);
+          return utils.warn("checkTimeLimits(): min-max look wrong: " + tLimits.min + " " + tLimits.max + ". Expecting Date objects");
 
       // change start and end (but keep startOrigin and endOrigin for furhter requests)
       // change is not persistent if it's splashscreen change

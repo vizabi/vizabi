@@ -159,6 +159,8 @@ var Data = Class.extend({
           //success reading
           var values = r.getData();
           var q = query;
+        
+          if(values.length == 0) utils.warn("Reader returned empty array for query:", JSON.stringify(q, null, 4))
 
           //make sure all queried is returned
           values = values.map(function(d) {
