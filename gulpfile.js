@@ -393,7 +393,9 @@ gulp.task('preview:vendor', ['clean:preview:vendor'], function() {
   gulp.src(path.join(config.modules, 'd3/d3.min.js'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/js')));
   gulp.src(path.join(config.modules, 'vizabi-ws-reader/dist/bundle.web.js'))
-    .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/js')));
+    .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/js/ws-reader')));
+  gulp.src(path.join(config.modules, 'vizabi-ddfcsv-reader/dist/bundle.web.js'))
+    .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/js/ddfcsv-reader')));
 });
 
 gulp.task('preview:data', ['clean:preview:data'], function() {

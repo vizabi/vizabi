@@ -79,6 +79,10 @@ script.
   var wsReader = new WSReader.WSReader().getReader();
   Vizabi.Reader.extend("waffle", wsReader);
 
+  //DDFCSV reader integration
+  var csvReader = new DDFCsvReader.getDDFCsvReaderObject()
+  Vizabi.Reader.extend("csv", csvReader);
+
   parseURL();
   
   var locationArray = window.location.href.split("/");
