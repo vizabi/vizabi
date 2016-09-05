@@ -804,7 +804,7 @@ export default function axisSmart() {
         if(i != 0 && i != tickValues.length - 1) return;
 
         // compute the influence of the axis head
-        var repositionHead = margin.head + options.bump 
+        var repositionHead = Math.min(margin.head, options.widthOfOneDigit * .5) + options.bump 
           + (orient == HORIZONTAL ? 1 : 0) * d3.max(scale.range()) 
           - (orient == HORIZONTAL ? 0 : 1) * d3.min(scale.range()) 
           + (orient == HORIZONTAL ? -1 : 1) * scale(d) 
@@ -818,8 +818,9 @@ export default function axisSmart() {
         var repositionTail = Math.min(margin.tail, options.widthOfOneDigit) + options.bump 
           + (orient == VERTICAL ? 1 : 0) * d3.max(scale.range()) 
           - (orient == VERTICAL ? 0 : 1) * d3.min(scale.range()) 
-          + (orient == VERTICAL ? -1 : 1) * scale(d) - (dimension == "x") 
-          * options.formatter(d).length * options.widthOfOneDigit / 2 - (dimension == "y") * options.heightOfOneDigit / 2
+          + (orient == VERTICAL ? -1 : 1) * scale(d) 
+          - (dimension == "x") * options.formatter(d).length * options.widthOfOneDigit / 2
+          - (dimension == "y") * options.heightOfOneDigit / 2
           // we may consider or not the label margins to give them a bit of spacing from the edges
           - (dimension == "x") * parseInt(options.cssMarginLeft) 
           - (dimension == "y") * parseInt(options.cssMarginBottom);
