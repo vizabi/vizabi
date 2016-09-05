@@ -51,18 +51,20 @@ var TimeModel = Model.extend({
 
   /**
    * Initializes the language model.
+   * @param {String} name 
    * @param {Object} values The initial values of this model
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
   init: function(name, values, parent, bind) {
     this._type = "time";
-
     //default values for time model
-    this._initDefaults(values);
+    var defaults = utils.deepClone(this._defaults);
+    values = utils.extend(defaults, values);
 
     //same constructor
-    this._super(name, this._defaults, parent, bind);
+    this._super(name, values, parent, bind);
+    this._initDefaults();
     var _this = this;
     this.timeFormat = formats[this.unit];
     this.dragging = false;
@@ -107,8 +109,8 @@ var TimeModel = Model.extend({
    * Convert default values to string
    * @param {String} values
    */
-  _initDefaults: function(values) {
-    this._defaults = utils.extend(this._defaults, values);
+  _initDefaults: function() {
+    this._defaults = utils.extend(this._defaults, this.getToolDefaults());
     var date_attr = ["value", "start", "end", "startSelected", "endSelected"];
     for(var i = 0; i < date_attr.length; i++) {
       var attr = date_attr[i];
@@ -116,10 +118,6 @@ var TimeModel = Model.extend({
         this._defaults[attr] = this._defaults[attr].toString();
       }
     }
-  },
-  
-  getDefaults: function() {
-    return this._defaults;
   },
   
   /*
@@ -181,13 +179,14 @@ var TimeModel = Model.extend({
     if(this.value > this.endSelected) {
       this.value = new Date(this.endSelected);
     }
-    
-    if(this.startSelected < this.start) {
-      this.startSelected = new Date(this.start);
-    }
+    if (this.splash === false) {
+      if(this.startSelected < this.start) {
+        this.startSelected = new Date(this.start);
+      }
 
-    if(this.endSelected > this.end) {
-      this.endSelected = new Date(this.end);
+      if(this.endSelected > this.end) {
+        this.endSelected = new Date(this.end);
+      }
     }
   
     //value has to be between start and end

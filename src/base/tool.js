@@ -32,6 +32,7 @@ var ToolModel = Model.extend({
     defaults = defaults || {};
     values = defaultModel(values, defaults);
     //constructor is similar to model
+    this.default_model = defaults;
     this._super(name, values, null, binds);
     // change language
     if(values.language) {

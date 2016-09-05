@@ -906,6 +906,26 @@ var Model = EventSource.extend({
       d[name] = model.getDefaults();
     });
     return d;
+  },
+
+  getToolDefaults: function() {
+    var isToolModel = false;
+    var model = this;
+    var path = [];
+    var model_defaults = {};
+    while (!isToolModel) {
+      if (model._type == 'tool' || !model._parent) {
+        isToolModel = true;
+        model_defaults = model.default_model;
+      } else {
+        path.push(model._name);
+        model = model._parent;
+      }
+    }
+    while (path.length > 0) {
+      model_defaults = model_defaults[path.pop()] || {};
+    }
+    return model_defaults;
   }
 
 });
