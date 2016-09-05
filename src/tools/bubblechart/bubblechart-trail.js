@@ -106,6 +106,7 @@ export default Class.extend({
                   _context._setTooltip(text, x, y, s + 3, c);
                 }
                 _context._setBubbleCrown(x, y, s, c);
+                _context.model.entities.getModelObject("highlight").trigger('change', {'size': values.size[pointer[KEY]], 'color': values.color[pointer[KEY]]});
               });
               //change opacity to OPACITY_HIGHLT = 1.0;
               d3.select(this).style("opacity", 1.0);
@@ -116,6 +117,7 @@ export default Class.extend({
               _context._setTooltip();
               _context._setBubbleCrown();
               _context._labels.highlight(null, false);
+              _context.model.entities.getModelObject("highlight").trigger('change', null);
               d3.select(this).style("opacity", _context.model.entities.opacityRegular);
             })
             .each(function(segment, index) {

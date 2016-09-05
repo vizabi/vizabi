@@ -261,6 +261,16 @@ var EntitiesModel = Model.extend({
     this.show[dimension] = ["*"];
   },
 
+  /**
+   * Gets the highlighted items
+   * @returns {Array} Array of unique highlighted values
+   */
+  getHighlighted: function() {
+    var dim = this.getDimension();
+    return this.highlight.map(function(d) {
+      return d[dim];
+    });
+  },
 
   setHighlight: function(arg) {
     if (!utils.isArray(arg))
