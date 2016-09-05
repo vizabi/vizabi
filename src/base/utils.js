@@ -837,8 +837,11 @@ export var timeStamp = function(message) {
  * @param {String} message
  */
 export var warn = function(message) {
-  message = Array.prototype.slice.call(arguments).join(' ');
+  message = Array.prototype.slice.call(arguments)
+    .map(function(m){return m instanceof Object? JSON.stringify(m, null, 4) : m })
+    .join(' ');
   if(console && typeof console.warn === 'function') {
+    
     console.warn(message);
   }
   // "return true" is needed to find out if a parent function is exited with warning

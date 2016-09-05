@@ -299,7 +299,7 @@ var Data = Class.extend({
       
       callback(_this.conceptDictionary);
     }, function(err) {
-      utils.warn('Problem with query: ', JSON.stringify(query));
+      utils.warn('Problem with query: ', query);
     });
   },
   

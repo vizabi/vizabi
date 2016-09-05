@@ -444,7 +444,7 @@ var Model = EventSource.extend({
           _this.afterLoad();
           promise.resolve();
         }, function(err) {
-          utils.warn('Problem with query: ', JSON.stringify(query));
+          utils.warn('Problem with query: ', query);
           promise.reject(err);
         });
         
