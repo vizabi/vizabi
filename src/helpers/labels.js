@@ -85,7 +85,7 @@ var label = function(context) {
   //              false, 500);
   //          });
 
-          view.append("text").attr("class", _cssPrefix + "-label-content vzb-label-shadow");
+          view.append("text").attr("class", _cssPrefix + "-label-content " + _cssPrefix + "-label-shadow vzb-noexport");
 
           view.append("text").attr("class", _cssPrefix + "-label-content");
 
