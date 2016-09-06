@@ -100,7 +100,6 @@ var Data = Class.extend({
         } else {
           // check if the requested rows are similar
           if (utils.comparePlainObjects(queueItem.query.where, query.where)
-           && utils.comparePlainObjects(queueItem.query.grouping, query.grouping)
            && utils.comparePlainObjects(queueItem.query.select.key, query.select.key)
             ) {
 
@@ -132,19 +131,6 @@ var Data = Class.extend({
       // remove double columns from select (resulting from merging)
       // no double columns in formatter because it's an object, extend would've overwritten doubles
       query.select.value = utils.unique(query.select.value);
-
-      //create hash for dimensions only query
-      var dim, dimQ, dimQId = 0; 
-      dimQ = utils.clone(query);
-      dim = utils.keys(dimQ.grouping);
-      if (utils.arrayEquals(dimQ.select.key, dim)) {
-        dimQ.select = dim;
-        dimQId = utils.hashCode([
-          dimQ,
-          lang,
-          reader
-        ]);
-      }
 
       // Create a new reader for this query
       var readerClass = Reader.get(reader_name);
@@ -198,10 +184,6 @@ var Data = Class.extend({
             mergedQuery.promise.resolve(mergedQuery.queryId);
           });
   
-          //create cache record for dimension only query
-          if(dimQId !== 0) {
-            _this._collection[dimQId] = _this._collection[queryId];              
-          }
           //promise.resolve(queryId);
         }, //error reading
         function(err) { 
@@ -266,7 +248,6 @@ var Data = Class.extend({
     var _this = this;
     
     var query = {
-      grouping: [],
       from: "concepts",
       select: {
         key: ["concept"],

@@ -528,7 +528,7 @@ var Model = EventSource.extend({
   getQuery: function(splashScreen) {
     var _this = this;
 
-    var dimensions, filters, select, from, grouping, orderBy, q, animatable;
+    var dimensions, filters, select, from, order_by, q, animatable;
 
     //if it's not a hook, no query is necessary
     if(!this.isHook()) return true;
@@ -565,12 +565,9 @@ var Model = EventSource.extend({
       filter[filterKey] = filters[filterKey];
       explicitAndFilters['$and'].push(filter);
     }
-    
-    // grouping
-    grouping = this._getGrouping();
 
     // order by
-    orderBy = (!prop) ? this._space.time.dim : null;
+    order_by = (!prop) ? this._space.time.dim : null;
 
     //return query
     return {
@@ -578,8 +575,7 @@ var Model = EventSource.extend({
       'animatable': animatable,
       'select': select,
       'where': explicitAndFilters,
-      'grouping': grouping,
-      'orderBy': orderBy // should be _space.animatable, but that's time for now
+      'order_by': order_by // should be _space.animatable, but that's time for now
     };
   },
 
@@ -868,19 +864,6 @@ var Model = EventSource.extend({
       filters = utils.extend(filters, h.getFilter(splashScreen));
     });
     return filters;
-  },
-
-  /**
-   * gets grouping for each of the used entities
-   * @param {Boolean} splashScreen get filters for first screen only
-   * @returns {Object} filters
-   */
-  _getGrouping: function() {
-    var groupings = {};
-    utils.forEach(this._space, function(h) {
-      groupings[h.dim] = h.grouping || undefined;
-    });
-    return groupings;
   },
 
   /**
