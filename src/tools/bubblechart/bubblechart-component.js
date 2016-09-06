@@ -132,8 +132,8 @@ var BubbleChartComp = Component.extend({
         _this.updateBubbleOpacity();
         _this._updateDoubtOpacity();
       },
-      "change:entities.highlight": function() {
-        if(!_this._readyOnce) return;
+      "change:entities.highlight": function(evt, path) {
+        if(!_this._readyOnce || path != 'highlight') return;
         //console.log("EVENT change:entities:highlight");
         _this.highlightDataPoints();
       },

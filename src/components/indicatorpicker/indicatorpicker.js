@@ -26,6 +26,12 @@ var IndPicker = Component.extend({
         var _this = this;
 
         this.model_expects = [{
+            name: "time",
+            type: "time"
+        }, {
+            name: "entities",
+            type: "entities"
+        }, {
             name: "marker",
             type: "model"
         }, {
@@ -34,6 +40,7 @@ var IndPicker = Component.extend({
         }];
 
         this.markerID = config.markerID;
+        this.showHoverValues = config.showHoverValues || false;
         if(!config.markerID) utils.warn("indicatorpicker.js complains on 'markerID' property: " + config.markerID);
 
         this.model_binds = {
@@ -47,8 +54,38 @@ var IndPicker = Component.extend({
         
         if(this.markerID) {
           this.model_binds["change:marker." + this.markerID + ".which"] = function(evt) {
+              _this.isIndicator = _this.model.marker[_this.markerID].use == "indicator";
               _this.updateView();
             } 
+        }
+ 
+        if(this.showHoverValues) {
+            this.model_binds["change:entities.highlight"] = function(evt, values) {
+                if(!_this.showHoverValues || !_this.isIndicator) return;
+
+                if (_this.model.entities.getHighlighted().length) {
+                    _this.model.marker.getFrame(_this.model.time.value, function(frame) {
+                        if(_this._highlighted || !frame) return;
+
+                        var _highlightedEntity = _this.model.entities.getHighlighted();
+                        if(_highlightedEntity.length) {
+                            _this._highlighted = true;
+                            _this._highlightedValue = frame[_this.markerID][_highlightedEntity[0]];
+                            _this.updateView();
+                        }
+                    });
+                } else {
+                    if(values !== null && values !== "highlight") {
+                        if(values && (values[_this.markerID] || values[_this.markerID]===0)) {
+                            _this._highlighted = true;
+                            _this._highlightedValue = values[_this.markerID];
+                        }                        
+                    } else {
+                        _this._highlighted = false;
+                    }
+                    _this.updateView();
+                }
+            }
         }
 
         //contructor is the same as any component
@@ -62,6 +99,8 @@ var IndPicker = Component.extend({
 
     readyOnce: function() {
         var _this = this;
+
+        this.isIndicator = this.model.marker[this.markerID].use == "indicator";
 
         this.el_select = d3.select(this.element).select('.vzb-ip-select');
 
@@ -118,8 +157,22 @@ var IndPicker = Component.extend({
         var which = this.model.marker[this.markerID].which;
         var type = this.model.marker[this.markerID]._type;
         
-        //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-        this.el_select.text(translator("indicator" + (which==="_default" ? "/" + type : "") + "/" + which));
+        var selectText;
+
+        if(this.showHoverValues && this._highlighted) {
+          var unit = translator("unit/" + _this.model.marker[this.markerID].which);
+          //suppress unit strings that found no translation (returns same thing as requested)
+          unit = (unit === "unit/" + _this.model.marker[this.markerID].which) ? "" : " " + unit;
+          var formatter = _this.model.marker[this.markerID].getTickFormatter();
+
+          selectText = (this._highlightedValue||this._highlightedValue===0) ? formatter(this._highlightedValue) + unit : translator("hints/nodata");
+
+        } else {
+            //Let the indicator "_default" in tree menu be translated differnetly for every hook type
+            selectText = translator("indicator" + (which==="_default" ? "/" + type : "") + "/" + which)
+        }
+
+        this.el_select.text(selectText);
         
         // hide info el if no data is available for it to make sense
         var hideInfoEl = ((translator("description/" + which) == "description/" + which)

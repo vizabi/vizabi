@@ -32,8 +32,9 @@ init: function(config, parent) {
   {
     component: indicatorpicker,
     placeholder: '.vzb-saxis-selector',
-    model: ["state.marker", "language"],
-    markerID: "size_label"
+    model: ["state.time", "state.entities", "state.marker", "language"],
+    markerID: "size_label",
+    showHoverValues: true
   },
   {
     component: simplecheckbox,

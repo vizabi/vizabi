@@ -22,7 +22,7 @@ var Axes = Dialog.extend({
     this.components = [{
       component: indicatorpicker,
       placeholder: '.vzb-xaxis-selector',
-      model: ["state.marker", "language"],
+      model: ["state.time", "state.entities", "state.marker", "language"],
       markerID: "axis_x"
     },{
       component: minmaxinputs,
@@ -36,7 +36,7 @@ var Axes = Dialog.extend({
     }, {
       component: indicatorpicker,
       placeholder: '.vzb-yaxis-selector',
-      model: ["state.marker", "language"],
+      model: ["state.time", "state.entities", "state.marker", "language"],
       markerID: "axis_y"
     }, {
       component: minmaxinputs,
