@@ -497,8 +497,7 @@ var Data = Class.extend({
       var buildFrame = function(frameName, keys, queryId, callback) {
           var frame = {};
 
-          if (!query.where[TIME]) {
-            // The query.where clause doesn't have time field for properties:
+          if (query.from !== "datapoints") {
             // we populate the regular set with a single value (unpack properties into constant time series)
             var dataset = _this._collection[queryId].data;
             for (c = 0; c < cLength; c++) frame[columns[c]] = {};
