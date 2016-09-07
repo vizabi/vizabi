@@ -49,7 +49,6 @@ export default function axisSmart() {
       //if(axis.orient()=="bottom") console.log("received", g.selectAll("text").each(function(d){console.log(d)}))
       var orient = axis.orient() == "top" || axis.orient() == "bottom" ? HORIZONTAL : VERTICAL;
       var dimension = (orient == HORIZONTAL && axis.pivot() || orient == VERTICAL && !axis.pivot()) ? Y : X;
-      var boxSize = g.select('.tick').select('text').node().getBBox();
 
       g.selectAll('.vzb-axis-value')
         .data([null])
@@ -57,23 +56,22 @@ export default function axisSmart() {
         .attr("class", 'vzb-axis-value')
         .classed("vzb-hidden", true)
         .append("text")
-        .style("text-anchor", dimension == X ? "middle" : "end")
-        .attr("dominant-baseline", orient == VERTICAL ? "text-after-edge" :"text-before-edge")
-        .attr("x", dimension == X ? (orient == VERTICAL ? -(axis.tickPadding() + axis.tickSize()) : 0) : -(axis.tickPadding() + axis.tickSize()))
-        .attr("y", dimension == X ? (orient == VERTICAL ? 0: axis.tickPadding() + axis.tickSize()) : 0);
 
+      
+      var tickSizeWithPadding = axis.tickPadding() + axis.tickSize();
       // patch the label positioning after the view is generated
       g.selectAll("text")
         .each(function(d, i) {
-          var view = d3.select(this);
-
           if(axis.pivot() == null) return;
+
+          var view = d3.select(this);
           view.attr("transform", "rotate(" + (axis.pivot() ? -90 : 0) + ")");
           view.style("text-anchor", dimension == X ? "middle" : "end");
-          view.attr("dominant-baseline", dimension == X ? (orient == VERTICAL ? "text-after-edge" :"text-before-edge") : "middle")
-              .attr("dx", dimension == X ? (orient == VERTICAL ? axis.tickPadding() + axis.tickSize() : 0) : 0)
-              .attr("dy", dimension == X ? (orient == VERTICAL ? -axis.tickSize() : -axis.tickSize()) : 0);
-        })
+          view.attr("x", dimension == X ? (orient == VERTICAL ? -tickSizeWithPadding : 0) : -tickSizeWithPadding);
+          view.attr("y", dimension == X ? (orient == VERTICAL ? 0 : tickSizeWithPadding) : 0);
+          view.attr("dx", dimension == X ? (orient == VERTICAL ? tickSizeWithPadding : 0) : 0);
+          view.attr("dy", dimension == X ? (orient == VERTICAL ? -tickSizeWithPadding : ".72em") : ".32em");
+        });
       
       if(axis.repositionLabels() != null){
           g.selectAll(".tick")
@@ -82,7 +80,7 @@ export default function axisSmart() {
               var shift = axis.repositionLabels()[i] || {x: 0, y: 0};
               view.attr("x", +view.attr("x") + shift.x);
               view.attr("y", +view.attr("y") + shift.y);
-            })
+            });
       }
 
       if(axis.tickValuesMinor() == null) axis.tickValuesMinor([]);
