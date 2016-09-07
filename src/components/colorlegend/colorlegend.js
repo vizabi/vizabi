@@ -59,10 +59,8 @@ var ColorLegend = Component.extend({
   
   forwardModelUpdate: function(){
     if(this.colorModel.use === "property"){
-      var show = {};
-      show[this.KEY + ".is--" + this.colorModel.which] = true;
-      this.model.state.entities_minimap.show.clear();
-      this.model.state.entities_minimap.show.set(show);
+      this.model.state.entities_minimap.show._data = {};
+      this.model.state.entities_minimap.show.set(this.KEY + ".is--" + this.colorModel.which, true);
     }
   },
 

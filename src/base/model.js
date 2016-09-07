@@ -30,6 +30,8 @@ var ModelLeaf = EventSource.extend({
     this._parent = parent;
     this.value = value;
     this.on(binds); // after super so there is an .events object
+
+    this.trigger(new ChangeEvent(this), this._name);
   },
 
   // if they want a persistent value and the current value is not persistent, return the last persistent value
@@ -202,7 +204,6 @@ var Model = EventSource.extend({
     }
 
   },
-
 
   setTreeFreezer: function(freezerStatus) {
     // first traverse down
