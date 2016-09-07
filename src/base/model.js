@@ -559,11 +559,14 @@ var Model = EventSource.extend({
     filters = this._getAllFilters(exceptions, splashScreen);
 
     // make root $and explicit
-    var explicitAndFilters = { '$and': [] };
-    for (var filterKey in filters) {
-      var filter = {};
-      filter[filterKey] = filters[filterKey];
-      explicitAndFilters['$and'].push(filter);
+    var explicitAndFilters =  {};
+    if (Object.keys(filters).length > 0) {
+      explicitAndFilters['$and'] = [];
+      for (var filterKey in filters) {
+        var filter = {};
+        filter[filterKey] = filters[filterKey];
+        explicitAndFilters['$and'].push(filter);
+      }
     }
 
     // order by
