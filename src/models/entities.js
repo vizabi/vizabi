@@ -99,7 +99,11 @@ var EntitiesModel = Model.extend({
     var _this = this;
     var response = {};
     utils.forEach(this.show.getPlainObject(), function(val, key) {
-      response[key + ".is--" + val] = true;
+      if (typeof val == "string") {
+        response[key + ".is--" + val] = true;
+      } else {
+        response[key] = val;
+      }
     });
     return response;
   },
@@ -182,7 +186,7 @@ var EntitiesModel = Model.extend({
     var value = d[dimension];
     var show = this.show[dimension];
       
-    if(!show || show[0] === "*") show = [];
+    if(!show || show[0] === "*" || utils.isString(show)) show = [];
       
     show = show.concat([]); //clone array
       
@@ -192,9 +196,8 @@ var EntitiesModel = Model.extend({
       show = show.concat(value);
     }
       
-    if(show.length === 0) show = ["*"];
-    this.show[dimension] = show.concat([]);
-
+    if(show.length === 0) {show = this.show[dimension + ".cat"] ? this.show[dimension + ".cat"][0] : ["*"]}
+    this.show[dimension] = utils.isArray(show) ? show.concat([]) : show;
   },
 
   setLabelOffset: function(d, xy) {
@@ -263,7 +266,7 @@ var EntitiesModel = Model.extend({
    */
   clearShow: function() {
     var dimension = this.getDimension();
-    this.show[dimension] = ["*"];
+    this.show[dimension] = this.show[dimension + ".cat"] ? this.show[dimension + ".cat"][0] : ["*"];
   },
 
   /**

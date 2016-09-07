@@ -340,7 +340,7 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
                 var worldBallText = worldBallAsParameter;
 
                 // Comparing the Check box country with selected country on the chart
-                var pop = "7.3B";
+                var pop = "7.29B";
                 expect(worldBallText.indexOf(pop) !== -1).toBe(true);
               });
             });
@@ -539,11 +539,10 @@ it('povertyPopulation', function() {
                         var lineText = lineAsParameter;
 
                         //Getting population at 2015
-                        var subStr = lineText.substring(12, 16);	
-
+                        var subStr = lineText.substring(12, 15);
                         // Comparing the population at 2015
                         var peakVal = "828";
-                        var downVal = "826";
+                        var downVal = "823"; //826
                         expect(peakVal).toBeGreaterThan(subStr);
                         expect(downVal).toBeLessThan(subStr);
 
