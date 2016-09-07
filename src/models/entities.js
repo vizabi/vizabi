@@ -96,12 +96,7 @@ var EntitiesModel = Model.extend({
    * @returns {Array} Array of unique values
    */
   getFilter: function() {
-    var _this = this;
-    var response = {};
-    utils.forEach(this.show.getPlainObject(), function(val, key) {
-      response[key + ".is--" + val] = true;
-    });
-    return response;
+    return this.show.getPlainObject();
   },
 
   /**
