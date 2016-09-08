@@ -821,28 +821,17 @@ var BubbleMapComponent = Component.extend({
 
   _interact: function () {
       var _this = this;
-
       return {
           _mouseover: function (d, i) {
               if (_this.model.time.dragging) return;
-
               _this.model.entities.highlightEntity(d);
-
               _this.hovered = d;
               //put the exact value in the size title
               _this.updateTitleNumbers();
               _this.fitSizeOfTitles();
-
-              if (_this.model.entities.isSelected(d)) { // if selected, not show hover tooltip
-                _this._setTooltip();
-              } else {
-                //position tooltip
-                _this._setTooltip(d);
-              }
           },
           _mouseout: function (d, i) {
               if (_this.model.time.dragging) return;
-              _this._setTooltip();
               _this.hovered = null;
               _this.updateTitleNumbers();
               _this.fitSizeOfTitles();
@@ -859,7 +848,17 @@ var BubbleMapComponent = Component.extend({
   highlightEntities: function () {
       var _this = this;
       this.someHighlighted = (this.model.entities.highlight.length > 0);
-
+      if(this.model.entities.highlight.length === 1) {
+        var d = utils.clone(this.model.entities.highlight[0]);
+        if (_this.model.entities.isSelected(d)) { // if selected, not show hover tooltip
+          _this._setTooltip();
+        } else {
+          //position tooltip
+          _this._setTooltip(d);
+        }
+      } else {
+        _this._setTooltip();
+      }
 
 //      if (!this.selectList || !this.someSelected) return;
 //      this.selectList.classed("vzb-highlight", function (d) {
@@ -913,10 +912,11 @@ var BubbleMapComponent = Component.extend({
   _setTooltip: function (d) {
     var _this = this;
     if (d) {
-      var tooltipText = d.label;
-      var x = d.cLoc[0];
-      var y = d.cLoc[1];
-      var offset = d.r;
+      var tooltipText = _this.values.label[d[_this.KEY]];
+      var cLoc = _this.skew(_this.projection([_this.values.lng[d[_this.KEY]]||0, _this.values.lat[d[_this.KEY]]||0]));
+      var x = cLoc[0];
+      var y = cLoc[1];
+      var offset = utils.areaToRadius(_this.sScale(_this.values.size[d[_this.KEY]]||0))
       var mouse = d3.mouse(this.graph.node()).map(function(d) {
         return parseInt(d)
       });
