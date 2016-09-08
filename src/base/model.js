@@ -546,7 +546,7 @@ var Model = EventSource.extend({
     var dimensions = this._getAllDimensions(exceptions);
     select = {
       key: dimensions,
-      value: dimensions.indexOf(this.which)!=-1 ? [] : [this.which]
+      value: dimensions.indexOf(this.which)!=-1 || this.use === "constant" ? [] : [this.which]
     }
     
     // animatable
