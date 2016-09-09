@@ -506,7 +506,7 @@ LineChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["world_4region"]
+          "geo": "world_4region"
         }
       }
     },
@@ -548,10 +548,12 @@ LineChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["*"],
-          "geo.cat": ["country", "unstate"]
+          "geo": "country"
         }
       }
+    },
+    entities_tags: {
+      dim: "tag"
     },
     marker_allpossible: {
       space: ["entities_allpossible"],
@@ -572,6 +574,17 @@ LineChart.define('default_model', {
           use: "property",
           which: "shape_lores_svg"
         }
+    },
+    marker_tags: {
+      space: ["entities_tags"],
+      label: {
+        use: "property",
+        which: "name"
+      },
+      parent: {
+        use: "property",
+        which: "parent"
+      }
     }
   },
 
