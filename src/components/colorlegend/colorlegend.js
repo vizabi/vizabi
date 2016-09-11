@@ -47,6 +47,26 @@ var ColorLegend = Component.extend({
         if(!_this._readyOnce) return;
         _this.updateView();
       },
+      "change:state.entities.highlight": function(evt, values) {
+        if(_this.colorModel.use !== "property") return;
+        var _highlightedEntity = _this.model.state.entities.getHighlighted();
+        if(_highlightedEntity.length > 1) return;
+
+        if(_highlightedEntity.length) {
+            _this.model.state.marker.getFrame(_this.model.state.time.value, function(frame) {
+              if(!frame) return;
+            
+              var _highlightedEntity = _this.model.state.entities.getHighlighted();
+              if(_highlightedEntity.length) {
+                _this.updateGroupsOpacity(frame["color"][_highlightedEntity[0]]);
+              }
+            });
+        } else if (values !== null && values !== "highlight") {
+          _this.updateGroupsOpacity(values["color"]);
+        } else {
+          _this.updateGroupsOpacity();         
+        }
+      },
       "change:language.strings": function(evt) {
         this.translator = this.model.language.getTFunction();
         _this.updateView();
@@ -62,7 +82,6 @@ var ColorLegend = Component.extend({
       this.model.state.entities_minimap.show[this.KEY] = [this.colorModel.which];
     }
   },
-
 
   readyOnce: function() {
     var _this = this;
@@ -109,12 +128,22 @@ var ColorLegend = Component.extend({
   
   ready: function(){
     var _this = this;
+    
+    this.canShowMap = false;
+
     if(this.model.state.marker_minimap){
       var minimapDim = this.model.state.marker_minimap._getFirstDimension();
       var timeModel = this.model.state.time;
       var filter = {};
       filter[timeModel.getDimension()] = timeModel.value;
       _this.frame = this.model.state.marker_minimap.getValues(filter,[minimapDim]);
+      
+      this.canShowMap = utils.keys((this.frame||{}).geoshape||{}).length && this.colorModel.use == "property";
+
+      var minimapKeys = this.model.state.marker_minimap.getKeys(minimapDim);     
+      minimapKeys.forEach(function(d){
+        if(!((_this.frame||{}).geoshape||{})[d[_this.KEY]]) _this.canShowMap = false;
+      });
     }
     _this.updateView();
   },
@@ -125,7 +154,7 @@ var ColorLegend = Component.extend({
     var KEY = this.KEY;
 
     var palette = this.colorModel.getPalette();
-    var canShowMap = utils.keys((this.frame||{}).geoshape||{}).length && this.colorModel.use == "property";
+    var canShowMap = this.canShowMap;
 
     var minimapKeys = [];
 
@@ -134,9 +163,6 @@ var ColorLegend = Component.extend({
       var minimapKeys = this.model.state.marker_minimap.getKeys(minimapDim);
     }
     
-    minimapKeys.forEach(function(d){
-      if(!((_this.frame||{}).geoshape||{})[d[_this.KEY]]) canShowMap = false;
-    });
     
 
     var colorOptions = this.listColorsEl.selectAll(".vzb-cl-option");
@@ -420,6 +446,26 @@ var ColorLegend = Component.extend({
       this.updateView();
     }
     this.colorPicker.resize(d3.select('.vzb-colorpicker-svg'));
+  },
+
+  updateGroupsOpacity: function(value) {
+    var _this = this; 
+    var selection = _this.canShowMap ? ".vzb-cl-minimap path" : ".vzb-cl-option";
+
+    if(value) {
+      this.listColorsEl.selectAll(selection).filter(function(d) {
+        return d[_this.KEY] == value;
+      }).each(function(d, i) {
+        var view = d3.select(this);
+        _this.listColorsEl.selectAll(".vzb-cl-option").style("opacity", OPACITY_DIM);
+        _this.minimapG.selectAll("path").style("opacity", OPACITY_DIM);
+        view.style("opacity", OPACITY_HIGHLIGHT);
+      });
+    } else {
+      this.listColorsEl.selectAll(".vzb-cl-option").style("opacity", OPACITY_REGULAR);
+      this.minimapG.selectAll("path").style("opacity", OPACITY_REGULAR);
+    }
+
   }
 
 });

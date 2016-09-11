@@ -133,7 +133,17 @@ var BubbleChartComp = Component.extend({
         _this._updateDoubtOpacity();
       },
       "change:entities.highlight": function(evt, path) {
-        if(!_this._readyOnce || path != 'highlight') return;
+        if(!_this._readyOnce) return;
+        //path have values if trail is highlighted
+        if(path != 'highlight') {
+          if(path !== null) {
+            var titles = _this._formatSTitleValues(path.size, path.color); 
+            _this._updateSTitle(titles[0], titles[1]);
+          } else {
+            _this._updateSTitle();
+          }
+          return;
+        }
         //console.log("EVENT change:entities:highlight");
         _this.highlightDataPoints();
       },
@@ -1272,6 +1282,27 @@ var BubbleChartComp = Component.extend({
     }
   },
 
+  _formatSTitleValues: function(titleS, titleC) {
+    var unitY = this.translator("unit/" + this.model.marker.size.which);
+    var unitC = this.translator("unit/" + this.model.marker.color.which);
+
+    //suppress unit strings that found no translation (returns same thing as requested)
+    if(unitY === "unit/" + this.model.marker.size.which) unitY = "";
+    if(unitC === "unit/" + this.model.marker.color.which) unitC = "";
+  
+    var formatterS = this.model.marker.size.getTickFormatter();
+    var formatterC = this.model.marker.color.getTickFormatter();
+
+    if(this.model.marker.color.use == "property" && titleC) {
+      var tKey = "entity/" + this.model.marker.color.which + "/" + titleC;
+      var translation = _this.translator(tKey);
+      if(tKey !== translation) titleC = translation;
+    }
+
+    return [formatterS(titleS) + " " + unitY,
+      titleC || titleC===0 ? formatterC(titleC) + " " + unitC : this.translator("hints/nodata")];
+  },
+
   _updateSTitle: function(titleS, titleC) {
 
     // vertical text about size and color
@@ -1472,19 +1503,8 @@ var BubbleChartComp = Component.extend({
           var c = values.color[d[KEY]]!=null?_this.cScale(values.color[d[KEY]]):_this.COLOR_WHITEISH;
           var entityOutOfView = false;
 
-          var unitY = _this.translator("unit/" + _this.model.marker.size.which);
-          var unitC = _this.translator("unit/" + _this.model.marker.color.which);
-  
-          //suppress unit strings that found no translation (returns same thing as requested)
-          if(unitY === "unit/" + _this.model.marker.size.which) unitY = "";
-          if(unitC === "unit/" + _this.model.marker.color.which) unitC = "";
-        
-          var formatterS = _this.model.marker.size.getTickFormatter();
-          var formatterC = _this.model.marker.color.getTickFormatter();
-          _this._updateSTitle(
-            formatterS(values.size[d[KEY]])  + " " + unitY,
-            values.color[d[KEY]] || values.color[d[KEY]]===0 ? formatterC(values.color[d[KEY]]) + " " + unitC : _this.translator("hints/nodata")
-          );
+          var titles = _this._formatSTitleValues(values.size[d[KEY]], values.color[d[KEY]]); 
+          _this._updateSTitle(titles[0], titles[1]);
           if(x + s < 0 || x - s > _this.width || y + s < 0 || y - s > _this.height) {
             entityOutOfView = true;
           }
