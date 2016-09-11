@@ -19,7 +19,7 @@ var EntitiesModel = Model.extend({
     opacityRegular: 1
   },
 
-  ObjectLeafs: ['show'],
+  objectLeafs: ['show'],
 
   /**
    * Initializes the entities model.

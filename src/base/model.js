@@ -66,7 +66,8 @@ var ModelLeaf = EventSource.extend({
 
 var Model = EventSource.extend({
 
-  ObjectLeafs: [],
+
+  objectLeafs: [],
 
   /**
    * Initializes the model.
@@ -931,7 +932,7 @@ var Model = EventSource.extend({
   },
 
   isObjectLeaf: function(name) {
-    return (this.ObjectLeafs.indexOf(name) !== -1)
+    return (this.objectLeafs.indexOf(name) !== -1)
   }
 
 });
