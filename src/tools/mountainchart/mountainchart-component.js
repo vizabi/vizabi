@@ -107,6 +107,7 @@ var MountainChartComponent = Component.extend({
                 if (!_this._readyOnce) return;
                 _this.selectEntities();
                 _this._selectlist.redraw();
+                _this.someSelectedAndOpacityZero = false;
                 _this.updateOpacity();
                 _this.updateDoubtOpacity();
                 _this.redrawDataPoints();
@@ -324,6 +325,7 @@ var MountainChartComponent = Component.extend({
           _this.highlightEntities();
           _this.selectEntities();
           _this._selectlist.redraw();
+          _this.someSelectedAndOpacityZero = false;
           _this.updateOpacity();
           _this.updateDoubtOpacity();
           _this._probe.redraw();
@@ -789,14 +791,14 @@ updateSize: function (meshLength) {
         var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
 
         // when pointer events need update...
-        if (someSelectedAndOpacityZero !== this.someSelectedAndOpacityZero_1) {
+        if (someSelectedAndOpacityZero !== this.someSelectedAndOpacityZero) {
             this.mountainsAtomic.style("pointer-events", function (d) {
                 return (!someSelectedAndOpacityZero || _this.model.entities.isSelected(d)) ?
                     "visible" : "none";
             });
         }
 
-        this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
+        this.someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
     },
 
     updateTime: function (time) {
