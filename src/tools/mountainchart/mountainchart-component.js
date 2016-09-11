@@ -705,7 +705,7 @@ updateSize: function (meshLength) {
                 });
 
                 //position tooltip
-                _this._setTooltip(d.key ? _this.translator("entity/geo.world_4region/" + d.key) : _this.values.label[d.KEY()]);
+                _this._setTooltip(d.key ? _this.translator("entity/world_4region/" + d.key) : _this.values.label[d.KEY()]);
 
             },
             _mouseout: function (d, i) {
@@ -1038,9 +1038,9 @@ updateSize: function (meshLength) {
 
         } else {
             if (mergeGrouped || dragOrPlay) {
-                this.mountainsMergeGrouped.sort(function (a, b) {
-                    return b.yMax - a.yMax;
-                });
+                // this.mountainsMergeGrouped.sort(function (a, b) {
+                //     return b.yMax - a.yMax;
+                // });
             } else {
                 this.mountainsAtomic.sort(function (a, b) {
                     return b.yMaxGroup - a.yMaxGroup;
