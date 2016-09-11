@@ -19,6 +19,8 @@ var EntitiesModel = Model.extend({
     opacityRegular: 1
   },
 
+  ObjectLeafs: ['show'],
+
   /**
    * Initializes the entities model.
    * @param {Object} values The initial values of this model
@@ -96,7 +98,7 @@ var EntitiesModel = Model.extend({
    * @returns {Array} Array of unique values
    */
   getFilter: function() {
-    return this.show.getPlainObject();
+    return this.show;
   },
 
   /**
