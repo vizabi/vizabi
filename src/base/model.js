@@ -861,6 +861,7 @@ var Model = EventSource.extend({
   _getAllFilters: function(opts, splashScreen) {
     opts = opts || {};
     var filters = {};
+    var _this = this;
     utils.forEach(this._space, function(h) {
       if(opts.exceptType && h.getType() === opts.exceptType) {
         return true;
@@ -868,21 +869,29 @@ var Model = EventSource.extend({
       if(opts.onlyType && h.getType() !== opts.onlyType) {
         return true;
       }
-      var filter = {}
-      filter[h.getDimension()] = "$"  + h.getDimension();
-      filters = utils.extend(filters, filter);
-      // filters = utils.extend(filters, h.getFilter(splashScreen)); before join
+
+      if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
+        filters = utils.extend(filters, h.getFilter(splashScreen));
+      } else {
+        var filter = {};
+        filter[h.getDimension()] = "$"  + h.getDimension();
+        filters = utils.extend(filters, filter);
+      }
     });
     return filters;
   },
 
   _getAllJoins: function(opts, splashScreen) {
     var joins = {};
+    var _this = this;
     utils.forEach(this._space, function(h) {
       if(opts.exceptType && h.getType() === opts.exceptType) {
         return true;
       }
       if(opts.onlyType && h.getType() !== opts.onlyType) {
+        return true;
+      }
+      if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
         return true;
       }
       joins["$" + h.getDimension()] = {
