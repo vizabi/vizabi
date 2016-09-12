@@ -255,7 +255,8 @@ var BubbleChartComp = Component.extend({
     this._labels.config({
       CSS_PREFIX: 'vzb-bc',
       LABELS_CONTAINER_CLASS: 'vzb-bc-labels',
-      LINES_CONTAINER_CLASS: 'vzb-bc-lines'
+      LINES_CONTAINER_CLASS: 'vzb-bc-bubbles',
+      LINES_CONTAINER_SELECTOR_PREFIX: 'bubble-'
     });
   },
   
@@ -507,6 +508,7 @@ var BubbleChartComp = Component.extend({
     }
     this._trails.run("reveal", null, this.duration);
     this.tooltipMobile.classed('vzb-hidden', true);
+    this._reorderEntities();
   },
 
   updateUIStrings: function() {
@@ -656,16 +658,14 @@ var BubbleChartComp = Component.extend({
     // that makes larger bubbles go behind the smaller ones
     var endTime = this.model.time.end;
     this.model.entities.setVisible(getKeys.call(this));
-      
     //unselecting bubbles with no data is used for the scenario when
     //some bubbles are selected and user would switch indicator.
     //bubbles would disappear but selection would stay
     if (!this.model.time.splash) {
       this.unselectBubblesWithNoData();
     }
-
-    this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
-      .data(this.model.entities.getVisible(), function(d) {return d && !d['selectedEntityData'] ? d[KEY] : null}); // trails have not keys
+    this.entityBubbles = this.bubbleContainer.selectAll('circle.vzb-bc-entity')
+      .data(this.model.entities.getVisible(), function(d) {return d[KEY]}); // trails have not keys
 
     //exit selection
     this.entityBubbles.exit().remove();
@@ -694,8 +694,8 @@ var BubbleChartComp = Component.extend({
         _this._bubblesInteract().click(d, i);
       })
       .onLongTap(function(d, i) {});
-
-      this.entityBubbles.order();
+    
+      this._reorderEntities();
   },
     
   unselectBubblesWithNoData: function(frame){
@@ -713,6 +713,15 @@ var BubbleChartComp = Component.extend({
       })
   },
 
+  _reorderEntities() {
+    var _this = this;
+    var KEY = this.KEY;
+    this.bubbleContainer.selectAll('.vzb-bc-entity')
+      .sort(function(a, b) {
+        return d3.descending(_this.frame.size[a[KEY]], _this.frame.size[b[KEY]]);
+      });
+  },
+  
   _bubblesInteract: function() {
     var _this = this;
     var KEY = this.KEY;
