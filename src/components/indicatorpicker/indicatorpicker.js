@@ -54,14 +54,14 @@ var IndPicker = Component.extend({
         
         if(this.markerID) {
           this.model_binds["change:marker." + this.markerID + ".which"] = function(evt) {
-              _this.isIndicator = _this.model.marker[_this.markerID].use == "indicator";
               _this.updateView();
             } 
         }
  
         if(this.showHoverValues) {
             this.model_binds["change:entities.highlight"] = function(evt, values) {
-                if(!_this.showHoverValues || !_this.isIndicator) return;
+                var use = _this.model.marker[_this.markerID].use;
+                if(!_this.showHoverValues || use == "constant") return;
                 var _highlightedEntity = _this.model.entities.getHighlighted();
                 if(_highlightedEntity.length > 1) return;
 
@@ -71,16 +71,16 @@ var IndPicker = Component.extend({
 
                         var _highlightedEntity = _this.model.entities.getHighlighted();
                         if(_highlightedEntity.length) {
-                            _this._highlighted = true;
                             _this._highlightedValue = frame[_this.markerID][_highlightedEntity[0]];
+                            _this._highlighted = (!_this._highlightedValue && _this._highlightedValue !== 0) || use !== "property";
                             _this.updateView();
                         }
                     });
                 } else {
                     if(values !== null && values !== "highlight") {
                         if(values) {
-                            _this._highlighted = true;
                             _this._highlightedValue = values[_this.markerID];
+                            _this._highlighted = (!_this._highlightedValue && _this._highlightedValue !== 0) || use !== "property";
                         }                        
                     } else {
                         _this._highlighted = false;
@@ -101,8 +101,6 @@ var IndPicker = Component.extend({
 
     readyOnce: function() {
         var _this = this;
-
-        this.isIndicator = this.model.marker[this.markerID].use == "indicator";
 
         this.el_select = d3.select(this.element).select('.vzb-ip-select');
 

@@ -57,7 +57,7 @@ var ColorLegend = Component.extend({
               if(!frame) return;
             
               var _highlightedEntity = _this.model.state.entities.getHighlighted();
-              if(_highlightedEntity.length) {
+              if(_highlightedEntity.length) {                
                 _this.updateGroupsOpacity(frame["color"][_highlightedEntity[0]]);
               }
             });
@@ -454,17 +454,17 @@ var ColorLegend = Component.extend({
     var _this = this; 
     var selection = _this.canShowMap ? ".vzb-cl-minimap path" : ".vzb-cl-option";
 
-    if(value) {
+    if(arguments.length) {
+      this.listColorsEl.selectAll(".vzb-cl-option").style("opacity", OPACITY_DIM);
+      this.minimapG.selectAll("path").style("opacity", OPACITY_DIM);
       this.listColorsEl.selectAll(selection).filter(function(d) {
         return d[_this.KEY] == value;
       }).each(function(d, i) {
         var view = d3.select(this);
-        _this.listColorsEl.selectAll(".vzb-cl-option").style("opacity", OPACITY_DIM);
-        _this.minimapG.selectAll("path").style("opacity", OPACITY_DIM);
         view.style("opacity", OPACITY_HIGHLIGHT);
       });
     } else {
-      this.listColorsEl.selectAll(".vzb-cl-option").style("opacity", OPACITY_REGULAR);
+      this.listColorsEl.selectAll(".vzb-cl-option").style("opacity", OPACITY_HIGHLIGHT);
       this.minimapG.selectAll("path").style("opacity", OPACITY_REGULAR);
     }
 
