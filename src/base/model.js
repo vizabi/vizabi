@@ -173,7 +173,7 @@ var Model = EventSource.extend({
       val = attrs[a];
 
       var bothModel = utils.isPlainObject(val) && this._data[a] instanceof Model;
-      var bothModelLeaf = !utils.isPlainObject(val) && this._data[a] instanceof ModelLeaf;
+      var bothModelLeaf = (!utils.isPlainObject(val) || this.isObjectLeaf(a)) && this._data[a] instanceof ModelLeaf;
       
       if (this._data[a] && (bothModel || bothModelLeaf)) {
         // data type does not change (model or leaf and can be set through set-function)
