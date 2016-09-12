@@ -569,6 +569,9 @@ var Model = EventSource.extend({
       }
     }
 
+    // join
+    var join = this._getAllJoins(exceptions, splashScreen);
+
     // order by
     order_by = (!prop) ? this._space.time.dim : null;
 
@@ -578,6 +581,7 @@ var Model = EventSource.extend({
       'animatable': animatable,
       'select': select,
       'where': explicitAndFilters,
+      'join': join,
       'order_by': order_by // should be _space.animatable, but that's time for now
     };
   },
@@ -864,9 +868,29 @@ var Model = EventSource.extend({
       if(opts.onlyType && h.getType() !== opts.onlyType) {
         return true;
       }
-      filters = utils.extend(filters, h.getFilter(splashScreen));
+      var filter = {}
+      filter[h.getDimension()] = "$"  + h.getDimension();
+      filters = utils.extend(filters, filter);
+      // filters = utils.extend(filters, h.getFilter(splashScreen)); before join
     });
     return filters;
+  },
+
+  _getAllJoins: function(opts, splashScreen) {
+    var joins = {};
+    utils.forEach(this._space, function(h) {
+      if(opts.exceptType && h.getType() === opts.exceptType) {
+        return true;
+      }
+      if(opts.onlyType && h.getType() !== opts.onlyType) {
+        return true;
+      }
+      joins["$" + h.getDimension()] = {
+        key: h.getDimension(),
+        where: h.getFilter(splashScreen)
+      };
+    });
+    return joins;
   },
 
   /**
