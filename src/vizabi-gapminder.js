@@ -245,7 +245,7 @@ BubbleMap.define('default_model', {
       opacityRegular: 1,
       show: {
         _defs_: {
-          "geo":"country"
+          "geo.is--country": true
         }
       },
     },
@@ -253,7 +253,7 @@ BubbleMap.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo":"world_4region"
+          "geo.is--world_4region": true
         }
       }
     },
@@ -360,7 +360,7 @@ MountainChart.define('default_model', {
       opacityRegular: .7,
       show: {
         _defs_: {
-          "geo":"country"
+          "geo.is--country": true
         }
       }
     },
@@ -368,7 +368,7 @@ MountainChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo":"country"
+          "geo.is--country": true
         }
       }
     },
@@ -376,7 +376,7 @@ MountainChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo":"world_4region"
+          "geo.is--world_4region": true
         }
       }
     },
@@ -630,18 +630,17 @@ BubbleChart.define('default_model', {
     },
     entities: {
       dim: "geo",
-      show:{
+      show: {
         _defs_: {
-            "geo": "country"
+            "geo.is--country": true
         }
       }
     },
-
     entities_minimap: {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": "world_4region"
+          "geo.is--world_4region": true
         }
       }
     },

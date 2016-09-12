@@ -65,6 +65,10 @@ var ModelLeaf = EventSource.extend({
 })
 
 var Model = EventSource.extend({
+
+
+  objectLeafs: [],
+
   /**
    * Initializes the model.
    * @param {Object} values The initial values of this model
@@ -165,18 +169,18 @@ var Model = EventSource.extend({
 
     // init/set all given values
     var newSubmodels = false;
-    for(var a in attrs) {
-      val = attrs[a];
+    for(var name in newChildren) {
+      var newChild = newChildren[name];
 
-      var bothModel = utils.isPlainObject(val) && this._data[a] instanceof Model;
-      var bothModelLeaf = !utils.isPlainObject(val) && this._data[a] instanceof ModelLeaf;
+      var bothModel = utils.isPlainObject(newChild) && this._data[name] instanceof Model;
+      var bothModelLeaf = (!utils.isPlainObject(newChild) || this.isObjectLeaf(name)) && this._data[name] instanceof ModelLeaf;
       
-      if (this._data[a] && (bothModel || bothModelLeaf)) {
+      if (this._data[name] && (bothModel || bothModelLeaf)) {
         // data type does not change (model or leaf and can be set through set-function)
-        this._data[a].set(val, force, persistent);
+        this._data[name].set(newChild, force, persistent);
       } else {
         // data type has changed or is new, so initializing the model/leaf
-        this._data[a] = initSubmodel(a, val, this);
+        this._data[name] = initSubmodel(name, newChild, this);
         newSubmodels = true;
       }
     }
@@ -202,7 +206,6 @@ var Model = EventSource.extend({
     }
 
   },
-
 
   setTreeFreezer: function(freezerStatus) {
     // first traverse down
@@ -926,6 +929,10 @@ var Model = EventSource.extend({
       model_defaults = model_defaults[path.pop()] || {};
     }
     return model_defaults;
+  },
+
+  isObjectLeaf: function(name) {
+    return (this.objectLeafs.indexOf(name) !== -1)
   }
 
 });
@@ -977,7 +984,7 @@ function initSubmodel(attr, val, ctx) {
   var submodel;
 
   // if value is a value -> leaf
-  if(!utils.isPlainObject(val) || utils.isArray(val)) {  
+  if(!utils.isPlainObject(val) || utils.isArray(val) || ctx.isObjectLeaf(attr)) {  
 
     var binds = {
       //the submodel has changed (multiple times)
