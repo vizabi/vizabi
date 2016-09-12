@@ -169,18 +169,18 @@ var Model = EventSource.extend({
 
     // init/set all given values
     var newSubmodels = false;
-    for(var name in newChildren) {
-      var newChild = newChildren[name];
+    for(var a in attrs) {
+      val = attrs[a];
 
-      var bothModel = utils.isPlainObject(newChild) && this._data[name] instanceof Model;
-      var bothModelLeaf = (!utils.isPlainObject(newChild) || this.isObjectLeaf(name)) && this._data[name] instanceof ModelLeaf;
+      var bothModel = utils.isPlainObject(val) && this._data[a] instanceof Model;
+      var bothModelLeaf = !utils.isPlainObject(val) && this._data[a] instanceof ModelLeaf;
       
-      if (this._data[name] && (bothModel || bothModelLeaf)) {
+      if (this._data[a] && (bothModel || bothModelLeaf)) {
         // data type does not change (model or leaf and can be set through set-function)
-        this._data[name].set(newChild, force, persistent);
+        this._data[a].set(val, force, persistent);
       } else {
         // data type has changed or is new, so initializing the model/leaf
-        this._data[name] = initSubmodel(name, newChild, this);
+        this._data[a] = initSubmodel(a, val, this);
         newSubmodels = true;
       }
     }
