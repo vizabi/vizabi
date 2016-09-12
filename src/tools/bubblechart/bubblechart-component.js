@@ -1283,6 +1283,7 @@ var BubbleChartComp = Component.extend({
   },
 
   _formatSTitleValues: function(titleS, titleC) {
+    var _this = this;
     var unitY = this.translator("unit/" + this.model.marker.size.which);
     var unitC = this.translator("unit/" + this.model.marker.color.which);
 
