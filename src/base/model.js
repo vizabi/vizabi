@@ -528,7 +528,7 @@ var Model = EventSource.extend({
   getQuery: function(splashScreen) {
     var _this = this;
 
-    var dimensions, filters, select, from, grouping, orderBy, q, animatable;
+    var dimensions, filters, select, from, order_by, q, animatable;
 
     //if it's not a hook, no query is necessary
     if(!this.isHook()) return true;
@@ -546,32 +546,43 @@ var Model = EventSource.extend({
     var dimensions = this._getAllDimensions(exceptions);
     select = {
       key: dimensions,
-      value: dimensions.indexOf(this.which)!=-1 ? [] : [this.which]
+      value: dimensions.indexOf(this.which)!=-1 || this.use === "constant" ? [] : [this.which]
     }
     
     // animatable
     animatable = this._getFirstDimension({type: "time"});
     
     // from
-    from = prop? "entities" : "datapoints";
+    from = prop ? "entities" : "datapoints";
 
     // where 
     filters = this._getAllFilters(exceptions, splashScreen);
-    
-    // grouping
-    grouping = this._getGrouping();
+
+    // make root $and explicit
+    var explicitAndFilters =  {};
+    if (Object.keys(filters).length > 0) {
+      explicitAndFilters['$and'] = [];
+      for (var filterKey in filters) {
+        var filter = {};
+        filter[filterKey] = filters[filterKey];
+        explicitAndFilters['$and'].push(filter);
+      }
+    }
+
+    // join
+    var join = this._getAllJoins(exceptions, splashScreen);
 
     // order by
-    orderBy = (!prop) ? this._space.time.dim : null;
+    order_by = (!prop) ? this._space.time.dim : null;
 
     //return query
     return {
       'from': from,
       'animatable': animatable,
       'select': select,
-      'where': filters,
-      'grouping': grouping,
-      'orderBy': orderBy // should be _space.animatable, but that's time for now
+      'where': explicitAndFilters,
+      'join': join,
+      'order_by': order_by // should be _space.animatable, but that's time for now
     };
   },
 
@@ -850,6 +861,7 @@ var Model = EventSource.extend({
   _getAllFilters: function(opts, splashScreen) {
     opts = opts || {};
     var filters = {};
+    var _this = this;
     utils.forEach(this._space, function(h) {
       if(opts.exceptType && h.getType() === opts.exceptType) {
         return true;
@@ -857,22 +869,37 @@ var Model = EventSource.extend({
       if(opts.onlyType && h.getType() !== opts.onlyType) {
         return true;
       }
-      filters = utils.extend(filters, h.getFilter(splashScreen));
+
+      if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
+        filters = utils.extend(filters, h.getFilter(splashScreen));
+      } else {
+        var filter = {};
+        filter[h.getDimension()] = "$"  + h.getDimension();
+        filters = utils.extend(filters, filter);
+      }
     });
     return filters;
   },
 
-  /**
-   * gets grouping for each of the used entities
-   * @param {Boolean} splashScreen get filters for first screen only
-   * @returns {Object} filters
-   */
-  _getGrouping: function() {
-    var groupings = {};
+  _getAllJoins: function(opts, splashScreen) {
+    var joins = {};
+    var _this = this;
     utils.forEach(this._space, function(h) {
-      groupings[h.dim] = h.grouping || undefined;
+      if(opts.exceptType && h.getType() === opts.exceptType) {
+        return true;
+      }
+      if(opts.onlyType && h.getType() !== opts.onlyType) {
+        return true;
+      }
+      if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
+        return true;
+      }
+      joins["$" + h.getDimension()] = {
+        key: h.getDimension(),
+        where: h.getFilter(splashScreen)
+      };
     });
-    return groupings;
+    return joins;
   },
 
   /**

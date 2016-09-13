@@ -632,7 +632,7 @@ BubbleChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-            "geo.is--country": true
+            "is--country": true
         }
       }
     },
@@ -640,7 +640,7 @@ BubbleChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.is--world_4region": true
+          "is--world_4region": true
         }
       }
     },
