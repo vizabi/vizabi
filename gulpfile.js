@@ -106,7 +106,7 @@ gulp.task('clean:preview:styles', function() {
 });
 
 gulp.task('clean:preview:js', function() {
-  return del([path.join(config.destPreview, 'assets/js/*.js')]);
+  return del([path.join(config.destPreview, 'assets/js/**/*.js')]);
 });
 
 gulp.task('clean:preview:vendor', function() {
@@ -378,7 +378,7 @@ gulp.task('preview:styles', ['clean:preview:styles'], function() {
 
 gulp.task('preview:js', ['clean:preview:js'], function() {
   gutil.log(chalk.yellow("Copying preview JS..."));
-  return gulp.src(path.join(config.srcPreview, 'assets/js/*.js'))
+  return gulp.src(path.join(config.srcPreview, 'assets/js/**/*.js'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/js')))
     .on('end', function() {
       gutil.log(chalk.green("Copying preview JS... DONE!"))
