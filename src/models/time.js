@@ -272,11 +272,7 @@ var TimeModel = Model.extend({
     if (firstScreen) {
       filter[dim] = value;
     } else {
-      var gte = {},
-          lte = {};
-      gte[dim] = { '$gte': start };
-      lte[dim] = { '$lte': end };
-      filter['$and'] = [gte,lte];
+      filter[dim] = {'$gte': start, '$lte': end};
     }
     return filter;
   },
