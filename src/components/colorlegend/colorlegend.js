@@ -80,7 +80,7 @@ var ColorLegend = Component.extend({
   forwardModelUpdate: function(){
     if(this.colorModel.use === "property"){
       var newFilter = {};
-      newFilter[this.KEY + ".is--" + this.colorModel.which] = true;
+      newFilter["is--" + this.colorModel.which] = true;
       this.model.state.entities_minimap.show = newFilter;
     }
   },
