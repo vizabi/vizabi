@@ -66,10 +66,6 @@ var ColorLegend = Component.extend({
         } else {
           _this.updateGroupsOpacity();         
         }
-      },
-      "change:language.strings": function(evt) {
-        this.translator = this.model.language.getTFunction();
-        _this.updateView();
       }
     };
 
@@ -88,8 +84,6 @@ var ColorLegend = Component.extend({
   readyOnce: function() {
     var _this = this;
     this.element = d3.select(this.element);
-    
-    this.translator = this.model.language.getTFunction();
     
     this.markerModel = this.model.state.marker_minimap ? this.model.state.marker_minimap : this.model.state.marker;
     this.listColorsEl = this.element
@@ -315,7 +309,7 @@ var ColorLegend = Component.extend({
         this.rainbowEl
           .style("background", "linear-gradient(90deg," + gColors + ")");
         
-        var unit = this.translator("unit/" + this.colorModel.which)
+        var unit = this.colorModel.getConceptprops().unit || "";
         
         this.unitDiv.classed("vzb-hidden", unit == "");
         this.unitText.text(unit);
