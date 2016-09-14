@@ -725,6 +725,7 @@ var TreeMenu = Component.extend({
       //add entries to different branches in the tree according to their tags
       utils.forEach(this.model.marker.getConceptprops(), function(entry, id){
         //if entry's tag are empty don't include it in the menu
+        if(entry.tags=="_none") return;
         if(!entry.tags) entry.tags = UNCLASSIFIED;
         entry.tags.split(",").forEach(function(tag){
           if(tags[tag.trim()]) {
