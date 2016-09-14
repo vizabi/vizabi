@@ -512,33 +512,29 @@ var BubbleChartComp = Component.extend({
   updateUIStrings: function() {
     var _this = this;
 
+    var conceptProps = _this.model.marker.getConceptprops();
     this.translator = this.model.language.getTFunction();
 
     this.strings = {
       title: {
-        Y: this.translator("indicator/" + this.model.marker.axis_y.which),
-        X: this.translator("indicator/" + this.model.marker.axis_x.which),
-        S: this.translator("indicator/" + this.model.marker.size.which),
-        C: this.translator("indicator/" + this.model.marker.color.which)
+        Y: conceptProps[this.model.marker.axis_y.which].name,
+        X: conceptProps[this.model.marker.axis_x.which].name,
+        S: conceptProps[this.model.marker.size.which].name,
+        C: conceptProps[this.model.marker.color.which].name
       },
       unit: {
-        Y: this.translator("unit/" + this.model.marker.axis_y.which),
-        X: this.translator("unit/" + this.model.marker.axis_x.which),
-        S: this.translator("unit/" + this.model.marker.size.which),
-        C: this.translator("unit/" + this.model.marker.color.which)
+        Y: conceptProps[this.model.marker.axis_y.which].unit,
+        X: conceptProps[this.model.marker.axis_x.which].unit,
+        S: conceptProps[this.model.marker.size.which].unit,
+        C: conceptProps[this.model.marker.color.which].unit
       }
     }
     
-    //suppress unit strings that found no translation (returns same thing as requested)
-    if(this.strings.unit.Y === "unit/" + this.model.marker.axis_y.which) this.strings.unit.Y = "";
-    if(this.strings.unit.X === "unit/" + this.model.marker.axis_x.which) this.strings.unit.X = "";
-    if(this.strings.unit.S === "unit/" + this.model.marker.size.which) this.strings.unit.S = "";
-    if(this.strings.unit.C === "unit/" + this.model.marker.color.which) this.strings.unit.C = "";
-    
-    if(!!this.strings.unit.Y) this.strings.unit.Y = ", " + this.strings.unit.Y;
-    if(!!this.strings.unit.X) this.strings.unit.X = ", " + this.strings.unit.X;
-    if(!!this.strings.unit.S) this.strings.unit.S = ", " + this.strings.unit.S;
-    if(!!this.strings.unit.C) this.strings.unit.C = ", " + this.strings.unit.C;
+    //suppress unit strings that are empty. otherwise add a comma in before the unit
+    this.strings.unit.Y = !this.strings.unit.Y ? "" : ", " + this.strings.unit.Y;
+    this.strings.unit.X = !this.strings.unit.X ? "" : ", " + this.strings.unit.X;
+    this.strings.unit.S = !this.strings.unit.S ? "" : ", " + this.strings.unit.S;
+    this.strings.unit.C = !this.strings.unit.C ? "" : ", " + this.strings.unit.C;
 
     var yTitle = this.yTitleEl.selectAll("text").data([0]);
     yTitle.enter().append("text");
@@ -1284,12 +1280,8 @@ var BubbleChartComp = Component.extend({
 
   _formatSTitleValues: function(titleS, titleC) {
     var _this = this;
-    var unitY = this.translator("unit/" + this.model.marker.size.which);
-    var unitC = this.translator("unit/" + this.model.marker.color.which);
-
-    //suppress unit strings that found no translation (returns same thing as requested)
-    if(unitY === "unit/" + this.model.marker.size.which) unitY = "";
-    if(unitC === "unit/" + this.model.marker.color.which) unitC = "";
+    var unitY = this.strings.unit.Y;
+    var unitC = this.strings.unit.C;
   
     var formatterS = this.model.marker.size.getTickFormatter();
     var formatterC = this.model.marker.color.getTickFormatter();

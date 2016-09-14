@@ -251,7 +251,7 @@ var Data = Class.extend({
       from: "concepts",
       select: {
         key: ["concept"],
-        value: ["concept_type","indicator_url","color","scales","interpolation","tags"]
+        value: ["concept_type","indicator_url","color","scales","interpolation","tags","name","unit","description"]
       }
     };
     
@@ -275,6 +275,9 @@ var Data = Class.extend({
         }
         concept["interpolation"] = d.interpolation;
         concept["tags"] = d.tags;
+        concept["name"] = d.name;
+        concept["unit"] = d.unit;
+        concept["description"] = d.description;
         _this.conceptDictionary[d.concept] = concept;
       });
       
