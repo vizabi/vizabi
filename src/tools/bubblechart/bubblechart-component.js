@@ -1225,7 +1225,8 @@ var BubbleChartComp = Component.extend({
         view.interrupt()
           .attr("cy", _this.yScale(valueY))
           .attr("cx", _this.xScale(valueX))
-          .attr("r", scaledS);
+          .attr("r", scaledS)
+          .transition();
 
         //show entity if it was hidden
         if(showhide) view.classed("vzb-invisible", d.hidden);

@@ -215,7 +215,7 @@ var BubbleMapComponent = Component.extend({
       _this._labels.updateSize();
       _this.redrawDataPoints();
       //_this._selectlist.redraw();
-      
+
     });
 
     this.KEY = this.model.entities.getDimension();
@@ -606,7 +606,8 @@ var BubbleMapComponent = Component.extend({
                   .attr("r", d.r);
           }else{
               view.interrupt()
-                  .attr("r", d.r);
+                  .attr("r", d.r)
+                  .transition();
           }
 
           _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], valueS, valueC, d.label, duration);
