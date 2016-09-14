@@ -171,23 +171,25 @@ var ColorLegend = Component.extend({
     
     //Hide and show elements of the color legend
     //Hide color legend entries if showing minimap or if color hook is a constant
-    colorOptions.classed("vzb-hidden", canShowMap || this.colorModel.which == "_default");
+    //or if using a discrete palette that would map to all entities on the chart and therefore will be too long
+    colorOptions.classed("vzb-hidden", canShowMap || this.colorModel.which == "_default" || minimapDim == _this.KEY);
     //Hide rainbow element if showing minimap or if color is discrete
-    //TODO: indocators-properties are incorrectly used here.
     this.rainbowEl.classed("vzb-hidden", canShowMap || this.colorModel.use !== "indicator");
+    this.labelScaleEl.classed("vzb-hidden", canShowMap || this.colorModel.use !== "indicator")
     this.rainbowLegendEl.classed("vzb-hidden", canShowMap || this.colorModel.use !== "indicator");
     //Hide minimap if no data to draw it
     this.minimapEl.classed("vzb-hidden", !canShowMap);
     
-    this.labelScaleEl.classed("vzb-hidden", canShowMap || this.colorModel.use !== "indicator")
     this.unitDiv.classed("vzb-hidden", true);
 
     //Check if geoshape is provided
     if(!canShowMap) {
+      var cScale = this.colorModel.getScale();
+      
       if(this.colorModel.which == "_default") {
         colorOptions = colorOptions.data([]); 
       }else if(this.colorModel.use == "indicator" || !minimapKeys.length) {
-        colorOptions = colorOptions.data(utils.keys(this.colorModel.getScale().range()), function(d) {return d});
+        colorOptions = colorOptions.data(utils.keys(cScale.range()), function(d) {return d});
       }else{
         colorOptions = colorOptions.data(minimapKeys, function(d) {return d[minimapDim]});
       }
@@ -205,8 +207,8 @@ var ColorLegend = Component.extend({
 
       colorOptions.each(function(d, index) {
         d3.select(this).select(".vzb-cl-color-sample")
-          .style("background-color", palette[d[_this.KEY]||d[minimapDim]||d])
-          .style("border", "1px solid " + palette[d[_this.KEY]||d[minimapDim]||d]);
+          .style("background-color", cScale(d[_this.KEY]||d[minimapDim]||d))
+          .style("border", "1px solid " + cScale(d[_this.KEY]||d[minimapDim]||d));
       }); 
       
       if(this.colorModel.use == "indicator") {
@@ -236,7 +238,7 @@ var ColorLegend = Component.extend({
 
         } else {
 
-          domain = _this.colorModel.getScale().domain();
+          domain = cScale.domain();
           var paletteMax = d3.max(paletteKeys);
           range = paletteKeys.map(function(val) {
             return val / paletteMax * gradientWidth;
@@ -280,7 +282,7 @@ var ColorLegend = Component.extend({
               
         this.labelScaleG.call(labelsAxis);
 
-        var colorRange = _this.colorModel.getScale().range();
+        var colorRange = cScale.range();
 
         var gIndicators = range.map(function(val, i) {
           return {val: val, color: colorRange[i], paletteKey: paletteKeys[i]}
@@ -333,9 +335,8 @@ var ColorLegend = Component.extend({
             .text(_this.frame.label[d[_this.KEY]||d[minimapDim]]);
         });
         
-        
-        //if using a discrete palette that is not supplied from concept properties but from defaults
-        colorOptions.classed("vzb-cl-compact", !(this.colorModel.getConceptprops().color||{}).palette );
+        //switch to compact mode (remove labels) when we have no labels to show
+        colorOptions.classed("vzb-cl-compact", !_this.frame.label );
       }
       
 
