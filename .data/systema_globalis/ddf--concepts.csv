@@ -1,20 +1,20 @@
 concept,name,concept_type,domain,indicator_url,color,scales,drill_up,unit,interpolation,description,tags
-tags,Tags,string,,,,,,,,,
-tag,Tag,entity_domain,,,,,,,,,
-parent,Tag parent,string,,,,,,,,,
+tags,Tags,string,,,,,,,,,_none
+tag,Tag,entity_domain,,,,,,,,,_none
+parent,Tag parent,string,,,,,,,,,_none
 geo,Geographic location,entity_domain,,https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv,,"[""ordinal""]",,,,,categorizations
-geographic_regions,Geographic regions,entity_set,geo,http://spreadsheets.google.com/pub?key=phT4mwjvEuGBtdf1ZeO7_PQ,"{""palette"": {""america"": ""#ebcc21"", ""middle_east_north_africa"": ""#5be56b"", ""south_asia"": ""#35d1d1"", ""europe_central_asia"": ""#f49d37"", ""sub_saharan_africa"": ""#4e7af0"", ""east_asia_pacific"": ""#f03838""}, ""selectable"": false}","[""ordinal""]",,,,,categorizations
+world_6region,Geographic regions,entity_set,geo,http://spreadsheets.google.com/pub?key=phT4mwjvEuGBtdf1ZeO7_PQ,"{""palette"": {""america"": ""#ebcc21"", ""middle_east_north_africa"": ""#5be56b"", ""south_asia"": ""#35d1d1"", ""europe_central_asia"": ""#f49d37"", ""sub_saharan_africa"": ""#4e7af0"", ""east_asia_pacific"": ""#f03838""}, ""selectable"": false}","[""ordinal""]",,,,,categorizations
 income_groups,Income groups,entity_set,geo,http://spreadsheets.google.com/pub?key=phT4mwjvEuGCSmAe5aq7HKw,"{""palette"": {""lower_middle_income"": ""#7ea1d1"", ""upper_middle_income"": ""#a7cb7d"", ""high_income"": ""#7bc135"", ""low_income"": ""#4366f4""}}","[""ordinal""]",,,,,categorizations
 landlocked,Landlocked,entity_set,geo,http://spreadsheets.google.com/pub?key=rBwKBodk7Y08pGiA4OAfzUA,"{""palette"": {""coastline"": ""#7487ef"", ""landlocked"": ""#f05656""}}","[""ordinal""]",,,,,categorizations
 g77_and_oecd_countries,G77 and OECD countries,entity_set,geo,http://spreadsheets.google.com/pub?key=tVI_UCwI1enCk4p61fWxUig,"{""palette"": {""g77"": ""#7487ef"", ""others"": ""#f05656"", ""oecd"": ""#71c44c""}}","[""ordinal""]",,,,,categorizations
-geographic_regions_in_4_colors,Geographic regions in 4 colors,entity_set,geo,http://spreadsheets.google.com/spreadsheet/pub?key=0ArfEDsV3bBwCdHlocWJBM1Uyd1ZPeHduU3c4WGplMEE,"{""palette"": {""america"": [""#7feb00"", ""#5de200"", ""#81f201"", ""#00b900"", ""#b5ea32"", ""#008d36""], ""asia"": [""#ff5872"", ""#ff5178"", ""#ff658a"", ""#da0025"", ""#fa4e73"", ""#b2043a""], ""_default"": [""#ffb600"", ""#ffaa14"", ""#ffc500"", ""#fb6d19"", ""#ffb600"", ""#9b4838""], ""europe"": [""#ffe700"", ""#fbdd00"", ""#fff400"", ""#fbaf09"", ""#ffe700"", ""#b17f4a""], ""africa"": [""#00d5e9"", ""#00c8ec"", ""#00e1ec"", ""#0098df"", ""#77dff7"", ""#0586c6""]}, ""selectable"": false}","[""ordinal""]",,,,,categorizations
+geographic_regions_in_4_colors,Geographic regions in 4 colors,entity_set,geo,http://spreadsheets.google.com/spreadsheet/pub?key=0ArfEDsV3bBwCdHlocWJBM1Uyd1ZPeHduU3c4WGplMEE,"{""palette"": {""america"": [""#7feb00"", ""#5de200"", ""#81f201"", ""#00b900"", ""#b5ea32"", ""#008d36""], ""asia"": [""#ff5872"", ""#ff5178"", ""#ff658a"", ""#da0025"", ""#fa4e73"", ""#b2043a""], ""_default"": [""#ffb600"", ""#ffaa14"", ""#ffc500"", ""#fb6d19"", ""#ffb600"", ""#9b4838""], ""europe"": [""#ffe700"", ""#fbdd00"", ""#fff400"", ""#fbaf09"", ""#ffe700"", ""#b17f4a""], ""africa"": [""#00d5e9"", ""#00c8ec"", ""#00e1ec"", ""#0098df"", ""#77dff7"", ""#0586c6""]}, ""selectable"": false}","[""ordinal""]",,,,,_none
 main_religion_2008,Main religion 2008,entity_set,geo,http://spreadsheets.google.com/spreadsheet/pub?key=0ArtujvvFrPjVdHUzTGVicFJZQ1NjaFhqelV5SDNxMVE,"{""palette"": {""muslim"": ""#71c44c"", ""eastern_religions"": ""#f05656"", ""christian"": ""#7487ef""}, ""selectable"": false}","[""ordinal""]",,,,,categorizations
-country,Country,entity_set,geo,https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv,,"[""ordinal""]","[""geographic_regions"", ""income_groups"", ""landlocked"", ""g77_and_oecd_countries"", ""geographic_regions_in_4_colors"", ""main_religion_2008""]",,,,categorizations
+country,Country,entity_set,geo,https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv,,"[""ordinal""]","[""world_6region"", ""income_groups"", ""landlocked"", ""g77_and_oecd_countries"", ""main_religion_2008""]",,,,categorizations
 world_4region,World Regions,entity_set,geo,http://spreadsheets.google.com/spreadsheet/pub?key=0ArfEDsV3bBwCdHlocWJBM1Uyd1ZPeHduU3c4WGplMEE,"{""palette"": {""asia"": [""#ff5872"", ""#ff5178"", ""#ff658a"", ""#da0025"", ""#fa4e73"", ""#b2043a""], ""africa"": [""#00d5e9"", ""#00c8ec"", ""#00e1ec"", ""#0098df"", ""#77dff7"", ""#0586c6""], ""_default"": [""#ffb600"", ""#ffaa14"", ""#ffc500"", ""#fb6d19"", ""#ffb600"", ""#9b4838""], ""europe"": [""#ffe700"", ""#fbdd00"", ""#fff400"", ""#fbaf09"", ""#ffe700"", ""#b17f4a""], ""americas"": [""#7feb00"", ""#5de200"", ""#81f201"", ""#00b900"", ""#b5ea32"", ""#008d36""]}, ""shades"": {""fill3"": 2, ""fill2"": 1, ""print_fill"": 4, ""print_stroke"": 5, ""fill1"": 0, ""shade"": 3}, ""selectable"": false}","[""ordinal""]",,,,,categorizations
-global,World,entity_set,geo,,,"[""ordinal""]",,,,,
-age,Age,measure,,,,"[""linear"", ""log""]",,years,,,
-latitude,Latitude,measure,,https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv,,"[""linear""]",,degrees,,,
-longitude,Longitude,measure,,https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv,,"[""linear""]",,degrees,,,
+global,World,entity_set,geo,,,"[""ordinal""]",,,,,_none
+age,Age,measure,,,,"[""linear"", ""log""]",,years,,,_none
+latitude,Latitude,measure,,https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv,,"[""linear""]",,degrees,,,_none
+longitude,Longitude,measure,,https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv,,"[""linear""]",,degrees,,,_none
 children_per_woman_total_fertility,Babies per woman,measure,,http://spreadsheets.google.com/pub?key=phAwcNAVuyj0TAlJeCEzcGQ,,"[""linear"", ""log""]",,,,Total fertility rate. The number of children that would be born to each woman with prevailing age-specific fertility rates. ,"_root, newborn_infants"
 co2_emissions_tonnes_per_person,CO2 emissions,measure,,http://spreadsheets.google.com/pub?key=phAwcNAVuyj1gkNuUEXOGag,,"[""linear"", ""log""]",,tons per person,,Carbon dioxide emissions from the burning of fossil fuels (metric tonnes of CO2 per person). ,"_root, emissions"
 income_per_person_gdppercapita_ppp_inflation_adjusted,Income per person,measure,,http://spreadsheets.google.com/pub?key=phAwcNAVuyj1jiMAkmq1iMg,,"[""log"", ""linear""]",,$/year (GDP/capita),,"Gross domestic product per person adjusted for differences in purchasing power (in international dollars, fixed 2005 prices, PPP based on 2005 ICP). ","_root, incomes_growth"
@@ -478,8 +478,8 @@ total_population_with_projections,Total population,measure,,http://spreadsheets.
 female_population_with_projections,Female population,measure,,http://spreadsheets.google.com/pub?key=t6nZVbvqsF-BbyheqUxerZQ,,"[""linear"", ""log""]",,with projections,,"Total number of female population, data after 2010 is based on the medium estimates from UN population division.",projections
 male_population_with_projections,Male population,measure,,http://spreadsheets.google.com/pub?key=tZMsbTkrY0k4OkkkXEfp6pA,,"[""linear"", ""log""]",,with projections,,"Total number of male population, data after 2010 is based on the medium estimates from UN population division.",projections
 population_growth_annual_percent_with_projections,Population growth,measure,,http://spreadsheets.google.com/pub?key=rZrHzR__kZfmw6L_xUx7cwg,,"[""linear"", ""log""]",,"annual %, with projections",,"Annual change of population in percentage, data after 2010 is based on the medium estimates from UN population division.",projections
-year_categorization_1820_2010,Year categorization 1820-2010,measure,,http://spreadsheets.google.com/pub?key=phAwcNAVuyj2t4ep52YXjSg,,"[""linear"", ""log""]",,,,"This ""indicator"" simply duplicates the years between 1820 and 2010. Use it to color the bubbles (by selecting this indicator under ""color"" in the top right-hand corner of the graph). This is useful when enabling ""trails"" for several countries. Use this one for long time series. ",
-year_categorization_1950,Year categorization 1950-,measure,,http://spreadsheets.google.com/pub?key=phAwcNAVuyj02SA7cGjnRbA,,"[""linear"", ""log""]",,,,"This ""indicator"" simply duplicates the years between 1950 and 2008. Use it to color the bubbles (by selecting this indicator under ""color"" in the top right-hand corner of the graph). This is useful when enabling ""trails"" for several countries. ",
+year_categorization_1820_2010,Year categorization 1820-2010,measure,,http://spreadsheets.google.com/pub?key=phAwcNAVuyj2t4ep52YXjSg,,"[""linear"", ""log""]",,,,"This ""indicator"" simply duplicates the years between 1820 and 2010. Use it to color the bubbles (by selecting this indicator under ""color"" in the top right-hand corner of the graph). This is useful when enabling ""trails"" for several countries. Use this one for long time series. ",_none
+year_categorization_1950,Year categorization 1950-,measure,,http://spreadsheets.google.com/pub?key=phAwcNAVuyj02SA7cGjnRbA,,"[""linear"", ""log""]",,,,"This ""indicator"" simply duplicates the years between 1950 and 2008. Use it to color the bubbles (by selecting this indicator under ""color"" in the top right-hand corner of the graph). This is useful when enabling ""trails"" for several countries. ",_none
 traffic_deaths_per_100000_people,Traffic deaths,measure,,http://spreadsheets.google.com/pub?key=tK87SOy-oZlfW99UDD7L3hw,,"[""linear"", ""log""]",,per 100 000 people,,"Traffic mortality per 100 000 standard population, age adjusted. This rate is calculated as if all countries had the same age composition of the population.",traffic
 burns_deaths_per_100000_people,Burns deaths,measure,,http://spreadsheets.google.com/pub?key=0AgogXXPMARyldGloTm9wekpDcUdMUjhlYWFKaHdnVWc,,"[""linear"", ""log""]",,per 100 000 people,,"Burns, age-adjusted mortality per 100 000 standard population. This rate is calculated as if all countries had the same age composition of the population.",injuries_and_accidents
 drownings_per_100000_people,Drownings,measure,,http://spreadsheets.google.com/pub?key=0AgogXXPMARyldF9ZRnhuWWljUXJHRDRpb0cyaHNLSUE,,"[""linear"", ""log""]",,per 100 000 people,,"Drownings, age-adjusted mortality per 100 000 standard population. This rate is calculated as if all countries had the same age composition of the population.",injuries_and_accidents
@@ -531,9 +531,7 @@ alternative_gdp_per_capita_ppp_pwt_7_1,"Alternative GDP/capita PPP, PWT 7.1",mea
 number_of_child_deaths,Number of child deaths,measure,,https://docs.google.com/spreadsheet/pub?key=0ArfEDsV3bBwCdGhSY2trbEVpYnNsMENqendaVm5ucnc,,"[""linear"", ""log""]",,,,The number of children dying before age 5,health
 energy_supply_per_person_toe,Energy supply per person,measure,,https://docs.google.com/spreadsheet/pub?key=0ArfEDsV3bBwCdFFjMFlMeS02N1NGNjJabl8wamVtdHc,,"[""linear"", ""log""]",,tons in oil eqv.,,"Total energy supply per person, tonnes of oil equivalent",alternative_energy
 energy_from_solid_biofuels_percent,Energy from solid biofuels,measure,,https://docs.google.com/spreadsheet/pub?key=0ArfEDsV3bBwCdFdaNHA3R1BzcG9GSlkwMXdnMHpScVE,,"[""linear"", ""log""]",,%,,"Percent of total energy supply that comes from ""solid biofuels"". Solid biofuels includes ""traditional energy sources"" e.g. firewood. ",alternative_energy
-residential_energy_use_percent,Residential energy use,measure,,"https://docs.google.com/spreadsheet/pub?key=0ArfEDsV3bBwCdEV1RkJqTEItQnJYVXJlZzVuc3Y3Mmc
-
-",,"[""linear"", ""log""]",,%,,"Percent of total emergy consumption that is used as ""residential consumption""",alternative_energy
+residential_energy_use_percent,Residential energy use,measure,,"https://docs.google.com/spreadsheet/pub?key=0ArfEDsV3bBwCdEV1RkJqTEItQnJYVXJlZzVuc3Y3Mmc",,"[""linear"", ""log""]",,%,,"Percent of total emergy consumption that is used as ""residential consumption""",alternative_energy
 life_expectancy_at_birth_data_from_ihme,Life expectancy at birth (IHME),measure,,https://docs.google.com/spreadsheet/pub?key=0ArfEDsV3bBwCdG9jSHA0WklHU0dqUnBCVUpVOXFzQUE,,"[""linear"", ""log""]",,,,"Life expectancy at birth, the data is taken from Institute for health metrics and evaluation",alternative_demography_indicators
 children_per_woman_temporary_update,Children per woman temporary update,measure,,https://docs.google.com/spreadsheet/pub?key=0ArfEDsV3bBwCdFJCTm43NGc0SzdYeHBpZWZGb1V0ckE,,"[""linear"", ""log""]",,,,"Children per woman (TFR), temporary update",alternative_demography_indicators
 alternative_gdp_per_capita_ppp_pwt_8_0,Alternative GDP/capita PPP PWT 8.0,measure,,https://docs.google.com/spreadsheet/pub?key=0ArfEDsV3bBwCdGhmWXFMY0hNcDFiTEt3ZVE4b21wRlE,,"[""linear"", ""log""]",,,,"GDP per capita PPP, in 2005 i$ from PWT 8.0 (based on rgdpe)",alternative_gdp_data
@@ -547,37 +545,37 @@ number_of_people_in_poverty,Number of people in poverty,measure,,https://docs.go
 income_per_person_long_series,Income per person (long series),measure,,https://docs.google.com/spreadsheet/pub?key=1SKMoV61HUNwWfYNCZs2M9zgMWqVrs9YrbJxs5HQbJSQ,,"[""linear"", ""log""]",,,,"Income per person, version 15, including historical data & projections",alternative_gdp_data
 newborn_mortality_rate_per_1000,Newborn mortality rate per 1000,measure,,https://docs.google.com/spreadsheet/pub?key=1S3Kcw96vp5-fZbaM7Lck_06IbJ8DagThGI5KHnzeSps,,"[""linear"", ""log""]",,,,Neonatal mortality rate. Children dying within the first 28 days per 1000 live births.,newborn_infants
 newborn_deaths,Newborn deaths,measure,,https://docs.google.com/spreadsheet/pub?key=1iTvolhgIMta3MmsoPkGnewJiaybev3MvR9e_7mxZ48o,,"[""linear"", ""log""]",,,,Neonatal deaths Children dying within the first 28 days.,newborn_infants
-sg_population,sg_population,measure,,http://www.gapminder.org/news/data-sources-dont-panic-end-poverty,,"[""linear"", ""log""]",,,,,
-sg_gini,sg_gini,measure,,http://www.gapminder.org/news/data-sources-dont-panic-end-poverty,,"[""linear""]",,,,,
-sg_gdp_p_cap_const_ppp2011_dollar,sg_gdp_p_cap_const_ppp2011_dollar,measure,,http://www.gapminder.org/news/data-sources-dont-panic-end-poverty,"{""palette"": {""2"": ""#E1CE00"", ""1"": ""#B4DE79"", ""3"": ""#F77481"", ""0"": ""#62CCE3""}}","[""log"", ""linear""]",,,exp,,
-description,Description,string,,,,,,,,,
-indicator_url,Indicator url,string,,,,,,,,,
-name,Name,string,,https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv,,"[""ordinal""]",,,,,
-unit,Unit,string,,,,,,,,,
-interpolation,interpolation,string,,,,,,,,,
-name_short,Name Short,string,,,,,,,,,
-name_long,Name Long,string,,,,,,,,,
-color,Color,string,,,,,,,,,
-gapminder_list,Gapminder list,string,,,,,,,,,
-alternative_1,Alternative 1,string,,,,,,,,,
-alternative_2,Alternative 2,string,,,,,,,,,
-alternative_3,Alternative 3,string,,,,,,,,,
-alternative_4_cdiac,Alternative 4 (CDIAC),string,,,,,,,,,
-pandg,pandg,string,,,,,,,,,
-god_id,GOD_ID,string,,,,,,,,,
-alt_5,ALT 5,string,,,,,,,,,
-upper_case_name,Upper Case Name,string,,,,,,,,,
-code,CODE,string,,,,,,,,,
-number,Number,string,,,,,,,,,
-gwid,Gwid,string,,,,,,,,,
-arb1,arb1,string,,,,,,,,,
-arb2,arb2,string,,,,,,,,,
-arb3,arb3,string,,,,,,,,,
-arb4,arb4,string,,,,,,,,,
-arb5,arb5,string,,,,,,,,,
-arb6,arb6,string,,,,,,,,,
-domain,Domain,string,,,,,,,,,
-scales,Scales,string,,,,,,,,,
-drill_up,drill up,string,,,,,,,,,
+sg_population,sg_population,measure,,http://www.gapminder.org/news/data-sources-dont-panic-end-poverty,,"[""linear"", ""log""]",,,,,_none
+sg_gini,sg_gini,measure,,http://www.gapminder.org/news/data-sources-dont-panic-end-poverty,,"[""linear""]",,,,,_none
+sg_gdp_p_cap_const_ppp2011_dollar,sg_gdp_p_cap_const_ppp2011_dollar,measure,,http://www.gapminder.org/news/data-sources-dont-panic-end-poverty,"{""palette"": {""2"": ""#E1CE00"", ""1"": ""#B4DE79"", ""3"": ""#F77481"", ""0"": ""#62CCE3""}}","[""log"", ""linear""]",,,exp,,_none
+description,Description,string,,,,,,,,,_none
+indicator_url,Indicator url,string,,,,,,,,,_none
+name,Name,string,,https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv,,"[""ordinal""]",,,,,_none
+unit,Unit,string,,,,,,,,,_none
+interpolation,interpolation,string,,,,,,,,,_none
+name_short,Name Short,string,,,,,,,,,_none
+name_long,Name Long,string,,,,,,,,,_none
+color,Color,string,,,,,,,,,_none
+gapminder_list,Gapminder list,string,,,,,,,,,_none
+alternative_1,Alternative 1,string,,,,,,,,,_none
+alternative_2,Alternative 2,string,,,,,,,,,_none
+alternative_3,Alternative 3,string,,,,,,,,,_none
+alternative_4_cdiac,Alternative 4 (CDIAC),string,,,,,,,,,_none
+pandg,pandg,string,,,,,,,,,_none
+god_id,GOD_ID,string,,,,,,,,,_none
+alt_5,ALT 5,string,,,,,,,,,_none
+upper_case_name,Upper Case Name,string,,,,,,,,,_none
+code,CODE,string,,,,,,,,,_none
+number,Number,string,,,,,,,,,_none
+gwid,Gwid,string,,,,,,,,,_none
+arb1,arb1,string,,,,,,,,,_none
+arb2,arb2,string,,,,,,,,,_none
+arb3,arb3,string,,,,,,,,,_none
+arb4,arb4,string,,,,,,,,,_none
+arb5,arb5,string,,,,,,,,,_none
+arb6,arb6,string,,,,,,,,,_none
+domain,Domain,string,,,,,,,,,_none
+scales,Scales,string,,,,,,,,,_none
+drill_up,drill up,string,,,,,,,,,_none
 time,Time,time,,,,"[""time""]",,,,,"_root"
-shape_lores_svg,Shapes,string,,,,,,,,,
+shape_lores_svg,Shapes,string,,,,,,,,,_none
