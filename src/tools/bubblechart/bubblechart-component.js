@@ -39,6 +39,12 @@ var BubbleChartComp = Component.extend({
       name: "marker",
       type: "model"
     }, {
+      name: "entities_minimap",
+      type: "entities"
+    }, {
+      name: "marker_minimap",
+      type: "model"
+    }, {
       name: "language",
       type: "language"
     }, {
@@ -523,19 +529,13 @@ var BubbleChartComp = Component.extend({
         C: conceptProps[this.model.marker.color.which].name
       },
       unit: {
-        Y: conceptProps[this.model.marker.axis_y.which].unit,
-        X: conceptProps[this.model.marker.axis_x.which].unit,
-        S: conceptProps[this.model.marker.size.which].unit,
-        C: conceptProps[this.model.marker.color.which].unit
+        Y: conceptProps[this.model.marker.axis_y.which].unit || "",
+        X: conceptProps[this.model.marker.axis_x.which].unit || "",
+        S: conceptProps[this.model.marker.size.which].unit || "",
+        C: conceptProps[this.model.marker.color.which].unit || ""
       }
     }
     
-    //suppress unit strings that are empty. otherwise add a comma in before the unit
-    this.strings.unit.Y = !this.strings.unit.Y ? "" : ", " + this.strings.unit.Y;
-    this.strings.unit.X = !this.strings.unit.X ? "" : ", " + this.strings.unit.X;
-    this.strings.unit.S = !this.strings.unit.S ? "" : ", " + this.strings.unit.S;
-    this.strings.unit.C = !this.strings.unit.C ? "" : ", " + this.strings.unit.C;
-
     var yTitle = this.yTitleEl.selectAll("text").data([0]);
     yTitle.enter().append("text");
     yTitle
@@ -931,11 +931,12 @@ var BubbleChartComp = Component.extend({
     this.sTitleEl
       .attr("transform", "translate(" + this.width + "," + 20 + ") rotate(-90)");
 
-
-    var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
+    var ySeparator = this.strings.unit.Y? ", ":"";
+    var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + ySeparator + this.strings.unit.Y);
     if(yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
 
-    var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
+    var xSeparator = this.strings.unit.Y? ", ":"";    
+    var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + xSeparator + this.strings.unit.X);
     if(xTitleText.node().getBBox().width > this.width - 100) xTitleText.text(this.strings.title.X);
 
     if(this.yInfoEl.select('svg').node()) {
@@ -1280,19 +1281,25 @@ var BubbleChartComp = Component.extend({
 
   _formatSTitleValues: function(titleS, titleC) {
     var _this = this;
-    var unitY = this.strings.unit.Y;
+    var unitS = this.strings.unit.S;
     var unitC = this.strings.unit.C;
   
     var formatterS = this.model.marker.size.getTickFormatter();
     var formatterC = this.model.marker.color.getTickFormatter();
 
     if(this.model.marker.color.use == "property" && titleC) {
-      var tKey = "entity/" + this.model.marker.color.which + "/" + titleC;
-      var translation = _this.translator(tKey);
-      if(tKey !== translation) titleC = translation;
+      var minimapDim = this.model.entities_minimap.getDimension();
+      var minimapItems = this.model.marker_minimap.label.getValidItems();
+      var minimapLabelWhich = this.model.marker_minimap.label.which;
+      var minimapDictionary = {};
+      minimapItems.forEach(function(d){
+          minimapDictionary[d[minimapDim]] = d[minimapLabelWhich]
+      })
+      
+      titleC = minimapDictionary[titleC] || "";
     }
 
-    return [formatterS(titleS) + " " + unitY,
+    return [formatterS(titleS) + " " + unitS,
       titleC || titleC===0 ? formatterC(titleC) + " " + unitC : this.translator("hints/nodata")];
   },
 
