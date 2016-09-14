@@ -119,6 +119,7 @@ var ColorLegend = Component.extend({
       .call(this.colorPicker);
 
     this.KEY = this.model.state.entities.getDimension();
+    this.minimapDim = this.model.state.entities_minimap.getDimension();
     this.colorModel = this.model.state.marker.color;
     
 //    OPACITY_REGULAR = 0.8;
@@ -134,15 +135,15 @@ var ColorLegend = Component.extend({
     this.canShowMap = false;
 
     if(this.model.state.marker_minimap){
-      var minimapDim = this.model.state.marker_minimap._getFirstDimension();
+      
       var timeModel = this.model.state.time;
       var filter = {};
       filter[timeModel.getDimension()] = timeModel.value;
-      _this.frame = this.model.state.marker_minimap.getValues(filter,[minimapDim]);
+      _this.frame = this.model.state.marker_minimap.getValues(filter,[_this.minimapDim]);
       
       this.canShowMap = utils.keys((this.frame||{}).geoshape||{}).length && this.colorModel.use == "property";
 
-      var minimapKeys = this.model.state.marker_minimap.getKeys(minimapDim);     
+      var minimapKeys = this.model.state.marker_minimap.getKeys(_this.minimapDim);     
       minimapKeys.forEach(function(d){
         if(!((_this.frame||{}).geoshape||{})[d[_this.KEY]]) _this.canShowMap = false;
       });
@@ -161,8 +162,7 @@ var ColorLegend = Component.extend({
     var minimapKeys = [];
 
     if(this.model.state.marker_minimap){
-      var minimapDim = this.model.state.marker_minimap._getFirstDimension();
-      var minimapKeys = this.model.state.marker_minimap.getKeys(minimapDim);
+      var minimapKeys = this.model.state.marker_minimap.getKeys(_this.minimapDim);
     }
     
     
@@ -172,7 +172,7 @@ var ColorLegend = Component.extend({
     //Hide and show elements of the color legend
     //Hide color legend entries if showing minimap or if color hook is a constant
     //or if using a discrete palette that would map to all entities on the chart and therefore will be too long
-    colorOptions.classed("vzb-hidden", canShowMap || this.colorModel.which == "_default" || minimapDim == _this.KEY);
+    colorOptions.classed("vzb-hidden", canShowMap || this.colorModel.which == "_default" || _this.minimapDim == _this.KEY);
     //Hide rainbow element if showing minimap or if color is discrete
     this.rainbowEl.classed("vzb-hidden", canShowMap || this.colorModel.use !== "indicator");
     this.labelScaleEl.classed("vzb-hidden", canShowMap || this.colorModel.use !== "indicator")
@@ -191,7 +191,7 @@ var ColorLegend = Component.extend({
       }else if(this.colorModel.use == "indicator" || !minimapKeys.length) {
         colorOptions = colorOptions.data(utils.keys(cScale.range()), function(d) {return d});
       }else{
-        colorOptions = colorOptions.data(minimapKeys, function(d) {return d[minimapDim]});
+        colorOptions = colorOptions.data(minimapKeys, function(d) {return d[_this.minimapDim]});
       }
 
       colorOptions.exit().remove();
@@ -207,8 +207,8 @@ var ColorLegend = Component.extend({
 
       colorOptions.each(function(d, index) {
         d3.select(this).select(".vzb-cl-color-sample")
-          .style("background-color", cScale(d[_this.KEY]||d[minimapDim]||d))
-          .style("border", "1px solid " + cScale(d[_this.KEY]||d[minimapDim]||d));
+          .style("background-color", cScale(d[_this.KEY]||d[_this.minimapDim]||d))
+          .style("border", "1px solid " + cScale(d[_this.KEY]||d[_this.minimapDim]||d));
       }); 
       
       if(this.colorModel.use == "indicator") {
@@ -332,7 +332,7 @@ var ColorLegend = Component.extend({
         //Apply names to color legend entries if color is a property
         colorOptions.each(function(d, index) {
           d3.select(this).select(".vzb-cl-color-legend")
-            .text(_this.frame.label[d[_this.KEY]||d[minimapDim]]);
+            .text(_this.frame.label[d[_this.KEY]||d[_this.minimapDim]]);
         });
         
         //switch to compact mode (remove labels) when we have no labels to show
@@ -388,6 +388,7 @@ var ColorLegend = Component.extend({
   _interact: function() {
     var _this = this;
     var KEY = this.KEY;
+    var minimapDim = this.minimapDim;
 
     return {
       mouseover: function(d, i) {
@@ -395,7 +396,7 @@ var ColorLegend = Component.extend({
         if(_this.colorModel.use === "indicator") return;
         
         var view = d3.select(this);
-        var target = d[KEY];
+        var target = d[minimapDim];
         _this.listColorsEl.selectAll(".vzb-cl-option").style("opacity", OPACITY_DIM);
         _this.minimapG.selectAll("path").style("opacity", OPACITY_DIM);
         view.style("opacity", OPACITY_HIGHLIGHT);
@@ -431,7 +432,7 @@ var ColorLegend = Component.extend({
         if(!_this.colorModel.isUserSelectable()) return;
         var palette = _this.colorModel.getPalette();
         var view = d3.select(this);
-        var target = _this.colorModel.use === "indicator"? d.paletteKey : (d[KEY]||d);
+        var target = _this.colorModel.use === "indicator"? d.paletteKey : (d[minimapDim]||d);
         _this.colorPicker
           .colorOld(palette[target])
           .colorDef(palette[target])
@@ -459,7 +460,7 @@ var ColorLegend = Component.extend({
       this.listColorsEl.selectAll(".vzb-cl-option").style("opacity", OPACITY_DIM);
       this.minimapG.selectAll("path").style("opacity", OPACITY_DIM);
       this.listColorsEl.selectAll(selection).filter(function(d) {
-        return d[_this.KEY] == value;
+        return d[_this.KEY]||d[_this.minimapDim] == value;
       }).each(function(d, i) {
         var view = d3.select(this);
         view.style("opacity", OPACITY_HIGHLIGHT);
