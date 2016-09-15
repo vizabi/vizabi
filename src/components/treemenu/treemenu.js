@@ -772,10 +772,12 @@ var TreeMenu = Component.extend({
       if (this.OPTIONS.IS_MOBILE) {
         if (this.menuEntity.direction != MENU_VERTICAL) {
           this.menuEntity.setDirection(MENU_VERTICAL, true);
+          this.OPTIONS.MENU_DIRECTION = MENU_VERTICAL;
         }
       } else {
         if (this.menuEntity.direction != MENU_HORIZONTAL) {
           this.menuEntity.setDirection(MENU_HORIZONTAL, true);
+          this.OPTIONS.MENU_DIRECTION = MENU_HORIZONTAL;
         }
       }
     }
@@ -850,6 +852,8 @@ var TreeMenu = Component.extend({
 
     this.wrapper.node().offsetHeight;
     this.wrapper.classed(css.noTransition, false);
+
+    this.setHorizontalMenuHeight();
 
     return this;
   },
@@ -942,6 +946,21 @@ var TreeMenu = Component.extend({
     this.wrapperOuter.classed(css.menuOpenLeftSide, '');
     this.wrapper.style('max-height', '');
   },
+
+  setHorizontalMenuHeight: function() {
+    var wrapperHeight = null;
+    if(this.menuEntity && this.OPTIONS.MENU_DIRECTION == MENU_HORIZONTAL && this.menuEntity.menuItems.length) {
+      var oneItemHeight = parseInt(this.menuEntity.menuItems[0].entity.style('height'), 10);
+      var menuMaxHeight = oneItemHeight * this._maxChildCount;
+      var rootMenuHeight = Math.max(this.menuEntity.menuItems.length, 3) * oneItemHeight + this.menuEntity.entity.node().offsetTop + parseInt(this.wrapper.style('padding-bottom'), 10);
+      wrapperHeight = "" + Math.max(menuMaxHeight, rootMenuHeight) + "px";
+    }
+    this.wrapper.classed(css.noTransition, true);
+    this.wrapper.node().offsetHeight;
+    this.wrapper.style("height", wrapperHeight);
+    this.wrapper.node().offsetHeight;
+    this.wrapper.classed(css.noTransition, false);
+  },
   //search listener
   _enableSearch: function() {
     var _this = this;
@@ -959,12 +978,12 @@ var TreeMenu = Component.extend({
       var translationMatch = function(value, data, i) {
         var languageId = _this.model.language.id;
 
-        if(_this.langStrings()) {
-          var translate = _this.langStrings()[languageId]['indicator/' + data[i][_this.OPTIONS.SEARCH_PROPERTY]] ||
-            _this.langStrings()[languageId]['indicator' + '/' + _this.model.marker[_this._markerID]._type + '/' + data[i][_this.OPTIONS.SEARCH_PROPERTY]];
-          if(translate && translate.toLowerCase().indexOf(value.toLowerCase()) >= 0) return true;
+        var translate = data[i].name;
+        if(!translate && _this.langStrings()) { 
+          translate = _this.langStrings()[languageId]['indicator' + '/' + data[i][_this.OPTIONS.SEARCH_PROPERTY] + '/' + _this.model.marker[_this._markerID]._type] ||
+          _this.langStrings()[languageId]['indicator/' + data[i][_this.OPTIONS.SEARCH_PROPERTY]];
         };
-        return false;
+        return translate && translate.toLowerCase().indexOf(value.toLowerCase()) >= 0;
       };
 
       var matching = function(data) {
@@ -1063,8 +1082,11 @@ var TreeMenu = Component.extend({
     this.element.select('.' + css.search)
       .attr("placeholder", this.translator("placeholder/search") + "...");
  
+    this._maxChildCount = 0; 
+    
     var createSubmeny = function(select, data, toplevel) {
       if(!data.children) return;
+      _this._maxChildCount = Math.max(_this._maxChildCount, data.children.length);
       var _select = toplevel ? select : select.append('div')
         .classed(css.list_outer, true);
 
@@ -1190,7 +1212,9 @@ var TreeMenu = Component.extend({
     this.menuEntity = new Menu(null, this.wrapper.selectAll('.' + css.list_top_level), this.OPTIONS);
     if(this.menuEntity) this.menuEntity.setDirection(this.OPTIONS.MENU_DIRECTION);
     if(this.menuEntity) this.menuEntity.setWidth(this.activeProfile.col_width, true, true);
-    
+
+    this.setHorizontalMenuHeight();
+
     if(!useDataFiltered) {
       var pointer = "_default";
       if(allowedIDs.indexOf(this.model.marker[markerID].which) > -1) pointer = this.model.marker[markerID].which;
