@@ -85,6 +85,9 @@ var ColorLegend = Component.extend({
     var _this = this;
     this.element = d3.select(this.element);
     
+    //make color in options scrollable
+    d3.select(this.placeholder.parentNode).classed("vzb-dialog-scrollable", true);
+
     this.markerModel = this.model.state.marker_minimap ? this.model.state.marker_minimap : this.model.state.marker;
     this.listColorsEl = this.element
       .append("div").attr("class", "vzb-cl-holder")
