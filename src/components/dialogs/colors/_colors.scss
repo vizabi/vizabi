@@ -37,7 +37,8 @@
           .vzb-dialog-content {
             padding-left: 10px;
             padding-right: 10px;
-            overflow: visible;
+            overflow: auto;
+            max-height: 200px;
             .vzb-cl-rainbow {
               left: 16px;
               right: auto;
