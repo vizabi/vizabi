@@ -241,10 +241,12 @@ var label = function(context) {
       } else {
         labelGroup
             .interrupt()
-            .attr("transform", "translate(" + _X + "," + _Y + ")");
+            .attr("transform", "translate(" + _X + "," + _Y + ")")
+            .transition();
         lineGroup
             .interrupt()
-            .attr("transform", "translate(" + _X + "," + _Y + ")");
+            .attr("transform", "translate(" + _X + "," + _Y + ")")
+            .transition();
         if(showhide) labelGroup.classed("vzb-invisible", d.hidden);
         if(showhide) lineGroup.classed("vzb-invisible", d.hidden);
       }
