@@ -169,10 +169,13 @@ var ColorLegend = Component.extend({
     //Hide color legend entries if showing minimap or if color hook is a constant
     //or if using a discrete palette that would map to all entities on the chart and therefore will be too long
     //in the latter case we should show colors in the "find" list instead
-    colorOptions.classed("vzb-hidden", canShowMap || this.colorModel.which == "_default" ||
-      _this.minimapDim == _this.KEY 
-      && utils.comparePlainObjects(this.model.state.entities_minimap.getFilter(), this.model.state.entities.getFilter())
-    );
+    var hideColorOptions = canShowMap 
+      || this.colorModel.which == "_default" 
+      || _this.minimapDim == _this.KEY 
+        && utils.comparePlainObjects(this.model.state.entities_minimap.getFilter(), this.model.state.entities.getFilter())
+    
+    colorOptions.classed("vzb-hidden", hideColorOptions);
+    
     //Hide rainbow element if showing minimap or if color is discrete
     this.rainbowEl.classed("vzb-hidden", canShowMap || this.colorModel.use !== "indicator");
     this.labelScaleEl.classed("vzb-hidden", canShowMap || this.colorModel.use !== "indicator")
@@ -191,7 +194,7 @@ var ColorLegend = Component.extend({
       }else if(this.colorModel.use == "indicator" || !minimapKeys.length) {
         colorOptions = colorOptions.data(utils.keys(cScale.range()), function(d) {return d});
       }else{
-        colorOptions = colorOptions.data(minimapKeys, function(d) {return d[_this.minimapDim]});
+        colorOptions = colorOptions.data(hideColorOptions? [] : minimapKeys, function(d) {return d[_this.minimapDim]});
       }
 
       colorOptions.exit().remove();
