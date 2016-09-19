@@ -158,10 +158,12 @@ var Data = Class.extend({
             if(!columnsMissing.length) break;
           }
           columnsMissing.forEach(function(d){
+            if(values.length == 0) return;
             if(q.select.key.indexOf(d)==-1){
               utils.warn("Reader returned data with missing columns [" + columnsMissing.join(", ") + "], but that might be ok");
             }else{
               utils.error("Reader returned data with missing KEY columns [" + columnsMissing.join(", ") + "] for query:", JSON.stringify(q));
+              console.log(values);
             }
           });
 
