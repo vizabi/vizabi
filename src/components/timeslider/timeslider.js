@@ -390,6 +390,7 @@ var TimeSlider = Component.extend({
       var point = iterator();
       if(point == null) return;
       _this.model.marker.getFrame(timePoints[point], function(values) {
+        if(!values) return;
         if(findEntityWithCompleteHooks(values)) {
           findCB(point);
         } else {
