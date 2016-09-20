@@ -145,18 +145,26 @@ var Data = Class.extend({
           //success reading
           var values = r.getData();
           var q = query;
-        
-          if(values.length == 0) utils.warn("Reader returned empty array for query:", JSON.stringify(q, null, 4))
+          if(values.length == 0) utils.warn("Reader returned empty array for query:", JSON.stringify(q, null, 2))
 
-          //make sure all queried is returned
-          values = values.map(function(d) {
-            for(var i = 0; i < q.select.length; i += 1) {
-              var col = q.select[i];
-              if(typeof d[col] === 'undefined') {
-                d[col] = null;
-              }
+          //search data for the entirely missing columns
+          var columnsMissing = (q.select.key||[]).concat(q.select.value||[]);
+          for(var i = values.length-1; i>=0; i--){
+            for(var c = columnsMissing.length-1; c>=0; c--){
+              //if found value for column c in row i then remove that column name from the list of missing columns
+              if(values[i][columnsMissing[c]] || values[i][columnsMissing[c]]===0) columnsMissing.splice(c,1);
             }
-            return d;
+            //all columns were found to have value in at least one of the rows then stop iterating
+            if(!columnsMissing.length) break;
+          }
+          columnsMissing.forEach(function(d){
+            if(values.length == 0) return;
+            if(q.select.key.indexOf(d)==-1){
+              utils.warn("Reader returned data with missing columns [" + columnsMissing.join(", ") + "], but that might be ok");
+            }else{
+              utils.error("Reader returned data with missing KEY columns [" + columnsMissing.join(", ") + "] for query:", JSON.stringify(q));
+              console.log(values);
+            }
           });
 
           _this._collection[queryId] = {};
@@ -251,7 +259,7 @@ var Data = Class.extend({
       from: "concepts",
       select: {
         key: ["concept"],
-        value: ["concept_type","indicator_url","color","scales","interpolation","tags"]
+        value: ["concept_type","indicator_url","color","scales","interpolation","tags","name","unit","description"]
       }
     };
     
@@ -275,6 +283,9 @@ var Data = Class.extend({
         }
         concept["interpolation"] = d.interpolation;
         concept["tags"] = d.tags;
+        concept["name"] = d.name;
+        concept["unit"] = d.unit;
+        concept["description"] = d.description;
         _this.conceptDictionary[d.concept] = concept;
       });
       

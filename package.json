@@ -1,6 +1,6 @@
 {
   "name": "vizabi",
-  "version": "0.16.1-0",
+  "version": "0.16.1-8",
   "description": "Vizabi Framework, Interactive charts and visualization tools animated through time",
   "main": "build/dist/vizabi.js",
   "scripts": {
@@ -64,7 +64,7 @@
     "shelljs": "0.7.4",
     "slash": "1.0.0",
     "tiny-lr": "0.2.1",
-    "vizabi-ws-reader": "0.0.15",
-    "vizabi-ddfcsv-reader": "0.4.0"
+    "vizabi-ws-reader": "0.0.18",
+    "vizabi-ddfcsv-reader": "0.4.12"
   }
 }

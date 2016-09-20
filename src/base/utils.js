@@ -1437,7 +1437,8 @@ export var pruneTree = function(tree, filterCallback) {
     });
   }
   if(filteredChildrens.length != 0 || filterCallback(tree)) {
-    filteredTree["id"] = tree.id;
+    //copy all the properties to the new tree
+    forEach(tree, function(value, key) {filteredTree[key] = value;})
   }
   if(filteredChildrens.length != 0) {
     filteredTree["children"] = filteredChildrens;

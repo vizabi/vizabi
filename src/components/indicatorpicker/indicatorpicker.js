@@ -156,28 +156,25 @@ var IndPicker = Component.extend({
         
         var which = this.model.marker[this.markerID].which;
         var type = this.model.marker[this.markerID]._type;
+        var concept = this.model.marker[this.markerID].getConceptprops();
         
         var selectText;
 
         if(this.showHoverValues && this._highlighted) {
-          var unit = translator("unit/" + _this.model.marker[this.markerID].which);
-          //suppress unit strings that found no translation (returns same thing as requested)
-          unit = (unit === "unit/" + _this.model.marker[this.markerID].which) ? "" : " " + unit;
+          var unit = !concept.unit ? "" : " " + concept.unit;
           var formatter = _this.model.marker[this.markerID].getTickFormatter();
 
           selectText = (this._highlightedValue||this._highlightedValue===0) ? formatter(this._highlightedValue) + unit : translator("hints/nodata");
 
         } else {
             //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-            selectText = translator("indicator" + (which==="_default" ? "/" + type : "") + "/" + which)
+            selectText = (which==="_default") ? translator("indicator/_default/" + type) : concept.name;
         }
 
         this.el_select.text(selectText);
         
         // hide info el if no data is available for it to make sense
-        var hideInfoEl = ((translator("description/" + which) == "description/" + which)
-            && (translator("sourceName/" + which) == "sourceName/" + which)
-            && !_this.model.marker[_this.markerID].getConceptprops().sourceLink); 
+        var hideInfoEl = !concept.description && !concept.sourceName && !concept.sourceLink;
         this.infoEl.classed("vzb-hidden", hideInfoEl);
     }
     

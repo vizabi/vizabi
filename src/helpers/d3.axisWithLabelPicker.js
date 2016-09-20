@@ -167,11 +167,13 @@ export default function axisSmart() {
           d3.select(this).select("text")
             .interrupt()
             .style("opacity", getOpacity(d,t))
+            .transition();
         })
           
         g.select('.vzb-axis-value')
           .interrupt()
-          .attr("transform", getTransform);
+          .attr("transform", getTransform)
+          .transition();
           
       }
 
