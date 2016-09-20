@@ -105,22 +105,21 @@ var DataNotes = Component.extend({
   setValues: function() {
     if(!hookName) return;
     var hook = this.model.marker[hookName];
-    var description = this.translator('description/' + hook.which);
-    var showDescription = description != ('description/' + hook.which);
-    if(showDescription) this.element.select('.vzb-data-notes-body').text(description);
-    this.element.select('.vzb-data-notes-body').classed('vzb-hidden', !showDescription);
+    var concept = hook.getConceptprops();
+    
+    this.element.select('.vzb-data-notes-body')
+      .classed('vzb-hidden', !concept.description)
+      .text(concept.description||"");
    
-    var sourceLink = hook.getConceptprops().sourceLink;
-    this.element.select('.vzb-data-notes-link').classed('vzb-hidden', !sourceLink);
+    this.element.select('.vzb-data-notes-link').classed('vzb-hidden', !concept.sourceLink);
 
-    if(sourceLink) {
+    if(concept.sourceLink) {
       var _source = this.translator('hints/source');
-      var sourceName = this.translator('sourceName/' + hook.which);
-      var showSourceName = sourceName != ('sourceName/' + hook.which);
-      this.element.select('.vzb-data-notes-link').html('<span>' + (showSourceName ? (_source + ':') : '') +
-        '<a href="' + sourceLink + '" target="_blank">' + (showSourceName ? sourceName : _source) + '</a></span>');
+      var sourceName = concept.sourceName||"";
+      this.element.select('.vzb-data-notes-link').html('<span>' + (sourceName ? (_source + ':') : '') +
+        '<a href="' + concept.sourceLink + '" target="_blank">' + (sourceName ? sourceName : _source) + '</a></span>');
     }
-    showNotes = sourceLink != null || showDescription;
+    showNotes = concept.sourceLink || concept.description;
   },
 
   setPos: function(_left, _top, force) {

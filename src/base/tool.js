@@ -32,6 +32,7 @@ var ToolModel = Model.extend({
     defaults = defaults || {};
     values = defaultModel(values, defaults);
     //constructor is similar to model
+    this.default_model = defaults;
     this._super(name, values, null, binds);
     // change language
     if(values.language) {
@@ -127,7 +128,7 @@ var Tool = Component.extend({
     this.model = new ToolModel(this.name, external_model, this.default_model, callbacks, validate);
 
     // default model is the model set in the tool
-    this.default_model = this.default_model || {};
+    this.default_model = utils.deepClone(this.default_model) || {};
 
     this.ui = this.model.ui || {};
 
@@ -156,12 +157,13 @@ var Tool = Component.extend({
       var tLimits = this.model.state.marker.getTimeLimits(time.getDimension());
 
       if(!tLimits || !utils.isDate(tLimits.min) || !utils.isDate(tLimits.max)) 
-          return utils.warn("checkTimeLimits(): min-max date objects look wrong: " + tLimits.min + " " + tLimits.max);
+          return utils.warn("checkTimeLimits(): min-max look wrong: " + tLimits.min + " " + tLimits.max + ". Expecting Date objects");
 
       // change start and end (but keep startOrigin and endOrigin for furhter requests)
       // change is not persistent if it's splashscreen change
-      if(time.start < tLimits.min) time.getModelObject('start').set(tLimits.min, false, !time.splash);
-      if(time.end > tLimits.max) time.getModelObject('end').set(tLimits.max, false, !time.splash);
+      if(time.start - tLimits.min != 0) time.getModelObject('start').set(d3.max([tLimits.min, time.parseToUnit(time.getDefaults().start)]), false, !time.splash);
+      if(time.end - tLimits.max != 0) time.getModelObject('end').set(d3.min([tLimits.max, time.parseToUnit(time.getDefaults().end)]), false, !time.splash);
+
     }
       
     //force time validation because time.value might now fall outside of start-end

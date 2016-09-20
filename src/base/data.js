@@ -100,15 +100,17 @@ var Data = Class.extend({
         } else {
           // check if the requested rows are similar
           if (utils.comparePlainObjects(queueItem.query.where, query.where)
-           && utils.comparePlainObjects(queueItem.query.grouping, query.grouping)
+           && utils.comparePlainObjects(queueItem.query.select.key, query.select.key)
             ) {
 
             // if so, merge the selects to the base query
-            Array.prototype.push.apply(query.select, queueItem.query.select);
+            Array.prototype.push.apply(query.select.value, queueItem.query.select.value);
             // merge parsers so the reader can parse the newly added columns
             utils.extend(reader.parsers, queueItem.reader.parsers);
             
-            reader.parsers[_this.getAvailableDimension(query, "key")] = function(d){return ""+d};
+            // the first entry in the "key" array of the query is the key of 1-dimensional set
+            //TODO: what if the set is multidimenstional?
+            reader.parsers[query.select.key[0]] = function(d){return ""+d};
 
             // include query's promise to promises for base query
             mergedQueries.push(queueItem);
@@ -128,20 +130,7 @@ var Data = Class.extend({
 
       // remove double columns from select (resulting from merging)
       // no double columns in formatter because it's an object, extend would've overwritten doubles
-      query.select = utils.unique(query.select);
-
-      //create hash for dimensions only query
-      var dim, dimQ, dimQId = 0; 
-      dimQ = utils.clone(query);
-      dim = utils.keys(dimQ.grouping);
-      if (utils.arrayEquals(dimQ.select.slice(0, dim.length), dim)) {
-        dimQ.select = dim;
-        dimQId = utils.hashCode([
-          dimQ,
-          lang,
-          reader
-        ]);
-      }
+      query.select.value = utils.unique(query.select.value);
 
       // Create a new reader for this query
       var readerClass = Reader.get(reader_name);
@@ -156,6 +145,8 @@ var Data = Class.extend({
           //success reading
           var values = r.getData();
           var q = query;
+        
+          if(values.length == 0) utils.warn("Reader returned empty array for query:", JSON.stringify(q, null, 4))
 
           //make sure all queried is returned
           values = values.map(function(d) {
@@ -193,10 +184,6 @@ var Data = Class.extend({
             mergedQuery.promise.resolve(mergedQuery.queryId);
           });
   
-          //create cache record for dimension only query
-          if(dimQId !== 0) {
-            _this._collection[dimQId] = _this._collection[queryId];              
-          }
           //promise.resolve(queryId);
         }, //error reading
         function(err) { 
@@ -257,18 +244,61 @@ var Data = Class.extend({
     return this._collection[queryId][what][id];
   },
 
+  loadConceptProps: function(reader, callback){
+    var _this = this;
+    
+    var query = {
+      from: "concepts",
+      select: {
+        key: ["concept"],
+        value: ["concept_type","indicator_url","color","scales","interpolation","tags","name","unit","description"]
+      }
+    };
+    
+    this.load(query, "en", reader).then(function(dataId) {
+      
+      _this.conceptPropsDataID = dataId;
+      _this.conceptDictionary = {_default: {concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root"}};
+      _this.get(dataId).forEach(function(d){
+        var concept = {};
+        concept["use"] = (d.concept_type=="measure" || d.concept_type=="time")?"indicator":"property";
+        concept["sourceLink"] = d.indicator_url;
+        try {
+          concept["color"] = d.color ? JSON.parse(d.color) : null;
+        } catch (e) {
+          concept["color"] = null;
+        }
+        try {
+          concept["scales"] = d.scales ? JSON.parse(d.scales) : null;
+        } catch (e) {
+          concept["scales"] = null;
+        }
+        concept["interpolation"] = d.interpolation;
+        concept["tags"] = d.tags;
+        concept["name"] = d.name;
+        concept["unit"] = d.unit;
+        concept["description"] = d.description;
+        _this.conceptDictionary[d.concept] = concept;
+      });
+      
+      callback(_this.conceptDictionary);
+    }, function(err) {
+      utils.warn('Problem with query: ', query);
+    });
+  },
+  
   getConceptprops: function(which){
-      if(!globals.conceptprops || !globals.conceptprops.indicatorsDB) return {};
-      return which ? globals.conceptprops.indicatorsDB[which] : globals.conceptprops.indicatorsDB;
+     if(which) {
+       if(this.conceptDictionary[which]) {
+         return this.conceptDictionary[which];
+       }else{
+         return utils.warn("The concept " + which + " is not found in the dictionary");
+       }
+     }else{
+       return this.conceptDictionary;
+     }
   },
     
-  /**
-   * Gets the concept properties of all hooks
-   * @returns {Object} concept properties
-   */
-  getIndicatorsTree: function() {
-    return globals.conceptprops && globals.conceptprops.indicatorsTree ? globals.conceptprops.indicatorsTree : {};
-  },
 
   getFrames: function(queryId, framesArray) {
     var _this = this;
@@ -299,7 +329,7 @@ var Data = Class.extend({
     var _this = this;
     var query = _this._collection[queryId].query;
     var whatId = framesArray[0] + " - " + framesArray[framesArray.length-1];
-    var columns = query.select.filter(function(f){return f != "municipality" && f != "year" && f !== "_default"});
+    var columns = query.select.value.filter(function(f){return f !== "_default"});
 
     return new Promise(function(resolve, reject) {
       if (_this._collection[queryId]["frames"][whatId] && _this._collection[queryId]["frames"][whatId][neededFrame]) {
@@ -395,23 +425,6 @@ var Data = Class.extend({
     }();
   },
   
-  
-  // arg = "key" or "time"
-  getAvailableDimension: function(query, arg){
-    
-    // HARD CODED KEY/TIME. Added "flexibility" for StatsSA assignment. 
-    // This should be replaced by getting key/time dimensions from query or model.
-    var possibleDimensions = {
-      key: ["geo","municipality","province","district"],
-      time: ["time","year"]
-    }
-
-    for (var i = 0; i<possibleDimensions[arg].length; i++) {
-      if (query.select.indexOf(possibleDimensions[arg][i]) !== -1)
-        return possibleDimensions[arg][i];
-    }
-    
-  },
 
   /**
    * Get regularised dataset (where gaps are filled)
@@ -440,8 +453,8 @@ var Data = Class.extend({
       if(!indicatorsDB) utils.warn("_getFrames in data.js is missing indicatorsDB, it's needed for gap filling");
       if(!framesArray) utils.warn("_getFrames in data.js is missing framesArray, it's needed so much");
 
-      var KEY = _this.getAvailableDimension(_this._collection[queryId].query, "key");
-      var TIME = _this.getAvailableDimension(_this._collection[queryId].query, "time");
+      var KEY = _this._collection[queryId].query.select.key[0];
+      var TIME = _this._collection[queryId].query.animatable;
 
       var filtered = {};
       var items, itemsIndex, oneFrame, method, use, next;
@@ -454,7 +467,7 @@ var Data = Class.extend({
       // Get the list of columns that are in the dataset, exclude key column and animatable column
       // Example: [“lex”, “gdp”, “u5mr"]
       var query = _this._collection[queryId].query;
-      var columns = query.select.filter(function(f){return f != KEY && f != TIME && f !== "_default"});
+      var columns = query.select.value.filter(function(f){return f !== "_default"});
 
       var cLength = columns.length;
       var key, k, column, c;
@@ -468,8 +481,7 @@ var Data = Class.extend({
       var buildFrame = function(frameName, keys, queryId, callback) {
           var frame = {};
 
-          if (!query.where[TIME]) {
-            // The query.where clause doesn't have time field for properties:
+          if (query.from !== "datapoints") {
             // we populate the regular set with a single value (unpack properties into constant time series)
             var dataset = _this._collection[queryId].data;
             for (c = 0; c < cLength; c++) frame[columns[c]] = {};

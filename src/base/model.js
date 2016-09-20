@@ -65,6 +65,10 @@ var ModelLeaf = EventSource.extend({
 })
 
 var Model = EventSource.extend({
+
+
+  objectLeafs: [],
+
   /**
    * Initializes the model.
    * @param {Object} values The initial values of this model
@@ -169,7 +173,7 @@ var Model = EventSource.extend({
       val = attrs[a];
 
       var bothModel = utils.isPlainObject(val) && this._data[a] instanceof Model;
-      var bothModelLeaf = !utils.isPlainObject(val) && this._data[a] instanceof ModelLeaf;
+      var bothModelLeaf = (!utils.isPlainObject(val) || this.isObjectLeaf(a)) && this._data[a] instanceof ModelLeaf;
       
       if (this._data[a] && (bothModel || bothModelLeaf)) {
         // data type does not change (model or leaf and can be set through set-function)
@@ -202,7 +206,6 @@ var Model = EventSource.extend({
     }
 
   },
-
 
   setTreeFreezer: function(freezerStatus) {
     // first traverse down
@@ -439,11 +442,12 @@ var Model = EventSource.extend({
         utils.timeStamp('Vizabi Model: Loading Data: ' + _this._id);
         _DATAMANAGER.load(query, lang, reader, evts).then(function(dataId) {
           _this._dataId = dataId;
+          _this.scale = null;
           utils.timeStamp('Vizabi Model: Data loaded: ' + _this._id);
           _this.afterLoad();
           promise.resolve();
         }, function(err) {
-          utils.warn('Problem with query: ', JSON.stringify(query));
+          utils.warn('Problem with query: ', query);
           promise.reject(err);
         });
         
@@ -522,8 +526,9 @@ var Model = EventSource.extend({
    * @returns {Array} query
    */
   getQuery: function(splashScreen) {
+    var _this = this;
 
-    var dimensions, filters, select, grouping, orderBy, q;
+    var dimensions, filters, select, from, order_by, q, animatable;
 
     //if it's not a hook, no query is necessary
     if(!this.isHook()) return true;
@@ -537,25 +542,47 @@ var Model = EventSource.extend({
     var exceptions = (prop) ? { exceptType: 'time' } : {};
 
     // select
-    dimensions = this._getAllDimensions(exceptions);
-    if(this.use !== 'constant') dimensions = dimensions.concat([this.which]);
-    select = utils.unique(dimensions);
+    // we remove this.which from values if it duplicates a dimension
+    var dimensions = this._getAllDimensions(exceptions);
+    select = {
+      key: dimensions,
+      value: dimensions.indexOf(this.which)!=-1 || this.use === "constant" ? [] : [this.which]
+    }
+    
+    // animatable
+    animatable = this._getFirstDimension({type: "time"});
+    
+    // from
+    from = prop ? "entities" : "datapoints";
 
     // where 
     filters = this._getAllFilters(exceptions, splashScreen);
-    
-    // grouping
-    grouping = this._getGrouping();
+
+    // make root $and explicit
+    var explicitAndFilters =  {};
+    if (Object.keys(filters).length > 0) {
+      explicitAndFilters['$and'] = [];
+      for (var filterKey in filters) {
+        var filter = {};
+        filter[filterKey] = filters[filterKey];
+        explicitAndFilters['$and'].push(filter);
+      }
+    }
+
+    // join
+    var join = this._getAllJoins(exceptions, splashScreen);
 
     // order by
-    orderBy = (!prop) ? this._space.time.dim : null;
+    order_by = (!prop) ? this._space.time.dim : null;
 
     //return query
     return {
+      'from': from,
+      'animatable': animatable,
       'select': select,
-      'where': filters,
-      'grouping': grouping,
-      'orderBy': orderBy // should be _space.animatable, but that's time for now
+      'where': explicitAndFilters,
+      'join': join,
+      'order_by': order_by // should be _space.animatable, but that's time for now
     };
   },
 
@@ -834,6 +861,7 @@ var Model = EventSource.extend({
   _getAllFilters: function(opts, splashScreen) {
     opts = opts || {};
     var filters = {};
+    var _this = this;
     utils.forEach(this._space, function(h) {
       if(opts.exceptType && h.getType() === opts.exceptType) {
         return true;
@@ -841,22 +869,37 @@ var Model = EventSource.extend({
       if(opts.onlyType && h.getType() !== opts.onlyType) {
         return true;
       }
-      filters = utils.extend(filters, h.getFilter(splashScreen));
+
+      if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
+        filters = utils.extend(filters, h.getFilter(splashScreen));
+      } else {
+        var filter = {};
+        filter[h.getDimension()] = "$"  + h.getDimension();
+        filters = utils.extend(filters, filter);
+      }
     });
     return filters;
   },
 
-  /**
-   * gets grouping for each of the used entities
-   * @param {Boolean} splashScreen get filters for first screen only
-   * @returns {Object} filters
-   */
-  _getGrouping: function() {
-    var groupings = {};
+  _getAllJoins: function(opts, splashScreen) {
+    var joins = {};
+    var _this = this;
     utils.forEach(this._space, function(h) {
-      groupings[h.dim] = h.grouping || undefined;
+      if(opts.exceptType && h.getType() === opts.exceptType) {
+        return true;
+      }
+      if(opts.onlyType && h.getType() !== opts.onlyType) {
+        return true;
+      }
+      if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
+        return true;
+      }
+      joins["$" + h.getDimension()] = {
+        key: h.getDimension(),
+        where: h.getFilter(splashScreen)
+      };
     });
-    return groupings;
+    return joins;
   },
 
   /**
@@ -893,6 +936,30 @@ var Model = EventSource.extend({
       d[name] = model.getDefaults();
     });
     return d;
+  },
+
+  getToolDefaults: function() {
+    var isToolModel = false;
+    var model = this;
+    var path = [];
+    var model_defaults = {};
+    while (!isToolModel) {
+      if (model._type == 'tool' || !model._parent) {
+        isToolModel = true;
+        model_defaults = model.default_model;
+      } else {
+        path.push(model._name);
+        model = model._parent;
+      }
+    }
+    while (path.length > 0) {
+      model_defaults = model_defaults[path.pop()] || {};
+    }
+    return model_defaults;
+  },
+
+  isObjectLeaf: function(name) {
+    return (this.objectLeafs.indexOf(name) !== -1)
   }
 
 });
@@ -944,7 +1011,7 @@ function initSubmodel(attr, val, ctx) {
   var submodel;
 
   // if value is a value -> leaf
-  if(!utils.isPlainObject(val) || utils.isArray(val)) {  
+  if(!utils.isPlainObject(val) || utils.isArray(val) || ctx.isObjectLeaf(attr)) {  
 
     var binds = {
       //the submodel has changed (multiple times)

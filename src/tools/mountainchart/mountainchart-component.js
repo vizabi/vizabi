@@ -107,6 +107,7 @@ var MountainChartComponent = Component.extend({
                 if (!_this._readyOnce) return;
                 _this.selectEntities();
                 _this._selectlist.redraw();
+                _this.someSelectedAndOpacityZero = false;
                 _this.updateOpacity();
                 _this.updateDoubtOpacity();
                 _this.redrawDataPoints();
@@ -324,6 +325,7 @@ var MountainChartComponent = Component.extend({
           _this.highlightEntities();
           _this.selectEntities();
           _this._selectlist.redraw();
+          _this.someSelectedAndOpacityZero = false;
           _this.updateOpacity();
           _this.updateDoubtOpacity();
           _this._probe.redraw();
@@ -703,7 +705,7 @@ updateSize: function (meshLength) {
                 });
 
                 //position tooltip
-                _this._setTooltip(d.key ? _this.translator("entity/geo.world_4region/" + d.key) : _this.values.label[d.KEY()]);
+                _this._setTooltip(d.key ? _this.translator("entity/world_4region/" + d.key) : _this.values.label[d.KEY()]);
 
             },
             _mouseout: function (d, i) {
@@ -789,14 +791,14 @@ updateSize: function (meshLength) {
         var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
 
         // when pointer events need update...
-        if (someSelectedAndOpacityZero !== this.someSelectedAndOpacityZero_1) {
+        if (someSelectedAndOpacityZero !== this.someSelectedAndOpacityZero) {
             this.mountainsAtomic.style("pointer-events", function (d) {
                 return (!someSelectedAndOpacityZero || _this.model.entities.isSelected(d)) ?
                     "visible" : "none";
             });
         }
 
-        this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
+        this.someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
     },
 
     updateTime: function (time) {
@@ -1036,9 +1038,9 @@ updateSize: function (meshLength) {
 
         } else {
             if (mergeGrouped || dragOrPlay) {
-                this.mountainsMergeGrouped.sort(function (a, b) {
-                    return b.yMax - a.yMax;
-                });
+                // this.mountainsMergeGrouped.sort(function (a, b) {
+                //     return b.yMax - a.yMax;
+                // });
             } else {
                 this.mountainsAtomic.sort(function (a, b) {
                     return b.yMaxGroup - a.yMaxGroup;

@@ -1,5 +1,6 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
+import Labels from 'helpers/labels';
 import {
   warn as iconWarn,
   question as iconQuestion
@@ -45,6 +46,12 @@ var BubbleMapComponent = Component.extend({
       name: "marker",
       type: "model"
     }, {
+      name: "entities_minimap",
+      type: "entities"
+    }, {
+      name: "marker_minimap",
+      type: "model"
+    }, {      
       name: "language",
       type: "language"
     }, {
@@ -114,6 +121,13 @@ var BubbleMapComponent = Component.extend({
     this.boundBox = [[0.02, 0], [1.0, 0.85]]; // two points to set box bound on 960 * 500 image;
 
     d3_geo_projection();
+
+    this._labels = new Labels(this);
+    this._labels.config({
+      CSS_PREFIX: 'vzb-bmc',
+      LABELS_CONTAINER_CLASS: 'vzb-bmc-labels',
+      LINES_CONTAINER_CLASS: 'vzb-bmc-lines'
+    });    
   },
 
 
@@ -169,14 +183,6 @@ var BubbleMapComponent = Component.extend({
         .attr("class", "boundary")
         .attr("d", path);
         
-    this.labels = this.parent.findChildByName('gapminder-labels');
-    this.labels.config({
-      CSS_PREFIX: 'vzb-bmc',
-      TOOL_CONTEXT: this,
-      LABELS_CONTAINER_CLASS: 'vzb-bmc-labels',
-      LINES_CONTAINER_CLASS: 'vzb-bmc-lines'
-    });
-    
   },
 
   /**
@@ -212,10 +218,10 @@ var BubbleMapComponent = Component.extend({
       //return if updatesize exists with error
       if(_this.updateSize()) return;
       _this.updateMarkerSizeLimits();
-      _this.labels.updateSize();
+      _this._labels.updateSize();
       _this.redrawDataPoints();
       //_this._selectlist.redraw();
-      
+
     });
 
     this.KEY = this.model.entities.getDimension();
@@ -228,6 +234,7 @@ var BubbleMapComponent = Component.extend({
         .domain(this.parent.datawarning_content.doubtDomain)
         .range(this.parent.datawarning_content.doubtRange);
 
+    this._labels.readyOnce();
   },
 
   /*
@@ -252,6 +259,7 @@ var BubbleMapComponent = Component.extend({
       _this.values = values;
       _this.updateEntities();
       _this.updateTime();
+      _this._labels.ready();
       _this.redrawDataPoints();
       _this.highlightEntities();
       _this.selectEntities();
@@ -278,12 +286,12 @@ var BubbleMapComponent = Component.extend({
       var _this = this;
 
       this.translator = this.model.language.getTFunction();    
-      var sizeConceptprops = this.model.marker.size.getConceptprops();
+      var conceptProps = _this.model.marker.getConceptprops();
 
       this.strings = {
           title: {
-            S: this.translator("indicator/" + _this.model.marker.size.which),
-            C: this.translator("indicator/" + _this.model.marker.color.which)
+            S: conceptProps[this.model.marker.size.which].name,
+            C: conceptProps[this.model.marker.color.which].name
           }
       };
 
@@ -372,22 +380,34 @@ var BubbleMapComponent = Component.extend({
       }
 
       if(_this.hovered || mobile) {
+        var conceptProps = _this.model.marker.getConceptprops();
+        
         var hovered = _this.hovered || mobile;
         var formatterS = _this.model.marker.size.getTickFormatter();
         var formatterC = _this.model.marker.color.getTickFormatter();
 
-        var unitY = _this.translator("unit/" + _this.model.marker.size.which);
-        var unitC = _this.translator("unit/" + _this.model.marker.color.which);
-          
-        //suppress unit strings that found no translation (returns same thing as requested)
-        if(unitY === "unit/" + _this.model.marker.size.which) unitY = "";
-        if(unitC === "unit/" + _this.model.marker.color.which) unitC = "";
+        var unitS = conceptProps[this.model.marker.size.which].unit || "";
+        var unitC = conceptProps[this.model.marker.color.which].unit || "";
           
         var valueS = _this.values.size[hovered[_this.KEY]];
         var valueC = _this.values.color[hovered[_this.KEY]];
+        
+        //resolve value for color from the color legend model
+        if(_this.model.marker.color.use == "property" && valueC) {
+          var minimapDim = this.model.entities_minimap.getDimension();
+          var minimapItems = this.model.marker_minimap.label.getValidItems();
+          var minimapLabelWhich = this.model.marker_minimap.label.which;
+          var minimapDictionary = {};
+          minimapItems.forEach(function(d){
+              minimapDictionary[d[minimapDim]] = d[minimapLabelWhich]
+          })
+
+          valueC = minimapDictionary[valueC] || "";
+        }
+        
           
         _this.yTitleEl.select("text")
-          .text(_this.translator("buttons/size") + ": " + formatterS(valueS) + " " + unitY);
+          .text(_this.translator("buttons/size") + ": " + formatterS(valueS) + " " + unitS);
           
         _this.cTitleEl.select("text")
           .text(_this.translator("buttons/color") + ": " + 
@@ -604,7 +624,8 @@ var BubbleMapComponent = Component.extend({
                   .attr("r", d.r);
           }else{
               view.interrupt()
-                  .attr("r", d.r);
+                  .attr("r", d.r)
+                  .transition();
           }
 
           _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], valueS, valueC, d.label, duration);
@@ -758,8 +779,9 @@ var BubbleMapComponent = Component.extend({
 
     var yTitleBB = this.yTitleEl.select("text").node().getBBox();
 
+    //hide the second line about color in large profile or when color is constant
     this.cTitleEl.attr("transform", "translate(" + 0 + "," + (margin.top + yTitleBB.height) + ")")
-        .classed("vzb-hidden", this.model.marker.color.which.indexOf(_this.KEY) != -1 || this.model.marker.color.use == "constant");
+        .classed("vzb-hidden", this.getLayoutProfile()==="large" || this.model.marker.color.use == "constant");
 
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl.select("svg")
@@ -890,7 +912,7 @@ var BubbleMapComponent = Component.extend({
       cache.scaledS0 = valueS ? utils.areaToRadius(_this.sScale(valueS)) : null;
       cache.scaledC0 = valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH;
              
-      this.labels.updateLabel(d, index, cache, valueX / this.width, valueY / this.height, valueS, valueC, valueL, valueLST, duration, showhide);
+      this._labels.updateLabel(d, index, cache, valueX / this.width, valueY / this.height, valueS, valueC, valueL, valueLST, duration, showhide);
     }
   },
 

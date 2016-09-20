@@ -37,7 +37,7 @@ describe('Web - Vizabi e2e test :: All', function() {
     colorOption.getText().then(function (colorOptionAsParameter) {
       var colorOptionText = colorOptionAsParameter;
       // Comparing the color option name
-      var findMe = "World Region";
+      var findMe = "World Regions";
       expect(findMe).toBe(colorOptionText);
     });
 
@@ -86,7 +86,7 @@ describe('Web - Vizabi e2e test :: All', function() {
     colorOption.getText().then(function (colorOptionAsParameter) {
       var colorOptionText = colorOptionAsParameter;
       // Comparing the color option name
-      var findMe = "World Region";
+      var findMe = "World Regions";
       expect(findMe).toBe(colorOptionText);
     });
 
@@ -134,7 +134,7 @@ describe('Web - Vizabi e2e test :: All', function() {
     colorOption.getText().then(function (colorOptionAsParameter) {
       var colorOptionText = colorOptionAsParameter;
       // Comparing the color option name
-      var findMe = "World Region";
+      var findMe = "World Regions";
       expect(findMe).toBe(colorOptionText);
     });
 
@@ -279,7 +279,7 @@ describe('Web - Vizabi e2e test :: All', function() {
   it('URLPersistencyBubbleMapChart', function() {
     browser.get(baseUrl + "bubblemap.html" + baseUrlHash);
     browser.refresh();
-    browser.wait(EC.visibilityOf(USABubbleMap), 60000 , "Chart is not Loaded");
+    browser.wait(EC.visibilityOf(USABubbleMap), 120000 , "Chart is not Loaded");
 
     //Clicking find
     var find =element(by.css(data.bubbleMap_Chart_Loctors.find_Locator_CSS));
@@ -293,9 +293,11 @@ describe('Web - Vizabi e2e test :: All', function() {
     });
 
     // Check China Text Box
-    var chinaBubble =element(by.css(data.bubbleMap_Chart_Loctors.chinaBubbleCheckbox_Locator_CSS));
-    browser.wait(EC.visibilityOf(chinaBubble), 5000).then(function(){
-      chinaBubble.click();
+    
+    var chinaCheckBox =element(by.css(data.bubbleMap_Chart_Loctors.chinaBubbleCheckbox_Locator_CSS));
+
+    browser.wait(EC.visibilityOf(chinaCheckBox), 5000).then(function(){
+      chinaCheckBox.click();
     });
 
     //clicking ok

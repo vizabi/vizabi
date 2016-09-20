@@ -196,7 +196,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
       var axisText = axisAsParameter;
 
       // Comparing gdp
-      var findMe = "100k";
+      var findMe = "53.4k";
       expect(axisText.indexOf(findMe) !== -1).toBe(true);
     });
   });

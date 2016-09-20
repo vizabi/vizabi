@@ -42,7 +42,7 @@ var TimeModel = Model.extend({
     round: 'round',
     delay: 600, //delay between animation frames
     delayThresholdX2: 600, //delay X2 boundary: if less -- then every other frame will be dropped and animation dely will be double the value
-    delayThresholdX4: 600, //delay X4 boundary: if less -- then 3/4 frame will be dropped and animation dely will be 4x the value
+    delayThresholdX4: 300, //delay X4 boundary: if less -- then 3/4 frame will be dropped and animation dely will be 4x the value
     unit: "year",
     step: 1, //step must be integer, and expressed in units
     immediatePlay: false,
@@ -51,12 +51,12 @@ var TimeModel = Model.extend({
 
   /**
    * Initializes the language model.
+   * @param {String} name 
    * @param {Object} values The initial values of this model
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
   init: function(name, values, parent, bind) {
-
     this._type = "time";
     //default values for time model
     var defaults = utils.deepClone(this._defaults);
@@ -64,7 +64,7 @@ var TimeModel = Model.extend({
 
     //same constructor
     this._super(name, values, parent, bind);
-
+    this._initDefaults();
     var _this = this;
     this.timeFormat = formats[this.unit];
     this.dragging = false;
@@ -105,6 +105,21 @@ var TimeModel = Model.extend({
     }
   },
 
+  /*
+   * Convert default values to string
+   * @param {String} values
+   */
+  _initDefaults: function() {
+    this._defaults = utils.extend(this._defaults, this.getToolDefaults());
+    var date_attr = ["value", "start", "end", "startSelected", "endSelected"];
+    for(var i = 0; i < date_attr.length; i++) {
+      var attr = date_attr[i];
+      if(!utils.isString(this._defaults[attr])) {
+        this._defaults[attr] = this._defaults[attr].toString();
+      }
+    }
+  },
+  
   /*
    * Formatting and parsing functions
    * @param {Date} date
@@ -164,13 +179,14 @@ var TimeModel = Model.extend({
     if(this.value > this.endSelected) {
       this.value = new Date(this.endSelected);
     }
-    
-    if(this.startSelected < this.start) {
-      this.startSelected = new Date(this.start);
-    }
+    if (this.splash === false) {
+      if(this.startSelected < this.start) {
+        this.startSelected = new Date(this.start);
+      }
 
-    if(this.endSelected > this.end) {
-      this.endSelected = new Date(this.end);
+      if(this.endSelected > this.end) {
+        this.endSelected = new Date(this.end);
+      }
     }
   
     //value has to be between start and end
@@ -253,11 +269,11 @@ var TimeModel = Model.extend({
     var dim = this.getDimension();
     var filter = {};
 
-    filter[dim] = (firstScreen) ? [
-      [value]
-    ] : [
-      [start, end]
-    ];
+    if (firstScreen) {
+      filter[dim] = value;
+    } else {
+      filter[dim] = {'$gte': start, '$lte': end};
+    }
     return filter;
   },
 

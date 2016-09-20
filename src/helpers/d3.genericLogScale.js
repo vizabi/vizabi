@@ -83,7 +83,7 @@ export default function genericLog() {
               + secondEps * rangePointingSign;
             scales = [
               _buildLinearScale(domainParts[0], [range[0], point1]),
-              _buildLogScale(domainParts[1], [point1,  range[1]], !domainPointingForward)
+              _buildLogScale(domainParts[1], [point1,  range[range.length - 1]], !domainPointingForward)
             ];
           } else if (domain[domain.length - 1] == 0 || abs(domain[domain.length - 1]) <= eps) {// example: [-val,-eps][-eps, 0..eps]
             point1 = range[range.length - 1] - (firstEps + secondEps) * rangePointKoef * rangePointingSign
@@ -269,7 +269,7 @@ export default function genericLog() {
     
     scale.range = function(arg, force) {
       if(!arguments.length)
-        return range;
+        return interpolator ? interpolator.range() : range;
 
       switch(arg.length) {
         // reset input to the default range

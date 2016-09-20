@@ -7,7 +7,6 @@ import {
   dialogs,
   buttonlist,
   treemenu,
-  labels,
   datawarning,
   datanotes
 } from 'components/_index';
@@ -28,11 +27,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
     this.components = [{
       component: BubbleChartComponent,
       placeholder: '.vzb-tool-viz',
-      model: ["state.time", "state.entities", "state.marker", "language", "ui"] //pass models to component
-    }, {
-      component: labels,
-      placeholder: '.vzb-tool-labels',
-      model: ["state.entities", "state.marker", "ui"]
+      model: ["state.time", "state.entities", "state.marker", "state.entities_minimap", "state.marker_minimap", "language", "ui"] //pass models to component
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
@@ -48,7 +43,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
     }, {
       component: treemenu,
       placeholder: '.vzb-tool-treemenu',
-      model: ['state.marker', 'language']
+      model: ['state.marker', 'state.marker_tags', 'state.time', 'language']
     }, {
       component: datawarning,
       placeholder: '.vzb-tool-datawarning',
@@ -80,47 +75,6 @@ var BubbleChart = Tool.extend('BubbleChart', {
    */
   default_model: {
     state: {
-      time: {
-        round: "ceil"
-      },
-      entities: {
-        dim: "geo",
-        show: {
-          _defs_: {
-            "geo": ["*"],
-            "geo.cat": ["country"]
-          }
-        },
-        opacitySelectDim: .3,
-        opacityRegular: 1,
-      },
-      marker: {
-        space: ["entities", "time"],
-        type: "geometry",
-        label: {
-          use: "property",
-          which: "geo.name"
-        },
-        size_label: {
-            use: "constant"
-        },
-        axis_y: {
-          use: "indicator",
-          which: "lex"
-        },
-        axis_x: {
-          use: "indicator",
-          which: "gdp_pc"
-        },
-        color: {
-          use: "property",
-          which: "geo.world_4region"
-        },
-        size: {
-          use: "indicator",
-          which: "pop"
-        }
-      }
     },
     ui: {
       chart: {

@@ -311,6 +311,7 @@ var TimeSlider = Component.extend({
    * Ideally,it contains only operations related to size
    */
   resize: function () {
+    if(this._splash) return;
 
     this.model.time.pause();
 

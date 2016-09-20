@@ -672,7 +672,7 @@ var AgePyramid = Component.extend({
       this.year.transition().duration(duration).ease("linear")
         .each("end", this._setYear(time.value));
     } else {
-      this.year.interrupt().text(time.timeFormat(time.value));
+      this.year.interrupt().text(time.timeFormat(time.value)).transition();
     }
       
 

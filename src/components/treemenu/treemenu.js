@@ -74,12 +74,13 @@ var OPTIONS = {
 };
 
 var Menu = Class.extend({
-  init: function (parent, menu) {
+  init: function (parent, menu, options) {
     var _this = this;
     this.parent = parent;
     this.entity = menu;
-    this.width = OPTIONS.MIN_COL_WIDTH;
-    this.direction = OPTIONS.MENU_DIRECTION;
+    this.OPTIONS = options;
+    this.width = this.OPTIONS.MIN_COL_WIDTH;
+    this.direction = this.OPTIONS.MENU_DIRECTION;
     this._setDirectionClass();
     this.menuItems = [];
     var menuItemsHolder;
@@ -154,7 +155,7 @@ var Menu = Class.extend({
     }
   },
   addSubmenu: function(item) {
-    this.menuItems.push(new MenuItem(this, item))
+    this.menuItems.push(new MenuItem(this, item, this.OPTIONS))
   },
   open: function() {
     var _this = this;
@@ -180,8 +181,8 @@ var Menu = Class.extend({
   calculateMissingWidth: function(width, cb) {
     var _this = this;
     if (this.entity.classed(css.list_top_level)) {
-      if (width > OPTIONS.MAX_MENU_WIDTH) {
-        if (typeof cb === "function") cb(width - OPTIONS.MAX_MENU_WIDTH);
+      if (width > this.OPTIONS.MAX_MENU_WIDTH) {
+        if (typeof cb === "function") cb(width - this.OPTIONS.MAX_MENU_WIDTH);
       }
     } else {
       this.parent.parentMenu.calculateMissingWidth(width + this.width, function(widthToReduce) {
@@ -233,11 +234,11 @@ var Menu = Class.extend({
     var _this = this;
     var currWidth = this.entity.node().offsetWidth;
 
-    if (currWidth <= OPTIONS.MIN_COL_WIDTH) {
+    if (currWidth <= this.OPTIONS.MIN_COL_WIDTH) {
       cb(width - _this.width + currWidth);
     } else {
 
-      var newElementWidth = Math.max(OPTIONS.MIN_COL_WIDTH, _this.width - width);
+      var newElementWidth = Math.max(this.OPTIONS.MIN_COL_WIDTH, _this.width - width);
       var duration = 250 / (_this.width / newElementWidth);
       this.entity.transition()
         .delay(0)
@@ -318,7 +319,7 @@ var Menu = Class.extend({
         _this.marqueeToggle(false);
         _this.entity.classed('active', false);
         if(!openSubmenuNow) {
-          _this.restoreWidth(OPTIONS.MAX_MENU_WIDTH, true, function() {
+          _this.restoreWidth(_this.OPTIONS.MAX_MENU_WIDTH, true, function() {
             if (typeof cb === "function") cb();
           });
         } else {
@@ -402,13 +403,13 @@ var Menu = Class.extend({
 });
 
 var MenuItem = Class.extend({
-  init: function (parent, item) {
+  init: function (parent, item, options) {
     var _this = this;
     this.parentMenu = parent;
     this.entity = item;
     var submenu = item.select('.' + css.list_outer);
     if (submenu.node()) {
-      this.submenu = new Menu(this, submenu);
+      this.submenu = new Menu(this, submenu, options);
     }
     var label = this.entity.select('.' + css.list_item_label).on('mouseenter', function() {
       if(utils.isTouchDevice()) return;
@@ -505,67 +506,52 @@ var MenuItem = Class.extend({
   }
 });
 
-//default callback
-var callback = function(indicator) {
-  console.log("Indicator selector: stub callback fired. New indicator is ", indicator);
-};
-
-var tree;
-var langStrings;
-var lang;
-var markerID;
-var alignX = "center";
-var alignY = "center";
-var top;
-var left;
-var selectedNode;
-
 var TreeMenu = Component.extend({
 
   //setters-getters
   tree: function(input) {
-    if(!arguments.length) return tree;
-    tree = input;
+    if(!arguments.length) return this._tree;
+    this._tree = input;
     return this;
   },
   lang: function(input) {
-    if(!arguments.length) return lang;
-    lang = input;
+    if(!arguments.length) return this._lang;
+    this._lang = input;
     return this;
   },
   langStrings: function(input) {
-    if(!arguments.length) return langStrings;
-    langStrings = input;
+    if(!arguments.length) return this._langStrings;
+    this._langStrings = input;
     return this;
   },
   callback: function(input) {
-    if(!arguments.length) return callback;
-    callback = input;
+    if(!arguments.length) return this._callback;
+    this._callback = input;
     return this;
   },
   markerID: function(input) {
-    if(!arguments.length) return markerID;
-    markerID = input;
+    if(!arguments.length) return this._markerID;
+    this._markerID = input;
     return this;
   },
   alignX: function(input) {
-    if(!arguments.length) return alignX;
-    alignX = input;
+    if(!arguments.length) return this._alignX;
+    this._alignX = input;
     return this;
   },
   alignY: function(input) {
-    if(!arguments.length) return alignY;
-    alignY = input;
+    if(!arguments.length) return this._alignY;
+    this._alignY = input;
     return this;
   },
   top: function(input) {
-    if(!arguments.length) return top;
-    top = input;
+    if(!arguments.length) return this._top;
+    this._top = input;
     return this;
   },
   left: function(input) {
-    if(!arguments.length) return left;
-    left = input;
+    if(!arguments.length) return this._left;
+    this._left = input;
     return this;
   },
 
@@ -577,6 +563,12 @@ var TreeMenu = Component.extend({
     this.model_expects = [{
       name: "marker",
       type: "model"
+    }, {      
+      name: "marker_tags",
+      type: "model"
+    }, {      
+      name: "time",
+      type: "time"
     }, {
         name: "language",
         type: "language"
@@ -587,7 +579,7 @@ var TreeMenu = Component.extend({
     this.menuEntity = null;
     this.model_binds = {
       "change:marker": function(evt, path) {
-        if(path.indexOf(markerID + '.which')==-1 && path.indexOf(markerID + '.scaleType')==-1) return;
+        if(path.indexOf(_this._markerID + '.which')==-1 && path.indexOf(_this._markerID + '.scaleType')==-1) return;
         _this.updateView();
       },
       "change:language.strings": function(evt) {
@@ -601,6 +593,16 @@ var TreeMenu = Component.extend({
     this.ui = utils.extend({
       //...add properties here
     }, this.ui);
+
+    //default callback
+    this._callback = function(indicator) {
+      console.log("Indicator selector: stub callback fired. New indicator is ", indicator);
+    };
+    this._alignX = "center";
+    this._alignY = "center";
+
+    //options
+    this.OPTIONS = utils.deepClone(OPTIONS);
 
   },
 
@@ -675,9 +677,68 @@ var TreeMenu = Component.extend({
       //if(_this.menuEntity.direction != MENU_VERTICAL) _this.menuEntity.closeAllChildren();
     });
 
+    this.translator = this.model.language.getTFunction();
+    
+    //TODO: hack! potentially unsafe operation here
+    var tags = this.model.marker_tags.getDataManager().get(this.model.marker_tags.label._dataId)
+    _this._buildIndicatorsTree(tags);
+    
     _this._enableSearch();
 
     _this.resize();
+  },
+  
+  
+  _buildIndicatorsTree: function(tagsArray){
+      
+      var ROOT = "_root";
+      var DEFAULT = "_default";
+      var UNCLASSIFIED = "_unclassified";
+      var ADVANCED = "advanced";
+
+      var indicatorsTree;
+
+      //init the dictionary of tags
+      var tags = {};
+      tags[ROOT] = {id: ROOT, children: []};
+      tags[UNCLASSIFIED] = {id: UNCLASSIFIED, name: this.translator("buttons/unclassified"), children:[]};
+      
+      //populate the dictionary of tags
+      tagsArray.forEach(function(tag){tags[tag.tag] = {id: tag.tag, name: tag.name, children: []};})
+      
+      //init the tag tree
+      indicatorsTree = tags[ROOT];
+      indicatorsTree.children.push({"id": DEFAULT});
+      indicatorsTree.children.push(tags[UNCLASSIFIED]);
+      
+      //populate the tag tree
+      tagsArray.forEach(function(tag){
+        if(!tag.parent || !tags[tag.parent]) {
+          // add tag to a root
+          indicatorsTree.children.push(tags[tag.tag]);
+        } else {
+          //add tag to a branch
+          tags[tag.parent].children.push(tags[tag.tag])
+        }
+      })
+      
+      //add entries to different branches in the tree according to their tags
+      utils.forEach(this.model.marker.getConceptprops(), function(entry, id){
+        //if entry's tag are empty don't include it in the menu
+        if(entry.tags=="_none") return;
+        if(!entry.tags) entry.tags = UNCLASSIFIED;
+        entry.tags.split(",").forEach(function(tag){
+          if(tags[tag.trim()]) {
+            tags[tag.trim()].children.push({id: id, name: entry.name, unit: entry.unit, description: entry.description});
+          } else {
+            //if entry's tag is not found in the tag dictionary
+            console.log(tag, "not found")
+            tags[UNCLASSIFIED].children.push({id: id, name: entry.name, unit: entry.unit, description: entry.description});
+          }
+        });  
+      });
+
+    this.indicatorsTree = indicatorsTree;
   },
 
   //happens on resizing of the container
@@ -696,22 +757,27 @@ var TreeMenu = Component.extend({
       }
     };
 
+    var top = this._top;
+    var left = this._left;
+
     this.wrapper.classed(css.noTransition, true);
     this.wrapper.node().scrollTop = 0;
 
     this.activeProfile = this.profiles[this.getLayoutProfile()];
-    OPTIONS.IS_MOBILE = this.getLayoutProfile() === "small";
+    this.OPTIONS.IS_MOBILE = this.getLayoutProfile() === "small";
 
     if (this.menuEntity) {
       this.menuEntity.setWidth(this.activeProfile.col_width, true, true);
 
-      if (OPTIONS.IS_MOBILE) {
+      if (this.OPTIONS.IS_MOBILE) {
         if (this.menuEntity.direction != MENU_VERTICAL) {
           this.menuEntity.setDirection(MENU_VERTICAL, true);
+          this.OPTIONS.MENU_DIRECTION = MENU_VERTICAL;
         }
       } else {
         if (this.menuEntity.direction != MENU_HORIZONTAL) {
           this.menuEntity.setDirection(MENU_HORIZONTAL, true);
+          this.OPTIONS.MENU_DIRECTION = MENU_HORIZONTAL;
         }
       }
     }
@@ -722,7 +788,7 @@ var TreeMenu = Component.extend({
     var containerWidth = rect.width;
     var containerHeight = rect.height;
     if (containerWidth) {
-      if(OPTIONS.IS_MOBILE) {
+      if(this.OPTIONS.IS_MOBILE) {
         this.clearPos();
       } else {
         if(top || left) {
@@ -746,24 +812,24 @@ var TreeMenu = Component.extend({
         }
         this.wrapper.style('max-height', (maxHeight - 10) + 'px');
       
-        this.wrapperOuter.classed(css.alignXc, alignX === "center");
-        this.wrapperOuter.style("margin-left",alignX === "center"? "-" + containerWidth/2 + "px" : null);
-        if (alignX === "center") {
-          OPTIONS.MAX_MENU_WIDTH = this.width/2 - containerWidth * 0.5 - 10;
+        this.wrapperOuter.classed(css.alignXc, this._alignX === "center");
+        this.wrapperOuter.style("margin-left", this._alignX === "center"? "-" + containerWidth/2 + "px" : null);
+        if (this._alignX === "center") {
+          this.OPTIONS.MAX_MENU_WIDTH = this.width/2 - containerWidth * 0.5 - 10;
         } else {
-          OPTIONS.MAX_MENU_WIDTH = this.width - this.wrapperOuter.node().offsetLeft - containerWidth - 10; // 10 - padding around wrapper
+          this.OPTIONS.MAX_MENU_WIDTH = this.width - this.wrapperOuter.node().offsetLeft - containerWidth - 10; // 10 - padding around wrapper
         }
 
-        var minMenuWidth = this.activeProfile.col_width + OPTIONS.MIN_COL_WIDTH * 2;
+        var minMenuWidth = this.activeProfile.col_width + this.OPTIONS.MIN_COL_WIDTH * 2;
         var leftPos = this.wrapperOuter.node().offsetLeft;
-        OPTIONS.MENU_OPEN_LEFTSIDE = OPTIONS.MAX_MENU_WIDTH < minMenuWidth && leftPos > (OPTIONS.MAX_MENU_WIDTH + 10);
-        if(OPTIONS.MENU_OPEN_LEFTSIDE) {
+        this.OPTIONS.MENU_OPEN_LEFTSIDE = this.OPTIONS.MAX_MENU_WIDTH < minMenuWidth && leftPos > (this.OPTIONS.MAX_MENU_WIDTH + 10);
+        if(this.OPTIONS.MENU_OPEN_LEFTSIDE) {
           if(leftPos <  (minMenuWidth + 10)) leftPos = (minMenuWidth + 10);
-          OPTIONS.MAX_MENU_WIDTH = leftPos - 10; // 10 - padding around wrapper        
+          this.OPTIONS.MAX_MENU_WIDTH = leftPos - 10; // 10 - padding around wrapper        
         } else {
-          if (OPTIONS.MAX_MENU_WIDTH < minMenuWidth) { 
-            leftPos = leftPos - (minMenuWidth - OPTIONS.MAX_MENU_WIDTH);
-            OPTIONS.MAX_MENU_WIDTH = minMenuWidth;
+          if (this.OPTIONS.MAX_MENU_WIDTH < minMenuWidth) { 
+            leftPos = leftPos - (minMenuWidth - this.OPTIONS.MAX_MENU_WIDTH);
+            this.OPTIONS.MAX_MENU_WIDTH = minMenuWidth;
           } 
         }
        
@@ -775,14 +841,19 @@ var TreeMenu = Component.extend({
           }
         }
         
+        this._top = top;
+        this._left = left;
+
         if(left || top) this.setPos();
         
-        this.wrapperOuter.classed('vzb-treemenu-open-left-side', !OPTIONS.IS_MOBILE && OPTIONS.MENU_OPEN_LEFTSIDE);        
+        this.wrapperOuter.classed('vzb-treemenu-open-left-side', !this.OPTIONS.IS_MOBILE && this.OPTIONS.MENU_OPEN_LEFTSIDE);        
       }
     }
 
     this.wrapper.node().offsetHeight;
     this.wrapper.classed(css.noTransition, false);
+
+    this.setHorizontalMenuHeight();
 
     return this;
   },
@@ -828,15 +899,15 @@ var TreeMenu = Component.extend({
     }
 
     if (this.menuEntity.direction == MENU_VERTICAL) {
-      scrollToItem(this.wrapper.node(), selectedNode);
+      scrollToItem(this.wrapper.node(), this.selectedNode);
       _this.menuEntity.marqueeToggleAll(true);
     } else {
-      var selectedItem = this.menuEntity.findItemByName(d3.select(selectedNode).select('span').text());
+      var selectedItem = this.menuEntity.findItemByName(d3.select(this.selectedNode).select('span').text());
       selectedItem.submenu.calculateMissingWidth(0, function() {
         _this.menuEntity.marqueeToggleAll(true);
       });
 
-      var parent = selectedNode;
+      var parent = this.selectedNode;
       var listNode;
       while(!(utils.hasClass(parent, css.list_top_level))) {
         if(parent.tagName == 'LI') {
@@ -849,6 +920,8 @@ var TreeMenu = Component.extend({
   },
 
   setPos: function() {
+    var top = this._top;
+    var left = this._left;
     var rect = this.wrapperOuter.node().getBoundingClientRect();
 
     if(top) {
@@ -865,13 +938,28 @@ var TreeMenu = Component.extend({
   },
 
   clearPos: function() {
-    top = '';
-    left = '';
+    this._top = '';
+    this._left = '';
     this.wrapperOuter.attr("style", "");
     this.wrapperOuter.classed(css.absPosVert, '');
     this.wrapperOuter.classed(css.absPosHoriz, '');
     this.wrapperOuter.classed(css.menuOpenLeftSide, '');
     this.wrapper.style('max-height', '');
+  },
+
+  setHorizontalMenuHeight: function() {
+    var wrapperHeight = null;
+    if(this.menuEntity && this.OPTIONS.MENU_DIRECTION == MENU_HORIZONTAL && this.menuEntity.menuItems.length) {
+      var oneItemHeight = parseInt(this.menuEntity.menuItems[0].entity.style('height'), 10);
+      var menuMaxHeight = oneItemHeight * this._maxChildCount;
+      var rootMenuHeight = Math.max(this.menuEntity.menuItems.length, 3) * oneItemHeight + this.menuEntity.entity.node().offsetTop + parseInt(this.wrapper.style('padding-bottom'), 10);
+      wrapperHeight = "" + Math.max(menuMaxHeight, rootMenuHeight) + "px";
+    }
+    this.wrapper.classed(css.noTransition, true);
+    this.wrapper.node().offsetHeight;
+    this.wrapper.style("height", wrapperHeight);
+    this.wrapper.node().offsetHeight;
+    this.wrapper.classed(css.noTransition, false);
   },
   //search listener
   _enableSearch: function() {
@@ -890,23 +978,24 @@ var TreeMenu = Component.extend({
       var translationMatch = function(value, data, i) {
         var languageId = _this.model.language.id;
 
-        if(_this.langStrings()) {
-          var translate = _this.langStrings()[languageId]['indicator/' + data[i][OPTIONS.SEARCH_PROPERTY]] ||
-            _this.langStrings()[languageId]['indicator' + '/' + _this.model.marker[markerID]._type + '/' + data[i][OPTIONS.SEARCH_PROPERTY]];
-          if(translate && translate.toLowerCase().indexOf(value.toLowerCase()) >= 0) return true;
+        var translate = data[i].name;
+        if(!translate && _this.langStrings()) { 
+          translate = _this.langStrings()[languageId]['indicator' + '/' + data[i][_this.OPTIONS.SEARCH_PROPERTY] + '/' + _this.model.marker[_this._markerID]._type] ||
+          _this.langStrings()[languageId]['indicator/' + data[i][_this.OPTIONS.SEARCH_PROPERTY]];
         };
-        return false;
+        return translate && translate.toLowerCase().indexOf(value.toLowerCase()) >= 0;
       };
 
       var matching = function(data) {
+        var SUBMENUS = _this.OPTIONS.SUBMENUS;
         for(var i = 0; i < data.length; i++) {
           var match = false;
           match =  translationMatch(value, data, i);
           if(match) {
             matches.children.push(data[i]);
           }
-          if(!match && data[i][OPTIONS.SUBMENUS]) {
-            matching(data[i][OPTIONS.SUBMENUS]);
+          if(!match && data[i][SUBMENUS]) {
+            matching(data[i][SUBMENUS]);
           }
         }
       };
@@ -925,7 +1014,7 @@ var TreeMenu = Component.extend({
         if(!searchValueNonEmpty && value == "") return;        
         searchValueNonEmpty = value != "";
 
-        if(value.length >= OPTIONS.SEARCH_MIN_STR) {
+        if(value.length >= _this.OPTIONS.SEARCH_MIN_STR) {
           _this.redraw(getMatches(value), true);  
         } else {
           _this.redraw();
@@ -936,7 +1025,7 @@ var TreeMenu = Component.extend({
   },
 
   _selectIndicator: function(value) {
-    callback("which", value, markerID);
+    this._callback("which", value, this._markerID);
     this.toggle();
   },
 
@@ -944,6 +1033,8 @@ var TreeMenu = Component.extend({
   //function is redrawing data and built structure
   redraw: function(data, useDataFiltered) {
     var _this = this;
+
+    var markerID = this._markerID;
 
     var dataFiltered;
     
@@ -954,7 +1045,7 @@ var TreeMenu = Component.extend({
     if(useDataFiltered) {
       dataFiltered = data;
     } else {
-      if(data == null) data = tree;
+      if(data == null) data = this._tree;
 
       var allowedIDs = utils.keys(indicatorsDB).filter(function(f) {
         //check if indicator is denied to show with allow->names->!indicator
@@ -991,8 +1082,11 @@ var TreeMenu = Component.extend({
     this.element.select('.' + css.search)
       .attr("placeholder", this.translator("placeholder/search") + "...");
  
+    this._maxChildCount = 0; 
+    
     var createSubmeny = function(select, data, toplevel) {
       if(!data.children) return;
+      _this._maxChildCount = Math.max(_this._maxChildCount, data.children.length);
       var _select = toplevel ? select : select.append('div')
         .classed(css.list_outer, true);
 
@@ -1025,9 +1119,9 @@ var TreeMenu = Component.extend({
         .append('span')
         .text(function(d) {
           //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-          var translated = _this.translator("indicator" + (d.id==="_default" ? "/" + hookType : "") + "/" + d.id);
-          if(translated.indexOf("indicator/")!==-1)utils.warn("translation missing: " + translated);
-          return translated;
+          var translated = d.id==="_default" ? _this.translator("indicator/_default/" + hookType) : d.name;
+          if(!translated && translated!=="") utils.warn("translation missing: NAME of " + d.id);
+          return translated||"";
         });
       
       li.classed(css.list_item, true)
@@ -1050,65 +1144,82 @@ var TreeMenu = Component.extend({
             deepLeafContent.append('span').classed(css.leaf_content_item + ' ' + css.leaf_content_item_title, true)
               .text(function(d) {
                 //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-                var translated = _this.translator("indicator" + (d.id === "_default" ? "/" + hookType : "") + "/" + d.id);
-                if(translated.indexOf("indicator/") !== -1) utils.warn("translation missing: " + translated);
-                return translated;
+                var translated = d.id==="_default" ? _this.translator("indicator/_default/" + hookType) : d.name;
+                return translated||"";
               });
             var hideUnits;
             var units = deepLeafContent.append('span').classed(css.leaf_content_item, true)
               .text(function(d) {
                 //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-                var translated = _this.translator("unit" + (d.id==="_default" ? "/" + hookType : "") + "/" + d.id);
-                hideUnits = translated.indexOf("unit/") !== -1 || translated === ''; 
-                if(translated.indexOf("unit/") !== -1) utils.warn("translation missing: " + translated);
-                return _this.translator('hints/units') + ': ' + translated;
+                var translated = d.id==="_default" ? _this.translator("unit/_default/" + hookType) : d.unit;parent
+                hideUnits = !translated;
+                return _this.translator('hints/units') + ': ' + translated||"";
               });
             units.classed('vzb-hidden', hideUnits);
             var hideDescription;
             var description = deepLeafContent.append('span').classed(css.leaf_content_item + ' ' + css.leaf_content_item_descr, true)
               .text(function(d) {
                 //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-                var translated = _this.translator("description" + (d.id === "_default" ? "/" + hookType : "") + "/" + d.id);
-                hideDescription = translated.indexOf("description/") !== -1; 
-                if(hideDescription) utils.warn("translation missing: " + translated);
-                return (hideUnits && hideDescription) ? _this.translator("hints/nodescr") : translated;
+                var translated = d.id==="_default" ? _this.translator("description/_default/" + hookType) : d.description;
+                hideDescription = !translated; 
+                return (hideUnits && hideDescription) ? _this.translator("hints/nodescr") : translated||"";
               });
             description.classed('vzb-hidden', hideDescription && !hideUnits);
           }
           
           if(d.id == _this.model.marker[markerID].which) {
-            var parent = this.parentNode;
-            d3.select(this).classed('item-active', true)
-              .select('.' + css.list_item_leaf).classed('active', true);
-            while(!(utils.hasClass(parent, css.list_top_level))) {
-              if(parent.tagName == 'UL') {
-                d3.select(parent.parentNode)
-                  .classed('active', true);
-              }
-              if(parent.tagName == 'LI') {
-                d3.select(parent).classed('item-active', true);
-              }
-              parent = parent.parentNode;
+            var parent;
+            if(_this.selectedNode && toplevel) {
+              parent = _this.selectedNode.parentNode;
+              d3.select(_this.selectedNode)
+                .select('.' + css.list_item_leaf).classed('active', false);
+              while(!(utils.hasClass(parent, css.list_top_level))) {
+                if(parent.tagName == 'UL') {
+                  d3.select(parent.parentNode)
+                    .classed('active', false);
+                }
+                parent = parent.parentNode;
+              }                    
             }
-            selectedNode = this;
+            if(!_this.selectedNode || toplevel) {
+              parent = this.parentNode;
+              d3.select(this).classed('item-active', true)
+                .select('.' + css.list_item_leaf).classed('active', true);
+              while(!(utils.hasClass(parent, css.list_top_level))) {
+                if(parent.tagName == 'UL') {
+                  d3.select(parent.parentNode)
+                    .classed('active', true);
+                }
+                if(parent.tagName == 'LI') {
+                  d3.select(parent).classed('item-active', true);
+                }
+                parent = parent.parentNode;
+              }
+              _this.selectedNode = this;
+            }
           }
           createSubmeny(view, d);
         });
     };
     
-    if(OPTIONS.IS_MOBILE) {
-      OPTIONS.MENU_DIRECTION = MENU_VERTICAL;
+    if(this.OPTIONS.IS_MOBILE) {
+      this.OPTIONS.MENU_DIRECTION = MENU_VERTICAL;
     } else {
-      OPTIONS.MENU_DIRECTION = MENU_HORIZONTAL;
+      this.OPTIONS.MENU_DIRECTION = MENU_HORIZONTAL;
     }
+    this.selectedNode = null;
     createSubmeny(this.wrapper, dataFiltered, true);
-    this.menuEntity = new Menu(null, this.wrapper.selectAll('.' + css.list_top_level));
-    if(this.menuEntity) this.menuEntity.setDirection(OPTIONS.MENU_DIRECTION);
+    this.menuEntity = new Menu(null, this.wrapper.selectAll('.' + css.list_top_level), this.OPTIONS);
+    if(this.menuEntity) this.menuEntity.setDirection(this.OPTIONS.MENU_DIRECTION);
     if(this.menuEntity) this.menuEntity.setWidth(this.activeProfile.col_width, true, true);
-    
+
+    this.setHorizontalMenuHeight();
+
     if(!useDataFiltered) {
       var pointer = "_default";
       if(allowedIDs.indexOf(this.model.marker[markerID].which) > -1) pointer = this.model.marker[markerID].which;
+      if(!indicatorsDB[pointer]) utils.error("Concept properties of " + pointer + " are missing from the set, or the set is empty. Put a breakpoint here and check what you have in indicatorsDB");
+      
       if(!indicatorsDB[pointer].scales) {
         this.element.select('.' + css.scaletypes).classed(css.hidden, true);
         return true;
@@ -1157,26 +1268,24 @@ var TreeMenu = Component.extend({
     var _this = this;
     var languageID = _this.model.language.id;
 
-    if(!markerID) return;
+    if(!this._markerID) return;
 
-    this.wrapperOuter.classed(css.absPosVert, top);
-    this.wrapperOuter.classed(css.alignYt, alignY === "top");
-    this.wrapperOuter.classed(css.alignYb, alignY === "bottom");
-    this.wrapperOuter.classed(css.absPosHoriz, left);
-    this.wrapperOuter.classed(css.alignXl, alignX === "left");
-    this.wrapperOuter.classed(css.alignXr, alignX === "right");
+    this.wrapperOuter.classed(css.absPosVert, this._top);
+    this.wrapperOuter.classed(css.alignYt, this._alignY === "top");
+    this.wrapperOuter.classed(css.alignYb, this._alignY === "bottom");
+    this.wrapperOuter.classed(css.absPosHoriz, this._left);
+    this.wrapperOuter.classed(css.alignXl, this._alignX === "left");
+    this.wrapperOuter.classed(css.alignXr, this._alignX === "right");
 
 
-    var strings = langStrings ? langStrings : {};
+    var strings = this._langStrings ? this._langStrings : {};
     strings[languageID] = _this.model.language.strings[languageID];
-
-    this.translator = this.model.language.getTFunction();
 
     var setModel = this._setModel.bind(this);
     this.langStrings(strings)
       .lang(languageID)
       .callback(setModel)
-      .tree(this.model.marker.getIndicatorsTree())
+      .tree(this.indicatorsTree)
       .redraw();
 
     this.wrapper.select('.' + css.search).node().value = "";

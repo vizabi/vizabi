@@ -57,84 +57,11 @@
         SVGSources.push(newSources[i]);
       }
     });
-    if (SVGSources.length > 1) {
-      createPopover(SVGSources);
-    } else if (SVGSources.length > 0) {
+    if (SVGSources.length > 0) {
       download(SVGSources[0]);
     } else {
-      alert("The Crowbar couldn’t find any SVG nodes.");
+      console.warn("Couldn’t find any SVG nodes for download.");
     }
-
-  }
-
-  function createPopover(sources) {
-    cleanup();
-
-    sources.forEach(function(s1) {
-      sources.forEach(function(s2) {
-        if (s1 !== s2) {
-          if ((Math.abs(s1.top - s2.top) < 38) && (Math.abs(s1.left - s2.left) < 38)) {
-            s2.top += 38;
-            s2.left += 38;
-          }
-        }
-      });
-    });
-
-    var buttonsContainer = document.createElement("div");
-    body.appendChild(buttonsContainer);
-
-    buttonsContainer.setAttribute("class", "svg-crowbar");
-    buttonsContainer.style["z-index"] = 1e7;
-    buttonsContainer.style["position"] = "absolute";
-    buttonsContainer.style["top"] = 0;
-    buttonsContainer.style["left"] = 0;
-
-
-
-    var background = document.createElement("div");
-    body.appendChild(background);
-
-    background.setAttribute("class", "svg-crowbar");
-    background.style["background"] = "rgba(255, 255, 255, 0.7)";
-    background.style["position"] = "fixed";
-    background.style["left"] = 0;
-    background.style["top"] = 0;
-    background.style["width"] = "100%";
-    background.style["height"] = "100%";
-
-    sources.forEach(function(d, i) {
-      var buttonWrapper = document.createElement("div");
-      buttonsContainer.appendChild(buttonWrapper);
-      buttonWrapper.setAttribute("class", "svg-crowbar");
-      buttonWrapper.style["position"] = "absolute";
-      buttonWrapper.style["top"] = (d.top + document.body.scrollTop) + "px";
-      buttonWrapper.style["left"] = (document.body.scrollLeft + d.left) + "px";
-      buttonWrapper.style["padding"] = "4px";
-      buttonWrapper.style["border-radius"] = "3px";
-      buttonWrapper.style["color"] = "white";
-      buttonWrapper.style["text-align"] = "center";
-      buttonWrapper.style["font-family"] = "'Helvetica Neue'";
-      buttonWrapper.style["background"] = "rgba(0, 0, 0, 0.8)";
-      buttonWrapper.style["box-shadow"] = "0px 4px 18px rgba(0, 0, 0, 0.4)";
-      buttonWrapper.style["cursor"] = "move";
-      buttonWrapper.textContent =  "SVG #" + i + ": " + (d.id ? "#" + d.id : "") + (d.class ? "." + d.class : "");
-
-      var button = document.createElement("button");
-      buttonWrapper.appendChild(button);
-      button.setAttribute("data-source-id", i);
-      button.style["width"] = "150px";
-      button.style["font-size"] = "12px";
-      button.style["line-height"] = "1.4em";
-      button.style["margin"] = "5px 0 0 0";
-      button.textContent = "Download";
-
-      button.onclick = function(el) {
-        // console.log(el, d, i, sources)
-        download(d);
-      };
-
-    });
 
   }
 
@@ -212,6 +139,13 @@
       filename = window.document.title.replace(/[^a-z0-9]/gi, '-').toLowerCase();
     }
 
+    var dateNow = new Date();
+
+    var dateString =  dateNow.getFullYear() + ("0"+(dateNow.getMonth()+1)).slice(-2) + ("0" + dateNow.getDate()).slice(-2) + "-" +
+      ("0" + dateNow.getHours()).slice(-2) + ("0" + dateNow.getMinutes()).slice(-2) + ("0" + dateNow.getSeconds()).slice(-2);
+
+    filename = dateString + "-" + filename.match(/-(\S+)/)[1]||filename;
+    
     var url = window.URL.createObjectURL(new Blob(source.source, { "type" : "text\/xml" }));
 
     var a = document.createElement("a");

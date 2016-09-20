@@ -1,5 +1,6 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
+import Labels from 'helpers/labels';
 import {
   warn as iconWarn,
   question as iconQuestion
@@ -138,6 +139,14 @@ var CartogramComponent = Component.extend({
       .properties(function(d) {
         return d.properties;
       });
+
+    this._labels = new Labels(this);
+    this._labels.config({
+      CSS_PREFIX: 'vzb-ct',
+      LABELS_CONTAINER_CLASS: 'vzb-ct-labels',
+      LINES_CONTAINER_CLASS: 'vzb-ct-lines'
+    });
+
   },
 
   afterPreload: function(){
@@ -151,14 +160,6 @@ var CartogramComponent = Component.extend({
 
     this.borderArcs = _this.cartogram.meshArcs(this.world, this.world.objects.topo, function(a, b) {
       return a.properties.MN_NAME && a.properties.PR_NAME !== b.properties.PR_NAME;
-    });
-
-    this.labels = this.parent.findChildByName('gapminder-labels');
-    if(this.labels) this.labels.config({
-      CSS_PREFIX: 'vzb-ct',
-      TOOL_CONTEXT: this,
-      LABELS_CONTAINER_CLASS: 'vzb-ct-labels',
-      LINES_CONTAINER_CLASS: 'vzb-ct-lines'
     });
 
   },

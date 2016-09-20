@@ -23,8 +23,9 @@ init: function(config, parent) {
   {
     component: indicatorpicker,
     placeholder: '.vzb-saxis-selector',
-    model: ["state.marker", "language"],
-    markerID: "size"
+    model: ["state.time", "state.entities", "state.marker", "language"],
+    markerID: "size",
+    showHoverValues: true
   }
   ];
   if (!config.ui.chart || config.ui.chart.sizeSelectorActive !== 0) {

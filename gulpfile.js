@@ -256,7 +256,7 @@ function buildJS(dev, cb) {
       banner: banner_str,
       moduleName: 'Vizabi',
       dest: path.join(config.destLib, 'vizabi.js'),
-      outro: 'globals.version = "' + pkg.version + '"; globals.build = "' + timestamp.valueOf() + '"; globals.templates = ' + templatesFunc
+      outro: 'function __setupGlobals(){globals.version = "' + pkg.version + '"; globals.build = "' + timestamp.valueOf() + '"; globals.templates = ' + templatesFunc + '};'
     };
 
     gutil.log(chalk.yellow("Bundling JS..."));
@@ -392,6 +392,10 @@ gulp.task('preview:vendor', ['clean:preview:vendor'], function() {
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/fonts')));
   gulp.src(path.join(config.modules, 'd3/d3.min.js'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/js')));
+  gulp.src(path.join(config.modules, 'vizabi-ws-reader/dist/bundle.web.js'))
+    .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/js/ws-reader')));
+  gulp.src(path.join(config.modules, 'vizabi-ddfcsv-reader/dist/bundle.web.js'))
+    .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/js/ddfcsv-reader')));
 });
 
 gulp.task('preview:data', ['clean:preview:data'], function() {

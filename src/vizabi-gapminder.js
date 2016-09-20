@@ -27,9 +27,6 @@ import AgePyramid from 'tools/agepyramid';
 import JOINTPyramidLine from 'tools/joint_pyramidline';
 import JOINTCartogramLine from 'tools/joint_cartogramline';
 
-//waffle reader
-import {waffle as WaffleReader} from 'readers/_index';
-
 var language = {
   id: "en",
   strings: {}
@@ -59,8 +56,7 @@ BarChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["usa", "swe", "nor"],
-          "geo.cat": ["country", "unstate"]
+          "geo": ["usa", "swe", "nor"]
         }
       }
     },
@@ -68,7 +64,7 @@ BarChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["world_4region"]
+          "is--world_4region": true
         }
       }
     },
@@ -76,7 +72,7 @@ BarChart.define('default_model', {
       space: ["entities", "time"],
       label: {
         use: "property",
-        which: "geo.name"
+        which: "name"
       },
       axis_y: {
         use: "indicator",
@@ -89,7 +85,7 @@ BarChart.define('default_model', {
       },
       axis_x: {
         use: "property",
-        which: "geo.name",
+        which: "name",
         allow: {
           scales: ["ordinal"],
           names: ["!geo", "!_default"]
@@ -97,7 +93,7 @@ BarChart.define('default_model', {
       },
       color: {
         use: "property",
-        which: "geo.world_4region",
+        which: "world_4region",
         scaleType: "ordinal"
       }
     },
@@ -107,7 +103,7 @@ BarChart.define('default_model', {
         shape: "svg",
         label: {
           use: "property",
-          which: "geo.name"
+          which: "name"
         },
         geoshape: {
           use: "property",
@@ -137,7 +133,7 @@ BarRankChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["country", "unstate"]
+          "is--country": true
         }
       },
       opacitySelectDim: .3,
@@ -147,7 +143,7 @@ BarRankChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["world_4region"]
+          "is--world_4region": true
         }
       }
     },
@@ -155,8 +151,7 @@ BarRankChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["*"],
-          "geo.cat": ["country", "unstate"]
+          "is--country": true
         }
       }
     },
@@ -164,14 +159,14 @@ BarRankChart.define('default_model', {
       space: ["entities_allpossible"],
       label: {
         use: "property",
-        which: "geo.name"
+        which: "name"
       }
     },
     marker: {
       space: ["entities", "time"],
       label: {
         use: "property",
-        which: "geo.name"
+        which: "name"
       },
       axis_x: {
         use: "indicator",
@@ -185,10 +180,10 @@ BarRankChart.define('default_model', {
           ]
         }
       },
-      // should not be here because axis-y is not geo.name but order of population
+      // should not be here because axis-y is not name but order of population
       axis_y: {
         use: "property",
-        which: "geo.name",
+        which: "name",
         scaleType: "log",
         allow: {
           scales: [
@@ -198,7 +193,7 @@ BarRankChart.define('default_model', {
       },
       color: {
         use: "property",
-        which: "geo.world_4region"
+        which: "world_4region"
       }
     },
     marker_minimap:{
@@ -207,7 +202,7 @@ BarRankChart.define('default_model', {
         shape: "svg",
         label: {
           use: "property",
-          which: "geo.name"
+          which: "name"
         },
         geoshape: {
           use: "property",
@@ -248,7 +243,7 @@ BubbleMap.define('default_model', {
       opacityRegular: 1,
       show: {
         _defs_: {
-          "geo.cat": ["country", "unstate"]
+          "is--country": true
         }
       },
     },
@@ -256,15 +251,18 @@ BubbleMap.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["world_4region"]
+          "is--world_4region": true
         }
       }
+    },
+    entities_tags: {
+      dim: "tag"
     },
     marker: {
       space: ["entities", "time"],
       label: {
         use: "property",
-        which: "geo.name"
+        which: "name"
       },
       size: {
         use: "indicator",
@@ -274,24 +272,24 @@ BubbleMap.define('default_model', {
         allow: {
           scales: ["linear"]
         },
-        extent: [0.04, 0.85]
+        extent: [0, 0.85]
       },
       lat: {
         use: "property",
-        which: "geo.latitude",
+        which: "latitude",
         _important: true
       },
       lng: {
         use: "property",
-        which: "geo.longitude",
+        which: "longitude",
         _important: true
       },
       color: {
         use: "property",
-        which: "geo.world_4region",
+        which: "world_4region",
         scaleType: "ordinal",
         allow: {
-          names: ["!geo.name"]
+          names: ["!name"]
         }
       }
     },
@@ -301,12 +299,23 @@ BubbleMap.define('default_model', {
         shape: "svg",
         label: {
           use: "property",
-          which: "geo.name"
+          which: "name"
         },
         geoshape: {
           use: "property",
           which: "shape_lores_svg"
         }
+    },
+    marker_tags: {
+      space: ["entities_tags"],
+      label: {
+        use: "property",
+        which: "name"
+      },
+      parent: {
+        use: "property",
+        which: "parent"
+      }
     }
   },
   data: {
@@ -349,8 +358,7 @@ MountainChart.define('default_model', {
       opacityRegular: .7,
       show: {
         _defs_: {
-          "geo": ["*"],
-          "geo.cat": ["country", "unstate"]
+          "is--country": true
         }
       }
     },
@@ -358,8 +366,7 @@ MountainChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["*"],
-          "geo.cat": ["country", "unstate"]
+          "is--country": true
         }
       }
     },
@@ -367,22 +374,25 @@ MountainChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["world_4region"]
+          "is--world_4region": true
         }
       }
+    },
+    entities_tags: {
+      dim: "tag"
     },
     marker_allpossible: {
       space: ["entities_allpossible"],
       label: {
         use: "property",
-        which: "geo.name"
+        which: "name"
       }
     },
     marker: {
       space: ["entities", "time"],
       label: {
         use: "property",
-        which: "geo.name"
+        which: "name"
       },
       axis_y: {
         use: "indicator",
@@ -411,10 +421,10 @@ MountainChart.define('default_model', {
       },
       color: {
         use: "property",
-        which: "geo.world_4region",
+        which: "world_4region",
         scaleType: "ordinal",
         allow: {
-          names: ["!geo.name"]
+          names: ["!name"]
         }
       },
       stack: {
@@ -423,7 +433,7 @@ MountainChart.define('default_model', {
       },
       group: {
         use: "property",
-        which: "geo.world_4region", // set a property of data
+        which: "world_4region", // set a property of data
         manualSorting: ["asia", "africa", "americas", "europe"],
         merge: false
       }
@@ -434,12 +444,23 @@ MountainChart.define('default_model', {
         shape: "svg",
         label: {
           use: "property",
-          which: "geo.name"
+          which: "name"
         },
         geoshape: {
           use: "property",
           which: "shape_lores_svg"
         }
+    },
+    marker_tags: {
+      space: ["entities_tags"],
+      label: {
+        use: "property",
+        which: "name"
+      },
+      parent: {
+        use: "property",
+        which: "parent"
+      }
     }
   },
   language: language,
@@ -475,7 +496,6 @@ LineChart.define('default_model', {
       show: {
         _defs_: {
           "geo": ["usa", "swe", "chn"],
-          "geo.cat": ["country", "unstate"]
         }
       }
     },
@@ -483,7 +503,7 @@ LineChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["world_4region"]
+          "is--world_4region": true
         }
       }
     },
@@ -492,7 +512,7 @@ LineChart.define('default_model', {
       space: ["entities", "time"],
       label: {
         use: "property",
-        which: "geo.name"
+        which: "name"
       },
       axis_y: {
         use: "indicator",
@@ -514,10 +534,10 @@ LineChart.define('default_model', {
       },
       color: {
         use: "property",
-        which: "geo.world_4region",
+        which: "world_4region",
         allow: {
           scales: ["ordinal"],
-          names: ["!geo.name"]
+          names: ["!name"]
         }
       }
     },
@@ -525,16 +545,18 @@ LineChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["*"],
-          "geo.cat": ["country", "unstate"]
+          "is--country": true
         }
       }
+    },
+    entities_tags: {
+      dim: "tag"
     },
     marker_allpossible: {
       space: ["entities_allpossible"],
       label: {
         use: "property",
-        which: "geo.name"
+        which: "name"
       }
     },
     marker_minimap:{
@@ -543,12 +565,23 @@ LineChart.define('default_model', {
         shape: "svg",
         label: {
           use: "property",
-          which: "geo.name"
+          which: "name"
         },
         geoshape: {
           use: "property",
           which: "shape_lores_svg"
         }
+    },
+    marker_tags: {
+      space: ["entities_tags"],
+      label: {
+        use: "property",
+        which: "name"
+      },
+      parent: {
+        use: "property",
+        which: "parent"
+      }
     }
   },
 
@@ -596,7 +629,7 @@ BubbleChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["country", "unstate"]
+            "is--country": true
         }
       }
     },
@@ -604,9 +637,12 @@ BubbleChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["world_4region"]
+          "is--world_4region": true
         }
       }
+    },
+    entities_tags: {
+      dim: "tag"
     },
     marker: {
       space: ["entities", "time"],
@@ -614,7 +650,7 @@ BubbleChart.define('default_model', {
       shape: "circle",
       label: {
         use: "property",
-        which: "geo.name"
+        which: "name"
       },
       size_label: {
         use: "constant",
@@ -629,7 +665,9 @@ BubbleChart.define('default_model', {
         //which: "sg_child_mortality_rate_per1000", //systema globalis
         which: "life_expectancy_years",
         scaleType: "linear",
-        zoomedMin: 15,
+        zoomedMin: 19,
+        domainMax: 85,
+        domainMin: 0,
         allow: {
           scales: ["linear", "log"]
         }
@@ -639,16 +677,18 @@ BubbleChart.define('default_model', {
         //which: "sg_gdp_p_cap_const_ppp2011_dollar",//systema globalis
         which: "income_per_person_gdppercapita_ppp_inflation_adjusted", 
         scaleType: "log",
+        domainMax: 150000,
+        domainMin: 300,
         allow: {
           scales: ["linear", "log"]
         }
       },
       color: {
         use: "property",
-        which: "geo.world_4region",
+        which: "world_4region",
         scaleType: "ordinal",
         allow: {
-          names: ["!geo.name"]
+          names: ["!name"]
         }
       },
       size: {
@@ -668,12 +708,23 @@ BubbleChart.define('default_model', {
         shape: "svg",
         label: {
           use: "property",
-          which: "geo.name"
+          which: "name"
         },
         geoshape: {
           use: "property",
           which: "shape_lores_svg"
         }
+    },
+    marker_tags: {
+      space: ["entities_tags"],
+      label: {
+        use: "property",
+        which: "name"
+      },
+      parent: {
+        use: "property",
+        which: "parent"
+      }
     }
   },
   data: {
@@ -723,7 +774,7 @@ PopByAge.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["world_4region"]
+          "is--world_4region": true
         }
       }
     },
@@ -764,7 +815,7 @@ PopByAge.define('default_model', {
         use: "constant",
         which: "#ffb600",
         allow: {
-          names: ["!geo.name"]
+          names: ["!name"]
         }
       }
     },
@@ -774,7 +825,7 @@ PopByAge.define('default_model', {
         shape: "svg",
         label: {
           use: "property",
-          which: "geo.name"
+          which: "name"
         },
         geoshape: {
           use: "property",
@@ -817,7 +868,7 @@ AgePyramid.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["country"]
+          "is--country": true
         }
       }
     },
@@ -981,7 +1032,7 @@ JOINTPyramidLine.define('default_model', {
       space: ["entities", "time"],
       label: {
         use: "property",
-        which: "geo.name"
+        which: "name"
       },
       axis_y: {
         use: "indicator",
@@ -1001,10 +1052,10 @@ JOINTPyramidLine.define('default_model', {
       },
       color: {
         use: "property",
-        which: "geo.world_4region",
+        which: "world_4region",
         allow: {
           scales: ["ordinal"],
-          names: ["!geo.name"]
+          names: ["!name"]
         }
       }
     },
@@ -1097,7 +1148,7 @@ JOINTCartogramLine.define('default_model', {
       },
       label: {
         use: "property",
-        which: "geo.name"
+        which: "name"
         //which: "province.name"
       }
     },
@@ -1105,7 +1156,7 @@ JOINTCartogramLine.define('default_model', {
       space: ["entities_line", "time"],
       label: {
         use: "property",
-        which: "geo.name"
+        which: "name"
       },
       axis_y: {
         use: "indicator",
@@ -1125,10 +1176,10 @@ JOINTCartogramLine.define('default_model', {
       },
       color: {
         use: "property",
-        which: "geo.world_4region",
+        which: "world_4region",
         allow: {
           scales: ["ordinal"],
-          names: ["!geo.name"]
+          names: ["!name"]
         }
       }
     }
@@ -1173,8 +1224,7 @@ DonutChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["usa", "bra", "chn", "ind", "idn"],
-          "geo.cat": ["country"]
+          "geo": ["usa", "bra", "chn", "ind", "idn"]
         }
       }
     },
@@ -1183,7 +1233,7 @@ DonutChart.define('default_model', {
       space: ["entities", "time"],
       label: {
         use: "property",
-        which: "geo.name"
+        which: "name"
       },
       axis: {
         use: "indicator",
@@ -1191,7 +1241,7 @@ DonutChart.define('default_model', {
       },
       color: {
         use: "property",
-        which: "geo.world_4region"
+        which: "world_4region"
       }
     }
   },
@@ -1226,23 +1276,19 @@ Cartogram.define('default_model', {
     },
     entities: {
       dim: "municipality",
-      //dim: "province",
       opacitySelectDim: .3,
       opacityRegular: 1,
       show: {
         _defs_: {
-          "municipality.cat": ["province", "municipality"],
-          //"province.cat": ["province", "municipality"]
+          "is--municipality": true
         }
       },
     },
     entities_minimap: {
-      dim: "municipality",
-      //dim: "province",
+      dim: "province",
       show: {
         _defs_: {
-          "municipality.cat": ["province", "municipality"],
-          //"province.cat": ["province", "municipality"]
+          "is--province": true
         }
       }
     },
@@ -1302,9 +1348,6 @@ Cartogram.define('default_model', {
   }
 });
 
-//Waffle Server Reader custom path
-WaffleReader.define('basepath', globals.ext_resources.host + globals.ext_resources.dataPath);
-
 //preloading mountain chart precomputed shapes
 MCComponent.define("preload", function(done) {
   var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
@@ -1361,9 +1404,6 @@ Tool.define("preload", function(promise) {
 
   var _this = this;
 
-  var conceptprops_path = globals.ext_resources.conceptpropsPath ? globals.ext_resources.conceptpropsPath :
-      globals.ext_resources.host + globals.ext_resources.preloadPath + "metadata.json";    
-  
   //TODO: concurrent
   //load language first
   this.preloadLanguage().then(function() {
@@ -1374,27 +1414,20 @@ Tool.define("preload", function(promise) {
       return;
     }
     
-    d3.json(conceptprops_path, function(conceptprops) {
-
-      globals.conceptprops = conceptprops;
-        
-      if(!globals.conceptprops.indicatorsDB["_default"]) globals.conceptprops.indicatorsDB["_default"] = {
-          "use": "constant",
-          "scales": ["ordinal"]
-      }
-      if(globals.conceptprops.indicatorsTree.children.map(function(m){return m.id}).indexOf("_default")===-1) {
-          globals.conceptprops.indicatorsTree.children.push({"id": "_default"});
-      }
+    var reader = _this.model.data.getPlainObject();
+    reader.parsers = [];
+    
+    _this.model.getDataManager().loadConceptProps(reader, function(concepts) {
 
       // TODO: REMOVE THIS HACK
       // We are currently saving concept properties info to default state manually in order
       // to produce small URLs considering some of the info in concept properties to be default
       // we need a consistent way to add concept properties to Vizabi
-      addMinMax("axis_x");
-      addMinMax("axis_y");
-      addMinMax("size");
-      addMinMax("size_label");
-      addPalettes("color");
+      addMinMax(concepts, "axis_x");
+      addMinMax(concepts, "axis_y");
+      addMinMax(concepts, "size");
+      addMinMax(concepts, "size_label");
+      addPalettes(concepts, "color");
 
       promise.resolve();
 
@@ -1402,24 +1435,24 @@ Tool.define("preload", function(promise) {
   });
 
   // TODO: REMOVE THIS HACK (read above)
-  function addPalettes(hook) {
-    //protection in case id state or marker or [hook] is undefined
+  function addPalettes(concepts, hook) {
+    //protection in case if state or marker or [hook] is undefined
     if(!((_this.default_model.state||{}).marker||{})[hook]) return;
     
     var color = _this.default_model.state.marker[hook];
-    var palette = ((globals.conceptprops.indicatorsDB[color.which]||{}).color||{}).palette||{};
-    var paletteLabels = ((globals.conceptprops.indicatorsDB[color.which]||{}).color||{}).paletteLabels||{};
+    var palette = ((concepts[color.which]||{}).color||{}).palette||{};
+    var paletteLabels = ((concepts[color.which]||{}).color||{}).paletteLabels||{};
     color.palette = utils.extend({}, color.palette, palette);
     color.paletteLabels = utils.clone(paletteLabels);
   }
 
-  function addMinMax(hook) {
-    //protection in case id state or marker or [hook] is undefined
+  function addMinMax(concepts, hook) {
+    //protection in case if state or marker or [hook] is undefined
     if(!((_this.default_model.state||{}).marker||{})[hook]) return;
     
     var axis = _this.default_model.state.marker[hook];
-    if(axis.use === "indicator" && globals.conceptprops.indicatorsDB[axis.which] && globals.conceptprops.indicatorsDB[axis.which].domain) {
-      var domain = globals.conceptprops.indicatorsDB[axis.which].domain;
+    if(axis.use === "indicator" && concepts[axis.which] && concepts[axis.which].domain) {
+      var domain = concepts[axis.which].domain;
       axis.domainMin = axis.domainMin || domain[0];
       axis.domainMax = axis.domainMax || domain[1];
       axis.zoomedMin = axis.zoomedMin || axis.domainMin || domain[0];

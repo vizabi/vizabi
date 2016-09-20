@@ -3,6 +3,7 @@ import Component from 'base/component';
 import Trail from './bubblechart-trail';
 import PanZoom from './bubblechart-panzoom';
 import Exporter from 'helpers/svgexport';
+import Labels from 'helpers/labels';
 import axisSmart from 'helpers/d3.axisWithLabelPicker';
 import DynamicBackground from 'helpers/d3.dynamicBackground';
 
@@ -36,6 +37,12 @@ var BubbleChartComp = Component.extend({
       type: "entities"
     }, {
       name: "marker",
+      type: "model"
+    }, {
+      name: "entities_minimap",
+      type: "entities"
+    }, {
+      name: "marker_minimap",
       type: "model"
     }, {
       name: "language",
@@ -87,7 +94,7 @@ var BubbleChartComp = Component.extend({
           _this.updateMarkerSizeLimits();
           _this._trails.run("findVisible");
           _this.redrawDataPoints();
-          _this._trails.run("resize");
+          _this._trails.run("resize", null, 500);
           return;
         }
         if(path.indexOf("zoomedMin") > -1 || path.indexOf("zoomedMax") > -1) {
@@ -100,14 +107,22 @@ var BubbleChartComp = Component.extend({
           && _this._zoomedXYMinMax.axis_y.zoomedMin == _this.model.marker.axis_y.zoomedMin
           && _this._zoomedXYMinMax.axis_y.zoomedMax == _this.model.marker.axis_y.zoomedMax
           ) return;
-
-            _this._panZoom.zoomToMaxMin(
-              _this.model.marker.axis_x.zoomedMin,
-              _this.model.marker.axis_x.zoomedMax,
-              _this.model.marker.axis_y.zoomedMin,
-              _this.model.marker.axis_y.zoomedMax,
-              500
-          )
+          var playAfterZoom = false;
+          if (_this.model.time.playing) {
+            playAfterZoom = true;
+            _this.model.time.pause(true);
+          }
+          _this._trails.run("abortAnimation");  
+          _this._panZoom.zoomToMaxMin(
+            _this.model.marker.axis_x.zoomedMin,
+            _this.model.marker.axis_x.zoomedMax,
+            _this.model.marker.axis_y.zoomedMin,
+            _this.model.marker.axis_y.zoomedMax,
+            500
+          );
+          if (playAfterZoom) {
+            _this.model.time.postponePause = false;
+          }
           return;
         }
 
@@ -123,8 +138,18 @@ var BubbleChartComp = Component.extend({
         _this.updateBubbleOpacity();
         _this._updateDoubtOpacity();
       },
-      "change:entities.highlight": function() {
+      "change:entities.highlight": function(evt, path) {
         if(!_this._readyOnce) return;
+        //path have values if trail is highlighted
+        if(path != 'highlight') {
+          if(path !== null) {
+            var titles = _this._formatSTitleValues(path.size, path.color); 
+            _this._updateSTitle(titles[0], titles[1]);
+          } else {
+            _this._updateSTitle();
+          }
+          return;
+        }
         //console.log("EVENT change:entities:highlight");
         _this.highlightDataPoints();
       },
@@ -232,18 +257,16 @@ var BubbleChartComp = Component.extend({
       .deleteClasses(["vzb-bc-bubbles-crop", "vzb-hidden", "vzb-bc-year", "vzb-bc-zoom-rect",
         "vzb-bc-projection-x", "vzb-bc-projection-y", "vzb-bc-axis-c-title"
       ]);
-
+    this._labels = new Labels(this);
+    this._labels.config({
+      CSS_PREFIX: 'vzb-bc',
+      LABELS_CONTAINER_CLASS: 'vzb-bc-labels',
+      LINES_CONTAINER_CLASS: 'vzb-bc-lines'
+    });
   },
   
   afterPreload: function() {
     var _this = this;
-    this.labels = this.parent.findChildByName('gapminder-labels');
-    this.labels.config({
-      CSS_PREFIX: 'vzb-bc',
-      TOOL_CONTEXT: this,
-      LABELS_CONTAINER_CLASS: 'vzb-bc-labels',
-      LINES_CONTAINER_CLASS: 'vzb-bc-lines'
-    });
   },
 
   _rangeBump: function(arg, undo) {
@@ -346,7 +369,7 @@ var BubbleChartComp = Component.extend({
       //return if updatesize exists with error
       if(_this.updateSize()) return;
       _this.updateMarkerSizeLimits();
-      _this.labels.updateSize();
+      _this._labels.updateSize();
       _this._trails.run("findVisible");
       _this._panZoom.rerun(); // includes redraw data points and trail resize
     });
@@ -388,6 +411,9 @@ var BubbleChartComp = Component.extend({
     this.wScale = d3.scale.linear()
       .domain(this.parent.datawarning_content.doubtDomain)
       .range(this.parent.datawarning_content.doubtRange);
+    
+    this._labels.readyOnce();
+
     _this._readyOnce = true;
   },
   
@@ -417,6 +443,7 @@ var BubbleChartComp = Component.extend({
       _this.updateIndicators();
       _this.updateSize();
       _this.updateEntities();
+      _this._labels.ready();
       _this.redrawDataPoints();
       _this.selectDataPoints();
       _this._trails.create();
@@ -467,7 +494,7 @@ var BubbleChartComp = Component.extend({
     this.xScale = this.model.marker.axis_x.getScale();
     this.sScale = this.model.marker.size.getScale();
     this.cScale = this.model.marker.color.getScale();
-    this.labels.setScales(this.xScale, this.yScale);
+    this._labels.setScales(this.xScale, this.yScale);
 
     this.yAxis.tickFormat(_this.model.marker.axis_y.getTickFormatter());
     this.xAxis.tickFormat(_this.model.marker.axis_x.getTickFormatter());
@@ -491,34 +518,24 @@ var BubbleChartComp = Component.extend({
   updateUIStrings: function() {
     var _this = this;
 
+    var conceptProps = _this.model.marker.getConceptprops();
     this.translator = this.model.language.getTFunction();
 
     this.strings = {
       title: {
-        Y: this.translator("indicator/" + this.model.marker.axis_y.which),
-        X: this.translator("indicator/" + this.model.marker.axis_x.which),
-        S: this.translator("indicator/" + this.model.marker.size.which),
-        C: this.translator("indicator/" + this.model.marker.color.which)
+        Y: conceptProps[this.model.marker.axis_y.which].name,
+        X: conceptProps[this.model.marker.axis_x.which].name,
+        S: conceptProps[this.model.marker.size.which].name,
+        C: conceptProps[this.model.marker.color.which].name
       },
       unit: {
-        Y: this.translator("unit/" + this.model.marker.axis_y.which),
-        X: this.translator("unit/" + this.model.marker.axis_x.which),
-        S: this.translator("unit/" + this.model.marker.size.which),
-        C: this.translator("unit/" + this.model.marker.color.which)
+        Y: conceptProps[this.model.marker.axis_y.which].unit || "",
+        X: conceptProps[this.model.marker.axis_x.which].unit || "",
+        S: conceptProps[this.model.marker.size.which].unit || "",
+        C: conceptProps[this.model.marker.color.which].unit || ""
       }
     }
     
-    //suppress unit strings that found no translation (returns same thing as requested)
-    if(this.strings.unit.Y === "unit/" + this.model.marker.axis_y.which) this.strings.unit.Y = "";
-    if(this.strings.unit.X === "unit/" + this.model.marker.axis_x.which) this.strings.unit.X = "";
-    if(this.strings.unit.S === "unit/" + this.model.marker.size.which) this.strings.unit.S = "";
-    if(this.strings.unit.C === "unit/" + this.model.marker.color.which) this.strings.unit.C = "";
-    
-    if(!!this.strings.unit.Y) this.strings.unit.Y = ", " + this.strings.unit.Y;
-    if(!!this.strings.unit.X) this.strings.unit.X = ", " + this.strings.unit.X;
-    if(!!this.strings.unit.S) this.strings.unit.S = ", " + this.strings.unit.S;
-    if(!!this.strings.unit.C) this.strings.unit.C = ", " + this.strings.unit.C;
-
     var yTitle = this.yTitleEl.selectAll("text").data([0]);
     yTitle.enter().append("text");
     yTitle
@@ -701,13 +718,13 @@ var BubbleChartComp = Component.extend({
       mouseover: function(d, i) {
         _this.model.entities.highlightEntity(d);
 
-        _this.labels.showCloseCross(d, true);
+        _this._labels.showCloseCross(d, true);
       },
 
       mouseout: function(d, i) {
         _this.model.entities.clearHighlighted();
 
-        _this.labels.showCloseCross(d, false);
+        _this._labels.showCloseCross(d, false);
       },
 
       click: function(d, i) {
@@ -811,7 +828,7 @@ var BubbleChartComp = Component.extend({
     var infoElHeight = this.activeProfile.infoElHeight;
     
     //labels
-    _this.labels.setCloseCrossHeight(_this.activeProfile.infoElHeight * 1.2);
+    _this._labels.setCloseCrossHeight(_this.activeProfile.infoElHeight * 1.2);
 
     //stage
     this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
@@ -914,11 +931,12 @@ var BubbleChartComp = Component.extend({
     this.sTitleEl
       .attr("transform", "translate(" + this.width + "," + 20 + ") rotate(-90)");
 
-
-    var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
+    var ySeparator = this.strings.unit.Y? ", ":"";
+    var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + ySeparator + this.strings.unit.Y);
     if(yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
 
-    var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
+    var xSeparator = this.strings.unit.Y? ", ":"";    
+    var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + xSeparator + this.strings.unit.X);
     if(xTitleText.node().getBBox().width > this.width - 100) xTitleText.text(this.strings.title.X);
 
     if(this.yInfoEl.select('svg').node()) {
@@ -1039,7 +1057,7 @@ var BubbleChartComp = Component.extend({
             cache.scaledC0 = valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH;
           }
           
-          _this.labels.updateLabelOnlyColor(d, index, cache);
+          _this._labels.updateLabelOnlyColor(d, index, cache);
 
         });
       }
@@ -1093,7 +1111,7 @@ var BubbleChartComp = Component.extend({
             cache.scaledS0 = utils.areaToRadius(_this.sScale(valuesTrailStart.size[d[KEY]]));
           }
           
-          _this.labels.updateLabelOnlyPosition(d, index, cache);
+          _this._labels.updateLabelOnlyPosition(d, index, cache);
 
         });
       }
@@ -1204,7 +1222,8 @@ var BubbleChartComp = Component.extend({
         view.interrupt()
           .attr("cy", _this.yScale(valueY))
           .attr("cx", _this.xScale(valueX))
-          .attr("r", scaledS);
+          .attr("r", scaledS)
+          .transition();
 
         //show entity if it was hidden
         if(showhide) view.classed("vzb-invisible", d.hidden);
@@ -1256,9 +1275,33 @@ var BubbleChartComp = Component.extend({
       if(showhide && d.hidden && _this.model.ui.chart.trails && trailStartTime && (trailStartTime < _this.time)) showhide = false;
       if(d.hidden && !_this.model.ui.chart.trails) showhide = true;
 
-      this.labels.updateLabel(d, index, cache, valueX, valueY, valueS, valueC, labelText, valueLST, duration, showhide);
+      this._labels.updateLabel(d, index, cache, valueX, valueY, valueS, valueC, labelText, valueLST, duration, showhide);
 
     }
+  },
+
+  _formatSTitleValues: function(titleS, titleC) {
+    var _this = this;
+    var unitS = this.strings.unit.S;
+    var unitC = this.strings.unit.C;
+  
+    var formatterS = this.model.marker.size.getTickFormatter();
+    var formatterC = this.model.marker.color.getTickFormatter();
+
+    if(this.model.marker.color.use == "property" && titleC) {
+      var minimapDim = this.model.entities_minimap.getDimension();
+      var minimapItems = this.model.marker_minimap.label.getValidItems();
+      var minimapLabelWhich = this.model.marker_minimap.label.which;
+      var minimapDictionary = {};
+      minimapItems.forEach(function(d){
+          minimapDictionary[d[minimapDim]] = d[minimapLabelWhich]
+      })
+      
+      titleC = minimapDictionary[titleC] || "";
+    }
+
+    return [formatterS(titleS) + " " + unitS,
+      titleC || titleC===0 ? formatterC(titleC) + " " + unitC : this.translator("hints/nodata")];
   },
 
   _updateSTitle: function(titleS, titleC) {
@@ -1454,25 +1497,15 @@ var BubbleChartComp = Component.extend({
       }
 
       _this.model.marker.getFrame(d[TIMEDIM], function(values) {
+          if(!values) return;
           var x = _this.xScale(values.axis_x[d[KEY]]);
           var y = _this.yScale(values.axis_y[d[KEY]]);
           var s = utils.areaToRadius(_this.sScale(values.size[d[KEY]]));
           var c = values.color[d[KEY]]!=null?_this.cScale(values.color[d[KEY]]):_this.COLOR_WHITEISH;
           var entityOutOfView = false;
 
-          var unitY = _this.translator("unit/" + _this.model.marker.size.which);
-          var unitC = _this.translator("unit/" + _this.model.marker.color.which);
-  
-          //suppress unit strings that found no translation (returns same thing as requested)
-          if(unitY === "unit/" + _this.model.marker.size.which) unitY = "";
-          if(unitC === "unit/" + _this.model.marker.color.which) unitC = "";
-        
-          var formatterS = _this.model.marker.size.getTickFormatter();
-          var formatterC = _this.model.marker.color.getTickFormatter();
-          _this._updateSTitle(
-            formatterS(values.size[d[KEY]])  + " " + unitY,
-            values.color[d[KEY]] || values.color[d[KEY]]===0 ? formatterC(values.color[d[KEY]]) + " " + unitC : _this.translator("hints/nodata")
-          );
+          var titles = _this._formatSTitleValues(values.size[d[KEY]], values.color[d[KEY]]); 
+          _this._updateSTitle(titles[0], titles[1]);
           if(x + s < 0 || x - s > _this.width || y + s < 0 || y - s > _this.height) {
             entityOutOfView = true;
           }
@@ -1491,7 +1524,7 @@ var BubbleChartComp = Component.extend({
             text = _this.model.entities.isSelected(d) ? '': values.label[d[KEY]];
           }
 
-          _this.labels.highlight(d, true);
+          _this._labels.highlight(d, true);
           if(_this.model.entities.isSelected(d)) {
             var skipCrownInnerFill = !d.trailStartTime || d.trailStartTime == _this.model.time.timeFormat(_this.time);
             _this._setBubbleCrown(x, y, s, c, skipCrownInnerFill);
@@ -1523,7 +1556,7 @@ var BubbleChartComp = Component.extend({
         _this._updateSTitle();  
         this._setTooltip();
         this._setBubbleCrown();
-        this.labels.highlight(null, false);
+        this._labels.highlight(null, false);
       }
 
   },

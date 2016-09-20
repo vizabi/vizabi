@@ -1,5 +1,15 @@
 //general styles
 
+.vzb-cl-rainbow-legend {
+  display: none;
+}
+
+[data-dlg="moreoptions"] {
+  .vzb-cl-rainbow-legend {
+    display: block;
+  }
+}
+
 .vzb-cl-outer {
 
   .vzb-cl-holder {
@@ -43,7 +53,6 @@
       }
     }
   }
-
   .vzb-cl-labelscale {
     top: 5px;
     padding-top: 20px;
@@ -63,12 +72,22 @@
     }
   }
 
+  .vzb-cl-rainbow-legend {
+    top: 0;
+    left: 0;
+    height: 12px;
+    position: absolute;
+    circle {
+      cursor: pointer;
+    }
+  }
+
   .vzb-cl-rainbow {
     height: 20px;
     position: absolute;
     left: 0;
     right: 0;
-    top: 5px;
+    top: 6px;
   }
   .vzb-cl-minimap {
     height: 145px;

@@ -48,7 +48,7 @@ var LineChart = Tool.extend('LineChart', {
       }, {
         component: treemenu,
         placeholder: '.vzb-tool-treemenu',
-        model: ['state.marker', 'language']
+        model: ['state.marker', 'state.marker_tags', 'state.time', 'language']
       }, {
         component: datanotes,
         placeholder: '.vzb-tool-datanotes',

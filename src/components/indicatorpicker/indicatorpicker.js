@@ -26,6 +26,12 @@ var IndPicker = Component.extend({
         var _this = this;
 
         this.model_expects = [{
+            name: "time",
+            type: "time"
+        }, {
+            name: "entities",
+            type: "entities"
+        }, {
             name: "marker",
             type: "model"
         }, {
@@ -34,6 +40,7 @@ var IndPicker = Component.extend({
         }];
 
         this.markerID = config.markerID;
+        this.showHoverValues = config.showHoverValues || false;
         if(!config.markerID) utils.warn("indicatorpicker.js complains on 'markerID' property: " + config.markerID);
 
         this.model_binds = {
@@ -49,6 +56,38 @@ var IndPicker = Component.extend({
           this.model_binds["change:marker." + this.markerID + ".which"] = function(evt) {
               _this.updateView();
             } 
+        }
+ 
+        if(this.showHoverValues) {
+            this.model_binds["change:entities.highlight"] = function(evt, values) {
+                var use = _this.model.marker[_this.markerID].use;
+                if(!_this.showHoverValues || use == "constant") return;
+                var _highlightedEntity = _this.model.entities.getHighlighted();
+                if(_highlightedEntity.length > 1) return;
+
+                if (_highlightedEntity.length) {
+                    _this.model.marker.getFrame(_this.model.time.value, function(frame) {
+                        if(_this._highlighted || !frame) return;
+
+                        var _highlightedEntity = _this.model.entities.getHighlighted();
+                        if(_highlightedEntity.length) {
+                            _this._highlightedValue = frame[_this.markerID][_highlightedEntity[0]];
+                            _this._highlighted = (!_this._highlightedValue && _this._highlightedValue !== 0) || use !== "property";
+                            _this.updateView();
+                        }
+                    });
+                } else {
+                    if(values !== null && values !== "highlight") {
+                        if(values) {
+                            _this._highlightedValue = values[_this.markerID];
+                            _this._highlighted = (!_this._highlightedValue && _this._highlightedValue !== 0) || use !== "property";
+                        }                        
+                    } else {
+                        _this._highlighted = false;
+                    }
+                    _this.updateView();
+                }
+            }
         }
 
         //contructor is the same as any component
@@ -117,14 +156,25 @@ var IndPicker = Component.extend({
         
         var which = this.model.marker[this.markerID].which;
         var type = this.model.marker[this.markerID]._type;
+        var concept = this.model.marker[this.markerID].getConceptprops();
         
-        //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-        this.el_select.text(translator("indicator" + (which==="_default" ? "/" + type : "") + "/" + which));
+        var selectText;
+
+        if(this.showHoverValues && this._highlighted) {
+          var unit = !concept.unit ? "" : " " + concept.unit;
+          var formatter = _this.model.marker[this.markerID].getTickFormatter();
+
+          selectText = (this._highlightedValue||this._highlightedValue===0) ? formatter(this._highlightedValue) + unit : translator("hints/nodata");
+
+        } else {
+            //Let the indicator "_default" in tree menu be translated differnetly for every hook type
+            selectText = (which==="_default") ? translator("indicator/_default/" + type) : concept.name;
+        }
+
+        this.el_select.text(selectText);
         
         // hide info el if no data is available for it to make sense
-        var hideInfoEl = ((translator("description/" + which) == "description/" + which)
-            && (translator("sourceName/" + which) == "sourceName/" + which)
-            && !_this.model.marker[_this.markerID].getConceptprops().sourceLink); 
+        var hideInfoEl = !concept.description && !concept.sourceName && !concept.sourceLink;
         this.infoEl.classed("vzb-hidden", hideInfoEl);
     }
     
