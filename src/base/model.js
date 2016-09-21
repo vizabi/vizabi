@@ -740,20 +740,6 @@ var Model = EventSource.extend({
     return value;
   },
 
-
-
-    
-  /**
-   * gets nested dataset
-   * @param {Array} keys define how to nest the set
-   * @returns {Object} hash-map of key-value pairs
-   */
-  getNestedItems: function(keys) {
-    if(!keys) return utils.warn("No keys provided to getNestedItems(<keys>)");
-    return _DATAMANAGER.get(this._dataId, 'nested', keys);
-  },
-
-
   /**
    * Gets formatter for this model
    * @returns {Function|Boolean} formatter function

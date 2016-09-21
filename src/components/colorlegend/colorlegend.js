@@ -397,20 +397,20 @@ var ColorLegend = Component.extend({
         _this.minimapG.selectAll("path").style("opacity", OPACITY_DIM);
         view.style("opacity", OPACITY_HIGHLIGHT);
 
-        var filtered = _this.colorModel.getNestedItems([KEY]);
-        var highlight = utils.values(filtered)
-          //returns a function over time. pick the last time-value
-          .map(function(d) {
-            return d[d.length - 1]
-          })
+        var highlight = _this.colorModel.getValidItems()
           //filter so that only countries of the correct target remain
           .filter(function(f) {
             return f[_this.colorModel.which] == target
           })
           //fish out the "key" field, leave the rest behind
           .map(function(d) {
-            return utils.clone(d, [KEY])
+            return utils.clone(d, [KEY]);
           });
+
+        //add group to highlight
+        var obj = {};
+        obj[KEY] = target;
+        highlight.push(obj); 
 
         _this.model.state.entities.setHighlight(highlight);
       },
