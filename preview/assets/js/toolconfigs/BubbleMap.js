@@ -1,10 +1,6 @@
 var VIZABI_MODEL = {
   state: {
     time: {
-      start: "1800",
-      end: "2015",
-      value: "2015",
-      step: 1,
       speed: 300
     },
     entities: {
@@ -83,17 +79,5 @@ var VIZABI_MODEL = {
         which: "parent"
       }
     }
-  },
-  language: {
-    id: "en",
-    strings: {}
-  },
-  ui: {
-    chart: {
-      labels: {
-        dragging: true
-      }
-    },
-    presentation: false
   }
 };
