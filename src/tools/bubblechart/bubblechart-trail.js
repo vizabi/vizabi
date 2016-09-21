@@ -353,7 +353,7 @@ export default Class.extend({
     var KEY = _context.KEY;
     _this.trailsData.forEach(function(d) {
       if (_this.trailTransitions[d[KEY]]) {
-        _this.trailTransitions[d[KEY]].select('line').interrupt();
+        _this.trailTransitions[d[KEY]].select('line').interrupt().transition();
       }
     });
   },

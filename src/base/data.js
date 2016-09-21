@@ -147,25 +147,26 @@ var Data = Class.extend({
           var q = query;
           if(values.length == 0) utils.warn("Reader returned empty array for query:", JSON.stringify(q, null, 2))
 
-          //search data for the entirely missing columns
-          var columnsMissing = (q.select.key||[]).concat(q.select.value||[]);
-          for(var i = values.length-1; i>=0; i--){
-            for(var c = columnsMissing.length-1; c>=0; c--){
-              //if found value for column c in row i then remove that column name from the list of missing columns
-              if(values[i][columnsMissing[c]] || values[i][columnsMissing[c]]===0) columnsMissing.splice(c,1);
+          if(values.length > 0) {
+            //search data for the entirely missing columns
+            var columnsMissing = (q.select.key||[]).concat(q.select.value||[]);
+            for(var i = values.length-1; i>=0; i--){
+              for(var c = columnsMissing.length-1; c>=0; c--){
+                //if found value for column c in row i then remove that column name from the list of missing columns
+                if(values[i][columnsMissing[c]] || values[i][columnsMissing[c]]===0) columnsMissing.splice(c,1);
+              }
+              //all columns were found to have value in at least one of the rows then stop iterating
+              if(!columnsMissing.length) break;
             }
-            //all columns were found to have value in at least one of the rows then stop iterating
-            if(!columnsMissing.length) break;
+            columnsMissing.forEach(function(d){
+              if(q.select.key.indexOf(d)==-1){
+                utils.warn('Reader result: Column "' + d + '" is missing from "' + q.from + '" data, but it might be ok');
+              }else{
+                utils.error('Reader result: Key column "' + d + '" is missing from "' + q.from + '" data for query:', JSON.stringify(q));
+                console.log(values);
+              }
+            });
           }
-          columnsMissing.forEach(function(d){
-            if(values.length == 0) return;
-            if(q.select.key.indexOf(d)==-1){
-              utils.warn("Reader returned data with missing columns [" + columnsMissing.join(", ") + "], but that might be ok");
-            }else{
-              utils.error("Reader returned data with missing KEY columns [" + columnsMissing.join(", ") + "] for query:", JSON.stringify(q));
-              console.log(values);
-            }
-          });
 
           _this._collection[queryId] = {};
           _this._collectionPromises[queryId] = {};

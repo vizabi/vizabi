@@ -154,7 +154,7 @@ var BubbleChartComp = Component.extend({
         _this.highlightDataPoints();
       },
       'change:time.value': function() {
-        if (!_this._readyOnce) return;
+        if (!_this._readyOnce || !_this.entityBubbles) return;
         if (!_this.calculationQueue) { // collect timestamp that we request
           _this.calculationQueue = [_this.model.time.value.toString()]
         } else {
@@ -651,13 +651,14 @@ var BubbleChartComp = Component.extend({
     // get array of GEOs, sorted by the size hook
     // that makes larger bubbles go behind the smaller ones
     var endTime = this.model.time.end;
-    this.model.entities.setVisible(getKeys.call(this));
+    var entities = getKeys.call(this);
+    this.model.entities.setVisible(entities);
       
     //unselecting bubbles with no data is used for the scenario when
     //some bubbles are selected and user would switch indicator.
     //bubbles would disappear but selection would stay
     if (!this.model.time.splash) {
-      this.unselectBubblesWithNoData();
+      this.unselectBubblesWithNoData(entities);
     }
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
@@ -694,19 +695,21 @@ var BubbleChartComp = Component.extend({
       this.entityBubbles.order();
   },
     
-  unselectBubblesWithNoData: function(frame){
+  unselectBubblesWithNoData: function(entities){
       var _this = this;
       var KEY = this.KEY;
-      if(!frame) frame = this.frame;
-      
-      if(!frame || !frame.axis_y || !frame.axis_x || !frame.size) return;
-      
+      if(!this.model.entities.select.length) return;
+
+      var _select = [];
+      var keys = entities.map(function(d) {
+        return d[KEY];
+      });
+
       this.model.entities.select.forEach(function(d){
-        if(!frame.axis_y[d[KEY]] && frame.axis_y[d[KEY]] !== 0
-        || !frame.axis_x[d[KEY]] && frame.axis_x[d[KEY]] !== 0
-        || !frame.size[d[KEY]] && frame.size[d[KEY]] !== 0) 
-            _this.model.entities.selectEntity(d);
-      })
+        if(keys.indexOf(d[KEY]) !== -1) _select.push(d);      
+      });
+      
+      if(_select.length !== _this.model.entities.select.length) _this.model.entities.select = _select;
   },
 
   _bubblesInteract: function() {

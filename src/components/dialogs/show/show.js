@@ -2,8 +2,6 @@ import * as utils from 'base/utils';
 import Component from 'base/component';
 import Dialog from '../_dialog';
 
-import { bubbleopacity } from 'components/_index'
-
 /*!
  * VIZABI SHOW CONTROL
  * Reusable show dialog

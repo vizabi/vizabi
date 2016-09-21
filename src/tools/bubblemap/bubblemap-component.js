@@ -7,7 +7,6 @@ import {
 } from 'base/iconset';
 
 import topojson from 'helpers/topojson';
-import cartogram from 'helpers/cartogram';
 import d3_geo_projection from 'helpers/d3.geo.projection';
 import DynamicBackground from 'helpers/d3.dynamicBackground';
 
