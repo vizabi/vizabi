@@ -378,6 +378,14 @@ MountainChart.define('default_model', {
         }
       }
     },
+    entities_group: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "is--world_4region": true
+        }
+      }
+    },
     entities_tags: {
       dim: "tag"
     },
@@ -449,6 +457,13 @@ MountainChart.define('default_model', {
         geoshape: {
           use: "property",
           which: "shape_lores_svg"
+        }
+    },
+    marker_group:{
+      space: ["entities_group"],
+        label: {
+          use: "property",
+          which: "name"
         }
     },
     marker_tags: {

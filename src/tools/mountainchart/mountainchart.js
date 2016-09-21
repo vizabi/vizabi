@@ -29,7 +29,7 @@ var MountainChart = Tool.extend('MountainChart', {
     this.components = [{
       component: MountainChartComponent,
       placeholder: '.vzb-tool-viz',
-      model: ["state.time", "state.entities", "state.marker", "language", "ui"] //pass models to component
+      model: ["state.time", "state.entities", "state.marker", "state.marker_group", "language", "ui"] //pass models to component
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',

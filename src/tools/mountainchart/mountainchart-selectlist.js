@@ -109,6 +109,8 @@ var MCSelectList = Class.extend({
     var currentAggrLevel = "null";
     var aggrLevelSpacing = 0;
 
+    var groupLabels = _this.model.marker_group.label.getItems();
+
     _this.selectList
       .attr("transform", function (d, i) {
         if(d.aggrLevel != currentAggrLevel) aggrLevelSpacing += fontHeight;
@@ -119,7 +121,7 @@ var MCSelectList = Class.extend({
       .each(function (d, i) {
 
         var view = d3.select(this).attr("id", d.geo + '-label');
-        var name = d.key ? _this.translator("entity/world_4region/" + d.key) : _this.values.label[d.KEY()];
+        var name = d.key ? groupLabels[d.key] : _this.values.label[d.KEY()];
         var number = _this.values.axis_y[d.KEY()];
 
         var string = name + ": " + formatter(number) + (i === 0 ? " "+ _this.translator("mount/people") : "");
