@@ -1,15 +1,17 @@
-var VIZABI_MODEL = { 
+
+var VIZABI_MODEL = {
   state: {
     time: {
-      start: "1800",
-      end: "2015",
-      value: "2015",
-      step: 1
+      start: 1800,
+      end: 2012,
+      value: 2012,
+      step: 1,
     },
+    //entities we want to show
     entities: {
       dim: "geo",
       show: {
-        "is--country": true
+        "country": { "$in": ["usa", "swe", "chn"] }
       }
     },
     entities_minimap: {
@@ -18,65 +20,54 @@ var VIZABI_MODEL = {
         "is--world_4region": true
       }
     },
-    entities_tags: {
-      dim: "tag"
-    },
+    //how we show it
     marker: {
       space: ["entities", "time"],
-      type: "geometry",
-      shape: "circle",
       label: {
         use: "property",
         which: "name"
       },
-      size_label: {
-        use: "constant",  
-        which: "_default",
-        scaleType: "ordinal",
-        _important: false,
-        extent: [0, 0.33]
-      },
-
       axis_y: {
         use: "indicator",
-        //which: "sg_child_mortality_rate_per1000", //systema globalis
-        which: "life_expectancy_years",
-        scaleType: "linear",
-        zoomedMin: 19,
-        domainMax: 85,
-        domainMin: 0,
+        which: "sg_gdp_p_cap_const_ppp2011_dollar",//systema globalis
+        //which: "income_per_person_gdppercapita_ppp_inflation_adjusted",
+        scaleType: "log",
         allow: {
           scales: ["linear", "log", "time"]
         }
+
       },
       axis_x: {
         use: "indicator",
-        //which: "sg_gdp_p_cap_const_ppp2011_dollar",//systema globalis
-        which: "income_per_person_gdppercapita_ppp_inflation_adjusted", 
-        scaleType: "log",
-        domainMax: 150000,
-        domainMin: 300,
+        which: "time",
+        scaleType: "time",
         allow: {
-          scales: ["linear", "log", "time"]
+          scales: ["time"]
         }
       },
       color: {
         use: "property",
         which: "world_4region",
-        scaleType: "ordinal",
         allow: {
+          scales: ["ordinal"],
           names: ["!name"]
         }
-      },
-      size: {
-        use: "indicator",
-        //which: "sg_population",//systema globalis
-        which: "population_total", 
-        scaleType: "linear",
-        allow: {
-          scales: ["linear"]
-        },
-        extent: [0, 0.85]
+      }
+    },
+    entities_allpossible: {
+      dim: "geo",
+      show: {
+        "is--country": true
+      }
+    },
+    entities_tags: {
+      dim: "tag"
+    },
+    marker_allpossible: {
+      space: ["entities_allpossible"],
+      label: {
+        use: "property",
+        which: "name"
       }
     },
     marker_minimap:{
@@ -107,5 +98,21 @@ var VIZABI_MODEL = {
   language: {
     id: "en",
     strings: {}
+  },
+  ui: {
+    chart: {
+      labels: {
+        min_number_of_entities_when_values_hide: 2 //values hide when showing 2 entities or more
+      },
+      whenHovering: {
+        hideVerticalNow: false,
+        showProjectionLineX: true,
+        showProjectionLineY: true,
+        higlightValueX: true,
+        higlightValueY: true,
+        showTooltip: false
+      }
+    },
+    presentation: false
   }
 }

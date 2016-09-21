@@ -4,12 +4,14 @@ script.
   var TOOL = "#{tool}";
   var DESCRIPTION = "#{description}";
 
-  Vizabi.utils.deepExtend(VIZABI_MODEL.ui, {
+
+  Vizabi.utils.deepExtend(VIZABI_MODEL, {
+    ui: {
       buttons: #{chart_buttons || '[]'},
       buttons_expand: #{chart_buttons_expand || '[]'},
       dialogs: #{chart_dialogs || '[]'}
     }
-  );
+  });
 
   VIZABI_MODEL.bind = {
       'ready': function(evt, vals) {
