@@ -15,6 +15,9 @@ var DraggableList = Component.extend({
       name: "group",
       type: "model"
     }, {
+      name: "marker_group",
+      type: "model" 
+    }, {
       name: "language",
       type: "language"
     }, {
@@ -124,7 +127,6 @@ var DraggableList = Component.extend({
 
   updateView: function() {
     var _this = this;
-    this.translator = this.model.language.getTFunction();
 
     this.items = this.element.selectAll('div').data(function() {
       return _this.dataArrFn().map( function(d) { return {data:d};})});
@@ -132,8 +134,10 @@ var DraggableList = Component.extend({
     this.items.enter()
       .append('div')
       .append('li');
+
+    var labels = _this.model.marker_group.label.getItems();
     this.items.select('li').classed('hover', false).each(function(val, index) {
-        d3.select(this).attr('data', val['data']).text(_this.translator(_this.lang + val['data']));
+        d3.select(this).attr('data', val['data']).text(labels[val['data']]);
       });
     this.items.exit().remove();
     this.element.selectAll('div')
@@ -172,7 +176,7 @@ var DraggableList = Component.extend({
     var _this = this;
 
     this.element = d3.select(this.element).select('.list');
-    
+
   }
 
 });

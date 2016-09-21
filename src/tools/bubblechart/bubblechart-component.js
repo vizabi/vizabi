@@ -39,9 +39,6 @@ var BubbleChartComp = Component.extend({
       name: "marker",
       type: "model"
     }, {
-      name: "entities_minimap",
-      type: "entities"
-    }, {
       name: "marker_minimap",
       type: "model"
     }, {
@@ -1293,15 +1290,7 @@ var BubbleChartComp = Component.extend({
     var formatterC = this.model.marker.color.getTickFormatter();
 
     if(this.model.marker.color.use == "property" && titleC) {
-      var minimapDim = this.model.entities_minimap.getDimension();
-      var minimapItems = this.model.marker_minimap.label.getValidItems();
-      var minimapLabelWhich = this.model.marker_minimap.label.which;
-      var minimapDictionary = {};
-      minimapItems.forEach(function(d){
-          minimapDictionary[d[minimapDim]] = d[minimapLabelWhich]
-      })
-      
-      titleC = minimapDictionary[titleC] || "";
+      titleC = this.model.marker_minimap.label.getItems()[titleC] || "";
     }
 
     return [formatterS(titleS) + " " + unitS,
