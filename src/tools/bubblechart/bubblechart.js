@@ -78,6 +78,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
       time: {
       }
     },
+    language: { },
     ui: {
       chart: {
         whenHovering: {
@@ -95,8 +96,8 @@ var BubbleChart = Tool.extend('BubbleChart', {
       },
       presentation: false,
       adaptMinMaxZoom: false,
-    cursorMode: 'arrow',
-    zoomOnScrolling: false,
+      cursorMode: 'arrow',
+      zoomOnScrolling: false,
     }
   }
 });

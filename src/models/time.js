@@ -122,15 +122,16 @@ var TimeModel = Model.extend({
   
   /*
    * Formatting and parsing functions
-   * @param {Date} date
+   * @param {Date} dateObject
    * @param {String} unit
    * @returns {String}
    */
   format: function(dateObject, unit) {
     unit = unit || this.unit;
+    if (dateObject == null) return null;
     return formats[unit] ? formats[unit](dateObject) : formats['year'](dateObject);
   },
-
+  /* parse to predefined unit */
   parseToUnit: function(timeString, unit) {
     unit = unit || this.unit;
     if (timeString == null) 
@@ -138,7 +139,7 @@ var TimeModel = Model.extend({
     else 
       return formats[unit] ? formats[unit].parse(timeString.toString()) : null;
   },
-
+  /* auto-determines unit from timestring */
   parse: function(timeString) {
     var keys = Object.keys(formats), i = 0; 
     for (; i < keys.length; i++) {

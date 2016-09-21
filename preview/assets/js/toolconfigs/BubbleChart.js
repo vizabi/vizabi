@@ -97,9 +97,5 @@ var VIZABI_MODEL = {
         which: "parent"
       }
     }
-  },
-  language: {
-    id: "en",
-    strings: {}
   }
 }

@@ -1,10 +1,6 @@
 var VIZABI_MODEL = {
   state: {
     time: {
-      start: 1800,
-      end: 2015,
-      value: 2015,
-      step: 1,
       delay: 100,
       delayThresholdX2: 50,
       delayThresholdX4: 25
@@ -113,19 +109,5 @@ var VIZABI_MODEL = {
         which: "parent"
       }
     }
-  },
-  language: {
-    id: "en",
-    strings: {}
-  },
-  ui: {
-    chart: {
-      manualSortingEnabled: true,
-      yMaxMethod: "latest",
-      probeX: 1.85,
-      xLogStops: [1, 2, 5],
-      xPoints: 50
-    },
-    presentation: false
   }
 }
