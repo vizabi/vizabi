@@ -19,6 +19,8 @@ var EntitiesModel = Model.extend({
     opacityRegular: 1
   },
 
+  objectLeafs: ['show'],
+
   /**
    * Initializes the entities model.
    * @param {Object} values The initial values of this model
@@ -96,7 +98,7 @@ var EntitiesModel = Model.extend({
    * @returns {Array} Array of unique values
    */
   getFilter: function() {
-    return this.show.getPlainObject();
+    return this.show;
   },
 
   /**
@@ -261,6 +263,16 @@ var EntitiesModel = Model.extend({
     this.show[dimension] = ["*"];
   },
 
+  /**
+   * Gets the highlighted items
+   * @returns {Array} Array of unique highlighted values
+   */
+  getHighlighted: function() {
+    var dim = this.getDimension();
+    return this.highlight.map(function(d) {
+      return d[dim];
+    });
+  },
 
   setHighlight: function(arg) {
     if (!utils.isArray(arg))

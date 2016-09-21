@@ -43,6 +43,7 @@ var Marker = Model.extend({
         }else{ 
             //otherwise calculate own date limits (a costly operation)
             items = hook.getValidItems().map(function(m){return m[time.getDimension()];});
+            if(items.length == 0) utils.warn("getTimeLimits() was unable to work with an empty array of valid datapoints")
             min = d3.min(items);
             max = d3.max(items);
         }
@@ -54,9 +55,9 @@ var Marker = Model.extend({
       var resultMin = d3.max(minArray);
       var resultMax = d3.min(maxArray);
       if(resultMin > resultMax) {
+          utils.warn("getTimeLimits(): Availability of the indicator's data has no intersection. I give up and just return some valid time range where you'll find no data points. Enjoy!")
           resultMin = d3.min(minArray);
           resultMax = d3.max(maxArray);
-          utils.warn("getTimeLimits(): Availability of the indicator's data has no intersection. I give up and just return some valid time range where you'll find no data points. Enjoy!")
       }
       return {min: resultMin, max: resultMax}
   },
@@ -91,7 +92,7 @@ var Marker = Model.extend({
                 
             // Remove the keys from it that are not in this hook
             if(hook._important) resultKeys = resultKeys.filter(function(f) {
-              return keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1;
+              return _this._parent.time.splash !== false || keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1;
             })
         });
         return resultKeys.map(function(d){var r = {}; r[KEY] = d; return r; });

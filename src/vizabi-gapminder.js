@@ -56,8 +56,7 @@ BarChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["usa", "swe", "nor"],
-          "geo.cat": ["country", "unstate"]
+          "geo": ["usa", "swe", "nor"]
         }
       }
     },
@@ -65,7 +64,7 @@ BarChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["world_4region"]
+          "is--world_4region": true
         }
       }
     },
@@ -134,7 +133,7 @@ BarRankChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["country", "unstate"]
+          "is--country": true
         }
       },
       opacitySelectDim: .3,
@@ -144,7 +143,7 @@ BarRankChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["world_4region"]
+          "is--world_4region": true
         }
       }
     },
@@ -152,8 +151,7 @@ BarRankChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["*"],
-          "geo.cat": ["country", "unstate"]
+          "is--country": true
         }
       }
     },
@@ -245,7 +243,7 @@ BubbleMap.define('default_model', {
       opacityRegular: 1,
       show: {
         _defs_: {
-          "geo.is--country": true
+          "is--country": true
         }
       },
     },
@@ -253,7 +251,7 @@ BubbleMap.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.is--world_4region": true
+          "is--world_4region": true
         }
       }
     },
@@ -274,7 +272,7 @@ BubbleMap.define('default_model', {
         allow: {
           scales: ["linear"]
         },
-        extent: [0.04, 0.85]
+        extent: [0, 0.85]
       },
       lat: {
         use: "property",
@@ -360,7 +358,7 @@ MountainChart.define('default_model', {
       opacityRegular: .7,
       show: {
         _defs_: {
-          "geo.is--country": true
+          "is--country": true
         }
       }
     },
@@ -368,7 +366,7 @@ MountainChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.is--country": true
+          "is--country": true
         }
       }
     },
@@ -376,7 +374,7 @@ MountainChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.is--world_4region": true
+          "is--world_4region": true
         }
       }
     },
@@ -498,7 +496,6 @@ LineChart.define('default_model', {
       show: {
         _defs_: {
           "geo": ["usa", "swe", "chn"],
-          "geo.cat": ["country", "unstate"]
         }
       }
     },
@@ -506,7 +503,7 @@ LineChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["world_4region"]
+          "is--world_4region": true
         }
       }
     },
@@ -548,10 +545,12 @@ LineChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["*"],
-          "geo.cat": ["country", "unstate"]
+          "is--country": true
         }
       }
+    },
+    entities_tags: {
+      dim: "tag"
     },
     marker_allpossible: {
       space: ["entities_allpossible"],
@@ -572,6 +571,17 @@ LineChart.define('default_model', {
           use: "property",
           which: "shape_lores_svg"
         }
+    },
+    marker_tags: {
+      space: ["entities_tags"],
+      label: {
+        use: "property",
+        which: "name"
+      },
+      parent: {
+        use: "property",
+        which: "parent"
+      }
     }
   },
 
@@ -619,7 +629,7 @@ BubbleChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-            "geo.is--country": true
+            "is--country": true
         }
       }
     },
@@ -627,7 +637,7 @@ BubbleChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.is--world_4region": true
+          "is--world_4region": true
         }
       }
     },
@@ -764,7 +774,7 @@ PopByAge.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["world_4region"]
+          "is--world_4region": true
         }
       }
     },
@@ -858,7 +868,7 @@ AgePyramid.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["country"]
+          "is--country": true
         }
       }
     },
@@ -1214,8 +1224,7 @@ DonutChart.define('default_model', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["usa", "bra", "chn", "ind", "idn"],
-          "geo.cat": ["country"]
+          "geo": ["usa", "bra", "chn", "ind", "idn"]
         }
       }
     },
@@ -1267,23 +1276,19 @@ Cartogram.define('default_model', {
     },
     entities: {
       dim: "municipality",
-      //dim: "province",
       opacitySelectDim: .3,
       opacityRegular: 1,
       show: {
         _defs_: {
-          "municipality.cat": ["province", "municipality"],
-          //"province.cat": ["province", "municipality"]
+          "is--municipality": true
         }
       },
     },
     entities_minimap: {
-      dim: "municipality",
-      //dim: "province",
+      dim: "province",
       show: {
         _defs_: {
-          "municipality.cat": ["province", "municipality"],
-          //"province.cat": ["province", "municipality"]
+          "is--province": true
         }
       }
     },

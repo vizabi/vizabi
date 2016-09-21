@@ -23,7 +23,7 @@
           .vzb-dialog-content {
             padding-left: 10px;
             padding-right: 10px;
-            overflow: visible;
+            overflow: auto;
             .vzb-cl-rainbow {
               left: 15px;
               right: 18px;
@@ -37,7 +37,8 @@
           .vzb-dialog-content {
             padding-left: 10px;
             padding-right: 10px;
-            overflow: visible;
+            overflow: auto;
+            max-height: 200px;
             .vzb-cl-rainbow {
               left: 16px;
               right: auto;
@@ -93,13 +94,14 @@
             //max-height: 190px;
             max-height: '';
             //min-height: 120px;
-          
+            margin-bottom: 5px;
             .vzb-colorpicker-svg {
               z-index: 10;
             }
           }
                 
           .vzb-cl-outer {
+            max-height: 145px;
             .vzb-cl-holder {
               //max-height: 160px;
               //overflow-y: scroll;

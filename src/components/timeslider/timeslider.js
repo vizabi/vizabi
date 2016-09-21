@@ -311,6 +311,7 @@ var TimeSlider = Component.extend({
    * Ideally,it contains only operations related to size
    */
   resize: function () {
+    if(this._splash) return;
 
     this.model.time.pause();
 
@@ -389,6 +390,7 @@ var TimeSlider = Component.extend({
       var point = iterator();
       if(point == null) return;
       _this.model.marker.getFrame(timePoints[point], function(values) {
+        if(!values) return;
         if(findEntityWithCompleteHooks(values)) {
           findCB(point);
         } else {

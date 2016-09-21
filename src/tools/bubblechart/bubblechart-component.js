@@ -39,6 +39,12 @@ var BubbleChartComp = Component.extend({
       name: "marker",
       type: "model"
     }, {
+      name: "entities_minimap",
+      type: "entities"
+    }, {
+      name: "marker_minimap",
+      type: "model"
+    }, {
       name: "language",
       type: "language"
     }, {
@@ -132,13 +138,23 @@ var BubbleChartComp = Component.extend({
         _this.updateBubbleOpacity();
         _this._updateDoubtOpacity();
       },
-      "change:entities.highlight": function() {
+      "change:entities.highlight": function(evt, path) {
         if(!_this._readyOnce) return;
+        //path have values if trail is highlighted
+        if(path != 'highlight') {
+          if(path !== null) {
+            var titles = _this._formatSTitleValues(path.size, path.color); 
+            _this._updateSTitle(titles[0], titles[1]);
+          } else {
+            _this._updateSTitle();
+          }
+          return;
+        }
         //console.log("EVENT change:entities:highlight");
         _this.highlightDataPoints();
       },
       'change:time.value': function() {
-        if (!_this._readyOnce) return;
+        if (!_this._readyOnce || !_this.entityBubbles) return;
         if (!_this.calculationQueue) { // collect timestamp that we request
           _this.calculationQueue = [_this.model.time.value.toString()]
         } else {
@@ -502,34 +518,24 @@ var BubbleChartComp = Component.extend({
   updateUIStrings: function() {
     var _this = this;
 
+    var conceptProps = _this.model.marker.getConceptprops();
     this.translator = this.model.language.getTFunction();
 
     this.strings = {
       title: {
-        Y: this.translator("indicator/" + this.model.marker.axis_y.which),
-        X: this.translator("indicator/" + this.model.marker.axis_x.which),
-        S: this.translator("indicator/" + this.model.marker.size.which),
-        C: this.translator("indicator/" + this.model.marker.color.which)
+        Y: conceptProps[this.model.marker.axis_y.which].name,
+        X: conceptProps[this.model.marker.axis_x.which].name,
+        S: conceptProps[this.model.marker.size.which].name,
+        C: conceptProps[this.model.marker.color.which].name
       },
       unit: {
-        Y: this.translator("unit/" + this.model.marker.axis_y.which),
-        X: this.translator("unit/" + this.model.marker.axis_x.which),
-        S: this.translator("unit/" + this.model.marker.size.which),
-        C: this.translator("unit/" + this.model.marker.color.which)
+        Y: conceptProps[this.model.marker.axis_y.which].unit || "",
+        X: conceptProps[this.model.marker.axis_x.which].unit || "",
+        S: conceptProps[this.model.marker.size.which].unit || "",
+        C: conceptProps[this.model.marker.color.which].unit || ""
       }
     }
     
-    //suppress unit strings that found no translation (returns same thing as requested)
-    if(this.strings.unit.Y === "unit/" + this.model.marker.axis_y.which) this.strings.unit.Y = "";
-    if(this.strings.unit.X === "unit/" + this.model.marker.axis_x.which) this.strings.unit.X = "";
-    if(this.strings.unit.S === "unit/" + this.model.marker.size.which) this.strings.unit.S = "";
-    if(this.strings.unit.C === "unit/" + this.model.marker.color.which) this.strings.unit.C = "";
-    
-    if(!!this.strings.unit.Y) this.strings.unit.Y = ", " + this.strings.unit.Y;
-    if(!!this.strings.unit.X) this.strings.unit.X = ", " + this.strings.unit.X;
-    if(!!this.strings.unit.S) this.strings.unit.S = ", " + this.strings.unit.S;
-    if(!!this.strings.unit.C) this.strings.unit.C = ", " + this.strings.unit.C;
-
     var yTitle = this.yTitleEl.selectAll("text").data([0]);
     yTitle.enter().append("text");
     yTitle
@@ -645,13 +651,14 @@ var BubbleChartComp = Component.extend({
     // get array of GEOs, sorted by the size hook
     // that makes larger bubbles go behind the smaller ones
     var endTime = this.model.time.end;
-    this.model.entities.setVisible(getKeys.call(this));
+    var entities = getKeys.call(this);
+    this.model.entities.setVisible(entities);
       
     //unselecting bubbles with no data is used for the scenario when
     //some bubbles are selected and user would switch indicator.
     //bubbles would disappear but selection would stay
     if (!this.model.time.splash) {
-      this.unselectBubblesWithNoData();
+      this.unselectBubblesWithNoData(entities);
     }
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
@@ -688,19 +695,21 @@ var BubbleChartComp = Component.extend({
       this.entityBubbles.order();
   },
     
-  unselectBubblesWithNoData: function(frame){
+  unselectBubblesWithNoData: function(entities){
       var _this = this;
       var KEY = this.KEY;
-      if(!frame) frame = this.frame;
-      
-      if(!frame || !frame.axis_y || !frame.axis_x || !frame.size) return;
-      
+      if(!this.model.entities.select.length) return;
+
+      var _select = [];
+      var keys = entities.map(function(d) {
+        return d[KEY];
+      });
+
       this.model.entities.select.forEach(function(d){
-        if(!frame.axis_y[d[KEY]] && frame.axis_y[d[KEY]] !== 0
-        || !frame.axis_x[d[KEY]] && frame.axis_x[d[KEY]] !== 0
-        || !frame.size[d[KEY]] && frame.size[d[KEY]] !== 0) 
-            _this.model.entities.selectEntity(d);
-      })
+        if(keys.indexOf(d[KEY]) !== -1) _select.push(d);      
+      });
+      
+      if(_select.length !== _this.model.entities.select.length) _this.model.entities.select = _select;
   },
 
   _bubblesInteract: function() {
@@ -925,11 +934,12 @@ var BubbleChartComp = Component.extend({
     this.sTitleEl
       .attr("transform", "translate(" + this.width + "," + 20 + ") rotate(-90)");
 
-
-    var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
+    var ySeparator = this.strings.unit.Y? ", ":"";
+    var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + ySeparator + this.strings.unit.Y);
     if(yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
 
-    var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
+    var xSeparator = this.strings.unit.Y? ", ":"";    
+    var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + xSeparator + this.strings.unit.X);
     if(xTitleText.node().getBBox().width > this.width - 100) xTitleText.text(this.strings.title.X);
 
     if(this.yInfoEl.select('svg').node()) {
@@ -1215,7 +1225,8 @@ var BubbleChartComp = Component.extend({
         view.interrupt()
           .attr("cy", _this.yScale(valueY))
           .attr("cx", _this.xScale(valueX))
-          .attr("r", scaledS);
+          .attr("r", scaledS)
+          .transition();
 
         //show entity if it was hidden
         if(showhide) view.classed("vzb-invisible", d.hidden);
@@ -1270,6 +1281,30 @@ var BubbleChartComp = Component.extend({
       this._labels.updateLabel(d, index, cache, valueX, valueY, valueS, valueC, labelText, valueLST, duration, showhide);
 
     }
+  },
+
+  _formatSTitleValues: function(titleS, titleC) {
+    var _this = this;
+    var unitS = this.strings.unit.S;
+    var unitC = this.strings.unit.C;
+  
+    var formatterS = this.model.marker.size.getTickFormatter();
+    var formatterC = this.model.marker.color.getTickFormatter();
+
+    if(this.model.marker.color.use == "property" && titleC) {
+      var minimapDim = this.model.entities_minimap.getDimension();
+      var minimapItems = this.model.marker_minimap.label.getValidItems();
+      var minimapLabelWhich = this.model.marker_minimap.label.which;
+      var minimapDictionary = {};
+      minimapItems.forEach(function(d){
+          minimapDictionary[d[minimapDim]] = d[minimapLabelWhich]
+      })
+      
+      titleC = minimapDictionary[titleC] || "";
+    }
+
+    return [formatterS(titleS) + " " + unitS,
+      titleC || titleC===0 ? formatterC(titleC) + " " + unitC : this.translator("hints/nodata")];
   },
 
   _updateSTitle: function(titleS, titleC) {
@@ -1465,25 +1500,15 @@ var BubbleChartComp = Component.extend({
       }
 
       _this.model.marker.getFrame(d[TIMEDIM], function(values) {
+          if(!values) return;
           var x = _this.xScale(values.axis_x[d[KEY]]);
           var y = _this.yScale(values.axis_y[d[KEY]]);
           var s = utils.areaToRadius(_this.sScale(values.size[d[KEY]]));
           var c = values.color[d[KEY]]!=null?_this.cScale(values.color[d[KEY]]):_this.COLOR_WHITEISH;
           var entityOutOfView = false;
 
-          var unitY = _this.translator("unit/" + _this.model.marker.size.which);
-          var unitC = _this.translator("unit/" + _this.model.marker.color.which);
-  
-          //suppress unit strings that found no translation (returns same thing as requested)
-          if(unitY === "unit/" + _this.model.marker.size.which) unitY = "";
-          if(unitC === "unit/" + _this.model.marker.color.which) unitC = "";
-        
-          var formatterS = _this.model.marker.size.getTickFormatter();
-          var formatterC = _this.model.marker.color.getTickFormatter();
-          _this._updateSTitle(
-            formatterS(values.size[d[KEY]])  + " " + unitY,
-            values.color[d[KEY]] || values.color[d[KEY]]===0 ? formatterC(values.color[d[KEY]]) + " " + unitC : _this.translator("hints/nodata")
-          );
+          var titles = _this._formatSTitleValues(values.size[d[KEY]], values.color[d[KEY]]); 
+          _this._updateSTitle(titles[0], titles[1]);
           if(x + s < 0 || x - s > _this.width || y + s < 0 || y - s > _this.height) {
             entityOutOfView = true;
           }

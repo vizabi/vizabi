@@ -100,7 +100,6 @@ var Data = Class.extend({
         } else {
           // check if the requested rows are similar
           if (utils.comparePlainObjects(queueItem.query.where, query.where)
-           && utils.comparePlainObjects(queueItem.query.grouping, query.grouping)
            && utils.comparePlainObjects(queueItem.query.select.key, query.select.key)
             ) {
 
@@ -133,19 +132,6 @@ var Data = Class.extend({
       // no double columns in formatter because it's an object, extend would've overwritten doubles
       query.select.value = utils.unique(query.select.value);
 
-      //create hash for dimensions only query
-      var dim, dimQ, dimQId = 0; 
-      dimQ = utils.clone(query);
-      dim = utils.keys(dimQ.grouping);
-      if (utils.arrayEquals(dimQ.select.key, dim)) {
-        dimQ.select = dim;
-        dimQId = utils.hashCode([
-          dimQ,
-          lang,
-          reader
-        ]);
-      }
-
       // Create a new reader for this query
       var readerClass = Reader.get(reader_name);
       if (!readerClass) {
@@ -159,17 +145,28 @@ var Data = Class.extend({
           //success reading
           var values = r.getData();
           var q = query;
+          if(values.length == 0) utils.warn("Reader returned empty array for query:", JSON.stringify(q, null, 2))
 
-          //make sure all queried is returned
-          values = values.map(function(d) {
-            for(var i = 0; i < q.select.length; i += 1) {
-              var col = q.select[i];
-              if(typeof d[col] === 'undefined') {
-                d[col] = null;
+          if(values.length > 0) {
+            //search data for the entirely missing columns
+            var columnsMissing = (q.select.key||[]).concat(q.select.value||[]);
+            for(var i = values.length-1; i>=0; i--){
+              for(var c = columnsMissing.length-1; c>=0; c--){
+                //if found value for column c in row i then remove that column name from the list of missing columns
+                if(values[i][columnsMissing[c]] || values[i][columnsMissing[c]]===0) columnsMissing.splice(c,1);
               }
+              //all columns were found to have value in at least one of the rows then stop iterating
+              if(!columnsMissing.length) break;
             }
-            return d;
-          });
+            columnsMissing.forEach(function(d){
+              if(q.select.key.indexOf(d)==-1){
+                utils.warn('Reader result: Column "' + d + '" is missing from "' + q.from + '" data, but it might be ok');
+              }else{
+                utils.error('Reader result: Key column "' + d + '" is missing from "' + q.from + '" data for query:', JSON.stringify(q));
+                console.log(values);
+              }
+            });
+          }
 
           _this._collection[queryId] = {};
           _this._collectionPromises[queryId] = {};
@@ -196,10 +193,6 @@ var Data = Class.extend({
             mergedQuery.promise.resolve(mergedQuery.queryId);
           });
   
-          //create cache record for dimension only query
-          if(dimQId !== 0) {
-            _this._collection[dimQId] = _this._collection[queryId];              
-          }
           //promise.resolve(queryId);
         }, //error reading
         function(err) { 
@@ -264,31 +257,42 @@ var Data = Class.extend({
     var _this = this;
     
     var query = {
-      grouping: [],
       from: "concepts",
       select: {
         key: ["concept"],
-        value: ["concept","concept_type","indicator_url","color","scales","interpolation","tags"]
+        value: ["concept_type","indicator_url","color","scales","interpolation","tags","name","unit","description"]
       }
     };
     
     this.load(query, "en", reader).then(function(dataId) {
+      
       _this.conceptPropsDataID = dataId;
       _this.conceptDictionary = {_default: {concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root"}};
       _this.get(dataId).forEach(function(d){
         var concept = {};
         concept["use"] = (d.concept_type=="measure" || d.concept_type=="time")?"indicator":"property";
         concept["sourceLink"] = d.indicator_url;
-        concept["color"] = JSON.parse(d.color);
-        concept["scales"] = JSON.parse(d.scales);
+        try {
+          concept["color"] = d.color ? JSON.parse(d.color) : null;
+        } catch (e) {
+          concept["color"] = null;
+        }
+        try {
+          concept["scales"] = d.scales ? JSON.parse(d.scales) : null;
+        } catch (e) {
+          concept["scales"] = null;
+        }
         concept["interpolation"] = d.interpolation;
         concept["tags"] = d.tags;
+        concept["name"] = d.name;
+        concept["unit"] = d.unit;
+        concept["description"] = d.description;
         _this.conceptDictionary[d.concept] = concept;
       });
       
       callback(_this.conceptDictionary);
     }, function(err) {
-      utils.warn('Problem with query: ', JSON.stringify(query));
+      utils.warn('Problem with query: ', query);
     });
   },
   
@@ -486,8 +490,7 @@ var Data = Class.extend({
       var buildFrame = function(frameName, keys, queryId, callback) {
           var frame = {};
 
-          if (!query.where[TIME]) {
-            // The query.where clause doesn't have time field for properties:
+          if (query.from !== "datapoints") {
             // we populate the regular set with a single value (unpack properties into constant time series)
             var dataset = _this._collection[queryId].data;
             for (c = 0; c < cLength; c++) frame[columns[c]] = {};

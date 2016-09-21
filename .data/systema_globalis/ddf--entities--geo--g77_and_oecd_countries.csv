@@ -1,0 +1,4 @@
+g77_and_oecd_countries,name,gwid,is--g77_and_oecd_countries
+others,Others,i274,TRUE
+g77,G77,i272,TRUE
+oecd,OECD,i273,TRUE

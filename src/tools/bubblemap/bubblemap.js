@@ -35,7 +35,7 @@ var BubbleMap = Tool.extend('BubbleMap', {
     this.components = [{
       component: BubbleMapComponent,
       placeholder: '.vzb-tool-viz',
-      model: ["state.time", "state.entities", "state.marker", "language", "ui"] //pass models to component
+      model: ["state.time", "state.entities", "state.marker", "state.entities_minimap", "state.marker_minimap", "language", "ui"] //pass models to component
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
