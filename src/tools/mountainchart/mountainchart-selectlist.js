@@ -11,6 +11,7 @@ var MCSelectList = Class.extend({
 
   rebuild: function (data) {
     var _this = this.context;
+    var _local = this;
 
     var listData = _this.mountainPointers
       .concat(_this.groupedPointers)
@@ -77,10 +78,12 @@ var MCSelectList = Class.extend({
       })
       .on("mousemove", function (d, i) {
         if (utils.isTouchDevice()) return;
+        _local.showCloseCross(d, true);
         _this.model.entities.highlightEntity(d);
       })
       .on("mouseout", function (d, i) {
         if (utils.isTouchDevice()) return;
+        _local.showCloseCross(d, false);
         _this.model.entities.clearHighlighted();
 
       })
@@ -181,7 +184,18 @@ var MCSelectList = Class.extend({
           }, 2000)
         });
       });
-  }
+  }, 
+
+  showCloseCross: function(d, show) {
+    var _this = this.context; 
+    var KEY = _this.KEY; 
+    //show the little cross on the selected label
+    _this.selectList
+        .filter(function(f){return f[KEY] == d[KEY]})
+        .select(".vzb-mc-label-x")
+        .classed("vzb-invisible", !show);
+  },
+ 
 });
 
 export default MCSelectList;
