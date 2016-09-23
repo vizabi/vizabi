@@ -1,11 +1,19 @@
+script(src='assets/js/toolconfigs/#{tool}.js')
 script.
   var TITLE = "#{title}";
   var TOOL = "#{tool}";
   var DESCRIPTION = "#{description}";
 
-  VIZABI_MODEL = {
-    state: {},
-    bind: {
+
+  Vizabi.utils.deepExtend(VIZABI_MODEL, {
+    ui: {
+      buttons: #{chart_buttons || '[]'},
+      buttons_expand: #{chart_buttons_expand || '[]'},
+      dialogs: #{chart_dialogs || '[]'}
+    }
+  });
+
+  VIZABI_MODEL.bind = {
       'ready': function(evt, vals) {
         updateURL();
         updateStateEditor(VIZ.getModel().state);
@@ -13,13 +21,7 @@ script.
       'persistentChange': function(evt, minModel) {
         updateURL(true, minModel); // force update
       }
-    },
-    ui: {
-      buttons: #{chart_buttons || '[]'},
-      buttons_expand: #{chart_buttons_expand || '[]'},
-      dialogs: #{chart_dialogs || '[]'}
-    }
-  };
+    };
 
   VIZABI_MODEL.bind['change:state'] = function(evt, vals) {
       updateStateEditor(VIZ.getModel().state);

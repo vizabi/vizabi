@@ -869,13 +869,16 @@ var Model = EventSource.extend({
       if(opts.onlyType && h.getType() !== opts.onlyType) {
         return true;
       }
-
+      // if query's dimensions are the same as the hook's, no join
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
         filters = utils.extend(filters, h.getFilter(splashScreen));
       } else {
-        var filter = {};
-        filter[h.getDimension()] = "$"  + h.getDimension();
-        filters = utils.extend(filters, filter);
+        var joinFilter = h.getFilter(splashScreen);
+        if (joinFilter != null) {
+          var filter = {};
+          filter[h.getDimension()] = "$"  + h.getDimension();
+          filters = utils.extend(filters, filter);
+        }
       }
     });
     return filters;
@@ -894,10 +897,13 @@ var Model = EventSource.extend({
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
         return true;
       }
-      joins["$" + h.getDimension()] = {
-        key: h.getDimension(),
-        where: h.getFilter(splashScreen)
-      };
+      var filter = h.getFilter(splashScreen);
+      if (filter != null) {
+        joins["$" + h.getDimension()] = {
+          key: h.getDimension(),
+          where: h.getFilter(splashScreen)
+        };
+      }
     });
     return joins;
   },

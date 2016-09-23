@@ -69,7 +69,9 @@ var BubbleMap = Tool.extend('BubbleMap', {
 
   default_model: {
     state: {
+      time: { }
     },
+    language: { },
     ui: {
       chart: {
         labels: {
