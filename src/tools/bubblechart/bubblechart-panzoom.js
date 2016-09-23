@@ -355,7 +355,7 @@ export default Class.extend({
                 if (this.quitZoom) return;
 
                 //Force the update of the URL and history, with the same values
-                _this.model.marker.set(_this._zoomedXYMinMax, true, true);
+                if(!zoomer.dontFeedToState) _this.model.marker.set(_this._zoomedXYMinMax, true, true);
             }
         };
     },
@@ -460,7 +460,7 @@ export default Class.extend({
         }
     },
 
-    zoomToMaxMin: function(zoomedMinX, zoomedMaxX, zoomedMinY, zoomedMaxY, duration){
+    zoomToMaxMin: function(zoomedMinX, zoomedMaxX, zoomedMinY, zoomedMaxY, duration, dontFeedToState){
         var _this = this.context;
         var minX = zoomedMinX;
         var maxX = zoomedMaxX;
@@ -518,10 +518,10 @@ export default Class.extend({
         var xRange = [_this.xScale(minX), _this.xScale(maxX)];
         var yRange = [_this.yScale(minY), _this.yScale(maxY)];
 
-        this._zoomOnRectangle(_this.element, xRange[0], yRange[0], xRange[1], yRange[1], false, duration);
+        this._zoomOnRectangle(_this.element, xRange[0], yRange[0], xRange[1], yRange[1], false, duration, dontFeedToState);
     },
 
-    _zoomOnRectangle: function(element, zoomedX1, zoomedY1, zoomedX2, zoomedY2, compensateDragging, duration) {
+    _zoomOnRectangle: function(element, zoomedX1, zoomedY1, zoomedX2, zoomedY2, compensateDragging, duration, dontFeedToState) {
         var _this = this.context;
         var zoomer = this.zoomer;
 
@@ -615,6 +615,7 @@ export default Class.extend({
             (zoomer.translate()[1] - Math.min(y1, y2)) / zoomer.scale() / zoomer.ratioY * zoom * ratioY
         ];
 
+        zoomer.dontFeedToState = dontFeedToState;
         zoomer.scale(zoom);
         zoomer.ratioY = ratioY;
         zoomer.ratioX = ratioX;
