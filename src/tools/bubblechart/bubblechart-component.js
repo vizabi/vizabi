@@ -367,10 +367,10 @@ var BubbleChartComp = Component.extend({
     this.on("resize", function() {
       //console.log("EVENT: resize");
       //return if updatesize exists with error
+      _this._trails.run("abortAnimation");
       if(_this.updateSize()) return;
       _this.updateMarkerSizeLimits();
       _this._labels.updateSize();
-      _this._trails.run("findVisible");
       _this._panZoom.rerun(); // includes redraw data points and trail resize
     });
 
