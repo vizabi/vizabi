@@ -1,6 +1,22 @@
 import interpolator from '../../node_modules/vizabi-interpolators/interpolators';
 
 /*
+ * Check if value A is in +- proximity of value B
+ * @param {Number} a
+ * @param {Number} b
+ * @param {Number} tolerance
+ * @returns {Boolean} true if values are approximately equal or false otherwise
+ */
+export var approxEqual = function(a, b, tolerance) {
+  tolerance = tolerance||0;
+  if(b!==0){
+    return (1 - tolerance) * b <= a && a <= b * (1 + tolerance);
+  }else{
+    return Math.abs(a) <= tolerance;
+  }
+};
+
+/*
  * returns unique id with optional prefix
  * @param {String} prefix
  * @returns {String} id

@@ -102,10 +102,10 @@ var BubbleChartComp = Component.extend({
 
           //avoid zooming again if values didn't change.
           //also prevents infinite loop on forced URL update from zoom.stop()
-          if(_this._zoomedXYMinMax.axis_x.zoomedMin == _this.model.marker.axis_x.zoomedMin
-          && _this._zoomedXYMinMax.axis_x.zoomedMax == _this.model.marker.axis_x.zoomedMax
-          && _this._zoomedXYMinMax.axis_y.zoomedMin == _this.model.marker.axis_y.zoomedMin
-          && _this._zoomedXYMinMax.axis_y.zoomedMax == _this.model.marker.axis_y.zoomedMax
+          if(utils.approxEqual(_this._zoomedXYMinMax.axis_x.zoomedMin, _this.model.marker.axis_x.zoomedMin, 0.01)
+          && utils.approxEqual(_this._zoomedXYMinMax.axis_x.zoomedMax, _this.model.marker.axis_x.zoomedMax, 0.01)
+          && utils.approxEqual(_this._zoomedXYMinMax.axis_y.zoomedMin, _this.model.marker.axis_y.zoomedMin, 0.01)
+          && utils.approxEqual(_this._zoomedXYMinMax.axis_y.zoomedMax, _this.model.marker.axis_y.zoomedMax, 0.01)
           ) return;
           var playAfterZoom = false;
           if (_this.model.time.playing) {
@@ -118,7 +118,7 @@ var BubbleChartComp = Component.extend({
             _this.model.marker.axis_x.zoomedMax,
             _this.model.marker.axis_y.zoomedMin,
             _this.model.marker.axis_y.zoomedMax,
-            500
+            500 /*duration*/, "don't feed these zoom values back to state"
           );
           if (playAfterZoom) {
             _this.model.time.postponePause = false;
@@ -480,6 +480,7 @@ var BubbleChartComp = Component.extend({
         var zoomedMinY = yAxis.zoomedMin ? yAxis.zoomedMin : yDomain[0];
         var zoomedMaxY = yAxis.zoomedMax ? yAxis.zoomedMax : yDomain[1];
 
+        //by default this will apply no transition and feed values back to state
         this._panZoom.zoomToMaxMin(zoomedMinX, zoomedMaxX, zoomedMinY, zoomedMaxY);
     },
 
