@@ -356,6 +356,7 @@ export default Class.extend({
 
                 //Force the update of the URL and history, with the same values
                 if(!zoomer.dontFeedToState) _this.model.marker.set(_this._zoomedXYMinMax, true, true);
+                zoomer.dontFeedToState = null;
             }
         };
     },
