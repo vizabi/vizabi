@@ -32,7 +32,7 @@ var ColorLegend = Component.extend({
 
     this.model_binds = {
       "change:state.marker.color.scaleType": function(evt, path) {
-        if(!_this._readyOnce) return;
+        if(!_this._readyOnce || _this.colorModel.use !== "indicator") return;
         _this.updateView();
       },
       "change:state.marker.color.which": function(evt, path) {
@@ -78,6 +78,9 @@ var ColorLegend = Component.extend({
       var newFilter = {};
       newFilter["is--" + this.colorModel.which] = true;
       this.model.state.entities_minimap.show = newFilter;
+    } else {
+      var defaultShow = utils.clone(this.root.default_model.state.entities_minimap.show._defs_);
+      this.model.state.entities_minimap.show = defaultShow;
     }
   },
 
@@ -131,7 +134,7 @@ var ColorLegend = Component.extend({
     this.canShowMap = false;
 
     if(this.model.state.marker_minimap){
-      
+
       var timeModel = this.model.state.time;
       var filter = {};
       filter[timeModel.getDimension()] = timeModel.value;
