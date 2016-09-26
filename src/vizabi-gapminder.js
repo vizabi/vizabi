@@ -155,6 +155,9 @@ BarRankChart.define('default_model', {
         }
       }
     },
+    entities_tags: {
+      dim: "tag"
+    },
     marker_allpossible: {
       space: ["entities_allpossible"],
       label: {
@@ -208,7 +211,19 @@ BarRankChart.define('default_model', {
           use: "property",
           which: "shape_lores_svg"
         }
+    },
+    marker_tags: {
+      space: ["entities_tags"],
+      label: {
+        use: "property",
+        which: "name"
+      },
+      parent: {
+        use: "property",
+        which: "parent"
+      }
     }
+    
   },
   language: language,
   data: {
