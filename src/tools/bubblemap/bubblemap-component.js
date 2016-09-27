@@ -72,9 +72,7 @@ var BubbleMapComponent = Component.extend({
         if(!_this._readyOnce) return;
 
         if(path.indexOf("scaleType") > -1) {
-          _this.updateIndicators();
-          _this.redrawDataPoints(null, false);
-          // ready is not needed because new data are not needed, just reposition _this.ready(); 
+          _this.ready();
         }
       },
       'change:marker.size.extent': function(evt, path) {
