@@ -229,7 +229,6 @@ BubbleMap.define('datawarning_content', {
 });
 
 
-
 MountainChart.define('datawarning_content', {
   title: "Income data has large uncertainty!",
   body: "There are many different ways to estimate and compare income. Different methods are used in different countries and years. Unfortunately no data source exists that would enable comparisons across all countries, not even for one single year. Gapminder has managed to adjust the picture for some differences in the data, but there are still large issues in comparing individual countries. The precise shape of a country should be taken with a large grain of salt.<br/><br/> Gapminder strongly agrees with <a href='https://twitter.com/brankomilan' target='_blank'>Branko Milanovic</a> about the urgent need for a comparable global income survey, especially for the purpose of monitoring the UN poverty-goal.<br/><br/> We are constantly improving our datasets and methods. Please expect revision of this graph within the coming months. <br/><br/> Learn more about the datasets and methods in this <a href='http://www.gapminder.org/news/data-sources-dont-panic-end-poverty' target='_blank'>blog post</a>",
@@ -874,20 +873,6 @@ CartogramComponent.define("preload", function(done) {
     done.resolve();
   });
 });
-
-CartogramComponent.define("preload", function(done) {
-  var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
-      globals.ext_resources.host + globals.ext_resources.preloadPath + "municipalities.json"; 
-  
-  d3.json(shape_path, function(error, json) {
-    if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
-    CartogramComponent.define('world', json);
-    CartogramComponent.define('geometries', json.objects.topo.geometries);
-    CartogramComponent.define('id_lookup', json.objects.id_lookup);
-    done.resolve();
-  });
-});
-
 
 //preloading concept properties for all charts
 Tool.define("preload", function(promise) {

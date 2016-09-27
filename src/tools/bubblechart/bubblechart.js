@@ -76,6 +76,19 @@ var BubbleChart = Tool.extend('BubbleChart', {
   default_model: {
     state: { 
       time: {
+      },
+      marker: {
+        axis_x: { },
+        axis_y: { },
+        size: { },
+        color: { },
+        size_label: {
+          use: "constant",
+          which: "_default",
+          scaleType: "ordinal",
+          _important: false,
+          extent: [0, 0.33]
+        },
       }
     },
     language: { },
