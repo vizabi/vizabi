@@ -184,7 +184,12 @@ var Model = EventSource.extend({
         newSubmodels = true;
       }
     }
-
+    if (attrs.which) {
+      if (this.isHook()) {
+        freezeCall = false;
+        this.load();
+      }
+    }
     // only if there's new submodels, we have to set new getters/setters
     if (newSubmodels)
       bindSettersGetters(this);
@@ -503,6 +508,7 @@ var Model = EventSource.extend({
    */
   afterLoad: function() {
     EventSource.unfreezeAll();
+    this.setTreeFreezer(false);
     this.setLoadingDone('_hook_data');
   },
 
