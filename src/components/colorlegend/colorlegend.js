@@ -426,11 +426,12 @@ var ColorLegend = Component.extend({
         //disable interaction if so stated in concept properties
         if(!_this.colorModel.isUserSelectable()) return;
         var palette = _this.colorModel.getPalette();
+        var defaultPalette = _this.colorModel.getDefaultPalette();
         var view = d3.select(this);
         var target = _this.colorModel.use === "indicator"? d.paletteKey : d[minimapDim];
         _this.colorPicker
           .colorOld(palette[target])
-          .colorDef(palette[target])
+          .colorDef(defaultPalette[target])
           .callback(function(value, permanent) {
             _this.colorModel.setColor(value, target)
           })
