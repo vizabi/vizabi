@@ -1,10 +1,10 @@
 import * as utils from 'base/utils';
 import Model from 'base/model';
+import EventSource from 'events';
 
 /*!
  * HOOK MODEL
  */
-
 
 var Hook = Model.extend({
   
@@ -12,6 +12,156 @@ var Hook = Model.extend({
   //that means, if X or Y doesn't have data at some point, we can't show markers
   _important: false,
   
+  /**
+   * Hooks loads data, models ask children to load data
+   * Basically, this method:
+   * loads is theres something to be loaded:
+   * does not load if there's nothing to be loaded
+   * @param {Object} options (includes splashScreen)
+   * @returns defer
+   */
+  loadData: function(opts) {
+
+    opts = opts || {};
+
+    var _this = this;
+    var data_hook = this._dataModel;
+    var language_hook = this._languageModel;
+    var query = this.getQuery();
+
+    //useful to check if in the middle of a load call
+    this._loadCall = true;
+
+    this._spaceDims = {};
+    this.setReady(false);
+
+    //get reader info
+    var reader = data_hook.getPlainObject();
+    reader.parsers = this._getAllParsers();
+
+    var lang = language_hook ? language_hook.id : 'en';
+    var promise = new Promise(function(resolve, reject) {
+
+      var evts = {
+        'load_start': function() {
+          _this.setLoading('_hook_data');
+          EventSource.freezeAll([
+            'load_start',
+            'resize',
+            'dom_ready'
+          ]);
+        }
+      };
+
+      utils.timeStamp('Vizabi Model: Loading Data: ' + _this._id);
+      _this.getDataManager().load(query, lang, reader, evts).then(function(dataId) {
+        _this._dataId = dataId;
+        utils.timeStamp('Vizabi Model: Data loaded: ' + _this._id);
+        _this.afterLoad();
+        resolve();
+      }, function(err) {
+        utils.warn('Problem with query: ', JSON.stringify(query));
+        reject(err);
+      });
+
+    });
+
+    return promise;
+    
+  },
+
+  /**
+   * gets query that this model/hook needs to get data
+   * @returns {Array} query
+   */
+  getQuery: function() {
+    var _this = this;
+
+    var dimensions, filters, select, from, order_by, q, animatable;
+
+    //if it's not a hook, no query is necessary
+    if(!this.isHook()) return true;
+    //error if there's nothing to hook to
+    if(Object.keys(this._space).length < 1) {
+      utils.error('Error:', this._id, 'can\'t find the space');
+      return true;
+    }
+
+    var prop = (this.use === "property") || (this.use === "constant");
+    var exceptions = (prop) ? { exceptType: 'time' } : {};
+
+    // select
+    // we remove this.which from values if it duplicates a dimension
+    var dimensions = this._getAllDimensions(exceptions);
+    select = {
+      key: dimensions,
+      value: dimensions.indexOf(this.which)!=-1 || this.use === "constant" ? [] : [this.which]
+    }
+    
+    // animatable
+    animatable = this._getFirstDimension({type: "time"});
+    
+    // from
+    from = prop ? "entities" : "datapoints";
+
+    // where 
+    filters = this._getAllFilters(exceptions);
+
+    // make root $and explicit
+    var explicitAndFilters =  {};
+    if (Object.keys(filters).length > 0) {
+      explicitAndFilters['$and'] = [];
+      for (var filterKey in filters) {
+        var filter = {};
+        filter[filterKey] = filters[filterKey];
+        explicitAndFilters['$and'].push(filter);
+      }
+    }
+
+    // join
+    var join = this._getAllJoins(exceptions);
+
+    // order by
+    order_by = (!prop) ? this._space.time.dim : null;
+
+    //return query
+    return {
+      'from': from,
+      'animatable': animatable,
+      'select': select,
+      'where': explicitAndFilters,
+      'join': join,
+      'order_by': order_by // should be _space.animatable, but that's time for now
+    };
+  },
+
+
+  /**
+   * gets all hook filters
+   * @returns {Object} filters
+   */
+  _getAllParsers: function() {
+
+    var parsers = {};
+
+    function addParser(model) {
+      // get parsers from model
+      var parser = model.getParser();
+      var column = model.getDimensionOrWhich();
+      if (parser && column) {
+        parsers[column] = parser;
+      }
+    }
+
+    // loop through all models which can have filters
+    utils.forEach(this._space, function(h) {
+      addParser(h);
+    });
+    addParser(this);
+
+    return parsers;
+  },
+
     /**
    * Gets tick values for this hook
    * @returns {Number|String} value The value for this tick
