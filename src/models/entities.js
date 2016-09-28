@@ -98,7 +98,19 @@ var EntitiesModel = Model.extend({
    * @returns {Array} Array of unique values
    */
   getFilter: function() {
-    return this.show;
+    var result = utils.deepClone(this.show);
+    var dimension = this.getDimension();
+    if (!utils.isArray(result[dimension])) result[dimension] = new Array(result[dimension]);
+    if (result[dimension].length == 0) {
+      delete result[dimension];
+    } else if (result[dimension].length == 1) {
+      result[dimension] = result[dimension][0];
+    } else {
+      result[dimension] = {
+        "$in":result[dimension]
+      };
+    }
+    return result;
   },
 
   /**
@@ -174,13 +186,12 @@ var EntitiesModel = Model.extend({
   showEntity: function(d) {
     //clear selected countries when showing something new
     this.clearSelected();
-    
+    var newShow = utils.deepClone(this.show);
     var dimension = this.getDimension();
     var value = d[dimension];
     var show = this.show[dimension];
-      
+    if (utils.isString(show)) show = new Array(show);
     if(!show || show[0] === "*") show = [];
-      
     show = show.concat([]); //clone array
       
     if(this.isShown(d)) {
@@ -188,10 +199,8 @@ var EntitiesModel = Model.extend({
     } else {
       show = show.concat(value);
     }
-      
-    if(show.length === 0) show = ["*"];
-    this.show[dimension] = show.concat([]);
-
+    newShow[dimension] = show;
+    this.show = newShow; 
   },
 
   setLabelOffset: function(d, xy) {
@@ -246,6 +255,7 @@ var EntitiesModel = Model.extend({
    */
   isShown: function(d) {
     var dimension = this.getDimension();
+    if (utils.isString(this.show[dimension])) return this.show[dimension] == d[dimension];
     return this.show[dimension] && this.show[dimension].indexOf(d[dimension]) !== -1;
   },
 
@@ -260,7 +270,9 @@ var EntitiesModel = Model.extend({
    */
   clearShow: function() {
     var dimension = this.getDimension();
-    this.show[dimension] = ["*"];
+    var newShow = {};
+    newShow[dimension] = [];
+    this.show = newShow;
   },
 
   /**
