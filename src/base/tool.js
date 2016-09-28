@@ -95,6 +95,11 @@ var Tool = Component.extend({
             _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'), _this.getMinModel());
         }
       },
+      'hook_change': function() {
+        if (!_this.model.state.time.splash) { // not block when it initial splash screen
+          _this.beforeLoading(true);
+        }
+      },
       'change:ui.presentation': function() {
         _this.layout.updatePresentation();
         _this.trigger('resize');

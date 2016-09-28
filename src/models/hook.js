@@ -22,6 +22,8 @@ var Hook = Model.extend({
    */
   loadData: function(opts) {
 
+    this.trigger('hook_change');
+
     opts = opts || {};
 
     var _this = this;
@@ -47,8 +49,7 @@ var Hook = Model.extend({
           _this.setLoading('_hook_data');
           EventSource.freezeAll([
             'load_start',
-            'resize',
-            'dom_ready'
+            'resize'
           ]);
         }
       };

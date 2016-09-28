@@ -905,6 +905,8 @@ function initSubmodel(attr, val, ctx) {
       //the submodel has changed (multiple times)
       'change': onChange,
       //loading has started in this submodel (multiple times)
+      'hook_change': onHookChange,
+      //loading has started in this submodel (multiple times)
       'load_start': onLoadStart,
       //loading has failed in this submodel (multiple times)
       'load_error': onLoadError,
@@ -937,6 +939,9 @@ function initSubmodel(attr, val, ctx) {
     if(!ctx._ready) return; //block change propagation if model isnt ready
     path = ctx._name + '.' + path
     ctx.trigger(evt, path);    
+  }
+  function onHookChange(evt, vals) {
+    ctx.trigger(evt, vals);
   }
   function onLoadStart(evt, vals) {
     ctx.setReady(false);
