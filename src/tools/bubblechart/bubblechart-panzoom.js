@@ -350,6 +350,11 @@ export default Class.extend({
             },
 
             stop: function(){
+                //TODO: Fix for scroll on mobile chrome on d3 v3.5.17. It must be retested/removed on d3 v4.x.x
+                if(utils.isTouchDevice()) {
+                    d3.select(this).on('mousedown.zoom', null);
+                }
+
                 _this.draggingNow = false;
 
                 if (this.quitZoom) return;
