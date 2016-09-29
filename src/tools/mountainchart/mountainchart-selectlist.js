@@ -11,6 +11,7 @@ var MCSelectList = Class.extend({
 
   rebuild: function (data) {
     var _this = this.context;
+    var _local = this;
 
     var listData = _this.mountainPointers
       .concat(_this.groupedPointers)
@@ -77,10 +78,12 @@ var MCSelectList = Class.extend({
       })
       .on("mousemove", function (d, i) {
         if (utils.isTouchDevice()) return;
+        _local.showCloseCross(d, true);
         _this.model.entities.highlightEntity(d);
       })
       .on("mouseout", function (d, i) {
         if (utils.isTouchDevice()) return;
+        _local.showCloseCross(d, false);
         _this.model.entities.clearHighlighted();
 
       })
@@ -109,6 +112,8 @@ var MCSelectList = Class.extend({
     var currentAggrLevel = "null";
     var aggrLevelSpacing = 0;
 
+    var groupLabels = _this.model.marker_group.label.getItems();
+
     _this.selectList
       .attr("transform", function (d, i) {
         if(d.aggrLevel != currentAggrLevel) aggrLevelSpacing += fontHeight;
@@ -119,7 +124,7 @@ var MCSelectList = Class.extend({
       .each(function (d, i) {
 
         var view = d3.select(this).attr("id", d.geo + '-label');
-        var name = d.key ? _this.translator("entity/world_4region/" + d.key) : _this.values.label[d.KEY()];
+        var name = d.key ? groupLabels[d.key] : _this.values.label[d.KEY()];
         var number = _this.values.axis_y[d.KEY()];
 
         var string = name + ": " + formatter(number) + (i === 0 ? " "+ _this.translator("mount/people") : "");
@@ -181,7 +186,18 @@ var MCSelectList = Class.extend({
           }, 2000)
         });
       });
-  }
+  }, 
+
+  showCloseCross: function(d, show) {
+    var _this = this.context; 
+    var KEY = _this.KEY; 
+    //show the little cross on the selected label
+    _this.selectList
+        .filter(function(f){return f[KEY] == d[KEY]})
+        .select(".vzb-mc-label-x")
+        .classed("vzb-invisible", !show);
+  },
+ 
 });
 
 export default MCSelectList;

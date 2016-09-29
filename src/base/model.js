@@ -573,7 +573,7 @@ var Model = EventSource.extend({
     var join = this._getAllJoins(exceptions, splashScreen);
 
     // order by
-    order_by = (!prop) ? this._space.time.dim : null;
+    order_by = (!prop) ? [this._space.time.dim] : [];
 
     //return query
     return {
@@ -739,20 +739,6 @@ var Model = EventSource.extend({
   mapValue: function(value) {
     return value;
   },
-
-
-
-    
-  /**
-   * gets nested dataset
-   * @param {Array} keys define how to nest the set
-   * @returns {Object} hash-map of key-value pairs
-   */
-  getNestedItems: function(keys) {
-    if(!keys) return utils.warn("No keys provided to getNestedItems(<keys>)");
-    return _DATAMANAGER.get(this._dataId, 'nested', keys);
-  },
-
 
   /**
    * Gets formatter for this model

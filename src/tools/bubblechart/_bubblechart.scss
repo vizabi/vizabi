@@ -26,8 +26,13 @@
         
     .vzb-bubblechart-svg {
       @extend %vzb-chart-svg;
-      
+
+      .vzb-bc-bubbles-crop {
+        touch-action: none;
+      }
+
       .vzb-bc-labels-crop {
+        touch-action: none;
         overflow: visible;
       }
 
