@@ -390,7 +390,7 @@ gulp.task('preview:vendor', ['clean:preview:vendor'], function() {
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/css')));
   gulp.src(path.join(config.modules, 'font-awesome/fonts/*'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/fonts')));
-  gulp.src(path.join(config.modules, 'd3/d3.min.js'))
+  gulp.src(path.join(config.modules, 'd3/d3.js'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/js')));
   gulp.src(path.join(config.modules, 'vizabi-ws-reader/dist/bundle.web.js'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/js/ws-reader')));

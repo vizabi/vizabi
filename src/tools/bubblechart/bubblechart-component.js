@@ -400,6 +400,19 @@ var BubbleChartComp = Component.extend({
         }
       });
 
+    //TODO: Fix for scroll on mobile chrome on d3 v3.5.17. It must be retested/removed on d3 v4.x.x
+    //see explanation here https://github.com/vizabi/vizabi/issues/2020#issuecomment-250205191
+    if(utils.isTouchDevice()) {
+      this.bubbleContainerCrop.on('mousedown.drag', null);
+      this.bubbleContainerCrop.on('mousedown.zoom', null);
+      this.bubbleContainerCrop.on('touchcancel', function() {
+        var id = d3.event.changedTouches[0].identifier;
+        if(d3.event.target["__ontouchend.drag-" + id]) {
+          d3.event.target["__ontouchend.drag-" + id](d3.event);
+        }
+      });
+    }
+
     this.KEY = this.model.entities.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
 
