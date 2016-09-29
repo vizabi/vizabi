@@ -401,6 +401,7 @@ var BubbleChartComp = Component.extend({
       });
 
     //TODO: Fix for scroll on mobile chrome on d3 v3.5.17. It must be retested/removed on d3 v4.x.x
+    //see explanation here https://github.com/vizabi/vizabi/issues/2020#issuecomment-250205191
     if(utils.isTouchDevice()) {
       this.bubbleContainerCrop.on('mousedown.drag', null);
       this.bubbleContainerCrop.on('mousedown.zoom', null);
