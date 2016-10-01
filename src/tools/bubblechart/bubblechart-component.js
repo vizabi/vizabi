@@ -368,7 +368,14 @@ var BubbleChartComp = Component.extend({
       if(_this.updateSize()) return;
       _this.updateMarkerSizeLimits();
       _this._labels.updateSize();
-      _this._panZoom.rerun(); // includes redraw data points and trail resize
+      (function(xMin, xMax, yMin, yMax) {
+        _this._panZoom.zoomer.dontFeedToState = true;
+        _this._panZoom.rerun(); // includes redraw data points and trail resize
+        _this._panZoom.zoomToMaxMin(xMin, xMax, yMin, yMax, 0, true);
+      })(_this._zoomedXYMinMax.axis_x.zoomedMin,
+        _this._zoomedXYMinMax.axis_x.zoomedMax,
+        _this._zoomedXYMinMax.axis_y.zoomedMin,
+        _this._zoomedXYMinMax.axis_y.zoomedMax);
     });
 
     //keyboard listeners
