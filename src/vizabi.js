@@ -55,10 +55,17 @@ utils.forEach(components, function(component, name) {
 
 import genericLog from 'helpers/d3.genericLogScale';
 import { onTap, onLongTap } from 'helpers/d3.touchEvents';
+import * as touchFixes from 'helpers/d3.touchFixes';
 
 d3.scale.genericLog = genericLog;
 d3.selection.prototype.onTap = onTap;
 d3.selection.prototype.onLongTap = onLongTap;
+
+//TODO: Fix for scroll on mobile chrome on d3 v3.5.17. It must be retested/removed on d3 v4.x.x
+//see explanation here https://github.com/vizabi/vizabi/issues/2020#issuecomment-250205191
+d3.svg.brush = touchFixes.brush;
+d3.behavior.drag = touchFixes.drag;
+d3.behavior.zoom = touchFixes.zoom;
 
 //makes all objects accessible
 Vzb.Tool = Tool;
