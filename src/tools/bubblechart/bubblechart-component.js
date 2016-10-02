@@ -39,9 +39,6 @@ var BubbleChartComp = Component.extend({
       name: "marker",
       type: "model"
     }, {
-      name: "entities_minimap",
-      type: "entities"
-    }, {
       name: "marker_minimap",
       type: "model"
     }, {
@@ -367,10 +364,10 @@ var BubbleChartComp = Component.extend({
     this.on("resize", function() {
       //console.log("EVENT: resize");
       //return if updatesize exists with error
+      _this._trails.run("abortAnimation");
       if(_this.updateSize()) return;
       _this.updateMarkerSizeLimits();
       _this._labels.updateSize();
-      _this._trails.run("findVisible");
       _this._panZoom.rerun(); // includes redraw data points and trail resize
     });
 
@@ -402,6 +399,19 @@ var BubbleChartComp = Component.extend({
           _this._panZoom.zoomByIncrement(cursor, 500);
         }
       });
+
+    //TODO: Fix for scroll on mobile chrome on d3 v3.5.17. It must be retested/removed on d3 v4.x.x
+    //see explanation here https://github.com/vizabi/vizabi/issues/2020#issuecomment-250205191
+    if(utils.isTouchDevice()) {
+      this.bubbleContainerCrop.on('mousedown.drag', null);
+      this.bubbleContainerCrop.on('mousedown.zoom', null);
+      this.bubbleContainerCrop.on('touchcancel', function() {
+        var id = d3.event.changedTouches[0].identifier;
+        if(d3.event.target["__ontouchend.drag-" + id]) {
+          d3.event.target["__ontouchend.drag-" + id](d3.event);
+        }
+      });
+    }
 
     this.KEY = this.model.entities.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
@@ -1293,15 +1303,7 @@ var BubbleChartComp = Component.extend({
     var formatterC = this.model.marker.color.getTickFormatter();
 
     if(this.model.marker.color.use == "property" && titleC) {
-      var minimapDim = this.model.entities_minimap.getDimension();
-      var minimapItems = this.model.marker_minimap.label.getValidItems();
-      var minimapLabelWhich = this.model.marker_minimap.label.which;
-      var minimapDictionary = {};
-      minimapItems.forEach(function(d){
-          minimapDictionary[d[minimapDim]] = d[minimapLabelWhich]
-      })
-      
-      titleC = minimapDictionary[titleC] || "";
+      titleC = this.model.marker_minimap.label.getItems()[titleC] || "";
     }
 
     return [formatterS(titleS) + " " + unitS,

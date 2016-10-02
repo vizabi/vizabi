@@ -176,6 +176,10 @@ var label = function(context) {
       }
 
       if(duration == null) duration = _this.context.duration;
+      if(cache._new) {
+        duration = 0;
+        delete cache._new;
+      }
       if(duration) {
         if(showhide && !d.hidden){
             //if need to show label
@@ -488,7 +492,7 @@ var Labels = Class.extend({
       .enter().append("g")
       .attr("class", function(d, index){return _cssPrefix + "-entity label-" + d[KEY]})
       .each(function(d, index) {
-        _this.cached[d[KEY]] = {};      
+        _this.cached[d[KEY]] = {_new: true};      
         _this.label(d3.select(this));
       });
   },

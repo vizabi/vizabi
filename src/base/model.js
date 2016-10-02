@@ -490,8 +490,6 @@ var Model = EventSource.extend({
     child._deps.parent.push(this);
   },
 
-
-
   /* ===============================
    * Hooking model to external data
    * ===============================
@@ -640,6 +638,7 @@ var Model = EventSource.extend({
   mapValue: function(value) {
     return value;
   },
+<<<<<<< HEAD
     
   /**
    * gets nested dataset
@@ -651,6 +650,8 @@ var Model = EventSource.extend({
     return _DATAMANAGER.get(this._dataId, 'nested', keys);
   },
 
+=======
+>>>>>>> feature/remove_gapminder-vizabi.js
 
   /**
    * Gets formatter for this model

@@ -25,6 +25,12 @@ var VIZABI_MODEL = {
         "is--world_4region": true
       }
     },
+    entities_group: {
+      dim: "geo",
+      show: {
+          "is--world_4region": true
+      }
+    },
     entities_tags: {
       dim: "tag"
     },
@@ -96,6 +102,13 @@ var VIZABI_MODEL = {
         geoshape: {
           use: "property",
           which: "shape_lores_svg"
+        }
+    },
+    marker_group:{
+      space: ["entities_group"],
+        label: {
+          use: "property",
+          which: "name"
         }
     },
     marker_tags: {

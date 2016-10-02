@@ -123,7 +123,7 @@ var Hook = Model.extend({
     var join = this._getAllJoins(exceptions);
 
     // order by
-    order_by = (!prop) ? this._space.time.dim : null;
+    order_by = (!prop) ? [this._space.time.dim] : [];
 
     //return query
     return {
@@ -351,8 +351,17 @@ var Hook = Model.extend({
     return this.getDataManager().get(this._dataId, 'valid', this.which);
   },
 
-  getNestedItems: function(groupBy) {
-    return this.getDataManager().get(this._dataId, 'nested', groupBy);
+  /**
+   * gets hook values according dimension values
+   */
+  getItems: function() {
+    var _this = this;
+    var dim = _this._getFirstDimension({exceptType: "time"});
+    var items = {};
+    this.getValidItems().forEach(function(d){
+      items[d[dim]] = d[_this.which];
+    })
+    return items;
   },
     
   getLimitsByDimensions: function(dims) {

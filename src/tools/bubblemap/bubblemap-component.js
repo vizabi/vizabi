@@ -45,9 +45,6 @@ var BubbleMapComponent = Component.extend({
       name: "marker",
       type: "model"
     }, {
-      name: "entities_minimap",
-      type: "entities"
-    }, {
       name: "marker_minimap",
       type: "model"
     }, {      
@@ -75,8 +72,7 @@ var BubbleMapComponent = Component.extend({
         if(!_this._readyOnce) return;
 
         if(path.indexOf("scaleType") > -1) {
-          _this.redrawDataPoints(null, false);
-          // ready is not needed because new data are not needed, just reposition _this.ready(); 
+          _this.ready();
         }
       },
       'change:marker.size.extent': function(evt, path) {
@@ -393,17 +389,8 @@ var BubbleMapComponent = Component.extend({
         
         //resolve value for color from the color legend model
         if(_this.model.marker.color.use == "property" && valueC) {
-          var minimapDim = this.model.entities_minimap.getDimension();
-          var minimapItems = this.model.marker_minimap.label.getValidItems();
-          var minimapLabelWhich = this.model.marker_minimap.label.which;
-          var minimapDictionary = {};
-          minimapItems.forEach(function(d){
-              minimapDictionary[d[minimapDim]] = d[minimapLabelWhich]
-          })
-
-          valueC = minimapDictionary[valueC] || "";
+          valueC = this.model.marker_minimap.label.getItems()[valueC] || "";
         }
-        
           
         _this.yTitleEl.select("text")
           .text(_this.translator("buttons/size") + ": " + formatterS(valueS) + " " + unitS);
