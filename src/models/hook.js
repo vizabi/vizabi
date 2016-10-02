@@ -29,7 +29,7 @@ var Hook = Model.extend({
     var _this = this;
     var data_hook = this._dataModel;
     var language_hook = this._languageModel;
-    var query = this.getQuery();
+    var query = this.getQuery(opts.splashScreen);
 
     //useful to check if in the middle of a load call
     this._loadCall = true;
@@ -75,7 +75,7 @@ var Hook = Model.extend({
    * gets query that this model/hook needs to get data
    * @returns {Array} query
    */
-  getQuery: function() {
+  getQuery: function(splashScreen) {
     var _this = this;
 
     var dimensions, filters, select, from, order_by, q, animatable;
@@ -106,7 +106,7 @@ var Hook = Model.extend({
     from = prop ? "entities" : "datapoints";
 
     // where 
-    filters = this._getAllFilters(exceptions);
+    filters = this._getAllFilters(exceptions, splashScreen);
 
     // make root $and explicit
     var explicitAndFilters =  {};
@@ -120,7 +120,7 @@ var Hook = Model.extend({
     }
 
     // join
-    var join = this._getAllJoins(exceptions);
+    var join = this._getAllJoins(exceptions, splashScreen);
 
     // order by
     order_by = (!prop) ? [this._space.time.dim] : [];

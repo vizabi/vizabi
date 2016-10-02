@@ -260,31 +260,38 @@ var TimeModel = Model.extend({
 
   /**
    * Gets filter for time
+   * @param {Boolean} firstScreen get filter for current year only
    * @returns {Object} time filter
    */
-  getFilter: function() {
+  getFilter: function(firstScreen) {
     var defaultStart = this.parseToUnit(this._defaults.start, this.unit);
     var defaultEnd = this.parseToUnit(this._defaults.end, this.unit);
       
     var dim = this.getDimension();
     var filter = null;
 
-    var gte, lte;
-    var start = defaultStart || this.start;
-    if (start != null) {
-      gte = this.timeFormat(start);
+    if (firstScreen) {
+      if (this.value != null) {
+        filter = {};
+        filter[dim] = this.timeFormat(this.value);
+      }
+    } else {
+      var gte, lte;
+      var start = defaultStart || this.start;
+      if (start != null) {
+        gte = this.timeFormat(start);
+      }
+      var end = defaultEnd || this.end;
+      if (end != null) {
+        lte = this.timeFormat(end);
+      }
+      if (gte || lte) {
+        filter = {};
+        filter[dim] = {};
+        if (gte) filter[dim]["$gte"] = gte;
+        if (lte) filter[dim]["$lte"] = lte;
+      }
     }
-    var end = defaultEnd || this.end;
-    if (end != null) {
-      lte = this.timeFormat(end);
-    }
-    if (gte || lte) {
-      filter = {};
-      filter[dim] = {};
-      if (gte) filter[dim]["$gte"] = gte;
-      if (lte) filter[dim]["$lte"] = lte;
-    }
-
     return filter;
   },
 

@@ -638,7 +638,6 @@ var Model = EventSource.extend({
   mapValue: function(value) {
     return value;
   },
-<<<<<<< HEAD
     
   /**
    * gets nested dataset
@@ -649,9 +648,6 @@ var Model = EventSource.extend({
     if(!keys) return utils.warn("No keys provided to getNestedItems(<keys>)");
     return _DATAMANAGER.get(this._dataId, 'nested', keys);
   },
-
-=======
->>>>>>> feature/remove_gapminder-vizabi.js
 
   /**
    * Gets formatter for this model
@@ -757,7 +753,7 @@ var Model = EventSource.extend({
    * @param {Boolean} splashScreen get filters for first screen only
    * @returns {Object} filters
    */
-  _getAllFilters: function(opts) {
+  _getAllFilters: function(opts, splashScreen) {
     opts = opts || {};
     var filters = {};
     var _this = this;
@@ -770,9 +766,9 @@ var Model = EventSource.extend({
       }
       // if query's dimensions are the same as the hook's, no join
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
-        filters = utils.extend(filters, h.getFilter());
+        filters = utils.extend(filters, h.getFilter(splashScreen));
       } else {
-        var joinFilter = h.getFilter();
+        var joinFilter = h.getFilter(splashScreen);
         if (joinFilter != null) {
           var filter = {};
           filter[h.getDimension()] = "$"  + h.getDimension();
@@ -783,7 +779,7 @@ var Model = EventSource.extend({
     return filters;
   },
 
-  _getAllJoins: function(opts) {
+  _getAllJoins: function(opts, splashScreen) {
     var joins = {};
     var _this = this;
     utils.forEach(this._space, function(h) {
@@ -796,11 +792,11 @@ var Model = EventSource.extend({
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
         return true;
       }
-      var filter = h.getFilter();
+      var filter = h.getFilter(splashScreen);
       if (filter != null) {
         joins["$" + h.getDimension()] = {
           key: h.getDimension(),
-          where: h.getFilter()
+          where: h.getFilter(splashScreen)
         };
       }
     });

@@ -1,5 +1,10 @@
 var VIZABI_MODEL = { 
   state: {
+    time: {
+      start: 1800,
+      end: 2015,
+      value: 1995
+    },
     entities: {
       dim: "geo"
     },
