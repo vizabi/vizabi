@@ -151,7 +151,7 @@ var Marker = Model.extend({
           if (!time && _this.cachedFrames[cachePath]) {
             //time can be null: then return all frames
             return cb(_this.cachedFrames[cachePath], time);
-          } else if(_this.cachedFrames[cachePath][time]) {
+          } else if(_this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
             //time can be !null: then a particular frame calculation was forced and now it's done  
             return cb(_this.cachedFrames[cachePath][time], time);
           } else {
@@ -265,7 +265,10 @@ var Marker = Model.extend({
             } else {
               //calculation of async frames is taken outside the loop
               //hooks with real data that needs to be fetched from datamanager
-              deferredHooks.push({hook: hook, name: name}); 
+              deferredHooks.push({hook: {
+                  _dataId: hook._dataId,
+                  which: hook.which
+                }, name: name}); 
             }
           });
             
