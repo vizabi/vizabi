@@ -45,7 +45,6 @@ export default Class.extend({
         var r = {};
         r[KEY] = d[KEY];
         // used for prevent move trail start time forward when we have empty values at end of time range
-        r["firstAvailableSegment"] = null;
         r["selectedEntityData"] = d;
         return r;
       });
@@ -311,39 +310,48 @@ export default Class.extend({
   _findVisible: function(trail, duration, d) {
     var _context = this.context;
     var KEY = _context.KEY;
-
-    var firstVisible = true;
-    var trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
-
-    if (_context.time - trailStartTime < 0 || _context.model.time.start - trailStartTime > 0) {
-      if (_context.time - trailStartTime < 0) { 
-        // move trail start time with trail label back if need
-        d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(_context.time);
-        trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+    return new Promise(function(resolve, reject) {
+      var defer = new Promise();
+      if (!d.limits) {
+        _context.model.marker.getEntityLimits(d[KEY]).then(function(limits) {
+          d.limits = limits;
+          defer.resolve();
+        });
       } else {
-        // move trail start time with trail label to start time if need
-        d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(_context.model.time.start);
-        trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+        defer.resolve();
       }
-      var cache = _context._labels.cached[d[KEY]];
-      cache.labelX0 = _context.frame.axis_x[d[KEY]];
-      cache.labelY0 = _context.frame.axis_y[d[KEY]];
-      var valueS = _context.frame.size[d[KEY]];
-      cache.scaledS0 = (valueS || valueS===0) ? utils.areaToRadius(_context.sScale(valueS)) : null;
-      var valueC = _context.frame.color[d[KEY]];
-      cache.scaledC0 = valueC != null ? _context.cScale(valueC) : _context.COLOR_WHITEISH;
-      _context._updateLabel(d, 0, _context.frame.axis_x[d[KEY]], _context.frame.axis_y[d[KEY]], _context.frame.size[d[KEY]], _context.frame.color[d[KEY]], _context.frame.label[d[KEY]], _context.frame.size_label[d[KEY]], 0, true);
-    }
-
-    trail.each(function(segment, index) {
-      // segment is transparent if it is after current time or before trail StartTime
-      var segmentVisibility = segment.transparent; 
-      segment.transparent = d.selectedEntityData.trailStartTime == null || (segment.t - _context.time > 0) || (trailStartTime - segment.t > 0)
-        //no trail segment should be visible if leading bubble is shifted backwards, beyond start time
-        || (d.selectedEntityData.trailStartTime - _context.model.time.timeFormat(_context.time) >= 0);
-      // always update nearest 2 points
-      if (segmentVisibility != segment.transparent || Math.abs(_context.model.time.timeFormat(segment.t) - _context.model.time.timeFormat(_context.time)) < 2) segment.visibilityChanged = true; // segment changed, so need to update it
-
+      defer.then(function() {
+        var trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+        if (_context.time - trailStartTime < 0 || d.limits.min - trailStartTime > 0) {
+          if (_context.time - trailStartTime < 0) {
+            // move trail start time with trail label back if need
+            d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(d3.max([_context.time, d.limits.min]));
+            trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+          } else {
+            // move trail start time with trail label to start time if need
+            d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(d.limits.min);
+            trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+          }
+          var cache = _context._labels.cached[d[KEY]];
+          cache.labelX0 = _context.frame.axis_x[d[KEY]];
+          cache.labelY0 = _context.frame.axis_y[d[KEY]];
+          var valueS = _context.frame.size[d[KEY]];
+          cache.scaledS0 = (valueS || valueS===0) ? utils.areaToRadius(_context.sScale(valueS)) : null;
+          var valueC = _context.frame.color[d[KEY]];
+          cache.scaledC0 = valueC != null ? _context.cScale(valueC) : _context.COLOR_WHITEISH;
+          _context._updateLabel(d, 0, _context.frame.axis_x[d[KEY]], _context.frame.axis_y[d[KEY]], _context.frame.size[d[KEY]], _context.frame.color[d[KEY]], _context.frame.label[d[KEY]], _context.frame.size_label[d[KEY]], 0, true);
+        }
+        trail.each(function(segment, index) {
+          // segment is transparent if it is after current time or before trail StartTime
+          var segmentVisibility = segment.transparent;
+          segment.transparent = d.selectedEntityData.trailStartTime == null || (segment.t - _context.time > 0) || (trailStartTime - segment.t > 0)
+              //no trail segment should be visible if leading bubble is shifted backwards, beyond start time
+            || (d.selectedEntityData.trailStartTime - _context.model.time.timeFormat(_context.time) >= 0);
+          // always update nearest 2 points
+          if (segmentVisibility != segment.transparent || Math.abs(_context.model.time.timeFormat(segment.t) - _context.model.time.timeFormat(_context.time)) < 2) segment.visibilityChanged = true; // segment changed, so need to update it
+        });
+        resolve();
+      });
     });
   },
 
@@ -367,6 +375,7 @@ export default Class.extend({
       return new Promise(function(resolve, reject) {
         var view = d3.select(trail[0][index]);
         var segment = view.datum();
+        //console.log(d[KEY] + " transparent: " + segment.transparent + " vis_changed:" + segment.visibilityChanged);
         if(segment.transparent) {
           view.classed("vzb-invisible", segment.transparent);
           resolve();
@@ -381,15 +390,8 @@ export default Class.extend({
             segment.valueC = frame.color[d[KEY]];
 
             if(segment.valueY==null || segment.valueX==null || segment.valueS==null) {
-              if (_context.time - trailStartTime > 0 && (!d.firstAvailableSegment || d.firstAvailableSegment - segment.t > 0)) { // move trail start time forward because previous values are empty
-                d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(_context.model.time.incrementTime(trailStartTime));
-                trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
-              }
               resolve();
             } else {
-              if (!d.firstAvailableSegment || d.firstAvailableSegment - segment.t > 0) {
-                d.firstAvailableSegment = segment.t;
-              }
               // fix label position if it not in correct place
               var cache = _context._labels.cached[d[KEY]];
               if (trailStartTime && trailStartTime.toString() == segment.t.toString()) {
@@ -473,12 +475,12 @@ export default Class.extend({
                   }
                 });
               }
-
             }
           });          
         }
       });
     };
+    
     var defer = new Promise();
     /**
      * update for generate next trail segment when previous segment finished

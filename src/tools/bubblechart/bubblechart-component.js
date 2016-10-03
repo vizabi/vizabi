@@ -184,7 +184,6 @@ var BubbleChartComp = Component.extend({
         //console.log("EVENT change:marker:size:max");
         if(!_this._readyOnce) return;
         _this.updateMarkerSizeLimits();
-        _this._trails.run("findVisible");
         _this.redrawDataPointsOnlySize();
         _this._trails.run("resize");
       },
@@ -454,7 +453,7 @@ var BubbleChartComp = Component.extend({
       _this.updateMarkerSizeLimits();
       _this.updateBubbleOpacity();
       _this.zoomToMarkerMaxMin(); // includes redraw data points and trail resize
-      _this._trails.run(["recolor", "opacityHandler", "findVisible", "reveal"]);
+      _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
       if(_this.model.ui.adaptMinMaxZoom) _this._panZoom.expandCanvas();
     });
   },
