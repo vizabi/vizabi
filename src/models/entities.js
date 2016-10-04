@@ -263,7 +263,9 @@ var EntitiesModel = Model.extend({
    */
   clearShow: function() {
     var dimension = this.getDimension();
-    delete this.show[dimension];
+    var show = utils.deepClone(this.show);
+    delete show[dimension];
+    this.show = show;
   },
 
   /**
