@@ -88,6 +88,10 @@ export var isNaN = function(arg) {
   return isNumber(arg) && arg !== +arg;
 };
 
+export var isEmpty = function(obj) {
+  return Object.keys(obj).length === 0 && obj.constructor === Object;
+};
+
 /*
  * checks whether arg is a number. NaN is a number too
  * @param {*} arg

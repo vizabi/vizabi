@@ -860,7 +860,7 @@ var Model = EventSource.extend({
         filters = utils.extend(filters, h.getFilter(splashScreen));
       } else {
         var joinFilter = h.getFilter(splashScreen);
-        if (joinFilter != null) {
+        if (joinFilter != null && !utils.isEmpty(joinFilter)) {
           var filter = {};
           filter[h.getDimension()] = "$"  + h.getDimension();
           filters = utils.extend(filters, filter);
@@ -884,7 +884,7 @@ var Model = EventSource.extend({
         return true;
       }
       var filter = h.getFilter(splashScreen);
-      if (filter != null) {
+      if (filter != null && !utils.isEmpty(filter)) {
         joins["$" + h.getDimension()] = {
           key: h.getDimension(),
           where: h.getFilter(splashScreen)
