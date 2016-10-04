@@ -180,11 +180,11 @@ var ColorLegend = Component.extend({
     colorOptions.classed("vzb-hidden", hideColorOptions);
     
     //Hide rainbow element if showing minimap or if color is discrete
-    this.rainbowEl.classed("vzb-hidden", canShowMap || this.colorModel.use !== "indicator");
-    this.labelScaleEl.classed("vzb-hidden", canShowMap || this.colorModel.use !== "indicator")
-    this.rainbowLegendEl.classed("vzb-hidden", canShowMap || this.colorModel.use !== "indicator");
+    this.rainbowEl.classed("vzb-hidden", this.colorModel.use !== "indicator");
+    this.labelScaleEl.classed("vzb-hidden", this.colorModel.use !== "indicator")
+    this.rainbowLegendEl.classed("vzb-hidden", this.colorModel.use !== "indicator");
     //Hide minimap if no data to draw it
-    this.minimapEl.classed("vzb-hidden", !canShowMap);
+    this.minimapEl.classed("vzb-hidden", !canShowMap || this.colorModel.use == "indicator");
     
     this.unitDiv.classed("vzb-hidden", true);
     var cScale = this.colorModel.getScale();
