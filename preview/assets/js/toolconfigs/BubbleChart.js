@@ -14,10 +14,6 @@ var VIZABI_MODEL = {
     },
     marker: {
       space: ["entities", "time"],
-      label: {
-        use: "property",
-        which: "name"
-      },
       axis_y: {
         use: "indicator",
         which: "life_expectancy_years" 
