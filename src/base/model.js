@@ -859,9 +859,12 @@ var Model = EventSource.extend({
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
         filters = utils.extend(filters, h.getFilter(splashScreen));
       } else {
-        var filter = {};
-        filter[h.getDimension()] = "$"  + h.getDimension();
-        filters = utils.extend(filters, filter);
+        var joinFilter = h.getFilter(splashScreen);
+        if (joinFilter != null && !utils.isEmpty(joinFilter)) {
+          var filter = {};
+          filter[h.getDimension()] = "$"  + h.getDimension();
+          filters = utils.extend(filters, filter);
+        }
       }
     });
     return filters;
@@ -880,10 +883,13 @@ var Model = EventSource.extend({
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
         return true;
       }
-      joins["$" + h.getDimension()] = {
-        key: h.getDimension(),
-        where: h.getFilter(splashScreen)
-      };
+      var filter = h.getFilter(splashScreen);
+      if (filter != null && !utils.isEmpty(filter)) {
+        joins["$" + h.getDimension()] = {
+          key: h.getDimension(),
+          where: h.getFilter(splashScreen)
+        };
+      }
     });
     return joins;
   },
