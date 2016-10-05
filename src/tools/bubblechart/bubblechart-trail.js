@@ -219,17 +219,17 @@ export default Class.extend({
 
       var view = d3.select(this);
       if (duration) {
-        view.select("circle").interrupt()
-          .transition().duration(duration).ease("linear")
-          .attr("cy", _context.yScale(segment.valueY))
-          .attr("cx", _context.xScale(segment.valueX))
-          .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)));
-      } else {
         view.select("circle")
           .transition().duration(duration).ease("linear")
           .attr("cy", _context.yScale(segment.valueY))
           .attr("cx", _context.xScale(segment.valueX))
           .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)));
+      } else {
+        view.select("circle").interrupt()
+          .attr("cy", _context.yScale(segment.valueY))
+          .attr("cx", _context.xScale(segment.valueX))
+          .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)))
+          .transition();
       }
 
       if(!updateLabel && !segment.transparent) {
@@ -247,7 +247,7 @@ export default Class.extend({
           Math.pow(_context.yScale(segment.valueY) - _context.yScale(next.valueY),2)
       );
       if (duration) {
-        view.select("line").interrupt()
+        view.select("line")
           .transition().duration(duration).ease("linear")
           .attr("x1", _context.xScale(next.valueX))
           .attr("y1", _context.yScale(next.valueY))
@@ -256,13 +256,14 @@ export default Class.extend({
           .style("stroke-dasharray", lineLength)
           .style("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)));
       } else {
-        view.select("line")
+        view.select("line").interrupt()
           .attr("x1", _context.xScale(next.valueX))
           .attr("y1", _context.yScale(next.valueY))
           .attr("x2", _context.xScale(segment.valueX))
           .attr("y2", _context.yScale(segment.valueY))
           .style("stroke-dasharray", lineLength)
-          .style("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)));
+          .style("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)))
+          .transition();
       }
     });
   },
