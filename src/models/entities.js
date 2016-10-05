@@ -98,19 +98,7 @@ var EntitiesModel = Model.extend({
    * @returns {Array} Array of unique values
    */
   getFilter: function() {
-    var result = utils.deepClone(this.show);
-    var dimension = this.getDimension();
-    if (!utils.isArray(result[dimension])) result[dimension] = new Array(result[dimension]);
-    if (result[dimension].length == 0) {
-      delete result[dimension];
-    } else if (result[dimension].length == 1) {
-      result[dimension] = result[dimension][0];
-    } else {
-      result[dimension] = {
-        "$in":result[dimension]
-      };
-    }
-    return result;
+    return this.show;
   },
 
   /**
@@ -189,18 +177,24 @@ var EntitiesModel = Model.extend({
     var newShow = utils.deepClone(this.show);
     var dimension = this.getDimension();
     var value = d[dimension];
-    var show = this.show[dimension];
-    if (utils.isString(show)) show = new Array(show);
-    if(!show || show[0] === "*") show = [];
-    show = show.concat([]); //clone array
-      
+    var showArray = [];
+
+    // get array from show
+    if (this.show[dimension] && this.show[dimension]['$in'] && utils.isArray(this.show[dimension]['$in']))
+      showArray = this.show[dimension]['$in'];
+
     if(this.isShown(d)) {
-      show = show.filter(function(d) { return d !== value; });
+      showArray = showArray.filter(function(d) { return d !== value; });
     } else {
-      show = show.concat(value);
+      showArray = showArray.concat(value);
     }
-    newShow[dimension] = show;
-    this.show = newShow; 
+
+    if (showArray.length === 0)
+      delete newShow[dimension]
+    else 
+      newShow[dimension] = { '$in': showArray }; 
+
+    this.show = newShow;
   },
 
   setLabelOffset: function(d, xy) {
@@ -255,8 +249,7 @@ var EntitiesModel = Model.extend({
    */
   isShown: function(d) {
     var dimension = this.getDimension();
-    if (utils.isString(this.show[dimension])) return this.show[dimension] == d[dimension];
-    return this.show[dimension] && this.show[dimension].indexOf(d[dimension]) !== -1;
+    return this.show[dimension] && this.show[dimension]['$in'] && this.show[dimension]['$in'].indexOf(d[dimension]) !== -1;
   },
 
   /**
@@ -270,9 +263,9 @@ var EntitiesModel = Model.extend({
    */
   clearShow: function() {
     var dimension = this.getDimension();
-    var newShow = {};
-    newShow[dimension] = [];
-    this.show = newShow;
+    var show = utils.deepClone(this.show);
+    delete show[dimension];
+    this.show = show;
   },
 
   /**

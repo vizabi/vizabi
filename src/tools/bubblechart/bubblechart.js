@@ -80,8 +80,9 @@ var BubbleChart = Tool.extend('BubbleChart', {
       marker: {
         axis_x: { },
         axis_y: { },
-        size: { },
-        color: { },
+        label:  { },
+        size:   { },
+        color:  { },
         size_label: {
           use: "constant",
           which: "_default",
