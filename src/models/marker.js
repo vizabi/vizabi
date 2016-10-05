@@ -151,7 +151,7 @@ var Marker = Model.extend({
           if (!time && _this.cachedFrames[cachePath]) {
             //time can be null: then return all frames
             return cb(_this.cachedFrames[cachePath], time);
-          } else if(_this.cachedFrames[cachePath][time]) {
+          } else if(_this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
             //time can be !null: then a particular frame calculation was forced and now it's done  
             return cb(_this.cachedFrames[cachePath][time], time);
           } else {
@@ -265,7 +265,10 @@ var Marker = Model.extend({
             } else {
               //calculation of async frames is taken outside the loop
               //hooks with real data that needs to be fetched from datamanager
-              deferredHooks.push({hook: hook, name: name}); 
+              deferredHooks.push({hook: {
+                  _dataId: hook._dataId,
+                  which: hook.which
+                }, name: name}); 
             }
           });
             
@@ -450,9 +453,72 @@ var Marker = Model.extend({
    */
   getConceptprops: function() {
     return this.getDataManager().getConceptprops();
-  }
-    
+  },
 
+  getEntityLimits: function(entity) {
+    var _this = this;
+    var timePoints = this._parent.time.getAllSteps();
+    var selectedEdgeTimes = [];
+    var hooks = [];
+    utils.forEach(_this.getSubhooks(), function(hook) {
+      if(hook.use == "constant") return;
+      if(hook._important) hooks.push(hook._name);
+    });
+
+    var findEntityWithCompleteHooks = function(values) {
+      for(var i = 0, j = hooks.length; i < j; i++) {
+        if(!(values[hooks[i]][entity] || values[hooks[i]][entity]===0)) return false;
+      }
+      return true;
+    };
+
+    var findSelectedTime = function(iterator, findCB) {
+      var point = iterator();
+      if(point == null) return;
+      _this.getFrame(timePoints[point], function(values) {
+        if(!values) return;
+        if(findEntityWithCompleteHooks(values)) {
+          findCB(point);
+        } else {
+          findSelectedTime(iterator, findCB);
+        }
+      });
+    };
+
+    var promises = [];
+
+    promises.push(new Promise());
+
+    //find startSelected time 
+    findSelectedTime(function(){
+      var max = timePoints.length;
+      var i = 0;
+      return function() {
+        return i < max ? i++ : null;
+      };
+    }(), function(point){
+      selectedEdgeTimes[0] = timePoints[point];
+      promises[0].resolve();
+    });
+
+    promises.push(new Promise());
+
+    //find endSelected time
+    findSelectedTime(function(){
+      var i = timePoints.length - 1;
+      return function() {
+        return i >= 0 ? i-- : null;
+      };
+    }(), function(point){
+      selectedEdgeTimes[1] = timePoints[point];
+      promises[1].resolve();
+    });
+    var promise = new Promise();
+    Promise.all(promises).then(function() {
+      promise.resolve({"min": selectedEdgeTimes[0],"max": selectedEdgeTimes[1]});
+    });
+    return promise;
+  }
 });
 
 export default Marker;

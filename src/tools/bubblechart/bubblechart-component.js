@@ -160,7 +160,7 @@ var BubbleChartComp = Component.extend({
         (function(time) { // isolate timestamp
         //_this._bubblesInteract().mouseout();
           _this.model.marker.getFrame(time, function(frame, time) {
-            if (!_this._frameIsValid(frame)) return;
+            if (!_this._frameIsValid(frame)) return utils.warn("change:time.value: empty data received from marker.getFrame(). doing nothing");
             var index = _this.calculationQueue.indexOf(time.toString()); //
             if (index == -1) { // we was receive more recent frame before so we pass this frame
               return;
@@ -184,7 +184,6 @@ var BubbleChartComp = Component.extend({
         //console.log("EVENT change:marker:size:max");
         if(!_this._readyOnce) return;
         _this.updateMarkerSizeLimits();
-        _this._trails.run("findVisible");
         _this.redrawDataPointsOnlySize();
         _this._trails.run("resize");
       },
@@ -368,7 +367,14 @@ var BubbleChartComp = Component.extend({
       if(_this.updateSize()) return;
       _this.updateMarkerSizeLimits();
       _this._labels.updateSize();
-      _this._panZoom.rerun(); // includes redraw data points and trail resize
+      (function(xMin, xMax, yMin, yMax) {
+        _this._panZoom.zoomer.dontFeedToState = true;
+        _this._panZoom.rerun(); // includes redraw data points and trail resize
+        _this._panZoom.zoomToMaxMin(xMin, xMax, yMin, yMax, 0, true);
+      })(_this._zoomedXYMinMax.axis_x.zoomedMin,
+        _this._zoomedXYMinMax.axis_x.zoomedMax,
+        _this._zoomedXYMinMax.axis_y.zoomedMin,
+        _this._zoomedXYMinMax.axis_y.zoomedMax);
     });
 
     //keyboard listeners
@@ -400,19 +406,6 @@ var BubbleChartComp = Component.extend({
         }
       });
 
-    //TODO: Fix for scroll on mobile chrome on d3 v3.5.17. It must be retested/removed on d3 v4.x.x
-    //see explanation here https://github.com/vizabi/vizabi/issues/2020#issuecomment-250205191
-    if(utils.isTouchDevice()) {
-      this.bubbleContainerCrop.on('mousedown.drag', null);
-      this.bubbleContainerCrop.on('mousedown.zoom', null);
-      this.bubbleContainerCrop.on('touchcancel', function() {
-        var id = d3.event.changedTouches[0].identifier;
-        if(d3.event.target["__ontouchend.drag-" + id]) {
-          d3.event.target["__ontouchend.drag-" + id](d3.event);
-        }
-      });
-    }
-
     this.KEY = this.model.entities.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
 
@@ -440,13 +433,13 @@ var BubbleChartComp = Component.extend({
     var endTime = this.model.time.end;
     this.model.marker.getFrame(this.model.time.value, function(frame, time) {
       // TODO: temporary fix for case when after data loading time changed on validation
-        if (time.toString() != _this.model.time.value.toString()) {  
-          utils.defer(function() {
-            _this.ready();
-          });
-          return;
-        } 
-        if (!_this._frameIsValid(frame)) return;
+      if (time.toString() != _this.model.time.value.toString()) {  
+        utils.defer(function() {
+          _this.ready();
+        });
+        return;
+      } 
+      if (!_this._frameIsValid(frame)) return utils.warn("ready: empty data received from marker.getFrame(). doing nothing");
 
       _this.frame = frame;
       _this.updateTime();
@@ -460,7 +453,7 @@ var BubbleChartComp = Component.extend({
       _this.updateMarkerSizeLimits();
       _this.updateBubbleOpacity();
       _this.zoomToMarkerMaxMin(); // includes redraw data points and trail resize
-      _this._trails.run(["recolor", "opacityHandler", "findVisible", "reveal"]);
+      _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
       if(_this.model.ui.adaptMinMaxZoom) _this._panZoom.expandCanvas();
     });
   },
@@ -1038,7 +1031,7 @@ var BubbleChartComp = Component.extend({
       time = this.model.time.timeFormat.parse("" + this.model.ui.chart.lockNonSelected);
     }
     this.model.marker.getFrame(time, function(valuesLocked) {
-      if(!_this._frameIsValid(valuesLocked)) return utils.warn("redrawDataPointsOnlyColor: empty data received from marker.getFrames(). doing nothing");
+      if(!_this._frameIsValid(valuesLocked)) return utils.warn("redrawDataPointsOnlyColor: empty data received from marker.getFrame(). doing nothing");
 
       valuesNow = _this.frame;
       _this.entityBubbles.each(function(d, index) {
@@ -1093,7 +1086,7 @@ var BubbleChartComp = Component.extend({
       time = this.model.time.timeFormat.parse("" + this.model.ui.chart.lockNonSelected);
     }
     this.model.marker.getFrame(time, function(valuesLocked) {
-      if(!_this._frameIsValid(valuesLocked)) return utils.warn("redrawDataPointsOnlySize: empty data received from marker.getFrames(). doing nothing");
+      if(!_this._frameIsValid(valuesLocked)) return utils.warn("redrawDataPointsOnlySize: empty data received from marker.getFrame(). doing nothing");
 
       valuesNow = _this.frame;
       _this.entityBubbles.each(function(d, index) {

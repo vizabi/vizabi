@@ -9,8 +9,10 @@ import interpolator from '../../node_modules/vizabi-interpolators/interpolators'
  */
 export var approxEqual = function(a, b, tolerance) {
   tolerance = tolerance||0;
-  if(b!==0){
+  if(b > 0){
     return (1 - tolerance) * b <= a && a <= b * (1 + tolerance);
+  }else if(b < 0){
+    return (1 + tolerance) * b <= a && a <= b * (1 - tolerance);
   }else{
     return Math.abs(a) <= tolerance;
   }
