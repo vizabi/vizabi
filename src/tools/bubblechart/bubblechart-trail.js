@@ -473,10 +473,10 @@ export default Class.extend({
                       resolve();
                     }
                   }
-                });
+                }, _context.model.entities.getSelected());
               }
             }
-          });          
+          }, _context.model.entities.getSelected());          
         }
       });
     };
