@@ -321,7 +321,7 @@ var Data = Class.extend({
     var whatId = this._getCacheKey(framesArray, keys);
     if (!this._collectionPromises[queryId][whatId]) {
       this._collectionPromises[queryId][whatId] = {
-        queue: this.framesQueue(framesArray),
+        queue: this.framesQueue(framesArray, whatId),
         promise: null
       };
     }
@@ -355,57 +355,88 @@ var Data = Class.extend({
       }
     });
   },
+  
+  _muteAllQueues: function(except) {
+    utils.forEach(this._collectionPromises, function(queries, queryId) {
+        utils.forEach(queries, function(promise, whatId) {
+          if(promise.queue.whatId != except && promise.queue.forcedQueue.length == 0) {
+            promise.queue.isActive = false;
+          }
+        });
+    });
+  },
+  
+  _unmuteQueue: function() {
+    utils.forEach(this._collectionPromises, function(queries, queryId) {
+      utils.forEach(queries, function(promise, whatId) {
+        if(promise.queue.isActive == false) {
+          promise.queue.unMute();
+        }
+      });
+    });
+  },
   /**
    * set priority for generate each year frame
    * @param framesArray
    * @returns {*}
    */
-  framesQueue: function(framesArray) {
-    return new function(){
+  framesQueue: function(framesArray, whatId) {
+    var _context = this;
+    return new function() {
       this.callbacks = {};
       this.forcedQueue = [];
+      this.isActive = true;
+      this.deferredQueues = [];
+      this.whatId = whatId;
       this.queue = framesArray.slice(0); //clone array
-        
+      var queue = this; 
       //put the last element to the start of the queue because we are likely to need it first
       this.queue.splice(0, 0, this.queue.splice(this.queue.length - 1, 1)[0]);
       this.key = 0;
         
-      // returns the next frame in a queue
-      this.getNext = function() {
-        var queue = this;
-        var frameName = null;
-        var response = new Promise();
-        var frameComplete = function(frameName) { //function called after build each frame with name of frame build
-          if (queue.callbacks[frameName] && queue.callbacks[frameName].length > 0) {
-            for (var  i = 0; i < queue.callbacks[frameName].length; i++) {
-              queue.callbacks[frameName][i]();
-            }
-            //delete queue.callbacks[frameName];
+      this.unMute = function() {
+        var _this = this;
+        this.isActive = true;
+        utils.forEach(this.deferredQueues, function(promise) {
+          promise.resolve(_this._getNextFrameName());
+        });
+        _context._unmuteQueue();
+      };
+      
+      this.frameComplete = function(frameName) { //function called after build each frame with name of frame build
+        if (queue.callbacks[frameName] && queue.callbacks[frameName].length > 0) {
+          for (var  i = 0; i < queue.callbacks[frameName].length; i++) {
+            queue.callbacks[frameName][i]();
           }
-        };
+          //delete queue.callbacks[frameName];
+        }
+      };
+      
+      this._getNextFrameName = function() {
+        var frameName = null;
         if (this.forcedQueue.length > 0 || this.queue.length > 0) {
           if (this.forcedQueue.length > 0) {
             frameName = this.forcedQueue.shift();
-            response.resolve({
-              frameName: frameName,
-              callback: frameComplete
-            });
           } else {
             if (this.forcedQueue.length == 0 && this.key >= this.queue.length - 1) {
               this.key = 0;
             }
             frameName = this.queue.splice(this.key, 1).pop();
-            utils.defer(function() {
-              response.resolve({
-                frameName: frameName,
-                callback: frameComplete
-              });
-            }, 200);
           }
         } else {
-          response.resolve(false);
+          _context._unmuteQueue();
         }
-        return response;
+        return frameName;
+      };
+      // returns the next frame in a queue
+      this.getNext = function() {
+        var defer = new Promise();
+        if (this.isActive) {
+          defer.resolve(this._getNextFrameName());
+        } else {
+          this.deferredQueues.unshift(defer);
+        }
+        return defer;
       };
         
       // force the particular frame up the queue
@@ -428,6 +459,7 @@ var Data = Class.extend({
           var newKey = objIndexOf(this.queue, frameName);//this.queue.indexOf(frameName.toString());
           if (newKey !== -1) {
             this.forcedQueue.unshift(this.queue.splice(newKey, 1).pop());
+            _context._muteAllQueues(this.whatId);
             if (typeof cb === "function") {
               if (typeof this.callbacks[frameName] != "object") {
                 this.callbacks[frameName] = [];
@@ -502,8 +534,7 @@ var Data = Class.extend({
       for (c = 0; c < cLength; c++) _this._collection[queryId].haveNoDataPointsPerKey[columns[c]] = {};
 
       var buildFrame = function(frameName, keys, queryId, callback) {
-          var frame = {};
-
+        var frame = {};
           if (query.from !== "datapoints") {
             // we populate the regular set with a single value (unpack properties into constant time series)
             var dataset = _this._collection[queryId].data;
@@ -610,7 +641,9 @@ var Data = Class.extend({
           //QUESTION: FramesArray is probably not needed at this point. queryId and whatId is enough
           _this._collectionPromises[queryId][whatId]["queue"].getNext().then(function(nextFrame) {
             if (nextFrame) {
-              buildFrame(nextFrame.frameName, keys, queryId, nextFrame.callback);
+              utils.defer(function() {
+                buildFrame(nextFrame, keys, queryId, _this._collectionPromises[queryId][whatId]["queue"].frameComplete);
+              });
             } else {
               //this goes to marker.js as a "response"
               resolve(_this._collection[queryId]["frames"][whatId]);
@@ -619,7 +652,7 @@ var Data = Class.extend({
       };
       _this._collectionPromises[queryId][whatId]["queue"].getNext().then(function(nextFrame) {
         if (nextFrame) {
-          buildFrame(nextFrame.frameName, keys, queryId, nextFrame.callback);
+          buildFrame(nextFrame, keys, queryId, _this._collectionPromises[queryId][whatId]["queue"].frameComplete);
         }
       });
     });
