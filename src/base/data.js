@@ -359,8 +359,8 @@ var Data = Class.extend({
   _muteAllQueues: function(except) {
     utils.forEach(this._collectionPromises, function(queries, queryId) {
         utils.forEach(queries, function(promise, whatId) {
-          if(promise.queue.whatId != except && promise.queue.forcedQueue.length == 0) {
-            promise.queue.isActive = false;
+          if(promise.queue.isActive == true && promise.queue.whatId != except) {
+            promise.queue.mute();
           }
         });
     });
@@ -386,32 +386,47 @@ var Data = Class.extend({
       this.callbacks = {};
       this.forcedQueue = [];
       this.isActive = true;
-      this.deferredQueues = [];
+      this.deferredPromise = null;
       this.whatId = whatId;
       this.queue = framesArray.slice(0); //clone array
       var queue = this; 
       //put the last element to the start of the queue because we are likely to need it first
       this.queue.splice(0, 0, this.queue.splice(this.queue.length - 1, 1)[0]);
       this.key = 0;
+      this.mute = function() {
+        this.isActive = false;
+        if (!(this.deferredPromise instanceof Promise && this.deferredPromise.status == "pending")) {
+          this.deferredPromise = new Promise();
+        }
+      };
         
       this.unMute = function() {
-        var _this = this;
         this.isActive = true;
-        utils.forEach(this.deferredQueues, function(promise) {
-          promise.resolve(_this._getNextFrameName());
-        });
-        _context._unmuteQueue();
+        if (this.deferredPromise instanceof Promise) {
+          this.deferredPromise.resolve();
+        }
+        this.deferredPromise = null;
+        if (this.forcedQueue.length == 0 && this.queue.length == 0) {
+          _context._unmuteQueue();
+        }
       };
-      
       this.frameComplete = function(frameName) { //function called after build each frame with name of frame build
         if (queue.callbacks[frameName] && queue.callbacks[frameName].length > 0) {
           for (var  i = 0; i < queue.callbacks[frameName].length; i++) {
             queue.callbacks[frameName][i]();
           }
-          //delete queue.callbacks[frameName];
         }
       };
-      
+      this._waitingForActivation = function() {
+        if (!this.deferredPromise instanceof Promise) {
+          this.deferredPromise = new Promise();
+        }
+        if (this.isActive) {
+          this.deferredPromise.resolve();
+        }
+        return this.deferredPromise; 
+      };
+        
       this._getNextFrameName = function() {
         var frameName = null;
         if (this.forcedQueue.length > 0 || this.queue.length > 0) {
@@ -434,7 +449,9 @@ var Data = Class.extend({
         if (this.isActive) {
           defer.resolve(this._getNextFrameName());
         } else {
-          this.deferredQueues.unshift(defer);
+          this._waitingForActivation().then(function() {
+            defer.resolve(queue._getNextFrameName());
+          }); 
         }
         return defer;
       };
@@ -460,6 +477,7 @@ var Data = Class.extend({
           if (newKey !== -1) {
             this.forcedQueue.unshift(this.queue.splice(newKey, 1).pop());
             _context._muteAllQueues(this.whatId);
+            this.unMute();
             if (typeof cb === "function") {
               if (typeof this.callbacks[frameName] != "object") {
                 this.callbacks[frameName] = [];

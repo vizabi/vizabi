@@ -131,6 +131,7 @@ var Marker = Model.extend({
     getFrame: function(time, cb, keys) {
       //keys = null;  
       var _this = this;
+      var interpolation = false;
       if (!this.cachedFrames) this.cachedFrames = {};
 
       var steps = this._parent.time.getAllSteps();
@@ -165,12 +166,14 @@ var Marker = Model.extend({
           if (steps[nextFrameIndex].toString() != time.toString()) {
             
             //interpolate between frames and fire the callback
+            interpolation = true;
             this._interpolateBetweenFrames(time, nextFrameIndex, steps, function (response) {
-              return cb(response, time); 
-            }, keys); 
+              cb(response, time); 
+            }, keys);
+            return;
           }
         }
-        
+
         //QUESTION: we don't need any further execution after we called for interpolation, right?
         //request preparing the data, wait until it's done
         _this.getFrames(time, keys).then(function() {
