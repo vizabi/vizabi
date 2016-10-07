@@ -681,8 +681,9 @@ BubbleChart.define('default_model', {
         which: "life_expectancy_years",
         scaleType: "linear",
         zoomedMin: 19,
-        domainMax: 85,
+        zoomedMax: 86,
         domainMin: 0,
+        domainMax: 100,
         allow: {
           scales: ["linear", "log", "time"]
         }
