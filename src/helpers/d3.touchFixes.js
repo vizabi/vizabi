@@ -4,7 +4,6 @@ import {isTouchDevice as isTouchDevice} from 'base/utils';
 //see explanation here https://github.com/vizabi/vizabi/issues/2020#issuecomment-250205191
 
 function touchcancel() {
-  console.warn("touchcancel");
   d3.event.target.dispatchEvent(new TouchEvent('touchend', d3.event));
 }
 
@@ -39,7 +38,6 @@ var zoom = function (_d3_behaviour_zoom) {
         g.on("mousedown.zoom", null);
         g.on("touchcancel", touchcancel);
         zoom.on("zoomend.clearmousedown", function() {
-          console.warn("zoomend clearmousedown");
           g.on("mousedown.zoom", null);
         });
       };
@@ -63,14 +61,12 @@ var brush = function (_d3_svg_brush) {
 
       function brushstart() {
         brush.on("brushend.touchcancel", brushend);
-        console.warn("brushstart");
 
         var w = d3.select(d3_window(this));
         w.on("touchcancel.brush", touchcancel);
 
         function brushend() {
           w.on("touchcancel.brush", null);
-          console.warn("brush end");
         }
         
       }
