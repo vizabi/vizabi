@@ -133,15 +133,20 @@ var Marker = Model.extend({
           //find the next frame after the requested time point
           var nextFrameIndex = d3.bisectLeft(steps, time);
           
-          if(!steps[nextFrameIndex]) utils.warn("The requested frame is out of range");
+          if(!steps[nextFrameIndex]) {
+            utils.warn("The requested frame is out of range: " + time);
+            cb(null, time);
+            return null;
+          }
             
           //if "time" doesn't hit the frame precisely 
           if (steps[nextFrameIndex].toString() != time.toString()) {
             
             //interpolate between frames and fire the callback
             this._interpolateBetweenFrames(time, nextFrameIndex, steps, function (response) {
-              return cb(response, time); 
-            }); 
+              cb(response, time); 
+            });
+            return null;
           }
         }
         
