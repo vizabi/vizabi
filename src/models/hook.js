@@ -12,6 +12,54 @@ var Hook = Model.extend({
   //that means, if X or Y doesn't have data at some point, we can't show markers
   _important: false,
   
+
+  init: function(name, values, parent, bind) {
+
+    this._super(name, values, parent, bind);
+
+    var _this = this;
+    var spaceRefs = getSpace(this);
+
+    //check what we want to hook this model to
+    utils.forEach(spaceRefs, function(name) {
+      //hook with the closest prefix to this model
+      _this._space[name] = _this.getClosestModel(name);
+      //if hooks change, this should load again
+      //TODO: remove hardcoded 'show"
+      if(_this._space[name].show) {
+        _this._space[name].on('change:show', function(evt) {
+          //hack for right size of bubbles
+          if(_this._type === 'size' && _this.which === _this.which_1) {
+            _this.which_1 = '';
+          };
+          //defer is necessary because other events might be queued.
+          //load right after such events
+          utils.defer(function() {
+            _this.load().then(function() {
+
+            }, function(err) {
+              utils.warn(err);
+            });
+          });
+        });
+      }
+    });
+    //this is a hook, therefore it needs to reload when data changes
+    this.on('change:which', function(evt) {
+      //defer is necessary because other events might be queued.
+      //load right after such events
+      _this.load();
+    });
+
+  },
+
+  getLoadSettings: function() {
+    return {
+      data: this.getClosestModel('data'),
+      language: this.getClosestModel('language')
+    }
+  },
+
   /**
    * Hooks loads data, models ask children to load data
    * Basically, this method:
@@ -26,9 +74,7 @@ var Hook = Model.extend({
 
     opts = opts || {};
 
-    var _this = this;
-    var data_hook = this._dataModel;
-    var language_hook = this._languageModel;
+    var loadSettings = this.getLoadSettings();
     var query = this.getQuery(opts.splashScreen);
 
     //useful to check if in the middle of a load call
@@ -38,37 +84,48 @@ var Hook = Model.extend({
     this.setReady(false);
 
     //get reader info
-    var reader = data_hook.getPlainObject();
+    var reader = loadSettings.data.getPlainObject();
     reader.parsers = this._getAllParsers();
 
-    var lang = language_hook ? language_hook.id : 'en';
-    var promise = new Promise(function(resolve, reject) {
+    var lang = loadSettings.language ? loadSettings.language.id : 'en';
 
-      var evts = {
-        'load_start': function() {
-          _this.setLoading('_hook_data');
-          EventSource.freezeAll([
-            'load_start',
-            'resize'
-          ]);
-        }
-      };
+    var _this = this;
+    var evts = {
+      'load_start': function() {
+        _this.setLoading('_hook_data');
+        EventSource.freezeAll([
+          'load_start',
+          'resize'
+        ]);
+      }
+    };
 
-      utils.timeStamp('Vizabi Model: Loading Data: ' + _this._id);
-      _this.getDataManager().load(query, lang, reader, evts).then(function(dataId) {
-        _this._dataId = dataId;
-        utils.timeStamp('Vizabi Model: Data loaded: ' + _this._id);
-        _this.afterLoad();
-        resolve();
-      }, function(err) {
-        utils.warn('Problem with query: ', JSON.stringify(query));
-        reject(err);
-      });
+    utils.timeStamp('Vizabi Model: Loading Data: ' + this._id);
 
-    });
+    var dataPromise = this.getDataManager().load(query, lang, reader, evts)
 
-    return promise;
+    dataPromise.then(
+      this.afterLoad.bind(this),
+      this.loadError.bind(this)
+    );
+
+    return dataPromise;
     
+  },
+
+
+  /**
+   * executes after data has actually been loaded
+   */
+  afterLoad: function(dataId) {
+    this._dataId = dataId;
+    utils.timeStamp('Vizabi Model: Data loaded: ' + this._id);
+    EventSource.unfreezeAll();
+    this.setLoadingDone('_hook_data');
+  },
+
+  loadError: function() {
+      utils.warn('Problem with query: ', JSON.stringify(query));
   },
 
   /**
@@ -136,6 +193,131 @@ var Hook = Model.extend({
     };
   },
 
+
+  /**
+   * gets all hook dimensions
+   * @param {Object} opts options with exceptType or onlyType
+   * @returns {Array} all unique dimensions
+   */
+  _getAllDimensions: function(opts) {
+
+    var optsStr = JSON.stringify(opts);
+    if(optsStr in this._spaceDims) {
+      return this._spaceDims[optsStr];
+    }
+
+    opts = opts || {};
+    var dims = [];
+    var dim;
+
+    var models = this._space;
+
+    utils.forEach(models, function(m) {
+      if(opts.exceptType && m.getType() === opts.exceptType) {
+        return true;
+      }
+      if(opts.onlyType && m.getType() !== opts.onlyType) {
+        return true;
+      }
+      if(dim = m.getDimension()) {
+        dims.push(dim);
+      }
+    });
+
+    this._spaceDims[optsStr] = dims;
+
+    return dims;
+  },
+
+  /**
+   * gets first dimension that matches type
+   * @param {Object} options
+   * @returns {Array} all unique dimensions
+   */
+  _getFirstDimension: function(opts) {
+    opts = opts || {};
+
+    var models = this._space;
+    //in case it's a parent of hooks
+    if(!this.isHook() && this.space) {
+      models = [];
+      var _this = this;
+      utils.forEach(this.space, function(name) {
+        models.push(_this.getClosestModel(name));
+      });
+    }
+
+    var dim = false;
+    utils.forEach(models, function(m) {
+      if(opts.exceptType && m.getType() !== opts.exceptType) {
+        dim = m.getDimension();
+        return false;
+      } else if(opts.type && m.getType() === opts.type) {
+        dim = m.getDimension();
+        return false;
+      } else if(!opts.exceptType && !opts.type) {
+        dim = m.getDimension();
+        return false;
+      }
+    });
+    return dim;
+  },
+
+
+  /**
+   * gets all hook filters
+   * @param {Boolean} splashScreen get filters for first screen only
+   * @returns {Object} filters
+   */
+  _getAllFilters: function(opts, splashScreen) {
+    opts = opts || {};
+    var filters = {};
+    var _this = this;
+    utils.forEach(this._space, function(h) {
+      if(opts.exceptType && h.getType() === opts.exceptType) {
+        return true;
+      }
+      if(opts.onlyType && h.getType() !== opts.onlyType) {
+        return true;
+      }
+      // if query's dimensions are the same as the hook's, no join
+      if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
+        filters = utils.extend(filters, h.getFilter(splashScreen));
+      } else {
+        var joinFilter = h.getFilter(splashScreen);
+        if (joinFilter != null && !utils.isEmpty(joinFilter)) {
+          var filter = {};
+          filter[h.getDimension()] = "$"  + h.getDimension();
+          filters = utils.extend(filters, filter);
+        }
+      }
+    });
+    return filters;
+  },
+
+  _getAllJoins: function(opts, splashScreen) {
+    var joins = {};
+    var _this = this;
+    utils.forEach(this._space, function(h) {
+      if(opts.exceptType && h.getType() === opts.exceptType) {
+        return true;
+      }
+      if(opts.onlyType && h.getType() !== opts.onlyType) {
+        return true;
+      }
+      if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
+        return true;
+      }
+      var filter = h.getFilter(splashScreen);
+      if (filter != null && !utils.isEmpty(filter)) {
+        joins["$" + h.getDimension()] = {
+          key: h.getDimension(),
+          where: h.getFilter(splashScreen)
+        };
+      }
+    });
+    return joins;
+  },
 
   /**
    * gets all hook filters
@@ -432,5 +614,22 @@ var Hook = Model.extend({
     return this.use !== 'constant' ? this.getDataManager().getConceptprops(this.which) : {};
   }    
 });
+
+/**
+ * Learn what this model should hook to
+ * @returns {Array} space array
+ */
+function getSpace(model) {
+  if(utils.isArray(model.space)) {
+    return model.space;
+  } else if(model._parent) {
+    return getSpace(model._parent);
+  } else {
+    utils.error(
+      'ERROR: space not found.\n You must specify the objects this hook will use under the "space" attribute in the state.\n Example:\n space: ["entities", "time"]'
+    );
+  }
+}
+
 
 export default Hook;
