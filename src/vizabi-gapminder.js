@@ -712,6 +712,8 @@ BubbleChart.define('default_model', {
         //which: "sg_population",//systema globalis
         which: "population_total", 
         scaleType: "linear",
+        domainMin: 15,
+        domainMax: 1400000000,
         allow: {
           scales: ["linear"]
         },
