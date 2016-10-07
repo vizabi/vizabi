@@ -135,7 +135,6 @@ var Marker = Model.extend({
       if (!this.cachedFrames) this.cachedFrames = {};
 
       var steps = this._parent.time.getAllSteps();
-      
       // try to get frame from cache without keys
       var cachePath = this._getCachePath();
       if (!cachePath) return cb(null, time); 
@@ -160,7 +159,11 @@ var Marker = Model.extend({
           //find the next frame after the requested time point
           var nextFrameIndex = d3.bisectLeft(steps, time);
           
-          if(!steps[nextFrameIndex]) utils.warn("The requested frame is out of range");
+          if(!steps[nextFrameIndex]) {
+            utils.warn("The requested frame is out of range: " + time);
+            cb(null, time);
+            return null;
+          }
             
           //if "time" doesn't hit the frame precisely 
           if (steps[nextFrameIndex].toString() != time.toString()) {
@@ -170,7 +173,7 @@ var Marker = Model.extend({
             this._interpolateBetweenFrames(time, nextFrameIndex, steps, function (response) {
               cb(response, time); 
             }, keys);
-            return;
+            return null;
           }
         }
 
@@ -483,6 +486,7 @@ var Marker = Model.extend({
   getEntityLimits: function(entity) {
     var _this = this;
     var timePoints = this._parent.time.getAllSteps();
+    console.log("get entity limits: " + timePoints.length);
     var selectedEdgeTimes = [];
     var hooks = [];
     utils.forEach(_this.getSubhooks(), function(hook) {
