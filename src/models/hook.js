@@ -120,6 +120,7 @@ var Hook = Model.extend({
   afterLoad: function(dataId) {
     this._dataId = dataId;
     utils.timeStamp('Vizabi Model: Data loaded: ' + this._id);
+    this.scale = null; // needed for axis/scale resetting to new data
     EventSource.unfreezeAll();
     this.setLoadingDone('_hook_data');
   },
