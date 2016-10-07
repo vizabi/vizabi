@@ -50,6 +50,11 @@ var BubbleChartComp = Component.extend({
     }];
 
     this.model_binds = {
+      'change:time.playing': function(evt, original) {
+        if(utils.isTouchDevice() && _this.model.time.playing && _this.someHighlighted) {
+          _this.model.entities.clearHighlighted();
+        }
+      },
       'change:time.start': function(evt, original) {
         if(_this.model.marker.color.scaleType === 'time') {
           _this.model.marker.color.scale = null;
@@ -1356,10 +1361,17 @@ var BubbleChartComp = Component.extend({
   selectDataPoints: function() {
     var _this = this;
     var KEY = this.KEY;
+    
     this.someSelectedAndOpacityZero_1 = false;
-    //hide tooltip
-    _this._setTooltip();
-    _this._setBubbleCrown();
+
+    if(utils.isTouchDevice()) {
+      _this.model.entities.clearHighlighted();
+      _this._labels.showCloseCross(null, false);
+    } else {
+      //hide tooltip
+      _this._setTooltip();
+      _this._setBubbleCrown();
+    }
 
     _this.someSelected = (_this.model.entities.select.length > 0);
 
@@ -1547,6 +1559,7 @@ var BubbleChartComp = Component.extend({
             text = _this.model.entities.isSelected(d) ? '': values.label[d[KEY]];
           }
 
+          _this._labels.highlight(null, false);
           _this._labels.highlight(d, true);
           if(_this.model.entities.isSelected(d)) {
             var skipCrownInnerFill = !d.trailStartTime || d.trailStartTime == _this.model.time.timeFormat(_this.time);

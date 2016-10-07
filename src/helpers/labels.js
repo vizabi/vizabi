@@ -100,9 +100,9 @@ var label = function(context) {
             .attr("height", "0px");
 
           cross.on("click", function() {
-            _this.model.entities.clearHighlighted();
             //default prevented is needed to distinguish click from drag
             if(d3.event.defaultPrevented) return;
+            _this.model.entities.clearHighlighted();
             _this.model.entities.selectEntity(d);
           });
 
@@ -123,9 +123,23 @@ var label = function(context) {
             .classed("vzb-transparent", true);
         })
         .on("click", function(d) {
-          if (!utils.isTouchDevice()) return;
+          if(!utils.isTouchDevice()) return;
           var cross = d3.select(this).selectAll("." + _cssPrefix + "-label-x");
-          cross.classed("vzb-transparent", !cross.classed("vzb-transparent"));
+          var KEY = _this.KEY || _this.model.entities.getDimension();
+          var hidden = cross.classed("vzb-transparent"); 
+          if(hidden) {
+            // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
+            _this.entityLabels.sort(function (a, b) { return a[KEY] != d[KEY]? -1 : 1; });
+            _this.showCloseCross(null, false);
+          }
+          cross.classed("vzb-transparent", !hidden);
+          if(!OPTIONS.SUPPRESS_HIGHLIGHT_DURING_PLAY || !_this.model.time.playing) {
+            if(hidden) {
+              _this.model.entities.setHighlight(d);
+            } else {
+              _this.model.entities.clearHighlighted();
+            }         
+          }
         });
     
       return label;  
@@ -333,7 +347,8 @@ var OPTIONS = {
   LABELS_CONTAINER_CLASS: '',
   LINES_CONTAINER_CLASS: '',
   LINES_CONTAINER_SELECTOR: '',
-  CSS_PREFIX: ''
+  CSS_PREFIX: '',
+  SUPPRESS_HIGHLIGHT_DURING_PLAY: true
 }; 
 
 var Labels = Class.extend({
@@ -504,7 +519,7 @@ var Labels = Class.extend({
     var KEY = this.KEY; 
     //show the little cross on the selected label
     this.entityLabels
-        .filter(function(f){return f[KEY] == d[KEY]})
+        .filter(function(f){return d ? f[KEY] == d[KEY] : true;})
         .select("." + this._cssPrefix + "-label-x")
         .classed("vzb-transparent", !show);
   },
@@ -514,7 +529,7 @@ var Labels = Class.extend({
     var labels = this.entityLabels; 
     if(d) {
       labels = labels.filter(function(f) {
-          return f[KEY] == d[KEY]
+          return d ? f[KEY] == d[KEY] : true;
         });
     }
     labels.classed("vzb-highlighted", highlight);
