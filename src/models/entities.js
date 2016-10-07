@@ -280,8 +280,10 @@ var EntitiesModel = Model.extend({
   },
 
   setHighlight: function(arg) {
-    if (!utils.isArray(arg))
+    if (!utils.isArray(arg)) {
       this.setHighlight([].concat(arg));
+      return;
+    }
     this.getModelObject('highlight').set(arg, false, false); // highlights are always non persistent changes
   },
 
