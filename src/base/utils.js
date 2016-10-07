@@ -1177,19 +1177,19 @@ export var flattenDates = function(obj, timeFormat) {
         }
       });
     } else if(key === 'time') {
-      if(typeof val.value === 'object') {
+      if(typeof val.value === 'object' && val.value != null) {
         val.value = timeFormat(val.value);
       }
-      if(typeof val.start === 'object') {
+      if(typeof val.start === 'object' && val.start != null) {
         val.start = timeFormat(val.start);
       }
-      if(typeof val.end === 'object') {
+      if(typeof val.end === 'object' && val.end != null) {
         val.end = timeFormat(val.end);
       }
-      if(typeof val.startSelected === 'object') {
+      if(typeof val.startSelected === 'object' && val.startSelected != null) {
         val.startSelected = timeFormat(val.startSelected);
       }
-      if(typeof val.endSelected === 'object') {
+      if(typeof val.endSelected === 'object' && val.endSelected != null) {
         val.endSelected = timeFormat(val.endSelected);
       }
     }

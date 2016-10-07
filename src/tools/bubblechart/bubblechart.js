@@ -74,8 +74,25 @@ var BubbleChart = Tool.extend('BubbleChart', {
    * Determines the default model of this tool
    */
   default_model: {
-    state: {
+    state: { 
+      time: {
+      },
+      marker: {
+        axis_x: { },
+        axis_y: { },
+        label:  { },
+        size:   { },
+        color:  { },
+        size_label: {
+          use: "constant",
+          which: "_default",
+          scaleType: "ordinal",
+          _important: false,
+          extent: [0, 0.33]
+        },
+      }
     },
+    language: { },
     ui: {
       chart: {
         whenHovering: {
@@ -91,8 +108,10 @@ var BubbleChart = Tool.extend('BubbleChart', {
         trails: true,
         lockNonSelected: 0
       },
-      presentation: true,
-      adaptMinMaxZoom: false
+      presentation: false,
+      adaptMinMaxZoom: false,
+      cursorMode: 'arrow',
+      zoomOnScrolling: false,
     }
   }
 });

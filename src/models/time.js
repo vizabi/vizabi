@@ -31,11 +31,11 @@ var TimeModel = Model.extend({
    */
   _defaults: {
     dim: "time",
-    value: "2015",
-    start: "1800", //mandatory defaults! 
-    end: "2016", //mandatory defaults!
-    startSelected: "1800",
-    endSelected: "2015",
+    value: null,
+    start: null, //mandatory defaults! 
+    end: null, //mandatory defaults!
+    startSelected: null,
+    endSelected: null,
     playable: true,
     playing: false,
     loop: false,
@@ -99,7 +99,7 @@ var TimeModel = Model.extend({
     for(var i = 0; i < date_attr.length; i++) {
       var attr = date_attr[i];
       if(!utils.isDate(this[attr])) {
-        var date = this.parseToUnit(this[attr].toString(), this.unit);
+        var date = this.parseToUnit(this[attr], this.unit);
         this.set(attr, date);
       }
     }
@@ -114,7 +114,7 @@ var TimeModel = Model.extend({
     var date_attr = ["value", "start", "end", "startSelected", "endSelected"];
     for(var i = 0; i < date_attr.length; i++) {
       var attr = date_attr[i];
-      if(!utils.isString(this._defaults[attr])) {
+      if(!utils.isString(this._defaults[attr]) && this._defaults[attr] != null) {
         this._defaults[attr] = this._defaults[attr].toString();
       }
     }
@@ -122,20 +122,24 @@ var TimeModel = Model.extend({
   
   /*
    * Formatting and parsing functions
-   * @param {Date} date
+   * @param {Date} dateObject
    * @param {String} unit
    * @returns {String}
    */
   format: function(dateObject, unit) {
     unit = unit || this.unit;
+    if (dateObject == null) return null;
     return formats[unit] ? formats[unit](dateObject) : formats['year'](dateObject);
   },
-
+  /* parse to predefined unit */
   parseToUnit: function(timeString, unit) {
     unit = unit || this.unit;
-    return formats[unit] ? formats[unit].parse(timeString) : null;
+    if (timeString == null) 
+      return null;
+    else 
+      return formats[unit] ? formats[unit].parse(timeString.toString()) : null;
   },
-
+  /* auto-determines unit from timestring */
   parse: function(timeString) {
     var keys = Object.keys(formats), i = 0; 
     for (; i < keys.length; i++) {
@@ -168,31 +172,31 @@ var TimeModel = Model.extend({
     }
 
     //end has to be >= than start
-    if(this.end < this.start) {
+    if(this.end < this.start && this.start != null) {
       this.end = new Date(this.start);
     }
     
-    if(this.value < this.startSelected) {
+    if(this.value < this.startSelected && this.startSelected != null) {
       this.value = new Date(this.startSelected); 
     }
     
-    if(this.value > this.endSelected) {
+    if(this.value > this.endSelected && this.endSelected != null) {
       this.value = new Date(this.endSelected);
     }
     if (this.splash === false) {
-      if(this.startSelected < this.start) {
+      if(this.startSelected < this.start && this.start != null) {
         this.startSelected = new Date(this.start);
       }
 
-      if(this.endSelected > this.end) {
+      if(this.endSelected > this.end && this.end != null) {
         this.endSelected = new Date(this.end);
       }
     }
   
     //value has to be between start and end
-    if(this.value < this.start) {
+    if(this.value < this.start && this.start != null) {
       this.value = new Date(this.start);
-    } else if(this.value > this.end) {
+    } else if(this.value > this.end && this.end != null) {
       this.value = new Date(this.end);
     }
 
@@ -263,16 +267,30 @@ var TimeModel = Model.extend({
     var defaultStart = this.parseToUnit(this._defaults.start, this.unit);
     var defaultEnd = this.parseToUnit(this._defaults.end, this.unit);
       
-    var start = this.timeFormat(defaultStart || this.start);
-    var end = this.timeFormat(defaultEnd || this.end);
-    var value = this.timeFormat(this.value);
     var dim = this.getDimension();
-    var filter = {};
+    var filter = null;
 
     if (firstScreen) {
-      filter[dim] = value;
+      if (this.value != null) {
+        filter = {};
+        filter[dim] = this.timeFormat(this.value);
+      }
     } else {
-      filter[dim] = {'$gte': start, '$lte': end};
+      var gte, lte;
+      var start = defaultStart || this.start;
+      if (start != null) {
+        gte = this.timeFormat(start);
+      }
+      var end = defaultEnd || this.end;
+      if (end != null) {
+        lte = this.timeFormat(end);
+      }
+      if (gte || lte) {
+        filter = {};
+        filter[dim] = {};
+        if (gte) filter[dim]["$gte"] = gte;
+        if (lte) filter[dim]["$lte"] = lte;
+      }
     }
     return filter;
   },

@@ -58,7 +58,27 @@ var MountainChart = Tool.extend('MountainChart', {
 
     //constructor is the same as any tool
     this._super(placeholder, external_model);
+  },
+
+  default_model: {
+    state: { 
+      time: {
+      }
+    },
+    language: { },
+    ui: {
+      chart: {
+        manualSortingEnabled: true,
+        yMaxMethod: "latest",
+        probeX: 1.85,
+        xLogStops: [1, 2, 5],
+        xPoints: 50
+      },
+      presentation: false
+    }
   }
+
+
 });
 
 export default MountainChart;

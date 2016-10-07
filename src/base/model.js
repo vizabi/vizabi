@@ -855,7 +855,7 @@ var Model = EventSource.extend({
       if(opts.onlyType && h.getType() !== opts.onlyType) {
         return true;
       }
-
+      // if query's dimensions are the same as the hook's, no join
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
         filters = utils.extend(filters, h.getFilter(splashScreen));
       } else {
