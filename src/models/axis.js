@@ -27,7 +27,10 @@ var AxisModel = Hook.extend({
     domainMax: null,
     zoomedMin: null,
     zoomedMax: null,
-    scaleType: "linear"
+    scaleType: "linear",
+    allow: {
+      scales: ["linear", "log", "genericLog", "time", "pow"]
+    }
   },
     
   _type: "axis",
