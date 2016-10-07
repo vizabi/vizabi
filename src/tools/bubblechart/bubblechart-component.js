@@ -54,6 +54,16 @@ var BubbleChartComp = Component.extend({
         if(_this.model.marker.color.scaleType === 'time') {
           _this.model.marker.color.scale = null;
         }
+        if(!_this._readyOnce) return;
+        _this._trails.create().then(function() {
+          _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
+        });
+      },
+      'change:time.end': function(evt, original) {
+        if(!_this._readyOnce) return;
+        _this._trails.create().then(function() {
+          _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
+        });
       },
       "change:time.record": function() {
         //console.log("change time record");
