@@ -131,7 +131,6 @@ var Marker = Model.extend({
     getFrame: function(time, cb, keys) {
       //keys = null;  
       var _this = this;
-      var interpolation = false;
       if (!this.cachedFrames) this.cachedFrames = {};
 
       var steps = this._parent.time.getAllSteps();
@@ -169,7 +168,6 @@ var Marker = Model.extend({
           if (steps[nextFrameIndex].toString() != time.toString()) {
             
             //interpolate between frames and fire the callback
-            interpolation = true;
             this._interpolateBetweenFrames(time, nextFrameIndex, steps, function (response) {
               cb(response, time); 
             }, keys);
@@ -486,7 +484,6 @@ var Marker = Model.extend({
   getEntityLimits: function(entity) {
     var _this = this;
     var timePoints = this._parent.time.getAllSteps();
-    console.log("get entity limits: " + timePoints.length);
     var selectedEdgeTimes = [];
     var hooks = [];
     utils.forEach(_this.getSubhooks(), function(hook) {
