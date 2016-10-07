@@ -35,6 +35,8 @@ var VIZABI_MODEL = {
       size: {
         use: "indicator",
         which: "population_total",
+        domainMin: 15,
+        domainMax: 1400000000,
         allow: {
           scales: ["linear"]
         },
