@@ -21,8 +21,9 @@ var VIZABI_MODEL = {
         use: "indicator",
         which: "life_expectancy_years",
         zoomedMin: 19,
-        domainMax: 85,
-        domainMin: 0
+        zoomedMax: 86,
+        domainMin: 0,
+        domainMax: 100
       },
       axis_x: {
         use: "indicator",
