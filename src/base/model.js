@@ -420,6 +420,7 @@ var Model = EventSource.extend({
   },
 
   loadData: function(opts) {
+    if (this.isHook()) utils.warn('Hook ' + this._name + ' is not loading because it\'s not extending Hook prototype.')
     return Promise.resolve();
   },
 
