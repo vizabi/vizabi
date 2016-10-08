@@ -100,6 +100,12 @@ var Marker = Model.extend({
     
   _getAllDimensions: function(opts) {
     
+    var models = [];
+    var _this = this;
+    utils.forEach(this.space, function(name) {
+      models.push(_this.getClosestModel(name));
+    });
+
     var optsStr = JSON.stringify(opts);
     if(optsStr in this._spaceDims) {
       return this._spaceDims[optsStr];
@@ -108,12 +114,6 @@ var Marker = Model.extend({
     opts = opts || {};
     var dims = [];
     var dim;
-
-    var models = [];
-    var _this = this;
-    utils.forEach(this.space, function(name) {
-      models.push(_this.getClosestModel(name));
-    });
 
     utils.forEach(models, function(m) {
       if(opts.exceptType && m.getType() === opts.exceptType) {
@@ -139,13 +139,13 @@ var Marker = Model.extend({
    * @returns {Array} all unique dimensions
    */
   _getFirstDimension: function(opts) {
-    opts = opts || {};
-
     var models = [];
     var _this = this;
     utils.forEach(this.space, function(name) {
       models.push(_this.getClosestModel(name));
     });
+
+    opts = opts || {};
 
     var dim = false;
     utils.forEach(models, function(m) {

@@ -202,32 +202,9 @@ var Hook = Model.extend({
    */
   _getAllDimensions: function(opts) {
 
-    var optsStr = JSON.stringify(opts);
-    if(optsStr in this._spaceDims) {
-      return this._spaceDims[optsStr];
-    }
+    // hook dimensions = marker dimensions. Later, hooks might have extra dimensions : )
+    return this._parent._getAllDimensions(opts);
 
-    opts = opts || {};
-    var dims = [];
-    var dim;
-
-    var models = this._space;
-
-    utils.forEach(models, function(m) {
-      if(opts.exceptType && m.getType() === opts.exceptType) {
-        return true;
-      }
-      if(opts.onlyType && m.getType() !== opts.onlyType) {
-        return true;
-      }
-      if(dim = m.getDimension()) {
-        dims.push(dim);
-      }
-    });
-
-    this._spaceDims[optsStr] = dims;
-
-    return dims;
   },
 
   /**
@@ -236,32 +213,10 @@ var Hook = Model.extend({
    * @returns {Array} all unique dimensions
    */
   _getFirstDimension: function(opts) {
-    opts = opts || {};
 
-    var models = this._space;
-    //in case it's a parent of hooks
-    if(!this.isHook() && this.space) {
-      models = [];
-      var _this = this;
-      utils.forEach(this.space, function(name) {
-        models.push(_this.getClosestModel(name));
-      });
-    }
+    // hook dimensions = marker dimensions. Later, hooks might have extra dimensions : )
+    return this._parent._getFirstDimension(opts);
 
-    var dim = false;
-    utils.forEach(models, function(m) {
-      if(opts.exceptType && m.getType() !== opts.exceptType) {
-        dim = m.getDimension();
-        return false;
-      } else if(opts.type && m.getType() === opts.type) {
-        dim = m.getDimension();
-        return false;
-      } else if(!opts.exceptType && !opts.type) {
-        dim = m.getDimension();
-        return false;
-      }
-    });
-    return dim;
   },
 
 
