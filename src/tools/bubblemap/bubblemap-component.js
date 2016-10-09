@@ -121,7 +121,8 @@ var BubbleMapComponent = Component.extend({
     this._labels.config({
       CSS_PREFIX: 'vzb-bmc',
       LABELS_CONTAINER_CLASS: 'vzb-bmc-labels',
-      LINES_CONTAINER_CLASS: 'vzb-bmc-lines'
+      LINES_CONTAINER_CLASS: 'vzb-bmc-lines',
+      SUPPRESS_HIGHLIGHT_DURING_PLAY: false
     });    
   },
 
@@ -866,6 +867,16 @@ var BubbleMapComponent = Component.extend({
       var _this = this;
       this.someHighlighted = (this.model.entities.highlight.length > 0);
 
+      if(utils.isTouchDevice()) {
+        if(this.someHighlighted) {
+          _this.hovered = this.model.entities.highlight[0];
+        } else {
+          _this.hovered = null;
+        }       
+        _this.updateTitleNumbers();
+        _this.fitSizeOfTitles();        
+      }
+
 
 //      if (!this.selectList || !this.someSelected) return;
 //      this.selectList.classed("vzb-highlight", function (d) {
@@ -908,10 +919,19 @@ var BubbleMapComponent = Component.extend({
       this.someSelected = (this.model.entities.select.length > 0);
 
 //      this._selectlist.rebuild();
-
-      // hide recent hover tooltip
-      if (!_this.hovered || _this.model.entities.isSelected(_this.hovered)) {
-        _this._setTooltip();
+      if(utils.isTouchDevice()) {
+        _this._labels.showCloseCross(null, false);
+        if(_this.someHighlighted) {
+          _this.model.entities.clearHighlighted();
+        } else {
+          _this.updateTitleNumbers();
+          _this.fitSizeOfTitles();        
+        }
+      } else {
+        // hide recent hover tooltip
+        if (!_this.hovered || _this.model.entities.isSelected(_this.hovered)) {
+          _this._setTooltip();
+        }
       }
 
   },
