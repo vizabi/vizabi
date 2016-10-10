@@ -11,6 +11,8 @@ var Hook = Model.extend({
   //some hooks can be important. like axis x and y
   //that means, if X or Y doesn't have data at some point, we can't show markers
   _important: false,
+
+  dataChildren: ['use', 'which', 'domainMin', 'domainMax'],
   
 
   init: function(name, values, parent, bind) {
@@ -27,7 +29,7 @@ var Hook = Model.extend({
       //if hooks change, this should load again
       //TODO: remove hardcoded 'show"
       if(_this._space[name].show) {
-        _this._space[name].on('change:show', function(evt) {
+        _this._space[name].on('dataChange', function(evt) {
           //hack for right size of bubbles
           if(_this._type === 'size' && _this.which === _this.which_1) {
             _this.which_1 = '';
@@ -44,13 +46,30 @@ var Hook = Model.extend({
         });
       }
     });
-    //this is a hook, therefore it needs to reload when data changes
-    this.on('change:which', function(evt) {
-      //defer is necessary because other events might be queued.
-      //load right after such events
-      _this.load();
-    });
+  },
 
+  checkDataChanges: function(attributes) {
+    var _this = this;
+
+    if (!attributes || !this.dataChildren)
+      return
+
+    if (!utils.isArray(attributes) && utils.isObject(attributes)) 
+      attributes = Object.keys(attributes);
+
+    if (attributes.length == 0 || this.dataChildren.length == 0)
+      return
+
+    var changedDataChildren = attributes.filter(checkDataChildren);
+
+    if (changedDataChildren.length > 0) {
+      this.trigger('dataChange');
+      this.load();
+    }
+
+    function checkDataChildren(attribute) { 
+      return _this.dataChildren.indexOf(attribute) !== -1 
+    }
   },
 
   getLoadSettings: function() {
@@ -112,7 +131,6 @@ var Hook = Model.extend({
     return dataPromise;
     
   },
-
 
   /**
    * executes after data has actually been loaded

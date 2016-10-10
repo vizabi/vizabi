@@ -168,7 +168,7 @@ var Model = EventSource.extend({
     }
 
     // init/set all given values
-    var newSubmodels = false;
+    var changes = [];
     for(var attribute in attrs) {
       val = attrs[attribute];
 
@@ -178,6 +178,7 @@ var Model = EventSource.extend({
       if (this._data[attribute] && (bothModel || bothModelLeaf)) {
         // data type does not change (model or leaf and can be set through set-function)
         this._data[attribute].set(val, force, persistent);
+        changes.push(attribute);
       } else {
         // data type has changed or is new, so initializing the model/leaf
         this._data[attribute] = initSubmodel(attribute, val, this);
@@ -185,9 +186,14 @@ var Model = EventSource.extend({
       }
     }
 
-    if(this.validate && !setting) {
-      this.validate();
+    if (!setting) {
+      this.checkDataChanges(changes);
+      if(this.validate) {
+        this.validate();
+      }
     }
+
+
 
     if(!setting || force) {
       this._setting = false;
@@ -200,8 +206,11 @@ var Model = EventSource.extend({
     if (freezeCall) {
       this.setTreeFreezer(false);
     }
-
   },
+
+  // standard model doesn't do anything with data 
+  // overloaded by hook/entities
+  checkDataChanges: function() { },
 
   setTreeFreezer: function(freezerStatus) {
     // first traverse down

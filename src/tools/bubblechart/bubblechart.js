@@ -90,7 +90,9 @@ var BubbleChart = Tool.extend('BubbleChart', {
           _important: false,
           extent: [0, 0.33]
         },
-      }
+      },
+      entities: { },
+      entities_minimap: { }
     },
     language: { },
     ui: {
