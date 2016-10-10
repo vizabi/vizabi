@@ -78,9 +78,6 @@ var ColorLegend = Component.extend({
       var newFilter = {};
       newFilter["is--" + this.colorModel.which] = true;
       this.model.state.entities_minimap.show = newFilter;
-    } else {
-      var defaultShow = utils.clone(this.root.default_model.state.entities_minimap.show._defs_);
-      this.model.state.entities_minimap.show = defaultShow;
     }
   },
 
