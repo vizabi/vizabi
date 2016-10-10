@@ -73,9 +73,6 @@ export default Class.extend({
               key: d[KEY]
             }
           });
-          if (_this.entityTrails[d[KEY]]) {
-             _this._remove(_this.entityTrails[d[KEY]], null, d);  
-          }
           _this.entityTrails[d[KEY]] = d3.select(this).selectAll("g").data(trailSegmentData);
           
           _this.entityTrails[d[KEY]].exit().remove();
@@ -210,15 +207,6 @@ export default Class.extend({
       });
     });
 
-  },
-
-
-  _remove: function(trail, duration, d) {
-    this.actionsQueue[d[this.context.KEY]] = []; 
-    if (trail) { // TODO: in some reason run twice 
-      d3.select(this.entityTrails[d[this.context.KEY]].node().parentNode).remove();
-      this.entityTrails[d[this.context.KEY]] = null;
-    }
   },
 
   _resize: function(trail, duration, d) {
