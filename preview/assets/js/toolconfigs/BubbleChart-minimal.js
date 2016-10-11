@@ -1,52 +1,52 @@
 var VIZABI_MODEL = { 
-  state: {
-    entities: {
-      dim: "geo"
+  "state": {
+    "entities": {
+      "dim": "geo"
     },
-    entities_minimap: {
-      dim: "geo",
-      show: {
+    "entities_minimap": {
+      "dim": "geo",
+      "show": {
         "is--world_4region": true
       }
     },
-    entities_tags: {
-      dim: "tag"
+    "entities_tags": {
+      "dim": "tag"
     },
-    marker: {
-      space: ["entities", "time"],
-      axis_y: {
-        use: "indicator",
-        which: "life_expectancy_years" 
+    "marker": {
+      "space": ["entities", "time"],
+      "axis_y": {
+        "use": "indicator",
+        "which": "life_expectancy_years" 
       },
-      axis_x: {
-        use: "indicator",
-        which: "income_per_person_gdppercapita_ppp_inflation_adjusted"
+      "axis_x": {
+        "use": "indicator",
+        "which": "income_per_person_gdppercapita_ppp_inflation_adjusted"
       },
-      size: {
-        use: "indicator",
-        which: "population_total"
+      "size": {
+        "use": "indicator",
+        "which": "population_total"
       }
     },
-    marker_minimap:{
-      space: ["entities_minimap"],
-      label: {
-        use: "property",
-        which: "name"
+    "marker_minimap":{
+      "space": ["entities_minimap"],
+      "label": {
+        "use": "property",
+        "which": "name"
       },
-      geoshape: {
-        use: "property",
-        which: "shape_lores_svg"
+      "geoshape": {
+        "use": "property",
+        "which": "shape_lores_svg"
       }
     },
-    marker_tags: {
-      space: ["entities_tags"],
-      label: {
-        use: "property",
-        which: "name"
+    "marker_tags": {
+      "space": ["entities_tags"],
+      "label": {
+        "use": "property",
+        "which": "name"
       },
-      parent: {
-        use: "property",
-        which: "parent"
+      "parent": {
+        "use": "property",
+        "which": "parent"
       }
     }
   }

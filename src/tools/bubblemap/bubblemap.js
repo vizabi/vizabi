@@ -69,7 +69,10 @@ var BubbleMap = Tool.extend('BubbleMap', {
 
   default_model: {
     state: {
-      time: { }
+      entities: {
+        "opacitySelectDim": 0.3,
+        "opacityRegular": 1
+      }
     },
     language: { },
     ui: {
