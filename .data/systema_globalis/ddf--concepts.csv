@@ -2,8 +2,8 @@ concept,name,concept_type,domain,indicator_url,color,scales,drill_up,unit,interp
 tags,Tags,string,,,,,,,,,_none
 tag,Tag,entity_domain,,,,,,,,,_none
 parent,Tag parent,string,,,,,,,,,_none
-geo,Geographic location,entity_domain,,https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv,,"[""ordinal""]",,,,,categorizations
-world_6region,Geographic regions,entity_set,geo,http://spreadsheets.google.com/pub?key=phT4mwjvEuGBtdf1ZeO7_PQ,"{""palette"": {""america"": ""#ebcc21"", ""middle_east_north_africa"": ""#5be56b"", ""south_asia"": ""#35d1d1"", ""europe_central_asia"": ""#f49d37"", ""sub_saharan_africa"": ""#4e7af0"", ""east_asia_pacific"": ""#f03838""}, ""selectable"": false}","[""ordinal""]",,,,,categorizations
+geo,Geographic location,entity_domain,,https://github.com/open-numbers/ddf--gapminder--dim_geo_countries_and_groups/blob/master/ddf--list--geo--country.csv,,"[""ordinal""]",,,,,_none
+world_6region,World Regions (6 colors),entity_set,geo,http://spreadsheets.google.com/pub?key=phT4mwjvEuGBtdf1ZeO7_PQ,"{""palette"": {""america"": ""#ebcc21"", ""middle_east_north_africa"": ""#5be56b"", ""south_asia"": ""#35d1d1"", ""europe_central_asia"": ""#f49d37"", ""sub_saharan_africa"": ""#4e7af0"", ""east_asia_pacific"": ""#f03838""}, ""selectable"": false}","[""ordinal""]",,,,,categorizations
 income_groups,Income groups,entity_set,geo,http://spreadsheets.google.com/pub?key=phT4mwjvEuGCSmAe5aq7HKw,"{""palette"": {""lower_middle_income"": ""#7ea1d1"", ""upper_middle_income"": ""#a7cb7d"", ""high_income"": ""#7bc135"", ""low_income"": ""#4366f4""}}","[""ordinal""]",,,,,categorizations
 landlocked,Landlocked,entity_set,geo,http://spreadsheets.google.com/pub?key=rBwKBodk7Y08pGiA4OAfzUA,"{""palette"": {""coastline"": ""#7487ef"", ""landlocked"": ""#f05656""}}","[""ordinal""]",,,,,categorizations
 g77_and_oecd_countries,G77 and OECD countries,entity_set,geo,http://spreadsheets.google.com/pub?key=tVI_UCwI1enCk4p61fWxUig,"{""palette"": {""g77"": ""#7487ef"", ""others"": ""#f05656"", ""oecd"": ""#71c44c""}}","[""ordinal""]",,,,,categorizations
@@ -531,7 +531,7 @@ alternative_gdp_per_capita_ppp_pwt_7_1,"Alternative GDP/capita PPP, PWT 7.1",mea
 number_of_child_deaths,Number of child deaths,measure,,https://docs.google.com/spreadsheet/pub?key=0ArfEDsV3bBwCdGhSY2trbEVpYnNsMENqendaVm5ucnc,,"[""linear"", ""log""]",,,,The number of children dying before age 5,health
 energy_supply_per_person_toe,Energy supply per person,measure,,https://docs.google.com/spreadsheet/pub?key=0ArfEDsV3bBwCdFFjMFlMeS02N1NGNjJabl8wamVtdHc,,"[""linear"", ""log""]",,tons in oil eqv.,,"Total energy supply per person, tonnes of oil equivalent",alternative_energy
 energy_from_solid_biofuels_percent,Energy from solid biofuels,measure,,https://docs.google.com/spreadsheet/pub?key=0ArfEDsV3bBwCdFdaNHA3R1BzcG9GSlkwMXdnMHpScVE,,"[""linear"", ""log""]",,%,,"Percent of total energy supply that comes from ""solid biofuels"". Solid biofuels includes ""traditional energy sources"" e.g. firewood. ",alternative_energy
-residential_energy_use_percent,Residential energy use,measure,,"https://docs.google.com/spreadsheet/pub?key=0ArfEDsV3bBwCdEV1RkJqTEItQnJYVXJlZzVuc3Y3Mmc",,"[""linear"", ""log""]",,%,,"Percent of total emergy consumption that is used as ""residential consumption""",alternative_energy
+residential_energy_use_percent,Residential energy use,measure,,https://docs.google.com/spreadsheet/pub?key=0ArfEDsV3bBwCdEV1RkJqTEItQnJYVXJlZzVuc3Y3Mmc,,"[""linear"", ""log""]",,%,,"Percent of total emergy consumption that is used as ""residential consumption""",alternative_energy
 life_expectancy_at_birth_data_from_ihme,Life expectancy at birth (IHME),measure,,https://docs.google.com/spreadsheet/pub?key=0ArfEDsV3bBwCdG9jSHA0WklHU0dqUnBCVUpVOXFzQUE,,"[""linear"", ""log""]",,,,"Life expectancy at birth, the data is taken from Institute for health metrics and evaluation",alternative_demography_indicators
 children_per_woman_temporary_update,Children per woman temporary update,measure,,https://docs.google.com/spreadsheet/pub?key=0ArfEDsV3bBwCdFJCTm43NGc0SzdYeHBpZWZGb1V0ckE,,"[""linear"", ""log""]",,,,"Children per woman (TFR), temporary update",alternative_demography_indicators
 alternative_gdp_per_capita_ppp_pwt_8_0,Alternative GDP/capita PPP PWT 8.0,measure,,https://docs.google.com/spreadsheet/pub?key=0ArfEDsV3bBwCdGhmWXFMY0hNcDFiTEt3ZVE4b21wRlE,,"[""linear"", ""log""]",,,,"GDP per capita PPP, in 2005 i$ from PWT 8.0 (based on rgdpe)",alternative_gdp_data
@@ -575,7 +575,10 @@ arb4,arb4,string,,,,,,,,,_none
 arb5,arb5,string,,,,,,,,,_none
 arb6,arb6,string,,,,,,,,,_none
 domain,Domain,string,,,,,,,,,_none
+arb7,arb7,string,,,,,,,,,_none
+arb8,arb8,string,,,,,,,,,_none
 scales,Scales,string,,,,,,,,,_none
 drill_up,drill up,string,,,,,,,,,_none
-time,Time,time,,,,"[""time""]",,,,,"_root"
+time,Time,time,,,,"[""time""]",,,,,_root
 shape_lores_svg,Shapes,string,,,,,,,,,_none
+temp_string,Temporaty string,string,,,,,,,,,_none
