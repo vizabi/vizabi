@@ -7,10 +7,9 @@ var VIZABI_MODEL = {
     },
     "entities": {
       "dim": "geo",
-      
       "show": {
         "is--country": true
-      },
+      }
     },
     "entities_minimap": {
       "dim": "geo",

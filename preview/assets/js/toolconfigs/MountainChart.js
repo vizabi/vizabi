@@ -48,14 +48,14 @@ var VIZABI_MODEL = {
       "axis_y": {
         "use": "indicator",
         "which": "sg_population",
-        "scaleType": 'linear'
+        "scaleType": "linear"
       },
       "axis_x": {
         "use": "indicator",
         "which": "sg_gdp_p_cap_const_ppp2011_dollar",
-        "scaleType": 'log',
-        "domainMin": 0.11, //0
-        "domainMax": 500, //100
+        "scaleType": "log",
+        "domainMin": 0.11,
+        "domainMax": 500,
         "tailFatX": 1.85,
         "tailCutX": 0.2,
         "tailFade": 0.7,
@@ -65,7 +65,7 @@ var VIZABI_MODEL = {
       "axis_s": {
         "use": "indicator",
         "which": "sg_gini",
-        "scaleType": 'linear'
+        "scaleType": "linear"
       },
       "color": {
         "use": "property",
@@ -77,7 +77,7 @@ var VIZABI_MODEL = {
       },
       "stack": {
         "use": "constant",
-        "which": "all" // set a property of data or values "all" or "none"
+        "which": "all"
       },
       "group": {
         "use": "property",
