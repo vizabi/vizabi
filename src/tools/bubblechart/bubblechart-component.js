@@ -1342,7 +1342,7 @@ var BubbleChartComp = Component.extend({
   selectDataPoints: function() {
     var _this = this;
     var KEY = this.KEY;
-
+    this.someSelectedAndOpacityZero_1 = false;
     //hide tooltip
     _this._setTooltip();
     _this._setBubbleCrown();
