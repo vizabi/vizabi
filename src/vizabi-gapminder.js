@@ -897,10 +897,6 @@ Tool.define("preload", function(promise) {
       // We are currently saving concept properties info to default state manually in order
       // to produce small URLs considering some of the info in concept properties to be default
       // we need a consistent way to add concept properties to Vizabi
-      addMinMax(concepts, "axis_x");
-      addMinMax(concepts, "axis_y");
-      addMinMax(concepts, "size");
-      addMinMax(concepts, "size_label");
       addPalettes(concepts, "color");
 
       promise.resolve();
@@ -912,26 +908,15 @@ Tool.define("preload", function(promise) {
   function addPalettes(concepts, hook) {
     //protection in case if state or marker or [hook] is undefined
     if(!((_this.default_model.state||{}).marker||{})[hook]) return;
+    if(!((_this.model.state||{}).marker||{})[hook]) return;
     
     var color = _this.default_model.state.marker[hook];
-    var palette = ((concepts[color.which]||{}).color||{}).palette||{};
-    var paletteLabels = ((concepts[color.which]||{}).color||{}).paletteLabels||{};
+    //which can come from either default model or an external page
+    var which = color.which || _this.model.state.marker.color.which;
+    var palette = ((concepts[which]||{}).color||{}).palette||{};
+    var paletteLabels = ((concepts[which]||{}).color||{}).paletteLabels||{};
     color.palette = utils.extend({}, color.palette, palette);
     color.paletteLabels = utils.clone(paletteLabels);
-  }
-
-  function addMinMax(concepts, hook) {
-    //protection in case if state or marker or [hook] is undefined
-    if(!((_this.default_model.state||{}).marker||{})[hook]) return;
-    
-    var axis = _this.default_model.state.marker[hook];
-    if(axis.use === "indicator" && concepts[axis.which] && concepts[axis.which].domain) {
-      var domain = concepts[axis.which].domain;
-      axis.domainMin = axis.domainMin || domain[0];
-      axis.domainMax = axis.domainMax || domain[1];
-      axis.zoomedMin = axis.zoomedMin || axis.domainMin || domain[0];
-      axis.zoomedMax = axis.zoomedMax || axis.domainMax || domain[1];
-    }
   }
 
 });

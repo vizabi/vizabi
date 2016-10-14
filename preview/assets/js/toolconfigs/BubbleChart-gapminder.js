@@ -32,6 +32,8 @@ var VIZABI_MODEL = {
         "scaleType": "log",
         "domainMax": 150000,
         "domainMin": 300,
+        "zoomedMax": 150000,
+        "zoomedMin": 300,
         "which": "income_per_person_gdppercapita_ppp_inflation_adjusted"
       },
       "size": {
