@@ -1241,7 +1241,7 @@ var TreeMenu = Component.extend({
         scaleTypes.enter().append("span")
           .on("click", function(d){
             d3.event.stopPropagation();
-            _this._setModel("scaleType", d, markerID)
+            _this._setModel("scaleType", d, _this._markerID);
           });
 
         scaleTypes

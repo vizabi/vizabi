@@ -17,7 +17,8 @@ var SizeModel = Axis.extend({
     domainMax: null,
     zoomedMin: null,
     zoomedMax: null,
-    extent: null
+    scaleType: "linear",
+    extent: [0, 0.85]
   },
     
   _type: "size",

@@ -11,6 +11,8 @@ var LabelModel = Hook.extend({
    * Default values for this model
    */
   _defaults: {
+    use: "property",
+    which: "name"
   },
 
   /**

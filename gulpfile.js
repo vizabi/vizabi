@@ -106,7 +106,7 @@ gulp.task('clean:preview:styles', function() {
 });
 
 gulp.task('clean:preview:js', function() {
-  return del([path.join(config.destPreview, 'assets/js/*.js')]);
+  return del([path.join(config.destPreview, 'assets/js/**/*')]);
 });
 
 gulp.task('clean:preview:vendor', function() {
@@ -378,7 +378,7 @@ gulp.task('preview:styles', ['clean:preview:styles'], function() {
 
 gulp.task('preview:js', ['clean:preview:js'], function() {
   gutil.log(chalk.yellow("Copying preview JS..."));
-  return gulp.src(path.join(config.srcPreview, 'assets/js/*.js'))
+  return gulp.src(path.join(config.srcPreview, 'assets/js/**/*'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/js')))
     .on('end', function() {
       gutil.log(chalk.green("Copying preview JS... DONE!"))
@@ -390,7 +390,7 @@ gulp.task('preview:vendor', ['clean:preview:vendor'], function() {
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/css')));
   gulp.src(path.join(config.modules, 'font-awesome/fonts/*'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/fonts')));
-  gulp.src(path.join(config.modules, 'd3/d3.min.js'))
+  gulp.src(path.join(config.modules, 'd3/d3.js'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/js')));
   gulp.src(path.join(config.modules, 'vizabi-ws-reader/dist/bundle.web.js'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/js/ws-reader')));

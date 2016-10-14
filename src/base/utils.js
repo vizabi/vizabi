@@ -1,6 +1,24 @@
 import interpolator from '../../node_modules/vizabi-interpolators/interpolators';
 
 /*
+ * Check if value A is in +- proximity of value B
+ * @param {Number} a
+ * @param {Number} b
+ * @param {Number} tolerance
+ * @returns {Boolean} true if values are approximately equal or false otherwise
+ */
+export var approxEqual = function(a, b, tolerance) {
+  tolerance = tolerance||0;
+  if(b > 0){
+    return (1 - tolerance) * b <= a && a <= b * (1 + tolerance);
+  }else if(b < 0){
+    return (1 + tolerance) * b <= a && a <= b * (1 - tolerance);
+  }else{
+    return Math.abs(a) <= tolerance;
+  }
+};
+
+/*
  * returns unique id with optional prefix
  * @param {String} prefix
  * @returns {String} id
@@ -70,6 +88,10 @@ export var isString = function(arg) {
 export var isNaN = function(arg) {
   // A `NaN` primitive is the only number that is not equal to itself
   return isNumber(arg) && arg !== +arg;
+};
+
+export var isEmpty = function(obj) {
+  return Object.keys(obj).length === 0 && obj.constructor === Object;
 };
 
 /*
@@ -1155,19 +1177,19 @@ export var flattenDates = function(obj, timeFormat) {
         }
       });
     } else if(key === 'time') {
-      if(typeof val.value === 'object') {
+      if(typeof val.value === 'object' && val.value != null) {
         val.value = timeFormat(val.value);
       }
-      if(typeof val.start === 'object') {
+      if(typeof val.start === 'object' && val.start != null) {
         val.start = timeFormat(val.start);
       }
-      if(typeof val.end === 'object') {
+      if(typeof val.end === 'object' && val.end != null) {
         val.end = timeFormat(val.end);
       }
-      if(typeof val.startSelected === 'object') {
+      if(typeof val.startSelected === 'object' && val.startSelected != null) {
         val.startSelected = timeFormat(val.startSelected);
       }
-      if(typeof val.endSelected === 'object') {
+      if(typeof val.endSelected === 'object' && val.endSelected != null) {
         val.endSelected = timeFormat(val.endSelected);
       }
     }

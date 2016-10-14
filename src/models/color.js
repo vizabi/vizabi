@@ -36,11 +36,11 @@ var ColorModel = Hook.extend({
    * Default values for this model
    */
   _defaults: {
-    use: null,
+    use: "constant",
+    which: "_default",
+    scaleType: "ordinal",
     palette: {},
-    paletteLabels: null,
-    scaleType: null,
-    which: null
+    paletteLabels: null
   },
 
   /**

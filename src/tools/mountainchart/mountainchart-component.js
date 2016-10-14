@@ -45,6 +45,7 @@ var MountainChartComponent = Component.extend({
             { name: "time", type: "time" },
             { name: "entities", type: "entities" },
             { name: "marker", type: "model" },
+            { name: "marker_group", type: "model" },
             { name: "language", type: "language" },
             { name: "ui", type: "model" }
         ];
@@ -234,8 +235,8 @@ var MountainChartComponent = Component.extend({
     afterPreload: function () {
         var _this = this;
 
-        var yearNow = _this.model.time.value.getUTCFullYear();
-        var yearEnd = _this.model.time.end.getUTCFullYear();
+        var yearNow = _this.model.time.format(this.model.time.value);
+        var yearEnd = _this.model.time.format(this.model.time.end);
 
         this._math.xScaleFactor = this.model.marker.axis_x.xScaleFactor;
         this._math.xScaleShift = this.model.marker.axis_x.xScaleShift;
@@ -705,7 +706,8 @@ updateSize: function (meshLength) {
                 });
 
                 //position tooltip
-                _this._setTooltip(d.key ? _this.translator("entity/world_4region/" + d.key) : _this.values.label[d.KEY()]);
+                _this._setTooltip(d.key ? _this.model.marker_group.label.getItems()[d.key] : _this.values.label[d.KEY()]);
+                _this._selectlist.showCloseCross(d, true);
 
             },
             _mouseout: function (d, i) {
@@ -713,6 +715,8 @@ updateSize: function (meshLength) {
 
                 _this._setTooltip("");
                 _this.model.entities.clearHighlighted();
+                _this._selectlist.showCloseCross(d, false);
+
             },
             _click: function (d, i) {
                 if (_this.model.time.dragging || _this.model.time.playing) return;
@@ -730,13 +734,6 @@ updateSize: function (meshLength) {
         if (!this.selectList || !this.someSelected) return;
         this.selectList.classed("vzb-highlight", function (d) {
             return _this.model.entities.isHighlighted(d);
-        });
-        this.selectList.each(function (d, i) {
-          d3.select(this).selectAll(".vzb-mc-label-x")
-            .classed("vzb-invisible", function(n) {
-              return !_this.model.entities.isHighlighted(d);
-            });
-
         });
 
     },

@@ -161,9 +161,12 @@ var Tool = Component.extend({
 
       // change start and end (but keep startOrigin and endOrigin for furhter requests)
       // change is not persistent if it's splashscreen change
-      if(time.start - tLimits.min != 0) time.getModelObject('start').set(d3.max([tLimits.min, time.parseToUnit(time.getDefaults().start)]), false, !time.splash);
-      if(time.end - tLimits.max != 0) time.getModelObject('end').set(d3.min([tLimits.max, time.parseToUnit(time.getDefaults().end)]), false, !time.splash);
+      var newTime = {}
+      if(time.start - tLimits.min != 0) newTime['start'] = d3.max([tLimits.min, time.parseToUnit(time.getDefaults().start)]);
+      if(time.end - tLimits.max != 0) newTime['end'] = d3.min([tLimits.max, time.parseToUnit(time.getDefaults().end)]);
+      if(time.value == null) newTime['value'] = new Date(); // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
 
+      time.set(newTime, false, !time.splash);
     }
       
     //force time validation because time.value might now fall outside of start-end

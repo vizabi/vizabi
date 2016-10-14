@@ -32,7 +32,6 @@ export default Class.extend({
     var _this = this;
     var KEY = _context.KEY;
     this._isCreated = new Promise(function(resolve, reject) {
-
       //quit if the function is called accidentally
       if(!_context.model.ui.chart.trails) return;
 
@@ -41,11 +40,12 @@ export default Class.extend({
       //work with entities.select (all selected entities), if no particular selection is specified
       var promises = [];
       selection = selection == null ? _context.model.entities.select : [selection];
+      _this._clearActions(selection);
       _this.trailsData = _context.model.entities.select.map(function(d) {
         var r = {};
         r[KEY] = d[KEY];
         // used for prevent move trail start time forward when we have empty values at end of time range
-        r["firstAvailableSegment"] = null;
+        r.actionInProgress = null;
         r["selectedEntityData"] = d;
         return r;
       });
@@ -56,18 +56,16 @@ export default Class.extend({
         });
         
       _trails.exit().remove();
-  
       _trails.enter()
         .insert("g", function(d) { 
           return this.querySelector(".bubble-" + d[KEY]);
         })
         .attr("class", function(d) {
           return "vzb-bc-entity trail-" + d[KEY];
-        })
-        .each(function(d, index) {
+        });
+      _trails.each(function(d, index) {
           var defer = new Promise();
           // used for prevent move trail start time forward when we have empty values at end of time range
-          d.firstAvailableSegment = null;
           promises.push(defer);
           var trailSegmentData = timePoints.map(function(m) {
             return {
@@ -75,9 +73,6 @@ export default Class.extend({
               key: d[KEY]
             }
           });
-          if (_this.entityTrails[d[KEY]]) {
-             _this._remove(_this.entityTrails[d[KEY]], null, d);  
-          }
           _this.entityTrails[d[KEY]] = d3.select(this).selectAll("g").data(trailSegmentData);
           
           _this.entityTrails[d[KEY]].exit().remove();
@@ -156,6 +151,18 @@ export default Class.extend({
       }), actions);
     });
   },
+
+  _clearActions: function(selections) {
+    var _context = this.context;
+    var _this = this;
+    var KEY = _context.KEY;
+
+    selections.forEach(function(d) {
+      if (!_this.actionsQueue[d[KEY]]) _this.actionsQueue[d[KEY]] = [];
+      _this.actionsQueue[d[KEY]] = [];
+    });
+  },
+
   _getNextAction: function(key) {
     return this.actionsQueue[key].shift();
   },
@@ -181,29 +188,25 @@ export default Class.extend({
         var executeSequential = function(index) { // some function can be async, but we should run next when previous completed
           var action = _this._getNextAction(d[KEY]);
           if (action) {
+            d.actionInProgress = action;
             var response = _context._trails["_" + action](trail, duration, d);
             if (response && response instanceof Promise) {
               response.then(function() {
+                d.actionInProgress = null;
                 executeSequential(index + 1);
               })
             } else {
+              d.actionInProgress = null;
               executeSequential(index + 1);
             }
           }
         };
-        executeSequential(0);
+        if (!d.actionInProgress) {
+          executeSequential(0);
+        }
       });
     });
 
-  },
-
-
-  _remove: function(trail, duration, d) {
-    this.actionsQueue[d[this.context.KEY]] = []; 
-    if (trail) { // TODO: in some reason run twice 
-      d3.select(this.entityTrails[d[this.context.KEY]].node().parentNode).remove();
-      this.entityTrails[d[this.context.KEY]] = null;
-    }
   },
 
   _resize: function(trail, duration, d) {
@@ -220,17 +223,17 @@ export default Class.extend({
 
       var view = d3.select(this);
       if (duration) {
-        view.select("circle").interrupt()
-          .transition().duration(duration).ease("linear")
-          .attr("cy", _context.yScale(segment.valueY))
-          .attr("cx", _context.xScale(segment.valueX))
-          .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)));
-      } else {
         view.select("circle")
           .transition().duration(duration).ease("linear")
           .attr("cy", _context.yScale(segment.valueY))
           .attr("cx", _context.xScale(segment.valueX))
           .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)));
+      } else {
+        view.select("circle").interrupt()
+          .attr("cy", _context.yScale(segment.valueY))
+          .attr("cx", _context.xScale(segment.valueX))
+          .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)))
+          .transition();
       }
 
       if(!updateLabel && !segment.transparent) {
@@ -248,7 +251,7 @@ export default Class.extend({
           Math.pow(_context.yScale(segment.valueY) - _context.yScale(next.valueY),2)
       );
       if (duration) {
-        view.select("line").interrupt()
+        view.select("line")
           .transition().duration(duration).ease("linear")
           .attr("x1", _context.xScale(next.valueX))
           .attr("y1", _context.yScale(next.valueY))
@@ -257,13 +260,14 @@ export default Class.extend({
           .style("stroke-dasharray", lineLength)
           .style("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)));
       } else {
-        view.select("line")
+        view.select("line").interrupt()
           .attr("x1", _context.xScale(next.valueX))
           .attr("y1", _context.yScale(next.valueY))
           .attr("x2", _context.xScale(segment.valueX))
           .attr("y2", _context.yScale(segment.valueY))
           .style("stroke-dasharray", lineLength)
-          .style("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)));
+          .style("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)))
+          .transition();
       }
     });
   },
@@ -311,39 +315,48 @@ export default Class.extend({
   _findVisible: function(trail, duration, d) {
     var _context = this.context;
     var KEY = _context.KEY;
-
-    var firstVisible = true;
-    var trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
-
-    if (_context.time - trailStartTime < 0 || _context.model.time.start - trailStartTime > 0) {
-      if (_context.time - trailStartTime < 0) { 
-        // move trail start time with trail label back if need
-        d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(_context.time);
-        trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+    return new Promise(function(resolve, reject) {
+      var defer = new Promise();
+      if (!d.limits) {
+        _context.model.marker.getEntityLimits(d[KEY]).then(function(limits) {
+          d.limits = limits;
+          defer.resolve();
+        });
       } else {
-        // move trail start time with trail label to start time if need
-        d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(_context.model.time.start);
-        trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+        defer.resolve();
       }
-      var cache = _context._labels.cached[d[KEY]];
-      cache.labelX0 = _context.frame.axis_x[d[KEY]];
-      cache.labelY0 = _context.frame.axis_y[d[KEY]];
-      var valueS = _context.frame.size[d[KEY]];
-      cache.scaledS0 = (valueS || valueS===0) ? utils.areaToRadius(_context.sScale(valueS)) : null;
-      var valueC = _context.frame.color[d[KEY]];
-      cache.scaledC0 = valueC != null ? _context.cScale(valueC) : _context.COLOR_WHITEISH;
-      _context._updateLabel(d, 0, _context.frame.axis_x[d[KEY]], _context.frame.axis_y[d[KEY]], _context.frame.size[d[KEY]], _context.frame.color[d[KEY]], _context.frame.label[d[KEY]], _context.frame.size_label[d[KEY]], 0, true);
-    }
-
-    trail.each(function(segment, index) {
-      // segment is transparent if it is after current time or before trail StartTime
-      var segmentVisibility = segment.transparent; 
-      segment.transparent = d.selectedEntityData.trailStartTime == null || (segment.t - _context.time > 0) || (trailStartTime - segment.t > 0)
-        //no trail segment should be visible if leading bubble is shifted backwards, beyond start time
-        || (d.selectedEntityData.trailStartTime - _context.model.time.timeFormat(_context.time) >= 0);
-      // always update nearest 2 points
-      if (segmentVisibility != segment.transparent || Math.abs(_context.model.time.timeFormat(segment.t) - _context.model.time.timeFormat(_context.time)) < 2) segment.visibilityChanged = true; // segment changed, so need to update it
-
+      defer.then(function() {
+        var trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+        if (_context.time - trailStartTime < 0 || d.limits.min - trailStartTime > 0) {
+          if (_context.time - trailStartTime < 0) {
+            // move trail start time with trail label back if need
+            d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(d3.max([_context.time, d.limits.min]));
+            trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+          } else {
+            // move trail start time with trail label to start time if need
+            d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(d.limits.min);
+            trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+          }
+          var cache = _context._labels.cached[d[KEY]];
+          cache.labelX0 = _context.frame.axis_x[d[KEY]];
+          cache.labelY0 = _context.frame.axis_y[d[KEY]];
+          var valueS = _context.frame.size[d[KEY]];
+          cache.scaledS0 = (valueS || valueS===0) ? utils.areaToRadius(_context.sScale(valueS)) : null;
+          var valueC = _context.frame.color[d[KEY]];
+          cache.scaledC0 = valueC != null ? _context.cScale(valueC) : _context.COLOR_WHITEISH;
+          _context._updateLabel(d, 0, _context.frame.axis_x[d[KEY]], _context.frame.axis_y[d[KEY]], _context.frame.size[d[KEY]], _context.frame.color[d[KEY]], _context.frame.label[d[KEY]], _context.frame.size_label[d[KEY]], 0, true);
+        }
+        trail.each(function(segment, index) {
+          // segment is transparent if it is after current time or before trail StartTime
+          var segmentVisibility = segment.transparent;
+          segment.transparent = d.selectedEntityData.trailStartTime == null || (segment.t - _context.time > 0) || (trailStartTime - segment.t > 0)
+              //no trail segment should be visible if leading bubble is shifted backwards, beyond start time
+            || (d.selectedEntityData.trailStartTime - _context.model.time.timeFormat(_context.time) >= 0);
+          // always update nearest 2 points
+          if (segmentVisibility != segment.transparent || Math.abs(_context.model.time.timeFormat(segment.t) - _context.model.time.timeFormat(_context.time)) < 2) segment.visibilityChanged = true; // segment changed, so need to update it
+        });
+        resolve();
+      });
     });
   },
 
@@ -367,6 +380,8 @@ export default Class.extend({
       return new Promise(function(resolve, reject) {
         var view = d3.select(trail[0][index]);
         var segment = view.datum();
+        //console.log(d[KEY] + " transparent: " + segment.transparent + " vis_changed:" + segment.visibilityChanged);
+        //console.log(segment.transparent + " " + segment.visibilityChanged);
         if(segment.transparent) {
           view.classed("vzb-invisible", segment.transparent);
           resolve();
@@ -374,6 +389,7 @@ export default Class.extend({
           resolve();            
         } else {
           _context.model.marker.getFrame(segment.t, function(frame) {
+            //console.log(frame);
             if (!frame) return resolve();
             segment.valueY = frame.axis_y[d[KEY]];
             segment.valueX = frame.axis_x[d[KEY]];
@@ -381,15 +397,8 @@ export default Class.extend({
             segment.valueC = frame.color[d[KEY]];
 
             if(segment.valueY==null || segment.valueX==null || segment.valueS==null) {
-              if (_context.time - trailStartTime > 0 && (!d.firstAvailableSegment || d.firstAvailableSegment - segment.t > 0)) { // move trail start time forward because previous values are empty
-                d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(_context.model.time.incrementTime(trailStartTime));
-                trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
-              }
               resolve();
             } else {
-              if (!d.firstAvailableSegment || d.firstAvailableSegment - segment.t > 0) {
-                d.firstAvailableSegment = segment.t;
-              }
               // fix label position if it not in correct place
               var cache = _context._labels.cached[d[KEY]];
               if (trailStartTime && trailStartTime.toString() == segment.t.toString()) {
@@ -473,12 +482,12 @@ export default Class.extend({
                   }
                 });
               }
-
             }
           });          
         }
       });
     };
+    
     var defer = new Promise();
     /**
      * update for generate next trail segment when previous segment finished

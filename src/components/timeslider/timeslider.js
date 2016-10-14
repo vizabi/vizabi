@@ -359,84 +359,31 @@ var TimeSlider = Component.extend({
     var _setSelectedLimitsId = this._setSelectedLimitsId;
 
     var select = _this.model.entities.select;
-    if(select.length == 0) 
-    {
+    if(select.length == 0) {
       _this.model.time.startSelected = new Date(_this.model.time.start);
       _this.model.time.endSelected = new Date(_this.model.time.end);
       return;
     }
-
     var KEY = _this.model.entities.getDimension();
-    var timePoints = _this.model.time.getAllSteps();
-    var selectedEdgeTimes = [];
-    var hooks = [];
-    utils.forEach(_this.model.marker.getSubhooks(), function(hook) {
-      if(hook.use == "constant") return;
-      if(hook._important) hooks.push(hook._name);
+    var proms = [];
+    utils.forEach(select, function(entity) {
+      proms.push(_this.model.marker.getEntityLimits(entity[KEY]));
     });
-    
-    var findEntityWithCompleteHooks = function(values) {
-      for(var k = 0, l = select.length; k < l; k++) {
-        var complete = 0;
-        for(var i = 0, j = hooks.length; i < j; i++) {
-          if(values[hooks[i]][select[k][KEY]] || values[hooks[i]][select[k][KEY]]===0) complete++;        
-        }
-        if(complete == hooks.length) return true;
-      }
-      return false;
-    }
-    
-    var findSelectedTime = function(iterator, findCB) {
-      var point = iterator();
-      if(point == null) return;
-      _this.model.marker.getFrame(timePoints[point], function(values) {
-        if(!values) return;
-        if(findEntityWithCompleteHooks(values)) {
-          findCB(point);
-        } else {
-          findSelectedTime(iterator, findCB);
-        }
-      });
-    }
-    
-    var promises = [];
-    
-    promises.push(new Promise());
-
-    //find startSelected time 
-    findSelectedTime(function(){
-      var max = timePoints.length;
-      var i = 0;
-      return function() {
-        return i < max ? i++ : null;
-      };
-    }(), function(point){
-      selectedEdgeTimes[0] = timePoints[point];
-      promises[0].resolve();
-    });
-    
-    promises.push(new Promise());
-    
-    //find endSelected time
-    findSelectedTime(function(){
-      var min = 0;
-      var i = timePoints.length - 1;
-      return function() {
-        return i >= 0 ? i-- : null;
-      };
-    }(), function(point){
-      selectedEdgeTimes[1] = timePoints[point];
-      promises[1].resolve();
-    });
-    
-    Promise.all(promises).then(function() {
-      //if another setSelectedLimits was started after this 
-      //then return without setup values
+    Promise.all(proms).then(function(limits) {
       if(_setSelectedLimitsId != _this._setSelectedLimitsId) return;
-      _this.model.time.set(
-        {"startSelected": selectedEdgeTimes[0],"endSelected": selectedEdgeTimes[1]}, force);
+      var first = limits.shift(); 
+      var min = first.min;
+      var max = first.max;
+      utils.forEach(limits, function(limit) {
+        if (min - limit.min > 0) min = limit.min;
+        if (max - limit.max < 0) max = limit.max;
+      });
+      _this.model.time
+        .set({
+          "startSelected": d3.max([min, new Date(_this.model.time.start)]),
+          "endSelected": d3.min([max, new Date(_this.model.time.end)])
+        }, force);
     });
-
   },
 
   updateSelectedStartLimiter: function() {
