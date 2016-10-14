@@ -745,7 +745,6 @@ var TreeMenu = Component.extend({
   _sortChildren: function(tree, isSubfolder){
     var _this = this;
     if(!tree.children) return;
-    if(!isSubfolder)console.log(tree.children)
     tree.children.sort(
       utils
       //in each folder including root: put subfolders below loose items
