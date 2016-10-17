@@ -414,7 +414,6 @@ var MenuItem = Class.extend({
     var label = this.entity.select('.' + css.list_item_label).on('mouseenter', function() {
       if(utils.isTouchDevice()) return;
       if (_this.parentMenu.direction == MENU_HORIZONTAL) {
-        _this.openSubmenu();
         _this.marqueeToggle(true);
       }
     }).on('click.item', function() {
