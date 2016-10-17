@@ -130,16 +130,16 @@ var BarRankChart = Component.extend({
 
   loadData: function() {
 
-    // get data, for the active year. Nest them using the entity of the graph
-
-
     // sort the data (also sets this.total)
     this.sortedEntities = this.sortByIndicator(this.values.axis_x);
 
     // change header titles for new data
-    var translator = this.model.language.getTFunction();
+    var conceptProps = this.model.marker.getConceptprops();
     this.header.select('.vzb-br-title')
-      .text(translator("indicator/" + this.model.marker.axis_x.which) + ' ' + this.model.time.timeFormat(this.model.time.value))
+      .text(conceptProps[this.model.marker.axis_x.which].name 
+            + ' ' 
+            + this.model.time.timeFormat(this.model.time.value)
+      )
     this.header.select('.vzb-br-total')
       .text('Σ = ' + this.model.marker.axis_x.getTickFormatter()(this.total))
 
@@ -174,9 +174,8 @@ var BarRankChart = Component.extend({
     this.barViewport.style('height', this.height + 'px');
 
     // header
-    this.header
-      .attr('height', margin.top)
-      .attr('dominant-baseline', 'middle');
+    this.header.attr('height', margin.top);
+    
     var headerTitle = this.header.select('.vzb-br-title');
     var headerTotal = this.header.select('.vzb-br-total');
     var headerTitleBBox = headerTitle.node().getBBox();
