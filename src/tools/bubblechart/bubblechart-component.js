@@ -727,7 +727,7 @@ var BubbleChartComp = Component.extend({
       if(_select.length !== _this.model.entities.select.length) _this.model.entities.select = _select;
   },
 
-  _reorderEntities() {
+  _reorderEntities: function() {
     var _this = this;
     var KEY = this.KEY;
     this.bubbleContainer.selectAll('.vzb-bc-entity')
