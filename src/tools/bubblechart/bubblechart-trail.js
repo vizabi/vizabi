@@ -208,6 +208,15 @@ export default Class.extend({
 
   },
 
+
+  _remove: function(trail, duration, d) {
+    this.actionsQueue[d[this.context.KEY]] = []; 
+    if (trail) { // TODO: in some reason run twice 
+      d3.select(this.entityTrails[d[this.context.KEY]].node().parentNode).remove();
+      this.entityTrails[d[this.context.KEY]] = null;
+    }
+  },
+
   _resize: function(trail, duration, d) {
     var _context = this.context;
     if (_context.model.time.splash) {
