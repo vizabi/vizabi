@@ -174,18 +174,31 @@ var BarRankChart = Component.extend({
     this.barViewport.style('height', this.height + 'px');
 
     // header
-    this.header
-      .attr('height', margin.top)
-      .select('.vzb-br-title')
-        .attr('dominant-baseline', 'middle')
-        .attr('y', margin.top/2)
+    var headerTitle = this.header.select('.vzb-br-title');
+    var headerTotal = this.header.select('.vzb-br-total');
+    var headerTitleBBox = headerTitle.node().getBBox();
+    var headerTotalBBox = headerTotal.node().getBBox();
+    headerTitle
+      .attr('dominant-baseline', 'middle')
+      .attr('y', margin.top/2)
+      .attr('x', margin.left);
+    headerTotal
+      .attr('dominant-baseline', 'middle')
+      .attr('x', this.width + margin.left);
+    if (headerTitleBBox.width + headerTotalBBox.width + 10 > this.width) {
+      this.header.attr('height', margin.top + headerTitleBBox.height * 0.8);
+      headerTotal
+        .attr('text-anchor', null)
+        .attr('y', margin.top/2 + headerTitleBBox.height * 0.8)
         .attr('x', margin.left);
-    this.header
-      .select('.vzb-br-total')
+    } else {
+      this.header.attr('height', margin.top);
+      headerTotal
         .attr('text-anchor', 'end')
-        .attr('dominant-baseline', 'middle')
-        .attr('y', margin.top/2)
-        .attr('x', this.width + margin.left);
+        .attr('x', this.width + margin.left)
+        .attr('y', margin.top/2);
+      
+   }
 
 
     // although axes are not drawn, need the xScale for bar width
