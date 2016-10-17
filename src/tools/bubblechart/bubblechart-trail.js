@@ -381,7 +381,6 @@ export default Class.extend({
         var view = d3.select(trail[0][index]);
         var segment = view.datum();
         //console.log(d[KEY] + " transparent: " + segment.transparent + " vis_changed:" + segment.visibilityChanged);
-        //console.log(segment.transparent + " " + segment.visibilityChanged);
         if(segment.transparent) {
           view.classed("vzb-invisible", segment.transparent);
           resolve();
@@ -389,7 +388,6 @@ export default Class.extend({
           resolve();            
         } else {
           _context.model.marker.getFrame(segment.t, function(frame) {
-            //console.log(frame);
             if (!frame) return resolve();
             segment.valueY = frame.axis_y[d[KEY]];
             segment.valueX = frame.axis_x[d[KEY]];
@@ -480,10 +478,10 @@ export default Class.extend({
                       resolve();
                     }
                   }
-                });
+                }, _context.model.entities.getSelected());
               }
             }
-          });          
+          }, _context.model.entities.getSelected());          
         }
       });
     };
