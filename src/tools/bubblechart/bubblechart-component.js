@@ -734,8 +734,8 @@ var BubbleChartComp = Component.extend({
       .sort(function(a, b) {
         if (_this.frame.size[a[KEY]] != _this.frame.size[b[KEY]]) return d3.descending(_this.frame.size[a[KEY]], _this.frame.size[b[KEY]]);
         if (a[KEY] != b[KEY]) return d3.ascending(a[KEY], b[KEY]);
+        if (typeof a.trailStartTime != "undefined" || typeof b.trailStartTime != "undefined") return typeof a.trailStartTime != "undefined" ? -1 : 1; // only lines has trailStartTime 
         if (typeof a.hidden != "undefined" || typeof b.hidden != "undefined") return typeof a.hidden != "undefined" ? 1 : -1; // only bubbles has attribute hidden
-        if (typeof a.trailStartTime != "undefined" || typeof b.trailStartTime != "undefined") return typeof a.trailStartTime != "undefined" ? 1 : -1; // only lines has trailStartTime 
         return d3.descending(_this.frame.size[a[KEY]], _this.frame.size[b[KEY]]);
       });
   },
