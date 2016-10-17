@@ -15,10 +15,9 @@ export default Class.extend({
 
   toggle: function(arg) {
     var _context = this.context;
-
     if(arg) {
       _context._trails.create();
-      _context._trails.run(["resize", "recolor", "opacityHandler", "findVisible", "reveal"]);
+      _context._trails.run(["findVisible", "reveal", "opacityHandler"]);
     } else {
       _context._trails.run("remove");
       _context.model.entities.select.forEach(function(d) {
@@ -50,7 +49,7 @@ export default Class.extend({
         return r;
       });
       _this.trailTransitions = {};
-      var _trails = _context.bubbleContainer.selectAll('g.vzb-bc-entity')
+      var _trails = _context.bubbleContainer.selectAll('g.vzb-bc-entity.entity-trail')
         .data(_this.trailsData, function(d) {
           return(d[KEY]);
         });
@@ -61,7 +60,7 @@ export default Class.extend({
           return this.querySelector(".bubble-" + d[KEY]);
         })
         .attr("class", function(d) {
-          return "vzb-bc-entity trail-" + d[KEY];
+          return "vzb-bc-entity entity-trail trail-" + d[KEY];
         });
       _trails.each(function(d, index) {
           var defer = new Promise();

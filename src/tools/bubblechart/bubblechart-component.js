@@ -141,7 +141,7 @@ var BubbleChartComp = Component.extend({
         _this.selectDataPoints();
         _this.redrawDataPoints();
         _this._trails.create();
-        _this._trails.run(["resize", "recolor", "opacityHandler","findVisible", "reveal"]);
+        _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
         _this.updateBubbleOpacity();
         _this._updateDoubtOpacity();
       },
@@ -267,7 +267,8 @@ var BubbleChartComp = Component.extend({
     this._labels.config({
       CSS_PREFIX: 'vzb-bc',
       LABELS_CONTAINER_CLASS: 'vzb-bc-labels',
-      LINES_CONTAINER_CLASS: 'vzb-bc-lines'
+      LINES_CONTAINER_CLASS: 'vzb-bc-bubbles',
+      LINES_CONTAINER_SELECTOR_PREFIX: 'bubble-'
     });
   },
   
@@ -527,6 +528,7 @@ var BubbleChartComp = Component.extend({
     }
     this._trails.run("reveal", null, this.duration);
     this.tooltipMobile.classed('vzb-hidden', true);
+    this._reorderEntities();
   },
 
   updateUIStrings: function() {
@@ -674,9 +676,8 @@ var BubbleChartComp = Component.extend({
     if (!this.model.time.splash) {
       this.unselectBubblesWithNoData(entities);
     }
-
-    this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
-      .data(this.model.entities.getVisible(), function(d) {return d && !d['selectedEntityData'] ? d[KEY] : null}); // trails have not keys
+    this.entityBubbles = this.bubbleContainer.selectAll('circle.vzb-bc-entity')
+      .data(this.model.entities.getVisible(), function(d) {return d[KEY]}); // trails have not keys
 
     //exit selection
     this.entityBubbles.exit().remove();
@@ -705,8 +706,8 @@ var BubbleChartComp = Component.extend({
         _this._bubblesInteract().click(d, i);
       })
       .onLongTap(function(d, i) {});
-
-      this.entityBubbles.order();
+    
+      this._reorderEntities();
   },
     
   unselectBubblesWithNoData: function(entities){
@@ -726,6 +727,19 @@ var BubbleChartComp = Component.extend({
       if(_select.length !== _this.model.entities.select.length) _this.model.entities.select = _select;
   },
 
+  _reorderEntities() {
+    var _this = this;
+    var KEY = this.KEY;
+    this.bubbleContainer.selectAll('.vzb-bc-entity')
+      .sort(function(a, b) {
+        if (_this.frame.size[a[KEY]] != _this.frame.size[b[KEY]]) return d3.descending(_this.frame.size[a[KEY]], _this.frame.size[b[KEY]]);
+        if (a[KEY] != b[KEY]) return d3.ascending(a[KEY], b[KEY]);
+        if (typeof a.hidden != "undefined" || typeof b.hidden != "undefined") return typeof a.hidden != "undefined" ? 1 : -1; // only bubbles has attribute hidden
+        if (typeof a.trailStartTime != "undefined" || typeof b.trailStartTime != "undefined") return typeof a.trailStartTime != "undefined" ? 1 : -1; // only lines has trailStartTime 
+        return d3.descending(_this.frame.size[a[KEY]], _this.frame.size[b[KEY]]);
+      });
+  },
+  
   _bubblesInteract: function() {
     var _this = this;
     var KEY = this.KEY;

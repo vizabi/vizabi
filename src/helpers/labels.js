@@ -332,6 +332,7 @@ var label = function(context) {
 var OPTIONS = {
   LABELS_CONTAINER_CLASS: '',
   LINES_CONTAINER_CLASS: '',
+  LINES_CONTAINER_SELECTOR: '',
   CSS_PREFIX: ''
 }; 
 
@@ -467,7 +468,7 @@ var Labels = Class.extend({
       .data(_this.model.entities.select, function(d) {
         return(d[KEY]);
       });
-    this.entityLines = this.linesContainer.selectAll("." + _cssPrefix + "-entity")
+    this.entityLines = this.linesContainer.selectAll("g.entity-line." + _cssPrefix + "-entity")
       .data(_this.model.entities.select, function(d) {
         return(d[KEY]);
       });
@@ -482,8 +483,10 @@ var Labels = Class.extend({
     this.entityLines.exit()
       .remove();
     this.entityLines
-      .enter().append('g')
-      .attr("class", function(d, index){return _cssPrefix + "-entity line-" + d[KEY]})
+      .enter().insert('g', function(d) {
+        return this.querySelector("." + OPTIONS.LINES_CONTAINER_SELECTOR_PREFIX + d[KEY]); 
+      })
+      .attr("class", function(d, index){return _cssPrefix + "-entity entity-line line-" + d[KEY]})
       .each(function(d, index) {
         _this.label.line(d3.select(this));
       });
