@@ -500,7 +500,9 @@ export default Class.extend({
         generateTrails(trail, index + 1);
       });
     };
-    generateTrails(trail, 0);
+    _context.model.marker.getFrame(null, function() {
+      generateTrails(trail, 0);
+    });
     return defer;
   }
 
