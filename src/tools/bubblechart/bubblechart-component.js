@@ -402,6 +402,12 @@ var BubbleChartComp = Component.extend({
       .on("keyup", function() {
         if(_this.model.ui.cursorMode !== 'arrow') return;
         if(!d3.event.metaKey && !d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", false);
+      })
+      //this is for the case when user would press ctrl and move away from the browser tab or window
+      //keyup event would happen somewhere else and won't be captured, so zoomin class would get stuck
+      .on("mouseenter", function(){
+        if(_this.model.ui.cursorMode !== 'arrow') return;
+        if(!d3.event.metaKey && !d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", false);
       });
         
     this.root.on('resetZoom', function(){
