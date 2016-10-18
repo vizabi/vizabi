@@ -69,6 +69,11 @@ var BubbleMap = Tool.extend('BubbleMap', {
 
   default_model: {
     state: {
+      time: {
+        "delay": 100,
+        "delayThresholdX2": 50,
+        "delayThresholdX4": 25  
+      },
       entities: {
         "opacitySelectDim": 0.3,
         "opacityRegular": 1
