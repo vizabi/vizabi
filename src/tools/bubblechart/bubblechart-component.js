@@ -711,8 +711,8 @@ var BubbleChartComp = Component.extend({
         _this._bubblesInteract().click(d, i);
       })
       .onLongTap(function(d, i) {});
-    
-      this._reorderEntities();
+
+    this._reorderEntities();
   },
     
   unselectBubblesWithNoData: function(entities){
@@ -737,6 +737,8 @@ var BubbleChartComp = Component.extend({
     var KEY = this.KEY;
     this.bubbleContainer.selectAll('.vzb-bc-entity')
       .sort(function(a, b) {
+        if (typeof _this.frame.size[a[KEY]] == "undefined") return -1;
+        if (typeof _this.frame.size[b[KEY]] == "undefined") return -1;
         if (_this.frame.size[a[KEY]] != _this.frame.size[b[KEY]]) return d3.descending(_this.frame.size[a[KEY]], _this.frame.size[b[KEY]]);
         if (a[KEY] != b[KEY]) return d3.ascending(a[KEY], b[KEY]);
         if (typeof a.trailStartTime != "undefined" || typeof b.trailStartTime != "undefined") return typeof a.trailStartTime != "undefined" ? -1 : 1; // only lines has trailStartTime 
