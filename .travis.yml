@@ -35,6 +35,7 @@ before_script:
 
 script:
   - .cicd/w4gulp.js
+  - npm run e2e:local
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && sh deploy.sh || true'
 
 after_success:
