@@ -1,4 +1,5 @@
-{
+export default {
+  en: {
     "buttons/expand": "Expand",
     "buttons/unexpand": "Restore",
     "buttons/trails": "Trails",
@@ -84,4 +85,5 @@
     "unit/": "",
     "unit/pixels": "px",
     "unit/mountainchart_hardcoded_income_per_day": "$/day"
+  }
 }

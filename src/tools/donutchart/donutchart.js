@@ -48,6 +48,9 @@ var DonutChart = Tool.extend('DonutChart', {
     //provide the default options
     default_model: {
       state: {
+      },
+      ui: {
+        presentation: false
       }
     }
 });
