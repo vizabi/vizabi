@@ -911,7 +911,7 @@ var BubbleChartComp = Component.extend({
         toolMargin: margin,
         limitMaxTickNumber: 6,
         bump: this.activeProfile.maxRadius/2,
-        constantRakeLength: this.height,
+        viewportLength: this.height,
         formatter: this.model.marker.axis_y.getTickFormatter()
       });
 
@@ -923,7 +923,7 @@ var BubbleChartComp = Component.extend({
         scaleType: this.model.marker.axis_x.scaleType,
         toolMargin: margin,
         bump: this.activeProfile.maxRadius/2,
-        constantRakeLength: this.width,
+        viewportLength: this.width,
         formatter: this.model.marker.axis_x.getTickFormatter()
       });
 

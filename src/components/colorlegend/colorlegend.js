@@ -248,7 +248,7 @@ var ColorLegend = Component.extend({
           },
           showOuter: true,
           //bump: this.activeProfile.maxRadius/2,
-          //constantRakeLength: gradientWidth,
+          //viewportLength: gradientWidth,
           formatter: formatter,
           bump: marginLeft,
           cssFontSize: "11px",

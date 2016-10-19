@@ -81,6 +81,13 @@ export default function axisSmart() {
             view.attr("y", +view.attr("y") + shift.y);
           });
       }
+      
+      //hide axis labels that are outside the available viewport
+      var scale = axis.scale();
+      if(options.viewportLength){
+        g.selectAll(".tick")
+          .classed("vzb-hidden", function(d) {return scale(d)<0 || scale(d)>options.viewportLength})
+      }
 
       // add minor ticks. if none exist add an empty array
       if(axis.tickValuesMinor() == null) axis.tickValuesMinor([]);
@@ -91,12 +98,12 @@ export default function axisSmart() {
 
       var tickLengthOut = axis.tickSizeMinor().outbound;
       var tickLengthIn = axis.tickSizeMinor().inbound;
-      var scale = axis.scale();
       minorTicks
+        .classed("vzb-hidden", function(d) {return scale(d)<0 || scale(d)>options.viewportLength})
         .attr("y1", orient == HORIZONTAL ? (axis.orient() == "top" ? 1 : -1) * tickLengthIn : scale)
         .attr("y2", orient == HORIZONTAL ? (axis.orient() == "top" ? -1 : 1) * tickLengthOut : scale)
         .attr("x1", orient == VERTICAL ? (axis.orient() == "right" ? -1 : 1) * tickLengthIn : scale)
-        .attr("x2", orient == VERTICAL ? (axis.orient() == "right" ? 1 : -1) * tickLengthOut : scale)
+        .attr("x2", orient == VERTICAL ? (axis.orient() == "right" ? 1 : -1) * tickLengthOut : scale);
 
       //adjust axis rake 
       g.selectAll("path").remove();
@@ -105,12 +112,12 @@ export default function axisSmart() {
       rake.enter().append("line")
         .attr("class", "vzb-axis-line");
         
-      if(options.constantRakeLength){
+      if(options.viewportLength){
         rake 
           .attr("x1", orient == VERTICAL ? 0 : -1)
-          .attr("x2", orient == VERTICAL ? 0 : options.constantRakeLength)
+          .attr("x2", orient == VERTICAL ? 0 : options.viewportLength)
           .attr("y1", orient == HORIZONTAL ? 0 : 0)
-          .attr("y2", orient == HORIZONTAL ? 0 : options.constantRakeLength)      
+          .attr("y2", orient == HORIZONTAL ? 0 : options.viewportLength)      
       }else{
         //TODO: this will not work for the "ordinal" scaleType
         rake 
@@ -119,7 +126,6 @@ export default function axisSmart() {
           .attr("y1", orient == HORIZONTAL ? 0 : d3.min(scale.range()) - (options.bump||0))
           .attr("y2", orient == HORIZONTAL ? 0 : d3.max(scale.range()) + (options.bump||0))
       }
-
     };
 
 
@@ -279,7 +285,7 @@ export default function axisSmart() {
         top: 30
       };
       if(options.bump == null) options.bump = 0;
-      if(options.constantRakeLength == null) options.constantRakeLength = 0;
+      if(options.viewportLength == null) options.viewportLength = 0;
 
       if(options.pivotingLimit == null) options.pivotingLimit = options.toolMargin[this.orient()];
 
