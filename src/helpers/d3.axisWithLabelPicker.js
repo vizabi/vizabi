@@ -74,9 +74,9 @@ export default function axisSmart() {
       //apply label repositioning: first and last visible values would shift away from the borders
       if(axis.repositionLabels() != null){
         g.selectAll(".tick")
-          .each(function(d, i) {
+          .each(function(d) {
             var view = d3.select(this).select("text");
-            var shift = axis.repositionLabels()[i] || {x: 0, y: 0};
+            var shift = axis.repositionLabels()[d] || {x: 0, y: 0};
             view.attr("x", +view.attr("x") + shift.x);
             view.attr("y", +view.attr("y") + shift.y);
           });
@@ -785,7 +785,8 @@ export default function axisSmart() {
     // returns the array of recommended {x,y} shifts
 
     function repositionLabelsThatStickOut(tickValues, options, orient, scale, dimension) {
-      if(tickValues == null) return null;
+      if(!tickValues) return null;
+      var result = {};
 
       // make an abstraction layer for margin sizes
       // tail means left or bottom, head means top or right
@@ -797,20 +798,30 @@ export default function axisSmart() {
           head: options.toolMargin.right,
           tail: options.toolMargin.left
         };
-
-
-      var result = {};
-
-
+      
+      var range = scale.range();
+      var bump = options.bump;
+      
+      //when a viewportLength is given: adjust outer VISIBLE tick values
+      //this is helpful when the scaled is zoomed, so labels don't get truncated by a viewport svg
+      if(options.viewportLength){
+        //remove invisible ticks from the array
+        tickValues = tickValues.filter(function(d){return scale(d)>=0 && scale(d)<=options.viewportLength});
+        //overwrite the available range with viewport limits. direction doesn't matter because we take min-max later anyway
+        range = [0, options.viewportLength];
+        //reset the bump because zoomed axis has no bump
+        bump = 0;
+      }      
+      
       // STEP 1:
       // for outer labels: avoid sticking out from the tool margin
       tickValues.forEach(function(d, i) {
         if(i != 0 && i != tickValues.length - 1) return;
 
         // compute the influence of the axis head
-        var repositionHead = Math.min(margin.head, options.widthOfOneDigit * .5) + options.bump 
-          + (orient == HORIZONTAL ? 1 : 0) * d3.max(scale.range()) 
-          - (orient == HORIZONTAL ? 0 : 1) * d3.min(scale.range()) 
+        var repositionHead = Math.min(margin.head, options.widthOfOneDigit * 0.5) + bump 
+          + (orient == HORIZONTAL ? 1 : 0) * d3.max(range) 
+          - (orient == HORIZONTAL ? 0 : 1) * d3.min(range) 
           + (orient == HORIZONTAL ? -1 : 1) * scale(d) 
           - (dimension == "x") * options.formatter(d).length * options.widthOfOneDigit / 2 
           - (dimension == "y") * options.heightOfOneDigit / 2
@@ -819,9 +830,9 @@ export default function axisSmart() {
           - (dimension == "y") * parseInt(options.cssMarginTop);
 
         // compute the influence of the axis tail
-        var repositionTail = Math.min(margin.tail, options.widthOfOneDigit) + options.bump 
-          + (orient == VERTICAL ? 1 : 0) * d3.max(scale.range()) 
-          - (orient == VERTICAL ? 0 : 1) * d3.min(scale.range()) 
+        var repositionTail = Math.min(margin.tail, options.widthOfOneDigit * 0.5) + bump 
+          + (orient == VERTICAL ? 1 : 0) * d3.max(range) 
+          - (orient == VERTICAL ? 0 : 1) * d3.min(range) 
           + (orient == VERTICAL ? -1 : 1) * scale(d) 
           - (dimension == "x") * options.formatter(d).length * options.widthOfOneDigit / 2
           - (dimension == "y") * options.heightOfOneDigit / 2
@@ -834,12 +845,8 @@ export default function axisSmart() {
         if(repositionTail > 0) repositionTail = 0;
 
         // add them up with appropriate signs, save to the axis
-        result[i] = {
-          x: 0,
-          y: 0
-        };
-        result[i][dimension] = (dimension == "y" && orient == VERTICAL ? -1 : 1) * (repositionHead -
-          repositionTail);
+        result[d] = {x: 0, y: 0};
+        result[d][dimension] = (dimension == "y" && orient == VERTICAL ? -1 : 1) * (repositionHead - repositionTail);
       });
 
 
@@ -852,34 +859,34 @@ export default function axisSmart() {
         var repositionHead =
           // take the distance between head and the tick at hand
           Math.abs(scale(d) - scale(tickValues[tickValues.length - 1]))
-        
+
           // substract the shift of the head TODO: THE SIGN CHOICE HERE MIGHT BE WRONG. NEED TO TEST ALL CASES
-          - (dimension == "y") * (orient == HORIZONTAL ? -1 : 1) * result[tickValues.length - 1][dimension]
-          - (dimension == "x") * (orient == HORIZONTAL ? 1 : -1) * result[tickValues.length - 1][dimension]
-        
+          - (dimension == "y") * (orient == HORIZONTAL ? -1 : 1) * result[tickValues[tickValues.length - 1]][dimension]
+          - (dimension == "x") * (orient == HORIZONTAL ? 1 : -1) * result[tickValues[tickValues.length - 1]][dimension]
+
           // substract half-length of the overlapping labels
           - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(d).length 
           - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(tickValues[tickValues.length - 1]).length 
           - (dimension == "y") * options.heightOfOneDigit * .7 //TODO remove magic constant - relation of actual font height to BBox-measured height
-          
+
           // we may consider or not the label margins to give them a bit of spacing from the edges
           - (dimension == "x") * parseInt(options.cssMarginLeft) 
           - (dimension == "y") * parseInt(options.cssMarginBottom);
-          
+
         // compute the influence of the tail-side outer label
         var repositionTail =
           // take the distance between tail and the tick at hand
           Math.abs(scale(d) - scale(tickValues[0]))
-        
+
           // substract the shift of the tail TODO: THE SIGN CHOICE HERE MIGHT BE WRONG. NEED TO TEST ALL CASES
-          - (dimension == "y") * (orient == VERTICAL ? -1 : 1) * result[0][dimension]
-          - (dimension == "x") * (orient == VERTICAL ? 1 : -1) * result[0][dimension]
-        
+          - (dimension == "y") * (orient == VERTICAL ? -1 : 1) * result[tickValues[0]][dimension]
+          - (dimension == "x") * (orient == VERTICAL ? 1 : -1) * result[tickValues[0]][dimension]
+
           // substract half-length of the overlapping labels
           - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(d).length 
           - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(tickValues[0]).length 
           - (dimension == "y") * options.heightOfOneDigit * .7 //TODO remove magic constant - relation of actual font height to BBox-measured height
-        
+
           // we may consider or not the label margins to give them a bit of spacing from the edges
           - (dimension == "x") * parseInt(options.cssMarginLeft) 
           - (dimension == "y") * parseInt(options.cssMarginBottom);
@@ -889,12 +896,8 @@ export default function axisSmart() {
         if(repositionTail > 0) repositionTail = 0;
 
         // add them up with appropriate signs, save to the axis
-        result[i] = {
-          x: 0,
-          y: 0
-        };
-        result[i][dimension] = (dimension == "y" && orient == VERTICAL ? -1 : 1) * (repositionHead -
-          repositionTail);
+        result[d] = {x: 0, y: 0};
+        result[d][dimension] = (dimension == "y" && orient == VERTICAL ? -1 : 1) * (repositionHead - repositionTail);
       });
 
 
