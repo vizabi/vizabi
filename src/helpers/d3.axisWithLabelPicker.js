@@ -26,7 +26,6 @@ export default function axisSmart() {
       // measure the width and height of one digit
       var widthSampleG = g.append("g").attr("class", "tick widthSampling");
       var widthSampleT = widthSampleG.append('text').text('0');
-
       options.cssMarginTop = widthSampleT.style("margin-top");
       options.cssMarginBottom = widthSampleT.style("margin-bottom");
       options.cssMarginLeft = widthSampleT.style("margin-left");
@@ -35,31 +34,30 @@ export default function axisSmart() {
       options.heightOfOneDigit = widthSampleT[0][0].getBBox().height;
       widthSampleG.remove();
 
-
       // run label factory - it will store labels in tickValues property of axis
       axis.labelFactory(options);
 
-      //if(axis.orient()=="bottom") console.log("ordered", axis.tickValues())
       // construct the view (d3 constructor is used)
       if(options.transitionDuration > 0) {
         _super(g.transition().duration(options.transitionDuration));
       } else {
        _super(g);
       }
-      //if(axis.orient()=="bottom") console.log("received", g.selectAll("text").each(function(d){console.log(d)}))
+      
+      //identify the orientation of axis and the direction of labels
       var orient = axis.orient() == "top" || axis.orient() == "bottom" ? HORIZONTAL : VERTICAL;
       var dimension = (orient == HORIZONTAL && axis.pivot() || orient == VERTICAL && !axis.pivot()) ? Y : X;
 
+      //add an invisible element that would represent hovered value
       g.selectAll('.vzb-axis-value')
         .data([null])
         .enter().append('g')
         .attr("class", 'vzb-axis-value')
         .classed("vzb-hidden", true)
         .append("text")
-
       
-      var tickSizeWithPadding = axis.tickPadding() + axis.tickSize();
       // patch the label positioning after the view is generated
+      var tickSizeWithPadding = axis.tickPadding() + axis.tickSize();
       g.selectAll("text")
         .each(function(d, i) {
           if(axis.pivot() == null) return;
@@ -73,18 +71,19 @@ export default function axisSmart() {
           view.attr("dy", dimension == X ? (orient == VERTICAL ? -tickSizeWithPadding : ".72em") : ".32em");
         });
       
+      //apply label repositioning: first and last visible values would shift away from the borders
       if(axis.repositionLabels() != null){
-          g.selectAll(".tick")
-            .each(function(d, i) {
-              var view = d3.select(this).select("text");
-              var shift = axis.repositionLabels()[i] || {x: 0, y: 0};
-              view.attr("x", +view.attr("x") + shift.x);
-              view.attr("y", +view.attr("y") + shift.y);
-            });
+        g.selectAll(".tick")
+          .each(function(d, i) {
+            var view = d3.select(this).select("text");
+            var shift = axis.repositionLabels()[i] || {x: 0, y: 0};
+            view.attr("x", +view.attr("x") + shift.x);
+            view.attr("y", +view.attr("y") + shift.y);
+          });
       }
 
+      // add minor ticks. if none exist add an empty array
       if(axis.tickValuesMinor() == null) axis.tickValuesMinor([]);
-      // add minor ticks
       var minorTicks = g.selectAll(".tickMinor").data(tickValuesMinor);
       minorTicks.exit().remove();
       minorTicks.enter().append("line")
@@ -99,27 +98,26 @@ export default function axisSmart() {
         .attr("x1", orient == VERTICAL ? (axis.orient() == "right" ? -1 : 1) * tickLengthIn : scale)
         .attr("x2", orient == VERTICAL ? (axis.orient() == "right" ? 1 : -1) * tickLengthOut : scale)
 
-
       //adjust axis rake 
       g.selectAll("path").remove();
       var rake = g.selectAll(".vzb-axis-line").data([0]);
       rake.exit().remove();
       rake.enter().append("line")
-          .attr("class", "vzb-axis-line");
+        .attr("class", "vzb-axis-line");
         
       if(options.constantRakeLength){
-          rake 
-            .attr("x1", orient == VERTICAL ? 0 : -1)
-            .attr("x2", orient == VERTICAL ? 0 : options.constantRakeLength)
-            .attr("y1", orient == HORIZONTAL ? 0 : 0)
-            .attr("y2", orient == HORIZONTAL ? 0 : options.constantRakeLength)      
+        rake 
+          .attr("x1", orient == VERTICAL ? 0 : -1)
+          .attr("x2", orient == VERTICAL ? 0 : options.constantRakeLength)
+          .attr("y1", orient == HORIZONTAL ? 0 : 0)
+          .attr("y2", orient == HORIZONTAL ? 0 : options.constantRakeLength)      
       }else{
-          //TODO: this will not work for the "ordinal" scaleType
-          rake 
-            .attr("x1", orient == VERTICAL ? 0 : d3.min(scale.range()) - (options.bump||0) - 1)
-            .attr("x2", orient == VERTICAL ? 0 : d3.max(scale.range()) + (options.bump||0))
-            .attr("y1", orient == HORIZONTAL ? 0 : d3.min(scale.range()) - (options.bump||0))
-            .attr("y2", orient == HORIZONTAL ? 0 : d3.max(scale.range()) + (options.bump||0))
+        //TODO: this will not work for the "ordinal" scaleType
+        rake 
+          .attr("x1", orient == VERTICAL ? 0 : d3.min(scale.range()) - (options.bump||0) - 1)
+          .attr("x2", orient == VERTICAL ? 0 : d3.max(scale.range()) + (options.bump||0))
+          .attr("y1", orient == HORIZONTAL ? 0 : d3.min(scale.range()) - (options.bump||0))
+          .attr("y2", orient == HORIZONTAL ? 0 : d3.max(scale.range()) + (options.bump||0))
       }
 
     };
