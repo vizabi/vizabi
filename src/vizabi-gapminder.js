@@ -137,14 +137,15 @@ Tool.define("preloadLanguage", function() {
   
   if(globals.ext_resources.translationPath) {
     // if a path to external tranlation file is provided, extend the default strings with the ones from that file
-    d3.json(globals.ext_resources.translationPath, function(langdata) {
-      langModel.strings = utils.deepExtend(defaultLanguageStrings, langdata);
+    d3.json(globals.ext_resources.translationPath + langModel.id + ".json", function(langdata) {
+      console.log(langdata, langModel.id, defaultLanguageStrings)
+      langModel.strings[langModel.id] = utils.extend(utils.clone(defaultLanguageStrings), langdata);
       _this.model.language.strings.trigger("change");
       promise.resolve();
     });
   } else {
     // use default UI strings, shipped with vizabi
-    langModel.strings = defaultLanguageStrings;
+    langModel.strings[langModel.id] = defaultLanguageStrings;
     this.model.language.strings.trigger("change");
     promise = promise.resolve();
   }
