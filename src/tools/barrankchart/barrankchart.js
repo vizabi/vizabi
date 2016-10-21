@@ -35,13 +35,34 @@ var BarRankChart = Tool.extend('BarRankChart', {
     }, {
       component: treemenu,
       placeholder: '.vzb-tool-treemenu',
-      model: ['state.marker', 'language']
+      model: ['state.marker', 'state.marker_tags', 'state.time', 'language']
     }];
 
     //constructor is the same as any tool
     this._super(placeholder, external_model);
-  }
+  },
 
+
+
+  /**
+   * Determines the default model of this tool
+   */
+  default_model: {
+    state: { 
+      time: {
+      },
+      marker: {
+        axis_x: {allow: {scales: ["linear","log"]}},
+        axis_y: {allow: {scales: ["ordinal"]}},
+        color:  { }
+      }
+    },
+    language: { },
+    ui: {
+      presentation: false,
+      chart: { }
+    }
+  }
 });
 
 export default BarRankChart;

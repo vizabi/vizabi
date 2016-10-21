@@ -53,6 +53,14 @@ var PopByAge = Tool.extend('PopByAge', {
 
     //constructor is the same as any tool
     this._super(placeholder, external_model);
+  },
+  
+  default_model: {
+    state: {
+    },
+    ui: {
+      presentation: false
+    }
   }
 
 });

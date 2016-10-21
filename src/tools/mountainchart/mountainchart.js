@@ -83,6 +83,13 @@ var MountainChart = Tool.extend('MountainChart', {
       },
       presentation: false
     }
+  },
+  
+  datawarning_content: {
+    title: "Income data has large uncertainty!",
+    body: "There are many different ways to estimate and compare income. Different methods are used in different countries and years. Unfortunately no data source exists that would enable comparisons across all countries, not even for one single year. Gapminder has managed to adjust the picture for some differences in the data, but there are still large issues in comparing individual countries. The precise shape of a country should be taken with a large grain of salt.<br/><br/> Gapminder strongly agrees with <a href='https://twitter.com/brankomilan' target='_blank'>Branko Milanovic</a> about the urgent need for a comparable global income survey, especially for the purpose of monitoring the UN poverty-goal.<br/><br/> We are constantly improving our datasets and methods. Please expect revision of this graph within the coming months. <br/><br/> Learn more about the datasets and methods in this <a href='http://www.gapminder.org/news/data-sources-dont-panic-end-poverty' target='_blank'>blog post</a>",
+    doubtDomain: [1800, 1950, 2015],
+    doubtRange: [1.0, .8, .6]
   }
 
 

@@ -57,10 +57,12 @@ var AgePyramid = Tool.extend('AgePyramid', {
 
   default_model: {
     ui: {
-      chart: {
-        inpercent: false,
-        stacked: true
-      }
+    chart: {
+      stacked: true,
+      inpercent: false,
+      flipSides: true
+    },
+    presentation: false
     }
   }
 

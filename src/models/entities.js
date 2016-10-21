@@ -14,8 +14,8 @@ var EntitiesModel = Model.extend({
     show: {},
     select: [],
     highlight: [],
-    opacityHighlightDim: .1,
-    opacitySelectDim: .3,
+    opacityHighlightDim: 0.1,
+    opacitySelectDim: 0.3,
     opacityRegular: 1
   },
 
@@ -280,8 +280,10 @@ var EntitiesModel = Model.extend({
   },
 
   setHighlight: function(arg) {
-    if (!utils.isArray(arg))
+    if (!utils.isArray(arg)) {
       this.setHighlight([].concat(arg));
+      return;
+    }
     this.getModelObject('highlight').set(arg, false, false); // highlights are always non persistent changes
   },
 

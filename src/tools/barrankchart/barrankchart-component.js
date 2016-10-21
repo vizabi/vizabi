@@ -130,16 +130,16 @@ var BarRankChart = Component.extend({
 
   loadData: function() {
 
-    // get data, for the active year. Nest them using the entity of the graph
-
-
     // sort the data (also sets this.total)
     this.sortedEntities = this.sortByIndicator(this.values.axis_x);
 
     // change header titles for new data
-    var translator = this.model.language.getTFunction();
+    var conceptProps = this.model.marker.getConceptprops();
     this.header.select('.vzb-br-title')
-      .text(translator("indicator/" + this.model.marker.axis_x.which) + ' ' + this.model.time.timeFormat(this.model.time.value))
+      .text(conceptProps[this.model.marker.axis_x.which].name 
+            + ' ' 
+            + this.model.time.timeFormat(this.model.time.value)
+      )
     this.header.select('.vzb-br-total')
       .text('Σ = ' + this.model.marker.axis_x.getTickFormatter()(this.total))
 
@@ -174,31 +174,23 @@ var BarRankChart = Component.extend({
     this.barViewport.style('height', this.height + 'px');
 
     // header
-    this.header
-      .attr('height', margin.top)
-      .select('.vzb-br-title')
-        .attr('dominant-baseline', 'middle')
-        .attr('y', margin.top/2)
-        .attr('x', margin.left);
-    this.header
-      .select('.vzb-br-total')
-        .attr('text-anchor', 'end')
-        .attr('dominant-baseline', 'middle')
-        .attr('y', margin.top/2)
-        .attr('x', this.width + margin.left);
-
+    this.header.attr('height', margin.top);
+    
+    var headerTitle = this.header.select('.vzb-br-title');
+    var headerTotal = this.header.select('.vzb-br-total');
+    var headerTitleBBox = headerTitle.node().getBBox();
+    var headerTotalBBox = headerTotal.node().getBBox();
+    headerTitle
+      .attr('y', margin.top/2)
+      .attr('x', margin.left);
+    headerTotal
+      .attr('text-anchor', 'end')
+      .attr('y', margin.top/2)
+      .attr('x', this.width + margin.left)
+      .classed("vzb-transparent", headerTitleBBox.width + headerTotalBBox.width + 10 > this.width);
 
     // although axes are not drawn, need the xScale for bar width
-    if(this.model.marker.axis_x.scaleType !== "ordinal") {
-      this.xScale.range([0, this.width]);
-    } else {
-      this.xScale.rangePoints([0, this.width]).range();
-    }
-
-    // redraw the limits
-    var limits = this.model.marker.axis_x.getLimits(this.model.marker.axis_x.which);
-    this.xScale = this.xScale.domain([limits.min, limits.max]);
-
+    this.xScale.range([0, this.width]);
   },
 
   drawData: function() {

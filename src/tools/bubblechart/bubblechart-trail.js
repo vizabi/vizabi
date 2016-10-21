@@ -15,10 +15,9 @@ export default Class.extend({
 
   toggle: function(arg) {
     var _context = this.context;
-
     if(arg) {
       _context._trails.create();
-      _context._trails.run(["resize", "recolor", "opacityHandler", "findVisible", "reveal"]);
+      _context._trails.run(["findVisible", "reveal", "opacityHandler"]);
     } else {
       _context._trails.run("remove");
       _context.model.entities.select.forEach(function(d) {
@@ -50,7 +49,7 @@ export default Class.extend({
         return r;
       });
       _this.trailTransitions = {};
-      var _trails = _context.bubbleContainer.selectAll('g.vzb-bc-entity')
+      var _trails = _context.bubbleContainer.selectAll('g.vzb-bc-entity.entity-trail')
         .data(_this.trailsData, function(d) {
           return(d[KEY]);
         });
@@ -61,7 +60,7 @@ export default Class.extend({
           return this.querySelector(".bubble-" + d[KEY]);
         })
         .attr("class", function(d) {
-          return "vzb-bc-entity trail-" + d[KEY];
+          return "vzb-bc-entity entity-trail trail-" + d[KEY];
         });
       _trails.each(function(d, index) {
           var defer = new Promise();
@@ -207,6 +206,15 @@ export default Class.extend({
       });
     });
 
+  },
+
+
+  _remove: function(trail, duration, d) {
+    this.actionsQueue[d[this.context.KEY]] = []; 
+    if (trail) { // TODO: in some reason run twice 
+      d3.select(this.entityTrails[d[this.context.KEY]].node().parentNode).remove();
+      this.entityTrails[d[this.context.KEY]] = null;
+    }
   },
 
   _resize: function(trail, duration, d) {
@@ -381,7 +389,6 @@ export default Class.extend({
         var view = d3.select(trail[0][index]);
         var segment = view.datum();
         //console.log(d[KEY] + " transparent: " + segment.transparent + " vis_changed:" + segment.visibilityChanged);
-        //console.log(segment.transparent + " " + segment.visibilityChanged);
         if(segment.transparent) {
           view.classed("vzb-invisible", segment.transparent);
           resolve();
@@ -389,7 +396,6 @@ export default Class.extend({
           resolve();            
         } else {
           _context.model.marker.getFrame(segment.t, function(frame) {
-            //console.log(frame);
             if (!frame) return resolve();
             segment.valueY = frame.axis_y[d[KEY]];
             segment.valueX = frame.axis_x[d[KEY]];
@@ -480,10 +486,10 @@ export default Class.extend({
                       resolve();
                     }
                   }
-                });
+                }, _context.model.entities.getSelected());
               }
             }
-          });          
+          }, _context.model.entities.getSelected());          
         }
       });
     };
@@ -502,7 +508,9 @@ export default Class.extend({
         generateTrails(trail, index + 1);
       });
     };
-    generateTrails(trail, 0);
+    _context.model.marker.getFrame(null, function() {
+      generateTrails(trail, 0);
+    });
     return defer;
   }
 
