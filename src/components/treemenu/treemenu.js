@@ -1337,13 +1337,13 @@ var TreeMenu = Component.extend({
       if(indicatorsDB[value].scales) {
         obj.scaleType = indicatorsDB[value].scales[0];
       }
-    }
 
-    if(mdl.getType() === 'axis' || mdl.getType() === 'size') {
-      obj.domainMin = null;
-      obj.domainMax = null;
-      obj.zoomedMin = null;
-      obj.zoomedMax = null;
+      if(mdl.getType() === 'axis' || mdl.getType() === 'size') {
+        obj.domainMin = null;
+        obj.domainMax = null;
+        obj.zoomedMin = null;
+        obj.zoomedMax = null;
+      }
     }
 
     mdl.set(obj);
