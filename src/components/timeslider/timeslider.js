@@ -453,15 +453,15 @@ var TimeSlider = Component.extend({
       if (_this.completedTimeFrames.indexOf(time) != -1) return;
       _this.completedTimeFrames.push(time);
       var next = _this.model.time.incrementTime(time);
+      var prev = _this.model.time.decrementTime(time);
       if (next > _this.model.time.end) {
         if (time - _this.model.time.end == 0) {
           next = time;
-          time = _this.model.time.decrementTime(time)
+          time = prev;
         } else {
           return;
         }
       } 
-      var prev = _this.model.time.decrementTime(time);
       if (_this.availableTimeFrames.length == 0 || _this.availableTimeFrames[_this.availableTimeFrames.length - 1][1] < time) {
         _this.availableTimeFrames.push([time, next]);
       } else if (next < _this.availableTimeFrames[0][0]) {
@@ -497,10 +497,13 @@ var TimeSlider = Component.extend({
     progress.enter().append('path').attr('class', 'domain');
     progress.each(function(d) {
         var element = d3.select(this);
-        element.attr('d', "M" + _this.xScale(d[0]) + ",0H" + _this.xScale(d[1]));
+        element.attr('d', "M" + _this.xScale(d[0]) + ",0H" + _this.xScale(d[1]))
+        .classed("rounded", _this.availableTimeFrames.length == 1);
+        
       });
   },
 
+  
   /**
    * Returns width of slider text value.
    * Parameters in this function needed for memoize function, so they are not redundant.

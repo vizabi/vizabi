@@ -102,6 +102,8 @@ $vzb-ts-value-width: 40px;
           stroke: $vzb-ts-slider-color;
           stroke-opacity: .2;
           stroke-width: 5px;
+        }
+        .rounded {
           stroke-linecap: round;
         }
       }
