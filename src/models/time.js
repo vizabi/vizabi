@@ -415,6 +415,11 @@ var TimeModel = Model.extend({
     return d3.time[is.interval].utc.offset(time, is.step);
   },
 
+  decrementTime: function(time) {
+    var is = this.getIntervalAndStep();
+    return d3.time[is.interval].utc.offset(time, -is.step);
+  },
+
   /**
    * Stops playing the time, clearing the interval
    */
