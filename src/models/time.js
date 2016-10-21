@@ -308,6 +308,7 @@ var TimeModel = Model.extend({
    * @returns {Array} time array
    */
   getAllSteps: function() {
+    if(!this.start || !this.end) return utils.warn("getAllSteps(): invalid start/end time is detected: " + this.start + ", " + this.end);
     var hash = "" + this.start + this.end + this.step;
     
     //return if cached

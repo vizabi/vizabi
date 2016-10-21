@@ -282,10 +282,21 @@ var Data = Class.extend({
         } catch (e) {
           concept["scales"] = null;
         }
-        concept["interpolation"] = d.interpolation;
+        if(!concept.scales){
+          switch (d.concept_type){
+            case "measure": concept.scales=["linear", "log"]; break;
+            case "string": concept.scales=["ordinal"]; break;
+            case "time": concept.scales=["time"]; break;
+          }
+        }
+        if(d.interpolation){
+          concept["interpolation"] = d.interpolation;
+        }else{
+          if(concept.scales && concept.scales[0]=="log") concept["interpolation"] = "exp";
+        }
         concept["tags"] = d.tags;
-        concept["name"] = d.name;
-        concept["unit"] = d.unit;
+        concept["name"] = d.name||d.concept||"";
+        concept["unit"] = d.unit||"";
         concept["description"] = d.description;
         _this.conceptDictionary[d.concept] = concept;
       });
