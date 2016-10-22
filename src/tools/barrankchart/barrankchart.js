@@ -53,7 +53,7 @@ var BarRankChart = Tool.extend('BarRankChart', {
       },
       marker: {
         axis_x: {allow: {scales: ["linear","log"]}},
-        axis_y: {allow: {scales: ["ordinal"]}},
+        axis_y: {allow: {scales: ["ordinal", "nominal"]}},
         color:  { }
       }
     },

@@ -139,6 +139,7 @@ var AxisModel = Hook.extend({
     }
     
     var scaletype = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.scaleType === "log")? "genericLog" : this.scaleType;
+    if(this.scaletype == "nominal") scaletype = "ordinal";
     this.scale = d3.scale[scaletype || "linear"]().domain(domain);
   }
 });

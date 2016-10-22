@@ -31,7 +31,7 @@ var VIZABI_MODEL = {
         "domainMin": 300,
         "domainMax": 128000,
         "allow": {
-          "scales": ["linear", "log", "time"]
+          "scales": ["linear", "log"]
         }
 
       },
@@ -47,8 +47,7 @@ var VIZABI_MODEL = {
         "use": "property",
         "which": "world_4region",
         "allow": {
-          "scales": ["ordinal"],
-          "names": ["!name"]
+          "scales": ["ordinal"]
         }
       }
     },

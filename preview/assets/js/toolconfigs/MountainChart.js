@@ -70,10 +70,7 @@ var VIZABI_MODEL = {
       "color": {
         "use": "property",
         "which": "world_4region",
-        "scaleType": "ordinal",
-        "allow": {
-          "names": ["!name"]
-        }
+        "scaleType": "ordinal"
       },
       "stack": {
         "use": "constant",

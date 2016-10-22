@@ -467,12 +467,12 @@ var BubbleChartComp = Component.extend({
       _this.updateTime();
       _this.updateIndicators();
       _this.updateSize();
+      _this.updateMarkerSizeLimits();
       _this.updateEntities();
       _this._labels.ready();
       _this.redrawDataPoints();
       _this.selectDataPoints();
       _this._trails.create();
-      _this.updateMarkerSizeLimits();
       _this.updateBubbleOpacity();
       _this.zoomToMarkerMaxMin(); // includes redraw data points and trail resize
       _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
@@ -1050,7 +1050,7 @@ var BubbleChartComp = Component.extend({
     if(this.model.marker.size.scaleType !== "ordinal") {
       this.sScale.range([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)]);
     } else {
-      this.sScale.rangePoints([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)], 0).range();
+      this.sScale.rangePoints([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)], _this.activeProfile.padding).range();
     }
 
   },

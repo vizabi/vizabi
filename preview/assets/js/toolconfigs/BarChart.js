@@ -29,14 +29,13 @@ var VIZABI_MODEL = {
       "axis_y": {
         "use": "indicator",
         "which": "population_total",
-        "scaleType": "log",
-        
+        "scaleType": "log"        
       },
       "axis_x": {
         "use": "property",
         "which": "name",
         "allow": {
-          "names": ["!geo", "!_default"]
+          "names": ["name"]
         }
       },
       "color": {

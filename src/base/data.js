@@ -285,7 +285,9 @@ var Data = Class.extend({
         if(!concept.scales){
           switch (d.concept_type){
             case "measure": concept.scales=["linear", "log"]; break;
-            case "string": concept.scales=["ordinal"]; break;
+            case "string": concept.scales=["nominal"]; break;
+            case "entity_domain": concept.scales=["ordinal"]; break;
+            case "entity_set": concept.scales=["ordinal"]; break;
             case "time": concept.scales=["time"]; break;
           }
         }

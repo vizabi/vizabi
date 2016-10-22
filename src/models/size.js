@@ -11,14 +11,17 @@ var SizeModel = Axis.extend({
    * Default values for this model
    */
   _defaults: {
-    use: null,
-    which: null,
+    use: "constant",
+    which: "_default",
     domainMin: null,
     domainMax: null,
     zoomedMin: null,
     zoomedMax: null,
-    scaleType: "linear",
-    extent: [0, 0.85]
+    extent: [0, 0.85],
+    scaleType: "ordinal",
+    allow: {
+      scales: ["linear", "log", "genericLog", "pow"]
+    }
   },
     
   _type: "size",

@@ -16,15 +16,11 @@ var VIZABI_MODEL = {
       "space": ["entities", "time"],
       "axis_y": {
         "use": "indicator",
-        "which": "life_expectancy_years" 
+        "which": "life_expectancy_at_birth_years" 
       },
       "axis_x": {
         "use": "indicator",
-        "which": "income_per_person_gdppercapita_ppp_inflation_adjusted"
-      },
-      "size": {
-        "use": "indicator",
-        "which": "population_total"
+        "which": "life_expectancy_at_birth_years"
       }
     },
     "marker_minimap":{

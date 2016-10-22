@@ -32,8 +32,7 @@ var VIZABI_MODEL = {
         "scaleType": "linear",
         "allow": {
           "scales": ["linear"]
-        },
-        "extent": [0, 0.85]
+        }
       },
       "lat": {
         "use": "property",
@@ -48,10 +47,7 @@ var VIZABI_MODEL = {
       "color": {
         "use": "property",
         "which": "world_4region",
-        "scaleType": "ordinal",
-        "allow": {
-          "names": ["!name"]
-        }
+        "scaleType": "ordinal"
       }
     },
     "marker_minimap":{

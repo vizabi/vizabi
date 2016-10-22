@@ -43,8 +43,7 @@ var VIZABI_MODEL = {
         "domainMax": 1400000000,
         "allow": {
           "scales": ["linear"]
-        },
-        "extent": [0, 0.85]
+        }
       },
       "color": {
         "use": "property",

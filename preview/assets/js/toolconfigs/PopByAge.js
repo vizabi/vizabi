@@ -50,10 +50,7 @@ var VIZABI_MODEL = {
       },
       color: {
         use: "constant",
-        which: "#ffb600",
-        allow: {
-          names: ["!name"]
-        }
+        which: "#ffb600"
       }
     },
     marker_minimap:{

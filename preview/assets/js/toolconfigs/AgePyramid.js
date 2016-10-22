@@ -67,9 +67,6 @@ var VIZABI_MODEL = {
       color: {
         use: "property",
         which: "education_attainment"
-        // allow: {
-        //   names: ["!stack.name"]
-        // }
       },
       side: {
         use: "property",

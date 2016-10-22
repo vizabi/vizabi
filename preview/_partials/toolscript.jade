@@ -151,7 +151,7 @@ script.
       host: 'https://waffle-server-dev.gapminderdev.org',
       preloadPath: '/api/vizabi/',
       dataPath: '/api/ddf/',
-      //translationPath: localUrl + "data/translation/",
+      translationPath: localUrl + "data/translation",
       //shapePath: localUrl + "data/mc_precomputed_shapes.json"
       //shapePath: localUrl + "data/world-50m.json"
     };
@@ -159,9 +159,9 @@ script.
     //popbyage is an exception because it has no data on WS for age. need local data
     if("#{tool}"!=="PopByAge"){
       VIZABI_MODEL.data = {
-        reader: "waffle",
+        reader: "ddf",
         splash: true,
-        path: Vizabi._globals.ext_resources.host + Vizabi._globals.ext_resources.dataPath
+        path: "data/ddf--gapminder--life_expectancy" //Vizabi._globals.ext_resources.host + Vizabi._globals.ext_resources.dataPath
       }
     }
   }
