@@ -1,7 +1,10 @@
 var VIZABI_MODEL = { 
   "state": {
     "entities": {
-      "dim": "geo"
+      "dim": "geo",
+      "show": {
+        "is--country": true
+      }      
     },
     "entities_minimap": {
       "dim": "geo",
@@ -41,6 +44,7 @@ var VIZABI_MODEL = {
         "which": "population_total",
         "domainMin": 15,
         "domainMax": 1400000000,
+        "scaleType": "linear",
         "allow": {
           "scales": ["linear"]
         }
