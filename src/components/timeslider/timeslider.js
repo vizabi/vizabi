@@ -228,8 +228,10 @@ var TimeSlider = Component.extend({
     utils.forEach(_this.model.marker.getSubhooks(), function(hook) {
       if(hook._important) hook.on('change:which', function() {
         _this._needRecalcSelectedLimits = true;
-        _this.model.time.startSelected = _this.model.time.start;
-        _this.model.time.endSelected = _this.model.time.end; 
+        _this.model.time.set({
+          startSelected: _this.model.time.start,
+          endSelected: _this.model.time.end
+        }, null, false  /*make change non-persistent for URL and history*/); 
       });
     });
     
@@ -360,8 +362,10 @@ var TimeSlider = Component.extend({
 
     var select = _this.model.entities.select;
     if(select.length == 0) {
-      _this.model.time.startSelected = new Date(_this.model.time.start);
-      _this.model.time.endSelected = new Date(_this.model.time.end);
+      _this.model.time.set({
+        startSelected: new Date(_this.model.time.start),
+        endSelected: new Date(_this.model.time.end)
+      }, null, false  /*make change non-persistent for URL and history*/);
       return;
     }
     var KEY = _this.model.entities.getDimension();

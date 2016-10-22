@@ -185,11 +185,11 @@ var TimeModel = Model.extend({
     }
     if (this.splash === false) {
       if(this.startSelected < this.start && this.start != null) {
-        this.startSelected = new Date(this.start);
+        this.set({startSelected: new Date(this.start)}, null, false /*make change non-persistent for URL and history*/);
       }
 
       if(this.endSelected > this.end && this.end != null) {
-        this.endSelected = new Date(this.end);
+        this.set({endSelected: new Date(this.end)}, null, false /*make change non-persistent for URL and history*/);
       }
     }
   
