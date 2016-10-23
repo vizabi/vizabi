@@ -17,11 +17,8 @@ var VIZABI_MODEL = {
         "is--country": true
       }
     },
-    "entities_minimap": {
-      "dim": "geo",
-      "show": {
-        "is--world_4region": true
-      }
+    "entities_colorlegend": {
+      "dim": "geo"
     },
     "entities_group": {
       "dim": "geo",
@@ -70,7 +67,8 @@ var VIZABI_MODEL = {
       "color": {
         "use": "property",
         "which": "world_4region",
-        "scaleType": "ordinal"
+        "scaleType": "ordinal",
+        "colorlegend": "marker_colorlegend"
       },
       "stack": {
         "use": "constant",
@@ -83,8 +81,8 @@ var VIZABI_MODEL = {
         "merge": false
       }
     },
-    "marker_minimap":{
-      "space": ["entities_minimap"],
+    "marker_colorlegend":{
+      "space": ["entities_colorlegend"],
         "type": "geometry",
         "shape": "svg",
         "label": {

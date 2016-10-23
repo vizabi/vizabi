@@ -12,11 +12,8 @@ var VIZABI_MODEL = {
         country: { "$in": ["usa", "swe", "chn"] }
       }
     },
-    "entities_minimap": {
-      "dim": "geo",
-      "show": {
-        "is--world_4region": true
-      }
+    "entities_colorlegend": {
+      "dim": "geo"
     },
     "marker": {
       "space": ["entities", "time"],
@@ -48,7 +45,8 @@ var VIZABI_MODEL = {
         "which": "world_4region",
         "allow": {
           "scales": ["ordinal"]
-        }
+        },
+        "colorlegend": "marker_colorlegend"
       }
     },
     "entities_allpossible": {
@@ -67,8 +65,8 @@ var VIZABI_MODEL = {
         "which": "name"
       }
     },
-    "marker_minimap":{
-      "space": ["entities_minimap"],
+    "marker_colorlegend":{
+      "space": ["entities_colorlegend"],
         "type": "geometry",
         "shape": "svg",
         "label": {

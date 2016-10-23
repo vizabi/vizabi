@@ -16,7 +16,7 @@ var VIZABI_MODEL = {
           "geo": ["*"]
       }
     },
-    entities_minimap: {
+    entities_colorlegend: {
       dim: "geo",
       show: {
           "is--country": true
@@ -66,7 +66,8 @@ var VIZABI_MODEL = {
       },
       color: {
         use: "property",
-        which: "education_attainment"
+        which: "education_attainment",
+        colorlegend: "marker_colorlegend"
       },
       side: {
         use: "property",
@@ -80,7 +81,7 @@ var VIZABI_MODEL = {
         which: "population"
       }      
     },
-    marker_minimap:{
+    marker_colorlegend:{
       space: ["entities_stack"],
         type: "geometry",
         shape: "svg",
