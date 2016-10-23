@@ -76,21 +76,24 @@ var BubbleChart = Tool.extend('BubbleChart', {
   default_model: {
     state: { 
       time: { },
-      entities: { }, 
+      entities: {
+        dim: "id"
+      }, 
       entities_tags: { }, 
       marker_tags: {
         space: ["entities_tags"],
-        label: { },
-        parent: { }
+        label: {},
+        parent: {}
       }, 
       marker: {
         space: ["entities", "time"],
-        axis_x: { },
-        axis_y: { },
-        label:  { },
-        size:   { },
-        color:  { },
+        axis_x: {use: "indicator", which: "x"},
+        axis_y: {use: "indicator", which: "y"},
+        label:  {use: "property", which: "id"},
+        size:   {/*use size model defaults - will be constant*/},
+        color:  {/*use color model defaults - will be constant*/},
         size_label: {
+          /*use size model defaults - will be constant*/
           _important: false,
           extent: [0, 0.33]
         },
