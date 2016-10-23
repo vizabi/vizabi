@@ -390,7 +390,7 @@ var Model = EventSource.extend({
         this.trigger('readyOnce');
       }
       this.trigger('ready');
-    }
+    }    
   },
 
   /**
@@ -952,6 +952,10 @@ var Model = EventSource.extend({
 
   isObjectLeaf: function(name) {
     return (this.objectLeafs.indexOf(name) !== -1)
+  },
+
+  getClosestModel: function(name) {
+    return getClosestModel(this, name);
   }
 
 });

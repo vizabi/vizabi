@@ -83,15 +83,10 @@ var ColorModel = Hook.extend({
     var conceptpropsColor = this.getConceptprops().color;
     var shade = args.shadeID && conceptpropsColor && conceptpropsColor.shades && conceptpropsColor.shades[args.shadeID] ? conceptpropsColor.shades[args.shadeID] : 0;
         
-    return palette[args.colorID][shade];
-    
-  },
-    
+    return palette[args.colorID][shade];    
 
-  afterPreload: function() {
-    this._super();
   },
-  
+
   /**
    * Get the above constants
    */
@@ -119,11 +114,37 @@ var ColorModel = Hook.extend({
       //TODO a hack that kills the scale and palette, it will be rebuild upon getScale request in model.js
       if(this.palette) this.palette._data = {};
       this.scale = null;
+
+      if(this.which_1 != this.which && this.use === "property" && this.colorlegend) {
+        this._setColorlegendFilter();      
+      }      
+    }
+
+    if(this._firstLoad && this.colorlegend) {
+        this._marker_colorlegend = this.getClosestModel(this.colorlegend);
+        this._entities_colorlegend = this._marker_colorlegend.getClosestModel(this._marker_colorlegend.space[0]);
+        if(this.use === "property") {
+          this._setColorlegendFilter();
+        }
     }
 
     this.which_1 = this.which;
     this.scaleType_1 = this.scaleType;
     this._firstLoad = false;
+  },
+
+  _setColorlegendFilter: function() {
+    var newFilter = {};
+    newFilter["is--" + this.which] = true;
+    this._entities_colorlegend.set('show', newFilter, false, false);
+  },
+
+  getColorlegendMarker: function() {
+    return this._marker_colorlegend;
+  },
+
+  getColorlegendEntities: function() {
+    return this._entities_colorlegend;
   },
 
   /**
