@@ -736,13 +736,16 @@ var BubbleChartComp = Component.extend({
     var KEY = this.KEY;
     this.bubbleContainer.selectAll('.vzb-bc-entity')
       .sort(function(a, b) {
-        if (typeof _this.frame.size[a[KEY]] == "undefined") return -1;
-        if (typeof _this.frame.size[b[KEY]] == "undefined") return -1;
-        if (_this.frame.size[a[KEY]] != _this.frame.size[b[KEY]]) return d3.descending(_this.frame.size[a[KEY]], _this.frame.size[b[KEY]]);
+        var sizeA = _this.frame.size[a[KEY]];
+        var sizeB = _this.frame.size[b[KEY]];
+      
+        if (typeof sizeA == "undefined" && typeof sizeB != "undefined") return -1;
+        if (typeof sizeA != "undefined" && typeof sizeB == "undefined") return 1;
+        if (sizeA != sizeB) return d3.descending(sizeA, sizeB);
         if (a[KEY] != b[KEY]) return d3.ascending(a[KEY], b[KEY]);
         if (typeof a.trailStartTime != "undefined" || typeof b.trailStartTime != "undefined") return typeof a.trailStartTime != "undefined" ? -1 : 1; // only lines has trailStartTime 
         if (typeof a.hidden != "undefined" || typeof b.hidden != "undefined") return typeof a.hidden != "undefined" ? 1 : -1; // only bubbles has attribute hidden
-        return d3.descending(_this.frame.size[a[KEY]], _this.frame.size[b[KEY]]);
+        return d3.descending(sizeA, sizeB);
       });
   },
   
