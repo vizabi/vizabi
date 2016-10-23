@@ -368,6 +368,19 @@ var Data = Class.extend({
       }
     });
   },
+
+  listenFrame: function(queryId, framesArray, keys,  cb) {
+    var _this = this;
+    var whatId = this._getCacheKey(framesArray, keys);
+    this._collectionPromises[queryId][whatId]["queue"].defaultCallbacks.push(function(time) {
+      cb(queryId, time);
+    });
+    if (this._collection[queryId]["frames"][whatId]) {
+      utils.forEach(this._collection[queryId]["frames"][whatId], function(frame, key) {
+        cb(queryId, new Date(key));
+      });
+    }
+  },
   
   _muteAllQueues: function(except) {
     utils.forEach(this._collectionPromises, function(queries, queryId) {
@@ -396,6 +409,7 @@ var Data = Class.extend({
   framesQueue: function(framesArray, whatId) {
     var _context = this;
     return new function() {
+      this.defaultCallbacks = [];
       this.callbacks = {};
       this.forcedQueue = [];
       this.isActive = true;
@@ -424,8 +438,14 @@ var Data = Class.extend({
         }
       };
       this.frameComplete = function(frameName) { //function called after build each frame with name of frame build
+        var i;
+        if (queue.defaultCallbacks.length > 0) {
+          for (i = 0; i < queue.defaultCallbacks.length; i++) {
+            queue.defaultCallbacks[i](frameName);
+          }
+        }
         if (queue.callbacks[frameName] && queue.callbacks[frameName].length > 0) {
-          for (var  i = 0; i < queue.callbacks[frameName].length; i++) {
+          for (i = 0; i < queue.callbacks[frameName].length; i++) {
             queue.callbacks[frameName][i]();
           }
         }

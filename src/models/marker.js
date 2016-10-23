@@ -359,8 +359,31 @@ var Marker = Model.extend({
       });
 
     },
-    
-    
+
+    listenFramesQueue: function(keys, cb) {
+      var _this = this;
+      var KEY = this._getFirstDimension();
+      var TIME = this._getFirstDimension({type: "time"});
+      var steps = this._parent.time.getAllSteps();
+      var preparedFrames = {};
+      this.getFrames();
+      var hooks = [];
+      utils.forEach(_this._dataCube, function(hook, name) {
+        if(!(hook.use === "constant" || hook.which === KEY || hook.which === TIME)) {
+          hooks.push(hook);
+        }
+      });
+      utils.forEach(hooks, function(hook) {
+        _this.getDataManager().listenFrame(hook._dataId, steps, keys, function(dataId, time) {
+          var keyName = time.toString();
+          if (typeof preparedFrames[keyName] == "undefined") preparedFrames[keyName] = [];
+          if (preparedFrames[keyName].indexOf(dataId) == -1) preparedFrames[keyName].push(dataId);
+          if (preparedFrames[keyName].length == hooks.length)  {
+            cb(time);
+          }
+        });
+      });
+    },
 
   /**
    * gets multiple values from the hook
@@ -376,7 +399,7 @@ var Marker = Model.extend({
       return [];
     }
 
-    var dimTime, time, filtered, next, method, u, w, value, method;
+    var dimTime, time, filtered, next, method, u, w, value;
     this._dataCube = this._dataCube || this.getSubhooks(true);
     filter = utils.clone(filter, this._getAllDimensions());
     dimTime = this._getFirstDimension({

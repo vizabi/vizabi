@@ -84,11 +84,30 @@ $vzb-ts-value-width: 40px;
           @include opacity(1);
           fill: none;
           stroke: $vzb-ts-slider-color;
-          stroke-opacity: .3;
+          stroke-opacity: .1;
           stroke-width: 5px;
           stroke-linecap: round;
         }
       }
+      .vzb-ts-slider-progress {
+        @include user-select(none);
+        @include opacity(.6);
+        fill: $vzb-ts-slider-color;
+        font-weight: bold;
+        cursor: pointer;
+
+        .domain {
+          @include opacity(1);
+          fill: none;
+          stroke: $vzb-ts-slider-color;
+          stroke-opacity: .2;
+          stroke-width: 5px;
+        }
+        .rounded {
+          stroke-linecap: round;
+        }
+      }
+
       .vzb-ts-slider-select {
         @include user-select(none);
         @include opacity(.8);
@@ -258,6 +277,9 @@ $vzb-ts-value-width: 40px;
         font-size: $vzb-font-size-regular;
       }
       .vzb-ts-slider-axis .domain {
+        stroke-width: 9px;
+      }
+      .vzb-ts-slider-progress .domain {
         stroke-width: 9px;
       }
       .vzb-ts-slider-select {
