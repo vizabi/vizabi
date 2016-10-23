@@ -690,7 +690,9 @@ var TreeMenu = Component.extend({
   
   
   _buildIndicatorsTree: function(tagsArray){
+      if(tagsArray===true || !tagsArray) tagsArray = [];
       
+      var _this = this;
       var ROOT = "_root";
       var DEFAULT = "_default";
       var UNCLASSIFIED = "_unclassified";
@@ -721,7 +723,6 @@ var TreeMenu = Component.extend({
           tags[tag.parent].children.push(tags[tag.tag])
         }
       })
-      
       //add entries to different branches in the tree according to their tags
       utils.forEach(this.model.marker.getConceptprops(), function(entry, id){
         //if entry's tag are empty don't include it in the menu
@@ -732,12 +733,19 @@ var TreeMenu = Component.extend({
             tags[tag.trim()].children.push({id: id, name: entry.name, unit: entry.unit, description: entry.description});
           } else {
             //if entry's tag is not found in the tag dictionary
-            utils.warn(tag, "- tag not found, storing under 'Unclassified'")
+            if(!_this.consoleGroupOpen) {
+              console.groupCollapsed("Some tags were are not found, so indicators went under 'Unclassified' menu");
+              _this.consoleGroupOpen = true;
+            }
+            utils.warn("tag '" + tag + "' for indicator '" + id + "'");
             tags[UNCLASSIFIED].children.push({id: id, name: entry.name, unit: entry.unit, description: entry.description});
           }
         });  
       });
-
+    if(_this.consoleGroupOpen){
+      console.groupEnd();
+      delete _this.consoleGroupOpen;
+    }
     this._sortChildren(indicatorsTree)
     this.indicatorsTree = indicatorsTree;
   },
