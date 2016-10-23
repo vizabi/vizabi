@@ -39,9 +39,6 @@ var BubbleChartComp = Component.extend({
       name: "marker",
       type: "model"
     }, {
-      name: "marker_minimap",
-      type: "model"
-    }, {
       name: "language",
       type: "language"
     }, {
@@ -277,10 +274,6 @@ var BubbleChartComp = Component.extend({
     });
   },
   
-  afterPreload: function() {
-    var _this = this;
-  },
-
   _rangeBump: function(arg, undo) {
     var bump = this.activeProfile.maxRadius/2;
     undo = undo?-1:1;
@@ -1332,8 +1325,8 @@ var BubbleChartComp = Component.extend({
     var formatterS = this.model.marker.size.getTickFormatter();
     var formatterC = this.model.marker.color.getTickFormatter();
 
-    if(this.model.marker.color.use == "property" && titleC) {
-      titleC = this.model.marker_minimap.label.getItems()[titleC] || "";
+    if(this.model.marker.color.use == "property" && titleC && this.model.marker.color.getColorlegendMarker()) {
+        titleC = this.model.marker.color.getColorlegendMarker().label.getItems()[titleC] || "";
     }
 
     return [formatterS(titleS) + " " + unitS,

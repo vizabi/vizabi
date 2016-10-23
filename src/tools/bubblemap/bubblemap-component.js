@@ -45,9 +45,6 @@ var BubbleMapComponent = Component.extend({
       name: "marker",
       type: "model"
     }, {
-      name: "marker_minimap",
-      type: "model"
-    }, {      
       name: "language",
       type: "language"
     }, {
@@ -390,7 +387,7 @@ var BubbleMapComponent = Component.extend({
         
         //resolve value for color from the color legend model
         if(_this.model.marker.color.use == "property" && valueC) {
-          valueC = this.model.marker_minimap.label.getItems()[valueC] || "";
+          valueC = this.model.marker.color.getColorlegendMarker().label.getItems()[valueC] || "";
         }
           
         _this.yTitleEl.select("text")

@@ -16,7 +16,7 @@ var VIZABI_MODEL = {
           "is--municipality": true
       },
     },
-    entities_minimap: {
+    entities_colorlegend: {
       dim: "province",
       show: {
           "is--province": true
@@ -40,6 +40,7 @@ var VIZABI_MODEL = {
         use: "indicator",
         which: "piped_water_percentage",
         scaleType: "linear",
+        colorlegend: "marker_colorlegend",
         _important: true
       },
       label: {
@@ -48,8 +49,8 @@ var VIZABI_MODEL = {
         //which: "province.name"
       }
     },
-    marker_minimap:{
-      space: ["entities_minimap"],
+    marker_colorlegend:{
+      space: ["entities_colorlegend"],
         type: "geometry",
         shape: "svg",
         label: {

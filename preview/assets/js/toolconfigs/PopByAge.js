@@ -11,11 +11,8 @@ var VIZABI_MODEL = {
           "geo": ["usa"]
       }
     },
-    entities_minimap: {
-      dim: "geo",
-      show: {
-          "is--world_4region": true
-      }
+    entities_colorlegend: {
+      dim: "geo"
     },
     entities_age: {
       dim: "age",
@@ -50,11 +47,12 @@ var VIZABI_MODEL = {
       },
       color: {
         use: "constant",
-        which: "#ffb600"
+        which: "#ffb600",
+        colorlegend: "marker_colorlegend"
       }
     },
-    marker_minimap:{
-      space: ["entities_minimap"],
+    marker_colorlegend:{
+      space: ["entities_colorlegend"],
         type: "geometry",
         shape: "svg",
         label: {
