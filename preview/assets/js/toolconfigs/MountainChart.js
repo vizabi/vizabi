@@ -20,12 +20,6 @@ var VIZABI_MODEL = {
     "entities_colorlegend": {
       "dim": "geo"
     },
-    "entities_group": {
-      "dim": "geo",
-      "show": {
-          "is--world_4region": true
-      }
-    },
     "entities_tags": {
       "dim": "tag"
     },
@@ -68,7 +62,7 @@ var VIZABI_MODEL = {
         "use": "property",
         "which": "world_4region",
         "scaleType": "ordinal",
-        "colorlegend": "marker_colorlegend"
+        "syncModels": ["marker_colorlegend", "stack", "group"]
       },
       "stack": {
         "use": "constant",
@@ -96,13 +90,6 @@ var VIZABI_MODEL = {
         "geoshape": {
           "use": "property",
           "which": "shape_lores_svg"
-        }
-    },
-    "marker_group":{
-      "space": ["entities_group"],
-        "label": {
-          "use": "property",
-          "which": "name"
         }
     },
     "marker_tags": {
