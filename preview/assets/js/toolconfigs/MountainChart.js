@@ -18,7 +18,10 @@ var VIZABI_MODEL = {
       }
     },
     "entities_colorlegend": {
-      "dim": "geo"
+      "dim": "geo",
+      "show": {
+        "is--world_4region": true
+      }
     },
     "entities_tags": {
       "dim": "tag"
@@ -71,7 +74,6 @@ var VIZABI_MODEL = {
       "group": {
         "use": "property",
         "which": "world_4region",
-        "manualSorting": ["asia", "africa", "americas", "europe"],
         "merge": false
       }
     },
