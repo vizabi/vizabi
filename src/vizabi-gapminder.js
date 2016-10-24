@@ -378,6 +378,14 @@ MountainChart.define('default_model', {
         }
       }
     },
+    entities_group: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "is--world_4region": true
+        }
+      }
+    },
     entities_tags: {
       dim: "tag"
     },
@@ -449,6 +457,13 @@ MountainChart.define('default_model', {
         geoshape: {
           use: "property",
           which: "shape_lores_svg"
+        }
+    },
+    marker_group:{
+      space: ["entities_group"],
+        label: {
+          use: "property",
+          which: "name"
         }
     },
     marker_tags: {
@@ -666,8 +681,9 @@ BubbleChart.define('default_model', {
         which: "life_expectancy_years",
         scaleType: "linear",
         zoomedMin: 19,
-        domainMax: 85,
+        zoomedMax: 86,
         domainMin: 0,
+        domainMax: 100,
         allow: {
           scales: ["linear", "log"]
         }
@@ -679,6 +695,8 @@ BubbleChart.define('default_model', {
         scaleType: "log",
         domainMax: 150000,
         domainMin: 300,
+        zoomedMax: 150000,
+        zoomedMin: 300,
         allow: {
           scales: ["linear", "log"]
         }
@@ -696,6 +714,8 @@ BubbleChart.define('default_model', {
         //which: "sg_population",//systema globalis
         which: "population_total", 
         scaleType: "linear",
+        domainMin: 15,
+        domainMax: 1400000000,
         allow: {
           scales: ["linear"]
         },

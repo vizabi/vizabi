@@ -174,24 +174,27 @@ var EntitiesModel = Model.extend({
   showEntity: function(d) {
     //clear selected countries when showing something new
     this.clearSelected();
-    
+    var newShow = utils.deepClone(this.show);
     var dimension = this.getDimension();
     var value = d[dimension];
-    var show = this.show[dimension];
-      
-    if(!show || show[0] === "*") show = [];
-      
-    show = show.concat([]); //clone array
-      
-    if(this.isShown(d)) {
-      show = show.filter(function(d) { return d !== value; });
-    } else {
-      show = show.concat(value);
-    }
-      
-    if(show.length === 0) show = ["*"];
-    this.show[dimension] = show.concat([]);
+    var showArray = [];
 
+    // get array from show
+    if (this.show[dimension] && this.show[dimension]['$in'] && utils.isArray(this.show[dimension]['$in']))
+      showArray = this.show[dimension]['$in'];
+
+    if(this.isShown(d)) {
+      showArray = showArray.filter(function(d) { return d !== value; });
+    } else {
+      showArray = showArray.concat(value);
+    }
+
+    if (showArray.length === 0)
+      delete newShow[dimension]
+    else 
+      newShow[dimension] = { '$in': showArray }; 
+
+    this.show = newShow;
   },
 
   setLabelOffset: function(d, xy) {
@@ -246,7 +249,7 @@ var EntitiesModel = Model.extend({
    */
   isShown: function(d) {
     var dimension = this.getDimension();
-    return this.show[dimension] && this.show[dimension].indexOf(d[dimension]) !== -1;
+    return this.show[dimension] && this.show[dimension]['$in'] && this.show[dimension]['$in'].indexOf(d[dimension]) !== -1;
   },
 
   /**
@@ -260,7 +263,9 @@ var EntitiesModel = Model.extend({
    */
   clearShow: function() {
     var dimension = this.getDimension();
-    this.show[dimension] = ["*"];
+    var show = utils.deepClone(this.show);
+    delete show[dimension];
+    this.show = show;
   },
 
   /**

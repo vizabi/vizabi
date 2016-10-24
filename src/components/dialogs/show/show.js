@@ -2,8 +2,6 @@ import * as utils from 'base/utils';
 import Component from 'base/component';
 import Dialog from '../_dialog';
 
-import { bubbleopacity } from 'components/_index'
-
 /*!
  * VIZABI SHOW CONTROL
  * Reusable show dialog
@@ -138,7 +136,7 @@ var Show = Dialog.extend({
 
   showHideDeselect: function() {
     var show = this.model.state.entities.show[this.KEY];
-    this.deselect_all.classed('vzb-hidden', !show || show[0]==="*");
+    this.deselect_all.classed('vzb-hidden', !show || show.length == 0);
   },
 
   deselectEntities: function() {

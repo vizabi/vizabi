@@ -1,6 +1,24 @@
 import interpolator from '../../node_modules/vizabi-interpolators/interpolators';
 
 /*
+ * Check if value A is in +- proximity of value B
+ * @param {Number} a
+ * @param {Number} b
+ * @param {Number} tolerance
+ * @returns {Boolean} true if values are approximately equal or false otherwise
+ */
+export var approxEqual = function(a, b, tolerance) {
+  tolerance = tolerance||0;
+  if(b > 0){
+    return (1 - tolerance) * b <= a && a <= b * (1 + tolerance);
+  }else if(b < 0){
+    return (1 + tolerance) * b <= a && a <= b * (1 - tolerance);
+  }else{
+    return Math.abs(a) <= tolerance;
+  }
+};
+
+/*
  * returns unique id with optional prefix
  * @param {String} prefix
  * @returns {String} id
@@ -70,6 +88,10 @@ export var isString = function(arg) {
 export var isNaN = function(arg) {
   // A `NaN` primitive is the only number that is not equal to itself
   return isNumber(arg) && arg !== +arg;
+};
+
+export var isEmpty = function(obj) {
+  return Object.keys(obj).length === 0 && obj.constructor === Object;
 };
 
 /*
@@ -1466,4 +1488,62 @@ export function makeAbsoluteContext(element, svgDocument) {
       y: (matrix.b * x) + (matrix.d * y) + matrix.f - offset.top
     };
   };
+}
+
+
+
+
+
+/***
+   thenBy.js
+   Copyright 2013 Teun Duynstee
+   https://github.com/Teun/thenBy.js/blob/master/thenBy.module.js
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+     http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+export function firstBy(){
+
+    function identity(v){return v;}
+
+    function ignoreCase(v){return typeof(v)==="string" ? v.toLowerCase() : v;}
+
+    function makeCompareFunction(f, opt){
+     opt = typeof(opt)==="number" ? {direction:opt} : opt||{}; 
+     if(typeof(f)!="function"){
+        var prop = f;
+        // make unary function
+        f = function(v1){return !!v1[prop] ? v1[prop] : "";}
+      }
+      if(f.length === 1) {
+        // f is a unary function mapping a single item to its sort score
+        var uf = f; 
+        var preprocess = opt.ignoreCase?ignoreCase:identity;
+        f = function(v1,v2) {return preprocess(uf(v1)) < preprocess(uf(v2)) ? -1 : preprocess(uf(v1)) > preprocess(uf(v2)) ? 1 : 0;}
+      }
+      if(opt.direction === -1)return function(v1,v2){return -f(v1,v2)};
+      return f;
+    }
+
+    /* adds a secondary compare function to the target function (`this` context)
+       which is applied in case the first one returns 0 (equal)
+       returns a new compare function, which has a `thenBy` method as well */
+    function tb(func, opt) {
+        var x = typeof(this) == "function" ? this : false;
+        var y = makeCompareFunction(func, opt);
+        var f = x ? function(a, b) {
+                        return x(a,b) || y(a,b);
+                    } 
+                  : y;
+        f.thenBy = tb;
+        return f;
+    }
+    return tb;
 }

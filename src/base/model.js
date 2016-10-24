@@ -573,7 +573,7 @@ var Model = EventSource.extend({
     var join = this._getAllJoins(exceptions, splashScreen);
 
     // order by
-    order_by = (!prop) ? this._space.time.dim : null;
+    order_by = (!prop) ? [this._space.time.dim] : [];
 
     //return query
     return {
@@ -740,20 +740,6 @@ var Model = EventSource.extend({
     return value;
   },
 
-
-
-    
-  /**
-   * gets nested dataset
-   * @param {Array} keys define how to nest the set
-   * @returns {Object} hash-map of key-value pairs
-   */
-  getNestedItems: function(keys) {
-    if(!keys) return utils.warn("No keys provided to getNestedItems(<keys>)");
-    return _DATAMANAGER.get(this._dataId, 'nested', keys);
-  },
-
-
   /**
    * Gets formatter for this model
    * @returns {Function|Boolean} formatter function
@@ -873,9 +859,12 @@ var Model = EventSource.extend({
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
         filters = utils.extend(filters, h.getFilter(splashScreen));
       } else {
-        var filter = {};
-        filter[h.getDimension()] = "$"  + h.getDimension();
-        filters = utils.extend(filters, filter);
+        var joinFilter = h.getFilter(splashScreen);
+        if (joinFilter != null && !utils.isEmpty(joinFilter)) {
+          var filter = {};
+          filter[h.getDimension()] = "$"  + h.getDimension();
+          filters = utils.extend(filters, filter);
+        }
       }
     });
     return filters;
@@ -894,10 +883,13 @@ var Model = EventSource.extend({
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
         return true;
       }
-      joins["$" + h.getDimension()] = {
-        key: h.getDimension(),
-        where: h.getFilter(splashScreen)
-      };
+      var filter = h.getFilter(splashScreen);
+      if (filter != null && !utils.isEmpty(filter)) {
+        joins["$" + h.getDimension()] = {
+          key: h.getDimension(),
+          where: h.getFilter(splashScreen)
+        };
+      }
     });
     return joins;
   },
