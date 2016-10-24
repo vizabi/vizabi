@@ -582,3 +582,4 @@ drill_up,drill up,string,,,,,,,,,_none
 time,Time,time,,,,,,,,,_root
 shape_lores_svg,Shapes,string,,,,,,,,,_none
 temp_string,Temporaty string,string,,,,,,,,,_none
+rank,Ranking order,measure,,,,,,,,,_none
