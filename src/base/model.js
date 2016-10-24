@@ -573,7 +573,7 @@ var Model = EventSource.extend({
     var join = this._getAllJoins(exceptions, splashScreen);
 
     // order by
-    order_by = (!prop) ? [this._space.time.dim] : [];
+    order_by = prop ? ["rank"] : [this._space.time.dim];
 
     //return query
     return {

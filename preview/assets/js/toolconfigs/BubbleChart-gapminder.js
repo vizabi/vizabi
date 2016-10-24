@@ -62,6 +62,10 @@ var VIZABI_MODEL = {
         "use": "property",
         "which": "name"
       },
+      "rank": {
+        "use": "property",
+        "which": "rank"
+      },
       "geoshape": {
         "use": "property",
         "which": "shape_lores_svg"
