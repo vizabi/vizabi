@@ -152,11 +152,11 @@ var ColorModel = Hook.extend({
   },
 
   getColorlegendMarker: function() {
-    return this._syncModelReferences["marker_colorlegend"]["marker"];
+    return (this._syncModelReferences["marker_colorlegend"]||{})["marker"];
   },
 
   getColorlegendEntities: function() {
-    return this._syncModelReferences["marker_colorlegend"]["entities"];
+    return (this._syncModelReferences["marker_colorlegend"]||{})["entities"];
   },
 
   /**
