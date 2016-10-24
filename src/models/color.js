@@ -39,6 +39,7 @@ var ColorModel = Hook.extend({
     use: "constant",
     which: "_default",
     scaleType: "ordinal",
+    sync_models: null,
     palette: {},
     paletteLabels: null,
     allow: {
@@ -64,6 +65,7 @@ var ColorModel = Hook.extend({
 
     this._super(name, values, parent, bind);
 
+    this._syncModelReferences = {};
     this._firstLoad = true;
     this._hasDefaultColor = false;
   },
@@ -99,6 +101,7 @@ var ColorModel = Hook.extend({
    * Validates a color hook
    */
   validate: function() {
+    var _this = this;
 
     var possibleScales = ["log", "genericLog", "linear", "time", "pow"];
     if(!this.scaleType || (this.use === "indicator" && possibleScales.indexOf(this.scaleType) === -1)) {
@@ -113,19 +116,22 @@ var ColorModel = Hook.extend({
 
       //TODO a hack that kills the scale and palette, it will be rebuild upon getScale request in model.js
       if(this.palette) this.palette._data = {};
-      this.scale = null;
-
-      if(this.which_1 != this.which && this.use === "property" && this.colorlegend) {
-        this._setColorlegendFilter();      
-      }      
+      this.scale = null;  
     }
 
-    if(this._firstLoad && this.colorlegend) {
-        this._marker_colorlegend = this.getClosestModel(this.colorlegend);
-        this._entities_colorlegend = this._marker_colorlegend.getClosestModel(this._marker_colorlegend.space[0]);
-        if(this.use === "property") {
-          this._setColorlegendFilter();
-        }
+    // if there are models to sync: do it on first load or on changing the which
+    if(this.sync_models && (this._firstLoad || this._firstLoad === false && this.which_1 != this.which)) {
+      this.sync_models.forEach(function(modelName){
+        //fetch the model to sync, it's marker and entities
+        var model = _this.getClosestModel(modelName);
+        var marker = model.isHook()? model._parent : model;
+        var entities = marker.getClosestModel(marker.space[0]);
+        
+        //save the references here locally
+        _this._syncModelReferences[modelName] = {model: model, marker: marker, entities: entities};
+        
+        if(_this.use === "property") _this._setSyncModel(model, marker, entities);
+      });   
     }
 
     this.which_1 = this.which;
@@ -133,18 +139,22 @@ var ColorModel = Hook.extend({
     this._firstLoad = false;
   },
 
-  _setColorlegendFilter: function() {
-    var newFilter = {};
-    newFilter["is--" + this.which] = true;
-    this._entities_colorlegend.set('show', newFilter, false, false);
+  _setSyncModel: function(model, marker, entities) {
+    if(model == marker){
+      var newFilter = {};
+      newFilter["is--" + this.which] = true;
+      entities.set('show', newFilter, false, false);
+    }else{
+      if(model.use == "property") model.set('which', this.which, false, false);
+    }
   },
 
   getColorlegendMarker: function() {
-    return this._marker_colorlegend;
+    return this._syncModelReferences["marker_colorlegend"]["marker"];
   },
 
   getColorlegendEntities: function() {
-    return this._entities_colorlegend;
+    return this._syncModelReferences["marker_colorlegend"]["entities"];
   },
 
   /**

@@ -53,7 +53,7 @@ var VIZABI_MODEL = {
       "color": {
         "use": "property",
         "which": "world_4region",
-        "colorlegend": "marker_colorlegend"
+        "sync_models": ["marker_colorlegend"]
       }
     },
     "marker_colorlegend":{

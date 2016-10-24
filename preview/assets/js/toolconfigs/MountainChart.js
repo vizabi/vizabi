@@ -68,7 +68,7 @@ var VIZABI_MODEL = {
         "use": "property",
         "which": "world_4region",
         "scaleType": "ordinal",
-        "colorlegend": "marker_colorlegend"
+        "sync_models": ["marker_colorlegend", "stack", "group"]
       },
       "stack": {
         "use": "constant",
