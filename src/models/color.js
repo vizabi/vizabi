@@ -141,10 +141,19 @@ var ColorModel = Hook.extend({
 
   _setSyncModel: function(model, marker, entities) {
     if(model == marker){
+      /*TODO: when WS will learn to respond correctly to the queries 
+      outside the same entity domain this can be reduced to 
+      just {dim: this.which}, without any show part #2103*/
       var conceptProps = this.getConceptprops();
-      var dim = (conceptProps=="entity_domain")? this.which : conceptProps.domain; 
-      var newFilter = {dim: dim, show: {}};
-      newFilter.show["is--" + this.which] = true;
+      var newFilter = {dim: null, show: {}};
+      if(conceptProps.concept_type == "entity_domain"){
+        newFilter.dim = this.which;
+        newFilter.show = {};
+      }else{
+        newFilter.dim = conceptProps.domain;
+        newFilter.show["is--" + this.which] = true;
+      }
+      /*END OF TODO*/
       entities.set(newFilter, false, false);
     }else{
       if(model.use == "property") model.set('which', this.which, false, false);
