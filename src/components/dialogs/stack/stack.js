@@ -74,7 +74,9 @@ var Stack = Dialog.extend({
 
         this.howToStackEl
             .property('checked', function() {
-                return d3.select(this).node().value === _this.stack.which;
+                if(d3.select(this).node().value === "none")  return _this.stack.which==="none";
+                if(d3.select(this).node().value === "bycolor") return _this.stack.which===_this.model.state.marker.color.which;
+                if(d3.select(this).node().value === "all") return _this.stack.which==="all";
             });
         
         _this.ui.chart.manualSortingEnabled = _this.stack.which == "all";
@@ -120,15 +122,21 @@ var Stack = Dialog.extend({
             }
         }
         if(what === "stack") {
-
-            obj.stack.which = value;
-
-            //validate use of stack hook
-            if(value !== "all" && value !== "none"){
-                obj.stack.use = "property";
-            } else {
-                obj.stack.use = "constant";
-            }
+          
+          switch (value){
+            case "all":
+              obj.stack.use = "constant";
+              obj.stack.which = "all";
+              break;
+            case "none":
+              obj.stack.use = "constant";
+              obj.stack.which = "none";
+              break;
+            case "bycolor":
+              obj.stack.use = "property";
+              obj.stack.which = this.model.state.marker.color.which;
+              break;
+          }
 
             //validate possible merge values in group and stack hooks
             if(value === "none" && this.group.merge) obj.group.merge = false;
