@@ -260,7 +260,7 @@ var Data = Class.extend({
       from: "concepts",
       select: {
         key: ["concept"],
-        value: ["concept_type","indicator_url","color","scales","interpolation","tags","name","unit","description"]
+        value: ["concept_type","domain","indicator_url","color","scales","interpolation","tags","name","unit","description"]
       }
     };
     
@@ -271,6 +271,7 @@ var Data = Class.extend({
       _this.get(dataId).forEach(function(d){
         var concept = {};
         concept["use"] = (d.concept_type=="measure" || d.concept_type=="time")?"indicator":"property";
+        concept["concept_type"] = d.concept_type;
         concept["sourceLink"] = d.indicator_url;
         try {
           concept["color"] = d.color ? JSON.parse(d.color) : null;
@@ -296,6 +297,7 @@ var Data = Class.extend({
         }else{
           if(concept.scales && concept.scales[0]=="log") concept["interpolation"] = "exp";
         }
+        concept["domain"] = d.domain;
         concept["tags"] = d.tags;
         concept["name"] = d.name||d.concept||"";
         concept["unit"] = d.unit||"";

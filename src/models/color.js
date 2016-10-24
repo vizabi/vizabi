@@ -141,9 +141,11 @@ var ColorModel = Hook.extend({
 
   _setSyncModel: function(model, marker, entities) {
     if(model == marker){
-      var newFilter = {};
-      newFilter["is--" + this.which] = true;
-      entities.set('show', newFilter, false, false);
+      var conceptProps = this.getConceptprops();
+      var dim = (conceptProps=="entity_domain")? this.which : conceptProps.domain; 
+      var newFilter = {dim: dim, show: {}};
+      newFilter.show["is--" + this.which] = true;
+      entities.set(newFilter, false, false);
     }else{
       if(model.use == "property") model.set('which', this.which, false, false);
     }
