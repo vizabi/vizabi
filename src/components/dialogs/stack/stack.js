@@ -38,10 +38,12 @@ var Stack = Dialog.extend({
         this.model_binds = {
             'change:state.marker.stack': function(evt) {
                 //console.log("stack change " + evt);
+                if(!_this._ready) return;
                 _this.updateView();
             },
             'change:state.marker.group': function(evt) {
                 //console.log("group change " + evt);
+                if(!_this._ready) return;
                 _this.updateView();
             }
         };

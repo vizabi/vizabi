@@ -106,7 +106,10 @@ var DraggableList = Component.extend({
 
   ready: function() {
     var _this = this;
-
+    
+    var labels = _this.model.color.getColorlegendMarker().label.getItems();
+    this.dataArrFn(utils.keys(labels));
+    
     this.updateView();
 
     this.itemsEl = this.element
