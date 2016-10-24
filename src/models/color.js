@@ -39,7 +39,7 @@ var ColorModel = Hook.extend({
     use: "constant",
     which: "_default",
     scaleType: "ordinal",
-    sync_models: null,
+    syncModels: null,
     palette: {},
     paletteLabels: null,
     allow: {
@@ -120,8 +120,8 @@ var ColorModel = Hook.extend({
     }
 
     // if there are models to sync: do it on first load or on changing the which
-    if(this.sync_models && (this._firstLoad || this._firstLoad === false && this.which_1 != this.which)) {
-      this.sync_models.forEach(function(modelName){
+    if(this.syncModels && (this._firstLoad || this._firstLoad === false && this.which_1 != this.which)) {
+      this.syncModels.forEach(function(modelName){
         //fetch the model to sync, it's marker and entities
         var model = _this.getClosestModel(modelName);
         var marker = model.isHook()? model._parent : model;
