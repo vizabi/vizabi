@@ -3,7 +3,7 @@ var VIZABI_MODEL = {
     "entities": {
       "dim": "geo",
       "show": {
-       "is--country": true
+        "is--country": true
       }      
     },
     "entities_colorlegend": {

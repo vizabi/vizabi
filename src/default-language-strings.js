@@ -34,7 +34,7 @@ export default {
     "hints/bubbl/setmaxsize": "Maximum bubble size:",
     "hints/bubbl/setsize": "Bubble size:",
     "hints/mount/maxYvalue": "Maximum Y value:",
-    "hints/mount/logXstops": "X-axis logarithmic stops:",
+    "hints/mount/logXstops": "X-axis log labels (if they fit):",
     "hints/mount/howtostack": "Stack mountains:",
     "hints/mount/howtomerge": "Merge mountains:",
     "hints/mount/xlimits": "X-axis limits:",

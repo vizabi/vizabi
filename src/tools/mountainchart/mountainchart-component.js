@@ -81,6 +81,9 @@ var MountainChartComponent = Component.extend({
             "change:ui.chart.probeX": function () {
                 _this.ready();
             },
+            "change:ui.chart.showProbeX": function () {
+                _this.ready();
+            },
             "change:ui.chart.xPoints": function () {
                 _this.ready();
             },
@@ -271,6 +274,7 @@ var MountainChartComponent = Component.extend({
         this.eventAreaEl
             .on("mousemove", function () {
                 if (_this.model.time.dragging) return;
+                if (!_this.model.ui.chart.showProbeX) return;
                 _this._probe.redraw({
                     level: _this.xScale.invert(d3.mouse(this)[0]),
                     full: true
@@ -278,6 +282,7 @@ var MountainChartComponent = Component.extend({
             })
             .on("mouseout", function () {
                 if (_this.model.time.dragging) return;
+                if (!_this.model.ui.chart.showProbeX) return;
                 _this._probe.redraw();
             });
 

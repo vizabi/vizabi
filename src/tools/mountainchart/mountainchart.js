@@ -77,6 +77,7 @@ var MountainChart = Tool.extend('MountainChart', {
       chart: {
         manualSortingEnabled: true,
         yMaxMethod: "latest",
+        showProbeX: true,
         probeX: 1.85,
         xLogStops: [1, 2, 5],
         xPoints: 50
