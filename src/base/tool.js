@@ -173,6 +173,14 @@ var Tool = Component.extend({
     time.validate(); 
   },
     
+  getDefaultModel: function() {
+    var defaultToolModel = this.default_model;
+    var defaultsFromModels = this.model.getDefaults();
+    //flattens _defs_ object
+    defaultToolModel = utils.flattenDefaults(defaultToolModel);
+    var result = utils.deepExtend({}, defaultsFromModels, defaultToolModel);
+    return result;
+  },
 
   getMinModel: function() {
     //try to find functions in properties of model. 
@@ -187,17 +195,8 @@ var Tool = Component.extend({
     }
    
     var currentToolModel = this.model.getPlainObject(true); // true = get only persistent model values
-    var defaultToolModel = this.default_model;
-    var defaultsFromModels = this.model.getDefaults();
-    //flattens _defs_ object
-    defaultToolModel = utils.flattenDefaults(defaultToolModel);
-    // compares with chart default model
-    var modelChanges = utils.diffObject(currentToolModel, defaultToolModel);
-    // change date object to string according to current format
-    modelChanges = utils.flattenDates(modelChanges, this.model.state.time.timeFormat);
-    //compares with model's defaults
 
-    var result = utils.diffObject(modelChanges, defaultsFromModels);
+    var result = utils.flattenDates(currentToolModel, this.model.state.time.timeFormat);
     for (var key in result) findFunc(result, key);
     return result;
   },
