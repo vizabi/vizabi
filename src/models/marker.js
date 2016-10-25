@@ -367,18 +367,20 @@ var Marker = Model.extend({
       var steps = this._parent.time.getAllSteps();
       var preparedFrames = {};
       this.getFrames();
-      var hooks = [];
+      var dataIds = [];
       utils.forEach(_this._dataCube, function(hook, name) {
         if(!(hook.use === "constant" || hook.which === KEY || hook.which === TIME)) {
-          hooks.push(hook);
+          if (dataIds.indexOf(hook._dataId) == -1) {
+            dataIds.push(hook._dataId);
+          }
         }
       });
-      utils.forEach(hooks, function(hook) {
-        _this.getDataManager().listenFrame(hook._dataId, steps, keys, function(dataId, time) {
+      utils.forEach(dataIds, function(hook) {
+        _this.getDataManager().listenFrame(hook, steps, keys, function(dataId, time) {
           var keyName = time.toString();
           if (typeof preparedFrames[keyName] == "undefined") preparedFrames[keyName] = [];
           if (preparedFrames[keyName].indexOf(dataId) == -1) preparedFrames[keyName].push(dataId);
-          if (preparedFrames[keyName].length == hooks.length)  {
+          if (preparedFrames[keyName].length == dataIds.length)  {
             cb(time);
           }
         });
