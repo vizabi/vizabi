@@ -8,7 +8,6 @@ import Promise from 'base/promise';
 import * as models from 'models/_index'; //TODO: Fake import because Model is not included first to bundle due to a cyclical dependency.
 import Tool from 'base/tool';
 import Vzb from 'vizabi';
-import defaultLanguageStrings from 'default-language-strings.js';
 
 //import tools
 import BubbleChart from 'tools/bubblechart';
@@ -137,15 +136,14 @@ Tool.define("preloadLanguage", function() {
   
   if(globals.ext_resources.translationPath) {
     // if a path to external tranlation file is provided, extend the default strings with the ones from that file
-    d3.json(globals.ext_resources.translationPath + langModel.id + ".json", function(langdata) {
-      langModel.strings[langModel.id] = utils.extend(utils.clone(defaultLanguageStrings), langdata);
+    d3.json(globals.ext_resources.translationPath + langModel.id + ".json", function(receivedStrings) {
+      var knownStrings = {};
+      if(langModel.strings[langModel.id]) knownStrings = langModel.strings[langModel.id].getPlainObject()
+      langModel.strings[langModel.id] = utils.extend(knownStrings, receivedStrings);
       _this.model.language.strings.trigger("change");
       promise.resolve();
     });
   } else {
-    // use default UI strings, shipped with vizabi
-    langModel.strings[langModel.id] = defaultLanguageStrings;
-    this.model.language.strings.trigger("change");
     promise = promise.resolve();
   }
 

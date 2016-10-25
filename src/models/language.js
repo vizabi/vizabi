@@ -1,5 +1,6 @@
 import * as utils from 'base/utils';
 import Model from 'base/model';
+import defaultLanguageStrings from 'default-language-strings.js';
 
 var LanguageModel = Model.extend({
 
@@ -8,7 +9,7 @@ var LanguageModel = Model.extend({
    */
   _defaults: {
     id: "en",
-    strings: {}
+    strings: defaultLanguageStrings
   },
 
   /**

@@ -206,8 +206,8 @@ var CartogramComponent = Component.extend({
       if(_this.updateSize()) return;
     });
     this.wScale = d3.scale.linear()
-      .domain(this.parent.datawarning_content.doubtDomain)
-      .range(this.parent.datawarning_content.doubtRange);
+      .domain(this.model.ui.datawarning.doubtDomain)
+      .range(this.model.ui.datawarning.doubtRange);
 
     this.cartogram.iterations(0);
     this.redrawInProgress = true;

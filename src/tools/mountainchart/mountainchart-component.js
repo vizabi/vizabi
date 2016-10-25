@@ -303,8 +303,8 @@ var MountainChartComponent = Component.extend({
         this.mountainAtomicContainer.select(".vzb-mc-prerender").remove();
         this.year.setText(this.model.time.value.getUTCFullYear().toString());
         this.wScale = d3.scale.linear()
-            .domain(this.parent.datawarning_content.doubtDomain)
-            .range(this.parent.datawarning_content.doubtRange);
+            .domain(this.model.ui.datawarning.doubtDomain)
+            .range(this.model.ui.datawarning.doubtRange);
     },
 
     ready: function () {

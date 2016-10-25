@@ -63,5 +63,11 @@ var VIZABI_MODEL = {
           which: "shape_lores_svg"
         }
     }
+  },
+  "ui": {
+    "datawarning": {
+      "doubtDomain": [1800, 1950, 2015],
+      "doubtRange": [1.0, 0.3, 0.2]
+    }
   }
 }
