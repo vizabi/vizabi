@@ -15,10 +15,9 @@ export default Class.extend({
 
   toggle: function(arg) {
     var _context = this.context;
-
     if(arg) {
       _context._trails.create();
-      _context._trails.run(["resize", "recolor", "opacityHandler", "findVisible", "reveal"]);
+      _context._trails.run(["findVisible", "reveal", "opacityHandler"]);
     } else {
       _context._trails.run("remove");
       _context.model.entities.select.forEach(function(d) {
@@ -32,7 +31,6 @@ export default Class.extend({
     var _this = this;
     var KEY = _context.KEY;
     this._isCreated = new Promise(function(resolve, reject) {
-
       //quit if the function is called accidentally
       if(!_context.model.ui.chart.trails) return;
 
@@ -41,32 +39,32 @@ export default Class.extend({
       //work with entities.select (all selected entities), if no particular selection is specified
       var promises = [];
       selection = selection == null ? _context.model.entities.select : [selection];
+      _this._clearActions(selection);
       _this.trailsData = _context.model.entities.select.map(function(d) {
         var r = {};
         r[KEY] = d[KEY];
         // used for prevent move trail start time forward when we have empty values at end of time range
+        r.actionInProgress = null;
         r["selectedEntityData"] = d;
         return r;
       });
       _this.trailTransitions = {};
-      var _trails = _context.bubbleContainer.selectAll('g.vzb-bc-entity')
+      var _trails = _context.bubbleContainer.selectAll('g.vzb-bc-entity.entity-trail')
         .data(_this.trailsData, function(d) {
           return(d[KEY]);
         });
         
       _trails.exit().remove();
-  
       _trails.enter()
         .insert("g", function(d) { 
           return this.querySelector(".bubble-" + d[KEY]);
         })
         .attr("class", function(d) {
-          return "vzb-bc-entity trail-" + d[KEY];
-        })
-        .each(function(d, index) {
+          return "vzb-bc-entity entity-trail trail-" + d[KEY];
+        });
+      _trails.each(function(d, index) {
           var defer = new Promise();
           // used for prevent move trail start time forward when we have empty values at end of time range
-          d.firstAvailableSegment = null;
           promises.push(defer);
           var trailSegmentData = timePoints.map(function(m) {
             return {
@@ -74,9 +72,6 @@ export default Class.extend({
               key: d[KEY]
             }
           });
-          if (_this.entityTrails[d[KEY]]) {
-             _this._remove(_this.entityTrails[d[KEY]], null, d);  
-          }
           _this.entityTrails[d[KEY]] = d3.select(this).selectAll("g").data(trailSegmentData);
           
           _this.entityTrails[d[KEY]].exit().remove();
@@ -155,6 +150,18 @@ export default Class.extend({
       }), actions);
     });
   },
+
+  _clearActions: function(selections) {
+    var _context = this.context;
+    var _this = this;
+    var KEY = _context.KEY;
+
+    selections.forEach(function(d) {
+      if (!_this.actionsQueue[d[KEY]]) _this.actionsQueue[d[KEY]] = [];
+      _this.actionsQueue[d[KEY]] = [];
+    });
+  },
+
   _getNextAction: function(key) {
     return this.actionsQueue[key].shift();
   },
@@ -180,17 +187,22 @@ export default Class.extend({
         var executeSequential = function(index) { // some function can be async, but we should run next when previous completed
           var action = _this._getNextAction(d[KEY]);
           if (action) {
+            d.actionInProgress = action;
             var response = _context._trails["_" + action](trail, duration, d);
             if (response && response instanceof Promise) {
               response.then(function() {
+                d.actionInProgress = null;
                 executeSequential(index + 1);
               })
             } else {
+              d.actionInProgress = null;
               executeSequential(index + 1);
             }
           }
         };
-        executeSequential(0);
+        if (!d.actionInProgress) {
+          executeSequential(0);
+        }
       });
     });
 
@@ -474,10 +486,10 @@ export default Class.extend({
                       resolve();
                     }
                   }
-                });
+                }, _context.model.entities.getSelected());
               }
             }
-          });          
+          }, _context.model.entities.getSelected());          
         }
       });
     };
@@ -496,7 +508,9 @@ export default Class.extend({
         generateTrails(trail, index + 1);
       });
     };
-    generateTrails(trail, 0);
+    _context.model.marker.getFrame(null, function() {
+      generateTrails(trail, 0);
+    });
     return defer;
   }
 

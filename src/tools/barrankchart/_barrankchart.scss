@@ -8,9 +8,12 @@
       width: 100%;
       display: block; // svg is standard inline 
 
-      .vzb-br-title,
+      .vzb-br-title {
+        fill: $vzb-color-black;
+      }
       .vzb-br-total {
         fill: $vzb-color-black;
+        font-size: $vzb-font-size-small;
       }
     }
 

@@ -19,44 +19,42 @@ var ColorLegend = Component.extend({
     this.name = 'colorlegend';
 
     this.model_expects = [{
-      name: "state",
-      type: "model"
-    }, {
-      name: "language",
-      type: "language"
-    }];
+        name: "time",
+        type: "time"
+      }, {
+        name: "entities",
+        type: "entities"
+      }, {
+        name: "marker",
+        type: "model"
+      }, {
+        name: "language",
+        type: "language"
+      }];
 
     this.needsUpdate = false;
     this.which_1 = false;
     this.scaleType_1 = false;
 
     this.model_binds = {
-      "change:state.marker.color.scaleType": function(evt, path) {
+      "change:marker.color.scaleType": function(evt, path) {
         if(!_this._readyOnce || _this.colorModel.use !== "indicator") return;
         _this.updateView();
       },
-      "change:state.marker.color.which": function(evt, path) {
-        if(!_this._readyOnce) return;
-        if(_this.model.state.entities_minimap) {
-          _this.forwardModelUpdate();
-        }else{
-          _this.updateView();
-        }
-      },
-      "change:state.marker.color.palette": function(evt, path) {
+      "change:marker.color.palette": function(evt, path) {
         if(!_this._readyOnce) return;
         _this.updateView();
       },
-      "change:state.entities.highlight": function(evt, values) {
+      "change:entities.highlight": function(evt, values) {
         if(_this.colorModel.use !== "property") return;
-        var _highlightedEntity = _this.model.state.entities.getHighlighted();
+        var _highlightedEntity = _this.model.entities.getHighlighted();
         if(_highlightedEntity.length > 1) return;
 
         if(_highlightedEntity.length) {
-            _this.model.state.marker.getFrame(_this.model.state.time.value, function(frame) {
+            _this.model.marker.getFrame(_this.model.time.value, function(frame) {
               if(!frame) return;
             
-              var _highlightedEntity = _this.model.state.entities.getHighlighted();
+              var _highlightedEntity = _this.model.entities.getHighlighted();
               if(_highlightedEntity.length) {                
                 _this.updateGroupsOpacity(frame["color"][_highlightedEntity[0]]);
               }
@@ -73,14 +71,6 @@ var ColorLegend = Component.extend({
     this._super(config, context);
   },
   
-  forwardModelUpdate: function(){
-    if(this.colorModel.use === "property"){
-      var newFilter = {};
-      newFilter["is--" + this.colorModel.which] = true;
-      this.model.state.entities_minimap.show = newFilter;
-    }
-  },
-
   readyOnce: function() {
     var _this = this;
     this.element = d3.select(this.element);
@@ -88,7 +78,13 @@ var ColorLegend = Component.extend({
     //make color in options scrollable
     d3.select(this.placeholder.parentNode).classed("vzb-dialog-scrollable", true);
 
-    this.markerModel = this.model.state.marker_minimap ? this.model.state.marker_minimap : this.model.state.marker;
+    this.colorModel = this.model.marker.color;
+    this.colorlegendMarker = this.colorModel.getColorlegendMarker();
+    if(this.colorlegendMarker) {
+      this.colorlegendMarker.on('ready', function() {
+        _this.ready();
+      });
+    }
     this.listColorsEl = this.element
       .append("div").attr("class", "vzb-cl-holder")
       .append("div").attr("class","vzb-cl-colorlist");
@@ -113,37 +109,38 @@ var ColorLegend = Component.extend({
     
     // append color picker to the tool DOM. need to check if element is already a d3 selection to not do it twice
     this.root.element instanceof Array? this.root.element : d3.select(this.root.element)
-      .call(this.colorPicker);
+      .call(this.colorPicker);    
 
-    this.colorModel = this.model.state.marker.color;
-    
-
-    OPACITY_DIM = this.model.state.entities.opacitySelectDim; 
+    OPACITY_DIM = this.model.entities.opacitySelectDim; 
   },
   
   
   ready: function(){
     var _this = this;
     
-    this.KEY = this.model.state.entities.getDimension();
-    this.minimapDim = this.model.state.entities_minimap.getDimension();
-    
+    this.KEY = this.model.entities.getDimension();
+    this.colorlegendDim = this.KEY;
     this.canShowMap = false;
 
-    if(this.model.state.marker_minimap){
-
-      var timeModel = this.model.state.time;
-      var filter = {};
-      filter[timeModel.getDimension()] = timeModel.value;
-      _this.frame = this.model.state.marker_minimap.getValues(filter,[_this.minimapDim]);
+    if(this.colorModel.use == "property" && this.colorlegendMarker) {
+      if(!this.colorlegendMarker._ready) return;
       
-      this.canShowMap = utils.keys((this.frame||{}).geoshape||{}).length && this.colorModel.use == "property";
+      this.colorlegendDim = this.colorModel.getColorlegendEntities().getDimension();
 
-      var minimapKeys = this.model.state.marker_minimap.getKeys(_this.minimapDim);     
-      minimapKeys.forEach(function(d){
-        if(!((_this.frame||{}).geoshape||{})[d[_this.minimapDim]]) _this.canShowMap = false;
+      this.colorlegendMarker.getFrame(this.model.time.value, function(frame) {
+        _this.frame = frame;
+        _this.canShowMap = utils.keys((_this.frame||{}).geoshape||{}).length;
+
+        _this.colorlegendKeys = _this.colorlegendMarker.getKeys(_this.colorlegendDim);
+
+        _this.colorlegendKeys.forEach(function(d){
+          if(!((_this.frame||{}).geoshape||{})[d[_this.colorlegendDim]]) _this.canShowMap = false;
+        });
+        _this.updateView();
       });
-    }
+      return;
+    } 
+ 
     _this.updateView();
   },
 
@@ -155,14 +152,8 @@ var ColorLegend = Component.extend({
     var palette = this.colorModel.getPalette();
     var canShowMap = this.canShowMap;
 
-    var minimapKeys = [];
-
-    if(this.model.state.marker_minimap){
-      var minimapKeys = this.model.state.marker_minimap.getKeys(_this.minimapDim);
-    }
+    var colorlegendKeys = this.colorlegendKeys || [];
     
-    
-
     var colorOptions = this.listColorsEl.selectAll(".vzb-cl-option");
     
     //Hide and show elements of the color legend
@@ -171,8 +162,8 @@ var ColorLegend = Component.extend({
     //in the latter case we should show colors in the "find" list instead
     var hideColorOptions = canShowMap 
       || this.colorModel.which == "_default" 
-      || _this.minimapDim == _this.KEY 
-        && utils.comparePlainObjects(this.model.state.entities_minimap.getFilter(), this.model.state.entities.getFilter())
+      || this.colorlegendMarker && this.colorlegendDim == this.KEY 
+        && utils.comparePlainObjects(this.colorModel.getColorlegendEntities().getFilter(), this.model.entities.getFilter());
     
     colorOptions.classed("vzb-hidden", hideColorOptions);
     
@@ -248,7 +239,7 @@ var ColorLegend = Component.extend({
           },
           showOuter: true,
           //bump: this.activeProfile.maxRadius/2,
-          //constantRakeLength: gradientWidth,
+          //viewportLength: gradientWidth,
           formatter: formatter,
           bump: marginLeft,
           cssFontSize: "11px",
@@ -301,10 +292,12 @@ var ColorLegend = Component.extend({
         
         if(this.colorModel.which == "_default") {
           colorOptions = colorOptions.data([]); 
-        }else if(this.colorModel.use == "indicator" || !minimapKeys.length) {
-          colorOptions = colorOptions.data(utils.keys(cScale.range()), function(d) {return d});
         }else{
-          colorOptions = colorOptions.data(hideColorOptions? [] : minimapKeys, function(d) {return d[_this.minimapDim]});
+          colorOptions = colorOptions.data(hideColorOptions? [] : colorlegendKeys.length ? colorlegendKeys : Object.keys(this.colorModel.getPalette()).map(function(value) {
+            var result = {};
+            result[_this.colorlegendDim] = value;
+            return result; 
+          }), function(d) {return d[_this.colorlegendDim]});
         }
 
         colorOptions.exit().remove();
@@ -318,14 +311,14 @@ var ColorLegend = Component.extend({
           .on("mouseout", _this._interact().mouseout)
           .on("click", _this._interact().click);
 
-        var labelsAvailable = !!_this.frame.label;
+        var labelsAvailable = !!(_this.frame||{}).label;
 
         colorOptions.each(function(d, index) {
           d3.select(this).select(".vzb-cl-color-sample")
-            .style("background-color", cScale(d[_this.minimapDim]))
-            .style("border", "1px solid " + cScale(d[_this.minimapDim]));
+            .style("background-color", cScale(d[_this.colorlegendDim]))
+            .style("border", "1px solid " + cScale(d[_this.colorlegendDim]));
           //Apply names to color legend entries if color is a property
-          var label = _this.frame.label[d[_this.minimapDim]];
+          var label = _this.colorlegendMarker ? _this.frame.label[d[_this.colorlegendDim]] : null;
           if(!label && label!==0) labelsAvailable = false;
           d3.select(this).select(".vzb-cl-color-legend").text(label);
         });
@@ -343,14 +336,14 @@ var ColorLegend = Component.extend({
         this.minimapSVG.selectAll("g").remove()
         this.minimapG = this.minimapSVG.append("g");
         this.minimapG.selectAll("path")
-          .data(minimapKeys, function(d) {return d[_this.minimapDim]})
+          .data(colorlegendKeys, function(d) {return d[_this.colorlegendDim]})
           .enter().append("path")
           .style("opacity", OPACITY_REGULAR)
           .on("mouseover", _this._interact().mouseover)
           .on("mouseout", _this._interact().mouseout)
           .on("click", _this._interact().click)
           .each(function(d){        
-            var shapeString = _this.frame.geoshape[d[_this.minimapDim]].trim();
+            var shapeString = _this.frame.geoshape[d[_this.colorlegendDim]].trim();
           
             //check if shape string starts with svg tag -- then it's a complete svg
             if(shapeString.slice(0,4) == "<svg"){
@@ -363,7 +356,7 @@ var ColorLegend = Component.extend({
             
             d3.select(this)
               .attr("d", shapeString)
-              .style("fill", cScale(d[_this.minimapDim]))
+              .style("fill", cScale(d[_this.colorlegendDim]))
           
             tempdivEl.html("");
           })
@@ -380,7 +373,7 @@ var ColorLegend = Component.extend({
   _interact: function() {
     var _this = this;
     var KEY = this.KEY;
-    var minimapDim = this.minimapDim;
+    var colorlegendDim = this.colorlegendDim;
 
     return {
       mouseover: function(d, i) {
@@ -388,7 +381,7 @@ var ColorLegend = Component.extend({
         if(_this.colorModel.use === "indicator") return;
         
         var view = d3.select(this);
-        var target = d[minimapDim];
+        var target = d[colorlegendDim];
         _this.listColorsEl.selectAll(".vzb-cl-option").style("opacity", OPACITY_DIM);
         _this.minimapG.selectAll("path").style("opacity", OPACITY_DIM);
         view.style("opacity", OPACITY_HIGHLIGHT);
@@ -403,12 +396,7 @@ var ColorLegend = Component.extend({
             return utils.clone(d, [KEY]);
           });
 
-        //add group to highlight
-        var obj = {};
-        obj[KEY] = target;
-        highlight.push(obj); 
-
-        _this.model.state.entities.setHighlight(highlight);
+        _this.model.entities.setHighlight(highlight);
       },
 
       mouseout: function(d, i) {
@@ -417,7 +405,7 @@ var ColorLegend = Component.extend({
 
         _this.listColorsEl.selectAll(".vzb-cl-option").style("opacity", OPACITY_REGULAR);
         _this.minimapG.selectAll("path").style("opacity", OPACITY_REGULAR);
-        _this.model.state.entities.clearHighlighted();
+        _this.model.entities.clearHighlighted();
       },
       click: function(d, i) {
         //disable interaction if so stated in concept properties
@@ -425,7 +413,7 @@ var ColorLegend = Component.extend({
         var palette = _this.colorModel.getPalette();
         var defaultPalette = _this.colorModel.getDefaultPalette();
         var view = d3.select(this);
-        var target = _this.colorModel.use === "indicator"? d.paletteKey : d[minimapDim];
+        var target = _this.colorModel.use === "indicator"? d.paletteKey : d[colorlegendDim];
         _this.colorPicker
           .colorOld(palette[target])
           .colorDef(defaultPalette[target])
@@ -453,7 +441,7 @@ var ColorLegend = Component.extend({
       this.listColorsEl.selectAll(".vzb-cl-option").style("opacity", OPACITY_DIM);
       this.minimapG.selectAll("path").style("opacity", OPACITY_DIM);
       this.listColorsEl.selectAll(selection).filter(function(d) {
-        return d[_this.minimapDim] == value;
+        return d[_this.colorlegendDim] == value;
       }).each(function(d, i) {
         var view = d3.select(this);
         view.style("opacity", OPACITY_HIGHLIGHT);

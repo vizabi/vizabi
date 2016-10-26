@@ -58,6 +58,11 @@ var Axes = Dialog.extend({
         _this.setModel("xLogStops", d3.select(this).node().value);
       })
 
+    this.probeCheck = this.element.select(".vzb-probe-check")
+      .on("change", function() {
+        _this.setModel("showProbeX", d3.select(this).property('checked'));
+      })
+    
     this.probeFieldEl = this.element.select(".vzb-probe-field")
       .on("change", function() {
         var result = parseFloat(this.value.replace(",", "."));
@@ -84,6 +89,7 @@ var Axes = Dialog.extend({
     this.xLogStops.property('checked', function() {
       return _this.model.ui.chart.xLogStops.indexOf(+d3.select(this).node().value) !== -1;
     })
+    this.probeCheck.property('checked', this.model.ui.chart.showProbeX);
     this.probeFieldEl.property("value", this.model.ui.chart.probeX);
   },
 
@@ -99,7 +105,7 @@ var Axes = Dialog.extend({
         if(d3.select(this).property('checked')) result.push(+d3.select(this).node().value);
       })
     }
-    if(what == "probeX") {
+    if(what == "probeX" || what == "showProbeX") {
       result = value;
     }
 

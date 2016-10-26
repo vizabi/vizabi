@@ -50,7 +50,7 @@ var BarChart = Tool.extend('BarChart', {
     }, {
       component: treemenu,
       placeholder: '.vzb-tool-treemenu',
-      model: ['state.marker', 'language']
+      model: ['state.marker', 'state.marker_tags', 'state.time', 'language']
     }];
 
     //constructor is the same as any tool
@@ -59,35 +59,19 @@ var BarChart = Tool.extend('BarChart', {
 
   default_model: {
     state: {
-      time: {},
-      entities: {
-        dim: "geo",
-        show: {
-          _defs_: {
-            "geo": ["*"],
-            "geo.cat": ["region"]
-          }
-        }
-      },
+      time: { },
+      entities: { },
       marker: {
-        space: ["entities", "time"],
-        label: {
-          use: "property",
-          which: "geo.name"
-        },
-        axis_y: {
-          use: "indicator",
-          which: "lex"
-        },
-        axis_x: {
-          use: "property",
-          which: "geo.name"
-        },
-        color: {
-          use: "property",
-          which: "geo.world_4region"
-        }
+        label: { },
+        axis_y: {allow: {scales: ["linear", "log"]}},
+        axis_x: {allow: {scales: ["ordinal", "nominal"]}},
+        color: { }
       }
+    },
+    language: { },
+    ui: {
+      presentation: false,
+      chart: { }
     }
   }
 });

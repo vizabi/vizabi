@@ -241,6 +241,7 @@
                 font-size: $vzb-font-size-small;
                 font-family: $vzb-font-family-alt;
                 &.vzb-treemenu-leaf-content-item-title {
+                  font-size: $vzb-font-size-regular;
                   font-weight: bold;
                 }
               }
@@ -283,6 +284,11 @@
 
         &:hover {
           background-color: $vzb-color-grey-light;
+        }
+        &.item-active:not(.vzb-treemenu-list-item-children) {
+          > span {
+            color: $vzb-color-accent-orange;
+          }
         }
         &.item-active {
           > span {

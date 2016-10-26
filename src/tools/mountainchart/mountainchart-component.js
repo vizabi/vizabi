@@ -45,7 +45,6 @@ var MountainChartComponent = Component.extend({
             { name: "time", type: "time" },
             { name: "entities", type: "entities" },
             { name: "marker", type: "model" },
-            { name: "marker_group", type: "model" },
             { name: "language", type: "language" },
             { name: "ui", type: "model" }
         ];
@@ -80,6 +79,9 @@ var MountainChartComponent = Component.extend({
                 _this.ready();
             },
             "change:ui.chart.probeX": function () {
+                _this.ready();
+            },
+            "change:ui.chart.showProbeX": function () {
                 _this.ready();
             },
             "change:ui.chart.xPoints": function () {
@@ -272,6 +274,7 @@ var MountainChartComponent = Component.extend({
         this.eventAreaEl
             .on("mousemove", function () {
                 if (_this.model.time.dragging) return;
+                if (!_this.model.ui.chart.showProbeX) return;
                 _this._probe.redraw({
                     level: _this.xScale.invert(d3.mouse(this)[0]),
                     full: true
@@ -279,6 +282,7 @@ var MountainChartComponent = Component.extend({
             })
             .on("mouseout", function () {
                 if (_this.model.time.dragging) return;
+                if (!_this.model.ui.chart.showProbeX) return;
                 _this._probe.redraw();
             });
 
@@ -706,7 +710,7 @@ updateSize: function (meshLength) {
                 });
 
                 //position tooltip
-                _this._setTooltip(d.key ? _this.model.marker_group.label.getItems()[d.key] : _this.values.label[d.KEY()]);
+                _this._setTooltip(d.key ? _this.model.marker.color.getColorlegendMarker().label.getItems()[d.key] : _this.values.label[d.KEY()]);
                 _this._selectlist.showCloseCross(d, true);
 
             },

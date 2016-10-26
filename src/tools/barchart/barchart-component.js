@@ -299,7 +299,7 @@ var BarComponent = Component.extend({
         scaleType: this.model.marker.axis_x.scaleType,
         timeFormat: this.model.time.timeFormat,
         toolMargin: margin,
-        constantRakeLength: this.width
+        viewportLength: this.width
       });
 
     this.xAxisEl.attr("transform", "translate(0," + this.height + ")")

@@ -353,13 +353,13 @@ var Menu = Class.extend({
       this.menuItems[i].marqueeToggleAll(toggle);
     }
   },
-  findItemByName: function(name) {
+  findItemById: function(id) {
     for (var i = 0; i < this.menuItems.length; i++) {
-      if(this.menuItems[i].entity.select('.' + css.list_item_label).text() == name) {
+      if(this.menuItems[i].entity.data().id == id) {
         return this.menuItems[i];
       }
       if(this.menuItems[i].submenu) {
-        var item = this.menuItems[i].submenu.findItemByName(name);
+        var item = this.menuItems[i].submenu.findItemById(id);
         if(item) return item;
       }
     }
@@ -690,7 +690,9 @@ var TreeMenu = Component.extend({
   
   
   _buildIndicatorsTree: function(tagsArray){
+      if(tagsArray===true || !tagsArray) tagsArray = [];
       
+      var _this = this;
       var ROOT = "_root";
       var DEFAULT = "_default";
       var UNCLASSIFIED = "_unclassified";
@@ -721,7 +723,6 @@ var TreeMenu = Component.extend({
           tags[tag.parent].children.push(tags[tag.tag])
         }
       })
-      
       //add entries to different branches in the tree according to their tags
       utils.forEach(this.model.marker.getConceptprops(), function(entry, id){
         //if entry's tag are empty don't include it in the menu
@@ -732,13 +733,47 @@ var TreeMenu = Component.extend({
             tags[tag.trim()].children.push({id: id, name: entry.name, unit: entry.unit, description: entry.description});
           } else {
             //if entry's tag is not found in the tag dictionary
-            console.log(tag, "not found")
+            if(!_this.consoleGroupOpen) {
+              console.groupCollapsed("Some tags were are not found, so indicators went under 'Unclassified' menu");
+              _this.consoleGroupOpen = true;
+            }
+            utils.warn("tag '" + tag + "' for indicator '" + id + "'");
             tags[UNCLASSIFIED].children.push({id: id, name: entry.name, unit: entry.unit, description: entry.description});
           }
         });  
       });
-
+    if(_this.consoleGroupOpen){
+      console.groupEnd();
+      delete _this.consoleGroupOpen;
+    }
+    this._sortChildren(indicatorsTree)
     this.indicatorsTree = indicatorsTree;
+  },
+  
+  _sortChildren: function(tree, isSubfolder){
+    var _this = this;
+    if(!tree.children) return;
+    tree.children.sort(
+      utils
+      //in each folder including root: put subfolders below loose items
+      .firstBy()(function(a,b){a=a.children?1:0;  b=b.children?1:0; return a-b;})
+      .thenBy(function(a,b){
+        //in the root level put "time" on top and send "anvanced" to the bottom
+        if(!isSubfolder){
+          if (a.id == "time") return -1;
+          if (b.id == "time") return 1;
+          if (a.id == "advanced") return 1;
+          if (b.id == "advanced") return -1;
+        }
+        //sort items alphabetically. folders go down because of the emoji folder in the beginning of the name
+        return a.name > b.name? 1:-1
+      })
+    );
+    
+    //recursively sort items in subfolders too
+    tree.children.forEach(function(d){
+      _this._sortChildren(d, true);
+    }); 
   },
 
   //happens on resizing of the container
@@ -902,7 +937,7 @@ var TreeMenu = Component.extend({
       scrollToItem(this.wrapper.node(), this.selectedNode);
       _this.menuEntity.marqueeToggleAll(true);
     } else {
-      var selectedItem = this.menuEntity.findItemByName(d3.select(this.selectedNode).select('span').text());
+      var selectedItem = this.menuEntity.findItemById(d3.select(this.selectedNode).data().id);
       selectedItem.submenu.calculateMissingWidth(0, function() {
         _this.menuEntity.marqueeToggleAll(true);
       });
@@ -1121,6 +1156,7 @@ var TreeMenu = Component.extend({
           //Let the indicator "_default" in tree menu be translated differnetly for every hook type
           var translated = d.id==="_default" ? _this.translator("indicator/_default/" + hookType) : d.name;
           if(!translated && translated!=="") utils.warn("translation missing: NAME of " + d.id);
+          if(d.children) translated = "📁 " + translated;
           return translated||"";
         });
       
@@ -1309,13 +1345,13 @@ var TreeMenu = Component.extend({
       if(indicatorsDB[value].scales) {
         obj.scaleType = indicatorsDB[value].scales[0];
       }
-    }
 
-    if(mdl.getType() === 'axis' || mdl.getType() === 'size') {
-      obj.domainMin = null;
-      obj.domainMax = null;
-      obj.zoomedMin = null;
-      obj.zoomedMax = null;
+      if(mdl.getType() === 'axis' || mdl.getType() === 'size') {
+        obj.domainMin = null;
+        obj.domainMax = null;
+        obj.zoomedMin = null;
+        obj.zoomedMax = null;
+      }
     }
 
     mdl.set(obj);

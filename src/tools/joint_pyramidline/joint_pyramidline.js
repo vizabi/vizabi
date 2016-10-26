@@ -67,6 +67,27 @@ var JOINTPyramidLine = Tool.extend('JOINTPyramidLine', {
 
     //constructor is the same as any tool
     this._super(placeholder, external_model);
+  },
+  
+  default_model: {
+    ui: {
+      chart: {
+        labels: {
+          min_number_of_entities_when_values_hide: 2 //values hide when showing 2 entities or more
+        },
+        whenHovering: {
+          hideVerticalNow: false,
+          showProjectionLineX: true,
+          showProjectionLineY: true,
+          higlightValueX: true,
+          higlightValueY: true,
+          showTooltip: false
+        },
+        stacked: true,
+        inpercent: false
+      },    
+      presentation: false
+    }
   }
 
 });

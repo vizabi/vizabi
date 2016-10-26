@@ -40,9 +40,9 @@ var TimeModel = Model.extend({
     playing: false,
     loop: false,
     round: 'round',
-    delay: 600, //delay between animation frames
-    delayThresholdX2: 600, //delay X2 boundary: if less -- then every other frame will be dropped and animation dely will be double the value
-    delayThresholdX4: 300, //delay X4 boundary: if less -- then 3/4 frame will be dropped and animation dely will be 4x the value
+    delay: 120, //delay between animation frames
+    delayThresholdX2: 100, //delay X2 boundary: if less -- then every other frame will be dropped and animation dely will be double the value
+    delayThresholdX4: 50, //delay X4 boundary: if less -- then 3/4 frame will be dropped and animation dely will be 4x the value
     unit: "year",
     step: 1, //step must be integer, and expressed in units
     immediatePlay: false,
@@ -185,11 +185,11 @@ var TimeModel = Model.extend({
     }
     if (this.splash === false) {
       if(this.startSelected < this.start && this.start != null) {
-        this.startSelected = new Date(this.start);
+        this.set({startSelected: new Date(this.start)}, null, false /*make change non-persistent for URL and history*/);
       }
 
       if(this.endSelected > this.end && this.end != null) {
-        this.endSelected = new Date(this.end);
+        this.set({endSelected: new Date(this.end)}, null, false /*make change non-persistent for URL and history*/);
       }
     }
   
@@ -308,6 +308,10 @@ var TimeModel = Model.extend({
    * @returns {Array} time array
    */
   getAllSteps: function() {
+    if(!this.start || !this.end) {
+      utils.warn("getAllSteps(): invalid start/end time is detected: " + this.start + ", " + this.end);
+      return [];
+    }
     var hash = "" + this.start + this.end + this.step;
     
     //return if cached
@@ -413,6 +417,11 @@ var TimeModel = Model.extend({
   incrementTime: function(time) {
     var is = this.getIntervalAndStep();
     return d3.time[is.interval].utc.offset(time, is.step);
+  },
+
+  decrementTime: function(time) {
+    var is = this.getIntervalAndStep();
+    return d3.time[is.interval].utc.offset(time, -is.step);
   },
 
   /**

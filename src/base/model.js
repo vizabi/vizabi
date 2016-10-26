@@ -395,7 +395,7 @@ var Model = EventSource.extend({
         this.trigger('readyOnce');
       }
       this.trigger('ready');
-    }
+    }    
   },
 
   /**
@@ -487,6 +487,7 @@ var Model = EventSource.extend({
     this._deps.children.push(child);
     child._deps.parent.push(this);
   },
+
 
   /* ===============================
    * Hooking model to external data

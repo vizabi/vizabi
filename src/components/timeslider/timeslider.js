@@ -156,7 +156,8 @@ var TimeSlider = Component.extend({
     //defaults
     this.width = 0;
     this.height = 0;
-
+    this.availableTimeFrames = [];
+    this.completedTimeFrames = [];
     this.getValueWidth = utils.memoize(this.getValueWidth);
     this._setTime = utils.throttle(this._setTime, 50);
   },
@@ -178,6 +179,7 @@ var TimeSlider = Component.extend({
     this.slider = this.slider_outer.select("g");
     this.axis = this.element.select(".vzb-ts-slider-axis");
     this.select = this.element.select(".vzb-ts-slider-select");
+    this.progressBar = this.element.select(".vzb-ts-slider-progress");
     this.slide = this.element.select(".vzb-ts-slider-slide");
     this.handle = this.slide.select(".vzb-ts-slider-handle");
     this.valueText = this.slide.select('.vzb-ts-slider-value');
@@ -228,12 +230,18 @@ var TimeSlider = Component.extend({
     utils.forEach(_this.model.marker.getSubhooks(), function(hook) {
       if(hook._important) hook.on('change:which', function() {
         _this._needRecalcSelectedLimits = true;
-        _this.model.time.startSelected = _this.model.time.start;
-        _this.model.time.endSelected = _this.model.time.end; 
+        _this.model.time.set({
+          startSelected: _this.model.time.start,
+          endSelected: _this.model.time.end
+        }, null, false  /*make change non-persistent for URL and history*/); 
       });
     });
     
-    this.root.on('ready', function() {     
+    this.root.on('ready', function() {
+      _this._updateProgressBar();
+      _this.model.marker.listenFramesQueue(null, function(time) {
+        _this._updateProgressBar(time);
+      });
       if(_this._needRecalcSelectedLimits) {
         _this._needRecalcSelectedLimits = false;
         _this.setSelectedLimits(true);
@@ -337,6 +345,7 @@ var TimeSlider = Component.extend({
       .call(this.xAxis);
 
     this.select.attr("transform", "translate(0," + this.height / 2 + ")");
+    this.progressBar.attr("transform", "translate(0," + this.height / 2 + ")");
 
     this.slide.select(".background")
       .attr("height", this.height);
@@ -348,7 +357,7 @@ var TimeSlider = Component.extend({
     this.sliderWidth = _this.slider.node().getBoundingClientRect().width;
 
     this.resizeSelectedLimiters();
-    
+    this._resizeProgressBar();
     this._setHandle();
 
   },
@@ -360,8 +369,10 @@ var TimeSlider = Component.extend({
 
     var select = _this.model.entities.select;
     if(select.length == 0) {
-      _this.model.time.startSelected = new Date(_this.model.time.start);
-      _this.model.time.endSelected = new Date(_this.model.time.end);
+      _this.model.time.set({
+        startSelected: new Date(_this.model.time.start),
+        endSelected: new Date(_this.model.time.end)
+      }, null, false  /*make change non-persistent for URL and history*/);
       return;
     }
     var KEY = _this.model.entities.getDimension();
@@ -430,8 +441,73 @@ var TimeSlider = Component.extend({
       .attr("height", this.height)
       .attr("width", this.xScale(this.model.time.end) - this.xScale(this.model.time.endSelected) + this.height / 2);
   },
-  
 
+  _resizeProgressBar: function() {
+    var _this = this;
+    this.progressBar.selectAll('path')
+    .each(function(d) {
+        d3.select(this)
+          .attr('d', "M" + _this.xScale(d[0]) + ",0H" + _this.xScale(d[1]));
+      });
+  },
+  
+  _updateProgressBar: function(time) {
+    var _this = this;
+    if (time) {
+      if (_this.completedTimeFrames.indexOf(time) != -1) return;
+      _this.completedTimeFrames.push(time);
+      var next = _this.model.time.incrementTime(time);
+      var prev = _this.model.time.decrementTime(time);
+      if (next > _this.model.time.end) {
+        if (time - _this.model.time.end == 0) {
+          next = time;
+          time = prev;
+        } else {
+          return;
+        }
+      } 
+      if (_this.availableTimeFrames.length == 0 || _this.availableTimeFrames[_this.availableTimeFrames.length - 1][1] < time) {
+        _this.availableTimeFrames.push([time, next]);
+      } else if (next < _this.availableTimeFrames[0][0]) {
+        _this.availableTimeFrames.unshift([time, next]);
+      } else {
+        for (var i = 0; i < _this.availableTimeFrames.length; i++) {
+          if (time - _this.availableTimeFrames[i][1] == 0) {
+            if (i + 1 < _this.availableTimeFrames.length && next - _this.availableTimeFrames[i + 1][0] == 0) {
+              _this.availableTimeFrames[i][1] = _this.availableTimeFrames[i + 1][1];
+              _this.availableTimeFrames.splice(i + 1, 1);
+            } else {
+              _this.availableTimeFrames[i][1] = next;
+            }
+            break;
+          }
+          if (next - _this.availableTimeFrames[i][0] == 0) {
+            _this.availableTimeFrames[i][0] = time;
+            break;
+          }
+          if (time - _this.availableTimeFrames[i][1] > 0 && next - _this.availableTimeFrames[i + 1][0] < 0) {
+            _this.availableTimeFrames.splice(i + 1, 0, [time, next]);
+            break;
+          }
+        }
+      }
+    } else {
+      _this.availableTimeFrames = [];
+      _this.completedTimeFrames = []
+    }
+    
+    var progress = this.progressBar.selectAll('path').data(_this.availableTimeFrames);
+    progress.exit().remove();
+    progress.enter().append('path').attr('class', 'domain');
+    progress.each(function(d) {
+        var element = d3.select(this);
+        element.attr('d', "M" + _this.xScale(d[0]) + ",0H" + _this.xScale(d[1]))
+        .classed("rounded", _this.availableTimeFrames.length == 1);
+        
+      });
+  },
+
+  
   /**
    * Returns width of slider text value.
    * Parameters in this function needed for memoize function, so they are not redundant.

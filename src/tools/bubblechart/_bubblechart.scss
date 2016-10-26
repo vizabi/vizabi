@@ -59,6 +59,9 @@
           stroke-opacity: .7;
           cursor: pointer;
           pointer-events: visible;
+          .vzb-bc-label-line {
+            stroke: $vzb-color-grey;
+          }
         }
       }
       

@@ -14,9 +14,9 @@ var DraggableList = Component.extend({
     this.model_expects = [{
       name: "group",
       type: "model"
-    }, {
-      name: "marker_group",
-      type: "model" 
+    }, {      
+      name: "color",
+      type: "color"
     }, {
       name: "language",
       type: "language"
@@ -33,6 +33,9 @@ var DraggableList = Component.extend({
 
     this.model_binds = {
       "change:language.strings": function(evt) {
+        _this.updateView();
+      }, 
+      "change:group.which": function(evt) {
         _this.updateView();
       }
     };
@@ -103,7 +106,10 @@ var DraggableList = Component.extend({
 
   ready: function() {
     var _this = this;
-
+    
+    var labels = _this.model.color.getColorlegendMarker().label.getItems();
+    this.dataArrFn(utils.keys(labels));
+    
     this.updateView();
 
     this.itemsEl = this.element
@@ -135,7 +141,7 @@ var DraggableList = Component.extend({
       .append('div')
       .append('li');
 
-    var labels = _this.model.marker_group.label.getItems();
+    var labels = _this.model.color.getColorlegendMarker().label.getItems();
     this.items.select('li').classed('hover', false).each(function(val, index) {
         d3.select(this).attr('data', val['data']).text(labels[val['data']]);
       });

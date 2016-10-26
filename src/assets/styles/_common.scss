@@ -81,6 +81,7 @@ $vzb-loader-bgcolor: $vzb-color-white;
 
 .vzb-transparent {
   opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 %vzb-loader {

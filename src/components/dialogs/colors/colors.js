@@ -27,7 +27,7 @@ var Colors = Dialog.extend({
     }, {
       component: colorlegend,
       placeholder: '.vzb-clegend-container',
-      model: ["state", "language"]
+      model: ["state.time", "state.entities", "state.marker", "language"]
     }];
 
 
