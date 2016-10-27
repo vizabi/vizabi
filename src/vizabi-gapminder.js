@@ -94,7 +94,7 @@ Tool.define("preload", function(promise) {
     var reader = _this.model.data.getPlainObject();
     reader.parsers = [];
     
-    _this.model.getDataManager().loadConceptProps(reader, function(concepts) {
+    _this.model.getDataManager().loadConceptProps(reader, _this.model.language.id, function(concepts) {
 
       // TODO: REMOVE THIS HACK
       // We are currently saving concept properties info to default state manually in order

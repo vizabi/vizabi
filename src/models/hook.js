@@ -73,8 +73,7 @@ var Hook = Model.extend({
 
   getLoadSettings: function() {
     return {
-      data: this.getClosestModel('data'),
-      language: this.getClosestModel('language')
+      data: this.getClosestModel('data')
     }
   },
 
@@ -105,8 +104,6 @@ var Hook = Model.extend({
     var reader = loadSettings.data.getPlainObject();
     reader.parsers = this._getAllParsers();
 
-    var lang = loadSettings.language ? loadSettings.language.id : 'en';
-
     var _this = this;
     var evts = {
       'load_start': function() {
@@ -120,7 +117,7 @@ var Hook = Model.extend({
 
     utils.timeStamp('Vizabi Model: Loading Data: ' + this._id);
 
-    var dataPromise = this.getDataManager().load(query, lang, reader, evts)
+    var dataPromise = this.getDataManager().load(query, reader, evts)
 
     dataPromise.then(
       this.afterLoad.bind(this),
@@ -202,6 +199,7 @@ var Hook = Model.extend({
 
     //return query
     return {
+      'language': this.getClosestModel('language').id,
       'from': from,
       'animatable': animatable,
       'select': select,
