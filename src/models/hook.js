@@ -12,8 +12,7 @@ var Hook = Model.extend({
   //that means, if X or Y doesn't have data at some point, we can't show markers
   _important: false,
 
-  dataChildren: ['use', 'which', 'domainMin', 'domainMax'],
-  
+  dataChildren: ['use', 'which'],
 
   init: function(name, values, parent, bind) {
 

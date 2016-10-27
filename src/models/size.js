@@ -34,7 +34,7 @@ var SizeModel = Axis.extend({
 
     if(this.use == 'indicator' && this.domainMin == null && this.domainMax == null) {
       var domain = this.scale.domain();
-      //this.set({domainMin: domain[0], domainMax: domain[1]});
+      this.set({domainMin: domain[0], domainMax: domain[1]});
     }
   }
 });
