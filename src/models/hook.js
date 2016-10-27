@@ -194,9 +194,6 @@ var Hook = Model.extend({
     // join
     var join = this._getAllJoins(exceptions, splashScreen);
 
-    // order by
-    order_by = (!prop) ? [this._space.time.dim] : [];
-
     //return query
     return {
       'language': this.getClosestModel('language').id,
@@ -205,7 +202,7 @@ var Hook = Model.extend({
       'select': select,
       'where': explicitAndFilters,
       'join': join,
-      'order_by': order_by // should be _space.animatable, but that's time for now
+      'order_by': prop ? ["rank"] : [this._space.time.dim]
     };
   },
 
