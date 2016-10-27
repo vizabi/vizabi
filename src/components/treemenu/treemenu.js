@@ -1329,11 +1329,11 @@ var TreeMenu = Component.extend({
     return this;
   },
 
-  _setModel: function(what, value, markerID) {
+  _setModel: function(what, value, hookID) {
 
     var indicatorsDB = this.model.marker.getConceptprops();
 
-    var mdl = this.model.marker[markerID];
+    var mdl = this.model.marker[hookID];
 
     var obj = {};
 
