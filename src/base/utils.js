@@ -1139,25 +1139,6 @@ export var diffObject = function(obj2, obj1) {
 };
 
 /*
- * Returns the resulting object without _defs_ leveling
- * @param {Object} obj
- * @returns {Object}
- */
-export var flattenDefaults = function(obj) {
-  var flattened = {};
-  forEach(obj, function(val, key) {
-    if(isPlainObject(val) && val._defs_) {
-      flattened[key] = val._defs_;
-    } else if(isPlainObject(val)) {
-      flattened[key] = flattenDefaults(val);
-    } else {
-      flattened[key] = val;
-    }
-  });
-  return flattened;
-};
-
-/*
  * Returns the resulting object without date objects for time
  * @param {Object} obj
  * @returns {Object}

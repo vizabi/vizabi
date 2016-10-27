@@ -165,8 +165,9 @@ script.
       }
     }
   }
-
-  VIZABI_INITIAL_MODEL = Vizabi.utils.deepClone(VIZABI_MODEL);
-  Vizabi.utils.deepExtend(VIZABI_MODEL, URL.model);
   
-  VIZ = Vizabi("#{tool}", placeholder, VIZABI_MODEL);
+  VIZABI_PAGE_MODEL = Vizabi.utils.deepExtend({}, VIZABI_MODEL); 
+
+  VIZ = Vizabi("#{tool}", placeholder, Vizabi.utils.deepExtend({}, VIZABI_MODEL, URL.model));
+
+
