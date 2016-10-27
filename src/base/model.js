@@ -38,8 +38,7 @@ var ModelLeaf = EventSource.extend({
   },
 
   set: function(val, force, persistent) {
-    if (!this.isSetAllowed(val, force)) {
-
+    if (this.isSetAllowed(val, force)) {
       // persistent defaults to true
       persistent = (typeof persistent !== 'undefined') ? persistent : true;
 
