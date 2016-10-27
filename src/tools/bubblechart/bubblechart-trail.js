@@ -11,6 +11,7 @@ export default Class.extend({
     this.entityTrails = {};
     this.trailsData = [];
     this.trailTransitions = {};
+    this.delayedIterations = {};
   },
 
   toggle: function(arg) {
@@ -491,7 +492,7 @@ export default Class.extend({
                       .style("stroke", strokeColor);
                     if (nextIndex - index > 1) {
                       var mediumIndex = getPointBetween(index, nextIndex);
-                      _this.delayedIterations.push({
+                      _this.delayedIterations[d[KEY]].push({
                         first: index,
                         next: nextIndex,
                         medium: mediumIndex
@@ -586,7 +587,7 @@ export default Class.extend({
           var mediumIndex;
           if (index - previousIndex > 1) {
             mediumIndex = getPointBetween(previousIndex, index);
-            _this.delayedIterations.push({
+            _this.delayedIterations[d[KEY]].push({
               first: previousIndex,
               next: index,
               medium: mediumIndex
@@ -594,7 +595,7 @@ export default Class.extend({
           }
           if (nextIndex - index > 1) {
             mediumIndex = getPointBetween(index, nextIndex);
-            _this.delayedIterations.push({
+            _this.delayedIterations[d[KEY]].push({
               first: index,
               next: nextIndex,
               medium: mediumIndex
@@ -638,21 +639,36 @@ export default Class.extend({
      * @param points
      */
     var processPointsBetween = function(points) {
-      var segments = [];
-      for (var i = 0; i <= points.length - 1; i++) {
-        segments.push(addPointBetween(points[i].first, points[i].next, points[i].medium));
-      }
-      Promise.all(segments).then(function () {
-        if (_this.delayedIterations.length == 0) {
+      processPoints(points).then(function() {
+        if (_this.delayedIterations[d[KEY]].length == 0) {
           defer.resolve();
         } else {
-          var iterations = _this.delayedIterations;
-          _this.delayedIterations = [];
+          var iterations = _this.delayedIterations[d[KEY]];
+          _this.delayedIterations[d[KEY]] = [];
           processPointsBetween(iterations);
         }
       });
     };
-
+    var processPoints = function(points) {
+      return new Promise(function(resolve, reject) {
+        var processPoint = function(points) {
+          var point = points.splice(Math.random() * points.length, 1).pop();
+          addPointBetween(point.first, point.next, point.medium).then(function () {
+            if (points.length > 0) {
+              processPoint(points);
+            } else {
+              resolve();
+            }
+          });
+        };
+        if (points.length > 0) {
+          processPoint(points);
+        } else {
+          resolve();
+        }
+      });
+    };
+    
     /**
      * iteration for each point from first segment to last
      * @param trail
@@ -672,16 +688,16 @@ export default Class.extend({
     } else {
       var trailKeys = _generateKeys(d, trail, 50);
       var segments = [];
-      _this.delayedIterations = [];
+      _this.delayedIterations[d[KEY]] = [];
       for (var i = 0; i < trailKeys.length - 1; i++) {
         segments.push(generateTrailSegment(trail, trailKeys[i], trailKeys[i + 1], 1));
       }
       Promise.all(segments).then(function() {
-        if (_this.delayedIterations.length == 0) {
+        if (_this.delayedIterations[d[KEY]].length == 0) {
           defer.resolve();
         } else {
-          var iterations = _this.delayedIterations;
-          _this.delayedIterations = [];
+          var iterations = _this.delayedIterations[d[KEY]];
+          _this.delayedIterations[d[KEY]] = [];
           processPointsBetween(iterations);
         }
       });
