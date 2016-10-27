@@ -194,10 +194,8 @@ var Tool = Component.extend({
     }
    
     var currentToolModel = this.model.getPlainObject(true); // true = get only persistent model values
-    var defaultModel = this.getDefaultModel();
-    var result = utils.diffObject(currentToolModel, defaultModel);
-
-    result = utils.flattenDates(result, this.model.state.time.timeFormat);
+    var result = utils.flattenDates(currentToolModel, this.model.state.time.timeFormat);
+    
     removeFunctions(result);
     return result;
   },
