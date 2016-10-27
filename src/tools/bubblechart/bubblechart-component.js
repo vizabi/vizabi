@@ -200,7 +200,7 @@ var BubbleChartComp = Component.extend({
         _this._trails.run("resize");
       },
       'change:marker.color': function(evt, path) {
-        if(!_this._readyOnce || !_this.entityBubbles) return;
+        if(!_this._readyOnce) return;
         //console.log("EVENT change:marker:color:palette");
         _this.redrawDataPointsOnlyColors();
         _this._trails.run("recolor");

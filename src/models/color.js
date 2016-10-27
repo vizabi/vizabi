@@ -82,9 +82,9 @@ var ColorModel = Hook.extend({
         Object.keys(defaultPalette).map(function(key) {
           if(!currentPalette[key]||defaultPalette[key]==currentPalette[key]) palette[key] = defaultPalette[key];
         });
-        _this.palette.set(palette, false, false);
+        _this.set("palette", palette, false, false);
         //rewrite one more time because 'persistent' is ignored when new submodel create
-        _this.palette.set(palette, true, false);
+        _this.set("palette", palette, true, false);
       }
     });
   },
@@ -254,12 +254,12 @@ var ColorModel = Hook.extend({
     //rebuild palette if it's empty
     if (!this.palette || Object.keys(this.palette._data).length===0){
       var palette = this.getDefaultPalette();
-      this.palette.set(palette, false, false);
+      this.set("palette", palette, false, false);
       //rewrite one more time because 'persistent' is ignored when new submodel create
-      this.palette.set(palette, true, false);
+      this.set("palette", palette, true, false);
       var paletteLabels = this._getPaletteLabels();
-      this.getModelObject("paletteLabels").set(paletteLabels, false, false);
-      this.getModelObject("paletteLabels").set(paletteLabels, true, false);
+      this.set("paletteLabels", paletteLabels, false, false);
+      this.set("paletteLabels", paletteLabels, true, false);
     }
     
     return this.palette.getPlainObject(); 

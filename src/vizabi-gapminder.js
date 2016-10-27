@@ -96,30 +96,11 @@ Tool.define("preload", function(promise) {
     
     _this.model.getDataManager().loadConceptProps(reader, _this.model.language.id, function(concepts) {
 
-      // TODO: REMOVE THIS HACK
-      // We are currently saving concept properties info to default state manually in order
-      // to produce small URLs considering some of the info in concept properties to be default
-      // we need a consistent way to add concept properties to Vizabi
-      //addPalettes(concepts, "color");
-
       promise.resolve();
 
     });
   });
 
-  // function addPalettes(concepts, hook) {
-  //   //protection in case if state or marker or [hook] is undefined
-  //   if(!((_this.default_model.state||{}).marker||{})[hook]) return;
-  //   if(!((_this.model.state||{}).marker||{})[hook]) return;
-    
-  //   var color = _this.default_model.state.marker[hook];
-  //   //which can come from either default model or an external page
-  //   var which = color.which || _this.model.state.marker.color.which;
-  //   var palette = ((concepts[which]||{}).color||{}).palette||{};
-  //   var paletteLabels = ((concepts[which]||{}).color||{}).paletteLabels;
-  //   color.palette = utils.extend({}, color.palette, palette);
-  //   if(paletteLabels) color.paletteLabels = utils.clone(paletteLabels);
-  // }
 
 });
 
