@@ -34,12 +34,12 @@ var VIZABI_MODEL = {
           "scales": ["linear"]
         }
       },
-      "lat": {
+      "hook_lat": {
         "use": "property",
         "which": "latitude",
         "_important": true
       },
-      "lng": {
+      "hook_lng": {
         "use": "property",
         "which": "longitude",
         "_important": true
