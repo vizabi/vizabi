@@ -92,7 +92,7 @@ var Tool = Component.extend({
           _this.model.validate();
 
           if (evt.source.persistent)
-            _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'), _this.getMinModel());
+            _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'));
         }
       },
       'hook_change': function() {
@@ -180,7 +180,7 @@ var Tool = Component.extend({
     return result;
   },
 
-  getMinModel: function() {
+  getPersistentModel: function() {
     //try to find functions in properties of model. 
     var removeFunctions = function(model) {
       for(var childKey in model) {        
@@ -198,6 +198,13 @@ var Tool = Component.extend({
     
     removeFunctions(result);
     return result;
+  },
+
+  getPersistentMinimalModel: function(diffModel) {
+    var defaultModel = this.getDefaultModel();
+    var currentPersistentModel = this.getPersistentModel();
+    var redundantModel = Vizabi.utils.deepExtend(defaultModel, diffModel);
+    return Vizabi.utils.diffObject(currentPersistentModel, redundantModel);
   },
 
   /**

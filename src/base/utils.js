@@ -1140,41 +1140,16 @@ export var diffObject = function(obj2, obj1) {
 
 /*
  * Returns the resulting object without date objects for time
+ * Should actually call flattenDates on the model object itself so it can choose it's own timeformat.
  * @param {Object} obj
  * @returns {Object}
  */
 export var flattenDates = function(obj, timeFormat) {
   var flattened = {};
   forEach(obj, function(val, key) {
-    //todo: hack to flatten time unit objects to strings
-    if (key === 'marker') {
-      ["axis_x", "axis_y", "size_label"].map(function(name) {
-        var hook = val[name];
-        if(typeof hook === 'object') {
-          if(isDate(hook.domainMin)) hook.domainMin = timeFormat(hook.domainMin);
-          if(isDate(hook.domainMax)) hook.domainMax = timeFormat(hook.domainMax);
-          if(isDate(hook.zoomedMin)) hook.zoomedMin = timeFormat(hook.zoomedMin);
-          if(isDate(hook.zoomedMax)) hook.zoomedMax = timeFormat(hook.zoomedMax);
-        }
-      });
-    } else if(key === 'time') {
-      if(typeof val.value === 'object' && val.value != null) {
-        val.value = timeFormat(val.value);
-      }
-      if(typeof val.start === 'object' && val.start != null) {
-        val.start = timeFormat(val.start);
-      }
-      if(typeof val.end === 'object' && val.end != null) {
-        val.end = timeFormat(val.end);
-      }
-      if(typeof val.startSelected === 'object' && val.startSelected != null) {
-        val.startSelected = timeFormat(val.startSelected);
-      }
-      if(typeof val.endSelected === 'object' && val.endSelected != null) {
-        val.endSelected = timeFormat(val.endSelected);
-      }
-    }
-    if(isPlainObject(val)) {
+    if(isDate(val)) {
+      flattened[key] = timeFormat(val);
+    } else if (isPlainObject(val)) {
       flattened[key] = flattenDates(val, timeFormat);
     } else {
       flattened[key] = val;
