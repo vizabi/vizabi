@@ -83,7 +83,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
       marker_tags: {
         space: ["entities_tags"],
         label: {},
-        parent: {}
+        hook_parent: {}
       }, 
       marker: {
         space: ["entities", "time"],

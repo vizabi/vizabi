@@ -129,12 +129,12 @@ var ColorLegend = Component.extend({
 
       this.colorlegendMarker.getFrame(this.model.time.value, function(frame) {
         _this.frame = frame;
-        _this.canShowMap = utils.keys((_this.frame||{}).geoshape||{}).length;
+        _this.canShowMap = utils.keys((_this.frame||{}).hook_geoshape||{}).length;
 
         _this.colorlegendKeys = _this.colorlegendMarker.getKeys(_this.colorlegendDim);
 
         _this.colorlegendKeys.forEach(function(d){
-          if(!((_this.frame||{}).geoshape||{})[d[_this.colorlegendDim]]) _this.canShowMap = false;
+          if(!((_this.frame||{}).hook_geoshape||{})[d[_this.colorlegendDim]]) _this.canShowMap = false;
         });
         _this.updateView();
       });
@@ -343,7 +343,7 @@ var ColorLegend = Component.extend({
           .on("mouseout", _this._interact().mouseout)
           .on("click", _this._interact().click)
           .each(function(d){        
-            var shapeString = _this.frame.geoshape[d[_this.colorlegendDim]].trim();
+            var shapeString = _this.frame.hook_geoshape[d[_this.colorlegendDim]].trim();
           
             //check if shape string starts with svg tag -- then it's a complete svg
             if(shapeString.slice(0,4) == "<svg"){
