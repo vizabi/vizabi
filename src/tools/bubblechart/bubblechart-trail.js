@@ -488,7 +488,7 @@ export default Class.extend({
                       .style("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)))
                       .style("stroke", strokeColor);
                     if (nextIndex - index > 1) {
-                      var mediumIndex = Math.round(index + (nextIndex - index) / 2);
+                      var mediumIndex = getPointBetween(index, nextIndex);
                       _this.delayedIterations.push({
                         first: index,
                         next: nextIndex,
@@ -515,7 +515,10 @@ export default Class.extend({
         var nextSegment = next.datum();
         var segment = view.datum();
         _context.model.marker.getFrame(segment.t, function(frame) {
-          if (!frame) return resolve();
+          if (!frame) {
+            utils.warn("Frame for trail missed: " + segment.t);
+            return resolve();
+          }
           segment.valueY = frame.axis_y[d[KEY]];
           segment.valueX = frame.axis_x[d[KEY]];
           segment.valueS = frame.size[d[KEY]];
@@ -578,9 +581,9 @@ export default Class.extend({
               .style("stroke", strokeColor);
           }
 
-          var promises = [], mediumIndex;
+          var mediumIndex;
           if (index - previousIndex > 1) {
-            mediumIndex = Math.round(previousIndex + (index - previousIndex) / 2);
+            mediumIndex = getPointBetween(previousIndex, index);
             _this.delayedIterations.push({
               first: previousIndex,
               next: index,
@@ -588,7 +591,7 @@ export default Class.extend({
             });
           }
           if (nextIndex - index > 1) {
-            mediumIndex = Math.round(index + (nextIndex - index) / 2);
+            mediumIndex = getPointBetween(index, nextIndex);
             _this.delayedIterations.push({
               first: index,
               next: nextIndex,
@@ -599,6 +602,10 @@ export default Class.extend({
         });
       });
     }; 
+    
+    var getPointBetween = function(previous, next) {
+      return Math.round(previous + (next - previous) / 2);
+    };
     
     var defer = new Promise();
 
@@ -623,23 +630,32 @@ export default Class.extend({
       response.push(max);
       return response;  
     };
-    
+
+    /**
+     * recursive iteration for drawing point between points calculated in previous step  
+     * @param points
+     */
     var processPointsBetween = function(points) {
-      Promise.all(points).then(function () {
+      var segments = [];
+      for (var i = 0; i <= points.length - 1; i++) {
+        segments.push(addPointBetween(points[i].first, points[i].next, points[i].medium));
+      }
+      Promise.all(segments).then(function () {
         if (_this.delayedIterations.length == 0) {
           defer.resolve();
         } else {
           var iterations = _this.delayedIterations;
           _this.delayedIterations = [];
-          var segments = [];
-          for (var i = 0; i < iterations.length - 1; i++) {
-            segments.push(addPointBetween(iterations[i].first, iterations[i].next, iterations[i].medium));
-          }
-          processPointsBetween(segments);
+          processPointsBetween(iterations);
         }
       });
     };
-    
+
+    /**
+     * iteration for each point from first segment to last
+     * @param trail
+     * @param index
+     */
     var generateTrails = function(trail, index) {
       if (index < 0 || index >= trail[0].length) {
         return defer.resolve();
@@ -663,11 +679,8 @@ export default Class.extend({
           defer.resolve();
         } else {
           var iterations = _this.delayedIterations;
-          segments = [];
-          for (var i = 0; i < iterations.length - 1; i++) {
-            segments.push(addPointBetween(iterations[i].first, iterations[i].next, iterations[i].medium));
-          }
-          processPointsBetween(segments);
+          _this.delayedIterations = [];
+          processPointsBetween(iterations);
         }
       });
     }
