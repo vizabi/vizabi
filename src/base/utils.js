@@ -1040,11 +1040,11 @@ export var keys = function(arg) {
  * @return {Array}
  */
 export var values = function(obj) {
-  var arr;
+  var arr = [];
   var keys = Object.keys(obj);
   var size = keys.length;
   for(var i = 0; i < size; i += 1) {
-    (arr = arr || []).push(obj[keys[i]]);
+    arr.push(obj[keys[i]]);
   }
   return arr;
 };
