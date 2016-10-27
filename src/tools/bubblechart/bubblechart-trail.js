@@ -396,8 +396,10 @@ export default Class.extend({
           if(segment.transparent) {
             view.classed("vzb-invisible", segment.transparent);
             resolve();
+            return;
           } else if (!segment.visibilityChanged) { // pass segment if it is not changed
             resolve();
+            return;
           }
         }
         _context.model.marker.getFrame(segment.t, function(frame) {
