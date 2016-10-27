@@ -577,8 +577,8 @@ var BubbleMapComponent = Component.extend({
     this.entityBubbles.each(function(d, index){
       var view = d3.select(this);
 
-      var valueX = _this.values.lng[d[_this.KEY]];
-      var valueY = _this.values.lat[d[_this.KEY]];
+      var valueX = _this.values.hook_lng[d[_this.KEY]];
+      var valueY = _this.values.hook_lat[d[_this.KEY]];
       var valueS = _this.values.size[d[_this.KEY]];
       var valueC = _this.values.color[d[_this.KEY]];
       var valueL = _this.values.label[d[_this.KEY]];
