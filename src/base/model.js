@@ -72,6 +72,11 @@ var ModelLeaf = EventSource.extend({
 var Model = EventSource.extend({
 
   _defaults: {},
+  
+  /**
+   * A leaf model which has an object as value.
+   * Needed when parsing plain JS objects. Enables distinction between models and leafs with object values.
+   **/ 
   objectLeafs: [],
 
   /**

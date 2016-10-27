@@ -43,7 +43,7 @@ var Component = Events.extend({
     this._components_config = this.components.map(function(x) {
       return utils.clone(x);
     });
-    this._frameRate = 10;
+    
     //define expected models for this component
     this.model_expects = this.model_expects || [];
     this.model_binds   = this.model_binds || {};
