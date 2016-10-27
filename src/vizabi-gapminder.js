@@ -39,8 +39,6 @@ globals.ext_resources = utils.deepExtend({
 }, globals.ext_resources);
 
 
-
-
 //preloading mountain chart precomputed shapes
 MCComponent.define("preload", function(done) {
   var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
