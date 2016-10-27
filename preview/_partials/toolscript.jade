@@ -18,8 +18,8 @@ script.
         updateURL();
         updateStateEditor(VIZ.getModel().state);
       },
-      'persistentChange': function(evt, minModel) {
-        updateURL(true, minModel); // force update
+      'persistentChange': function(evt) {
+        updateURL(true); // force update
       }
     };
 

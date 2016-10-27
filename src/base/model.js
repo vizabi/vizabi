@@ -280,7 +280,9 @@ var Model = EventSource.extend({
       } 
       // if it's a modelLeaf
       else {
-        obj[i] = dataItem.get(persistent);
+        //if asked for persistent then add value to result only if modelLeaf state is 
+        //persistent
+        if(!persistent || dataItem.persistent) obj[i] = dataItem.get(persistent);
       }
     });
     return obj;
