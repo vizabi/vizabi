@@ -37,17 +37,23 @@ var ModelLeaf = EventSource.extend({
     return (persistent && !this._persistent) ? this._persistentVal : this._val;
   },
 
-  set: function(val, persistent) {
-    // persistent defaults to true
-    persistent = (typeof persistent !== 'undefined') ? persistent : true;
+  set: function(val, force, persistent) {
+    if (!this.isSetAllowed(val, force))
+      
+      // persistent defaults to true
+      persistent = (typeof persistent !== 'undefined') ? persistent : true;
 
-    // set leaf properties
-    if (persistent) this._persistentVal = val; // set persistent value if change is persistent.
-    this._val = val;
-    this._persistent = persistent;
+      // set leaf properties
+      if (persistent) this._persistentVal = val; // set persistent value if change is persistent.
+      this._val = val;
+      this._persistent = persistent;
 
-    // trigger change event
-    this.trigger(new ChangeEvent(this), this._name);
+      // trigger change event
+      this.trigger(new ChangeEvent(this), this._name);
+
+      return true;
+    }
+    return false;
   },
 
   isSetAllowed: function(val, force) {
@@ -178,8 +184,8 @@ var Model = EventSource.extend({
       
       if (this._data[attribute] && (bothModel || bothModelLeaf)) {
         // data type does not change (model or leaf and can be set through set-function)
-        if (bothModelLeaf && this._data[attribute].isSetAllowed(val, force)) {
-          this._data[attribute].set(val, persistent);
+        var setSuccess = this._data[attribute].set(val, force, persistent);
+        if (bothModelLeaf && setSuccess) {
           changes.push(attribute);
         }
       } else {
