@@ -12,6 +12,7 @@ export default Class.extend({
     this.trailsData = [];
     this.trailTransitions = {};
     this.delayedIterations = {};
+    this.drawingQueue = {};
   },
 
   toggle: function(arg) {
@@ -172,6 +173,8 @@ export default Class.extend({
     var _this = this;
     var KEY = _context.KEY;
     if (!this._isCreated || _context.model.time.splash) return;
+    if (typeof actions == "string") actions = [actions]; 
+    
     this._isCreated.then(function() {
       //quit if function is called accidentally
       if((!_context.model.ui.chart.trails || !_context.model.entities.select.length) && actions != "remove") return;
@@ -180,9 +183,25 @@ export default Class.extend({
 
       //work with entities.select (all selected entities), if no particular selection is specified
       selection = selection == null ? _context.model.entities.select : [selection];
+      for (var i = 0; i < actions.length; i++) {
+        if (["resize", "recolor"].indexOf(actions[i]) != -1) {
+          var action = actions.splice(i, 1).pop();
+          --i;
+          _this.trailsData.forEach(function(d) {
+            var trail = _this.entityTrails[d[KEY]];
+            _context._trails["_" + action](trail, duration, d);
+          });
+        } 
+      }
+      if (actions.length == 0) {
+        return;
+      }
       _this._addActions(selection, actions);
       _this.trailsData.forEach(function(d) {
-
+        if (actions.indexOf('findVisible') != -1) {
+          _this.drawingQueue[d[KEY]] = [];
+          _this.delayedIterations[d[KEY]] = [];
+        }
         var trail = _this.entityTrails[d[KEY]];
         //do all the actions over "trail"
         var executeSequential = function(index) { // some function can be async, but we should run next when previous completed
@@ -323,6 +342,7 @@ export default Class.extend({
 
   _findVisible: function(trail, duration, d) {
     var _context = this.context;
+    var _this = this;
     var KEY = _context.KEY;
     return new Promise(function(resolve, reject) {
       var defer = new Promise();
@@ -363,7 +383,12 @@ export default Class.extend({
             || (d.selectedEntityData.trailStartTime - _context.model.time.timeFormat(_context.time) >= 0);
           // always update nearest 2 points
           if (segmentVisibility != segment.transparent || Math.abs(_context.model.time.timeFormat(segment.t) - _context.model.time.timeFormat(_context.time)) < 2) segment.visibilityChanged = true; // segment changed, so need to update it
+          if (segment.transparent) {
+            d3.select(trail[0][index]).classed("vzb-invisible", segment.transparent);
+          }
         });
+        _this.drawingQueue[d[KEY]] = [];
+        _this.delayedIterations[d[KEY]] = [];
         resolve();
       });
     });
@@ -517,6 +542,11 @@ export default Class.extend({
         var previousSegment = previous.datum();
         var nextSegment = next.datum();
         var segment = view.datum();
+        if (!segment.visibilityChanged) {
+          addNewIntervals(previousIndex, index, nextIndex);
+          resolve();
+          return;
+        }
         _context.model.marker.getFrame(segment.t, function(frame) {
           if (!frame) {
             utils.warn("Frame for trail missed: " + segment.t);
@@ -583,29 +613,30 @@ export default Class.extend({
               .style("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)))
               .style("stroke", strokeColor);
           }
-
-          var mediumIndex;
-          if (index - previousIndex > 1) {
-            mediumIndex = getPointBetween(previousIndex, index);
-            _this.delayedIterations[d[KEY]].push({
-              first: previousIndex,
-              next: index,
-              medium: mediumIndex
-            });
-          }
-          if (nextIndex - index > 1) {
-            mediumIndex = getPointBetween(index, nextIndex);
-            _this.delayedIterations[d[KEY]].push({
-              first: index,
-              next: nextIndex,
-              medium: mediumIndex
-            });
-          }
+          addNewIntervals(previousIndex, index, nextIndex);
           resolve()
         });
       });
     }; 
-    
+    var addNewIntervals = function(previousIndex, index, nextIndex) {
+      var mediumIndex;
+      if (index - previousIndex > 1) {
+        mediumIndex = getPointBetween(previousIndex, index);
+        _this.delayedIterations[d[KEY]].push({
+          first: previousIndex,
+          next: index,
+          medium: mediumIndex
+        });
+      }
+      if (nextIndex - index > 1) {
+        mediumIndex = getPointBetween(index, nextIndex);
+        _this.delayedIterations[d[KEY]].push({
+          first: index,
+          next: nextIndex,
+          medium: mediumIndex
+        });
+      }
+    };
     var getPointBetween = function(previous, next) {
       return Math.round(previous + (next - previous) / 2);
     };
@@ -615,14 +646,16 @@ export default Class.extend({
     var _generateKeys = function(d, trail, div) {
       var response = [];
       var min = 0, max = 0;
+      var maxValue = d3.min([d.limits.max, _context.time]);
+      var minValue = d3.max([d.limits.min, _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime)]);
       utils.forEach(trail[0], function(segment, index) {
         var data = segment.__data__;
-        if (data.t -  d.limits.min == 0) {
+        if (data.t -  minValue == 0) {
           min = index;
-        } else if (data.t -  d.limits.max == 0) {
+        } else if (data.t -  maxValue == 0) {
           max = index;
         } else {
-          if (data.t >  d.limits.min && data.t <  d.limits.max) {
+          if (data.t >  minValue && data.t <  maxValue) {
             if (_context.model.time.timeFormat(data.t) % div == 0) {
               response.push(index);
             }
@@ -638,31 +671,31 @@ export default Class.extend({
      * recursive iteration for drawing point between points calculated in previous step  
      * @param points
      */
-    var processPointsBetween = function(points) {
-      processPoints(points).then(function() {
+    var processPointsBetween = function() {
+      processPoints().then(function() {
         if (_this.delayedIterations[d[KEY]].length == 0) {
           defer.resolve();
         } else {
-          var iterations = _this.delayedIterations[d[KEY]];
+          _this.drawingQueue[d[KEY]] = _this.delayedIterations[d[KEY]];
           _this.delayedIterations[d[KEY]] = [];
-          processPointsBetween(iterations);
+          processPointsBetween();
         }
       });
     };
-    var processPoints = function(points) {
+    var processPoints = function() {
       return new Promise(function(resolve, reject) {
-        var processPoint = function(points) {
-          var point = points.splice(Math.random() * points.length, 1).pop();
+        var processPoint = function() {
+          var point = _this.drawingQueue[d[KEY]].splice(Math.random() * _this.drawingQueue[d[KEY]].length, 1).pop();
           addPointBetween(point.first, point.next, point.medium).then(function () {
-            if (points.length > 0) {
-              processPoint(points);
-            } else {
-              resolve();
-            }
+              if (_this.drawingQueue[d[KEY]].length > 0) {
+                  processPoint();
+              } else {
+                resolve();
+              }
           });
         };
-        if (points.length > 0) {
-          processPoint(points);
+        if (_this.drawingQueue[d[KEY]].length > 0) {
+          processPoint(_this.drawingQueue[d[KEY]]);
         } else {
           resolve();
         }
@@ -696,9 +729,9 @@ export default Class.extend({
         if (_this.delayedIterations[d[KEY]].length == 0) {
           defer.resolve();
         } else {
-          var iterations = _this.delayedIterations[d[KEY]];
+          _this.drawingQueue[d[KEY]] = _this.delayedIterations[d[KEY]];
           _this.delayedIterations[d[KEY]] = [];
-          processPointsBetween(iterations);
+          processPointsBetween();
         }
       });
     }

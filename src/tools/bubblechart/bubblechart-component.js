@@ -56,13 +56,13 @@ var BubbleChartComp = Component.extend({
         if(_this.model.marker.color.scaleType === 'time') {
           _this.model.marker.color.scale = null;
         }
-        if(!_this._readyOnce) return;
+        if(!_this._readyOnce || _this.model.time.splash) return;
         _this._trails.create().then(function() {
           _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
         });
       },
       'change:time.end': function(evt, original) {
-        if(!_this._readyOnce) return;
+        if(!_this._readyOnce || _this.model.time.splash) return;
         _this._trails.create().then(function() {
           _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
         });
@@ -465,11 +465,14 @@ var BubbleChartComp = Component.extend({
       _this._labels.ready();
       _this.redrawDataPoints();
       _this.selectDataPoints();
-      _this._trails.create();
       _this.updateBubbleOpacity();
       _this._updateDoubtOpacity();
       _this.zoomToMarkerMaxMin(); // includes redraw data points and trail resize
-      _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
+      if (!_this.model.time.splash) {
+        _this._trails.create();
+        _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
+        
+      }
       if(_this.model.ui.adaptMinMaxZoom) _this._panZoom.expandCanvas();
     });
   },
@@ -745,7 +748,7 @@ var BubbleChartComp = Component.extend({
         if (sizeA != sizeB) return d3.descending(sizeA, sizeB);
         if (a[KEY] != b[KEY]) return d3.ascending(a[KEY], b[KEY]);
         if (typeof a.trailStartTime != "undefined" || typeof b.trailStartTime != "undefined") return typeof a.trailStartTime != "undefined" ? -1 : 1; // only lines has trailStartTime 
-        if (typeof a.hidden != "undefined" || typeof b.hidden != "undefined") return typeof a.hidden != "undefined" ? 1 : -1; // only bubbles has attribute hidden
+        if (typeof a.limits != "undefined" || typeof b.limits != "undefined") return typeof a.limits != "undefined" ? -1 : 1; // only trails has attribute limits
         return d3.descending(sizeA, sizeB);
       });
   },
