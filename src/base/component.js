@@ -112,7 +112,6 @@ var Component = Events.extend({
 
     //if it's a root component with model
     if(this.isRoot() && this.model) {
-      this.model.setHooks();
 
       var splashScreen = this.model && this.model.data && this.model.data.splash;
       var promise = new Promise();

@@ -56,9 +56,12 @@ var VIZABI_MODEL = {
         label: {
           use: "property",
           which: "municipality.name"
-          //which: "province.name"
         },
-        geoshape: {
+        hook_rank: {
+          use: "property",
+          which: "rank"
+        },
+        hook_geoshape: {
           use: "property",
           which: "shape_lores_svg"
         }

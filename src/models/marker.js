@@ -120,6 +120,72 @@ var Marker = Model.extend({
     }
     return cachePath;
   },
+    
+  _getAllDimensions: function(opts) {
+    
+    var models = [];
+    var _this = this;
+    utils.forEach(this.space, function(name) {
+      models.push(_this.getClosestModel(name));
+    });
+
+    var optsStr = JSON.stringify(opts);
+    if(optsStr in this._spaceDims) {
+      return this._spaceDims[optsStr];
+    }
+
+    opts = opts || {};
+    var dims = [];
+    var dim;
+
+    utils.forEach(models, function(m) {
+      if(opts.exceptType && m.getType() === opts.exceptType) {
+        return true;
+      }
+      if(opts.onlyType && m.getType() !== opts.onlyType) {
+        return true;
+      }
+      if(dim = m.getDimension()) {
+        dims.push(dim);
+      }
+    });
+
+    this._spaceDims[optsStr] = dims;
+
+    return dims;
+  },
+
+
+  /**
+   * gets first dimension that matches type
+   * @param {Object} options
+   * @returns {Array} all unique dimensions
+   */
+  _getFirstDimension: function(opts) {
+    var models = [];
+    var _this = this;
+    utils.forEach(this.space, function(name) {
+      models.push(_this.getClosestModel(name));
+    });
+
+    opts = opts || {};
+
+    var dim = false;
+    utils.forEach(models, function(m) {
+      if(opts.exceptType && m.getType() !== opts.exceptType) {
+        dim = m.getDimension();
+        return false;
+      } else if(opts.type && m.getType() === opts.type) {
+        dim = m.getDimension();
+        return false;
+      } else if(!opts.exceptType && !opts.type) {
+        dim = m.getDimension();
+        return false;
+      }
+    });
+    return dim;
+  },
+
 
   framesAreReady: function() {
     var cachePath = this._getCachePath();

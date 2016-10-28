@@ -55,7 +55,7 @@ var ColorModel = Hook.extend({
    * @param {Object} bind Initial events to bind
    */
   init: function(name, values, parent, bind) {
-
+    var _this = this;
     this._type = "color";
     //TODO: add defaults extend to super
     var defaults = utils.deepClone(this._defaults);
@@ -68,6 +68,25 @@ var ColorModel = Hook.extend({
     this._syncModelReferences = {};
     this._firstLoad = true;
     this._hasDefaultColor = false;
+
+    this.on('hook_change', function() {
+      if(_this._loadedOnce) return;
+      
+      if(_this.palette && Object.keys(_this.palette._data).length!==0) {
+        var defaultPalette = _this.getDefaultPalette();
+        var currentPalette = _this.getPalette();
+        var palette = {};
+        //extend partial current palette with default palette and
+        //switch current palette elements which equals
+        //default palette elments to nonpersistent state  
+        Object.keys(defaultPalette).map(function(key) {
+          if(!currentPalette[key]||defaultPalette[key]==currentPalette[key]) palette[key] = defaultPalette[key];
+        });
+        _this.set("palette", palette, false, false);
+        //rewrite one more time because 'persistent' is ignored when new submodel create
+        _this.set("palette", palette, true, false);
+      }
+    });
   },
 
   // args: {colorID, shadeID}
@@ -234,8 +253,13 @@ var ColorModel = Hook.extend({
   getPalette: function(){
     //rebuild palette if it's empty
     if (!this.palette || Object.keys(this.palette._data).length===0){
-      this.palette.set(this.getDefaultPalette(), false, false);
-      this.getModelObject("paletteLabels").set(this._getPaletteLabels(), false, false);
+      var palette = this.getDefaultPalette();
+      this.set("palette", palette, false, false);
+      //rewrite one more time because 'persistent' is ignored when new submodel create
+      this.set("palette", palette, true, false);
+      var paletteLabels = this._getPaletteLabels();
+      this.set("paletteLabels", paletteLabels, false, false);
+      this.set("paletteLabels", paletteLabels, true, false);
     }
     
     return this.palette.getPlainObject(); 

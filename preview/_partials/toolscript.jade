@@ -18,8 +18,8 @@ script.
         updateURL();
         updateStateEditor(VIZ.getModel().state);
       },
-      'persistentChange': function(evt, minModel) {
-        updateURL(true, minModel); // force update
+      'persistentChange': function(evt) {
+        updateURL(true); // force update
       }
     };
 
@@ -151,7 +151,7 @@ script.
       host: 'https://waffle-server-dev.gapminderdev.org',
       preloadPath: '/api/vizabi/',
       dataPath: '/api/ddf/',
-      translationPath: localUrl + "data/translation/",
+      //translationPath: localUrl + "data/translation/",
       //shapePath: localUrl + "data/mc_precomputed_shapes.json"
       //shapePath: localUrl + "data/world-50m.json"
     };
@@ -165,8 +165,9 @@ script.
       }
     }
   }
-
-  VIZABI_INITIAL_MODEL = Vizabi.utils.deepClone(VIZABI_MODEL);
-  Vizabi.utils.deepExtend(VIZABI_MODEL, URL.model);
   
-  VIZ = Vizabi("#{tool}", placeholder, VIZABI_MODEL);
+  VIZABI_PAGE_MODEL = Vizabi.utils.deepExtend({}, VIZABI_MODEL); 
+
+  VIZ = Vizabi("#{tool}", placeholder, Vizabi.utils.deepExtend({}, VIZABI_MODEL, URL.model));
+
+

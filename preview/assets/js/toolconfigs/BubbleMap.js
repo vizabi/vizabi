@@ -30,16 +30,18 @@ var VIZABI_MODEL = {
         "use": "indicator",
         "which": "population_total",
         "scaleType": "linear",
+        "domainMin": 15,
+        "domainMax": 1400000000,
         "allow": {
           "scales": ["linear"]
         }
       },
-      "lat": {
+      "hook_lat": {
         "use": "property",
         "which": "latitude",
         "_important": true
       },
-      "lng": {
+      "hook_lng": {
         "use": "property",
         "which": "longitude",
         "_important": true
@@ -59,11 +61,11 @@ var VIZABI_MODEL = {
           "use": "property",
           "which": "name"
         },
-        "rank": {
+        "hook_rank": {
           "use": "property",
           "which": "rank"
         },
-        "geoshape": {
+        "hook_geoshape": {
           "use": "property",
           "which": "shape_lores_svg"
         }
@@ -74,7 +76,7 @@ var VIZABI_MODEL = {
         "use": "property",
         "which": "name"
       },
-      "parent": {
+      "hook_parent": {
         "use": "property",
         "which": "parent"
       }

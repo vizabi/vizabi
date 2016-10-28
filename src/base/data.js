@@ -14,15 +14,14 @@ var Data = Class.extend({
   /**
    * Loads resource from reader or cache
    * @param {Array} query Array with queries to be loaded
-   * @param {String} language Language
    * @param {Object} reader Which reader to use - data reader info
    * @param {*} evts ?
    */
-  load: function(query, language, reader, evts) {
+  load: function(query, reader, evts) {
     var _this = this;
     var promise = new Promise();
     var wait = new Promise().resolve();
-    var cached = query === true ? true : this.isCached(query, language, reader);
+    var cached = query === true ? true : this.isCached(query, reader);
     var loaded = false;
     //if result is cached, dont load anything
     if(!cached) {
@@ -31,7 +30,7 @@ var Data = Class.extend({
         evts.load_start();
       }
       wait = new Promise();
-      this.loadFromReader(query, language, reader).then(function(queryId) {
+      this.loadFromReader(query, reader).then(function(queryId) {
         loaded = true;
         cached = queryId;
         wait.resolve();
@@ -61,17 +60,15 @@ var Data = Class.extend({
   /**
    * Loads resource from reader
    * @param {Array} query Array with queries to be loaded
-   * @param {String} lang Language
    * @param {Object} reader Which reader to use. E.g.: "json"
    * @param {String} path Where data is located
    */
-  loadFromReader: function(query, lang, reader) {
+  loadFromReader: function(query, reader) {
     var _this = this;
     var promise = new Promise();
     var reader_name = reader.reader;
     var queryId = utils.hashCode([
       query,
-      lang,
       reader
     ]);
 
@@ -140,7 +137,7 @@ var Data = Class.extend({
       var r = new readerClass(reader);
 
       // execute the query with this reader
-      r.read(query, lang).then(function() {
+      r.read(query).then(function() {
 
           //success reading
           var values = r.getData();
@@ -253,18 +250,19 @@ var Data = Class.extend({
     return this._collection[queryId][what][id];
   },
 
-  loadConceptProps: function(reader, callback){
+  loadConceptProps: function(reader, languageId, callback){
     var _this = this;
     
     var query = {
       from: "concepts",
+      language: languageId,
       select: {
         key: ["concept"],
         value: ["concept_type","domain","indicator_url","color","scales","interpolation","tags","name","unit","description"]
       }
     };
     
-    this.load(query, "en", reader).then(function(dataId) {
+    this.load(query, reader).then(function(dataId) {
       
       _this.conceptPropsDataID = dataId;
       _this.conceptDictionary = {_default: {concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root"}};
@@ -815,11 +813,10 @@ var Data = Class.extend({
   /**
    * checks whether this combination is cached or not
    */
-  isCached: function(query, language, reader) {
+  isCached: function(query, reader) {
     //encode in hashCode
     var q = utils.hashCode([
       query,
-      language,
       reader
     ]);
     //simply check if we have this in internal data

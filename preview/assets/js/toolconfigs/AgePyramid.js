@@ -89,7 +89,11 @@ var VIZABI_MODEL = {
           use: "property",
           which: "education_attainment"
         },
-        geoshape: {
+        hook_rank: {
+          use: "property",
+          which: "rank"
+        },
+        hook_geoshape: {
           use: "property",
           which: "shape_lores_svg"
         }

@@ -1187,7 +1187,7 @@ var TreeMenu = Component.extend({
             var units = deepLeafContent.append('span').classed(css.leaf_content_item, true)
               .text(function(d) {
                 //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-                var translated = d.id==="_default" ? _this.translator("unit/_default/" + hookType) : d.unit;parent
+                var translated = d.id==="_default" ? _this.translator("unit/_default/" + hookType) : d.unit;
                 hideUnits = !translated;
                 return _this.translator('hints/units') + ': ' + translated||"";
               });
@@ -1329,11 +1329,11 @@ var TreeMenu = Component.extend({
     return this;
   },
 
-  _setModel: function(what, value, markerID) {
+  _setModel: function(what, value, hookID) {
 
     var indicatorsDB = this.model.marker.getConceptprops();
 
-    var mdl = this.model.marker[markerID];
+    var mdl = this.model.marker[hookID];
 
     var obj = {};
 

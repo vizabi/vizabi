@@ -58,7 +58,7 @@ var VIZABI_MODEL = {
           "use": "property",
           "which": "name"
         },
-        "geoshape": {
+        "hook_geoshape": {
           "use": "property",
           "which": "shape_lores_svg"
         }
@@ -69,7 +69,7 @@ var VIZABI_MODEL = {
         "use": "property",
         "which": "name"
       },
-      "parent": {
+      "hook_parent": {
         "use": "property",
         "which": "parent"
       }
