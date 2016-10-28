@@ -158,6 +158,7 @@ var Component = Events.extend({
           _this.model.load().then(function() {
             utils.delay(function() {
               if(timeMdl) {
+                timeMdl.splash = false;
                 timeMdl.trigger('change');
               } else {
                 done();
