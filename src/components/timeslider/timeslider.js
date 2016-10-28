@@ -391,9 +391,9 @@ var TimeSlider = Component.extend({
       });
       _this.model.time
         .set({
-          "startSelected": d3.max([min, new Date(_this.model.time.start)]),
-          "endSelected": d3.min([max, new Date(_this.model.time.end)])
-        }, force);
+          startSelected: d3.max([min, new Date(_this.model.time.start)]),
+          endSelected: d3.min([max, new Date(_this.model.time.end)])
+        }, force, false  /*make change non-persistent for URL and history*/);
     });
   },
 
