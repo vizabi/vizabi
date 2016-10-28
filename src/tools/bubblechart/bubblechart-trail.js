@@ -269,8 +269,8 @@ export default Class.extend({
         _context._labels.updateLabelOnlyPosition(d, null, {'scaledS0': utils.areaToRadius(_context.sScale(segment.valueS))});
       }
 
-      if(!this.nextSibling) return;
-      var next = d3.select(this.nextSibling).datum();
+      if(!segment.next) return;
+      var next = segment.next;
       if(next == null) return;
       if(next.valueY==null || next.valueX==null) return;
         
@@ -474,6 +474,8 @@ export default Class.extend({
             } else {
               var next = d3.select(trail[0][nextIndex]);
               var nextSegment = next.datum();
+              nextSegment.previous = segment;
+              segment.next = nextSegment; 
               var nextTime = nextSegment.t;
               if (_context.time - nextSegment.t < 0) { // time is not equal start of year
                 segment.visibilityChanged = true; // redraw needed next time because line not have full length
@@ -542,6 +544,12 @@ export default Class.extend({
         var previousSegment = previous.datum();
         var nextSegment = next.datum();
         var segment = view.datum();
+        
+        segment.previous = previousSegment;
+        segment.next = nextSegment;
+        previousSegment.next = segment;
+        nextSegment.previous = segment;
+        
         if (!segment.visibilityChanged) {
           addNewIntervals(previousIndex, index, nextIndex);
           resolve();
@@ -688,7 +696,7 @@ export default Class.extend({
           var point = _this.drawingQueue[d[KEY]].splice(Math.random() * _this.drawingQueue[d[KEY]].length, 1).pop();
           addPointBetween(point.first, point.next, point.medium).then(function () {
               if (_this.drawingQueue[d[KEY]].length > 0) {
-                  processPoint();
+                processPoint();
               } else {
                 resolve();
               }
