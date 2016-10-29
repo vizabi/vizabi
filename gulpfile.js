@@ -223,7 +223,7 @@ function getTemplates(cb) {
 //resolve path when finding modules
 function resolvePath(id, importer, options) {
   //if starts with ".", follow strict path
-  if(/^\./.test(id)) return path.resolve(path.dirname(importer), id).replace(/\.js$/, "") + ".js";
+  if(/^\./.test(id)) return path.resolve(path.dirname(importer||""), id).replace(/\.js$/, "") + ".js";
   //else, try to find it
   var importee = id.replace(/\.js$/, "");
   var pat = path.join(config.src,'/**/',importee.replace(/\//g, '/**/')+'.js');
