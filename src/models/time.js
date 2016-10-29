@@ -32,8 +32,10 @@ var TimeModel = Model.extend({
   _defaults: {
     dim: "time",
     value: null,
-    start: null, //mandatory defaults! 
-    end: null, //mandatory defaults!
+    start: null, 
+    end: null,
+    startOrigin: null,
+    endOrigin: null,
     startSelected: null,
     endSelected: null,
     playable: true,
@@ -154,6 +156,10 @@ var TimeModel = Model.extend({
    * Validates the model
    */
   validate: function() {
+    
+    //check if time start and end are not defined but start and end origins are defined
+    if(this.start == null && this.startOrigin) this.set("start", this.startOrigin, null, false);
+    if(this.end == null && this.endOrigin) this.set("start", this.endOrigin, null, false);
 
     //unit has to be one of the available_time_units
     if(!formats[this.unit]) {
@@ -264,8 +270,8 @@ var TimeModel = Model.extend({
    * @returns {Object} time filter
    */
   getFilter: function(firstScreen) {
-    var defaultStart = this.parseToUnit(this._defaults.start, this.unit);
-    var defaultEnd = this.parseToUnit(this._defaults.end, this.unit);
+    var defaultStart = this.parseToUnit(this.startOrigin, this.unit);
+    var defaultEnd = this.parseToUnit(this.endOrigin, this.unit);
       
     var dim = this.getDimension();
     var filter = null;
