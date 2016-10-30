@@ -133,7 +133,7 @@ export default function axisSmart() {
     axis.highlightValueRun = function(g) {
 
       //if viewport is defined and HL value is outside then behave as reset HL
-      if(options.viewportLength && (
+      if(options.viewportLength && highlightValue != "none" && (
         axis.scale()(highlightValue) > options.viewportLength ||
         axis.scale()(highlightValue) < 0
       )) highlightValue = "none";
