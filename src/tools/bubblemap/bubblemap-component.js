@@ -574,6 +574,7 @@ var BubbleMapComponent = Component.extend({
     var _this = this;  
     if(!duration) duration = this.duration;
     if(!reposition) reposition = true;
+    if(!this.entityBubbles) return utils.warn("redrawDataPoints(): no entityBubbles defined. likely a premature call, fix it!");
     this.entityBubbles.each(function(d, index){
       var view = d3.select(this);
 

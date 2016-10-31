@@ -1061,6 +1061,7 @@ updateSize: function (meshLength) {
 
     redrawDataPointsOnlyColors: function () {
         var _this = this;
+        if(!this.mountains) return utils.warn("redrawDataPointsOnlyColors(): no mountains  defined. likely a premature call, fix it!");
         this.mountains.style("fill", function (d) {
             return _this.values.color[d.KEY()]?_this.cScale(_this.values.color[d.KEY()]):"transparent";
         });
