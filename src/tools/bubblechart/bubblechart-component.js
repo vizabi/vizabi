@@ -87,7 +87,6 @@ var BubbleChartComp = Component.extend({
       "change:marker": function(evt, path) {
         // bubble size change is processed separately
         if(!_this._readyOnce) return;
-
         if(path.indexOf("scaleType") > -1) {
           _this.ready();
           return;
@@ -1285,7 +1284,6 @@ var BubbleChartComp = Component.extend({
       });
 
     } // data exists
-
     _this._updateLabel(d, index, valueX, valueY, valueS, valueC, valueL, valueLST, duration, showhide);
   },
 

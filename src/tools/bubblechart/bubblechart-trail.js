@@ -734,6 +734,9 @@ export default Class.extend({
     } else {
       var trailKeys = _generateKeys(d, trail, 50);
       var segments = [];
+      if (trailKeys.length <= 1) {
+        return defer.resolve();
+      }
       _this.delayedIterations[d[KEY]] = [];
       for (var i = 0; i < trailKeys.length - 1; i++) {
         segments.push(generateTrailSegment(trail, trailKeys[i], trailKeys[i + 1], 1));
