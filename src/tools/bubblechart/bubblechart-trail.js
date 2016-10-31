@@ -74,7 +74,9 @@ export default Class.extend({
               key: d[KEY]
             }
           });
-          _this.entityTrails[d[KEY]] = d3.select(this).selectAll("g").data(trailSegmentData);
+          _this.entityTrails[d[KEY]] = d3.select(this).selectAll("g")
+            .data(trailSegmentData)
+            .classed("vzb-invisible", true);
           
           _this.entityTrails[d[KEY]].exit().remove();
           
@@ -550,11 +552,6 @@ export default Class.extend({
         previousSegment.next = segment;
         nextSegment.previous = segment;
         
-        if (!segment.visibilityChanged) {
-          addNewIntervals(previousIndex, index, nextIndex);
-          resolve();
-          return;
-        }
         _context.model.marker.getFrame(segment.t, function(frame) {
           if (!frame) {
             utils.warn("Frame for trail missed: " + segment.t);
@@ -636,7 +633,7 @@ export default Class.extend({
           medium: mediumIndex
         });
       }
-      if (nextIndex - index > 1) {
+      if (nextIndex && nextIndex - index > 1) {
         mediumIndex = getPointBetween(index, nextIndex);
         _this.delayedIterations[d[KEY]].push({
           first: index,
@@ -664,20 +661,21 @@ export default Class.extend({
           max = index;
         } else {
           if (data.t >  minValue && data.t <  maxValue) {
-            if (_context.model.time.timeFormat(data.t) % div == 0) {
+            if (_context.model.time.timeFormat(data.t) % div == 0 || data.next || data.previous) {
               response.push(index);
             }
           }
         }
       });
       response.unshift(min);
-      response.push(max);
-      return response;  
+      if (max > 0) {
+        response.push(max);
+      }
+      return response;
     };
 
     /**
      * recursive iteration for drawing point between points calculated in previous step  
-     * @param points
      */
     var processPointsBetween = function() {
       processPoints().then(function() {
