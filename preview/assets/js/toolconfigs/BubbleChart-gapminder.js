@@ -16,8 +16,8 @@ var VIZABI_MODEL = {
       "dim": "tag"
     },
     "time": {
-      "start": "1800",
-      "end": "2015",
+      "startOrigin": "1800",
+      "endOrigin": "2015",
       "value": "2015"
     },
     "marker": {

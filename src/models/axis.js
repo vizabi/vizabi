@@ -68,8 +68,8 @@ var AxisModel = Hook.extend({
       if(this.scaleType == "time") {
         
         var timeMdl = this._space.time;
-        var limits = timeMdl.beyondSplash ? 
-            {min: timeMdl.beyondSplash.start, max: timeMdl.beyondSplash.end}
+        var limits = timeMdl.splash ? 
+            {min: timeMdl.parseToUnit(timeMdl.startOrigin), max: timeMdl.parseToUnit(timeMdl.endOrigin)}
             :
             {min: timeMdl.start, max: timeMdl.end};
         
@@ -106,8 +106,8 @@ var AxisModel = Hook.extend({
     if(this.scaleType == "time") {
       
       var timeMdl = this._space.time;
-      var limits = timeMdl.beyondSplash ? 
-          {min: timeMdl.beyondSplash.start, max: timeMdl.beyondSplash.end}
+      var limits = timeMdl.splash ? 
+          {min: timeMdl.parseToUnit(timeMdl.startOrigin), max: timeMdl.parseToUnit(timeMdl.endOrigin)}
           :
           {min: timeMdl.start, max: timeMdl.end};
       

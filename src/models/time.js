@@ -32,8 +32,10 @@ var TimeModel = Model.extend({
   _defaults: {
     dim: "time",
     value: null,
-    start: null, //mandatory defaults! 
-    end: null, //mandatory defaults!
+    start: null, 
+    end: null,
+    startOrigin: null,
+    endOrigin: null,
     startSelected: null,
     endSelected: null,
     playable: true,
@@ -100,7 +102,7 @@ var TimeModel = Model.extend({
       var attr = date_attr[i];
       if(!utils.isDate(this[attr])) {
         var date = this.parseToUnit(this[attr], this.unit);
-        this.set(attr, date);
+        this.set(attr, date, null, false);
       }
     }
   },
@@ -154,6 +156,10 @@ var TimeModel = Model.extend({
    * Validates the model
    */
   validate: function() {
+    
+    //check if time start and end are not defined but start and end origins are defined
+    if(this.start == null && this.startOrigin) this.set("start", this.startOrigin, null, false);
+    if(this.end == null && this.endOrigin) this.set("end", this.endOrigin, null, false);
 
     //unit has to be one of the available_time_units
     if(!formats[this.unit]) {
@@ -173,7 +179,7 @@ var TimeModel = Model.extend({
 
     //end has to be >= than start
     if(this.end < this.start && this.start != null) {
-      this.end = new Date(this.start);
+      this.set("end", new Date(this.start), null, false);
     }
     
     if(this.value < this.startSelected && this.startSelected != null) {
@@ -260,17 +266,17 @@ var TimeModel = Model.extend({
 
   /**
    * Gets filter for time
-   * @param {Boolean} firstScreen get filter for current year only
+   * @param {Boolean} splash: get filter for current year only
    * @returns {Object} time filter
    */
-  getFilter: function(firstScreen) {
-    var defaultStart = this.parseToUnit(this._defaults.start, this.unit);
-    var defaultEnd = this.parseToUnit(this._defaults.end, this.unit);
+  getFilter: function(splash) {
+    var defaultStart = this.parseToUnit(this.startOrigin, this.unit);
+    var defaultEnd = this.parseToUnit(this.endOrigin, this.unit);
       
     var dim = this.getDimension();
     var filter = null;
 
-    if (firstScreen) {
+    if (splash) {
       if (this.value != null) {
         filter = {};
         filter[dim] = this.timeFormat(this.value);
