@@ -163,6 +163,9 @@ export default Class.extend({
     selections.forEach(function(d) {
       if (!_this.actionsQueue[d[KEY]]) _this.actionsQueue[d[KEY]] = [];
       _this.actionsQueue[d[KEY]] = [];
+      _this.drawingQueue[d[KEY]] = [];
+      _this.delayedIterations[d[KEY]] = [];
+
     });
   },
 
@@ -547,13 +550,12 @@ export default Class.extend({
         var nextSegment = next.datum();
         var segment = view.datum();
         
-        segment.previous = previousSegment;
-        segment.next = nextSegment;
-        previousSegment.next = segment;
-        nextSegment.previous = segment;
         
         _context.model.marker.getFrame(segment.t, function(frame) {
-          if (!frame) {
+          if (!frame || 
+            (typeof frame.axis_x == "undefined") ||  frame.axis_x[d[KEY]]==null ||
+            (typeof frame.axis_y == "undefined") ||  frame.axis_y[d[KEY]]==null)
+          {
             utils.warn("Frame for trail missed: " + segment.t);
             return resolve();
           }
@@ -561,6 +563,11 @@ export default Class.extend({
           segment.valueX = frame.axis_x[d[KEY]];
           segment.valueS = frame.size[d[KEY]];
           segment.valueC = frame.color[d[KEY]];
+
+          segment.previous = previousSegment;
+          segment.next = nextSegment;
+          previousSegment.next = segment;
+          nextSegment.previous = segment;
 
           if(segment.valueY==null || segment.valueX==null || segment.valueS==null) {
             utils.warn("Data for trail point missed: " + segment.t);
