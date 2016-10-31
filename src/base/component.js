@@ -129,7 +129,6 @@ var Component = Events.extend({
 
           //TODO: cleanup hardcoded splash screen
           timeMdl.splash = true;
-          timeMdl.beyondSplash = utils.clone(timeMdl.getPlainObject(), ['start', 'end']);
 
           _this.model.load({
             splashScreen: true
@@ -138,10 +137,6 @@ var Component = Events.extend({
             utils.delay(function() {
               //force loading because we're restoring time.
               _this.model.setLoading('restore_orig_time');
-              //restore because validation kills the original start/end
-              timeMdl.start = timeMdl.beyondSplash.start;
-              timeMdl.end = timeMdl.beyondSplash.end;
-              delete timeMdl.beyondSplash;
 
               _this.model.load().then(function() {
                 _this.model.setLoadingDone('restore_orig_time');
