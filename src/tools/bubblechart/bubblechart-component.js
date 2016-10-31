@@ -1294,7 +1294,7 @@ var BubbleChartComp = Component.extend({
     // only for selected entities
     if(_this.model.entities.isSelected(d)) {
       
-      var cache = null;
+      var cache = {};
 
       var select = utils.find(_this.model.entities.select, function(f) {
         return f[KEY] == d[KEY]
@@ -1304,7 +1304,6 @@ var BubbleChartComp = Component.extend({
       if(!this.model.ui.chart.trails || select.trailStartTime == time || select.trailStartTime == null) {
         if(this.model.ui.chart.trails && select.trailStartTime == null) select.trailStartTime = time; // need only when trailStartTime == null
 
-        var cache = {};
         cache.labelX0 = valueX;
         cache.labelY0 = valueY;
         cache.scaledC0 = valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH,
