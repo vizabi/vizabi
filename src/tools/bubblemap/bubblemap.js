@@ -90,7 +90,7 @@ var BubbleMap = Tool.extend('BubbleMap', {
         doubtDomain: [],
         doubtRange: []
       },
-      presentation: true
+      presentation: false
     }
   }
 });

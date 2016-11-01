@@ -107,6 +107,7 @@ var TimeSlider = Component.extend({
             _this.changeLimits();
           }
           _this._optionClasses();
+          _this._setHandle(_this.model.time.playing);
         }
       },
       'change:time.value': function(evt, path) {

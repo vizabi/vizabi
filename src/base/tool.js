@@ -160,13 +160,12 @@ var Tool = Component.extend({
           return utils.warn("checkTimeLimits(): min-max look wrong: " + tLimits.min + " " + tLimits.max + ". Expecting Date objects");
 
       // change start and end (but keep startOrigin and endOrigin for furhter requests)
-      // change is not persistent if it's splashscreen change
       var newTime = {}
-      if(time.start - tLimits.min != 0) newTime['start'] = d3.max([tLimits.min, time.parseToUnit(time.getDefaults().start)]);
-      if(time.end - tLimits.max != 0) newTime['end'] = d3.min([tLimits.max, time.parseToUnit(time.getDefaults().end)]);
-      if(time.value == null) newTime['value'] = new Date(); // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
+      if(time.start - tLimits.min != 0) newTime['start'] = d3.max([tLimits.min, time.parseToUnit(time.startOrigin)]);
+      if(time.end - tLimits.max != 0) newTime['end'] = d3.min([tLimits.max, time.parseToUnit(time.endOrigin)]);
+      if(time.value == null) newTime['value'] = time.parseToUnit(time.format(new Date())); // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
 
-      time.set(newTime, false, !time.splash);
+      time.set(newTime, false, false);
     }
       
     //force time validation because time.value might now fall outside of start-end
