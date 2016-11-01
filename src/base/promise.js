@@ -172,7 +172,6 @@ function resolvePromise(promise1, promise2) {
   if('rejected' === status) {
     promise1.reject(promise2.reason);
   }
-  return promise2;
 }
 
 function resolveThen(promise, thanable) {
