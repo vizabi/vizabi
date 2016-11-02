@@ -13,7 +13,7 @@ var ModelLeaf = EventSource.extend({
   _parent: null,
   _persistent: true,
 
-  init: function(name, value, parent, binds) {
+  init: function(name, value, parent, binds, persistent) {
 
     // getter and setter for the value
     Object.defineProperty(this, 'value', {
@@ -28,7 +28,7 @@ var ModelLeaf = EventSource.extend({
 
     this._name = name;
     this._parent = parent;
-    this.value = value;
+    this.set(value, false, persistent);
     this.on(binds); // after super so there is an .events object
   },
 
@@ -189,7 +189,7 @@ var Model = EventSource.extend({
         }
       } else {
         // data type has changed or is new, so initializing the model/leaf
-        this._data[attribute] = initSubmodel(attribute, val, this);
+        this._data[attribute] = initSubmodel(attribute, val, this, persistent);
         bindSetterGetter(this, attribute);
       }
     }
@@ -723,9 +723,10 @@ function bindSetterGetter(model, prop) {
  * @param {String} attr Name of submodel
  * @param {Object} val Initial values
  * @param {Object} ctx context / parent model
+ * @param {Boolean} persistent true if the change is a persistent change 
  * @returns {Object} model new submodel
  */
-function initSubmodel(attr, val, ctx) {
+function initSubmodel(attr, val, ctx, persistent) {
 
   var submodel;
 
@@ -736,7 +737,7 @@ function initSubmodel(attr, val, ctx) {
       //the submodel has changed (multiple times)
       'change': onChange
     }
-    submodel = new ModelLeaf(attr, val, ctx, binds);
+    submodel = new ModelLeaf(attr, val, ctx, binds, persistent);
   }
 
   // if value is an object -> model
