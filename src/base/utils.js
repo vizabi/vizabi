@@ -1400,6 +1400,10 @@ export var debounce = function(func, wait, immediate) {
 };
 
 export var isTouchDevice = function() {
+  //'ontouchstart' is not reliable in Google Chrome #2116, but Chrome has this firesTouchEvents flag
+  if(((d3.event||{}).sourceCapabilities||{}).firesTouchEvents != null ) {
+    return d3.event.sourceCapabilities.firesTouchEvents;
+  }
   return !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
 };
 
