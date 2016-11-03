@@ -63,7 +63,7 @@ var VIZABI_MODEL = {
           use: "property",
           which: "rank"
         },
-        "hook_geoshape: {
+        "hook_geoshape": {
           use: "property",
           which: "shape_lores_svg"
         }
