@@ -323,31 +323,34 @@ var Model = EventSource.extend({
    * ==========================
    */
 
+   // normal model is never loading 
+  _isLoading: function() {
+    return false;
+  },
+
   /**
    * checks whether this model is loading anything
    * @param {String} optional process id (to check only one)
    * @returns {Boolean} is it loading?
    */
-  isLoading: function(p_id) {
-    if((this.isHook() || this._name == 'language') && (!this._loadedOnce || this._loadCall)) {
+  isLoading: function() {
+    if(this._isLoading())
       return true;
-    }
-    if(p_id) {
-      return this._loading.indexOf(p_id) !== -1;
-    } //if loading something
-    else if(this._loading.length > 0) {
+
+    //if loading something
+    if(this._loading.length > 0)
       return true;
-    } //if not loading anything, check submodels
-    else {
-      var submodels = this.getSubmodels();
-      var i;
-      for(i = 0; i < submodels.length; i += 1) {
-        if(submodels[i].isLoading()) {
-          return true;
-        }
+
+    //if not loading anything, check submodels
+    var submodels = this.getSubmodels();
+    var i;
+    for(i = 0; i < submodels.length; i += 1) {
+      if(submodels[i].isLoading()) {
+        return true;
       }
-      return false;
     }
+
+    return false;
   },
 
   /**
