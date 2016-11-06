@@ -70,7 +70,7 @@ var ColorModel = Hook.extend({
     this._hasDefaultColor = false;
 
     this.on('hook_change', function() {
-      if(_this._loadedOnce) return;
+      if(_this._readyOnce) return;
       
       if(_this.palette && Object.keys(_this.palette._data).length!==0) {
         var defaultPalette = _this.getDefaultPalette();

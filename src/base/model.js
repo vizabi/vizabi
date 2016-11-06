@@ -91,8 +91,7 @@ var Model = EventSource.extend({
     this._name = name;
     this._ready = false;
     this._readyOnce = false;
-    //has this model ever been ready?
-    this._loadedOnce = false;
+
     this._loading = [];
     //array of processes that are loading
     this._intervals = getIntervals(this);
@@ -329,25 +328,28 @@ var Model = EventSource.extend({
    * @returns {Boolean} is it loading?
    */
   isLoading: function(p_id) {
-    if((this.isHook() || this._name == 'language') && (!this._loadedOnce || this._loadCall)) {
+    
+    if (this._loadCall)
       return true;
-    }
+
     if(p_id) {
       return this._loading.indexOf(p_id) !== -1;
-    } //if loading something
-    else if(this._loading.length > 0) {
+    } 
+
+    //if loading something
+    if(this._loading.length > 0) {
       return true;
-    } //if not loading anything, check submodels
-    else {
-      var submodels = this.getSubmodels();
-      var i;
-      for(i = 0; i < submodels.length; i += 1) {
-        if(submodels[i].isLoading()) {
-          return true;
-        }
+    } 
+
+    //if not loading anything, check submodels
+    var submodels = this.getSubmodels();
+    var i;
+    for(i = 0; i < submodels.length; i += 1) {
+      if(submodels[i].isLoading()) {
+        return true;
       }
-      return false;
     }
+    return false;
   },
 
   /**
@@ -446,8 +448,6 @@ var Model = EventSource.extend({
 
     this.validate();
     utils.timeStamp('Vizabi Model: Model loaded: ' + this.name + '(' + this._id + ')');
-    //end this load call
-    this._loadedOnce = true;
 
     //we need to defer to make sure all other submodels
     //have a chance to call loading for the second time
