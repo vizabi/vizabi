@@ -1,0 +1,4 @@
+files:
+  - 
+    source: /.data/translation/en.json
+    translation: /.data/translation/%locale%.json
