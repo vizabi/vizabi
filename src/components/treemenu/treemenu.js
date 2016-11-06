@@ -514,16 +514,6 @@ var TreeMenu = Component.extend({
     this._tree = input;
     return this;
   },
-  lang: function(input) {
-    if(!arguments.length) return this._lang;
-    this._lang = input;
-    return this;
-  },
-  langStrings: function(input) {
-    if(!arguments.length) return this._langStrings;
-    this._langStrings = input;
-    return this;
-  },
   callback: function(input) {
     if(!arguments.length) return this._callback;
     this._callback = input;
@@ -570,9 +560,9 @@ var TreeMenu = Component.extend({
       name: "time",
       type: "time"
     }, {
-        name: "language",
-        type: "language"
-      }];
+      name: "language",
+      type: "language"
+    }];
 
     this.context = context;
     // object for manipulation with menu representation level
@@ -580,9 +570,6 @@ var TreeMenu = Component.extend({
     this.model_binds = {
       "change:marker": function(evt, path) {
         if(path.indexOf(_this._markerID + '.which')==-1 && path.indexOf(_this._markerID + '.scaleType')==-1) return;
-        _this.updateView();
-      },
-      "change:language.strings": function(evt) {
         _this.updateView();
       }
     };
@@ -1011,13 +998,12 @@ var TreeMenu = Component.extend({
 
       //translation integration
       var translationMatch = function(value, data, i) {
-        var languageId = _this.model.language.id;
 
         var translate = data[i].name;
-        if(!translate && _this.langStrings()) { 
-          translate = _this.langStrings()[languageId]['indicator' + '/' + data[i][_this.OPTIONS.SEARCH_PROPERTY] + '/' + _this.model.marker[_this._markerID]._type] ||
-          _this.langStrings()[languageId]['indicator/' + data[i][_this.OPTIONS.SEARCH_PROPERTY]];
-        };
+        if(!translate && _this.translator) {
+          var t1 = _this.translator('indicator' + '/' + data[i][_this.OPTIONS.SEARCH_PROPERTY] + '/' + _this.model.marker[_this._markerID]._type);
+          translate =  t1 || _this.translator('indicator/' + data[i][_this.OPTIONS.SEARCH_PROPERTY]);
+        }
         return translate && translate.toLowerCase().indexOf(value.toLowerCase()) >= 0;
       };
 
@@ -1302,7 +1288,6 @@ var TreeMenu = Component.extend({
 
   updateView: function() {
     var _this = this;
-    var languageID = _this.model.language.id;
 
     if(!this._markerID) return;
 
@@ -1313,13 +1298,8 @@ var TreeMenu = Component.extend({
     this.wrapperOuter.classed(css.alignXl, this._alignX === "left");
     this.wrapperOuter.classed(css.alignXr, this._alignX === "right");
 
-
-    var strings = this._langStrings ? this._langStrings : {};
-    strings[languageID] = _this.model.language.strings[languageID];
-
     var setModel = this._setModel.bind(this);
-    this.langStrings(strings)
-      .lang(languageID)
+    this
       .callback(setModel)
       .tree(this.indicatorsTree)
       .redraw();

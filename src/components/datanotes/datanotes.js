@@ -29,7 +29,7 @@ var DataNotes = Component.extend({
     this.context = context;
 
     this.model_binds = {
-      "change:language.strings": function(evt) {
+      "translate:language": function(evt) {
         _this.ready();
       }
     }

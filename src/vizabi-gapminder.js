@@ -79,54 +79,19 @@ CartogramComponent.define("preload", function(done) {
 //preloading concept properties for all charts
 Tool.define("preload", function(promise) {
 
-  var _this = this;
-
-  //TODO: concurrent
-  //load language first
-  this.preloadLanguage().then(function() {
-    //then concept properties
-    
-    if (!_this.model.data || _this.model.data.noConceptprops) {
-      promise.resolve();
-      return;
-    }
-    
-    var reader = _this.model.data.getPlainObject();
-    reader.parsers = [];
-    
-    _this.model.getDataManager().loadConceptProps(reader, _this.model.language.id, function(concepts) {
-
-      promise.resolve();
-
-    });
-  });
-
-
-});
-
-Tool.define("preloadLanguage", function() {
-  var _this = this;
-  var promise = new Promise();
-
-  var langModel = this.model.language;
-  
-  // quit if no language model is set (go translationless)
-  if(!langModel) return promise.resolve();
-  
-  if(globals.ext_resources.translationPath) {
-    // if a path to external tranlation file is provided, extend the default strings with the ones from that file
-    d3.json(globals.ext_resources.translationPath + langModel.id + ".json", function(receivedStrings) {
-      var knownStrings = {};
-      if(langModel.strings[langModel.id]) knownStrings = langModel.strings[langModel.id].getPlainObject()
-      langModel.strings[langModel.id] = utils.extend(knownStrings, receivedStrings);
-      _this.model.language.strings.trigger("change");
-      promise.resolve();
-    });
-  } else {
-    promise = promise.resolve();
+  if (!this.model.data || this.model.data.noConceptprops) {
+    promise.resolve();
+    return;
   }
+  
+  var reader = this.model.data.getPlainObject();
+  reader.parsers = [];
+  
+  this.model.getDataManager().loadConceptProps(reader, this.model.language.id, function(concepts) {
 
-  return promise;
+    promise.resolve();
+
+  });
 
 });
 

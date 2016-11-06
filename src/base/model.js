@@ -203,7 +203,7 @@ var Model = EventSource.extend({
 
     if(!setting || force) {
       this._setting = false;
-      if(!this.isHook()) {
+      if(!this.isHook() && !this.isLoading()) {
         this.setReady();
       }
     }
@@ -333,7 +333,7 @@ var Model = EventSource.extend({
    * @returns {Boolean} is it loading?
    */
   isLoading: function(p_id) {
-    if(this.isHook() && (!this._loadedOnce || this._loadCall)) {
+    if((this.isHook() || this._name == 'language') && (!this._loadedOnce || this._loadCall)) {
       return true;
     }
     if(p_id) {
@@ -462,6 +462,8 @@ var Model = EventSource.extend({
     //we need to defer to make sure all other submodels
     //have a chance to call loading for the second time
     this._loadCall = false;
+    this.setTreeFreezer(false);
+
     utils.defer(
       function() { _this.setReady(); }
     );    

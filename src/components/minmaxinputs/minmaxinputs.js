@@ -40,7 +40,7 @@ var MinMaxInputs = Component.extend({
         if(!config.markerID) utils.warn("minmaxinputs.js complains on 'markerID' property: " + config.markerID);
 
         this.model_binds = {};
-        this.model_binds["change:language.strings"] = function(evt) {
+        this.model_binds["translate:language"] = function(evt) {
             _this.updateView();
         };
         this.model_binds["change:marker." + this.markerID] = function(evt) {

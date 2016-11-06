@@ -34,13 +34,6 @@ var ToolModel = Model.extend({
     //constructor is similar to model
     this.default_model = defaults;
     this._super(name, values, null, binds);
-    // change language
-    if(values.language) {
-      var _this = this;
-      this.on('change:language.id', function() {
-        _this.trigger('translate');
-      });
-    }
   }
 });
 //tool
@@ -104,14 +97,8 @@ var Tool = Component.extend({
         _this.layout.updatePresentation();
         _this.trigger('resize');
       },
-      'translate': function(evt, val) {
-        if(_this._ready) {
-          Promise.all([_this.preloadLanguage(), _this.model.load()])
-            .then(function() {
-              _this.model.validate();
-              _this.translateStrings();
-            });
-        }
+      'translate:language': function() {
+        _this.translateStrings();
       },
       'load_start': function() {
         _this.beforeLoading();

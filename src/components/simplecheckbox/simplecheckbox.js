@@ -24,7 +24,7 @@ export default Component.extend({
       "change:mdl": function(evt) {
         _this.updateView();
       },
-      "change:language.strings": function(evt) {
+      "translate:language": function(evt) {
         _this.updateView();
       }
     };

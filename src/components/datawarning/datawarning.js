@@ -20,7 +20,7 @@ var DataWarning = Component.extend({
     this.context = context;
 
     this.model_binds = {
-      "change:language.strings": function(evt) {
+      "translate:language": function(evt) {
         if(!_this._ready) return;
         _this.redraw();
       }

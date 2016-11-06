@@ -49,7 +49,7 @@ var Find = Dialog.extend({
           _this.redrawDataPoints(values);
         });
       },
-      "change:language.strings": function() {
+      "translate:language": function() {
         _this.translator = _this.model.language.getTFunction();
         _this.input_search.attr("placeholder", _this.translator("placeholder/search") + "...");
       }
