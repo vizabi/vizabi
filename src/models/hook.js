@@ -107,7 +107,6 @@ var Hook = Model.extend({
     var _this = this;
     var evts = {
       'load_start': function() {
-        _this.setLoading('_hook_data');
         EventSource.freezeAll([
           'load_start',
           'resize'
@@ -136,7 +135,6 @@ var Hook = Model.extend({
     utils.timeStamp('Vizabi Model: Data loaded: ' + this._id);
     this.scale = null; // needed for axis/scale resetting to new data
     EventSource.unfreezeAll();
-    this.setLoadingDone('_hook_data');
   },
 
   loadError: function() {
