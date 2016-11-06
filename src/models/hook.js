@@ -127,6 +127,10 @@ var Hook = Model.extend({
     
   },
 
+  _isLoading: function() {
+    return (!this._loadedOnce || this._loadCall);
+  },
+
   /**
    * executes after data has actually been loaded
    */

@@ -69,6 +69,10 @@ var LanguageModel = Model.extend({
     }
   },
 
+  _isLoading: function() {
+    return (!this._loadedOnce || this._loadCall);
+  },
+
   loadData: function() {
 
     var _this = this;
