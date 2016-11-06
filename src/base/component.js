@@ -277,11 +277,7 @@ var Component = Events.extend({
     var comp;
     //use the same name for collection
     this.components = [];
-    //external dependencies let this model know what it
-    //has to wait for
-    if(this.model) {
-      this.model.resetDeps();
-    }
+
     // Loops through components, loading them.
     utils.forEach(this._components_config, function(c) {
       if(!c.component) {

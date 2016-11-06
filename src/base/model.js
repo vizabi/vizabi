@@ -96,11 +96,7 @@ var Model = EventSource.extend({
     this._loading = [];
     //array of processes that are loading
     this._intervals = getIntervals(this);
-    //holds the list of dependencies for virtual models
-    this._deps = {
-      parent: [],
-      children: []
-    };
+
     //will the model be hooked to data?
     this._space = {};
     this._spaceDims = {};
@@ -350,12 +346,6 @@ var Model = EventSource.extend({
           return true;
         }
       }
-      for(i = 0; i < this._deps.children.length; i += 1) {
-        var d = this._deps.children[i];
-        if(d.isLoading() || !d._ready) {
-          return true;
-        }
-      }
       return false;
     }
   },
@@ -482,22 +472,6 @@ var Model = EventSource.extend({
       s.afterPreload();
     });
   },
-
-  /**
-   * removes all external dependency references
-   */
-  resetDeps: function() {
-    this._deps.children = [];
-  },
-
-  /**
-   * add external dependency ref to this model
-   */
-  addDep: function(child) {
-    this._deps.children.push(child);
-    child._deps.parent.push(this);
-  },
-
 
   /* ===============================
    * Hooking model to external data
