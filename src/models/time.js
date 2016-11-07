@@ -1,5 +1,5 @@
 import * as utils from 'base/utils';
-import Model from 'base/model';
+import DataConnected from 'models/dataconnected';
 
 /*!
  * VIZABI Time Model
@@ -24,7 +24,7 @@ var formats = {
   'quarter': quarterFormat() // %Yq%Q d3 does not support quarters
 };
 
-var TimeModel = Model.extend({
+var TimeModel = DataConnected.extend({
 
   /**
    * Default values for this model
@@ -50,6 +50,8 @@ var TimeModel = Model.extend({
     immediatePlay: false,
     record: false
   },
+
+  dataConnectedChildren: ['startOrigin', 'endOrigin', 'dim'],
 
   /**
    * Initializes the language model.

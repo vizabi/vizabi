@@ -1,11 +1,11 @@
 import * as utils from 'base/utils';
-import Model from 'base/model';
+import DataConnected from 'models/dataconnected';
 
 /*!
  * VIZABI Entities Model
  */
 
-var EntitiesModel = Model.extend({
+var EntitiesModel = DataConnected.extend({
 
   /**
    * Default values for this model
@@ -20,7 +20,7 @@ var EntitiesModel = Model.extend({
   },
 
   objectLeafs: ['show'],
-  dataChildren: ['show'],
+  dataConnectedChildren: ['show'],
 
   /**
    * Initializes the entities model.
@@ -39,30 +39,6 @@ var EntitiesModel = Model.extend({
     this._multiple = true;
 
     this._super(name, values, parent, bind);
-  },
-
-  checkDataChanges: function(attributes) {
-    var _this = this;
-
-    if (!attributes || !this.dataChildren)
-      return
-
-    if (!utils.isArray(attributes) && utils.isObject(attributes)) 
-      attributes = Object.keys(attributes);
-
-    if (attributes.length == 0 || this.dataChildren.length == 0)
-      return
-
-    var changedDataChildren = attributes.filter(checkDataChildren);
-
-    if (changedDataChildren.length > 0) {
-      this.trigger('dataChange');
-      this.load();
-    }
-
-    function checkDataChildren(attribute) { 
-      return _this.dataChildren.indexOf(attribute) !== -1 
-    }
   },
 
   /**

@@ -1,8 +1,8 @@
 import * as utils from 'base/utils';
-import Model from 'base/model';
+import DataConnected from 'models/dataconnected';
 import Promise from 'promise';
 
-var LanguageModel = Model.extend({
+var LanguageModel = DataConnected.extend({
 
   /**
    * Default values for this model
@@ -12,7 +12,7 @@ var LanguageModel = Model.extend({
     filePath: ""
   },
 
-  dataChildren: ["id"],
+  dataConnectedChildren: ["id"],
   strings: {},
 
   /**
@@ -43,30 +43,6 @@ var LanguageModel = Model.extend({
     });
 
     return promise;
-  },
-
-  checkDataChanges: function(attributes) {
-    var _this = this;
-
-    if (!attributes || !this.dataChildren)
-      return
-
-    if (!utils.isArray(attributes) && utils.isObject(attributes)) 
-      attributes = Object.keys(attributes);
-
-    if (attributes.length == 0 || this.dataChildren.length == 0)
-      return
-
-    var changedDataChildren = attributes.filter(checkDataChildren);
-
-    if (changedDataChildren.length > 0) {
-      this.trigger('dataChange');
-      this.load();
-    }
-
-    function checkDataChildren(attribute) { 
-      return _this.dataChildren.indexOf(attribute) !== -1 
-    }
   },
 
   _isLoading: function() {
