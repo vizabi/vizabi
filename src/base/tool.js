@@ -22,19 +22,28 @@ var ToolModel = Model.extend({
    * @param {Object} binds contains initial bindings for the model
    * @param {Function|Array} validade validate rules
    */
-  init: function(name, values, defaults, binds, validate) {
+  init: function(name, external_model, default_model, binds, validate) {
     this._id = utils.uniqueId('tm');
     this._type = 'tool';
+
     //generate validation function
     this.validate = generateValidate(this, validate);
-    //default submodels
-    values = values || {};
-    defaults = defaults || {};
-    values = defaultModel(values, defaults);
+
+    // defaults are taken from tool default model
+    this._defaults = default_model;
+
     //constructor is similar to model
-    this.default_model = defaults;
-    this._super(name, values, null, binds);
-  }
+    this._super(name, external_model, null, binds);
+  },
+
+  /**
+   * @return {object} Defaults of tool model and children
+   * Tool defaults overwrite other models' default
+   */
+  getDefaults: function() {
+    return utils.deepExtend({}, this.getSubmodelDefaults(), this._defaults);
+  },
+
 });
 //tool
 var Tool = Component.extend({
@@ -114,9 +123,6 @@ var Tool = Component.extend({
 
     this.model = new ToolModel(this.name, external_model, this.default_model, callbacks, validate);
 
-    // default model is the model set in the tool
-    this.default_model = utils.deepClone(this.default_model) || {};
-
     this.ui = this.model.ui || {};
 
     this.layout = new Layout(this.ui);
@@ -158,13 +164,6 @@ var Tool = Component.extend({
     //force time validation because time.value might now fall outside of start-end
     time.validate(); 
   },
-    
-  getDefaultModel: function() {
-    var defaultToolModel = this.default_model;
-    var defaultsFromModels = this.model.getDefaults();
-    var result = utils.deepExtend({}, defaultsFromModels, defaultToolModel);
-    return result;
-  },
 
   getPersistentModel: function() {
     //try to find functions in properties of model. 
@@ -187,7 +186,7 @@ var Tool = Component.extend({
   },
 
   getPersistentMinimalModel: function(diffModel) {
-    var defaultModel = this.getDefaultModel();
+    var defaultModel = this.model.getDefaults();
     var currentPersistentModel = this.getPersistentModel();
     var redundantModel = Vizabi.utils.deepExtend(defaultModel, diffModel);
     return Vizabi.utils.diffObject(currentPersistentModel, redundantModel);
@@ -324,103 +323,5 @@ function generateValidate(m, validate) {
 
   return validate_func;
 }
-
-/* ==========================
- * Default model methods
- * ==========================
- */
-
-/**
- * Generates a valid state based on default model
- */
-function defaultModel(values, defaults) {
-  var keys = Object.keys(defaults);
-  var size = keys.length;
-  var field;
-  var blueprint;
-  var original;
-  var type;
-  for(var i = 0; i < size; i += 1) {
-    field = keys[i];
-    if(field === '_defs_') {
-      continue;
-    }
-    blueprint = defaults[field];
-    original = values[field];
-    type = typeof blueprint;
-    if(type === 'object') {
-      type = utils.isPlainObject(blueprint) && blueprint._defs_ ? 'object' : utils.isArray(blueprint) ? 'array' :
-        'model';
-    }
-    if(typeof original === 'undefined') {
-      if(type !== 'object' && type !== 'model') {
-        values[field] = blueprint;
-      } else {
-        values[field] = defaultModel({}, blueprint);
-      }
-    }
-    original = values[field];
-    if(type === 'number' && isNaN(original)) {
-      values[field] = 0;
-    } else if(type === 'string' && typeof original !== 'string') {
-      values[field] = '';
-    } else if(type === 'array' && !utils.isArray(original)) {
-      values[field] = [];
-    } else if(type === 'model') {
-      if(!utils.isObject(original)) {
-        values[field] = {};
-      }
-      values[field] = defaultModel(values[field], blueprint);
-    } else if(type === 'object') {
-      if(!utils.isObject(original) || Object.keys(original).length === 0) {
-        original = false; //will be overwritten
-      }
-      if(!utils.isObject(blueprint._defs_)) {
-        blueprint._defs_ = {};
-      }
-      values[field] = original || blueprint._defs_;
-    }
-  }
-  return values;
-}
-
-/**
- * Outputs the difference between two objects
- * @param {Object} obj prevailing object
- * @param {Object} compare comparison object
- * @returns {Object} resulting diff object
- */
-function changedObj(obj, compare) {
-  var acc = {};
-  utils.forEach(obj, function(val, name) {
-    if(!(name in compare)) {
-      acc[name] = val;
-      return true;
-    }
-    //if the same, no need to check deeper
-    if(JSON.stringify(val) === JSON.stringify(compare[name])) return true;
-    else if(utils.isArray(val)) {
-      acc[name] = val;
-    } else if(utils.isObject(val)) {
-      acc[name] = changedObj(val, compare[name]);
-    } else if(utils.isDate(compare[name])) {
-      var comp1 = val.toString();
-      //TODO: workaround for years only
-      var comp2 = compare[name].getUTCFullYear().toString();
-      if(comp1 !== comp2) {
-        acc[name] = val;
-      }
-    } else {
-      acc[name] = val;
-    }
-  });
-  return acc;
-}
-
-//utility function to check if a component is a tool
-//TODO: Move to utils?
-Tool.isTool = function(c) {
-  return c._id && c._id[0] === 't';
-};
 
 export default Tool;

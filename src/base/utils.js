@@ -428,8 +428,10 @@ export var deepExtend = function(/*obj_1, [obj_2], [obj_N]*/) {
       /**
        * if new value isn't object then just overwrite by new value
        * instead of extending.
+       * 2016-11-07 / Jasper: Added specific check for val instanceof Model for merging defaults & values of ComponentModels
+       * 2016-11-07 / Jasper: Hack because importing Model doesn't work: instead check for val._data
        */
-      } else if (typeof val !== 'object' || val === null) {
+      } else if (typeof val !== 'object' || val === null || val._data) {
         target[key] = val;
         return;
 

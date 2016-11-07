@@ -57,11 +57,6 @@ var ColorModel = Hook.extend({
   init: function(name, values, parent, bind) {
     var _this = this;
     this._type = "color";
-    //TODO: add defaults extend to super
-    var defaults = utils.deepClone(this._defaults);
-    values = utils.extend(defaults, values);
-
-    this._original_palette = values.palette;
 
     this._super(name, values, parent, bind);
 

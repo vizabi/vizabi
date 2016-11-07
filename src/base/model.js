@@ -72,7 +72,7 @@ var ModelLeaf = EventSource.extend({
 
 var Model = EventSource.extend({
 
-
+  _defaults: {},
   objectLeafs: [],
 
   /**
@@ -106,10 +106,11 @@ var Model = EventSource.extend({
     //stores limit values
     this._super();
 
-    //initial values
-    if(values) {
-      this.set(values);
-    }
+    // initial values
+    // add defaults to initialValues
+    var initialValues = utils.deepExtend({}, this._defaults, values)
+    this.set(initialValues);
+
     // bind initial events
     // bind after setting, so no events are fired by setting initial values
     if(bind) {
@@ -600,9 +601,17 @@ var Model = EventSource.extend({
     return _DATAMANAGER.get(this._dataId, 'limits', attr);
   },
 
+  /**
+   * @return {Object} defaults of this model, and when available overwritten by submodel defaults
+   */
   getDefaults: function() {
-    // if defaults are set, does not care about defaults from children
-    if(this._defaults) return this._defaults;
+    return utils.deepExtend({}, this._defaults, this.getSubmodelDefaults());
+  },
+
+  /**
+   * @return {Object} All defaults coming from submodels
+   */
+  getSubmodelDefaults: function() {
     var d = {};
     utils.forEach(this.getSubmodels(true), function(model, name) {
       d[name] = model.getDefaults();
@@ -610,26 +619,10 @@ var Model = EventSource.extend({
     return d;
   },
 
-  getToolDefaults: function() {
-    var isToolModel = false;
-    var model = this;
-    var path = [];
-    var model_defaults = {};
-    while (!isToolModel) {
-      if (model._type == 'tool' || !model._parent) {
-        isToolModel = true;
-        model_defaults = model.default_model;
-      } else {
-        path.push(model._name);
-        model = model._parent;
-      }
-    }
-    while (path.length > 0) {
-      model_defaults = model_defaults[path.pop()] || {};
-    }
-    return model_defaults;
-  },
-
+  /**
+   * @param  {name} name of the child to check
+   * @return {Boolean} if the child is a leaf with a plain object as value
+   */
   isObjectLeaf: function(name) {
     return (this.objectLeafs.indexOf(name) !== -1)
   },

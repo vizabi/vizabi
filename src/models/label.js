@@ -24,9 +24,7 @@ var LabelModel = Hook.extend({
   init: function(name, values, parent, bind) {
 
     this._type = "label";
-    //TODO: add defaults extend to super
-    var defaults = utils.deepClone(this._defaults);
-    values = utils.extend(defaults, values);
+    
     this._super(name, values, parent, bind);
   }
 

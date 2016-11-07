@@ -31,9 +31,6 @@ var EntitiesModel = DataConnected.extend({
   init: function(name, values, parent, bind) {
 
     this._type = "entities";
-    //TODO: add defaults extend to super
-    var defaults = utils.deepClone(this._defaults);
-    values = utils.extend(defaults, values);
 
     this._visible = [];
     this._multiple = true;

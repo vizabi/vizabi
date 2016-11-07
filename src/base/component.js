@@ -515,14 +515,6 @@ var Component = Events.extend({
   },
 
   /**
-   * Checks whether this component is a tool or not
-   * @returns {Boolean}
-   */
-  isTool: function() {
-    return this._id[0] === 't';
-  },
-
-  /**
    * Executes after the template is loaded and rendered.
    * Ideally, it contains HTML instantiations related to template
    * At this point, this.element and this.placeholder are available

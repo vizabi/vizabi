@@ -36,20 +36,6 @@ var AxisModel = Hook.extend({
   _type: "axis",
 
   /**
-   * Initializes the color hook
-   * @param {Object} values The initial values of this model
-   * @param parent A reference to the parent model
-   * @param {Object} bind Initial events to bind
-   */
-  init: function(name, values, parent, bind) {
-
-    //TODO: add defaults extend to super
-    var defaults = utils.deepClone(this._defaults);
-    values = utils.extend(defaults, values);      
-    this._super(name, values, parent, bind);
-  },
-
-  /**
    * Validates a color hook
    */
   validate: function() {

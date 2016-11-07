@@ -22,11 +22,7 @@ var LanguageModel = DataConnected.extend({
    * @param {Object} bind Initial events to bind
    */
   init: function(name, values, parent, bind) {
-
     this._type = "language";
-    //default values for state model
-    var defaults = utils.deepClone(this._defaults);
-    values = utils.extend(defaults, values);
 
     //same constructor, with same arguments
     this._super(name, values, parent, bind);

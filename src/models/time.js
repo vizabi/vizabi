@@ -62,13 +62,9 @@ var TimeModel = DataConnected.extend({
    */
   init: function(name, values, parent, bind) {
     this._type = "time";
-    //default values for time model
-    var defaults = utils.deepClone(this._defaults);
-    values = utils.extend(defaults, values);
 
     //same constructor
     this._super(name, values, parent, bind);
-    this._initDefaults();
     var _this = this;
     this.timeFormat = formats[this.unit];
     this.dragging = false;
@@ -105,21 +101,6 @@ var TimeModel = DataConnected.extend({
       if(!utils.isDate(this[attr])) {
         var date = this.parseToUnit(this[attr], this.unit);
         this.set(attr, date, null, false);
-      }
-    }
-  },
-
-  /*
-   * Convert default values to string
-   * @param {String} values
-   */
-  _initDefaults: function() {
-    this._defaults = utils.extend(this._defaults, this.getToolDefaults());
-    var date_attr = ["value", "start", "end", "startSelected", "endSelected"];
-    for(var i = 0; i < date_attr.length; i++) {
-      var attr = date_attr[i];
-      if(!utils.isString(this._defaults[attr]) && this._defaults[attr] != null) {
-        this._defaults[attr] = this._defaults[attr].toString();
       }
     }
   },
