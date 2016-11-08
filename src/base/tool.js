@@ -189,8 +189,8 @@ var Tool = Component.extend({
   getPersistentMinimalModel: function(diffModel) {
     var defaultModel = this.getDefaultModel();
     var currentPersistentModel = this.getPersistentModel();
-    var redundantModel = Vizabi.utils.deepExtend(defaultModel, diffModel);
-    return Vizabi.utils.diffObject(currentPersistentModel, redundantModel);
+    var redundantModel = utils.deepExtend(defaultModel, diffModel);
+    return utils.diffObject(currentPersistentModel, redundantModel);
   },
 
   /**
