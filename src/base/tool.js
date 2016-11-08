@@ -136,6 +136,7 @@ var Tool = Component.extend({
   },
     
   checkTimeLimits: function() {
+    console.log("checkTimeLimits");
     if(!this.model.state.time) return;
     
     var time = this.model.state.time;
@@ -151,8 +152,14 @@ var Tool = Component.extend({
       if(time.start - tLimits.min != 0) newTime['start'] = d3.max([tLimits.min, time.parseToUnit(time.startOrigin)]);
       if(time.end - tLimits.max != 0) newTime['end'] = d3.min([tLimits.max, time.parseToUnit(time.endOrigin)]);
       if(time.value == null) newTime['value'] = time.parseToUnit(time.format(new Date())); // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
-
       time.set(newTime, false, false);
+      if (newTime.start || newTime.end) {
+        utils.forEach(this.model.state.marker._dataCube, function(hook, name) {
+          if (hook.scaleType == "time") {
+            hook.buildScale(); 
+          }
+        });
+      }
     }
       
     //force time validation because time.value might now fall outside of start-end
