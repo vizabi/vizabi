@@ -56,13 +56,13 @@ var BubbleChartComp = Component.extend({
         if(_this.model.marker.color.scaleType === 'time') {
           _this.model.marker.color.scale = null;
         }
-        if(!_this._readyOnce) return;
+        if(!_this._readyOnce || _this.model.time.splash) return;
         _this._trails.create().then(function() {
           _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
         });
       },
       'change:time.end': function(evt, original) {
-        if(!_this._readyOnce) return;
+        if(!_this._readyOnce || _this.model.time.splash) return;
         _this._trails.create().then(function() {
           _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
         });
@@ -87,7 +87,6 @@ var BubbleChartComp = Component.extend({
       "change:marker": function(evt, path) {
         // bubble size change is processed separately
         if(!_this._readyOnce) return;
-
         if(path.indexOf("scaleType") > -1) {
           _this.ready();
           return;
@@ -465,11 +464,14 @@ var BubbleChartComp = Component.extend({
       _this._labels.ready();
       _this.redrawDataPoints();
       _this.selectDataPoints();
-      _this._trails.create();
       _this.updateBubbleOpacity();
       _this._updateDoubtOpacity();
       _this.zoomToMarkerMaxMin(); // includes redraw data points and trail resize
-      _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
+      if (!_this.model.time.splash) {
+        _this._trails.create();
+        _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
+        
+      }
       if(_this.model.ui.adaptMinMaxZoom) _this._panZoom.expandCanvas();
     });
   },
@@ -745,7 +747,7 @@ var BubbleChartComp = Component.extend({
         if (sizeA != sizeB) return d3.descending(sizeA, sizeB);
         if (a[KEY] != b[KEY]) return d3.ascending(a[KEY], b[KEY]);
         if (typeof a.trailStartTime != "undefined" || typeof b.trailStartTime != "undefined") return typeof a.trailStartTime != "undefined" ? -1 : 1; // only lines has trailStartTime 
-        if (typeof a.hidden != "undefined" || typeof b.hidden != "undefined") return typeof a.hidden != "undefined" ? 1 : -1; // only bubbles has attribute hidden
+        if (typeof a.limits != "undefined" || typeof b.limits != "undefined") return typeof a.limits != "undefined" ? -1 : 1; // only trails has attribute limits
         return d3.descending(sizeA, sizeB);
       });
   },
@@ -1282,7 +1284,6 @@ var BubbleChartComp = Component.extend({
       });
 
     } // data exists
-
     _this._updateLabel(d, index, valueX, valueY, valueS, valueC, valueL, valueLST, duration, showhide);
   },
 
@@ -1293,7 +1294,7 @@ var BubbleChartComp = Component.extend({
     // only for selected entities
     if(_this.model.entities.isSelected(d)) {
       
-      var cache = null;
+      var cache = {};
 
       var select = utils.find(_this.model.entities.select, function(f) {
         return f[KEY] == d[KEY]
@@ -1303,7 +1304,6 @@ var BubbleChartComp = Component.extend({
       if(!this.model.ui.chart.trails || select.trailStartTime == time || select.trailStartTime == null) {
         if(this.model.ui.chart.trails && select.trailStartTime == null) select.trailStartTime = time; // need only when trailStartTime == null
 
-        var cache = {};
         cache.labelX0 = valueX;
         cache.labelY0 = valueY;
         cache.scaledC0 = valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH,

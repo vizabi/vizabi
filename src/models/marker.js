@@ -186,6 +186,13 @@ var Marker = Model.extend({
     return dim;
   },
 
+
+  framesAreReady: function() {
+    var cachePath = this._getCachePath();
+    if (!this.cachedFrames) return false;
+    return Object.keys(this.cachedFrames[cachePath]).length == this._parent.time.getAllSteps().length; 
+  },
+  
   /**
    *
    * @param {String|null} time of a particularly requested data frame. Null if all frames are requested
