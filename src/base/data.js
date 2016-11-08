@@ -260,7 +260,7 @@ var Data = Class.extend({
       from: "concepts",
       select: {
         key: ["concept"],
-        value: ["concept_type","indicator_url","color","scales","interpolation","tags","name","unit","description"]
+        value: ["concept_type","domain","indicator_url","color","scales","interpolation","tags","name","unit","description"]
       }
     };
     
@@ -271,6 +271,7 @@ var Data = Class.extend({
       _this.get(dataId).forEach(function(d){
         var concept = {};
         concept["use"] = (d.concept_type=="measure" || d.concept_type=="time")?"indicator":"property";
+        concept["concept_type"] = d.concept_type;
         concept["sourceLink"] = d.indicator_url;
         try {
           concept["color"] = d.color ? JSON.parse(d.color) : null;
@@ -282,10 +283,24 @@ var Data = Class.extend({
         } catch (e) {
           concept["scales"] = null;
         }
-        concept["interpolation"] = d.interpolation;
+        if(!concept.scales){
+          switch (d.concept_type){
+            case "measure": concept.scales=["linear", "log"]; break;
+            case "string": concept.scales=["nominal"]; break;
+            case "entity_domain": concept.scales=["ordinal"]; break;
+            case "entity_set": concept.scales=["ordinal"]; break;
+            case "time": concept.scales=["time"]; break;
+          }
+        }
+        if(d.interpolation){
+          concept["interpolation"] = d.interpolation;
+        }else{
+          if(concept.scales && concept.scales[0]=="log") concept["interpolation"] = "exp";
+        }
+        concept["domain"] = d.domain;
         concept["tags"] = d.tags;
-        concept["name"] = d.name;
-        concept["unit"] = d.unit;
+        concept["name"] = d.name||d.concept||"";
+        concept["unit"] = d.unit||"";
         concept["description"] = d.description;
         _this.conceptDictionary[d.concept] = concept;
       });
