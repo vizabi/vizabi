@@ -53,7 +53,6 @@ var MountainChartComponent = Component.extend({
         this.model_binds = {
             "change:time.value": function (evt) {
               if (!_this._readyOnce) return;
-              _this.year.setText(_this.model.time.value.getUTCFullYear().toString());
               _this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
             },
             "change:time.playing": function (evt) {
@@ -806,6 +805,7 @@ updateSize: function (meshLength) {
         var _this = this;
 
         this.time = this.model.time.value;
+        this.year.setText(this.model.time.format(this.time));
         if (time == null) time = this.time;
 
         this.yMax = 0;
