@@ -1,103 +1,101 @@
-var VIZABI_MODEL = { 
-  state: {
-    time: {
-      value: '2011',
-      start: '1996',
-      end: '2011'
+var VIZABI_MODEL = {
+  "state": {
+    "time": {
+      "value": "2011",
+      "start": "1996",
+      "end": "2011"
     },
-    entities: {
-      dim: "geo",
-      show: {
-          "geo": ["*"]
+    "entities": {
+      "dim": "geo",
+      "show": {
+        "geo": ["*"]
       }
     },
-    entities_age: {
-      dim: "age",
-      show: {
-          "age": [
-            [0, 95]
-          ] //show 0 through 100
+    "entities_age": {
+      "dim": "age",
+      "show": {
+        "age": [
+          [0, 95]
+        ]
       },
-      grouping: 5,
-      _multiple: true
+      "grouping": 5,
+      "_multiple": true
     },
-    entities_stack: {
-      space: ["entities_age", "entities_side"],
-      dim: "education",
-      _multiple: true,
-      select: []
+    "entities_stack": {
+      "space": ["entities_age", "entities_side"],
+      "dim": "education",
+      "_multiple": true,
+      "select": []
     },
-    entities_side: {
-      dim: "sex"
+    "entities_side": {
+      "dim": "sex"
     },
-    marker_pyramid: {
-      space: ["entities", "entities_side", "entities_stack", "entities_age", "time"],
-      label: {
-        use: "indicator",
-        which: "age"
+    "marker_pyramid": {
+      "space": ["entities", "entities_side", "entities_stack", "entities_age", "time"],
+      "label": {
+        "use": "indicator",
+        "which": "age"
       },
-      label_name: {
-        use: "property",
-        which: "sex"
+      "label_name": {
+        "use": "property",
+        "which": "sex"
       },
-      axis_y: {
-        use: "indicator",
-        which: "age",
-        // domain Max should be set manually as age max from entites_age plus one grouping value (95 + 5 = 100)
-        // that way the last age group fits in on the scale
-        domainMax: 100,
-        domainMin: 0
+      "axis_y": {
+        "use": "indicator",
+        "which": "age",
+        "domainMax": 100,
+        "domainMin": 0
       },
-      axis_x: {
-        use: "indicator",
-        which: "zaf_population"
+      "axis_x": {
+        "use": "indicator",
+        "which": "zaf_population"
       },
-      color: {
-        use: "property",
-        which: "education"
+      "color": {
+        "use": "property",
+        "which": "education"
       },
-      side: {
-        use: "property",
-        which: "sex"
+      "side": {
+        "use": "property",
+        "which": "sex"
       }
     },
-    marker_line: {
-      space: ["entities", "time"],
-      label: {
-        use: "property",
-        which: "name"
+    "marker_line": {
+      "space": ["entities", "time"],
+      "label": {
+        "use": "property",
+        "which": "name"
       },
-      axis_y: {
-        use: "indicator",
-        which: "tfr",
-        scaleType: "linear",
-        allow: {
-          scales: ["linear", "log"]
+      "axis_y": {
+        "use": "indicator",
+        "which": "tfr",
+        "scaleType": "linear",
+        "allow": {
+          "scales": ["linear", "log"]
         }
       },
-      axis_x: {
-        use: "indicator",
-        which: "time",
-        scaleType: "time",
-        allow: {
-          scales: ["time"]
+      "axis_x": {
+        "use": "indicator",
+        "which": "time",
+        "scaleType": "time",
+        "allow": {
+          "scales": ["time"]
         }
       },
-      color: {
-        use: "property",
-        which: "world_4region",
-        allow: {
-          scales: ["ordinal"],
-          names: ["!name"]
+      "color": {
+        "use": "property",
+        "which": "world_4region",
+        "allow": {
+          "scales": ["ordinal"],
+          "names": ["!name"]
         }
       }
     },
-    marker_side: {
-      space: ["entities", "entities_side", "time"],
-      hook_total: {
-        use: "indicator",
-        which: "zaf_population"
-      }      
+    "marker_side": {
+      "space": ["entities", "entities_side", "time"],
+      "hook_total": {
+        "use": "indicator",
+        "which": "zaf_population"
+      }
     }
   }
-}
+};
