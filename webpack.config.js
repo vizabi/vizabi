@@ -28,7 +28,7 @@ const stats = {
   source: false,
   errors: true,
   errorDetails: true,
-  warnings: true,
+  warnings: false,
   publicPath: false
 };
 
@@ -57,7 +57,7 @@ const plugins = [
     url: 'http://localhost:8080/preview/'
   }),
   new SassLintPlugin({
-    quiet: true,
+    quiet: false,
     syntax: 'scss',
     glob: 'src/**/*.s?(a|c)ss',
     ignorePlugins: ['extract-text-webpack-plugin']
