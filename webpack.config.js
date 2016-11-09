@@ -26,8 +26,8 @@ const stats = {
   reasons: true,
   children: false,
   source: false,
-  errors: false,
-  errorDetails: false,
+  errors: true,
+  errorDetails: true,
   warnings: true,
   publicPath: false
 };
@@ -144,7 +144,7 @@ module.exports = {
           path.resolve(__dirname, 'src')
         ],
         loader: extractSrc.extract([
-          `css?${JSON.stringify({ sourceMap: !__PROD__, minimize: __PROD__ })}`,
+          `css?${JSON.stringify({ sourceMap: true, minimize: __PROD__ })}`,
           'sass'
         ])
       },

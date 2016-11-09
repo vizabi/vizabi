@@ -7,7 +7,7 @@ import * as utils from 'base/utils';
 import Promise from 'base/promise';
 import Tool from 'base/tool';
 import Vzb from 'vizabi';
-import './assets/styles/vizabi.scss';
+import 'assets/styles/vizabi.scss';
 
 //import tools
 import BubbleChart from 'tools/bubblechart/bubblechart';

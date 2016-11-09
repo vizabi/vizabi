@@ -1,5 +1,5 @@
 import * as utils from 'base/utils';
-import DataConnected from 'dataconnected';
+import DataConnected from 'models/dataconnected';
 import EventSource from 'base/events';
 
 /*!
