@@ -52,6 +52,7 @@
     "open-browser-webpack-plugin": "0.0.3",
     "protractor": "4.0.10",
     "pug-html-loader": "^1.0.9",
+    "sass-lint": "^1.10.2",
     "sass-loader": "^4.0.2",
     "sasslint-webpack-plugin": "^1.0.4",
     "shelljs": "0.7.5",
