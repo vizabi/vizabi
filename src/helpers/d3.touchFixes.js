@@ -13,7 +13,7 @@ var drag = function (_d3_behaviour_drag) {
   return function() {
 
     return function(_super) {
-      
+
       function drag() {
         _super.call(this);
         this.on("mousedown.drag", null);
@@ -68,7 +68,7 @@ var brush = function (_d3_svg_brush) {
         function brushend() {
           w.on("touchcancel.brush", null);
         }
-        
+
       }
 
       function brush(g) {

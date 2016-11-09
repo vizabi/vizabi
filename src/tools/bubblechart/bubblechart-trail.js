@@ -1,6 +1,6 @@
 import * as utils from 'base/utils';
 import Class from 'base/class';
-import Promise from 'promise';
+import Promise from 'base/promise';
 
 export default Class.extend({
 
@@ -55,10 +55,10 @@ export default Class.extend({
         .data(_this.trailsData, function(d) {
           return(d[KEY]);
         });
-        
+
       _trails.exit().remove();
       _trails.enter()
-        .insert("g", function(d) { 
+        .insert("g", function(d) {
           return this.querySelector(".bubble-" + d[KEY]);
         })
         .attr("class", function(d) {
@@ -77,9 +77,9 @@ export default Class.extend({
           _this.entityTrails[d[KEY]] = d3.select(this).selectAll("g")
             .data(trailSegmentData)
             .classed("vzb-invisible", true);
-          
+
           _this.entityTrails[d[KEY]].exit().remove();
-          
+
           _this.entityTrails[d[KEY]].enter().append("g")
             .attr("class", "vzb-bc-trailsegment")
             .on("mouseover", function(segment, index) {
@@ -172,14 +172,14 @@ export default Class.extend({
   _getNextAction: function(key) {
     return this.actionsQueue[key].shift();
   },
-  
+
   run: function(actions, selection, duration) {
     var _context = this.context;
     var _this = this;
     var KEY = _context.KEY;
     if (!this._isCreated || _context.model.time.splash) return;
-    if (typeof actions == "string") actions = [actions]; 
-    
+    if (typeof actions == "string") actions = [actions];
+
     this._isCreated.then(function() {
       //quit if function is called accidentally
       if((!_context.model.ui.chart.trails || !_context.model.entities.select.length) && actions != "remove") return;
@@ -196,7 +196,7 @@ export default Class.extend({
             var trail = _this.entityTrails[d[KEY]];
             _context._trails["_" + action](trail, duration, d);
           });
-        } 
+        }
       }
       if (actions.length == 0) {
         return;
@@ -235,8 +235,8 @@ export default Class.extend({
 
 
   _remove: function(trail, duration, d) {
-    this.actionsQueue[d[this.context.KEY]] = []; 
-    if (trail) { // TODO: in some reason run twice 
+    this.actionsQueue[d[this.context.KEY]] = [];
+    if (trail) { // TODO: in some reason run twice
       d3.select(this.entityTrails[d[this.context.KEY]].node().parentNode).remove();
       this.entityTrails[d[this.context.KEY]] = null;
     }
@@ -251,7 +251,7 @@ export default Class.extend({
     var updateLabel = false;
 
     trail.each(function(segment, index) {
-        
+
       if(segment.valueY==null || segment.valueX==null || segment.valueS==null) return;
 
       var view = d3.select(this);
@@ -278,7 +278,7 @@ export default Class.extend({
       var next = segment.next;
       if(next == null) return;
       if(next.valueY==null || next.valueX==null) return;
-        
+
       var lineLength = Math.sqrt(
           Math.pow(_context.xScale(segment.valueX) - _context.xScale(next.valueX),2) +
           Math.pow(_context.yScale(segment.valueY) - _context.yScale(next.valueY),2)
@@ -417,11 +417,11 @@ export default Class.extend({
     var trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
     var generateTrailSegment = function(trail, index, nextIndex, level) {
       return new Promise(function(resolve, reject) {
-        
+
         var view = d3.select(trail[0][index]);
 
         var segment = view.datum();
-        
+
         //console.log(d[KEY] + " transparent: " + segment.transparent + " vis_changed:" + segment.visibilityChanged);
         if (nextIndex - index == 1) {
           if(segment.transparent) {
@@ -480,11 +480,11 @@ export default Class.extend({
               var next = d3.select(trail[0][nextIndex]);
               var nextSegment = next.datum();
               nextSegment.previous = segment;
-              segment.next = nextSegment; 
+              segment.next = nextSegment;
               var nextTime = nextSegment.t;
               if (_context.time - nextSegment.t < 0) { // time is not equal start of year
                 segment.visibilityChanged = true; // redraw needed next time because line not have full length
-                nextTime = _context.time; 
+                nextTime = _context.time;
               }
               _context.model.marker.getFrame(nextTime, function(nextFrame) {
                 if(!nextFrame || segment.valueY==null || segment.valueX==null || segment.valueS==null) {
@@ -538,7 +538,7 @@ export default Class.extend({
               });
             }
           }
-        });          
+        });
       });
     };
     var addPointBetween = function(previousIndex, nextIndex, index) {
@@ -549,10 +549,10 @@ export default Class.extend({
         var previousSegment = previous.datum();
         var nextSegment = next.datum();
         var segment = view.datum();
-        
-        
+
+
         _context.model.marker.getFrame(segment.t, function(frame) {
-          if (!frame || 
+          if (!frame ||
             (typeof frame.axis_x == "undefined") ||  frame.axis_x[d[KEY]]==null ||
             (typeof frame.axis_y == "undefined") ||  frame.axis_y[d[KEY]]==null)
           {
@@ -629,7 +629,7 @@ export default Class.extend({
           resolve()
         });
       });
-    }; 
+    };
     var addNewIntervals = function(previousIndex, index, nextIndex) {
       var mediumIndex;
       if (index - previousIndex > 1) {
@@ -652,7 +652,7 @@ export default Class.extend({
     var getPointBetween = function(previous, next) {
       return Math.round(previous + (next - previous) / 2);
     };
-    
+
     var defer = new Promise();
 
     var _generateKeys = function(d, trail, div) {
@@ -682,7 +682,7 @@ export default Class.extend({
     };
 
     /**
-     * recursive iteration for drawing point between points calculated in previous step  
+     * recursive iteration for drawing point between points calculated in previous step
      */
     var processPointsBetween = function() {
       processPoints().then(function() {
@@ -714,7 +714,7 @@ export default Class.extend({
         }
       });
     };
-    
+
     /**
      * iteration for each point from first segment to last
      * @param trail

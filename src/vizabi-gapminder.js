@@ -5,27 +5,27 @@
 import globals from 'base/globals';
 import * as utils from 'base/utils';
 import Promise from 'base/promise';
-import * as models from 'models/_index'; //TODO: Fake import because Model is not included first to bundle due to a cyclical dependency.
 import Tool from 'base/tool';
 import Vzb from 'vizabi';
+import './assets/styles/vizabi.scss';
 
 //import tools
-import BubbleChart from 'tools/bubblechart';
-import BarRankChart from 'tools/barrankchart';
-import MountainChart from 'tools/mountainchart';
-import MCComponent from 'tools/mountainchart-component';
-import BarChart from 'tools/barchart';
-import BubbleMap from 'tools/bubblemap';
-import BMComponent from 'tools/bubblemap-component';
-import LineChart from 'tools/linechart';
-import PopByAge from 'tools/popbyage';
-import DonutChart from 'tools/donutchart';
-import Cartogram from 'tools/cartogram';
-import CartogramComponent from 'tools/cartogram-component';
-import AxisLabeler from 'tools/axislabeler';
-import AgePyramid from 'tools/agepyramid';
-import JOINTPyramidLine from 'tools/joint_pyramidline';
-import JOINTCartogramLine from 'tools/joint_cartogramline';
+import BubbleChart from 'tools/bubblechart/bubblechart';
+import BarRankChart from 'tools/barrankchart/barrankchart';
+import MountainChart from 'tools/mountainchart/mountainchart';
+import MCComponent from 'tools/mountainchart/mountainchart-component';
+import BarChart from 'tools/barchart/barchart';
+import BubbleMap from 'tools/bubblemap/bubblemap';
+import BMComponent from 'tools/bubblemap/bubblemap-component';
+import LineChart from 'tools/linechart/linechart';
+import PopByAge from 'tools/popbyage/popbyage';
+import DonutChart from 'tools/donutchart/donutchart';
+import Cartogram from 'tools/cartogram/cartogram';
+import CartogramComponent from 'tools/cartogram/cartogram-component';
+import AxisLabeler from 'tools/axislabeler/axislabeler';
+import AgePyramid from 'tools/agepyramid/agepyramid';
+import JOINTPyramidLine from 'tools/joint_pyramidline/joint_pyramidline';
+import JOINTCartogramLine from 'tools/joint_cartogramline/joint_cartogramline';
 
 
 // Fallback in case if WS is not available - requesting data from local files
@@ -42,7 +42,7 @@ globals.ext_resources = utils.deepExtend({
 //preloading mountain chart precomputed shapes
 MCComponent.define("preload", function(done) {
   var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
-      globals.ext_resources.host + globals.ext_resources.preloadPath + "mc_precomputed_shapes.json";     
+      globals.ext_resources.host + globals.ext_resources.preloadPath + "mc_precomputed_shapes.json";
 
   d3.json(shape_path, function(error, json) {
     if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
@@ -54,8 +54,8 @@ MCComponent.define("preload", function(done) {
 //preloading bubble map country shapes
 BMComponent.define("preload", function(done) {
   var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
-      globals.ext_resources.host + globals.ext_resources.preloadPath + "world-50m.json"; 
-    
+      globals.ext_resources.host + globals.ext_resources.preloadPath + "world-50m.json";
+
   d3.json(shape_path, function(error, json) {
     if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
     BMComponent.define('world', json);
@@ -65,8 +65,8 @@ BMComponent.define("preload", function(done) {
 
 CartogramComponent.define("preload", function(done) {
   var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
-      globals.ext_resources.host + globals.ext_resources.preloadPath + "municipalities.json"; 
-  
+      globals.ext_resources.host + globals.ext_resources.preloadPath + "municipalities.json";
+
   d3.json(shape_path, function(error, json) {
     if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
     CartogramComponent.define('world', json);
@@ -83,10 +83,10 @@ Tool.define("preload", function(promise) {
     promise.resolve();
     return;
   }
-  
+
   var reader = this.model.data.getPlainObject();
   reader.parsers = [];
-  
+
   this.model.getDataManager().loadConceptProps(reader, this.model.language.id, function(concepts) {
 
     promise.resolve();

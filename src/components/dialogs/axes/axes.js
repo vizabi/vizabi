@@ -1,8 +1,9 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
-import Dialog from '../_dialog';
+import Dialog from 'components/dialogs/_dialog';
 
-import { indicatorpicker, minmaxinputs } from 'components/_index';
+import indicatorpicker from 'components/indicatorpicker/indicatorpicker';
+import minmaxinputs from 'components/minmaxinputs/minmaxinputs';
 
 /*
  * Axes dialog

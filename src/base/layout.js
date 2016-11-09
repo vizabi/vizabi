@@ -1,5 +1,5 @@
-import * as utils from 'utils';
-import Events from 'events';
+import * as utils from 'base/utils';
+import Events from 'base/events';
 
 //classes are vzb-portrait, vzb-landscape...
 var class_prefix = 'vzb-';

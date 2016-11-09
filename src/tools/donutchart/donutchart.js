@@ -5,15 +5,12 @@
 import * as utils from 'base/utils';
 import Tool from 'base/tool';
 
-import DonutComponent from './donutchart-component';
+import DonutComponent from 'tools/donutchart/donutchart-component';
 
-import {
-  timeslider,
-  dialogs,
-  buttonlist,
-  treemenu
-}
-from 'components/_index';
+import timeslider from 'components/timeslider/timeslider';
+import dialogs from 'components/dialogs/dialogs';
+import buttonlist from 'components/buttonlist/buttonlist';
+import treemenu from 'components/treemenu/treemenu';
 
 var comp_template = 'barchart.html';
 
@@ -41,7 +38,7 @@ var DonutChart = Tool.extend('DonutChart', {
       placeholder: '.vzb-tool-timeslider',
       model: ["state.time", "state.entities", "state.marker"]
     }];
-      
+
       this._super(placeholder, external_model);
     },
 

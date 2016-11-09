@@ -5,15 +5,12 @@
 import * as utils from 'base/utils';
 import Tool from 'base/tool';
 
-import AgePyramidComponent from './agepyramid-component';
+import AgePyramidComponent from 'tools/agepyramid/agepyramid-component';
 
-import {
-  timeslider,
-  dialogs,
-  buttonlist,
-  treemenu
-}
-from 'components/_index';
+import timeslider from 'components/timeslider/timeslider';
+import dialogs from 'components/dialogs/dialogs';
+import buttonlist from 'components/buttonlist/buttonlist';
+import treemenu from 'components/treemenu/treemenu';
 
 //BAR CHART TOOL
 var AgePyramid = Tool.extend('AgePyramid', {

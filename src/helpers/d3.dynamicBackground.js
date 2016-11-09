@@ -1,7 +1,7 @@
 //d3.svg.dynamicBackground
 
 
-import Class from '../base/class'
+import Class from 'base/class'
 
 export default Class.extend({
 

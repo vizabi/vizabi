@@ -155,8 +155,8 @@ var ButtonList = Component.extend({
           _this.setBubbleLock();
         }
       }
-    }      
-        
+    }
+
     config.ui.buttons.forEach(function(buttonId) {
       var button = _this._available_buttons[buttonId];
       if(button && button.statebind) {
@@ -164,10 +164,10 @@ var ButtonList = Component.extend({
           button.statebindfunc(buttonId, evt.source.value);
         }
       }
-    });    
+    });
 
 
-    
+
     this.validatePopupButtons(config.ui.buttons, config.ui.dialogs);
 
     this._super(config, context);
@@ -176,16 +176,16 @@ var ButtonList = Component.extend({
 
   readyOnce: function() {
     var _this = this;
-    
+
     this.element = d3.select(this.placeholder);
     this.element.selectAll("div").remove();
-    
+
     this.root.findChildByName("gapminder-dialogs").on('close', function( evt, params) {
       _this.setButtonActive(params.id, false);
     });
-    
+
     var button_expand = (this.model.ui.dialogs||{}).sidebar || [];
-    
+
     // // if button_expand has been passed in with boolean param or array must check and covert to array
     // if (button_expand){
     //   this.model.ui.dialogs.sidebar = (button_expand === true) ? this.model.ui.buttons : button_expand;
@@ -194,7 +194,7 @@ var ButtonList = Component.extend({
     // if (button_expand && button_expand.length !== 0) {
     //     d3.select(this.root.element).classed("vzb-dialog-expand-true", true);
     // }
-    
+
     var button_list = [].concat(this.model.ui.buttons);
 
     // (button_expand||[]).forEach(function(button) {
@@ -219,7 +219,7 @@ var ButtonList = Component.extend({
     this._toggleButtons();
 
   },
-  
+
   proceedClick: function(id) {
     var _this = this;
     var btn = _this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
@@ -236,15 +236,15 @@ var ButtonList = Component.extend({
       evt['id'] = id;
       evt['active'] = btn_active;
       _this.trigger('click', evt);
-    }    
+    }
   },
-  
+
   validatePopupButtons: function (buttons, dialogs) {
     var _this = this;
-    
+
     var popupDialogs = dialogs.popup;
     var popupButtons = buttons.filter(function(d) {
-      return (_this._available_buttons[d] && !_this._available_buttons[d].func); 
+      return (_this._available_buttons[d] && !_this._available_buttons[d].func);
       });
     for(var i = 0, j = popupButtons.length; i < j; i++) {
        if(popupDialogs.indexOf(popupButtons[i]) == -1) {
@@ -353,7 +353,7 @@ var ButtonList = Component.extend({
         not_required[i].style("display", "none");
         hiddenButtons.push(not_required[i].attr("data-btn"));
     }
-    
+
     var evt = {};
     evt['hiddenButtons'] = hiddenButtons;
     _this.trigger('toggle', evt);
@@ -414,7 +414,7 @@ var ButtonList = Component.extend({
 
       d3.event.preventDefault();
       d3.event.stopPropagation();
-      
+
       var id = d3.select(this).attr("data-btn");
       _this.proceedClick(id);
     });
@@ -464,7 +464,7 @@ var ButtonList = Component.extend({
   },
   setBubbleTrails: function() {
     var trails = (this.model.ui.chart||{}).trails;
-    if(!trails && trails !== false) return; 
+    if(!trails && trails !== false) return;
     var id = "trails";
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
     if(!btn.node()) return utils.warn("setBubbleTrails: no button '" +id+ "' found in DOM. doing nothing");
@@ -496,7 +496,7 @@ var ButtonList = Component.extend({
     var id = "lock";
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
     if(!btn.node()) return utils.warn("setBubbleLock: no button '" +id+ "' found in DOM. doing nothing");
-      
+
     var translator = this.model.language.getTFunction();
 
     btn.classed(class_unavailable, this.model.state.entities.select.length == 0 && !active);

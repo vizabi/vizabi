@@ -1,0 +1,19 @@
+files:
+  include: '**/*.s+(a|c)ss'
+options:
+  formatter: stylish
+  merge-default-rules: false
+rules:
+  empty-line-between-blocks: 0
+  extends-before-declarations: 1
+  extends-before-mixins: 1
+  mixins-before-declarations: 1
+  nesting-depth: 0
+  no-color-literals: 0
+  no-important: 0
+  no-mergeable-selectors: 1
+  no-qualifying-elements:
+    - 1
+    - allow-element-with-attribute: true
+  placeholder-in-extend: 0
+  property-sort-order: 0

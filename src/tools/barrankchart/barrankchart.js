@@ -1,13 +1,12 @@
 import * as utils from 'base/utils';
 import Tool from 'base/tool';
 
-import BarRankChartComponent from './barrankchart-component';
-import {
-  timeslider,
-  dialogs,
-  buttonlist,
-  treemenu
-} from 'components/_index';
+import BarRankChartComponent from 'tools/barrankchart/barrankchart-component';
+
+import timeslider from 'components/timeslider/timeslider';
+import dialogs from 'components/dialogs/dialogs';
+import buttonlist from 'components/buttonlist/buttonlist';
+import treemenu from 'components/treemenu/treemenu';
 
 var BarRankChart = Tool.extend('BarRankChart', {
 
@@ -17,9 +16,9 @@ var BarRankChart = Tool.extend('BarRankChart', {
     this.name = "barrankchart";
 
     this.components = [{
-      component: BarRankChartComponent, 
-      placeholder: '.vzb-tool-viz', 
-      model: ["state.time", "state.entities", "state.marker", "language", "ui"] 
+      component: BarRankChartComponent,
+      placeholder: '.vzb-tool-viz',
+      model: ["state.time", "state.entities", "state.marker", "language", "ui"]
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
@@ -48,7 +47,7 @@ var BarRankChart = Tool.extend('BarRankChart', {
    * Determines the default model of this tool
    */
   default_model: {
-    state: { 
+    state: {
       time: {
       },
       marker: {

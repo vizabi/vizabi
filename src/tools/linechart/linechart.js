@@ -5,16 +5,13 @@
 import * as utils from 'base/utils';
 import Tool from 'base/tool';
 
-import LCComponent from './linechart-component';
+import LCComponent from 'tools/linechart/linechart-component';
 
-import {
-  timeslider,
-  dialogs,
-  buttonlist,
-  treemenu,
-  datanotes
-}
-from 'components/_index';
+import timeslider from 'components/timeslider/timeslider';
+import dialogs from 'components/dialogs/dialogs';
+import buttonlist from 'components/buttonlist/buttonlist';
+import treemenu from 'components/treemenu/treemenu';
+import datanotes from 'components/datanotes/datanotes';
 
 
   //LINE CHART TOOL

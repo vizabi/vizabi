@@ -1,5 +1,4 @@
-import * as utils from 'utils';
-import Class from 'class';
+import Class from 'base/class';
 
 var Intervals = Class.extend({
 
