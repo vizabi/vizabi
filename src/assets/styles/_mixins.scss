@@ -80,7 +80,7 @@
 //   Animation
 // ----------------------------------------------------------------------------
 
-@mixin rotate-forever {
+@keyframes rotate-forever {
   0% {
     @include transform(rotate(0deg));
   }
@@ -88,10 +88,6 @@
   100% {
     @include transform(rotate(359deg));
   }
-}
-
-@keyframes rotate-forever {
-  @include rotate-forever;
 }
 
 // ----------------------------------------------------------------------------
