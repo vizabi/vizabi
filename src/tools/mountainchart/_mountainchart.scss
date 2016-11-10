@@ -9,12 +9,12 @@
 
     .vzb-mountainchart-svg {
       @extend %vzb-chart-svg;
-    
+
       .vzb-mc-eventarea {
         fill: none;
         pointer-events: all;
       }
-    
+
       .vzb-mc-mountain {
         stroke: $vzb-color-white;
         stroke-opacity: .5;
@@ -24,7 +24,7 @@
           stroke: #000;
         }
       }
-    
+
       .vzb-mc-probe text {
         dominant-baseline: hanging;
         fill: $vzb-color-primary;
@@ -35,12 +35,12 @@
           opacity: .7;
         }
       }
-    
+
       .vzb-mc-probe .vzb-mc-probe-value-ul,
       .vzb-mc-probe .vzb-mc-probe-value-dl {
         text-anchor: end;
       }
-    
+
       .vzb-mc-probe .vzb-mc-probe-value-ur,
       .vzb-mc-probe .vzb-mc-probe-value-dr {
         text-anchor: start;
@@ -207,7 +207,7 @@
       .vzb-mc-label-shadow {
         @extend %vzb-chart-label-shadow-small;
       }
-      
+
       .vzb-mc-axis-x,
       .vzb-mc-mountains-labels,
       .vzb-mc-probe,
@@ -225,7 +225,7 @@
       .vzb-mc-axis-y,
       .vzb-mc-probe,
       .vzb-mc-mountains-labels,
-      .vzb-mc-tooltip, {
+      .vzb-mc-tooltip {
         text {
           font-size: $vzb-font-size-larger;
         }

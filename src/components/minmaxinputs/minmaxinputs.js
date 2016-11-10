@@ -21,7 +21,7 @@ var MinMaxInputs = Component.extend({
     init: function(config, context) {
 
         this.name = 'gapminder-minmaxinputs';
-        this.template = 'minmaxinputs.html';
+        this.template = require('./minmaxinputs.html');
 
         var _this = this;
 
@@ -75,7 +75,7 @@ var MinMaxInputs = Component.extend({
         this.el_domain_fieldMax = this.element.select('.vzb-mmi-domainmax');
 
         this.el_break = this.element.select('.vzb-mmi-break');
-        
+
         this.el_zoomed_labelMin = this.element.select('.vzb-mmi-zoomedmin-label');
         this.el_zoomed_labelMax = this.element.select('.vzb-mmi-zoomedmax-label');
         this.el_zoomed_fieldMin = this.element.select('.vzb-mmi-zoomedmin');
@@ -95,7 +95,7 @@ var MinMaxInputs = Component.extend({
         _this.el_zoomed_fieldMax.on("change", function() {
             _this._setModel(ZOOMEDMAX, this.value)
         });
-        
+
         this.element.selectAll("input")
             .on("keypress", function(e) {
                 if(d3.event.which == 13) document.activeElement.blur();
@@ -123,12 +123,12 @@ var MinMaxInputs = Component.extend({
       this.el_zoomed_fieldMin.classed('vzb-hidden', !this.ui.selectZoomedMinMax);
       this.el_zoomed_fieldMax.classed('vzb-hidden', !this.ui.selectZoomedMinMax);
 
-      var formatter = function(n) { 
+      var formatter = function(n) {
         if(!n && n!==0) return n;
         if(utils.isDate(n)) return _this.model.time.timeFormat(n);
         return d3.format(".2r")(n);
       }
-      
+
       this.el_domain_fieldMin.property("value", formatter(this.model.marker[this.markerID].getScale().domain()[0]));
       this.el_domain_fieldMax.property("value", formatter(this.model.marker[this.markerID].getScale().domain()[1]));
       this.el_zoomed_fieldMin.property("value", formatter(this.model.marker[this.markerID].zoomedMin));

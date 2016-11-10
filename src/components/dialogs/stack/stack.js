@@ -1,11 +1,8 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
-import Dialog from '../_dialog';
+import Dialog from 'components/dialogs/_dialog';
 
-import {
-    draggablelist
-}
-from 'components/_index'
+import draggablelist from 'components/draggablelist/draggablelist';
 
 
 /*
@@ -80,9 +77,9 @@ var Stack = Dialog.extend({
                 if(d3.select(this).node().value === "bycolor") return _this.stack.which===_this.model.state.marker.color.which;
                 if(d3.select(this).node().value === "all") return _this.stack.which==="all";
             });
-        
+
         _this.ui.chart.manualSortingEnabled = _this.stack.which == "all";
-        
+
         this.howToMergeEl
             .property('checked', function() {
                 if(d3.select(this).node().value === "none")  return !_this.group.merge && !_this.stack.merge;
@@ -124,7 +121,7 @@ var Stack = Dialog.extend({
             }
         }
         if(what === "stack") {
-          
+
           switch (value){
             case "all":
               obj.stack.use = "constant";

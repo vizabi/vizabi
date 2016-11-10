@@ -61,7 +61,7 @@ var CSVReader = Reader.extend({
 
       function parse(res) {
 
-        var data = res;   
+        var data = res;
 
         //rename geo.category to geo.cat
         var where = query.where;
@@ -90,7 +90,7 @@ var CSVReader = Reader.extend({
           // only use valid conditions
           where = utils.clone(utils.deepClone(where), validConditions);
 
-          // 
+          //
           where = utils.mapRows([where], _this._parsers)[0];
 
           //filter any rows that match where condition
@@ -220,11 +220,11 @@ var CSVReader = Reader.extend({
         FILE_CACHED[path] = res;
         FILE_REQUESTED[path].resolve();
         // commented this out because the promise needs to stay for future requests, indicating it is already in the cache
-        // FILE_REQUESTED[path] = void 0; 
+        // FILE_REQUESTED[path] = void 0;
 
       });
       FILE_REQUESTED[path] = new Promise();
-    }    
+    }
     // always return a promise, even if it is already in the cache
     return FILE_REQUESTED[path];
   },
@@ -246,7 +246,7 @@ var CSVReader = Reader.extend({
       });
 
       // load properties for each column referring to property in the dataset
-        
+
       // The below process O(n*m*o) but both n and o are typically small: n = number of property-sets, m = size of data-set, o = number of columns in property-set
       // for each requested property-set
       utils.forEach(propertiesByKey, function(properties, key) {
@@ -294,13 +294,13 @@ var CSVReader = Reader.extend({
           // this map is readable in O(1)
           utils.forEach(FILE_CACHED[propertiesPath], function(object) {
             properties[object[keyColumn]] = object;
-          }); 
+          });
 
           // go through each row of data
           utils.forEach(data, function(row, index) { // e.g. row = { geo: se, pop: 1000, gdp: 5 }
             // copy each property that was queried to the matching data-row (matching = same keyColumn)
             utils.forEach(queriedProperties, function(property) {
-                
+
                 // check if row exists in properties
                 if(properties[row[keyColumn]]){
                     row[property] = properties[row[keyColumn]][property];
@@ -308,10 +308,10 @@ var CSVReader = Reader.extend({
                     // if not, then complain
                     utils.warn(row[keyColumn] + " is missing from GEO-PROPERTIES.CSV");
                 }
-              
+
             })
           });
-            
+
           processedPromise.resolve();
 
         });
@@ -323,7 +323,7 @@ var CSVReader = Reader.extend({
   groupData: function(data, query) {
 
     // nested object which will be used to find the right group for each datarow. Each leaf will contain a reference to a data-object for aggregration.
-    var grouping_map = {}; 
+    var grouping_map = {};
 
     var filtered = data.filter(function(val, index) {
 
@@ -350,7 +350,7 @@ var CSVReader = Reader.extend({
 
           // if the group falls outside the where filter, make the group smaller
           if (group_start < query.where[entity][0][0])
-            group_start = query.where[entity][0][0];   
+            group_start = query.where[entity][0][0];
 
           group_index = group_start;
           val[entity] = group_index;
@@ -381,16 +381,16 @@ var CSVReader = Reader.extend({
             leaf = leaf[val[entity]];
             // if the leaf already had values, apply the aggregrate functions for each property
             utils.forEach(query.select, function(property, key) {
-              
+
               //avoid aggregating keys, such as geo and time, also avoid aggregating properties, such as geo.region
               if(keys.indexOf(property) != -1 || property.indexOf(keys[0]) != -1) return;
               // aggregrate the un-grouped data (now only sum population)
               // leaf[property] = parseFloat(leaf[property]) + parseFloat(val[property]);
-              
+
               //never aggregate strings!
               if(val[property]!=="" && !+val[property] && +val[property]!==0) return;
               leaf[property] = leaf[property] + val[property];
-            });  
+            });
             keep = false;
 
           }
@@ -403,7 +403,7 @@ var CSVReader = Reader.extend({
       return keep;
 
     });
-  
+
     return filtered;
 
   }

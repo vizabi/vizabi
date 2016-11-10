@@ -1,9 +1,9 @@
-import * as utils from 'utils'
-import Model from 'model'
-import Component from 'component'
-import Layout from 'layout'
-import { DefaultEvent } from 'events'
-import { warn as warnIcon } from 'iconset'
+import * as utils from 'base/utils'
+import Model from 'base/model'
+import Component from 'base/component'
+import Layout from 'base/layout'
+import { DefaultEvent } from 'base/events'
+import { warn as warnIcon } from 'base/iconset'
 import Promise from 'base/promise';
 
 var class_loading_first = 'vzb-loading-first';
@@ -45,35 +45,35 @@ var Tool = Component.extend({
    */
   init: function(placeholder, external_model) {
     this._id = utils.uniqueId('t');
-    this.template = this.template || 
-      '<div class="vzb-tool vzb-tool-' + this.name + '">' + 
-        '<div class="vzb-tool-stage">' + 
-          '<div class="vzb-tool-viz">' + 
-          '</div>' + 
-          '<div class="vzb-tool-timeslider">' + 
-          '</div>' + 
-        '</div>' + 
-        '<div class="vzb-tool-sidebar">' + 
-          '<div class="vzb-tool-dialogs">' + 
+    this.template = this.template ||
+      '<div class="vzb-tool vzb-tool-' + this.name + '">' +
+        '<div class="vzb-tool-stage">' +
+          '<div class="vzb-tool-viz">' +
           '</div>' +
-          '<div class="vzb-tool-buttonlist">' + 
-          '</div>' + 
-        '</div>' +         
-        '<div class="vzb-tool-datanotes vzb-hidden">' + 
-        '</div>' + 
-        '<div class="vzb-tool-treemenu vzb-hidden">' + 
-        '</div>' + 
-        '<div class="vzb-tool-datawarning vzb-hidden">' + 
-        '</div>' + 
-        '<div class="vzb-tool-labels vzb-hidden">' + 
-        '</div>' + 
+          '<div class="vzb-tool-timeslider">' +
+          '</div>' +
+        '</div>' +
+        '<div class="vzb-tool-sidebar">' +
+          '<div class="vzb-tool-dialogs">' +
+          '</div>' +
+          '<div class="vzb-tool-buttonlist">' +
+          '</div>' +
+        '</div>' +
+        '<div class="vzb-tool-datanotes vzb-hidden">' +
+        '</div>' +
+        '<div class="vzb-tool-treemenu vzb-hidden">' +
+        '</div>' +
+        '<div class="vzb-tool-datawarning vzb-hidden">' +
+        '</div>' +
+        '<div class="vzb-tool-labels vzb-hidden">' +
+        '</div>' +
       '</div>';
     this.model_binds = this.model_binds || {};
-    
+
     external_model = external_model || {}; //external model can be undefined
     external_model.bind = external_model.bind || {}; //bind functions can be undefined
 
-    
+
     //bind the validation function with the tool
     var validate = this.validate.bind(this);
     var _this = this;
@@ -107,7 +107,7 @@ var Tool = Component.extend({
         if(_this._ready) {
           _this.afterLoading();
         }
-      }      
+      }
     };
     utils.extend(callbacks, this.model_binds, external_model.bind);
     delete external_model.bind;
@@ -132,18 +132,18 @@ var Tool = Component.extend({
   },
 
   ready: function(){
-    this.checkTimeLimits();  
+    this.checkTimeLimits();
   },
-    
+
   checkTimeLimits: function() {
     if(!this.model.state.time) return;
-    
+
     var time = this.model.state.time;
-    
+
     if(this.model.state.marker) {
       var tLimits = this.model.state.marker.getTimeLimits(time.getDimension());
 
-      if(!tLimits || !utils.isDate(tLimits.min) || !utils.isDate(tLimits.max)) 
+      if(!tLimits || !utils.isDate(tLimits.min) || !utils.isDate(tLimits.max))
           return utils.warn("checkTimeLimits(): min-max look wrong: " + tLimits.min + " " + tLimits.max + ". Expecting Date objects");
 
       // change start and end (but keep startOrigin and endOrigin for furhter requests)
@@ -154,11 +154,11 @@ var Tool = Component.extend({
 
       time.set(newTime, false, false);
     }
-      
+
     //force time validation because time.value might now fall outside of start-end
-    time.validate(); 
+    time.validate();
   },
-    
+
   getDefaultModel: function() {
     var defaultToolModel = this.default_model;
     var defaultsFromModels = this.model.getDefaults();
@@ -167,21 +167,21 @@ var Tool = Component.extend({
   },
 
   getPersistentModel: function() {
-    //try to find functions in properties of model. 
+    //try to find functions in properties of model.
     var removeFunctions = function(model) {
-      for(var childKey in model) {        
+      for(var childKey in model) {
         if(typeof model[childKey] === 'function') {
           delete model[childKey];
           utils.warn('minModel validation. Function found in enumerable properties of ' + childKey + ". This key is deleted from minModel");
-        } 
-        else if(typeof model[childKey] === 'object') 
+        }
+        else if(typeof model[childKey] === 'object')
           removeFunctions(model[childKey]);
       }
     }
-   
+
     var currentToolModel = this.model.getPlainObject(true); // true = get only persistent model values
     var result = utils.flattenDates(currentToolModel, this.model.state.time.timeFormat);
-    
+
     removeFunctions(result);
     return result;
   },
@@ -241,10 +241,10 @@ var Tool = Component.extend({
    */
   beforeLoading: function(loadingData) {
     if(!this._readyOnce) {
-        utils.addClass(this.placeholder, class_loading_first);    
+        utils.addClass(this.placeholder, class_loading_first);
     }
     if(loadingData) {
-        utils.addClass(this.placeholder, class_loading_data);    
+        utils.addClass(this.placeholder, class_loading_data);
     }
   },
   /**

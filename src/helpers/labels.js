@@ -6,14 +6,14 @@ import {close as iconClose} from 'base/iconset';
 var label = function(context) {
 
   return function d3_label() {
-  
+
     var _this = context;
 
     var _cssPrefix;
     label.setCssPrefix = function(cssPrefix) {
       _cssPrefix = cssPrefix;
       return label;
-    }    
+    }
 
     var labelDragger = d3.behavior.drag()
       .on("dragstart", function(d, i) {
@@ -26,9 +26,9 @@ var label = function(context) {
         if(!this.druging) _this.druging = d[KEY];
         var cache = _this.cached[d[KEY]];
         cache.labelFixed = true;
-        
-        var viewWidth = _this.context.width;       
-        var viewHeight = _this.context.height;       
+
+        var viewWidth = _this.context.width;
+        var viewHeight = _this.context.height;
 
         cache.labelX_ += d3.event.dx / viewWidth;
         cache.labelY_ += d3.event.dy / viewHeight;
@@ -55,7 +55,7 @@ var label = function(context) {
           _this.model.entities.setLabelOffset(d, [cache.labelX_, cache.labelY_]);
         }
       });
-    
+
     function label(container) {
       container
         .call(labelDragger)
@@ -126,7 +126,7 @@ var label = function(context) {
           if(!utils.isTouchDevice()) return;
           var cross = d3.select(this).selectAll("." + _cssPrefix + "-label-x");
           var KEY = _this.KEY || _this.model.entities.getDimension();
-          var hidden = cross.classed("vzb-transparent"); 
+          var hidden = cross.classed("vzb-transparent");
           if(hidden) {
             // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
             _this.entityLabels.sort(function (a, b) { return a[KEY] != d[KEY]? -1 : 1; });
@@ -138,17 +138,17 @@ var label = function(context) {
               _this.model.entities.setHighlight(d);
             } else {
               _this.model.entities.clearHighlighted();
-            }         
+            }
           }
         });
-    
-      return label;  
+
+      return label;
     };
 
     label.line = function(container) {
       container.append("line").attr("class", _cssPrefix + "-label-line");
     };
-            
+
 
 
 
@@ -166,9 +166,9 @@ var label = function(context) {
           lineGroup.classed("vzb-invisible", brokenInputs);
           return;
       }
-      
-      var viewWidth = _this.context.width;       
-      var viewHeight = _this.context.height;       
+
+      var viewWidth = _this.context.width;
+      var viewHeight = _this.context.height;
       var rectBBox = cache.rectBBox;
       var width = rectBBox.width;
       var height = rectBBox.height;
@@ -178,7 +178,7 @@ var label = function(context) {
         _X = width;
         cache.labelX_ = (_X - _this.xScale(cache.labelX0)) / viewWidth;
       } else if(_X + 5 > viewWidth) { //check right
-        _X = viewWidth - 5; 
+        _X = viewWidth - 5;
         cache.labelX_ = (_X - _this.xScale(cache.labelX0)) / viewWidth;
       }
       if(_Y - height * .75 <= 0) { // check top
@@ -197,14 +197,14 @@ var label = function(context) {
       if(duration) {
         if(showhide && !d.hidden){
             //if need to show label
-          
+
             labelGroup.classed("vzb-invisible", d.hidden);
             labelGroup
                 .attr("transform", "translate(" + _X + "," + _Y + ")")
                 .style("opacity", 0)
                 .transition().duration(duration).ease("exp")
                 .style("opacity", 1)
-                //i would like to set opactiy to null in the end of transition. 
+                //i would like to set opactiy to null in the end of transition.
                 //but then fade in animation is not working for some reason
                 .each("interrupt", function(){
                     labelGroup
@@ -216,16 +216,16 @@ var label = function(context) {
                 .style("opacity", 0)
                 .transition().duration(duration).ease("exp")
                 .style("opacity", 1)
-                //i would like to set opactiy to null in the end of transition. 
+                //i would like to set opactiy to null in the end of transition.
                 //but then fade in animation is not working for some reason
                 .each("interrupt", function(){
                     lineGroup
                         .style("opacity", 1)
                 });
-            
+
         } else if(showhide && d.hidden) {
             //if need to hide label
-            
+
             labelGroup
                 .style("opacity", 1)
                 .transition().duration(duration).ease("exp")
@@ -243,11 +243,11 @@ var label = function(context) {
                     lineGroup
                         .style("opacity", 1) //i would like to set it to null. but then fade in animation is not working for some reason
                         .classed("vzb-invisible", d.hidden);
-                })      
-            
+                })
+
         } else {
             // just update the position
-            
+
             labelGroup
                 .transition().duration(duration).ease("linear")
                 .attr("transform", "translate(" + _X + "," + _Y + ")");
@@ -255,7 +255,7 @@ var label = function(context) {
                 .transition().duration(duration).ease("linear")
                 .attr("transform", "translate(" + _X + "," + _Y + ")");
         }
-          
+
       } else {
         labelGroup
             .interrupt()
@@ -277,7 +277,7 @@ var label = function(context) {
       var labels = _this.model.ui.chart.labels;
 
       var bBox = labels.removeLabelBox ? textBBox : rectBBox;
-      
+
       var FAR_COEFF = _this.activeProfile.labelLeashCoeff||0;
 
       var lineHidden = circleRectIntersects({x: diffX1, y: diffY1, r: cache.scaledS0},
@@ -303,17 +303,17 @@ var label = function(context) {
         .attr("y2", diffY2);
 
     }
-  
+
     /*
-    * Adapted from 
+    * Adapted from
     * http://stackoverflow.com/questions/401847/circle-rectangle-collision-detection-intersection
-    * 
-    * circle { 
-    *  x: center X 
+    *
+    * circle {
+    *  x: center X
     *  y: center Y
     *  r: radius
     * }
-    * 
+    *
     * rect {
     *  x: center X
     *  y: center Y
@@ -323,14 +323,14 @@ var label = function(context) {
     */
     function circleRectIntersects(circle, rect) {
       var circleDistanceX = Math.abs(circle.x - rect.x);
-      var circleDistanceY = Math.abs(circle.y - rect.y);    
+      var circleDistanceY = Math.abs(circle.y - rect.y);
       var halfRectWidth = rect.width * .5;
       var halfRectHeight = rect.height * .5;
 
       if (circleDistanceX > (halfRectWidth + circle.r)) { return false; }
       if (circleDistanceY > (halfRectHeight + circle.r)) { return false; }
 
-      if (circleDistanceX <= halfRectWidth) { return true; } 
+      if (circleDistanceX <= halfRectWidth) { return true; }
       if (circleDistanceY <= halfRectHeight) { return true; }
 
       var cornerDistance_sq = Math.pow(circleDistanceX - halfRectWidth, 2) +
@@ -349,7 +349,7 @@ var OPTIONS = {
   LINES_CONTAINER_SELECTOR: '',
   CSS_PREFIX: '',
   SUPPRESS_HIGHLIGHT_DURING_PLAY: true
-}; 
+};
 
 var Labels = Class.extend({
 
@@ -372,7 +372,7 @@ var Labels = Class.extend({
 
   readyOnce: function() {
     var _this = this;
-    
+
     this.model = this.context.model;
 
     this.model.on("change:entities.select", function() {
@@ -398,12 +398,12 @@ var Labels = Class.extend({
       });
 
     this.KEY = this.context.model.entities.getDimension();
-    
+
     this.cached = {};
 
     this._cssPrefix = OPTIONS.CSS_PREFIX;
     this.label.setCssPrefix(OPTIONS.CSS_PREFIX);
-    
+
     this.rootEl = this.context.root.element instanceof Array? this.context.root.element : d3.select(this.context.root.element);
     this.labelsContainer = this.rootEl.select("." + OPTIONS.LABELS_CONTAINER_CLASS);
     this.linesContainer = this.rootEl.select("." + OPTIONS.LINES_CONTAINER_CLASS);
@@ -411,7 +411,7 @@ var Labels = Class.extend({
     this.updateSize();
     this.selectDataPoints();
   },
-  
+
   config: function(newOptions) {
     utils.extend(OPTIONS, newOptions);
   },
@@ -432,10 +432,10 @@ var Labels = Class.extend({
       // if(!this.model.marker.size_label.which) {
       //   this.maxLabelTextSize = this.activeProfile.defaultLabelTextSize;
       //   this.model.marker.size_label.set({'domainMax': (this.maxLabelTextSize - minLabelTextSize) / minMaxDelta, 'which': '_default'});
-      //   return; 
+      //   return;
       // }
       this.minLabelTextSize = this.maxLabelTextSize;
-    } 
+    }
 
     if(this.model.marker.size_label.scaleType !== "ordinal" || this.model.marker.size_label.use == 'constant') {
       this.labelSizeTextScale.range([_this.minLabelTextSize, _this.maxLabelTextSize]);
@@ -444,7 +444,7 @@ var Labels = Class.extend({
     }
 
   },
-  
+
   updateIndicators: function() {
     var _this = this;
 
@@ -453,19 +453,19 @@ var Labels = Class.extend({
       this.labelSizeTextScale = this.model.marker.size_label.getScale();
     }
   },
-  
+
   setScales: function(xScale, yScale) {
     this._xScale = xScale;
     this._yScale = yScale;
   },
-  
+
   setCloseCrossHeight: function(closeCrossHeight) {
     if(this._closeCrossHeight != closeCrossHeight) {
       this._closeCrossHeight = closeCrossHeight;
       this.updateLabelCloseGroupSize(this.entityLabels.selectAll("." + this._cssPrefix + "-label-x"), this._closeCrossHeight);
     }
   },
- 
+
   xScale: function(x) {
     return this._xScale ? this._xScale(x) : (x * this.context.width);
   },
@@ -499,7 +499,7 @@ var Labels = Class.extend({
       .remove();
     this.entityLines
       .enter().insert('g', function(d) {
-        return this.querySelector("." + OPTIONS.LINES_CONTAINER_SELECTOR_PREFIX + d[KEY]); 
+        return this.querySelector("." + OPTIONS.LINES_CONTAINER_SELECTOR_PREFIX + d[KEY]);
       })
       .attr("class", function(d, index){return _cssPrefix + "-entity entity-line line-" + d[KEY]})
       .each(function(d, index) {
@@ -510,23 +510,23 @@ var Labels = Class.extend({
       .enter().append("g")
       .attr("class", function(d, index){return _cssPrefix + "-entity label-" + d[KEY]})
       .each(function(d, index) {
-        _this.cached[d[KEY]] = {_new: true};      
+        _this.cached[d[KEY]] = {_new: true};
         _this.label(d3.select(this));
       });
   },
-  
+
   showCloseCross: function(d, show) {
-    var KEY = this.KEY; 
+    var KEY = this.KEY;
     //show the little cross on the selected label
     this.entityLabels
         .filter(function(f){return d ? f[KEY] == d[KEY] : true;})
         .select("." + this._cssPrefix + "-label-x")
         .classed("vzb-transparent", !show);
   },
-  
+
   highlight: function(d, highlight) {
-    var KEY = this.KEY; 
-    var labels = this.entityLabels; 
+    var KEY = this.KEY;
+    var labels = this.entityLabels;
     if(d) {
       labels = labels.filter(function(f) {
           return d ? f[KEY] == d[KEY] : true;
@@ -534,7 +534,7 @@ var Labels = Class.extend({
     }
     labels.classed("vzb-highlighted", highlight);
   },
-  
+
   updateLabel: function(d, index, cache, valueX, valueY, valueS, valueC, valueL, valueLST, duration, showhide) {
     var _this = this;
     var KEY = this.KEY;
@@ -547,7 +547,7 @@ var Labels = Class.extend({
     // only for selected entities
     if(_this.model.entities.isSelected(d) && _this.entityLabels != null) {
       if(_this.cached[d[KEY]] == null) this.selectDataPoints();
-      
+
       var cached = _this.cached[d[KEY]];
       if(cache) utils.extend(cached, cache);
 
@@ -561,7 +561,7 @@ var Labels = Class.extend({
       }
 
       if(cached.labelX_ == null || cached.labelY_ == null)
-      {            
+      {
         var select = utils.find(_this.model.entities.select, function(f) {
           return f[KEY] == d[KEY]
         });
@@ -588,44 +588,44 @@ var Labels = Class.extend({
           }
 
           var text = labelGroup.selectAll("." + _cssPrefix + "-label-content")
-            .text(valueL);                       
-          
-          _this._updateLabelSize(d, index, labelGroup, valueLST, text);          
-          
+            .text(valueL);
+
+          _this._updateLabelSize(d, index, labelGroup, valueLST, text);
+
           _this.positionLabel(d, index, this, duration, showhide, lineGroup);
         });
     }
   },
-  
-  _updateLabelSize: function(d, index, labelGroup, valueLST, text) { 
+
+  _updateLabelSize: function(d, index, labelGroup, valueLST, text) {
     var _this = this;
     var KEY = this.KEY;
     var cached = _this.cached[d[KEY]];
 
-    
+
     var _cssPrefix = OPTIONS.CSS_PREFIX;
     var _context = OPTIONS.TOOL_CONTEXT;
 
-                   
+
     var labels = _this.model.ui.chart.labels || {};
     labelGroup.classed('vzb-label-boxremoved', labels.removeLabelBox);
-    
-    var _text = text || labelGroup.selectAll("." + _cssPrefix + "-label-content"); 
-    
+
+    var _text = text || labelGroup.selectAll("." + _cssPrefix + "-label-content");
+
     if(_this.labelSizeTextScale) {
       if(valueLST != null) {
       var range = _this.labelSizeTextScale.range();
       var fontSize = range[0] + Math.sqrt((_this.labelSizeTextScale(valueLST) - range[0]) * (range[1] - range[0]));
         _text.attr('font-size', fontSize + 'px');
       } else {
-        _text.attr('font-size', '');        
+        _text.attr('font-size', '');
       }
     }
 
     var contentBBox = _text[0][0].getBBox();
-    
+
     var rect = labelGroup.selectAll("rect");
-    
+
     if(!cached.textWidth || cached.textWidth != contentBBox.width) {
       cached.textWidth = contentBBox.width;
 
@@ -633,7 +633,7 @@ var Labels = Class.extend({
 
       var labelCloseGroup = labelGroup.select("." + _cssPrefix + "-label-x")
         .attr('transform', 'translate(' + 4 + ',' + (-contentBBox.height * .85) + ')');
-      
+
       this.updateLabelCloseGroupSize(labelCloseGroup, labelCloseHeight);
 
       rect.attr("width", contentBBox.width + 8)
@@ -648,7 +648,7 @@ var Labels = Class.extend({
       //cached.moveX = 5;
       //cached.moveY = contentBBox.height * .3;
     }
-    
+
     var glowRect = labelGroup.select(".vzb-label-glow")
     if(glowRect.attr("stroke") !== cached.scaledC0) {
       glowRect.attr("stroke", cached.scaledC0);
@@ -668,11 +668,11 @@ var Labels = Class.extend({
       .attr("height", labelCloseHeight)
 
   },
-    
+
   updateLabelsOnlyTextSize: function() {
     var _this = this;
     var KEY = this.KEY;
-    
+
     this.entityLabels.each(function(d, index) {
       var cached = _this.cached[d[KEY]];
         _this._updateLabelSize(d, index, d3.select(this), _this.context.frame.size_label[d[KEY]]);
@@ -682,7 +682,7 @@ var Labels = Class.extend({
         _this.positionLabel(d, index, this, 0, null, lineGroup);
       });
   },
-  
+
   updateLabelOnlyPosition: function(d, index, cache) {
     var _this = this;
     var KEY = this.KEY;
@@ -692,7 +692,7 @@ var Labels = Class.extend({
     var lineGroup = _this.entityLines.filter(function(f) {
       return f[KEY] == d[KEY];
     });
-    
+
     this.entityLabels.filter(function(f) {
         return f[KEY] == d[KEY]
       })
@@ -710,26 +710,26 @@ var Labels = Class.extend({
     var labelGroup = _this.entityLabels.filter(function(f) {
       return f[KEY] == d[KEY];
     });
-   
+
     _this._updateLabelSize(d, index, labelGroup, null);
-    
+
   },
-  
+
   positionLabel: function(d, index, context, duration, showhide, lineGroup) {
     var KEY = this.KEY;
     var cached = this.cached[d[KEY]];
 
-    var viewWidth = this.context.width;       
-    var viewHeight = this.context.height;       
+    var viewWidth = this.context.width;
+    var viewHeight = this.context.height;
 
     var resolvedX0 = this.xScale(cached.labelX0);
     var resolvedY0 = this.yScale(cached.labelY0);
-    
+
     if(!cached.labelOffset) cached.labelOffset = [0,0];
     cached.labelX_ = cached.labelOffset[0] || (-cached.scaledS0 * .75 - 5) / viewWidth;
     cached.labelY_ = cached.labelOffset[1] || (-cached.scaledS0 * .75 - 11) / viewHeight;
-    
-    //check default label position and switch to mirror position if position 
+
+    //check default label position and switch to mirror position if position
     //does not bind to visible field
 
     var resolvedX = resolvedX0 + cached.labelX_ * viewWidth;
@@ -744,7 +744,7 @@ var Labels = Class.extend({
     }
     var resolvedY = resolvedY0 + cached.labelY_ * viewHeight;
     if(cached.labelOffset[1] == 0) {
-      if(resolvedY - cached.rectBBox.height <= 0) { // check top 
+      if(resolvedY - cached.rectBBox.height <= 0) { // check top
         cached.labelY_ = (cached.scaledS0 * .75 + cached.rectBBox.height) / viewHeight;
         resolvedY = resolvedY0 + cached.labelY_ * viewHeight;
       } else if(resolvedY + 10 > viewHeight) { //check bottom
@@ -754,7 +754,7 @@ var Labels = Class.extend({
     }
     this.label._repositionLabels(d, index, context, resolvedX, resolvedY, resolvedX0, resolvedY0, duration, showhide, lineGroup);
   },
-  
+
   updateSize: function() {
     var profiles = {
       small: {
@@ -780,7 +780,7 @@ var Labels = Class.extend({
     var _this = this;
 
     this.activeProfile = this.context.getActiveProfile(profiles);
-    
+
     this.updateLabelSizeLimits();
   }
 

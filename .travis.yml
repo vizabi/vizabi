@@ -8,8 +8,7 @@ addons:
   apt:
     packages:
     - s3cmd
-    - ruby
-    
+
 notifications:
   email: false
   slack:
@@ -17,24 +16,20 @@ notifications:
       - gapminder:siB4Z9ymsYR6qHnRPpgUoB2Q#vizabi-spam
     on_success: change
     on_failure: always
-  
+
 cache:
   directories:
     - node_modules
 
 before_install:
   - npm install -g npm@latest
-  - gem install sass
-  - gem install scss_lint
-  - npm install -g gulp
 
 before_script:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
-  - gulp &
+  - npm run build:prod
 
 script:
-  - .cicd/w4gulp.js
 #  - npm run e2e:local
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && sh deploy.sh || true'
 

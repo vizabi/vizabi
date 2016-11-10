@@ -130,7 +130,7 @@ var MCSelectList = Class.extend({
         }else{
           name = _this.values.label[d.KEY()];
         }
-      
+
         var number = _this.values.axis_y[d.KEY()];
 
         var string = name + ": " + formatter(number) + (i === 0 ? " "+ _this.translator("mount/people") : "");
@@ -192,18 +192,18 @@ var MCSelectList = Class.extend({
           }, 2000)
         });
       });
-  }, 
+  },
 
   showCloseCross: function(d, show) {
-    var _this = this.context; 
-    var KEY = _this.KEY; 
+    var _this = this.context;
+    var KEY = _this.KEY;
     //show the little cross on the selected label
     _this.selectList
         .filter(function(f){return f[KEY] == d[KEY]})
         .select(".vzb-mc-label-x")
         .classed("vzb-invisible", !show);
   },
- 
+
 });
 
 export default MCSelectList;

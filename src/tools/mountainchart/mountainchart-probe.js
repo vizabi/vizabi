@@ -5,9 +5,9 @@ var MCProbe = Class.extend({
 
         init: function (context) {
             this.context = context;
-            
+
         },
-                
+
         redraw: function (options) {
             var _this = this.context;
             if (!options) options = {};

@@ -5,7 +5,7 @@
 import * as utils from 'base/utils';
 import Tool from 'base/tool';
 
-import AxisLabelerComponent from './axislabeler-component';
+import AxisLabelerComponent from 'tools/axislabeler/axislabeler-component';
 
 var comp_template = 'axislabeler.html';
 

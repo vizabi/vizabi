@@ -155,7 +155,7 @@ export default Class.extend({
                  * scroll. Instead, redirect the scroll event to the scrollable
                  * ancestor
                  */
-                if (sourceEvent != null && (sourceEvent.type === "wheel" || sourceEvent.type === "mousewheel") && 
+                if (sourceEvent != null && (sourceEvent.type === "wheel" || sourceEvent.type === "mousewheel") &&
                     !_this.ui.zoomOnScrolling) {
                     if (_this.scrollableAncestor) {
                         _this.scrollableAncestor.scrollTop += (sourceEvent.deltaY || -sourceEvent.wheelDelta);
@@ -315,7 +315,7 @@ export default Class.extend({
                 zoomedXRange[1] = xRangeBounds[1] < xRange[1] ? xRangeBounds[1] : xRange[1];
                 zoomedYRange[0] = yRangeBounds[0] < yRange[0] ? yRangeBounds[0] : yRange[0];
                 zoomedYRange[1] = yRangeBounds[1] > yRange[1] ? yRangeBounds[1] : yRange[1];
-                
+
                 _this._zoomedXYMinMax = {
                   axis_x: {
                     zoomedMin: formatter(_this.xScale.invert(zoomedXRange[0])),
@@ -350,7 +350,7 @@ export default Class.extend({
             },
 
             stop: function(){
-                
+
                 _this.draggingNow = false;
 
                 if (this.quitZoom) return;
@@ -654,17 +654,17 @@ export default Class.extend({
      * Incrementally zoom in or out and pan the view so that it never looses the point where click happened
      * this function is a modified d3's own zoom behavior on double click
      * for the original code see https://github.com/mbostock/d3/blob/master/src/behavior/zoom.js
-     * function dblclicked() and what it refers to 
+     * function dblclicked() and what it refers to
      */
     zoomByIncrement: function(direction, duration) {
         var _this = this.context;
-        
+
         var ratio = this.zoomer.scale();
         var pan = [this.zoomer.translate()[0], this.zoomer.translate()[1]];
-        
+
         var mouse = d3.mouse(_this.element.node());
         var k = Math.log(ratio) / Math.LN2;
-        
+
         //change factor direction based on the input. default is no direction supplied
         if(direction=="plus" || !direction) k = Math.floor(k) + 1;
         if(direction=="minus") k = Math.ceil(k) - 1;
@@ -675,19 +675,19 @@ export default Class.extend({
         //recalculate zoom ratio
         var scaleExtent = this.zoomer.scaleExtent();
         ratio = Math.max(scaleExtent[0], Math.min( scaleExtent[1], Math.pow(2, k) ));
-        
+
         //recalculate panning
         locus = [locus[0] * ratio + pan[0], locus[1] * ratio + pan[1]];
         pan[0] += mouse[0] - locus[0];
         pan[1] += mouse[1] - locus[1];
-        
+
         //save changes to the zoom behavior and run the event
         this.zoomer.scale(ratio);
         this.zoomer.translate([pan[0], pan[1]]);
         this.zoomer.duration = duration||0;
         this.zoomer.event(_this.element);
-    },    
-    
+    },
+
 
     /*
      * Reset zoom values without triggering a zoom event.

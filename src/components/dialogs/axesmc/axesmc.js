@@ -1,8 +1,9 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
-import Dialog from '../_dialog';
+import Dialog from 'components/dialogs/_dialog';
 
-import { minmaxinputs } from 'components/_index'
+import minmaxinputs from 'components/minmaxinputs/minmaxinputs';
+
 /*
  * Axes dialog
  */
@@ -16,7 +17,7 @@ var Axes = Dialog.extend({
    * @param context component context (parent)
    */
   init: function(config, parent) {
-    this.name = 'axesmc'; 
+    this.name = 'axesmc';
     var _this = this;
 
     this.model_binds = {
@@ -35,7 +36,7 @@ var Axes = Dialog.extend({
       markerID: "axis_x",
       ui: {
         selectDomainMinMax: false,
-        selectZoomedMinMax: true 
+        selectZoomedMinMax: true
       }
     }]
 
@@ -62,7 +63,7 @@ var Axes = Dialog.extend({
       .on("change", function() {
         _this.setModel("showProbeX", d3.select(this).property('checked'));
       })
-    
+
     this.probeFieldEl = this.element.select(".vzb-probe-field")
       .on("change", function() {
         var result = parseFloat(this.value.replace(",", "."));

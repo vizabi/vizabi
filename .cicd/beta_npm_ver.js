@@ -44,5 +44,5 @@ if (!versionBump){
     shell.exec("git add package.json");
     shell.exec("git commit --amend -C $(git rev-parse --verify HEAD)");
     //need rebuild after version bump so that the published vizabi is self-aware of its version
-    shell.exec("gulp build");
+    shell.exec("npm run build:prod");
 };

@@ -5,11 +5,11 @@ var MCMath = Class.extend({
 
         init: function (context) {
             this.context = context;
-            
+
             this.xScaleFactor = 1;
             this.xScaleShift = 0;
         },
-                
+
         rescale: function (x) {
             return Math.exp(this.xScaleFactor * Math.log(x) + this.xScaleShift);
         },
@@ -20,15 +20,15 @@ var MCMath = Class.extend({
         generateMesh: function (length, scaleType, domain) {
             // span a uniform mesh across the entire X scale
             // if the scale is log, the mesh would be exponentially distorted to look uniform
-            
-            var rangeFrom = scaleType === "linear" ? domain[0] 
+
+            var rangeFrom = scaleType === "linear" ? domain[0]
                 : Math.log(this.unscale(domain[0]));
-            
-            var rangeTo = scaleType === "linear" ? domain[1] 
+
+            var rangeTo = scaleType === "linear" ? domain[1]
                 : Math.log(this.unscale(domain[1]));
-            
+
             var rangeStep = (rangeTo - rangeFrom) / length;
-            
+
             var mesh = d3.range(rangeFrom, rangeTo, rangeStep).concat(rangeTo);
 
             if (scaleType !== "linear") {
@@ -39,19 +39,19 @@ var MCMath = Class.extend({
 
             return mesh;
         },
-        
+
         gdpToMu: function(gdp, sigma, xScaleFactor, xScaleShift){
             // converting gdp per capita per day into MU for lognormal distribution
             // see https://en.wikipedia.org/wiki/Log-normal_distribution
             return Math.log(gdp/365) - sigma*sigma/2;
         },
-        
+
         giniToSigma: function (gini) {
-            // The ginis are turned into std deviation. 
+            // The ginis are turned into std deviation.
             // Mattias uses this formula in Excel: stddev = NORMSINV( ((gini/100)+1)/2 )*2^0.5
             return this.normsinv( ( (gini / 100) + 1 ) / 2 ) * Math.pow(2,0.5);
         },
-                             
+
         // this function returns PDF values for a specified distribution
         pdf: {
             normal: function(x, mu, sigma){
@@ -70,7 +70,7 @@ var MCMath = Class.extend({
             }
         },
 
-        
+
         normsinv: function (p) {
             //
             // Lower tail quantile for standard normal distribution function.
@@ -89,10 +89,10 @@ var MCMath = Class.extend({
             // Time-stamp:  2003-05-05 05:15:14
             // E-mail:      pjacklam@online.no
             // WWW URL:     http://home.online.no/~pjacklam
-            
+
             // Taken from http://home.online.no/~pjacklam/notes/invnorm/index.html
             // adapted from Java code
-            
+
             // An algorithm with a relative error less than 1.15*10-9 in the entire region.
 
             // Coefficients in rational approximations

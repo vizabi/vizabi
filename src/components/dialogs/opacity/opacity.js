@@ -1,8 +1,8 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
-import Dialog from '../_dialog';
+import Dialog from 'components/dialogs/_dialog';
 
-import { simpleslider } from 'components/_index'
+import simpleslider from 'components/simpleslider/simpleslider';
 /*
  * Size dialog
  */

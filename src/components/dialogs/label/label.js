@@ -1,8 +1,10 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
-import Dialog from '../_dialog';
+import Dialog from 'components/dialogs/_dialog';
 
-import { sizeslider, indicatorpicker, simplecheckbox } from 'components/_index'
+import sizeslider from 'components/sizeslider/sizeslider';
+import indicatorpicker from 'components/indicatorpicker/indicatorpicker';
+import simplecheckbox from 'components/simplecheckbox/simplecheckbox';
 /*
  * Label dialog
  */

@@ -15,7 +15,7 @@ var OPTIONS = {
   THUMB_RADIUS: 10,
   THUMB_STROKE_WIDTH: 4,
   INTRO_DURATION: 250,
-  MARGIN: { TOP: 2, LEFT: 5, RIGHT:5}  
+  MARGIN: { TOP: 2, LEFT: 5, RIGHT:5}
 }
 
 var profiles = {
@@ -49,7 +49,7 @@ var SizeSlider = Component.extend({
 
     this.name = 'sizeslider';
 
-    this.template = this.template || "sizeslider.html";
+    this.template = this.template || require('./sizeslider.html');
 
     this.propertyName = config.propertyname;
 
@@ -65,7 +65,7 @@ var SizeSlider = Component.extend({
     this.model_binds = {
       'change:size.domainMin': changeMinMaxHandler,
       'change:size.domainMax': changeMinMaxHandler,
-      'change:size.extent': changeMinMaxHandler,        
+      'change:size.extent': changeMinMaxHandler,
       'ready': function() {
         _this.modelReady();
       }
@@ -81,7 +81,7 @@ var SizeSlider = Component.extend({
           .style("display", "block");
       }
     }
-    
+
     this._setModel = utils.throttle(this._setModel, 50);
     //contructor is the same as any component
     this._super(config, context);
@@ -89,7 +89,7 @@ var SizeSlider = Component.extend({
 
   modelReady: function() {
     var _this = this;
-    _this.modelUse = _this.model.size.use; 
+    _this.modelUse = _this.model.size.use;
     var size = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
     if(_this.modelUse != 'constant') {
       _this.sizeScaleMinMax = _this.model.size.getScale().domain();
@@ -105,10 +105,10 @@ var SizeSlider = Component.extend({
         var p = _this.propertyActiveProfile;
         size[1] = (p.default - p.min) / (p.max - p.min);
         _this.model.size.which = '_default';
-      }      
+      }
     }
     _this.sliderEl.call(_this.brush.extent([size[0], size[1]]));
-    _this.sliderEl.call(_this.brush.event);      
+    _this.sliderEl.call(_this.brush.event);
   },
 
   /**
@@ -137,11 +137,11 @@ var SizeSlider = Component.extend({
         right: thumbRadius,
         bottom: barWidth + textMaxHeight
       }
-    
-    var componentWidth = this.element.node().offsetWidth; 
+
+    var componentWidth = this.element.node().offsetWidth;
 
     this.padding = padding;
-    
+
     this.propertyActiveProfile = this.getPropertyActiveProfile();
     this.translator = this.model.language.getTFunction();
 
@@ -170,7 +170,7 @@ var SizeSlider = Component.extend({
 
     this.sliderEl
       .call(_this.brush);
-      
+
     this.sliderEl.selectAll('.background').attr('style','');
 
     //For return to round thumbs
@@ -213,8 +213,8 @@ var SizeSlider = Component.extend({
       //console.log("EVENT: resize");
       _this.propertyActiveProfile = _this.getPropertyActiveProfile();
       _this.propertyScale.range([_this.propertyActiveProfile.min, _this.propertyActiveProfile.max])
-      
-      var componentWidth = _this.element.node().offsetWidth; 
+
+      var componentWidth = _this.element.node().offsetWidth;
 
        _this.xScale.range([0, componentWidth - _this.padding.left - _this.padding.right])
        _this._updateSize();
@@ -226,7 +226,7 @@ var SizeSlider = Component.extend({
     });
 
     this._updateSize();
-    
+
     this.sliderEl
       .call(this.brush.extent(values))
     _this._setFromExtent(false, false, false); // non persistent change
@@ -239,7 +239,7 @@ var SizeSlider = Component.extend({
 
     if(_this.model._ready) this.modelReady();
   },
-  
+
   getPropertyActiveProfile: function() {
     var profile = profiles[this.getLayoutProfile()];
     return { min: profile['min' + this.propertyName], max: profile['max' + this.propertyName], default: profile['default' + this.propertyName]};
@@ -264,12 +264,12 @@ var SizeSlider = Component.extend({
 //       .innerRadius(function (d) { return _this.xScale(d) * 0.5 })
 //       .startAngle(-Math.PI * 0.5)
 //       .endAngle(Math.PI * 0.5);
-// 
+//
 //     this.sliderThumbs.select('.vzb-szs-slider-thumb-arc').data(s)
 //       .attr("d", valueArc)
 //       .attr("transform", function (d) {return "translate(" + (-_this.xScale(d) * 0.25) + ",0)"; })
 //   },
-// 
+//
   _updateLabels: function(s) {
     var _this = this;
     var arcLabelTransform = function(d, i) {
@@ -285,7 +285,7 @@ var SizeSlider = Component.extend({
     if(_this.model.size.use === 'constant')
       this.sliderLabelsEl.data(s).text(function(d) {
         return ~~(_this.propertyScale(d)) + (_this.translator(_this.ui.constantUnit)||"");
-      })    
+      })
   },
 
   _setLabelsText: function() {
