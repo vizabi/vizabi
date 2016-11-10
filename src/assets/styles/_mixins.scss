@@ -17,7 +17,7 @@
 //   Sizes, borders and margins
 // ----------------------------------------------------------------------------
 
-@mixin reset-margin-padding() {
+@mixin reset-margin-padding {
   padding: 0;
   margin: 0;
 }
@@ -95,7 +95,7 @@
 // ----------------------------------------------------------------------------
 
 //overflow mobile y
-@mixin overflow-mobile() {
+@mixin overflow-mobile {
   -webkit-overflow-scrolling: auto;
 }
 
@@ -111,9 +111,9 @@
                $border-width: 0,
                $border-color: false) {
 
+  @include box-sizing(border-box);
   position: absolute;
   padding: $padding;
-  @include box-sizing(border-box);
   margin-bottom: $arrow-length;
   background-color: $background-color;
   cursor: default;

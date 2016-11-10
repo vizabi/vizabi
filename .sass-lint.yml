@@ -17,3 +17,12 @@ rules:
     - allow-element-with-attribute: true
   placeholder-in-extend: 0
   property-sort-order: 0
+  no-trailing-whitespace: 0
+  force-element-nesting: 0
+  force-attribute-nesting: 0
+  force-pseudo-nesting: 0
+  no-vendor-prefixes: 0
+  attribute-quotes: 0
+  quotes: 0
+  indentation: 0
+  
