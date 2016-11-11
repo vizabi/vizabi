@@ -213,7 +213,7 @@ module.exports = {
         include: [path.resolve(__dirname, 'src', 'assets', 'translation')],
         loader: 'file',
         query: {
-          name: 'preview/assets/translation/[name].[ext]'
+          name: `${__PROD__ ? 'dist' : 'preview'}/assets/translation/[name].[ext]`
         }
       }
     ]
