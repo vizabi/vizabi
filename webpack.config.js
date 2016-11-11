@@ -120,7 +120,9 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: '[name].js',
-    library: 'Vizabi'
+    library: 'Vizabi',    
+    libraryTarget: 'umd',
+    umdNamedDefine: true
   },
 
   resolve: {
@@ -213,7 +215,7 @@ module.exports = {
         }
       },
       {
-        test: __PROD__ ? /en\.json$/ : /\.json$/,
+        test:  /\.json$/, //__PROD__ ? /en\.json$/ : /\.json$/,
         include: [path.resolve(__dirname, 'src', 'assets', 'translation')],
         loader: 'file',
         query: {
