@@ -42,7 +42,7 @@ var ColorLegend = Component.extend({
         _this.updateView();
       },
       "change:marker.color.palette": function(evt, path) {
-        if(!_this._readyOnce && _this.frame) return;
+        if(!_this._readyOnce || !_this.frame) return;
         _this.updateView();
       },
       "change:entities.highlight": function(evt, values) {
