@@ -46,7 +46,7 @@ var MountainChartComponent = Component.extend({
             { name: "entities", type: "entities" },
             { name: "marker", type: "model" },
             { name: "language", type: "language" },
-            { name: "ui", type: "model" }
+            { name: "ui", type: "ui" }
         ];
 
         //attach event listeners to the model items

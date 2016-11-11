@@ -23,7 +23,7 @@ var Stack = Dialog.extend({
         this.name = 'stack';
         var _this = this;
 
-        // in dialog, this.model_expects = ["state", "data"];
+        // in dialog, this.model_expects = ["state", "ui", "language"];
 
         this.components = [{
             component: draggablelist,
@@ -81,7 +81,7 @@ var Stack = Dialog.extend({
                 if(d3.select(this).node().value === "all") return _this.stack.which==="all";
             });
         
-        _this.ui.chart.manualSortingEnabled = _this.stack.which == "all";
+        _this.model.ui.chart.manualSortingEnabled = _this.stack.which == "all";
         
         this.howToMergeEl
             .property('checked', function() {

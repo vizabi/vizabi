@@ -37,20 +37,17 @@ var DataNotes = Component.extend({
     //contructor is the same as any component
     this._super(config, context);
 
-    this.ui = utils.extend({
-      //...add properties here
-    }, this.ui);
-
     this.close = this.close.bind(this);
   },
 
   ready: function() {
-    this.translator = this.model.language.getTFunction();
-    //this.setValues();
+    this.setValues();
   },
 
   readyOnce: function() {
     var _this = this;
+
+    this.translator = this.model.language.getTFunction();
     this.element = d3.select(this.placeholder);
 
     this.element.selectAll("div").remove();

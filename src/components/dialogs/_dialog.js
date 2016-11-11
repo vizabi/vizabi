@@ -21,7 +21,7 @@ var Dialog = Component.extend({
       type: "model"
     }, {
       name: "ui",
-      type: "model"
+      type: "ui"
     }, {
       name: "language",
       type: "language"

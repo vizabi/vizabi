@@ -49,7 +49,7 @@ var AgePyramid = Component.extend({
       type: "language"
     }, {
       name: "ui",
-      type: "model"
+      type: "ui"
     }];
 
     var _this = this;

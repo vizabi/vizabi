@@ -43,7 +43,7 @@ var BubbleChartComp = Component.extend({
       type: "language"
     }, {
       name: "ui",
-      type: "model"
+      type: "ui"
     }];
 
     this.model_binds = {
@@ -1476,7 +1476,7 @@ var BubbleChartComp = Component.extend({
 
         if(!valueY && valueY!==0 || !valueX && valueX!==0 || !valueS && valueS!==0) return;
 
-        if(_this.ui.chart.whenHovering.showProjectionLineX
+        if(_this.model.ui.chart.whenHovering.showProjectionLineX
           && _this.xScale(valueX) > 0 && _this.xScale(valueX) < _this.width
           && (_this.yScale(valueY) + radius) < _this.height) {
           _this.projectionX
@@ -1486,7 +1486,7 @@ var BubbleChartComp = Component.extend({
             .attr("x2", _this.xScale(valueX));
         }
 
-        if(_this.ui.chart.whenHovering.showProjectionLineY
+        if(_this.model.ui.chart.whenHovering.showProjectionLineY
           && _this.yScale(valueY) > 0 && _this.yScale(valueY) < _this.height
           && (_this.xScale(valueX) - radius) > 0) {
           _this.projectionY
@@ -1496,11 +1496,11 @@ var BubbleChartComp = Component.extend({
             .attr("x1", _this.xScale(valueX) - radius);
         }
 
-        if(_this.ui.chart.whenHovering.higlightValueX) _this.xAxisEl.call(
+        if(_this.model.ui.chart.whenHovering.higlightValueX) _this.xAxisEl.call(
           _this.xAxis.highlightValue(valueX)
         );
 
-        if(_this.ui.chart.whenHovering.higlightValueY) _this.yAxisEl.call(
+        if(_this.model.ui.chart.whenHovering.higlightValueY) _this.yAxisEl.call(
           _this.yAxis.highlightValue(valueY)
         );
       });

@@ -577,10 +577,6 @@ var TreeMenu = Component.extend({
     //contructor is the same as any component
     this._super(config, context);
 
-    this.ui = utils.extend({
-      //...add properties here
-    }, this.ui);
-
     //default callback
     this._callback = function(indicator) {
       console.log("Indicator selector: stub callback fired. New indicator is ", indicator);

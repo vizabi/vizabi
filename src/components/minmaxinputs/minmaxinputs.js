@@ -53,6 +53,7 @@ var MinMaxInputs = Component.extend({
         //contructor is the same as any component
         this._super(config, context);
 
+        // SPECIFIC COMPONENT UI! NOT TOOLMODEL UI!
         this.ui = utils.extend({
             selectDomainMinMax: false,
             selectZoomedMinMax: false
