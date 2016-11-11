@@ -207,6 +207,14 @@ module.exports = {
         query: {
           interpolate: 'require'
         }
+      },
+      {
+        test: __PROD__ ? /en\.json$/ : /\.json$/,
+        include: [path.resolve(__dirname, 'src', 'assets', 'translation')],
+        loader: 'file',
+        query: {
+          name: 'preview/assets/translation/[name].[ext]'
+        }
       }
     ]
   },

@@ -8,6 +8,8 @@ import Promise from 'base/promise';
 import Tool from 'base/tool';
 import Vzb from 'vizabi';
 import 'assets/styles/vizabi.scss';
+import requireAll from 'helpers/requireAll';
+requireAll(require.context('assets/translation', false, /\.json$/));
 
 //import tools
 import BubbleChart from 'tools/bubblechart/bubblechart';
