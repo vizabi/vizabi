@@ -1,4 +1,4 @@
-var VIZABI_MODEL = { 
+var VIZABI_MODEL = {
   "state": {
     "time": {
       "startOrigin": "1950",
@@ -75,4 +75,4 @@ var VIZABI_MODEL = {
       }
     }
   }
-}
+};

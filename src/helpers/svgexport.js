@@ -1,4 +1,4 @@
-import Class from '../base/class'
+import Class from 'base/class'
 
 var prefix = "";
 var deleteClasses = [];
@@ -175,7 +175,7 @@ export default Class.extend({
     var result = SVGHEADER + " " + this.container.node().innerHTML
       .replace("param1", "xmlns")
       .replace("param2", "xmlns:xlink")
-      //round all numbers in SVG code 
+      //round all numbers in SVG code
       .replace(/\d+(\.\d+)/g, function(x) {
         return Math.round(+x * 100) / 100 + ""
       });

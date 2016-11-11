@@ -1,5 +1,5 @@
 import * as utils from 'base/utils';
-import ButtonList from '../buttonlist';
+import ButtonList from 'components/buttonlist/buttonlist';
 import * as iconset from 'base/iconset';
 
 /*!
@@ -28,24 +28,24 @@ var OptionsButtonList = ButtonList.extend({
     //set properties
     var _this = this;
     this.name = 'gapminder-optionsbuttonlist';
-    
+
     this._super(config, context);
   },
-  
+
   readyOnce: function() {
     var _this = this;
     Object.keys(this._available_buttons).forEach(function(buttonId) {
       var button = _this._available_buttons[buttonId];
       button.required = !button.required;
     });
-    
+
     this.buttonListComp = this.root.findChildByName("gapminder-buttonlist");
-    
+
     this.buttonListComp.on("click", function(evt, button) {
       var btn = _this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + button.id + "']");
       btn.classed(class_active, button.active);
     });
-    
+
     this.buttonListComp.on("toggle", function(evt, params) {
       var btn = _this.element.selectAll(".vzb-buttonlist-btn");
       var visibleButton = 0;
@@ -53,13 +53,13 @@ var OptionsButtonList = ButtonList.extend({
         var button = d3.select(this);
         var isHidden = params.hiddenButtons.indexOf(d.id) == -1;
         button.style('display', isHidden ? 'none' : '');
-        if(!isHidden) visibleButton++; 
+        if(!isHidden) visibleButton++;
       });
     });
 
     this._super();
-  },  
-  
+  },
+
   proceedClick: function(id) {
     var _this = this;
     this.buttonListComp.proceedClick(id);
@@ -70,11 +70,11 @@ var OptionsButtonList = ButtonList.extend({
       }, 200);
     }
   },
-   
+
   _toggleButtons: function() {
     //
   }
-  
+
 });
 
 export default OptionsButtonList;

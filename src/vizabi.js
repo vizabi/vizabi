@@ -1,3 +1,4 @@
+import requireAll from 'helpers/requireAll';
 import * as utils from 'base/utils';
 import Tool from 'base/tool';
 import Component from 'base/component';
@@ -36,14 +37,14 @@ Vzb.clearInstances = function(id) {
 };
 
 //available readers = all
-import * as readers from 'readers/_index';
+const readers = requireAll(require.context('./readers', true, /\.js$/));
 
 //register available readers
 utils.forEach(readers, function(reader, name) {
   Reader.register(name, reader);
 });
 
-import * as components from 'components/_index';
+const components = requireAll(require.context('./components', true, /\.js$/), 1);
 
 //register available components
 utils.forEach(components, function(component, name) {
@@ -74,7 +75,5 @@ Vzb.Model = Model;
 Vzb.Reader = Reader;
 Vzb.Events = Events;
 Vzb.utils = utils;
-
-__setupGlobals();
 
 export default Vzb;

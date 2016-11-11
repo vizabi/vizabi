@@ -1,5 +1,5 @@
 import * as utils from 'base/utils';
-import Hook from 'hook';
+import Hook from 'models/hook';
 
 /*!
  * VIZABI Axis Model (hook)

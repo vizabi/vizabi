@@ -5,17 +5,14 @@
 import * as utils from 'base/utils';
 import Tool from 'base/tool';
 
-import BubbleMapComponent from './bubblemap-component';
+import BubbleMapComponent from 'tools/bubblemap/bubblemap-component';
 
-import {
-  timeslider,
-  dialogs,
-  buttonlist,
-  treemenu,
-  datawarning,
-  datanotes
-}
-from 'components/_index';
+import timeslider from 'components/timeslider/timeslider';
+import dialogs from 'components/dialogs/dialogs';
+import buttonlist from 'components/buttonlist/buttonlist';
+import treemenu from 'components/treemenu/treemenu';
+import datawarning from 'components/datawarning/datawarning';
+import datanotes from 'components/datanotes/datanotes';
 
 //BAR CHART TOOL
 var BubbleMap = Tool.extend('BubbleMap', {
@@ -72,7 +69,7 @@ var BubbleMap = Tool.extend('BubbleMap', {
       time: {
         "delay": 100,
         "delayThresholdX2": 50,
-        "delayThresholdX4": 25  
+        "delayThresholdX4": 25
       },
       entities: {
         "opacitySelectDim": 0.3,

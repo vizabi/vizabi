@@ -1,5 +1,5 @@
 import * as utils from 'base/utils';
-import Hook from 'hook';
+import Hook from 'models/hook';
 
 /*!
  * VIZABI Color Model (hook)
@@ -66,14 +66,14 @@ var ColorModel = Hook.extend({
 
     this.on('hook_change', function() {
       if(_this._readyOnce) return;
-      
+
       if(_this.palette && Object.keys(_this.palette._data).length!==0) {
         var defaultPalette = _this.getDefaultPalette();
         var currentPalette = _this.getPalette();
         var palette = {};
         //extend partial current palette with default palette and
         //switch current palette elements which equals
-        //default palette elments to nonpersistent state  
+        //default palette elments to nonpersistent state
         Object.keys(defaultPalette).map(function(key) {
           if(!currentPalette[key]||defaultPalette[key]==currentPalette[key]) palette[key] = defaultPalette[key];
         });
@@ -87,19 +87,19 @@ var ColorModel = Hook.extend({
   // args: {colorID, shadeID}
   getColorShade: function(args){
     var palette = this.getPalette();
-      
-    if(!args) return utils.warn("getColorShade() is missing arguments");  
-      
+
+    if(!args) return utils.warn("getColorShade() is missing arguments");
+
     // if colorID is not given or not found in the palette, replace it with default color
     if(!args.colorID || !palette[args.colorID]) args.colorID = "_default";
-    
+
     // if the resolved colr value is not an array (has only one shade) -- return it
     if( !utils.isArray(palette[args.colorID]) ) return palette[args.colorID];
-      
+
     var conceptpropsColor = this.getConceptprops().color;
     var shade = args.shadeID && conceptpropsColor && conceptpropsColor.shades && conceptpropsColor.shades[args.shadeID] ? conceptpropsColor.shades[args.shadeID] : 0;
-        
-    return palette[args.colorID][shade];    
+
+    return palette[args.colorID][shade];
 
   },
 
@@ -130,7 +130,7 @@ var ColorModel = Hook.extend({
 
       //TODO a hack that kills the scale and palette, it will be rebuild upon getScale request in model.js
       if(this.palette) this.palette._data = {};
-      this.scale = null;  
+      this.scale = null;
     }
 
     // if there are models to sync: do it on first load or on changing the which
@@ -140,12 +140,12 @@ var ColorModel = Hook.extend({
         var model = _this.getClosestModel(modelName);
         var marker = model.isHook()? model._parent : model;
         var entities = marker.getClosestModel(marker.space[0]);
-        
+
         //save the references here locally
         _this._syncModelReferences[modelName] = {model: model, marker: marker, entities: entities};
-        
+
         if(_this.use === "property") _this._setSyncModel(model, marker, entities);
-      });   
+      });
     }
 
     this.which_1 = this.which;
@@ -155,8 +155,8 @@ var ColorModel = Hook.extend({
 
   _setSyncModel: function(model, marker, entities) {
     if(model == marker){
-      /*TODO: when WS will learn to respond correctly to the queries 
-      outside the same entity domain this can be reduced to 
+      /*TODO: when WS will learn to respond correctly to the queries
+      outside the same entity domain this can be reduced to
       just {dim: this.which}, without any show part #2103*/
       var conceptProps = this.getConceptprops();
       var newFilter = {dim: null, show: {}};
@@ -206,10 +206,10 @@ var ColorModel = Hook.extend({
   },
 
 
-  getDefaultPalette: function() {     
+  getDefaultPalette: function() {
       var conceptpropsColor = this.getConceptprops().color;
       var palette;
-      
+
       if(conceptpropsColor && conceptpropsColor.palette) {
         //specific color palette from hook concept properties
         palette = utils.clone(conceptpropsColor.palette);
@@ -226,14 +226,14 @@ var ColorModel = Hook.extend({
       } else {
         palette = utils.clone(defaultPalettes["_default"]);
       }
-      
+
       return palette;
   },
 
   _getPaletteLabels: function() {
       var conceptpropsColor = this.getConceptprops().color;
       var paletteLabels = null;
-      
+
       if(conceptpropsColor && conceptpropsColor.paletteLabels) {
         //specific color palette from hook concept properties
         paletteLabels = utils.clone(conceptpropsColor.paletteLabels);
@@ -242,7 +242,7 @@ var ColorModel = Hook.extend({
   },
 
   getPaletteLabels: function() {
-    return this.paletteLabels.getPlainObject(); 
+    return this.paletteLabels.getPlainObject();
   },
 
   getPalette: function(){
@@ -256,10 +256,10 @@ var ColorModel = Hook.extend({
       this.set("paletteLabels", paletteLabels, false, false);
       this.set("paletteLabels", paletteLabels, true, false);
     }
-    
-    return this.palette.getPlainObject(); 
+
+    return this.palette.getPlainObject();
   },
-    
+
   /**
    * Gets the domain for this hook
    * @returns {Array} domain
@@ -272,17 +272,17 @@ var ColorModel = Hook.extend({
     var range = utils.values(paletteObject);
 
     this._hasDefaultColor = domain.indexOf("_default") > -1;
-    
+
     if(this.scaleType == "time") {
-      
+
       var timeMdl = this._space.time;
-      var limits = timeMdl.splash ? 
+      var limits = timeMdl.splash ?
           {min: timeMdl.parseToUnit(timeMdl.startOrigin), max: timeMdl.parseToUnit(timeMdl.endOrigin)}
           :
           {min: timeMdl.start, max: timeMdl.end};
-      
+
       var singlePoint = (limits.max - limits.min == 0);
-        
+
       domain = domain.sort(function(a,b){return a-b});
       range = domain.map(function(m){
         return singlePoint? paletteObject[domain[0]] : paletteObject[m]
@@ -290,7 +290,7 @@ var ColorModel = Hook.extend({
       domain = domain.map(function(m){
         return limits.min.valueOf() + m/100 * (limits.max.valueOf() - limits.min.valueOf())
       });
-      
+
       this.scale = d3.time.scale.utc()
         .domain(domain)
         .range(range)
@@ -305,7 +305,7 @@ var ColorModel = Hook.extend({
         limits = [limits.min, limits.max];
         //domain from concept properties can override it if defined
         limits = this.getConceptprops().domain ? this.getConceptprops().domain : limits;
-          
+
         var singlePoint = (limits[1] - limits[0] == 0);
 
         domain = domain.sort(function(a,b){return a-b});
@@ -314,8 +314,8 @@ var ColorModel = Hook.extend({
         });
         domain = domain.map(function(m){
           return limits[0] + m/100 * (limits[1] - limits[0])
-        });        
-        
+        });
+
         var scaleType = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.scaleType === "log")? "genericLog" : this.scaleType;
 
         if(this.scaleType == "log" || this.scaleType == "genericLog") {
@@ -334,7 +334,7 @@ var ColorModel = Hook.extend({
 
       default:
         range = range.map(function(m){ return utils.isArray(m)? m[0] : m; });
-            
+
         this.scale = d3.scale["ordinal"]()
           .domain(domain)
           .range(range);

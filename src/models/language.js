@@ -1,6 +1,6 @@
 import * as utils from 'base/utils';
 import DataConnected from 'models/dataconnected';
-import Promise from 'promise';
+import Promise from 'base/promise';
 
 var LanguageModel = DataConnected.extend({
 
@@ -52,7 +52,7 @@ var LanguageModel = DataConnected.extend({
     this._loadCall = true;
 
     var promise = new Promise(function(resolve, reject) {
-      
+
       if(_this.filePath) {
         // if a path to external tranlation file is provided, extend the default strings with the ones from that file
         d3.json(_this.filePath + _this.id + ".json", function(receivedStrings) {

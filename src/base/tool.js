@@ -1,8 +1,8 @@
-import * as utils from 'utils'
-import Model from 'model'
-import Component from 'component'
-import { DefaultEvent } from 'events'
-import { warn as warnIcon } from 'iconset'
+import * as utils from 'base/utils'
+import Model from 'base/model'
+import Component from 'base/component'
+import { DefaultEvent } from 'base/events'
+import { warn as warnIcon } from 'base/iconset'
 import Promise from 'base/promise';
 
 var class_loading_first = 'vzb-loading-first';
@@ -228,7 +228,7 @@ var Tool = Component.extend({
   getPersistentMinimalModel: function(diffModel) {
     var defaultModel = this.model.getDefaults();
     var currentPersistentModel = this.getPersistentModel();
-    var redundantModel = Vizabi.utils.deepExtend(defaultModel, diffModel);
+    var redundantModel = utils.deepExtend(defaultModel, diffModel);
     return utils.diffObject(currentPersistentModel, redundantModel);
   },
 

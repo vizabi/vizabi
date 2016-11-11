@@ -5,15 +5,12 @@
 import * as utils from 'base/utils';
 import Tool from 'base/tool';
 
-import PopByAgeComponent from './popbyage-component';
+import PopByAgeComponent from 'tools/popbyage/popbyage-component';
 
-import {
-  timeslider,
-  dialogs,
-  buttonlist,
-  treemenu
-}
-from 'components/_index';
+import timeslider from 'components/timeslider/timeslider';
+import dialogs from 'components/dialogs/dialogs';
+import buttonlist from 'components/buttonlist/buttonlist';
+import treemenu from 'components/treemenu/treemenu';
 
 //BAR CHART TOOL
 var PopByAge = Tool.extend('PopByAge', {
@@ -54,7 +51,7 @@ var PopByAge = Tool.extend('PopByAge', {
     //constructor is the same as any tool
     this._super(placeholder, external_model);
   },
-  
+
   default_model: {
     state: {
     },

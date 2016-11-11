@@ -65,17 +65,17 @@ var DataWarning = Component.extend({
 
     icon.append("div")
       .text("Data doubts");
-    
+
     this.container.append("div")
       .attr("class", "vzb-data-warning-title")
 
     this.container.append("div")
       .attr("class", "vzb-data-warning-body vzb-dialog-scrollable")
   },
-  
+
   redraw: function(){
     this.translator = this.model.language.getTFunction();
-    
+
     var title = this.translator("datawarning/title/"+this.parent.name);
     this.container.select(".vzb-data-warning-title")
       .html(title)

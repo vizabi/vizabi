@@ -5,17 +5,14 @@
 import * as utils from 'base/utils';
 import Tool from 'base/tool';
 
-import CartogramComponent from './cartogram-component';
+import CartogramComponent from 'tools/cartogram/cartogram-component';
 
-import {
-  timeslider,
-  dialogs,
-  buttonlist,
-  treemenu,
-  datawarning,
-  datanotes
-}
-from 'components/_index';
+import timeslider from 'components/timeslider/timeslider';
+import dialogs from 'components/dialogs/dialogs';
+import buttonlist from 'components/buttonlist/buttonlist';
+import treemenu from 'components/treemenu/treemenu';
+import datawarning from 'components/datawarning/datawarning';
+import datanotes from 'components/datanotes/datanotes';
 
   //CARTOGRAM TOOL
 var Cartogram = Tool.extend('Cartogram', {

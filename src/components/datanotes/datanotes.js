@@ -85,7 +85,7 @@ var DataNotes = Component.extend({
   },
 
   setHook: function(_hookName) {
-    if(!this._readyOnce) return this; 
+    if(!this._readyOnce) return this;
     if(pin) {
       newHookName = _hookName;
       return this;
@@ -93,7 +93,7 @@ var DataNotes = Component.extend({
     if(hookName) this.model.marker[hookName].off('change:which', this.close);
     hookName = newHookName = _hookName;
     this.model.marker[hookName].on('change:which', this.close);
-    
+
     this.setValues();
 
     return this;
@@ -103,11 +103,11 @@ var DataNotes = Component.extend({
     if(!hookName) return;
     var hook = this.model.marker[hookName];
     var concept = hook.getConceptprops();
-    
+
     this.element.select('.vzb-data-notes-body')
       .classed('vzb-hidden', !concept.description)
       .text(concept.description||"");
-   
+
     this.element.select('.vzb-data-notes-link').classed('vzb-hidden', !concept.sourceLink);
 
     if(concept.sourceLink) {
@@ -154,12 +154,12 @@ var DataNotes = Component.extend({
     if(arg != null) pin = arg;
     this.element.select('.vzb-data-notes-close').classed('vzb-hidden', !pin);
     this.element.classed('vzb-data-notes-pinned', pin);
-    if(hookName != newHookName) this.setHook(newHookName);  
+    if(hookName != newHookName) this.setHook(newHookName);
     this.element.select('.vzb-data-notes-body').node().scrollTop = 0;
     if(!showNotes) {
       return this.hide();
     } else {
-      return this.setPos(left, top, true);      
+      return this.setPos(left, top, true);
     }
   },
 

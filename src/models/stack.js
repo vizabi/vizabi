@@ -1,5 +1,5 @@
 import * as utils from 'base/utils';
-import Hook from 'hook';
+import Hook from 'models/hook';
 
 /*
  * VIZABI Stack Model
@@ -40,7 +40,7 @@ var StackModel = Hook.extend({
     //there must be no scale
     if(this.scale) this.scale = null;
 
-    //use must not be "indicator" 
+    //use must not be "indicator"
     if(this.use === "indicator") {
       utils.warn("stack model: use must not be 'indicator'. Resetting use to 'constant' and which to '" + palettes._default)
       this.use = "constant";

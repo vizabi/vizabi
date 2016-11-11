@@ -1,4 +1,4 @@
-import * as utils from 'utils';
+import * as utils from 'base/utils';
 
 function Promise(resolver) {
   if(!(this instanceof Promise)) {
@@ -172,7 +172,6 @@ function resolvePromise(promise1, promise2) {
   if('rejected' === status) {
     promise1.reject(promise2.reason);
   }
-  return promise;
 }
 
 function resolveThen(promise, thanable) {

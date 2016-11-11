@@ -1,4 +1,4 @@
-var VIZABI_MODEL = { 
+var VIZABI_MODEL = {
   "state": {
     "entities": {
       "dim": "geo"
@@ -8,11 +8,11 @@ var VIZABI_MODEL = {
         "which": "name"
       },
       "axis_y": {
-        "which": "life_expectancy_years" 
+        "which": "life_expectancy_years"
       },
       "axis_x": {
         "which": "life_expectancy_years"
       }
     }
   }
-}
+};

@@ -20,7 +20,7 @@ var PopByAge = Component.extend({
    */
   init: function(config, context) {
     this.name = 'popbyage';
-    this.template = 'popbyage.html';
+    this.template = require('./popbyage.html');
 
     //define expected models for this component
     this.model_expects = [{
@@ -191,7 +191,7 @@ var PopByAge = Component.extend({
       .onTap(function(d) {
         d3.event.stopPropagation();
         _this.model.age.selectEntity(d);
-      })    
+      })
       .append('rect');
 
     this.entityLabels.enter().append("g")
@@ -281,7 +281,7 @@ var PopByAge = Component.extend({
    */
   _unhighlightBars: function() {
     if(utils.isTouchDevice()) return;
-      
+
     this.bars.classed('vzb-dimmed', false);
     this.bars.selectAll('.vzb-bc-bar.vzb-hovered').classed('vzb-hovered', false);
     this.labels.selectAll('.vzb-hovered').classed('vzb-hovered', false);
@@ -289,7 +289,7 @@ var PopByAge = Component.extend({
 
   _highlightBar: function(d) {
     if(utils.isTouchDevice()) return;
-      
+
     this.bars.classed('vzb-dimmed', true);
     var curr = this.bars.select("#vzb-bc-bar-" + d[this.AGEDIM]);
     curr.classed('vzb-hovered', true);
@@ -369,7 +369,7 @@ var PopByAge = Component.extend({
     //stage
     this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
     this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
-      
+
     if(this.height<=0 || this.width<=0) return utils.warn("Pop by age resize() abort: vizabi container is too little or has display:none");
 
     this.graph

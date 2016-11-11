@@ -1,8 +1,8 @@
-import * as utils from 'utils';
-import Events from 'events';
-import Model from 'model';
-import Promise from 'promise';
-import globals from 'globals';
+import * as utils from 'base/utils';
+import Events from 'base/events';
+import Model from 'base/model';
+import Promise from 'base/promise';
+import globals from 'base/globals';
 
 var class_loading_first = 'vzb-loading-first';
 var class_loading_data = 'vzb-loading-data';
@@ -190,7 +190,7 @@ var Component = Events.extend({
 
     function done() {
       utils.removeClass(_this.placeholder, class_loading_first);
-      utils.removeClass(_this.placeholder, class_loading_data);        
+      utils.removeClass(_this.placeholder, class_loading_data);
       _this.setReady();
     }
   },

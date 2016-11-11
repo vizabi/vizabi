@@ -1,5 +1,5 @@
-import * as utils from 'utils';
-import Model from 'model';
+import * as utils from 'base/utils';
+import Model from 'base/model';
 
 //classes are vzb-portrait, vzb-landscape...
 var class_prefix = 'vzb-';

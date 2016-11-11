@@ -1,9 +1,10 @@
+import requireAll from 'helpers/requireAll';
 import * as utils from 'base/utils';
 import Component from 'base/component';
 import * as iconset from 'base/iconset';
 
 //dialogs
-import * as dialogs from 'dialogs/_index';
+const dialogs = requireAll(require.context('../../components/dialogs', true, /\.js$/), 1);
 
 /*!
  * VIZABI DIALOGS
@@ -88,13 +89,13 @@ var Dialogs = Component.extend({
     this._super(config, context);
 
   },
-  
+
   domReady: function() {
     var dialog_popup = (this.model.ui.dialogs||{}).popup || [];
     var dialog_sidebar = (this.model.ui.dialogs||{}).sidebar || [];
-    
+
     this.rootEl = this.root.element instanceof Array? this.root.element : d3.select(this.root.element);
-    
+
     // if dialog_sidebar has been passed in with boolean param or array must check and covert to array
     if (dialog_sidebar === true) {
       dialog_sidebar = dialog_popup;

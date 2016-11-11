@@ -1,5 +1,4 @@
-import * as utils from 'base/utils';
-import Axis from 'axis';
+import Axis from 'models/axis';
 
 /*
  * VIZABI Size Model
@@ -23,7 +22,7 @@ var SizeModel = Axis.extend({
       scales: ["linear", "log", "genericLog", "pow"]
     }
   },
-    
+
   _type: "size",
 
   buildScale: function(margins){

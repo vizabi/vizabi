@@ -1,5 +1,5 @@
 import * as utils from 'base/utils';
-import Promise from 'promise';
+import Promise from 'base/promise';
 import Model from 'base/model';
 
 /*!
@@ -13,24 +13,24 @@ var Marker = Model.extend({
    * Gets the narrowest limits of the subhooks with respect to the provided data column
    * @param {String} attr parameter (data column)
    * @returns {Object} limits (min and max)
-   * this function is only needed to route the "time" to some indicator, 
+   * this function is only needed to route the "time" to some indicator,
    * to adjust time start and end to the max and min time available in data
    */
   getTimeLimits: function(attr) {
       var _this = this;
       var time = this._parent.time;
-      var min, max, minArray = [], maxArray = [], items = {};      
-      if (!this.cachedTimeLimits) this.cachedTimeLimits = {};      
+      var min, max, minArray = [], maxArray = [], items = {};
+      if (!this.cachedTimeLimits) this.cachedTimeLimits = {};
       utils.forEach(this.getSubhooks(), function(hook) {
         if(hook.use !== "indicator" || !hook._important) return;
         var hookConceptprops = hook.getConceptprops();
         if(!hookConceptprops) return utils.warn(hook._name + ": " + hook.which + " is not found among concept properties. \
             Check that you read the correct file or server instance... \
             Check that the pointer 'which' of the hook is correct too");
-                                        
+
         var availability = hookConceptprops.availability;
         var availabilityForHook = _this.cachedTimeLimits[hook._dataId + hook.which];
-          
+
         if (availabilityForHook){
             //if already calculated the limits then no ned to do it again
             min = availabilityForHook.min;
@@ -40,7 +40,7 @@ var Marker = Model.extend({
             min = time.timeFormat.parse(availability[0]+"");
             var timeEnd = time._defaults.end || availability[1];
             max = time.timeFormat.parse(Math.min(timeEnd, availability[1])+"");
-        }else{ 
+        }else{
             //otherwise calculate own date limits (a costly operation)
             items = hook.getValidItems().map(function(m){return m[time.getDimension()];});
             if(items.length == 0) utils.warn("getTimeLimits() was unable to work with an empty array of valid datapoints")
@@ -51,7 +51,7 @@ var Marker = Model.extend({
         minArray.push(min);
         maxArray.push(max);
       });
-      
+
       var resultMin = d3.max(minArray);
       var resultMax = d3.min(maxArray);
       if(resultMin > resultMax) {
@@ -70,10 +70,10 @@ var Marker = Model.extend({
     getKeys: function(KEY) {
         var _this = this;
         var resultKeys = [];
-        
+
         KEY = KEY || this._getFirstDimension();
         var TIME = this._getFirstDimension({type: "time"});
-      
+
         utils.forEach(this._dataCube||this.getSubhooks(true), function(hook, name) {
 
             // If hook use is constant, then we can provide no additional info about keys
@@ -83,13 +83,13 @@ var Marker = Model.extend({
             // Get keys in data of this hook
             var nested = _this.getDataManager().get(hook._dataId, 'nested', [KEY, TIME]);
             var noDataPoints = _this.getDataManager().get(hook._dataId, 'haveNoDataPointsPerKey', hook.which);
-            
+
             var keys = Object.keys(nested);
             var keysNoDP = Object.keys(noDataPoints || []);
 
             // If ain't got nothing yet, set the list of keys to result
             if(resultKeys.length == 0) resultKeys = keys;
-                
+
             // Remove the keys from it that are not in this hook
             if(hook._important) resultKeys = resultKeys.filter(function(f) {
               return _this._parent.time.splash !== false || keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1;
@@ -103,7 +103,7 @@ var Marker = Model.extend({
    * @return String
    */
   _getCachePath: function(keys) {
-    //array of steps -- names of all frames  
+    //array of steps -- names of all frames
     var steps = this._parent.time.getAllSteps();
     var cachePath = steps[0] + " - " + steps[steps.length-1];
     this._dataCube = this._dataCube || this.getSubhooks(true);
@@ -120,9 +120,9 @@ var Marker = Model.extend({
     }
     return cachePath;
   },
-    
+
   _getAllDimensions: function(opts) {
-    
+
     var models = [];
     var _this = this;
     utils.forEach(this.space, function(name) {
@@ -186,22 +186,29 @@ var Marker = Model.extend({
     return dim;
   },
 
+
+  framesAreReady: function() {
+    var cachePath = this._getCachePath();
+    if (!this.cachedFrames) return false;
+    return Object.keys(this.cachedFrames[cachePath]).length == this._parent.time.getAllSteps().length;
+  },
+
   /**
-   * 
+   *
    * @param {String|null} time of a particularly requested data frame. Null if all frames are requested
-   * @param {function} cb 
+   * @param {function} cb
    * @param {Array} keys array of entities
    * @return null
    */
     getFrame: function(time, cb, keys) {
-      //keys = null;  
+      //keys = null;
       var _this = this;
       if (!this.cachedFrames) this.cachedFrames = {};
 
       var steps = this._parent.time.getAllSteps();
       // try to get frame from cache without keys
       var cachePath = this._getCachePath();
-      if (!cachePath) return cb(null, time); 
+      if (!cachePath) return cb(null, time);
       if(time && _this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
         // if it does, then return that frame directly and stop here
         //QUESTION: can we call the callback and return the frame? this will allow callbackless API too
@@ -219,22 +226,22 @@ var Marker = Model.extend({
         // if it doesn't (the requested time point falls between animation frames or frame is not cached yet)
         // check if interpolation makes sense: we've requested a particular time and we have more than one frame
         if (time && steps.length > 1) {
-          
+
           //find the next frame after the requested time point
           var nextFrameIndex = d3.bisectLeft(steps, time);
-          
+
           if(!steps[nextFrameIndex]) {
             utils.warn("The requested frame is out of range: " + time);
             cb(null, time);
             return null;
           }
-            
-          //if "time" doesn't hit the frame precisely 
+
+          //if "time" doesn't hit the frame precisely
           if (steps[nextFrameIndex].toString() != time.toString()) {
-            
+
             //interpolate between frames and fire the callback
             this._interpolateBetweenFrames(time, nextFrameIndex, steps, function (response) {
-              cb(response, time); 
+              cb(response, time);
             }, keys);
             return null;
           }
@@ -247,38 +254,38 @@ var Marker = Model.extend({
             //time can be null: then return all frames
             return cb(_this.cachedFrames[cachePath], time);
           } else if(_this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
-            //time can be !null: then a particular frame calculation was forced and now it's done  
+            //time can be !null: then a particular frame calculation was forced and now it's done
             return cb(_this.cachedFrames[cachePath][time], time);
           } else {
             utils.warn("marker.js getFrame: Data is not available for frame: " + time);
             return cb(null, time);
           }
-        }); 
+        });
       }
     },
-    
+
     _interpolateBetweenFrames: function(time, nextFrameIndex, steps, cb, keys) {
       var _this = this;
-      
+
       if (nextFrameIndex == 0) {
         //getFrame makes sure the frane is ready because a frame with non-existing data might be adressed
-        this.getFrame(steps[nextFrameIndex], function(values) { 
+        this.getFrame(steps[nextFrameIndex], function(values) {
           return cb(values);
         }, keys);
       } else {
         var prevFrameTime = steps[nextFrameIndex - 1];
         var nextFrameTime = steps[nextFrameIndex];
-          
+
         //getFrame makes sure the frane is ready because a frame with non-existing data might be adressed
         this.getFrame(prevFrameTime, function(pValues) {
           _this.getFrame(nextFrameTime, function(nValues) {
             var fraction = (time - prevFrameTime) / (nextFrameTime - prevFrameTime);
             var dataBetweenFrames = {};
-            
+
             //loop across the hooks
             utils.forEach(pValues, function(values, hook) {
               dataBetweenFrames[hook] = {};
-            
+
               //loop across the entities
               utils.forEach(values, function(val1, key) {
                 var val2 = nValues[hook][key];
@@ -301,23 +308,24 @@ var Marker = Model.extend({
 
     getFrames: function(forceFrame, selected) {
       var _this = this;
-      
+      if (!this.cachedFrames) this.cachedFrames = {};
+
       var KEY = this._getFirstDimension();
       var TIME = this._getFirstDimension({type: "time"});
-      
+
       if (!this.frameQueues) this.frameQueues = {}; //static queue of frames
       if (!this.partialResult) this.partialResult = {};
-        
-      //array of steps -- names of all frames  
+
+      //array of steps -- names of all frames
       var steps = this._parent.time.getAllSteps();
-        
+
       var cachePath = this._getCachePath(selected);
       if (!cachePath) return new Promise(function(resolve, reject) {resolve()});
       //if the collection of frames for this data cube is not scheduled yet (otherwise no need to repeat calculation)
       if (!this.frameQueues[cachePath] || !this.frameQueues[cachePath] instanceof Promise) {
-        
-        //this is a promise nobody listens to - it prepares all the frames we need without forcing any  
-        this.frameQueues[cachePath] = new Promise(function(resolve, reject) { 
+
+        //this is a promise nobody listens to - it prepares all the frames we need without forcing any
+        this.frameQueues[cachePath] = new Promise(function(resolve, reject) {
 
           _this.partialResult[cachePath] = {};
           steps.forEach(function(t) { _this.partialResult[cachePath][t] = {}; });
@@ -359,10 +367,10 @@ var Marker = Model.extend({
               deferredHooks.push({hook: {
                   _dataId: hook._dataId,
                   which: hook.which
-                }, name: name}); 
+                }, name: name});
             }
           });
-            
+
           //check if we have any data to get from datamanager
           if (deferredHooks.length > 0) {
             var promises = [];
@@ -487,7 +495,7 @@ var Marker = Model.extend({
         u = hook.use;
         w = hook.which;
 
-        if(hook.use !== "property") next = next || d3.bisectLeft(hook.getUnique(dimTime), time);        
+        if(hook.use !== "property") next = next || d3.bisectLeft(hook.getUnique(dimTime), time);
 
         method = hook.getConceptprops ? hook.getConceptprops().interpolation : null;
         filtered = _this.getDataManager().get(hook._dataId, 'nested', f_keys);
@@ -511,22 +519,22 @@ var Marker = Model.extend({
     //else, interpolate all with time
     else {
       utils.forEach(this._dataCube, function(hook, name) {
-          
+
         filtered = _this.getDataManager().get(hook._dataId, 'nested', group_by);
-            
+
         response[name] = {};
         //find position from first hook
         u = hook.use;
         w = hook.which;
-          
+
         if(hook.use !== "property") next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
-        
+
         method = hook.getConceptprops ? hook.getConceptprops().interpolation : null;
-                
+
         var interpolate = function(arr, result, id) {
-          //TODO: this saves when geos have different data length. line can be optimised. 
+          //TODO: this saves when geos have different data length. line can be optimised.
           next = d3.bisectLeft(arr.map(function(m){return m[dimTime]}), time);
-            
+
           value = utils.interpolatePoint(arr, u, w, next, dimTime, time, method);
           result[id] = hook.mapValue(value);
 
@@ -541,7 +549,7 @@ var Marker = Model.extend({
           }
 
         }
-        
+
         var iterateGroupKeys = function(data, deep, result, cb) {
           deep--;
           utils.forEach(data, function(d, id) {
@@ -553,9 +561,9 @@ var Marker = Model.extend({
             }
           });
         }
-        
+
         iterateGroupKeys(filtered, group_by.length, response[name], interpolate);
-        
+
       });
     }
 
@@ -604,7 +612,7 @@ var Marker = Model.extend({
 
     promises.push(new Promise());
 
-    //find startSelected time 
+    //find startSelected time
     findSelectedTime(function(){
       var max = timePoints.length;
       var i = 0;

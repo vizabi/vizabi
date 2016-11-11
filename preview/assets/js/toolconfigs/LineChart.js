@@ -1,4 +1,3 @@
-
 var VIZABI_MODEL = {
   "state": {
     "time": {
@@ -9,7 +8,7 @@ var VIZABI_MODEL = {
     "entities": {
       "dim": "geo",
       "show": {
-        country: { "$in": ["usa", "swe", "chn"] }
+        "country": { "$in": ["usa", "swe", "chn"] }
       }
     },
     "entities_colorlegend": {
@@ -65,22 +64,22 @@ var VIZABI_MODEL = {
         "which": "name"
       }
     },
-    "marker_colorlegend":{
+    "marker_colorlegend": {
       "space": ["entities_colorlegend"],
-        "type": "geometry",
-        "shape": "svg",
-        "label": {
-          "use": "property",
-          "which": "name"
-        },
-        "hook_rank": {
-          "use": "property",
-          "which": "rank"
-        },
-        "hook_geoshape": {
-          "use": "property",
-          "which": "shape_lores_svg"
-        }
+      "type": "geometry",
+      "shape": "svg",
+      "label": {
+        "use": "property",
+        "which": "name"
+      },
+      "hook_rank": {
+        "use": "property",
+        "which": "rank"
+      },
+      "hook_geoshape": {
+        "use": "property",
+        "which": "shape_lores_svg"
+      }
     },
     "marker_tags": {
       "space": ["entities_tags"],
@@ -94,4 +93,4 @@ var VIZABI_MODEL = {
       }
     }
   }
-}
+};
