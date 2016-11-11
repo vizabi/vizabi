@@ -165,6 +165,7 @@ module.exports = {
         test: /\.cur$/,
         loader: 'file',
         query: {
+          publicPath: path => path.split('/').slice(1).join('/'),
           name: 'dist/assets/cursors/[name].[ext]'
         }
       },
