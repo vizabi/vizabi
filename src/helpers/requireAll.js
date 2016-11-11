@@ -12,7 +12,7 @@ const requireAll = (_require, depth) => {
   }
 
   return keys.reduce((result, key) => {
-    const name = /([^/]+)\.js$/.exec(key)[1];
+    const name = /([^/]+)\..+$/.exec(key)[1];
 
     try {
       result[name] = _require(key);
