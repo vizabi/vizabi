@@ -100,6 +100,10 @@ if (__PROD__) {
       archive.pipe(
         fs.createWriteStream(path.resolve('build', 'download', 'vizabi.zip'))
       );
+      archive.bulk([
+          { expand: true, cwd: 'src/assets/cursors', src: ["**/*"], dot: true, dest: 'assets/cursors'},
+          { expand: true, cwd: 'src/assets/translation', src: ["en.json"], dot: true, dest: 'assets/translation'}
+      ]);
       archive.finalize();
     })
   )
