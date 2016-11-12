@@ -11,8 +11,6 @@ var class_error = 'vzb-error';
 var templates = {};
 var Component = Events.extend({
 
-  model_binds: {},
-
   /**
    * Initializes the component
    * @param {Object} config Initial config, with name and placeholder
