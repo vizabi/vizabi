@@ -168,11 +168,11 @@ var Tool = Component.extend({
 
   setResizeHandler: function() {
     //only tools have layout (manage sizes)
-
+    var _this = this;
     this.model.ui.setContainer(this.element);
     this.model.ui.on('resize', function() {
-      if(this._ready) {
-        this.triggerResize();
+      if(_this._ready) {
+        _this.triggerResize();
       }
     });
   },
