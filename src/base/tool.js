@@ -140,7 +140,7 @@ var Tool = Component.extend({
             _this.model.validate();
 
             if (evt.source.persistent)
-              _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'), _this.getPersistentModel());
+              _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'));
           }
         },
         'hook_change': function() {
