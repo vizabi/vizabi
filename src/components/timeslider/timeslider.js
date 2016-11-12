@@ -149,13 +149,16 @@ var TimeSlider = Component.extend({
     //starts as splash if this is the option
     this._splash = this.model.ui.splash;
 
-    this.model.ui = utils.extend({
+    // Sort of defaults. Actually should be in ui default or bubblechart. 
+    // By not having "this.model.ui =" we prevent it from going to url (not defined in defaults)
+    // Should be in defaults when we make components config part of external config (& every component gets own config)
+    this.ui = utils.extend({
       show_limits: false,
       show_value: false,
       show_value_when_drag_play: true,
       show_button: true,
       class_axis_aligned: false
-    }, this.model.ui.getPlainObject());
+    }, model.ui, this.ui);
 
 
     //defaults
