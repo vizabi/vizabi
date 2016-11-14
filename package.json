@@ -58,7 +58,7 @@
     "shelljs": "0.7.5",
     "vizabi-ddfcsv-reader": "0.4.18",
     "vizabi-ws-reader": "0.0.19",
-    "webpack": "^2.1.0-beta.25",
-    "webpack-dev-server": "^2.1.0-beta.10"
+    "webpack": "2.1.0-beta.25",
+    "webpack-dev-server": "2.1.0-beta.10"
   }
 }
