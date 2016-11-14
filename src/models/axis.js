@@ -100,6 +100,7 @@ var AxisModel = Hook.extend({
       domain = [limits.min, limits.max];
       this.scale = d3.time.scale.utc().domain(domain);
 
+      this.validate();
       return;
     }
 
