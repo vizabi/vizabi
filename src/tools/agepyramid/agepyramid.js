@@ -45,7 +45,7 @@ var AgePyramid = Tool.extend('AgePyramid', {
     }, {
       component: treemenu,
       placeholder: '.vzb-tool-treemenu',
-      model: ['state.marker', 'language']
+      model: ['state.marker', 'state.marker_tags', 'state.time', 'language']
     }];
 
     //constructor is the same as any tool
@@ -53,6 +53,9 @@ var AgePyramid = Tool.extend('AgePyramid', {
   },
 
   default_model: {
+    state: {
+      marker_tags: {}
+    },
     ui: {
     chart: {
       stacked: true,
