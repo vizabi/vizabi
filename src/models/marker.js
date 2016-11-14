@@ -589,6 +589,7 @@ var Marker = Model.extend({
     });
 
     var findEntityWithCompleteHooks = function(values) {
+      if (!values) return false;
       for(var i = 0, j = hooks.length; i < j; i++) {
         if(!(values[hooks[i]][entity] || values[hooks[i]][entity]===0)) return false;
       }
@@ -599,7 +600,6 @@ var Marker = Model.extend({
       var point = iterator();
       if(point == null) return;
       _this.getFrame(timePoints[point], function(values) {
-        if(!values) return;
         if(findEntityWithCompleteHooks(values)) {
           findCB(point);
         } else {
