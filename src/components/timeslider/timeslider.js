@@ -315,7 +315,6 @@ var TimeSlider = Component.extend({
   },
 
   changeTime: function() {
-    this.model.ui.format = this.model.time.unit;
     //time slider should always receive a time model
     var time = this.model.time.value;
     //special classes
@@ -659,11 +658,11 @@ var TimeSlider = Component.extend({
   _optionClasses: function() {
     //show/hide classes
 
-    var show_limits = this.model.ui.show_limits;
-    var show_value = this.model.ui.show_value;
-    var show_value_when_drag_play = this.model.ui.show_value_when_drag_play;
-    var axis_aligned = this.model.ui.axis_aligned;
-    var show_play = (this.model.ui.show_button) && (this.model.time.playable);
+    var show_limits = this.ui.show_limits;
+    var show_value = this.ui.show_value;
+    var show_value_when_drag_play = this.ui.show_value_when_drag_play;
+    var axis_aligned = this.ui.axis_aligned;
+    var show_play = (this.ui.show_button) && (this.model.time.playable);
 
     if(!show_limits) {
       this.xAxis.tickValues([]).ticks(0);
