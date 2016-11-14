@@ -101,8 +101,8 @@ if (__PROD__) {
         fs.createWriteStream(path.resolve('build', 'download', 'vizabi.zip'))
       );
       archive.bulk([
-          { expand: true, cwd: 'src/assets/cursors', src: ["**/*"], dot: true, dest: 'assets/cursors'},
-          { expand: true, cwd: 'src/assets/translation', src: ["en.json"], dot: true, dest: 'assets/translation'}
+        { expand: true, cwd: 'src/assets/cursors', src: ["**/*"], dot: true, dest: 'assets/cursors'},
+        { expand: true, cwd: 'src/assets/translation', src: ["en.json"], dot: true, dest: 'assets/translation'}
       ]);
       archive.finalize();
     })
@@ -120,7 +120,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: '[name].js',
-    library: 'Vizabi',    
+    library: 'Vizabi',
     libraryTarget: 'umd',
     umdNamedDefine: true
   },
@@ -137,7 +137,7 @@ module.exports = {
       {
         test: /\.js$/,
         // exclude: /node_modules/, // TODO: uncomment after fix export default in interpolators module
-        loader: 'babel',
+        loader: 'babel-loader',
         query: {
           cacheDirectory: !__PROD__,
           presets: ['es2015'],
@@ -150,8 +150,8 @@ module.exports = {
           path.resolve(__dirname, 'src')
         ],
         loader: extractSrc.extract([
-          `css?${JSON.stringify({ sourceMap: true, minimize: __PROD__ })}`,
-          'sass'
+          `css-loader?${JSON.stringify({ sourceMap: true, minimize: __PROD__ })}`,
+          'sass-loader'
         ])
       },
       {
@@ -159,11 +159,11 @@ module.exports = {
         include: [
           path.resolve(__dirname, 'preview')
         ],
-        loader: extractPreview.extract(['css', 'sass'])
+        loader: extractPreview.extract(['css-loader', 'sass-loader'])
       },
       {
         test: /\.cur$/,
-        loader: 'file',
+        loader: 'file-loader',
         query: {
           publicPath: path => path.split('/').slice(1).join('/'),
           name: 'dist/assets/cursors/[name].[ext]'
@@ -172,8 +172,8 @@ module.exports = {
       {
         test: /\.pug$/,
         loaders: [
-          'file?name=[path][name].html',
-          'pug-html?exports=false&pretty'
+          'file-loader?name=[path][name].html',
+          'pug-html-loader?exports=false&pretty'
         ]
       },
       {
@@ -181,7 +181,7 @@ module.exports = {
         include: [
           path.resolve(__dirname, 'node_modules')
         ],
-        loader: 'file',
+        loader: 'file-loader',
         query: {
           name: 'preview/assets/vendor/css/[name].[ext]'
         }
@@ -191,7 +191,7 @@ module.exports = {
         include: [
           path.resolve(__dirname, 'node_modules')
         ],
-        loader: 'file',
+        loader: 'file-loader',
         query: {
           name: 'preview/assets/vendor/fonts/[name].[ext]'
         }
@@ -201,7 +201,7 @@ module.exports = {
         include: [
           path.resolve(__dirname, 'node_modules')
         ],
-        loader: 'file',
+        loader: 'file-loader',
         query: {
           name: 'preview/assets/vendor/js/[1]/[name].[ext]',
           regExp: new RegExp(`${sep}node_modules${sep}([^${sep}]+?)${sep}`)
@@ -210,7 +210,7 @@ module.exports = {
       {
         test: /\.html$/,
         include: [path.resolve(__dirname, 'src')],
-        loader: 'html',
+        loader: 'html-loader',
         query: {
           interpolate: 'require'
         }
@@ -218,7 +218,7 @@ module.exports = {
       {
         test:  /\.json$/, //__PROD__ ? /en\.json$/ : /\.json$/,
         include: [path.resolve(__dirname, 'src', 'assets', 'translation')],
-        loader: 'file',
+        loader: 'file-loader',
         query: {
           name: `${__PROD__ ? 'dist' : 'preview'}/assets/translation/[name].[ext]`
         }
