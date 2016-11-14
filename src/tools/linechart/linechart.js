@@ -60,59 +60,24 @@ var LineChart = Tool.extend('LineChart', {
 
     default_model: {
     state: {
-      time: {
-        start: 1990,
-        end: 2012,
-        value: 2012,
-        step: 1
-      },
-      //entities we want to show
-      entities: {
-        dim: "geo",
-        show: {
-          _defs_: {
-            "geo": ["*"],
-            "geo.cat": ["region"]
-          }
-        }
-      },
-      //how we show it
-      marker: {
-        space: ["entities", "time"],
-        label: {
-          use: "property",
-          which: "geo.name"
-        },
-        axis_y: {
-          use: "indicator",
-          which: "gdp_pc",
-          scaleType: "log"
-        },
-        axis_x: {
-          use: "indicator",
-          which: "time",
-          scaleType: "time"
-        },
-        color: {
-          use: "property",
-          which: "geo.world_4region"
-        }
-      }
+      time: {},
     },
-    ui: {
-      'vzb-tool-line-chart': {
-        labels: {
-          min_number_of_entities_when_values_hide: 10 //values hide when showing 10 entities or more
+    language: { },
+    "ui": {
+      "chart": {
+        "labels": {
+          "min_number_of_entities_when_values_hide": 2 //values hide when showing 2 entities or more
         },
-        whenHovering: {
-          hideVerticalNow: true,
-          showProjectionLineX: true,
-          showProjectionLineY: true,
-          higlightValueX: true,
-          higlightValueY: true,
-          showTooltip: true
+        "whenHovering": {
+          "hideVerticalNow": false,
+          "showProjectionLineX": true,
+          "showProjectionLineY": true,
+          "higlightValueX": true,
+          "higlightValueY": true,
+          "showTooltip": false
         }
-      }
+      },
+      "presentation": false
     }
   }
 

@@ -26,7 +26,11 @@ var AxisModel = Hook.extend({
     domainMin: null,
     domainMax: null,
     zoomedMin: null,
-    zoomedMax: null
+    zoomedMax: null,
+    scaleType: "linear",
+    allow: {
+      scales: ["linear", "log", "genericLog", "time", "pow"]
+    }
   },
     
   _type: "axis",
@@ -64,8 +68,8 @@ var AxisModel = Hook.extend({
       if(this.scaleType == "time") {
         
         var timeMdl = this._space.time;
-        var limits = timeMdl.beyondSplash ? 
-            {min: timeMdl.beyondSplash.start, max: timeMdl.beyondSplash.end}
+        var limits = timeMdl.splash ? 
+            {min: timeMdl.parseToUnit(timeMdl.startOrigin), max: timeMdl.parseToUnit(timeMdl.endOrigin)}
             :
             {min: timeMdl.start, max: timeMdl.end};
         
@@ -98,14 +102,12 @@ var AxisModel = Hook.extend({
    */
   buildScale: function(margins) {
     var domain;
-    
-    var conceptprops = this.getConceptprops();
 
     if(this.scaleType == "time") {
       
       var timeMdl = this._space.time;
-      var limits = timeMdl.beyondSplash ? 
-          {min: timeMdl.beyondSplash.start, max: timeMdl.beyondSplash.end}
+      var limits = timeMdl.splash ? 
+          {min: timeMdl.parseToUnit(timeMdl.startOrigin), max: timeMdl.parseToUnit(timeMdl.endOrigin)}
           :
           {min: timeMdl.start, max: timeMdl.end};
       
@@ -120,8 +122,6 @@ var AxisModel = Hook.extend({
         var limits = this.getLimits(this.which);
         //default domain is based on limits
         domain = [limits.min, limits.max];
-        //domain from concept properties can override it if defined
-        domain = conceptprops.domain ? conceptprops.domain : domain;
         //min and max can override the domain if defined
         domain = this.domainMin!=null && this.domainMax!=null ? [+this.domainMin, +this.domainMax] : domain;
         break;
@@ -135,6 +135,7 @@ var AxisModel = Hook.extend({
     }
     
     var scaletype = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.scaleType === "log")? "genericLog" : this.scaleType;
+    if(this.scaletype == "nominal") scaletype = "ordinal"; // 
     this.scale = d3.scale[scaletype || "linear"]().domain(domain);
   }
 });

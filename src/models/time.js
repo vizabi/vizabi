@@ -31,18 +31,20 @@ var TimeModel = Model.extend({
    */
   _defaults: {
     dim: "time",
-    value: "2015",
-    start: "1800", //mandatory defaults! 
-    end: "2016", //mandatory defaults!
-    startSelected: "1800",
-    endSelected: "2015",
+    value: null,
+    start: null, 
+    end: null,
+    startOrigin: null,
+    endOrigin: null,
+    startSelected: null,
+    endSelected: null,
     playable: true,
     playing: false,
     loop: false,
     round: 'round',
-    delay: 600, //delay between animation frames
-    delayThresholdX2: 600, //delay X2 boundary: if less -- then every other frame will be dropped and animation dely will be double the value
-    delayThresholdX4: 300, //delay X4 boundary: if less -- then 3/4 frame will be dropped and animation dely will be 4x the value
+    delay: 150, //delay between animation frames
+    delayThresholdX2: 100, //delay X2 boundary: if less -- then every other frame will be dropped and animation dely will be double the value
+    delayThresholdX4: 50, //delay X4 boundary: if less -- then 3/4 frame will be dropped and animation dely will be 4x the value
     unit: "year",
     step: 1, //step must be integer, and expressed in units
     immediatePlay: false,
@@ -99,8 +101,8 @@ var TimeModel = Model.extend({
     for(var i = 0; i < date_attr.length; i++) {
       var attr = date_attr[i];
       if(!utils.isDate(this[attr])) {
-        var date = this.parseToUnit(this[attr].toString(), this.unit);
-        this.set(attr, date);
+        var date = this.parseToUnit(this[attr], this.unit);
+        this.set(attr, date, null, false);
       }
     }
   },
@@ -114,7 +116,7 @@ var TimeModel = Model.extend({
     var date_attr = ["value", "start", "end", "startSelected", "endSelected"];
     for(var i = 0; i < date_attr.length; i++) {
       var attr = date_attr[i];
-      if(!utils.isString(this._defaults[attr])) {
+      if(!utils.isString(this._defaults[attr]) && this._defaults[attr] != null) {
         this._defaults[attr] = this._defaults[attr].toString();
       }
     }
@@ -122,20 +124,24 @@ var TimeModel = Model.extend({
   
   /*
    * Formatting and parsing functions
-   * @param {Date} date
+   * @param {Date} dateObject
    * @param {String} unit
    * @returns {String}
    */
   format: function(dateObject, unit) {
     unit = unit || this.unit;
+    if (dateObject == null) return null;
     return formats[unit] ? formats[unit](dateObject) : formats['year'](dateObject);
   },
-
+  /* parse to predefined unit */
   parseToUnit: function(timeString, unit) {
     unit = unit || this.unit;
-    return formats[unit] ? formats[unit].parse(timeString) : null;
+    if (timeString == null) 
+      return null;
+    else 
+      return formats[unit] ? formats[unit].parse(timeString.toString()) : null;
   },
-
+  /* auto-determines unit from timestring */
   parse: function(timeString) {
     var keys = Object.keys(formats), i = 0; 
     for (; i < keys.length; i++) {
@@ -150,6 +156,10 @@ var TimeModel = Model.extend({
    * Validates the model
    */
   validate: function() {
+    
+    //check if time start and end are not defined but start and end origins are defined
+    if(this.start == null && this.startOrigin) this.set("start", this.startOrigin, null, false);
+    if(this.end == null && this.endOrigin) this.set("end", this.endOrigin, null, false);
 
     //unit has to be one of the available_time_units
     if(!formats[this.unit]) {
@@ -168,31 +178,31 @@ var TimeModel = Model.extend({
     }
 
     //end has to be >= than start
-    if(this.end < this.start) {
-      this.end = new Date(this.start);
+    if(this.end < this.start && this.start != null) {
+      this.set("end", new Date(this.start), null, false);
     }
     
-    if(this.value < this.startSelected) {
+    if(this.value < this.startSelected && this.startSelected != null) {
       this.value = new Date(this.startSelected); 
     }
     
-    if(this.value > this.endSelected) {
+    if(this.value > this.endSelected && this.endSelected != null) {
       this.value = new Date(this.endSelected);
     }
     if (this.splash === false) {
-      if(this.startSelected < this.start) {
-        this.startSelected = new Date(this.start);
+      if(this.startSelected < this.start && this.start != null) {
+        this.set({startSelected: new Date(this.start)}, null, false /*make change non-persistent for URL and history*/);
       }
 
-      if(this.endSelected > this.end) {
-        this.endSelected = new Date(this.end);
+      if(this.endSelected > this.end && this.end != null) {
+        this.set({endSelected: new Date(this.end)}, null, false /*make change non-persistent for URL and history*/);
       }
     }
   
     //value has to be between start and end
-    if(this.value < this.start) {
+    if(this.value < this.start && this.start != null) {
       this.value = new Date(this.start);
-    } else if(this.value > this.end) {
+    } else if(this.value > this.end && this.end != null) {
       this.value = new Date(this.end);
     }
 
@@ -256,23 +266,37 @@ var TimeModel = Model.extend({
 
   /**
    * Gets filter for time
-   * @param {Boolean} firstScreen get filter for current year only
+   * @param {Boolean} splash: get filter for current year only
    * @returns {Object} time filter
    */
-  getFilter: function(firstScreen) {
-    var defaultStart = this.parseToUnit(this._defaults.start, this.unit);
-    var defaultEnd = this.parseToUnit(this._defaults.end, this.unit);
+  getFilter: function(splash) {
+    var defaultStart = this.parseToUnit(this.startOrigin, this.unit);
+    var defaultEnd = this.parseToUnit(this.endOrigin, this.unit);
       
-    var start = this.timeFormat(defaultStart || this.start);
-    var end = this.timeFormat(defaultEnd || this.end);
-    var value = this.timeFormat(this.value);
     var dim = this.getDimension();
-    var filter = {};
+    var filter = null;
 
-    if (firstScreen) {
-      filter[dim] = value;
+    if (splash) {
+      if (this.value != null) {
+        filter = {};
+        filter[dim] = this.timeFormat(this.value);
+      }
     } else {
-      filter[dim] = {'$gte': start, '$lte': end};
+      var gte, lte;
+      var start = defaultStart || this.start;
+      if (start != null) {
+        gte = this.timeFormat(start);
+      }
+      var end = defaultEnd || this.end;
+      if (end != null) {
+        lte = this.timeFormat(end);
+      }
+      if (gte || lte) {
+        filter = {};
+        filter[dim] = {};
+        if (gte) filter[dim]["$gte"] = gte;
+        if (lte) filter[dim]["$lte"] = lte;
+      }
     }
     return filter;
   },
@@ -290,6 +314,10 @@ var TimeModel = Model.extend({
    * @returns {Array} time array
    */
   getAllSteps: function() {
+    if(!this.start || !this.end) {
+      utils.warn("getAllSteps(): invalid start/end time is detected: " + this.start + ", " + this.end);
+      return [];
+    }
     var hash = "" + this.start + this.end + this.step;
     
     //return if cached
@@ -395,6 +423,11 @@ var TimeModel = Model.extend({
   incrementTime: function(time) {
     var is = this.getIntervalAndStep();
     return d3.time[is.interval].utc.offset(time, is.step);
+  },
+
+  decrementTime: function(time) {
+    var is = this.getIntervalAndStep();
+    return d3.time[is.interval].utc.offset(time, -is.step);
   },
 
   /**

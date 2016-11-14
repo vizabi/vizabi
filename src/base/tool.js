@@ -92,7 +92,7 @@ var Tool = Component.extend({
           _this.model.validate();
 
           if (evt.source.persistent)
-            _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'), _this.getMinModel());
+            _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'), _this.getPersistentModel());
         }
       },
       'hook_change': function() {
@@ -160,43 +160,50 @@ var Tool = Component.extend({
           return utils.warn("checkTimeLimits(): min-max look wrong: " + tLimits.min + " " + tLimits.max + ". Expecting Date objects");
 
       // change start and end (but keep startOrigin and endOrigin for furhter requests)
-      // change is not persistent if it's splashscreen change
-      if(time.start - tLimits.min != 0) time.getModelObject('start').set(d3.max([tLimits.min, time.parseToUnit(time.getDefaults().start)]), false, !time.splash);
-      if(time.end - tLimits.max != 0) time.getModelObject('end').set(d3.min([tLimits.max, time.parseToUnit(time.getDefaults().end)]), false, !time.splash);
+      var newTime = {}
+      if(time.start - tLimits.min != 0) newTime['start'] = d3.max([tLimits.min, time.parseToUnit(time.startOrigin)]);
+      if(time.end - tLimits.max != 0) newTime['end'] = d3.min([tLimits.max, time.parseToUnit(time.endOrigin)]);
+      if(time.value == null) newTime['value'] = time.parseToUnit(time.format(new Date())); // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
 
+      time.set(newTime, false, false);
     }
       
     //force time validation because time.value might now fall outside of start-end
     time.validate(); 
   },
     
+  getDefaultModel: function() {
+    var defaultToolModel = this.default_model;
+    var defaultsFromModels = this.model.getDefaults();
+    var result = utils.deepExtend({}, defaultsFromModels, defaultToolModel);
+    return result;
+  },
 
-  getMinModel: function() {
+  getPersistentModel: function() {
     //try to find functions in properties of model. 
-    var findFunc = function(parent, key) {
-      var child = parent[key];
-      for(var childKey in child) {        
-        if(typeof child[childKey] === 'function') {
-          delete parent[key];
-          utils.warn('minModel validation. Function found in enumerable properties of ' + key + ". This key is deleted from minModel");
-        } else if(typeof child[childKey] === 'object') findFunc(child, childKey);
+    var removeFunctions = function(model) {
+      for(var childKey in model) {        
+        if(typeof model[childKey] === 'function') {
+          delete model[childKey];
+          utils.warn('minModel validation. Function found in enumerable properties of ' + childKey + ". This key is deleted from minModel");
+        } 
+        else if(typeof model[childKey] === 'object') 
+          removeFunctions(model[childKey]);
       }
     }
    
     var currentToolModel = this.model.getPlainObject(true); // true = get only persistent model values
-    var defaultToolModel = this.default_model;
-    var defaultsFromModels = this.model.getDefaults();
-    //flattens _defs_ object
-    defaultToolModel = utils.flattenDefaults(defaultToolModel);
-    // compares with chart default model
-    var modelChanges = utils.diffObject(currentToolModel, defaultToolModel);
-    // change date object to string according to current format
-    modelChanges = utils.flattenDates(modelChanges, this.model.state.time.timeFormat);
-    //compares with model's defaults
-
-    var result = utils.diffObject(modelChanges, defaultsFromModels);
-    for (var key in result) findFunc(result, key);
+    var result = utils.flattenDates(currentToolModel, this.model.state.time.timeFormat);
+    
+    removeFunctions(result);
     return result;
+  },
+
+  getPersistentMinimalModel: function(diffModel) {
+    var defaultModel = this.getDefaultModel();
+    var currentPersistentModel = this.getPersistentModel();
+    var redundantModel = Vizabi.utils.deepExtend(defaultModel, diffModel);
+    return Vizabi.utils.diffObject(currentPersistentModel, redundantModel);
   },
 
   /**

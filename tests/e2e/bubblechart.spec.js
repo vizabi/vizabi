@@ -557,7 +557,7 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
     // Clicking the bubble of USA
     browser.wait(EC.visibilityOf(USABubble), 5000).then(function(){
-      browser.actions().mouseMove(USABubble).mouseMove({x:0,y:-5}).click().perform();
+      browser.actions().mouseMove(USABubble).mouseMove({x:0,y:-15}).click().perform();
     });
     browser.sleep(3000);
 
@@ -639,6 +639,10 @@ describe('Web - Vizabi e2e test :: Bubble Chart', function() {
 
     // Select the US bubble again
     browser.actions().mouseMove(USABubble).mouseMove({x:0,y:-10}).click().perform();
+
+    //Selecting the label
+    var label= element(by.css(data.bubble_Chart_Loctors.label_Locator_CSS));
+    browser.actions().mouseMove(label).mouseMove({x:0,y:0}).click().perform();
 
     // Unselect country by click
     var cross = element(by.css(data.bubble_Chart_Loctors.cross_Locator_CSS));

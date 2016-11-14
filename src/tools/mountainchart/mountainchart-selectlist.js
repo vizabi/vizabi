@@ -112,7 +112,7 @@ var MCSelectList = Class.extend({
     var currentAggrLevel = "null";
     var aggrLevelSpacing = 0;
 
-    var groupLabels = _this.model.marker_group.label.getItems();
+    var groupLabels = _this.model.marker.color.getColorlegendMarker().label.getItems();
 
     _this.selectList
       .attr("transform", function (d, i) {

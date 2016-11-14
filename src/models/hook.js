@@ -1,17 +1,318 @@
 import * as utils from 'base/utils';
 import Model from 'base/model';
+import EventSource from 'events';
 
 /*!
  * HOOK MODEL
  */
-
 
 var Hook = Model.extend({
   
   //some hooks can be important. like axis x and y
   //that means, if X or Y doesn't have data at some point, we can't show markers
   _important: false,
-  
+
+  dataChildren: ['use', 'which'],
+
+  init: function(name, values, parent, bind) {
+
+    this._super(name, values, parent, bind);
+
+    var _this = this;
+    var spaceRefs = getSpace(this);
+
+    //check what we want to hook this model to
+    utils.forEach(spaceRefs, function(name) {
+      //hook with the closest prefix to this model
+      _this._space[name] = _this.getClosestModel(name);
+      //if hooks change, this should load again
+      //TODO: remove hardcoded 'show"
+      if(_this._space[name].show) {
+        _this._space[name].on('dataChange', function(evt) {
+          //hack for right size of bubbles
+          if(_this._type === 'size' && _this.which === _this.which_1) {
+            _this.which_1 = '';
+          };
+          //defer is necessary because other events might be queued.
+          //load right after such events
+          utils.defer(function() {
+            _this.load().then(function() {
+
+            }, function(err) {
+              utils.warn(err);
+            });
+          });
+        });
+      }
+    });
+  },
+
+  checkDataChanges: function(attributes) {
+    var _this = this;
+
+    if (!attributes || !this.dataChildren)
+      return
+
+    if (!utils.isArray(attributes) && utils.isObject(attributes)) 
+      attributes = Object.keys(attributes);
+
+    if (attributes.length == 0 || this.dataChildren.length == 0)
+      return
+
+    var changedDataChildren = attributes.filter(checkDataChildren);
+
+    if (changedDataChildren.length > 0) {
+      this.trigger('dataChange');
+      this.load();
+    }
+
+    function checkDataChildren(attribute) { 
+      return _this.dataChildren.indexOf(attribute) !== -1 
+    }
+  },
+
+  getLoadSettings: function() {
+    return {
+      data: this.getClosestModel('data')
+    }
+  },
+
+  /**
+   * Hooks loads data, models ask children to load data
+   * Basically, this method:
+   * loads is theres something to be loaded:
+   * does not load if there's nothing to be loaded
+   * @param {Object} options (includes splashScreen)
+   * @returns defer
+   */
+  loadData: function(opts) {
+
+    this.trigger('hook_change');
+
+    opts = opts || {};
+
+    var loadSettings = this.getLoadSettings();
+    var query = this.getQuery(opts.splashScreen);
+
+    //useful to check if in the middle of a load call
+    this._loadCall = true;
+
+    this._spaceDims = {};
+    this.setReady(false);
+
+    //get reader info
+    var reader = loadSettings.data.getPlainObject();
+    reader.parsers = this._getAllParsers();
+
+    var _this = this;
+    var evts = {
+      'load_start': function() {
+        _this.setLoading('_hook_data');
+        EventSource.freezeAll([
+          'load_start',
+          'resize'
+        ]);
+      }
+    };
+
+    utils.timeStamp('Vizabi Model: Loading Data: ' + this._id);
+
+    var dataPromise = this.getDataManager().load(query, reader, evts)
+
+    dataPromise.then(
+      this.afterLoad.bind(this),
+      this.loadError.bind(this)
+    );
+
+    return dataPromise;
+    
+  },
+
+  /**
+   * executes after data has actually been loaded
+   */
+  afterLoad: function(dataId) {
+    this._dataId = dataId;
+    utils.timeStamp('Vizabi Model: Data loaded: ' + this._id);
+    this.scale = null; // needed for axis/scale resetting to new data
+    EventSource.unfreezeAll();
+    this.setLoadingDone('_hook_data');
+  },
+
+  loadError: function() {
+      utils.warn('Problem with query: ', JSON.stringify(query));
+  },
+
+  /**
+   * gets query that this model/hook needs to get data
+   * @returns {Array} query
+   */
+  getQuery: function(splashScreen) {
+    var _this = this;
+
+    var dimensions, filters, select, from, order_by, q, animatable;
+
+    //if it's not a hook, no query is necessary
+    if(!this.isHook()) return true;
+    //error if there's nothing to hook to
+    if(Object.keys(this._space).length < 1) {
+      utils.error('Error:', this._id, 'can\'t find the space');
+      return true;
+    }
+
+    var prop = (this.use === "property") || (this.use === "constant");
+    var exceptions = (prop) ? { exceptType: 'time' } : {};
+
+    // select
+    // we remove this.which from values if it duplicates a dimension
+    var dimensions = this._getAllDimensions(exceptions);
+    select = {
+      key: dimensions,
+      value: dimensions.indexOf(this.which)!=-1 || this.use === "constant" ? [] : [this.which]
+    }
+    
+    // animatable
+    animatable = this._getFirstDimension({type: "time"});
+    
+    // from
+    from = prop ? "entities" : "datapoints";
+
+    // where 
+    filters = this._getAllFilters(exceptions, splashScreen);
+
+    // make root $and explicit
+    var explicitAndFilters =  {};
+    if (Object.keys(filters).length > 0) {
+      explicitAndFilters['$and'] = [];
+      for (var filterKey in filters) {
+        var filter = {};
+        filter[filterKey] = filters[filterKey];
+        explicitAndFilters['$and'].push(filter);
+      }
+    }
+
+    // join
+    var join = this._getAllJoins(exceptions, splashScreen);
+
+    //return query
+    return {
+      'language': this.getClosestModel('language').id,
+      'from': from,
+      'animatable': animatable,
+      'select': select,
+      'where': explicitAndFilters,
+      'join': join,
+      'order_by': prop ? ["rank"] : [this._space.time.dim]
+    };
+  },
+
+
+  /**
+   * gets all hook dimensions
+   * @param {Object} opts options with exceptType or onlyType
+   * @returns {Array} all unique dimensions
+   */
+  _getAllDimensions: function(opts) {
+
+    // hook dimensions = marker dimensions. Later, hooks might have extra dimensions : )
+    return this._parent._getAllDimensions(opts);
+
+  },
+
+  /**
+   * gets first dimension that matches type
+   * @param {Object} options
+   * @returns {Array} all unique dimensions
+   */
+  _getFirstDimension: function(opts) {
+
+    // hook dimensions = marker dimensions. Later, hooks might have extra dimensions : )
+    return this._parent._getFirstDimension(opts);
+
+  },
+
+
+  /**
+   * gets all hook filters
+   * @param {Boolean} splashScreen get filters for first screen only
+   * @returns {Object} filters
+   */
+  _getAllFilters: function(opts, splashScreen) {
+    opts = opts || {};
+    var filters = {};
+    var _this = this;
+    utils.forEach(this._space, function(h) {
+      if(opts.exceptType && h.getType() === opts.exceptType) {
+        return true;
+      }
+      if(opts.onlyType && h.getType() !== opts.onlyType) {
+        return true;
+      }
+      // if query's dimensions are the same as the hook's, no join
+      if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
+        filters = utils.extend(filters, h.getFilter(splashScreen));
+      } else {
+        var joinFilter = h.getFilter(splashScreen);
+        if (joinFilter != null && !utils.isEmpty(joinFilter)) {
+          var filter = {};
+          filter[h.getDimension()] = "$"  + h.getDimension();
+          filters = utils.extend(filters, filter);
+        }
+      }
+    });
+    return filters;
+  },
+
+  _getAllJoins: function(opts, splashScreen) {
+    var joins = {};
+    var _this = this;
+    utils.forEach(this._space, function(h) {
+      if(opts.exceptType && h.getType() === opts.exceptType) {
+        return true;
+      }
+      if(opts.onlyType && h.getType() !== opts.onlyType) {
+        return true;
+      }
+      if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
+        return true;
+      }
+      var filter = h.getFilter(splashScreen);
+      if (filter != null && !utils.isEmpty(filter)) {
+        joins["$" + h.getDimension()] = {
+          key: h.getDimension(),
+          where: h.getFilter(splashScreen)
+        };
+      }
+    });
+    return joins;
+  },
+
+  /**
+   * gets all hook filters
+   * @returns {Object} filters
+   */
+  _getAllParsers: function() {
+
+    var parsers = {};
+
+    function addParser(model) {
+      // get parsers from model
+      var parser = model.getParser();
+      var column = model.getDimensionOrWhich();
+      if (parser && column) {
+        parsers[column] = parser;
+      }
+    }
+
+    // loop through all models which can have filters
+    utils.forEach(this._space, function(h) {
+      addParser(h);
+    });
+    addParser(this);
+
+    return parsers;
+  },
+
     /**
    * Gets tick values for this hook
    * @returns {Number|String} value The value for this tick
@@ -281,5 +582,22 @@ var Hook = Model.extend({
     return this.use !== 'constant' ? this.getDataManager().getConceptprops(this.which) : {};
   }    
 });
+
+/**
+ * Learn what this model should hook to
+ * @returns {Array} space array
+ */
+function getSpace(model) {
+  if(utils.isArray(model.space)) {
+    return model.space;
+  } else if(model._parent) {
+    return getSpace(model._parent);
+  } else {
+    utils.error(
+      'ERROR: space not found.\n You must specify the objects this hook will use under the "space" attribute in the state.\n Example:\n space: ["entities", "time"]'
+    );
+  }
+}
+
 
 export default Hook;

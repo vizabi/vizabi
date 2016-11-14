@@ -45,9 +45,6 @@ var BubbleMapComponent = Component.extend({
       name: "marker",
       type: "model"
     }, {
-      name: "marker_minimap",
-      type: "model"
-    }, {      
       name: "language",
       type: "language"
     }, {
@@ -121,7 +118,8 @@ var BubbleMapComponent = Component.extend({
     this._labels.config({
       CSS_PREFIX: 'vzb-bmc',
       LABELS_CONTAINER_CLASS: 'vzb-bmc-labels',
-      LINES_CONTAINER_CLASS: 'vzb-bmc-lines'
+      LINES_CONTAINER_CLASS: 'vzb-bmc-lines',
+      SUPPRESS_HIGHLIGHT_DURING_PLAY: false
     });    
   },
 
@@ -226,8 +224,8 @@ var BubbleMapComponent = Component.extend({
     this.updateUIStrings();
 
     this.wScale = d3.scale.linear()
-        .domain(this.parent.datawarning_content.doubtDomain)
-        .range(this.parent.datawarning_content.doubtRange);
+        .domain(this.model.ui.datawarning.doubtDomain)
+        .range(this.model.ui.datawarning.doubtRange);
 
     this._labels.readyOnce();
   },
@@ -389,7 +387,7 @@ var BubbleMapComponent = Component.extend({
         
         //resolve value for color from the color legend model
         if(_this.model.marker.color.use == "property" && valueC) {
-          valueC = this.model.marker_minimap.label.getItems()[valueC] || "";
+          valueC = this.model.marker.color.getColorlegendMarker().label.getItems()[valueC] || "";
         }
           
         _this.yTitleEl.select("text")
@@ -576,11 +574,12 @@ var BubbleMapComponent = Component.extend({
     var _this = this;  
     if(!duration) duration = this.duration;
     if(!reposition) reposition = true;
+    if(!this.entityBubbles) return utils.warn("redrawDataPoints(): no entityBubbles defined. likely a premature call, fix it!");
     this.entityBubbles.each(function(d, index){
       var view = d3.select(this);
 
-      var valueX = _this.values.lng[d[_this.KEY]];
-      var valueY = _this.values.lat[d[_this.KEY]];
+      var valueX = _this.values.hook_lng[d[_this.KEY]];
+      var valueY = _this.values.hook_lat[d[_this.KEY]];
       var valueS = _this.values.size[d[_this.KEY]];
       var valueC = _this.values.color[d[_this.KEY]];
       var valueL = _this.values.label[d[_this.KEY]];
@@ -866,6 +865,16 @@ var BubbleMapComponent = Component.extend({
       var _this = this;
       this.someHighlighted = (this.model.entities.highlight.length > 0);
 
+      if(utils.isTouchDevice()) {
+        if(this.someHighlighted) {
+          _this.hovered = this.model.entities.highlight[0];
+        } else {
+          _this.hovered = null;
+        }       
+        _this.updateTitleNumbers();
+        _this.fitSizeOfTitles();        
+      }
+
 
 //      if (!this.selectList || !this.someSelected) return;
 //      this.selectList.classed("vzb-highlight", function (d) {
@@ -908,10 +917,19 @@ var BubbleMapComponent = Component.extend({
       this.someSelected = (this.model.entities.select.length > 0);
 
 //      this._selectlist.rebuild();
-
-      // hide recent hover tooltip
-      if (!_this.hovered || _this.model.entities.isSelected(_this.hovered)) {
-        _this._setTooltip();
+      if(utils.isTouchDevice()) {
+        _this._labels.showCloseCross(null, false);
+        if(_this.someHighlighted) {
+          _this.model.entities.clearHighlighted();
+        } else {
+          _this.updateTitleNumbers();
+          _this.fitSizeOfTitles();        
+        }
+      } else {
+        // hide recent hover tooltip
+        if (!_this.hovered || _this.model.entities.isSelected(_this.hovered)) {
+          _this._setTooltip();
+        }
       }
 
   },

@@ -144,6 +144,7 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
     var checkBox = browser.element(by.css(data.mountain_Chart_Loctors.chinaCheckboxShow_Locator_CSS));
     browser.wait(EC.visibilityOf(checkBox), 5000 , "Check box is not clicked").then(function(){
       checkBox.click();
+    browser.sleep(2000);
     });
 
     //Removing text from search bar
@@ -160,7 +161,7 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
     var checkUSA = browser.element(by.css(data.mountain_Chart_Loctors.USACheckboxShow_Locator_CSS));
     browser.wait(EC.visibilityOf(checkUSA), 5000).then(function(){
       checkUSA.click();
-      browser.sleep(2000);
+      browser.sleep(5000);
     });
 
     //Clicking OK of show pop up
@@ -340,7 +341,7 @@ describe('Web - Vizabi e2e test :: Mountain Chart', function() {
                 var worldBallText = worldBallAsParameter;
 
                 // Comparing the Check box country with selected country on the chart
-                var pop = "7.29B";
+                var pop = "7.31B";
                 expect(worldBallText.indexOf(pop) !== -1).toBe(true);
               });
             });
@@ -541,7 +542,7 @@ it('povertyPopulation', function() {
                         //Getting population at 2015
                         var subStr = lineText.substring(12, 15);
                         // Comparing the population at 2015
-                        var peakVal = "828";
+                        var peakVal = "829";
                         var downVal = "823"; //826
                         expect(peakVal).toBeGreaterThan(subStr);
                         expect(downVal).toBeLessThan(subStr);
@@ -599,7 +600,7 @@ it('povertyPopulation', function() {
                                             var findMe = "812M";
 
                                             // Comparing value of probline search bar
-                                            peakVal = "813";
+                                            peakVal = "814";
                                             downVal = "811";
                                             expect(peakVal).toBeGreaterThan(subStrAfterDrag);
                                             expect(downVal).toBeLessThan(subStrAfterDrag);		

@@ -21,25 +21,22 @@ var DataWarning = Component.extend({
 
     this.model_binds = {
       "change:language.strings": function(evt) {
-        _this.ready();
+        if(!_this._ready) return;
+        _this.redraw();
       }
     }
 
     //contructor is the same as any component
     this._super(config, context);
-
-    this.ui = utils.extend({
-      //...add properties here
-    }, this.ui);
-
   },
 
-  ready: function() {},
+  ready: function() {
+    this.redraw();
+  },
 
   readyOnce: function() {
     var _this = this;
     this.element = d3.select(this.placeholder);
-    this.translator = this.model.language.getTFunction();
 
     this.element.selectAll("div").remove();
 
@@ -49,10 +46,10 @@ var DataWarning = Component.extend({
         _this.toggle(true)
       });
 
-    var container = this.element.append("div")
+    this.container = this.element.append("div")
       .attr("class", "vzb-data-warning-box");
 
-    container.append("div")
+    this.container.append("div")
       .html(iconClose)
       .on("click", function() {
         _this.toggle()
@@ -62,23 +59,30 @@ var DataWarning = Component.extend({
       .attr("height", "0px")
       .attr("class", "vzb-data-warning-close");
 
-    var icon = container.append("div")
+    var icon = this.container.append("div")
       .attr("class", "vzb-data-warning-link")
       .html(iconWarn)
 
     icon.append("div")
       .text("Data doubts");
+    
+    this.container.append("div")
+      .attr("class", "vzb-data-warning-title")
 
-    if(this.parent.datawarning_content.title) {
-      container.append("div")
-        .attr("class", "vzb-data-warning-title")
-        .html(this.parent.datawarning_content.title);
-    }
-
-    container.append("div")
+    this.container.append("div")
       .attr("class", "vzb-data-warning-body vzb-dialog-scrollable")
-      .html(this.parent.datawarning_content.body);
+  },
+  
+  redraw: function(){
+    this.translator = this.model.language.getTFunction();
+    
+    var title = this.translator("datawarning/title/"+this.parent.name);
+    this.container.select(".vzb-data-warning-title")
+      .html(title)
+      .classed("vzb-hidden", !title || title==("datawarning/title/"+this.parent.name));
 
+    this.container.select(".vzb-data-warning-body")
+      .html(this.translator("datawarning/body/"+this.parent.name));
   },
 
   toggle: function(arg) {

@@ -39,9 +39,6 @@ var BubbleChartComp = Component.extend({
       name: "marker",
       type: "model"
     }, {
-      name: "marker_minimap",
-      type: "model"
-    }, {
       name: "language",
       type: "language"
     }, {
@@ -50,6 +47,11 @@ var BubbleChartComp = Component.extend({
     }];
 
     this.model_binds = {
+      'change:time.playing': function(evt, original) {
+        if(utils.isTouchDevice() && _this.model.time.playing && _this.someHighlighted) {
+          _this.model.entities.clearHighlighted();
+        }
+      },
       'change:time.start': function(evt, original) {
         if(_this.model.marker.color.scaleType === 'time') {
           _this.model.marker.color.scale = null;
@@ -141,7 +143,7 @@ var BubbleChartComp = Component.extend({
         _this.selectDataPoints();
         _this.redrawDataPoints();
         _this._trails.create();
-        _this._trails.run(["resize", "recolor", "opacityHandler","findVisible", "reveal"]);
+        _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
         _this.updateBubbleOpacity();
         _this._updateDoubtOpacity();
       },
@@ -267,14 +269,11 @@ var BubbleChartComp = Component.extend({
     this._labels.config({
       CSS_PREFIX: 'vzb-bc',
       LABELS_CONTAINER_CLASS: 'vzb-bc-labels',
-      LINES_CONTAINER_CLASS: 'vzb-bc-lines'
+      LINES_CONTAINER_CLASS: 'vzb-bc-bubbles',
+      LINES_CONTAINER_SELECTOR_PREFIX: 'bubble-'
     });
   },
   
-  afterPreload: function() {
-    var _this = this;
-  },
-
   _rangeBump: function(arg, undo) {
     var bump = this.activeProfile.maxRadius/2;
     undo = undo?-1:1;
@@ -396,6 +395,12 @@ var BubbleChartComp = Component.extend({
       .on("keyup", function() {
         if(_this.model.ui.cursorMode !== 'arrow') return;
         if(!d3.event.metaKey && !d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", false);
+      })
+      //this is for the case when user would press ctrl and move away from the browser tab or window
+      //keyup event would happen somewhere else and won't be captured, so zoomin class would get stuck
+      .on("mouseenter", function(){
+        if(_this.model.ui.cursorMode !== 'arrow') return;
+        if(!d3.event.metaKey && !d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", false);
       });
         
     this.root.on('resetZoom', function(){
@@ -422,8 +427,8 @@ var BubbleChartComp = Component.extend({
     this.updateUIStrings();
 
     this.wScale = d3.scale.linear()
-      .domain(this.parent.datawarning_content.doubtDomain)
-      .range(this.parent.datawarning_content.doubtRange);
+      .domain(this.model.ui.datawarning.doubtDomain)
+      .range(this.model.ui.datawarning.doubtRange);
     
     this._labels.readyOnce();
 
@@ -455,13 +460,14 @@ var BubbleChartComp = Component.extend({
       _this.updateTime();
       _this.updateIndicators();
       _this.updateSize();
+      _this.updateMarkerSizeLimits();
       _this.updateEntities();
       _this._labels.ready();
       _this.redrawDataPoints();
       _this.selectDataPoints();
       _this._trails.create();
-      _this.updateMarkerSizeLimits();
       _this.updateBubbleOpacity();
+      _this._updateDoubtOpacity();
       _this.zoomToMarkerMaxMin(); // includes redraw data points and trail resize
       _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
       if(_this.model.ui.adaptMinMaxZoom) _this._panZoom.expandCanvas();
@@ -527,6 +533,7 @@ var BubbleChartComp = Component.extend({
     }
     this._trails.run("reveal", null, this.duration);
     this.tooltipMobile.classed('vzb-hidden', true);
+    this._reorderEntities();
   },
 
   updateUIStrings: function() {
@@ -674,9 +681,8 @@ var BubbleChartComp = Component.extend({
     if (!this.model.time.splash) {
       this.unselectBubblesWithNoData(entities);
     }
-
-    this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
-      .data(this.model.entities.getVisible(), function(d) {return d && !d['selectedEntityData'] ? d[KEY] : null}); // trails have not keys
+    this.entityBubbles = this.bubbleContainer.selectAll('circle.vzb-bc-entity')
+      .data(this.model.entities.getVisible(), function(d) {return d[KEY]}); // trails have not keys
 
     //exit selection
     this.entityBubbles.exit().remove();
@@ -706,7 +712,7 @@ var BubbleChartComp = Component.extend({
       })
       .onLongTap(function(d, i) {});
 
-      this.entityBubbles.order();
+    this._reorderEntities();
   },
     
   unselectBubblesWithNoData: function(entities){
@@ -726,6 +732,24 @@ var BubbleChartComp = Component.extend({
       if(_select.length !== _this.model.entities.select.length) _this.model.entities.select = _select;
   },
 
+  _reorderEntities: function() {
+    var _this = this;
+    var KEY = this.KEY;
+    this.bubbleContainer.selectAll('.vzb-bc-entity')
+      .sort(function(a, b) {
+        var sizeA = _this.frame.size[a[KEY]];
+        var sizeB = _this.frame.size[b[KEY]];
+      
+        if (typeof sizeA == "undefined" && typeof sizeB != "undefined") return -1;
+        if (typeof sizeA != "undefined" && typeof sizeB == "undefined") return 1;
+        if (sizeA != sizeB) return d3.descending(sizeA, sizeB);
+        if (a[KEY] != b[KEY]) return d3.ascending(a[KEY], b[KEY]);
+        if (typeof a.trailStartTime != "undefined" || typeof b.trailStartTime != "undefined") return typeof a.trailStartTime != "undefined" ? -1 : 1; // only lines has trailStartTime 
+        if (typeof a.hidden != "undefined" || typeof b.hidden != "undefined") return typeof a.hidden != "undefined" ? 1 : -1; // only bubbles has attribute hidden
+        return d3.descending(sizeA, sizeB);
+      });
+  },
+  
   _bubblesInteract: function() {
     var _this = this;
     var KEY = this.KEY;
@@ -884,7 +908,7 @@ var BubbleChartComp = Component.extend({
         toolMargin: margin,
         limitMaxTickNumber: 6,
         bump: this.activeProfile.maxRadius/2,
-        constantRakeLength: this.height,
+        viewportLength: this.height,
         formatter: this.model.marker.axis_y.getTickFormatter()
       });
 
@@ -896,7 +920,7 @@ var BubbleChartComp = Component.extend({
         scaleType: this.model.marker.axis_x.scaleType,
         toolMargin: margin,
         bump: this.activeProfile.maxRadius/2,
-        constantRakeLength: this.width,
+        viewportLength: this.width,
         formatter: this.model.marker.axis_x.getTickFormatter()
       });
 
@@ -1023,13 +1047,14 @@ var BubbleChartComp = Component.extend({
     if(this.model.marker.size.scaleType !== "ordinal") {
       this.sScale.range([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)]);
     } else {
-      this.sScale.rangePoints([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)], 0).range();
+      this.sScale.rangePoints([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)], _this.activeProfile.padding).range();
     }
 
   },
 
   redrawDataPointsOnlyColors: function() {
     var _this = this;
+    if(!this.entityBubbles) return utils.warn("redrawDataPointsOnlyColors(): no entityBubbles defined. likely a premature call, fix it!");
 
     var valuesNow;
     var KEY = this.KEY;
@@ -1305,8 +1330,8 @@ var BubbleChartComp = Component.extend({
     var formatterS = this.model.marker.size.getTickFormatter();
     var formatterC = this.model.marker.color.getTickFormatter();
 
-    if(this.model.marker.color.use == "property" && titleC) {
-      titleC = this.model.marker_minimap.label.getItems()[titleC] || "";
+    if(this.model.marker.color.use == "property" && titleC && this.model.marker.color.getColorlegendMarker()) {
+        titleC = this.model.marker.color.getColorlegendMarker().label.getItems()[titleC] || "";
     }
 
     return [formatterS(titleS) + " " + unitS,
@@ -1342,10 +1367,17 @@ var BubbleChartComp = Component.extend({
   selectDataPoints: function() {
     var _this = this;
     var KEY = this.KEY;
+    
     this.someSelectedAndOpacityZero_1 = false;
-    //hide tooltip
-    _this._setTooltip();
-    _this._setBubbleCrown();
+
+    if(utils.isTouchDevice()) {
+      _this.model.entities.clearHighlighted();
+      _this._labels.showCloseCross(null, false);
+    } else {
+      //hide tooltip
+      _this._setTooltip();
+      _this._setBubbleCrown();
+    }
 
     _this.someSelected = (_this.model.entities.select.length > 0);
 
@@ -1533,6 +1565,7 @@ var BubbleChartComp = Component.extend({
             text = _this.model.entities.isSelected(d) ? '': values.label[d[KEY]];
           }
 
+          _this._labels.highlight(null, false);
           _this._labels.highlight(d, true);
           if(_this.model.entities.isSelected(d)) {
             var skipCrownInnerFill = !d.trailStartTime || d.trailStartTime == _this.model.time.timeFormat(_this.time);

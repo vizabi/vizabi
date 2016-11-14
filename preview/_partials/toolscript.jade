@@ -1,25 +1,27 @@
+script(src='assets/js/toolconfigs/#{tool_config||tool}.js')
 script.
   var TITLE = "#{title}";
   var TOOL = "#{tool}";
   var DESCRIPTION = "#{description}";
 
-  VIZABI_MODEL = {
-    state: {},
-    bind: {
-      'ready': function(evt, vals) {
-        updateURL();
-        updateStateEditor(VIZ.getModel().state);
-      },
-      'persistentChange': function(evt, minModel) {
-        updateURL(true, minModel); // force update
-      }
-    },
+
+  Vizabi.utils.deepExtend(VIZABI_MODEL, {
     ui: {
       buttons: #{chart_buttons || '[]'},
       buttons_expand: #{chart_buttons_expand || '[]'},
       dialogs: #{chart_dialogs || '[]'}
     }
-  };
+  });
+
+  VIZABI_MODEL.bind = {
+      'ready': function(evt, vals) {
+        updateURL();
+        updateStateEditor(VIZ.getModel().state);
+      },
+      'persistentChange': function(evt) {
+        updateURL(true); // force update
+      }
+    };
 
   VIZABI_MODEL.bind['change:state'] = function(evt, vals) {
       updateStateEditor(VIZ.getModel().state);
@@ -149,7 +151,7 @@ script.
       host: 'https://waffle-server-dev.gapminderdev.org',
       preloadPath: '/api/vizabi/',
       dataPath: '/api/ddf/',
-      //translationPath: localUrl + "data/translation/en.json",
+      //translationPath: localUrl + "data/translation/",
       //shapePath: localUrl + "data/mc_precomputed_shapes.json"
       //shapePath: localUrl + "data/world-50m.json"
     };
@@ -158,12 +160,14 @@ script.
     if("#{tool}"!=="PopByAge"){
       VIZABI_MODEL.data = {
         reader: "waffle",
+        splash: true,
         path: Vizabi._globals.ext_resources.host + Vizabi._globals.ext_resources.dataPath
       }
     }
   }
-
-  VIZABI_INITIAL_MODEL = Vizabi.utils.deepClone(VIZABI_MODEL);
-  Vizabi.utils.deepExtend(VIZABI_MODEL, URL.model);
   
-  VIZ = Vizabi("#{tool}", placeholder, VIZABI_MODEL);
+  VIZABI_PAGE_MODEL = Vizabi.utils.deepExtend({}, VIZABI_MODEL); 
+
+  VIZ = Vizabi("#{tool}", placeholder, Vizabi.utils.deepExtend({}, VIZABI_MODEL, URL.model));
+
+

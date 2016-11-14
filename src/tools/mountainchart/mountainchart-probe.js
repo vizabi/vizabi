@@ -14,7 +14,7 @@ var MCProbe = Class.extend({
 
             if (!options.level) options.level = _this.model.ui.chart.probeX;
 
-            _this.probeEl.classed("vzb-hidden", !options.level);
+            _this.probeEl.classed("vzb-hidden", !options.level || !_this.model.ui.chart.showProbeX);
             if (!options.level) return;
 
             _this.xAxisEl.call(_this.xAxis.highlightValue(options.full ? options.level : "none"));

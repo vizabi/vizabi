@@ -690,7 +690,9 @@ var TreeMenu = Component.extend({
   
   
   _buildIndicatorsTree: function(tagsArray){
+      if(tagsArray===true || !tagsArray) tagsArray = [];
       
+      var _this = this;
       var ROOT = "_root";
       var DEFAULT = "_default";
       var UNCLASSIFIED = "_unclassified";
@@ -721,7 +723,6 @@ var TreeMenu = Component.extend({
           tags[tag.parent].children.push(tags[tag.tag])
         }
       })
-      
       //add entries to different branches in the tree according to their tags
       utils.forEach(this.model.marker.getConceptprops(), function(entry, id){
         //if entry's tag are empty don't include it in the menu
@@ -732,12 +733,19 @@ var TreeMenu = Component.extend({
             tags[tag.trim()].children.push({id: id, name: entry.name, unit: entry.unit, description: entry.description});
           } else {
             //if entry's tag is not found in the tag dictionary
-            utils.warn(tag, "- tag not found, storing under 'Unclassified'")
+            if(!_this.consoleGroupOpen) {
+              console.groupCollapsed("Some tags were are not found, so indicators went under 'Unclassified' menu");
+              _this.consoleGroupOpen = true;
+            }
+            utils.warn("tag '" + tag + "' for indicator '" + id + "'");
             tags[UNCLASSIFIED].children.push({id: id, name: entry.name, unit: entry.unit, description: entry.description});
           }
         });  
       });
-
+    if(_this.consoleGroupOpen){
+      console.groupEnd();
+      delete _this.consoleGroupOpen;
+    }
     this._sortChildren(indicatorsTree)
     this.indicatorsTree = indicatorsTree;
   },
@@ -1179,7 +1187,7 @@ var TreeMenu = Component.extend({
             var units = deepLeafContent.append('span').classed(css.leaf_content_item, true)
               .text(function(d) {
                 //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-                var translated = d.id==="_default" ? _this.translator("unit/_default/" + hookType) : d.unit;parent
+                var translated = d.id==="_default" ? _this.translator("unit/_default/" + hookType) : d.unit;
                 hideUnits = !translated;
                 return _this.translator('hints/units') + ': ' + translated||"";
               });
@@ -1321,11 +1329,11 @@ var TreeMenu = Component.extend({
     return this;
   },
 
-  _setModel: function(what, value, markerID) {
+  _setModel: function(what, value, hookID) {
 
     var indicatorsDB = this.model.marker.getConceptprops();
 
-    var mdl = this.model.marker[markerID];
+    var mdl = this.model.marker[hookID];
 
     var obj = {};
 
@@ -1337,13 +1345,13 @@ var TreeMenu = Component.extend({
       if(indicatorsDB[value].scales) {
         obj.scaleType = indicatorsDB[value].scales[0];
       }
-    }
 
-    if(mdl.getType() === 'axis' || mdl.getType() === 'size') {
-      obj.domainMin = null;
-      obj.domainMax = null;
-      obj.zoomedMin = null;
-      obj.zoomedMax = null;
+      if(mdl.getType() === 'axis' || mdl.getType() === 'size') {
+        obj.domainMin = null;
+        obj.domainMax = null;
+        obj.zoomedMin = null;
+        obj.zoomedMax = null;
+      }
     }
 
     mdl.set(obj);

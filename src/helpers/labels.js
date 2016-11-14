@@ -100,9 +100,9 @@ var label = function(context) {
             .attr("height", "0px");
 
           cross.on("click", function() {
-            _this.model.entities.clearHighlighted();
             //default prevented is needed to distinguish click from drag
             if(d3.event.defaultPrevented) return;
+            _this.model.entities.clearHighlighted();
             _this.model.entities.selectEntity(d);
           });
 
@@ -123,9 +123,23 @@ var label = function(context) {
             .classed("vzb-transparent", true);
         })
         .on("click", function(d) {
-          if (!utils.isTouchDevice()) return;
+          if(!utils.isTouchDevice()) return;
           var cross = d3.select(this).selectAll("." + _cssPrefix + "-label-x");
-          cross.classed("vzb-transparent", !cross.classed("vzb-transparent"));
+          var KEY = _this.KEY || _this.model.entities.getDimension();
+          var hidden = cross.classed("vzb-transparent"); 
+          if(hidden) {
+            // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
+            _this.entityLabels.sort(function (a, b) { return a[KEY] != d[KEY]? -1 : 1; });
+            _this.showCloseCross(null, false);
+          }
+          cross.classed("vzb-transparent", !hidden);
+          if(!OPTIONS.SUPPRESS_HIGHLIGHT_DURING_PLAY || !_this.model.time.playing) {
+            if(hidden) {
+              _this.model.entities.setHighlight(d);
+            } else {
+              _this.model.entities.clearHighlighted();
+            }         
+          }
         });
     
       return label;  
@@ -279,8 +293,8 @@ var label = function(context) {
         diffY2 += Math.abs(diffY1 - diffY2) > textBBox.height * .5 ? deltaDiffY2 : (textBBox.height * .05);
       }
 
-      var longerSideCoeff = Math.abs(diffX1) > Math.abs(diffY1) ? Math.abs(diffX1) / viewWidth : Math.abs(diffY1) / viewHeight;
-      lineGroup.select("line").style("stroke-dasharray", "0 " + (cache.scaledS0) + " " + ~~(longerSideCoeff + 2) + "00%");
+      var longerSideCoeff = Math.abs(diffX1) > Math.abs(diffY1) ? Math.abs(diffX1) : Math.abs(diffY1);
+      lineGroup.select("line").style("stroke-dasharray", "0 " + (cache.scaledS0) + " " + ~~(longerSideCoeff)*2);
 
       lineGroup.selectAll("line")
         .attr("x1", diffX1)
@@ -332,7 +346,9 @@ var label = function(context) {
 var OPTIONS = {
   LABELS_CONTAINER_CLASS: '',
   LINES_CONTAINER_CLASS: '',
-  CSS_PREFIX: ''
+  LINES_CONTAINER_SELECTOR: '',
+  CSS_PREFIX: '',
+  SUPPRESS_HIGHLIGHT_DURING_PLAY: true
 }; 
 
 var Labels = Class.extend({
@@ -469,7 +485,7 @@ var Labels = Class.extend({
       .data(_this.model.entities.select, function(d) {
         return(d[KEY]);
       });
-    this.entityLines = this.linesContainer.selectAll("." + _cssPrefix + "-entity")
+    this.entityLines = this.linesContainer.selectAll("g.entity-line." + _cssPrefix + "-entity")
       .data(_this.model.entities.select, function(d) {
         return(d[KEY]);
       });
@@ -484,8 +500,10 @@ var Labels = Class.extend({
     this.entityLines.exit()
       .remove();
     this.entityLines
-      .enter().append('g')
-      .attr("class", function(d, index){return _cssPrefix + "-entity line-" + d[KEY]})
+      .enter().insert('g', function(d) {
+        return this.querySelector("." + OPTIONS.LINES_CONTAINER_SELECTOR_PREFIX + d[KEY]); 
+      })
+      .attr("class", function(d, index){return _cssPrefix + "-entity entity-line line-" + d[KEY]})
       .each(function(d, index) {
         _this.label.line(d3.select(this));
       });
@@ -503,7 +521,7 @@ var Labels = Class.extend({
     var KEY = this.KEY; 
     //show the little cross on the selected label
     this.entityLabels
-        .filter(function(f){return f[KEY] == d[KEY]})
+        .filter(function(f){return d ? f[KEY] == d[KEY] : true;})
         .select("." + this._cssPrefix + "-label-x")
         .classed("vzb-transparent", !show);
   },
@@ -513,7 +531,7 @@ var Labels = Class.extend({
     var labels = this.entityLabels; 
     if(d) {
       labels = labels.filter(function(f) {
-          return f[KEY] == d[KEY]
+          return d ? f[KEY] == d[KEY] : true;
         });
     }
     labels.classed("vzb-highlighted", highlight);

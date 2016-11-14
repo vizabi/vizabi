@@ -66,27 +66,23 @@ var Cartogram = Tool.extend('Cartogram', {
     },
 
   default_model: {
-    state: {
-      time: {},
-      marker: {
-        space: ["entities", "time"],
-        color: {
-          use: "property",
-          which: "population"
-        }
-      }
-    },
+    state: { },
     ui: {
       chart: {
         labels: {
           dragging: true
         },
-        lockNonSelected: 0
+        lockNonSelected: 0,
+        lockActive: 0,
+        sizeSelectorActive:0
       },
-      presentation: true
+      datawarning: {
+        doubtDomain: [],
+        doubtRange: []
+      },
+      presentation: false
     }
   }
-
-  });
+});
 
 export default Cartogram;

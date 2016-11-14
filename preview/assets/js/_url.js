@@ -4,14 +4,13 @@ var URLON={stringify:function(a){function b(a){return encodeURI(a.replace(/([=:&
 var URL = {};
 
 //grabs width, height, tabs open, and updates the url
-function updateURL(force, minModel) {
+function updateURL(force) {
 
   function update() {
 
     var lang, model;
     if(typeof VIZ !== 'undefined') {
-      minModel = minModel || VIZ.getMinModel();
-      minModel = Vizabi.utils.diffObject(minModel, VIZABI_INITIAL_MODEL);
+      minModel = VIZ.getPersistentMinimalModel(VIZABI_PAGE_MODEL);
       model = VIZ.getModel();
     }
 

@@ -45,7 +45,6 @@ var MountainChartComponent = Component.extend({
             { name: "time", type: "time" },
             { name: "entities", type: "entities" },
             { name: "marker", type: "model" },
-            { name: "marker_group", type: "model" },
             { name: "language", type: "language" },
             { name: "ui", type: "model" }
         ];
@@ -80,6 +79,9 @@ var MountainChartComponent = Component.extend({
                 _this.ready();
             },
             "change:ui.chart.probeX": function () {
+                _this.ready();
+            },
+            "change:ui.chart.showProbeX": function () {
                 _this.ready();
             },
             "change:ui.chart.xPoints": function () {
@@ -235,8 +237,8 @@ var MountainChartComponent = Component.extend({
     afterPreload: function () {
         var _this = this;
 
-        var yearNow = _this.model.time.value.getUTCFullYear();
-        var yearEnd = _this.model.time.end.getUTCFullYear();
+        var yearNow = _this.model.time.format(this.model.time.value);
+        var yearEnd = _this.model.time.format(this.model.time.end);
 
         this._math.xScaleFactor = this.model.marker.axis_x.xScaleFactor;
         this._math.xScaleShift = this.model.marker.axis_x.xScaleShift;
@@ -272,6 +274,7 @@ var MountainChartComponent = Component.extend({
         this.eventAreaEl
             .on("mousemove", function () {
                 if (_this.model.time.dragging) return;
+                if (!_this.model.ui.chart.showProbeX) return;
                 _this._probe.redraw({
                     level: _this.xScale.invert(d3.mouse(this)[0]),
                     full: true
@@ -279,6 +282,7 @@ var MountainChartComponent = Component.extend({
             })
             .on("mouseout", function () {
                 if (_this.model.time.dragging) return;
+                if (!_this.model.ui.chart.showProbeX) return;
                 _this._probe.redraw();
             });
 
@@ -299,8 +303,8 @@ var MountainChartComponent = Component.extend({
         this.mountainAtomicContainer.select(".vzb-mc-prerender").remove();
         this.year.setText(this.model.time.value.getUTCFullYear().toString());
         this.wScale = d3.scale.linear()
-            .domain(this.parent.datawarning_content.doubtDomain)
-            .range(this.parent.datawarning_content.doubtRange);
+            .domain(this.model.ui.datawarning.doubtDomain)
+            .range(this.model.ui.datawarning.doubtRange);
     },
 
     ready: function () {
@@ -706,7 +710,7 @@ updateSize: function (meshLength) {
                 });
 
                 //position tooltip
-                _this._setTooltip(d.key ? _this.model.marker_group.label.getItems()[d.key] : _this.values.label[d.KEY()]);
+                _this._setTooltip(d.key ? _this.model.marker.color.getColorlegendMarker().label.getItems()[d.key] : _this.values.label[d.KEY()]);
                 _this._selectlist.showCloseCross(d, true);
 
             },
@@ -1057,6 +1061,7 @@ updateSize: function (meshLength) {
 
     redrawDataPointsOnlyColors: function () {
         var _this = this;
+        if(!this.mountains) return utils.warn("redrawDataPointsOnlyColors(): no mountains  defined. likely a premature call, fix it!");
         this.mountains.style("fill", function (d) {
             return _this.values.color[d.KEY()]?_this.cScale(_this.values.color[d.KEY()]):"transparent";
         });

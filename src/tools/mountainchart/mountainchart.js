@@ -29,7 +29,7 @@ var MountainChart = Tool.extend('MountainChart', {
     this.components = [{
       component: MountainChartComponent,
       placeholder: '.vzb-tool-viz',
-      model: ["state.time", "state.entities", "state.marker", "state.marker_group", "language", "ui"] //pass models to component
+      model: ["state.time", "state.entities", "state.marker", "language", "ui"] //pass models to component
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
@@ -58,6 +58,36 @@ var MountainChart = Tool.extend('MountainChart', {
 
     //constructor is the same as any tool
     this._super(placeholder, external_model);
+  },
+
+  default_model: {
+    state: { 
+      time: {
+        "delay": 100,
+        "delayThresholdX2": 50,
+        "delayThresholdX4": 25        
+      },
+      "entities": {
+        "opacitySelectDim": 0.3,
+        "opacityRegular": 0.7
+      }
+    },
+    language: { },
+    ui: {
+      chart: {
+        manualSortingEnabled: true,
+        yMaxMethod: "latest",
+        showProbeX: true,
+        probeX: 1.85,
+        xLogStops: [1, 2, 5],
+        xPoints: 50
+      },
+      datawarning: {
+        doubtDomain: [],
+        doubtRange: []
+      },
+      presentation: false
+    }
   }
 });
 

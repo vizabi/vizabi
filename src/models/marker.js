@@ -97,29 +97,119 @@ var Marker = Model.extend({
         });
         return resultKeys.map(function(d){var r = {}; r[KEY] = d; return r; });
     },
+
+  /**
+   * @param {Array} entities array of entities
+   * @return String
+   */
+  _getCachePath: function(keys) {
+    //array of steps -- names of all frames  
+    var steps = this._parent.time.getAllSteps();
+    var cachePath = steps[0] + " - " + steps[steps.length-1];
+    this._dataCube = this._dataCube || this.getSubhooks(true);
+    var dataLoading = false;
+    utils.forEach(this._dataCube, function(hook, name) {
+      if (hook._loadCall) dataLoading = true;
+      cachePath = cachePath + "_" +  hook._dataId;
+    });
+    if (dataLoading) {
+      return null;
+    }
+    if (keys) {
+      cachePath = cachePath + "_" + keys.join(",");
+    }
+    return cachePath;
+  },
     
+  _getAllDimensions: function(opts) {
+    
+    var models = [];
+    var _this = this;
+    utils.forEach(this.space, function(name) {
+      models.push(_this.getClosestModel(name));
+    });
+
+    var optsStr = JSON.stringify(opts);
+    if(optsStr in this._spaceDims) {
+      return this._spaceDims[optsStr];
+    }
+
+    opts = opts || {};
+    var dims = [];
+    var dim;
+
+    utils.forEach(models, function(m) {
+      if(opts.exceptType && m.getType() === opts.exceptType) {
+        return true;
+      }
+      if(opts.onlyType && m.getType() !== opts.onlyType) {
+        return true;
+      }
+      if(dim = m.getDimension()) {
+        dims.push(dim);
+      }
+    });
+
+    this._spaceDims[optsStr] = dims;
+
+    return dims;
+  },
+
+
+  /**
+   * gets first dimension that matches type
+   * @param {Object} options
+   * @returns {Array} all unique dimensions
+   */
+  _getFirstDimension: function(opts) {
+    var models = [];
+    var _this = this;
+    utils.forEach(this.space, function(name) {
+      models.push(_this.getClosestModel(name));
+    });
+
+    opts = opts || {};
+
+    var dim = false;
+    utils.forEach(models, function(m) {
+      if(opts.exceptType && m.getType() !== opts.exceptType) {
+        dim = m.getDimension();
+        return false;
+      } else if(opts.type && m.getType() === opts.type) {
+        dim = m.getDimension();
+        return false;
+      } else if(!opts.exceptType && !opts.type) {
+        dim = m.getDimension();
+        return false;
+      }
+    });
+    return dim;
+  },
+
   /**
    * 
    * @param {String|null} time of a particularly requested data frame. Null if all frames are requested
    * @param {function} cb 
+   * @param {Array} keys array of entities
    * @return null
    */
-    getFrame: function(time, cb) {
+    getFrame: function(time, cb, keys) {
+      //keys = null;  
       var _this = this;
       if (!this.cachedFrames) this.cachedFrames = {};
-      this._dataCube = this._dataCube || this.getSubhooks(true);  
-      
-      //array of steps -- names of all frames  
+
       var steps = this._parent.time.getAllSteps();
-        
-      var cachePath = steps[0] + " - " + steps[steps.length-1];
-      var dataLoading = false;
-      utils.forEach(this._dataCube, function(hook, name) {
-        if (hook._loadCall) dataLoading = true;  
-        cachePath = cachePath + "_" +  hook._dataId;
-      });
-      // prevent calculating corrupted frames when one of models is loading 
-      if (dataLoading) return cb(null, time);
+      // try to get frame from cache without keys
+      var cachePath = this._getCachePath();
+      if (!cachePath) return cb(null, time); 
+      if(time && _this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
+        // if it does, then return that frame directly and stop here
+        //QUESTION: can we call the callback and return the frame? this will allow callbackless API too
+        return cb(_this.cachedFrames[cachePath][time], time);
+      }
+      cachePath = this._getCachePath(keys);
+      if (!cachePath) return cb(null, time);
+
       // check if the requested time point has a cached animation frame
       if(time && _this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
         // if it does, then return that frame directly and stop here
@@ -145,14 +235,14 @@ var Marker = Model.extend({
             //interpolate between frames and fire the callback
             this._interpolateBetweenFrames(time, nextFrameIndex, steps, function (response) {
               cb(response, time); 
-            });
+            }, keys);
             return null;
           }
         }
-        
+
         //QUESTION: we don't need any further execution after we called for interpolation, right?
         //request preparing the data, wait until it's done
-        _this.getFrames(time).then(function() {
+        _this.getFrames(time, keys).then(function() {
           if (!time && _this.cachedFrames[cachePath]) {
             //time can be null: then return all frames
             return cb(_this.cachedFrames[cachePath], time);
@@ -167,14 +257,14 @@ var Marker = Model.extend({
       }
     },
     
-    _interpolateBetweenFrames: function(time, nextFrameIndex, steps, cb) {
+    _interpolateBetweenFrames: function(time, nextFrameIndex, steps, cb, keys) {
       var _this = this;
       
       if (nextFrameIndex == 0) {
         //getFrame makes sure the frane is ready because a frame with non-existing data might be adressed
         this.getFrame(steps[nextFrameIndex], function(values) { 
           return cb(values);
-        });
+        }, keys);
       } else {
         var prevFrameTime = steps[nextFrameIndex - 1];
         var nextFrameTime = steps[nextFrameIndex];
@@ -204,12 +294,12 @@ var Marker = Model.extend({
               });
             });
             cb(dataBetweenFrames);
-          })
-        })
+          }, keys)
+        }, keys)
       }
     },
 
-    getFrames: function(forceFrame) {
+    getFrames: function(forceFrame, selected) {
       var _this = this;
       
       var KEY = this._getFirstDimension();
@@ -221,11 +311,8 @@ var Marker = Model.extend({
       //array of steps -- names of all frames  
       var steps = this._parent.time.getAllSteps();
         
-      var cachePath = steps[0] + " - " + steps[steps.length-1];
-      utils.forEach(this._dataCube, function(hook, name) {
-        cachePath = cachePath + "_" + hook._dataId;
-      });
-
+      var cachePath = this._getCachePath(selected);
+      if (!cachePath) return new Promise(function(resolve, reject) {resolve()});
       //if the collection of frames for this data cube is not scheduled yet (otherwise no need to repeat calculation)
       if (!this.frameQueues[cachePath] || !this.frameQueues[cachePath] instanceof Promise) {
         
@@ -239,7 +326,6 @@ var Marker = Model.extend({
           var keys = _this.getKeys();
 
           var deferredHooks = [];
-        
           // Assemble data from each hook. Each frame becomes a vector containing the current configuration of hooks.
           // frame -> hooks -> entities: values
           utils.forEach(_this._dataCube, function(hook, name) {
@@ -284,7 +370,7 @@ var Marker = Model.extend({
               (function(hookKey) {
                 var defer = deferredHooks[hookKey];
                 promises.push(new Promise(function(res, rej) {
-                  _this.getDataManager().getFrames(defer.hook._dataId, steps).then(function(response) {
+                  _this.getDataManager().getFrames(defer.hook._dataId, steps, selected).then(function(response) {
                     utils.forEach(response, function (frame, t) {
                       _this.partialResult[cachePath][t][defer.name] = frame[defer.hook.which];
                     });
@@ -304,7 +390,6 @@ var Marker = Model.extend({
 
         });
       }
-
       return new Promise(function(resolve, reject) {
         if (steps.length < 2 || !forceFrame) {
             //wait until the above promise is resolved, then resolve the current promise
@@ -318,7 +403,7 @@ var Marker = Model.extend({
             if(hook.use !== "constant" && hook.which !== KEY && hook.which !== TIME) {
               (function(_hook, _name) {
                 promises.push(new Promise(function(res, rej) {
-                  _this.getDataManager().getFrame(_hook._dataId, steps, forceFrame).then(function(response) {
+                  _this.getDataManager().getFrame(_hook._dataId, steps, forceFrame, selected).then(function(response) {
                     _this.partialResult[cachePath][forceFrame][_name] = response[forceFrame][_hook.which];
                     res();
                   })
@@ -339,8 +424,33 @@ var Marker = Model.extend({
       });
 
     },
-    
-    
+
+    listenFramesQueue: function(keys, cb) {
+      var _this = this;
+      var KEY = this._getFirstDimension();
+      var TIME = this._getFirstDimension({type: "time"});
+      var steps = this._parent.time.getAllSteps();
+      var preparedFrames = {};
+      this.getFrames();
+      var dataIds = [];
+      utils.forEach(_this._dataCube, function(hook, name) {
+        if(!(hook.use === "constant" || hook.which === KEY || hook.which === TIME)) {
+          if (dataIds.indexOf(hook._dataId) == -1) {
+            dataIds.push(hook._dataId);
+          }
+        }
+      });
+      utils.forEach(dataIds, function(hook) {
+        _this.getDataManager().listenFrame(hook, steps, keys, function(dataId, time) {
+          var keyName = time.toString();
+          if (typeof preparedFrames[keyName] == "undefined") preparedFrames[keyName] = [];
+          if (preparedFrames[keyName].indexOf(dataId) == -1) preparedFrames[keyName].push(dataId);
+          if (preparedFrames[keyName].length == dataIds.length)  {
+            cb(time);
+          }
+        });
+      });
+    },
 
   /**
    * gets multiple values from the hook
@@ -356,7 +466,7 @@ var Marker = Model.extend({
       return [];
     }
 
-    var dimTime, time, filtered, next, method, u, w, value, method;
+    var dimTime, time, filtered, next, method, u, w, value;
     this._dataCube = this._dataCube || this.getSubhooks(true);
     filter = utils.clone(filter, this._getAllDimensions());
     dimTime = this._getFirstDimension({

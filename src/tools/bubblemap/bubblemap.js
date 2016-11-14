@@ -35,7 +35,7 @@ var BubbleMap = Tool.extend('BubbleMap', {
     this.components = [{
       component: BubbleMapComponent,
       placeholder: '.vzb-tool-viz',
-      model: ["state.time", "state.entities", "state.marker", "state.marker_minimap", "language", "ui"] //pass models to component
+      model: ["state.time", "state.entities", "state.marker", "language", "ui"] //pass models to component
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
@@ -69,14 +69,28 @@ var BubbleMap = Tool.extend('BubbleMap', {
 
   default_model: {
     state: {
+      time: {
+        "delay": 100,
+        "delayThresholdX2": 50,
+        "delayThresholdX4": 25  
+      },
+      entities: {
+        "opacitySelectDim": 0.3,
+        "opacityRegular": 1
+      }
     },
+    language: { },
     ui: {
       chart: {
         labels: {
           dragging: true
         }
       },
-      presentation: true
+      datawarning: {
+        doubtDomain: [],
+        doubtRange: []
+      },
+      presentation: false
     }
   }
 });

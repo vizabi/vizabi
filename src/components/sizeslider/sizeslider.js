@@ -66,7 +66,9 @@ var SizeSlider = Component.extend({
       'change:size.domainMin': changeMinMaxHandler,
       'change:size.domainMax': changeMinMaxHandler,
       'change:size.extent': changeMinMaxHandler,        
-      'ready': readyHandler
+      'ready': function() {
+        _this.modelReady();
+      }
     };
 
     function changeMinMaxHandler(evt, path) {
@@ -80,32 +82,33 @@ var SizeSlider = Component.extend({
       }
     }
     
-    function readyHandler(evt) {
-      _this.modelUse = _this.model.size.use; 
-      var size = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
-      if(_this.modelUse != 'constant') {
-        _this.sizeScaleMinMax = _this.model.size.getScale().domain();
-        _this.sliderEl.selectAll('.w').classed('vzb-hidden', false);
-        _this.sliderEl.select('.extent').classed('vzb-hidden', false);
-        _this.sliderEl.select('.background').classed('vzb-pointerevents-none', false);
-        _this._setLabelsText();
-      } else {
-        _this.sliderEl.selectAll('.w').classed('vzb-hidden', true);
-        _this.sliderEl.select('.extent').classed('vzb-hidden', true);
-        _this.sliderEl.select('.background').classed('vzb-pointerevents-none', true);
-        if(!_this.model.size.which) {
-          var p = _this.propertyActiveProfile;
-          size[1] = (p.default - p.min) / (p.max - p.min);
-          _this.model.size.which = '_default';
-        }      
-      }
-      _this.sliderEl.call(_this.brush.extent([size[0], size[1]]));
-      _this.sliderEl.call(_this.brush.event);      
-    }
-
     this._setModel = utils.throttle(this._setModel, 50);
     //contructor is the same as any component
     this._super(config, context);
+  },
+
+  modelReady: function() {
+    var _this = this;
+    _this.modelUse = _this.model.size.use; 
+    var size = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
+    if(_this.modelUse != 'constant') {
+      _this.sizeScaleMinMax = _this.model.size.getScale().domain();
+      _this.sliderEl.selectAll('.w').classed('vzb-hidden', false);
+      _this.sliderEl.select('.extent').classed('vzb-hidden', false);
+      _this.sliderEl.select('.background').classed('vzb-pointerevents-none', false);
+      _this._setLabelsText();
+    } else {
+      _this.sliderEl.selectAll('.w').classed('vzb-hidden', true);
+      _this.sliderEl.select('.extent').classed('vzb-hidden', true);
+      _this.sliderEl.select('.background').classed('vzb-pointerevents-none', true);
+      if(!_this.model.size.which) {
+        var p = _this.propertyActiveProfile;
+        size[1] = (p.default - p.min) / (p.max - p.min);
+        _this.model.size.which = '_default';
+      }      
+    }
+    _this.sliderEl.call(_this.brush.extent([size[0], size[1]]));
+    _this.sliderEl.call(_this.brush.event);      
   },
 
   /**
@@ -186,8 +189,6 @@ var SizeSlider = Component.extend({
         return "M0 " + (barWidth * .5) + "l" + (-thumbRadius) + " " + (thumbRadius * 1.5) + "h" + (thumbRadius * 2) + "Z";
       })
 
-//
-
     this.sliderThumbs.append("path")
       .attr("class", "vzb-szs-slider-thumb-arc")
     this.sliderEl.selectAll("text").data([0,0]).enter()
@@ -235,6 +236,8 @@ var SizeSlider = Component.extend({
     if(_this.sizeScaleMinMax) {
       _this._setLabelsText();
     }
+
+    if(_this.model._ready) this.modelReady();
   },
   
   getPropertyActiveProfile: function() {

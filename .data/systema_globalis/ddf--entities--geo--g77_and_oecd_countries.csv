@@ -1,4 +1,4 @@
-g77_and_oecd_countries,name,gwid,is--g77_and_oecd_countries
-others,Others,i274,TRUE
-g77,G77,i272,TRUE
-oecd,OECD,i273,TRUE
+g77_and_oecd_countries,rank,name,gwid,is--g77_and_oecd_countries
+others,3,Others,i274,TRUE
+g77,1,G77,i272,TRUE
+oecd,2,OECD,i273,TRUE

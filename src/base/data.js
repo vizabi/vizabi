@@ -14,15 +14,14 @@ var Data = Class.extend({
   /**
    * Loads resource from reader or cache
    * @param {Array} query Array with queries to be loaded
-   * @param {String} language Language
    * @param {Object} reader Which reader to use - data reader info
    * @param {*} evts ?
    */
-  load: function(query, language, reader, evts) {
+  load: function(query, reader, evts) {
     var _this = this;
     var promise = new Promise();
     var wait = new Promise().resolve();
-    var cached = query === true ? true : this.isCached(query, language, reader);
+    var cached = query === true ? true : this.isCached(query, reader);
     var loaded = false;
     //if result is cached, dont load anything
     if(!cached) {
@@ -31,7 +30,7 @@ var Data = Class.extend({
         evts.load_start();
       }
       wait = new Promise();
-      this.loadFromReader(query, language, reader).then(function(queryId) {
+      this.loadFromReader(query, reader).then(function(queryId) {
         loaded = true;
         cached = queryId;
         wait.resolve();
@@ -61,17 +60,15 @@ var Data = Class.extend({
   /**
    * Loads resource from reader
    * @param {Array} query Array with queries to be loaded
-   * @param {String} lang Language
    * @param {Object} reader Which reader to use. E.g.: "json"
    * @param {String} path Where data is located
    */
-  loadFromReader: function(query, lang, reader) {
+  loadFromReader: function(query, reader) {
     var _this = this;
     var promise = new Promise();
     var reader_name = reader.reader;
     var queryId = utils.hashCode([
       query,
-      lang,
       reader
     ]);
 
@@ -140,7 +137,7 @@ var Data = Class.extend({
       var r = new readerClass(reader);
 
       // execute the query with this reader
-      r.read(query, lang).then(function() {
+      r.read(query).then(function() {
 
           //success reading
           var values = r.getData();
@@ -253,18 +250,19 @@ var Data = Class.extend({
     return this._collection[queryId][what][id];
   },
 
-  loadConceptProps: function(reader, callback){
+  loadConceptProps: function(reader, languageId, callback){
     var _this = this;
     
     var query = {
       from: "concepts",
+      language: languageId,
       select: {
         key: ["concept"],
         value: ["concept_type","domain","indicator_url","color","scales","interpolation","tags","name","unit","description"]
       }
     };
     
-    this.load(query, "en", reader).then(function(dataId) {
+    this.load(query, reader).then(function(dataId) {
       
       _this.conceptPropsDataID = dataId;
       _this.conceptDictionary = {_default: {concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root"}};
@@ -323,13 +321,20 @@ var Data = Class.extend({
      }
   },
     
-
-  getFrames: function(queryId, framesArray) {
+  _getCacheKey: function(frames, keys) {
+    var result = frames[0] + " - " + frames[frames.length-1];
+    if (keys) {
+      result = result + "_" + keys.join(); 
+    }
+    return result;
+  },
+  
+  getFrames: function(queryId, framesArray, keys) {
     var _this = this;
-    var whatId = framesArray[0] + " - " + framesArray[framesArray.length-1];
+    var whatId = this._getCacheKey(framesArray, keys);
     if (!this._collectionPromises[queryId][whatId]) {
       this._collectionPromises[queryId][whatId] = {
-        queue: this.framesQueue(framesArray),
+        queue: this.framesQueue(framesArray, whatId),
         promise: null
       };
     }
@@ -338,7 +343,7 @@ var Data = Class.extend({
     } else {
       this._collectionPromises[queryId][whatId]["promise"] = new Promise(function (resolve, reject) {
         if (!queryId) reject(utils.warn("Data.js 'get' method doesn't like the queryId you gave it: " + queryId));
-        _this._getFrames(queryId, whatId, framesArray).then(function (frames) {
+        _this._getFrames(queryId, whatId, framesArray, keys).then(function (frames) {
           _this._collection[queryId]["frames"][whatId] = frames;
           resolve(_this._collection[queryId]["frames"][whatId]);
         });
@@ -348,13 +353,11 @@ var Data = Class.extend({
     return this._collectionPromises[queryId][whatId]["promise"];
   },
 
-  getFrame: function(queryId, framesArray, neededFrame) {
+  
+  getFrame: function(queryId, framesArray, neededFrame, keys) {
     //can only be called after getFrames()
     var _this = this;
-    var query = _this._collection[queryId].query;
-    var whatId = framesArray[0] + " - " + framesArray[framesArray.length-1];
-    var columns = query.select.value.filter(function(f){return f !== "_default"});
-
+    var whatId = this._getCacheKey(framesArray, keys);
     return new Promise(function(resolve, reject) {
       if (_this._collection[queryId]["frames"][whatId] && _this._collection[queryId]["frames"][whatId][neededFrame]) {
         resolve(_this._collection[queryId]["frames"][whatId]);
@@ -365,49 +368,125 @@ var Data = Class.extend({
       }
     });
   },
+
+  listenFrame: function(queryId, framesArray, keys,  cb) {
+    var _this = this;
+    var whatId = this._getCacheKey(framesArray, keys);
+    this._collectionPromises[queryId][whatId]["queue"].defaultCallbacks.push(function(time) {
+      cb(queryId, time);
+    });
+    if (this._collection[queryId]["frames"][whatId]) {
+      utils.forEach(this._collection[queryId]["frames"][whatId], function(frame, key) {
+        cb(queryId, new Date(key));
+      });
+    }
+  },
+  
+  _muteAllQueues: function(except) {
+    utils.forEach(this._collectionPromises, function(queries, queryId) {
+        utils.forEach(queries, function(promise, whatId) {
+          if(promise.queue.isActive == true && promise.queue.whatId != except) {
+            promise.queue.mute();
+          }
+        });
+    });
+  },
+  
+  _unmuteQueue: function() {
+    utils.forEach(this._collectionPromises, function(queries, queryId) {
+      utils.forEach(queries, function(promise, whatId) {
+        if(promise.queue.isActive == false) {
+          promise.queue.unMute();
+        }
+      });
+    });
+  },
   /**
    * set priority for generate each year frame
    * @param framesArray
    * @returns {*}
    */
-  framesQueue: function(framesArray) {
-    return new function(){
+  framesQueue: function(framesArray, whatId) {
+    var _context = this;
+    return new function() {
+      this.defaultCallbacks = [];
       this.callbacks = {};
       this.forcedQueue = [];
+      this.isActive = true;
+      this.deferredPromise = null;
+      this.whatId = whatId;
       this.queue = framesArray.slice(0); //clone array
-        
+      var queue = this; 
       //put the last element to the start of the queue because we are likely to need it first
       this.queue.splice(0, 0, this.queue.splice(this.queue.length - 1, 1)[0]);
       this.key = 0;
+      this.mute = function() {
+        this.isActive = false;
+        if (!(this.deferredPromise instanceof Promise && this.deferredPromise.status == "pending")) {
+          this.deferredPromise = new Promise();
+        }
+      };
         
+      this.unMute = function() {
+        this.isActive = true;
+        if (this.deferredPromise instanceof Promise) {
+          this.deferredPromise.resolve();
+        }
+        this.deferredPromise = null;
+        if (this.forcedQueue.length == 0 && this.queue.length == 0) {
+          _context._unmuteQueue();
+        }
+      };
+      this.frameComplete = function(frameName) { //function called after build each frame with name of frame build
+        var i;
+        if (queue.defaultCallbacks.length > 0) {
+          for (i = 0; i < queue.defaultCallbacks.length; i++) {
+            queue.defaultCallbacks[i](frameName);
+          }
+        }
+        if (queue.callbacks[frameName] && queue.callbacks[frameName].length > 0) {
+          for (i = 0; i < queue.callbacks[frameName].length; i++) {
+            queue.callbacks[frameName][i]();
+          }
+        }
+      };
+      this._waitingForActivation = function() {
+        if (!this.deferredPromise instanceof Promise) {
+          this.deferredPromise = new Promise();
+        }
+        if (this.isActive) {
+          this.deferredPromise.resolve();
+        }
+        return this.deferredPromise; 
+      };
+        
+      this._getNextFrameName = function() {
+        var frameName = null;
+        if (this.forcedQueue.length > 0 || this.queue.length > 0) {
+          if (this.forcedQueue.length > 0) {
+            frameName = this.forcedQueue.shift();
+          } else {
+            if (this.forcedQueue.length == 0 && this.key >= this.queue.length - 1) {
+              this.key = 0;
+            }
+            frameName = this.queue.splice(this.key, 1).pop();
+          }
+        } else {
+          _context._unmuteQueue();
+        }
+        return frameName;
+      };
       // returns the next frame in a queue
       this.getNext = function() {
-        var queue = this;
-        var frameName = null;
-        if (this.forcedQueue.length > 0) {
-          frameName = this.forcedQueue.shift();
+        var defer = new Promise();
+        if (this.isActive) {
+          defer.resolve(this._getNextFrameName());
         } else {
-          if (this.queue.length == 0) return false;
-          if (this.forcedQueue.length == 0 && this.key >= this.queue.length - 1) {
-            this.key = 0;
-          }
-          frameName = this.queue.splice(this.key, 1).pop();
+          this._waitingForActivation().then(function() {
+            defer.resolve(queue._getNextFrameName());
+          }); 
         }
-        if (!this.callbacks[frameName]) {
-          this.callbacks[frameName] = [];
-        }
-        var frameComplete = function(frameName) { //function called after build each frame with name of frame build
-          if (queue.callbacks[frameName].length > 0) {
-            for (var  i = 0; i < queue.callbacks[frameName].length; i++) {
-              queue.callbacks[frameName][i]();
-            }
-            //delete queue.callbacks[frameName];
-          }
-        };
-        return {
-          frameName: frameName,
-          callback: frameComplete
-        };
+        return defer;
       };
         
       // force the particular frame up the queue
@@ -430,6 +509,8 @@ var Data = Class.extend({
           var newKey = objIndexOf(this.queue, frameName);//this.queue.indexOf(frameName.toString());
           if (newKey !== -1) {
             this.forcedQueue.unshift(this.queue.splice(newKey, 1).pop());
+            _context._muteAllQueues(this.whatId);
+            this.unMute();
             if (typeof cb === "function") {
               if (typeof this.callbacks[frameName] != "object") {
                 this.callbacks[frameName] = [];
@@ -453,10 +534,12 @@ var Data = Class.extend({
   /**
    * Get regularised dataset (where gaps are filled)
    * @param {Number} queryId hash code for query
+   * @param {String} whatId hash code for cache
    * @param {Array} framesArray -- array of keyframes across animatable
+   * @param {Array} keys -- array of keys
    * @returns {Object} regularised dataset, nested by [animatable, column, key]
    */
-  _getFrames: function(queryId, whatId, framesArray) {
+  _getFrames: function(queryId, whatId, framesArray, keys) {
     var _this = this;
 
     if (!_this._collection[queryId]["frames"][whatId]) {
@@ -486,8 +569,7 @@ var Data = Class.extend({
       // We _nest_ the flat dataset in two levels: first by “key” (example: geo), then by “animatable” (example: year)
       // See the _getNested function for more details
       var nested = _this.get(queryId, 'nested', [KEY, TIME]);
-      var keys = Object.keys(nested);
-
+      keys = keys ? keys : Object.keys(nested);
       // Get the list of columns that are in the dataset, exclude key column and animatable column
       // Example: [“lex”, “gdp”, “u5mr"]
       var query = _this._collection[queryId].query;
@@ -503,8 +585,7 @@ var Data = Class.extend({
       for (c = 0; c < cLength; c++) _this._collection[queryId].haveNoDataPointsPerKey[columns[c]] = {};
 
       var buildFrame = function(frameName, keys, queryId, callback) {
-          var frame = {};
-
+        var frame = {};
           if (query.from !== "datapoints") {
             // we populate the regular set with a single value (unpack properties into constant time series)
             var dataset = _this._collection[queryId].data;
@@ -609,21 +690,22 @@ var Data = Class.extend({
           
           // recursively call the buildFrame again, this time for the next frame
           //QUESTION: FramesArray is probably not needed at this point. queryId and whatId is enough
-          var nextFrame = _this._collectionPromises[queryId][whatId]["queue"].getNext(); 
-          if (nextFrame) {
-            // defer allows other interactions to squeeze in between buildFrame executions
-            utils.defer(function() {
-              buildFrame(nextFrame.frameName, keys, queryId, nextFrame.callback);
-            });
-          } else {
-            //this goes to marker.js as a "response"
-            resolve(_this._collection[queryId]["frames"][whatId]); 
-          }
+          _this._collectionPromises[queryId][whatId]["queue"].getNext().then(function(nextFrame) {
+            if (nextFrame) {
+              utils.defer(function() {
+                buildFrame(nextFrame, keys, queryId, _this._collectionPromises[queryId][whatId]["queue"].frameComplete);
+              });
+            } else {
+              //this goes to marker.js as a "response"
+              resolve(_this._collection[queryId]["frames"][whatId]);
+            }
+          });
       };
-      var nextFrame = _this._collectionPromises[queryId][whatId]["queue"].getNext();
-      if (nextFrame) {
-        buildFrame(nextFrame.frameName, keys, queryId, nextFrame.callback);
-      }
+      _this._collectionPromises[queryId][whatId]["queue"].getNext().then(function(nextFrame) {
+        if (nextFrame) {
+          buildFrame(nextFrame, keys, queryId, _this._collectionPromises[queryId][whatId]["queue"].frameComplete);
+        }
+      });
     });
   },
 
@@ -731,11 +813,10 @@ var Data = Class.extend({
   /**
    * checks whether this combination is cached or not
    */
-  isCached: function(query, language, reader) {
+  isCached: function(query, reader) {
     //encode in hashCode
     var q = utils.hashCode([
       query,
-      language,
       reader
     ]);
     //simply check if we have this in internal data

@@ -1040,11 +1040,11 @@ export var keys = function(arg) {
  * @return {Array}
  */
 export var values = function(obj) {
-  var arr;
+  var arr = [];
   var keys = Object.keys(obj);
   var size = keys.length;
   for(var i = 0; i < size; i += 1) {
-    (arr = arr || []).push(obj[keys[i]]);
+    arr.push(obj[keys[i]]);
   }
   return arr;
 };
@@ -1139,61 +1139,17 @@ export var diffObject = function(obj2, obj1) {
 };
 
 /*
- * Returns the resulting object without _defs_ leveling
- * @param {Object} obj
- * @returns {Object}
- */
-export var flattenDefaults = function(obj) {
-  var flattened = {};
-  forEach(obj, function(val, key) {
-    if(isPlainObject(val) && val._defs_) {
-      flattened[key] = val._defs_;
-    } else if(isPlainObject(val)) {
-      flattened[key] = flattenDefaults(val);
-    } else {
-      flattened[key] = val;
-    }
-  });
-  return flattened;
-};
-
-/*
  * Returns the resulting object without date objects for time
+ * Should actually call flattenDates on the model object itself so it can choose it's own timeformat.
  * @param {Object} obj
  * @returns {Object}
  */
 export var flattenDates = function(obj, timeFormat) {
   var flattened = {};
   forEach(obj, function(val, key) {
-    //todo: hack to flatten time unit objects to strings
-    if (key === 'marker') {
-      ["axis_x", "axis_y", "size_label"].map(function(name) {
-        var hook = val[name];
-        if(typeof hook === 'object') {
-          if(isDate(hook.domainMin)) hook.domainMin = timeFormat(hook.domainMin);
-          if(isDate(hook.domainMax)) hook.domainMax = timeFormat(hook.domainMax);
-          if(isDate(hook.zoomedMin)) hook.zoomedMin = timeFormat(hook.zoomedMin);
-          if(isDate(hook.zoomedMax)) hook.zoomedMax = timeFormat(hook.zoomedMax);
-        }
-      });
-    } else if(key === 'time') {
-      if(typeof val.value === 'object') {
-        val.value = timeFormat(val.value);
-      }
-      if(typeof val.start === 'object') {
-        val.start = timeFormat(val.start);
-      }
-      if(typeof val.end === 'object') {
-        val.end = timeFormat(val.end);
-      }
-      if(typeof val.startSelected === 'object') {
-        val.startSelected = timeFormat(val.startSelected);
-      }
-      if(typeof val.endSelected === 'object') {
-        val.endSelected = timeFormat(val.endSelected);
-      }
-    }
-    if(isPlainObject(val)) {
+    if(isDate(val)) {
+      flattened[key] = timeFormat(val);
+    } else if (isPlainObject(val)) {
       flattened[key] = flattenDates(val, timeFormat);
     } else {
       flattened[key] = val;

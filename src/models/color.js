@@ -36,11 +36,16 @@ var ColorModel = Hook.extend({
    * Default values for this model
    */
   _defaults: {
-    use: null,
+    use: "constant",
+    which: "_default",
+    scaleType: "ordinal",
+    syncModels: null,
     palette: {},
     paletteLabels: null,
-    scaleType: null,
-    which: null
+    allow: {
+      //this is almost everything, but not "nominal", so no random strings like "name"
+      scales: ["linear", "log", "genericLog", "time", "pow", "ordinal"]
+    }
   },
 
   /**
@@ -50,7 +55,7 @@ var ColorModel = Hook.extend({
    * @param {Object} bind Initial events to bind
    */
   init: function(name, values, parent, bind) {
-
+    var _this = this;
     this._type = "color";
     //TODO: add defaults extend to super
     var defaults = utils.deepClone(this._defaults);
@@ -60,8 +65,28 @@ var ColorModel = Hook.extend({
 
     this._super(name, values, parent, bind);
 
+    this._syncModelReferences = {};
     this._firstLoad = true;
     this._hasDefaultColor = false;
+
+    this.on('hook_change', function() {
+      if(_this._loadedOnce) return;
+      
+      if(_this.palette && Object.keys(_this.palette._data).length!==0) {
+        var defaultPalette = _this.getDefaultPalette();
+        var currentPalette = _this.getPalette();
+        var palette = {};
+        //extend partial current palette with default palette and
+        //switch current palette elements which equals
+        //default palette elments to nonpersistent state  
+        Object.keys(defaultPalette).map(function(key) {
+          if(!currentPalette[key]||defaultPalette[key]==currentPalette[key]) palette[key] = defaultPalette[key];
+        });
+        _this.set("palette", palette, false, false);
+        //rewrite one more time because 'persistent' is ignored when new submodel create
+        _this.set("palette", palette, true, false);
+      }
+    });
   },
 
   // args: {colorID, shadeID}
@@ -79,15 +104,10 @@ var ColorModel = Hook.extend({
     var conceptpropsColor = this.getConceptprops().color;
     var shade = args.shadeID && conceptpropsColor && conceptpropsColor.shades && conceptpropsColor.shades[args.shadeID] ? conceptpropsColor.shades[args.shadeID] : 0;
         
-    return palette[args.colorID][shade];
-    
-  },
-    
+    return palette[args.colorID][shade];    
 
-  afterPreload: function() {
-    this._super();
   },
-  
+
   /**
    * Get the above constants
    */
@@ -100,6 +120,7 @@ var ColorModel = Hook.extend({
    * Validates a color hook
    */
   validate: function() {
+    var _this = this;
 
     var possibleScales = ["log", "genericLog", "linear", "time", "pow"];
     if(!this.scaleType || (this.use === "indicator" && possibleScales.indexOf(this.scaleType) === -1)) {
@@ -114,12 +135,56 @@ var ColorModel = Hook.extend({
 
       //TODO a hack that kills the scale and palette, it will be rebuild upon getScale request in model.js
       if(this.palette) this.palette._data = {};
-      this.scale = null;
+      this.scale = null;  
+    }
+
+    // if there are models to sync: do it on first load or on changing the which
+    if(this.syncModels && (this._firstLoad || this._firstLoad === false && this.which_1 != this.which)) {
+      this.syncModels.forEach(function(modelName){
+        //fetch the model to sync, it's marker and entities
+        var model = _this.getClosestModel(modelName);
+        var marker = model.isHook()? model._parent : model;
+        var entities = marker.getClosestModel(marker.space[0]);
+        
+        //save the references here locally
+        _this._syncModelReferences[modelName] = {model: model, marker: marker, entities: entities};
+        
+        if(_this.use === "property") _this._setSyncModel(model, marker, entities);
+      });   
     }
 
     this.which_1 = this.which;
     this.scaleType_1 = this.scaleType;
     this._firstLoad = false;
+  },
+
+  _setSyncModel: function(model, marker, entities) {
+    if(model == marker){
+      /*TODO: when WS will learn to respond correctly to the queries 
+      outside the same entity domain this can be reduced to 
+      just {dim: this.which}, without any show part #2103*/
+      var conceptProps = this.getConceptprops();
+      var newFilter = {dim: null, show: {}};
+      if(conceptProps.concept_type == "entity_domain"){
+        newFilter.dim = this.which;
+        newFilter.show = {};
+      }else{
+        newFilter.dim = conceptProps.domain;
+        newFilter.show["is--" + this.which] = true;
+      }
+      /*END OF TODO*/
+      entities.set(newFilter, false, false);
+    }else{
+      if(model.use == "property") model.set('which', this.which, false, false);
+    }
+  },
+
+  getColorlegendMarker: function() {
+    return (this._syncModelReferences["marker_colorlegend"]||{})["marker"];
+  },
+
+  getColorlegendEntities: function() {
+    return (this._syncModelReferences["marker_colorlegend"]||{})["entities"];
   },
 
   /**
@@ -188,8 +253,13 @@ var ColorModel = Hook.extend({
   getPalette: function(){
     //rebuild palette if it's empty
     if (!this.palette || Object.keys(this.palette._data).length===0){
-      this.palette.set(this.getDefaultPalette(), false, false);
-      this.getModelObject("paletteLabels").set(this._getPaletteLabels(), false, false);
+      var palette = this.getDefaultPalette();
+      this.set("palette", palette, false, false);
+      //rewrite one more time because 'persistent' is ignored when new submodel create
+      this.set("palette", palette, true, false);
+      var paletteLabels = this._getPaletteLabels();
+      this.set("paletteLabels", paletteLabels, false, false);
+      this.set("paletteLabels", paletteLabels, true, false);
     }
     
     return this.palette.getPlainObject(); 
@@ -211,8 +281,8 @@ var ColorModel = Hook.extend({
     if(this.scaleType == "time") {
       
       var timeMdl = this._space.time;
-      var limits = timeMdl.beyondSplash ? 
-          {min: timeMdl.beyondSplash.start, max: timeMdl.beyondSplash.end}
+      var limits = timeMdl.splash ? 
+          {min: timeMdl.parseToUnit(timeMdl.startOrigin), max: timeMdl.parseToUnit(timeMdl.endOrigin)}
           :
           {min: timeMdl.start, max: timeMdl.end};
       
