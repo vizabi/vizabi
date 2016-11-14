@@ -33,16 +33,11 @@ var Stack = Dialog.extend({
         }];
 
         this.model_binds = {
-            'change:state.marker.stack': function(evt) {
-                //console.log("stack change " + evt);
-                if(!_this._ready) return;
-                _this.updateView();
-            },
-            'change:state.marker.group': function(evt) {
-                //console.log("group change " + evt);
-                if(!_this._ready) return;
-                _this.updateView();
-            }
+          'change:state.marker.group': function(evt) {
+            //console.log("group change " + evt);
+            if(!_this._ready) return;
+            _this.updateView();
+          }
         };
 
         this._super(config, parent);
@@ -65,6 +60,11 @@ var Stack = Dialog.extend({
               _this.setModel("merge", d3.select(this).node().value);
           })
 
+      this.updateView();
+    },
+    
+    ready: function() {
+      this._super();
       this.updateView();
     },
 
