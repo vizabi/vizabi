@@ -173,7 +173,7 @@ module.exports = {
         test: /\.pug$/,
         loaders: [
           'file-loader?name=[path][name].html',
-          'pug-html-loader?exports=false&pretty'
+          'pug-html-loader?exports=false'
         ]
       },
       {
