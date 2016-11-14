@@ -56,7 +56,7 @@ var JOINTPyramidLine = Tool.extend('JOINTPyramidLine', {
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
-      model: ["state.time", "state.entities", "state.marker_pyramid"]
+      model: ["state.time", "state.entities", "state.marker_pyramid", "ui"]
     }];
 
     //constructor is the same as any tool

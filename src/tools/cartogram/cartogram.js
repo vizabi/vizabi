@@ -34,7 +34,7 @@ var Cartogram = Tool.extend('Cartogram', {
       }, {
         component: timeslider,
         placeholder: '.vzb-tool-timeslider',
-        model: ["state.time", "state.entities", "state.marker"]
+        model: ["state.time", "state.entities", "state.marker", "ui"]
       }, {
         component: dialogs,
         placeholder: '.vzb-tool-dialogs',

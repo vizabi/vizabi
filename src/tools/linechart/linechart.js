@@ -32,7 +32,7 @@ var LineChart = Tool.extend('LineChart', {
       }, {
         component: timeslider,
         placeholder: '.vzb-tool-timeslider',
-        model: ["state.time", "state.entities", "state.marker"],
+        model: ["state.time", "state.entities", "state.marker", "ui"],
         ui: {show_value_when_drag_play: false, axis_aligned: true}
       }, {
         component: dialogs,

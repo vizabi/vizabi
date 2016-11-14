@@ -36,7 +36,7 @@ var BubbleMap = Tool.extend('BubbleMap', {
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
-      model: ["state.time", "state.entities", "state.marker"]
+      model: ["state.time", "state.entities", "state.marker", "ui"]
     }, {
       component: dialogs,
       placeholder: '.vzb-tool-dialogs',
