@@ -53,11 +53,11 @@ const plugins = [
       to: 'preview/assets/js/'
     }
   ]),
-  new OpenBrowserPlugin({ 
+  new OpenBrowserPlugin({
     url: 'http://localhost:8080/preview/'
   }),
   new SassLintPlugin({
-    quiet: true,
+    quiet: false,
     syntax: 'scss',
     glob: 'src/**/*.s?(a|c)ss',
     ignorePlugins: ['extract-text-webpack-plugin']
