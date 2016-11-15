@@ -7,6 +7,12 @@ const QUERY_FROM_CONCEPTS = 'concepts';
 const QUERY_FROM_DATAPOINTS = 'datapoints';
 const QUERY_FROM_ENTITIES = 'entities';
 const DATA_QUERIES = [QUERY_FROM_DATAPOINTS, QUERY_FROM_ENTITIES];
+const CONDITION_CALLBACKS = {
+  $gt: (a, b) => b > a,
+  $gte: (a, b) => b >= a,
+  $lt: (a, b) => b < a,
+  $lte: (a, b) => b <= a,
+};
 
 const CSVReader = Reader.extend({
 
@@ -37,20 +43,34 @@ const CSVReader = Reader.extend({
   read(query) {
     const {
       select: {
-        key: keys = []
+        key = []
       },
-      from
+      from,
+      order_by = []
     } = query;
 
-    return this.load().then(data => {
-      if (from === QUERY_FROM_CONCEPTS) {
-        this._data = this._getConcepts(data[0]);
-      } else if (DATA_QUERIES.includes(from) && keys.length) {
-        this._data = data.reduce(this._reduceData(query), []);
-      } else {
-        this._data = [];
-      }
-    }).catch(utils.warn);
+    const [orderBy] = order_by;
+
+    return this.load()
+      .then(data => {
+        switch (true) {
+          case from === QUERY_FROM_CONCEPTS:
+            this._data = this._getConcepts(data[0]);
+            break;
+
+          case DATA_QUERIES.includes(from) && key.length > 0:
+            this._data = data
+              .reduce(this._reduceData(query), [])
+              .sort((prev, next) => prev[orderBy] - next[orderBy]);
+            break;
+
+          default:
+            this._data = [];
+        }
+
+        this._data = this.format(this._data);
+      })
+      .catch(utils.warn);
   },
 
   _getConcepts(firstRow) {
@@ -61,36 +81,52 @@ const CSVReader = Reader.extend({
   _reduceData(query) {
     const {
       select: {
-        value: values,
-        key: keys
+        value,
+        key
       },
-      from
+      from,
+      join,
+      where: {
+        $and
+      }
     } = query;
 
-    const [key] = query.select.key;
-    const uniqueKeys = [];
+    const [uniqueKey] = key;
+    const uniqueValues = [];
 
     return (result, row) => {
-      if (from === QUERY_FROM_ENTITIES) {
-        const unique = row[key];
+      const isSuitable = $and.every(binding =>
+        Object.keys(binding).every(conditionKey => {
+          const conditionValue = join[binding[conditionKey]].where[conditionKey];
 
-        if (uniqueKeys.includes(unique)) {
-          return result;
-        }
+          return typeof conditionValue === 'object' ?
+            Object.keys(conditionValue).every(compareKey =>
+              CONDITION_CALLBACKS[compareKey](conditionValue[compareKey], row[conditionKey])
+            ) :
+          row[conditionKey] === conditionValue;
+        })
+      );
 
-        uniqueKeys.push(unique);
+      if (isSuitable) {
+        const rowFilteredByKeys = Object.keys(row)
+          .reduce((resultRow, rowKey) => {
+            if (key.includes(rowKey) || value.includes(rowKey)) {
+              resultRow[rowKey] = row[rowKey];
+            }
+
+            return resultRow;
+          }, {});
+
+        result.push(rowFilteredByKeys);
       }
 
-      const rowFilteredByKeys = Object.keys(row)
-        .reduce((resultRow, rowKey) => {
-          if (keys.includes(rowKey) || values.includes(rowKey)) {
-            resultRow[rowKey] = row[rowKey];
-          }
-
-          return resultRow;
-        }, {});
-
-      result.push(rowFilteredByKeys);
+      const unique = row[uniqueKey];
+      if (
+        from === QUERY_FROM_ENTITIES
+        && !uniqueValues.includes(unique)
+      ) {
+        uniqueValues.push(unique);
+      }
 
       return result;
     };
@@ -117,7 +153,7 @@ const CSVReader = Reader.extend({
             return reject(`Error happened while loading csv file: ${path}. ${error}`);
           }
 
-          resolve(cached[path] = this.format(result));
+          resolve(cached[path] = result);
         });
       });
   },
