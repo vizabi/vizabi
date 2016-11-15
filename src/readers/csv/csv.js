@@ -116,16 +116,15 @@ const CSVReader = Reader.extend({
 
             return resultRow;
           }, {});
-
         result.push(rowFilteredByKeys);
-      }
 
-      const unique = row[uniqueKey];
-      if (
-        from === QUERY_FROM_ENTITIES
-        && !uniqueValues.includes(unique)
-      ) {
-        uniqueValues.push(unique);
+        const unique = row[uniqueKey];
+        if (
+          from === QUERY_FROM_ENTITIES
+          && !uniqueValues.includes(unique)
+        ) {
+          uniqueValues.push(unique);
+        }
       }
 
       return result;
