@@ -34,7 +34,7 @@ var Component = Events.extend({
         utils.error('Error finding placeholder \'' + this.placeholder + '\' for component \'' + this.name + '\'');
       }
     }
-    this.parent = parent || this;
+    this.parent = parent || null;
     this.root = this.parent.root || this;
 
     this.components = this.components || [];
@@ -112,84 +112,36 @@ var Component = Events.extend({
 
     // if a componente's model is ready, the component is ready
     this.model.on('ready', function() {
-      done();
+      _this.loadingDone();
     });
 
-    //if it's a root component with model
-    if(this.isRoot() && this.model) {
+    this.startLoading();
 
-      var splashScreen = this.model && this.model.data && this.model.data.splash;
-      var promise = new Promise();
+  },
 
-      this.preload(promise);
-      var promises = []; //holds all promises
-      utils.forEach(_this.components, function(subcomp) {
-        promises.push(preloader(subcomp, promise));
-      });
-      var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
-      wait.then(function() {
-        _this.afterPreload();
-        var timeMdl = _this.model.state.time;
-        if(splashScreen) {
-
-          //TODO: cleanup hardcoded splash screen
-          timeMdl.splash = true;
-
-          _this.model.load({
-            splashScreen: true
-          }).then(function() {
-            //delay to avoid conflicting with setReady
-            utils.delay(function() {
-              //force loading because we're restoring time.
-              _this.model.setLoading('restore_orig_time');
-
-              _this.model.load().then(function() {
-                _this.model.setLoadingDone('restore_orig_time');
-                timeMdl.splash = false;
-                //_this.model.data.splash = false;
-                timeMdl.trigger('change', timeMdl.getPlainObject());
-              });
-            }, 300);
-
-          }, function() {
-            renderError();
-          });
-        } else {
-          _this.model.load().then(function() {
-            utils.delay(function() {
-              if(timeMdl) {
-                timeMdl.splash = false;
-                timeMdl.trigger('change');
-              } else {
-                done();
-              }
-            }, 300);
-          }, function() {
-            renderError();
-          });
-        }
-      });
-
-    } else if(this.model && this.model.isLoading()) {
-      // nothing
-    } else {
-      done();
+  /**
+   * Overloaded by Tool which starts loading of model
+   * @return {[type]} [description]
+   */
+  startLoading: function() {
+    if(!(this.model && this.model.isLoading())) {
+      this.loadingDone();
     }
+  },
 
-    function renderError() {
-      utils.removeClass(_this.placeholder, class_loading_first);
-      utils.removeClass(_this.placeholder, class_loading_data);
-      utils.addClass(_this.placeholder, class_error);
-      _this.setError({
-        type: 'data'
-      });
-    }
+  loadingDone: function () {
+    utils.removeClass(this.placeholder, class_loading_first);
+    utils.removeClass(this.placeholder, class_loading_data);
+    this.setReady();
+  },
 
-    function done() {
-      utils.removeClass(_this.placeholder, class_loading_first);
-      utils.removeClass(_this.placeholder, class_loading_data);
-      _this.setReady();
-    }
+  renderError: function() {
+    utils.removeClass(this.placeholder, class_loading_first);
+    utils.removeClass(this.placeholder, class_loading_data);
+    utils.addClass(this.placeholder, class_error);
+    this.setError({
+      type: 'data'
+    });
   },
 
   setError: function(opts) {
@@ -293,14 +245,6 @@ var Component = Events.extend({
       var subcomp = new comp(config, _this);
       _this.components.push(subcomp);
     });
-  },
-
-  /**
-   * Checks whether this is the root component
-   * @returns {Boolean}
-   */
-  isRoot: function() {
-    return this.parent === this;
   },
 
   /**
@@ -537,33 +481,6 @@ var Component = Events.extend({
   }
 });
 
-/**
- * Preloader implementation with promises
- * @param {Object} comp any component
- * @param {Object} rootPromise promise fot tool preloader
- * @returns {Promise}
- */
-function preloader(comp, rootPromise) {
-  var promise = new Promise();
-  var promises = []; //holds all promises
-
-  //preload all subcomponents first
-  utils.forEach(comp.components, function(subcomp) {
-    promises.push(preloader(subcomp, rootPromise));
-  });
-
-  var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
-  wait.then(function() {
-    comp.preload(promise);
-  }, function(err) {
-    utils.error("Error preloading data:", err);
-  });
-
-  return Promise.all([promise, rootPromise]).then(function() {
-    comp.afterPreload();
-    return true;
-  });
-}
 
 // Based on Simple JavaScript Templating by John Resig
 //generic templating function

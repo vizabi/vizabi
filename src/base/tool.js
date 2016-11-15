@@ -182,6 +182,61 @@ var Tool = Component.extend({
     this.trigger('resize');
   }, 100),
 
+  startLoading: function() {
+    var splashScreen = this.model && this.model.data && this.model.data.splash;
+    var promise = new Promise();
+    var _this = this;
+
+    this.preload(promise);
+    var promises = []; //holds all promises
+    utils.forEach(this.components, function(subcomp) {
+      promises.push(preloader(subcomp, promise));
+    });
+    var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
+    wait.then(function() {
+      _this.afterPreload();
+      var timeMdl = _this.model.state.time;
+      if(splashScreen) {
+
+        //TODO: cleanup hardcoded splash screen
+        timeMdl.splash = true;
+
+        _this.model.load({
+          splashScreen: true
+        }).then(function() {
+          //delay to avoid conflicting with setReady
+          utils.delay(function() {
+            //force loading because we're restoring time.
+            _this.model.setLoading('restore_orig_time');
+
+            _this.model.load().then(function() {
+              _this.model.setLoadingDone('restore_orig_time');
+              timeMdl.splash = false;
+              //_this.model.data.splash = false;
+              timeMdl.trigger('change', timeMdl.getPlainObject());
+            });
+          }, 300);
+
+        }, function() {
+          _this.renderError();
+        });
+      } else {
+        _this.model.load().then(function() {
+          utils.delay(function() {
+            if(timeMdl) {
+              timeMdl.splash = false;
+              timeMdl.trigger('change');
+            } else {
+              _this.loadingDone();
+            }
+          }, 300);
+        }, function() {
+          _this.renderError();
+        });
+      }
+    })
+  },
+
   checkTimeLimits: function() {
     if(!this.model.state.time) return;
     
@@ -324,5 +379,34 @@ var Tool = Component.extend({
   }
 
 });
+
+
+/**
+ * Preloader implementation with promises
+ * @param {Object} comp any component
+ * @param {Object} rootPromise promise fot tool preloader
+ * @returns {Promise}
+ */
+function preloader(comp, rootPromise) {
+  var promise = new Promise();
+  var promises = []; //holds all promises
+
+  //preload all subcomponents first
+  utils.forEach(comp.components, function(subcomp) {
+    promises.push(preloader(subcomp, rootPromise));
+  });
+
+  var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
+  wait.then(function() {
+    comp.preload(promise);
+  }, function(err) {
+    utils.error("Error preloading data:", err);
+  });
+
+  return Promise.all([promise, rootPromise]).then(function() {
+    comp.afterPreload();
+    return true;
+  });
+}
 
 export default Tool;
