@@ -35,7 +35,7 @@ var Component = Events.extend({
       }
     }
     this.parent = parent || null;
-    this.root = this.parent.root || this;
+    this.root = this.parent ? this.parent.root : this;
 
     this.components = this.components || [];
     this._components_config = this.components.map(function(x) {
@@ -49,34 +49,21 @@ var Component = Events.extend({
 
     this.ui = this.model.ui || this.ui || config.ui;
     this._super();
-    //readyOnce alias
-    var _this = this;
-    this.on({
-      'readyOnce': function() {
-        if(typeof _this.readyOnce === 'function') {
-          _this.readyOnce();
-        }
-      },
-      'ready': function() {
-        if(typeof _this.ready === 'function') {
-          _this.ready();
-        }
-      },
-      'domReady': function() {
-        if(typeof _this.domReady === 'function') {
-          _this.domReady();
-        }
-      },
-      'resize': function() {
-        if(typeof _this.resize === 'function') {
-          _this.resize();
-        }
-      }
-    });
+
+    this.registerListeners();
   },
 
   createModel: function(configModel) {
     this.model = this._modelMapping(configModel);
+  },
+
+  registerListeners: function() {
+    this.on({
+      'readyOnce': this.readyOnce,
+      'ready': this.ready,
+      'domReady': this.domReady,
+      'resize': this.resize
+    });
   },
 
   /**
@@ -320,10 +307,10 @@ var Component = Events.extend({
       //if there's a different number of models received and expected
       if(this.model_expects.length !== model_config.length) {
         utils.groupCollapsed('DIFFERENCE IN NUMBER OF MODELS EXPECTED AND RECEIVED');
-        utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + this.name +
-          '\' or check the models passed in \'' + _this.parent.name + '\'.\n\nComponent: \'' + _this.parent.name +
-          '\'\nSubcomponent: \'' + this.name + '\'\nNumber of Models Expected: ' + this.model_expects.length +
-          '\nNumber of Models Received: ' + model_config.length);
+        utils.warn("Please, configure the 'model_expects' attribute accordingly in '" + this.name + "' or check the models passed in '" + _this.parent.name + "'.\n\n" +
+          "Component: '" + _this.parent.name + "'\n" +
+          "Subcomponent: '" + this.name + "'\n" + 
+          "Number of Models Expected: " + this.model_expects.length + "\nNumber of Models Received: " + model_config.length);
         utils.groupEnd();
       }
       utils.forEach(model_config, function(m, i) {
@@ -331,25 +318,26 @@ var Component = Events.extend({
         var new_name;
         if(_this.model_expects[i]) {
           new_name = _this.model_expects[i].name;
-          if(_this.model_expects[i].type && model_info.type !== _this.model_expects[i].type && (!utils.isArray(
-                _this.model_expects[i].type) ||
-              _this.model_expects[i].type.indexOf(model_info.type) === -1)) {
+          if(_this.model_expects[i].type && model_info.type !== _this.model_expects[i].type && 
+            (!utils.isArray(_this.model_expects[i].type) || _this.model_expects[i].type.indexOf(model_info.type) === -1)) {
 
-            utils.groupCollapsed('UNEXPECTED MODEL TYPE: \'' + model_info.type + '\' instead of \'' +
-              _this.model_expects[i].type + '\'');
-            utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + _this.name +
-              '\' or check the models passed in \'' + _this.parent.name + '\'.\n\nComponent: \'' + _this.parent.name +
-              '\'\nSubcomponent: \'' + _this.name + '\'\nExpected Model: \'' + _this.model_expects[i].type +
-              '\'\nReceived Model\'' + model_info.type + '\'\nModel order: ' + i);
+            utils.groupCollapsed("UNEXPECTED MODEL TYPE: '" + model_info.type + "' instead of '" + _this.model_expects[i].type + "'");
+            utils.warn("Please, configure the 'model_expects' attribute accordingly in '" + _this.name + "' or check the models passed in '" + _this.parent.name + "'.\n\n" + 
+              "Component: '" + _this.parent.name + "'\n" + 
+              "Subcomponent: '" + _this.name + "'\n" + 
+              "Expected Model: '" + _this.model_expects[i].type + "'\n" + 
+              "Received Model: '" + model_info.type + "'\n" + 
+              "Model order: " + i);
             utils.groupEnd();
           }
         } else {
 
-          utils.groupCollapsed('UNEXPECTED MODEL: \'' + model_config[i] + '\'');
-          utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + _this.name +
-            '\' or check the models passed in \'' + _this.parent.name + '\'.\n\nComponent: \'' + _this.parent.name +
-            '\'\nSubcomponent: \'' + _this.name + '\'\nNumber of Models Expected: ' + _this.model_expects.length +
-            '\nNumber of Models Received: ' + model_config.length);
+          utils.groupCollapsed("UNEXPECTED MODEL: '" + model_config[i] + "'");
+          utils.warn("Please, configure the 'model_expects' attribute accordingly in '" + _this.name + "' or check the models passed in '" + _this.parent.name + "'.\n\n" + 
+            "Component: '" + _this.parent.name + "'\n" + 
+            "Subcomponent: '" + _this.name + "'\n" + 
+            "Number of Models Expected: " + _this.model_expects.length + "\n" + 
+            "Number of Models Received: " + model_config.length);
           utils.groupEnd();
           new_name = model_info.name;
         }
@@ -468,6 +456,12 @@ var Component = Events.extend({
    * Ideally, it only contains operations related to size
    */
   resize: function() {},
+
+  /**
+   * Executed after template is loaded
+   * Ideally, it contains instantiations related to template
+   */
+  domReady: function() {},
 
   /**
    * Clears a component

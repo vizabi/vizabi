@@ -52,8 +52,7 @@ var ToolModel = Model.extend({
     var _this = this;
 
     function validate_func(c) {
-      // ToolmMdel uses validate on the tool so validation can be defined on the tool. 
-      // And thus each tool can have its own validation method
+      // ToolModel uses validate function declared on Tool so each Tool can have its own validation.
       var model = JSON.stringify(_this.getPlainObject());
       _this._component.validate(_this);
       var model2 = JSON.stringify(_this.getPlainObject());
@@ -85,7 +84,7 @@ var Tool = Component.extend({
     this._super({
       placeholder: placeholder,
       model: external_model
-    }, this);
+    });
 
     //splash
     this.model.ui.splash = this.model && this.model.data && this.model.data.splash;
