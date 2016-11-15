@@ -201,6 +201,19 @@ var EventSource = Class.extend({
       return this.getModelObject(currentTarget).traversePath(path);
   },
 
+  createEventFromType: function(evtType) {
+    if ((evtType instanceof DefaultEvent)) {
+      return evtType
+    }
+
+    var eventClass = DefaultEvent.get(evtType, true); // silent
+    if (eventClass) {
+      return new eventClass(this);
+    }
+
+    return new DefaultEvent(this, evtType);
+  },
+
   /**
    * Triggers an event, adding it to the buffer
    * @param {String|Array} name name of event or array with names
@@ -219,17 +232,7 @@ var EventSource = Class.extend({
     }
 
     // create an event-object if necessary
-    var evt;
-    if ((evtType instanceof DefaultEvent)) {
-      evt = evtType;
-    } else {
-      var eventClass = DefaultEvent.get(evtType, true); // silent
-      if(eventClass) {
-        evt = new eventClass(this);
-      } else {
-        evt = new DefaultEvent(this, evtType);
-      }
-    }
+    var evt = this.createEventFromType(evtType);
 
     // if this eventType has no events registered
     if(!this._events.hasOwnProperty(evt.type)) {
