@@ -141,8 +141,9 @@ var BubbleChartComp = Component.extend({
         //console.log("EVENT change:entities:select");
         _this.selectDataPoints();
         _this.redrawDataPoints();
-        _this._trails.create();
-        _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
+        _this._trails.create().then(function() {
+          _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
+        });
         _this.updateBubbleOpacity();
         _this._updateDoubtOpacity();
       },
@@ -445,6 +446,8 @@ var BubbleChartComp = Component.extend({
     var _this = this;
     this.updateUIStrings();
     var endTime = this.model.time.end;
+    this.updateIndicators();
+    this.updateTime();
     this.model.marker.getFrame(this.model.time.value, function(frame, time) {
       // TODO: temporary fix for case when after data loading time changed on validation
       if (time.toString() != _this.model.time.value.toString()) {
@@ -456,8 +459,7 @@ var BubbleChartComp = Component.extend({
       if (!_this._frameIsValid(frame)) return utils.warn("ready: empty data received from marker.getFrame(). doing nothing");
 
       _this.frame = frame;
-      _this.updateTime();
-      _this.updateIndicators();
+      _this.year.setText(_this.model.time.timeFormat(_this.time));
       _this.updateSize();
       _this.updateMarkerSizeLimits();
       _this.updateEntities();
@@ -468,8 +470,10 @@ var BubbleChartComp = Component.extend({
       _this._updateDoubtOpacity();
       _this.zoomToMarkerMaxMin(); // includes redraw data points and trail resize
       if (!_this.model.time.splash) {
-        _this._trails.create();
-        _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
+        _this._trails.create().then(function() {
+          _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
+          
+        });
 
       }
       if(_this.model.ui.adaptMinMaxZoom) _this._panZoom.expandCanvas();
@@ -526,6 +530,8 @@ var BubbleChartComp = Component.extend({
 //    if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
     this.frame = frame;
     this.updateTime();
+    this.year.setText(this.model.time.timeFormat(this.time));
+
     this._updateDoubtOpacity();
     this._trails.run("findVisible");
     if(this.model.ui.adaptMinMaxZoom) {
@@ -806,7 +812,6 @@ var BubbleChartComp = Component.extend({
         utils.clearDelay(this.yearDelayId);
         this.yearDelayId = null;
       }
-      _this.year.setText(_this.model.time.timeFormat(_this.time));
     }
   },
 
