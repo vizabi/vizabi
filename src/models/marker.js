@@ -641,7 +641,23 @@ var Marker = Model.extend({
       promise.resolve({"min": selectedEdgeTimes[0],"max": selectedEdgeTimes[1]});
     });
     return promise;
+  },
+
+
+  /**
+   * Learn what this model should hook to
+   * @returns {Array} space array
+   */
+  getSpace: function() {
+    if(utils.isArray(this.space)) {
+      return this.space;
+    } 
+
+    utils.error(
+      'ERROR: space not found.\n You must specify the objects this hook will use under the "space" attribute in the state.\n Example:\n space: ["entities", "time"]'
+    );
   }
+
 });
 
 export default Marker;

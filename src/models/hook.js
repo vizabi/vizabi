@@ -19,7 +19,7 @@ var Hook = DataConnected.extend({
     this._super(name, values, parent, bind);
 
     var _this = this;
-    var spaceRefs = getSpace(this);
+    var spaceRefs = this._parent.getSpace(this);
 
     //check what we want to hook this model to
     utils.forEach(spaceRefs, function(name) {
@@ -557,22 +557,5 @@ var Hook = DataConnected.extend({
     return this.use !== 'constant' ? this.getDataManager().getConceptprops(this.which) : {};
   }
 });
-
-/**
- * Learn what this model should hook to
- * @returns {Array} space array
- */
-function getSpace(model) {
-  if(utils.isArray(model.space)) {
-    return model.space;
-  } else if(model._parent) {
-    return getSpace(model._parent);
-  } else {
-    utils.error(
-      'ERROR: space not found.\n You must specify the objects this hook will use under the "space" attribute in the state.\n Example:\n space: ["entities", "time"]'
-    );
-  }
-}
-
 
 export default Hook;
