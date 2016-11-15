@@ -20,8 +20,10 @@ export default Class.extend({
   toggle: function(arg) {
     var _context = this.context;
     if(arg) {
-      _context._trails.create();
-      _context._trails.run(["findVisible", "reveal", "opacityHandler"]);
+      
+      _context._trails.create().then(function() {
+        _context._trails.run(["findVisible", "reveal", "opacityHandler"]);
+      })
     } else {
       _context._trails.run("remove");
       _context.model.entities.select.forEach(function(d) {
@@ -364,6 +366,9 @@ export default Class.extend({
         defer.resolve();
       }
       defer.then(function() {
+        if (!d.selectedEntityData.trailStartTime) {
+          d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(_context.time);
+        }
         var trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
         if (_context.time - trailStartTime < 0 || d.limits.min - trailStartTime > 0) {
           if (_context.time - trailStartTime < 0) {
