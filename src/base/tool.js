@@ -219,10 +219,8 @@ var Tool = Component.extend({
     }
    
     var currentToolModel = this.model.getPlainObject(true); // true = get only persistent model values
-    var result = utils.flattenDates(currentToolModel, this.model.state.time.timeFormat);
-    
-    removeFunctions(result);
-    return result;
+    removeFunctions(currentToolModel);
+    return currentToolModel;
   },
 
   getPersistentMinimalModel: function(diffModel) {

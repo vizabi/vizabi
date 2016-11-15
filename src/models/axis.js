@@ -124,7 +124,19 @@ var AxisModel = Hook.extend({
     var scaletype = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.scaleType === "log")? "genericLog" : this.scaleType;
     if(this.scaletype == "nominal") scaletype = "ordinal"; // 
     this.scale = d3.scale[scaletype || "linear"]().domain(domain);
+  },
+
+  /**
+   * Formats date according to time in this hook's space
+   * @param {Date} date object to format
+   * @returns {String} formatted date
+   */
+  formatDate: function(dateObject) {
+    // improvement would be to check concept type of each space-dimension if it's time. 
+    // Below code works as long we have one time model: time.
+    this._space.time.format(dateObject);
   }
+
 });
 
 export default AxisModel;

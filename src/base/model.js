@@ -274,6 +274,7 @@ var Model = EventSource.extend({
    */
   getPlainObject: function(persistent) {
     var obj = {};
+    var _this = this;
     utils.forEach(this._data, function(dataItem, i) {
       // if it's a submodel
       if(dataItem instanceof Model) {
@@ -283,12 +284,20 @@ var Model = EventSource.extend({
       else {
         //if asked for persistent then add value to result only if modelLeaf state is
         //persistent
-        if(!persistent || dataItem.persistent) obj[i] = dataItem.get(persistent);
+        if(!persistent || dataItem.persistent) {
+          var leafValue = dataItem.get(persistent);
+          if (utils.isDate(leafValue)) 
+            leafValue = _this.formatDate(leafValue);
+          obj[i] = leafValue;
+        }
       }
     });
     return obj;
   },
 
+  formatDate: function(dateObject) {
+    return dateObject.toString();
+  },
 
   /**
    * Gets the requested object, including the leaf-object, not the value

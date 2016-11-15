@@ -110,7 +110,10 @@ var TimeModel = DataConnected.extend({
    * @param {Date} dateObject
    * @param {String} unit
    * @returns {String}
-   */
+   */  
+  formatDate: function(dateObject) {
+    return this.format(dateObject);
+  },
   format: function(dateObject, unit) {
     unit = unit || this.unit;
     if (dateObject == null) return null;

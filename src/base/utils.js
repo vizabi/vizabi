@@ -1141,26 +1141,6 @@ export var diffObject = function(obj2, obj1) {
 };
 
 /*
- * Returns the resulting object without date objects for time
- * Should actually call flattenDates on the model object itself so it can choose it's own timeformat.
- * @param {Object} obj
- * @returns {Object}
- */
-export var flattenDates = function(obj, timeFormat) {
-  var flattened = {};
-  forEach(obj, function(val, key) {
-    if(isDate(val)) {
-      flattened[key] = timeFormat(val);
-    } else if (isPlainObject(val)) {
-      flattened[key] = flattenDates(val, timeFormat);
-    } else {
-      flattened[key] = val;
-    }
-  });
-  return flattened;
-}
-
-/*
  * Defers a function
  * @param {Function} func
  */
