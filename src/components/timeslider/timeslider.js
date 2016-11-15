@@ -107,11 +107,6 @@ var TimeSlider = Component.extend({
             _this.changeLimits();
           }
           _this._optionClasses();
-          _this._setHandle(_this.model.time.playing);
-        }
-      },
-      'change:time.value': function(evt, path) {
-        if(!_this._splash && _this.slide) {
           //only set handle position if change is external
           if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
