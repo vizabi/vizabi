@@ -45,7 +45,7 @@ var Component = Events.extend({
     //define expected models for this component
     this.model_expects = this.model_expects || [];
     this.model_binds   = this.model_binds || {};
-    this.initiateModel(config.model);
+    this.createModel(config.model);
 
     this.ui = this.model.ui || this.ui || config.ui;
     this._super();
@@ -75,7 +75,7 @@ var Component = Events.extend({
     });
   },
 
-  initiateModel: function(configModel) {
+  createModel: function(configModel) {
     this.model = this._modelMapping(configModel);
   },
 

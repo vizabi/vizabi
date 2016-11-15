@@ -25,7 +25,8 @@ var ToolModel = Model.extend({
     this._type = 'tool';
     this._component = tool;
 
-    // defaults are taken from tool default model
+    // defaults are defined on the Tool
+    // this way, each tool can have it's own default model
     this._defaults = tool.default_model;
 
     // combine listeners from tool and external page to one object
@@ -98,7 +99,7 @@ var Tool = Component.extend({
     this.checkTimeLimits();  
   },
 
-  initiateModel: function(external_model) {
+  createModel: function(external_model) {
     external_model      = external_model      || {}; //external model can be undefined
     external_model.bind = external_model.bind || {}; //bind functions can be undefined
     this.model = new ToolModel(this, external_model);
