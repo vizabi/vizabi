@@ -77,12 +77,6 @@ var ZoomButtonList = Component.extend({
     }
     
     this.model_binds = {};
-    
-    this._super(config, context);
-
-    if(this.model.ui.cursorMode == undefined) {
-      this.model.ui.set('cursorMode', null, false, false);
-    }
 
     Object.keys(this._available_buttons).forEach(function(buttonId) {
       var button = _this._available_buttons[buttonId];
@@ -93,7 +87,8 @@ var ZoomButtonList = Component.extend({
       }
     });
 
-    
+    this._super(config, context);
+
   },
   
   readyOnce: function() {
