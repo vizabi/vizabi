@@ -427,6 +427,16 @@ var DataModel = Model.extend({
     });
   },
 
+  _checkForcedQueuesExists: function() {
+    utils.forEach(this._collectionPromises, function(queries, queryId) {
+      utils.forEach(queries, function(promise, whatId) {
+        if(promise.queue.forcedQueue.length > 0) {
+          promise.queue.unMute();
+        }
+      });
+    });
+  },
+
   _unmuteQueue: function() {
     utils.forEach(this._collectionPromises, function(queries, queryId) {
       utils.forEach(queries, function(promise, whatId) {
@@ -511,9 +521,15 @@ var DataModel = Model.extend({
         }
         return frameName;
       };
+      this.checkForcedFrames = function() {
+        if (this.forcedQueue.length > 0) return;
+        _context._checkForcedQueuesExists();
+      };
+
       // returns the next frame in a queue
       this.getNext = function() {
         var defer = new Promise();
+        this.checkForcedFrames();
         if (this.isActive) {
           defer.resolve(this._getNextFrameName());
         } else {
