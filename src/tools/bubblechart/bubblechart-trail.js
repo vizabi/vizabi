@@ -171,6 +171,7 @@ export default Class.extend({
       utils.forEach(_this.activePromises[d[KEY]], function(promise, key) {
         if (promise.status === "pending") promise.reject(); 
       });
+      _this.trailsInProgress[d[KEY]] = null;
       _this.activePromises[d[KEY]] = [];
     });
   },
@@ -180,6 +181,7 @@ export default Class.extend({
   },
 
   run: function(actions, selection, duration) {
+    
     var _context = this.context;
     var _this = this;
     var KEY = _context.KEY;
@@ -224,6 +226,8 @@ export default Class.extend({
               response.then(function() {
                 _this.trailsInProgress[d[KEY]] = null;
                 executeSequential(index + 1);
+              }, function() {
+                _this.trailsInProgress[d[KEY]] = null;
               })
             } else {
               _this.trailsInProgress[d[KEY]] = null;

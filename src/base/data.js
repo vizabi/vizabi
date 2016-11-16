@@ -391,6 +391,16 @@ var Data = Class.extend({
     });
   },
 
+  _checkForcedQueuesExists: function() {
+    utils.forEach(this._collectionPromises, function(queries, queryId) {
+      utils.forEach(queries, function(promise, whatId) {
+        if(promise.queue.forcedQueue.length > 0) {
+          promise.queue.unMute();
+        }
+      });
+    });
+  },
+
   _unmuteQueue: function() {
     utils.forEach(this._collectionPromises, function(queries, queryId) {
       utils.forEach(queries, function(promise, whatId) {
@@ -419,6 +429,7 @@ var Data = Class.extend({
       //put the last element to the start of the queue because we are likely to need it first
       this.queue.splice(0, 0, this.queue.splice(this.queue.length - 1, 1)[0]);
       this.key = 0;
+      
       this.mute = function() {
         this.isActive = false;
         if (!(this.deferredPromise instanceof Promise && this.deferredPromise.status == "pending")) {
@@ -436,6 +447,7 @@ var Data = Class.extend({
           _context._unmuteQueue();
         }
       };
+      
       this.frameComplete = function(frameName) { //function called after build each frame with name of frame build
         var i;
         if (queue.defaultCallbacks.length > 0) {
@@ -449,6 +461,7 @@ var Data = Class.extend({
           }
         }
       };
+      
       this._waitingForActivation = function() {
         if (!this.deferredPromise instanceof Promise) {
           this.deferredPromise = new Promise();
@@ -476,8 +489,15 @@ var Data = Class.extend({
         return frameName;
       };
       // returns the next frame in a queue
+      
+      this.checkForcedFrames = function() {
+        if (this.forcedQueue.length > 0) return;
+        _context._checkForcedQueuesExists();
+      };
+      
       this.getNext = function() {
         var defer = new Promise();
+        this.checkForcedFrames();
         if (this.isActive) {
           defer.resolve(this._getNextFrameName());
         } else {
