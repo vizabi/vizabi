@@ -1,1 +1,5 @@
-export default {ext_resources: {}};
+export default {
+  ext_resources: {},
+  build: __BUILD,
+  version: __VERSION
+};
