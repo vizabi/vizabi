@@ -108,7 +108,13 @@ const CSVReader = Reader.extend({
         })
       );
 
-      if (isSuitable) {
+      const unique = row[uniqueKey];
+      const isUnique = !uniqueValues.includes(unique);
+      if (isSuitable && isUnique) {
+        if (from === QUERY_FROM_ENTITIES) {
+          uniqueValues.push(unique);
+        }
+
         const rowFilteredByKeys = Object.keys(row)
           .reduce((resultRow, rowKey) => {
             if (key.includes(rowKey) || value.includes(rowKey)) {
@@ -117,15 +123,8 @@ const CSVReader = Reader.extend({
 
             return resultRow;
           }, {});
-        result.push(rowFilteredByKeys);
 
-        const unique = row[uniqueKey];
-        if (
-          from === QUERY_FROM_ENTITIES
-          && !uniqueValues.includes(unique)
-        ) {
-          uniqueValues.push(unique);
-        }
+        result.push(rowFilteredByKeys);
       }
 
       return result;
