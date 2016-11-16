@@ -96,7 +96,7 @@ const CSVReader = Reader.extend({
     const uniqueValues = [];
 
     return (result, row) => {
-      const isSuitable = $and.every(binding =>
+      const isSuitable = !$and || $and.every(binding =>
         Object.keys(binding).every(conditionKey => {
           const conditionValue = join[binding[conditionKey]].where[conditionKey];
 
