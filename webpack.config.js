@@ -16,6 +16,8 @@ const extractSrc = new ExtractTextPlugin('dist/vizabi.css');
 const extractPreview = new ExtractTextPlugin('preview/assets/css/main.css');
 
 const __PROD__ = process.env.NODE_ENV === 'production';
+const timestamp = new Date();
+
 const sep = '\\' + path.sep;
 const stats = {
   colors: true,
@@ -66,7 +68,7 @@ const plugins = [
   }),
   new webpack.DefinePlugin({
     __VERSION: JSON.stringify(pkg.version),
-    __BUILD: +new Date()
+    __BUILD: +timestamp
   })
 ];
 
@@ -111,6 +113,19 @@ if (__PROD__) {
         { expand: true, cwd: 'src/assets/translation', src: ["en.json"], dot: true, dest: 'assets/translation' }
       ]);
       archive.finalize();
+    }),
+    new webpack.BannerPlugin({
+      banner: [
+        '/**',
+        ' * ' + pkg.name + ' - ' + pkg.description,
+        ' * @version v' + pkg.version,
+        ' * @build timestamp ' + timestamp,
+        ' * @link ' + pkg.homepage,
+        ' * @license ' + pkg.license,
+        ' */',
+        ''
+      ].join('\n'),
+      raw: true
     })
   )
 }
