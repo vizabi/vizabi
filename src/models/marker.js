@@ -81,8 +81,8 @@ var Marker = Model.extend({
             if(hook.use === "constant") return;
 
             // Get keys in data of this hook
-            var nested = _this.getDataManager().getData(hook._dataId, 'nested', [KEY, TIME]);
-            var noDataPoints = _this.getDataManager().getData(hook._dataId, 'haveNoDataPointsPerKey', hook.which);
+            var nested = hook.getNestedItems([KEY, TIME]);
+            var noDataPoints = hook.getHaveNoDataPointsPerKey();
 
             var keys = Object.keys(nested);
             var keysNoDP = Object.keys(noDataPoints || []);
@@ -364,29 +364,23 @@ var Marker = Model.extend({
             } else {
               //calculation of async frames is taken outside the loop
               //hooks with real data that needs to be fetched from datamanager
-              deferredHooks.push({hook: {
-                  _dataId: hook._dataId,
-                  which: hook.which
-                }, name: name});
+              deferredHooks.push(hook);
             }
           });
 
           //check if we have any data to get from datamanager
           if (deferredHooks.length > 0) {
             var promises = [];
-            for (var hookId = 0; hookId < deferredHooks.length; hookId++) {
-              (function(hookKey) {
-                var defer = deferredHooks[hookKey];
-                promises.push(new Promise(function(res, rej) {
-                  _this.getDataManager().getFrames(defer.hook._dataId, steps, selected).then(function(response) {
-                    utils.forEach(response, function (frame, t) {
-                      _this.partialResult[cachePath][t][defer.name] = frame[defer.hook.which];
-                    });
-                    res();
-                  })
-                }));
-              }(hookId));
-            }
+            utils.forEach(deferredHooks, function(hook) {
+              promises.push(new Promise(function(res, rej) {
+                hook.getFrames(steps, selected).then(function(response) {
+                  utils.forEach(response, function (frame, t) {
+                    _this.partialResult[cachePath][t][hook._name] = frame[hook.which];
+                  });
+                  res();
+                })
+              }));
+            });
             Promise.all(promises).then(function() {
               _this.cachedFrames[cachePath] = _this.partialResult[cachePath];
               resolve();
@@ -411,7 +405,7 @@ var Marker = Model.extend({
             if(hook.use !== "constant" && hook.which !== KEY && hook.which !== TIME) {
               (function(_hook, _name) {
                 promises.push(new Promise(function(res, rej) {
-                  _this.getDataManager().getFrame(_hook._dataId, steps, forceFrame, selected).then(function(response) {
+                  _hook.getFrame(steps, forceFrame, selected).then(function(response) {
                     _this.partialResult[cachePath][forceFrame][_name] = response[forceFrame][_hook.which];
                     res();
                   })
@@ -445,18 +439,17 @@ var Marker = Model.extend({
         if(!(hook.use === "constant" || hook.which === KEY || hook.which === TIME)) {
           if (dataIds.indexOf(hook._dataId) == -1) {
             dataIds.push(hook._dataId);
+
+            hook.dataSource.listenFrame(hook._dataId, steps, keys, function(dataId, time) {
+              var keyName = time.toString();
+              if (typeof preparedFrames[keyName] == "undefined") preparedFrames[keyName] = [];
+              if (preparedFrames[keyName].indexOf(dataId) == -1) preparedFrames[keyName].push(dataId);
+              if (preparedFrames[keyName].length == dataIds.length)  {
+                cb(time);
+              }
+            });
           }
         }
-      });
-      utils.forEach(dataIds, function(hook) {
-        _this.getDataManager().listenFrame(hook, steps, keys, function(dataId, time) {
-          var keyName = time.toString();
-          if (typeof preparedFrames[keyName] == "undefined") preparedFrames[keyName] = [];
-          if (preparedFrames[keyName].indexOf(dataId) == -1) preparedFrames[keyName].push(dataId);
-          if (preparedFrames[keyName].length == dataIds.length)  {
-            cb(time);
-          }
-        });
       });
     },
 
@@ -498,7 +491,7 @@ var Marker = Model.extend({
         if(hook.use !== "property") next = next || d3.bisectLeft(hook.getUnique(dimTime), time);
 
         method = hook.getConceptprops ? hook.getConceptprops().interpolation : null;
-        filtered = _this.getDataManager().getData(hook._dataId, 'nested', f_keys);
+        filtered = hook.getNestedItems(f_keys);
         utils.forEach(f_values, function(v) {
           filtered = filtered[v]; //get precise array (leaf)
         });
@@ -520,7 +513,7 @@ var Marker = Model.extend({
     else {
       utils.forEach(this._dataCube, function(hook, name) {
 
-        filtered = _this.getDataManager().getData(hook._dataId, 'nested', group_by);
+        filtered = hook.getNestedItems(group_by);
 
         response[name] = {};
         //find position from first hook
@@ -575,7 +568,10 @@ var Marker = Model.extend({
    * @returns {Object} concept properties
    */
   getConceptprops: function() {
-    return this.getDataManager().getConceptprops();
+    // temporary hack to get conceptprops from hook. Fix should be that no one tries to get it from marker in the first place.
+    var keys = Object.keys(this._data);
+    var index = (keys[0] !== 'space') ? keys[0] : keys[1];
+    return this._data[index].dataSource.getConceptprops();
   },
 
   getEntityLimits: function(entity) {

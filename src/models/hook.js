@@ -282,7 +282,7 @@ var Hook = DataConnected.extend({
     return parsers;
   },
 
-    /**
+  /**
    * Gets tick values for this hook
    * @returns {Number|String} value The value for this tick
    */
@@ -405,62 +405,22 @@ var Hook = DataConnected.extend({
     this.scale = scaleType === 'time' ? d3.time.scale.utc().domain(domain) : d3.scale[scaleType]().domain(domain);
   },
 
-      //TODO: this should go down to datamanager, hook should only provide interface
-  /**
-   * gets maximum, minimum and mean values from the dataset of this certain hook
+
+   /**
+   * Gets unique values in a column
+   * @param {String|Array} attr parameter
+   * @returns {Array} unique values
    */
-  gerLimitsPerFrame: function() {
-
-    if(this.use === "property") return utils.warn("getMaxMinMean: strange that you ask min max mean of a property");
-    if(!this.isHook) return utils.warn("getMaxMinMean: only works for hooks");
-
-    var result = {};
-    var values = [];
-    var value = null;
-    var TIME = this._getFirstDimension({type: "time"});
-
-    var steps = this._parent._parent.time.getAllSteps();
-
-    if(this.use === "constant") {
-        steps.forEach(function(t){
-            value = this.which;
-            result[t] = {
-                min: value,
-                max: value
-            }
-        });
-
-    }else if(this.which===TIME){
-        steps.forEach(function(t){
-            value = new Date(t);
-            result[t] = {
-                min: value,
-                max: value
-            }
-        });
-
-    }else{
-        var args = {framesArray: steps, which: this.which};
-        result = this.dataSource.getData(this._dataId, 'limitsPerFrame', args);
-    }
-
-    return result;
+  getUnique: function(attr) {
+    if(!this.isHook()) return;
+    if(!attr) attr = this._getFirstDimension({type: "time"});
+    return this.dataSource.getData(this._dataId, 'unique', attr);
   },
 
 
-     /**
-     * Gets unique values in a column
-     * @param {String|Array} attr parameter
-     * @returns {Array} unique values
-     */
-    getUnique: function(attr) {
-        if(!this.isHook()) return;
-        if(!attr) attr = this._getFirstDimension({type: "time"});
-        return this.dataSource.getData(this._dataId, 'unique', attr);
-    },
-
-
-
+  getData: function() {
+    return this.dataSource.getData(this._dataId);
+  },
 
       /**
    * gets dataset without null or nan values with respect to this hook's which
@@ -480,6 +440,10 @@ var Hook = DataConnected.extend({
     return this.dataSource.getData(this._dataId, 'nested', keys);
   },
 
+  getHaveNoDataPointsPerKey: function() {
+    return this.dataSource.getData(this._dataId, 'haveNoDataPointsPerKey', this.which);
+  },
+
   /**
    * Gets limits
    * @param {String} attr parameter
@@ -489,6 +453,13 @@ var Hook = DataConnected.extend({
     return this.dataSource.getData(this._dataId, 'limits', attr);
   },
 
+  getFrame: function(steps, forceFrame, selected) {
+    return this.dataSource.getFrame(this._dataId, steps, forceFrame, selected);
+  },
+
+  getFrames: function(steps, selected) {
+    return this.dataSource.getFrames(this._dataId, steps, selected);
+  },
 
   /**
    * gets hook values according dimension values
@@ -560,8 +531,6 @@ var Hook = DataConnected.extend({
 
     return limitsDim;
   },
-
-
 
   /**
    * Gets the concept properties of the hook's "which"

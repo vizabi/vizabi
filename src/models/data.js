@@ -198,7 +198,6 @@ var DataModel = Model.extend({
           col.nested = {};
           col.unique = {};
           col.limits = {};
-          col.limitsPerFrame = {};
           col.frames = {};
           col.haveNoDataPointsPerKey = {};
           col.query = q;

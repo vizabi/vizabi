@@ -663,7 +663,7 @@ var TreeMenu = Component.extend({
     this.translator = this.model.language.getTFunction();
 
     //TODO: hack! potentially unsafe operation here
-    var tags = this.model.marker_tags.getDataManager().getData(this.model.marker_tags.label._dataId)
+    var tags = this.model.marker_tags.label.getData();
     _this._buildIndicatorsTree(tags);
 
     _this._enableSearch();

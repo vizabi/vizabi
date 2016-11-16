@@ -580,35 +580,12 @@ var Model = EventSource.extend({
   },
 
   /**
-   * gets nested dataset
-   * @param {Array} keys define how to nest the set
-   * @returns {Object} hash-map of key-value pairs
-   */
-  getNestedItems: function(keys) {
-    if(!keys) return utils.warn("No keys provided to getNestedItems(<keys>)");
-    return _DATAMANAGER.getData(this._dataId, 'nested', keys);
-  },
-
-  /**
    * Gets formatter for this model
    * @returns {Function|Boolean} formatter function
    */
   getParser: function() {
     //TODO: default formatter is moved to utils. need to return it to hook prototype class, but retest #1212 #1230 #1253
     return null;
-  },
-
-  getDataManager: function(){
-    return this.getClosestModel('data');
-  },
-
-  /**
-   * Gets limits
-   * @param {String} attr parameter
-   * @returns {Object} limits (min and max)
-   */
-  getLimits: function(attr) {
-    return _DATAMANAGER.getData(this._dataId, 'limits', attr);
   },
 
   /**
