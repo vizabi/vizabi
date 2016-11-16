@@ -81,8 +81,8 @@ var Marker = Model.extend({
             if(hook.use === "constant") return;
 
             // Get keys in data of this hook
-            var nested = _this.getDataManager().get(hook._dataId, 'nested', [KEY, TIME]);
-            var noDataPoints = _this.getDataManager().get(hook._dataId, 'haveNoDataPointsPerKey', hook.which);
+            var nested = _this.getDataManager().getData(hook._dataId, 'nested', [KEY, TIME]);
+            var noDataPoints = _this.getDataManager().getData(hook._dataId, 'haveNoDataPointsPerKey', hook.which);
 
             var keys = Object.keys(nested);
             var keysNoDP = Object.keys(noDataPoints || []);
@@ -498,7 +498,7 @@ var Marker = Model.extend({
         if(hook.use !== "property") next = next || d3.bisectLeft(hook.getUnique(dimTime), time);
 
         method = hook.getConceptprops ? hook.getConceptprops().interpolation : null;
-        filtered = _this.getDataManager().get(hook._dataId, 'nested', f_keys);
+        filtered = _this.getDataManager().getData(hook._dataId, 'nested', f_keys);
         utils.forEach(f_values, function(v) {
           filtered = filtered[v]; //get precise array (leaf)
         });
@@ -520,7 +520,7 @@ var Marker = Model.extend({
     else {
       utils.forEach(this._dataCube, function(hook, name) {
 
-        filtered = _this.getDataManager().get(hook._dataId, 'nested', group_by);
+        filtered = _this.getDataManager().getData(hook._dataId, 'nested', group_by);
 
         response[name] = {};
         //find position from first hook

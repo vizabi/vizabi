@@ -30,7 +30,7 @@ var DataConnected = Model.extend({
 
     if (dataConnectedChangedChildren.length > 0) {
       this.trigger('dataConnectedChange');
-      this.load();
+      this.startLoading();
     }
 
   }

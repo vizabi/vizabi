@@ -89,7 +89,7 @@ Tool.define("preload", function(promise) {
   var reader = this.model.data.getPlainObject();
   reader.parsers = [];
 
-  this.model.getDataManager().loadConceptProps(reader, this.model.language.id, function(concepts) {
+  this.model.data.loadConceptProps(reader, this.model.language.id, function(concepts) {
 
     promise.resolve();
 

@@ -200,7 +200,7 @@ var Tool = Component.extend({
         //TODO: cleanup hardcoded splash screen
         timeMdl.splash = true;
 
-        _this.model.load({
+        _this.model.startLoading({
           splashScreen: true
         }).then(function() {
           //delay to avoid conflicting with setReady
@@ -208,7 +208,7 @@ var Tool = Component.extend({
             //force loading because we're restoring time.
             _this.model.setLoading('restore_orig_time');
 
-            _this.model.load().then(function() {
+            _this.model.startLoading().then(function() {
               _this.model.setLoadingDone('restore_orig_time');
               timeMdl.splash = false;
               //_this.model.data.splash = false;
@@ -220,7 +220,7 @@ var Tool = Component.extend({
           _this.renderError();
         });
       } else {
-        _this.model.load().then(function() {
+        _this.model.startLoading().then(function() {
           utils.delay(function() {
             if(timeMdl) {
               timeMdl.splash = false;

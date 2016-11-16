@@ -1,10 +1,7 @@
 import * as utils from 'base/utils';
 import Promise from 'base/promise';
-import Data from 'base/data';
 import EventSource, {DefaultEvent, ChangeEvent} from 'base/events';
 import Intervals from 'base/intervals';
-
-var _DATAMANAGER = new Data();
 
 var ModelLeaf = EventSource.extend({
 
@@ -422,7 +419,7 @@ var Model = EventSource.extend({
    * @param {Object} options (includes splashScreen)
    * @returns defer
    */
-  load: function(opts) {
+  startLoading: function(opts) {
 
     var _this = this;
 
@@ -452,7 +449,7 @@ var Model = EventSource.extend({
     var promises = [];
     var subModels = this.getSubmodels();
     utils.forEach(subModels, function(subModel) {
-      promises.push(subModel.load(options));
+      promises.push(subModel.startLoading(options));
     });
     return promises.length > 0 ? Promise.all(promises) : Promise.resolve();
   },
@@ -589,7 +586,7 @@ var Model = EventSource.extend({
    */
   getNestedItems: function(keys) {
     if(!keys) return utils.warn("No keys provided to getNestedItems(<keys>)");
-    return _DATAMANAGER.get(this._dataId, 'nested', keys);
+    return _DATAMANAGER.getData(this._dataId, 'nested', keys);
   },
 
   /**
@@ -602,7 +599,7 @@ var Model = EventSource.extend({
   },
 
   getDataManager: function(){
-    return _DATAMANAGER;
+    return this.getClosestModel('data');
   },
 
   /**
@@ -611,7 +608,7 @@ var Model = EventSource.extend({
    * @returns {Object} limits (min and max)
    */
   getLimits: function(attr) {
-    return _DATAMANAGER.get(this._dataId, 'limits', attr);
+    return _DATAMANAGER.getData(this._dataId, 'limits', attr);
   },
 
   /**

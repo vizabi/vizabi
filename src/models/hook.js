@@ -34,7 +34,7 @@ var Hook = DataConnected.extend({
         //defer is necessary because other events might be queued.
         //load right after such events
         utils.defer(function() {
-          _this.load().then(function() {
+          _this.startLoading().then(function() {
 
           }, function(err) {
             utils.warn(err);
@@ -42,12 +42,6 @@ var Hook = DataConnected.extend({
         });
       })
     });
-  },
-
-  getLoadSettings: function() {
-    return {
-      data: this.getClosestModel('data')
-    }
   },
 
   /**
@@ -64,7 +58,7 @@ var Hook = DataConnected.extend({
 
     opts = opts || {};
 
-    var loadSettings = this.getLoadSettings();
+    this.dataSource = this.getClosestModel('data');
     var query = this.getQuery(opts.splashScreen);
 
     //useful to check if in the middle of a load call
@@ -74,7 +68,7 @@ var Hook = DataConnected.extend({
     this.setReady(false);
 
     //get reader info
-    var reader = loadSettings.data.getPlainObject();
+    var reader = this.dataSource.getPlainObject();
     reader.parsers = this._getAllParsers();
 
     var _this = this;
@@ -89,7 +83,7 @@ var Hook = DataConnected.extend({
 
     utils.timeStamp('Vizabi Model: Loading Data: ' + this._id);
 
-    var dataPromise = this.getDataManager().load(query, reader, evts)
+    var dataPromise = this.dataSource.load(query, reader, evts);
 
     dataPromise.then(
       this.afterLoad.bind(this),
@@ -447,7 +441,7 @@ var Hook = DataConnected.extend({
 
     }else{
         var args = {framesArray: steps, which: this.which};
-        result = this.getDataManager().get(this._dataId, 'limitsPerFrame', args);
+        result = this.dataSource.getData(this._dataId, 'limitsPerFrame', args);
     }
 
     return result;
@@ -462,7 +456,7 @@ var Hook = DataConnected.extend({
     getUnique: function(attr) {
         if(!this.isHook()) return;
         if(!attr) attr = this._getFirstDimension({type: "time"});
-        return this.getDataManager().get(this._dataId, 'unique', attr);
+        return this.dataSource.getData(this._dataId, 'unique', attr);
     },
 
 
@@ -473,8 +467,28 @@ var Hook = DataConnected.extend({
    * @returns {Object} filtered items object
    */
   getValidItems: function() {
-    return this.getDataManager().get(this._dataId, 'valid', this.which);
+    return this.dataSource.getData(this._dataId, 'valid', this.which);
   },
+
+  /**
+   * gets nested dataset
+   * @param {Array} keys define how to nest the set
+   * @returns {Object} hash-map of key-value pairs
+   */
+  getNestedItems: function(keys) {
+    if(!keys) return utils.warn("No keys provided to getNestedItems(<keys>)");
+    return this.dataSource.getData(this._dataId, 'nested', keys);
+  },
+
+  /**
+   * Gets limits
+   * @param {String} attr parameter
+   * @returns {Object} limits (min and max)
+   */
+  getLimits: function(attr) {
+    return this.dataSource.getData(this._dataId, 'limits', attr);
+  },
+
 
   /**
    * gets hook values according dimension values
@@ -490,7 +504,7 @@ var Hook = DataConnected.extend({
   },
 
   getLimitsByDimensions: function(dims) {
-    var filtered = this.getDataManager().get(this._dataId, 'nested', dims);
+    var filtered = this.dataSource.getData(this._dataId, 'nested', dims);
     var values = {};
     var limitsDim = {};
     var attr = this.which;
@@ -554,7 +568,7 @@ var Hook = DataConnected.extend({
    * @returns {Object} concept properties
    */
   getConceptprops: function() {
-    return this.use !== 'constant' ? this.getDataManager().getConceptprops(this.which) : {};
+    return this.use !== 'constant' ? this.dataSource.getConceptprops(this.which) : {};
   }
 });
 
