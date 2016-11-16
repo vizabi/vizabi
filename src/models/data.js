@@ -33,8 +33,16 @@ var DataModel = Model.extend({
 
     //same constructor as parent, with same arguments
     this._super(name, values, parent, bind);
+
   },
 
+  /**
+   * Loads concept properties when all other models are also starting to load data
+   * @return {Promise} Promise which resolves when concepts are loaded
+   */
+  loadData: function() {
+    return this.loadConceptProps();
+  },
 
   /**
    * Loads resource from reader or cache
@@ -274,19 +282,23 @@ var DataModel = Model.extend({
     return this._collection[queryId][what][id];
   },
 
-  loadConceptProps: function(reader, languageId, callback){
+  loadConceptProps: function(){
     var _this = this;
 
     var query = {
-      from: "concepts",
-      language: languageId,
       select: {
         key: ["concept"],
         value: ["concept_type","domain","indicator_url","color","scales","interpolation","tags","name","unit","description"]
-      }
+      },
+      from: "concepts",
+      where: {},
+      language: this.getClosestModel('language').id,
     };
 
-    this.load(query, reader).then(function(dataId) {
+    var reader = this.getPlainObject();
+    reader.parsers = [];
+
+    return this.load(query, reader).then(function(dataId) {
 
       _this.conceptPropsDataID = dataId;
       _this.conceptDictionary = {_default: {concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root"}};
@@ -327,7 +339,6 @@ var DataModel = Model.extend({
         _this.conceptDictionary[d.concept] = concept;
       });
 
-      callback(_this.conceptDictionary);
     }, function(err) {
       utils.warn('Problem with query: ', query);
     });

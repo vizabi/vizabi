@@ -58,7 +58,8 @@ var Hook = DataConnected.extend({
 
     opts = opts || {};
 
-    this.dataSource = this.getClosestModel('data');
+    var dataModel = (this.data) ? this.data : 'data';
+    this.dataSource = this.getClosestModel(dataModel);
     var query = this.getQuery(opts.splashScreen);
 
     //useful to check if in the middle of a load call

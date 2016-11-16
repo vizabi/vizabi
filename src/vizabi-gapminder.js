@@ -78,23 +78,4 @@ CartogramComponent.define("preload", function(done) {
   });
 });
 
-//preloading concept properties for all charts
-Tool.define("preload", function(promise) {
-
-  if (!this.model.data || this.model.data.noConceptprops) {
-    promise.resolve();
-    return;
-  }
-
-  var reader = this.model.data.getPlainObject();
-  reader.parsers = [];
-
-  this.model.data.loadConceptProps(reader, this.model.language.id, function(concepts) {
-
-    promise.resolve();
-
-  });
-
-});
-
 export default Vzb;
