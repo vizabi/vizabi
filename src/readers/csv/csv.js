@@ -8,10 +8,11 @@ const QUERY_FROM_DATAPOINTS = 'datapoints';
 const QUERY_FROM_ENTITIES = 'entities';
 const DATA_QUERIES = [QUERY_FROM_DATAPOINTS, QUERY_FROM_ENTITIES];
 const CONDITION_CALLBACKS = {
-  $gt: (a, b) => b > a,
-  $gte: (a, b) => b >= a,
-  $lt: (a, b) => b < a,
-  $lte: (a, b) => b <= a,
+  $gt: (configValue, rowValue) => rowValue > configValue,
+  $gte: (configValue, rowValue) => rowValue >= configValue,
+  $lt: (configValue, rowValue) => rowValue < configValue,
+  $lte: (configValue, rowValue) => rowValue <= configValue,
+  $in: (configValue, rowValue) => configValue.includes(rowValue)
 };
 
 const CSVReader = Reader.extend({
