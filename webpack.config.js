@@ -1,3 +1,5 @@
+const pkg = require('./package.json');
+
 const fs = require('fs');
 const path = require('path');
 
@@ -62,6 +64,10 @@ const plugins = [
     glob: 'src/**/*.s?(a|c)ss',
     ignorePlugins: ['extract-text-webpack-plugin']
   }),
+  new webpack.DefinePlugin({
+    __VERSION: JSON.stringify(pkg.version),
+    __BUILD: +new Date()
+  })
 ];
 
 if (__PROD__) {
@@ -101,8 +107,8 @@ if (__PROD__) {
         fs.createWriteStream(path.resolve('build', 'download', 'vizabi.zip'))
       );
       archive.bulk([
-        { expand: true, cwd: 'src/assets/cursors', src: ["**/*"], dot: true, dest: 'assets/cursors'},
-        { expand: true, cwd: 'src/assets/translation', src: ["en.json"], dot: true, dest: 'assets/translation'}
+        { expand: true, cwd: 'src/assets/cursors', src: ["**/*"], dot: true, dest: 'assets/cursors' },
+        { expand: true, cwd: 'src/assets/translation', src: ["en.json"], dot: true, dest: 'assets/translation' }
       ]);
       archive.finalize();
     })
@@ -216,7 +222,7 @@ module.exports = {
         }
       },
       {
-        test:  /\.json$/, //__PROD__ ? /en\.json$/ : /\.json$/,
+        test: /\.json$/, //__PROD__ ? /en\.json$/ : /\.json$/,
         include: [path.resolve(__dirname, 'src', 'assets', 'translation')],
         loader: 'file-loader',
         query: {
