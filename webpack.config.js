@@ -9,6 +9,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const OpenBrowserPlugin = require('open-browser-webpack-plugin');
 const SassLintPlugin = require('sasslint-webpack-plugin');
+const UnminifiedWebpackPlugin = require('unminified-webpack-plugin');
 
 const archiver = require('archiver');
 
@@ -89,12 +90,14 @@ if (__PROD__) {
         screw_ie8: true
       }
     }),
+    new UnminifiedWebpackPlugin(),
     new AfterBuildPlugin(() => {
       fs.mkdirSync(path.resolve(__dirname, 'build', 'download'));
 
       const archive = archiver('zip');
       const files = [
         'vizabi.css',
+        'vizabi.min.js',
         'vizabi.js'
       ];
 
@@ -140,7 +143,7 @@ module.exports = {
 
   output: {
     path: path.resolve(__dirname, 'build'),
-    filename: '[name].js',
+    filename: '[name].min.js',
     library: 'Vizabi',
     libraryTarget: 'umd',
     umdNamedDefine: true
@@ -251,6 +254,7 @@ module.exports = {
 
   stats,
   devServer: {
-    stats
+    stats,
+    host: '0.0.0.0'
   }
 };
