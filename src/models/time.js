@@ -94,13 +94,13 @@ var TimeModel = DataConnected.extend({
    * Formats value, start and end dates to actual Date objects
    */
   _formatToDates: function() {
-
+    var persistentValues = ["value"];
     var date_attr = ["value", "start", "end", "startSelected", "endSelected"];
     for(var i = 0; i < date_attr.length; i++) {
       var attr = date_attr[i];
       if(!utils.isDate(this[attr])) {
         var date = this.parseToUnit(this[attr], this.unit);
-        this.set(attr, date, null, false);
+        this.set(attr, date, null, (persistentValues.indexOf(attr) !== -1));
       }
     }
   },
