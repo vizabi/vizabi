@@ -27,10 +27,6 @@ const CSVReader = Reader.extend({
     this._basepath = readerInfo.path;
     this._parsers = readerInfo.parsers;
 
-    // TODO: remove
-    this._parsers.Year = year => new Date(new Date().setYear(year));
-    this._parsers['Lines of code'] = lines => +lines;
-
     if (!this._basepath) {
       utils.error('Missing base path for csv reader');
     }
@@ -97,16 +93,20 @@ const CSVReader = Reader.extend({
 
     return (result, row) => {
       const isSuitable = !$and || $and.every(binding =>
-        Object.keys(binding).every(conditionKey => {
-          const conditionValue = join[binding[conditionKey]].where[conditionKey];
+          Object.keys(binding).every(conditionKey => {
+            const bindingKey = binding[conditionKey];
 
-          return typeof conditionValue === 'object' ?
-            Object.keys(conditionValue).every(compareKey =>
-              CONDITION_CALLBACKS[compareKey](conditionValue[compareKey], row[conditionKey])
-            ) :
-          row[conditionKey] === conditionValue;
-        })
-      );
+            if (bindingKey.startsWith('$')) {
+              const conditions = join[bindingKey].where;
+              const rowKeys = Object.keys(conditions);
+              return rowKeys.every(rowKey => row[rowKey] === conditions[rowKey]);
+            }
+
+            return Object.keys(bindingKey).every(compareKey =>
+              CONDITION_CALLBACKS[compareKey](bindingKey[compareKey], row[conditionKey])
+            );
+          })
+        );
 
       const unique = row[uniqueKey];
       const isUnique = !uniqueValues.includes(unique);
