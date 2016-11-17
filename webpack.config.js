@@ -143,7 +143,7 @@ module.exports = {
 
   output: {
     path: path.resolve(__dirname, 'build'),
-    filename: '[name].min.js',
+    filename: __PROD__ ? '[name].min.js' : '[name].js',
     library: 'Vizabi',
     libraryTarget: 'umd',
     umdNamedDefine: true
