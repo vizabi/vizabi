@@ -53,14 +53,16 @@ var Hook = DataConnected.extend({
    * @returns defer
    */
   loadData: function(opts) {
+    
+    var dataModel = (this.data) ? this.data : 'data';
+    this.dataSource = this.getClosestModel(dataModel);
+
     if(!this.which) return Promise.resolve();
 
     this.trigger('hook_change');
 
     opts = opts || {};
 
-    var dataModel = (this.data) ? this.data : 'data';
-    this.dataSource = this.getClosestModel(dataModel);
     var query = this.getQuery(opts.splashScreen);
 
     //useful to check if in the middle of a load call
