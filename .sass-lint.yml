@@ -12,6 +12,11 @@ rules:
   no-color-literals: 0
   no-important: 0
   no-mergeable-selectors: 1
+  no-misspelled-properties:
+    - 1
+    - extra-properties:
+      - 'overflow-scrolling'
+      - 'touch-callout'
   no-qualifying-elements:
     - 1
     - allow-element-with-attribute: true
