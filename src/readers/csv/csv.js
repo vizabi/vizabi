@@ -31,7 +31,6 @@ const CSVReader = Reader.extend({
     this._name = 'csv';
     this._data = [];
     this._basepath = readerInfo.path;
-    this._parsers = readerInfo.parsers;
 
     if (!this._basepath) {
       utils.error('Missing base path for csv reader');
@@ -41,9 +40,10 @@ const CSVReader = Reader.extend({
   /**
    * Reads from source
    * @param {Object} query to be performed
-   * @returns a promise that will be resolved when data is read
+   * @param parsers
+   * @returns {Promise} a promise that will be resolved when data is read
    */
-  read(query) {
+  read(query, parsers = {}) {
     const {
       select,
       from,
@@ -52,52 +52,61 @@ const CSVReader = Reader.extend({
 
     const [orderBy] = order_by;
 
-    return this.load()
+    return this.load({ parsers })
       .then(data => {
         switch (true) {
           case from === this.QUERY_FROM_CONCEPTS:
-            this._data = this._getConcepts(data[0]);
-            break;
+            return this._getConcepts(data[0]);
 
           case this.DATA_QUERIES().includes(from) && select.key.length > 0:
-            this._data = data
+            return data
               .reduce(this._reduceData(query), [])
               .sort((prev, next) => prev[orderBy] - next[orderBy]);
-            break;
 
           default:
-            this._data = [];
+            return [];
         }
-
-        this._data = utils.mapRows(this._data, this._parsers);
       })
       .catch(utils.warn);
   },
 
-  load(path = this._basepath) {
+  load(options = {}) {
+    const {
+      path = this._basepath,
+      parsers = {}
+    } = options;
+
     return cached[path] ?
       Promise.resolve(cached[path]) :
       new Promise((resolve, reject) => {
-        d3.csv(path, (error, result) => {
-          if (!result) {
-            return reject(`No permissions or empty file: ${path}. ${error}`);
-          }
+        d3.csv(path)
+          .row(row => {
+            return Object.keys(row).reduce((result, key) => {
+              const value = row[key];
+              const parser = parsers[key];
 
-          if (error) {
-            return reject(`Error happened while loading csv file: ${path}. ${error}`);
-          }
+              if (parser) {
+                result[key] = parser(value);
+              } else {
+                const numeric = parseFloat(value);
+                result[key] = !isNaN(numeric) && isFinite(numeric) ? numeric : value;
+              }
 
-          resolve(cached[path] = result);
-        });
+              return result;
+            }, {});
+          })
+          .get((error, result) => {
+            if (!result) {
+              return reject(`No permissions or empty file: ${path}. ${error}`);
+            }
+
+            if (error) {
+              return reject(`Error happened while loading csv file: ${path}. ${error}`);
+            }
+
+            resolve(cached[path] = result);
+          });
       });
-  },
-
-  /**
-   * Gets the data
-   * @returns all data
-   */
-  getData() {
-    return this._data;
   },
 
   _getConcepts(firstRow) {
