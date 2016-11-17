@@ -102,9 +102,7 @@ const CSVReader = Reader.extend({
               return rowKeys.every(rowKey => row[rowKey] === conditions[rowKey]);
             }
 
-            return Object.keys(bindingKey).every(compareKey =>
-              CONDITION_CALLBACKS[compareKey](bindingKey[compareKey], row[conditionKey])
-            );
+            return row[conditionKey] === bindingKey;
           })
         );
 
