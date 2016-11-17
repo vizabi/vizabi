@@ -375,6 +375,12 @@ var Tool = Component.extend({
     } else {
       utils.removeClass(this.element, class_buttons_off);
     }
+  },
+
+  preload: function(promise) {
+    this.model.data.loadConceptProps().then(function() {
+      promise.resolve();
+    })
   }
 
 });
