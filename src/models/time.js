@@ -269,13 +269,11 @@ var TimeModel = DataConnected.extend({
       }
     } else {
       var gte, lte;
-      var start = defaultStart || this.start;
-      if (start != null) {
-        gte = this.timeFormat(start);
+      if (defaultStart != null) {
+        gte = this.timeFormat(defaultStart);
       }
-      var end = defaultEnd || this.end;
-      if (end != null) {
-        lte = this.timeFormat(end);
+      if (defaultEnd != null) {
+        lte = this.timeFormat(defaultEnd);
       }
       if (gte || lte) {
         filter = {};
