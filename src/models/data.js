@@ -338,7 +338,6 @@ var DataModel = Model.extend({
           concept["name"] = d.name||d.concept||"";
           concept["unit"] = d.unit||"";
           concept["description"] = d.description;
-          console.log('dict set');
           _this.conceptDictionary[d.concept] = concept;
         });
 
