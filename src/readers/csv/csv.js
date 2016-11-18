@@ -3,19 +3,25 @@ import Reader from 'base/reader';
 
 const cached = {};
 
-const QUERY_FROM_CONCEPTS = 'concepts';
-const QUERY_FROM_DATAPOINTS = 'datapoints';
-const QUERY_FROM_ENTITIES = 'entities';
-const DATA_QUERIES = [QUERY_FROM_DATAPOINTS, QUERY_FROM_ENTITIES];
-const CONDITION_CALLBACKS = {
-  $gt: (configValue, rowValue) => rowValue > configValue,
-  $gte: (configValue, rowValue) => rowValue >= configValue,
-  $lt: (configValue, rowValue) => rowValue < configValue,
-  $lte: (configValue, rowValue) => rowValue <= configValue,
-  $in: (configValue, rowValue) => configValue.includes(rowValue)
-};
-
 const CSVReader = Reader.extend({
+
+  QUERY_FROM_CONCEPTS: 'concepts',
+  QUERY_FROM_DATAPOINTS: 'datapoints',
+  QUERY_FROM_ENTITIES: 'entities',
+  DATA_QUERIES() {
+    return [
+      this.QUERY_FROM_DATAPOINTS,
+      this.QUERY_FROM_ENTITIES
+    ];
+  },
+
+  CONDITION_CALLBACKS: {
+    $gt: (configValue, rowValue) => rowValue > configValue,
+    $gte: (configValue, rowValue) => rowValue >= configValue,
+    $lt: (configValue, rowValue) => rowValue < configValue,
+    $lte: (configValue, rowValue) => rowValue <= configValue,
+    $in: (configValue, rowValue) => configValue.includes(rowValue)
+  },
 
   /**
    * Initializes the reader.
@@ -39,9 +45,7 @@ const CSVReader = Reader.extend({
    */
   read(query) {
     const {
-      select: {
-        key = []
-      },
+      select,
       from,
       order_by = []
     } = query;
@@ -51,11 +55,11 @@ const CSVReader = Reader.extend({
     return this.load()
       .then(data => {
         switch (true) {
-          case from === QUERY_FROM_CONCEPTS:
+          case from === this.QUERY_FROM_CONCEPTS:
             this._data = this._getConcepts(data[0]);
             break;
 
-          case DATA_QUERIES.includes(from) && key.length > 0:
+          case this.DATA_QUERIES().includes(from) && select.key.length > 0:
             this._data = data
               .reduce(this._reduceData(query), [])
               .sort((prev, next) => prev[orderBy] - next[orderBy]);
@@ -65,76 +69,9 @@ const CSVReader = Reader.extend({
             this._data = [];
         }
 
-        this._data = this.format(this._data);
+        this._data = utils.mapRows(this._data, this._parsers);
       })
       .catch(utils.warn);
-  },
-
-  _getConcepts(firstRow) {
-    return Object.keys(firstRow)
-      .map(concept => ({ concept }));
-  },
-
-  _reduceData(query) {
-    const {
-      select: {
-        value,
-        key
-      },
-      from,
-      join,
-      where: {
-        $and
-      }
-    } = query;
-
-    const [uniqueKey] = key;
-    const uniqueValues = [];
-
-    return (result, row) => {
-      const isSuitable = !$and || $and.every(binding =>
-          Object.keys(binding).every(conditionKey => {
-            const bindingKey = binding[conditionKey];
-
-            if (bindingKey.startsWith('$')) {
-              const conditions = join[bindingKey].where;
-              const rowKeys = Object.keys(conditions);
-              return rowKeys.every(rowKey => row[rowKey] === conditions[rowKey]);
-            }
-
-            return row[conditionKey] === bindingKey;
-          })
-        );
-
-      const unique = row[uniqueKey];
-      const isUnique = !uniqueValues.includes(unique);
-      if (isSuitable && isUnique) {
-        if (from === QUERY_FROM_ENTITIES) {
-          uniqueValues.push(unique);
-        }
-
-        const rowFilteredByKeys = Object.keys(row)
-          .reduce((resultRow, rowKey) => {
-            if (key.includes(rowKey) || value.includes(rowKey)) {
-              resultRow[rowKey] = row[rowKey];
-            }
-
-            return resultRow;
-          }, {});
-
-        result.push(rowFilteredByKeys);
-      }
-
-      return result;
-    };
-  },
-
-  /**
-   * Gets the data
-   * @returns all data
-   */
-  getData() {
-    return this._data;
   },
 
   load(path = this._basepath) {
@@ -155,16 +92,86 @@ const CSVReader = Reader.extend({
       });
   },
 
-  format(data) {
-    return data.map(row =>
-      Object.keys(row)
-        .reduce((result, key) => {
-          result[key] = this._parsers[key] ?
-            this._parsers[key](row[key]) :
-            row[key];
+  /**
+   * Gets the data
+   * @returns all data
+   */
+  getData() {
+    return this._data;
+  },
 
-          return result;
-        }, {})
+  _getConcepts(firstRow) {
+    return Object.keys(firstRow)
+      .map(concept => ({ concept }));
+  },
+
+  _reduceData(query) {
+    const {
+      select,
+      from
+    } = query;
+
+    const [uniqueKey] = select.key;
+    const uniqueValues = [];
+
+    return (result, row) => {
+      const unique = row[uniqueKey];
+      const isUnique = from !== this.QUERY_FROM_ENTITIES || !uniqueValues.includes(unique);
+      const isSuitable = this._isSuitableRow(query, row);
+
+      if (isSuitable && isUnique) {
+        if (from === this.QUERY_FROM_ENTITIES) {
+          uniqueValues.push(unique);
+        }
+
+        const rowFilteredByKeys = Object.keys(row)
+          .reduce((resultRow, rowKey) => {
+            if (select.key.includes(rowKey) || select.value.includes(rowKey)) {
+              resultRow[rowKey] = row[rowKey];
+            }
+
+            return resultRow;
+          }, {});
+
+        result.push(rowFilteredByKeys);
+      }
+
+      return result;
+    };
+  },
+
+  _isSuitableRow(query, row) {
+    const { where } = query;
+
+    return !where.$and || where.$and.every(binding =>
+        Object.keys(binding).every(conditionKey =>
+          this._checkCondition(query, row, binding[conditionKey], conditionKey)
+        )
+      );
+  },
+
+  _checkCondition(query, row, bindingKey, conditionKey) {
+    const { join } = query;
+
+    switch (true) {
+      case typeof bindingKey === 'string' && bindingKey.startsWith('$'):
+        const { where: conditions } = join[bindingKey];
+
+        return Object.keys(conditions).every(rowKey => {
+          return this._checkCondition(query, row, conditions[rowKey], rowKey);
+        });
+
+      case typeof bindingKey === 'object':
+        return this._checkConditionCallbacks(bindingKey, row, conditionKey);
+
+      default:
+        return row[conditionKey] === bindingKey;
+    }
+  },
+
+  _checkConditionCallbacks(conditions, row, rowKey) {
+    return Object.keys(conditions).every(conditionKey =>
+      this.CONDITION_CALLBACKS[conditionKey](conditions[conditionKey], row[rowKey])
     );
   }
 
