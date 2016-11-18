@@ -46,7 +46,7 @@ export default Component.extend({
   readyOnce: function() {
     var _this = this;
     this.element = d3.select(this.element);
-    var id = "-check-" + Math.random() * 1000;
+    var id = "-check-" + _this._id;
     this.labelEl = this.element.select('label').attr("for", id);
     this.checkEl = this.element.select('input').attr("id", id)
       .on("change", function() {

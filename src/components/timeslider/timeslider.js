@@ -400,44 +400,47 @@ var TimeSlider = Component.extend({
   },
 
   updateSelectedStartLimiter: function() {
-    this.select.select('#clip-start').remove();
+    var _this = this;
+    this.select.select('#clip-start-' + _this._id).remove();
     this.select.select(".selected-start").remove();
     if(this.model.time.startSelected > this.model.time.start) {
       this.select.append("clipPath")
-        .attr("id", "clip-start")
+        .attr("id", "clip-start-" + _this._id)
         .append('rect')
       this.select.append('path')
-        .attr("clip-path", "url(" + location.pathname + "#clip-start)")
+        .attr("clip-path", "url(" + location.pathname + "#clip-start-" + _this._id + ")")
         .classed('selected-start', true);
       this.resizeSelectedLimiters();
     }
   },
 
   updateSelectedEndLimiter: function() {
-    this.select.select('#clip-end').remove();
+    var _this = this;
+    this.select.select('#clip-end-' + _this._id).remove();
     this.select.select(".selected-end").remove();
     if(this.model.time.endSelected < this.model.time.end) {
       this.select.append("clipPath")
-        .attr("id", "clip-end")
+        .attr("id", "clip-end-" + _this._id)
         .append('rect')
       this.select.append('path')
-        .attr("clip-path", "url(" + location.pathname + "#clip-end)")
+        .attr("clip-path", "url(" + location.pathname + "#clip-end-" + _this._id + ")")
         .classed('selected-end', true);
       this.resizeSelectedLimiters();
     }
   },
 
   resizeSelectedLimiters: function() {
+    var _this = this;
     this.select.select('.selected-start')
       .attr('d', "M0,0H" + this.xScale(this.model.time.startSelected));
-    this.select.select("#clip-start").select('rect')
+    this.select.select("#clip-start-" + _this._id).select('rect')
       .attr("x", -this.height / 2)
       .attr("y", -this.height / 2)
       .attr("height", this.height)
       .attr("width", this.xScale(this.model.time.startSelected) + this.height / 2);
     this.select.select('.selected-end')
       .attr('d', "M" + this.xScale(this.model.time.endSelected) + ",0H" + this.xScale(this.model.time.end));
-    this.select.select("#clip-end").select('rect')
+    this.select.select("#clip-end-" + _this._id).select('rect')
       .attr("x", this.xScale(this.model.time.endSelected))
       .attr("y", -this.height / 2)
       .attr("height", this.height)
