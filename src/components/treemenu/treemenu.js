@@ -1316,7 +1316,7 @@ var TreeMenu = Component.extend({
     obj[what] = value;
 
     if(what == "which") {
-      obj.use = indicatorsDB[value].use;
+      if(indicatorsDB[value].use) obj.use = indicatorsDB[value].use;
 
       if(indicatorsDB[value].scales) {
         obj.scaleType = indicatorsDB[value].scales[0];

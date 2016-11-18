@@ -306,7 +306,10 @@ var DataModel = Model.extend({
         _this.conceptDictionary = {_default: {concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root"}};
         _this.getData(dataId).forEach(function(d){
           var concept = {};
-          concept["use"] = (d.concept_type=="measure" || d.concept_type=="time")?"indicator":"property";
+          
+          concept["use"] = d.concept_type;
+          if(d.concept_type) concept["use"] = (d.concept_type=="measure" || d.concept_type=="time")?"indicator":"property";
+          
           concept["concept_type"] = d.concept_type;
           concept["sourceLink"] = d.indicator_url;
           try {
@@ -328,6 +331,7 @@ var DataModel = Model.extend({
               case "time": concept.scales=["time"]; break;
             }
           }
+          if(concept["scales"]==null) concept["scales"] = ["ordinal", "linear", "log"];
           if(d.interpolation){
             concept["interpolation"] = d.interpolation;
           }else{
