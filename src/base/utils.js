@@ -806,7 +806,7 @@ export var mapRows = function(original, formatters) {
       if(val === ""){
         newVal = null;
       } else {
-        // check for numberic
+        // check for numeric
         var numericVal = parseFloat(val);
         if (!isNaN(numericVal) && isFinite(val)) {
           newVal = numericVal;

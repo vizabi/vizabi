@@ -47,14 +47,14 @@ var DataModel = Model.extend({
   /**
    * Loads resource from reader or cache
    * @param {Array} query Array with queries to be loaded
-   * @param {Object} reader Which reader to use - data reader info
+   * @param {Object} parsers An object with concepts as key and parsers as value
    * @param {*} evts ?
    */
-  load: function(query, reader, evts) {
+  load: function(query, parsers = {}, evts) {
     var _this = this;
     var promise = new Promise();
     var wait = new Promise().resolve();
-    var cached = query === true ? true : this.isCached(query, reader);
+    var cached = query === true ? true : this.isCached(query);
     var loaded = false;
     //if result is cached, dont load anything
     if(!cached) {
@@ -63,7 +63,7 @@ var DataModel = Model.extend({
         evts.load_start();
       }
       wait = new Promise();
-      this.loadFromReader(query, reader).then(function(queryId) {
+      this.loadFromReader(query, parsers).then(function(queryId) {
         loaded = true;
         cached = queryId;
         wait.resolve();
@@ -93,22 +93,19 @@ var DataModel = Model.extend({
   /**
    * Loads resource from reader
    * @param {Array} query Array with queries to be loaded
-   * @param {Object} reader Which reader to use. E.g.: "json"
-   * @param {String} path Where data is located
+   * @param {Object} parsers An object with concepts as key and parsers as value
    */
-  loadFromReader: function(query, reader) {
+  loadFromReader: function(query, parsers) {
     var _this = this;
     var promise = new Promise();
-    var reader_name = reader.reader;
     var queryId = utils.hashCode([
-      query,
-      reader
+      query
     ]);
 
     // joining multiple queries
     // create a queue which this datamanager writes all queries to
     this.queryQueue = this.queryQueue || [];
-    this.queryQueue.push({ query: query, queryId: queryId, promise: promise, reader: reader});
+    this.queryQueue.push({ query: query, queryId: queryId, promise: promise });
 
     // wait one execution round for the queue to fill up
     utils.defer(function() {
@@ -135,12 +132,6 @@ var DataModel = Model.extend({
 
             // if so, merge the selects to the base query
             Array.prototype.push.apply(query.select.value, queueItem.query.select.value);
-            // merge parsers so the reader can parse the newly added columns
-            utils.extend(reader.parsers, queueItem.reader.parsers);
-
-            // the first entry in the "key" array of the query is the key of 1-dimensional set
-            //TODO: what if the set is multidimenstional?
-            reader.parsers[query.select.key[0]] = function(d){return ""+d};
 
             // include query's promise to promises for base query
             mergedQueries.push(queueItem);
@@ -163,11 +154,14 @@ var DataModel = Model.extend({
       query.select.value = utils.unique(query.select.value);
 
       // Create a new reader for this query
-      var readerClass = Reader.get(reader_name);
+      var readerClass = Reader.get(_this.reader);
       if (!readerClass) {
-        throw new Error('Unknown reader: ' + reader_name);
+        throw new Error('Unknown reader: ' + _this.reader);
       }
-      var r = new readerClass(reader);
+      var r = new readerClass({
+        path: _this.path,
+        parsers: parsers
+      });
 
       // execute the query with this reader
       r.read(query).then(function() {
@@ -295,10 +289,7 @@ var DataModel = Model.extend({
       language: this.getClosestModel('language').id,
     };
 
-    var reader = this.getPlainObject();
-    reader.parsers = [];
-
-    var promise = this.load(query, reader);
+    var promise = this.load(query);
     return new Promise(function(resolve, reject) {
       promise.then(function(dataId) {
 
@@ -877,11 +868,10 @@ var DataModel = Model.extend({
   /**
    * checks whether this combination is cached or not
    */
-  isCached: function(query, reader) {
+  isCached: function(query) {
     //encode in hashCode
     var q = utils.hashCode([
-      query,
-      reader
+      query
     ]);
     //simply check if we have this in internal data
     if(Object.keys(this._collection).indexOf(q) !== -1) {

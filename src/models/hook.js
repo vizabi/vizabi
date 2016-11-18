@@ -71,9 +71,6 @@ var Hook = DataConnected.extend({
     this._spaceDims = {};
     this.setReady(false);
 
-    //get reader info
-    var reader = this.dataSource.getPlainObject();
-    reader.parsers = this._getAllParsers();
 
     var _this = this;
     var evts = {
@@ -87,7 +84,8 @@ var Hook = DataConnected.extend({
 
     utils.timeStamp('Vizabi Model: Loading Data: ' + this._id);
 
-    var dataPromise = this.dataSource.load(query, reader, evts);
+    var parsers = this._getAllParsers();
+    var dataPromise = this.dataSource.load(query, parsers, evts);
 
     dataPromise.then(
       this.afterLoad.bind(this),
