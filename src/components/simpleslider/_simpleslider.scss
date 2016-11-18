@@ -20,12 +20,13 @@
     &::before {
       background-color: rgba($vzb-color-grey, .2);
     }
-    .vzb-ss-slider {
+    .vzb-ss-slider-normal, 
+    .vzb-ss-slider-small {
       opacity: .5;
     }
   }
 
-  .vzb-ss-slider {
+  .vzb-ss-slider-normal {
     position: absolute;
     top: 50%;
     margin-top: -10px;
@@ -73,7 +74,7 @@
   }
 
   .vzb-ss-slider-small {
-    @extend .vzb-ss-slider;
+    @extend .vzb-ss-slider-normal;
     &::-webkit-slider-thumb {
       width: 15px;
       height: 15px;

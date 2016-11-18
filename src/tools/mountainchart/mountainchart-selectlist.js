@@ -55,7 +55,7 @@ var MCSelectList = Class.extend({
             d3.event.stopPropagation();
           })
           .onTap(function (d, i) {
-            d3.select("#" + d.geo + "-label").remove();
+            d3.select("#" + d.geo + "-label-" + _this._id).remove();
             _this.model.entities.clearHighlighted();
             _this.model.entities.selectEntity(d);
           });
@@ -123,7 +123,7 @@ var MCSelectList = Class.extend({
       })
       .each(function (d, i) {
 
-        var view = d3.select(this).attr("id", d.geo + '-label');
+        var view = d3.select(this).attr("id", d.geo + '-label-' + _this._id);
         var name = "";
         if(d.key){
           name = d.key === "all"? _this.translator("mount/merging/world") : groupLabels[d.key];

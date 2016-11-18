@@ -180,7 +180,7 @@ var PopByAge = Component.extend({
     this.entityBars.enter().append("g")
       .attr("class", "vzb-bc-bar")
       .attr("id", function(d) {
-        return "vzb-bc-bar-" + d[ageDim];
+        return "vzb-bc-bar-" + d[ageDim] + "-" + _this._id;
       })
       .on("mouseover", highlight)
       .on("mouseout", unhighlight)
@@ -197,7 +197,7 @@ var PopByAge = Component.extend({
     this.entityLabels.enter().append("g")
       .attr("class", "vzb-bc-label")
       .attr("id", function(d) {
-        return "vzb-bc-label-" + d[ageDim];
+        return "vzb-bc-label-" + d[ageDim] + "-" + _this._id;
       })
       .append('text')
       .attr("class", "vzb-bc-age");
@@ -291,9 +291,9 @@ var PopByAge = Component.extend({
     if(utils.isTouchDevice()) return;
 
     this.bars.classed('vzb-dimmed', true);
-    var curr = this.bars.select("#vzb-bc-bar-" + d[this.AGEDIM]);
+    var curr = this.bars.select("#vzb-bc-bar-" + d[this.AGEDIM] + "-" + this._id);
     curr.classed('vzb-hovered', true);
-    var label = this.labels.select("#vzb-bc-label-" + d[this.AGEDIM]);
+    var label = this.labels.select("#vzb-bc-label-" + d[this.AGEDIM] + "-" + this._id);
     label.classed('vzb-hovered', true);
   },
 
@@ -310,8 +310,8 @@ var PopByAge = Component.extend({
     if(selected.length) {
       this.bars.classed('vzb-dimmed-selected', true);
       utils.forEach(selected, function(s) {
-        _this.bars.select("#vzb-bc-bar-" + s[AGEDIM]).classed('vzb-selected', true);
-        _this.labels.select("#vzb-bc-label-" + s[AGEDIM]).classed('vzb-selected', true);
+        _this.bars.select("#vzb-bc-bar-" + s[AGEDIM] + "-" + _this._id).classed('vzb-selected', true);
+        _this.labels.select("#vzb-bc-label-" + s[AGEDIM] + "-" + _this._id).classed('vzb-selected', true);
       });
     }
   },

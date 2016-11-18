@@ -643,7 +643,7 @@ var AgePyramid = Component.extend({
     this.entityLabels.enter().append("g")
       .attr("class", "vzb-bc-label")
       .attr("id", function(d) {
-        return "vzb-bc-label-" + d[shiftedAgeDim];
+        return "vzb-bc-label-" + d[shiftedAgeDim] + "-" + _this._id;
       })
       .append('text')
       .attr("class", "vzb-bc-age");
@@ -725,7 +725,7 @@ var AgePyramid = Component.extend({
         //_this.bars.select("#vzb-bc-bar-" + d[this.AGEDIM]);
         curr.classed('vzb-hovered', true);
         var left = _this.sideKeys.indexOf(d[sideDim]);
-        var label = _this.labels.select("#vzb-bc-label-" + d[shiftedAgeDim]);
+        var label = _this.labels.select("#vzb-bc-label-" + d[shiftedAgeDim] + "-" + _this._id);
         label.selectAll('.vzb-bc-age')
           .text(function(textData) {
             //var total = _this.ui.chart.inpercent ? _this.totalValues[d[sideDim]] : 1;
@@ -762,7 +762,7 @@ var AgePyramid = Component.extend({
         var indexStack = _this.stacked ? _this.stackKeys.indexOf(d[stackDim]) : 0;
         var side = _this.twoSided != !indexSide ? "left": "right";
         _this.bars.selectAll(".vzb-bc-bar-" + d[ageDim]).selectAll(".vzb-bc-side-" + side).selectAll(".vzb-bc-stack-" + indexStack).classed('vzb-selected', true);
-        //_this.labels.select("#vzb-bc-label-" + d[ageDim]).classed('vzb-selected', true);
+        //_this.labels.select("#vzb-bc-label-" + d[ageDim] + "-" + _this._id).classed('vzb-selected', true);
       });
     }
   },
