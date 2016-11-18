@@ -133,7 +133,7 @@ var label = function(context) {
             _this.showCloseCross(null, false);
           }
           cross.classed("vzb-transparent", !hidden);
-          if(!OPTIONS.SUPPRESS_HIGHLIGHT_DURING_PLAY || !_this.model.time.playing) {
+          if(!_this.options.SUPPRESS_HIGHLIGHT_DURING_PLAY || !_this.model.time.playing) {
             if(hidden) {
               _this.model.entities.setHighlight(d);
             } else {
@@ -356,7 +356,8 @@ var Labels = Class.extend({
   init: function(context, conditions) {
     var _this = this;
     this.context = context;
-
+  
+    this.options = utils.extend({}, OPTIONS);
     this.label = label(this);
     this._xScale = null;
     this._yScale = null;
@@ -401,19 +402,18 @@ var Labels = Class.extend({
 
     this.cached = {};
 
-    this._cssPrefix = OPTIONS.CSS_PREFIX;
-    this.label.setCssPrefix(OPTIONS.CSS_PREFIX);
+    this.label.setCssPrefix(this.options.CSS_PREFIX);
 
     this.rootEl = this.context.root.element instanceof Array? this.context.root.element : d3.select(this.context.root.element);
-    this.labelsContainer = this.rootEl.select("." + OPTIONS.LABELS_CONTAINER_CLASS);
-    this.linesContainer = this.rootEl.select("." + OPTIONS.LINES_CONTAINER_CLASS);
+    this.labelsContainer = this.rootEl.select("." + this.options.LABELS_CONTAINER_CLASS);
+    this.linesContainer = this.rootEl.select("." + this.options.LINES_CONTAINER_CLASS);
     this.updateIndicators();
     this.updateSize();
     this.selectDataPoints();
   },
 
   config: function(newOptions) {
-    utils.extend(OPTIONS, newOptions);
+    utils.extend(this.options, newOptions);
   },
 
   updateLabelSizeLimits: function() {
@@ -462,7 +462,7 @@ var Labels = Class.extend({
   setCloseCrossHeight: function(closeCrossHeight) {
     if(this._closeCrossHeight != closeCrossHeight) {
       this._closeCrossHeight = closeCrossHeight;
-      this.updateLabelCloseGroupSize(this.entityLabels.selectAll("." + this._cssPrefix + "-label-x"), this._closeCrossHeight);
+      this.updateLabelCloseGroupSize(this.entityLabels.selectAll("." + this.options.CSS_PREFIX + "-label-x"), this._closeCrossHeight);
     }
   },
 
@@ -477,7 +477,7 @@ var Labels = Class.extend({
   selectDataPoints: function() {
     var _this = this;
     var KEY = this.KEY;
-    var _cssPrefix = this._cssPrefix;
+    var _cssPrefix = this.options.CSS_PREFIX;
 
     this.entityLabels = this.labelsContainer.selectAll("." + _cssPrefix + "-entity")
       .data(_this.model.entities.select, function(d) {
@@ -499,7 +499,7 @@ var Labels = Class.extend({
       .remove();
     this.entityLines
       .enter().insert('g', function(d) {
-        return this.querySelector("." + OPTIONS.LINES_CONTAINER_SELECTOR_PREFIX + d[KEY]);
+        return this.querySelector("." + _this.options.LINES_CONTAINER_SELECTOR_PREFIX + d[KEY]);
       })
       .attr("class", function(d, index){return _cssPrefix + "-entity entity-line line-" + d[KEY]})
       .each(function(d, index) {
@@ -520,7 +520,7 @@ var Labels = Class.extend({
     //show the little cross on the selected label
     this.entityLabels
         .filter(function(f){return d ? f[KEY] == d[KEY] : true;})
-        .select("." + this._cssPrefix + "-label-x")
+        .select("." + this.options.CSS_PREFIX + "-label-x")
         .classed("vzb-transparent", !show);
   },
 
@@ -541,8 +541,8 @@ var Labels = Class.extend({
     if(d[KEY] == _this.druging)
       return;
 
-    var _cssPrefix = OPTIONS.CSS_PREFIX;
-    var _context = OPTIONS.TOOL_CONTEXT;
+    var _cssPrefix = this.options.CSS_PREFIX;
+    var _context = this.options.TOOL_CONTEXT;
 
     // only for selected entities
     if(_this.model.entities.isSelected(d) && _this.entityLabels != null) {
@@ -603,8 +603,8 @@ var Labels = Class.extend({
     var cached = _this.cached[d[KEY]];
 
 
-    var _cssPrefix = OPTIONS.CSS_PREFIX;
-    var _context = OPTIONS.TOOL_CONTEXT;
+    var _cssPrefix = this.options.CSS_PREFIX;
+    var _context = this.options.TOOL_CONTEXT;
 
 
     var labels = _this.model.ui.chart.labels || {};
