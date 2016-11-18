@@ -62,8 +62,6 @@ function download(){
 }
 
 document.getElementById("vzbp-btn-play").onclick = play;
-document.getElementById("vzbp-btn-lang").onclick = function() {
-  language('se')
-};
+document.getElementById("vzbp-btn-lang").onchange = function() {language(this.value)};
 document.getElementById("vzbp-btn-record").onclick = recstart;
 document.getElementById("vzbp-btn-download").onclick = download; 
