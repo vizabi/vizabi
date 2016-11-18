@@ -44,6 +44,12 @@ var Hook = DataConnected.extend({
     });
   },
 
+  preloadData: function() {
+    var dataModel = (this.data) ? this.data : 'data';
+    this.dataSource = this.getClosestModel(dataModel);
+    return this._super();
+  },
+
   /**
    * Hooks loads data, models ask children to load data
    * Basically, this method:
@@ -53,9 +59,7 @@ var Hook = DataConnected.extend({
    * @returns defer
    */
   loadData: function(opts) {
-    
-    var dataModel = (this.data) ? this.data : 'data';
-    this.dataSource = this.getClosestModel(dataModel);
+
 
     if(!this.which) return Promise.resolve();
 

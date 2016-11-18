@@ -40,9 +40,9 @@ var DataModel = Model.extend({
    * Loads concept properties when all other models are also starting to load data
    * @return {Promise} Promise which resolves when concepts are loaded
    */
-  //loadData: function() {
-  //  return Promise.resolve(); //return this.loadConceptProps();
-  //},
+  preloadData: function() {
+    return this.loadConceptProps();
+  },
 
   /**
    * Loads resource from reader or cache
@@ -290,6 +290,7 @@ var DataModel = Model.extend({
     };
 
     var promise = this.load(query);
+
     return new Promise(function(resolve, reject) {
       promise.then(function(dataId) {
 
@@ -344,8 +345,6 @@ var DataModel = Model.extend({
       });
     });
 
-
-    return promise;
   },
 
   getConceptprops: function(which){

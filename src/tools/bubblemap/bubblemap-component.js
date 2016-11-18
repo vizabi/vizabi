@@ -9,6 +9,7 @@ import {
 import topojson from 'helpers/topojson';
 import d3_geo_projection from 'helpers/d3.geo.projection';
 import DynamicBackground from 'helpers/d3.dynamicBackground';
+import globals from 'base/globals';
 
 //import Selectlist from 'bubblemap-selectlist';
 
@@ -995,6 +996,20 @@ var BubbleMapComponent = Component.extend({
 
       this.tooltip.classed("vzb-hidden", true);
     }
+  },
+
+  preload: function() {
+    var _this = this;
+    var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
+        globals.ext_resources.host + globals.ext_resources.preloadPath + "world-50m.json";
+
+    return new Promise(function(resolve, reject) {
+      d3.json(shape_path, function(error, json) {
+        if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
+        _this.world = json;
+        resolve();
+      });
+    });
   }
 
 });

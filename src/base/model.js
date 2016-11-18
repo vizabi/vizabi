@@ -410,6 +410,22 @@ var Model = EventSource.extend({
     }
   },
 
+  startPreload: function() {
+    
+    var promises = [];
+    promises.push(this.preloadData());
+
+    utils.forEach(this.getSubmodels(), 
+      subModel => promises.push(subModel.startPreload())
+    ); 
+
+    return Promise.all(promises);
+  },
+
+  preloadData: function() {
+    return Promise.resolve();
+  },
+
   /**
    * loads data (if hook)
    * Hooks loads data, models ask children to load data

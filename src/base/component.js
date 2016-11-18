@@ -67,10 +67,23 @@ var Component = Events.extend({
   },
 
   /**
-   * Preloads data before anything else
+   * Recursively starts preloading in components
+   * @return {[type]} [description]
    */
-  preload: function(promise) {
-    promise.resolve(); //by default, load nothing
+  startPreload: function() {
+    
+    var promises = [];
+    promises.push(this.preload());
+
+    utils.forEach(this.components, 
+      subComponent => promises.push(subComponent.startPreload())
+    ); 
+
+    return Promise.all(promises);
+  },
+
+  preload: function() {
+    return Promise.resolve();
   },
 
   /**
@@ -80,6 +93,9 @@ var Component = Events.extend({
     if(this.model) {
       this.model.afterPreload();
     }
+    utils.forEach(this.components, function(subcomp) {
+      subcomp.afterPreload();
+    });
   },
 
   /**

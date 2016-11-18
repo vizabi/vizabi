@@ -186,14 +186,15 @@ var Tool = Component.extend({
     var promise = new Promise();
     var _this = this;
 
-    this.preload(promise);
-    var promises = []; //holds all promises
-    utils.forEach(this.components, function(subcomp) {
-      promises.push(preloader(subcomp, promise));
-    });
-    var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
-    wait.then(function() {
+
+    var preloadPromises = []; //holds all promises
+
+    preloadPromises.push(this.model.startPreload());
+    preloadPromises.push(this.startPreload());
+
+    Promise.all(preloadPromises).then(function() {
       _this.afterPreload();
+      
       var timeMdl = _this.model.state.time;
       if(splashScreen) {
 
@@ -375,43 +376,8 @@ var Tool = Component.extend({
     } else {
       utils.removeClass(this.element, class_buttons_off);
     }
-  },
-
-  preload: function(promise) {
-    this.model.data.loadConceptProps().then(function() {
-      promise.resolve();
-    })
   }
 
 });
-
-
-/**
- * Preloader implementation with promises
- * @param {Object} comp any component
- * @param {Object} rootPromise promise fot tool preloader
- * @returns {Promise}
- */
-function preloader(comp, rootPromise) {
-  var promise = new Promise();
-  var promises = []; //holds all promises
-
-  //preload all subcomponents first
-  utils.forEach(comp.components, function(subcomp) {
-    promises.push(preloader(subcomp, rootPromise));
-  });
-
-  var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
-  wait.then(function() {
-    comp.preload(promise);
-  }, function(err) {
-    utils.error("Error preloading data:", err);
-  });
-
-  return Promise.all([promise, rootPromise]).then(function() {
-    comp.afterPreload();
-    return true;
-  });
-}
 
 export default Tool;
