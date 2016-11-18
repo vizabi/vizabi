@@ -65,8 +65,8 @@ var Find = Dialog.extend({
     this._super();
 
     this.list = this.element.select(".vzb-find-list");
-    this.input_search = this.element.select("#vzb-find-search");
-    this.deselect_all = this.element.select("#vzb-find-deselect");
+    this.input_search = this.element.select(".vzb-find-search");
+    this.deselect_all = this.element.select(".vzb-find-deselect");
     this.opacity_nonselected = this.element.select(".vzb-dialog-bubbleopacity");
 
     this.KEY = this.model.state.entities.getDimension();
@@ -156,7 +156,7 @@ var Find = Dialog.extend({
         .attr("type", "checkbox")
         .attr("class", "vzb-find-item")
         .attr("id", function(d) {
-          return "-find-" + d[KEY];
+          return "-find-" + d[KEY] + "-" + _this._id;
         })
         .on("change", function(d) {
           //clear highlight so it doesn't get in the way when selecting an entity
@@ -168,7 +168,7 @@ var Find = Dialog.extend({
 
       _this.items.append("label")
         .attr("for", function(d) {
-          return "-find-" + d[KEY];
+          return "-find-" + d[KEY] + "-" + _this._id;
         })
         .text(function(d){return d.name})
         .on("mouseover", function(d) {

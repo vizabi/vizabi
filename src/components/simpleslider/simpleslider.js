@@ -9,7 +9,7 @@ import * as utils from 'base/utils';
 var SimpleSlider = Component.extend({
 
     init: function (config, context) {
-      this.template = '<div class="vzb-ss-holder"><input type="range" id="vzb-ss-slider" class="vzb-ss-slider" step="1"></div>';
+      this.template = '<div class="vzb-ss-holder"><input type="range" class="vzb-ss-slider vzb-ss-slider-normal" step="1"></div>';
 
       this.model_expects = [{
         name: "submodel"
@@ -49,7 +49,7 @@ var SimpleSlider = Component.extend({
       //selecting elements
       var _this = this;
       this.element = d3.select(this.element);
-      this.slider = this.element.selectAll('#vzb-ss-slider');
+      this.slider = this.element.selectAll('.vzb-ss-slider');
 
       this.elementSize = this.element.node().getBoundingClientRect();
       this.sliderSize = this.slider.node().getBoundingClientRect();
@@ -71,7 +71,7 @@ var SimpleSlider = Component.extend({
 
       //check and change the slider's thumb size
       if(this.thumb_size){
-        this.slider.classed('vzb-ss-slider', false);
+        this.slider.classed('vzb-ss-slider-normal', false);
         this.slider.classed('vzb-ss-slider-'+this.thumb_size, true);
       }
 

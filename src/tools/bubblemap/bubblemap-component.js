@@ -148,16 +148,16 @@ var BubbleMapComponent = Component.extend({
     /* // no latlng line
     svg.append("defs").append("path")
         .datum({type: "Sphere"})
-        .attr("id", "sphere")
+        .attr("id", "sphere-" + this._id)
         .attr("d", path);
 
     svg.append("use")
         .attr("class", "stroke")
-        .attr("xlink:href", "#sphere");
+        .attr("xlink:href", "#sphere-" + this._id);
 
     svg.append("use")
         .attr("class", "fill")
-        .attr("xlink:href", "#sphere");
+        .attr("xlink:href", "#sphere-" + this._id);
 
     svg.append("path")
         .datum(graticule)

@@ -309,7 +309,7 @@ var BarRankChart = Component.extend({
     var newGroups = updatedBars.enter().append("g")
         .attr("class", 'vzb-br-bar')
         .attr("id", function(d) {
-          return "vzb-br-bar-" + d.entity;
+          return "vzb-br-bar-" + d.entity + "-" + _this._id;
         })
         .on("mousemove", function(bar) { _this.setHover(bar, true)  })
         .on("mouseout",  function(bar) { _this.setHover(bar, false) })
@@ -418,7 +418,7 @@ var BarRankChart = Component.extend({
    */
   setHover: function(bar, hover) {
     this.barContainer.classed('vzb-dimmed', hover);
-    this.barContainer.select("#vzb-br-bar-" + bar.entity).classed('vzb-hovered', hover);
+    this.barContainer.select("#vzb-br-bar-" + bar.entity + "-" + this._id).classed('vzb-hovered', hover);
   },
 
   /**
@@ -437,7 +437,7 @@ var BarRankChart = Component.extend({
     if(selected.length) {
       this.barContainer.classed('vzb-dimmed-selected', true);
       utils.forEach(selected, function(selectedBar) {
-        _this.barContainer.select("#vzb-br-bar-" + selectedBar[entityDim]).classed('vzb-selected', true);
+        _this.barContainer.select("#vzb-br-bar-" + selectedBar[entityDim] + "-" + _this._id).classed('vzb-selected', true);
       });
     }
 
