@@ -28,7 +28,7 @@ var LanguageModel = DataConnected.extend({
     this._super(name, values, parent, bind);
   },
 
-  load: function() {
+  startLoading: function() {
     var _this, promise;
 
     promise = this._super()
