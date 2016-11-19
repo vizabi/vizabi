@@ -28,19 +28,6 @@ var LanguageModel = DataConnected.extend({
     this._super(name, values, parent, bind);
   },
 
-  startLoading: function() {
-    var _this, promise;
-
-    promise = this._super()
-
-    _this = this;
-    promise.then(function() {
-      _this.trigger('translate');
-    });
-
-    return promise;
-  },
-
   _isLoading: function() {
     return (!this._loadedOnce || this._loadCall);
   },
@@ -66,6 +53,10 @@ var LanguageModel = DataConnected.extend({
       }
 
     });
+
+    promise.then(
+      () => this.trigger('translate')
+    );
 
     return promise;
   },
