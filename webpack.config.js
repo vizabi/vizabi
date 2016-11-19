@@ -56,6 +56,10 @@ const plugins = [
     {
       from: 'preview/assets/js/',
       to: 'preview/assets/js/'
+    },
+    {
+      from: 'src/assets/translation/',
+      to: __PROD__ ? 'dist/assets/translation/':'preview/assets/translation/'
     }
   ]),
   new OpenBrowserPlugin({
@@ -236,15 +240,15 @@ module.exports = {
         query: {
           interpolate: 'require'
         }
-      },
-      {
-        test: /\.json$/, //__PROD__ ? /en\.json$/ : /\.json$/,
-        include: [path.resolve(__dirname, 'src', 'assets', 'translation')],
-        loader: 'file-loader',
-        query: {
-          name: `${__PROD__ ? 'dist' : 'preview'}/assets/translation/[name].[ext]`
-        }
       }
+//      {
+//        test: /\.json$/, //__PROD__ ? /en\.json$/ : /\.json$/,
+//        include: [path.resolve(__dirname, 'src', 'assets', 'translation')],
+//        loader: 'file-loader',
+//        query: {
+//          name: __PROD__ ? 'dist/assets/translation/[name].[ext]': 'preview/assets/translation/[name].[ext]'
+//        }
+//      }
     ]
   },
 
