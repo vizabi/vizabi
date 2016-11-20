@@ -1,7 +1,8 @@
 import * as utils from 'base/utils';
 import Model from 'base/model';
-import Promise from 'base/promise';
+import Promise2 from 'base/promise';
 import Reader from 'base/reader';
+const Promise = require('bluebird');
 
 /*
  * VIZABI Data Model (model.data)
@@ -28,6 +29,7 @@ var DataModel = Model.extend({
 
     this._type = "data";
 
+    this.queryQueue = {};
     this._collection = {};
     this._collectionPromises = {};// stores promises, making sure we don't do one calulation twice
 
@@ -52,42 +54,44 @@ var DataModel = Model.extend({
    */
   load: function(query, parsers = {}, evts) {
     var _this = this;
-    var promise = new Promise();
-    var wait = new Promise().resolve();
-    var cached = query === true ? true : this.isCached(query);
-    var loaded = false;
-    //if result is cached, dont load anything
-    if(!cached) {
-      utils.timeStamp('Vizabi Data: Loading Data');
-      if(evts && typeof evts.load_start === 'function') {
-        evts.load_start();
+
+    return new Promise(function(resolve, reject) {
+      var wait = Promise.resolve();
+      var cached = query === true ? true : _this.isCached(query);
+      var loaded = false;
+      //if result is cached, dont load anything
+      if(!cached) {
+        utils.timeStamp('Vizabi Data: Loading Data');
+        if(evts && typeof evts.load_start === 'function') {
+          evts.load_start();
+        }
+        wait = new Promise(function(res, rej) {
+          _this.loadFromReader(query, parsers).then(function(queryId) {
+            loaded = true;
+            cached = queryId;
+            res();
+          }, function(err) {
+            utils.warn(err);
+            rej();
+          });
+        });
       }
-      wait = new Promise();
-      this.loadFromReader(query, parsers).then(function(queryId) {
-        loaded = true;
-        cached = queryId;
-        wait.resolve();
-      }, function(err) {
-        utils.warn(err);
-        wait.reject();
+      wait.then(function() {
+        //pass the data forward
+        var data = _this._collection[cached].data;
+        //not loading anymore
+        if(loaded && evts && typeof evts.load_end === 'function') {
+          evts.load_end();
+        }
+        resolve(cached);
+      }, function() {
+        //not loading anymore
+        if(loaded && evts && typeof evts.load_end === 'function') {
+          evts.load_end();
+        }
+        reject();
       });
-    }
-    wait.then(function() {
-      //pass the data forward
-      var data = _this._collection[cached].data;
-      //not loading anymore
-      if(loaded && evts && typeof evts.load_end === 'function') {
-        evts.load_end();
-      }
-      promise.resolve(cached);
-    }, function() {
-      //not loading anymore
-      if(loaded && evts && typeof evts.load_end === 'function') {
-        evts.load_end();
-      }
-      promise.reject();
     });
-    return promise;
   },
 
   /**
@@ -97,137 +101,100 @@ var DataModel = Model.extend({
    */
   loadFromReader: function(query, parsers) {
     var _this = this;
-    var promise = new Promise();
     var queryId = utils.hashCode([
-      query
+      query.select.key,
+      query.where,
+      query.join
     ]);
 
-    // joining multiple queries
-    // create a queue which this datamanager writes all queries to
-    this.queryQueue = this.queryQueue || [];
-    this.queryQueue.push({ query: query, queryId: queryId, promise: promise });
+    if (this.queryQueue[queryId]) {
+      Array.prototype.push.apply(this.queryQueue[queryId].query.select.value, query.select.value);
+      return this.queryQueue[queryId].promise;
+    }
 
-    // wait one execution round for the queue to fill up
-    utils.defer(function() {
-      // now the query queue is filled with all queries from one execution round
+    var promise = new Promise(function(resolve, reject) {
 
-      var mergedQueries = [];
-      var willExecute = false;
+      // wait one execution round for the queue to fill up
+      utils.defer(function() {
+        // now the query queue is filled with all queries from one execution round
 
-      // check every query in the queue
-      _this.queryQueue = _this.queryQueue.filter(function(queueItem) {
-        if (queueItem.query == query) {
-          // Query is still in the queue so this is the first deferred query with same requested rows (where & group) to reach here.
-          // This will be the base query which will be executed; It will be extended by other queries in the queue.
-          mergedQueries.push(queueItem);
-          willExecute = true;
+        // remove double columns from select (resulting from merging)
+        // no double columns in formatter because it's an object, extend would've overwritten doubles
+        query.select.value = utils.unique(query.select.value);
 
-          // remove so that other queries won't merge it
-          return false;
-        } else {
-          // check if the requested rows are similar
-          if (utils.comparePlainObjects(queueItem.query.where, query.where)
-           && utils.comparePlainObjects(queueItem.query.select.key, query.select.key)
-            ) {
-
-            // if so, merge the selects to the base query
-            Array.prototype.push.apply(query.select.value, queueItem.query.select.value);
-
-            // include query's promise to promises for base query
-            mergedQueries.push(queueItem);
-
-            // remove queueItem from queue as it's merged in the current query
-            return false;
-          }
+        // Create a new reader for this query
+        var readerClass = Reader.get(_this.reader);
+        if (!readerClass) {
+          throw new Error('Unknown reader: ' + _this.reader);
         }
-        // otherwise keep it in the queue, so it can be joined with another query
-        return true;
-      });
 
-      if (!willExecute) return;
+        var r = new readerClass({
+          path: _this.path,
+          parsers: parsers
+        });
 
-      // make the promise a collection of all promises of merged queries
-      // promise = promises.length ? Promise.all(promises) : new Promise.resolve();
+        // execute the query with this reader
+        r.read(query).then(function() {
 
-      // remove double columns from select (resulting from merging)
-      // no double columns in formatter because it's an object, extend would've overwritten doubles
-      query.select.value = utils.unique(query.select.value);
+            //success reading
+            var values = r.getData();
+            var q = query;
+            if (values.length == 0) utils.warn("Reader returned empty array for query:", JSON.stringify(q, null, 2))
 
-      // Create a new reader for this query
-      var readerClass = Reader.get(_this.reader);
-      if (!readerClass) {
-        throw new Error('Unknown reader: ' + _this.reader);
-      }
-      var r = new readerClass({
-        path: _this.path,
-        parsers: parsers
-      });
-
-      // execute the query with this reader
-      r.read(query).then(function() {
-
-          //success reading
-          var values = r.getData();
-          var q = query;
-          if(values.length == 0) utils.warn("Reader returned empty array for query:", JSON.stringify(q, null, 2))
-
-          if(values.length > 0) {
-            //search data for the entirely missing columns
-            var columnsMissing = (q.select.key||[]).concat(q.select.value||[]);
-            for(var i = values.length-1; i>=0; i--){
-              for(var c = columnsMissing.length-1; c>=0; c--){
-                //if found value for column c in row i then remove that column name from the list of missing columns
-                if(values[i][columnsMissing[c]] || values[i][columnsMissing[c]]===0) columnsMissing.splice(c,1);
+            if (values.length > 0) {
+              //search data for the entirely missing columns
+              var columnsMissing = (q.select.key||[]).concat(q.select.value||[]);
+              for (var i = values.length-1; i>=0; i--){
+                for (var c = columnsMissing.length-1; c>=0; c--){
+                  //if found value for column c in row i then remove that column name from the list of missing columns
+                  if (values[i][columnsMissing[c]] || values[i][columnsMissing[c]]===0) columnsMissing.splice(c,1);
+                }
+                //all columns were found to have value in at least one of the rows then stop iterating
+                if (!columnsMissing.length) break;
               }
-              //all columns were found to have value in at least one of the rows then stop iterating
-              if(!columnsMissing.length) break;
+              columnsMissing.forEach(function(d) {
+                if (q.select.key.indexOf(d)==-1){
+                  utils.warn('Reader result: Column "' + d + '" is missing from "' + q.from + '" data, but it might be ok');
+                } else {
+                  utils.error('Reader result: Key column "' + d + '" is missing from "' + q.from + '" data for query:', JSON.stringify(q));
+                  console.log(values);
+                }
+              });
             }
-            columnsMissing.forEach(function(d){
-              if(q.select.key.indexOf(d)==-1){
-                utils.warn('Reader result: Column "' + d + '" is missing from "' + q.from + '" data, but it might be ok');
-              }else{
-                utils.error('Reader result: Key column "' + d + '" is missing from "' + q.from + '" data for query:', JSON.stringify(q));
-                console.log(values);
-              }
-            });
+
+            _this._collection[queryId] = {};
+            _this._collectionPromises[queryId] = {};
+            var col = _this._collection[queryId];
+            col.data = values;
+            col.valid = {};
+            col.nested = {};
+            col.unique = {};
+            col.limits = {};
+            col.frames = {};
+            col.haveNoDataPointsPerKey = {};
+            col.query = q;
+            // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
+
+            resolve(queryId);
+            _this.queryQueue[queryId] = null;
+
+          }, //error reading
+          function(err) {
+            reject(err);
+            _this.queryQueue[queryId] = null;
           }
+        );
 
-          _this._collection[queryId] = {};
-          _this._collectionPromises[queryId] = {};
-          var col = _this._collection[queryId];
-          col.data = values;
-          col.valid = {};
-          col.nested = {};
-          col.unique = {};
-          col.limits = {};
-          col.frames = {};
-          col.haveNoDataPointsPerKey = {};
-          col.query = q;
-          // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
+      });
+    });
 
-          // returning the query-id/values of the merged query without splitting the result up again per query
-          // this is okay because the collection-object above will only be passed by reference to the cache and this will not take up more memory.
-          // On the contrary: it uses less because there is no need to duplicate the key-columns.
-          utils.forEach(mergedQueries, function(mergedQuery) {
-            // set the cache-location for each seperate query to the combined query's cache
-            _this._collection[mergedQuery.queryId] = _this._collection[queryId];
-            _this._collectionPromises[mergedQuery.queryId] = _this._collectionPromises[queryId];
-            // resolve the query
-            mergedQuery.promise.resolve(mergedQuery.queryId);
-          });
 
-          //promise.resolve(queryId);
-        }, //error reading
-        function(err) {
-          utils.forEach(mergedQueries, function(mergedQuery) {
-            mergedQuery.promise.reject(err);
-          });
-        }
-      );
+    this.queryQueue[queryId] = {
+      query: query,
+      promise: promise
+    };
 
-    })
-
-    return promise;
+    return this.queryQueue[queryId].promise;
   },
 
   /**
@@ -470,14 +437,14 @@ var DataModel = Model.extend({
       this.key = 0;
       this.mute = function() {
         this.isActive = false;
-        if (!(this.deferredPromise instanceof Promise && this.deferredPromise.status == "pending")) {
-          this.deferredPromise = new Promise();
+        if (!(this.deferredPromise instanceof Promise2 && this.deferredPromise.status == "pending")) {
+          this.deferredPromise = new Promise2();
         }
       };
 
       this.unMute = function() {
         this.isActive = true;
-        if (this.deferredPromise instanceof Promise) {
+        if (this.deferredPromise instanceof Promise2) {
           this.deferredPromise.resolve();
         }
         this.deferredPromise = null;
@@ -499,8 +466,8 @@ var DataModel = Model.extend({
         }
       };
       this._waitingForActivation = function() {
-        if (!this.deferredPromise instanceof Promise) {
-          this.deferredPromise = new Promise();
+        if (!this.deferredPromise instanceof Promise2) {
+          this.deferredPromise = new Promise2();
         }
         if (this.isActive) {
           this.deferredPromise.resolve();
@@ -531,15 +498,17 @@ var DataModel = Model.extend({
 
       // returns the next frame in a queue
       this.getNext = function() {
-        var defer = new Promise();
-        this.checkForcedFrames();
-        if (this.isActive) {
-          defer.resolve(this._getNextFrameName());
-        } else {
-          this._waitingForActivation().then(function() {
-            defer.resolve(queue._getNextFrameName());
-          });
-        }
+        var _this = this;
+        var defer = new Promise(function(resolve, reject) {
+          _this.checkForcedFrames();
+          if (_this.isActive) {
+            resolve(_this._getNextFrameName());
+          } else {
+            _this._waitingForActivation().then(function() {
+              resolve(_this._getNextFrameName());
+            });
+          }
+        });
         return defer;
       };
 
@@ -870,7 +839,9 @@ var DataModel = Model.extend({
   isCached: function(query) {
     //encode in hashCode
     var q = utils.hashCode([
-      query
+      query.select.key,
+      query.where,
+      query.join
     ]);
     //simply check if we have this in internal data
     if(Object.keys(this._collection).indexOf(q) !== -1) {
