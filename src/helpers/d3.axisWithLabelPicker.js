@@ -149,22 +149,26 @@ export default function axisSmart() {
         .select("text")
         .text(options.formatter(highlightValue == "none" ? 0 : highlightValue));
       
-      // measure its width and height for collision resolving
-      var bbox = g.select('.vzb-axis-value').node().getBBox();
-      
-      // clone a known options object (because we don't want to overwrite widthOfOneDigit / heightOfOneDigit in the original one
+      var bbox;
       var o = {};
-      o.bump = options.bump;
-      o.formatter = options.formatter;
-      o.viewportLength = options.viewportLength;
-      o.toolMargin = options.toolMargin;
-      o.cssMargin = options.cssMargin;
-      o.widthOfOneDigit = bbox[axis.pivot()?"height":"width"]/(options.formatter(highlightValue).length);
-      o.heightOfOneDigit = bbox[axis.pivot()?"width":"height"];
+
+      if(highlightValue != "none") {
+        // measure its width and height for collision resolving
+        bbox = g.select('.vzb-axis-value').node().getBBox();
+        
+        // clone a known options object (because we don't want to overwrite widthOfOneDigit / heightOfOneDigit in the original one
+        o.bump = options.bump;
+        o.formatter = options.formatter;
+        o.viewportLength = options.viewportLength;
+        o.toolMargin = options.toolMargin;
+        o.cssMargin = options.cssMargin;
+        o.widthOfOneDigit = bbox[axis.pivot()?"height":"width"]/(options.formatter(highlightValue).length);
+        o.heightOfOneDigit = bbox[axis.pivot()?"width":"height"];
+      }
 
       // this will give additive shifting for the hovered value in case it sticks out a little outside viewport
-      var hlValueShift = highlightValue == "none" ? {x:0, y:0} :
-          repositionLabelsThatStickOut([highlightValue], o, orient, axis.scale(), dimension)[highlightValue][dimension];
+      var hlValueShift = (highlightValue == "none" ? {x:0, y:0} :
+          repositionLabelsThatStickOut([highlightValue], o, orient, axis.scale(), dimension)[highlightValue])[dimension];
       
       // this function will help to move the hovered value to the right place
       var getTransform = function(d){
@@ -177,11 +181,13 @@ export default function axisSmart() {
       
       // this function will help to compute opacity for the axis labels that would overlap with the HL label
       var getOpacity = function(d, t, view){
+        if(highlightValue == "none") return 1;
+        
         var wh = orient==HORIZONTAL? "width" : "height";
         var shift = (axis.repositionLabels()[d] || {x: 0, y: 0})[dimension];
         
         // opacity depends on the collision between label's boundary boxes
-        return highlightValue == "none" ? 1 : axis.hlOpacityScale()(
+        return axis.hlOpacityScale()(
           // this computes the distance between the box centers, this is a 1-d problem because all labels are along the axis
           // shifts of labels that stick out from the viewport are also taken into account
           Math.abs(axis.scale()(d) + shift * pivot - axis.scale()(highlightValue) -  hlValueShift * pivot) 
@@ -198,7 +204,7 @@ export default function axisSmart() {
           .ease("linear")
           .attr("transform", getTransform);
         
-        g.selectAll(".tick").each(function(d, t) {
+        g.selectAll(".tick:not(.vzb-hidden)").each(function(d, t) {
           d3.select(this).select("text")
             .transition()
             .duration(highlightTransDuration)
@@ -212,7 +218,7 @@ export default function axisSmart() {
           .attr("transform", getTransform)
           .transition();
           
-        g.selectAll(".tick").each(function(d, t) {
+        g.selectAll(".tick:not(.vzb-hidden)").each(function(d, t) {
           d3.select(this).select("text")
             .interrupt()
             .style("opacity", getOpacity(d,t, this))
