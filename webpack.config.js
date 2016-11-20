@@ -59,10 +59,6 @@ const plugins = [
     },
     {
       from: 'src/assets/translation/',
-      to: 'dist/assets/translation/'
-    },
-    {
-      from: 'src/assets/translation/',
       to: 'preview/assets/translation/'
     }
   ]),
