@@ -77,19 +77,11 @@ var Hook = DataConnected.extend({
 
 
     var _this = this;
-    var evts = {
-      'load_start': function() {
-        EventSource.freezeAll([
-          'load_start',
-          'resize'
-        ]);
-      }
-    };
 
     utils.timeStamp('Vizabi Model: Loading Data: ' + this._id);
 
     var parsers = this._getAllParsers();
-    var dataPromise = this.dataSource.load(query, parsers, evts);
+    var dataPromise = this.dataSource.load(query, parsers);
 
     dataPromise.then(
       this.afterLoad.bind(this),

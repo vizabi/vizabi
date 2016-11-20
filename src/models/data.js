@@ -2,6 +2,7 @@ import * as utils from 'base/utils';
 import Model from 'base/model';
 import Promise2 from 'base/promise';
 import Reader from 'base/reader';
+import EventSource from 'base/events';
 const Promise = require('bluebird');
 
 /*
@@ -52,46 +53,21 @@ var DataModel = Model.extend({
    * @param {Object} parsers An object with concepts as key and parsers as value
    * @param {*} evts ?
    */
-  load: function(query, parsers = {}, evts) {
-    var _this = this;
+  load: function(query, parsers = {}) {
 
-    return new Promise(function(resolve, reject) {
-      var wait = Promise.resolve();
-      var cached = query === true ? true : _this.isCached(query);
-      var loaded = false;
-      //if result is cached, dont load anything
-      if(!cached) {
-        utils.timeStamp('Vizabi Data: Loading Data');
-        if(evts && typeof evts.load_start === 'function') {
-          evts.load_start();
-        }
-        wait = new Promise(function(res, rej) {
-          _this.loadFromReader(query, parsers).then(function(queryId) {
-            loaded = true;
-            cached = queryId;
-            res();
-          }, function(err) {
-            utils.warn(err);
-            rej();
-          });
-        });
-      }
-      wait.then(function() {
-        //pass the data forward
-        var data = _this._collection[cached].data;
-        //not loading anymore
-        if(loaded && evts && typeof evts.load_end === 'function') {
-          evts.load_end();
-        }
-        resolve(cached);
-      }, function() {
-        //not loading anymore
-        if(loaded && evts && typeof evts.load_end === 'function') {
-          evts.load_end();
-        }
-        reject();
-      });
-    });
+    var cached = this.getQueryCacheId(query);
+
+    if (cached) {
+      return Promise.resolve(cached);
+    } else {
+      utils.timeStamp('Vizabi Data: Loading Data');
+      EventSource.freezeAll([
+        'load_start',
+        'resize'
+      ]);
+      return this.loadFromReader(query, parsers);
+    }
+
   },
 
   /**
@@ -111,72 +87,80 @@ var DataModel = Model.extend({
     ]);
 
     if (this.queryQueue[queryMergeId]) {
+      // add select to base query
       Array.prototype.push.apply(this.queryQueue[queryMergeId].query.select.value, query.select.value);
-      return this.queryQueue[queryMergeId].promise;
+    } else {
+
+      // set up base query
+      var promise = new Promise(function(resolve, reject) {
+
+        // wait one execution round for the queue to fill up
+        utils.defer(function() {
+          // now the query queue is filled with all queries from one execution round
+
+          // remove double columns from select (resulting from merging)
+          // no double columns in formatter because it's an object, extend would've overwritten doubles
+          query.select.value = utils.unique(query.select.value);
+
+          var reader = _this.getReader(parsers);
+
+          // execute the query with this reader
+          reader.read(query).then(function(response) {
+
+              //success reading
+              response = response || reader.getData();
+
+              _this.checkQueryResponse(query, response);
+
+              _this._collection[queryId] = {};
+              _this._collectionPromises[queryId] = {};
+              var col = _this._collection[queryId];
+              col.data = response;
+              col.valid = {};
+              col.nested = {};
+              col.unique = {};
+              col.limits = {};
+              col.frames = {};
+              col.haveNoDataPointsPerKey = {};
+              col.query = query;
+              // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
+
+              _this.queryQueue[queryMergeId] = null;
+              resolve(queryId);
+
+            }, //error reading
+            function(err) {
+              _this.queryQueue[queryMergeId] = null;
+              reject(err);
+            }
+          );
+
+        });
+      });
+
+
+      this.queryQueue[queryMergeId] = {
+        query: query,
+        promise: promise
+      };
+
     }
 
-    var promise = new Promise(function(resolve, reject) {
+    return this.queryQueue[queryMergeId].promise;
+  },
 
-      // wait one execution round for the queue to fill up
-      utils.defer(function() {
-        // now the query queue is filled with all queries from one execution round
+  getReader: function(parsers) {
+    // Create a new reader for this query
+    var readerClass = Reader.get(this.reader);
+    if (!readerClass) {
+      throw new Error('Unknown reader: ' + this.reader);
+    }
 
-        // remove double columns from select (resulting from merging)
-        // no double columns in formatter because it's an object, extend would've overwritten doubles
-        query.select.value = utils.unique(query.select.value);
-
-        // Create a new reader for this query
-        var readerClass = Reader.get(_this.reader);
-        if (!readerClass) {
-          throw new Error('Unknown reader: ' + _this.reader);
-        }
-
-        var reader = new readerClass({
-          path: _this.path,
-          parsers: parsers
-        });
-
-        // execute the query with this reader
-        reader.read(query).then(function(response) {
-
-            //success reading
-            response = response || reader.getData();
-
-            _this.checkQueryResponse(query, response);
-
-            _this._collection[queryId] = {};
-            _this._collectionPromises[queryId] = {};
-            var col = _this._collection[queryId];
-            col.data = response;
-            col.valid = {};
-            col.nested = {};
-            col.unique = {};
-            col.limits = {};
-            col.frames = {};
-            col.haveNoDataPointsPerKey = {};
-            col.query = query;
-            // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
-
-            resolve(queryId);
-            _this.queryQueue[queryMergeId] = null;
-
-          }, //error reading
-          function(err) {
-            reject(err);
-            _this.queryQueue[queryMergeId] = null;
-          }
-        );
-
-      });
+    return new readerClass({
+      path: this.path,
+      parsers: parsers
     });
 
-
-    this.queryQueue[queryMergeId] = {
-      query: query,
-      promise: promise
-    };
-
-    return this.queryQueue[queryMergeId].promise;
   },
 
   checkQueryResponse: function(query, response) {
@@ -263,60 +247,57 @@ var DataModel = Model.extend({
       language: this.getClosestModel('language').id,
     };
 
-    var promise = this.load(query);
-
-    return new Promise(function(resolve, reject) {
-      promise.then(function(dataId) {
-
-        _this.conceptPropsDataID = dataId;
-        _this.conceptDictionary = {_default: {concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root"}};
-        _this.getData(dataId).forEach(function(d){
-          var concept = {};
-          
-          concept["use"] = d.concept_type;
-          if(d.concept_type) concept["use"] = (d.concept_type=="measure" || d.concept_type=="time")?"indicator":"property";
-          
-          concept["concept_type"] = d.concept_type;
-          concept["sourceLink"] = d.indicator_url;
-          try {
-            concept["color"] = d.color ? JSON.parse(d.color) : null;
-          } catch (e) {
-            concept["color"] = null;
-          }
-          try {
-            concept["scales"] = d.scales ? JSON.parse(d.scales) : null;
-          } catch (e) {
-            concept["scales"] = null;
-          }
-          if(!concept.scales){
-            switch (d.concept_type){
-              case "measure": concept.scales=["linear", "log"]; break;
-              case "string": concept.scales=["nominal"]; break;
-              case "entity_domain": concept.scales=["ordinal"]; break;
-              case "entity_set": concept.scales=["ordinal"]; break;
-              case "time": concept.scales=["time"]; break;
-            }
-          }
-          if(concept["scales"]==null) concept["scales"] = ["ordinal", "linear", "log"];
-          if(d.interpolation){
-            concept["interpolation"] = d.interpolation;
-          }else{
-            if(concept.scales && concept.scales[0]=="log") concept["interpolation"] = "exp";
-          }
-          concept["domain"] = d.domain;
-          concept["tags"] = d.tags;
-          concept["name"] = d.name||d.concept||"";
-          concept["unit"] = d.unit||"";
-          concept["description"] = d.description;
-          _this.conceptDictionary[d.concept] = concept;
-        });
-
-        resolve();
-
-      }, function(err) {
+    return this.load(query).bind(this)
+      .then(this.handleConceptPropsResponse)
+      .catch(function(err) {
         utils.warn('Problem with query: ', query);
-        reject();
       });
+
+  },
+
+  handleConceptPropsResponse: function(dataId) {
+
+    this.conceptDictionary = {_default: {concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root"}};
+
+    this.getData(dataId).forEach(d => {
+      var concept = {};
+      
+      concept["use"] = d.concept_type;
+      if(d.concept_type) concept["use"] = (d.concept_type=="measure" || d.concept_type=="time")?"indicator":"property";
+      
+      concept["concept_type"] = d.concept_type;
+      concept["sourceLink"] = d.indicator_url;
+      try {
+        concept["color"] = d.color ? JSON.parse(d.color) : null;
+      } catch (e) {
+        concept["color"] = null;
+      }
+      try {
+        concept["scales"] = d.scales ? JSON.parse(d.scales) : null;
+      } catch (e) {
+        concept["scales"] = null;
+      }
+      if(!concept.scales){
+        switch (d.concept_type){
+          case "measure": concept.scales=["linear", "log"]; break;
+          case "string": concept.scales=["nominal"]; break;
+          case "entity_domain": concept.scales=["ordinal"]; break;
+          case "entity_set": concept.scales=["ordinal"]; break;
+          case "time": concept.scales=["time"]; break;
+        }
+      }
+      if(concept["scales"]==null) concept["scales"] = ["ordinal", "linear", "log"];
+      if(d.interpolation){
+        concept["interpolation"] = d.interpolation;
+      }else{
+        if(concept.scales && concept.scales[0]=="log") concept["interpolation"] = "exp";
+      }
+      concept["domain"] = d.domain;
+      concept["tags"] = d.tags;
+      concept["name"] = d.name||d.concept||"";
+      concept["unit"] = d.unit||"";
+      concept["description"] = d.description;
+      this.conceptDictionary[d.concept] = concept;
     });
 
   },
@@ -843,7 +824,7 @@ var DataModel = Model.extend({
   /**
    * checks whether this combination is cached or not
    */
-  isCached: function(query) {
+  getQueryCacheId: function(query) {
     //encode in hashCode
     var q = utils.hashCode([
       query
