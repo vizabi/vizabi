@@ -373,9 +373,16 @@ var Marker = Model.extend({
             var promises = [];
             utils.forEach(deferredHooks, function(hook) {
               promises.push(new Promise(function(res, rej) {
+                // need to save the hook state before calling getFrames.
+                // `hook` state might change between calling and resolving the call.
+                // The result needs to be saved to the correct cache, so we need to save current hook state
+                var currentHookState = {
+                  name: hook._name,
+                  which: hook.which
+                }
                 hook.getFrames(steps, selected).then(function(response) {
                   utils.forEach(response, function (frame, t) {
-                    _this.partialResult[cachePath][t][hook._name] = frame[hook.which];
+                    _this.partialResult[cachePath][t][currentHookState._name] = frame[currentHookState.which];
                   });
                   res();
                 })
