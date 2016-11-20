@@ -141,29 +141,8 @@ var DataModel = Model.extend({
 
             //success reading
             var values = r.getData();
-            var q = query;
-            if (values.length == 0) utils.warn("Reader returned empty array for query:", JSON.stringify(q, null, 2))
 
-            if (values.length > 0) {
-              //search data for the entirely missing columns
-              var columnsMissing = (q.select.key||[]).concat(q.select.value||[]);
-              for (var i = values.length-1; i>=0; i--){
-                for (var c = columnsMissing.length-1; c>=0; c--){
-                  //if found value for column c in row i then remove that column name from the list of missing columns
-                  if (values[i][columnsMissing[c]] || values[i][columnsMissing[c]]===0) columnsMissing.splice(c,1);
-                }
-                //all columns were found to have value in at least one of the rows then stop iterating
-                if (!columnsMissing.length) break;
-              }
-              columnsMissing.forEach(function(d) {
-                if (q.select.key.indexOf(d)==-1){
-                  utils.warn('Reader result: Column "' + d + '" is missing from "' + q.from + '" data, but it might be ok');
-                } else {
-                  utils.error('Reader result: Key column "' + d + '" is missing from "' + q.from + '" data for query:', JSON.stringify(q));
-                  console.log(values);
-                }
-              });
-            }
+            _this.checkQueryResponse(query, values);
 
             _this._collection[queryId] = {};
             _this._collectionPromises[queryId] = {};
@@ -175,7 +154,7 @@ var DataModel = Model.extend({
             col.limits = {};
             col.frames = {};
             col.haveNoDataPointsPerKey = {};
-            col.query = q;
+            col.query = query;
             // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
 
             resolve(queryId);
@@ -198,6 +177,31 @@ var DataModel = Model.extend({
     };
 
     return this.queryQueue[queryMergeId].promise;
+  },
+
+  checkQueryResponse: function(query, response) {
+    if (response.length == 0) utils.warn("Reader returned empty array for query:", JSON.stringify(query, null, 2))
+
+    if (response.length > 0) {
+      // search data for the entirely missing columns
+      var columnsMissing = (query.select.key||[]).concat(query.select.value||[]);
+      for (var i = response.length-1; i>=0; i--){
+        for (var c = columnsMissing.length-1; c>=0; c--){
+          // if found value for column c in row i then remove that column name from the list of missing columns
+          if (response[i][columnsMissing[c]] || response[i][columnsMissing[c]]===0) columnsMissing.splice(c,1);
+        }
+        // all columns were found to have value in at least one of the rows then stop iterating
+        if (!columnsMissing.length) break;
+      }
+      columnsMissing.forEach(function(d) {
+        if (query.select.key.indexOf(d)==-1){
+          utils.warn('Reader result: Column "' + d + '" is missing from "' + query.from + '" data, but it might be ok');
+        } else {
+          utils.error('Reader result: Key column "' + d + '" is missing from "' + query.from + '" data for query:', JSON.stringify(query));
+          console.log(response);
+        }
+      });
+    }
   },
 
   /**
