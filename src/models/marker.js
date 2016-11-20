@@ -382,7 +382,7 @@ var Marker = Model.extend({
                 }
                 hook.getFrames(steps, selected).then(function(response) {
                   utils.forEach(response, function (frame, t) {
-                    _this.partialResult[cachePath][t][currentHookState._name] = frame[currentHookState.which];
+                    _this.partialResult[cachePath][t][currentHookState.name] = frame[currentHookState.which];
                   });
                   res();
                 })
