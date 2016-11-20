@@ -102,14 +102,17 @@ var DataModel = Model.extend({
   loadFromReader: function(query, parsers) {
     var _this = this;
     var queryId = utils.hashCode([
+      query
+    ]);
+    var queryMergeId = utils.hashCode([
       query.select.key,
       query.where,
       query.join
     ]);
 
-    if (this.queryQueue[queryId]) {
-      Array.prototype.push.apply(this.queryQueue[queryId].query.select.value, query.select.value);
-      return this.queryQueue[queryId].promise;
+    if (this.queryQueue[queryMergeId]) {
+      Array.prototype.push.apply(this.queryQueue[queryMergeId].query.select.value, query.select.value);
+      return this.queryQueue[queryMergeId].promise;
     }
 
     var promise = new Promise(function(resolve, reject) {
@@ -176,12 +179,12 @@ var DataModel = Model.extend({
             // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
 
             resolve(queryId);
-            _this.queryQueue[queryId] = null;
+            _this.queryQueue[queryMergeId] = null;
 
           }, //error reading
           function(err) {
             reject(err);
-            _this.queryQueue[queryId] = null;
+            _this.queryQueue[queryMergeId] = null;
           }
         );
 
@@ -189,12 +192,12 @@ var DataModel = Model.extend({
     });
 
 
-    this.queryQueue[queryId] = {
+    this.queryQueue[queryMergeId] = {
       query: query,
       promise: promise
     };
 
-    return this.queryQueue[queryId].promise;
+    return this.queryQueue[queryMergeId].promise;
   },
 
   /**
@@ -839,9 +842,7 @@ var DataModel = Model.extend({
   isCached: function(query) {
     //encode in hashCode
     var q = utils.hashCode([
-      query.select.key,
-      query.where,
-      query.join
+      query
     ]);
     //simply check if we have this in internal data
     if(Object.keys(this._collection).indexOf(q) !== -1) {
