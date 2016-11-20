@@ -62,6 +62,12 @@ const plugins = [
       to: 'preview/assets/translation/'
     }
   ]),
+  new CopyWebpackPlugin([
+    {
+      from: 'src/assets/translation/',
+      to: 'dist/assets/translation/'
+    }
+  ]),
   new OpenBrowserPlugin({
     url: 'http://localhost:8080/preview/'
   }),
