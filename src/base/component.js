@@ -105,17 +105,13 @@ var Component = Events.extend({
     var _this = this;
     this.loadTemplate();
     this.loadSubComponents();
+
     //render each subcomponent
     utils.forEach(this.components, function(subcomp) {
       subcomp.render();
       _this.on('resize', function() {
         subcomp.trigger('resize');
       });
-    });
-
-    // if a componente's model is ready, the component is ready
-    this.model.on('ready', function() {
-      _this.loadingDone();
     });
 
     this.startLoading();
@@ -127,9 +123,18 @@ var Component = Events.extend({
    * @return {[type]} [description]
    */
   startLoading: function() {
+    var _this = this;
+   
+    // if a componente's model is ready, the component is ready
+    this.model.on('ready', function() {
+      _this.loadingDone();
+    });
+
     if(!(this.model && this.model.isLoading())) {
       this.loadingDone();
     }
+
+
   },
 
   loadingDone: function () {

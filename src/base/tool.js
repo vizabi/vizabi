@@ -79,7 +79,6 @@ var Tool = Component.extend({
     this._id = utils.uniqueId('t');
 
     this.template = this.getToolTemplate();
-    //this.initiateModel(external_model);
 
     this._super({
       placeholder: placeholder,
@@ -90,6 +89,9 @@ var Tool = Component.extend({
     this.model.ui.splash = this.model && this.model.data && this.model.data.splash;
 
     this.render();
+
+    this.startLoading();
+
     this.setCSSClasses();
     this.setResizeHandler();
   },
@@ -152,6 +154,11 @@ var Tool = Component.extend({
           _this.model.ui.updatePresentation();
           _this.trigger('resize');
         },
+        'resize:ui': function() {
+          if(_this._ready) {
+            _this.triggerResize();
+          }
+        },
         'translate:language': function() {
           _this.translateStrings();
         },
@@ -168,13 +175,7 @@ var Tool = Component.extend({
 
   setResizeHandler: function() {
     //only tools have layout (manage sizes)
-    var _this = this;
     this.model.ui.setContainer(this.element);
-    this.model.ui.on('resize', function() {
-      if(_this._ready) {
-        _this.triggerResize();
-      }
-    });
   },
 
   triggerResize: utils.throttle(function() {
@@ -182,10 +183,9 @@ var Tool = Component.extend({
   }, 100),
 
   startLoading: function() {
+    this._super();
     var splashScreen = this.model && this.model.data && this.model.data.splash;
-    var promise = new Promise();
     var _this = this;
-
 
     var preloadPromises = []; //holds all promises
 
@@ -194,8 +194,10 @@ var Tool = Component.extend({
 
     Promise.all(preloadPromises).then(function() {
       _this.afterPreload();
-      
+
+
       var timeMdl = _this.model.state.time;
+
       if(splashScreen) {
 
         //TODO: cleanup hardcoded splash screen
