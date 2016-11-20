@@ -1,11 +1,10 @@
 import * as utils from 'base/utils';
-import Promise from 'base/promise';
+import Promise from 'bluebird';
 import Model from 'base/model';
 
 /*!
  * HOOK MODEL
  */
-
 
 var Marker = Model.extend({
 
@@ -611,39 +610,40 @@ var Marker = Model.extend({
       });
     };
 
-    var promises = [];
+    promises.push(new Promise(function(resolve, reject) {
 
-    promises.push(new Promise());
+      //find startSelected time
+      findSelectedTime(function(){
+        var max = timePoints.length;
+        var i = 0;
+        return function() {
+          return i < max ? i++ : null;
+        };
+      }(), function(point){
+        selectedEdgeTimes[0] = timePoints[point];
+        resolve();
+      });
+    }));
 
-    //find startSelected time
-    findSelectedTime(function(){
-      var max = timePoints.length;
-      var i = 0;
-      return function() {
-        return i < max ? i++ : null;
-      };
-    }(), function(point){
-      selectedEdgeTimes[0] = timePoints[point];
-      promises[0].resolve();
+    promises.push(new Promise(function(resolve, reject) {
+
+      //find endSelected time
+      findSelectedTime(function(){
+        var i = timePoints.length - 1;
+        return function() {
+          return i >= 0 ? i-- : null;
+        };
+      }(), function(point){
+        selectedEdgeTimes[1] = timePoints[point];
+        resolve();
+      });
+
+    }));
+
+
+    return Promise.all(promises).then(function() {
+      resolve({"min": selectedEdgeTimes[0],"max": selectedEdgeTimes[1]});
     });
-
-    promises.push(new Promise());
-
-    //find endSelected time
-    findSelectedTime(function(){
-      var i = timePoints.length - 1;
-      return function() {
-        return i >= 0 ? i-- : null;
-      };
-    }(), function(point){
-      selectedEdgeTimes[1] = timePoints[point];
-      promises[1].resolve();
-    });
-    var promise = new Promise();
-    Promise.all(promises).then(function() {
-      promise.resolve({"min": selectedEdgeTimes[0],"max": selectedEdgeTimes[1]});
-    });
-    return promise;
   },
 
 
