@@ -131,23 +131,23 @@ var DataModel = Model.extend({
           throw new Error('Unknown reader: ' + _this.reader);
         }
 
-        var r = new readerClass({
+        var reader = new readerClass({
           path: _this.path,
           parsers: parsers
         });
 
         // execute the query with this reader
-        r.read(query).then(function() {
+        reader.read(query).then(function(response) {
 
             //success reading
-            var values = r.getData();
+            response = response || reader.getData();
 
-            _this.checkQueryResponse(query, values);
+            _this.checkQueryResponse(query, response);
 
             _this._collection[queryId] = {};
             _this._collectionPromises[queryId] = {};
             var col = _this._collection[queryId];
-            col.data = values;
+            col.data = response;
             col.valid = {};
             col.nested = {};
             col.unique = {};
