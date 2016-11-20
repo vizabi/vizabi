@@ -56,6 +56,16 @@ const plugins = [
     {
       from: 'preview/assets/js/',
       to: 'preview/assets/js/'
+    },
+    {
+      from: 'src/assets/translation/',
+      to: 'preview/assets/translation/'
+    }
+  ]),
+  new CopyWebpackPlugin([
+    {
+      from: 'src/assets/translation/',
+      to: 'dist/assets/translation/'
     }
   ]),
   new OpenBrowserPlugin({
@@ -235,14 +245,6 @@ module.exports = {
         loader: 'html-loader',
         query: {
           interpolate: 'require'
-        }
-      },
-      {
-        test: /\.json$/, //__PROD__ ? /en\.json$/ : /\.json$/,
-        include: [path.resolve(__dirname, 'src', 'assets', 'translation')],
-        loader: 'file-loader',
-        query: {
-          name: `${__PROD__ ? 'dist' : 'preview'}/assets/translation/[name].[ext]`
         }
       }
     ]
