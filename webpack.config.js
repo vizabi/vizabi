@@ -59,7 +59,11 @@ const plugins = [
     },
     {
       from: 'src/assets/translation/',
-      to: __PROD__ ? 'dist/assets/translation/':'preview/assets/translation/'
+      to: 'dist/assets/translation/'
+    },
+    {
+      from: 'src/assets/translation/',
+      to: 'preview/assets/translation/'
     }
   ]),
   new OpenBrowserPlugin({
