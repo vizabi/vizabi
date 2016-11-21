@@ -1,9 +1,9 @@
 {
-  "buttons/expand":"توسيع",
+  "buttons/expand":"وسّع",
   "buttons/unexpand":"استعادة",
-  "buttons/trails":"مسارات",
+  "buttons/trails":"المسارات",
   "buttons/lock":"قفل",
-  "buttons/find":"البحث عن",
+  "buttons/find":"ابحث",
   "buttons/show":"اظهار",
   "buttons/deselect":"إلغاء تحديد",
   "buttons/showall":"اظهار الكل",
