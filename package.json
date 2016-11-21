@@ -23,8 +23,7 @@
   },
   "homepage": "http://vizabi.org",
   "dependencies": {
-    "vizabi-interpolators": "^1.2.0",
-    "bluebird": "3.4.6"
+    "vizabi-interpolators": "^1.2.0"
   },
   "devDependencies": {
     "archiver": "^1.2.0",

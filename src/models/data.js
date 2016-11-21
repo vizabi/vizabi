@@ -3,7 +3,6 @@ import Model from 'base/model';
 import Promise2 from 'base/promise';
 import Reader from 'base/reader';
 import EventSource from 'base/events';
-const Promise = require('bluebird');
 
 /*
  * VIZABI Data Model (model.data)
@@ -247,8 +246,8 @@ var DataModel = Model.extend({
       language: this.getClosestModel('language').id,
     };
 
-    return this.load(query).bind(this)
-      .then(this.handleConceptPropsResponse)
+    return this.load(query)
+      .then(this.handleConceptPropsResponse.bind(this))
       .catch(function(err) {
         utils.warn('Problem with query: ', query);
       });
