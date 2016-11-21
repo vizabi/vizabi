@@ -47,7 +47,8 @@ const CSVReader = Reader.extend({
     const {
       select,
       from,
-      order_by = []
+      order_by = [],
+      parsers = []
     } = query;
 
     const [orderBy] = order_by;
@@ -67,6 +68,7 @@ const CSVReader = Reader.extend({
             return [];
         }
       })
+      .then(data => parsers.length ? utils.mapRows(data, parsers) : data)
       .catch(utils.warn);
   },
 
