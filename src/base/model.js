@@ -696,10 +696,6 @@ function initSubmodel(attr, val, ctx, persistent) {
       'change': onChange,
       //loading has started in this submodel (multiple times)
       'hook_change': onHookChange,
-      //loading has started in this submodel (multiple times)
-      'load_start': onLoadStart,
-      //loading has failed in this submodel (multiple times)
-      'load_error': onLoadError,
         //loading has ended in this submodel (multiple times)
       'ready': onReady
     };
@@ -740,13 +736,6 @@ function initSubmodel(attr, val, ctx, persistent) {
     ctx.trigger(evt, path);
   }
   function onHookChange(evt, vals) {
-    ctx.trigger(evt, vals);
-  }
-  function onLoadStart(evt, vals) {
-    ctx.setReady(false);
-    ctx.trigger(evt, vals);
-  }
-  function onLoadError(evt, vals) {
     ctx.trigger(evt, vals);
   }
   function onReady(evt, vals) {
