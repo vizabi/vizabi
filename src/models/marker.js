@@ -609,6 +609,8 @@ var Marker = Model.extend({
       });
     };
 
+    var promises = [];
+
     promises.push(new Promise(function(resolve, reject) {
 
       //find startSelected time
@@ -641,7 +643,7 @@ var Marker = Model.extend({
 
 
     return Promise.all(promises).then(function() {
-      resolve({"min": selectedEdgeTimes[0],"max": selectedEdgeTimes[1]});
+      return {"min": selectedEdgeTimes[0],"max": selectedEdgeTimes[1]};
     });
   },
 
