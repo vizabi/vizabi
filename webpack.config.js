@@ -142,7 +142,7 @@ if (__PROD__) {
 }
 
 module.exports = {
-  devtool: 'source-map',
+  devtool: __PROD__ ? 'source-map' : 'cheap-module-source-map',
 
   entry: {
     'dist/vizabi': './src/vizabi-gapminder',
@@ -168,7 +168,7 @@ module.exports = {
     loaders: [
       {
         test: /\.js$/,
-        // exclude: /node_modules/, // TODO: uncomment after fix export default in interpolators module
+        exclude: /node_modules/,
         loader: 'babel-loader',
         query: {
           cacheDirectory: !__PROD__,
@@ -242,10 +242,7 @@ module.exports = {
       {
         test: /\.html$/,
         include: [path.resolve(__dirname, 'src')],
-        loader: 'html-loader',
-        query: {
-          interpolate: 'require'
-        }
+        loader: 'html-loader'
       }
     ]
   },
