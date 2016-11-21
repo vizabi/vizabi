@@ -162,12 +162,7 @@ var Tool = Component.extend({
         },
         'load_start': function() {
           _this.beforeLoading();
-        },
-        'ready': function(evt) {
-          if(_this._ready) {
-            _this.afterLoading();
-          }
-        }      
+        }     
       });
   },
 
@@ -340,13 +335,7 @@ var Tool = Component.extend({
         utils.addClass(this.placeholder, class_loading_data);    
     }
   },
-  /**
-   * Removes loading class
-   */
-  afterLoading: function() {
-    utils.removeClass(this.placeholder, class_loading_first);
-    utils.removeClass(this.placeholder, class_loading_data);
-  },
+
   /**
    * Adds loading error class
    */
