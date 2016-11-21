@@ -94,7 +94,6 @@ var Model = EventSource.extend({
     this._readyOnce = false;
     //has this model ever been ready?
     this._loadedOnce = false;
-    this._loading = [];
     //array of processes that are loading
     this._intervals = getIntervals(this);
 
@@ -348,10 +347,6 @@ var Model = EventSource.extend({
     if(this._isLoading())
       return true;
 
-    //if loading something
-    if(this._loading.length > 0)
-      return true;
-
     //if not loading anything, check submodels
     var submodels = this.getSubmodels();
     var i;
@@ -362,28 +357,6 @@ var Model = EventSource.extend({
     }
 
     return false;
-  },
-
-  /**
-   * specifies that the model is loading data
-   * @param {String} p_id of the loading process
-   */
-  setLoading: function(p_id) {
-    //if this is the first time we're loading anything
-    if(!this.isLoading()) {
-      this.trigger('load_start');
-    }
-    //add id to the list of processes that are loading
-    this._loading.push(p_id);
-  },
-
-  /**
-   * specifies that the model is done with loading data
-   * @param {String} p_id of the loading process
-   */
-  setLoadingDone: function(p_id) {
-    this._loading = utils.without(this._loading, p_id);
-    this.setReady();
   },
 
   /**

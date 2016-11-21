@@ -145,7 +145,7 @@ var Tool = Component.extend({
         },
         'hook_change': function() {
           if (!_this.model.state.time.splash) { // not block when it initial splash screen
-            _this.beforeLoading(true);
+            _this.beforeLoading();
           }
         },
         'change:ui.presentation': function() {
@@ -159,10 +159,7 @@ var Tool = Component.extend({
         },
         'translate:language': function() {
           _this.translateStrings();
-        },
-        'load_start': function() {
-          _this.beforeLoading();
-        }     
+        }  
       });
   },
 
@@ -202,10 +199,8 @@ var Tool = Component.extend({
           //delay to avoid conflicting with setReady
           utils.delay(function() {
             //force loading because we're restoring time.
-            _this.model.setLoading('restore_orig_time');
 
             _this.model.startLoading().then(function() {
-              _this.model.setLoadingDone('restore_orig_time');
               timeMdl.splash = false;
               //_this.model.data.splash = false;
               timeMdl.trigger('change', timeMdl.getPlainObject());
@@ -327,13 +322,8 @@ var Tool = Component.extend({
   /**
    * Displays loading class
    */
-  beforeLoading: function(loadingData) {
-    if(!this._readyOnce) {
-        utils.addClass(this.placeholder, class_loading_first);    
-    }
-    if(loadingData) {
-        utils.addClass(this.placeholder, class_loading_data);    
-    }
+  beforeLoading: function() {
+    utils.addClass(this.placeholder, class_loading_data);    
   },
 
   /**
