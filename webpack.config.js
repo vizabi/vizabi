@@ -142,7 +142,7 @@ if (__PROD__) {
 }
 
 module.exports = {
-  devtool: __PROD__ ? 'source-map' : 'cheap-module-source-map',
+  devtool: 'source-map', //__PROD__ ? 'source-map' : 'cheap-module-source-map',
 
   entry: {
     'dist/vizabi': './src/vizabi-gapminder',
