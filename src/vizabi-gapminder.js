@@ -2,6 +2,7 @@
  * VIZABI GAPMINDER PREFERENCES (included only in Gapminder build)
  */
 
+import 'babel-polyfill';
 import globals from 'base/globals';
 import * as utils from 'base/utils';
 import Promise from 'base/promise';
