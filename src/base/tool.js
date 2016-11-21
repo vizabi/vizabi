@@ -90,8 +90,6 @@ var Tool = Component.extend({
 
     this.render();
 
-    this.startLoading();
-
     this.setCSSClasses();
     this.setResizeHandler();
   },
