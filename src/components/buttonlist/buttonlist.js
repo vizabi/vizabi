@@ -157,10 +157,9 @@ var ButtonList = Component.extend({
       }
     }      
 
-    // builds model
-    this._super(config, context);
-        
-    this.model.ui.buttons.forEach(function(buttonId) {
+    // config.ui is same as this.model.ui here but this.model.ui is not yet available because constructor hasn't been called. 
+    // can't call constructor earlier because this.model_binds needs to be complete before calling constructor
+    config.ui.buttons.forEach(function(buttonId) {
       var button = _this._available_buttons[buttonId];
       if(button && button.statebind) {
         _this.model_binds['change:' + button.statebind] = function(evt) {
@@ -169,6 +168,9 @@ var ButtonList = Component.extend({
       }
     });    
 
+    // builds model
+    this._super(config, context);
+        
     this.validatePopupButtons(this.model.ui.buttons, this.model.ui.dialogs);
 
   },
