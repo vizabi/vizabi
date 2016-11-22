@@ -1,6 +1,8 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
 import { drag as iconDrag, pin as iconPin } from 'base/iconset'
+import requireAll from 'helpers/requireAll';
+const dialogTemplates = requireAll(require.context('components/dialogs/', true, /\.html$/));
 
 /*!
  * VIZABI DIALOG
@@ -27,7 +29,7 @@ var Dialog = Component.extend({
       type: "language"
     }];
 
-    this.template = require(`./${this.name}/${this.name}.html`);
+    this.template = dialogTemplates[this.name];
 
     this._super(config, parent);
   },
