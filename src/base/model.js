@@ -69,11 +69,11 @@ var ModelLeaf = EventSource.extend({
 var Model = EventSource.extend({
 
   _defaults: {},
-  
+
   /**
    * A leaf model which has an object as value.
    * Needed when parsing plain JS objects. Enables distinction between models and leafs with object values.
-   **/ 
+   **/
   objectLeafs: [],
 
   /**
@@ -282,7 +282,7 @@ var Model = EventSource.extend({
         //persistent
         if(!persistent || dataItem.persistent) {
           var leafValue = dataItem.get(persistent);
-          if (utils.isDate(leafValue)) 
+          if (utils.isDate(leafValue))
             leafValue = _this.formatDate(leafValue);
           obj[i] = leafValue;
         }
@@ -384,13 +384,13 @@ var Model = EventSource.extend({
   },
 
   startPreload: function() {
-    
+
     var promises = [];
     promises.push(this.preloadData());
 
-    utils.forEach(this.getSubmodels(), 
+    utils.forEach(this.getSubmodels(),
       subModel => promises.push(subModel.startPreload())
-    ); 
+    );
 
     return Promise.all(promises);
   },
@@ -671,7 +671,7 @@ function bindSetterGetter(model, prop) {
  * @param {String} attr Name of submodel
  * @param {Object} val Initial values
  * @param {Object} ctx context / parent model
- * @param {Boolean} persistent true if the change is a persistent change 
+ * @param {Boolean} persistent true if the change is a persistent change
  * @returns {Object} model new submodel
  */
 function initSubmodel(attr, val, ctx, persistent) {
