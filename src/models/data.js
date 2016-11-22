@@ -1,6 +1,6 @@
 import * as utils from 'base/utils';
 import Model from 'base/model';
-import Promise2 from 'base/promise';
+//import Promise2 from 'base/promise';
 import Reader from 'base/reader';
 import EventSource from 'base/events';
 
@@ -415,7 +415,7 @@ var DataModel = Model.extend({
       this.callbacks = {};
       this.forcedQueue = [];
       this.isActive = true;
-      this.deferredPromise = null;
+      this.delayedAction = null;
       this.whatId = whatId;
       this.queue = framesArray.slice(0); //clone array
       var queue = this;
@@ -423,18 +423,19 @@ var DataModel = Model.extend({
       this.queue.splice(0, 0, this.queue.splice(this.queue.length - 1, 1)[0]);
       this.key = 0;
       this.mute = function() {
+        var _this = this;
         this.isActive = false;
-        if (!(this.deferredPromise instanceof Promise2 && this.deferredPromise.status == "pending")) {
-          this.deferredPromise = new Promise2();
-        }
+        new Promise(function(resolve, reject){
+          _this.delayedAction = resolve;    
+        });
       };
 
       this.unMute = function() {
         this.isActive = true;
-        if (this.deferredPromise instanceof Promise2) {
-          this.deferredPromise.resolve();
+        if (typeof this.delayedAction == "function") {
+          this.delayedAction();
         }
-        this.deferredPromise = null;
+        this.delayedAction = null;
         if (this.forcedQueue.length == 0 && this.queue.length == 0) {
           _context._unmuteQueue();
         }
@@ -453,13 +454,13 @@ var DataModel = Model.extend({
         }
       };
       this._waitingForActivation = function() {
-        if (!this.deferredPromise instanceof Promise2) {
-          this.deferredPromise = new Promise2();
-        }
-        if (this.isActive) {
-          this.deferredPromise.resolve();
-        }
-        return this.deferredPromise;
+        var _this = this;
+        return new Promise(function(resolve, reject) {
+          if (_this.isActive) {
+            return resolve();
+          }
+          _this.delayedAction = resolve;
+        });
       };
 
       this._getNextFrameName = function() {
@@ -486,7 +487,7 @@ var DataModel = Model.extend({
       // returns the next frame in a queue
       this.getNext = function() {
         var _this = this;
-        var defer = new Promise(function(resolve, reject) {
+        return new Promise(function(resolve, reject) {
           _this.checkForcedFrames();
           if (_this.isActive) {
             resolve(_this._getNextFrameName());
@@ -496,7 +497,6 @@ var DataModel = Model.extend({
             });
           }
         });
-        return defer;
       };
 
       // force the particular frame up the queue

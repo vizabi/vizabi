@@ -448,6 +448,9 @@ var BubbleChartComp = Component.extend({
     var endTime = this.model.time.end;
     this.updateIndicators();
     this.updateTime();
+    if (!_this.model.time.splash) {
+      _this._trails.create()
+    }
     this.model.marker.getFrame(this.model.time.value, function(frame, time) {
       // TODO: temporary fix for case when after data loading time changed on validation
       if (time.toString() != _this.model.time.value.toString()) {
@@ -470,11 +473,7 @@ var BubbleChartComp = Component.extend({
       _this._updateDoubtOpacity();
       _this.zoomToMarkerMaxMin(); // includes redraw data points and trail resize
       if (!_this.model.time.splash) {
-        _this._trails.create().then(function() {
-          _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
-          
-        });
-
+        _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
       }
       if(_this.model.ui.adaptMinMaxZoom) _this._panZoom.expandCanvas();
     });
