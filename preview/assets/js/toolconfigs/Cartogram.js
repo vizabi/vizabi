@@ -70,5 +70,17 @@ var VIZABI_MODEL = {
       "doubtDomain": [1800, 1950, 2015],
       "doubtRange": [1.0, 0.3, 0.2]
     }
+  },
+  "data": {
+    "reader": "csv",
+    "path": "data/zaf/waffles/ddf--datapoints--piped_water_percentage--electricity_lighting_percentage--by--year--municipality.csv",
+    "splash": false
   }
+};
+
+var EXT_RESOURCES = {
+  "host": LOCAL_URL,
+  "preloadPath": "data/zaf/",
+  "dataPath": "data/zaf/waffles/",
+  "shapePath": "data/zaf/municipalities.json"
 };

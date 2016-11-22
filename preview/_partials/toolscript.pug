@@ -1,19 +1,14 @@
+script.
+  var locationArray = window.location.href.split("/");
+  var LOCAL_URL = locationArray.splice(0, locationArray.indexOf("preview")).join("/") + "/preview/";
+  VIZABI_MODEL = {};
+  EXT_RESOURCES = {};
+
 script(src='assets/js/toolconfigs/' + (tool_config || tool) + '.js')
 script.
   var TITLE = "#{title}";
   var TOOL = "#{tool}";
   var DESCRIPTION = "#{description}";
-
-  Vizabi.utils.deepExtend(VIZABI_MODEL, {
-    ui: {
-      buttons: #{chart_buttons || '[]'},
-      buttons_expand: #{chart_buttons_expand || '[]'},
-      dialogs: #{chart_dialogs || '[]'}
-    },
-    language: {
-      filePath: "assets/translation/"
-    }
-  });
 
   VIZABI_MODEL.bind = {
     'ready': function (evt, vals) {
@@ -80,84 +75,32 @@ script.
 
   parseURL();
 
-  var locationArray = window.location.href.split("/");
-  var localUrl = locationArray.splice(0, locationArray.indexOf("preview")).join("/") + "/preview/";
 
-  if ("#{tool}" == "AgePyramid") {
-    Vizabi._globals.ext_resources = {
-      host: localUrl,
-      preloadPath: 'data/zaf/',
-      dataPath: 'data/zaf/waffles/'
-    };
-
-    VIZABI_MODEL.data = {
-      reader: "csv",
-      path: localUrl + 'data/zaf/waffles/' + "ddf--datapoints--population--by--year--age--population_group--education_attainment.csv",
-      splash: false
+  EXT_RESOURCES = Vizabi.utils.deepExtend({
+    host: 'https://waffle-server-dev.gapminderdev.org',
+    preloadPath: '/api/vizabi/',
+    dataPath: '/api/ddf/',
+    //shapePath: localUrl + "data/mc_precomputed_shapes.json"
+    //shapePath: localUrl + "data/world-50m.json"
+  }, EXT_RESOURCES);
+  
+  VIZABI_MODEL = Vizabi.utils.deepExtend({
+    ui: {
+      buttons: #{chart_buttons || '[]'},
+      buttons_expand: #{chart_buttons_expand || '[]'},
+      dialogs: #{chart_dialogs || '[]'}
+    },
+    language: {
+      filePath: "assets/translation/"
+    },
+    data: {
+      "reader": "waffle",
+      "splash": true,
+      "path": EXT_RESOURCES.host + EXT_RESOURCES.dataPath
     }
+  }, VIZABI_MODEL);
 
-  } else if ("#{tool}" == "JOINTPyramidLine") {
-    Vizabi._globals.ext_resources = {
-      host: localUrl,
-      preloadPath: 'data/zaf/',
-      dataPath: 'data/zaf/waffles/'
-    };
-
-    VIZABI_MODEL.data = {
-      reader: "csv",
-      path: localUrl + 'data/zaf/waffles/' + "ddf--datapoints--population--by--year--age--education-gender-add-tfr.csv",
-      splash: false
-    }
-
-  } else if ("#{tool}" == "JOINTCartogramLine") {
-    Vizabi._globals.ext_resources = {
-      host: localUrl,
-      preloadPath: 'data/zaf/',
-      dataPath: 'data/zaf/waffles/'
-    };
-
-    VIZABI_MODEL.data = {
-      reader: "csv",
-      path: localUrl + "data/zaf/waffles/ddf--datapoints--piped_water_percentage--electricity_lighting_percentage--by--time--geo-add-zaf.csv",
-      splash: false
-    }
-
-  } else if ("#{tool}" == "Cartogram") {
-    Vizabi._globals.ext_resources = {
-      host: localUrl,
-      preloadPath: 'data/zaf/',
-      dataPath: 'data/zaf/waffles/',
-      shapePath: localUrl + 'data/zaf/municipalities.json'
-      //shapePath: localUrl + 'data/zaf/provinces.json'
-    };
-
-    VIZABI_MODEL.data = {
-      reader: "csv",
-      //path: localUrl + "data/zaf/waffles/ddf--datapoints--population--black_population--black_population_percentage--by--year--province.csv",
-      //path: localUrl + "data/zaf/waffles/ddf--datapoints--population--black_population--black_population_percentage--by--year--municipality.csv",
-      path: localUrl + "data/zaf/waffles/ddf--datapoints--piped_water_percentage--electricity_lighting_percentage--by--year--municipality.csv",
-      splash: false
-    }
-  } else {
-
-    Vizabi._globals.ext_resources = {
-      host: 'https://waffle-server-dev.gapminderdev.org',
-      preloadPath: '/api/vizabi/',
-      dataPath: '/api/ddf/',
-      //shapePath: localUrl + "data/mc_precomputed_shapes.json"
-      //shapePath: localUrl + "data/world-50m.json"
-    };
-
-    //popbyage is an exception because it has no data on WS for age. need local data
-    if ("#{tool}" !== "PopByAge") {
-      VIZABI_MODEL.data = {
-        reader: "waffle",
-        splash: true,
-        path: Vizabi._globals.ext_resources.host + Vizabi._globals.ext_resources.dataPath
-      }
-    }
-  }
-
+  Vizabi._globals.ext_resources = EXT_RESOURCES;
   VIZABI_PAGE_MODEL = Vizabi.utils.deepExtend({}, VIZABI_MODEL);
 
   VIZ = Vizabi("#{tool}", placeholder, Vizabi.utils.deepExtend({}, VIZABI_MODEL, URL.model));

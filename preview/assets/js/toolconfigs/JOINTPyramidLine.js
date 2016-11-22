@@ -97,5 +97,16 @@ var VIZABI_MODEL = {
         "which": "zaf_population"
       }
     }
+  },
+  "data": {
+    "reader": "csv",
+    "path": "data/zaf/waffles/ddf--datapoints--population--by--year--age--education-gender-add-tfr.csv",
+    "splash": false
   }
+};
+
+var EXT_RESOURCES = {
+  "host": LOCAL_URL,
+  "preloadPath": "data/zaf/",
+  "dataPath": "data/zaf/waffles/"
 };

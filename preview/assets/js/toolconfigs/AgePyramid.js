@@ -94,5 +94,16 @@ var VIZABI_MODEL = {
         "which": "shape_lores_svg"
       }
     }
+  },
+  "data": {
+    "reader": "csv",
+    "path": "data/zaf/waffles/ddf--datapoints--population--by--year--age--population_group--education_attainment.csv",
+    "splash": false
   }
+};
+
+var EXT_RESOURCES = {
+  "host": LOCAL_URL,
+  "preloadPath": "data/zaf/",
+  "dataPath": "data/zaf/waffles/"
 };
