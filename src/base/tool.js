@@ -3,7 +3,6 @@ import Model from 'base/model'
 import Component from 'base/component'
 import { DefaultEvent } from 'base/events'
 import { warn as warnIcon } from 'base/iconset'
-import Promise from 'base/promise';
 
 var class_loading_first = 'vzb-loading-first';
 var class_loading_data = 'vzb-loading-data';

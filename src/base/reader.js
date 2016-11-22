@@ -1,5 +1,4 @@
 import * as utils from 'base/utils';
-import Promise from 'base/promise';
 import Class from 'base/class';
 
 /**

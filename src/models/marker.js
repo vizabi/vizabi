@@ -1,5 +1,4 @@
 import * as utils from 'base/utils';
-import Promise from 'bluebird';
 import Model from 'base/model';
 
 /*!

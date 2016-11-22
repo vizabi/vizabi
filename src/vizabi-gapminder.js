@@ -5,7 +5,6 @@
 import 'babel-polyfill';
 import globals from 'base/globals';
 import * as utils from 'base/utils';
-import Promise from 'base/promise';
 import Tool from 'base/tool';
 import Vzb from 'vizabi';
 import 'assets/styles/vizabi.scss';

@@ -1,6 +1,5 @@
 import * as utils from 'base/utils';
 import DataConnected from 'models/dataconnected';
-import Promise from 'base/promise';
 
 var LanguageModel = DataConnected.extend({
 

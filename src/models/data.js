@@ -1,6 +1,5 @@
 import * as utils from 'base/utils';
 import Model from 'base/model';
-//import Promise2 from 'base/promise';
 import Reader from 'base/reader';
 import EventSource from 'base/events';
 

@@ -1,6 +1,5 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
-import Promise from 'base/promise';
 
 
 var precision = 1;

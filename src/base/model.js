@@ -1,5 +1,4 @@
 import * as utils from 'base/utils';
-import Promise from 'base/promise';
 import EventSource, {DefaultEvent, ChangeEvent} from 'base/events';
 import Intervals from 'base/intervals';
 

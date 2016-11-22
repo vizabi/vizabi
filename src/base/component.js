@@ -1,7 +1,6 @@
 import * as utils from 'base/utils';
 import Events from 'base/events';
 import Model from 'base/model';
-import Promise from 'base/promise';
 import globals from 'base/globals';
 
 var class_loading_first = 'vzb-loading-first';
