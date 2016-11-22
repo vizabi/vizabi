@@ -381,6 +381,7 @@ var Model = EventSource.extend({
       }
       this.trigger('ready');
     }
+    this.setTreeFreezer(false);
   },
 
   startPreload: function() {
@@ -405,14 +406,14 @@ var Model = EventSource.extend({
    * Basically, this method:
    * loads is theres something to be loaded:
    * does not load if there's nothing to be loaded
-   * @param {Object} options (includes splashScreen)
+   * @param {Object} opts (includes splashScreen)
    * @returns defer
    */
   startLoading: function(opts) {
 
     var _this = this;
 
-    return new Promise(function(resolve, reject) {
+    var loading = new Promise(function(resolve, reject) {
 
       var promises = [];
 
@@ -421,12 +422,18 @@ var Model = EventSource.extend({
 
       var everythingLoaded = Promise.all(promises);
       everythingLoaded.then(
-        function() { resolve(); _this.onSuccessfullLoad(); },
+        function() { this.validate(); resolve(); _this.onSuccessfullLoad(); },
         function() { reject(); _this.triggerLoadError(); }
       );
 
     });
-
+    if (this.isHook()) {
+      var marker = this.getMarker();
+      if (marker) {
+        marker.loadStarted(this._name, loading);
+      }
+    }
+    return loading;
   },
 
   loadData: function(opts) {
@@ -447,7 +454,6 @@ var Model = EventSource.extend({
 
     var _this = this;
 
-    this.validate();
     utils.timeStamp('Vizabi Model: Model loaded: ' + this.name + '(' + this._id + ')');
     //end this load call
     this._loadedOnce = true;
@@ -455,7 +461,6 @@ var Model = EventSource.extend({
     //we need to defer to make sure all other submodels
     //have a chance to call loading for the second time
     this._loadCall = false;
-    this.setTreeFreezer(false);
 
     utils.defer(
       function() { _this.setReady(); }
@@ -605,7 +610,7 @@ var Model = EventSource.extend({
 
   /**
    * gets closest prefix model moving up the model tree
-   * @param {String} prefix
+   * @param {String} name
    * @returns {Object} submodel
    */
   getClosestModel: function(name) {
@@ -619,8 +624,23 @@ var Model = EventSource.extend({
   },
 
   /**
+   * gets marker model moving up the model tree
+   * @returns {Object} submodel
+   */
+  getMarker: function() {
+    if (/marker/g.test(this._name)) {
+      return this;
+    } else if (this._parent) {
+      return this._parent.getMarker();
+    } else {
+      return null;
+    }
+  },
+  
+  
+  /**
    * find submodel with name that starts with prefix
-   * @param {String} prefix
+   * @param {String} name
    * @returns {Object} submodel or false if nothing is found
    */
   findSubmodel: function(name) {

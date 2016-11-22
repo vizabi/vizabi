@@ -113,7 +113,6 @@ var Component = Events.extend({
         subcomp.trigger('resize');
       });
     });
-
     this.startLoading();
 
   },

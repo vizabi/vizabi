@@ -8,6 +8,60 @@ import Model from 'base/model';
 
 var Marker = Model.extend({
 
+  loadStarted: function(name, promise) {
+    var _this = this;
+    if (!this.modelsLoading) this.modelsLoading = {};
+    this.modelsLoading[name] = promise;
+    console.log("load started " + _this._name + " " + name);
+    promise.then(function() {
+      delete _this.modelsLoading[name];
+      if (Object.keys(_this.modelsLoading).length == 0) {
+        _this.loadFinished();
+      }
+    }, function() {
+      _this.modelsLoading = {};
+    });
+  },
+  
+  loadFinished: function() {
+    var _this = this;
+    if (_this.space.indexOf("time") > -1) {
+      if (_this.checkTimeLimits()) {
+        utils.forEach(_this.getSubhooks(), function(hook) {
+          if (hook.which == "time")
+            hook.scale = null;
+        });
+      }
+    }
+  },
+
+  checkTimeLimits: function() {
+    if(!this._parent.time) return;
+
+    var time = this._parent.time;
+
+    var tLimits = this.getTimeLimits(time.getDimension());
+
+    if(!tLimits || !utils.isDate(tLimits.min) || !utils.isDate(tLimits.max))
+      return utils.warn("checkTimeLimits(): min-max look wrong: " + tLimits.min + " " + tLimits.max + ". Expecting Date objects");
+
+    // change start and end (but keep startOrigin and endOrigin for furhter requests)
+    var newTime = {}
+    if(time.start - tLimits.min != 0) newTime['start'] = d3.max([tLimits.min, time.parseToUnit(time.startOrigin)]);
+    if(time.end - tLimits.max != 0) newTime['end'] = d3.min([tLimits.max, time.parseToUnit(time.endOrigin)]);
+    if(time.value == null) newTime['value'] = time.parseToUnit(time.format(new Date())); // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
+
+    time.set(newTime, false, false);
+    if (Object.keys(newTime).length > 0) {
+      time.validate();
+      return true;
+    }
+    return false;
+    //force time validation because time.value might now fall outside of start-end
+  },
+  
+  
+
   /**
    * Gets the narrowest limits of the subhooks with respect to the provided data column
    * @param {String} attr parameter (data column)

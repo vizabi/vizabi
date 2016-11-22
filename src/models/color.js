@@ -260,7 +260,6 @@ var ColorModel = Hook.extend({
    */
   buildScale: function() {
     var _this = this;
-
     var paletteObject = _this.getPalette();
     var domain = Object.keys(paletteObject);
     var range = utils.values(paletteObject);

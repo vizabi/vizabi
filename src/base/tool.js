@@ -95,7 +95,7 @@ var Tool = Component.extend({
   },
 
   ready: function() {
-    this.checkTimeLimits();  
+    //this.checkTimeLimits();  
   },
 
   createModel: function(external_model) {
@@ -227,6 +227,7 @@ var Tool = Component.extend({
     })
   },
 
+/*
   checkTimeLimits: function() {
     if(!this.model.state.time) return;
     
@@ -250,6 +251,7 @@ var Tool = Component.extend({
     //force time validation because time.value might now fall outside of start-end
     time.validate(); 
   },
+*/
 
   getPersistentModel: function() {
     //try to find functions in properties of model. 

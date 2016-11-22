@@ -60,7 +60,6 @@ var Hook = DataConnected.extend({
    */
   loadData: function(opts) {
 
-
     if(!this.which) return Promise.resolve();
 
     this.trigger('hook_change');

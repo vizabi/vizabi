@@ -486,7 +486,7 @@ var DataModel = Model.extend({
       // returns the next frame in a queue
       this.getNext = function() {
         var _this = this;
-        var defer = new Promise(function(resolve, reject) {
+        return new Promise(function(resolve, reject) {
           _this.checkForcedFrames();
           if (_this.isActive) {
             resolve(_this._getNextFrameName());
@@ -496,7 +496,6 @@ var DataModel = Model.extend({
             });
           }
         });
-        return defer;
       };
 
       // force the particular frame up the queue

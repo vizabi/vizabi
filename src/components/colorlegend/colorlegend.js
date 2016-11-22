@@ -117,11 +117,10 @@ var ColorLegend = Component.extend({
 
   ready: function(){
     var _this = this;
-
     this.KEY = this.model.entities.getDimension();
     this.colorlegendDim = this.KEY;
     this.canShowMap = false;
-
+    var palette = this.colorModel.getPalette();
     if(this.colorModel.use == "property" && this.colorlegendMarker) {
       if(!this.colorlegendMarker._ready) return;
 
