@@ -50,11 +50,10 @@ var Dialog = Component.extend({
     this.dragHandler.html(iconDrag);
     this.pinIcon = this.placeholderEl.select("[data-click='pinDialog']");
     this.pinIcon.html(iconPin);
-    this.dragContainerEl = d3.select('.vzb-tool');
     this.topPos = '';
     var profile = this.getLayoutProfile();
 
-    var dg = dialogDrag(this.placeholderEl, this.dragContainerEl, 10);
+    var dg = dialogDrag(this.placeholderEl, this.rootEl, 10);
     var dragBehavior = d3.behavior.drag()
       .on('dragstart', function D3dialogDragStart() {
         var topPos = _this.placeholderEl.node().offsetTop;
@@ -79,13 +78,13 @@ var Dialog = Component.extend({
   },
 
   resize: function() {
-    if(this.placeholderEl && this.dragContainerEl && this.placeholderEl.classed('vzb-top-dialog')) {
+    if(this.placeholderEl && this.rootEl && this.placeholderEl.classed('vzb-top-dialog')) {
       this.placeholderEl.classed('notransition', true);
 
       var profile = this.getLayoutProfile();
 
       if(profile !== 'small') {
-        var chartWidth = parseInt(this.dragContainerEl.style('width'), 10);
+        var chartWidth = parseInt(this.rootEl.style('width'), 10);
         var dialogRight = parseInt(this.rightPos, 10);
         var chartHeight = parseInt(this.rootEl.style('height'), 10);
         var dialogTop = parseInt(this.topPos, 10);

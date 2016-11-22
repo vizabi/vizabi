@@ -448,7 +448,7 @@ var Model = EventSource.extend({
     var _this = this;
 
     this.validate();
-    utils.timeStamp('Vizabi Model: Model loaded: ' + this.name + '(' + this._id + ')');
+    utils.timeStamp('Vizabi Model: Model loaded: ' + this._name + '(' + this._id + ')');
     //end this load call
     this._loadedOnce = true;
 

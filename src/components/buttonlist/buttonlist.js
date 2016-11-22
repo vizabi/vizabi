@@ -577,7 +577,7 @@ var ButtonList = Component.extend({
     //restore body overflow
     document.body.style.overflow = body_overflow;
 
-    this.root.layout.resizeHandler();
+    this.root.ui.resizeHandler();
 
     //force window resize event
     // utils.defer(function() {
