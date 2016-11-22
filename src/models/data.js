@@ -104,7 +104,7 @@ var DataModel = Model.extend({
           var reader = _this.getReader(parsers);
 
           // execute the query with this reader
-          reader.read(query).then(function(response) {
+          reader.read(query, parsers).then(function(response) {
 
               //success reading
               response = response || reader.getData();
