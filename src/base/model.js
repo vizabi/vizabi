@@ -716,7 +716,7 @@ function initSubmodel(attr, val, ctx, persistent) {
       let Modl = Model.get(modelType, true);
       if (!Modl) {
         try {
-          Modl = require(`../models/${modelType}`);
+          Modl = require('../models/' + modelType).default;
         } catch (err) {
           Modl = Model;
         }

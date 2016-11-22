@@ -15,7 +15,8 @@ const requireAll = (_require, depth) => {
     const name = /([^/]+)\..+$/.exec(key)[1];
 
     try {
-      result[name] = _require(key);
+      const required = _require(key);
+      result[name] = required.default || required;
     } catch (err) {
       console.warn('Import error', key, err);
     }

@@ -37,3 +37,4 @@ globals.ext_resources = utils.deepExtend({
 }, globals.ext_resources);
 
 export default Vzb;
+module.exports = Vzb;
