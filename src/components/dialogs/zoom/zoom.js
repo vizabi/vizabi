@@ -25,16 +25,16 @@ init: function(config, parent) {
   this.components = [{
     component: zoombuttonlist,
     placeholder: '.vzb-dialog-zoom-buttonlist',
-    model: ["state", "ui", "language"]
+    model: ["state", "ui", "locale"]
   }, {
     component: simplecheckbox,
     placeholder: '.vzb-zoomonscrolling-switch',
-    model: ["ui", "language"],
+    model: ["ui", "locale"],
     checkbox: 'zoomOnScrolling'
   }, {
     component: simplecheckbox,
     placeholder: '.vzb-adaptminmaxzoom-switch',
-    model: ["ui", "language"],
+    model: ["ui", "locale"],
     checkbox: 'adaptMinMaxZoom'
   }];
 

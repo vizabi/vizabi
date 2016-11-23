@@ -22,13 +22,13 @@ var Colors = Dialog.extend({
     this.components = [{
       component: indicatorpicker,
       placeholder: '.vzb-caxis-selector',
-      model: ["state.time", "state.entities", "state.marker", "language"],
+      model: ["state.time", "state.entities", "state.marker", "locale"],
       markerID: "color",
       showHoverValues: true
     }, {
       component: colorlegend,
       placeholder: '.vzb-clegend-container',
-      model: ["state.time", "state.entities", "state.marker", "language"]
+      model: ["state.time", "state.entities", "state.marker", "locale"]
     }];
 
 

@@ -18,7 +18,7 @@ var BarRankChart = Tool.extend('BarRankChart', {
     this.components = [{
       component: BarRankChartComponent,
       placeholder: '.vzb-tool-viz',
-      model: ["state.time", "state.entities", "state.marker", "language", "ui"]
+      model: ["state.time", "state.entities", "state.marker", "locale", "ui"]
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
@@ -26,15 +26,15 @@ var BarRankChart = Tool.extend('BarRankChart', {
     }, {
       component: dialogs,
       placeholder: '.vzb-tool-dialogs',
-      model: ['state', 'ui', 'language']
+      model: ['state', 'ui', 'locale']
     }, {
       component: buttonlist,
       placeholder: '.vzb-tool-buttonlist',
-      model: ['state', 'ui', 'language']
+      model: ['state', 'ui', 'locale']
     }, {
       component: treemenu,
       placeholder: '.vzb-tool-treemenu',
-      model: ['state.marker', 'state.marker_tags', 'state.time', 'language']
+      model: ['state.marker', 'state.marker_tags', 'state.time', 'locale']
     }];
 
     //constructor is the same as any tool
@@ -56,7 +56,7 @@ var BarRankChart = Tool.extend('BarRankChart', {
         color:  { }
       }
     },
-    language: { },
+    locale: { },
     ui: {
       presentation: false,
       chart: { }

@@ -20,12 +20,12 @@ var Stack = Dialog.extend({
         this.name = 'stack';
         var _this = this;
 
-        // in dialog, this.model_expects = ["state", "ui", "language"];
+        // in dialog, this.model_expects = ["state", "ui", "locale"];
 
         this.components = [{
             component: draggablelist,
             placeholder: '.vzb-dialog-draggablelist',
-            model: ["state.marker.group", "state.marker.color", "language", "ui.chart"],
+            model: ["state.marker.group", "state.marker.color", "locale", "ui.chart"],
             groupID: "manualSorting",
             isEnabled: "manualSortingEnabled",
             dataArrFn: _this.manualSorting.bind(_this),

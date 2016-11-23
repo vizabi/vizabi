@@ -38,8 +38,8 @@ var ButtonList = Component.extend({
       name: "ui",
       type: "ui"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }];
 
     this._available_buttons = {
@@ -498,7 +498,7 @@ var ButtonList = Component.extend({
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
     if(!btn.node()) return utils.warn("setBubbleLock: no button '" +id+ "' found in DOM. doing nothing");
       
-    var translator = this.model.language.getTFunction();
+    var translator = this.model.locale.getTFunction();
 
     btn.classed(class_unavailable, this.model.state.entities.select.length == 0 && !active);
     if (typeof active == "undefined") {
@@ -521,7 +521,7 @@ var ButtonList = Component.extend({
   setInpercent: function() {
     if (typeof((this.model.ui.chart||{}).inpercent) == "undefined") return;
     var id = 'inpercent';
-    var translator = this.model.language.getTFunction();
+    var translator = this.model.locale.getTFunction();
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
 
     btn.classed(class_active_locked, this.model.ui.chart.inpercent);
@@ -532,7 +532,7 @@ var ButtonList = Component.extend({
   },
   setPresentationMode: function() {
     var id = 'presentation';
-    var translator = this.model.language.getTFunction();
+    var translator = this.model.locale.getTFunction();
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
 
     btn.classed(class_active_locked, this.model.ui.presentation);
@@ -566,7 +566,7 @@ var ButtonList = Component.extend({
     }
 
     this.model.ui.fullscreen = fs;
-    var translator = this.model.language.getTFunction();
+    var translator = this.model.locale.getTFunction();
     btn.classed(class_active_locked, fs);
 
     btn.select(".vzb-buttonlist-btn-icon").html(iconset[fs ? "unexpand" : "expand"]);

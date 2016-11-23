@@ -22,7 +22,7 @@ function pause() {
 
 function language(lang) {
   var model = {
-    language: {
+    locale: {
       id: lang
     }
   };

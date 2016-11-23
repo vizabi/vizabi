@@ -33,8 +33,8 @@ var BarRankChart = Component.extend({
       name: "marker",
       type: "model"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }, {
       name: "ui",
       type: "ui"

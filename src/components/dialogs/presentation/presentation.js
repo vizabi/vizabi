@@ -23,7 +23,7 @@ init: function(config, parent) {
   {
     component: simplecheckbox,
     placeholder: '.vzb-presentationmode-switch',
-    model: ["ui", "language"],
+    model: ["ui", "locale"],
     checkbox: 'presentation'
   }];
 

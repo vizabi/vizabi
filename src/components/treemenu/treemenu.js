@@ -560,8 +560,8 @@ var TreeMenu = Component.extend({
       name: "time",
       type: "time"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }];
 
     this.context = context;
@@ -660,7 +660,7 @@ var TreeMenu = Component.extend({
       //if(_this.menuEntity.direction != MENU_VERTICAL) _this.menuEntity.closeAllChildren();
     });
 
-    this.translator = this.model.language.getTFunction();
+    this.translator = this.model.locale.getTFunction();
 
     //TODO: hack! potentially unsafe operation here
     var tags = this.model.marker_tags.label.getData();

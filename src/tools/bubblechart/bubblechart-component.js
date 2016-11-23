@@ -39,8 +39,8 @@ var BubbleChartComp = Component.extend({
       name: "marker",
       type: "model"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }, {
       name: "ui",
       type: "ui"
@@ -547,7 +547,7 @@ var BubbleChartComp = Component.extend({
     var _this = this;
 
     var conceptProps = _this.model.marker.getConceptprops();
-    this.translator = this.model.language.getTFunction();
+    this.translator = this.model.locale.getTFunction();
 
     this.strings = {
       title: {

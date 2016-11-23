@@ -365,8 +365,8 @@ var Component = Events.extend({
       });
 
       // fill the models that weren't passed with empty objects
-      // e.g. if expected = [ui, language, color] and passed/existing = [ui, language]
-      // it will fill values up to [ui, language, {}]
+      // e.g. if expected = [ui, locale, color] and passed/existing = [ui, locale]
+      // it will fill values up to [ui, locale, {}]
       var existing = model_config.length;
       var expected = this.model_expects.length;
       if(expected > existing) {
@@ -411,7 +411,7 @@ var Component = Events.extend({
   getTranslationFunction: function(wrap) {
     var t_func;
     try {
-      t_func = this.model.get('language').getTFunction();
+      t_func = this.model.get('locale').getTFunction();
     } catch(err) {
       if(this.parent && this.parent !== this) {
         t_func = this.parent.getTranslationFunction();

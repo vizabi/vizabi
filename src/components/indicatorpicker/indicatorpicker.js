@@ -35,8 +35,8 @@ var IndPicker = Component.extend({
             name: "marker",
             type: "model"
         }, {
-            name: "language",
-            type: "language"
+            name: "locale",
+            type: "locale"
         }];
 
         this.markerID = config.markerID;
@@ -44,7 +44,7 @@ var IndPicker = Component.extend({
         if(!config.markerID) utils.warn("indicatorpicker.js complains on 'markerID' property: " + config.markerID);
 
         this.model_binds = {
-            "translate:language": function(evt) {
+            "translate:locale": function(evt) {
                 _this.updateView();
             },
             "ready": function(evt) {
@@ -152,7 +152,7 @@ var IndPicker = Component.extend({
         if(!this._readyOnce) return;
 
         var _this = this;
-        var translator = this.model.language.getTFunction();
+        var translator = this.model.locale.getTFunction();
 
         var which = this.model.marker[this.markerID].which;
         var type = this.model.marker[this.markerID]._type;

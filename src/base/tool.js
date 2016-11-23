@@ -156,7 +156,7 @@ var Tool = Component.extend({
             _this.triggerResize();
           }
         },
-        'translate:language': function() {
+        'translate:locale': function() {
           _this.translateStrings();
         }  
       });

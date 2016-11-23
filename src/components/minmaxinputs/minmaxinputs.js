@@ -32,15 +32,15 @@ var MinMaxInputs = Component.extend({
             name: "time",
             type: "time"
         }, {
-            name: "language",
-            type: "language"
+            name: "locale",
+            type: "locale"
         }];
 
         this.markerID = config.markerID;
         if(!config.markerID) utils.warn("minmaxinputs.js complains on 'markerID' property: " + config.markerID);
 
         this.model_binds = {};
-        this.model_binds["translate:language"] = function(evt) {
+        this.model_binds["translate:locale"] = function(evt) {
             _this.updateView();
         };
         this.model_binds["change:marker." + this.markerID] = function(evt) {
@@ -105,7 +105,7 @@ var MinMaxInputs = Component.extend({
 
     updateView: function() {
       var _this = this;
-      this.translator = this.model.language.getTFunction();
+      this.translator = this.model.locale.getTFunction();
 
       this.el_domain_labelMin.text(this.translator("min") + ":");
       this.el_domain_labelMax.text(this.translator("max") + ":");

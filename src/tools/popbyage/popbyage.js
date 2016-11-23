@@ -29,7 +29,7 @@ var PopByAge = Tool.extend('PopByAge', {
     this.components = [{
       component: PopByAgeComponent,
       placeholder: '.vzb-tool-viz',
-      model: ["state.time", "state.entities", "state.entities_age", "state.marker", "language"] //pass models to component
+      model: ["state.time", "state.entities", "state.entities_age", "state.marker", "locale"] //pass models to component
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
@@ -37,15 +37,15 @@ var PopByAge = Tool.extend('PopByAge', {
     }, {
       component: dialogs,
       placeholder: '.vzb-tool-dialogs',
-      model: ['state', 'ui', 'language']
+      model: ['state', 'ui', 'locale']
     }, {
       component: buttonlist,
       placeholder: '.vzb-tool-buttonlist',
-      model: ['state', 'ui', 'language']
+      model: ['state', 'ui', 'locale']
     }, {
       component: treemenu,
       placeholder: '.vzb-tool-treemenu',
-      model: ['state.marker', 'state.marker_tags', 'state.time', 'language']
+      model: ['state.marker', 'state.marker_tags', 'state.time', 'locale']
     }];
 
     //constructor is the same as any tool

@@ -5,7 +5,7 @@ import EventSource from 'base/events';
 /*!
  * DATACONNECTED MODEL
  *
- * Any model which may trigger a reload of data is here. Dimensions, Time, Hooks and Languages are DataConnected
+ * Any model which may trigger a reload of data is here. Dimensions, Time, Hooks and Locales are DataConnected
  */
 
 var DataConnected = Model.extend({

@@ -45,8 +45,8 @@ var AgePyramid = Component.extend({
       name: "marker_side",
       type: "model"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }, {
       name: "ui",
       type: "ui"
@@ -174,7 +174,7 @@ var AgePyramid = Component.extend({
   },
 
   updateUIStrings: function() {
-    this.translator = this.model.language.getTFunction();
+    this.translator = this.model.locale.getTFunction();
 
     var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
 

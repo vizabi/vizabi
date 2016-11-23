@@ -22,14 +22,14 @@ var DataNotes = Component.extend({
       name: "marker",
       type: "model"
     },{
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }];
 
     this.context = context;
 
     this.model_binds = {
-      "translate:language": function(evt) {
+      "translate:locale": function(evt) {
         _this.ready();
       }
     }
@@ -47,7 +47,7 @@ var DataNotes = Component.extend({
   readyOnce: function() {
     var _this = this;
 
-    this.translator = this.model.language.getTFunction();
+    this.translator = this.model.locale.getTFunction();
     this.element = d3.select(this.placeholder);
 
     this.element.selectAll("div").remove();

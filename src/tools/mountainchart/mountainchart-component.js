@@ -46,7 +46,7 @@ var MountainChartComponent = Component.extend({
             { name: "time", type: "time" },
             { name: "entities", type: "entities" },
             { name: "marker", type: "model" },
-            { name: "language", type: "language" },
+            { name: "locale", type: "locale" },
             { name: "ui", type: "ui" }
         ];
 
@@ -495,7 +495,7 @@ updateSize: function (meshLength) {
     updateUIStrings: function () {
         var _this = this;
 
-        this.translator = this.model.language.getTFunction();
+        this.translator = this.model.locale.getTFunction();
         var xConceptprops = this.model.marker.axis_x.getConceptprops();
 
 

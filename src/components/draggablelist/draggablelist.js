@@ -18,8 +18,8 @@ var DraggableList = Component.extend({
       name: "color",
       type: "color"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }, {
       name: "chart",
       type: "model"
@@ -32,7 +32,7 @@ var DraggableList = Component.extend({
     if(!config.groupID) utils.warn("draggablelist.js complains on 'groupID' property: " + config.groupID);
 
     this.model_binds = {
-      "translate:language": function(evt) {
+      "translate:locale": function(evt) {
         _this.updateView();
       },
       "change:group.which": function(evt) {

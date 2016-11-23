@@ -28,8 +28,8 @@ var ColorLegend = Component.extend({
         name: "marker",
         type: "model"
       }, {
-        name: "language",
-        type: "language"
+        name: "locale",
+        type: "locale"
       }];
 
     this.needsUpdate = false;

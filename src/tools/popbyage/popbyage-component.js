@@ -36,8 +36,8 @@ var PopByAge = Component.extend({
       name: "marker",
       type: "model"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }];
 
     var _this = this;
@@ -115,7 +115,7 @@ var PopByAge = Component.extend({
   },
 
   updateUIStrings: function() {
-    this.translator = this.model.language.getTFunction();
+    this.translator = this.model.locale.getTFunction();
 
     var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
 

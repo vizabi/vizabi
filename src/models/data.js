@@ -242,7 +242,7 @@ var DataModel = Model.extend({
       },
       from: "concepts",
       where: {},
-      language: this.getClosestModel('language').id,
+      language: this.getClosestModel('locale').id,
     };
 
     return this.load(query)

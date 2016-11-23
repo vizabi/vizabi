@@ -163,7 +163,7 @@ var Hook = DataConnected.extend({
 
     //return query
     return {
-      'language': this.getClosestModel('language').id,
+      'language': this.getClosestModel('locale').id,
       'from': from,
       'animatable': animatable,
       'select': select,

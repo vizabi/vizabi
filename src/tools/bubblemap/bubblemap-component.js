@@ -46,8 +46,8 @@ var BubbleMapComponent = Component.extend({
       name: "marker",
       type: "model"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }, {
       name: "ui",
       type: "ui"
@@ -278,7 +278,7 @@ var BubbleMapComponent = Component.extend({
   updateUIStrings: function () {
       var _this = this;
 
-      this.translator = this.model.language.getTFunction();
+      this.translator = this.model.locale.getTFunction();
       var conceptProps = _this.model.marker.getConceptprops();
 
       this.strings = {

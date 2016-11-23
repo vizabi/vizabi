@@ -36,8 +36,8 @@ var ZoomButtonList = Component.extend({
       name: "ui",
       type: "ui"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }];
     
     this._available_buttons = {

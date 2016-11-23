@@ -49,8 +49,7 @@ var Find = Dialog.extend({
           _this.redrawDataPoints(values);
         });
       },
-      "translate:language": function() {
-        _this.translator = _this.model.language.getTFunction();
+      "translate:locale": function() {
         _this.input_search.attr("placeholder", _this.translator("placeholder/search") + "...");
       }
     }
@@ -91,7 +90,7 @@ var Find = Dialog.extend({
       _this.deselectEntities();
     });
 
-    this.translator = this.model.language.getTFunction();
+    this.translator = this.model.locale.getTFunction();
     this.input_search.attr("placeholder", this.translator("placeholder/search") + "...");
 
     //make sure it refreshes when all is reloaded

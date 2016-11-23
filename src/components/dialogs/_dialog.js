@@ -25,8 +25,8 @@ var Dialog = Component.extend({
       name: "ui",
       type: "ui"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }];
 
     this.template = dialogTemplates[this.name];

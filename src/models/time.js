@@ -54,7 +54,7 @@ var TimeModel = DataConnected.extend({
   dataConnectedChildren: ['startOrigin', 'endOrigin', 'dim'],
 
   /**
-   * Initializes the language model.
+   * Initializes the locale model.
    * @param {String} name 
    * @param {Object} values The initial values of this model
    * @param parent A reference to the parent model

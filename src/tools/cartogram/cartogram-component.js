@@ -45,8 +45,8 @@ var CartogramComponent = Component.extend({
       name: "marker",
       type: "model"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }, {
       name: "ui",
       type: "ui"
@@ -418,7 +418,7 @@ var CartogramComponent = Component.extend({
   updateUIStrings: function () {
     var _this = this;
 
-    this.translator = this.model.language.getTFunction();
+    this.translator = this.model.locale.getTFunction();
     var sizeConceptprops = this.model.marker.size.getConceptprops();
     this.strings = {
       title: {

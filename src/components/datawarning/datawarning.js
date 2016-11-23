@@ -13,14 +13,14 @@ var DataWarning = Component.extend({
     this.name = 'gapminder-datawarning';
 
     this.model_expects = [{
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }];
 
     this.context = context;
 
     this.model_binds = {
-      "translate:language": function(evt) {
+      "translate:locale": function(evt) {
         if(!_this._ready) return;
         _this.redraw();
       }
@@ -74,7 +74,7 @@ var DataWarning = Component.extend({
   },
 
   redraw: function(){
-    this.translator = this.model.language.getTFunction();
+    this.translator = this.model.locale.getTFunction();
 
     var title = this.translator("datawarning/title/"+this.parent.name);
     this.container.select(".vzb-data-warning-title")

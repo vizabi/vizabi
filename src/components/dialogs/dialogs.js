@@ -37,8 +37,8 @@ var Dialogs = Component.extend({
       name: "ui",
       type: "ui"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }];
 
     this._available_dialogs = {
@@ -220,7 +220,7 @@ var Dialogs = Component.extend({
         comps.push({
           component: dlg_config.dialog,
           placeholder: '.vzb-dialogs-dialog[data-dlg="' + dlg + '"]',
-          model: ["state", "ui", "language"]
+          model: ["state", "ui", "locale"]
         });
 
         dlg_config.component = comps.length - 1;

@@ -1,7 +1,7 @@
 import * as utils from 'base/utils';
 import DataConnected from 'models/dataconnected';
 
-var LanguageModel = DataConnected.extend({
+var LocaleModel = DataConnected.extend({
 
   /**
    * Default values for this model
@@ -15,13 +15,13 @@ var LanguageModel = DataConnected.extend({
   strings: {},
 
   /**
-   * Initializes the language model.
+   * Initializes the locale model.
    * @param {Object} values The initial values of this model
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
   init: function(name, values, parent, bind) {
-    this._type = "language";
+    this._type = "locale";
 
     //same constructor, with same arguments
     this._super(name, values, parent, bind);
@@ -63,15 +63,13 @@ var LanguageModel = DataConnected.extend({
   /**
    * Gets a certain UI string
    * @param {String} id string identifier
-   * @param {String} lang language
-   * @param {Object} ui_strings ui_strings object or model
    * @returns {string} translated string
    */
   getUIString: function(stringId) {
     if(this.strings && this.strings[this.id] && (this.strings[this.id][stringId] || this.strings[this.id][stringId]==="")) {
       return this.strings[this.id][stringId];
     } else {
-      if(!this.strings || !this.strings[this.id]) utils.warn("Strings are not loaded for the " + this.id + " language. Check if translation JSON is valid");
+      if(!this.strings || !this.strings[this.id]) utils.warn("Strings are not loaded for the " + this.id + " locale. Check if translation JSON is valid");
       return stringId;
     }
   },
@@ -83,10 +81,10 @@ var LanguageModel = DataConnected.extend({
   getTFunction: function() {
     var _this = this;
     return function(stringId) {
-      return _this.getUIString(stringId)
+      return _this.getUIString(stringId);
     }
   }
 
 });
 
-export default LanguageModel;
+export default LocaleModel;

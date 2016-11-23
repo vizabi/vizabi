@@ -18,13 +18,13 @@ var Size = Dialog.extend({
 init: function(config, parent) {
   this.name = 'size';
 
-  // in dialog, this.model_expects = ["state", "ui", "language"];
+  // in dialog, this.model_expects = ["state", "ui", "locale"];
 
   this.components = [
   {
     component: indicatorpicker,
     placeholder: '.vzb-saxis-selector',
-    model: ["state.time", "state.entities", "state.marker", "language"],
+    model: ["state.time", "state.entities", "state.marker", "locale"],
     markerID: "size",
     showHoverValues: true
   }
