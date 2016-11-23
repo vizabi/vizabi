@@ -243,7 +243,7 @@ var Model = EventSource.extend({
    * @param {Function} validationFunction Validation function
    * @returns {Array} submodels
    */
-  getSubmodels: function(object, validationFunction) {
+  getSubmodels: function(object = false, validationFunction) {
     var submodels = (object) ? {} : [];
     var validationFunction = validationFunction || function() {
       return true;
@@ -369,7 +369,7 @@ var Model = EventSource.extend({
     }
     //only ready if nothing is loading at all
     var prev_ready = this._ready;
-    this._ready = !this.isLoading() && !this._setting && !this._loadCall;
+    this._ready = !this.isLoading() && !this._setting;
     // if now ready and wasn't ready yet
     if(this._ready && prev_ready !== this._ready) {
       if(!this._readyOnce) {
@@ -413,23 +413,17 @@ var Model = EventSource.extend({
    */
   startLoading: function(opts) {
 
-    var _this = this;
+    var promises = [];
+    promises.push(this.loadData(opts));
 
-    return new Promise(function(resolve, reject) {
+    utils.forEach(this.getSubmodels(), 
+      subModel => promises.push(subModel.startLoading(opts))
+    );
 
-      var promises = [];
-
-      promises.push(_this.loadData(opts));
-      promises.push(_this.loadSubmodels(opts));
-
-      var everythingLoaded = Promise.all(promises);
-      everythingLoaded.then(
-        function() { resolve(); _this.onSuccessfullLoad(); },
-        function() { reject(); _this.triggerLoadError(); }
-      );
-
-    });
-
+    return Promise.all(promises).then(
+      this.onSuccessfullLoad.bind(this),
+      this.triggerLoadError.bind(this)
+    );
   },
 
   loadData: function(opts) {
@@ -448,20 +442,18 @@ var Model = EventSource.extend({
 
   onSuccessfullLoad: function() {
 
-    var _this = this;
-
     this.validate();
     utils.timeStamp('Vizabi Model: Model loaded: ' + this._name + '(' + this._id + ')');
     //end this load call
     this._loadedOnce = true;
 
-    //we need to defer to make sure all other submodels
-    //have a chance to call loading for the second time
     this._loadCall = false;
     this.setTreeFreezer(false);
 
+    //we need to defer to make sure all other submodels
+    //have a chance to call loading for the second time
     utils.defer(
-      function() { _this.setReady(); }
+      () => this.setReady()
     );
   },
 
