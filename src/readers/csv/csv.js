@@ -91,9 +91,9 @@ const CSVReader = Reader.extend({
     });
   },
 
-  _normalizeQuery(query, parsers) {
-    const where = Object.assign({}, query.where);
-    const { join } = query;
+  _normalizeQuery(_query, parsers) {
+    const query = Object.assign({}, _query);
+    const { where, join } = query;
 
     if (where.$and) {
       where.$and = where.$and.reduce((whereResult, condition) => {
@@ -127,7 +127,7 @@ const CSVReader = Reader.extend({
       }, {});
     }
 
-    return Object.assign({}, query, { where });
+    return query;
   },
 
   _isDataQuery(from) {
