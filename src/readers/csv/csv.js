@@ -8,12 +8,6 @@ const CSVReader = Reader.extend({
   QUERY_FROM_CONCEPTS: 'concepts',
   QUERY_FROM_DATAPOINTS: 'datapoints',
   QUERY_FROM_ENTITIES: 'entities',
-  DATA_QUERIES() {
-    return [
-      this.QUERY_FROM_DATAPOINTS,
-      this.QUERY_FROM_ENTITIES
-    ];
-  },
 
   CONDITION_CALLBACKS: {
     $gt: (configValue, rowValue) => rowValue > configValue,
@@ -44,6 +38,8 @@ const CSVReader = Reader.extend({
    * @returns {Promise} a promise that will be resolved when data is read
    */
   read(query, parsers = {}) {
+    query = this._normalizeQuery(query, parsers);
+
     const {
       select,
       from,
@@ -58,43 +54,28 @@ const CSVReader = Reader.extend({
           case from === this.QUERY_FROM_CONCEPTS:
             return this._getConcepts(data[0]);
 
-          case this.DATA_QUERIES().includes(from) && select.key.length > 0:
+          case this._isDataQuery(from) && select.key.length > 0:
             return data
-              .reduce(this._reduceData(query), [])
+              .reduce(this._applyQuery(query), [])
               .sort((prev, next) => prev[orderBy] - next[orderBy]);
 
           default:
             return [];
         }
       })
-      .catch(utils.warn);
+      .catch(utils.error);
   },
 
   load(options = {}) {
-    const {
-      path = this._basepath,
-      parsers = {}
-    } = options;
+    const { parsers = {} } = options;
+    const { _basepath: path } = this;
 
-    return cached[path] ?
-      Promise.resolve(cached[path]) :
-      new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
+      const data = cached[path];
+
+      data ?
+        resolve(data.map(this._mapRows(parsers))) :
         d3.csv(path)
-          .row(row => {
-            return Object.keys(row).reduce((result, key) => {
-              const value = row[key];
-              const parser = parsers[key];
-
-              if (parser) {
-                result[key] = parser(value);
-              } else {
-                const numeric = parseFloat(value);
-                result[key] = !isNaN(numeric) && isFinite(numeric) ? numeric : value;
-              }
-
-              return result;
-            }, {});
-          })
           .get((error, result) => {
             if (!result) {
               return reject(`No permissions or empty file: ${path}. ${error}`);
@@ -104,9 +85,74 @@ const CSVReader = Reader.extend({
               return reject(`Error happened while loading csv file: ${path}. ${error}`);
             }
 
-            resolve(cached[path] = result);
+            cached[path] = result;
+            resolve(this.load(options));
           });
-      });
+    });
+  },
+
+  _normalizeQuery(query, parsers) {
+    const where = Object.assign({}, query.where);
+    const { join } = query;
+
+    if (where.$and) {
+      where.$and = where.$and.reduce((whereResult, condition) => {
+        Object.keys(condition).forEach(rowKey => {
+          const conditionValue = condition[rowKey];
+
+          if (typeof conditionValue === 'string' && conditionValue.startsWith('$')) {
+            const joinWhere = join[conditionValue].where;
+
+            Object.keys(joinWhere)
+              .forEach(joinRowKey => {
+                const value = joinWhere[joinRowKey];
+                const parser = parsers[joinRowKey];
+
+                whereResult[joinRowKey] = parser ?
+                  typeof value === 'object' ?
+                    Object.keys(value).reduce((callbackConditions, callbackKey) => {
+                      callbackConditions[callbackKey] = parser(value[callbackKey]);
+                      return callbackConditions;
+                    }, {}) :
+                    parser(value)
+                  : value;
+              });
+          } else {
+            const parser = parsers[rowKey];
+            whereResult[rowKey] = parser ? parser(conditionValue) : conditionValue;
+          }
+        });
+
+        return whereResult;
+      }, {});
+    }
+
+    return Object.assign({}, query, { where });
+  },
+
+  _isDataQuery(from) {
+    return [
+      this.QUERY_FROM_DATAPOINTS,
+      this.QUERY_FROM_ENTITIES
+    ].includes(from);
+  },
+
+  _mapRows(parsers) {
+    return row => {
+      return Object.keys(row).reduce((result, key) => {
+        const value = row[key];
+        const parser = parsers[key];
+
+        if (parser) {
+          result[key] = parser(value);
+        } else {
+          const numeric = parseFloat(value);
+          result[key] = !isNaN(numeric) && isFinite(numeric) ? numeric : value;
+        }
+
+        return result;
+      }, {});
+    };
   },
 
   _getConcepts(firstRow) {
@@ -114,7 +160,7 @@ const CSVReader = Reader.extend({
       .map(concept => ({ concept }));
   },
 
-  _reduceData(query) {
+  _applyQuery(query) {
     const {
       select,
       from
@@ -152,36 +198,16 @@ const CSVReader = Reader.extend({
   _isSuitableRow(query, row) {
     const { where } = query;
 
-    return !where.$and || where.$and.every(binding =>
-        Object.keys(binding).every(conditionKey =>
-          this._checkCondition(query, row, binding[conditionKey], conditionKey)
-        )
-      );
-  },
+    return !where.$and ||
+      Object.keys(where.$and).every(conditionKey => {
+        const condition = where.$and[conditionKey];
 
-  _checkCondition(query, row, bindingKey, conditionKey) {
-    const { join } = query;
-
-    switch (true) {
-      case typeof bindingKey === 'string' && bindingKey.startsWith('$'):
-        const { where: conditions } = join[bindingKey];
-
-        return Object.keys(conditions).every(rowKey => {
-          return this._checkCondition(query, row, conditions[rowKey], rowKey);
-        });
-
-      case typeof bindingKey === 'object':
-        return this._checkConditionCallbacks(bindingKey, row, conditionKey);
-
-      default:
-        return row[conditionKey] === bindingKey;
-    }
-  },
-
-  _checkConditionCallbacks(conditions, row, rowKey) {
-    return Object.keys(conditions).every(conditionKey =>
-      this.CONDITION_CALLBACKS[conditionKey](conditions[conditionKey], row[rowKey])
-    );
+        return typeof condition !== 'object' ?
+          (row[conditionKey] === condition) :
+          Object.keys(condition).every(callbackKey =>
+            this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], row[conditionKey])
+          );
+      });
   }
 
 });
