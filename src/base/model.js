@@ -237,8 +237,6 @@ var Model = EventSource.extend({
     return this._type;
   },
 
-
-
   /**
    * Gets all submodels of the current model
    * @param {Object} object [object=false] Should it return an object?
@@ -380,6 +378,12 @@ var Model = EventSource.extend({
       }
       this.trigger('ready');
     }
+  },
+
+  setInterModelListeners: function() {
+    utils.forEach(this.getSubmodels(),
+      subModel => subModel.setInterModelListeners()
+    );
   },
 
   startPreload: function() {

@@ -14,40 +14,26 @@ var Hook = DataConnected.extend({
 
   dataConnectedChildren: ['use', 'which'],
 
-  init: function(name, values, parent, bind) {
-
-    this._super(name, values, parent, bind);
-
-    var _this = this;
-    var spaceRefs = this._parent.getSpace(this);
-
-    //check what we want to hook this model to
-    utils.forEach(spaceRefs, function(name) {
-      //hook with the closest prefix to this model
-      _this._space[name] = _this.getClosestModel(name);
-      //if hooks change, this should load again
-      _this._space[name].on('dataConnectedChange', function(evt) {
-        //hack for right size of bubbles
-        if(_this._type === 'size' && _this.which === _this.which_1) {
-          _this.which_1 = '';
-        };
-        //defer is necessary because other events might be queued.
-        //load right after such events
-        utils.defer(function() {
-          _this.startLoading().then(function() {
-
-          }, function(err) {
-            utils.warn(err);
-          });
-        });
-      })
-    });
-  },
-
   preloadData: function() {
     var dataModel = (this.data) ? this.data : 'data';
     this.dataSource = this.getClosestModel(dataModel);
     return this._super();
+  },
+
+  /**
+   * After complete model tree is created, this allows models to listen to eachother. 
+   */
+  setInterModelListeners: function() {
+    var spaceRefs = this._parent.getSpace(this);
+
+    //check what we want to hook this model to
+    utils.forEach(spaceRefs, name => {
+      //hook with the closest prefix to this model
+      this._space[name] = this.getClosestModel(name);
+      //if hooks change, this should load again
+      this._space[name].on('dataConnectedChange', this.handleDataConnectedChange.bind(this));
+    });
+    this.getClosestModel('locale').on('dataConnectedChange', this.handleDataConnectedChange.bind(this));
   },
 
   /**
@@ -60,6 +46,7 @@ var Hook = DataConnected.extend({
    */
   loadData: function(opts) {
 
+    // then start loading data
 
     if(!this.which) return Promise.resolve();
 
@@ -90,6 +77,22 @@ var Hook = DataConnected.extend({
 
     return dataPromise;
 
+  },
+
+  handleDataConnectedChange: function(evt) {
+    //hack for right size of bubbles
+    if(this._type === 'size' && this.which === this.which_1) {
+      this.which_1 = '';
+    };
+    //defer is necessary because other events might be queued.
+    //load right after such events
+    utils.defer(() => {
+      this.startLoading().then(function() {
+
+      }, function(err) {
+        utils.warn(err);
+      });
+    });
   },
 
   _isLoading: function() {

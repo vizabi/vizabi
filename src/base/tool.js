@@ -32,7 +32,6 @@ var ToolModel = Model.extend({
     var listeners = utils.extend(tool.getToolListeners(), external_model.bind);
     delete external_model.bind; // bind shouldn't go to model tree
 
-    //constructor is similar to model
     this._super(tool.name, external_model, null, listeners);
   },
 
@@ -67,6 +66,8 @@ var ToolModel = Model.extend({
   }
 
 });
+
+
 //tool
 var Tool = Component.extend({
  /**
@@ -79,10 +80,13 @@ var Tool = Component.extend({
 
     this.template = this.getToolTemplate();
 
+    // super also calls createModel
     this._super({
       placeholder: placeholder,
       model: external_model
     });
+
+    // 
 
     //splash
     this.model.ui.splash = this.model && this.model.data && this.model.data.splash;
@@ -101,6 +105,7 @@ var Tool = Component.extend({
     external_model      = external_model      || {}; //external model can be undefined
     external_model.bind = external_model.bind || {}; //bind functions can be undefined
     this.model = new ToolModel(this, external_model);
+    this.model.setInterModelListeners();
   },
   
   getToolTemplate: function() {
