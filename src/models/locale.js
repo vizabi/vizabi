@@ -1,6 +1,9 @@
 import * as utils from 'base/utils';
 import DataConnected from 'models/dataconnected';
 
+// this and many other locale information should at some point be stored in an external file with locale information (rtl, date formats etc)
+var rtlLocales = ['ar', 'ar-SA'];
+
 var LocaleModel = DataConnected.extend({
 
   /**
@@ -83,6 +86,10 @@ var LocaleModel = DataConnected.extend({
     return function(stringId) {
       return _this.getUIString(stringId);
     }
+  },
+
+  isRTL: function() {
+    return (rtlLocales.indexOf(this.id) !== -1);
   }
 
 });

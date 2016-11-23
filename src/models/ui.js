@@ -4,8 +4,9 @@ import Model from 'base/model';
 //classes are vzb-portrait, vzb-landscape...
 var class_prefix = 'vzb-';
 var class_presentation = 'presentation';
+var class_rtl = 'rtl';
 var class_portrait = 'vzb-portrait';
-var class_lansdcape = 'vzb-landscape';
+var class_landscape = 'vzb-landscape';
 
 var UI = Model.extend({
 
@@ -92,19 +93,15 @@ var UI = Model.extend({
 
     //update size class
     utils.addClass(this._container, class_prefix + this._curr_profile);
+    
     //toggle, untoggle classes based on orientation
-    if(width < height) {
-      utils.addClass(this._container, class_portrait);
-      utils.removeClass(this._container, class_lansdcape);
-    } else {
-      utils.addClass(this._container, class_lansdcape);
-      utils.removeClass(this._container, class_portrait);
-    }
+    utils.classed(this._container, class_portrait, width < height);
+    utils.classed(this._container, class_landscape, !(width < height));
+
     this._prev_size.width = width;
     this._prev_size.height = height;
     this.trigger('resize');
   },
-
   /**
    * Sets the container for this layout
    * @param container DOM element
@@ -120,15 +117,15 @@ var UI = Model.extend({
    * @param {Bool} presentation mode on or off
    */
   updatePresentation: function() {
-    if (this.presentation) {
-        utils.addClass(this._container, class_prefix + class_presentation);
-    } else {
-        utils.removeClass(this._container, class_prefix + class_presentation);
-    }
+    utils.classed(this._container, class_prefix + class_presentation, this.presentation);
   },
 
   getPresentationMode: function() {
     return this.presentation;
+  },
+
+  setRTL: function(flag) {
+    utils.classed(this._container, class_prefix + class_rtl, flag);
   },
 
   /**

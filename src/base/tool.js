@@ -158,6 +158,7 @@ var Tool = Component.extend({
         },
         'translate:locale': function() {
           _this.translateStrings();
+          _this.model.ui.setRTL(_this.model.locale.isRTL());
         }  
       });
   },
