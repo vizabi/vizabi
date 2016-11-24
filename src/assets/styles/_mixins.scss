@@ -149,3 +149,9 @@
     }
   }
 }
+
+@mixin rtl {
+  @at-root #{'.vzb-rtl' + &} {
+    @content;
+  }  
+}

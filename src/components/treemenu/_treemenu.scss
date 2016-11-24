@@ -39,6 +39,11 @@
       }
       
       .vzb-treemenu-close {
+        @include rtl {
+          float: left;
+          left: -15px;
+          right: auto;
+        }
         position: relative;
         float: right;
         top: 10px;
@@ -56,12 +61,21 @@
         }
       }
       .vzb-treemenu-title {
+        @include rtl {
+          padding-left: 25px;
+          padding-right: 10px;
+        }
         display: inline-block;
         color: $vzb-color-primary;
         font-size: $vzb-font-size-medium;
         padding: 25px 25px 10px 5px;
       }
       .vzb-treemenu-scaletypes {
+        @include rtl {
+          left: -10px;
+          right: auto;
+          float: left;
+        }
         position: relative;
         right: -10px;
         top: 30px;
@@ -80,9 +94,15 @@
             color: $vzb-color-primary-strong;
           }
           &:first-child {
+            @include rtl {
+              border-radius: 0 4px 4px 0;
+            }
             border-radius: 4px 0 0 4px;
           }
           &:last-child {
+            @include rtl {
+              border-radius: 4px 0 0 4px;          
+            }
             border-radius: 0 4px 4px 0;
           }
         }
@@ -130,6 +150,7 @@
         left: 100%;
         &.vzb-treemenu-horizontal .vzb-treemenu-list,
         &.vzb-treemenu-horizontal {
+          direction: ltr;
           > .vzb-treemenu-list-item {
             height: 38px;
             padding: 0;
@@ -160,6 +181,7 @@
         }
         &.vzb-treemenu-vertical .vzb-treemenu-list,
         &.vzb-treemenu-vertical {
+          direction: ltr;
           > .vzb-treemenu-list-item {
             .vzb-treemenu-list-item-label {
               line-height: 16px;
