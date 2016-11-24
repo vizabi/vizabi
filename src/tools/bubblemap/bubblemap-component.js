@@ -259,7 +259,6 @@ var BubbleMapComponent = Component.extend({
 //    this._selectlist.redraw();
       _this.updateDoubtOpacity();
       _this.updateOpacity();
-      _this.year.setText(_this.model.time.timeFormat(_this.model.time.value));
     });
 
   },
@@ -630,7 +629,7 @@ var BubbleMapComponent = Component.extend({
 
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
-    this.year.setText(_this.model.time.format(this.time));
+    this.year.setText(_this.model.time.timeNow);
 
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
 
