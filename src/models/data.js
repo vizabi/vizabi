@@ -30,10 +30,12 @@ var DataModel = Model.extend({
 
     this.queryQueue = {};
     this._collection = {};
-    this._collectionPromises = {};// stores promises, making sure we don't do one calulation twice
+    this._collectionPromises = {}; // stores promises, making sure we don't do one calulation twice
 
     //same constructor as parent, with same arguments
     this._super(name, values, parent, bind);
+
+    this.readerObject = this.getReader();
 
   },
 
@@ -100,10 +102,8 @@ var DataModel = Model.extend({
           // no double columns in formatter because it's an object, extend would've overwritten doubles
           query.select.value = utils.unique(query.select.value);
 
-          var reader = _this.getReader();
-
           // execute the query with this reader
-          reader.read(query, parsers).then(function(response) {
+          _this.readerObject.read(query, parsers).then(function(response) {
 
               //success reading
               _this.checkQueryResponse(query, response);
@@ -155,7 +155,6 @@ var DataModel = Model.extend({
     return new readerClass({
       path: this.path
     });
-
   },
 
   checkQueryResponse: function(query, response) {
