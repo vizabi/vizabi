@@ -11,7 +11,7 @@ import treemenu from 'components/treemenu/treemenu';
 var BarRankChart = Tool.extend('BarRankChart', {
 
   //Run when the tool is created
-  init: function(placeholder, external_model) {
+  init: function (placeholder, external_model) {
 
     this.name = "barrankchart";
 
@@ -41,8 +41,6 @@ var BarRankChart = Tool.extend('BarRankChart', {
     this._super(placeholder, external_model);
   },
 
-
-
   /**
    * Determines the default model of this tool
    */
@@ -51,19 +49,17 @@ var BarRankChart = Tool.extend('BarRankChart', {
       entities: {
         dim: "id"
       },
-      time: {
-      },
+      time: {},
       marker: {
-        space: ["entities", "time"],
-        axis_x: {allow: {scales: ["linear","log"]}},
-        axis_y: {allow: {scales: ["ordinal", "nominal"]}},
-        color:  { }
+        axis_x: { allow: { scales: ["linear", "log"] } },
+        axis_y: { allow: { scales: ["ordinal", "nominal"] } },
+        color: {}
       }
     },
-    locale: { },
+    locale: {},
     ui: {
       presentation: false,
-      chart: { }
+      chart: {}
     }
   }
 });
