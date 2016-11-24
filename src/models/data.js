@@ -100,14 +100,12 @@ var DataModel = Model.extend({
           // no double columns in formatter because it's an object, extend would've overwritten doubles
           query.select.value = utils.unique(query.select.value);
 
-          var reader = _this.getReader(parsers);
+          var reader = _this.getReader();
 
           // execute the query with this reader
           reader.read(query, parsers).then(function(response) {
 
               //success reading
-              response = response || reader.getData();
-
               _this.checkQueryResponse(query, response);
 
               _this._collection[queryId] = {};
@@ -147,7 +145,7 @@ var DataModel = Model.extend({
     return this.queryQueue[queryMergeId].promise;
   },
 
-  getReader: function(parsers) {
+  getReader: function() {
     // Create a new reader for this query
     var readerClass = Reader.get(this.reader);
     if (!readerClass) {
@@ -155,8 +153,7 @@ var DataModel = Model.extend({
     }
 
     return new readerClass({
-      path: this.path,
-      parsers: parsers
+      path: this.path
     });
 
   },
