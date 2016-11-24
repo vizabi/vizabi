@@ -87,8 +87,12 @@ var DataModel = Model.extend({
     ]);
 
     if (this.queryQueue[queryMergeId]) {
-      // add select to base query
+
+      // add select to base query and return the base query promise
       Array.prototype.push.apply(this.queryQueue[queryMergeId].query.select.value, query.select.value);
+      utils.extend(this.queryQueue[queryMergeId].parsers, parsers);
+      return this.queryQueue[queryMergeId].promise;
+    
     } else {
 
       // set up base query
@@ -121,6 +125,7 @@ var DataModel = Model.extend({
               col.query = query;
               // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
 
+              // remove query from queue
               _this.queryQueue[queryMergeId] = null;
               resolve(queryId);
 
@@ -137,12 +142,14 @@ var DataModel = Model.extend({
 
       this.queryQueue[queryMergeId] = {
         query: query,
+        parsers: parsers,
         promise: promise
       };
+      
+      return this.queryQueue[queryMergeId].promise;
 
     }
 
-    return this.queryQueue[queryMergeId].promise;
   },
 
   getReader: function() {
