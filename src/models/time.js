@@ -68,6 +68,7 @@ var TimeModel = DataConnected.extend({
     var _this = this;
     this.timeFormat = formats[this.unit];
     this.dragging = false;
+    this.timeNow = this.timeFormat(this.value);
     this.postponePause = false;
     this.allSteps = {};
     this.delayAnimations = this.delay;
@@ -82,7 +83,17 @@ var TimeModel = DataConnected.extend({
           _this._stopPlaying();
         }
       },
-
+      "change:value": function() {
+        if(_this.playing) {
+          _this.timeDelayId = utils.delay(function() {
+            _this.timeNow = _this.timeFormat(_this.value);  
+          }, _this.delayAnimations);
+        } else {
+          utils.clearDelay(_this.timeDelayId);
+          _this.timeNow = _this.timeFormat(_this.value);
+        } 
+      },
+      
       "change:unit": function() {
         _this.timeFormat = formats[_this.unit];
       }

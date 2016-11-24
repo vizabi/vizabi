@@ -48,9 +48,13 @@ var BarRankChart = Tool.extend('BarRankChart', {
    */
   default_model: {
     state: {
+      entities: {
+        dim: "id"
+      },
       time: {
       },
       marker: {
+        space: ["entities", "time"],
         axis_x: {allow: {scales: ["linear","log"]}},
         axis_y: {allow: {scales: ["ordinal", "nominal"]}},
         color:  { }

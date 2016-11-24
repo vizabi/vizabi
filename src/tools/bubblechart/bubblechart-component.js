@@ -462,7 +462,6 @@ var BubbleChartComp = Component.extend({
       if (!_this._frameIsValid(frame)) return utils.warn("ready: empty data received from marker.getFrame(). doing nothing");
 
       _this.frame = frame;
-      _this.year.setText(_this.model.time.timeFormat(_this.time));
       _this.updateSize();
       _this.updateMarkerSizeLimits();
       _this.updateEntities();
@@ -529,7 +528,6 @@ var BubbleChartComp = Component.extend({
 //    if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
     this.frame = frame;
     this.updateTime();
-    this.year.setText(this.model.time.timeFormat(this.time));
 
     this._updateDoubtOpacity();
     this._trails.run("findVisible");
@@ -800,18 +798,7 @@ var BubbleChartComp = Component.extend({
 
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
-    this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
-    if(this.duration) {
-      var time = _this.time;
-      this.yearDelayId = utils.delay(function() {
-        _this.year.setText(_this.model.time.timeFormat(time));
-      }, this.duration);
-    } else {
-      if(this.yearDelayId) {
-        utils.clearDelay(this.yearDelayId);
-        this.yearDelayId = null;
-      }
-    }
+    this.year.setText(this.model.time.timeNow);
   },
 
   /*
