@@ -5,15 +5,12 @@
 import * as utils from 'base/utils';
 import Tool from 'base/tool';
 
-import BarChartComponent from './barchart-component';
+import BarChartComponent from 'tools/barchart/barchart-component';
 
-import {
-  timeslider,
-  dialogs,
-  buttonlist,
-  treemenu
-}
-from 'components/_index';
+import timeslider from 'components/timeslider/timeslider';
+import dialogs from 'components/dialogs/dialogs';
+import buttonlist from 'components/buttonlist/buttonlist';
+import treemenu from 'components/treemenu/treemenu';
 
 var comp_template = 'barchart.html';
 
@@ -38,7 +35,7 @@ var BarChart = Tool.extend('BarChart', {
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
-      model: ["state.time", "state.entities", "state.marker"]
+      model: ["state.time", "state.entities", "state.marker", "ui"]
     }, {
       component: dialogs,
       placeholder: '.vzb-tool-dialogs',

@@ -36,7 +36,7 @@ var ButtonList = Component.extend({
       type: "model"
     }, {
       name: "ui",
-      type: "model"
+      type: "ui"
     }, {
       name: "language",
       type: "language"
@@ -156,8 +156,11 @@ var ButtonList = Component.extend({
         }
       }
     }      
+
+    // builds model
+    this._super(config, context);
         
-    config.ui.buttons.forEach(function(buttonId) {
+    this.model.ui.buttons.forEach(function(buttonId) {
       var button = _this._available_buttons[buttonId];
       if(button && button.statebind) {
         _this.model_binds['change:' + button.statebind] = function(evt) {
@@ -166,11 +169,7 @@ var ButtonList = Component.extend({
       }
     });    
 
-
-    
-    this.validatePopupButtons(config.ui.buttons, config.ui.dialogs);
-
-    this._super(config, context);
+    this.validatePopupButtons(this.model.ui.buttons, this.model.ui.dialogs);
 
   },
 

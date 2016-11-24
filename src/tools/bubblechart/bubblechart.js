@@ -1,15 +1,14 @@
 import * as utils from 'base/utils';
 import Tool from 'base/tool';
 
-import BubbleChartComponent from './bubblechart-component';
-import {
-  timeslider,
-  dialogs,
-  buttonlist,
-  treemenu,
-  datawarning,
-  datanotes
-} from 'components/_index';
+import BubbleChartComponent from 'tools/bubblechart/bubblechart-component';
+
+import timeslider from 'components/timeslider/timeslider';
+import dialogs from 'components/dialogs/dialogs';
+import buttonlist from 'components/buttonlist/buttonlist';
+import treemenu from 'components/treemenu/treemenu';
+import datawarning from 'components/datawarning/datawarning';
+import datanotes from 'components/datanotes/datanotes';
 
 var BubbleChart = Tool.extend('BubbleChart', {
 
@@ -31,7 +30,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
-      model: ["state.time", "state.entities", "state.marker"]
+      model: ["state.time", "state.entities", "state.marker", "ui"]
     }, {
       component: dialogs,
       placeholder: '.vzb-tool-dialogs',
@@ -57,16 +56,16 @@ var BubbleChart = Tool.extend('BubbleChart', {
     this._super(placeholder, external_model);
 
   },
-  
+
   validate: function(model){
     model = this.model || model;
-    
+
     this._super(model);
-    
+
     if(model.ui.chart.lockNonSelected) {
        var time = model.state.time.timeFormat.parse("" + model.ui.chart.lockNonSelected);
        if(time < model.state.time.start) model.ui.chart.lockNonSelected = model.state.time.timeFormat(model.state.time.start);
-       if(time > model.state.time.end) model.ui.chart.lockNonSelected = model.state.time.timeFormat(model.state.time.end);       
+       if(time > model.state.time.end) model.ui.chart.lockNonSelected = model.state.time.timeFormat(model.state.time.end);
     }
   },
 
@@ -74,17 +73,17 @@ var BubbleChart = Tool.extend('BubbleChart', {
    * Determines the default model of this tool
    */
   default_model: {
-    state: { 
+    state: {
       time: { },
       entities: {
         dim: "id"
-      }, 
-      entities_tags: { }, 
+      },
+      entities_tags: { },
       marker_tags: {
         space: ["entities_tags"],
         label: {},
         hook_parent: {}
-      }, 
+      },
       marker: {
         space: ["entities", "time"],
         axis_x: {use: "indicator", which: "x"},

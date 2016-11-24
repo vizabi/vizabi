@@ -21,13 +21,13 @@ var Dialog = Component.extend({
       type: "model"
     }, {
       name: "ui",
-      type: "model"
+      type: "ui"
     }, {
       name: "language",
       type: "language"
     }];
 
-    this.template = this.name + '.html';
+    this.template = require(`./${this.name}/${this.name}.html`);
 
     this._super(config, parent);
   },
@@ -104,7 +104,7 @@ var Dialog = Component.extend({
             if(this.isOpen) this.placeholderEl.style('top', this.topPos);
           }
         }
-        
+
         if(this.topPos && (this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true"))) {
             this.placeholderEl.style('bottom', 'auto');
         }
@@ -147,7 +147,7 @@ var Dialog = Component.extend({
         var dialogBottom = parseInt(this.placeholderEl.style('bottom'), 10);
         totalHeight = totalHeight - dialogBottom;
       } else {
-        var topPos = this.topPos ? parseInt(this.topPos, 10) : this.placeholderEl[0][0].offsetTop; 
+        var topPos = this.topPos ? parseInt(this.topPos, 10) : this.placeholderEl[0][0].offsetTop;
         totalHeight = totalHeight - topPos;
       }
     } else {
@@ -155,7 +155,7 @@ var Dialog = Component.extend({
     }
 
     this.element.style('max-height', totalHeight + 'px');
-    
+
     //set 'max-height' to content for IE11
     var contentHeight = totalHeight - this.titleEl.node().offsetHeight - this.buttonsEl.node().offsetHeight;
     this.contentEl.style('max-height', contentHeight + 'px');
@@ -163,16 +163,16 @@ var Dialog = Component.extend({
 
   beforeOpen: function() {
     var _this = this;
-    
+
     this.transitionEvents = ['webkitTransitionEnd', 'transitionend', 'msTransitionEnd', 'oTransitionEnd'];
     this.transitionEvents.forEach(function(event) {
       _this.placeholderEl.on(event, _this.transitionEnd.bind(_this, event));
     });
 
     this.placeholderEl.classed('notransition', true);
-    
+
     this.placeholderEl.style({'top': '', 'bottom': ''}); // issues: 369 & 442
-    
+
     if(this.topPos && this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true")) {
       var topPos = this.placeholderEl.node().offsetTop;
       this.placeholderEl.style({'top': topPos + 'px', 'bottom': 'auto'}); // issues: 369 & 442
@@ -180,7 +180,7 @@ var Dialog = Component.extend({
       //if(this.rightPos) this.placeholderEl.style('right', this.rightPos);
     }
 
-    this.placeholderEl.node().offsetTop;            
+    this.placeholderEl.node().offsetTop;
     this.placeholderEl.classed('notransition', false);
 
     if(this.getLayoutProfile() === 'small') {
@@ -199,7 +199,7 @@ var Dialog = Component.extend({
       // }
       //this.placeholderEl.style('top', this.topPos);
     }
-    
+
   },
 
   /**
@@ -219,10 +219,10 @@ var Dialog = Component.extend({
 //issues: 369 & 442
     if(this.rootEl.classed('vzb-portrait') && this.getLayoutProfile() === 'small') {
       this.placeholderEl.style('top', 'auto'); // issues: 369 & 442
-    } 
+    }
     if(this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true")) {
       this.topPos0 = this.topPos ? (this.placeholderEl.node().parentNode.offsetHeight - this.placeholderEl.node().offsetHeight) + 'px' : '';
-    }   
+    }
     this.placeholderEl.classed('notransition', false);
     this.placeholderEl.node().offsetHeight; // trigger a reflow (flushing the css changes)
   },
@@ -236,9 +236,9 @@ var Dialog = Component.extend({
       this.placeholderEl.style('top', ''); // issues: 369 & 442
       this.placeholderEl.style('right', ''); // issues: 369 & 442
     }
-    
+
     if(this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true")) {
-      this.placeholderEl.style({'top' : this.topPos0, 'right' : ''});    
+      this.placeholderEl.style({'top' : this.topPos0, 'right' : ''});
     }
     this.isOpen = false;
     this.trigger('close');

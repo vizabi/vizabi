@@ -1,36 +1,38 @@
-script(src='assets/js/toolconfigs/#{tool_config||tool}.js')
+script(src='assets/js/toolconfigs/' + (tool_config || tool) + '.js')
 script.
   var TITLE = "#{title}";
   var TOOL = "#{tool}";
   var DESCRIPTION = "#{description}";
-
 
   Vizabi.utils.deepExtend(VIZABI_MODEL, {
     ui: {
       buttons: #{chart_buttons || '[]'},
       buttons_expand: #{chart_buttons_expand || '[]'},
       dialogs: #{chart_dialogs || '[]'}
+    },
+    language: {
+      filePath: "assets/translation/"
     }
   });
 
   VIZABI_MODEL.bind = {
-      'ready': function(evt, vals) {
-        updateURL();
-        updateStateEditor(VIZ.getModel().state);
-      },
-      'persistentChange': function(evt) {
-        updateURL(true); // force update
-      }
-    };
-
-  VIZABI_MODEL.bind['change:state'] = function(evt, vals) {
+    'ready': function (evt, vals) {
+      updateURL();
       updateStateEditor(VIZ.getModel().state);
+    },
+    'persistentChange': function (evt) {
+      updateURL(true); // force update
+    }
+  };
+
+  VIZABI_MODEL.bind['change:state'] = function (evt, vals) {
+    updateStateEditor(VIZ.getModel().state);
   };
 
   var playButton = document.getElementById("vzbp-btn-play");
   var playButtonIcon = playButton.querySelectorAll("i")[0];
 
-  VIZABI_MODEL.bind['change:state.time.playing'] = function(evt, path) {
+  VIZABI_MODEL.bind['change:state.time.playing'] = function (evt, path) {
     var playing = evt.source;
     if (playing.value) {
       playButton.onclick = pause;
@@ -45,7 +47,7 @@ script.
     }
   };
 
-  VIZABI_MODEL.bind['change:state.time.record'] = function(evt, path) {
+  VIZABI_MODEL.bind['change:state.time.record'] = function (evt, path) {
     var recButton = document.getElementById("vzbp-btn-record");
     var recButtonIcon = recButton.querySelectorAll("i")[0];
     var record = evt.source;
@@ -61,22 +63,26 @@ script.
       addClass(recButtonIcon, 'fa-bullseye');
     }
   };
- 
+
   var langButton = document.getElementById("vzbp-btn-lang");
 
-  VIZABI_MODEL.bind['change:language.id'] = function(evt, path) {
+  VIZABI_MODEL.bind['change:language.id'] = function (evt, path) {
     var lang = evt.source;
     if (lang.value === "en") {
-      langButton.onclick = function() { language('se'); };
+      langButton.onclick = function () {
+        language('se');
+      };
       langButton.setAttribute("data-tooltip", "Set Lang: SE");
       langButton.setAttribute("data-next_lang", 'se');
     } else {
-      langButton.onclick = function() { language('en'); };
+      langButton.onclick = function () {
+        language('en');
+      };
       langButton.setAttribute("data-tooltip", "Set Lang: EN");
       langButton.setAttribute("data-next_lang", 'en');
     }
   };
-  
+
   //WS reader integration
   var wsReader = new WSReader.WSReader().getReader();
   Vizabi.Reader.extend("waffle", wsReader);
@@ -86,11 +92,11 @@ script.
   Vizabi.Reader.extend("ddf", ddfReader);
 
   parseURL();
-  
+
   var locationArray = window.location.href.split("/");
   var localUrl = locationArray.splice(0, locationArray.indexOf("preview")).join("/") + "/preview/";
-  
-  if("#{tool}"=="AgePyramid"){
+
+  if ("#{tool}" == "AgePyramid") {
     Vizabi._globals.ext_resources = {
       host: localUrl,
       preloadPath: 'data/zaf/',
@@ -101,9 +107,9 @@ script.
       reader: "csv",
       path: localUrl + 'data/zaf/waffles/' + "ddf--datapoints--population--by--year--age--population_group--education_attainment.csv",
       splash: false
-    }   
-    
-  }else if("#{tool}"=="JOINTPyramidLine"){
+    }
+
+  } else if ("#{tool}" == "JOINTPyramidLine") {
     Vizabi._globals.ext_resources = {
       host: localUrl,
       preloadPath: 'data/zaf/',
@@ -114,9 +120,9 @@ script.
       reader: "csv",
       path: localUrl + 'data/zaf/waffles/' + "ddf--datapoints--population--by--year--age--education-gender-add-tfr.csv",
       splash: false
-    }      
-    
-  }else if("#{tool}"=="JOINTCartogramLine"){
+    }
+
+  } else if ("#{tool}" == "JOINTCartogramLine") {
     Vizabi._globals.ext_resources = {
       host: localUrl,
       preloadPath: 'data/zaf/',
@@ -127,9 +133,9 @@ script.
       reader: "csv",
       path: localUrl + "data/zaf/waffles/ddf--datapoints--piped_water_percentage--electricity_lighting_percentage--by--time--geo-add-zaf.csv",
       splash: false
-    }  
-    
-  }else if("#{tool}"=="Cartogram"){
+    }
+
+  } else if ("#{tool}" == "Cartogram") {
     Vizabi._globals.ext_resources = {
       host: localUrl,
       preloadPath: 'data/zaf/',
@@ -144,20 +150,19 @@ script.
       //path: localUrl + "data/zaf/waffles/ddf--datapoints--population--black_population--black_population_percentage--by--year--municipality.csv",
       path: localUrl + "data/zaf/waffles/ddf--datapoints--piped_water_percentage--electricity_lighting_percentage--by--year--municipality.csv",
       splash: false
-    }  
-  }else{
-  
+    }
+  } else {
+
     Vizabi._globals.ext_resources = {
       host: 'https://waffle-server-dev.gapminderdev.org',
       preloadPath: '/api/vizabi/',
       dataPath: '/api/ddf/',
-      //translationPath: localUrl + "data/translation/",
       //shapePath: localUrl + "data/mc_precomputed_shapes.json"
       //shapePath: localUrl + "data/world-50m.json"
     };
-  
+
     //popbyage is an exception because it has no data on WS for age. need local data
-    if("#{tool}"!=="PopByAge"){
+    if ("#{tool}" !== "PopByAge") {
       VIZABI_MODEL.data = {
         reader: "waffle",
         splash: true,
@@ -165,9 +170,7 @@ script.
       }
     }
   }
-  
-  VIZABI_PAGE_MODEL = Vizabi.utils.deepExtend({}, VIZABI_MODEL); 
+
+  VIZABI_PAGE_MODEL = Vizabi.utils.deepExtend({}, VIZABI_MODEL);
 
   VIZ = Vizabi("#{tool}", placeholder, Vizabi.utils.deepExtend({}, VIZABI_MODEL, URL.model));
-
-

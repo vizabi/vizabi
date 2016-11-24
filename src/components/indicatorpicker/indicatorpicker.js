@@ -44,20 +44,20 @@ var IndPicker = Component.extend({
         if(!config.markerID) utils.warn("indicatorpicker.js complains on 'markerID' property: " + config.markerID);
 
         this.model_binds = {
-            "change:language.strings": function(evt) {
+            "translate:language": function(evt) {
                 _this.updateView();
             },
             "ready": function(evt) {
                 _this.updateView();
             }
         };
-        
+
         if(this.markerID) {
           this.model_binds["change:marker." + this.markerID + ".which"] = function(evt) {
               _this.updateView();
-            } 
+            }
         }
- 
+
         if(this.showHoverValues) {
             this.model_binds["change:entities.highlight"] = function(evt, values) {
                 var use = _this.model.marker[_this.markerID].use;
@@ -81,7 +81,7 @@ var IndPicker = Component.extend({
                         if(values) {
                             _this._highlightedValue = values[_this.markerID];
                             _this._highlighted = (!_this._highlightedValue && _this._highlightedValue !== 0) || use !== "property";
-                        }                        
+                        }
                     } else {
                         _this._highlighted = false;
                     }
@@ -109,12 +109,12 @@ var IndPicker = Component.extend({
             var rootEl = _this.root.element instanceof Array? _this.root.element : d3.select(_this.root.element);
             var rootRect = rootEl.node().getBoundingClientRect();
             var treemenuComp = _this.root.findChildByName("gapminder-treemenu");
-            var treemenuColWidth = treemenuComp.activeProfile.col_width; 
-            var treemenuPaddLeft = parseInt(treemenuComp.wrapper.style('padding-left'), 10) || 0; 
-            var treemenuPaddRight = parseInt(treemenuComp.wrapper.style('padding-right'), 10) || 0; 
+            var treemenuColWidth = treemenuComp.activeProfile.col_width;
+            var treemenuPaddLeft = parseInt(treemenuComp.wrapper.style('padding-left'), 10) || 0;
+            var treemenuPaddRight = parseInt(treemenuComp.wrapper.style('padding-right'), 10) || 0;
             var topPos = rect.bottom - rootRect.top;
             var leftPos = rect.left - rootRect.left - (treemenuPaddLeft + treemenuPaddRight + treemenuColWidth - rect.width) * .5;
-        
+
             treemenuComp
                 .markerID(_this.markerID)
                 .alignX("left")
@@ -128,7 +128,7 @@ var IndPicker = Component.extend({
         this.infoEl = d3.select(this.element).select('.vzb-ip-info');
         utils.setIcon(this.infoEl, iconQuestion)
           .select("svg").attr("width", "0px").attr("height", "0px");
-          
+
         this.infoEl.on("click", function() {
           _this.root.findChildByName("gapminder-datanotes").pin();
         })
@@ -137,7 +137,7 @@ var IndPicker = Component.extend({
           var rootRect = _this.root.element.getBoundingClientRect();
           var topPos = rect.bottom - rootRect.top;
           var leftPos = rect.left - rootRect.left + rect.width;
-          
+
           _this.root.findChildByName("gapminder-datanotes").setHook(_this.markerID).show().setPos(leftPos, topPos);
         })
         this.infoEl.on("mouseout", function() {
@@ -147,17 +147,17 @@ var IndPicker = Component.extend({
 
     },
 
-    
+
     updateView: function() {
         if(!this._readyOnce) return;
 
         var _this = this;
         var translator = this.model.language.getTFunction();
-        
+
         var which = this.model.marker[this.markerID].which;
         var type = this.model.marker[this.markerID]._type;
         var concept = this.model.marker[this.markerID].getConceptprops();
-        
+
         var selectText;
 
         if(this.showHoverValues && this._highlighted) {
@@ -172,12 +172,12 @@ var IndPicker = Component.extend({
         }
 
         this.el_select.text(selectText);
-        
+
         // hide info el if no data is available for it to make sense
         var hideInfoEl = !concept.description && !concept.sourceName && !concept.sourceLink;
         this.infoEl.classed("vzb-hidden", hideInfoEl);
     }
-    
+
 });
 
 export default IndPicker;

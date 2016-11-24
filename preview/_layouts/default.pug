@@ -23,17 +23,17 @@ html(lang='en')
     link(rel='stylesheet', href='../dist/vizabi.css')
   body
     #vzbp-main
-      include ../_partials/nav.jade
+      include ../_partials/nav.pug
       #vzbp-placeholder.vzbp-viewer
 
     #vzbp-sidebar
-      include ../_partials/sidebar.jade
+      include ../_partials/sidebar.pug
 
-    include ../_partials/state_editor.jade
+    include ../_partials/state_editor.pug
 
-    script(src='assets/vendor/js/d3.js')
-    script(src='assets/vendor/js/ws-reader/bundle.web.js')
-    script(src='assets/vendor/js/ddfcsv-reader/bundle.web.js')
+    script(src='assets/vendor/js/d3/d3.min.js')
+    script(src='assets/vendor/js/vizabi-ws-reader/bundle.web.js')
+    script(src='assets/vendor/js/vizabi-ddfcsv-reader/bundle.web.js')
     script(src='../dist/vizabi.js')
     script(src='assets/js/_utils.js')
     script(src='assets/js/_collapsible.js')
@@ -46,4 +46,4 @@ html(lang='en')
     script(src='assets/js/_dropdowns.js')
 
     unless !tool
-      include ../_partials/toolscript.jade
+      include ../_partials/toolscript.pug

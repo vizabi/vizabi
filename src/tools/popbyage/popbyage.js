@@ -5,15 +5,12 @@
 import * as utils from 'base/utils';
 import Tool from 'base/tool';
 
-import PopByAgeComponent from './popbyage-component';
+import PopByAgeComponent from 'tools/popbyage/popbyage-component';
 
-import {
-  timeslider,
-  dialogs,
-  buttonlist,
-  treemenu
-}
-from 'components/_index';
+import timeslider from 'components/timeslider/timeslider';
+import dialogs from 'components/dialogs/dialogs';
+import buttonlist from 'components/buttonlist/buttonlist';
+import treemenu from 'components/treemenu/treemenu';
 
 //BAR CHART TOOL
 var PopByAge = Tool.extend('PopByAge', {
@@ -36,7 +33,7 @@ var PopByAge = Tool.extend('PopByAge', {
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
-      model: ["state.time", "state.entities", "state.marker"]
+      model: ["state.time", "state.entities", "state.marker", "ui"]
     }, {
       component: dialogs,
       placeholder: '.vzb-tool-dialogs',
@@ -48,15 +45,16 @@ var PopByAge = Tool.extend('PopByAge', {
     }, {
       component: treemenu,
       placeholder: '.vzb-tool-treemenu',
-      model: ['state.marker', 'language']
+      model: ['state.marker', 'state.marker_tags', 'state.time', 'language']
     }];
 
     //constructor is the same as any tool
     this._super(placeholder, external_model);
   },
-  
+
   default_model: {
     state: {
+      marker_tags: {}
     },
     ui: {
       presentation: false

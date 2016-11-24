@@ -1,5 +1,5 @@
 .vzbp-nav-menu {
-  @include prefixer(user-select, none, webkit moz khtml ms);
+  @include prefixer(user-select, none, webkit moz ms);
   a,
   a:hover {
     display: block;

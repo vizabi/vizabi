@@ -1,8 +1,9 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
-import Dialog from '../_dialog';
+import Dialog from 'components/dialogs/_dialog';
 
-import { bubblesize, indicatorpicker } from 'components/_index'
+import bubblesize from 'components/bubblesize/bubblesize';
+import indicatorpicker from 'components/indicatorpicker/indicatorpicker';
 /*
  * Size dialog
  */
@@ -17,7 +18,7 @@ var Size = Dialog.extend({
 init: function(config, parent) {
   this.name = 'size';
 
-  // in dialog, this.model_expects = ["state", "data"];
+  // in dialog, this.model_expects = ["state", "ui", "language"];
 
   this.components = [
   {
@@ -28,6 +29,9 @@ init: function(config, parent) {
     showHoverValues: true
   }
   ];
+
+  // config.ui is same as this.model.ui here but this.model.ui is not yet available because constructor hasn't been called. 
+  // can't call constructor earlier because this.components needs to be complete before calling constructor
   if (!config.ui.chart || config.ui.chart.sizeSelectorActive !== 0) {
     this.components.push(  {
       component: bubblesize,

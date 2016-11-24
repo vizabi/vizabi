@@ -45,7 +45,7 @@ var BubbleSize = Component.extend({
 
     this.name = 'bubblesize';
 
-    this.template = this.template || "bubblesize.html";
+    this.template = this.template || require('./bubblesize.html');
 
     this.model_expects = [{
       name: "size",
@@ -131,7 +131,7 @@ var BubbleSize = Component.extend({
 
     this.sliderEl
       .call(_this.brush);
-      
+
     this.sliderEl.selectAll('.background').attr('style','');
 
     //For return to round thumbs

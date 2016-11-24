@@ -1,6 +1,6 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
-import Dialog from '../_dialog';
+import Dialog from 'components/dialogs/_dialog';
 
 /*!
  * VIZABI SHOW CONTROL
@@ -28,8 +28,8 @@ var Show = Dialog.extend({
   readyOnce: function() {
     this._super();
     this.list = this.element.select(".vzb-show-list");
-    this.input_search = this.element.select("#vzb-show-search");
-    this.deselect_all = this.element.select("#vzb-show-deselect");
+    this.input_search = this.element.select(".vzb-show-search");
+    this.deselect_all = this.element.select(".vzb-show-deselect");
 
     this.KEY = this.model.state.entities.getDimension();
     this.TIMEDIM = this.model.state.time.getDimension();
@@ -96,7 +96,7 @@ var Show = Dialog.extend({
       .attr("type", "checkbox")
       .attr("class", "vzb-show-item")
       .attr("id", function(d) {
-        return "-show-" + d[_this.KEY];
+        return "-show-" + d[_this.KEY] + "-" + _this._id;
       })
       .property("checked", function(d) {
         return _this.model.state.entities.isShown(d);
@@ -108,7 +108,7 @@ var Show = Dialog.extend({
 
     items.append("label")
       .attr("for", function(d) {
-        return "-show-" + d[_this.KEY];
+        return "-show-" + d[_this.KEY] + "-" + _this._id;
       })
       .text(function(d) {
         return d.label;

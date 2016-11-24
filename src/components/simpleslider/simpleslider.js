@@ -9,7 +9,7 @@ import * as utils from 'base/utils';
 var SimpleSlider = Component.extend({
 
     init: function (config, context) {
-      this.template = '<div class="vzb-ss-holder"><input type="range" id="vzb-ss-slider" class="vzb-ss-slider" step="1"></div>';
+      this.template = '<div class="vzb-ss-holder"><input type="range" class="vzb-ss-slider vzb-ss-slider-normal" step="1"></div>';
 
       this.model_expects = [{
         name: "submodel"
@@ -29,7 +29,7 @@ var SimpleSlider = Component.extend({
 
       //contructor is the same as any component
       this._super(config, context);
-        
+
       this._setModel = utils.throttle(this._setModel, 50);
     },
 
@@ -49,7 +49,7 @@ var SimpleSlider = Component.extend({
       //selecting elements
       var _this = this;
       this.element = d3.select(this.element);
-      this.slider = this.element.selectAll('#vzb-ss-slider');
+      this.slider = this.element.selectAll('.vzb-ss-slider');
 
       this.elementSize = this.element.node().getBoundingClientRect();
       this.sliderSize = this.slider.node().getBoundingClientRect();
@@ -65,13 +65,13 @@ var SimpleSlider = Component.extend({
           value = this.slider_properties.scale(min);
         }
       }
-        
+
       //step also defines the rounding of values that willbe sent to model: 0.1 --> 1 digit, 0.01 --> 2, 1 and up --> 0
       this.roundTo = step > 1 ? 0 : Math.round(Math.abs(Math.log(step)/Math.LN10));
 
       //check and change the slider's thumb size
       if(this.thumb_size){
-        this.slider.classed('vzb-ss-slider', false);
+        this.slider.classed('vzb-ss-slider-normal', false);
         this.slider.classed('vzb-ss-slider-'+this.thumb_size, true);
       }
 
@@ -109,9 +109,9 @@ var SimpleSlider = Component.extend({
     },
 
     _setModel: function (value, force, persistent) {
-      // rescale value if scale is supplied in slider_properties 
+      // rescale value if scale is supplied in slider_properties
       if(this.slider_properties && this.slider_properties.scale) value = this.slider_properties.scale(value);
-      
+
       this.model.submodel.getModelObject(this.arg).set(value.toFixed(this.roundTo), force, persistent);
     }
 

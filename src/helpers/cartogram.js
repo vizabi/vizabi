@@ -1,5 +1,5 @@
-import topojson from '../helpers/topojson'
-import Promise from 'promise';
+import topojson from 'helpers/topojson'
+import Promise from 'base/promise';
 import * as utils from 'base/utils';
 (function(exports) {
 
@@ -39,7 +39,7 @@ import * as utils from 'base/utils';
           var totalArea = d3.sum(areas),
             sizeErrorsTot =0,
             sizeErrorsNum=0;
-          
+
           var calculateMeta = function(index, cb) {
             var area = Math.abs(areas[index]), // XXX: why do we have negative areas?
               v = + values[index],
@@ -101,7 +101,7 @@ import * as utils from 'base/utils';
             }
             resolve(out1);
           });
-          
+
         };
         var generateTopologyArcs = function(index, totalLength) {
           if (index >= totalLength) {
@@ -195,7 +195,7 @@ import * as utils from 'base/utils';
                     i1++;
                   }
                   i2++;
-                }              
+                }
               };
               var updatePointSequence = function(start) {
                 if (start >= projectedArcs.length) {
@@ -207,7 +207,7 @@ import * as utils from 'base/utils';
                     resizeSegments(++index, iterations);
                   })
                   return;
-                } 
+                }
                 var end = Math.min(start + 400, projectedArcs.length);
                 updatePoint(start, end);
                 utils.defer(function() {
@@ -247,7 +247,7 @@ import * as utils from 'base/utils';
         }
 */
       });
-      
+
     }
 
     var iterations = 8,
@@ -301,7 +301,7 @@ import * as utils from 'base/utils';
         }
       };
     };
-    
+
     carto.meshArcs = function(topology, o, filter) {
       var arcs = [];
 
@@ -438,7 +438,7 @@ import * as utils from 'base/utils';
         arcs: fragments
       })
     };
-    
+
     carto.features = function(topo, geometries) {
       return geometries.map(function(f) {
         return carto.feature(topo, f);
@@ -525,7 +525,7 @@ import * as utils from 'base/utils';
         ? o
         : copyObject(o);
   }
-  
+
   function copyObject(o) {
     var obj = {};
     for (var k in o) obj[k] = copy(o[k]);

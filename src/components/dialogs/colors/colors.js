@@ -1,8 +1,9 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
-import Dialog from '../_dialog';
+import Dialog from 'components/dialogs/_dialog';
 
-import { colorlegend, indicatorpicker } from 'components/_index'
+import colorlegend from 'components/colorlegend/colorlegend';
+import indicatorpicker from 'components/indicatorpicker/indicatorpicker';
 
 /*!
  * VIZABI COLOR DIALOG

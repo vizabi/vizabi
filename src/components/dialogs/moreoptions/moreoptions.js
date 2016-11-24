@@ -1,20 +1,13 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
-import Dialog from '../_dialog';
+import Dialog from 'components/dialogs/_dialog';
 
-import {
-  simpleslider,
-  bubblesize,
-  colorlegend,
-  indicatorpicker,
-  simplecheckbox
-}
-from 'components/_index';
-
-import {
-  optionsbuttonlist
-}
-from 'components/buttonlist/_index';
+import simpleslider from 'components/simpleslider/simpleslider';
+import bubblesize from 'components/bubblesize/bubblesize';
+import colorlegend from 'components/colorlegend/colorlegend';
+import indicatorpicker from 'components/indicatorpicker/indicatorpicker';
+import simplecheckbox from 'components/simplecheckbox/simplecheckbox';
+import optionsbuttonlist from 'components/buttonlist/optionsbuttonlist/optionsbuttonlist';
 
 /*
  * More options dialog
@@ -29,7 +22,7 @@ var MoreOptions = Dialog.extend({
    */
   init: function(config, parent) {
     this.name = 'moreoptions';
-    
+
     //specifying components
     this.components = [{
       component: optionsbuttonlist,
@@ -42,25 +35,25 @@ var MoreOptions = Dialog.extend({
 
   readyOnce: function() {
     this._super();
-    
+
     var _this = this;
     this.accordionEl = this.contentEl.select('.vzb-accordion');
 
     this.on('dragend', function() {
       _this._setMaxHeight();
     });
-        
+
     var dialog_popup = (this.model.ui.dialogs||{}).popup || [];
     var dialog_moreoptions = (this.model.ui.dialogs||{}).moreoptions || [];
-            
+
     // if dialog_moreoptions has been passed in with boolean param or array must check and covert to array
     if (dialog_moreoptions === true) {
       dialog_moreoptions = dialog_popup;
       (this.model.ui.dialogs||{}).moreoptions = dialog_moreoptions;
     }
-    
+
     this._addDialogs(dialog_moreoptions);
-    
+
     //accordion
     if(this.accordionEl) {
       var titleEl = this.accordionEl.selectAll('.vzb-accordion-section')
@@ -78,7 +71,7 @@ var MoreOptions = Dialog.extend({
       })
     }
   },
-  
+
   _addDialogs: function(dialog_list) {
     this._components_config = [];
     var details_dlgs = [];
@@ -88,7 +81,7 @@ var MoreOptions = Dialog.extend({
 
       //check moreoptions in dialog.moreoptions
       if(dialog_list[i] === "moreoptions") continue;
-      
+
       var dlg = dialog_list[i];
       var dlg_config = utils.deepClone(this.parent._available_dialogs[dlg]);
 
@@ -104,7 +97,7 @@ var MoreOptions = Dialog.extend({
         });
 
         dlg_config.component = comps.length - 1;
-      
+
         dlg_config.id = dlg;
         details_dlgs.push(dlg_config);
       }
@@ -120,7 +113,7 @@ var MoreOptions = Dialog.extend({
         return d.id;
       });
 
-    this.loadComponents();
+    this.loadSubComponents();
 
     var _this = this;
     //render each subcomponent

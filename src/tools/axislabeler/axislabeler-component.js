@@ -15,7 +15,7 @@ var AxisLabelerComponent = Component.extend({
    */
   init: function(config, context) {
     this.name = 'axislabeler';
-    this.template = 'axislabeler.html';
+    this.template = require('./axislabeler.html');
 
     //define expected models for this component
     this.model_expects = [{name: "scales"}, {name: "show"}];
@@ -54,11 +54,11 @@ var AxisLabelerComponent = Component.extend({
     this.graph = this.element.select('.vzb-al-graph');
     this.xAxisEl = this.graph.select('.vzb-al-axis-x');
     this.yAxisEl = this.graph.select('.vzb-al-axis-y');
-    
+
     //$(".vzb-bc-axis-x, .vzb-bc-axis-y").css('font-size',this.model.show.labelSize);
     this.xInvert = function(d){return _this.xScale(_this.xScale.invert(_this.xScale(d)));}
     this.yInvert = function(d){return _this.yScale(_this.yScale.invert(_this.yScale(d)));}
-    
+
     this.line = d3.svg.line()
       .x(function(d) { return _this.xScale(d); })
       .y(function(d) { return _this.yScale(d); });
@@ -81,7 +81,7 @@ var AxisLabelerComponent = Component.extend({
     this.initScales();
     this.update();
   },
-  
+
   initScales: function() {
     var _this = this;
 
@@ -108,7 +108,7 @@ var AxisLabelerComponent = Component.extend({
     //stage
     var height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
     var width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
-    
+
     if(height<=0 || width<=0) return utils.warn("Axis Labeler update() call interrupted for Vizabi container is too little or has display:none");
 
     //graph group is shifted according to margins (while svg element is at 100 by 100%)
@@ -153,12 +153,12 @@ var AxisLabelerComponent = Component.extend({
     path.enter().append("path")
       .attr("class", "vzb-al-line")
     path.datum(this.mockData).attr("d", this.line);
-    
+
     var pathInvert = this.graph.selectAll(".vzb-al-line-invert").data([0]);
     pathInvert.enter().append("path")
       .attr("class", "vzb-al-line-invert")
     pathInvert.datum(this.mockData).attr("d", this.lineInvert);
-    
+
     var format = d3.format(".4r");
 
     var dots = this.graph.selectAll(".vzb-al-dots").data(this.mockData);
@@ -175,7 +175,7 @@ var AxisLabelerComponent = Component.extend({
       .attr("cy", function(d) {
         return _this.yScale(d)
       });
-    
+
     var dotsInvert = this.graph.selectAll(".vzb-al-dots-invert").data(this.mockData);
     dotsInvert.enter().append("circle")
       .attr("class", "vzb-al-dots-invert")

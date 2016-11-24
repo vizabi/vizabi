@@ -1,5 +1,5 @@
 import * as utils from 'base/utils';
-import Hook from 'hook';
+import Hook from 'models/hook';
 
 /*
  * VIZABI Stack Model
@@ -29,9 +29,7 @@ var StackModel = Hook.extend({
   init: function(name, values, parent, bind) {
 
     this._type = "model";
-    //TODO: add defaults extend to super
-    var defaults = utils.deepClone(this._defaults);
-    values = utils.extend(defaults, values);
+    
     this._super(name, values, parent, bind);
   },
 
@@ -42,7 +40,7 @@ var StackModel = Hook.extend({
     //there must be no scale
     if(this.scale) this.scale = null;
 
-    //use must not be "indicator" 
+    //use must not be "indicator"
     if(this.use === "indicator") {
       utils.warn("stack model: use must not be 'indicator'. Resetting use to 'constant' and which to '" + palettes._default)
       this.use = "constant";

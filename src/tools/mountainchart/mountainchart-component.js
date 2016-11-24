@@ -18,9 +18,9 @@ import { warn as iconWarn, question as iconQuestion } from 'base/iconset';
 
 import Exporter from 'helpers/svgexport';
 import axisSmart from 'helpers/d3.axisWithLabelPicker';
-import MountainChartMath from './mountainchart-math';
-import Selectlist from './mountainchart-selectlist';
-import Probe from './mountainchart-probe';
+import MountainChartMath from 'tools/mountainchart/mountainchart-math';
+import Selectlist from 'tools/mountainchart/mountainchart-selectlist';
+import Probe from 'tools/mountainchart/mountainchart-probe';
 import DynamicBackground from 'helpers/d3.dynamicBackground';
 
 var THICKNESS_THRESHOLD = 0.001;
@@ -38,7 +38,7 @@ var MountainChartComponent = Component.extend({
 
         var _this = this;
         this.name = "mountainchart";
-        this.template = "mountainchart.html";
+        this.template = require("./mountainchart.html");
 
         //define expected models for this component
         this.model_expects = [
@@ -46,14 +46,13 @@ var MountainChartComponent = Component.extend({
             { name: "entities", type: "entities" },
             { name: "marker", type: "model" },
             { name: "language", type: "language" },
-            { name: "ui", type: "model" }
+            { name: "ui", type: "ui" }
         ];
 
         //attach event listeners to the model items
         this.model_binds = {
             "change:time.value": function (evt) {
               if (!_this._readyOnce) return;
-              _this.year.setText(_this.model.time.value.getUTCFullYear().toString());
               _this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
             },
             "change:time.playing": function (evt) {
@@ -346,7 +345,7 @@ var MountainChartComponent = Component.extend({
     this._probe.redraw();
     this.updateDoubtOpacity();
   },
-  
+
 
 updateSize: function (meshLength) {
 
@@ -386,7 +385,7 @@ updateSize: function (meshLength) {
         //mesure width and height
         this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
         this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
-    
+
         if(this.height<=0 || this.width<=0) return utils.warn("Mountain chart updateSize() abort: vizabi container is too little or has display:none");
 
         //graph group is shifted according to margins (while svg element is at 100 by 100%)
@@ -523,9 +522,9 @@ updateSize: function (meshLength) {
         this.infoEl.on("mouseout", function() {
           _this.parent.findChildByName("gapminder-datanotes").hide();
         })
-        
-        
-        
+
+
+
         this.dataWarningEl
             .on("click", function () {
                 _this.parent.findChildByName("gapminder-datawarning").toggle();
@@ -724,7 +723,7 @@ updateSize: function (meshLength) {
             },
             _click: function (d, i) {
                 if (_this.model.time.dragging || _this.model.time.playing) return;
-                
+
                 _this.model.entities.selectEntity(d);
             }
         };
@@ -806,6 +805,7 @@ updateSize: function (meshLength) {
         var _this = this;
 
         this.time = this.model.time.value;
+        this.year.setText(this.model.time.format(this.time));
         if (time == null) time = this.time;
 
         this.yMax = 0;
@@ -897,7 +897,7 @@ updateSize: function (meshLength) {
             var first = visible[0];
             var last = visible[visible.length - 1];
         }
-        
+
         if (!visible.length || (visible2 && !visible2.length)) utils.warn('mountain chart failed to generate shapes. check the incoming data');
 
         return {
@@ -982,7 +982,7 @@ updateSize: function (meshLength) {
           var prevValues = _this.values;
           _this.model.marker.getFrame(_this.model.time.end, function(values) {
             if(!values) return;
-              
+
             _this.values = values;
             _this.updateTime();
             _this.values = prevValues;

@@ -1,16 +1,19 @@
 import * as utils from 'base/utils';
-import Model from 'base/model';
-import defaultLanguageStrings from 'default-language-strings.js';
+import DataConnected from 'models/dataconnected';
+import Promise from 'base/promise';
 
-var LanguageModel = Model.extend({
+var LanguageModel = DataConnected.extend({
 
   /**
    * Default values for this model
    */
   _defaults: {
     id: "en",
-    strings: defaultLanguageStrings
+    filePath: ""
   },
+
+  dataConnectedChildren: ["id"],
+  strings: {},
 
   /**
    * Initializes the language model.
@@ -19,14 +22,52 @@ var LanguageModel = Model.extend({
    * @param {Object} bind Initial events to bind
    */
   init: function(name, values, parent, bind) {
-
     this._type = "language";
-    //default values for state model
-    var defaults = utils.deepClone(this._defaults);
-    values = utils.extend(defaults, values);
 
     //same constructor, with same arguments
     this._super(name, values, parent, bind);
+  },
+
+  load: function() {
+    var _this, promise;
+
+    promise = this._super()
+
+    _this = this;
+    promise.then(function() {
+      _this.trigger('translate');
+    });
+
+    return promise;
+  },
+
+  _isLoading: function() {
+    return (!this._loadedOnce || this._loadCall);
+  },
+
+  loadData: function() {
+
+    var _this = this;
+    this.setReady(false);
+    this._loadCall = true;
+
+    var promise = new Promise(function(resolve, reject) {
+
+      if(_this.filePath) {
+        // if a path to external tranlation file is provided, extend the default strings with the ones from that file
+        d3.json(_this.filePath + _this.id + ".json", function(receivedStrings) {
+          var knownStrings = {};
+          if(_this.strings[_this.id]) knownStrings = _this.strings[_this.id];
+          _this.strings[_this.id] = utils.extend(knownStrings, receivedStrings);
+          resolve();
+        });
+      } else {
+        resolve();
+      }
+
+    });
+
+    return promise;
   },
 
   /**
@@ -36,15 +77,12 @@ var LanguageModel = Model.extend({
    * @param {Object} ui_strings ui_strings object or model
    * @returns {string} translated string
    */
-  getUIString: function(id, lang, strings) {
-    lang = lang || this.id;
-    strings = strings || this.strings;
-
-    if(strings && strings[lang] && (strings[lang][id] || strings[lang][id]==="")) {
-      return strings[lang][id];
+  getUIString: function(stringId) {
+    if(this.strings && this.strings[this.id] && (this.strings[this.id][stringId] || this.strings[this.id][stringId]==="")) {
+      return this.strings[this.id][stringId];
     } else {
-      if(!strings || !strings[lang]) utils.warn("Strings are not loaded for the " + lang + " language. Check if translation JSON is valid");
-      return id;
+      if(!this.strings || !this.strings[this.id]) utils.warn("Strings are not loaded for the " + this.id + " language. Check if translation JSON is valid");
+      return stringId;
     }
   },
 
@@ -53,12 +91,9 @@ var LanguageModel = Model.extend({
    * @returns {string} translation function
    */
   getTFunction: function() {
-    var lang = this.id,
-      strings = this.strings,
-      _this = this;
-
-    return function(string) {
-      return _this.getUIString(string, lang, strings);
+    var _this = this;
+    return function(stringId) {
+      return _this.getUIString(stringId)
     }
   }
 

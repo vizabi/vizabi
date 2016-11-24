@@ -1,5 +1,5 @@
 import * as utils from 'base/utils';
-import Model from 'base/model';
+import DataConnected from 'models/dataconnected';
 
 /*!
  * VIZABI Time Model
@@ -24,7 +24,7 @@ var formats = {
   'quarter': quarterFormat() // %Yq%Q d3 does not support quarters
 };
 
-var TimeModel = Model.extend({
+var TimeModel = DataConnected.extend({
 
   /**
    * Default values for this model
@@ -51,6 +51,8 @@ var TimeModel = Model.extend({
     record: false
   },
 
+  dataConnectedChildren: ['startOrigin', 'endOrigin', 'dim'],
+
   /**
    * Initializes the language model.
    * @param {String} name 
@@ -60,13 +62,9 @@ var TimeModel = Model.extend({
    */
   init: function(name, values, parent, bind) {
     this._type = "time";
-    //default values for time model
-    var defaults = utils.deepClone(this._defaults);
-    values = utils.extend(defaults, values);
 
     //same constructor
     this._super(name, values, parent, bind);
-    this._initDefaults();
     var _this = this;
     this.timeFormat = formats[this.unit];
     this.dragging = false;
@@ -96,28 +94,13 @@ var TimeModel = Model.extend({
    * Formats value, start and end dates to actual Date objects
    */
   _formatToDates: function() {
-
+    var persistentValues = ["value"];
     var date_attr = ["value", "start", "end", "startSelected", "endSelected"];
     for(var i = 0; i < date_attr.length; i++) {
       var attr = date_attr[i];
       if(!utils.isDate(this[attr])) {
         var date = this.parseToUnit(this[attr], this.unit);
-        this.set(attr, date, null, false);
-      }
-    }
-  },
-
-  /*
-   * Convert default values to string
-   * @param {String} values
-   */
-  _initDefaults: function() {
-    this._defaults = utils.extend(this._defaults, this.getToolDefaults());
-    var date_attr = ["value", "start", "end", "startSelected", "endSelected"];
-    for(var i = 0; i < date_attr.length; i++) {
-      var attr = date_attr[i];
-      if(!utils.isString(this._defaults[attr]) && this._defaults[attr] != null) {
-        this._defaults[attr] = this._defaults[attr].toString();
+        this.set(attr, date, null, (persistentValues.indexOf(attr) !== -1));
       }
     }
   },

@@ -5,16 +5,13 @@
 import * as utils from 'base/utils';
 import Tool from 'base/tool';
 
-import LCComponent from './linechart-component';
+import LCComponent from 'tools/linechart/linechart-component';
 
-import {
-  timeslider,
-  dialogs,
-  buttonlist,
-  treemenu,
-  datanotes
-}
-from 'components/_index';
+import timeslider from 'components/timeslider/timeslider';
+import dialogs from 'components/dialogs/dialogs';
+import buttonlist from 'components/buttonlist/buttonlist';
+import treemenu from 'components/treemenu/treemenu';
+import datanotes from 'components/datanotes/datanotes';
 
 
   //LINE CHART TOOL
@@ -35,7 +32,7 @@ var LineChart = Tool.extend('LineChart', {
       }, {
         component: timeslider,
         placeholder: '.vzb-tool-timeslider',
-        model: ["state.time", "state.entities", "state.marker"],
+        model: ["state.time", "state.entities", "state.marker", "ui"],
         ui: {show_value_when_drag_play: false, axis_aligned: true}
       }, {
         component: dialogs,

@@ -1,8 +1,8 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
-import Dialog from '../_dialog';
+import Dialog from 'components/dialogs/_dialog';
 
-import { simplecheckbox } from 'components/_index'
+import simplecheckbox from 'components/simplecheckbox/simplecheckbox';
 /*
  * Size dialog
  */

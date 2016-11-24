@@ -29,7 +29,7 @@ var DataNotes = Component.extend({
     this.context = context;
 
     this.model_binds = {
-      "change:language.strings": function(evt) {
+      "translate:language": function(evt) {
         _this.ready();
       }
     }
@@ -37,20 +37,17 @@ var DataNotes = Component.extend({
     //contructor is the same as any component
     this._super(config, context);
 
-    this.ui = utils.extend({
-      //...add properties here
-    }, this.ui);
-
     this.close = this.close.bind(this);
   },
 
   ready: function() {
-    this.translator = this.model.language.getTFunction();
-    //this.setValues();
+    this.setValues();
   },
 
   readyOnce: function() {
     var _this = this;
+
+    this.translator = this.model.language.getTFunction();
     this.element = d3.select(this.placeholder);
 
     this.element.selectAll("div").remove();
@@ -88,7 +85,7 @@ var DataNotes = Component.extend({
   },
 
   setHook: function(_hookName) {
-    if(!this._readyOnce) return this; 
+    if(!this._readyOnce) return this;
     if(pin) {
       newHookName = _hookName;
       return this;
@@ -96,7 +93,7 @@ var DataNotes = Component.extend({
     if(hookName) this.model.marker[hookName].off('change:which', this.close);
     hookName = newHookName = _hookName;
     this.model.marker[hookName].on('change:which', this.close);
-    
+
     this.setValues();
 
     return this;
@@ -106,11 +103,11 @@ var DataNotes = Component.extend({
     if(!hookName) return;
     var hook = this.model.marker[hookName];
     var concept = hook.getConceptprops();
-    
+
     this.element.select('.vzb-data-notes-body')
       .classed('vzb-hidden', !concept.description)
       .text(concept.description||"");
-   
+
     this.element.select('.vzb-data-notes-link').classed('vzb-hidden', !concept.sourceLink);
 
     if(concept.sourceLink) {
@@ -157,12 +154,12 @@ var DataNotes = Component.extend({
     if(arg != null) pin = arg;
     this.element.select('.vzb-data-notes-close').classed('vzb-hidden', !pin);
     this.element.classed('vzb-data-notes-pinned', pin);
-    if(hookName != newHookName) this.setHook(newHookName);  
+    if(hookName != newHookName) this.setHook(newHookName);
     this.element.select('.vzb-data-notes-body').node().scrollTop = 0;
     if(!showNotes) {
       return this.hide();
     } else {
-      return this.setPos(left, top, true);      
+      return this.setPos(left, top, true);
     }
   },
 

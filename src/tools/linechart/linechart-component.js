@@ -18,7 +18,7 @@ var LCComponent = Component.extend({
   init: function(config, context) {
     var _this = this;
     this.name = 'linechart';
-    this.template = 'linechart.html';
+    this.template = require('./linechart.html');
 
     //define expected models for this component
     this.model_expects = [{
@@ -56,7 +56,7 @@ var LCComponent = Component.extend({
       },
       'change:marker': function(evt, path) {
         if(!_this._readyOnce) return;
-        if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1 || 
+        if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1 ||
           path.indexOf("zoomedMin") > -1 || path.indexOf("zoomedMax") > -1) {
           if(!_this.yScale || !_this.xScale) return; //abort if building of the scale is in progress
           _this.zoomToMaxMin();
@@ -64,7 +64,7 @@ var LCComponent = Component.extend({
           _this.updateSize();
           _this.updateTime();
           _this.redrawDataPoints();
-          return; 
+          return;
         }
         if(path.indexOf("which") > -1 || path.indexOf("use") > -1) return;
         _this.ready();
@@ -118,7 +118,7 @@ var LCComponent = Component.extend({
 
     this.element = d3.select(this.element);
     this.graph = this.element.select('.vzb-lc-graph');
-    
+
     this.yAxisElContainer = this.graph.select('.vzb-lc-axis-y');
     this.yAxisEl = this.yAxisElContainer.select('g');
 
@@ -134,7 +134,7 @@ var LCComponent = Component.extend({
     this.linesContainer = this.graph.select('.vzb-lc-lines');
     this.labelsContainerCrop = this.graph.select('.vzb-lc-labels-crop');
     this.labelsContainer = this.graph.select('.vzb-lc-labels');
-    
+
     this.verticalNow = this.labelsContainer.select(".vzb-lc-vertical-now");
     this.tooltip = this.element.select('.vzb-tooltip');
     //            this.filterDropshadowEl = this.element.select('#vzb-lc-filter-dropshadow');
@@ -176,7 +176,7 @@ var LCComponent = Component.extend({
   ready: function() {
     this.updateUIStrings();
     var _this = this;
-      
+
     //null means we need to calculate all frames before we get to the callback
     this.model.marker.getFrame(null, function(allValues) {
       _this.all_values = allValues;
@@ -191,7 +191,7 @@ var LCComponent = Component.extend({
         _this.linesContainerCrop
           .on('mousemove', _this.entityMousemove.bind(_this, null, null, _this))
           .on('mouseleave', _this.entityMouseout.bind(_this, null, null, _this));
-        
+
       });
     });
   },
@@ -236,7 +236,7 @@ var LCComponent = Component.extend({
           .updateView()
           .toggle();
       });
-    
+
   },
 
   /*
@@ -268,7 +268,7 @@ var LCComponent = Component.extend({
     this.line = d3.svg.line()
       //see https://bl.ocks.org/mbostock/4342190
       //"monotone" can also work. "basis" would skip the points on the sharp turns. "linear" is ugly
-      .interpolate("cardinal") 
+      .interpolate("cardinal")
       .x(function(d) {
         return _this.xScale(d[0]);
       })
@@ -409,7 +409,7 @@ var LCComponent = Component.extend({
     this.activeProfile = this.getActiveProfile(this.profiles, this.presentationProfileChanges);
     this.margin = this.activeProfile.margin;
     this.tick_spacing = this.activeProfile.tick_spacing;
-    
+
     var infoElHeight = this.activeProfile.infoElHeight;
 
     //adjust right this.margin according to biggest label
@@ -502,7 +502,7 @@ var LCComponent = Component.extend({
       .attr("x", -this.activeProfile.margin.left);
     this.yAxisEl
       .attr("transform", "translate(" + (this.activeProfile.margin.left - 1) + "," + 0 + ")");
-    
+
     this.yAxisEl.call(this.yAxis);
     this.xAxisEl.call(this.xAxis);
 
@@ -529,8 +529,8 @@ var LCComponent = Component.extend({
         + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
         + (translate[1] - infoElHeight * 0.8) + ')');
     }
-    
-    
+
+
     this.xTitleEl
       .style("font-size", infoElHeight + "px")
       .attr("transform", "translate(" + this.width + "," + this.height + ")");
@@ -585,8 +585,8 @@ var LCComponent = Component.extend({
 
       if(!_this.sizeUpdatedOnce) {
         _this.updateSize();
-      }    
-      
+      }
+
       _this.entityLabels.exit().remove();
       _this.entityLines.exit().remove();
 
@@ -624,7 +624,7 @@ var LCComponent = Component.extend({
             .attr("class", "vzb-lc-label-value")
             .attr("dy", "1.6em");
         });
-            
+
       _this.entityLines
         .each(function(d, index) {
           var entity = d3.select(this);
@@ -770,7 +770,7 @@ var LCComponent = Component.extend({
         .attr("transform", "translate(" + _this.xScale(d3.min([_this.model.marker.axis_x.zoomedMax, _this.time])) + ",0)");
 
 
-        
+
 
       if(!_this.hoveringNow && _this.time - _this.model.time.start !== 0) {
         if (!_this.ui.chart.hideXAxisValue) _this.xAxisEl.call(
@@ -793,8 +793,8 @@ var LCComponent = Component.extend({
       _this.collisionTimeout = setTimeout(function() {
         _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
       }, _this.model.time.delayAnimations * 1.5);
-    
-    });  
+
+    });
   },
 
   entityMousemove: function(me, index, context, closestToMouse) {
@@ -814,11 +814,11 @@ var LCComponent = Component.extend({
     }
     var resolvedValue;
     var timeDim = _this.model.time.getDimension();
-    
+
     var mousePos = mouse[1] - _this.margin.bottom;
 
     if(!utils.isDate(resolvedTime)) resolvedTime = this.model.time.timeFormat.parse(resolvedTime);
-      
+
     this.model.marker.getFrame(resolvedTime, function(data) {
       var nearestKey = _this.getNearestKey(mousePos, data.axis_y, _this.yScale.bind(_this));
     resolvedValue = data.axis_y[nearestKey];
@@ -892,7 +892,7 @@ var LCComponent = Component.extend({
       _this.yAxisEl.call(_this.yAxis.highlightValue("none"));
 
       _this.model.entities.clearHighlighted();
-      
+
       _this.hoveringNow = null;
     }, 300);
 
@@ -911,7 +911,7 @@ var LCComponent = Component.extend({
     var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
 
     var someHighlighted = (this.model.entities.highlight.length > 0);
-    var someSelected = (this.model.entities.select.length > 0); 
+    var someSelected = (this.model.entities.select.length > 0);
     this.graph.selectAll(".vzb-lc-entity").each(function() {
       d3.select(this)
         .style("opacity", function(d) {
@@ -920,7 +920,7 @@ var LCComponent = Component.extend({
             return _this.model.entities.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
           }
           if(someHighlighted) return OPACITY_HIGHLT_DIM;
-          return OPACITY_REGULAR;            
+          return OPACITY_REGULAR;
         });
     });
 
@@ -928,13 +928,13 @@ var LCComponent = Component.extend({
 
   zoomToMaxMin: function() {
     var _this = this;
-    // 
+    //
     if(this.model.marker.axis_y.zoomedMin == null ) this.model.marker.axis_y.zoomedMin = this.yScale.domain()[0];
     if(this.model.marker.axis_y.zoomedMin == null ) this.model.marker.axis_y.zoomedMin = this.yScale.domain()[1];
 
 
     if(
-      this.model.marker.axis_x.zoomedMin != null && 
+      this.model.marker.axis_x.zoomedMin != null &&
       this.model.marker.axis_x.zoomedMax != null) {
 
       var x1 = this.xScale(this.model.marker.axis_x.zoomedMin);
@@ -945,7 +945,7 @@ var LCComponent = Component.extend({
 
       this.xScale.range([this.rangeXShift, this.width*this.rangeXRatio + this.rangeXShift]);
       this.xAxisEl.call(this.xAxis);
-    } 
+    }
     if (
       this.model.marker.axis_y.zoomedMin != null &&
       this.model.marker.axis_y.zoomedMax != null) {
@@ -960,8 +960,8 @@ var LCComponent = Component.extend({
       this.yAxisEl.call(this.yAxis);
     }
   },
-  
-  
+
+
   /**
    * Returns key from obj which value has the smallest difference with val
    */

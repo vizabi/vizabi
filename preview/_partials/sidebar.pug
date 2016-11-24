@@ -2,7 +2,7 @@ button#vzbp-btn-refresh.vzbp-button(data-tooltip='Refresh')
   i.fa.fa-refresh
 
 if source_code
-  button#vzbp-btn-github.vzbp-button.vzbp-button-bigger(onclick="openLink('#{source_code}')", data-tooltip='Github')
+  button#vzbp-btn-github.vzbp-button.vzbp-button-bigger(onclick='openLink(\'' + source_code + '\')', data-tooltip='Github')
     i.fa.fa-github
 
 button#vzbp-btn-codepen.vzbp-button(data-tooltip='Codepen')
@@ -25,7 +25,7 @@ hr.vzbp-hr
       i.fa.fa-random
     p(align='left')
       input#vzbp-input-width.vzbp-input(type='number')
-      |  x 
+      |  x
       input#vzbp-input-height.vzbp-input(type='number')
     //- p(align='center')
     //-   a(href='fullscreen/{{ page.filename }}', target='blank')
@@ -35,7 +35,7 @@ hr.vzbp-hr
 hr.vzbp-hr
 
 #state-section-panel.collapsible-panel
-    h2#state-section.vzbp-subtitle.vzbp-collapsible-title State
+  h2#state-section.vzbp-subtitle.vzbp-collapsible-title State
 
 hr.vzbp-hr
 #info-sect.collapsible-section.open
@@ -57,5 +57,5 @@ hr.vzbp-hr
       i.fa.fa-bullseye
     button#vzbp-btn-download.vzbp-button.vzbp-button-bigger(data-tooltip='Download')
       i.fa.fa-download
-      
+
 hr.vzbp-hr

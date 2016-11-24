@@ -1,5 +1,5 @@
 import * as utils from 'base/utils';
-import Hook from 'hook';
+import Hook from 'models/hook';
 /*
  * VIZABI Group Model
  */
@@ -23,11 +23,8 @@ var GroupModel = Hook.extend({
    * @param {Object} bind Initial events to bind
    */
   init: function(name, values, parent, bind) {
-
     this._type = "model";
-    //TODO: add defaults extend to super
-    var defaults = utils.deepClone(this._defaults);
-    values = utils.extend(defaults, values);
+
     this._super(name, values, parent, bind);
   },
 
@@ -38,7 +35,7 @@ var GroupModel = Hook.extend({
     //there must be no scale
     if(this.scale) this.scale = null;
 
-    //use must be "property" 
+    //use must be "property"
     if(this.use != "property") {
       utils.warn("group model: use must be 'property'. Resetting...")
       this.use = "property";

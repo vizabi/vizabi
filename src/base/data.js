@@ -1,14 +1,13 @@
-import * as utils from 'utils';
-import Promise from 'promise';
-import Class from 'class';
-import Reader from 'reader';
-import globals from 'base/globals';
+import * as utils from 'base/utils';
+import Promise from 'base/promise';
+import Class from 'base/class';
+import Reader from 'base/reader';
 
 var Data = Class.extend({
 
   init: function() {
     this._collection = {};
-    this._collectionPromises = {};// stores promises, making sure we don't do one calulation twice 
+    this._collectionPromises = {};// stores promises, making sure we don't do one calulation twice
   },
 
   /**
@@ -87,7 +86,7 @@ var Data = Class.extend({
       // check every query in the queue
       _this.queryQueue = _this.queryQueue.filter(function(queueItem) {
         if (queueItem.query == query) {
-          // Query is still in the queue so this is the first deferred query with same requested rows (where & group) to reach here. 
+          // Query is still in the queue so this is the first deferred query with same requested rows (where & group) to reach here.
           // This will be the base query which will be executed; It will be extended by other queries in the queue.
           mergedQueries.push(queueItem);
           willExecute = true;
@@ -104,7 +103,7 @@ var Data = Class.extend({
             Array.prototype.push.apply(query.select.value, queueItem.query.select.value);
             // merge parsers so the reader can parse the newly added columns
             utils.extend(reader.parsers, queueItem.reader.parsers);
-            
+
             // the first entry in the "key" array of the query is the key of 1-dimensional set
             //TODO: what if the set is multidimenstional?
             reader.parsers[query.select.key[0]] = function(d){return ""+d};
@@ -115,7 +114,7 @@ var Data = Class.extend({
             // remove queueItem from queue as it's merged in the current query
             return false;
           }
-        } 
+        }
         // otherwise keep it in the queue, so it can be joined with another query
         return true;
       });
@@ -180,7 +179,7 @@ var Data = Class.extend({
           // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
 
           // returning the query-id/values of the merged query without splitting the result up again per query
-          // this is okay because the collection-object above will only be passed by reference to the cache and this will not take up more memory. 
+          // this is okay because the collection-object above will only be passed by reference to the cache and this will not take up more memory.
           // On the contrary: it uses less because there is no need to duplicate the key-columns.
           utils.forEach(mergedQueries, function(mergedQuery) {
             // set the cache-location for each seperate query to the combined query's cache
@@ -189,10 +188,10 @@ var Data = Class.extend({
             // resolve the query
             mergedQuery.promise.resolve(mergedQuery.queryId);
           });
-  
+
           //promise.resolve(queryId);
         }, //error reading
-        function(err) { 
+        function(err) {
           utils.forEach(mergedQueries, function(mergedQuery) {
             mergedQuery.promise.reject(err);
           });
@@ -240,10 +239,10 @@ var Data = Class.extend({
       case 'limits':
         this._collection[queryId][what][id] = this._getLimits(queryId, whatId);
         break;
-      case 'nested':     
+      case 'nested':
         this._collection[queryId][what][id] = this._getNested(queryId, whatId);
         break;
-      case 'haveNoDataPointsPerKey':     
+      case 'haveNoDataPointsPerKey':
         //do nothing. no caching is available for this option, served directly from collection
         break;
     }
@@ -252,7 +251,7 @@ var Data = Class.extend({
 
   loadConceptProps: function(reader, languageId, callback){
     var _this = this;
-    
+
     var query = {
       from: "concepts",
       language: languageId,
@@ -261,9 +260,9 @@ var Data = Class.extend({
         value: ["concept_type","domain","indicator_url","color","scales","interpolation","tags","name","unit","description"]
       }
     };
-    
+
     this.load(query, reader).then(function(dataId) {
-      
+
       _this.conceptPropsDataID = dataId;
       _this.conceptDictionary = {_default: {concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root"}};
       _this.get(dataId).forEach(function(d){
@@ -302,13 +301,13 @@ var Data = Class.extend({
         concept["description"] = d.description;
         _this.conceptDictionary[d.concept] = concept;
       });
-      
+
       callback(_this.conceptDictionary);
     }, function(err) {
       utils.warn('Problem with query: ', query);
     });
   },
-  
+
   getConceptprops: function(which){
      if(which) {
        if(this.conceptDictionary[which]) {
@@ -320,15 +319,15 @@ var Data = Class.extend({
        return this.conceptDictionary;
      }
   },
-    
+
   _getCacheKey: function(frames, keys) {
     var result = frames[0] + " - " + frames[frames.length-1];
     if (keys) {
-      result = result + "_" + keys.join(); 
+      result = result + "_" + keys.join();
     }
     return result;
   },
-  
+
   getFrames: function(queryId, framesArray, keys) {
     var _this = this;
     var whatId = this._getCacheKey(framesArray, keys);
@@ -348,12 +347,12 @@ var Data = Class.extend({
           resolve(_this._collection[queryId]["frames"][whatId]);
         });
       })
-     
+
     }
     return this._collectionPromises[queryId][whatId]["promise"];
   },
 
-  
+
   getFrame: function(queryId, framesArray, neededFrame, keys) {
     //can only be called after getFrames()
     var _this = this;
@@ -381,7 +380,7 @@ var Data = Class.extend({
       });
     }
   },
-  
+
   _muteAllQueues: function(except) {
     utils.forEach(this._collectionPromises, function(queries, queryId) {
         utils.forEach(queries, function(promise, whatId) {
@@ -392,6 +391,16 @@ var Data = Class.extend({
     });
   },
   
+  _checkForcedQueuesExists: function() {
+    utils.forEach(this._collectionPromises, function(queries, queryId) {
+      utils.forEach(queries, function(promise, whatId) {
+        if(promise.queue.forcedQueue.length > 0) {
+          promise.queue.unMute();
+        }
+      });
+    });
+  },
+
   _unmuteQueue: function() {
     utils.forEach(this._collectionPromises, function(queries, queryId) {
       utils.forEach(queries, function(promise, whatId) {
@@ -416,7 +425,7 @@ var Data = Class.extend({
       this.deferredPromise = null;
       this.whatId = whatId;
       this.queue = framesArray.slice(0); //clone array
-      var queue = this; 
+      var queue = this;
       //put the last element to the start of the queue because we are likely to need it first
       this.queue.splice(0, 0, this.queue.splice(this.queue.length - 1, 1)[0]);
       this.key = 0;
@@ -426,7 +435,7 @@ var Data = Class.extend({
           this.deferredPromise = new Promise();
         }
       };
-        
+
       this.unMute = function() {
         this.isActive = true;
         if (this.deferredPromise instanceof Promise) {
@@ -457,9 +466,9 @@ var Data = Class.extend({
         if (this.isActive) {
           this.deferredPromise.resolve();
         }
-        return this.deferredPromise; 
+        return this.deferredPromise;
       };
-        
+
       this._getNextFrameName = function() {
         var frameName = null;
         if (this.forcedQueue.length > 0 || this.queue.length > 0) {
@@ -476,19 +485,27 @@ var Data = Class.extend({
         }
         return frameName;
       };
+      
+      this.checkForcedFrames = function() {
+        if (this.forcedQueue.length > 0) return;
+        _context._checkForcedQueuesExists();
+      };
+
+      
       // returns the next frame in a queue
       this.getNext = function() {
         var defer = new Promise();
+        this.checkForcedFrames();
         if (this.isActive) {
           defer.resolve(this._getNextFrameName());
         } else {
           this._waitingForActivation().then(function() {
             defer.resolve(queue._getNextFrameName());
-          }); 
+          });
         }
         return defer;
       };
-        
+
       // force the particular frame up the queue
       this.forceFrame = function(frameName, cb) {
         var objIndexOf = function(obj, need) {
@@ -529,7 +546,7 @@ var Data = Class.extend({
       }
     }();
   },
-  
+
 
   /**
    * Get regularised dataset (where gaps are filled)
@@ -595,8 +612,8 @@ var Data = Class.extend({
               var d = dataset[i];
               for (c = 0; c < cLength; c++) {
                 frame[columns[c]][d[KEY]] = d[columns[c]];
-                //check data for properties with missed data. If founded then write key to haveNoDataPointsPerKey with 
-                //count of broken datapoints  
+                //check data for properties with missed data. If founded then write key to haveNoDataPointsPerKey with
+                //count of broken datapoints
                 if(d[columns[c]] == null) {
                   _this._collection[queryId].haveNoDataPointsPerKey[columns[c]][d[KEY]] = dataset.length;
                 }
@@ -632,10 +649,10 @@ var Data = Class.extend({
                   frame[column][key] = nested[key][frameName][0][column];
 
                 } else if (method === "none") {
-                    
+
                   // the piece of data is not available and the interpolation is set to "none"
                   frame[column][key] = null;
-                    
+
                 } else {
                   // If the piece of data doesn’t exist or is invalid, then we need to inter- or extapolate it
 
@@ -663,7 +680,7 @@ var Data = Class.extend({
                     } else {
                       filtered[key][column] = items;
                     }
-                      
+
                     if(items.length==0) _this._collection[queryId].haveNoDataPointsPerKey[column][key] = items.length;
                   }
 
@@ -678,16 +695,16 @@ var Data = Class.extend({
               } //loop across columns
             } //loop across keys
           }
-          
+
           // save the calcualted frame to global datamanager cache
           _this._collection[queryId]["frames"][whatId][frameName] = frame;
-          
+
           // fire the callback
           if (typeof callback === "function") {
             // runs the function frameComplete inside framesQueue.getNext()
-            callback(frameName); 
+            callback(frameName);
           }
-          
+
           // recursively call the buildFrame again, this time for the next frame
           //QUESTION: FramesArray is probably not needed at this point. queryId and whatId is enough
           _this._collectionPromises[queryId][whatId]["queue"].getNext().then(function(nextFrame) {
@@ -712,17 +729,17 @@ var Data = Class.extend({
 
   _getNested: function(queryId, order) {
     // Nests are objects of key-value pairs
-    // Example: 
-    // 
+    // Example:
+    //
     // order = ["geo", "time"];
-    // 
+    //
     // original_data = [
     //   { geo: "afg", time: 1800, gdp: 23424, lex: 23}
     //   { geo: "afg", time: 1801, gdp: 23424, lex: null}
     //   { geo: "chn", time: 1800, gdp: 23587424, lex: 46}
     //   { geo: "chn", time: 1801, gdp: null, lex: null}
     // ];
-    //  
+    //
     // nested_data = {
     //   afg: {
     //     1800: {gdp: 23424, lex: 23},
@@ -747,7 +764,7 @@ var Data = Class.extend({
 
     return utils.nestArrayToObj(nest.entries(this._collection[queryId]['data']));
   },
-    
+
 
   _getUnique: function(queryId, attr) {
     var uniq;
@@ -772,14 +789,14 @@ var Data = Class.extend({
 
   _getValid: function(queryId, column) {
     return this._collection[queryId].data.filter(function(f){return f[column] || f[column]===0});
-  },    
-    
+  },
+
   _getLimits: function(queryId, attr) {
 
     var items = this._collection[queryId].data;
     // get only column attr and only rows with number or date
     var filtered = items.reduce(function(filtered, d) {
-      
+
       // check for dates
       var f = (utils.isDate(d[attr])) ? d[attr] : parseFloat(d[attr]);
 
@@ -807,7 +824,7 @@ var Data = Class.extend({
     }
     limits.min = min || 0;
     limits.max = max || 100;
-    return limits;    
+    return limits;
   },
 
   /**

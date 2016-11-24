@@ -1,8 +1,8 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
-import Dialog from '../_dialog';
+import Dialog from 'components/dialogs/_dialog';
 
-import { simpleslider } from 'components/_index'
+import simpleslider from 'components/simpleslider/simpleslider';
 
 /*!
  * VIZABI FIND CONTROL
@@ -31,9 +31,9 @@ var Find = Dialog.extend({
       "change:state.time.playing": function(evt) {
         if(!_this.model.state.time.playing) {
           _this.time = _this.model.state.time.value;
-      
+
           _this.model.state.marker.getFrame(_this.time, function(values, time) {
-            if (!values || (_this.time - time)) return;          
+            if (!values || (_this.time - time)) return;
             _this.redrawDataPoints(values);
           });
         }
@@ -41,15 +41,15 @@ var Find = Dialog.extend({
       "change:state.time.value": function(evt) {
         // hide changes if the dialog is not visible
         if(!_this.placeholderEl.classed('vzb-active') && !_this.placeholderEl.classed('vzb-sidebar')) return;
-        
+
         _this.time = _this.model.state.time.value;
-      
+
         _this.model.state.marker.getFrame(_this.time, function(values) {
-          if (!values) return;          
+          if (!values) return;
           _this.redrawDataPoints(values);
         });
       },
-      "change:language.strings": function() {
+      "translate:language": function() {
         _this.translator = _this.model.language.getTFunction();
         _this.input_search.attr("placeholder", _this.translator("placeholder/search") + "...");
       }
@@ -65,8 +65,8 @@ var Find = Dialog.extend({
     this._super();
 
     this.list = this.element.select(".vzb-find-list");
-    this.input_search = this.element.select("#vzb-find-search");
-    this.deselect_all = this.element.select("#vzb-find-deselect");
+    this.input_search = this.element.select(".vzb-find-search");
+    this.deselect_all = this.element.select(".vzb-find-deselect");
     this.opacity_nonselected = this.element.select(".vzb-dialog-bubbleopacity");
 
     this.KEY = this.model.state.entities.getDimension();
@@ -78,7 +78,7 @@ var Find = Dialog.extend({
       if(event.keyCode == 13 && _this.input_search.node().value == "select all") {
         _this.input_search.node().value = "";
         //clear highlight so it doesn't get in the way when selecting an entity
-        if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();        
+        if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();
         _this.model.state.entities.selectAll();
       }
     });
@@ -107,13 +107,13 @@ var Find = Dialog.extend({
 
     this.input_search.node().value = "";
     this.showHideSearch();
-      
+
     this.time = this.model.state.time.value;
-      
+
     this.model.state.marker.getFrame(this.time, function(values) {
-      if (!values) return;          
+      if (!values) return;
       _this.redrawDataPoints(values);
-    });      
+    });
   },
 
   /**
@@ -125,17 +125,17 @@ var Find = Dialog.extend({
 
     var _this = this;
     var KEY = this.KEY;
-    
+
     this.time = this.model.state.time.value;
     this.model.state.marker.getFrame(this.time, function(values) {
       if (!values) return;
-        
+
       var data = _this.model.state.marker.getKeys().map(function(d) {
         var pointer = {};
         pointer[KEY] = d[KEY];
         pointer.brokenData = false;
         pointer.name = values.label[d[KEY]];
-          
+
         return pointer;
       });
 
@@ -156,19 +156,19 @@ var Find = Dialog.extend({
         .attr("type", "checkbox")
         .attr("class", "vzb-find-item")
         .attr("id", function(d) {
-          return "-find-" + d[KEY];
+          return "-find-" + d[KEY] + "-" + _this._id;
         })
         .on("change", function(d) {
           //clear highlight so it doesn't get in the way when selecting an entity
-          if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();        
-          _this.model.state.entities.selectEntity(d);        
+          if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();
+          _this.model.state.entities.selectEntity(d);
           //return to highlighted state
-          if(!utils.isTouchDevice() && !d.brokenData) _this.model.state.entities.highlightEntity(d); 
+          if(!utils.isTouchDevice() && !d.brokenData) _this.model.state.entities.highlightEntity(d);
         });
 
       _this.items.append("label")
         .attr("for", function(d) {
-          return "-find-" + d[KEY];
+          return "-find-" + d[KEY] + "-" + _this._id;
         })
         .text(function(d){return d.name})
         .on("mouseover", function(d) {
@@ -178,23 +178,23 @@ var Find = Dialog.extend({
           if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();
         });
         utils.preventAncestorScrolling(_this.element.select('.vzb-dialog-scrollable'));
-        
+
         _this.redrawDataPoints(values);
         _this.selectDataPoints();
         _this.showHideSearch();
         _this.showHideDeselect();
-        
+
     });
   },
-    
+
   redrawDataPoints: function(values){
     var _this = this;
     var KEY = this.KEY;
-        
+
     _this.items
       .each(function(d){
         var view = d3.select(this).select("label");
-      
+
         d.brokenData = false;
         utils.forEach(values, function(hook, name) {
           //TODO: remove the hack with hardcoded hook names (see discussion in #1389)
@@ -202,13 +202,13 @@ var Find = Dialog.extend({
             d.brokenData = true;
           }
         });
-    
+
         view
           .classed("vzb-find-item-brokendata", d.brokenData)
           .attr("title", d.brokenData? _this.model.state.time.timeFormat(_this.time) + ": " + _this.translator("hints/nodata") : "");
       })
   },
-    
+
   selectDataPoints: function(){
     var KEY = this.KEY;
     var selected = this.model.state.entities.getSelected();
@@ -217,7 +217,7 @@ var Find = Dialog.extend({
           return(selected.indexOf(d[KEY]) !== -1);
         });
   },
-    
+
   showHideSearch: function() {
     var search = this.input_search.node().value || "";
     search = search.toLowerCase();

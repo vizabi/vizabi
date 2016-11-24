@@ -1,8 +1,9 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
-import Dialog from '../_dialog';
+import Dialog from 'components/dialogs/_dialog';
 
-import { zoombuttonlist, simplecheckbox } from 'components/_index'
+import zoombuttonlist from 'components/zoombuttonlist/zoombuttonlist';
+import simplecheckbox from 'components/simplecheckbox/simplecheckbox';
 
 
 /*

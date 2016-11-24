@@ -1,11 +1,11 @@
 import * as utils from 'base/utils';
-import Model from 'base/model';
+import DataConnected from 'models/dataconnected';
 
 /*!
  * VIZABI Entities Model
  */
 
-var EntitiesModel = Model.extend({
+var EntitiesModel = DataConnected.extend({
 
   /**
    * Default values for this model
@@ -20,7 +20,7 @@ var EntitiesModel = Model.extend({
   },
 
   objectLeafs: ['show'],
-  dataChildren: ['show'],
+  dataConnectedChildren: ['show'],
 
   /**
    * Initializes the entities model.
@@ -31,38 +31,11 @@ var EntitiesModel = Model.extend({
   init: function(name, values, parent, bind) {
 
     this._type = "entities";
-    //TODO: add defaults extend to super
-    var defaults = utils.deepClone(this._defaults);
-    values = utils.extend(defaults, values);
 
     this._visible = [];
     this._multiple = true;
 
     this._super(name, values, parent, bind);
-  },
-
-  checkDataChanges: function(attributes) {
-    var _this = this;
-
-    if (!attributes || !this.dataChildren)
-      return
-
-    if (!utils.isArray(attributes) && utils.isObject(attributes)) 
-      attributes = Object.keys(attributes);
-
-    if (attributes.length == 0 || this.dataChildren.length == 0)
-      return
-
-    var changedDataChildren = attributes.filter(checkDataChildren);
-
-    if (changedDataChildren.length > 0) {
-      this.trigger('dataChange');
-      this.load();
-    }
-
-    function checkDataChildren(attribute) { 
-      return _this.dataChildren.indexOf(attribute) !== -1 
-    }
   },
 
   /**
@@ -171,16 +144,16 @@ var EntitiesModel = Model.extend({
       this.select = (this._multiple) ? this.select.concat(value) : [value];
     }
   },
-    
+
   /**
    * Select all entities
    */
   selectAll: function(timeDim, timeFormatter) {
     if(!this._multiple) return;
-    
+
     var added,
       dimension = this.getDimension();
-    
+
     var select = this._visible.map(function(d) {
       added = {};
       added[dimension] = d[dimension];
@@ -192,7 +165,7 @@ var EntitiesModel = Model.extend({
 
     this.select = select;
   },
-    
+
   /**
    * Shows or unshows an entity from the set
    */
@@ -216,15 +189,15 @@ var EntitiesModel = Model.extend({
 
     if (showArray.length === 0)
       delete newShow[dimension]
-    else 
-      newShow[dimension] = { '$in': showArray }; 
+    else
+      newShow[dimension] = { '$in': showArray };
 
     this.show = newShow;
   },
 
   setLabelOffset: function(d, xy) {
     if(xy[0]===0 && xy[1]===1) return;
-      
+
     var dimension = this.getDimension();
     var value = d[dimension];
 
@@ -248,26 +221,26 @@ var EntitiesModel = Model.extend({
         .map(function(d) {return d[dimension];})
         .indexOf(value) !== -1;
   },
-    
+
   isSelectedMD: function(d) {
     var _this = this;
     var value = this._createValue(d);
-        
+
     return this.select
       .map(function(d) {
         return JSON.stringify(_this._createValue(d)) === JSON.stringify(value);
       })
       .indexOf(true) !== -1;
   },
-  
+
   _createValue: function(d) {
-    var dims = this.getDimension() ? [this.getDimension()].concat(this._getAllDimensions()) : this._getAllDimensions(); 
+    var dims = this.getDimension() ? [this.getDimension()].concat(this._getAllDimensions()) : this._getAllDimensions();
     return dims.reduce(function(value, key) {
       value[key] = d[key];
       return value;
     }, {});
   },
-   
+
   /**
    * Selects an entity from the set
    * @returns {Boolean} whether the item is shown or not
@@ -323,7 +296,7 @@ var EntitiesModel = Model.extend({
     if(!this.isHighlighted(d)) {
       var added = {};
       if(copyDatum) {
-        added = utils.clone(d);                
+        added = utils.clone(d);
       } else {
         added[dimension] = value;
         if(timeDim && timeFormatter) {
@@ -368,7 +341,7 @@ var EntitiesModel = Model.extend({
   clearHighlighted: function() {
     this.setHighlight([]);
   }
-    
+
 });
 
 export default EntitiesModel;

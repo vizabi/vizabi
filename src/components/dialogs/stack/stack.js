@@ -1,11 +1,8 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
-import Dialog from '../_dialog';
+import Dialog from 'components/dialogs/_dialog';
 
-import {
-    draggablelist
-}
-from 'components/_index'
+import draggablelist from 'components/draggablelist/draggablelist';
 
 
 /*
@@ -23,7 +20,7 @@ var Stack = Dialog.extend({
         this.name = 'stack';
         var _this = this;
 
-        // in dialog, this.model_expects = ["state", "data"];
+        // in dialog, this.model_expects = ["state", "ui", "language"];
 
         this.components = [{
             component: draggablelist,
@@ -36,16 +33,11 @@ var Stack = Dialog.extend({
         }];
 
         this.model_binds = {
-            'change:state.marker.stack': function(evt) {
-                //console.log("stack change " + evt);
-                if(!_this._ready) return;
-                _this.updateView();
-            },
-            'change:state.marker.group': function(evt) {
-                //console.log("group change " + evt);
-                if(!_this._ready) return;
-                _this.updateView();
-            }
+          'change:state.marker.group': function(evt) {
+            //console.log("group change " + evt);
+            if(!_this._ready) return;
+            _this.updateView();
+          }
         };
 
         this._super(config, parent);
@@ -70,6 +62,11 @@ var Stack = Dialog.extend({
 
       this.updateView();
     },
+    
+    ready: function() {
+      this._super();
+      this.updateView();
+    },
 
     updateView: function() {
         var _this = this;
@@ -81,7 +78,7 @@ var Stack = Dialog.extend({
                 if(d3.select(this).node().value === "all") return _this.stack.which==="all";
             });
         
-        _this.ui.chart.manualSortingEnabled = _this.stack.which == "all";
+        _this.model.ui.chart.manualSortingEnabled = _this.stack.which == "all";
         
         this.howToMergeEl
             .property('checked', function() {

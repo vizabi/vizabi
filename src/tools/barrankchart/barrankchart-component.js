@@ -1,6 +1,5 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
-import DynamicBackground from 'helpers/d3.dynamicBackground';
 import axisWithLabelPicker from 'helpers/d3.axisWithLabelPicker';
 
 
@@ -21,7 +20,7 @@ var BarRankChart = Component.extend({
   init: function(config, context) {
 
     this.name = 'barrankchart-component';
-    this.template = 'barrank.html';
+    this.template = require('./barrank.html');
 
     //define expected models for this component
     this.model_expects = [{
@@ -38,7 +37,7 @@ var BarRankChart = Component.extend({
       type: "language"
     }, {
       name: "ui",
-      type: "model"
+      type: "ui"
     }];
 
     var _this = this;
@@ -136,8 +135,8 @@ var BarRankChart = Component.extend({
     // change header titles for new data
     var conceptProps = this.model.marker.getConceptprops();
     this.header.select('.vzb-br-title')
-      .text(conceptProps[this.model.marker.axis_x.which].name 
-            + ' ' 
+      .text(conceptProps[this.model.marker.axis_x.which].name
+            + ' '
             + this.model.time.timeFormat(this.model.time.value)
       )
     this.header.select('.vzb-br-total')
@@ -161,13 +160,13 @@ var BarRankChart = Component.extend({
   drawAxes: function() {
 
     // these should go in some style-config
-    this.barHeight = 20; 
+    this.barHeight = 20;
     var margin = {top: 60, bottom: 40, left: 90, right: 20}; // need right margin for scroll bar
 
     // draw the stage - copied from popbyage, should figure out what it exactly does and what is necessary.
     this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
     this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
-      
+
     if(this.height<=0 || this.width<=0) return utils.warn("Bar rank chart drawAxes() abort: vizabi container is too little or has display:none");
 
     this.barContainer.attr('transform', 'translate(' + margin.left + ', 0)');
@@ -175,7 +174,7 @@ var BarRankChart = Component.extend({
 
     // header
     this.header.attr('height', margin.top);
-    
+
     var headerTitle = this.header.select('.vzb-br-title');
     var headerTotal = this.header.select('.vzb-br-total');
     var headerTitleBBox = headerTitle.node().getBBox();
@@ -208,9 +207,9 @@ var BarRankChart = Component.extend({
     // update the shown bars for new data-set
     this.createAndDeleteBars(updatedBars);
 
-   
+
     this.barContainer
-      .selectAll('.vzb-br-bar') 
+      .selectAll('.vzb-br-bar')
       .data(this.sortedEntities, getDataKey)
       .order()
       .each(function (d, i) {
@@ -218,7 +217,7 @@ var BarRankChart = Component.extend({
         var bar = d3.select(this);
         var barWidth = _this.xScale(d.value);
         var xValue = _this.model.marker.axis_x.getTickFormatter()(d.value);
-        
+
         // save the current index in the bar datum
         d.index = i;
 
@@ -285,17 +284,17 @@ var BarRankChart = Component.extend({
     function getBarPosition(d, i) {
         return (_this.barHeight+bar_margin)*i;
     }
-    function getDataKey(d) {          
-      return d.entity;  
-    } 
+    function getDataKey(d) {
+      return d.entity;
+    }
     // http://stackoverflow.com/questions/10692100/invoke-a-callback-at-the-end-of-a-transition
-    function endAll(transition, callback) { 
+    function endAll(transition, callback) {
       if (transition.size() === 0) { callback() }
-      var n = 0; 
-      transition 
-          .each(function() { ++n; }) 
-          .each("end", function() { if (!--n) callback.apply(this, arguments); }); 
-    } 
+      var n = 0;
+      transition
+          .each(function() { ++n; })
+          .each("end", function() { if (!--n) callback.apply(this, arguments); });
+    }
 
   },
 
@@ -310,7 +309,7 @@ var BarRankChart = Component.extend({
     var newGroups = updatedBars.enter().append("g")
         .attr("class", 'vzb-br-bar')
         .attr("id", function(d) {
-          return "vzb-br-bar-" + d.entity;
+          return "vzb-br-bar-" + d.entity + "-" + _this._id;
         })
         .on("mousemove", function(bar) { _this.setHover(bar, true)  })
         .on("mouseout",  function(bar) { _this.setHover(bar, false) })
@@ -339,7 +338,7 @@ var BarRankChart = Component.extend({
 
     // draw new labels per group
     newGroups.append('text')
-        .attr("class", "vzb-br-label") 
+        .attr("class", "vzb-br-label")
         .attr("x", -5)
         .attr("y", this.barHeight/2)
         .attr("text-anchor", "end")
@@ -356,7 +355,7 @@ var BarRankChart = Component.extend({
 
     // draw new values on each bar
     newGroups.append('text')
-        .attr("class", "vzb-br-value") 
+        .attr("class", "vzb-br-value")
         .attr("x", 5)
         .attr("y", this.barHeight/2)
         .attr("dominant-baseline", "middle")
@@ -386,7 +385,7 @@ var BarRankChart = Component.extend({
 
   /**
   * DATA HELPER FUNCTIONS
-  */  
+  */
 
   sortByIndicator: function(values) {
 
@@ -401,13 +400,13 @@ var BarRankChart = Component.extend({
       data_array.push(row);
 
       // setting this.total for efficiency at the same time
-      _this.total += indicator_value; 
+      _this.total += indicator_value;
     });
     data_array.sort(function(a, b) {
       // if a is bigger, a comes first, i.e. descending sort
       return b.value - a.value;
-    });  
-    return data_array;  
+    });
+    return data_array;
   },
 
   /**
@@ -419,7 +418,7 @@ var BarRankChart = Component.extend({
    */
   setHover: function(bar, hover) {
     this.barContainer.classed('vzb-dimmed', hover);
-    this.barContainer.select("#vzb-br-bar-" + bar.entity).classed('vzb-hovered', hover);
+    this.barContainer.select("#vzb-br-bar-" + bar.entity + "-" + this._id).classed('vzb-hovered', hover);
   },
 
   /**
@@ -438,7 +437,7 @@ var BarRankChart = Component.extend({
     if(selected.length) {
       this.barContainer.classed('vzb-dimmed-selected', true);
       utils.forEach(selected, function(selectedBar) {
-        _this.barContainer.select("#vzb-br-bar-" + selectedBar[entityDim]).classed('vzb-selected', true);
+        _this.barContainer.select("#vzb-br-bar-" + selectedBar[entityDim] + "-" + _this._id).classed('vzb-selected', true);
       });
     }
 
