@@ -58,6 +58,10 @@ var LineChart = Tool.extend('LineChart', {
     default_model: {
     state: {
       time: {},
+      marker: { 
+        axis_x: {allow: {scales: ["time"]}},
+        axis_y: {allow: {scales: ["linear", "log"]}}
+      }
     },
     locale: { },
     "ui": {

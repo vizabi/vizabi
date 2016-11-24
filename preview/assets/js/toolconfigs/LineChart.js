@@ -28,19 +28,12 @@ var VIZABI_MODEL = {
         "which": "income_per_person_gdppercapita_ppp_inflation_adjusted",
         "scaleType": "log",
         "domainMin": 300,
-        "domainMax": 128000,
-        "allow": {
-          "scales": ["linear", "log"]
-        }
-
+        "domainMax": 128000
       },
       "axis_x": {
         "use": "indicator",
         "which": "time",
-        "scaleType": "time",
-        "allow": {
-          "scales": ["time"]
-        }
+        "scaleType": "time"
       },
       "color": {
         "use": "property",
@@ -93,5 +86,8 @@ var VIZABI_MODEL = {
         "which": "parent"
       }
     }
+  },
+  "data": {
+    "splash": false
   }
 };

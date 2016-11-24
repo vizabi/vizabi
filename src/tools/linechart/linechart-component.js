@@ -456,18 +456,8 @@ var LCComponent = Component.extend({
     this.graph
       .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
 
-
-    if(this.model.marker.axis_y.scaleType !== "ordinal") {
-      this.yScale.range([this.height * this.rangeYRatio + this.rangeYShift, this.rangeYShift]);
-    } else {
-      this.yScale.rangePoints([this.height * this.rangeYRatio + this.rangeYShift, this.rangeYShift], padding).range();
-    }
-    if(this.model.marker.axis_x.scaleType !== "ordinal") {
-      this.xScale.range([this.rangeXShift, this.width * this.rangeXRatio + this.rangeXShift]);
-    } else {
-      this.xScale.rangePoints([[this.rangeXShift, this.width * this.rangeXRatio + this.rangeXShift]], padding).range();
-    }
-
+    this.yScale.range([this.height * this.rangeYRatio + this.rangeYShift, this.rangeYShift]);
+    this.xScale.range([this.rangeXShift, this.width * this.rangeXRatio + this.rangeXShift]);
 
     this.yAxis.scale(this.yScale)
       .labelerOptions({
@@ -642,10 +632,10 @@ var LCComponent = Component.extend({
           //TODO: optimization is possible if getValues would return both x and time
           //TODO: optimization is possible if getValues would return a limited number of points, say 1 point per screen pixel
           var xy = _this.prev_steps.map(function(frame, i) {
-                  return [+frame,  (_this.all_values[frame] && _this.all_values[frame].axis_y[d[KEY]]) ? _this.all_values[frame].axis_y[d[KEY]] : null] ;
-              })
-              .filter(function(d) { return d[1] || d[1] === 0; });
-          xy.push([+time, +values.axis_y[d[KEY]]]);
+              return [frame, _this.all_values[frame] ? _this.all_values[frame].axis_y[d[KEY]] : null] ;
+            })
+            .filter(function(d) { return d[1] || d[1] === 0; });
+          xy.push([time, values.axis_y[d[KEY]]]);
           _this.cached[d[KEY]] = {
             valueY: xy[xy.length - 1][1]
           };
