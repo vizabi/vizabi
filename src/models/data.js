@@ -62,7 +62,7 @@ var DataModel = Model.extend({
     } else {
       utils.timeStamp('Vizabi Data: Loading Data');
       EventSource.freezeAll([
-        'load_start',
+        'hook_change',
         'resize'
       ]);
       return this.loadFromReader(query, parsers);

@@ -44,7 +44,7 @@ var Hook = DataConnected.extend({
    * @param {Object} options (includes splashScreen)
    * @returns defer
    */
-  loadData: function(opts) {
+  loadData: function(opts = {}) {
 
     // then start loading data
 
@@ -52,18 +52,12 @@ var Hook = DataConnected.extend({
 
     this.trigger('hook_change');
 
-    opts = opts || {};
-
     var query = this.getQuery(opts.splashScreen);
 
     //useful to check if in the middle of a load call
     this._loadCall = true;
 
-    this._spaceDims = {};
     this.setReady(false);
-
-
-    var _this = this;
 
     utils.timeStamp('Vizabi Model: Loading Data: ' + this._id);
 

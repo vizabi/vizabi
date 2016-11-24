@@ -98,7 +98,6 @@ var Model = EventSource.extend({
 
     //will the model be hooked to data?
     this._space = {};
-    this._spaceDims = {};
 
     this._dataId = false;
     this._limits = {};
@@ -311,7 +310,6 @@ var Model = EventSource.extend({
     for(var i in submodels) {
       submodels[i].clear();
     }
-    this._spaceDims = {};
     this.setReady(false);
     this.off();
     this._intervals.clearAllIntervals();

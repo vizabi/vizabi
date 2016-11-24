@@ -127,11 +127,6 @@ var Marker = Model.extend({
       models.push(_this.getClosestModel(name));
     });
 
-    var optsStr = JSON.stringify(opts);
-    if(optsStr in this._spaceDims) {
-      return this._spaceDims[optsStr];
-    }
-
     opts = opts || {};
     var dims = [];
     var dim;
@@ -147,8 +142,6 @@ var Marker = Model.extend({
         dims.push(dim);
       }
     });
-
-    this._spaceDims[optsStr] = dims;
 
     return dims;
   },

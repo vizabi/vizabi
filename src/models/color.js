@@ -156,15 +156,9 @@ var ColorModel = Hook.extend({
       /*TODO: when WS will learn to respond correctly to the queries
       outside the same entity domain this can be reduced to
       just {dim: this.which}, without any show part #2103*/
-      var conceptProps = this.getConceptprops();
-      var newFilter = {dim: null, show: {}};
-      if(conceptProps.concept_type == "entity_domain"){
-        newFilter.dim = this.which;
-        newFilter.show = {};
-      }else{
-        newFilter.dim = conceptProps.domain;
-        newFilter.show["is--" + this.which] = true;
-      }
+      var newFilter = {
+        dim: this.which
+      };
       /*END OF TODO*/
       entities.set(newFilter, false, false);
     }else{
