@@ -10,7 +10,7 @@ var VIZABI_MODEL = {
     },
     "marker": {
       "label": {
-        "which": "name"
+        "which": "geo"
       },
       "axis_y": {
         "which": "LEX"
