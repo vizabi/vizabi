@@ -1307,30 +1307,15 @@ var TreeMenu = Component.extend({
 
   _setModel: function(what, value, hookID) {
 
-    var indicatorsDB = this.model.marker.getConceptprops();
-
     var mdl = this.model.marker[hookID];
 
     var obj = {};
-
     obj[what] = value;
-
-    if(what == "which") {
-      if(indicatorsDB[value].use) obj.use = indicatorsDB[value].use;
-
-      if(indicatorsDB[value].scales) {
-        obj.scaleType = indicatorsDB[value].scales[0];
-      }
-
-      if(mdl.getType() === 'axis' || mdl.getType() === 'size') {
-        obj.domainMin = null;
-        obj.domainMax = null;
-        obj.zoomedMin = null;
-        obj.zoomedMax = null;
-      }
-    }
-
-    mdl.set(obj);
+    
+    if (what == 'which')
+      mdl.whichChange(value);
+    else
+      mdl.set(obj);
 
   }
 

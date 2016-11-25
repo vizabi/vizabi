@@ -39,7 +39,7 @@ var ColorModel = Hook.extend({
     use: "constant",
     which: "_default",
     scaleType: "ordinal",
-    syncModels: null,
+    syncModels: [],
     palette: {},
     paletteLabels: null,
     allow: {
@@ -109,6 +109,12 @@ var ColorModel = Hook.extend({
     return conceptpropsColor == null || conceptpropsColor.selectable == null || conceptpropsColor.selectable;
   },
 
+  whichChange: function(newValue) {
+    this._super(newValue);
+    if(this.palette) this.palette._data = {};
+    this._setSyncModels();
+  },
+
   /**
    * Validates a color hook
    */
@@ -123,32 +129,27 @@ var ColorModel = Hook.extend({
       this.scaleType = "ordinal";
     }
 
-    // reset palette and scale in the following cases: indicator or scale type changed
-    if(this._firstLoad === false && (this.which_1 != this.which || this.scaleType_1 != this.scaleType)) {
-
-      //TODO a hack that kills the scale and palette, it will be rebuild upon getScale request in model.js
-      if(this.palette) this.palette._data = {};
-      this.scale = null;
-    }
-
     // if there are models to sync: do it on first load or on changing the which
-    if(this.syncModels && (this._firstLoad || this._firstLoad === false && this.which_1 != this.which)) {
-      this.syncModels.forEach(function(modelName){
-        //fetch the model to sync, it's marker and entities
-        var model = _this.getClosestModel(modelName);
-        var marker = model.isHook()? model._parent : model;
-        var entities = marker.getClosestModel(marker.space[0]);
-
-        //save the references here locally
-        _this._syncModelReferences[modelName] = {model: model, marker: marker, entities: entities};
-
-        if(_this.use === "property") _this._setSyncModel(model, marker, entities);
-      });
+    if(this._firstLoad) {
+      _this._setSyncModels();
     }
 
-    this.which_1 = this.which;
-    this.scaleType_1 = this.scaleType;
     this._firstLoad = false;
+  },
+
+  _setSyncModels: function() {
+    var _this = this;
+    this.syncModels.forEach(function(modelName){
+      //fetch the model to sync, it's marker and entities
+      var model = _this.getClosestModel(modelName);
+      var marker = model.isHook()? model._parent : model;
+      var entities = marker.getClosestModel(marker.space[0]);
+
+      //save the references here locally
+      _this._syncModelReferences[modelName] = {model: model, marker: marker, entities: entities};
+
+      if(_this.use === "property") _this._setSyncModel(model, marker, entities);
+    });
   },
 
   _setSyncModel: function(model, marker, entities) {
@@ -157,7 +158,8 @@ var ColorModel = Hook.extend({
       outside the same entity domain this can be reduced to
       just {dim: this.which}, without any show part #2103*/
       var newFilter = {
-        dim: this.which
+        dim: this.which,
+        show: {}
       };
       /*END OF TODO*/
       entities.set(newFilter, false, false);

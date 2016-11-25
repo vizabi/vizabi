@@ -36,6 +36,29 @@ var Hook = DataConnected.extend({
     this.getClosestModel('locale').on('dataConnectedChange', this.handleDataConnectedChange.bind(this));
   },
 
+  whichChange: function(newValue) {
+
+    var obj = { which: newValue };
+    var conceptProps = this.dataSource.getConceptprops(newValue);
+
+    if(conceptProps.use) obj.use = conceptProps.use;
+
+    if(conceptProps.scales) {
+      obj.scaleType = conceptProps.scales[0];
+    }
+
+    if(this.getType() === 'axis' || this.getType() === 'size') {
+      obj.domainMin = null;
+      obj.domainMax = null;
+      obj.zoomedMin = null;
+      obj.zoomedMax = null;
+    }
+    this.scale = null;
+
+    this.set(obj);
+
+  },
+
   /**
    * Hooks loads data, models ask children to load data
    * Basically, this method:
@@ -74,10 +97,6 @@ var Hook = DataConnected.extend({
   },
 
   handleDataConnectedChange: function(evt) {
-    //hack for right size of bubbles
-    if(this._type === 'size' && this.which === this.which_1) {
-      this.which_1 = '';
-    };
     //defer is necessary because other events might be queued.
     //load right after such events
     utils.defer(() => {
@@ -99,7 +118,6 @@ var Hook = DataConnected.extend({
   afterLoad: function(dataId) {
     this._dataId = dataId;
     utils.timeStamp('Vizabi Model: Data loaded: ' + this._id);
-    this.scale = null; // needed for axis/scale resetting to new data
     EventSource.unfreezeAll();
   },
 
@@ -370,36 +388,6 @@ var Hook = DataConnected.extend({
     }
     return this.scale;
   },
-
-  /**
-   * Gets the domain for this hook
-   * @returns {Array} domain
-   */
-  buildScale: function() {
-    if(!this.isHook()) {
-      return;
-    }
-    var domain;
-    var scaleType = this.scaleType || 'linear';
-    switch(this.use) {
-      case 'indicator':
-        var limits = this.getLimits(this.which);
-        domain = [
-          limits.min,
-          limits.max
-        ];
-        break;
-      case 'property':
-        domain = this.getUnique(this.which);
-        break;
-      default:
-        domain = [this.which];
-        break;
-    }
-    //TODO: d3 is global?
-    this.scale = scaleType === 'time' ? d3.time.scale.utc().domain(domain) : d3.scale[scaleType]().domain(domain);
-  },
-
 
    /**
    * Gets unique values in a column

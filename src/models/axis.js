@@ -43,12 +43,6 @@ var AxisModel = Hook.extend({
     //only some scaleTypes are allowed depending on use. reset to default if inappropriate
     if(allowTypes[this.use].indexOf(this.scaleType) === -1) this.scaleType = allowTypes[this.use][0];
 
-    //kill the scale if indicator or scale type have changed
-    //the scale will be rebuild upon getScale request in model.js
-    if(this.which_1 != this.which || this.scaleType_1 != this.scaleType) this.scale = null;
-    this.which_1 = this.which;
-    this.scaleType_1 = this.scaleType;
-
     //here the modified min and max may change the domain, if the scale is defined
     if(this.scale && this._readyOnce && this.use === "indicator") {
       if(this.scaleType == "time") {
@@ -86,7 +80,7 @@ var AxisModel = Hook.extend({
    * Gets the domain for this hook
    * @returns {Array} domain
    */
-  buildScale: function(margins) {
+  buildScale: function() {
     var domain;
 
     if(this.scaleType == "time") {

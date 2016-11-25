@@ -198,15 +198,16 @@ var Model = EventSource.extend({
 
     if(!setting || force) {
       this._setting = false;
-      if(!this.isHook() && !this.isLoading()) {
+      if (freezeCall && (!this.isHook() || !this.isLoading())) {
+        this.setTreeFreezer(false);
+      }
+      if (!this.isHook() && !this.isLoading()) {
         this.setReady();
       }
     }
 
     // if this set()-call was the one freezing the tree, now the tree can be unfrozen (i.e. all setting is done)
-    if (freezeCall) {
-      this.setTreeFreezer(false);
-    }
+
   },
 
   // standard model doesn't do anything with data

@@ -32,10 +32,6 @@ var ColorLegend = Component.extend({
         type: "locale"
       }];
 
-    this.needsUpdate = false;
-    this.which_1 = false;
-    this.scaleType_1 = false;
-
     this.model_binds = {
       "change:marker.color.scaleType": function(evt, path) {
         if(!_this._readyOnce || _this.colorModel.use !== "indicator") return;
