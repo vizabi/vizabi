@@ -48,9 +48,11 @@ var BarRankChart = Component.extend({
         if(!_this._readyOnce) return;
         _this.onTimeChange();
       },
-      "change:entities.select": function(evt) {
-        if(!_this._readyOnce) return;
-        _this.selectBars();
+      'change:entities.select': () => {
+        if (this._readyOnce) {
+          this.selectBars();
+          this.updateOpacity();
+        }
       },
       "change:marker.axis_x.scaleType": function(evt) {
         if(!_this._readyOnce) return;
@@ -61,6 +63,12 @@ var BarRankChart = Component.extend({
       },
       'change:entities.highlight': () => {
         this.highlightEntities();
+      },
+      'change:entities.opacitySelectDim': () => {
+        this.updateOpacity();
+      },
+      'change:entities.opacityRegular': () => {
+        this.updateOpacity();
       },
     };
 
@@ -110,21 +118,15 @@ var BarRankChart = Component.extend({
 
   },
 
-  readyRuns: 0,
-
-  /*
+  /**
    * Both model and DOM are ready
    */
-  ready: function() {
-    var _this = this;
-    // hack: second run is right after readyOnce (in which ready() is also called)
-    // then it's not necessary to run ready()
-    // (without hack it's impossible to run things in readyOnce áfter ready has ran)
-    if (++this.readyRuns == 2) return;
-    this.model.marker.getFrame(this.model.time.value, function(values) {
-      _this.values =values;
-      _this.loadData();
-      _this.draw();
+  ready() {
+    this.model.marker.getFrame(this.model.time.value, values => {
+      this.values = values;
+      this.loadData();
+      this.draw();
+      this.updateOpacity();
     });
   },
 
@@ -478,6 +480,31 @@ var BarRankChart = Component.extend({
       .classed('vzb-dimmed', this.model.entities.highlight.length)
       .selectAll('.vzb-br-bar')
       .classed('vzb-hovered', d => this.model.entities.isHighlighted(d));
+  },
+
+  updateOpacity() {
+    const { model: { entities } } =  this;
+    const OPACITY_HIGHLIGHT_DEFAULT = 1;
+    const {
+      opacityHighlightDim: OPACITY_HIGHLIGHT_DIM,
+      opacitySelectDim: OPACITY_SELECT_DIM,
+      opacityRegular: OPACITY_REGULAR,
+    } = entities;
+    const [someHighlighted, someSelected] = [entities.highlight.length > 0, entities.select.length > 0];
+
+    this.barContainer
+      .selectAll('.vzb-br-bar')
+      .style('opacity', d => {
+        if (someHighlighted) {
+          return entities.isHighlighted(d) ? OPACITY_HIGHLIGHT_DEFAULT : OPACITY_HIGHLIGHT_DIM;
+        }
+
+        if (someSelected) {
+          return entities.isSelected(d) ? OPACITY_REGULAR : OPACITY_SELECT_DIM;
+        }
+
+        return OPACITY_REGULAR;
+      });
   },
 
 });
