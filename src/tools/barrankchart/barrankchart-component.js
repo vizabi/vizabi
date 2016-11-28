@@ -484,27 +484,31 @@ var BarRankChart = Component.extend({
 
   updateOpacity() {
     const { model: { entities } } =  this;
+
     const OPACITY_HIGHLIGHT_DEFAULT = 1;
     const {
       opacityHighlightDim: OPACITY_HIGHLIGHT_DIM,
       opacitySelectDim: OPACITY_SELECT_DIM,
       opacityRegular: OPACITY_REGULAR,
     } = entities;
-    const [someHighlighted, someSelected] = [entities.highlight.length > 0, entities.select.length > 0];
+
+    const [
+      someHighlighted,
+      someSelected
+    ] = [
+      entities.highlight.length > 0,
+      entities.select.length > 0
+    ];
 
     this.barContainer
       .selectAll('.vzb-br-bar')
-      .style('opacity', d => {
-        if (someHighlighted) {
-          return entities.isHighlighted(d) ? OPACITY_HIGHLIGHT_DEFAULT : OPACITY_HIGHLIGHT_DIM;
-        }
-
-        if (someSelected) {
-          return entities.isSelected(d) ? OPACITY_REGULAR : OPACITY_SELECT_DIM;
-        }
-
-        return OPACITY_REGULAR;
-      });
+      .style('opacity', d => (
+        someHighlighted ?
+          (entities.isHighlighted(d) ? OPACITY_HIGHLIGHT_DEFAULT : OPACITY_HIGHLIGHT_DIM) :
+          someSelected ?
+            (entities.isSelected(d) ? OPACITY_REGULAR : OPACITY_SELECT_DIM) :
+            OPACITY_REGULAR
+      ));
   },
 
 });
