@@ -56,15 +56,11 @@ var BarRankChart = Component.extend({
         if(!_this._readyOnce) return;
         _this.draw();
       },
-      'change:marker.color.palette': function() {
-        //console.log("EVENT change:marker:color:palette");
-        _this.drawColors();
+      'change:marker.color.palette': () => {
+        this.drawColors();
       },
-      'change:entities.highlight': (evt, path) => {
-        this.barContainer
-          .classed('vzb-dimmed', this.model.entities.highlight.length)
-          .selectAll('.vzb-br-bar')
-          .classed('vzb-hovered', d => this.model.entities.isHighlighted(d));
+      'change:entities.highlight': () => {
+        this.highlightEntities();
       },
     };
 
@@ -253,7 +249,11 @@ var BarRankChart = Component.extend({
         var bar = d3.select(this);
         var barWidth = _this.xScale(d.value);
         var xValue = _this.model.marker.axis_x.getTickFormatter()(d.value);
-        bar.select('.vzb-br-label').attr('x', x - 5);
+        const color = d3.rgb(_this.cScale(_this.values.color[d.entity]));
+
+        bar.select('.vzb-br-label')
+          .attr('x', x - 5)
+          .style('fill', color.darker(2));
 
         // save the current index in the bar datum
         d.index = i;
@@ -262,12 +262,14 @@ var BarRankChart = Component.extend({
         bar.selectAll('rect')
           .transition().duration(duration).ease("linear")
           .attr("width", (barWidth > 0) ? barWidth : 0)
-          .attr('x', x);
+          .attr('x', x)
+          .style('fill', color);
 
         // set positions of the bar-values
         bar.selectAll('.vzb-br-value')
           .text(xValue)
-          .attr('x', x + 5);
+          .attr('x', x + 5)
+          .style('fill', color.darker(2));
 
         // set title (tooltip)
         bar.selectAll('title')
@@ -370,11 +372,7 @@ var BarRankChart = Component.extend({
         .attr("stroke", "white")
         .attr("stroke-opacity", 0)
         .attr("stroke-width", 2)
-        .attr("height", this.barHeight)
-        .style("fill", function(d) {
-          var color = _this.cScale(_this.values.color[d.entity]);
-          return d3.rgb(color);
-        });
+        .attr("height", this.barHeight);
 
     // draw new labels per group
     newGroups.append('text')
@@ -387,10 +385,6 @@ var BarRankChart = Component.extend({
           var label = _this.values.label[d.entity];
           return label.length < 12 ? label : label.substring(0, 9) + '...';
         })
-        .style("fill", function(d) {
-          var color = _this.cScale(_this.values.color[d.entity]);
-          return d3.rgb(color).darker(2);
-        })
         .append('title'); // watch out: might be overwritten if changing the labeltext later on
 
     // draw new values on each bar
@@ -398,11 +392,7 @@ var BarRankChart = Component.extend({
         .attr("class", "vzb-br-value")
         .attr("x", 5)
         .attr("y", this.barHeight/2)
-        .attr("dominant-baseline", "middle")
-        .style("fill", function(d) {
-          var color = _this.cScale(_this.values.color[d.entity]);
-          return d3.rgb(color).darker(2);
-        });
+        .attr("dominant-baseline", "middle");
   },
 
   drawColors: function() {
@@ -481,6 +471,13 @@ var BarRankChart = Component.extend({
       });
     }
 
+  },
+
+  highlightEntities() {
+    this.barContainer
+      .classed('vzb-dimmed', this.model.entities.highlight.length)
+      .selectAll('.vzb-br-bar')
+      .classed('vzb-hovered', d => this.model.entities.isHighlighted(d));
   },
 
 });
