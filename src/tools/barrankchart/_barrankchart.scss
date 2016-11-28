@@ -4,9 +4,13 @@
   .vzb-barrankchart {
     @extend %vzb-chart-wrapper;
 
+    .vzb-br-axis-info {
+      @extend %vzb-chart-info;
+    }
+
     .vzb-br-header {
       width: 100%;
-      display: block; // svg is standard inline 
+      display: block; // svg is standard inline
 
       .vzb-br-title {
         fill: $vzb-color-black;
@@ -43,7 +47,7 @@
       }
       .vzb-dimmed {
         > .vzb-br-bar {
-          opacity: .8;
+          opacity: .5;
           &.vzb-hovered {
             opacity: 1;
           }
@@ -61,5 +65,8 @@
         }
       }
     }
+  }
+  &.vzb-presentation {
+    font-size: $vzb-font-size-larger;
   }
 }

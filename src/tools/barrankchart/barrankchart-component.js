@@ -1,6 +1,8 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
 import axisWithLabelPicker from 'helpers/d3.axisWithLabelPicker';
+import Labels from 'helpers/labels';
+import { question as iconQuestion } from 'base/iconset';
 
 
 /*!
@@ -56,7 +58,13 @@ var BarRankChart = Component.extend({
       },
       'change:marker.color.palette': function() {
         //console.log("EVENT change:marker:color:palette");
-        //_this.drawColors();
+        _this.drawColors();
+      },
+      'change:entities.highlight': (evt, path) => {
+        this.barContainer
+          .classed('vzb-dimmed', this.model.entities.highlight.length)
+          .selectAll('.vzb-br-bar')
+          .classed('vzb-hovered', d => this.model.entities.isHighlighted(d));
       },
     };
 
@@ -92,6 +100,7 @@ var BarRankChart = Component.extend({
     //this.yearEl = this.element.select('.vzb-br-year');
     //this.year = new DynamicBackground(this.yearEl);
     this.header = this.element.select('.vzb-br-header');
+    // this.infoEl = this.element.select('.vzb-br-axis-info');
     this.barViewport = this.element.select('.barsviewport');
     this.barSvg = this.element.select('.vzb-br-bars-svg');
     this.barContainer = this.element.select('.vzb-br-bars');
@@ -135,16 +144,41 @@ var BarRankChart = Component.extend({
     // change header titles for new data
     var conceptProps = this.model.marker.getConceptprops();
     this.header.select('.vzb-br-title')
-      .text(conceptProps[this.model.marker.axis_x.which].name
-            + ' '
-            + this.model.time.timeFormat(this.model.time.value)
-      )
+      .text(conceptProps[this.model.marker.axis_x.which].name)
+      .on('click', () =>
+        this.parent
+          .findChildByName('gapminder-treemenu')
+          .markerID('axis_x')
+          .alignX('left')
+          .alignY('top')
+          .updateView()
+          .toggle()
+      );
+
     this.header.select('.vzb-br-total')
-      .text('Σ = ' + this.model.marker.axis_x.getTickFormatter()(this.total))
+      .text(this.model.time.timeFormat(this.model.time.value));
 
     // new scales and axes
     this.xScale = this.model.marker.axis_x.getScale(false);
     this.cScale = this.model.marker.color.getScale();
+
+    // utils.setIcon(this.infoEl, iconQuestion)
+    //   .select('svg').attr('width', '0px').attr('height', '0px');
+    //
+    // this.infoEl.on('click', () => {
+    //   this.parent.findChildByName('gapminder-datanotes').pin();
+    // });
+    //
+    // const _this = this;
+    // this.infoEl.on("mouseover", function() {
+    //   var rect = this.getBBox();
+    //   var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+    //   _this.parent.findChildByName("gapminder-datanotes").setHook('axis_y').show().setPos(coord.x, coord.y);
+    // });
+    //
+    // this.infoEl.on("mouseout", function() {
+    //   _this.parent.findChildByName("gapminder-datanotes").hide();
+    // });
 
   },
 
@@ -166,6 +200,7 @@ var BarRankChart = Component.extend({
     // draw the stage - copied from popbyage, should figure out what it exactly does and what is necessary.
     this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
     this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
+    this.width -= this.model.ui.presentation ? 30 : 0;
 
     if(this.height<=0 || this.width<=0) return utils.warn("Bar rank chart drawAxes() abort: vizabi container is too little or has display:none");
 
@@ -207,7 +242,8 @@ var BarRankChart = Component.extend({
     // update the shown bars for new data-set
     this.createAndDeleteBars(updatedBars);
 
-
+    const { presentation } = this.model.ui;
+    const x = presentation ? 35 : 5;
     this.barContainer
       .selectAll('.vzb-br-bar')
       .data(this.sortedEntities, getDataKey)
@@ -217,6 +253,7 @@ var BarRankChart = Component.extend({
         var bar = d3.select(this);
         var barWidth = _this.xScale(d.value);
         var xValue = _this.model.marker.axis_x.getTickFormatter()(d.value);
+        bar.select('.vzb-br-label').attr('x', x - 5);
 
         // save the current index in the bar datum
         d.index = i;
@@ -225,14 +262,17 @@ var BarRankChart = Component.extend({
         bar.selectAll('rect')
           .transition().duration(duration).ease("linear")
           .attr("width", (barWidth > 0) ? barWidth : 0)
+          .attr('x', x);
 
         // set positions of the bar-values
         bar.selectAll('.vzb-br-value')
           .text(xValue)
+          .attr('x', x + 5);
 
         // set title (tooltip)
         bar.selectAll('title')
-          .text(_this.values.label[d.entity] + ' (' + xValue + ')');
+          .text(_this.values.label[d.entity] + ' (' + xValue + ')')
+          .attr('x', x);
 
       })
       .transition().duration(duration).ease("linear")
