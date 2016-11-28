@@ -124,7 +124,7 @@ var AxisModel = Hook.extend({
   formatDate: function(dateObject) {
     // improvement would be to check concept type of each space-dimension if it's time. 
     // Below code works as long we have one time model: time.
-    this._space.time.format(dateObject);
+    return this._space.time.format(dateObject);
   }
 
 });
