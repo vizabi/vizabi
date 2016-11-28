@@ -5,6 +5,13 @@ import Hook from 'models/hook';
  * VIZABI Color Model (hook)
  */
 
+
+var allowTypes = {
+    "indicator": ["linear", "log", "genericLog", "time", "pow"],
+    "property": ["ordinal"],
+    "constant": ["ordinal"]
+};
+
 var defaultPalettes = {
   "_continuous": {
     "0": "#B4DE79",
@@ -120,14 +127,9 @@ var ColorModel = Hook.extend({
    */
   validate: function() {
     var _this = this;
-
-    var possibleScales = ["log", "genericLog", "linear", "time", "pow"];
-    if(!this.scaleType || (this.use === "indicator" && possibleScales.indexOf(this.scaleType) === -1)) {
-      this.scaleType = 'linear';
-    }
-    if(this.use !== "indicator" && this.scaleType !== "ordinal") {
-      this.scaleType = "ordinal";
-    }
+    
+    //only some scaleTypes are allowed depending on use. reset to default if inappropriate
+    if(allowTypes[this.use].indexOf(this.scaleType) === -1) this.scaleType = allowTypes[this.use][0];
 
     // if there are models to sync: do it on first load or on changing the which
     if(this._firstLoad) {

@@ -57,10 +57,6 @@ var AxisModel = Hook.extend({
           this.scale.domain([limits.min, limits.max]);
         }
         
-        //restore the correct object type for time values
-        if(this.zoomedMin != null && !utils.isDate(this.zoomedMin)) this.zoomedMin = this._space.time.parseToUnit(this.zoomedMin.toString());
-        if(this.zoomedMax != null && !utils.isDate(this.zoomedMax)) this.zoomedMax = this._space.time.parseToUnit(this.zoomedMax.toString());
-
         if(!utils.isDate(this.domainMin)) this.domainMin = this.scale.domain()[0];
         if(!utils.isDate(this.domainMax)) this.domainMax = this.scale.domain()[1];
       }
