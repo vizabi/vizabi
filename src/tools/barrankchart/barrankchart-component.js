@@ -62,7 +62,7 @@ var BarRankChart = Component.extend({
         this.drawColors();
       },
       'change:entities.highlight': () => {
-        this.highlightEntities();
+        this.updateOpacity();
       },
       'change:entities.opacitySelectDim': () => {
         this.updateOpacity();
@@ -355,8 +355,8 @@ var BarRankChart = Component.extend({
         .attr("id", function(d) {
           return "vzb-br-bar-" + d.entity + "-" + _this._id;
         })
-        .on("mousemove", function(bar) { _this.setHover(bar, true)  })
-        .on("mouseout",  function(bar) { _this.setHover(bar, false) })
+        .on('mousemove', d => _this.model.entities.highlightEntity(d))
+        .on('mouseout', () => _this.model.entities.clearHighlighted())
         .on("click", function(d) {
 
           utils.forEach(_this.model.marker.space, function(entity) {
@@ -475,18 +475,14 @@ var BarRankChart = Component.extend({
 
   },
 
-  highlightEntities() {
-    this.barContainer
-      .classed('vzb-dimmed', this.model.entities.highlight.length)
-      .selectAll('.vzb-br-bar')
-      .classed('vzb-hovered', d => this.model.entities.isHighlighted(d));
-  },
-
   updateOpacity() {
     const { model: { entities } } =  this;
 
     const OPACITY_HIGHLIGHT_DEFAULT = 1;
     const {
+      highlight,
+      select,
+
       opacityHighlightDim: OPACITY_HIGHLIGHT_DIM,
       opacitySelectDim: OPACITY_SELECT_DIM,
       opacityRegular: OPACITY_REGULAR,
@@ -496,19 +492,27 @@ var BarRankChart = Component.extend({
       someHighlighted,
       someSelected
     ] = [
-      entities.highlight.length > 0,
-      entities.select.length > 0
+      highlight.length > 0,
+      select.length > 0
     ];
 
     this.barContainer
       .selectAll('.vzb-br-bar')
-      .style('opacity', d => (
-        someHighlighted ?
-          (entities.isHighlighted(d) ? OPACITY_HIGHLIGHT_DEFAULT : OPACITY_HIGHLIGHT_DIM) :
-          someSelected ?
-            (entities.isSelected(d) ? OPACITY_REGULAR : OPACITY_SELECT_DIM) :
-            OPACITY_REGULAR
-      ));
+      .style('opacity', d => {
+        if (someHighlighted && entities.isHighlighted(d)) {
+          return OPACITY_HIGHLIGHT_DEFAULT;
+        }
+
+        if (someSelected) {
+          return entities.isSelected(d) ? OPACITY_REGULAR : OPACITY_SELECT_DIM;
+        }
+
+        if (someHighlighted) {
+          return OPACITY_HIGHLIGHT_DIM;
+        }
+
+        return OPACITY_REGULAR;
+      });
   },
 
 });
