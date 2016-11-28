@@ -1138,7 +1138,7 @@ var TreeMenu = Component.extend({
           //Let the indicator "_default" in tree menu be translated differnetly for every hook type
           var translated = d.id==="_default" ? _this.translator("indicator/_default/" + hookType) : d.name;
           if(!translated && translated!=="") utils.warn("translation missing: NAME of " + d.id);
-          if(d.children) translated = "📁 " + translated;
+          //if(d.children) translated = "‫📁‬ " + translated;
           return translated||"";
         });
 

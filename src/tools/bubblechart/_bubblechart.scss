@@ -185,6 +185,11 @@
       .vzb-bc-axis-c-title {
         @extend %vzb-chart-axis-title;
         opacity: .3;
+        text {
+          @include rtl {
+            unicode-bidi: plaintext;
+          }
+        }
       }
 
       .vzb-bc-axis-x-info,

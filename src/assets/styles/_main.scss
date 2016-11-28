@@ -21,7 +21,11 @@
   font-family: $vzb-font-family;
   font-size: $vzb-font-size-base; //important to set the base in px
   overflow: hidden;
-  text-align: left;
+  //text-align: left;
+
+  &.vzb-rtl {
+    direction: rtl;
+  }
 
   .vzb-tool-title {
     @include position(absolute, 0 0 null 0);
@@ -37,6 +41,7 @@
     flex: 1 auto;
     display: flex;
     flex-direction: column;
+    direction: ltr;
 
     transform: translate3d(0, 0, 0);
 

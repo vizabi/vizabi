@@ -149,3 +149,11 @@
     }
   }
 }
+
+@mixin rtl {
+  @each $p in & {
+    @at-root #{".vzb-rtl" + $p} {
+      @content;
+    }
+  }  
+}

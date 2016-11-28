@@ -1,11 +1,13 @@
 //general styles
 .vzb-ss-holder {
-
   height: 20px;
   margin: 0 auto;
   position: relative;
 
   &::before {
+    @include rtl {
+      right: 0;
+    }
     @include border-radius(5px 5px 5px 5px);
     content: '';
     position: absolute;
@@ -27,6 +29,9 @@
   }
 
   .vzb-ss-slider-normal {
+    @include rtl {
+      left: 0 !important;
+    }
     position: absolute;
     top: 50%;
     margin-top: -10px;
