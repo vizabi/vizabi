@@ -21,23 +21,13 @@ var Marker = Model.extend({
       if (!this.cachedTimeLimits) this.cachedTimeLimits = {};
       utils.forEach(this.getSubhooks(), function(hook) {
         if(hook.use !== "indicator" || !hook._important) return;
-        var hookConceptprops = hook.getConceptprops();
-        if(!hookConceptprops) return utils.warn(hook._name + ": " + hook.which + " is not found among concept properties. \
-            Check that you read the correct file or server instance... \
-            Check that the pointer 'which' of the hook is correct too");
 
-        var availability = hookConceptprops.availability;
-        var availabilityForHook = _this.cachedTimeLimits[hook._dataId + hook.which];
+        var cachedLimits = _this.cachedTimeLimits[hook._dataId + hook.which];
 
-        if (availabilityForHook){
+        if (cachedLimits){
             //if already calculated the limits then no ned to do it again
-            min = availabilityForHook.min;
-            max = availabilityForHook.max;
-        }else if (availability){
-            //if date limits are supplied by the concept properties then use them
-            min = time.timeFormat.parse(availability[0]+"");
-            var timeEnd = time._defaults.end || availability[1];
-            max = time.timeFormat.parse(Math.min(timeEnd, availability[1])+"");
+            min = cachedLimits.min;
+            max = cachedLimits.max;
         }else{
             //otherwise calculate own date limits (a costly operation)
             items = hook.getValidItems().map(function(m){return m[time.getDimension()];});
