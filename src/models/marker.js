@@ -7,6 +7,50 @@ import Model from 'base/model';
 
 var Marker = Model.extend({
 
+  init: function(name, value, parent, binds, persistent) {
+    this._super(name, value, parent, binds, persistent);
+    this.on('ready', this.checkTimeLimits.bind(this));
+  },
+
+  checkTimeLimits: function() {
+    
+    if(!this._parent.time) return;
+    
+    var time = this._parent.time;
+    
+    var tLimits = this.getTimeLimits();
+
+    if(!tLimits) return;
+    if(!utils.isDate(tLimits.min) || !utils.isDate(tLimits.max)) 
+        return utils.warn("checkTimeLimits(): min-max look wrong: " + tLimits.min + " " + tLimits.max + ". Expecting Date objects. Ensure that time is properly parsed in the data from reader");
+
+    // change start and end (but keep startOrigin and endOrigin for furhter requests)
+    var newTime = {}
+    if(time.start - tLimits.min != 0) newTime['start'] = d3.max([tLimits.min, time.parseToUnit(time.startOrigin)]);
+    if(time.end - tLimits.max != 0) newTime['end'] = d3.min([tLimits.max, time.parseToUnit(time.endOrigin)]);
+    // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
+    if(time.value == null) newTime['value'] = time.parseToUnit(time.format(new Date())); 
+    
+    time.set(newTime, false, false);
+    
+    if (newTime.start || newTime.end) {
+      utils.forEach(this.getSubhooks(), function(hook) {
+        if (hook.which == "time") {
+          hook.scale = null;          
+          var obj = {};
+          obj.domainMin = null;
+          obj.domainMax = null;
+          obj.zoomedMin = null;
+          obj.zoomedMax = null;
+          hook.set(obj);
+        }
+      });
+    }
+    
+    //force time validation because time.value might now fall outside of start-end
+    time.validate(); 
+  },
+
   /**
    * Gets the narrowest limits of the subhooks with respect to the provided data column
    * @param {String} attr parameter (data column)
@@ -14,7 +58,7 @@ var Marker = Model.extend({
    * this function is only needed to route the "time" to some indicator,
    * to adjust time start and end to the max and min time available in data
    */
-  getTimeLimits: function(attr) {
+  getTimeLimits: function() {
       var _this = this;
       var time = this._parent.time;
       var min, max, minArray = [], maxArray = [], items = {};
@@ -47,7 +91,9 @@ var Marker = Model.extend({
           resultMin = d3.min(minArray);
           resultMax = d3.max(maxArray);
       }
-      return {min: resultMin, max: resultMax}
+    
+      //return false for the case when neither of hooks was an "indicator" or "important"
+      return !min && !max? false : {min: resultMin, max: resultMax}
   },
 
 

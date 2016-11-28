@@ -97,10 +97,6 @@ var Tool = Component.extend({
     this.setResizeHandler();
   },
 
-  ready: function() {
-    this.checkTimeLimits();  
-  },
-
   createModel: function(external_model) {
     external_model      = external_model      || {}; //external model can be undefined
     external_model.bind = external_model.bind || {}; //bind functions can be undefined
@@ -230,30 +226,6 @@ var Tool = Component.extend({
         });
       }
     })
-  },
-
-  checkTimeLimits: function() {
-    if(!this.model.state.time) return;
-    
-    var time = this.model.state.time;
-    
-    if(this.model.state.marker) {
-      var tLimits = this.model.state.marker.getTimeLimits(time.getDimension());
-
-      if(!tLimits || !utils.isDate(tLimits.min) || !utils.isDate(tLimits.max)) 
-          return utils.warn("checkTimeLimits(): min-max look wrong: " + tLimits.min + " " + tLimits.max + ". Expecting Date objects");
-
-      // change start and end (but keep startOrigin and endOrigin for furhter requests)
-      var newTime = {}
-      if(time.start - tLimits.min != 0) newTime['start'] = d3.max([tLimits.min, time.parseToUnit(time.startOrigin)]);
-      if(time.end - tLimits.max != 0) newTime['end'] = d3.min([tLimits.max, time.parseToUnit(time.endOrigin)]);
-      if(time.value == null) newTime['value'] = time.parseToUnit(time.format(new Date())); // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
-
-      time.set(newTime, false, false);
-    }
-      
-    //force time validation because time.value might now fall outside of start-end
-    time.validate(); 
   },
 
   getPersistentModel: function() {
