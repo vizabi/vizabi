@@ -196,7 +196,7 @@ const loaders = [
     }
   },
   {
-    test: /(d3\.min|\.web)\.js$/, // TODO: we need another way to extract vendor files
+    test: /(d3|\.web)\.js$/, // TODO: we need another way to extract vendor files
     include: [
       path.resolve(__dirname, 'node_modules')
     ],
