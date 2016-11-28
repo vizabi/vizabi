@@ -151,7 +151,9 @@
 }
 
 @mixin rtl {
-  @at-root #{'.vzb-rtl' + &} {
-    @content;
+  @each $p in & {
+    @at-root #{".vzb-rtl" + $p} {
+      @content;
+    }
   }  
 }

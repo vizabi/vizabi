@@ -42,6 +42,8 @@
     @include rtl {
       padding-left: 30px;
       padding-right: 5px;
+      direction: ltr;
+      text-align: right;
     }
     font-size: $vzb-font-size-regular;
     flex: 1 1 auto;
