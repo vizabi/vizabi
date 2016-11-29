@@ -66,6 +66,12 @@ var LCComponent = Component.extend({
           _this.redrawDataPoints();
           return;
         }
+        if(path.indexOf("scaleType") > -1) {
+          _this.updateShow();
+          _this.updateSize();
+          _this.redrawDataPoints();
+          return;
+        }
         if(path.indexOf("which") > -1 || path.indexOf("use") > -1) return;
         _this.ready();
       },
@@ -146,6 +152,9 @@ var LCComponent = Component.extend({
     this.totalLength_1 = {};
 
     this.KEY = this.model.entities.getDimension();
+    this.collisionResolver = collisionResolver()
+      .selector(".vzb-lc-label")
+      .value("valueY");
 
     //component events
 
@@ -250,6 +259,8 @@ var LCComponent = Component.extend({
     this.cached = {};
 
     //scales
+    // remove when fixed problem with scale (not reset when scale type changed)
+    this.model.marker.axis_y.buildScale();
     this.yScale = this.model.marker.axis_y.getScale();
     this.xScale = this.model.marker.axis_x.getScale();
     this.cScale = this.model.marker.color.getScale();
@@ -258,11 +269,48 @@ var LCComponent = Component.extend({
     this.xAxis.tickSize(6, 0)
       .tickFormat(this.model.marker.axis_x.getTickFormatter());
 
-    this.collisionResolver = collisionResolver()
-      .selector(".vzb-lc-label")
-      .value("valueY")
-      .scale(this.yScale)
+    this.collisionResolver.scale(this.yScale)
       .KEY(KEY);
+
+    this.data = this.model.marker.getKeys();
+
+    this.entityLines = this.linesContainer.selectAll('.vzb-lc-entity').data(this.data);
+    this.entityLines.exit().remove();
+    this.entityLines.enter().append("g")
+      .attr("class", "vzb-lc-entity")
+      .each(function(d, index) {
+        var entity = d3.select(this);
+
+        entity.append("path")
+          .attr("class", "vzb-lc-line-shadow")
+          .attr("transform", "translate(0,2)");
+
+        entity.append("path")
+          .attr("class", "vzb-lc-line");
+
+      });
+    
+    this.entityLabels = this.labelsContainer.selectAll('.vzb-lc-entity').data(this.data);
+    this.entityLabels.exit().remove();
+    this.entityLabels.enter().append("g")
+      .attr("class", "vzb-lc-entity")
+      .each(function(d, index) {
+        var entity = d3.select(this);
+
+        entity.append("circle")
+          .attr("class", "vzb-lc-circle")
+          .attr("cx", 0);
+
+        var labelGroup = entity.append("g").attr("class", "vzb-lc-label");
+
+        labelGroup.append("text")
+          .attr("class", "vzb-lc-labelname")
+          .attr("dy", ".35em");
+
+        labelGroup.append("text")
+          .attr("class", "vzb-lc-label-value")
+          .attr("dy", "1.6em");
+      });
 
     //line template
     this.line = d3.svg.line()
@@ -294,17 +342,11 @@ var LCComponent = Component.extend({
 
     filter[timeDim] = this.time;
 
-    this.data = this.model.marker.getKeys();
     this.prev_steps = this.all_steps.filter(function(f){return f <= _this.time;});
-
-    this.entityLines = this.linesContainer.selectAll('.vzb-lc-entity').data(this.data);
-    this.entityLabels = this.labelsContainer.selectAll('.vzb-lc-entity').data(this.data);
 
     this.timeUpdatedOnce = true;
 
   },
-
-
 
   profiles: {
     "small": {
@@ -585,44 +627,6 @@ var LCComponent = Component.extend({
         _this.updateSize();
       }
 
-      _this.entityLabels.exit().remove();
-      _this.entityLines.exit().remove();
-
-      _this.entityLines.enter().append("g")
-        .attr("class", "vzb-lc-entity")
-        .each(function(d, index) {
-          var entity = d3.select(this);
-
-          entity.append("path")
-            .attr("class", "vzb-lc-line-shadow")
-            .attr("transform", "translate(0,2)");
-
-          entity.append("path")
-            .attr("class", "vzb-lc-line");
-
-        });
-
-      _this.entityLabels.enter().append("g")
-        .attr("class", "vzb-lc-entity")
-        .each(function(d, index) {
-          var entity = d3.select(this);
-          var label = values.label[d[KEY]];
-
-          entity.append("circle")
-            .attr("class", "vzb-lc-circle")
-            .attr("cx", 0);
-
-          var labelGroup = entity.append("g").attr("class", "vzb-lc-label");
-
-          labelGroup.append("text")
-            .attr("class", "vzb-lc-labelname")
-            .attr("dy", ".35em");
-
-          labelGroup.append("text")
-            .attr("class", "vzb-lc-label-value")
-            .attr("dy", "1.6em");
-        });
-
       _this.entityLines
         .each(function(d, index) {
           var entity = d3.select(this);
@@ -639,6 +643,7 @@ var LCComponent = Component.extend({
 
           //TODO: optimization is possible if getValues would return both x and time
           //TODO: optimization is possible if getValues would return a limited number of points, say 1 point per screen pixel
+          
           var xy = _this.prev_steps.map(function(frame, i) {
               return [frame, _this.all_values[frame] ? _this.all_values[frame].axis_y[d[KEY]] : null] ;
             })
@@ -668,7 +673,6 @@ var LCComponent = Component.extend({
             //.style("filter", "none")
             .style("stroke", color)
             .attr("d", _this.line(xy));
-
           var totalLength = path2.node().getTotalLength();
 
           // this section ensures the smooth transition while playing and not needed otherwise
