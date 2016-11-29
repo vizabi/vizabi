@@ -611,9 +611,11 @@ var BubbleChartComp = Component.extend({
       _this.parent.findChildByName("gapminder-datanotes").pin();
     })
     this.yInfoEl.on("mouseover", function() {
-      var rect = this.getBBox();
+      var rect = this.getBBox(); 
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-      _this.parent.findChildByName("gapminder-datanotes").setHook('axis_y').show().setPos(coord.x, coord.y);
+      var toolRect = _this.root.element.getBoundingClientRect();
+      var chartRect = _this.element.node().getBoundingClientRect();      
+      _this.parent.findChildByName("gapminder-datanotes").setHook('axis_y').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
     })
     this.yInfoEl.on("mouseout", function() {
       _this.parent.findChildByName("gapminder-datanotes").hide();
@@ -625,7 +627,9 @@ var BubbleChartComp = Component.extend({
       if (_this.model.time.dragging) return;
       var rect = this.getBBox();
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-      _this.parent.findChildByName("gapminder-datanotes").setHook('axis_x').show().setPos(coord.x, coord.y);
+      var toolRect = _this.root.element.getBoundingClientRect();
+      var chartRect = _this.element.node().getBoundingClientRect();      
+      _this.parent.findChildByName("gapminder-datanotes").setHook('axis_x').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
     })
     this.xInfoEl.on("mouseout", function() {
        if (_this.model.time.dragging) return;
