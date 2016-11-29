@@ -13,6 +13,22 @@ var Hook = DataConnected.extend({
   _important: false,
 
   dataConnectedChildren: ['use', 'which'],
+  
+  
+  init: function(name, value, parent, binds, persistent) {
+    this._super(name, value, parent, binds, persistent);
+    this.on('ready', this.hookReady.bind(this));
+  },
+  
+  hookReady: function(){
+    this.buildScale();
+    this.validate();
+  },
+  
+  buildScale: function(){
+    //overloaded by specific hook models, like axis and color
+  },
+  
 
   preloadData: function() {
     var dataModel = (this.data) ? this.data : 'data';

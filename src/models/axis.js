@@ -44,7 +44,7 @@ var AxisModel = Hook.extend({
     if(allowTypes[this.use].indexOf(this.scaleType) === -1) this.scaleType = allowTypes[this.use][0];
 
     //here the modified min and max may change the domain, if the scale is defined
-    if(this.scale && this._readyOnce && this.use === "indicator") {
+    if(this.scale && this._ready && this.use === "indicator") {
       var obj = {};
       
       if(this.scaleType == "time") {
