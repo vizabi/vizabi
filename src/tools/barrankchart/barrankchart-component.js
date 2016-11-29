@@ -1,8 +1,10 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
 import axisWithLabelPicker from 'helpers/d3.axisWithLabelPicker';
-import Labels from 'helpers/labels';
-import { question as iconQuestion } from 'base/iconset';
+import {
+  question as iconQuestion,
+  warn as iconWarn
+} from 'base/iconset';
 
 
 /*!
@@ -96,7 +98,7 @@ var BarRankChart = Component.extend({
   /**
    * DOM and model are ready
    */
-  readyOnce: function() {
+  readyOnce() {
     this.element = d3.select(this.element);
 
     // reference elements
@@ -108,6 +110,10 @@ var BarRankChart = Component.extend({
     this.barViewport = this.element.select('.barsviewport');
     this.barSvg = this.element.select('.vzb-br-bars-svg');
     this.barContainer = this.element.select('.vzb-br-bars');
+    this.dataWarningEl = this.element.select('.vzb-data-warning');
+    this.wScale = d3.scale.linear()
+      .domain(this.model.ui.datawarning.doubtDomain)
+      .range(this.model.ui.datawarning.doubtRange);
 
     // set up formatters
     this.xAxis.tickFormat(this.model.marker.axis_x.getTickFormatter());
@@ -136,6 +142,9 @@ var BarRankChart = Component.extend({
 
   loadData: function() {
 
+    const _this = this;
+
+    this.translator = this.model.locale.getTFunction();
     // sort the data (also sets this.total)
     this.sortedEntities = this.sortByIndicator(this.values.axis_x);
 
@@ -161,6 +170,18 @@ var BarRankChart = Component.extend({
     this.xScale = this.model.marker.axis_x.getScale(false);
     this.cScale = this.model.marker.color.getScale();
 
+    utils.setIcon(this.dataWarningEl, iconWarn)
+      .select('svg')
+      .attr('width', '0px').attr('height', '0px');
+
+    this.dataWarningEl.append('text')
+      .text(this.translator('hints/dataWarning'));
+
+    this.dataWarningEl
+      .on('click', () => this.parent.findChildByName('gapminder-datawarning').toggle())
+      .on('mouseover', () => this.updateDoubtOpacity(1))
+      .on('mouseout', () => this.updateDoubtOpacity());
+
     utils.setIcon(this.infoEl, iconQuestion)
       .select('svg').attr('width', '0px').attr('height', '0px');
 
@@ -168,7 +189,6 @@ var BarRankChart = Component.extend({
       this.parent.findChildByName('gapminder-datanotes').pin();
     });
 
-    const _this = this;
     this.infoEl.on("mouseover", function() {
       var rect = this.getBBox();
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
@@ -235,6 +255,19 @@ var BarRankChart = Component.extend({
       const ty = translate[1] - infoElHeight * .8;
       this.infoEl.attr('transform', `translate(${tx}, ${ty})`);
     }
+
+    const warnBB = this.dataWarningEl.select('text').node().getBBox();
+    this.dataWarningEl
+      .select('svg')
+      .attr('width', warnBB.height)
+      .attr('height', warnBB.height)
+      .attr('x', warnBB.height * .1)
+      .attr('y', -warnBB.height + 1);
+
+    this.dataWarningEl
+      .attr('transform', `translate(10, ${warnBB.height + 15})`)
+      .select('text')
+      .attr('dx', warnBB.height * 1.5);
 
     // although axes are not drawn, need the xScale for bar width
     this.xScale.range([0, this.width]);
@@ -528,6 +561,16 @@ var BarRankChart = Component.extend({
 
         return OPACITY_REGULAR;
       });
+  },
+
+  updateDoubtOpacity(opacity) {
+    this.dataWarningEl.style('opacity',
+      opacity || (
+        !this.model.entities.select.length ?
+          this.wScale(+this.model.time.value.getUTCFullYear().toString()) :
+          1
+      )
+    );
   },
 
 });

@@ -8,6 +8,7 @@ import dialogs from 'components/dialogs/dialogs';
 import buttonlist from 'components/buttonlist/buttonlist';
 import treemenu from 'components/treemenu/treemenu';
 import datanotes from 'components/datanotes/datanotes';
+import datawarning from 'components/datawarning/datawarning';
 
 var BarRankChart = Tool.extend('BarRankChart', {
 
@@ -40,6 +41,10 @@ var BarRankChart = Tool.extend('BarRankChart', {
       component: datanotes,
       placeholder: '.vzb-tool-datanotes',
       model: ['state.marker', 'locale']
+    }, {
+      component: datawarning,
+      placeholder: '.vzb-tool-datawarning',
+      model: ['locale']
     }];
 
     //constructor is the same as any tool
@@ -63,8 +68,12 @@ var BarRankChart = Tool.extend('BarRankChart', {
     },
     locale: {},
     ui: {
-      presentation: false,
-      chart: {}
+      chart: {},
+      datawarning: {
+        doubtDomain: [],
+        doubtRange: []
+      },
+      presentation: false
     }
   }
 });
