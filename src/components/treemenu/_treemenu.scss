@@ -332,6 +332,13 @@
               overflow-y: auto;
               max-height: calc(100% - 60px);
               .vzb-treemenu-leaf-content-item {
+                @include rtl {
+                  &.vzb-treemenu-leaf-content-item-title,
+                  &.vzb-treemenu-leaf-content-item-descr {
+                    direction: ltr;
+                    text-align: right;
+                  }
+                }
                 padding: 10px 15px 0;
                 display: block;
                 overflow: hidden;
@@ -343,13 +350,7 @@
                 font-family: $vzb-font-family-alt;
                 &.vzb-treemenu-leaf-content-item-title {
                   font-size: $vzb-font-size-regular;
-                  font-weight: bold;
-                  direction: ltr;
-                  text-align: right;
-                }
-                &.vzb-treemenu-leaf-content-item-descr {
-                  direction: ltr;
-                  text-align: right;
+                  font-weight: bold;                  
                 }
               }
             }
