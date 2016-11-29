@@ -158,6 +158,9 @@ var Model = EventSource.extend({
       persistent = force;
       force = val;
     }
+    
+    //do nothing if setting an empty object
+    if (Object.keys(attrs).length === 0) return;
 
     //we are currently setting the model
     this._setting = true;
