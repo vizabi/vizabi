@@ -104,7 +104,7 @@ var BarRankChart = Component.extend({
     //this.yearEl = this.element.select('.vzb-br-year');
     //this.year = new DynamicBackground(this.yearEl);
     this.header = this.element.select('.vzb-br-header');
-    // this.infoEl = this.element.select('.vzb-br-axis-info');
+    this.infoEl = this.element.select('.vzb-br-axis-info');
     this.barViewport = this.element.select('.barsviewport');
     this.barSvg = this.element.select('.vzb-br-bars-svg');
     this.barContainer = this.element.select('.vzb-br-bars');
@@ -142,6 +142,7 @@ var BarRankChart = Component.extend({
     // change header titles for new data
     var conceptProps = this.model.marker.getConceptprops();
     this.header.select('.vzb-br-title')
+      .select('text')
       .text(conceptProps[this.model.marker.axis_x.which].name)
       .on('click', () =>
         this.parent
@@ -160,23 +161,23 @@ var BarRankChart = Component.extend({
     this.xScale = this.model.marker.axis_x.getScale(false);
     this.cScale = this.model.marker.color.getScale();
 
-    // utils.setIcon(this.infoEl, iconQuestion)
-    //   .select('svg').attr('width', '0px').attr('height', '0px');
-    //
-    // this.infoEl.on('click', () => {
-    //   this.parent.findChildByName('gapminder-datanotes').pin();
-    // });
-    //
-    // const _this = this;
-    // this.infoEl.on("mouseover", function() {
-    //   var rect = this.getBBox();
-    //   var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-    //   _this.parent.findChildByName("gapminder-datanotes").setHook('axis_y').show().setPos(coord.x, coord.y);
-    // });
-    //
-    // this.infoEl.on("mouseout", function() {
-    //   _this.parent.findChildByName("gapminder-datanotes").hide();
-    // });
+    utils.setIcon(this.infoEl, iconQuestion)
+      .select('svg').attr('width', '0px').attr('height', '0px');
+
+    this.infoEl.on('click', () => {
+      this.parent.findChildByName('gapminder-datanotes').pin();
+    });
+
+    const _this = this;
+    this.infoEl.on("mouseover", function() {
+      var rect = this.getBBox();
+      var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+      _this.parent.findChildByName("gapminder-datanotes").setHook('axis_y').show().setPos(coord.x, coord.y);
+    });
+
+    this.infoEl.on("mouseout", function() {
+      _this.parent.findChildByName("gapminder-datanotes").hide();
+    });
 
   },
 
@@ -208,18 +209,32 @@ var BarRankChart = Component.extend({
     // header
     this.header.attr('height', margin.top);
 
-    var headerTitle = this.header.select('.vzb-br-title');
-    var headerTotal = this.header.select('.vzb-br-total');
-    var headerTitleBBox = headerTitle.node().getBBox();
-    var headerTotalBBox = headerTotal.node().getBBox();
+    const headerTitle = this.header.select('.vzb-br-title');
+    const headerTotal = this.header.select('.vzb-br-total');
+    const headerTitleBBox = headerTitle.node().getBBox();
+    const headerTotalBBox = headerTotal.node().getBBox();
     headerTitle
-      .attr('y', margin.top/2)
-      .attr('x', margin.left);
+      .attr('transform', `translate(${margin.left}, ${margin.top / 2})`);
+
     headerTotal
       .attr('text-anchor', 'end')
       .attr('y', margin.top/2)
       .attr('x', this.width + margin.left)
       .classed("vzb-transparent", headerTitleBBox.width + headerTotalBBox.width + 10 > this.width);
+
+    if (this.infoEl.select('svg').node()) {
+      const infoElHeight = margin.top / 3;
+      const titleBBox = headerTitle.node().getBBox();
+      const translate = d3.transform(headerTitle.attr('transform')).translate;
+
+      this.infoEl.select('svg')
+        .attr('width', `${infoElHeight}px`)
+        .attr("height", `${infoElHeight}px`);
+
+      const tx = titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4;
+      const ty = translate[1] - infoElHeight * .8;
+      this.infoEl.attr('transform', `translate(${tx}, ${ty})`);
+    }
 
     // although axes are not drawn, need the xScale for bar width
     this.xScale.range([0, this.width]);
