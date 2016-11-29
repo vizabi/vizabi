@@ -783,7 +783,7 @@ var LCComponent = Component.extend({
 
       if(!_this.hoveringNow && _this.time - _this.model.time.start !== 0) {
         if (!_this.ui.chart.hideXAxisValue) _this.xAxisEl.call(
-           _this.xAxis.highlightValue(time).highlightTransDuration(_this.duration)
+           _this.xAxis.highlightValue(_this.model.time.timeNow).highlightTransDuration(_this.duration)
         );
         _this.verticalNow.style("opacity", 1);
       }else{

@@ -605,7 +605,7 @@ var TimeSlider = Component.extend({
 
       this.valueText.attr("transform", "translate(" + _this.prevPosition + "," + (this.height / 2) + ")")
         .transition('text')
-        .text(this.model.time.timeNow);
+        .text(this.model.time.timeFormat(this.model.time.timeNow));
       this.valueText
         .transition()
         .duration(delayAnimations)

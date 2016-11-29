@@ -806,7 +806,7 @@ updateSize: function (meshLength) {
         var _this = this;
 
         this.time = this.model.time.value;
-        this.year.setText(this.model.time.timeNow);
+        this.year.setText(this.model.time.timeFormat(this.model.time.timeNow));
         if (time == null) time = this.time;
 
         this.yMax = 0;
