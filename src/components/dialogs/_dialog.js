@@ -260,7 +260,7 @@ var Dialog = Component.extend({
 });
 
 function dialogDrag(element, container, xOffset) {
-  var posX, posY, divTop, divRight, marginRight, eWi, eHe, cWi, cHe, diffX, diffY;
+  var posX, posY, divTop, divRight, marginRight, marginLeft, xOffsetRight, xOffsetLeft, eWi, eHe, cWi, cHe, diffX, diffY;
 
   return {
     move: function(x, y) {
@@ -279,8 +279,11 @@ function dialogDrag(element, container, xOffset) {
       }
       divTop = parseInt(element.style('top')) || 0;
       divRight = parseInt(element.style('right')) || 0;
+      marginLeft = parseInt(element.style('margin-left')) || 0;
       marginRight = parseInt(element.style('margin-right')) || 0;
-      eWi = parseInt(element.style('width'));
+      xOffsetLeft = Math.min(xOffset, marginLeft);
+      xOffsetRight = Math.min(xOffset, marginRight);
+      eWi = parseInt(element.style('width')) + marginLeft - xOffsetLeft;
       eHe = parseInt(element.style('height'));
       cWi = parseInt(container.style('width')) - marginRight;
       cHe = parseInt(container.style('height'));
@@ -299,7 +302,7 @@ function dialogDrag(element, container, xOffset) {
       }
       var aX = -posX + diffX,
         aY = posY - diffY;
-      if(aX < -xOffset) aX = -xOffset;
+      if(aX < -xOffsetRight) aX = -xOffsetRight;
       if(aY < 0) aY = 0;
       if(aX + eWi > cWi) aX = cWi - eWi;
       if(aY + eHe > cHe) aY = cHe - eHe;
