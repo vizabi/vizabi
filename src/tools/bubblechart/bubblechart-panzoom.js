@@ -383,7 +383,7 @@ export default Class.extend({
                 }
 
 
-                _this.model.marker.set(_this._zoomedXYMinMax, null, false /*avoid storing it in URL*/);
+                if(!zoomer.dontFeedToState) _this.model.marker.set(_this._zoomedXYMinMax, null, false /*avoid storing it in URL*/);
 
                 // Keep the min and max size (pixels) constant, when zooming.
                 //                    _this.sScale.range([utils.radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
