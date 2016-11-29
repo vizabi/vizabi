@@ -7,11 +7,13 @@ import timeslider from 'components/timeslider/timeslider';
 import dialogs from 'components/dialogs/dialogs';
 import buttonlist from 'components/buttonlist/buttonlist';
 import treemenu from 'components/treemenu/treemenu';
+import datanotes from 'components/datanotes/datanotes';
+import datawarning from 'components/datawarning/datawarning';
 
 var BarRankChart = Tool.extend('BarRankChart', {
 
   //Run when the tool is created
-  init: function(placeholder, external_model) {
+  init: function (placeholder, external_model) {
 
     this.name = "barrankchart";
 
@@ -35,13 +37,19 @@ var BarRankChart = Tool.extend('BarRankChart', {
       component: treemenu,
       placeholder: '.vzb-tool-treemenu',
       model: ['state.marker', 'state.marker_tags', 'state.time', 'locale']
+    }, {
+      component: datanotes,
+      placeholder: '.vzb-tool-datanotes',
+      model: ['state.marker', 'locale']
+    }, {
+      component: datawarning,
+      placeholder: '.vzb-tool-datawarning',
+      model: ['locale']
     }];
 
     //constructor is the same as any tool
     this._super(placeholder, external_model);
   },
-
-
 
   /**
    * Determines the default model of this tool
@@ -51,19 +59,21 @@ var BarRankChart = Tool.extend('BarRankChart', {
       entities: {
         dim: "id"
       },
-      time: {
-      },
+      time: {},
       marker: {
-        space: ["entities", "time"],
-        axis_x: {allow: {scales: ["linear","log"]}},
-        axis_y: {allow: {scales: ["ordinal", "nominal"]}},
-        color:  { }
+        axis_x: { allow: { scales: ["linear", "log"] } },
+        axis_y: { allow: { scales: ["ordinal", "nominal"] } },
+        color: {}
       }
     },
-    locale: { },
+    locale: {},
     ui: {
-      presentation: false,
-      chart: { }
+      chart: {},
+      datawarning: {
+        doubtDomain: [],
+        doubtRange: []
+      },
+      presentation: false
     }
   }
 });

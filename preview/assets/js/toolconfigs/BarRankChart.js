@@ -79,5 +79,11 @@ var VIZABI_MODEL = {
         "which": "parent"
       }
     }
+  },
+  "ui": {
+    "datawarning": {
+      "doubtDomain": [1800, 1950, 2015],
+      "doubtRange": [1.0, 0.8, 0.6]
+    }
   }
 };
