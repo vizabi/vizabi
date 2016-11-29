@@ -14,9 +14,9 @@ var Marker = Model.extend({
 
   checkTimeLimits: function() {
     
-    if(!this._parent.time) return;
-    
     var time = this._parent.time;
+    
+    if(!time || time.splash) return;
     
     var tLimits = this.getTimeLimits();
 
