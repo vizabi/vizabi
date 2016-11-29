@@ -68,7 +68,6 @@ var ColorModel = Hook.extend({
     this._super(name, values, parent, bind);
 
     this._syncModelReferences = {};
-    this._firstLoad = true;
     this._hasDefaultColor = false;
 
     this.on('hook_change', function() {
@@ -87,6 +86,11 @@ var ColorModel = Hook.extend({
         _this.set("palette", palette, false, false);
       }
     });
+  },
+
+  setInterModelListeners: function () {
+    this._super();
+    this._setSyncModels();
   },
 
   // args: {colorID, shadeID}
@@ -125,18 +129,10 @@ var ColorModel = Hook.extend({
   /**
    * Validates a color hook
    */
-  validate: function() {
-    var _this = this;
-    
+  validate: function() {    
     //only some scaleTypes are allowed depending on use. reset to default if inappropriate
     if(allowTypes[this.use].indexOf(this.scaleType) === -1) this.scaleType = allowTypes[this.use][0];
 
-    // if there are models to sync: do it on first load or on changing the which
-    if(this._firstLoad) {
-      _this._setSyncModels();
-    }
-
-    this._firstLoad = false;
   },
 
   _setSyncModels: function() {
