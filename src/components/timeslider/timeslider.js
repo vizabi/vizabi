@@ -227,7 +227,6 @@ var TimeSlider = Component.extend({
       .remove();
 
     this._setSelectedLimitsId = 0; //counter for setSelectedLimits
-    this._needRecalcSelectedLimits = true;
 
     utils.forEach(_this.model.marker.getSubhooks(), function(hook) {
       if(hook._important) hook.on('change:which', function() {
@@ -289,10 +288,7 @@ var TimeSlider = Component.extend({
     _this.model.marker.listenFramesQueue(null, function(time) {
       _this._updateProgressBar(time);
     });
-    if(_this._needRecalcSelectedLimits) {
-      _this._needRecalcSelectedLimits = false;
-      _this.setSelectedLimits(true);
-    }
+    _this.setSelectedLimits(true);
   },
 
   changeLimits: function() {
