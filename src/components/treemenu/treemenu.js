@@ -591,6 +591,10 @@ var TreeMenu = Component.extend({
 
   ready: function() {
     this.updateView();
+
+    //TODO: hack! potentially unsafe operation here
+    var tags = this.model.marker_tags.label.getData();
+    _this._buildIndicatorsTree(tags);
   },
 
   readyOnce: function() {
@@ -661,10 +665,6 @@ var TreeMenu = Component.extend({
     });
 
     this.translator = this.model.locale.getTFunction();
-
-    //TODO: hack! potentially unsafe operation here
-    var tags = this.model.marker_tags.label.getData();
-    _this._buildIndicatorsTree(tags);
 
     _this._enableSearch();
 
