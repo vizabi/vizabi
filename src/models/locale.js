@@ -40,26 +40,23 @@ var LocaleModel = DataConnected.extend({
     this.setReady(false);
     this._loadCall = true;
 
+    var conceptPropsPromise = this.getClosestModel('data').loadConceptProps();
     var filePromise = new Promise((resolve, reject) => {
-      if(this.filePath) {
-        // if a path to external tranlation file is provided, extend the default strings with the ones from that file
-        d3.json(this.filePath + _this.id + ".json", function(receivedStrings) {
-          var knownStrings = {};
-          if(_this.strings[_this.id]) knownStrings = _this.strings[_this.id];
-          _this.strings[_this.id] = utils.extend(knownStrings, receivedStrings);
-          resolve();
-        });
-      } else {
-        reject("File path not given in locale model " + this._name + ".");
-      }
+      d3.json(this.filePath + _this.id + ".json", (error, strings) => {
+        if (error) reject(error);
+        this.handleNewStrings(strings)
+        resolve();
+      });
     });
 
-    return Promise.all([
-      filePromise,
-      _this.getClosestModel('data').loadConceptProps()
-    ]).then(
-      () => this.trigger('translate')
-    );
+    return Promise.all([filePromise, conceptPropsPromise])
+      .then(() => this.trigger('translate'));
+  },
+
+  handleNewStrings: function(receivedStrings) {
+    this.strings[this.id] = this.strings[this.id]
+      ? utils.extend(this.strings[this.id], receivedStrings)
+      : receivedStrings;
   },
 
   /**

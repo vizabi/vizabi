@@ -594,7 +594,7 @@ var TreeMenu = Component.extend({
 
     //TODO: hack! potentially unsafe operation here
     var tags = this.model.marker_tags.label.getData();
-    _this._buildIndicatorsTree(tags);
+    this._buildIndicatorsTree(tags);
   },
 
   readyOnce: function() {
