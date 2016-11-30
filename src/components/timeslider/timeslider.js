@@ -233,21 +233,10 @@ var TimeSlider = Component.extend({
       if(hook._important) hook.on('change:which', function() {
         _this._needRecalcSelectedLimits = true;
         _this.model.time.set({
-          startSelected: _this.model.time.start,
-          endSelected: _this.model.time.end
+          startSelected: new Date(_this.model.time.start),
+          endSelected: new Date(_this.model.time.end)
         }, null, false  /*make change non-persistent for URL and history*/);
       });
-    });
-
-    this.root.on('ready', function() {
-      _this._updateProgressBar();
-      _this.model.marker.listenFramesQueue(null, function(time) {
-        _this._updateProgressBar(time);
-      });
-      if(_this._needRecalcSelectedLimits) {
-        _this._needRecalcSelectedLimits = false;
-        _this.setSelectedLimits(true);
-      }
     });
 
     if(this.model.time.startSelected > this.model.time.start) {
@@ -296,6 +285,14 @@ var TimeSlider = Component.extend({
     this.changeTime();
     this.resize();
 
+    _this._updateProgressBar();
+    _this.model.marker.listenFramesQueue(null, function(time) {
+      _this._updateProgressBar(time);
+    });
+    if(_this._needRecalcSelectedLimits) {
+      _this._needRecalcSelectedLimits = false;
+      _this.setSelectedLimits(true);
+    }
   },
 
   changeLimits: function() {
