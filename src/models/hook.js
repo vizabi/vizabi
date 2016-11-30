@@ -134,7 +134,6 @@ var Hook = DataConnected.extend({
   afterLoad: function(dataId) {
     this._dataId = dataId;
     utils.timeStamp('Vizabi Model: Data loaded: ' + this._id);
-    EventSource.unfreezeAll();
   },
 
   loadError: function() {

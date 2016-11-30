@@ -65,7 +65,11 @@ var DataModel = Model.extend({
         'hook_change',
         'resize'
       ]);
-      return this.loadFromReader(query, parsers);
+      return this.loadFromReader(query, parsers)
+        .then(promise => { 
+          EventSource.unfreezeAll();
+          return promise;
+        });
     }
 
   },
