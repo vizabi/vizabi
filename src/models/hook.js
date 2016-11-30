@@ -28,13 +28,6 @@ var Hook = DataConnected.extend({
   buildScale: function(){
     //overloaded by specific hook models, like axis and color
   },
-  
-
-  preloadData: function() {
-    var dataModel = (this.data) ? this.data : 'data';
-    this.dataSource = this.getClosestModel(dataModel);
-    return this._super();
-  },
 
   /**
    * After complete model tree is created, this allows models to listen to eachother. 
@@ -73,6 +66,12 @@ var Hook = DataConnected.extend({
 
     this.set(obj);
 
+  },
+
+  preloadData: function() {
+    var dataModel = (this.data) ? this.data : 'data';
+    this.dataSource = this.getClosestModel(dataModel);
+    return this._super();
   },
 
   /**
@@ -116,11 +115,10 @@ var Hook = DataConnected.extend({
     //defer is necessary because other events might be queued.
     //load right after such events
     utils.defer(() => {
-      this.startLoading().then(function() {
-
-      }, function(err) {
-        utils.warn(err);
-      });
+      this.startLoading().then(
+        undefined,
+        err => utils.warn(err)
+      );
     });
   },
 
