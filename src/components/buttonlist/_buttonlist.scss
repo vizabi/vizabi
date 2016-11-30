@@ -157,6 +157,9 @@ $vzb-button-color-border: #cce6ed;
   &.vzb-dialog-expand-true {
     .vzb-tool-buttonlist {
       .vzb-buttonlist-btn {
+        @include rtl {
+          margin-left: 0;
+        }
         margin-right: 0;
         width: $vzb-button-width-expand;
         &.vzb-dialog-side-btn {
