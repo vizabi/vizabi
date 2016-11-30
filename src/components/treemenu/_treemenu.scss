@@ -335,7 +335,7 @@
                 @include rtl {
                   &.vzb-treemenu-leaf-content-item-title,
                   &.vzb-treemenu-leaf-content-item-descr {
-                    direction: ltr;
+                    direction: rtl;
                     text-align: right;
                   }
                 }
