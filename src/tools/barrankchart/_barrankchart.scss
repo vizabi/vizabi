@@ -68,6 +68,11 @@
     }
   }
   &.vzb-presentation {
-    font-size: $vzb-font-size-larger;
+    .vzb-barrankchart {
+      font-size: $vzb-font-size-larger;
+    }
+    &.vzb-small {
+      font-size: $vzb-font-size-medium;
+    }
   }
 }
