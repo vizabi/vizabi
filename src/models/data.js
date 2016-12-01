@@ -81,6 +81,7 @@ var DataModel = Model.extend({
    */
   loadFromReader: function(query, parsers) {
     var _this = this;
+    if (this.dataset) query.dataset = this.dataset;
     var queryId = utils.hashCode([
       query
     ]);

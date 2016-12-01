@@ -6,17 +6,18 @@ var VIZABI_MODEL = {
       "dim": "year"
     },
     "entities": {
-      "dim": "basomrade"
+      "dim": "basomrade",
+      "show": { "municipality": "0120_varmdo"}
     },
     "marker": {
       "label": {
-        "which": "basomrade"
+        "which": "name"
       },
       "axis_y": {
         "which": "immigration_surplus"
       },
       "axis_x": {
-        "which": "employment_rate_aged_20_64"
+        "which": "mean_income_aged_lt_20_male"
       },
       "size": {
         "which": "population_20xx_12_31",
@@ -25,9 +26,10 @@ var VIZABI_MODEL = {
     }
   },
   "data": {
-    "reader": "ddf",
+    "reader": "waffle",
     "splash": false,
-    "path": "data/sodertorn"
+    "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/",
+    "dataset": "Gapminder/ddf--sodertorn"
   }
 };
 
