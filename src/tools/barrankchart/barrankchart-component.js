@@ -6,13 +6,6 @@ import {
   warn as iconWarn
 } from 'base/iconset';
 
-
-/*!
- * VIZABI POP BY AGE Component
- */
-
-
-//POP BY AGE CHART COMPONENT
 const BarRankChart = Component.extend({
 
   /**
@@ -44,11 +37,10 @@ const BarRankChart = Component.extend({
       type: "ui"
     }];
 
-    const _this = this;
     this.model_binds = {
       "change:time.value": () => {
-        if (_this._readyOnce) {
-          _this.onTimeChange();
+        if (this._readyOnce) {
+          this.onTimeChange();
         }
       },
       'change:entities.select': () => {
@@ -58,8 +50,8 @@ const BarRankChart = Component.extend({
         }
       },
       "change:marker.axis_x.scaleType": () => {
-        if (_this._readyOnce) {
-          _this.draw();
+        if (this._readyOnce) {
+          this.draw();
         }
       },
       'change:marker.color.palette': () => {
@@ -143,8 +135,7 @@ const BarRankChart = Component.extend({
     this.draw();
   },
 
-  loadData: function () {
-
+  loadData() {
     const _this = this;
 
     this.translator = this.model.locale.getTFunction();
@@ -213,8 +204,7 @@ const BarRankChart = Component.extend({
   /*
    * draw the chart/stage
    */
-  drawAxes: function () {
-
+  drawAxes() {
     // these should go in some style-config
     this.barHeight = 20;
     const margin = { top: 60, bottom: 40, left: 90, right: 20 }; // need right margin for scroll bar
@@ -224,7 +214,9 @@ const BarRankChart = Component.extend({
     this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
     this.width -= this.model.ui.presentation ? 30 : 0;
 
-    if (this.height <= 0 || this.width <= 0) return utils.warn("Bar rank chart drawAxes() abort: vizabi container is too little or has display:none");
+    if (this.height <= 0 || this.width <= 0) {
+      return utils.warn("Bar rank chart drawAxes() abort: vizabi container is too little or has display:none");
+    }
 
     this.barContainer.attr('transform', 'translate(' + margin.left + ', 0)');
     this.barViewport.style('height', this.height + 'px');
@@ -476,10 +468,10 @@ const BarRankChart = Component.extend({
   _sortByIndicator(values) {
     return Object.keys(values).map(entity => {
       const cached = this._entities[entity];
+      const value = values[entity];
+      const formattedValue = this._formatter(value);
 
       if (cached) {
-        const value = values[entity];
-        const formattedValue = this._formatter(value);
         return Object.assign(cached, {
           value,
           formattedValue,
@@ -488,11 +480,10 @@ const BarRankChart = Component.extend({
         });
       }
 
-      const value = values[entity];
       return this._entities[entity] = {
         entity,
         value,
-        formattedValue: this._formatter(value),
+        formattedValue,
         [this.model.entities.dim]: entity,
         changedValue: true,
         changedWidth: true
