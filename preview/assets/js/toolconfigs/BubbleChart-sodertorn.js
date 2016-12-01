@@ -6,12 +6,11 @@ var VIZABI_MODEL = {
       "dim": "year"
     },
     "entities": {
-      "dim": "geo",
-      "show": { "is--basomrade": true }
+      "dim": "basomrade"
     },
     "marker": {
       "label": {
-        "which": "name"
+        "which": "basomrade"
       },
       "axis_y": {
         "which": "immigration_surplus"
