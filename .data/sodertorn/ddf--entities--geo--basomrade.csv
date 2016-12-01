@@ -1,0 +1,1165 @@
+basomrade,name,municipality,is--basomrade
+4111110_norra_runby, Norra Runby,0114_upplands_vasby,TRUE
+4111120_sodra_runby, Södra Runby,0114_upplands_vasby,TRUE
+4111130_runby_lovsta, Runby Lövsta,0114_upplands_vasby,TRUE
+4111140_prastgardsmarken, Prästgårdsmarken,0114_upplands_vasby,TRUE
+4111900_eds_glesbygd, Eds glesbygd,0114_upplands_vasby,TRUE
+4122100_lowenstromska_sjukhuset, Löwenströmska Sjukhuset,0114_upplands_vasby,TRUE
+4122210_norra_vilunda, Norra Vilunda,0114_upplands_vasby,TRUE
+4122230_apoteksskogen, Apoteksskogen,0114_upplands_vasby,TRUE
+4122240_vasbyskogen, Väsbyskogen,0114_upplands_vasby,TRUE
+4122310_korpkulla, Korpkulla,0114_upplands_vasby,TRUE
+4122340_vilunda, Vilunda,0114_upplands_vasby,TRUE
+4122420_norra_smedby, Norra Smedby,0114_upplands_vasby,TRUE
+4122430_sodra_smedby, Södra Smedby,0114_upplands_vasby,TRUE
+4122520_skalby, Skälby,0114_upplands_vasby,TRUE
+4122530_carlslund, Carlslund,0114_upplands_vasby,TRUE
+4122540_brunnby, Brunnby,0114_upplands_vasby,TRUE
+4122600_vastra_odenslunda, Västra Odenslunda,0114_upplands_vasby,TRUE
+4133110_sanda, Sanda,0114_upplands_vasby,TRUE
+4133120_ostra_odenslunda, Östra Odenslunda,0114_upplands_vasby,TRUE
+4133200_frestaby, Frestaby,0114_upplands_vasby,TRUE
+4133310_vastra_bollstanas, Västra Bollstanäs,0114_upplands_vasby,TRUE
+4133330_ostra_bollstanas, Östra Bollstanäs,0114_upplands_vasby,TRUE
+4133350_sodra_bollstanas, Södra Bollstanäs,0114_upplands_vasby,TRUE
+4133910_fresta_norra_glesbygd, Fresta norra glesbygd,0114_upplands_vasby,TRUE
+4133920_fresta_sodra_glesbygd, Fresta södra glesbygd,0114_upplands_vasby,TRUE
+4210110_centrala_vallentuna, Centrala Vallentuna,0115_vallentuna,TRUE
+4210210_norra_vallentuna_tatort, Norra Vallentuna tätort,0115_vallentuna,TRUE
+4210220_nv_a_vallentuna_tatort, NV:a Vallentuna tätort,0115_vallentuna,TRUE
+4210320_ostra_ormsta, Östra Ormsta,0115_vallentuna,TRUE
+4210330_vastra_ormsta, Västra Ormsta,0115_vallentuna,TRUE
+4210340_aby_bostadsomr, Åby bostadsomr,0115_vallentuna,TRUE
+4210410_vastra_ballsta, Västra Bällsta,0115_vallentuna,TRUE
+4210420_kragstalund, Kragstalund,0115_vallentuna,TRUE
+4210430_ballstaberg, Bällstaberg,0115_vallentuna,TRUE
+4210440_okand,Okänd,0115_vallentuna,TRUE
+4210510_vallentuna_glesbygd_v, Vallentuna glesbygd V,0115_vallentuna,TRUE
+4210530_vallentuna_glesbygd_no, Vallentuna glesbygd NO,0115_vallentuna,TRUE
+4210540_okand,Okänd,0115_vallentuna,TRUE
+4220000_markims_forsamling, Markims församling,0115_vallentuna,TRUE
+4230100_lindholmen, Lindholmen,0115_vallentuna,TRUE
+4230500_okand,Okänd,0115_vallentuna,TRUE
+4240000_frosunda_forsamling, Frösunda församling,0115_vallentuna,TRUE
+4250100_karsta, Kårsta,0115_vallentuna,TRUE
+4250200_ekskogen, Ekskogen,0115_vallentuna,TRUE
+4250500_karsta_glesbygd, Kårsta glesbygd,0115_vallentuna,TRUE
+4260500_vada_glesbygd, Vada glesbygd,0115_vallentuna,TRUE
+4270100_karby, Karby,0115_vallentuna,TRUE
+4270200_brottby, Brottby,0115_vallentuna,TRUE
+4270501_ovr_osseby_garns_glesbygd, Övr Össeby-Garns glesbygd,0115_vallentuna,TRUE
+4270502_algeby_garns_ekskogen, Älgeby/Garns-Ekskogen,0115_vallentuna,TRUE
+4280000_angarns_forsamling, Angarns församling,0115_vallentuna,TRUE
+4440110_ljustero, Ljusterö,0117_osteraker,TRUE
+4440120_ingmarso_m_fl_oar, Ingmarsö m fl öar,0117_osteraker,TRUE
+4440200_roslags_kulla_fd_forsaml, Roslags-Kulla fd församl,0117_osteraker,TRUE
+4450110_ekbacken, Ekbacken,0117_osteraker,TRUE
+4450120_runo_gard, Runö gård,0117_osteraker,TRUE
+4450130_akersberga, Åkersberga,0117_osteraker,TRUE
+4450140_kullen, Kullen,0117_osteraker,TRUE
+4450150_ostra_sora, Östra Söra,0117_osteraker,TRUE
+4450160_vastra_sora, Västra Söra,0117_osteraker,TRUE
+4450170_neptunus, Neptunus,0117_osteraker,TRUE
+4450180_kungsangen, Kungsängen,0117_osteraker,TRUE
+4450190_tunagard_osterskar, Tunagård Österskär,0117_osteraker,TRUE
+4450210_akerstorp, Åkerstorp,0117_osteraker,TRUE
+4450220_smedby, Smedby,0117_osteraker,TRUE
+4450230_hacksta, Hacksta,0117_osteraker,TRUE
+4450240_skansta, Skånsta,0117_osteraker,TRUE
+4450250_singo, Singö,0117_osteraker,TRUE
+4450260_asatra, Åsätra,0117_osteraker,TRUE
+4450310_margretelund, Margretelund,0117_osteraker,TRUE
+4450320_trasatra, Tråsätra,0117_osteraker,TRUE
+4450330_flaxenvik, Flaxenvik,0117_osteraker,TRUE
+4450340_skargardsstad, Skärgårdsstad,0117_osteraker,TRUE
+4451231_okand,Okänd,0117_osteraker,TRUE
+4451240_norra_runo, Norra Runö,0117_osteraker,TRUE
+4451250_svinninge, Svinninge,0117_osteraker,TRUE
+4451410_rydbo, Rydbo,0117_osteraker,TRUE
+4451420_svartgarn, Svartgarn,0117_osteraker,TRUE
+4451430_ostra_ryds_glesbygd, Östra Ryds glesbygd,0117_osteraker,TRUE
+5610200_mortnas, Mörtnäs,0120_varmdo,TRUE
+5610500_okand,Okänd,0120_varmdo,TRUE
+5611110_munkmora, Munkmora,0120_varmdo,TRUE
+5611120_lugnet_flerbostadshus, Lugnet flerbostadshus,0120_varmdo,TRUE
+5611130_lugnet_smahus, Lugnet småhus,0120_varmdo,TRUE
+5611140_hojdhagen, Höjdhagen,0120_varmdo,TRUE
+5611150_okand,Okänd,0120_varmdo,TRUE
+5611160_osby_grind, Ösby Grind,0120_varmdo,TRUE
+5611170_osbydalen, Ösbydalen,0120_varmdo,TRUE
+5611190_holmviksskogen, Holmviksskogen,0120_varmdo,TRUE
+5620100_brunn, Brunn,0120_varmdo,TRUE
+5620510_okand,Okänd,0120_varmdo,TRUE
+5620520_sydvastra_ingaro, Sydvästra Ingarö,0120_varmdo,TRUE
+5620530_okand,Okänd,0120_varmdo,TRUE
+5630110_hemmesta, Hemmesta,0120_varmdo,TRUE
+5630120_fruvik, Fruvik,0120_varmdo,TRUE
+5630130_hemmestahojden, Hemmestahöjden,0120_varmdo,TRUE
+5630200_angsvik, Ängsvik,0120_varmdo,TRUE
+5630300_skeppsdalsstrom, Skeppsdalsström,0120_varmdo,TRUE
+5630400_kopparmora, Kopparmora,0120_varmdo,TRUE
+5630510_okand,Okänd,0120_varmdo,TRUE
+5630520_okand,Okänd,0120_varmdo,TRUE
+5630600_varmdo_norra_skargard, Värmdö norra skärgård,0120_varmdo,TRUE
+5640100_djurhamn, Djurhamn,0120_varmdo,TRUE
+5640200_stavsnas, Stavsnäs,0120_varmdo,TRUE
+5640510_stavsnas_glesbygd, Stavsnäs glesbygd,0120_varmdo,TRUE
+5640520_djuro_glesbygd, Djurö glesbygd,0120_varmdo,TRUE
+5640600_djuro_skargard, Djurö skärgård,0120_varmdo,TRUE
+5650000_moja_forsamling, Möja församling,0120_varmdo,TRUE
+5660000_namdo_forsamling, Nämdö församling,0120_varmdo,TRUE
+3311110_staket, Stäket,0123_jarfalla,TRUE
+3312220_vastra_kallhall, Västra Kallhäll,0123_jarfalla,TRUE
+3312230_skogstorp, Skogstorp,0123_jarfalla,TRUE
+3312240_norra_kallhall, Norra Kallhäll,0123_jarfalla,TRUE
+3312250_bonas, Bonäs,0123_jarfalla,TRUE
+3312260_termosvagen, Termosvägen,0123_jarfalla,TRUE
+3312270_ladersatra, Lädersätra,0123_jarfalla,TRUE
+3312300_molnsattra, Molnsättra,0123_jarfalla,TRUE
+3324100_olovslund, Olovslund,0123_jarfalla,TRUE
+3324200_berghem, Berghem,0123_jarfalla,TRUE
+3324310_sodra_nibble, Södra Nibble,0123_jarfalla,TRUE
+3324320_norra_nibble, Norra Nibble,0123_jarfalla,TRUE
+3324410_tallbohov, Tallbohov,0123_jarfalla,TRUE
+3324420_hammaren, Hammaren,0123_jarfalla,TRUE
+3324430_jakobsbergs_centrum, Jakobsbergs centrum,0123_jarfalla,TRUE
+3324500_vibblaby, Vibblaby,0123_jarfalla,TRUE
+3335100_norra_viksjo, Norra Viksjö,0123_jarfalla,TRUE
+3335210_ostra_viksjo, Östra Viksjö,0123_jarfalla,TRUE
+3335220_viksjo_centrum, Viksjö centrum,0123_jarfalla,TRUE
+3335310_ostra_lund, Östra Lund,0123_jarfalla,TRUE
+3335320_vastra_lund, Västra Lund,0123_jarfalla,TRUE
+3335410_ostra_sandvik, Östra Sandvik,0123_jarfalla,TRUE
+3335420_sandvik, Sandvik,0123_jarfalla,TRUE
+3335600_fjallen, Fjällen,0123_jarfalla,TRUE
+3346110_skalby, Skälby,0123_jarfalla,TRUE
+3346120_ormbacka, Ormbacka,0123_jarfalla,TRUE
+3346200_skalby_gard, Skälby gård,0123_jarfalla,TRUE
+3347300_jarfalla_kyrka, Järfälla kyrka,0123_jarfalla,TRUE
+3347400_barkarby, Barkarby,0123_jarfalla,TRUE
+3347500_barsbro, Barsbro,0123_jarfalla,TRUE
+3210100_drottningholm, Drottningholm,0125_ekero,TRUE
+3210500_lovo_glesbygd, Lovö glesbygd,0125_ekero,TRUE
+3220101_tappstrom_narlunda, Tappström/Närlunda,0125_ekero,TRUE
+3220102_ostra_narlunda, Östra Närlunda,0125_ekero,TRUE
+3220103_ekero_centrum, Ekerö centrum,0125_ekero,TRUE
+3220211_alvnas, Älvnäs,0125_ekero,TRUE
+3220212_brunna, Brunna,0125_ekero,TRUE
+3220230_knalleborg, Knalleborg,0125_ekero,TRUE
+3220261_ostra_trakvista, Östra Träkvista,0125_ekero,TRUE
+3220262_gallsta_o, Gällsta Ö,0125_ekero,TRUE
+3220270_sandudden, Sandudden,0125_ekero,TRUE
+3220500_ekero_glesbygd, Ekerö glesbygd,0125_ekero,TRUE
+3230000_munso_forsamling, Munsö församling,0125_ekero,TRUE
+3240000_adelso_forsamling, Adelsö församling,0125_ekero,TRUE
+3250100_farentuna_fd_forsaml, Färentuna fd församl,0125_ekero,TRUE
+3250201_hilleshogs_fd_forsaml, Hilleshögs fd församl,0125_ekero,TRUE
+3250202_ricksattra, Ricksättra,0125_ekero,TRUE
+3250310_stenhamra, Stenhamra,0125_ekero,TRUE
+3250320_sanga_glesbygd, Sånga glesbygd,0125_ekero,TRUE
+3250400_ska_fd_forsaml, Skå fd församl,0125_ekero,TRUE
+5310420_skogsang_milsten, Skogsäng Milsten,0126_huddinge,TRUE
+5310810_fullersta_gard, Fullersta Gård,0126_huddinge,TRUE
+5310830_fridhem, Fridhem,0126_huddinge,TRUE
+5310840_kallbrink_vistaberg, Källbrink Vistaberg,0126_huddinge,TRUE
+5310850_vardkasen, Vårdkasen,0126_huddinge,TRUE
+5310910_sjodalen_huddinge_c, Sjödalen - Huddinge C,0126_huddinge,TRUE
+5310941_solgard, Solgård,0126_huddinge,TRUE
+5310942_sorskogen, Sörskogen,0126_huddinge,TRUE
+5310950_horningsnas_balingsnas, Hörningsnäs Balingsnäs,0126_huddinge,TRUE
+5311010_stuvsta_kvarnberget, Stuvsta Kvarnberget,0126_huddinge,TRUE
+5311030_segersminne, Segersminne,0126_huddinge,TRUE
+5311041_stensangen_hogmora, Stensängen Högmora,0126_huddinge,TRUE
+5311042_kynas, Kynäs,0126_huddinge,TRUE
+5311110_glado_kvarn, Gladö Kvarn,0126_huddinge,TRUE
+5311120_adran, Ådran,0126_huddinge,TRUE
+5320110_trangsunds_centrum, Trångsunds centrum,0126_huddinge,TRUE
+5320120_trangsunds_smahus, Trångsunds småhus,0126_huddinge,TRUE
+5320310_vastra_skogas, Västra Skogås,0126_huddinge,TRUE
+5320320_ostra_skogas, Östra Skogås,0126_huddinge,TRUE
+5320410_lanna_drevviken, Länna Drevviken,0126_huddinge,TRUE
+5320510_trangsunds_glesbygd, Trångsunds glesbygd,0126_huddinge,TRUE
+5320520_vidja, Vidja,0126_huddinge,TRUE
+5330110_varby_gard, Vårby Gård,0126_huddinge,TRUE
+5330200_masmo, Masmo,0126_huddinge,TRUE
+5330331_smista_juringe, Smista Juringe,0126_huddinge,TRUE
+5330332_jakobslund, Jakobslund,0126_huddinge,TRUE
+5330340_krakvik, Kråkvik,0126_huddinge,TRUE
+5330410_utsalje, Utsälje,0126_huddinge,TRUE
+5330430_snattringe_gard, Snättringe gård,0126_huddinge,TRUE
+5340500_glomsta, Glömsta,0126_huddinge,TRUE
+5340630_kasta, Kästa,0126_huddinge,TRUE
+5340640_grantorp, Grantorp,0126_huddinge,TRUE
+5340710_visattra, Visättra,0126_huddinge,TRUE
+5110110_albyslatten, Albyslätten,0127_botkyrka,TRUE
+5110120_albyberget, Albyberget,0127_botkyrka,TRUE
+5110150_rotemannen, Rotemannen,0127_botkyrka,TRUE
+5110160_alby_gard, Alby Gård,0127_botkyrka,TRUE
+5110240_aspberget, Aspberget,0127_botkyrka,TRUE
+5110260_ostra_eriksberg, Östra Eriksberg,0127_botkyrka,TRUE
+5110270_vastra_eriksberg, Västra Eriksberg,0127_botkyrka,TRUE
+5110280_tre_kallor, Tre källor,0127_botkyrka,TRUE
+5110290_sturehov, Sturehov,0127_botkyrka,TRUE
+5110311_krogarvagen_vardshusvagen, Krögarvägen-Värdshusvägen,0127_botkyrka,TRUE
+5110312_forvagen, Forvägen,0127_botkyrka,TRUE
+5110320_fittja_gard, Fittja Gård,0127_botkyrka,TRUE
+5110410_sodra_hallunda, Södra Hallunda,0127_botkyrka,TRUE
+5110420_slagsta, Slagsta,0127_botkyrka,TRUE
+5110430_brunna, Brunna,0127_botkyrka,TRUE
+5110450_sodra_norsborg, Södra Norsborg,0127_botkyrka,TRUE
+5110460_tornbergsfaltet, Tornbergsfältet,0127_botkyrka,TRUE
+5110480_nordostra_norsborg, Nordöstra Norsborg,0127_botkyrka,TRUE
+5110490_nordvastra_norsborg, Nordvästra Norsborg,0127_botkyrka,TRUE
+5120730_tumba_centrum, Tumba centrum,0127_botkyrka,TRUE
+5120750_segersjo, Segersjö,0127_botkyrka,TRUE
+5120780_tumba_villastad, Tumba villastad,0127_botkyrka,TRUE
+5120790_skacklinge, Skäcklinge,0127_botkyrka,TRUE
+5120810_storvreten, Storvreten,0127_botkyrka,TRUE
+5120820_blockvagen, Blockvägen,0127_botkyrka,TRUE
+5120830_grytstigen, Grytstigen,0127_botkyrka,TRUE
+5120840_vedstigen, Vedstigen,0127_botkyrka,TRUE
+5120910_tumba_bruk, Tumba Bruk,0127_botkyrka,TRUE
+5120920_tumba_glesbygd, Tumba glesbygd,0127_botkyrka,TRUE
+5120930_kommunalhuset, Kommunalhuset,0127_botkyrka,TRUE
+5120940_tuna, Tuna,0127_botkyrka,TRUE
+5120950_nackdala, Nackdala,0127_botkyrka,TRUE
+5120970_loviseberg, Loviseberg,0127_botkyrka,TRUE
+5130810_uttran, Uttran,0127_botkyrka,TRUE
+5130820_varsta, Vårsta,0127_botkyrka,TRUE
+5130830_grodinge_glesbygd, Grödinge glesbygd,0127_botkyrka,TRUE
+5140110_tullinge_villastad, Tullinge villastad,0127_botkyrka,TRUE
+5140620_tullingeberg, Tullingeberg,0127_botkyrka,TRUE
+5140641_tullinge_parkhem, Tullinge parkhem,0127_botkyrka,TRUE
+5140642_lanthem_n, Lanthem N,0127_botkyrka,TRUE
+5140650_tullinge_centrum, Tullinge centrum,0127_botkyrka,TRUE
+5140660_banslatt, Banslätt,0127_botkyrka,TRUE
+5140690_okand,Okänd,0127_botkyrka,TRUE
+5140711_tullinge_skog, Tullinge skog,0127_botkyrka,TRUE
+5140712_lanthem_s, Lanthem S,0127_botkyrka,TRUE
+5711010_soderby_garde, Söderby Gärde,0128_salem,TRUE
+5711020_soderby_park, Söderby Park,0128_salem,TRUE
+5711110_skyttorp, Skyttorp,0128_salem,TRUE
+5711120_skogsang, Skogsäng,0128_salem,TRUE
+5711130_soderby, Söderby,0128_salem,TRUE
+5711200_salems_centrum, Salems centrum,0128_salem,TRUE
+5712110_norra_ronninge, Norra Rönninge,0128_salem,TRUE
+5712210_uttringe, Uttringe,0128_salem,TRUE
+5712220_ostra_ronninge, Östra Rönninge,0128_salem,TRUE
+5712300_ronninge_centrum, Rönninge Centrum,0128_salem,TRUE
+5713000_salems_glesbygd, Salems glesbygd,0128_salem,TRUE
+5211120_gudo, Gudö,0136_haninge,TRUE
+5211131_sodra_vendelso, Södra Vendelsö,0136_haninge,TRUE
+5211132_sagen, Sågen,0136_haninge,TRUE
+5211140_norra_vendelso, Norra Vendelsö,0136_haninge,TRUE
+5211150_dalen, Dalen,0136_haninge,TRUE
+5211210_vendelsomalm, Vendelsömalm,0136_haninge,TRUE
+5211220_eriksberg, Eriksberg,0136_haninge,TRUE
+5211230_ramsdalen, Ramsdalen,0136_haninge,TRUE
+5211320_brandbergens_industriomr, Brandbergens industriomr,0136_haninge,TRUE
+5211330_brandbergen_flerbost_hus, Brandbergen flerbost-hus,0136_haninge,TRUE
+5211340_brandbergen_smahus, Brandbergen småhus,0136_haninge,TRUE
+5211430_kolartorp, Kolartorp,0136_haninge,TRUE
+5211440_okand,Okänd,0136_haninge,TRUE
+5211450_okand,Okänd,0136_haninge,TRUE
+5211511_haninge_centrum, Haninge centrum,0136_haninge,TRUE
+5211512_vastra_handen, Västra Handen,0136_haninge,TRUE
+5211520_norra_handen, Norra Handen,0136_haninge,TRUE
+5211540_valla, Valla,0136_haninge,TRUE
+5211550_sodra_handen, Södra Handen,0136_haninge,TRUE
+5211610_jordbro_flerbostadshus, Jordbro flerbostadshus,0136_haninge,TRUE
+5211620_jordbro_smahus, Jordbro småhus,0136_haninge,TRUE
+5211710_norrby, Norrby,0136_haninge,TRUE
+5211800_norra_soderby, Norra Söderby,0136_haninge,TRUE
+5211920_galo_sandemar, Gålö Sandemar,0136_haninge,TRUE
+5211930_tyresta, Tyresta,0136_haninge,TRUE
+5211940_osterhaninge_kyrka, Österhaninge kyrka,0136_haninge,TRUE
+5211950_arsta_havsbad_o, Årsta Havsbad Ö,0136_haninge,TRUE
+5222100_dalaro, Dalarö,0136_haninge,TRUE
+5222500_smadalaro, Smådalarö,0136_haninge,TRUE
+5233000_uto, Utö,0136_haninge,TRUE
+5240000_orno_forsamling, Ornö församling,0136_haninge,TRUE
+5255110_aby, Åby,0136_haninge,TRUE
+5255121_jagartorp, Jägartorp,0136_haninge,TRUE
+5255130_vasterhaninge_kyrka, Västerhaninge kyrka,0136_haninge,TRUE
+5255140_ribby, Ribby,0136_haninge,TRUE
+5255150_okand,Okänd,0136_haninge,TRUE
+5255210_norra_tungelsta, Norra Tungelsta,0136_haninge,TRUE
+5255220_sodra_tungelsta, Södra Tungelsta,0136_haninge,TRUE
+5255910_vasterhaninge_glesbygd_n, Västerhaninge glesbygd N,0136_haninge,TRUE
+5255920_vasterhaninge_glesbygd_s, Västerhaninge glesbygd S,0136_haninge,TRUE
+5255930_arsta_havsbad_v_berga, Årsta Havsbad V - Berga,0136_haninge,TRUE
+5260000_musko_forsamling, Muskö församling,0136_haninge,TRUE
+5511000_vastra_trollbacken, Västra Trollbäcken,0138_tyreso,TRUE
+5511120_centrala_trollbacken, Centrala Trollbäcken,0138_tyreso,TRUE
+5511130_sodergarden, Södergården,0138_tyreso,TRUE
+5511140_skalsatra, Skälsätra,0138_tyreso,TRUE
+5511150_norra_hanviken, Norra Hanviken,0138_tyreso,TRUE
+5511160_sodra_hanviken, Södra Hanviken,0138_tyreso,TRUE
+5512010_norra_lindalen, Norra Lindalen,0138_tyreso,TRUE
+5513010_tyreso_centrum, Tyresö Centrum,0138_tyreso,TRUE
+5513020_simvagen, Simvägen,0138_tyreso,TRUE
+5513110_granitvagen, Granitvägen,0138_tyreso,TRUE
+5513120_pluggvagen, Pluggvägen,0138_tyreso,TRUE
+5513140_mellanbergsvagen, Mellanbergsvägen,0138_tyreso,TRUE
+5513150_granangsringen, Granängsringen,0138_tyreso,TRUE
+5513160_vastra_farmarstigen, Västra Farmarstigen,0138_tyreso,TRUE
+5513170_ostra_farmarstigen, Östra Farmarstigen,0138_tyreso,TRUE
+5513210_ostra_bollmora, Östra Bollmora,0138_tyreso,TRUE
+5513220_bondevagen, Bondevägen,0138_tyreso,TRUE
+5513310_norra_bollmora, Norra Bollmora,0138_tyreso,TRUE
+5513330_vastra_fardala, Västra Fårdala,0138_tyreso,TRUE
+5513410_fardala, Fårdala,0138_tyreso,TRUE
+5514000_krusboda, Krusboda,0138_tyreso,TRUE
+5515010_oringe, Öringe,0138_tyreso,TRUE
+5515120_okand,Okänd,0138_tyreso,TRUE
+5515210_okand,Okänd,0138_tyreso,TRUE
+5515220_okand,Okänd,0138_tyreso,TRUE
+4010130_gamla_bro_tatort, Gamla Bro tätort,0139_upplands_bro,TRUE
+4010140_bro_centrum, Bro centrum,0139_upplands_bro,TRUE
+4010500_okand,Okänd,0139_upplands_bro,TRUE
+4020000_lassa_forsamling, Låssa församling,0139_upplands_bro,TRUE
+4050100_habo_tibble_kyrkby, Håbo-Tibble kyrkby,0139_upplands_bro,TRUE
+4050200_mariedal_nashagen, Mariedal-Näshagen,0139_upplands_bro,TRUE
+4050500_habo_tibble_glesbygd, Håbo-Tibble glesbygd,0139_upplands_bro,TRUE
+4060000_hatuna_forsamling, Håtuna församling,0139_upplands_bro,TRUE
+4070110_sodra_kungsangen, Södra Kungsängen,0139_upplands_bro,TRUE
+4070120_norra_kungsangen, Norra Kungsängen,0139_upplands_bro,TRUE
+4070130_tibblehojden, Tibblehöjden,0139_upplands_bro,TRUE
+4070150_tibbleangen, Tibbleängen,0139_upplands_bro,TRUE
+4070160_sylta, Sylta,0139_upplands_bro,TRUE
+4070170_okand,Okänd,0139_upplands_bro,TRUE
+4070210_brunna_tatort, Brunna tätort,0139_upplands_bro,TRUE
+6410100_nykvarn, Nykvarn,0140_nykvarn,TRUE
+6410500_turinge_glesbygd, Turinge glesbygd,0140_nykvarn,TRUE
+6420000_taxinge_forsamling, Taxinge församling,0140_nykvarn,TRUE
+3910110_vastra_nasbypark, Västra Näsbypark,0160_taby,TRUE
+3910120_ornstigen, Örnstigen,0160_taby,TRUE
+3910130_nasbyparks_centrum, Näsbyparks centrum,0160_taby,TRUE
+3910140_nasby_slott, Näsby slott,0160_taby,TRUE
+3910170_ostra_nasbypark, Östra Näsbypark,0160_taby,TRUE
+3910190_lahall, Lahäll,0160_taby,TRUE
+3910210_nasbydal, Näsbydal,0160_taby,TRUE
+3910220_grindtorp, Grindtorp,0160_taby,TRUE
+3910240_taby_centrum, Täby centrum,0160_taby,TRUE
+3910270_marknadsvagen, Marknadsvägen,0160_taby,TRUE
+3910280_akerbyvagen, Åkerbyvägen,0160_taby,TRUE
+3910310_sodra_viggbyholm, Södra Viggbyholm,0160_taby,TRUE
+3910320_viggbygardet, Viggbygärdet,0160_taby,TRUE
+3910330_mellersta_viggbyholm, Mellersta Viggbyholm,0160_taby,TRUE
+3910350_norra_viggbyholm, Norra Viggbyholm,0160_taby,TRUE
+3910370_norra_hagernas, Norra Hägernäs,0160_taby,TRUE
+3910380_sodra_hagernas, Södra Hägernäs,0160_taby,TRUE
+3910480_norra_landsbygden, Norra landsbygden,0160_taby,TRUE
+3910730_ella, Ella,0160_taby,TRUE
+3910770_vastra_ensta, Västra Ensta,0160_taby,TRUE
+3910780_ostra_ensta, Östra Ensta,0160_taby,TRUE
+3910790_kullagrand, Kullagränd,0160_taby,TRUE
+3910810_norra_ellagard, Norra Ellagård,0160_taby,TRUE
+3910820_sodra_ellagard, Södra Ellagård,0160_taby,TRUE
+3910830_ava, Åva,0160_taby,TRUE
+3910840_vastra_ellagard, Västra Ellagård,0160_taby,TRUE
+3910910_skarpang, Skarpäng,0160_taby,TRUE
+3910920_gripsvall, Gripsvall,0160_taby,TRUE
+3911010_ostra_roslags_nasby, Östra Roslags-Näsby,0160_taby,TRUE
+3911020_vastra_roslags_nasby, Västra Roslags-Näsby,0160_taby,TRUE
+3911510_lansen, Lansen,0160_taby,TRUE
+3911520_sodra_gribbylund, Södra Gribbylund,0160_taby,TRUE
+3911530_gribbylunds_centrum, Gribbylunds centrum,0160_taby,TRUE
+3911540_norra_gribbylund, Norra Gribbylund,0160_taby,TRUE
+3911550_sveavagen, Sveavägen,0160_taby,TRUE
+3911610_ostra_vallabrink, Östra Vallabrink,0160_taby,TRUE
+3911620_vastra_vallabrink, Västra Vallabrink,0160_taby,TRUE
+3911660_visinge, Visinge,0160_taby,TRUE
+3911670_vallatorp, Vallatorp,0160_taby,TRUE
+3911680_erikslund, Erikslund,0160_taby,TRUE
+3911740_s_a_midgards_industriomr, S:a Midgårds industriomr,0160_taby,TRUE
+3911750_taby_kyrka, Täby Kyrka,0160_taby,TRUE
+3911760_midgard, Midgård,0160_taby,TRUE
+3911780_ostra_taby_kyrkby, Östra Täby Kyrkby,0160_taby,TRUE
+3911790_runborg, Runborg,0160_taby,TRUE
+3110110_ostra_enebyberg, Östra Enebyberg,0162_danderyd,TRUE
+3110120_vastra_enebyberg, Västra Enebyberg,0162_danderyd,TRUE
+3110260_satra, Sätra,0162_danderyd,TRUE
+3110270_nora, Nora,0162_danderyd,TRUE
+3110280_klingsta, Klingsta,0162_danderyd,TRUE
+3110330_morbyskogen, Mörbyskogen,0162_danderyd,TRUE
+3110340_kevinge, Kevinge,0162_danderyd,TRUE
+3110350_morby_centrum, Mörby Centrum,0162_danderyd,TRUE
+3110370_morbylund, Mörbylund,0162_danderyd,TRUE
+3110430_norra_djursholm, Norra Djursholm,0162_danderyd,TRUE
+3110440_sodra_djursholm, Södra Djursholm,0162_danderyd,TRUE
+3110450_osby, Ösby,0162_danderyd,TRUE
+3110460_ekeby, Ekeby,0162_danderyd,TRUE
+3110510_norra_stocksund, Norra Stocksund,0162_danderyd,TRUE
+3110530_inverness, Inverness,0162_danderyd,TRUE
+3110540_sodra_stocksund, Södra Stocksund,0162_danderyd,TRUE
+3110610_klockargarden, Klockargården,0162_danderyd,TRUE
+3110620_berga, Berga,0162_danderyd,TRUE
+3610120_gillberga, Gillberga,0163_sollentuna,TRUE
+3610140_rotsunda, Rotsunda,0163_sollentuna,TRUE
+3610170_rotebro_centrum, Rotebro centrum,0163_sollentuna,TRUE
+3610180_rotsunda_gard, Rotsunda gård,0163_sollentuna,TRUE
+3610210_vastra_viby, Västra Viby,0163_sollentuna,TRUE
+3610230_ostra_viby, Östra Viby,0163_sollentuna,TRUE
+3610310_vastra_norrviken, Västra Norrviken,0163_sollentuna,TRUE
+3610330_ostra_norrviken, Östra Norrviken,0163_sollentuna,TRUE
+3610400_vaxmora, Vaxmora,0163_sollentuna,TRUE
+3610510_klasro, Klasro,0163_sollentuna,TRUE
+3610530_haggviks_centrum, Häggviks centrum,0163_sollentuna,TRUE
+3610540_skalby, Skälby,0163_sollentuna,TRUE
+3610610_edsbergs_centrum, Edsbergs centrum,0163_sollentuna,TRUE
+3610650_ovriga_edsberg, Övriga Edsberg,0163_sollentuna,TRUE
+3610660_landsnora, Landsnora,0163_sollentuna,TRUE
+3610670_vasjoomradet, Väsjöområdet,0163_sollentuna,TRUE
+3610680_kvarnskogen, Kvarnskogen,0163_sollentuna,TRUE
+3610730_turebergs_industriomr, Turebergs industriomr,0163_sollentuna,TRUE
+3610750_fagelsangen, Fågelsången,0163_sollentuna,TRUE
+3610760_tojnan, Töjnan,0163_sollentuna,TRUE
+3610770_nytorp, Nytorp,0163_sollentuna,TRUE
+3610780_skansen, Skansen,0163_sollentuna,TRUE
+3610810_falkberget, Falkberget,0163_sollentuna,TRUE
+3610830_sjoberg, Sjöberg,0163_sollentuna,TRUE
+3610920_ostra_helenelund, Östra Helenelund,0163_sollentuna,TRUE
+3610931_tegelhagen, Tegelhagen,0163_sollentuna,TRUE
+3610940_helenelunds_centrum, Helenelunds centrum,0163_sollentuna,TRUE
+3610951_vastra_helenelund, Västra Helenelund,0163_sollentuna,TRUE
+3612710_bagarby, Bagarby,0163_sollentuna,TRUE
+1010120_skeppsbron, Skeppsbron,0180_stockholm,TRUE
+1010130_munkbron, Munkbron,0180_stockholm,TRUE
+1010140_stortorget, Stortorget,0180_stockholm,TRUE
+1010201_centralstationen_n, Centralstationen N,0180_stockholm,TRUE
+1010220_klara_kyrka, Klara Kyrka,0180_stockholm,TRUE
+1010230_centralposten, Centralposten,0180_stockholm,TRUE
+1010240_oscarsteatern, Oscarsteatern,0180_stockholm,TRUE
+1010250_brunkeberg, Brunkeberg,0180_stockholm,TRUE
+1010290_oxtorget, Oxtorget,0180_stockholm,TRUE
+1010310_norrlandsgatan, Norrlandsgatan,0180_stockholm,TRUE
+1110111_brunnsgatan_n, Brunnsgatan N,0180_stockholm,TRUE
+1110112_brunnsgatan_s, Brunnsgatan S,0180_stockholm,TRUE
+1110120_johannes_kyrka, Johannes Kyrka,0180_stockholm,TRUE
+1110210_wenner_gren_center, Wenner Gren Center,0180_stockholm,TRUE
+1110220_vanadislunden, Vanadislunden,0180_stockholm,TRUE
+1110230_surbrunnsomradet, Surbrunnsområdet,0180_stockholm,TRUE
+1110240_norra_real, Norra Real,0180_stockholm,TRUE
+1110250_elverket, Elverket,0180_stockholm,TRUE
+1120110_tegnerlunden, Tegnerlunden,0180_stockholm,TRUE
+1120120_tandlakarhogskolan, Tandläkarhögskolan,0180_stockholm,TRUE
+1120131_norra_bantorget_o, Norra Bantorget Ö,0180_stockholm,TRUE
+1120140_adolf_fredriks_kyrka, Adolf Fredriks Kyrka,0180_stockholm,TRUE
+1120150_skandiahuset, Skandiahuset,0180_stockholm,TRUE
+1120210_kungsstenen, Kungsstenen,0180_stockholm,TRUE
+1120220_saltmatargatan, Saltmätargatan,0180_stockholm,TRUE
+1120230_sjokatten, Sjökatten,0180_stockholm,TRUE
+1130110_atlasomradet, Atlasområdet,0180_stockholm,TRUE
+1130120_gustav_vasa_kyrka, Gustav Vasa Kyrka,0180_stockholm,TRUE
+1130130_observatoriegatan, Observatoriegatan,0180_stockholm,TRUE
+1130140_sabbatsberg, Sabbatsberg,0180_stockholm,TRUE
+1130150_polstjarnan, Polstjärnan,0180_stockholm,TRUE
+1130170_betlehemskyrkan, Betlehemskyrkan,0180_stockholm,TRUE
+1140110_norrtull, Norrtull,0180_stockholm,TRUE
+1140120_tre_liljor, Tre Liljor,0180_stockholm,TRUE
+1140130_matteus_kyrka, Matteus Kyrka,0180_stockholm,TRUE
+1140140_halsingehojden, Hälsingehöjden,0180_stockholm,TRUE
+1140150_centralgaraget, Centralgaraget,0180_stockholm,TRUE
+1140210_okand,Okänd,0180_stockholm,TRUE
+1140220_birkagarden, Birkagården,0180_stockholm,TRUE
+1140230_rorstrand, Rörstrand,0180_stockholm,TRUE
+1140240_rodaberget, Rödaberget,0180_stockholm,TRUE
+1140250_s_t_eriksplan, S:t Eriksplan,0180_stockholm,TRUE
+1210110_roslagstull, Roslagstull,0180_stockholm,TRUE
+1210120_larkstaden, Lärkstaden,0180_stockholm,TRUE
+1210131_danderydsplan_v, Danderydsplan V,0180_stockholm,TRUE
+1210132_danderydsplan_o, Danderydsplan Ö,0180_stockholm,TRUE
+1210140_eriksberg, Eriksberg,0180_stockholm,TRUE
+1210151_stureplan_o, Stureplan Ö,0180_stockholm,TRUE
+1210161_humlegarden_o, Humlegården Ö,0180_stockholm,TRUE
+1210171_stureparken_o, Stureparken Ö,0180_stockholm,TRUE
+1210172_stureparken_v, Stureparken V,0180_stockholm,TRUE
+1210210_roslagstulls_sjukhus, Roslagstulls Sjukhus,0180_stockholm,TRUE
+1210220_ostra_station, Östra Station,0180_stockholm,TRUE
+1210320_ekhagen, Ekhagen,0180_stockholm,TRUE
+1210330_frescati, Frescati,0180_stockholm,TRUE
+1210410_centrala_hjorthagen, Centrala Hjorthagen,0180_stockholm,TRUE
+1220110_ostermalmshallen, Östermalmshallen,0180_stockholm,TRUE
+1220120_dramatiska_teatern, Dramatiska Teatern,0180_stockholm,TRUE
+1220130_ostermalmstorg, Östermalmstorg,0180_stockholm,TRUE
+1220140_skvalberget, Skvalberget,0180_stockholm,TRUE
+1220150_tyskbagaromradet, Tyskbagarområdet,0180_stockholm,TRUE
+1220160_hedvig_eleonora_kyrka, Hedvig Eleonora Kyrka,0180_stockholm,TRUE
+1220170_kronkvarnen, Kronkvarnen,0180_stockholm,TRUE
+1230110_karlaplan, Karlaplan,0180_stockholm,TRUE
+1230120_historiska_museet, Historiska Muséet,0180_stockholm,TRUE
+1230130_strandvagen, Strandvägen,0180_stockholm,TRUE
+1230140_oscarskyrkan, Oscarskyrkan,0180_stockholm,TRUE
+1230161_gustav_adolfskyrkan_v, Gustav Adolfskyrkan V,0180_stockholm,TRUE
+1230162_gustav_adolfskyrkan_o, Gustav Adolfskyrkan Ö,0180_stockholm,TRUE
+1230210_djurgardsstaden, Djurgårdsstaden,0180_stockholm,TRUE
+1230220_sodra_djurgarden, Södra Djurgården,0180_stockholm,TRUE
+1230300_hastgardet, Hästgardet,0180_stockholm,TRUE
+1230310_olaus_petri_kyrka, Olaus Petri Kyrka,0180_stockholm,TRUE
+1230320_tessinparken, Tessinparken,0180_stockholm,TRUE
+1230330_smedsbacken, Smedsbacken,0180_stockholm,TRUE
+1230350_kampementsbacken, Kampementsbacken,0180_stockholm,TRUE
+1230360_oregrundsgatan, Öregrundsgatan,0180_stockholm,TRUE
+1230390_ladugardsgardet, Ladugårdsgärdet,0180_stockholm,TRUE
+1310100_stadshuset, Stadshuset,0180_stockholm,TRUE
+1310110_eira, Eira,0180_stockholm,TRUE
+1310120_kungsklippan, Kungsklippan,0180_stockholm,TRUE
+1310130_kungsbroplan, Kungsbroplan,0180_stockholm,TRUE
+1310140_tekniska_namndhuset, Tekniska Nämndhuset,0180_stockholm,TRUE
+1310150_landstingshuset, Landstingshuset,0180_stockholm,TRUE
+1310160_pontonjarparken, Pontonjärparken,0180_stockholm,TRUE
+1310170_s_t_eriks_sjukhus, S:t Eriks Sjukhus,0180_stockholm,TRUE
+1310180_wargentinsgatan, Wargentinsgatan,0180_stockholm,TRUE
+1310190_kronoberg, Kronoberg,0180_stockholm,TRUE
+1320110_karlsvik, Karlsvik,0180_stockholm,TRUE
+1320120_hemmet, Hemmet,0180_stockholm,TRUE
+1320130_fridhemsplan, Fridhemsplan,0180_stockholm,TRUE
+1320140_s_t_eriksgatan, S:t Eriksgatan,0180_stockholm,TRUE
+1320150_alstromergatan, Alströmergatan,0180_stockholm,TRUE
+1320210_ralambshov, Rålambshov,0180_stockholm,TRUE
+1320220_svedbergsplan, Svedbergsplan,0180_stockholm,TRUE
+1320240_mariebergsparken, Mariebergsparken,0180_stockholm,TRUE
+1320310_ostra_stadshagen, Östra Stadshagen,0180_stockholm,TRUE
+1320410_vastra_kristineberg, Västra Kristineberg,0180_stockholm,TRUE
+1320420_thorildsplan, Thorildsplan,0180_stockholm,TRUE
+1320500_fredhall, Fredhäll,0180_stockholm,TRUE
+1330100_lilla_essingen, Lilla Essingen,0180_stockholm,TRUE
+1330200_stora_essingen, Stora Essingen,0180_stockholm,TRUE
+1410110_mariaberget, Mariaberget,0180_stockholm,TRUE
+1410120_maria_kyrka, Maria Kyrka,0180_stockholm,TRUE
+1410130_swedenborgsgatan, Swedenborgsgatan,0180_stockholm,TRUE
+1410140_gullfjardsplan, Gullfjärdsplan,0180_stockholm,TRUE
+1410150_bergsgruvan, Bergsgruvan,0180_stockholm,TRUE
+1410210_sodra_station_vast, Södra Station Väst,0180_stockholm,TRUE
+1410220_sodra_station_ost, Södra Station Öst,0180_stockholm,TRUE
+1420110_hogalidskyrkan, Högalidskyrkan,0180_stockholm,TRUE
+1420120_skinnarviksringen, Skinnarviksringen,0180_stockholm,TRUE
+1420130_ludvigsberg, Ludvigsberg,0180_stockholm,TRUE
+1420140_bergsund, Bergsund,0180_stockholm,TRUE
+1420210_hornstull, Hornstull,0180_stockholm,TRUE
+1420220_bysistappan, Bysistäppan,0180_stockholm,TRUE
+1420230_sodra_namndhuset, Södra Nämndhuset,0180_stockholm,TRUE
+1420240_zinkensdamm, Zinkensdamm,0180_stockholm,TRUE
+1420310_sodersjukhuset, Södersjukhuset,0180_stockholm,TRUE
+1420320_tanto, Tanto,0180_stockholm,TRUE
+1420330_skoldgatan_syd, Sköldgatan Syd,0180_stockholm,TRUE
+1420360_skoldgatan_nord, Sköldgatan Nord,0180_stockholm,TRUE
+1420410_langholmen, Långholmen,0180_stockholm,TRUE
+1420420_reimersholme, Reimersholme,0180_stockholm,TRUE
+1430120_vastra_aso, Västra Åsö,0180_stockholm,TRUE
+1430130_blekingetappan, Blekingetäppan,0180_stockholm,TRUE
+1430140_helgalunden, Helgalunden,0180_stockholm,TRUE
+1430150_eriksdal, Eriksdal,0180_stockholm,TRUE
+1430160_asotorget, Åsötorget,0180_stockholm,TRUE
+1430180_rosenlund, Rosenlund,0180_stockholm,TRUE
+1430210_mosebacke, Mosebacke,0180_stockholm,TRUE
+1430220_ostra_aso, Östra Åsö,0180_stockholm,TRUE
+1430230_katarina_kyrka, Katarina Kyrka,0180_stockholm,TRUE
+1430240_bjurholmsplan, Bjurholmsplan,0180_stockholm,TRUE
+1430250_nytorget, Nytorget,0180_stockholm,TRUE
+1440110_ersta, Ersta,0180_stockholm,TRUE
+1440120_sofia_kyrka, Sofia Kyrka,0180_stockholm,TRUE
+1440210_tullgarden, Tullgården,0180_stockholm,TRUE
+1440220_vita_bergen, Vita Bergen,0180_stockholm,TRUE
+1440230_blecktornet, Blecktornet,0180_stockholm,TRUE
+1440240_vintertullen, Vintertullen,0180_stockholm,TRUE
+1440250_barnangen, Barnängen,0180_stockholm,TRUE
+1440260_mjardgrand, Mjärdgränd,0180_stockholm,TRUE
+1440311_danviken_n, Danviken N,0180_stockholm,TRUE
+1440312_danviken_s, Danviken S,0180_stockholm,TRUE
+2110120_sankt_sigfrid, Sankt Sigfrid,0180_stockholm,TRUE
+2110130_ornsberg_nord_ost, Örnsberg Nord-Öst,0180_stockholm,TRUE
+2110140_vinterviken, Vinterviken,0180_stockholm,TRUE
+2110150_ornsberg_syd_ost, Örnsberg Syd-Öst,0180_stockholm,TRUE
+2110220_ostra_grondal, Östra Gröndal,0180_stockholm,TRUE
+2110230_ekensberg, Ekensberg,0180_stockholm,TRUE
+2110310_axelbergs_torg, Axelbergs Torg,0180_stockholm,TRUE
+2110320_klubbacken, Klubbacken,0180_stockholm,TRUE
+2110330_axelsberg_syd_ost, Axelsberg Syd-Öst,0180_stockholm,TRUE
+2110340_stensborg, Stensborg,0180_stockholm,TRUE
+2110350_sankt_mickelsgatan, Sankt Mickelsgatan,0180_stockholm,TRUE
+2110370_ornsberg_syd_vast, Örnsberg Syd-Väst,0180_stockholm,TRUE
+2110380_hagerstenshamnen, Hägerstenshamnen,0180_stockholm,TRUE
+2110390_axelsberg_nord, Axelsberg Nord,0180_stockholm,TRUE
+2110520_norra_hagerstensasen, Norra Hägerstensåsen,0180_stockholm,TRUE
+2110530_sodra_hagerstensasen, Södra Hägerstensåsen,0180_stockholm,TRUE
+2110620_nybohov, Nybohov,0180_stockholm,TRUE
+2110650_liljeholmsberget, Liljeholmsberget,0180_stockholm,TRUE
+2110660_lovholmen, Lövholmen,0180_stockholm,TRUE
+2110681_nyboda_o, Nyboda Ö,0180_stockholm,TRUE
+2110720_svandammen, Svandammen,0180_stockholm,TRUE
+2110730_fastlagsvagen, Fastlagsvägen,0180_stockholm,TRUE
+2110740_telefonplan, Telefonplan,0180_stockholm,TRUE
+2110810_norra_malarhojden, Norra Mälarhöjden,0180_stockholm,TRUE
+2110820_gulddragaren, Gulddragaren,0180_stockholm,TRUE
+2110920_karusellvagen, Karusellvägen,0180_stockholm,TRUE
+2110930_korpmossen, Korpmossen,0180_stockholm,TRUE
+2110940_hokmossen, Hökmossen,0180_stockholm,TRUE
+2120100_fruangen, Fruängen,0180_stockholm,TRUE
+2120201_herrangen_v, Herrängen V,0180_stockholm,TRUE
+2120202_herrangen_o, Herrängen Ö,0180_stockholm,TRUE
+2120300_liseberg, Liseberg,0180_stockholm,TRUE
+2120401_langbro_v, Långbro V,0180_stockholm,TRUE
+2120402_langbro_o, Långbro Ö,0180_stockholm,TRUE
+2120500_langsjo, Långsjö,0180_stockholm,TRUE
+2120620_norra_solberga, Norra Solberga,0180_stockholm,TRUE
+2120630_vastra_solberga, Västra Solberga,0180_stockholm,TRUE
+2120660_sodra_solberga, Södra Solberga,0180_stockholm,TRUE
+2120700_vastertorp, Västertorp,0180_stockholm,TRUE
+2120820_vastra_alvsjo, Västra Älvsjö,0180_stockholm,TRUE
+2120900_orby_slott, Örby Slott,0180_stockholm,TRUE
+2121020_okand,Okänd,0180_stockholm,TRUE
+2130100_bandhagen, Bandhagen,0180_stockholm,TRUE
+2130210_hogdalens_centrum, Högdalens Centrum,0180_stockholm,TRUE
+2130220_ostra_hogdalen, Östra Högdalen,0180_stockholm,TRUE
+2130230_vastra_hogdalen, Västra Högdalen,0180_stockholm,TRUE
+2130240_skebokvarnsvagen, Skebokvarnsvägen,0180_stockholm,TRUE
+2130320_ragsveds_torg, Rågsveds Torg,0180_stockholm,TRUE
+2130330_bjursatra, Bjursätra,0180_stockholm,TRUE
+2130340_snosatra, Snösätra,0180_stockholm,TRUE
+2130420_backaskiftsvagen, Bäckaskiftsvägen,0180_stockholm,TRUE
+2130430_ostra_stureby, Östra Stureby,0180_stockholm,TRUE
+2130440_vastra_stureby, Västra Stureby,0180_stockholm,TRUE
+2130501_orby_n, Örby N,0180_stockholm,TRUE
+2130502_orby_s, Örby S,0180_stockholm,TRUE
+2130620_hagsatra_torg, Hagsätra Torg,0180_stockholm,TRUE
+2130630_ormkarr, Ormkärr,0180_stockholm,TRUE
+2140120_ostra_enskedefaltet, Östra Enskedefältet,0180_stockholm,TRUE
+2140210_vastra_enskede_gard, Västra Enskede Gård,0180_stockholm,TRUE
+2140220_tradskolan, Trädskolan,0180_stockholm,TRUE
+2140320_enskede_kyrka, Enskede Kyrka,0180_stockholm,TRUE
+2140330_svampvagen, Svampvägen,0180_stockholm,TRUE
+2140340_sandsborg, Sandsborg,0180_stockholm,TRUE
+2140350_dalen, Dalen,0180_stockholm,TRUE
+2140620_gullmarsplan, Gullmarsplan,0180_stockholm,TRUE
+2140630_skarmarbrink, Skärmarbrink,0180_stockholm,TRUE
+2140820_skanskvarn, Skanskvarn,0180_stockholm,TRUE
+2140830_arsta_centrum, Årsta Centrum,0180_stockholm,TRUE
+2140840_arsta_gard, Årsta Gård,0180_stockholm,TRUE
+2140850_valla_garde, Valla Gärde,0180_stockholm,TRUE
+2150100_bjorkhagen, Björkhagen,0180_stockholm,TRUE
+2150200_enskededalen, Enskededalen,0180_stockholm,TRUE
+2150400_okand,Okänd,0180_stockholm,TRUE
+2150500_karrtorp, Kärrtorp,0180_stockholm,TRUE
+2150720_pungpinan, Pungpinan,0180_stockholm,TRUE
+2150731_skarpnacksfaltet_o, Skarpnäcksfältet Ö,0180_stockholm,TRUE
+2150732_skarpnacksfaltet_v, Skarpnäcksfältet V,0180_stockholm,TRUE
+2150740_skarpa_by, Skarpa By,0180_stockholm,TRUE
+2150820_lagaplan, Lagaplan,0180_stockholm,TRUE
+2150830_sodra_bagarmossen, Södra Bagarmossen,0180_stockholm,TRUE
+2150840_norra_bagarmossen, Norra Bagarmossen,0180_stockholm,TRUE
+2160120_havsornstorget, Havsörnstorget,0180_stockholm,TRUE
+2160130_fagersjovagen, Fagersjövägen,0180_stockholm,TRUE
+2160220_sodra_farsta, Södra Farsta,0180_stockholm,TRUE
+2160230_vastra_farsta, Västra Farsta,0180_stockholm,TRUE
+2160240_ostra_farsta, Östra Farsta,0180_stockholm,TRUE
+2160260_norra_farsta, Norra Farsta,0180_stockholm,TRUE
+2160320_ullerudsbacken, Ullerudsbacken,0180_stockholm,TRUE
+2160330_farsta_gard, Farsta Gård,0180_stockholm,TRUE
+2160520_gubbangstorget, Gubbängstorget,0180_stockholm,TRUE
+2160530_gubbangens_gard, Gubbängens Gård,0180_stockholm,TRUE
+2160620_vastra_hokarangen, Västra Hökarängen,0180_stockholm,TRUE
+2160630_sondagsvagen, Söndagsvägen,0180_stockholm,TRUE
+2160640_lingvagen, Lingvägen,0180_stockholm,TRUE
+2160720_vastra_larsboda, Västra Larsboda,0180_stockholm,TRUE
+2160760_ostra_larsboda, Östra Larsboda,0180_stockholm,TRUE
+2160820_bagarfruvagen, Bagarfruvägen,0180_stockholm,TRUE
+2160830_vastra_skondal, Västra Sköndal,0180_stockholm,TRUE
+2160840_norra_skondal, Norra Sköndal,0180_stockholm,TRUE
+2160850_stora_skondal, Stora Sköndal,0180_stockholm,TRUE
+2160920_sodra_svedmyra, Södra Svedmyra,0180_stockholm,TRUE
+2160930_norra_svedmyra, Norra Svedmyra,0180_stockholm,TRUE
+2161020_norra_tallkrogen, Norra Tallkrogen,0180_stockholm,TRUE
+2161030_sodra_tallkrogen, Södra Tallkrogen,0180_stockholm,TRUE
+2170120_bredangs_alle, Bredängs Allé,0180_stockholm,TRUE
+2170130_yttre_bredang, Yttre Bredäng,0180_stockholm,TRUE
+2170220_satra_torg, Sätra Torg,0180_stockholm,TRUE
+2170230_norra_satra, Norra Sätra,0180_stockholm,TRUE
+2170310_skarholmens_centrum, Skärholmens Centrum,0180_stockholm,TRUE
+2170321_skarholmens_gard, Skärholmens Gård,0180_stockholm,TRUE
+2170322_mellersta_skarholmen, Mellersta Skärholmen,0180_stockholm,TRUE
+2170330_sodra_skarholmen, Södra Skärholmen,0180_stockholm,TRUE
+2170420_ostra_varberg, Östra Vårberg,0180_stockholm,TRUE
+2170430_vastra_varberg, Västra Vårberg,0180_stockholm,TRUE
+2210120_norra_abrahamsberg, Norra Abrahamsberg,0180_stockholm,TRUE
+2210130_sodra_abrahamsberg, Södra Abrahamsberg,0180_stockholm,TRUE
+2210200_beckomberga, Beckomberga,0180_stockholm,TRUE
+2210300_blackeberg, Blackeberg,0180_stockholm,TRUE
+2210400_bromma_kyrka, Bromma Kyrka,0180_stockholm,TRUE
+2210500_ballsta, Bällsta,0180_stockholm,TRUE
+2210600_eneby, Eneby,0180_stockholm,TRUE
+2210700_mariehall, Mariehäll,0180_stockholm,TRUE
+2210830_runstensplan, Runstensplan,0180_stockholm,TRUE
+2210840_angbylunden, Ängbylunden,0180_stockholm,TRUE
+2210850_attehagen, Ättehagen,0180_stockholm,TRUE
+2210860_akeshovsbadet, Åkeshovsbadet,0180_stockholm,TRUE
+2210920_sodra_riksby, Södra Riksby,0180_stockholm,TRUE
+2211121_farjestadsvagen_v, Färjestadsvägen V,0180_stockholm,TRUE
+2211130_angbyhojden, Ängbyhöjden,0180_stockholm,TRUE
+2211220_johannesfred, Johannesfred,0180_stockholm,TRUE
+2211300_akeshov, Åkeshov,0180_stockholm,TRUE
+2211420_ostra_akeslund, Östra Åkeslund,0180_stockholm,TRUE
+2211460_vastra_akeslund, Västra Åkeslund,0180_stockholm,TRUE
+2220100_alvik, Alvik,0180_stockholm,TRUE
+2220200_hoglandet, Höglandet,0180_stockholm,TRUE
+2220300_nockeby, Nockeby,0180_stockholm,TRUE
+2220400_nockebyhov, Nockebyhov,0180_stockholm,TRUE
+2220500_olovslund, Olovslund,0180_stockholm,TRUE
+2220600_smedslatten, Smedslätten,0180_stockholm,TRUE
+2220700_stora_mossen, Stora Mossen,0180_stockholm,TRUE
+2220820_sodra_traneberg, Södra Traneberg,0180_stockholm,TRUE
+2220830_norra_traneberg, Norra Traneberg,0180_stockholm,TRUE
+2220840_minneberg, Minneberg,0180_stockholm,TRUE
+2220900_ulvsunda, Ulvsunda,0180_stockholm,TRUE
+2221000_alsten, Ålsten,0180_stockholm,TRUE
+2221100_appelviken, Äppelviken,0180_stockholm,TRUE
+2230100_grimsta, Grimsta,0180_stockholm,TRUE
+2230200_kalvesta, Kälvesta,0180_stockholm,TRUE
+2230300_nalsta, Nälsta,0180_stockholm,TRUE
+2230420_vastra_racksta, Västra Råcksta,0180_stockholm,TRUE
+2230430_ostra_racksta, Östra Råcksta,0180_stockholm,TRUE
+2230440_racksta_sjukhus, Råcksta sjukhus,0180_stockholm,TRUE
+2230520_norra_vinsta, Norra Vinsta,0180_stockholm,TRUE
+2230560_sodra_vinsta, Södra Vinsta,0180_stockholm,TRUE
+2230610_vallingby_centrum, Vällingby Centrum,0180_stockholm,TRUE
+2230620_sodra_vallingby, Södra Vällingby,0180_stockholm,TRUE
+2230630_norra_vallingby, Norra Vällingby,0180_stockholm,TRUE
+2240121_sodra_bromsten_n, Södra Bromsten N,0180_stockholm,TRUE
+2240122_sodra_bromsten_s, Södra Bromsten S,0180_stockholm,TRUE
+2240130_norra_bromsten, Norra Bromsten,0180_stockholm,TRUE
+2240200_flysta, Flysta,0180_stockholm,TRUE
+2240520_okand,Okänd,0180_stockholm,TRUE
+2240530_okand,Okänd,0180_stockholm,TRUE
+2240621_solhojden, Solhöjden,0180_stockholm,TRUE
+2240622_spanga_torg, Spånga Torg,0180_stockholm,TRUE
+2240631_solhems_villastad_vast, Solhems Villastad Väst,0180_stockholm,TRUE
+2240632_spanga_gymnasium, Spånga Gymnasium,0180_stockholm,TRUE
+2240640_solhems_villastad_nord, Solhems Villastad Nord,0180_stockholm,TRUE
+2240650_logvagen_erland, Logvägen (Erland),0180_stockholm,TRUE
+2240700_sundby, Sundby,0180_stockholm,TRUE
+2240820_okand,Okänd,0180_stockholm,TRUE
+2240830_okand,Okänd,0180_stockholm,TRUE
+2240840_hjulsta, Hjulsta,0180_stockholm,TRUE
+2250120_hasselby_torg, Hässelby Torg,0180_stockholm,TRUE
+2250130_vastra_hasselby_gard, Västra Hässelby Gård,0180_stockholm,TRUE
+2250140_sodra_hasselby_gard, Södra Hässelby Gård,0180_stockholm,TRUE
+2250200_hasselby_strand, Hässelby Strand,0180_stockholm,TRUE
+2250310_backlura, Backlura,0180_stockholm,TRUE
+2250320_trollboda, Trollboda,0180_stockholm,TRUE
+2250332_hasselby_villastrand, Hässelby Villastrand,0180_stockholm,TRUE
+2250340_hasselby_kyrka, Hässelby Kyrka,0180_stockholm,TRUE
+2250350_akermyntan, Åkermyntan,0180_stockholm,TRUE
+2250370_radisvagen, Rädisvägen,0180_stockholm,TRUE
+2250380_smedshagen, Smedshagen,0180_stockholm,TRUE
+2260120_okand,Okänd,0180_stockholm,TRUE
+2260130_okand,Okänd,0180_stockholm,TRUE
+2260220_okand,Okänd,0180_stockholm,TRUE
+2260230_okand,Okänd,0180_stockholm,TRUE
+2260310_okand,Okänd,0180_stockholm,TRUE
+2260320_okand,Okänd,0180_stockholm,TRUE
+2260330_okand,Okänd,0180_stockholm,TRUE
+6310110_ostra_centrum, Östra centrum,0181_sodertalje,TRUE
+6310120_vastra_centrum, Västra centrum,0181_sodertalje,TRUE
+6310130_kvarnberga, Kvarnberga,0181_sodertalje,TRUE
+6310170_vardsholmen, Värdsholmen,0181_sodertalje,TRUE
+6310320_blombacka, Blombacka,0181_sodertalje,TRUE
+6310330_mariekalla, Mariekälla,0181_sodertalje,TRUE
+6310340_saltskog, Saltskog,0181_sodertalje,TRUE
+6310351_sodra_vastergard, Södra Västergård,0181_sodertalje,TRUE
+6310352_norra_vastergard, Norra Västergård,0181_sodertalje,TRUE
+6310353_vastra_vastergard, Västra Västergård,0181_sodertalje,TRUE
+6310360_barstafaltet, Bårstafältet,0181_sodertalje,TRUE
+6310370_barstabergen, Bårstabergen,0181_sodertalje,TRUE
+6310422_stationsomradet_sodra, Stationsområdet Södra,0181_sodertalje,TRUE
+6320510_vastra_grusasen, Västra Grusåsen,0181_sodertalje,TRUE
+6320520_ostra_grusasen, Östra Grusåsen,0181_sodertalje,TRUE
+6320541_sodra_brunnsang, Södra Brunnsäng,0181_sodertalje,TRUE
+6320542_norra_brunnsang, Norra Brunnsäng,0181_sodertalje,TRUE
+6320550_ragnhildsborg, Ragnhildsborg,0181_sodertalje,TRUE
+6320611_kusens_backe, Kusens backe,0181_sodertalje,TRUE
+6320612_sjukhuset, Sjukhuset,0181_sodertalje,TRUE
+6320621_ostra_rosenlund, Östra Rosenlund,0181_sodertalje,TRUE
+6320622_rosenborg, Rosenborg,0181_sodertalje,TRUE
+6320940_viksberg, Viksberg,0181_sodertalje,TRUE
+6321710_igelsta, Igelsta,0181_sodertalje,TRUE
+6321720_ostertalje, Östertälje,0181_sodertalje,TRUE
+6321740_fornhojden, Fornhöjden,0181_sodertalje,TRUE
+6330210_karlhov, Karlhov,0181_sodertalje,TRUE
+6330220_sodra_ronna, Södra Ronna,0181_sodertalje,TRUE
+6330230_norra_ronna, Norra Ronna,0181_sodertalje,TRUE
+6330240_vastra_ronna, Västra Ronna,0181_sodertalje,TRUE
+6330250_lina_hage, Lina Hage,0181_sodertalje,TRUE
+6330260_lina, Lina,0181_sodertalje,TRUE
+6330380_norra_geneta, Norra Geneta,0181_sodertalje,TRUE
+6330391_vastra_geneta, Västra Geneta,0181_sodertalje,TRUE
+6330392_ostra_geneta, Östra Geneta,0181_sodertalje,TRUE
+6341410_pershagen, Pershagen,0181_sodertalje,TRUE
+6341430_tveta_glesbygd, Tveta glesbygd,0181_sodertalje,TRUE
+6341451_hovsjo, Hovsjö,0181_sodertalje,TRUE
+6351200_enhorna_glesbygd, Enhörna glesbygd,0181_sodertalje,TRUE
+6351210_ekeby, Ekeby,0181_sodertalje,TRUE
+6381100_molnbo, Mölnbo,0181_sodertalje,TRUE
+6381500_vardinge_glesbygd, Vårdinge glesbygd,0181_sodertalje,TRUE
+6382100_jarna, Järna,0181_sodertalje,TRUE
+6382500_overjarna_glesbygd, Överjärna glesbygd,0181_sodertalje,TRUE
+6383000_ytterjarna_forsamling, Ytterjärna församling,0181_sodertalje,TRUE
+6391100_holo, Hölö,0181_sodertalje,TRUE
+6391500_holo_glesbygd, Hölö glesbygd,0181_sodertalje,TRUE
+6392000_morko_forsamling, Mörkö församling,0181_sodertalje,TRUE
+5411010_henriksdal, Henriksdal,0182_nacka,TRUE
+5411020_finnberget, Finnberget,0182_nacka,TRUE
+5411030_kvarnholmen, Kvarnholmen,0182_nacka,TRUE
+5411040_danviken, Danviken,0182_nacka,TRUE
+5411100_alphyddan, Alphyddan,0182_nacka,TRUE
+5411110_finntorp, Finntorp,0182_nacka,TRUE
+5411130_ekudden, Ekudden,0182_nacka,TRUE
+5411140_jarla_industriomr, Järla industriomr,0182_nacka,TRUE
+5411200_sickla_industriomr, Sickla industriomr,0182_nacka,TRUE
+5411210_tallbacken, Tallbacken,0182_nacka,TRUE
+5411220_nysatra, Nysätra,0182_nacka,TRUE
+5411320_jarlaberg, Jarlaberg,0182_nacka,TRUE
+5411330_vikdalen, Vikdalen,0182_nacka,TRUE
+5411340_nacka_strand, Nacka Strand,0182_nacka,TRUE
+5411410_nacka_centrum, Nacka Centrum,0182_nacka,TRUE
+5411500_storangen, Storängen,0182_nacka,TRUE
+5411600_duvnas_utskog, Duvnäs utskog,0182_nacka,TRUE
+5411610_skuru, Skuru,0182_nacka,TRUE
+5411700_skogalund, Skogalund,0182_nacka,TRUE
+5411710_vastra_ektorp, Västra Ektorp,0182_nacka,TRUE
+5411720_ostra_ektorp, Östra Ektorp,0182_nacka,TRUE
+5411740_saltangen, Saltängen,0182_nacka,TRUE
+5411800_duvnas, Duvnäs,0182_nacka,TRUE
+5411900_hasthagen, Hästhagen,0182_nacka,TRUE
+5413001_fisksatra_sm, Fisksätra sm,0182_nacka,TRUE
+5413002_fisksatra_fh, Fisksätra fh,0182_nacka,TRUE
+5414001_erstavik, Erstavik,0182_nacka,TRUE
+5414100_kolarangen, Kolarängen,0182_nacka,TRUE
+5414200_alta_gard, Älta gård,0182_nacka,TRUE
+5414300_stenso, Stensö,0182_nacka,TRUE
+5414310_hedvigslund, Hedvigslund,0182_nacka,TRUE
+5423100_igelboda, Igelboda,0182_nacka,TRUE
+5423201_solsidan_norr, Solsidan norr,0182_nacka,TRUE
+5423202_saltsjobaden_centrum, Saltsjöbaden centrum,0182_nacka,TRUE
+5423230_tattby, Tattby,0182_nacka,TRUE
+5423300_neglingeon, Neglingeön,0182_nacka,TRUE
+5423400_solsidan, Solsidan,0182_nacka,TRUE
+5423500_algo, Älgö,0182_nacka,TRUE
+5432000_norra_bjorknas, Norra Björknäs,0182_nacka,TRUE
+5432020_sodra_bjorknas, Södra Björknäs,0182_nacka,TRUE
+5432030_klinten, Klinten,0182_nacka,TRUE
+5432100_eknas, Eknäs,0182_nacka,TRUE
+5432200_vastra_kummelnas, Västra Kummelnäs,0182_nacka,TRUE
+5432220_ostra_kummelnas, Östra Kummelnäs,0182_nacka,TRUE
+5432300_kil, Kil,0182_nacka,TRUE
+5432400_krokhojden, Krokhöjden,0182_nacka,TRUE
+5432410_orminge, Orminge,0182_nacka,TRUE
+5432500_mensattra, Mensättra,0182_nacka,TRUE
+5432600_kallvagen, Källvägen,0182_nacka,TRUE
+5432610_eriksvik, Eriksvik,0182_nacka,TRUE
+5432700_norra_lannersta, Norra Lännersta,0182_nacka,TRUE
+5432710_sodra_lannersta, Södra Lännersta,0182_nacka,TRUE
+5432810_boo_gard, Boo gård,0182_nacka,TRUE
+5432900_gustavsvik, Gustavsvik,0182_nacka,TRUE
+3810100_lilla_alby, Lilla Alby,0183_sundbyberg,TRUE
+3810110_sundbybergs_industriomr, Sundbybergs industriomr,0183_sundbyberg,TRUE
+3810220_rasten, Råsten,0183_sundbyberg,TRUE
+3810230_sundbybergs_centrum, Sundbybergs Centrum,0183_sundbyberg,TRUE
+3810240_starrbacksgatan, Starrbäcksgatan,0183_sundbyberg,TRUE
+3810300_storskogen, Storskogen,0183_sundbyberg,TRUE
+3810310_lotsjo, Lötsjö,0183_sundbyberg,TRUE
+3810320_tule, Tule,0183_sundbyberg,TRUE
+3810400_duvbo, Duvbo,0183_sundbyberg,TRUE
+3810410_hasthagen, Hästhagen,0183_sundbyberg,TRUE
+3810500_or, Ör,0183_sundbyberg,TRUE
+3810610_hallonbergen, Hallonbergen,0183_sundbyberg,TRUE
+3810720_rissne_norra_arbetsomr, Rissne norra arbetsomr,0183_sundbyberg,TRUE
+3810740_norra_rissne, Norra Rissne,0183_sundbyberg,TRUE
+3810750_sodra_rissne, Södra Rissne,0183_sundbyberg,TRUE
+3810810_ursviks_smahusomr, Ursviks småhusomr,0183_sundbyberg,TRUE
+3710120_ritorp, Ritorp,0184_solna,TRUE
+3710130_jarva_krog, Järva Krog,0184_solna,TRUE
+3710141_okand,Okänd,0184_solna,TRUE
+3710143_ballongberget, Ballongberget,0184_solna,TRUE
+3710160_bagartorp, Bagartorp,0184_solna,TRUE
+3710170_rastahem, Råstahem,0184_solna,TRUE
+3710180_agnesberg, Agnesberg,0184_solna,TRUE
+3710200_ulriksdal, Ulriksdal,0184_solna,TRUE
+3710310_norra_bergshamra, Norra Bergshamra,0184_solna,TRUE
+3710320_bergshamra_torg, Bergshamra torg,0184_solna,TRUE
+3710330_stocksundstorp, Stocksundstorp,0184_solna,TRUE
+3710340_ostra_bergshamra, Östra Bergshamra,0184_solna,TRUE
+3710350_sodra_bergshamra, Södra Bergshamra,0184_solna,TRUE
+3710360_kungshamra, Kungshamra,0184_solna,TRUE
+3710420_okand,Okänd,0184_solna,TRUE
+3710430_karolinska_institutet, Karolinska Institutet,0184_solna,TRUE
+3710520_huvudsta_gard, Huvudsta Gård,0184_solna,TRUE
+3710530_sodra_huvudsta, Södra Huvudsta,0184_solna,TRUE
+3710540_ingentingskogen, Ingentingskogen,0184_solna,TRUE
+3710550_gamla_huvudsta, Gamla Huvudsta,0184_solna,TRUE
+3710570_vastra_huvudsta, Västra Huvudsta,0184_solna,TRUE
+3710580_okand,Okänd,0184_solna,TRUE
+3720610_okand,Okänd,0184_solna,TRUE
+3720620_norra_hagalund, Norra Hagalund,0184_solna,TRUE
+3720630_okand,Okänd,0184_solna,TRUE
+3720710_okand,Okänd,0184_solna,TRUE
+3720730_skogskronet, Skogskrönet,0184_solna,TRUE
+3720740_okand,Okänd,0184_solna,TRUE
+3720750_charlottenburg, Charlottenburg,0184_solna,TRUE
+3720760_sodra_vasalund, Södra Vasalund,0184_solna,TRUE
+3720770_norra_vasalund, Norra Vasalund,0184_solna,TRUE
+3720780_ekensberg, Ekensberg,0184_solna,TRUE
+3720790_hallen, Hallen,0184_solna,TRUE
+3720910_rudtorp, Rudtorp,0184_solna,TRUE
+3720920_albygard, Albygård,0184_solna,TRUE
+3720930_solna_centrum, Solna Centrum,0184_solna,TRUE
+3720940_hanneberg, Hanneberg,0184_solna,TRUE
+3720950_albydal, Albydal,0184_solna,TRUE
+3411110_norra_sticklinge, Norra Sticklinge,0186_lidingo,TRUE
+3411120_sodra_sticklinge, Södra Sticklinge,0186_lidingo,TRUE
+3411200_islinge, Islinge,0186_lidingo,TRUE
+3411310_vastra_naset, Västra Näset,0186_lidingo,TRUE
+3411320_ostra_naset, Östra Näset,0186_lidingo,TRUE
+3411400_bo_garde, Bo Gärde,0186_lidingo,TRUE
+3411510_bo, Bo,0186_lidingo,TRUE
+3411520_bjornbo, Björnbo,0186_lidingo,TRUE
+3411610_boson, Bosön,0186_lidingo,TRUE
+3411620_rudboda, Rudboda,0186_lidingo,TRUE
+3412100_elfvik, Elfvik,0186_lidingo,TRUE
+3413110_torsviksplatan, Torsviksplatån,0186_lidingo,TRUE
+3413120_lidingo_centrum, Lidingö centrum,0186_lidingo,TRUE
+3413130_stureplatan, Stureplatån,0186_lidingo,TRUE
+3413140_herserud, Herserud,0186_lidingo,TRUE
+3413150_torsviks_torg, Torsviks Torg,0186_lidingo,TRUE
+3413210_bredablick, Bredablick,0186_lidingo,TRUE
+3413220_norra_hersby, Norra Hersby,0186_lidingo,TRUE
+3413230_sodra_hersby, Södra Hersby,0186_lidingo,TRUE
+3413240_hersbyholm, Hersbyholm,0186_lidingo,TRUE
+3413300_stockby, Stockby,0186_lidingo,TRUE
+3413410_baggeby, Baggeby,0186_lidingo,TRUE
+3413420_bodal, Bodal,0186_lidingo,TRUE
+3413500_larsberg, Larsberg,0186_lidingo,TRUE
+3413600_mosstorp, Mosstorp,0186_lidingo,TRUE
+3413710_centrala_gangsatra, Centrala Gångsätra,0186_lidingo,TRUE
+3413720_norra_gangsatra, Norra Gångsätra,0186_lidingo,TRUE
+3413810_bergsatra, Bergsätra,0186_lidingo,TRUE
+3413820_centrala_skarsatra, Centrala Skärsätra,0186_lidingo,TRUE
+3413830_kottla_molna_kappsta, Kottla Mölna Kappsta,0186_lidingo,TRUE
+3414210_centrala_kappala, Centrala Käppala,0186_lidingo,TRUE
+3414240_killinge, Killinge,0186_lidingo,TRUE
+3414250_ostra_kappala, Östra Käppala,0186_lidingo,TRUE
+3414310_brevik, Brevik,0186_lidingo,TRUE
+3414320_hogberga, Högberga,0186_lidingo,TRUE
+4311441_bogesund, Bogesund,0187_vaxholm,TRUE
+4311442_okand,Okänd,0187_vaxholm,TRUE
+4311443_kullon, Kullön,0187_vaxholm,TRUE
+4311460_karlsudd, Karlsudd,0187_vaxholm,TRUE
+4311610_ostra_vaxon, Östra Vaxön,0187_vaxholm,TRUE
+4311620_vastra_vaxon, Västra Vaxön,0187_vaxholm,TRUE
+4311650_engarn_storang, Engarn Storäng,0187_vaxholm,TRUE
+4311661_ytterby_overby, Ytterby Överby,0187_vaxholm,TRUE
+4311730_tynningo, Tynningö,0187_vaxholm,TRUE
+4311810_rindo_centrum, Rindö centrum,0187_vaxholm,TRUE
+4311820_rindo, Rindö,0187_vaxholm,TRUE
+4311830_skarpo, Skarpö,0187_vaxholm,TRUE
+6110310_norrtalje_centrum, Norrtälje centrum,0188_norrtalje,TRUE
+6110320_fagelsangen, Fågelsången,0188_norrtalje,TRUE
+6110330_vastra_rodenstaden, Västra Rodenstaden,0188_norrtalje,TRUE
+6110340_ostra_rodenstaden, Östra Rodenstaden,0188_norrtalje,TRUE
+6110350_norgegardet, Norgegärdet,0188_norrtalje,TRUE
+6110360_roslagsstaden, Roslagsstaden,0188_norrtalje,TRUE
+6110410_grossgardet, Grossgärdet,0188_norrtalje,TRUE
+6110430_sodra_bergen, Södra Bergen,0188_norrtalje,TRUE
+6110440_vastra_kvisthamra, Västra Kvisthamra,0188_norrtalje,TRUE
+6110450_kvisthamra, Kvisthamra,0188_norrtalje,TRUE
+6121000_malsta_forsamling, Malsta församling,0188_norrtalje,TRUE
+6122000_loharads_forsamling, Lohärads församling,0188_norrtalje,TRUE
+6123100_svanberga, Svanberga,0188_norrtalje,TRUE
+6123210_farsna, Färsna,0188_norrtalje,TRUE
+6123220_sodra_estuna, Södra Estuna,0188_norrtalje,TRUE
+6123500_estuna_glesbygd, Estuna glesbygd,0188_norrtalje,TRUE
+6125000_roslags_bro, Roslags-Bro,0188_norrtalje,TRUE
+6126500_vato_fastland, Vätö fastland,0188_norrtalje,TRUE
+6126600_vato, Vätö,0188_norrtalje,TRUE
+6131100_sodersvik, Södersvik,0188_norrtalje,TRUE
+6131501_radmansolandet, Rådmansölandet,0188_norrtalje,TRUE
+6131502_graddo, Gräddö,0188_norrtalje,TRUE
+6132120_osthamra, Östhamra,0188_norrtalje,TRUE
+6132200_frotuna, Frötuna,0188_norrtalje,TRUE
+6132501_frotuna_o_glesbygd, Frötuna Ö glesbygd,0188_norrtalje,TRUE
+6132502_spillersboda, Spillersboda,0188_norrtalje,TRUE
+6133100_furusund, Furusund,0188_norrtalje,TRUE
+6133200_kopmanholm, Köpmanholm,0188_norrtalje,TRUE
+6133600_yxlan, Yxlan,0188_norrtalje,TRUE
+6133700_blido, Blidö,0188_norrtalje,TRUE
+6134100_bergshamra, Bergshamra,0188_norrtalje,TRUE
+6134510_lanna_fastland, Länna fastland,0188_norrtalje,TRUE
+6134520_svartno, Svartnö,0188_norrtalje,TRUE
+6135000_riala_forsamling, Riala församling,0188_norrtalje,TRUE
+6141110_sodra_rimbo, Södra Rimbo,0188_norrtalje,TRUE
+6141120_hasta, Håsta,0188_norrtalje,TRUE
+6141130_vastertorp, Västertorp,0188_norrtalje,TRUE
+6141500_rimbo_glesbygd, Rimbo glesbygd,0188_norrtalje,TRUE
+6142100_ranas, Rånäs,0188_norrtalje,TRUE
+6142500_fasterna_glesbygd, Fasterna glesbygd,0188_norrtalje,TRUE
+6143100_edsbro, Edsbro,0188_norrtalje,TRUE
+6143500_edsbro_glesbygd, Edsbro glesbygd,0188_norrtalje,TRUE
+6144000_skederids_forsamling, Skederids församling,0188_norrtalje,TRUE
+6145000_husby_sjuhundra, Husby-Sjuhundra,0188_norrtalje,TRUE
+6146000_ro_forsamling, Rö församling,0188_norrtalje,TRUE
+6147000_nartuna_forsamling, Närtuna församling,0188_norrtalje,TRUE
+6148000_gottrora_forsamling, Gottröra församling,0188_norrtalje,TRUE
+6151100_ostra_hallstavik, Östra Hallstavik,0188_norrtalje,TRUE
+6151200_herrang, Herräng,0188_norrtalje,TRUE
+6151500_havero_glesbygd, Häverö glesbygd,0188_norrtalje,TRUE
+6152100_vastra_hallstavik, Västra Hallstavik,0188_norrtalje,TRUE
+6152500_edebo_glesbygd, Edebo glesbygd,0188_norrtalje,TRUE
+6154100_skebobruk, Skebobruk,0188_norrtalje,TRUE
+6154500_ununge_glesbygd, Ununge glesbygd,0188_norrtalje,TRUE
+6161000_singo_forsamling, Singö församling,0188_norrtalje,TRUE
+6162100_almsta, Älmsta,0188_norrtalje,TRUE
+6162200_grisslehamn, Grisslehamn,0188_norrtalje,TRUE
+6162510_vaddo_fastland, Väddö fastland,0188_norrtalje,TRUE
+6162520_vaddo, Väddö,0188_norrtalje,TRUE
+6163500_bjorko, Björkö,0188_norrtalje,TRUE
+6164100_soderby_karl, Söderby-Karl,0188_norrtalje,TRUE
+6164500_soderby_karls_glesbygd, Söderby-Karls glesbygd,0188_norrtalje,TRUE
+3510110_gamla_marsta, Gamla Märsta,0191_sigtuna,TRUE
+3510120_marsta_kyrka, Märsta kyrka,0191_sigtuna,TRUE
+3510130_tingvalla, Tingvalla,0191_sigtuna,TRUE
+3510140_ekillatorp, Ekillatorp,0191_sigtuna,TRUE
+3510150_sodra_ekilla, Södra Ekilla,0191_sigtuna,TRUE
+3510160_marsta_centrum, Märsta centrum,0191_sigtuna,TRUE
+3510210_ostra_norrbacka, Östra Norrbacka,0191_sigtuna,TRUE
+3510220_vastra_norrbacka, Västra Norrbacka,0191_sigtuna,TRUE
+3510260_norra_ekilla, Norra Ekilla,0191_sigtuna,TRUE
+3510270_ostra_arenberga, Östra Arenberga,0191_sigtuna,TRUE
+3510280_satuna, Sätuna,0191_sigtuna,TRUE
+3510450_okand,Okänd,0191_sigtuna,TRUE
+3522020_ostra_sigtuna, Östra Sigtuna,0191_sigtuna,TRUE
+3522030_gamla_sigtuna, Gamla Sigtuna,0191_sigtuna,TRUE
+3522040_brannbo, Brännbo,0191_sigtuna,TRUE
+3522050_prastangen_och_hallsbo, Prästängen och Hällsbo,0191_sigtuna,TRUE
+3522060_sjudargarden, Sjudargården,0191_sigtuna,TRUE
+3532010_munkholmen, Munkholmen,0191_sigtuna,TRUE
+3534030_okand,Okänd,0191_sigtuna,TRUE
+3541000_sankt_pers_forsaml, Sankt Pers församl,0191_sigtuna,TRUE
+3542000_haga_forsamling, Haga församling,0191_sigtuna,TRUE
+3551110_norra_valsta, Norra Valsta,0191_sigtuna,TRUE
+3551120_valsta_centrum, Valsta centrum,0191_sigtuna,TRUE
+3551130_sodra_valsta, Södra Valsta,0191_sigtuna,TRUE
+3551140_ostra_steninge, Östra Steninge,0191_sigtuna,TRUE
+3551150_steninge_gard, Steninge gård,0191_sigtuna,TRUE
+3560210_rosersbergs_bostadsomr, Rosersbergs bostadsomr,0191_sigtuna,TRUE
+3560500_okand,Okänd,0191_sigtuna,TRUE
+3560610_sodra_skanela, Södra Skånela,0191_sigtuna,TRUE
+3580100_skepptuna_fd_forsamling, Skepptuna fd församling,0191_sigtuna,TRUE
+3580210_ostra_lunda, Östra Lunda,0191_sigtuna,TRUE
+3580300_vidbo_fd_forsamling, Vidbo fd församling,0191_sigtuna,TRUE
+6210240_nicksta, Nicksta,0192_nynashamn,TRUE
+6210270_kallsmo, Källsmo,0192_nynashamn,TRUE
+6210350_vastra_nynashamn_c, Västra Nynäshamn C,0192_nynashamn,TRUE
+6210360_ostra_nynashamn_c, Östra Nynäshamn C,0192_nynashamn,TRUE
+6210410_nynashamn_sv_esto, Nynäshamn SV (Estö),0192_nynashamn,TRUE
+6210440_sandhamn_mm, Sandhamn mm,0192_nynashamn,TRUE
+6210490_trehorningen_mm, Trehörningen mm,0192_nynashamn,TRUE
+6210520_vaktberget, Vaktberget,0192_nynashamn,TRUE
+6210570_rappsta_hacktorp, Rappsta - Hacktorp,0192_nynashamn,TRUE
+6210640_hamnvik, Hamnvik,0192_nynashamn,TRUE
+6220100_sorunda, Sorunda,0192_nynashamn,TRUE
+6220200_stora_vika, Stora Vika,0192_nynashamn,TRUE
+6220300_grodby, Grödby,0192_nynashamn,TRUE
+6220510_liso, Lisö,0192_nynashamn,TRUE
+6220520_sorunda_vastra_glesbygd, Sorunda västra glesbygd,0192_nynashamn,TRUE
+6220530_sorunda_ostra_glesbygd, Sorunda östra glesbygd,0192_nynashamn,TRUE
+6230000_toro_forsamling, Torö församling,0192_nynashamn,TRUE
+6240100_osmo, Ösmo,0192_nynashamn,TRUE
+6240510_jarflotta, Järflotta,0192_nynashamn,TRUE
+6240530_osmo_ostra_glesbygd, Ösmo östra glesbygd,0192_nynashamn,TRUE
+6240540_osmo_vastra_glesbygd, Ösmo västra glesbygd,0192_nynashamn,TRUE
+6240550_osmo_norra_glesbygd, Ösmo norra glesbygd,0192_nynashamn,TRUE
+3720720_filmstaden, Filmstaden,0184_solna,TRUE
+4210441_karlberg_rickeby, Karlberg Rickeby,0115_vallentuna,TRUE
+4210450_ostra_vallentuna_tatort, Östra Vallentuna tätort,0115_vallentuna,TRUE
+4210550_vallentuna_glesbygd_so, Vallentuna glesbygd SO,0115_vallentuna,TRUE
+4230510_orkesta_glesbygd, Orkesta glesbygd,0115_vallentuna,TRUE
+4451233_sodra_runo, Södra Runö,0117_osteraker,TRUE
+4451234_sodra_runotaljo, Södra RunöTäljö,0117_osteraker,TRUE
+5610501_gustavsbergs_glesbygd, Gustavsbergs glesbygd,0120_varmdo,TRUE
+5610502_gustavsbergs_glesbygd_v, Gustavsbergs glesbygd V,0120_varmdo,TRUE
+5611151_sodra_gustavsberg, Södra Gustavsberg,0120_varmdo,TRUE
+5611152_hasthagen, Hästhagen,0120_varmdo,TRUE
+5620511_norra_ingaro, Norra Ingarö,0120_varmdo,TRUE
+5620512_sodra_farstalandet, Södra Farstalandet,0120_varmdo,TRUE
+5620531_langvik_klacknaset, Långvik-Klacknäset,0120_varmdo,TRUE
+5620532_skalsmara, Skälsmara,0120_varmdo,TRUE
+5630511_norra_varmdo, Norra Värmdö,0120_varmdo,TRUE
+5630512_torsby, Torsby,0120_varmdo,TRUE
+5630513_evlinge, Evlinge,0120_varmdo,TRUE
+5630514_saltaro_skarmaro, Saltarö-Skärmarö,0120_varmdo,TRUE
+5630522_stromma, Strömma,0120_varmdo,TRUE
+5630523_bullando_alvsala_fagerdala, Bullandö/Älvsala/Fagerdala,0120_varmdo,TRUE
+5630524_fagelbrolandet, Fågelbrolandet,0120_varmdo,TRUE
+5140691_tullinge_glesbygd, Tullinge glesbygd,0127_botkyrka,TRUE
+5140692_riksten, Riksten,0127_botkyrka,TRUE
+5211441_vega, Vega,0136_haninge,TRUE
+5211442_vega_soderhagen, Vega Söderhagen,0136_haninge,TRUE
+5211451_kvarntorp, Kvarntorp,0136_haninge,TRUE
+5211453_gamla_nynasvagen, Gamla Nynäsvägen,0136_haninge,TRUE
+5255151_nedersta, Nedersta,0136_haninge,TRUE
+5255152_nodesta, Nödesta,0136_haninge,TRUE
+5515121_strand_norr, Strand Norr,0138_tyreso,TRUE
+5515122_tyreso_strand_centrum," Tyresö Strand, Centrum",0138_tyreso,TRUE
+5515123_strand_syd_gimmersta," Strand Syd, Gimmersta",0138_tyreso,TRUE
+5515212_raksta_solberga_bergholm," Raksta, Solberga, Bergholm",0138_tyreso,TRUE
+5515221_inre_brevik, Inre Brevik,0138_tyreso,TRUE
+5515222_yttre_brevik, Yttre Brevik,0138_tyreso,TRUE
+4010122_vastra_raby_garde, Västra Råby Gärde,0139_upplands_bro,TRUE
+4010150_kockbacka, Kockbacka,0139_upplands_bro,TRUE
+4010502_ostra_bro, Östra Bro,0139_upplands_bro,TRUE
+4010503_sodra_bro, Södra Bro,0139_upplands_bro,TRUE
+4070171_kungsangens_glesbygd, Kungsängens glesbygd,0139_upplands_bro,TRUE
+1120132_norra_bantorget_v, Norra Bantorget V,0180_stockholm,TRUE
+1140212_norra_station_2, Norra Station 2,0180_stockholm,TRUE
+1320330_lindhagensplan, Lindhagensplan,0180_stockholm,TRUE
+2121021_ostbergahojden, Östbergahöjden,0180_stockholm,TRUE
+2150401_blasut, Blåsut,0180_stockholm,TRUE
+2150402_hammarbyhojden, Hammarbyhöjden,0180_stockholm,TRUE
+2240521_norra_rinkeby_kvarnby," Norra Rinkeby, Kvarnby",0180_stockholm,TRUE
+2240522_norra_rinkeby_askeby," Norra Rinkeby, Askeby",0180_stockholm,TRUE
+2240531_sodra_rinkeby_knutby," Södra Rinkeby, Knutby",0180_stockholm,TRUE
+2240532_sodra_rinkeby_bredby," Södra Rinkeby, Bredby",0180_stockholm,TRUE
+2240821_norra_tensta_spanga_kyrkvag," Norra Tensta, Spånga Kyrkväg",0180_stockholm,TRUE
+2240822_norra_tensta_tensta_alle," Norra Tensta,Tensta Allé",0180_stockholm,TRUE
+2240831_sodra_tensta_spanga_kyrka," Södra Tensta,Spånga Kyrka",0180_stockholm,TRUE
+2240832_sodra_tensta_tensta_kyrka," Södra Tensta,Tensta Kyrka",0180_stockholm,TRUE
+2242120_centrala_akalla, Centrala Akalla,0180_stockholm,TRUE
+2242130_sodra_akalla, Södra Akalla,0180_stockholm,TRUE
+2242220_norra_husby, Norra Husby,0180_stockholm,TRUE
+2242230_sodra_husby, Södra Husby,0180_stockholm,TRUE
+2242310_kista_centrum, Kista Centrum,0180_stockholm,TRUE
+2242320_ovre_kista, Övre Kista,0180_stockholm,TRUE
+2242330_nedre_kista, Nedre Kista,0180_stockholm,TRUE
+3810824_brotorp, Brotorp,0183_sundbyberg,TRUE
+3710114_jarvastaden_ostra, Järvastaden östra,0184_solna,TRUE
+3710144_sodra_frosunda, Södra Frösunda,0184_solna,TRUE
+3710145_norra_frosunda, Norra Frösunda,0184_solna,TRUE
+3710421_karolinska_sjukhuset, Karolinska sjukhuset,0184_solna,TRUE
+3710422_nya_karolinska, Nya Karolinska,0184_solna,TRUE
+3710423_solna_kyrkby, Solna Kyrkby,0184_solna,TRUE
+3710582_ingenting, Ingenting,0184_solna,TRUE
+3720611_solna_station, Solna station,0184_solna,TRUE
+3720613_brahelund, Brahelund,0184_solna,TRUE
+3720631_rudviken, Rudviken,0184_solna,TRUE
+3720632_vastra_hagalund, Västra Hagalund,0184_solna,TRUE
+3720711_rasunda_kyrka, Råsunda kyrka,0184_solna,TRUE
+3720712_sodra_rasunda, Södra Råsunda,0184_solna,TRUE
+3720741_rasundaskolan, Råsundaskolan,0184_solna,TRUE
+3411130_storholmen, Storholmen,0186_lidingo,TRUE
+3510451_marsta_vastra_glesbygd, Märsta västra glesbygd,0191_sigtuna,TRUE
+3534031_sankt_olofs_glesbygd, Sankt Olofs glesbygd,0191_sigtuna,TRUE
+3534032_pilsbo, Pilsbo,0191_sigtuna,TRUE
+3560510_norrsunda_glesbygd, Norrsunda glesbygd,0191_sigtuna,TRUE
+3710112_jarvastaden_norra, Järvastaden norra,0184_solna,TRUE
+5211452_kvarntorp_v, Kvarntorp V,0136_haninge,TRUE
+3710152_nationalarenan, Nationalarenan,0184_solna,TRUE
