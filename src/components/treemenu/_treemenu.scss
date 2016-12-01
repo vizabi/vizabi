@@ -192,7 +192,7 @@
               padding-left: 20px;
               &::after {
                 @include rtl {
-                  left: calc(100% - 25px);
+                  left: 0;
                 }
                 content: "📁";
                 display: block;
@@ -332,13 +332,6 @@
               overflow-y: auto;
               max-height: calc(100% - 60px);
               .vzb-treemenu-leaf-content-item {
-                @include rtl {
-                  &.vzb-treemenu-leaf-content-item-title,
-                  &.vzb-treemenu-leaf-content-item-descr {
-                    direction: rtl;
-                    text-align: right;
-                  }
-                }
                 padding: 10px 15px 0;
                 display: block;
                 overflow: hidden;
@@ -391,10 +384,6 @@
         overflow: hidden;
         white-space: nowrap;
         > .vzb-treemenu-list-item-label {
-          @include rtl {
-            direction: ltr;
-            text-align: right;
-          }
           left: 0;
         }
 
