@@ -60,7 +60,8 @@ var MountainChartComponent = Component.extend({
                 // this listener is a patch for fixing #1228. time.js doesn't produce the last event
                 // with playing == false when paused softly
                 if(!_this.model.time.playing){
-                    _this.redrawDataPoints();
+                  _this.redrawDataPoints();
+                  _this.year.setText(_this.model.time.timeFormat(_this.model.time.value));
                 }
             },
             "change:marker.axis_x.xScaleFactor": function () {

@@ -59,6 +59,11 @@ var BubbleMapComponent = Component.extend({
         if (!_this._readyOnce) return;
         _this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
       },
+      'change:time.playing': function() {
+        if (!_this.model.time.playing) {
+          _this.year.setText(_this.model.time.timeFormat(_this.model.time.value));
+        }
+      },
       "change:entities.highlight": function (evt) {
         if (!_this._readyOnce) return;
         _this.highlightEntities();

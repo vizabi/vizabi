@@ -51,6 +51,9 @@ var BubbleChartComp = Component.extend({
         if(utils.isTouchDevice() && _this.model.time.playing && _this.someHighlighted) {
           _this.model.entities.clearHighlighted();
         }
+        if (!_this.model.time.playing) {
+          _this.year.setText(_this.model.time.timeFormat(_this.model.time.value));
+        }
       },
       'change:time.start': function(evt, original) {
         if(_this.model.marker.color.scaleType === 'time') {
@@ -803,6 +806,7 @@ var BubbleChartComp = Component.extend({
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
+    
     this.year.setText(this.model.time.timeFormat(this.model.time.timeNow));
   },
 
