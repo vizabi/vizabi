@@ -126,7 +126,7 @@ var Marker = Model.extend({
 
             // Remove the keys from it that are not in this hook
             if(hook._important) resultKeys = resultKeys.filter(function(f) {
-              return _this._parent.time.splash !== false || keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1;
+              return keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1;
             })
         });
         return resultKeys.map(function(d){var r = {}; r[KEY] = d; return r; });
