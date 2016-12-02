@@ -16,8 +16,16 @@ var Hook = DataConnected.extend({
   
   
   init: function(name, value, parent, binds, persistent) {
+    var _this = this;
     this._super(name, value, parent, binds, persistent);
     this.on('ready', this.hookReady.bind(this));
+    if (this.scaleType) {
+      this.on({
+        "change:scaleType": function () {
+          _this.scale = null;
+        }
+      });
+    }
   },
   
   hookReady: function(){
