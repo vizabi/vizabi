@@ -13,7 +13,7 @@
       display: block; // svg is standard inline
 
       .vzb-br-title {
-        fill: $vzb-color-black;
+        @extend %vzb-chart-axis-title;
       }
       .vzb-br-total {
         fill: $vzb-color-black;
