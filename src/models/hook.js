@@ -155,8 +155,6 @@ var Hook = DataConnected.extend({
 
     var dimensions, filters, select, from, order_by, q, animatable;
 
-    //if it's not a hook, no query is necessary
-    if(!this.isHook()) return true;
     //error if there's nothing to hook to
     if(Object.keys(this._space).length < 1) {
       utils.error('Error:', this._id, 'can\'t find the space');
