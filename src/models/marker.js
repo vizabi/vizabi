@@ -144,7 +144,7 @@ var Marker = Model.extend({
     var dataLoading = false;
     utils.forEach(this._dataCube, function(hook, name) {
       if (hook._loadCall) dataLoading = true;
-      cachePath = cachePath + "_" +  hook._dataId;
+      cachePath = cachePath + "_" +  hook._dataId + hook.which;
     });
     if (dataLoading) {
       return null;
