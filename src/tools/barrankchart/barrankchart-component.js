@@ -21,24 +21,24 @@ const BarRankChart = Component.extend({
 
     //define expected models for this component
     this.model_expects = [{
-      name: "time",
-      type: "time"
+      name: 'time',
+      type: 'time'
     }, {
-      name: "entities",
-      type: "entities"
+      name: 'entities',
+      type: 'entities'
     }, {
-      name: "marker",
-      type: "model"
+      name: 'marker',
+      type: 'model'
     }, {
-      name: "locale",
-      type: "locale"
+      name: 'locale',
+      type: 'locale'
     }, {
-      name: "ui",
-      type: "ui"
+      name: 'ui',
+      type: 'ui'
     }];
 
     this.model_binds = {
-      "change:time.value": () => {
+      'change:time.value': () => {
         if (this._readyOnce) {
           this.onTimeChange();
         }
@@ -142,11 +142,9 @@ const BarRankChart = Component.extend({
     // sort the data (also sets this.total)
     this.sortedEntities = this._sortByIndicator(this.values.axis_x);
 
-    // change header titles for new data
-    const conceptProps = this.model.marker.getConceptprops();
-    this.header.select('.vzb-br-title')
+    this.header
+      .select('.vzb-br-title')
       .select('text')
-      .text(conceptProps[this.model.marker.axis_x.which].name)
       .on('click', () =>
         this.parent
           .findChildByName('gapminder-treemenu')
@@ -158,6 +156,7 @@ const BarRankChart = Component.extend({
       );
 
     this.header.select('.vzb-br-total')
+      .select('text')
       .text(this.model.time.timeFormat(this.model.time.value));
 
     // new scales and axes
@@ -166,7 +165,7 @@ const BarRankChart = Component.extend({
 
     utils.setIcon(this.dataWarningEl, iconWarn)
       .select('svg')
-      .attr('width', '0px').attr('height', '0px');
+      .attr('width', 0).attr('height', 0);
 
     this.dataWarningEl.append('text')
       .text(this.translator('hints/dataWarning'));
@@ -177,7 +176,7 @@ const BarRankChart = Component.extend({
       .on('mouseout', () => this.updateDoubtOpacity());
 
     utils.setIcon(this.infoEl, iconQuestion)
-      .select('svg').attr('width', '0px').attr('height', '0px');
+      .select('svg').attr('width', 0).attr('height', 0);
 
     this.infoEl.on('click', () => {
       this.parent.findChildByName('gapminder-datanotes').pin();
@@ -185,8 +184,12 @@ const BarRankChart = Component.extend({
 
     this.infoEl.on('mouseover', function () {
       const rect = this.getBBox();
-      const coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-      _this.parent.findChildByName('gapminder-datanotes').setHook('axis_y').show().setPos(coord.x, coord.y);
+      const ctx = utils.makeAbsoluteContext(this, this.farthestViewportElement);
+      const coord = ctx(rect.x - 10, rect.y + rect.height + 10);
+      _this.parent.findChildByName('gapminder-datanotes')
+        .setHook('axis_y')
+        .show()
+        .setPos(coord.x, coord.y);
     });
 
     this.infoEl.on('mouseout', function () {
@@ -205,52 +208,119 @@ const BarRankChart = Component.extend({
    * draw the chart/stage
    */
   drawAxes() {
-    // these should go in some style-config
-    this.barMargin = 2;
-    this.barHeight = 20;
-    const margin = { top: 60, bottom: 40, left: 90, right: 20 }; // need right margin for scroll bar
+    const profiles = {
+      small: {
+        margin: { top: 60, right: 20, left: 90, bottom: 40 },
+        headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
+        infoElHeight: 16,
+        infoElMargin: 5,
+        barHeight: 20,
+        barMargin: 2,
+      },
+      medium: {
+        margin: { top: 60, right: 20, left: 90, bottom: 40 },
+        headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
+        infoElHeight: 16,
+        infoElMargin: 5,
+        barHeight: 20,
+        barMargin: 2,
+      },
+      large: {
+        margin: { top: 60, right: 20, left: 90, bottom: 40 },
+        headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
+        infoElHeight: 16,
+        infoElMargin: 5,
+        barHeight: 20,
+        barMargin: 2,
+      }
+    };
+
+    const presentationProfileChanges = {
+      medium: {
+        margin: { top: 60, right: 50, left: 90, bottom: 40 },
+        headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
+        infoElHeight: 25,
+        infoElMargin: 10,
+        barHeight: 20,
+        barMargin: 2,
+      },
+      large: {
+        margin: { top: 60, right: 50, left: 90, bottom: 40 },
+        headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
+        infoElHeight: 16,
+        barHeight: 25,
+        infoElMargin: 10,
+        barMargin: 2,
+      }
+    };
+
+    this.activeProfile = this.getActiveProfile(profiles, presentationProfileChanges);
+
+    const {
+      margin,
+      headerMargin,
+      infoElHeight,
+      infoElMargin,
+    } = this.activeProfile;
 
     // draw the stage - copied from popbyage, should figure out what it exactly does and what is necessary.
     this.height = (parseInt(this.element.style('height'), 10) - margin.top - margin.bottom) || 0;
     this.width = (parseInt(this.element.style('width'), 10) - margin.left - margin.right) || 0;
-    this.width -= this.model.ui.presentation ? 30 : 0;
 
     if (this.height <= 0 || this.width <= 0) {
       return utils.warn('Bar rank chart drawAxes() abort: vizabi container is too little or has display:none');
     }
 
-    this.barContainer.attr('transform', 'translate(' + margin.left + ', 0)');
-    this.barViewport.style('height', this.height + 'px');
+    this.barContainer.attr('transform', `translate(${margin.left}, 0)`);
+    this.barViewport.style('height', `${this.height}px`);
 
     // header
     this.header.attr('height', margin.top);
 
     const headerTitle = this.header.select('.vzb-br-title');
-    const headerTotal = this.header.select('.vzb-br-total');
     const headerTitleBBox = headerTitle.node().getBBox();
-    const headerTotalBBox = headerTotal.node().getBBox();
+
+    const titleTx = headerMargin.left;
+    const titleTy = headerMargin.top + headerTitleBBox.height;
     headerTitle
-      .attr('transform', `translate(${margin.left}, ${margin.top / 2})`);
+      .attr('transform', `translate(${titleTx}, ${titleTy})`);
 
-    headerTotal
-      .attr('text-anchor', 'end')
-      .attr('y', margin.top / 2)
-      .attr('x', this.width + margin.left)
-      .classed('vzb-transparent', headerTitleBBox.width + headerTotalBBox.width + 10 > this.width);
+    const headerInfo = this.infoEl;
 
-    if (this.infoEl.select('svg').node()) {
-      const infoElHeight = margin.top / 3;
-      const titleBBox = headerTitle.node().getBBox();
-      const translate = d3.transform(headerTitle.attr('transform')).translate;
+    headerInfo.select('svg')
+      .attr('width', `${infoElHeight}px`)
+      .attr('height', `${infoElHeight}px`);
 
-      this.infoEl.select('svg')
-        .attr('width', `${infoElHeight}px`)
-        .attr('height', `${infoElHeight}px`);
+    const infoTx = titleTx + headerTitle.node().getBBox().width + infoElMargin;
+    const infoTy = headerMargin.top + infoElHeight / 4;
+    headerInfo.attr('transform', `translate(${infoTx}, ${infoTy})`);
 
-      const tx = titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4;
-      const ty = translate[1] - infoElHeight * .8;
-      this.infoEl.attr('transform', `translate(${tx}, ${ty})`);
+    // change header titles for new data
+    const conceptProps = this.model.marker.getConceptprops();
+    const { which } = this.model.marker.axis_x;
+    const { name, unit } = conceptProps[which];
+
+    const headerTitleText = headerTitle
+      .select('text');
+
+    if (unit) {
+      headerTitleText.text(`${name}, ${unit}`);
+      const rightEdgeOfLeftText = headerMargin.left + headerTitle.node().getBBox().width + infoElHeight + infoElMargin;
+      const leftEdgeOfRightText = this.width + headerMargin.right + headerMargin.left + 30;
+
+      if (rightEdgeOfLeftText > leftEdgeOfRightText) {
+        headerTitleText.text(name);
+      }
     }
+
+    const headerTotal = this.header.select('.vzb-br-total');
+    const headerTotalBBox = headerTotal.node().getBBox();
+
+    const totalTx = this.width + margin.left - headerTotalBBox.width;
+    const totalTy = headerMargin.top + headerTotalBBox.height;
+    headerTotal
+      .attr('transform', `translate(${totalTx}, ${totalTy})`)
+      .classed('vzb-transparent', headerTitleBBox.width + headerTotalBBox.width + 10 > this.width);
 
     const warnBB = this.dataWarningEl.select('text').node().getBBox();
     this.dataWarningEl
@@ -330,8 +400,8 @@ const BarRankChart = Component.extend({
   },
 
   resizeSvgAndScroll() {
-    const height = this.barHeight * this._entitiesCount;
-    this.barSvg.attr('height', `${height}px`);
+    const { barHeight, barMargin } = this.activeProfile;
+    this.barSvg.attr('height', `${(barHeight + barMargin) * this._entitiesCount}px`);
 
     // move along with a selection if playing
     if (this.model.time.playing) {
@@ -345,8 +415,8 @@ const BarRankChart = Component.extend({
 
         const scrollTo = yPos < currentTop ?
           yPos :
-          yPos + this.barHeight > currentBottom ?
-            (yPos + this.barHeight - this.height) :
+          yPos + this.activeProfile.barHeight > currentBottom ?
+            (yPos + this.activeProfile.barHeight - this.height) :
             false;
 
         if (scrollTo) {
@@ -383,18 +453,18 @@ const BarRankChart = Component.extend({
         });
 
         const barRect = self.append('rect')
-          .attr('rx', _this.barHeight / 4)
-          .attr('ry', _this.barHeight / 4)
+          .attr('rx', _this.activeProfile.barHeight / 4)
+          .attr('ry', _this.activeProfile.barHeight / 4)
           .attr('stroke', 'white')
           .attr('stroke-opacity', 0)
           .attr('stroke-width', 2)
-          .attr('height', _this.barHeight)
+          .attr('height', _this.activeProfile.barHeight)
           .style('fill', color);
 
         const barLabel = self.append('text')
           .attr('class', 'vzb-br-label')
           .attr('x', -5)
-          .attr('y', _this.barHeight / 2)
+          .attr('y', _this.activeProfile.barHeight / 2)
           .attr('text-anchor', 'end')
           .attr('dominant-baseline', 'middle')
           .text(d => {
@@ -408,7 +478,7 @@ const BarRankChart = Component.extend({
         const barValue = self.append('text')
           .attr('class', 'vzb-br-value')
           .attr('x', 5)
-          .attr('y', _this.barHeight / 2)
+          .attr('y', _this.activeProfile.barHeight / 2)
           .attr('dominant-baseline', 'middle')
           .style('fill', darkerColor);
 
@@ -457,7 +527,7 @@ const BarRankChart = Component.extend({
   },
 
   _getBarPosition(i) {
-    return (this.barHeight + this.barMargin) * i;
+    return (this.activeProfile.barHeight + this.activeProfile.barMargin) * i;
   },
 
   _entities: {},
