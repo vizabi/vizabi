@@ -292,8 +292,6 @@ var LCComponent = Component.extend({
     this.cached = {};
 
     //scales
-    // remove when fixed problem with scale (not reset when scale type changed)
-    //this.model.marker.axis_y.buildScale();
     this.yScale = this.model.marker.axis_y.getScale();
     this.xScale = this.model.marker.axis_x.getScale();
     this.cScale = this.model.marker.color.getScale();
