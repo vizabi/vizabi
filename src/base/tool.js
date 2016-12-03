@@ -3,7 +3,6 @@ import Model from 'base/model'
 import Component from 'base/component'
 import { DefaultEvent } from 'base/events'
 import { warn as warnIcon } from 'base/iconset'
-import Promise from 'base/promise';
 
 var class_loading_first = 'vzb-loading-first';
 var class_loading_data = 'vzb-loading-data';
@@ -25,14 +24,14 @@ var ToolModel = Model.extend({
     this._type = 'tool';
     this._component = tool;
 
-    // defaults are taken from tool default model
+    // defaults are defined on the Tool
+    // this way, each tool can have it's own default model
     this._defaults = tool.default_model;
 
     // combine listeners from tool and external page to one object
     var listeners = utils.extend(tool.getToolListeners(), external_model.bind);
     delete external_model.bind; // bind shouldn't go to model tree
 
-    //constructor is similar to model
     this._super(tool.name, external_model, null, listeners);
   },
 
@@ -51,8 +50,7 @@ var ToolModel = Model.extend({
     var _this = this;
 
     function validate_func(c) {
-      // ToolmMdel uses validate on the tool so validation can be defined on the tool. 
-      // And thus each tool can have its own validation method
+      // ToolModel uses validate function declared on Tool so each Tool can have its own validation.
       var model = JSON.stringify(_this.getPlainObject());
       _this._component.validate(_this);
       var model2 = JSON.stringify(_this.getPlainObject());
@@ -68,6 +66,8 @@ var ToolModel = Model.extend({
   }
 
 });
+
+
 //tool
 var Tool = Component.extend({
  /**
@@ -79,29 +79,29 @@ var Tool = Component.extend({
     this._id = utils.uniqueId('t');
 
     this.template = this.getToolTemplate();
-    //this.initiateModel(external_model);
 
+    // super also calls createModel
     this._super({
       placeholder: placeholder,
       model: external_model
-    }, this);
+    });
+
+    // 
 
     //splash
     this.model.ui.splash = this.model && this.model.data && this.model.data.splash;
 
     this.render();
+
     this.setCSSClasses();
     this.setResizeHandler();
   },
 
-  ready: function() {
-    this.checkTimeLimits();  
-  },
-
-  initiateModel: function(external_model) {
+  createModel: function(external_model) {
     external_model      = external_model      || {}; //external model can be undefined
     external_model.bind = external_model.bind || {}; //bind functions can be undefined
     this.model = new ToolModel(this, external_model);
+    this.model.setInterModelListeners();
   },
   
   getToolTemplate: function() {
@@ -145,64 +145,87 @@ var Tool = Component.extend({
         },
         'hook_change': function() {
           if (!_this.model.state.time.splash) { // not block when it initial splash screen
-            _this.beforeLoading(true);
+            _this.beforeLoading();
           }
         },
         'change:ui.presentation': function() {
           _this.model.ui.updatePresentation();
           _this.trigger('resize');
         },
-        'translate:language': function() {
-          _this.translateStrings();
-        },
-        'load_start': function() {
-          _this.beforeLoading();
-        },
-        'ready': function(evt) {
+        'resize:ui': function() {
           if(_this._ready) {
-            _this.afterLoading();
+            _this.triggerResize();
           }
-        }      
+        },
+        'translate:locale': function() {
+          _this.translateStrings();
+          _this.model.ui.setRTL(_this.model.locale.isRTL());
+        }  
       });
   },
 
   setResizeHandler: function() {
     //only tools have layout (manage sizes)
-    var _this = this;
     this.model.ui.setContainer(this.element);
-    this.model.ui.on('resize', function() {
-      if(_this._ready) {
-        _this.triggerResize();
-      }
-    });
   },
 
   triggerResize: utils.throttle(function() {
     this.trigger('resize');
   }, 100),
 
-  checkTimeLimits: function() {
-    if(!this.model.state.time) return;
-    
-    var time = this.model.state.time;
-    
-    if(this.model.state.marker) {
-      var tLimits = this.model.state.marker.getTimeLimits(time.getDimension());
+  startLoading: function() {
+    this._super();
+    var splashScreen = this.model && this.model.data && this.model.data.splash;
+    var _this = this;
 
-      if(!tLimits || !utils.isDate(tLimits.min) || !utils.isDate(tLimits.max)) 
-          return utils.warn("checkTimeLimits(): min-max look wrong: " + tLimits.min + " " + tLimits.max + ". Expecting Date objects");
+    var preloadPromises = []; //holds all promises
 
-      // change start and end (but keep startOrigin and endOrigin for furhter requests)
-      var newTime = {}
-      if(time.start - tLimits.min != 0) newTime['start'] = d3.max([tLimits.min, time.parseToUnit(time.startOrigin)]);
-      if(time.end - tLimits.max != 0) newTime['end'] = d3.min([tLimits.max, time.parseToUnit(time.endOrigin)]);
-      if(time.value == null) newTime['value'] = time.parseToUnit(time.format(new Date())); // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
+    preloadPromises.push(this.model.startPreload());
+    preloadPromises.push(this.startPreload());
 
-      time.set(newTime, false, false);
-    }
-      
-    //force time validation because time.value might now fall outside of start-end
-    time.validate(); 
+    Promise.all(preloadPromises).then(function() {
+      _this.afterPreload();
+
+
+      var timeMdl = _this.model.state.time;
+
+      if(splashScreen) {
+
+        //TODO: cleanup hardcoded splash screen
+        timeMdl.splash = true;
+
+        _this.model.startLoading({
+          splashScreen: true
+        }).then(function() {
+          //delay to avoid conflicting with setReady
+          utils.delay(function() {
+            //force loading because we're restoring time.
+
+            _this.model.startLoading().then(function() {
+              timeMdl.splash = false;
+              //_this.model.data.splash = false;
+              timeMdl.trigger('change', timeMdl.getPlainObject());
+            });
+          }, 300);
+
+        }, function() {
+          _this.renderError();
+        });
+      } else {
+        _this.model.startLoading().then(function() {
+          utils.delay(function() {
+            if(timeMdl) {
+              timeMdl.splash = false;
+              timeMdl.trigger('change');
+            } else {
+              _this.loadingDone();
+            }
+          }, 300);
+        }, function() {
+          _this.renderError();
+        });
+      }
+    })
   },
 
   getPersistentModel: function() {
@@ -219,10 +242,8 @@ var Tool = Component.extend({
     }
    
     var currentToolModel = this.model.getPlainObject(true); // true = get only persistent model values
-    var result = utils.flattenDates(currentToolModel, this.model.state.time.timeFormat);
-    
-    removeFunctions(result);
-    return result;
+    removeFunctions(currentToolModel);
+    return currentToolModel;
   },
 
   getPersistentMinimalModel: function(diffModel) {
@@ -278,21 +299,10 @@ var Tool = Component.extend({
   /**
    * Displays loading class
    */
-  beforeLoading: function(loadingData) {
-    if(!this._readyOnce) {
-        utils.addClass(this.placeholder, class_loading_first);    
-    }
-    if(loadingData) {
-        utils.addClass(this.placeholder, class_loading_data);    
-    }
+  beforeLoading: function() {
+    utils.addClass(this.placeholder, class_loading_data);    
   },
-  /**
-   * Removes loading class
-   */
-  afterLoading: function() {
-    utils.removeClass(this.placeholder, class_loading_first);
-    utils.removeClass(this.placeholder, class_loading_data);
-  },
+
   /**
    * Adds loading error class
    */

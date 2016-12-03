@@ -1,5 +1,4 @@
 import topojson from 'helpers/topojson'
-import Promise from 'base/promise';
 import * as utils from 'base/utils';
 (function(exports) {
 

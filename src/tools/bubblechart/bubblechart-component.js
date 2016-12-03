@@ -39,8 +39,8 @@ var BubbleChartComp = Component.extend({
       name: "marker",
       type: "model"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }, {
       name: "ui",
       type: "ui"
@@ -448,6 +448,9 @@ var BubbleChartComp = Component.extend({
     var endTime = this.model.time.end;
     this.updateIndicators();
     this.updateTime();
+    if (!_this.model.time.splash) {
+      _this._trails.create()
+    }
     this.model.marker.getFrame(this.model.time.value, function(frame, time) {
       // TODO: temporary fix for case when after data loading time changed on validation
       if (time.toString() != _this.model.time.value.toString()) {
@@ -459,7 +462,6 @@ var BubbleChartComp = Component.extend({
       if (!_this._frameIsValid(frame)) return utils.warn("ready: empty data received from marker.getFrame(). doing nothing");
 
       _this.frame = frame;
-      _this.year.setText(_this.model.time.timeFormat(_this.time));
       _this.updateSize();
       _this.updateMarkerSizeLimits();
       _this.updateEntities();
@@ -470,11 +472,7 @@ var BubbleChartComp = Component.extend({
       _this._updateDoubtOpacity();
       _this.zoomToMarkerMaxMin(); // includes redraw data points and trail resize
       if (!_this.model.time.splash) {
-        _this._trails.create().then(function() {
-          _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
-          
-        });
-
+        _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
       }
       if(_this.model.ui.adaptMinMaxZoom) _this._panZoom.expandCanvas();
     });
@@ -506,7 +504,7 @@ var BubbleChartComp = Component.extend({
         var zoomedMaxY = yAxis.zoomedMax ? yAxis.zoomedMax : yDomain[1];
 
         //by default this will apply no transition and feed values back to state
-        this._panZoom.zoomToMaxMin(zoomedMinX, zoomedMaxX, zoomedMinY, zoomedMaxY);
+        this._panZoom.zoomToMaxMin(zoomedMinX, zoomedMaxX, zoomedMinY, zoomedMaxY, 0, "don't feed these zoom values back to state");
     },
 
   /*
@@ -530,7 +528,6 @@ var BubbleChartComp = Component.extend({
 //    if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
     this.frame = frame;
     this.updateTime();
-    this.year.setText(this.model.time.timeFormat(this.time));
 
     this._updateDoubtOpacity();
     this._trails.run("findVisible");
@@ -548,7 +545,7 @@ var BubbleChartComp = Component.extend({
     var _this = this;
 
     var conceptProps = _this.model.marker.getConceptprops();
-    this.translator = this.model.language.getTFunction();
+    this.translator = this.model.locale.getTFunction();
 
     this.strings = {
       title: {
@@ -614,9 +611,11 @@ var BubbleChartComp = Component.extend({
       _this.parent.findChildByName("gapminder-datanotes").pin();
     })
     this.yInfoEl.on("mouseover", function() {
-      var rect = this.getBBox();
+      var rect = this.getBBox(); 
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-      _this.parent.findChildByName("gapminder-datanotes").setHook('axis_y').show().setPos(coord.x, coord.y);
+      var toolRect = _this.root.element.getBoundingClientRect();
+      var chartRect = _this.element.node().getBoundingClientRect();      
+      _this.parent.findChildByName("gapminder-datanotes").setHook('axis_y').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
     })
     this.yInfoEl.on("mouseout", function() {
       _this.parent.findChildByName("gapminder-datanotes").hide();
@@ -628,7 +627,9 @@ var BubbleChartComp = Component.extend({
       if (_this.model.time.dragging) return;
       var rect = this.getBBox();
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-      _this.parent.findChildByName("gapminder-datanotes").setHook('axis_x').show().setPos(coord.x, coord.y);
+      var toolRect = _this.root.element.getBoundingClientRect();
+      var chartRect = _this.element.node().getBoundingClientRect();      
+      _this.parent.findChildByName("gapminder-datanotes").setHook('axis_x').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
     })
     this.xInfoEl.on("mouseout", function() {
        if (_this.model.time.dragging) return;
@@ -802,17 +803,7 @@ var BubbleChartComp = Component.extend({
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
-    if(this.duration) {
-      var time = _this.time;
-      this.yearDelayId = utils.delay(function() {
-        _this.year.setText(_this.model.time.timeFormat(time));
-      }, this.duration);
-    } else {
-      if(this.yearDelayId) {
-        utils.clearDelay(this.yearDelayId);
-        this.yearDelayId = null;
-      }
-    }
+    this.year.setText(this.model.time.timeFormat(this.model.time.timeNow));
   },
 
   /*

@@ -1,3 +1,4 @@
+import * as utils from 'base/utils';
 //d3.svg.axisSmart
 
 export default function axisSmart() {
@@ -18,6 +19,13 @@ export default function axisSmart() {
     }
 
     function axis(g) {
+      var checkDmn = axis.scale().domain();
+      var checkRng = axis.scale().range();
+      if(!checkDmn[0] && checkDmn[0]!==0 || !checkDmn[1] && checkDmn[1]!==0 
+      || !checkRng[0] && checkRng[0]!==0 || !checkRng[1] && checkRng[1]!==0){
+        return utils.warn("d3.svg.axisSmart() skips action because of invalid domain " + JSON.stringify(checkDmn) + " or range " + JSON.stringify(checkRng) + " of the attached scale");
+      }
+      
       if(highlightValue != null) {
         axis.highlightValueRun(g);
         return;

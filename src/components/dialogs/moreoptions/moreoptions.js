@@ -27,7 +27,7 @@ var MoreOptions = Dialog.extend({
     this.components = [{
       component: optionsbuttonlist,
       placeholder: '.vzb-dialog-options-buttonlist',
-      model: ['state', 'ui', 'language']
+      model: ['state', 'ui', 'locale']
     }];
 
     this._super(config, parent);
@@ -93,7 +93,7 @@ var MoreOptions = Dialog.extend({
         comps.push({
           component: dlg_config.dialog,
           placeholder: '.vzb-dialogs-dialog[data-dlg="' + dlg + '"]',
-          model: ["state", "ui", "language"]
+          model: ["state", "ui", "locale"]
         });
 
         dlg_config.component = comps.length - 1;

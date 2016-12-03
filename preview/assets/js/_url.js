@@ -15,7 +15,7 @@ function updateURL(force) {
     }
 
     if(model) {
-      lang = model.language.id || document.getElementById('vzbp-btn-lang').getAttribute('data-next_lang');
+      lang = model.locale.id || document.getElementById('vzbp-btn-lang').getAttribute('data-next_lang');
     }
     if(!lang) {
       lang = 'en';

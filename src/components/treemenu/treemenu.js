@@ -560,8 +560,8 @@ var TreeMenu = Component.extend({
       name: "time",
       type: "time"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }];
 
     this.context = context;
@@ -591,6 +591,10 @@ var TreeMenu = Component.extend({
 
   ready: function() {
     this.updateView();
+
+    //TODO: hack! potentially unsafe operation here
+    var tags = this.model.marker_tags.label.getData();
+    this._buildIndicatorsTree(tags);
   },
 
   readyOnce: function() {
@@ -660,11 +664,7 @@ var TreeMenu = Component.extend({
       //if(_this.menuEntity.direction != MENU_VERTICAL) _this.menuEntity.closeAllChildren();
     });
 
-    this.translator = this.model.language.getTFunction();
-
-    //TODO: hack! potentially unsafe operation here
-    var tags = this.model.marker_tags.getDataManager().get(this.model.marker_tags.label._dataId)
-    _this._buildIndicatorsTree(tags);
+    this.translator = this.model.locale.getTFunction();
 
     _this._enableSearch();
 
@@ -1138,7 +1138,6 @@ var TreeMenu = Component.extend({
           //Let the indicator "_default" in tree menu be translated differnetly for every hook type
           var translated = d.id==="_default" ? _this.translator("indicator/_default/" + hookType) : d.name;
           if(!translated && translated!=="") utils.warn("translation missing: NAME of " + d.id);
-          if(d.children) translated = "📁 " + translated;
           return translated||"";
         });
 
@@ -1307,30 +1306,15 @@ var TreeMenu = Component.extend({
 
   _setModel: function(what, value, hookID) {
 
-    var indicatorsDB = this.model.marker.getConceptprops();
-
     var mdl = this.model.marker[hookID];
 
     var obj = {};
-
     obj[what] = value;
-
-    if(what == "which") {
-      obj.use = indicatorsDB[value].use;
-
-      if(indicatorsDB[value].scales) {
-        obj.scaleType = indicatorsDB[value].scales[0];
-      }
-
-      if(mdl.getType() === 'axis' || mdl.getType() === 'size') {
-        obj.domainMin = null;
-        obj.domainMax = null;
-        obj.zoomedMin = null;
-        obj.zoomedMax = null;
-      }
-    }
-
-    mdl.set(obj);
+    
+    if (what == 'which')
+      mdl.whichChange(value);
+    else
+      mdl.set(obj);
 
   }
 

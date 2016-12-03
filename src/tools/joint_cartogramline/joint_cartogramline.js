@@ -52,11 +52,11 @@ var JOINTCartogramLine = Tool.extend('JOINTCartogramLine', {
     this.components = [{
       component: CartogramComponent,
       placeholder: '.vzb-tool-viz-cartogram',
-      model: ["state.time", "state.entities", "state.marker", "language", "ui"] //pass models to component
+      model: ["state.time", "state.entities", "state.marker", "locale", "ui"] //pass models to component
     }, {
       component: LCComponent,
       placeholder: '.vzb-tool-viz-line',
-      model: ["state.time", "state.entities_line", "state.marker_line", "language"]
+      model: ["state.time", "state.entities_line", "state.marker_line", "locale"]
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
@@ -64,23 +64,23 @@ var JOINTCartogramLine = Tool.extend('JOINTCartogramLine', {
     }, {
       component: dialogs,
       placeholder: '.vzb-tool-dialogs',
-      model: ['state', 'ui', 'language']
+      model: ['state', 'ui', 'locale']
     }, {
       component: buttonlist,
       placeholder: '.vzb-tool-buttonlist',
-      model: ['state', 'ui', 'language']
+      model: ['state', 'ui', 'locale']
     }, {
       component: treemenu,
       placeholder: '.vzb-tool-treemenu',
-      model: ['state.marker', 'language']
+      model: ['state.marker', 'locale']
     }, {
       component: datawarning,
       placeholder: '.vzb-tool-datawarning',
-      model: ['language']
+      model: ['locale']
     }, {
       component: datanotes,
       placeholder: '.vzb-tool-datanotes',
-      model: ['state.marker', 'language']
+      model: ['state.marker', 'locale']
     }];
 
     //constructor is the same as any tool

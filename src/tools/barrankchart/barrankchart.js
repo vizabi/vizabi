@@ -7,18 +7,20 @@ import timeslider from 'components/timeslider/timeslider';
 import dialogs from 'components/dialogs/dialogs';
 import buttonlist from 'components/buttonlist/buttonlist';
 import treemenu from 'components/treemenu/treemenu';
+import datanotes from 'components/datanotes/datanotes';
+import datawarning from 'components/datawarning/datawarning';
 
 var BarRankChart = Tool.extend('BarRankChart', {
 
   //Run when the tool is created
-  init: function(placeholder, external_model) {
+  init: function (placeholder, external_model) {
 
     this.name = "barrankchart";
 
     this.components = [{
       component: BarRankChartComponent,
       placeholder: '.vzb-tool-viz',
-      model: ["state.time", "state.entities", "state.marker", "language", "ui"]
+      model: ["state.time", "state.entities", "state.marker", "locale", "ui"]
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
@@ -26,40 +28,52 @@ var BarRankChart = Tool.extend('BarRankChart', {
     }, {
       component: dialogs,
       placeholder: '.vzb-tool-dialogs',
-      model: ['state', 'ui', 'language']
+      model: ['state', 'ui', 'locale']
     }, {
       component: buttonlist,
       placeholder: '.vzb-tool-buttonlist',
-      model: ['state', 'ui', 'language']
+      model: ['state', 'ui', 'locale']
     }, {
       component: treemenu,
       placeholder: '.vzb-tool-treemenu',
-      model: ['state.marker', 'state.marker_tags', 'state.time', 'language']
+      model: ['state.marker', 'state.marker_tags', 'state.time', 'locale']
+    }, {
+      component: datanotes,
+      placeholder: '.vzb-tool-datanotes',
+      model: ['state.marker', 'locale']
+    }, {
+      component: datawarning,
+      placeholder: '.vzb-tool-datawarning',
+      model: ['locale']
     }];
 
     //constructor is the same as any tool
     this._super(placeholder, external_model);
   },
 
-
-
   /**
    * Determines the default model of this tool
    */
   default_model: {
     state: {
-      time: {
+      entities: {
+        dim: "id"
       },
+      time: {},
       marker: {
-        axis_x: {allow: {scales: ["linear","log"]}},
-        axis_y: {allow: {scales: ["ordinal", "nominal"]}},
-        color:  { }
+        axis_x: { allow: { scales: ["linear", "log"] } },
+        axis_y: { allow: { scales: ["ordinal", "nominal"] } },
+        color: {}
       }
     },
-    language: { },
+    locale: {},
     ui: {
-      presentation: false,
-      chart: { }
+      chart: {},
+      datawarning: {
+        doubtDomain: [],
+        doubtRange: []
+      },
+      presentation: false
     }
   }
 });

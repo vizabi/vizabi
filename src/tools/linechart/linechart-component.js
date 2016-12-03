@@ -31,8 +31,8 @@ var LCComponent = Component.extend({
       name: "marker",
       type: "model"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }];
 
 
@@ -63,6 +63,12 @@ var LCComponent = Component.extend({
           _this.updateShow();
           _this.updateSize();
           _this.updateTime();
+          _this.redrawDataPoints();
+          return;
+        }
+        if(path.indexOf("scaleType") > -1) {
+          _this.updateShow();
+          _this.updateSize();
           _this.redrawDataPoints();
           return;
         }
@@ -146,6 +152,9 @@ var LCComponent = Component.extend({
     this.totalLength_1 = {};
 
     this.KEY = this.model.entities.getDimension();
+    this.collisionResolver = collisionResolver()
+      .selector(".vzb-lc-label")
+      .value("valueY");
 
     //component events
 
@@ -174,42 +183,42 @@ var LCComponent = Component.extend({
   },
 
   ready: function() {
+
+    this.all_steps = this.model.time.getAllSteps();
+    this.updateTime();
     this.updateUIStrings();
     var _this = this;
 
     //null means we need to calculate all frames before we get to the callback
     this.model.marker.getFrame(null, function(allValues) {
       _this.all_values = allValues;
-      _this.model.marker.getFrame(_this.model.time.value, function(values) {
-        _this.values = values;
-        _this.all_steps = _this.model.time.getAllSteps();
-        _this.updateShow();
-        _this.updateTime();
-        _this.updateSize();
-        _this.zoomToMaxMin();
-        _this.redrawDataPoints();
-        _this.linesContainerCrop
-          .on('mousemove', _this.entityMousemove.bind(_this, null, null, _this))
-          .on('mouseleave', _this.entityMouseout.bind(_this, null, null, _this));
+      _this.values = allValues[_this.model.time.value];
+      _this.updateShow();
+      _this.updateSize();
+      _this.zoomToMaxMin();
+      _this.redrawDataPoints();
+      _this.linesContainerCrop
+        .on('mousemove', _this.entityMousemove.bind(_this, null, null, _this))
+        .on('mouseleave', _this.entityMouseout.bind(_this, null, null, _this));
 
-      });
     });
   },
 
   updateUIStrings: function() {
     var _this = this;
-    this.translator = this.model.language.getTFunction();
+    var conceptProps = _this.model.marker.getConceptprops();
+    this.translator = this.model.locale.getTFunction();
 
     this.strings = {
       title: {
-        Y: this.translator("indicator/" + this.model.marker.axis_y.which),
-        X: this.translator("indicator/" + this.model.marker.axis_x.which),
-        C: this.translator("indicator/" + this.model.marker.color.which)
+        Y: conceptProps[this.model.marker.axis_y.which].name,
+        X: conceptProps[this.model.marker.axis_x.which].name,
+        C: conceptProps[this.model.marker.color.which].name
       },
       unit: {
-        Y: this.translator("unit/" + this.model.marker.axis_y.which),
-        X: this.translator("unit/" + this.model.marker.axis_x.which),
-        C: this.translator("unit/" + this.model.marker.color.which)
+        Y: conceptProps[this.model.marker.axis_y.which].unit || "",
+        X: conceptProps[this.model.marker.axis_x.which].unit || "",
+        C: conceptProps[this.model.marker.color.which].unit || ""
       }
     };
 
@@ -250,6 +259,8 @@ var LCComponent = Component.extend({
     this.cached = {};
 
     //scales
+    // remove when fixed problem with scale (not reset when scale type changed)
+    this.model.marker.axis_y.buildScale();
     this.yScale = this.model.marker.axis_y.getScale();
     this.xScale = this.model.marker.axis_x.getScale();
     this.cScale = this.model.marker.color.getScale();
@@ -258,11 +269,48 @@ var LCComponent = Component.extend({
     this.xAxis.tickSize(6, 0)
       .tickFormat(this.model.marker.axis_x.getTickFormatter());
 
-    this.collisionResolver = collisionResolver()
-      .selector(".vzb-lc-label")
-      .value("valueY")
-      .scale(this.yScale)
+    this.collisionResolver.scale(this.yScale)
       .KEY(KEY);
+
+    this.data = this.model.marker.getKeys();
+
+    this.entityLines = this.linesContainer.selectAll('.vzb-lc-entity').data(this.data);
+    this.entityLines.exit().remove();
+    this.entityLines.enter().append("g")
+      .attr("class", "vzb-lc-entity")
+      .each(function(d, index) {
+        var entity = d3.select(this);
+
+        entity.append("path")
+          .attr("class", "vzb-lc-line-shadow")
+          .attr("transform", "translate(0,2)");
+
+        entity.append("path")
+          .attr("class", "vzb-lc-line");
+
+      });
+    
+    this.entityLabels = this.labelsContainer.selectAll('.vzb-lc-entity').data(this.data);
+    this.entityLabels.exit().remove();
+    this.entityLabels.enter().append("g")
+      .attr("class", "vzb-lc-entity")
+      .each(function(d, index) {
+        var entity = d3.select(this);
+
+        entity.append("circle")
+          .attr("class", "vzb-lc-circle")
+          .attr("cx", 0);
+
+        var labelGroup = entity.append("g").attr("class", "vzb-lc-label");
+
+        labelGroup.append("text")
+          .attr("class", "vzb-lc-labelname")
+          .attr("dy", ".35em");
+
+        labelGroup.append("text")
+          .attr("class", "vzb-lc-label-value")
+          .attr("dy", "1.6em");
+      });
 
     //line template
     this.line = d3.svg.line()
@@ -294,30 +342,24 @@ var LCComponent = Component.extend({
 
     filter[timeDim] = this.time;
 
-    this.data = this.model.marker.getKeys();
-    this.prev_steps = this.all_steps.filter(function(f){return f < _this.time;});
-
-    this.entityLines = this.linesContainer.selectAll('.vzb-lc-entity').data(this.data);
-    this.entityLabels = this.labelsContainer.selectAll('.vzb-lc-entity').data(this.data);
+    this.prev_steps = this.all_steps.filter(function(f){return f <= _this.time;});
 
     this.timeUpdatedOnce = true;
 
   },
-
-
 
   profiles: {
     "small": {
       margin: {
         top: 30,
         right: 20,
-        left: 55,
+        left: 40,
         bottom: 30
       },
       infoElHeight: 16,
       yAxisTitleBottomMargin: 6,
       tick_spacing: 60,
-      text_padding: 8,
+      text_padding: 12,
       lollipopRadius: 6,
       limitMaxTickNumberX: 5
     },
@@ -325,13 +367,13 @@ var LCComponent = Component.extend({
       margin: {
         top: 40,
         right: 60,
-        left: 65,
+        left: 60,
         bottom: 40
       },
       infoElHeight: 20,
       yAxisTitleBottomMargin: 6,
       tick_spacing: 80,
-      text_padding: 12,
+      text_padding: 15,
       lollipopRadius: 7,
       limitMaxTickNumberX: 10
     },
@@ -339,7 +381,7 @@ var LCComponent = Component.extend({
       margin: {
         top: 50,
         right: 60,
-        left: 70,
+        left: 60,
         bottom: 50
       },
       infoElHeight: 22,
@@ -356,12 +398,14 @@ var LCComponent = Component.extend({
       yAxisTitleBottomMargin: 20,
       xAxisTitleBottomMargin: 20,
       infoElHeight: 26,
+      text_padding: 30
     },
     "large": {
       margin: { top: 80, bottom: 100, left: 100 },
       yAxisTitleBottomMargin: 20,
       xAxisTitleBottomMargin: 20,
       infoElHeight: 32,
+      text_padding: 36,
       hideSTitle: true
     }
   },
@@ -456,45 +500,39 @@ var LCComponent = Component.extend({
     this.graph
       .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
 
-
-    if(this.model.marker.axis_y.scaleType !== "ordinal") {
-      this.yScale.range([this.height * this.rangeYRatio + this.rangeYShift, this.rangeYShift]);
-    } else {
-      this.yScale.rangePoints([this.height * this.rangeYRatio + this.rangeYShift, this.rangeYShift], padding).range();
-    }
-    if(this.model.marker.axis_x.scaleType !== "ordinal") {
-      this.xScale.range([this.rangeXShift, this.width * this.rangeXRatio + this.rangeXShift]);
-    } else {
-      this.xScale.rangePoints([[this.rangeXShift, this.width * this.rangeXRatio + this.rangeXShift]], padding).range();
-    }
-
+    this.yScale.range([this.height * this.rangeYRatio + this.rangeYShift, this.rangeYShift]);
+    this.xScale.range([this.rangeXShift, this.width * this.rangeXRatio + this.rangeXShift]);
 
     this.yAxis.scale(this.yScale)
+      .orient("left")
+      .tickSize(6, 0)
+      .tickSizeMinor(3, 0)
       .labelerOptions({
         scaleType: this.model.marker.axis_y.scaleType,
-        timeFormat: this.model.time.timeFormat,
-        toolMargin: {top: 5, bottom: 5, left: this.margin.left, right: this.margin.right},
+        toolMargin: this.margin,
         limitMaxTickNumber: 6,
+        viewportLength: this.height,
         formatter: this.model.marker.axis_y.getTickFormatter()
-          //showOuter: true
       });
 
     this.xAxis.scale(this.xScale)
       .labelerOptions({
         scaleType: this.model.marker.axis_x.scaleType,
         limitMaxTickNumber: this.activeProfile.limitMaxTickNumberX,
-        toolMargin: {left: 5, right: 5, top: this.margin.top, bottom: this.margin.bottom},
+        toolMargin: this.margin,
+        bump: this.activeProfile.text_padding * 2,
         formatter: this.model.marker.axis_x.getTickFormatter()
         //showOuter: true
       });
 
     this.xAxisElContainer
-      .attr("width", this.width + 1)
+      .attr("width", this.width + this.activeProfile.text_padding * 2)
       .attr("height", this.activeProfile.margin.bottom)
       .attr("y", this.height - 1)
-      .attr("x", -1);
+      .attr("x", - this.activeProfile.text_padding);
+    
     this.xAxisEl
-      .attr("transform", "translate(1,1)");
+      .attr("transform", "translate(" + (this.activeProfile.text_padding - 1) + ",1)");
 
     this.yAxisElContainer
       .attr("width", this.activeProfile.margin.left)
@@ -533,7 +571,9 @@ var LCComponent = Component.extend({
 
     this.xTitleEl
       .style("font-size", infoElHeight + "px")
-      .attr("transform", "translate(" + this.width + "," + this.height + ")");
+      .attr("transform", "translate(" + 
+        (this.width + this.activeProfile.text_padding + this.activeProfile.yAxisTitleBottomMargin) + "," + 
+        (this.height + this.activeProfile.lollipopRadius) + ")");
 
     var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
     if(xTitleText.node().getBBox().width > this.width - 100) xTitleText.text(this.strings.title.X);
@@ -587,44 +627,6 @@ var LCComponent = Component.extend({
         _this.updateSize();
       }
 
-      _this.entityLabels.exit().remove();
-      _this.entityLines.exit().remove();
-
-      _this.entityLines.enter().append("g")
-        .attr("class", "vzb-lc-entity")
-        .each(function(d, index) {
-          var entity = d3.select(this);
-
-          entity.append("path")
-            .attr("class", "vzb-lc-line-shadow")
-            .attr("transform", "translate(0,2)");
-
-          entity.append("path")
-            .attr("class", "vzb-lc-line");
-
-        });
-
-      _this.entityLabels.enter().append("g")
-        .attr("class", "vzb-lc-entity")
-        .each(function(d, index) {
-          var entity = d3.select(this);
-          var label = values.label[d[KEY]];
-
-          entity.append("circle")
-            .attr("class", "vzb-lc-circle")
-            .attr("cx", 0);
-
-          var labelGroup = entity.append("g").attr("class", "vzb-lc-label");
-
-          labelGroup.append("text")
-            .attr("class", "vzb-lc-labelname")
-            .attr("dy", ".35em");
-
-          labelGroup.append("text")
-            .attr("class", "vzb-lc-label-value")
-            .attr("dy", "1.6em");
-        });
-
       _this.entityLines
         .each(function(d, index) {
           var entity = d3.select(this);
@@ -641,14 +643,19 @@ var LCComponent = Component.extend({
 
           //TODO: optimization is possible if getValues would return both x and time
           //TODO: optimization is possible if getValues would return a limited number of points, say 1 point per screen pixel
+          
           var xy = _this.prev_steps.map(function(frame, i) {
-                  return [+frame,  _this.all_values[frame] ? +_this.all_values[frame].axis_y[d[KEY]] : null] ;
-              })
-              .filter(function(d) { return d[1] || d[1] === 0; });
-          xy.push([+time, +values.axis_y[d[KEY]]]);
-          _this.cached[d[KEY]] = {
-            valueY: xy[xy.length - 1][1]
-          };
+              return [frame, _this.all_values[frame] ? _this.all_values[frame].axis_y[d[KEY]] : null] ;
+            })
+            .filter(function(d) { return d[1] || d[1] === 0; });
+
+          if (xy.length > 0) {
+            _this.cached[d[KEY]] = {
+              valueY: xy[xy.length - 1][1]
+            };
+          } else {
+            delete _this.cached[d[KEY]];
+          }
 
 
           // the following fixes the ugly line butts sticking out of the axis line
@@ -666,7 +673,6 @@ var LCComponent = Component.extend({
             //.style("filter", "none")
             .style("stroke", color)
             .attr("d", _this.line(xy));
-
           var totalLength = path2.node().getTotalLength();
 
           // this section ensures the smooth transition while playing and not needed otherwise
@@ -710,6 +716,9 @@ var LCComponent = Component.extend({
       _this.entityLabels
         .each(function(d, index) {
           var entity = d3.select(this);
+          entity.classed("vzb-hidden", !_this.cached[d[KEY]]);
+          if (!_this.cached[d[KEY]]) return;
+
           var label = values.label[d[KEY]];
 
           var color = _this.cScale(values.color[d[KEY]]);
@@ -722,20 +731,20 @@ var LCComponent = Component.extend({
               d3.rgb(color).darker(0.5).toString();
 
 
-          entity.select(".vzb-lc-circle")
-            .style("fill", color)
-            .transition()
-            .duration(_this.duration)
-            .ease("linear")
-            .attr("r", _this.activeProfile.lollipopRadius)
-            .attr("cy", _this.yScale(_this.cached[d[KEY]].valueY) + 1);
+            entity.select(".vzb-lc-circle")
+              .style("fill", color)
+              .transition()
+              .duration(_this.duration)
+              .ease("linear")
+              .attr("r", _this.activeProfile.lollipopRadius)
+              .attr("cy", _this.yScale(_this.cached[d[KEY]].valueY) + 1);
 
 
-          entity.select(".vzb-lc-label")
-            .transition()
-            .duration(_this.duration)
-            .ease("linear")
-            .attr("transform", "translate(0," + _this.yScale(_this.cached[d[KEY]].valueY) + ")");
+            entity.select(".vzb-lc-label")
+              .transition()
+              .duration(_this.duration)
+              .ease("linear")
+              .attr("transform", "translate(0," + _this.yScale(_this.cached[d[KEY]].valueY) + ")");
 
 
           var value = _this.yAxis.tickFormat()(_this.cached[d[KEY]].valueY);
@@ -774,7 +783,7 @@ var LCComponent = Component.extend({
 
       if(!_this.hoveringNow && _this.time - _this.model.time.start !== 0) {
         if (!_this.ui.chart.hideXAxisValue) _this.xAxisEl.call(
-           _this.xAxis.highlightValue(time).highlightTransDuration(_this.duration)
+           _this.xAxis.highlightValue(_this.model.time.timeNow).highlightTransDuration(_this.duration)
         );
         _this.verticalNow.style("opacity", 1);
       }else{

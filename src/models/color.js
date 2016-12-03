@@ -5,6 +5,13 @@ import Hook from 'models/hook';
  * VIZABI Color Model (hook)
  */
 
+
+var allowTypes = {
+    "indicator": ["linear", "log", "genericLog", "time", "pow"],
+    "property": ["ordinal"],
+    "constant": ["ordinal"]
+};
+
 var defaultPalettes = {
   "_continuous": {
     "0": "#B4DE79",
@@ -39,7 +46,7 @@ var ColorModel = Hook.extend({
     use: "constant",
     which: "_default",
     scaleType: "ordinal",
-    syncModels: null,
+    syncModels: [],
     palette: {},
     paletteLabels: null,
     allow: {
@@ -61,7 +68,6 @@ var ColorModel = Hook.extend({
     this._super(name, values, parent, bind);
 
     this._syncModelReferences = {};
-    this._firstLoad = true;
     this._hasDefaultColor = false;
 
     this.on('hook_change', function() {
@@ -78,10 +84,13 @@ var ColorModel = Hook.extend({
           if(!currentPalette[key]||defaultPalette[key]==currentPalette[key]) palette[key] = defaultPalette[key];
         });
         _this.set("palette", palette, false, false);
-        //rewrite one more time because 'persistent' is ignored when new submodel create
-        _this.set("palette", palette, true, false);
       }
     });
+  },
+
+  setInterModelListeners: function () {
+    this._super();
+    this._setSyncModels();
   },
 
   // args: {colorID, shadeID}
@@ -111,46 +120,34 @@ var ColorModel = Hook.extend({
     return conceptpropsColor == null || conceptpropsColor.selectable == null || conceptpropsColor.selectable;
   },
 
+  whichChange: function(newValue) {
+    this._super(newValue);
+    if(this.palette) this.palette._data = {};
+    this._setSyncModels();
+  },
+
   /**
    * Validates a color hook
    */
-  validate: function() {
+  validate: function() {    
+    //only some scaleTypes are allowed depending on use. reset to default if inappropriate
+    if(allowTypes[this.use].indexOf(this.scaleType) === -1) this.scaleType = allowTypes[this.use][0];
+
+  },
+
+  _setSyncModels: function() {
     var _this = this;
+    this.syncModels.forEach(function(modelName){
+      //fetch the model to sync, it's marker and entities
+      var model = _this.getClosestModel(modelName);
+      var marker = model.isHook()? model._parent : model;
+      var entities = marker.getClosestModel(marker.space[0]);
 
-    var possibleScales = ["log", "genericLog", "linear", "time", "pow"];
-    if(!this.scaleType || (this.use === "indicator" && possibleScales.indexOf(this.scaleType) === -1)) {
-      this.scaleType = 'linear';
-    }
-    if(this.use !== "indicator" && this.scaleType !== "ordinal") {
-      this.scaleType = "ordinal";
-    }
+      //save the references here locally
+      _this._syncModelReferences[modelName] = {model: model, marker: marker, entities: entities};
 
-    // reset palette and scale in the following cases: indicator or scale type changed
-    if(this._firstLoad === false && (this.which_1 != this.which || this.scaleType_1 != this.scaleType)) {
-
-      //TODO a hack that kills the scale and palette, it will be rebuild upon getScale request in model.js
-      if(this.palette) this.palette._data = {};
-      this.scale = null;
-    }
-
-    // if there are models to sync: do it on first load or on changing the which
-    if(this.syncModels && (this._firstLoad || this._firstLoad === false && this.which_1 != this.which)) {
-      this.syncModels.forEach(function(modelName){
-        //fetch the model to sync, it's marker and entities
-        var model = _this.getClosestModel(modelName);
-        var marker = model.isHook()? model._parent : model;
-        var entities = marker.getClosestModel(marker.space[0]);
-
-        //save the references here locally
-        _this._syncModelReferences[modelName] = {model: model, marker: marker, entities: entities};
-
-        if(_this.use === "property") _this._setSyncModel(model, marker, entities);
-      });
-    }
-
-    this.which_1 = this.which;
-    this.scaleType_1 = this.scaleType;
-    this._firstLoad = false;
+      if(_this.use === "property") _this._setSyncModel(model, marker, entities);
+    });
   },
 
   _setSyncModel: function(model, marker, entities) {
@@ -158,15 +155,10 @@ var ColorModel = Hook.extend({
       /*TODO: when WS will learn to respond correctly to the queries
       outside the same entity domain this can be reduced to
       just {dim: this.which}, without any show part #2103*/
-      var conceptProps = this.getConceptprops();
-      var newFilter = {dim: null, show: {}};
-      if(conceptProps.concept_type == "entity_domain"){
-        newFilter.dim = this.which;
-        newFilter.show = {};
-      }else{
-        newFilter.dim = conceptProps.domain;
-        newFilter.show["is--" + this.which] = true;
-      }
+      var newFilter = {
+        dim: this.which,
+        show: {}
+      };
       /*END OF TODO*/
       entities.set(newFilter, false, false);
     }else{
@@ -250,13 +242,9 @@ var ColorModel = Hook.extend({
     if (!this.palette || Object.keys(this.palette._data).length===0){
       var palette = this.getDefaultPalette();
       this.set("palette", palette, false, false);
-      //rewrite one more time because 'persistent' is ignored when new submodel create
-      this.set("palette", palette, true, false);
       var paletteLabels = this._getPaletteLabels();
       this.set("paletteLabels", paletteLabels, false, false);
-      this.set("paletteLabels", paletteLabels, true, false);
     }
-
     return this.palette.getPlainObject();
   },
 

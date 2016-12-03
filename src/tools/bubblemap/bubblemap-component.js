@@ -9,6 +9,7 @@ import {
 import topojson from 'helpers/topojson';
 import d3_geo_projection from 'helpers/d3.geo.projection';
 import DynamicBackground from 'helpers/d3.dynamicBackground';
+import globals from 'base/globals';
 
 //import Selectlist from 'bubblemap-selectlist';
 
@@ -45,8 +46,8 @@ var BubbleMapComponent = Component.extend({
       name: "marker",
       type: "model"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }, {
       name: "ui",
       type: "ui"
@@ -258,7 +259,6 @@ var BubbleMapComponent = Component.extend({
 //    this._selectlist.redraw();
       _this.updateDoubtOpacity();
       _this.updateOpacity();
-      _this.year.setText(_this.model.time.timeFormat(_this.model.time.value));
     });
 
   },
@@ -277,7 +277,7 @@ var BubbleMapComponent = Component.extend({
   updateUIStrings: function () {
       var _this = this;
 
-      this.translator = this.model.language.getTFunction();
+      this.translator = this.model.locale.getTFunction();
       var conceptProps = _this.model.marker.getConceptprops();
 
       this.strings = {
@@ -629,7 +629,7 @@ var BubbleMapComponent = Component.extend({
 
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
-    this.year.setText(_this.model.time.format(this.time));
+    this.year.setText(this.model.time.timeFormat(_this.model.time.timeNow));
 
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
 
@@ -995,6 +995,20 @@ var BubbleMapComponent = Component.extend({
 
       this.tooltip.classed("vzb-hidden", true);
     }
+  },
+
+  preload: function() {
+    var _this = this;
+    var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
+        globals.ext_resources.host + globals.ext_resources.preloadPath + "world-50m.json";
+
+    return new Promise(function(resolve, reject) {
+      d3.json(shape_path, function(error, json) {
+        if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
+        _this.world = json;
+        resolve();
+      });
+    });
   }
 
 });

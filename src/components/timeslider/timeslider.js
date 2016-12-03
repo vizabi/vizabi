@@ -1,6 +1,5 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
-import Promise from 'base/promise';
 
 
 var precision = 1;
@@ -228,27 +227,15 @@ var TimeSlider = Component.extend({
       .remove();
 
     this._setSelectedLimitsId = 0; //counter for setSelectedLimits
-    this._needRecalcSelectedLimits = true;
 
     utils.forEach(_this.model.marker.getSubhooks(), function(hook) {
       if(hook._important) hook.on('change:which', function() {
         _this._needRecalcSelectedLimits = true;
         _this.model.time.set({
-          startSelected: _this.model.time.start,
-          endSelected: _this.model.time.end
+          startSelected: new Date(_this.model.time.start),
+          endSelected: new Date(_this.model.time.end)
         }, null, false  /*make change non-persistent for URL and history*/);
       });
-    });
-
-    this.root.on('ready', function() {
-      _this._updateProgressBar();
-      _this.model.marker.listenFramesQueue(null, function(time) {
-        _this._updateProgressBar(time);
-      });
-      if(_this._needRecalcSelectedLimits) {
-        _this._needRecalcSelectedLimits = false;
-        _this.setSelectedLimits(true);
-      }
     });
 
     if(this.model.time.startSelected > this.model.time.start) {
@@ -297,6 +284,11 @@ var TimeSlider = Component.extend({
     this.changeTime();
     this.resize();
 
+    _this._updateProgressBar();
+    _this.model.marker.listenFramesQueue(null, function(time) {
+      _this._updateProgressBar(time);
+    });
+    _this.setSelectedLimits(true);
   },
 
   changeLimits: function() {
@@ -403,7 +395,7 @@ var TimeSlider = Component.extend({
     var _this = this;
     this.select.select('#clip-start-' + _this._id).remove();
     this.select.select(".selected-start").remove();
-    if(this.model.time.startSelected > this.model.time.start) {
+    if(this.model.time.startSelected && this.model.time.startSelected > this.model.time.start) {
       this.select.append("clipPath")
         .attr("id", "clip-start-" + _this._id)
         .append('rect')
@@ -418,7 +410,7 @@ var TimeSlider = Component.extend({
     var _this = this;
     this.select.select('#clip-end-' + _this._id).remove();
     this.select.select(".selected-end").remove();
-    if(this.model.time.endSelected < this.model.time.end) {
+    if(this.model.time.endSelected && this.model.time.endSelected < this.model.time.end) {
       this.select.append("clipPath")
         .attr("id", "clip-end-" + _this._id)
         .append('rect')
@@ -606,8 +598,7 @@ var TimeSlider = Component.extend({
 
       this.valueText.attr("transform", "translate(" + _this.prevPosition + "," + (this.height / 2) + ")")
         .transition('text')
-        .delay(delayAnimations)
-        .text(this.model.time.timeFormat(value));
+        .text(this.model.time.timeFormat(this.model.time.timeNow));
       this.valueText
         .transition()
         .duration(delayAnimations)

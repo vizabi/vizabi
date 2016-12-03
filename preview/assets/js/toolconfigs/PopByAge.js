@@ -66,5 +66,10 @@ var VIZABI_MODEL = {
         "which": "shape_lores_svg"
       }
     }
+  },
+  "data": {
+    "reader": "csv",
+    "path": "data/waffles/usa.csv",
+    "splash": false
   }
 };

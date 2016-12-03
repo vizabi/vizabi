@@ -2,6 +2,10 @@ $vzb-button-color: $vzb-color-primary-dark;
 $vzb-button-bg: $vzb-color-white;
 
 .vzb-dialog-zoom-buttonlist {
+  @include rtl {
+    padding-left: 0;
+    padding-right: 15px;
+  }
   display: inline-flex;
   flex-wrap: wrap;
   justify-content: flex-start;

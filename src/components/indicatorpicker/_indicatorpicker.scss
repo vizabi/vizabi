@@ -3,6 +3,12 @@
   flex-direction: row;
   align-items: center;
   .vzb-ip-select {
+    @include rtl {
+      padding-left: 21px;
+      padding-right: 5px;
+      margin-left: 5px;
+      margin-right: 11px;
+    }
     display: block;
     flex: 1 1 auto;
     min-width: 0;
@@ -18,6 +24,10 @@
     line-height: 20px;
     text-align: center;
     &::after {
+      @include rtl {
+        left: 5px;
+        right: auto;
+      }
       content: '';
       position: absolute;
       width: 0;
@@ -47,6 +57,10 @@
 
 .vzb-sidebar {
   .vzb-ip-select {
+    @include rtl {
+      margin-left: 2px;
+      margin-right: 11px;
+    }
     margin-right: 2px;
   }
 }

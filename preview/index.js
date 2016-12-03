@@ -11,7 +11,7 @@ import 'font-awesome/fonts/fontawesome-webfont.woff2';
 
 import 'vizabi-ddfcsv-reader/dist/bundle.web';
 import 'vizabi-ws-reader/dist/bundle.web';
-import 'd3/d3.min';
+import 'd3/d3';
 
 const _require = require.context('./', false, /\.pug$/);
 _require.keys().forEach(_require);

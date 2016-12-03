@@ -13,41 +13,65 @@ var Hook = DataConnected.extend({
   _important: false,
 
   dataConnectedChildren: ['use', 'which'],
-
-  init: function(name, values, parent, bind) {
-
-    this._super(name, values, parent, bind);
-
-    var _this = this;
-    var spaceRefs = getSpace(this);
-
-    //check what we want to hook this model to
-    utils.forEach(spaceRefs, function(name) {
-      //hook with the closest prefix to this model
-      _this._space[name] = _this.getClosestModel(name);
-      //if hooks change, this should load again
-      _this._space[name].on('dataConnectedChange', function(evt) {
-        //hack for right size of bubbles
-        if(_this._type === 'size' && _this.which === _this.which_1) {
-          _this.which_1 = '';
-        };
-        //defer is necessary because other events might be queued.
-        //load right after such events
-        utils.defer(function() {
-          _this.load().then(function() {
-
-          }, function(err) {
-            utils.warn(err);
-          });
-        });
-      })
-    });
+  
+  
+  init: function(name, value, parent, binds, persistent) {
+    this._super(name, value, parent, binds, persistent);
+    this.on('ready', this.hookReady.bind(this));
+  },
+  
+  hookReady: function(){
+    this.buildScale();
+    this.validate();
+  },
+  
+  buildScale: function(){
+    //overloaded by specific hook models, like axis and color
   },
 
-  getLoadSettings: function() {
-    return {
-      data: this.getClosestModel('data')
+  /**
+   * After complete model tree is created, this allows models to listen to eachother. 
+   */
+  setInterModelListeners: function() {
+    var spaceRefs = this._parent.getSpace(this);
+
+    //check what we want to hook this model to
+    utils.forEach(spaceRefs, name => {
+      //hook with the closest prefix to this model
+      this._space[name] = this.getClosestModel(name);
+      //if hooks change, this should load again
+      this._space[name].on('dataConnectedChange', this.handleDataConnectedChange.bind(this));
+    });
+    this.getClosestModel('locale').on('dataConnectedChange', this.handleDataConnectedChange.bind(this));
+  },
+
+  whichChange: function(newValue) {
+
+    var obj = { which: newValue };
+    var conceptProps = this.dataSource.getConceptprops(newValue);
+
+    if(conceptProps.use) obj.use = conceptProps.use;
+
+    if(conceptProps.scales) {
+      obj.scaleType = conceptProps.scales[0];
     }
+
+    if(this.getType() === 'axis' || this.getType() === 'size') {
+      obj.domainMin = null;
+      obj.domainMax = null;
+      obj.zoomedMin = null;
+      obj.zoomedMax = null;
+    }
+    this.scale = null;
+
+    this.set(obj);
+
+  },
+
+  preloadData: function() {
+    var dataModel = (this.data) ? this.data : 'data';
+    this.dataSource = this.getClosestModel(dataModel);
+    return this._super();
   },
 
   /**
@@ -58,38 +82,25 @@ var Hook = DataConnected.extend({
    * @param {Object} options (includes splashScreen)
    * @returns defer
    */
-  loadData: function(opts) {
+  loadData: function(opts = {}) {
+
+    // then start loading data
+
+    if(!this.which) return Promise.resolve();
 
     this.trigger('hook_change');
 
-    opts = opts || {};
-
-    var loadSettings = this.getLoadSettings();
     var query = this.getQuery(opts.splashScreen);
 
     //useful to check if in the middle of a load call
     this._loadCall = true;
 
-    this._spaceDims = {};
     this.setReady(false);
-
-    //get reader info
-    var reader = loadSettings.data.getPlainObject();
-    reader.parsers = this._getAllParsers();
-
-    var _this = this;
-    var evts = {
-      'load_start': function() {
-        EventSource.freezeAll([
-          'load_start',
-          'resize'
-        ]);
-      }
-    };
 
     utils.timeStamp('Vizabi Model: Loading Data: ' + this._id);
 
-    var dataPromise = this.getDataManager().load(query, reader, evts)
+    var parsers = this._getAllParsers();
+    var dataPromise = this.dataSource.load(query, parsers);
 
     dataPromise.then(
       this.afterLoad.bind(this),
@@ -98,6 +109,17 @@ var Hook = DataConnected.extend({
 
     return dataPromise;
 
+  },
+
+  handleDataConnectedChange: function(evt) {
+    //defer is necessary because other events might be queued.
+    //load right after such events
+    utils.defer(() => {
+      this.startLoading().then(
+        undefined,
+        err => utils.warn(err)
+      );
+    });
   },
 
   _isLoading: function() {
@@ -110,8 +132,6 @@ var Hook = DataConnected.extend({
   afterLoad: function(dataId) {
     this._dataId = dataId;
     utils.timeStamp('Vizabi Model: Data loaded: ' + this._id);
-    this.scale = null; // needed for axis/scale resetting to new data
-    EventSource.unfreezeAll();
   },
 
   loadError: function() {
@@ -171,7 +191,7 @@ var Hook = DataConnected.extend({
 
     //return query
     return {
-      'language': this.getClosestModel('language').id,
+      'language': this.getClosestModel('locale').id,
       'from': from,
       'animatable': animatable,
       'select': select,
@@ -288,7 +308,7 @@ var Hook = DataConnected.extend({
     return parsers;
   },
 
-    /**
+  /**
    * Gets tick values for this hook
    * @returns {Number|String} value The value for this tick
    */
@@ -382,98 +402,59 @@ var Hook = DataConnected.extend({
     return this.scale;
   },
 
-  /**
-   * Gets the domain for this hook
-   * @returns {Array} domain
+   /**
+   * Gets unique values in a column
+   * @param {String|Array} attr parameter
+   * @returns {Array} unique values
    */
-  buildScale: function() {
-    if(!this.isHook()) {
-      return;
-    }
-    var domain;
-    var scaleType = this.scaleType || 'linear';
-    switch(this.use) {
-      case 'indicator':
-        var limits = this.getLimits(this.which);
-        domain = [
-          limits.min,
-          limits.max
-        ];
-        break;
-      case 'property':
-        domain = this.getUnique(this.which);
-        break;
-      default:
-        domain = [this.which];
-        break;
-    }
-    //TODO: d3 is global?
-    this.scale = scaleType === 'time' ? d3.time.scale.utc().domain(domain) : d3.scale[scaleType]().domain(domain);
-  },
-
-      //TODO: this should go down to datamanager, hook should only provide interface
-  /**
-   * gets maximum, minimum and mean values from the dataset of this certain hook
-   */
-  gerLimitsPerFrame: function() {
-
-    if(this.use === "property") return utils.warn("getMaxMinMean: strange that you ask min max mean of a property");
-    if(!this.isHook) return utils.warn("getMaxMinMean: only works for hooks");
-
-    var result = {};
-    var values = [];
-    var value = null;
-    var TIME = this._getFirstDimension({type: "time"});
-
-    var steps = this._parent._parent.time.getAllSteps();
-
-    if(this.use === "constant") {
-        steps.forEach(function(t){
-            value = this.which;
-            result[t] = {
-                min: value,
-                max: value
-            }
-        });
-
-    }else if(this.which===TIME){
-        steps.forEach(function(t){
-            value = new Date(t);
-            result[t] = {
-                min: value,
-                max: value
-            }
-        });
-
-    }else{
-        var args = {framesArray: steps, which: this.which};
-        result = this.getDataManager().get(this._dataId, 'limitsPerFrame', args);
-    }
-
-    return result;
+  getUnique: function(attr) {
+    if(!this.isHook()) return;
+    if(!attr) attr = this._getFirstDimension({type: "time"});
+    return this.dataSource.getData(this._dataId, 'unique', attr);
   },
 
 
-     /**
-     * Gets unique values in a column
-     * @param {String|Array} attr parameter
-     * @returns {Array} unique values
-     */
-    getUnique: function(attr) {
-        if(!this.isHook()) return;
-        if(!attr) attr = this._getFirstDimension({type: "time"});
-        return this.getDataManager().get(this._dataId, 'unique', attr);
-    },
-
-
-
+  getData: function() {
+    return this.dataSource.getData(this._dataId);
+  },
 
       /**
    * gets dataset without null or nan values with respect to this hook's which
    * @returns {Object} filtered items object
    */
   getValidItems: function() {
-    return this.getDataManager().get(this._dataId, 'valid', this.which);
+    return this.dataSource.getData(this._dataId, 'valid', this.which);
+  },
+
+  /**
+   * gets nested dataset
+   * @param {Array} keys define how to nest the set
+   * @returns {Object} hash-map of key-value pairs
+   */
+  getNestedItems: function(keys) {
+    if(!keys) return utils.warn("No keys provided to getNestedItems(<keys>)");
+    return this.dataSource.getData(this._dataId, 'nested', keys);
+  },
+
+  getHaveNoDataPointsPerKey: function() {
+    return this.dataSource.getData(this._dataId, 'haveNoDataPointsPerKey', this.which);
+  },
+
+  /**
+   * Gets limits
+   * @param {String} attr parameter
+   * @returns {Object} limits (min and max)
+   */
+  getLimits: function(attr) {
+    return this.dataSource.getData(this._dataId, 'limits', attr);
+  },
+
+  getFrame: function(steps, forceFrame, selected) {
+    return this.dataSource.getFrame(this._dataId, steps, forceFrame, selected);
+  },
+
+  getFrames: function(steps, selected) {
+    return this.dataSource.getFrames(this._dataId, steps, selected);
   },
 
   /**
@@ -490,7 +471,7 @@ var Hook = DataConnected.extend({
   },
 
   getLimitsByDimensions: function(dims) {
-    var filtered = this.getDataManager().get(this._dataId, 'nested', dims);
+    var filtered = this.dataSource.getData(this._dataId, 'nested', dims);
     var values = {};
     var limitsDim = {};
     var attr = this.which;
@@ -547,32 +528,13 @@ var Hook = DataConnected.extend({
     return limitsDim;
   },
 
-
-
   /**
    * Gets the concept properties of the hook's "which"
    * @returns {Object} concept properties
    */
   getConceptprops: function() {
-    return this.use !== 'constant' ? this.getDataManager().getConceptprops(this.which) : {};
+    return this.use !== 'constant' ? this.dataSource.getConceptprops(this.which) : {};
   }
 });
-
-/**
- * Learn what this model should hook to
- * @returns {Array} space array
- */
-function getSpace(model) {
-  if(utils.isArray(model.space)) {
-    return model.space;
-  } else if(model._parent) {
-    return getSpace(model._parent);
-  } else {
-    utils.error(
-      'ERROR: space not found.\n You must specify the objects this hook will use under the "space" attribute in the state.\n Example:\n space: ["entities", "time"]'
-    );
-  }
-}
-
 
 export default Hook;

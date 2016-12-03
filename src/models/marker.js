@@ -1,13 +1,55 @@
 import * as utils from 'base/utils';
-import Promise from 'base/promise';
 import Model from 'base/model';
 
 /*!
  * HOOK MODEL
  */
 
-
 var Marker = Model.extend({
+
+  init: function(name, value, parent, binds, persistent) {
+    this._super(name, value, parent, binds, persistent);
+    this.on('ready', this.checkTimeLimits.bind(this));
+  },
+
+  checkTimeLimits: function() {
+    
+    var time = this._parent.time;
+    
+    if(!time || time.splash) return;
+    
+    var tLimits = this.getTimeLimits();
+
+    if(!tLimits) return;
+    if(!utils.isDate(tLimits.min) || !utils.isDate(tLimits.max)) 
+        return utils.warn("checkTimeLimits(): min-max look wrong: " + tLimits.min + " " + tLimits.max + ". Expecting Date objects. Ensure that time is properly parsed in the data from reader");
+
+    // change start and end (but keep startOrigin and endOrigin for furhter requests)
+    var newTime = {}
+    if(time.start - tLimits.min != 0) newTime['start'] = d3.max([tLimits.min, time.parseToUnit(time.startOrigin)]);
+    if(time.end - tLimits.max != 0) newTime['end'] = d3.min([tLimits.max, time.parseToUnit(time.endOrigin)]);
+    // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
+    if(time.value == null) newTime['value'] = time.parseToUnit(time.format(new Date())); 
+    
+    time.set(newTime, false, false);
+    
+    if (newTime.start || newTime.end) {
+      utils.forEach(this.getSubhooks(), function(hook) {
+        if (hook.which == "time") {
+          hook.scale = null;          
+          var obj = {};
+          obj.domainMin = null;
+          obj.domainMax = null;
+          obj.zoomedMin = null;
+          obj.zoomedMax = null;
+          hook.set(obj);
+        }
+      });
+    }
+    
+    //force time validation because time.value might now fall outside of start-end
+    time.validate(); 
+  },
 
   /**
    * Gets the narrowest limits of the subhooks with respect to the provided data column
@@ -16,30 +58,20 @@ var Marker = Model.extend({
    * this function is only needed to route the "time" to some indicator,
    * to adjust time start and end to the max and min time available in data
    */
-  getTimeLimits: function(attr) {
+  getTimeLimits: function() {
       var _this = this;
       var time = this._parent.time;
       var min, max, minArray = [], maxArray = [], items = {};
       if (!this.cachedTimeLimits) this.cachedTimeLimits = {};
       utils.forEach(this.getSubhooks(), function(hook) {
         if(hook.use !== "indicator" || !hook._important) return;
-        var hookConceptprops = hook.getConceptprops();
-        if(!hookConceptprops) return utils.warn(hook._name + ": " + hook.which + " is not found among concept properties. \
-            Check that you read the correct file or server instance... \
-            Check that the pointer 'which' of the hook is correct too");
 
-        var availability = hookConceptprops.availability;
-        var availabilityForHook = _this.cachedTimeLimits[hook._dataId + hook.which];
+        var cachedLimits = _this.cachedTimeLimits[hook._dataId + hook.which];
 
-        if (availabilityForHook){
+        if (cachedLimits){
             //if already calculated the limits then no ned to do it again
-            min = availabilityForHook.min;
-            max = availabilityForHook.max;
-        }else if (availability){
-            //if date limits are supplied by the concept properties then use them
-            min = time.timeFormat.parse(availability[0]+"");
-            var timeEnd = time._defaults.end || availability[1];
-            max = time.timeFormat.parse(Math.min(timeEnd, availability[1])+"");
+            min = cachedLimits.min;
+            max = cachedLimits.max;
         }else{
             //otherwise calculate own date limits (a costly operation)
             items = hook.getValidItems().map(function(m){return m[time.getDimension()];});
@@ -59,7 +91,9 @@ var Marker = Model.extend({
           resultMin = d3.min(minArray);
           resultMax = d3.max(maxArray);
       }
-      return {min: resultMin, max: resultMax}
+    
+      //return false for the case when neither of hooks was an "indicator" or "important"
+      return !min && !max? false : {min: resultMin, max: resultMax}
   },
 
 
@@ -81,8 +115,8 @@ var Marker = Model.extend({
             if(hook.use === "constant") return;
 
             // Get keys in data of this hook
-            var nested = _this.getDataManager().get(hook._dataId, 'nested', [KEY, TIME]);
-            var noDataPoints = _this.getDataManager().get(hook._dataId, 'haveNoDataPointsPerKey', hook.which);
+            var nested = hook.getNestedItems([KEY, TIME]);
+            var noDataPoints = hook.getHaveNoDataPointsPerKey();
 
             var keys = Object.keys(nested);
             var keysNoDP = Object.keys(noDataPoints || []);
@@ -129,11 +163,6 @@ var Marker = Model.extend({
       models.push(_this.getClosestModel(name));
     });
 
-    var optsStr = JSON.stringify(opts);
-    if(optsStr in this._spaceDims) {
-      return this._spaceDims[optsStr];
-    }
-
     opts = opts || {};
     var dims = [];
     var dim;
@@ -149,8 +178,6 @@ var Marker = Model.extend({
         dims.push(dim);
       }
     });
-
-    this._spaceDims[optsStr] = dims;
 
     return dims;
   },
@@ -364,29 +391,30 @@ var Marker = Model.extend({
             } else {
               //calculation of async frames is taken outside the loop
               //hooks with real data that needs to be fetched from datamanager
-              deferredHooks.push({hook: {
-                  _dataId: hook._dataId,
-                  which: hook.which
-                }, name: name});
+              deferredHooks.push(hook);
             }
           });
 
           //check if we have any data to get from datamanager
           if (deferredHooks.length > 0) {
             var promises = [];
-            for (var hookId = 0; hookId < deferredHooks.length; hookId++) {
-              (function(hookKey) {
-                var defer = deferredHooks[hookKey];
-                promises.push(new Promise(function(res, rej) {
-                  _this.getDataManager().getFrames(defer.hook._dataId, steps, selected).then(function(response) {
-                    utils.forEach(response, function (frame, t) {
-                      _this.partialResult[cachePath][t][defer.name] = frame[defer.hook.which];
-                    });
-                    res();
-                  })
-                }));
-              }(hookId));
-            }
+            utils.forEach(deferredHooks, function(hook) {
+              promises.push(new Promise(function(res, rej) {
+                // need to save the hook state before calling getFrames.
+                // `hook` state might change between calling and resolving the call.
+                // The result needs to be saved to the correct cache, so we need to save current hook state
+                var currentHookState = {
+                  name: hook._name,
+                  which: hook.which
+                }
+                hook.getFrames(steps, selected).then(function(response) {
+                  utils.forEach(response, function (frame, t) {
+                    _this.partialResult[cachePath][t][currentHookState.name] = frame[currentHookState.which];
+                  });
+                  res();
+                })
+              }));
+            });
             Promise.all(promises).then(function() {
               _this.cachedFrames[cachePath] = _this.partialResult[cachePath];
               resolve();
@@ -411,7 +439,7 @@ var Marker = Model.extend({
             if(hook.use !== "constant" && hook.which !== KEY && hook.which !== TIME) {
               (function(_hook, _name) {
                 promises.push(new Promise(function(res, rej) {
-                  _this.getDataManager().getFrame(_hook._dataId, steps, forceFrame, selected).then(function(response) {
+                  _hook.getFrame(steps, forceFrame, selected).then(function(response) {
                     _this.partialResult[cachePath][forceFrame][_name] = response[forceFrame][_hook.which];
                     res();
                   })
@@ -445,18 +473,17 @@ var Marker = Model.extend({
         if(!(hook.use === "constant" || hook.which === KEY || hook.which === TIME)) {
           if (dataIds.indexOf(hook._dataId) == -1) {
             dataIds.push(hook._dataId);
+
+            hook.dataSource.listenFrame(hook._dataId, steps, keys, function(dataId, time) {
+              var keyName = time.toString();
+              if (typeof preparedFrames[keyName] == "undefined") preparedFrames[keyName] = [];
+              if (preparedFrames[keyName].indexOf(dataId) == -1) preparedFrames[keyName].push(dataId);
+              if (preparedFrames[keyName].length == dataIds.length)  {
+                cb(time);
+              }
+            });
           }
         }
-      });
-      utils.forEach(dataIds, function(hook) {
-        _this.getDataManager().listenFrame(hook, steps, keys, function(dataId, time) {
-          var keyName = time.toString();
-          if (typeof preparedFrames[keyName] == "undefined") preparedFrames[keyName] = [];
-          if (preparedFrames[keyName].indexOf(dataId) == -1) preparedFrames[keyName].push(dataId);
-          if (preparedFrames[keyName].length == dataIds.length)  {
-            cb(time);
-          }
-        });
       });
     },
 
@@ -498,7 +525,7 @@ var Marker = Model.extend({
         if(hook.use !== "property") next = next || d3.bisectLeft(hook.getUnique(dimTime), time);
 
         method = hook.getConceptprops ? hook.getConceptprops().interpolation : null;
-        filtered = _this.getDataManager().get(hook._dataId, 'nested', f_keys);
+        filtered = hook.getNestedItems(f_keys);
         utils.forEach(f_values, function(v) {
           filtered = filtered[v]; //get precise array (leaf)
         });
@@ -520,7 +547,7 @@ var Marker = Model.extend({
     else {
       utils.forEach(this._dataCube, function(hook, name) {
 
-        filtered = _this.getDataManager().get(hook._dataId, 'nested', group_by);
+        filtered = hook.getNestedItems(group_by);
 
         response[name] = {};
         //find position from first hook
@@ -575,7 +602,10 @@ var Marker = Model.extend({
    * @returns {Object} concept properties
    */
   getConceptprops: function() {
-    return this.getDataManager().getConceptprops();
+    // temporary hack to get conceptprops from hook. Fix should be that no one tries to get it from marker in the first place.
+    var keys = Object.keys(this._data);
+    var index = (keys[0] !== 'space') ? keys[0] : keys[1];
+    return this._data[index].dataSource.getConceptprops();
   },
 
   getEntityLimits: function(entity) {
@@ -607,41 +637,57 @@ var Marker = Model.extend({
         }
       });
     };
-
     var promises = [];
+    promises.push(new Promise(function(resolve, reject) {
 
-    promises.push(new Promise());
+      //find startSelected time
+      findSelectedTime(function(){
+        var max = timePoints.length;
+        var i = 0;
+        return function() {
+          return i < max ? i++ : null;
+        };
+      }(), function(point){
+        selectedEdgeTimes[0] = timePoints[point];
+        resolve();
+      });
+    }));
 
-    //find startSelected time
-    findSelectedTime(function(){
-      var max = timePoints.length;
-      var i = 0;
-      return function() {
-        return i < max ? i++ : null;
-      };
-    }(), function(point){
-      selectedEdgeTimes[0] = timePoints[point];
-      promises[0].resolve();
+    promises.push(new Promise(function(resolve, reject) {
+
+      //find endSelected time
+      findSelectedTime(function(){
+        var i = timePoints.length - 1;
+        return function() {
+          return i >= 0 ? i-- : null;
+        };
+      }(), function(point){
+        selectedEdgeTimes[1] = timePoints[point];
+        resolve();
+      });
+
+    }));
+
+    return Promise.all(promises).then(function() {
+      return ({"min": selectedEdgeTimes[0],"max": selectedEdgeTimes[1]});
     });
+  },
 
-    promises.push(new Promise());
 
-    //find endSelected time
-    findSelectedTime(function(){
-      var i = timePoints.length - 1;
-      return function() {
-        return i >= 0 ? i-- : null;
-      };
-    }(), function(point){
-      selectedEdgeTimes[1] = timePoints[point];
-      promises[1].resolve();
-    });
-    var promise = new Promise();
-    Promise.all(promises).then(function() {
-      promise.resolve({"min": selectedEdgeTimes[0],"max": selectedEdgeTimes[1]});
-    });
-    return promise;
+  /**
+   * Learn what this model should hook to
+   * @returns {Array} space array
+   */
+  getSpace: function() {
+    if(utils.isArray(this.space)) {
+      return this.space;
+    } 
+
+    utils.error(
+      'ERROR: space not found.\n You must specify the objects this hook will use under the "space" attribute in the state.\n Example:\n space: ["entities", "time"]'
+    );
   }
+
 });
 
 export default Marker;

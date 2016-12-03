@@ -7,10 +7,7 @@ var VIZABI_MODEL = {
       }      
     },
     "entities_colorlegend": {
-      "dim": "geo",
-      "show": {
-        "is--world_4region": true
-      }
+      "dim": "world_4region"
     },
     "entities_tags": {
       "dim": "tag"

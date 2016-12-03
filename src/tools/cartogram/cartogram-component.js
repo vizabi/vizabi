@@ -8,6 +8,8 @@ import {
 
 import d3_geo_projection from 'helpers/d3.geo.projection';
 import DynamicBackground from 'helpers/d3.dynamicBackground';
+import globals from 'base/globals';
+
 
 //import Selectlist from 'bubblemap-selectlist';
 
@@ -43,8 +45,8 @@ var CartogramComponent = Component.extend({
       name: "marker",
       type: "model"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }, {
       name: "ui",
       type: "ui"
@@ -416,7 +418,7 @@ var CartogramComponent = Component.extend({
   updateUIStrings: function () {
     var _this = this;
 
-    this.translator = this.model.language.getTFunction();
+    this.translator = this.model.locale.getTFunction();
     var sizeConceptprops = this.model.marker.size.getConceptprops();
     this.strings = {
       title: {
@@ -845,6 +847,23 @@ var CartogramComponent = Component.extend({
     }
 
     this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
+  },
+
+  preload: function() {
+    var _this = this;
+    var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
+        globals.ext_resources.host + globals.ext_resources.preloadPath + "municipalities.json";
+
+    return new Promise(function(resolve, reject) {
+      d3.json(shape_path, function(error, json) {
+        if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
+        _this.world = json;
+        _this.geometries = json.objects.topo.geometries;
+        _this.id_lookup = json.objects.id_lookup;
+        resolve();
+      });
+    });
+
   }
 
 

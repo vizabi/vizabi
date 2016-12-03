@@ -4,6 +4,10 @@
       &.vzb-popup {
         .vzb-dialog-modal {        
           .vzb-dialog-title {
+            @include rtl {
+              padding-left: 5px;
+              padding-right: 25px;
+            }
             padding-right: 5px;
           }
         }

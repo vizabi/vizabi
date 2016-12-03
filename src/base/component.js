@@ -1,7 +1,6 @@
 import * as utils from 'base/utils';
 import Events from 'base/events';
 import Model from 'base/model';
-import Promise from 'base/promise';
 import globals from 'base/globals';
 
 var class_loading_first = 'vzb-loading-first';
@@ -34,8 +33,8 @@ var Component = Events.extend({
         utils.error('Error finding placeholder \'' + this.placeholder + '\' for component \'' + this.name + '\'');
       }
     }
-    this.parent = parent || this;
-    this.root = this.parent.root || this;
+    this.parent = parent || null;
+    this.root = this.parent ? this.parent.root : this;
 
     this.components = this.components || [];
     this._components_config = this.components.map(function(x) {
@@ -45,45 +44,45 @@ var Component = Events.extend({
     //define expected models for this component
     this.model_expects = this.model_expects || [];
     this.model_binds   = this.model_binds || {};
-    this.initiateModel(config.model);
+    this.createModel(config.model);
 
     this.ui = this.model.ui || this.ui || config.ui;
     this._super();
-    //readyOnce alias
-    var _this = this;
-    this.on({
-      'readyOnce': function() {
-        if(typeof _this.readyOnce === 'function') {
-          _this.readyOnce();
-        }
-      },
-      'ready': function() {
-        if(typeof _this.ready === 'function') {
-          _this.ready();
-        }
-      },
-      'domReady': function() {
-        if(typeof _this.domReady === 'function') {
-          _this.domReady();
-        }
-      },
-      'resize': function() {
-        if(typeof _this.resize === 'function') {
-          _this.resize();
-        }
-      }
-    });
+
+    this.registerListeners();
   },
 
-  initiateModel: function(configModel) {
+  createModel: function(configModel) {
     this.model = this._modelMapping(configModel);
   },
 
+  registerListeners: function() {
+    this.on({
+      'readyOnce': this.readyOnce,
+      'ready': this.ready,
+      'domReady': this.domReady,
+      'resize': this.resize
+    });
+  },
+
   /**
-   * Preloads data before anything else
+   * Recursively starts preloading in components
+   * @return {[type]} [description]
    */
-  preload: function(promise) {
-    promise.resolve(); //by default, load nothing
+  startPreload: function() {
+    
+    var promises = [];
+    promises.push(this.preload());
+
+    utils.forEach(this.components, 
+      subComponent => promises.push(subComponent.startPreload())
+    ); 
+
+    return Promise.all(promises);
+  },
+
+  preload: function() {
+    return Promise.resolve();
   },
 
   /**
@@ -93,6 +92,9 @@ var Component = Events.extend({
     if(this.model) {
       this.model.afterPreload();
     }
+    utils.forEach(this.components, function(subcomp) {
+      subcomp.afterPreload();
+    });
   },
 
   /**
@@ -102,6 +104,7 @@ var Component = Events.extend({
     var _this = this;
     this.loadTemplate();
     this.loadSubComponents();
+
     //render each subcomponent
     utils.forEach(this.components, function(subcomp) {
       subcomp.render();
@@ -110,86 +113,42 @@ var Component = Events.extend({
       });
     });
 
+    this.startLoading();
+
+  },
+
+  /**
+   * Overloaded by Tool which starts loading of model
+   * @return {[type]} [description]
+   */
+  startLoading: function() {
+    var _this = this;
+   
     // if a componente's model is ready, the component is ready
     this.model.on('ready', function() {
-      done();
+      _this.loadingDone();
     });
 
-    //if it's a root component with model
-    if(this.isRoot() && this.model) {
-
-      var splashScreen = this.model && this.model.data && this.model.data.splash;
-      var promise = new Promise();
-
-      this.preload(promise);
-      var promises = []; //holds all promises
-      utils.forEach(_this.components, function(subcomp) {
-        promises.push(preloader(subcomp, promise));
-      });
-      var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
-      wait.then(function() {
-        _this.afterPreload();
-        var timeMdl = _this.model.state.time;
-        if(splashScreen) {
-
-          //TODO: cleanup hardcoded splash screen
-          timeMdl.splash = true;
-
-          _this.model.load({
-            splashScreen: true
-          }).then(function() {
-            //delay to avoid conflicting with setReady
-            utils.delay(function() {
-              //force loading because we're restoring time.
-              _this.model.setLoading('restore_orig_time');
-
-              _this.model.load().then(function() {
-                _this.model.setLoadingDone('restore_orig_time');
-                timeMdl.splash = false;
-                //_this.model.data.splash = false;
-                timeMdl.trigger('change', timeMdl.getPlainObject());
-              });
-            }, 300);
-
-          }, function() {
-            renderError();
-          });
-        } else {
-          _this.model.load().then(function() {
-            utils.delay(function() {
-              if(timeMdl) {
-                timeMdl.splash = false;
-                timeMdl.trigger('change');
-              } else {
-                done();
-              }
-            }, 300);
-          }, function() {
-            renderError();
-          });
-        }
-      });
-
-    } else if(this.model && this.model.isLoading()) {
-      // nothing
-    } else {
-      done();
+    if(!(this.model && this.model.isLoading())) {
+      this.loadingDone();
     }
 
-    function renderError() {
-      utils.removeClass(_this.placeholder, class_loading_first);
-      utils.removeClass(_this.placeholder, class_loading_data);
-      utils.addClass(_this.placeholder, class_error);
-      _this.setError({
-        type: 'data'
-      });
-    }
 
-    function done() {
-      utils.removeClass(_this.placeholder, class_loading_first);
-      utils.removeClass(_this.placeholder, class_loading_data);
-      _this.setReady();
-    }
+  },
+
+  loadingDone: function () {
+    utils.removeClass(this.placeholder, class_loading_first);
+    utils.removeClass(this.placeholder, class_loading_data);
+    this.setReady();
+  },
+
+  renderError: function() {
+    utils.removeClass(this.placeholder, class_loading_first);
+    utils.removeClass(this.placeholder, class_loading_data);
+    utils.addClass(this.placeholder, class_error);
+    this.setError({
+      type: 'data'
+    });
   },
 
   setError: function(opts) {
@@ -296,14 +255,6 @@ var Component = Events.extend({
   },
 
   /**
-   * Checks whether this is the root component
-   * @returns {Boolean}
-   */
-  isRoot: function() {
-    return this.parent === this;
-  },
-
-  /**
    * Returns subcomponent by name
    * @returns {Boolean}
    */
@@ -376,10 +327,10 @@ var Component = Events.extend({
       //if there's a different number of models received and expected
       if(this.model_expects.length !== model_config.length) {
         utils.groupCollapsed('DIFFERENCE IN NUMBER OF MODELS EXPECTED AND RECEIVED');
-        utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + this.name +
-          '\' or check the models passed in \'' + _this.parent.name + '\'.\n\nComponent: \'' + _this.parent.name +
-          '\'\nSubcomponent: \'' + this.name + '\'\nNumber of Models Expected: ' + this.model_expects.length +
-          '\nNumber of Models Received: ' + model_config.length);
+        utils.warn("Please, configure the 'model_expects' attribute accordingly in '" + this.name + "' or check the models passed in '" + _this.parent.name + "'.\n\n" +
+          "Component: '" + _this.parent.name + "'\n" +
+          "Subcomponent: '" + this.name + "'\n" + 
+          "Number of Models Expected: " + this.model_expects.length + "\nNumber of Models Received: " + model_config.length);
         utils.groupEnd();
       }
       utils.forEach(model_config, function(m, i) {
@@ -387,25 +338,26 @@ var Component = Events.extend({
         var new_name;
         if(_this.model_expects[i]) {
           new_name = _this.model_expects[i].name;
-          if(_this.model_expects[i].type && model_info.type !== _this.model_expects[i].type && (!utils.isArray(
-                _this.model_expects[i].type) ||
-              _this.model_expects[i].type.indexOf(model_info.type) === -1)) {
+          if(_this.model_expects[i].type && model_info.type !== _this.model_expects[i].type && 
+            (!utils.isArray(_this.model_expects[i].type) || _this.model_expects[i].type.indexOf(model_info.type) === -1)) {
 
-            utils.groupCollapsed('UNEXPECTED MODEL TYPE: \'' + model_info.type + '\' instead of \'' +
-              _this.model_expects[i].type + '\'');
-            utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + _this.name +
-              '\' or check the models passed in \'' + _this.parent.name + '\'.\n\nComponent: \'' + _this.parent.name +
-              '\'\nSubcomponent: \'' + _this.name + '\'\nExpected Model: \'' + _this.model_expects[i].type +
-              '\'\nReceived Model\'' + model_info.type + '\'\nModel order: ' + i);
+            utils.groupCollapsed("UNEXPECTED MODEL TYPE: '" + model_info.type + "' instead of '" + _this.model_expects[i].type + "'");
+            utils.warn("Please, configure the 'model_expects' attribute accordingly in '" + _this.name + "' or check the models passed in '" + _this.parent.name + "'.\n\n" + 
+              "Component: '" + _this.parent.name + "'\n" + 
+              "Subcomponent: '" + _this.name + "'\n" + 
+              "Expected Model: '" + _this.model_expects[i].type + "'\n" + 
+              "Received Model: '" + model_info.type + "'\n" + 
+              "Model order: " + i);
             utils.groupEnd();
           }
         } else {
 
-          utils.groupCollapsed('UNEXPECTED MODEL: \'' + model_config[i] + '\'');
-          utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + _this.name +
-            '\' or check the models passed in \'' + _this.parent.name + '\'.\n\nComponent: \'' + _this.parent.name +
-            '\'\nSubcomponent: \'' + _this.name + '\'\nNumber of Models Expected: ' + _this.model_expects.length +
-            '\nNumber of Models Received: ' + model_config.length);
+          utils.groupCollapsed("UNEXPECTED MODEL: '" + model_config[i] + "'");
+          utils.warn("Please, configure the 'model_expects' attribute accordingly in '" + _this.name + "' or check the models passed in '" + _this.parent.name + "'.\n\n" + 
+            "Component: '" + _this.parent.name + "'\n" + 
+            "Subcomponent: '" + _this.name + "'\n" + 
+            "Number of Models Expected: " + _this.model_expects.length + "\n" + 
+            "Number of Models Received: " + model_config.length);
           utils.groupEnd();
           new_name = model_info.name;
         }
@@ -413,8 +365,8 @@ var Component = Events.extend({
       });
 
       // fill the models that weren't passed with empty objects
-      // e.g. if expected = [ui, language, color] and passed/existing = [ui, language]
-      // it will fill values up to [ui, language, {}]
+      // e.g. if expected = [ui, locale, color] and passed/existing = [ui, locale]
+      // it will fill values up to [ui, locale, {}]
       var existing = model_config.length;
       var expected = this.model_expects.length;
       if(expected > existing) {
@@ -459,7 +411,7 @@ var Component = Events.extend({
   getTranslationFunction: function(wrap) {
     var t_func;
     try {
-      t_func = this.model.get('language').getTFunction();
+      t_func = this.model.get('locale').getTFunction();
     } catch(err) {
       if(this.parent && this.parent !== this) {
         t_func = this.parent.getTranslationFunction();
@@ -526,6 +478,12 @@ var Component = Events.extend({
   resize: function() {},
 
   /**
+   * Executed after template is loaded
+   * Ideally, it contains instantiations related to template
+   */
+  domReady: function() {},
+
+  /**
    * Clears a component
    */
   clear: function() {
@@ -537,33 +495,6 @@ var Component = Events.extend({
   }
 });
 
-/**
- * Preloader implementation with promises
- * @param {Object} comp any component
- * @param {Object} rootPromise promise fot tool preloader
- * @returns {Promise}
- */
-function preloader(comp, rootPromise) {
-  var promise = new Promise();
-  var promises = []; //holds all promises
-
-  //preload all subcomponents first
-  utils.forEach(comp.components, function(subcomp) {
-    promises.push(preloader(subcomp, rootPromise));
-  });
-
-  var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
-  wait.then(function() {
-    comp.preload(promise);
-  }, function(err) {
-    utils.error("Error preloading data:", err);
-  });
-
-  return Promise.all([promise, rootPromise]).then(function() {
-    comp.afterPreload();
-    return true;
-  });
-}
 
 // Based on Simple JavaScript Templating by John Resig
 //generic templating function

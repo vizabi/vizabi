@@ -1,8 +1,10 @@
 import * as utils from 'base/utils';
 import DataConnected from 'models/dataconnected';
-import Promise from 'base/promise';
 
-var LanguageModel = DataConnected.extend({
+// this and many other locale information should at some point be stored in an external file with locale information (rtl, date formats etc)
+var rtlLocales = ['ar', 'ar-SA'];
+
+var LocaleModel = DataConnected.extend({
 
   /**
    * Default values for this model
@@ -16,29 +18,16 @@ var LanguageModel = DataConnected.extend({
   strings: {},
 
   /**
-   * Initializes the language model.
+   * Initializes the locale model.
    * @param {Object} values The initial values of this model
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
   init: function(name, values, parent, bind) {
-    this._type = "language";
+    this._type = "locale";
 
     //same constructor, with same arguments
     this._super(name, values, parent, bind);
-  },
-
-  load: function() {
-    var _this, promise;
-
-    promise = this._super()
-
-    _this = this;
-    promise.then(function() {
-      _this.trigger('translate');
-    });
-
-    return promise;
   },
 
   _isLoading: function() {
@@ -51,37 +40,35 @@ var LanguageModel = DataConnected.extend({
     this.setReady(false);
     this._loadCall = true;
 
-    var promise = new Promise(function(resolve, reject) {
-
-      if(_this.filePath) {
-        // if a path to external tranlation file is provided, extend the default strings with the ones from that file
-        d3.json(_this.filePath + _this.id + ".json", function(receivedStrings) {
-          var knownStrings = {};
-          if(_this.strings[_this.id]) knownStrings = _this.strings[_this.id];
-          _this.strings[_this.id] = utils.extend(knownStrings, receivedStrings);
-          resolve();
-        });
-      } else {
+    var conceptPropsPromise = this.getClosestModel('data').loadConceptProps();
+    var filePromise = new Promise((resolve, reject) => {
+      d3.json(this.filePath + _this.id + ".json", (error, strings) => {
+        if (error) reject(error);
+        this.handleNewStrings(strings)
         resolve();
-      }
-
+      });
     });
 
-    return promise;
+    return Promise.all([filePromise, conceptPropsPromise])
+      .then(() => this.trigger('translate'));
+  },
+
+  handleNewStrings: function(receivedStrings) {
+    this.strings[this.id] = this.strings[this.id]
+      ? utils.extend(this.strings[this.id], receivedStrings)
+      : receivedStrings;
   },
 
   /**
    * Gets a certain UI string
    * @param {String} id string identifier
-   * @param {String} lang language
-   * @param {Object} ui_strings ui_strings object or model
    * @returns {string} translated string
    */
   getUIString: function(stringId) {
     if(this.strings && this.strings[this.id] && (this.strings[this.id][stringId] || this.strings[this.id][stringId]==="")) {
       return this.strings[this.id][stringId];
     } else {
-      if(!this.strings || !this.strings[this.id]) utils.warn("Strings are not loaded for the " + this.id + " language. Check if translation JSON is valid");
+      if(!this.strings || !this.strings[this.id]) utils.warn("Strings are not loaded for the " + this.id + " locale. Check if translation JSON is valid");
       return stringId;
     }
   },
@@ -93,10 +80,14 @@ var LanguageModel = DataConnected.extend({
   getTFunction: function() {
     var _this = this;
     return function(stringId) {
-      return _this.getUIString(stringId)
+      return _this.getUIString(stringId);
     }
+  },
+
+  isRTL: function() {
+    return (rtlLocales.indexOf(this.id) !== -1);
   }
 
 });
 
-export default LanguageModel;
+export default LocaleModel;

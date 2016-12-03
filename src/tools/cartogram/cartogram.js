@@ -30,7 +30,7 @@ var Cartogram = Tool.extend('Cartogram', {
       this.components = [{
         component: CartogramComponent,
         placeholder: '.vzb-tool-viz',
-        model: ["state.time", "state.entities", "state.marker", "language", "ui"] //pass models to component
+        model: ["state.time", "state.entities", "state.marker", "locale", "ui"] //pass models to component
       }, {
         component: timeslider,
         placeholder: '.vzb-tool-timeslider',
@@ -38,23 +38,23 @@ var Cartogram = Tool.extend('Cartogram', {
       }, {
         component: dialogs,
         placeholder: '.vzb-tool-dialogs',
-        model: ['state', 'ui', 'language']
+        model: ['state', 'ui', 'locale']
       }, {
         component: buttonlist,
         placeholder: '.vzb-tool-buttonlist',
-        model: ['state', 'ui', 'language']
+        model: ['state', 'ui', 'locale']
       }, {
         component: treemenu,
         placeholder: '.vzb-tool-treemenu',
-        model: ['state.marker', 'language']
+        model: ['state.marker', 'locale']
       }, {
         component: datawarning,
         placeholder: '.vzb-tool-datawarning',
-        model: ['language']
+        model: ['locale']
       }, {
         component: datanotes,
         placeholder: '.vzb-tool-datanotes',
-        model: ['state.marker', 'language']
+        model: ['state.marker', 'locale']
       }
       ];
 

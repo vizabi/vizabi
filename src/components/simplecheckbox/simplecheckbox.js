@@ -15,8 +15,8 @@ export default Component.extend({
       name: "mdl"
         //TODO: learn how to expect model "axis" or "size" or "color"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }];
 
 
@@ -24,7 +24,7 @@ export default Component.extend({
       "change:mdl": function(evt) {
         _this.updateView();
       },
-      "translate:language": function(evt) {
+      "translate:locale": function(evt) {
         _this.updateView();
       }
     };
@@ -55,7 +55,7 @@ export default Component.extend({
   },
 
   updateView: function() {
-    this.translator = this.model.language.getTFunction();
+    this.translator = this.model.locale.getTFunction();
     this.labelEl.text(this.translator("check/" + this.checkbox));
     this.checkEl.property("checked", !!this.parentModel[this.checkbox]);
   },

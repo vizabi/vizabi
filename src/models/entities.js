@@ -20,7 +20,7 @@ var EntitiesModel = DataConnected.extend({
   },
 
   objectLeafs: ['show'],
-  dataConnectedChildren: ['show'],
+  dataConnectedChildren: ['show','dim'],
 
   /**
    * Initializes the entities model.

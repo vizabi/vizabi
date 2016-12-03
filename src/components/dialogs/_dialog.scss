@@ -11,7 +11,7 @@ $vzb-dialog-content-height: 250px;
     //margin-left: -140px;
     vertical-align: top;
     background-color: #fff;
-    text-align: left;
+    //text-align: left;
     display: block;
     position: absolute;
     overflow: hidden;
@@ -85,6 +85,10 @@ $vzb-dialog-content-height: 250px;
     }
 
     input[type=search] {
+      @include rtl {
+        padding-left: 1px;
+        padding-right: 9px;
+      }
       -webkit-appearance: none;
       padding-right: 1px;
       &::-webkit-search-decoration {
@@ -131,10 +135,18 @@ $vzb-dialog-content-height: 250px;
       text-transform: uppercase;
 
       &:first-child {
+        @include rtl {
+          padding-left: 8px;
+          padding-right: 0;
+        }
         padding-left: 0;
       }
 
       &:last-child {
+        @include rtl {
+          padding-left: 0;
+          padding-right: 8px;
+        }        
         padding-right: 0;
       }
 
@@ -156,6 +168,10 @@ $vzb-dialog-content-height: 250px;
     }
 
     .thumb-tack-class {
+      @include rtl {
+        margin-left: 8px;
+        margin-right: 0;
+      }
       border-radius: 50%;
       width: 26px;
       height: 26px;
@@ -299,9 +315,17 @@ $vzb-dialog-content-height: 250px;
         display: flex;
         flex-direction: column;
         >.thumb-tack-class {
+          @include rtl {
+            left: 0;
+            right: auto;
+          }
           position: absolute;
           right: 0;
           &.thumb-tack-class-ico-drag {
+            @include rtl {
+              left: 34px;
+              right: auto;
+            }
             right: 34px;
           }
         }
@@ -334,6 +358,10 @@ $vzb-dialog-content-height: 250px;
         margin: 0 0 20px;
         padding: 0;
         .vzb-ip-holder {
+          @include rtl {
+            margin-left: 10px;
+            margin-right: 15px;            
+          }
           margin-top: 25px;
           margin-left: 15px;
           margin-right: 10px;
@@ -378,9 +406,17 @@ $vzb-dialog-content-height: 250px;
         bottom: auto;
       }
       &.vzb-popup {
+        @include rtl {
+          right: calc(100% - 330px);
+          margin-left: $size-button-list;
+          margin-right: 0;
+        }
         @include position(absolute, 20px -10px auto auto);
         margin-right: $size-button-list;
         &.vzb-active {
+          @include rtl {
+            right: calc(100% - 330px);
+          }
           @include position(absolute, 20px -10px auto auto);
         }
       }
@@ -429,9 +465,19 @@ $vzb-dialog-content-height: 250px;
   &.vzb-landscape {
     .vzb-dialogs-dialog {
       &.vzb-popup {
+        @include rtl {
+          left: -10px;
+          right: auto;
+          margin-left: $size-button-list;
+          margin-right: 0;
+        }
         @include position(absolute, -1000px -10px auto auto);
         margin-right: $size-button-list;
         &.vzb-active {
+          @include rtl {
+            left: -10px;
+            right: auto;
+          }
           @include position(absolute, 5px -10px auto auto);
         }
         >.vzb-dialog-modal {
@@ -459,8 +505,16 @@ $vzb-dialog-content-height: 250px;
           left: 110%;
         }
         &.vzb-popup {
+          @include rtl {
+            margin-left: 30px; 
+            margin-right: 0;
+            right: calc(100% - 300px);
+          }
           @include position(absolute, auto -10px 70px auto);
           &.vzb-active {
+            @include rtl {
+              right: calc(100% - 300px);
+            }
             @include position(absolute, auto -10px 70px auto);
           }
         }
@@ -494,6 +548,10 @@ $vzb-dialog-content-height: 250px;
           }
 
           .vzb-dialog-title {
+            @include rtl {
+              padding-left: 0;
+              padding-right: 20px;
+            }
             padding: 5px 0 5px 20px;
             flex: none;
           }

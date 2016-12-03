@@ -8,11 +8,14 @@ var VIZABI_MODEL = {
     "entities": {
       "dim": "geo",
       "show": {
-        "country": { "$in": ["usa", "swe", "chn"] }
+        "geo": { "$in": ["usa", "swe", "chn"] }
       }
     },
     "entities_colorlegend": {
-      "dim": "geo"
+      "dim": "geo",
+      "show": {
+        "is--world_4region": true
+      }
     },
     "marker": {
       "space": ["entities", "time"],
@@ -25,19 +28,12 @@ var VIZABI_MODEL = {
         "which": "income_per_person_gdppercapita_ppp_inflation_adjusted",
         "scaleType": "log",
         "domainMin": 300,
-        "domainMax": 128000,
-        "allow": {
-          "scales": ["linear", "log"]
-        }
-
+        "domainMax": 128000
       },
       "axis_x": {
         "use": "indicator",
         "which": "time",
-        "scaleType": "time",
-        "allow": {
-          "scales": ["time"]
-        }
+        "scaleType": "time"
       },
       "color": {
         "use": "property",
@@ -45,7 +41,7 @@ var VIZABI_MODEL = {
         "allow": {
           "scales": ["ordinal"]
         },
-        "colorlegend": "marker_colorlegend"
+        "syncModels": ["marker_colorlegend"]
       }
     },
     "entities_allpossible": {
@@ -66,8 +62,6 @@ var VIZABI_MODEL = {
     },
     "marker_colorlegend": {
       "space": ["entities_colorlegend"],
-      "type": "geometry",
-      "shape": "svg",
       "label": {
         "use": "property",
         "which": "name"
@@ -92,5 +86,8 @@ var VIZABI_MODEL = {
         "which": "parent"
       }
     }
+  },
+  "data": {
+    "splash": false
   }
 };

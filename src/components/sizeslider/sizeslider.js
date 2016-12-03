@@ -57,8 +57,8 @@ var SizeSlider = Component.extend({
       name: "size",
       type: "size"
     },{
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }];
 
     var _this = this;
@@ -143,7 +143,7 @@ var SizeSlider = Component.extend({
     this.padding = padding;
 
     this.propertyActiveProfile = this.getPropertyActiveProfile();
-    this.translator = this.model.language.getTFunction();
+    this.translator = this.model.locale.getTFunction();
 
     this.propertyScale = d3.scale.linear()
       .domain([OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX])

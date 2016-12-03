@@ -27,7 +27,7 @@ var MountainChart = Tool.extend('MountainChart', {
     this.components = [{
       component: MountainChartComponent,
       placeholder: '.vzb-tool-viz',
-      model: ["state.time", "state.entities", "state.marker", "language", "ui"] //pass models to component
+      model: ["state.time", "state.entities", "state.marker", "locale", "ui"] //pass models to component
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
@@ -35,23 +35,23 @@ var MountainChart = Tool.extend('MountainChart', {
     }, {
       component: dialogs,
       placeholder: '.vzb-tool-dialogs',
-      model: ['state', 'ui', 'language']
+      model: ['state', 'ui', 'locale']
     }, {
       component: buttonlist,
       placeholder: '.vzb-tool-buttonlist',
-      model: ['state', 'ui', 'language']
+      model: ['state', 'ui', 'locale']
     }, {
       component: treemenu,
       placeholder: '.vzb-tool-treemenu',
-      model: ['state.marker', 'state.marker_tags', 'state.time', 'language']
+      model: ['state.marker', 'state.marker_tags', 'state.time', 'locale']
     }, {
       component: datawarning,
       placeholder: '.vzb-tool-datawarning',
-      model: ['language']
+      model: ['locale']
     }, {
       component: datanotes,
       placeholder: '.vzb-tool-datanotes',
-      model: ['state.marker', 'language']
+      model: ['state.marker', 'locale']
     }];
 
     //constructor is the same as any tool
@@ -70,7 +70,7 @@ var MountainChart = Tool.extend('MountainChart', {
         "opacityRegular": 0.7
       }
     },
-    language: { },
+    locale: { },
     ui: {
       chart: {
         manualSortingEnabled: true,

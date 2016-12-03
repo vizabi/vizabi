@@ -132,6 +132,10 @@ $vzb-button-color-border: #cce6ed;
 &.vzb-large {
   .vzb-tool-buttonlist {
     .vzb-buttonlist-btn {
+      @include rtl {
+        margin-left: 20px;
+        margin-right: 0;
+      }
       margin-right: 20px;
       width: $vzb-button-width;
       > .vzb-btn-icon {
@@ -153,6 +157,9 @@ $vzb-button-color-border: #cce6ed;
   &.vzb-dialog-expand-true {
     .vzb-tool-buttonlist {
       .vzb-buttonlist-btn {
+        @include rtl {
+          margin-left: 0;
+        }
         margin-right: 0;
         width: $vzb-button-width-expand;
         &.vzb-dialog-side-btn {

@@ -25,7 +25,7 @@ init: function(config, parent) {
   {
     component: sizeslider,
     placeholder: '.vzb-dialog-sizeslider',
-    model: ["state.marker.size_label",  "language"],
+    model: ["state.marker.size_label",  "locale"],
     propertyname: 'LabelTextSize',
     ui: {
       constantUnit: "unit/pixels"
@@ -34,14 +34,14 @@ init: function(config, parent) {
   {
     component: indicatorpicker,
     placeholder: '.vzb-saxis-selector',
-    model: ["state.time", "state.entities", "state.marker", "language"],
+    model: ["state.time", "state.entities", "state.marker", "locale"],
     markerID: "size_label",
     showHoverValues: true
   },
   {
     component: simplecheckbox,
     placeholder: '.vzb-removelabelbox-switch',
-    model: ["ui.chart", "language"],
+    model: ["ui.chart", "locale"],
     checkbox: 'removeLabelBox',
     submodel: 'labels'
   }

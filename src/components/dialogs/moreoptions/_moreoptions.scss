@@ -15,6 +15,10 @@
               width: auto;
               border: 0;
               .vzb-dialog-title>span:first-child {
+                @include rtl {
+                  padding-left: 15px;
+                  padding-right: 10px;
+                }
                 display: block;     
                 padding: 9px 15px 10px 10px;
                 height: 40px;
@@ -22,6 +26,11 @@
                 cursor: pointer;
                 text-transform: uppercase;
                 &::after {
+                  @include rtl {
+                    @include rotate(225deg);
+                    left: 20px;
+                    right: auto;
+                  }
                   @include rotate(45deg);
                   content: '';
                   position: absolute;

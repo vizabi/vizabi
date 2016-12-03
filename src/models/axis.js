@@ -43,14 +43,10 @@ var AxisModel = Hook.extend({
     //only some scaleTypes are allowed depending on use. reset to default if inappropriate
     if(allowTypes[this.use].indexOf(this.scaleType) === -1) this.scaleType = allowTypes[this.use][0];
 
-    //kill the scale if indicator or scale type have changed
-    //the scale will be rebuild upon getScale request in model.js
-    if(this.which_1 != this.which || this.scaleType_1 != this.scaleType) this.scale = null;
-    this.which_1 = this.which;
-    this.scaleType_1 = this.scaleType;
-
     //here the modified min and max may change the domain, if the scale is defined
-    if(this.scale && this._readyOnce && this.use === "indicator") {
+    if(this.scale && this._ready && this.use === "indicator") {
+      var obj = {};
+      
       if(this.scaleType == "time") {
         
         var timeMdl = this._space.time;
@@ -64,20 +60,23 @@ var AxisModel = Hook.extend({
         }
         
         //restore the correct object type for time values
-        if(this.zoomedMin != null && !utils.isDate(this.zoomedMin)) this.zoomedMin = this._space.time.parseToUnit(this.zoomedMin.toString());
-        if(this.zoomedMax != null && !utils.isDate(this.zoomedMax)) this.zoomedMax = this._space.time.parseToUnit(this.zoomedMax.toString());
-
-        if(!utils.isDate(this.domainMin)) this.domainMin = this.scale.domain()[0];
-        if(!utils.isDate(this.domainMax)) this.domainMax = this.scale.domain()[1];
+        if(this.zoomedMin != null && !utils.isDate(this.zoomedMin)) obj.zoomedMin = this._space.time.parseToUnit(this.zoomedMin.toString());
+        if(this.zoomedMax != null && !utils.isDate(this.zoomedMax)) obj.zoomedMax = this._space.time.parseToUnit(this.zoomedMax.toString());
+        
+        if(!utils.isDate(this.domainMin)) obj.domainMin = this.scale.domain()[0];
+        if(!utils.isDate(this.domainMax)) obj.domainMax = this.scale.domain()[1];
       }
       //min and max nonsense protection
-      if(this.domainMin == null || this.domainMin <= 0 && this.scaleType === "log") this.domainMin = this.scale.domain()[0];
-      if(this.domainMax == null || this.domainMax <= 0 && this.scaleType === "log") this.domainMax = this.scale.domain()[1];
+      if(this.domainMin == null || this.domainMin <= 0 && this.scaleType === "log") obj.domainMin = this.scale.domain()[0];
+      if(this.domainMax == null || this.domainMax <= 0 && this.scaleType === "log") obj.domainMax = this.scale.domain()[1];
 
       //zoomedmin and zoomedmax nonsense protection    
-      if(this.zoomedMin == null || this.zoomedMin < this.scale.domain()[0]) this.zoomedMin = this.scale.domain()[0];
-      if(this.zoomedMax == null || this.zoomedMax > this.scale.domain()[1]) this.zoomedMax = this.scale.domain()[1];
+      if(this.zoomedMin == null) obj.zoomedMin = this.scale.domain()[0];
+      if(this.zoomedMax == null) obj.zoomedMax = this.scale.domain()[1];
 
+      //setting all validated parameters at once
+      this.set(obj);
+      
       this.scale.domain([this.domainMin, this.domainMax]);
     }
   },
@@ -86,7 +85,7 @@ var AxisModel = Hook.extend({
    * Gets the domain for this hook
    * @returns {Array} domain
    */
-  buildScale: function(margins) {
+  buildScale: function() {
     var domain;
 
     if(this.scaleType == "time") {
@@ -100,7 +99,6 @@ var AxisModel = Hook.extend({
       domain = [limits.min, limits.max];
       this.scale = d3.time.scale.utc().domain(domain);
 
-      this.validate();
       return;
     }
 
@@ -124,7 +122,19 @@ var AxisModel = Hook.extend({
     var scaletype = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.scaleType === "log")? "genericLog" : this.scaleType;
     if(this.scaletype == "nominal") scaletype = "ordinal"; // 
     this.scale = d3.scale[scaletype || "linear"]().domain(domain);
+  },
+
+  /**
+   * Formats date according to time in this hook's space
+   * @param {Date} date object to format
+   * @returns {String} formatted date
+   */
+  formatDate: function(dateObject) {
+    // improvement would be to check concept type of each space-dimension if it's time. 
+    // Below code works as long we have one time model: time.
+    return this._space.time.format(dateObject);
   }
+
 });
 
 export default AxisModel;

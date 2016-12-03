@@ -11,7 +11,7 @@
 // ----------------------------------------------------------------------------
 //   Bourbon mixins: http://bourbon.io/docs/
 // ----------------------------------------------------------------------------
-@import "~bourbon/app/assets/stylesheets/_bourbon";
+@import "~bourbon/app/assets/stylesheets/bourbon";
 
 // ----------------------------------------------------------------------------
 //   Sizes, borders and margins
@@ -148,4 +148,12 @@
       width: 0;
     }
   }
+}
+
+@mixin rtl {
+  @each $p in & {
+    @at-root #{".vzb-rtl" + $p} {
+      @content;
+    }
+  }  
 }

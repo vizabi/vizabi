@@ -12,6 +12,10 @@
 
   .vzb-data-warning-box {
     //opacity: 1;
+    @include rtl {
+      padding-left: 15px;
+      padding-right: 25px;
+    }
     @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, .24));
     @include transition(all 300ms ease-in-out);
     background-color: #fff;
@@ -22,6 +26,10 @@
     flex-direction: column;
 
     .vzb-data-warning-link {
+      @include rtl {
+        margin-left: 30px;
+        margin-right: 5px;
+      }
       color: $vzb-color-accent-orange;
       font-size: $vzb-font-size-medium;
       margin: 25px 30px 10px 5px;
@@ -31,6 +39,10 @@
         width: 25px;
       }
       div {
+        @include rtl {
+          margin-left: 0;
+          margin-right: 10px;
+        }
         display: inline-block;
         margin-left: 10px;
         text-transform: uppercase;
@@ -42,6 +54,10 @@
     }
 
     .vzb-data-warning-title {
+      @include rtl {
+        margin-left: 30px;
+        margin-right: 5px;
+      }
       color: $vzb-color-primary;
       font-size: $vzb-font-size-medium;
       margin: 15px 30px 10px 5px;
@@ -49,6 +65,11 @@
     }
 
     .vzb-data-warning-body {
+      @include rtl {
+        padding-left: 30px;
+        padding-right: 5px;
+        text-align: right;
+      }
       font-size: $vzb-font-size-regular;
       padding: 10px 30px 10px 5px;
       color: $vzb-color-black;
@@ -69,6 +90,10 @@
     }
 
     .vzb-data-warning-close {
+      @include rtl {
+        left: 10px;
+        right: auto;
+      }
       cursor: pointer;
       fill: $vzb-color-primary;
       fill-opacity: .7;

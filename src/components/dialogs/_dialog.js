@@ -1,6 +1,8 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
 import { drag as iconDrag, pin as iconPin } from 'base/iconset'
+import requireAll from 'helpers/requireAll';
+const dialogTemplates = requireAll(require.context('components/dialogs/', true, /\.html$/));
 
 /*!
  * VIZABI DIALOG
@@ -23,11 +25,11 @@ var Dialog = Component.extend({
       name: "ui",
       type: "ui"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }];
 
-    this.template = require(`./${this.name}/${this.name}.html`);
+    this.template = dialogTemplates[this.name];
 
     this._super(config, parent);
   },
@@ -50,11 +52,10 @@ var Dialog = Component.extend({
     this.dragHandler.html(iconDrag);
     this.pinIcon = this.placeholderEl.select("[data-click='pinDialog']");
     this.pinIcon.html(iconPin);
-    this.dragContainerEl = d3.select('.vzb-tool');
     this.topPos = '';
     var profile = this.getLayoutProfile();
 
-    var dg = dialogDrag(this.placeholderEl, this.dragContainerEl, 10);
+    var dg = dialogDrag(this.placeholderEl, this.rootEl, 10);
     var dragBehavior = d3.behavior.drag()
       .on('dragstart', function D3dialogDragStart() {
         var topPos = _this.placeholderEl.node().offsetTop;
@@ -79,13 +80,13 @@ var Dialog = Component.extend({
   },
 
   resize: function() {
-    if(this.placeholderEl && this.dragContainerEl && this.placeholderEl.classed('vzb-top-dialog')) {
+    if(this.placeholderEl && this.rootEl && this.placeholderEl.classed('vzb-top-dialog')) {
       this.placeholderEl.classed('notransition', true);
 
       var profile = this.getLayoutProfile();
 
       if(profile !== 'small') {
-        var chartWidth = parseInt(this.dragContainerEl.style('width'), 10);
+        var chartWidth = parseInt(this.rootEl.style('width'), 10);
         var dialogRight = parseInt(this.rightPos, 10);
         var chartHeight = parseInt(this.rootEl.style('height'), 10);
         var dialogTop = parseInt(this.topPos, 10);
@@ -259,7 +260,7 @@ var Dialog = Component.extend({
 });
 
 function dialogDrag(element, container, xOffset) {
-  var posX, posY, divTop, divRight, marginRight, eWi, eHe, cWi, cHe, diffX, diffY;
+  var posX, posY, divTop, divRight, marginRight, marginLeft, xOffsetRight, xOffsetLeft, eWi, eHe, cWi, cHe, diffX, diffY;
 
   return {
     move: function(x, y) {
@@ -278,8 +279,11 @@ function dialogDrag(element, container, xOffset) {
       }
       divTop = parseInt(element.style('top')) || 0;
       divRight = parseInt(element.style('right')) || 0;
+      marginLeft = parseInt(element.style('margin-left')) || 0;
       marginRight = parseInt(element.style('margin-right')) || 0;
-      eWi = parseInt(element.style('width'));
+      xOffsetLeft = Math.min(xOffset, marginLeft);
+      xOffsetRight = Math.min(xOffset, marginRight);
+      eWi = parseInt(element.style('width')) + marginLeft - xOffsetLeft;
       eHe = parseInt(element.style('height'));
       cWi = parseInt(container.style('width')) - marginRight;
       cHe = parseInt(container.style('height'));
@@ -298,7 +302,7 @@ function dialogDrag(element, container, xOffset) {
       }
       var aX = -posX + diffX,
         aY = posY - diffY;
-      if(aX < -xOffset) aX = -xOffset;
+      if(aX < -xOffsetRight) aX = -xOffsetRight;
       if(aY < 0) aY = 0;
       if(aX + eWi > cWi) aX = cWi - eWi;
       if(aY + eHe > cHe) aY = cHe - eHe;

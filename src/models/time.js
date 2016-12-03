@@ -54,7 +54,7 @@ var TimeModel = DataConnected.extend({
   dataConnectedChildren: ['startOrigin', 'endOrigin', 'dim'],
 
   /**
-   * Initializes the language model.
+   * Initializes the locale model.
    * @param {String} name 
    * @param {Object} values The initial values of this model
    * @param parent A reference to the parent model
@@ -68,6 +68,7 @@ var TimeModel = DataConnected.extend({
     var _this = this;
     this.timeFormat = formats[this.unit];
     this.dragging = false;
+    this.timeNow = new Date(this.value);
     this.postponePause = false;
     this.allSteps = {};
     this.delayAnimations = this.delay;
@@ -82,7 +83,17 @@ var TimeModel = DataConnected.extend({
           _this._stopPlaying();
         }
       },
-
+      "change:value": function() {
+        if(_this.playing) {
+          _this.timeDelayId = utils.delay(function() {
+            _this.timeNow = new Date(_this.value);  
+          }, _this.delayAnimations);
+        } else {
+          utils.clearDelay(_this.timeDelayId);
+          _this.timeNow = new Date(_this.value);
+        } 
+      },
+      
       "change:unit": function() {
         _this.timeFormat = formats[_this.unit];
       }
@@ -110,7 +121,10 @@ var TimeModel = DataConnected.extend({
    * @param {Date} dateObject
    * @param {String} unit
    * @returns {String}
-   */
+   */  
+  formatDate: function(dateObject) {
+    return this.format(dateObject);
+  },
   format: function(dateObject, unit) {
     unit = unit || this.unit;
     if (dateObject == null) return null;
@@ -266,13 +280,11 @@ var TimeModel = DataConnected.extend({
       }
     } else {
       var gte, lte;
-      var start = defaultStart || this.start;
-      if (start != null) {
-        gte = this.timeFormat(start);
+      if (defaultStart != null) {
+        gte = this.timeFormat(defaultStart);
       }
-      var end = defaultEnd || this.end;
-      if (end != null) {
-        lte = this.timeFormat(end);
+      if (defaultEnd != null) {
+        lte = this.timeFormat(defaultEnd);
       }
       if (gte || lte) {
         filter = {};

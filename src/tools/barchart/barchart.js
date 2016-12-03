@@ -31,7 +31,7 @@ var BarChart = Tool.extend('BarChart', {
     this.components = [{
       component: BarChartComponent,
       placeholder: '.vzb-tool-viz',
-      model: ["state.time", "state.entities", "state.marker", "language"] //pass models to component
+      model: ["state.time", "state.entities", "state.marker", "locale"] //pass models to component
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
@@ -39,15 +39,15 @@ var BarChart = Tool.extend('BarChart', {
     }, {
       component: dialogs,
       placeholder: '.vzb-tool-dialogs',
-      model: ['state', 'ui', 'language']
+      model: ['state', 'ui', 'locale']
     }, {
       component: buttonlist,
       placeholder: '.vzb-tool-buttonlist',
-      model: ['state', 'ui', 'language']
+      model: ['state', 'ui', 'locale']
     }, {
       component: treemenu,
       placeholder: '.vzb-tool-treemenu',
-      model: ['state.marker', 'state.marker_tags', 'state.time', 'language']
+      model: ['state.marker', 'state.marker_tags', 'state.time', 'locale']
     }];
 
     //constructor is the same as any tool
@@ -65,7 +65,7 @@ var BarChart = Tool.extend('BarChart', {
         color: { }
       }
     },
-    language: { },
+    locale: { },
     ui: {
       presentation: false,
       chart: { }

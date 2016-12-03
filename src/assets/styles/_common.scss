@@ -157,6 +157,10 @@ $vzb-loader-bgcolor: $vzb-color-white;
     }
   }
 
+  .fa {
+    direction: ltr;
+  }
+
   &.vzb-error {
 
     @include user-select(none);

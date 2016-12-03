@@ -13,7 +13,7 @@ button#vzbp-btn-share.vzbp-button(data-tooltip='Share')
 
 hr.vzbp-hr
 #resp-sect.collapsible-section.open
-  h2.vzbp-subtitle.vzbp-collapsible-title Responsiveness
+  h2.vzbp-subtitle.vzbp-collapsible-title Layout
   .vzbp-collapsible
     button#vzbp-btn-portrait.vzbp-button.vzbp-button-bigger(data-tooltip='Portrait')
       i.fa.fa-mobile
@@ -25,12 +25,7 @@ hr.vzbp-hr
       i.fa.fa-random
     p(align='left')
       input#vzbp-input-width.vzbp-input(type='number')
-      |  x
       input#vzbp-input-height.vzbp-input(type='number')
-    //- p(align='center')
-    //-   a(href='fullscreen/{{ page.filename }}', target='blank')
-    //-     i.fa.fa-share
-    //-     | Full screen page
 
 hr.vzbp-hr
 
@@ -38,24 +33,28 @@ hr.vzbp-hr
   h2#state-section.vzbp-subtitle.vzbp-collapsible-title State
 
 hr.vzbp-hr
-#info-sect.collapsible-section.open
-  h2.vzbp-subtitle.vzbp-collapsible-title Info
-  .vzbp-collapsible
-    p #{description}
-
-
-hr.vzbp-hr
 
 #butt-sect.collapsible-section.open
-  h2.vzbp-subtitle.vzbp-collapsible-title Interaction Buttons
+  h2.vzbp-subtitle.vzbp-collapsible-title Interact
   .vzbp-collapsible
-    button#vzbp-btn-play.vzbp-button(data-tooltip='Play')
+    button#vzbp-btn-play.vzbp-button.vzbp-wide(data-tooltip='Play')
       i.fa.fa-play
-    button#vzbp-btn-lang.vzbp-button.vzbp-button-bigger(data-tooltip='Switch language')
-      i.fa.fa-globe
     button#vzbp-btn-record.vzbp-button.vzbp-button-bigger(data-tooltip='Record')
       i.fa.fa-bullseye
     button#vzbp-btn-download.vzbp-button.vzbp-button-bigger(data-tooltip='Download')
       i.fa.fa-download
+    select#vzbp-btn-lang.vzbp-button.vzbp-wide(data-tooltip='Switch language')
+      option(value='en') English
+      option(value='sv-SE') Svenska
+      option(value='ar-SA') العربية
+      option(value='ru-RU') Русский
+      option(value='fr-FR') Français
+      option(value='zh-CN') 中國傳統的
+      option(value='es-ES') Español
+      option(value='empty') --empty--
 
 hr.vzbp-hr
+#info-sect.collapsible-section.open
+  h2.vzbp-subtitle.vzbp-collapsible-title Info
+  .vzbp-collapsible
+    p #{description}

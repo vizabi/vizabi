@@ -28,13 +28,9 @@ var ColorLegend = Component.extend({
         name: "marker",
         type: "model"
       }, {
-        name: "language",
-        type: "language"
+        name: "locale",
+        type: "locale"
       }];
-
-    this.needsUpdate = false;
-    this.which_1 = false;
-    this.scaleType_1 = false;
 
     this.model_binds = {
       "change:marker.color.scaleType": function(evt, path) {
@@ -100,7 +96,7 @@ var ColorLegend = Component.extend({
     this.labelScaleSVG = this.labelScaleEl.append("svg");
     this.labelScaleG = this.labelScaleSVG.append("g");
     this.unitDiv = this.listColorsEl.append("div").attr("class", "vzb-cl-unit");
-    this.unitText = this.unitDiv.append("text").attr("class", "vzb-cl-unit-text");
+    this.unitText = this.unitDiv.append("span").attr("class", "vzb-cl-unit-text");
 
     this.minimapSVG = this.minimapEl.append("svg");
     this.minimapG = this.minimapSVG.append("g");

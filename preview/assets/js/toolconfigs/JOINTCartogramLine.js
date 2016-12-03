@@ -78,5 +78,17 @@ var VIZABI_MODEL = {
         }
       }
     }
+  },
+  "data": {
+    "reader": "csv",
+    "path": "data/zaf/waffles/ddf--datapoints--piped_water_percentage--electricity_lighting_percentage--by--time--geo-add-zaf.csv",
+    "splash": false
   }
 };
+
+var EXT_RESOURCES = {
+  "host": LOCAL_URL,
+  "preloadPath": "data/zaf/",
+  "dataPath": "data/zaf/waffles/"
+};
+    

@@ -36,7 +36,7 @@ export default function collisionResolver() {
       labelPosition = resolver.calculatePositions(data, value, height, scale);
       //actually reposition the labels
       g.each(function(d, i) {
-        if(data[d[KEY]][fixed])
+        if((!data[d[KEY]]) || data[d[KEY]][fixed])
           return;
         var resolvedY = labelPosition[d[KEY]] || scale(data[d[KEY]][value]) || 0;
         var resolvedX = null;

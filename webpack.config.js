@@ -9,6 +9,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const OpenBrowserPlugin = require('open-browser-webpack-plugin');
 const SassLintPlugin = require('sasslint-webpack-plugin');
+const UnminifiedWebpackPlugin = require('unminified-webpack-plugin');
 
 const archiver = require('archiver');
 
@@ -16,6 +17,7 @@ const extractSrc = new ExtractTextPlugin('dist/vizabi.css');
 const extractPreview = new ExtractTextPlugin('preview/assets/css/main.css');
 
 const __PROD__ = process.env.NODE_ENV === 'production';
+const __FAST__ = !!process.env.FAST;
 const timestamp = new Date();
 
 const sep = '\\' + path.sep;
@@ -55,6 +57,16 @@ const plugins = [
     {
       from: 'preview/assets/js/',
       to: 'preview/assets/js/'
+    },
+    {
+      from: 'src/assets/translation/',
+      to: 'preview/assets/translation/'
+    }
+  ]),
+  new CopyWebpackPlugin([
+    {
+      from: 'src/assets/translation/',
+      to: 'dist/assets/translation/'
     }
   ]),
   new OpenBrowserPlugin({
@@ -89,12 +101,14 @@ if (__PROD__) {
         screw_ie8: true
       }
     }),
+    new UnminifiedWebpackPlugin(),
     new AfterBuildPlugin(() => {
       fs.mkdirSync(path.resolve(__dirname, 'build', 'download'));
 
       const archive = archiver('zip');
       const files = [
         'vizabi.css',
+        'vizabi.min.js',
         'vizabi.js'
       ];
 
@@ -108,10 +122,8 @@ if (__PROD__) {
       archive.pipe(
         fs.createWriteStream(path.resolve('build', 'download', 'vizabi.zip'))
       );
-      archive.bulk([
-        { expand: true, cwd: 'src/assets/cursors', src: ["**/*"], dot: true, dest: 'assets/cursors' },
-        { expand: true, cwd: 'src/assets/translation', src: ["en.json"], dot: true, dest: 'assets/translation' }
-      ]);
+      archive.glob("**/*", { cwd: 'src/assets/cursors', dot: true }, { prefix: 'assets/cursors' });
+      archive.glob("en.json", { cwd: 'src/assets/translation', dot: true }, { prefix: 'assets/translation' });
       archive.finalize();
     }),
     new webpack.BannerPlugin({
@@ -130,8 +142,91 @@ if (__PROD__) {
   )
 }
 
+const loaders = [
+  {
+    test: /\.scss$/,
+    include: [
+      path.resolve(__dirname, 'src')
+    ],
+    loader: extractSrc.extract([
+      `css-loader?${JSON.stringify({ sourceMap: true, minimize: __PROD__ })}`,
+      'sass-loader'
+    ])
+  },
+  {
+    test: /\.scss$/,
+    include: [
+      path.resolve(__dirname, 'preview')
+    ],
+    loader: extractPreview.extract(['css-loader', 'sass-loader'])
+  },
+  {
+    test: /\.cur$/,
+    loader: 'file-loader',
+    query: {
+      publicPath: path => path.split('/').slice(1).join('/'),
+      name: 'dist/assets/cursors/[name].[ext]'
+    }
+  },
+  {
+    test: /\.pug$/,
+    loaders: [
+      'file-loader?name=[path][name].html',
+      'pug-html-loader?exports=false'
+    ]
+  },
+  {
+    test: /\.css$/,
+    include: [
+      path.resolve(__dirname, 'node_modules')
+    ],
+    loader: 'file-loader',
+    query: {
+      name: 'preview/assets/vendor/css/[name].[ext]'
+    }
+  },
+  {
+    test: /\.(otf|eot|svg|ttf|woff2?)$/,
+    include: [
+      path.resolve(__dirname, 'node_modules')
+    ],
+    loader: 'file-loader',
+    query: {
+      name: 'preview/assets/vendor/fonts/[name].[ext]'
+    }
+  },
+  {
+    test: /(d3|\.web)\.js$/, // TODO: we need another way to extract vendor files
+    include: [
+      path.resolve(__dirname, 'node_modules')
+    ],
+    loader: 'file-loader',
+    query: {
+      name: 'preview/assets/vendor/js/[1]/[name].[ext]',
+      regExp: new RegExp(`${sep}node_modules${sep}([^${sep}]+?)${sep}`)
+    }
+  },
+  {
+    test: /\.html$/,
+    include: [path.resolve(__dirname, 'src')],
+    loader: 'html-loader'
+  }
+];
+
+if (!__FAST__) {
+  loaders.push({
+    test: /\.js$/,
+    exclude: /node_modules/,
+    loader: 'babel-loader',
+    query: {
+      cacheDirectory: !__PROD__,
+      presets: ['es2015']
+    }
+  });
+}
+
 module.exports = {
-  devtool: __PROD__ ? 'source-map' : 'eval',
+  devtool: 'source-map',
 
   entry: {
     'dist/vizabi': './src/vizabi-gapminder',
@@ -140,7 +235,7 @@ module.exports = {
 
   output: {
     path: path.resolve(__dirname, 'build'),
-    filename: '[name].js',
+    filename: __PROD__ ? '[name].min.js' : '[name].js',
     library: 'Vizabi',
     libraryTarget: 'umd',
     umdNamedDefine: true
@@ -154,103 +249,14 @@ module.exports = {
   },
 
   module: {
-    loaders: [
-      {
-        test: /\.js$/,
-        // exclude: /node_modules/, // TODO: uncomment after fix export default in interpolators module
-        loader: 'babel-loader',
-        query: {
-          cacheDirectory: !__PROD__,
-          presets: ['es2015'],
-          plugins: ['add-module-exports']
-        }
-      },
-      {
-        test: /\.scss$/,
-        include: [
-          path.resolve(__dirname, 'src')
-        ],
-        loader: extractSrc.extract([
-          `css-loader?${JSON.stringify({ sourceMap: true, minimize: __PROD__ })}`,
-          'sass-loader'
-        ])
-      },
-      {
-        test: /\.scss$/,
-        include: [
-          path.resolve(__dirname, 'preview')
-        ],
-        loader: extractPreview.extract(['css-loader', 'sass-loader'])
-      },
-      {
-        test: /\.cur$/,
-        loader: 'file-loader',
-        query: {
-          publicPath: path => path.split('/').slice(1).join('/'),
-          name: 'dist/assets/cursors/[name].[ext]'
-        }
-      },
-      {
-        test: /\.pug$/,
-        loaders: [
-          'file-loader?name=[path][name].html',
-          'pug-html-loader?exports=false'
-        ]
-      },
-      {
-        test: /\.css$/,
-        include: [
-          path.resolve(__dirname, 'node_modules')
-        ],
-        loader: 'file-loader',
-        query: {
-          name: 'preview/assets/vendor/css/[name].[ext]'
-        }
-      },
-      {
-        test: /\.(otf|eot|svg|ttf|woff2?)$/,
-        include: [
-          path.resolve(__dirname, 'node_modules')
-        ],
-        loader: 'file-loader',
-        query: {
-          name: 'preview/assets/vendor/fonts/[name].[ext]'
-        }
-      },
-      {
-        test: /(d3\.min|\.web)\.js$/, // TODO: we need another way to extract vendor files
-        include: [
-          path.resolve(__dirname, 'node_modules')
-        ],
-        loader: 'file-loader',
-        query: {
-          name: 'preview/assets/vendor/js/[1]/[name].[ext]',
-          regExp: new RegExp(`${sep}node_modules${sep}([^${sep}]+?)${sep}`)
-        }
-      },
-      {
-        test: /\.html$/,
-        include: [path.resolve(__dirname, 'src')],
-        loader: 'html-loader',
-        query: {
-          interpolate: 'require'
-        }
-      },
-      {
-        test: /\.json$/, //__PROD__ ? /en\.json$/ : /\.json$/,
-        include: [path.resolve(__dirname, 'src', 'assets', 'translation')],
-        loader: 'file-loader',
-        query: {
-          name: `${__PROD__ ? 'dist' : 'preview'}/assets/translation/[name].[ext]`
-        }
-      }
-    ]
+    loaders
   },
 
   plugins,
 
   stats,
   devServer: {
-    stats
+    stats,
+    host: '0.0.0.0'
   }
 };

@@ -28,8 +28,8 @@ var BarComponent = Component.extend({
       name: "marker",
       type: "model"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }];
 
     var _this = this;
@@ -105,7 +105,7 @@ var BarComponent = Component.extend({
   updateIndicators: function() {
 
     var _this = this;
-    this.translator = this.model.language.getTFunction();
+    this.translator = this.model.locale.getTFunction();
     this.duration = this.model.time.delayAnimations;
 
     var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
