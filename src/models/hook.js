@@ -19,13 +19,6 @@ var Hook = DataConnected.extend({
     var _this = this;
     this._super(name, value, parent, binds, persistent);
     this.on('ready', this.hookReady.bind(this));
-    if (this.scaleType) {
-      this.on({
-        "change:scaleType": function () {
-          _this.scale = null;
-        }
-      });
-    }
   },
   
   hookReady: function(){
@@ -53,7 +46,7 @@ var Hook = DataConnected.extend({
     this.getClosestModel('locale').on('dataConnectedChange', this.handleDataConnectedChange.bind(this));
   },
 
-  whichChange: function(newValue) {
+  setWhich: function(newValue) {
 
     var obj = { which: newValue };
     var conceptProps = this.dataSource.getConceptprops(newValue);
@@ -73,7 +66,11 @@ var Hook = DataConnected.extend({
     this.scale = null;
 
     this.set(obj);
-
+  },
+  
+  setScaleType: function(newValue) {
+    this.scale = null;
+    this.set({"scaleType": newValue});
   },
 
   preloadData: function() {

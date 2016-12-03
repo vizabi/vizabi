@@ -1311,15 +1311,8 @@ var TreeMenu = Component.extend({
   _setModel: function(what, value, hookID) {
 
     var mdl = this.model.marker[hookID];
-
-    var obj = {};
-    obj[what] = value;
-    
-    if (what == 'which')
-      mdl.whichChange(value);
-    else
-      mdl.set(obj);
-
+    if (what == 'which') mdl.setWhich(value);
+    if (what == 'scaleType') mdl.setScaleType(value);
   }
 
 
