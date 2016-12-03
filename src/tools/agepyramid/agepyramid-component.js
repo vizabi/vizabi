@@ -154,7 +154,7 @@ var AgePyramid = Component.extend({
       .domain([this.timeSteps[0], this.timeSteps[this.timeSteps.length - 1]])
       .range([0, this.timeSteps.length - 1]);
 
-    this.SIDEDIM = this.model.marker.side.which;//this.model.side.getDimension();
+    this.SIDEDIM = this.model.marker.hook_side.which;//this.model.side.getDimension();
     //this.STACKDIM = this.model.marker.color.which;
     this.STACKDIM = this.model.stack.getDimension() || this.model.marker.color.which;
     this.AGEDIM = this.model.age.getDimension();

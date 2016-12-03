@@ -13,21 +13,26 @@ var VIZABI_MODEL = {
     "entities": {
       "dim": "geo",
       "show": {
-        "geo": ["*"]
+        "geo": {
+          "$in": ["zaf"]
+        }
       }
     },
     "entities_colorlegend": {
       "dim": "geo",
       "show": {
-        "is--country": true
+        "geo": {
+          "$in": ["zaf"]
+        }
       }
     },
     "entities_age": {
       "dim": "age",
       "show": {
-        "age": [
-          [0, 95]
-        ]
+        "age": {
+          "$lte": 95,
+          "$gte": 0
+        }
       },
       "grouping": 1,
       "_multiple": true
@@ -63,9 +68,12 @@ var VIZABI_MODEL = {
       "color": {
         "use": "property",
         "which": "education_attainment",
-        "colorlegend": "marker_colorlegend"
+        "allow": {
+          "scales": ["ordinal"]
+        },
+        "syncModels": ["marker_colorlegend"]
       },
-      "side": {
+      "hook_side": {
         "use": "property",
         "which": "population_group"
       }
@@ -78,9 +86,7 @@ var VIZABI_MODEL = {
       }
     },
     "marker_colorlegend": {
-      "space": ["entities_stack"],
-      "type": "geometry",
-      "shape": "svg",
+      "space": ["entities_colorlegend"],
       "label": {
         "use": "property",
         "which": "education_attainment"
@@ -92,6 +98,20 @@ var VIZABI_MODEL = {
       "hook_geoshape": {
         "use": "property",
         "which": "shape_lores_svg"
+      }
+    },
+    "entities_tags": {
+      "dim": "tag"
+    },
+    "marker_tags": {
+      "space": ["entities_tags"],
+      "label": {
+        "use": "property",
+        "which": "name"
+      },
+      "hook_parent": {
+        "use": "property",
+        "which": "parent"
       }
     }
   },
