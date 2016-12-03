@@ -47,7 +47,7 @@ var TimeModel = DataConnected.extend({
     delayThresholdX4: 50, //delay X4 boundary: if less -- then 3/4 frame will be dropped and animation dely will be 4x the value
     unit: "year",
     step: 1, //step must be integer, and expressed in units
-    immediatePlay: false,
+    immediatePlay: true,
     record: false
   },
 
