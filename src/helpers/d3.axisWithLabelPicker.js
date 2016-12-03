@@ -153,9 +153,7 @@ export default function axisSmart() {
       
       //set content and visibility of HL value
       g.select('.vzb-axis-value')
-        .classed("vzb-hidden", highlightValue == "none")
-        .select("text")
-        .text(options.formatter(highlightValue == "none" ? 0 : highlightValue));
+        .classed("vzb-hidden", highlightValue == "none");
       
       var bbox;
       var o = {};
@@ -212,6 +210,12 @@ export default function axisSmart() {
           .ease("linear")
           .attr("transform", getTransform);
         
+        g.select('.vzb-axis-value')
+          .select("text")
+          .transition("text")
+          .delay(highlightTransDuration)
+          .text(highlightValue == "none" ? "" : options.formatter(highlightValue));
+        
         g.selectAll(".tick:not(.vzb-hidden)").each(function(d, t) {
           d3.select(this).select("text")
             .transition()
@@ -224,6 +228,12 @@ export default function axisSmart() {
         g.select('.vzb-axis-value')
           .interrupt()
           .attr("transform", getTransform)
+          .transition();
+        
+        g.select('.vzb-axis-value')
+          .select("text")
+          .interrupt()
+          .text(highlightValue == "none" ? "" : options.formatter(highlightValue))
           .transition();
           
         g.selectAll(".tick:not(.vzb-hidden)").each(function(d, t) {

@@ -67,7 +67,7 @@ export default Class.extend({
     this.__resizeText();
   },
 
-  setText: function(text) {
+  setText: function(text, delay) {
     var _this = this;
     var lengthChanged = text.split('').length != this.symbols.length;
     this.symbols = text.split('');
@@ -76,8 +76,10 @@ export default Class.extend({
     
     view.exit().remove();
     view.enter().append("text");
-    view.text((d) => d);
-    
+    view.transition('text')
+      .delay(delay)
+      .text((d) => d);
+      
     if (lengthChanged) {
       return this.__resizeText();
     } else {

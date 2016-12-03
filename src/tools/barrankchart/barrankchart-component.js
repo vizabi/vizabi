@@ -86,7 +86,6 @@ var BarRankChart = Component.extend({
   },
 
   onTimeChange: function() {
-    //this.year.setText(this.model.time.timeFormat(this.model.time.value));
     var _this = this;
     this.model.marker.getFrame(this.model.time.value, function(values) {
       _this.values = values;
