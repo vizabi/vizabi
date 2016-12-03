@@ -155,10 +155,6 @@ const BarRankChart = Component.extend({
           .toggle()
       );
 
-    this.header.select('.vzb-br-total')
-      .select('text')
-      .text(this.model.time.timeFormat(this.model.time.value));
-
     // new scales and axes
     this.xScale = this.model.marker.axis_x.getScale(false);
     this.cScale = this.model.marker.color.getScale();
@@ -199,15 +195,20 @@ const BarRankChart = Component.extend({
   },
 
   draw: function () {
+    this.time_1 = this.time == null ? this.model.time.value : this.time;
+    this.time = this.model.time.value;      
+    //smooth animation is needed when playing, except for the case when time jumps from end to start
+    let duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
+    
     //return if drawAxes exists with error
-    if (this.drawAxes()) return;
-    this.drawData();
+    if (this.drawAxes(duration)) return;    
+    this.drawData(duration);
   },
 
   /*
    * draw the chart/stage
    */
-  drawAxes() {
+  drawAxes(duration = 0) {
     const profiles = {
       small: {
         margin: { top: 60, right: 20, left: 90, bottom: 40 },
@@ -276,25 +277,8 @@ const BarRankChart = Component.extend({
 
     // header
     this.header.attr('height', margin.top);
-
     const headerTitle = this.header.select('.vzb-br-title');
-    const headerTitleBBox = headerTitle.node().getBBox();
-
-    const titleTx = headerMargin.left;
-    const titleTy = headerMargin.top + headerTitleBBox.height;
-    headerTitle
-      .attr('transform', `translate(${titleTx}, ${titleTy})`);
-
-    const headerInfo = this.infoEl;
-
-    headerInfo.select('svg')
-      .attr('width', `${infoElHeight}px`)
-      .attr('height', `${infoElHeight}px`);
-
-    const infoTx = titleTx + headerTitle.node().getBBox().width + infoElMargin;
-    const infoTy = headerMargin.top + infoElHeight / 4;
-    headerInfo.attr('transform', `translate(${infoTx}, ${infoTy})`);
-
+    
     // change header titles for new data
     const conceptProps = this.model.marker.getConceptprops();
     const { which } = this.model.marker.axis_x;
@@ -313,7 +297,37 @@ const BarRankChart = Component.extend({
       }
     }
 
+    const headerTitleBBox = headerTitle.node().getBBox();
+
+    const titleTx = headerMargin.left;
+    const titleTy = headerMargin.top + headerTitleBBox.height;
+    headerTitle
+      .attr('transform', `translate(${titleTx}, ${titleTy})`);
+
+    const headerInfo = this.infoEl;
+
+    headerInfo.select('svg')
+      .attr('width', `${infoElHeight}px`)
+      .attr('height', `${infoElHeight}px`);
+
+    const infoTx = titleTx + headerTitle.node().getBBox().width + infoElMargin;
+    const infoTy = headerMargin.top + infoElHeight / 4;
+    headerInfo.attr('transform', `translate(${infoTx}, ${infoTy})`);
+
+
     const headerTotal = this.header.select('.vzb-br-total');
+    
+    if(duration){
+      headerTotal.select('text')
+        .transition('text')
+        .delay(duration)
+        .text(this.model.time.timeFormat(this.time));
+    }else{
+      headerTotal.select('text')
+        .interrupt()
+        .text(this.model.time.timeFormat(this.time));
+    }
+    
     const headerTotalBBox = headerTotal.node().getBBox();
 
     const totalTx = this.width + margin.left - headerTotalBBox.width;
@@ -339,8 +353,7 @@ const BarRankChart = Component.extend({
     this.xScale.range([0, this.width]);
   },
 
-  drawData() {
-    const duration = this.model.time.playing ? this.model.time.delayAnimations : 0;
+  drawData(duration = 0) {
 
     // update the shown bars for new data-set
     this.createAndDeleteBars(
