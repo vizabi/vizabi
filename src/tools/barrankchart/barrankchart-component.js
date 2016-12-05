@@ -47,6 +47,7 @@ const BarRankChart = Component.extend({
         if (this._readyOnce) {
           this.selectBars();
           this.updateOpacity();
+          this._updateDoubtOpacity();
         }
       },
       'change:marker.axis_x.scaleType': () => {
@@ -168,8 +169,8 @@ const BarRankChart = Component.extend({
 
     this.dataWarningEl
       .on('click', () => this.parent.findChildByName('gapminder-datawarning').toggle())
-      .on('mouseover', () => this.updateDoubtOpacity(1))
-      .on('mouseout', () => this.updateDoubtOpacity());
+      .on('mouseover', () => this._updateDoubtOpacity(1))
+      .on('mouseout', () => this._updateDoubtOpacity());
 
     utils.setIcon(this.infoEl, iconQuestion)
       .select('svg').attr('width', 0).attr('height', 0);
@@ -196,12 +197,12 @@ const BarRankChart = Component.extend({
 
   draw: function () {
     this.time_1 = this.time == null ? this.model.time.value : this.time;
-    this.time = this.model.time.value;      
+    this.time = this.model.time.value;
     //smooth animation is needed when playing, except for the case when time jumps from end to start
     let duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
-    
+
     //return if drawAxes exists with error
-    if (this.drawAxes(duration)) return;    
+    if (this.drawAxes(duration)) return;
     this.drawData(duration);
   },
 
@@ -211,7 +212,7 @@ const BarRankChart = Component.extend({
   drawAxes(duration = 0) {
     const profiles = {
       small: {
-        margin: { top: 60, right: 20, left: 90, bottom: 40 },
+        margin: { top: 60, right: 20, left: 90, bottom: 10 },
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 16,
         infoElMargin: 5,
@@ -219,7 +220,7 @@ const BarRankChart = Component.extend({
         barMargin: 2,
       },
       medium: {
-        margin: { top: 60, right: 20, left: 90, bottom: 40 },
+        margin: { top: 60, right: 20, left: 90, bottom: 15 },
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 16,
         infoElMargin: 5,
@@ -227,7 +228,7 @@ const BarRankChart = Component.extend({
         barMargin: 2,
       },
       large: {
-        margin: { top: 60, right: 20, left: 90, bottom: 40 },
+        margin: { top: 60, right: 20, left: 90, bottom: 15 },
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 16,
         infoElMargin: 5,
@@ -242,8 +243,8 @@ const BarRankChart = Component.extend({
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 25,
         infoElMargin: 10,
-        barHeight: 20,
-        barMargin: 2,
+        barHeight: 25,
+        barMargin: 4,
       },
       large: {
         margin: { top: 60, right: 50, left: 90, bottom: 40 },
@@ -251,7 +252,7 @@ const BarRankChart = Component.extend({
         infoElHeight: 16,
         barHeight: 25,
         infoElMargin: 10,
-        barMargin: 2,
+        barMargin: 4,
       }
     };
 
@@ -278,7 +279,7 @@ const BarRankChart = Component.extend({
     // header
     this.header.attr('height', margin.top);
     const headerTitle = this.header.select('.vzb-br-title');
-    
+
     // change header titles for new data
     const conceptProps = this.model.marker.getConceptprops();
     const { which } = this.model.marker.axis_x;
@@ -316,18 +317,18 @@ const BarRankChart = Component.extend({
 
 
     const headerTotal = this.header.select('.vzb-br-total');
-    
-    if(duration){
+
+    if (duration) {
       headerTotal.select('text')
         .transition('text')
         .delay(duration)
         .text(this.model.time.timeFormat(this.time));
-    }else{
+    } else {
       headerTotal.select('text')
         .interrupt()
         .text(this.model.time.timeFormat(this.time));
     }
-    
+
     const headerTotalBBox = headerTotal.node().getBBox();
 
     const totalTx = this.width + margin.left - headerTotalBBox.width;
@@ -345,12 +346,14 @@ const BarRankChart = Component.extend({
       .attr('y', -warnBB.height + 1);
 
     this.dataWarningEl
-      .attr('transform', `translate(10, ${warnBB.height + 15})`)
+      .attr('transform', `translate(${this.width + margin.left - warnBB.width - 15}, ${warnBB.height})`)
       .select('text')
       .attr('dx', warnBB.height * 1.5);
 
     // although axes are not drawn, need the xScale for bar width
     this.xScale.range([0, this.width]);
+
+    this._updateDoubtOpacity();
   },
 
   drawData(duration = 0) {
@@ -368,43 +371,60 @@ const BarRankChart = Component.extend({
       this._presentation = presentation;
     }
 
-    if (typeof this._entitiesCount === 'undefined' || this._entitiesCount !== this.sortedEntities.length) {
+    if (
+      presentationModeChanged
+      || typeof this._entitiesCount === 'undefined'
+      || this._entitiesCount !== this.sortedEntities.length
+    ) {
       this._entitiesCount = this.sortedEntities.length;
       this.resizeSvgAndScroll();
     }
 
     const x = presentation ? 35 : 5;
-    const barWidth = ({ value }) => this.xScale(value);
-    const xValue = ({ value }) => this._formatter(value);
+    const barWidth = (value) => this.xScale(value);
+    const xValue = (value) => this._formatter(value);
 
     this.sortedEntities.forEach(bar => {
+      const { value } = bar;
+
       if (presentationModeChanged || bar.isNew) {
         bar.barLabel
-          .attr('x', x - 5);
+          .attr('x', x - 5)
+          .attr('y', this.activeProfile.barHeight / 2);
 
         bar.barRect
-          .attr('x', x);
+          .attr('x', x)
+          .attr('rx', this.activeProfile.barHeight / 4)
+          .attr('ry', this.activeProfile.barHeight / 4)
+          .attr('height', this.activeProfile.barHeight);
 
         bar.barValue
-          .attr('x', x + 5);
+          .attr('x', x + 5)
+          .attr('y', this.activeProfile.barHeight / 2);
 
         bar.barTitle
           .attr('x', x);
       }
 
-      if (bar.changedWidth) {
-        bar.barRect
-          .transition().duration(duration).ease('linear')
-          .attr('width', Math.max(0, barWidth(bar)));
+      if (bar.changedWidth || presentationModeChanged) {
+        const width = Math.max(0, value && barWidth(Math.abs(value)));
 
+        if (bar.changedWidth) {
+          bar.barRect
+            .transition().duration(duration).ease('linear')
+            .attr('width', width)
+        }
+
+        bar.barRect
+          .attr('x', x - (value < 0 ? width : 0));
 
         if (bar.changedValue) {
           bar.barValue
-            .text(xValue(bar));
+            .text(xValue(value) || this.translator('hints/nodata'));
         }
       }
 
-      if (bar.changedIndex) {
+      if (bar.changedIndex || presentationModeChanged) {
         bar.self
           .transition().duration(duration).ease('linear')
           .attr('transform', `translate(0, ${this._getBarPosition(bar.index)})`);
@@ -466,18 +486,14 @@ const BarRankChart = Component.extend({
         });
 
         const barRect = self.append('rect')
-          .attr('rx', _this.activeProfile.barHeight / 4)
-          .attr('ry', _this.activeProfile.barHeight / 4)
           .attr('stroke', 'white')
           .attr('stroke-opacity', 0)
           .attr('stroke-width', 2)
-          .attr('height', _this.activeProfile.barHeight)
           .style('fill', color);
 
         const barLabel = self.append('text')
           .attr('class', 'vzb-br-label')
           .attr('x', -5)
-          .attr('y', _this.activeProfile.barHeight / 2)
           .attr('text-anchor', 'end')
           .attr('dominant-baseline', 'middle')
           .text(d => {
@@ -491,7 +507,6 @@ const BarRankChart = Component.extend({
         const barValue = self.append('text')
           .attr('class', 'vzb-br-value')
           .attr('x', 5)
-          .attr('y', _this.activeProfile.barHeight / 2)
           .attr('dominant-baseline', 'middle')
           .style('fill', darkerColor);
 
@@ -645,7 +660,7 @@ const BarRankChart = Component.extend({
       });
   },
 
-  updateDoubtOpacity(opacity) {
+  _updateDoubtOpacity(opacity) {
     this.dataWarningEl.style('opacity',
       opacity || (
         !this.model.entities.select.length ?
