@@ -392,9 +392,11 @@ updateSize: function (meshLength) {
         //graph group is shifted according to margins (while svg element is at 100 by 100%)
         this.graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+        var isRTL = this.model.locale.isRTL();
+
         var yearLabelOptions = {
             topOffset: this.getLayoutProfile()==="large"? margin.top * 2 : 0,
-            xAlign: this.getLayoutProfile()==="large"? 'left' : 'center',
+            xAlign: this.getLayoutProfile()==="large"? (isRTL ? 'left' : 'right') : 'center',
             yAlign: this.getLayoutProfile()==="large"? 'top' : 'center',
         };
 
@@ -436,7 +438,6 @@ updateSize: function (meshLength) {
             .attr("transform", "translate(" + this.width + "," + this.height + ")")
             .attr("dy", "-0.36em");
 
-        var isRTL = this.model.locale.isRTL();
         this.yTitleEl
           .style("font-size", infoElHeight + "px")
           .attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + margin.top + ")")
