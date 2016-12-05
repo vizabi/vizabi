@@ -90,7 +90,7 @@ $vzb-loader-bgcolor: $vzb-color-white;
   @include animation-name(rotate-forever);
   @include animation-timing-function(linear);
   @include size($vzb-loader-size);
-  @include position(absolute, 50% 0 0 50%);
+  @include position(absolute, 50% null 0 50%);
   border: $vzb-loader-thickness solid rgba($vzb-color-primary, .1);
   border-radius: 100%;
   border-top: $vzb-loader-thickness solid rgba($vzb-color-primary, .6);
@@ -120,10 +120,6 @@ $vzb-loader-bgcolor: $vzb-color-white;
     }
 
     &::after {
-      @include rtl {
-        right: 50%;
-        left: auto;
-      }
       @extend %vzb-loader;
     }
   }
