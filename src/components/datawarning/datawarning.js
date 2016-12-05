@@ -64,7 +64,6 @@ var DataWarning = Component.extend({
       .html(iconWarn)
 
     icon.append("div")
-      .text("Data doubts");
 
     this.container.append("div")
       .attr("class", "vzb-data-warning-title")
@@ -75,6 +74,9 @@ var DataWarning = Component.extend({
 
   redraw: function(){
     this.translator = this.model.locale.getTFunction();
+
+    this.container.select(".vzb-data-warning-link div")
+      .text(this.translator("hints/dataWarning"))
 
     var title = this.translator("datawarning/title/"+this.parent.name);
     this.container.select(".vzb-data-warning-title")

@@ -394,7 +394,7 @@ updateSize: function (meshLength) {
 
         var yearLabelOptions = {
             topOffset: this.getLayoutProfile()==="large"? margin.top * 2 : 0,
-            xAlign: this.getLayoutProfile()==="large"? 'right' : 'center',
+            xAlign: this.getLayoutProfile()==="large"? 'left' : 'center',
             yAlign: this.getLayoutProfile()==="large"? 'top' : 'center',
         };
 
@@ -436,9 +436,10 @@ updateSize: function (meshLength) {
             .attr("transform", "translate(" + this.width + "," + this.height + ")")
             .attr("dy", "-0.36em");
 
+        var isRTL = this.model.locale.isRTL();
         this.yTitleEl
           .style("font-size", infoElHeight + "px")
-          .attr("transform", "translate(0," + margin.top + ")")
+          .attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + margin.top + ")")
 
 
         var warnBB = this.dataWarningEl.select("text").node().getBBox();
@@ -449,19 +450,20 @@ updateSize: function (meshLength) {
             .attr("y", -warnBB.height * 1.0 + 1)
 
         this.dataWarningEl
-            .attr("transform", "translate(" + (0) + "," + (margin.top + warnBB.height * 1.5) + ")")
+            .attr("transform", "translate(" + (isRTL ? this.width - warnBB.width - warnBB.height * 2 : 0) + "," + (margin.top + warnBB.height * 1.5) + ")")
             .select("text")
             .attr("dx", warnBB.height * 1.5);
 
         if(this.infoEl.select('svg').node()) {
             var titleBBox = this.yTitleEl.node().getBBox();
             var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
+            var hTranslate = isRTL ? (titleBBox.x + translate[0] - infoElHeight * 1.4) : (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4);
 
             this.infoEl.select('svg')
                 .attr("width", infoElHeight + "px")
                 .attr("height", infoElHeight + "px");
             this.infoEl.attr('transform', 'translate('
-                + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
+                + hTranslate + ','
                 + (translate[1]-infoElHeight * .8) + ')');
         }
 
@@ -518,7 +520,9 @@ updateSize: function (meshLength) {
         this.infoEl.on("mouseover", function() {
           var rect = this.getBBox();
           var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-          _this.parent.findChildByName("gapminder-datanotes").setHook('axis_y').show().setPos(coord.x, coord.y);
+          var toolRect = _this.root.element.getBoundingClientRect();
+          var chartRect = _this.element.node().getBoundingClientRect();      
+          _this.parent.findChildByName("gapminder-datanotes").setHook('axis_y').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
         })
         this.infoEl.on("mouseout", function() {
           _this.parent.findChildByName("gapminder-datanotes").hide();
