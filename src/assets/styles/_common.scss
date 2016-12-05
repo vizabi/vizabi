@@ -120,6 +120,10 @@ $vzb-loader-bgcolor: $vzb-color-white;
     }
 
     &::after {
+      @include rtl {
+        right: 50%;
+        left: auto;
+      }
       @extend %vzb-loader;
     }
   }
