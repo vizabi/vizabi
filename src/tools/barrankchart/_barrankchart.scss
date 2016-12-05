@@ -66,6 +66,14 @@
         }
       }
     }
+    .vzb-data-warning-svg {
+      width: 100%;
+    }
+  }
+  &.vzb-presentation {
+    .vzb-barrankchart {
+      font-size: $vzb-font-size-larger;
+    }
   }
   &.vzb-presentation {
     .vzb-barrankchart {
