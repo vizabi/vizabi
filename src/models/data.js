@@ -274,7 +274,7 @@ var DataModel = Model.extend({
       concept["concept_type"] = d.concept_type;
       concept["sourceLink"] = d.indicator_url;
       try {
-        concept["color"] = d.color ? JSON.parse(d.color) : null;
+        concept["color"] = d.color && d.color !== "" ? JSON.parse(d.color) : null;
       } catch (e) {
         concept["color"] = null;
       }
