@@ -4,7 +4,7 @@ var VIZABI_MODEL = {
       "startOrigin": "1993",
       "endOrigin": "2015",
       "dim": "year",
-      "delay": 1
+      "delay": 700
     },
     "entities": {
       "opacitySelectDim": "0.05",
