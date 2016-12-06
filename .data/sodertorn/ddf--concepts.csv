@@ -1,14 +1,14 @@
 concept,name,concept_type,domain,tags
-domain,Domain,string,,
-year,År,time,,
-tag,Tag,entity_domain,,
-geo,Geo,entity_domain,,
-basomrade,Basområde,entity_set,geo,
-country,Land,entity_set,geo,
-county,Län,entity_set,geo,
-county_region,Länsregion,entity_set,geo,
-municipality,Kommun,entity_set,geo,
-name,Name,string,,
+domain,Domain,string,,_none
+year,År,time,,_root
+tag,Tag,entity_domain,,_none
+geo,Geo,entity_domain,,_none
+basomrade,Basområde,entity_set,geo,_none
+country,Land,entity_set,geo,_none
+county,Län,entity_set,geo,_none
+county_region,Länsregion,entity_set,geo,_none
+municipality,Kommun,entity_set,geo,geography
+name,Name,string,,_none
 cumulative_immigration_surplus,"Invandringsöverskott, Kumulativ antal",measure,,_root
 cumulative_immigration_surplus_female,"Invandringsöverskott, Kumulativ antal, Kvinnor",measure,,female
 cumulative_immigration_surplus_male,"Invandringsöverskott, Kumulativ antal, Män",measure,,male
