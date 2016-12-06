@@ -104,7 +104,7 @@ var Hook = DataConnected.extend({
 
     dataPromise.then(
       this.afterLoad.bind(this),
-      this.loadError.bind(this)
+      err => utils.warn('Problem with query: ', err, JSON.stringify(query))
     );
 
     return dataPromise;
@@ -132,10 +132,6 @@ var Hook = DataConnected.extend({
   afterLoad: function(dataId) {
     this._dataId = dataId;
     utils.timeStamp('Vizabi Model: Data loaded: ' + this._id);
-  },
-
-  loadError: function() {
-      utils.warn('Problem with query: ', JSON.stringify(query));
   },
 
   /**
