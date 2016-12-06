@@ -27,6 +27,9 @@
 					},
 					{
 						"name": "domain"
+					},
+					{
+						"name": "tags"
 					}
 				],
 				"primaryKey": "concept"
@@ -762,6 +765,24 @@
 					}
 				],
 				"primaryKey": "municipality"
+			}
+		},
+		{
+			"path": "ddf--entities--tag.csv",
+			"name": "ddf--entities--tag",
+			"schema": {
+				"fields": [
+					{
+						"name": "tag"
+					},
+					{
+						"name": "name"
+					},
+					{
+						"name": "parent"
+					}
+				],
+				"primaryKey": "tag"
 			}
 		}
 	]

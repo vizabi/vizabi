@@ -78,10 +78,15 @@ var BubbleChart = Tool.extend('BubbleChart', {
       entities: {
         dim: "id"
       },
-      entities_tags: { },
+      entities_tags: { 
+        dim: "tag"
+      },
       marker_tags: {
         space: ["entities_tags"],
-        label: {},
+        label: {
+          use: "property",
+          which: "name"
+        },
         hook_parent: {}
       },
       marker: {

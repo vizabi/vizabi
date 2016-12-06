@@ -3,25 +3,30 @@ var VIZABI_MODEL = {
     "time": {
       "startOrigin": "1993",
       "endOrigin": "2012",
-      "dim": "year"
+      "dim": "year",
+      "delay": 1
     },
     "entities": {
       "dim": "basomrade",
-      "show": { "municipality": "0120_varmdo"}
+      "show": { }
     },
     "marker": {
       "label": {
         "which": "name"
       },
       "axis_y": {
-        "which": "immigration_surplus"
+        "which": "cumulative_immigration_surplus"
       },
       "axis_x": {
-        "which": "mean_income_aged_lt_20_male"
+        "which": "mean_income_aged_lt_20"
       },
       "size": {
-        "which": "population_20xx_12_31",
-        "use": "indicator"
+        "use": "indicator",
+        "which": "population_20xx_12_31"
+      },
+      "color": {
+        "use": "property",
+        "which": "municipality"
       }
     }
   },

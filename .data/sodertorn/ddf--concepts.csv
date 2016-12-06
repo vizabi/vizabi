@@ -1,40 +1,41 @@
-concept,name,concept_type,domain
-geo,Geo,entity_domain,
-domain,Domain,string,
-name,Name,string,
-year,År,time,
-basomrade,Basområde,entity_set,geo
-municipality,Kommun,entity_set,geo
-county,Län,entity_set,geo
-county_region,Länsregion,entity_set,geo
-country,Land,entity_set,geo
-mean_income_aged_lt_20_male,"Medelinkomst, Män",measure,
-mean_income_aged_lt_20_female,"Medelinkomst, Kvinnor",measure,
-mean_income_aged_lt_20,"Medelinkomst, Totalt",measure,
-population_20xx_12_31_male,"Antal, Befolkning 20XX-12-31, Män",measure,
-population_20xx_12_31_female,"Antal, Befolkning 20XX-12-31, Kvinnor",measure,
-immigration_surplus_min_3_years_of_higher_education_aged_25_64_female,,measure,
-immigration_surplus_min_3_years_of_higher_education_aged_25_64,,measure,
-cumulative_immigration_surplus_employed_aged_20_64_female,,measure,
-immigration_surplus_employed_aged_20_64,,measure,
-immigration_surplus,,measure,
-population_20xx_12_31,,measure,
-higher_education_min_3_years_percent_of_population_aged_25_64_male,,measure,
-immigration_surplus_employed_aged_20_64_female,,measure,
-cumulative_immigration_surplus_employed_aged_20_64_male,,measure,
-cumulative_immigration_surplus_min_3_years_of_higher_education_aged_25_64_male,,measure,
-employment_rate_aged_20_64_female,,measure,
-cumulative_immigration_surplus_min_3_years_of_higher_education_aged_25_64_female,,measure,
-employment_rate_aged_20_64_male,,measure,
-higher_education_min_3_years_percent_of_population_aged_25_64_female,,measure,
-higher_education_min_3_years_percent_of_population_aged_25_64,,measure,
-immigration_surplus_female,,measure,
-immigration_surplus_min_3_years_of_higher_education_aged_25_64_male,,measure,
-cumulative_immigration_surplus_min_3_years_of_higher_education_aged_25_64,,measure,
-immigration_surplus_male,,measure,
-cumulative_immigration_surplus_female,,measure,
-employment_rate_aged_20_64,,measure,
-cumulative_immigration_surplus_employed_aged_20_64,,measure,
-immigration_surplus_employed_aged_20_64_male,,measure,
-cumulative_immigration_surplus,,measure,
-cumulative_immigration_surplus_male,,measure,
+concept,name,concept_type,domain,tags
+domain,Domain,string,,
+year,År,time,,
+tag,Tag,entity_domain,,
+geo,Geo,entity_domain,,
+basomrade,Basområde,entity_set,geo,
+country,Land,entity_set,geo,
+county,Län,entity_set,geo,
+county_region,Länsregion,entity_set,geo,
+municipality,Kommun,entity_set,geo,
+name,Name,string,,
+cumulative_immigration_surplus,"Invandringsöverskott, Kumulativ antal",measure,,_root
+cumulative_immigration_surplus_female,"Invandringsöverskott, Kumulativ antal, Kvinnor",measure,,female
+cumulative_immigration_surplus_male,"Invandringsöverskott, Kumulativ antal, Män",measure,,male
+cumulative_immigration_surplus_employed_aged_20_64,"Invandringsöverskott som förvärvsarbetar, Kumulativ antal",measure,,_root
+cumulative_immigration_surplus_employed_aged_20_64_female,"Invandringsöverskott som förvärvsarbetar, Kumulativ antal, Kvinnor",measure,,female
+cumulative_immigration_surplus_employed_aged_20_64_male,"Invandringsöverskott som förvärvsarbetar, Kumulativ antal, Män",measure,,male
+cumulative_immigration_surplus_min_3_years_of_higher_education_aged_25_64,"Invandringsöverskott som har minst 3-årig högskoleutbildning, Kumulativ antal",measure,,_root
+cumulative_immigration_surplus_min_3_years_of_higher_education_aged_25_64_female,"Invandringsöverskott som har minst 3-årig högskoleutbildning, Kumulativ antal, Kvinnor",measure,,female
+cumulative_immigration_surplus_min_3_years_of_higher_education_aged_25_64_male,"Invandringsöverskott som har minst 3-årig högskoleutbildning, Kumulativ antal, Män",measure,,male
+employment_rate_aged_20_64,Sysselsättningsgrad,measure,,_root
+employment_rate_aged_20_64_female,"Sysselsättningsgrad, Kvinnor",measure,,female
+employment_rate_aged_20_64_male,"Sysselsättningsgrad, Män",measure,,male
+higher_education_min_3_years_percent_of_population_aged_25_64,"EfterGymnasial > 3 år, Andelar av befolkning 25-64 år",measure,,_root
+higher_education_min_3_years_percent_of_population_aged_25_64_female,"EfterGymnasial > 3 år, Andelar av befolkning 25-64 år, Kvinnor",measure,,female
+higher_education_min_3_years_percent_of_population_aged_25_64_male,"EfterGymnasial > 3 år, Andelar av befolkning 25-64 år, Män",measure,,male
+immigration_surplus,,measure,,noncommulative_integration
+immigration_surplus_female,,measure,,noncommulative_integration
+immigration_surplus_male,,measure,,noncommulative_integration
+immigration_surplus_employed_aged_20_64,,measure,,noncommulative_integration
+immigration_surplus_employed_aged_20_64_female,,measure,,noncommulative_integration
+immigration_surplus_employed_aged_20_64_male,,measure,,noncommulative_integration
+immigration_surplus_min_3_years_of_higher_education_aged_25_64,,measure,,noncommulative_integration
+immigration_surplus_min_3_years_of_higher_education_aged_25_64_female,,measure,,noncommulative_integration
+immigration_surplus_min_3_years_of_higher_education_aged_25_64_male,,measure,,noncommulative_integration
+mean_income_aged_lt_20,"Medelinkomst, Totalt",measure,,_root
+mean_income_aged_lt_20_female,"Medelinkomst, Kvinnor",measure,,female
+mean_income_aged_lt_20_male,"Medelinkomst, Män",measure,,male
+population_20xx_12_31,"Befolkning 20XX-12-31, antal",measure,,_root
+population_20xx_12_31_female,"Befolkning 20XX-12-31, antal, Kvinnor",measure,,female
+population_20xx_12_31_male,"Befolkning 20XX-12-31, antal, Män",measure,,male
