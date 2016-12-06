@@ -255,7 +255,7 @@ var ColorLegend = Component.extend({
       this.rainbowLegend.enter().append("circle")
         .attr('r', "6px")
         .attr('stroke', '#000')
-        .on("click", _this._interact().click);
+        .on("clickToChangeColor", _this._interact().click);
 
       this.rainbowLegend.each(function(d, i) {
         d3.select(this).attr('fill', d.color);
@@ -305,7 +305,7 @@ var ColorLegend = Component.extend({
           })
           .on("mouseover", _this._interact().mouseover)
           .on("mouseout", _this._interact().mouseout)
-          .on("click", _this._interact().click);
+          .on("click", _this._interact().clickToSelect);
 
         var labelsAvailable = !!(_this.frame||{}).label;
 
@@ -337,7 +337,7 @@ var ColorLegend = Component.extend({
           .style("opacity", OPACITY_REGULAR)
           .on("mouseover", _this._interact().mouseover)
           .on("mouseout", _this._interact().mouseout)
-          .on("click", _this._interact().click)
+          .on("click", _this._interact().clickToSelect)
           .each(function(d){
             var shapeString = _this.frame.hook_geoshape[d[_this.colorlegendDim]].trim();
 
@@ -403,7 +403,7 @@ var ColorLegend = Component.extend({
         _this.minimapG.selectAll("path").style("opacity", OPACITY_REGULAR);
         _this.model.entities.clearHighlighted();
       },
-      click: function(d, i) {
+      clickToChangeColor: function(d, i) {
         //disable interaction if so stated in concept properties
         if(!_this.colorModel.isUserSelectable()) return;
         var palette = _this.colorModel.getPalette();
@@ -418,6 +418,25 @@ var ColorLegend = Component.extend({
           })
           .fitToScreen([d3.event.pageX, d3.event.pageY])
           .show(true);
+      },
+      clickToSelect: function(d, i) {
+        //disable interaction if so stated in concept properties
+        if(_this.colorModel.use === "indicator") return;
+
+        var view = d3.select(this);
+        var target = d[colorlegendDim];
+
+        var select = _this.colorModel.getValidItems()
+          //filter so that only countries of the correct target remain
+          .filter(function(f) {
+            return f[_this.colorModel.which] == target
+          })
+          //fish out the "key" field, leave the rest behind
+          .map(function(d) {
+            return utils.clone(d, [KEY]);
+          });
+
+        _this.model.entities.setSelect(select);
       }
     }
   },
