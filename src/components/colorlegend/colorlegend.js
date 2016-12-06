@@ -300,7 +300,8 @@ var ColorLegend = Component.extend({
 
         colorOptions.enter().append("div").attr("class", "vzb-cl-option")
           .each(function() {
-            d3.select(this).append("div").attr("class", "vzb-cl-color-sample");
+            d3.select(this).append("div").attr("class", "vzb-cl-color-sample")
+              .on("click", _this._interact().clickToShow);
             d3.select(this).append("div").attr("class", "vzb-cl-color-legend");
           })
           .on("mouseover", _this._interact().mouseover)
@@ -418,6 +419,32 @@ var ColorLegend = Component.extend({
           })
           .fitToScreen([d3.event.pageX, d3.event.pageY])
           .show(true);
+      },
+      clickToShow: function(d, i) {
+        //disable interaction if so stated in concept properties
+        if(_this.colorModel.use === "indicator") return;
+
+        var view = d3.select(this);
+        var target = d[colorlegendDim];
+
+        if (_this.model.entities.show[colorlegendDim] && _this.model.entities.show[colorlegendDim]["$in"])
+          var oldShow = utils.clone(_this.model.entities.show[colorlegendDim]["$in"]);
+        else
+          var oldShow = [];
+
+        var entityIndex = oldShow.indexOf(d[colorlegendDim])
+        if (entityIndex !== -1) {
+          oldShow.splice(entityIndex,1);
+        } else {
+          oldShow.push(d[colorlegendDim]);
+        }
+
+        var show = {};
+        if (oldShow.length > 0) 
+          show[colorlegendDim] = { "$in": oldShow };
+
+        _this.model.entities.set({ show: show });
+
       },
       clickToSelect: function(d, i) {
         //disable interaction if so stated in concept properties
