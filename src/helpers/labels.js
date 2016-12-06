@@ -549,7 +549,6 @@ var Labels = Class.extend({
       return;
 
     var _cssPrefix = this.options.CSS_PREFIX;
-    var _context = this.options.TOOL_CONTEXT;
 
     // only for selected entities
     if(_this.model.entities.isSelected(d) && _this.entityLabels != null) {
@@ -611,8 +610,6 @@ var Labels = Class.extend({
 
 
     var _cssPrefix = this.options.CSS_PREFIX;
-    var _context = this.options.TOOL_CONTEXT;
-
 
     var labels = _this.model.ui.chart.labels || {};
     labelGroup.classed('vzb-label-boxremoved', labels.removeLabelBox);
@@ -638,8 +635,9 @@ var Labels = Class.extend({
 
       var labelCloseHeight = _this._closeCrossHeight || contentBBox.height;//_this.activeProfile.infoElHeight * 1.2;//contentBBox.height;
 
+      var isRTL = _this.model.locale.isRTL();
       var labelCloseGroup = labelGroup.select("." + _cssPrefix + "-label-x")
-        .attr('transform', 'translate(' + 4 + ',' + (-contentBBox.height * .85) + ')');
+        .attr('transform', 'translate(' + (isRTL ? -contentBBox.width - 4 : 4) + ',' + (-contentBBox.height * .85) + ')');
 
       this.updateLabelCloseGroupSize(labelCloseGroup, labelCloseHeight);
 

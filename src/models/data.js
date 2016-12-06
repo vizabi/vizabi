@@ -55,6 +55,10 @@ var DataModel = Model.extend({
    */
   load: function(query, parsers = {}) {
 
+    // add waffle server specific query clauses if set
+    if (this.dataset) query.dataset = this.dataset;
+    if (this.version) query.version = this.version;
+
     var cached = this.getQueryCacheId(query);
 
     if (cached) {

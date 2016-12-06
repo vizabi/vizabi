@@ -87,6 +87,12 @@ var VIZABI_MODEL = {
       }
     }
   },
+  "ui": {
+    "datawarning": {
+      "doubtDomain": [1800, 1950, 2015],
+      "doubtRange": [1.0, 0.3, 0.2]
+    }
+  },
   "data": {
     "splash": false
   }

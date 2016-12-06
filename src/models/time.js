@@ -47,7 +47,7 @@ var TimeModel = DataConnected.extend({
     delayThresholdX4: 50, //delay X4 boundary: if less -- then 3/4 frame will be dropped and animation dely will be 4x the value
     unit: "year",
     step: 1, //step must be integer, and expressed in units
-    immediatePlay: false,
+    immediatePlay: true,
     record: false
   },
 
@@ -68,7 +68,6 @@ var TimeModel = DataConnected.extend({
     var _this = this;
     this.timeFormat = formats[this.unit];
     this.dragging = false;
-    this.timeNow = new Date(this.value);
     this.postponePause = false;
     this.allSteps = {};
     this.delayAnimations = this.delay;
@@ -82,16 +81,6 @@ var TimeModel = DataConnected.extend({
         } else {
           _this._stopPlaying();
         }
-      },
-      "change:value": function() {
-        if(_this.playing) {
-          _this.timeDelayId = utils.delay(function() {
-            _this.timeNow = new Date(_this.value);  
-          }, _this.delayAnimations);
-        } else {
-          utils.clearDelay(_this.timeDelayId);
-          _this.timeNow = new Date(_this.value);
-        } 
       },
       
       "change:unit": function() {

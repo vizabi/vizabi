@@ -293,7 +293,7 @@ var BubbleMapComponent = Component.extend({
             _this.parent
               .findChildByName("gapminder-treemenu")
               .markerID("size")
-              .alignX("left")
+              .alignX(_this.model.locale.isRTL() ? "right" : "left")
               .alignY("top")
               .updateView()
               .toggle();
@@ -305,7 +305,7 @@ var BubbleMapComponent = Component.extend({
             _this.parent
               .findChildByName("gapminder-treemenu")
               .markerID("color")
-              .alignX("left")
+              .alignX(_this.model.locale.isRTL() ? "right" : "left")
               .alignY("top")
               .updateView()
               .toggle();
@@ -338,7 +338,9 @@ var BubbleMapComponent = Component.extend({
       this.yInfoEl.on("mouseover", function() {
         var rect = this.getBBox();
         var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-        _this.parent.findChildByName("gapminder-datanotes").setHook('size').show().setPos(coord.x, coord.y);
+        var toolRect = _this.root.element.getBoundingClientRect();
+        var chartRect = _this.element.node().getBoundingClientRect();      
+        _this.parent.findChildByName("gapminder-datanotes").setHook('size').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
       })
       this.yInfoEl.on("mouseout", function() {
         _this.parent.findChildByName("gapminder-datanotes").hide();
@@ -355,7 +357,9 @@ var BubbleMapComponent = Component.extend({
       this.cInfoEl.on("mouseover", function() {
         var rect = this.getBBox();
         var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-        _this.parent.findChildByName("gapminder-datanotes").setHook('color').show().setPos(coord.x, coord.y);
+        var toolRect = _this.root.element.getBoundingClientRect();
+        var chartRect = _this.element.node().getBoundingClientRect();      
+        _this.parent.findChildByName("gapminder-datanotes").setHook('color').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
       })
       this.cInfoEl.on("mouseout", function() {
         _this.parent.findChildByName("gapminder-datanotes").hide();
@@ -584,7 +588,7 @@ var BubbleMapComponent = Component.extend({
       var valueL = _this.values.label[d[_this.KEY]];
 
       d.hidden_1 = d.hidden;
-      d.hidden = !valueS || valueX==null || valueY==null;
+      d.hidden = (!valueS && valueS !== 0)|| valueX==null || valueY==null;
 
       if(d.hidden !== d.hidden_1) view.classed("vzb-hidden", d.hidden);
 
@@ -629,9 +633,8 @@ var BubbleMapComponent = Component.extend({
 
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
-    this.year.setText(this.model.time.timeFormat(_this.model.time.timeNow));
-
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
+    this.year.setText(this.model.time.timeFormat(this.time), this.duration);
 
     //possibly update the exact value in size title
     this.updateTitleNumbers();
@@ -758,15 +761,15 @@ var BubbleMapComponent = Component.extend({
       }
     }());
 
-
+    var isRTL = this.model.locale.isRTL();
     this.yTitleEl
         .style("font-size", infoElHeight)
-        .attr("transform", "translate(0," + margin.top + ")")
+        .attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + margin.top + ")")
 
     var yTitleBB = this.yTitleEl.select("text").node().getBBox();
 
     //hide the second line about color in large profile or when color is constant
-    this.cTitleEl.attr("transform", "translate(" + 0 + "," + (margin.top + yTitleBB.height) + ")")
+    this.cTitleEl.attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + (margin.top + yTitleBB.height) + ")")
         .classed("vzb-hidden", this.getLayoutProfile()==="large" || this.model.marker.color.use == "constant");
 
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
@@ -783,12 +786,13 @@ var BubbleMapComponent = Component.extend({
     if(this.yInfoEl.select('svg').node()) {
         var titleBBox = this.yTitleEl.node().getBBox();
         var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
+        var hTranslate = isRTL ? (titleBBox.x + translate[0] - infoElHeight * 1.4) : (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4);
 
         this.yInfoEl.select('svg')
             .attr("width", infoElHeight)
             .attr("height", infoElHeight)
         this.yInfoEl.attr('transform', 'translate('
-            + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
+            + hTranslate + ','
             + (translate[1] - infoElHeight * 0.8) + ')');
     }
 
@@ -797,12 +801,13 @@ var BubbleMapComponent = Component.extend({
     if(!this.cInfoEl.classed("vzb-hidden") && this.cInfoEl.select('svg').node()) {
         var titleBBox = this.cTitleEl.node().getBBox();
         var translate = d3.transform(this.cTitleEl.attr('transform')).translate;
+        var hTranslate = isRTL ? (titleBBox.x + translate[0] - infoElHeight * 1.4) : (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4);
 
         this.cInfoEl.select('svg')
             .attr("width", infoElHeight)
             .attr("height", infoElHeight)
         this.cInfoEl.attr('transform', 'translate('
-            + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
+            + hTranslate + ','
             + (translate[1] - infoElHeight * 0.8) + ')');
     }
   },

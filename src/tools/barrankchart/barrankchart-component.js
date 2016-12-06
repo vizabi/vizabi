@@ -6,14 +6,7 @@ import {
   warn as iconWarn
 } from 'base/iconset';
 
-
-/*!
- * VIZABI POP BY AGE Component
- */
-
-
-//POP BY AGE CHART COMPONENT
-var BarRankChart = Component.extend({
+const BarRankChart = Component.extend({
 
   /**
    * Initializes the component (Bar Chart).
@@ -21,34 +14,34 @@ var BarRankChart = Component.extend({
    * @param {Object} config The config passed to the component
    * @param {Object} context The component's parent
    */
-  init: function(config, context) {
+  init: function (config, context) {
 
     this.name = 'barrankchart-component';
     this.template = require('./barrank.html');
 
     //define expected models for this component
     this.model_expects = [{
-      name: "time",
-      type: "time"
+      name: 'time',
+      type: 'time'
     }, {
-      name: "entities",
-      type: "entities"
+      name: 'entities',
+      type: 'entities'
     }, {
-      name: "marker",
-      type: "model"
+      name: 'marker',
+      type: 'model'
     }, {
-      name: "locale",
-      type: "locale"
+      name: 'locale',
+      type: 'locale'
     }, {
-      name: "ui",
-      type: "ui"
+      name: 'ui',
+      type: 'ui'
     }];
 
-    var _this = this;
     this.model_binds = {
-      "change:time.value": function(evt) {
-        if(!_this._readyOnce) return;
-        _this.onTimeChange();
+      'change:time.value': () => {
+        if (this._readyOnce) {
+          this.onTimeChange();
+        }
       },
       'change:entities.select': () => {
         if (this._readyOnce) {
@@ -56,12 +49,13 @@ var BarRankChart = Component.extend({
           this.updateOpacity();
         }
       },
-      "change:marker.axis_x.scaleType": function(evt) {
-        if(!_this._readyOnce) return;
-        _this.draw();
+      'change:marker.axis_x.scaleType': () => {
+        if (this._readyOnce) {
+          this.draw();
+        }
       },
       'change:marker.color.palette': () => {
-        this.drawColors();
+        this._drawColors();
       },
       'change:entities.highlight': () => {
         this.updateOpacity();
@@ -85,13 +79,11 @@ var BarRankChart = Component.extend({
     this.xAxis = axisWithLabelPicker();
   },
 
-  onTimeChange: function() {
-    //this.year.setText(this.model.time.timeFormat(this.model.time.value));
-    var _this = this;
-    this.model.marker.getFrame(this.model.time.value, function(values) {
-      _this.values = values;
-      _this.loadData();
-      _this.draw();
+  onTimeChange: function () {
+    this.model.marker.getFrame(this.model.time.value, values => {
+      this.values = values;
+      this.loadData();
+      this.draw();
     });
   },
 
@@ -118,6 +110,9 @@ var BarRankChart = Component.extend({
     // set up formatters
     this.xAxis.tickFormat(this.model.marker.axis_x.getTickFormatter());
 
+    this._presentation = !this.model.ui.presentation;
+    this._formatter = this.model.marker.axis_x.getTickFormatter();
+
     this.ready();
 
     this.selectBars();
@@ -136,23 +131,20 @@ var BarRankChart = Component.extend({
     });
   },
 
-  resize: function() {
+  resize: function () {
     this.draw();
   },
 
-  loadData: function() {
-
+  loadData() {
     const _this = this;
 
     this.translator = this.model.locale.getTFunction();
     // sort the data (also sets this.total)
-    this.sortedEntities = this.sortByIndicator(this.values.axis_x);
+    this.sortedEntities = this._sortByIndicator(this.values.axis_x);
 
-    // change header titles for new data
-    var conceptProps = this.model.marker.getConceptprops();
-    this.header.select('.vzb-br-title')
+    this.header
+      .select('.vzb-br-title')
       .select('text')
-      .text(conceptProps[this.model.marker.axis_x.which].name)
       .on('click', () =>
         this.parent
           .findChildByName('gapminder-treemenu')
@@ -163,16 +155,13 @@ var BarRankChart = Component.extend({
           .toggle()
       );
 
-    this.header.select('.vzb-br-total')
-      .text(this.model.time.timeFormat(this.model.time.value));
-
     // new scales and axes
     this.xScale = this.model.marker.axis_x.getScale(false);
     this.cScale = this.model.marker.color.getScale();
 
     utils.setIcon(this.dataWarningEl, iconWarn)
       .select('svg')
-      .attr('width', '0px').attr('height', '0px');
+      .attr('width', 0).attr('height', 0);
 
     this.dataWarningEl.append('text')
       .text(this.translator('hints/dataWarning'));
@@ -183,78 +172,169 @@ var BarRankChart = Component.extend({
       .on('mouseout', () => this.updateDoubtOpacity());
 
     utils.setIcon(this.infoEl, iconQuestion)
-      .select('svg').attr('width', '0px').attr('height', '0px');
+      .select('svg').attr('width', 0).attr('height', 0);
 
     this.infoEl.on('click', () => {
       this.parent.findChildByName('gapminder-datanotes').pin();
     });
 
-    this.infoEl.on("mouseover", function() {
-      var rect = this.getBBox();
-      var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-      _this.parent.findChildByName("gapminder-datanotes").setHook('axis_y').show().setPos(coord.x, coord.y);
+    this.infoEl.on('mouseover', function () {
+      const rect = this.getBBox();
+      const ctx = utils.makeAbsoluteContext(this, this.farthestViewportElement);
+      const coord = ctx(rect.x - 10, rect.y + rect.height + 10);
+      _this.parent.findChildByName('gapminder-datanotes')
+        .setHook('axis_y')
+        .show()
+        .setPos(coord.x, coord.y);
     });
 
-    this.infoEl.on("mouseout", function() {
-      _this.parent.findChildByName("gapminder-datanotes").hide();
+    this.infoEl.on('mouseout', function () {
+      _this.parent.findChildByName('gapminder-datanotes').hide();
     });
 
   },
 
-  draw: function() {
+  draw: function () {
+    this.time_1 = this.time == null ? this.model.time.value : this.time;
+    this.time = this.model.time.value;      
+    //smooth animation is needed when playing, except for the case when time jumps from end to start
+    let duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
+    
     //return if drawAxes exists with error
-    if(this.drawAxes()) return;
-    this.drawData();
+    if (this.drawAxes(duration)) return;    
+    this.drawData(duration);
   },
 
   /*
-  * draw the chart/stage
-  */
-  drawAxes: function() {
+   * draw the chart/stage
+   */
+  drawAxes(duration = 0) {
+    const profiles = {
+      small: {
+        margin: { top: 60, right: 20, left: 90, bottom: 40 },
+        headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
+        infoElHeight: 16,
+        infoElMargin: 5,
+        barHeight: 20,
+        barMargin: 2,
+      },
+      medium: {
+        margin: { top: 60, right: 20, left: 90, bottom: 40 },
+        headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
+        infoElHeight: 16,
+        infoElMargin: 5,
+        barHeight: 20,
+        barMargin: 2,
+      },
+      large: {
+        margin: { top: 60, right: 20, left: 90, bottom: 40 },
+        headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
+        infoElHeight: 16,
+        infoElMargin: 5,
+        barHeight: 20,
+        barMargin: 2,
+      }
+    };
 
-    // these should go in some style-config
-    this.barHeight = 20;
-    var margin = {top: 60, bottom: 40, left: 90, right: 20}; // need right margin for scroll bar
+    const presentationProfileChanges = {
+      medium: {
+        margin: { top: 60, right: 50, left: 90, bottom: 40 },
+        headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
+        infoElHeight: 25,
+        infoElMargin: 10,
+        barHeight: 20,
+        barMargin: 2,
+      },
+      large: {
+        margin: { top: 60, right: 50, left: 90, bottom: 40 },
+        headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
+        infoElHeight: 16,
+        barHeight: 25,
+        infoElMargin: 10,
+        barMargin: 2,
+      }
+    };
+
+    this.activeProfile = this.getActiveProfile(profiles, presentationProfileChanges);
+
+    const {
+      margin,
+      headerMargin,
+      infoElHeight,
+      infoElMargin,
+    } = this.activeProfile;
 
     // draw the stage - copied from popbyage, should figure out what it exactly does and what is necessary.
-    this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
-    this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
-    this.width -= this.model.ui.presentation ? 30 : 0;
+    this.height = (parseInt(this.element.style('height'), 10) - margin.top - margin.bottom) || 0;
+    this.width = (parseInt(this.element.style('width'), 10) - margin.left - margin.right) || 0;
 
-    if(this.height<=0 || this.width<=0) return utils.warn("Bar rank chart drawAxes() abort: vizabi container is too little or has display:none");
+    if (this.height <= 0 || this.width <= 0) {
+      return utils.warn('Bar rank chart drawAxes() abort: vizabi container is too little or has display:none');
+    }
 
-    this.barContainer.attr('transform', 'translate(' + margin.left + ', 0)');
-    this.barViewport.style('height', this.height + 'px');
+    this.barContainer.attr('transform', `translate(${margin.left}, 0)`);
+    this.barViewport.style('height', `${this.height}px`);
 
     // header
     this.header.attr('height', margin.top);
-
     const headerTitle = this.header.select('.vzb-br-title');
-    const headerTotal = this.header.select('.vzb-br-total');
-    const headerTitleBBox = headerTitle.node().getBBox();
-    const headerTotalBBox = headerTotal.node().getBBox();
-    headerTitle
-      .attr('transform', `translate(${margin.left}, ${margin.top / 2})`);
+    
+    // change header titles for new data
+    const conceptProps = this.model.marker.getConceptprops();
+    const { which } = this.model.marker.axis_x;
+    const { name, unit } = conceptProps[which];
 
-    headerTotal
-      .attr('text-anchor', 'end')
-      .attr('y', margin.top/2)
-      .attr('x', this.width + margin.left)
-      .classed("vzb-transparent", headerTitleBBox.width + headerTotalBBox.width + 10 > this.width);
+    const headerTitleText = headerTitle
+      .select('text');
 
-    if (this.infoEl.select('svg').node()) {
-      const infoElHeight = margin.top / 3;
-      const titleBBox = headerTitle.node().getBBox();
-      const translate = d3.transform(headerTitle.attr('transform')).translate;
+    if (unit) {
+      headerTitleText.text(`${name}, ${unit}`);
+      const rightEdgeOfLeftText = headerMargin.left + headerTitle.node().getBBox().width + infoElHeight + infoElMargin;
+      const leftEdgeOfRightText = this.width + headerMargin.right + headerMargin.left + 30;
 
-      this.infoEl.select('svg')
-        .attr('width', `${infoElHeight}px`)
-        .attr("height", `${infoElHeight}px`);
-
-      const tx = titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4;
-      const ty = translate[1] - infoElHeight * .8;
-      this.infoEl.attr('transform', `translate(${tx}, ${ty})`);
+      if (rightEdgeOfLeftText > leftEdgeOfRightText) {
+        headerTitleText.text(name);
+      }
     }
+
+    const headerTitleBBox = headerTitle.node().getBBox();
+
+    const titleTx = headerMargin.left;
+    const titleTy = headerMargin.top + headerTitleBBox.height;
+    headerTitle
+      .attr('transform', `translate(${titleTx}, ${titleTy})`);
+
+    const headerInfo = this.infoEl;
+
+    headerInfo.select('svg')
+      .attr('width', `${infoElHeight}px`)
+      .attr('height', `${infoElHeight}px`);
+
+    const infoTx = titleTx + headerTitle.node().getBBox().width + infoElMargin;
+    const infoTy = headerMargin.top + infoElHeight / 4;
+    headerInfo.attr('transform', `translate(${infoTx}, ${infoTy})`);
+
+
+    const headerTotal = this.header.select('.vzb-br-total');
+    
+    if(duration){
+      headerTotal.select('text')
+        .transition('text')
+        .delay(duration)
+        .text(this.model.time.timeFormat(this.time));
+    }else{
+      headerTotal.select('text')
+        .interrupt()
+        .text(this.model.time.timeFormat(this.time));
+    }
+    
+    const headerTotalBBox = headerTotal.node().getBBox();
+
+    const totalTx = this.width + margin.left - headerTotalBBox.width;
+    const totalTy = headerMargin.top + headerTotalBBox.height;
+    headerTotal
+      .attr('transform', `translate(${totalTx}, ${totalTy})`)
+      .classed('vzb-transparent', headerTitleBBox.width + headerTotalBBox.width + 10 > this.width);
 
     const warnBB = this.dataWarningEl.select('text').node().getBBox();
     this.dataWarningEl
@@ -273,251 +353,254 @@ var BarRankChart = Component.extend({
     this.xScale.range([0, this.width]);
   },
 
-  drawData: function() {
-
-    var _this = this;
-    var bar_margin = 2; // should go in some config
-    var duration = (this.model.time.playing) ? this.model.time.delayAnimations : 0;
-
-    // apply the current data to the bars (including ordering)
-    var updatedBars = this.barContainer
-      .selectAll('.vzb-br-bar')
-      .data(this.sortedEntities, getDataKey)
-      .order();
+  drawData(duration = 0) {
 
     // update the shown bars for new data-set
-    this.createAndDeleteBars(updatedBars);
+    this.createAndDeleteBars(
+      this.barContainer.selectAll('.vzb-br-bar')
+        .data(this.sortedEntities, d => d.entity)
+    );
 
     const { presentation } = this.model.ui;
+    const presentationModeChanged = this._presentation !== presentation;
+
+    if (presentationModeChanged) {
+      this._presentation = presentation;
+    }
+
+    if (typeof this._entitiesCount === 'undefined' || this._entitiesCount !== this.sortedEntities.length) {
+      this._entitiesCount = this.sortedEntities.length;
+      this.resizeSvgAndScroll();
+    }
+
     const x = presentation ? 35 : 5;
-    this.barContainer
-      .selectAll('.vzb-br-bar')
-      .data(this.sortedEntities, getDataKey)
-      .order()
-      .each(function (d, i) {
+    const barWidth = ({ value }) => this.xScale(value);
+    const xValue = ({ value }) => this._formatter(value);
 
-        var bar = d3.select(this);
-        var barWidth = _this.xScale(d.value);
-        var xValue = _this.model.marker.axis_x.getTickFormatter()(d.value);
-        const color = d3.rgb(_this.cScale(_this.values.color[d.entity]));
+    this.sortedEntities.forEach(bar => {
+      if (presentationModeChanged || bar.isNew) {
+        bar.barLabel
+          .attr('x', x - 5);
 
-        bar.select('.vzb-br-label')
-          .attr('x', x - 5)
-          .style('fill', color.darker(2));
-
-        // save the current index in the bar datum
-        d.index = i;
-
-        // set width of the bars
-        bar.selectAll('rect')
-          .transition().duration(duration).ease("linear")
-          .attr("width", (barWidth > 0) ? barWidth : 0)
-          .attr('x', x)
-          .style('fill', color);
-
-        // set positions of the bar-values
-        bar.selectAll('.vzb-br-value')
-          .text(xValue)
-          .attr('x', x + 5)
-          .style('fill', color.darker(2));
-
-        // set title (tooltip)
-        bar.selectAll('title')
-          .text(_this.values.label[d.entity] + ' (' + xValue + ')')
+        bar.barRect
           .attr('x', x);
 
-      })
-      .transition().duration(duration).ease("linear")
-      .attr("transform", function(d, i) {
-        return 'translate(0, '+ getBarPosition(d,i) + ')'
-      })
-      .call(endAll, function() {
-        // when all the transitions have ended
+        bar.barValue
+          .attr('x', x + 5);
 
-        // set the height of the svg so it resizes according to its children
-        var height = _this.barContainer.node().getBoundingClientRect().height
-        _this.barSvg.attr('height', height + "px");
+        bar.barTitle
+          .attr('x', x);
+      }
 
-        // move along with a selection if playing
-        if (_this.model.time.playing) {
-          var follow = _this.barContainer.select('.vzb-selected');
-          if (!follow.empty()) {
-            var d = follow.datum();
-            var yPos = getBarPosition(d, d.index);
+      if (bar.changedWidth) {
+        bar.barRect
+          .transition().duration(duration).ease('linear')
+          .attr('width', Math.max(0, barWidth(bar)));
 
-            var currentTop = _this.barViewport.node().scrollTop;
-            var currentBottom = currentTop + _this.height;
 
-            var scrollTo = false;
-            if (yPos < currentTop)
-              scrollTo = yPos;
-            if ((yPos + _this.barHeight) > currentBottom)
-              scrollTo = yPos + _this.barHeight - _this.height;
-
-            if (scrollTo)
-              _this.barViewport.transition().duration(duration)
-                .tween('scrollfor' + d.entity, scrollTopTween(scrollTo));
-
-          }
-
+        if (bar.changedValue) {
+          bar.barValue
+            .text(xValue(bar));
         }
+      }
 
-        function scrollTopTween(scrollTop) {
-          return function() {
-            var i = d3.interpolateNumber(this.scrollTop, scrollTop);
-            return function(t) { this.scrollTop = i(t); };
-          };
-        }
-
-      });
-
-
-    // helper functions
-    function getBarPosition(d, i) {
-        return (_this.barHeight+bar_margin)*i;
-    }
-    function getDataKey(d) {
-      return d.entity;
-    }
-    // http://stackoverflow.com/questions/10692100/invoke-a-callback-at-the-end-of-a-transition
-    function endAll(transition, callback) {
-      if (transition.size() === 0) { callback() }
-      var n = 0;
-      transition
-          .each(function() { ++n; })
-          .each("end", function() { if (!--n) callback.apply(this, arguments); });
-    }
-
+      if (bar.changedIndex) {
+        bar.self
+          .transition().duration(duration).ease('linear')
+          .attr('transform', `translate(0, ${this._getBarPosition(bar.index)})`);
+      }
+    });
   },
 
-  createAndDeleteBars: function(updatedBars) {
+  resizeSvgAndScroll() {
+    const { barHeight, barMargin } = this.activeProfile;
+    this.barSvg.attr('height', `${(barHeight + barMargin) * this._entitiesCount}px`);
 
-    var _this = this;
+    // move along with a selection if playing
+    if (this.model.time.playing) {
+      const follow = this.barContainer.select('.vzb-selected');
+      if (!follow.empty()) {
+        const d = follow.datum();
+        const yPos = this._getBarPosition(d.index);
+
+        const currentTop = this.barViewport.node().scrollTop;
+        const currentBottom = currentTop + this.height;
+
+        const scrollTo = yPos < currentTop ?
+          yPos :
+          yPos + this.activeProfile.barHeight > currentBottom ?
+            (yPos + this.activeProfile.barHeight - this.height) :
+            false;
+
+        if (scrollTo) {
+          this.barViewport.transition().duration(duration)
+            .tween('scrollfor' + d.entity, this._scrollTopTween(scrollTo));
+        }
+      }
+    }
+  },
+
+  createAndDeleteBars(updatedBars) {
+    const _this = this;
 
     // remove groups for entities that are gone
     updatedBars.exit().remove();
 
     // make the groups for the entities which were not drawn yet (.data.enter() does this)
-    var newGroups = updatedBars.enter().append("g")
-        .attr("class", 'vzb-br-bar')
-        .attr("id", function(d) {
-          return "vzb-br-bar-" + d.entity + "-" + _this._id;
-        })
-        .on('mousemove', d => _this.model.entities.highlightEntity(d))
-        .on('mouseout', () => _this.model.entities.clearHighlighted())
-        .on("click", function(d) {
+    updatedBars.enter()
+      .append('g')
+      .each(function (d) {
+        const self = d3.select(this);
+        const color = _this._getColor(d);
+        const darkerColor = _this._getDarkerColor(d);
 
-          utils.forEach(_this.model.marker.space, function(entity) {
+        self.attr('class', 'vzb-br-bar');
+        self.attr('id', `vzb-br-bar-${d.entity}-${_this._id}`);
+        self.on('mousemove', d => _this.model.entities.highlightEntity(d));
+        self.on('mouseout', () => _this.model.entities.clearHighlighted());
+        self.on('click', d => {
+          utils.forEach(_this.model.marker.space, function (entity) {
             if (_this.model[entity].getDimension() !== 'time')
               _this.model[entity].selectEntity(d); // this will trigger a change in the model, which the tool listens to
           });
-
         });
 
-    // draw new bars per group
-    newGroups.append('rect')
-        .attr("x", 0)
-        .attr("rx", this.barHeight/4)
-        .attr("ry", this.barHeight/4)
-        .attr("stroke", "white")
-        .attr("stroke-opacity", 0)
-        .attr("stroke-width", 2)
-        .attr("height", this.barHeight);
+        const barRect = self.append('rect')
+          .attr('rx', _this.activeProfile.barHeight / 4)
+          .attr('ry', _this.activeProfile.barHeight / 4)
+          .attr('stroke', 'white')
+          .attr('stroke-opacity', 0)
+          .attr('stroke-width', 2)
+          .attr('height', _this.activeProfile.barHeight)
+          .style('fill', color);
 
-    // draw new labels per group
-    newGroups.append('text')
-        .attr("class", "vzb-br-label")
-        .attr("x", -5)
-        .attr("y", this.barHeight/2)
-        .attr("text-anchor", "end")
-        .attr("dominant-baseline", "middle")
-        .text(function(d, i) {
-          var label = _this.values.label[d.entity];
-          return label.length < 12 ? label : label.substring(0, 9) + '...';
-        })
-        .append('title'); // watch out: might be overwritten if changing the labeltext later on
+        const barLabel = self.append('text')
+          .attr('class', 'vzb-br-label')
+          .attr('x', -5)
+          .attr('y', _this.activeProfile.barHeight / 2)
+          .attr('text-anchor', 'end')
+          .attr('dominant-baseline', 'middle')
+          .text(d => {
+            const label = _this.values.label[d.entity];
+            return label.length < 12 ? label : label.substring(0, 9) + '...';
+          })
+          .style('fill', darkerColor);
 
-    // draw new values on each bar
-    newGroups.append('text')
-        .attr("class", "vzb-br-value")
-        .attr("x", 5)
-        .attr("y", this.barHeight/2)
-        .attr("dominant-baseline", "middle");
+        const barTitle = barLabel.append('title'); // watch out: might be overwritten if changing the labeltext later on
+
+        const barValue = self.append('text')
+          .attr('class', 'vzb-br-value')
+          .attr('x', 5)
+          .attr('y', _this.activeProfile.barHeight / 2)
+          .attr('dominant-baseline', 'middle')
+          .style('fill', darkerColor);
+
+        Object.assign(d, {
+          self,
+          barRect,
+          barLabel,
+          barValue,
+          barTitle
+        });
+      });
   },
 
-  drawColors: function() {
-    var _this = this;
-
+  _drawColors() {
     this.barContainer.selectAll('.vzb-br-bar>rect')
-      .style("fill", getColor);
+      .style('fill', d => this._getColor(d));
+
     this.barContainer.selectAll('.vzb-br-bar>text')
-      .style("fill", getDarkerColor);
+      .style('fill', d => this._getDarkerColor(d));
+  },
 
-    function getColor(d) {
-      var color = _this.cScale(_this.values.color[d.entity]);
-      return d3.rgb(color);
-    }
-    function getDarkerColor(d) {
-      return getColor(d).darker(2);
-    }
+  _getColor(d) {
+    return d3.rgb(
+      this.cScale(
+        this.values.color[d.entity]
+      )
+    );
+  },
+
+  _getDarkerColor(d) {
+    return this._getColor(d).darker(2);
   },
 
 
   /**
-  * DATA HELPER FUNCTIONS
-  */
-
-  sortByIndicator: function(values) {
-
-    var _this = this;
-    var data_array = [];
-    this.total = 0; // setting this.total for efficiency at the same time
-
-    // first put the data in an array (objects aren't sortable)
-    utils.forEach(values, function(indicator_value, entity) {
-      var row = { entity: entity, value: indicator_value };
-      row[_this.model.entities.dim] = entity;
-      data_array.push(row);
-
-      // setting this.total for efficiency at the same time
-      _this.total += indicator_value;
-    });
-    data_array.sort(function(a, b) {
-      // if a is bigger, a comes first, i.e. descending sort
-      return b.value - a.value;
-    });
-    return data_array;
-  },
-
-  /**
-  * UI METHODS
-  */
-
-  /**
-   * setting hover
+   * DATA HELPER FUNCTIONS
    */
-  setHover: function(bar, hover) {
-    this.barContainer.classed('vzb-dimmed', hover);
-    this.barContainer.select("#vzb-br-bar-" + bar.entity + "-" + this._id).classed('vzb-hovered', hover);
+
+  _scrollTopTween(scrollTop) {
+    return function () {
+      const i = d3.interpolateNumber(this.scrollTop, scrollTop);
+      return function (t) {
+        this.scrollTop = i(t);
+      };
+    };
   },
+
+  _getBarPosition(i) {
+    return (this.activeProfile.barHeight + this.activeProfile.barMargin) * i;
+  },
+
+  _entities: {},
+
+  _sortByIndicator(values) {
+    return Object.keys(values).map(entity => {
+      const cached = this._entities[entity];
+      const value = values[entity];
+      const formattedValue = this._formatter(value);
+
+      if (cached) {
+        return Object.assign(cached, {
+          value,
+          formattedValue,
+          changedValue: formattedValue !== cached.formattedValue,
+          changedWidth: value !== cached.value,
+          isNew: false
+        });
+      }
+
+      return this._entities[entity] = {
+        entity,
+        value,
+        formattedValue,
+        [this.model.entities.dim]: entity,
+        changedValue: true,
+        changedWidth: true,
+        isNew: true
+      };
+    }).sort(({ value: a }, { value: b }) => b - a)
+      .map((entity, index) => {
+        return Object.assign(entity, {
+          index,
+          changedIndex: index !== entity.index
+        });
+      });
+  },
+
+  /**
+   * UI METHODS
+   */
+
 
   /**
    * Select Entities
    */
-  selectBars: function() {
-    var _this = this;
-    var entityDim = this.model.entities.dim;
-    var selected = this.model.entities.select;
+  selectBars: function () {
+    const _this = this;
+    const entityDim = this.model.entities.dim;
+    const selected = this.model.entities.select;
 
     // unselect all bars
     this.barContainer.classed('vzb-dimmed-selected', false);
     this.barContainer.selectAll('.vzb-br-bar.vzb-selected').classed('vzb-selected', false);
 
     // select the selected ones
-    if(selected.length) {
+    if (selected.length) {
       this.barContainer.classed('vzb-dimmed-selected', true);
-      utils.forEach(selected, function(selectedBar) {
-        _this.barContainer.select("#vzb-br-bar-" + selectedBar[entityDim] + "-" + _this._id).classed('vzb-selected', true);
+      utils.forEach(selected, function (selectedBar) {
+        _this.barContainer.select('#vzb-br-bar-' + selectedBar[entityDim] + '-' + _this._id).classed('vzb-selected', true);
       });
     }
 
@@ -544,8 +627,7 @@ var BarRankChart = Component.extend({
       select.length > 0
     ];
 
-    this.barContainer
-      .selectAll('.vzb-br-bar')
+    this.barContainer.selectAll('.vzb-br-bar')
       .style('opacity', d => {
         if (someHighlighted && entities.isHighlighted(d)) {
           return OPACITY_HIGHLIGHT_DEFAULT;

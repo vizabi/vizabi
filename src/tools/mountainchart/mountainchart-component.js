@@ -301,7 +301,7 @@ var MountainChartComponent = Component.extend({
         this.TIMEDIM = this.model.time.getDimension();
 
         this.mountainAtomicContainer.select(".vzb-mc-prerender").remove();
-        this.year.setText(this.model.time.value.getUTCFullYear().toString());
+        this.year.setText(this.model.time.timeFormat(this.model.time.value));
         this.wScale = d3.scale.linear()
             .domain(this.model.ui.datawarning.doubtDomain)
             .range(this.model.ui.datawarning.doubtRange);
@@ -392,9 +392,11 @@ updateSize: function (meshLength) {
         //graph group is shifted according to margins (while svg element is at 100 by 100%)
         this.graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+        var isRTL = this.model.locale.isRTL();
+
         var yearLabelOptions = {
             topOffset: this.getLayoutProfile()==="large"? margin.top * 2 : 0,
-            xAlign: this.getLayoutProfile()==="large"? 'right' : 'center',
+            xAlign: this.getLayoutProfile()==="large"? (isRTL ? 'left' : 'right') : 'center',
             yAlign: this.getLayoutProfile()==="large"? 'top' : 'center',
         };
 
@@ -438,7 +440,7 @@ updateSize: function (meshLength) {
 
         this.yTitleEl
           .style("font-size", infoElHeight + "px")
-          .attr("transform", "translate(0," + margin.top + ")")
+          .attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + margin.top + ")")
 
 
         var warnBB = this.dataWarningEl.select("text").node().getBBox();
@@ -449,19 +451,20 @@ updateSize: function (meshLength) {
             .attr("y", -warnBB.height * 1.0 + 1)
 
         this.dataWarningEl
-            .attr("transform", "translate(" + (0) + "," + (margin.top + warnBB.height * 1.5) + ")")
+            .attr("transform", "translate(" + (isRTL ? this.width - warnBB.width - warnBB.height * 2 : 0) + "," + (margin.top + warnBB.height * 1.5) + ")")
             .select("text")
             .attr("dx", warnBB.height * 1.5);
 
         if(this.infoEl.select('svg').node()) {
             var titleBBox = this.yTitleEl.node().getBBox();
             var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
+            var hTranslate = isRTL ? (titleBBox.x + translate[0] - infoElHeight * 1.4) : (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4);
 
             this.infoEl.select('svg')
                 .attr("width", infoElHeight + "px")
                 .attr("height", infoElHeight + "px");
             this.infoEl.attr('transform', 'translate('
-                + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
+                + hTranslate + ','
                 + (translate[1]-infoElHeight * .8) + ')');
         }
 
@@ -518,7 +521,9 @@ updateSize: function (meshLength) {
         this.infoEl.on("mouseover", function() {
           var rect = this.getBBox();
           var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-          _this.parent.findChildByName("gapminder-datanotes").setHook('axis_y').show().setPos(coord.x, coord.y);
+          var toolRect = _this.root.element.getBoundingClientRect();
+          var chartRect = _this.element.node().getBoundingClientRect();      
+          _this.parent.findChildByName("gapminder-datanotes").setHook('axis_y').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
         })
         this.infoEl.on("mouseout", function() {
           _this.parent.findChildByName("gapminder-datanotes").hide();
@@ -805,8 +810,10 @@ updateSize: function (meshLength) {
     updateTime: function (time) {
         var _this = this;
 
+        this.time_1 = this.time == null ? this.model.time.value : this.time;
         this.time = this.model.time.value;
-        this.year.setText(this.model.time.timeFormat(this.model.time.timeNow));
+        this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
+        this.year.setText(this.model.time.timeFormat(this.time), this.duration);
         if (time == null) time = this.time;
 
         this.yMax = 0;

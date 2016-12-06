@@ -16,6 +16,7 @@ var Hook = DataConnected.extend({
   
   
   init: function(name, value, parent, binds, persistent) {
+    var _this = this;
     this._super(name, value, parent, binds, persistent);
     this.on('ready', this.hookReady.bind(this));
   },
@@ -45,7 +46,7 @@ var Hook = DataConnected.extend({
     this.getClosestModel('locale').on('dataConnectedChange', this.handleDataConnectedChange.bind(this));
   },
 
-  whichChange: function(newValue) {
+  setWhich: function(newValue) {
 
     var obj = { which: newValue };
     var conceptProps = this.dataSource.getConceptprops(newValue);
@@ -65,7 +66,17 @@ var Hook = DataConnected.extend({
     this.scale = null;
 
     this.set(obj);
+  },
+  
+  setScaleType: function(newValue) {
+    this.scale = null;
+    this.set({"scaleType": newValue});
+  },
 
+  preloadData: function() {
+    var dataModel = (this.data) ? this.data : 'data';
+    this.dataSource = this.getClosestModel(dataModel);
+    return this._super();
   },
 
   preloadData: function() {
@@ -147,8 +158,6 @@ var Hook = DataConnected.extend({
 
     var dimensions, filters, select, from, order_by, q, animatable;
 
-    //if it's not a hook, no query is necessary
-    if(!this.isHook()) return true;
     //error if there's nothing to hook to
     if(Object.keys(this._space).length < 1) {
       utils.error('Error:', this._id, 'can\'t find the space');

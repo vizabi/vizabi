@@ -402,19 +402,31 @@
         }
         &.marquee:not(:hover) {
           > .vzb-treemenu-list-item-label span {
+            @include rtl {
+              left: auto !important;
+              right: 0 !important;          
+            }
             left: 0 !important;
+            right: auto !important;
             //text-overflow: ellipsis;
           }
         }
         &.marquee:hover {
           > .vzb-treemenu-list-item-label {
             span {
+              @include rtl {
+                animation: rtlMarquee 5s linear infinite;
+              }
               text-overflow: inherit;
               overflow: visible;
               animation: marquee 5s linear infinite;
               &::after {
+                @include rtl {
+                  padding-left: 0;
+                  padding-right: 30px; //must be equal owner 'space' in marqueeToogle;
+                }
                 content: attr(data-content);
-                padding-left: 30px; //must be equal owner 'space' in marqueeToogle; 
+                padding-left: 30px; //must be equal owner 'space' in marqueeToogle;
               }
             }
           }
@@ -486,6 +498,12 @@
 @keyframes marquee {
   from {
     left: 0;
+  }
+}
+
+@keyframes rtlMarquee {
+  from {
+    right: 0;
   }
 }
 

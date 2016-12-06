@@ -9,6 +9,7 @@ import axisSmart from 'helpers/d3.axisWithLabelPicker';
 import collisionResolver from 'helpers/d3.collisionResolver';
 
 import {
+  warn as iconWarn,
   question as iconQuestion
 } from 'base/iconset';
 
@@ -33,6 +34,9 @@ var LCComponent = Component.extend({
     }, {
       name: "locale",
       type: "locale"
+    }, {
+      name: "ui",
+      type: "ui"
     }];
 
 
@@ -59,8 +63,8 @@ var LCComponent = Component.extend({
         if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1 ||
           path.indexOf("zoomedMin") > -1 || path.indexOf("zoomedMax") > -1) {
           if(!_this.yScale || !_this.xScale) return; //abort if building of the scale is in progress
-          _this.zoomToMaxMin();
           _this.updateShow();
+          _this.zoomToMaxMin();
           _this.updateSize();
           _this.updateTime();
           _this.redrawDataPoints();
@@ -68,6 +72,7 @@ var LCComponent = Component.extend({
         }
         if(path.indexOf("scaleType") > -1) {
           _this.updateShow();
+          _this.zoomToMaxMin();
           _this.updateSize();
           _this.redrawDataPoints();
           return;
@@ -81,6 +86,7 @@ var LCComponent = Component.extend({
       },
       "change:entities.select": function() {
         if(!_this._readyOnce) return;
+        _this.updateDoubtOpacity();
         _this.highlightLines();
       },
       'change:entities.opacitySelectDim': function() {
@@ -103,7 +109,7 @@ var LCComponent = Component.extend({
 
     this.rangeYRatio = 1;
     this.rangeYShift = 0;
-
+    this.lineWidthScale = d3.scale.linear().domain([0, 20]).range([7, 1]).clamp(true);
     this.xAxis = axisSmart().orient("bottom");
     this.yAxis = axisSmart().orient("left");
 
@@ -134,13 +140,13 @@ var LCComponent = Component.extend({
     this.xTitleEl = this.graph.select('.vzb-lc-axis-x-title');
     this.yTitleEl = this.graph.select('.vzb-lc-axis-y-title');
     this.yInfoEl = this.graph.select('.vzb-lc-axis-y-info');
-    this.xValueEl = this.graph.select('.vzb-lc-axis-x-value');
-    this.yValueEl = this.graph.select('.vzb-lc-axis-y-value');
     this.linesContainerCrop = this.graph.select('.vzb-lc-lines-crop');
     this.linesContainer = this.graph.select('.vzb-lc-lines');
     this.labelsContainerCrop = this.graph.select('.vzb-lc-labels-crop');
     this.labelsContainer = this.graph.select('.vzb-lc-labels');
-
+    
+    this.dataWarningEl = this.graph.select('.vzb-data-warning');
+    
     this.verticalNow = this.labelsContainer.select(".vzb-lc-vertical-now");
     this.tooltip = this.element.select('.vzb-tooltip');
     //            this.filterDropshadowEl = this.element.select('#vzb-lc-filter-dropshadow');
@@ -173,6 +179,9 @@ var LCComponent = Component.extend({
       _this.parent.findChildByName("gapminder-datanotes").hide();
     });
 
+    this.wScale = d3.scale.linear()
+      .domain(this.model.ui.datawarning.doubtDomain)
+      .range(this.model.ui.datawarning.doubtRange);
 
     this.on("resize", function() {
       //return if updatesize exists with error
@@ -195,6 +204,7 @@ var LCComponent = Component.extend({
       _this.values = allValues[_this.model.time.value];
       _this.updateShow();
       _this.updateSize();
+      _this.updateDoubtOpacity();
       _this.zoomToMaxMin();
       _this.redrawDataPoints();
       _this.linesContainerCrop
@@ -230,6 +240,22 @@ var LCComponent = Component.extend({
     if(!!this.strings.unit.X) this.strings.unit.X = ", " + this.strings.unit.X;
     if(!!this.strings.unit.C) this.strings.unit.C = ", " + this.strings.unit.C;
 
+    utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
+    this.dataWarningEl.append("text")
+      .attr("text-anchor", "end")
+      .text(this.translator("hints/dataWarning"));
+
+    this.dataWarningEl
+      .on("click", function () {
+        _this.parent.findChildByName("gapminder-datawarning").toggle();
+      })
+      .on("mouseover", function () {
+        _this.updateDoubtOpacity(1);
+      })
+      .on("mouseout", function () {
+        _this.updateDoubtOpacity();
+      })
+
     var xTitle = this.xTitleEl.selectAll("text").data([0]);
     xTitle.enter().append("text");
 
@@ -248,6 +274,13 @@ var LCComponent = Component.extend({
 
   },
 
+  updateDoubtOpacity: function (opacity) {
+    if (opacity == null) opacity = this.wScale(+this.time.getUTCFullYear().toString());
+    if (this.someSelected) opacity = 1;
+    this.dataWarningEl.style("opacity", opacity);
+  },
+
+
   /*
    * UPDATE SHOW:
    * Ideally should only update when show parameters change or data changes
@@ -259,8 +292,6 @@ var LCComponent = Component.extend({
     this.cached = {};
 
     //scales
-    // remove when fixed problem with scale (not reset when scale type changed)
-    this.model.marker.axis_y.buildScale();
     this.yScale = this.model.marker.axis_y.getScale();
     this.xScale = this.model.marker.axis_x.getScale();
     this.cScale = this.model.marker.color.getScale();
@@ -283,7 +314,6 @@ var LCComponent = Component.extend({
 
         entity.append("path")
           .attr("class", "vzb-lc-line-shadow")
-          .attr("transform", "translate(0,2)");
 
         entity.append("path")
           .attr("class", "vzb-lc-line");
@@ -354,7 +384,7 @@ var LCComponent = Component.extend({
         top: 30,
         right: 20,
         left: 40,
-        bottom: 30
+        bottom: 20
       },
       infoElHeight: 16,
       yAxisTitleBottomMargin: 6,
@@ -368,7 +398,7 @@ var LCComponent = Component.extend({
         top: 40,
         right: 60,
         left: 60,
-        bottom: 40
+        bottom: 25
       },
       infoElHeight: 20,
       yAxisTitleBottomMargin: 6,
@@ -382,7 +412,7 @@ var LCComponent = Component.extend({
         top: 50,
         right: 60,
         left: 60,
-        bottom: 50
+        bottom: 30
       },
       infoElHeight: 22,
       yAxisTitleBottomMargin: 6,
@@ -394,14 +424,14 @@ var LCComponent = Component.extend({
   },
   presentationProfileChanges: {
     "medium": {
-      margin: { top: 80, bottom: 80, left: 100 },
+      margin: { top: 70, bottom: 40, left: 70 },
       yAxisTitleBottomMargin: 20,
       xAxisTitleBottomMargin: 20,
       infoElHeight: 26,
       text_padding: 30
     },
     "large": {
-      margin: { top: 80, bottom: 100, left: 100 },
+      margin: { top: 70, bottom: 50, left: 70 },
       yAxisTitleBottomMargin: 20,
       xAxisTitleBottomMargin: 20,
       infoElHeight: 32,
@@ -479,7 +509,7 @@ var LCComponent = Component.extend({
       })
       .remove();
 
-    this.margin.right = Math.max(this.margin.right, longestLabelWidth + this.activeProfile.text_padding + 20);
+    this.margin.right  = Math.max(this.margin.right, longestLabelWidth + this.activeProfile.text_padding + 20);
 
 
     //stage
@@ -544,9 +574,6 @@ var LCComponent = Component.extend({
     this.yAxisEl.call(this.yAxis);
     this.xAxisEl.call(this.xAxis);
 
-    this.xValueEl.attr("transform", "translate(0," + this.height + ")")
-      .attr("y", this.xAxis.tickPadding() + this.xAxis.tickSize());
-
     var yaxisWidth = this.yAxisElContainer.select("g").node().getBBox().width;
 
     this.yTitleEl
@@ -568,12 +595,24 @@ var LCComponent = Component.extend({
         + (translate[1] - infoElHeight * 0.8) + ')');
     }
 
+    var warnBB = this.dataWarningEl.select("text").node().getBBox();
+    this.dataWarningEl.select("svg")
+      .attr("width", warnBB.height * 0.75)
+      .attr("height", warnBB.height * 0.75)
+      .attr("x", -warnBB.width - warnBB.height * 1.2)
+      .attr("y", -warnBB.height * 0.65)
 
+    this.dataWarningEl
+      .attr("transform", "translate(" + (this.width + warnBB.width + warnBB.height * 2) + 
+      ",-" + this.activeProfile.yAxisTitleBottomMargin + ")")
+      .select("text");
+
+    
     this.xTitleEl
       .style("font-size", infoElHeight + "px")
       .attr("transform", "translate(" + 
         (this.width + this.activeProfile.text_padding + this.activeProfile.yAxisTitleBottomMargin) + "," + 
-        (this.height + this.activeProfile.lollipopRadius) + ")");
+        (this.height + this.xAxis.tickPadding() + this.xAxis.tickSize() + this.activeProfile.lollipopRadius) + ")");
 
     var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
     if(xTitleText.node().getBBox().width > this.width - 100) xTitleText.text(this.strings.title.X);
@@ -597,7 +636,6 @@ var LCComponent = Component.extend({
 
       _this.hoveringNow = null;
     }
-
     var opts = {
       rangeMax: this.xScale.range()[1],
       mRight: this.margin.right,
@@ -626,7 +664,11 @@ var LCComponent = Component.extend({
       if(!_this.sizeUpdatedOnce) {
         _this.updateSize();
       }
-
+      
+      _this.updateDoubtOpacity();
+      
+      _this.lineWidth = _this.lineWidthScale(_this.data.length);
+      _this.shadowWidth = _this.lineWidth * 1.3;
       _this.entityLines
         .each(function(d, index) {
           var entity = d3.select(this);
@@ -667,11 +709,15 @@ var LCComponent = Component.extend({
           }
 
           var path1 = entity.select(".vzb-lc-line-shadow")
+            
             .style("stroke", colorShadow)
+            .style("stroke-width", _this.shadowWidth + "px")
+            .attr("transform", "translate(0, " + (_this.shadowWidth - _this.lineWidth) + ")")
             .attr("d", _this.line(xy));
           path2
             //.style("filter", "none")
             .style("stroke", color)
+            .style("stroke-width", _this.lineWidth + "px")
             .attr("d", _this.line(xy));
           var totalLength = path2.node().getTotalLength();
 
@@ -783,7 +829,9 @@ var LCComponent = Component.extend({
 
       if(!_this.hoveringNow && _this.time - _this.model.time.start !== 0) {
         if (!_this.ui.chart.hideXAxisValue) _this.xAxisEl.call(
-           _this.xAxis.highlightValue(_this.model.time.timeNow).highlightTransDuration(_this.duration)
+           _this.xAxis
+            .highlightTransDuration(_this.duration)
+            .highlightValue(_this.time)
         );
         _this.verticalNow.style("opacity", 1);
       }else{
@@ -939,26 +987,41 @@ var LCComponent = Component.extend({
     var _this = this;
     //
     if(this.model.marker.axis_y.zoomedMin == null ) this.model.marker.axis_y.zoomedMin = this.yScale.domain()[0];
-    if(this.model.marker.axis_y.zoomedMin == null ) this.model.marker.axis_y.zoomedMin = this.yScale.domain()[1];
+    if(this.model.marker.axis_y.zoomedMax == null ) this.model.marker.axis_y.zoomedMax = this.yScale.domain()[1];
 
 
     if(
       this.model.marker.axis_x.zoomedMin != null &&
       this.model.marker.axis_x.zoomedMax != null) {
 
+/*
       var x1 = this.xScale(this.model.marker.axis_x.zoomedMin);
       var x2 = this.xScale(this.model.marker.axis_x.zoomedMax);
 
       this.rangeXRatio = this.width / (x2 - x1) * this.rangeXRatio;
       this.rangeXShift = (this.rangeXShift - x1) / (x2 - x1) * this.width;
+*/
 
-      this.xScale.range([this.rangeXShift, this.width*this.rangeXRatio + this.rangeXShift]);
+      this.xScale.domain([this.model.marker.axis_x.zoomedMin, this.model.marker.axis_x.zoomedMax]);
       this.xAxisEl.call(this.xAxis);
     }
     if (
       this.model.marker.axis_y.zoomedMin != null &&
       this.model.marker.axis_y.zoomedMax != null) {
-
+      if ((this.model.marker.axis_y.zoomedMin <= 0 || this.model.marker.axis_y.zoomedMax <= 0)
+        && this.model.marker.axis_y.scaleType == "log") {
+        this.yScale = d3.scale.genericLog()
+          .domain([this.model.marker.axis_y.zoomedMin, this.model.marker.axis_y.zoomedMax])
+          .range(this.yScale.range());
+        this.model.marker.axis_y.scale = d3.scale.genericLog()
+          .domain([this.model.marker.axis_y.zoomedMin, this.model.marker.axis_y.zoomedMax])
+          .range(this.yScale.range());
+        this.yScale = this.model.marker.axis_y.scale;
+      } else {
+        this.yScale.domain([this.model.marker.axis_y.zoomedMin, this.model.marker.axis_y.zoomedMax]);
+        
+      }
+/*
       var y1 = this.yScale(this.model.marker.axis_y.zoomedMin);
       var y2 = this.yScale(this.model.marker.axis_y.zoomedMax);
 
@@ -966,6 +1029,7 @@ var LCComponent = Component.extend({
       this.rangeYShift = (this.height - y1) / (y1 - y2) * this.rangeYShift;
 
       this.yScale.range([this.height * this.rangeYRatio + this.rangeYShift, this.rangeYShift]);
+*/
       this.yAxisEl.call(this.yAxis);
     }
   },
