@@ -22,7 +22,10 @@ var VIZABI_MODEL = {
         "which": "cumulative_immigration_surplus"
       },
       "axis_x": {
-        "which": "mean_income_aged_lt_20"
+        "which": "mean_income_aged_lt_20",
+        "scaleType": "log",
+        "zoomedMin": "64000",
+        "zoomedMax": "700000"
       },
       "size": {
         "use": "indicator",
