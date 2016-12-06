@@ -129,6 +129,7 @@ const BarRankChart = Component.extend({
       this.loadData();
       this.draw();
       this._updateOpacity();
+      this._drawColors();
     });
   },
 
@@ -475,8 +476,6 @@ const BarRankChart = Component.extend({
       .append('g')
       .each(function (d) {
         const self = d3.select(this);
-        const color = _this._getColor(d);
-        const darkerColor = _this._getDarkerColor(d);
 
         self
           .attr('class', 'vzb-br-bar')
@@ -497,8 +496,7 @@ const BarRankChart = Component.extend({
         const barRect = self.append('rect')
           .attr('stroke', 'white')
           .attr('stroke-opacity', 0)
-          .attr('stroke-width', 2)
-          .style('fill', color);
+          .attr('stroke-width', 2);
 
         const barLabel = self.append('text')
           .attr('class', 'vzb-br-label')
@@ -507,16 +505,14 @@ const BarRankChart = Component.extend({
           .text(d => {
             const label = _this.values.label[d.entity];
             return label.length < 12 ? label : label.substring(0, 9) + '...';
-          })
-          .style('fill', darkerColor);
+          });
 
         // watch out: might be overwritten if changing the labeltext later on
         const barTitle = barLabel.append('title');
 
         const barValue = self.append('text')
           .attr('class', 'vzb-br-value')
-          .attr('dominant-baseline', 'middle')
-          .style('fill', darkerColor);
+          .attr('dominant-baseline', 'middle');
 
         Object.assign(d, {
           self,
