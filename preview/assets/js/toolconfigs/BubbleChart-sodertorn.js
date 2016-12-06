@@ -10,6 +10,9 @@ var VIZABI_MODEL = {
       "dim": "basomrade",
       "show": { }
     },
+    "entities_colorlegend": {
+      "dim": "municipality"
+    },
     "marker": {
       "label": {
         "which": "name"
@@ -26,7 +29,23 @@ var VIZABI_MODEL = {
       },
       "color": {
         "use": "property",
-        "which": "municipality"
+        "which": "municipality",
+        "syncModels": ["marker_colorlegend"]
+      }
+    },
+    "marker_colorlegend":{
+      "space": ["entities_colorlegend"],
+      "label": {
+        "use": "property",
+        "which": "name"
+      },
+      "hook_rank": {
+        "use": "property",
+        "which": "rank"
+      },
+      "hook_geoshape": {
+        "use": "property",
+        "which": "shape_lores_svg"
       }
     }
   },
