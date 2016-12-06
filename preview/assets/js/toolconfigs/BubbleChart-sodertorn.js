@@ -2,11 +2,12 @@ var VIZABI_MODEL = {
   "state": {
     "time": {
       "startOrigin": "1993",
-      "endOrigin": "2012",
+      "endOrigin": "2015",
       "dim": "year",
       "delay": 1
     },
     "entities": {
+      "opacitySelectDim": "0.05",
       "dim": "basomrade",
       "show": { }
     },
@@ -25,7 +26,8 @@ var VIZABI_MODEL = {
       },
       "size": {
         "use": "indicator",
-        "which": "population_20xx_12_31"
+        "which": "population_20xx_12_31",
+        "extent": [0, 0.4]
       },
       "color": {
         "use": "property",
@@ -54,6 +56,12 @@ var VIZABI_MODEL = {
     "splash": false,
     "path": "data/sodertorn",
     "dataset": "Gapminder/ddf--sodertorn"
+  },
+  "ui": {
+    "chart": {
+      "labels": {"removeLabelBox": true},
+      "trails": false
+    }
   }
 };
 
