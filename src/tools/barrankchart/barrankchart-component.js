@@ -504,7 +504,10 @@ const BarRankChart = Component.extend({
           .attr('class', 'vzb-br-label')
           .attr('text-anchor', 'end')
           .attr('dominant-baseline', 'middle')
-          .text(_this.values.label[d.entity])
+          .text(d => {
+            const label = _this.values.label[d.entity];
+            return label.length < 12 ? label : label.substring(0, 9) + '...';
+          })
           .style('fill', darkerColor);
 
         // watch out: might be overwritten if changing the labeltext later on
