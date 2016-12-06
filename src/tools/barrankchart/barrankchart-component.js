@@ -515,7 +515,8 @@ const BarRankChart = Component.extend({
           barRect,
           barLabel,
           barValue,
-          barTitle
+          barTitle,
+          isNew: true,
         });
       });
   },
