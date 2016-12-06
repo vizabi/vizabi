@@ -212,7 +212,7 @@ const BarRankChart = Component.extend({
   drawAxes(duration = 0) {
     const profiles = {
       small: {
-        margin: { top: 60, right: 20, left: 90, bottom: 10 },
+        margin: { top: 60, right: 20, left: 90, bottom: 15 },
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 16,
         infoElMargin: 5,
