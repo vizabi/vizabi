@@ -56,7 +56,6 @@ var CartogramComponent = Component.extend({
     this.model_binds = {
       "change:time.value": function (evt) {
         if (!_this._readyOnce) return;
-        _this.year.setText(_this.model.time.timeFormat(_this.model.time.value));
         if (!_this.calculationQueue) { // collect timestamp that we request
           _this.calculationQueue = [_this.model.time.value.toString()]
         } else {
@@ -268,7 +267,6 @@ var CartogramComponent = Component.extend({
     this.updateMarkerSizeLimits();
     this.updateSize();
     this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
-    this.year.setText(_this.model.time.timeFormat(_this.model.time.value));
   },
 
   /**
@@ -518,8 +516,7 @@ var CartogramComponent = Component.extend({
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
-
-    //possibly update the exact value in size title
+    this.year.setText(this.model.time.timeFormat(this.time), this.duration);
   },
 
 

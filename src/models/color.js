@@ -120,7 +120,7 @@ var ColorModel = Hook.extend({
     return conceptpropsColor == null || conceptpropsColor.selectable == null || conceptpropsColor.selectable;
   },
 
-  whichChange: function(newValue) {
+  setWhich: function(newValue) {
     this._super(newValue);
     if(this.palette) this.palette._data = {};
     this._setSyncModels();

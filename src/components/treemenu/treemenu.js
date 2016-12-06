@@ -481,11 +481,13 @@ var MenuItem = Class.extend({
       var parent = d3.select(this.parentNode);
       parent.classed('marquee', false);
       label.style("left", '');
+      label.style("right", '');
       if(toggle) {
         if(label.node().scrollWidth > label.node().offsetWidth) {
           label.attr("data-content", label.text());
           var space = 30;
           label.style("left", (-space - label.node().scrollWidth) + 'px');
+          label.style("right", (-space - label.node().scrollWidth) + 'px');
           parent.classed('marquee', true);
         }
       }
@@ -495,11 +497,13 @@ var MenuItem = Class.extend({
     var label = this.entity.select('.' + css.list_item_label).select('span');
     this.entity.classed('marquee', false);
     label.style("left", '');
+    label.style("right", '');
     if(toggle) {
       if(label.node().scrollWidth > label.node().offsetWidth) {
         label.attr("data-content", label.text());
         var space = 30;
         label.style("left", (-space - label.node().scrollWidth) + 'px');
+        label.style("right", (-space - label.node().scrollWidth) + 'px');
         this.entity.classed('marquee', true);
       }
     }
@@ -1307,15 +1311,8 @@ var TreeMenu = Component.extend({
   _setModel: function(what, value, hookID) {
 
     var mdl = this.model.marker[hookID];
-
-    var obj = {};
-    obj[what] = value;
-    
-    if (what == 'which')
-      mdl.whichChange(value);
-    else
-      mdl.set(obj);
-
+    if (what == 'which') mdl.setWhich(value);
+    if (what == 'scaleType') mdl.setScaleType(value);
   }
 
 

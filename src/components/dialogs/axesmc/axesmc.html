@@ -2,19 +2,19 @@
     <span class="thumb-tack-class thumb-tack-class-ico-pin fa" data-dialogtype="axesmc" data-click="pinDialog"></span>
     <span class="thumb-tack-class thumb-tack-class-ico-drag fa" data-dialogtype="axesmc" data-click="dragDialog"></span>
     <div class="vzb-dialog-title">
-        <%=t ( "buttons/axes") %>
+        <%=t ("buttons/axes") %>
     </div>
     <div class="vzb-dialog-content">
         <div class="vzb-yaxis-container">
-            <p class="vzb-dialog-sublabel"><%=t ( "hints/mount/maxYvalue") %></p>
+            <p class="vzb-dialog-sublabel"><%=t ("hints/mount/maxYvalue") %></p>
             <form class="vzb-dialog-paragraph">
-                <label><input type="radio" name="ymax" value="immediate"><%=t ( "mount/maxYmode/immediate") %></label>
-                <label><input type="radio" name="ymax" value="latest"><%=t ( "mount/maxYmode/latest") %></label>
+                <label><input type="radio" name="ymax" value="immediate"><%=t ("mount/maxYmode/immediate") %></label>
+                <label><input type="radio" name="ymax" value="latest"><%=t ("mount/maxYmode/latest") %></label>
             </form>
         </div>
         <div class="vzb-xaxis-container">
             <p class="vzb-dialog-sublabel">
-                <%=t ( "hints/mount/logXstops") %>
+                <%=t ("hints/mount/logXstops") %>
             </p>
             <form class="vzb-dialog-paragraph">
                 <input type="checkbox" name="logstops" value="1">1
@@ -23,19 +23,19 @@
             </form>
         </div>
         <p class="vzb-dialog-sublabel">
-            <%=t ( "hints/mount/xlimits") %>
+            <%=t ("hints/mount/xlimits") %>
         </p>
         <div class="vzb-xlimits-container vzb-dialog-paragraph"></div>
         <div class="vzb-probe-container">
             <p class="vzb-dialog-sublabel">
-              <input type="checkbox" name="probe" class="vzb-probe-check"> <%=t ( "hints/mount/probe") %>
+              <input type="checkbox" name="probe" class="vzb-probe-check"> <%=t ("hints/mount/probe") %>
             </p>
             <input type="text" class="vzb-probe-field" name="probe">
         </div>
     </div>
     <div class="vzb-dialog-buttons">
         <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary">
-            OK
+            <%=t ("buttons/ok") %>
         </div>
     </div>
 </div>

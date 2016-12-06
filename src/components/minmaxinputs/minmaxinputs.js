@@ -107,10 +107,10 @@ var MinMaxInputs = Component.extend({
       var _this = this;
       this.translator = this.model.locale.getTFunction();
 
-      this.el_domain_labelMin.text(this.translator("min") + ":");
-      this.el_domain_labelMax.text(this.translator("max") + ":");
-      this.el_zoomed_labelMin.text(this.translator("min") + ":");
-      this.el_zoomed_labelMax.text(this.translator("max") + ":");
+      this.el_domain_labelMin.text(this.translator("hints/min") + ":");
+      this.el_domain_labelMax.text(this.translator("hints/max") + ":");
+      this.el_zoomed_labelMin.text(this.translator("hints/min") + ":");
+      this.el_zoomed_labelMax.text(this.translator("hints/max") + ":");
 
       this.el_domain_labelMin.classed('vzb-hidden', !this.ui.selectDomainMinMax);
       this.el_domain_labelMax.classed('vzb-hidden', !this.ui.selectDomainMinMax);

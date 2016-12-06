@@ -11,6 +11,7 @@ import timeslider from 'components/timeslider/timeslider';
 import dialogs from 'components/dialogs/dialogs';
 import buttonlist from 'components/buttonlist/buttonlist';
 import treemenu from 'components/treemenu/treemenu';
+import datawarning from 'components/datawarning/datawarning';
 import datanotes from 'components/datanotes/datanotes';
 
 
@@ -28,7 +29,7 @@ var LineChart = Tool.extend('LineChart', {
       this.components = [{
         component: LCComponent,
         placeholder: '.vzb-tool-viz',
-        model: ["state.time", "state.entities", "state.marker", "locale"] //pass models to component
+        model: ["state.time", "state.entities", "state.marker", "locale", "ui"] //pass models to component
       }, {
         component: timeslider,
         placeholder: '.vzb-tool-timeslider',
@@ -46,6 +47,10 @@ var LineChart = Tool.extend('LineChart', {
         component: treemenu,
         placeholder: '.vzb-tool-treemenu',
         model: ['state.marker', 'state.marker_tags', 'state.time', 'locale']
+      }, {
+        component: datawarning,
+        placeholder: '.vzb-tool-datawarning',
+        model: ['locale']
       }, {
         component: datanotes,
         placeholder: '.vzb-tool-datanotes',
@@ -77,6 +82,10 @@ var LineChart = Tool.extend('LineChart', {
           "higlightValueY": true,
           "showTooltip": false
         }
+      },
+      datawarning: {
+        doubtDomain: [],
+        doubtRange: []
       },
       "presentation": false
     }

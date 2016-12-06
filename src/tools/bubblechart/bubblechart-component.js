@@ -570,7 +570,7 @@ var BubbleChartComp = Component.extend({
         _this.parent
           .findChildByName("gapminder-treemenu")
           .markerID("axis_y")
-          .alignX("left")
+          .alignX(_this.model.locale.isRTL() ? "right" : "left")
           .alignY("top")
           .updateView()
           .toggle();
@@ -583,7 +583,7 @@ var BubbleChartComp = Component.extend({
         _this.parent
           .findChildByName("gapminder-treemenu")
           .markerID("axis_x")
-          .alignX("left")
+          .alignX(_this.model.locale.isRTL() ? "right" : "left")
           .alignY("bottom")
           .updateView()
           .toggle();
@@ -803,7 +803,7 @@ var BubbleChartComp = Component.extend({
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
-    this.year.setText(this.model.time.timeFormat(this.model.time.timeNow));
+    this.year.setText(this.model.time.timeFormat(this.time), this.duration);
   },
 
   /*
@@ -956,19 +956,18 @@ var BubbleChartComp = Component.extend({
 
     // reduce font size if the caption doesn't fit
     this._updateSTitle();
+    this.sTitleEl
+      .attr("transform", "translate(" + this.width + "," + 20 + ") rotate(-90)");
 
-
+    var isRTL = this.model.locale.isRTL();
     var yaxisWidth = this.yAxisElContainer.select("g").node().getBBox().width;
     this.yTitleEl
       .style("font-size", infoElHeight + "px")
-      .attr("transform", "translate(" + (-yaxisWidth) + ", -" + this.activeProfile.yAxisTitleBottomMargin + ")");
+      .attr("transform", "translate(" + (isRTL ? this.width : -yaxisWidth) + ", -" + this.activeProfile.yAxisTitleBottomMargin + ")");
 
     this.xTitleEl
       .style("font-size", infoElHeight + "px")
-      .attr("transform", "translate(" + (0) + "," + (this.height + margin.bottom - this.activeProfile.xAxisTitleBottomMargin) + ")");
-
-    this.sTitleEl
-      .attr("transform", "translate(" + this.width + "," + 20 + ") rotate(-90)");
+      .attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + (this.height + margin.bottom - this.activeProfile.xAxisTitleBottomMargin) + ")");
 
     var ySeparator = this.strings.unit.Y? ", ":"";
     var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + ySeparator + this.strings.unit.Y);
@@ -981,24 +980,26 @@ var BubbleChartComp = Component.extend({
     if(this.yInfoEl.select('svg').node()) {
       var titleBBox = this.yTitleEl.node().getBBox();
       var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
+      var hTranslate = isRTL ? (titleBBox.x + translate[0] - infoElHeight * 1.4) : (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4);
 
       this.yInfoEl.select('svg')
         .attr("width", infoElHeight + "px")
         .attr("height", infoElHeight + "px")
       this.yInfoEl.attr('transform', 'translate('
-        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
+        + hTranslate + ','
         + (translate[1] - infoElHeight * 0.8) + ')');
     }
 
     if(this.xInfoEl.select('svg').node()) {
       var titleBBox = this.xTitleEl.node().getBBox();
       var translate = d3.transform(this.xTitleEl.attr('transform')).translate;
+      var hTranslate = isRTL ? (titleBBox.x + translate[0] - infoElHeight * 1.4) : (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4);
 
       this.xInfoEl.select('svg')
         .attr("width", infoElHeight + "px")
         .attr("height", infoElHeight + "px")
       this.xInfoEl.attr('transform', 'translate('
-        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
+        + hTranslate + ','
         + (translate[1] - infoElHeight * 0.8) + ')');
     }
 
@@ -1006,12 +1007,6 @@ var BubbleChartComp = Component.extend({
   },
 
   _resizeDataWarning: function(){
-    this.dataWarningEl
-      .attr("transform", "translate("
-        + (this.width) + ","
-        + (this.height + this.activeProfile.margin.bottom - this.activeProfile.xAxisTitleBottomMargin)
-        + ")");
-
     // reset font size to remove jumpy measurement
     var dataWarningText = this.dataWarningEl.select("text").style("font-size", null);
 
@@ -1028,6 +1023,12 @@ var BubbleChartComp = Component.extend({
       .attr("height", warnBB.height * 0.75)
       .attr("x", -warnBB.width - warnBB.height * 1.2)
       .attr("y", - warnBB.height * 0.65);
+
+    this.dataWarningEl
+      .attr("transform", "translate("
+        + (this.model.locale.isRTL() ? warnBB.width + warnBB.height : this.width) + ","
+        + (this.height + this.activeProfile.margin.bottom - this.activeProfile.xAxisTitleBottomMargin)
+        + ")");
   },
 
   updateMarkerSizeLimits: function() {

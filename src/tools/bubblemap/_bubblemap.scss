@@ -97,6 +97,13 @@
 
       .vzb-bmc-labels {
         @extend %vzb-chart-tooltip;
+        @include rtl {
+          text {
+            direction: rtl;
+            text-anchor: start;
+            unicode-bidi: embed;
+          }
+        }
         rect {
           pointer-events: visible;
         }
@@ -136,10 +143,22 @@
 
       .vzb-bmc-axis-y-title {
         @extend %vzb-chart-axis-title;
+        @include rtl {
+          text {
+            direction: rtl;
+            unicode-bidi: embed;
+          }
+        }
       }
         
       .vzb-bmc-axis-c-title {
         @extend %vzb-chart-axis-title;
+        @include rtl {
+          text {
+            direction: rtl;
+            unicode-bidi: embed;
+          }
+        }
       }
 
       .vzb-bmc-axis-y-info,
@@ -149,8 +168,12 @@
 
       .vzb-bmc-tooltip {
         @extend %vzb-chart-tooltip;
-        text {
-          text-anchor: end;
+        @include rtl {
+          text {
+            direction: rtl;
+            text-anchor: start;
+            unicode-bidi: embed;
+          }
         }
       }
 
