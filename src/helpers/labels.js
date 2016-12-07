@@ -102,14 +102,14 @@ var label = function(context) {
           cross.on("click", function() {
             //default prevented is needed to distinguish click from drag
             if(d3.event.defaultPrevented) return;
-            _this.model.entities.clearHighlighted();
-            _this.model.entities.selectEntity(d);
+            _this.model.marker.clearHighlighted();
+            _this.model.marker.selectMarker(d);
           });
 
         })
         .on("mouseover", function(d) {
           if(utils.isTouchDevice()) return;
-          _this.model.entities.highlightEntity(d, null, null, true);
+          _this.model.marker.highlightMarker(d, null, null, true);
           var KEY = _this.KEY || _this.model.entities.getDimension();
           // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
           _this.entityLabels.sort(function (a, b) { return a[KEY] != d[KEY]? -1 : 1; });
@@ -118,7 +118,7 @@ var label = function(context) {
         })
         .on("mouseout", function(d) {
           if(utils.isTouchDevice()) return;
-          _this.model.entities.clearHighlighted();
+          _this.model.marker.clearHighlighted();
           d3.select(this).selectAll("." + _cssPrefix + "-label-x")
             .classed("vzb-transparent", true);
         })
@@ -137,7 +137,7 @@ var label = function(context) {
             if(hidden) {
               _this.model.entities.setHighlight(d);
             } else {
-              _this.model.entities.clearHighlighted();
+              _this.model.marker.clearHighlighted();
             }
           }
         });
@@ -376,7 +376,7 @@ var Labels = Class.extend({
 
     this.model = this.context.model;
 
-    this.model.on("change:entities.select", function() {
+    this.model.on("change:marker.select", function() {
         if(!_this.context._readyOnce) return;
         //console.log("EVENT change:entities:select");
         _this.selectDataPoints();
@@ -480,11 +480,11 @@ var Labels = Class.extend({
     var _cssPrefix = this.options.CSS_PREFIX;
 
     this.entityLabels = this.labelsContainer.selectAll("." + _cssPrefix + "-entity")
-      .data(_this.model.entities.select, function(d) {
+      .data(_this.model.marker.select, function(d) {
         return(d[KEY]);
       });
     this.entityLines = this.linesContainer.selectAll("g.entity-line." + _cssPrefix + "-entity")
-      .data(_this.model.entities.select, function(d) {
+      .data(_this.model.marker.select, function(d) {
         return(d[KEY]);
       });
 
@@ -544,7 +544,7 @@ var Labels = Class.extend({
     var _cssPrefix = this.options.CSS_PREFIX;
 
     // only for selected entities
-    if(_this.model.entities.isSelected(d) && _this.entityLabels != null) {
+    if(_this.model.marker.isSelected(d) && _this.entityLabels != null) {
       if(_this.cached[d[KEY]] == null) this.selectDataPoints();
 
       var cached = _this.cached[d[KEY]];
@@ -561,7 +561,7 @@ var Labels = Class.extend({
 
       if(cached.labelX_ == null || cached.labelY_ == null)
       {
-        var select = utils.find(_this.model.entities.select, function(f) {
+        var select = utils.find(_this.model.marker.select, function(f) {
           return f[KEY] == d[KEY]
         });
         cached.labelOffset = select.labelOffset || [0,0];
