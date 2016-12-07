@@ -12,6 +12,7 @@ var VIZABI_MODEL = {
       "show": { }
     },
     "entities_colorlegend": {
+      "opacityHighlightDim": "0.3",
       "dim": "municipality"
     },
     "marker": {

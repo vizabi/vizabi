@@ -107,7 +107,7 @@ var ColorLegend = Component.extend({
     this.root.element instanceof Array? this.root.element : d3.select(this.root.element)
       .call(this.colorPicker);
 
-    OPACITY_DIM = this.model.entities.opacitySelectDim;
+    OPACITY_DIM = this.colorModel.getColorlegendEntities().opacityHighlightDim;
   },
 
 
@@ -339,6 +339,7 @@ var ColorLegend = Component.extend({
           .on("mouseover", _this._interact().mouseover)
           .on("mouseout", _this._interact().mouseout)
           .on("click", _this._interact().clickToSelect)
+          .on("dblclick", _this._interact().clickToShow)
           .each(function(d){
             var shapeString = _this.frame.hook_geoshape[d[_this.colorlegendDim]].trim();
 
@@ -354,6 +355,7 @@ var ColorLegend = Component.extend({
             d3.select(this)
               .attr("d", shapeString)
               .style("fill", cScale(d[_this.colorlegendDim]))
+              .append("title").html(_this.frame.label[d[_this.colorlegendDim]]);
 
             tempdivEl.html("");
           })
@@ -462,8 +464,12 @@ var ColorLegend = Component.extend({
           .map(function(d) {
             return utils.clone(d, [KEY]);
           });
-
-        _this.model.entities.setSelect(select);
+        
+        if(select.filter(function(d){return _this.model.entities.isSelected(d) }).length == select.length) {
+          _this.model.entities.clearSelected();
+        }else{
+          _this.model.entities.setSelect(select);
+        }
       }
     }
   },
