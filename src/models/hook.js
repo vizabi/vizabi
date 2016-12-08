@@ -42,6 +42,7 @@ var Hook = DataConnected.extend({
       this._space[name] = this.getClosestModel(name);
       //if hooks change, this should load again
       this._space[name].on('dataConnectedChange', this.handleDataConnectedChange.bind(this));
+      this._space[name].on('filterChange', this.handleFilterChange.bind(this));
     });
     this.getClosestModel('locale').on('dataConnectedChange', this.handleDataConnectedChange.bind(this));
   },
@@ -122,6 +123,25 @@ var Hook = DataConnected.extend({
     utils.defer(() => {
       this.startLoading().then(
         undefined,
+        err => utils.warn(err)
+      );
+    });
+  },
+
+  handleFilterChange: function(evt) {
+    //defer is necessary because other events might be queued.
+    //load right after such events
+    utils.defer(() => {
+      this.setReady(false);
+      this.startLoading().then(
+        () => {
+          this.set({
+            domainMin: null,
+            domainMax: null,
+            zoomedMin: null,
+            zoomedMax: null
+          }, null, false);
+        },
         err => utils.warn(err)
       );
     });
