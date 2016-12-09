@@ -3,12 +3,12 @@ var VIZABI_MODEL = {
     "time": {
       "startOrigin": "1800",
       "endOrigin": "2015",
-      "value": "2015",
+      "value": "2015"
     },
     "entities": {
       "dim": "geo",
       "show": {
-        "geo": { "$in": ["usa", "swe", "chn"] }
+        "geo": { "$in": ["usa", "rus", "chn", "nga"] }
       }
     },
     "entities_colorlegend": {
