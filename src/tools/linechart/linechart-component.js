@@ -194,7 +194,7 @@ var LCComponent = Component.extend({
   },
 
   ready: function() {
-
+    this.all_values = null;
     this.all_steps = this.model.time.getAllSteps();
     this.all_values = this.values = null;
     this.updateTime();
