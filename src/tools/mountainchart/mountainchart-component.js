@@ -110,7 +110,7 @@ var MountainChartComponent = Component.extend({
                 if (!_this._readyOnce) return;
                 _this.selectEntities();
                 _this._selectlist.redraw();
-                _this.someSelectedAndOpacityZero = false;
+                _this.nonSelectedOpacityZero = false;
                 _this.updateOpacity();
                 _this.updateDoubtOpacity();
                 _this.redrawDataPoints();
@@ -330,7 +330,7 @@ var MountainChartComponent = Component.extend({
           _this.highlightEntities();
           _this.selectEntities();
           _this._selectlist.redraw();
-          _this.someSelectedAndOpacityZero = false;
+          _this.nonSelectedOpacityZero = false;
           _this.updateOpacity();
           _this.updateDoubtOpacity();
           _this._probe.redraw();
@@ -794,17 +794,17 @@ updateSize: function (meshLength) {
             return _this.model.entities.isSelected(d)
         });
 
-        var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
+        var nonSelectedOpacityZero = _this.model.entities.opacitySelectDim < .01;
 
         // when pointer events need update...
-        if (someSelectedAndOpacityZero !== this.someSelectedAndOpacityZero) {
+        if (nonSelectedOpacityZero !== this.nonSelectedOpacityZero) {
             this.mountainsAtomic.style("pointer-events", function (d) {
-                return (!someSelectedAndOpacityZero || _this.model.entities.isSelected(d)) ?
+                return (!_this.someSelected || !nonSelectedOpacityZero || _this.model.entities.isSelected(d)) ?
                     "visible" : "none";
             });
         }
 
-        this.someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
+        this.nonSelectedOpacityZero = _this.model.entities.opacitySelectDim < .01;
     },
 
     updateTime: function (time) {
