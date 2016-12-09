@@ -20,7 +20,7 @@ var EntitiesModel = DataConnected.extend({
   },
 
   objectLeafs: ['show'],
-  dataConnectedChildren: ['dim'],
+  dataConnectedChildren: ['show','dim'],
 
   /**
    * Initializes the entities model.
@@ -193,7 +193,6 @@ var EntitiesModel = DataConnected.extend({
       newShow[dimension] = { '$in': showArray };
 
     this.show = newShow;
-    this.trigger('filterChange');
   },
 
   setLabelOffset: function(d, xy) {
