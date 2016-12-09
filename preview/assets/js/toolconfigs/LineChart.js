@@ -26,9 +26,7 @@ var VIZABI_MODEL = {
       "axis_y": {
         "use": "indicator",
         "which": "income_per_person_gdppercapita_ppp_inflation_adjusted",
-        "scaleType": "log",
-        "domainMin": 300,
-        "domainMax": 128000
+        "scaleType": "log"
       },
       "axis_x": {
         "use": "indicator",
