@@ -367,9 +367,6 @@ var LCComponent = Component.extend({
       });
 
     if (this.all_values) {
-      if (!_this.values) {
-        console.log(_this.values);
-      }
       this.entityLabels.each(function(d, index) {
         var entity = d3.select(this);
         var color = _this.cScale(_this.values.color[d[KEY]]);
