@@ -17,7 +17,6 @@ export default Class.extend({
             .on("dragend", this.drag().stop);
 
         this.zoomer
-            .scaleExtent([.5, 100])
             .on("zoomstart", this.zoom().start)
             .on("zoom", this.zoom().go)
             .on('zoomend', this.zoom().stop);
@@ -39,7 +38,7 @@ export default Class.extend({
                  * not enabled. Also do not drag if zoom-pinching on touchmove
                  * events.
                  */
-                if(!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey ||
+              if(!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey ||
                      _this.ui.cursorMode === "plus") ||
                      (d3.event.sourceEvent.type === "touchmove" || d3.event.sourceEvent.type === "touchstart") &&
                      (d3.event.sourceEvent.touches.length > 1 || d3.event.sourceEvent.targetTouches.length > 1)) {
@@ -59,7 +58,7 @@ export default Class.extend({
                  * Cancel drag if drag lock is false, or when zoom-pinching via
                  * touchmove events.
                  */
-                if(!self.dragLock || (d3.event.sourceEvent.type === "touchmove" || d3.event.sourceEvent.type === "touchstart") &&
+              if(!self.dragLock || (d3.event.sourceEvent.type === "touchmove" || d3.event.sourceEvent.type === "touchstart") &&
                     (d3.event.sourceEvent.touches.length > 1 || d3.event.sourceEvent.targetTouches.length > 1)) {
                     self.dragLock = false;
 
@@ -85,8 +84,8 @@ export default Class.extend({
             },
 
             stop: function(e) {
-                if(!self.dragLock) return;
-                self.dragLock = false;
+              if(!self.dragLock) return;
+              self.dragLock = false;
 
                 _this.zoomRect
                     .attr("width", 0)
@@ -97,6 +96,7 @@ export default Class.extend({
                     x: d3.mouse(this)[0],
                     y: d3.mouse(this)[1]
                 };
+                if(Math.abs(this.origin.x - this.target.x) < 10 || Math.abs(this.origin.y - this.target.y) < 10) return;
 
                 /*
                  * Only compensate for dragging when the Ctrl key or Meta key
@@ -680,8 +680,6 @@ export default Class.extend({
         } else if (_this.yScale.invert(y1) > yDomain[1] && y1 >= yRangeBounds[1] && !zoomYOut) {
             y1 = this._scaleCoordinate(y1, yRangeBounds[0] - y2, _this.yScale.range()[1], yRangeBounds[0]);
         }
-
-        if(Math.abs(x1 - x2) < 10 || Math.abs(y1 - y2) < 10) return;
 
         var minZoom = zoomer.scaleExtent()[0];
         var maxZoom = zoomer.scaleExtent()[1];
