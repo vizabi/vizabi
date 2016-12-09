@@ -196,23 +196,26 @@ var LCComponent = Component.extend({
   ready: function() {
 
     this.all_steps = this.model.time.getAllSteps();
+    this.all_values = this.values = null;
     this.updateTime();
     this.updateUIStrings();
+    this.updateShow();
     var _this = this;
-    
     //null means we need to calculate all frames before we get to the callback
     this.model.marker.getFrame(null, function(allValues) {
       _this.all_values = allValues;
-      _this.values = allValues[_this.model.time.value];
-      _this.updateShow();
-      _this.updateSize();
-      _this.updateDoubtOpacity();
-      _this.zoomToMaxMin();
-      _this.redrawDataPoints();
-      _this.linesContainerCrop
-        .on('mousemove', _this.entityMousemove.bind(_this, null, null, _this))
-        .on('mouseleave', _this.entityMouseout.bind(_this, null, null, _this));
+      _this.model.marker.getFrame(_this.model.time.value, function (values) {
+        _this.values = values;
+        _this.updateShow();
+        _this.updateSize();
+        _this.updateDoubtOpacity();
+        _this.zoomToMaxMin();
+        _this.redrawDataPoints();
+        _this.linesContainerCrop
+          .on('mousemove', _this.entityMousemove.bind(_this, null, null, _this))
+          .on('mouseleave', _this.entityMouseout.bind(_this, null, null, _this));
 
+      });
     });
   },
 
@@ -227,6 +230,7 @@ var LCComponent = Component.extend({
 //    if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
     this.frame = frame;
     this.updateTime();
+    if (!this.all_values) return;
     this.redrawDataPoints();
   },
 
@@ -362,31 +366,33 @@ var LCComponent = Component.extend({
           .attr("dy", "1.6em");
       });
 
-    this.entityLabels.each(function(d, index) {
-      var entity = d3.select(this);
-      var color = _this.cScale(_this.values.color[d[KEY]]);
-      var colorShadow = _this.model.marker.color.which == "geo.world_4region"?
-        _this.model.marker.color.getColorShade({
-          colorID: values.color[d[KEY]],
-          shadeID: "shade"
-        })
-        :
-        d3.rgb(color).darker(0.5).toString();
+    if (this.all_values) {
+      this.entityLabels.each(function(d, index) {
+        var entity = d3.select(this);
+        var color = _this.cScale(_this.values.color[d[KEY]]);
+        var colorShadow = _this.model.marker.color.which == "geo.world_4region"?
+          _this.model.marker.color.getColorShade({
+            colorID: _this.values.color[d[KEY]],
+            shadeID: "shade"
+          })
+          :
+          d3.rgb(color).darker(0.5).toString();
 
-      var label = _this.values.label[d[KEY]];
-      var value = _this.yAxis.tickFormat()(_this.values.axis_y[d[KEY]]);
-      var name = label.length < 13 ? label : label.substring(0, 10) + '...';
-      var valueHideLimit = _this.ui.chart.labels.min_number_of_entities_when_values_hide;
+        var label = _this.values.label[d[KEY]];
+        var value = _this.yAxis.tickFormat()(_this.values.axis_y[d[KEY]]);
+        var name = label.length < 13 ? label : label.substring(0, 10) + '...';
+        var valueHideLimit = _this.ui.chart.labels.min_number_of_entities_when_values_hide;
 
-      entity.select("circle").style("fill", color);
-      entity.select(".vzb-lc-labelname")
-        .style("fill", colorShadow)
-        .text(name + " " + (_this.data.length < valueHideLimit ? value : ""));
+        entity.select("circle").style("fill", color);
+        entity.select(".vzb-lc-labelname")
+          .style("fill", colorShadow)
+          .text(name + " " + (_this.data.length < valueHideLimit ? value : ""));
 
-      entity.select(".vzb-lc-label-value")
-        .style("fill", colorShadow);
+        entity.select(".vzb-lc-label-value")
+          .style("fill", colorShadow);
 
-    });
+      });
+    }
 
     //line template
     this.line = d3.svg.line()
@@ -533,12 +539,9 @@ var LCComponent = Component.extend({
     var infoElHeight = this.activeProfile.infoElHeight;
 
     //adjust right this.margin according to biggest label
-    var lineLabelsText = this.model.marker.getKeys().map(function(d, i) {
-      return values.label[d[KEY]];
-    });
 
     var longestLabelWidth = 0;
-    var lineLabelsView = this.linesContainer.selectAll(".samplingView").data(lineLabelsText);
+    
     this.entityLabels.selectAll(".vzb-lc-labelname")
       .attr("dx", _this.activeProfile.text_padding)
       .each(function(d, index) {
