@@ -455,17 +455,17 @@ var BubbleMapComponent = Component.extend({
           return _this.model.entities.isSelected(d)
       });
 
-      var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
+      var nonSelectedOpacityZero = _this.model.entities.opacitySelectDim < .01;
 
       // when pointer events need update...
-      if (someSelectedAndOpacityZero !== this.someSelectedAndOpacityZero_1) {
+      if (nonSelectedOpacityZero !== this.nonSelectedOpacityZero) {
           this.entityBubbles.style("pointer-events", function (d) {
-              return (!someSelectedAndOpacityZero || _this.model.entities.isSelected(d)) ?
+              return (!_this.someSelected || !nonSelectedOpacityZero || _this.model.entities.isSelected(d)) ?
                   "visible" : "none";
           });
       }
 
-      this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
+      this.nonSelectedOpacityZero = _this.model.entities.opacitySelectDim < .01;
   },
 
   /**
@@ -938,6 +938,7 @@ var BubbleMapComponent = Component.extend({
         }
       }
 
+      this.nonSelectedOpacityZero = false;
   },
 
   _setTooltip: function (d) {

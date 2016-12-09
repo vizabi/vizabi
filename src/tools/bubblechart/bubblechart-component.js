@@ -1365,8 +1365,6 @@ var BubbleChartComp = Component.extend({
     var _this = this;
     var KEY = this.KEY;
 
-    this.someSelectedAndOpacityZero_1 = false;
-
     if(utils.isTouchDevice()) {
       _this.model.entities.clearHighlighted();
       _this._labels.showCloseCross(null, false);
@@ -1377,7 +1375,7 @@ var BubbleChartComp = Component.extend({
     }
 
     _this.someSelected = (_this.model.entities.select.length > 0);
-
+    _this.nonSelectedOpacityZero = false;
   },
 
   _setBubbleCrown: function(x, y, r, glow, skipInnerFill) {
@@ -1630,17 +1628,17 @@ var BubbleChartComp = Component.extend({
       });
 
 
-    var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
+    var nonSelectedOpacityZero = _this.model.entities.opacitySelectDim < .01;
 
     // when pointer events need update...
-    if(someSelectedAndOpacityZero != this.someSelectedAndOpacityZero_1) {
+    if(nonSelectedOpacityZero != this.nonSelectedOpacityZero) {
       this.entityBubbles.style("pointer-events", function(d) {
-        return(!someSelectedAndOpacityZero || _this.model.entities.isSelected(d)) ?
+        return(!_this.someSelected || !nonSelectedOpacityZero || _this.model.entities.isSelected(d)) ?
           "visible" : "none";
       });
     }
 
-    this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
+    this.nonSelectedOpacityZero = _this.model.entities.opacitySelectDim < .01;
   }
 
 });

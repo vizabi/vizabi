@@ -110,7 +110,6 @@ var MountainChartComponent = Component.extend({
                 if (!_this._readyOnce) return;
                 _this.selectEntities();
                 _this._selectlist.redraw();
-                _this.nonSelectedOpacityZero = false;
                 _this.updateOpacity();
                 _this.updateDoubtOpacity();
                 _this.redrawDataPoints();
@@ -330,7 +329,6 @@ var MountainChartComponent = Component.extend({
           _this.highlightEntities();
           _this.selectEntities();
           _this._selectlist.redraw();
-          _this.nonSelectedOpacityZero = false;
           _this.updateOpacity();
           _this.updateDoubtOpacity();
           _this._probe.redraw();
@@ -752,6 +750,7 @@ updateSize: function (meshLength) {
         this.someSelected = (this.model.entities.select.length > 0);
 
         this._selectlist.rebuild();
+        this.nonSelectedOpacityZero = false;
     },
 
     _sumLeafPointersByMarker: function (branch, marker) {
