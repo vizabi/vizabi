@@ -136,9 +136,14 @@ var BubbleChartComp = Component.extend({
 
         //console.log("EVENT change:marker", evt);
       },
-      "change:entities.select": function() {
+      "change:entities.select": function(evt, path) {
         if(!_this._readyOnce || !_this.entityBubbles) return;
         //console.log("EVENT change:entities:select");
+        
+        //disable trails if too many items get selected at once
+        //otherwise it's too much waiting time
+        if((evt.source._val||[]).length - (evt.source._previousVal||[]).length > 50) _this.model.ui.chart.trails = false;
+        
         _this.selectDataPoints();
         _this.redrawDataPoints();
         _this._trails.create().then(function() {
