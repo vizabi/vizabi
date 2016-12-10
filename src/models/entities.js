@@ -284,6 +284,14 @@ var EntitiesModel = DataConnected.extend({
     }
     this.getModelObject('highlight').set(arg, false, false); // highlights are always non persistent changes
   },
+  
+  setSelect: function(arg) {
+    if (!utils.isArray(arg)) {
+      this.setSelect([].concat(arg));
+      return;
+    }
+    this.getModelObject('select').set(arg);
+  },
 
   //TODO: join the following 3 methods with the previous 3
 
