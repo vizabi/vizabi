@@ -398,9 +398,9 @@ var Hook = DataConnected.extend({
    * Gets the d3 scale for this hook. if no scale then builds it
    * @returns {Array} domain
    */
-  getScale: function(margins) {
+  getScale: function() {
     if(!this.scale) {
-      this.buildScale(margins);
+      this.buildScale();
     }
     return this.scale;
   },

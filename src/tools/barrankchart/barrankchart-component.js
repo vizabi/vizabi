@@ -158,7 +158,7 @@ const BarRankChart = Component.extend({
       );
 
     // new scales and axes
-    this.xScale = this.model.marker.axis_x.getScale(false);
+    this.xScale = this.model.marker.axis_x.getScale();
     this.cScale = this.model.marker.color.getScale();
 
     utils.setIcon(this.dataWarningEl, iconWarn)

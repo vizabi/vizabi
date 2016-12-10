@@ -135,7 +135,7 @@ var PopByAge = Component.extend({
     var _this = this;
     this.duration = this.model.time.delayAnimations;
     this.yScale = this.model.marker.axis_y.getScale();
-    this.xScale = this.model.marker.axis_x.getScale(false);
+    this.xScale = this.model.marker.axis_x.getScale();
     this.yAxis.tickFormat(_this.model.marker.axis_y.getTickFormatter());
     this.xAxis.tickFormat(_this.model.marker.axis_x.getTickFormatter());
   },
