@@ -70,9 +70,9 @@ var DataModel = Model.extend({
         'resize'
       ]);
       return this.loadFromReader(query, parsers)
-        .then(promise => { 
+        .then(dataId => { 
           EventSource.unfreezeAll();
-          return promise;
+          return dataId;
         });
     }
 
