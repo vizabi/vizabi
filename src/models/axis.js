@@ -41,7 +41,7 @@ var AxisModel = Hook.extend({
   validate: function() {
 
     //only some scaleTypes are allowed depending on use. reset to default if inappropriate
-    if(allowTypes[this.use].indexOf(this.scaleType) === -1) this.scaleType = allowTypes[this.use][0];
+    if(allowTypes[this.use].indexOf(this.scaleType) === -1) this.buildScale(allowTypes[this.use][0]);
 
   },
 
