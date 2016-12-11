@@ -14,18 +14,6 @@ var Hook = DataConnected.extend({
 
   dataConnectedChildren: ['use', 'which'],
   
-  
-  init: function(name, value, parent, binds, persistent) {
-    var _this = this;
-    this._super(name, value, parent, binds, persistent);
-    this.on('ready', this.hookReady.bind(this));
-  },
-  
-  hookReady: function(){
-    this.buildScale();
-    this.validate();
-  },
-  
   buildScale: function(){
     //overloaded by specific hook models, like axis and color
   },
@@ -46,6 +34,11 @@ var Hook = DataConnected.extend({
     this.getClosestModel('locale').on('dataConnectedChange', this.handleDataConnectedChange.bind(this));
   },
 
+  onSuccessfullLoad: function() {
+    this.buildScale();
+    this._super();
+  },
+
   setWhich: function(newValue) {
 
     var obj = { which: newValue };
@@ -63,14 +56,12 @@ var Hook = DataConnected.extend({
       obj.zoomedMin = null;
       obj.zoomedMax = null;
     }
-    this.scale = null;
 
     this.set(obj);
   },
   
   setScaleType: function(newValue) {
-    this.scale = null;
-    this.set({"scaleType": newValue});
+    this.buildScale(newValue);
   },
 
   preloadData: function() {
@@ -395,9 +386,7 @@ var Hook = DataConnected.extend({
    * @returns {Array} domain
    */
   getScale: function() {
-    if(!this.scale) {
-      this.buildScale();
-    }
+    if (this.scale == null) console.warn('scale is null')
     return this.scale;
   },
 

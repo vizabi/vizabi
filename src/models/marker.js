@@ -35,14 +35,8 @@ var Marker = Model.extend({
     
     if (newTime.start || newTime.end) {
       utils.forEach(this.getSubhooks(), function(hook) {
-        if (hook.which == "time") {
-          hook.scale = null;          
-          var obj = {};
-          obj.domainMin = null;
-          obj.domainMax = null;
-          obj.zoomedMin = null;
-          obj.zoomedMax = null;
-          hook.set(obj);
+        if (hook.which == "time") {     
+          hook.buildScale();     
         }
       });
     }
