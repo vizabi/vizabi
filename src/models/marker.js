@@ -597,9 +597,11 @@ var Marker = Model.extend({
    */
   getConceptprops: function() {
     // temporary hack to get conceptprops from hook. Fix should be that no one tries to get it from marker in the first place.
-    var keys = Object.keys(this._data);
-    var index = (keys[0] !== 'space') ? keys[0] : keys[1];
-    return this._data[index].dataSource.getConceptprops();
+    var result = {};
+    utils.forEach(this._parent._parent._data, function(m){
+      if(m._type==="data")result[m._name] = m.getConceptprops()
+    })
+    return result;
   },
 
   getEntityLimits: function(entity) {

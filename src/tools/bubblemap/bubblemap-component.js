@@ -278,12 +278,13 @@ var BubbleMapComponent = Component.extend({
       var _this = this;
 
       this.translator = this.model.locale.getTFunction();
-      var conceptProps = _this.model.marker.getConceptprops();
+      var conceptPropsS = _this.model.marker.size.getConceptprops();
+      var conceptPropsC = _this.model.marker.color.getConceptprops();
 
       this.strings = {
           title: {
-            S: conceptProps[this.model.marker.size.which].name,
-            C: conceptProps[this.model.marker.color.which].name
+            S: conceptPropsS.name,
+            C: conceptPropsC.name
           }
       };
 
@@ -376,14 +377,15 @@ var BubbleMapComponent = Component.extend({
       }
 
       if(_this.hovered || mobile) {
-        var conceptProps = _this.model.marker.getConceptprops();
+        var conceptPropsS = _this.model.marker.size.getConceptprops();
+        var conceptPropsC = _this.model.marker.color.getConceptprops();
 
         var hovered = _this.hovered || mobile;
         var formatterS = _this.model.marker.size.getTickFormatter();
         var formatterC = _this.model.marker.color.getTickFormatter();
 
-        var unitS = conceptProps[this.model.marker.size.which].unit || "";
-        var unitC = conceptProps[this.model.marker.color.which].unit || "";
+        var unitS = conceptPropsS.unit || "";
+        var unitC = conceptPropsC.unit || "";
 
         var valueS = _this.values.size[hovered[_this.KEY]];
         var valueC = _this.values.color[hovered[_this.KEY]];

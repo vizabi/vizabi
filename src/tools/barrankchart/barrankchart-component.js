@@ -305,9 +305,7 @@ const BarRankChart = Component.extend({
     const headerTitle = this.header.select('.vzb-br-title');
 
     // change header titles for new data
-    const conceptProps = this.model.marker.getConceptprops();
-    const { which } = this.model.marker.axis_x;
-    const { name, unit } = conceptProps[which];
+    const { name, unit } = this.model.marker.axis_x.getConceptprops();
 
     const headerTitleText = headerTitle
       .select('text');

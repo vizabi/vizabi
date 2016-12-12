@@ -237,19 +237,21 @@ var LCComponent = Component.extend({
 
   updateUIStrings: function() {
     var _this = this;
-    var conceptProps = _this.model.marker.getConceptprops();
+    var conceptPropsY = _this.model.marker.axis_y.getConceptprops();
+    var conceptPropsX = _this.model.marker.axis_x.getConceptprops();
+    var conceptPropsC = _this.model.marker.color.getConceptprops();
     this.translator = this.model.locale.getTFunction();
 
     this.strings = {
       title: {
-        Y: conceptProps[this.model.marker.axis_y.which].name,
-        X: conceptProps[this.model.marker.axis_x.which].name,
-        C: conceptProps[this.model.marker.color.which].name
+        Y: conceptPropsY.name,
+        X: conceptPropsX.name,
+        C: conceptPropsC.name
       },
       unit: {
-        Y: conceptProps[this.model.marker.axis_y.which].unit || "",
-        X: conceptProps[this.model.marker.axis_x.which].unit || "",
-        C: conceptProps[this.model.marker.color.which].unit || ""
+        Y: conceptPropsY.unit || "",
+        X: conceptPropsX.unit || "",
+        C: conceptPropsC.unit || ""
       }
     };
 

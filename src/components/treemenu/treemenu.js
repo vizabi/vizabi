@@ -711,7 +711,11 @@ var TreeMenu = Component.extend({
         }
       })
       //add entries to different branches in the tree according to their tags
-      utils.forEach(this.model.marker.getConceptprops(), function(entry, id){
+      var conceptprops = _this.model.marker.getConceptprops();
+      var indicatorsDB = {}
+      utils.forEach(conceptprops, (m)=>utils.deepExtend(indicatorsDB, m));
+      
+      utils.forEach(indicatorsDB, function(entry, id){
         //if entry's tag are empty don't include it in the menu
         if(entry.tags=="_none") return;
         if(!entry.tags) entry.tags = UNCLASSIFIED;
@@ -1059,7 +1063,9 @@ var TreeMenu = Component.extend({
 
     var dataFiltered;
 
-    var indicatorsDB = _this.model.marker.getConceptprops();
+    var conceptprops = _this.model.marker.getConceptprops();
+    var indicatorsDB = {}
+    utils.forEach(conceptprops, (m)=>utils.deepExtend(indicatorsDB, m));
 
     var hookType = _this.model.marker[markerID]._type;
 

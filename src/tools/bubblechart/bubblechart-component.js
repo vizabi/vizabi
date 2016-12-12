@@ -549,21 +549,24 @@ var BubbleChartComp = Component.extend({
   updateUIStrings: function() {
     var _this = this;
 
-    var conceptProps = _this.model.marker.getConceptprops();
+    var conceptPropsY = _this.model.marker.axis_y.getConceptprops();
+    var conceptPropsX = _this.model.marker.axis_x.getConceptprops();
+    var conceptPropsS = _this.model.marker.size.getConceptprops();
+    var conceptPropsC = _this.model.marker.color.getConceptprops();
     this.translator = this.model.locale.getTFunction();
 
     this.strings = {
       title: {
-        Y: conceptProps[this.model.marker.axis_y.which].name,
-        X: conceptProps[this.model.marker.axis_x.which].name,
-        S: conceptProps[this.model.marker.size.which].name,
-        C: conceptProps[this.model.marker.color.which].name
+        Y: conceptPropsY.name,
+        X: conceptPropsX.name,
+        S: conceptPropsS.name,
+        C: conceptPropsC.name
       },
       unit: {
-        Y: conceptProps[this.model.marker.axis_y.which].unit || "",
-        X: conceptProps[this.model.marker.axis_x.which].unit || "",
-        S: conceptProps[this.model.marker.size.which].unit || "",
-        C: conceptProps[this.model.marker.color.which].unit || ""
+        Y: conceptPropsY.unit || "",
+        X: conceptPropsX.unit || "",
+        S: conceptPropsS.unit || "",
+        C: conceptPropsC.unit || ""
       }
     }
 
