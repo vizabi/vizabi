@@ -31,6 +31,8 @@ function extend(name, extensions) {
   });
 
   function Class() {
+    if (this.trackInstances)
+      Class.instances.push(this);
     if(!initializing && this.init) {
       this.init.apply(this, arguments);
     }
@@ -42,6 +44,7 @@ function extend(name, extensions) {
   Class.extend = extend;
 
   Class._collection = {};
+  Class.instances = [];
   Class.register = function(name, code) {
     if(typeof this._collection[name] !== 'undefined') {
       warn('"' + name + '" is already registered. Overwriting...');

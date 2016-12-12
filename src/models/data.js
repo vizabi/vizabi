@@ -17,6 +17,7 @@ var DataModel = Model.extend({
     splash: false
   },
 
+  trackInstances: true,
 
   /**
    * Initializes the data model.
