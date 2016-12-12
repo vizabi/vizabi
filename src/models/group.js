@@ -40,12 +40,7 @@ var GroupModel = Hook.extend({
       utils.warn("group model: use must be 'property'. Resetting...")
       this.use = "property";
     }
-  },
-
-  /**
-   * There must be no scale
-   */
-  buildScale: function() {}
+  }
 
 });
 
