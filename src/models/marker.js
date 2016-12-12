@@ -591,19 +591,6 @@ var Marker = Model.extend({
     return response;
   },
 
-  /**
-   * Gets the concept properties of all hooks
-   * @returns {Object} concept properties
-   */
-  getConceptprops: function() {
-    // temporary hack to get conceptprops from hook. Fix should be that no one tries to get it from marker in the first place.
-    var result = {};
-    utils.forEach(this._parent._parent._data, function(m){
-      if(m._type==="data")result[m._name] = m.getConceptprops()
-    })
-    return result;
-  },
-
   getEntityLimits: function(entity) {
     var _this = this;
     var timePoints = this._parent.time.getAllSteps();
