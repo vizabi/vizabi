@@ -20,10 +20,7 @@ var VIZABI_MODEL = {
     "entities_colorlegend": {
       "opacityRegular": 0.8,
       "opacityHighlightDim": 0.3,      
-      "dim": "geo",
-      "show": {
-        "is--world_4region": true
-      }
+      "dim": "world_4region"
     },
     "entities_tags": {
       "dim": "tag"
