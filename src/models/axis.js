@@ -43,15 +43,11 @@ var AxisModel = Hook.extend({
     //only some scaleTypes are allowed depending on use. reset to default if inappropriate
     if(allowTypes[this.use].indexOf(this.scaleType) === -1) this.scaleType = allowTypes[this.use][0];
     
-    //here the modified min and max may change the domain, if the scale is defined
-    if(this.scale && this.scaleType == "time" && this.use === "indicator") {
+    //restore the correct object type for time values
+    if(this.scale && this.scaleType == "time") {
       var obj = {};
-      
-      //restore the correct object type for time values
       if(this.zoomedMin != null && !utils.isDate(this.zoomedMin)) obj.zoomedMin = this._space.time.parseToUnit(this.zoomedMin.toString());
       if(this.zoomedMax != null && !utils.isDate(this.zoomedMax)) obj.zoomedMax = this._space.time.parseToUnit(this.zoomedMax.toString());
-
-      //setting all validated parameters at once
       this.set(obj);
     }
 
