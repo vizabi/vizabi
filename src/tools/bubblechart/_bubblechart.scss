@@ -189,6 +189,11 @@
       .vzb-bc-axis-x,
       .vzb-bc-axis-y {
         @extend %vzb-chart-axis;
+        .tick line, 
+        .tick-minor {
+          stroke: $vzb-color-grey;
+          stroke-dasharray: 1 3;
+        }
       }
       .vzb-bc-axis-x-title,
       .vzb-bc-axis-y-title {
@@ -221,8 +226,8 @@
 
       .vzb-bc-projection-x,
       .vzb-bc-projection-y {
-        stroke-dasharray: 2 4;
-        stroke: $vzb-color-grey;
+        stroke-dasharray: 4 4;
+        stroke: $vzb-color-black;
         opacity: 0;
       }
       .vzb-bc-line {
@@ -345,6 +350,14 @@
       .vzb-bc-axis-y {
         text {
           font-size: $vzb-font-size-larger;
+        }
+        .tick line {
+          stroke: $vzb-color-black;
+          stroke-width: 1;
+          stroke-dasharray: 2 3;
+        } 
+        .tick-minor {
+          stroke: $vzb-color-grey;
         }
       }
 

@@ -66,7 +66,7 @@ export default function axisSmart() {
         .append("text")
       
       // patch the label positioning after the view is generated
-      var tickSizeWithPadding = axis.tickPadding() + axis.tickSize();
+      var padding = axis.tickPadding();
       g.selectAll("text")
         .each(function(d, i) {
           if(axis.pivot() == null) return;
@@ -74,10 +74,10 @@ export default function axisSmart() {
           var view = d3.select(this);
           view.attr("transform", "rotate(" + (axis.pivot() ? -90 : 0) + ")");
           view.style("text-anchor", dimension == X ? "middle" : "end");
-          view.attr("x", dimension == X ? (orient == VERTICAL ? -tickSizeWithPadding : 0) : -tickSizeWithPadding);
-          view.attr("y", dimension == X ? (orient == VERTICAL ? 0 : tickSizeWithPadding) : 0);
-          view.attr("dx", dimension == X ? (orient == VERTICAL ? tickSizeWithPadding : 0) : 0);
-          view.attr("dy", dimension == X ? (orient == VERTICAL ? -tickSizeWithPadding : ".72em") : ".32em");
+          view.attr("x", dimension == X ? (orient == VERTICAL ? -padding : 0) : -padding);
+          view.attr("y", dimension == X ? (orient == VERTICAL ? 0 : padding) : 0);
+          view.attr("dx", dimension == X ? (orient == VERTICAL ? padding : 0) : 0);
+          view.attr("dy", dimension == X ? (orient == VERTICAL ? -padding : ".72em") : ".32em");
         });
       
       //apply label repositioning: first and last visible values would shift away from the borders
@@ -100,10 +100,10 @@ export default function axisSmart() {
 
       // add minor ticks. if none exist add an empty array
       if(axis.tickValuesMinor() == null) axis.tickValuesMinor([]);
-      var minorTicks = g.selectAll(".tickMinor").data(tickValuesMinor);
+      var minorTicks = g.selectAll(".tick-minor").data(tickValuesMinor);
       minorTicks.exit().remove();
       minorTicks.enter().append("line")
-        .attr("class", "tickMinor");
+        .attr("class", "tick-minor");
 
       var tickLengthOut = axis.tickSizeMinor().outbound;
       var tickLengthIn = axis.tickSizeMinor().inbound;

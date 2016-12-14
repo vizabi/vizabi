@@ -907,8 +907,9 @@ var BubbleChartComp = Component.extend({
     //apply scales to axes and redraw
     this.yAxis.scale(this.yScale)
       .orient("left")
-      .tickSize(6, 0)
-      .tickSizeMinor(3, 0)
+      .tickSize(-this.width, 0)
+      .tickPadding(6)
+      .tickSizeMinor(-this.width, 0)
       .labelerOptions({
         scaleType: this.model.marker.axis_y.scaleType,
         toolMargin: margin,
@@ -920,8 +921,9 @@ var BubbleChartComp = Component.extend({
 
     this.xAxis.scale(this.xScale)
       .orient("bottom")
-      .tickSize(6, 0)
-      .tickSizeMinor(3, 0)
+      .tickSize(-this.height, 0)
+      .tickPadding(6)
+      .tickSizeMinor(-this.height, 0)
       .labelerOptions({
         scaleType: this.model.marker.axis_x.scaleType,
         toolMargin: margin,
@@ -941,14 +943,14 @@ var BubbleChartComp = Component.extend({
 
     this.xAxisElContainer
       .attr("width", this.width + 1)
-      .attr("height", this.activeProfile.margin.bottom)
-      .attr("y", this.height - 1)
+      .attr("height", this.activeProfile.margin.bottom + this.height)
+      .attr("y", -1)
       .attr("x", -1);
     this.xAxisEl
-      .attr("transform", "translate(1,1)");
+      .attr("transform", "translate(1," + (1 + this.height) + ")");
 
     this.yAxisElContainer
-      .attr("width", this.activeProfile.margin.left)
+      .attr("width", this.activeProfile.margin.left + this.width)
       .attr("height", Math.max(0, this.height))
       .attr("x", -this.activeProfile.margin.left);
     this.yAxisEl
@@ -968,10 +970,9 @@ var BubbleChartComp = Component.extend({
       .attr("transform", "translate(" + this.width + "," + 20 + ") rotate(-90)");
 
     var isRTL = this.model.locale.isRTL();
-    var yaxisWidth = this.yAxisElContainer.select("g").node().getBBox().width;
     this.yTitleEl
       .style("font-size", infoElHeight + "px")
-      .attr("transform", "translate(" + (isRTL ? this.width : -yaxisWidth) + ", -" + this.activeProfile.yAxisTitleBottomMargin + ")");
+      .attr("transform", "translate(" + (isRTL ? this.width : 10-this.activeProfile.margin.left) + ", -" + this.activeProfile.yAxisTitleBottomMargin + ")");
 
     this.xTitleEl
       .style("font-size", infoElHeight + "px")
