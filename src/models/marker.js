@@ -28,9 +28,9 @@ var Marker = Model.extend({
    */
   getSelected: function(dim) {
     if (dim)
-      return this.select.map(function(d) {
-        return d[dim];
-      });
+      return this.select.map(
+        d => d[dim]
+      );
     else
       return this.select;
   },
@@ -103,8 +103,13 @@ var Marker = Model.extend({
    * Gets the highlighted items
    * @returns {Array} Array of unique highlighted values
    */
-  getHighlighted: function() {
-    return this.highlight;
+  getHighlighted: function(dim) {
+    if (dim)
+      return this.highlight.map(
+        d => d[dim]
+      );
+    else
+      return this.highlight;
   },
 
   setHighlight: function(arg) {

@@ -42,7 +42,7 @@ var ColorLegend = Component.extend({
 
         _this.model.marker.getFrame(_this.model.time.value, function(frame) {
           if(frame) {
-            var _hlEntities = _this.model.marker.getHighlighted();
+            var _hlEntities = _this.model.marker.getHighlighted(_this.KEY);
             _this.updateGroupsOpacity(_hlEntities.map((d)=>frame["color"][d]));
           }else{
             _this.updateGroupsOpacity();
