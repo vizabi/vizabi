@@ -135,7 +135,7 @@ var label = function(context) {
           cross.classed("vzb-transparent", !hidden);
           if(!_this.options.SUPPRESS_HIGHLIGHT_DURING_PLAY || !_this.model.time.playing) {
             if(hidden) {
-              _this.model.entities.setHighlight(d);
+              _this.model.marker.setHighlight(d);
             } else {
               _this.model.marker.clearHighlighted();
             }

@@ -59,17 +59,17 @@ var IndPicker = Component.extend({
         }
 
         if(this.showHoverValues) {
-            this.model_binds["change:entities.highlight"] = function(evt, values) {
+            this.model_binds["change:marker.highlight"] = function(evt, values) {
                 var use = _this.model.marker[_this.markerID].use;
                 if(!_this.showHoverValues || use == "constant") return;
-                var _highlightedEntity = _this.model.entities.getHighlighted();
+                var _highlightedEntity = _this.model.marker.getHighlighted();
                 if(_highlightedEntity.length > 1) return;
 
                 if (_highlightedEntity.length) {
                     _this.model.marker.getFrame(_this.model.time.value, function(frame) {
                         if(_this._highlighted || !frame) return;
 
-                        var _highlightedEntity = _this.model.entities.getHighlighted();
+                        var _highlightedEntity = _this.model.marker.getHighlighted();
                         if(_highlightedEntity.length) {
                             _this._highlightedValue = frame[_this.markerID][_highlightedEntity[0]];
                             _this._highlighted = (!_this._highlightedValue && _this._highlightedValue !== 0) || use !== "property";

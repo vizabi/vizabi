@@ -12,11 +12,6 @@ var EntitiesModel = DataConnected.extend({
    */
   _defaults: {
     show: {},
-    select: [],
-    highlight: [],
-    opacityHighlightDim: 0.1,
-    opacitySelectDim: 0.3,
-    opacityRegular: 1
   },
 
   objectLeafs: ['show'],
@@ -76,14 +71,6 @@ var EntitiesModel = DataConnected.extend({
   },
 
   /**
-   * Determines whether multiple entities can be selected
-   * @param {Boolean} bool
-   */
-  selectMultiple: function(bool) {
-    this._multiple = bool;
-  },
-
-  /**
    * Gets the dimensions in this entities
    * @returns {String} String with dimension
    */
@@ -97,73 +84,6 @@ var EntitiesModel = DataConnected.extend({
    */
   getFilter: function() {
     return this.show;
-  },
-
-  /**
-   * Gets the selected items
-   * @returns {Array} Array of unique selected values
-   */
-  getSelected: function() {
-    var dim = this.getDimension();
-    return this.select.map(function(d) {
-      return d[dim];
-    });
-  },
-
-  /**
-   * Selects or unselects an entity from the set
-   */
-  selectEntity: function(d, timeDim, timeFormatter) {
-    var dimension = this.getDimension();
-    var value = d[dimension];
-    if(this.isSelected(d)) {
-      this.select = this.select.filter(function(d) {
-        return d[dimension] !== value;
-      });
-    } else {
-      var added = {};
-      added[dimension] = value;
-      if(timeDim && timeFormatter) {
-        added["trailStartTime"] = timeFormatter(d[timeDim]);
-      }
-      this.select = (this._multiple) ? this.select.concat(added) : [added];
-    }
-  },
-
-  selectEntityMD: function(d, timeDim, timeFormatter) {
-    var _this = this;
-    var value = this._createValue(d);
-    if(this.isSelectedMD(d)) {
-      this.select = this.select.filter(function(d) {
-        return JSON.stringify(_this._createValue(d)) !== JSON.stringify(value);
-      });
-    } else {
-      if(timeDim && timeFormatter) {
-        value["trailStartTime"] = timeFormatter(d[timeDim]);
-      }
-      this.select = (this._multiple) ? this.select.concat(value) : [value];
-    }
-  },
-
-  /**
-   * Select all entities
-   */
-  selectAll: function(timeDim, timeFormatter) {
-    if(!this._multiple) return;
-
-    var added,
-      dimension = this.getDimension();
-
-    var select = this._visible.map(function(d) {
-      added = {};
-      added[dimension] = d[dimension];
-      if(timeDim && timeFormatter) {
-        added["trailStartTime"] = timeFormatter(d[timeDim]);
-      }
-      return added;
-    });
-
-    this.select = select;
   },
 
   /**
@@ -211,38 +131,6 @@ var EntitiesModel = DataConnected.extend({
 
   /**
    * Selects an entity from the set
-   * @returns {Boolean} whether the item is selected or not
-   */
-  isSelected: function(d) {
-    var dimension = this.getDimension();
-    var value = d[this.getDimension()];
-
-    return this.select
-        .map(function(d) {return d[dimension];})
-        .indexOf(value) !== -1;
-  },
-
-  isSelectedMD: function(d) {
-    var _this = this;
-    var value = this._createValue(d);
-
-    return this.select
-      .map(function(d) {
-        return JSON.stringify(_this._createValue(d)) === JSON.stringify(value);
-      })
-      .indexOf(true) !== -1;
-  },
-
-  _createValue: function(d) {
-    var dims = this.getDimension() ? [this.getDimension()].concat(this._getAllDimensions()) : this._getAllDimensions();
-    return dims.reduce(function(value, key) {
-      value[key] = d[key];
-      return value;
-    }, {});
-  },
-
-  /**
-   * Selects an entity from the set
    * @returns {Boolean} whether the item is shown or not
    */
   isShown: function(d) {
@@ -251,12 +139,6 @@ var EntitiesModel = DataConnected.extend({
   },
 
   /**
-   * Clears selection of items
-   */
-  clearSelected: function() {
-    this.select = [];
-  },
-  /**
    * Clears showing of items
    */
   clearShow: function() {
@@ -264,90 +146,6 @@ var EntitiesModel = DataConnected.extend({
     var show = utils.deepClone(this.show);
     delete show[dimension];
     this.show = show;
-  },
-
-  /**
-   * Gets the highlighted items
-   * @returns {Array} Array of unique highlighted values
-   */
-  getHighlighted: function() {
-    var dim = this.getDimension();
-    return this.highlight.map(function(d) {
-      return d[dim];
-    });
-  },
-
-  setHighlight: function(arg) {
-    if (!utils.isArray(arg)) {
-      this.setHighlight([].concat(arg));
-      return;
-    }
-    this.getModelObject('highlight').set(arg, false, false); // highlights are always non persistent changes
-  },
-  
-  setSelect: function(arg) {
-    if (!utils.isArray(arg)) {
-      this.setSelect([].concat(arg));
-      return;
-    }
-    this.getModelObject('select').set(arg);
-  },
-
-  //TODO: join the following 3 methods with the previous 3
-
-  /**
-   * Highlights an entity from the set
-   */
-  highlightEntity: function(d, timeDim, timeFormatter, copyDatum) {
-    var dimension = this.getDimension();
-    var value = d[dimension];
-    if(!this.isHighlighted(d)) {
-      var added = {};
-      if(copyDatum) {
-        added = utils.clone(d);
-      } else {
-        added[dimension] = value;
-        if(timeDim && timeFormatter) {
-          added["trailStartTime"] = timeFormatter(d[timeDim]);
-        }
-      }
-      this.setHighlight(this.highlight.concat(added));
-    }
-  },
-
-  /**
-   * Unhighlights an entity from the set
-   */
-  unhighlightEntity: function(d) {
-    var dimension = this.getDimension();
-    var value = d[dimension];
-    if(this.isHighlighted(d)) {
-      this.setHighlight(this.highlight.filter(function(d) {
-        return d[dimension] !== value;
-      }));
-    }
-  },
-
-  /**
-   * Checks whether an entity is highlighted from the set
-   * @returns {Boolean} whether the item is highlighted or not
-   */
-  isHighlighted: function(d) {
-    var dimension = this.getDimension();
-    var value = d[this.getDimension()];
-
-    var highlight_array = this.highlight.map(function(d) {
-      return d[dimension];
-    });
-
-    return highlight_array.indexOf(value) !== -1;
-  },
-
-  /**
-   * Clears selection of items
-   */
-  clearHighlighted: function() {
-    this.setHighlight([]);
   }
 
 });

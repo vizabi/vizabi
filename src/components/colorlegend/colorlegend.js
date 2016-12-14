@@ -37,12 +37,12 @@ var ColorLegend = Component.extend({
         if(!_this._readyOnce || !_this.frame) return;
         _this.updateView();
       },
-      "change:entities.highlight": function(evt, values) {
+      "change:marker.highlight": function(evt, values) {
         if(_this.colorModel.use !== "property") return;
 
         _this.model.marker.getFrame(_this.model.time.value, function(frame) {
           if(frame) {
-            var _hlEntities = _this.model.entities.getHighlighted();
+            var _hlEntities = _this.model.marker.getHighlighted();
             _this.updateGroupsOpacity(_hlEntities.map((d)=>frame["color"][d]));
           }else{
             _this.updateGroupsOpacity();
@@ -374,13 +374,13 @@ var ColorLegend = Component.extend({
             return utils.clone(d, [KEY]);
           });
 
-        _this.model.entities.setHighlight(highlight);
+        _this.model.marker.setHighlight(highlight);
       },
 
       mouseout: function(d, i) {
         //disable interaction if so stated in concept properties
         if(_this.colorModel.use === "indicator") return;
-        _this.model.entities.clearHighlighted();
+        _this.model.marker.clearHighlighted();
       },
       clickToChangeColor: function(d, i) {
         //disable interaction if so stated in concept properties
@@ -441,10 +441,10 @@ var ColorLegend = Component.extend({
             return utils.clone(d, [KEY]);
           });
         
-        if(select.filter(function(d){return _this.model.entities.isSelected(d) }).length == select.length) {
-          _this.model.entities.clearSelected();
+        if(select.filter(function(d){return _this.model.marker.isSelected(d) }).length == select.length) {
+          _this.model.marker.clearSelected();
         }else{
-          _this.model.entities.setSelect(select);
+          _this.model.marker.setSelect(select);
         }
       }
     }
@@ -464,9 +464,9 @@ var ColorLegend = Component.extend({
   updateGroupsOpacity: function(highlight = []) {
     var _this = this;
     
-    var clEntities = this.colorModel.getColorlegendEntities()||{};
-    var OPACITY_REGULAR = clEntities.opacityRegular || 0.8;
-    var OPACITY_DIM = clEntities.opacityHighlightDim || 0.5;
+    var clMarker = this.colorModel.getColorlegendMarker()||{};
+    var OPACITY_REGULAR = clMarker.opacityRegular || 0.8;
+    var OPACITY_DIM = clMarker.opacityHighlightDim || 0.5;
     var OPACITY_HIGHLIGHT = 1;
     
     var selection = _this.canShowMap ? ".vzb-cl-minimap path" : ".vzb-cl-option .vzb-cl-color-sample";

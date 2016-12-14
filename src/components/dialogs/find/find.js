@@ -18,13 +18,13 @@ var Find = Dialog.extend({
     this.components = [{
       component: simpleslider,
       placeholder: '.vzb-dialog-bubbleopacity',
-      model: ["state.entities"],
+      model: ["state.marker"],
       arg: "opacitySelectDim",
       properties: {step: 0.01}
     }];
 
     this.model_binds = {
-      "change:state.entities.select": function(evt) {
+      "change:state.marker.select": function(evt) {
         _this.selectDataPoints();
         _this.showHideDeselect();
       },
@@ -77,8 +77,8 @@ var Find = Dialog.extend({
       if(event.keyCode == 13 && _this.input_search.node().value == "select all") {
         _this.input_search.node().value = "";
         //clear highlight so it doesn't get in the way when selecting an entity
-        if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();
-        _this.model.state.entities.selectAll();
+        if(!utils.isTouchDevice()) _this.model.state.marker.clearHighlighted();
+        _this.model.state.marker.selectAll();
       }
     });
 
@@ -159,10 +159,10 @@ var Find = Dialog.extend({
         })
         .on("change", function(d) {
           //clear highlight so it doesn't get in the way when selecting an entity
-          if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();
-          _this.model.state.entities.selectEntity(d);
+          if(!utils.isTouchDevice()) _this.model.state.marker.clearHighlighted();
+          _this.model.state.marker.selectMarker(d);
           //return to highlighted state
-          if(!utils.isTouchDevice() && !d.brokenData) _this.model.state.entities.highlightEntity(d);
+          if(!utils.isTouchDevice() && !d.brokenData) _this.model.state.marker.highlightMarker(d);
         });
 
       _this.items.append("label")
@@ -171,10 +171,10 @@ var Find = Dialog.extend({
         })
         .text(function(d){return d.name})
         .on("mouseover", function(d) {
-          if(!utils.isTouchDevice() && !d.brokenData) _this.model.state.entities.highlightEntity(d);
+          if(!utils.isTouchDevice() && !d.brokenData) _this.model.state.marker.highlightMarker(d);
         })
         .on("mouseout", function(d) {
-          if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();
+          if(!utils.isTouchDevice()) _this.model.state.marker.clearHighlighted();
         });
         utils.preventAncestorScrolling(_this.element.select('.vzb-dialog-scrollable'));
 
@@ -210,7 +210,7 @@ var Find = Dialog.extend({
 
   selectDataPoints: function(){
     var KEY = this.KEY;
-    var selected = this.model.state.entities.getSelected();
+    var selected = this.model.state.marker.getSelected();
     this.items.selectAll("input")
         .property("checked", function(d) {
           return(selected.indexOf(d[KEY]) !== -1);
@@ -229,13 +229,13 @@ var Find = Dialog.extend({
   },
 
   showHideDeselect: function() {
-    var someSelected = !!this.model.state.entities.select.length;
+    var someSelected = !!this.model.state.marker.select.length;
     this.deselect_all.classed('vzb-hidden', !someSelected);
     this.opacity_nonselected.classed('vzb-hidden', !someSelected);
   },
 
   deselectEntities: function() {
-    this.model.state.entities.clearSelected();
+    this.model.state.marker.clearSelected();
   },
 
   transitionEnd: function(event) {

@@ -216,10 +216,10 @@ var BubbleChartComp = Component.extend({
       //   _this.redrawDataPointsOnlyColors();
       //   _this._trails.run("recolor");
       // },
-      'change:entities.opacitySelectDim': function() {
+      'change:marker.opacitySelectDim': function() {
         _this.updateBubbleOpacity();
       },
-      'change:entities.opacityRegular': function() {
+      'change:marker.opacityRegular': function() {
         _this.updateBubbleOpacity();
         _this._trails.run("opacityHandler");
       },
@@ -1611,10 +1611,10 @@ var BubbleChartComp = Component.extend({
     //if(!duration)duration = 0;
 
     var OPACITY_HIGHLT = 1.0;
-    var OPACITY_HIGHLT_DIM = this.model.entities.opacityHighlightDim;
-    var OPACITY_SELECT = this.model.entities.opacityRegular;
-    var OPACITY_REGULAR = this.model.entities.opacityRegular;
-    var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
+    var OPACITY_HIGHLT_DIM = this.model.marker.opacityHighlightDim;
+    var OPACITY_SELECT = this.model.marker.opacityRegular;
+    var OPACITY_REGULAR = this.model.marker.opacityRegular;
+    var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
 
     this.entityBubbles
       //.transition().duration(duration)
@@ -1636,7 +1636,7 @@ var BubbleChartComp = Component.extend({
       });
 
 
-    var nonSelectedOpacityZero = _this.model.entities.opacitySelectDim < .01;
+    var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
 
     // when pointer events need update...
     if(nonSelectedOpacityZero != this.nonSelectedOpacityZero) {
@@ -1646,7 +1646,7 @@ var BubbleChartComp = Component.extend({
       });
     }
 
-    this.nonSelectedOpacityZero = _this.model.entities.opacitySelectDim < .01;
+    this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
   }
 
 });

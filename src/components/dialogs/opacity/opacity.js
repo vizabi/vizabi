@@ -23,13 +23,13 @@ init: function(config, parent) {
   {
     component: simpleslider,
     placeholder: '.vzb-dialog-bubbleopacity-regular',
-    model: ["state.entities"],
+    model: ["state.marker"],
     arg: "opacityRegular",
     properties: {step: 0.01}
   }, {
     component: simpleslider,
     placeholder: '.vzb-dialog-bubbleopacity-selectdim',
-    model: ["state.entities"],
+    model: ["state.marker"],
     arg: "opacitySelectDim",
     properties: {step: 0.01}
   }
