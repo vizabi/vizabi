@@ -3,6 +3,7 @@
  */
 /*eslint-env protractor, jasmine */
 'use strict';
+
 const EC = protractor.ExpectedConditions;
 const timeout = 5000;
 function logos () {
@@ -10,13 +11,11 @@ function logos () {
   browser.wait(EC.visibilityOf(element(by.css('#footer-logo'))));
 }
 function logos2 () {
-  browser.wait(EC.visibilityOf(element(by.css('body > div.wrapper > div.header > a'))));
-  browser.wait(EC.visibilityOf(element(by.css('#vizabi-placeholder > div > div.vzb-tool-stage > ' +
-    'div.vzb-tool-timeslider > div > div.vzb-ts-btns > button.vzb-ts-btn-play.vzb-ts-btn > svg'))));
+  browser.wait(EC.visibilityOf(element(by.css('div.header > a'))));
+  browser.wait(EC.visibilityOf(element(by.css('div#vizabi-placeholder-bubbles button.vzb-ts-btn-play.vzb-ts-btn'))));
 
-  browser.wait(EC.visibilityOf(element(by.css('body > div.wrapper > div.header > a'))));
-  browser.wait(EC.visibilityOf(element(by.css('#vizabi-placeholder > div > div.vzb-tool-stage > ' +
-    'div.vzb-tool-timeslider > div > div.vzb-ts-btns > button.vzb-ts-btn-play.vzb-ts-btn > svg'))));
+  browser.wait(EC.visibilityOf(element(by.css('div.header > a'))));
+  browser.wait(EC.visibilityOf(element(by.css('div#vizabi-placeholder-bubbles button.vzb-ts-btn-play.vzb-ts-btn'))));
 }
 function logos3 () {
   browser.wait(EC.visibilityOf(element(by.css('#logo > a:nth-child(1) > img'))));
@@ -33,12 +32,10 @@ function load () {
   browser.driver.get('http://gapminder.org/tools');
   browser.waitForAngular();
 }
-const about = element(by.css('body > div.wrapper > div.header > ' +
-  'ul.nav.navbar-nav.navbar-nav-left.desktop.ng-isolate-scope > li > div:nth-child(3) > a'));
-const facts = element(by.css('body > div.wrapper > div.header > ' +
-  'ul.nav.navbar-nav.navbar-nav-left.desktop.ng-isolate-scope > li > div:nth-child(1) > a'));
-const forteachers = element(by.css('body > div.wrapper > div.header > ' +
-  'ul.nav.navbar-nav.navbar-nav-left.desktop.ng-isolate-scope > li > div:nth-child(2) > a'));
+const about = element(by.css('ul.nav.navbar-nav.navbar-nav-left.desktop > li > div:nth-child(3) > a'));
+const facts = element(by.css('ul.nav.navbar-nav.navbar-nav-left.desktop > li > div:nth-child(1) > a'));
+const forteachers = element(by.css('ul.nav.navbar-nav.navbar-nav-left.desktop > li > div:nth-child(2) > a'));
+
 describe('checking redirecting', () => {
   it('should open https://www.gapminder.org', (done) => {
     browser.ignoreSynchronization = true;
@@ -139,18 +136,18 @@ describe('checking redirecting', () => {
   });
   it('redirect https://www.gapminder.org/tools/bubbles to https://www.gapminder.org/tools/#_chart-type=bubbles',
     (done) => {
-    browser.get('https://www.gapminder.org/tools/bubbles');
-    logos2();
-    expect(browser.getCurrentUrl()).toContain('chart-type=bubbles');
-    done();
-  });
+      browser.get('https://www.gapminder.org/tools/bubbles');
+      logos2();
+      expect(browser.getCurrentUrl()).toContain('chart-type=bubbles');
+      done();
+    });
   it('redirect http://www.gapminder.org/tools/bubbles to https://www.gapminder.org/tools/#_chart-type=bubbles',
     (done) => {
-    browser.get('http://www.gapminder.org/tools/bubbles');
-    logos2();
-    expect(browser.getCurrentUrl()).toContain('chart-type=bubbles');
-    done();
-  });
+      browser.get('http://www.gapminder.org/tools/bubbles');
+      logos2();
+      expect(browser.getCurrentUrl()).toContain('chart-type=bubbles');
+      done();
+    });
   it('redirect https://gapminder.org/tools/bubbles to https://www.gapminder.org/tools/#_chart-type=bubbles', (done) => {
     browser.get('https://gapminder.org/tools/bubbles');
     logos2();
@@ -165,25 +162,25 @@ describe('checking redirecting', () => {
   });
   it('redirect https://www.gapminder.org/tools/bubbles/ to https://www.gapminder.org/tools/#_chart-type=bubbles',
     (done) => {
-    browser.get('https://www.gapminder.org/tools/bubbles/');
-    logos2();
-    expect(browser.getCurrentUrl()).toContain('chart-type=bubbles');
-    done();
-  });
+      browser.get('https://www.gapminder.org/tools/bubbles/');
+      logos2();
+      expect(browser.getCurrentUrl()).toContain('chart-type=bubbles');
+      done();
+    });
   it('redirect http://www.gapminder.org/tools/bubbles/ to https://www.gapminder.org/tools/#_chart-type=bubbles',
     (done) => {
-    browser.get('http://www.gapminder.org/tools/bubbles/');
-    logos2();
-    expect(browser.getCurrentUrl()).toContain('chart-type=bubbles');
-    done();
-  });
+      browser.get('http://www.gapminder.org/tools/bubbles/');
+      logos2();
+      expect(browser.getCurrentUrl()).toContain('chart-type=bubbles');
+      done();
+    });
   it('redirect https://gapminder.org/tools/bubbles/ to https://www.gapminder.org/tools/#_chart-type=bubbles',
     (done) => {
-    browser.get('https://gapminder.org/tools/bubbles/');
-    logos2();
-    expect(browser.getCurrentUrl()).toContain('chart-type=bubbles');
-    done();
-  });
+      browser.get('https://gapminder.org/tools/bubbles/');
+      logos2();
+      expect(browser.getCurrentUrl()).toContain('chart-type=bubbles');
+      done();
+    });
   it('redirect http://gapminder.org/tools/bubbles/ to https://www.gapminder.org/tools/#_chart-type=bubbles', (done) => {
     browser.get('http://gapminder.org/tools/bubbles/');
     logos2();
@@ -224,9 +221,7 @@ describe('checking Teach menu items', () => {
     load();
     logos2();
     forteachers.click();
-    element(by.css('body > div.wrapper > div.header > ul.nav.navbar-nav.navbar-nav-left.desktop.ng-isolate-scope' +
-      ' > li > div:nth-child(2) > div > div > div > ul > li:nth-child(1) > a > div.column-item-info' +
-      ' > div.column-item-heading')).click();
+    element(by.css('a[href*="teachers"]')).click();
     logos3();
     expect(browser.getCurrentUrl()).toEqual('https://www.gapminder.org/for-teachers/');
     done();
@@ -235,9 +230,7 @@ describe('checking Teach menu items', () => {
     load();
     logos2();
     forteachers.click();
-    element(by.css('body > div.wrapper > div.header > ul.nav.navbar-nav.navbar-nav-left.desktop.ng-isolate-scope' +
-      ' > li > div:nth-child(2) > div > div > div > ul > li:nth-child(3) > a' +
-      ' > div.column-item-info > div.column-item-heading.ng-binding')).click();
+    element(by.css('a[href*="workshops"]')).click();
     logos4();
     expect(browser.getCurrentUrl()).toEqual('http://www.gapminder.org/workshops/');
     done();
@@ -246,8 +239,7 @@ describe('checking Teach menu items', () => {
     load();
     logos2();
     forteachers.click();
-    element(by.css('body > div.wrapper > div.header > ul.nav.navbar-nav.navbar-nav-left.desktop.ng-isolate-scope' +
-      ' > li > div:nth-child(2) > div > div > div > ul > li:nth-child(2) > a > div.column-item-icon > img')).click();
+    element(by.css('a[href*="presentations"]')).click();
     logos4();
     expect(browser.getCurrentUrl()).toEqual('http://www.gapminder.org/slideshows/');
     done();
@@ -256,8 +248,7 @@ describe('checking Teach menu items', () => {
     load();
     logos2();
     forteachers.click();
-    element(by.css('body > div.wrapper > div.header > ul.nav.navbar-nav.navbar-nav-left.desktop.ng-isolate-scope' +
-      ' > li > div:nth-child(2) > div > div > div > ul > li:nth-child(4) > a > div.column-item-icon > img')).click();
+    element(by.css('a[href*="test-questions"]')).click();
     logos4();
     expect(browser.getCurrentUrl()).toEqual('http://www.gapminder.org/test-questions/');
     done();
@@ -268,18 +259,16 @@ describe('checking Facts menu items', () => {
     load();
     logos2();
     facts.click();
-    element(by.css('body > div.wrapper > div.header > ul.nav.navbar-nav.navbar-nav-left.desktop.ng-isolate-scope' +
-      ' > li > div:nth-child(1) > div > div > div > ul > li:nth-child(1) > a > div.column-item-icon > img')).click();
+    element(by.css('a[href*="world"]')).click();
     logos3();
-    expect(browser.getCurrentUrl()).toContain('https://www.gapminder.org/world/');
+    expect(browser.getCurrentUrl()).toContain('http://www.gapminder.org/world/');
     done();
   });
   it('should open massive ignorance page', (done) => {
     load();
     logos2();
     facts.click();
-    element(by.css('body > div.wrapper > div.header > ul.nav.navbar-nav.navbar-nav-left.desktop.ng-isolate-scope' +
-      ' > li > div:nth-child(1) > div > div > div > ul > li:nth-child(3) > a > div.column-item-icon > img')).click();
+    element(by.css('a[href*="ignorance"]')).click();
     logos3();
     expect(browser.getCurrentUrl()).toEqual('https://www.gapminder.org/ignorance/');
     done();
@@ -288,12 +277,9 @@ describe('checking Facts menu items', () => {
     load();
     logos2();
     facts.click();
-    element(by.css('body > div.wrapper > div.header > ul.nav.navbar-nav.navbar-nav-left.desktop.ng-isolate-scope' +
-      ' > li > div:nth-child(1) > div > div > div > ul > li:nth-child(2) > a > div.column-item-icon > img')).click();
-    browser.wait(EC.visibilityOf(element(by.css('body > div > div:nth-child(1) > nav > div > div.navbar-header' +
-      ' > a > logo > span'))));
-    browser.wait(EC.visibilityOf(element(by.css('body > div > footer > footer > div > div.footer-top > ' +
-      'div.top-primary > a:nth-child(2) > logo > span'))));
+    element(by.css('a[href*="answers"]')).click();
+    browser.wait(EC.visibilityOf(element(by.css('div[class*="navbar-header"] span[class*="gapminder-logo"]'))));
+    browser.wait(EC.visibilityOf(element(by.css('div[class*="footer-top"] span[class*="gapminder-logo"]'))));
     expect(browser.getCurrentUrl()).toEqual('http://www.gapminder.org/answers/');
     done();
   });
@@ -301,8 +287,7 @@ describe('checking Facts menu items', () => {
     load();
     logos2();
     facts.click();
-    element(by.css('body > div.wrapper > div.header > ul.nav.navbar-nav.navbar-nav-left.desktop.ng-isolate-scope' +
-      ' > li > div:nth-child(1) > div > div > div > ul > li:nth-child(4) > a > div.column-item-icon > img')).click();
+    element(by.css('a[href*="data"]')).click();
     logos3();
     expect(browser.getCurrentUrl()).toEqual('https://www.gapminder.org/data/');
     done();
@@ -313,8 +298,7 @@ describe('checking About menu items', () => {
     load();
     logos2();
     about.click();
-    element(by.css('body > div.wrapper > div.header > ul.nav.navbar-nav.navbar-nav-left.desktop.ng-isolate-scope' +
-      ' > li > div:nth-child(3) > div > div > div > ul > li:nth-child(1) > a > div.column-item-icon > img')).click();
+    element(by.css('a[href*="about-gapminder"]')).click();
     logos3();
     expect(browser.getCurrentUrl()).toContain('https://www.gapminder.org/about-gapminder/');
     done();
@@ -323,8 +307,7 @@ describe('checking About menu items', () => {
     load();
     logos2();
     about.click();
-    element(by.css('body > div.wrapper > div.header > ul.nav.navbar-nav.navbar-nav-left.desktop.ng-isolate-scope' +
-      ' > li > div:nth-child(3) > div > div > div > ul > li:nth-child(3) > a > div.column-item-icon > img')).click();
+    element(by.css('a[href*="faq_frequently_asked_questions"]')).click();
     logos3();
     expect(browser.getCurrentUrl()).toEqual('https://www.gapminder.org/faq_frequently_asked_questions/');
     done();
@@ -333,8 +316,7 @@ describe('checking About menu items', () => {
     load();
     logos2();
     about.click();
-    element(by.css('body > div.wrapper > div.header > ul.nav.navbar-nav.navbar-nav-left.desktop.ng-isolate-scope' +
-      ' > li > div:nth-child(3) > div > div > div > ul > li:nth-child(2) > a > div.column-item-icon > img')).click();
+    element(by.css('a[href*="news"]')).click();
     logos3();
     expect(browser.getCurrentUrl()).toEqual('https://www.gapminder.org/news/');
     done();
@@ -343,8 +325,7 @@ describe('checking About menu items', () => {
     load();
     logos2();
     about.click();
-    element(by.css('body > div.wrapper > div.header > ul.nav.navbar-nav.navbar-nav-left.desktop.ng-isolate-scope' +
-      ' > li > div:nth-child(3) > div > div > div > ul > li:nth-child(4) > a > div.column-item-icon > img')).click();
+    element(by.css('a[href*="free-material"]')).click();
     logos4();
     expect(browser.getCurrentUrl()).toEqual('http://www.gapminder.org/free-material/');
     done();
