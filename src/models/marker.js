@@ -26,11 +26,13 @@ var Marker = Model.extend({
    * Gets the selected items
    * @returns {Array} Array of unique selected values
    */
-  getSelected: function() {
-    var dim = this.getDimension();
-    return this.select.map(function(d) {
-      return d[dim];
-    });
+  getSelected: function(dim) {
+    if (dim)
+      return this.select.map(function(d) {
+        return d[dim];
+      });
+    else
+      return this.select;
   },
 
   /**

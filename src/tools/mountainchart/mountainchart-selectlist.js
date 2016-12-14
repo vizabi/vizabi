@@ -17,7 +17,7 @@ var MCSelectList = Class.extend({
       .concat(_this.groupedPointers)
       .concat(_this.stackedPointers)
       .filter(function (f) {
-        return _this.model.entities.isSelected(f);
+        return _this.model.marker.isSelected(f);
       }).sort(function (a, b) {
         if (a.sortValue && b.sortValue) {
           if(a.sortValue[1] === b.sortValue[1]) {
@@ -50,14 +50,14 @@ var MCSelectList = Class.extend({
           .on("click", function (d, i) {
             if (utils.isTouchDevice()) return;
             d3.event.stopPropagation();
-            _this.model.entities.clearHighlighted();
-            _this.model.entities.selectEntity(d);
+            _this.model.marker.clearHighlighted();
+            _this.model.marker.selectMarker(d);
             d3.event.stopPropagation();
           })
           .onTap(function (d, i) {
             d3.select("#" + d.geo + "-label-" + _this._id).remove();
-            _this.model.entities.clearHighlighted();
-            _this.model.entities.selectEntity(d);
+            _this.model.marker.clearHighlighted();
+            _this.model.marker.selectMarker(d);
           });
         var labelCloseGroup = label.select("g.vzb-mc-label-x")
         if (!utils.isTouchDevice()){
@@ -79,18 +79,18 @@ var MCSelectList = Class.extend({
       .on("mousemove", function (d, i) {
         if (utils.isTouchDevice()) return;
         _local.showCloseCross(d, true);
-        _this.model.entities.highlightEntity(d);
+        _this.model.marker.highlightMarker(d);
       })
       .on("mouseout", function (d, i) {
         if (utils.isTouchDevice()) return;
         _local.showCloseCross(d, false);
-        _this.model.entities.clearHighlighted();
+        _this.model.marker.clearHighlighted();
 
       })
       .on("click", function (d, i) {
         if (utils.isTouchDevice()) return;
-        _this.model.entities.clearHighlighted();
-        _this.model.entities.selectEntity(d);
+        _this.model.marker.clearHighlighted();
+        _this.model.marker.selectMarker(d);
       });
   },
 
@@ -188,9 +188,9 @@ var MCSelectList = Class.extend({
 
         view.onTap(function (d, i) {
           d3.event.stopPropagation();
-          _this.model.entities.highlightEntity(d);
+          _this.model.marker.highlightMarker(d);
           setTimeout(function() {
-            _this.model.entities.unhighlightEntity(d);
+            _this.model.marker.unhighlightMarker(d);
           }, 2000)
         });
       });

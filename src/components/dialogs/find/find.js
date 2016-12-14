@@ -87,7 +87,7 @@ var Find = Dialog.extend({
     });
 
     this.deselect_all.on("click", function() {
-      _this.deselectEntities();
+      _this.deselectMarkers();
     });
 
     this.translator = this.model.locale.getTFunction();
@@ -210,7 +210,7 @@ var Find = Dialog.extend({
 
   selectDataPoints: function(){
     var KEY = this.KEY;
-    var selected = this.model.state.marker.getSelected();
+    var selected = this.model.state.marker.getSelected(KEY);
     this.items.selectAll("input")
         .property("checked", function(d) {
           return(selected.indexOf(d[KEY]) !== -1);
@@ -234,7 +234,7 @@ var Find = Dialog.extend({
     this.opacity_nonselected.classed('vzb-hidden', !someSelected);
   },
 
-  deselectEntities: function() {
+  deselectMarkers: function() {
     this.model.state.marker.clearSelected();
   },
 

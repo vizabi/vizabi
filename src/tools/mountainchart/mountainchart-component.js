@@ -101,23 +101,23 @@ var MountainChartComponent = Component.extend({
                     _this._export.reset();
                 }
             },
-            "change:entities.highlight": function (evt) {
+            "change:marker.highlight": function (evt) {
                 if (!_this._readyOnce) return;
-                _this.highlightEntities();
+                _this.highlightMarkers();
                 _this.updateOpacity();
             },
-            "change:entities.select": function (evt) {
+            "change:marker.select": function (evt) {
                 if (!_this._readyOnce) return;
-                _this.selectEntities();
+                _this.selectMarkers();
                 _this._selectlist.redraw();
                 _this.updateOpacity();
                 _this.updateDoubtOpacity();
                 _this.redrawDataPoints();
             },
-            "change:entities.opacitySelectDim": function (evt) {
+            "change:marker.opacitySelectDim": function (evt) {
                 _this.updateOpacity();
             },
-            "change:entities.opacityRegular": function (evt) {
+            "change:marker.opacityRegular": function (evt) {
                 _this.updateOpacity();
             },
             "change:marker": function (evt, path) {
@@ -326,8 +326,8 @@ var MountainChartComponent = Component.extend({
           _this._adjustMaxY({force: true});
           _this.redrawDataPoints();
           _this.redrawDataPointsOnlyColors();
-          _this.highlightEntities();
-          _this.selectEntities();
+          _this.highlightMarkers();
+          _this.selectMarkers();
           _this._selectlist.redraw();
           _this.updateOpacity();
           _this.updateDoubtOpacity();
@@ -689,7 +689,7 @@ updateSize: function (meshLength) {
             .on("click", function (d, i) {
                 if (utils.isTouchDevice()) return;
                 _this._interact()._click(d, i);
-                _this.highlightEntities();
+                _this.highlightMarkers();
             })
             .onTap(function (d, i) {
                 _this._interact()._click(d, i);
@@ -706,7 +706,7 @@ updateSize: function (meshLength) {
             _mousemove: function (d, i) {
                 if (_this.model.time.dragging || _this.model.time.playing) return;
 
-                _this.model.entities.highlightEntity(d);
+                _this.model.marker.highlightMarker(d);
 
                 var mouse = d3.mouse(_this.graph.node()).map(function (d) {
                     return parseInt(d);
@@ -721,33 +721,33 @@ updateSize: function (meshLength) {
                 if (_this.model.time.dragging || _this.model.time.playing) return;
 
                 _this._setTooltip("");
-                _this.model.entities.clearHighlighted();
+                _this.model.marker.clearHighlighted();
                 _this._selectlist.showCloseCross(d, false);
 
             },
             _click: function (d, i) {
                 if (_this.model.time.dragging || _this.model.time.playing) return;
 
-                _this.model.entities.selectEntity(d);
+                _this.model.marker.selectMarker(d);
             }
         };
 
     },
 
-    highlightEntities: function () {
+    highlightMarkers: function () {
         var _this = this;
-        this.someHighlighted = (this.model.entities.highlight.length > 0);
+        this.someHighlighted = (this.model.marker.highlight.length > 0);
 
         if (!this.selectList || !this.someSelected) return;
         this.selectList.classed("vzb-highlight", function (d) {
-            return _this.model.entities.isHighlighted(d);
+            return _this.model.marker.isHighlighted(d);
         });
 
     },
 
-    selectEntities: function () {
+    selectMarkers: function () {
         var _this = this;
-        this.someSelected = (this.model.entities.select.length > 0);
+        this.someSelected = (this.model.marker.select.length > 0);
 
         this._selectlist.rebuild();
         this.nonSelectedOpacityZero = false;
@@ -767,20 +767,20 @@ updateSize: function (meshLength) {
 
         var OPACITY_HIGHLT = 1.0;
         var OPACITY_HIGHLT_DIM = .3;
-        var OPACITY_SELECT = this.model.entities.opacityRegular;
-        var OPACITY_REGULAR = this.model.entities.opacityRegular;
-        var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
+        var OPACITY_SELECT = this.model.marker.opacityRegular;
+        var OPACITY_REGULAR = this.model.marker.opacityRegular;
+        var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
 
         this.mountains.style("opacity", function (d) {
 
             if (_this.someHighlighted) {
                 //highlight or non-highlight
-                if (_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
+                if (_this.model.marker.isHighlighted(d)) return OPACITY_HIGHLT;
             }
 
             if (_this.someSelected) {
                 //selected or non-selected
-                return _this.model.entities.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
+                return _this.model.marker.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
             }
 
             if (_this.someHighlighted) return OPACITY_HIGHLT_DIM;
@@ -790,20 +790,20 @@ updateSize: function (meshLength) {
         });
 
         this.mountains.classed("vzb-selected", function (d) {
-            return _this.model.entities.isSelected(d)
+            return _this.model.marker.isSelected(d)
         });
 
-        var nonSelectedOpacityZero = _this.model.entities.opacitySelectDim < .01;
+        var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
 
         // when pointer events need update...
         if (nonSelectedOpacityZero !== this.nonSelectedOpacityZero) {
             this.mountainsAtomic.style("pointer-events", function (d) {
-                return (!_this.someSelected || !nonSelectedOpacityZero || _this.model.entities.isSelected(d)) ?
+                return (!_this.someSelected || !nonSelectedOpacityZero || _this.model.marker.isSelected(d)) ?
                     "visible" : "none";
             });
         }
 
-        this.nonSelectedOpacityZero = _this.model.entities.opacitySelectDim < .01;
+        this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
     },
 
     updateTime: function (time) {
@@ -1026,13 +1026,13 @@ updateSize: function (meshLength) {
 
         this.mountainsMergeGrouped.each(function (d) {
             var view = d3.select(this);
-            var hidden = (!mergeGrouped && !dragOrPlay) || (mergeStacked && !_this.model.entities.isSelected(d));
+            var hidden = (!mergeGrouped && !dragOrPlay) || (mergeStacked && !_this.model.marker.isSelected(d));
             _this._renderShape(view, d.KEY(), hidden);
         });
 
         this.mountainsAtomic.each(function (d, i) {
             var view = d3.select(this);
-            var hidden = d.hidden || ((mergeGrouped || mergeStacked || dragOrPlay) && !_this.model.entities.isSelected(d));
+            var hidden = d.hidden || ((mergeGrouped || mergeStacked || dragOrPlay) && !_this.model.marker.isSelected(d));
             _this._renderShape(view, d.KEY(), hidden);
         })
 
@@ -1087,7 +1087,7 @@ updateSize: function (meshLength) {
 
         var filter = {};
         filter[this.KEY] = key;
-        if (this.model.entities.isSelected(filter)) {
+        if (this.model.marker.isSelected(filter)) {
             view.attr("d", this.area(this.cached[key].filter(function (f) {return f.y > _this.values.axis_y[key] * THICKNESS_THRESHOLD })));
         } else {
             view.attr("d", this.area(this.cached[key]));
