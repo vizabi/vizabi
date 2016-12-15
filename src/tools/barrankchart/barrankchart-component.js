@@ -287,19 +287,9 @@ const BarRankChart = Component.extend({
 
     this.height = +this.element.style('height').replace('px', '');
     this.width = +this.element.style('width').replace('px', '');
-    this.coordinates = {
-      x: {
-        start: margin.left,
-        end: this.width - margin.right
-      },
-      y: {
-        start: margin.top,
-        end: this.height - margin.bottom
-      }
-    };
 
     this.barViewport
-      .style('height', `${this.coordinates.y.end - this.coordinates.y.start}px`);
+      .style('height', `${this.height - margin.bottom - margin.top}px`);
 
     // header
     this.header.attr('height', margin.top);
@@ -369,7 +359,7 @@ const BarRankChart = Component.extend({
 
     const warningBBox = this.dataWarningEl.select('text').node().getBBox();
     this.dataWarningEl
-      .attr('transform', `translate(${this.coordinates.x.end - warningBBox.width}, ${warningBBox.height})`)
+      .attr('transform', `translate(${this.width - margin.right - warningBBox.width}, ${warningBBox.height})`)
       .select('text');
 
     this.dataWarningEl
@@ -434,7 +424,8 @@ const BarRankChart = Component.extend({
     const ltr = Math.abs(this._limits.max) >= Math.abs(this._limits.min);
 
 
-    const rightEdge = this.coordinates.x.end
+    const rightEdge = this.width
+      - margin.right
       - margin.left
       - this._getWidestLabelWidth()
       - barRectMargin
@@ -444,8 +435,8 @@ const BarRankChart = Component.extend({
 
     let zeroValueWidth = this.xScale(0) || 0;
     let shift = 0;
-    if (zeroValueWidth > this.coordinates.x.start + this._getWidestLabelWidth()) {
-      this.xScale.range([0, this.coordinates.x.end - scrollMargin - margin.left - margin.right]);
+    if (zeroValueWidth > margin.left + this._getWidestLabelWidth()) {
+      this.xScale.range([0, this.width - scrollMargin - margin.left - margin.right]);
       zeroValueWidth = this.xScale(0);
       shift = zeroValueWidth - this._getWidestLabelWidth() - barRectMargin;
     }
