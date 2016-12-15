@@ -52,7 +52,8 @@ const BarRankChart = Component.extend({
       },
       'change:marker.axis_x.scaleType': () => {
         if (this._readyOnce) {
-          this.draw();
+          this.loadData();
+          this.draw(true);
         }
       },
       'change:marker.color.palette': () => {
@@ -113,7 +114,6 @@ const BarRankChart = Component.extend({
 
     this._presentation = !this.model.ui.presentation;
     this._formatter = this.model.marker.axis_x.getTickFormatter();
-    this._dataChanged = true;
 
     this.ready();
 
@@ -126,11 +126,10 @@ const BarRankChart = Component.extend({
    */
   ready() {
     this.model.marker.getFrame(this.model.time.value, values => {
-      this._dataChanged = true;
 
       this.values = values;
       this.loadData();
-      this.draw();
+      this.draw(true);
       this._updateOpacity();
       this._drawColors();
     });
@@ -224,7 +223,7 @@ const BarRankChart = Component.extend({
         barMargin: 2,
         barRectMargin: 5,
         barValueMargin: 5,
-        scrollMargin: 5,
+        scrollMargin: 11,
       },
       medium: {
         margin: { top: 60, right: 5, left: 5, bottom: 15 },
@@ -235,7 +234,7 @@ const BarRankChart = Component.extend({
         barMargin: 2,
         barRectMargin: 5,
         barValueMargin: 5,
-        scrollMargin: 5,
+        scrollMargin: 11,
       },
       large: {
         margin: { top: 60, right: 5, left: 5, bottom: 15 },
@@ -246,13 +245,13 @@ const BarRankChart = Component.extend({
         barMargin: 2,
         barRectMargin: 5,
         barValueMargin: 5,
-        scrollMargin: 5,
+        scrollMargin: 11,
       }
     };
 
     const presentationProfileChanges = {
       medium: {
-        margin: { top: 60, right: 50, left: 5, bottom: 40 },
+        margin: { top: 60, right: 10, left: 10, bottom: 40 },
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 25,
         infoElMargin: 10,
@@ -260,10 +259,10 @@ const BarRankChart = Component.extend({
         barMargin: 4,
         barRectMargin: 5,
         barValueMargin: 5,
-        scrollMargin: 5,
+        scrollMargin: 11,
       },
       large: {
-        margin: { top: 60, right: 50, left: 5, bottom: 40 },
+        margin: { top: 60, right: 10, left: 10, bottom: 40 },
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 16,
         barHeight: 25,
@@ -271,7 +270,7 @@ const BarRankChart = Component.extend({
         barMargin: 4,
         barRectMargin: 5,
         barValueMargin: 5,
-        scrollMargin: 5,
+        scrollMargin: 11,
       }
     };
 
@@ -286,19 +285,9 @@ const BarRankChart = Component.extend({
 
     this.height = +this.element.style('height').replace('px', '');
     this.width = +this.element.style('width').replace('px', '');
-    this.coordinates = {
-      x: {
-        start: margin.left,
-        end: this.width - margin.right
-      },
-      y: {
-        start: margin.top,
-        end: this.height - margin.bottom
-      }
-    };
 
     this.barViewport
-      .style('height', `${this.coordinates.y.end - this.coordinates.y.start}px`);
+      .style('height', `${this.height - margin.bottom - margin.top}px`);
 
     // header
     this.header.attr('height', margin.top);
@@ -368,7 +357,7 @@ const BarRankChart = Component.extend({
 
     const warningBBox = this.dataWarningEl.select('text').node().getBBox();
     this.dataWarningEl
-      .attr('transform', `translate(${this.coordinates.x.end - warningBBox.width}, ${warningBBox.height})`)
+      .attr('transform', `translate(${this.width - margin.right - warningBBox.width}, ${warningBBox.height})`)
       .select('text');
 
     this.dataWarningEl
@@ -387,21 +376,6 @@ const BarRankChart = Component.extend({
       this.barContainer.selectAll('.vzb-br-bar')
         .data(this.sortedEntities, d => d.entity)
     );
-
-    if (this._dataChanged) {
-      this._dataChanged = false;
-
-      this._widestLabel = this.sortedEntities
-        .reduce((previous, current) => {
-          return previous.barLabel.node().getBBox().width < current.barLabel.node().getBBox().width ?
-            current :
-            previous;
-        })
-        .barLabel;
-
-      const { axis_x } = this.model.marker;
-      this._limits = axis_x.getLimits(axis_x.which);
-    }
 
 
     const { presentation } = this.model.ui;
@@ -428,27 +402,30 @@ const BarRankChart = Component.extend({
       this._scroll(duration);
     }
 
-    const { barRectMargin, barValueMargin, scrollMargin } = this.activeProfile;
-    const ltr = Math.abs(this._limits.max) >= Math.abs(this._limits.min);
+    const { barRectMargin, barValueMargin, scrollMargin, margin } = this.activeProfile;
+    const { axis_x } = this.model.marker;
+    const limits = axis_x.getLimits(axis_x.which);
+    const ltr = Math.abs(limits.max) >= Math.abs(limits.min);
 
 
-    const rightEdge = this.coordinates.x.end - (
-        this.coordinates.x.start
-        + this._getWidestLabelWidth()
-        + barRectMargin
-        + barValueMargin
-        + scrollMargin
-      );
+    const rightEdge = this.width
+      - margin.right
+      - margin.left
+      - this._getWidestLabelWidth()
+      - barRectMargin
+      - scrollMargin;
     this.xScale.range([0, rightEdge]);
 
-
     let zeroValueWidth = this.xScale(0) || 0;
-    let shift = 0;
+    let shift = this._getWidestLabelWidth();
 
-    if (zeroValueWidth > this.coordinates.x.start + this._getWidestLabelWidth() + barRectMargin) {
-      this.xScale.range([0, this.coordinates.x.end - this.coordinates.x.start - scrollMargin * 2]);
-      zeroValueWidth = this.xScale(0);
-      shift = zeroValueWidth - this._getWidestLabelWidth() - this.coordinates.x.start;
+    if (zeroValueWidth > ((ltr ? margin.left : margin.right) + this._getWidestLabelWidth())) {
+      shift = zeroValueWidth;
+    }
+
+    if (zeroValueWidth < 0) {
+      this.xScale.range([0, rightEdge - Math.abs(zeroValueWidth)]);
+      zeroValueWidth = this.xScale(0) || 0;
     }
 
     const barWidth = (value) => this.xScale(value) - zeroValueWidth;
@@ -457,25 +434,27 @@ const BarRankChart = Component.extend({
     const valueAnchor = ltr ? 'start' : 'end';
 
     const labelX = ltr ?
-      (this.coordinates.x.start + this._getWidestLabelWidth()) :
-      (this.coordinates.x.end - this._getWidestLabelWidth() - scrollMargin);
+      (margin.left + shift) :
+      (this.width - shift - scrollMargin - margin.right);
 
     const barX = ltr ?
-      (labelX + barRectMargin + shift) :
-      (labelX - barRectMargin - shift);
+      (labelX + barRectMargin) :
+      (labelX - barRectMargin);
 
     const valueX = ltr ?
       (barX + barValueMargin) :
       (barX - barValueMargin);
 
-    this.sortedEntities.forEach(bar => {
+    const isLabelBig = (this._getWidestLabelWidth(true) + (ltr ? margin.left : margin.right)) < shift;
+    this.sortedEntities.forEach((bar) => {
       const { value } = bar;
 
       if (force || presentationModeChanged || bar.isNew) {
         bar.barLabel
           .attr('x', labelX)
           .attr('y', this.activeProfile.barHeight / 2)
-          .attr('text-anchor', labelAnchor);
+          .attr('text-anchor', labelAnchor)
+          .text(isLabelBig ? bar.labelFull : bar.labelSmall);
 
         bar.barRect
           .attr('rx', this.activeProfile.barHeight / 4)
@@ -491,7 +470,7 @@ const BarRankChart = Component.extend({
       if (force || bar.changedWidth || presentationModeChanged) {
         const width = Math.max(0, value && barWidth(Math.abs(value)));
 
-        if (force || bar.changedWidth) {
+        if (force || bar.changedWidth || presentationModeChanged) {
           bar.barRect
             .transition().duration(duration).ease('linear')
             .attr('width', width)
@@ -577,12 +556,14 @@ const BarRankChart = Component.extend({
           .attr('stroke-opacity', 0)
           .attr('stroke-width', 2);
 
-        const label = _this.values.label[d.entity];
-        const formattedLabel = label.length < 12 ? label : `${label.substring(0, 9)}...`;
+        const labelFull = _this.values.label[d.entity];
+        const labelSmall = labelFull.length < 12 ? labelFull : `${labelFull.substring(0, 9)}...`;
         const barLabel = self.append('text')
           .attr('class', 'vzb-br-label')
-          .attr('dominant-baseline', 'middle')
-          .text(formattedLabel);
+          .attr('dominant-baseline', 'middle');
+
+        const labelFullWidth = barLabel.text(labelFull).node().getBBox().width;
+        const labelSmallWidth = barLabel.text(labelSmall).node().getBBox().width;
 
         const barValue = self.append('text')
           .attr('class', 'vzb-br-value')
@@ -594,31 +575,49 @@ const BarRankChart = Component.extend({
           barLabel,
           barValue,
           isNew: true,
-          formattedLabel
+          labelFullWidth,
+          labelSmallWidth,
+          labelFull,
+          labelSmall,
         });
       });
   },
 
-  _getWidestLabelWidth() {
-    return this._widestLabel ?
-      this._widestLabel.node().getBBox().width :
-      0;
+  _getWidestLabelWidth(big = false) {
+    const key = big ? 'labelFullWidth' : 'labelSmallWidth';
+    return this.sortedEntities
+      .reduce((a, b) => {
+        return a[key] < b[key] ? b : a;
+      })[key];
   },
 
   _drawColors() {
+    const _this = this;
+
     this.barContainer.selectAll('.vzb-br-bar>rect')
-      .style('fill', d => this._getColor(d));
+      .each(function ({ entity }) {
+        const self = d3.select(this);
+        const color = _this.values.color[entity];
+
+        if (typeof color === 'undefined') {
+          self
+            .style('fill', 'white')
+            .attr('stroke', 'black')
+            .attr('stroke-width', 1)
+            .attr('stroke-opacity', 1);
+        } else {
+          self
+            .style('fill', _this._getColor(color))
+            .attr('stroke-opacity', 0);
+        }
+      });
 
     this.barContainer.selectAll('.vzb-br-bar>text')
-      .style('fill', d => this._getDarkerColor(d));
+      .style('fill', ({ entity }) => this._getDarkerColor(this.values.color[entity]));
   },
 
-  _getColor(d) {
-    return d3.rgb(
-      this.cScale(
-        this.values.color[d.entity]
-      )
-    );
+  _getColor(value) {
+    return d3.rgb(this.cScale(value));
   },
 
   _getDarkerColor(d) {
