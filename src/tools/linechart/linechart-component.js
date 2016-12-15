@@ -82,20 +82,20 @@ var LCComponent = Component.extend({
         if(path.indexOf("which") > -1 || path.indexOf("use") > -1) return;
         _this.ready();
       },
-      "change:entities.highlight": function() {
+      "change:marker.highlight": function() {
         if(!_this._readyOnce) return;
         _this.highlightLines();
       },
-      "change:entities.select": function() {
+      "change:marker.select": function() {
         if(!_this._readyOnce) return;
         _this.updateDoubtOpacity();
         _this.highlightLines();
       },
-      'change:entities.opacitySelectDim': function() {
+      'change:marker.opacitySelectDim': function() {
         if(!_this._readyOnce) return;
         _this.highlightLines();
       },
-      'change:entities.opacityRegular': function() {
+      'change:marker.opacityRegular': function() {
         if(!_this._readyOnce) return;
         _this.highlightLines();
       }
@@ -899,9 +899,9 @@ var LCComponent = Component.extend({
       resolvedValue = data.axis_y[nearestKey];
       if(!me) me = {};
       me[KEY] = nearestKey;
-      if (!_this.model.entities.isHighlighted(me)) {
-        _this.model.entities.clearHighlighted();
-        _this.model.entities.highlightEntity(me);
+      if (!_this.model.marker.isHighlighted(me)) {
+        _this.model.marker.clearHighlighted();
+        _this.model.marker.highlightMarker(me);
       }
       _this.hoveringNow = me;
   
@@ -966,7 +966,7 @@ var LCComponent = Component.extend({
       _this.xAxisEl.call(_this.xAxis.highlightValue(_this.time));
       _this.yAxisEl.call(_this.yAxis.highlightValue("none"));
 
-      _this.model.entities.clearHighlighted();
+      _this.model.marker.clearHighlighted();
 
       _this.hoveringNow = null;
     }, 300);
@@ -981,18 +981,18 @@ var LCComponent = Component.extend({
 
     var OPACITY_HIGHLT = 1.0;
     var OPACITY_HIGHLT_DIM = .3;
-    var OPACITY_SELECT = this.model.entities.opacityRegular;
-    var OPACITY_REGULAR = this.model.entities.opacityRegular;
-    var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
+    var OPACITY_SELECT = this.model.marker.opacityRegular;
+    var OPACITY_REGULAR = this.model.marker.opacityRegular;
+    var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
 
-    var someHighlighted = (this.model.entities.highlight.length > 0);
-    var someSelected = (this.model.entities.select.length > 0);
+    var someHighlighted = (this.model.marker.highlight.length > 0);
+    var someSelected = (this.model.marker.select.length > 0);
     this.graph.selectAll(".vzb-lc-entity").each(function() {
       d3.select(this)
         .style("opacity", function(d) {
-          if (_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
+          if (_this.model.marker.isHighlighted(d)) return OPACITY_HIGHLT;
           if(someSelected) {
-            return _this.model.entities.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
+            return _this.model.marker.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
           }
           if(someHighlighted) return OPACITY_HIGHLT_DIM;
           return OPACITY_REGULAR;
