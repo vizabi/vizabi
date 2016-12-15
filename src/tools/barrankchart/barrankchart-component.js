@@ -6,6 +6,9 @@ import {
   warn as iconWarn
 } from 'base/iconset';
 
+const COLOR_BLACKISH = "#333";
+const COLOR_WHITEISH = "#fdfdfd";
+
 const BarRankChart = Component.extend({
 
   /**
@@ -220,7 +223,7 @@ const BarRankChart = Component.extend({
         infoElHeight: 16,
         infoElMargin: 5,
         barHeight: 20,
-        barMargin: 2,
+        barMargin: 3,
         barRectMargin: 5,
         barValueMargin: 5,
         scrollMargin: 11,
@@ -231,7 +234,7 @@ const BarRankChart = Component.extend({
         infoElHeight: 16,
         infoElMargin: 5,
         barHeight: 20,
-        barMargin: 2,
+        barMargin: 3,
         barRectMargin: 5,
         barValueMargin: 5,
         scrollMargin: 11,
@@ -242,7 +245,7 @@ const BarRankChart = Component.extend({
         infoElHeight: 16,
         infoElMargin: 5,
         barHeight: 20,
-        barMargin: 2,
+        barMargin: 3,
         barRectMargin: 5,
         barValueMargin: 5,
         scrollMargin: 11,
@@ -256,7 +259,7 @@ const BarRankChart = Component.extend({
         infoElHeight: 25,
         infoElMargin: 10,
         barHeight: 25,
-        barMargin: 4,
+        barMargin: 6,
         barRectMargin: 5,
         barValueMargin: 5,
         scrollMargin: 11,
@@ -267,7 +270,7 @@ const BarRankChart = Component.extend({
         infoElHeight: 16,
         barHeight: 25,
         infoElMargin: 10,
-        barMargin: 4,
+        barMargin: 6,
         barRectMargin: 5,
         barValueMargin: 5,
         scrollMargin: 11,
@@ -552,9 +555,7 @@ const BarRankChart = Component.extend({
           });
 
         const barRect = self.append('rect')
-          .attr('stroke', 'white')
-          .attr('stroke-opacity', 0)
-          .attr('stroke-width', 2);
+          .attr('stroke', 'transparent');
 
         const labelFull = _this.values.label[d.entity];
         const labelSmall = labelFull.length < 12 ? labelFull : `${labelFull.substring(0, 9)}...`;
@@ -599,16 +600,14 @@ const BarRankChart = Component.extend({
         const self = d3.select(this);
         const color = _this.values.color[entity];
 
-        if (typeof color === 'undefined') {
+        if (!color && color!==0) {
           self
-            .style('fill', 'white')
-            .attr('stroke', 'black')
-            .attr('stroke-width', 1)
-            .attr('stroke-opacity', 1);
+            .style('fill', COLOR_WHITEISH)
+            .attr('stroke', COLOR_BLACKISH)
         } else {
           self
             .style('fill', _this._getColor(color))
-            .attr('stroke-opacity', 0);
+            .attr('stroke', 'transparent');
         }
       });
 
