@@ -181,6 +181,9 @@ var Marker = Model.extend({
   clearHighlighted: function() {
     this.setHighlight([]);
   },
+  clearSelected: function() {
+    this.select = [];
+  },
 
   checkTimeLimits: function() {
     

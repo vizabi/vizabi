@@ -91,7 +91,6 @@ var EntitiesModel = DataConnected.extend({
    */
   showEntity: function(d) {
     //clear selected countries when showing something new
-    this.clearSelected();
     var newShow = utils.deepClone(this.show);
     var dimension = this.getDimension();
     var value = d[dimension];
