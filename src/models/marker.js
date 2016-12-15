@@ -35,14 +35,8 @@ var Marker = Model.extend({
     
     if (newTime.start || newTime.end) {
       utils.forEach(this.getSubhooks(), function(hook) {
-        if (hook.which == "time") {
-          hook.scale = null;          
-          var obj = {};
-          obj.domainMin = null;
-          obj.domainMax = null;
-          obj.zoomedMin = null;
-          obj.zoomedMax = null;
-          hook.set(obj);
+        if (hook.which == "time") {     
+          hook.buildScale();     
         }
       });
     }
@@ -595,17 +589,6 @@ var Marker = Model.extend({
     }
 
     return response;
-  },
-
-  /**
-   * Gets the concept properties of all hooks
-   * @returns {Object} concept properties
-   */
-  getConceptprops: function() {
-    // temporary hack to get conceptprops from hook. Fix should be that no one tries to get it from marker in the first place.
-    var keys = Object.keys(this._data);
-    var index = (keys[0] !== 'space') ? keys[0] : keys[1];
-    return this._data[index].dataSource.getConceptprops();
   },
 
   getEntityLimits: function(entity) {

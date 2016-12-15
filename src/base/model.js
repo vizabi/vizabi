@@ -39,6 +39,7 @@ var ModelLeaf = EventSource.extend({
 
       // set leaf properties
       if (persistent) this._persistentVal = val; // set persistent value if change is persistent.
+      this._previousVal = utils.deepClone(this._val);
       this._val = val;
       this._persistent = persistent;
 

@@ -25,16 +25,12 @@ var SizeModel = Axis.extend({
 
   _type: "size",
 
-  buildScale: function(margins){
+  buildScale: function(){
     //do whatever axis.buildScale does
-    this._super(margins);
+    this._super();
     //but then also clamp a numeric scale
     if(this.scaleType !== 'ordinal') this.scale.clamp(true);
-
-    if(this.use == 'indicator' && this.domainMin == null && this.domainMax == null) {
-      var domain = this.scale.domain();
-      this.set({domainMin: domain[0], domainMax: domain[1]});
-    }
+    
   }
 });
 

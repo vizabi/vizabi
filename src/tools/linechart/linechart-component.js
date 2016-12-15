@@ -43,8 +43,10 @@ var LCComponent = Component.extend({
     this.model_binds = {
       'change:time.value': function() {
         if(!_this._readyOnce) return;
-        _this.updateTime();
-        _this.redrawDataPoints();
+        _this.model.marker.getFrame(_this.model.time.value, function(frame, time) {
+          if (!_this._frameIsValid(frame)) return utils.warn("change:time.value: empty data received from marker.getFrame(). doing nothing");
+          _this.frameChanged(frame, time);
+        });
       },
       'change:time.playing': function() {
         // hide tooltip on touch devices when playing
@@ -194,41 +196,62 @@ var LCComponent = Component.extend({
   ready: function() {
 
     this.all_steps = this.model.time.getAllSteps();
+    this.all_values = this.values = null;
     this.updateTime();
     this.updateUIStrings();
+    this.updateShow();
     var _this = this;
-
     //null means we need to calculate all frames before we get to the callback
     this.model.marker.getFrame(null, function(allValues) {
       _this.all_values = allValues;
-      _this.values = allValues[_this.model.time.value];
-      _this.updateShow();
-      _this.updateSize();
-      _this.updateDoubtOpacity();
-      _this.zoomToMaxMin();
-      _this.redrawDataPoints();
-      _this.linesContainerCrop
-        .on('mousemove', _this.entityMousemove.bind(_this, null, null, _this))
-        .on('mouseleave', _this.entityMouseout.bind(_this, null, null, _this));
+      _this.model.marker.getFrame(_this.model.time.value, function (values) {
+        _this.values = values;
+        _this.updateShow();
+        _this.updateSize();
+        _this.updateDoubtOpacity();
+        _this.zoomToMaxMin();
+        _this.redrawDataPoints();
+        _this.linesContainerCrop
+          .on('mousemove', _this.entityMousemove.bind(_this, null, null, _this))
+          .on('mouseleave', _this.entityMouseout.bind(_this, null, null, _this));
 
+      });
     });
   },
 
+  _frameIsValid: function(frame) {
+    return !(!frame
+    || Object.keys(frame.axis_y).length === 0
+    || Object.keys(frame.axis_x).length === 0
+    || Object.keys(frame.color).length === 0);
+  },
+
+  frameChanged: function(frame, time) {
+//    if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
+    this.frame = frame;
+    this.updateTime();
+    if (!this.all_values) return;
+    this.redrawDataPoints();
+  },
+
+
   updateUIStrings: function() {
     var _this = this;
-    var conceptProps = _this.model.marker.getConceptprops();
+    var conceptPropsY = _this.model.marker.axis_y.getConceptprops();
+    var conceptPropsX = _this.model.marker.axis_x.getConceptprops();
+    var conceptPropsC = _this.model.marker.color.getConceptprops();
     this.translator = this.model.locale.getTFunction();
 
     this.strings = {
       title: {
-        Y: conceptProps[this.model.marker.axis_y.which].name,
-        X: conceptProps[this.model.marker.axis_x.which].name,
-        C: conceptProps[this.model.marker.color.which].name
+        Y: conceptPropsY.name,
+        X: conceptPropsX.name,
+        C: conceptPropsC.name
       },
       unit: {
-        Y: conceptProps[this.model.marker.axis_y.which].unit || "",
-        X: conceptProps[this.model.marker.axis_x.which].unit || "",
-        C: conceptProps[this.model.marker.color.which].unit || ""
+        Y: conceptPropsY.unit || "",
+        X: conceptPropsX.unit || "",
+        C: conceptPropsC.unit || ""
       }
     };
 
@@ -290,9 +313,12 @@ var LCComponent = Component.extend({
     var KEY = this.KEY;
 
     this.cached = {};
-
     //scales
     this.yScale = this.model.marker.axis_y.getScale();
+    if (!this.splash) {
+      var limits = this.model.marker.axis_y.getLimits(this.model.marker.axis_y.which);
+      this.yScale.domain([limits.min, limits.max]);
+    }
     this.xScale = this.model.marker.axis_x.getScale();
     this.cScale = this.model.marker.color.getScale();
     this.yAxis.tickSize(6, 0)
@@ -330,9 +356,9 @@ var LCComponent = Component.extend({
         entity.append("circle")
           .attr("class", "vzb-lc-circle")
           .attr("cx", 0);
-
+        
         var labelGroup = entity.append("g").attr("class", "vzb-lc-label");
-
+        
         labelGroup.append("text")
           .attr("class", "vzb-lc-labelname")
           .attr("dy", ".35em");
@@ -341,6 +367,34 @@ var LCComponent = Component.extend({
           .attr("class", "vzb-lc-label-value")
           .attr("dy", "1.6em");
       });
+
+    if (this.all_values) {
+      this.entityLabels.each(function(d, index) {
+        var entity = d3.select(this);
+        var color = _this.cScale(_this.values.color[d[KEY]]);
+        var colorShadow = _this.model.marker.color.which == "geo.world_4region"?
+          _this.model.marker.color.getColorShade({
+            colorID: _this.values.color[d[KEY]],
+            shadeID: "shade"
+          })
+          :
+          d3.rgb(color).darker(0.5).toString();
+
+        var label = _this.values.label[d[KEY]];
+        var value = _this.yAxis.tickFormat()(_this.values.axis_y[d[KEY]]);
+        var name = label.length < 13 ? label : label.substring(0, 10) + '...';
+        var valueHideLimit = _this.ui.chart.labels.min_number_of_entities_when_values_hide;
+
+        entity.select("circle").style("fill", color);
+        entity.select(".vzb-lc-labelname")
+          .style("fill", colorShadow)
+          .text(name + " " + (_this.data.length < valueHideLimit ? value : ""));
+
+        entity.select(".vzb-lc-label-value")
+          .style("fill", colorShadow);
+
+      });
+    }
 
     //line template
     this.line = d3.svg.line()
@@ -487,27 +541,18 @@ var LCComponent = Component.extend({
     var infoElHeight = this.activeProfile.infoElHeight;
 
     //adjust right this.margin according to biggest label
-    var lineLabelsText = this.model.marker.getKeys().map(function(d, i) {
-      return values.label[d[KEY]];
-    });
 
     var longestLabelWidth = 0;
-    var lineLabelsView = this.linesContainer.selectAll(".samplingView").data(lineLabelsText);
-
-    lineLabelsView
-      .enter().append("text")
-      .attr("class", "samplingView vzb-lc-labelname")
-      .style("opacity", 0)
-      .text(function(d) {
-        return(d.length < 13) ? d : d.substring(0, 10) + '...';
-      })
-      .each(function(d) {
-        if(longestLabelWidth > this.getComputedTextLength()) {
-          return;
-        }
-        longestLabelWidth = this.getComputedTextLength();
-      })
-      .remove();
+    
+    this.entityLabels.selectAll(".vzb-lc-labelname")
+      .attr("dx", _this.activeProfile.text_padding)
+      .each(function(d, index) {
+        var width = this.getComputedTextLength();
+        if (width > longestLabelWidth) longestLabelWidth = width; 
+      });
+    
+    this.entityLabels.selectAll(".vzb-lc-circle")
+      .attr("r", _this.activeProfile.lollipopRadius);
 
     this.margin.right  = Math.max(this.margin.right, longestLabelWidth + this.activeProfile.text_padding + 20);
 
@@ -530,9 +575,10 @@ var LCComponent = Component.extend({
     this.graph
       .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
 
-    this.yScale.range([this.height * this.rangeYRatio + this.rangeYShift, this.rangeYShift]);
+    this.yScale.range([this.height - this.activeProfile.lollipopRadius, this.activeProfile.lollipopRadius]);
     this.xScale.range([this.rangeXShift, this.width * this.rangeXRatio + this.rangeXShift]);
 
+    
     this.yAxis.scale(this.yScale)
       .orient("left")
       .tickSize(6, 0)
@@ -607,14 +653,15 @@ var LCComponent = Component.extend({
       ",-" + this.activeProfile.yAxisTitleBottomMargin + ")")
       .select("text");
 
-    
+
+    var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
+
     this.xTitleEl
       .style("font-size", infoElHeight + "px")
       .attr("transform", "translate(" + 
         (this.width + this.activeProfile.text_padding + this.activeProfile.yAxisTitleBottomMargin) + "," + 
-        (this.height + this.xAxis.tickPadding() + this.xAxis.tickSize() + this.activeProfile.lollipopRadius) + ")");
+        (this.height + xTitleText.node().getBBox().height  * 0.72) + ")");
 
-    var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
     if(xTitleText.node().getBBox().width > this.width - 100) xTitleText.text(this.strings.title.X);
 
     // adjust the vertical dashed line
@@ -655,16 +702,16 @@ var LCComponent = Component.extend({
     var KEY = this.KEY;
 //    var values = this.values;
 
+    if (!_this.all_values) return;
     this.model.marker.getFrame(this.time, function(values, time) {
-
+      if (!values) return;
+      _this.values = values;
       if(!_this.timeUpdatedOnce) {
         _this.updateTime();
       }
-
       if(!_this.sizeUpdatedOnce) {
         _this.updateSize();
       }
-      
       _this.updateDoubtOpacity();
       
       _this.lineWidth = _this.lineWidthScale(_this.data.length);
@@ -762,51 +809,20 @@ var LCComponent = Component.extend({
       _this.entityLabels
         .each(function(d, index) {
           var entity = d3.select(this);
-          entity.classed("vzb-hidden", !_this.cached[d[KEY]]);
-          if (!_this.cached[d[KEY]]) return;
-
-          var label = values.label[d[KEY]];
-
-          var color = _this.cScale(values.color[d[KEY]]);
-          var colorShadow = _this.model.marker.color.which == "geo.world_4region"?
-              _this.model.marker.color.getColorShade({
-                colorID: values.color[d[KEY]],
-                shadeID: "shade"
-              })
-              :
-              d3.rgb(color).darker(0.5).toString();
-
-
-            entity.select(".vzb-lc-circle")
-              .style("fill", color)
+          entity.select(".vzb-lc-circle")
               .transition()
               .duration(_this.duration)
               .ease("linear")
-              .attr("r", _this.activeProfile.lollipopRadius)
-              .attr("cy", _this.yScale(_this.cached[d[KEY]].valueY) + 1);
+              .attr("cy", _this.yScale(_this.values.axis_y[d[KEY]]) + 1);
 
 
             entity.select(".vzb-lc-label")
               .transition()
               .duration(_this.duration)
               .ease("linear")
-              .attr("transform", "translate(0," + _this.yScale(_this.cached[d[KEY]].valueY) + ")");
+              .attr("transform", "translate(0," + _this.yScale(_this.values.axis_y[d[KEY]]) + ")");
 
-
-          var value = _this.yAxis.tickFormat()(_this.cached[d[KEY]].valueY);
-          var name = label.length < 13 ? label : label.substring(0, 10) + '...';
-          var valueHideLimit = _this.ui.chart.labels.min_number_of_entities_when_values_hide;
-
-          var t = entity.select(".vzb-lc-labelname")
-            .style("fill", colorShadow)
-            .attr("dx", _this.activeProfile.text_padding)
-            .text(name + " " + (_this.data.length < valueHideLimit ? value : ""));
-
-          entity.select(".vzb-lc-label-value")
-            .style("fill", colorShadow)
-            .attr("dx", _this.activeProfile.text_padding)
-            .text("");
-
+/*
           if(_this.data.length < valueHideLimit) {
 
             var size = _this.xScale(_this.time) + t[0][0].getComputedTextLength() + _this.activeProfile.text_padding;
@@ -817,6 +833,7 @@ var LCComponent = Component.extend({
               entity.select(".vzb-lc-label-value").text(value);
             }
           }
+*/
         });
       _this.labelsContainer
         .transition()
@@ -877,60 +894,61 @@ var LCComponent = Component.extend({
     if(!utils.isDate(resolvedTime)) resolvedTime = this.model.time.timeFormat.parse(resolvedTime);
 
     this.model.marker.getFrame(resolvedTime, function(data) {
+      if (!_this._frameIsValid(data)) return;
       var nearestKey = _this.getNearestKey(mousePos, data.axis_y, _this.yScale.bind(_this));
-    resolvedValue = data.axis_y[nearestKey];
-    if(!me) me = {};
-    me[KEY] = nearestKey;
-    if (!_this.model.entities.isHighlighted(me)) {
-      _this.model.entities.clearHighlighted();
-      _this.model.entities.highlightEntity(me);
-    }
-    _this.hoveringNow = me;
-
-    if(utils.isNaN(resolvedValue)) return;
-
-    var scaledTime = _this.xScale(resolvedTime);
-    var scaledValue = _this.yScale(resolvedValue);
-
-    if(_this.ui.chart.whenHovering.showTooltip) {
-      //position tooltip
-      _this.tooltip
-        //.style("right", (_this.width - scaledTime + _this.margin.right ) + "px")
-        .style("left", (scaledTime + _this.margin.left) + "px")
-        .style("bottom", (_this.height - scaledValue + _this.margin.bottom) + "px")
-        .text(_this.yAxis.tickFormat()(resolvedValue))
-        .classed("vzb-hidden", false);
-    }
-
-    // bring the projection lines to the hovering point
-    if(_this.ui.chart.whenHovering.hideVerticalNow) {
-      _this.verticalNow.style("opacity", 0);
-    }
-
-    if(_this.ui.chart.whenHovering.showProjectionLineX) {
-      _this.projectionX
-        .style("opacity", 1)
-        .attr("y2", scaledValue)
-        .attr("x1", scaledTime)
-        .attr("x2", scaledTime);
-    }
-    if(_this.ui.chart.whenHovering.showProjectionLineY) {
-      _this.projectionY
-        .style("opacity", 1)
-        .attr("y1", scaledValue)
-        .attr("y2", scaledValue)
-        .attr("x1", scaledTime);
-    }
-
-    if(_this.ui.chart.whenHovering.higlightValueX) _this.xAxisEl.call(
-      _this.xAxis.highlightValue(resolvedTime).highlightTransDuration(0)
-    );
-
-    if(_this.ui.chart.whenHovering.higlightValueY) _this.yAxisEl.call(
-      _this.yAxis.highlightValue(resolvedValue).highlightTransDuration(0)
-    );
-
-    clearTimeout(_this.unhoverTimeout);
+      resolvedValue = data.axis_y[nearestKey];
+      if(!me) me = {};
+      me[KEY] = nearestKey;
+      if (!_this.model.entities.isHighlighted(me)) {
+        _this.model.entities.clearHighlighted();
+        _this.model.entities.highlightEntity(me);
+      }
+      _this.hoveringNow = me;
+  
+      if(utils.isNaN(resolvedValue)) return;
+  
+      var scaledTime = _this.xScale(resolvedTime);
+      var scaledValue = _this.yScale(resolvedValue);
+  
+      if(_this.ui.chart.whenHovering.showTooltip) {
+        //position tooltip
+        _this.tooltip
+          //.style("right", (_this.width - scaledTime + _this.margin.right ) + "px")
+          .style("left", (scaledTime + _this.margin.left) + "px")
+          .style("bottom", (_this.height - scaledValue + _this.margin.bottom) + "px")
+          .text(_this.yAxis.tickFormat()(resolvedValue))
+          .classed("vzb-hidden", false);
+      }
+  
+      // bring the projection lines to the hovering point
+      if(_this.ui.chart.whenHovering.hideVerticalNow) {
+        _this.verticalNow.style("opacity", 0);
+      }
+  
+      if(_this.ui.chart.whenHovering.showProjectionLineX) {
+        _this.projectionX
+          .style("opacity", 1)
+          .attr("y2", scaledValue)
+          .attr("x1", scaledTime)
+          .attr("x2", scaledTime);
+      }
+      if(_this.ui.chart.whenHovering.showProjectionLineY) {
+        _this.projectionY
+          .style("opacity", 1)
+          .attr("y1", scaledValue)
+          .attr("y2", scaledValue)
+          .attr("x1", scaledTime);
+      }
+  
+      if(_this.ui.chart.whenHovering.higlightValueX) _this.xAxisEl.call(
+        _this.xAxis.highlightValue(resolvedTime).highlightTransDuration(0)
+      );
+  
+      if(_this.ui.chart.whenHovering.higlightValueY) _this.yAxisEl.call(
+        _this.yAxis.highlightValue(resolvedValue).highlightTransDuration(0)
+      );
+  
+      clearTimeout(_this.unhoverTimeout);
 
     });
   },
@@ -986,22 +1004,15 @@ var LCComponent = Component.extend({
   zoomToMaxMin: function() {
     var _this = this;
     //
+/*
     if(this.model.marker.axis_y.zoomedMin == null ) this.model.marker.axis_y.zoomedMin = this.yScale.domain()[0];
     if(this.model.marker.axis_y.zoomedMax == null ) this.model.marker.axis_y.zoomedMax = this.yScale.domain()[1];
-
-
-    if(
-      this.model.marker.axis_x.zoomedMin != null &&
-      this.model.marker.axis_x.zoomedMax != null) {
-
-/*
-      var x1 = this.xScale(this.model.marker.axis_x.zoomedMin);
-      var x2 = this.xScale(this.model.marker.axis_x.zoomedMax);
-
-      this.rangeXRatio = this.width / (x2 - x1) * this.rangeXRatio;
-      this.rangeXShift = (this.rangeXShift - x1) / (x2 - x1) * this.width;
 */
 
+
+    if (
+      this.model.marker.axis_x.zoomedMin != null &&
+      this.model.marker.axis_x.zoomedMax != null) {
       this.xScale.domain([this.model.marker.axis_x.zoomedMin, this.model.marker.axis_x.zoomedMax]);
       this.xAxisEl.call(this.xAxis);
     }
@@ -1019,17 +1030,7 @@ var LCComponent = Component.extend({
         this.yScale = this.model.marker.axis_y.scale;
       } else {
         this.yScale.domain([this.model.marker.axis_y.zoomedMin, this.model.marker.axis_y.zoomedMax]);
-        
       }
-/*
-      var y1 = this.yScale(this.model.marker.axis_y.zoomedMin);
-      var y2 = this.yScale(this.model.marker.axis_y.zoomedMax);
-
-      this.rangeYRatio = this.height / (y1 - y2) * this.rangeYRatio;
-      this.rangeYShift = (this.height - y1) / (y1 - y2) * this.rangeYShift;
-
-      this.yScale.range([this.height * this.rangeYRatio + this.rangeYShift, this.rangeYShift]);
-*/
       this.yAxisEl.call(this.yAxis);
     }
   },

@@ -188,7 +188,7 @@ var EntitiesModel = DataConnected.extend({
     }
 
     if (showArray.length === 0)
-      delete newShow[dimension]
+      delete newShow[dimension];
     else
       newShow[dimension] = { '$in': showArray };
 
@@ -283,6 +283,14 @@ var EntitiesModel = DataConnected.extend({
       return;
     }
     this.getModelObject('highlight').set(arg, false, false); // highlights are always non persistent changes
+  },
+  
+  setSelect: function(arg) {
+    if (!utils.isArray(arg)) {
+      this.setSelect([].concat(arg));
+      return;
+    }
+    this.getModelObject('select').set(arg);
   },
 
   //TODO: join the following 3 methods with the previous 3

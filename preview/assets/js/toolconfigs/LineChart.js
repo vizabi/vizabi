@@ -3,19 +3,18 @@ var VIZABI_MODEL = {
     "time": {
       "startOrigin": "1800",
       "endOrigin": "2015",
-      "value": "2015",
+      "value": "2015"
     },
     "entities": {
       "dim": "geo",
       "show": {
-        "geo": { "$in": ["usa", "swe", "chn"] }
+        "geo": { "$in": ["usa", "rus", "chn", "nga"] }
       }
     },
     "entities_colorlegend": {
-      "dim": "geo",
-      "show": {
-        "is--world_4region": true
-      }
+      "opacityRegular": 0.8,
+      "opacityHighlightDim": 0.3,  
+      "dim": "world_4region"
     },
     "marker": {
       "space": ["entities", "time"],
@@ -26,9 +25,7 @@ var VIZABI_MODEL = {
       "axis_y": {
         "use": "indicator",
         "which": "income_per_person_gdppercapita_ppp_inflation_adjusted",
-        "scaleType": "log",
-        "domainMin": 300,
-        "domainMax": 128000
+        "scaleType": "log"
       },
       "axis_x": {
         "use": "indicator",

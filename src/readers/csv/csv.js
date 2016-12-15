@@ -38,7 +38,7 @@ const CSVReader = Reader.extend({
    * @returns {Promise} a promise that will be resolved when data is read
    */
   read(query, parsers = {}) {
-    query = this._normalizeQuery(query, parsers);
+    query = this._normalizeQuery(utils.deepClone(query), parsers);
 
     const {
       select,
@@ -203,7 +203,10 @@ const CSVReader = Reader.extend({
         const condition = where.$and[conditionKey];
 
         return typeof condition !== 'object' ?
-          (row[conditionKey] === condition) :
+          (row[conditionKey] === condition)
+            || condition === true && utils.isString(row[conditionKey]) && row[conditionKey].toLowerCase().trim()==="true" 
+            || condition === false && utils.isString(row[conditionKey]) && row[conditionKey].toLowerCase().trim()==="false" 
+          :
           Object.keys(condition).every(callbackKey =>
             this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], row[conditionKey])
           );

@@ -2,7 +2,7 @@ language: node_js
 dist: trusty
 sudo: true
 node_js:
-  - '5.1'
+  - '6.9.2'
 addons:
   firefox: "42.0"
   apt:
@@ -44,5 +44,5 @@ deploy:
     secure: "XVJ/QwnTYMNEUMtAcvmVdh6EHndHcEqzdJUe7JYYRXmA2qxhRGIC8VlnK9GKZOS3ACSDygp1lCam+BA5ZYy4QhvsMsPQukWeon6K8Zcerg8Lg3XfxXBilKATf83DQ0PZslus1XgynZmNgUCkJ61rhAhLVOx0iIpetMOHTZ3oJak="
   on:
     branch: develop
-    node: 5.1
+    node: 6.9.2
     condition: "-e /tmp/deployment.flag"

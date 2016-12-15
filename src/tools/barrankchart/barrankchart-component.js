@@ -14,7 +14,7 @@ const BarRankChart = Component.extend({
    * @param {Object} config The config passed to the component
    * @param {Object} context The component's parent
    */
-  init: function (config, context) {
+  init(config, context) {
 
     this.name = 'barrankchart-component';
     this.template = require('./barrank.html');
@@ -45,8 +45,9 @@ const BarRankChart = Component.extend({
       },
       'change:entities.select': () => {
         if (this._readyOnce) {
-          this.selectBars();
-          this.updateOpacity();
+          this._selectBars();
+          this._updateOpacity();
+          this._updateDoubtOpacity();
         }
       },
       'change:marker.axis_x.scaleType': () => {
@@ -58,13 +59,13 @@ const BarRankChart = Component.extend({
         this._drawColors();
       },
       'change:entities.highlight': () => {
-        this.updateOpacity();
+        this._updateOpacity();
       },
       'change:entities.opacitySelectDim': () => {
-        this.updateOpacity();
+        this._updateOpacity();
       },
       'change:entities.opacityRegular': () => {
-        this.updateOpacity();
+        this._updateOpacity();
       },
     };
 
@@ -79,7 +80,7 @@ const BarRankChart = Component.extend({
     this.xAxis = axisWithLabelPicker();
   },
 
-  onTimeChange: function () {
+  onTimeChange() {
     this.model.marker.getFrame(this.model.time.value, values => {
       this.values = values;
       this.loadData();
@@ -112,10 +113,11 @@ const BarRankChart = Component.extend({
 
     this._presentation = !this.model.ui.presentation;
     this._formatter = this.model.marker.axis_x.getTickFormatter();
+    this._dataChanged = true;
 
     this.ready();
 
-    this.selectBars();
+    this._selectBars();
 
   },
 
@@ -124,15 +126,18 @@ const BarRankChart = Component.extend({
    */
   ready() {
     this.model.marker.getFrame(this.model.time.value, values => {
+      this._dataChanged = true;
+
       this.values = values;
       this.loadData();
       this.draw();
-      this.updateOpacity();
+      this._updateOpacity();
+      this._drawColors();
     });
   },
 
-  resize: function () {
-    this.draw();
+  resize() {
+    this.draw(true);
   },
 
   loadData() {
@@ -156,7 +161,7 @@ const BarRankChart = Component.extend({
       );
 
     // new scales and axes
-    this.xScale = this.model.marker.axis_x.getScale(false);
+    this.xScale = this.model.marker.axis_x.getScale();
     this.cScale = this.model.marker.color.getScale();
 
     utils.setIcon(this.dataWarningEl, iconWarn)
@@ -168,8 +173,8 @@ const BarRankChart = Component.extend({
 
     this.dataWarningEl
       .on('click', () => this.parent.findChildByName('gapminder-datawarning').toggle())
-      .on('mouseover', () => this.updateDoubtOpacity(1))
-      .on('mouseout', () => this.updateDoubtOpacity());
+      .on('mouseover', () => this._updateDoubtOpacity(1))
+      .on('mouseout', () => this._updateDoubtOpacity());
 
     utils.setIcon(this.infoEl, iconQuestion)
       .select('svg').attr('width', 0).attr('height', 0);
@@ -194,15 +199,15 @@ const BarRankChart = Component.extend({
 
   },
 
-  draw: function () {
+  draw(force = false) {
     this.time_1 = this.time == null ? this.model.time.value : this.time;
-    this.time = this.model.time.value;      
+    this.time = this.model.time.value;
     //smooth animation is needed when playing, except for the case when time jumps from end to start
-    let duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
-    
+    const duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
+
     //return if drawAxes exists with error
-    if (this.drawAxes(duration)) return;    
-    this.drawData(duration);
+    if (this.drawAxes(duration, force)) return;
+    this.drawData(duration, force);
   },
 
   /*
@@ -211,47 +216,62 @@ const BarRankChart = Component.extend({
   drawAxes(duration = 0) {
     const profiles = {
       small: {
-        margin: { top: 60, right: 20, left: 90, bottom: 40 },
+        margin: { top: 60, right: 5, left: 5, bottom: 15 },
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 16,
         infoElMargin: 5,
         barHeight: 20,
         barMargin: 2,
+        barRectMargin: 5,
+        barValueMargin: 5,
+        scrollMargin: 5,
       },
       medium: {
-        margin: { top: 60, right: 20, left: 90, bottom: 40 },
+        margin: { top: 60, right: 5, left: 5, bottom: 15 },
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 16,
         infoElMargin: 5,
         barHeight: 20,
         barMargin: 2,
+        barRectMargin: 5,
+        barValueMargin: 5,
+        scrollMargin: 5,
       },
       large: {
-        margin: { top: 60, right: 20, left: 90, bottom: 40 },
+        margin: { top: 60, right: 5, left: 5, bottom: 15 },
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 16,
         infoElMargin: 5,
         barHeight: 20,
         barMargin: 2,
+        barRectMargin: 5,
+        barValueMargin: 5,
+        scrollMargin: 5,
       }
     };
 
     const presentationProfileChanges = {
       medium: {
-        margin: { top: 60, right: 50, left: 90, bottom: 40 },
+        margin: { top: 60, right: 50, left: 5, bottom: 40 },
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 25,
         infoElMargin: 10,
-        barHeight: 20,
-        barMargin: 2,
+        barHeight: 25,
+        barMargin: 4,
+        barRectMargin: 5,
+        barValueMargin: 5,
+        scrollMargin: 5,
       },
       large: {
-        margin: { top: 60, right: 50, left: 90, bottom: 40 },
+        margin: { top: 60, right: 50, left: 5, bottom: 40 },
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 16,
         barHeight: 25,
         infoElMargin: 10,
-        barMargin: 2,
+        barMargin: 4,
+        barRectMargin: 5,
+        barValueMargin: 5,
+        scrollMargin: 5,
       }
     };
 
@@ -264,35 +284,41 @@ const BarRankChart = Component.extend({
       infoElMargin,
     } = this.activeProfile;
 
-    // draw the stage - copied from popbyage, should figure out what it exactly does and what is necessary.
-    this.height = (parseInt(this.element.style('height'), 10) - margin.top - margin.bottom) || 0;
-    this.width = (parseInt(this.element.style('width'), 10) - margin.left - margin.right) || 0;
+    this.height = +this.element.style('height').replace('px', '');
+    this.width = +this.element.style('width').replace('px', '');
+    this.coordinates = {
+      x: {
+        start: margin.left,
+        end: this.width - margin.right
+      },
+      y: {
+        start: margin.top,
+        end: this.height - margin.bottom
+      }
+    };
 
-    if (this.height <= 0 || this.width <= 0) {
-      return utils.warn('Bar rank chart drawAxes() abort: vizabi container is too little or has display:none');
-    }
-
-    this.barContainer.attr('transform', `translate(${margin.left}, 0)`);
-    this.barViewport.style('height', `${this.height}px`);
+    this.barViewport
+      .style('height', `${this.coordinates.y.end - this.coordinates.y.start}px`);
 
     // header
     this.header.attr('height', margin.top);
     const headerTitle = this.header.select('.vzb-br-title');
-    
+
     // change header titles for new data
-    const conceptProps = this.model.marker.getConceptprops();
-    const { which } = this.model.marker.axis_x;
-    const { name, unit } = conceptProps[which];
+    const { name, unit } = this.model.marker.axis_x.getConceptprops();
 
     const headerTitleText = headerTitle
       .select('text');
 
     if (unit) {
       headerTitleText.text(`${name}, ${unit}`);
-      const rightEdgeOfLeftText = headerMargin.left + headerTitle.node().getBBox().width + infoElHeight + infoElMargin;
-      const leftEdgeOfRightText = this.width + headerMargin.right + headerMargin.left + 30;
 
-      if (rightEdgeOfLeftText > leftEdgeOfRightText) {
+      const rightEdgeOfLeftText = headerMargin.left
+        + headerTitle.node().getBBox().width
+        + infoElMargin
+        + infoElHeight;
+
+      if (rightEdgeOfLeftText > this.width - headerMargin.right) {
         headerTitleText.text(name);
       }
     }
@@ -316,50 +342,67 @@ const BarRankChart = Component.extend({
 
 
     const headerTotal = this.header.select('.vzb-br-total');
-    
-    if(duration){
+
+    if (duration) {
       headerTotal.select('text')
         .transition('text')
         .delay(duration)
         .text(this.model.time.timeFormat(this.time));
-    }else{
+    } else {
       headerTotal.select('text')
         .interrupt()
         .text(this.model.time.timeFormat(this.time));
     }
-    
+
     const headerTotalBBox = headerTotal.node().getBBox();
 
-    const totalTx = this.width + margin.left - headerTotalBBox.width;
+    const totalTx = this.width - headerMargin.right - headerTotalBBox.width;
     const totalTy = headerMargin.top + headerTotalBBox.height;
     headerTotal
       .attr('transform', `translate(${totalTx}, ${totalTy})`)
       .classed('vzb-transparent', headerTitleBBox.width + headerTotalBBox.width + 10 > this.width);
 
-    const warnBB = this.dataWarningEl.select('text').node().getBBox();
+    this.element.select('.vzb-data-warning-svg')
+      .style('height', `${margin.bottom}px`);
+
+
+    const warningBBox = this.dataWarningEl.select('text').node().getBBox();
+    this.dataWarningEl
+      .attr('transform', `translate(${this.coordinates.x.end - warningBBox.width}, ${warningBBox.height})`)
+      .select('text');
+
     this.dataWarningEl
       .select('svg')
-      .attr('width', warnBB.height)
-      .attr('height', warnBB.height)
-      .attr('x', warnBB.height * .1)
-      .attr('y', -warnBB.height + 1);
+      .attr('width', warningBBox.height)
+      .attr('height', warningBBox.height)
+      .attr('x', -warningBBox.height - 5)
+      .attr('y', -warningBBox.height + 1);
 
-    this.dataWarningEl
-      .attr('transform', `translate(10, ${warnBB.height + 15})`)
-      .select('text')
-      .attr('dx', warnBB.height * 1.5);
-
-    // although axes are not drawn, need the xScale for bar width
-    this.xScale.range([0, this.width]);
+    this._updateDoubtOpacity();
   },
 
-  drawData(duration = 0) {
-
+  drawData(duration = 0, force = false) {
     // update the shown bars for new data-set
-    this.createAndDeleteBars(
+    this._createAndDeleteBars(
       this.barContainer.selectAll('.vzb-br-bar')
         .data(this.sortedEntities, d => d.entity)
     );
+
+    if (this._dataChanged) {
+      this._dataChanged = false;
+
+      this._widestLabel = this.sortedEntities
+        .reduce((previous, current) => {
+          return previous.barLabel.node().getBBox().width < current.barLabel.node().getBBox().width ?
+            current :
+            previous;
+        })
+        .barLabel;
+
+      const { axis_x } = this.model.marker;
+      this._limits = axis_x.getLimits(axis_x.which);
+    }
+
 
     const { presentation } = this.model.ui;
     const presentationModeChanged = this._presentation !== presentation;
@@ -368,43 +411,102 @@ const BarRankChart = Component.extend({
       this._presentation = presentation;
     }
 
-    if (typeof this._entitiesCount === 'undefined' || this._entitiesCount !== this.sortedEntities.length) {
-      this._entitiesCount = this.sortedEntities.length;
-      this.resizeSvgAndScroll();
+
+    const entitiesCountChanged = typeof this._entitiesCount === 'undefined'
+      || this._entitiesCount !== this.sortedEntities.length;
+
+    if (presentationModeChanged || entitiesCountChanged) {
+      if (entitiesCountChanged) {
+        this._entitiesCount = this.sortedEntities.length;
+      }
+      this._resizeSvg();
     }
 
-    const x = presentation ? 35 : 5;
-    const barWidth = ({ value }) => this.xScale(value);
-    const xValue = ({ value }) => this._formatter(value);
+
+    // move along with a selection if playing
+    if (this.model.time.playing) {
+      this._scroll(duration);
+    }
+
+    const { barRectMargin, barValueMargin, scrollMargin } = this.activeProfile;
+    const ltr = Math.abs(this._limits.max) >= Math.abs(this._limits.min);
+
+
+    const rightEdge = this.coordinates.x.end - (
+        this.coordinates.x.start
+        + this._getWidestLabelWidth()
+        + barRectMargin
+        + barValueMargin
+        + scrollMargin
+      );
+    this.xScale.range([0, rightEdge]);
+
+
+    let zeroValueWidth = this.xScale(0) || 0;
+    let shift = 0;
+
+    if (zeroValueWidth > this.coordinates.x.start + this._getWidestLabelWidth() + barRectMargin) {
+      this.xScale.range([0, this.coordinates.x.end - this.coordinates.x.start - scrollMargin * 2]);
+      zeroValueWidth = this.xScale(0);
+      shift = zeroValueWidth - this._getWidestLabelWidth() - this.coordinates.x.start;
+    }
+
+    const barWidth = (value) => this.xScale(value) - zeroValueWidth;
+
+    const labelAnchor = ltr ? 'end' : 'start';
+    const valueAnchor = ltr ? 'start' : 'end';
+
+    const labelX = ltr ?
+      (this.coordinates.x.start + this._getWidestLabelWidth()) :
+      (this.coordinates.x.end - this._getWidestLabelWidth() - scrollMargin);
+
+    const barX = ltr ?
+      (labelX + barRectMargin + shift) :
+      (labelX - barRectMargin - shift);
+
+    const valueX = ltr ?
+      (barX + barValueMargin) :
+      (barX - barValueMargin);
 
     this.sortedEntities.forEach(bar => {
-      if (presentationModeChanged || bar.isNew) {
+      const { value } = bar;
+
+      if (force || presentationModeChanged || bar.isNew) {
         bar.barLabel
-          .attr('x', x - 5);
+          .attr('x', labelX)
+          .attr('y', this.activeProfile.barHeight / 2)
+          .attr('text-anchor', labelAnchor);
 
         bar.barRect
-          .attr('x', x);
+          .attr('rx', this.activeProfile.barHeight / 4)
+          .attr('ry', this.activeProfile.barHeight / 4)
+          .attr('height', this.activeProfile.barHeight);
 
         bar.barValue
-          .attr('x', x + 5);
-
-        bar.barTitle
-          .attr('x', x);
+          .attr('x', valueX)
+          .attr('y', this.activeProfile.barHeight / 2)
+          .attr('text-anchor', valueAnchor);
       }
 
-      if (bar.changedWidth) {
+      if (force || bar.changedWidth || presentationModeChanged) {
+        const width = Math.max(0, value && barWidth(Math.abs(value)));
+
+        if (force || bar.changedWidth) {
+          bar.barRect
+            .transition().duration(duration).ease('linear')
+            .attr('width', width)
+        }
+
         bar.barRect
-          .transition().duration(duration).ease('linear')
-          .attr('width', Math.max(0, barWidth(bar)));
+          .attr('x', barX - (value < 0 ? width : 0));
 
-
-        if (bar.changedValue) {
+        if (force || bar.changedValue) {
           bar.barValue
-            .text(xValue(bar));
+            .text(this._formatter(value) || this.translator('hints/nodata'));
         }
       }
 
-      if (bar.changedIndex) {
+      if (force || bar.changedIndex || presentationModeChanged) {
         bar.self
           .transition().duration(duration).ease('linear')
           .attr('transform', `translate(0, ${this._getBarPosition(bar.index)})`);
@@ -412,35 +514,37 @@ const BarRankChart = Component.extend({
     });
   },
 
-  resizeSvgAndScroll() {
+  _resizeSvg() {
     const { barHeight, barMargin } = this.activeProfile;
-    this.barSvg.attr('height', `${(barHeight + barMargin) * this._entitiesCount}px`);
+    this.barSvg.attr('height', `${(barHeight + barMargin) * this.sortedEntities.length}px`);
+  },
 
-    // move along with a selection if playing
-    if (this.model.time.playing) {
-      const follow = this.barContainer.select('.vzb-selected');
-      if (!follow.empty()) {
-        const d = follow.datum();
-        const yPos = this._getBarPosition(d.index);
+  _scroll(duration = 0) {
+    const follow = this.barContainer.select('.vzb-selected');
+    if (!follow.empty()) {
+      const d = follow.datum();
+      const yPos = this._getBarPosition(d.index);
 
-        const currentTop = this.barViewport.node().scrollTop;
-        const currentBottom = currentTop + this.height;
+      const { margin } = this.activeProfile;
+      const height = this.height - margin.top - margin.bottom;
 
-        const scrollTo = yPos < currentTop ?
-          yPos :
-          yPos + this.activeProfile.barHeight > currentBottom ?
-            (yPos + this.activeProfile.barHeight - this.height) :
-            false;
+      const currentTop = this.barViewport.node().scrollTop;
+      const currentBottom = currentTop + height;
 
-        if (scrollTo) {
-          this.barViewport.transition().duration(duration)
-            .tween('scrollfor' + d.entity, this._scrollTopTween(scrollTo));
-        }
+      const scrollTo = yPos < currentTop ?
+        yPos :
+        (yPos + this.activeProfile.barHeight > currentBottom) ?
+          (yPos - height + this.activeProfile.barHeight) :
+          0;
+
+      if (scrollTo) {
+        this.barViewport.transition().duration(duration)
+          .tween('scrollfor' + d.entity, this._scrollTopTween(scrollTo));
       }
     }
   },
 
-  createAndDeleteBars(updatedBars) {
+  _createAndDeleteBars(updatedBars) {
     const _this = this;
 
     // remove groups for entities that are gone
@@ -451,58 +555,54 @@ const BarRankChart = Component.extend({
       .append('g')
       .each(function (d) {
         const self = d3.select(this);
-        const color = _this._getColor(d);
-        const darkerColor = _this._getDarkerColor(d);
 
-        self.attr('class', 'vzb-br-bar');
-        self.attr('id', `vzb-br-bar-${d.entity}-${_this._id}`);
-        self.on('mousemove', d => _this.model.entities.highlightEntity(d));
-        self.on('mouseout', () => _this.model.entities.clearHighlighted());
-        self.on('click', d => {
-          utils.forEach(_this.model.marker.space, function (entity) {
-            if (_this.model[entity].getDimension() !== 'time')
-              _this.model[entity].selectEntity(d); // this will trigger a change in the model, which the tool listens to
+        self
+          .attr('class', 'vzb-br-bar')
+          .classed('vzb-selected', _this.model.entities.isSelected(d))
+          .attr('id', `vzb-br-bar-${d.entity}-${_this._id}`)
+          .on('mousemove', d => _this.model.entities.highlightEntity(d))
+          .on('mouseout', () => _this.model.entities.clearHighlighted())
+          .on('click', d => {
+            _this.model.marker.space
+              .forEach(entity => {
+                if (_this.model[entity].getDimension() !== 'time') {
+                  // this will trigger a change in the model, which the tool listens to
+                  _this.model[entity].selectEntity(d);
+                }
+              });
           });
-        });
 
         const barRect = self.append('rect')
-          .attr('rx', _this.activeProfile.barHeight / 4)
-          .attr('ry', _this.activeProfile.barHeight / 4)
           .attr('stroke', 'white')
           .attr('stroke-opacity', 0)
-          .attr('stroke-width', 2)
-          .attr('height', _this.activeProfile.barHeight)
-          .style('fill', color);
+          .attr('stroke-width', 2);
 
+        const label = _this.values.label[d.entity];
+        const formattedLabel = label.length < 12 ? label : `${label.substring(0, 9)}...`;
         const barLabel = self.append('text')
           .attr('class', 'vzb-br-label')
-          .attr('x', -5)
-          .attr('y', _this.activeProfile.barHeight / 2)
-          .attr('text-anchor', 'end')
           .attr('dominant-baseline', 'middle')
-          .text(d => {
-            const label = _this.values.label[d.entity];
-            return label.length < 12 ? label : label.substring(0, 9) + '...';
-          })
-          .style('fill', darkerColor);
-
-        const barTitle = barLabel.append('title'); // watch out: might be overwritten if changing the labeltext later on
+          .text(formattedLabel);
 
         const barValue = self.append('text')
           .attr('class', 'vzb-br-value')
-          .attr('x', 5)
-          .attr('y', _this.activeProfile.barHeight / 2)
-          .attr('dominant-baseline', 'middle')
-          .style('fill', darkerColor);
+          .attr('dominant-baseline', 'middle');
 
         Object.assign(d, {
           self,
           barRect,
           barLabel,
           barValue,
-          barTitle
+          isNew: true,
+          formattedLabel
         });
       });
+  },
+
+  _getWidestLabelWidth() {
+    return this._widestLabel ?
+      this._widestLabel.node().getBBox().width :
+      0;
   },
 
   _drawColors() {
@@ -579,16 +679,7 @@ const BarRankChart = Component.extend({
       });
   },
 
-  /**
-   * UI METHODS
-   */
-
-
-  /**
-   * Select Entities
-   */
-  selectBars: function () {
-    const _this = this;
+  _selectBars() {
     const entityDim = this.model.entities.dim;
     const selected = this.model.entities.select;
 
@@ -599,14 +690,16 @@ const BarRankChart = Component.extend({
     // select the selected ones
     if (selected.length) {
       this.barContainer.classed('vzb-dimmed-selected', true);
-      utils.forEach(selected, function (selectedBar) {
-        _this.barContainer.select('#vzb-br-bar-' + selectedBar[entityDim] + '-' + _this._id).classed('vzb-selected', true);
+      selected.forEach(selectedBar => {
+        this.barContainer
+          .select(`#vzb-br-bar-${selectedBar[entityDim]}-${this._id}`)
+          .classed('vzb-selected', true);
       });
     }
 
   },
 
-  updateOpacity() {
+  _updateOpacity() {
     const { model: { entities } } =  this;
 
     const OPACITY_HIGHLIGHT_DEFAULT = 1;
@@ -645,7 +738,7 @@ const BarRankChart = Component.extend({
       });
   },
 
-  updateDoubtOpacity(opacity) {
+  _updateDoubtOpacity(opacity) {
     this.dataWarningEl.style('opacity',
       opacity || (
         !this.model.entities.select.length ?

@@ -14,18 +14,6 @@ var Hook = DataConnected.extend({
 
   dataConnectedChildren: ['use', 'which'],
   
-  
-  init: function(name, value, parent, binds, persistent) {
-    var _this = this;
-    this._super(name, value, parent, binds, persistent);
-    this.on('ready', this.hookReady.bind(this));
-  },
-  
-  hookReady: function(){
-    this.buildScale();
-    this.validate();
-  },
-  
   buildScale: function(){
     //overloaded by specific hook models, like axis and color
   },
@@ -46,6 +34,11 @@ var Hook = DataConnected.extend({
     this.getClosestModel('locale').on('dataConnectedChange', this.handleDataConnectedChange.bind(this));
   },
 
+  onSuccessfullLoad: function() {
+    this.buildScale();
+    this._super();
+  },
+
   setWhich: function(newValue) {
 
     var obj = { which: newValue };
@@ -63,14 +56,12 @@ var Hook = DataConnected.extend({
       obj.zoomedMin = null;
       obj.zoomedMax = null;
     }
-    this.scale = null;
 
     this.set(obj);
   },
   
   setScaleType: function(newValue) {
-    this.scale = null;
-    this.set({"scaleType": newValue});
+    this.buildScale(newValue);
   },
 
   preloadData: function() {
@@ -115,7 +106,7 @@ var Hook = DataConnected.extend({
 
     dataPromise.then(
       this.afterLoad.bind(this),
-      this.loadError.bind(this)
+      err => utils.warn('Problem with query: ', err, JSON.stringify(query))
     );
 
     return dataPromise;
@@ -143,10 +134,6 @@ var Hook = DataConnected.extend({
   afterLoad: function(dataId) {
     this._dataId = dataId;
     utils.timeStamp('Vizabi Model: Data loaded: ' + this._id);
-  },
-
-  loadError: function() {
-      utils.warn('Problem with query: ', JSON.stringify(query));
   },
 
   /**
@@ -404,10 +391,8 @@ var Hook = DataConnected.extend({
    * Gets the d3 scale for this hook. if no scale then builds it
    * @returns {Array} domain
    */
-  getScale: function(margins) {
-    if(!this.scale) {
-      this.buildScale(margins);
-    }
+  getScale: function() {
+    if (this.scale == null) console.warn('scale is null')
     return this.scale;
   },
 

@@ -136,9 +136,14 @@ var BubbleChartComp = Component.extend({
 
         //console.log("EVENT change:marker", evt);
       },
-      "change:entities.select": function() {
+      "change:entities.select": function(evt, path) {
         if(!_this._readyOnce || !_this.entityBubbles) return;
         //console.log("EVENT change:entities:select");
+        
+        //disable trails if too many items get selected at once
+        //otherwise it's too much waiting time
+        if((evt.source._val||[]).length - (evt.source._previousVal||[]).length > 50) _this.model.ui.chart.trails = false;
+        
         _this.selectDataPoints();
         _this.redrawDataPoints();
         _this._trails.create().then(function() {
@@ -544,21 +549,24 @@ var BubbleChartComp = Component.extend({
   updateUIStrings: function() {
     var _this = this;
 
-    var conceptProps = _this.model.marker.getConceptprops();
+    var conceptPropsY = _this.model.marker.axis_y.getConceptprops();
+    var conceptPropsX = _this.model.marker.axis_x.getConceptprops();
+    var conceptPropsS = _this.model.marker.size.getConceptprops();
+    var conceptPropsC = _this.model.marker.color.getConceptprops();
     this.translator = this.model.locale.getTFunction();
 
     this.strings = {
       title: {
-        Y: conceptProps[this.model.marker.axis_y.which].name,
-        X: conceptProps[this.model.marker.axis_x.which].name,
-        S: conceptProps[this.model.marker.size.which].name,
-        C: conceptProps[this.model.marker.color.which].name
+        Y: conceptPropsY.name,
+        X: conceptPropsX.name,
+        S: conceptPropsS.name,
+        C: conceptPropsC.name
       },
       unit: {
-        Y: conceptProps[this.model.marker.axis_y.which].unit || "",
-        X: conceptProps[this.model.marker.axis_x.which].unit || "",
-        S: conceptProps[this.model.marker.size.which].unit || "",
-        C: conceptProps[this.model.marker.color.which].unit || ""
+        Y: conceptPropsY.unit || "",
+        X: conceptPropsX.unit || "",
+        S: conceptPropsS.unit || "",
+        C: conceptPropsC.unit || ""
       }
     }
 
@@ -1365,8 +1373,6 @@ var BubbleChartComp = Component.extend({
     var _this = this;
     var KEY = this.KEY;
 
-    this.someSelectedAndOpacityZero_1 = false;
-
     if(utils.isTouchDevice()) {
       _this.model.entities.clearHighlighted();
       _this._labels.showCloseCross(null, false);
@@ -1377,7 +1383,7 @@ var BubbleChartComp = Component.extend({
     }
 
     _this.someSelected = (_this.model.entities.select.length > 0);
-
+    _this.nonSelectedOpacityZero = false;
   },
 
   _setBubbleCrown: function(x, y, r, glow, skipInnerFill) {
@@ -1630,17 +1636,17 @@ var BubbleChartComp = Component.extend({
       });
 
 
-    var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
+    var nonSelectedOpacityZero = _this.model.entities.opacitySelectDim < .01;
 
     // when pointer events need update...
-    if(someSelectedAndOpacityZero != this.someSelectedAndOpacityZero_1) {
+    if(nonSelectedOpacityZero != this.nonSelectedOpacityZero) {
       this.entityBubbles.style("pointer-events", function(d) {
-        return(!someSelectedAndOpacityZero || _this.model.entities.isSelected(d)) ?
+        return(!_this.someSelected || !nonSelectedOpacityZero || _this.model.entities.isSelected(d)) ?
           "visible" : "none";
       });
     }
 
-    this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
+    this.nonSelectedOpacityZero = _this.model.entities.opacitySelectDim < .01;
   }
 
 });

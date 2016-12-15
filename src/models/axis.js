@@ -42,53 +42,25 @@ var AxisModel = Hook.extend({
 
     //only some scaleTypes are allowed depending on use. reset to default if inappropriate
     if(allowTypes[this.use].indexOf(this.scaleType) === -1) this.scaleType = allowTypes[this.use][0];
-
-    //here the modified min and max may change the domain, if the scale is defined
-    if(this.scale && this._ready && this.use === "indicator") {
+    
+    //restore the correct object type for time values
+    if(this.scale && this.scaleType == "time") {
       var obj = {};
-      
-      if(this.scaleType == "time") {
-        
-        var timeMdl = this._space.time;
-        var limits = timeMdl.splash ? 
-            {min: timeMdl.parseToUnit(timeMdl.startOrigin), max: timeMdl.parseToUnit(timeMdl.endOrigin)}
-            :
-            {min: timeMdl.start, max: timeMdl.end};
-        
-        if (this.scale.domain()[0] < limits.min || this.scale.domain()[1] > limits.max) {
-          this.scale.domain([limits.min, limits.max]);
-        }
-        
-        //restore the correct object type for time values
-        if(this.zoomedMin != null && !utils.isDate(this.zoomedMin)) obj.zoomedMin = this._space.time.parseToUnit(this.zoomedMin.toString());
-        if(this.zoomedMax != null && !utils.isDate(this.zoomedMax)) obj.zoomedMax = this._space.time.parseToUnit(this.zoomedMax.toString());
-        
-        if(!utils.isDate(this.domainMin)) obj.domainMin = this.scale.domain()[0];
-        if(!utils.isDate(this.domainMax)) obj.domainMax = this.scale.domain()[1];
-      }
-      //min and max nonsense protection
-      if(this.domainMin == null || this.domainMin <= 0 && this.scaleType === "log") obj.domainMin = this.scale.domain()[0];
-      if(this.domainMax == null || this.domainMax <= 0 && this.scaleType === "log") obj.domainMax = this.scale.domain()[1];
-
-      //zoomedmin and zoomedmax nonsense protection    
-      if(this.zoomedMin == null) obj.zoomedMin = this.scale.domain()[0];
-      if(this.zoomedMax == null) obj.zoomedMax = this.scale.domain()[1];
-
-      //setting all validated parameters at once
+      if(this.zoomedMin != null && !utils.isDate(this.zoomedMin)) obj.zoomedMin = this._space.time.parseToUnit(this.zoomedMin.toString());
+      if(this.zoomedMax != null && !utils.isDate(this.zoomedMax)) obj.zoomedMax = this._space.time.parseToUnit(this.zoomedMax.toString());
       this.set(obj);
-      
-      this.scale.domain([this.domainMin, this.domainMax]);
     }
+
   },
 
   /**
    * Gets the domain for this hook
    * @returns {Array} domain
    */
-  buildScale: function() {
+  buildScale: function(scaleType = this.scaleType) {
     var domain;
 
-    if(this.scaleType == "time") {
+    if(scaleType == "time") {
       
       var timeMdl = this._space.time;
       var limits = timeMdl.splash ? 
@@ -108,7 +80,8 @@ var AxisModel = Hook.extend({
         //default domain is based on limits
         domain = [limits.min, limits.max];
         //min and max can override the domain if defined
-        domain = this.domainMin!=null && this.domainMax!=null ? [+this.domainMin, +this.domainMax] : domain;
+        domain[0] = this.domainMin!=null ? +this.domainMin : domain[0];
+        domain[1] = this.domainMax!=null ? +this.domainMax : domain[1];
         break;
       case "property":
         domain = this.getUnique(this.which);
@@ -119,9 +92,9 @@ var AxisModel = Hook.extend({
         break;
     }
     
-    var scaletype = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.scaleType === "log")? "genericLog" : this.scaleType;
-    if(this.scaletype == "nominal") scaletype = "ordinal"; // 
-    this.scale = d3.scale[scaletype || "linear"]().domain(domain);
+    scaleType = (d3.min(domain)<=0 && d3.max(domain)>=0 && scaleType === "log")? "genericLog" : scaleType;
+    this.scale = d3.scale[scaleType || "linear"]().domain(domain);
+    this.scaleType = scaleType;
   },
 
   /**
