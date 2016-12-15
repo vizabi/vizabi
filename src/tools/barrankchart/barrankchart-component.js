@@ -457,11 +457,11 @@ const BarRankChart = Component.extend({
 
     const labelX = ltr ?
       (margin.left + this._getWidestLabelWidth() + shift) :
-      (this.coordinates.x.end - this._getWidestLabelWidth() - scrollMargin);
+      (this.width - this._getWidestLabelWidth() - shift - scrollMargin - margin.right);
 
     const barX = ltr ?
       (labelX + barRectMargin) :
-      (labelX - barRectMargin - shift);
+      (labelX - barRectMargin);
 
     const valueX = ltr ?
       (barX + barValueMargin) :
@@ -604,19 +604,32 @@ const BarRankChart = Component.extend({
   },
 
   _drawColors() {
+    const _this = this;
+
     this.barContainer.selectAll('.vzb-br-bar>rect')
-      .style('fill', d => this._getColor(d));
+      .each(function ({ entity }) {
+        const self = d3.select(this);
+        const color = _this.values.color[entity];
+
+        if (typeof color === 'undefined') {
+          self
+            .style('fill', 'white')
+            .attr('stroke', 'black')
+            .attr('stroke-width', 1)
+            .attr('stroke-opacity', 1);
+        } else {
+          self
+            .style('fill', _this._getColor(color))
+            .attr('stroke-opacity', 0);
+        }
+      });
 
     this.barContainer.selectAll('.vzb-br-bar>text')
-      .style('fill', d => this._getDarkerColor(d));
+      .style('fill', ({ entity }) => this._getDarkerColor(this.values.color[entity]));
   },
 
-  _getColor(d) {
-    return d3.rgb(
-      this.cScale(
-        this.values.color[d.entity]
-      )
-    );
+  _getColor(value) {
+    return d3.rgb(this.cScale(value));
   },
 
   _getDarkerColor(d) {
