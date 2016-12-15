@@ -114,7 +114,6 @@ const BarRankChart = Component.extend({
 
     this._presentation = !this.model.ui.presentation;
     this._formatter = this.model.marker.axis_x.getTickFormatter();
-    this._dataChanged = true;
 
     this.ready();
 
@@ -127,11 +126,10 @@ const BarRankChart = Component.extend({
    */
   ready() {
     this.model.marker.getFrame(this.model.time.value, values => {
-      this._dataChanged = true;
 
       this.values = values;
       this.loadData();
-      this.draw();
+      this.draw(true);
       this._updateOpacity();
       this._drawColors();
     });
@@ -379,22 +377,6 @@ const BarRankChart = Component.extend({
         .data(this.sortedEntities, d => d.entity)
     );
 
-    if (this._dataChanged) {
-      force = true;
-      this._dataChanged = false;
-
-      this._widestLabel = this.sortedEntities
-        .reduce((previous, current) => {
-          return previous.barLabel.node().getBBox().width < current.barLabel.node().getBBox().width ?
-            current :
-            previous;
-        })
-        .barLabel;
-
-      const { axis_x } = this.model.marker;
-      this._limits = axis_x.getLimits(axis_x.which);
-    }
-
 
     const { presentation } = this.model.ui;
     const presentationModeChanged = this._presentation !== presentation;
@@ -421,7 +403,9 @@ const BarRankChart = Component.extend({
     }
 
     const { barRectMargin, barValueMargin, scrollMargin, margin } = this.activeProfile;
-    const ltr = Math.abs(this._limits.max) >= Math.abs(this._limits.min);
+    const { axis_x } = this.model.marker;
+    const limits = axis_x.getLimits(axis_x.which);
+    const ltr = Math.abs(limits.max) >= Math.abs(limits.min);
 
 
     const rightEdge = this.width
@@ -432,13 +416,16 @@ const BarRankChart = Component.extend({
       - scrollMargin;
     this.xScale.range([0, rightEdge]);
 
-
     let zeroValueWidth = this.xScale(0) || 0;
-    let shift = 0;
-    if (zeroValueWidth > margin.left + this._getWidestLabelWidth()) {
-      this.xScale.range([0, this.width - scrollMargin - margin.left - margin.right]);
-      zeroValueWidth = this.xScale(0);
-      shift = zeroValueWidth - this._getWidestLabelWidth() - barRectMargin;
+    let shift = this._getWidestLabelWidth();
+
+    if (zeroValueWidth > ((ltr ? margin.left : margin.right) + this._getWidestLabelWidth())) {
+      shift = zeroValueWidth;
+    }
+
+    if (zeroValueWidth < 0) {
+      this.xScale.range([0, rightEdge - Math.abs(zeroValueWidth)]);
+      zeroValueWidth = this.xScale(0) || 0;
     }
 
     const barWidth = (value) => this.xScale(value) - zeroValueWidth;
@@ -447,8 +434,8 @@ const BarRankChart = Component.extend({
     const valueAnchor = ltr ? 'start' : 'end';
 
     const labelX = ltr ?
-      (margin.left + this._getWidestLabelWidth() + shift) :
-      (this.width - this._getWidestLabelWidth() - shift - scrollMargin - margin.right);
+      (margin.left + shift) :
+      (this.width - shift - scrollMargin - margin.right);
 
     const barX = ltr ?
       (labelX + barRectMargin) :
@@ -458,6 +445,7 @@ const BarRankChart = Component.extend({
       (barX + barValueMargin) :
       (barX - barValueMargin);
 
+    const isLabelBig = (this._getWidestLabelWidth(true) + (ltr ? margin.left : margin.right)) < shift;
     this.sortedEntities.forEach((bar) => {
       const { value } = bar;
 
@@ -465,7 +453,8 @@ const BarRankChart = Component.extend({
         bar.barLabel
           .attr('x', labelX)
           .attr('y', this.activeProfile.barHeight / 2)
-          .attr('text-anchor', labelAnchor);
+          .attr('text-anchor', labelAnchor)
+          .text(isLabelBig ? bar.labelFull : bar.labelSmall);
 
         bar.barRect
           .attr('rx', this.activeProfile.barHeight / 4)
@@ -567,12 +556,14 @@ const BarRankChart = Component.extend({
           .attr('stroke-opacity', 0)
           .attr('stroke-width', 2);
 
-        const label = _this.values.label[d.entity];
-        const formattedLabel = label.length < 12 ? label : `${label.substring(0, 9)}...`;
+        const labelFull = _this.values.label[d.entity];
+        const labelSmall = labelFull.length < 12 ? labelFull : `${labelFull.substring(0, 9)}...`;
         const barLabel = self.append('text')
           .attr('class', 'vzb-br-label')
-          .attr('dominant-baseline', 'middle')
-          .text(formattedLabel);
+          .attr('dominant-baseline', 'middle');
+
+        const labelFullWidth = barLabel.text(labelFull).node().getBBox().width;
+        const labelSmallWidth = barLabel.text(labelSmall).node().getBBox().width;
 
         const barValue = self.append('text')
           .attr('class', 'vzb-br-value')
@@ -584,14 +575,20 @@ const BarRankChart = Component.extend({
           barLabel,
           barValue,
           isNew: true,
+          labelFullWidth,
+          labelSmallWidth,
+          labelFull,
+          labelSmall,
         });
       });
   },
 
-  _getWidestLabelWidth() {
-    return this._widestLabel ?
-      this._widestLabel.node().getBBox().width :
-      0;
+  _getWidestLabelWidth(big = false) {
+    const key = big ? 'labelFullWidth' : 'labelSmallWidth';
+    return this.sortedEntities
+      .reduce((a, b) => {
+        return a[key] < b[key] ? b : a;
+      })[key];
   },
 
   _drawColors() {
