@@ -5,29 +5,28 @@ var VIZABI_MODEL = {
       "endOrigin": "2012"
     },
     "entities": {
-      "dim": "geo",
-      "show": {"category": "country"}
+      "dim": "country",
     },
     "marker": {
       "label": {
-        "which": "geo"
+        "which": "country"
       },
       "axis_y": {
-        "which": "LEX"
+        "which": "CO2 emissions (metric tons per capita)"
       },
       "axis_x": {
-        "which": "GDP"
+        "which": "time",
+        "scaleType": "time"
       },
       "size": {
-        "which": "POP",
+        "which": "CO2 emissions (metric tons per capita)",
         "use": "indicator"
       }
     }
   },
   "data": {
-    "reader": "csv",
+    "reader": "csv-time_in_columns",
     "splash": true,
-    "path": "data/waffles/basic-indicators.csv"
+    "path": "data/waffles/test-time_in_columns.csv"
   }
 };
-
