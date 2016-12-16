@@ -26,7 +26,7 @@ var VIZABI_MODEL = {
   "data": {
     "reader": "csv-time_in_columns",
     "splash": true,
-    "path": "data/waffles/data.csv"
+    "path": "data/waffles/test-time_in_columns.csv"
   }
 };
 
