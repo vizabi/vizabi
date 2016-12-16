@@ -226,7 +226,7 @@ const BarRankChart = Component.extend({
         barMargin: 3,
         barRectMargin: 5,
         barValueMargin: 5,
-        scrollMargin: 11,
+        scrollMargin: 18,
       },
       medium: {
         margin: { top: 60, right: 5, left: 5, bottom: 15 },
@@ -237,7 +237,7 @@ const BarRankChart = Component.extend({
         barMargin: 3,
         barRectMargin: 5,
         barValueMargin: 5,
-        scrollMargin: 11,
+        scrollMargin: 18,
       },
       large: {
         margin: { top: 60, right: 5, left: 5, bottom: 15 },
@@ -248,7 +248,7 @@ const BarRankChart = Component.extend({
         barMargin: 3,
         barRectMargin: 5,
         barValueMargin: 5,
-        scrollMargin: 11,
+        scrollMargin: 18,
       }
     };
 
@@ -262,7 +262,7 @@ const BarRankChart = Component.extend({
         barMargin: 6,
         barRectMargin: 5,
         barValueMargin: 5,
-        scrollMargin: 11,
+        scrollMargin: 18,
       },
       large: {
         margin: { top: 60, right: 10, left: 10, bottom: 40 },
@@ -273,7 +273,7 @@ const BarRankChart = Component.extend({
         barMargin: 6,
         barRectMargin: 5,
         barValueMargin: 5,
-        scrollMargin: 11,
+        scrollMargin: 18,
       }
     };
 
@@ -608,7 +608,7 @@ const BarRankChart = Component.extend({
         const self = d3.select(this);
         const color = _this.values.color[entity];
 
-        if (!color && color!==0) {
+        if (!color && color !== 0) {
           self
             .style('fill', COLOR_WHITEISH)
             .attr('stroke', COLOR_BLACKISH)
