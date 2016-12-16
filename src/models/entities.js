@@ -34,27 +34,6 @@ var EntitiesModel = DataConnected.extend({
   },
 
   /**
-   * Validates the model
-   * @param {boolean} silent Block triggering of events
-   */
-  validate: function(silent) {
-    var _this = this;
-    var dimension = this.getDimension();
-    var visible_array = this._visible.map(function(d) {
-      return d[dimension]
-    });
-
-    if(visible_array.length) {
-      this.select = this.select.filter(function(f) {
-        return visible_array.indexOf(f[dimension]) !== -1;
-      });
-      this.setHighlight(this.highlight.filter(function(f) {
-        return visible_array.indexOf(f[dimension]) !== -1;
-      }));
-    }
-  },
-
-  /**
    * Sets the visible entities
    * @param {Array} arr
    */

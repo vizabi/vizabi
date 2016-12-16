@@ -17,9 +17,33 @@ var Marker = Model.extend({
 
   init: function(name, value, parent, binds, persistent) {
     this._multiple = true;
+    this._visible = [];
+
 
     this._super(name, value, parent, binds, persistent);
     this.on('ready', this.checkTimeLimits.bind(this));
+  },
+
+
+  /**
+   * Validates the model
+   * @param {boolean} silent Block triggering of events
+   */
+  validate: function(silent) {
+    var _this = this;
+    var dimension = this.getDimension();
+    var visible_array = this._visible.map(function(d) {
+      return d[dimension]
+    });
+
+    if(visible_array.length) {
+      this.select = this.select.filter(function(f) {
+        return visible_array.indexOf(f[dimension]) !== -1;
+      });
+      this.setHighlight(this.highlight.filter(function(f) {
+        return visible_array.indexOf(f[dimension]) !== -1;
+      }));
+    }
   },
 
   /**
