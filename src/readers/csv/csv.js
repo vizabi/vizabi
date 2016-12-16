@@ -48,8 +48,10 @@ const CSVReader = Reader.extend({
 
     const [orderBy] = order_by;
 
-    return this.load({ parsers })
-      .then(data => {
+    return this.load()
+      .then((data) => {
+        data = data.map(this._mapRows(parsers));
+
         switch (true) {
           case from === this.QUERY_FROM_CONCEPTS:
             return this._getConcepts(data[0]);
@@ -66,15 +68,14 @@ const CSVReader = Reader.extend({
       .catch(utils.error);
   },
 
-  load(options = {}) {
-    const { parsers = {} } = options;
+  load() {
     const { _basepath: path } = this;
 
     return new Promise((resolve, reject) => {
       const data = cached[path];
 
       data ?
-        resolve(data.map(this._mapRows(parsers))) :
+        resolve(data) :
         d3.csv(path)
           .get((error, result) => {
             if (!result) {
@@ -86,7 +87,7 @@ const CSVReader = Reader.extend({
             }
 
             cached[path] = result;
-            resolve(this.load(options));
+            resolve(result);
           });
     });
   },
@@ -204,8 +205,8 @@ const CSVReader = Reader.extend({
 
         return typeof condition !== 'object' ?
           (row[conditionKey] === condition)
-            || condition === true && utils.isString(row[conditionKey]) && row[conditionKey].toLowerCase().trim()==="true" 
-            || condition === false && utils.isString(row[conditionKey]) && row[conditionKey].toLowerCase().trim()==="false" 
+          || condition === true && utils.isString(row[conditionKey]) && row[conditionKey].toLowerCase().trim() === "true"
+          || condition === false && utils.isString(row[conditionKey]) && row[conditionKey].toLowerCase().trim() === "false"
           :
           Object.keys(condition).every(callbackKey =>
             this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], row[conditionKey])
