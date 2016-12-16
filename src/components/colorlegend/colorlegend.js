@@ -244,7 +244,7 @@ var ColorLegend = Component.extend({
       this.rainbowLegend.enter().append("circle")
         .attr('r', "6px")
         .attr('stroke', '#000')
-        .on("clickToChangeColor", _this._interact().click);
+        .on("click", _this._interact().clickToChangeColor);
 
       this.rainbowLegend.each(function(d, i) {
         d3.select(this).attr('fill', d.color);

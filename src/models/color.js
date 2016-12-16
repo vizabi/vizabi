@@ -14,11 +14,13 @@ var allowTypes = {
 
 var defaultPalettes = {
   "_continuous": {
+    "_default": "#ffb600",
     "0": "#B4DE79",
     "50": "#E1CE00",
     "100": "#F77481"
   },
   "_discrete": {
+    "_default": "#ffb600",
     "0": "#bcfa83",
     "1": "#4cd843",
     "2": "#ff8684",
@@ -75,7 +77,7 @@ var ColorModel = Hook.extend({
 
       if(_this.palette && Object.keys(_this.palette._data).length!==0) {
         var defaultPalette = _this.getDefaultPalette();
-        var currentPalette = _this.getPalette();
+        var currentPalette = _this.getPalette(true);
         var palette = {};
         //extend partial current palette with default palette and
         //switch current palette elements which equals
@@ -219,6 +221,10 @@ var ColorModel = Hook.extend({
         palette = utils.clone(defaultPalettes["_default"]);
       }
 
+      if(!palette["_default"]) {
+        var type = this.use === "property" ? "_discrete" : (this.use === "indicator" ? "_continuous" : null);
+        if(type) palette["_default"] = defaultPalettes[type]["_default"];
+      }
       return palette;
   },
 
@@ -237,7 +243,7 @@ var ColorModel = Hook.extend({
     return this.paletteLabels.getPlainObject();
   },
 
-  getPalette: function(){
+  getPalette: function(includeDefault){
     //rebuild palette if it's empty
     if (!this.palette || Object.keys(this.palette._data).length===0){
       var palette = this.getDefaultPalette();
@@ -245,7 +251,11 @@ var ColorModel = Hook.extend({
       var paletteLabels = this._getPaletteLabels();
       this.set("paletteLabels", paletteLabels, false, false);
     }
-    return this.palette.getPlainObject();
+    var palette = this.palette.getPlainObject();
+    if(this.use == "indicator" && !includeDefault) {
+      delete palette["_default"];
+    }
+    return palette;
   },
 
   /**
