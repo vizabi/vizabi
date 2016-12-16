@@ -411,10 +411,9 @@ export default function axisSmart() {
         })) * options.widthOfOneDigit + parseInt(options.cssMargin.left);
 
       var pivot = options.isPivotAuto && (
-        (estLongestLabelLength + axis.tickPadding() + axis.tickSize() > options.pivotingLimit) && (orient ==
-          VERTICAL) ||
-        !(estLongestLabelLength + axis.tickPadding() + axis.tickSize() > options.pivotingLimit) && !(orient ==
-          VERTICAL)
+        (estLongestLabelLength + axis.tickPadding() > options.pivotingLimit) && (orient == VERTICAL) 
+        ||
+        !(estLongestLabelLength + axis.tickPadding() > options.pivotingLimit) && !(orient == VERTICAL)
       );
 
       var labelsStackOnTop = (orient == HORIZONTAL && pivot || orient == VERTICAL && !pivot);
