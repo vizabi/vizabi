@@ -1,10 +1,10 @@
 import CSVReader from 'readers/csv/csv';
 import { isNumber } from 'base/utils';
 
-const InlineCSVReader = CSVReader.extend({
+const CSVTimeInColumnsReader = CSVReader.extend({
 
   init(readerInfo) {
-    this.name = 'inlinecsv';
+    this.name = 'csv-time_in_columns';
     this._super(readerInfo);
   },
 
@@ -23,15 +23,21 @@ const InlineCSVReader = CSVReader.extend({
           return result;
         }, []).concat('time');
 
+        const indicators = concepts.slice(1, -1);
         const [which] = concepts;
         return data.reduce((result, row) => {
           Object.keys(row).forEach((key) => {
             if (![which, 'indicator'].includes(key)) {
-              result.push({
-                time: key,
-                [row.indicator]: row[key],
-                [which]: row[which]
-              });
+              result.push(
+                Object.assign({
+                    [which]: row[which],
+                    time: key,
+                  }, indicators.reduce((result, indicator) => {
+                    result[indicator] = row.indicator === indicator ? row[key] : null;
+                    return result;
+                  }, {})
+                )
+              );
             }
           });
 
@@ -42,4 +48,4 @@ const InlineCSVReader = CSVReader.extend({
 
 });
 
-export default InlineCSVReader;
+export default CSVTimeInColumnsReader;
