@@ -214,6 +214,7 @@ var ColorLegend = Component.extend({
         .orient("bottom")
         //.tickFormat(formatter)
         .tickSize(6, 0)
+        .tickPadding(6)
         .tickSizeMinor(3, 0)
         .labelerOptions({
           scaleType: this.colorModel.scaleType,
