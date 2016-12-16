@@ -67,6 +67,10 @@ const plugins = [
     {
       from: 'src/assets/translation/',
       to: 'dist/assets/translation/'
+    },
+    {
+      from: 'src/assets/cursors/',
+      to: 'dist/assets/cursors/'
     }
   ]),
   new OpenBrowserPlugin({
@@ -165,7 +169,7 @@ const loaders = [
     loader: 'file-loader',
     query: {
       publicPath: path => path.split('/').slice(1).join('/'),
-      name: 'dist/assets/cursors/[name].[ext]'
+      name: 'preview/assets/cursors/[name].[ext]'
     }
   },
   {
