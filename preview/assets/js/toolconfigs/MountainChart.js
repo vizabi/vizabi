@@ -57,7 +57,7 @@ var VIZABI_MODEL = {
       },
       "axis_s": {
         "use": "indicator",
-        "which": "inequality_index_gini",
+        "which": "sg_gini",
         "scaleType": "linear"
       },
       "color": {
