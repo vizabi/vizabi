@@ -6,7 +6,6 @@ import { warn as warnIcon } from 'base/iconset'
 
 var class_loading_first = 'vzb-loading-first';
 var class_loading_data = 'vzb-loading-data';
-var class_loading_error = 'vzb-loading-error';
 var class_placeholder = 'vzb-placeholder';
 var class_buttons_off = 'vzb-buttonlist-off';
 
@@ -160,7 +159,8 @@ var Tool = Component.extend({
         'translate:locale': function() {
           _this.translateStrings();
           _this.model.ui.setRTL(_this.model.locale.isRTL());
-        }  
+        },
+        'load_error': this.renderError.bind(this)
       });
   },
 
@@ -303,12 +303,6 @@ var Tool = Component.extend({
     utils.addClass(this.placeholder, class_loading_data);    
   },
 
-  /**
-   * Adds loading error class
-   */
-  errorLoading: function() {
-    utils.addClass(this.placeholder, class_loading_error);
-  },
   /* ==========================
    * Validation and query
    * ==========================
