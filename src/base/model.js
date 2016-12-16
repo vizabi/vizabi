@@ -68,7 +68,7 @@ var ModelLeaf = EventSource.extend({
 
 var Model = EventSource.extend({
 
-  _defaults: {},
+  getClassDefaults: () => ({}),
 
   /**
    * A leaf model which has an object as value.
@@ -107,7 +107,7 @@ var Model = EventSource.extend({
 
     // initial values
     // add defaults to initialValues
-    var initialValues = utils.deepExtend({}, this._defaults, values)
+    var initialValues = utils.deepExtend({}, this.getClassDefaults(), values)
     this.set(initialValues);
 
     // bind initial events
@@ -579,7 +579,7 @@ var Model = EventSource.extend({
    * @return {Object} defaults of this model, and when available overwritten by submodel defaults
    */
   getDefaults: function() {
-    return utils.deepExtend({}, this._defaults, this.getSubmodelDefaults());
+    return utils.deepExtend({}, this.getClassDefaults(), this.getSubmodelDefaults());
   },
 
   /**

@@ -14,6 +14,13 @@ var Hook = DataConnected.extend({
 
   dataConnectedChildren: ['use', 'which'],
   
+  getClassDefaults: function() { 
+    var defaults = {
+      data: 'data'
+    };
+    return utils.deepExtend(this._super(), defaults)
+  },
+
   buildScale: function(){
     //overloaded by specific hook models, like axis and color
   },

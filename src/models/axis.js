@@ -20,17 +20,20 @@ var AxisModel = Hook.extend({
   /**
    * Default values for this model
    */
-  _defaults: {
-    use: null,
-    which: null,
-    domainMin: null,
-    domainMax: null,
-    zoomedMin: null,
-    zoomedMax: null,
-    scaleType: "linear",
-    allow: {
-      scales: ["linear", "log", "genericLog", "time", "pow"]
-    }
+  getClassDefaults: function() { 
+    var defaults = {
+      use: null,
+      which: null,
+      domainMin: null,
+      domainMax: null,
+      zoomedMin: null,
+      zoomedMax: null,
+      scaleType: "linear",
+      allow: {
+        scales: ["linear", "log", "genericLog", "time", "pow"]
+      }
+    };
+    return utils.deepExtend(this._super(), defaults)
   },
     
   _type: "axis",

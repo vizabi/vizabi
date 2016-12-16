@@ -44,17 +44,20 @@ var ColorModel = Hook.extend({
   /**
    * Default values for this model
    */
-  _defaults: {
-    use: "constant",
-    which: "_default",
-    scaleType: "ordinal",
-    syncModels: [],
-    palette: {},
-    paletteLabels: null,
-    allow: {
-      //this is almost everything, but not "nominal", so no random strings like "name"
-      scales: ["linear", "log", "genericLog", "time", "pow", "ordinal"]
-    }
+  getClassDefaults: function() { 
+    var defaults = {
+      use: "constant",
+      which: "_default",
+      scaleType: "ordinal",
+      syncModels: [],
+      palette: {},
+      paletteLabels: null,
+      allow: {
+        //this is almost everything, but not "nominal", so no random strings like "name"
+        scales: ["linear", "log", "genericLog", "time", "pow", "ordinal"]
+      }
+    };
+    return utils.deepExtend(this._super(), defaults)
   },
 
   /**

@@ -29,26 +29,29 @@ var TimeModel = DataConnected.extend({
   /**
    * Default values for this model
    */
-  _defaults: {
-    dim: "time",
-    value: null,
-    start: null, 
-    end: null,
-    startOrigin: null,
-    endOrigin: null,
-    startSelected: null,
-    endSelected: null,
-    playable: true,
-    playing: false,
-    loop: false,
-    round: 'round',
-    delay: 150, //delay between animation frames
-    delayThresholdX2: 100, //delay X2 boundary: if less -- then every other frame will be dropped and animation dely will be double the value
-    delayThresholdX4: 50, //delay X4 boundary: if less -- then 3/4 frame will be dropped and animation dely will be 4x the value
-    unit: "year",
-    step: 1, //step must be integer, and expressed in units
-    immediatePlay: true,
-    record: false
+  getClassDefaults: function() { 
+    var defaults = {
+      dim: "time",
+      value: null,
+      start: null, 
+      end: null,
+      startOrigin: null,
+      endOrigin: null,
+      startSelected: null,
+      endSelected: null,
+      playable: true,
+      playing: false,
+      loop: false,
+      round: 'round',
+      delay: 150, //delay between animation frames
+      delayThresholdX2: 100, //delay X2 boundary: if less -- then every other frame will be dropped and animation dely will be double the value
+      delayThresholdX4: 50, //delay X4 boundary: if less -- then 3/4 frame will be dropped and animation dely will be 4x the value
+      unit: "year",
+      step: 1, //step must be integer, and expressed in units
+      immediatePlay: true,
+      record: false
+    };
+    return utils.deepExtend(this._super(), defaults);
   },
 
   dataConnectedChildren: ['startOrigin', 'endOrigin', 'dim'],

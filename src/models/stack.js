@@ -15,11 +15,15 @@ var StackModel = Hook.extend({
   /**
    * Default values for this model
    */
-  _defaults: {
-    use: null,
-    which: null,
-    merge: false
+  getClassDefaults: function() { 
+    var defaults = {
+      use: null,
+      which: null,
+      merge: false
+    };
+    return utils.deepExtend(this._super(), defaults);
   },
+  
   /**
    * Initializes the stack hook
    * @param {Object} values The initial values of this model

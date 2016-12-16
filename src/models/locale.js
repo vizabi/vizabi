@@ -9,9 +9,12 @@ var LocaleModel = DataConnected.extend({
   /**
    * Default values for this model
    */
-  _defaults: {
-    id: "en",
-    filePath: ""
+  getClassDefaults: function() { 
+    var defaults = {
+      id: "en",
+      filePath: ""
+    };
+    return utils.deepExtend(this._super(), defaults)
   },
 
   dataConnectedChildren: ["id"],

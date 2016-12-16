@@ -10,9 +10,13 @@ var LabelModel = Hook.extend({
   /**
    * Default values for this model
    */
-  _defaults: {
-    use: null,
-    which: null
+
+  getClassDefaults: function() { 
+    var defaults = {
+      use: null,
+      which: null
+    };
+    return utils.deepExtend(this._super(), defaults);
   },
 
   /**

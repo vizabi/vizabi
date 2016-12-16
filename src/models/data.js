@@ -12,9 +12,12 @@ var DataModel = Model.extend({
   /**
    * Default values for this model
    */
-  _defaults: {
-    reader: "csv",
-    splash: false
+  getClassDefaults: function() { 
+    var defaults = {
+      reader: "csv",
+      splash: false
+    };
+    return utils.deepExtend(this._super(), defaults)
   },
 
   trackInstances: true,
