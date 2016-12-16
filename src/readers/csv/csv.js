@@ -158,7 +158,14 @@ const CSVReader = Reader.extend({
 
   _getConcepts(firstRow) {
     return Object.keys(firstRow)
-      .map(concept => ({ concept }));
+      .map((concept, index) => Object.assign(
+        { concept },
+        !index ?
+          { concept_type: 'entity_domain' } :
+          concept === 'time' ?
+            { concept_type: 'time' } :
+            {}
+      ));
   },
 
   _applyQuery(query) {
@@ -202,14 +209,16 @@ const CSVReader = Reader.extend({
     return !where.$and ||
       Object.keys(where.$and).every(conditionKey => {
         const condition = where.$and[conditionKey];
+        const rowValue = row[conditionKey];
+        const rowValueEscaped = rowValue.toLowerCase().trim();
 
         return typeof condition !== 'object' ?
-          (row[conditionKey] === condition)
-          || condition === true && utils.isString(row[conditionKey]) && row[conditionKey].toLowerCase().trim() === "true"
-          || condition === false && utils.isString(row[conditionKey]) && row[conditionKey].toLowerCase().trim() === "false"
-          :
+          (rowValue === condition
+            || condition === true && utils.isString(rowValue) && rowValueEscaped === 'true'
+            || condition === false && utils.isString(rowValue) && rowValueEscaped === 'false'
+          ) :
           Object.keys(condition).every(callbackKey =>
-            this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], row[conditionKey])
+            this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], rowValue)
           );
       });
   }
