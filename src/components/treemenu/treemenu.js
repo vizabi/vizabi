@@ -711,19 +711,17 @@ var TreeMenu = Component.extend({
           tags[tag.parent].children.push(tags[tag.tag])
         }
       })
-      //add entries to different branches in the tree according to their tags
-      var indicatorsDB = {}
-      utils.forEach(Data.instances, 
-        dataSource => utils.deepExtend(indicatorsDB, dataSource.getConceptprops())
-      );
       
+    utils.forEach(Data.instances, dataSource => {
+      var indicatorsDB = dataSource.getConceptprops();
       utils.forEach(indicatorsDB, function(entry, id){
         //if entry's tag are empty don't include it in the menu
         if(entry.tags=="_none") return;
         if(!entry.tags) entry.tags = UNCLASSIFIED;
+        var concept = { id: id, name: entry.name, unit: entry.unit, description: entry.description, dataSource: dataSource._name };
         entry.tags.split(",").forEach(function(tag){
           if(tags[tag.trim()]) {
-            tags[tag.trim()].children.push({id: id, name: entry.name, unit: entry.unit, description: entry.description});
+            tags[tag.trim()].children.push(concept);
           } else {
             //if entry's tag is not found in the tag dictionary
             if(!_this.consoleGroupOpen) {
@@ -731,10 +729,11 @@ var TreeMenu = Component.extend({
               _this.consoleGroupOpen = true;
             }
             utils.warn("tag '" + tag + "' for indicator '" + id + "'");
-            tags[UNCLASSIFIED].children.push({id: id, name: entry.name, unit: entry.unit, description: entry.description});
+            tags[UNCLASSIFIED].children.push(concept);
           }
         });
       });
+    });
     if(_this.consoleGroupOpen){
       console.groupEnd();
       delete _this.consoleGroupOpen;
@@ -1144,7 +1143,7 @@ var TreeMenu = Component.extend({
           //only for leaf nodes
           if(view.attr("children")) return;
           d3.event.stopPropagation();
-          _this._selectIndicator(d.id);
+          _this._selectIndicator({ concept: d.id, dataSource: d.dataSource });
         })
         .append('span')
         .text(function(d) {
@@ -1168,7 +1167,7 @@ var TreeMenu = Component.extend({
           if(!d.children) {
             var deepLeaf = view.append('div').attr('class', css.menuHorizontal + ' ' + css.list_outer + ' ' + css.list_item_leaf);
             deepLeaf.on('click', function(d) {
-              _this._selectIndicator(d.id);
+              _this._selectIndicator({ concept: d.id, dataSource: d.dataSource });
             });
             var deepLeafContent = deepLeaf.append('div').classed(css.leaf + ' ' + css.leaf_content + " vzb-dialog-scrollable", true);
             deepLeafContent.append('span').classed(css.leaf_content_item + ' ' + css.leaf_content_item_title, true)

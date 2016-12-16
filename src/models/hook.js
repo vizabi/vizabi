@@ -48,8 +48,9 @@ var Hook = DataConnected.extend({
 
   setWhich: function(newValue) {
 
-    var obj = { which: newValue };
-    var conceptProps = this.dataSource.getConceptprops(newValue);
+    var obj = { which: newValue.concept, data: newValue.dataSource };
+    var newDataSource = this.getClosestModel(newValue.dataSource);
+    var conceptProps = newDataSource.getConceptprops(newValue.concept);
 
     if(conceptProps.use) obj.use = conceptProps.use;
 
@@ -71,12 +72,6 @@ var Hook = DataConnected.extend({
     this.buildScale(newValue);
   },
 
-  preloadData: function() {
-    var dataModel = (this.data) ? this.data : 'data';
-    this.dataSource = this.getClosestModel(dataModel);
-    return this._super();
-  },
-
   /**
    * Hooks loads data, models ask children to load data
    * Basically, this method:
@@ -92,6 +87,9 @@ var Hook = DataConnected.extend({
     if(!this.which) return Promise.resolve();
 
     this.trigger('hook_change');
+
+    // TODO: should be set on data source switch, but load happens before change events
+    this.dataSource = this.getClosestModel(this.data);
 
     var query = this.getQuery(opts.splashScreen);
 

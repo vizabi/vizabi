@@ -178,7 +178,7 @@ var DataModel = Model.extend({
   },
 
   checkQueryResponse: function(query, response) {
-    if (response.length == 0) utils.warn("Reader returned empty array for query:", JSON.stringify(query, null, 2))
+    if (response.length == 0) utils.warn("Reader for data source '" + this._name + "' returned empty array for query:", JSON.stringify(query, null, 2))
 
     if (response.length > 0) {
       // search data for the entirely missing columns
