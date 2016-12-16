@@ -218,7 +218,7 @@ const BarRankChart = Component.extend({
   drawAxes(duration = 0) {
     const profiles = {
       small: {
-        margin: { top: 60, right: 5, left: 5, bottom: 15 },
+        margin: { top: 60, right: 5, left: 5, bottom: 20 },
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 16,
         infoElMargin: 5,
@@ -229,7 +229,7 @@ const BarRankChart = Component.extend({
         scrollMargin: 18,
       },
       medium: {
-        margin: { top: 60, right: 5, left: 5, bottom: 15 },
+        margin: { top: 60, right: 5, left: 5, bottom: 20 },
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 16,
         infoElMargin: 5,
@@ -240,7 +240,7 @@ const BarRankChart = Component.extend({
         scrollMargin: 18,
       },
       large: {
-        margin: { top: 60, right: 5, left: 5, bottom: 15 },
+        margin: { top: 60, right: 5, left: 5, bottom: 20 },
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 16,
         infoElMargin: 5,
