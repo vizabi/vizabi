@@ -263,6 +263,10 @@
     }
   }
 
+  .vzb-colorpicker-svg {
+    direction: ltr;
+  }
+
   //common tool components
   @import '../../components/timeslider/timeslider';
   @import '../../components/dialogs/dialog';
