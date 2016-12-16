@@ -585,11 +585,19 @@ const BarRankChart = Component.extend({
   },
 
   _getWidestLabelWidth(big = false) {
-    const key = big ? 'labelFullWidth' : 'labelSmallWidth';
-    return this.sortedEntities
+    const widthKey = big ? 'labelFullWidth' : 'labelSmallWidth';
+    const labelKey = big ? 'labelFull' : 'labelSmall';
+
+    const bar = this.sortedEntities
       .reduce((a, b) => {
-        return a[key] < b[key] ? b : a;
-      })[key];
+        return a[widthKey] < b[widthKey] ? b : a;
+      });
+
+    const text = bar.barLabel.text();
+    const width = bar.barLabel.text(bar[labelKey]).node().getBBox().width;
+    bar.barLabel.text(text);
+
+    return width;
   },
 
   _drawColors() {
