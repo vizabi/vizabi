@@ -210,12 +210,11 @@ const CSVReader = Reader.extend({
       Object.keys(where.$and).every(conditionKey => {
         const condition = where.$and[conditionKey];
         const rowValue = row[conditionKey];
-        const rowValueEscaped = rowValue.toLowerCase().trim();
 
         return typeof condition !== 'object' ?
           (rowValue === condition
-            || condition === true && utils.isString(rowValue) && rowValueEscaped === 'true'
-            || condition === false && utils.isString(rowValue) && rowValueEscaped === 'false'
+            || condition === true && utils.isString(rowValue) && rowValue.toLowerCase().trim() === 'true'
+            || condition === false && utils.isString(rowValue) && rowValue.toLowerCase().trim() === 'false'
           ) :
           Object.keys(condition).every(callbackKey =>
             this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], rowValue)
