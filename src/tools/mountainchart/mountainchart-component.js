@@ -1070,8 +1070,9 @@ updateSize: function (meshLength) {
     redrawDataPointsOnlyColors: function () {
         var _this = this;
         if(!this.mountains) return utils.warn("redrawDataPointsOnlyColors(): no mountains  defined. likely a premature call, fix it!");
+        var isColorUseIndicator = this.model.marker.color.use === "indicator";
         this.mountains.style("fill", function (d) {
-            return _this.values.color[d.KEY()]?_this.cScale(_this.values.color[d.KEY()]):"transparent";
+            return _this.values.color[d.KEY()] ? ( isColorUseIndicator && _this.values.color[d.KEY()] == "_default" ? _this.model.marker.color.palette["_default"] : _this.cScale(_this.values.color[d.KEY()])) : "transparent";
         });
     },
 
@@ -1095,7 +1096,7 @@ updateSize: function (meshLength) {
         }
 
         if (this.model.marker.color.use === "indicator") view
-            .style("fill", this.values.color[key] ? _this.cScale(this.values.color[key]) : "transparent");
+            .style("fill", _this.values.color[key] ? ( _this.values.color[key] == "_default" ? _this.model.marker.color.palette["_default"] : _this.cScale(_this.values.color[key])) : "transparent");
 
         if (stack !== "none") view
             .transition().duration(Math.random() * 900 + 100).ease("circle")
