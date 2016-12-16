@@ -69,7 +69,9 @@ var IndPicker = Component.extend({
                     _this.model.marker.getFrame(_this.model.time.value, function(frame) {
                         if(_this._highlighted || !frame) return;
 
-                        var _highlightedEntity = _this.model.marker.getHighlighted();
+                        // should be replaced by dimension of entity set for this hook (if use == property)
+                        var dimension = _this.model.entities.getDimension();
+                        var _highlightedEntity = _this.model.marker.getHighlighted(dimension);
                         if(_highlightedEntity.length) {
                             _this._highlightedValue = frame[_this.markerID][_highlightedEntity[0]];
                             _this._highlighted = (!_this._highlightedValue && _this._highlightedValue !== 0) || use !== "property";
