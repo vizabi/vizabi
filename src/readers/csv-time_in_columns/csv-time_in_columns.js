@@ -24,13 +24,13 @@ const CSVTimeInColumnsReader = CSVReader.extend({
         }, []).concat('time');
 
         const indicators = concepts.slice(1, -1);
-        const [which] = concepts;
+        const [entityDomain] = concepts;
         return data.reduce((result, row) => {
           Object.keys(row).forEach((key) => {
-            if (![which, 'indicator'].includes(key)) {
+            if (![entityDomain, 'indicator'].includes(key)) {
               result.push(
                 Object.assign({
-                    [which]: row[which],
+                    [entityDomain]: row[entityDomain],
                     time: key,
                   }, indicators.reduce((result, indicator) => {
                     result[indicator] = row.indicator === indicator ? row[key] : null;
