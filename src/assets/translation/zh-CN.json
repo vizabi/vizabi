@@ -48,6 +48,7 @@
   "hints/nodata":"No data",
   "hints/units":"Unit",
   "hints/nodescr":"No description",
+  "colorpicker/default":"DEFAULT",
   "mount/maxYmode/immediate":"Immediate",
   "mount/maxYmode/latest":"Latest",
   "mount/maxYmode/total":"Total",

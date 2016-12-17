@@ -48,6 +48,7 @@
   "hints/nodata":"Ej tillgängligt",
   "hints/units":"Måttenhet",
   "hints/nodescr":"Ingen beskrivning",
+  "colorpicker/default":"DEFAULT",
   "mount/maxYmode/immediate":"Direkt",
   "mount/maxYmode/latest":"Senast",
   "mount/maxYmode/total":"Totalt",

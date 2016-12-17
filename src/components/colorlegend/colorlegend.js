@@ -48,6 +48,9 @@ var ColorLegend = Component.extend({
             _this.updateGroupsOpacity();
           }
         });
+      },
+      "translate:locale":  function() {
+        _this.colorPicker.translate(_this.model.locale.getTFunction());
       }
     };
 
@@ -94,6 +97,7 @@ var ColorLegend = Component.extend({
     // append color picker to the tool DOM. need to check if element is already a d3 selection to not do it twice
     this.root.element instanceof Array? this.root.element : d3.select(this.root.element)
       .call(this.colorPicker);
+    this.colorPicker.translate(this.model.locale.getTFunction());
   },
 
 
