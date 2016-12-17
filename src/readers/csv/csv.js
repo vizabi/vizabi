@@ -214,6 +214,8 @@ const CSVReader = Reader.extend({
 
         return typeof condition !== 'object' ?
           (rowValue === condition
+            // if the column is missing, then don't apply filter
+            || rowValue === undefined
             || condition === true && utils.isString(rowValue) && rowValue.toLowerCase().trim() === 'true'
             || condition === false && utils.isString(rowValue) && rowValue.toLowerCase().trim() === 'false'
           ) :
