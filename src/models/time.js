@@ -149,6 +149,8 @@ var TimeModel = DataConnected.extend({
     //check if time start and end are not defined but start and end origins are defined
     if(this.start == null && this.startOrigin) this.set("start", this.startOrigin, null, false);
     if(this.end == null && this.endOrigin) this.set("end", this.endOrigin, null, false);
+    // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
+    if(this.value == null) this.set("value", this.parseToUnit(this.format(new Date())), null, false); 
 
     //unit has to be one of the available_time_units
     if(!formats[this.unit]) {

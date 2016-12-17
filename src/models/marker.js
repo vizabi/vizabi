@@ -28,8 +28,6 @@ var Marker = Model.extend({
     var newTime = {}
     if(time.start - tLimits.min != 0) newTime['start'] = d3.max([tLimits.min, time.parseToUnit(time.startOrigin)]);
     if(time.end - tLimits.max != 0) newTime['end'] = d3.min([tLimits.max, time.parseToUnit(time.endOrigin)]);
-    // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
-    if(time.value == null) newTime['value'] = time.parseToUnit(time.format(new Date())); 
     
     time.set(newTime, false, false);
     
