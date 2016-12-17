@@ -196,7 +196,7 @@ var TimeModel = DataConnected.extend({
     }
 
     if(this.playable === false && this.playing === true) {
-      this.set("playing", false, null, null);
+      this.set("playing", false, null, false);
     }
   },
 
@@ -214,7 +214,7 @@ var TimeModel = DataConnected.extend({
     if(soft) {
       this.postponePause = true;
     } else {
-      this.set("playing", false, null, null);
+      this.set("playing", false, null, false);
     }
   },
 
@@ -355,7 +355,7 @@ var TimeModel = DataConnected.extend({
       //so the bubble chart will zoom in smoothly. Closes #1213
       //this.snap();
     }
-    this.set("playing", true, null, null);
+    this.set("playing", true, null, false);
     this.playInterval(this.immediatePlay);
 
     this.trigger("play");
@@ -378,7 +378,7 @@ var TimeModel = DataConnected.extend({
           // reset time to start, silently
           _this.getModelObject('value').set(_this.startSelected, null, false /*make change non-persistent for URL and history*/);
         } else {
-          _this.set("playing", false, null, null);
+          _this.set("playing", false, null, false);
         }
         return;
       } else {
@@ -386,7 +386,7 @@ var TimeModel = DataConnected.extend({
         _this._intervals.clearInterval('playInterval_' + _this._id);
 
         if(_this.postponePause || !_this.playing) {
-          _this.set("playing", false, null, null);
+          _this.set("playing", false, null, false);
           _this.postponePause = false;
           _this.getModelObject('value').set(_this.value, true, true /*force the change and make it persistent for URL and history*/);
         } else {
