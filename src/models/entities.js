@@ -27,26 +27,7 @@ var EntitiesModel = DataConnected.extend({
 
     this._type = "entities";
 
-    this._visible = [];
-    this._multiple = true;
-
     this._super(name, values, parent, bind);
-  },
-
-  /**
-   * Sets the visible entities
-   * @param {Array} arr
-   */
-  setVisible: function(arr) {
-    this._visible = arr;
-  },
-
-  /**
-   * Gets the visible entities
-   * @returns {Array} visible
-   */
-  getVisible: function(arr) {
-    return this._visible;
   },
 
   /**

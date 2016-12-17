@@ -506,7 +506,7 @@ var BubbleMapComponent = Component.extend({
     // get array of GEOs, sorted by the size hook
     // that makes larger bubbles go behind the smaller ones
     var endTime = this.model.time.end;
-    this.model.entities.setVisible(getKeys.call(this));
+    this.model.marker.setVisible(getKeys.call(this));
 
     //unselecting bubbles with no data is used for the scenario when
     //some bubbles are selected and user would switch indicator.
@@ -531,7 +531,7 @@ var BubbleMapComponent = Component.extend({
 
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bmc-bubble')
-      .data(this.model.entities.getVisible(), function(d) { return d[KEY]; })
+      .data(this.model.marker.getVisible(), function(d) { return d[KEY]; })
       .order();
 
     //exit selection

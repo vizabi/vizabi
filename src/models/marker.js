@@ -45,6 +45,22 @@ var Marker = Model.extend({
       }));
     }
   },
+  
+  /**
+   * Sets the visible entities
+   * @param {Array} arr
+   */
+  setVisible: function(arr) {
+    this._visible = arr;
+  },
+
+  /**
+   * Gets the visible entities
+   * @returns {Array} visible
+   */
+  getVisible: function(arr) {
+    return this._visible;
+  },
 
   /**
    * Gets the selected items

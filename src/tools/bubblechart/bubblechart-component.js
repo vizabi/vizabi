@@ -689,17 +689,17 @@ var BubbleChartComp = Component.extend({
     // get array of GEOs, sorted by the size hook
     // that makes larger bubbles go behind the smaller ones
     var endTime = this.model.time.end;
-    var entities = getKeys.call(this);
-    this.model.entities.setVisible(entities);
+    var markers = getKeys.call(this);
+    this.model.marker.setVisible(markers);
 
     //unselecting bubbles with no data is used for the scenario when
     //some bubbles are selected and user would switch indicator.
     //bubbles would disappear but selection would stay
     if (!this.model.time.splash) {
-      this.unselectBubblesWithNoData(entities);
+      this.unselectBubblesWithNoData(markers);
     }
     this.entityBubbles = this.bubbleContainer.selectAll('circle.vzb-bc-entity')
-      .data(this.model.entities.getVisible(), function(d) {return d[KEY]}); // trails have not keys
+      .data(this.model.marker.getVisible(), function(d) {return d[KEY]}); // trails have not keys
 
     //exit selection
     this.entityBubbles.exit().remove();
