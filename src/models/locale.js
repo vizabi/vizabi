@@ -1,5 +1,6 @@
 import * as utils from 'base/utils';
 import DataConnected from 'models/dataconnected';
+import Data from 'models/data';
 
 // this and many other locale information should at some point be stored in an external file with locale information (rtl, date formats etc)
 var rtlLocales = ['ar', 'ar-SA'];
@@ -38,21 +39,25 @@ var LocaleModel = DataConnected.extend({
   },
 
   loadData: function() {
+    var promises;
 
-    var _this = this;
     this.setReady(false);
     this._loadCall = true;
 
-    var conceptPropsPromise = this.getClosestModel('data').loadConceptProps();
-    var filePromise = new Promise((resolve, reject) => {
-      d3.json(this.filePath + _this.id + ".json", (error, strings) => {
-        if (error) reject(error);
-        this.handleNewStrings(strings)
-        resolve();
-      });
-    });
+    // load new concept properties for each data source.
+    // this should be done with listeners, but the load promise can't be returned
+    // through the listeners
+    promises = Data.instances.map(dataSource => dataSource.loadConceptProps());
+    promises.push(new Promise((resolve, reject) => {
+        d3.json(this.filePath + this.id + ".json", (error, strings) => {
+          if (error) reject(error);
+          this.handleNewStrings(strings)
+          resolve();
+        });
+      })
+    );
 
-    return Promise.all([filePromise, conceptPropsPromise])
+    return Promise.all(promises)
       .then(() => this.trigger('translate'));
   },
 
