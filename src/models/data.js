@@ -173,7 +173,8 @@ var DataModel = Model.extend({
     }
 
     return new readerClass({
-      path: this.path
+      path: this.path,
+      delimiter: this.delimiter
     });
   },
 

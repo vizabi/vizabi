@@ -25,6 +25,7 @@ const CSVReader = Reader.extend({
     this._name = 'csv';
     this._data = [];
     this._basepath = readerInfo.path;
+    this.d3reader = readerInfo.delimiter? d3.dsv(readerInfo.delimiter, "text/plain") : d3.csv;
 
     if (!this._basepath) {
       utils.error('Missing base path for csv reader');
@@ -76,7 +77,7 @@ const CSVReader = Reader.extend({
 
       data ?
         resolve(data) :
-        d3.csv(path)
+        this.d3reader(path)
           .get((error, result) => {
             if (!result) {
               return reject(`No permissions or empty file: ${path}. ${error}`);
