@@ -72,6 +72,11 @@ var Hook = DataConnected.extend({
     this.buildScale(newValue);
   },
 
+  preloadData: function() {
+    this.dataSource = this.getClosestModel(this.data);
+    return this._super();
+  },
+
   /**
    * Hooks loads data, models ask children to load data
    * Basically, this method:
