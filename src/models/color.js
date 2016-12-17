@@ -265,7 +265,7 @@ var ColorModel = Hook.extend({
    * Gets the domain for this hook
    * @returns {Array} domain
    */
-  buildScale: function() {
+  buildScale: function(scaleType = this.scaleType) {
     var _this = this;
 
     var paletteObject = _this.getPalette();
@@ -274,7 +274,7 @@ var ColorModel = Hook.extend({
 
     this._hasDefaultColor = domain.indexOf("_default") > -1;
 
-    if(this.scaleType == "time") {
+    if(scaleType == "time") {
 
       var timeMdl = this._space.time;
       var limits = timeMdl.splash ?
@@ -284,63 +284,53 @@ var ColorModel = Hook.extend({
 
       var singlePoint = (limits.max - limits.min == 0);
 
-      domain = domain.sort(function(a,b){return a-b});
-      range = domain.map(function(m){
-        return singlePoint? paletteObject[domain[0]] : paletteObject[m]
-      });
-      domain = domain.map(function(m){
-        return limits.min.valueOf() + m/100 * (limits.max.valueOf() - limits.min.valueOf())
-      });
+      domain = domain.sort((a,b) => a-b);
+      range = domain.map((m) => singlePoint? paletteObject[domain[0]] : paletteObject[m]);
+      domain = domain.map((m) => limits.min.valueOf() + m/100 * (limits.max.valueOf() - limits.min.valueOf()));
 
       this.scale = d3.time.scale.utc()
         .domain(domain)
         .range(range)
         .interpolate(d3.interpolateRgb);
-      return;
+
+    }else if(this.use == "indicator"){
+
+      var limits = this.getLimits(this.which);
+      //default domain is based on limits
+      limits = [limits.min, limits.max];
+      //domain from concept properties can override it if defined
+      limits = this.getConceptprops().domain ? this.getConceptprops().domain : limits;
+
+      var singlePoint = (limits[1] - limits[0] == 0);
+
+      domain = domain.sort((a,b) => a-b);
+      range = domain.map((m) => singlePoint? paletteObject[domain[0]] : paletteObject[m]);
+      domain = domain.map((m) => limits[0] + m/100 * (limits[1] - limits[0]));
+
+      if(d3.min(domain)<=0 && d3.max(domain)>=0 && scaleType === "log") scaleType = "genericLog";
+
+      if(scaleType == "log" || scaleType == "genericLog") {
+        var s = d3.scale.genericLog()
+          .domain(limits)
+          .range(limits);
+        domain = domain.map((d) => s.invert(d));
+      }
+      this.scale = d3.scale[scaleType]()
+        .domain(domain)
+        .range(range)
+        .interpolate(d3.interpolateRgb);
+
+    }else{
+      range = range.map((m) => utils.isArray(m)? m[0] : m);
+      
+      scaleType = "ordinal";
+
+      this.scale = d3.scale[scaleType]()
+        .domain(domain)
+        .range(range);
     }
-
-    switch(this.use) {
-      case "indicator":
-        var limits = this.getLimits(this.which);
-        //default domain is based on limits
-        limits = [limits.min, limits.max];
-        //domain from concept properties can override it if defined
-        limits = this.getConceptprops().domain ? this.getConceptprops().domain : limits;
-
-        var singlePoint = (limits[1] - limits[0] == 0);
-
-        domain = domain.sort(function(a,b){return a-b});
-        range = domain.map(function(m){
-          return singlePoint? paletteObject[domain[0]] : paletteObject[m]
-        });
-        domain = domain.map(function(m){
-          return limits[0] + m/100 * (limits[1] - limits[0])
-        });
-
-        var scaleType = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.scaleType === "log")? "genericLog" : this.scaleType;
-
-        if(this.scaleType == "log" || this.scaleType == "genericLog") {
-          var s = d3.scale.genericLog()
-            .domain(limits)
-            .range(limits);
-          domain = domain.map(function(d) {
-            return s.invert(d)
-          });
-        }
-        this.scale = d3.scale[scaleType || "linear"]()
-          .domain(domain)
-          .range(range)
-          .interpolate(d3.interpolateRgb);
-        return;
-
-      default:
-        range = range.map(function(m){ return utils.isArray(m)? m[0] : m; });
-
-        this.scale = d3.scale["ordinal"]()
-          .domain(domain)
-          .range(range);
-        return;
-    }
+    
+    this.scaleType = scaleType;
   }
 
 });

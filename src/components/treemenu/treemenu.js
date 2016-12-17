@@ -1272,11 +1272,13 @@ var TreeMenu = Component.extend({
             d3.event.stopPropagation();
             _this._setModel("scaleType", d, _this._markerID);
           });
+        
+        var mdlScaleType = _this.model.marker[markerID].scaleType;
 
         scaleTypes
           .classed(css.scaletypesDisabled, scaleTypesData.length < 2)
           .classed(css.scaletypesActive, function(d){
-            return d == _this.model.marker[markerID].scaleType && scaleTypesData.length > 1;
+            return (d == mdlScaleType || d === "log" && mdlScaleType === "genericLog") && scaleTypesData.length > 1;
           })
           .text(function(d){
             return _this.translator("scaletype/" + d);
