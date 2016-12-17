@@ -74,20 +74,6 @@ var EntitiesModel = DataConnected.extend({
     this.show = newShow;
   },
 
-  setLabelOffset: function(d, xy) {
-    if(xy[0]===0 && xy[1]===1) return;
-
-    var dimension = this.getDimension();
-    var value = d[dimension];
-
-    utils.find(this.select, function(d) {
-      return d[dimension] === value;
-    }).labelOffset = [Math.round(xy[0]*1000)/1000, Math.round(xy[1]*1000)/1000];
-
-    //force the model to trigger events even if value is the same
-    this.set("select", this.select, true);
-  },
-
   /**
    * Selects an entity from the set
    * @returns {Boolean} whether the item is shown or not

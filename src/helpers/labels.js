@@ -52,7 +52,7 @@ var label = function(context) {
           _this.druging = null;
           cache.labelOffset[0] = cache.labelX_;
           cache.labelOffset[1] = cache.labelY_;
-          _this.model.entities.setLabelOffset(d, [cache.labelX_, cache.labelY_]);
+          _this.model.marker.setLabelOffset(d, [cache.labelX_, cache.labelY_]);
         }
       });
 

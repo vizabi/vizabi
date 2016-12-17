@@ -225,6 +225,17 @@ var Marker = Model.extend({
     this.select = [];
   },
 
+  setLabelOffset: function(d, xy) {
+    if(xy[0]===0 && xy[1]===1) return;
+
+    this.select
+      .find(selectedMarker => utils.comparePlainObjects(selectedMarker, d))
+      .labelOffset = [Math.round(xy[0]*1000)/1000, Math.round(xy[1]*1000)/1000];
+
+    //force the model to trigger events even if value is the same
+    this.set("select", this.select, true);
+  },
+
   checkTimeLimits: function() {
     
     var time = this._parent.time;
