@@ -157,17 +157,14 @@ var ColorModel = Hook.extend({
 
   _setSyncModel: function(model, marker, entities) {
     if(model == marker){
-      /*TODO: when WS will learn to respond correctly to the queries
-      outside the same entity domain this can be reduced to
-      just {dim: this.which}, without any show part #2103*/
       var newFilter = {
         dim: this.which,
         show: {}
       };
-      /*END OF TODO*/
+      marker.setDataSourceForAllSubhooks(this.data);      
       entities.set(newFilter, false, false);
     }else{
-      if(model.use == "property") model.set('which', this.which, false, false);
+      if(model.use == "property") model.set({which: this.which, data: this.data}, false, false);
     }
   },
 

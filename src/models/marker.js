@@ -11,6 +11,12 @@ var Marker = Model.extend({
     this._super(name, value, parent, binds, persistent);
     this.on('ready', this.checkTimeLimits.bind(this));
   },
+  
+  setDataSourceForAllSubhooks: function(data){
+    var obj = {};
+    this.getSubhooks().forEach((hook) => { obj[hook._name] = {data: data} });
+    this.set(obj, null, false);
+  },
 
   checkTimeLimits: function() {
     
