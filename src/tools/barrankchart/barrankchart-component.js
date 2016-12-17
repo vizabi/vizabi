@@ -104,7 +104,7 @@ const BarRankChart = Component.extend({
     //this.year = new DynamicBackground(this.yearEl);
     this.header = this.element.select('.vzb-br-header');
     this.infoEl = this.element.select('.vzb-br-axis-info');
-    this.barViewport = this.element.select('.barsviewport');
+    this.barViewport = this.element.select('.vzb-br-barsviewport');
     this.barSvg = this.element.select('.vzb-br-bars-svg');
     this.barContainer = this.element.select('.vzb-br-bars');
     this.dataWarningEl = this.element.select('.vzb-data-warning');
@@ -226,7 +226,7 @@ const BarRankChart = Component.extend({
         barMargin: 3,
         barRectMargin: 5,
         barValueMargin: 5,
-        scrollMargin: 18,
+        scrollMargin: 20,
       },
       medium: {
         margin: { top: 60, right: 5, left: 5, bottom: 20 },
@@ -237,7 +237,7 @@ const BarRankChart = Component.extend({
         barMargin: 3,
         barRectMargin: 5,
         barValueMargin: 5,
-        scrollMargin: 18,
+        scrollMargin: 25,
       },
       large: {
         margin: { top: 60, right: 5, left: 5, bottom: 20 },
@@ -248,7 +248,7 @@ const BarRankChart = Component.extend({
         barMargin: 3,
         barRectMargin: 5,
         barValueMargin: 5,
-        scrollMargin: 18,
+        scrollMargin: 25,
       }
     };
 
@@ -259,10 +259,7 @@ const BarRankChart = Component.extend({
         infoElHeight: 25,
         infoElMargin: 10,
         barHeight: 25,
-        barMargin: 6,
-        barRectMargin: 5,
-        barValueMargin: 5,
-        scrollMargin: 18,
+        barMargin: 6
       },
       large: {
         margin: { top: 60, right: 10, left: 10, bottom: 40 },
@@ -270,10 +267,7 @@ const BarRankChart = Component.extend({
         infoElHeight: 16,
         barHeight: 25,
         infoElMargin: 10,
-        barMargin: 6,
-        barRectMargin: 5,
-        barValueMargin: 5,
-        scrollMargin: 18,
+        barMargin: 6
       }
     };
 
