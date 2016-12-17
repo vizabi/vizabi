@@ -296,20 +296,15 @@ var ColorLegend = Component.extend({
           .on("mouseout", _this._interact().mouseout)
           .on("click", _this._interact().clickToSelect);
 
-        var labelsAvailable = !!(_this.frame||{}).label;
-
         colorOptions.each(function(d, index) {
           d3.select(this).select(".vzb-cl-color-sample")
             .style("background-color", cScale(d[_this.colorlegendDim]))
             .style("border", "1px solid " + cScale(d[_this.colorlegendDim]));
           //Apply names to color legend entries if color is a property
           var label = _this.colorlegendMarker ? _this.frame.label[d[_this.colorlegendDim]] : null;
-          if(!label && label!==0) labelsAvailable = false;
+          if(!label && label!==0) label = d[_this.colorlegendDim];
           d3.select(this).select(".vzb-cl-color-legend").text(label);
         });
-
-        //switch to compact mode (remove labels) when we have no labels to show
-        colorOptions.classed("vzb-cl-compact", !labelsAvailable);
 
       } else {
 
