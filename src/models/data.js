@@ -328,6 +328,14 @@ var DataModel = Model.extend({
        return this.conceptDictionary;
      }
   },
+  
+  getDatasetName: function(){
+    if(this.readerObject.getDatasetInfo) {
+      var meta = this.readerObject.getDatasetInfo();
+      return meta.name + (meta.version ? " " + meta.version : "");
+    }
+    return this._name;
+  },
 
   _getCacheKey: function(frames, keys) {
     var result = frames[0] + " - " + frames[frames.length-1];

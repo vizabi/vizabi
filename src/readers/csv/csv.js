@@ -68,6 +68,16 @@ const CSVReader = Reader.extend({
       })
       .catch(utils.error);
   },
+  
+  
+  /**
+   * This function returns info about the dataset
+   * in case of CSV reader it's just the name of the file
+   * @returns {object} object of info about the dataset
+   */
+  getDatasetInfo: function(){
+    return {name: this._basepath.split("/").pop()};
+  },
 
   load() {
     const { _basepath: path } = this;
