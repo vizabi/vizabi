@@ -274,8 +274,26 @@ var DataModel = Model.extend({
 
     this.conceptDictionary = {_default: {concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root"}};
 
+    var dimensions = [];
+    utils.forEach(this._root.state._data, (mdl) => {
+      var dim = mdl.getDimension();
+      if(dim) dimensions.push(dim);
+    });
+    var animatable = this._root.state.time.dim;
+    
     this.getData(dataId).forEach(d => {
       var concept = {};
+      
+      //guessing the concept types based on state
+      if(!d.concept_type){
+        if(animatable === d.concept) {
+          d.concept_type = "time";
+        }else if(dimensions.indexOf(d.concept)>-1) {
+          d.concept_type = "entity_set";
+        }else{
+          d.concept_type = "measure";
+        }
+      }
       
       concept["use"] = d.concept_type;
       if(d.concept_type) concept["use"] = (d.concept_type=="measure" || d.concept_type=="time")?"indicator":"property";
