@@ -23,6 +23,7 @@ var ModelLeaf = EventSource.extend({
 
     this._name = name;
     this._parent = parent;
+    this._root = parent._root;
     this.set(value, false, persistent);
     this.on(binds); // after super so there is an .events object
   },
@@ -89,6 +90,7 @@ var Model = EventSource.extend({
     this._data = {};
     //holds attributes of this model
     this._parent = parent;
+    this._root = parent? parent._root : this;
     this._name = name;
     this._ready = false;
     this._readyOnce = false;
