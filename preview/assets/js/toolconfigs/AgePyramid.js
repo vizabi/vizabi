@@ -34,13 +34,10 @@ var VIZABI_MODEL = {
           "$gte": 0
         }
       },
-      "grouping": 1,
-      "_multiple": true
+      "grouping": 1
     },
     "entities_stack": {
-      "space": ["entities_age", "entities_side"],
-      "dim": "education_attainment",
-      "_multiple": true
+      "dim": "education_attainment"
     },
     "entities_side": {
       "dim": "population_group"
@@ -59,7 +56,8 @@ var VIZABI_MODEL = {
         "use": "indicator",
         "which": "age",
         "domainMax": 100,
-        "domainMin": 0
+        "domainMin": 0,
+        "_important": false
       },
       "axis_x": {
         "use": "indicator",
@@ -76,7 +74,7 @@ var VIZABI_MODEL = {
       "hook_side": {
         "use": "property",
         "which": "population_group"
-      }
+      },
     },
     "marker_side": {
       "space": ["entities", "entities_side", "time"],

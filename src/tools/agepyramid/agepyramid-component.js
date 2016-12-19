@@ -73,7 +73,7 @@ var AgePyramid = Component.extend({
       "change:entities.show": function(evt) {
         console.log('Trying to change show');
       },
-      "change:stack.select": function(evt) {
+      "change:marker.select": function(evt) {
         _this._selectBars();
       },
       "change:marker.color.palette": function (evt) {
@@ -469,7 +469,7 @@ var AgePyramid = Component.extend({
 
     var domain = this.yScale.domain();
 
-    this.model.age.setVisible(markers);
+    //this.model.age.setVisible(markers);
 
     var nextStep = d3.bisectLeft(this.timeSteps, time.value);
 
@@ -558,11 +558,11 @@ var AgePyramid = Component.extend({
           .on("mouseout", _this.interaction.unhighlightBars)
           .on("click", function(d, i) {
             if(utils.isTouchDevice()) return;
-            _this.model.stack.selectEntityMD(d);
+            _this.model.marker.selectMarker(d);
           })
           .onTap(function(d) {
             d3.event.stopPropagation();
-            _this.model.stack.selectEntityMD(d);
+            _this.model.marker.selectMarker(d);
           });
 
     // this.stackBars = this.bars.selectAll('.vzb-bc-bar')
@@ -732,7 +732,7 @@ var AgePyramid = Component.extend({
     var stackDim = this.STACKDIM;
     var ageDim = this.AGEDIM;
     var sideDim = this.SIDEDIM;
-    var selected = this.model.stack.select;
+    var selected = this.model.marker.select;
 
     this._unselectBars();
 
