@@ -132,7 +132,7 @@ var TimeSlider = Component.extend({
           _this.updateSelectedEndLimiter();
         }
       },
-      'change:entities.select': function(evt, path) {
+      'change:marker.select': function(evt, path) {
         _this.setSelectedLimits();
       }
     };
@@ -361,7 +361,7 @@ var TimeSlider = Component.extend({
     this._setSelectedLimitsId++;
     var _setSelectedLimitsId = this._setSelectedLimitsId;
 
-    var select = _this.model.entities.select;
+    var select = _this.model.marker.select;
     if(select.length == 0) {
       _this.model.time.set({
         startSelected: new Date(_this.model.time.start),

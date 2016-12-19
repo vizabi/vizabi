@@ -49,7 +49,7 @@ var BubbleChartComp = Component.extend({
     this.model_binds = {
       'change:time.playing': function(evt, original) {
         if(utils.isTouchDevice() && _this.model.time.playing && _this.someHighlighted) {
-          _this.model.entities.clearHighlighted();
+          _this.model.marker.clearHighlighted();
         }
       },
       'change:time.start': function(evt, original) {
@@ -136,7 +136,7 @@ var BubbleChartComp = Component.extend({
 
         //console.log("EVENT change:marker", evt);
       },
-      "change:entities.select": function(evt, path) {
+      "change:marker.select": function(evt, path) {
         if(!_this._readyOnce || !_this.entityBubbles) return;
         //console.log("EVENT change:entities:select");
         
@@ -152,7 +152,7 @@ var BubbleChartComp = Component.extend({
         _this.updateBubbleOpacity();
         _this._updateDoubtOpacity();
       },
-      "change:entities.highlight": function(evt, path) {
+      "change:marker.highlight": function(evt, path) {
         if(!_this._readyOnce) return;
         //path have values if trail is highlighted
         if(path != 'highlight') {
@@ -216,10 +216,10 @@ var BubbleChartComp = Component.extend({
       //   _this.redrawDataPointsOnlyColors();
       //   _this._trails.run("recolor");
       // },
-      'change:entities.opacitySelectDim': function() {
+      'change:marker.opacitySelectDim': function() {
         _this.updateBubbleOpacity();
       },
-      'change:entities.opacityRegular': function() {
+      'change:marker.opacityRegular': function() {
         _this.updateBubbleOpacity();
         _this._trails.run("opacityHandler");
       },
@@ -689,17 +689,17 @@ var BubbleChartComp = Component.extend({
     // get array of GEOs, sorted by the size hook
     // that makes larger bubbles go behind the smaller ones
     var endTime = this.model.time.end;
-    var entities = getKeys.call(this);
-    this.model.entities.setVisible(entities);
+    var markers = getKeys.call(this);
+    this.model.marker.setVisible(markers);
 
     //unselecting bubbles with no data is used for the scenario when
     //some bubbles are selected and user would switch indicator.
     //bubbles would disappear but selection would stay
     if (!this.model.time.splash) {
-      this.unselectBubblesWithNoData(entities);
+      this.unselectBubblesWithNoData(markers);
     }
     this.entityBubbles = this.bubbleContainer.selectAll('circle.vzb-bc-entity')
-      .data(this.model.entities.getVisible(), function(d) {return d[KEY]}); // trails have not keys
+      .data(this.model.marker.getVisible(), function(d) {return d[KEY]}); // trails have not keys
 
     //exit selection
     this.entityBubbles.exit().remove();
@@ -735,18 +735,18 @@ var BubbleChartComp = Component.extend({
   unselectBubblesWithNoData: function(entities){
       var _this = this;
       var KEY = this.KEY;
-      if(!this.model.entities.select.length) return;
+      if(!this.model.marker.select.length) return;
 
       var _select = [];
       var keys = entities.map(function(d) {
         return d[KEY];
       });
 
-      this.model.entities.select.forEach(function(d){
+      this.model.marker.select.forEach(function(d){
         if(keys.indexOf(d[KEY]) !== -1) _select.push(d);
       });
 
-      if(_select.length !== _this.model.entities.select.length) _this.model.entities.select = _select;
+      if(_select.length !== _this.model.marker.select.length) _this.model.marker.select = _select;
   },
 
   _reorderEntities: function() {
@@ -774,24 +774,24 @@ var BubbleChartComp = Component.extend({
 
     return {
       mouseover: function(d, i) {
-        _this.model.entities.highlightEntity(d);
+        _this.model.marker.highlightMarker(d);
 
         _this._labels.showCloseCross(d, true);
       },
 
       mouseout: function(d, i) {
-        _this.model.entities.clearHighlighted();
+        _this.model.marker.clearHighlighted();
 
         _this._labels.showCloseCross(d, false);
       },
 
       click: function(d, i) {
         if(_this.draggingNow) return;
-        var isSelected = _this.model.entities.isSelected(d);
-        _this.model.entities.selectEntity(d);
+        var isSelected = _this.model.marker.isSelected(d);
+        _this.model.marker.selectMarker(d);
         //return to highlighted state
         if(!utils.isTouchDevice()) {
-            if(isSelected) _this.model.entities.highlightEntity(d);
+            if(isSelected) _this.model.marker.highlightMarker(d);
             _this.highlightDataPoints();
         }
       }
@@ -1079,7 +1079,7 @@ var BubbleChartComp = Component.extend({
       valuesNow = _this.frame;
       _this.entityBubbles.each(function(d, index) {
 
-      var selected = _this.model.entities.isSelected(d);
+      var selected = _this.model.marker.isSelected(d);
 
       var valueC = selected ? valuesNow.color[d[KEY]] : valuesLocked.color[d[KEY]];
 
@@ -1090,7 +1090,7 @@ var BubbleChartComp = Component.extend({
       //update lines of labels
       if(selected) {
 
-        var select = utils.find(_this.model.entities.select, function(f) {
+        var select = utils.find(_this.model.marker.select, function(f) {
           return f[KEY] == d[KEY]
         });
 
@@ -1134,7 +1134,7 @@ var BubbleChartComp = Component.extend({
       valuesNow = _this.frame;
       _this.entityBubbles.each(function(d, index) {
 
-      var selected = _this.model.entities.isSelected(d);
+      var selected = _this.model.marker.isSelected(d);
 
       var valueS = selected ? valuesNow.size[d[KEY]] : valuesLocked.size[d[KEY]];
       if(valueS == null) return;
@@ -1145,7 +1145,7 @@ var BubbleChartComp = Component.extend({
       //update lines of labels
       if(selected) {
 
-        var select = utils.find(_this.model.entities.select, function(f) {
+        var select = utils.find(_this.model.marker.select, function(f) {
           return f[KEY] == d[KEY]
         });
 
@@ -1188,7 +1188,7 @@ var BubbleChartComp = Component.extend({
 
             // each bubble
             _this.entityBubbles.each(function(d, index) {
-                var frame = _this.model.entities.isSelected(d) ? _this.frame : lockedFrame
+                var frame = _this.model.marker.isSelected(d) ? _this.frame : lockedFrame
                 _this._updateBubble(d, frame, index, d3.select(this), duration);
             });
         });
@@ -1297,12 +1297,12 @@ var BubbleChartComp = Component.extend({
     var _this = this;
     var KEY = this.KEY;
 
-    // only for selected entities
-    if(_this.model.entities.isSelected(d)) {
+    // only for selected markers
+    if(_this.model.marker.isSelected(d)) {
 
       var cache = {};
 
-      var select = utils.find(_this.model.entities.select, function(f) {
+      var select = utils.find(_this.model.marker.select, function(f) {
         return f[KEY] == d[KEY]
       });
 
@@ -1375,7 +1375,7 @@ var BubbleChartComp = Component.extend({
     var KEY = this.KEY;
 
     if(utils.isTouchDevice()) {
-      _this.model.entities.clearHighlighted();
+      _this.model.marker.clearHighlighted();
       _this._labels.showCloseCross(null, false);
     } else {
       //hide tooltip
@@ -1383,7 +1383,7 @@ var BubbleChartComp = Component.extend({
       _this._setBubbleCrown();
     }
 
-    _this.someSelected = (_this.model.entities.select.length > 0);
+    _this.someSelected = (_this.model.marker.select.length > 0);
     _this.nonSelectedOpacityZero = false;
   },
 
@@ -1528,14 +1528,14 @@ var BubbleChartComp = Component.extend({
     var TIMEDIM = this.TIMEDIM;
     var KEY = this.KEY;
 
-    this.someHighlighted = (this.model.entities.highlight.length > 0);
+    this.someHighlighted = (this.model.marker.highlight.length > 0);
 
     this.updateBubbleOpacity();
 
-    if(this.model.entities.highlight.length === 1) {
-      var d = utils.clone(this.model.entities.highlight[0]);
+    if(this.model.marker.highlight.length === 1) {
+      var d = utils.clone(this.model.marker.highlight[0]);
 
-      if(_this.model.ui.chart.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)) {
+      if(_this.model.ui.chart.lockNonSelected && _this.someSelected && !_this.model.marker.isSelected(d)) {
         d[TIMEDIM] = _this.model.time.timeFormat.parse("" + _this.model.ui.chart.lockNonSelected);
       } else {
         d[TIMEDIM] = _this.model.time.timeFormat.parse("" + d.trailStartTime) || _this.time;
@@ -1558,20 +1558,20 @@ var BubbleChartComp = Component.extend({
           //show tooltip
           var text = "";
           var hoverTrail = false;
-          if(_this.model.entities.isSelected(d) && _this.model.ui.chart.trails) {
+          if(_this.model.marker.isSelected(d) && _this.model.ui.chart.trails) {
             text = _this.model.time.timeFormat(_this.time);
-            var selectedData = utils.find(_this.model.entities.select, function(f) {
+            var selectedData = utils.find(_this.model.marker.select, function(f) {
               return f[KEY] == d[KEY]
             });
             hoverTrail = text !== selectedData.trailStartTime && !d3.select(d3.event.target).classed('bubble-' + d[KEY]);
             text = text !== selectedData.trailStartTime && _this.time === d[TIMEDIM] ? text : '';
           } else {
-            text = _this.model.entities.isSelected(d) ? '': values.label[d[KEY]];
+            text = _this.model.marker.isSelected(d) ? '': values.label[d[KEY]];
           }
 
           _this._labels.highlight(null, false);
           _this._labels.highlight(d, true);
-          if(_this.model.entities.isSelected(d)) {
+          if(_this.model.marker.isSelected(d)) {
             var skipCrownInnerFill = !d.trailStartTime || d.trailStartTime == _this.model.time.timeFormat(_this.time);
             _this._setBubbleCrown(x, y, s, c, skipCrownInnerFill);
           }
@@ -1585,7 +1585,7 @@ var BubbleChartComp = Component.extend({
             _this._setTooltip(text, x, y, s + 3, c);
           }
 
-          var selectedData = utils.find(_this.model.entities.select, function(f) {
+          var selectedData = utils.find(_this.model.marker.select, function(f) {
             return f[KEY] == d[KEY];
           });
           if(selectedData) {
@@ -1612,10 +1612,10 @@ var BubbleChartComp = Component.extend({
     //if(!duration)duration = 0;
 
     var OPACITY_HIGHLT = 1.0;
-    var OPACITY_HIGHLT_DIM = this.model.entities.opacityHighlightDim;
-    var OPACITY_SELECT = this.model.entities.opacityRegular;
-    var OPACITY_REGULAR = this.model.entities.opacityRegular;
-    var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
+    var OPACITY_HIGHLT_DIM = this.model.marker.opacityHighlightDim;
+    var OPACITY_SELECT = this.model.marker.opacityRegular;
+    var OPACITY_REGULAR = this.model.marker.opacityRegular;
+    var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
 
     this.entityBubbles
       //.transition().duration(duration)
@@ -1623,12 +1623,12 @@ var BubbleChartComp = Component.extend({
 
         if(_this.someHighlighted) {
           //highlight or non-highlight
-          if(_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
+          if(_this.model.marker.isHighlighted(d)) return OPACITY_HIGHLT;
         }
 
         if(_this.someSelected) {
           //selected or non-selected
-          return _this.model.entities.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
+          return _this.model.marker.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
         }
 
         if(_this.someHighlighted) return OPACITY_HIGHLT_DIM;
@@ -1637,17 +1637,17 @@ var BubbleChartComp = Component.extend({
       });
 
 
-    var nonSelectedOpacityZero = _this.model.entities.opacitySelectDim < .01;
+    var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
 
     // when pointer events need update...
     if(nonSelectedOpacityZero != this.nonSelectedOpacityZero) {
       this.entityBubbles.style("pointer-events", function(d) {
-        return(!_this.someSelected || !nonSelectedOpacityZero || _this.model.entities.isSelected(d)) ?
+        return(!_this.someSelected || !nonSelectedOpacityZero || _this.model.marker.isSelected(d)) ?
           "visible" : "none";
       });
     }
 
-    this.nonSelectedOpacityZero = _this.model.entities.opacitySelectDim < .01;
+    this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
   }
 
 });

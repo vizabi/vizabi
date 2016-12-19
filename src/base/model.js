@@ -462,7 +462,8 @@ var Model = EventSource.extend({
     );
   },
 
-  triggerLoadError: function() {
+  triggerLoadError: function(err) {
+    utils.error(err);
     this.trigger('load_error');
   },
 
@@ -696,6 +697,8 @@ function initSubmodel(attr, val, ctx, persistent) {
       'change': onChange,
       //loading has started in this submodel (multiple times)
       'hook_change': onHookChange,
+      // error triggered in loading
+      'load_error': evt => ctx.trigger(evt),
         //loading has ended in this submodel (multiple times)
       'ready': onReady
     };

@@ -167,7 +167,7 @@ export default Class.extend({
                 }
                 this.quitZoom = false;
 
-                _this.model._data.entities.clearHighlighted();
+                _this.model._data.marker.clearHighlighted();
                 _this._setTooltip();
 
                 var zoom = d3.event.scale;

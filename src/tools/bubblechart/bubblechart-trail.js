@@ -25,7 +25,7 @@ export default Class.extend({
       })
     } else {
       _context._trails.run("remove");
-      _context.model.entities.select.forEach(function(d) {
+      _context.model.marker.select.forEach(function(d) {
         d.trailStartTime = null;
       });
     }
@@ -41,11 +41,11 @@ export default Class.extend({
 
       var timePoints = _context.model.time.getAllSteps();
 
-      //work with entities.select (all selected entities), if no particular selection is specified
+      //work with marker.select (all selected entities), if no particular selection is specified
       var promises = [];
-      selection = selection == null ? _context.model.entities.select : [selection];
+      selection = selection == null ? _context.model.marker.select : [selection];
       _this._clearActions(selection);
-      _this.trailsData = _context.model.entities.select.map(function(d) {
+      _this.trailsData = _context.model.marker.select.map(function(d) {
         var r = {
           status: "created",
           selectedEntityData: d
@@ -95,7 +95,7 @@ export default Class.extend({
                 _context._axisProjections(pointer);
                 _context._labels.highlight(d, true);
                 var text = _context.model.time.timeFormat(segment.t);
-                var selectedData = utils.find(_context.model.entities.select, function(f) {
+                var selectedData = utils.find(_context.model.marker.select, function(f) {
                   return f[KEY] == d[KEY]
                 });
                 _context.model.marker.getFrame(pointer.time, function(values) {
@@ -107,7 +107,7 @@ export default Class.extend({
                     _context._setTooltip(text, x, y, s + 3, c);
                   }
                   _context._setBubbleCrown(x, y, s, c);
-                  _context.model.entities.getModelObject("highlight").trigger('change', {'size': values.size[pointer[KEY]], 'color': values.color[pointer[KEY]]});
+                  _context.model.marker.getModelObject("highlight").trigger('change', {'size': values.size[pointer[KEY]], 'color': values.color[pointer[KEY]]});
                 });
                 //change opacity to OPACITY_HIGHLT = 1.0;
                 d3.select(this).style("opacity", 1.0);
@@ -118,8 +118,8 @@ export default Class.extend({
                 _context._setTooltip();
                 _context._setBubbleCrown();
                 _context._labels.highlight(null, false);
-                _context.model.entities.getModelObject("highlight").trigger('change', null);
-                d3.select(this).style("opacity", _context.model.entities.opacityRegular);
+                _context.model.marker.getModelObject("highlight").trigger('change', null);
+                d3.select(this).style("opacity", _context.model.marker.opacityRegular);
               })
               .each(function(segment, index) {
                 var view = d3.select(this);
@@ -191,12 +191,12 @@ export default Class.extend({
 
     this._isCreated.then(function() {
       //quit if function is called accidentally
-      if((!_context.model.ui.chart.trails || !_context.model.entities.select.length) && actions != "remove") return;
+      if((!_context.model.ui.chart.trails || !_context.model.marker.select.length) && actions != "remove") return;
 
       if(!duration) duration = 0;
 
-      //work with entities.select (all selected entities), if no particular selection is specified
-      selection = selection == null ? _context.model.entities.select : [selection];
+      //work with marker.select (all selected entities), if no particular selection is specified
+      selection = selection == null ? _context.model.marker.select : [selection];
       for (var i = 0; i < actions.length; i++) {
         if (["resize", "recolor"].indexOf(actions[i]) != -1) {
           var action = actions.splice(i, 1).pop();
@@ -351,7 +351,7 @@ export default Class.extend({
 
       view
         //.transition().duration(duration).ease("linear")
-        .style("opacity", d.opacity || _context.model.entities.opacityRegular);
+        .style("opacity", d.opacity || _context.model.marker.opacityRegular);
     });
   },
 
