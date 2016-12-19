@@ -137,9 +137,6 @@ var AgePyramid = Component.extend({
     this.titleRight = this.element.select('.vzb-bc-title-right');
     this.year = this.element.select('.vzb-bc-year');
 
-    //only allow selecting one at a time
-    this.model.age.selectMultiple(true);
-
     var _this = this;
     this.on("resize", function() {
       _this._updateEntities();

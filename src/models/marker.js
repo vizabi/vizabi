@@ -12,11 +12,11 @@ var Marker = Model.extend({
     highlight: [],
     opacityHighlightDim: 0.1,
     opacitySelectDim: 0.3,
-    opacityRegular: 1
+    opacityRegular: 1,
+    allowSelectMultiple: true
   },
 
   init: function(name, value, parent, binds, persistent) {
-    this._multiple = true;
     this._visible = [];
 
 
@@ -27,9 +27,8 @@ var Marker = Model.extend({
 
   /**
    * Validates the model
-   * @param {boolean} silent Block triggering of events
    */
-  validate: function(silent) {
+  validate: function() {
     var _this = this;
     var dimension = this.getDimension();
     var visible_array = this._visible.map(function(d) {
@@ -75,15 +74,7 @@ var Marker = Model.extend({
       return this.select;
   },
 
-  /**
-   * Determines whether multiple markers can be selected
-   * @param {Boolean} bool
-   */
-  selectMultiple: function(bool) {
-    this._multiple = bool;
-  },
-
-  selectMarker: function(d, timeDim, timeFormatter) {
+  selectMarker: function(d) {
     var _this = this;
     var value = this._createValue(d);
     if(this.isSelected(d)) {
@@ -91,10 +82,7 @@ var Marker = Model.extend({
         return JSON.stringify(_this._createValue(d)) !== JSON.stringify(value);
       });
     } else {
-      if(timeDim && timeFormatter) {
-        value["trailStartTime"] = timeFormatter(d[timeDim]);
-      }
-      this.select = (this._multiple) ? this.select.concat(value) : [value];
+      this.select = (this.allowSelectMultiple) ? this.select.concat(value) : [value];
     }
   },
 
@@ -102,7 +90,7 @@ var Marker = Model.extend({
    * Select all entities
    */
   selectAll: function(timeDim, timeFormatter) {
-    if(!this._multiple) return;
+    if(!this.allowSelectMultiple) return;
 
     var added,
       dimension = this.getDimension();
@@ -110,9 +98,6 @@ var Marker = Model.extend({
     var select = this._visible.map(function(d) {
       added = {};
       added[dimension] = d[dimension];
-      if(timeDim && timeFormatter) {
-        added["trailStartTime"] = timeFormatter(d[timeDim]);
-      }
       return added;
     });
 
@@ -173,19 +158,10 @@ var Marker = Model.extend({
   /**
    * Highlights an entity from the set
    */
-  highlightMarker: function(d, timeDim, timeFormatter, copyDatum) {
+  highlightMarker: function(d) {
     var value = this._createValue(d);
     if(!this.isHighlighted(d)) {
-      var added = {};
-      if(copyDatum) {
-        added = utils.clone(d);
-      } else {
-        added = value;
-        if(timeDim && timeFormatter) {
-          added["trailStartTime"] = timeFormatter(d[timeDim]);
-        }
-      }
-      this.setHighlight(this.highlight.concat(added));
+      this.setHighlight(this.highlight.concat(value));
     }
   },
 
