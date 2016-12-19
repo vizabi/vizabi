@@ -17,9 +17,7 @@ var VIZABI_MODEL = {
         "is--country": true
       }
     },
-    "entities_colorlegend": {
-      "opacityRegular": 0.8,
-      "opacityHighlightDim": 0.3,      
+    "entities_colorlegend": {     
       "dim": "world_4region"
     },
     "entities_tags": {
@@ -34,6 +32,7 @@ var VIZABI_MODEL = {
     },
     "marker": {
       "space": ["entities", "time"],
+      "opacityRegular": 0.8,
       "label": {
         "use": "property",
         "which": "name"
@@ -78,8 +77,8 @@ var VIZABI_MODEL = {
     },
     "marker_colorlegend": {
       "space": ["entities_colorlegend"],
-      "type": "geometry",
-      "shape": "svg",
+      "opacityRegular": 0.8,
+      "opacityHighlightDim": 0.3, 
       "label": {
         "use": "property",
         "which": "name"

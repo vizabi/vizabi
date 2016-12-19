@@ -11,9 +11,7 @@ var VIZABI_MODEL = {
         "geo": { "$in": ["usa", "rus", "chn", "nga"] }
       }
     },
-    "entities_colorlegend": {
-      "opacityRegular": 0.8,
-      "opacityHighlightDim": 0.3,  
+    "entities_colorlegend": { 
       "dim": "world_4region"
     },
     "marker": {
@@ -59,6 +57,8 @@ var VIZABI_MODEL = {
     },
     "marker_colorlegend": {
       "space": ["entities_colorlegend"],
+      "opacityRegular": 0.8,
+      "opacityHighlightDim": 0.3, 
       "label": {
         "use": "property",
         "which": "name"

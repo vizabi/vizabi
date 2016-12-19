@@ -43,20 +43,18 @@ var VIZABI_MODEL = {
     },
     "marker_colorlegend":{
       "space": ["entities_colorlegend"],
-        "type": "geometry",
-        "shape": "svg",
-        "label": {
-          "use": "property",
-          "which": "name"
-        },
-        "hook_rank": {
-          "use": "property",
-          "which": "rank"
-        },
-        "hook_geoshape": {
-          "use": "property",
-          "which": "shape_lores_svg"
-        }
+      "label": {
+        "use": "property",
+        "which": "name"
+      },
+      "hook_rank": {
+        "use": "property",
+        "which": "rank"
+      },
+      "hook_geoshape": {
+        "use": "property",
+        "which": "shape_lores_svg"
+      }
     },
     "marker_tags": {
       "space": ["entities_tags"],
