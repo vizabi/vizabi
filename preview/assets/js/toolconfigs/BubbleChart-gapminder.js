@@ -7,8 +7,6 @@ var VIZABI_MODEL = {
       }      
     },
     "entities_colorlegend": {
-      "opacityRegular": 0.8,
-      "opacityHighlightDim": 0.3,
       "dim": "world_4region"
     },
     "entities_tags": {
@@ -60,6 +58,8 @@ var VIZABI_MODEL = {
     },
     "marker_colorlegend":{
       "space": ["entities_colorlegend"],
+      "opacityRegular": 0.8,
+      "opacityHighlightDim": 0.3,
       "label": {
         "use": "property",
         "which": "name"

@@ -11,9 +11,7 @@ var VIZABI_MODEL = {
         "is--country": true
       }
     },
-    "entities_colorlegend": {
-      "opacityRegular": 0.8,
-      "opacityHighlightDim": 0.3,      
+    "entities_colorlegend": { 
       "dim": "world_4region"
     },
     "entities_tags": {
@@ -53,21 +51,21 @@ var VIZABI_MODEL = {
       }
     },
     "marker_colorlegend":{
-      "space": ["entities_colorlegend"],
-        "type": "geometry",
-        "shape": "svg",
-        "label": {
-          "use": "property",
-          "which": "name"
-        },
-        "hook_rank": {
-          "use": "property",
-          "which": "rank"
-        },
-        "hook_geoshape": {
-          "use": "property",
-          "which": "shape_lores_svg"
-        }
+      "space": ["entities_colorlegend"],      
+      "opacityRegular": 0.8,
+      "opacityHighlightDim": 0.3,     
+      "label": {
+        "use": "property",
+        "which": "name"
+      },
+      "hook_rank": {
+        "use": "property",
+        "which": "rank"
+      },
+      "hook_geoshape": {
+        "use": "property",
+        "which": "shape_lores_svg"
+      }
     },
     "marker_tags": {
       "space": ["entities_tags"],

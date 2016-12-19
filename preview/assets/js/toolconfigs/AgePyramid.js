@@ -79,8 +79,6 @@ var VIZABI_MODEL = {
     },
     "marker_colorlegend": {
       "space": ["entities_stack"],
-      "type": "geometry",
-      "shape": "svg",
       "label": {
         "use": "property",
         "which": "education_attainment"

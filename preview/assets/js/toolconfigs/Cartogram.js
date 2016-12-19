@@ -10,8 +10,6 @@ var VIZABI_MODEL = {
     },
     "entities": {
       "dim": "municipality",
-      "opacitySelectDim": .3,
-      "opacityRegular": 1,
       "show": {
         "is--municipality": true
       },
@@ -24,6 +22,8 @@ var VIZABI_MODEL = {
     },
     "marker": {
       "space": ["entities", "time"],
+      "opacitySelectDim": 0.3,
+      "opacityRegular": 1,
       "size": {
         "use": "constant",
         "which": "_default",
@@ -49,8 +49,6 @@ var VIZABI_MODEL = {
     },
     "marker_colorlegend": {
       "space": ["entities_colorlegend"],
-      "type": "geometry",
-      "shape": "svg",
       "label": {
         "use": "property",
         "which": "municipality.name"
