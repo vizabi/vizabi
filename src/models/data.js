@@ -278,7 +278,6 @@ var DataModel = Model.extend({
     this.getData(dataId).forEach(d => {
       var concept = {};
 
-      concept["use"] = d.concept_type;
       if(d.concept_type) concept["use"] = (d.concept_type=="measure" || d.concept_type=="time")?"indicator":"property";
       
       concept["concept_type"] = d.concept_type;
@@ -302,7 +301,7 @@ var DataModel = Model.extend({
           case "time": concept.scales=["time"]; break;
         }
       }
-      if(concept["scales"]==null) concept["scales"] = ["ordinal", "linear", "log"];
+      if(concept["scales"]==null) concept["scales"] = ["linear", "log"];
       if(d.interpolation){
         concept["interpolation"] = d.interpolation;
       }else if(d.concept_type == "measure"){
