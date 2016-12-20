@@ -86,6 +86,12 @@ var BubbleChart = Tool.extend('BubbleChart', {
           conceptIndex: 0
         }
       },
+      entities_colorlegend: {
+        autogenerate: {
+          data: "data",
+          conceptIndex: 0
+        }
+      },
       entities_tags: { },
       marker_tags: {
         space: ["entities_tags"],
@@ -115,12 +121,28 @@ var BubbleChart = Tool.extend('BubbleChart', {
         size: {
         },
         color: {
+          syncModels: ["marker_colorlegend"]
         },
         size_label: {
           /*use size model defaults - will be constant*/
           _important: false,
           extent: [0, 0.33]
         },
+      },
+      "marker_colorlegend":{
+        "space": ["entities_colorlegend"],
+        "label": {
+          "use": "property",
+          "which": "name"
+        },
+        "hook_rank": {
+          "use": "property",
+          "which": "rank"
+        },
+        "hook_geoshape": {
+          "use": "property",
+          "which": "shape_lores_svg"
+        }
       }
     },
     locale: { },
