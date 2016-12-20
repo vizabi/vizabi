@@ -1347,7 +1347,9 @@ var BubbleChartComp = Component.extend({
   _updateSTitle: function(titleS, titleC) {
 
     // vertical text about size and color
-    if (this.activeProfile.hideSTitle) {
+    if (this.activeProfile.hideSTitle 
+        && this.model.ui.dialogs.sidebar.indexOf("colors")>-1
+        && this.model.ui.dialogs.sidebar.indexOf("size")>-1) {
       this.sTitleEl.classed("vzb-invisible", true);
       return;
     }

@@ -29,7 +29,11 @@ var UI = Model.extend({
     var defaults = {
       presentation: false,
       buttons: [],
-      dialogs: []
+      dialogs: {
+        popup: [],
+        sidebar: [],
+        moreoptions: []
+      }
     };
     return utils.deepExtend(this._super(), defaults);
   },
