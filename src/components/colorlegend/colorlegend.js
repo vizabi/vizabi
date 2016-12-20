@@ -30,7 +30,7 @@ var ColorLegend = Component.extend({
 
     this.model_binds = {
       "change:marker.color.scaleType": function(evt, path) {
-        if(!_this._readyOnce || _this.colorModel.use !== "indicator") return;
+        if(!_this._readyOnce || _this.colorModel.isDiscrete()) return;
         _this.updateView();
       },
       "change:marker.color.palette": function(evt, path) {
@@ -38,12 +38,12 @@ var ColorLegend = Component.extend({
         _this.updateView();
       },
       "change:marker.highlight": function(evt, values) {
-        if(_this.colorModel.use !== "property") return;
+        if(!_this.colorModel.isDiscrete()) return;
 
         _this.model.marker.getFrame(_this.model.time.value, function(frame) {
           if(frame) {
             var _hlEntities = _this.model.marker.getHighlighted(_this.KEY);
-            _this.updateGroupsOpacity(_hlEntities.map((d)=>frame["color"][d]));
+            _this.updateGroupsOpacity(_hlEntities.map((d)=>frame[_this.colorModel._name][d]));
           }else{
             _this.updateGroupsOpacity();
           }
@@ -108,7 +108,7 @@ var ColorLegend = Component.extend({
     this.colorlegendDim = this.KEY;
     this.canShowMap = false;
 
-    if(this.colorModel.use == "property" && this.colorlegendMarker) {
+    if(this.colorModel.isDiscrete() && this.colorlegendMarker) {
       if(!this.colorlegendMarker._ready) return;
 
       this.colorlegendDim = this.colorModel.getColorlegendEntities().getDimension();
@@ -156,16 +156,16 @@ var ColorLegend = Component.extend({
     colorOptions.classed("vzb-hidden", hideColorOptions);
 
     //Hide rainbow element if showing minimap or if color is discrete
-    this.rainbowEl.classed("vzb-hidden", this.colorModel.use !== "indicator");
-    this.labelScaleEl.classed("vzb-hidden", this.colorModel.use !== "indicator")
-    this.rainbowLegendEl.classed("vzb-hidden", this.colorModel.use !== "indicator");
+    this.rainbowEl.classed("vzb-hidden", this.colorModel.isDiscrete());
+    this.labelScaleEl.classed("vzb-hidden", this.colorModel.isDiscrete())
+    this.rainbowLegendEl.classed("vzb-hidden", this.colorModel.isDiscrete());
     //Hide minimap if no data to draw it
-    this.minimapEl.classed("vzb-hidden", !canShowMap || this.colorModel.use == "indicator");
+    this.minimapEl.classed("vzb-hidden", !canShowMap || !this.colorModel.isDiscrete());
 
     this.unitDiv.classed("vzb-hidden", true);
     var cScale = this.colorModel.getScale();
 
-    if(this.colorModel.use == "indicator") {
+    if(!this.colorModel.isDiscrete()) {
 
       var gradientWidth = this.rainbowEl.node().getBoundingClientRect().width;
       var paletteKeys = Object.keys(palette).map(parseFloat);
@@ -359,7 +359,7 @@ var ColorLegend = Component.extend({
     return {
       mouseover: function(d, i) {
         //disable interaction if so stated in concept properties
-        if(_this.colorModel.use === "indicator") return;
+        if(!_this.colorModel.isDiscrete()) return;
         
         var view = d3.select(this);
         var target = d[colorlegendDim];
@@ -379,7 +379,7 @@ var ColorLegend = Component.extend({
 
       mouseout: function(d, i) {
         //disable interaction if so stated in concept properties
-        if(_this.colorModel.use === "indicator") return;
+        if(!_this.colorModel.isDiscrete()) return;
         _this.model.marker.clearHighlighted();
       },
       clickToChangeColor: function(d, i) {
@@ -388,7 +388,7 @@ var ColorLegend = Component.extend({
         var palette = _this.colorModel.getPalette();
         var defaultPalette = _this.colorModel.getDefaultPalette();
         var view = d3.select(this);
-        var target = _this.colorModel.use === "indicator"? d.paletteKey : d[colorlegendDim];
+        var target = !_this.colorModel.isDiscrete()? d.paletteKey : d[colorlegendDim];
         _this.colorPicker
           .colorOld(palette[target])
           .colorDef(defaultPalette[target])
@@ -400,7 +400,7 @@ var ColorLegend = Component.extend({
       },
       clickToShow: function(d, i) {
         //disable interaction if so stated in concept properties
-        if(_this.colorModel.use === "indicator") return;
+        if(!_this.colorModel.isDiscrete()) return;
 
         var view = d3.select(this);
         var target = d[colorlegendDim];
@@ -426,7 +426,7 @@ var ColorLegend = Component.extend({
       },
       clickToSelect: function(d, i) {
         //disable interaction if so stated in concept properties
-        if(_this.colorModel.use === "indicator") return;
+        if(!_this.colorModel.isDiscrete()) return;
 
         var view = d3.select(this);
         var target = d[colorlegendDim];
@@ -451,7 +451,7 @@ var ColorLegend = Component.extend({
   },
 
   resize: function() {
-    if(this.colorModel.use == "indicator") {
+    if(!this.colorModel.isDiscrete()) {
       this.updateView();
     }
     this.colorPicker.resize(d3.select('.vzb-colorpicker-svg'));

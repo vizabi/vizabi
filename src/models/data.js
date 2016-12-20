@@ -272,7 +272,7 @@ var DataModel = Model.extend({
 
   handleConceptPropsResponse: function(dataId) {
 
-    this.conceptDictionary = {_default: {concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root"}};
+    this.conceptDictionary = {_default: {concept_type: "string", scales: ["ordinal"], tags: "_root"}};
 
     var dimensions = [];
     utils.forEach(this._root.state._data, (mdl) => {
@@ -322,8 +322,12 @@ var DataModel = Model.extend({
       if(concept["scales"]==null) concept["scales"] = ["ordinal", "linear", "log"];
       if(d.interpolation){
         concept["interpolation"] = d.interpolation;
+      }else if(d.concept_type == "measure"){
+        concept["interpolation"] = concept.scales && concept.scales[0]=="log"? "exp" : "linear";
+      }else if(d.concept_type == "time"){
+        concept["interpolation"] = "linear";        
       }else{
-        if(concept.scales && concept.scales[0]=="log") concept["interpolation"] = "exp";
+        concept["interpolation"] = "stepMiddle";
       }
       concept["domain"] = d.domain;
       concept["tags"] = d.tags;

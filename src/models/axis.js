@@ -5,12 +5,6 @@ import Hook from 'models/hook';
  * VIZABI Axis Model (hook)
  */
 
-var allowTypes = {
-    "indicator": ["linear", "log", "genericLog", "time", "pow"],
-    "property": ["ordinal"],
-    "constant": ["ordinal"]
-};
-
 var AxisModel = Hook.extend({
   
   //some hooks can be important. like axis x and y
@@ -41,10 +35,8 @@ var AxisModel = Hook.extend({
   /**
    * Validates a color hook
    */
-  validate: function() {
-
-    //only some scaleTypes are allowed depending on use. reset to default if inappropriate
-    if(allowTypes[this.use].indexOf(this.scaleType) === -1) this.scaleType = allowTypes[this.use][0];
+  validate: function() {    
+    this._super();
     
     //restore the correct object type for time values
     if(this.scale && this.scaleType == "time") {
@@ -76,22 +68,15 @@ var AxisModel = Hook.extend({
 
     }else{
 
-      switch(this.use) {
-        case "indicator":
-          var limits = this.getLimits(this.which);
-          //default domain is based on limits
-          domain = [limits.min, limits.max];
-          //min and max can override the domain if defined
-          domain[0] = this.domainMin!=null ? +this.domainMin : domain[0];
-          domain[1] = this.domainMax!=null ? +this.domainMax : domain[1];
-          break;
-        case "property":
-          domain = this.getUnique(this.which);
-          break;
-        case "constant":
-        default:
-          domain = [this.which];
-          break;
+      if(!this.isDiscrete()){
+        var limits = this.getLimits(this.which);
+        //default domain is based on limits
+        domain = [limits.min, limits.max];
+        //min and max can override the domain if defined
+        domain[0] = this.domainMin!=null ? +this.domainMin : domain[0];
+        domain[1] = this.domainMax!=null ? +this.domainMax : domain[1];
+      }else{
+        domain = this.use === "constant"? [this.which] : this.getUnique(this.which);
       }
 
       scaleType = (d3.min(domain)<=0 && d3.max(domain)>=0 && scaleType === "log")? "genericLog" : scaleType;

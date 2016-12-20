@@ -265,6 +265,8 @@ var Marker = Model.extend({
       var min, max, minArray = [], maxArray = [], items = {};
       if (!this.cachedTimeLimits) this.cachedTimeLimits = {};
       utils.forEach(this.getSubhooks(), function(hook) {
+        
+        //only indicators depend on time and therefore influence the limits
         if(hook.use !== "indicator" || !hook._important) return;
 
         var cachedLimits = _this.cachedTimeLimits[hook._dataId + hook.which];

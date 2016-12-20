@@ -6,6 +6,11 @@ import EventSource from 'base/events';
  * HOOK MODEL
  */
 
+const SCALETYPES = {
+  discrete: ["ordinal"],
+  continious: ["linear", "log", "genericLog", "time", "pow"]
+};
+
 var Hook = DataConnected.extend({
 
   //some hooks can be important. like axis x and y
@@ -52,8 +57,12 @@ var Hook = DataConnected.extend({
     var newDataSource = this.getClosestModel(newValue.dataSource);
     var conceptProps = newDataSource.getConceptprops(newValue.concept);
 
-    if(conceptProps.use) obj.use = conceptProps.use;
-
+    if(newValue.which==="_default") {
+      obj.use = "constant";
+    }else{
+      if(conceptProps.use) obj.use = conceptProps.use;
+    }
+    
     if(conceptProps.scales) {
       obj.scaleType = conceptProps.scales[0];
     }
@@ -532,6 +541,22 @@ var Hook = DataConnected.extend({
    */
   getConceptprops: function() {
     return this.use !== 'constant' ? this.dataSource.getConceptprops(this.which) : {};
+  },
+  
+  /**
+   * Find if a current model is discrete
+   * @returns {boolean} true if it's a discrete model, false if continious
+   */
+  isDiscrete: function() {
+    return this.scaleType === "ordinal";
+  },
+  
+  validate: function() {    
+    this._super();
+    
+    //only some scaleTypes are allowed depending on the data. reset to default if inappropriate
+    //var allowedScaleTypes = SCALETYPES[this.isDiscrete()? "discrete":"continious"];
+    //if(allowedScaleTypes.indexOf(this.scaleType)==-1) this.scaleType = allowedScaleTypes[0];
   }
 });
 
