@@ -96,38 +96,25 @@ var BubbleChart = Tool.extend('BubbleChart', {
         space: ["entities", "time"],
         axis_x: { 
           use: "indicator",
-          which: null,
           autogenerate: {
-            conceptIndex: 3
+            conceptIndex: 2
           }
         },
         axis_y: { 
           use: "indicator",
-          which: null,
           autogenerate: {
-            conceptIndex: 4
+            conceptIndex: 3
           }
         },
         label:  {
-          use: "indicator",
-          which: null,
+          use: "property",
           autogenerate: {
             conceptIndex: 0
           }
         },
-        size:   {
-          use: "indicator",
-          which: null,
-          autogenerate: {
-            conceptIndex: 5
-          }
+        size: {
         },
-        color:  { 
-          use: "property",
-          which: null,
-          autogenerate: {
-            conceptIndex: 2
-          }
+        color: {
         },
         size_label: {
           /*use size model defaults - will be constant*/
@@ -160,6 +147,12 @@ var BubbleChart = Tool.extend('BubbleChart', {
       adaptMinMaxZoom: false,
       cursorMode: 'arrow',
       zoomOnScrolling: false,
+      buttons: ['colors', 'find', 'size', 'trails', 'lock', 'moreoptions', 'fullscreen', 'presentation'],
+      dialogs: {
+        popup: ['colors', 'find', 'size', 'zoom', 'moreoptions'], 
+        sidebar: ['colors', 'find', 'size', 'zoom'], 
+        moreoptions: ['opacity', 'speed', 'axes', 'size', 'colors', 'label', 'zoom','presentation', 'about']
+      }
     }
   }
 });

@@ -57,7 +57,7 @@ var VIZABI_MODEL = {
       },
       "axis_s": {
         "use": "indicator",
-        "which": "sg_gini",
+        "which": "gapminder_gini",
         "scaleType": "linear"
       },
       "color": {

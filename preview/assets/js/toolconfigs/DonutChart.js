@@ -19,7 +19,7 @@ var VIZABI_MODEL = {
       },
       "axis": {
         "use": "indicator",
-        "which": "sg_population"
+        "which": "population_total"
       },
       "color": {
         "use": "property",
