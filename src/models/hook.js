@@ -6,11 +6,6 @@ import EventSource from 'base/events';
  * HOOK MODEL
  */
 
-const SCALETYPES = {
-  discrete: ["ordinal"],
-  continious: ["linear", "log", "genericLog", "time", "pow"]
-};
-
 var Hook = DataConnected.extend({
 
   //some hooks can be important. like axis x and y
@@ -551,12 +546,8 @@ var Hook = DataConnected.extend({
     return this.scaleType === "ordinal";
   },
   
-  validate: function() {    
+  validate: function() {
     this._super();
-    
-    //only some scaleTypes are allowed depending on the data. reset to default if inappropriate
-    //var allowedScaleTypes = SCALETYPES[this.isDiscrete()? "discrete":"continious"];
-    //if(allowedScaleTypes.indexOf(this.scaleType)==-1) this.scaleType = allowedScaleTypes[0];
   }
 });
 
