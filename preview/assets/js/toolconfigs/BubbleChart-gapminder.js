@@ -100,9 +100,7 @@ var VIZABI_MODEL = {
   },
   "data": {
     "reader": "waffle",
-    //"reader": "ddf",
     "splash": true,
     "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/"
-    //"path": "data/systema_globalis"
   }
 };
