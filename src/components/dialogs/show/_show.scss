@@ -7,6 +7,18 @@
         max-width: 170px;
         padding: 0 10px;
       }
+      &.vzb-moreoptions {
+        .vzb-dialog-title {
+          .vzb-find-filter {
+            padding-top: 20px;
+            margin-bottom: 0; 
+          }
+        }
+        .vzb-dialog-content {
+          padding-bottom: 0;
+          margin-bottom: 15px;
+        }
+      }
     }
   }
 }
@@ -17,24 +29,61 @@
     .vzb-dialogs-dialog {
       &.vzb-sidebar {
         &[data-dlg="show"] {
+          display: flex;
+          flex-direction: column;
           flex: auto;
 
-          .vzb-dialog-content.vzb-dialog-content-fixed {
-            height: 310px;
-            max-height: 305px;
-            min-width: 140px;
+          .vzb-dialog-buttons {
+            display: block;
+            flex: none;
+          }
+
+          .vzb-dialog-button.vzb-label-primary {
+            display: none;
+          }
+
+          .vzb-dialog-content {
+            flex-grow: 1;
+
+            .vzb-dialog-content-fixed {
+              height: 310px;
+              max-height: 305px;
+              min-width: 140px;
+            }
+
+            .vzb-dialog-sublabel {
+              margin-bottom: 10px;
+            }
           }
           
           .vzb-dialog-title {
-            display: inline-block;
-            padding: 15px 0 10px 20px;
-            vertical-align: top;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 0 0 5px 20px;
+            > span:first-child {
+              display: block;
+              flex: 0 0 auto;
+            } 
           }
           
           .vzb-show-filter {
-            display: inline-block;
-            position: relative;
-            max-width: 210px;
+            @include rtl {
+              padding-left: 20px;
+              padding-right: 10px;
+            }
+            display: block;
+            flex: 1 1 auto;
+            min-width: 1px;            
+            max-width: 260px;
+            padding-right: 20px;
+          }
+
+          .vzb-dialog-content-fixed {
+            min-height: 0;
+            max-height: initial;
+            height: auto;
+            margin-top: 5px;
           }
         }
       }
