@@ -1,5 +1,8 @@
 var VIZABI_MODEL = { 
   "state": {
+    "time": {
+      "dim": "time"
+    },
     "entities": {
       "dim": "geo",
       "show": {
