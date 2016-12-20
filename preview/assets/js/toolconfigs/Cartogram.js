@@ -67,6 +67,12 @@ var VIZABI_MODEL = {
     "datawarning": {
       "doubtDomain": [1800, 1950, 2015],
       "doubtRange": [1.0, 0.3, 0.2]
+    },
+    "buttons": ['colors', 'find', 'size', 'lock', 'moreoptions', 'fullscreen'],
+    "dialogs": {
+      'popup': ['colors', 'find', 'size', 'moreoptions'], 
+      'sidebar': ['colors', 'find', 'size'], 
+      'moreoptions': ['size', 'colors', 'about']
     }
   },
   "data": {

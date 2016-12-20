@@ -2,7 +2,8 @@ var VIZABI_MODEL = {
   "state": {
     "time": {
       "startOrigin": "1993",
-      "endOrigin": "2012"
+      "endOrigin": "2012",
+      "dim": "time"
     },
     "entities": {
       "dim": "country",

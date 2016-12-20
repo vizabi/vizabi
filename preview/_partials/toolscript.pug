@@ -75,7 +75,6 @@ script.
 
   parseURL();
 
-
   EXT_RESOURCES = Vizabi.utils.deepExtend({
     host: 'https://waffle-server-dev.gapminderdev.org',
     preloadPath: '/api/vizabi/',
@@ -83,24 +82,6 @@ script.
     //shapePath: localUrl + "data/mc_precomputed_shapes.json"
     //shapePath: localUrl + "data/world-50m.json"
   }, EXT_RESOURCES);
-
-  VIZABI_MODEL = Vizabi.utils.deepExtend({
-    ui: {
-      buttons: #{chart_buttons || '[]'},
-      buttons_expand: #{chart_buttons_expand || '[]'},
-      dialogs: #{chart_dialogs || '[]'}
-    },
-    locale: {
-      filePath: "assets/translation/"
-    },
-    data: {
-      "reader": "waffle",
-      //"reader": "ddf",
-      "splash": true,
-      "path": EXT_RESOURCES.host + EXT_RESOURCES.dataPath
-      //"path": "data/systema_globalis"
-    }
-  }, VIZABI_MODEL);
 
   Vizabi._globals.ext_resources = EXT_RESOURCES;
   VIZABI_PAGE_MODEL = Vizabi.utils.deepExtend({}, VIZABI_MODEL);

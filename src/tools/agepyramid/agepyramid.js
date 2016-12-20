@@ -57,13 +57,14 @@ var AgePyramid = Tool.extend('AgePyramid', {
       marker_tags: {}
     },
     ui: {
-    chart: {
-      stacked: true,
-      inpercent: false,
-      flipSides: true
+      chart: {
+        stacked: true,
+        inpercent: false,
+        flipSides: true
+      },
+      presentation: false
     },
-    presentation: false
-    }
+    locale: { }
   }
 
 

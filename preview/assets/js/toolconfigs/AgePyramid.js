@@ -8,7 +8,8 @@ var VIZABI_MODEL = {
       "delayThresholdX2": 0,
       "delayThresholdX4": 0,
       "immediatePlay": true,
-      "delay": 1500
+      "delay": 1500,
+      "dim": "time"
     },
     "entities": {
       "dim": "geo",
@@ -111,6 +112,14 @@ var VIZABI_MODEL = {
         "use": "property",
         "which": "parent"
       }
+    }
+  },
+  "ui": {
+    "buttons":['colors', 'inpercent','moreoptions', 'fullscreen'],
+    "dialogs": {
+      'popup': ['colors', 'moreoptions'], 
+      'sidebar': ['colors'], 
+      'moreoptions': ['opacity', 'speed', 'colors','presentation', 'about']
     }
   },
   "data": {

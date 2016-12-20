@@ -1,5 +1,8 @@
 var VIZABI_MODEL = {
   "state": {
+    "time": {
+      "dim": "time"
+    },
     "entities": {
       "dim": "geo"
     },
@@ -14,5 +17,9 @@ var VIZABI_MODEL = {
         "which": "life_expectancy_years"
       }
     }
+  },
+  "data": {
+    "reader": "waffle",
+    "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/"
   }
 };

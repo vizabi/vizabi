@@ -13,7 +13,7 @@ var LocaleModel = DataConnected.extend({
   getClassDefaults: function() { 
     var defaults = {
       id: "en",
-      filePath: ""
+      filePath: "assets/translation/"
     };
     return utils.deepExtend(this._super(), defaults)
   },

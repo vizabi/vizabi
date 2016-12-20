@@ -3,7 +3,8 @@ var VIZABI_MODEL = {
     "time": {
       "startOrigin": "1950",
       "endOrigin": "2015",
-      "value": "2015"
+      "value": "2015",
+      "dim": "time"
     },
     "entities": {
       "dim": "geo",
@@ -83,6 +84,19 @@ var VIZABI_MODEL = {
     "datawarning": {
       "doubtDomain": [1800, 1950, 2015],
       "doubtRange": [1.0, 0.8, 0.6]
+    },
+    "buttons": ['colors', 'find', 'show', 'moreoptions', 'fullscreen', 'presentation'],
+    "dialogs": {
+      'popup': ['colors', 'find', 'axes', 'show', 'moreoptions'], 
+      'sidebar': ['colors', 'find'], 
+      'moreoptions': ['opacity', 'speed', 'colors', 'presentation', 'about']
     }
+  },
+  "data": {
+    "reader": "waffle",
+    //"reader": "ddf",
+    "splash": true,
+    "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/"
+    //"path": "data/systema_globalis"
   }
 };

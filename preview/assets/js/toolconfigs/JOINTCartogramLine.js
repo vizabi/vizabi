@@ -3,7 +3,8 @@ var VIZABI_MODEL = {
     "time": {
       "value": "2011",
       "start": "1996",
-      "end": "2011"
+      "end": "2011",
+      "dim": "time"
     },
     "entities": {
       "dim": "geo",
@@ -77,6 +78,13 @@ var VIZABI_MODEL = {
           "names": ["!name"]
         }
       }
+    }
+  },
+  "ui": {
+    "dialogs": {
+      'popup': ['colors', 'find', 'size', 'moreoptions'], 
+      'sidebar': ['colors', 'find', 'size'], 
+      'moreoptions': ['size', 'colors', 'about']
     }
   },
   "data": {
