@@ -3,8 +3,9 @@ import { isNumber } from 'base/utils';
 
 const CSVTimeInColumnsReader = CSVReader.extend({
 
+  _name: 'csv-time_in_columns',
+  
   init(readerInfo) {
-    this.name = 'csv-time_in_columns';
     this._super(readerInfo);
   },
 

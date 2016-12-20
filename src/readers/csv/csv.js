@@ -17,15 +17,17 @@ const CSVReader = Reader.extend({
     $in: (configValue, rowValue) => configValue.includes(rowValue)
   },
 
+  _name: 'csv',
+  
   /**
    * Initializes the reader.
    * @param {Object} readerInfo Information about the reader
    */
   init(readerInfo) {
-    this._name = 'csv';
     this._data = [];
     this._basepath = readerInfo.path;
     this.d3reader = readerInfo.delimiter? d3.dsv(readerInfo.delimiter, "text/plain") : d3.csv;
+    this.nowManyFirstColumnsAreKeys = readerInfo.nowManyFirstColumnsAreKeys || 1;
 
     if (!this._basepath) {
       utils.error('Missing base path for csv reader');
@@ -55,7 +57,7 @@ const CSVReader = Reader.extend({
 
         switch (true) {
           case from === this.QUERY_FROM_CONCEPTS:
-            return this._getConcepts(data[0]);
+            return this._getConcepts(data);
 
           case this._isDataQuery(from) && select.key.length > 0:
             return data
@@ -167,16 +169,35 @@ const CSVReader = Reader.extend({
     };
   },
 
-  _getConcepts(firstRow) {
-    return Object.keys(firstRow)
-      .map((concept, index) => Object.assign(
-        { concept },
-        !index ?
-          { concept_type: 'entity_domain' } :
-          concept === 'time' ?
-            { concept_type: 'time' } :
-            {}
-      ));
+  _getConcepts(data) {
+    var firstRow = data[0];
+    var _this = this;
+    
+    return Object.keys(firstRow).map(function(concept, index){
+      var result = {concept: concept};
+      //TODO: is the order of first/last elements stable?
+      //first columns are expected to have keys
+      if(index < _this.nowManyFirstColumnsAreKeys) {
+        result.concept_type = 'entity_domain';
+      }
+      //the column after is expected to have time
+      else if(index === _this.nowManyFirstColumnsAreKeys) {
+        result.concept_type = 'time';
+      }
+      else {
+        result.concept_type = "measure";
+
+        for (var i = data.length-1; i>=0; i--){
+          if(utils.isString(data[i][concept]) && data[i][concept] !== "") {
+            result.concept_type = "entity_set";
+            result.domain = Object.keys(firstRow)[0];
+            break;
+          }
+        }
+      }
+      
+      return result;
+    })
   },
 
   _applyQuery(query) {
