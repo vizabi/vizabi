@@ -91,14 +91,6 @@ var TimeSlider = Component.extend({
     //binds methods to this model
     this.model_binds = {
       'change:time': function(evt, path) {
-
-        //TODO: readyOnce CANNOT be run twice
-        if(_this._splash !== _this.model.time.splash) {
-          _this._splash = _this.model.time.splash;
-          _this.readyOnce();
-          _this.ready();
-        }
-
         if(!_this._splash && _this.slide) {
 
           if((['time.start', 'time.end']).indexOf(path) !== -1) {
@@ -137,6 +129,8 @@ var TimeSlider = Component.extend({
       }
     };
 
+
+
     // Same constructor as the superclass
     this._super(model, context);
 
@@ -162,6 +156,15 @@ var TimeSlider = Component.extend({
     this.completedTimeFrames = [];
     this.getValueWidth = utils.memoize(this.getValueWidth);
     this._setTime = utils.throttle(this._setTime, 50);
+  },
+
+  startEverything() {
+    //TODO: readyOnce CANNOT be run twice
+    if(this._splash !== this.model.time.splash) {
+      this._splash = this.model.time.splash;
+      this.readyOnce();
+      this.ready();
+    }
   },
 
   //template is ready

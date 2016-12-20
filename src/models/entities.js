@@ -1,5 +1,6 @@
 import * as utils from 'base/utils';
 import DataConnected from 'models/dataconnected';
+import Data from 'models/data';
 
 /*!
  * VIZABI Entities Model
@@ -12,12 +13,13 @@ var EntitiesModel = DataConnected.extend({
    */
   getClassDefaults: function() { 
     var defaults = {
-      show: {}
+      show: {},
+      dim: null
     };
     return utils.deepExtend(this._super(), defaults)
   },
 
-  objectLeafs: ['show'],
+  objectLeafs: ['show','autogenerate'],
   dataConnectedChildren: ['show','dim'],
 
   /**
@@ -31,6 +33,13 @@ var EntitiesModel = DataConnected.extend({
     this._type = "entities";
 
     this._super(name, values, parent, bind);
+  },
+
+  afterPreload: function() {
+    if (this.dim == null && this.autogenerate) {
+      var dataSource = Data.instances.find(data => data._name == this.autogenerate.data);
+      this.dim = dataSource.getConceptByIndex(this.autogenerate.conceptIndex).concept;
+    }
   },
 
   /**

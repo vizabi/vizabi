@@ -1,5 +1,6 @@
 import * as utils from 'base/utils';
 import DataConnected from 'models/dataconnected';
+import Data from 'models/data';
 
 /*!
  * VIZABI Time Model
@@ -26,12 +27,14 @@ var formats = {
 
 var TimeModel = DataConnected.extend({
 
+  objectLeafs: ['autogenerate'],
+
   /**
    * Default values for this model
    */
   getClassDefaults: function() { 
     var defaults = {
-      dim: "time",
+      dim: null,
       value: null,
       start: null, 
       end: null,
@@ -91,6 +94,13 @@ var TimeModel = DataConnected.extend({
       }
 
     });
+  },
+
+  afterPreload: function() {
+    if (this.dim == null && this.autogenerate) {
+      var dataSource = Data.instances.find(data => data._name == this.autogenerate.data);
+      this.dim = dataSource.getConceptByIndex(this.autogenerate.conceptIndex).concept;
+    }
   },
 
   /**

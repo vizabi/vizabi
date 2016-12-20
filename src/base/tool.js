@@ -203,8 +203,8 @@ var Tool = Component.extend({
 
             _this.model.startLoading().then(function() {
               timeMdl.splash = false;
+              _this.startEverything();
               //_this.model.data.splash = false;
-              timeMdl.trigger('change', timeMdl.getPlainObject());
             });
           }, 300);
 

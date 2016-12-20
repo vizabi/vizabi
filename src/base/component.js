@@ -81,6 +81,12 @@ var Component = Events.extend({
     return Promise.all(promises);
   },
 
+  startEverything: function() {
+    utils.forEach(this.components, 
+      subComponent => subComponent.startEverything()
+    ); 
+  },
+
   preload: function() {
     return Promise.resolve();
   },

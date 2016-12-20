@@ -12,16 +12,18 @@ var Hook = DataConnected.extend({
   //that means, if X or Y doesn't have data at some point, we can't show markers
   _important: false,
 
+  objectLeafs: ['autogenerate'],
   dataConnectedChildren: ['use', 'which'],
   
   getClassDefaults: function() { 
     var defaults = {
-      data: 'data'
+      data: 'data',
+      which: null
     };
     return utils.deepExtend(this._super(), defaults)
   },
 
-  buildScale: function(){
+  buildScale: function() {
     //overloaded by specific hook models, like axis and color
   },
 
@@ -79,6 +81,12 @@ var Hook = DataConnected.extend({
   preloadData: function() {
     this.dataSource = this.getClosestModel(this.data);
     return this._super();
+  },
+
+  afterPreload: function() {
+    if (this.which == null && this.autogenerate) {
+      this.which = this.dataSource.getConceptByIndex(this.autogenerate.conceptIndex).concept;
+    }
   },
 
   /**

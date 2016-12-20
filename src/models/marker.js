@@ -225,7 +225,7 @@ var Marker = Model.extend({
     
     var time = this._parent.time;
     
-    if(!time || time.splash) return;
+    if(!time) return;
     
     var tLimits = this.getTimeLimits();
 
