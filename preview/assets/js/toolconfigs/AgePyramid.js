@@ -9,21 +9,21 @@ var VIZABI_MODEL = {
       "delayThresholdX4": 0,
       "immediatePlay": true,
       "delay": 1500,
-      "dim": "time"
+      "dim": "year"
     },
     "entities": {
-      "dim": "geo",
+      "dim": "country_code",
       "show": {
-        "geo": {
-          "$in": ["zaf"]
+        "country_code": {
+          "$in": ["900"]
         }
       }
     },
     "entities_colorlegend": {
-      "dim": "geo",
+      "dim": "country_code",
       "show": {
-        "geo": {
-          "$in": ["zaf"]
+        "country_code": {
+          "$in": ["900"]
         }
       }
     },
@@ -41,7 +41,7 @@ var VIZABI_MODEL = {
       "dim": "education_attainment"
     },
     "entities_side": {
-      "dim": "population_group"
+      "dim": "gender"
     },
     "marker": {
       "space": ["entities", "entities_side", "entities_stack", "entities_age", "time"],
@@ -51,7 +51,7 @@ var VIZABI_MODEL = {
       },
       "label_name": {
         "use": "property",
-        "which": "population_group"
+        "which": "gender"
       },
       "axis_y": {
         "use": "indicator",
@@ -74,7 +74,7 @@ var VIZABI_MODEL = {
       },
       "hook_side": {
         "use": "property",
-        "which": "population_group"
+        "which": "gender"
       },
     },
     "marker_side": {
@@ -122,11 +122,16 @@ var VIZABI_MODEL = {
       'moreoptions': ['opacity', 'speed', 'colors','presentation', 'about']
     }
   },
+//  "data": {
+//    "reader": "csv",
+//    "delimiter": ";",
+//    "nowManyFirstColumnsAreKeys": 4,
+//    "path": "data/zaf/waffles/ddf--datapoints--population--by--year--age--population_group--education_attainment.csv",
+//    "splash": false
+//  },
   "data": {
-    "reader": "csv",
-    "delimiter": ";",
-    "nowManyFirstColumnsAreKeys": 4,
-    "path": "data/zaf/waffles/ddf--datapoints--population--by--year--age--population_group--education_attainment.csv",
+    "reader": "ddf",
+    "path": "data/ddf--unpop--wpp_population",
     "splash": false
   }
 };
