@@ -129,9 +129,15 @@ var VIZABI_MODEL = {
 //    "path": "data/zaf/waffles/ddf--datapoints--population--by--year--age--population_group--education_attainment.csv",
 //    "splash": false
 //  },
+//  "data": {
+//    "reader": "ddf",
+//    "path": "data/ddf--unpop--wpp_population",
+//    "splash": false
+//  },
   "data": {
-    "reader": "ddf",
-    "path": "data/ddf--unpop--wpp_population",
+    "reader": "waffle",
+    "dataset": "open-numbers/ddf--unpop--wpp_population",
+    "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/",
     "splash": false
   }
 };
