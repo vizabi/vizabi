@@ -457,9 +457,7 @@ var Model = EventSource.extend({
 
     //we need to defer to make sure all other submodels
     //have a chance to call loading for the second time
-    utils.defer(
-      () => this.setReady()
-    );
+    this.setReady()
   },
 
   triggerLoadError: function(err) {
@@ -742,12 +740,9 @@ function initSubmodel(attr, val, ctx, persistent) {
     ctx.trigger(evt, vals);
   }
   function onReady(evt, vals) {
-    //trigger only for submodel
-    ctx.setReady(false);
     //wait to make sure it's not set false again in the next execution loop
-    utils.defer(function() {
-      ctx.setReady();
-    });
+    ctx.setReady();
+
     //ctx.trigger(evt, vals);
   }
 }
