@@ -231,16 +231,6 @@ var TimeSlider = Component.extend({
 
     this._setSelectedLimitsId = 0; //counter for setSelectedLimits
 
-    utils.forEach(_this.model.marker.getSubhooks(), function(hook) {
-      if(hook._important) hook.on('change:which', function() {
-        _this._needRecalcSelectedLimits = true;
-        _this.model.time.set({
-          startSelected: new Date(_this.model.time.start),
-          endSelected: new Date(_this.model.time.end)
-        }, null, false  /*make change non-persistent for URL and history*/);
-      });
-    });
-
     if(this.model.time.startSelected > this.model.time.start) {
       _this.updateSelectedStartLimiter();
     }
@@ -249,6 +239,7 @@ var TimeSlider = Component.extend({
       _this.updateSelectedEndLimiter();
     }
 
+    // special for linechart: resize timeslider to match time x-axis length
     this.parent.on('myEvent', function (evt, arg) {
       var layoutProfile = _this.getLayoutProfile();
 
