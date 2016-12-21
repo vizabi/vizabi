@@ -27,7 +27,7 @@ const CSVReader = Reader.extend({
     this._data = [];
     this._basepath = readerInfo.path;
     this.d3reader = readerInfo.delimiter? d3.dsv(readerInfo.delimiter, "text/plain") : d3.csv;
-    this.nowManyFirstColumnsAreKeys = readerInfo.nowManyFirstColumnsAreKeys || 1;
+    this.keySize = readerInfo.keySize || 1;
 
     if (!this._basepath) {
       utils.error('Missing base path for csv reader');
@@ -177,11 +177,11 @@ const CSVReader = Reader.extend({
       var result = {concept: concept};
       //TODO: is the order of first/last elements stable?
       //first columns are expected to have keys
-      if(index < _this.nowManyFirstColumnsAreKeys) {
+      if(index < _this.keySize) {
         result.concept_type = 'entity_domain';
       }
       //the column after is expected to have time
-      else if(index === _this.nowManyFirstColumnsAreKeys) {
+      else if(index === _this.keySize) {
         result.concept_type = 'time';
       }
       else {

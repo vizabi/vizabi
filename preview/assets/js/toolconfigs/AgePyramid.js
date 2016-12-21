@@ -125,7 +125,7 @@ var VIZABI_MODEL = {
   "data": {
     "reader": "csv",
     "delimiter": ";",
-    "nowManyFirstColumnsAreKeys": 4,
+    "keySize": 4,
     "path": "data/zaf/waffles/ddf--datapoints--population--by--year--age--population_group--education_attainment.csv",
     "splash": false
   }
