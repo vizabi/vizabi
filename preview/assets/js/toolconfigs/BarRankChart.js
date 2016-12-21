@@ -90,12 +90,12 @@ var VIZABI_MODEL = {
       'popup': ['colors', 'find', 'axes', 'show', 'moreoptions'], 
       'sidebar': ['colors', 'find'], 
       'moreoptions': ['opacity', 'speed', 'colors', 'presentation', 'about']
-    }
+    },
+    "splash": true
   },
   "data": {
     "reader": "waffle",
     //"reader": "ddf",
-    "splash": true,
     "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/"
     //"path": "data/systema_globalis"
   }

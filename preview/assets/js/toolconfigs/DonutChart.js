@@ -31,12 +31,12 @@ var VIZABI_MODEL = {
     "datawarning": {
       "doubtDomain": [1800, 1950, 2015],
       "doubtRange": [1.0, 0.3, 0.2]
-    }
+    },
+    "splash": true
   },
   "data": {
     "reader": "waffle",
     //"reader": "ddf",
-    "splash": true,
     "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/"
     //"path": "data/systema_globalis"
   }

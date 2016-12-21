@@ -85,9 +85,6 @@ var Tool = Component.extend({
       model: external_model
     });
 
-    //splash
-    this.model.ui.splash = this.model && this.model.data && this.model.data.splash;
-
     this.render();
 
     this.setCSSClasses();
@@ -187,9 +184,7 @@ var Tool = Component.extend({
   },
 
   loadSplashScreen: function() {
-    var splashScreen = this.model && this.model.data && this.model.data.splash;
-
-    if(splashScreen) {
+    if(this.model.ui.splash) {
       //TODO: cleanup hardcoded splash screen
       this.model.state.time.splash = true;
       return this.model.startLoading({

@@ -120,14 +120,14 @@ var VIZABI_MODEL = {
       'popup': ['colors', 'moreoptions'], 
       'sidebar': ['colors'], 
       'moreoptions': ['opacity', 'speed', 'colors','presentation', 'about']
-    }
+    },
+    "splash": false
   },
   "data": {
     "reader": "csv",
     "delimiter": ";",
     "keySize": 4,
-    "path": "data/zaf/waffles/ddf--datapoints--population--by--year--age--population_group--education_attainment.csv",
-    "splash": false
+    "path": "data/zaf/waffles/ddf--datapoints--population--by--year--age--population_group--education_attainment.csv"
   }
 };
 

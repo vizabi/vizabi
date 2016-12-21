@@ -33,7 +33,8 @@ var UI = Model.extend({
         popup: [],
         sidebar: [],
         moreoptions: []
-      }
+      },
+      splash: false
     };
     return utils.deepExtend(this._super(), defaults);
   },

@@ -115,11 +115,11 @@ var VIZABI_MODEL = {
       'popup': ['colors', 'find', 'stack', 'show', 'moreoptions'], 
       'sidebar': ['colors', 'find', 'stack'], 
       'moreoptions': ['opacity', 'speed', 'stack', 'axesmc', 'colors', 'presentation', 'about']
-    }
+    },
+    "splash": true
   },
   "data": {
     "reader": "waffle",
-    "splash": true,
     "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/"
   }
 };

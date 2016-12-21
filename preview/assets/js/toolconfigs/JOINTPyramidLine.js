@@ -101,8 +101,7 @@ var VIZABI_MODEL = {
   },
   "data": {
     "reader": "csv",
-    "path": "data/zaf/waffles/ddf--datapoints--population--by--year--age--education-gender-add-tfr.csv",
-    "splash": false
+    "path": "data/zaf/waffles/ddf--datapoints--population--by--year--age--education-gender-add-tfr.csv"
   }
 };
 

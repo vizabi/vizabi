@@ -14,8 +14,7 @@ var DataModel = Model.extend({
    */
   getClassDefaults: function() { 
     var defaults = {
-      reader: "csv",
-      splash: false
+      reader: "csv"
     };
     return utils.deepExtend(this._super(), defaults)
   },
