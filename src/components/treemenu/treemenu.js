@@ -698,7 +698,7 @@ var TreeMenu = Component.extend({
 
       //init the tag tree
       indicatorsTree = tags[ROOT];
-      indicatorsTree.children.push({"id": DEFAULT});
+      indicatorsTree.children.push({"id": DEFAULT, dataSource: Data.instances[0]._name });
       indicatorsTree.children.push(tags[UNCLASSIFIED]);
 
       //populate the tag tree
