@@ -193,7 +193,6 @@ var Tool = Component.extend({
 
   finishLoading: function() {
     this.model.state.time.splash = false;
-    this.startEverything();
   },
 
   getPersistentModel: function() {
