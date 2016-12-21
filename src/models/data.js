@@ -174,7 +174,8 @@ var DataModel = Model.extend({
 
     return new readerClass({
       path: this.path,
-      delimiter: this.delimiter
+      delimiter: this.delimiter,
+      nowManyFirstColumnsAreKeys: this.nowManyFirstColumnsAreKeys
     });
   },
 
