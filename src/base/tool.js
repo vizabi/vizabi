@@ -180,6 +180,7 @@ var Tool = Component.extend({
     ])
       .then(this.afterPreload.bind(this))
       .then(this.loadSplashScreen.bind(this))
+      .then(() => utils.delay(300))
       .then(this.model.startLoading.bind(this.model))
       .then(this.finishLoading.bind(this))
 
