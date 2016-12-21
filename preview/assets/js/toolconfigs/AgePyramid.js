@@ -29,24 +29,29 @@ var VIZABI_MODEL = {
     },
     "entities_age": {
       "dim": "age",
-      "show": {
-        "age": {
-          "$lte": 95,
-          "$gte": 0
-        }
-      },
+      // "show": {
+      //   "age": {
+      //     "$lte": 95,
+      //     "$gte": 0
+      //   }
+      // },
       "grouping": 1
     },
     "entities_stack": {
-      "dim": "education_attainment"
+      "dim": "country_code",
+      "show": {
+        "country_code": {
+          "$in": ["900"]
+        }
+      }
     },
     "entities_side": {
       "dim": "gender"
     },
     "marker": {
-      "space": ["entities", "entities_side", "entities_stack", "entities_age", "time"],
+      "space": ["entities_stack", "time", "entities_side", "entities_age"],
       "label": {
-        "use": "indicator",
+        "use": "property",
         "which": "age"
       },
       "label_name": {
@@ -54,7 +59,7 @@ var VIZABI_MODEL = {
         "which": "gender"
       },
       "axis_y": {
-        "use": "indicator",
+        "use": "property",
         "which": "age",
         "domainMax": 100,
         "domainMin": 0,
@@ -66,7 +71,7 @@ var VIZABI_MODEL = {
       },
       "color": {
         "use": "property",
-        "which": "education_attainment",
+        "which": "country_code",
         "allow": {
           "scales": ["ordinal"]
         },
@@ -78,7 +83,7 @@ var VIZABI_MODEL = {
       },
     },
     "marker_side": {
-      "space": ["entities", "entities_side", "time"],
+      "space": ["entities_stack", "entities_side", "time"],
       "hook_total": {
         "use": "indicator",
         "which": "population"
@@ -88,7 +93,7 @@ var VIZABI_MODEL = {
       "space": ["entities_colorlegend"],
       "label": {
         "use": "property",
-        "which": "education_attainment"
+        "which": "name"
       },
       "hook_rank": {
         "use": "property",
