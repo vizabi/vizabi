@@ -142,10 +142,6 @@ var Tool = Component.extend({
             _this.beforeLoading();
           }
         },
-        'change:ui.presentation': function() {
-          _this.model.ui.updatePresentation();
-          _this.trigger('resize');
-        },
         'resize:ui': function() {
           if(_this._ready) {
             _this.triggerResize();
