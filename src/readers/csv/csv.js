@@ -243,16 +243,17 @@ const CSVReader = Reader.extend({
         const condition = where.$and[conditionKey];
         const rowValue = row[conditionKey];
 
-        return typeof condition !== 'object' ?
-          (rowValue === condition
-            // if the column is missing, then don't apply filter
-            || rowValue === undefined
-            || condition === true && utils.isString(rowValue) && rowValue.toLowerCase().trim() === 'true'
-            || condition === false && utils.isString(rowValue) && rowValue.toLowerCase().trim() === 'false'
-          ) :
-          Object.keys(condition).every(callbackKey =>
-            this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], rowValue)
-          );
+        // if the column is missing, then don't apply filter
+        return rowValue === undefined
+          || (typeof condition !== 'object' ?
+            (rowValue === condition
+              //resolve booleans via strings
+              || condition === true && utils.isString(rowValue) && rowValue.toLowerCase().trim() === 'true'
+              || condition === false && utils.isString(rowValue) && rowValue.toLowerCase().trim() === 'false'
+            ) :
+            Object.keys(condition).every(callbackKey =>
+              this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], rowValue)
+            ));
       });
   }
 
