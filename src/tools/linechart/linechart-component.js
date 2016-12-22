@@ -77,10 +77,7 @@ var LCComponent = Component.extend({
           _this.zoomToMaxMin();
           _this.updateSize();
           _this.redrawDataPoints();
-          return;
         }
-        if(path.indexOf("which") > -1 || path.indexOf("use") > -1) return;
-        _this.ready();
       },
       "change:marker.highlight": function() {
         if(!_this._readyOnce) return;
@@ -194,7 +191,6 @@ var LCComponent = Component.extend({
   },
 
   ready: function() {
-    this.all_values = null;
     this.all_steps = this.model.time.getAllSteps();
     this.all_values = this.values = null;
     this.updateTime();
@@ -205,6 +201,7 @@ var LCComponent = Component.extend({
     this.model.marker.getFrame(null, function(allValues) {
       _this.all_values = allValues;
       _this.model.marker.getFrame(_this.model.time.value, function (values) {
+        if (!_this._frameIsValid(values)) return;
         _this.values = values;
         _this.updateShow();
         _this.updateSize();
@@ -366,7 +363,7 @@ var LCComponent = Component.extend({
           .attr("dy", "1.6em");
       });
 
-    if (this.all_values) {
+    if (this.all_values && this.values) {
       this.entityLabels.each(function(d, index) {
         var entity = d3.select(this);
         var color = _this.cScale(_this.values.color[d[KEY]]);
@@ -424,7 +421,7 @@ var LCComponent = Component.extend({
 
     filter[timeDim] = this.time;
 
-    this.prev_steps = this.all_steps.filter(function(f){return f <= _this.time;});
+    this.prev_steps = this.all_steps.filter(function(f){return f < _this.time;});
 
     this.timeUpdatedOnce = true;
 
@@ -704,7 +701,7 @@ var LCComponent = Component.extend({
 
     if (!_this.all_values) return;
     this.model.marker.getFrame(this.time, function(values, time) {
-      if (!values) return;
+      if (!_this._frameIsValid(values)) return;
       _this.values = values;
       if(!_this.timeUpdatedOnce) {
         _this.updateTime();
@@ -738,8 +735,14 @@ var LCComponent = Component.extend({
             })
             .filter(function(d) { return d[1] || d[1] === 0; });
 
+          // add last point 
+          if (values.axis_y[d[KEY]]) {
+            xy.push([values.axis_x[d[KEY]], values.axis_y[d[KEY]]]);
+          }
+          
           if (xy.length > 0) {
             _this.cached[d[KEY]] = {
+              valueX: xy[xy.length - 1][0],
               valueY: xy[xy.length - 1][1]
             };
           } else {
@@ -809,38 +812,37 @@ var LCComponent = Component.extend({
       _this.entityLabels
         .each(function(d, index) {
           var entity = d3.select(this);
-          entity.select(".vzb-lc-circle")
+          if (_this.cached[d[KEY]]) {
+            entity
+              .classed("vzb-hidden", false)
               .transition()
               .duration(_this.duration)
               .ease("linear")
-              .attr("cy", _this.yScale(_this.values.axis_y[d[KEY]]) + 1);
+              .attr("transform", "translate(" + _this.xScale(d3.min([_this.cached[d[KEY]]["valueX"]])) + ",0)");
+
+            entity.select(".vzb-lc-circle")
+              .transition()
+              .duration(_this.duration)
+              .ease("linear")
+              .attr("cy", _this.yScale(_this.cached[d[KEY]]["valueY"]) + 1);
+
 
 
             entity.select(".vzb-lc-label")
               .transition()
               .duration(_this.duration)
               .ease("linear")
-              .attr("transform", "translate(0," + _this.yScale(_this.values.axis_y[d[KEY]]) + ")");
-
-/*
-          if(_this.data.length < valueHideLimit) {
-
-            var size = _this.xScale(_this.time) + t[0][0].getComputedTextLength() + _this.activeProfile.text_padding;
-            var width = _this.width + _this.margin.right;
-
-            if(size > width) {
-              entity.select(".vzb-lc-labelname").text(name);
-              entity.select(".vzb-lc-label-value").text(value);
-            }
+              .attr("transform", "translate(0," + _this.yScale(_this.cached[d[KEY]]["valueY"]) + ")");
+          } else {
+            entity
+              .classed("vzb-hidden", true);
           }
-*/
         });
-      _this.labelsContainer
+      _this.verticalNow
         .transition()
         .duration(_this.duration)
         .ease("linear")
         .attr("transform", "translate(" + _this.xScale(d3.min([_this.model.marker.axis_x.zoomedMax, _this.time])) + ",0)");
-
 
 
 
