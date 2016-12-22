@@ -133,10 +133,8 @@ var Hook = DataConnected.extend({
     //defer is necessary because other events might be queued.
     //load right after such events
     utils.defer(() => {
-      this.startLoading().then(
-        undefined,
-        err => utils.warn(err)
-      );
+      this.startLoading()
+        .catch(utils.warn);
     });
   },
 

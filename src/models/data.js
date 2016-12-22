@@ -68,15 +68,7 @@ var DataModel = Model.extend({
       return Promise.resolve(dataId);
     } else {
       utils.timeStamp('Vizabi Data: Loading Data');
-      EventSource.freezeAll([
-        'hook_change',
-        'resize'
-      ]);
-      return this.loadFromReader(query, parsers)
-        .then(dataId => { 
-          EventSource.unfreezeAll();
-          return dataId;
-        });
+      return this.loadFromReader(query, parsers);
     }
 
   },
