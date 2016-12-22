@@ -15,7 +15,7 @@ var VIZABI_MODEL = {
       "dim": "country_code",
       "show": {
         "country_code": {
-          "$in": ["900"]
+          "$in": [900]
         }
       }
     },
@@ -23,25 +23,25 @@ var VIZABI_MODEL = {
       "dim": "country_code",
       "show": {
         "country_code": {
-          "$in": ["900"]
+          "$in": [900]
         }
       }
     },
     "entities_age": {
       "dim": "age",
-      // "show": {
-      //   "age": {
-      //     "$lte": 95,
-      //     "$gte": 0
-      //   }
-      // },
+      "show": {
+        "age": {
+          "$lte": 95,
+          "$gte": 0
+        }
+      },
       "grouping": 1
     },
     "entities_stack": {
       "dim": "country_code",
       "show": {
         "country_code": {
-          "$in": ["900"]
+          "$in": [900]
         }
       }
     },
@@ -56,7 +56,8 @@ var VIZABI_MODEL = {
       },
       "label_name": {
         "use": "property",
-        "which": "gender"
+        "spaceRef": "entities_side",
+        "which": "name"
       },
       "axis_y": {
         "use": "property",
@@ -83,7 +84,7 @@ var VIZABI_MODEL = {
       },
     },
     "marker_side": {
-      "space": ["entities_stack", "entities_side", "time"],
+      "space": ["entities_stack", "time", "entities_side", "entities_age"],
       "hook_total": {
         "use": "indicator",
         "which": "population"
