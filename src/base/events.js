@@ -241,7 +241,7 @@ var EventSource = Class.extend({
 
     // for each function registered to this eventType on this object
     var _this = this;
-    utils.forEach(this._events[evt.type], function(func) {
+    utils.forEach(this._events[evt.type], func => {
 
       // prepare execution
       var execute = function() {
@@ -255,23 +255,23 @@ var EventSource = Class.extend({
 
       //TODO: improve readability of freezer code
       //only execute if not frozen and exception doesnt exist
-      if(_this._freeze || _freezeAllEvents) {
-        //if exception exists for freezing, execute
-        if(_freezeAllEvents && _freezeAllExceptions.hasOwnProperty(evt.type) || !_freezeAllEvents && _this._freeze &&
-          _this._freezeExceptions.hasOwnProperty(evt.type)) {
-          execute();
-        } //otherwise, freeze it
-        else {
-          _this._freezer.push(execute);
-          if(_freezeAllEvents && !_frozenEventInstances[_this._id]) {
-            _this.freeze();
-            _frozenEventInstances[_this._id] = _this;
-          }
-        }
-      } else {
+      if(this.allowExecution(evt)) {
         execute();
+      } else {
+        this._freezer.push(execute);
+        if(_freezeAllEvents && !_frozenEventInstances[this._id]) {
+          this.freeze();
+          _frozenEventInstances[this._id] = this;
+        }
       }
+
     })
+  },
+
+  allowExecution: function(evt) {
+    return (!this._freeze && !_freezeAllEvents) ||                                           // nothing frozen
+      (_freezeAllEvents && _freezeAllExceptions.hasOwnProperty(evt.type)) ||                 // freeze all but exception
+      (!_freezeAllEvents && this._freeze && this._freezeExceptions.hasOwnProperty(evt.type)) // freeze but exception
   },
 
   /**
