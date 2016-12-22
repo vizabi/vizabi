@@ -162,7 +162,7 @@ var Model = EventSource.extend({
     // Freeze the whole model tree if not frozen yet, so no events are fired while setting
     if (!this._freeze) {
       freezeCall = true;
-      EventSource.freezeAll['hook_change'];
+      EventSource.freezeAll(['hook_change']);
     }
 
     // init/set all given values
