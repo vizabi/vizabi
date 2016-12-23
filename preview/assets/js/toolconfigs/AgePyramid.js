@@ -142,7 +142,7 @@ var VIZABI_MODEL = {
 //  },
   "data": {
     "reader": "waffle",
-    "dataset": "open-numbers/ddf--unpop--wpp_population",
+    "dataset": "angieskazka/ddf--unpop--wpp_population",
     "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/",
     "splash": false
   }

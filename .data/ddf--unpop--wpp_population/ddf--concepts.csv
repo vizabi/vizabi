@@ -1,5 +1,4 @@
 concept,concept_type,name
-variant,string,Variant
 name,string,Name
 country_code,entity_domain,Country code
 year,time,Reference date (as of 1 July)
