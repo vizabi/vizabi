@@ -1,21 +1,21 @@
 var VIZABI_MODEL = {
   "state": {
     "time": {
-      "value": "2001",
-      "startOrigin": "1995",
-      "endOrigin": "2001",
+      //"value": "2000",
+      //"startOrigin": "1970",
+      //"endOrigin": "2000",
       "step": 1,
       "delayThresholdX2": 0,
       "delayThresholdX4": 0,
       "immediatePlay": true,
-      "delay": 1500,
+      "delay": 1000,
       "dim": "year"
     },
     "entities": {
       "dim": "country_code",
       "show": {
         "country_code": {
-          "$in": [900]
+          "$in": [903,904,905,908,909,935]
         }
       }
     },
@@ -23,7 +23,7 @@ var VIZABI_MODEL = {
       "dim": "country_code",
       "show": {
         "country_code": {
-          "$in": [900]
+          "$in": [903,904,905,908,909,935]
         }
       }
     },
@@ -41,7 +41,7 @@ var VIZABI_MODEL = {
       "dim": "country_code",
       "show": {
         "country_code": {
-          "$in": [900]
+          "$in": [903,904,905,908,909,935]
         }
       }
     },
@@ -50,11 +50,12 @@ var VIZABI_MODEL = {
     },
     "marker": {
       "space": ["entities_stack", "time", "entities_side", "entities_age"],
-      "label": {
+      "label_stack": {
         "use": "property",
-        "which": "age"
+        "spaceRef": "entities_stack",
+        "which": "name"
       },
-      "label_name": {
+      "label_side": {
         "use": "property",
         "spaceRef": "entities_side",
         "which": "name"

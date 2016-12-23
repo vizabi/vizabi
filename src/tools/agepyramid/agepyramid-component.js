@@ -269,14 +269,16 @@ var AgePyramid = Component.extend({
       }, sortedStackKeys);
     }
     this.stackKeys = sortedStackKeys;
+    this.stackItems = this.model.marker.label_stack.getItems();
 
     this.stacked = this.ui.chart.stacked && this.model.marker.color.use != "constant" && this.model.stack.getDimension();
 
     this.twoSided = this.sideKeys.length > 1;
     if(this.twoSided) {
       this.xScaleLeft = this.xScale.copy();
-      this.title.text(this.sideKeys[1]);
-      this.titleRight.text(this.sideKeys[0]);
+      var sideItems = this.model.marker.label_side.getItems();
+      this.title.text(sideItems[this.sideKeys[1]]);
+      this.titleRight.text(sideItems[this.sideKeys[0]]);
     } else {
       var title = this.translator("indicator/" + this.model.marker.axis_x.which);
       this.title.text(title);
@@ -301,7 +303,7 @@ var AgePyramid = Component.extend({
           utils.forEach(_this.ageKeys, function(age) {
             var stackSum = 0;
             utils.forEach(_this.stackKeys, function(stack) {
-              if (limits[key][time][age][stack])
+              if (limits[key][time][age] && limits[key][time][age][stack])
                 stackSum += limits[key][time][age][stack].max;
             });
             maxLimits.push(stackSum / (totalLimits[key][time].max * totalCoeff));
@@ -318,7 +320,7 @@ var AgePyramid = Component.extend({
           utils.forEach(_this.ageKeys, function(age) {
             var stackSum = 0;
             utils.forEach(_this.stackKeys, function(stack) {
-              if (limits[key][time][age][stack])
+              if (limits[key][time][age] && limits[key][time][age][stack])
                 stackSum += limits[key][time][age][stack].max;
             });
             maxLimits.push(stackSum);
@@ -333,7 +335,7 @@ var AgePyramid = Component.extend({
   },
 
   getShiftedValues: function(hook, time) {
-
+    var _this = this;
     var iterateGroupKeys = function(data, deep, result, cb) {
         deep--;
         utils.forEach(data, function(d, id) {
@@ -416,7 +418,7 @@ var AgePyramid = Component.extend({
             var stack = side[stackKey] || [];
             var point = {};
             point[timeDim] = new Date(timeKey);
-            point[which] = allToNull ? 0 : value;
+            point[which] = allToNull || value == null ? 0 : value;
             stack.push(point);
             side[stackKey] = stack;
             age[sideKey] = side;
@@ -710,8 +712,8 @@ var AgePyramid = Component.extend({
         label.selectAll('.vzb-bc-age')
           .text(function(textData) {
             //var total = _this.ui.chart.inpercent ? _this.totalValues[d[sideDim]] : 1;
-            var text = _this.stackKeys.length > 1 ? d[stackDim]: textData.text;
-            text = _this.twoSided ? text : textData.text + " " + d[stackDim];
+            var text = _this.stackKeys.length > 1 ? _this.stackItems[d[stackDim]]: textData.text;
+            text = _this.twoSided ? text : textData.text + " " + _this.stackItems[d[stackDim]];
             var value = _this.xScale.invert(d["width_"]);
             //var value = (_this.dataWithTotal || _this.stacked) ? _this.values1.axis_x[d[shiftedAgeDim]][d[sideDim]][d[stackDim]] / total : _this.xScale.invert(d["width_"]);
             return text + ": " + formatter(value);
