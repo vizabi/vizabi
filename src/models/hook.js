@@ -483,7 +483,7 @@ var Hook = DataConnected.extend({
    */
   getItems: function() {
     var _this = this;
-    var dim = _this._getFirstDimension({exceptType: "time"});
+    var dim = this.spaceRef && this._space[this.spaceRef] ? this._space[this.spaceRef].dim : _this._getFirstDimension({exceptType: "time"});
     var items = {};
     this.getValidItems().forEach(function(d){
       items[d[dim]] = d[_this.which];
