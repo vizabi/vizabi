@@ -56,6 +56,15 @@ var ModelLeaf = EventSource.extend({
     return force || (this._val !== val && JSON.stringify(this._val) !== JSON.stringify(val));
   },
 
+  // duplicate from Model. Should be in a shared parent class.
+  setTreeFreezer: function(freezerStatus) {
+    if (freezerStatus) {
+      this.freeze(['hook_change']);
+    } else {
+      this.unfreeze();
+    }
+  }
+
 })
 
 var Model = EventSource.extend({
@@ -162,7 +171,7 @@ var Model = EventSource.extend({
     // Freeze the whole model tree if not frozen yet, so no events are fired while setting
     if (!this._freeze) {
       freezeCall = true;
-      EventSource.freezeAll(['hook_change']);
+      this.setTreeFreezer(true);
     }
 
     // init/set all given values
@@ -196,7 +205,7 @@ var Model = EventSource.extend({
     if(!setting || force) {
       this._setting = false;
       if (freezeCall && (!this.isHook() || !this.isLoading())) {
-        EventSource.unfreezeAll();
+        this.setTreeFreezer(false);
       }
       if (!this.isHook() && !this.isLoading()) {
         this.setReady();
@@ -210,6 +219,21 @@ var Model = EventSource.extend({
   // standard model doesn't do anything with data
   // overloaded by hook/entities
   checkDataChanges: function() { },
+
+  setTreeFreezer: function(freezerStatus) {
+    // first traverse down
+    // this ensures deepest events are triggered first
+    utils.forEach(this._data, function(submodel) {
+      submodel.setTreeFreezer(freezerStatus);
+    });
+
+    // then freeze/unfreeze
+    if (freezerStatus) {
+      this.freeze(['hook_change']);
+    } else {
+      this.unfreeze();
+    }
+  },
 
   /**
    * Gets the type of this model
@@ -429,7 +453,7 @@ var Model = EventSource.extend({
     this._loadedOnce = true;
 
     this._loadCall = false;
-    EventSource.unfreezeAll();
+    this.setTreeFreezer(false);
 
     //we need to defer to make sure all other submodels
     //have a chance to call loading for the second time
