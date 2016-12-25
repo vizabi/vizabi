@@ -1,29 +1,29 @@
 var VIZABI_MODEL = {
   "state": {
     "time": {
-      "value": "2011",
-      "start": "1950",
-      "end": "2100",
+      //"value": "2000",
+      //"startOrigin": "1970",
+      //"endOrigin": "2000",
       "step": 1,
       "delayThresholdX2": 0,
       "delayThresholdX4": 0,
       "immediatePlay": true,
-      "delay": 1500,
-      "dim": "time"
+      "delay": 1000,
+      "dim": "year"
     },
     "entities": {
-      "dim": "geo",
+      "dim": "country_code",
       "show": {
-        "geo": {
-          "$in": ["zaf"]
+        "country_code": {
+          "$in": [903,904,905,908,909,935]
         }
       }
     },
     "entities_colorlegend": {
-      "dim": "geo",
+      "dim": "country_code",
       "show": {
-        "geo": {
-          "$in": ["zaf"]
+        "country_code": {
+          "$in": [903,904,905,908,909,935]
         }
       }
     },
@@ -38,23 +38,30 @@ var VIZABI_MODEL = {
       "grouping": 1
     },
     "entities_stack": {
-      "dim": "education_attainment"
+      "dim": "country_code",
+      "show": {
+        "country_code": {
+          "$in": [903,904,905,908,909,935]
+        }
+      }
     },
     "entities_side": {
-      "dim": "population_group"
+      "dim": "gender"
     },
     "marker": {
-      "space": ["entities", "entities_side", "entities_stack", "entities_age", "time"],
-      "label": {
-        "use": "indicator",
-        "which": "age"
-      },
-      "label_name": {
+      "space": ["entities_stack", "time", "entities_side", "entities_age"],
+      "label_stack": {
         "use": "property",
-        "which": "population_group"
+        "spaceRef": "entities_stack",
+        "which": "name"
+      },
+      "label_side": {
+        "use": "property",
+        "spaceRef": "entities_side",
+        "which": "name"
       },
       "axis_y": {
-        "use": "indicator",
+        "use": "property",
         "which": "age",
         "domainMax": 100,
         "domainMin": 0,
@@ -66,7 +73,7 @@ var VIZABI_MODEL = {
       },
       "color": {
         "use": "property",
-        "which": "education_attainment",
+        "which": "country_code",
         "allow": {
           "scales": ["ordinal"]
         },
@@ -74,11 +81,11 @@ var VIZABI_MODEL = {
       },
       "hook_side": {
         "use": "property",
-        "which": "population_group"
+        "which": "gender"
       },
     },
     "marker_side": {
-      "space": ["entities", "entities_side", "time"],
+      "space": ["entities_stack", "time", "entities_side", "entities_age"],
       "hook_total": {
         "use": "indicator",
         "which": "population"
@@ -88,7 +95,7 @@ var VIZABI_MODEL = {
       "space": ["entities_colorlegend"],
       "label": {
         "use": "property",
-        "which": "education_attainment"
+        "which": "name"
       },
       "hook_rank": {
         "use": "property",
@@ -123,11 +130,23 @@ var VIZABI_MODEL = {
     },
     "splash": false
   },
+//  "data": {
+//    "reader": "csv",
+//    "delimiter": ";",
+//    "nowManyFirstColumnsAreKeys": 4,
+//    "path": "data/zaf/waffles/ddf--datapoints--population--by--year--age--population_group--education_attainment.csv",
+//    "splash": false
+//  },
+//  "data": {
+//    "reader": "ddf",
+//    "path": "data/ddf--unpop--wpp_population",
+//    "splash": false
+//  },
   "data": {
-    "reader": "csv",
-    "delimiter": ";",
-    "keySize": 4,
-    "path": "data/zaf/waffles/ddf--datapoints--population--by--year--age--population_group--education_attainment.csv"
+    "reader": "waffle",
+    "dataset": "open-numbers/ddf--unpop--wpp_population",
+    "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/",
+    "splash": true
   }
 };
 

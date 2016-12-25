@@ -320,6 +320,8 @@ var Marker = Model.extend({
             // Get keys in data of this hook
             var nested = hook.getNestedItems([KEY, TIME]);
             var noDataPoints = hook.getHaveNoDataPointsPerKey();
+            
+            if(nested["undefined"]) delete nested["undefined"];
 
             var keys = Object.keys(nested);
             var keysNoDP = Object.keys(noDataPoints || []);

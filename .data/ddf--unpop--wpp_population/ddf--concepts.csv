@@ -1,0 +1,7 @@
+concept,concept_type,name
+name,string,Name
+country_code,entity_domain,Country code
+year,time,Reference date (as of 1 July)
+gender,entity_domain,Gender
+population,measure,Population
+age,entity_domain,Age

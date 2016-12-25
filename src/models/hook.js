@@ -170,7 +170,8 @@ var Hook = DataConnected.extend({
 
     // select
     // we remove this.which from values if it duplicates a dimension
-    var dimensions = this._getAllDimensions(exceptions);
+    var allDimensions = this._getAllDimensions(exceptions);
+    var dimensions = (prop && allDimensions.length > 1) ? [(this.spaceRef ? this._space[this.spaceRef].dim : this.which)] : allDimensions;
     select = {
       key: dimensions,
       value: dimensions.indexOf(this.which)!=-1 || this.use === "constant" ? [] : [this.which]
@@ -184,6 +185,11 @@ var Hook = DataConnected.extend({
 
     // where
     filters = this._getAllFilters(exceptions, splashScreen);
+    if(prop && allDimensions.length > 1) {
+      var f = {};
+      if(filters[dimensions]) f[dimensions] = filters[dimensions];
+      filters = f;
+    }
 
     // make root $and explicit
     var explicitAndFilters =  {};
@@ -198,6 +204,11 @@ var Hook = DataConnected.extend({
 
     // join
     var join = this._getAllJoins(exceptions, splashScreen);
+    if(prop && allDimensions.length > 1) {
+      var j = {};
+      if(join["$" + dimensions]) j["$" + dimensions] = join["$" + dimensions];
+      join = j;
+    }
 
     //return query
     return {
@@ -470,7 +481,7 @@ var Hook = DataConnected.extend({
    */
   getItems: function() {
     var _this = this;
-    var dim = _this._getFirstDimension({exceptType: "time"});
+    var dim = this.spaceRef && this._space[this.spaceRef] ? this._space[this.spaceRef].dim : _this._getFirstDimension({exceptType: "time"});
     var items = {};
     this.getValidItems().forEach(function(d){
       items[d[dim]] = d[_this.which];

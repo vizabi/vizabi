@@ -103,6 +103,7 @@ var AgePyramid = Component.extend({
     this.xAxisLeft = axisSmart();
     this.yAxis = axisSmart();
     this.xScales = [];
+    this.SHIFTEDAGEDIM = "s_age";
 
     this.totalFieldName = "Total";
   },
@@ -269,14 +270,16 @@ var AgePyramid = Component.extend({
       }, sortedStackKeys);
     }
     this.stackKeys = sortedStackKeys;
+    this.stackItems = this.model.marker.label_stack.getItems();
 
     this.stacked = this.ui.chart.stacked && this.model.marker.color.use != "constant" && this.model.stack.getDimension();
 
     this.twoSided = this.sideKeys.length > 1;
     if(this.twoSided) {
       this.xScaleLeft = this.xScale.copy();
-      this.title.text(this.sideKeys[1]);
-      this.titleRight.text(this.sideKeys[0]);
+      var sideItems = this.model.marker.label_side.getItems();
+      this.title.text(sideItems[this.sideKeys[1]]);
+      this.titleRight.text(sideItems[this.sideKeys[0]]);
     } else {
       var title = this.translator("indicator/" + this.model.marker.axis_x.which);
       this.title.text(title);
@@ -284,6 +287,8 @@ var AgePyramid = Component.extend({
 
     this.cScale = this.model.marker.color.getScale();
 
+    var shiftedAgeDim = this.SHIFTEDAGEDIM;
+    this.markers = this.model.marker.getKeys(ageDim);
   },
 
   _updateLimits: function() {
@@ -301,7 +306,7 @@ var AgePyramid = Component.extend({
           utils.forEach(_this.ageKeys, function(age) {
             var stackSum = 0;
             utils.forEach(_this.stackKeys, function(stack) {
-              if (limits[key][time][age][stack])
+              if (limits[key][time][age] && limits[key][time][age][stack])
                 stackSum += limits[key][time][age][stack].max;
             });
             maxLimits.push(stackSum / (totalLimits[key][time].max * totalCoeff));
@@ -318,7 +323,7 @@ var AgePyramid = Component.extend({
           utils.forEach(_this.ageKeys, function(age) {
             var stackSum = 0;
             utils.forEach(_this.stackKeys, function(stack) {
-              if (limits[key][time][age][stack])
+              if (limits[key][time][age] && limits[key][time][age][stack])
                 stackSum += limits[key][time][age][stack].max;
             });
             maxLimits.push(stackSum);
@@ -332,8 +337,8 @@ var AgePyramid = Component.extend({
     if(this.xScaleLeft) this.xScaleLeft.domain(this.xScale.domain());
   },
 
-  getShiftedValues: function(hook, time) {
-
+  getShiftedValues: function(hook, time, ageData) {
+    var _this = this;
     var iterateGroupKeys = function(data, deep, result, cb) {
         deep--;
         utils.forEach(data, function(d, id) {
@@ -351,12 +356,18 @@ var AgePyramid = Component.extend({
     var dimTime = this.TIMEDIM;
     var response = {};
     var method = hook.getConceptprops ? hook.getConceptprops().interpolation : null;
+    var ageDim = this.AGEDIM;
+    var deep = this.stepDataDeep - 1;
 
-    iterateGroupKeys(this.stepDataMoved, this.stepDataDeep, response, function(arr, result, id) {
-      var next = d3.bisectLeft(arr.map(function(m){return m[dimTime]}), time);
+    utils.forEach(ageData, function(d, id) {
+      var age = d[ageDim];
+      response[age] = {};
+      iterateGroupKeys(_this.stepDataMoved[age], deep, response[age], function(arr, result, id) {
+        var next = d3.bisectLeft(arr.map(function(m){return m[dimTime]}), time);
 
-      var value = utils.interpolatePoint(arr, use, which, next, dimTime, time, method);
-      result[id] = hook.mapValue(value);
+        var value = utils.interpolatePoint(arr, use, which, next, dimTime, time, method);
+        result[id] = hook.mapValue(value);
+      });
     });
 
     return response;
@@ -416,7 +427,7 @@ var AgePyramid = Component.extend({
             var stack = side[stackKey] || [];
             var point = {};
             point[timeDim] = new Date(timeKey);
-            point[which] = allToNull ? 0 : value;
+            point[which] = allToNull || value == null ? 0 : value;
             stack.push(point);
             side[stackKey] = stack;
             age[sideKey] = side;
@@ -442,10 +453,6 @@ var AgePyramid = Component.extend({
     var timeDim = this.TIMEDIM;
     var duration = (time.playing) ? time.delayAnimations : 0;
 
-    this.shiftedValues = this.stepData[time.value];
-    if(!this.shiftedValues) this.shiftedValues = this.getShiftedValues(this.model.marker.axis_x, time.value);
-    var shiftedValues = this.shiftedValues;
-
     var group_by = this.model.age.grouping || 1;
     //var group_offset = this.model.marker.group_offset ? Math.abs(this.model.marker.group_offset % group_by) : 0;
 
@@ -465,27 +472,32 @@ var AgePyramid = Component.extend({
     //   _this.frame = frame;
     // })
 
-    var markers = this.model.marker.getKeys(ageDim);
-
     var domain = this.yScale.domain();
 
     //this.model.age.setVisible(markers);
 
     var nextStep = d3.bisectLeft(this.timeSteps, time.value);
 
-    var shiftedAgeDim = "s_age";
+    var shiftedAgeDim = this.SHIFTEDAGEDIM;
 
-    var ageBars = markers.map(function(data) {
-      data[shiftedAgeDim] = +data[ageDim];
-      data[ageDim] = data[shiftedAgeDim] - nextStep * group_by;
-      return data;
+    var markers = this.markers.map(function(data) {
+      var o = {};
+      o[ageDim] = o[shiftedAgeDim] = +data[ageDim];
+      o[ageDim] -= nextStep * group_by;
+      return o;
     })
+
+    var ageBars = markers.slice(0);
 
     var outAge = {};
     outAge[shiftedAgeDim] = markers.length * group_by;
     outAge[ageDim] = outAge[shiftedAgeDim] - nextStep * group_by;
 
     if (nextStep) ageBars.push(outAge);
+
+    this.shiftedValues = this.stepData[time.value];
+    if(!this.shiftedValues) this.shiftedValues = this.getShiftedValues(this.model.marker.axis_x, time.value, ageBars);
+    var shiftedValues = this.shiftedValues;
 
     this.entityBars = this.bars.selectAll('.vzb-bc-bar')
       .data(ageBars, function(d) {return d[ageDim]});
@@ -608,7 +620,6 @@ var AgePyramid = Component.extend({
 
     this.entityBars
       .attr("transform", function(d, i) {
-        var _d = d[shiftedAgeDim] < 0 ? 0 : d[ageDim] - group_by;
         return "translate(0," + (first_bar_y_offset - (d[shiftedAgeDim] - group_by - domain[0]) * one_bar_height) + ")";
       })
       .transition('age')
@@ -710,8 +721,8 @@ var AgePyramid = Component.extend({
         label.selectAll('.vzb-bc-age')
           .text(function(textData) {
             //var total = _this.ui.chart.inpercent ? _this.totalValues[d[sideDim]] : 1;
-            var text = _this.stackKeys.length > 1 ? d[stackDim]: textData.text;
-            text = _this.twoSided ? text : textData.text + " " + d[stackDim];
+            var text = _this.stackKeys.length > 1 ? _this.stackItems[d[stackDim]]: textData.text;
+            text = _this.twoSided ? text : textData.text + " " + _this.stackItems[d[stackDim]];
             var value = _this.xScale.invert(d["width_"]);
             //var value = (_this.dataWithTotal || _this.stacked) ? _this.values1.axis_x[d[shiftedAgeDim]][d[sideDim]][d[stackDim]] / total : _this.xScale.invert(d["width_"]);
             return text + ": " + formatter(value);
