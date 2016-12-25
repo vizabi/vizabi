@@ -61,7 +61,7 @@ var MountainChartComponent = Component.extend({
                 // this listener is a patch for fixing #1228. time.js doesn't produce the last event
                 // with playing == false when paused softly
                 if(!_this.model.time.playing){
-                    _this.redrawDataPoints();
+                   _this.redrawDataPoints();
                 }
             },
             "change:marker.axis_x.xScaleFactor": function () {
@@ -141,7 +141,7 @@ var MountainChartComponent = Component.extend({
             },
             "change:marker.group.merge": function (evt) {
                 if (!_this._readyOnce) return;
-                _this.updateTime();
+                _this.updatePointers();
                 _this.redrawDataPoints();
             },
             "change:marker.stack": function (evt) {
@@ -291,7 +291,7 @@ var MountainChartComponent = Component.extend({
             //console.log("acting on resize");
             //return if updatesize exists with error
             if(_this.updateSize()) return;
-            _this.updateTime(); // respawn is needed
+            _this.updatePointers(); // respawn is needed
             _this.redrawDataPoints();
             _this._selectlist.redraw();
             _this._probe.redraw();
@@ -324,6 +324,7 @@ var MountainChartComponent = Component.extend({
           _this.zoomToMaxMin();
           _this._spawnMasks();
           _this.updateTime();
+          _this.updatePointers();
           _this._adjustMaxY({force: true});
           _this.redrawDataPoints();
           _this.redrawDataPointsOnlyColors();
@@ -340,6 +341,7 @@ var MountainChartComponent = Component.extend({
     if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
     this.values = frame;
     this.updateTime();
+    this.updatePointers();
     this.redrawDataPoints();
     this._selectlist.redraw();
     this._probe.redraw();
@@ -808,15 +810,17 @@ updateSize: function (meshLength) {
         this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
     },
 
-    updateTime: function (time) {
+    updateTime: function () {
         var _this = this;
 
         this.time_1 = this.time == null ? this.model.time.value : this.time;
         this.time = this.model.time.value;
         this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
         this.year.setText(this.model.time.timeFormat(this.time), this.duration);
-        if (time == null) time = this.time;
+    },
 
+    updatePointers: function() {
+        var _this = this;
         this.yMax = 0;
 
 
@@ -850,7 +854,7 @@ updateSize: function (meshLength) {
 
         var mergeGrouped = _this.model.marker.group.merge;
         var mergeStacked = _this.model.marker.stack.merge;
-        var dragOrPlay = (_this.model.time.dragging || _this.model.time.playing) && this.model.marker.stack.which !== "none";
+        //var dragOrPlay = (_this.model.time.dragging || _this.model.time.playing) && this.model.marker.stack.which !== "none";
 
         //if(mergeStacked){
         this.stackedPointers.forEach(function (d) {
@@ -993,10 +997,10 @@ updateSize: function (meshLength) {
             if(!values) return;
 
             _this.values = values;
-            _this.updateTime();
+            _this.updatePointers();
             _this.values = prevValues;
             _this.yScale.domain([0, Math.round(_this.yMax)]);
-            _this.updateTime();
+            _this.updatePointers();
           });
         } else {
           if (!_this.yMax) utils.warn("Setting yMax to " + _this.yMax + ". You failed again :-/");
@@ -1014,10 +1018,7 @@ updateSize: function (meshLength) {
         var dragOrPlay = (this.model.time.dragging || this.model.time.playing)
             //never merge when no entities are stacked
             && stackMode !== "none"
-            //when the time is playing and stops in the end, the time.playing is set to false after the slider is stopped
-            //so the mountain chat is stuck in the merged state. this line prevents it:
-            && !(this.model.time.value - this.model.time.end==0 && !this.model.time.loop);
-
+            
         this._adjustMaxY();
 
         this.mountainsMergeStacked.each(function (d) {

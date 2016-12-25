@@ -27,7 +27,7 @@ const CSVReader = Reader.extend({
     this._data = [];
     this._basepath = readerInfo.path;
     this.d3reader = readerInfo.delimiter? d3.dsv(readerInfo.delimiter, "text/plain") : d3.csv;
-    this.nowManyFirstColumnsAreKeys = readerInfo.nowManyFirstColumnsAreKeys || 1;
+    this.keySize = readerInfo.keySize || 1;
 
     if (!this._basepath) {
       utils.error('Missing base path for csv reader');
@@ -177,11 +177,11 @@ const CSVReader = Reader.extend({
       var result = {concept: concept};
       //TODO: is the order of first/last elements stable?
       //first columns are expected to have keys
-      if(index < _this.nowManyFirstColumnsAreKeys) {
+      if(index < _this.keySize) {
         result.concept_type = 'entity_domain';
       }
       //the column after is expected to have time
-      else if(index === _this.nowManyFirstColumnsAreKeys) {
+      else if(index === _this.keySize) {
         result.concept_type = 'time';
       }
       else {
@@ -243,16 +243,17 @@ const CSVReader = Reader.extend({
         const condition = where.$and[conditionKey];
         const rowValue = row[conditionKey];
 
-        return typeof condition !== 'object' ?
-          (rowValue === condition
-            // if the column is missing, then don't apply filter
-            || rowValue === undefined
-            || condition === true && utils.isString(rowValue) && rowValue.toLowerCase().trim() === 'true'
-            || condition === false && utils.isString(rowValue) && rowValue.toLowerCase().trim() === 'false'
-          ) :
-          Object.keys(condition).every(callbackKey =>
-            this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], rowValue)
-          );
+        // if the column is missing, then don't apply filter
+        return rowValue === undefined
+          || (typeof condition !== 'object' ?
+            (rowValue === condition
+              //resolve booleans via strings
+              || condition === true && utils.isString(rowValue) && rowValue.toLowerCase().trim() === 'true'
+              || condition === false && utils.isString(rowValue) && rowValue.toLowerCase().trim() === 'false'
+            ) :
+            Object.keys(condition).every(callbackKey =>
+              this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], rowValue)
+            ));
       });
   }
 

@@ -352,6 +352,7 @@ var BubbleChartComp = Component.extend({
 
     this.projectionX = this.graph.select(".vzb-bc-projection-x");
     this.projectionY = this.graph.select(".vzb-bc-projection-y");
+    this.lineEqualXY = this.graph.select(".vzb-bc-line-equal-xy");
 
     this.trailsContainer = this.graph.select('.vzb-bc-trails');
     this.bubbleContainerCrop = this.graph.select('.vzb-bc-bubbles-crop');
@@ -1015,6 +1016,24 @@ var BubbleChartComp = Component.extend({
     this._resizeDataWarning();
   },
 
+  
+  _updateLineEqualXY: function (duration){
+    var oneMeasure = this.model.marker.axis_x.which == this.model.marker.axis_y.which;
+    this.lineEqualXY.classed("vzb-invisible", !oneMeasure);
+    if(!oneMeasure) return;
+    
+    var min = d3.min(this.yScale.domain().concat(this.xScale.domain()) );
+    var max = d3.max(this.yScale.domain().concat(this.xScale.domain()) );
+    
+    this.lineEqualXY
+      .transition()
+      .duration(duration||0)
+      .attr("y1", this.yScale(min))
+      .attr("y2", this.yScale(max))
+      .attr("x1", this.xScale(min))
+      .attr("x2", this.xScale(max));
+  },
+  
   _resizeDataWarning: function(){
     // reset font size to remove jumpy measurement
     var dataWarningText = this.dataWarningEl.select("text").style("font-size", null);
@@ -1198,6 +1217,8 @@ var BubbleChartComp = Component.extend({
             _this._updateBubble(d, _this.frame, index, d3.select(this), duration);
         });
     }
+    
+    this._updateLineEqualXY(duration);
   },
 
   //redraw Data Points

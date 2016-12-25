@@ -73,12 +73,12 @@ var VIZABI_MODEL = {
       'popup': ['colors', 'find', 'size', 'moreoptions'], 
       'sidebar': ['colors', 'find', 'size'], 
       'moreoptions': ['size', 'colors', 'about']
-    }
+    },
+    "splash": false
   },
   "data": {
     "reader": "csv",
-    "path": "data/zaf/waffles/ddf--datapoints--piped_water_percentage--electricity_lighting_percentage--by--year--municipality.csv",
-    "splash": false
+    "path": "data/zaf/waffles/ddf--datapoints--piped_water_percentage--electricity_lighting_percentage--by--year--municipality.csv"
   }
 };
 

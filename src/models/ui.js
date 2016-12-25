@@ -33,7 +33,8 @@ var UI = Model.extend({
         popup: [],
         sidebar: [],
         moreoptions: []
-      }
+      },
+      splash: false
     };
     return utils.deepExtend(this._super(), defaults);
   },
@@ -48,13 +49,18 @@ var UI = Model.extend({
     //dom element
     this._curr_profile = null;
     this._prev_size = {};
+
     //resize when window resizes
-    var _this = this;
+    window.addEventListener('resize', this.resizeHandler.bind(this));
+    bind['change:presentation'] = this.updatePresentation.bind(this);
 
-    this.resizeHandler = this.resizeHandler || resize.bind(this);
-
-    window.addEventListener('resize', this.resizeHandler);
     this._super(name, values, parent, bind);
+  },
+
+  resizeHandler: function() {
+    if(this._container) {
+      this.setSize();
+    }
   },
 
   /**
@@ -109,6 +115,7 @@ var UI = Model.extend({
     this._prev_size.height = height;
     this.trigger('resize');
   },
+
   /**
    * Sets the container for this layout
    * @param container DOM element
@@ -125,6 +132,7 @@ var UI = Model.extend({
    */
   updatePresentation: function() {
     utils.classed(this._container, class_prefix + class_presentation, this.presentation);
+    this.trigger('resize');
   },
 
   getPresentationMode: function() {
@@ -148,11 +156,5 @@ var UI = Model.extend({
   }
 
 });
-
-function resize() {
-  if(this._container) {
-    this.setSize();
-  }
-}
 
 export default UI;

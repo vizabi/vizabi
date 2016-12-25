@@ -1152,8 +1152,8 @@ export var defer = function(func) {
  * Defers a function
  * @param {Function} func
  */
-export var delay = function(func, delay) {
-  return setTimeout(func, delay);
+export var delay = function(delay) {
+  return new Promise(resolve => setTimeout(resolve, delay));
 };
 
 export var clearDelay = function(delayId) {

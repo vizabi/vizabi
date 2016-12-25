@@ -65,7 +65,7 @@ var OptionsButtonList = ButtonList.extend({
     this.buttonListComp.proceedClick(id);
     var btn_data = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']").datum();
     if(btn_data.func) {
-      utils.delay(function() {
+      setTimeout(function() {
         _this.root.findChildByName("gapminder-dialogs").closeAllDialogs();
       }, 200);
     }

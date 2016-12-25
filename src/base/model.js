@@ -59,7 +59,7 @@ var ModelLeaf = EventSource.extend({
   // duplicate from Model. Should be in a shared parent class.
   setTreeFreezer: function(freezerStatus) {
     if (freezerStatus) {
-      this.freeze();
+      this.freeze(['hook_change']);
     } else {
       this.unfreeze();
     }
@@ -229,7 +229,7 @@ var Model = EventSource.extend({
 
     // then freeze/unfreeze
     if (freezerStatus) {
-      this.freeze();
+      this.freeze(['hook_change']);
     } else {
       this.unfreeze();
     }

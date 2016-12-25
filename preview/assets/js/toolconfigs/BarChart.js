@@ -77,12 +77,12 @@ var VIZABI_MODEL = {
     "buttons": ['axes', 'colors', 'fullscreen'],
     "dialogs": { 
       'popup': ['axes', 'colors'] 
-    }
+    },
+    "splash": false
   },
   "data": {
     "reader": "waffle",
     //"reader": "ddf",
-    "splash": false,
     "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/"
     //"path": "data/systema_globalis"
   }

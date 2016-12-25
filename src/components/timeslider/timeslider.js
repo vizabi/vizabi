@@ -91,8 +91,7 @@ var TimeSlider = Component.extend({
     //binds methods to this model
     this.model_binds = {
       'change:time': function(evt, path) {
-        if(!_this._splash && _this.slide) {
-
+        if(_this.slide) {
           if((['time.start', 'time.end']).indexOf(path) !== -1) {
             if (!_this.xScale) return;
             _this.changeLimits();
@@ -103,24 +102,24 @@ var TimeSlider = Component.extend({
         }
       },
       'change:time.start': function(evt, path) {
-        if(!_this._splash && _this.slide) {
+        if(_this.slide) {
           //only set handle position if change is external
           if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
       'change:time.end': function(evt, path) {
-        if(!_this._splash && _this.slide) {
+        if(_this.slide) {
           //only set handle position if change is external
           if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
       'change:time.startSelected': function(evt, path) {
-        if(!_this._splash && _this.slide) {
+        if(_this.slide) {
           _this.updateSelectedStartLimiter();
         }
       },
       'change:time.endSelected': function(evt, path) {
-        if(!_this._splash && _this.slide) {
+        if(_this.slide) {
           _this.updateSelectedEndLimiter();
         }
       },
@@ -133,9 +132,6 @@ var TimeSlider = Component.extend({
 
     // Same constructor as the superclass
     this._super(model, context);
-
-    //starts as splash if this is the option
-    this._splash = this.model.ui.splash;
 
     // Sort of defaults. Actually should be in ui default or bubblechart. 
     // By not having "this.model.ui =" we prevent it from going to url (not defined in defaults)
@@ -158,26 +154,14 @@ var TimeSlider = Component.extend({
     this._setTime = utils.throttle(this._setTime, 50);
   },
 
-  startEverything() {
-    //TODO: readyOnce CANNOT be run twice
-    if(this._splash !== this.model.time.splash) {
-      this._splash = this.model.time.splash;
-      this.readyOnce();
-      this.ready();
-    }
-  },
-
   //template is ready
   readyOnce: function () {
-
-    if(this._splash) return;
 
     var _this = this;
 
     //DOM to d3
     //TODO: remove this ugly hack
     this.element = utils.isArray(this.element) ? this.element : d3.select(this.element);
-    this.element.classed(class_loading, false);
 
     //html elements
     this.slider_outer = this.element.select(".vzb-ts-slider");
@@ -231,16 +215,6 @@ var TimeSlider = Component.extend({
 
     this._setSelectedLimitsId = 0; //counter for setSelectedLimits
 
-    utils.forEach(_this.model.marker.getSubhooks(), function(hook) {
-      if(hook._important) hook.on('change:which', function() {
-        _this._needRecalcSelectedLimits = true;
-        _this.model.time.set({
-          startSelected: new Date(_this.model.time.start),
-          endSelected: new Date(_this.model.time.end)
-        }, null, false  /*make change non-persistent for URL and history*/);
-      });
-    });
-
     if(this.model.time.startSelected > this.model.time.start) {
       _this.updateSelectedStartLimiter();
     }
@@ -249,6 +223,7 @@ var TimeSlider = Component.extend({
       _this.updateSelectedEndLimiter();
     }
 
+    // special for linechart: resize timeslider to match time x-axis length
     this.parent.on('myEvent', function (evt, arg) {
       var layoutProfile = _this.getLayoutProfile();
 
@@ -267,7 +242,9 @@ var TimeSlider = Component.extend({
 
   //template and model are ready
   ready: function () {
-    if(this._splash) return;
+    if(this.model.time.splash) return;
+
+    this.element.classed(class_loading, false);
 
     var play = this.element.select(".vzb-ts-btn-play");
     var pause = this.element.select(".vzb-ts-btn-pause");
@@ -316,7 +293,7 @@ var TimeSlider = Component.extend({
    * Ideally,it contains only operations related to size
    */
   resize: function () {
-    if(this._splash) return;
+    if(this.model.time.splash) return;
 
     this.model.time.pause();
 

@@ -219,6 +219,11 @@
         @extend %vzb-chart-info;
       }
 
+      .vzb-bc-line-equal-xy {
+        stroke-dasharray: 4 4;
+        stroke: $vzb-color-black;
+      }
+      
       .vzb-bc-projection-x,
       .vzb-bc-projection-y {
         stroke-dasharray: 4 4;

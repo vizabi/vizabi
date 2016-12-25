@@ -85,11 +85,6 @@ var Tool = Component.extend({
       model: external_model
     });
 
-    // 
-
-    //splash
-    this.model.ui.splash = this.model && this.model.data && this.model.data.splash;
-
     this.render();
 
     this.setCSSClasses();
@@ -147,10 +142,6 @@ var Tool = Component.extend({
             _this.beforeLoading();
           }
         },
-        'change:ui.presentation': function() {
-          _this.model.ui.updatePresentation();
-          _this.trigger('resize');
-        },
         'resize:ui': function() {
           if(_this._ready) {
             _this.triggerResize();
@@ -175,57 +166,33 @@ var Tool = Component.extend({
 
   startLoading: function() {
     this._super();
-    var splashScreen = this.model && this.model.data && this.model.data.splash;
-    var _this = this;
 
-    var preloadPromises = []; //holds all promises
+    Promise.all([
+      this.model.startPreload(),
+      this.startPreload()
+    ])
+      .then(this.afterPreload.bind(this))
+      .then(this.loadSplashScreen.bind(this))
+      .then(() => utils.delay(300))
+      .then(this.model.startLoading.bind(this.model))
+      .then(this.finishLoading.bind(this))
 
-    preloadPromises.push(this.model.startPreload());
-    preloadPromises.push(this.startPreload());
+  },
 
-    Promise.all(preloadPromises).then(function() {
-      _this.afterPreload();
+  loadSplashScreen: function() {
+    if(this.model.ui.splash) {
+      //TODO: cleanup hardcoded splash screen
+      this.model.state.time.splash = true;
+      return this.model.startLoading({
+        splashScreen: true
+      });
+    } else {
+      return Promise.resolve();
+    }
+  },
 
-
-      var timeMdl = _this.model.state.time;
-
-      if(splashScreen) {
-
-        //TODO: cleanup hardcoded splash screen
-        timeMdl.splash = true;
-
-        _this.model.startLoading({
-          splashScreen: true
-        }).then(function() {
-          //delay to avoid conflicting with setReady
-          utils.delay(function() {
-            //force loading because we're restoring time.
-
-            _this.model.startLoading().then(function() {
-              timeMdl.splash = false;
-              _this.startEverything();
-              //_this.model.data.splash = false;
-            });
-          }, 300);
-
-        }, function() {
-          _this.renderError();
-        });
-      } else {
-        _this.model.startLoading().then(function() {
-          utils.delay(function() {
-            if(timeMdl) {
-              timeMdl.splash = false;
-              timeMdl.trigger('change');
-            } else {
-              _this.loadingDone();
-            }
-          }, 300);
-        }, function() {
-          _this.renderError();
-        });
-      }
-    })
+  finishLoading: function() {
+    this.model.state.time.splash = false;
   },
 
   getPersistentModel: function() {

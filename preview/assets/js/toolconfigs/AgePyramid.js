@@ -127,7 +127,8 @@ var VIZABI_MODEL = {
       'popup': ['colors', 'moreoptions'], 
       'sidebar': ['colors'], 
       'moreoptions': ['opacity', 'speed', 'colors','presentation', 'about']
-    }
+    },
+    "splash": false
   },
 //  "data": {
 //    "reader": "csv",

@@ -14,8 +14,7 @@ var DataModel = Model.extend({
    */
   getClassDefaults: function() { 
     var defaults = {
-      reader: "csv",
-      splash: false
+      reader: "csv"
     };
     return utils.deepExtend(this._super(), defaults)
   },
@@ -175,7 +174,7 @@ var DataModel = Model.extend({
     return new readerClass({
       path: this.path,
       delimiter: this.delimiter,
-      nowManyFirstColumnsAreKeys: this.nowManyFirstColumnsAreKeys
+      keySize: this.keySize
     });
   },
 
