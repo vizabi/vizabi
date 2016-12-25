@@ -1075,10 +1075,11 @@ updateSize: function (meshLength) {
         var isColorUseIndicator = this.model.marker.color.use === "indicator";
         this.mountains.style("fill", function (d) {
             return _this.values.color[d.KEY()] ? 
-              ( isColorUseIndicator && _this.values.color[d.KEY()] == "_default" ? 
-               _this.model.marker.color.palette["_default"] 
-               : 
-               _this.cScale(_this.values.color[d.KEY()])
+              ( 
+                isColorUseIndicator &&_this.values.color[d.KEY()] == "_default" ? 
+                 _this.model.marker.color.palette["_default"] 
+                 : 
+                 _this.cScale(_this.values.color[d.KEY()])
               ) 
             : 
             COLOR_WHITEISH;
@@ -1104,15 +1105,19 @@ updateSize: function (meshLength) {
             view.attr("d", this.area(this.cached[key]));
         }
 
-        if (this.model.marker.color.use === "indicator") view
-            .style("fill", _this.values.color[key] ? 
-                   ( _this.values.color[key] == "_default" ? 
-                    _this.model.marker.color.palette["_default"] 
-                    : 
-                    _this.cScale(_this.values.color[key])) 
-                   : 
-                   COLOR_WHITEISH
-                  );
+        //color use indicator suggests that this should be updated on every timeframe
+        if (this.model.marker.color.use === "indicator") {
+          view.style("fill", _this.values.color[key] ? 
+            ( 
+             _this.values.color[key] !== "_default" ? 
+               _this.cScale(_this.values.color[key])
+               : 
+               _this.model.marker.color.palette["_default"] 
+            ) 
+            : 
+            COLOR_WHITEISH
+          );
+        }
 
         if (stack !== "none") view
             .transition().duration(Math.random() * 900 + 100).ease("circle")

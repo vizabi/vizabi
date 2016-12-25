@@ -391,7 +391,7 @@ var BubbleMapComponent = Component.extend({
         var valueC = _this.values.color[hovered[_this.KEY]];
 
         //resolve value for color from the color legend model
-        if(_this.model.marker.color.use == "property" && valueC) {
+        if(_this.model.marker.color.isDiscrete() && valueC) {
           valueC = this.model.marker.color.getColorlegendMarker().label.getItems()[valueC] || "";
         }
 
