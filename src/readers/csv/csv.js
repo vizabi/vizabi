@@ -173,7 +173,7 @@ const CSVReader = Reader.extend({
     const firstRow = data[0];
 
     return Object.keys(firstRow).map((concept, index) => {
-      const result = { concept: concept };
+      const result = { concept };
       // TODO: is the order of first/last elements stable?
       // first columns are expected to have keys
       if (index < this.keySize) {
