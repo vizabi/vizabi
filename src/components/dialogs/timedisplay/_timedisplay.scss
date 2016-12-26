@@ -1,10 +1,10 @@
 .vzb-tool-dialogs {
   .vzb-dialogs-dialog {
     &[data-dlg="timedisplay"] {
-      .vzb-dialog-content {
-        text-align: center;
+      .vzb-timedisplay {
         font-size: $vzb-font-size-largest;
-        color: $vzb-color-primary;
+        color: $vzb-color-primary-strong;
+        opacity: .5;
       }
     }
   }
