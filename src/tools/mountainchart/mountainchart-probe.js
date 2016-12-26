@@ -53,7 +53,7 @@ var MCProbe = Class.extend({
                         .classed("vzb-hidden", false)
                         .attr("x", -_this.height)
                         .attr("y", _this.xScale(options.level))
-                        .attr("dy", "-1em")
+                        .attr("dy", "-1.15em")
                         .attr("dx", "0.5em")
                         .attr("transform", "rotate(-90)");
 
@@ -76,7 +76,7 @@ var MCProbe = Class.extend({
 
                 view.text(string)
                     .classed("vzb-hidden", !options.full && i !== 0 && i !== 4)
-                    .attr("x", _this.xScale(options.level) + ([0, 4, 2, 6].indexOf(i) > -1 ? -5 : +5))
+                    .attr("x", _this.xScale(options.level) + ([0, 4, 2, 6].indexOf(i) > -1 ? -6 : +5))
                     .attr("y", _this.heightOfLabels)
                     .attr("dy", [0, 1, 4, 5].indexOf(i) > -1 ? 0 : "1.5em");
             });
