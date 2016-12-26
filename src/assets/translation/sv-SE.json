@@ -28,6 +28,7 @@
   "buttons/zoom":"Zoom",
   "buttons/inpercent":"Procent",
   "buttons/unclassified":"Ingen kategori",
+  "buttons/timedisplay":"Timedisplay",
   "dialogs/find":"Välj",
   "dialogs/presentation":"Presentation",
   "hints/bubbl/setminsize":"Min bubblar storlek:",
