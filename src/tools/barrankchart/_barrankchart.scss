@@ -1,6 +1,54 @@
 .vzb-tool {
   $vzb-br-year-size: 16em;
 
+  &.vzb-small {
+    .vzb-barrankchart {
+      .vzb-br-total {
+        font-size: $vzb-font-size-small;
+      }
+
+      .vzb-br-label {
+        font-size: $vzb-font-size-small;
+      }
+
+      .vzb-br-value {
+        font-size: $vzb-font-size-tiny;
+      }
+    }
+  }
+
+  &.vzb-medium {
+    .vzb-barrankchart {
+      .vzb-br-total {
+        font-size: $vzb-font-size-medium;
+      }
+
+      .vzb-br-label {
+        font-size: $vzb-font-size-medium;
+      }
+
+      .vzb-br-value {
+        font-size: $vzb-font-size-small;
+      }
+    }
+  }
+
+  &.vzb-large {
+    .vzb-barrankchart {
+      .vzb-br-total {
+        font-size: $vzb-font-size-large;
+      }
+
+      .vzb-br-label {
+        font-size: $vzb-font-size-large;
+      }
+
+      .vzb-br-value {
+        font-size: $vzb-font-size-small;
+      }
+    }
+  }
+
   .vzb-barrankchart {
     @extend %vzb-chart-wrapper;
 
@@ -17,7 +65,6 @@
       }
       .vzb-br-total {
         fill: $vzb-color-black;
-        font-size: $vzb-font-size-small;
       }
     }
 
@@ -40,13 +87,6 @@
         user-select: none;
       }
 
-      .vzb-br-label {
-        font-size: $vzb-font-size-small;
-      }
-
-      .vzb-br-value {
-        font-size: $vzb-font-size-tiny;
-      }
       .vzb-dimmed {
         > .vzb-br-bar {
           opacity: .5;
