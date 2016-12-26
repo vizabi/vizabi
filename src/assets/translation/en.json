@@ -28,7 +28,7 @@
     "buttons/zoom": "Zoom",
     "buttons/inpercent": "Percent",
     "buttons/unclassified": "Unclassified",
-    "buttons/year": "Year",
+    "buttons/timedisplay": "Timedisplay",
     "dialogs/find": "Select",
     "dialogs/presentation": "Presentation",
     "hints/bubbl/setminsize": "Minimum bubble size:",

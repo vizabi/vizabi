@@ -1,12 +1,12 @@
 import Dialog from 'components/dialogs/_dialog';
 
 /*
- * Year dialog
+ * Timedisplay dialog
  */
-const Year = Dialog.extend({
+const TimeDisplay = Dialog.extend({
 
   init(config, parent) {
-    this.name = 'year';
+    this.name = 'timedisplay';
 
     this.model_binds = {
       'change:state.time.value': () => {
@@ -28,4 +28,4 @@ const Year = Dialog.extend({
 
 });
 
-export default Year;
+export default TimeDisplay;
