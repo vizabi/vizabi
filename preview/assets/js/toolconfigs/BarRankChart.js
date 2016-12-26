@@ -12,7 +12,7 @@ var VIZABI_MODEL = {
         "is--country": true
       }
     },
-    "entities_colorlegend": { 
+    "entities_colorlegend": {
       "dim": "world_4region"
     },
     "entities_tags": {
@@ -54,7 +54,7 @@ var VIZABI_MODEL = {
     "marker_colorlegend": {
       "space": ["entities_colorlegend"],
       "opacityRegular": 0.8,
-      "opacityHighlightDim": 0.3, 
+      "opacityHighlightDim": 0.3,
       "label": {
         "use": "property",
         "which": "name"
@@ -87,8 +87,8 @@ var VIZABI_MODEL = {
     },
     "buttons": ['colors', 'find', 'show', 'moreoptions', 'fullscreen', 'presentation'],
     "dialogs": {
-      'popup': ['colors', 'find', 'axes', 'show', 'moreoptions'], 
-      'sidebar': ['colors', 'find'], 
+      'popup': ['colors', 'find', 'axes', 'show', 'moreoptions'],
+      'sidebar': ['timedisplay', 'colors', 'find'],
       'moreoptions': ['opacity', 'speed', 'colors', 'presentation', 'about']
     },
     "splash": true

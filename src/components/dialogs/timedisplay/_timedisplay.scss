@@ -1,0 +1,11 @@
+.vzb-tool-dialogs {
+  .vzb-dialogs-dialog {
+    &[data-dlg="timedisplay"] {
+      .vzb-dialog-content {
+        text-align: center;
+        font-size: $vzb-font-size-largest;
+        color: $vzb-color-primary;
+      }
+    }
+  }
+}
