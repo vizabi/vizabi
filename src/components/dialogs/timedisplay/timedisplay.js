@@ -11,7 +11,7 @@ const TimeDisplay = Dialog.extend({
 
     this.model_binds = {
       'change:state.time.value': () => {
-        this.draw();
+        this.updateTime();
       }
     };
 
@@ -19,16 +19,22 @@ const TimeDisplay = Dialog.extend({
   },
 
   ready() {
-    this.draw();
+    this.updateTime();
+  },
+  
+  readyOnce() {
+    this.element = d3.select(this.element);
+    this.timeLabel = new DynamicBackground(this.element.select('.vzb-timedisplay'));
+    this.timeLabel.setConditions({ yAlign: 'top', topOffset: 25 });
+    this.timeLabel.resize(this.element.style('width'), this.element.style('height'), 100);
   },
 
-  draw() {
-    const { time } = this.model.state;
-    const background = new DynamicBackground(this.contentEl.select('.vzb-timedisplay'));
-
-    background.setConditions({ xAlign: 'left', yAlign: 'top', topOffset: 5 });
-    background.setText(time.timeFormat(time.value), 1);
-    background.resize(this.contentEl.style('width'), this.contentEl.style('height'), 110);
+  updateTime() {
+    var timeMdl = this.model.state.time;
+    this.time_1 = this.time == null ? timeMdl.value : this.time;
+    this.time = timeMdl.value;
+    var duration = timeMdl.playing && (this.time - this.time_1 > 0) ? timeMdl.delayAnimations : 0;
+    this.timeLabel.setText(timeMdl.timeFormat(this.time), duration);
   }
 
 });

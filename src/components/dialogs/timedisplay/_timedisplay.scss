@@ -1,11 +1,15 @@
 .vzb-tool-dialogs {
   .vzb-dialogs-dialog {
     &[data-dlg="timedisplay"] {
-      .vzb-timedisplay {
-        font-size: $vzb-font-size-largest;
-        color: $vzb-color-primary-strong;
+      min-height: 130px;
+      .vzb-dialog-content.vzb-dialog-content-fixed {
+        max-height: 128px;
+        padding: 0;
+        fill: $vzb-color-primary-strong;
         opacity: .5;
       }
     }
   }
 }
+
+
