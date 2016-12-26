@@ -1,6 +1,5 @@
 import * as utils from 'base/utils';
 import DataConnected from 'models/dataconnected';
-import Data from 'models/data';
 
 /*!
  * VIZABI Time Model
@@ -98,7 +97,7 @@ var TimeModel = DataConnected.extend({
 
   afterPreload: function() {
     if (this.dim == null && this.autogenerate) {
-      var dataSource = Data.instances.find(data => data._name == this.autogenerate.data);
+      var dataSource = this.getClosestModel(this.autogenerate.data);
       this.dim = dataSource.getConceptByIndex(this.autogenerate.conceptIndex).concept;
     }
   },

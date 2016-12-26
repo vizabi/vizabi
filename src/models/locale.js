@@ -1,6 +1,5 @@
 import * as utils from 'base/utils';
 import DataConnected from 'models/dataconnected';
-import Data from 'models/data';
 
 // this and many other locale information should at some point be stored in an external file with locale information (rtl, date formats etc)
 var rtlLocales = ['ar', 'ar-SA'];
@@ -47,7 +46,11 @@ var LocaleModel = DataConnected.extend({
     // load new concept properties for each data source.
     // this should be done with listeners, but the load promise can't be returned
     // through the listeners
-    promises = Data.instances.map(dataSource => dataSource.loadConceptProps());
+    
+    promises = [];
+    utils.forEach(this._root._data, (mdl)=>{
+      if(mdl._type === "data") promises.push(mdl.loadConceptProps())
+    })
     promises.push(new Promise((resolve, reject) => {
         d3.json(this.filePath + this.id + ".json", (error, strings) => {
           if (error) reject(error);
