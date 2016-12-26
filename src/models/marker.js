@@ -880,6 +880,20 @@ var Marker = Model.extend({
     utils.error(
       'ERROR: space not found.\n You must specify the objects this hook will use under the "space" attribute in the state.\n Example:\n space: ["entities", "time"]'
     );
+  },
+
+  getSpaceEntityByTag: function(tag) {
+    var _this = this;
+    var entity;
+    utils.forEach(this.getSpace(), function(name) {
+      var _entity = _this.getClosestModel(name);
+      if(!_entity) return;
+      if(_entity.tags && _entity.tags.indexOf(tag) !== -1) {
+        entity = _entity;
+        return false;
+      }
+    });
+    return entity;
   }
 
 });

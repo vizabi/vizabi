@@ -27,18 +27,6 @@ var AgePyramid = Component.extend({
       name: "time",
       type: "time"
     }, {
-      name: "entities",
-      type: "entities"
-    }, {
-      name: "side",
-      type: "entities"
-    }, {
-      name: "stack",
-      type: "entities"
-    }, {
-      name: "age",
-      type: "entities"
-    }, {
       name: "marker",
       type: "model"
     }, {
@@ -172,10 +160,13 @@ var AgePyramid = Component.extend({
       .domain([this.timeSteps[0], this.timeSteps[this.timeSteps.length - 1]])
       .range([0, this.timeSteps.length - 1]);
 
-    this.SIDEDIM = this.model.marker.hook_side.which;//this.model.side.getDimension();
+    this.side = this.model.marker.getSpaceEntityByTag("side");
+    this.SIDEDIM = this.side.getDimension();//this.model.marker.hook_side.which;//this.model.side.getDimension();
     //this.STACKDIM = this.model.marker.color.which;
-    this.STACKDIM = this.model.stack.getDimension() || this.model.marker.color.which;
-    this.AGEDIM = this.model.age.getDimension();
+    this.stack = this.model.marker.getSpaceEntityByTag("stack");
+    this.STACKDIM = this.stack.getDimension() || this.model.marker.color.which;
+    this.age = this.model.marker.getSpaceEntityByTag("age");
+    this.AGEDIM = this.age.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
 
     this.updateUIStrings();
@@ -217,7 +208,7 @@ var AgePyramid = Component.extend({
     var sideDim = this.SIDEDIM;
     var stackDim = this.STACKDIM;
     var ageDim = this.AGEDIM;
-    var group_by = this.model.age.grouping || 1;
+    var group_by = this.age.grouping || 1;
 
     var ages = this.model.marker.getKeys(ageDim);
     var ageKeys = [];
@@ -234,12 +225,12 @@ var AgePyramid = Component.extend({
         return m[sideDim];
       });
 
-    var sideFilter = this.model.side.getFilter;
+    var sideFilter = this.side.getFilter;
     if(sideFilter[sideDim] && sideFilter[sideDim][0] != "*") {
       sideKeys = sideKeys.filter(function(m) {
         var f = {};
         f[sideDim] = m;
-        return _this.model.side.isShown(f);
+        return _this.side.isShown(f);
       });
     }
 
@@ -272,7 +263,7 @@ var AgePyramid = Component.extend({
     this.stackKeys = sortedStackKeys;
     this.stackItems = this.model.marker.label_stack.getItems();
 
-    this.stacked = this.ui.chart.stacked && this.model.marker.color.use != "constant" && this.model.stack.getDimension();
+    this.stacked = this.ui.chart.stacked && this.model.marker.color.use != "constant" && this.stack.getDimension();
 
     this.twoSided = this.sideKeys.length > 1;
     if(this.twoSided) {
@@ -383,7 +374,7 @@ var AgePyramid = Component.extend({
     this.stepData = {};
 
     var ageShift = 0;
-    var group_by = this.model.age.grouping || 1;
+    var group_by = this.age.grouping || 1;
 
     var groupArray = [ageDim, sideDim, stackDim];
     this.stepDataDeep = groupArray.length;
@@ -453,7 +444,7 @@ var AgePyramid = Component.extend({
     var timeDim = this.TIMEDIM;
     var duration = (time.playing) ? time.delayAnimations : 0;
 
-    var group_by = this.model.age.grouping || 1;
+    var group_by = this.age.grouping || 1;
     //var group_offset = this.model.marker.group_offset ? Math.abs(this.model.marker.group_offset % group_by) : 0;
 
     if(this.ui.chart.inpercent) {
@@ -875,7 +866,7 @@ var AgePyramid = Component.extend({
         limitMaxTickNumber: 19
       });
 
-    var group_by = this.model.age.grouping || 1;
+    var group_by = this.age.grouping || 1;
 
     var format = this.ui.chart.inpercent ? d3.format((group_by > 3 ? "":".1") + "%") : this.model.marker.axis_x.getTickFormatter();
 

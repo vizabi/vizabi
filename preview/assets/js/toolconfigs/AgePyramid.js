@@ -15,17 +15,13 @@ var VIZABI_MODEL = {
       "dim": "country_code",
       "show": {
         "country_code": {
-          "$in": [903,904,905,908,909,935]
+          "$in": [903,904]//[903,904,905,908,909,935]
         }
-      }
+      },
+      "tags": ["stack"]
     },
     "entities_colorlegend": {
       "dim": "country_code",
-      "show": {
-        "country_code": {
-          "$in": [903,904,905,908,909,935]
-        }
-      }
     },
     "entities_age": {
       "dim": "age",
@@ -35,24 +31,18 @@ var VIZABI_MODEL = {
           "$gte": 0
         }
       },
+      "tags": ["age"],
       "grouping": 1
     },
-    "entities_stack": {
-      "dim": "country_code",
-      "show": {
-        "country_code": {
-          "$in": [903,904,905,908,909,935]
-        }
-      }
-    },
     "entities_side": {
-      "dim": "gender"
+      "dim": "gender",
+      "tags": ["side"]
     },
     "marker": {
-      "space": ["entities_stack", "time", "entities_side", "entities_age"],
+      "space": ["entities", "time", "entities_side", "entities_age"],
       "label_stack": {
         "use": "property",
-        "spaceRef": "entities_stack",
+        "spaceRef": "entities",
         "which": "name"
       },
       "label_side": {
@@ -84,8 +74,18 @@ var VIZABI_MODEL = {
         "which": "gender"
       },
     },
+    "entities_allpossible": {
+      "dim": "country_code",
+    },
+    "marker_allpossible": {
+      "space": ["entities_allpossible"],
+      "label": {
+        "use": "property",
+        "which": "name"
+      }
+    },
     "marker_side": {
-      "space": ["entities_stack", "time", "entities_side", "entities_age"],
+      "space": ["entities", "time", "entities_side", "entities_age"],
       "hook_total": {
         "use": "indicator",
         "which": "population"
@@ -125,7 +125,7 @@ var VIZABI_MODEL = {
     "buttons":['colors', 'inpercent','moreoptions', 'fullscreen'],
     "dialogs": {
       'popup': ['colors', 'moreoptions'], 
-      'sidebar': ['colors'], 
+      'sidebar': ['colors', 'show'], 
       'moreoptions': ['opacity', 'speed', 'colors','presentation', 'about']
     },
     "splash": true
