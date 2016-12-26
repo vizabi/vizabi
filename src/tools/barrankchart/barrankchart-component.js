@@ -339,6 +339,7 @@ const BarRankChart = Component.extend({
         .interrupt()
         .text(this.model.time.timeFormat(this.time));
     }
+    headerTotal.style('opacity', Number(this.getLayoutProfile() !== 'large'));
 
     const headerTotalBBox = headerTotal.node().getBBox();
 
