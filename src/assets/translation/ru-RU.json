@@ -28,6 +28,7 @@
   "buttons/zoom":"Масштаб",
   "buttons/inpercent":"Процент",
   "buttons/unclassified":"Винегрет",
+  "buttons/year":"Год",
   "dialogs/find":"Выбрать",
   "dialogs/presentation":"Презентация (проектор)",
   "hints/bubbl/setminsize":"Минимальный размер кружка:",
