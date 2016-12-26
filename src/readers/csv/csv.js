@@ -161,7 +161,7 @@ const CSVReader = Reader.extend({
           result[key] = parser(value);
         } else {
           const numeric = parseFloat(value);
-          result[key] = !isNaN(numeric) && isFinite(numeric) ? numeric : value;
+          result[key] = !isNaN(numeric) && isFinite(numeric) ? parseFloat(value.replace(',', '.')) : value;
         }
 
         return result;
