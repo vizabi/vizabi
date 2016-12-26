@@ -87,7 +87,9 @@ var Hook = DataConnected.extend({
 
   afterPreload: function() {
     if (this.which == null && this.autogenerate) {
-      this.which = this.dataSource.getConceptByIndex(this.autogenerate.conceptIndex).concept;
+      this.which = this.dataSource
+        .getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType)
+        .concept;
     }
   },
 

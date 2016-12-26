@@ -335,8 +335,8 @@ var DataModel = Model.extend({
      }
   },
 
-  getConceptByIndex: function(index) {
-    return this.conceptArray[index];
+  getConceptByIndex: function(index, type) {
+    return this.conceptArray.filter((f)=>!type || !f.concept_type || f.concept_type===type)[index];
   },
   
   getDatasetName: function(){
