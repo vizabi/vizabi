@@ -1,4 +1,5 @@
 import Dialog from 'components/dialogs/_dialog';
+import DynamicBackground from 'helpers/d3.dynamicBackground';
 
 /*
  * Timedisplay dialog
@@ -23,7 +24,11 @@ const TimeDisplay = Dialog.extend({
 
   draw() {
     const { time } = this.model.state;
-    this.contentEl.text(time.timeFormat(time.value));
+    const background = new DynamicBackground(this.contentEl.select('.vzb-timedisplay'));
+
+    background.setConditions({ xAlign: 'left', yAlign: 'top', topOffset: 5 });
+    background.setText(time.timeFormat(time.value), 1);
+    background.resize(this.contentEl.style('width'), this.contentEl.style('height'), 110);
   }
 
 });
