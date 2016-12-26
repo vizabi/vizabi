@@ -18,7 +18,7 @@ const CSVReader = Reader.extend({
   },
 
   _name: 'csv',
-  
+
   /**
    * Initializes the reader.
    * @param {Object} readerInfo Information about the reader
@@ -26,7 +26,7 @@ const CSVReader = Reader.extend({
   init(readerInfo) {
     this._data = [];
     this._basepath = readerInfo.path;
-    this.d3reader = readerInfo.delimiter? d3.dsv(readerInfo.delimiter, "text/plain") : d3.csv;
+    this.d3reader = readerInfo.delimiter ? d3.dsv(readerInfo.delimiter, 'text/plain') : d3.csv;
     this.keySize = readerInfo.keySize || 1;
 
     if (!this._basepath) {
@@ -70,15 +70,15 @@ const CSVReader = Reader.extend({
       })
       .catch(utils.error);
   },
-  
-  
+
+
   /**
    * This function returns info about the dataset
    * in case of CSV reader it's just the name of the file
    * @returns {object} object of info about the dataset
    */
-  getDatasetInfo: function(){
-    return {name: this._basepath.split("/").pop()};
+  getDatasetInfo() {
+    return { name: this._basepath.split('/').pop() };
   },
 
   load() {
@@ -161,7 +161,7 @@ const CSVReader = Reader.extend({
           result[key] = parser(value);
         } else {
           const numeric = parseFloat(value);
-          result[key] = !isNaN(numeric) && isFinite(numeric) ? numeric : value;
+          result[key] = !isNaN(numeric) && isFinite(numeric) ? parseFloat(value.replace(',', '.')) : value;
         }
 
         return result;
@@ -170,32 +170,29 @@ const CSVReader = Reader.extend({
   },
 
   _getConcepts(data) {
-    var firstRow = data[0];
-    var _this = this;
-    
-    return Object.keys(firstRow).map(function(concept, index){
-      var result = {concept: concept};
-      //TODO: is the order of first/last elements stable?
-      //first columns are expected to have keys
-      if(index < _this.keySize) {
-        result.concept_type = 'entity_domain';
-      }
-      //the column after is expected to have time
-      else if(index === _this.keySize) {
-        result.concept_type = 'time';
-      }
-      else {
-        result.concept_type = "measure";
+    const firstRow = data[0];
 
-        for (var i = data.length-1; i>=0; i--){
-          if(utils.isString(data[i][concept]) && data[i][concept] !== "") {
-            result.concept_type = "entity_set";
+    return Object.keys(firstRow).map((concept, index) => {
+      const result = { concept };
+      // TODO: is the order of first/last elements stable?
+      // first columns are expected to have keys
+      if (index < this.keySize) {
+        result.concept_type = 'entity_domain';
+      } else if (index === this.keySize) {
+        //the column after is expected to have time
+        result.concept_type = 'time';
+      } else {
+        result.concept_type = 'measure';
+
+        for (let i = data.length - 1; i >= 0; i--) {
+          if (utils.isString(data[i][concept]) && data[i][concept] !== '') {
+            result.concept_type = 'entity_set';
             result.domain = Object.keys(firstRow)[0];
             break;
           }
         }
       }
-      
+
       return result;
     })
   },
