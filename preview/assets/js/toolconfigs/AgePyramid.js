@@ -128,25 +128,22 @@ var VIZABI_MODEL = {
       'sidebar': ['colors'], 
       'moreoptions': ['opacity', 'speed', 'colors','presentation', 'about']
     },
-    "splash": false
+    "splash": true
   },
 //  "data": {
 //    "reader": "csv",
 //    "delimiter": ";",
 //    "nowManyFirstColumnsAreKeys": 4,
-//    "path": "data/zaf/waffles/ddf--datapoints--population--by--year--age--population_group--education_attainment.csv",
-//    "splash": false
+//    "path": "data/zaf/waffles/ddf--datapoints--population--by--year--age--population_group--education_attainment.csv"
 //  },
 //  "data": {
 //    "reader": "ddf",
-//    "path": "data/ddf--unpop--wpp_population",
-//    "splash": false
+//    "path": "data/ddf--unpop--wpp_population"
 //  },
   "data": {
     "reader": "waffle",
     "dataset": "open-numbers/ddf--unpop--wpp_population",
-    "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/",
-    "splash": true
+    "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/"
   }
 };
 
