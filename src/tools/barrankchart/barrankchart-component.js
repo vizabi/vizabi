@@ -222,7 +222,7 @@ const BarRankChart = Component.extend({
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 16,
         infoElMargin: 5,
-        barHeight: 20,
+        barHeight: 18,
         barMargin: 3,
         barRectMargin: 5,
         barValueMargin: 5,
@@ -233,7 +233,7 @@ const BarRankChart = Component.extend({
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 16,
         infoElMargin: 5,
-        barHeight: 20,
+        barHeight: 21,
         barMargin: 3,
         barRectMargin: 5,
         barValueMargin: 5,
@@ -244,8 +244,8 @@ const BarRankChart = Component.extend({
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 16,
         infoElMargin: 5,
-        barHeight: 20,
-        barMargin: 3,
+        barHeight: 28,
+        barMargin: 4,
         barRectMargin: 5,
         barValueMargin: 5,
         scrollMargin: 25,
@@ -265,8 +265,8 @@ const BarRankChart = Component.extend({
         margin: { top: 60, right: 10, left: 10, bottom: 40 },
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 16,
-        barHeight: 25,
         infoElMargin: 10,
+        barHeight: 30,
         barMargin: 6
       }
     };
