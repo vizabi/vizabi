@@ -88,7 +88,7 @@ var VIZABI_MODEL = {
     "buttons": ['colors', 'find', 'show', 'moreoptions', 'fullscreen', 'presentation'],
     "dialogs": {
       'popup': ['colors', 'find', 'axes', 'show', 'moreoptions'],
-      'sidebar': ['year', 'colors', 'find'],
+      'sidebar': ['timedisplay', 'colors', 'find'],
       'moreoptions': ['opacity', 'speed', 'colors', 'presentation', 'about']
     },
     "splash": true

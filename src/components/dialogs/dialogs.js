@@ -42,8 +42,8 @@ var Dialogs = Component.extend({
     }];
 
     this._available_dialogs = {
-      'year': {
-        dialog: dialogs.year
+      'timedisplay': {
+        dialog: dialogs.timedisplay
       },
       'find': {
         dialog: dialogs.find,
