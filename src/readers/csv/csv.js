@@ -77,7 +77,7 @@ const CSVReader = Reader.extend({
    * in case of CSV reader it's just the name of the file
    * @returns {object} object of info about the dataset
    */
-  getDatasetInfo: function () {
+  getDatasetInfo() {
     return { name: this._basepath.split('/').pop() };
   },
 
