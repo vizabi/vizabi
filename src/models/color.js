@@ -188,6 +188,8 @@ var ColorModel = Hook.extend({
       var conceptpropsColor = this.getConceptprops().color;
       var palette;
 
+      this.discreteDefaultPalette = false;
+
       if(conceptpropsColor && conceptpropsColor.palette) {
         //specific color palette from hook concept properties
         palette = utils.clone(conceptpropsColor.palette);
@@ -203,7 +205,8 @@ var ColorModel = Hook.extend({
         }
       } else {
         palette = utils.clone(defaultPalettes[this.isDiscrete()? "_discrete" : "_continuous"]);
-      }
+        this.discreteDefaultPalette = true;
+     }
 
       return palette;
   },
@@ -232,7 +235,7 @@ var ColorModel = Hook.extend({
       this.set("paletteLabels", paletteLabels, false, false);
     }
     var palette = this.palette.getPlainObject();
-    if(this.use == "indicator" && !includeDefault) {
+    if(this.use !== "constant" && !includeDefault) {
       delete palette["_default"];
     }
     return palette;
@@ -302,6 +305,7 @@ var ColorModel = Hook.extend({
       
       scaleType = "ordinal";
 
+      if(this.discreteDefaultPalette) domain = domain.concat(this.getUnique(this.which));
       this.scale = d3.scale[scaleType]()
         .domain(domain)
         .range(range);
