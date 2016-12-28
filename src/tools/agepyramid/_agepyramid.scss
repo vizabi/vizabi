@@ -5,6 +5,13 @@
     .vzb-bc-axis-y {
       @extend %vzb-chart-axis;
     }
+    .vzb-bc-axis-x {
+      .tick line {
+        stroke: $vzb-color-white;
+        stroke-width: 1px;
+        stroke-dasharray: none;
+      }
+    }
     .vzb-bc-axis-x-title,
     .vzb-bc-axis-y-title {
       @extend %vzb-chart-axis-title;

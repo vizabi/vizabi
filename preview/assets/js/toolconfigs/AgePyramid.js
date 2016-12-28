@@ -84,13 +84,6 @@ var VIZABI_MODEL = {
         "which": "name"
       }
     },
-    "marker_side": {
-      "space": ["entities", "time", "entities_side", "entities_age"],
-      "hook_total": {
-        "use": "indicator",
-        "which": "population"
-      }
-    },
     "marker_colorlegend": {
       "space": ["entities_colorlegend"],
       "label": {
