@@ -15,7 +15,7 @@ var VIZABI_MODEL = {
       "dim": "country_code",
       "show": {
         "country_code": {
-          "$in": [903,904]//[903,904,905,908,909,935]
+          "$in": ["903","904","905","908","909","935"]
         }
       },
       "tags": ["stack"]
@@ -27,8 +27,7 @@ var VIZABI_MODEL = {
       "dim": "age",
       "show": {
         "age": {
-          "$lte": 95,
-          "$gte": 0
+          "$nin": ["80plus","100plus","96","97","98","99"]
         }
       },
       "tags": ["age"],
@@ -135,7 +134,7 @@ var VIZABI_MODEL = {
 //  },
   "data": {
     "reader": "waffle",
-    "dataset": "open-numbers/ddf--unpop--wpp_population",
+    "dataset": "angieskazka/ddf--unpop--wpp_population",
     "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/"
   }
 };
