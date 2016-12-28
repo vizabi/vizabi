@@ -27,7 +27,7 @@ var VIZABI_MODEL = {
       "dim": "age",
       "show": {
         "age": {
-          "$nin": ["80plus","100plus","96","97","98","99"]
+          "$nin": ["80plus","100plus"]
         }
       },
       "tags": ["age"],
