@@ -478,7 +478,7 @@ export default function axisSmart() {
               }))
 
           } else {
-            return lengthRange + options.toolMargin.left + options.toolMargin.right >
+            return lengthRange >
               tickValues.length * marginsLR + (approximationStyle == PESSIMISTIC ?
                 options.widthOfOneDigit * tickValues.length * maxLength : 0) + (approximationStyle == OPTIMISTIC ?
                 options.widthOfOneDigit * (
