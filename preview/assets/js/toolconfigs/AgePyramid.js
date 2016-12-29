@@ -17,11 +17,10 @@ var VIZABI_MODEL = {
         "country_code": {
           "$in": ["903","904","905","908","909","935"]
         }
-      },
-      "tags": ["stack"]
+      }
     },
     "entities_colorlegend": {
-      "dim": "country_code",
+      "dim": "country_code"
     },
     "entities_age": {
       "dim": "age",
@@ -30,12 +29,10 @@ var VIZABI_MODEL = {
           "$nin": ["80plus","100plus"]
         }
       },
-      "tags": ["age"],
       "grouping": 1
     },
     "entities_side": {
-      "dim": "gender",
-      "tags": ["side"]
+      "dim": "gender"
     },
     "marker": {
       "space": ["entities", "time", "entities_side", "entities_age"],
@@ -52,6 +49,7 @@ var VIZABI_MODEL = {
       "axis_y": {
         "use": "property",
         "which": "age",
+        "spaceRef": "entities_age",
         "domainMax": 100,
         "domainMin": 0,
         "_important": false
@@ -67,11 +65,7 @@ var VIZABI_MODEL = {
           "scales": ["ordinal"]
         },
         "syncModels": ["marker_colorlegend"]
-      },
-      "hook_side": {
-        "use": "property",
-        "which": "gender"
-      },
+      }
     },
     "entities_allpossible": {
       "dim": "country_code",

@@ -569,6 +569,10 @@ var Hook = DataConnected.extend({
   
   validate: function() {
     this._super();
+  },
+
+  getEntity: function() {
+    return  this._space[this.spaceRef ? this.spaceRef : this._parent.getSpace()[0]];
   }
 });
 
