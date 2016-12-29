@@ -21,11 +21,11 @@ export default function axisSmart() {
     function axis(g) {
       var checkDmn = axis.scale().domain();
       var checkRng = axis.scale().range();
-      if(!checkDmn[0] && checkDmn[0]!==0 || !checkDmn[1] && checkDmn[1]!==0 
+      if(!checkDmn[0] && checkDmn[0]!==0 || !checkDmn[1] && checkDmn[1]!==0
       || !checkRng[0] && checkRng[0]!==0 || !checkRng[1] && checkRng[1]!==0){
         return utils.warn("d3.svg.axisSmart() skips action because of invalid domain " + JSON.stringify(checkDmn) + " or range " + JSON.stringify(checkRng) + " of the attached scale");
       }
-      
+
       if(highlightValue != null) {
         axis.highlightValueRun(g);
         return;
@@ -52,7 +52,7 @@ export default function axisSmart() {
       } else {
        _super(g);
       }
-      
+
       //identify the orientation of axis and the direction of labels
       var orient = axis.orient() == "top" || axis.orient() == "bottom" ? HORIZONTAL : VERTICAL;
       var dimension = (orient == HORIZONTAL && axis.pivot() || orient == VERTICAL && !axis.pivot()) ? Y : X;
@@ -64,7 +64,7 @@ export default function axisSmart() {
         .attr("class", 'vzb-axis-value')
         .classed("vzb-hidden", true)
         .append("text")
-      
+
       // patch the label positioning after the view is generated
       var padding = axis.tickPadding();
       g.selectAll("text")
@@ -79,7 +79,7 @@ export default function axisSmart() {
           view.attr("dx", dimension == X ? (orient == VERTICAL ? padding : 0) : 0);
           view.attr("dy", dimension == X ? (orient == VERTICAL ? -padding : ".72em") : ".32em");
         });
-      
+
       //apply label repositioning: first and last visible values would shift away from the borders
       if(axis.repositionLabels() != null){
         g.selectAll(".tick")
@@ -90,7 +90,7 @@ export default function axisSmart() {
             view.attr("y", +view.attr("y") + shift.y);
           });
       }
-      
+
       //hide axis labels that are outside the available viewport
       var scale = axis.scale();
       if(options.viewportLength){
@@ -114,22 +114,22 @@ export default function axisSmart() {
         .attr("x1", orient == VERTICAL ? (axis.orient() == "right" ? -1 : 1) * tickLengthIn : scale)
         .attr("x2", orient == VERTICAL ? (axis.orient() == "right" ? 1 : -1) * tickLengthOut : scale);
 
-      //adjust axis rake 
+      //adjust axis rake
       g.selectAll("path").remove();
       var rake = g.selectAll(".vzb-axis-line").data([0]);
       rake.exit().remove();
       rake.enter().append("line")
         .attr("class", "vzb-axis-line");
-        
+
       if(options.viewportLength){
-        rake 
+        rake
           .attr("x1", orient == VERTICAL ? 0 : -1)
           .attr("x2", orient == VERTICAL ? 0 : options.viewportLength)
           .attr("y1", orient == HORIZONTAL ? 0 : 0)
-          .attr("y2", orient == HORIZONTAL ? 0 : options.viewportLength)      
+          .attr("y2", orient == HORIZONTAL ? 0 : options.viewportLength)
       }else{
         //TODO: this will not work for the "ordinal" scaleType
-        rake 
+        rake
           .attr("x1", orient == VERTICAL ? 0 : d3.min(scale.range()) - (options.bump||0) - 1)
           .attr("x2", orient == VERTICAL ? 0 : d3.max(scale.range()) + (options.bump||0))
           .attr("y1", orient == HORIZONTAL ? 0 : d3.min(scale.range()) - (options.bump||0))
@@ -145,23 +145,23 @@ export default function axisSmart() {
         axis.scale()(highlightValue) > options.viewportLength ||
         axis.scale()(highlightValue) < 0
       )) highlightValue = "none";
-      
+
       //identify the orientation of axis and the direction of labels
       var orient = axis.orient() == "top" || axis.orient() == "bottom" ? HORIZONTAL : VERTICAL;
       var dimension = (orient == HORIZONTAL && axis.pivot() || orient == VERTICAL && !axis.pivot()) ? "y" : "x";
       var pivot = axis.pivot() ? -1 : 1;
-      
+
       //set content and visibility of HL value
       g.select('.vzb-axis-value')
         .classed("vzb-hidden", highlightValue == "none");
-      
+
       var bbox;
       var o = {};
 
       if(highlightValue != "none") {
         // measure its width and height for collision resolving
         bbox = g.select('.vzb-axis-value').node().getBBox();
-        
+
         // clone a known options object (because we don't want to overwrite widthOfOneDigit / heightOfOneDigit in the original one
         o.bump = options.bump;
         o.formatter = options.formatter;
@@ -175,33 +175,33 @@ export default function axisSmart() {
       // this will give additive shifting for the hovered value in case it sticks out a little outside viewport
       var hlValueShift = (highlightValue == "none" ? {x:0, y:0} :
           repositionLabelsThatStickOut([highlightValue], o, orient, axis.scale(), dimension)[highlightValue])[dimension];
-      
+
       // this function will help to move the hovered value to the right place
       var getTransform = function(d){
-        return highlightValue == "none" ? "translate(0,0)" : 
-            "translate(" 
-            + (orient == HORIZONTAL ? axis.scale()(highlightValue) + hlValueShift * pivot : 0) + "," 
-            + (orient == VERTICAL ? axis.scale()(highlightValue) + hlValueShift * pivot : 0) 
+        return highlightValue == "none" ? "translate(0,0)" :
+            "translate("
+            + (orient == HORIZONTAL ? axis.scale()(highlightValue) + hlValueShift * pivot : 0) + ","
+            + (orient == VERTICAL ? axis.scale()(highlightValue) + hlValueShift * pivot : 0)
             + ")"
       }
-      
+
       // this function will help to compute opacity for the axis labels that would overlap with the HL label
       var getOpacity = function(d, t, view){
         if(highlightValue == "none") return 1;
-        
+
         var wh = orient==HORIZONTAL? "width" : "height";
         var shift = (axis.repositionLabels()[d] || {x: 0, y: 0})[dimension];
-        
+
         // opacity depends on the collision between label's boundary boxes
         return axis.hlOpacityScale()(
           // this computes the distance between the box centers, this is a 1-d problem because all labels are along the axis
           // shifts of labels that stick out from the viewport are also taken into account
-          Math.abs(axis.scale()(d) + shift * pivot - axis.scale()(highlightValue) -  hlValueShift * pivot) 
+          Math.abs(axis.scale()(d) + shift * pivot - axis.scale()(highlightValue) -  hlValueShift * pivot)
           // this computes the sides of boundary boxes, each has a half-size to reduce the distance between centers
           - view.getBBox()[wh]/2 - bbox[wh]/2
         );
       }
-        
+
       // apply translation of the HL value and opacity of tick labels
       if(highlightTransDuration){
         g.select('.vzb-axis-value')
@@ -209,13 +209,13 @@ export default function axisSmart() {
           .duration(highlightTransDuration)
           .ease("linear")
           .attr("transform", getTransform);
-        
+
         g.select('.vzb-axis-value')
           .select("text")
           .transition("text")
           .delay(highlightTransDuration)
           .text(highlightValue == "none" ? "" : options.formatter(highlightValue));
-        
+
         g.selectAll(".tick:not(.vzb-hidden)").each(function(d, t) {
           d3.select(this).select("text")
             .transition()
@@ -223,32 +223,32 @@ export default function axisSmart() {
             .ease("linear")
             .style("opacity", getOpacity(d,t, this))
         })
-          
+
       }else{
         g.select('.vzb-axis-value')
           .interrupt()
           .attr("transform", getTransform)
           .transition();
-        
+
         g.select('.vzb-axis-value')
           .select("text")
           .interrupt()
           .text(highlightValue == "none" ? "" : options.formatter(highlightValue))
           .transition();
-          
+
         g.selectAll(".tick:not(.vzb-hidden)").each(function(d, t) {
           d3.select(this).select("text")
             .interrupt()
             .style("opacity", getOpacity(d,t, this))
             .transition();
         })
-                  
+
       }
 
       highlightValue = null;
     }
 
-    
+
     var hlOpacityScale = d3.scale.linear().domain([0,5]).range([0,1]).clamp(true);
     axis.hlOpacityScale = function(arg) {
       if(!arguments.length) return hlOpacityScale;
@@ -341,15 +341,15 @@ export default function axisSmart() {
       if(options.formatter == null) options.formatter = axis.tickFormat()?
         axis.tickFormat() : function(d) {return d+"";}
       options.cssLabelMarginLimit = 5; //px
-      
+
       if(options.cssMargin == null) options.cssMargin = {};
-      if(options.cssMargin.left == null || parseInt(options.cssMargin.left) < options.cssLabelMarginLimit) 
+      if(options.cssMargin.left == null || parseInt(options.cssMargin.left) < options.cssLabelMarginLimit)
         options.cssMargin.left = options.cssLabelMarginLimit + "px";
-      if(options.cssMargin.right == null || parseInt(options.cssMargin.right) < options.cssLabelMarginLimit) 
+      if(options.cssMargin.right == null || parseInt(options.cssMargin.right) < options.cssLabelMarginLimit)
         options.cssMargin.right = options.cssLabelMarginLimit + "px";
-      if(options.cssMargin.top == null || parseInt(options.cssMargin.top) < options.cssLabelMarginLimit) 
+      if(options.cssMargin.top == null || parseInt(options.cssMargin.top) < options.cssLabelMarginLimit)
         options.cssMargin.top = options.cssLabelMarginLimit + "px";
-      if(options.cssMargin.bottom == null || parseInt(options.cssMargin.bottom) < options.cssLabelMarginLimit) 
+      if(options.cssMargin.bottom == null || parseInt(options.cssMargin.bottom) < options.cssLabelMarginLimit)
         options.cssMargin.bottom = options.cssLabelMarginLimit + "px";
       if(options.toolMargin == null) options.toolMargin = {
         left: 30,
@@ -411,7 +411,7 @@ export default function axisSmart() {
         })) * options.widthOfOneDigit + parseInt(options.cssMargin.left);
 
       var pivot = options.isPivotAuto && (
-        (estLongestLabelLength + axis.tickPadding() > options.pivotingLimit) && (orient == VERTICAL) 
+        (estLongestLabelLength + axis.tickPadding() > options.pivotingLimit) && (orient == VERTICAL)
         ||
         !(estLongestLabelLength + axis.tickPadding() > options.pivotingLimit) && !(orient == VERTICAL)
       );
@@ -870,10 +870,10 @@ export default function axisSmart() {
           head: options.toolMargin.right,
           tail: options.toolMargin.left
         };
-      
+
       var range = scale.range();
       var bump = options.bump;
-      
+
       //when a viewportLength is given: adjust outer VISIBLE tick values
       //this is helpful when the scaled is zoomed, so labels don't get truncated by a viewport svg
       if(options.viewportLength){
@@ -883,33 +883,33 @@ export default function axisSmart() {
         range = [0, options.viewportLength];
         //reset the bump because zoomed axis has no bump
         bump = 0;
-      }      
-      
+      }
+
       // STEP 1:
       // for outer labels: avoid sticking out from the tool margin
       tickValues.forEach(function(d, i) {
         if(i != 0 && i != tickValues.length - 1) return;
 
         // compute the influence of the axis head
-        var repositionHead = Math.min(margin.head, options.widthOfOneDigit * 0.5) + bump 
-          + (orient == HORIZONTAL ? 1 : 0) * d3.max(range) 
-          - (orient == HORIZONTAL ? 0 : 1) * d3.min(range) 
-          + (orient == HORIZONTAL ? -1 : 1) * scale(d) 
-          - (dimension == "x") * options.formatter(d).length * options.widthOfOneDigit / 2 
-          - (dimension == "y") * options.heightOfOneDigit / 2
-          // we may consider or not the label margins to give them a bit of spacing from the edges
-          - (dimension == "x") * parseInt(options.cssMargin.right) 
-          - (dimension == "y") * parseInt(options.cssMargin.top);
-
-        // compute the influence of the axis tail
-        var repositionTail = Math.min(margin.tail, options.widthOfOneDigit * 0.5) + bump 
-          + (orient == VERTICAL ? 1 : 0) * d3.max(range) 
-          - (orient == VERTICAL ? 0 : 1) * d3.min(range) 
-          + (orient == VERTICAL ? -1 : 1) * scale(d) 
+        var repositionHead = Math.min(margin.head, options.widthOfOneDigit * 0.5) + bump
+          + (orient == HORIZONTAL ? 1 : 0) * d3.max(range)
+          - (orient == HORIZONTAL ? 0 : 1) * d3.min(range)
+          + (orient == HORIZONTAL ? -1 : 1) * scale(d)
           - (dimension == "x") * options.formatter(d).length * options.widthOfOneDigit / 2
           - (dimension == "y") * options.heightOfOneDigit / 2
           // we may consider or not the label margins to give them a bit of spacing from the edges
-          - (dimension == "x") * parseInt(options.cssMargin.left) 
+          - (dimension == "x") * parseInt(options.cssMargin.right)
+          - (dimension == "y") * parseInt(options.cssMargin.top);
+
+        // compute the influence of the axis tail
+        var repositionTail = Math.min(margin.tail, options.widthOfOneDigit * 0.5) + bump
+          + (orient == VERTICAL ? 1 : 0) * d3.max(range)
+          - (orient == VERTICAL ? 0 : 1) * d3.min(range)
+          + (orient == VERTICAL ? -1 : 1) * scale(d)
+          - (dimension == "x") * options.formatter(d).length * options.widthOfOneDigit / 2
+          - (dimension == "y") * options.heightOfOneDigit / 2
+          // we may consider or not the label margins to give them a bit of spacing from the edges
+          - (dimension == "x") * parseInt(options.cssMargin.left)
           - (dimension == "y") * parseInt(options.cssMargin.bottom);
 
         // apply limits in order to cancel repositioning of labels that are good
@@ -937,12 +937,12 @@ export default function axisSmart() {
           - (dimension == "x") * (orient == HORIZONTAL ? 1 : -1) * result[tickValues[tickValues.length - 1]][dimension]
 
           // substract half-length of the overlapping labels
-          - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(d).length 
-          - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(tickValues[tickValues.length - 1]).length 
+          - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(d).length
+          - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(tickValues[tickValues.length - 1]).length
           - (dimension == "y") * options.heightOfOneDigit * .7 //TODO remove magic constant - relation of actual font height to BBox-measured height
 
           // we may consider or not the label margins to give them a bit of spacing from the edges
-          - (dimension == "x") * parseInt(options.cssMargin.left) 
+          - (dimension == "x") * parseInt(options.cssMargin.left)
           - (dimension == "y") * parseInt(options.cssMargin.bottom);
 
         // compute the influence of the tail-side outer label
@@ -955,12 +955,12 @@ export default function axisSmart() {
           - (dimension == "x") * (orient == VERTICAL ? 1 : -1) * result[tickValues[0]][dimension]
 
           // substract half-length of the overlapping labels
-          - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(d).length 
-          - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(tickValues[0]).length 
+          - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(d).length
+          - (dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(tickValues[0]).length
           - (dimension == "y") * options.heightOfOneDigit * .7 //TODO remove magic constant - relation of actual font height to BBox-measured height
 
           // we may consider or not the label margins to give them a bit of spacing from the edges
-          - (dimension == "x") * parseInt(options.cssMargin.left) 
+          - (dimension == "x") * parseInt(options.cssMargin.left)
           - (dimension == "y") * parseInt(options.cssMargin.bottom);
 
         // apply limits in order to cancel repositioning of labels that are good
