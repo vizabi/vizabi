@@ -77,7 +77,8 @@ var BubbleChart = Tool.extend('BubbleChart', {
       time: { 
         autogenerate: {
           data: "data",
-          conceptIndex: 1
+          conceptIndex: 0,
+          conceptType: "time"
         }
       },
       entities: {

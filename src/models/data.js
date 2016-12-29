@@ -336,7 +336,9 @@ var DataModel = Model.extend({
   },
 
   getConceptByIndex: function(index, type) {
-    return this.conceptArray.filter((f)=>!type || !f.concept_type || f.concept_type===type)[index];
+    var concept = this.conceptArray.filter(f => !type || !f.concept_type || f.concept_type===type)[index];
+    if(!concept && type == "measure") concept = this.conceptArray.filter(f => f.concept_type==="time")[0];
+    return concept;
   },
   
   getDatasetName: function(){

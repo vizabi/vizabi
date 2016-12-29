@@ -100,7 +100,7 @@ var TimeModel = DataConnected.extend({
   afterPreload: function() {
     if (this.dim == null && this.autogenerate) {
       var dataSource = this.getClosestModel(this.autogenerate.data);
-      this.dim = dataSource.getConceptByIndex(this.autogenerate.conceptIndex).concept;
+      this.dim = dataSource.getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType).concept;
     }
   },
 
