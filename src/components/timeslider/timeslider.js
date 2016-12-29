@@ -529,7 +529,7 @@ var TimeSlider = Component.extend({
         //set handle position
         _this.handle.attr("cx", posX);
         _this.valueText.attr("transform", "translate(" + posX + "," + (_this.height / 2) + ")");
-        _this.valueText.text(_this.model.time.timeFormat(value));
+        _this.valueText.text(_this.model.time.uiTimeFormat(value));
       }
 
       //set time according to dragged position
@@ -579,7 +579,7 @@ var TimeSlider = Component.extend({
       this.valueText.attr("transform", "translate(" + _this.prevPosition + "," + (this.height / 2) + ")")
         .transition('text')
         .delay(delayAnimations)
-        .text(this.model.time.timeFormat(value));
+        .text(this.model.time.uiTimeFormat(value));
       this.valueText
         .transition()
         .duration(delayAnimations)
@@ -598,7 +598,7 @@ var TimeSlider = Component.extend({
         .transition('text');
       this.valueText
         .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")")
-        .text(this.model.time.timeFormat(value));
+        .text(this.model.time.uiTimeFormat(value));
     }
     _this.prevPosition = new_pos;
 

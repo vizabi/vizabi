@@ -237,8 +237,8 @@ var MountainChartComponent = Component.extend({
     afterPreload: function () {
         var _this = this;
 
-        var yearNow = _this.model.time.format(this.model.time.value);
-        var yearEnd = _this.model.time.format(this.model.time.end);
+        var yearNow = _this.model.time.formatDate(this.model.time.value);
+        var yearEnd = _this.model.time.formatDate(this.model.time.end);
 
         this._math.xScaleFactor = this.model.marker.axis_x.xScaleFactor;
         this._math.xScaleShift = this.model.marker.axis_x.xScaleShift;

@@ -812,7 +812,7 @@ var BubbleChartComp = Component.extend({
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
-    this.year.setText(this.model.time.timeFormat(this.time), this.duration);
+    this.year.setText(this.model.time.uiTimeFormat(this.time), this.duration);
   },
 
   /*

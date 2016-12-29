@@ -15,11 +15,11 @@ Date.prototype.utc = Date.prototype.toUTCString;
  */
 var formats = {
   'year':    d3.time.format.utc('%Y'),
-  'month':   d3.time.format.utc('%Y%m'),
+  'month':   d3.time.format.utc('%Y-%m'),
   'day':     d3.time.format.utc('%Y%m%d'),
-  'hour':    d3.time.format.utc("%Y-%m-%d %H"),
-  'minute':  d3.time.format.utc("%Y-%m-%d %H:%M"),
-  'second':  d3.time.format.utc("%Y-%m-%d %H:%M:%S"),
+  'hour':    d3.time.format.utc("%Y%m%dT%H"),
+  'minute':  d3.time.format.utc("%Y%m%dT%H%M"),
+  'second':  d3.time.format.utc("%Y%m%dT%H%M%S"),
   'week':    weekFormat(),   // %Yw%W d3 week format does not comply with ISO
   'quarter': quarterFormat() // %Yq%Q d3 does not support quarters
 };
@@ -49,6 +49,7 @@ var TimeModel = DataConnected.extend({
       delayThresholdX2: 90, //delay X2 boundary: if less -- then every other frame will be dropped and animation dely will be double the value
       delayThresholdX4: 45, //delay X4 boundary: if less -- then 3/4 frame will be dropped and animation dely will be 4x the value
       unit: "year",
+      format: null, // format used for UI
       step: 1, //step must be integer, and expressed in units
       immediatePlay: true,
       record: false
@@ -72,6 +73,7 @@ var TimeModel = DataConnected.extend({
     this._super(name, values, parent, bind);
     var _this = this;
     this.timeFormat = formats[this.unit];
+    this.uiTimeFormat = this.format ? d3.time.format.utc(this.format) : this.timeFormat; 
     this.dragging = false;
     this.postponePause = false;
     this.allSteps = {};
@@ -123,10 +125,7 @@ var TimeModel = DataConnected.extend({
    * @param {String} unit
    * @returns {String}
    */  
-  formatDate: function(dateObject) {
-    return this.format(dateObject);
-  },
-  format: function(dateObject, unit) {
+  formatDate: function(dateObject, unit) {
     unit = unit || this.unit;
     if (dateObject == null) return null;
     return formats[unit] ? formats[unit](dateObject) : formats['year'](dateObject);
@@ -159,7 +158,7 @@ var TimeModel = DataConnected.extend({
     if(this.start == null && this.startOrigin) this.set("start", this.startOrigin, null, false);
     if(this.end == null && this.endOrigin) this.set("end", this.endOrigin, null, false);
     // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
-    if(this.value == null) this.set("value", this.parseToUnit(this.format(new Date())), null, false); 
+    if(this.value == null) this.set("value", this.parseToUnit(this.formatDate(new Date())), null, false); 
 
     //unit has to be one of the available_time_units
     if(!formats[this.unit]) {
