@@ -113,6 +113,8 @@ var Hook = DataConnected.extend({
     this.dataSource = this.getClosestModel(this.data);
 
     var query = this.getQuery(opts.splashScreen);
+    
+    if(query===true) return Promise.resolve();
 
     //useful to check if in the middle of a load call
     this._loadCall = true;
@@ -176,6 +178,13 @@ var Hook = DataConnected.extend({
     // we remove this.which from values if it duplicates a dimension
     var allDimensions = this._getAllDimensions(exceptions);
     var dimensions = (prop && allDimensions.length > 1) ? [(this.spaceRef ? this._space[this.spaceRef].dim : this.which)] : allDimensions;
+    
+    dimensions = dimensions.filter(f => f!=="_default");
+    if(!dimensions || !dimensions.length) {
+      utils.warn('getQuery() produced no query because no keys are available');
+      return true;
+    }
+    
     select = {
       key: dimensions,
       value: dimensions.indexOf(this.which)!=-1 || this.use === "constant" ? [] : [this.which]
@@ -556,7 +565,7 @@ var Hook = DataConnected.extend({
    * @returns {Object} concept properties
    */
   getConceptprops: function() {
-    return this.use !== 'constant' ? this.dataSource.getConceptprops(this.which) : {};
+    return this.use !== 'constant' && this.dataSource? this.dataSource.getConceptprops(this.which) : {};
   },
   
   /**
@@ -569,6 +578,11 @@ var Hook = DataConnected.extend({
   
   validate: function() {
     this._super();
+    
+    var allowedScales = this.getConceptprops().scales;
+    if(allowedScales && allowedScales.length>0 && !allowedScales.includes(this.scaleType)) {
+      this.set({scaleType: allowedScales[0]}, null, false);
+    }
   },
 
   getEntity: function() {

@@ -104,14 +104,14 @@ var BubbleChart = Tool.extend('BubbleChart', {
         axis_x: { 
           use: "indicator",
           autogenerate: {
-            conceptIndex: 0,
+            conceptIndex: 1,
             conceptType: "measure"
           }
         },
         axis_y: { 
           use: "indicator",
           autogenerate: {
-            conceptIndex: 1,
+            conceptIndex: 0,
             conceptType: "measure"
           }
         },

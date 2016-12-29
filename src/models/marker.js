@@ -235,8 +235,8 @@ var Marker = Model.extend({
 
     // change start and end (but keep startOrigin and endOrigin for furhter requests)
     var newTime = {}
-    if(time.start - tLimits.min != 0) newTime['start'] = d3.max([tLimits.min, time.parseToUnit(time.startOrigin)]);
-    if(time.end - tLimits.max != 0) newTime['end'] = d3.min([tLimits.max, time.parseToUnit(time.endOrigin)]);
+    if(time.start - tLimits.min != 0 || !time.start && !this.startOrigin) newTime['start'] = d3.max([tLimits.min, time.parseToUnit(time.startOrigin)]);
+    if(time.end - tLimits.max != 0 || !time.end && !this.endOrigin) newTime['end'] = d3.min([tLimits.max, time.parseToUnit(time.endOrigin)]);
     
     time.set(newTime, false, false);
     
