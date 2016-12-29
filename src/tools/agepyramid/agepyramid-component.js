@@ -52,14 +52,25 @@ var AgePyramid = Component.extend({
             _this.model.time.value = new Date(snapTime);
           }
         }
-        if(!_this.snapped) _this._updateEntities();
+        if(!_this.snapped) {
+          _this._updateEntities();
+          _this.updateBarsOpacity();
+        }
         _this.snapped = false;
       },
-      "change:entities.show": function(evt) {
-        console.log('Trying to change show');
-      },
       "change:marker.select": function(evt) {
-        _this._selectBars();
+        _this.someSelected = (_this.model.marker.select.length > 0);
+        _this.nonSelectedOpacityZero = false;
+      },
+      "change:marker.highlight": function(evt, path) {
+        if(!_this._readyOnce) return;
+        _this._highlightBars();
+      },
+      "change:marker.opacitySelectDim": function() {
+        _this.updateBarsOpacity();
+      },
+      "change:marker.opacityRegular": function() {
+        _this.updateBarsOpacity();
       },
       "change:marker.color.palette": function (evt) {
         if (!_this._readyOnce) return;
@@ -161,12 +172,11 @@ var AgePyramid = Component.extend({
       .domain([this.timeSteps[0], this.timeSteps[this.timeSteps.length - 1]])
       .range([0, this.timeSteps.length - 1]);
 
-    this.side = this.model.marker.getSpaceEntityByTag("side");
-    this.SIDEDIM = this.side.getDimension();//this.model.marker.hook_side.which;//this.model.side.getDimension();
-    //this.STACKDIM = this.model.marker.color.which;
-    this.stack = this.model.marker.getSpaceEntityByTag("stack");
+    this.side = this.model.marker.label_side.getEntity();
+    this.SIDEDIM = this.side.getDimension();
+    this.stack = this.model.marker.label_stack.getEntity();
     this.STACKDIM = this.stack.getDimension() || this.model.marker.color.which;
-    this.age = this.model.marker.getSpaceEntityByTag("age");
+    this.age = this.model.marker.axis_y.getEntity();
     this.AGEDIM = this.age.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
 
@@ -177,7 +187,7 @@ var AgePyramid = Component.extend({
 
     this.resize();
     this._updateEntities();
-    this._selectBars();
+    this.updateBarsOpacity();
   },
 
   updateUIStrings: function() {
@@ -511,9 +521,9 @@ var AgePyramid = Component.extend({
     this.entityBars.exit().remove();
     this.entityLabels.exit().remove();
 
-    var one_bar_height = this.height / (domain[1] - domain[0]);
-    var bar_height = one_bar_height * group_by; // height per bar is total domain height divided by the number of possible markers in the domain
-    var first_bar_y_offset = this.height - bar_height;
+    var oneBarHeight = this.oneBarHeight;
+    var barHeight = this.barHeight;
+    var firstBarOffsetY = this.firstBarOffsetY;
 
     //enter selection -- init bars
     this.entityBars.enter().append("g")
@@ -564,20 +574,14 @@ var AgePyramid = Component.extend({
             return "vzb-bc-stack " + "vzb-bc-stack-" + i + (_this.highlighted ? " vzb-dimmed" : "");
           })
           .attr("y", 0)
-          .attr("height", bar_height)
+          .attr("height", barHeight)
           .attr("fill", function(d) {
             return _this.cScale(d[stackDim]);
           })
-          .on("mouseover", _this.interaction.highlightBar)
-          .on("mouseout", _this.interaction.unhighlightBars)
-          .on("click", function(d, i) {
-            if(utils.isTouchDevice()) return;
-            _this.model.marker.selectMarker(d);
-          })
-          .onTap(function(d) {
-            d3.event.stopPropagation();
-            _this.model.marker.selectMarker(d);
-          });
+          .on("mouseover", _this.interaction.mouseover)
+          .on("mouseout", _this.interaction.mouseout)
+          .on("click", _this.interaction.click)
+          .onTap(_this.interaction.tap);
 
     // this.stackBars = this.bars.selectAll('.vzb-bc-bar')
     //   .selectAll('.vzb-bc-side')
@@ -585,7 +589,7 @@ var AgePyramid = Component.extend({
     //       return i ? ("scale(-1,1) translate(" + _this.activeProfile.centerWidth + ",0)") : "";
     //     })
     //   .selectAll('.vzb-bc-stack')
-    //     .attr("height", bar_height)
+    //     .attr("height", barHeight)
     //     .attr("fill", function(d) {
     //       //return _this._temporaryBarsColorAdapter(values, d, ageDim);
     //       //return _this.cScale(values.color[d[ageDim]]);
@@ -622,13 +626,13 @@ var AgePyramid = Component.extend({
 
     this.entityBars
       .attr("transform", function(d, i) {
-        return "translate(0," + (first_bar_y_offset - (d[shiftedAgeDim] - group_by - domain[0]) * one_bar_height) + ")";
+        return "translate(0," + (firstBarOffsetY - (d[shiftedAgeDim] - group_by - domain[0]) * oneBarHeight) + ")";
       })
       .transition('age')
       .duration(duration)
       .ease("linear")
       .attr("transform", function(d, i) {
-        return "translate(0," + (first_bar_y_offset - (d[shiftedAgeDim] - domain[0] - stepShift) * one_bar_height) + ")";
+        return "translate(0," + (firstBarOffsetY - (d[shiftedAgeDim] - domain[0] - stepShift) * oneBarHeight) + ")";
       })
 
     var _attributeUpdaters = this._attributeUpdaters;
@@ -665,7 +669,7 @@ var AgePyramid = Component.extend({
         d["text"] = age + yearOlds;
       })
       .attr("y", function(d, i) {
-        return first_bar_y_offset - (d[shiftedAgeDim] - domain[0]) * one_bar_height - 10;
+        return firstBarOffsetY - (d[shiftedAgeDim] - domain[0]) * oneBarHeight - 10;
       });
       // .style("fill", function(d) {
       //   var color = _this.cScale(values.color[d[ageDim]]);
@@ -678,8 +682,6 @@ var AgePyramid = Component.extend({
     } else {
       this.year.interrupt().text(time.timeFormat(time.value)).transition();
     }
-
-    this._selectBars();
   },
 
   _setYear: function(timeValue) {
@@ -689,82 +691,63 @@ var AgePyramid = Component.extend({
 
   _interaction: function() {
     var _this = this;
-  /**
-   * Highlight and unhighlight labels
-   */
     return {
-      unhighlightBars: function() {
+      mouseover: function(d, i) {
         if(utils.isTouchDevice()) return;
-
-        _this.highlighted = false;
-
-        _this.stackBars.classed('vzb-dimmed', false).classed('vzb-hovered', false);
-        _this.labels.selectAll('.vzb-hovered').classed('vzb-hovered', false);
-
+        _this.model.marker.highlightMarker(d);
+        _this._showLabel(d);
       },
-
-      highlightBar: function(d) {
+      mouseout: function(d, i) {
         if(utils.isTouchDevice()) return;
-
-        _this.highlighted = true;
-
-        var formatter = _this.ui.chart.inpercent ? d3.format(".1%") : _this.model.marker.axis_x.getTickFormatter();
-        var sideDim = _this.SIDEDIM;
-        var ageDim = _this.AGEDIM;
-        var stackDim = _this.STACKDIM;
-        var shiftedAgeDim = "s_age";
-
-        _this.stackBars.classed('vzb-dimmed', true);
-        var curr = d3.select(this);
-        //_this.bars.select("#vzb-bc-bar-" + d[this.AGEDIM]);
-        curr.classed('vzb-hovered', true);
-        var left = _this.sideKeys.indexOf(d[sideDim]);
-        var label = _this.labels.select("#vzb-bc-label-" + d[shiftedAgeDim] + "-" + _this._id);
-        label.selectAll('.vzb-bc-age')
-          .text(function(textData) {
-            //var total = _this.ui.chart.inpercent ? _this.totalValues[d[sideDim]] : 1;
-            var text = _this.stackKeys.length > 1 ? _this.stackItems[d[stackDim]]: textData.text;
-            text = _this.twoSided ? text : textData.text + " " + _this.stackItems[d[stackDim]];
-            var value = _this.xScale.invert(d["width_"]);
-            //var value = (_this.dataWithTotal || _this.stacked) ? _this.values1.axis_x[d[shiftedAgeDim]][d[sideDim]][d[stackDim]] / total : _this.xScale.invert(d["width_"]);
-            return text + ": " + formatter(value);
-          })
-          .attr("x", (left?-1:1) * (_this.activeProfile.centerWidth * .5 + 7))
-          .classed("vzb-text-left", left);
-
-        label.classed('vzb-hovered', true);
+        _this.model.marker.clearHighlighted();
+      },
+      click: function(d, i) {
+        if(utils.isTouchDevice()) return;
+        _this.model.marker.selectMarker(d);
+      },
+      tap: function(d) {
+        d3.event.stopPropagation();
+        _this.model.marker.selectMarker(d);
       }
     }
   },
 
-  /**
-   * Select Entities
-   */
-  _selectBars: function() {
+  _highlightBars: function(d) {
     var _this = this;
-    var stackDim = this.STACKDIM;
-    var ageDim = this.AGEDIM;
-    var sideDim = this.SIDEDIM;
-    var selected = this.model.marker.select;
+    
+    _this.someHighlighted = (_this.model.marker.highlight.length > 0);
 
-    this._unselectBars();
+    _this.updateBarsOpacity();
 
-    if(selected.length) {
-      this.stackBars.classed('vzb-dimmed-selected', true);
-      utils.forEach(selected, function(d) {
-        var indexSide = _this.stacked ? _this.sideKeys.indexOf(d[sideDim]) : 0;
-        var indexStack = _this.stacked ? _this.stackKeys.indexOf(d[stackDim]) : 0;
-        var side = _this.twoSided != !indexSide ? "left": "right";
-        _this.bars.selectAll(".vzb-bc-bar-" + d[ageDim]).selectAll(".vzb-bc-side-" + side).selectAll(".vzb-bc-stack-" + indexStack).classed('vzb-selected', true);
-        //_this.labels.select("#vzb-bc-label-" + d[ageDim] + "-" + _this._id).classed('vzb-selected', true);
-      });
+    if(!_this.someHighlighted) {
+      //hide labels
+      _this.labels.selectAll('.vzb-hovered').classed('vzb-hovered', false);
     }
   },
 
-  _unselectBars: function() {
-    this.stackBars.classed('vzb-dimmed-selected', false);
-    this.stackBars.classed('vzb-selected', false);
-    //this.labels.selectAll('.vzb-selected').classed('vzb-selected', false);
+  _showLabel: function(d) {
+    var _this = this;
+    var formatter = _this.ui.chart.inpercent ? d3.format(".1%") : _this.model.marker.axis_x.getTickFormatter();
+    var sideDim = _this.SIDEDIM;
+    var ageDim = _this.AGEDIM;
+    var stackDim = _this.STACKDIM;
+    var shiftedAgeDim = "s_age";
+
+    var left = _this.sideKeys.indexOf(d[sideDim]);
+    var label = _this.labels.select("#vzb-bc-label-" + d[shiftedAgeDim] + "-" + _this._id);
+    label.selectAll('.vzb-bc-age')
+      .text(function(textData) {
+        //var total = _this.ui.chart.inpercent ? _this.totalValues[d[sideDim]] : 1;
+        var text = _this.stackKeys.length > 1 ? _this.stackItems[d[stackDim]]: textData.text;
+        text = _this.twoSided ? text : textData.text + " " + _this.stackItems[d[stackDim]];
+        var value = _this.xScale.invert(d["width_"]);
+        //var value = (_this.dataWithTotal || _this.stacked) ? _this.values1.axis_x[d[shiftedAgeDim]][d[sideDim]][d[stackDim]] / total : _this.xScale.invert(d["width_"]);
+        return text + ": " + formatter(value);
+      })
+      .attr("x", (left?-1:1) * (_this.activeProfile.centerWidth * .5 + 7))
+      .classed("vzb-text-left", left);
+
+    label.classed('vzb-hovered', true);
   },
 
   /**
@@ -848,6 +831,15 @@ var AgePyramid = Component.extend({
     this.labelsCrop
       .attr("width", this.width)
       .attr("height", Math.max(0, this.height));    
+    
+    var group_by = this.age.grouping || 1;
+
+    var domain = this.yScale.domain();
+    this.oneBarHeight = this.height / (domain[1] - domain[0]);
+    var barHeight = this.barHeight = this.oneBarHeight * group_by; // height per bar is total domain height divided by the number of possible markers in the domain
+    this.firstBarOffsetY = this.height - this.barHeight;
+
+    if(this.stackBars) this.stackBars.attr("height", barHeight);
 
     if(this.sideBars) this.sideBars
       .attr("transform", function(d, i) {
@@ -881,8 +873,6 @@ var AgePyramid = Component.extend({
         toolMargin: margin,
         limitMaxTickNumber: 19
       });
-
-    var group_by = this.age.grouping || 1;
 
     var format = this.ui.chart.inpercent ? d3.format((group_by > 3 ? "":".1") + "%") : this.model.marker.axis_x.getTickFormatter();
 
@@ -943,7 +933,51 @@ var AgePyramid = Component.extend({
 
     this.year.attr('x', this.width + margin.left).attr('y', margin.top / 2);
 
+  },
+
+  updateBarsOpacity: function(duration) {
+    var _this = this;
+    //if(!duration)duration = 0;
+
+    var OPACITY_HIGHLT = 1.0;
+    var OPACITY_HIGHLT_DIM = this.model.marker.opacityHighlightDim;
+    var OPACITY_SELECT = this.model.marker.opacityRegular;
+    var OPACITY_REGULAR = this.model.marker.opacityRegular;
+    var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
+
+    this.stackBars
+      //.transition().duration(duration)
+      .style("opacity", function(d) {
+
+        if(_this.someHighlighted) {
+          //highlight or non-highlight
+          if(_this.model.marker.isHighlighted(d)) return OPACITY_HIGHLT;
+        }
+
+        if(_this.someSelected) {
+          //selected or non-selected
+          return _this.model.marker.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
+        }
+
+        if(_this.someHighlighted) return OPACITY_HIGHLT_DIM;
+
+        return OPACITY_REGULAR;
+      });
+
+
+    var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
+
+    // when pointer events need update...
+    if(nonSelectedOpacityZero != this.nonSelectedOpacityZero) {
+      this.stackBars.style("pointer-events", function(d) {
+        return(!_this.someSelected || !nonSelectedOpacityZero || _this.model.marker.isSelected(d)) ?
+          "visible" : "none";
+      });
+    }
+
+    this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
   }
+
 });
 
 export default AgePyramid;
