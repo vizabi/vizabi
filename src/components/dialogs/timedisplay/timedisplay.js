@@ -23,10 +23,10 @@ const TimeDisplay = Dialog.extend({
   },
   
   readyOnce() {
-    this.element = d3.select(this.element);
+    this._super();
     this.timeLabel = new DynamicBackground(this.element.select('.vzb-timedisplay'));
-    this.timeLabel.setConditions({ yAlign: 'top', topOffset: 25 });
-    this.timeLabel.resize(this.element.style('width'), this.element.style('height'), 100);
+    this.timeLabel.setConditions({ widthRatio: 1, heightRatio: 1 });
+    this.timeLabel.resize(this.contentEl.style('width'), this.contentEl.style('height'));
   },
 
   updateTime() {
