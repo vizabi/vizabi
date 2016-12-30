@@ -901,10 +901,16 @@ export var groupEnd = function() {
  * Prints error
  * @param {String} message
  */
-export var error = function(message) {
-  message = Array.prototype.slice.call(arguments).join(' ');
+export var error = function(err) {
   if(console && typeof console.error === 'function') {
-    console.error(message);
+    if (err.stack) {
+      console.error(err.stack);
+    } else {
+      console.error(err);
+    }
+    if (arguments.length > 1) {
+      console.error.apply(this, Array.prototype.slice.call(arguments, 1));
+    }
   }
 };
 

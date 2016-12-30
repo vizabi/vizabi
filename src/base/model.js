@@ -425,10 +425,9 @@ var Model = EventSource.extend({
       subModel => promises.push(subModel.startLoading(opts))
     );
 
-    return Promise.all(promises).then(
-      this.onSuccessfullLoad.bind(this),
-      this.triggerLoadError.bind(this)
-    );
+    return Promise.all(promises)
+      .then(this.onSuccessfullLoad.bind(this))
+      .catch(this.triggerLoadError.bind(this));
   },
 
   loadData: function(opts) {
