@@ -97,7 +97,7 @@ export default Class.extend({
     var widthTransform = this.width * this.widthRatio / bbox.width;
     var heightTransform = this.height * this.heightRatio / bbox.height;
     this.scalar = widthTransform < heightTransform ? widthTransform : heightTransform;
-    this.element.attr("transform", "matrix("+this.scalar+", 0, 0, "+this.scalar+", 0,0)");
+    this.element.attr("transform", "scale("+this.scalar+")");
 
     this.textHeight = bbox.height * this.scalar;
     this.textWidth = bbox.width * this.scalar;
