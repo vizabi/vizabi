@@ -237,7 +237,7 @@ var Tool = Component.extend({
    */
   error: function(opts) {
 
-    var msg = (opts && opts.type === "data") ? "Error loading chart data. <br>Please, try again soon." : "Error loading chart";
+    var msg = (opts && opts.type === "data") ? "Error loading chart data. <br>Please, try again later." : "Error loading chart";
 
     this.placeholder.innerHTML = '<div class="vzb-error-message"><h1>'+warnIcon+'</h1><p>'+msg+'</p></div>';
   },
