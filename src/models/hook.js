@@ -581,7 +581,7 @@ var Hook = DataConnected.extend({
     
     var allowedScales = this.getConceptprops().scales;
     if(allowedScales && allowedScales.length>0 && !allowedScales.includes(this.scaleType)) {
-      this.set({scaleType: allowedScales[0]}, null, false);
+      this.set({scaleType: allowedScales[0] === "nominal"? "ordinal":allowedScales[0]}, null, false);
     }
   },
 
