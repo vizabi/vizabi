@@ -74,10 +74,10 @@ export default Class.extend({
 
   setText: function (text, delay) {
 
-    this.element
-      .transition().delay(delay)
-      .text(text)
-      .each("end", this._resizeText.bind(this));
+    setTimeout(() => {
+      this.element.text(text);
+      this._resizeText();
+    }, delay);
 
     return this;
 
