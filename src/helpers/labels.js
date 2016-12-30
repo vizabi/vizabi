@@ -356,7 +356,7 @@ var Labels = Class.extend({
   init: function(context, conditions) {
     var _this = this;
     this.context = context;
-  
+
     this.options = utils.extend({}, OPTIONS);
     this.label = label(this);
     this._xScale = null;
@@ -753,8 +753,8 @@ var Labels = Class.extend({
     this.label._repositionLabels(d, index, context, resolvedX, resolvedY, resolvedX0, resolvedY0, duration, showhide, lineGroup);
   },
 
-  updateSize: function() {
-    var profiles = {
+  updateSize() {
+    const profiles = {
       small: {
         minLabelTextSize: 7,
         maxLabelTextSize: 21,
@@ -775,10 +775,22 @@ var Labels = Class.extend({
       }
     };
 
-    var _this = this;
+    const presentationProfiles = {
+      medium: {
+        minLabelTextSize: 15,
+        maxLabelTextSize: 35,
+        defaultLabelTextSize: 15,
+        labelLeashCoeff: 0.3
+      },
+      large: {
+        minLabelTextSize: 20,
+        maxLabelTextSize: 55,
+        defaultLabelTextSize: 20,
+        labelLeashCoeff: 0.2
+      }
+    };
 
-    this.activeProfile = this.context.getActiveProfile(profiles);
-
+    this.activeProfile = this.context.getActiveProfile(profiles, presentationProfiles);
     this.updateLabelSizeLimits();
   }
 
