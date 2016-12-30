@@ -204,7 +204,7 @@ var BubbleMapComponent = Component.extend({
     // year background
     this.yearEl = this.graph.select('.vzb-bmc-year');
     this.year = new DynamicBackground(this.yearEl);
-    this.year.setConditions({xAlign: 'left', yAlign: 'bottom', bottomOffset: 5});
+    this.year.setConditions({xAlign: 'left', yAlign: 'bottom'});
 
     var _this = this;
     this.on("resize", function () {
@@ -732,8 +732,10 @@ var BubbleMapComponent = Component.extend({
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    this.year.resize(this.width, this.height,
-      Math.min(this.width/2.5, Math.max(this.height / 4, this.width / 4)) / 2.5);
+    this.year.setConditions({
+      widthRatio: 2/10
+    });
+    this.year.resize(this.width, this.height);
 
     this.mapSvg
       .attr('width', width)

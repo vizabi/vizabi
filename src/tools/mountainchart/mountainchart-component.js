@@ -399,14 +399,13 @@ updateSize: function (meshLength) {
             topOffset: this.getLayoutProfile()==="large"? margin.top * 2 : 0,
             xAlign: this.getLayoutProfile()==="large"? (isRTL ? 'left' : 'right') : 'center',
             yAlign: this.getLayoutProfile()==="large"? 'top' : 'center',
+            widthRatio: this.getLayoutProfile()==="large" ? 3/8 : 8/10
         };
-
-        var yearLabelFontSize = this.getLayoutProfile()==="large"? this.width / 6 : Math.max(this.height / 4, this.width / 4);
 
         //year is centered and resized
         this.year
             .setConditions(yearLabelOptions)
-            .resize(this.width, this.height, yearLabelFontSize);
+            .resize(this.width, this.height);
 
         //update scales to the new range
         this.yScale.range([this.height, 0]);
