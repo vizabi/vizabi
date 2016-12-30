@@ -73,16 +73,11 @@ export default Class.extend({
   },
 
   setText: function (text, delay) {
-    var _this = this;
-    var lengthChanged = text.length != this.element.text().length;
 
     this.element
       .transition().delay(delay)
       .text(text)
-      .each("end", () => {
-        if (lengthChanged) 
-          this._resizeText()
-      });
+      .each("end", this._resizeText.bind(this));
 
     return this;
 
