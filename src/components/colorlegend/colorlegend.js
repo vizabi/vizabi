@@ -108,7 +108,7 @@ var ColorLegend = Component.extend({
     this.colorlegendDim = this.KEY;
     this.canShowMap = false;
 
-    if(this.colorModel.isDiscrete() && this.colorlegendMarker) {
+    if(this.colorModel.isDiscrete() && this.colorModel.use!=="constant" && this.colorlegendMarker) {
       if(!this.colorlegendMarker._ready) return;
 
       this.colorlegendDim = this.colorModel.getColorlegendEntities().getDimension();

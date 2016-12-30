@@ -1358,7 +1358,7 @@ var BubbleChartComp = Component.extend({
     var formatterC = this.model.marker.color.getTickFormatter();
 
     //resolve labels for colors via the color legend
-    if(this.model.marker.color.isDiscrete() && titleC && this.model.marker.color.getColorlegendMarker()) {
+    if(this.model.marker.color.isDiscrete() && this.model.marker.color.use !== "constant" && titleC && this.model.marker.color.getColorlegendMarker()) {
         titleC = this.model.marker.color.getColorlegendMarker().label.getItems()[titleC] || "";
     }
 
