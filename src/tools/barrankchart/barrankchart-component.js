@@ -51,6 +51,7 @@ const BarRankChart = Component.extend({
           this._selectBars();
           this._updateOpacity();
           this._updateDoubtOpacity();
+          this._scroll();
         }
       },
       'change:marker.axis_x.scaleType': () => {
@@ -395,10 +396,8 @@ const BarRankChart = Component.extend({
     }
 
 
-    // move along with a selection if playing
-    if (this.model.time.playing) {
-      this._scroll(duration);
-    }
+    this._scroll(duration);
+
 
     const { barRectMargin, barValueMargin, scrollMargin, margin } = this.activeProfile;
     const { axis_x } = this.model.marker;
