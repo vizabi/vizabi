@@ -893,7 +893,7 @@ var LCComponent = Component.extend({
 
     var mousePos = mouse[1] - _this.margin.bottom;
 
-    if(!utils.isDate(resolvedTime)) resolvedTime = this.model.time.timeFormat.parse(resolvedTime);
+    if(!utils.isDate(resolvedTime)) resolvedTime = this.model.time.parse(resolvedTime);
 
     this.model.marker.getFrame(resolvedTime, function(data) {
       if (!_this._frameIsValid(data)) return;

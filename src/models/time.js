@@ -14,14 +14,14 @@ Date.prototype.utc = Date.prototype.toUTCString;
  * all in UTC
  */
 var formats = {
-  'year':    d3.time.format.utc('%Y'),
-  'month':   d3.time.format.utc('%Y-%m'),
-  'day':     d3.time.format.utc('%Y%m%d'),
-  'hour':    d3.time.format.utc("%Y%m%dT%H"),
-  'minute':  d3.time.format.utc("%Y%m%dT%H%M"),
-  'second':  d3.time.format.utc("%Y%m%dT%H%M%S"),
-  'week':    weekFormat(),   // %Yw%W d3 week format does not comply with ISO
-  'quarter': quarterFormat() // %Yq%Q d3 does not support quarters
+  'year':    { data: d3.time.format.utc('%Y'),            ui: d3.time.format.utc('%Y') },
+  'month':   { data: d3.time.format.utc('%Y-%m'),         ui: d3.time.format.utc('%b %Y') }, // month needs separator according to ISO to not confuse YYYYMM with YYMMDD
+  'day':     { data: d3.time.format.utc('%Y%m%d'),        ui: d3.time.format.utc('%c') },
+  'hour':    { data: d3.time.format.utc("%Y%m%dT%H"),     ui: d3.time.format.utc('%b %d %Y, %H') },
+  'minute':  { data: d3.time.format.utc("%Y%m%dT%H%M"),   ui: d3.time.format.utc('%b %d %Y, %H:%M') },
+  'second':  { data: d3.time.format.utc("%Y%m%dT%H%M%S"), ui: d3.time.format.utc('%b %d %Y, %H:%M:%S') },
+  'week':    { data: weekFormat(),    ui: weekFormat() },   // %Yw%W d3 week format does not comply with ISO
+  'quarter': { data: quarterFormat(), ui: quarterFormat() } // %Yq%Q d3 does not support quarters
 };
 
 var TimeModel = DataConnected.extend({
@@ -49,7 +49,7 @@ var TimeModel = DataConnected.extend({
       delayThresholdX2: 90, //delay X2 boundary: if less -- then every other frame will be dropped and animation dely will be double the value
       delayThresholdX4: 45, //delay X4 boundary: if less -- then 3/4 frame will be dropped and animation dely will be 4x the value
       unit: "year",
-      format: null, // format used for UI
+      format: { data: null, ui: null }, // overwrite of default formats
       step: 1, //step must be integer, and expressed in units
       immediatePlay: true,
       record: false
@@ -72,8 +72,7 @@ var TimeModel = DataConnected.extend({
     //same constructor
     this._super(name, values, parent, bind);
     var _this = this;
-    this.timeFormat = formats[this.unit];
-    this.uiTimeFormat = this.format ? d3.time.format.utc(this.format) : this.timeFormat; 
+    this.initFormatters();
     this.dragging = false;
     this.postponePause = false;
     this.allSteps = {};
@@ -90,11 +89,29 @@ var TimeModel = DataConnected.extend({
         }
       },
       
-      "change:unit": function() {
-        _this.timeFormat = formats[_this.unit];
+      "change:format": function() {
+        _this.initFormatters();
       }
 
     });
+  },
+
+  initFormatters: function() {
+    if (formats[this.unit]) {
+      this.formatters = formats[this.unit];
+    }
+    // specifically set formats overwrite unit defaults
+    if (typeof this.format == 'string') {
+      this.formatters.data = this.formatters.ui = d3.time.format.utc(this.format);
+    } else {
+      if (this.format.data) {
+        this.formatters.data = d3.time.format.utc(this.format.data);
+      }
+      if (this.format.ui) {
+        this.formatters.ui = d3.time.format.utc(this.format.ui);
+      }
+    }
+    this.validateFormatting();
   },
 
   afterPreload: function() {
@@ -113,7 +130,7 @@ var TimeModel = DataConnected.extend({
     for(var i = 0; i < date_attr.length; i++) {
       var attr = date_attr[i];
       if(!utils.isDate(this[attr])) {
-        var date = this.parseToUnit(this[attr], this.unit);
+        var date = this.parse(this[attr]);
         this.set(attr, date, null, (persistentValues.indexOf(attr) !== -1));
       }
     }
@@ -122,28 +139,31 @@ var TimeModel = DataConnected.extend({
   /*
    * Formatting and parsing functions
    * @param {Date} dateObject
-   * @param {String} unit
+   * @param {String} type Either data or ui.
    * @returns {String}
    */  
-  formatDate: function(dateObject, unit) {
-    unit = unit || this.unit;
+  formatDate: function(dateObject, type = 'data') {
+    if (['data','ui'].indexOf(type) === -1) {
+      utils.warn('Time.formatDate type parameter (' + type + ') invalid. Using "data".');
+      type = data;
+    }
     if (dateObject == null) return null;
-    return formats[unit] ? formats[unit](dateObject) : formats['year'](dateObject);
+    return this.formatters[type](dateObject);
   },
   /* parse to predefined unit */
-  parseToUnit: function(timeString, unit) {
-    unit = unit || this.unit;
-    if (timeString == null) 
-      return null;
-    else 
-      return formats[unit] ? formats[unit].parse(timeString.toString()) : null;
+  parse: function(timeString, type = 'data') {
+    if (timeString == null) return null;
+    return this.formatters[type].parse(timeString.toString());
   },
+
   /* auto-determines unit from timestring */
-  parse: function(timeString) {
+  findFormat: function(timeString) {
     var keys = Object.keys(formats), i = 0; 
     for (; i < keys.length; i++) {
-      var dateObject = formats[keys[i]].parse(timeString);
-      if (dateObject) return { unit: keys[i], time: dateObject };
+      var dateObject = formats[keys[i]].data.parse(timeString);
+      if (dateObject) return { unit: keys[i], time: dateObject, type: 'data' };
+      var dateObject = formats[keys[i]].ui.parse(timeString);
+      if (dateObject) return { unit: keys[i], time: dateObject, type: 'ui' };
     }
     return null;
   },
@@ -157,8 +177,10 @@ var TimeModel = DataConnected.extend({
     //check if time start and end are not defined but start and end origins are defined
     if(this.start == null && this.startOrigin) this.set("start", this.startOrigin, null, false);
     if(this.end == null && this.endOrigin) this.set("end", this.endOrigin, null, false);
-    // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
-    if(this.value == null) this.set("value", this.parseToUnit(this.formatDate(new Date())), null, false); 
+
+    if (this.formatters) {
+      this.validateFormatting();
+    }
 
     //unit has to be one of the available_time_units
     if(!formats[this.unit]) {
@@ -170,12 +192,6 @@ var TimeModel = DataConnected.extend({
       this.step = 1;
     }
       
-    //make sure dates are transformed into dates at all times
-    if(!utils.isDate(this.start) || !utils.isDate(this.end) || !utils.isDate(this.value) 
-      || !utils.isDate(this.startSelected) || !utils.isDate(this.endSelected)) {
-      this._formatToDates();
-    }
-
     //end has to be >= than start
     if(this.end < this.start && this.start != null) {
       this.set("end", new Date(this.start), null, false);
@@ -207,6 +223,17 @@ var TimeModel = DataConnected.extend({
 
     if(this.playable === false && this.playing === true) {
       this.set("playing", false, null, false);
+    }
+  },
+
+  validateFormatting: function() {
+    // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
+    if(this.value == null) this.set("value", this.parse(this.formatDate(new Date())), null, false); 
+
+    //make sure dates are transformed into dates at all times
+    if(!utils.isDate(this.start) || !utils.isDate(this.end) || !utils.isDate(this.value) 
+      || !utils.isDate(this.startSelected) || !utils.isDate(this.endSelected)) {
+      this._formatToDates();
     }
   },
 
@@ -250,8 +277,7 @@ var TimeModel = DataConnected.extend({
 
   /** 
    * gets the d3 interval and stepsize for d3 time interval methods
-   * D3's week-interval starts on sunday and it does not support a quarter interval
-   * 
+   * D3's week-interval starts on sunday and d3 does not support a quarter interval
    **/
   getIntervalAndStep: function() {
     var d3Interval, step;
@@ -269,8 +295,8 @@ var TimeModel = DataConnected.extend({
    * @returns {Object} time filter
    */
   getFilter: function(splash) {
-    var defaultStart = this.parseToUnit(this.startOrigin, this.unit);
-    var defaultEnd = this.parseToUnit(this.endOrigin, this.unit);
+    var defaultStart = this.parse(this.startOrigin);
+    var defaultEnd = this.parse(this.endOrigin);
       
     var dim = this.getDimension();
     var filter = null;
@@ -278,15 +304,15 @@ var TimeModel = DataConnected.extend({
     if (splash) {
       if (this.value != null) {
         filter = {};
-        filter[dim] = this.timeFormat(this.value);
+        filter[dim] = this.formatters.data(this.value);
       }
     } else {
       var gte, lte;
       if (defaultStart != null) {
-        gte = this.timeFormat(defaultStart);
+        gte = this.formatters.data(defaultStart);
       }
       if (defaultEnd != null) {
-        lte = this.timeFormat(defaultEnd);
+        lte = this.formatters.data(defaultEnd);
       }
       if (gte || lte) {
         filter = {};
@@ -299,11 +325,19 @@ var TimeModel = DataConnected.extend({
   },
 
   /**
-   * Gets formatter for this model
-   * @returns {Function} formatter function
+   * Gets parser for this model
+   * @returns {Function} parser function 
    */
-  getParser: function() {
-    return this.timeFormat.parse;
+  getParser: function(type = 'data') {
+    return this.formatters[type].parse;
+  },
+  
+  /**
+  * Gets formatter for this model
+  * @returns {Function} formatter function 
+  */
+  getFormatter: function(type = 'data') {
+    return this.formatters[type];
   },
 
   /**

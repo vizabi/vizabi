@@ -204,7 +204,7 @@ var Find = Dialog.extend({
 
         view
           .classed("vzb-find-item-brokendata", d.brokenData)
-          .attr("title", d.brokenData? _this.model.state.time.timeFormat(_this.time) + ": " + _this.translator("hints/nodata") : "");
+          .attr("title", d.brokenData? _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : "");
       })
   },
 

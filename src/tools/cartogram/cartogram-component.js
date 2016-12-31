@@ -317,7 +317,7 @@ var CartogramComponent = Component.extend({
     var duration = this.updateEntitiesQueue[this.updateEntitiesQueue.length - 1].duration;
     this.updateEntitiesQueue = [];
     if(this.model.ui.chart.lockNonSelected) {
-      time = this.model.time.timeFormat.parse("" + this.model.ui.chart.lockNonSelected);
+      time = this.model.time.parse("" + this.model.ui.chart.lockNonSelected);
     }
     this.model.marker.getFrame(time, function(lockedFrame) {
       var totValue = null;
@@ -516,7 +516,7 @@ var CartogramComponent = Component.extend({
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
-    this.year.setText(this.model.time.timeFormat(this.time), this.duration);
+    this.year.setText(this.model.time.formatDate(this.time), this.duration);
   },
 
 

@@ -63,9 +63,9 @@ var BubbleChart = Tool.extend('BubbleChart', {
     this._super(model);
 
     if(model.ui.chart.lockNonSelected) {
-       var time = model.state.time.timeFormat.parse("" + model.ui.chart.lockNonSelected);
-       if(time < model.state.time.start) model.ui.chart.lockNonSelected = model.state.time.timeFormat(model.state.time.start);
-       if(time > model.state.time.end) model.ui.chart.lockNonSelected = model.state.time.timeFormat(model.state.time.end);
+       var time = model.state.time.parse("" + model.ui.chart.lockNonSelected);
+       if(time < model.state.time.start) model.ui.chart.lockNonSelected = model.state.time.formatDate(model.state.time.start);
+       if(time > model.state.time.end) model.ui.chart.lockNonSelected = model.state.time.formatDate(model.state.time.end);
     }
   },
 

@@ -94,7 +94,7 @@ export default Class.extend({
 
                 _context._axisProjections(pointer);
                 _context._labels.highlight(d, true);
-                var text = _context.model.time.timeFormat(segment.t);
+                var text = _context.model.time.formatDate(segment.t);
                 var selectedData = utils.find(_context.model.marker.select, function(f) {
                   return f[KEY] == d[KEY]
                 });
@@ -372,18 +372,18 @@ export default Class.extend({
         }
       }).then(function() {
           if (!d.selectedEntityData.trailStartTime) {
-            d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(_context.time);
+            d.selectedEntityData.trailStartTime = _context.model.time.formatDate(_context.time);
           }
-          var trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+          var trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
           if (_context.time - trailStartTime < 0 || d.limits.min - trailStartTime > 0) {
             if (_context.time - trailStartTime < 0) {
               // move trail start time with trail label back if need
-              d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(d3.max([_context.time, d.limits.min]));
-              trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+              d.selectedEntityData.trailStartTime = _context.model.time.formatDate(d3.max([_context.time, d.limits.min]));
+              trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
             } else {
               // move trail start time with trail label to start time if need
-              d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(d.limits.min);
-              trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+              d.selectedEntityData.trailStartTime = _context.model.time.formatDate(d.limits.min);
+              trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
             }
             var cache = _context._labels.cached[d[KEY]];
             var valueS = _context.frame.size[d[KEY]];
@@ -399,9 +399,9 @@ export default Class.extend({
             var segmentVisibility = segment.transparent;
             segment.transparent = d.selectedEntityData.trailStartTime == null || (segment.t - _context.time > 0) || (trailStartTime - segment.t > 0)
                 //no trail segment should be visible if leading bubble is shifted backwards, beyond start time
-              || (d.selectedEntityData.trailStartTime - _context.model.time.timeFormat(_context.time) >= 0);
+              || (d.selectedEntityData.trailStartTime - _context.model.time.formatDate(_context.time) >= 0);
             // always update nearest 2 points
-            if (segmentVisibility != segment.transparent || Math.abs(_context.model.time.timeFormat(segment.t) - _context.model.time.timeFormat(_context.time)) < 2) segment.visibilityChanged = true; // segment changed, so need to update it
+            if (segmentVisibility != segment.transparent || Math.abs(_context.model.time.formatDate(segment.t) - _context.model.time.formatDate(_context.time)) < 2) segment.visibilityChanged = true; // segment changed, so need to update it
             if (segment.transparent) {
               d3.select(trail[0][index]).classed("vzb-invisible", segment.transparent);
             }
@@ -429,7 +429,7 @@ export default Class.extend({
     var _this = this;
     var KEY = _context.KEY;
     d.status = "reveal";
-    var trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+    var trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
     var generateTrailSegment = function(trail, index, nextIndex, level) {
       return new Promise(function(resolve, reject) {
         var view = d3.select(trail[0][index]);
@@ -670,7 +670,7 @@ export default Class.extend({
       var response = [];
       var min = 0, max = 0;
       var maxValue = d3.min([d.limits.max, _context.time]);
-      var minValue = d3.max([d.limits.min, _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime)]);
+      var minValue = d3.max([d.limits.min, _context.model.time.parse("" + d.selectedEntityData.trailStartTime)]);
       utils.forEach(trail[0], function(segment, index) {
         var data = segment.__data__;
         if (data.t -  minValue == 0) {
@@ -679,7 +679,7 @@ export default Class.extend({
           max = index;
         } else {
           if (data.t >  minValue && data.t <  maxValue) {
-            if (_context.model.time.timeFormat(data.t) % div == 0 || (data.next && data.previous)) {
+            if (_context.model.time.formatDate(data.t) % div == 0 || (data.next && data.previous)) {
               response.push(index);
             }
           }

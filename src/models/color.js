@@ -258,7 +258,7 @@ var ColorModel = Hook.extend({
 
       var timeMdl = this._space.time;
       var limits = timeMdl.splash ?
-          {min: timeMdl.parseToUnit(timeMdl.startOrigin), max: timeMdl.parseToUnit(timeMdl.endOrigin)}
+          {min: timeMdl.parse(timeMdl.startOrigin), max: timeMdl.parse(timeMdl.endOrigin)}
           :
           {min: timeMdl.start, max: timeMdl.end};
 

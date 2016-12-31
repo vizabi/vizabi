@@ -480,7 +480,7 @@ var ButtonList = Component.extend({
 
     var locked = this.model.ui.chart.lockNonSelected;
     var time = this.model.state.time;
-    locked = locked ? 0 : time.timeFormat(time.value);
+    locked = locked ? 0 : time.formatDate(time.value);
     this.model.ui.chart.lockNonSelected = locked;
 
     this.setBubbleLock();

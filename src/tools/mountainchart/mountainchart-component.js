@@ -301,7 +301,7 @@ var MountainChartComponent = Component.extend({
         this.TIMEDIM = this.model.time.getDimension();
 
         this.mountainAtomicContainer.select(".vzb-mc-prerender").remove();
-        this.year.setText(this.model.time.timeFormat(this.model.time.value));
+        this.year.setText(this.model.time.formatDate(this.model.time.value));
         this.wScale = d3.scale.linear()
             .domain(this.model.ui.datawarning.doubtDomain)
             .range(this.model.ui.datawarning.doubtRange);
@@ -815,7 +815,7 @@ updateSize: function (meshLength) {
         this.time_1 = this.time == null ? this.model.time.value : this.time;
         this.time = this.model.time.value;
         this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
-        this.year.setText(this.model.time.timeFormat(this.time), this.duration);
+        this.year.setText(this.model.time.formatDate(this.time), this.duration);
     },
 
     updatePointers: function() {

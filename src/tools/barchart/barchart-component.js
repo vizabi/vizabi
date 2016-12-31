@@ -207,7 +207,7 @@ var BarComponent = Component.extend({
       .attr("height", function(d) {
         return _this.height - _this.yScale(_this.values.axis_y[d[entityDim]]);
       });
-      this.year.text(this.model.time.timeFormat(this.model.time.value));
+      this.year.text(this.model.time.formatDate(this.model.time.value));
   },
 
   /**
@@ -286,7 +286,7 @@ var BarComponent = Component.extend({
       .tickSizeMinor(3, 0)
       .labelerOptions({
         scaleType: this.model.marker.axis_y.scaleType,
-        timeFormat: this.model.time.timeFormat,
+        timeFormat: this.model.time.getFormatter(),
         toolMargin: {top: 5, right: margin.right, left: margin.left, bottom: margin.bottom},
         limitMaxTickNumber: 6
       });
@@ -297,7 +297,7 @@ var BarComponent = Component.extend({
       .tickSizeMinor(3, 0)
       .labelerOptions({
         scaleType: this.model.marker.axis_x.scaleType,
-        timeFormat: this.model.time.timeFormat,
+        timeFormat: this.model.time.getFormatter(),
         toolMargin: margin,
         viewportLength: this.width
       });

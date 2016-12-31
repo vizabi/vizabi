@@ -34,7 +34,7 @@ const TimeDisplay = Dialog.extend({
     this.time_1 = this.time == null ? timeMdl.value : this.time;
     this.time = timeMdl.value;
     var duration = timeMdl.playing && (this.time - this.time_1 > 0) ? timeMdl.delayAnimations : 0;
-    this.timeLabel.setText(timeMdl.timeFormat(this.time), duration);
+    this.timeLabel.setText(timeMdl.formatDate(this.time), duration);
   }
 
 });

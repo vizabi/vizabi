@@ -680,13 +680,13 @@ var AgePyramid = Component.extend({
       this.year.transition().duration(duration).ease("linear")
         .each("end", this._setYear(time.value));
     } else {
-      this.year.interrupt().text(time.timeFormat(time.value)).transition();
+      this.year.interrupt().text(time.formatDate(time.value)).transition();
     }
   },
 
   _setYear: function(timeValue) {
-      var year = this.model.time.timeFormat(timeValue);
-      return function() { d3.select(this).text(year);};
+      var formattedTime = this.model.time.formatDate(timeValue);
+      return function() { d3.select(this).text(formattedTime);};
   },
 
   _interaction: function() {

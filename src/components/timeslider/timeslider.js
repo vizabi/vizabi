@@ -278,7 +278,7 @@ var TimeSlider = Component.extend({
     this.xScale.domain([minValue, maxValue]);
     //axis
     this.xAxis.tickValues([minValue, maxValue])
-      .tickFormat(this.model.time.timeFormat);
+      .tickFormat(this.model.time.getFormatter());
   },
 
   changeTime: function() {
@@ -529,7 +529,7 @@ var TimeSlider = Component.extend({
         //set handle position
         _this.handle.attr("cx", posX);
         _this.valueText.attr("transform", "translate(" + posX + "," + (_this.height / 2) + ")");
-        _this.valueText.text(_this.model.time.uiTimeFormat(value));
+        _this.valueText.text(_this.model.time.formatDate(value, 'ui'));
       }
 
       //set time according to dragged position
@@ -563,7 +563,7 @@ var TimeSlider = Component.extend({
     this.slide.call(this.brush.extent([value, value]));
 
     this.element.classed("vzb-ts-disabled", this.model.time.end <= this.model.time.start);
-//    this.valueText.text(this.model.time.timeFormat(value));
+//    this.valueText.text(this.model.time.formatDate(value));
 
 //    var old_pos = this.handle.attr("cx");
     var new_pos = this.xScale(value);
@@ -579,7 +579,7 @@ var TimeSlider = Component.extend({
       this.valueText.attr("transform", "translate(" + _this.prevPosition + "," + (this.height / 2) + ")")
         .transition('text')
         .delay(delayAnimations)
-        .text(this.model.time.uiTimeFormat(value));
+        .text(this.model.time.formatDate(value, 'ui'));
       this.valueText
         .transition()
         .duration(delayAnimations)
@@ -598,7 +598,7 @@ var TimeSlider = Component.extend({
         .transition('text');
       this.valueText
         .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")")
-        .text(this.model.time.uiTimeFormat(value));
+        .text(this.model.time.formatDate(value, 'ui'));
     }
     _this.prevPosition = new_pos;
 

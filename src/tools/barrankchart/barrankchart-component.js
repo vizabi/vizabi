@@ -333,11 +333,11 @@ const BarRankChart = Component.extend({
       headerTotal.select('text')
         .transition('text')
         .delay(duration)
-        .text(this.model.time.timeFormat(this.time));
+        .text(this.model.time.formatDate(this.time));
     } else {
       headerTotal.select('text')
         .interrupt()
-        .text(this.model.time.timeFormat(this.time));
+        .text(this.model.time.formatDate(this.time));
     }
     headerTotal.style('opacity', Number(this.getLayoutProfile() !== 'large'));
 

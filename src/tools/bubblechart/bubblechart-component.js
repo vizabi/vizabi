@@ -657,7 +657,7 @@ var BubbleChartComp = Component.extend({
   },
 
   _updateDoubtOpacity: function(opacity) {
-    if(opacity == null) opacity = this.wScale(+this.model.time.timeFormat(this.time));
+    if(opacity == null) opacity = this.wScale(+this.model.time.formatDate(this.time));
     if(this.someSelected) opacity = 1;
     this.dataWarningEl.style("opacity", opacity);
   },
@@ -812,7 +812,7 @@ var BubbleChartComp = Component.extend({
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
-    this.year.setText(this.model.time.uiTimeFormat(this.time), this.duration);
+    this.year.setText(this.model.time.formatDate(this.time, 'ui'), this.duration);
   },
 
   /*
@@ -1090,7 +1090,7 @@ var BubbleChartComp = Component.extend({
     var time = this.model.time.value;
 
     if(this.model.ui.chart.lockNonSelected && this.someSelected) {
-      time = this.model.time.timeFormat.parse("" + this.model.ui.chart.lockNonSelected);
+      time = this.model.time.parse("" + this.model.ui.chart.lockNonSelected);
     }
     this.model.marker.getFrame(time, function(valuesLocked) {
       if(!_this._frameIsValid(valuesLocked)) return utils.warn("redrawDataPointsOnlyColor: empty data received from marker.getFrame(). doing nothing");
@@ -1113,7 +1113,7 @@ var BubbleChartComp = Component.extend({
           return f[KEY] == d[KEY]
         });
 
-        var trailStartTime = _this.model.time.timeFormat.parse("" + select.trailStartTime);
+        var trailStartTime = _this.model.time.parse("" + select.trailStartTime);
 
         _this.model.marker.getFrame(trailStartTime, function(valuesTrailStart) {
           if(!valuesTrailStart) return utils.warn("redrawDataPointsOnlyColor: empty data received from marker.getFrames(). doing nothing");
@@ -1145,7 +1145,7 @@ var BubbleChartComp = Component.extend({
     var time = this.model.time.value;
 
     if(this.model.ui.chart.lockNonSelected && this.someSelected) {
-      time = this.model.time.timeFormat.parse("" + this.model.ui.chart.lockNonSelected);
+      time = this.model.time.parse("" + this.model.ui.chart.lockNonSelected);
     }
     this.model.marker.getFrame(time, function(valuesLocked) {
       if(!_this._frameIsValid(valuesLocked)) return utils.warn("redrawDataPointsOnlySize: empty data received from marker.getFrame(). doing nothing");
@@ -1168,7 +1168,7 @@ var BubbleChartComp = Component.extend({
           return f[KEY] == d[KEY]
         });
 
-        var trailStartTime = _this.model.time.timeFormat.parse("" + select.trailStartTime);
+        var trailStartTime = _this.model.time.parse("" + select.trailStartTime);
 
         _this.model.marker.getFrame(trailStartTime, function(valuesTrailStart) {
           if(!valuesTrailStart) return utils.warn("redrawDataPointsOnlySize: empty data received from marker.getFrames(). doing nothing");
@@ -1199,7 +1199,7 @@ var BubbleChartComp = Component.extend({
     if(duration == null) duration = _this.duration;
 
     if(this.model.ui.chart.lockNonSelected && this.someSelected) {
-        var time = this.model.time.timeFormat.parse("" + this.model.ui.chart.lockNonSelected);
+        var time = this.model.time.parse("" + this.model.ui.chart.lockNonSelected);
 
         //get values for locked frames
         this.model.marker.getFrame(time, function(lockedFrame) {
@@ -1327,7 +1327,7 @@ var BubbleChartComp = Component.extend({
         return f[KEY] == d[KEY]
       });
 
-      var time = _this.model.time.timeFormat(_this.time);
+      var time = _this.model.time.formatDate(_this.time);
       if(!this.model.ui.chart.trails || select.trailStartTime == time || select.trailStartTime == null) {
         if(this.model.ui.chart.trails && select.trailStartTime == null) select.trailStartTime = time; // need only when trailStartTime == null
 
@@ -1337,7 +1337,7 @@ var BubbleChartComp = Component.extend({
         cache.scaledS0 = (valueS || valueS===0) ? utils.areaToRadius(_this.sScale(valueS)) : null;
       }
 
-      var trailStartTime = _this.model.time.timeFormat.parse("" + select.trailStartTime);
+      var trailStartTime = _this.model.time.parse("" + select.trailStartTime);
 
       var labelText = valueL + (_this.model.ui.chart.trails ? " " + select.trailStartTime : "");
 
@@ -1560,9 +1560,9 @@ var BubbleChartComp = Component.extend({
       var d = utils.clone(this.model.marker.highlight[0]);
 
       if(_this.model.ui.chart.lockNonSelected && _this.someSelected && !_this.model.marker.isSelected(d)) {
-        d[TIMEDIM] = _this.model.time.timeFormat.parse("" + _this.model.ui.chart.lockNonSelected);
+        d[TIMEDIM] = _this.model.time.parse("" + _this.model.ui.chart.lockNonSelected);
       } else {
-        d[TIMEDIM] = _this.model.time.timeFormat.parse("" + d.trailStartTime) || _this.time;
+        d[TIMEDIM] = _this.model.time.parse("" + d.trailStartTime) || _this.time;
       }
 
       _this.model.marker.getFrame(d[TIMEDIM], function(values) {
@@ -1583,7 +1583,7 @@ var BubbleChartComp = Component.extend({
           var text = "";
           var hoverTrail = false;
           if(_this.model.marker.isSelected(d) && _this.model.ui.chart.trails) {
-            text = _this.model.time.timeFormat(_this.time);
+            text = _this.model.time.formatDate(_this.time);
             var selectedData = utils.find(_this.model.marker.select, function(f) {
               return f[KEY] == d[KEY]
             });
@@ -1596,7 +1596,7 @@ var BubbleChartComp = Component.extend({
           _this._labels.highlight(null, false);
           _this._labels.highlight(d, true);
           if(_this.model.marker.isSelected(d)) {
-            var skipCrownInnerFill = !d.trailStartTime || d.trailStartTime == _this.model.time.timeFormat(_this.time);
+            var skipCrownInnerFill = !d.trailStartTime || d.trailStartTime == _this.model.time.formatDate(_this.time);
             _this._setBubbleCrown(x, y, s, c, skipCrownInnerFill);
           }
 

@@ -41,8 +41,8 @@ var AxisModel = Hook.extend({
     //restore the correct object type for time values
     if(this.scale && this.scaleType == "time") {
       var obj = {};
-      if(this.zoomedMin != null && !utils.isDate(this.zoomedMin)) obj.zoomedMin = this._space.time.parseToUnit(this.zoomedMin.toString());
-      if(this.zoomedMax != null && !utils.isDate(this.zoomedMax)) obj.zoomedMax = this._space.time.parseToUnit(this.zoomedMax.toString());
+      if(this.zoomedMin != null && !utils.isDate(this.zoomedMin)) obj.zoomedMin = this._space.time.parse(this.zoomedMin.toString());
+      if(this.zoomedMax != null && !utils.isDate(this.zoomedMax)) obj.zoomedMax = this._space.time.parse(this.zoomedMax.toString());
       this.set(obj);
     }
 
@@ -59,7 +59,7 @@ var AxisModel = Hook.extend({
       
       var timeMdl = this._space.time;
       var limits = timeMdl.splash ? 
-          {min: timeMdl.parseToUnit(timeMdl.startOrigin), max: timeMdl.parseToUnit(timeMdl.endOrigin)}
+          {min: timeMdl.parse(timeMdl.startOrigin), max: timeMdl.parse(timeMdl.endOrigin)}
           :
           {min: timeMdl.start, max: timeMdl.end};
       

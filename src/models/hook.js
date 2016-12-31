@@ -362,11 +362,11 @@ var Hook = DataConnected.extend({
 
     // Format time values
     // Assumption: a hook has always time in its space
-    if(utils.isDate(x)) return _this._space.time.timeFormat(x);
+    if(utils.isDate(x)) return _this._space.time.formatDate(x);
 
     // Dealing with values that are supposed to be time
     if(_this.scaleType === "time" && !utils.isDate(x)) {
-        return _this._space.time.timeFormat(new Date(x));
+        return _this._space.time.formatDate(new Date(x));
     }
 
     // Strings, null, NaN and undefined are bypassing any formatter
