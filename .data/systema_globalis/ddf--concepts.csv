@@ -543,7 +543,7 @@ income_per_person_long_series,Income per person (long series),measure,,https://d
 newborn_mortality_rate_per_1000,Newborn mortality rate per 1000,measure,,https://docs.google.com/spreadsheet/pub?key=1S3Kcw96vp5-fZbaM7Lck_06IbJ8DagThGI5KHnzeSps,,"[""linear"", ""log""]",,,,Neonatal mortality rate. Children dying within the first 28 days per 1000 live births.,newborn_infants
 newborn_deaths,Newborn deaths,measure,,https://docs.google.com/spreadsheet/pub?key=1iTvolhgIMta3MmsoPkGnewJiaybev3MvR9e_7mxZ48o,,"[""linear"", ""log""]",,,,Neonatal deaths Children dying within the first 28 days.,newborn_infants
 sg_population,sg_population,measure,,http://www.gapminder.org/news/data-sources-dont-panic-end-poverty,,"[""linear"", ""log""]",,,,,_none
-sg_gini,sg_gini,measure,,http://www.gapminder.org/news/data-sources-dont-panic-end-poverty,,"[""linear""]",,,,,_none
+gapminder_gini,gapminder_gini,measure,,http://www.gapminder.org/news/data-sources-dont-panic-end-poverty,,"[""linear""]",,,,,_none
 sg_gdp_p_cap_const_ppp2011_dollar,sg_gdp_p_cap_const_ppp2011_dollar,measure,,http://www.gapminder.org/news/data-sources-dont-panic-end-poverty,"{""palette"": {""2"": ""#E1CE00"", ""1"": ""#B4DE79"", ""3"": ""#F77481"", ""0"": ""#62CCE3""}}","[""log"", ""linear""]",,,exp,,_none
 description,Description,string,,,,,,,,,_none
 indicator_url,Indicator url,string,,,,,,,,,_none
