@@ -235,8 +235,11 @@ var TimeSlider = Component.extend({
       _this.element.select(".vzb-ts-slider-wrapper")
         .style("right", (arg.mRight - profiles[layoutProfile].margin.right) + "px");
 
-      _this.xScale.range([0, arg.rangeMax]);
-      _this.resize();
+      _this.updateSize([0, arg.rangeMax]);
+    });
+    
+    this.on("resize", function() {
+      _this.updateSize();
     });
   },
 
@@ -262,7 +265,7 @@ var TimeSlider = Component.extend({
 
     this.changeLimits();
     this.changeTime();
-    this.resize();
+    this.updateSize();
 
     _this._updateProgressBar();
     _this.model.marker.listenFramesQueue(null, function(time) {
@@ -292,7 +295,7 @@ var TimeSlider = Component.extend({
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
    */
-  resize: function () {
+  updateSize: function (range) {
     if(this.model.time.splash) return;
 
     this.model.time.pause();
@@ -301,6 +304,9 @@ var TimeSlider = Component.extend({
 
     var slider_w = parseInt(this.slider_outer.style("width"), 10) || 0;
     var slider_h = parseInt(this.slider_outer.style("height"), 10) || 0;
+    
+    if(!slider_h || !slider_w) return utils.warn("time slider resize() aborted because element is too small or has display:none");
+    
     this.width = slider_w - this.profile.margin.left - this.profile.margin.right;
     this.height = slider_h - this.profile.margin.bottom - this.profile.margin.top;
     var _this = this;
@@ -308,8 +314,7 @@ var TimeSlider = Component.extend({
     //translate according to margins
     this.slider.attr("transform", "translate(" + this.profile.margin.left + "," + this.profile.margin.top + ")");
 
-    //adjust scale width if it was not set manually before
-    if (this.xScale.range()[1] = 1) this.xScale.range([0, this.width]);
+    this.xScale.range(range || [0, this.width]);
 
     //adjust axis with scale
     this.xAxis = this.xAxis.scale(this.xScale)

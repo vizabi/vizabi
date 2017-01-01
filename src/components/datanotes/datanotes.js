@@ -30,6 +30,7 @@ var DataNotes = Component.extend({
 
     this.model_binds = {
       "translate:locale": function(evt) {
+        if(!_this._ready || !_this._readyOnce) return;
         _this.ready();
       }
     }
