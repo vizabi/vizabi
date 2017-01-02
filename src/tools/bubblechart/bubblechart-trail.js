@@ -35,6 +35,7 @@ export default Class.extend({
     var _context = this.context;
     var _this = this;
     var KEY = _context.KEY;
+    var TIMEDIM = _context.TIMEDIM;
     this._isCreated = new Promise(function(resolve, reject) {
       //quit if the function is called accidentally
       if(!_context.model.ui.chart.trails) return;
@@ -90,7 +91,7 @@ export default Class.extend({
 
                 var pointer = {};
                 pointer[KEY] = segment.key;
-                pointer.time = segment.t;
+                pointer[TIMEDIM] = segment.t;
 
                 _context._axisProjections(pointer);
                 _context._labels.highlight(d, true);
@@ -98,7 +99,7 @@ export default Class.extend({
                 var selectedData = utils.find(_context.model.marker.select, function(f) {
                   return f[KEY] == d[KEY]
                 });
-                _context.model.marker.getFrame(pointer.time, function(values) {
+                _context.model.marker.getFrame(pointer[TIMEDIM], function(values) {
                   var x = _context.xScale(values.axis_x[pointer[KEY]]);
                   var y = _context.yScale(values.axis_y[pointer[KEY]]);
                   var s = utils.areaToRadius(_context.sScale(values.size[pointer[KEY]]));
