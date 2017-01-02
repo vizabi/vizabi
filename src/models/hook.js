@@ -586,10 +586,10 @@ var Hook = DataConnected.extend({
   validate: function() {
     this._super();
     
-    var allowedScales = this.getConceptprops().scales;
-    if(allowedScales && allowedScales.length>0 && !allowedScales.includes(this.scaleType)) {
-      this.set({scaleType: allowedScales[0] === "nominal"? "ordinal":allowedScales[0]}, null, false);
-    }
+    // var allowedScales = this.getConceptprops().scales;
+    // if(allowedScales && allowedScales.length>0 && !allowedScales.includes(this.scaleType)) {
+    //   this.set({scaleType: allowedScales[0] === "nominal"? "ordinal":allowedScales[0]}, null, false);
+    // }
   },
 
   getEntity: function() {

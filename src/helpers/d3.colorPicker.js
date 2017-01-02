@@ -82,8 +82,8 @@ export default function colorPicker() {
      ]
      ]
      */
-    var arc = d3.svg.arc();
-    var pie = d3.layout.pie().sort(null).value(function(d) {
+    var arc = d3.arc();
+    var pie = d3.pie().sort(null).value(function(d) {
       return 1;
     });
     var svg = null;

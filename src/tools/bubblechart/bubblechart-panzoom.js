@@ -12,14 +12,14 @@ export default Class.extend({
         this.dragLock = false;
 
         this.dragRectangle
-            .on("dragstart", this.drag().start)
+            .on("start", this.drag().start)
             .on("drag", this.drag().go)
-            .on("dragend", this.drag().stop);
+            .on("end", this.drag().stop);
 
         this.zoomer
-            .on("zoomstart", this.zoom().start)
+            .on("start", this.zoom().start)
             .on("zoom", this.zoom().go)
-            .on('zoomend', this.zoom().stop);
+            .on('end', this.zoom().stop);
 
         this.zoomer.ratioX = 1;
         this.zoomer.ratioY = 1;

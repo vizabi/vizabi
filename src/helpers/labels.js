@@ -16,7 +16,7 @@ var label = function(context) {
     }
 
     var labelDragger = d3.behavior.drag()
-      .on("dragstart", function(d, i) {
+      .on("start", function(d, i) {
         d3.event.sourceEvent.stopPropagation();
         var KEY = _this.KEY;
       })
@@ -45,7 +45,7 @@ var label = function(context) {
 
         label._repositionLabels(d, i, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0, null, lineGroup);
       })
-      .on("dragend", function(d, i) {
+      .on("end", function(d, i) {
         var KEY = _this.KEY;
         if(_this.druging) {
           var cache = _this.cached[d[KEY]];

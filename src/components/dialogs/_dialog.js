@@ -57,7 +57,7 @@ var Dialog = Component.extend({
 
     var dg = dialogDrag(this.placeholderEl, this.rootEl, 10);
     var dragBehavior = d3.behavior.drag()
-      .on('dragstart', function D3dialogDragStart() {
+      .on('start', function D3dialogDragStart() {
         var topPos = _this.placeholderEl.node().offsetTop;
         _this.placeholderEl.style({'top': topPos + 'px', 'bottom': 'auto'});
         _this.trigger('dragstart');
@@ -67,7 +67,7 @@ var Dialog = Component.extend({
         _this.trigger('drag');
         dg.drag(d3.event);
       })
-      .on('dragend', function D3dialogDrag() {
+      .on('end', function D3dialogDrag() {
         _this.rightPos = _this.placeholderEl.style('right');
         _this.topPos = _this.placeholderEl.style('top');
         _this.trigger('dragend');

@@ -1,7 +1,7 @@
 import * as utils from 'base/utils';
 //d3.svg.axisSmart
 
-export default function axisSmart() {
+export default function axisSmart(_orient) {
 
   return function d3_axis_smart(_super) {
 
@@ -39,8 +39,8 @@ export default function axisSmart() {
       options.cssMargin.bottom = widthSampleT.style("margin-bottom");
       options.cssMargin.left = widthSampleT.style("margin-left");
       options.cssMargin.right = widthSampleT.style("margin-right");
-      options.widthOfOneDigit = widthSampleT[0][0].getBBox().width;
-      options.heightOfOneDigit = widthSampleT[0][0].getBBox().height;
+      options.widthOfOneDigit = widthSampleT.node().getBBox().width;
+      options.heightOfOneDigit = widthSampleT.node().getBBox().height;
       widthSampleG.remove();
 
       // run label factory - it will store labels in tickValues property of axis
@@ -983,8 +983,12 @@ export default function axisSmart() {
       return d3_axis_smart(d3.svg.axis());
     };
 
+    axis.orient = function() {
+      return _orient;
+    }
+
     return d3.rebind(axis, _super,
-      "scale", "orient", "ticks", "tickValues", "tickFormat",
+      "scale", "ticks", "tickValues", "tickFormat",
       "tickSize", "innerTickSize", "outerTickSize", "tickPadding",
       "tickSubdivide"
     );
@@ -1014,6 +1018,6 @@ export default function axisSmart() {
       }
     }
 
-  }(d3.svg.axis());
+  }(d3["axis" + _orient.charAt(0).toUpperCase() + _orient.substr(1).toLowerCase()]());
 
 };

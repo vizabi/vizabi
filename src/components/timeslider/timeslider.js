@@ -177,8 +177,7 @@ var TimeSlider = Component.extend({
       .clamp(true);
 
     //Axis
-    this.xAxis = d3.svg.axis()
-      .orient("bottom")
+    this.xAxis = d3.axisBottom()
       .tickSize(0);
     //Value
     this.valueText.attr("text-anchor", "middle").attr("dy", "-0.7em");
@@ -187,13 +186,13 @@ var TimeSlider = Component.extend({
       brushedEnd = _this._getBrushedEnd();
 
     //Brush for dragging
-    this.brush = d3.svg.brush()
-      .x(this.xScale)
+    this.brush = d3.brushX()
+      //.x(this.xScale)
       .extent([0, 0])
       .on("brush", function () {
         brushed.call(this);
       })
-      .on("brushend", function () {
+      .on("end", function () {
         brushedEnd.call(this);
       });
 
@@ -210,8 +209,8 @@ var TimeSlider = Component.extend({
         }
     });
 
-    this.slide.selectAll(".extent,.resize")
-      .remove();
+    //this.slide.selectAll(".extent,.resize")
+    //  .remove();
 
     this._setSelectedLimitsId = 0; //counter for setSelectedLimits
 

@@ -174,9 +174,9 @@ var AgePyramid = Component.extend({
     this.yScale = null;
     this.cScale = null;
 
-    this.xAxis = axisSmart();
-    this.xAxisLeft = axisSmart();
-    this.yAxis = axisSmart();
+    this.xAxis = axisSmart("bottom");
+    this.xAxisLeft = axisSmart("bottom");
+    this.yAxis = axisSmart("left");
     this.xScales = [];
     this.SHIFTEDAGEDIM = "s_age";
 
@@ -772,12 +772,12 @@ var AgePyramid = Component.extend({
       this.entityBars
         .transition('age')
         .duration(duration)
-        .ease("linear")
+        .ease(d3.easeLinear)
         .attr("transform", function(d, i) {
           return "translate(0," + (firstBarOffsetY - (d[shiftedAgeDim] - domain[0] - stepShift) * oneBarHeight) + ")";
         });
       this.stackBars
-        .transition().duration(duration*.95).ease("linear")
+        .transition().duration(duration*.95).ease(d3.easeLinear)
         .attr("width", _attributeUpdaters._newWidth)
         .attr("x", _attributeUpdaters._newX);
     } else {
@@ -1012,7 +1012,7 @@ var AgePyramid = Component.extend({
 
     //apply scales to axes and redraw
     this.yAxis.scale(this.yScale)
-      .orient("left")
+      //.orient("left")
       .tickSize(-this.width, 0)
       .tickPadding(6)
       .tickSizeMinor(-this.width, 0)
@@ -1025,7 +1025,7 @@ var AgePyramid = Component.extend({
     var format = this.ui.chart.inpercent ? d3.format((groupBy > 3 ? "":".1") + "%") : this.model.marker.axis_x.getTickFormatter();
 
     this.xAxis.scale(this.xScale)
-      .orient("bottom")
+      //.orient("bottom")
       .tickFormat(format)
       .tickSize(-this.height, 0)
       .tickPadding(6)
@@ -1053,7 +1053,7 @@ var AgePyramid = Component.extend({
       }
 
       this.xAxisLeft.scale(this.xScaleLeft)
-        .orient("bottom")
+        //.orient("bottom")
         .tickFormat(format)
         .tickSize(-this.height, 0)
         .tickPadding(6)
