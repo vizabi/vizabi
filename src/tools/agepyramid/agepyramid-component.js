@@ -142,6 +142,7 @@ var AgePyramid = Component.extend({
     
     this._attributeUpdaters = {
       _newWidth: function(d, i) {
+        d["x_"] = 0;
         d["width_"] =  _this.xScale(_this.shiftedValues[d[_this.AGEDIM]] ? _this.shiftedValues[d[_this.AGEDIM]][d[_this.SIDEDIM]][d[_this.STACKDIM]] : 0);
         if(_this.ui.chart.inpercent) {
           d["width_"] /= _this.total[d[_this.SIDEDIM]];
@@ -186,7 +187,7 @@ var AgePyramid = Component.extend({
     this._createStepData(this.model.marker.axis_x);
 
     this.resize();
-    this._updateEntities();
+    this._updateEntities(true);
     this.updateBarsOpacity();
   },
 
@@ -236,15 +237,6 @@ var AgePyramid = Component.extend({
         return m[sideDim];
       });
 
-    var sideFilter = this.side.getFilter;
-    if(sideFilter[sideDim] && sideFilter[sideDim][0] != "*") {
-      sideKeys = sideKeys.filter(function(m) {
-        var f = {};
-        f[sideDim] = m;
-        return _this.side.isShown(f);
-      });
-    }
-
     if(sideKeys.length > 1) {
       var sortFunc = this.ui.chart.flipSides ? d3.ascending : d3.descending;
       sideKeys.sort(sortFunc);
@@ -276,14 +268,14 @@ var AgePyramid = Component.extend({
 
     this.stacked = this.ui.chart.stacked && this.model.marker.color.use != "constant" && this.stack.getDimension();
 
+    var sideItems = this.model.marker.label_side.getItems();
     this.twoSided = this.sideKeys.length > 1;
     if(this.twoSided) {
       this.xScaleLeft = this.xScale.copy();
-      var sideItems = this.model.marker.label_side.getItems();
       this.title.text(sideItems[this.sideKeys[1]]);
       this.titleRight.text(sideItems[this.sideKeys[0]]);
     } else {
-      var title = this.translator("indicator/" + this.model.marker.axis_x.which);
+      var title = this.sideKeys.length ? sideItems[this.sideKeys[0]] : this.translator("indicator/" + this.model.marker.axis_x.which);
       this.title.text(title);
     }
 
@@ -462,7 +454,7 @@ var AgePyramid = Component.extend({
   /**
    * Updates entities
    */
-  _updateEntities: function() {
+  _updateEntities: function(stackReorder) {
 
     var _this = this;
     var time = this.model.time;
@@ -544,7 +536,7 @@ var AgePyramid = Component.extend({
           r[sideDim] = m;
           return r;
         });
-      })
+      }, function(d) {return d[sideDim]})
 
     this.sideBars.exit().remove();
     this.sideBars.enter().append("g")
@@ -566,7 +558,7 @@ var AgePyramid = Component.extend({
             r[stackDim] = m;
             return r;
           });
-        })
+    }, function(d) {return d[stackDim]});
 
     this.stackBars.exit().remove();
     this.stackBars.enter().append("rect")
@@ -582,6 +574,8 @@ var AgePyramid = Component.extend({
           .on("mouseout", _this.interaction.mouseout)
           .on("click", _this.interaction.click)
           .onTap(_this.interaction.tap);
+
+    if(stackReorder) this.stackBars.order();
 
     // this.stackBars = this.bars.selectAll('.vzb-bc-bar')
     //   .selectAll('.vzb-bc-side')
