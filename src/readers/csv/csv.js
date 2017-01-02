@@ -26,7 +26,7 @@ const CSVReader = Reader.extend({
   init(readerInfo) {
     this._data = [];
     this._basepath = readerInfo.path;
-    this.d3reader = readerInfo.delimiter ? d3.dsv(readerInfo.delimiter, 'text/plain') : d3.csv;
+    this.delimiter = readerInfo.delimiter;
     this.keySize = readerInfo.keySize || 1;
 
     if (!this._basepath) {
@@ -82,26 +82,51 @@ const CSVReader = Reader.extend({
   },
 
   load() {
-    const { _basepath: path } = this;
+    const { _basepath: path, delimiter: delimiter } = this;
 
     return new Promise((resolve, reject) => {
-      const data = cached[path];
+      const cachedData = cached[path];
 
-      data ?
-        resolve(data) :
-        this.d3reader(path)
-          .get((error, result) => {
-            if (!result) {
-              return reject(`No permissions or empty file: ${path}. ${error}`);
-            }
+      if (cachedData){
+        resolve(cachedData);
+        
+      }else{
+        d3.csv(path).get((error, result) => {
+          if (!result) {
+            return reject(`No permissions or empty file: ${path}. ${error}`);
+          }
 
-            if (error) {
-              return reject(`Error happened while loading csv file: ${path}. ${error}`);
-            }
-
+          if (error) {
+            return reject(`Error happened while loading csv file: ${path}. ${error}`);
+          }
+          
+          var itemsInLine1 = utils.keys(result[0]).filter(f => f !== undefined).length;
+          var itemsInLine2 = utils.values(result[0]).filter(f => f !== undefined).length;
+          
+          var semicolonsInLine1 = utils.keys(result[0]).join("").split(";").length;
+          var semicolonsInLine2 = utils.values(result[0]).join("").split(";").length;
+          
+          if(itemsInLine1 === itemsInLine2
+             && itemsInLine1 > 1 && itemsInLine2 > 1
+             && itemsInLine1 > semicolonsInLine1 && itemsInLine1 > semicolonsInLine2
+             && (!delimiter || delimiter === ",")
+            ){
+            
+            //comma is indeed the delimiter!
             cached[path] = result;
             resolve(result);
-          });
+            
+          } else {
+            
+            //something else is a delimiter. assume semicolon 
+            d3.dsv(delimiter || ";", 'text/plain')(path).get((error, result) => {
+              cached[path] = result;
+              resolve(result);
+            });
+            
+          }
+        });        
+      }
     });
   },
 
