@@ -41,7 +41,7 @@ const CSVReader = Reader.extend({
    * @returns {Promise} a promise that will be resolved when data is read
    */
   read(query, parsers = {}) {
-    query = this._normalizeQuery(utils.deepClone(query), parsers);
+    query = this._normalizeQuery(query, parsers);
 
     const {
       select,
@@ -53,22 +53,19 @@ const CSVReader = Reader.extend({
 
     return this.load()
       .then((data) => {
-        data = data.map(this._mapRows(parsers));
-
         switch (true) {
           case from === this.QUERY_FROM_CONCEPTS:
             return this._getConcepts(data);
 
           case this._isDataQuery(from) && select.key.length > 0:
             return data
-              .reduce(this._applyQuery(query), [])
+              .reduce(this._applyQuery(query, parsers), [])
               .sort((prev, next) => prev[orderBy] - next[orderBy]);
 
           default:
             return [];
         }
-      })
-      .catch(utils.error);
+      });
   },
 
 
@@ -82,15 +79,15 @@ const CSVReader = Reader.extend({
   },
 
   load() {
-    const { _basepath: path, delimiter: delimiter } = this;
+    const { _basepath: path, delimiter } = this;
 
     return new Promise((resolve, reject) => {
       const cachedData = cached[path];
 
-      if (cachedData){
+      if (cachedData) {
         resolve(cachedData);
-        
-      }else{
+
+      } else {
         d3.csv(path).get((error, result) => {
           if (!result) {
             return reject(`No permissions or empty file: ${path}. ${error}`);
@@ -99,33 +96,35 @@ const CSVReader = Reader.extend({
           if (error) {
             return reject(`Error happened while loading csv file: ${path}. ${error}`);
           }
-          
-          var itemsInLine1 = utils.keys(result[0]).filter(f => f !== undefined).length;
-          var itemsInLine2 = utils.values(result[0]).filter(f => f !== undefined).length;
-          
-          var semicolonsInLine1 = utils.keys(result[0]).join("").split(";").length;
-          var semicolonsInLine2 = utils.values(result[0]).join("").split(";").length;
-          
-          if(itemsInLine1 === itemsInLine2
-             && itemsInLine1 > 1 && itemsInLine2 > 1
-             && itemsInLine1 > semicolonsInLine1 && itemsInLine1 > semicolonsInLine2
-             && (!delimiter || delimiter === ",")
-            ){
-            
+
+          const [firstRow] = result;
+          const isNotUndefined = (v) => v !== undefined;
+          const itemsInLine1 = utils.keys(firstRow).filter(isNotUndefined).length;
+          const itemsInLine2 = utils.values(firstRow).filter(isNotUndefined).length;
+
+          const semicolonsInLine1 = utils.keys(firstRow).join('').split(';').length;
+          const semicolonsInLine2 = utils.values(firstRow).join('').split(';').length;
+
+          if (itemsInLine1 === itemsInLine2
+            && itemsInLine1 > 1 && itemsInLine2 > 1
+            && itemsInLine1 > semicolonsInLine1 && itemsInLine1 > semicolonsInLine2
+            && (!delimiter || delimiter === ',')
+          ) {
+
             //comma is indeed the delimiter!
             cached[path] = result;
             resolve(result);
-            
+
           } else {
-            
-            //something else is a delimiter. assume semicolon 
-            d3.dsv(delimiter || ";", 'text/plain')(path).get((error, result) => {
+
+            //something else is a delimiter. assume semicolon
+            d3.dsv(delimiter || ';', 'text/plain')(path).get((error, result) => {
               cached[path] = result;
               resolve(result);
             });
-            
+
           }
-        });        
+        });
       }
     });
   },
@@ -176,26 +175,45 @@ const CSVReader = Reader.extend({
     ].includes(from);
   },
 
-  _mapRows(parsers) {
-    return row => {
-      return Object.keys(row).reduce((result, key) => {
-        const value = row[key];
-        const parser = parsers[key];
+  _mapRow(query, parsers) {
+    const { select } = query;
 
-        if (parser) {
-          result[key] = parser(value);
-        } else {
-          const numeric = parseFloat(value);
-          result[key] = !isNaN(numeric) && isFinite(numeric) ? parseFloat(value.replace(',', '.')) : value;
+    return (row) => {
+      let correct = true;
+
+      const result = Object.keys(row).reduce((result, key) => {
+        if (correct) {
+          const value = row[key];
+          const parser = parsers[key];
+          let resultValue;
+
+          if (parser) {
+            resultValue = parser(value);
+          } else {
+            const numeric = parseFloat(value);
+            resultValue = !isNaN(numeric) && isFinite(numeric) ? parseFloat(value.replace(',', '.')) : value;
+          }
+
+          if (!resultValue && resultValue !== 0) {
+            if (parser && resultValue === null) {
+              throw new Error(`Data format is wrong. Can't read "${key}" column.`);
+            } else if (select.key.includes(key)) {
+              correct = false;
+            }
+          } else {
+            result[key] = resultValue;
+          }
         }
 
         return result;
       }, {});
+
+      return correct && result;
     };
   },
 
   _getConcepts(data) {
-    const firstRow = data[0];
+    const [firstRow] = data;
 
     return Object.keys(firstRow).map((concept, index) => {
       const result = { concept };
@@ -222,7 +240,7 @@ const CSVReader = Reader.extend({
     })
   },
 
-  _applyQuery(query) {
+  _applyQuery(query, parsers) {
     const {
       select,
       from
@@ -230,27 +248,32 @@ const CSVReader = Reader.extend({
 
     const [uniqueKey] = select.key;
     const uniqueValues = [];
+    const rowMapper = this._mapRow(query, parsers);
 
     return (result, row) => {
-      const unique = row[uniqueKey];
-      const isUnique = from !== this.QUERY_FROM_ENTITIES || !uniqueValues.includes(unique);
-      const isSuitable = this._isSuitableRow(query, row);
+      row = rowMapper(row);
 
-      if (isSuitable && isUnique) {
-        if (from === this.QUERY_FROM_ENTITIES) {
-          uniqueValues.push(unique);
+      if (row) {
+        const unique = row[uniqueKey];
+        const isUnique = from !== this.QUERY_FROM_ENTITIES || !uniqueValues.includes(unique);
+        const isSuitable = this._isSuitableRow(query, row);
+
+        if (isSuitable && isUnique) {
+          if (from === this.QUERY_FROM_ENTITIES) {
+            uniqueValues.push(unique);
+          }
+
+          const rowFilteredByKeys = Object.keys(row)
+            .reduce((resultRow, rowKey) => {
+              if (select.key.includes(rowKey) || select.value.includes(rowKey)) {
+                resultRow[rowKey] = row[rowKey];
+              }
+
+              return resultRow;
+            }, {});
+
+          result.push(rowFilteredByKeys);
         }
-
-        const rowFilteredByKeys = Object.keys(row)
-          .reduce((resultRow, rowKey) => {
-            if (select.key.includes(rowKey) || select.value.includes(rowKey)) {
-              resultRow[rowKey] = row[rowKey];
-            }
-
-            return resultRow;
-          }, {});
-
-        result.push(rowFilteredByKeys);
       }
 
       return result;
