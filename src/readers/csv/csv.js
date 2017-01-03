@@ -41,7 +41,7 @@ const CSVReader = Reader.extend({
    * @returns {Promise} a promise that will be resolved when data is read
    */
   read(query, parsers = {}) {
-    query = this._normalizeQuery(utils.deepClone(query), parsers);
+    query = this._normalizeQuery(query, parsers);
 
     const {
       select,
@@ -67,8 +67,7 @@ const CSVReader = Reader.extend({
           default:
             return [];
         }
-      })
-      .catch(utils.error);
+      });
   },
 
 
@@ -82,15 +81,15 @@ const CSVReader = Reader.extend({
   },
 
   load() {
-    const { _basepath: path, delimiter: delimiter } = this;
+    const { _basepath: path, delimiter } = this;
 
     return new Promise((resolve, reject) => {
       const cachedData = cached[path];
 
-      if (cachedData){
+      if (cachedData) {
         resolve(cachedData);
-        
-      }else{
+
+      } else {
         d3.csv(path).get((error, result) => {
           if (!result) {
             return reject(`No permissions or empty file: ${path}. ${error}`);
@@ -99,33 +98,35 @@ const CSVReader = Reader.extend({
           if (error) {
             return reject(`Error happened while loading csv file: ${path}. ${error}`);
           }
-          
-          var itemsInLine1 = utils.keys(result[0]).filter(f => f !== undefined).length;
-          var itemsInLine2 = utils.values(result[0]).filter(f => f !== undefined).length;
-          
-          var semicolonsInLine1 = utils.keys(result[0]).join("").split(";").length;
-          var semicolonsInLine2 = utils.values(result[0]).join("").split(";").length;
-          
-          if(itemsInLine1 === itemsInLine2
-             && itemsInLine1 > 1 && itemsInLine2 > 1
-             && itemsInLine1 > semicolonsInLine1 && itemsInLine1 > semicolonsInLine2
-             && (!delimiter || delimiter === ",")
-            ){
-            
+
+          const [firstRow] = result;
+          const isNotUndefined = (v) => v !== undefined;
+          const itemsInLine1 = utils.keys(firstRow).filter(isNotUndefined).length;
+          const itemsInLine2 = utils.values(firstRow).filter(isNotUndefined).length;
+
+          const semicolonsInLine1 = utils.keys(firstRow).join('').split(';').length;
+          const semicolonsInLine2 = utils.values(firstRow).join('').split(';').length;
+
+          if (itemsInLine1 === itemsInLine2
+            && itemsInLine1 > 1 && itemsInLine2 > 1
+            && itemsInLine1 > semicolonsInLine1 && itemsInLine1 > semicolonsInLine2
+            && (!delimiter || delimiter === ',')
+          ) {
+
             //comma is indeed the delimiter!
             cached[path] = result;
             resolve(result);
-            
+
           } else {
-            
-            //something else is a delimiter. assume semicolon 
-            d3.dsv(delimiter || ";", 'text/plain')(path).get((error, result) => {
+
+            //something else is a delimiter. assume semicolon
+            d3.dsv(delimiter || ';', 'text/plain')(path).get((error, result) => {
               cached[path] = result;
               resolve(result);
             });
-            
+
           }
-        });        
+        });
       }
     });
   },
@@ -177,7 +178,7 @@ const CSVReader = Reader.extend({
   },
 
   _mapRows(parsers) {
-    return row => {
+    return (row) => {
       return Object.keys(row).reduce((result, key) => {
         const value = row[key];
         const parser = parsers[key];
@@ -189,13 +190,18 @@ const CSVReader = Reader.extend({
           result[key] = !isNaN(numeric) && isFinite(numeric) ? parseFloat(value.replace(',', '.')) : value;
         }
 
+        const resultValue = result[key];
+        if (!resultValue && resultValue !== 0) {
+          throw new Error(`Data format is wrong. Can't read "${key}" column.`);
+        }
+
         return result;
       }, {});
     };
   },
 
   _getConcepts(data) {
-    const firstRow = data[0];
+    const [firstRow] = data;
 
     return Object.keys(firstRow).map((concept, index) => {
       const result = { concept };

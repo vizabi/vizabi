@@ -12,7 +12,7 @@ var DataModel = Model.extend({
   /**
    * Default values for this model
    */
-  getClassDefaults: function() { 
+  getClassDefaults: function() {
     var defaults = {
       reader: "csv"
     };
@@ -73,7 +73,7 @@ var DataModel = Model.extend({
         'resize'
       ]);
       return this.loadFromReader(query, parsers)
-        .then(dataId => { 
+        .then(dataId => {
           EventSource.unfreezeAll();
           return dataId;
         });
@@ -88,7 +88,7 @@ var DataModel = Model.extend({
    */
   loadFromReader: function(query, parsers) {
     var _this = this;
-    
+
     var dataId = utils.hashCode([
       query
     ]);
@@ -104,7 +104,7 @@ var DataModel = Model.extend({
       Array.prototype.push.apply(this.queryQueue[queryMergeId].query.select.value, query.select.value);
       utils.extend(this.queryQueue[queryMergeId].parsers, parsers);
       return this.queryQueue[queryMergeId].promise;
-    
+
     } else {
 
       // set up base query
@@ -157,7 +157,7 @@ var DataModel = Model.extend({
         parsers: parsers,
         promise: promise
       };
-      
+
       return this.queryQueue[queryMergeId].promise;
 
     }
@@ -249,22 +249,32 @@ var DataModel = Model.extend({
     return this._collection[dataId][what][id];
   },
 
-  loadConceptProps: function(){
-    var _this = this;
-
-    var query = {
+  loadConceptProps() {
+    const query = {
       select: {
-        key: ["concept"],
-        value: ["concept_type","domain","indicator_url","color","scales","interpolation","tags","name","unit","description"]
+        key: ['concept'],
+        value: [
+          'concept_type',
+          'domain',
+          'indicator_url',
+          'color',
+          'scales',
+          'interpolation',
+          'tags',
+          'name',
+          'unit',
+          'description'
+        ]
       },
-      from: "concepts",
+      from: 'concepts',
       where: {},
       language: this.getClosestModel('locale').id,
     };
 
     return this.load(query)
       .then(this.handleConceptPropsResponse.bind(this))
-      .catch(function(err) {
+      .catch((error) => {
+        this.triggerLoadError(error);
         utils.warn('Problem with query: ', query);
       });
 
@@ -274,12 +284,12 @@ var DataModel = Model.extend({
 
     this.conceptDictionary = {_default: {concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root"}};
     this.conceptArray = [];
-    
+
     this.getData(dataId).forEach(d => {
       var concept = {};
 
       if(d.concept_type) concept["use"] = (d.concept_type=="measure" || d.concept_type=="time")?"indicator":"property";
-      
+
       concept["concept_type"] = d.concept_type;
       concept["sourceLink"] = d.indicator_url;
       try {
@@ -307,7 +317,7 @@ var DataModel = Model.extend({
       }else if(d.concept_type == "measure"){
         concept["interpolation"] = concept.scales && concept.scales[0]=="log"? "exp" : "linear";
       }else if(d.concept_type == "time"){
-        concept["interpolation"] = "linear";        
+        concept["interpolation"] = "linear";
       }else{
         concept["interpolation"] = "stepMiddle";
       }
@@ -340,7 +350,7 @@ var DataModel = Model.extend({
     if(!concept && type == "measure") concept = this.conceptArray.filter(f => f.concept_type==="time")[0];
     return concept;
   },
-  
+
   getDatasetName: function(){
     if(this.readerObject.getDatasetInfo) {
       var meta = this.readerObject.getDatasetInfo();
@@ -462,7 +472,7 @@ var DataModel = Model.extend({
         var _this = this;
         this.isActive = false;
         new Promise(function(resolve, reject){
-          _this.delayedAction = resolve;    
+          _this.delayedAction = resolve;
         });
       };
 

@@ -161,7 +161,7 @@ var Model = EventSource.extend({
       persistent = force;
       force = val;
     }
-    
+
     //do nothing if setting an empty object
     if (Object.keys(attrs).length === 0) return;
 
@@ -421,7 +421,7 @@ var Model = EventSource.extend({
     var promises = [];
     promises.push(this.loadData(opts));
 
-    utils.forEach(this.getSubmodels(), 
+    utils.forEach(this.getSubmodels(),
       subModel => promises.push(subModel.startLoading(opts))
     );
 
@@ -461,9 +461,9 @@ var Model = EventSource.extend({
     );
   },
 
-  triggerLoadError: function(err) {
-    utils.error(err);
-    this.trigger('load_error');
+  triggerLoadError(error) {
+    utils.error(error);
+    this.trigger('load_error', error);
   },
 
   /**
@@ -697,7 +697,7 @@ function initSubmodel(attr, val, ctx, persistent) {
       //loading has started in this submodel (multiple times)
       'hook_change': onHookChange,
       // error triggered in loading
-      'load_error': evt => ctx.trigger(evt),
+      'load_error': (...args) => ctx.trigger(...args),
         //loading has ended in this submodel (multiple times)
       'ready': onReady
     };
