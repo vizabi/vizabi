@@ -175,7 +175,7 @@ const CSVReader = Reader.extend({
     ].includes(from);
   },
 
-  _mapRow(query, parsers) {
+  _getRowMapper(query, parsers) {
     const { select } = query;
 
     return (row) => {
@@ -248,10 +248,10 @@ const CSVReader = Reader.extend({
 
     const [uniqueKey] = select.key;
     const uniqueValues = [];
-    const rowMapper = this._mapRow(query, parsers);
+    const mapRow = this._getRowMapper(query, parsers);
 
     return (result, row) => {
-      row = rowMapper(row);
+      row = mapRow(row);
 
       if (row) {
         const unique = row[uniqueKey];
