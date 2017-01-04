@@ -97,37 +97,37 @@ var Tool = Component.extend({
     this.model = new ToolModel(this, external_model);
     this.model.setInterModelListeners();
   },
-  
+
   getToolTemplate: function() {
-    return this.template || 
-      '<div class="vzb-tool vzb-tool-' + this.name + '">' + 
-        '<div class="vzb-tool-stage">' + 
-          '<div class="vzb-tool-viz">' + 
-          '</div>' + 
-          '<div class="vzb-tool-timeslider">' + 
-          '</div>' + 
-        '</div>' + 
-        '<div class="vzb-tool-sidebar">' + 
-          '<div class="vzb-tool-dialogs">' + 
+    return this.template ||
+      '<div class="vzb-tool vzb-tool-' + this.name + '">' +
+        '<div class="vzb-tool-stage">' +
+          '<div class="vzb-tool-viz">' +
           '</div>' +
-          '<div class="vzb-tool-buttonlist">' + 
-          '</div>' + 
-        '</div>' +         
-        '<div class="vzb-tool-datanotes vzb-hidden">' + 
-        '</div>' + 
-        '<div class="vzb-tool-treemenu vzb-hidden">' + 
-        '</div>' + 
-        '<div class="vzb-tool-datawarning vzb-hidden">' + 
-        '</div>' + 
-        '<div class="vzb-tool-labels vzb-hidden">' + 
-        '</div>' + 
+          '<div class="vzb-tool-timeslider">' +
+          '</div>' +
+        '</div>' +
+        '<div class="vzb-tool-sidebar">' +
+          '<div class="vzb-tool-dialogs">' +
+          '</div>' +
+          '<div class="vzb-tool-buttonlist">' +
+          '</div>' +
+        '</div>' +
+        '<div class="vzb-tool-datanotes vzb-hidden">' +
+        '</div>' +
+        '<div class="vzb-tool-treemenu vzb-hidden">' +
+        '</div>' +
+        '<div class="vzb-tool-datawarning vzb-hidden">' +
+        '</div>' +
+        '<div class="vzb-tool-labels vzb-hidden">' +
+        '</div>' +
       '</div>';
   },
 
   getToolListeners: function() {
     var _this = this;
-    return utils.extend( 
-      this.model_binds, 
+    return utils.extend(
+      this.model_binds,
       {
         'change': function(evt, path) {
           if(_this._ready) {
@@ -151,7 +151,10 @@ var Tool = Component.extend({
           _this.translateStrings();
           _this.model.ui.setRTL(_this.model.locale.isRTL());
         },
-        'load_error': this.renderError.bind(this)
+        'load_error': (...args) => {
+          this.renderError(...args);
+          this.error(...args);
+        }
       });
   },
 
@@ -196,18 +199,18 @@ var Tool = Component.extend({
   },
 
   getPersistentModel: function() {
-    //try to find functions in properties of model. 
+    //try to find functions in properties of model.
     var removeFunctions = function(model) {
-      for(var childKey in model) {        
+      for(var childKey in model) {
         if(typeof model[childKey] === 'function') {
           delete model[childKey];
           utils.warn('minModel validation. Function found in enumerable properties of ' + childKey + ". This key is deleted from minModel");
-        } 
-        else if(typeof model[childKey] === 'object') 
+        }
+        else if(typeof model[childKey] === 'object')
           removeFunctions(model[childKey]);
       }
     }
-   
+
     var currentToolModel = this.model.getPlainObject(true); // true = get only persistent model values
     removeFunctions(currentToolModel);
     return currentToolModel;
@@ -235,11 +238,14 @@ var Tool = Component.extend({
   /**
    * Visually display errors
    */
-  error: function(opts) {
+  error(options, message) {
+    if (!message) {
+      message = options && options.type === 'data' ?
+        'Error loading chart data. <br>Please, try again later.' :
+        'Error loading chart';
+    }
 
-    var msg = (opts && opts.type === "data") ? "Error loading chart data. <br>Please, try again later." : "Error loading chart";
-
-    this.placeholder.innerHTML = '<div class="vzb-error-message"><h1>'+warnIcon+'</h1><p>'+msg+'</p></div>';
+    this.placeholder.innerHTML = `<div class="vzb-error-message"><h1>${warnIcon}</h1><p>${message}</p></div>`;
   },
 
   /**
@@ -267,7 +273,7 @@ var Tool = Component.extend({
    * Displays loading class
    */
   beforeLoading: function() {
-    utils.addClass(this.placeholder, class_loading_data);    
+    utils.addClass(this.placeholder, class_loading_data);
   },
 
   /* ==========================
