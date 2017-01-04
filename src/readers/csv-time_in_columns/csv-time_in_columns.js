@@ -11,11 +11,8 @@ const CSVTimeInColumnsReader = CSVReader.extend({
 
   load() {
     return this._super()
-      .then((data) => {
-        const [firstRow] = data;
-        const [indicatorKey] = Object.keys(firstRow)
-          .filter((key) => Number(key) != key)
-          .slice(this.keySize, this.keySize + 1);
+      .then(({ data, columns }) => {
+        const indicatorKey = columns[this.keySize];
 
         const concepts = data.reduce((result, row) => {
           Object.keys(row).forEach((concept) => {
