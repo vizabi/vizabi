@@ -97,13 +97,10 @@ const CSVReader = Reader.extend({
           }
 
           const { delimiter = this._guessDelimiter(text) } = this;
-          const [columns, ...values] = d3.dsv(delimiter).parseRows(text);
-          const data = values.map((values) => {
-            return values.reduce((result, value, index) => {
-              result[columns[index]] = value;
-              return result;
-            }, {});
-          });
+          const parser = d3.dsv(delimiter);
+          const [header] = this._getRows(text, 1);
+          const [columns] = parser.parseRows(header);
+          const data = parser.parse(text);
 
           const result = { columns, data };
           cached[path] = result;
@@ -113,28 +110,11 @@ const CSVReader = Reader.extend({
     });
   },
 
-  _countCharsInLine(text, char) {
-    const re = new RegExp(char, 'g');
-    const matches = text.match(re);
-    return matches ? matches.length : 0;
-  },
-
   _guessDelimiter(text) {
     const stringsToCheck = 2;
-    const re = /([^\r\n]+)/g;
-    const rows = [];
-    let rowsCount = 0;
+    const rows = this._getRows(text, stringsToCheck);
 
-    let matches = [];
-    do {
-      matches = re.exec(text);
-      if (matches && matches.length > 1) {
-        ++rowsCount;
-        rows.push(matches[1]);
-      }
-    } while (rowsCount !== stringsToCheck || !matches);
-
-    if (rowsCount !== stringsToCheck) {
+    if (rows.length !== stringsToCheck) {
       // TODO: replace with constant error
       throw new Error('There is only 1 string in file');
     }
@@ -168,6 +148,29 @@ const CSVReader = Reader.extend({
 
     // TODO: replace with constant error
     throw new Error('Can\'t detect delimiter');
+  },
+
+  _getRows(text, count = 0) {
+    const re = /([^\r\n]+)/g;
+    const rows = [];
+    let rowsCount = 0;
+
+    let matches = true;
+    while (matches && rowsCount !== count) {
+      matches = re.exec(text);
+      if (matches && matches.length > 1) {
+        ++rowsCount;
+        rows.push(matches[1]);
+      }
+    }
+
+    return rows;
+  },
+
+  _countCharsInLine(text, char) {
+    const re = new RegExp(char, 'g');
+    const matches = text.match(re);
+    return matches ? matches.length : 0;
   },
 
   _normalizeQuery(_query, parsers) {
