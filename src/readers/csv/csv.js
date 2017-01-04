@@ -55,7 +55,7 @@ const CSVReader = Reader.extend({
       .then((data) => {
         switch (true) {
           case from === this.QUERY_FROM_CONCEPTS:
-            return this._getConcepts(data);
+            return this._getConcepts(data.map(this._getRowMapper(query, parsers)));
 
           case this._isDataQuery(from) && select.key.length > 0:
             return data
