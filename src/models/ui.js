@@ -51,7 +51,8 @@ var UI = Model.extend({
     this._prev_size = {};
 
     //resize when window resizes
-    window.addEventListener('resize', this.resizeHandler.bind(this));
+    this.resizeHandler = this.resizeHandler.bind(this);
+    window.addEventListener('resize', this.resizeHandler);
     bind['change:presentation'] = this.updatePresentation.bind(this);
 
     this._super(name, values, parent, bind);
