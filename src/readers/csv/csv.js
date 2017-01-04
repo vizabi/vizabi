@@ -205,11 +205,6 @@ const CSVReader = Reader.extend({
           }
         }
 
-        const resultValue = result[key];
-        if (!resultValue && resultValue !== 0) {
-          throw new Error(`Data format is wrong. Can't read "${key}" column.`);
-        }
-
         return result;
       }, {});
 
