@@ -53,15 +53,13 @@ const CSVReader = Reader.extend({
 
     return this.load()
       .then((data) => {
-        data = data.map(this._mapRows(parsers));
-
         switch (true) {
           case from === this.QUERY_FROM_CONCEPTS:
             return this._getConcepts(data);
 
           case this._isDataQuery(from) && select.key.length > 0:
             return data
-              .reduce(this._applyQuery(query), [])
+              .reduce(this._applyQuery(query, parsers), [])
               .sort((prev, next) => prev[orderBy] - next[orderBy]);
 
           default:
@@ -177,17 +175,34 @@ const CSVReader = Reader.extend({
     ].includes(from);
   },
 
-  _mapRows(parsers) {
-    return (row) => {
-      return Object.keys(row).reduce((result, key) => {
-        const value = row[key];
-        const parser = parsers[key];
+  _getRowMapper(query, parsers) {
+    const { select } = query;
 
-        if (parser) {
-          result[key] = parser(value);
-        } else {
-          const numeric = parseFloat(value);
-          result[key] = !isNaN(numeric) && isFinite(numeric) ? parseFloat(value.replace(',', '.')) : value;
+    return (row) => {
+      let correct = true;
+
+      const result = Object.keys(row).reduce((result, key) => {
+        if (correct) {
+          const value = row[key];
+          const parser = parsers[key];
+          let resultValue;
+
+          if (parser) {
+            resultValue = parser(value);
+          } else {
+            const numeric = parseFloat(value);
+            resultValue = !isNaN(numeric) && isFinite(numeric) ? parseFloat(value.replace(',', '.')) : value;
+          }
+
+          if (!resultValue && resultValue !== 0) {
+            if (parser && resultValue === null) {
+              throw new Error(`Data format is wrong. Can't read "${key}" column.`);
+            } else if (select.key.includes(key)) {
+              correct = false;
+            }
+          } else {
+            result[key] = resultValue;
+          }
         }
 
         const resultValue = result[key];
@@ -197,6 +212,8 @@ const CSVReader = Reader.extend({
 
         return result;
       }, {});
+
+      return correct && result;
     };
   },
 
@@ -228,7 +245,7 @@ const CSVReader = Reader.extend({
     })
   },
 
-  _applyQuery(query) {
+  _applyQuery(query, parsers) {
     const {
       select,
       from
@@ -236,27 +253,32 @@ const CSVReader = Reader.extend({
 
     const [uniqueKey] = select.key;
     const uniqueValues = [];
+    const mapRow = this._getRowMapper(query, parsers);
 
     return (result, row) => {
-      const unique = row[uniqueKey];
-      const isUnique = from !== this.QUERY_FROM_ENTITIES || !uniqueValues.includes(unique);
-      const isSuitable = this._isSuitableRow(query, row);
+      row = mapRow(row);
 
-      if (isSuitable && isUnique) {
-        if (from === this.QUERY_FROM_ENTITIES) {
-          uniqueValues.push(unique);
+      if (row) {
+        const unique = row[uniqueKey];
+        const isUnique = from !== this.QUERY_FROM_ENTITIES || !uniqueValues.includes(unique);
+        const isSuitable = this._isSuitableRow(query, row);
+
+        if (isSuitable && isUnique) {
+          if (from === this.QUERY_FROM_ENTITIES) {
+            uniqueValues.push(unique);
+          }
+
+          const rowFilteredByKeys = Object.keys(row)
+            .reduce((resultRow, rowKey) => {
+              if (select.key.includes(rowKey) || select.value.includes(rowKey)) {
+                resultRow[rowKey] = row[rowKey];
+              }
+
+              return resultRow;
+            }, {});
+
+          result.push(rowFilteredByKeys);
         }
-
-        const rowFilteredByKeys = Object.keys(row)
-          .reduce((resultRow, rowKey) => {
-            if (select.key.includes(rowKey) || select.value.includes(rowKey)) {
-              resultRow[rowKey] = row[rowKey];
-            }
-
-            return resultRow;
-          }, {});
-
-        result.push(rowFilteredByKeys);
       }
 
       return result;
