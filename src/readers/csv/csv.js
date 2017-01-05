@@ -17,6 +17,14 @@ const CSVReader = Reader.extend({
     $in: (configValue, rowValue) => configValue.includes(rowValue)
   },
 
+  ERRORS: {
+    WRONG_TIME_COLUMN_OR_UNITS: 'reader/error/wrongTimeUnitsOrColumn',
+    NOT_ENOUGH_ROWS_IN_FILE: 'reader/error/notEnoughRows',
+    UNDEFINED_DELIMITER: 'reader/error/undefinedDelimiter',
+    EMPTY_HEADERS: 'reader/error/emptyHeaders',
+    GENERIC_ERROR: 'reader/error/generic',
+  },
+
   _name: 'csv',
 
   /**
@@ -52,7 +60,10 @@ const CSVReader = Reader.extend({
     const [orderBy] = order_by;
 
     return this.load()
-      .then(({ data, columns }) => {
+      .then((result) => {
+        const { data, columns } = result;
+        this.ensureDataIsCorrect(result, parsers);
+
         switch (true) {
           case from === this.QUERY_FROM_CONCEPTS:
             return this._getConcepts(columns, data.map(this._getRowMapper(query, parsers)));
@@ -65,9 +76,27 @@ const CSVReader = Reader.extend({
           default:
             return [];
         }
+      })
+      .catch((error) => {
+        throw ({}).toString.call(error) === '[object Error]' ?
+          this.error(this.ERRORS.GENERIC_ERROR, error) :
+          error;
       });
   },
 
+  ensureDataIsCorrect({ columns, data }, parsers) {
+    const time = columns[this.keySize];
+    const [firstRow] = data;
+    const parser = parsers[time];
+
+    if (parser && !parser(firstRow[time])) {
+      throw this.error(this.ERRORS.WRONG_TIME_COLUMN_OR_UNITS);
+    }
+
+    if (!columns.length) {
+      throw this.error(this.ERRORS.EMPTY_HEADERS);
+    }
+  },
 
   /**
    * This function returns info about the dataset
@@ -115,8 +144,7 @@ const CSVReader = Reader.extend({
     const rows = this._getRows(text, stringsToCheck);
 
     if (rows.length !== stringsToCheck) {
-      // TODO: replace with constant error
-      throw new Error('There is only 1 string in file');
+      throw this.error(this.ERRORS.NOT_ENOUGH_ROWS_IN_FILE);
     }
 
     const [header, firstRow] = rows;
@@ -146,8 +174,7 @@ const CSVReader = Reader.extend({
       return semicolon;
     }
 
-    // TODO: replace with constant error
-    throw new Error('Can\'t detect delimiter');
+    throw this.error(this.ERRORS.UNDEFINED_DELIMITER);
   },
 
   _getRows(text, count = 0) {
@@ -239,9 +266,7 @@ const CSVReader = Reader.extend({
           }
 
           if (!resultValue && resultValue !== 0) {
-            if (parser && resultValue === null) {
-              throw new Error(`Data format is wrong. Can't read "${key}" column.`);
-            } else if (select.key.includes(key)) {
+            if (select.key.includes(key)) {
               correct = false;
             }
           } else {
@@ -341,6 +366,10 @@ const CSVReader = Reader.extend({
               this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], rowValue)
             ));
       });
+  },
+
+  error(code, message) {
+    return { code, message };
   }
 
 });
