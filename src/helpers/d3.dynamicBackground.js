@@ -97,6 +97,12 @@ export default Class.extend({
     this.textHeight = bbox.height * this.scalar;
     this.textWidth = bbox.width * this.scalar;
 
+    switch(this.yAlign) {
+      case 'bottom': this.context.style('dominant-baseline', 'central'); break;
+      case 'center': this.context.style('dominant-baseline', 'central'); break;
+      case 'top': this.context.style('dominant-baseline', 'initial'); break;
+    }
+
     this.context.attr("transform", "translate(" + this._getLeftOffset() + "," + this._getTopOffset() + ")");
 
     return this;
