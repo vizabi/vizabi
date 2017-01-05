@@ -250,6 +250,7 @@ var DataModel = Model.extend({
   },
 
   loadConceptProps() {
+    const locale = this.getClosestModel('locale');
     const query = {
       select: {
         key: ['concept'],
@@ -268,13 +269,16 @@ var DataModel = Model.extend({
       },
       from: 'concepts',
       where: {},
-      language: this.getClosestModel('locale').id,
+      language: locale.id,
     };
 
     return this.load(query)
       .then(this.handleConceptPropsResponse.bind(this))
       .catch((error) => {
-        this.triggerLoadError(error);
+        const translation = locale.getTFunction()(error.code) || '';
+        const errorMessage = `${translation} ${error.message || ''}`.trim();
+
+        this.triggerLoadError(errorMessage);
         utils.warn('Problem with query: ', query);
       });
 

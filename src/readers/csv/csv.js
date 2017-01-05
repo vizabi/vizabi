@@ -17,6 +17,14 @@ const CSVReader = Reader.extend({
     $in: (configValue, rowValue) => configValue.includes(rowValue)
   },
 
+  ERRORS: {
+    WRONG_TIME_COLUMN_OR_UNITS: 'reader/error/wrongTimeUnitsOrColumn',
+    NOT_ENOUGH_ROWS_IN_FILE: 'reader/error/notEnoughRows',
+    UNDEFINED_DELIMITER: 'reader/error/undefinedDelimiter',
+    EMPTY_HEADERS: 'reader/error/emptyHeaders',
+    GENERIC_ERROR: 'reader/error/generic',
+  },
+
   _name: 'csv',
 
   /**
@@ -52,10 +60,13 @@ const CSVReader = Reader.extend({
     const [orderBy] = order_by;
 
     return this.load()
-      .then((data) => {
+      .then((result) => {
+        const { data, columns } = result;
+        this.ensureDataIsCorrect(result, parsers);
+
         switch (true) {
           case from === this.QUERY_FROM_CONCEPTS:
-            return this._getConcepts(data.map(this._getRowMapper(query, parsers)));
+            return this._getConcepts(columns, data.map(this._getRowMapper(query, parsers)));
 
           case this._isDataQuery(from) && select.key.length > 0:
             return data
@@ -65,9 +76,27 @@ const CSVReader = Reader.extend({
           default:
             return [];
         }
+      })
+      .catch((error) => {
+        throw ({}).toString.call(error) === '[object Error]' ?
+          this.error(this.ERRORS.GENERIC_ERROR, error) :
+          error;
       });
   },
 
+  ensureDataIsCorrect({ columns, data }, parsers) {
+    const time = columns[this.keySize];
+    const [firstRow] = data;
+    const parser = parsers[time];
+
+    if (parser && !parser(firstRow[time])) {
+      throw this.error(this.ERRORS.WRONG_TIME_COLUMN_OR_UNITS);
+    }
+
+    if (!columns.length) {
+      throw this.error(this.ERRORS.EMPTY_HEADERS);
+    }
+  },
 
   /**
    * This function returns info about the dataset
@@ -79,17 +108,16 @@ const CSVReader = Reader.extend({
   },
 
   load() {
-    const { _basepath: path, delimiter } = this;
+    const { _basepath: path } = this;
 
     return new Promise((resolve, reject) => {
       const cachedData = cached[path];
 
       if (cachedData) {
         resolve(cachedData);
-
       } else {
-        d3.csv(path).get((error, result) => {
-          if (!result) {
+        d3.text(path).get((error, text) => {
+          if (!text) {
             return reject(`No permissions or empty file: ${path}. ${error}`);
           }
 
@@ -97,36 +125,79 @@ const CSVReader = Reader.extend({
             return reject(`Error happened while loading csv file: ${path}. ${error}`);
           }
 
-          const [firstRow] = result;
-          const isNotUndefined = (v) => v !== undefined;
-          const itemsInLine1 = utils.keys(firstRow).filter(isNotUndefined).length;
-          const itemsInLine2 = utils.values(firstRow).filter(isNotUndefined).length;
+          const { delimiter = this._guessDelimiter(text) } = this;
+          const parser = d3.dsv(delimiter);
+          const [header] = this._getRows(text, 1);
+          const [columns] = parser.parseRows(header);
+          const data = parser.parse(text);
 
-          const semicolonsInLine1 = utils.keys(firstRow).join('').split(';').length;
-          const semicolonsInLine2 = utils.values(firstRow).join('').split(';').length;
-
-          if (itemsInLine1 === itemsInLine2
-            && itemsInLine1 > 1 && itemsInLine2 > 1
-            && itemsInLine1 > semicolonsInLine1 && itemsInLine1 > semicolonsInLine2
-            && (!delimiter || delimiter === ',')
-          ) {
-
-            //comma is indeed the delimiter!
-            cached[path] = result;
-            resolve(result);
-
-          } else {
-
-            //something else is a delimiter. assume semicolon
-            d3.dsv(delimiter || ';', 'text/plain')(path).get((error, result) => {
-              cached[path] = result;
-              resolve(result);
-            });
-
-          }
+          const result = { columns, data };
+          cached[path] = result;
+          resolve(result);
         });
       }
     });
+  },
+
+  _guessDelimiter(text) {
+    const stringsToCheck = 2;
+    const rows = this._getRows(text, stringsToCheck);
+
+    if (rows.length !== stringsToCheck) {
+      throw this.error(this.ERRORS.NOT_ENOUGH_ROWS_IN_FILE);
+    }
+
+    const [header, firstRow] = rows;
+    const [comma, semicolon] = [',', ';'];
+    const commasCountInHeader = this._countCharsInLine(header, comma);
+    const semicolonsCountInHeader = this._countCharsInLine(header, semicolon);
+    const commasCountInFirstRow = this._countCharsInLine(firstRow, comma);
+    const semicolonsCountInFirstRow = this._countCharsInLine(firstRow, semicolon);
+
+    if (
+      commasCountInHeader === commasCountInFirstRow
+      && commasCountInHeader > 1
+      && (
+        (semicolonsCountInHeader !== semicolonsCountInFirstRow)
+        || (!semicolonsCountInHeader && !semicolonsCountInFirstRow)
+      )
+    ) {
+      return comma;
+    } else if (
+      semicolonsCountInHeader === semicolonsCountInFirstRow
+      && semicolonsCountInHeader > 1
+      && (
+        (commasCountInHeader !== commasCountInFirstRow)
+        || (!commasCountInHeader && !commasCountInFirstRow)
+      )
+    ) {
+      return semicolon;
+    }
+
+    throw this.error(this.ERRORS.UNDEFINED_DELIMITER);
+  },
+
+  _getRows(text, count = 0) {
+    const re = /([^\r\n]+)/g;
+    const rows = [];
+    let rowsCount = 0;
+
+    let matches = true;
+    while (matches && rowsCount !== count) {
+      matches = re.exec(text);
+      if (matches && matches.length > 1) {
+        ++rowsCount;
+        rows.push(matches[1]);
+      }
+    }
+
+    return rows;
+  },
+
+  _countCharsInLine(text, char) {
+    const re = new RegExp(char, 'g');
+    const matches = text.match(re);
+    return matches ? matches.length : 0;
   },
 
   _normalizeQuery(_query, parsers) {
@@ -195,9 +266,7 @@ const CSVReader = Reader.extend({
           }
 
           if (!resultValue && resultValue !== 0) {
-            if (parser && resultValue === null) {
-              throw new Error(`Data format is wrong. Can't read "${key}" column.`);
-            } else if (select.key.includes(key)) {
+            if (select.key.includes(key)) {
               correct = false;
             }
           } else {
@@ -212,13 +281,10 @@ const CSVReader = Reader.extend({
     };
   },
 
-  _getConcepts(data) {
-    const [firstRow] = data;
-
-    return Object.keys(firstRow).map((concept, index) => {
+  _getConcepts(columns, data) {
+    return columns.map((concept, index) => {
       const result = { concept };
-      // TODO: is the order of first/last elements stable?
-      // first columns are expected to have keys
+
       if (index < this.keySize) {
         result.concept_type = 'entity_domain';
       } else if (index === this.keySize) {
@@ -230,7 +296,7 @@ const CSVReader = Reader.extend({
         for (let i = data.length - 1; i >= 0; i--) {
           if (utils.isString(data[i][concept]) && data[i][concept] !== '') {
             result.concept_type = 'entity_set';
-            result.domain = Object.keys(firstRow)[0];
+            [result.domain] = columns;
             break;
           }
         }
@@ -300,6 +366,10 @@ const CSVReader = Reader.extend({
               this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], rowValue)
             ));
       });
+  },
+
+  error(code, message) {
+    return { code, message };
   }
 
 });
