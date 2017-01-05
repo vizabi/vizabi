@@ -537,7 +537,7 @@ var ButtonList = Component.extend({
 
     btn.classed(class_active_locked, this.model.ui.presentation);
   },
-  toggleFullScreen: function(id) {
+  toggleFullScreen: function(id, emulateClick) {
 
     if(!window) return;
 
@@ -555,9 +555,11 @@ var ButtonList = Component.extend({
 
     //TODO: figure out a way to avoid fullscreen resize delay in firefox
     if(fs) {
+      this.resizeInExitHandler = false;
       launchIntoFullscreen(pholder);
-      subscribeFullscreenChangeEvent.call(this, this.toggleFullScreen.bind(this, id));
+      subscribeFullscreenChangeEvent.call(this, this.toggleFullScreen.bind(this, id, true));
     } else {
+      this.resizeInExitHandler = emulateClick ? false : true;
       exitFullscreen.call(this);
     }
     utils.classed(pholder, class_vzb_fullscreen, fs);
@@ -579,7 +581,7 @@ var ButtonList = Component.extend({
     //restore body overflow
     document.body.style.overflow = body_overflow;
 
-    this.root.ui.resizeHandler();
+    if(!this.resizeInExitHandler) this.root.ui.resizeHandler();
 
     //force window resize event
     // utils.defer(function() {
@@ -606,7 +608,12 @@ function isFullscreen() {
 
 function exitHandler(emulateClickFunc) {
   if(!isFullscreen()) {
-    emulateClickFunc();
+    removeFullscreenChangeEvent.call(this);
+    if(!this.resizeInExitHandler) {
+      emulateClickFunc();
+    } else {
+      this.root.ui.resizeHandler();
+    }
   }
 }
 
@@ -647,8 +654,6 @@ function launchIntoFullscreen(elem) {
 }
 
 function exitFullscreen() {
-  removeFullscreenChangeEvent.call(this);
-
   if(document.exitFullscreen) {
     document.exitFullscreen();
   } else if(document.msExitFullscreen) {
@@ -657,6 +662,9 @@ function exitFullscreen() {
     document.mozCancelFullScreen();
   } else if(document.webkitExitFullscreen) {
     document.webkitExitFullscreen();
+  } else {
+    removeFullscreenChangeEvent.call(this);
+    this.resizeInExitHandler = false;
   }
 }
 
