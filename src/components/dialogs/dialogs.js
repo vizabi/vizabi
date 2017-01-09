@@ -60,6 +60,9 @@ var Dialogs = Component.extend({
       'size': {
         dialog: dialogs.size,
       },
+      'side': {
+        dialog: dialogs.side,
+      },
       'label': {
         dialog: dialogs.label,
       },

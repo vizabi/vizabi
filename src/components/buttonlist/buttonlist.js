@@ -379,7 +379,9 @@ var ButtonList = Component.extend({
       //add template data
       var d = (btn_config) ? btn : "_default";
       var details_btn = utils.clone(this._available_buttons[d]);
-
+      if(d == "_default") {
+        details_btn.title = "buttons/" + btn;
+      }
       details_btn.id = btn;
       details_btn.icon = iconset[details_btn.icon];
       details_btns.push(details_btn);

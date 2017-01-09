@@ -1,0 +1,30 @@
+<div class='vzb-dialog-modal'>
+  <span class="thumb-tack-class thumb-tack-class-ico-pin fa" data-dialogtype="side" data-click="pinDialog"></span>
+  <span class="thumb-tack-class thumb-tack-class-ico-drag fa" data-dialogtype="side" data-click="dragDialog"></span>
+  <div class="vzb-dialog-title">
+    <%=t ("buttons/side") %>
+    <span class="vzb-side-selector"></span>
+    <span class="vzb-dialog-content vzb-side-filter">
+      <input class="vzb-side-search" type="search"/>
+    </span>
+  </div>
+  
+  <div class="vzb-dialog-content vzb-dialog-scrollable">
+    <p class="vzb-dialog-sublabel"> <%=t ("hints/ap/onlyshowthefollowingsides") %> </p>
+    <div class="vzb-side-list">
+      <!-- list will be placed here -->
+    </div>
+    <div class="vzb-flipsides-switch"></div>
+  </div>
+
+  <div class="vzb-dialog-buttons">
+    <div class="vzb-dialog-button vzb-side-deselect">
+      <%=t ("buttons/showall") %>
+    </div>
+
+    <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary">
+      <%=t ("buttons/ok") %>
+    </div>
+  </div>
+
+</div>
