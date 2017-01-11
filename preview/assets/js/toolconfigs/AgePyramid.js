@@ -65,6 +65,13 @@ var VIZABI_MODEL = {
           "scales": ["ordinal"]
         },
         "syncModels": ["marker_colorlegend"]
+      },
+      "hook_side": {
+        "use": "property",
+        "which": "gender",
+        "allow": {
+          "scales": ["ordinal"]
+        }
       }
     },
     "entities_allpossible": {
@@ -72,6 +79,16 @@ var VIZABI_MODEL = {
     },
     "marker_allpossible": {
       "space": ["entities_allpossible"],
+      "label": {
+        "use": "property",
+        "which": "name"
+      }
+    },
+    "entities_allpossibleside": {
+      "dim": "gender",
+    },
+    "marker_allpossibleside": {
+      "space": ["entities_allpossibleside"],
       "label": {
         "use": "property",
         "which": "name"
@@ -100,11 +117,11 @@ var VIZABI_MODEL = {
     }
   },
   "ui": {
-    "buttons":['colors', 'inpercent','moreoptions', 'fullscreen'],
+    "buttons":['colors', 'inpercent', 'side', 'moreoptions', 'fullscreen'],
     "dialogs": {
-      'popup': ['colors', 'moreoptions'], 
+      'popup': ['colors', 'side', 'moreoptions'], 
       'sidebar': ['colors', 'show'], 
-      'moreoptions': ['opacity', 'speed', 'colors','presentation', 'about']
+    'moreoptions': ['opacity', 'speed', 'colors', 'side', 'presentation', 'about']
     },
     "splash": true
   },

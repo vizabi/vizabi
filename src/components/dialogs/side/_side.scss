@@ -1,0 +1,123 @@
+.vzb-tool-dialogs {
+  .vzb-dialogs-dialog {
+    &[data-dlg='side'] {
+      .vzb-dialog-title {
+        .vzb-side-filter {
+          max-width: unset;
+          padding: 10px 0 0;
+          display: block;
+          margin-bottom: 0;
+        }
+      }
+      .vzb-side-list {
+        margin-bottom: 20px;
+      }
+      .vzb-flipsides-switch {
+        border-top: 1px solid rgba($vzb-color-primary-light, .5); 
+      }
+      &.vzb-moreoptions {
+        .vzb-side-filter {
+          font-size: 1em;
+          padding: 20px 20px 0;
+        }
+        .vzb-side-selector {
+          .vzb-ip-select {
+            flex: none;
+            width: 214px;
+          }
+        }
+        .vzb-dialog-content {
+          padding-bottom: 0;
+          margin-bottom: 15px;
+        }
+      }
+      &.vzb-popup,
+      &.vzb-sidebar {
+        .vzb-dialog-title {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          flex-wrap: wrap;
+          > span:first-child {
+            display: block;
+            flex: 0 0 auto;
+          } 
+          .vzb-side-selector {
+            flex: 1 1 auto;
+          }
+          .vzb-side-filter {
+            flex: 1 1 auto;
+          }
+        }
+      }
+    }
+  }
+}
+
+//responsiveness
+&.vzb-large {
+  &.vzb-dialog-expand-true {
+    .vzb-dialogs-dialog {
+      &.vzb-sidebar {
+        &[data-dlg="side"] {
+          display: flex;
+          flex-direction: column;
+          flex: none;
+
+          .vzb-dialog-buttons {
+            display: block;
+            flex: none;
+          }
+
+          .vzb-dialog-button.vzb-label-primary {
+            display: none;
+          }
+
+          .vzb-dialog-content {
+            flex-grow: 1;
+
+            .vzb-dialog-content-fixed {
+              height: 310px;
+              max-height: 305px;
+              min-width: 140px;
+            }
+
+            .vzb-dialog-sublabel {
+              margin-bottom: 10px;
+            }
+          }
+          
+          .vzb-dialog-title {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 0 0 5px 20px;
+            > span:first-child {
+              display: block;
+              flex: 0 0 auto;
+            } 
+          }
+          
+          .vzb-side-filter {
+            @include rtl {
+              padding-left: 20px;
+              padding-right: 10px;
+            }
+            display: block;
+            flex: 1 1 auto;
+            min-width: 1px;            
+            max-width: 260px;
+            padding-right: 20px;
+          }
+
+          .vzb-dialog-content-fixed {
+            min-height: 0;
+            max-height: initial;
+            height: auto;
+            margin-top: 5px;
+          }
+        }
+      }
+    }
+  }
+}
