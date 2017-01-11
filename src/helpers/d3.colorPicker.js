@@ -419,6 +419,13 @@ export default function colorPicker() {
       svg.select('.' + css.COLOR_DEFAULT).style('fill', colorDef);
       return colorPicker;
     };
+    colorPicker.translate = function(translator) {
+      if(translator instanceof Function) {
+        svg.select(".vzb-default-label")
+          .text(translator("colorpicker/default"));
+      }
+      return colorPicker;
+    };
     /**
      * @param {ClientRect} screen parent element
      * @param {int[]} arg [x,y] of color picker position

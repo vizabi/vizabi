@@ -48,6 +48,9 @@ var ColorLegend = Component.extend({
             _this.updateGroupsOpacity();
           }
         });
+      },
+      "translate:locale":  function() {
+        _this.colorPicker.translate(_this.model.locale.getTFunction());
       }
     };
 
@@ -94,6 +97,7 @@ var ColorLegend = Component.extend({
     // append color picker to the tool DOM. need to check if element is already a d3 selection to not do it twice
     this.root.element instanceof Array? this.root.element : d3.select(this.root.element)
       .call(this.colorPicker);
+    this.colorPicker.translate(this.model.locale.getTFunction());
   },
 
 
@@ -214,6 +218,7 @@ var ColorLegend = Component.extend({
         .orient("bottom")
         //.tickFormat(formatter)
         .tickSize(6, 0)
+        .tickPadding(6)
         .tickSizeMinor(3, 0)
         .labelerOptions({
           scaleType: this.colorModel.scaleType,
@@ -243,7 +248,7 @@ var ColorLegend = Component.extend({
       this.rainbowLegend.enter().append("circle")
         .attr('r', "6px")
         .attr('stroke', '#000')
-        .on("clickToChangeColor", _this._interact().click);
+        .on("click", _this._interact().clickToChangeColor);
 
       this.rainbowLegend.each(function(d, i) {
         d3.select(this).attr('fill', d.color);
@@ -291,20 +296,15 @@ var ColorLegend = Component.extend({
           .on("mouseout", _this._interact().mouseout)
           .on("click", _this._interact().clickToSelect);
 
-        var labelsAvailable = !!(_this.frame||{}).label;
-
         colorOptions.each(function(d, index) {
           d3.select(this).select(".vzb-cl-color-sample")
             .style("background-color", cScale(d[_this.colorlegendDim]))
             .style("border", "1px solid " + cScale(d[_this.colorlegendDim]));
           //Apply names to color legend entries if color is a property
           var label = _this.colorlegendMarker ? _this.frame.label[d[_this.colorlegendDim]] : null;
-          if(!label && label!==0) labelsAvailable = false;
+          if(!label && label!==0) label = d[_this.colorlegendDim];
           d3.select(this).select(".vzb-cl-color-legend").text(label);
         });
-
-        //switch to compact mode (remove labels) when we have no labels to show
-        colorOptions.classed("vzb-cl-compact", !labelsAvailable);
 
       } else {
 

@@ -1,6 +1,6 @@
 {
   "name": "vizabi",
-  "version": "0.17.6-24",
+  "version": "0.18.1-1",
   "description": "Vizabi Framework, Interactive charts and visualization tools animated through time",
   "main": "build/dist/vizabi.js",
   "scripts": {
@@ -50,7 +50,7 @@
     "glob": "7.1.1",
     "html-loader": "^0.4.4",
     "jasmine-spec-reporter": "2.7.0",
-    "node-sass": "^3.4.2",
+    "node-sass": "^4.0.0",
     "open-browser-webpack-plugin": "0.0.3",
     "protractor": "4.0.13",
     "pug-html-loader": "^1.0.9",
@@ -59,8 +59,8 @@
     "sasslint-webpack-plugin": "^1.0.4",
     "shelljs": "0.7.5",
     "unminified-webpack-plugin": "^1.1.1",
-    "vizabi-ddfcsv-reader": "0.5.4",
-    "vizabi-ws-reader": "0.1.1",
+    "vizabi-ddfcsv-reader": "0.6.1",
+    "vizabi-ws-reader": "0.1.1-1",
     "webpack": "2.1.0-beta.25",
     "webpack-dev-server": "2.1.0-beta.10"
   }

@@ -25,10 +25,13 @@ var UI = Model.extend({
     }
   },
 
-  _defaults: {
-    presentation: false,
-    buttons: [],
-    dialogs: []
+  getClassDefaults: function() { 
+    var defaults = {
+      presentation: false,
+      buttons: [],
+      dialogs: []
+    };
+    return utils.deepExtend(this._super(), defaults);
   },
 
   /**

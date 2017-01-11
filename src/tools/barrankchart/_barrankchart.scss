@@ -21,9 +21,10 @@
       }
     }
 
-    .barsviewport {
+    .vzb-br-barsviewport {
       margin-right: 5px;
       overflow-y: auto;
+      overflow-x: hidden;
       position: relative;
     }
 

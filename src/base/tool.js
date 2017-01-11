@@ -26,7 +26,7 @@ var ToolModel = Model.extend({
 
     // defaults are defined on the Tool
     // this way, each tool can have it's own default model
-    this._defaults = tool.default_model;
+    this.getClassDefaults = () => tool.default_model;
 
     // combine listeners from tool and external page to one object
     var listeners = utils.extend(tool.getToolListeners(), external_model.bind);
@@ -40,7 +40,7 @@ var ToolModel = Model.extend({
    * Tool defaults overwrite other models' default
    */
   getDefaults: function() {
-    return utils.deepExtend({}, this.getSubmodelDefaults(), this._defaults);
+    return utils.deepExtend({}, this.getSubmodelDefaults(), this.getClassDefaults());
   },
 
   validate: function() {

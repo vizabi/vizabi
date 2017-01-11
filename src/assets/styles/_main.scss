@@ -21,6 +21,7 @@
   font-family: $vzb-font-family;
   font-size: $vzb-font-size-base; //important to set the base in px
   overflow: hidden;
+  direction: ltr;
   //text-align: left;
 
   &.vzb-rtl {
@@ -261,6 +262,10 @@
     &:hover text {
       text-decoration: underline;
     }
+  }
+
+  .vzb-colorpicker-svg {
+    direction: ltr;
   }
 
   //common tool components

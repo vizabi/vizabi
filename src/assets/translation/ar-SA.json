@@ -48,6 +48,7 @@
   "hints/nodata":"لا توجد بيانات",
   "hints/units":"وحدة",
   "hints/nodescr":"لا يوجد وصف",
+  "colorpicker/default":"لون الافتراضي",
   "mount/maxYmode/immediate":"عاجل",
   "mount/maxYmode/latest":"الأحدث",
   "mount/maxYmode/total":"الإجمالي",

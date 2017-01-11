@@ -221,8 +221,8 @@
 
       .vzb-bc-projection-x,
       .vzb-bc-projection-y {
-        stroke-dasharray: 2 4;
-        stroke: $vzb-color-grey;
+        stroke-dasharray: 4 4;
+        stroke: $vzb-color-black;
         opacity: 0;
       }
       .vzb-bc-line {
@@ -343,6 +343,7 @@
 
       .vzb-bc-axis-x,
       .vzb-bc-axis-y {
+        @extend %vzb-chart-axis-presentation;
         text {
           font-size: $vzb-font-size-larger;
         }

@@ -65,6 +65,16 @@ var Stack = Dialog.extend({
     
     ready: function() {
       this._super();
+      if(this.model.state.marker.color.use !== "property") {
+        if(this.stack.use == "property") { 
+          this.setModel("stack", "none");
+          return;
+        } 
+        else if(this.group.merge) {
+          this.setModel("merge", "none");
+          return;
+        }
+      }
       this.updateView();
     },
 
@@ -73,22 +83,27 @@ var Stack = Dialog.extend({
 
         this.howToStackEl
             .property('checked', function() {
-                if(d3.select(this).node().value === "none")  return _this.stack.which==="none";
+                if(d3.select(this).node().value === "none") return _this.stack.which==="none";
                 if(d3.select(this).node().value === "bycolor") return _this.stack.which===_this.model.state.marker.color.which;
                 if(d3.select(this).node().value === "all") return _this.stack.which==="all";
+            })
+            .attr('disabled', function(){
+                if(d3.select(this).node().value === "none") return null; // always enabled
+                if(d3.select(this).node().value === "all") return null; // always enabled
+                if(d3.select(this).node().value === "bycolor") return _this.model.state.marker.color.use !== "property" ? true : null;
             });
         
         _this.model.ui.chart.manualSortingEnabled = _this.stack.which == "all";
         
         this.howToMergeEl
             .property('checked', function() {
-                if(d3.select(this).node().value === "none")  return !_this.group.merge && !_this.stack.merge;
+                if(d3.select(this).node().value === "none") return !_this.group.merge && !_this.stack.merge;
                 if(d3.select(this).node().value === "grouped") return _this.group.merge;
                 if(d3.select(this).node().value === "stacked") return _this.stack.merge;
             })
             .attr('disabled', function(){
-                if(d3.select(this).node().value === "none")  return null; // always enabled
-                if(d3.select(this).node().value === "grouped") return _this.stack.which === "none" ? true : null;
+                if(d3.select(this).node().value === "none") return null; // always enabled
+                if(d3.select(this).node().value === "grouped") return _this.stack.which === "none" || _this.model.state.marker.color.use !== "property" ? true : null;
                 if(d3.select(this).node().value === "stacked") return _this.stack.which === "all" ? null : true;
             });
 

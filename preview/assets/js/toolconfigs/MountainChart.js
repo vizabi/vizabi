@@ -40,12 +40,12 @@ var VIZABI_MODEL = {
       },
       "axis_y": {
         "use": "indicator",
-        "which": "sg_population",
+        "which": "population_total",
         "scaleType": "linear"
       },
       "axis_x": {
         "use": "indicator",
-        "which": "sg_gdp_p_cap_const_ppp2011_dollar",
+        "which": "income_per_person_gdppercapita_ppp_inflation_adjusted",
         "scaleType": "log",
         "domainMin": 0.11,
         "domainMax": 500,

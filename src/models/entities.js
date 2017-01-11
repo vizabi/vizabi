@@ -10,13 +10,16 @@ var EntitiesModel = DataConnected.extend({
   /**
    * Default values for this model
    */
-  _defaults: {
-    show: {},
-    select: [],
-    highlight: [],
-    opacityHighlightDim: 0.1,
-    opacitySelectDim: 0.3,
-    opacityRegular: 1
+  getClassDefaults: function() { 
+    var defaults = {
+      show: {},
+      select: [],
+      highlight: [],
+      opacityHighlightDim: 0.1,
+      opacitySelectDim: 0.3,
+      opacityRegular: 1
+    };
+    return utils.deepExtend(this._super(), defaults)
   },
 
   objectLeafs: ['show'],

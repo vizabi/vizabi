@@ -25,6 +25,7 @@ const CSVReader = Reader.extend({
     this._name = 'csv';
     this._data = [];
     this._basepath = readerInfo.path;
+    this.d3reader = readerInfo.delimiter? d3.dsv(readerInfo.delimiter, "text/plain") : d3.csv;
 
     if (!this._basepath) {
       utils.error('Missing base path for csv reader');
@@ -48,8 +49,10 @@ const CSVReader = Reader.extend({
 
     const [orderBy] = order_by;
 
-    return this.load({ parsers })
-      .then(data => {
+    return this.load()
+      .then((data) => {
+        data = data.map(this._mapRows(parsers));
+
         switch (true) {
           case from === this.QUERY_FROM_CONCEPTS:
             return this._getConcepts(data[0]);
@@ -65,17 +68,26 @@ const CSVReader = Reader.extend({
       })
       .catch(utils.error);
   },
+  
+  
+  /**
+   * This function returns info about the dataset
+   * in case of CSV reader it's just the name of the file
+   * @returns {object} object of info about the dataset
+   */
+  getDatasetInfo: function(){
+    return {name: this._basepath.split("/").pop()};
+  },
 
-  load(options = {}) {
-    const { parsers = {} } = options;
+  load() {
     const { _basepath: path } = this;
 
     return new Promise((resolve, reject) => {
       const data = cached[path];
 
       data ?
-        resolve(data.map(this._mapRows(parsers))) :
-        d3.csv(path)
+        resolve(data) :
+        this.d3reader(path)
           .get((error, result) => {
             if (!result) {
               return reject(`No permissions or empty file: ${path}. ${error}`);
@@ -86,7 +98,7 @@ const CSVReader = Reader.extend({
             }
 
             cached[path] = result;
-            resolve(this.load(options));
+            resolve(result);
           });
     });
   },
@@ -157,7 +169,14 @@ const CSVReader = Reader.extend({
 
   _getConcepts(firstRow) {
     return Object.keys(firstRow)
-      .map(concept => ({ concept }));
+      .map((concept, index) => Object.assign(
+        { concept },
+        !index ?
+          { concept_type: 'entity_domain' } :
+          concept === 'time' ?
+            { concept_type: 'time' } :
+            {}
+      ));
   },
 
   _applyQuery(query) {
@@ -201,14 +220,17 @@ const CSVReader = Reader.extend({
     return !where.$and ||
       Object.keys(where.$and).every(conditionKey => {
         const condition = where.$and[conditionKey];
+        const rowValue = row[conditionKey];
 
         return typeof condition !== 'object' ?
-          (row[conditionKey] === condition)
-            || condition === true && utils.isString(row[conditionKey]) && row[conditionKey].toLowerCase().trim()==="true" 
-            || condition === false && utils.isString(row[conditionKey]) && row[conditionKey].toLowerCase().trim()==="false" 
-          :
+          (rowValue === condition
+            // if the column is missing, then don't apply filter
+            || rowValue === undefined
+            || condition === true && utils.isString(rowValue) && rowValue.toLowerCase().trim() === 'true'
+            || condition === false && utils.isString(rowValue) && rowValue.toLowerCase().trim() === 'false'
+          ) :
           Object.keys(condition).every(callbackKey =>
-            this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], row[conditionKey])
+            this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], rowValue)
           );
       });
   }

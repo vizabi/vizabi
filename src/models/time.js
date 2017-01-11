@@ -29,26 +29,29 @@ var TimeModel = DataConnected.extend({
   /**
    * Default values for this model
    */
-  _defaults: {
-    dim: "time",
-    value: null,
-    start: null, 
-    end: null,
-    startOrigin: null,
-    endOrigin: null,
-    startSelected: null,
-    endSelected: null,
-    playable: true,
-    playing: false,
-    loop: false,
-    round: 'round',
-    delay: 150, //delay between animation frames
-    delayThresholdX2: 100, //delay X2 boundary: if less -- then every other frame will be dropped and animation dely will be double the value
-    delayThresholdX4: 50, //delay X4 boundary: if less -- then 3/4 frame will be dropped and animation dely will be 4x the value
-    unit: "year",
-    step: 1, //step must be integer, and expressed in units
-    immediatePlay: true,
-    record: false
+  getClassDefaults: function() { 
+    var defaults = {
+      dim: "time",
+      value: null,
+      start: null, 
+      end: null,
+      startOrigin: null,
+      endOrigin: null,
+      startSelected: null,
+      endSelected: null,
+      playable: true,
+      playing: false,
+      loop: false,
+      round: 'round',
+      delay: 150, //delay between animation frames
+      delayThresholdX2: 100, //delay X2 boundary: if less -- then every other frame will be dropped and animation dely will be double the value
+      delayThresholdX4: 50, //delay X4 boundary: if less -- then 3/4 frame will be dropped and animation dely will be 4x the value
+      unit: "year",
+      step: 1, //step must be integer, and expressed in units
+      immediatePlay: true,
+      record: false
+    };
+    return utils.deepExtend(this._super(), defaults);
   },
 
   dataConnectedChildren: ['startOrigin', 'endOrigin', 'dim'],
@@ -146,6 +149,8 @@ var TimeModel = DataConnected.extend({
     //check if time start and end are not defined but start and end origins are defined
     if(this.start == null && this.startOrigin) this.set("start", this.startOrigin, null, false);
     if(this.end == null && this.endOrigin) this.set("end", this.endOrigin, null, false);
+    // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
+    if(this.value == null) this.set("value", this.parseToUnit(this.format(new Date())), null, false); 
 
     //unit has to be one of the available_time_units
     if(!formats[this.unit]) {
@@ -193,7 +198,7 @@ var TimeModel = DataConnected.extend({
     }
 
     if(this.playable === false && this.playing === true) {
-      this.playing = false;
+      this.set("playing", false, null, false);
     }
   },
 
@@ -211,7 +216,7 @@ var TimeModel = DataConnected.extend({
     if(soft) {
       this.postponePause = true;
     } else {
-      this.playing = false;
+      this.set("playing", false, null, false);
     }
   },
 
@@ -352,7 +357,7 @@ var TimeModel = DataConnected.extend({
       //so the bubble chart will zoom in smoothly. Closes #1213
       //this.snap();
     }
-    this.playing = true;
+    this.set("playing", true, null, false);
     this.playInterval(this.immediatePlay);
 
     this.trigger("play");
@@ -375,7 +380,7 @@ var TimeModel = DataConnected.extend({
           // reset time to start, silently
           _this.getModelObject('value').set(_this.startSelected, null, false /*make change non-persistent for URL and history*/);
         } else {
-          _this.playing = false;
+          _this.set("playing", false, null, false);
         }
         return;
       } else {
@@ -383,7 +388,7 @@ var TimeModel = DataConnected.extend({
         _this._intervals.clearInterval('playInterval_' + _this._id);
 
         if(_this.postponePause || !_this.playing) {
-          _this.playing = false;
+          _this.set("playing", false, null, false);
           _this.postponePause = false;
           _this.getModelObject('value').set(_this.value, true, true /*force the change and make it persistent for URL and history*/);
         } else {

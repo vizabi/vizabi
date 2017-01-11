@@ -168,6 +168,7 @@
 
       .vzb-lc-axis-x,
       .vzb-lc-axis-y {
+        @extend %vzb-chart-axis-presentation;
         text {
           font-size: $vzb-font-size-larger;
         }

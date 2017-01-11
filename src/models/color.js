@@ -14,11 +14,13 @@ var allowTypes = {
 
 var defaultPalettes = {
   "_continuous": {
+    "_default": "#ffb600",
     "0": "#B4DE79",
     "50": "#E1CE00",
     "100": "#F77481"
   },
   "_discrete": {
+    "_default": "#ffb600",
     "0": "#bcfa83",
     "1": "#4cd843",
     "2": "#ff8684",
@@ -42,17 +44,20 @@ var ColorModel = Hook.extend({
   /**
    * Default values for this model
    */
-  _defaults: {
-    use: "constant",
-    which: "_default",
-    scaleType: "ordinal",
-    syncModels: [],
-    palette: {},
-    paletteLabels: null,
-    allow: {
-      //this is almost everything, but not "nominal", so no random strings like "name"
-      scales: ["linear", "log", "genericLog", "time", "pow", "ordinal"]
-    }
+  getClassDefaults: function() { 
+    var defaults = {
+      use: "constant",
+      which: "_default",
+      scaleType: "ordinal",
+      syncModels: [],
+      palette: {},
+      paletteLabels: null,
+      allow: {
+        //this is almost everything, but not "nominal", so no random strings like "name"
+        scales: ["linear", "log", "genericLog", "time", "pow", "ordinal"]
+      }
+    };
+    return utils.deepExtend(this._super(), defaults)
   },
 
   /**
@@ -75,7 +80,7 @@ var ColorModel = Hook.extend({
 
       if(_this.palette && Object.keys(_this.palette._data).length!==0) {
         var defaultPalette = _this.getDefaultPalette();
-        var currentPalette = _this.getPalette();
+        var currentPalette = _this.getPalette(true);
         var palette = {};
         //extend partial current palette with default palette and
         //switch current palette elements which equals
@@ -152,17 +157,14 @@ var ColorModel = Hook.extend({
 
   _setSyncModel: function(model, marker, entities) {
     if(model == marker){
-      /*TODO: when WS will learn to respond correctly to the queries
-      outside the same entity domain this can be reduced to
-      just {dim: this.which}, without any show part #2103*/
       var newFilter = {
         dim: this.which,
         show: {}
       };
-      /*END OF TODO*/
+      marker.setDataSourceForAllSubhooks(this.data);      
       entities.set(newFilter, false, false);
     }else{
-      if(model.use == "property") model.set('which', this.which, false, false);
+      if(model.use == "property") model.set({which: this.which, data: this.data}, false, false);
     }
   },
 
@@ -219,6 +221,10 @@ var ColorModel = Hook.extend({
         palette = utils.clone(defaultPalettes["_default"]);
       }
 
+      if(!palette["_default"]) {
+        var type = this.use === "property" ? "_discrete" : (this.use === "indicator" ? "_continuous" : null);
+        if(type) palette["_default"] = defaultPalettes[type]["_default"];
+      }
       return palette;
   },
 
@@ -237,7 +243,7 @@ var ColorModel = Hook.extend({
     return this.paletteLabels.getPlainObject();
   },
 
-  getPalette: function(){
+  getPalette: function(includeDefault){
     //rebuild palette if it's empty
     if (!this.palette || Object.keys(this.palette._data).length===0){
       var palette = this.getDefaultPalette();
@@ -245,14 +251,18 @@ var ColorModel = Hook.extend({
       var paletteLabels = this._getPaletteLabels();
       this.set("paletteLabels", paletteLabels, false, false);
     }
-    return this.palette.getPlainObject();
+    var palette = this.palette.getPlainObject();
+    if(this.use == "indicator" && !includeDefault) {
+      delete palette["_default"];
+    }
+    return palette;
   },
 
   /**
    * Gets the domain for this hook
    * @returns {Array} domain
    */
-  buildScale: function() {
+  buildScale: function(scaleType = this.scaleType) {
     var _this = this;
 
     var paletteObject = _this.getPalette();
@@ -261,7 +271,7 @@ var ColorModel = Hook.extend({
 
     this._hasDefaultColor = domain.indexOf("_default") > -1;
 
-    if(this.scaleType == "time") {
+    if(scaleType == "time") {
 
       var timeMdl = this._space.time;
       var limits = timeMdl.splash ?
@@ -271,63 +281,53 @@ var ColorModel = Hook.extend({
 
       var singlePoint = (limits.max - limits.min == 0);
 
-      domain = domain.sort(function(a,b){return a-b});
-      range = domain.map(function(m){
-        return singlePoint? paletteObject[domain[0]] : paletteObject[m]
-      });
-      domain = domain.map(function(m){
-        return limits.min.valueOf() + m/100 * (limits.max.valueOf() - limits.min.valueOf())
-      });
+      domain = domain.sort((a,b) => a-b);
+      range = domain.map((m) => singlePoint? paletteObject[domain[0]] : paletteObject[m]);
+      domain = domain.map((m) => limits.min.valueOf() + m/100 * (limits.max.valueOf() - limits.min.valueOf()));
 
       this.scale = d3.time.scale.utc()
         .domain(domain)
         .range(range)
         .interpolate(d3.interpolateRgb);
-      return;
+
+    }else if(this.use == "indicator"){
+
+      var limits = this.getLimits(this.which);
+      //default domain is based on limits
+      limits = [limits.min, limits.max];
+      //domain from concept properties can override it if defined
+      limits = this.getConceptprops().domain ? this.getConceptprops().domain : limits;
+
+      var singlePoint = (limits[1] - limits[0] == 0);
+
+      domain = domain.sort((a,b) => a-b);
+      range = domain.map((m) => singlePoint? paletteObject[domain[0]] : paletteObject[m]);
+      domain = domain.map((m) => limits[0] + m/100 * (limits[1] - limits[0]));
+
+      if(d3.min(domain)<=0 && d3.max(domain)>=0 && scaleType === "log") scaleType = "genericLog";
+
+      if(scaleType == "log" || scaleType == "genericLog") {
+        var s = d3.scale.genericLog()
+          .domain(limits)
+          .range(limits);
+        domain = domain.map((d) => s.invert(d));
+      }
+      this.scale = d3.scale[scaleType]()
+        .domain(domain)
+        .range(range)
+        .interpolate(d3.interpolateRgb);
+
+    }else{
+      range = range.map((m) => utils.isArray(m)? m[0] : m);
+      
+      scaleType = "ordinal";
+
+      this.scale = d3.scale[scaleType]()
+        .domain(domain)
+        .range(range);
     }
-
-    switch(this.use) {
-      case "indicator":
-        var limits = this.getLimits(this.which);
-        //default domain is based on limits
-        limits = [limits.min, limits.max];
-        //domain from concept properties can override it if defined
-        limits = this.getConceptprops().domain ? this.getConceptprops().domain : limits;
-
-        var singlePoint = (limits[1] - limits[0] == 0);
-
-        domain = domain.sort(function(a,b){return a-b});
-        range = domain.map(function(m){
-          return singlePoint? paletteObject[domain[0]] : paletteObject[m]
-        });
-        domain = domain.map(function(m){
-          return limits[0] + m/100 * (limits[1] - limits[0])
-        });
-
-        var scaleType = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.scaleType === "log")? "genericLog" : this.scaleType;
-
-        if(this.scaleType == "log" || this.scaleType == "genericLog") {
-          var s = d3.scale.genericLog()
-            .domain(limits)
-            .range(limits);
-          domain = domain.map(function(d) {
-            return s.invert(d)
-          });
-        }
-        this.scale = d3.scale[scaleType || "linear"]()
-          .domain(domain)
-          .range(range)
-          .interpolate(d3.interpolateRgb);
-        return;
-
-      default:
-        range = range.map(function(m){ return utils.isArray(m)? m[0] : m; });
-
-        this.scale = d3.scale["ordinal"]()
-          .domain(domain)
-          .range(range);
-        return;
-    }
+    
+    this.scaleType = scaleType;
   }
 
 });

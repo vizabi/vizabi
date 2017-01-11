@@ -23,6 +23,7 @@ var ModelLeaf = EventSource.extend({
 
     this._name = name;
     this._parent = parent;
+    this._root = parent._root;
     this.set(value, false, persistent);
     this.on(binds); // after super so there is an .events object
   },
@@ -68,7 +69,7 @@ var ModelLeaf = EventSource.extend({
 
 var Model = EventSource.extend({
 
-  _defaults: {},
+  getClassDefaults: () => ({}),
 
   /**
    * A leaf model which has an object as value.
@@ -89,6 +90,7 @@ var Model = EventSource.extend({
     this._data = {};
     //holds attributes of this model
     this._parent = parent;
+    this._root = parent? parent._root : this;
     this._name = name;
     this._ready = false;
     this._readyOnce = false;
@@ -107,7 +109,7 @@ var Model = EventSource.extend({
 
     // initial values
     // add defaults to initialValues
-    var initialValues = utils.deepExtend({}, this._defaults, values)
+    var initialValues = utils.deepExtend({}, this.getClassDefaults(), values)
     this.set(initialValues);
 
     // bind initial events
@@ -579,7 +581,7 @@ var Model = EventSource.extend({
    * @return {Object} defaults of this model, and when available overwritten by submodel defaults
    */
   getDefaults: function() {
-    return utils.deepExtend({}, this._defaults, this.getSubmodelDefaults());
+    return utils.deepExtend({}, this.getClassDefaults(), this.getSubmodelDefaults());
   },
 
   /**

@@ -194,7 +194,7 @@ var LCComponent = Component.extend({
   },
 
   ready: function() {
-
+    this.all_values = null;
     this.all_steps = this.model.time.getAllSteps();
     this.all_values = this.values = null;
     this.updateTime();
@@ -321,10 +321,8 @@ var LCComponent = Component.extend({
     }
     this.xScale = this.model.marker.axis_x.getScale();
     this.cScale = this.model.marker.color.getScale();
-    this.yAxis.tickSize(6, 0)
-      .tickFormat(this.model.marker.axis_y.getTickFormatter());
-    this.xAxis.tickSize(6, 0)
-      .tickFormat(this.model.marker.axis_x.getTickFormatter());
+    this.yAxis.tickFormat(this.model.marker.axis_y.getTickFormatter());
+    this.xAxis.tickFormat(this.model.marker.axis_x.getTickFormatter());
 
     this.collisionResolver.scale(this.yScale)
       .KEY(KEY);
@@ -581,8 +579,9 @@ var LCComponent = Component.extend({
     
     this.yAxis.scale(this.yScale)
       .orient("left")
-      .tickSize(6, 0)
-      .tickSizeMinor(3, 0)
+      .tickSize(-this.width, 0)
+      .tickPadding(6)
+      .tickSizeMinor(-this.width, 0)
       .labelerOptions({
         scaleType: this.model.marker.axis_y.scaleType,
         toolMargin: this.margin,
@@ -592,6 +591,9 @@ var LCComponent = Component.extend({
       });
 
     this.xAxis.scale(this.xScale)
+      .tickSize(-this.height, 0)
+      .tickSizeMinor(-this.height, 0)
+      .tickPadding(6)
       .labelerOptions({
         scaleType: this.model.marker.axis_x.scaleType,
         limitMaxTickNumber: this.activeProfile.limitMaxTickNumberX,
@@ -603,15 +605,15 @@ var LCComponent = Component.extend({
 
     this.xAxisElContainer
       .attr("width", this.width + this.activeProfile.text_padding * 2)
-      .attr("height", this.activeProfile.margin.bottom)
-      .attr("y", this.height - 1)
+      .attr("height", this.activeProfile.margin.bottom + this.height)
+      .attr("y", - 1)
       .attr("x", - this.activeProfile.text_padding);
     
     this.xAxisEl
-      .attr("transform", "translate(" + (this.activeProfile.text_padding - 1) + ",1)");
+      .attr("transform", "translate(" + (this.activeProfile.text_padding - 1) + "," + (this.height + 1) + ")");
 
     this.yAxisElContainer
-      .attr("width", this.activeProfile.margin.left)
+      .attr("width", this.activeProfile.margin.left + this.width)
       .attr("height", Math.max(0, this.height))
       .attr("x", -this.activeProfile.margin.left);
     this.yAxisEl
@@ -620,11 +622,9 @@ var LCComponent = Component.extend({
     this.yAxisEl.call(this.yAxis);
     this.xAxisEl.call(this.xAxis);
 
-    var yaxisWidth = this.yAxisElContainer.select("g").node().getBBox().width;
-
     this.yTitleEl
       .style("font-size", infoElHeight + "px")
-      .attr("transform", "translate(" + (-yaxisWidth) + ", -" + this.activeProfile.yAxisTitleBottomMargin + ")");
+      .attr("transform", "translate(" + (10-this.activeProfile.margin.left) + ", -" + this.activeProfile.yAxisTitleBottomMargin + ")");
 
     var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
     if(yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
