@@ -379,7 +379,9 @@ var TimeModel = DataConnected.extend({
     if(this.round === 'floor') op = 'floor';
     var is = this.getIntervalAndStep();
     var time = d3["utc" + is.interval][op](this[what]);
-    this.set(what, time, true); //3rd argumennt forces update
+    if((this.value - time) != 0) {
+      this.set(what, time, true); //3rd argumennt forces update
+    }
   },
 
   /**

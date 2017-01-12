@@ -186,7 +186,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
       adaptMinMaxZoom: false,
       cursorMode: 'arrow',
       zoomOnScrolling: false,
-      buttons: ['colors', 'find', 'size', 'trails', 'lock', 'moreoptions', 'fullscreen', 'presentation'],
+      buttons: ['colors', 'find', 'trails', 'lock', 'moreoptions', 'fullscreen', 'presentation'],
       dialogs: {
         popup: ['colors', 'find', 'size', 'zoom', 'moreoptions'],
         sidebar: ['colors', 'find', 'size', 'zoom'],

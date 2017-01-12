@@ -984,7 +984,8 @@ export default function axisSmart(_orient) {
     };
 
     axis.orient = function() {
-      return _orient;
+      if(!arguments.length) return _orient;
+      return axis;
     }
 
     return d3.rebind(axis, _super,

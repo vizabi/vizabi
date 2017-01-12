@@ -125,7 +125,7 @@ export default Class.extend({
 
         return {
             start: function() {
-                this.savedScale = zoomer.scale();
+                this.savedScale = zoomer.scale;
             },
             go: function() {
 
@@ -170,15 +170,15 @@ export default Class.extend({
                 _this.model._data.marker.clearHighlighted();
                 _this._setTooltip();
 
-                var zoom = d3.event.scale;
-                var pan = d3.event.translate;
+                var zoom = d3.event.transform.k;
+                var pan = [d3.event.transform.x, d3.event.transform.y];//d3.event.translate;
                 var ratioY = zoomer.ratioY;
                 var ratioX = zoomer.ratioX;
 
                 _this.draggingNow = true;
 
                 //value protections and fallbacks
-                if(isNaN(zoom) || zoom == null) zoom = zoomer.scale();
+                if(isNaN(zoom) || zoom == null) zoom = zoomer.scale;
                 if(isNaN(zoom) || zoom == null) zoom = 1;
 
                 //TODO: this is a patch to fix #221. A proper code review of zoom and zoomOnRectangle logic is needed
@@ -286,7 +286,7 @@ export default Class.extend({
                     if(yRange[1] < yRangeBoundsBumped[1]) pan[1] = yRangeBoundsBumped[1] - yRangeMaxOffset;
                 }
 
-                zoomer.translate(pan);
+                zoomer.translate = pan;
 
                 /*
                  * Clamp the xRange and yRange by the amount that the bounds
@@ -801,7 +801,7 @@ export default Class.extend({
      * Reset zoom values without triggering a zoom event.
      */
      resetZoomState: function(element) {
-        this.zoomer.scale(1);
+        this.zoomer.scaleTo(element, 1);
         this.zoomer.ratioY = 1;
         this.zoomer.ratioX = 1;
         this.zoomer.translate([0, 0]);

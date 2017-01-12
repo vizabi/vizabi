@@ -122,11 +122,15 @@ $vzb-ts-value-width: 40px;
           stroke-linecap: round;
         }
       }
+      .vzb-ts-slider-slide {
+        pointer-events: stroke;
+        stroke-linecap: round;
+        cursor: pointer;
+      }
       .vzb-ts-slider-handle {
         fill: $vzb-ts-slider-color;
         stroke: #fff;
         stroke-width: 4px;
-        cursor: pointer;
       }
       .vzb-ts-slider-value {
         @include user-select(none);

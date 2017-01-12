@@ -148,7 +148,7 @@ var Dialog = Component.extend({
         var dialogBottom = parseInt(this.placeholderEl.style('bottom'), 10);
         totalHeight = totalHeight - dialogBottom;
       } else {
-        var topPos = this.topPos ? parseInt(this.topPos, 10) : this.placeholderEl[0][0].offsetTop;
+        var topPos = this.topPos ? parseInt(this.topPos, 10) : this.placeholderEl.node().offsetTop;
         totalHeight = totalHeight - topPos;
       }
     } else {

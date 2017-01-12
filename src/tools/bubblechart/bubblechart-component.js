@@ -253,8 +253,8 @@ var BubbleChartComp = Component.extend({
     this.sScale = null;
     this.cScale = null;
 
-    this.xAxis = axisSmart();
-    this.yAxis = axisSmart();
+    this.xAxis = axisSmart("bottom");
+    this.yAxis = axisSmart("left");
 
     _this.COLOR_BLACKISH = "#333";
     _this.COLOR_WHITEISH = "#fdfdfd";
@@ -989,28 +989,28 @@ var BubbleChartComp = Component.extend({
 
     if(this.yInfoEl.select('svg').node()) {
       var titleBBox = this.yTitleEl.node().getBBox();
-      var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
-      var hTranslate = isRTL ? (titleBBox.x + translate[0] - infoElHeight * 1.4) : (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4);
+      var t = utils.transform(this.yTitleEl.node());
+      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4);
 
       this.yInfoEl.select('svg')
         .attr("width", infoElHeight + "px")
         .attr("height", infoElHeight + "px")
       this.yInfoEl.attr('transform', 'translate('
         + hTranslate + ','
-        + (translate[1] - infoElHeight * 0.8) + ')');
+        + (t.translateY - infoElHeight * 0.8) + ')');
     }
 
     if(this.xInfoEl.select('svg').node()) {
       var titleBBox = this.xTitleEl.node().getBBox();
-      var translate = d3.transform(this.xTitleEl.attr('transform')).translate;
-      var hTranslate = isRTL ? (titleBBox.x + translate[0] - infoElHeight * 1.4) : (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4);
+      var t = utils.transform(this.xTitleEl.node());
+      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4);
 
       this.xInfoEl.select('svg')
         .attr("width", infoElHeight + "px")
         .attr("height", infoElHeight + "px")
       this.xInfoEl.attr('transform', 'translate('
         + hTranslate + ','
-        + (translate[1] - infoElHeight * 0.8) + ')');
+        + (t.translateY - infoElHeight * 0.8) + ')');
     }
 
     this._resizeDataWarning();

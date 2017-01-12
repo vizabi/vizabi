@@ -170,8 +170,8 @@ var TimeSlider = Component.extend({
     this.select = this.element.select(".vzb-ts-slider-select");
     this.progressBar = this.element.select(".vzb-ts-slider-progress");
     this.slide = this.element.select(".vzb-ts-slider-slide");
-    this.handle = this.slide.select(".vzb-ts-slider-handle");
-    this.valueText = this.slide.select('.vzb-ts-slider-value');
+    this.handle = this.element.select(".vzb-ts-slider-handle");
+    this.valueText = this.element.select('.vzb-ts-slider-value');
     //Scale
     this.xScale = d3.time.scale.utc()
       .clamp(true);
@@ -186,10 +186,22 @@ var TimeSlider = Component.extend({
       brushedEnd = _this._getBrushedEnd();
 
     //Brush for dragging
-    this.brush = d3.brushX()
-      //.x(this.xScale)
-      .extent([0, 0])
-      .on("brush", function () {
+    // this.brush = d3.brushX()
+    //   //.x(this.xScale)
+    //   .extent([[0, 0], [0, 0]])
+    //   .on("start brush", function () {
+    //     brushed.call(this);
+    //   })
+    //   .on("end", function () {
+    //     brushedEnd.call(this);
+    //   });
+
+    // //Slide
+    // this.slide.call(this.brush);
+
+    this.brush = d3.drag()
+      //.on("start.interrupt", function() { _this.slide.interrupt(); })
+      .on("start drag", function () {
         brushed.call(this);
       })
       .on("end", function () {
@@ -314,6 +326,14 @@ var TimeSlider = Component.extend({
     this.slider.attr("transform", "translate(" + this.profile.margin.left + "," + this.profile.margin.top + ")");
 
     this.xScale.range(range || [0, this.width]);
+    
+    this.slide
+      .attr("transform", "translate(0," + this.height / 2 + ")")
+      .attr("x1", this.xScale.range()[0])
+      .attr("x2", this.xScale.range()[1])
+      .style("stroke-width", this.profile.radius * 2 + "px");
+    //.call(this.brush
+    //.extent([[this.xScale.range()[0], 0], [this.xScale.range()[1], this.height]]));
 
     //adjust axis with scale
     this.xAxis = this.xAxis.scale(this.xScale)
@@ -511,7 +531,10 @@ var TimeSlider = Component.extend({
       _this._optionClasses();
       _this.element.classed(class_dragging, true);
 
-      var value = _this.brush.extent()[0];
+      var value;// = _this.brush.extent()[0];
+      //var value = d3.brushSelection(_this.slide.node());
+
+      //if(!value) return;
 
       //set brushed properties
 
@@ -564,20 +587,22 @@ var TimeSlider = Component.extend({
   _setHandle: function(transition) {
     var _this = this;
     var value = this.model.time.value;
-    this.slide.call(this.brush.extent([value, value]));
+    //this.slide.call(this.brush.extent([value, value]));
+    var new_pos = this.xScale(value);
+    //this.brush.move(this.slide, [new_pos, new_pos])
 
     this.element.classed("vzb-ts-disabled", this.model.time.end <= this.model.time.start);
 //    this.valueText.text(this.model.time.formatDate(value));
 
 //    var old_pos = this.handle.attr("cx");
-    var new_pos = this.xScale(value);
+    //var new_pos = this.xScale(value);
     if(_this.prevPosition == null) _this.prevPosition = new_pos;
     var delayAnimations = new_pos > _this.prevPosition ? this.model.time.delayAnimations : 0;
     if(transition) {
       this.handle.attr("cx", _this.prevPosition)
         .transition()
         .duration(delayAnimations)
-        .ease("linear")
+        .ease(d3.easeLinear)
         .attr("cx", new_pos);
 
       this.valueText.attr("transform", "translate(" + _this.prevPosition + "," + (this.height / 2) + ")")
@@ -587,7 +612,7 @@ var TimeSlider = Component.extend({
       this.valueText
         .transition()
         .duration(delayAnimations)
-        .ease("linear")
+        .ease(d3.easeLinear)
         .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")");
     } else {
       this.handle

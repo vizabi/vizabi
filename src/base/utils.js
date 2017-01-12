@@ -1495,3 +1495,24 @@ export function firstBy(){
     }
     return tb;
 }
+
+export function transform(node) {
+
+  var {a, b, c, d, e, f} = node.transform.baseVal.consolidate().matrix;
+
+  return function(a, b, c, d, e, f) {
+    var scaleX, scaleY, skewX;
+    if (scaleX = Math.sqrt(a * a + b * b)) a /= scaleX, b /= scaleX;
+    if (skewX = a * c + b * d) c -= a * skewX, d -= b * skewX;
+    if (scaleY = Math.sqrt(c * c + d * d)) c /= scaleY, d /= scaleY, skewX /= scaleY;
+    if (a * d < b * c) a = -a, b = -b, skewX = -skewX, scaleX = -scaleX;
+    return {
+      translateX: e,
+      translateY: f,
+      rotate: Math.atan2(b, a) * Math.PI/180,
+      skewX: Math.atan(skewX) * Math.PI/180,
+      scaleX: scaleX,
+      scaleY: scaleY
+    };
+  }(a, b, c, d, e, f);
+}

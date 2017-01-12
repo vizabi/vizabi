@@ -655,18 +655,18 @@ var AgePyramid = Component.extend({
     var firstBarOffsetY = this.firstBarOffsetY;
 
     //enter selection -- init bars
-    this.entityBars.enter().append("g")
+    this.entityBars = this.entityBars.enter().append("g")
       .attr("class", function(d) {
         return "vzb-bc-bar " + "vzb-bc-bar-" + d[ageDim];
       })
       .attr("transform", function(d, i) {
         return "translate(0," + (firstBarOffsetY - (d[shiftedAgeDim] - domain[0] - groupBy) * oneBarHeight) + ")";
       })
+      .merge(this.entityBars)
 
-
-    this.entityBars.attr("class", function(d) {
-        return "vzb-bc-bar " + "vzb-bc-bar-" + d[ageDim];
-      })
+    // this.entityBars.attr("class", function(d) {
+    //     return "vzb-bc-bar " + "vzb-bc-bar-" + d[ageDim];
+    //   })
 
 
     this.sideBars = this.entityBars.selectAll('.vzb-bc-side').data(function(d) {
@@ -681,13 +681,14 @@ var AgePyramid = Component.extend({
       }, function(d) {return d[prefixedSideDim]})
 
     this.sideBars.exit().remove();
-    this.sideBars.enter().append("g")
+    this.sideBars = this.sideBars.enter().append("g")
         .attr("class", function(d, i) {
           return "vzb-bc-side " + "vzb-bc-side-" + (!i != !_this.twoSided ? "right": "left");
         })
     this.sideBars.attr("transform", function(d, i) {
           return i ? ("scale(-1,1) translate(" + _this.activeProfile.centerWidth + ",0)") : "";
         })
+        .merge(this.sideBars)
     
     if(reorder) {
       this.sideBars.attr("transform", function(d, i) {
@@ -710,7 +711,7 @@ var AgePyramid = Component.extend({
     }, function(d) {return d[prefixedStackDim]});
 
     this.stackBars.exit().remove();
-    this.stackBars.enter().append("rect")
+    this.stackBars = this.stackBars.enter().append("rect")
           .attr("class", function(d, i) {
             return "vzb-bc-stack " + "vzb-bc-stack-" + i + (_this.highlighted ? " vzb-dimmed" : "");
           })
@@ -722,7 +723,9 @@ var AgePyramid = Component.extend({
           .on("mouseover", _this.interaction.mouseover)
           .on("mouseout", _this.interaction.mouseout)
           .on("click", _this.interaction.click)
-          .onTap(_this.interaction.tap);
+          .onTap(_this.interaction.tap)
+          .merge(this.stackBars)
+
 
     if(reorder) this.stackBars.order();
 
@@ -777,7 +780,7 @@ var AgePyramid = Component.extend({
           return "translate(0," + (firstBarOffsetY - (d[shiftedAgeDim] - domain[0] - stepShift) * oneBarHeight) + ")";
         });
       this.stackBars
-        .transition().duration(duration*.95).ease(d3.easeLinear)
+        .transition().duration(duration).ease(d3.easeLinear)
         .attr("width", _attributeUpdaters._newWidth)
         .attr("x", _attributeUpdaters._newX);
     } else {
@@ -789,7 +792,7 @@ var AgePyramid = Component.extend({
       this.stackBars.interrupt()
         .attr("width", _attributeUpdaters._newWidth)
         .attr("x", _attributeUpdaters._newX)
-        .transition();
+        //.transition();
     }
 
     this.entityLabels.enter().append("g")
@@ -821,8 +824,8 @@ var AgePyramid = Component.extend({
       // });
 
     if(duration) {
-      this.year.transition().duration(duration).ease("linear")
-        .each("end", this._setYear(time.value));
+      this.year.transition().duration(duration).ease(d3.easeLinear)
+        .on("end", this._setYear(time.value));
     } else {
       this.year.interrupt().text(time.formatDate(time.value)).transition();
     }

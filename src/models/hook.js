@@ -362,7 +362,7 @@ var Hook = DataConnected.extend({
     // percentageMode works like rounded if set to SHARE, but multiplies by 100 and suffixes with "%"
     // percentageMode works like rounded if set to PERCENT, but suffixes with "%"
 
-    return function format(x, index, removePrefix, percentageMode){
+    return function format(x, index, group, removePrefix, percentageMode){
 
     percentageMode = _this.getConceptprops().format;
     if(percentageMode===SHARE) x*=100;
