@@ -80,7 +80,12 @@ export default Class.extend({
   setText: function (text, delay) {
 
     setTimeout(() => {
-      this.element.text(text);
+      this.element.selectAll('tspan').remove();
+      text.split('').forEach((char, index) => {
+        this.element.append('tspan').text(char)
+          .attr('x', (index - text.length / 2) * this.letterBBox.width + this.letterBBox.width / 2);
+      });
+
       this._resizeText();
     }, delay);
 
@@ -130,7 +135,6 @@ export default Class.extend({
   },
 
   _getTopOffset: function () {
-    //console.log(this.topOffset);
     switch (this.yAlign) {
       case 'top':
         return this.textHeight / 2 + this.topOffset;
