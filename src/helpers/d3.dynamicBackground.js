@@ -20,6 +20,11 @@ export default Class.extend({
     this.xAlign = 'center';
     this.yAlign = 'center';
     this.element = this.context.append('text').style("font-size", '20px');
+
+    this.element.text('0');
+    this.letterBBox = this.element.node().getBBox();
+    this.element.text('');
+
     if (conditions) {
       this.setConditions(conditions);
     }
@@ -85,7 +90,10 @@ export default Class.extend({
 
   _resizeText: function () {
 
-    var bbox = this.element.node().getBBox();
+    var bbox = Object.assign(this.element.node().getBBox(), {
+      width: this.letterBBox.width * this.element.text().length
+    });
+
     if (!bbox.width || !bbox.height || !this.width || !this.height) return this;
 
     // method from http://stackoverflow.com/a/22580176
