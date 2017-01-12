@@ -504,19 +504,9 @@ const BarRankChart = Component.extend({
       const { margin } = this.activeProfile;
       const height = this.height - margin.top - margin.bottom;
 
-      const currentTop = this.barViewport.node().scrollTop;
-      const currentBottom = currentTop + height;
-
-      const scrollTo = yPos < currentTop ?
-        yPos :
-        (yPos + this.activeProfile.barHeight > currentBottom) ?
-          (yPos - height + this.activeProfile.barHeight) :
-          0;
-
-      if (scrollTo) {
-        this.barViewport.transition().duration(duration)
-          .tween('scrollfor' + d.entity, this._scrollTopTween(scrollTo));
-      }
+      const scrollTo = yPos - (height + this.activeProfile.barHeight) / 2;
+      this.barViewport.transition().duration(duration)
+        .tween('scrollfor' + d.entity, this._scrollTopTween(scrollTo));
     }
   },
 
