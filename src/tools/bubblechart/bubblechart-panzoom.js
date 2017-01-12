@@ -560,6 +560,7 @@ export default Class.extend({
          * values. These values are used to calculate the correct rectangle
          * points for zooming.
          */
+/*
         if (_this.xScale.invert(xRangeBounds[0]) < xDomain[0] && !zoomXOut
             && Math.abs(minX - xDomain[0]) < TOLERANCE) {
             minX = _this.xScale.invert(xRangeBounds[0]);
@@ -579,6 +580,7 @@ export default Class.extend({
             && Math.abs(maxY - yDomain[1]) < TOLERANCE) {
             maxY = _this.yScale.invert(yRangeBounds[1]);
         }
+*/
 
         var xRange = [_this.xScale(minX), _this.xScale(maxX)];
         var yRange = [_this.yScale(minY), _this.yScale(maxY)];
@@ -587,8 +589,9 @@ export default Class.extend({
          * Calculate correct pan for zoom out
          * Expand ranges to viewport and after shift them to pan
          */
+/*
         if(zoomXOut) {
-            if(zoomedMaxX >= xDomain[1] && zoomedMinX <= xDomain[0]) {
+            if(maxX >= xDomain[1] && minX <= xDomain[0]) {
                 var scale = Math.abs(_this.xScale(xDomain[1]) - _this.xScale(xDomain[0])) / Math.abs(xRange[1] - xRange[0]);
                 var bump = Math.abs(xRangeBoundsBumped[0] - xRangeBounds[0]);
                 var deltaVB = Math.abs(xRangeBounds[1] - xRangeBounds[0]);
@@ -601,7 +604,7 @@ export default Class.extend({
         }
 
         if(zoomYOut) {
-            if(zoomedMaxY >= yDomain[1] && zoomedMinY <= yDomain[0]) {
+            if(maxY >= yDomain[1] && minY <= yDomain[0]) {
                 var scale = Math.abs(_this.yScale(yDomain[0]) - _this.yScale(yDomain[1])) / Math.abs(yRange[0] - yRange[1]);
                 var bump = Math.abs(yRangeBoundsBumped[1] - yRangeBounds[1]);
                 var deltaVB = Math.abs(yRangeBounds[0] - yRangeBounds[1]);
@@ -612,6 +615,7 @@ export default Class.extend({
                 yRange[1] = scaledPanY;
             }
         }
+*/
 
         this._zoomOnRectangle(_this.element, xRange[0], yRange[0], xRange[1], yRange[1], false, duration, dontFeedToState);
     },
@@ -645,6 +649,10 @@ export default Class.extend({
         var xRangeBounds = [0, _this.width];
         var yRangeBounds = [_this.height, 0];
 
+      var xRangeBoundsBumped = _this._rangeBump(xRangeBounds);
+      var yRangeBoundsBumped = _this._rangeBump(yRangeBounds);
+      
+      
         var xDomain = _this.xScale.domain();
         var yDomain = _this.yScale.domain();
 
@@ -657,6 +665,7 @@ export default Class.extend({
          * maintain the range bump region.
          */
 
+/*
         if (_this.xScale.invert(x1) < xDomain[0] && x1 >= xRangeBounds[0] && !zoomXOut) {
             x1 = this._scaleCoordinate(x1, xRangeBounds[1] - x2, _this.xScale.range()[0], xRangeBounds[1]);
         } else if (_this.xScale.invert(x2) < xDomain[0] && x2 >= xRangeBounds[0] && !zoomXOut) {
@@ -668,24 +677,32 @@ export default Class.extend({
         } else if (_this.xScale.invert(x1) > xDomain[1] && x1 <= xRangeBounds[1] && !zoomXOut) {
             x1 = this._scaleCoordinate(x1, x2 - xRangeBounds[0], _this.xScale.range()[1], xRangeBounds[0]);
         }
+*/
 
+      /*
         if (_this.yScale.invert(y1) < yDomain[0] && y1 <= yRangeBounds[0] && !zoomYOut) {
             y1 = this._scaleCoordinate(y1, y2 - yRangeBounds[1], _this.yScale.range()[0], yRangeBounds[1]);
+            console.log(y1);
+  
         } else if (_this.yScale.invert(y2) < yDomain[0] && y2 <= yRangeBounds[0] && !zoomYOut) {
             y2 = this._scaleCoordinate(y2, y1 - yRangeBounds[1], _this.yScale.range()[0], yRangeBounds[1]);
+            console.log(y2);
         }
 
         if (_this.yScale.invert(y2) > yDomain[1] && y2 >= yRangeBounds[1] && !zoomYOut) {
             y2 = this._scaleCoordinate(y2, yRangeBounds[0] - y1, _this.yScale.range()[1], yRangeBounds[0]);
+            console.log(y2);
         } else if (_this.yScale.invert(y1) > yDomain[1] && y1 >= yRangeBounds[1] && !zoomYOut) {
             y1 = this._scaleCoordinate(y1, yRangeBounds[0] - y2, _this.yScale.range()[1], yRangeBounds[0]);
+            console.log(y1);
         }
+*/
 
         var minZoom = zoomer.scaleExtent()[0];
         var maxZoom = zoomer.scaleExtent()[1];
 
         if(Math.abs(x1 - x2) > Math.abs(y1 - y2)) {
-            var zoom = _this.height / Math.abs(y1 - y2) * zoomer.scale();
+            var zoom =  Math.abs(yRangeBoundsBumped[0] - yRangeBoundsBumped[1]) / Math.abs(y1 - y2) * zoomer.scale();
 
             /*
              * Clamp the zoom scalar to the maximum zoom allowed before
@@ -697,10 +714,10 @@ export default Class.extend({
             }
             if (zoom > maxZoom) zoom = maxZoom;
 
-            var ratioX = _this.width / Math.abs(x1 - x2) * zoomer.scale() / zoom * zoomer.ratioX;
+            var ratioX = Math.abs(xRangeBoundsBumped[0] - xRangeBoundsBumped[1]) / Math.abs(x1 - x2) * zoomer.scale() / zoom * zoomer.ratioX;
             var ratioY = zoomer.ratioY;
         } else {
-            var zoom = _this.width / Math.abs(x1 - x2) * zoomer.scale();
+            var zoom = Math.abs(xRangeBoundsBumped[0] - xRangeBoundsBumped[1]) / Math.abs(x1 - x2) * zoomer.scale();
 
             /*
              * Clamp the zoom scalar to the maximum zoom allowed before
@@ -712,15 +729,14 @@ export default Class.extend({
             }
             if (zoom > maxZoom) zoom = maxZoom;
 
-            var ratioY = _this.height / Math.abs(y1 - y2) * zoomer.scale() / zoom * zoomer.ratioY;
+            var ratioY = Math.abs(yRangeBoundsBumped[0] - yRangeBoundsBumped[1]) / Math.abs(y1 - y2) * zoomer.scale() / zoom * zoomer.ratioY;
             var ratioX = zoomer.ratioX;
         }
 
         var pan = [
-            (zoomer.translate()[0] - Math.min(x1, x2)) / zoomer.scale() / zoomer.ratioX * zoom * ratioX,
-            (zoomer.translate()[1] - Math.min(y1, y2)) / zoomer.scale() / zoomer.ratioY * zoom * ratioY
+            (zoomer.translate()[0] - Math.min(x1, x2)) / zoomer.scale() / zoomer.ratioX * zoom * ratioX + (xRangeBoundsBumped[0] - xRangeBounds[0]),
+            (zoomer.translate()[1] - Math.min(y1, y2)) / zoomer.scale() / zoomer.ratioY * zoom * ratioY + (yRangeBoundsBumped[1] - yRangeBounds[1])
         ];
-
         zoomer.dontFeedToState = dontFeedToState;
         zoomer.scale(zoom);
         zoomer.ratioY = ratioY;
