@@ -891,7 +891,7 @@ var LCComponent = Component.extend({
     var resolvedValue;
     var timeDim = _this.model.time.getDimension();
 
-    var mousePos = mouse[1] - _this.margin.bottom;
+    var mousePos = mouse[1] - _this.margin.top;
 
     if(!utils.isDate(resolvedTime)) resolvedTime = this.model.time.parse(resolvedTime);
 
