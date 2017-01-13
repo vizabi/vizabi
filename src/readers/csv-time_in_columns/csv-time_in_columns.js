@@ -14,7 +14,7 @@ const CSVTimeInColumnsReader = CSVReader.extend({
       .then(({ data, columns }) => {
         const indicatorKey = columns[this.keySize];
 
-        const concepts = data.reduce((result, row) => {
+        let concepts = data.reduce((result, row) => {
           Object.keys(row).forEach((concept) => {
             concept = concept === indicatorKey ? row[indicatorKey] : concept;
 
@@ -24,28 +24,32 @@ const CSVTimeInColumnsReader = CSVReader.extend({
           });
 
           return result;
-        }, []).concat('time');
-
-        const indicators = concepts.slice(1, -1);
-        const [entityDomain] = concepts;
-        return data.reduce((result, row) => {
-          Object.keys(row).forEach((key) => {
-            if (![entityDomain, indicatorKey].includes(key)) {
-              result.push(
-                Object.assign({
-                    [entityDomain]: row[entityDomain],
-                    time: key,
-                  }, indicators.reduce((result, indicator) => {
-                    result[indicator] = row[indicatorKey] === indicator ? row[key] : null;
-                    return result;
-                  }, {})
-                )
-              );
-            }
-          });
-
-          return result;
         }, []);
+        concepts.splice(1, 0, 'time');
+
+        const indicators = concepts.slice(2);
+        const [entityDomain] = concepts;
+        return {
+          columns: concepts,
+          data: data.reduce((result, row) => {
+            Object.keys(row).forEach((key) => {
+              if (![entityDomain, indicatorKey].includes(key)) {
+                result.push(
+                  Object.assign({
+                      [entityDomain]: row[entityDomain],
+                      time: key,
+                    }, indicators.reduce((result, indicator) => {
+                      result[indicator] = row[indicatorKey] === indicator ? row[key] : null;
+                      return result;
+                    }, {})
+                  )
+                );
+              }
+            });
+
+            return result;
+          }, [])
+        };
       });
   }
 
