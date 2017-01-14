@@ -3,6 +3,7 @@ import Model from 'base/model'
 import Component from 'base/component'
 import { DefaultEvent } from 'base/events'
 import { warn as warnIcon } from 'base/iconset'
+import EventSource from 'base/events';
 
 var class_loading_first = 'vzb-loading-first';
 var class_loading_data = 'vzb-loading-data';
@@ -152,7 +153,7 @@ var Tool = Component.extend({
           _this.model.ui.setRTL(_this.model.locale.isRTL());
         },
         'load_error': (...args) => {
-          this.renderError(...args);
+          this.renderError();
           this.error(...args);
         }
       });
@@ -179,6 +180,10 @@ var Tool = Component.extend({
       .then(() => utils.delay(300))
       .then(this.model.startLoading.bind(this.model))
       .then(this.finishLoading.bind(this))
+      .catch((error) => {
+        EventSource.unfreezeAll();
+        this.model.triggerLoadError(error);
+      });
 
   },
 
