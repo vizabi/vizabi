@@ -92,7 +92,10 @@ var VIZABI_MODEL = {
       'moreoptions': ['opacity', 'speed', 'size', 'colors', 'presentation', 'about']
     },
     "map": {
+      "scale": 1,
+      "preserveAspectRatio": false,
       "offset": {
+        "top": 0.05,
         "bottom": -0.12
       }
     },
