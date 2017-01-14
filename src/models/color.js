@@ -235,7 +235,7 @@ var ColorModel = Hook.extend({
       this.set("paletteLabels", paletteLabels, false, false);
     }
     var palette = this.palette.getPlainObject();
-    if(this.use !== "constant" && !includeDefault) {
+    if(this.use === "indicator" && !includeDefault) {
       delete palette["_default"];
     }
     return palette;
