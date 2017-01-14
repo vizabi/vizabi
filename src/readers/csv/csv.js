@@ -85,12 +85,16 @@ const CSVReader = Reader.extend({
   },
 
   ensureDataIsCorrect({ columns, data }, parsers) {
-    const time = columns[this.keySize];
+    const timeKey = columns[this.keySize];
     const [firstRow] = data;
-    const parser = parsers[time];
+    const parser = parsers[timeKey];
 
-    if (parser && !parser(firstRow[time])) {
-      throw this.error(this.ERRORS.WRONG_TIME_COLUMN_OR_UNITS);
+    const time = firstRow[timeKey];
+    if (parser && !parser(time)) {
+      throw this.error(this.ERRORS.WRONG_TIME_COLUMN_OR_UNITS, undefined, {
+        currentYear: new Date().getFullYear(),
+        foundYear: time
+      });
     }
 
     if (!columns.length) {
@@ -374,8 +378,12 @@ const CSVReader = Reader.extend({
       });
   },
 
-  error(code, message) {
-    return { code, message };
+  error(code, message, payload) {
+    return {
+      code,
+      message,
+      payload
+    };
   }
 
 });
