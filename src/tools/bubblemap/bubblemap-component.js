@@ -535,8 +535,16 @@ var BubbleMapComponent = Component.extend({
       d.hidden_1 = d.hidden;
       d.hidden = (!valueS && valueS !== 0)|| valueX==null || valueY==null;
 
-      if(d.hidden !== d.hidden_1) view.classed("vzb-hidden", d.hidden);
 
+      if(d.hidden !== d.hidden_1) {
+        if(duration){
+            view.transition().duration(duration).ease("linear")
+                .style("opacity", 0)
+                .each("end", () => view.classed("vzb-hidden", d.hidden).style("opacity", _this.model.marker.opacityRegular));
+        } else {
+          view.classed("vzb-hidden", d.hidden);
+        }
+      }
       if(!d.hidden){
 
           d.r = utils.areaToRadius(_this.sScale(valueS||0));
