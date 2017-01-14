@@ -91,6 +91,11 @@ var VIZABI_MODEL = {
       'sidebar': ['colors', 'find', 'size'], 
       'moreoptions': ['opacity', 'speed', 'size', 'colors', 'presentation', 'about']
     },
+    "map": {
+      "offset": {
+        "bottom": -0.12
+      }
+    },
     "splash": true
   },
   "data": {

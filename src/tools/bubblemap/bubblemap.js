@@ -78,6 +78,22 @@ var BubbleMap = Tool.extend('BubbleMap', {
     },
     locale: { },
     ui: {
+      map: {
+        path: null,
+        preserveAspectRatio: true,
+        scale: 0.95,
+        offset: {
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0
+        },
+        projection: 'robinson',      
+        topology_object: {
+          surface: 'land',
+          boundaries: 'countries'
+        },
+      },
       chart: {
         labels: {
           dragging: true

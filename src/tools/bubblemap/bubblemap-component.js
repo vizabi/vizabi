@@ -108,10 +108,6 @@ var BubbleMapComponent = Component.extend({
 
     _this.COLOR_WHITEISH = "#fdfdfd";
 
-    this.defaultWidth = 960;
-    this.defaultHeight = 500;
-    this.boundBox = [[0.02, 0], [1.0, 0.85]]; // two points to set box bound on 960 * 500 image;
-
     d3_geo_projection();
 
     this._labels = new Labels(this);
@@ -123,60 +119,6 @@ var BubbleMapComponent = Component.extend({
     });
   },
 
-
-  afterPreload: function(){
-    if(!this.world) utils.warn("bubble map afterPreload: missing country shapes " + this.world);
-
-    // http://bl.ocks.org/mbostock/d4021aa4dccfd65edffd patterson
-    // http://bl.ocks.org/mbostock/3710566 robinson
-    // map background
-    var defaultWidth = this.defaultWidth;
-    var defaultHeight = this.defaultHeight;
-    var world = this.world;
-    var projection = this.projection = d3.geo.robinson()
-        .scale(150)
-        .translate([defaultWidth / 2, defaultHeight / 2])
-        .precision(.1);
-
-    var path = this.bgPath = d3.geo.path()
-        .projection(projection);
-
-    var svg = this.mapGraph = d3.select(this.element).select(".vzb-bmc-map-graph")
-        .attr("width", defaultWidth)
-        .attr("height", defaultHeight);
-    svg.html('');
-
-    /* // no latlng line
-    svg.append("defs").append("path")
-        .datum({type: "Sphere"})
-        .attr("id", "sphere-" + this._id)
-        .attr("d", path);
-
-    svg.append("use")
-        .attr("class", "stroke")
-        .attr("xlink:href", "#sphere-" + this._id);
-
-    svg.append("use")
-        .attr("class", "fill")
-        .attr("xlink:href", "#sphere-" + this._id);
-
-    svg.append("path")
-        .datum(graticule)
-        .attr("class", "graticule")
-        .attr("d", path);
-    */
-
-    svg.insert("path", ".graticule")
-        .datum(topojson.feature(world, world.objects.land))
-        .attr("class", "land")
-        .attr("d", path);
-
-    svg.insert("path", ".graticule")
-        .datum(topojson.mesh(world, world.objects.countries, function(a, b) { return a !== b; }))
-        .attr("class", "boundary")
-        .attr("d", path);
-
-  },
 
   /**
    * DOM is ready
@@ -217,9 +159,10 @@ var BubbleMapComponent = Component.extend({
 
     });
 
+    this.initMap();
+
     this.KEY = this.model.entities.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
-
 
     this.updateUIStrings();
 
@@ -673,6 +616,71 @@ var BubbleMapComponent = Component.extend({
 
   },
 
+  initMap: function(){
+    if(!this.topology) utils.warn("bubble map afterPreload: missing country shapes " + this.topology);
+
+    // http://bl.ocks.org/mbostock/d4021aa4dccfd65edffd patterson
+    // http://bl.ocks.org/mbostock/3710566 robinson
+    // map background
+
+    //stage
+
+    this.projection = d3.geo[this.model.ui.map.projection]();
+
+    this.mapPath = d3.geo.path()
+        .projection(this.projection);
+
+    this.mapGraph = this.element.select(".vzb-bmc-map-graph");
+    this.mapGraph.html('');
+
+    this.mapGeo = topojson.feature(this.topology, this.topology.objects[this.model.ui.map.topology_object.surface]);
+    var boundaries = topojson.mesh(this.topology, this.topology.objects[this.model.ui.map.topology_object.boundaries], function(a, b) { return a !== b; });
+
+    // project to bounding box https://bl.ocks.org/mbostock/4707858
+    this.projection
+        .scale(1)
+        .translate([0, 0]);
+
+    this.mapBounds = this.mapPath.bounds(this.mapGeo);
+
+    this.mapGraph.insert("path", ".graticule")
+        .datum(this.mapGeo)
+        .attr("class", "land");
+
+    this.mapGraph.insert("path", ".graticule")
+        .datum(boundaries)
+        .attr("class", "boundary");
+  },
+
+  profiles: {
+    small: {
+      margin: { top: 10, right: 10, left: 10, bottom: 0 },
+      infoElHeight: 16,
+      minRadius: 0.5,
+      maxRadius: 30
+    },
+    medium: {
+      margin: { top: 20, right: 20, left: 20, bottom: 30 },
+      infoElHeight: 20,
+      minRadius: 1,
+      maxRadius: 55
+    },
+    large: {
+      margin: { top: 30, right: 30, left: 30, bottom: 35 },
+      infoElHeight: 22,
+      minRadius: 1,
+      maxRadius: 65
+    }
+  },
+
+  presentationProfileChanges: {
+    medium: {
+      infoElHeight: 26
+    },
+    large: {
+      infoElHeight: 32
+    }
+  },
 
   /**
    * Executes everytime the container or vizabi is resized
@@ -680,54 +688,24 @@ var BubbleMapComponent = Component.extend({
    */
   updateSize: function () {
 
-    var _this = this;
-    var margin, infoElHeight;
+    this.activeProfile = this.getActiveProfile(this.profiles, this.presentationProfileChanges);
+    var margin = this.activeProfile.margin;
 
-    var profiles = {
-      small: {
-        margin: { top: 10, right: 10, left: 10, bottom: 0 },
-        infoElHeight: 16,
-        minRadius: 0.5,
-        maxRadius: 30
-      },
-      medium: {
-        margin: { top: 20, right: 20, left: 20, bottom: 30 },
-        infoElHeight: 20,
-        minRadius: 1,
-        maxRadius: 55
-      },
-      large: {
-        margin: { top: 30, right: 30, left: 30, bottom: 35 },
-        infoElHeight: 22,
-        minRadius: 1,
-        maxRadius: 65
-      }
-    };
-
-    var presentationProfileChanges = {
-      medium: {
-        infoElHeight: 26
-      },
-      large: {
-        infoElHeight: 32
-      }
-    };
-
-    this.activeProfile = this.getActiveProfile(profiles, presentationProfileChanges);
-    margin = this.activeProfile.margin;
-    infoElHeight = this.activeProfile.infoElHeight;
-
-    //stage
-    var height = this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
-    var width = this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
+    this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
+    this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
 
     if(this.height<=0 || this.width<=0) return utils.warn("Bubble map updateSize() abort: vizabi container is too little or has display:none");
 
-    var boundBox = this.boundBox;
-    var viewBox = [ boundBox[0][0] * this.defaultWidth,
-                    boundBox[0][1] * this.defaultHeight,
-                    Math.abs(boundBox[1][0] - boundBox[0][0]) * this.defaultWidth,
-                    Math.abs(boundBox[1][1] - boundBox[0][1]) * this.defaultHeight];
+    this.repositionElements();
+    this.rescaleMap();
+
+  },
+
+  repositionElements: function() {
+
+    var margin = this.activeProfile.margin,
+        infoElHeight = this.activeProfile.infoElHeight,
+        isRTL = this.model.locale.isRTL();
 
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -736,36 +714,7 @@ var BubbleMapComponent = Component.extend({
       widthRatio: 2/10
     });
     this.year.resize(this.width, this.height);
-
-    this.mapSvg
-      .attr('width', width)
-      .attr('height', height)
-      .attr('viewBox', viewBox.join(' '))
-      .attr('preserveAspectRatio', 'none')
-      .attr('x', margin.left)
-      .attr('y', margin.top)
-      .style("transform", "translate3d(" + margin.left + "px," + margin.top + "px,0)");
-
-    //update scales to the new range
-    //this.updateMarkerSizeLimits();
-    //this.sScale.range([0, this.height / 4]);
-
-    var skew = this.skew = (function () {
-      var vb = viewBox;
-      var w = width;
-      var h = height;
-      var vbCenter = [vb[0] + vb[2] / 2, vb[1] + vb[3] / 2];
-      var vbWidth = vb[2] || 0.001;
-      var vbHeight = vb[3] || 0.001;
-      //input pixel loc after projection, return pixel loc after skew;
-      return function (points) {
-        var x = (points[0] - vbCenter[0]) / vbWidth * width + width / 2;
-        var y = (points[1] - vbCenter[1]) / vbHeight * height + height / 2;
-        return [x, y];
-      }
-    }());
-
-    var isRTL = this.model.locale.isRTL();
+        
     this.yTitleEl
         .style("font-size", infoElHeight)
         .attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + margin.top + ")")
@@ -814,6 +763,90 @@ var BubbleMapComponent = Component.extend({
             + hTranslate + ','
             + (translate[1] - infoElHeight * 0.8) + ')');
     }
+  },
+
+  rescaleMap: function() {
+
+    var offset = this.model.ui.map.offset;
+    var margin = this.activeProfile.margin;
+
+    // scale to aspect ratio 
+    // http://bl.ocks.org/mbostock/4707858
+    var s = this.model.ui.map.scale / Math.max((this.mapBounds[1][0] - this.mapBounds[0][0]) / this.width, (this.mapBounds[1][1] - this.mapBounds[0][1]) / this.height),
+
+        // dimensions of the map itself (regardless of cropping)
+        mapWidth = (s * (this.mapBounds[1][0] - this.mapBounds[0][0])),
+        mapHeight = (s * (this.mapBounds[1][1] - this.mapBounds[0][1])),
+
+        // dimensions of the viewport in which the map is shown (can be bigger or smaller than map)
+        viewPortHeight = mapHeight * (1 + offset.top + offset.bottom),
+        viewPortWidth  = mapWidth  * (1 + offset.left + offset.right),
+        mapTopOffset   = mapHeight * offset.top,
+        mapLeftOffset  = mapWidth  * offset.left,
+
+        // translate projection to the middle of map
+        t = [(mapWidth - s * (this.mapBounds[1][0] + this.mapBounds[0][0])) / 2, (mapHeight - s * (this.mapBounds[1][1] + this.mapBounds[0][1])) / 2];
+
+    this.projection
+      .scale(s)
+      .translate(t);
+
+    this.mapGraph
+      .selectAll('path').attr("d", this.mapPath);  
+
+    // handle scale to fit case
+    var widthScale, heightScale;
+    if (!this.model.ui.map.preserveAspectRatio) {
+
+      // wrap viewBox around viewport so map scales to fit viewport
+      var viewBoxHeight = viewPortHeight;
+      var viewBoxWidth = viewPortWidth;
+
+      // viewport is complete area (apart from scaling)
+      viewPortHeight = this.height * this.model.ui.map.scale;
+      viewPortWidth = this.width * this.model.ui.map.scale;
+
+      this.mapSvg
+        .attr('preserveAspectRatio', 'none')  
+        .attr('viewBox', [0, 0, viewBoxWidth, viewBoxHeight].join(' '));
+
+      //            ratio between map, viewport and offset (for bubbles)
+      widthScale  = viewPortWidth  / mapWidth  / (1 + offset.left + offset.right);
+      heightScale = viewPortHeight / mapHeight / (1 + offset.top  + offset.bottom);
+
+    } else {
+
+      // no scaling needed
+      widthScale = 1;
+      heightScale = 1;
+
+    }
+
+    // internal offset against parent container (mapSvg)
+    this.mapGraph
+      .attr('transform', 'translate(' + mapLeftOffset + ',' + mapTopOffset + ')')
+
+    // resize and put in center
+    this.mapSvg
+      .style("transform", "translate3d(" + (margin.left + (this.width-viewPortWidth)/2) + "px," + (margin.top + (this.height-viewPortHeight)/2) + "px,0)")
+      .attr('width', viewPortWidth)
+      .attr('height', viewPortHeight);
+    
+    // set skew function used for bubbles in chart
+    var _this = this;
+    this.skew = (function () {
+      var w = _this.width;
+      var h = _this.height;
+      //input pixel loc after projection, return pixel loc after skew;
+      return function (points) {
+        //      input       scale         translate                    translate offset
+        var x = points[0] * widthScale  + ((w - viewPortWidth) / 2)  + mapLeftOffset * widthScale;
+        var y = points[1] * heightScale + ((h - viewPortHeight) / 2) + mapTopOffset  * heightScale;
+        return [x, y];
+      }
+    }());
+
+
   },
 
   updateMarkerSizeLimits: function() {
@@ -1009,13 +1042,15 @@ var BubbleMapComponent = Component.extend({
 
   preload: function() {
     var _this = this;
-    var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
-        globals.ext_resources.host + globals.ext_resources.preloadPath + "world-50m.json";
+
+    var shape_path = this.model.ui.map.path 
+      ? this.model.ui.map.path 
+      : globals.ext_resources.host + globals.ext_resources.preloadPath + "world-50m.json";
 
     return new Promise(function(resolve, reject) {
       d3.json(shape_path, function(error, json) {
         if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
-        _this.world = json;
+        _this.topology = json;
         resolve();
       });
     });
