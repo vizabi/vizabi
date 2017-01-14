@@ -95,12 +95,12 @@ var LocaleModel = DataConnected.extend({
   getTFunction() {
     return (stringId, payload = {}) => (
       Object.keys(payload).reduce((result, key) => {
-          const regexp = new RegExp(`{{${key}}}`, 'g');
+          const regexp = new RegExp('{{' + key + '}}', 'g');
           return result.replace(regexp, payload[key]);
         },
         this.getUIString(stringId)
       )
-    )
+    );
   },
 
   isRTL: function() {
