@@ -2,6 +2,7 @@ import * as utils from 'base/utils';
 import Model from 'base/model';
 import Reader from 'base/reader';
 import EventSource from 'base/events';
+import { isObject } from 'base/utils';
 
 /*
  * VIZABI Data Model (model.data)
@@ -880,12 +881,14 @@ var DataModel = Model.extend({
   },
 
   handleReaderError(error, query) {
-    const locale = this.getClosestModel('locale');
-    const translation = locale.getTFunction()(error.code) || '';
-    const errorMessage = `${translation} ${error.message || ''}`.trim();
+    if (isObject(error)) {
+      const locale = this.getClosestModel('locale');
+      const translation = locale.getTFunction()(error.code) || '';
+      error = `${translation} ${error.message || ''}`.trim();
+    }
 
-    this.triggerLoadError(errorMessage);
     utils.warn('Problem with query: ', query);
+    throw error;
   },
 
 });

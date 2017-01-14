@@ -426,8 +426,7 @@ var Model = EventSource.extend({
     );
 
     return Promise.all(promises)
-      .then(this.onSuccessfullLoad.bind(this))
-      .catch(this.triggerLoadError.bind(this));
+      .then(this.onSuccessfullLoad.bind(this));
   },
 
   loadData: function(opts) {

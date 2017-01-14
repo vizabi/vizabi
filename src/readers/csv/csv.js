@@ -125,15 +125,19 @@ const CSVReader = Reader.extend({
             return reject(`Error happened while loading csv file: ${path}. ${error}`);
           }
 
-          const { delimiter = this._guessDelimiter(text) } = this;
-          const parser = d3.dsv(delimiter);
-          const [header] = this._getRows(text, 1);
-          const [columns] = parser.parseRows(header);
-          const data = parser.parse(text);
+          try {
+            const { delimiter = this._guessDelimiter(text) } = this;
+            const parser = d3.dsv(delimiter);
+            const [header] = this._getRows(text, 1);
+            const [columns] = parser.parseRows(header);
+            const data = parser.parse(text);
 
-          const result = { columns, data };
-          cached[path] = result;
-          resolve(result);
+            const result = { columns, data };
+            cached[path] = result;
+            resolve(result);
+          } catch (e) {
+            return reject(e);
+          }
         });
       }
     });
@@ -160,6 +164,7 @@ const CSVReader = Reader.extend({
       && (
         (semicolonsCountInHeader !== semicolonsCountInFirstRow)
         || (!semicolonsCountInHeader && !semicolonsCountInFirstRow)
+        || (commasCountInHeader > semicolonsCountInHeader && commasCountInFirstRow > semicolonsCountInFirstRow)
       )
     ) {
       return comma;
@@ -169,6 +174,7 @@ const CSVReader = Reader.extend({
       && (
         (commasCountInHeader !== commasCountInFirstRow)
         || (!commasCountInHeader && !commasCountInFirstRow)
+        || (semicolonsCountInHeader > commasCountInHeader && semicolonsCountInFirstRow > commasCountInFirstRow)
       )
     ) {
       return semicolon;
