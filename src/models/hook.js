@@ -53,7 +53,7 @@ var Hook = DataConnected.extend({
     var obj = { which: newValue.concept }
     
     if(newValue.dataSource) obj.data = newValue.dataSource;
-    var newDataSource = this.getClosestModel(newValue.dataSource || this.dataSource);
+    var newDataSource = this.getClosestModel(obj.data || this.data);
     var conceptProps = newDataSource.getConceptprops(newValue.concept);
 
     if(newValue.which==="_default") {
