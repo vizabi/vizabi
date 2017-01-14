@@ -883,7 +883,7 @@ var DataModel = Model.extend({
   handleReaderError(error, query) {
     if (isObject(error)) {
       const locale = this.getClosestModel('locale');
-      const translation = locale.getTFunction()(error.code) || '';
+      const translation = locale.getTFunction()(error.code, error.payload) || '';
       error = `${translation} ${error.message || ''}`.trim();
     }
 

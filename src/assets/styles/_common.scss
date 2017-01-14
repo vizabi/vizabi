@@ -106,7 +106,7 @@ $vzb-loader-bgcolor: $vzb-color-white;
 
   &.vzb-loading-first,
   &.vzb-loading-data {
-      
+
     &::before {
       background-color: $vzb-loader-bgcolor;
       bottom: 0;
@@ -128,7 +128,7 @@ $vzb-loader-bgcolor: $vzb-color-white;
   &.vzb-loading-first {
     > div {
       visibility: hidden;
-    }      
+    }
   }
   //all other loadings would not hide the div and be semi-transparent
   &.vzb-loading-data {
@@ -179,8 +179,9 @@ $vzb-loader-bgcolor: $vzb-color-white;
 
     p {
       font-size: .75em;
-      text-transform: uppercase;
       white-space: normal;
+      display: block;
+      margin: 0 10px;
     }
 
     .vzb-icon {

@@ -92,10 +92,15 @@ var LocaleModel = DataConnected.extend({
    * Gets the translation function
    * @returns {string} translation function
    */
-  getTFunction: function() {
-    var _this = this;
-    return function(stringId) {
-      return _this.getUIString(stringId);
+  getTFunction() {
+    return (stringId, payload) => {
+      const result = this.getUIString(stringId);
+      return payload ?
+        Object.keys(payload).reduce((result, key) => {
+          const regexp = new RegExp(`{{${key}}}`, 'g')
+          return result.replace(regexp, payload[key]);
+        }, result)
+        : result;
     }
   },
 
