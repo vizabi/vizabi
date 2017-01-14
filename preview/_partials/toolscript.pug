@@ -75,6 +75,9 @@ script.
 
   parseURL();
 
+  var locationArray = window.location.href.split("/");
+  var localUrl = locationArray.splice(0, locationArray.indexOf("preview")).join("/") + "/preview/";
+
   EXT_RESOURCES = Vizabi.utils.deepExtend({
     host: 'https://waffle-server.gapminder.org',
     preloadPath: '/api/vizabi/',
