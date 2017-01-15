@@ -525,6 +525,7 @@ var BubbleMapComponent = Component.extend({
     if(!this.entityBubbles) return utils.warn("redrawDataPoints(): no entityBubbles defined. likely a premature call, fix it!");
     this.entityBubbles.each(function(d, index){
       var view = d3.select(this);
+      var geo = d3.select("#" + d[_this.KEY]);
 
       var valueX = _this.values.hook_lng[d[_this.KEY]];
       var valueY = _this.values.hook_lat[d[_this.KEY]];
@@ -552,6 +553,9 @@ var BubbleMapComponent = Component.extend({
 
           view.classed("vzb-hidden", false)
               .attr("fill", valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH);
+
+          if (_this.model.ui.map.colorGeo)
+            geo.style("fill", valueC!=null?_this.cScale(valueC):"#999");
 
           if(reposition){
               d.cLoc = _this.skew(_this.projection([valueX||0, valueY||0]));
@@ -641,21 +645,30 @@ var BubbleMapComponent = Component.extend({
     this.mapGraph = this.element.select(".vzb-bmc-map-graph");
     this.mapGraph.html('');
 
-    this.mapGeo = topojson.feature(this.topology, this.topology.objects[this.model.ui.map.topology_object.surface]);
-    var boundaries = topojson.mesh(this.topology, this.topology.objects[this.model.ui.map.topology_object.boundaries], function(a, b) { return a !== b; });
+    this.mapFeature = topojson.feature(this.topology, this.topology.objects[this.model.ui.map.topology.objects.geo]);
+    var boundaries = topojson.mesh(this.topology, this.topology.objects[this.model.ui.map.topology.objects.boundaries], function(a, b) { return a !== b; });
 
     // project to bounding box https://bl.ocks.org/mbostock/4707858
     this.projection
         .scale(1)
         .translate([0, 0]);
 
-    this.mapBounds = this.mapPath.bounds(this.mapGeo);
+    this.mapBounds = this.mapPath.bounds(this.mapFeature);
 
-    this.mapGraph.insert("path", ".graticule")
-        .datum(this.mapGeo)
-        .attr("class", "land");
+    if (this.mapFeature.features) {
+      this.mapGraph.selectAll(".land")
+          .data(this.mapFeature.features)
+          .enter().insert("path")
+            .attr("d", this.mapPath)
+            .attr("id", (d) => d.properties[this.model.ui.map.topology.geoIdProperty].toLowerCase())
+            .attr("class", "land");
+    } else {
+      this.mapGraph.insert("path")
+          .datum(this.mapFeature)
+          .attr("class", "land");
+    }
 
-    this.mapGraph.insert("path", ".graticule")
+    this.mapGraph.insert("path")
         .datum(boundaries)
         .attr("class", "boundary");
   },
@@ -1051,9 +1064,8 @@ var BubbleMapComponent = Component.extend({
   preload: function() {
     var _this = this;
 
-    var shape_path = this.model.ui.map.path 
-      ? this.model.ui.map.path 
-      : globals.ext_resources.host + globals.ext_resources.preloadPath + "world-50m.json";
+    var shape_path = this.model.ui.map.topology.path 
+      || globals.ext_resources.host + globals.ext_resources.preloadPath + "world-50m.json"
 
     return new Promise(function(resolve, reject) {
       d3.json(shape_path, function(error, json) {

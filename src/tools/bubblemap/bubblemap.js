@@ -80,6 +80,7 @@ var BubbleMap = Tool.extend('BubbleMap', {
     ui: {
       map: {
         path: null,
+        colorGeo: false,
         preserveAspectRatio: true,
         scale: 0.95,
         offset: {
@@ -89,10 +90,14 @@ var BubbleMap = Tool.extend('BubbleMap', {
           left: 0
         },
         projection: 'robinson',      
-        topology_object: {
-          surface: 'land',
-          boundaries: 'countries'
-        },
+        topology: {
+          path: null,
+          objects: {
+            geo: 'land',
+            boundaries: 'countries'
+          },
+          geoIdProperty: null,
+        }
       },
       chart: {
         labels: {

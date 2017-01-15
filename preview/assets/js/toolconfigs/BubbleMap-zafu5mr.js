@@ -20,7 +20,7 @@ var VIZABI_MODEL = {
       "space": ["entities", "time"],
       "label": {
         "use": "property",
-        "which": "municipality2011"
+        "which": "name"
       },
       "size": {
         "use": "indicator",
@@ -55,7 +55,7 @@ var VIZABI_MODEL = {
     },
     "marker_colorlegend":{
       "space": ["entities_colorlegend"],      
-      "opacityRegular": 0.8,
+      "opacityRegular": 0,
       "opacityHighlightDim": 0.3,     
       "label": {
         "use": "property",
@@ -94,11 +94,15 @@ var VIZABI_MODEL = {
       'moreoptions': ['opacity', 'speed', 'size', 'colors', 'presentation', 'about']
     },
     "map": {
-      "path": "data/municipalities-2016.json",
       "scale": 0.8,
-      "topology_object": {
-        "surface": 'LocalMunicipalities2016',
-        "boundaries": 'LocalMunicipalities2016'
+      "colorGeo": true,
+      "topology": {
+        "path": "data/zaf-municipalities-2011.json",
+        "objects": {
+          "geo": 'topo',
+          "boundaries": 'topo'
+        },
+        "geoIdProperty": "MN_MDB_C"
       }
     },
     "splash": false
