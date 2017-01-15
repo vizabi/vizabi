@@ -7,6 +7,7 @@ const CSVTimeInColumnsReader = CSVReader.extend({
 
   init(readerInfo) {
     this._super(readerInfo);
+    this.timeKey = 'time';
   },
 
   load() {
@@ -25,27 +26,34 @@ const CSVTimeInColumnsReader = CSVReader.extend({
 
           return result;
         }, []);
-        concepts.splice(1, 0, 'time');
+        concepts.splice(1, 0, this.timeKey);
 
         const indicators = concepts.slice(2);
         const [entityDomain] = concepts;
         return {
           columns: concepts,
           data: data.reduce((result, row) => {
-            Object.keys(row).forEach((key) => {
-              if (![entityDomain, indicatorKey].includes(key)) {
-                result.push(
-                  Object.assign({
-                      [entityDomain]: row[entityDomain],
-                      time: key,
-                    }, indicators.reduce((result, indicator) => {
-                      result[indicator] = row[indicatorKey] === indicator ? row[key] : null;
-                      return result;
-                    }, {})
-                  )
-                );
-              }
-            });
+            const resultRows = result.filter((resultRow) => resultRow[entityDomain] === row[entityDomain]);
+            if (resultRows.length) {
+              resultRows.forEach((resultRow) => {
+                resultRow[row[indicatorKey]] = row[resultRow[this.timeKey]];
+              });
+            } else {
+              Object.keys(row).forEach((key) => {
+                if (![entityDomain, indicatorKey].includes(key)) {
+                  result.push(
+                    Object.assign({
+                        [entityDomain]: row[entityDomain],
+                        [this.timeKey]: key,
+                      }, indicators.reduce((result, indicator) => {
+                        result[indicator] = row[indicatorKey] === indicator ? row[key] : null;
+                        return result;
+                      }, {})
+                    )
+                  );
+                }
+              })
+            }
 
             return result;
           }, [])
