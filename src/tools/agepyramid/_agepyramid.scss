@@ -64,6 +64,13 @@
         opacity: 1;
       }
     }
+
+    .vzb-bc-axis-x-info,
+    .vzb-bc-axis-y-info {
+      @extend %vzb-chart-info;
+    }
+
+    .vzb-bc-axis-x-title,
     .vzb-bc-title {
       @extend %vzb-chart-axis-title;
       fill: $vzb-color-primary;
@@ -77,9 +84,12 @@
   &.vzb-large {
     .vzb-bc-axis-x,
     .vzb-bc-axis-y,
+    .vzb-bc-axis-x-info,
+    .vzb-bc-axis-y-info,
     .vzb-bc-label > .vzb-bc-age {
       @extend %vzb-chart-ticks-large;
     }
+    .vzb-bc-axis-x-title,
     .vzb-bc-title,
     .vzb-bc-year {
       @extend %vzb-chart-axis-title-large;
@@ -88,9 +98,12 @@
   &.vzb-medium {
     .vzb-bc-axis-x,
     .vzb-bc-axis-y,
+    .vzb-bc-axis-x-info,
+    .vzb-bc-axis-y-info,
     .vzb-bc-label > .vzb-bc-age {
       @extend %vzb-chart-ticks-medium;
     }
+    .vzb-bc-axis-x-title,
     .vzb-bc-title,
     .vzb-bc-year {
       @extend %vzb-chart-axis-title-medium;
@@ -99,9 +112,12 @@
   &.vzb-small {
     .vzb-bc-axis-x,
     .vzb-bc-axis-y,
+    .vzb-bc-axis-x-info,
+    .vzb-bc-axis-y-info,
     .vzb-bc-label > .vzb-bc-age {
       @extend %vzb-chart-ticks-small;
     }
+    .vzb-bc-axis-x-title,
     .vzb-bc-title,
     .vzb-bc-year {
       @extend %vzb-chart-axis-title-small;

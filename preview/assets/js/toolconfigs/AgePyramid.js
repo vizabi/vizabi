@@ -61,14 +61,16 @@ var VIZABI_MODEL = {
       "color": {
         "use": "property",
         "which": "country_code",
+        "spaceRef": "entities",
         "allow": {
           "scales": ["ordinal"]
         },
         "syncModels": ["marker_colorlegend"]
       },
-      "hook_side": {
+      "side": {
         "use": "property",
         "which": "gender",
+        "spaceRef": "entities_side",
         "allow": {
           "scales": ["ordinal"]
         }

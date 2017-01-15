@@ -11,6 +11,7 @@ import timeslider from 'components/timeslider/timeslider';
 import dialogs from 'components/dialogs/dialogs';
 import buttonlist from 'components/buttonlist/buttonlist';
 import treemenu from 'components/treemenu/treemenu';
+import datanotes from 'components/datanotes/datanotes';
 
 //BAR CHART TOOL
 var AgePyramid = Tool.extend('AgePyramid', {
@@ -46,6 +47,10 @@ var AgePyramid = Tool.extend('AgePyramid', {
       component: treemenu,
       placeholder: '.vzb-tool-treemenu',
       model: ['state.marker', 'state.marker_tags', 'state.time', 'locale']
+    }, {
+      component: datanotes,
+      placeholder: '.vzb-tool-datanotes',
+      model: ['state.marker', 'locale']
     }];
 
     //constructor is the same as any tool
