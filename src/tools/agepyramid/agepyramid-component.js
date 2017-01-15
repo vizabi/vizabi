@@ -3,6 +3,9 @@ import Component from 'base/component';
 
 import axisSmart from 'helpers/d3.axisWithLabelPicker';
 
+import {
+  question as iconQuestion
+} from 'base/iconset';
 
 /*!
  * VIZABI POP BY AGE Component
@@ -80,6 +83,13 @@ var AgePyramid = Component.extend({
         if (!_this._readyOnce) return;
         _this._updateEntities();
       },
+      "change:marker.side.which":function (evt) {
+        if (!_this._readyOnce) return;
+
+        var sideDim = _this.model.marker.side.use == "constant" ? null : _this.model.marker.side.which;
+        _this.model.marker.side.getEntity().clearShow();
+        _this.model.marker.side.getEntity().set("dim", sideDim);
+      },
       "change:ui.chart.inpercent":function (evt) {
         if (!_this._readyOnce) return;
         _this._updateLimits();
@@ -131,6 +141,8 @@ var AgePyramid = Component.extend({
     this.yAxisEl = this.graph.select('.vzb-bc-axis-y');
     this.xAxisEl = this.graph.select('.vzb-bc-axis-x');
     this.xAxisLeftEl = this.graph.select('.vzb-bc-axis-x-left');
+    this.xTitleEl = this.element.select('.vzb-bc-axis-x-title');
+    this.xInfoEl = this.element.select('.vzb-bc-axis-x-info');
     this.yTitleEl = this.graph.select('.vzb-bc-axis-y-title');
     this.barsCrop = this.graph.select('.vzb-bc-bars-crop');
     this.labelsCrop = this.graph.select('.vzb-bc-labels-crop');
@@ -198,17 +210,53 @@ var AgePyramid = Component.extend({
   },
 
   updateUIStrings: function() {
+    var _this = this;
     this.translator = this.model.locale.getTFunction();
 
-    var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
+    var titleStringX = this.model.marker.axis_x.getConceptprops().name;
 
-    var yTitle = this.yTitleEl.selectAll("text").data([0]);
-    yTitle.enter().append("text");
-    yTitle
-      .attr("y", "-6px")
-      .attr("x", "-9px")
-      .attr("dx", "-0.72em")
-      .text(titleStringY);
+    var xTitle = this.xTitleEl.selectAll("text").data([0]);
+    xTitle.enter().append("text");
+    xTitle
+      .text(titleStringX)
+      .on("click", function() {
+        _this.parent
+          .findChildByName("gapminder-treemenu")
+          .markerID("axis_x")
+          .alignX(_this.model.locale.isRTL() ? "right" : "left")
+          .alignY("top")
+          .updateView()
+          .toggle();
+      });
+
+    utils.setIcon(this.xInfoEl, iconQuestion)
+      .select("svg").attr("width", "0px").attr("height", "0px");
+    
+    this.xInfoEl.on("click", function() {
+      _this.parent.findChildByName("gapminder-datanotes").pin();
+    })
+    this.xInfoEl.on("mouseover", function() {
+      if (_this.model.time.dragging) return;
+      var rect = this.getBBox();
+      var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+      var toolRect = _this.root.element.getBoundingClientRect();
+      var chartRect = _this.element.node().getBoundingClientRect();      
+      _this.parent.findChildByName("gapminder-datanotes").setHook('axis_x').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
+    })
+    this.xInfoEl.on("mouseout", function() {
+       if (_this.model.time.dragging) return;
+      _this.parent.findChildByName("gapminder-datanotes").hide();
+    })
+    
+    // var titleStringY = this.model.marker.axis_y.getConceptprops().name;
+
+    // var yTitle = this.yTitleEl.selectAll("text").data([0]);
+    // yTitle.enter().append("text");
+    // yTitle
+    //   .attr("y", "-6px")
+    //   .attr("x", "-9px")
+    //   .attr("dx", "-0.72em")
+    //   .text(titleStringY);
   },
 
   /**
@@ -237,11 +285,13 @@ var AgePyramid = Component.extend({
 
     this.shiftedAgeKeys = this.timeSteps.map(function(m, i) {return -i * group_by;}).slice(1).reverse().concat(ageKeys);
 
-    var sides = this.model.marker.getKeys(sideDim);
-    var sideKeys = [];
-    sideKeys = sides.map(function(m) {
-        return m[sideDim];
-      });
+    var sideItems = this.model.marker.label_side.getItems();
+    var sideKeys = Object.keys(sideItems);
+    //this.model.marker.getKeys(sideDim);
+    // var sideKeys = [];
+    // sideKeys = sides.map(function(m) {
+    //     return m[sideDim];
+    //   });
 
     if(sideKeys.length > 1) {
       var sortFunc = this.ui.chart.flipSides ? d3.ascending : d3.descending;
@@ -249,6 +299,7 @@ var AgePyramid = Component.extend({
     }
     if(sideKeys.length > 2) sideKeys.length = 2;
 
+    if(!sideKeys.length) sideKeys.push("undefined");
     this.sideKeys = sideKeys;
 
     var stacks = this.model.marker.getKeys(stackDim);
@@ -274,7 +325,6 @@ var AgePyramid = Component.extend({
 
     this.stacked = this.ui.chart.stacked && this.model.marker.color.use != "constant" && this.stack.getDimension();
 
-    var sideItems = this.model.marker.label_side.getItems();
     this.twoSided = this.sideKeys.length > 1;
     this.titleRight.classed("vzb-hidden", !this.twoSided);
     if(this.twoSided) {
@@ -282,7 +332,7 @@ var AgePyramid = Component.extend({
       this.title.text(sideItems[this.sideKeys[1]]);
       this.titleRight.text(sideItems[this.sideKeys[0]]);
     } else {
-      var title = this.sideKeys.length ? sideItems[this.sideKeys[0]] : this.translator("indicator/" + this.model.marker.axis_x.which);
+      var title = this.sideKeys.length && sideItems[this.sideKeys[0]] ? sideItems[this.sideKeys[0]] : "";
       this.title.text(title);
     }
 
@@ -781,6 +831,7 @@ var AgePyramid = Component.extend({
         left: 40,
         bottom: 40
       },
+      infoElHeight: 16,
       minRadius: 2,
       maxRadius: 40,
       centerWidth: 2,
@@ -793,6 +844,7 @@ var AgePyramid = Component.extend({
         left: 60,
         bottom: 40
       },
+      infoElHeight: 20,
       minRadius: 3,
       maxRadius: 60,
       centerWidth: 2,
@@ -805,6 +857,7 @@ var AgePyramid = Component.extend({
         left: 60,
         bottom: 40
       },
+      infoElHeight: 22,
       minRadius: 4,
       maxRadius: 80,
       centerWidth: 2,
@@ -820,6 +873,7 @@ var AgePyramid = Component.extend({
 
     //this.activeProfile = this.profiles[this.getLayoutProfile()];
     var margin = this.activeProfile.margin;
+    var infoElHeight = this.activeProfile.infoElHeight;
 
     //stage
     this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
@@ -931,18 +985,41 @@ var AgePyramid = Component.extend({
       }
     }
 
+    var isRTL = this.model.locale.isRTL();
+
     this.bars.attr("transform", "translate(" + translateX + ",0)");
     this.labels.attr("transform", "translate(" + translateX + ",0)");
 
     this.title
       .attr('x', margin.left + (this.twoSided ? translateX - this.activeProfile.titlesSpacing : 0))
       .style('text-anchor', this.twoSided ? "end":"")
-      .attr('y', margin.top / 2);
+      .attr('y', margin.top * .7);
     this.titleRight
       .attr('x', margin.left + translateX + this.activeProfile.titlesSpacing)
-      .attr('y', margin.top / 2);
+      .attr('y', margin.top * .7);
 
-    this.year.attr('x', this.width + margin.left).attr('y', margin.top / 2);
+    this.xTitleEl
+      .style("font-size", infoElHeight + "px")
+      .attr("transform", "translate(" + (isRTL ? this.width : margin.left * .4) + "," + (margin.top * .4) + ")");
+    // this.xTitleEl.select("text")
+    //   .attr('x', margin.left / 2)
+    //   .attr('y', margin.top / 2);
+
+    if(this.xInfoEl.select('svg').node()) {
+      var titleBBox = this.xTitleEl.node().getBBox();
+      var translate = d3.transform(this.xTitleEl.attr('transform')).translate;
+      var hTranslate = isRTL ? (titleBBox.x + translate[0] - infoElHeight * 1.4) : (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4);
+
+      this.xInfoEl.select('svg')
+        .attr("width", infoElHeight + "px")
+        .attr("height", infoElHeight + "px")
+      this.xInfoEl.attr('transform', 'translate('
+        + hTranslate + ','
+        + (translate[1] - infoElHeight * 0.8) + ')');
+    }
+
+
+    this.year.attr('x', this.width + margin.left).attr('y', margin.top * .4);
 
   },
 

@@ -126,6 +126,11 @@ var ButtonList = Component.extend({
         icon: "stack",
         required: false
       },
+      'side': {
+        title: "buttons/side",
+        icon: "side",
+        required: false
+      },
       '_default': {
         title: "Button",
         icon: "asterisk",

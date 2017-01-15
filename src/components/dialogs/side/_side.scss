@@ -9,11 +9,19 @@
           margin-bottom: 0;
         }
       }
+      .vzb-dialog-content {
+        display: flex;
+      }
       .vzb-side-list {
-        margin-bottom: 20px;
+        width: 50%;
+        overflow: hidden;
       }
       .vzb-flipsides-switch {
         border-top: 1px solid rgba($vzb-color-primary-light, .5); 
+      }
+      .vzb-side-switch-sides {
+        text-align: unset;
+        font-weight: normal;
       }
       &.vzb-moreoptions {
         .vzb-side-filter {
