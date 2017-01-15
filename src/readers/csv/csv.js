@@ -97,7 +97,7 @@ const CSVReader = Reader.extend({
       });
     }
 
-    if (!columns.length) {
+    if (!columns.filter(Boolean).length) {
       throw this.error(this.ERRORS.EMPTY_HEADERS);
     }
   },
