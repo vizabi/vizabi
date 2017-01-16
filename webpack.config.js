@@ -220,6 +220,7 @@ const loaders = [
 if (!__FAST__) {
   loaders.push({
     test: /\.js$/,
+    exclude: /node_modules/,
     loader: 'babel-loader',
     query: {
       cacheDirectory: !__PROD__,
