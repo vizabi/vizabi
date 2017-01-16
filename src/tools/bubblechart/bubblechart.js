@@ -122,6 +122,10 @@ var BubbleChart = Tool.extend('BubbleChart', {
           }
         },
         size: {
+          autogenerate: {
+            conceptIndex: 2,
+            conceptType: "measure"
+          }
         },
         color: {
           syncModels: ["marker_colorlegend"]
