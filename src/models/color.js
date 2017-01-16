@@ -39,9 +39,9 @@ var ColorModel = Hook.extend({
    */
   getClassDefaults: function() { 
     var defaults = {
-      use: "constant",
-      which: "_default",
-      scaleType: "ordinal",
+      use: null,
+      which: null,
+      scaleType: null,
       syncModels: [],
       palette: {},
       paletteLabels: null,
@@ -51,6 +51,28 @@ var ColorModel = Hook.extend({
       }
     };
     return utils.deepExtend(this._super(), defaults)
+  },
+
+  autoGenerateModel: function() {
+    if (this.which == null) {
+      var concept;
+      if (this.autogenerate) {
+        var concept = this.dataSource
+          .getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType)
+
+        if (concept) {
+          this.which = concept.concept;
+          this.use = "indicator";
+          this.scaleType = "linear";
+        }
+
+      } 
+      if (!concept) {
+        this.which = "_default";
+        this.use = "constant";  
+        this.scaleType = "ordinal";
+      }
+    }
   },
 
   /**

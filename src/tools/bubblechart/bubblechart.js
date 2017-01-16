@@ -128,7 +128,11 @@ var BubbleChart = Tool.extend('BubbleChart', {
           }
         },
         color: {
-          syncModels: ["marker_colorlegend"]
+          syncModels: ["marker_colorlegend"],
+          autogenerate: {
+            conceptIndex: 0,
+            conceptType: "entity_set"
+          }
         },
         size_label: {
           /*use size model defaults - will be constant*/
