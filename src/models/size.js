@@ -57,6 +57,10 @@ var SizeModel = Axis.extend({
         this.scaleType = "ordinal";
       }
     }
+    if (this.scaleType == null) {
+        this.scaleType = this.dataSource
+          .getConceptprops(this.which).scales[0]; 
+    }
   }
 
 });
