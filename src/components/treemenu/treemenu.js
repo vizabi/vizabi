@@ -710,15 +710,15 @@ var TreeMenu = Component.extend({
           tags[tag.parent].children.push(tags[tag.tag])
         }
       })
-      
+
     utils.forEach(this.model.marker._root._data, (dataSource)=>{
       if(dataSource._type !== "data") return;
-      
+
       var indicatorsDB = dataSource.getConceptprops();
       var datasetName = dataSource.getDatasetName();
       tags[datasetName] = {id: datasetName, type: "dataset", children:[]};
       tags[ROOT].children.push(tags[datasetName]);
-      
+
       utils.forEach(indicatorsDB, function(entry, id){
         //if entry's tag are empty don't include it in the menu
         if(entry.tags=="_none") return;
@@ -1070,7 +1070,7 @@ var TreeMenu = Component.extend({
 
     var dataFiltered;
 
-    var indicatorsDB = {}      
+    var indicatorsDB = {}
     utils.forEach(this.model.marker._root._data, (m)=>{
       if(m._type === "data") utils.deepExtend(indicatorsDB, m.getConceptprops());
     })
@@ -1281,7 +1281,7 @@ var TreeMenu = Component.extend({
             d3.event.stopPropagation();
             _this._setModel("scaleType", d, _this._markerID);
           });
-        
+
         var mdlScaleType = _this.model.marker[markerID].scaleType;
 
         scaleTypes
