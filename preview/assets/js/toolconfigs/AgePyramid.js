@@ -121,8 +121,8 @@ var VIZABI_MODEL = {
   "ui": {
     "buttons":['colors', 'inpercent', 'side', 'moreoptions', 'fullscreen'],
     "dialogs": {
-      'popup': ['colors', 'side', 'moreoptions'], 
-      'sidebar': ['colors', 'show'], 
+      'popup': ['timedisplay', 'colors', 'side', 'moreoptions'], 
+      'sidebar': ['timedisplay', 'colors', 'show'], 
     'moreoptions': ['opacity', 'speed', 'colors', 'side', 'presentation', 'about']
     },
     "splash": true
