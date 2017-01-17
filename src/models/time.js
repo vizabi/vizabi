@@ -31,11 +31,11 @@ var TimeModel = DataConnected.extend({
   /**
    * Default values for this model
    */
-  getClassDefaults: function() { 
+  getClassDefaults: function() {
     var defaults = {
       dim: null,
       value: null,
-      start: null, 
+      start: null,
       end: null,
       startOrigin: null,
       endOrigin: null,
@@ -61,7 +61,7 @@ var TimeModel = DataConnected.extend({
 
   /**
    * Initializes the locale model.
-   * @param {String} name 
+   * @param {String} name
    * @param {Object} values The initial values of this model
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
@@ -88,7 +88,7 @@ var TimeModel = DataConnected.extend({
           _this._stopPlaying();
         }
       },
-      
+
       "change:format": function() {
         _this.initFormatters();
       }
@@ -135,13 +135,13 @@ var TimeModel = DataConnected.extend({
       }
     }
   },
-  
+
   /*
    * Formatting and parsing functions
    * @param {Date} dateObject
    * @param {String} type Either data or ui.
    * @returns {String}
-   */  
+   */
   formatDate: function(dateObject, type = 'data') {
     if (['data','ui'].indexOf(type) === -1) {
       utils.warn('Time.formatDate type parameter (' + type + ') invalid. Using "data".');
@@ -158,7 +158,7 @@ var TimeModel = DataConnected.extend({
 
   /* auto-determines unit from timestring */
   findFormat: function(timeString) {
-    var keys = Object.keys(formats), i = 0; 
+    var keys = Object.keys(formats), i = 0;
     for (; i < keys.length; i++) {
       var dateObject = formats[keys[i]].data.parse(timeString);
       if (dateObject) return { unit: keys[i], time: dateObject, type: 'data' };
@@ -173,7 +173,7 @@ var TimeModel = DataConnected.extend({
    * Validates the model
    */
   validate: function() {
-    
+
     //check if time start and end are not defined but start and end origins are defined
     if(this.start == null && this.startOrigin) this.set("start", this.startOrigin, null, false);
     if(this.end == null && this.endOrigin) this.set("end", this.endOrigin, null, false);
@@ -191,16 +191,16 @@ var TimeModel = DataConnected.extend({
     if(this.step < 1) {
       this.step = 1;
     }
-      
+
     //end has to be >= than start
     if(this.end < this.start && this.start != null) {
       this.set("end", new Date(this.start), null, false);
     }
-    
+
     if(this.value < this.startSelected && this.startSelected != null) {
-      this.value = new Date(this.startSelected); 
+      this.value = new Date(this.startSelected);
     }
-    
+
     if(this.value > this.endSelected && this.endSelected != null) {
       this.value = new Date(this.endSelected);
     }
@@ -213,7 +213,7 @@ var TimeModel = DataConnected.extend({
         this.set({endSelected: new Date(this.end)}, null, false /*make change non-persistent for URL and history*/);
       }
     }
-  
+
     //value has to be between start and end
     if(this.value < this.start && this.start != null) {
       this.value = new Date(this.start);
@@ -228,10 +228,10 @@ var TimeModel = DataConnected.extend({
 
   validateFormatting: function() {
     // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
-    if(this.value == null) this.set("value", this.parse(this.formatDate(new Date())), null, false); 
+    if(this.value == null) this.set("value", this.parse(this.formatDate(new Date())), null, false);
 
     //make sure dates are transformed into dates at all times
-    if(!utils.isDate(this.start) || !utils.isDate(this.end) || !utils.isDate(this.value) 
+    if(!utils.isDate(this.start) || !utils.isDate(this.end) || !utils.isDate(this.value)
       || !utils.isDate(this.startSelected) || !utils.isDate(this.endSelected)) {
       this._formatToDates();
     }
@@ -275,7 +275,7 @@ var TimeModel = DataConnected.extend({
     return d3.time[is.interval].utc.range(this.start, this.end, is.step);
   },
 
-  /** 
+  /**
    * gets the d3 interval and stepsize for d3 time interval methods
    * D3's week-interval starts on sunday and d3 does not support a quarter interval
    **/
@@ -297,7 +297,7 @@ var TimeModel = DataConnected.extend({
   getFilter: function(splash) {
     var defaultStart = this.parse(this.startOrigin);
     var defaultEnd = this.parse(this.endOrigin);
-      
+
     var dim = this.getDimension();
     var filter = null;
 
@@ -326,15 +326,15 @@ var TimeModel = DataConnected.extend({
 
   /**
    * Gets parser for this model
-   * @returns {Function} parser function 
+   * @returns {Function} parser function
    */
   getParser: function(type = 'data') {
     return this.formatters[type].parse;
   },
-  
+
   /**
   * Gets formatter for this model
-  * @returns {Function} formatter function 
+  * @returns {Function} formatter function
   */
   getFormatter: function(type = 'data') {
     return this.formatters[type];
@@ -350,10 +350,10 @@ var TimeModel = DataConnected.extend({
       return [];
     }
     var hash = "" + this.start + this.end + this.step;
-    
+
     //return if cached
     if(this.allSteps[hash]) return this.allSteps[hash];
-      
+
     this.allSteps[hash] = [];
     var curr = this.start;
     while(curr <= this.end) {
@@ -450,7 +450,7 @@ var TimeModel = DataConnected.extend({
     }, delayAnimations);
 
   },
-  
+
   incrementTime: function(time) {
     var is = this.getIntervalAndStep();
     return d3.time[is.interval].utc.offset(time, is.step);
@@ -476,30 +476,30 @@ var TimeModel = DataConnected.extend({
  * Week Format to format and parse dates
  * Conforms with ISO8601
  * Follows format: YYYYwWW: 2015w04, 3845w34, 0020w53
- */ 
+ */
 function weekFormat() {
 
   var format = function(d) {
     return formatWeekYear(d) + 'w' + formatWeek(d);
   }
-  
+
   format.parse = function parse(dateString) {
     var matchedDate = dateString.match(/^(\d{4})w(\d{2})$/);
     return matchedDate ? getDateFromWeek(matchedDate[1], matchedDate[2]): null;
   };
-  
+
   var formatWeekYear = function(d) {
       var origin = +d;
       return new Date(origin + ((4 - (d.getUTCDay() || 7)) * 86400000)).getUTCFullYear();
   };
-  
+
   var formatWeek = function(d) {
     var origin = +d;
     var quote = new Date(origin + ((4 - (d.getUTCDay() || 7)) * 86400000))
     var week = Math.ceil(((quote.getTime() - quote.setUTCMonth(0, 1)) / 86400000 + 1) / 7);
     return week < 10 ? '0' + week : week;
   };
-  
+
   var getDateFromWeek = function(p1, p2) {
     var week = parseInt(p2);
     var year = p1;
@@ -516,22 +516,22 @@ function weekFormat() {
 
     return date;
   }
-  
+
   return format;
-  
+
 };
 
 /*
  * Quarter Format to format and parse quarter dates
  * A quarter is the month%3
  * Follows format: YYYYqQ: 2015q4, 5847q1, 0040q2
- */ 
+ */
 function quarterFormat() {
-  
+
   var format = function(d) {
     return formats['year'](d) + 'q' + formatQuarter(d)
   }
-  
+
   format.parse = function(dateString) {
     var matchedDate = dateString.match(/^(\d{4})q(\d)$/);
     return matchedDate ? getDateFromQuarter(matchedDate[1], matchedDate[2]): null;
@@ -540,14 +540,14 @@ function quarterFormat() {
   var formatQuarter = function(d) {
     return ((d.getUTCMonth() / 3) | 0) + 1;
   };
- 
+
   var getDateFromQuarter = function(p1, p2) {
     var quarter = parseInt(p2);
     var month = 3 * quarter - 2; // first month in quarter
     var year = p1;
     return formats['month'].parse([year, (month < 9 ? '0': '') + month].join(''));
-  }   
-  
+  }
+
   return format;
 }
 
