@@ -529,7 +529,7 @@ function weekFormat() {
 function quarterFormat() {
 
   var format = function(d) {
-    return formats['year'](d) + 'q' + formatQuarter(d)
+    return formats.year.data(d) + 'q' + formatQuarter(d)
   }
 
   format.parse = function(dateString) {
@@ -545,7 +545,7 @@ function quarterFormat() {
     var quarter = parseInt(p2);
     var month = 3 * quarter - 2; // first month in quarter
     var year = p1;
-    return formats['month'].parse([year, (month < 9 ? '0': '') + month].join(''));
+    return formats.month.data.parse([year, (month < 9 ? '0': '') + month].join('-'));
   }
 
   return format;
