@@ -32,7 +32,8 @@ var VIZABI_MODEL = {
       "grouping": 1
     },
     "entities_side": {
-      "dim": "gender"
+      "dim": "gender",
+      "skipFilter": true
     },
     "marker": {
       "space": ["entities", "time", "entities_side", "entities_age"],

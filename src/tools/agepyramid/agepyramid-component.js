@@ -33,6 +33,12 @@ var AgePyramid = Component.extend({
       name: "marker",
       type: "model"
     }, {
+      name: "entities",
+      type: "entities"
+    }, {
+      name: "entities_side",
+      type: "entities"
+    }, {
       name: "locale",
       type: "locale"
     }, {
@@ -85,10 +91,48 @@ var AgePyramid = Component.extend({
       },
       "change:marker.side.which":function (evt) {
         if (!_this._readyOnce) return;
-
         var sideDim = _this.model.marker.side.use == "constant" ? null : _this.model.marker.side.which;
-        _this.model.marker.side.getEntity().clearShow();
-        _this.model.marker.side.getEntity().set("dim", sideDim);
+        _this.model.marker.side.clearSideState();
+        _this.model.entities_side.clearShow()
+        _this.model.entities_side.set("dim", sideDim);
+      },
+      "change:entities.show":function (evt) {
+        if (!_this._readyOnce) return;
+        if(_this.model.entities.dim === _this.model.entities_side.dim
+        && !utils.isEmpty(_this.model.entities.show)
+        && !utils.isEmpty(_this.model.entities_side.show)) {
+          utils.forEach(_this.model.entities_side.getFilteredEntities(), (s) => {
+            if(!_this.model.entities.isShown(s)) {
+              _this.model.marker.side.clearSideState();
+              _this.model.entities_side.showEntity(s);
+            }            
+          });
+        }
+      },
+      "change:entities_side.show":function (evt) {
+        if (!_this._readyOnce) return;
+
+        var doReturn = false;
+        var _entitiesSameDimWithSide = null;
+        utils.forEach(_this.model.marker.side._space, (h) => {
+          if(h.dim === _this.model.entities_side.dim && h._name !== _this.model.entities_side._name) {
+            _entitiesSameDimWithSide = h;
+          }
+        })
+        if(_entitiesSameDimWithSide && !utils.isEmpty(_entitiesSameDimWithSide.show)) {
+          utils.forEach(_this.model.entities_side.getFilteredEntities(), (s) => {
+            if(!_entitiesSameDimWithSide.isShown(s)) {
+              _entitiesSameDimWithSide.showEntity(s);
+              doReturn = true;
+            }
+          });
+        }
+        if(doReturn) return;
+
+        _this._updateIndicators();
+        _this._updateLimits();
+        _this.resize();
+        _this._updateEntities();
       },
       "change:ui.chart.inpercent":function (evt) {
         if (!_this._readyOnce) return;
@@ -98,6 +142,7 @@ var AgePyramid = Component.extend({
       },
       "change:ui.chart.flipSides":function (evt) {
         if (!_this._readyOnce) return;
+        _this.model.marker.side.switchSideState();
         _this._updateIndicators();
         _this.resize();
         _this._updateEntities();
@@ -161,9 +206,9 @@ var AgePyramid = Component.extend({
     this._attributeUpdaters = {
       _newWidth: function(d, i) {
         d["x_"] = 0;
-        d["width_"] =  _this.xScale(_this.shiftedValues[d[_this.AGEDIM]] ? _this.shiftedValues[d[_this.AGEDIM]][d[_this.SIDEDIM]][d[_this.STACKDIM]] : 0);
+        d["width_"] =  _this.xScale(_this.shiftedValues[d[_this.AGEDIM]] ? _this.shiftedValues[d[_this.AGEDIM]][d[_this.PREFIXEDSIDEDIM]][d[_this.PREFIXEDSTACKDIM]] : 0) || 0;
         if(_this.ui.chart.inpercent) {
-          d["width_"] /= _this.total[d[_this.SIDEDIM]];
+          d["width_"] /= _this.total[d[_this.PREFIXEDSIDEDIM]];
         }
         return d.width_;
       },
@@ -184,7 +229,8 @@ var AgePyramid = Component.extend({
    * Both model and DOM are ready
    */
   ready: function() {
-
+    //TODO: get component ready if some submodel doesn't ready ??????
+    if(!this.model.marker._ready) return;
     this.timeSteps = this.model.time.getAllSteps();
 
     this.shiftScale = d3.scale.linear()
@@ -193,14 +239,17 @@ var AgePyramid = Component.extend({
 
     this.side = this.model.marker.label_side.getEntity();
     this.SIDEDIM = this.side.getDimension();
+    this.PREFIXEDSIDEDIM = "side_" + this.SIDEDIM; 
     this.stack = this.model.marker.label_stack.getEntity();
     this.STACKDIM = this.stack.getDimension() || this.model.marker.color.which;
+    this.PREFIXEDSTACKDIM = "stack_" + this.STACKDIM;
     this.age = this.model.marker.axis_y.getEntity();
     this.AGEDIM = this.age.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
 
     this.updateUIStrings();
     this._updateIndicators();
+    this._createLimits();
     this._updateLimits();
     this._createStepData(this.model.marker.axis_x);
 
@@ -286,19 +335,22 @@ var AgePyramid = Component.extend({
     this.shiftedAgeKeys = this.timeSteps.map(function(m, i) {return -i * group_by;}).slice(1).reverse().concat(ageKeys);
 
     var sideItems = this.model.marker.label_side.getItems();
-    var sideKeys = Object.keys(sideItems);
-    //this.model.marker.getKeys(sideDim);
-    // var sideKeys = [];
-    // sideKeys = sides.map(function(m) {
-    //     return m[sideDim];
-    //   });
+    //var sideKeys = Object.keys(sideItems);
+    var sideKeys = [];
+    if(!utils.isEmpty(sideItems)) {
+      var sideFiltered = !!this.model.marker.side.getEntity().show[sideDim];
+      var sides = this.model.marker.getKeys(sideDim)
+        .filter((f) => !sideFiltered || this.model.marker.side.getEntity().isShown(f));
+      sideKeys = sides.map(function(m) {
+          return m[sideDim];
+        });
 
-    if(sideKeys.length > 1) {
-      var sortFunc = this.ui.chart.flipSides ? d3.ascending : d3.descending;
-      sideKeys.sort(sortFunc);
+      if(sideKeys.length > 2) sideKeys.length = 2;
+      if(sideKeys.length > 1) {
+        var sortFunc = this.ui.chart.flipSides ? d3.ascending : d3.descending;
+        sideKeys.sort(sortFunc);
+      }
     }
-    if(sideKeys.length > 2) sideKeys.length = 2;
-
     if(!sideKeys.length) sideKeys.push("undefined");
     this.sideKeys = sideKeys;
 
@@ -342,54 +394,61 @@ var AgePyramid = Component.extend({
     this.markers = this.model.marker.getKeys(ageDim);
   },
 
-  _updateLimits: function() {
+  _createLimits: function() {
     var _this = this;
     var limits, domain;
     var axisX = this.model.marker.axis_x;
-    if(this.ui.chart.inpercent) {
-      limits = axisX.getLimitsByDimensions([this.TIMEDIM, this.SIDEDIM, this.AGEDIM, this.STACKDIM]);
-      var totals = {};
-      var totalCoeff = this.dataWithTotal ? .5 : 1;
-      var timeKeys = axisX.getUnique();
-      var maxLimits = [];
-      utils.forEach(timeKeys, function(time) {
-        totals[time] = {};
-        utils.forEach(_this.sideKeys, function(side) {
-          var ageSum = 0;
-          var sideMaxLimits = [];
-          utils.forEach(_this.ageKeys, function(age) {
-            var stackSum = 0;
-            utils.forEach(_this.stackKeys, function(stack) {
-              if (limits[time][side][age] && limits[time][side][age][stack])
-                stackSum += limits[time][side][age][stack].max;
-                ageSum += stackSum;
-            });
-            sideMaxLimits.push(stackSum);
-          });
-          totals[time][side] = ageSum;
-          sideMaxLimits.map(v => maxLimits.push(v / ageSum));
-        });
-        _this.totals = totals;
-      });
-      domain = [0, Math.max.apply(Math, maxLimits)];
-    } else {
-      limits = axisX.getLimitsByDimensions([this.TIMEDIM, this.SIDEDIM, this.AGEDIM, this.STACKDIM]);
-      var timeKeys = axisX.getUnique();
-      var maxLimits = [];
-      utils.forEach(timeKeys, function(time) {
-        utils.forEach(_this.sideKeys, function(side) {
-          utils.forEach(_this.ageKeys, function(age) {
-            var stackSum = 0;
-            utils.forEach(_this.stackKeys, function(stack) {
-              if (limits[time][side][age] && limits[time][side][age][stack])
-                stackSum += limits[time][side][age][stack].max;
-            });
-            maxLimits.push(stackSum);
-          });
-        });
-      });
 
-      domain = (axisX.domainMin!=null && axisX.domainMax!=null) ? [+axisX.domainMin, +axisX.domainMax] : [0, Math.max.apply(Math, maxLimits)];
+    var sideKeysNF = Object.keys(this.model.marker.side.getItems());
+    if(!sideKeysNF.length) sideKeysNF.push("undefined");
+
+    limits = axisX.getLimitsByDimensions([this.TIMEDIM, this.SIDEDIM, this.AGEDIM, this.STACKDIM]);
+    var timeKeys = axisX.getUnique();
+    var totals = {};
+    var inpercentMaxLimits = {};
+    var maxLimits = {};
+    sideKeysNF.map((s) => {
+      maxLimits[s] = [];
+      inpercentMaxLimits[s] = [];
+    });
+
+    utils.forEach(timeKeys, function(time) {
+      totals[time] = {};
+      utils.forEach(sideKeysNF, function(side) {
+        var ageSum = 0;
+        var sideMaxLimits = [];
+        utils.forEach(_this.ageKeys, function(age) {
+          var stackSum = 0;
+          utils.forEach(_this.stackKeys, function(stack) {
+            if (limits[time][side][age] && limits[time][side][age][stack])
+              stackSum += limits[time][side][age][stack].max;
+              ageSum += stackSum;
+          });
+          sideMaxLimits.push(stackSum);
+        });
+        totals[time][side] = ageSum;
+        var maxSideLimit = Math.max.apply(Math, sideMaxLimits); 
+        inpercentMaxLimits[side].push(maxSideLimit / ageSum);
+        maxLimits[side].push(maxSideLimit); 
+      });
+    });
+    this.maxLimits = {};
+    this.inpercentMaxLimits = {};
+    sideKeysNF.map((s) => {
+      _this.maxLimits[s] = Math.max.apply(Math, maxLimits[s])
+      _this.inpercentMaxLimits[s] = Math.max.apply(Math, inpercentMaxLimits[s]);
+    });
+    this.totals = totals;
+  },
+
+  _updateLimits: function() {
+    var _this = this;
+    var axisX = this.model.marker.axis_x;
+    var domain;
+    if(this.ui.chart.inpercent) {
+      domain = [0, Math.max.apply(Math, this.sideKeys.map((s) => _this.inpercentMaxLimits[s]))];
+    } else {
+      domain = (axisX.domainMin!=null && axisX.domainMax!=null) ? [+axisX.domainMin, +axisX.domainMax] : [0, Math.max.apply(Math, this.sideKeys.map((s) => _this.maxLimits[s]))];
     }
     this.xScale.domain(domain);
     if(this.xScaleLeft) this.xScaleLeft.domain(this.xScale.domain());
@@ -516,8 +575,10 @@ var AgePyramid = Component.extend({
     var _this = this;
     var time = this.model.time;
     var sideDim = this.SIDEDIM;
+    var prefixedSideDim = this.PREFIXEDSIDEDIM;
     var ageDim = this.AGEDIM;
     var stackDim = this.STACKDIM;
+    var prefixedStackDim = this.PREFIXEDSTACKDIM;
     var timeDim = this.TIMEDIM;
     var duration = (time.playing) ? time.delayAnimations : 0;
     var total;
@@ -590,10 +651,11 @@ var AgePyramid = Component.extend({
           var r = {};
           r[ageDim] = d[ageDim];
           r[shiftedAgeDim] = d[shiftedAgeDim];
+          r[prefixedSideDim] = m;
           r[sideDim] = m;
           return r;
         });
-      }, function(d) {return d[sideDim]})
+      }, function(d) {return d[prefixedSideDim]})
 
     this.sideBars.exit().remove();
     this.sideBars.enter().append("g")
@@ -618,9 +680,11 @@ var AgePyramid = Component.extend({
             r[shiftedAgeDim] = d[shiftedAgeDim];
             r[sideDim] = d[sideDim];
             r[stackDim] = m;
+            r[prefixedSideDim] = d[prefixedSideDim];
+            r[prefixedStackDim] = m;
             return r;
           });
-    }, function(d) {return d[stackDim]});
+    }, function(d) {return d[prefixedStackDim]});
 
     this.stackBars.exit().remove();
     this.stackBars.enter().append("rect")
@@ -630,7 +694,7 @@ var AgePyramid = Component.extend({
           .attr("y", 0)
           .attr("height", barHeight)
           .attr("fill", function(d) {
-            return _this.cScale(d[stackDim]);
+            return _this.cScale(d[prefixedStackDim]);
           })
           .on("mouseover", _this.interaction.mouseover)
           .on("mouseout", _this.interaction.mouseout)
