@@ -28,10 +28,29 @@ var SideModel = Hook.extend({
   init: function(name, values, parent, bind) {
 
     this._type = "side";
-    
-    this._super(name, values, parent, bind);
-  }
 
+    bind["readyOnce"] = this.readyOnce;
+    
+    this.state = {left: {}, right:{}};
+    this._super(name, values, parent, bind);
+  },
+
+  readyOnce: function() {
+    if(!this.spaceRef) return;
+    var dataConnChildren = this._space[this.spaceRef].dataConnectedChildren.slice(0);
+    dataConnChildren.splice(dataConnChildren.indexOf("show"), 1);
+    this._space[this.spaceRef].dataConnectedChildren = dataConnChildren;
+  },
+
+  switchSideState: function() {
+    var left = this.state.left;
+    this.state.left = this.state.right;
+    this.state.right = left;
+  },
+
+  clearSideState: function() {
+    this.state = {left: {}, right:{}};
+  }
 
 });
 
