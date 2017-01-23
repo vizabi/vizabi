@@ -61,7 +61,12 @@
   color: $vzb-color-grey;
   fill: none;
   stroke: $vzb-color-grey;
-
+  >g {
+    font-size: unset;
+    font-family: unset;
+    text-anchor: unset;
+    fill: unset;
+  }
   path,
   line {
     fill: none;

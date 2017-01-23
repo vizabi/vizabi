@@ -356,6 +356,7 @@ var BubbleChartComp = Component.extend({
 
     this.trailsContainer = this.graph.select('.vzb-bc-trails');
     this.bubbleContainerCrop = this.graph.select('.vzb-bc-bubbles-crop');
+    this.zoomSelection = this.graph.select('.vzb-zoom-selection');
     this.labelsContainerCrop = this.graph.select('.vzb-bc-labels-crop');
     this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
     this.labelsContainer = this.graph.select('.vzb-bc-labels');
@@ -413,9 +414,10 @@ var BubbleChartComp = Component.extend({
         _this._panZoom.reset(null, 500);
     });
 
+    this._panZoom.zoomSelection(this.bubbleContainerCrop);
     this.bubbleContainerCrop
-      .call(this._panZoom.zoomer)
       .call(this._panZoom.dragRectangle)
+      .call(this._panZoom.zoomer)
       .on('dblclick.zoom', null)
       .on("mouseup", function() {
         _this.draggingNow = false;
@@ -1246,7 +1248,7 @@ var BubbleChartComp = Component.extend({
        if(showhide) {
            if(duration) {
                var opacity = view.style("opacity");
-               view.transition().duration(duration).ease("exp")
+               view.transition().duration(duration).ease(d3.easeExp)
                 .style("opacity", 0)
                 .each("end", function() {
                     //to avoid transition from null state add class with a delay
@@ -1278,10 +1280,10 @@ var BubbleChartComp = Component.extend({
                 .attr("cy", _this.yScale(valueY))
                 .attr("cx", _this.xScale(valueX))
                 .attr("r", scaledS)
-                .transition().duration(duration).ease("exp")
+                .transition().duration(duration).ease(d3.easeExp)
                 .style("opacity", opacity);
         }else{
-            view.transition().duration(duration).ease("linear")
+            view.transition().duration(duration).ease(d3.easeLinear)
                 .attr("cy", _this.yScale(valueY))
                 .attr("cx", _this.xScale(valueX))
                 .attr("r", scaledS);
@@ -1448,7 +1450,7 @@ var BubbleChartComp = Component.extend({
         .selectAll("text")
         .text(tooltipText);
 
-      var contentBBox = this.tooltip.select('text')[0][0].getBBox();
+      var contentBBox = this.tooltip.select('text').node().getBBox();
       if(x - xOffset - contentBBox.width < 0) {
         xSign = 1;
         x += contentBBox.width + 5; // corrective to the block Radius and text padding
