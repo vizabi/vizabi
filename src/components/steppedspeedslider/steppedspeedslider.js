@@ -40,25 +40,25 @@ const SteppedSlider = Component.extend({
       .attr('d', this.getTrianglePath());
 
 
-    const scale = d3.scale.log()
+    const axisScale = d3.scale.log()
       .base(10)
       .domain([1, 10])
       .range([this.config.height, 0]);
 
 
-    const _scale = d3.scale.linear()
+    const brushScale = d3.scale.linear()
       .domain([0, 100])
       .range([-100, 100]);
 
 
     const self = this;
     this.brush = d3.svg.brush()
-      .y(_scale)
+      .y(brushScale)
       .on('brush', function () {
         const [dx, dy] = d3.mouse(this);
         const [tx, ty] = d3.transform(self.slide.attr('transform')).translate;
         const y = Math.max(0, Math.min(dy + ty, self.config.height));
-        const value = scale.invert(y);
+        const value = axisScale.invert(y);
         self.slide.attr('transform', `translate(0, ${y})`);
 
         console.log({ dy, ty, y, value });
@@ -67,7 +67,7 @@ const SteppedSlider = Component.extend({
     this.slide.call(this.brush);
 
     const axis = d3.svg.axis()
-      .scale(scale)
+      .scale(axisScale)
       .tickFormat(() => '')
       .orient('left')
       // .ticks(2, ',.1s')
