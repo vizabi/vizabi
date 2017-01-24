@@ -107,6 +107,8 @@ var Tool = Component.extend({
           '</div>' +
           '<div class="vzb-tool-timeslider">' +
           '</div>' +
+          '<div class="vzb-tool-stepped-speed-slider">' +
+          '</div>' +
         '</div>' +
         '<div class="vzb-tool-sidebar">' +
           '<div class="vzb-tool-dialogs">' +

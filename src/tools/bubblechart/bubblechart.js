@@ -9,6 +9,7 @@ import buttonlist from 'components/buttonlist/buttonlist';
 import treemenu from 'components/treemenu/treemenu';
 import datawarning from 'components/datawarning/datawarning';
 import datanotes from 'components/datanotes/datanotes';
+import steppedSpeedSlider from 'components/steppedspeedslider/steppedspeedslider';
 
 var BubbleChart = Tool.extend('BubbleChart', {
 
@@ -51,6 +52,11 @@ var BubbleChart = Tool.extend('BubbleChart', {
       component: datanotes,
       placeholder: '.vzb-tool-datanotes',
       model: ['state.marker', 'locale']
+    }, {
+      component: steppedSpeedSlider,
+      placeholder: '.vzb-tool-stepped-speed-slider',
+      model: ['state.time']
+
     }];
 
     this._super(placeholder, external_model);
@@ -74,7 +80,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
    */
   default_model: {
     state: {
-      time: { 
+      time: {
         autogenerate: {
           data: "data",
           conceptIndex: 0,
@@ -101,14 +107,14 @@ var BubbleChart = Tool.extend('BubbleChart', {
       },
       marker: {
         space: ["entities", "time"],
-        axis_x: { 
+        axis_x: {
           use: "indicator",
           autogenerate: {
             conceptIndex: 1,
             conceptType: "measure"
           }
         },
-        axis_y: { 
+        axis_y: {
           use: "indicator",
           autogenerate: {
             conceptIndex: 0,
@@ -182,8 +188,8 @@ var BubbleChart = Tool.extend('BubbleChart', {
       zoomOnScrolling: false,
       buttons: ['colors', 'find', 'size', 'trails', 'lock', 'moreoptions', 'fullscreen', 'presentation'],
       dialogs: {
-        popup: ['colors', 'find', 'size', 'zoom', 'moreoptions'], 
-        sidebar: ['colors', 'find', 'size', 'zoom'], 
+        popup: ['colors', 'find', 'size', 'zoom', 'moreoptions'],
+        sidebar: ['colors', 'find', 'size', 'zoom'],
         moreoptions: ['opacity', 'speed', 'axes', 'size', 'colors', 'label', 'zoom','presentation', 'about']
       }
     }

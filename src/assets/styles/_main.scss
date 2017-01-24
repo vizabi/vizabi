@@ -11,7 +11,7 @@
   $size-timeslider-medium: 50px;
   $size-timeslider-small: 40px;
   $vzb-button-expand-width: 290px;
- 
+
 
   @include user-select(none);
   display: flex;
@@ -52,7 +52,7 @@
     }
 
     .vzb-tool-timeslider {
-      flex: 0 0 $size-timeslider; 
+      flex: 0 0 $size-timeslider;
       height: $size-timeslider;
     }
   }
@@ -70,7 +70,7 @@
       position: relative;
       //overflow: visible;
       text-align: center;
-    
+
       input,
       textarea,
       keygen,
@@ -78,7 +78,7 @@
       button {
         font-family: $vzb-font-family;
       }
-    
+
       &:-webkit-scrollbar {
         display: none;
       }
@@ -117,7 +117,7 @@
 
     &.vzb-portrait {
       flex-direction: column;
-        
+
       .vzb-tool-sidebar {
         flex-direction: column;
         .vzb-tool-buttonlist {
@@ -149,11 +149,11 @@
       font-size: $vzb-font-size-tiny;
     }
   }
-  
+
   &.vzb-medium {
     .vzb-tool-stage {
       .vzb-tool-timeslider {
-        flex: 0 0 $size-timeslider-medium; 
+        flex: 0 0 $size-timeslider-medium;
         height: $size-timeslider-medium;
       }
     }
@@ -174,7 +174,7 @@
           overflow-x: hidden;
           overflow-y: auto;
         }
-  
+
         .vzb-tool-buttonlist {
           flex: 0 0 auto;
           width: $vzb-button-expand-width;
@@ -183,7 +183,7 @@
       }
     }
   }
-  
+
   //tooltip
   .vzb-tooltip {
     @include border-radius(3px);
@@ -237,14 +237,14 @@
   input[type=range]:focus::-ms-fill-upper {
     background: transparent;
   }
-  
+
   input[type=range]::-ms-tooltip {
-    display: none;  
+    display: none;
   }
-  
+
   input[type=range]::-moz-focus-outer {
     border: 0;
-  }    
+  }
   //Data warning
   .vzb-data-warning {
     cursor: pointer;
@@ -275,4 +275,5 @@
   @import '../../components/treemenu/treemenu';
   @import '../../components/datawarning/datawarning';
   @import '../../components/datanotes/datanotes';
+  @import '../../components/steppedspeedslider/steppedspeedslider';
 }
