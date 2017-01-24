@@ -685,10 +685,11 @@ var AgePyramid = Component.extend({
         .attr("class", function(d, i) {
           return "vzb-bc-side " + "vzb-bc-side-" + (!i != !_this.twoSided ? "right": "left");
         })
+        .merge(this.sideBars)
+
     this.sideBars.attr("transform", function(d, i) {
           return i ? ("scale(-1,1) translate(" + _this.activeProfile.centerWidth + ",0)") : "";
         })
-        .merge(this.sideBars)
     
     if(reorder) {
       this.sideBars.attr("transform", function(d, i) {
@@ -697,7 +698,7 @@ var AgePyramid = Component.extend({
     }
 
     this.stackBars = this.sideBars.selectAll('.vzb-bc-stack').data(function(d,i) {
-          var stacks = _this.stacked ? _this.stackKeys : [_this.totalFieldName];
+    var stacks = _this.stacked ? _this.stackKeys : [_this.totalFieldName];
           return stacks.map(function(m) {
             var r = {};
             r[ageDim] = d[ageDim];
@@ -1098,15 +1099,15 @@ var AgePyramid = Component.extend({
 
     if(this.xInfoEl.select('svg').node()) {
       var titleBBox = this.xTitleEl.node().getBBox();
-      var translate = d3.transform(this.xTitleEl.attr('transform')).translate;
-      var hTranslate = isRTL ? (titleBBox.x + translate[0] - infoElHeight * 1.4) : (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4);
+      var t = utils.transform(this.xTitleEl.node());
+      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4);
 
       this.xInfoEl.select('svg')
         .attr("width", infoElHeight + "px")
         .attr("height", infoElHeight + "px")
       this.xInfoEl.attr('transform', 'translate('
         + hTranslate + ','
-        + (translate[1] - infoElHeight * 0.8) + ')');
+        + (t.translateY - infoElHeight * 0.8) + ')');
     }
 
 
