@@ -51,9 +51,12 @@
       position: relative;
     }
 
-    .vzb-tool-timeslider {
-      flex: 0 0 $size-timeslider;
-      height: $size-timeslider;
+    .vzb-tool-time-speed-sliders {
+      display: flex;
+    }
+
+    .vzb-tool-stepped-speed-slider {
+      flex: 0 0 $size-timeslider-small;
     }
   }
 
@@ -110,7 +113,7 @@
 
     .vzb-tool-stage {
       .vzb-tool-timeslider {
-        flex: 0 0 $size-timeslider-small;
+        width: 100%;
         height: $size-timeslider-small;
       }
     }

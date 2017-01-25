@@ -1,5 +1,16 @@
 .vzb-stepped-speed-slider {
+  position: relative;
+  height: $size-timeslider-small;
+
+  .vzb-stepped-speed-slider-triangle {
+    fill: $vzb-color-primary;
+  }
+
+  svg {
+    width: 100%;
+  }
+
   line {
-    stroke: #000;
+    stroke: $vzb-color-primary;
   }
 }
