@@ -22,7 +22,7 @@ const SteppedSlider = Component.extend({
 
     this.model_binds = {
       'change:time.delay': (...args) => {
-        console.log(...args);
+        // console.log(...args);
       }
     };
 
@@ -32,8 +32,7 @@ const SteppedSlider = Component.extend({
   readyOnce() {
     this.element = d3.select(this.element);
     this.svg = this.element.select('svg');
-
-    this.slide = this.svg.append('g');
+    this.slide = this.svg.select('.vzb-stepped-speed-slider-triangle');
 
     this.slide
       .append('path')
@@ -42,7 +41,7 @@ const SteppedSlider = Component.extend({
 
     const axisScale = d3.scale.log()
       .base(10)
-      .domain([1, 10])
+      .domain([1, 6])
       .range([this.config.height, 0]);
 
 
@@ -73,7 +72,7 @@ const SteppedSlider = Component.extend({
       // .ticks(2, ',.1s')
       .tickSize(this.config.lineWidth, 0);
 
-    this.svg.append('g')
+    this.svg.select('.vzb-stepped-speed-slider-axis')
       .attr('transform', `translate(${this.config.triangleWidth + 10}, ${this.config.triangleHeight / 2})`)
       .call(axis);
   },
@@ -84,9 +83,7 @@ const SteppedSlider = Component.extend({
       triangleWidth
     } = this.config;
 
-    return `M ${triangleWidth},` +
-      `${triangleHeight / 2} 0,` +
-      `${triangleHeight} 0,0 z`;
+    return `M ${triangleWidth},${triangleHeight / 2} 0,${triangleHeight} 0,0 z`;
   }
 
 });
