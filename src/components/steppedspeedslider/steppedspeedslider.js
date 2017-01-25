@@ -1,4 +1,5 @@
 import Component from 'base/component';
+import { throttle } from 'base/utils';
 
 const SteppedSlider = Component.extend({
 
@@ -9,22 +10,30 @@ const SteppedSlider = Component.extend({
     this.config = Object.assign({
       triangleWidth: 10,
       triangleHeight: 10,
-      height: 30,
-      lineWidth: 10
+      height: 20,
+      lineWidth: 10,
+      domain: [1, 2, 3, 4, 5, 6],
+      range: [1200, 900, 450, 200, 150, 100]
     }, config);
 
     this.model_expects = [
       {
         name: 'time',
         type: 'time'
+      },
+      {
+        name: 'locale',
+        type: 'locale'
       }
     ];
 
     this.model_binds = {
-      'change:time.delay': (...args) => {
-        // console.log(...args);
+      'change:time.delay': () => {
+        this.redraw();
       }
     };
+
+    this.setDelay = throttle(this.setDelay, 50);
 
     this._super(config, context);
   },
@@ -38,43 +47,40 @@ const SteppedSlider = Component.extend({
       .append('path')
       .attr('d', this.getTrianglePath());
 
-
-    const axisScale = d3.scale.log()
-      .base(10)
-      .domain([1, 6])
+    this.axisScale = d3.scale.log()
+      .domain(d3.extent(this.config.domain))
       .range([this.config.height, 0]);
 
-
-    const brushScale = d3.scale.linear()
-      .domain([0, 100])
-      .range([-100, 100]);
-
-
-    const self = this;
-    this.brush = d3.svg.brush()
-      .y(brushScale)
-      .on('brush', function () {
-        const [dx, dy] = d3.mouse(this);
-        const [tx, ty] = d3.transform(self.slide.attr('transform')).translate;
-        const y = Math.max(0, Math.min(dy + ty, self.config.height));
-        const value = axisScale.invert(y);
-        self.slide.attr('transform', `translate(0, ${y})`);
-
-        console.log({ dy, ty, y, value });
-      });
-
-    this.slide.call(this.brush);
-
     const axis = d3.svg.axis()
-      .scale(axisScale)
+      .scale(this.axisScale)
       .tickFormat(() => '')
       .orient('left')
-      // .ticks(2, ',.1s')
       .tickSize(this.config.lineWidth, 0);
 
     this.svg.select('.vzb-stepped-speed-slider-axis')
-      .attr('transform', `translate(${this.config.triangleWidth + 10}, ${this.config.triangleHeight / 2})`)
+      .attr('transform', `translate(${this.config.triangleWidth + this.config.lineWidth / 2}, ${this.config.triangleHeight / 2})`)
       .call(axis);
+
+    this.delayScale = d3.scale.linear()
+      .domain(this.config.domain)
+      .range(this.config.range);
+
+    this.drag = d3.behavior.drag()
+      .on('drag', () => {
+        const { dy } = d3.event;
+        const [, ty] = d3.transform(this.slide.attr('transform')).translate;
+        const y = Math.max(0, Math.min(dy + ty, this.config.height));
+        this.setDelay(Math.round(this.delayScale(this.axisScale.invert(y))));
+
+        this.redraw(y);
+      })
+      .on('dragend', () => {
+        this.setDelay(this.model.time.delay, true, true);
+      });
+
+    this.slide.call(this.drag);
+
+    this.redraw();
   },
 
   getTrianglePath() {
@@ -84,6 +90,14 @@ const SteppedSlider = Component.extend({
     } = this.config;
 
     return `M ${triangleWidth},${triangleHeight / 2} 0,${triangleHeight} 0,0 z`;
+  },
+
+  setDelay(value, force = false, persistent = false) {
+    this.model.time.set('delay', value, force, persistent);
+  },
+
+  redraw(y = this.axisScale(this.delayScale.invert(this.model.time.delay))) {
+    this.slide.attr('transform', `translate(0, ${y})`);
   }
 
 });

@@ -46,6 +46,11 @@
 
     transform: translate3d(0, 0, 0);
 
+    .vzb-tool-timeslider {
+      width: 100%;
+      height: $size-timeslider-medium;
+    }
+
     .vzb-tool-viz {
       flex: 1 auto;
       position: relative;
@@ -56,7 +61,7 @@
     }
 
     .vzb-tool-stepped-speed-slider {
-      flex: 0 0 $size-timeslider-small;
+      flex: 0 0 20px;
     }
   }
 
@@ -156,7 +161,7 @@
   &.vzb-medium {
     .vzb-tool-stage {
       .vzb-tool-timeslider {
-        flex: 0 0 $size-timeslider-medium;
+        width: 100%;
         height: $size-timeslider-medium;
       }
     }

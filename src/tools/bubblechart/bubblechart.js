@@ -55,8 +55,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
     }, {
       component: steppedSpeedSlider,
       placeholder: '.vzb-tool-stepped-speed-slider',
-      model: ['state.time']
-
+      model: ['state.time', 'locale']
     }];
 
     this._super(placeholder, external_model);
