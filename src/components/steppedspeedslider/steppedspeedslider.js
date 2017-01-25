@@ -70,9 +70,8 @@ const SteppedSlider = Component.extend({
         const { dy } = d3.event;
         const [, ty] = d3.transform(this.slide.attr('transform')).translate;
         const y = Math.max(0, Math.min(dy + ty, this.config.height));
-        this.setDelay(Math.round(this.delayScale(this.axisScale.invert(y))));
 
-        this.redraw(y);
+        this.setDelay(Math.round(this.delayScale(this.axisScale.invert(y))));
       })
       .on('dragend', () => {
         this.setDelay(this.model.time.delay, true, true);
