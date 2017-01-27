@@ -2,6 +2,10 @@
   position: relative;
   height: $size-timeslider-small;
 
+  .vzb-stepped-speed-slider-axis {
+    pointer-events: bounding-box;
+  }
+
   .vzb-stepped-speed-slider-triangle {
     cursor: pointer;
     fill: $vzb-color-primary;

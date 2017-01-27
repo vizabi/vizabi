@@ -41,8 +41,22 @@ const SteppedSlider = Component.extend({
   },
 
   readyOnce() {
+    const {
+      domain,
+      range,
+      height
+    } = this.config;
+
     this.element = d3.select(this.element);
     this.svg = this.element.select('svg');
+
+    this.axisScale = d3.scale.log()
+      .domain(d3.extent(domain))
+      .range([height, 0]);
+
+    this.delayScale = d3.scale.linear()
+      .domain(domain)
+      .range(range);
 
     this.initAxis();
     this.initTriangle();
@@ -52,16 +66,10 @@ const SteppedSlider = Component.extend({
 
   initAxis() {
     const {
-      domain,
-      height,
       lineWidth,
       triangleWidth,
       triangleHeight
     } = this.config;
-
-    this.axisScale = d3.scale.log()
-      .domain(d3.extent(domain))
-      .range([height, 0]);
 
     const axis = d3.svg.axis()
       .scale(this.axisScale)
@@ -72,6 +80,12 @@ const SteppedSlider = Component.extend({
     const tx = triangleWidth + lineWidth / 2;
     const ty = triangleHeight / 2;
     this.svg.select('.vzb-stepped-speed-slider-axis')
+      .on('click', () => {
+        // -5 because d3.event.offsetY returns incorrect value
+        const { offsetY } = d3.event;
+        const delay = this.delayScale(this.axisScale.invert(offsetY - 5));
+        this.setDelay(delay, true, true);
+      })
       .attr('transform', `translate(${tx}, ${ty})`)
       .call(axis);
   },
@@ -81,8 +95,6 @@ const SteppedSlider = Component.extend({
       triangleWidth,
       triangleHeight,
       lineWidth,
-      range,
-      domain,
       height
     } = this.config;
 
@@ -98,10 +110,6 @@ const SteppedSlider = Component.extend({
       .append('g')
       .append('path')
       .attr('d', this.getTrianglePath());
-
-    this.delayScale = d3.scale.linear()
-      .domain(domain)
-      .range(range);
 
     this.drag = d3.behavior.drag()
       .on('drag', () => {
