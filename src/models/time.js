@@ -91,6 +91,10 @@ var TimeModel = DataConnected.extend({
 
       "change:format": function() {
         _this.initFormatters();
+      },
+
+      'change:delay': () => {
+        this.playInterval();
       }
 
     });
