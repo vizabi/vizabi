@@ -180,7 +180,7 @@ var MountainChartComponent = Component.extend({
 
         //define d3 stack layout
         this.stack = d3.layout.stack()
-            .order("reverse")
+            .order("default")
             .values(function (d) {
                 return _this.cached[d.KEY()];
             })
@@ -577,35 +577,22 @@ updateSize: function (meshLength) {
                 pointer.KEY = function () {
                     return this[_this.KEY];
                 };
-                pointer.sortValue = [_this.values.axis_y[pointer.KEY()]||0, 0];
                 pointer.aggrLevel = 0;
                 return pointer;
             });
 
 
         //TODO: optimise this!
+        var groupKeys = _this.model.marker.stack.use === "property" ? _this.values.stack : _this.values.group;
+        
         this.groupedPointers = d3.nest()
             .key(function (d) {
-                return _this.model.marker.stack.use === "property" ? _this.values.stack[d.KEY()] : _this.values.group[d.KEY()];
-            })
-            .sortValues(function (a, b) {
-                return b.sortValue[0] - a.sortValue[0];
+                return groupKeys[d.KEY()];
             })
             .entries(this.mountainPointers);
 
 
-        var groupManualSort = this.model.marker.group.manualSorting;
         this.groupedPointers.forEach(function (group) {
-            var groupSortValue = d3.sum(group.values.map(function (m) {
-                return m.sortValue[0];
-            }));
-
-            if (groupManualSort && groupManualSort.length > 1) groupSortValue = groupManualSort.length-1 - groupManualSort.indexOf(group.key);
-
-            group.values.forEach(function (d) {
-                d.sortValue[1] = groupSortValue;
-            });
-
             group[_this.model.entities.getDimension()] = group.key; // hack to get highlihgt and selection work
             group.KEY = function () {
                 return this.key;
@@ -613,18 +600,9 @@ updateSize: function (meshLength) {
             group.aggrLevel = 1;
         });
 
-        var sortGroupKeys = {};
-        _this.groupedPointers.map(function (m) {
-            sortGroupKeys[m.key] = m.values[0].sortValue[1];
-        });
-
-
         // update the stacked pointers
         if (_this.model.marker.stack.which === "none") {
             this.stackedPointers = [];
-            this.mountainPointers.sort(function (a, b) {
-                return b.sortValue[0] - a.sortValue[0];
-            });
 
         } else {
             this.stackedPointers = d3.nest()
@@ -634,18 +612,7 @@ updateSize: function (meshLength) {
                 .key(function (d) {
                     return _this.values.group[d.KEY()];
                 })
-                .sortKeys(function (a, b) {
-                    return sortGroupKeys[b] - sortGroupKeys[a];
-                })
-                .sortValues(function (a, b) {
-                    return b.sortValue[0] - a.sortValue[0];
-                })
-                .entries(this.mountainPointers);
-
-            this.mountainPointers.sort(function (a, b) {
-                return b.sortValue[1] - a.sortValue[1];
-            });
-
+                 .entries(this.mountainPointers);
 
             this.stackedPointers.forEach(function (stack) {
                 stack.KEY = function () {
@@ -824,23 +791,50 @@ updateSize: function (meshLength) {
 
 
         //spawn the original mountains
+
         this.mountainPointers.forEach(function (d, i) {
             var vertices = _this._spawn(_this.values, d);
             _this.cached[d.KEY()] = vertices;
+            d.sortValue = [_this.values.axis_y[d.KEY()]||0, 0];
             d.hidden = vertices.length === 0;
         });
 
 
         //recalculate stacking
+//            if (groupManualSort && groupManualSort.length > 1) groupSortValue = groupManualSort.length-1 - groupManualSort.indexOf(d.key);
+
+        var groupManualSort = this.model.marker.group.manualSorting;
+        var stacked = {};
         if (_this.model.marker.stack.which !== "none") {
             this.stackedPointers.forEach(function (group) {
                 var toStack = [];
+                group.values.forEach(function (subgroup) {
+                    subgroup.sortValue = [d3.sum(subgroup.values.map(function (m) {
+                        return _this.values.axis_y[m.KEY()];
+                    })), groupManualSort.indexOf(subgroup.key)];
+                    subgroup.values.sort(function(a, b) {
+                        return d3.ascending(_this.values.axis_y[a.KEY()], _this.values.axis_y[b.KEY()]);
+                    });
+                });
+                 group.values.sort(function(a, b) {
+                    if (a.sortValue[1] == b.sortValue[1]) {
+                        return d3.ascending(a.sortValue[0], b.sortValue[0]);
+                    } else {
+                        return d3.descending(a.sortValue[1], b.sortValue[1]);
+                    }
+                });
                 group.values.forEach(function (subgroup) {
                     toStack = toStack.concat(subgroup.values.filter(function (f) {
                         return !f.hidden;
                     }));
                 });
                 _this.stack(toStack);
+                var firstLast = _this._getFirstLastPointersInStack(group);
+                _this.cached[group.key] = _this._getVerticesOfaMergedShape(firstLast);
+                _this.values.color[group.key] = "_default";
+                _this.values.axis_y[group.key] = _this._sumLeafPointersByMarker(group, "axis_y");
+                group.yMax = firstLast.first.yMax;
+                
             });
         }
 
@@ -855,23 +849,30 @@ updateSize: function (meshLength) {
         var mergeStacked = _this.model.marker.stack.merge;
         //var dragOrPlay = (_this.model.time.dragging || _this.model.time.playing) && this.model.marker.stack.which !== "none";
 
-        //if(mergeStacked){
-        this.stackedPointers.forEach(function (d) {
-            var firstLast = _this._getFirstLastPointersInStack(d);
-            _this.cached[d.key] = _this._getVerticesOfaMergedShape(firstLast);
-            _this.values.color[d.key] = "_default";
-            _this.values.axis_y[d.key] = _this._sumLeafPointersByMarker(d, "axis_y");
-            d.yMax = firstLast.first.yMax;
-        });
-        //} else if (mergeGrouped || dragOrPlay){
         this.groupedPointers.forEach(function (d) {
+            d.values.sort(function (a, b) {
+                return d3.descending(_this.values.axis_y[a.KEY()], _this.values.axis_y[b.KEY()]);
+            });
+
             var firstLast = _this._getFirstLastPointersInStack(d);
             _this.cached[d.key] = _this._getVerticesOfaMergedShape(firstLast);
             _this.values.color[d.key] = _this.values.color[firstLast.first.KEY()];
             _this.values.axis_y[d.key] = _this._sumLeafPointersByMarker(d, "axis_y");
             d.yMax = firstLast.first.yMax;
         });
-        //}
+
+        if (_this.model.marker.stack.which === "none") {
+            this.stackedPointers = [];
+            this.mountainPointers.sort(function (a, b) {
+                return d3.descending(b.sortValue[0], a.sortValue[0]);
+            });
+
+        } else {
+            this.mountainPointers.sort(function (a, b) {
+                return d3.descending(b.sortValue[1], a.sortValue[1]);
+            });
+        }
+
 
         if (!mergeStacked && !mergeGrouped && this.model.marker.stack.use === "property") {
             this.groupedPointers.forEach(function (d) {
@@ -887,7 +888,6 @@ updateSize: function (meshLength) {
 
 
     },
-
     _getFirstLastPointersInStack: function (group) {
         var _this = this;
 
@@ -1032,6 +1032,7 @@ updateSize: function (meshLength) {
             _this._renderShape(view, d.KEY(), hidden);
         });
 
+        
         this.mountainsAtomic.each(function (d, i) {
             var view = d3.select(this);
             var hidden = d.hidden || ((mergeGrouped || mergeStacked || dragOrPlay) && !_this.model.marker.isSelected(d));
@@ -1043,10 +1044,7 @@ updateSize: function (meshLength) {
                 return b.yMax - a.yMax;
             });
 
-        } else if (stackMode === "all") {
-            // do nothing if everything is stacked
-
-        } else {
+        } else if (stackMode != "all") {
             if (mergeGrouped || dragOrPlay) {
                 // this.mountainsMergeGrouped.sort(function (a, b) {
                 //     return b.yMax - a.yMax;
@@ -1057,7 +1055,6 @@ updateSize: function (meshLength) {
                 });
             }
         }
-
 
         // exporting shapes for shape preloader. is needed once in a while
         // if (!this.shapes) this.shapes = {}
