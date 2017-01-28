@@ -20,11 +20,17 @@ var Marker = Model.extend({
   },
 
   init: function(name, value, parent, binds, persistent) {
+    var _this = this;
+    
     this._visible = [];
-
 
     this._super(name, value, parent, binds, persistent);
     this.on('ready', this.checkTimeLimits.bind(this));
+    this.on('readyOnce', () => {
+      var exceptions = { exceptType: 'time' };
+      var allDimensions = _this._getAllDimensions(exceptions);
+      _this._multiDim = allDimensions.length > 1 ? true : false;
+    });
   },
   
   setDataSourceForAllSubhooks: function(data){
@@ -518,21 +524,65 @@ var Marker = Model.extend({
             utils.forEach(pValues, function(values, hook) {
               dataBetweenFrames[hook] = {};
 
-              //loop across the entities
-              utils.forEach(values, function(val1, key) {
-                var val2 = nValues[hook][key];
-                if(utils.isDate(val1)){
-                  dataBetweenFrames[hook][key] = time;
-                } else if(!utils.isNumber(val1)){
+              if(_this._multiDim && _this[hook].use == "indicator") {
+                var hookDataBF = dataBetweenFrames[hook];
+                var TIME = _this[hook].dataSource._collection[_this[hook]._dataId].query.animatable;
+                var KEY = _this[hook].dataSource._collection[_this[hook]._dataId].query.select.key.slice(0);
+                if(TIME && KEY.indexOf(TIME) != -1) KEY.splice(KEY.indexOf(TIME), 1);
+
+                var lastIndex = KEY.length - 1;
+                var iterateKeys = function(firstKeyObject, lastKeyObject, firstKey, pValues, nValues, index) {
+                  var keys = Object.keys(pValues);
+                  for(var i = 0, j = keys.length; i < j; i++) {
+                    if(index == 0) {
+                      firstKey = keys[i];//root level
+                    }
+                    if(index == lastIndex) {
+                      mapValue(hookDataBF, firstKey, keys[i], firstKeyObject, lastKeyObject, pValues[keys[i]], nValues[keys[i]]);
+                    } else {
+                      if(index == 0) {
+                        lastKeyObject = firstKeyObject = {};
+                      }
+                      var nextIndex = index + 1;
+                      lastKeyObject[keys[i]] = {};
+                      iterateKeys(firstKeyObject, lastKeyObject[keys[i]], firstKey, pValues[keys[i]], nValues[keys[i]], nextIndex);
+                    }
+                  }
+                }
+
+                iterateKeys(null, null, null, values, nValues[hook], 0);
+
+              } else {
+                //loop across the entities
+                utils.forEach(values, function(val1, key) {
+                  var val2 = nValues[hook][key];
+                  if(utils.isDate(val1)) {
+                    dataBetweenFrames[hook][key] = time;
+                  } else if(!utils.isNumber(val1)) {
                     //we can be interpolating string values
                     dataBetweenFrames[hook][key] = val1;
-                }else{
+                  } else {
                     //interpolation between number and null should rerurn null, not a value in between (#1350)
                     dataBetweenFrames[hook][key] = (val1==null || val2==null) ? null : val1 + ((val2 - val1) * fraction);
-                }
-              });
+                  }
+                });
+              }
             });
             cb(dataBetweenFrames);
+
+            function mapValue(hookDataBF, firstKey, lastKey, firstKeyObject, lastKeyObject, val1, val2) {
+              hookDataBF[firstKey] = firstKeyObject[firstKey];
+              if(utils.isDate(val1)){
+                lastKeyObject[lastKey] = time;
+              } else if(!utils.isNumber(val1)){
+                //we can be interpolating string values
+                lastKeyObject[lastKey] = val1;
+              } else {
+                //interpolation between number and null should rerurn null, not a value in between (#1350)
+                lastKeyObject[lastKey] = (val1==null || val2==null) ? null : val1 + ((val2 - val1) * fraction);
+              }
+            }
+
           }, keys)
         }, keys)
       }
