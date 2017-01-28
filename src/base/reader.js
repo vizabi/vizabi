@@ -23,10 +23,7 @@ const Reader = Class.extend({
     GENERIC_ERROR: 'reader/error/generic'
   },
 
-  init(readerInfo) {
-    this._name = this._name || readerInfo.reader;
-    this._data = readerInfo.data || [];
-  },
+  _name: 'reader',
 
   load() {
     return Promise.resolve({
