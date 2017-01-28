@@ -483,7 +483,7 @@ var AgePyramid = Component.extend({
     var sideKeysNF = Object.keys(this.model.marker.side.getItems());
     if(!sideKeysNF.length) sideKeysNF.push("undefined");
 
-    limits = axisX.getLimitsByDimensions([this.TIMEDIM, this.SIDEDIM, this.AGEDIM, this.STACKDIM]);
+    limits = axisX.getLimitsByDimensions([this.STACKDIM, this.SIDEDIM, this.AGEDIM, this.TIMEDIM]);
     var timeKeys = axisX.getUnique();
     var totals = {};
     var inpercentMaxLimits = {};
@@ -501,8 +501,8 @@ var AgePyramid = Component.extend({
         utils.forEach(_this.ageKeys, function(age) {
           var stackSum = 0;
           utils.forEach(_this.stackKeys, function(stack) {
-            if (limits[time][side][age] && limits[time][side][age][stack])
-              stackSum += limits[time][side][age][stack].max;
+            if (limits[stack][side] && limits[stack][side][age] && limits[stack][side][age][time])
+              stackSum += limits[stack][side][age][time].max;
               ageSum += stackSum;
           });
           sideMaxLimits.push(stackSum);
