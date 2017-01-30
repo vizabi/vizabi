@@ -152,11 +152,16 @@ const loaders = [
     include: [
       path.resolve(__dirname, 'src')
     ],
-    loader: extractSrc.extract([
-      'css-loader',
-      'sass-loader'
-    ])
-  },
+    loader: extractSrc.extract([{
+                loader: "css-loader",
+                options: {
+                       minimize: __PROD__,
+                       sourceMap: true
+                }
+            }, {
+              loader: 'sass-loader'
+            }])
+    },
   {
     test: /\.scss$/,
     include: [
