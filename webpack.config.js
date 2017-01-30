@@ -153,7 +153,7 @@ const loaders = [
       path.resolve(__dirname, 'src')
     ],
     loader: extractSrc.extract([
-      `css-loader?${JSON.stringify({ sourceMap: true, minimize: __PROD__ })}`,
+      'css-loader',
       'sass-loader'
     ])
   },
