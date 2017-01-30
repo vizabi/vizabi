@@ -153,14 +153,14 @@ const loaders = [
       path.resolve(__dirname, 'src')
     ],
     loader: extractSrc.extract([{
-                loader: "css-loader",
-                options: {
-                       minimize: __PROD__,
-                       sourceMap: true
-                }
-            }, {
-              loader: 'sass-loader'
-            }])
+        loader: "css-loader",
+        options: {
+          minimize: __PROD__,
+          sourceMap: true
+        }
+      }, {
+        loader: 'sass-loader'
+      }])
     },
   {
     test: /\.scss$/,
