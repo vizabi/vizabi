@@ -483,7 +483,8 @@ var AgePyramid = Component.extend({
     var sideKeysNF = Object.keys(this.model.marker.side.getItems());
     if(!sideKeysNF.length) sideKeysNF.push("undefined");
 
-    limits = axisX.getLimitsByDimensions([this.STACKDIM, this.SIDEDIM, this.AGEDIM, this.TIMEDIM]);
+    var keys = this.sideSkip ? [this.STACKDIM] : (this.stackSkip ? [this.SIDEDIM] : [this.STACKDIM, this.SIDEDIM]);
+    limits = axisX.getLimitsByDimensions(keys.concat([this.AGEDIM, this.TIMEDIM]));
     var timeKeys = axisX.getUnique();
     var totals = {};
     var inpercentMaxLimits = {};
@@ -493,26 +494,70 @@ var AgePyramid = Component.extend({
       inpercentMaxLimits[s] = [];
     });
 
-    utils.forEach(timeKeys, function(time) {
-      totals[time] = {};
-      utils.forEach(sideKeysNF, function(side) {
+    if(_this.sideSkip) {
+      utils.forEach(timeKeys, function(time) {
+        totals[time] = {};
         var ageSum = 0;
         var sideMaxLimits = [];
         utils.forEach(_this.ageKeys, function(age) {
           var stackSum = 0;
           utils.forEach(_this.stackKeys, function(stack) {
-            if (limits[stack][side] && limits[stack][side][age] && limits[stack][side][age][time])
-              stackSum += limits[stack][side][age][time].max;
+            if(limits[stack] && limits[stack][age] && limits[stack][age][time]) {
+              stackSum += limits[stack][age][time].max;
               ageSum += stackSum;
+            }
           });
           sideMaxLimits.push(stackSum);
         });
-        totals[time][side] = ageSum;
+        totals[time][sideKeysNF[0]] = ageSum;
         var maxSideLimit = Math.max.apply(Math, sideMaxLimits); 
-        inpercentMaxLimits[side].push(maxSideLimit / ageSum);
-        maxLimits[side].push(maxSideLimit); 
+        inpercentMaxLimits[sideKeysNF[0]].push(maxSideLimit / ageSum);
+        maxLimits[sideKeysNF[0]].push(maxSideLimit); 
       });
-    });
+    } else if(_this.stackSkip) {
+      utils.forEach(timeKeys, function(time) {
+        totals[time] = {};
+        utils.forEach(sideKeysNF, function(side) {
+          var ageSum = 0;
+          var sideMaxLimits = [];
+          utils.forEach(_this.ageKeys, function(age) {
+            var stackSum = 0;
+            if (limits[side] && limits[side][age] && limits[side][age][time]) {
+              stackSum += limits[side][age][time].max;
+              ageSum += stackSum;
+            }
+            sideMaxLimits.push(stackSum);
+          });
+          totals[time][side] = ageSum;
+          var maxSideLimit = Math.max.apply(Math, sideMaxLimits); 
+          inpercentMaxLimits[side].push(maxSideLimit / ageSum);
+          maxLimits[side].push(maxSideLimit); 
+        });
+      });
+    } else {
+      utils.forEach(timeKeys, function(time) {
+        totals[time] = {};
+        utils.forEach(sideKeysNF, function(side) {
+          var ageSum = 0;
+          var sideMaxLimits = [];
+          utils.forEach(_this.ageKeys, function(age) {
+            var stackSum = 0;
+            utils.forEach(_this.stackKeys, function(stack) {
+              if (limits[stack][side] && limits[stack][side][age] && limits[stack][side][age][time]) {
+                stackSum += limits[stack][side][age][time].max;
+                ageSum += stackSum;
+              }
+            });
+            sideMaxLimits.push(stackSum);
+          });
+          totals[time][side] = ageSum;
+          var maxSideLimit = Math.max.apply(Math, sideMaxLimits); 
+          inpercentMaxLimits[side].push(maxSideLimit / ageSum);
+          maxLimits[side].push(maxSideLimit); 
+        });
+      });
+    }
+
     this.maxLimits = {};
     this.inpercentMaxLimits = {};
     sideKeysNF.map((s) => {

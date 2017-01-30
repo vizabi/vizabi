@@ -626,7 +626,7 @@ var DataModel = Model.extend({
       var entitiesByKey = {};
       if(KEY.length > 1) {
         for (k = 1; k < KEY.length; k++) {
-          var nested = _this.getData(dataId, 'nested', [KEY[k]]);
+          var nested = _this.getData(dataId, 'nested', [KEY[k]].concat([TIME]));
           entitiesByKey[KEY[k]] = Object.keys(nested);
         }
       }
