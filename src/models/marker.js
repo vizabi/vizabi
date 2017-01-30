@@ -7,7 +7,22 @@ import Model from 'base/model';
 
 var Marker = Model.extend({
 
+  getClassDefaults: function() { 
+    var defaults = {
+      select: [],
+      highlight: [],
+      opacityHighlightDim: 0.1,
+      opacitySelectDim: 0.3,
+      opacityRegular: 1,
+      allowSelectMultiple: true
+    };
+    return utils.deepExtend(this._super(), defaults)
+  },
+
   init: function(name, value, parent, binds, persistent) {
+    this._visible = [];
+
+
     this._super(name, value, parent, binds, persistent);
     this.on('ready', this.checkTimeLimits.bind(this));
   },
@@ -18,11 +33,199 @@ var Marker = Model.extend({
     this.set(obj, null, false);
   },
 
+
+  /**
+   * Validates the model
+   */
+  validate: function() {
+    var _this = this;
+    var dimension = this.getDimension();
+    var visible_array = this._visible.map(function(d) {
+      return d[dimension]
+    });
+
+    if(visible_array.length) {
+      this.select = this.select.filter(function(f) {
+        return visible_array.indexOf(f[dimension]) !== -1;
+      });
+      this.setHighlight(this.highlight.filter(function(f) {
+        return visible_array.indexOf(f[dimension]) !== -1;
+      }));
+    }
+  },
+  
+  /**
+   * Sets the visible entities
+   * @param {Array} arr
+   */
+  setVisible: function(arr) {
+    this._visible = arr;
+  },
+
+  /**
+   * Gets the visible entities
+   * @returns {Array} visible
+   */
+  getVisible: function(arr) {
+    return this._visible;
+  },
+
+  /**
+   * Gets the selected items
+   * @returns {Array} Array of unique selected values
+   */
+  getSelected: function(dim) {
+    if (dim)
+      return this.select.map(
+        d => d[dim]
+      );
+    else
+      return this.select;
+  },
+
+  selectMarker: function(d) {
+    var _this = this;
+    var value = this._createValue(d);
+    if(this.isSelected(d)) {
+      this.select = this.select.filter(function(d) {
+        return JSON.stringify(_this._createValue(d)) !== JSON.stringify(value);
+      });
+    } else {
+      this.select = (this.allowSelectMultiple) ? this.select.concat(value) : [value];
+    }
+  },
+
+  /**
+   * Select all entities
+   */
+  selectAll: function(timeDim, timeFormatter) {
+    if(!this.allowSelectMultiple) return;
+
+    var added,
+      dimension = this.getDimension();
+
+    var select = this._visible.map(function(d) {
+      added = {};
+      added[dimension] = d[dimension];
+      return added;
+    });
+
+    this.select = select;
+  },
+
+  isSelected: function(d) {
+    var _this = this;
+    var value = this._createValue(d);
+
+    return this.select
+      .map(function(d) {
+        return JSON.stringify(_this._createValue(d)) === JSON.stringify(value);
+      })
+      .indexOf(true) !== -1;
+  },
+
+  _createValue: function(d) {
+    var dims = this._getAllDimensions({ exceptType: 'time' });
+    return dims.reduce(function(value, key) {
+      value[key] = d[key];
+      return value;
+    }, {});
+  },
+
+
+  /**
+   * Gets the highlighted items
+   * @returns {Array} Array of unique highlighted values
+   */
+  getHighlighted: function(dim) {
+    if (dim)
+      return this.highlight.map(
+        d => d[dim]
+      );
+    else
+      return this.highlight;
+  },
+
+  setHighlight: function(arg) {
+    if (!utils.isArray(arg)) {
+      this.setHighlight([].concat(arg));
+      return;
+    }
+    this.getModelObject('highlight').set(arg, false, false); // highlights are always non persistent changes
+  },
+  
+  setSelect: function(arg) {
+    if (!utils.isArray(arg)) {
+      this.setSelect([].concat(arg));
+      return;
+    }
+    this.getModelObject('select').set(arg);
+  },
+
+  //TODO: join the following 3 methods with the previous 3
+
+  /**
+   * Highlights an entity from the set
+   */
+  highlightMarker: function(d) {
+    var value = this._createValue(d);
+    if(!this.isHighlighted(d)) {
+      this.setHighlight(this.highlight.concat(value));
+    }
+  },
+
+  /**
+   * Unhighlights an entity from the set
+   */
+  unhighlightEntity: function(d) {
+    var value = this._createValue(d);
+    if(this.isHighlighted(d)) {
+      this.setHighlight(this.highlight.filter(function(d) {
+        return d[dimension] !== value;
+      }));
+    }
+  },
+
+  /**
+   * Checks whether an entity is highlighted from the set
+   * @returns {Boolean} whether the item is highlighted or not
+   */
+  isHighlighted: function(d) {
+    var _this = this;
+    var value = this._createValue(d);
+    return this.highlight
+      .map(function(d) {
+        return JSON.stringify(_this._createValue(d)) === JSON.stringify(value);
+      })
+      .indexOf(true) !== -1;
+  },
+
+  /**
+   * Clears selection of items
+   */
+  clearHighlighted: function() {
+    this.setHighlight([]);
+  },
+  clearSelected: function() {
+    this.select = [];
+  },
+
+  setLabelOffset: function(d, xy) {
+    if(xy[0]===0 && xy[1]===1) return;
+
+    this.select
+      .find(selectedMarker => utils.comparePlainObjects(selectedMarker, d))
+      .labelOffset = [Math.round(xy[0]*1000)/1000, Math.round(xy[1]*1000)/1000];
+
+    //force the model to trigger events even if value is the same
+    this.set("select", this.select, true);
+  },
+
   checkTimeLimits: function() {
     
     var time = this._parent.time;
     
-    if(!time || time.splash) return;
+    if(!time) return;
     
     var tLimits = this.getTimeLimits();
 
@@ -32,8 +235,8 @@ var Marker = Model.extend({
 
     // change start and end (but keep startOrigin and endOrigin for furhter requests)
     var newTime = {}
-    if(time.start - tLimits.min != 0) newTime['start'] = d3.max([tLimits.min, time.parseToUnit(time.startOrigin)]);
-    if(time.end - tLimits.max != 0) newTime['end'] = d3.min([tLimits.max, time.parseToUnit(time.endOrigin)]);
+    if(time.start - tLimits.min != 0 || !time.start && !this.startOrigin) newTime['start'] = d3.max([tLimits.min, time.parse(time.startOrigin)]);
+    if(time.end - tLimits.max != 0 || !time.end && !this.endOrigin) newTime['end'] = d3.min([tLimits.max, time.parse(time.endOrigin)]);
     
     time.set(newTime, false, false);
     
@@ -62,6 +265,8 @@ var Marker = Model.extend({
       var min, max, minArray = [], maxArray = [], items = {};
       if (!this.cachedTimeLimits) this.cachedTimeLimits = {};
       utils.forEach(this.getSubhooks(), function(hook) {
+        
+        //only indicators depend on time and therefore influence the limits
         if(hook.use !== "indicator" || !hook._important) return;
 
         var cachedLimits = _this.cachedTimeLimits[hook._dataId + hook.which];
@@ -115,6 +320,8 @@ var Marker = Model.extend({
             // Get keys in data of this hook
             var nested = hook.getNestedItems([KEY, TIME]);
             var noDataPoints = hook.getHaveNoDataPointsPerKey();
+            
+            if(nested["undefined"]) delete nested["undefined"];
 
             var keys = Object.keys(nested);
             var keysNoDP = Object.keys(noDataPoints || []);

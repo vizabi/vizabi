@@ -1,9 +1,7 @@
 var VIZABI_MODEL = {
   "state": {
     "time": {
-      "startOrigin": "1990",
-      "endOrigin": "2012",
-      "value": "2000"
+      "dim": "time"
     },
     "entities": {
       "dim": "geo",
@@ -21,12 +19,25 @@ var VIZABI_MODEL = {
       },
       "axis": {
         "use": "indicator",
-        "which": "sg_population"
+        "which": "population_total"
       },
       "color": {
         "use": "property",
         "which": "world_4region"
       }
     }
+  },
+  "ui": {
+    "datawarning": {
+      "doubtDomain": [1800, 1950, 2015],
+      "doubtRange": [1.0, 0.3, 0.2]
+    },
+    "splash": true
+  },
+  "data": {
+    "reader": "waffle",
+    //"reader": "ddf",
+    "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/"
+    //"path": "data/systema_globalis"
   }
 };

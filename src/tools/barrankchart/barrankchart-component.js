@@ -46,11 +46,12 @@ const BarRankChart = Component.extend({
           this.onTimeChange();
         }
       },
-      'change:entities.select': () => {
+      'change:marker.select': () => {
         if (this._readyOnce) {
           this._selectBars();
           this._updateOpacity();
           this._updateDoubtOpacity();
+          this._scroll();
         }
       },
       'change:marker.axis_x.scaleType': () => {
@@ -62,13 +63,13 @@ const BarRankChart = Component.extend({
       'change:marker.color.palette': () => {
         this._drawColors();
       },
-      'change:entities.highlight': () => {
+      'change:marker.highlight': () => {
         this._updateOpacity();
       },
-      'change:entities.opacitySelectDim': () => {
+      'change:marker.opacitySelectDim': () => {
         this._updateOpacity();
       },
-      'change:entities.opacityRegular': () => {
+      'change:marker.opacityRegular': () => {
         this._updateOpacity();
       },
     };
@@ -222,7 +223,7 @@ const BarRankChart = Component.extend({
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 16,
         infoElMargin: 5,
-        barHeight: 20,
+        barHeight: 18,
         barMargin: 3,
         barRectMargin: 5,
         barValueMargin: 5,
@@ -233,7 +234,7 @@ const BarRankChart = Component.extend({
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 16,
         infoElMargin: 5,
-        barHeight: 20,
+        barHeight: 21,
         barMargin: 3,
         barRectMargin: 5,
         barValueMargin: 5,
@@ -244,8 +245,8 @@ const BarRankChart = Component.extend({
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 16,
         infoElMargin: 5,
-        barHeight: 20,
-        barMargin: 3,
+        barHeight: 28,
+        barMargin: 4,
         barRectMargin: 5,
         barValueMargin: 5,
         scrollMargin: 25,
@@ -265,8 +266,8 @@ const BarRankChart = Component.extend({
         margin: { top: 60, right: 10, left: 10, bottom: 40 },
         headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
         infoElHeight: 16,
-        barHeight: 25,
         infoElMargin: 10,
+        barHeight: 30,
         barMargin: 6
       }
     };
@@ -333,12 +334,13 @@ const BarRankChart = Component.extend({
       headerTotal.select('text')
         .transition('text')
         .delay(duration)
-        .text(this.model.time.timeFormat(this.time));
+        .text(this.model.time.formatDate(this.time));
     } else {
       headerTotal.select('text')
         .interrupt()
-        .text(this.model.time.timeFormat(this.time));
+        .text(this.model.time.formatDate(this.time));
     }
+    headerTotal.style('opacity', Number(this.getLayoutProfile() !== 'large'));
 
     const headerTotalBBox = headerTotal.node().getBBox();
 
@@ -394,10 +396,8 @@ const BarRankChart = Component.extend({
     }
 
 
-    // move along with a selection if playing
-    if (this.model.time.playing) {
-      this._scroll(duration);
-    }
+    this._scroll(duration);
+
 
     const { barRectMargin, barValueMargin, scrollMargin, margin } = this.activeProfile;
     const { axis_x } = this.model.marker;
@@ -534,18 +534,12 @@ const BarRankChart = Component.extend({
 
         self
           .attr('class', 'vzb-br-bar')
-          .classed('vzb-selected', _this.model.entities.isSelected(d))
+          .classed('vzb-selected', _this.model.marker.isSelected(d))
           .attr('id', `vzb-br-bar-${d.entity}-${_this._id}`)
-          .on('mousemove', d => _this.model.entities.highlightEntity(d))
-          .on('mouseout', () => _this.model.entities.clearHighlighted())
+          .on('mousemove', d => _this.model.marker.highlightMarker(d))
+          .on('mouseout', () => _this.model.marker.clearHighlighted())
           .on('click', d => {
-            _this.model.marker.space
-              .forEach(entity => {
-                if (_this.model[entity].getDimension() !== 'time') {
-                  // this will trigger a change in the model, which the tool listens to
-                  _this.model[entity].selectEntity(d);
-                }
-              });
+            _this.model.marker.selectMarker(d)
           });
 
         const barRect = self.append('rect')
@@ -681,7 +675,7 @@ const BarRankChart = Component.extend({
 
   _selectBars() {
     const entityDim = this.model.entities.dim;
-    const selected = this.model.entities.select;
+    const selected = this.model.marker.select;
 
     // unselect all bars
     this.barContainer.classed('vzb-dimmed-selected', false);
@@ -700,7 +694,7 @@ const BarRankChart = Component.extend({
   },
 
   _updateOpacity() {
-    const { model: { entities } } =  this;
+    const { model: { marker } } =  this;
 
     const OPACITY_HIGHLIGHT_DEFAULT = 1;
     const {
@@ -710,7 +704,7 @@ const BarRankChart = Component.extend({
       opacityHighlightDim: OPACITY_HIGHLIGHT_DIM,
       opacitySelectDim: OPACITY_SELECT_DIM,
       opacityRegular: OPACITY_REGULAR,
-    } = entities;
+    } = marker;
 
     const [
       someHighlighted,
@@ -722,12 +716,12 @@ const BarRankChart = Component.extend({
 
     this.barContainer.selectAll('.vzb-br-bar')
       .style('opacity', d => {
-        if (someHighlighted && entities.isHighlighted(d)) {
+        if (someHighlighted && marker.isHighlighted(d)) {
           return OPACITY_HIGHLIGHT_DEFAULT;
         }
 
         if (someSelected) {
-          return entities.isSelected(d) ? OPACITY_REGULAR : OPACITY_SELECT_DIM;
+          return marker.isSelected(d) ? OPACITY_REGULAR : OPACITY_SELECT_DIM;
         }
 
         if (someHighlighted) {
@@ -741,7 +735,7 @@ const BarRankChart = Component.extend({
   _updateDoubtOpacity(opacity) {
     this.dataWarningEl.style('opacity',
       opacity || (
-        !this.model.entities.select.length ?
+        !this.model.marker.select.length ?
           this.wScale(+this.model.time.value.getUTCFullYear().toString()) :
           1
       )

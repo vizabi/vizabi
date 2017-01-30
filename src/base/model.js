@@ -59,7 +59,7 @@ var ModelLeaf = EventSource.extend({
   // duplicate from Model. Should be in a shared parent class.
   setTreeFreezer: function(freezerStatus) {
     if (freezerStatus) {
-      this.freeze();
+      this.freeze(['hook_change']);
     } else {
       this.unfreeze();
     }
@@ -161,7 +161,7 @@ var Model = EventSource.extend({
       persistent = force;
       force = val;
     }
-    
+
     //do nothing if setting an empty object
     if (Object.keys(attrs).length === 0) return;
 
@@ -229,7 +229,7 @@ var Model = EventSource.extend({
 
     // then freeze/unfreeze
     if (freezerStatus) {
-      this.freeze();
+      this.freeze(['hook_change']);
     } else {
       this.unfreeze();
     }
@@ -421,14 +421,13 @@ var Model = EventSource.extend({
     var promises = [];
     promises.push(this.loadData(opts));
 
-    utils.forEach(this.getSubmodels(), 
+    utils.forEach(this.getSubmodels(),
       subModel => promises.push(subModel.startLoading(opts))
     );
 
-    return Promise.all(promises).then(
-      this.onSuccessfullLoad.bind(this),
-      this.triggerLoadError.bind(this)
-    );
+    return Promise.all(promises)
+      .then(this.onSuccessfullLoad.bind(this))
+      .catch(this.triggerLoadError.bind(this));
   },
 
   loadData: function(opts) {
@@ -462,8 +461,9 @@ var Model = EventSource.extend({
     );
   },
 
-  triggerLoadError: function() {
-    this.trigger('load_error');
+  triggerLoadError(error) {
+    utils.error(error);
+    this.trigger('load_error', error);
   },
 
   /**
@@ -696,6 +696,8 @@ function initSubmodel(attr, val, ctx, persistent) {
       'change': onChange,
       //loading has started in this submodel (multiple times)
       'hook_change': onHookChange,
+      // error triggered in loading
+      'load_error': (...args) => ctx.trigger(...args),
         //loading has ended in this submodel (multiple times)
       'ready': onReady
     };

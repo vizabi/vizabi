@@ -219,6 +219,11 @@
         @extend %vzb-chart-info;
       }
 
+      .vzb-bc-line-equal-xy {
+        stroke-dasharray: 4 4;
+        stroke: $vzb-color-black;
+      }
+      
       .vzb-bc-projection-x,
       .vzb-bc-projection-y {
         stroke-dasharray: 4 4;
@@ -235,6 +240,7 @@
         font-size: $vzb-bc-year-size;
         fill: $vzb-color-grey;
         text-anchor: middle;
+        dominant-baseline: central;
         -webkit-touch-callout: none;
         user-select: none;
       }

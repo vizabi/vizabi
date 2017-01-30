@@ -5,7 +5,7 @@ import Class from 'base/class'
 
 export default Class.extend({
 
-  init: function(context, conditions) {
+  init: function (context, conditions) {
     this.context = context;
     this.width = 0;
     this.height = 0;
@@ -13,20 +13,26 @@ export default Class.extend({
     this.leftOffset = 0;
     this.bottomOffset = 0;
     this.rightOffset = 0;
-    this.fontSize = 0;
-    this.fontWidth = 0;
-    this.fontHeight = 0;
+    this.textWidth = 0;
+    this.textHeight = 0;
+    this.widthRatio = 0.9;
+    this.heightRatio = 0.9;
     this.xAlign = 'center';
     this.yAlign = 'center';
-    this.symbols = [];
+    this.element = this.context.append('text').style("font-size", '20px');
+
+    this.element.text('0');
+    this.letterBBox = this.element.node().getBBox();
+    this.element.text('');
+
     if (conditions) {
       this.setConditions(conditions);
     }
   },
 
-  setConditions: function(conditions) {
+  setConditions: function (conditions) {
     if (!isNaN(parseFloat(conditions.rightOffset)) && isFinite(conditions.rightOffset)) {
-      this.rifgtOffset = conditions.rightOffset;
+      this.rightOffset = conditions.rightOffset;
     }
     if (!isNaN(parseFloat(conditions.leftOffset)) && isFinite(conditions.leftOffset)) {
       this.leftOffset = conditions.leftOffset;
@@ -43,85 +49,101 @@ export default Class.extend({
     if (conditions.yAlign) {
       this.yAlign = conditions.yAlign;
     }
+    if (!isNaN(parseFloat(conditions.widthRatio)) && conditions.widthRatio > 0 && conditions.widthRatio <= 1) {
+      this.widthRatio = conditions.widthRatio;
+    }
+    if (!isNaN(parseFloat(conditions.heightRatio)) && conditions.heightRatio > 0 && conditions.heightRatio <= 1) {
+      this.heightRatio = conditions.heightRatio;
+    }
     return this;
   },
 
-  resize: function(width, height, fontSize, topOffset, leftOffset) {
-    this.width = width;
-    this.height = height;
-    this.fontSize = fontSize;
+  resize: function (width, height, topOffset, leftOffset) {
+    [
+      this.width,
+      this.height
+    ] = [
+      width,
+      height
+    ].map(v => Number(String(v).replace('px', '')));
+
     if (topOffset) {
       this.topOffset = topOffset;
     }
     if (leftOffset) {
       this.leftOffset = leftOffset;
     }
-    if (this.fontSize > this.height) {
-      this.fontSize = this.height;
-    }
-    var sample = this.context.append("text").text("0").style("font-size", this.fontSize + "px");
-    this.fontWidth = sample[0][0].getBBox().width;
-    this.fontHeight = this.fontSize*0.72;
 
-    d3.select(sample[0][0]).remove();
-    this.__resizeText();
+    this._resizeText();
   },
 
-  setText: function(text, delay) {
-    var _this = this;
-    var lengthChanged = text.split('').length != this.symbols.length;
-    this.symbols = text.split('');
+  setText: function (text, delay) {
 
-    var view = this.context.selectAll("text").data(this.symbols);
-    
-    view.exit().remove();
-    view.enter().append("text");
-    view.transition('text')
-      .delay(delay)
-      .text((d) => d);
-      
-    if (lengthChanged) {
-      return this.__resizeText();
-    } else {
-      return this;
-    }
-
-  },
-
-  __resizeText: function() {
-    var _this = this;
-    this.context.attr("transform", "translate(" + this.__getLeftOffset() + "," + this.__getTopOffset() + ")");
-    this.context.selectAll("text").each(function(d, i) {
-        d3.select(this)
-          .attr("x", _this.fontWidth * i)
-          .style("font-size", _this.fontSize + 'px')
-          .style("text-anchor", "middle");
+    setTimeout(() => {
+      this.element.selectAll('tspan').remove();
+      text.split('').forEach((char, index) => {
+        this.element.append('tspan').text(char)
+          .attr('x', (index - text.length / 2) * this.letterBBox.width + this.letterBBox.width / 2);
       });
+
+      this._resizeText();
+    }, delay);
+
+    return this;
+
+  },
+
+  _resizeText: function () {
+
+    var bbox = Object.assign(this.element.node().getBBox(), {
+      width: this.letterBBox.width * this.element.text().length
+    });
+
+    if (!bbox.width || !bbox.height || !this.width || !this.height) return this;
+
+    // method from http://stackoverflow.com/a/22580176
+    var widthTransform = this.width * this.widthRatio / bbox.width;
+    var heightTransform = this.height * this.heightRatio / bbox.height;
+    this.scalar = widthTransform < heightTransform ? widthTransform : heightTransform;
+    this.element.attr("transform", "scale("+this.scalar+")");
+
+    this.textHeight = bbox.height * this.scalar;
+    this.textWidth = bbox.width * this.scalar;
+
+    switch(this.yAlign) {
+      case 'bottom': this.context.style('dominant-baseline', 'central'); break;
+      case 'center': this.context.style('dominant-baseline', 'central'); break;
+      case 'top': this.context.style('dominant-baseline', 'initial'); break;
+    }
+
+    this.context.attr("transform", "translate(" + this._getLeftOffset() + "," + this._getTopOffset() + ")");
+
     return this;
   },
-  __getLeftOffset: function() {
+
+  _getLeftOffset: function () {
     switch (this.xAlign) {
       case 'right':
-        return this.width - this.fontWidth * this.symbols.length + this.fontWidth/2;
+        return this.width - this.textWidth / 2 - this.rightOffset;
         break;
       case 'left':
-        return this.fontWidth/2;
+        return this.textWidth / 2 + this.leftOffset;
         break;
       default :
-        return this.fontWidth/2 + (this.width - this.fontWidth * this.symbols.length)/2;
+        return this.width / 2;
     }
   },
-  __getTopOffset: function() {
-    //console.log(this.topOffset);
+
+  _getTopOffset: function () {
     switch (this.yAlign) {
       case 'top':
-        return this.fontHeight + this.topOffset;
+        return this.textHeight / 2 + this.topOffset;
         break;
       case 'bottom':
-        return this.height - this.bottomOffset;
+        return this.height - this.textHeight / 2 - this.bottomOffset;
         break;
       default :
-        return this.fontHeight + (this.height - this.fontHeight)/2 + this.topOffset;
+        return this.height / 2;
     }
   }
 

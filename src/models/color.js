@@ -5,13 +5,6 @@ import Hook from 'models/hook';
  * VIZABI Color Model (hook)
  */
 
-
-var allowTypes = {
-    "indicator": ["linear", "log", "genericLog", "time", "pow"],
-    "property": ["ordinal"],
-    "constant": ["ordinal"]
-};
-
 var defaultPalettes = {
   "_continuous": {
     "_default": "#ffb600",
@@ -131,15 +124,6 @@ var ColorModel = Hook.extend({
     this._setSyncModels();
   },
 
-  /**
-   * Validates a color hook
-   */
-  validate: function() {    
-    //only some scaleTypes are allowed depending on use. reset to default if inappropriate
-    if(allowTypes[this.use].indexOf(this.scaleType) === -1) this.scaleType = allowTypes[this.use][0];
-
-  },
-
   _setSyncModels: function() {
     var _this = this;
     this.syncModels.forEach(function(modelName){
@@ -151,7 +135,7 @@ var ColorModel = Hook.extend({
       //save the references here locally
       _this._syncModelReferences[modelName] = {model: model, marker: marker, entities: entities};
 
-      if(_this.use === "property") _this._setSyncModel(model, marker, entities);
+      if(_this.isDiscrete()) _this._setSyncModel(model, marker, entities);
     });
   },
 
@@ -164,7 +148,7 @@ var ColorModel = Hook.extend({
       marker.setDataSourceForAllSubhooks(this.data);      
       entities.set(newFilter, false, false);
     }else{
-      if(model.use == "property") model.set({which: this.which, data: this.data}, false, false);
+      if(model.isDiscrete() && model.use !== "constant") model.set({which: this.which, data: this.data}, false, false);
     }
   },
 
@@ -195,7 +179,7 @@ var ColorModel = Hook.extend({
   mapValue: function(value) {
     //if the property value does not exist, supply the _default
     // otherwise the missing value would be added to the domain
-    if(this.scale != null && this.use == "property" && this._hasDefaultColor && this.scale.domain().indexOf(value) == -1) value = "_default";
+    if(this.scale != null && this.isDiscrete() && this._hasDefaultColor && this.scale.domain().indexOf(value) == -1) value = "_default";
     return this._super(value);
   },
 
@@ -204,27 +188,26 @@ var ColorModel = Hook.extend({
       var conceptpropsColor = this.getConceptprops().color;
       var palette;
 
+      this.discreteDefaultPalette = false;
+
       if(conceptpropsColor && conceptpropsColor.palette) {
         //specific color palette from hook concept properties
         palette = utils.clone(conceptpropsColor.palette);
       } else if(defaultPalettes[this.which]) {
         //color palette for this.which exists in palette defaults
         palette = utils.clone(defaultPalettes[this.which]);
-      } else if(this.use === "constant" && /^#([0-9a-f]{3}|[0-9a-f]{6})$/.test(this.which)) {
+      } else if(this.use === "constant") {
         //an explicit hex color constant #abc or #adcdef is provided
-        palette = {"_default": this.which};
-      } else if(this.use === "indicator") {
-        palette = utils.clone(defaultPalettes["_continuous"]);
-      } else if(this.use === "property") {
-        palette = utils.clone(defaultPalettes["_discrete"]);
+        if(/^#([0-9a-f]{3}|[0-9a-f]{6})$/.test(this.which)){
+          palette = {"_default": this.which};
+        }else{
+          palette = utils.clone(defaultPalettes["_default"]);
+        }
       } else {
-        palette = utils.clone(defaultPalettes["_default"]);
-      }
+        palette = utils.clone(defaultPalettes[this.isDiscrete()? "_discrete" : "_continuous"]);
+        this.discreteDefaultPalette = true;
+     }
 
-      if(!palette["_default"]) {
-        var type = this.use === "property" ? "_discrete" : (this.use === "indicator" ? "_continuous" : null);
-        if(type) palette["_default"] = defaultPalettes[type]["_default"];
-      }
       return palette;
   },
 
@@ -252,7 +235,7 @@ var ColorModel = Hook.extend({
       this.set("paletteLabels", paletteLabels, false, false);
     }
     var palette = this.palette.getPlainObject();
-    if(this.use == "indicator" && !includeDefault) {
+    if(this.use !== "constant" && !includeDefault) {
       delete palette["_default"];
     }
     return palette;
@@ -275,7 +258,7 @@ var ColorModel = Hook.extend({
 
       var timeMdl = this._space.time;
       var limits = timeMdl.splash ?
-          {min: timeMdl.parseToUnit(timeMdl.startOrigin), max: timeMdl.parseToUnit(timeMdl.endOrigin)}
+          {min: timeMdl.parse(timeMdl.startOrigin), max: timeMdl.parse(timeMdl.endOrigin)}
           :
           {min: timeMdl.start, max: timeMdl.end};
 
@@ -290,7 +273,7 @@ var ColorModel = Hook.extend({
         .range(range)
         .interpolate(d3.interpolateRgb);
 
-    }else if(this.use == "indicator"){
+    }else if(!this.isDiscrete()){
 
       var limits = this.getLimits(this.which);
       //default domain is based on limits
@@ -322,6 +305,7 @@ var ColorModel = Hook.extend({
       
       scaleType = "ordinal";
 
+      if(this.discreteDefaultPalette) domain = domain.concat(this.getUnique(this.which));
       this.scale = d3.scale[scaleType]()
         .domain(domain)
         .range(range);

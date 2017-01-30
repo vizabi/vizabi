@@ -59,9 +59,9 @@ var BubbleMapComponent = Component.extend({
         if (!_this._readyOnce) return;
         _this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
       },
-      "change:entities.highlight": function (evt) {
+      "change:marker.highlight": function (evt) {
         if (!_this._readyOnce) return;
-        _this.highlightEntities();
+        _this.highlightMarkers();
         _this.updateOpacity();
       },
       "change:marker": function(evt, path) {
@@ -82,18 +82,18 @@ var BubbleMapComponent = Component.extend({
           if (!_this._readyOnce) return;
           _this.redrawDataPoints(null, false);
       },
-      "change:entities.select": function (evt) {
+      "change:marker.select": function (evt) {
           if (!_this._readyOnce) return;
-          _this.selectEntities();
+          _this.selectMarkers();
           _this.redrawDataPoints(null, false);
           _this.updateOpacity();
           _this.updateDoubtOpacity();
 
       },
-      "change:entities.opacitySelectDim": function (evt) {
+      "change:marker.opacitySelectDim": function (evt) {
           _this.updateOpacity();
       },
-      "change:entities.opacityRegular": function (evt) {
+      "change:marker.opacityRegular": function (evt) {
           _this.updateOpacity();
       },
     };
@@ -204,7 +204,7 @@ var BubbleMapComponent = Component.extend({
     // year background
     this.yearEl = this.graph.select('.vzb-bmc-year');
     this.year = new DynamicBackground(this.yearEl);
-    this.year.setConditions({xAlign: 'left', yAlign: 'bottom', bottomOffset: 5});
+    this.year.setConditions({xAlign: 'left', yAlign: 'bottom'});
 
     var _this = this;
     this.on("resize", function () {
@@ -254,8 +254,8 @@ var BubbleMapComponent = Component.extend({
       _this.updateTime();
       _this._labels.ready();
       _this.redrawDataPoints();
-      _this.highlightEntities();
-      _this.selectEntities();
+      _this.highlightMarkers();
+      _this.selectMarkers();
 //    this._selectlist.redraw();
       _this.updateDoubtOpacity();
       _this.updateOpacity();
@@ -372,8 +372,8 @@ var BubbleMapComponent = Component.extend({
       var _this = this;
 
       var mobile; // if is mobile device and only one bubble is selected, update the ytitle for the bubble
-      if (_this.isMobile && _this.model.entities.select && _this.model.entities.select.length === 1) {
-        mobile = _this.model.entities.select[0];
+      if (_this.isMobile && _this.model.marker.select && _this.model.marker.select.length === 1) {
+        mobile = _this.model.marker.select[0];
       }
 
       if(_this.hovered || mobile) {
@@ -391,7 +391,7 @@ var BubbleMapComponent = Component.extend({
         var valueC = _this.values.color[hovered[_this.KEY]];
 
         //resolve value for color from the color legend model
-        if(_this.model.marker.color.use == "property" && valueC) {
+        if(_this.model.marker.color.isDiscrete() && valueC) {
           valueC = this.model.marker.color.getColorlegendMarker().label.getItems()[valueC] || "";
         }
 
@@ -425,26 +425,26 @@ var BubbleMapComponent = Component.extend({
       var _this = this;
       /*
       this.entityBubbles.classed("vzb-selected", function (d) {
-          return _this.model.entities.isSelected(d);
+          return _this.model.marker.isSelected(d);
       });
       */
 
       var OPACITY_HIGHLT = 1.0;
       var OPACITY_HIGHLT_DIM = .3;
-      var OPACITY_SELECT = this.model.entities.opacityRegular;
-      var OPACITY_REGULAR = this.model.entities.opacityRegular;
-      var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
+      var OPACITY_SELECT = this.model.marker.opacityRegular;
+      var OPACITY_REGULAR = this.model.marker.opacityRegular;
+      var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
 
       this.entityBubbles.style("opacity", function (d) {
 
           if (_this.someHighlighted) {
               //highlight or non-highlight
-              if (_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
+              if (_this.model.marker.isHighlighted(d)) return OPACITY_HIGHLT;
           }
 
           if (_this.someSelected) {
               //selected or non-selected
-              return _this.model.entities.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
+              return _this.model.marker.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
           }
 
           if (_this.someHighlighted) return OPACITY_HIGHLT_DIM;
@@ -454,20 +454,20 @@ var BubbleMapComponent = Component.extend({
       });
 
       this.entityBubbles.classed("vzb-selected", function (d) {
-          return _this.model.entities.isSelected(d)
+          return _this.model.marker.isSelected(d)
       });
 
-      var nonSelectedOpacityZero = _this.model.entities.opacitySelectDim < .01;
+      var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
 
       // when pointer events need update...
       if (nonSelectedOpacityZero !== this.nonSelectedOpacityZero) {
           this.entityBubbles.style("pointer-events", function (d) {
-              return (!_this.someSelected || !nonSelectedOpacityZero || _this.model.entities.isSelected(d)) ?
+              return (!_this.someSelected || !nonSelectedOpacityZero || _this.model.marker.isSelected(d)) ?
                   "visible" : "none";
           });
       }
 
-      this.nonSelectedOpacityZero = _this.model.entities.opacitySelectDim < .01;
+      this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
   },
 
   /**
@@ -506,7 +506,7 @@ var BubbleMapComponent = Component.extend({
     // get array of GEOs, sorted by the size hook
     // that makes larger bubbles go behind the smaller ones
     var endTime = this.model.time.end;
-    this.model.entities.setVisible(getKeys.call(this));
+    this.model.marker.setVisible(getKeys.call(this));
 
     //unselecting bubbles with no data is used for the scenario when
     //some bubbles are selected and user would switch indicator.
@@ -531,7 +531,7 @@ var BubbleMapComponent = Component.extend({
 
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bmc-bubble')
-      .data(this.model.entities.getVisible(), function(d) { return d[KEY]; })
+      .data(this.model.marker.getVisible(), function(d) { return d[KEY]; })
       .order();
 
     //exit selection
@@ -551,7 +551,7 @@ var BubbleMapComponent = Component.extend({
       .on("click", function (d, i) {
           if (utils.isTouchDevice()) return;
           _this._interact()._click(d, i);
-          _this.highlightEntities();
+          _this.highlightMarkers();
       })
       .onTap(function (d, i) {
           _this._interact()._click(d, i);
@@ -569,9 +569,9 @@ var BubbleMapComponent = Component.extend({
 
       if(!frame || !frame.size) return;
 
-      this.model.entities.select.forEach(function(d){
+      this.model.marker.select.forEach(function(d){
         if(!frame.size[d[KEY]] && frame.size[d[KEY]] !== 0)
-            _this.model.entities.selectEntity(d);
+            _this.model.marker.selectMarker(d);
       })
   },
 
@@ -636,7 +636,7 @@ var BubbleMapComponent = Component.extend({
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
-    this.year.setText(this.model.time.timeFormat(this.time), this.duration);
+    this.year.setText(this.model.time.formatDate(this.time), this.duration);
 
     //possibly update the exact value in size title
     this.updateTitleNumbers();
@@ -732,8 +732,10 @@ var BubbleMapComponent = Component.extend({
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    this.year.resize(this.width, this.height,
-      Math.min(this.width/2.5, Math.max(this.height / 4, this.width / 4)) / 2.5);
+    this.year.setConditions({
+      widthRatio: 2/10
+    });
+    this.year.resize(this.width, this.height);
 
     this.mapSvg
       .attr('width', width)
@@ -839,14 +841,14 @@ var BubbleMapComponent = Component.extend({
           _mouseover: function (d, i) {
               if (_this.model.time.dragging) return;
 
-              _this.model.entities.highlightEntity(d);
+              _this.model.marker.highlightMarker(d);
 
               _this.hovered = d;
               //put the exact value in the size title
               _this.updateTitleNumbers();
               _this.fitSizeOfTitles();
 
-              if (_this.model.entities.isSelected(d)) { // if selected, not show hover tooltip
+              if (_this.model.marker.isSelected(d)) { // if selected, not show hover tooltip
                 _this._setTooltip();
               } else {
                 //position tooltip
@@ -859,23 +861,23 @@ var BubbleMapComponent = Component.extend({
               _this.hovered = null;
               _this.updateTitleNumbers();
               _this.fitSizeOfTitles();
-              _this.model.entities.clearHighlighted();
+              _this.model.marker.clearHighlighted();
           },
           _click: function (d, i) {
-              _this.model.entities.selectEntity(d);
+              _this.model.marker.selectMarker(d);
           }
       };
 
   },
 
 
-  highlightEntities: function () {
+  highlightMarkers: function () {
       var _this = this;
-      this.someHighlighted = (this.model.entities.highlight.length > 0);
+      this.someHighlighted = (this.model.marker.highlight.length > 0);
 
       if(utils.isTouchDevice()) {
         if(this.someHighlighted) {
-          _this.hovered = this.model.entities.highlight[0];
+          _this.hovered = this.model.marker.highlight[0];
         } else {
           _this.hovered = null;
         }
@@ -905,7 +907,7 @@ var BubbleMapComponent = Component.extend({
     if(duration == null) duration = _this.duration;
 
     // only for selected entities
-    if(_this.model.entities.isSelected(d)) {
+    if(_this.model.marker.isSelected(d)) {
 
       var showhide = d.hidden !== d.hidden_1;
       var valueLST = null;
@@ -919,23 +921,23 @@ var BubbleMapComponent = Component.extend({
     }
   },
 
-  selectEntities: function () {
+  selectMarkers: function () {
       var _this = this;
       var KEY = this.KEY;
-      this.someSelected = (this.model.entities.select.length > 0);
+      this.someSelected = (this.model.marker.select.length > 0);
 
 //      this._selectlist.rebuild();
       if(utils.isTouchDevice()) {
         _this._labels.showCloseCross(null, false);
         if(_this.someHighlighted) {
-          _this.model.entities.clearHighlighted();
+          _this.model.marker.clearHighlighted();
         } else {
           _this.updateTitleNumbers();
           _this.fitSizeOfTitles();
         }
       } else {
         // hide recent hover tooltip
-        if (!_this.hovered || _this.model.entities.isSelected(_this.hovered)) {
+        if (!_this.hovered || _this.model.marker.isSelected(_this.hovered)) {
           _this._setTooltip();
         }
       }

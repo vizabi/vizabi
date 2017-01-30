@@ -30,20 +30,20 @@ var ColorLegend = Component.extend({
 
     this.model_binds = {
       "change:marker.color.scaleType": function(evt, path) {
-        if(!_this._readyOnce || _this.colorModel.use !== "indicator") return;
+        if(!_this._readyOnce || _this.colorModel.isDiscrete()) return;
         _this.updateView();
       },
       "change:marker.color.palette": function(evt, path) {
         if(!_this._readyOnce || !_this.frame) return;
         _this.updateView();
       },
-      "change:entities.highlight": function(evt, values) {
-        if(_this.colorModel.use !== "property") return;
+      "change:marker.highlight": function(evt, values) {
+        if(!_this.colorModel.isDiscrete()) return;
 
         _this.model.marker.getFrame(_this.model.time.value, function(frame) {
           if(frame) {
-            var _hlEntities = _this.model.entities.getHighlighted();
-            _this.updateGroupsOpacity(_hlEntities.map((d)=>frame["color"][d]));
+            var _hlEntities = _this.model.marker.getHighlighted(_this.KEY);
+            _this.updateGroupsOpacity(_hlEntities.map((d)=>frame[_this.colorModel._name][d]));
           }else{
             _this.updateGroupsOpacity();
           }
@@ -108,7 +108,7 @@ var ColorLegend = Component.extend({
     this.colorlegendDim = this.KEY;
     this.canShowMap = false;
 
-    if(this.colorModel.use == "property" && this.colorlegendMarker) {
+    if(this.colorModel.isDiscrete() && this.colorModel.use!=="constant" && this.colorlegendMarker) {
       if(!this.colorlegendMarker._ready) return;
 
       this.colorlegendDim = this.colorModel.getColorlegendEntities().getDimension();
@@ -156,16 +156,16 @@ var ColorLegend = Component.extend({
     colorOptions.classed("vzb-hidden", hideColorOptions);
 
     //Hide rainbow element if showing minimap or if color is discrete
-    this.rainbowEl.classed("vzb-hidden", this.colorModel.use !== "indicator");
-    this.labelScaleEl.classed("vzb-hidden", this.colorModel.use !== "indicator")
-    this.rainbowLegendEl.classed("vzb-hidden", this.colorModel.use !== "indicator");
+    this.rainbowEl.classed("vzb-hidden", this.colorModel.isDiscrete());
+    this.labelScaleEl.classed("vzb-hidden", this.colorModel.isDiscrete())
+    this.rainbowLegendEl.classed("vzb-hidden", this.colorModel.isDiscrete());
     //Hide minimap if no data to draw it
-    this.minimapEl.classed("vzb-hidden", !canShowMap || this.colorModel.use == "indicator");
+    this.minimapEl.classed("vzb-hidden", !canShowMap || !this.colorModel.isDiscrete());
 
     this.unitDiv.classed("vzb-hidden", true);
     var cScale = this.colorModel.getScale();
 
-    if(this.colorModel.use == "indicator") {
+    if(!this.colorModel.isDiscrete()) {
 
       var gradientWidth = this.rainbowEl.node().getBoundingClientRect().width;
       var paletteKeys = Object.keys(palette).map(parseFloat);
@@ -359,7 +359,7 @@ var ColorLegend = Component.extend({
     return {
       mouseover: function(d, i) {
         //disable interaction if so stated in concept properties
-        if(_this.colorModel.use === "indicator") return;
+        if(!_this.colorModel.isDiscrete()) return;
         
         var view = d3.select(this);
         var target = d[colorlegendDim];
@@ -374,13 +374,13 @@ var ColorLegend = Component.extend({
             return utils.clone(d, [KEY]);
           });
 
-        _this.model.entities.setHighlight(highlight);
+        _this.model.marker.setHighlight(highlight);
       },
 
       mouseout: function(d, i) {
         //disable interaction if so stated in concept properties
-        if(_this.colorModel.use === "indicator") return;
-        _this.model.entities.clearHighlighted();
+        if(!_this.colorModel.isDiscrete()) return;
+        _this.model.marker.clearHighlighted();
       },
       clickToChangeColor: function(d, i) {
         //disable interaction if so stated in concept properties
@@ -388,7 +388,7 @@ var ColorLegend = Component.extend({
         var palette = _this.colorModel.getPalette();
         var defaultPalette = _this.colorModel.getDefaultPalette();
         var view = d3.select(this);
-        var target = _this.colorModel.use === "indicator"? d.paletteKey : d[colorlegendDim];
+        var target = !_this.colorModel.isDiscrete()? d.paletteKey : d[colorlegendDim];
         _this.colorPicker
           .colorOld(palette[target])
           .colorDef(defaultPalette[target])
@@ -400,7 +400,7 @@ var ColorLegend = Component.extend({
       },
       clickToShow: function(d, i) {
         //disable interaction if so stated in concept properties
-        if(_this.colorModel.use === "indicator") return;
+        if(!_this.colorModel.isDiscrete()) return;
 
         var view = d3.select(this);
         var target = d[colorlegendDim];
@@ -426,7 +426,7 @@ var ColorLegend = Component.extend({
       },
       clickToSelect: function(d, i) {
         //disable interaction if so stated in concept properties
-        if(_this.colorModel.use === "indicator") return;
+        if(!_this.colorModel.isDiscrete()) return;
 
         var view = d3.select(this);
         var target = d[colorlegendDim];
@@ -441,17 +441,17 @@ var ColorLegend = Component.extend({
             return utils.clone(d, [KEY]);
           });
         
-        if(select.filter(function(d){return _this.model.entities.isSelected(d) }).length == select.length) {
-          _this.model.entities.clearSelected();
+        if(select.filter(function(d){return _this.model.marker.isSelected(d) }).length == select.length) {
+          _this.model.marker.clearSelected();
         }else{
-          _this.model.entities.setSelect(select);
+          _this.model.marker.setSelect(select);
         }
       }
     }
   },
 
   resize: function() {
-    if(this.colorModel.use == "indicator") {
+    if(!this.colorModel.isDiscrete()) {
       this.updateView();
     }
     this.colorPicker.resize(d3.select('.vzb-colorpicker-svg'));
@@ -464,9 +464,9 @@ var ColorLegend = Component.extend({
   updateGroupsOpacity: function(highlight = []) {
     var _this = this;
     
-    var clEntities = this.colorModel.getColorlegendEntities()||{};
-    var OPACITY_REGULAR = clEntities.opacityRegular || 0.8;
-    var OPACITY_DIM = clEntities.opacityHighlightDim || 0.5;
+    var clMarker = this.colorModel.getColorlegendMarker()||{};
+    var OPACITY_REGULAR = clMarker.opacityRegular || 0.8;
+    var OPACITY_DIM = clMarker.opacityHighlightDim || 0.5;
     var OPACITY_HIGHLIGHT = 1;
     
     var selection = _this.canShowMap ? ".vzb-cl-minimap path" : ".vzb-cl-option .vzb-cl-color-sample";

@@ -1,0 +1,8 @@
+concept,concept_type,name,color
+name,string,Name,
+country_code,entity_domain,Country code,"{""palette"": {""935"": ""#ff5872"", ""909"": ""#ff5872"", ""903"": ""#00d5e9"", ""_default"": ""#ffb600"", ""908"": ""#ffe700"", ""905"": ""#7feb00"", ""904"": ""#7feb00""}, ""selectable"": false}"
+year,time,Reference date (as of 1 July),
+gender,entity_domain,Gender,
+population,measure,Population,
+age,entity_domain,Age,
+color,string,,

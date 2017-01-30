@@ -91,16 +91,7 @@ var TimeSlider = Component.extend({
     //binds methods to this model
     this.model_binds = {
       'change:time': function(evt, path) {
-
-        //TODO: readyOnce CANNOT be run twice
-        if(_this._splash !== _this.model.time.splash) {
-          _this._splash = _this.model.time.splash;
-          _this.readyOnce();
-          _this.ready();
-        }
-
-        if(!_this._splash && _this.slide) {
-
+        if(_this.slide) {
           if((['time.start', 'time.end']).indexOf(path) !== -1) {
             if (!_this.xScale) return;
             _this.changeLimits();
@@ -111,37 +102,36 @@ var TimeSlider = Component.extend({
         }
       },
       'change:time.start': function(evt, path) {
-        if(!_this._splash && _this.slide) {
+        if(_this.slide) {
           //only set handle position if change is external
           if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
       'change:time.end': function(evt, path) {
-        if(!_this._splash && _this.slide) {
+        if(_this.slide) {
           //only set handle position if change is external
           if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
       'change:time.startSelected': function(evt, path) {
-        if(!_this._splash && _this.slide) {
+        if(_this.slide) {
           _this.updateSelectedStartLimiter();
         }
       },
       'change:time.endSelected': function(evt, path) {
-        if(!_this._splash && _this.slide) {
+        if(_this.slide) {
           _this.updateSelectedEndLimiter();
         }
       },
-      'change:entities.select': function(evt, path) {
+      'change:marker.select': function(evt, path) {
         _this.setSelectedLimits();
       }
     };
 
+
+
     // Same constructor as the superclass
     this._super(model, context);
-
-    //starts as splash if this is the option
-    this._splash = this.model.ui.splash;
 
     // Sort of defaults. Actually should be in ui default or bubblechart. 
     // By not having "this.model.ui =" we prevent it from going to url (not defined in defaults)
@@ -167,14 +157,11 @@ var TimeSlider = Component.extend({
   //template is ready
   readyOnce: function () {
 
-    if(this._splash) return;
-
     var _this = this;
 
     //DOM to d3
     //TODO: remove this ugly hack
     this.element = utils.isArray(this.element) ? this.element : d3.select(this.element);
-    this.element.classed(class_loading, false);
 
     //html elements
     this.slider_outer = this.element.select(".vzb-ts-slider");
@@ -228,16 +215,6 @@ var TimeSlider = Component.extend({
 
     this._setSelectedLimitsId = 0; //counter for setSelectedLimits
 
-    utils.forEach(_this.model.marker.getSubhooks(), function(hook) {
-      if(hook._important) hook.on('change:which', function() {
-        _this._needRecalcSelectedLimits = true;
-        _this.model.time.set({
-          startSelected: new Date(_this.model.time.start),
-          endSelected: new Date(_this.model.time.end)
-        }, null, false  /*make change non-persistent for URL and history*/);
-      });
-    });
-
     if(this.model.time.startSelected > this.model.time.start) {
       _this.updateSelectedStartLimiter();
     }
@@ -246,6 +223,7 @@ var TimeSlider = Component.extend({
       _this.updateSelectedEndLimiter();
     }
 
+    // special for linechart: resize timeslider to match time x-axis length
     this.parent.on('myEvent', function (evt, arg) {
       var layoutProfile = _this.getLayoutProfile();
 
@@ -257,14 +235,19 @@ var TimeSlider = Component.extend({
       _this.element.select(".vzb-ts-slider-wrapper")
         .style("right", (arg.mRight - profiles[layoutProfile].margin.right) + "px");
 
-      _this.xScale.range([0, arg.rangeMax]);
-      _this.resize();
+      _this.updateSize([0, arg.rangeMax]);
+    });
+    
+    this.on("resize", function() {
+      _this.updateSize();
     });
   },
 
   //template and model are ready
   ready: function () {
-    if(this._splash) return;
+    if(this.model.time.splash) return;
+
+    this.element.classed(class_loading, false);
 
     var play = this.element.select(".vzb-ts-btn-play");
     var pause = this.element.select(".vzb-ts-btn-pause");
@@ -282,7 +265,7 @@ var TimeSlider = Component.extend({
 
     this.changeLimits();
     this.changeTime();
-    this.resize();
+    this.updateSize();
 
     _this._updateProgressBar();
     _this.model.marker.listenFramesQueue(null, function(time) {
@@ -298,7 +281,7 @@ var TimeSlider = Component.extend({
     this.xScale.domain([minValue, maxValue]);
     //axis
     this.xAxis.tickValues([minValue, maxValue])
-      .tickFormat(this.model.time.timeFormat);
+      .tickFormat(this.model.time.getFormatter());
   },
 
   changeTime: function() {
@@ -312,8 +295,8 @@ var TimeSlider = Component.extend({
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
    */
-  resize: function () {
-    if(this._splash) return;
+  updateSize: function (range) {
+    if(this.model.time.splash) return;
 
     this.model.time.pause();
 
@@ -321,6 +304,9 @@ var TimeSlider = Component.extend({
 
     var slider_w = parseInt(this.slider_outer.style("width"), 10) || 0;
     var slider_h = parseInt(this.slider_outer.style("height"), 10) || 0;
+    
+    if(!slider_h || !slider_w) return utils.warn("time slider resize() aborted because element is too small or has display:none");
+    
     this.width = slider_w - this.profile.margin.left - this.profile.margin.right;
     this.height = slider_h - this.profile.margin.bottom - this.profile.margin.top;
     var _this = this;
@@ -328,8 +314,7 @@ var TimeSlider = Component.extend({
     //translate according to margins
     this.slider.attr("transform", "translate(" + this.profile.margin.left + "," + this.profile.margin.top + ")");
 
-    //adjust scale width if it was not set manually before
-    if (this.xScale.range()[1] = 1) this.xScale.range([0, this.width]);
+    this.xScale.range(range || [0, this.width]);
 
     //adjust axis with scale
     this.xAxis = this.xAxis.scale(this.xScale)
@@ -361,7 +346,7 @@ var TimeSlider = Component.extend({
     this._setSelectedLimitsId++;
     var _setSelectedLimitsId = this._setSelectedLimitsId;
 
-    var select = _this.model.entities.select;
+    var select = _this.model.marker.select;
     if(select.length == 0) {
       _this.model.time.set({
         startSelected: new Date(_this.model.time.start),
@@ -549,7 +534,7 @@ var TimeSlider = Component.extend({
         //set handle position
         _this.handle.attr("cx", posX);
         _this.valueText.attr("transform", "translate(" + posX + "," + (_this.height / 2) + ")");
-        _this.valueText.text(_this.model.time.timeFormat(value));
+        _this.valueText.text(_this.model.time.formatDate(value, 'ui'));
       }
 
       //set time according to dragged position
@@ -583,7 +568,7 @@ var TimeSlider = Component.extend({
     this.slide.call(this.brush.extent([value, value]));
 
     this.element.classed("vzb-ts-disabled", this.model.time.end <= this.model.time.start);
-//    this.valueText.text(this.model.time.timeFormat(value));
+//    this.valueText.text(this.model.time.formatDate(value));
 
 //    var old_pos = this.handle.attr("cx");
     var new_pos = this.xScale(value);
@@ -599,7 +584,7 @@ var TimeSlider = Component.extend({
       this.valueText.attr("transform", "translate(" + _this.prevPosition + "," + (this.height / 2) + ")")
         .transition('text')
         .delay(delayAnimations)
-        .text(this.model.time.timeFormat(value));
+        .text(this.model.time.formatDate(value, 'ui'));
       this.valueText
         .transition()
         .duration(delayAnimations)
@@ -618,7 +603,7 @@ var TimeSlider = Component.extend({
         .transition('text');
       this.valueText
         .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")")
-        .text(this.model.time.timeFormat(value));
+        .text(this.model.time.formatDate(value, 'ui'));
     }
     _this.prevPosition = new_pos;
 

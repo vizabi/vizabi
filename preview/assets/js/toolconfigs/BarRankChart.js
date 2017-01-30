@@ -3,7 +3,8 @@ var VIZABI_MODEL = {
     "time": {
       "startOrigin": "1950",
       "endOrigin": "2015",
-      "value": "2015"
+      "value": "2015",
+      "dim": "time"
     },
     "entities": {
       "dim": "geo",
@@ -12,8 +13,6 @@ var VIZABI_MODEL = {
       }
     },
     "entities_colorlegend": {
-      "opacityRegular": 0.8,
-      "opacityHighlightDim": 0.3,  
       "dim": "world_4region"
     },
     "entities_tags": {
@@ -54,6 +53,8 @@ var VIZABI_MODEL = {
     },
     "marker_colorlegend": {
       "space": ["entities_colorlegend"],
+      "opacityRegular": 0.8,
+      "opacityHighlightDim": 0.3,
       "label": {
         "use": "property",
         "which": "name"
@@ -83,6 +84,19 @@ var VIZABI_MODEL = {
     "datawarning": {
       "doubtDomain": [1800, 1950, 2015],
       "doubtRange": [1.0, 0.8, 0.6]
-    }
+    },
+    "buttons": ['colors', 'find', 'show', 'moreoptions', 'fullscreen', 'presentation'],
+    "dialogs": {
+      'popup': ['timedisplay', 'colors', 'find', 'axes', 'show', 'moreoptions'],
+      'sidebar': ['timedisplay', 'colors', 'find'],
+      'moreoptions': ['opacity', 'speed', 'colors', 'presentation', 'about']
+    },
+    "splash": true
+  },
+  "data": {
+    "reader": "waffle",
+    //"reader": "ddf",
+    "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/"
+    //"path": "data/systema_globalis"
   }
 };

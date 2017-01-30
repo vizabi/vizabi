@@ -59,20 +59,32 @@ var IndPicker = Component.extend({
         }
 
         if(this.showHoverValues) {
-            this.model_binds["change:entities.highlight"] = function(evt, values) {
-                var use = _this.model.marker[_this.markerID].use;
-                if(!_this.showHoverValues || use == "constant") return;
-                var _highlightedEntity = _this.model.entities.getHighlighted();
+            this.model_binds["change:marker.highlight"] = function(evt, values) {
+                var mdl = _this.model.marker[_this.markerID];
+                if(!_this.showHoverValues || mdl.use == "constant") return;
+                var _highlightedEntity = _this.model.marker.getHighlighted();
                 if(_highlightedEntity.length > 1) return;
 
                 if (_highlightedEntity.length) {
                     _this.model.marker.getFrame(_this.model.time.value, function(frame) {
                         if(_this._highlighted || !frame) return;
 
-                        var _highlightedEntity = _this.model.entities.getHighlighted();
+                        // should be replaced by dimension of entity set for this hook (if use == property)
+                        var dimension = _this.model.entities.getDimension();
+                        var _highlightedEntity = _this.model.marker.getHighlighted(dimension);
                         if(_highlightedEntity.length) {
-                            _this._highlightedValue = frame[_this.markerID][_highlightedEntity[0]];
-                            _this._highlighted = (!_this._highlightedValue && _this._highlightedValue !== 0) || use !== "property";
+                          
+                            var value = frame[_this.markerID][_highlightedEntity[0]];
+                            
+                            // resolve strings via the color legend model
+                            if(value && mdl._type === "color" && mdl.isDiscrete()){
+                              var clModel = mdl.getColorlegendMarker();
+                              if(clModel.label.getItems()[value]) value = clModel.label.getItems()[value];
+                            }
+                          
+                            _this._highlightedValue = value;
+                          
+                            _this._highlighted = (!_this._highlightedValue && _this._highlightedValue !== 0) || mdl.use !== "constant";
                             _this.updateView();
                         }
                     });
@@ -80,7 +92,7 @@ var IndPicker = Component.extend({
                     if(values !== null && values !== "highlight") {
                         if(values) {
                             _this._highlightedValue = values[_this.markerID];
-                            _this._highlighted = (!_this._highlightedValue && _this._highlightedValue !== 0) || use !== "property";
+                            _this._highlighted = (!_this._highlightedValue && _this._highlightedValue !== 0) || mdl.use !== "constant";
                         }
                     } else {
                         _this._highlighted = false;

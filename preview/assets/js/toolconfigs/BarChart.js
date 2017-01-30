@@ -3,7 +3,8 @@ var VIZABI_MODEL = {
     "time": {
       "startOrigin": "1800",
       "endOrigin": "2012",
-      "value": "2000"
+      "value": "2000",
+      "dim": "time"
     },
     "entities": {
       "dim": "geo",
@@ -25,7 +26,7 @@ var VIZABI_MODEL = {
       },
       "axis_y": {
         "use": "indicator",
-        "which": "population_total",
+        "which": "  ",
         "scaleType": "log"        
       },
       "axis_x": {
@@ -43,20 +44,18 @@ var VIZABI_MODEL = {
     },
     "marker_colorlegend":{
       "space": ["entities_colorlegend"],
-        "type": "geometry",
-        "shape": "svg",
-        "label": {
-          "use": "property",
-          "which": "name"
-        },
-        "hook_rank": {
-          "use": "property",
-          "which": "rank"
-        },
-        "hook_geoshape": {
-          "use": "property",
-          "which": "shape_lores_svg"
-        }
+      "label": {
+        "use": "property",
+        "which": "name"
+      },
+      "hook_rank": {
+        "use": "property",
+        "which": "rank"
+      },
+      "hook_geoshape": {
+        "use": "property",
+        "which": "shape_lores_svg"
+      }
     },
     "marker_tags": {
       "space": ["entities_tags"],
@@ -69,5 +68,22 @@ var VIZABI_MODEL = {
         "which": "parent"
       }
     }
+  },
+  "ui": {
+    "datawarning": {
+      "doubtDomain": [1800, 1950, 2015],
+      "doubtRange": [1.0, 0.8, 0.6]
+    },
+    "buttons": ['axes', 'colors', 'fullscreen'],
+    "dialogs": { 
+      'popup': ['axes', 'colors'] 
+    },
+    "splash": false
+  },
+  "data": {
+    "reader": "waffle",
+    //"reader": "ddf",
+    "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/"
+    //"path": "data/systema_globalis"
   }
 };

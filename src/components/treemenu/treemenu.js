@@ -2,7 +2,6 @@ import * as utils from 'base/utils';
 import Component from 'base/component';
 import Class from 'base/class';
 import {close as iconClose} from 'base/iconset';
-import Data from 'models/data';
 
 /*!
  * VIZABI INDICATOR PICKER
@@ -712,7 +711,9 @@ var TreeMenu = Component.extend({
         }
       })
       
-    utils.forEach(Data.instances, dataSource => {
+    utils.forEach(this.model.marker._root._data, (dataSource)=>{
+      if(dataSource._type !== "data") return;
+      
       var indicatorsDB = dataSource.getConceptprops();
       var datasetName = dataSource.getDatasetName();
       tags[datasetName] = {id: datasetName, type: "dataset", children:[]};
@@ -1070,9 +1071,9 @@ var TreeMenu = Component.extend({
     var dataFiltered;
 
     var indicatorsDB = {}      
-    utils.forEach(Data.instances, 
-        dataSource => utils.deepExtend(indicatorsDB, dataSource.getConceptprops())
-    );
+    utils.forEach(this.model.marker._root._data, (m)=>{
+      if(m._type === "data") utils.deepExtend(indicatorsDB, m.getConceptprops());
+    })
 
     var hookType = _this.model.marker[markerID]._type;
 

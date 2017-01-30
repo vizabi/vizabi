@@ -6,7 +6,6 @@ import { warn as warnIcon } from 'base/iconset'
 
 var class_loading_first = 'vzb-loading-first';
 var class_loading_data = 'vzb-loading-data';
-var class_loading_error = 'vzb-loading-error';
 var class_placeholder = 'vzb-placeholder';
 var class_buttons_off = 'vzb-buttonlist-off';
 
@@ -86,11 +85,6 @@ var Tool = Component.extend({
       model: external_model
     });
 
-    // 
-
-    //splash
-    this.model.ui.splash = this.model && this.model.data && this.model.data.splash;
-
     this.render();
 
     this.setCSSClasses();
@@ -103,37 +97,37 @@ var Tool = Component.extend({
     this.model = new ToolModel(this, external_model);
     this.model.setInterModelListeners();
   },
-  
+
   getToolTemplate: function() {
-    return this.template || 
-      '<div class="vzb-tool vzb-tool-' + this.name + '">' + 
-        '<div class="vzb-tool-stage">' + 
-          '<div class="vzb-tool-viz">' + 
-          '</div>' + 
-          '<div class="vzb-tool-timeslider">' + 
-          '</div>' + 
-        '</div>' + 
-        '<div class="vzb-tool-sidebar">' + 
-          '<div class="vzb-tool-dialogs">' + 
+    return this.template ||
+      '<div class="vzb-tool vzb-tool-' + this.name + '">' +
+        '<div class="vzb-tool-stage">' +
+          '<div class="vzb-tool-viz">' +
           '</div>' +
-          '<div class="vzb-tool-buttonlist">' + 
-          '</div>' + 
-        '</div>' +         
-        '<div class="vzb-tool-datanotes vzb-hidden">' + 
-        '</div>' + 
-        '<div class="vzb-tool-treemenu vzb-hidden">' + 
-        '</div>' + 
-        '<div class="vzb-tool-datawarning vzb-hidden">' + 
-        '</div>' + 
-        '<div class="vzb-tool-labels vzb-hidden">' + 
-        '</div>' + 
+          '<div class="vzb-tool-timeslider">' +
+          '</div>' +
+        '</div>' +
+        '<div class="vzb-tool-sidebar">' +
+          '<div class="vzb-tool-dialogs">' +
+          '</div>' +
+          '<div class="vzb-tool-buttonlist">' +
+          '</div>' +
+        '</div>' +
+        '<div class="vzb-tool-datanotes vzb-hidden">' +
+        '</div>' +
+        '<div class="vzb-tool-treemenu vzb-hidden">' +
+        '</div>' +
+        '<div class="vzb-tool-datawarning vzb-hidden">' +
+        '</div>' +
+        '<div class="vzb-tool-labels vzb-hidden">' +
+        '</div>' +
       '</div>';
   },
 
   getToolListeners: function() {
     var _this = this;
-    return utils.extend( 
-      this.model_binds, 
+    return utils.extend(
+      this.model_binds,
       {
         'change': function(evt, path) {
           if(_this._ready) {
@@ -148,10 +142,6 @@ var Tool = Component.extend({
             _this.beforeLoading();
           }
         },
-        'change:ui.presentation': function() {
-          _this.model.ui.updatePresentation();
-          _this.trigger('resize');
-        },
         'resize:ui': function() {
           if(_this._ready) {
             _this.triggerResize();
@@ -160,7 +150,11 @@ var Tool = Component.extend({
         'translate:locale': function() {
           _this.translateStrings();
           _this.model.ui.setRTL(_this.model.locale.isRTL());
-        }  
+        },
+        'load_error': (...args) => {
+          this.renderError(...args);
+          this.error(...args);
+        }
       });
   },
 
@@ -175,72 +169,48 @@ var Tool = Component.extend({
 
   startLoading: function() {
     this._super();
-    var splashScreen = this.model && this.model.data && this.model.data.splash;
-    var _this = this;
 
-    var preloadPromises = []; //holds all promises
+    Promise.all([
+      this.model.startPreload(),
+      this.startPreload()
+    ])
+      .then(this.afterPreload.bind(this))
+      .then(this.loadSplashScreen.bind(this))
+      .then(() => utils.delay(300))
+      .then(this.model.startLoading.bind(this.model))
+      .then(this.finishLoading.bind(this))
 
-    preloadPromises.push(this.model.startPreload());
-    preloadPromises.push(this.startPreload());
+  },
 
-    Promise.all(preloadPromises).then(function() {
-      _this.afterPreload();
+  loadSplashScreen: function() {
+    if(this.model.ui.splash) {
+      //TODO: cleanup hardcoded splash screen
+      this.model.state.time.splash = true;
+      return this.model.startLoading({
+        splashScreen: true
+      });
+    } else {
+      return Promise.resolve();
+    }
+  },
 
-
-      var timeMdl = _this.model.state.time;
-
-      if(splashScreen) {
-
-        //TODO: cleanup hardcoded splash screen
-        timeMdl.splash = true;
-
-        _this.model.startLoading({
-          splashScreen: true
-        }).then(function() {
-          //delay to avoid conflicting with setReady
-          utils.delay(function() {
-            //force loading because we're restoring time.
-
-            _this.model.startLoading().then(function() {
-              timeMdl.splash = false;
-              //_this.model.data.splash = false;
-              timeMdl.trigger('change', timeMdl.getPlainObject());
-            });
-          }, 300);
-
-        }, function() {
-          _this.renderError();
-        });
-      } else {
-        _this.model.startLoading().then(function() {
-          utils.delay(function() {
-            if(timeMdl) {
-              timeMdl.splash = false;
-              timeMdl.trigger('change');
-            } else {
-              _this.loadingDone();
-            }
-          }, 300);
-        }, function() {
-          _this.renderError();
-        });
-      }
-    })
+  finishLoading: function() {
+    this.model.state.time.splash = false;
   },
 
   getPersistentModel: function() {
-    //try to find functions in properties of model. 
+    //try to find functions in properties of model.
     var removeFunctions = function(model) {
-      for(var childKey in model) {        
+      for(var childKey in model) {
         if(typeof model[childKey] === 'function') {
           delete model[childKey];
           utils.warn('minModel validation. Function found in enumerable properties of ' + childKey + ". This key is deleted from minModel");
-        } 
-        else if(typeof model[childKey] === 'object') 
+        }
+        else if(typeof model[childKey] === 'object')
           removeFunctions(model[childKey]);
       }
     }
-   
+
     var currentToolModel = this.model.getPlainObject(true); // true = get only persistent model values
     removeFunctions(currentToolModel);
     return currentToolModel;
@@ -268,11 +238,14 @@ var Tool = Component.extend({
   /**
    * Visually display errors
    */
-  error: function(opts) {
+  error(options, message) {
+    if (!message) {
+      message = options && options.type === 'data' ?
+        'Error loading chart data. <br>Please, try again later.' :
+        'Error loading chart';
+    }
 
-    var msg = (opts && opts.type === "data") ? "Error loading chart data. <br>Please, try again soon." : "Error loading chart";
-
-    this.placeholder.innerHTML = '<div class="vzb-error-message"><h1>'+warnIcon+'</h1><p>'+msg+'</p></div>';
+    this.placeholder.innerHTML = `<div class="vzb-error-message"><h1>${warnIcon}</h1><p>${message}</p></div>`;
   },
 
   /**
@@ -300,15 +273,9 @@ var Tool = Component.extend({
    * Displays loading class
    */
   beforeLoading: function() {
-    utils.addClass(this.placeholder, class_loading_data);    
+    utils.addClass(this.placeholder, class_loading_data);
   },
 
-  /**
-   * Adds loading error class
-   */
-  errorLoading: function() {
-    utils.addClass(this.placeholder, class_loading_error);
-  },
   /* ==========================
    * Validation and query
    * ==========================

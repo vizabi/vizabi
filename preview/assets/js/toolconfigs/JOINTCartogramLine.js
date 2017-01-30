@@ -3,7 +3,8 @@ var VIZABI_MODEL = {
     "time": {
       "value": "2011",
       "start": "1996",
-      "end": "2011"
+      "end": "2011",
+      "dim": "time"
     },
     "entities": {
       "dim": "geo",
@@ -79,10 +80,16 @@ var VIZABI_MODEL = {
       }
     }
   },
+  "ui": {
+    "dialogs": {
+      'popup': ['colors', 'find', 'size', 'moreoptions'], 
+      'sidebar': ['colors', 'find', 'size'], 
+      'moreoptions': ['size', 'colors', 'about']
+    }
+  },
   "data": {
     "reader": "csv",
-    "path": "data/zaf/waffles/ddf--datapoints--piped_water_percentage--electricity_lighting_percentage--by--time--geo-add-zaf.csv",
-    "splash": false
+    "path": "data/zaf/waffles/ddf--datapoints--piped_water_percentage--electricity_lighting_percentage--by--time--geo-add-zaf.csv"
   }
 };
 

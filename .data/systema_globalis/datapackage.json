@@ -9570,8 +9570,8 @@
 			}
 		},
 		{
-			"path": "ddf--datapoints--sg_gini--by--geo--time.csv",
-			"name": "ddf--datapoints--sg_gini--by--geo--time",
+			"path": "ddf--datapoints--gapminder_gini--by--geo--time.csv",
+			"name": "ddf--datapoints--gapminder_gini--by--geo--time",
 			"schema": {
 				"fields": [
 					{
@@ -9581,7 +9581,7 @@
 						"name": "time"
 					},
 					{
-						"name": "sg_gini"
+						"name": "gapminder_gini"
 					}
 				],
 				"primaryKey": [

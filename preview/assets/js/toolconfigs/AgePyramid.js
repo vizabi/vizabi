@@ -1,60 +1,58 @@
 var VIZABI_MODEL = {
   "state": {
     "time": {
-      "value": "2011",
-      "start": "1950",
-      "end": "2100",
+      //"value": "2000",
+      //"startOrigin": "1970",
+      //"endOrigin": "2000",
       "step": 1,
       "delayThresholdX2": 0,
       "delayThresholdX4": 0,
       "immediatePlay": true,
-      "delay": 1500
+      "delay": 1000,
+      "dim": "year"
     },
     "entities": {
-      "dim": "geo",
+      "dim": "country_code",
       "show": {
-        "geo": ["*"]
+        "country_code": {
+          "$in": ["903","904","905","908","909","935"]
+        }
       }
     },
     "entities_colorlegend": {
-      "dim": "geo",
-      "show": {
-        "is--country": true
-      }
+      "dim": "country_code"
     },
     "entities_age": {
       "dim": "age",
       "show": {
-        "age": [
-          [0, 95]
-        ]
+        "age": {
+          "$nin": ["80plus","100plus"]
+        }
       },
-      "grouping": 1,
-      "_multiple": true
-    },
-    "entities_stack": {
-      "space": ["entities_age", "entities_side"],
-      "dim": "education_attainment",
-      "_multiple": true
+      "grouping": 1
     },
     "entities_side": {
-      "dim": "population_group"
+      "dim": "gender"
     },
     "marker": {
-      "space": ["entities", "entities_side", "entities_stack", "entities_age", "time"],
-      "label": {
-        "use": "indicator",
-        "which": "age"
-      },
-      "label_name": {
+      "space": ["entities", "time", "entities_side", "entities_age"],
+      "label_stack": {
         "use": "property",
-        "which": "population_group"
+        "spaceRef": "entities",
+        "which": "name"
+      },
+      "label_side": {
+        "use": "property",
+        "spaceRef": "entities_side",
+        "which": "name"
       },
       "axis_y": {
-        "use": "indicator",
+        "use": "property",
         "which": "age",
+        "spaceRef": "entities_age",
         "domainMax": 100,
-        "domainMin": 0
+        "domainMin": 0,
+        "_important": false
       },
       "axis_x": {
         "use": "indicator",
@@ -62,28 +60,45 @@ var VIZABI_MODEL = {
       },
       "color": {
         "use": "property",
-        "which": "education_attainment",
-        "colorlegend": "marker_colorlegend"
+        "which": "country_code",
+        "allow": {
+          "scales": ["ordinal"]
+        },
+        "syncModels": ["marker_colorlegend"]
       },
-      "side": {
+      "hook_side": {
         "use": "property",
-        "which": "population_group"
+        "which": "gender",
+        "allow": {
+          "scales": ["ordinal"]
+        }
       }
     },
-    "marker_side": {
-      "space": ["entities", "entities_side", "time"],
-      "hook_total": {
-        "use": "indicator",
-        "which": "population"
+    "entities_allpossible": {
+      "dim": "country_code",
+    },
+    "marker_allpossible": {
+      "space": ["entities_allpossible"],
+      "label": {
+        "use": "property",
+        "which": "name"
+      }
+    },
+    "entities_allpossibleside": {
+      "dim": "gender",
+    },
+    "marker_allpossibleside": {
+      "space": ["entities_allpossibleside"],
+      "label": {
+        "use": "property",
+        "which": "name"
       }
     },
     "marker_colorlegend": {
-      "space": ["entities_stack"],
-      "type": "geometry",
-      "shape": "svg",
+      "space": ["entities_colorlegend"],
       "label": {
         "use": "property",
-        "which": "education_attainment"
+        "which": "name"
       },
       "hook_rank": {
         "use": "property",
@@ -93,12 +108,37 @@ var VIZABI_MODEL = {
         "use": "property",
         "which": "shape_lores_svg"
       }
+    },
+    "entities_tags": { },
+    "marker_tags": {
+      "space": ["entities_tags"],
+      "label": {},
+      "hook_parent": {}
     }
   },
+  "ui": {
+    "buttons":['colors', 'inpercent', 'side', 'moreoptions', 'fullscreen'],
+    "dialogs": {
+      'popup': ['colors', 'side', 'moreoptions'], 
+      'sidebar': ['colors', 'show'], 
+    'moreoptions': ['opacity', 'speed', 'colors', 'side', 'presentation', 'about']
+    },
+    "splash": true
+  },
+//  "data": {
+//    "reader": "csv",
+//    "delimiter": ";",
+//    "nowManyFirstColumnsAreKeys": 4,
+//    "path": "data/zaf/waffles/ddf--datapoints--population--by--year--age--population_group--education_attainment.csv"
+//  },
+//  "data": {
+//    "reader": "ddf",
+//    "path": "data/ddf--unpop--wpp_population"
+//  },
   "data": {
-    "reader": "csv",
-    "path": "data/zaf/waffles/ddf--datapoints--population--by--year--age--population_group--education_attainment.csv",
-    "splash": false
+    "reader": "waffle",
+    "dataset": "angieskazka/ddf--unpop--wpp_population",
+    "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/"
   }
 };
 

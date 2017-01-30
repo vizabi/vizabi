@@ -12,16 +12,18 @@ var Hook = DataConnected.extend({
   //that means, if X or Y doesn't have data at some point, we can't show markers
   _important: false,
 
+  objectLeafs: ['autogenerate'],
   dataConnectedChildren: ['use', 'which'],
   
   getClassDefaults: function() { 
     var defaults = {
-      data: 'data'
+      data: 'data',
+      which: null
     };
     return utils.deepExtend(this._super(), defaults)
   },
 
-  buildScale: function(){
+  buildScale: function() {
     //overloaded by specific hook models, like axis and color
   },
 
@@ -48,12 +50,18 @@ var Hook = DataConnected.extend({
 
   setWhich: function(newValue) {
 
-    var obj = { which: newValue.concept, data: newValue.dataSource };
-    var newDataSource = this.getClosestModel(newValue.dataSource);
+    var obj = { which: newValue.concept }
+    
+    if(newValue.dataSource) obj.data = newValue.dataSource;
+    var newDataSource = this.getClosestModel(newValue.dataSource || this.dataSource);
     var conceptProps = newDataSource.getConceptprops(newValue.concept);
 
-    if(conceptProps.use) obj.use = conceptProps.use;
-
+    if(newValue.which==="_default") {
+      obj.use = "constant";
+    }else{
+      if(conceptProps.use) obj.use = conceptProps.use;
+    }
+    
     if(conceptProps.scales) {
       obj.scaleType = conceptProps.scales[0];
     }
@@ -77,10 +85,12 @@ var Hook = DataConnected.extend({
     return this._super();
   },
 
-  preloadData: function() {
-    var dataModel = (this.data) ? this.data : 'data';
-    this.dataSource = this.getClosestModel(dataModel);
-    return this._super();
+  afterPreload: function() {
+    if (this.which == null && this.autogenerate) {
+      this.which = this.dataSource
+        .getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType)
+        .concept;
+    }
   },
 
   /**
@@ -103,6 +113,8 @@ var Hook = DataConnected.extend({
     this.dataSource = this.getClosestModel(this.data);
 
     var query = this.getQuery(opts.splashScreen);
+    
+    if(query===true) return Promise.resolve();
 
     //useful to check if in the middle of a load call
     this._loadCall = true;
@@ -127,10 +139,8 @@ var Hook = DataConnected.extend({
     //defer is necessary because other events might be queued.
     //load right after such events
     utils.defer(() => {
-      this.startLoading().then(
-        undefined,
-        err => utils.warn(err)
-      );
+      this.startLoading()
+        .catch(utils.warn);
     });
   },
 
@@ -166,7 +176,15 @@ var Hook = DataConnected.extend({
 
     // select
     // we remove this.which from values if it duplicates a dimension
-    var dimensions = this._getAllDimensions(exceptions);
+    var allDimensions = this._getAllDimensions(exceptions);
+    var dimensions = (prop && allDimensions.length > 1) ? [(this.spaceRef ? this._space[this.spaceRef].dim : this.which)] : allDimensions;
+    
+    dimensions = dimensions.filter(f => f!=="_default");
+    if(!dimensions || !dimensions.length) {
+      utils.warn('getQuery() produced no query because no keys are available');
+      return true;
+    }
+    
     select = {
       key: dimensions,
       value: dimensions.indexOf(this.which)!=-1 || this.use === "constant" ? [] : [this.which]
@@ -180,6 +198,11 @@ var Hook = DataConnected.extend({
 
     // where
     filters = this._getAllFilters(exceptions, splashScreen);
+    if(prop && allDimensions.length > 1) {
+      var f = {};
+      if(filters[dimensions]) f[dimensions] = filters[dimensions];
+      filters = f;
+    }
 
     // make root $and explicit
     var explicitAndFilters =  {};
@@ -194,6 +217,11 @@ var Hook = DataConnected.extend({
 
     // join
     var join = this._getAllJoins(exceptions, splashScreen);
+    if(prop && allDimensions.length > 1) {
+      var j = {};
+      if(join["$" + dimensions]) j["$" + dimensions] = join["$" + dimensions];
+      join = j;
+    }
 
     //return query
     return {
@@ -334,11 +362,11 @@ var Hook = DataConnected.extend({
 
     // Format time values
     // Assumption: a hook has always time in its space
-    if(utils.isDate(x)) return _this._space.time.timeFormat(x);
+    if(utils.isDate(x)) return _this._space.time.formatDate(x);
 
     // Dealing with values that are supposed to be time
     if(_this.scaleType === "time" && !utils.isDate(x)) {
-        return _this._space.time.timeFormat(new Date(x));
+        return _this._space.time.formatDate(new Date(x));
     }
 
     // Strings, null, NaN and undefined are bypassing any formatter
@@ -466,7 +494,7 @@ var Hook = DataConnected.extend({
    */
   getItems: function() {
     var _this = this;
-    var dim = _this._getFirstDimension({exceptType: "time"});
+    var dim = this.spaceRef && this._space[this.spaceRef] ? this._space[this.spaceRef].dim : _this._getFirstDimension({exceptType: "time"});
     var items = {};
     this.getValidItems().forEach(function(d){
       items[d[dim]] = d[_this.which];
@@ -537,7 +565,28 @@ var Hook = DataConnected.extend({
    * @returns {Object} concept properties
    */
   getConceptprops: function() {
-    return this.use !== 'constant' ? this.dataSource.getConceptprops(this.which) : {};
+    return this.use !== 'constant' && this.dataSource? this.dataSource.getConceptprops(this.which) : {};
+  },
+  
+  /**
+   * Find if a current model is discrete
+   * @returns {boolean} true if it's a discrete model, false if continious
+   */
+  isDiscrete: function() {
+    return this.scaleType === "ordinal";
+  },
+  
+  validate: function() {
+    this._super();
+    
+    var allowedScales = this.getConceptprops().scales;
+    if(allowedScales && allowedScales.length>0 && !allowedScales.includes(this.scaleType)) {
+      this.set({scaleType: allowedScales[0] === "nominal"? "ordinal":allowedScales[0]}, null, false);
+    }
+  },
+
+  getEntity: function() {
+    return  this._space[this.spaceRef ? this.spaceRef : this._parent.getSpace()[0]];
   }
 });
 

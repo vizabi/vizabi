@@ -52,7 +52,7 @@ var label = function(context) {
           _this.druging = null;
           cache.labelOffset[0] = cache.labelX_;
           cache.labelOffset[1] = cache.labelY_;
-          _this.model.entities.setLabelOffset(d, [cache.labelX_, cache.labelY_]);
+          _this.model.marker.setLabelOffset(d, [cache.labelX_, cache.labelY_]);
         }
       });
 
@@ -102,14 +102,14 @@ var label = function(context) {
           cross.on("click", function() {
             //default prevented is needed to distinguish click from drag
             if(d3.event.defaultPrevented) return;
-            _this.model.entities.clearHighlighted();
-            _this.model.entities.selectEntity(d);
+            _this.model.marker.clearHighlighted();
+            _this.model.marker.selectMarker(d);
           });
 
         })
         .on("mouseover", function(d) {
           if(utils.isTouchDevice()) return;
-          _this.model.entities.highlightEntity(d, null, null, true);
+          _this.model.marker.highlightMarker(d);
           var KEY = _this.KEY || _this.model.entities.getDimension();
           // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
           _this.entityLabels.sort(function (a, b) { return a[KEY] != d[KEY]? -1 : 1; });
@@ -118,7 +118,7 @@ var label = function(context) {
         })
         .on("mouseout", function(d) {
           if(utils.isTouchDevice()) return;
-          _this.model.entities.clearHighlighted();
+          _this.model.marker.clearHighlighted();
           d3.select(this).selectAll("." + _cssPrefix + "-label-x")
             .classed("vzb-transparent", true);
         })
@@ -135,9 +135,9 @@ var label = function(context) {
           cross.classed("vzb-transparent", !hidden);
           if(!_this.options.SUPPRESS_HIGHLIGHT_DURING_PLAY || !_this.model.time.playing) {
             if(hidden) {
-              _this.model.entities.setHighlight(d);
+              _this.model.marker.setHighlight(d);
             } else {
-              _this.model.entities.clearHighlighted();
+              _this.model.marker.clearHighlighted();
             }
           }
         });
@@ -356,7 +356,7 @@ var Labels = Class.extend({
   init: function(context, conditions) {
     var _this = this;
     this.context = context;
-  
+
     this.options = utils.extend({}, OPTIONS);
     this.label = label(this);
     this._xScale = null;
@@ -378,7 +378,7 @@ var Labels = Class.extend({
 
     this.model = this.context.model;
 
-    this.model.on("change:entities.select", function() {
+    this.model.on("change:marker.select", function() {
         if(!_this.context._readyOnce) return;
         //console.log("EVENT change:entities:select");
         _this.selectDataPoints();
@@ -482,11 +482,11 @@ var Labels = Class.extend({
     var _cssPrefix = this.options.CSS_PREFIX;
 
     this.entityLabels = this.labelsContainer.selectAll("." + _cssPrefix + "-entity")
-      .data(_this.model.entities.select, function(d) {
+      .data(_this.model.marker.select, function(d) {
         return(d[KEY]);
       });
     this.entityLines = this.linesContainer.selectAll("g.entity-line." + _cssPrefix + "-entity")
-      .data(_this.model.entities.select, function(d) {
+      .data(_this.model.marker.select, function(d) {
         return(d[KEY]);
       });
 
@@ -551,7 +551,7 @@ var Labels = Class.extend({
     var _cssPrefix = this.options.CSS_PREFIX;
 
     // only for selected entities
-    if(_this.model.entities.isSelected(d) && _this.entityLabels != null) {
+    if(_this.model.marker.isSelected(d) && _this.entityLabels != null) {
       if(_this.cached[d[KEY]] == null) this.selectDataPoints();
 
       var cached = _this.cached[d[KEY]];
@@ -568,7 +568,7 @@ var Labels = Class.extend({
 
       if(cached.labelX_ == null || cached.labelY_ == null)
       {
-        var select = utils.find(_this.model.entities.select, function(f) {
+        var select = utils.find(_this.model.marker.select, function(f) {
           return f[KEY] == d[KEY]
         });
         cached.labelOffset = select.labelOffset || [0,0];
@@ -760,8 +760,8 @@ var Labels = Class.extend({
     this.label._repositionLabels(d, index, context, resolvedX, resolvedY, resolvedX0, resolvedY0, duration, showhide, lineGroup);
   },
 
-  updateSize: function() {
-    var profiles = {
+  updateSize() {
+    const profiles = {
       small: {
         minLabelTextSize: 7,
         maxLabelTextSize: 21,
@@ -782,10 +782,22 @@ var Labels = Class.extend({
       }
     };
 
-    var _this = this;
+    const presentationProfiles = {
+      medium: {
+        minLabelTextSize: 15,
+        maxLabelTextSize: 35,
+        defaultLabelTextSize: 15,
+        labelLeashCoeff: 0.3
+      },
+      large: {
+        minLabelTextSize: 20,
+        maxLabelTextSize: 55,
+        defaultLabelTextSize: 20,
+        labelLeashCoeff: 0.2
+      }
+    };
 
-    this.activeProfile = this.context.getActiveProfile(profiles);
-
+    this.activeProfile = this.context.getActiveProfile(profiles, presentationProfiles);
     this.updateLabelSizeLimits();
   }
 

@@ -76,7 +76,7 @@ var DonutComponent = Component.extend('donut', {
        * Populate the visuals according to the number of entities
        */
       update: function() {
-        this.timeFormatter = d3.time.format("%Y");
+        this.timeFormatter = this.model.time.formatters.data("%Y");
         this.colorScale = this.model.marker.color.getScale();
 
         this.titleEl.text("Population");

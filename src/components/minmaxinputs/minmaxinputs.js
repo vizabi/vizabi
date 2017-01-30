@@ -126,7 +126,7 @@ var MinMaxInputs = Component.extend({
 
       var formatter = function(n) {
         if(!n && n!==0) return n;
-        if(utils.isDate(n)) return _this.model.time.timeFormat(n);
+        if(utils.isDate(n)) return _this.model.time.formatDate(n);
         return d3.format(".2r")(n);
       }
 

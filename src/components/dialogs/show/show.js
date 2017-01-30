@@ -102,6 +102,8 @@ var Show = Dialog.extend({
         return _this.model.state.entities.isShown(d);
       })
       .on("change", function(d) {
+
+        _this.model.state.marker.clearSelected();
         _this.model.state.entities.showEntity(d);
         _this.showHideDeselect();
       });

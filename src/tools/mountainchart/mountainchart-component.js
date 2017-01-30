@@ -61,7 +61,7 @@ var MountainChartComponent = Component.extend({
                 // this listener is a patch for fixing #1228. time.js doesn't produce the last event
                 // with playing == false when paused softly
                 if(!_this.model.time.playing){
-                    _this.redrawDataPoints();
+                   _this.redrawDataPoints();
                 }
             },
             "change:marker.axis_x.xScaleFactor": function () {
@@ -102,23 +102,23 @@ var MountainChartComponent = Component.extend({
                     _this._export.reset();
                 }
             },
-            "change:entities.highlight": function (evt) {
+            "change:marker.highlight": function (evt) {
                 if (!_this._readyOnce) return;
-                _this.highlightEntities();
+                _this.highlightMarkers();
                 _this.updateOpacity();
             },
-            "change:entities.select": function (evt) {
+            "change:marker.select": function (evt) {
                 if (!_this._readyOnce) return;
-                _this.selectEntities();
+                _this.selectMarkers();
                 _this._selectlist.redraw();
                 _this.updateOpacity();
                 _this.updateDoubtOpacity();
                 _this.redrawDataPoints();
             },
-            "change:entities.opacitySelectDim": function (evt) {
+            "change:marker.opacitySelectDim": function (evt) {
                 _this.updateOpacity();
             },
-            "change:entities.opacityRegular": function (evt) {
+            "change:marker.opacityRegular": function (evt) {
                 _this.updateOpacity();
             },
             "change:marker": function (evt, path) {
@@ -141,7 +141,7 @@ var MountainChartComponent = Component.extend({
             },
             "change:marker.group.merge": function (evt) {
                 if (!_this._readyOnce) return;
-                _this.updateTime();
+                _this.updatePointers();
                 _this.redrawDataPoints();
             },
             "change:marker.stack": function (evt) {
@@ -237,8 +237,8 @@ var MountainChartComponent = Component.extend({
     afterPreload: function () {
         var _this = this;
 
-        var yearNow = _this.model.time.format(this.model.time.value);
-        var yearEnd = _this.model.time.format(this.model.time.end);
+        var yearNow = _this.model.time.formatDate(this.model.time.value);
+        var yearEnd = _this.model.time.formatDate(this.model.time.end);
 
         this._math.xScaleFactor = this.model.marker.axis_x.xScaleFactor;
         this._math.xScaleShift = this.model.marker.axis_x.xScaleShift;
@@ -291,7 +291,7 @@ var MountainChartComponent = Component.extend({
             //console.log("acting on resize");
             //return if updatesize exists with error
             if(_this.updateSize()) return;
-            _this.updateTime(); // respawn is needed
+            _this.updatePointers(); // respawn is needed
             _this.redrawDataPoints();
             _this._selectlist.redraw();
             _this._probe.redraw();
@@ -301,7 +301,7 @@ var MountainChartComponent = Component.extend({
         this.TIMEDIM = this.model.time.getDimension();
 
         this.mountainAtomicContainer.select(".vzb-mc-prerender").remove();
-        this.year.setText(this.model.time.timeFormat(this.model.time.value));
+        this.year.setText(this.model.time.formatDate(this.model.time.value));
         this.wScale = d3.scale.linear()
             .domain(this.model.ui.datawarning.doubtDomain)
             .range(this.model.ui.datawarning.doubtRange);
@@ -324,11 +324,12 @@ var MountainChartComponent = Component.extend({
           _this.zoomToMaxMin();
           _this._spawnMasks();
           _this.updateTime();
+          _this.updatePointers();
           _this._adjustMaxY({force: true});
           _this.redrawDataPoints();
           _this.redrawDataPointsOnlyColors();
-          _this.highlightEntities();
-          _this.selectEntities();
+          _this.highlightMarkers();
+          _this.selectMarkers();
           _this._selectlist.redraw();
           _this.updateOpacity();
           _this.updateDoubtOpacity();
@@ -340,6 +341,7 @@ var MountainChartComponent = Component.extend({
     if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
     this.values = frame;
     this.updateTime();
+    this.updatePointers();
     this.redrawDataPoints();
     this._selectlist.redraw();
     this._probe.redraw();
@@ -397,14 +399,13 @@ updateSize: function (meshLength) {
             topOffset: this.getLayoutProfile()==="large"? margin.top * 2 : 0,
             xAlign: this.getLayoutProfile()==="large"? (isRTL ? 'left' : 'right') : 'center',
             yAlign: this.getLayoutProfile()==="large"? 'top' : 'center',
+            widthRatio: this.getLayoutProfile()==="large" ? 3/8 : 8/10
         };
-
-        var yearLabelFontSize = this.getLayoutProfile()==="large"? this.width / 6 : Math.max(this.height / 4, this.width / 4);
 
         //year is centered and resized
         this.year
             .setConditions(yearLabelOptions)
-            .resize(this.width, this.height, yearLabelFontSize);
+            .resize(this.width, this.height);
 
         //update scales to the new range
         this.yScale.range([this.height, 0]);
@@ -691,7 +692,7 @@ updateSize: function (meshLength) {
             .on("click", function (d, i) {
                 if (utils.isTouchDevice()) return;
                 _this._interact()._click(d, i);
-                _this.highlightEntities();
+                _this.highlightMarkers();
             })
             .onTap(function (d, i) {
                 _this._interact()._click(d, i);
@@ -708,7 +709,7 @@ updateSize: function (meshLength) {
             _mousemove: function (d, i) {
                 if (_this.model.time.dragging || _this.model.time.playing) return;
 
-                _this.model.entities.highlightEntity(d);
+                _this.model.marker.highlightMarker(d);
 
                 var mouse = d3.mouse(_this.graph.node()).map(function (d) {
                     return parseInt(d);
@@ -723,33 +724,33 @@ updateSize: function (meshLength) {
                 if (_this.model.time.dragging || _this.model.time.playing) return;
 
                 _this._setTooltip("");
-                _this.model.entities.clearHighlighted();
+                _this.model.marker.clearHighlighted();
                 _this._selectlist.showCloseCross(d, false);
 
             },
             _click: function (d, i) {
                 if (_this.model.time.dragging || _this.model.time.playing) return;
 
-                _this.model.entities.selectEntity(d);
+                _this.model.marker.selectMarker(d);
             }
         };
 
     },
 
-    highlightEntities: function () {
+    highlightMarkers: function () {
         var _this = this;
-        this.someHighlighted = (this.model.entities.highlight.length > 0);
+        this.someHighlighted = (this.model.marker.highlight.length > 0);
 
         if (!this.selectList || !this.someSelected) return;
         this.selectList.classed("vzb-highlight", function (d) {
-            return _this.model.entities.isHighlighted(d);
+            return _this.model.marker.isHighlighted(d);
         });
 
     },
 
-    selectEntities: function () {
+    selectMarkers: function () {
         var _this = this;
-        this.someSelected = (this.model.entities.select.length > 0);
+        this.someSelected = (this.model.marker.select.length > 0);
 
         this._selectlist.rebuild();
         this.nonSelectedOpacityZero = false;
@@ -769,20 +770,20 @@ updateSize: function (meshLength) {
 
         var OPACITY_HIGHLT = 1.0;
         var OPACITY_HIGHLT_DIM = .3;
-        var OPACITY_SELECT = this.model.entities.opacityRegular;
-        var OPACITY_REGULAR = this.model.entities.opacityRegular;
-        var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
+        var OPACITY_SELECT = this.model.marker.opacityRegular;
+        var OPACITY_REGULAR = this.model.marker.opacityRegular;
+        var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
 
         this.mountains.style("opacity", function (d) {
 
             if (_this.someHighlighted) {
                 //highlight or non-highlight
-                if (_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
+                if (_this.model.marker.isHighlighted(d)) return OPACITY_HIGHLT;
             }
 
             if (_this.someSelected) {
                 //selected or non-selected
-                return _this.model.entities.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
+                return _this.model.marker.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
             }
 
             if (_this.someHighlighted) return OPACITY_HIGHLT_DIM;
@@ -792,31 +793,33 @@ updateSize: function (meshLength) {
         });
 
         this.mountains.classed("vzb-selected", function (d) {
-            return _this.model.entities.isSelected(d)
+            return _this.model.marker.isSelected(d)
         });
 
-        var nonSelectedOpacityZero = _this.model.entities.opacitySelectDim < .01;
+        var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
 
         // when pointer events need update...
         if (nonSelectedOpacityZero !== this.nonSelectedOpacityZero) {
             this.mountainsAtomic.style("pointer-events", function (d) {
-                return (!_this.someSelected || !nonSelectedOpacityZero || _this.model.entities.isSelected(d)) ?
+                return (!_this.someSelected || !nonSelectedOpacityZero || _this.model.marker.isSelected(d)) ?
                     "visible" : "none";
             });
         }
 
-        this.nonSelectedOpacityZero = _this.model.entities.opacitySelectDim < .01;
+        this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
     },
 
-    updateTime: function (time) {
+    updateTime: function () {
         var _this = this;
 
         this.time_1 = this.time == null ? this.model.time.value : this.time;
         this.time = this.model.time.value;
         this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
-        this.year.setText(this.model.time.timeFormat(this.time), this.duration);
-        if (time == null) time = this.time;
+        this.year.setText(this.model.time.formatDate(this.time), this.duration);
+    },
 
+    updatePointers: function() {
+        var _this = this;
         this.yMax = 0;
 
 
@@ -850,7 +853,7 @@ updateSize: function (meshLength) {
 
         var mergeGrouped = _this.model.marker.group.merge;
         var mergeStacked = _this.model.marker.stack.merge;
-        var dragOrPlay = (_this.model.time.dragging || _this.model.time.playing) && this.model.marker.stack.which !== "none";
+        //var dragOrPlay = (_this.model.time.dragging || _this.model.time.playing) && this.model.marker.stack.which !== "none";
 
         //if(mergeStacked){
         this.stackedPointers.forEach(function (d) {
@@ -993,10 +996,10 @@ updateSize: function (meshLength) {
             if(!values) return;
 
             _this.values = values;
-            _this.updateTime();
+            _this.updatePointers();
             _this.values = prevValues;
             _this.yScale.domain([0, Math.round(_this.yMax)]);
-            _this.updateTime();
+            _this.updatePointers();
           });
         } else {
           if (!_this.yMax) utils.warn("Setting yMax to " + _this.yMax + ". You failed again :-/");
@@ -1014,10 +1017,7 @@ updateSize: function (meshLength) {
         var dragOrPlay = (this.model.time.dragging || this.model.time.playing)
             //never merge when no entities are stacked
             && stackMode !== "none"
-            //when the time is playing and stops in the end, the time.playing is set to false after the slider is stopped
-            //so the mountain chat is stuck in the merged state. this line prevents it:
-            && !(this.model.time.value - this.model.time.end==0 && !this.model.time.loop);
-
+            
         this._adjustMaxY();
 
         this.mountainsMergeStacked.each(function (d) {
@@ -1028,13 +1028,13 @@ updateSize: function (meshLength) {
 
         this.mountainsMergeGrouped.each(function (d) {
             var view = d3.select(this);
-            var hidden = (!mergeGrouped && !dragOrPlay) || (mergeStacked && !_this.model.entities.isSelected(d));
+            var hidden = (!mergeGrouped && !dragOrPlay) || (mergeStacked && !_this.model.marker.isSelected(d));
             _this._renderShape(view, d.KEY(), hidden);
         });
 
         this.mountainsAtomic.each(function (d, i) {
             var view = d3.select(this);
-            var hidden = d.hidden || ((mergeGrouped || mergeStacked || dragOrPlay) && !_this.model.entities.isSelected(d));
+            var hidden = d.hidden || ((mergeGrouped || mergeStacked || dragOrPlay) && !_this.model.marker.isSelected(d));
             _this._renderShape(view, d.KEY(), hidden);
         })
 
@@ -1074,10 +1074,11 @@ updateSize: function (meshLength) {
         var isColorUseIndicator = this.model.marker.color.use === "indicator";
         this.mountains.style("fill", function (d) {
             return _this.values.color[d.KEY()] ? 
-              ( isColorUseIndicator && _this.values.color[d.KEY()] == "_default" ? 
-               _this.model.marker.color.palette["_default"] 
-               : 
-               _this.cScale(_this.values.color[d.KEY()])
+              ( 
+                isColorUseIndicator &&_this.values.color[d.KEY()] == "_default" ? 
+                 _this.model.marker.color.palette["_default"] 
+                 : 
+                 _this.cScale(_this.values.color[d.KEY()])
               ) 
             : 
             COLOR_WHITEISH;
@@ -1097,21 +1098,25 @@ updateSize: function (meshLength) {
 
         var filter = {};
         filter[this.KEY] = key;
-        if (this.model.entities.isSelected(filter)) {
+        if (this.model.marker.isSelected(filter)) {
             view.attr("d", this.area(this.cached[key].filter(function (f) {return f.y > _this.values.axis_y[key] * THICKNESS_THRESHOLD })));
         } else {
             view.attr("d", this.area(this.cached[key]));
         }
 
-        if (this.model.marker.color.use === "indicator") view
-            .style("fill", _this.values.color[key] ? 
-                   ( _this.values.color[key] == "_default" ? 
-                    _this.model.marker.color.palette["_default"] 
-                    : 
-                    _this.cScale(_this.values.color[key])) 
-                   : 
-                   COLOR_WHITEISH
-                  );
+        //color use indicator suggests that this should be updated on every timeframe
+        if (this.model.marker.color.use === "indicator") {
+          view.style("fill", _this.values.color[key] ? 
+            ( 
+             _this.values.color[key] !== "_default" ? 
+               _this.cScale(_this.values.color[key])
+               : 
+               _this.model.marker.color.palette["_default"] 
+            ) 
+            : 
+            COLOR_WHITEISH
+          );
+        }
 
         if (stack !== "none") view
             .transition().duration(Math.random() * 900 + 100).ease("circle")

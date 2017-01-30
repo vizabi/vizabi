@@ -25,7 +25,7 @@ export default Class.extend({
       })
     } else {
       _context._trails.run("remove");
-      _context.model.entities.select.forEach(function(d) {
+      _context.model.marker.select.forEach(function(d) {
         d.trailStartTime = null;
       });
     }
@@ -35,17 +35,18 @@ export default Class.extend({
     var _context = this.context;
     var _this = this;
     var KEY = _context.KEY;
+    var TIMEDIM = _context.TIMEDIM;
     this._isCreated = new Promise(function(resolve, reject) {
       //quit if the function is called accidentally
       if(!_context.model.ui.chart.trails) return;
 
       var timePoints = _context.model.time.getAllSteps();
 
-      //work with entities.select (all selected entities), if no particular selection is specified
+      //work with marker.select (all selected entities), if no particular selection is specified
       var promises = [];
-      selection = selection == null ? _context.model.entities.select : [selection];
+      selection = selection == null ? _context.model.marker.select : [selection];
       _this._clearActions(selection);
-      _this.trailsData = _context.model.entities.select.map(function(d) {
+      _this.trailsData = _context.model.marker.select.map(function(d) {
         var r = {
           status: "created",
           selectedEntityData: d
@@ -90,15 +91,15 @@ export default Class.extend({
 
                 var pointer = {};
                 pointer[KEY] = segment.key;
-                pointer.time = segment.t;
+                pointer[TIMEDIM] = segment.t;
 
                 _context._axisProjections(pointer);
                 _context._labels.highlight(d, true);
-                var text = _context.model.time.timeFormat(segment.t);
-                var selectedData = utils.find(_context.model.entities.select, function(f) {
+                var text = _context.model.time.formatDate(segment.t);
+                var selectedData = utils.find(_context.model.marker.select, function(f) {
                   return f[KEY] == d[KEY]
                 });
-                _context.model.marker.getFrame(pointer.time, function(values) {
+                _context.model.marker.getFrame(pointer[TIMEDIM], function(values) {
                   var x = _context.xScale(values.axis_x[pointer[KEY]]);
                   var y = _context.yScale(values.axis_y[pointer[KEY]]);
                   var s = utils.areaToRadius(_context.sScale(values.size[pointer[KEY]]));
@@ -107,7 +108,7 @@ export default Class.extend({
                     _context._setTooltip(text, x, y, s + 3, c);
                   }
                   _context._setBubbleCrown(x, y, s, c);
-                  _context.model.entities.getModelObject("highlight").trigger('change', {'size': values.size[pointer[KEY]], 'color': values.color[pointer[KEY]]});
+                  _context.model.marker.getModelObject("highlight").trigger('change', {'size': values.size[pointer[KEY]], 'color': values.color[pointer[KEY]]});
                 });
                 //change opacity to OPACITY_HIGHLT = 1.0;
                 d3.select(this).style("opacity", 1.0);
@@ -118,8 +119,8 @@ export default Class.extend({
                 _context._setTooltip();
                 _context._setBubbleCrown();
                 _context._labels.highlight(null, false);
-                _context.model.entities.getModelObject("highlight").trigger('change', null);
-                d3.select(this).style("opacity", _context.model.entities.opacityRegular);
+                _context.model.marker.getModelObject("highlight").trigger('change', null);
+                d3.select(this).style("opacity", _context.model.marker.opacityRegular);
               })
               .each(function(segment, index) {
                 var view = d3.select(this);
@@ -191,12 +192,12 @@ export default Class.extend({
 
     this._isCreated.then(function() {
       //quit if function is called accidentally
-      if((!_context.model.ui.chart.trails || !_context.model.entities.select.length) && actions != "remove") return;
+      if((!_context.model.ui.chart.trails || !_context.model.marker.select.length) && actions != "remove") return;
 
       if(!duration) duration = 0;
 
-      //work with entities.select (all selected entities), if no particular selection is specified
-      selection = selection == null ? _context.model.entities.select : [selection];
+      //work with marker.select (all selected entities), if no particular selection is specified
+      selection = selection == null ? _context.model.marker.select : [selection];
       for (var i = 0; i < actions.length; i++) {
         if (["resize", "recolor"].indexOf(actions[i]) != -1) {
           var action = actions.splice(i, 1).pop();
@@ -351,7 +352,7 @@ export default Class.extend({
 
       view
         //.transition().duration(duration).ease("linear")
-        .style("opacity", d.opacity || _context.model.entities.opacityRegular);
+        .style("opacity", d.opacity || _context.model.marker.opacityRegular);
     });
   },
 
@@ -373,18 +374,18 @@ export default Class.extend({
         }
       }).then(function() {
           if (!d.selectedEntityData.trailStartTime) {
-            d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(_context.time);
+            d.selectedEntityData.trailStartTime = _context.model.time.formatDate(_context.time);
           }
-          var trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+          var trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
           if (_context.time - trailStartTime < 0 || d.limits.min - trailStartTime > 0) {
             if (_context.time - trailStartTime < 0) {
               // move trail start time with trail label back if need
-              d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(d3.max([_context.time, d.limits.min]));
-              trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+              d.selectedEntityData.trailStartTime = _context.model.time.formatDate(d3.max([_context.time, d.limits.min]));
+              trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
             } else {
               // move trail start time with trail label to start time if need
-              d.selectedEntityData.trailStartTime = _context.model.time.timeFormat(d.limits.min);
-              trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+              d.selectedEntityData.trailStartTime = _context.model.time.formatDate(d.limits.min);
+              trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
             }
             var cache = _context._labels.cached[d[KEY]];
             var valueS = _context.frame.size[d[KEY]];
@@ -400,9 +401,9 @@ export default Class.extend({
             var segmentVisibility = segment.transparent;
             segment.transparent = d.selectedEntityData.trailStartTime == null || (segment.t - _context.time > 0) || (trailStartTime - segment.t > 0)
                 //no trail segment should be visible if leading bubble is shifted backwards, beyond start time
-              || (d.selectedEntityData.trailStartTime - _context.model.time.timeFormat(_context.time) >= 0);
+              || (d.selectedEntityData.trailStartTime - _context.model.time.formatDate(_context.time) >= 0);
             // always update nearest 2 points
-            if (segmentVisibility != segment.transparent || Math.abs(_context.model.time.timeFormat(segment.t) - _context.model.time.timeFormat(_context.time)) < 2) segment.visibilityChanged = true; // segment changed, so need to update it
+            if (segmentVisibility != segment.transparent || Math.abs(_context.model.time.formatDate(segment.t) - _context.model.time.formatDate(_context.time)) < 2) segment.visibilityChanged = true; // segment changed, so need to update it
             if (segment.transparent) {
               d3.select(trail[0][index]).classed("vzb-invisible", segment.transparent);
             }
@@ -430,7 +431,7 @@ export default Class.extend({
     var _this = this;
     var KEY = _context.KEY;
     d.status = "reveal";
-    var trailStartTime = _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime);
+    var trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
     var generateTrailSegment = function(trail, index, nextIndex, level) {
       return new Promise(function(resolve, reject) {
         var view = d3.select(trail[0][index]);
@@ -671,7 +672,7 @@ export default Class.extend({
       var response = [];
       var min = 0, max = 0;
       var maxValue = d3.min([d.limits.max, _context.time]);
-      var minValue = d3.max([d.limits.min, _context.model.time.timeFormat.parse("" + d.selectedEntityData.trailStartTime)]);
+      var minValue = d3.max([d.limits.min, _context.model.time.parse("" + d.selectedEntityData.trailStartTime)]);
       utils.forEach(trail[0], function(segment, index) {
         var data = segment.__data__;
         if (data.t -  minValue == 0) {
@@ -680,7 +681,7 @@ export default Class.extend({
           max = index;
         } else {
           if (data.t >  minValue && data.t <  maxValue) {
-            if (_context.model.time.timeFormat(data.t) % div == 0 || (data.next && data.previous)) {
+            if (_context.model.time.formatDate(data.t) % div == 0 || (data.next && data.previous)) {
               response.push(index);
             }
           }

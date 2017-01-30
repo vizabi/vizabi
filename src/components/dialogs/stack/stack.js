@@ -65,7 +65,7 @@ var Stack = Dialog.extend({
     
     ready: function() {
       this._super();
-      if(this.model.state.marker.color.use !== "property") {
+      if(!this.model.state.marker.color.isDiscrete()) {
         if(this.stack.use == "property") { 
           this.setModel("stack", "none");
           return;

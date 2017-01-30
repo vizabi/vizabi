@@ -63,9 +63,9 @@ var BubbleChart = Tool.extend('BubbleChart', {
     this._super(model);
 
     if(model.ui.chart.lockNonSelected) {
-       var time = model.state.time.timeFormat.parse("" + model.ui.chart.lockNonSelected);
-       if(time < model.state.time.start) model.ui.chart.lockNonSelected = model.state.time.timeFormat(model.state.time.start);
-       if(time > model.state.time.end) model.ui.chart.lockNonSelected = model.state.time.timeFormat(model.state.time.end);
+       var time = model.state.time.parse("" + model.ui.chart.lockNonSelected);
+       if(time < model.state.time.start) model.ui.chart.lockNonSelected = model.state.time.formatDate(model.state.time.start);
+       if(time > model.state.time.end) model.ui.chart.lockNonSelected = model.state.time.formatDate(model.state.time.end);
     }
   },
 
@@ -74,9 +74,24 @@ var BubbleChart = Tool.extend('BubbleChart', {
    */
   default_model: {
     state: {
-      time: { },
+      time: { 
+        autogenerate: {
+          data: "data",
+          conceptIndex: 0,
+          conceptType: "time"
+        }
+      },
       entities: {
-        dim: "id"
+        autogenerate: {
+          data: "data",
+          conceptIndex: 0
+        }
+      },
+      entities_colorlegend: {
+        autogenerate: {
+          data: "data",
+          conceptIndex: 0
+        }
       },
       entities_tags: { },
       marker_tags: {
@@ -86,16 +101,51 @@ var BubbleChart = Tool.extend('BubbleChart', {
       },
       marker: {
         space: ["entities", "time"],
-        axis_x: {use: "indicator", which: "x"},
-        axis_y: {use: "indicator", which: "y"},
-        label:  {use: "property", which: "id"},
-        size:   {/*use size model defaults - will be constant*/},
-        color:  {/*use color model defaults - will be constant*/},
+        axis_x: { 
+          use: "indicator",
+          autogenerate: {
+            conceptIndex: 1,
+            conceptType: "measure"
+          }
+        },
+        axis_y: { 
+          use: "indicator",
+          autogenerate: {
+            conceptIndex: 0,
+            conceptType: "measure"
+          }
+        },
+        label:  {
+          use: "property",
+          autogenerate: {
+            conceptIndex: 0
+          }
+        },
+        size: {
+        },
+        color: {
+          syncModels: ["marker_colorlegend"]
+        },
         size_label: {
           /*use size model defaults - will be constant*/
           _important: false,
           extent: [0, 0.33]
         },
+      },
+      "marker_colorlegend":{
+        "space": ["entities_colorlegend"],
+        "label": {
+          "use": "property",
+          "which": "name"
+        },
+        "hook_rank": {
+          "use": "property",
+          "which": "rank"
+        },
+        "hook_geoshape": {
+          "use": "property",
+          "which": "shape_lores_svg"
+        }
       }
     },
     locale: { },
@@ -122,6 +172,12 @@ var BubbleChart = Tool.extend('BubbleChart', {
       adaptMinMaxZoom: false,
       cursorMode: 'arrow',
       zoomOnScrolling: false,
+      buttons: ['colors', 'find', 'size', 'trails', 'lock', 'moreoptions', 'fullscreen', 'presentation'],
+      dialogs: {
+        popup: ['colors', 'find', 'size', 'zoom', 'moreoptions'], 
+        sidebar: ['colors', 'find', 'size', 'zoom'], 
+        moreoptions: ['opacity', 'speed', 'axes', 'size', 'colors', 'label', 'zoom','presentation', 'about']
+      }
     }
   }
 });

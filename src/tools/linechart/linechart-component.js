@@ -77,25 +77,22 @@ var LCComponent = Component.extend({
           _this.zoomToMaxMin();
           _this.updateSize();
           _this.redrawDataPoints();
-          return;
         }
-        if(path.indexOf("which") > -1 || path.indexOf("use") > -1) return;
-        _this.ready();
       },
-      "change:entities.highlight": function() {
+      "change:marker.highlight": function() {
         if(!_this._readyOnce) return;
         _this.highlightLines();
       },
-      "change:entities.select": function() {
+      "change:marker.select": function() {
         if(!_this._readyOnce) return;
         _this.updateDoubtOpacity();
         _this.highlightLines();
       },
-      'change:entities.opacitySelectDim': function() {
+      'change:marker.opacitySelectDim': function() {
         if(!_this._readyOnce) return;
         _this.highlightLines();
       },
-      'change:entities.opacityRegular': function() {
+      'change:marker.opacityRegular': function() {
         if(!_this._readyOnce) return;
         _this.highlightLines();
       }
@@ -194,7 +191,6 @@ var LCComponent = Component.extend({
   },
 
   ready: function() {
-    this.all_values = null;
     this.all_steps = this.model.time.getAllSteps();
     this.all_values = this.values = null;
     this.updateTime();
@@ -205,6 +201,7 @@ var LCComponent = Component.extend({
     this.model.marker.getFrame(null, function(allValues) {
       _this.all_values = allValues;
       _this.model.marker.getFrame(_this.model.time.value, function (values) {
+        if (!_this._frameIsValid(values)) return;
         _this.values = values;
         _this.updateShow();
         _this.updateSize();
@@ -366,7 +363,7 @@ var LCComponent = Component.extend({
           .attr("dy", "1.6em");
       });
 
-    if (this.all_values) {
+    if (this.all_values && this.values) {
       this.entityLabels.each(function(d, index) {
         var entity = d3.select(this);
         var color = _this.cScale(_this.values.color[d[KEY]]);
@@ -424,7 +421,7 @@ var LCComponent = Component.extend({
 
     filter[timeDim] = this.time;
 
-    this.prev_steps = this.all_steps.filter(function(f){return f <= _this.time;});
+    this.prev_steps = this.all_steps.filter(function(f){return f < _this.time;});
 
     this.timeUpdatedOnce = true;
 
@@ -704,7 +701,7 @@ var LCComponent = Component.extend({
 
     if (!_this.all_values) return;
     this.model.marker.getFrame(this.time, function(values, time) {
-      if (!values) return;
+      if (!_this._frameIsValid(values)) return;
       _this.values = values;
       if(!_this.timeUpdatedOnce) {
         _this.updateTime();
@@ -738,8 +735,14 @@ var LCComponent = Component.extend({
             })
             .filter(function(d) { return d[1] || d[1] === 0; });
 
+          // add last point 
+          if (values.axis_y[d[KEY]]) {
+            xy.push([values.axis_x[d[KEY]], values.axis_y[d[KEY]]]);
+          }
+          
           if (xy.length > 0) {
             _this.cached[d[KEY]] = {
+              valueX: xy[xy.length - 1][0],
               valueY: xy[xy.length - 1][1]
             };
           } else {
@@ -809,38 +812,37 @@ var LCComponent = Component.extend({
       _this.entityLabels
         .each(function(d, index) {
           var entity = d3.select(this);
-          entity.select(".vzb-lc-circle")
+          if (_this.cached[d[KEY]]) {
+            entity
+              .classed("vzb-hidden", false)
               .transition()
               .duration(_this.duration)
               .ease("linear")
-              .attr("cy", _this.yScale(_this.values.axis_y[d[KEY]]) + 1);
+              .attr("transform", "translate(" + _this.xScale(d3.min([_this.cached[d[KEY]]["valueX"]])) + ",0)");
+
+            entity.select(".vzb-lc-circle")
+              .transition()
+              .duration(_this.duration)
+              .ease("linear")
+              .attr("cy", _this.yScale(_this.cached[d[KEY]]["valueY"]) + 1);
+
 
 
             entity.select(".vzb-lc-label")
               .transition()
               .duration(_this.duration)
               .ease("linear")
-              .attr("transform", "translate(0," + _this.yScale(_this.values.axis_y[d[KEY]]) + ")");
-
-/*
-          if(_this.data.length < valueHideLimit) {
-
-            var size = _this.xScale(_this.time) + t[0][0].getComputedTextLength() + _this.activeProfile.text_padding;
-            var width = _this.width + _this.margin.right;
-
-            if(size > width) {
-              entity.select(".vzb-lc-labelname").text(name);
-              entity.select(".vzb-lc-label-value").text(value);
-            }
+              .attr("transform", "translate(0," + _this.yScale(_this.cached[d[KEY]]["valueY"]) + ")");
+          } else {
+            entity
+              .classed("vzb-hidden", true);
           }
-*/
         });
-      _this.labelsContainer
+      _this.verticalNow
         .transition()
         .duration(_this.duration)
         .ease("linear")
         .attr("transform", "translate(" + _this.xScale(d3.min([_this.model.marker.axis_x.zoomedMax, _this.time])) + ",0)");
-
 
 
 
@@ -891,7 +893,7 @@ var LCComponent = Component.extend({
 
     var mousePos = mouse[1] - _this.margin.bottom;
 
-    if(!utils.isDate(resolvedTime)) resolvedTime = this.model.time.timeFormat.parse(resolvedTime);
+    if(!utils.isDate(resolvedTime)) resolvedTime = this.model.time.parse(resolvedTime);
 
     this.model.marker.getFrame(resolvedTime, function(data) {
       if (!_this._frameIsValid(data)) return;
@@ -899,9 +901,9 @@ var LCComponent = Component.extend({
       resolvedValue = data.axis_y[nearestKey];
       if(!me) me = {};
       me[KEY] = nearestKey;
-      if (!_this.model.entities.isHighlighted(me)) {
-        _this.model.entities.clearHighlighted();
-        _this.model.entities.highlightEntity(me);
+      if (!_this.model.marker.isHighlighted(me)) {
+        _this.model.marker.clearHighlighted();
+        _this.model.marker.highlightMarker(me);
       }
       _this.hoveringNow = me;
   
@@ -966,7 +968,7 @@ var LCComponent = Component.extend({
       _this.xAxisEl.call(_this.xAxis.highlightValue(_this.time));
       _this.yAxisEl.call(_this.yAxis.highlightValue("none"));
 
-      _this.model.entities.clearHighlighted();
+      _this.model.marker.clearHighlighted();
 
       _this.hoveringNow = null;
     }, 300);
@@ -981,18 +983,18 @@ var LCComponent = Component.extend({
 
     var OPACITY_HIGHLT = 1.0;
     var OPACITY_HIGHLT_DIM = .3;
-    var OPACITY_SELECT = this.model.entities.opacityRegular;
-    var OPACITY_REGULAR = this.model.entities.opacityRegular;
-    var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
+    var OPACITY_SELECT = this.model.marker.opacityRegular;
+    var OPACITY_REGULAR = this.model.marker.opacityRegular;
+    var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
 
-    var someHighlighted = (this.model.entities.highlight.length > 0);
-    var someSelected = (this.model.entities.select.length > 0);
+    var someHighlighted = (this.model.marker.highlight.length > 0);
+    var someSelected = (this.model.marker.select.length > 0);
     this.graph.selectAll(".vzb-lc-entity").each(function() {
       d3.select(this)
         .style("opacity", function(d) {
-          if (_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
+          if (_this.model.marker.isHighlighted(d)) return OPACITY_HIGHLT;
           if(someSelected) {
-            return _this.model.entities.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
+            return _this.model.marker.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
           }
           if(someHighlighted) return OPACITY_HIGHLT_DIM;
           return OPACITY_REGULAR;

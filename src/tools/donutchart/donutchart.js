@@ -48,7 +48,8 @@ var DonutChart = Tool.extend('DonutChart', {
       },
       ui: {
         presentation: false
-      }
+      },
+      locale: { }
     }
 });
 

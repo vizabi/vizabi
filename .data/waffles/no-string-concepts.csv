@@ -1,12 +1,4 @@
-"geo","time","sg_population","sg_gdp_p_cap_const_ppp2011_dollar","sg_gini","sg_child_mortality_rate_per1000"
-"asia",2015,,,
-"europe",2015,,,
-"africa",2015,,,
-"americas",2015,,,
-"asia",1800,,,
-"europe",1800,,,
-"africa",1800,,,
-"americas",1800,,,
+"geo","time","pop","gdp","gini","u5mr"
 "abw",1800,19286,833,,
 "afg",1800,3280000,603,30.5,468.58
 "ago",1800,1567028,618,48.9,485.68

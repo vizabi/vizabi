@@ -3,17 +3,20 @@ import { isNumber } from 'base/utils';
 
 const CSVTimeInColumnsReader = CSVReader.extend({
 
+  _name: 'csv-time_in_columns',
+
   init(readerInfo) {
-    this.name = 'csv-time_in_columns';
     this._super(readerInfo);
   },
 
   load() {
     return this._super()
-      .then((data) => {
+      .then(({ data, columns }) => {
+        const indicatorKey = columns[this.keySize];
+
         const concepts = data.reduce((result, row) => {
-          Object.keys(row).forEach(concept => {
-            concept = concept === 'indicator' ? row.indicator : concept;
+          Object.keys(row).forEach((concept) => {
+            concept = concept === indicatorKey ? row[indicatorKey] : concept;
 
             if (Number(concept) != concept && !result.includes(concept)) {
               result.push(concept);
@@ -27,13 +30,13 @@ const CSVTimeInColumnsReader = CSVReader.extend({
         const [entityDomain] = concepts;
         return data.reduce((result, row) => {
           Object.keys(row).forEach((key) => {
-            if (![entityDomain, 'indicator'].includes(key)) {
+            if (![entityDomain, indicatorKey].includes(key)) {
               result.push(
                 Object.assign({
                     [entityDomain]: row[entityDomain],
                     time: key,
                   }, indicators.reduce((result, indicator) => {
-                    result[indicator] = row.indicator === indicator ? row[key] : null;
+                    result[indicator] = row[indicatorKey] === indicator ? row[key] : null;
                     return result;
                   }, {})
                 )

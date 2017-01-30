@@ -29,7 +29,7 @@ var AgePyramid = Tool.extend('AgePyramid', {
     this.components = [{
       component: AgePyramidComponent,
       placeholder: '.vzb-tool-viz',
-      model: ["state.time", "state.entities", "state.entities_side", "state.entities_stack", "state.entities_age", "state.marker", "state.marker_side", "locale", "ui"] //pass models to component
+      model: ["state.time", "state.marker", "locale", "ui"] //pass models to component
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
@@ -57,13 +57,14 @@ var AgePyramid = Tool.extend('AgePyramid', {
       marker_tags: {}
     },
     ui: {
-    chart: {
-      stacked: true,
-      inpercent: false,
-      flipSides: true
+      chart: {
+        stacked: true,
+        inpercent: false,
+        flipSides: true
+      },
+      presentation: false
     },
-    presentation: false
-    }
+    locale: { }
   }
 
 
