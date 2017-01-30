@@ -148,6 +148,18 @@ var MountainChartComponent = Component.extend({
                 if (!_this._readyOnce) return;
                 _this.ready();
             },
+            "change:marker.stack.which": function (evt) {
+                if (!_this._readyOnce) return;
+                if (_this.model.time.playing) {
+                    _this.model.time.pause();
+                }               
+            },
+            "change:marker.stack.use": function (evt) {
+                if (!_this._readyOnce) return;
+                if (_this.model.time.playing) {
+                    _this.model.time.pause();
+                }               
+            },
             "change:marker.color.palette": function (evt) {
                 if (!_this._readyOnce) return;
                 _this.redrawDataPointsOnlyColors();
@@ -338,6 +350,7 @@ var MountainChartComponent = Component.extend({
     },
 
   frameChanged: function(frame, time) {
+    if (!frame) return utils.warn("change:time.value: empty data received from marker.getFrame(). doing nothing");
     if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
     this.values = frame;
     this.updateTime();
