@@ -95,9 +95,9 @@ export default Class.extend({
 
   _resizeText: function () {
 
-    var bbox = Object.assign(this.element.node().getBBox(), {
-      width: this.letterBBox.width * this.element.text().length
-    });
+    var bbox = {};
+    bbox.height = this.element.node().getBBox().height;
+    bbox.width =  this.letterBBox.width * this.element.text().length;
 
     if (!bbox.width || !bbox.height || !this.width || !this.height) return this;
 
