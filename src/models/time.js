@@ -251,7 +251,10 @@ var TimeModel = DataConnected.extend({
     if(soft) {
       this.postponePause = true;
     } else {
-      this.set("playing", false, null, false);
+      if(this.playing) {
+        this.set("playing", false, null, false);
+        this.set("value", this.value, true, true);
+      }
     }
   },
 
