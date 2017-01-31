@@ -536,7 +536,7 @@ updateSize: function (meshLength) {
           var rect = this.getBBox();
           var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
           var toolRect = _this.root.element.getBoundingClientRect();
-          var chartRect = _this.element.node().getBoundingClientRect();      
+          var chartRect = _this.element.node().getBoundingClientRect();
           _this.parent.findChildByName("gapminder-datanotes").setHook('axis_y').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
         })
         this.infoEl.on("mouseout", function() {
@@ -1034,7 +1034,7 @@ updateSize: function (meshLength) {
         var dragOrPlay = (this.model.time.dragging || this.model.time.playing)
             //never merge when no entities are stacked
             && stackMode !== "none"
-            
+
         this._adjustMaxY();
 
         this.mountainsMergeStacked.each(function (d) {
@@ -1090,14 +1090,14 @@ updateSize: function (meshLength) {
         if(!this.mountains) return utils.warn("redrawDataPointsOnlyColors(): no mountains  defined. likely a premature call, fix it!");
         var isColorUseIndicator = this.model.marker.color.use === "indicator";
         this.mountains.style("fill", function (d) {
-            return _this.values.color[d.KEY()] ? 
-              ( 
-                isColorUseIndicator &&_this.values.color[d.KEY()] == "_default" ? 
-                 _this.model.marker.color.palette["_default"] 
-                 : 
+            return _this.values.color[d.KEY()] ?
+              (
+                isColorUseIndicator &&_this.values.color[d.KEY()] == "_default" ?
+                 _this.model.marker.color.palette["_default"]
+                 :
                  _this.cScale(_this.values.color[d.KEY()])
-              ) 
-            : 
+              )
+            :
             COLOR_WHITEISH;
         });
     },
@@ -1123,14 +1123,14 @@ updateSize: function (meshLength) {
 
         //color use indicator suggests that this should be updated on every timeframe
         if (this.model.marker.color.use === "indicator") {
-          view.style("fill", _this.values.color[key] ? 
-            ( 
-             _this.values.color[key] !== "_default" ? 
+          view.style("fill", _this.values.color[key] ?
+            (
+             _this.values.color[key] !== "_default" ?
                _this.cScale(_this.values.color[key])
-               : 
-               _this.model.marker.color.palette["_default"] 
-            ) 
-            : 
+               :
+               _this.model.marker.color.palette["_default"]
+            )
+            :
             COLOR_WHITEISH
           );
         }
