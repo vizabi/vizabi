@@ -767,21 +767,25 @@ var AgePyramid = Component.extend({
 
     var stepShift = (ageBars[0][shiftedAgeDim] - ageBars[0][ageDim]) - this.shiftScale(time.value) * groupBy;
 
-    this.entityBars
-      .transition('age')
-      .duration(duration)
-      .ease("linear")
-      .attr("transform", function(d, i) {
-        return "translate(0," + (firstBarOffsetY - (d[shiftedAgeDim] - domain[0] - stepShift) * oneBarHeight) + ")";
-      })
-
     var _attributeUpdaters = this._attributeUpdaters;
     if(duration) {
+      this.entityBars
+        .transition('age')
+        .duration(duration)
+        .ease("linear")
+        .attr("transform", function(d, i) {
+          return "translate(0," + (firstBarOffsetY - (d[shiftedAgeDim] - domain[0] - stepShift) * oneBarHeight) + ")";
+        });
       this.stackBars
         .transition().duration(duration*.95).ease("linear")
         .attr("width", _attributeUpdaters._newWidth)
         .attr("x", _attributeUpdaters._newX);
     } else {
+      this.entityBars.interrupt()
+        .attr("transform", function(d, i) {
+          return "translate(0," + (firstBarOffsetY - (d[shiftedAgeDim] - domain[0] - stepShift) * oneBarHeight) + ")";
+        })
+        .transition();
       this.stackBars.interrupt()
         .attr("width", _attributeUpdaters._newWidth)
         .attr("x", _attributeUpdaters._newX)
