@@ -202,7 +202,7 @@ var label = function(context) {
             labelGroup
                 .attr("transform", "translate(" + _X + "," + _Y + ")")
                 .style("opacity", 0)
-                .transition().duration(duration).ease("exp")
+                .transition().duration(duration).ease(d3.easeExp)
                 .style("opacity", 1)
                 //i would like to set opactiy to null in the end of transition.
                 //but then fade in animation is not working for some reason
@@ -214,7 +214,7 @@ var label = function(context) {
             lineGroup
                 .attr("transform", "translate(" + _X + "," + _Y + ")")
                 .style("opacity", 0)
-                .transition().duration(duration).ease("exp")
+                .transition().duration(duration).ease(d3.easeExp)
                 .style("opacity", 1)
                 //i would like to set opactiy to null in the end of transition.
                 //but then fade in animation is not working for some reason
@@ -228,7 +228,7 @@ var label = function(context) {
 
             labelGroup
                 .style("opacity", 1)
-                .transition().duration(duration).ease("exp")
+                .transition().duration(duration).ease(d3.easeExp)
                 .style("opacity", 0)
                 .each("end", function(){
                     labelGroup
@@ -237,7 +237,7 @@ var label = function(context) {
                 })
             lineGroup
                 .style("opacity", 1)
-                .transition().duration(duration).ease("exp")
+                .transition().duration(duration).ease(d3.easeExp)
                 .style("opacity", 0)
                 .each("end", function(){
                     lineGroup
@@ -249,10 +249,10 @@ var label = function(context) {
             // just update the position
 
             labelGroup
-                .transition().duration(duration).ease("linear")
+                .transition().duration(duration).ease(d3.easeLinear)
                 .attr("transform", "translate(" + _X + "," + _Y + ")");
             lineGroup
-                .transition().duration(duration).ease("linear")
+                .transition().duration(duration).ease(d3.easeLinear)
                 .attr("transform", "translate(" + _X + "," + _Y + ")");
         }
 
@@ -497,22 +497,25 @@ var Labels = Class.extend({
       .remove();
     this.entityLines.exit()
       .remove();
-    this.entityLines
+      
+    this.entityLines = this.entityLines
       .enter().insert('g', function(d) {
         return this.querySelector("." + _this.options.LINES_CONTAINER_SELECTOR_PREFIX + d[KEY]);
       })
       .attr("class", function(d, index){return _cssPrefix + "-entity entity-line line-" + d[KEY]})
       .each(function(d, index) {
         _this.label.line(d3.select(this));
-      });
+      })
+      .merge(this.entityLines);
 
-    this.entityLabels
+    this.entityLabels = this.entityLabels
       .enter().append("g")
       .attr("class", function(d, index){return _cssPrefix + "-entity label-" + d[KEY]})
       .each(function(d, index) {
         _this.cached[d[KEY]] = {_new: true};
         _this.label(d3.select(this));
-      });
+      })
+      .merge(this.entityLabels);
   },
 
   showCloseCross: function(d, show) {
