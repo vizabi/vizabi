@@ -215,7 +215,7 @@ var Menu = Class.extend({
           .delay(0)
           .duration(duration)
           .style('width', newElementWidth + "px")
-          .each('end', function() {
+          .on('end', function() {
           });
         _this.parent.parentMenu.restoreWidth(width - newElementWidth, false, cb);
       } else {
@@ -244,7 +244,7 @@ var Menu = Class.extend({
         .delay(0)
         .duration(duration)
         .style('width', newElementWidth + "px")
-        .each('end', function() {
+        .on('end', function() {
           cb(width - _this.width + newElementWidth);
         });
     }
@@ -256,7 +256,7 @@ var Menu = Class.extend({
       .delay(0)
       .duration(250)
       .style('width', _this.width + "px")
-      .each('end', function() {
+      .on('end', function() {
         _this.marqueeToggle(true);
       });
   },
@@ -267,7 +267,7 @@ var Menu = Class.extend({
       .delay(0)
       .duration(250)
       .style('height', (36 * _this.menuItems.length) + "px")
-      .each('end', function() {
+      .on('end', function() {
         _this.entity.style('height', 'auto');
         _this.marqueeToggle(true);
         _this.scrollToFitView();
@@ -315,7 +315,7 @@ var Menu = Class.extend({
       .delay(0)
       .duration(20)
       .style('width', 0 + "px")
-      .each('end', function() {
+      .on('end', function() {
         _this.marqueeToggle(false);
         _this.entity.classed('active', false);
         if(!openSubmenuNow) {
@@ -334,7 +334,7 @@ var Menu = Class.extend({
       .delay(0)
       .duration(100)
       .style('height', 0 + "px")
-      .each('end', function() {
+      .on('end', function() {
         _this.marqueeToggle(false);
         _this.entity.classed('active', false);
         if (typeof cb === "function") cb();
@@ -1276,11 +1276,12 @@ var TreeMenu = Component.extend({
 
         scaleTypes.exit().remove();
 
-        scaleTypes.enter().append("span")
+        scaleTypes = scaleTypes.enter().append("span")
           .on("click", function(d){
             d3.event.stopPropagation();
             _this._setModel("scaleType", d, _this._markerID);
-          });
+          })
+          .merge(scaleTypes);
 
         var mdlScaleType = _this.model.marker[markerID].scaleType;
 
