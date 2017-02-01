@@ -56,7 +56,7 @@ var Dialog = Component.extend({
     var profile = this.getLayoutProfile();
 
     var dg = dialogDrag(this.placeholderEl, this.rootEl, 10);
-    var dragBehavior = d3.behavior.drag()
+    var dragBehavior = d3.drag()
       .on('start', function D3dialogDragStart() {
         var topPos = _this.placeholderEl.node().offsetTop;
         _this.placeholderEl.style({'top': topPos + 'px', 'bottom': 'auto'});

@@ -15,7 +15,7 @@ var label = function(context) {
       return label;
     }
 
-    var labelDragger = d3.behavior.drag()
+    var labelDragger = d3.drag()
       .on("start", function(d, i) {
         d3.event.sourceEvent.stopPropagation();
         var KEY = _this.KEY;

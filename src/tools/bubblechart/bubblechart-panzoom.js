@@ -6,8 +6,8 @@ export default Class.extend({
     init: function(context) {
         this.context = context;
 
-        this.dragRectangle = d3.behavior.drag();
-        this.zoomer = d3.behavior.zoom();
+        this.dragRectangle = d3.drag();
+        this.zoomer = d3.zoom();
 
         this.dragLock = false;
 

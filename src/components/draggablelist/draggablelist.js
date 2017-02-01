@@ -53,7 +53,7 @@ var DraggableList = Component.extend({
 
     this.updateData = utils.debounce(this.updateData, 1000);
 
-    this.itemDragger = d3.behavior.drag()
+    this.itemDragger = d3.drag()
       .on('dragstart', function(draggedData, i) {
         if(_this.dataUpdateFlag || !_this.draggable) return;
         d3.event.sourceEvent.stopPropagation();
