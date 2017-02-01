@@ -1,5 +1,5 @@
 import * as utils from 'base/utils';
-//d3.svg.axisSmart
+//d3.axisSmart
 
 export default function axisSmart(_orient) {
 
@@ -23,7 +23,7 @@ export default function axisSmart(_orient) {
       var checkRng = axis.scale().range();
       if(!checkDmn[0] && checkDmn[0]!==0 || !checkDmn[1] && checkDmn[1]!==0
       || !checkRng[0] && checkRng[0]!==0 || !checkRng[1] && checkRng[1]!==0){
-        return utils.warn("d3.svg.axisSmart() skips action because of invalid domain " + JSON.stringify(checkDmn) + " or range " + JSON.stringify(checkRng) + " of the attached scale");
+        return utils.warn("d3.axisSmart() skips action because of invalid domain " + JSON.stringify(checkDmn) + " or range " + JSON.stringify(checkRng) + " of the attached scale");
       }
 
       if(highlightValue != null) {
@@ -980,7 +980,7 @@ export default function axisSmart(_orient) {
 
 
     axis.copy = function() {
-      return d3_axis_smart(d3.svg.axis());
+      return d3_axis_smart(d3["axis" + _orient.charAt(0).toUpperCase() + _orient.substr(1).toLowerCase()]());
     };
 
     axis.orient = function() {

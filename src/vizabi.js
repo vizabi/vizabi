@@ -105,8 +105,6 @@ d3.time.format.iso = function(f) {
   format.parse = d3.isoParse(f);
   return format;
 }
-d3.svg = {};
-d3.svg.axis = d3.axisBottom;
 d3.round = function(x, n) {
   return n ? Math.round(x * (n = Math.pow(10, n))) / n : Math.round(x);
 };
