@@ -1160,7 +1160,7 @@ updateSize: function (meshLength) {
                 .attr("alignment-baseline", "middle")
                 .text(tooltipText)
 
-            var contentBBox = this.tooltip.select("text")[0][0].getBBox();
+            var contentBBox = this.tooltip.select("text").node().getBBox();
 
             this.tooltip.select("rect")
                 .attr("width", contentBBox.width + 8)

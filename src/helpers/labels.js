@@ -619,7 +619,7 @@ var Labels = Class.extend({
       }
     }
 
-    var contentBBox = _text[0][0].getBBox();
+    var contentBBox = _text.node().getBBox();
 
     var rect = labelGroup.selectAll("rect");
 
