@@ -92,7 +92,7 @@ var TimeModel = DataConnected.extend({
       "change:format": function() {
         _this.initFormatters();
       }
-
+      
     });
   },
 
