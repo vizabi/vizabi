@@ -11,7 +11,7 @@
   $size-timeslider-medium: 50px;
   $size-timeslider-small: 40px;
   $vzb-button-expand-width: 290px;
-
+ 
 
   @include user-select(none);
   display: flex;
@@ -45,23 +45,21 @@
     direction: ltr;
 
     transform: translate3d(0, 0, 0);
-
-    .vzb-tool-timeslider {
-      width: 100%;
-      height: $size-timeslider-medium;
-    }
-
     .vzb-tool-viz {
       flex: 1 auto;
       position: relative;
     }
 
     .vzb-tool-time-speed-sliders {
+      flex: 0 0 $size-timeslider; 
+      height: $size-timeslider;
       display: flex;
-    }
-
-    .vzb-tool-stepped-speed-slider {
-      flex: 0 0 35px;
+      .vzb-tool-timeslider {
+        flex: 1 1 auto;
+      }
+      .vzb-tool-stepped-speed-slider {
+        flex: 0 0 35px;
+      }
     }
   }
 
@@ -78,7 +76,7 @@
       position: relative;
       //overflow: visible;
       text-align: center;
-
+    
       input,
       textarea,
       keygen,
@@ -86,7 +84,7 @@
       button {
         font-family: $vzb-font-family;
       }
-
+    
       &:-webkit-scrollbar {
         display: none;
       }
@@ -100,7 +98,7 @@
   }
 
   &.vzb-timeslider-off {
-    .vzb-tool-timeslider {
+    .vzb-tool-time-speed-sliders {
       display: none;
     }
   }
@@ -117,15 +115,15 @@
     //@include position(absolute, $pos-top 0 0 0);
 
     .vzb-tool-stage {
-      .vzb-tool-timeslider {
-        width: 100%;
+      .vzb-tool-time-speed-sliders {
+        flex: 0 0 $size-timeslider-small;
         height: $size-timeslider-small;
       }
     }
 
     &.vzb-portrait {
       flex-direction: column;
-
+        
       .vzb-tool-sidebar {
         flex-direction: column;
         .vzb-tool-buttonlist {
@@ -148,7 +146,7 @@
     }
 
     &.vzb-timeslider-off {
-      .vzb-tool-timeslider {
+      .vzb-tool-time-speed-sliders {
         display: none;
       }
     }
@@ -157,11 +155,11 @@
       font-size: $vzb-font-size-tiny;
     }
   }
-
+  
   &.vzb-medium {
     .vzb-tool-stage {
-      .vzb-tool-timeslider {
-        width: 100%;
+      .vzb-tool-time-speed-sliders {
+        flex: 0 0 $size-timeslider-medium; 
         height: $size-timeslider-medium;
       }
     }
@@ -182,7 +180,7 @@
           overflow-x: hidden;
           overflow-y: auto;
         }
-
+  
         .vzb-tool-buttonlist {
           flex: 0 0 auto;
           width: $vzb-button-expand-width;
@@ -191,7 +189,7 @@
       }
     }
   }
-
+  
   //tooltip
   .vzb-tooltip {
     @include border-radius(3px);
@@ -245,14 +243,14 @@
   input[type=range]:focus::-ms-fill-upper {
     background: transparent;
   }
-
+  
   input[type=range]::-ms-tooltip {
-    display: none;
+    display: none;  
   }
-
+  
   input[type=range]::-moz-focus-outer {
     border: 0;
-  }
+  }    
   //Data warning
   .vzb-data-warning {
     cursor: pointer;

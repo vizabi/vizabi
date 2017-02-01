@@ -58,8 +58,8 @@ const SteppedSlider = Component.extend({
       .domain(domain)
       .range(range);
 
-    this.initAxis();
     this.initTriangle();
+    this.initAxis();
 
     this.redraw();
   },
@@ -68,7 +68,8 @@ const SteppedSlider = Component.extend({
     const {
       lineWidth,
       triangleWidth,
-      triangleHeight
+      triangleHeight,
+      height
     } = this.config;
 
     const axis = d3.svg.axis()
@@ -79,37 +80,16 @@ const SteppedSlider = Component.extend({
 
     const tx = triangleWidth + lineWidth / 2;
     const ty = triangleHeight / 2;
-    this.svg.select('.vzb-stepped-speed-slider-axis')
-      .on('click', () => {
-        // -5 because d3.event.offsetY returns incorrect value
+    this.svg
+      .on('mousedown', () => {
         const { offsetY } = d3.event;
-        const delay = this.delayScale(this.axisScale.invert(offsetY - 5));
-        this.setDelay(delay, true, true);
+        const y = Math.max(0, Math.min(offsetY - ty, height));
+
+        this.setDelay(Math.round(this.delayScale(this.axisScale.invert(y))), true, true);
       })
+      .select('.vzb-stepped-speed-slider-axis')
       .attr('transform', `translate(${tx}, ${ty})`)
       .call(axis);
-  },
-
-  initTriangle() {
-    const {
-      triangleWidth,
-      triangleHeight,
-      lineWidth,
-      height
-    } = this.config;
-
-    this.slide = this.svg.select('.vzb-stepped-speed-slider-triangle');
-
-    this.slide
-      .append('rect')
-      .attr('width', triangleWidth + lineWidth / 2)
-      .attr('height', triangleHeight)
-      .style('opacity', 0);
-
-    this.slide
-      .append('g')
-      .append('path')
-      .attr('d', this.getTrianglePath());
 
     this.drag = d3.behavior.drag()
       .on('drag', () => {
@@ -124,7 +104,22 @@ const SteppedSlider = Component.extend({
         this.setDelay(this.model.time.delay, true, true);
       });
 
-    this.slide.call(this.drag);
+    this.svg.call(this.drag);
+  },
+
+  initTriangle() {
+    const {
+      triangleWidth,
+      triangleHeight,
+      lineWidth
+    } = this.config;
+
+    this.slide = this.svg.select('.vzb-stepped-speed-slider-triangle');
+
+    this.slide
+      .append('g')
+      .append('path')
+      .attr('d', this.getTrianglePath());
   },
 
   getTrianglePath() {
