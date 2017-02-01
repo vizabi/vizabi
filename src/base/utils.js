@@ -1516,3 +1516,5 @@ export function transform(node) {
     };
   }(a, b, c, d, e, f);
 }
+
+export function capitalize(string) { return string && string[0].toUpperCase() + string.slice(1).toLowerCase(); };

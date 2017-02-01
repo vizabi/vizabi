@@ -7,7 +7,7 @@ import {
 } from 'base/iconset';
 
 import topojson from 'helpers/topojson';
-import d3_geo_projection from 'helpers/d3.geo.projection';
+import d3_geo_projection from 'helpers/d3.geoProjection';
 import DynamicBackground from 'helpers/d3.dynamicBackground';
 import globals from 'base/globals';
 
@@ -104,7 +104,7 @@ var BubbleMapComponent = Component.extend({
     this._super(config, context);
 
     this.sScale = null;
-    this.cScale = d3.scale.category10();
+    this.cScale = d3.scaleOrdinal(d3.schemeCategory10);
 
     _this.COLOR_WHITEISH = "#fdfdfd";
 
@@ -539,9 +539,9 @@ var BubbleMapComponent = Component.extend({
 
       if(d.hidden !== d.hidden_1) {
         if(duration){
-            view.transition().duration(duration).ease("linear")
+            view.transition().duration(duration).ease(d3.easeLinear)
                 .style("opacity", 0)
-                .each("end", () => view.classed("vzb-hidden", d.hidden).style("opacity", _this.model.marker.opacityRegular));
+                .on("end", () => view.classed("vzb-hidden", d.hidden).style("opacity", _this.model.marker.opacityRegular));
         } else {
           view.classed("vzb-hidden", d.hidden);
         }
@@ -565,7 +565,7 @@ var BubbleMapComponent = Component.extend({
           }
 
           if(duration){
-              view.transition().duration(duration).ease("linear")
+              view.transition().duration(duration).ease(d3.easeLinear)
                   .attr("r", d.r);
           }else{
               view.interrupt()
@@ -637,9 +637,9 @@ var BubbleMapComponent = Component.extend({
 
     //stage
 
-    this.projection = d3.geo[this.model.ui.map.projection]();
+    this.projection = d3["geo" + utils.capitalize(this.model.ui.map.projection)]();
 
-    this.mapPath = d3.geo.path()
+    this.mapPath = d3.geoPath()
         .projection(this.projection);
 
     this.mapGraph = this.element.select(".vzb-bmc-map-graph");
@@ -759,30 +759,30 @@ var BubbleMapComponent = Component.extend({
 
     if(this.yInfoEl.select('svg').node()) {
         var titleBBox = this.yTitleEl.node().getBBox();
-        var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
-        var hTranslate = isRTL ? (titleBBox.x + translate[0] - infoElHeight * 1.4) : (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4);
+        var t = utils.transform(this.yTitleEl.node());
+        var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4);
 
         this.yInfoEl.select('svg')
             .attr("width", infoElHeight)
             .attr("height", infoElHeight)
         this.yInfoEl.attr('transform', 'translate('
             + hTranslate + ','
-            + (translate[1] - infoElHeight * 0.8) + ')');
+            + (t.translateY - infoElHeight * 0.8) + ')');
     }
 
     this.cInfoEl.classed("vzb-hidden", this.cTitleEl.classed("vzb-hidden"));
 
     if(!this.cInfoEl.classed("vzb-hidden") && this.cInfoEl.select('svg').node()) {
         var titleBBox = this.cTitleEl.node().getBBox();
-        var translate = d3.transform(this.cTitleEl.attr('transform')).translate;
-        var hTranslate = isRTL ? (titleBBox.x + translate[0] - infoElHeight * 1.4) : (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4);
+        var t = utils.transform(this.cTitleEl.node());
+        var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4);
 
         this.cInfoEl.select('svg')
             .attr("width", infoElHeight)
             .attr("height", infoElHeight)
         this.cInfoEl.attr('transform', 'translate('
             + hTranslate + ','
-            + (translate[1] - infoElHeight * 0.8) + ')');
+            + (t.translateY - infoElHeight * 0.8) + ')');
     }
   },
 
@@ -1024,7 +1024,7 @@ var BubbleMapComponent = Component.extend({
         .selectAll("text")
         .text(tooltipText);
 
-      var contentBBox = this.tooltip.select('text')[0][0].getBBox();
+      var contentBBox = this.tooltip.select('text').node().getBBox();
       if(x - xOffset - contentBBox.width < 0) {
         xSign = 1;
         x += contentBBox.width + 5; // corrective to the block Radius and text padding

@@ -6,7 +6,7 @@ import {
   question as iconQuestion
 } from 'base/iconset';
 
-import d3_geo_projection from 'helpers/d3.geo.projection';
+import d3_geo_projection from 'helpers/d3.geoProjection';
 import DynamicBackground from 'helpers/d3.dynamicBackground';
 import globals from 'base/globals';
 
@@ -765,7 +765,7 @@ var CartogramComponent = Component.extend({
         .selectAll("text")
         .text(tooltipText);
 
-      var contentBBox = this.tooltip.select('text')[0][0].getBBox();
+      var contentBBox = this.tooltip.select('text').node().getBBox();
       if(x - xOffset - contentBBox.width < 0) {
         xSign = 1;
         x += contentBBox.width + 5; // corrective to the block Radius and text padding
