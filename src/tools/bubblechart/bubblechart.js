@@ -140,7 +140,8 @@ var BubbleChart = Tool.extend('BubbleChart', {
           }
         },
         size_label: {
-          /*use size model defaults - will be constant*/
+          use: "constant",
+          which: "_default",
           _important: false,
           extent: [0, 0.33]
         },
