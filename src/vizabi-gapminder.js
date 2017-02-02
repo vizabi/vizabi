@@ -16,6 +16,7 @@ import BarRankChart from 'tools/barrankchart/barrankchart';
 import MountainChart from 'tools/mountainchart/mountainchart';
 import BarChart from 'tools/barchart/barchart';
 import BubbleMap from 'tools/bubblemap/bubblemap';
+import LBubbleMap from 'tools/lbubblemap/bubblemap';
 import LineChart from 'tools/linechart/linechart';
 import DonutChart from 'tools/donutchart/donutchart';
 import Cartogram from 'tools/cartogram/cartogram';
