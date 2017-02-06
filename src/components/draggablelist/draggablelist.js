@@ -54,7 +54,7 @@ var DraggableList = Component.extend({
     this.updateData = utils.debounce(this.updateData, 1000);
 
     this.itemDragger = d3.drag()
-      .on('dragstart', function(draggedData, i) {
+      .on('start', function(draggedData, i) {
         if(_this.dataUpdateFlag || !_this.draggable) return;
         d3.event.sourceEvent.stopPropagation();
         _this.parentBoundRect = _this.element.node().getBoundingClientRect();
@@ -97,7 +97,7 @@ var DraggableList = Component.extend({
         }
       })
 
-      .on('dragend', function(d, i) {
+      .on('end', function(d, i) {
         if(_this.dataUpdateFlag || !_this.draggable) return;
         _this.getData();
       })

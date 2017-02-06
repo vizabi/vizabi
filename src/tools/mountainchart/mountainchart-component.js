@@ -178,8 +178,8 @@ var MountainChartComponent = Component.extend({
         this._selectlist = new Selectlist(this);
 
         // define path generator
-        this.area = d3.svg.area()
-            .interpolate("basis")
+        this.area = d3.area()
+            .curve(d3.curveBasis)
             .x(function (d) {
                 return _this.xScale(_this._math.rescale(d.x));
             })
@@ -191,13 +191,10 @@ var MountainChartComponent = Component.extend({
             });
 
         //define d3 stack layout
-        this.stack = d3.layout.stack()
-            .order("reverse")
-            .values(function (d) {
-                return _this.cached[d.KEY()];
-            })
-            .out(function out(d, y0, y) {
-                d.y0 = y0;
+        this.stack = d3.stack()
+            .order(d3.stackOrderReverse)
+            .value(function (d, key) {
+                return _this.cached[key][d].y;
             });
 
         // init internal variables
@@ -205,7 +202,7 @@ var MountainChartComponent = Component.extend({
         this.yScale = null;
         this.cScale = null;
 
-        this.xAxis = axisSmart();
+        this.xAxis = axisSmart("bottom");
 
 
         this.rangeRatio = 1;
@@ -471,15 +468,15 @@ updateSize: function (meshLength) {
 
         if(this.infoEl.select('svg').node()) {
             var titleBBox = this.yTitleEl.node().getBBox();
-            var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
-            var hTranslate = isRTL ? (titleBBox.x + translate[0] - infoElHeight * 1.4) : (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4);
+            var t = utils.transform(this.yTitleEl.node());
+            var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4);
 
             this.infoEl.select('svg')
                 .attr("width", infoElHeight + "px")
                 .attr("height", infoElHeight + "px");
             this.infoEl.attr('transform', 'translate('
                 + hTranslate + ','
-                + (translate[1]-infoElHeight * .8) + ')');
+                + (t.translateY - infoElHeight * .8) + ')');
         }
 
         this.eventAreaEl
@@ -684,11 +681,14 @@ updateSize: function (meshLength) {
 
         //enter selection -- add shapes
         this.mountainsMergeStacked.enter().append("path")
-            .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel2");
+            .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel2")
+            .merge(this.mountainsMergeStacked);
         this.mountainsMergeGrouped.enter().append("path")
-            .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel1");
+            .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel1")
+            .merge(this.mountainsMergeGrouped)
         this.mountainsAtomic.enter().append("path")
-            .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel0");
+            .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel0")
+            .merge(this.mountainsAtomic);
 
         //add interaction
         this.mountains = this.mountainAtomicContainer.selectAll(".vzb-mc-mountain");
@@ -853,7 +853,13 @@ updateSize: function (meshLength) {
                         return !f.hidden;
                     }));
                 });
-                _this.stack(toStack);
+                _this.stack.keys(toStack.map(d => d.KEY()))(d3.range(_this.mesh.length))
+                    .forEach((vertices, keyIndex) => {
+                        var key = toStack[keyIndex].KEY();
+                        vertices.forEach((d, verticesIndex) => {
+                            _this.cached[key][verticesIndex].y0 = d[0];
+                        });
+                    });
             });
         }
 
@@ -1136,7 +1142,7 @@ updateSize: function (meshLength) {
         }
 
         if (stack !== "none") view
-            .transition().duration(Math.random() * 900 + 100).ease("circle")
+            .transition().duration(Math.random() * 900 + 100).ease(d3.easeCircle)
             .style("stroke-opacity", .5);
 
         if (this.model.time.record) this._export.write({
