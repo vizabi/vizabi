@@ -5,6 +5,8 @@ import topojson from 'helpers/topojson';
 import d3_geo_projection from 'helpers/d3.geo.projection';
 var GoogleMapsLoader = require('google-maps');
 
+import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js';
+
 export default Class.extend({
   init: function(context) {
     this.context = context;
@@ -15,6 +17,9 @@ export default Class.extend({
       switch (this.context.model.ui.map.mapEngine) {
         case "google":
           this.mapInstance = new GoogleMapLayer(this.context);
+          break;
+        case "mapbox":
+          this.mapInstance = new MapboxLayer(this.context);
           break;
         default:
         this.mapInstance = new MapLayer(this.context);
@@ -147,7 +152,7 @@ var MapLayer = Class.extend({
 
     // internal offset against parent container (mapSvg)
     this.mapGraph
-        .attr('transform', 'translate(' + mapLeftOffset + ',' + mapTopOffset + ')')
+        .attr('transform', 'translate(' + mapLeftOffset + ',' + mapTopOffset + ')');
 
     // resize and put in center
     this.mapSvg
@@ -243,3 +248,77 @@ var GoogleMapLayer = Class.extend({
   }
   
 });
+
+var MapboxLayer = Class.extend({
+
+  init: function (context) {
+    mapboxgl.accessToken = "pk.eyJ1Ijoic2VyZ2V5ZiIsImEiOiJjaXlqeWo5YnYwMDBzMzJwZnlwZXJ2bnA2In0.e711ku9KzcFW_x5wmOZTag";
+    this.context = context;
+  },
+
+  initMap: function (domSelector) {
+    var _this = this;
+    this.mapRoot = d3.select(this.context.element).select(domSelector);
+    this.mapCanvas = this.mapRoot.html('').append("div");
+    return new Promise(function(resolve, reject) {
+      _this.map = new mapboxgl.Map({
+        container: _this.mapCanvas.node(),
+        interactive: false,
+        style: 'mapbox://styles/mapbox/satellite-v9',
+        hash: false
+      });
+      resolve();
+    });
+  },
+
+  rescaleMap: function() {
+    var _this = this;
+    var offset = this.context.model.ui.map.offset;
+    var margin = this.context.activeProfile.margin;
+    var viewPortHeight = this.context.height * this.context.model.ui.map.scale;
+    var viewPortWidth = this.context.width * this.context.model.ui.map.scale;
+
+    this.mapCanvas
+        .style({"width": viewPortWidth + "px", "height": viewPortHeight + "px"});
+
+    this.mapRoot
+        .attr('width', viewPortWidth)
+        .attr('height', viewPortHeight)
+        .style({"position": "absolute", "left": margin.left + "px", "right": margin.right + "px", "top": margin.top + "px", "bottom": margin.bottom + "px"});
+    _this.map.resize();
+    _this.map.fitBounds([[
+      _this.context.model.ui.map.bounds.west,
+      _this.context.model.ui.map.bounds.south
+    ], [
+      _this.context.model.ui.map.bounds.east,
+      _this.context.model.ui.map.bounds.north
+    ]]);
+    /*
+    google.maps.event.trigger(this.map, "resize");
+    var rectangle = new google.maps.Rectangle({
+      bounds: {
+        north:_this.context.model.ui.map.bounds.north,
+        east: _this.context.model.ui.map.bounds.east,
+        south: _this.context.model.ui.map.bounds.south,
+        west: _this.context.model.ui.map.bounds.west
+      },
+      editable: true,
+      draggable: true
+    });
+
+    rectangle.setMap(_this.map);
+    var rectBounds = new google.maps.LatLngBounds(
+        new google.maps.LatLng(this.context.model.ui.map.bounds.north, this.context.model.ui.map.bounds.west),
+        new google.maps.LatLng(this.context.model.ui.map.bounds.south, this.context.model.ui.map.bounds.east)
+    );
+    this.map.fitBounds(rectBounds);
+*/
+  },
+  invert: function(x, y) {
+    var coords = this.map.project([y, x]);
+    return [coords.x, coords.y];
+  }
+
+});
+
+

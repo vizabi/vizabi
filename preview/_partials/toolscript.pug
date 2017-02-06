@@ -1,5 +1,6 @@
 script.
   var locationArray = window.location.href.split("/");
+  window.URL = null;
   var LOCAL_URL = locationArray.splice(0, locationArray.indexOf("preview")).join("/") + "/preview/";
   VIZABI_MODEL = {};
   EXT_RESOURCES = {};
@@ -101,4 +102,4 @@ script.
   Vizabi._globals.ext_resources = EXT_RESOURCES;
   VIZABI_PAGE_MODEL = Vizabi.utils.deepExtend({}, VIZABI_MODEL);
 
-  VIZ = Vizabi("#{tool}", placeholder, Vizabi.utils.deepExtend({}, VIZABI_MODEL, URL.model));
+  VIZ = Vizabi("#{tool}", placeholder, Vizabi.utils.deepExtend({}, VIZABI_MODEL, URLI.model));
