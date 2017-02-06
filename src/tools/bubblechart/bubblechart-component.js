@@ -701,14 +701,14 @@ var BubbleChartComp = Component.extend({
     if (!this.model.time.splash) {
       this.unselectBubblesWithNoData(markers);
     }
-    this.entityBubbles = this.bubbleContainer.selectAll('circle.vzb-bc-entity')
+    var entityBubbles = this.bubbleContainer.selectAll('circle.vzb-bc-entity')
       .data(this.model.marker.getVisible(), function(d) {return d[KEY]}); // trails have not keys
 
     //exit selection
-    this.entityBubbles.exit().remove();
+    entityBubbles.exit().remove();
 
     //enter selection -- init circles
-    this.entityBubbles.enter().append("circle")
+    this.entityBubbles = entityBubbles.enter().append("circle")
       .attr("class", function(d) {
         return "vzb-bc-entity " + "bubble-" + d[KEY];
       })
@@ -730,7 +730,8 @@ var BubbleChartComp = Component.extend({
         d3.event.stopPropagation();
         _this._bubblesInteract().click(d, i);
       })
-      .onLongTap(function(d, i) {});
+      .onLongTap(function(d, i) {})
+      .merge(entityBubbles);
 
     this._reorderEntities();
   },

@@ -473,15 +473,15 @@ var BubbleMapComponent = Component.extend({
     */
 
 
-    this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bmc-bubble')
+    var entityBubbles = this.bubbleContainer.selectAll('.vzb-bmc-bubble')
       .data(this.model.marker.getVisible(), function(d) { return d[KEY]; })
       .order();
 
     //exit selection
-    this.entityBubbles.exit().remove();
+    entityBubbles.exit().remove();
 
     //enter selection -- init circles
-    this.entityBubbles.enter().append("circle")
+    this.entityBubbles = entityBubbles.enter().append("circle")
       .attr("class", "vzb-bmc-bubble")
       .on("mouseover", function (d, i) {
           if (utils.isTouchDevice()) return;
@@ -502,6 +502,7 @@ var BubbleMapComponent = Component.extend({
       })
       .onLongTap(function (d, i) {
       })
+      .merge(entityBubbles);
 
   },
 
