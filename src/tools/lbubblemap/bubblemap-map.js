@@ -186,30 +186,26 @@ var GoogleMapLayer = Class.extend({
     var _this = this;
     this.mapRoot = d3.select(this.context.element).select(domSelector);
     this.mapCanvas = this.mapRoot.html('').append("div");
+    
     GoogleMapsLoader.KEY = "AIzaSyAP0vMZwYojifwGYHTnEtYV40v6-MdLGFM";
     return new Promise(function(resolve, reject) {
       GoogleMapsLoader.load(function (google) {
         _this.map = new google.maps.Map(_this.mapCanvas.node(), {
-          center: new google.maps.LatLng(0, 0),
-          zoom: 2,
-          minZoom: 1
+          disableDefaultUI: true,
+          backgroundColor: '#FFFFFF'
         });
+
         _this.overlay = new google.maps.OverlayView();
         _this.overlay.draw = function() {};
         _this.overlay.setMap(_this.map);
 
-        var rectBounds = new google.maps.LatLngBounds(
-            new google.maps.LatLng(85, -180),           // top left corner of map
-            new google.maps.LatLng(-85, 180)
-        );
-        _this.map.fitBounds(rectBounds);
-        console.log("map ready");
         resolve();
       });
     });
    },
  
   rescaleMap: function() {
+    var _this = this;
     var offset = this.context.model.ui.map.offset;
     var margin = this.context.activeProfile.margin;
     var viewPortHeight = this.context.height * this.context.model.ui.map.scale;
@@ -222,12 +218,24 @@ var GoogleMapLayer = Class.extend({
         .attr('width', viewPortWidth)
         .attr('height', viewPortHeight)
         .style({"position": "absolute", "left": margin.left + "px", "right": margin.right + "px", "top": margin.top + "px", "bottom": margin.bottom + "px"});
+    google.maps.event.trigger(this.map, "resize");
+    var rectangle = new google.maps.Rectangle({
+      bounds: {
+        north:_this.context.model.ui.map.bounds.north,
+        east: _this.context.model.ui.map.bounds.east,
+        south: _this.context.model.ui.map.bounds.south,
+        west: _this.context.model.ui.map.bounds.west
+      },
+      editable: true,
+      draggable: true
+    });
+
+    rectangle.setMap(_this.map);
     var rectBounds = new google.maps.LatLngBounds(
-        new google.maps.LatLng(85, -180),           // top left corner of map
-        new google.maps.LatLng(-85, 180)
+        new google.maps.LatLng(this.context.model.ui.map.bounds.north, this.context.model.ui.map.bounds.west),
+        new google.maps.LatLng(this.context.model.ui.map.bounds.south, this.context.model.ui.map.bounds.east)
     );
     this.map.fitBounds(rectBounds);
-    console.log("rescale");
   },
   invert: function(x, y) {
     var coords = this.overlay.getProjection().fromLatLngToContainerPixel(new google.maps.LatLng(x, y)); 

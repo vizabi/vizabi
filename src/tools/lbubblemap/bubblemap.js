@@ -84,9 +84,11 @@ var LBubbleMap = Tool.extend('LBubbleMap', {
         preserveAspectRatio: true,
         mapEngine: "google",
         scale: 5,
-        center: {
-          lat: 0,
-          lng: 0
+        bounds: {
+          north: 60,
+          west: 15,
+          south: 35,
+          east: 50
         },
         offset: {
           top: 0,
