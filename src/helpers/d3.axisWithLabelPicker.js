@@ -50,8 +50,14 @@ export default function axisSmart(_orient) {
       if(options.transitionDuration > 0) {
         _super(g.transition().duration(options.transitionDuration));
       } else {
-       _super(g);
+        _super(g);
       }
+
+      //remove axis d3v4 hardcoded attributes
+      g.attr("fill", null);
+      g.attr("font-size", null);
+      g.attr("font-family", null);
+      g.attr("text-anchor", null);
 
       //identify the orientation of axis and the direction of labels
       var orient = axis.orient() == "top" || axis.orient() == "bottom" ? HORIZONTAL : VERTICAL;
@@ -102,8 +108,9 @@ export default function axisSmart(_orient) {
       if(axis.tickValuesMinor() == null) axis.tickValuesMinor([]);
       var minorTicks = g.selectAll(".tick-minor").data(tickValuesMinor);
       minorTicks.exit().remove();
-      minorTicks.enter().append("line")
-        .attr("class", "tick-minor");
+      minorTicks = minorTicks.enter().append("line")
+        .attr("class", "tick-minor")
+        .merge(minorTicks);
 
       var tickLengthOut = axis.tickSizeMinor().outbound;
       var tickLengthIn = axis.tickSizeMinor().inbound;
@@ -118,8 +125,9 @@ export default function axisSmart(_orient) {
       g.selectAll("path").remove();
       var rake = g.selectAll(".vzb-axis-line").data([0]);
       rake.exit().remove();
-      rake.enter().append("line")
-        .attr("class", "vzb-axis-line");
+      rake = rake.enter().append("line")
+        .attr("class", "vzb-axis-line")
+        .merge(rake);
 
       if(options.viewportLength){
         rake
