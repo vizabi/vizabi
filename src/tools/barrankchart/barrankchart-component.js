@@ -79,10 +79,10 @@ const BarRankChart = Component.extend({
 
     // set up the scales
     this.xScale = null;
-    this.cScale = d3.scale.category10();
+    this.cScale = d3.scaleOrdinal(d3.schemeCategory10);
 
     // set up the axes
-    this.xAxis = axisWithLabelPicker();
+    this.xAxis = axisWithLabelPicker("bottom");
   },
 
   onTimeChange() {
@@ -517,7 +517,7 @@ const BarRankChart = Component.extend({
     updatedBars.exit().remove();
 
     // make the groups for the entities which were not drawn yet (.data.enter() does this)
-    updatedBars.enter()
+    updatedBars = updatedBars.enter()
       .append('g')
       .each(function (d) {
         const self = d3.select(this);
@@ -559,7 +559,8 @@ const BarRankChart = Component.extend({
           labelFull,
           labelSmall,
         });
-      });
+      })
+      .merge(updatedBars);
   },
 
   _getWidestLabelWidth(big = false) {
