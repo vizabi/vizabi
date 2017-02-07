@@ -642,13 +642,8 @@ var AgePyramid = Component.extend({
 
     this.entityBars = this.bars.selectAll('.vzb-bc-bar')
       .data(ageBars, function(d) {return d[ageDim]});
-
-    this.entityLabels = this.labels.selectAll('.vzb-bc-label')
-      .data(markers);
-
     //exit selection
     this.entityBars.exit().remove();
-    this.entityLabels.exit().remove();
 
     var oneBarHeight = this.oneBarHeight;
     var barHeight = this.barHeight;
@@ -671,25 +666,25 @@ var AgePyramid = Component.extend({
 
     this.sideBars = this.entityBars.selectAll('.vzb-bc-side').data(function(d) {
       return _this.sideKeys.map(function(m) {
-          var r = {};
-          r[ageDim] = d[ageDim];
-          r[shiftedAgeDim] = d[shiftedAgeDim];
-          r[prefixedSideDim] = m;
-          r[sideDim] = m;
-          return r;
-        });
-      }, function(d) {return d[prefixedSideDim]})
+        var r = {};
+        r[ageDim] = d[ageDim];
+        r[shiftedAgeDim] = d[shiftedAgeDim];
+        r[prefixedSideDim] = m;
+        r[sideDim] = m;
+        return r;
+      });
+    }, function(d) {return d[prefixedSideDim]})
 
     this.sideBars.exit().remove();
     this.sideBars = this.sideBars.enter().append("g")
-        .attr("class", function(d, i) {
-          return "vzb-bc-side " + "vzb-bc-side-" + (!i != !_this.twoSided ? "right": "left");
-        })
-        .merge(this.sideBars)
+      .attr("class", function(d, i) {
+        return "vzb-bc-side " + "vzb-bc-side-" + (!i != !_this.twoSided ? "right": "left");
+      })
+      .merge(this.sideBars)
 
     this.sideBars.attr("transform", function(d, i) {
-          return i ? ("scale(-1,1) translate(" + _this.activeProfile.centerWidth + ",0)") : "";
-        })
+      return i ? ("scale(-1,1) translate(" + _this.activeProfile.centerWidth + ",0)") : "";
+    });
     
     if(reorder) {
       this.sideBars.attr("transform", function(d, i) {
@@ -697,35 +692,39 @@ var AgePyramid = Component.extend({
       })
     }
 
+    var _attributeUpdaters = this._attributeUpdaters;
+
     this.stackBars = this.sideBars.selectAll('.vzb-bc-stack').data(function(d,i) {
-    var stacks = _this.stacked ? _this.stackKeys : [_this.totalFieldName];
-          return stacks.map(function(m) {
-            var r = {};
-            r[ageDim] = d[ageDim];
-            r[shiftedAgeDim] = d[shiftedAgeDim];
-            r[sideDim] = d[sideDim];
-            r[stackDim] = m;
-            r[prefixedSideDim] = d[prefixedSideDim];
-            r[prefixedStackDim] = m;
-            return r;
-          });
+      var stacks = _this.stacked ? _this.stackKeys : [_this.totalFieldName];
+      return stacks.map(function(m) {
+        var r = {};
+        r[ageDim] = d[ageDim];
+        r[shiftedAgeDim] = d[shiftedAgeDim];
+        r[sideDim] = d[sideDim];
+        r[stackDim] = m;
+        r[prefixedSideDim] = d[prefixedSideDim];
+        r[prefixedStackDim] = m;
+        return r;
+      });
     }, function(d) {return d[prefixedStackDim]});
 
     this.stackBars.exit().remove();
     this.stackBars = this.stackBars.enter().append("rect")
-          .attr("class", function(d, i) {
-            return "vzb-bc-stack " + "vzb-bc-stack-" + i + (_this.highlighted ? " vzb-dimmed" : "");
-          })
-          .attr("y", 0)
-          .attr("height", barHeight)
-          .attr("fill", function(d) {
-            return _this.cScale(d[prefixedStackDim]);
-          })
-          .on("mouseover", _this.interaction.mouseover)
-          .on("mouseout", _this.interaction.mouseout)
-          .on("click", _this.interaction.click)
-          .onTap(_this.interaction.tap)
-          .merge(this.stackBars)
+      .attr("class", function(d, i) {
+        return "vzb-bc-stack " + "vzb-bc-stack-" + i + (_this.highlighted ? " vzb-dimmed" : "");
+      })
+      .attr("y", 0)
+      .attr("height", barHeight)
+      .attr("fill", function(d) {
+        return _this.cScale(d[prefixedStackDim]);
+      })
+      .attr("width", _attributeUpdaters._newWidth)
+      .attr("x", _attributeUpdaters._newX)
+      .on("mouseover", _this.interaction.mouseover)
+      .on("mouseout", _this.interaction.mouseout)
+      .on("click", _this.interaction.click)
+      .onTap(_this.interaction.tap)
+      .merge(this.stackBars)
 
 
     if(reorder) this.stackBars.order();
@@ -771,30 +770,34 @@ var AgePyramid = Component.extend({
 
     var stepShift = (ageBars[0][shiftedAgeDim] - ageBars[0][ageDim]) - this.shiftScale(time.value) * groupBy;
 
-    var _attributeUpdaters = this._attributeUpdaters;
     if(duration) {
-      this.entityBars
-        .transition('age')
+      var transition = d3.transition()
         .duration(duration)
-        .ease(d3.easeLinear)
+        .ease(d3.easeLinear);
+        
+      this.entityBars
+        .transition(transition)
         .attr("transform", function(d, i) {
           return "translate(0," + (firstBarOffsetY - (d[shiftedAgeDim] - domain[0] - stepShift) * oneBarHeight) + ")";
         });
       this.stackBars
-        .transition().duration(duration).ease(d3.easeLinear)
+        .transition(transition)
         .attr("width", _attributeUpdaters._newWidth)
         .attr("x", _attributeUpdaters._newX);
     } else {
       this.entityBars.interrupt()
         .attr("transform", function(d, i) {
           return "translate(0," + (firstBarOffsetY - (d[shiftedAgeDim] - domain[0] - stepShift) * oneBarHeight) + ")";
-        })
-        .transition();
+        });
       this.stackBars.interrupt()
         .attr("width", _attributeUpdaters._newWidth)
-        .attr("x", _attributeUpdaters._newX)
-        //.transition();
+        .attr("x", _attributeUpdaters._newX);
     }
+
+    this.entityLabels = this.labels.selectAll('.vzb-bc-label')
+      .data(markers);
+    //exit selection
+    this.entityLabels.exit().remove();
 
     this.entityLabels.enter().append("g")
       .attr("class", "vzb-bc-label")
@@ -802,9 +805,8 @@ var AgePyramid = Component.extend({
         return "vzb-bc-label-" + d[shiftedAgeDim] + "-" + _this._id;
       })
       .append('text')
-      .attr("class", "vzb-bc-age");
-
-    this.labels.selectAll('.vzb-bc-label > .vzb-bc-age')
+      .attr("class", "vzb-bc-age")
+      .merge(this.entityLabels)
       .each(function(d, i) {
         var yearOlds = _this.translator("agepyramid/yearOlds");
 
