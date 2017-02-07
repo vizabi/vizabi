@@ -213,9 +213,8 @@ var ColorLegend = Component.extend({
       this.labelScaleG.attr("transform","translate(" + marginLeft + ",0)");
       this.rainbowLegendSVG.style("width", marginLeft + gradientWidth + marginRight + "px");
       this.rainbowLegendG.attr("transform","translate(" + marginLeft + ", " + 7 + ")");
-      var labelsAxis = axisSmart();
+      var labelsAxis = axisSmart("bottom");
       labelsAxis.scale(labelScale)
-        .orient("bottom")
         //.tickFormat(formatter)
         .tickSize(6, 0)
         .tickPadding(6)

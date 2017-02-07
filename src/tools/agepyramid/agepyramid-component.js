@@ -1016,7 +1016,6 @@ var AgePyramid = Component.extend({
 
     //apply scales to axes and redraw
     this.yAxis.scale(this.yScale)
-      //.orient("left")
       .tickSize(-this.width, 0)
       .tickPadding(6)
       .tickSizeMinor(-this.width, 0)
@@ -1029,7 +1028,6 @@ var AgePyramid = Component.extend({
     var format = this.ui.chart.inpercent ? d3.format((groupBy > 3 ? "":".1") + "%") : this.model.marker.axis_x.getTickFormatter();
 
     this.xAxis.scale(this.xScale)
-      //.orient("bottom")
       .tickFormat(format)
       .tickSize(-this.height, 0)
       .tickPadding(6)
@@ -1057,7 +1055,6 @@ var AgePyramid = Component.extend({
       }
 
       this.xAxisLeft.scale(this.xScaleLeft)
-        //.orient("bottom")
         .tickFormat(format)
         .tickSize(-this.height, 0)
         .tickPadding(6)

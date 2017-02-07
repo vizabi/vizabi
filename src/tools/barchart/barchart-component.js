@@ -61,8 +61,8 @@ var BarComponent = Component.extend({
     this.yScale = null;
     this.cScale = d3.scale.category10();
 
-    this.xAxis = axisSmart();
-    this.yAxis = axisSmart();
+    this.xAxis = axisSmart("bottom");
+    this.yAxis = axisSmart("left");
   },
 
   /**
@@ -281,7 +281,6 @@ var BarComponent = Component.extend({
 
     //apply scales to axes and redraw
     this.yAxis.scale(this.yScale)
-      .orient("left")
       .tickSize(6, 0)
       .tickSizeMinor(3, 0)
       .labelerOptions({
@@ -292,7 +291,6 @@ var BarComponent = Component.extend({
       });
 
     this.xAxis.scale(this.xScale)
-      .orient("bottom")
       .tickSize(6, 0)
       .tickSizeMinor(3, 0)
       .labelerOptions({

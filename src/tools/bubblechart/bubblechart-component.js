@@ -910,7 +910,6 @@ var BubbleChartComp = Component.extend({
 
     //apply scales to axes and redraw
     this.yAxis.scale(this.yScale)
-      .orient("left")
       .tickSize(-this.width, 0)
       .tickPadding(6)
       .tickSizeMinor(-this.width, 0)
@@ -924,7 +923,6 @@ var BubbleChartComp = Component.extend({
       });
 
     this.xAxis.scale(this.xScale)
-      .orient("bottom")
       .tickSize(-this.height, 0)
       .tickPadding(6)
       .tickSizeMinor(-this.height, 0)

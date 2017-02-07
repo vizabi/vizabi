@@ -427,7 +427,6 @@ updateSize: function (meshLength) {
 
         //axis is updated
         this.xAxis.scale(this.xScale)
-            .orient("bottom")
             .tickSize(6, 0)
             .tickPadding(9)
             .tickSizeMinor(3, 0)
