@@ -215,7 +215,7 @@ export default function axisSmart(_orient) {
         g.select('.vzb-axis-value')
           .transition()
           .duration(highlightTransDuration)
-          .ease("linear")
+          .ease(d3.easeLinear)
           .attr("transform", getTransform);
 
         g.select('.vzb-axis-value')
@@ -228,7 +228,7 @@ export default function axisSmart(_orient) {
           d3.select(this).select("text")
             .transition()
             .duration(highlightTransDuration)
-            .ease("linear")
+            .ease(d3.easeLinear)
             .style("opacity", getOpacity(d,t, this))
         })
 

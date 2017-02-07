@@ -469,7 +469,7 @@ const BarRankChart = Component.extend({
 
         if (force || bar.changedWidth || presentationModeChanged) {
           bar.barRect
-            .transition().duration(duration).ease('linear')
+            .transition().duration(duration).ease(d3.easeLinear)
             .attr('width', width)
         }
 
@@ -484,7 +484,7 @@ const BarRankChart = Component.extend({
 
       if (force || bar.changedIndex || presentationModeChanged) {
         bar.self
-          .transition().duration(duration).ease('linear')
+          .transition().duration(duration).ease(d3.easeLinear)
           .attr('transform', `translate(0, ${this._getBarPosition(bar.index)})`);
       }
     });

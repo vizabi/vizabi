@@ -354,7 +354,7 @@ var CartogramComponent = Component.extend({
           _this.borders.datum(data)
             .transition()
             .duration(duration)
-            .ease("linear")
+            .ease(d3.easeLinear)
             .attr("d", _this.cartogram.path);
         }
         _this.lands.data(_this.features)
@@ -365,7 +365,7 @@ var CartogramComponent = Component.extend({
           _this.lands.interrupt()
             .transition()
             .duration(duration)
-            .ease("linear")
+            .ease(d3.easeLinear)
             .style("fill", function(d) {
               return _this.values.color[_this._getKey(d)]!=null?_this.cScale(_this.values.color[_this._getKey(d)]):_this.COLOR_LAND_DEFAULT;
             })
@@ -374,7 +374,7 @@ var CartogramComponent = Component.extend({
             _this.borders.interrupt()
               .transition()
               .duration(duration)
-              .ease("linear")
+              .ease(d3.easeLinear)
               .attr("d", _this.cartogram.path);
           }
 
@@ -407,7 +407,7 @@ var CartogramComponent = Component.extend({
     var _this = this;
     this.lands.transition()
       .duration(_this.duration)
-      .ease("linear")
+      .ease(d3.easeLinear)
       .style("fill", function(d) {
         return _this.values.color[_this._getKey(d)]!=null?_this.cScale(_this.values.color[_this._getKey(d)]):_this.COLOR_LAND_DEFAULT;
       })

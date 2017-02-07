@@ -274,7 +274,7 @@ var MountainChartComponent = Component.extend({
             .style("fill", "pink")
             .style("opacity", 0)
             .attr("d", _this.area(shape))
-            .transition().duration(1000).ease("linear")
+            .transition().duration(1000).ease(d3.easeLinear)
             .style("opacity", 1);
     },
 

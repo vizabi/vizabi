@@ -200,7 +200,7 @@ var BarComponent = Component.extend({
       .attr("x", function(d) {
         return _this.xScale(_this.values.axis_x[d[entityDim]]);
       })
-      .transition().duration(duration).ease("linear")
+      .transition().duration(duration).ease(d3.easeLinear)
       .attr("y", function(d) {
         return _this.yScale(_this.values.axis_y[d[entityDim]]);
       })

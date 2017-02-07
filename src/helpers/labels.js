@@ -230,7 +230,7 @@ var label = function(context) {
                 .style("opacity", 1)
                 .transition().duration(duration).ease(d3.easeExp)
                 .style("opacity", 0)
-                .each("end", function(){
+                .on("end", function(){
                     labelGroup
                         .style("opacity", 1) //i would like to set it to null. but then fade in animation is not working for some reason
                         .classed("vzb-invisible", d.hidden);
@@ -239,7 +239,7 @@ var label = function(context) {
                 .style("opacity", 1)
                 .transition().duration(duration).ease(d3.easeExp)
                 .style("opacity", 0)
-                .each("end", function(){
+                .on("end", function(){
                     lineGroup
                         .style("opacity", 1) //i would like to set it to null. but then fade in animation is not working for some reason
                         .classed("vzb-invisible", d.hidden);

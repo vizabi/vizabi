@@ -1251,7 +1251,7 @@ var BubbleChartComp = Component.extend({
                var opacity = view.style("opacity");
                view.transition().duration(duration).ease(d3.easeExp)
                 .style("opacity", 0)
-                .each("end", function() {
+                .on("end", function() {
                     //to avoid transition from null state add class with a delay
                     view.classed("vzb-invisible", d.hidden);
                     view.style("opacity", opacity);
