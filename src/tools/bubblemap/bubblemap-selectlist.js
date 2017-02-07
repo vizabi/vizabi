@@ -44,7 +44,7 @@ var MCSelectList = Class.extend({
         return d.KEY();
       }));
     _this.selectList.exit().remove();
-    _this.selectList.enter().append("g")
+    _this.selectList = _this.selectList.enter().append("g")
       .attr("class", "vzb-bmc-label")
       .each(function (d, i) {
         var label = d3.select(this);
@@ -95,7 +95,8 @@ var MCSelectList = Class.extend({
         if (utils.isTouchDevice()) return;
         _this.model.marker.clearHighlighted();
         _this.model.marker.selectMarker(d);
-      });
+      })
+      .merge(_this.selectList);
   },
 
   redraw: function () {

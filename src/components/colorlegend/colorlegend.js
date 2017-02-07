@@ -244,10 +244,11 @@ var ColorLegend = Component.extend({
       this.rainbowLegend = this.rainbowLegendG.selectAll('circle')
         .data(gIndicators);
       this.rainbowLegend.exit().remove();
-      this.rainbowLegend.enter().append("circle")
+      this.rainbowLegend = this.rainbowLegend.enter().append("circle")
         .attr('r', "6px")
         .attr('stroke', '#000')
-        .on("click", _this._interact().clickToChangeColor);
+        .on("click", _this._interact().clickToChangeColor)
+        .merge(this.rainbowLegend);
 
       this.rainbowLegend.each(function(d, i) {
         d3.select(this).attr('fill', d.color);

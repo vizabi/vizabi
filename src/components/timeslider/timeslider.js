@@ -499,8 +499,11 @@ var TimeSlider = Component.extend({
 
     var progress = this.progressBar.selectAll('path').data(_this.availableTimeFrames);
     progress.exit().remove();
-    progress.enter().append('path').attr('class', 'domain');
-    progress.each(function(d) {
+    progress.enter()
+      .append('path')
+      .attr('class', 'domain')
+      .merge(progress)
+      .each(function(d) {
         var element = d3.select(this);
         element.attr('d', "M" + _this.xScale(d[0]) + ",0H" + _this.xScale(d[1]))
         .classed("rounded", _this.availableTimeFrames.length == 1);

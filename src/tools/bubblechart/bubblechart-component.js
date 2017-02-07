@@ -701,14 +701,14 @@ var BubbleChartComp = Component.extend({
     if (!this.model.time.splash) {
       this.unselectBubblesWithNoData(markers);
     }
-    var entityBubbles = this.bubbleContainer.selectAll('circle.vzb-bc-entity')
+    this.entityBubbles = this.bubbleContainer.selectAll('circle.vzb-bc-entity')
       .data(this.model.marker.getVisible(), function(d) {return d[KEY]}); // trails have not keys
 
     //exit selection
-    entityBubbles.exit().remove();
+    this.entityBubbles.exit().remove();
 
     //enter selection -- init circles
-    this.entityBubbles = entityBubbles.enter().append("circle")
+    this.entityBubbles = this.entityBubbles.enter().append("circle")
       .attr("class", function(d) {
         return "vzb-bc-entity " + "bubble-" + d[KEY];
       })
@@ -731,7 +731,7 @@ var BubbleChartComp = Component.extend({
         _this._bubblesInteract().click(d, i);
       })
       .onLongTap(function(d, i) {})
-      .merge(entityBubbles);
+      .merge(this.entityBubbles);
 
     this._reorderEntities();
   },

@@ -34,12 +34,12 @@ var MCSelectList = Class.extend({
           }
         }
       });
-    var selectList = _this.mountainLabelContainer.selectAll("g.vzb-mc-label")
+    _this.selectList = _this.mountainLabelContainer.selectAll("g.vzb-mc-label")
       .data(utils.unique(listData, function (d) {
         return d.KEY()
       }));
-    selectList.exit().remove();
-    _this.selectList = selectList.enter().append("g")
+    _this.selectList.exit().remove();
+    _this.selectList = _this.selectList.enter().append("g")
       .attr("class", "vzb-mc-label")
       .each(function (d, i) {
         var label = d3.select(this);
@@ -92,7 +92,7 @@ var MCSelectList = Class.extend({
         _this.model.marker.clearHighlighted();
         _this.model.marker.selectMarker(d);
       })
-      .merge(selectList);
+      .merge(_this.selectList);
   },
 
   redraw: function () {

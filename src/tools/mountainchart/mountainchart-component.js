@@ -679,13 +679,13 @@ updateSize: function (meshLength) {
         this.mountainsAtomic.exit().remove();
 
         //enter selection -- add shapes
-        this.mountainsMergeStacked.enter().append("path")
+        this.mountainsMergeStacked = this.mountainsMergeStacked.enter().append("path")
             .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel2")
             .merge(this.mountainsMergeStacked);
-        this.mountainsMergeGrouped.enter().append("path")
+        this.mountainsMergeGrouped = this.mountainsMergeGrouped.enter().append("path")
             .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel1")
             .merge(this.mountainsMergeGrouped)
-        this.mountainsAtomic.enter().append("path")
+        this.mountainsAtomic = this.mountainsAtomic.enter().append("path")
             .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel0")
             .merge(this.mountainsAtomic);
 
