@@ -206,7 +206,7 @@ var label = function(context) {
                 .style("opacity", 1)
                 //i would like to set opactiy to null in the end of transition.
                 //but then fade in animation is not working for some reason
-                .each("interrupt", function(){
+                .on("interrupt", function(){
                     labelGroup
                         .style("opacity", 1)
                 });
@@ -218,7 +218,7 @@ var label = function(context) {
                 .style("opacity", 1)
                 //i would like to set opactiy to null in the end of transition.
                 //but then fade in animation is not working for some reason
-                .each("interrupt", function(){
+                .on("interrupt", function(){
                     lineGroup
                         .style("opacity", 1)
                 });

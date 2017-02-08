@@ -59,7 +59,8 @@ var Dialog = Component.extend({
     var dragBehavior = d3.drag()
       .on('start', function D3dialogDragStart() {
         var topPos = _this.placeholderEl.node().offsetTop;
-        _this.placeholderEl.style({'top': topPos + 'px', 'bottom': 'auto'});
+        _this.placeholderEl.style('top', topPos + 'px');
+        _this.placeholderEl.style('bottom', 'auto');
         _this.trigger('dragstart');
         dg.dragStart(d3.event);
       })
@@ -172,11 +173,13 @@ var Dialog = Component.extend({
 
     this.placeholderEl.classed('notransition', true);
 
-    this.placeholderEl.style({'top': '', 'bottom': ''}); // issues: 369 & 442
+    this.placeholderEl.style('top', ''); // issues: 369 & 442
+    this.placeholderEl.style('bottom', ''); // issues: 369 & 442
 
     if(this.topPos && this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true")) {
       var topPos = this.placeholderEl.node().offsetTop;
-      this.placeholderEl.style({'top': topPos + 'px', 'bottom': 'auto'}); // issues: 369 & 442
+      this.placeholderEl.style('top', topPos + 'px'); // issues: 369 & 442
+      this.placeholderEl.style('bottom', 'auto'); // issues: 369 & 442
     } else if(this.getLayoutProfile() !== 'small') {
       //if(this.rightPos) this.placeholderEl.style('right', this.rightPos);
     }
@@ -239,7 +242,8 @@ var Dialog = Component.extend({
     }
 
     if(this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true")) {
-      this.placeholderEl.style({'top' : this.topPos0, 'right' : ''});
+      this.placeholderEl.style('top', this.topPos0);
+      this.placeholderEl.style('right', '');
     }
     this.isOpen = false;
     this.trigger('close');

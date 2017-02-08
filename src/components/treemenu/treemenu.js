@@ -832,7 +832,8 @@ var TreeMenu = Component.extend({
             if(containerHeight > this.height) {
               containerHeight = this.height - 20;
             }
-            this.wrapperOuter.style({'top' : (this.height - containerHeight - 10) + 'px', 'bottom' : 'auto'});
+            this.wrapperOuter.style('top', (this.height - containerHeight - 10) + 'px');
+            this.wrapperOuter.style('bottom', 'auto');
           }
           if(top) top = _this.wrapperOuter.node().offsetTop;
         }
@@ -870,7 +871,8 @@ var TreeMenu = Component.extend({
           left = leftPos;
         } else {
           if(leftPos != this.wrapperOuter.node().offsetLeft) {
-            this.wrapperOuter.style({'left': 'auto', 'right': (this.width - leftPos - rect.width) + 'px'});
+            this.wrapperOuter.style('left', 'auto');
+            this.wrapperOuter.style('right', (this.width - leftPos - rect.width) + 'px');
           }
         }
 
@@ -958,13 +960,15 @@ var TreeMenu = Component.extend({
     var rect = this.wrapperOuter.node().getBoundingClientRect();
 
     if(top) {
-      this.wrapperOuter.style({'top': top + 'px', 'bottom': 'auto'});
+      this.wrapperOuter.style('top', top + 'px');
+      this.wrapperOuter.style('bottom', 'auto');
       this.wrapperOuter.classed(css.absPosVert, top);
     }
     if(left) {
       var right = this.element.node().offsetWidth - left - rect.width;
       right = right < 10 ? 10 : right;
-      this.wrapperOuter.style({'right': right + 'px', 'left': 'auto'});
+      this.wrapperOuter.style('right', right + 'px');
+      this.wrapperOuter.style('left', 'auto');
       this.wrapperOuter.classed(css.absPosHoriz, right);
     }
 
