@@ -82,13 +82,13 @@ var LBubbleMap = Tool.extend('LBubbleMap', {
         path: null,
         colorGeo: false,
         preserveAspectRatio: true,
-        mapEngine: "google",
-        scale: 5,
+        mapEngine: "mapbox",
+        topojsonLayer: true,
         bounds: {
-          north: 84,
-          west: -170,
-          south: -80,
-          east: 170
+          north: 37,
+          west: -30,
+          south: -39,
+          east: 58
         },
         offset: {
           top: 0,
@@ -96,14 +96,14 @@ var LBubbleMap = Tool.extend('LBubbleMap', {
           bottom: 0,
           left: 0
         },
-        projection: 'robinson',      
+        projection: 'mercator',
         topology: {
-          path: null,
+          path: "data/zaf-municipalities-2016.json",
           objects: {
-            geo: 'land',
-            boundaries: 'countries'
+            geo: 'LocalMunicipalities2016',
+            boundaries: 'LocalMunicipalities2016'
           },
-          geoIdProperty: null,
+          geoIdProperty: "CAT_B"
         }
       },
       chart: {

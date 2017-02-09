@@ -1,5 +1,6 @@
 import Class from 'base/class';
 import globals from 'base/globals';
+import * as utils from 'base/utils';
 
 import topojson from 'helpers/topojson';
 import d3_geo_projection from 'helpers/d3.geo.projection';
@@ -10,43 +11,82 @@ import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js';
 export default Class.extend({
   init: function(context) {
     this.context = context;
+    this.topojsonMap = null;
+    this.mapInstance = null;
   },
   
   getMap: function () {
     if (!this.mapInstance) {
       switch (this.context.model.ui.map.mapEngine) {
         case "google":
-          this.mapInstance = new GoogleMapLayer(this.context);
+          this.mapInstance = new GoogleMapLayer(this.context, this);
           break;
         case "mapbox":
-          this.mapInstance = new MapboxLayer(this.context);
+          this.mapInstance = new MapboxLayer(this.context, this);
           break;
-        default:
-        this.mapInstance = new MapLayer(this.context);
+      }
+      if (!this.context.model.ui.map.topojsonLayer && this.mapInstance) {
+        return this.mapInstance;
+      } else {
+        if (this.mapInstance) {
+          this.topojsonMap = new MapLayer(this.context, this);
+        } else {
+          this.mapInstance = new MapLayer(this.context, this);
+          return this.mapInstance;
+        }
+        return this;
       }
     }
-    return this.mapInstance; 
+  },
+  
+  initMap: function(domSelector) {
+    if (this.topojsonMap && this.mapInstance) {
+      return Promise.all([
+        this.mapInstance.initMap(domSelector),
+        this.topojsonMap.initMap(domSelector)
+      ])
+    }
+  },
+  
+  boundsChanged: function() {
+    if (this.topojsonMap) {
+      this.topojsonMap.rescaleMap(this.mapInstance.getCanvas());
+    }
+    this.context.mapBoundsChanged();
+  },
+  
+  rescaleMap: function() {
+    var _this = this;
+    return this.mapInstance.rescaleMap();
+  },
+
+  invert: function(x, y) {
+    return this.mapInstance.invert(x, y);
   }
+  
 });
 
 var MapLayer = Class.extend({
-  init: function (context) {
+  init: function (context, parent) {
     this.shapes = null;
+    this.parent = parent;
     this.context = context;
     d3_geo_projection();
-
   },
  
-  initMap: function (domSelector) {
-    this.mapRoot = d3.select(this.context.element).select(domSelector);
-    this.mapSvg = this.mapRoot.html('').append("svg")
-        .attr("class", "vzb-bmc-map-background vzb-export");
+  initMap: function () {
+    this.mapSvg = d3.select(this.context.element).select(".vzb-bmc-map-background");
     this.mapGraph = this.mapSvg.html('').append("g")
       .attr("class", "vzb-bmc-map-graph");
 
     var _this = this;
     var shape_path = this.context.model.ui.map.topology.path
         || globals.ext_resources.host + globals.ext_resources.preloadPath + "world-50m.json";
+
+    this.zeroProjection = d3.geo[this.context.model.ui.map.projection]();
+    this.zeroProjection
+        .scale(1)
+        .translate([0, 0]);
 
     this.projection = d3.geo[this.context.model.ui.map.projection]();
     this.projection
@@ -57,7 +97,7 @@ var MapLayer = Class.extend({
         .projection(this.projection);
 
 
-
+    this.context.model.ui.map.scale = 1;
     return this._loadShapes(shape_path).then(
       shapes => {
         _this.shapes = shapes;
@@ -70,7 +110,9 @@ var MapLayer = Class.extend({
               .data(_this.mapFeature.features)
               .enter().insert("path")
               .attr("d", _this.mapPath)
-              .attr("id", (d) => d.properties[_this.context.model.ui.map.topology.geoIdProperty].toLowerCase())
+              .attr("id", function(d) {
+                return d.properties[_this.context.model.ui.map.topology.geoIdProperty].toLowerCase(); 
+              })
               .attr("class", "land");
         } else {
           _this.mapGraph.insert("path")
@@ -80,7 +122,7 @@ var MapLayer = Class.extend({
         _this.mapGraph.insert("path")
             .datum(boundaries)
             .attr("class", "boundary");
-      } 
+      }
     )
   },
 
@@ -93,15 +135,51 @@ var MapLayer = Class.extend({
     });
 
   },
-
-  rescaleMap: function() {
-
+  
+  rescaleMap: function(canvas) {
+    //var topoCanvas = 
+    var emitEvent = false;
     var offset = this.context.model.ui.map.offset;
     var margin = this.context.activeProfile.margin;
+    var zero = this.zeroProjection([
+      this.context.model.ui.map.bounds.west,
+      this.context.model.ui.map.bounds.north
+    ]);
+    var currentNW = this.zeroProjection([
+      this.context.model.ui.map.bounds.west,
+      this.context.model.ui.map.bounds.north
+    ]);
+    var currentSE = this.zeroProjection([
+      this.context.model.ui.map.bounds.east,
+      this.context.model.ui.map.bounds.south
+    ]);
+    var scaleDelta = 1, mapTopOffset = 0, mapLeftOffset = 0;
 
+    if (!canvas) {
+      emitEvent = true;
+      canvas = [
+        [0, 0],
+        [this.context.width, this.context.height]
+      ];
+      var scaleX = (canvas[1][0] - canvas[0][0])/(currentSE[0] - currentNW[0]);
+      var scaleY = (canvas[1][1] - canvas[0][1])/(currentSE[1] - currentNW[1]);
+      if (scaleX != scaleY) {
+        if (scaleX > scaleY) {
+          scaleDelta = scaleY;
+          mapLeftOffset = (this.context.width - scaleDelta * (this.mapBounds[1][0] - this.mapBounds[0][0])) / 2;
+        } else {
+          scaleDelta = scaleX;
+          mapTopOffset = (this.context.height - scaleDelta * (this.mapBounds[1][1] - this.mapBounds[0][1])) / 2;
+        }
+      }
+      
+    } else {
+      scaleDelta = (canvas[1][0] - canvas[0][0])/(currentSE[0] - currentNW[0]);
+    }
+    
     // scale to aspect ratio 
     // http://bl.ocks.org/mbostock/4707858
-    var s = this.context.model.ui.map.scale / Math.max((this.mapBounds[1][0] - this.mapBounds[0][0]) / this.context.width, (this.mapBounds[1][1] - this.mapBounds[0][1]) / this.context.height),
+    var s = this.context.model.ui.map.scale/ Math.max((this.mapBounds[1][0] - this.mapBounds[0][0]) / this.context.width, (this.mapBounds[1][1] - this.mapBounds[0][1]) / this.context.height),
 
     // dimensions of the map itself (regardless of cropping)
         mapWidth = (s * (this.mapBounds[1][0] - this.mapBounds[0][0])),
@@ -109,16 +187,14 @@ var MapLayer = Class.extend({
 
     // dimensions of the viewport in which the map is shown (can be bigger or smaller than map)
         viewPortHeight = mapHeight * (1 + offset.top + offset.bottom),
-        viewPortWidth  = mapWidth  * (1 + offset.left + offset.right),
-        mapTopOffset   = mapHeight * offset.top,
-        mapLeftOffset  = mapWidth  * offset.left,
+        viewPortWidth  = mapWidth  * (1 + offset.left + offset.right);
 
     // translate projection to the middle of map
-        t = [(mapWidth - s * (this.mapBounds[1][0] + this.mapBounds[0][0])) / 2, (mapHeight - s * (this.mapBounds[1][1] + this.mapBounds[0][1])) / 2];
     this.projection
-        .scale(s)
-        .translate(t);
-
+        .translate([canvas[0][0] - (currentNW[0] * scaleDelta) + mapLeftOffset, canvas[0][1] - (currentNW[1] * scaleDelta) + mapTopOffset])
+        .scale(scaleDelta)
+        .precision(.1);
+    
     this.mapGraph
         .selectAll('path').attr("d", this.mapPath);
 
@@ -126,17 +202,11 @@ var MapLayer = Class.extend({
     var widthScale, heightScale;
     if (!this.context.model.ui.map.preserveAspectRatio) {
 
-      // wrap viewBox around viewport so map scales to fit viewport
-      var viewBoxHeight = viewPortHeight;
-      var viewBoxWidth = viewPortWidth;
 
       // viewport is complete area (apart from scaling)
       viewPortHeight = this.context.height * this.context.model.ui.map.scale;
       viewPortWidth = this.context.width * this.context.model.ui.map.scale;
 
-      this.mapSvg
-          .attr('preserveAspectRatio', 'none')
-          .attr('viewBox', [0, 0, viewBoxWidth, viewBoxHeight].join(' '));
 
       //            ratio between map, viewport and offset (for bubbles)
       widthScale  = viewPortWidth  / mapWidth  / (1 + offset.left + offset.right);
@@ -151,14 +221,16 @@ var MapLayer = Class.extend({
     }
 
     // internal offset against parent container (mapSvg)
+/*
     this.mapGraph
         .attr('transform', 'translate(' + mapLeftOffset + ',' + mapTopOffset + ')');
+*/
 
     // resize and put in center
     this.mapSvg
-        .style("transform", "translate3d(" + (margin.left + (this.context.width-viewPortWidth)/2) + "px," + (margin.top + (this.context.height-viewPortHeight)/2) + "px,0)")
-        .attr('width', viewPortWidth)
-        .attr('height', viewPortHeight);
+        .style("transform", "translate(" + margin.left + "px," + margin.top + "px)")
+        .attr('width', this.context.width)
+        .attr('height', this.context.height);
 
     // set skew function used for bubbles in chart
     var _this = this;
@@ -173,18 +245,24 @@ var MapLayer = Class.extend({
         return [x, y];
       }
     }());
+    
+    // if canvas not received this map is main and shound trigger redraw points on tool
+    if (emitEvent) {
+      this.parent.boundsChanged();
+    }
   },
 
   invert: function(x, y) {
-     return this.skew(this.projection([x||0, y||0]));
+     return this.projection([x||0, y||0]);
   }
   
 });
 
 var GoogleMapLayer = Class.extend({
 
-  init: function (context) {
+  init: function (context, parent) {
     this.context = context;
+    this.parent = parent;
   },
 
   initMap: function (domSelector) {
@@ -203,7 +281,26 @@ var GoogleMapLayer = Class.extend({
         _this.overlay = new google.maps.OverlayView();
         _this.overlay.draw = function() {};
         _this.overlay.setMap(_this.map);
+        _this.centerMapker = new google.maps.Marker({
+          map: _this.map,
+          title: 'Hello World!'
+        });
+        var rectangle = new google.maps.Rectangle({
+          bounds: {
+            north:_this.context.model.ui.map.bounds.north,
+            east: _this.context.model.ui.map.bounds.east,
+            south: _this.context.model.ui.map.bounds.south,
+            west: _this.context.model.ui.map.bounds.west
+          },
+          editable: true,
+          draggable: true
+        });
+        google.maps.event.addListener(_this.map, 'bounds_changed', function () {
+            _this.parent.boundsChanged();
+        });
 
+        //rectangle.setMap(_this.map);
+        
         resolve();
       });
     });
@@ -217,25 +314,13 @@ var GoogleMapLayer = Class.extend({
     var viewPortWidth = this.context.width * this.context.model.ui.map.scale;
 
     this.mapCanvas
-        .style({"width": viewPortWidth + "px", "height": viewPortHeight + "px"});
-
+        .style({"width": this.context.width + "px", "height": this.context.height + "px"});
     this.mapRoot
-        .attr('width', viewPortWidth)
-        .attr('height', viewPortHeight)
+        .attr('width', this.context.width)
+        .attr('height', this.context.height)
         .style({"position": "absolute", "left": margin.left + "px", "right": margin.right + "px", "top": margin.top + "px", "bottom": margin.bottom + "px"});
     google.maps.event.trigger(this.map, "resize");
-    var rectangle = new google.maps.Rectangle({
-      bounds: {
-        north:_this.context.model.ui.map.bounds.north,
-        east: _this.context.model.ui.map.bounds.east,
-        south: _this.context.model.ui.map.bounds.south,
-        west: _this.context.model.ui.map.bounds.west
-      },
-      editable: true,
-      draggable: true
-    });
 
-    rectangle.setMap(_this.map);
     var rectBounds = new google.maps.LatLngBounds(
         new google.maps.LatLng(this.context.model.ui.map.bounds.north, this.context.model.ui.map.bounds.west),
         new google.maps.LatLng(this.context.model.ui.map.bounds.south, this.context.model.ui.map.bounds.east)
@@ -243,17 +328,34 @@ var GoogleMapLayer = Class.extend({
     this.map.fitBounds(rectBounds);
   },
   invert: function(x, y) {
-    var coords = this.overlay.getProjection().fromLatLngToContainerPixel(new google.maps.LatLng(x, y)); 
+    var coords = this.overlay.getProjection().fromLatLngToContainerPixel(new google.maps.LatLng(y, x)); 
     return [coords.x, coords.y];
-  }
+  },
+
+  getZoom: function() {
+    return this.map.getZoom();
+  },
   
+  getCanvas: function() {
+    return [
+      this.invert(this.context.model.ui.map.bounds.west, this.context.model.ui.map.bounds.north),
+      this.invert(this.context.model.ui.map.bounds.east, this.context.model.ui.map.bounds.south)
+    ];
+  },
+  
+  getCenter: function() {
+    var center = this.map.getCenter();
+    this.centerMapker.setPosition(center);
+    return {lat: center.lat(), lng: center.lng()};
+  }  
 });
 
 var MapboxLayer = Class.extend({
 
-  init: function (context) {
+  init: function (context, parent) {
     mapboxgl.accessToken = "pk.eyJ1Ijoic2VyZ2V5ZiIsImEiOiJjaXlqeWo5YnYwMDBzMzJwZnlwZXJ2bnA2In0.e711ku9KzcFW_x5wmOZTag";
     this.context = context;
+    this.parent = parent;
   },
 
   initMap: function (domSelector) {
@@ -264,9 +366,17 @@ var MapboxLayer = Class.extend({
       _this.map = new mapboxgl.Map({
         container: _this.mapCanvas.node(),
         interactive: false,
-        style: 'mapbox://styles/mapbox/satellite-v9',
+        style: 'mapbox://styles/mapbox/satellite-streets-v9',
         hash: false
       });
+      _this.bounds = [[
+        _this.context.model.ui.map.bounds.west,
+        _this.context.model.ui.map.bounds.south
+      ], [
+        _this.context.model.ui.map.bounds.east,
+        _this.context.model.ui.map.bounds.north
+      ]];
+      _this.map.fitBounds(_this.bounds);
       resolve();
     });
   },
@@ -285,37 +395,23 @@ var MapboxLayer = Class.extend({
         .attr('width', viewPortWidth)
         .attr('height', viewPortHeight)
         .style({"position": "absolute", "left": margin.left + "px", "right": margin.right + "px", "top": margin.top + "px", "bottom": margin.bottom + "px"});
-    _this.map.resize();
-    _this.map.fitBounds([[
-      _this.context.model.ui.map.bounds.west,
-      _this.context.model.ui.map.bounds.south
-    ], [
-      _this.context.model.ui.map.bounds.east,
-      _this.context.model.ui.map.bounds.north
-    ]]);
-    /*
-    google.maps.event.trigger(this.map, "resize");
-    var rectangle = new google.maps.Rectangle({
-      bounds: {
-        north:_this.context.model.ui.map.bounds.north,
-        east: _this.context.model.ui.map.bounds.east,
-        south: _this.context.model.ui.map.bounds.south,
-        west: _this.context.model.ui.map.bounds.west
-      },
-      editable: true,
-      draggable: true
-    });
 
-    rectangle.setMap(_this.map);
-    var rectBounds = new google.maps.LatLngBounds(
-        new google.maps.LatLng(this.context.model.ui.map.bounds.north, this.context.model.ui.map.bounds.west),
-        new google.maps.LatLng(this.context.model.ui.map.bounds.south, this.context.model.ui.map.bounds.east)
-    );
-    this.map.fitBounds(rectBounds);
-*/
+    utils.defer(function() {
+      _this.map.fitBounds(_this.bounds, {duration: 0});
+      _this.map.resize();
+      _this.parent.boundsChanged();
+    })
   },
+  
+  getCanvas: function() {
+    return [
+      this.invert(this.context.model.ui.map.bounds.west, this.context.model.ui.map.bounds.north),
+      this.invert(this.context.model.ui.map.bounds.east, this.context.model.ui.map.bounds.south)
+    ];
+  },
+  
   invert: function(x, y) {
-    var coords = this.map.project([y, x]);
+    var coords = this.map.project([x, y]);
     return [coords.x, coords.y];
   }
 

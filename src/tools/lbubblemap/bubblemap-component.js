@@ -122,7 +122,6 @@ var LBubbleMapComponent = Component.extend({
    * DOM is ready
    */
   readyOnce: function () {
-    console.log("ready once");
     this.element = d3.select(this.element);
 
     this.graph = this.element.select('.vzb-bmc-graph');
@@ -149,11 +148,7 @@ var LBubbleMapComponent = Component.extend({
     this.on("resize", function () {
       //return if updatesize exists with error
       if(_this.updateSize()) return;
-      _this.updateMarkerSizeLimits();
-      _this._labels.updateSize();
-      _this.redrawDataPoints();
-      //_this._selectlist.redraw();
-
+      _this.map.rescaleMap();
     });
 
     this.KEY = this.model.entities.getDimension();
@@ -176,6 +171,7 @@ var LBubbleMapComponent = Component.extend({
     this.updateUIStrings();
     this.updateIndicators();
     this.updateSize();
+    this.map.rescaleMap();
     this.updateMarkerSizeLimits();
     this.model.marker.getFrame(this.model.time.value, function(values, time) {
       // TODO: temporary fix for case when after data loading time changed on validation
@@ -522,8 +518,8 @@ var LBubbleMapComponent = Component.extend({
       var view = d3.select(this);
       var geo = d3.select("#" + d[_this.KEY]);
 
-      var valueX = _this.values.hook_lat[d[_this.KEY]];
-      var valueY = _this.values.hook_lng[d[_this.KEY]];
+      var valueX = _this.values.hook_lng[d[_this.KEY]];
+      var valueY = _this.values.hook_lat[d[_this.KEY]];
       var valueS = _this.values.size[d[_this.KEY]];
       var valueC = _this.values.color[d[_this.KEY]];
       var valueL = _this.values.label[d[_this.KEY]];
@@ -668,7 +664,14 @@ var LBubbleMapComponent = Component.extend({
     if(this.height<=0 || this.width<=0) return utils.warn("Bubble map updateSize() abort: vizabi container is too little or has display:none");
 
     this.repositionElements();
-    this.map.rescaleMap();
+  },
+  
+  mapBoundsChanged: function() {
+    this.updateMarkerSizeLimits();
+    this._labels.updateSize();
+    this.redrawDataPoints();
+    //_this._selectlist.redraw();
+
   },
 
   repositionElements: function() {
