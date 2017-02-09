@@ -216,7 +216,7 @@ var ColorLegend = Component.extend({
       var labelsAxis = axisSmart("bottom");
       labelsAxis.scale(labelScale)
         //.tickFormat(formatter)
-        .tickSize(6, 0)
+        .tickSizeOuter(0)
         .tickPadding(6)
         .tickSizeMinor(3, 0)
         .labelerOptions({

@@ -1018,7 +1018,8 @@ var AgePyramid = Component.extend({
 
     //apply scales to axes and redraw
     this.yAxis.scale(this.yScale)
-      .tickSize(-this.width, 0)
+      .tickSizeInner(-this.width)
+      .tickSizeOuter(0)
       .tickPadding(6)
       .tickSizeMinor(-this.width, 0)
       .labelerOptions({
@@ -1031,7 +1032,8 @@ var AgePyramid = Component.extend({
 
     this.xAxis.scale(this.xScale)
       .tickFormat(format)
-      .tickSize(-this.height, 0)
+      .tickSizeInner(-this.height)
+      .tickSizeOuter(0)
       .tickPadding(6)
       .tickSizeMinor(-this.height, 0)
       .labelerOptions({
@@ -1058,7 +1060,8 @@ var AgePyramid = Component.extend({
 
       this.xAxisLeft.scale(this.xScaleLeft)
         .tickFormat(format)
-        .tickSize(-this.height, 0)
+        .tickSizeInner(-this.height)
+        .tickSizeOuter(0)
         .tickPadding(6)
         .tickSizeMinor(-this.height, 0)
         .labelerOptions({

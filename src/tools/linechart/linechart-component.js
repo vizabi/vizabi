@@ -577,7 +577,8 @@ var LCComponent = Component.extend({
 
     
     this.yAxis.scale(this.yScale)
-      .tickSize(-this.width, 0)
+      .tickSizeInner(-this.width)
+      .tickSizeOuter(0)
       .tickPadding(6)
       .tickSizeMinor(-this.width, 0)
       .labelerOptions({
@@ -589,7 +590,8 @@ var LCComponent = Component.extend({
       });
 
     this.xAxis.scale(this.xScale)
-      .tickSize(-this.height, 0)
+      .tickSizeInner(-this.height)
+      .tickSizeOuter(0)
       .tickSizeMinor(-this.height, 0)
       .tickPadding(6)
       .labelerOptions({

@@ -75,7 +75,8 @@ const SteppedSlider = Component.extend({
     const axis = d3.axisLeft()
       .scale(this.axisScale)
       .tickFormat(() => '')
-      .tickSize(lineWidth, 0);
+      .tickSizeInner(lineWidth)
+      .tickSizeOuter(0);
 
     const tx = triangleWidth + lineWidth / 2;
     const ty = triangleHeight / 2;

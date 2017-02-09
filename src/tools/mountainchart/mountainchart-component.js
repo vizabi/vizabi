@@ -427,7 +427,7 @@ updateSize: function (meshLength) {
 
         //axis is updated
         this.xAxis.scale(this.xScale)
-            .tickSize(6, 0)
+            .tickSizeOuter(0)
             .tickPadding(9)
             .tickSizeMinor(3, 0)
             .labelerOptions({

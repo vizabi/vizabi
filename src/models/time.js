@@ -289,7 +289,7 @@ var TimeModel = DataConnected.extend({
       case 'quarter': d3Interval = 'month'; step = this.step*3; break;
       default: d3Interval = this.unit; step = this.step; break;
     }
-    return { interval: d3Interval.charAt(0).toUpperCase() + d3Interval.substr(1).toLowerCase(), step: step };
+    return { interval: utils.capitalize(d3Interval), step: step };
   },
 
   /**

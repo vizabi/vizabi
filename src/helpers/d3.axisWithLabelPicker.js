@@ -988,7 +988,7 @@ export default function axisSmart(_orient) {
 
 
     axis.copy = function() {
-      return d3_axis_smart(d3["axis" + _orient.charAt(0).toUpperCase() + _orient.substr(1).toLowerCase()]());
+      return d3_axis_smart(d3["axis" + utils.capitalize(_orient)]());
     };
 
     axis.orient = function() {
@@ -997,9 +997,8 @@ export default function axisSmart(_orient) {
     }
 
     return d3.rebind(axis, _super,
-      "scale", "ticks", "tickValues", "tickFormat",
-      "tickSize", "innerTickSize", "outerTickSize", "tickPadding",
-      "tickSubdivide"
+      "scale", "ticks", "tickArguments", "tickValues", "tickFormat",
+      "tickSize", "tickSizeInner", "tickSizeOuter", "tickPadding"
     );
 
 
@@ -1027,6 +1026,6 @@ export default function axisSmart(_orient) {
       }
     }
 
-  }(d3["axis" + _orient.charAt(0).toUpperCase() + _orient.substr(1).toLowerCase()]());
+  }(d3["axis" + utils.capitalize(_orient)]());
 
 };
