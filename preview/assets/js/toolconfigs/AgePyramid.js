@@ -62,6 +62,7 @@ var VIZABI_MODEL = {
       "color": {
         "use": "property",
         "which": "country_code",
+        "scaleType": "ordinal",
         "spaceRef": "entities",
         "allow": {
           "scales": ["ordinal"]

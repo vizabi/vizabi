@@ -143,6 +143,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
           use: "constant",
           which: "_default",
           _important: false,
+          scaleType: "ordinal",
           extent: [0, 0.33]
         },
       },
