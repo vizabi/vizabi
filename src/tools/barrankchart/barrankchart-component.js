@@ -539,14 +539,14 @@ const BarRankChart = Component.extend({
         const labelSmall = labelFull.length < 12 ? labelFull : `${labelFull.substring(0, 9)}...`;
         const barLabel = self.append('text')
           .attr('class', 'vzb-br-label')
-          .attr('dominant-baseline', 'middle');
+          .attr('dy', '.325em')
 
         const labelFullWidth = barLabel.text(labelFull).node().getBBox().width;
         const labelSmallWidth = barLabel.text(labelSmall).node().getBBox().width;
 
         const barValue = self.append('text')
           .attr('class', 'vzb-br-value')
-          .attr('dominant-baseline', 'middle');
+          .attr('dy', '.325em')
 
         Object.assign(d, {
           self,
@@ -617,9 +617,9 @@ const BarRankChart = Component.extend({
 
   _scrollTopTween(scrollTop) {
     return function () {
-      const i = d3.interpolateNumber(this.scrollTop, scrollTop);
+      const node = this, i = d3.interpolateNumber(this.scrollTop, scrollTop);
       return function (t) {
-        this.scrollTop = i(t);
+        node.scrollTop = i(t);
       };
     };
   },
