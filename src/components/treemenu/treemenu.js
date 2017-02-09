@@ -697,7 +697,6 @@ var TreeMenu = Component.extend({
 
       //init the tag tree
       indicatorsTree = tags[ROOT];
-      indicatorsTree.children.push({"id": DEFAULT});
       indicatorsTree.children.push(tags[UNCLASSIFIED]);
 
       //populate the tag tree
@@ -762,6 +761,8 @@ var TreeMenu = Component.extend({
           if (b.id == "time") return 1;
           if (a.id == "advanced") return 1;
           if (b.id == "advanced") return -1;
+          if (a.id == "_default") return 1;
+          if (b.id == "_default") return -1;
         }
         //sort items alphabetically. folders go down because of the emoji folder in the beginning of the name
         return a.name > b.name? 1:-1
@@ -1088,8 +1089,10 @@ var TreeMenu = Component.extend({
 
       var allowedIDs = utils.keys(indicatorsDB).filter(function(f) {
         //check if indicator is denied to show with allow->names->!indicator
-        if(_this.model.marker[markerID].allow && _this.model.marker[markerID].allow.names
-          && _this.model.marker[markerID].allow.names.indexOf('!' + f) != -1) return false;
+        if(_this.model.marker[markerID].allow && _this.model.marker[markerID].allow.names) {
+          if(_this.model.marker[markerID].allow.names.indexOf('!' + f) != -1) return false;
+          if(_this.model.marker[markerID].allow.names.indexOf(f) != -1) return true;
+        }
         //keep indicator if nothing is specified in tool properties
         if(!_this.model.marker[markerID].allow || !_this.model.marker[markerID].allow.scales) return true;
         //keep indicator if any scale is allowed in tool properties
