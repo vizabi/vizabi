@@ -85,12 +85,6 @@ var VIZABI_MODEL = {
       "doubtDomain": [1800, 1950, 2015],
       "doubtRange": [1.0, 0.3, 0.2]
     },
-    "buttons": ["colors","find","size","moreoptions","fullscreen","presentation"],
-    "dialogs": {
-      "popup": ["colors","find","size","moreoptions"],
-      "sidebar": ["colors","find","size"],
-      "moreoptions": ["opacity","speed","size","colors","presentation","about"]
-    },
     "map": {
       "scale": 1,
       "preserveAspectRatio": false,

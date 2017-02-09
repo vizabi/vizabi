@@ -73,6 +73,12 @@ var BarRankChart = Tool.extend('BarRankChart', {
         doubtDomain: [],
         doubtRange: []
       },
+      "buttons": ['colors', 'find', 'show', 'moreoptions', 'fullscreen', 'presentation'],
+      "dialogs": {
+        'popup': ['timedisplay', 'colors', 'find', 'axes', 'show', 'moreoptions'],
+        'sidebar': ['timedisplay', 'colors', 'find'],
+        'moreoptions': ['opacity', 'speed', 'colors', 'presentation', 'about']
+      },
       presentation: false
     }
   }

@@ -108,6 +108,12 @@ var BubbleMap = Tool.extend('BubbleMap', {
         doubtDomain: [],
         doubtRange: []
       },
+      "buttons": ["colors","find","size","moreoptions","fullscreen","presentation"],
+      "dialogs": {
+        "popup": ["colors","find","size","moreoptions"],
+        "sidebar": ["colors","find","size"],
+        "moreoptions": ["opacity","speed","size","colors","presentation","about"]
+      },
       presentation: false
     }
   }

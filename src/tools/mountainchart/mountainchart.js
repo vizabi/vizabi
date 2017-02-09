@@ -80,6 +80,12 @@ var MountainChart = Tool.extend('MountainChart', {
         xLogStops: [1, 2, 5],
         xPoints: 50
       },
+      "buttons": ['colors', 'find', 'stack', 'show', 'moreoptions', 'fullscreen', 'presentation'],
+      "dialogs": {
+        'popup': ['colors', 'find', 'stack', 'show', 'moreoptions'], 
+        'sidebar': ['colors', 'find', 'stack'], 
+        'moreoptions': ['opacity', 'speed', 'stack', 'axesmc', 'colors', 'presentation', 'about']
+      },
       datawarning: {
         doubtDomain: [],
         doubtRange: []

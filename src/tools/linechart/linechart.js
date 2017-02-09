@@ -87,6 +87,12 @@ var LineChart = Tool.extend('LineChart', {
         doubtDomain: [],
         doubtRange: []
       },
+      "buttons": ['colors', 'find', 'show', 'moreoptions', 'fullscreen', 'presentation'],
+      "dialogs": {
+        'popup': ['colors', 'find', 'show', 'moreoptions'], 
+        'sidebar': ['colors', 'show'], 
+        'moreoptions': ['opacity', 'speed', 'axes', 'colors', 'presentation', 'about']
+      },
       "presentation": false
     }
   }

@@ -110,12 +110,6 @@ var VIZABI_MODEL = {
       "doubtDomain": [1800, 1950, 2015],
       "doubtRange": [1.0, 0.8, 0.6]
     },
-    "buttons": ['colors', 'find', 'stack', 'show', 'moreoptions', 'fullscreen', 'presentation'],
-    "dialogs": {
-      'popup': ['colors', 'find', 'stack', 'show', 'moreoptions'], 
-      'sidebar': ['colors', 'find', 'stack'], 
-      'moreoptions': ['opacity', 'speed', 'stack', 'axesmc', 'colors', 'presentation', 'about']
-    },
     "splash": true
   },
   "data": {
