@@ -359,7 +359,7 @@ var TimeModel = DataConnected.extend({
 
     this.allSteps[hash] = [];
     var curr = this.start;
-    while(curr <= this.end) {
+    while(+curr <= +this.end) {
       var is = this.getIntervalAndStep();
       this.allSteps[hash].push(curr);
       curr = d3["utc" + is.interval].offset(curr, is.step);

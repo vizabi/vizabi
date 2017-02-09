@@ -108,7 +108,7 @@ var Marker = Model.extend({
     if(!this.allowSelectMultiple) return;
 
     var added,
-      dimension = this.getDimension();
+      dimension = this._getFirstDimension({exceptType: "time"});
 
     var select = this._visible.map(function(d) {
       added = {};
