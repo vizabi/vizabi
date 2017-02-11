@@ -144,10 +144,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
           which: "_default",
           scaleType: "ordinal",
           _important: false,
-          extent: [0, 0.33],
-          allow: {
-            names: ["_default"]
-          }
+          extent: [0, 0.33]
         },
       },
       "marker_colorlegend":{

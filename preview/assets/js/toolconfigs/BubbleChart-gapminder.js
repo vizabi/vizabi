@@ -53,6 +53,7 @@ var VIZABI_MODEL = {
       },
       "color": {
         "use": "property",
+        "scaleType": "ordinal",
         "which": "world_4region",
         "scaleType": "ordinal",
         "syncModels": ["marker_colorlegend"]
