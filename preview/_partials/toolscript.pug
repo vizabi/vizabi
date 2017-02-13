@@ -75,12 +75,15 @@ script.
 
   parseURL();
 
+  var locationArray = window.location.href.split("/");
+  var localUrl = locationArray.splice(0, locationArray.indexOf("preview")).join("/") + "/preview/";
+
   EXT_RESOURCES = Vizabi.utils.deepExtend({
     host: 'https://waffle-server.gapminder.org',
     preloadPath: '/api/vizabi/',
     dataPath: '/api/ddf/',
     //shapePath: localUrl + "data/mc_precomputed_shapes.json"
-    //shapePath: localUrl + "data/world-50m.json"
+    shapePath: localUrl + "data/world-50m.json"
   }, EXT_RESOURCES);
   
   VIZABI_MODEL = Vizabi.utils.deepExtend({}, VIZABI_MODEL, {

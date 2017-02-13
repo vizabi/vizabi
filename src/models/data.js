@@ -2,6 +2,7 @@ import * as utils from 'base/utils';
 import Model from 'base/model';
 import Reader from 'base/reader';
 import EventSource from 'base/events';
+import { isObject } from 'base/utils';
 
 /*
  * VIZABI Data Model (model.data)
@@ -76,7 +77,8 @@ var DataModel = Model.extend({
         .then(dataId => {
           EventSource.unfreezeAll();
           return dataId;
-        });
+        })
+        .catch((error) => this.handleReaderError(error, query));
     }
 
   },
@@ -174,7 +176,8 @@ var DataModel = Model.extend({
     return new readerClass({
       path: this.path,
       delimiter: this.delimiter,
-      keySize: this.keySize
+      keySize: this.keySize,
+      data: this.data
     });
   },
 
@@ -250,7 +253,6 @@ var DataModel = Model.extend({
   },
 
   loadConceptProps() {
-    const locale = this.getClosestModel('locale');
     const query = {
       select: {
         key: ['concept'],
@@ -269,18 +271,12 @@ var DataModel = Model.extend({
       },
       from: 'concepts',
       where: {},
-      language: locale.id,
+      language: this.getClosestModel('locale').id,
     };
 
     return this.load(query)
       .then(this.handleConceptPropsResponse.bind(this))
-      .catch((error) => {
-        const translation = locale.getTFunction()(error.code) || '';
-        const errorMessage = `${translation} ${error.message || ''}`.trim();
-
-        this.triggerLoadError(errorMessage);
-        utils.warn('Problem with query: ', query);
-      });
+      .catch((error) => this.handleReaderError(error, query));
 
   },
 
@@ -351,7 +347,7 @@ var DataModel = Model.extend({
 
   getConceptByIndex: function(index, type) {
     var concept = this.conceptArray.filter(f => !type || !f.concept_type || f.concept_type===type)[index];
-    if(!concept && type == "measure") concept = this.conceptArray.filter(f => f.concept_type==="time")[0];
+    //if(!concept && type == "measure") concept = this.conceptArray.filter(f => f.concept_type==="time")[0];
     return concept;
   },
 
@@ -620,16 +616,26 @@ var DataModel = Model.extend({
       if(!indicatorsDB) utils.warn("_getFrames in data.js is missing indicatorsDB, it's needed for gap filling");
       if(!framesArray) utils.warn("_getFrames in data.js is missing framesArray, it's needed so much");
 
-      var KEY = _this._collection[dataId].query.select.key[0];
       var TIME = _this._collection[dataId].query.animatable;
+      var KEY = _this._collection[dataId].query.select.key.slice(0);
+      if(TIME && KEY.indexOf(TIME) != -1) KEY.splice(KEY.indexOf(TIME), 1);
 
       var filtered = {};
-      var items, itemsIndex, oneFrame, method, use, next;
+      var k, items, itemsIndex, oneFrame, method, use, next;
+
+      var entitiesByKey = {};
+      if(KEY.length > 1) {
+        for (k = 1; k < KEY.length; k++) {
+          var nested = _this.getData(dataId, 'nested', [KEY[k]].concat([TIME]));
+          entitiesByKey[KEY[k]] = Object.keys(nested);
+        }
+      }
 
       // We _nest_ the flat dataset in two levels: first by “key” (example: geo), then by “animatable” (example: year)
       // See the _getNested function for more details
-      var nested = _this.getData(dataId, 'nested', [KEY, TIME]);
+      var nested = _this.getData(dataId, 'nested', KEY.concat([TIME]));
       keys = keys ? keys : Object.keys(nested);
+      entitiesByKey[KEY[0]] = keys;
       // Get the list of columns that are in the dataset, exclude key column and animatable column
       // Example: [“lex”, “gdp”, “u5mr"]
       var query = _this._collection[dataId].query;
@@ -638,13 +644,25 @@ var DataModel = Model.extend({
       var cLength = columns.length;
       var key, k, column, c;
 
-      for (k = 0; k < keys.length; k++) {
-        filtered[keys[k]] = {};
-        for (c = 0; c < cLength; c++) filtered[keys[k]][columns[c]] = null;
+      var lastIndex = KEY.length - 1;
+      var createFiltered = function(parent, index) {
+        var keys = entitiesByKey[KEY[index]];
+        for(var i = 0, j = keys.length; i < j; i++) {
+          parent[keys[i]] = {};
+          if(index == lastIndex) {
+            for (c = 0; c < cLength; c++) parent[keys[i]][columns[c]] = null;
+          } else {
+            var nextIndex = index + 1;
+            createFiltered(parent[keys[i]], nextIndex);
+          }
+        }
       }
+
+      createFiltered(filtered, 0);
+
       for (c = 0; c < cLength; c++) _this._collection[dataId].haveNoDataPointsPerKey[columns[c]] = {};
 
-      var buildFrame = function(frameName, keys, dataId, callback) {
+      var buildFrame = function(frameName, entitiesByKey, KEY, dataId, callback) {
         var frame = {};
           if (query.from !== "datapoints") {
             // we populate the regular set with a single value (unpack properties into constant time series)
@@ -654,11 +672,11 @@ var DataModel = Model.extend({
             for (var i = 0; i < dataset.length; i++) {
               var d = dataset[i];
               for (c = 0; c < cLength; c++) {
-                frame[columns[c]][d[KEY]] = d[columns[c]];
+                frame[columns[c]][d[KEY[0]]] = d[columns[c]];
                 //check data for properties with missed data. If founded then write key to haveNoDataPointsPerKey with
                 //count of broken datapoints
                 if(d[columns[c]] == null) {
-                  _this._collection[dataId].haveNoDataPointsPerKey[columns[c]][d[KEY]] = dataset.length;
+                  _this._collection[dataId].haveNoDataPointsPerKey[columns[c]][d[KEY[0]]] = dataset.length;
                 }
               }
             }
@@ -672,29 +690,54 @@ var DataModel = Model.extend({
 
             for (c = 0; c < cLength; c++) frame[columns[c]] = {};
 
-            for (k = 0; k < keys.length; k++) {
-              key = keys[k];
+            var iterateKeys = function(firstKeyObject, lastKeyObject, firstKey, nested, filtered, index) {
+              var keys = entitiesByKey[KEY[index]];
+              for(var i = 0, j = keys.length; i < j; i++) {
+                if(index == 0) {
+                  firstKey = keys[i];//root level
+                }
+                if(index == lastIndex) {
+                  for (c = 0; c < cLength; c++) {
+                    mapValue(columns[c], firstKey, keys[i], firstKeyObject, lastKeyObject, nested[keys[i]], filtered[keys[i]]);
+                  }
+                } else {
+                  if(index == 0) {
+                    lastKeyObject = firstKeyObject = {};
+                  }
+                  var nextIndex = index + 1;
+                  lastKeyObject[keys[i]] = {};
+                  iterateKeys(firstKeyObject, lastKeyObject[keys[i]], firstKey, nested[keys[i]], filtered[keys[i]], nextIndex);
+                }
+              }
+            }
 
-              for (c = 0; c < cLength; c++) {
-                column = columns[c];
+            iterateKeys(null, null, null, nested, filtered, 0);
+
+            function mapValue(column, firstKey, lastKey, firstKeyObject, lastKeyObject, nested, filtered) {
 
                 //If there are some points in the array with valid numbers, then
                 //interpolate the missing point and save it to the “clean regular set”
                 method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
                 use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
 
-
+                
+                if(firstKeyObject) {
+                  frame[column][firstKey] = firstKeyObject[firstKey];
+                } else {
+                  lastKeyObject = frame[column];
+                }
+                
                 // Inside of this 3-level loop is the following:
-                if (nested[key] && nested[key][frameName] && (nested[key][frameName][0][column] || nested[key][frameName][0][column] === 0)) {
+                if (nested && nested[frameName] && (nested[frameName][0][column] || nested[frameName][0][column] === 0)) {
 
                   // Check if the piece of data for [this key][this frame][this column] exists
                   // and is valid. If so, then save it into a “clean regular set”
-                  frame[column][key] = nested[key][frameName][0][column];
+                  lastKeyObject[lastKey] = nested[frameName][0][column];
 
                 } else if (method === "none") {
 
                   // the piece of data is not available and the interpolation is set to "none"
-                  frame[column][key] = null;
+                  lastKeyObject[lastKey] = null;
 
                 } else {
                   // If the piece of data doesn’t exist or is invalid, then we need to inter- or extapolate it
@@ -704,14 +747,14 @@ var DataModel = Model.extend({
                   // At every frame the data in the current column might or might not exist.
                   // Thus, let’s filter out all the frames which don’t have the data for the current column.
                   // Let’s cache it because we will most likely encounter another gap in the same column for the same key
-                  items = filtered[key][column];
+                  items = filtered[column];
                   if (items === null) {
-                    var givenFrames = Object.keys(nested[key]);
+                    var givenFrames = Object.keys(nested);
                     items = new Array(givenFrames.length);
                     itemsIndex = 0;
 
                     for (var z = 0, length = givenFrames.length; z < length; z++) {
-                      oneFrame = nested[key][givenFrames[z]];
+                      oneFrame = nested[givenFrames[z]];
                       if (oneFrame[0][column] || oneFrame[0][column] === 0) items[itemsIndex++] = oneFrame[0];
                     }
 
@@ -719,9 +762,9 @@ var DataModel = Model.extend({
                     items.length = itemsIndex;
 
                     if (itemsIndex === 0) {
-                      filtered[key][column] = [];
+                      filtered[column] = [];
                     } else {
-                      filtered[key][column] = items;
+                      filtered[column] = items;
                     }
 
                     if(items.length==0) _this._collection[dataId].haveNoDataPointsPerKey[column][key] = items.length;
@@ -732,11 +775,10 @@ var DataModel = Model.extend({
                   //So we let the key have missing values in this column for all frames
                   if (items && items.length > 0) {
                     next = null;
-                    frame[column][key] = utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
+                    lastKeyObject[lastKey] = utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
                   }
                 }
-              } //loop across columns
-            } //loop across keys
+            }
           }
 
           // save the calcualted frame to global datamanager cache
@@ -753,7 +795,7 @@ var DataModel = Model.extend({
           _this._collectionPromises[dataId][whatId]["queue"].getNext().then(function(nextFrame) {
             if (nextFrame) {
               utils.defer(function() {
-                buildFrame(nextFrame, keys, dataId, _this._collectionPromises[dataId][whatId]["queue"].frameComplete);
+                buildFrame(nextFrame, entitiesByKey, KEY, dataId, _this._collectionPromises[dataId][whatId]["queue"].frameComplete);
               });
             } else {
               //this goes to marker.js as a "response"
@@ -763,7 +805,7 @@ var DataModel = Model.extend({
       };
       _this._collectionPromises[dataId][whatId]["queue"].getNext().then(function(nextFrame) {
         if (nextFrame) {
-          buildFrame(nextFrame, keys, dataId, _this._collectionPromises[dataId][whatId]["queue"].frameComplete);
+          buildFrame(nextFrame, entitiesByKey, KEY, dataId, _this._collectionPromises[dataId][whatId]["queue"].frameComplete);
         }
       });
     });
@@ -883,7 +925,18 @@ var DataModel = Model.extend({
       return q;
     }
     return false;
-  }
+  },
+
+  handleReaderError(error, query) {
+    if (isObject(error)) {
+      const locale = this.getClosestModel('locale');
+      const translation = locale.getTFunction()(error.code, error.payload) || '';
+      error = `${translation} ${error.message || ''}`.trim();
+    }
+
+    utils.warn('Problem with query: ', query);
+    throw error;
+  },
 
 });
 

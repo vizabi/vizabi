@@ -53,7 +53,7 @@ var Hook = DataConnected.extend({
     var obj = { which: newValue.concept }
     
     if(newValue.dataSource) obj.data = newValue.dataSource;
-    var newDataSource = this.getClosestModel(newValue.dataSource || this.dataSource);
+    var newDataSource = this.getClosestModel(obj.data || this.data);
     var conceptProps = newDataSource.getConceptprops(newValue.concept);
 
     if(newValue.which==="_default") {
@@ -86,6 +86,10 @@ var Hook = DataConnected.extend({
   },
 
   afterPreload: function() {
+    this.autoGenerateModel();
+  },
+
+  autoGenerateModel: function() {
     if (this.which == null && this.autogenerate) {
       this.which = this.dataSource
         .getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType)
@@ -176,10 +180,10 @@ var Hook = DataConnected.extend({
 
     // select
     // we remove this.which from values if it duplicates a dimension
-    var allDimensions = this._getAllDimensions(exceptions);
+    var allDimensions = utils.unique(this._getAllDimensions(exceptions));
     var dimensions = (prop && allDimensions.length > 1) ? [(this.spaceRef ? this._space[this.spaceRef].dim : this.which)] : allDimensions;
     
-    dimensions = dimensions.filter(f => f!=="_default");
+    dimensions = dimensions.filter(f => f!=="_default");// && f!==null);
     if(!dimensions || !dimensions.length) {
       utils.warn('getQuery() produced no query because no keys are available');
       return true;
@@ -277,6 +281,7 @@ var Hook = DataConnected.extend({
       if(opts.onlyType && h.getType() !== opts.onlyType) {
         return true;
       }
+      if(h.skipFilter) return;
       // if query's dimensions are the same as the hook's, no join
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
         filters = utils.extend(filters, h.getFilter(splashScreen));
@@ -305,6 +310,8 @@ var Hook = DataConnected.extend({
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
         return true;
       }
+      if(h.skipFilter) return;
+      
       var filter = h.getFilter(splashScreen);
       if (filter != null && !utils.isEmpty(filter)) {
         joins["$" + h.getDimension()] = {

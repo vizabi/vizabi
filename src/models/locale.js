@@ -9,7 +9,7 @@ var LocaleModel = DataConnected.extend({
   /**
    * Default values for this model
    */
-  getClassDefaults: function() { 
+  getClassDefaults: function() {
     var defaults = {
       id: "en",
       filePath: "assets/translation/"
@@ -37,6 +37,10 @@ var LocaleModel = DataConnected.extend({
     return (!this._loadedOnce || this._loadCall);
   },
 
+  preloadData() {
+    return this.loadData();
+  },
+
   loadData: function() {
     var promises;
 
@@ -46,7 +50,7 @@ var LocaleModel = DataConnected.extend({
     // load new concept properties for each data source.
     // this should be done with listeners, but the load promise can't be returned
     // through the listeners
-    
+
     promises = [];
     utils.forEach(this._root._data, (mdl)=>{
       if(mdl._type === "data") promises.push(mdl.loadConceptProps())
@@ -88,11 +92,15 @@ var LocaleModel = DataConnected.extend({
    * Gets the translation function
    * @returns {string} translation function
    */
-  getTFunction: function() {
-    var _this = this;
-    return function(stringId) {
-      return _this.getUIString(stringId);
-    }
+  getTFunction() {
+    return (stringId, payload = {}) => (
+      Object.keys(payload).reduce((result, key) => {
+          const regexp = new RegExp('{{' + key + '}}', 'g');
+          return result.replace(regexp, payload[key]);
+        },
+        this.getUIString(stringId)
+      )
+    );
   },
 
   isRTL: function() {

@@ -13,7 +13,8 @@ var EntitiesModel = DataConnected.extend({
   getClassDefaults: function() { 
     var defaults = {
       show: {},
-      dim: null
+      dim: null,
+      skipFilter: false
     };
     return utils.deepExtend(this._super(), defaults)
   },
@@ -54,7 +55,7 @@ var EntitiesModel = DataConnected.extend({
    * @returns {Array} Array of unique values
    */
   getFilter: function() {
-    return this.show;
+    return this.skipFilter ? [] : this.show;
   },
 
   /**
@@ -64,18 +65,28 @@ var EntitiesModel = DataConnected.extend({
     //clear selected countries when showing something new
     var newShow = utils.deepClone(this.show);
     var dimension = this.getDimension();
-    var value = d[dimension];
+    var _d;
+
+    if(!utils.isArray(d)) {
+      _d = [d];
+    } else {
+      _d = d;
+    }
+
     var showArray = [];
 
     // get array from show
     if (this.show[dimension] && this.show[dimension]['$in'] && utils.isArray(this.show[dimension]['$in']))
       showArray = this.show[dimension]['$in'];
 
-    if(this.isShown(d)) {
-      showArray = showArray.filter(function(d) { return d !== value; });
-    } else {
-      showArray = showArray.concat(value);
-    }
+    utils.forEach(_d, (d) => {
+      var value = d[dimension];
+      if(this.isShown(d)) {
+        showArray = showArray.filter(function(d) { return d !== value; });
+      } else {
+        showArray = showArray.concat(value);
+      }
+    });
 
     if (showArray.length === 0)
       delete newShow[dimension];
@@ -102,6 +113,20 @@ var EntitiesModel = DataConnected.extend({
     var show = utils.deepClone(this.show);
     delete show[dimension];
     this.show = show;
+  },
+
+  getFilteredEntities: function() {
+    var dimension = this.getDimension();
+    if (this.show[dimension] && this.show[dimension]['$in'] && utils.isArray(this.show[dimension]['$in'])) {
+      var showArray = this.show[dimension]['$in'];
+      return showArray.map((m) => {
+        var _m = {};
+        _m[dimension] = m;
+        return _m;
+      });
+    } else {
+      return false;
+    }
   }
 
 });

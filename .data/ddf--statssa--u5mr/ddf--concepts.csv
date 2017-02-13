@@ -1,0 +1,13 @@
+concept,concept_type,domain
+municipality2011,entity_domain,
+municipality2016,entity_domain,
+year,time,
+u5mr,measure,
+cd,measure,
+population,measure,
+id,string,
+lat,measure,
+lng,measure,
+name,string,
+province,string,
+domain,string,

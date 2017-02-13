@@ -12,14 +12,14 @@ var SizeModel = Axis.extend({
    */
   getClassDefaults: function() { 
     var defaults = {
-      use: "constant",
-      which: "_default",
+      use: null,
+      which: null,
       domainMin: null,
       domainMax: null,
       zoomedMin: null,
       zoomedMax: null,
       extent: [0, 0.85],
-      scaleType: "ordinal",
+      scaleType: null,
       allow: {
         scales: ["linear", "log", "genericLog", "pow"]
       }
@@ -35,7 +35,34 @@ var SizeModel = Axis.extend({
     //but then also clamp a numeric scale
     if(this.scaleType !== 'ordinal') this.scale.clamp(true);
     
+  },
+
+  autoGenerateModel: function() {
+    if (this.which == null) {
+      var concept;
+      if (this.autogenerate) {
+        var concept = this.dataSource
+          .getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType)
+
+        if (concept) {
+          this.which = concept.concept;
+          this.use = "indicator";
+          this.scaleType = "linear";
+        }
+
+      } 
+      if (!concept) {
+        this.which = "_default";
+        this.use = "constant";  
+        this.scaleType = "ordinal";
+      }
+    }
+    if (this.scaleType == null) {
+        this.scaleType = this.dataSource
+          .getConceptprops(this.which).scales[0]; 
+    }
   }
+
 });
 
 export default SizeModel;

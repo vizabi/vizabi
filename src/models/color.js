@@ -14,18 +14,18 @@ var defaultPalettes = {
   },
   "_discrete": {
     "_default": "#ffb600",
-    "0": "#bcfa83",
-    "1": "#4cd843",
-    "2": "#ff8684",
-    "3": "#e83739",
-    "4": "#ffb04b",
-    "5": "#ff7f00",
-    "6": "#f599f5",
-    "7": "#c027d4",
-    "8": "#f4f459",
-    "9": "#d66425",
-    "10": "#7fb5ed",
-    "11": "#0ab8d8"
+    "0": "#4cd843",
+    "1": "#e83739",
+    "2": "#ff7f00",
+    "3": "#c027d4",
+    "4": "#d66425",
+    "5": "#0ab8d8",
+    "6": "#bcfa83",
+    "7": "#ff8684",
+    "8": "#ffb04b",
+    "9": "#f599f5",
+    "10": "#f4f459",
+    "11": "#7fb5ed"
   },
   "_default": {
     "_default": "#93daec"
@@ -39,9 +39,9 @@ var ColorModel = Hook.extend({
    */
   getClassDefaults: function() { 
     var defaults = {
-      use: "constant",
-      which: "_default",
-      scaleType: "ordinal",
+      use: null,
+      which: null,
+      scaleType: null,
       syncModels: [],
       palette: {},
       paletteLabels: null,
@@ -51,6 +51,32 @@ var ColorModel = Hook.extend({
       }
     };
     return utils.deepExtend(this._super(), defaults)
+  },
+
+  autoGenerateModel: function() {
+    if (this.which == null) {
+      var concept;
+      if (this.autogenerate) {
+        var concept = this.dataSource
+          .getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType)
+
+        if (concept) {
+          this.which = concept.concept;
+          this.use = "indicator";
+          this.scaleType = "linear";
+        }
+
+      } 
+      if (!concept) {
+        this.which = "_default";
+        this.use = "constant";  
+        this.scaleType = "ordinal";
+      }
+    }
+    if (this.scaleType == null) {
+        this.scaleType = this.dataSource
+          .getConceptprops(this.which).scales[0]; 
+    }
   },
 
   /**
@@ -235,7 +261,7 @@ var ColorModel = Hook.extend({
       this.set("paletteLabels", paletteLabels, false, false);
     }
     var palette = this.palette.getPlainObject();
-    if(this.use !== "constant" && !includeDefault) {
+    if(this.use === "indicator" && !includeDefault) {
       delete palette["_default"];
     }
     return palette;

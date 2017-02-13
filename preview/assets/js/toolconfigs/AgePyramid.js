@@ -32,7 +32,8 @@ var VIZABI_MODEL = {
       "grouping": 1
     },
     "entities_side": {
-      "dim": "gender"
+      "dim": "gender",
+      "skipFilter": true
     },
     "marker": {
       "space": ["entities", "time", "entities_side", "entities_age"],
@@ -61,14 +62,16 @@ var VIZABI_MODEL = {
       "color": {
         "use": "property",
         "which": "country_code",
+        "spaceRef": "entities",
         "allow": {
           "scales": ["ordinal"]
         },
         "syncModels": ["marker_colorlegend"]
       },
-      "hook_side": {
+      "side": {
         "use": "property",
         "which": "gender",
+        "spaceRef": "entities_side",
         "allow": {
           "scales": ["ordinal"]
         }
@@ -119,8 +122,8 @@ var VIZABI_MODEL = {
   "ui": {
     "buttons":['colors', 'inpercent', 'side', 'moreoptions', 'fullscreen'],
     "dialogs": {
-      'popup': ['colors', 'side', 'moreoptions'], 
-      'sidebar': ['colors', 'show'], 
+      'popup': ['timedisplay', 'colors', 'side', 'moreoptions'], 
+      'sidebar': ['timedisplay', 'colors', 'show'], 
     'moreoptions': ['opacity', 'speed', 'colors', 'side', 'presentation', 'about']
     },
     "splash": true

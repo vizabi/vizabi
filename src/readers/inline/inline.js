@@ -1,15 +1,25 @@
 import Reader from 'base/reader';
 
-/*!
+/**
  * Inline Reader
  * the simplest reader possible
  */
 
-var InlineReader = Reader.extend({
-    init: function (reader_info) {
-      this.name = "inline";
-      this._super(reader_info);
-    }
-  });
+const InlineReader = Reader.extend({
+
+  _name: 'inline',
+
+  init(readerInfo) {
+    this._data = readerInfo.data || [{}];
+  },
+
+  load() {
+    return Promise.resolve({
+      columns: Object.keys(this._data[0]),
+      data: this._data
+    });
+  }
+
+});
 
 export default InlineReader;

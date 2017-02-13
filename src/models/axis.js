@@ -14,7 +14,7 @@ var AxisModel = Hook.extend({
   /**
    * Default values for this model
    */
-  getClassDefaults: function() { 
+  getClassDefaults: function() {
     var defaults = {
       use: null,
       which: null,
@@ -28,6 +28,19 @@ var AxisModel = Hook.extend({
       }
     };
     return utils.deepExtend(this._super(), defaults)
+  },
+
+  autoGenerateModel: function() {
+    if (this.which == null && this.autogenerate) {
+      
+      var concept = this.dataSource.getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType)
+
+      if (!concept) {
+        concept = this.dataSource.getConceptByIndex(0, "time");
+      }
+
+      this.which = concept.concept;
+    }
   },
     
   _type: "axis",

@@ -148,6 +148,18 @@ var MountainChartComponent = Component.extend({
                 if (!_this._readyOnce) return;
                 _this.ready();
             },
+            "change:marker.stack.which": function (evt) {
+                if (!_this._readyOnce) return;
+                if (_this.model.time.playing) {
+                    _this.model.time.pause();
+                }               
+            },
+            "change:marker.stack.use": function (evt) {
+                if (!_this._readyOnce) return;
+                if (_this.model.time.playing) {
+                    _this.model.time.pause();
+                }               
+            },
             "change:marker.color.palette": function (evt) {
                 if (!_this._readyOnce) return;
                 _this.redrawDataPointsOnlyColors();
@@ -338,6 +350,7 @@ var MountainChartComponent = Component.extend({
     },
 
   frameChanged: function(frame, time) {
+    if (!frame) return utils.warn("change:time.value: empty data received from marker.getFrame(). doing nothing");
     if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
     this.values = frame;
     this.updateTime();
@@ -995,11 +1008,15 @@ updateSize: function (meshLength) {
           _this.model.marker.getFrame(_this.model.time.end, function(values) {
             if(!values) return;
 
+            //below is a complicated issue when updatePointers() is first calculated for one set of values (at the end of time series), then yMax is taken from that data (assuming that population always grows, so the last year has the highest mountain)
             _this.values = values;
             _this.updatePointers();
+            
+            //after that updatePointers() is called with the actual data of the current time point
             _this.values = prevValues;
             _this.yScale.domain([0, Math.round(_this.yMax)]);
             _this.updatePointers();
+            _this.redrawDataPoints();
           });
         } else {
           if (!_this.yMax) utils.warn("Setting yMax to " + _this.yMax + ". You failed again :-/");

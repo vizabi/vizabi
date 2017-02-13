@@ -1,18 +1,16 @@
 var VIZABI_MODEL = {
   "state": {
     "time": {
-      "startOrigin": "1800",
-      "endOrigin": "2015",
-      "value": "2015",
-      "dim": "time"
+      "startOrigin": "1994",
+      "endOrigin": "2011",
+      "value": "2004",
+      "dim": "year",
+      "delay": "1000"
     },
     "entities": {
-      "dim": "geo",
-      "show": {
-        "is--country": true
-      }
+      "dim": "municipality2011",
     },
-    "entities_colorlegend": {
+    "entities_colorlegend": { 
       "dim": "world_4region"
     },
     "entities_tags": {
@@ -26,35 +24,39 @@ var VIZABI_MODEL = {
       },
       "size": {
         "use": "indicator",
-        "which": "population_total",
+        "which": "population",
         "scaleType": "linear",
-        "domainMin": 15,
-        "domainMax": 1400000000,
         "allow": {
           "scales": ["linear"]
         }
       },
       "hook_lat": {
         "use": "property",
-        "which": "latitude",
+        "which": "lat",
         "_important": true
       },
       "hook_lng": {
         "use": "property",
-        "which": "longitude",
+        "which": "lng",
         "_important": true
       },
       "color": {
-        "use": "property",
-        "which": "world_4region",
-        "scaleType": "ordinal",
+        "use": "indicator",
+        "which": "u5mr",
+        "scaleType": "linear",
+        "palette": {
+          "0": "#AAFFAA",
+          "50": "#E1CE00",
+          "100": "#FF0000",
+          "_default": "#ffb600"
+        },
         "syncModels": ["marker_colorlegend"]
       }
     },
     "marker_colorlegend":{
-      "space": ["entities_colorlegend"],
-      "opacityRegular": 0.8,
-      "opacityHighlightDim": 0.3,
+      "space": ["entities_colorlegend"],      
+      "opacityRegular": 0,
+      "opacityHighlightDim": 0.3,     
       "label": {
         "use": "property",
         "which": "name"
@@ -85,24 +87,28 @@ var VIZABI_MODEL = {
       "doubtDomain": [1800, 1950, 2015],
       "doubtRange": [1.0, 0.3, 0.2]
     },
-    "buttons": ["colors","find","size","moreoptions","fullscreen","presentation"],
+    "buttons": ['colors', 'find', 'size', 'moreoptions', 'fullscreen', 'presentation'],
     "dialogs": {
-      "popup": ["colors","find","size","moreoptions"],
-      "sidebar": ["colors","find","size"],
-      "moreoptions": ["opacity","speed","size","colors","presentation","about"]
+      'popup': ['colors', 'find', 'size', 'moreoptions'], 
+      'sidebar': ['colors', 'find', 'size'], 
+      'moreoptions': ['opacity', 'speed', 'size', 'colors', 'presentation', 'about']
     },
     "map": {
-      "scale": 1,
-      "preserveAspectRatio": false,
-      "offset": {
-        "top": 0.05,
-        "bottom": -0.12
+      "scale": 0.8,
+      "colorGeo": true,
+      "topology": {
+        "path": "data/zaf-municipalities-2011.json",
+        "objects": {
+          "geo": 'topo',
+          "boundaries": 'topo'
+        },
+        "geoIdProperty": "MN_MDB_C"
       }
     },
-    "splash": true
+    "splash": false
   },
   "data": {
-    "reader": "waffle",
-    "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/"
+    "reader": "ddf",
+    "path": "data/ddf--statssa--u5mr"
   }
 };
