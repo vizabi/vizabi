@@ -343,6 +343,11 @@ var Menu = Class.extend({
   isActive: function() {
     return this.entity.classed('active');
   },
+  hasActiveParentNeighbour() {
+    return this.menuItems
+      .filter((item) => item.isActive())
+      .some((item) => !!d3.select(item.entity).node().classed(css.hasChild));
+  },
   marqueeToggle: function(toggle) {
     for (var i = 0; i < this.menuItems.length; i++) {
       this.menuItems[i].marqueeToggle(toggle);
@@ -411,11 +416,14 @@ var MenuItem = Class.extend({
     if (submenu.node()) {
       this.submenu = new Menu(this, submenu, options);
     }
-    var label = this.entity.select('.' + css.list_item_label).on('mouseenter', function() {
-      if(utils.isTouchDevice()) return;
+    this.entity.select('.' + css.list_item_label).on('mouseenter', function () {
+      if (utils.isTouchDevice()) return;
+
       if (_this.parentMenu.direction == MENU_HORIZONTAL && !d3.select(this).attr('children')) {
         _this.openSubmenu();
         _this.marqueeToggle(true);
+      } else if (!_this.parentMenu.hasActiveParentNeighbour()) {
+        _this.closeNeighbors();
       }
     }).on('click.item', function() {
       if(utils.isTouchDevice()) return;
