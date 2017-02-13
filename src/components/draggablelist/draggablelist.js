@@ -53,8 +53,8 @@ var DraggableList = Component.extend({
 
     this.updateData = utils.debounce(this.updateData, 1000);
 
-    this.itemDragger = d3.behavior.drag()
-      .on('dragstart', function(draggedData, i) {
+    this.itemDragger = d3.drag()
+      .on('start', function(draggedData, i) {
         if(_this.dataUpdateFlag || !_this.draggable) return;
         d3.event.sourceEvent.stopPropagation();
         _this.parentBoundRect = _this.element.node().getBoundingClientRect();
@@ -97,7 +97,7 @@ var DraggableList = Component.extend({
         }
       })
 
-      .on('dragend', function(d, i) {
+      .on('end', function(d, i) {
         if(_this.dataUpdateFlag || !_this.draggable) return;
         _this.getData();
       })
@@ -136,16 +136,18 @@ var DraggableList = Component.extend({
 
     this.items = this.element.selectAll('div').data(function() {
       return _this.dataArrFn().map( function(d) { return {data:d};})});
-    var draggable = _this.draggable?true:null;
-    this.items.enter()
+    this.items.exit().remove();
+    this.items = this.items.enter()
       .append('div')
-      .append('li');
+      .append('li')
+      .merge(this.items);
 
     var labels = _this.model.color.getColorlegendMarker().label.getItems();
     this.items.select('li').classed('hover', false).each(function(val, index) {
         d3.select(this).attr('data', val['data']).text(labels[val['data']]);
       });
-    this.items.exit().remove();
+
+    var draggable = _this.draggable?true:null;
     this.element.selectAll('div')
       .style('top', '')
       .attr('draggable', draggable)

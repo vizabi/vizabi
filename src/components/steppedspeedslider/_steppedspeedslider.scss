@@ -6,6 +6,9 @@
 
   .vzb-stepped-speed-slider-axis {
     pointer-events: none;
+    .domain {
+      display: none;
+    }
   }
 
   .vzb-stepped-speed-slider-triangle {

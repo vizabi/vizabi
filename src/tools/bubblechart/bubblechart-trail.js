@@ -67,8 +67,9 @@ export default Class.extend({
         })
         .attr("class", function(d) {
           return "vzb-bc-entity entity-trail trail-" + d[KEY];
-        });
-      _trails.each(function(d, index) {
+        })
+        .merge(_trails)
+        .each(function(d, index) {
           // used for prevent move trail start time forward when we have empty values at end of time range
         var trail = this;  
         promises.push(new Promise(function(resolve, reject) {
@@ -78,13 +79,13 @@ export default Class.extend({
                 key: d[KEY]
               }
             });
-            _this.entityTrails[d[KEY]] = d3.select(trail).selectAll("g")
+            var entityTrails = d3.select(trail).selectAll("g")
               .data(trailSegmentData)
               .classed("vzb-invisible", true);
 
-            _this.entityTrails[d[KEY]].exit().remove();
+            entityTrails.exit().remove();
 
-            _this.entityTrails[d[KEY]].enter().append("g")
+            _this.entityTrails[d[KEY]] = entityTrails.enter().append("g")
               .attr("class", "vzb-bc-trailsegment")
               .on("mouseover", function(segment, index) {
                 if(utils.isTouchDevice()) return;
@@ -126,7 +127,8 @@ export default Class.extend({
                 var view = d3.select(this);
                 view.append("circle");
                 view.append("line");
-              });
+              })
+              .merge(entityTrails);
             resolve();
           }));
         });
@@ -269,7 +271,7 @@ export default Class.extend({
       var view = d3.select(this);
       if (duration) {
         view.select("circle")
-          .transition().duration(duration).ease("linear")
+          .transition().duration(duration).ease(d3.easeLinear)
           .attr("cy", _context.yScale(segment.valueY))
           .attr("cx", _context.xScale(segment.valueX))
           .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)));
@@ -297,21 +299,21 @@ export default Class.extend({
       );
       if (duration) {
         view.select("line")
-          .transition().duration(duration).ease("linear")
+          .transition().duration(duration).ease(d3.easeLinear)
           .attr("x1", _context.xScale(next.valueX))
           .attr("y1", _context.yScale(next.valueY))
           .attr("x2", _context.xScale(segment.valueX))
           .attr("y2", _context.yScale(segment.valueY))
-          .style("stroke-dasharray", lineLength)
-          .style("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)));
+          .attr("stroke-dasharray", lineLength)
+          .attr("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)));
       } else {
         view.select("line").interrupt()
           .attr("x1", _context.xScale(next.valueX))
           .attr("y1", _context.yScale(next.valueY))
           .attr("x2", _context.xScale(segment.valueX))
           .attr("y2", _context.yScale(segment.valueY))
-          .style("stroke-dasharray", lineLength)
-          .style("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)))
+          .attr("stroke-dasharray", lineLength)
+          .attr("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)))
           .transition();
       }
     });
@@ -335,10 +337,10 @@ export default Class.extend({
         (segment.valueC!=null?_context.cScale(segment.valueC):_context.COLOR_BLACKISH);
 
       view.select("circle")
-        //.transition().duration(duration).ease("linear")
+        //.transition().duration(duration).ease(d3.easeLinear)
         .style("fill", segment.valueC!=null?_context.cScale(segment.valueC):_context.COLOR_WHITEISH);
       view.select("line")
-        //.transition().duration(duration).ease("linear")
+        //.transition().duration(duration).ease(d3.easeLinear)
         .style("stroke", strokeColor);
     });
   },
@@ -351,7 +353,7 @@ export default Class.extend({
       var view = d3.select(this);
 
       view
-        //.transition().duration(duration).ease("linear")
+        //.transition().duration(duration).ease(d3.easeLinear)
         .style("opacity", d.opacity || _context.model.marker.opacityRegular);
     });
   },
@@ -404,7 +406,7 @@ export default Class.extend({
             // always update nearest 2 points
             if (segmentVisibility != segment.transparent || Math.abs(_context.model.time.formatDate(segment.t) - _context.model.time.formatDate(_context.time)) < 2) segment.visibilityChanged = true; // segment changed, so need to update it
             if (segment.transparent) {
-              d3.select(trail[0][index]).classed("vzb-invisible", segment.transparent);
+              d3.select(trail._groups[0][index]).classed("vzb-invisible", segment.transparent);
             }
           });
           _this.drawingQueue[d[KEY]] = {};
@@ -433,7 +435,7 @@ export default Class.extend({
     var trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
     var generateTrailSegment = function(trail, index, nextIndex, level) {
       return new Promise(function(resolve, reject) {
-        var view = d3.select(trail[0][index]);
+        var view = d3.select(trail._groups[0][index]);
 
         var segment = view.datum();
 
@@ -468,7 +470,7 @@ export default Class.extend({
               _context._updateLabel(d, index, segment.valueX, segment.valueY, segment.valueS, segment.valueC, frame.label[d[KEY]], frame.size_label[d[KEY]], 0, true);
             }
             view.select("circle")
-              //.transition().duration(duration).ease("linear")
+              //.transition().duration(duration).ease(d3.easeLinear)
               .attr("cy", _context.yScale(segment.valueY))
               .attr("cx", _context.xScale(segment.valueX))
               .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)))
@@ -488,10 +490,10 @@ export default Class.extend({
               view.classed("vzb-invisible", true);
             }
 
-            if(!trail[0][nextIndex] || _context.time.toString() == segment.t.toString()) {
+            if(!trail._groups[0][nextIndex] || _context.time.toString() == segment.t.toString()) {
               return resolve();
             } else {
-              var next = d3.select(trail[0][nextIndex]);
+              var next = d3.select(trail._groups[0][nextIndex]);
               var nextSegment = next.datum();
               nextSegment.previous = segment;
               segment.next = nextSegment;
@@ -529,13 +531,13 @@ export default Class.extend({
                       Math.pow(_context.yScale(segment.valueY) - _context.yScale(nextFrame.axis_y[d[KEY]]),2)
                     );
                     view.select("line")
-                      .transition().duration(duration).ease("linear")
+                      .transition().duration(duration).ease(d3.easeLinear)
                       .attr("x1", _context.xScale(nextSegment.valueX))
                       .attr("y1", _context.yScale(nextSegment.valueY))
                       .attr("x2", _context.xScale(segment.valueX))
                       .attr("y2", _context.yScale(segment.valueY))
-                      .style("stroke-dasharray", lineLength)
-                      .style("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)))
+                      .attr("stroke-dasharray", lineLength)
+                      .attr("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)))
                       .style("stroke", strokeColor);
                     if (nextIndex - index > 1) {
                       addNewIntervals(index, nextIndex);
@@ -553,9 +555,9 @@ export default Class.extend({
     };
     var addPointBetween = function(previousIndex, nextIndex, index) {
       return new Promise(function(resolve, reject) {
-        var previous = d3.select(trail[0][previousIndex]);
-        var next = d3.select(trail[0][nextIndex]);
-        var view = d3.select(trail[0][index]);
+        var previous = d3.select(trail._groups[0][previousIndex]);
+        var next = d3.select(trail._groups[0][nextIndex]);
+        var view = d3.select(trail._groups[0][index]);
         var previousSegment = previous.datum();
         var nextSegment = next.datum();
         var segment = view.datum();
@@ -605,20 +607,20 @@ export default Class.extend({
           );
 
           previous.select("line")
-            .transition().duration(duration).ease("linear")
+            .transition().duration(duration).ease(d3.easeLinear)
             .attr("x1", _context.xScale(segment.valueX))
             .attr("y1", _context.yScale(segment.valueY))
             .attr("x2", _context.xScale(previousSegment.valueX))
             .attr("y2", _context.yScale(previousSegment.valueY))
-            .style("stroke-dasharray", firstLineLength)
-            .style("stroke-dashoffset", utils.areaToRadius(_context.sScale(previousSegment.valueS)))
+            .attr("stroke-dasharray", firstLineLength)
+            .attr("stroke-dashoffset", utils.areaToRadius(_context.sScale(previousSegment.valueS)))
             .style("stroke", strokeColor);
 
           view.classed("vzb-invisible", segment.transparent);
 
           if (!segment.transparent) {
             view.select("circle")
-              //.transition().duration(duration).ease("linear")
+              //.transition().duration(duration).ease(d3.easeLinear)
               .attr("cy", _context.yScale(segment.valueY))
               .attr("cx", _context.xScale(segment.valueX))
               .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)))
@@ -630,13 +632,13 @@ export default Class.extend({
             );
 
             view.select("line")
-              .transition().duration(duration).ease("linear")
+              .transition().duration(duration).ease(d3.easeLinear)
               .attr("x1", _context.xScale(nextSegment.valueX))
               .attr("y1", _context.yScale(nextSegment.valueY))
               .attr("x2", _context.xScale(segment.valueX))
               .attr("y2", _context.yScale(segment.valueY))
-              .style("stroke-dasharray", secondLineLength)
-              .style("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)))
+              .attr("stroke-dasharray", secondLineLength)
+              .attr("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)))
               .style("stroke", strokeColor);
           }
           addNewIntervals(previousIndex, index, nextIndex);
@@ -672,7 +674,7 @@ export default Class.extend({
       var min = 0, max = 0;
       var maxValue = d3.min([d.limits.max, _context.time]);
       var minValue = d3.max([d.limits.min, _context.model.time.parse("" + d.selectedEntityData.trailStartTime)]);
-      utils.forEach(trail[0], function(segment, index) {
+      utils.forEach(trail._groups[0], function(segment, index) {
         var data = segment.__data__;
         if (data.t -  minValue == 0) {
           min = index;
@@ -722,7 +724,7 @@ export default Class.extend({
        * @param index
        */
       var generateTrails = function(trail, index) {
-        if (index < 0 || index >= trail[0].length) {
+        if (index < 0 || index >= trail._groups[0].length) {
           return resolve();
         }
         generateTrailSegment(trail, index, index + 1).then(function() {

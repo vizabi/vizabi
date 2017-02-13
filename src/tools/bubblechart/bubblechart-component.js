@@ -253,8 +253,8 @@ var BubbleChartComp = Component.extend({
     this.sScale = null;
     this.cScale = null;
 
-    this.xAxis = axisSmart();
-    this.yAxis = axisSmart();
+    this.xAxis = axisSmart("bottom");
+    this.yAxis = axisSmart("left");
 
     _this.COLOR_BLACKISH = "#333";
     _this.COLOR_WHITEISH = "#fdfdfd";
@@ -356,6 +356,7 @@ var BubbleChartComp = Component.extend({
 
     this.trailsContainer = this.graph.select('.vzb-bc-trails');
     this.bubbleContainerCrop = this.graph.select('.vzb-bc-bubbles-crop');
+    this.zoomSelection = this.graph.select('.vzb-zoom-selection');
     this.labelsContainerCrop = this.graph.select('.vzb-bc-labels-crop');
     this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
     this.labelsContainer = this.graph.select('.vzb-bc-labels');
@@ -413,9 +414,10 @@ var BubbleChartComp = Component.extend({
         _this._panZoom.reset(null, 500);
     });
 
+    this._panZoom.zoomSelection(this.bubbleContainerCrop);
     this.bubbleContainerCrop
-      .call(this._panZoom.zoomer)
       .call(this._panZoom.dragRectangle)
+      .call(this._panZoom.zoomer)
       .on('dblclick.zoom', null)
       .on("mouseup", function() {
         _this.draggingNow = false;
@@ -706,7 +708,7 @@ var BubbleChartComp = Component.extend({
     this.entityBubbles.exit().remove();
 
     //enter selection -- init circles
-    this.entityBubbles.enter().append("circle")
+    this.entityBubbles = this.entityBubbles.enter().append("circle")
       .attr("class", function(d) {
         return "vzb-bc-entity " + "bubble-" + d[KEY];
       })
@@ -728,7 +730,8 @@ var BubbleChartComp = Component.extend({
         d3.event.stopPropagation();
         _this._bubblesInteract().click(d, i);
       })
-      .onLongTap(function(d, i) {});
+      .onLongTap(function(d, i) {})
+      .merge(this.entityBubbles);
 
     this._reorderEntities();
   },
@@ -907,8 +910,8 @@ var BubbleChartComp = Component.extend({
 
     //apply scales to axes and redraw
     this.yAxis.scale(this.yScale)
-      .orient("left")
-      .tickSize(-this.width, 0)
+      .tickSizeInner(-this.width)
+      .tickSizeOuter(0)
       .tickPadding(6)
       .tickSizeMinor(-this.width, 0)
       .labelerOptions({
@@ -921,8 +924,8 @@ var BubbleChartComp = Component.extend({
       });
 
     this.xAxis.scale(this.xScale)
-      .orient("bottom")
-      .tickSize(-this.height, 0)
+      .tickSizeInner(-this.height)
+      .tickSizeOuter(0)
       .tickPadding(6)
       .tickSizeMinor(-this.height, 0)
       .labelerOptions({
@@ -989,28 +992,28 @@ var BubbleChartComp = Component.extend({
 
     if(this.yInfoEl.select('svg').node()) {
       var titleBBox = this.yTitleEl.node().getBBox();
-      var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
-      var hTranslate = isRTL ? (titleBBox.x + translate[0] - infoElHeight * 1.4) : (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4);
+      var t = utils.transform(this.yTitleEl.node());
+      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4);
 
       this.yInfoEl.select('svg')
         .attr("width", infoElHeight + "px")
         .attr("height", infoElHeight + "px")
       this.yInfoEl.attr('transform', 'translate('
         + hTranslate + ','
-        + (translate[1] - infoElHeight * 0.8) + ')');
+        + (t.translateY - infoElHeight * 0.8) + ')');
     }
 
     if(this.xInfoEl.select('svg').node()) {
       var titleBBox = this.xTitleEl.node().getBBox();
-      var translate = d3.transform(this.xTitleEl.attr('transform')).translate;
-      var hTranslate = isRTL ? (titleBBox.x + translate[0] - infoElHeight * 1.4) : (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4);
+      var t = utils.transform(this.xTitleEl.node());
+      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4);
 
       this.xInfoEl.select('svg')
         .attr("width", infoElHeight + "px")
         .attr("height", infoElHeight + "px")
       this.xInfoEl.attr('transform', 'translate('
         + hTranslate + ','
-        + (translate[1] - infoElHeight * 0.8) + ')');
+        + (t.translateY - infoElHeight * 0.8) + ')');
     }
 
     this._resizeDataWarning();
@@ -1246,9 +1249,9 @@ var BubbleChartComp = Component.extend({
        if(showhide) {
            if(duration) {
                var opacity = view.style("opacity");
-               view.transition().duration(duration).ease("exp")
+               view.transition().duration(duration).ease(d3.easeExp)
                 .style("opacity", 0)
-                .each("end", function() {
+                .on("end", function() {
                     //to avoid transition from null state add class with a delay
                     view.classed("vzb-invisible", d.hidden);
                     view.style("opacity", opacity);
@@ -1278,10 +1281,10 @@ var BubbleChartComp = Component.extend({
                 .attr("cy", _this.yScale(valueY))
                 .attr("cx", _this.xScale(valueX))
                 .attr("r", scaledS)
-                .transition().duration(duration).ease("exp")
+                .transition().duration(duration).ease(d3.easeExp)
                 .style("opacity", opacity);
         }else{
-            view.transition().duration(duration).ease("linear")
+            view.transition().duration(duration).ease(d3.easeLinear)
                 .attr("cy", _this.yScale(valueY))
                 .attr("cx", _this.xScale(valueX))
                 .attr("r", scaledS);
@@ -1448,7 +1451,7 @@ var BubbleChartComp = Component.extend({
         .selectAll("text")
         .text(tooltipText);
 
-      var contentBBox = this.tooltip.select('text')[0][0].getBBox();
+      var contentBBox = this.tooltip.select('text').node().getBBox();
       if(x - xOffset - contentBBox.width < 0) {
         xSign = 1;
         x += contentBBox.width + 5; // corrective to the block Radius and text padding

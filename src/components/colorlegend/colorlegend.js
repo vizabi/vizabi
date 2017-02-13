@@ -213,11 +213,10 @@ var ColorLegend = Component.extend({
       this.labelScaleG.attr("transform","translate(" + marginLeft + ",0)");
       this.rainbowLegendSVG.style("width", marginLeft + gradientWidth + marginRight + "px");
       this.rainbowLegendG.attr("transform","translate(" + marginLeft + ", " + 7 + ")");
-      var labelsAxis = axisSmart();
+      var labelsAxis = axisSmart("bottom");
       labelsAxis.scale(labelScale)
-        .orient("bottom")
         //.tickFormat(formatter)
-        .tickSize(6, 0)
+        .tickSizeOuter(0)
         .tickPadding(6)
         .tickSizeMinor(3, 0)
         .labelerOptions({
@@ -245,10 +244,11 @@ var ColorLegend = Component.extend({
       this.rainbowLegend = this.rainbowLegendG.selectAll('circle')
         .data(gIndicators);
       this.rainbowLegend.exit().remove();
-      this.rainbowLegend.enter().append("circle")
+      this.rainbowLegend = this.rainbowLegend.enter().append("circle")
         .attr('r', "6px")
         .attr('stroke', '#000')
-        .on("click", _this._interact().clickToChangeColor);
+        .on("click", _this._interact().clickToChangeColor)
+        .merge(this.rainbowLegend);
 
       this.rainbowLegend.each(function(d, i) {
         d3.select(this).attr('fill', d.color);

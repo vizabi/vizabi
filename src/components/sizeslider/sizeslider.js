@@ -72,14 +72,9 @@ var SizeSlider = Component.extend({
     };
 
     function changeMinMaxHandler(evt, path) {
-      var size = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
-      //_this._updateArcs(size);
-      _this._updateLabels(size);
-      _this.sliderEl.call(_this.brush.extent(size));
-      if(size[0] == size[1]){
-        _this.sliderEl.selectAll(".resize")
-          .style("display", "block");
-      }
+      var extent = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
+      _this._updateLabels(extent);
+      _this._moveBrush(extent);
     }
 
     this._setModel = utils.throttle(this._setModel, 50);
@@ -90,25 +85,24 @@ var SizeSlider = Component.extend({
   modelReady: function() {
     var _this = this;
     _this.modelUse = _this.model.size.use;
-    var size = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
+    var extent = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
     if(_this.modelUse != 'constant') {
       _this.sizeScaleMinMax = _this.model.size.getScale().domain();
       _this.sliderEl.selectAll('.w').classed('vzb-hidden', false);
-      _this.sliderEl.select('.extent').classed('vzb-hidden', false);
-      _this.sliderEl.select('.background').classed('vzb-pointerevents-none', false);
+      _this.sliderEl.select('.selection').classed('vzb-hidden', false);
+      _this.sliderEl.select('.overlay').classed('vzb-pointerevents-none', false);
       _this._setLabelsText();
     } else {
       _this.sliderEl.selectAll('.w').classed('vzb-hidden', true);
-      _this.sliderEl.select('.extent').classed('vzb-hidden', true);
-      _this.sliderEl.select('.background').classed('vzb-pointerevents-none', true);
+      _this.sliderEl.select('.selection').classed('vzb-hidden', true);
+      _this.sliderEl.select('.overlay').classed('vzb-pointerevents-none', true);
       if(!_this.model.size.which) {
         var p = _this.propertyActiveProfile;
-        size[1] = (p.default - p.min) / (p.max - p.min);
+        extent[1] = (p.default - p.min) / (p.max - p.min);
         _this.model.size.which = '_default';
       }
     }
-    _this.sliderEl.call(_this.brush.extent([size[0], size[1]]));
-    _this.sliderEl.call(_this.brush.event);
+    _this._moveBrush(extent);
   },
 
   /**
@@ -118,7 +112,7 @@ var SizeSlider = Component.extend({
    */
   readyOnce: function () {
     var _this = this;
-    var values = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
+    var extent = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
     this.element = d3.select(this.element);
     this.sliderSvg = this.element.select(".vzb-szs-svg");
     this.sliderWrap = this.sliderSvg.select(".vzb-szs-slider-wrap");
@@ -155,42 +149,43 @@ var SizeSlider = Component.extend({
       .range([0, componentWidth - padding.left - padding.right])
       .clamp(true)
 
-    this.brush = d3.svg.brush()
-      .x(this.xScale)
-      .extent([OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX])
+    this.brush = d3.brushX()
+      .extent([[0, 0], [componentWidth - padding.left - padding.right, barWidth]])
+      .handleSize(thumbRadius * 2 + barWidth * 2)
+      .on("start", function () {
+        if (_this.nonBrushChange || !d3.event.sourceEvent) return;
+        if(d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
+          var brushDatum = _this.sliderEl.node().__brush;
+          brushDatum.selection[1][0] += 0.01;
+        }        
+        _this._setFromExtent(false, false, false);
+      })
       .on("brush", function () {
+        if (_this.nonBrushChange || !d3.event.sourceEvent) return;
+        if(d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
+          var brushDatum = _this.sliderEl.node().__brush;
+          brushDatum.selection[1][0] += 0.01;
+        }
         _this._setFromExtent(true, false, false); // non persistent change
       })
-      .on("brushend", function () {
-         _this.sliderEl.selectAll(".resize")
-         .style("display", null);
-
+      .on("end", function () {
+        if (_this.nonBrushChange || !d3.event.sourceEvent) return;
         _this._setFromExtent(true, true); // force a persistent change
       });
 
-    this.sliderEl
-      .call(_this.brush);
-
-    this.sliderEl.selectAll('.background').attr('style','');
-
-    //For return to round thumbs
-    //var thumbArc = d3.svg.arc()
-    //  .outerRadius(thumbRadius)
-    //  .startAngle(0)
-    //  .endAngle(2 * Math.PI)
-
-    this.sliderThumbs = this.sliderEl.selectAll(".resize").sort(d3.descending)
+    this.sliderThumbs = this.sliderEl.selectAll(".handle")
+      .data([{type:"w"},{type:"e"}], function(d) { return d.type; })
+      .enter().append("svg").attr("class", function(d) { return "handle handle--" + d.type + " " + d.type; })
       .classed("vzb-szs-slider-thumb", true)
 
     this.sliderThumbs.append("g")
       .attr("class", "vzb-szs-slider-thumb-badge")
       .append("path")
-      .attr('d', function(d,i) {
-        return "M0 " + (barWidth * .5) + "l" + (-thumbRadius) + " " + (thumbRadius * 1.5) + "h" + (thumbRadius * 2) + "Z";
-      })
+      .attr('d', "M" + (thumbRadius + barWidth) + " " + (thumbRadius + barWidth * 1.5) + "l" + (-thumbRadius) + " " + (thumbRadius * 1.5) + "h" + (thumbRadius * 2) + "Z")
 
-    this.sliderThumbs.append("path")
-      .attr("class", "vzb-szs-slider-thumb-arc")
+    this.sliderEl
+      .call(_this.brush);
+
     this.sliderEl.selectAll("text").data([0,0]).enter()
       .append("text")
       .attr("class", function(d, i) {
@@ -201,7 +196,7 @@ var SizeSlider = Component.extend({
 
     this.sliderLabelsEl = this.sliderEl.selectAll("text.vzb-szs-slider-thumb-label");
 
-    this.sliderEl.selectAll("rect")
+    this.sliderEl.selectAll(".selection,.overlay")
       .attr("height", barWidth)
       .attr("rx", barWidth * 0.25)
       .attr("ry", barWidth * 0.25)
@@ -216,20 +211,15 @@ var SizeSlider = Component.extend({
 
       var componentWidth = _this.element.node().offsetWidth;
 
-       _this.xScale.range([0, componentWidth - _this.padding.left - _this.padding.right])
-       _this._updateSize();
-
-       _this.sliderEl
-         .call(_this.brush.extent(_this.brush.extent()))
-       _this._setFromExtent(false, false, false); // non persistent change
-
+      _this.xScale.range([0, componentWidth - _this.padding.left - _this.padding.right])
+      _this._updateSize();
+      _this.sliderEl.call(_this.brush.extent([[0, 0], [componentWidth - padding.left - padding.right, barWidth]]));
+      var extent = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
+      _this._moveBrush(extent);
     });
 
     this._updateSize();
-
-    this.sliderEl
-      .call(this.brush.extent(values))
-    _this._setFromExtent(false, false, false); // non persistent change
+    this._moveBrush(extent);
 
     _this.sizeScaleMinMax = _this.model.size.getScale().domain();
 
@@ -245,6 +235,14 @@ var SizeSlider = Component.extend({
     return { min: profile['min' + this.propertyName], max: profile['max' + this.propertyName], default: profile['default' + this.propertyName]};
   },
 
+  _moveBrush: function(s) {
+    var _s = s.map(this.xScale);
+    this.nonBrushChange = true;
+    this.sliderEl.call(this.brush.move, [_s[0], _s[1] + 0.01]);
+    this.nonBrushChange = false;
+    this._setFromExtent(false, false, false);
+  },
+
   /*
    * RESIZE:
    * Executed whenever the container is resized
@@ -257,42 +255,28 @@ var SizeSlider = Component.extend({
       .attr("transform", "translate(" + this.padding.left + "," + (this.propertyActiveProfile.max + this.padding.top) + ")")
   },
 
-//   _updateArcs: function(s) {
-//     var _this = this;
-//     var valueArc = d3.svg.arc()
-//       .outerRadius(function (d) { return _this.xScale(d) * 0.5 })
-//       .innerRadius(function (d) { return _this.xScale(d) * 0.5 })
-//       .startAngle(-Math.PI * 0.5)
-//       .endAngle(Math.PI * 0.5);
-//
-//     this.sliderThumbs.select('.vzb-szs-slider-thumb-arc').data(s)
-//       .attr("d", valueArc)
-//       .attr("transform", function (d) {return "translate(" + (-_this.xScale(d) * 0.25) + ",0)"; })
-//   },
-//
   _updateLabels: function(s) {
     var _this = this;
-    var arcLabelTransform = function(d, i) {
-      var dX = _this.xScale(i),
-          dY = 0;//i ? -textMargin.v : 0;
-      return "translate(" + (dX) + "," + (dY) + ")";
-    }
     this.sliderLabelsEl.data(s)
-      .attr("transform", arcLabelTransform)
+      .attr("transform", function(d, i) {
+        var dX = _this.xScale(i),
+            dY = 0;//i ? -textMargin.v : 0;
+        return "translate(" + (dX) + "," + (dY) + ")";
+      })
       .attr("font-size", function(d, i) {
         return _this.propertyScale(d);
       })
     if(_this.model.size.use === 'constant')
-      this.sliderLabelsEl.data(s).text(function(d) {
+      this.sliderLabelsEl.text(function(d) {
         return ~~(_this.propertyScale(d)) + (_this.translator(_this.ui.constantUnit)||"");
       })
   },
 
   _setLabelsText: function() {
-      var _this = this;
-      _this.sliderLabelsEl
-        .data([_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[0]),_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[1])])
-        .text(function (d) { return d; });
+    var _this = this;
+    _this.sliderLabelsEl
+      .data([_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[0]),_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[1])])
+      .text(function (d) { return d; });
   },
 
   /**
@@ -302,8 +286,9 @@ var SizeSlider = Component.extend({
    * @param {boolean} persistent sets the persistency of the change event
    */
   _setFromExtent: function(setModel, force, persistent) {
-    var s = this.brush.extent();
-//    this._updateArcs(s);
+    var s = d3.brushSelection(this.sliderEl.node());
+    if(!s) return;
+    s = [this.xScale.invert(s[0]), this.xScale.invert(+s[1].toFixed(1))];
     this._updateLabels(s);
     if(setModel) this._setModel(s, force, persistent);
   },

@@ -31,7 +31,7 @@ export default function collisionResolver() {
         return;
       }
       g.each(function(d, index) {
-        labelHeight[d[KEY]] = d3.select(this).select(selector)[0][0].getBBox().height;
+        labelHeight[d[KEY]] = d3.select(this).select(selector).node().getBBox().height;
       });
       labelPosition = resolver.calculatePositions(data, value, height, scale);
       //actually reposition the labels

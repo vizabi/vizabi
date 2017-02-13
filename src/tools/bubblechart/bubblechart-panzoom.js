@@ -6,25 +6,45 @@ export default Class.extend({
     init: function(context) {
         this.context = context;
 
-        this.dragRectangle = d3.behavior.drag();
-        this.zoomer = d3.behavior.zoom();
+        this.dragRectangle = d3.drag();
+        this.zoomer = d3.zoom();
 
         this.dragLock = false;
 
         this.dragRectangle
-            .on("dragstart", this.drag().start)
+            .subject(this.dragSubject())
+            .on("start", this.drag().start)
             .on("drag", this.drag().go)
-            .on("dragend", this.drag().stop);
+            .on("end", this.drag().stop);
 
         this.zoomer
-            .on("zoomstart", this.zoom().start)
+            .on("start", this.zoom().start)
             .on("zoom", this.zoom().go)
-            .on('zoomend', this.zoom().stop);
+            .on('end', this.zoom().stop);
 
         this.zoomer.ratioX = 1;
         this.zoomer.ratioY = 1;
 
         context._zoomedXYMinMax = {axis_x:{zoomedMin: null, zoomedMax: null}, axis_y:{zoomedMin: null, zoomedMax: null}};
+    },
+
+    dragSubject: function() {
+        var _this = this.context;
+        var self = this;
+
+        return function(d) {
+            if(!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey ||
+                    _this.ui.cursorMode === "plus") || (_this.ui.cursorMode === "minus") ||
+                    (d3.event.sourceEvent.type === "touchmove" || d3.event.sourceEvent.type === "touchstart") &&
+                    (d3.event.sourceEvent.touches.length > 1 || d3.event.sourceEvent.targetTouches.length > 1)) {
+                return null;
+            }
+
+            return {
+                x: d3.mouse(this)[0],
+                y: d3.mouse(this)[1]
+            }
+        }
     },
 
     drag: function(){
@@ -38,12 +58,12 @@ export default Class.extend({
                  * not enabled. Also do not drag if zoom-pinching on touchmove
                  * events.
                  */
-              if(!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey ||
-                     _this.ui.cursorMode === "plus") ||
-                     (d3.event.sourceEvent.type === "touchmove" || d3.event.sourceEvent.type === "touchstart") &&
-                     (d3.event.sourceEvent.touches.length > 1 || d3.event.sourceEvent.targetTouches.length > 1)) {
-                    return;
-                }
+            //   if(!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey ||
+            //          _this.ui.cursorMode === "plus") ||
+            //          (d3.event.sourceEvent.type === "touchmove" || d3.event.sourceEvent.type === "touchstart") &&
+            //          (d3.event.sourceEvent.touches.length > 1 || d3.event.sourceEvent.targetTouches.length > 1)) {
+            //         return;
+            //     }
 
                 self.dragLock = true;
                 this.origin = {
@@ -125,7 +145,7 @@ export default Class.extend({
 
         return {
             start: function() {
-                this.savedScale = zoomer.scale();
+                //this.savedScale = zoomer.scale;
             },
             go: function() {
 
@@ -161,7 +181,7 @@ export default Class.extend({
                         _this.scrollableAncestor.scrollTop += (sourceEvent.deltaY || -sourceEvent.wheelDelta);
                     }
                     d3.event.scale = null;
-                    zoomer.scale(this.savedScale);
+                    //zoomer.scale(this.savedScale);
                     this.quitZoom = true;
                     return;
                 }
@@ -170,15 +190,19 @@ export default Class.extend({
                 _this.model._data.marker.clearHighlighted();
                 _this._setTooltip();
 
-                var zoom = d3.event.scale;
-                var pan = d3.event.translate;
+                //var transform = d3.zoomTransform(self.zoomSelection.node())
+                  //  .translate(, )
+                    //.scale(d3.event.transform.k);
+                var zoom = d3.event.transform.k;
+
+                var pan = [d3.event.transform.x, d3.event.transform.y];//d3.event.translate;
                 var ratioY = zoomer.ratioY;
                 var ratioX = zoomer.ratioX;
 
                 _this.draggingNow = true;
 
                 //value protections and fallbacks
-                if(isNaN(zoom) || zoom == null) zoom = zoomer.scale();
+                if(isNaN(zoom) || zoom == null) zoom = zoomer.scale;
                 if(isNaN(zoom) || zoom == null) zoom = 1;
 
                 //TODO: this is a patch to fix #221. A proper code review of zoom and zoomOnRectangle logic is needed
@@ -286,7 +310,8 @@ export default Class.extend({
                     if(yRange[1] < yRangeBoundsBumped[1]) pan[1] = yRangeBoundsBumped[1] - yRangeMaxOffset;
                 }
 
-                zoomer.translate(pan);
+                //zoomer.translate = pan;
+                //self.zoomSelection.property("__zoom", d3.zoomIdentity.translate(pan[0], pan[1]).scale(zoom));
 
                 /*
                  * Clamp the xRange and yRange by the amount that the bounds
@@ -619,6 +644,7 @@ export default Class.extend({
     _zoomOnRectangle: function(element, zoomedX1, zoomedY1, zoomedX2, zoomedY2, compensateDragging, duration, dontFeedToState) {
         var _this = this.context;
         var zoomer = this.zoomer;
+        var transform = d3.zoomTransform(this.zoomSelection.node());
 
         var x1 = zoomedX1;
         var y1 = zoomedY1;
@@ -636,10 +662,14 @@ export default Class.extend({
          * dimensions.
          */
         if(compensateDragging) {
-            zoomer.translate([
-                zoomer.translate()[0] + x1 - x2,
-                zoomer.translate()[1] + y1 - y2
-            ]);
+            transform.translate(
+                x1 - x2,
+                y1 - y2
+            );
+            // zoomer.translate([
+            //     zoomer.translate()[0] + x1 - x2,
+            //     zoomer.translate()[1] + y1 - y2
+            // ]);
         }
 
         var xRangeBounds = [0, _this.width];
@@ -648,8 +678,8 @@ export default Class.extend({
         var xDomain = _this.xScale.domain();
         var yDomain = _this.yScale.domain();
 
-        var zoomXOut = zoomer.scale() * zoomer.ratioX < 1;
-        var zoomYOut = zoomer.scale() * zoomer.ratioY < 1;
+        var zoomXOut = transform.k * zoomer.ratioX < 1;
+        var zoomYOut = transform.k * zoomer.ratioY < 1;
 
         /*
          * If the min or max of one axis lies in the range bump region, then
@@ -685,50 +715,51 @@ export default Class.extend({
         var maxZoom = zoomer.scaleExtent()[1];
 
         if(Math.abs(x1 - x2) > Math.abs(y1 - y2)) {
-            var zoom = _this.height / Math.abs(y1 - y2) * zoomer.scale();
+            var zoom = _this.height / Math.abs(y1 - y2) * transform.k;
 
             /*
              * Clamp the zoom scalar to the maximum zoom allowed before
              * calculating the next ratioX and ratioY.
              */
             if(zoom < minZoom) {
-              zoomer.ratioY *= zoom / zoomer.scale(); 
+              zoomer.ratioY *= zoom / transform.k; 
               zoom = minZoom;
             }
             if (zoom > maxZoom) zoom = maxZoom;
 
-            var ratioX = _this.width / Math.abs(x1 - x2) * zoomer.scale() / zoom * zoomer.ratioX;
+            var ratioX = _this.width / Math.abs(x1 - x2) * transform.k / zoom * zoomer.ratioX;
             var ratioY = zoomer.ratioY;
         } else {
-            var zoom = _this.width / Math.abs(x1 - x2) * zoomer.scale();
+            var zoom = _this.width / Math.abs(x1 - x2) * transform.k;
 
             /*
              * Clamp the zoom scalar to the maximum zoom allowed before
              * calculating the next ratioX and ratioY.
              */
             if(zoom < minZoom) {
-              zoomer.ratioX *= zoom / zoomer.scale(); 
+              zoomer.ratioX *= zoom / transform.k; 
               zoom = minZoom;
             }
             if (zoom > maxZoom) zoom = maxZoom;
 
-            var ratioY = _this.height / Math.abs(y1 - y2) * zoomer.scale() / zoom * zoomer.ratioY;
+            var ratioY = _this.height / Math.abs(y1 - y2) * transform.k / zoom * zoomer.ratioY;
             var ratioX = zoomer.ratioX;
         }
 
         var pan = [
-            (zoomer.translate()[0] - Math.min(x1, x2)) / zoomer.scale() / zoomer.ratioX * zoom * ratioX,
-            (zoomer.translate()[1] - Math.min(y1, y2)) / zoomer.scale() / zoomer.ratioY * zoom * ratioY
+            (transform.x - Math.min(x1, x2)) / transform.k / zoomer.ratioX * zoom * ratioX,
+            (transform.y - Math.min(y1, y2)) / transform.k / zoomer.ratioY * zoom * ratioY
         ];
 
         zoomer.dontFeedToState = dontFeedToState;
-        zoomer.scale(zoom);
+        //zoomer.scale(zoom);
         zoomer.ratioY = ratioY;
         zoomer.ratioX = ratioX;
-        zoomer.translate(pan);
+        //zoomer.translate(pan);
         zoomer.duration = duration ? duration : 0;
 
-        zoomer.event(element);
+        //zoomer.event(element);
+        this.zoomSelection.call(zoomer.transform, d3.zoomIdentity.translate(pan[0], pan[1]).scale(zoom));
     },
 
     /*
@@ -762,9 +793,10 @@ export default Class.extend({
      */
     zoomByIncrement: function(direction, duration) {
         var _this = this.context;
+        var transform = d3.zoomTransform(this.zoomSelection.node());
 
-        var ratio = this.zoomer.scale();
-        var pan = [this.zoomer.translate()[0], this.zoomer.translate()[1]];
+        var ratio = transform.k;
+        var pan = [transform.x, transform.y];
 
         var mouse = d3.mouse(_this.element.node());
         var k = Math.log(ratio) / Math.LN2;
@@ -790,10 +822,12 @@ export default Class.extend({
         pan[1] += mouse[1] - locus[1];
 
         //save changes to the zoom behavior and run the event
-        this.zoomer.scale(ratio);
-        this.zoomer.translate([pan[0], pan[1]]);
+        //this.zoomer.scale(ratio);
+        //this.zoomer.translate([pan[0], pan[1]]);
         this.zoomer.duration = duration||0;
-        this.zoomer.event(_this.element);
+        //this.zoomer.event(_this.element);
+        this.zoomSelection.call(this.zoomer.transform, d3.zoomIdentity.translate(pan[0], pan[1]).scale(ratio));
+
     },
 
 
@@ -801,26 +835,34 @@ export default Class.extend({
      * Reset zoom values without triggering a zoom event.
      */
      resetZoomState: function(element) {
-        this.zoomer.scale(1);
+        //this.zoomer.scaleTo(element, 1);
         this.zoomer.ratioY = 1;
         this.zoomer.ratioX = 1;
-        this.zoomer.translate([0, 0]);
+        //this.zoomer.translate([0, 0]);
+        (element || this.zoomSelection).property("__zoom", d3.zoomIdentity);
     },
 
     reset: function(element, duration) {
         var _this = this.context;
         _this.isCanvasPreviouslyExpanded = false;
 
-        this.zoomer.scale(1);
+        //this.zoomer.scale(1);
         this.zoomer.ratioY = 1;
         this.zoomer.ratioX = 1;
-        this.zoomer.translate([0, 0]);
+        //this.zoomer.translate([0, 0]);
         this.zoomer.duration = duration||0;
-        this.zoomer.event(element || _this.element);
+        //this.zoomer.event(element || _this.element);
+        (element || this.zoomSelection).call(this.zoomer.transform, d3.zoomIdentity);
     },
 
     rerun: function(element) {
         var _this = this.context;
-        this.zoomer.event(element || _this.element);
+        //this.zoomer.event(element || _this.element);
+        (element || this.zoomSelection).call(this.zoomer.scaleBy, 1)
+    },
+
+    zoomSelection: function(element) {
+        this.zoomSelection = element;
     }
+
 });

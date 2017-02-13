@@ -1,5 +1,5 @@
 import Component from 'base/component';
-import { throttle } from 'base/utils';
+import { throttle, transform } from 'base/utils';
 
 const SteppedSlider = Component.extend({
 
@@ -72,11 +72,11 @@ const SteppedSlider = Component.extend({
       height
     } = this.config;
 
-    const axis = d3.svg.axis()
+    const axis = d3.axisLeft()
       .scale(this.axisScale)
       .tickFormat(() => '')
-      .orient('left')
-      .tickSize(lineWidth, 0);
+      .tickSizeInner(lineWidth)
+      .tickSizeOuter(0);
 
     const tx = triangleWidth + lineWidth / 2;
     const ty = triangleHeight / 2;
@@ -91,16 +91,16 @@ const SteppedSlider = Component.extend({
       .attr('transform', `translate(${tx}, ${ty})`)
       .call(axis);
 
-    this.drag = d3.behavior.drag()
+    this.drag = d3.drag()
       .on('drag', () => {
         const { dy } = d3.event;
-        const [, ty] = d3.transform(this.slide.attr('transform')).translate;
-        const y = Math.max(0, Math.min(dy + ty, height));
+        const {translateY} = transform(this.slide.node());
+        const y = Math.max(0, Math.min(dy + translateY, height));
 
         this.setDelay(Math.round(this.delayScale(this.axisScale.invert(y))));
         this.redraw(y);
       })
-      .on('dragend', () => {
+      .on('end', () => {
         this.setDelay(this.model.time.delay, true, true);
       });
 
