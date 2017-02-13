@@ -21,8 +21,6 @@ import DonutChart from 'tools/donutchart/donutchart';
 import Cartogram from 'tools/cartogram/cartogram';
 import AxisLabeler from 'tools/axislabeler/axislabeler';
 import AgePyramid from 'tools/agepyramid/agepyramid';
-import JOINTPyramidLine from 'tools/joint_pyramidline/joint_pyramidline';
-import JOINTCartogramLine from 'tools/joint_cartogramline/joint_cartogramline';
 
 // Fallback in case if WS is not available - requesting data from local files
 var locationArray = window.location.href.split("/");
