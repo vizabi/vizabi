@@ -12,6 +12,7 @@ import dialogs from 'components/dialogs/dialogs';
 import buttonlist from 'components/buttonlist/buttonlist';
 import treemenu from 'components/treemenu/treemenu';
 import datanotes from 'components/datanotes/datanotes';
+import steppedSpeedSlider from 'components/steppedspeedslider/steppedspeedslider';
 
 //BAR CHART TOOL
 var AgePyramid = Tool.extend('AgePyramid', {
@@ -51,6 +52,10 @@ var AgePyramid = Tool.extend('AgePyramid', {
       component: datanotes,
       placeholder: '.vzb-tool-datanotes',
       model: ['state.marker', 'locale']
+    }, {
+      component: steppedSpeedSlider,
+      placeholder: '.vzb-tool-stepped-speed-slider',
+      model: ['state.time', 'locale']
     }];
 
     //constructor is the same as any tool

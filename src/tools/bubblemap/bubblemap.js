@@ -13,6 +13,7 @@ import buttonlist from 'components/buttonlist/buttonlist';
 import treemenu from 'components/treemenu/treemenu';
 import datawarning from 'components/datawarning/datawarning';
 import datanotes from 'components/datanotes/datanotes';
+import steppedSpeedSlider from 'components/steppedspeedslider/steppedspeedslider';
 
 //BAR CHART TOOL
 var BubbleMap = Tool.extend('BubbleMap', {
@@ -57,6 +58,10 @@ var BubbleMap = Tool.extend('BubbleMap', {
       component: datanotes,
       placeholder: '.vzb-tool-datanotes',
       model: ['state.marker', 'locale']
+    }, {
+      component: steppedSpeedSlider,
+      placeholder: '.vzb-tool-stepped-speed-slider',
+      model: ['state.time', 'locale']
     }
     ];
 
