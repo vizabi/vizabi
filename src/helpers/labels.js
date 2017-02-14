@@ -15,8 +15,8 @@ var label = function(context) {
       return label;
     }
 
-    var labelDragger = d3.behavior.drag()
-      .on("dragstart", function(d, i) {
+    var labelDragger = d3.drag()
+      .on("start", function(d, i) {
         d3.event.sourceEvent.stopPropagation();
         var KEY = _this.KEY;
       })
@@ -45,7 +45,7 @@ var label = function(context) {
 
         label._repositionLabels(d, i, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0, null, lineGroup);
       })
-      .on("dragend", function(d, i) {
+      .on("end", function(d, i) {
         var KEY = _this.KEY;
         if(_this.druging) {
           var cache = _this.cached[d[KEY]];
@@ -202,11 +202,11 @@ var label = function(context) {
             labelGroup
                 .attr("transform", "translate(" + _X + "," + _Y + ")")
                 .style("opacity", 0)
-                .transition().duration(duration).ease("exp")
+                .transition().duration(duration).ease(d3.easeExp)
                 .style("opacity", 1)
                 //i would like to set opactiy to null in the end of transition.
                 //but then fade in animation is not working for some reason
-                .each("interrupt", function(){
+                .on("interrupt", function(){
                     labelGroup
                         .style("opacity", 1)
                 });
@@ -214,11 +214,11 @@ var label = function(context) {
             lineGroup
                 .attr("transform", "translate(" + _X + "," + _Y + ")")
                 .style("opacity", 0)
-                .transition().duration(duration).ease("exp")
+                .transition().duration(duration).ease(d3.easeExp)
                 .style("opacity", 1)
                 //i would like to set opactiy to null in the end of transition.
                 //but then fade in animation is not working for some reason
-                .each("interrupt", function(){
+                .on("interrupt", function(){
                     lineGroup
                         .style("opacity", 1)
                 });
@@ -228,18 +228,18 @@ var label = function(context) {
 
             labelGroup
                 .style("opacity", 1)
-                .transition().duration(duration).ease("exp")
+                .transition().duration(duration).ease(d3.easeExp)
                 .style("opacity", 0)
-                .each("end", function(){
+                .on("end", function(){
                     labelGroup
                         .style("opacity", 1) //i would like to set it to null. but then fade in animation is not working for some reason
                         .classed("vzb-invisible", d.hidden);
                 })
             lineGroup
                 .style("opacity", 1)
-                .transition().duration(duration).ease("exp")
+                .transition().duration(duration).ease(d3.easeExp)
                 .style("opacity", 0)
-                .each("end", function(){
+                .on("end", function(){
                     lineGroup
                         .style("opacity", 1) //i would like to set it to null. but then fade in animation is not working for some reason
                         .classed("vzb-invisible", d.hidden);
@@ -249,10 +249,10 @@ var label = function(context) {
             // just update the position
 
             labelGroup
-                .transition().duration(duration).ease("linear")
+                .transition().duration(duration).ease(d3.easeLinear)
                 .attr("transform", "translate(" + _X + "," + _Y + ")");
             lineGroup
-                .transition().duration(duration).ease("linear")
+                .transition().duration(duration).ease(d3.easeLinear)
                 .attr("transform", "translate(" + _X + "," + _Y + ")");
         }
 
@@ -497,22 +497,25 @@ var Labels = Class.extend({
       .remove();
     this.entityLines.exit()
       .remove();
-    this.entityLines
+      
+    this.entityLines = this.entityLines
       .enter().insert('g', function(d) {
         return this.querySelector("." + _this.options.LINES_CONTAINER_SELECTOR_PREFIX + d[KEY]);
       })
       .attr("class", function(d, index){return _cssPrefix + "-entity entity-line line-" + d[KEY]})
       .each(function(d, index) {
         _this.label.line(d3.select(this));
-      });
+      })
+      .merge(this.entityLines);
 
-    this.entityLabels
+    this.entityLabels = this.entityLabels
       .enter().append("g")
       .attr("class", function(d, index){return _cssPrefix + "-entity label-" + d[KEY]})
       .each(function(d, index) {
         _this.cached[d[KEY]] = {_new: true};
         _this.label(d3.select(this));
-      });
+      })
+      .merge(this.entityLabels);
   },
 
   showCloseCross: function(d, show) {
@@ -619,7 +622,7 @@ var Labels = Class.extend({
       }
     }
 
-    var contentBBox = _text[0][0].getBBox();
+    var contentBBox = _text.node().getBBox();
 
     var rect = labelGroup.selectAll("rect");
 

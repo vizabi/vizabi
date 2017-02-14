@@ -95,9 +95,9 @@ export default Class.extend({
 
   _resizeText: function () {
 
-    var bbox = Object.assign(this.element.node().getBBox(), {
-      width: this.letterBBox.width * this.element.text().length
-    });
+    var bbox = {};
+    bbox.height = this.element.node().getBBox().height;
+    bbox.width =  this.letterBBox.width * this.element.text().length;
 
     if (!bbox.width || !bbox.height || !this.width || !this.height) return this;
 
@@ -111,9 +111,9 @@ export default Class.extend({
     this.textWidth = bbox.width * this.scalar;
 
     switch(this.yAlign) {
-      case 'bottom': this.context.style('dominant-baseline', 'central'); break;
-      case 'center': this.context.style('dominant-baseline', 'central'); break;
-      case 'top': this.context.style('dominant-baseline', 'initial'); break;
+      case 'bottom': this.context.select("text").attr("dy", ".325em"); break;
+      case 'center': this.context.select("text").attr("dy", ".325em"); break;
+      case 'top': this.context.select("text").attr("dy", "0"); break;
     }
 
     this.context.attr("transform", "translate(" + this._getLeftOffset() + "," + this._getTopOffset() + ")");

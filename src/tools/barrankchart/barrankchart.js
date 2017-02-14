@@ -9,6 +9,7 @@ import buttonlist from 'components/buttonlist/buttonlist';
 import treemenu from 'components/treemenu/treemenu';
 import datanotes from 'components/datanotes/datanotes';
 import datawarning from 'components/datawarning/datawarning';
+import steppedSpeedSlider from 'components/steppedspeedslider/steppedspeedslider';
 
 var BarRankChart = Tool.extend('BarRankChart', {
 
@@ -45,6 +46,10 @@ var BarRankChart = Tool.extend('BarRankChart', {
       component: datawarning,
       placeholder: '.vzb-tool-datawarning',
       model: ['locale']
+    }, {
+      component: steppedSpeedSlider,
+      placeholder: '.vzb-tool-stepped-speed-slider',
+      model: ['state.time', 'locale']
     }];
 
     //constructor is the same as any tool
@@ -72,6 +77,12 @@ var BarRankChart = Tool.extend('BarRankChart', {
       datawarning: {
         doubtDomain: [],
         doubtRange: []
+      },
+      "buttons": ['colors', 'find', 'show', 'moreoptions', 'fullscreen', 'presentation'],
+      "dialogs": {
+        'popup': ['timedisplay', 'colors', 'find', 'axes', 'show', 'moreoptions'],
+        'sidebar': ['timedisplay', 'colors', 'find'],
+        'moreoptions': ['opacity', 'speed', 'colors', 'presentation', 'about']
       },
       presentation: false
     }

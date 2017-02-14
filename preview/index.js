@@ -11,7 +11,10 @@ import 'font-awesome/fonts/fontawesome-webfont.woff2';
 
 import 'vizabi-ddfcsv-reader/dist/bundle.web';
 import 'vizabi-ws-reader/dist/bundle.web';
-import 'd3/d3';
+import 'd3/build/d3';
 
-const _require = require.context('./', false, /\.pug$/);
-_require.keys().forEach(_require);
+const requirePugTemplates = require.context('./', false, /\.pug$/);
+requirePugTemplates.keys().forEach(requirePugTemplates);
+
+const requireChartConfigs = require.context('vizabi-config-systema_globalis', false, /\.json$/);
+requireChartConfigs.keys().forEach(requireChartConfigs);

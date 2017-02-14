@@ -109,8 +109,8 @@ var LCComponent = Component.extend({
     this.rangeYRatio = 1;
     this.rangeYShift = 0;
     this.lineWidthScale = d3.scale.linear().domain([0, 20]).range([7, 1]).clamp(true);
-    this.xAxis = axisSmart().orient("bottom");
-    this.yAxis = axisSmart().orient("left");
+    this.xAxis = axisSmart("bottom");
+    this.yAxis = axisSmart("left");
 
     this.isDataPreprocessed = false;
     this.timeUpdatedOnce = false;
@@ -277,10 +277,10 @@ var LCComponent = Component.extend({
       })
 
     var xTitle = this.xTitleEl.selectAll("text").data([0]);
-    xTitle.enter().append("text");
+    xTitle = xTitle.enter().append("text").merge(xTitle);
 
     var yTitle = this.yTitleEl.selectAll("text").data([0]);
-    yTitle.enter().append("text");
+    yTitle = yTitle.enter().append("text").merge(yTitle);
     yTitle
       .on("click", function() {
         _this.parent
@@ -328,7 +328,7 @@ var LCComponent = Component.extend({
 
     this.entityLines = this.linesContainer.selectAll('.vzb-lc-entity').data(this.data);
     this.entityLines.exit().remove();
-    this.entityLines.enter().append("g")
+    this.entityLines = this.entityLines.enter().append("g")
       .attr("class", "vzb-lc-entity")
       .each(function(d, index) {
         var entity = d3.select(this);
@@ -339,11 +339,12 @@ var LCComponent = Component.extend({
         entity.append("path")
           .attr("class", "vzb-lc-line");
 
-      });
+      })
+      .merge(this.entityLines);
     
     this.entityLabels = this.labelsContainer.selectAll('.vzb-lc-entity').data(this.data);
     this.entityLabels.exit().remove();
-    this.entityLabels.enter().append("g")
+    this.entityLabels = this.entityLabels.enter().append("g")
       .attr("class", "vzb-lc-entity")
       .each(function(d, index) {
         var entity = d3.select(this);
@@ -361,7 +362,8 @@ var LCComponent = Component.extend({
         labelGroup.append("text")
           .attr("class", "vzb-lc-label-value")
           .attr("dy", "1.6em");
-      });
+      })
+      .merge(this.entityLabels);
 
     if (this.all_values && this.values) {
       this.entityLabels.each(function(d, index) {
@@ -392,10 +394,10 @@ var LCComponent = Component.extend({
     }
 
     //line template
-    this.line = d3.svg.line()
+    this.line = d3.line()
       //see https://bl.ocks.org/mbostock/4342190
       //"monotone" can also work. "basis" would skip the points on the sharp turns. "linear" is ugly
-      .interpolate("cardinal")
+      .curve(d3.curveCardinal)
       .x(function(d) {
         return _this.xScale(d[0]);
       })
@@ -575,8 +577,8 @@ var LCComponent = Component.extend({
 
     
     this.yAxis.scale(this.yScale)
-      .orient("left")
-      .tickSize(-this.width, 0)
+      .tickSizeInner(-this.width)
+      .tickSizeOuter(0)
       .tickPadding(6)
       .tickSizeMinor(-this.width, 0)
       .labelerOptions({
@@ -588,7 +590,8 @@ var LCComponent = Component.extend({
       });
 
     this.xAxis.scale(this.xScale)
-      .tickSize(-this.height, 0)
+      .tickSizeInner(-this.height)
+      .tickSizeOuter(0)
       .tickSizeMinor(-this.height, 0)
       .tickPadding(6)
       .labelerOptions({
@@ -628,14 +631,14 @@ var LCComponent = Component.extend({
 
     if(this.yInfoEl.select('svg').node()) {
       var titleBBox = this.yTitleEl.node().getBBox();
-      var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
+      var t = utils.transform(this.yTitleEl.node());
 
       this.yInfoEl.select('svg')
         .attr("width", infoElHeight + "px")
         .attr("height", infoElHeight + "px")
       this.yInfoEl.attr('transform', 'translate('
-        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
-        + (translate[1] - infoElHeight * 0.8) + ')');
+        + (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4) + ','
+        + (t.translateY - infoElHeight * 0.8) + ')');
     }
 
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
@@ -781,7 +784,7 @@ var LCComponent = Component.extend({
               .transition()
               .delay(0)
               .duration(_this.duration)
-              .ease("linear")
+              .ease(d3.easeLinear)
               .attr("stroke-dashoffset", 0);
             path2
               .interrupt()
@@ -790,7 +793,7 @@ var LCComponent = Component.extend({
               .transition()
               .delay(0)
               .duration(_this.duration)
-              .ease("linear")
+              .ease(d3.easeLinear)
               .attr("stroke-dashoffset", 0);
 
             _this.totalLength_1[d[KEY]] = totalLength;
@@ -817,13 +820,13 @@ var LCComponent = Component.extend({
               .classed("vzb-hidden", false)
               .transition()
               .duration(_this.duration)
-              .ease("linear")
+              .ease(d3.easeLinear)
               .attr("transform", "translate(" + _this.xScale(d3.min([_this.cached[d[KEY]]["valueX"]])) + ",0)");
 
             entity.select(".vzb-lc-circle")
               .transition()
               .duration(_this.duration)
-              .ease("linear")
+              .ease(d3.easeLinear)
               .attr("cy", _this.yScale(_this.cached[d[KEY]]["valueY"]) + 1);
 
 
@@ -831,7 +834,7 @@ var LCComponent = Component.extend({
             entity.select(".vzb-lc-label")
               .transition()
               .duration(_this.duration)
-              .ease("linear")
+              .ease(d3.easeLinear)
               .attr("transform", "translate(0," + _this.yScale(_this.cached[d[KEY]]["valueY"]) + ")");
           } else {
             entity
@@ -841,7 +844,7 @@ var LCComponent = Component.extend({
       _this.verticalNow
         .transition()
         .duration(_this.duration)
-        .ease("linear")
+        .ease(d3.easeLinear)
         .attr("transform", "translate(" + _this.xScale(d3.min([_this.model.marker.axis_x.zoomedMax, _this.time])) + ",0)");
 
 
@@ -860,7 +863,7 @@ var LCComponent = Component.extend({
       // Call flush() after any zero-duration transitions to synchronously flush the timer queue
       // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
       if(_this.duration == 0) {
-        d3.timer.flush();
+        d3.timerFlush();
       }
 
       // cancel previously queued simulation if we just ordered a new one

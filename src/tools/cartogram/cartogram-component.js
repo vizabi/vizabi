@@ -6,7 +6,7 @@ import {
   question as iconQuestion
 } from 'base/iconset';
 
-import d3_geo_projection from 'helpers/d3.geo.projection';
+import d3_geo_projection from 'helpers/d3.geoProjection';
 import DynamicBackground from 'helpers/d3.dynamicBackground';
 import globals from 'base/globals';
 
@@ -354,7 +354,7 @@ var CartogramComponent = Component.extend({
           _this.borders.datum(data)
             .transition()
             .duration(duration)
-            .ease("linear")
+            .ease(d3.easeLinear)
             .attr("d", _this.cartogram.path);
         }
         _this.lands.data(_this.features)
@@ -365,7 +365,7 @@ var CartogramComponent = Component.extend({
           _this.lands.interrupt()
             .transition()
             .duration(duration)
-            .ease("linear")
+            .ease(d3.easeLinear)
             .style("fill", function(d) {
               return _this.values.color[_this._getKey(d)]!=null?_this.cScale(_this.values.color[_this._getKey(d)]):_this.COLOR_LAND_DEFAULT;
             })
@@ -374,7 +374,7 @@ var CartogramComponent = Component.extend({
             _this.borders.interrupt()
               .transition()
               .duration(duration)
-              .ease("linear")
+              .ease(d3.easeLinear)
               .attr("d", _this.cartogram.path);
           }
 
@@ -407,7 +407,7 @@ var CartogramComponent = Component.extend({
     var _this = this;
     this.lands.transition()
       .duration(_this.duration)
-      .ease("linear")
+      .ease(d3.easeLinear)
       .style("fill", function(d) {
         return _this.values.color[_this._getKey(d)]!=null?_this.cScale(_this.values.color[_this._getKey(d)]):_this.COLOR_LAND_DEFAULT;
       })
@@ -765,7 +765,7 @@ var CartogramComponent = Component.extend({
         .selectAll("text")
         .text(tooltipText);
 
-      var contentBBox = this.tooltip.select('text')[0][0].getBBox();
+      var contentBBox = this.tooltip.select('text').node().getBBox();
       if(x - xOffset - contentBBox.width < 0) {
         xSign = 1;
         x += contentBBox.width + 5; // corrective to the block Radius and text padding

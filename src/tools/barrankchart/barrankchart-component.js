@@ -79,10 +79,10 @@ const BarRankChart = Component.extend({
 
     // set up the scales
     this.xScale = null;
-    this.cScale = d3.scale.category10();
+    this.cScale = d3.scaleOrdinal(d3.schemeCategory10);
 
     // set up the axes
-    this.xAxis = axisWithLabelPicker();
+    this.xAxis = axisWithLabelPicker("bottom");
   },
 
   onTimeChange() {
@@ -469,7 +469,7 @@ const BarRankChart = Component.extend({
 
         if (force || bar.changedWidth || presentationModeChanged) {
           bar.barRect
-            .transition().duration(duration).ease('linear')
+            .transition().duration(duration).ease(d3.easeLinear)
             .attr('width', width)
         }
 
@@ -484,7 +484,7 @@ const BarRankChart = Component.extend({
 
       if (force || bar.changedIndex || presentationModeChanged) {
         bar.self
-          .transition().duration(duration).ease('linear')
+          .transition().duration(duration).ease(d3.easeLinear)
           .attr('transform', `translate(0, ${this._getBarPosition(bar.index)})`);
       }
     });
@@ -517,7 +517,7 @@ const BarRankChart = Component.extend({
     updatedBars.exit().remove();
 
     // make the groups for the entities which were not drawn yet (.data.enter() does this)
-    updatedBars.enter()
+    updatedBars = updatedBars.enter()
       .append('g')
       .each(function (d) {
         const self = d3.select(this);
@@ -539,14 +539,14 @@ const BarRankChart = Component.extend({
         const labelSmall = labelFull.length < 12 ? labelFull : `${labelFull.substring(0, 9)}...`;
         const barLabel = self.append('text')
           .attr('class', 'vzb-br-label')
-          .attr('dominant-baseline', 'middle');
+          .attr('dy', '.325em')
 
         const labelFullWidth = barLabel.text(labelFull).node().getBBox().width;
         const labelSmallWidth = barLabel.text(labelSmall).node().getBBox().width;
 
         const barValue = self.append('text')
           .attr('class', 'vzb-br-value')
-          .attr('dominant-baseline', 'middle');
+          .attr('dy', '.325em')
 
         Object.assign(d, {
           self,
@@ -559,7 +559,8 @@ const BarRankChart = Component.extend({
           labelFull,
           labelSmall,
         });
-      });
+      })
+      .merge(updatedBars);
   },
 
   _getWidestLabelWidth(big = false) {
@@ -616,9 +617,9 @@ const BarRankChart = Component.extend({
 
   _scrollTopTween(scrollTop) {
     return function () {
-      const i = d3.interpolateNumber(this.scrollTop, scrollTop);
+      const node = this, i = d3.interpolateNumber(this.scrollTop, scrollTop);
       return function (t) {
-        this.scrollTop = i(t);
+        node.scrollTop = i(t);
       };
     };
   },

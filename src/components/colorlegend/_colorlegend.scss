@@ -64,6 +64,9 @@
       right: 0;
       top: 25px;
       height: 20px;
+      .tick line {
+        stroke: none;
+      }
     }
     .vzb-cl-unit {
       top: 30px;

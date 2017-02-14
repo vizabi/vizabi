@@ -148,6 +148,18 @@ var MountainChartComponent = Component.extend({
                 if (!_this._readyOnce) return;
                 _this.ready();
             },
+            "change:marker.stack.which": function (evt) {
+                if (!_this._readyOnce) return;
+                if (_this.model.time.playing) {
+                    _this.model.time.pause();
+                }               
+            },
+            "change:marker.stack.use": function (evt) {
+                if (!_this._readyOnce) return;
+                if (_this.model.time.playing) {
+                    _this.model.time.pause();
+                }               
+            },
             "change:marker.color.palette": function (evt) {
                 if (!_this._readyOnce) return;
                 _this.redrawDataPointsOnlyColors();
@@ -166,8 +178,8 @@ var MountainChartComponent = Component.extend({
         this._selectlist = new Selectlist(this);
 
         // define path generator
-        this.area = d3.svg.area()
-            .interpolate("basis")
+        this.area = d3.area()
+            .curve(d3.curveBasis)
             .x(function (d) {
                 return _this.xScale(_this._math.rescale(d.x));
             })
@@ -179,13 +191,10 @@ var MountainChartComponent = Component.extend({
             });
 
         //define d3 stack layout
-        this.stack = d3.layout.stack()
-            .order("reverse")
-            .values(function (d) {
-                return _this.cached[d.KEY()];
-            })
-            .out(function out(d, y0, y) {
-                d.y0 = y0;
+        this.stack = d3.stack()
+            .order(d3.stackOrderReverse)
+            .value(function (d, key) {
+                return _this.cached[key][d].y;
             });
 
         // init internal variables
@@ -193,7 +202,7 @@ var MountainChartComponent = Component.extend({
         this.yScale = null;
         this.cScale = null;
 
-        this.xAxis = axisSmart();
+        this.xAxis = axisSmart("bottom");
 
 
         this.rangeRatio = 1;
@@ -265,7 +274,7 @@ var MountainChartComponent = Component.extend({
             .style("fill", "pink")
             .style("opacity", 0)
             .attr("d", _this.area(shape))
-            .transition().duration(1000).ease("linear")
+            .transition().duration(1000).ease(d3.easeLinear)
             .style("opacity", 1);
     },
 
@@ -338,6 +347,7 @@ var MountainChartComponent = Component.extend({
     },
 
   frameChanged: function(frame, time) {
+    if (!frame) return utils.warn("change:time.value: empty data received from marker.getFrame(). doing nothing");
     if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
     this.values = frame;
     this.updateTime();
@@ -417,8 +427,7 @@ updateSize: function (meshLength) {
 
         //axis is updated
         this.xAxis.scale(this.xScale)
-            .orient("bottom")
-            .tickSize(6, 0)
+            .tickSizeOuter(0)
             .tickPadding(9)
             .tickSizeMinor(3, 0)
             .labelerOptions({
@@ -458,15 +467,15 @@ updateSize: function (meshLength) {
 
         if(this.infoEl.select('svg').node()) {
             var titleBBox = this.yTitleEl.node().getBBox();
-            var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
-            var hTranslate = isRTL ? (titleBBox.x + translate[0] - infoElHeight * 1.4) : (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4);
+            var t = utils.transform(this.yTitleEl.node());
+            var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4);
 
             this.infoEl.select('svg')
                 .attr("width", infoElHeight + "px")
                 .attr("height", infoElHeight + "px");
             this.infoEl.attr('transform', 'translate('
                 + hTranslate + ','
-                + (translate[1]-infoElHeight * .8) + ')');
+                + (t.translateY - infoElHeight * .8) + ')');
         }
 
         this.eventAreaEl
@@ -670,12 +679,15 @@ updateSize: function (meshLength) {
         this.mountainsAtomic.exit().remove();
 
         //enter selection -- add shapes
-        this.mountainsMergeStacked.enter().append("path")
-            .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel2");
-        this.mountainsMergeGrouped.enter().append("path")
-            .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel1");
-        this.mountainsAtomic.enter().append("path")
-            .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel0");
+        this.mountainsMergeStacked = this.mountainsMergeStacked.enter().append("path")
+            .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel2")
+            .merge(this.mountainsMergeStacked);
+        this.mountainsMergeGrouped = this.mountainsMergeGrouped.enter().append("path")
+            .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel1")
+            .merge(this.mountainsMergeGrouped)
+        this.mountainsAtomic = this.mountainsAtomic.enter().append("path")
+            .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel0")
+            .merge(this.mountainsAtomic);
 
         //add interaction
         this.mountains = this.mountainAtomicContainer.selectAll(".vzb-mc-mountain");
@@ -840,7 +852,13 @@ updateSize: function (meshLength) {
                         return !f.hidden;
                     }));
                 });
-                _this.stack(toStack);
+                _this.stack.keys(toStack.map(d => d.KEY()))(d3.range(_this.mesh.length))
+                    .forEach((vertices, keyIndex) => {
+                        var key = toStack[keyIndex].KEY();
+                        vertices.forEach((d, verticesIndex) => {
+                            _this.cached[key][verticesIndex].y0 = d[0];
+                        });
+                    });
             });
         }
 
@@ -995,11 +1013,15 @@ updateSize: function (meshLength) {
           _this.model.marker.getFrame(_this.model.time.end, function(values) {
             if(!values) return;
 
+            //below is a complicated issue when updatePointers() is first calculated for one set of values (at the end of time series), then yMax is taken from that data (assuming that population always grows, so the last year has the highest mountain)
             _this.values = values;
             _this.updatePointers();
+            
+            //after that updatePointers() is called with the actual data of the current time point
             _this.values = prevValues;
             _this.yScale.domain([0, Math.round(_this.yMax)]);
             _this.updatePointers();
+            _this.redrawDataPoints();
           });
         } else {
           if (!_this.yMax) utils.warn("Setting yMax to " + _this.yMax + ". You failed again :-/");
@@ -1119,7 +1141,7 @@ updateSize: function (meshLength) {
         }
 
         if (stack !== "none") view
-            .transition().duration(Math.random() * 900 + 100).ease("circle")
+            .transition().duration(Math.random() * 900 + 100).ease(d3.easeCircle)
             .style("stroke-opacity", .5);
 
         if (this.model.time.record) this._export.write({
@@ -1143,7 +1165,7 @@ updateSize: function (meshLength) {
                 .attr("alignment-baseline", "middle")
                 .text(tooltipText)
 
-            var contentBBox = this.tooltip.select("text")[0][0].getBBox();
+            var contentBBox = this.tooltip.select("text").node().getBBox();
 
             this.tooltip.select("rect")
                 .attr("width", contentBBox.width + 8)

@@ -56,10 +56,11 @@ var Dialog = Component.extend({
     var profile = this.getLayoutProfile();
 
     var dg = dialogDrag(this.placeholderEl, this.rootEl, 10);
-    var dragBehavior = d3.behavior.drag()
-      .on('dragstart', function D3dialogDragStart() {
+    var dragBehavior = d3.drag()
+      .on('start', function D3dialogDragStart() {
         var topPos = _this.placeholderEl.node().offsetTop;
-        _this.placeholderEl.style({'top': topPos + 'px', 'bottom': 'auto'});
+        _this.placeholderEl.style('top', topPos + 'px');
+        _this.placeholderEl.style('bottom', 'auto');
         _this.trigger('dragstart');
         dg.dragStart(d3.event);
       })
@@ -67,7 +68,7 @@ var Dialog = Component.extend({
         _this.trigger('drag');
         dg.drag(d3.event);
       })
-      .on('dragend', function D3dialogDrag() {
+      .on('end', function D3dialogDrag() {
         _this.rightPos = _this.placeholderEl.style('right');
         _this.topPos = _this.placeholderEl.style('top');
         _this.trigger('dragend');
@@ -148,7 +149,7 @@ var Dialog = Component.extend({
         var dialogBottom = parseInt(this.placeholderEl.style('bottom'), 10);
         totalHeight = totalHeight - dialogBottom;
       } else {
-        var topPos = this.topPos ? parseInt(this.topPos, 10) : this.placeholderEl[0][0].offsetTop;
+        var topPos = this.topPos ? parseInt(this.topPos, 10) : this.placeholderEl.node().offsetTop;
         totalHeight = totalHeight - topPos;
       }
     } else {
@@ -172,11 +173,13 @@ var Dialog = Component.extend({
 
     this.placeholderEl.classed('notransition', true);
 
-    this.placeholderEl.style({'top': '', 'bottom': ''}); // issues: 369 & 442
+    this.placeholderEl.style('top', ''); // issues: 369 & 442
+    this.placeholderEl.style('bottom', ''); // issues: 369 & 442
 
     if(this.topPos && this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true")) {
       var topPos = this.placeholderEl.node().offsetTop;
-      this.placeholderEl.style({'top': topPos + 'px', 'bottom': 'auto'}); // issues: 369 & 442
+      this.placeholderEl.style('top', topPos + 'px'); // issues: 369 & 442
+      this.placeholderEl.style('bottom', 'auto'); // issues: 369 & 442
     } else if(this.getLayoutProfile() !== 'small') {
       //if(this.rightPos) this.placeholderEl.style('right', this.rightPos);
     }
@@ -239,7 +242,8 @@ var Dialog = Component.extend({
     }
 
     if(this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true")) {
-      this.placeholderEl.style({'top' : this.topPos0, 'right' : ''});
+      this.placeholderEl.style('top', this.topPos0);
+      this.placeholderEl.style('right', '');
     }
     this.isOpen = false;
     this.trigger('close');

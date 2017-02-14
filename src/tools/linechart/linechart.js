@@ -13,6 +13,7 @@ import buttonlist from 'components/buttonlist/buttonlist';
 import treemenu from 'components/treemenu/treemenu';
 import datawarning from 'components/datawarning/datawarning';
 import datanotes from 'components/datanotes/datanotes';
+import steppedSpeedSlider from 'components/steppedspeedslider/steppedspeedslider';
 
 
   //LINE CHART TOOL
@@ -55,6 +56,10 @@ var LineChart = Tool.extend('LineChart', {
         component: datanotes,
         placeholder: '.vzb-tool-datanotes',
         model: ['state.marker', 'locale']
+      }, {
+        component: steppedSpeedSlider,
+        placeholder: '.vzb-tool-stepped-speed-slider',
+        model: ['state.time', 'locale']
       }];
 
       this._super(placeholder, external_model);
@@ -86,6 +91,12 @@ var LineChart = Tool.extend('LineChart', {
       datawarning: {
         doubtDomain: [],
         doubtRange: []
+      },
+      "buttons": ['colors', 'find', 'show', 'moreoptions', 'fullscreen', 'presentation'],
+      "dialogs": {
+        'popup': ['colors', 'find', 'show', 'moreoptions'], 
+        'sidebar': ['colors', 'show'], 
+        'moreoptions': ['opacity', 'speed', 'axes', 'colors', 'presentation', 'about']
       },
       "presentation": false
     }

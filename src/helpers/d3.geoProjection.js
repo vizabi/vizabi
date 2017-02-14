@@ -1,5 +1,5 @@
 export default function() {
-  d3.geo.project = function(object, projection) {
+  d3.geoProject = function(object, projection) {
     var stream = projection.stream;
     if (!stream) throw new Error("not yet supported");
     return (object && d3_geo_projectObjectType.hasOwnProperty(object.type) ? d3_geo_projectObjectType[object.type] : d3_geo_projectGeometry)(object, stream);
@@ -22,7 +22,7 @@ export default function() {
     };
     if (!d3_geo_projectGeometryType.hasOwnProperty(geometry.type)) return null;
     var sink = d3_geo_projectGeometryType[geometry.type];
-    d3.geo.stream(geometry, stream(sink));
+    d3.geoUstream(geometry, stream(sink));
     return sink.result();
   }
   var d3_geo_projectObjectType = {
@@ -153,8 +153,8 @@ export default function() {
   function asqrt(x) {
     return x > 0 ? Math.sqrt(x) : 0;
   }
-  var projection = d3.geo.projection, projectionMutator = d3.geo.projectionMutator;
-  d3.geo.interrupt = function(project) {
+  var projection = d3.geoProjection, projectionMutator = d3.geoProjectionMutator;
+  d3.geoInterrupt = function(project) {
     var lobes = [ [ [ [ -π, 0 ], [ 0, halfπ ], [ π, 0 ] ] ], [ [ [ -π, 0 ], [ 0, -halfπ ], [ π, 0 ] ] ] ];
     var bounds;
     function forward(λ, φ) {
@@ -184,13 +184,13 @@ export default function() {
         }
       }
     };
-    var projection = d3.geo.projection(forward), stream_ = projection.stream;
+    var projection = d3.geoProjection(forward), stream_ = projection.stream;
     projection.stream = function(stream) {
       var rotate = projection.rotate(), rotateStream = stream_(stream), sphereStream = (projection.rotate([ 0, 0 ]), 
       stream_(stream));
       projection.rotate(rotate);
       rotateStream.sphere = function() {
-        d3.geo.stream(sphere(), sphereStream);
+        d3.geoStream(sphere(), sphereStream);
       };
       return rotateStream;
     };
@@ -266,7 +266,7 @@ export default function() {
     };
     return p;
   }
-  (d3.geo.airy = airyProjection).raw = airy;
+  (d3.geoAiry = airyProjection).raw = airy;
   function aitoff(λ, φ) {
     var cosφ = Math.cos(φ), sinciα = sinci(acos(cosφ * Math.cos(λ /= 2)));
     return [ 2 * cosφ * Math.sin(λ) * sinciα, Math.sin(φ) * sinciα ];
@@ -282,7 +282,7 @@ export default function() {
     } while ((Math.abs(δλ) > ε || Math.abs(δφ) > ε) && --i > 0);
     return [ λ, φ ];
   };
-  (d3.geo.aitoff = function() {
+  (d3.geoAitoff = function() {
     return projection(aitoff);
   }).raw = aitoff;
   function armadillo(φ0) {
@@ -324,7 +324,7 @@ export default function() {
     };
     return p;
   }
-  (d3.geo.armadillo = armadilloProjection).raw = armadillo;
+  (d3.geoArmadillo = armadilloProjection).raw = armadillo;
   function tanh(x) {
     x = Math.exp(2 * x);
     return (x - 1) / (x + 1);
@@ -351,7 +351,7 @@ export default function() {
     var x2 = x * x, y2 = y * y, s = 1 + x2 + y2, sin3η = Math.sqrt(.5 * (s - Math.sqrt(s * s - 4 * y * y))), η = asin(sin3η) / 3, ξ = sin3η ? arcosh(Math.abs(y / sin3η)) / 3 : arsinh(Math.abs(x)) / 3, cosη = Math.cos(η), coshξ = cosh(ξ), d = coshξ * coshξ - cosη * cosη;
     return [ sgn(x) * 2 * Math.atan2(sinh(ξ) * cosη, .25 - d), sgn(y) * 2 * Math.atan2(coshξ * Math.sin(η), .25 + d) ];
   };
-  (d3.geo.august = function() {
+  (d3.geoAugust = function() {
     return projection(august);
   }).raw = august;
   var bakerφ = Math.log(1 + Math.SQRT2);
@@ -368,10 +368,10 @@ export default function() {
     } while (Math.abs(δ) > ε2 && --i > 0);
     return [ x / (Math.cos(φ) * (sqrt8 - 1 / Math.sin(φ))), sgn(y) * φ ];
   };
-  (d3.geo.baker = function() {
+  (d3.geoBaker = function() {
     return projection(baker);
   }).raw = baker;
-  var berghausAzimuthalEquidistant = d3.geo.azimuthalEquidistant.raw;
+  var berghausAzimuthalEquidistant = d3.geoAzimuthalEquidistant.raw;
   function berghaus(n) {
     var k = 2 * π / n;
     function forward(λ, φ) {
@@ -424,7 +424,7 @@ export default function() {
     };
     return p;
   }
-  (d3.geo.berghaus = berghausProjection).raw = berghaus;
+  (d3.geoBerghaus = berghausProjection).raw = berghaus;
   function mollweideBromleyθ(Cp) {
     return function(θ) {
       var Cpsinθ = Cp * Math.sin(θ), i = 30, δ;
@@ -444,7 +444,7 @@ export default function() {
     return forward;
   }
   var mollweideθ = mollweideBromleyθ(π), mollweide = mollweideBromley(Math.SQRT2 / halfπ, Math.SQRT2, π);
-  (d3.geo.mollweide = function() {
+  (d3.geoMollweide = function() {
     return projection(mollweide);
   }).raw = mollweide;
   function boggs(λ, φ) {
@@ -460,7 +460,7 @@ export default function() {
     φ = ky - Math.SQRT2 * Math.sin(θ);
     return [ x * (1 / Math.cos(φ) + 1.11072 / Math.cos(θ)) / k, φ ];
   };
-  (d3.geo.boggs = function() {
+  (d3.geoBoggs = function() {
     return projection(boggs);
   }).raw = boggs;
   function parallel1Projection(projectAt) {
@@ -477,7 +477,7 @@ export default function() {
   sinusoidal.invert = function(x, y) {
     return [ x / Math.cos(y), y ];
   };
-  (d3.geo.sinusoidal = function() {
+  (d3.geoSinusoidal = function() {
     return projection(sinusoidal);
   }).raw = sinusoidal;
   function bonne(φ0) {
@@ -493,11 +493,11 @@ export default function() {
     };
     return forward;
   }
-  (d3.geo.bonne = function() {
+  (d3.geoBonne = function() {
     return parallel1Projection(bonne).parallel(45);
   }).raw = bonne;
   var bromley = mollweideBromley(1, 4 / π, π);
-  (d3.geo.bromley = function() {
+  (d3.geoBromley = function() {
     return projection(bromley);
   }).raw = bromley;
   function chamberlin(points) {
@@ -550,12 +550,12 @@ export default function() {
     p.points = function(_) {
       if (!arguments.length) return points;
       points = _;
-      var origin = d3.geo.centroid({
+      var origin = d3.geoCentroid({
         type: "MultiPoint",
         coordinates: points
       }), r = [ -origin[0], -origin[1] ];
       rotate.call(p, r);
-      return m(points.map(d3.geo.rotation(r)).map(chamberlinRadians));
+      return m(points.map(d3.geoRotation(r)).map(chamberlinRadians));
     };
     return p.points([ [ -150, 55 ], [ -35, 55 ], [ -92.5, 10 ] ]);
   }
@@ -581,7 +581,7 @@ export default function() {
   function chamberlinRadians(point) {
     return [ point[0] * radians, point[1] * radians ];
   }
-  (d3.geo.chamberlin = chamberlinProjection).raw = chamberlin;
+  (d3.geoChamberlin = chamberlinProjection).raw = chamberlin;
   function collignon(λ, φ) {
     var α = asqrt(1 - Math.sin(φ));
     return [ 2 / sqrtπ * λ * α, sqrtπ * (1 - α) ];
@@ -590,7 +590,7 @@ export default function() {
     var λ = (λ = y / sqrtπ - 1) * λ;
     return [ λ > 0 ? x * Math.sqrt(π / λ) / 2 : 0, asin(1 - λ) ];
   };
-  (d3.geo.collignon = function() {
+  (d3.geoCollignon = function() {
     return projection(collignon);
   }).raw = collignon;
   function craig(φ0) {
@@ -607,7 +607,7 @@ export default function() {
     };
     return forward;
   }
-  (d3.geo.craig = function() {
+  (d3.geoCraig = function() {
     return parallel1Projection(craig);
   }).raw = craig;
   function craster(λ, φ) {
@@ -618,7 +618,7 @@ export default function() {
     var sqrt3 = Math.sqrt(3), φ = 3 * asin(y / (sqrt3 * sqrtπ));
     return [ sqrtπ * x / (sqrt3 * (2 * Math.cos(2 * φ / 3) - 1)), φ ];
   };
-  (d3.geo.craster = function() {
+  (d3.geoCraster = function() {
     return projection(craster);
   }).raw = craster;
   function cylindricalEqualArea(φ0) {
@@ -631,7 +631,7 @@ export default function() {
     };
     return forward;
   }
-  (d3.geo.cylindricalEqualArea = function() {
+  (d3.geoCylindricalEqualArea = function() {
     return parallel1Projection(cylindricalEqualArea);
   }).raw = cylindricalEqualArea;
   function cylindricalStereographic(φ0) {
@@ -644,7 +644,7 @@ export default function() {
     };
     return forward;
   }
-  (d3.geo.cylindricalStereographic = function() {
+  (d3.geoCylindricalStereographic = function() {
     return parallel1Projection(cylindricalStereographic);
   }).raw = cylindricalStereographic;
   function eckert1(λ, φ) {
@@ -655,7 +655,7 @@ export default function() {
     var α = Math.sqrt(8 / (3 * π)), φ = y / α;
     return [ x / (α * (1 - Math.abs(φ) / π)), φ ];
   };
-  (d3.geo.eckert1 = function() {
+  (d3.geoEckert1 = function() {
     return projection(eckert1);
   }).raw = eckert1;
   function eckert2(λ, φ) {
@@ -666,7 +666,7 @@ export default function() {
     var α = 2 - Math.abs(y) / Math.sqrt(2 * π / 3);
     return [ x * Math.sqrt(6 * π) / (2 * α), sgn(y) * asin((4 - α * α) / 3) ];
   };
-  (d3.geo.eckert2 = function() {
+  (d3.geoEckert2 = function() {
     return projection(eckert2);
   }).raw = eckert2;
   function eckert3(λ, φ) {
@@ -677,7 +677,7 @@ export default function() {
     var k = Math.sqrt(π * (4 + π)) / 2;
     return [ x * k / (1 + asqrt(1 - y * y * (4 + π) / (4 * π))), y * k / 2 ];
   };
-  (d3.geo.eckert3 = function() {
+  (d3.geoEckert3 = function() {
     return projection(eckert3);
   }).raw = eckert3;
   function eckert4(λ, φ) {
@@ -693,7 +693,7 @@ export default function() {
     var A = .5 * y * Math.sqrt((4 + π) / π), k = asin(A), c = Math.cos(k);
     return [ x / (2 / Math.sqrt(π * (4 + π)) * (1 + c)), asin((k + A * (c + 2)) / (2 + halfπ)) ];
   };
-  (d3.geo.eckert4 = function() {
+  (d3.geoEckert4 = function() {
     return projection(eckert4);
   }).raw = eckert4;
   function eckert5(λ, φ) {
@@ -703,7 +703,7 @@ export default function() {
     var k = Math.sqrt(2 + π), φ = y * k / 2;
     return [ k * x / (1 + Math.cos(φ)), φ ];
   };
-  (d3.geo.eckert5 = function() {
+  (d3.geoEckert5 = function() {
     return projection(eckert5);
   }).raw = eckert5;
   function eckert6(λ, φ) {
@@ -718,7 +718,7 @@ export default function() {
     var j = 1 + halfπ, k = Math.sqrt(j / 2);
     return [ x * 2 * k / (1 + Math.cos(y *= k)), asin((y + Math.sin(y)) / j) ];
   };
-  (d3.geo.eckert6 = function() {
+  (d3.geoEckert6 = function() {
     return projection(eckert6);
   }).raw = eckert6;
   function eisenlohr(λ, φ) {
@@ -726,7 +726,7 @@ export default function() {
     return [ eisenlohrK * (c * (v - 1 / v) - 2 * Math.log(v)), eisenlohrK * (c * t * (v + 1 / v) - 2 * Math.atan(t)) ];
   }
   eisenlohr.invert = function(x, y) {
-    var p = d3.geo.august.raw.invert(x / 1.2, y * 1.065);
+    var p = d3.geoAugust.raw.invert(x / 1.2, y * 1.065);
     if (!p) return null;
     var λ = p[0], φ = p[1], i = 20;
     x /= eisenlohrK, y /= eisenlohrK;
@@ -740,7 +740,7 @@ export default function() {
     return Math.abs(Math.abs(φ) - halfπ) < ε ? [ 0, φ ] : i && [ λ, φ ];
   };
   var eisenlohrK = 3 + 2 * Math.SQRT2;
-  (d3.geo.eisenlohr = function() {
+  (d3.geoEisenlohr = function() {
     return projection(eisenlohr);
   }).raw = eisenlohr;
   function fahey(λ, φ) {
@@ -752,7 +752,7 @@ export default function() {
     return [ x ? x / (faheyK * asqrt(1 - t * t)) : 0, 2 * Math.atan(t) ];
   };
   var faheyK = Math.cos(35 * radians);
-  (d3.geo.fahey = function() {
+  (d3.geoFahey = function() {
     return projection(fahey);
   }).raw = fahey;
   function foucaut(λ, φ) {
@@ -763,11 +763,11 @@ export default function() {
     var k = Math.atan(y / sqrtπ), cosk = Math.cos(k), φ = 2 * k;
     return [ x * sqrtπ * .5 / (Math.cos(φ) * cosk * cosk), φ ];
   };
-  (d3.geo.foucaut = function() {
+  (d3.geoFoucaut = function() {
     return projection(foucaut);
   }).raw = foucaut;
-  d3.geo.gilbert = function(projection) {
-    var e = d3.geo.equirectangular().scale(degrees).translate([ 0, 0 ]);
+  d3.geoGilbert = function(projection) {
+    var e = d3.geoEquirectangular().scale(degrees).translate([ 0, 0 ]);
     function gilbert(coordinates) {
       return projection([ coordinates[0] * .5, asin(Math.tan(coordinates[1] * .5 * radians)) * degrees ]);
     }
@@ -804,7 +804,7 @@ export default function() {
     };
     return gilbert;
   };
-  var gingeryAzimuthalEquidistant = d3.geo.azimuthalEquidistant.raw;
+  var gingeryAzimuthalEquidistant = d3.geoAzimuthalEquidistant.raw;
   function gingery(ρ, n) {
     var k = 2 * π / n, ρ2 = ρ * ρ;
     function forward(λ, φ) {
@@ -884,7 +884,7 @@ export default function() {
     for (var i = 1, x = a; i < n; ++i) s += 2 * f(x += h);
     return s * .5 * h;
   }
-  (d3.geo.gingery = gingeryProjection).raw = gingery;
+  (d3.geoGingery = gingeryProjection).raw = gingery;
   function ginzburgPolyconic(a, b, c, d, e, f, g, h) {
     if (arguments.length < 8) h = 0;
     function forward(λ, φ) {
@@ -911,15 +911,15 @@ export default function() {
     return forward;
   }
   var ginzburg4 = ginzburgPolyconic(2.8284, -1.6988, .75432, -.18071, 1.76003, -.38914, .042555);
-  (d3.geo.ginzburg4 = function() {
+  (d3.geoGinzburg4 = function() {
     return projection(ginzburg4);
   }).raw = ginzburg4;
   var ginzburg5 = ginzburgPolyconic(2.583819, -.835827, .170354, -.038094, 1.543313, -.411435, .082742);
-  (d3.geo.ginzburg5 = function() {
+  (d3.geoGinzburg5 = function() {
     return projection(ginzburg5);
   }).raw = ginzburg5;
   var ginzburg6 = ginzburgPolyconic(5 / 6 * π, -.62636, -.0344, 0, 1.3493, -.05524, 0, .045);
-  (d3.geo.ginzburg6 = function() {
+  (d3.geoGinzburg6 = function() {
     return projection(ginzburg6);
   }).raw = ginzburg6;
   function ginzburg8(λ, φ) {
@@ -940,11 +940,11 @@ export default function() {
     } while (Math.abs(δ) > ε && --i > 0);
     return [ λ, φ ];
   };
-  (d3.geo.ginzburg8 = function() {
+  (d3.geoGinzburg8 = function() {
     return projection(ginzburg8);
   }).raw = ginzburg8;
   var ginzburg9 = ginzburgPolyconic(2.6516, -.76534, .19123, -.047094, 1.36289, -.13965, .031762);
-  (d3.geo.ginzburg9 = function() {
+  (d3.geoGinzburg9 = function() {
     return projection(ginzburg9);
   }).raw = ginzburg9;
   function quincuncialProjection(projectHemisphere) {
@@ -1042,7 +1042,7 @@ export default function() {
     var φ = Math.asin(sinφ), cosφ = Math.cos(φ), secφ = 1 / cosφ, drdφ = 2 * sinφ * cosφ, dvdφ = (-3 * r + z * (1 + 3 * r2)) * drdφ, dp2dφ = (-v * cosφ - (1 - sinφ) * dvdφ) / (v * v), dpdφ = .5 * dp2dφ / p, dhdφ = (1 - r2) * dpdφ - 2 * r * p * drdφ, ζ = -2 * secφ * dhdφ, μ = -secφ * drdφ, ν = -secφ * (r * (1 + r2) * dp2dφ + p2 * (1 + 3 * r2) * drdφ);
     return [ π / 4 * (x * (ζ + μ * g) + ν * Math.asin(x / Math.sqrt(a2))), φ ];
   }
-  d3.geo.gringorten = quincuncialProjection(gringorten);
+  d3.geoGringorten = quincuncialProjection(gringorten);
   function ellipticJi(u, v, m) {
     if (!u) {
       var b = ellipticJ(v, 1 - m);
@@ -1128,7 +1128,7 @@ export default function() {
     var j = ellipticJi(.5 * K - y, -x, k * k), tn = guyouComplexDivide(j[0], j[1]), λ = Math.atan2(tn[1], tn[0]) / f;
     return [ λ, 2 * Math.atan(Math.exp(.5 / f * Math.log(k_ * tn[0] * tn[0] + k_ * tn[1] * tn[1]))) - halfπ ];
   };
-  d3.geo.guyou = quincuncialProjection(guyou);
+  d3.geoGuyou = quincuncialProjection(guyou);
   function hammerRetroazimuthal(φ0) {
     var sinφ0 = Math.sin(φ0), cosφ0 = Math.cos(φ0), rotate = hammerRetroazimuthalRotation(φ0);
     rotate.invert = hammerRetroazimuthalRotation(-φ0);
@@ -1152,7 +1152,7 @@ export default function() {
     };
   }
   function hammerRetroazimuthalProjection() {
-    var φ0 = 0, m = projectionMutator(hammerRetroazimuthal), p = m(φ0), rotate_ = p.rotate, stream_ = p.stream, circle = d3.geo.circle();
+    var φ0 = 0, m = projectionMutator(hammerRetroazimuthal), p = m(φ0), rotate_ = p.rotate, stream_ = p.stream, circle = d3.geoCircle();
     p.parallel = function(_) {
       if (!arguments.length) return φ0 / π * 180;
       var r = p.rotate();
@@ -1161,18 +1161,18 @@ export default function() {
     p.rotate = function(_) {
       if (!arguments.length) return _ = rotate_.call(p), _[1] += φ0 / π * 180, _;
       rotate_.call(p, [ _[0], _[1] - φ0 / π * 180 ]);
-      circle.origin([ -_[0], -_[1] ]);
+      circle.center([ -_[0], -_[1] ]);
       return p;
     };
     p.stream = function(stream) {
       stream = stream_(stream);
       stream.sphere = function() {
         stream.polygonStart();
-        var ε = .01, ring = circle.angle(90 - ε)().coordinates[0], n = ring.length - 1, i = -1, p;
+        var ε = .01, ring = circle.radius(90 - ε)().coordinates[0], n = ring.length - 1, i = -1, p;
         stream.lineStart();
         while (++i < n) stream.point((p = ring[i])[0], p[1]);
         stream.lineEnd();
-        ring = circle.angle(90 + ε)().coordinates[0];
+        ring = circle.radius(90 + ε)().coordinates[0];
         n = ring.length - 1;
         stream.lineStart();
         while (--i >= 0) stream.point((p = ring[i])[0], p[1]);
@@ -1183,8 +1183,8 @@ export default function() {
     };
     return p;
   }
-  (d3.geo.hammerRetroazimuthal = hammerRetroazimuthalProjection).raw = hammerRetroazimuthal;
-  var hammerAzimuthalEqualArea = d3.geo.azimuthalEqualArea.raw;
+  (d3.geoHammerRetroazimuthal = hammerRetroazimuthalProjection).raw = hammerRetroazimuthal;
+  var hammerAzimuthalEqualArea = d3.geoAzimuthalEqualArea.raw;
   function hammer(A, B) {
     if (arguments.length < 2) B = A;
     if (B === 1) return hammerAzimuthalEqualArea;
@@ -1216,7 +1216,7 @@ export default function() {
     var φ = 2 * asin(y / 2);
     return [ x * Math.cos(φ / 2) / Math.cos(φ), φ ];
   };
-  (d3.geo.hammer = hammerProjection).raw = hammer;
+  (d3.geoHammer = hammerProjection).raw = hammer;
   function hatano(λ, φ) {
     var c = Math.sin(φ) * (φ < 0 ? 2.43763 : 2.67595);
     for (var i = 0, δ; i < 20; i++) {
@@ -1229,18 +1229,18 @@ export default function() {
     var θ = Math.abs(θ = y * (y < 0 ? .5179951515653813 : .5686373742600607)) > 1 - ε ? θ > 0 ? halfπ : -halfπ : asin(θ);
     return [ 1.1764705882352942 * x / Math.cos(θ), Math.abs(θ = ((θ += θ) + Math.sin(θ)) * (y < 0 ? .4102345310814193 : .3736990601468637)) > 1 - ε ? θ > 0 ? halfπ : -halfπ : asin(θ) ];
   };
-  (d3.geo.hatano = function() {
+  (d3.geoHatano = function() {
     return projection(hatano);
   }).raw = hatano;
   var healpixParallel = 41 + 48 / 36 + 37 / 3600;
   function healpix(h) {
-    var lambert = d3.geo.cylindricalEqualArea.raw(0), φ0 = healpixParallel * π / 180, dx0 = 2 * π, dx1 = d3.geo.collignon.raw(π, φ0)[0] - d3.geo.collignon.raw(-π, φ0)[0], y0 = lambert(0, φ0)[1], y1 = d3.geo.collignon.raw(0, φ0)[1], dy1 = d3.geo.collignon.raw(0, halfπ)[1] - y1, k = 2 * π / h;
+    var lambert = d3.geoCylindricalEqualArea.raw(0), φ0 = healpixParallel * π / 180, dx0 = 2 * π, dx1 = d3.geoCollignon.raw(π, φ0)[0] - d3.geoCollignon.raw(-π, φ0)[0], y0 = lambert(0, φ0)[1], y1 = d3.geoCollignon.raw(0, φ0)[1], dy1 = d3.geoCollignon.raw(0, halfπ)[1] - y1, k = 2 * π / h;
     function forward(λ, φ) {
       var point, φ2 = Math.abs(φ);
       if (φ2 > φ0) {
         var i = Math.min(h - 1, Math.max(0, Math.floor((λ + π) / k)));
         λ += π * (h - 1) / h - i * k;
-        point = d3.geo.collignon.raw(λ, φ2);
+        point = d3.geoCollignon.raw(λ, φ2);
         point[0] = point[0] * dx0 / dx1 - dx0 * (h - 1) / (2 * h) + i * dx0 / h;
         point[1] = y0 + (point[1] - y1) * 4 * dy1 / dx0;
         if (φ < 0) point[1] = -point[1];
@@ -1256,7 +1256,7 @@ export default function() {
       if (y2 > y0) {
         var i = Math.min(h - 1, Math.max(0, Math.floor((x + π) / k)));
         x = (x + π * (h - 1) / h - i * k) * dx1 / dx0;
-        var point = d3.geo.collignon.raw.invert(x, .25 * (y2 - y0) * dx0 / dy1 + y1);
+        var point = d3.geoCollignon.raw.invert(x, .25 * (y2 - y0) * dx0 / dy1 + y1);
         point[0] -= π * (h - 1) / h - i * k;
         if (y < 0) point[1] = -point[1];
         return point;
@@ -1276,7 +1276,7 @@ export default function() {
       stream_(stream));
       p.rotate(rotate);
       rotateStream.sphere = function() {
-        d3.geo.stream(sphere(), sphereStream);
+        d3.geoStream(sphere(), sphereStream);
       };
       return rotateStream;
     };
@@ -1293,7 +1293,7 @@ export default function() {
     }
     return p;
   }
-  (d3.geo.healpix = healpixProjection).raw = healpix;
+  (d3.geoHealpix = healpixProjection).raw = healpix;
   function hill(K) {
     var L = 1 + K, sinβ = Math.sin(1 / L), β = asin(sinβ), A = 2 * Math.sqrt(π / (B = π + 4 * β * L)), B, ρ0 = .5 * A * (L + Math.sqrt(K * (2 + K))), K2 = K * K, L2 = L * L;
     function forward(λ, φ) {
@@ -1326,7 +1326,7 @@ export default function() {
     };
     return p;
   }
-  (d3.geo.hill = hillProjection).raw = hill;
+  (d3.geoHill = hillProjection).raw = hill;
   var sinuMollweideφ = .7109889596207567, sinuMollweideY = .0528035274542;
   function sinuMollweide(λ, φ) {
     return φ > -sinuMollweideφ ? (λ = mollweide(λ, φ), λ[1] += sinuMollweideY, λ) : sinusoidal(λ, φ);
@@ -1334,7 +1334,7 @@ export default function() {
   sinuMollweide.invert = function(x, y) {
     return y > -sinuMollweideφ ? mollweide.invert(x, y - sinuMollweideY) : sinusoidal.invert(x, y);
   };
-  (d3.geo.sinuMollweide = function() {
+  (d3.geoSinuMollweide = function() {
     return projection(sinuMollweide).rotate([ -20, -55 ]);
   }).raw = sinuMollweide;
   function homolosine(λ, φ) {
@@ -1344,7 +1344,7 @@ export default function() {
   homolosine.invert = function(x, y) {
     return Math.abs(y) > sinuMollweideφ ? mollweide.invert(x, y + (y > 0 ? sinuMollweideY : -sinuMollweideY)) : sinusoidal.invert(x, y);
   };
-  (d3.geo.homolosine = function() {
+  (d3.geoHomolosine = function() {
     return projection(homolosine);
   }).raw = homolosine;
   function kavrayskiy7(λ, φ) {
@@ -1353,7 +1353,7 @@ export default function() {
   kavrayskiy7.invert = function(x, y) {
     return [ 2 / 3 * π * x / Math.sqrt(π * π / 3 - y * y), y ];
   };
-  (d3.geo.kavrayskiy7 = function() {
+  (d3.geoKavrayskiy7 = function() {
     return projection(kavrayskiy7);
   }).raw = kavrayskiy7;
   function lagrange(n) {
@@ -1381,7 +1381,7 @@ export default function() {
     };
     return p;
   }
-  (d3.geo.lagrange = lagrangeProjection).raw = lagrange;
+  (d3.geoLagrange = lagrangeProjection).raw = lagrange;
   function larrivee(λ, φ) {
     return [ λ * (1 + Math.sqrt(Math.cos(φ))) / 2, φ / (Math.cos(φ / 2) * Math.cos(λ / 6)) ];
   }
@@ -1396,7 +1396,7 @@ export default function() {
     }
     return [ x < 0 ? -λ : λ, y < 0 ? -φ : φ ];
   };
-  (d3.geo.larrivee = function() {
+  (d3.geoLarrivee = function() {
     return projection(larrivee);
   }).raw = larrivee;
   function laskowski(λ, φ) {
@@ -1411,7 +1411,7 @@ export default function() {
     } while ((Math.abs(δλ) > ε || Math.abs(δφ) > ε) && --i > 0);
     return i && [ λ, φ ];
   };
-  (d3.geo.laskowski = function() {
+  (d3.geoLaskowski = function() {
     return projection(laskowski);
   }).raw = laskowski;
   function littrow(λ, φ) {
@@ -1421,7 +1421,7 @@ export default function() {
     var x2 = x * x, y2 = y * y, y2_1 = y2 + 1, cosφ = x ? Math.SQRT1_2 * Math.sqrt((y2_1 - Math.sqrt(x2 * x2 + 2 * x2 * (y2 - 1) + y2_1 * y2_1)) / x2 + 1) : 1 / Math.sqrt(y2_1);
     return [ asin(x * cosφ), sgn(y) * acos(cosφ) ];
   };
-  (d3.geo.littrow = function() {
+  (d3.geoLittrow = function() {
     return projection(littrow);
   }).raw = littrow;
   function loximuthal(φ0) {
@@ -1436,7 +1436,7 @@ export default function() {
     };
     return forward;
   }
-  (d3.geo.loximuthal = function() {
+  (d3.geoLoximuthal = function() {
     return parallel1Projection(loximuthal).parallel(40);
   }).raw = loximuthal;
   function miller(λ, φ) {
@@ -1445,7 +1445,7 @@ export default function() {
   miller.invert = function(x, y) {
     return [ x, 2.5 * Math.atan(Math.exp(.8 * y)) - .625 * π ];
   };
-  (d3.geo.miller = function() {
+  (d3.geoMiller = function() {
     return projection(miller);
   }).raw = miller;
   function modifiedStereographic(C) {
@@ -1502,7 +1502,7 @@ export default function() {
     };
     return p;
   }
-  (d3.geo.modifiedStereographic = modifiedStereographicProjection).raw = modifiedStereographic;
+  (d3.geoModifiedStereographic = modifiedStereographicProjection).raw = modifiedStereographic;
   function mtFlatPolarParabolic(λ, φ) {
     var sqrt6 = Math.sqrt(6), sqrt7 = Math.sqrt(7), θ = Math.asin(7 * Math.sin(φ) / (3 * sqrt6));
     return [ sqrt6 * λ * (2 * Math.cos(2 * θ / 3) - 1) / sqrt7, 9 * Math.sin(θ / 3) / sqrt7 ];
@@ -1511,7 +1511,7 @@ export default function() {
     var sqrt6 = Math.sqrt(6), sqrt7 = Math.sqrt(7), θ = 3 * asin(y * sqrt7 / 9);
     return [ x * sqrt7 / (sqrt6 * (2 * Math.cos(2 * θ / 3) - 1)), asin(Math.sin(θ) * 3 * sqrt6 / 7) ];
   };
-  (d3.geo.mtFlatPolarParabolic = function() {
+  (d3.geoMtFlatPolarParabolic = function() {
     return projection(mtFlatPolarParabolic);
   }).raw = mtFlatPolarParabolic;
   function mtFlatPolarQuartic(λ, φ) {
@@ -1526,7 +1526,7 @@ export default function() {
     var sinθ_2 = y * Math.sqrt(2 + Math.SQRT2) / (2 * Math.sqrt(3)), θ = 2 * asin(sinθ_2);
     return [ 3 * Math.SQRT2 * x / (1 + 2 * Math.cos(θ) / Math.cos(θ / 2)), asin((sinθ_2 + Math.sin(θ)) / (1 + Math.SQRT1_2)) ];
   };
-  (d3.geo.mtFlatPolarQuartic = function() {
+  (d3.geoMtFlatPolarQuartic = function() {
     return projection(mtFlatPolarQuartic);
   }).raw = mtFlatPolarQuartic;
   function mtFlatPolarSinusoidal(λ, φ) {
@@ -1542,7 +1542,7 @@ export default function() {
     if (Math.abs(Math.abs(θ) - halfπ) < ε) θ = θ < 0 ? -halfπ : halfπ;
     return [ 1.5 * x / (A * (.5 + Math.cos(θ))), asin((θ / 2 + Math.sin(θ)) / (1 + π / 4)) ];
   };
-  (d3.geo.mtFlatPolarSinusoidal = function() {
+  (d3.geoMtFlatPolarSinusoidal = function() {
     return projection(mtFlatPolarSinusoidal);
   }).raw = mtFlatPolarSinusoidal;
   function naturalEarth(λ, φ) {
@@ -1557,7 +1557,7 @@ export default function() {
     } while (Math.abs(δ) > ε && --i > 0);
     return [ x / (.8707 + (φ2 = φ * φ) * (-.131979 + φ2 * (-.013791 + φ2 * φ2 * φ2 * (.003971 - .001529 * φ2)))), φ ];
   };
-  (d3.geo.naturalEarth = function() {
+  (d3.geoNaturalEarth = function() {
     return projection(naturalEarth);
   }).raw = naturalEarth;
   function nellHammer(λ, φ) {
@@ -1571,7 +1571,7 @@ export default function() {
     }
     return [ 2 * x / (1 + Math.cos(y)), y ];
   };
-  (d3.geo.nellHammer = function() {
+  (d3.geoNellHammer = function() {
     return projection(nellHammer);
   }).raw = nellHammer;
   var pattersonK1 = 1.0148, pattersonK2 = .23185, pattersonK3 = -.14499, pattersonK4 = .02406, pattersonC1 = pattersonK1, pattersonC2 = 5 * pattersonK2, pattersonC3 = 7 * pattersonK3, pattersonC4 = 9 * pattersonK4, pattersonYmax = 1.790857183;
@@ -1588,11 +1588,11 @@ export default function() {
     } while (Math.abs(δ) > ε);
     return [ x, yc ];
   };
-  (d3.geo.patterson = function() {
+  (d3.geoPatterson = function() {
     return projection(patterson);
   }).raw = patterson;
   var peirceQuincuncialProjection = quincuncialProjection(guyou);
-  (d3.geo.peirceQuincuncial = function() {
+  (d3.geoPeirceQuincuncial = function() {
     return peirceQuincuncialProjection().quincuncial(true).rotate([ -90, -90, 45 ]).clipAngle(180 - 1e-6);
   }).raw = peirceQuincuncialProjection.raw;
   function polyconic(λ, φ) {
@@ -1610,7 +1610,7 @@ export default function() {
     tanφ = Math.tan(φ);
     return [ (Math.abs(y) < Math.abs(φ + 1 / tanφ) ? asin(x * tanφ) : sgn(x) * (acos(Math.abs(x * tanφ)) + halfπ)) / Math.sin(φ), φ ];
   };
-  (d3.geo.polyconic = function() {
+  (d3.geoPolyconic = function() {
     return projection(polyconic);
   }).raw = polyconic;
   function rectangularPolyconic(φ0) {
@@ -1633,7 +1633,7 @@ export default function() {
     };
     return forward;
   }
-  (d3.geo.rectangularPolyconic = function() {
+  (d3.geoRectangularPolyconic = function() {
     return parallel1Projection(rectangularPolyconic);
   }).raw = rectangularPolyconic;
   var robinsonConstants = [ [ .9986, -.062 ], [ 1, 0 ], [ .9986, .062 ], [ .9954, .124 ], [ .99, .186 ], [ .9822, .248 ], [ .973, .31 ], [ .96, .372 ], [ .9427, .434 ], [ .9216, .4958 ], [ .8962, .5571 ], [ .8679, .6176 ], [ .835, .6769 ], [ .7986, .7346 ], [ .7597, .7903 ], [ .7186, .8435 ], [ .6732, .8936 ], [ .6213, .9394 ], [ .5722, .9761 ], [ .5322, 1 ] ];
@@ -1666,7 +1666,7 @@ export default function() {
     var ax = robinsonConstants[i0][0], bx = robinsonConstants[i0 + 1][0], cx = robinsonConstants[Math.min(19, i0 + 2)][0];
     return [ x / (bx + di * (cx - ax) / 2 + di * di * (cx - 2 * bx + ax) / 2), φ * radians ];
   };
-  (d3.geo.robinson = function() {
+  (d3.geoRobinson = function() {
     return projection(robinson);
   }).raw = robinson;
   function satelliteVertical(P) {
@@ -1706,7 +1706,7 @@ export default function() {
     };
     return p;
   }
-  (d3.geo.satellite = satelliteProjection).raw = satellite;
+  (d3.geoSatellite = satelliteProjection).raw = satellite;
   function times(λ, φ) {
     var t = Math.tan(φ / 2), s = Math.sin(π / 4 * t);
     return [ λ * (.74482 - .34588 * s * s), 1.70711 * t ];
@@ -1715,11 +1715,11 @@ export default function() {
     var t = y / 1.70711, s = Math.sin(π / 4 * t);
     return [ x / (.74482 - .34588 * s * s), 2 * Math.atan(t) ];
   };
-  (d3.geo.times = function() {
+  (d3.geoTimes = function() {
     return projection(times);
   }).raw = times;
   function twoPointEquidistant(z0) {
-    if (!z0) return d3.geo.azimuthalEquidistant.raw;
+    if (!z0) return d3.geoAzimuthalEquidistant.raw;
     var λa = -z0 / 2, λb = -λa, z02 = z0 * z0, tanλ0 = Math.tan(λb), S = .5 / Math.sin(λb);
     function forward(λ, φ) {
       var za = acos(Math.cos(φ) * Math.cos(λ - λa)), zb = acos(Math.cos(φ) * Math.cos(λ - λb)), ys = φ < 0 ? -1 : 1;
@@ -1738,23 +1738,23 @@ export default function() {
     p.points = function(_) {
       if (!arguments.length) return points;
       points = _;
-      var interpolate = d3.geo.interpolate(_[0], _[1]), origin = interpolate(.5), p = d3.geo.rotation([ -origin[0], -origin[1] ])(_[0]), b = interpolate.distance * .5, γ = -asin(Math.sin(p[1] * radians) / Math.sin(b));
+      var interpolate = d3.geoInterpolate(_[0], _[1]), origin = interpolate(.5), p = d3.geoRotation([ -origin[0], -origin[1] ])(_[0]), b = interpolate.distance * .5, γ = -asin(Math.sin(p[1] * radians) / Math.sin(b));
       if (p[0] > 0) γ = π - γ;
       rotate.call(p, [ -origin[0], -origin[1], -γ * degrees ]);
       return m(b * 2);
     };
     return p;
   }
-  (d3.geo.twoPointEquidistant = twoPointEquidistantProjection).raw = twoPointEquidistant;
+  (d3.geoTwoPointEquidistant = twoPointEquidistantProjection).raw = twoPointEquidistant;
   function twoPointAzimuthal(d) {
     var cosd = Math.cos(d);
     function forward(λ, φ) {
-      var coordinates = d3.geo.gnomonic.raw(λ, φ);
+      var coordinates = d3.geoGnomonic.raw(λ, φ);
       coordinates[0] *= cosd;
       return coordinates;
     }
     forward.invert = function(x, y) {
-      return d3.geo.gnomonic.raw.invert(x / cosd, y);
+      return d3.geoGnomonic.raw.invert(x / cosd, y);
     };
     return forward;
   }
@@ -1764,14 +1764,14 @@ export default function() {
     p.points = function(_) {
       if (!arguments.length) return points;
       points = _;
-      var interpolate = d3.geo.interpolate(_[0], _[1]), origin = interpolate(.5), p = d3.geo.rotation([ -origin[0], -origin[1] ])(_[0]), b = interpolate.distance * .5, γ = -asin(Math.sin(p[1] * radians) / Math.sin(b));
+      var interpolate = d3.geoInterpolate(_[0], _[1]), origin = interpolate(.5), p = d3.geoRotation([ -origin[0], -origin[1] ])(_[0]), b = interpolate.distance * .5, γ = -asin(Math.sin(p[1] * radians) / Math.sin(b));
       if (p[0] > 0) γ = π - γ;
       rotate.call(p, [ -origin[0], -origin[1], -γ * degrees ]);
       return m(b);
     };
     return p;
   }
-  (d3.geo.twoPointAzimuthal = twoPointAzimuthalProjection).raw = twoPointAzimuthal;
+  (d3.geoTwoPointAzimuthal = twoPointAzimuthalProjection).raw = twoPointAzimuthal;
   function vanDerGrinten(λ, φ) {
     if (Math.abs(φ) < ε) return [ λ, 0 ];
     var sinθ = Math.abs(φ / halfπ), θ = asin(sinθ);
@@ -1785,7 +1785,7 @@ export default function() {
     var x2 = (x /= π) * x, y2 = (y /= π) * y, x2_y2 = x2 + y2, z = x2_y2 * x2_y2, c1 = -Math.abs(y) * (1 + x2_y2), c2 = c1 - 2 * y2 + x2, c3 = -2 * c1 + 1 + 2 * y2 + z, d = y2 / c3 + (2 * c2 * c2 * c2 / (c3 * c3 * c3) - 9 * c1 * c2 / (c3 * c3)) / 27, a1 = (c1 - c2 * c2 / (3 * c3)) / c3, m1 = 2 * Math.sqrt(-a1 / 3), θ1 = acos(3 * d / (a1 * m1)) / 3;
     return [ π * (x2_y2 - 1 + Math.sqrt(1 + 2 * (x2 - y2) + z)) / (2 * x), sgn(y) * π * (-m1 * Math.cos(θ1 + π / 3) - c2 / (3 * c3)) ];
   };
-  (d3.geo.vanDerGrinten = function() {
+  (d3.geoVanDerGrinten = function() {
     return projection(vanDerGrinten);
   }).raw = vanDerGrinten;
   function vanDerGrinten2(λ, φ) {
@@ -1800,7 +1800,7 @@ export default function() {
     var x1 = Math.abs(x / π), A = (1 - x1 * x1 - (y /= π) * y) / (2 * x1), A2 = A * A, B = Math.sqrt(A2 + 1);
     return [ sgn(x) * π * (B - A), sgn(y) * halfπ * Math.sin(2 * Math.atan2(Math.sqrt((1 - 2 * A * x1) * (A + B) - x1), Math.sqrt(B + A + x1))) ];
   };
-  (d3.geo.vanDerGrinten2 = function() {
+  (d3.geoVanDerGrinten2 = function() {
     return projection(vanDerGrinten2);
   }).raw = vanDerGrinten2;
   function vanDerGrinten3(λ, φ) {
@@ -1815,7 +1815,7 @@ export default function() {
     var y1 = y / π, A = (π * π * (1 - y1 * y1) - x * x) / (2 * π * x);
     return [ x ? π * (sgn(x) * Math.sqrt(A * A + 1) - A) : 0, halfπ * Math.sin(2 * Math.atan(y1)) ];
   };
-  (d3.geo.vanDerGrinten3 = function() {
+  (d3.geoVanDerGrinten3 = function() {
     return projection(vanDerGrinten3);
   }).raw = vanDerGrinten3;
   function vanDerGrinten4(λ, φ) {
@@ -1835,14 +1835,14 @@ export default function() {
     } while (δ > ε && --i > 0);
     return [ sgn(x) * (Math.sqrt(D * D + 4) + D) * π / 4, halfπ * B ];
   };
-  (d3.geo.vanDerGrinten4 = function() {
+  (d3.geoVanDerGrinten4 = function() {
     return projection(vanDerGrinten4);
   }).raw = vanDerGrinten4;
   var wagner4 = function() {
     var A = 4 * π + 3 * Math.sqrt(3), B = 2 * Math.sqrt(2 * π * Math.sqrt(3) / A);
     return mollweideBromley(B * Math.sqrt(3) / π, B, A / 6);
   }();
-  (d3.geo.wagner4 = function() {
+  (d3.geoWagner4 = function() {
     return projection(wagner4);
   }).raw = wagner4;
   function wagner6(λ, φ) {
@@ -1851,7 +1851,7 @@ export default function() {
   wagner6.invert = function(x, y) {
     return [ x / Math.sqrt(1 - 3 * y * y / (π * π)), y ];
   };
-  (d3.geo.wagner6 = function() {
+  (d3.geoWagner6 = function() {
     return projection(wagner6);
   }).raw = wagner6;
   function wagner7(λ, φ) {
@@ -1862,7 +1862,7 @@ export default function() {
     var t1 = x / 2.66723, t2 = y / 1.24104, p = Math.sqrt(t1 * t1 + t2 * t2), c = 2 * asin(p / 2);
     return [ 3 * Math.atan2(x * Math.tan(c), 2.66723 * p), p && asin(y * Math.sin(c) / (1.24104 * .90631 * p)) ];
   };
-  (d3.geo.wagner7 = function() {
+  (d3.geoWagner7 = function() {
     return projection(wagner7);
   }).raw = wagner7;
   function wiechel(λ, φ) {
@@ -1874,7 +1874,7 @@ export default function() {
     var w = -.5 * (x * x + y * y), k = Math.sqrt(-w * (2 + w)), b = y * w + x * k, a = x * w - y * k, D = Math.sqrt(a * a + b * b);
     return [ Math.atan2(k * b, D * (1 + w)), D ? -asin(k * a / D) : 0 ];
   };
-  (d3.geo.wiechel = function() {
+  (d3.geoWiechel = function() {
     return projection(wiechel);
   }).raw = wiechel;
   function winkel3(λ, φ) {
@@ -1889,7 +1889,7 @@ export default function() {
     } while ((Math.abs(δλ) > ε || Math.abs(δφ) > ε) && --i > 0);
     return [ λ, φ ];
   };
-  (d3.geo.winkel3 = function() {
+  (d3.geoWinkel3 = function() {
     return projection(winkel3);
   }).raw = winkel3;
 };

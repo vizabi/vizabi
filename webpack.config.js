@@ -10,6 +10,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const OpenBrowserPlugin = require('open-browser-webpack-plugin');
 const SassLintPlugin = require('sasslint-webpack-plugin');
 const UnminifiedWebpackPlugin = require('unminified-webpack-plugin');
+const customLoader = require('custom-loader');
 
 const archiver = require('archiver');
 
@@ -43,6 +44,16 @@ function AfterBuildPlugin(callback) {
 }
 AfterBuildPlugin.prototype.apply = function (compiler) {
   compiler.plugin('done', this.callback);
+};
+
+customLoader.loaders = {
+  ['config-loader'](source) {
+    this.cacheable && this.cacheable();
+
+    const value = typeof source === 'string' ? JSON.parse(source) : source;
+    this.value = [value];
+    return `var VIZABI_MODEL = ${JSON.stringify(value, undefined, '  ')};`;
+  }
 };
 
 const plugins = [
@@ -152,10 +163,15 @@ const loaders = [
     include: [
       path.resolve(__dirname, 'src')
     ],
-    loader: extractSrc.extract([
-      `css-loader?${JSON.stringify({ sourceMap: true, minimize: __PROD__ })}`,
-      'sass-loader'
-    ])
+    loader: extractSrc.extract([{
+      loader: "css-loader",
+      options: {
+        minimize: __PROD__,
+        sourceMap: true
+      }
+    }, {
+      loader: 'sass-loader'
+    }])
   },
   {
     test: /\.scss$/,
@@ -214,7 +230,17 @@ const loaders = [
     test: /\.html$/,
     include: [path.resolve(__dirname, 'src')],
     loader: 'html-loader'
-  }
+  },
+  {
+    test: /\.json$/,
+    include: [
+      path.resolve(__dirname, 'node_modules')
+    ],
+    loaders: [
+      'file-loader?name=preview/assets/js/toolconfigs/[name].js',
+      'custom-loader?name=config-loader'
+    ]
+  },
 ];
 
 if (!__FAST__) {

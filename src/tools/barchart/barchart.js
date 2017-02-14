@@ -68,7 +68,11 @@ var BarChart = Tool.extend('BarChart', {
     locale: { },
     ui: {
       presentation: false,
-      chart: { }
+      chart: { },
+      "buttons": ['axes', 'colors', 'fullscreen'],
+      "dialogs": { 
+        'popup': ['axes', 'colors'] 
+      },
     }
   }
 });

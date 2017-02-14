@@ -1,22 +1,22 @@
-var VIZABI_MODEL = { 
+var VIZABI_MODEL = {
   "state": {
+    "time": {
+      "startOrigin": "1800",
+      "endOrigin": "2012",
+      "value": "2000",
+      "dim": "time"
+    },
     "entities": {
       "dim": "geo",
       "show": {
-        "is--country": true
-      }      
+        "geo": {"$in": ["usa", "swe", "nor"]}
+      }
     },
     "entities_colorlegend": {
-      "dim": "world_4region"
+      "dim": "geo"
     },
     "entities_tags": {
       "dim": "tag"
-    },
-    "time": {
-      "startOrigin": "1800",
-      "endOrigin": "2015",
-      "value": "2015",
-      "dim": "time"
     },
     "marker": {
       "space": ["entities", "time"],
@@ -26,41 +26,25 @@ var VIZABI_MODEL = {
       },
       "axis_y": {
         "use": "indicator",
-        "which": "life_expectancy_years",
-        "zoomedMin": 19,
-        "zoomedMax": 86,
-        "domainMin": 0,
-        "domainMax": 100
+        "which": "  ",
+        "scaleType": "log"        
       },
       "axis_x": {
-        "use": "indicator",
-        "scaleType": "log",
-        "domainMax": 150000,
-        "domainMin": 300,
-        "zoomedMax": 150000,
-        "zoomedMin": 300,
-        "which": "income_per_person_gdppercapita_ppp_inflation_adjusted"
-      },
-      "size": {
-        "use": "indicator",
-        "which": "population_total",
-        "domainMin": 15,
-        "domainMax": 1400000000,
-        "scaleType": "linear",
+        "use": "property",
+        "which": "name",
         "allow": {
-          "scales": ["linear"]
+          "names": ["name"]
         }
       },
       "color": {
         "use": "property",
         "which": "world_4region",
-        "syncModels": ["marker_colorlegend"]
+        "scaleType": "ordinal",
+        "colorlegend": "marker_colorlegend"
       }
     },
     "marker_colorlegend":{
       "space": ["entities_colorlegend"],
-      "opacityRegular": 0.8,
-      "opacityHighlightDim": 0.3,
       "label": {
         "use": "property",
         "which": "name"
@@ -89,12 +73,14 @@ var VIZABI_MODEL = {
   "ui": {
     "datawarning": {
       "doubtDomain": [1800, 1950, 2015],
-      "doubtRange": [1.0, 0.3, 0.2]
+      "doubtRange": [1.0, 0.8, 0.6]
     },
-    "splash": true
+    "splash": false
   },
   "data": {
     "reader": "waffle",
+    //"reader": "ddf",
     "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/"
+    //"path": "data/systema_globalis"
   }
 };

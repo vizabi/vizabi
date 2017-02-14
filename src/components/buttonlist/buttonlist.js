@@ -435,11 +435,11 @@ var ButtonList = Component.extend({
     var parent = d3.select(".vzb-tool");
 
     if(parent.classed("vzb-portrait") && parent.classed("vzb-small")) {
-      if(this.model.state.marker.select.length > 0) target = this.element[0][0].scrollWidth
-      this.element[0][0].scrollLeft = target;
+      if(this.model.state.marker.select.length > 0) target = this.element.node().scrollWidth
+      this.element.node().scrollLeft = target;
     } else {
-      if(this.model.state.marker.select.length > 0) target = this.element[0][0].scrollHeight
-      this.element[0][0].scrollTop = target;
+      if(this.model.state.marker.select.length > 0) target = this.element.node().scrollHeight
+      this.element.node().scrollTop = target;
     }
   },
 
