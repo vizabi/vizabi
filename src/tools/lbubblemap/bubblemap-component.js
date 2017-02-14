@@ -102,7 +102,7 @@ var LBubbleMapComponent = Component.extend({
     this._super(config, context);
 
     this.sScale = null;
-    this.cScale = d3.scale.category10();
+    this.cScale = d3.scaleOrdinal(d3.schemeCategory10);
 
     _this.COLOR_WHITEISH = "#fdfdfd";
 
@@ -215,193 +215,193 @@ var LBubbleMapComponent = Component.extend({
       var conceptPropsS = _this.model.marker.size.getConceptprops();
       var conceptPropsC = _this.model.marker.color.getConceptprops();
 
-      this.strings = {
-          title: {
-            S: conceptPropsS.name,
-            C: conceptPropsC.name
-          }
-      };
+    this.strings = {
+      title: {
+        S: conceptPropsS.name,
+        C: conceptPropsC.name
+      }
+    };
 
-      this.yTitleEl.select("text")
-          .text(this.translator("buttons/size") + ": " + this.strings.title.S)
-          .on("click", function() {
-            _this.parent
+    this.yTitleEl.select("text")
+        .text(this.translator("buttons/size") + ": " + this.strings.title.S)
+        .on("click", function() {
+          _this.parent
               .findChildByName("gapminder-treemenu")
               .markerID("size")
               .alignX(_this.model.locale.isRTL() ? "right" : "left")
               .alignY("top")
               .updateView()
               .toggle();
-          });
+        });
 
-      this.cTitleEl.select("text")
-          .text(this.translator("buttons/color") + ": " + this.strings.title.C)
-          .on("click", function() {
-            _this.parent
+    this.cTitleEl.select("text")
+        .text(this.translator("buttons/color") + ": " + this.strings.title.C)
+        .on("click", function() {
+          _this.parent
               .findChildByName("gapminder-treemenu")
               .markerID("color")
               .alignX(_this.model.locale.isRTL() ? "right" : "left")
               .alignY("top")
               .updateView()
               .toggle();
-          });
+        });
 
-      utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
-      this.dataWarningEl.append("text")
-          .attr("text-anchor", "end")
-          .text(this.translator("hints/dataWarning"));
+    utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
+    this.dataWarningEl.append("text")
+        .attr("text-anchor", "end")
+        .text(this.translator("hints/dataWarning"));
 
-      this.dataWarningEl
-          .on("click", function () {
-              _this.parent.findChildByName("gapminder-datawarning").toggle();
-          })
-          .on("mouseover", function () {
-              _this.updateDoubtOpacity(1);
-          })
-          .on("mouseout", function () {
-              _this.updateDoubtOpacity();
-          })
+    this.dataWarningEl
+        .on("click", function () {
+          _this.parent.findChildByName("gapminder-datawarning").toggle();
+        })
+        .on("mouseover", function () {
+          _this.updateDoubtOpacity(1);
+        })
+        .on("mouseout", function () {
+          _this.updateDoubtOpacity();
+        })
 
-      this.yInfoEl
-          .html(iconQuestion)
-          .select("svg").attr("width", "0px").attr("height", "0px");
+    this.yInfoEl
+        .html(iconQuestion)
+        .select("svg").attr("width", "0px").attr("height", "0px");
 
-      //TODO: move away from UI strings, maybe to ready or ready once
-      this.yInfoEl.on("click", function() {
-        _this.parent.findChildByName("gapminder-datanotes").pin();
-      })
-      this.yInfoEl.on("mouseover", function() {
-        var rect = this.getBBox();
-        var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-        var toolRect = _this.root.element.getBoundingClientRect();
-        var chartRect = _this.element.node().getBoundingClientRect();      
-        _this.parent.findChildByName("gapminder-datanotes").setHook('size').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
-      })
-      this.yInfoEl.on("mouseout", function() {
-        _this.parent.findChildByName("gapminder-datanotes").hide();
-      })
+    //TODO: move away from UI strings, maybe to ready or ready once
+    this.yInfoEl.on("click", function() {
+      _this.parent.findChildByName("gapminder-datanotes").pin();
+    })
+    this.yInfoEl.on("mouseover", function() {
+      var rect = this.getBBox();
+      var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+      var toolRect = _this.root.element.getBoundingClientRect();
+      var chartRect = _this.element.node().getBoundingClientRect();
+      _this.parent.findChildByName("gapminder-datanotes").setHook('size').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
+    })
+    this.yInfoEl.on("mouseout", function() {
+      _this.parent.findChildByName("gapminder-datanotes").hide();
+    })
 
-      this.cInfoEl
-          .html(iconQuestion)
-          .select("svg").attr("width", "0px").attr("height", "0px");
+    this.cInfoEl
+        .html(iconQuestion)
+        .select("svg").attr("width", "0px").attr("height", "0px");
 
-      //TODO: move away from UI strings, maybe to ready or ready once
-      this.cInfoEl.on("click", function() {
-        _this.parent.findChildByName("gapminder-datanotes").pin();
-      })
-      this.cInfoEl.on("mouseover", function() {
-        var rect = this.getBBox();
-        var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-        var toolRect = _this.root.element.getBoundingClientRect();
-        var chartRect = _this.element.node().getBoundingClientRect();      
-        _this.parent.findChildByName("gapminder-datanotes").setHook('color').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
-      })
-      this.cInfoEl.on("mouseout", function() {
-        _this.parent.findChildByName("gapminder-datanotes").hide();
-      })
+    //TODO: move away from UI strings, maybe to ready or ready once
+    this.cInfoEl.on("click", function() {
+      _this.parent.findChildByName("gapminder-datanotes").pin();
+    })
+    this.cInfoEl.on("mouseover", function() {
+      var rect = this.getBBox();
+      var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+      var toolRect = _this.root.element.getBoundingClientRect();
+      var chartRect = _this.element.node().getBoundingClientRect();
+      _this.parent.findChildByName("gapminder-datanotes").setHook('color').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
+    })
+    this.cInfoEl.on("mouseout", function() {
+      _this.parent.findChildByName("gapminder-datanotes").hide();
+    })
   },
 
   // show size number on title when hovered on a bubble
   updateTitleNumbers: function(){
-      var _this = this;
+    var _this = this;
 
-      var mobile; // if is mobile device and only one bubble is selected, update the ytitle for the bubble
-      if (_this.isMobile && _this.model.marker.select && _this.model.marker.select.length === 1) {
-        mobile = _this.model.marker.select[0];
+    var mobile; // if is mobile device and only one bubble is selected, update the ytitle for the bubble
+    if (_this.isMobile && _this.model.marker.select && _this.model.marker.select.length === 1) {
+      mobile = _this.model.marker.select[0];
+    }
+
+    if(_this.hovered || mobile) {
+      var conceptPropsS = _this.model.marker.size.getConceptprops();
+      var conceptPropsC = _this.model.marker.color.getConceptprops();
+
+      var hovered = _this.hovered || mobile;
+      var formatterS = _this.model.marker.size.getTickFormatter();
+      var formatterC = _this.model.marker.color.getTickFormatter();
+
+      var unitS = conceptPropsS.unit || "";
+      var unitC = conceptPropsC.unit || "";
+
+      var valueS = _this.values.size[hovered[_this.KEY]];
+      var valueC = _this.values.color[hovered[_this.KEY]];
+
+      //resolve value for color from the color legend model
+      if(_this.model.marker.color.isDiscrete() && valueC) {
+        valueC = this.model.marker.color.getColorlegendMarker().label.getItems()[valueC] || "";
       }
 
-      if(_this.hovered || mobile) {
-        var conceptPropsS = _this.model.marker.size.getConceptprops();
-        var conceptPropsC = _this.model.marker.color.getConceptprops();
-
-        var hovered = _this.hovered || mobile;
-        var formatterS = _this.model.marker.size.getTickFormatter();
-        var formatterC = _this.model.marker.color.getTickFormatter();
-
-        var unitS = conceptPropsS.unit || "";
-        var unitC = conceptPropsC.unit || "";
-
-        var valueS = _this.values.size[hovered[_this.KEY]];
-        var valueC = _this.values.color[hovered[_this.KEY]];
-
-        //resolve value for color from the color legend model
-        if(_this.model.marker.color.isDiscrete() && valueC) {
-          valueC = this.model.marker.color.getColorlegendMarker().label.getItems()[valueC] || "";
-        }
-
-        _this.yTitleEl.select("text")
+      _this.yTitleEl.select("text")
           .text(_this.translator("buttons/size") + ": " + formatterS(valueS) + " " + unitS);
 
-        _this.cTitleEl.select("text")
+      _this.cTitleEl.select("text")
           .text(_this.translator("buttons/color") + ": " +
-            (valueC || valueC===0 ? formatterC(valueC) + " " + unitC : _this.translator("hints/nodata")));
+          (valueC || valueC===0 ? formatterC(valueC) + " " + unitC : _this.translator("hints/nodata")));
 
-        this.yInfoEl.classed("vzb-hidden", true);
-        this.cInfoEl.classed("vzb-hidden", true);
-      } else {
-        this.yTitleEl.select("text")
-            .text(this.translator("buttons/size") + ": " + this.strings.title.S);
-        this.cTitleEl.select("text")
-            .text(this.translator("buttons/color") + ": " + this.strings.title.C);
+      this.yInfoEl.classed("vzb-hidden", true);
+      this.cInfoEl.classed("vzb-hidden", true);
+    } else {
+      this.yTitleEl.select("text")
+          .text(this.translator("buttons/size") + ": " + this.strings.title.S);
+      this.cTitleEl.select("text")
+          .text(this.translator("buttons/color") + ": " + this.strings.title.C);
 
-        this.yInfoEl.classed("vzb-hidden", false);
-        this.cInfoEl.classed("vzb-hidden", false || this.cTitleEl.classed('vzb-hidden'));
-      }
+      this.yInfoEl.classed("vzb-hidden", false);
+      this.cInfoEl.classed("vzb-hidden", false || this.cTitleEl.classed('vzb-hidden'));
+    }
   },
 
   updateDoubtOpacity: function (opacity) {
-      if (opacity == null) opacity = this.wScale(+this.time.getUTCFullYear().toString());
-      if (this.someSelected) opacity = 1;
-      this.dataWarningEl.style("opacity", opacity);
+    if (opacity == null) opacity = this.wScale(+this.time.getUTCFullYear().toString());
+    if (this.someSelected) opacity = 1;
+    this.dataWarningEl.style("opacity", opacity);
   },
 
   updateOpacity: function () {
-      var _this = this;
-      /*
-      this.entityBubbles.classed("vzb-selected", function (d) {
-          return _this.model.marker.isSelected(d);
-      });
-      */
+    var _this = this;
+    /*
+     this.entityBubbles.classed("vzb-selected", function (d) {
+     return _this.model.marker.isSelected(d);
+     });
+     */
 
-      var OPACITY_HIGHLT = 1.0;
-      var OPACITY_HIGHLT_DIM = .3;
-      var OPACITY_SELECT = this.model.marker.opacityRegular;
-      var OPACITY_REGULAR = this.model.marker.opacityRegular;
-      var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
+    var OPACITY_HIGHLT = 1.0;
+    var OPACITY_HIGHLT_DIM = .3;
+    var OPACITY_SELECT = this.model.marker.opacityRegular;
+    var OPACITY_REGULAR = this.model.marker.opacityRegular;
+    var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
 
-      this.entityBubbles.style("opacity", function (d) {
+    this.entityBubbles.style("opacity", function (d) {
 
-          if (_this.someHighlighted) {
-              //highlight or non-highlight
-              if (_this.model.marker.isHighlighted(d)) return OPACITY_HIGHLT;
-          }
-
-          if (_this.someSelected) {
-              //selected or non-selected
-              return _this.model.marker.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
-          }
-
-          if (_this.someHighlighted) return OPACITY_HIGHLT_DIM;
-
-          return OPACITY_REGULAR;
-
-      });
-
-      this.entityBubbles.classed("vzb-selected", function (d) {
-          return _this.model.marker.isSelected(d)
-      });
-
-      var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
-
-      // when pointer events need update...
-      if (nonSelectedOpacityZero !== this.nonSelectedOpacityZero) {
-          this.entityBubbles.style("pointer-events", function (d) {
-              return (!_this.someSelected || !nonSelectedOpacityZero || _this.model.marker.isSelected(d)) ?
-                  "visible" : "none";
-          });
+      if (_this.someHighlighted) {
+        //highlight or non-highlight
+        if (_this.model.marker.isHighlighted(d)) return OPACITY_HIGHLT;
       }
 
-      this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
+      if (_this.someSelected) {
+        //selected or non-selected
+        return _this.model.marker.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
+      }
+
+      if (_this.someHighlighted) return OPACITY_HIGHLT_DIM;
+
+      return OPACITY_REGULAR;
+
+    });
+
+    this.entityBubbles.classed("vzb-selected", function (d) {
+      return _this.model.marker.isSelected(d)
+    });
+
+    var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
+
+    // when pointer events need update...
+    if (nonSelectedOpacityZero !== this.nonSelectedOpacityZero) {
+      this.entityBubbles.style("pointer-events", function (d) {
+        return (!_this.someSelected || !nonSelectedOpacityZero || _this.model.marker.isSelected(d)) ?
+            "visible" : "none";
+      });
+    }
+
+    this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
   },
 
   /**
@@ -424,17 +424,17 @@ var LBubbleMapComponent = Component.extend({
     var getKeys = function(prefix) {
       prefix = prefix || "";
       return _this.model.marker.getKeys()
-        .map(function(d) {
-          var pointer = {};
-          pointer[KEY] = d[KEY];
-          pointer[TIMEDIM] = endTime;
-          pointer.sortValue = _this.values.size[d[KEY]]||0;
-          pointer[KEY] = prefix + d[KEY];
-          return pointer;
-        })
-        .sort(function(a, b) {
-          return b.sortValue - a.sortValue;
-        })
+          .map(function(d) {
+            var pointer = {};
+            pointer[KEY] = d[KEY];
+            pointer[TIMEDIM] = endTime;
+            pointer.sortValue = _this.values.size[d[KEY]]||0;
+            pointer[KEY] = prefix + d[KEY];
+            return pointer;
+          })
+          .sort(function(a, b) {
+            return b.sortValue - a.sortValue;
+          })
     };
 
     // get array of GEOs, sorted by the size hook
@@ -455,58 +455,59 @@ var LBubbleMapComponent = Component.extend({
     //Asia 49.8380° N, 105.8203° E
     //north American 48.1667° N and longitude 100.1667° W
     /*
-    var pos = {
-      "afr": {lat: 9.1, lng: 18.3},
-      "eur": {lat: 53.0, lng: 9.0},
-      "asi": {lat: 49.8, lng: 105.8},
-      "ame": {lat: 48.2, lng: -100.2},
-    };
-    */
+     var pos = {
+     "afr": {lat: 9.1, lng: 18.3},
+     "eur": {lat: 53.0, lng: 9.0},
+     "asi": {lat: 49.8, lng: 105.8},
+     "ame": {lat: 48.2, lng: -100.2},
+     };
+     */
 
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bmc-bubble')
-      .data(this.model.marker.getVisible(), function(d) { return d[KEY]; })
-      .order();
+        .data(this.model.marker.getVisible(), function(d) { return d[KEY]; })
+        .order();
 
     //exit selection
     this.entityBubbles.exit().remove();
 
     //enter selection -- init circles
-    this.entityBubbles.enter().append("circle")
-      .attr("class", "vzb-bmc-bubble")
-      .on("mouseover", function (d, i) {
+    this.entityBubbles = this.entityBubbles.enter().append("circle")
+        .attr("class", "vzb-bmc-bubble")
+        .on("mouseover", function (d, i) {
           if (utils.isTouchDevice()) return;
           _this._interact()._mouseover(d, i);
-      })
-      .on("mouseout", function (d, i) {
+        })
+        .on("mouseout", function (d, i) {
           if (utils.isTouchDevice()) return;
           _this._interact()._mouseout(d, i);
-      })
-      .on("click", function (d, i) {
+        })
+        .on("click", function (d, i) {
           if (utils.isTouchDevice()) return;
           _this._interact()._click(d, i);
           _this.highlightMarkers();
-      })
-      .onTap(function (d, i) {
+        })
+        .onTap(function (d, i) {
           _this._interact()._click(d, i);
           d3.event.stopPropagation();
-      })
-      .onLongTap(function (d, i) {
-      })
+        })
+        .onLongTap(function (d, i) {
+        })
+        .merge(this.entityBubbles);
 
   },
 
   unselectBubblesWithNoData: function(frame){
-      var _this = this;
-      var KEY = this.KEY;
-      if(!frame) frame = this.values;
+    var _this = this;
+    var KEY = this.KEY;
+    if(!frame) frame = this.values;
 
-      if(!frame || !frame.size) return;
+    if(!frame || !frame.size) return;
 
-      this.model.marker.select.forEach(function(d){
-        if(!frame.size[d[KEY]] && frame.size[d[KEY]] !== 0)
-            _this.model.marker.selectMarker(d);
-      })
+    this.model.marker.select.forEach(function(d){
+      if(!frame.size[d[KEY]] && frame.size[d[KEY]] !== 0)
+        _this.model.marker.selectMarker(d);
+    })
   },
 
   redrawDataPoints: function(duration, reposition){
@@ -530,46 +531,46 @@ var LBubbleMapComponent = Component.extend({
 
       if(d.hidden !== d.hidden_1) {
         if(duration){
-            view.transition().duration(duration).ease("linear")
-                .style("opacity", 0)
-                .each("end", () => view.classed("vzb-hidden", d.hidden).style("opacity", _this.model.marker.opacityRegular));
+          view.transition().duration(duration).ease(d3.easeLinear)
+              .style("opacity", 0)
+              .on("end", () => view.classed("vzb-hidden", d.hidden).style("opacity", _this.model.marker.opacityRegular));
         } else {
           view.classed("vzb-hidden", d.hidden);
         }
       }
       if(!d.hidden){
 
-          d.r = utils.areaToRadius(_this.sScale(valueS||0));
-          d.label = valueL;
+        d.r = utils.areaToRadius(_this.sScale(valueS||0));
+        d.label = valueL;
 
-          view.classed("vzb-hidden", false)
-              .attr("fill", valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH);
+        view.classed("vzb-hidden", false)
+            .attr("fill", valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH);
 
-          if (_this.model.ui.map.colorGeo)
-            geo.style("fill", valueC!=null?_this.cScale(valueC):"#999");
+        if (_this.model.ui.map.colorGeo)
+          geo.style("fill", valueC!=null?_this.cScale(valueC):"#999");
 
-          if(reposition){
+        if(reposition){
               d.cLoc = _this.map.invert(valueX, valueY);
 
-              view.attr("cx", d.cLoc[0])
-                  .attr("cy", d.cLoc[1]);
-          }
-
-          if(duration){
-              view.transition().duration(duration).ease("linear")
-                  .attr("r", d.r);
-          }else{
-              view.interrupt()
-                  .attr("r", d.r)
-                  .transition();
-          }
-
-          _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], valueS, valueC, d.label, duration);
-        } else {
-          _this._updateLabel(d, index, 0, 0, valueS, valueC, valueL, duration);
+          view.attr("cx", d.cLoc[0])
+              .attr("cy", d.cLoc[1]);
         }
 
-      });
+        if(duration){
+          view.transition().duration(duration).ease(d3.easeLinear)
+              .attr("r", d.r);
+        }else{
+          view.interrupt()
+              .attr("r", d.r)
+              .transition();
+        }
+
+        _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], valueS, valueC, d.label, duration);
+      } else {
+        _this._updateLabel(d, index, 0, 0, valueS, valueC, valueL, duration);
+      }
+
+    });
   },
 
   /*
@@ -593,9 +594,9 @@ var LBubbleMapComponent = Component.extend({
 
     //reset font sizes first to make the measurement consistent
     var yTitleText = this.yTitleEl.select("text")
-      .style("font-size", null);
+        .style("font-size", null);
     var cTitleText = this.cTitleEl.select("text")
-      .style("font-size", null);
+        .style("font-size", null);
 
     var yTitleText = this.yTitleEl.select("text");
     var cTitleText = this.cTitleEl.select("text");
@@ -681,13 +682,13 @@ var LBubbleMapComponent = Component.extend({
         isRTL = this.model.locale.isRTL();
 
     this.graph
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     this.year.setConditions({
       widthRatio: 2/10
     });
     this.year.resize(this.width, this.height);
-        
+
     this.yTitleEl
         .style("font-size", infoElHeight)
         .attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + margin.top + ")")
@@ -703,38 +704,38 @@ var LBubbleMapComponent = Component.extend({
         .attr("width", warnBB.height * 0.75)
         .attr("height", warnBB.height * 0.75)
         .attr("x", -warnBB.width - warnBB.height * 1.2)
-        .attr("y", -warnBB.height * 0.65)
+        .attr("y", -warnBB.height * 0.65);
 
     this.dataWarningEl
         .attr("transform", "translate(" + (this.width) + "," + (this.height - warnBB.height * 0.5) + ")")
         .select("text");
 
     if(this.yInfoEl.select('svg').node()) {
-        var titleBBox = this.yTitleEl.node().getBBox();
-        var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
-        var hTranslate = isRTL ? (titleBBox.x + translate[0] - infoElHeight * 1.4) : (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4);
+      var titleBBox = this.yTitleEl.node().getBBox();
+      var t = utils.transform(this.yTitleEl.node());
+      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4);
 
-        this.yInfoEl.select('svg')
-            .attr("width", infoElHeight)
-            .attr("height", infoElHeight)
-        this.yInfoEl.attr('transform', 'translate('
-            + hTranslate + ','
-            + (translate[1] - infoElHeight * 0.8) + ')');
+      this.yInfoEl.select('svg')
+          .attr("width", infoElHeight)
+          .attr("height", infoElHeight);
+      this.yInfoEl.attr('transform', 'translate('
+          + hTranslate + ','
+          + (t.translateY - infoElHeight * 0.8) + ')');
     }
 
     this.cInfoEl.classed("vzb-hidden", this.cTitleEl.classed("vzb-hidden"));
 
     if(!this.cInfoEl.classed("vzb-hidden") && this.cInfoEl.select('svg').node()) {
-        var titleBBox = this.cTitleEl.node().getBBox();
-        var translate = d3.transform(this.cTitleEl.attr('transform')).translate;
-        var hTranslate = isRTL ? (titleBBox.x + translate[0] - infoElHeight * 1.4) : (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4);
+      var titleBBox = this.cTitleEl.node().getBBox();
+      var t = utils.transform(this.cTitleEl.node());
+      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4);
 
-        this.cInfoEl.select('svg')
-            .attr("width", infoElHeight)
-            .attr("height", infoElHeight)
-        this.cInfoEl.attr('transform', 'translate('
-            + hTranslate + ','
-            + (translate[1] - infoElHeight * 0.8) + ')');
+      this.cInfoEl.select('svg')
+          .attr("width", infoElHeight)
+          .attr("height", infoElHeight)
+      this.cInfoEl.attr('transform', 'translate('
+          + hTranslate + ','
+          + (t.translateY - infoElHeight * 0.8) + ')');
     }
   },
 
@@ -758,55 +759,55 @@ var LBubbleMapComponent = Component.extend({
   },
 
   _interact: function () {
-      var _this = this;
+    var _this = this;
 
-      return {
-          _mouseover: function (d, i) {
-              if (_this.model.time.dragging) return;
+    return {
+      _mouseover: function (d, i) {
+        if (_this.model.time.dragging) return;
 
-              _this.model.marker.highlightMarker(d);
+        _this.model.marker.highlightMarker(d);
 
-              _this.hovered = d;
-              //put the exact value in the size title
-              _this.updateTitleNumbers();
-              _this.fitSizeOfTitles();
+        _this.hovered = d;
+        //put the exact value in the size title
+        _this.updateTitleNumbers();
+        _this.fitSizeOfTitles();
 
-              if (_this.model.marker.isSelected(d)) { // if selected, not show hover tooltip
-                _this._setTooltip();
-              } else {
-                //position tooltip
-                _this._setTooltip(d);
-              }
-          },
-          _mouseout: function (d, i) {
-              if (_this.model.time.dragging) return;
-              _this._setTooltip();
-              _this.hovered = null;
-              _this.updateTitleNumbers();
-              _this.fitSizeOfTitles();
-              _this.model.marker.clearHighlighted();
-          },
-          _click: function (d, i) {
-              _this.model.marker.selectMarker(d);
-          }
-      };
+        if (_this.model.marker.isSelected(d)) { // if selected, not show hover tooltip
+          _this._setTooltip();
+        } else {
+          //position tooltip
+          _this._setTooltip(d);
+        }
+      },
+      _mouseout: function (d, i) {
+        if (_this.model.time.dragging) return;
+        _this._setTooltip();
+        _this.hovered = null;
+        _this.updateTitleNumbers();
+        _this.fitSizeOfTitles();
+        _this.model.marker.clearHighlighted();
+      },
+      _click: function (d, i) {
+        _this.model.marker.selectMarker(d);
+      }
+    };
 
   },
 
 
   highlightMarkers: function () {
-      var _this = this;
-      this.someHighlighted = (this.model.marker.highlight.length > 0);
+    var _this = this;
+    this.someHighlighted = (this.model.marker.highlight.length > 0);
 
-      if(utils.isTouchDevice()) {
-        if(this.someHighlighted) {
-          _this.hovered = this.model.marker.highlight[0];
-        } else {
-          _this.hovered = null;
-        }
-        _this.updateTitleNumbers();
-        _this.fitSizeOfTitles();
+    if(utils.isTouchDevice()) {
+      if(this.someHighlighted) {
+        _this.hovered = this.model.marker.highlight[0];
+      } else {
+        _this.hovered = null;
       }
+      _this.updateTitleNumbers();
+      _this.fitSizeOfTitles();
+    }
 
 
 //      if (!this.selectList || !this.someSelected) return;
@@ -845,27 +846,27 @@ var LBubbleMapComponent = Component.extend({
   },
 
   selectMarkers: function () {
-      var _this = this;
-      var KEY = this.KEY;
-      this.someSelected = (this.model.marker.select.length > 0);
+    var _this = this;
+    var KEY = this.KEY;
+    this.someSelected = (this.model.marker.select.length > 0);
 
 //      this._selectlist.rebuild();
-      if(utils.isTouchDevice()) {
-        _this._labels.showCloseCross(null, false);
-        if(_this.someHighlighted) {
-          _this.model.marker.clearHighlighted();
-        } else {
-          _this.updateTitleNumbers();
-          _this.fitSizeOfTitles();
-        }
+    if(utils.isTouchDevice()) {
+      _this._labels.showCloseCross(null, false);
+      if(_this.someHighlighted) {
+        _this.model.marker.clearHighlighted();
       } else {
-        // hide recent hover tooltip
-        if (!_this.hovered || _this.model.marker.isSelected(_this.hovered)) {
-          _this._setTooltip();
-        }
+        _this.updateTitleNumbers();
+        _this.fitSizeOfTitles();
       }
+    } else {
+      // hide recent hover tooltip
+      if (!_this.hovered || _this.model.marker.isSelected(_this.hovered)) {
+        _this._setTooltip();
+      }
+    }
 
-      this.nonSelectedOpacityZero = false;
+    this.nonSelectedOpacityZero = false;
   },
 
   _setTooltip: function (d) {
@@ -879,9 +880,9 @@ var LBubbleMapComponent = Component.extend({
         return parseInt(d)
       });
       var xPos, yPos, xSign = -1,
-        ySign = -1,
-        xOffset = 0,
-        yOffset = 0;
+          ySign = -1,
+          xOffset = 0,
+          yOffset = 0;
 
       if(offset) {
         xOffset = offset * .71; // .71 - sin and cos for 315
@@ -890,10 +891,10 @@ var LBubbleMapComponent = Component.extend({
       //position tooltip
       this.tooltip.classed("vzb-hidden", false)
         //.attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
-        .selectAll("text")
-        .text(tooltipText);
+          .selectAll("text")
+          .text(tooltipText);
 
-      var contentBBox = this.tooltip.select('text')[0][0].getBBox();
+      var contentBBox = this.tooltip.select('text').node().getBBox();
       if(x - xOffset - contentBBox.width < 0) {
         xSign = 1;
         x += contentBBox.width + 5; // corrective to the block Radius and text padding
@@ -914,14 +915,14 @@ var LBubbleMapComponent = Component.extend({
         yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
       }
       this.tooltip.attr("transform", "translate(" + (xPos ? xPos : mouse[0]) + "," + (yPos ? yPos : mouse[1]) +
-        ")")
+          ")")
 
       this.tooltip.select('rect').attr("width", contentBBox.width + 8)
-        .attr("height", contentBBox.height * 1.2)
-        .attr("x", -contentBBox.width - 4)
-        .attr("y", -contentBBox.height * .85)
-        .attr("rx", contentBBox.height * .2)
-        .attr("ry", contentBBox.height * .2);
+          .attr("height", contentBBox.height * 1.2)
+          .attr("x", -contentBBox.width - 4)
+          .attr("y", -contentBBox.height * .85)
+          .attr("rx", contentBBox.height * .2)
+          .attr("ry", contentBBox.height * .2);
 
 
     } else {

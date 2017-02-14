@@ -3,7 +3,7 @@ import globals from 'base/globals';
 import * as utils from 'base/utils';
 
 import topojson from 'helpers/topojson';
-import d3_geo_projection from 'helpers/d3.geo.projection';
+import d3_geo_projection from 'helpers/d3.geoProjection';
 var GoogleMapsLoader = require('google-maps');
 
 import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js';
@@ -83,17 +83,19 @@ var MapLayer = Class.extend({
     var shape_path = this.context.model.ui.map.topology.path
         || globals.ext_resources.host + globals.ext_resources.preloadPath + "world-50m.json";
 
-    this.zeroProjection = d3.geo[this.context.model.ui.map.projection]();
+    var projection = "geo" + utils.capitalize(this.context.model.ui.map.projection);
+    
+    this.zeroProjection = d3[projection]();
     this.zeroProjection
         .scale(1)
         .translate([0, 0]);
 
-    this.projection = d3.geo[this.context.model.ui.map.projection]();
+    this.projection = d3[projection]();
     this.projection
         .scale(1)
         .translate([0, 0]);
 
-    this.mapPath = d3.geo.path()
+    this.mapPath = d3.geoPath()
         .projection(this.projection);
 
 
@@ -308,17 +310,19 @@ var GoogleMapLayer = Class.extend({
  
   rescaleMap: function() {
     var _this = this;
-    var offset = this.context.model.ui.map.offset;
     var margin = this.context.activeProfile.margin;
-    var viewPortHeight = this.context.height * this.context.model.ui.map.scale;
-    var viewPortWidth = this.context.width * this.context.model.ui.map.scale;
 
     this.mapCanvas
-        .style({"width": this.context.width + "px", "height": this.context.height + "px"});
+        .style("width", this.context.width + "px")
+        .style("height", this.context.height + "px");
     this.mapRoot
         .attr('width', this.context.width)
         .attr('height', this.context.height)
-        .style({"position": "absolute", "left": margin.left + "px", "right": margin.right + "px", "top": margin.top + "px", "bottom": margin.bottom + "px"});
+        .style("position", "absolute")
+        .style("left", margin.left + "px")
+        .style("right", margin.right + "px")
+        .style("top", margin.top + "px")
+        .style("bottom", margin.bottom + "px");
     google.maps.event.trigger(this.map, "resize");
 
     var rectBounds = new google.maps.LatLngBounds(
@@ -389,12 +393,17 @@ var MapboxLayer = Class.extend({
     var viewPortWidth = this.context.width * this.context.model.ui.map.scale;
 
     this.mapCanvas
-        .style({"width": viewPortWidth + "px", "height": viewPortHeight + "px"});
+        .style("width", viewPortWidth + "px")
+        .style("height", viewPortHeight + "px");
 
     this.mapRoot
         .attr('width', viewPortWidth)
         .attr('height', viewPortHeight)
-        .style({"position": "absolute", "left": margin.left + "px", "right": margin.right + "px", "top": margin.top + "px", "bottom": margin.bottom + "px"});
+        .style("position", "absolute")
+        .style("left", margin.left + "px")
+        .style("right", margin.right + "px")
+        .style("top", margin.top + "px")
+        .style("bottom", margin.bottom + "px");
 
     utils.defer(function() {
       _this.map.fitBounds(_this.bounds, {duration: 0});

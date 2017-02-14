@@ -82,7 +82,7 @@ var LBubbleMap = Tool.extend('LBubbleMap', {
         path: null,
         colorGeo: false,
         preserveAspectRatio: true,
-        mapEngine: "mapbox",
+        mapEngine: "google",
         topojsonLayer: true,
         bounds: {
           north: 37,
