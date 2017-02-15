@@ -18,6 +18,7 @@ const extractSrc = new ExtractTextPlugin('dist/vizabi.css');
 const extractPreview = new ExtractTextPlugin('preview/assets/css/main.css');
 
 const __PROD__ = process.env.NODE_ENV === 'production';
+const __FIX__ = !!process.env.FIX;
 const timestamp = new Date();
 
 const sep = '\\' + path.sep;
@@ -95,7 +96,14 @@ const plugins = [
   new webpack.DefinePlugin({
     __VERSION: JSON.stringify(pkg.version),
     __BUILD: +timestamp
-  })
+  }),
+  new webpack.LoaderOptionsPlugin({
+    options: {
+      eslint: {
+        fix: __FIX__,
+      },
+    },
+  }),
 ];
 
 if (__PROD__) {
