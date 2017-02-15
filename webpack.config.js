@@ -18,7 +18,6 @@ const extractSrc = new ExtractTextPlugin('dist/vizabi.css');
 const extractPreview = new ExtractTextPlugin('preview/assets/css/main.css');
 
 const __PROD__ = process.env.NODE_ENV === 'production';
-const __FAST__ = !!process.env.FAST;
 const timestamp = new Date();
 
 const sep = '\\' + path.sep;
@@ -35,7 +34,7 @@ const stats = {
   source: false,
   errors: true,
   errorDetails: true,
-  warnings: false,
+  warnings: true,
   publicPath: false
 };
 
@@ -159,6 +158,22 @@ if (__PROD__) {
 
 const loaders = [
   {
+    test: /\.js$/,
+    exclude: /node_modules/,
+    loaders: [
+      {
+        loader: 'babel-loader',
+        query: {
+          cacheDirectory: !__PROD__,
+          presets: ['es2015']
+        }
+      },
+      {
+        loader: 'eslint-loader'
+      }
+    ]
+  },
+  {
     test: /\.scss$/,
     include: [
       path.resolve(__dirname, 'src')
@@ -248,18 +263,6 @@ const loaders = [
     ]
   },
 ];
-
-if (!__FAST__) {
-  loaders.push({
-    test: /\.js$/,
-    exclude: /node_modules/,
-    loader: 'babel-loader',
-    query: {
-      cacheDirectory: !__PROD__,
-      presets: ['es2015']
-    }
-  });
-}
 
 module.exports = {
   devtool: 'source-map',
