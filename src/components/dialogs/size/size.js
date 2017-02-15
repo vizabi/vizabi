@@ -30,7 +30,7 @@ init: function(config, parent) {
   }
   ];
 
-  // config.ui is same as this.model.ui here but this.model.ui is not yet available because constructor hasn't been called. 
+  // config.ui is same as this.model.ui here but this.model.ui is not yet available because constructor hasn't been called.
   // can't call constructor earlier because this.components needs to be complete before calling constructor
   if (!config.ui.chart || config.ui.chart.sizeSelectorActive !== 0) {
     this.components.push(  {

@@ -15,7 +15,7 @@ var StackModel = Hook.extend({
   /**
    * Default values for this model
    */
-  getClassDefaults: function() { 
+  getClassDefaults: function() {
     var defaults = {
       use: null,
       which: null,
@@ -23,7 +23,7 @@ var StackModel = Hook.extend({
     };
     return utils.deepExtend(this._super(), defaults);
   },
-  
+
   /**
    * Initializes the stack hook
    * @param {Object} values The initial values of this model
@@ -33,7 +33,7 @@ var StackModel = Hook.extend({
   init: function(name, values, parent, bind) {
 
     this._type = "model";
-    
+
     this._super(name, values, parent, bind);
   },
 

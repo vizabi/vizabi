@@ -94,7 +94,7 @@ var BubbleMap = Tool.extend('BubbleMap', {
           bottom: 0,
           left: 0
         },
-        projection: 'robinson',      
+        projection: 'robinson',
         topology: {
           path: null,
           objects: {

@@ -18,6 +18,7 @@ const extractSrc = new ExtractTextPlugin('dist/vizabi.css');
 const extractPreview = new ExtractTextPlugin('preview/assets/css/main.css');
 
 const __PROD__ = process.env.NODE_ENV === 'production';
+const __FIX__ = !!process.env.FIX;
 const timestamp = new Date();
 
 const sep = '\\' + path.sep;
@@ -169,7 +170,10 @@ const loaders = [
         }
       },
       {
-        loader: 'eslint-loader'
+        loader: 'eslint-loader',
+        options: {
+          fix: __FIX__
+        }
       }
     ]
   },

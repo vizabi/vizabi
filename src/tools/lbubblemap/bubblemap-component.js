@@ -666,7 +666,7 @@ var LBubbleMapComponent = Component.extend({
 
     this.repositionElements();
   },
-  
+
   mapBoundsChanged: function() {
     this.updateMarkerSizeLimits();
     this._labels.updateSize();

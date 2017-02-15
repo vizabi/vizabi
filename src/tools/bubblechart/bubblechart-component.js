@@ -139,11 +139,11 @@ var BubbleChartComp = Component.extend({
       "change:marker.select": function(evt, path) {
         if(!_this._readyOnce || !_this.entityBubbles) return;
         //console.log("EVENT change:entities:select");
-        
+
         //disable trails if too many items get selected at once
         //otherwise it's too much waiting time
         if((evt.source._val||[]).length - (evt.source._previousVal||[]).length > 50) _this.model.ui.chart.trails = false;
-        
+
         _this.selectDataPoints();
         _this.redrawDataPoints();
         _this._trails.create().then(function() {
@@ -622,10 +622,10 @@ var BubbleChartComp = Component.extend({
       _this.parent.findChildByName("gapminder-datanotes").pin();
     })
     this.yInfoEl.on("mouseover", function() {
-      var rect = this.getBBox(); 
+      var rect = this.getBBox();
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
       var toolRect = _this.root.element.getBoundingClientRect();
-      var chartRect = _this.element.node().getBoundingClientRect();      
+      var chartRect = _this.element.node().getBoundingClientRect();
       _this.parent.findChildByName("gapminder-datanotes").setHook('axis_y').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
     })
     this.yInfoEl.on("mouseout", function() {
@@ -639,7 +639,7 @@ var BubbleChartComp = Component.extend({
       var rect = this.getBBox();
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
       var toolRect = _this.root.element.getBoundingClientRect();
-      var chartRect = _this.element.node().getBoundingClientRect();      
+      var chartRect = _this.element.node().getBoundingClientRect();
       _this.parent.findChildByName("gapminder-datanotes").setHook('axis_x').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
     })
     this.xInfoEl.on("mouseout", function() {
@@ -1019,15 +1019,15 @@ var BubbleChartComp = Component.extend({
     this._resizeDataWarning();
   },
 
-  
+
   _updateLineEqualXY: function (duration){
     var oneMeasure = this.model.marker.axis_x.which == this.model.marker.axis_y.which;
     this.lineEqualXY.classed("vzb-invisible", !oneMeasure);
     if(!oneMeasure) return;
-    
+
     var min = d3.min(this.yScale.domain().concat(this.xScale.domain()) );
     var max = d3.max(this.yScale.domain().concat(this.xScale.domain()) );
-    
+
     this.lineEqualXY
       .transition()
       .duration(duration||0)
@@ -1036,7 +1036,7 @@ var BubbleChartComp = Component.extend({
       .attr("x1", this.xScale(min))
       .attr("x2", this.xScale(max));
   },
-  
+
   _resizeDataWarning: function(){
     // reset font size to remove jumpy measurement
     var dataWarningText = this.dataWarningEl.select("text").style("font-size", null);
@@ -1220,7 +1220,7 @@ var BubbleChartComp = Component.extend({
             _this._updateBubble(d, _this.frame, index, d3.select(this), duration);
         });
     }
-    
+
     this._updateLineEqualXY(duration);
   },
 
@@ -1372,7 +1372,7 @@ var BubbleChartComp = Component.extend({
   _updateSTitle: function(titleS, titleC) {
 
     // vertical text about size and color
-    if (this.activeProfile.hideSTitle 
+    if (this.activeProfile.hideSTitle
         && this.model.ui.dialogs.sidebar.indexOf("colors")>-1
         && this.model.ui.dialogs.sidebar.indexOf("size")>-1) {
       this.sTitleEl.classed("vzb-invisible", true);

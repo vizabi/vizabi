@@ -722,13 +722,13 @@ var DataModel = Model.extend({
                 method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
                 use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
 
-                
+
                 if(firstKeyObject) {
                   frame[column][firstKey] = firstKeyObject[firstKey];
                 } else {
                   lastKeyObject = frame[column];
                 }
-                
+
                 // Inside of this 3-level loop is the following:
                 if (nested && nested[frameName] && (nested[frameName][0][column] || nested[frameName][0][column] === 0)) {
 

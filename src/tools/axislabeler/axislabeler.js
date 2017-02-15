@@ -82,7 +82,7 @@ var AxisLabeler = Tool.extend('AxisLabeler', {
     },
     data: {noConceptprops: true},
     locale: { },
-    ui: { } 
+    ui: { }
   }
 });
 

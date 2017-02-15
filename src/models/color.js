@@ -37,7 +37,7 @@ var ColorModel = Hook.extend({
   /**
    * Default values for this model
    */
-  getClassDefaults: function() { 
+  getClassDefaults: function() {
     var defaults = {
       use: null,
       which: null,
@@ -66,16 +66,16 @@ var ColorModel = Hook.extend({
           this.scaleType = "linear";
         }
 
-      } 
+      }
       if (!concept) {
         this.which = "_default";
-        this.use = "constant";  
+        this.use = "constant";
         this.scaleType = "ordinal";
       }
     }
     if (this.scaleType == null) {
         this.scaleType = this.dataSource
-          .getConceptprops(this.which).scales[0]; 
+          .getConceptprops(this.which).scales[0];
     }
   },
 
@@ -171,7 +171,7 @@ var ColorModel = Hook.extend({
         dim: this.which,
         show: {}
       };
-      marker.setDataSourceForAllSubhooks(this.data);      
+      marker.setDataSourceForAllSubhooks(this.data);
       entities.set(newFilter, false, false);
     }else{
       if(model.isDiscrete() && model.use !== "constant") model.set({which: this.which, data: this.data}, false, false);
@@ -328,7 +328,7 @@ var ColorModel = Hook.extend({
 
     }else{
       range = range.map((m) => utils.isArray(m)? m[0] : m);
-      
+
       scaleType = "ordinal";
 
       if(this.discreteDefaultPalette) domain = domain.concat(this.getUnique(this.which));
@@ -336,7 +336,7 @@ var ColorModel = Hook.extend({
         .domain(domain)
         .range(range);
     }
-    
+
     this.scaleType = scaleType;
   }
 

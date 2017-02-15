@@ -21,7 +21,7 @@ const TimeDisplay = Dialog.extend({
   ready() {
     this.updateTime();
   },
-  
+
   readyOnce() {
     this._super();
     this.timeLabel = new DynamicBackground(this.element.select('.vzb-timedisplay'));

@@ -7,6 +7,6 @@
     "browser": true
   },
   "rules": {
-    "no-unused-vars": 1
+    "no-trailing-spaces": 1
   }
 }

@@ -110,7 +110,7 @@ var Side = Dialog.extend({
       this.state["left"] = {};
       this.state["left"][sideDim] = sideKeys[1] ? sideKeys[1] : sideKeys[0];
     }
-  
+
     var hidden = this.model.state.marker.side.use == "constant";
 
     this.listLeft.classed("vzb-hidden", hidden);
@@ -186,9 +186,9 @@ var Side = Dialog.extend({
         }
         if(_this.state[name][sideDim] !== _this.state[otherSide][sideDim] && sideEntities.isShown(_this.state[name])) {
           showArray.push(_this.state[name]);
-        }  
+        }
 
-        if(d[sideDim] !== _this.state[otherSide][sideDim]) {       
+        if(d[sideDim] !== _this.state[otherSide][sideDim]) {
           var sideKeys = [d[sideDim], _this.state[otherSide][sideDim]]
           var sortFunc = _this.ui.chart.flipSides ? d3.ascending : d3.descending;
           sideKeys.sort(sortFunc);

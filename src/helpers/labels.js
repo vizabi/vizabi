@@ -497,7 +497,7 @@ var Labels = Class.extend({
       .remove();
     this.entityLines.exit()
       .remove();
-      
+
     this.entityLines = this.entityLines
       .enter().insert('g', function(d) {
         return this.querySelector("." + _this.options.LINES_CONTAINER_SELECTOR_PREFIX + d[KEY]);

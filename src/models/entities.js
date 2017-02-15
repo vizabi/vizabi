@@ -10,7 +10,7 @@ var EntitiesModel = DataConnected.extend({
   /**
    * Default values for this model
    */
-  getClassDefaults: function() { 
+  getClassDefaults: function() {
     var defaults = {
       show: {},
       dim: null,

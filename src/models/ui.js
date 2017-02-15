@@ -25,7 +25,7 @@ var UI = Model.extend({
     }
   },
 
-  getClassDefaults: function() { 
+  getClassDefaults: function() {
     var defaults = {
       presentation: false,
       buttons: [],
@@ -107,7 +107,7 @@ var UI = Model.extend({
 
     //update size class
     utils.addClass(this._container, class_prefix + this._curr_profile);
-    
+
     //toggle, untoggle classes based on orientation
     utils.classed(this._container, class_portrait, width < height);
     utils.classed(this._container, class_landscape, !(width < height));

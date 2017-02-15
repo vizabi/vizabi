@@ -11,7 +11,7 @@ var SideModel = Hook.extend({
    * Default values for this model
    */
 
-  getClassDefaults: function() { 
+  getClassDefaults: function() {
     var defaults = {
       use: null,
       which: null
@@ -30,7 +30,7 @@ var SideModel = Hook.extend({
     this._type = "side";
 
     bind["readyOnce"] = this.readyOnce;
-    
+
     this.state = {left: {}, right:{}};
     this._super(name, values, parent, bind);
   },

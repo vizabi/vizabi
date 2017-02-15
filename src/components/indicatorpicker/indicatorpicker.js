@@ -73,17 +73,17 @@ var IndPicker = Component.extend({
                         var dimension = _this.model.entities.getDimension();
                         var _highlightedEntity = _this.model.marker.getHighlighted(dimension);
                         if(_highlightedEntity.length) {
-                          
+
                             var value = frame[_this.markerID][_highlightedEntity[0]];
-                            
+
                             // resolve strings via the color legend model
                             if(value && mdl._type === "color" && mdl.isDiscrete()){
                               var clModel = mdl.getColorlegendMarker();
                               if(clModel.label.getItems()[value]) value = clModel.label.getItems()[value];
                             }
-                          
+
                             _this._highlightedValue = value;
-                          
+
                             _this._highlighted = (!_this._highlightedValue && _this._highlightedValue !== 0) || mdl.use !== "constant";
                             _this.updateView();
                         }

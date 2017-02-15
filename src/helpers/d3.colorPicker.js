@@ -183,7 +183,7 @@ export default function colorPicker() {
         .on('mouseover',
           function(d) {
             _cellHover(colorOld);
-          });          
+          });
       var circles = svg.append('g')
         .attr('class', css.COLOR_CIRCLES)
         .attr('transform', 'translate(' + (maxRadius + width * margin.left) +
@@ -275,7 +275,7 @@ export default function colorPicker() {
         })
         .on('mouseout', function() {
           d3.select(this).style('stroke', 'none');
-        });        
+        });
 
       colorPointer = circles.append('path')
         .attr('class', css.COLOR_POINTER + ' ' + css.INVISIBLE);
@@ -488,10 +488,10 @@ export default function colorPicker() {
         var selectedColor = svg.select('.'+css.COLOR_DEFAULT);
         var defaultLabel = svg.select('.vzb-default-label');
         var circles = svg.select('.' + css.COLOR_CIRCLES);
-       
+
         var hPos = maxRadius + height * margin.top;
         var hPosCenter = (1 + margin.top * .5) * height * .5;
-        hPos = hPos > hPosCenter ? hPosCenter : hPos; 
+        hPos = hPos > hPosCenter ? hPosCenter : hPos;
         circles.attr('transform', 'translate(' + (maxRadius + width * margin.left) +
         ',' + hPos + ')');
         selectedColor.attr('cx', width * margin.left * 1.5)

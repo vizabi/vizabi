@@ -239,7 +239,7 @@ export default function genericLog() {
     scale.domain = function(arg) {
       if(!arguments.length)
         return domain;
-      
+
       // this is an internal array, it will be modified. the input _arg should stay intact
       switch(arg.length) {
         // if no values are given, reset input to the default domain (do nothing)
@@ -266,7 +266,7 @@ export default function genericLog() {
       return scale;
     };
 
-    
+
     scale.range = function(arg, force) {
       if(!arguments.length)
         return interpolator ? interpolator.range() : range;

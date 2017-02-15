@@ -10,7 +10,7 @@ var SizeModel = Axis.extend({
   /**
    * Default values for this model
    */
-  getClassDefaults: function() { 
+  getClassDefaults: function() {
     var defaults = {
       use: null,
       which: null,
@@ -34,7 +34,7 @@ var SizeModel = Axis.extend({
     this._super();
     //but then also clamp a numeric scale
     if(this.scaleType !== 'ordinal') this.scale.clamp(true);
-    
+
   },
 
   autoGenerateModel: function() {
@@ -50,16 +50,16 @@ var SizeModel = Axis.extend({
           this.scaleType = "linear";
         }
 
-      } 
+      }
       if (!concept) {
         this.which = "_default";
-        this.use = "constant";  
+        this.use = "constant";
         this.scaleType = "ordinal";
       }
     }
     if (this.scaleType == null) {
         this.scaleType = this.dataSource
-          .getConceptprops(this.which).scales[0]; 
+          .getConceptprops(this.which).scales[0];
     }
   }
 

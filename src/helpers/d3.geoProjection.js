@@ -59,7 +59,7 @@ export default function() {
       d3_geo_projectPoints.push([ x, y ]);
     },
     lineEnd: function() {
-      if (d3_geo_projectPoints.length) d3_geo_projectLines.push(d3_geo_projectPoints), 
+      if (d3_geo_projectPoints.length) d3_geo_projectLines.push(d3_geo_projectPoints),
       d3_geo_projectPoints = [];
     },
     result: function() {
@@ -186,7 +186,7 @@ export default function() {
     };
     var projection = d3.geoProjection(forward), stream_ = projection.stream;
     projection.stream = function(stream) {
-      var rotate = projection.rotate(), rotateStream = stream_(stream), sphereStream = (projection.rotate([ 0, 0 ]), 
+      var rotate = projection.rotate(), rotateStream = stream_(stream), sphereStream = (projection.rotate([ 0, 0 ]),
       stream_(stream));
       projection.rotate(rotate);
       rotateStream.sphere = function() {
@@ -309,7 +309,7 @@ export default function() {
       return m(φ0);
     };
     p.stream = function(stream) {
-      var rotate = p.rotate(), rotateStream = stream_(stream), sphereStream = (p.rotate([ 0, 0 ]), 
+      var rotate = p.rotate(), rotateStream = stream_(stream), sphereStream = (p.rotate([ 0, 0 ]),
       stream_(stream));
       p.rotate(rotate);
       rotateStream.sphere = function() {
@@ -402,12 +402,12 @@ export default function() {
       return m(n = +_);
     };
     p.stream = function(stream) {
-      var rotate = p.rotate(), rotateStream = stream_(stream), sphereStream = (p.rotate([ 0, 0 ]), 
+      var rotate = p.rotate(), rotateStream = stream_(stream), sphereStream = (p.rotate([ 0, 0 ]),
       stream_(stream));
       p.rotate(rotate);
       rotateStream.sphere = function() {
         sphereStream.polygonStart(), sphereStream.lineStart();
-        for (var i = 0, δ = 360 / n, δ0 = 2 * π / n, φ = 90 - 180 / n, φ0 = halfπ; i < n; ++i, 
+        for (var i = 0, δ = 360 / n, δ0 = 2 * π / n, φ = 90 - 180 / n, φ0 = halfπ; i < n; ++i,
         φ -= δ, φ0 -= δ0) {
           sphereStream.point(Math.atan2(sr * Math.cos(φ0), cr) * degrees, asin(sr * Math.sin(φ0)) * degrees);
           if (φ < -90) {
@@ -864,7 +864,7 @@ export default function() {
       return m(ρ, n = +_);
     };
     p.stream = function(stream) {
-      var rotate = p.rotate(), rotateStream = stream_(stream), sphereStream = (p.rotate([ 0, 0 ]), 
+      var rotate = p.rotate(), rotateStream = stream_(stream), sphereStream = (p.rotate([ 0, 0 ]),
       stream_(stream));
       p.rotate(rotate);
       rotateStream.sphere = function() {
@@ -896,11 +896,11 @@ export default function() {
       var λ = π * x / a, φ = y, δλ, δφ, i = 50;
       do {
         var φ2 = φ * φ, xB = a + φ2 * (b + φ2 * (c + φ2 * d)), yB = φ * (e - 1 + φ2 * (f - h + φ2 * g)), p = xB * xB + yB * yB, q = 2 * yB, m = p / q, m2 = m * m, dαdλ = Math.asin(xB / m) / π, α = λ * dαdλ;
-        xB2 = xB * xB, dxBdφ = (2 * b + φ2 * (4 * c + φ2 * 6 * d)) * φ, dyBdφ = e + φ2 * (3 * f + φ2 * 5 * g), 
-        dpdφ = 2 * (xB * dxBdφ + yB * (dyBdφ - 1)), dqdφ = 2 * (dyBdφ - 1), dmdφ = (dpdφ * q - p * dqdφ) / (q * q), 
-        cosα = Math.cos(α), sinα = Math.sin(α), mcosα = m * cosα, msinα = m * sinα, dαdφ = λ / π * (1 / asqrt(1 - xB2 / m2)) * (dxBdφ * m - xB * dmdφ) / m2, 
-        fx = msinα - x, fy = φ * (1 + φ2 * h) + m - mcosα - y, δxδφ = dmdφ * sinα + mcosα * dαdφ, 
-        δxδλ = mcosα * dαdλ, δyδφ = 1 + dmdφ - (dmdφ * cosα - msinα * dαdφ), δyδλ = msinα * dαdλ, 
+        xB2 = xB * xB, dxBdφ = (2 * b + φ2 * (4 * c + φ2 * 6 * d)) * φ, dyBdφ = e + φ2 * (3 * f + φ2 * 5 * g),
+        dpdφ = 2 * (xB * dxBdφ + yB * (dyBdφ - 1)), dqdφ = 2 * (dyBdφ - 1), dmdφ = (dpdφ * q - p * dqdφ) / (q * q),
+        cosα = Math.cos(α), sinα = Math.sin(α), mcosα = m * cosα, msinα = m * sinα, dαdφ = λ / π * (1 / asqrt(1 - xB2 / m2)) * (dxBdφ * m - xB * dmdφ) / m2,
+        fx = msinα - x, fy = φ * (1 + φ2 * h) + m - mcosα - y, δxδφ = dmdφ * sinα + mcosα * dαdφ,
+        δxδλ = mcosα * dαdλ, δyδφ = 1 + dmdφ - (dmdφ * cosα - msinα * dαdφ), δyδλ = msinα * dαdλ,
         denominator = δxδφ * δyδλ - δyδφ * δxδλ;
         if (!denominator) break;
         λ -= δλ = (fy * δxδφ - fx * δyδφ) / denominator;
@@ -1272,7 +1272,7 @@ export default function() {
       return m(n = +_);
     };
     p.stream = function(stream) {
-      var rotate = p.rotate(), rotateStream = stream_(stream), sphereStream = (p.rotate([ 0, 0 ]), 
+      var rotate = p.rotate(), rotateStream = stream_(stream), sphereStream = (p.rotate([ 0, 0 ]),
       stream_(stream));
       p.rotate(rotate);
       rotateStream.sphere = function() {
@@ -1338,7 +1338,7 @@ export default function() {
     return projection(sinuMollweide).rotate([ -20, -55 ]);
   }).raw = sinuMollweide;
   function homolosine(λ, φ) {
-    return Math.abs(φ) > sinuMollweideφ ? (λ = mollweide(λ, φ), λ[1] -= φ > 0 ? sinuMollweideY : -sinuMollweideY, 
+    return Math.abs(φ) > sinuMollweideφ ? (λ = mollweide(λ, φ), λ[1] -= φ > 0 ? sinuMollweideY : -sinuMollweideY,
     λ) : sinusoidal(λ, φ);
   }
   homolosine.invert = function(x, y) {

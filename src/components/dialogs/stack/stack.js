@@ -62,14 +62,14 @@ var Stack = Dialog.extend({
 
       this.updateView();
     },
-    
+
     ready: function() {
       this._super();
       if(!this.model.state.marker.color.isDiscrete()) {
-        if(this.stack.use == "property") { 
+        if(this.stack.use == "property") {
           this.setModel("stack", "none");
           return;
-        } 
+        }
         else if(this.group.merge) {
           this.setModel("merge", "none");
           return;
@@ -92,9 +92,9 @@ var Stack = Dialog.extend({
                 if(d3.select(this).node().value === "all") return null; // always enabled
                 if(d3.select(this).node().value === "bycolor") return _this.model.state.marker.color.use !== "property" ? true : null;
             });
-        
+
         _this.model.ui.chart.manualSortingEnabled = _this.stack.which == "all";
-        
+
         this.howToMergeEl
             .property('checked', function() {
                 if(d3.select(this).node().value === "none") return !_this.group.merge && !_this.stack.merge;
@@ -136,7 +136,7 @@ var Stack = Dialog.extend({
             }
         }
         if(what === "stack") {
-          
+
           switch (value){
             case "all":
               obj.stack.use = "constant";

@@ -143,9 +143,9 @@ var LCComponent = Component.extend({
     this.linesContainer = this.graph.select('.vzb-lc-lines');
     this.labelsContainerCrop = this.graph.select('.vzb-lc-labels-crop');
     this.labelsContainer = this.graph.select('.vzb-lc-labels');
-    
+
     this.dataWarningEl = this.graph.select('.vzb-data-warning');
-    
+
     this.verticalNow = this.labelsContainer.select(".vzb-lc-vertical-now");
     this.tooltip = this.element.select('.vzb-tooltip');
     //            this.filterDropshadowEl = this.element.select('#vzb-lc-filter-dropshadow');
@@ -341,7 +341,7 @@ var LCComponent = Component.extend({
 
       })
       .merge(this.entityLines);
-    
+
     this.entityLabels = this.labelsContainer.selectAll('.vzb-lc-entity').data(this.data);
     this.entityLabels.exit().remove();
     this.entityLabels = this.entityLabels.enter().append("g")
@@ -352,9 +352,9 @@ var LCComponent = Component.extend({
         entity.append("circle")
           .attr("class", "vzb-lc-circle")
           .attr("cx", 0);
-        
+
         var labelGroup = entity.append("g").attr("class", "vzb-lc-label");
-        
+
         labelGroup.append("text")
           .attr("class", "vzb-lc-labelname")
           .attr("dy", ".35em");
@@ -540,14 +540,14 @@ var LCComponent = Component.extend({
     //adjust right this.margin according to biggest label
 
     var longestLabelWidth = 0;
-    
+
     this.entityLabels.selectAll(".vzb-lc-labelname")
       .attr("dx", _this.activeProfile.text_padding)
       .each(function(d, index) {
         var width = this.getComputedTextLength();
-        if (width > longestLabelWidth) longestLabelWidth = width; 
+        if (width > longestLabelWidth) longestLabelWidth = width;
       });
-    
+
     this.entityLabels.selectAll(".vzb-lc-circle")
       .attr("r", _this.activeProfile.lollipopRadius);
 
@@ -575,7 +575,7 @@ var LCComponent = Component.extend({
     this.yScale.range([this.height - this.activeProfile.lollipopRadius, this.activeProfile.lollipopRadius]);
     this.xScale.range([this.rangeXShift, this.width * this.rangeXRatio + this.rangeXShift]);
 
-    
+
     this.yAxis.scale(this.yScale)
       .tickSizeInner(-this.width)
       .tickSizeOuter(0)
@@ -608,7 +608,7 @@ var LCComponent = Component.extend({
       .attr("height", this.activeProfile.margin.bottom + this.height)
       .attr("y", - 1)
       .attr("x", - this.activeProfile.text_padding);
-    
+
     this.xAxisEl
       .attr("transform", "translate(" + (this.activeProfile.text_padding - 1) + "," + (this.height + 1) + ")");
 
@@ -649,7 +649,7 @@ var LCComponent = Component.extend({
       .attr("y", -warnBB.height * 0.65)
 
     this.dataWarningEl
-      .attr("transform", "translate(" + (this.width + warnBB.width + warnBB.height * 2) + 
+      .attr("transform", "translate(" + (this.width + warnBB.width + warnBB.height * 2) +
       ",-" + this.activeProfile.yAxisTitleBottomMargin + ")")
       .select("text");
 
@@ -658,8 +658,8 @@ var LCComponent = Component.extend({
 
     this.xTitleEl
       .style("font-size", infoElHeight + "px")
-      .attr("transform", "translate(" + 
-        (this.width + this.activeProfile.text_padding + this.activeProfile.yAxisTitleBottomMargin) + "," + 
+      .attr("transform", "translate(" +
+        (this.width + this.activeProfile.text_padding + this.activeProfile.yAxisTitleBottomMargin) + "," +
         (this.height + xTitleText.node().getBBox().height  * 0.72) + ")");
 
     if(xTitleText.node().getBBox().width > this.width - 100) xTitleText.text(this.strings.title.X);
@@ -713,7 +713,7 @@ var LCComponent = Component.extend({
         _this.updateSize();
       }
       _this.updateDoubtOpacity();
-      
+
       _this.lineWidth = _this.lineWidthScale(_this.data.length);
       _this.shadowWidth = _this.lineWidth * 1.3;
       _this.entityLines
@@ -732,17 +732,17 @@ var LCComponent = Component.extend({
 
           //TODO: optimization is possible if getValues would return both x and time
           //TODO: optimization is possible if getValues would return a limited number of points, say 1 point per screen pixel
-          
+
           var xy = _this.prev_steps.map(function(frame, i) {
               return [frame, _this.all_values[frame] ? _this.all_values[frame].axis_y[d[KEY]] : null] ;
             })
             .filter(function(d) { return d[1] || d[1] === 0; });
 
-          // add last point 
+          // add last point
           if (values.axis_y[d[KEY]]) {
             xy.push([values.axis_x[d[KEY]], values.axis_y[d[KEY]]]);
           }
-          
+
           if (xy.length > 0) {
             _this.cached[d[KEY]] = {
               valueX: xy[xy.length - 1][0],
@@ -762,7 +762,7 @@ var LCComponent = Component.extend({
           }
 
           var path1 = entity.select(".vzb-lc-line-shadow")
-            
+
             .style("stroke", colorShadow)
             .style("stroke-width", _this.shadowWidth + "px")
             .attr("transform", "translate(0, " + (_this.shadowWidth - _this.lineWidth) + ")")
@@ -909,12 +909,12 @@ var LCComponent = Component.extend({
         _this.model.marker.highlightMarker(me);
       }
       _this.hoveringNow = me;
-  
+
       if(utils.isNaN(resolvedValue)) return;
-  
+
       var scaledTime = _this.xScale(resolvedTime);
       var scaledValue = _this.yScale(resolvedValue);
-  
+
       if(_this.ui.chart.whenHovering.showTooltip) {
         //position tooltip
         _this.tooltip
@@ -924,12 +924,12 @@ var LCComponent = Component.extend({
           .text(_this.yAxis.tickFormat()(resolvedValue))
           .classed("vzb-hidden", false);
       }
-  
+
       // bring the projection lines to the hovering point
       if(_this.ui.chart.whenHovering.hideVerticalNow) {
         _this.verticalNow.style("opacity", 0);
       }
-  
+
       if(_this.ui.chart.whenHovering.showProjectionLineX) {
         _this.projectionX
           .style("opacity", 1)
@@ -944,15 +944,15 @@ var LCComponent = Component.extend({
           .attr("y2", scaledValue)
           .attr("x1", scaledTime);
       }
-  
+
       if(_this.ui.chart.whenHovering.higlightValueX) _this.xAxisEl.call(
         _this.xAxis.highlightValue(resolvedTime).highlightTransDuration(0)
       );
-  
+
       if(_this.ui.chart.whenHovering.higlightValueY) _this.yAxisEl.call(
         _this.yAxis.highlightValue(resolvedValue).highlightTransDuration(0)
       );
-  
+
       clearTimeout(_this.unhoverTimeout);
 
     });
