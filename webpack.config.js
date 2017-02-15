@@ -169,17 +169,10 @@ const loaders = [
         options: {
           minimize: __PROD__,
           sourceMap: true
-        },
-        use: [
-          {
-            loader: 'postcss-loader',
-            options: {
-              plugins: () => [
-                require('autoprefixer')
-              ]
-            }
-          }
-        ]
+        }
+      },
+      {
+        loader: 'postcss-loader'
       },
       {
         loader: 'sass-loader'
