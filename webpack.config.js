@@ -137,8 +137,8 @@ if (__PROD__) {
       archive.pipe(
         fs.createWriteStream(path.resolve('build', 'download', 'vizabi.zip'))
       );
-      archive.glob("**/*", { cwd: 'src/assets/cursors', dot: true }, { prefix: 'assets/cursors' });
-      archive.glob("en.json", { cwd: 'src/assets/translation', dot: true }, { prefix: 'assets/translation' });
+      archive.glob('**/*', { cwd: 'src/assets/cursors', dot: true }, { prefix: 'assets/cursors' });
+      archive.glob('en.json', { cwd: 'src/assets/translation', dot: true }, { prefix: 'assets/translation' });
       archive.finalize();
     }),
     new webpack.BannerPlugin({
@@ -163,15 +163,21 @@ const loaders = [
     include: [
       path.resolve(__dirname, 'src')
     ],
-    loader: extractSrc.extract([{
-      loader: "css-loader",
-      options: {
-        minimize: __PROD__,
-        sourceMap: true
+    loader: extractSrc.extract([
+      {
+        loader: 'css-loader',
+        options: {
+          minimize: __PROD__,
+          sourceMap: true
+        }
+      },
+      {
+        loader: 'postcss-loader'
+      },
+      {
+        loader: 'sass-loader'
       }
-    }, {
-      loader: 'sass-loader'
-    }])
+    ])
   },
   {
     test: /\.scss$/,
