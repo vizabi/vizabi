@@ -103,7 +103,7 @@
         }
         .vzb-bc-entity {
           .vzb-bc-label-x {
-            @include transition(opacity 200ms linear);
+            transition: opacity 200ms linear;
             fill: $vzb-color-primary;
             text-anchor: middle;
             dominant-baseline: middle;
@@ -114,7 +114,7 @@
           }
 
           .vzb-bc-label-x-icon {
-            @include transition(opacity 200ms linear);
+            transition: opacity 200ms linear;
             fill: $vzb-color-white;
             //pointer-events: none;
           }
@@ -223,7 +223,7 @@
         stroke-dasharray: 4 4;
         stroke: $vzb-color-black;
       }
-      
+
       .vzb-bc-projection-x,
       .vzb-bc-projection-y {
         stroke-dasharray: 4 4;
