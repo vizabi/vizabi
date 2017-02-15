@@ -103,5 +103,6 @@
     "reader/error/notEnoughRows": "Was unable to read the data :( <br><br> Looks like your file contains only one line. <br><br> The valid file should contains two or more.",
     "reader/error/undefinedDelimiter": "Was unable to read the data :( <br><br> Can't detect delimiter. <br><br> Please replace your delimiters with comma ( , ) or semicolon ( ; ), consistently throughtout the file",
     "reader/error/emptyHeaders": "Was unable to read the data :( <br><br> Please check if there are empty lines above the column headers. The valid file should not have these. See the tutorial <a href='https://docs.google.com/document/d/1EUY88cgjs4RHlLpFy_9JdyKaPio4gRVVI2L8wpgZe6Y' target='_blank'>here</a> for more help. You may also need to restart the app now. <a href='https://getsatisfaction.com/gapminder/' target='_blank'>Contact us</a> if still in trouble.",
-    "reader/error/generic": "Was unable to read the data :( <br>"
+    "reader/error/generic": "Was unable to read the data :( <br>",
+    "crash/error": "Sorry, you've discovered a problem in our software that we didn't fix yet. Please help us by reporting it on <a href='https://getsatisfaction.com/gapminder' target='_blank'>https://getsatisfaction.com/gapminder</a>. Include the current link from the address line above, steps you've been taking before you encountered the problem, your OS and browser and the error message that comes below."
   }
