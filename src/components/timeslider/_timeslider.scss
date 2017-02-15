@@ -7,7 +7,7 @@ $vzb-ts-value-width: 40px;
 .vzb-timeslider {
   min-height: $vzb-ts-btn-area;
   position: relative;
-    
+
   &.vzb-ts-disabled {
     opacity: .4;
     pointer-events: none;
@@ -21,7 +21,7 @@ $vzb-ts-value-width: 40px;
       pointer-events: none;
     }
   }
-    
+
   .vzb-ts-btns {
     @include position(absolute, 0 null 0 5px);
     width: $vzb-ts-btn-area;
@@ -74,8 +74,8 @@ $vzb-ts-value-width: 40px;
         cursor: pointer !important;
       }
       .vzb-ts-slider-axis {
-        @include user-select(none);
         @include opacity(.6);
+        user-select: none;
         fill: $vzb-ts-slider-color;
         font-weight: bold;
         cursor: pointer;
@@ -90,8 +90,8 @@ $vzb-ts-value-width: 40px;
         }
       }
       .vzb-ts-slider-progress {
-        @include user-select(none);
         @include opacity(.6);
+        user-select: none;
         fill: $vzb-ts-slider-color;
         font-weight: bold;
         cursor: pointer;
@@ -109,8 +109,8 @@ $vzb-ts-value-width: 40px;
       }
 
       .vzb-ts-slider-select {
-        @include user-select(none);
         @include opacity(.8);
+        user-select: none;
         cursor: default;
         .selected-start,
         .selected-end {
@@ -133,7 +133,7 @@ $vzb-ts-value-width: 40px;
         stroke-width: 4px;
       }
       .vzb-ts-slider-value {
-        @include user-select(none);
+        user-select: none;
         display: none;
         fill: $vzb-ts-slider-color;
         font-weight: bold;

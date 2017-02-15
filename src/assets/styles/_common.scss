@@ -163,7 +163,7 @@ $vzb-loader-bgcolor: $vzb-color-white;
 
   &.vzb-error {
 
-    @include user-select(none);
+    user-select: none;
 
     display: table;
     height: 100%;
