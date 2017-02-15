@@ -23,17 +23,21 @@
     "url": "https://github.com/Gapminder/vizabi/issues"
   },
   "homepage": "http://vizabi.org",
+  "browserslist": [
+    "> 1%"
+  ],
   "dependencies": {
     "vizabi-config-systema_globalis": "^1.0.0",
     "vizabi-interpolators": "^2.0.0"
   },
   "devDependencies": {
     "archiver": "^1.2.0",
+    "autoprefixer": "^6.7.2",
     "babel-core": "^6.18.0",
     "babel-loader": "^6.2.7",
     "babel-polyfill": "^6.16.0",
     "babel-preset-es2015": "^6.18.0",
-    "bourbon": "^4.2.7",
+    "bourbon": "^4.3.2",
     "clean-webpack-plugin": "^0.1.13",
     "compare-version": "^0.1.2",
     "copy-webpack-plugin": "^4.0.0",
@@ -49,13 +53,14 @@
     "extract-text-webpack-plugin": "^2.0.0-beta.4",
     "file-loader": "^0.10.0",
     "font-awesome": "^4.6.3",
-    "google-maps": "3.2.1",
     "glob": "7.1.1",
+    "google-maps": "3.2.1",
     "html-loader": "^0.4.4",
     "jasmine-spec-reporter": "3.2.0",
     "mapbox-gl": "0.32.1",
     "node-sass": "^4.0.0",
     "open-browser-webpack-plugin": "0.0.3",
+    "postcss-loader": "^1.3.0",
     "protractor": "5.1.1",
     "pug-html-loader": "^1.1.0",
     "sass-lint": "^1.10.2",
