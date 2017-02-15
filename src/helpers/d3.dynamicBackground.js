@@ -21,10 +21,6 @@ export default Class.extend({
     this.yAlign = 'center';
     this.element = this.context.append('text').style("font-size", '20px');
 
-    this.element.text('0');
-    this.letterBBox = this.element.node().getBBox();
-    this.element.text('');
-
     if (conditions) {
       this.setConditions(conditions);
     }
@@ -77,27 +73,18 @@ export default Class.extend({
     this._resizeText();
   },
 
-  setText: function (text, delay) {
-
+  setText(text, delay) {
     setTimeout(() => {
-      this.element.selectAll('tspan').remove();
-      text.split('').forEach((char, index) => {
-        this.element.append('tspan').text(char)
-          .attr('x', (index - text.length / 2) * this.letterBBox.width + this.letterBBox.width / 2);
-      });
-
+      this.element.text(text);
       this._resizeText();
     }, delay);
 
     return this;
-
   },
 
   _resizeText: function () {
 
-    var bbox = {};
-    bbox.height = this.element.node().getBBox().height;
-    bbox.width =  this.letterBBox.width * this.element.text().length;
+    var bbox = this.element.node().getBBox();
 
     if (!bbox.width || !bbox.height || !this.width || !this.height) return this;
 
