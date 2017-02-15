@@ -7,7 +7,7 @@ import Model from 'base/model';
 
 var Marker = Model.extend({
 
-  getClassDefaults: function() { 
+  getClassDefaults: function() {
     var defaults = {
       select: [],
       highlight: [],
@@ -21,7 +21,7 @@ var Marker = Model.extend({
 
   init: function(name, value, parent, binds, persistent) {
     var _this = this;
-    
+
     this._visible = [];
 
     this._super(name, value, parent, binds, persistent);
@@ -32,7 +32,7 @@ var Marker = Model.extend({
       _this._multiDim = allDimensions.length > 1 ? true : false;
     });
   },
-  
+
   setDataSourceForAllSubhooks: function(data){
     var obj = {};
     this.getSubhooks().forEach((hook) => { obj[hook._name] = {data: data} });
@@ -59,7 +59,7 @@ var Marker = Model.extend({
       }));
     }
   },
-  
+
   /**
    * Sets the visible entities
    * @param {Array} arr
@@ -159,7 +159,7 @@ var Marker = Model.extend({
     }
     this.getModelObject('highlight').set(arg, false, false); // highlights are always non persistent changes
   },
-  
+
   setSelect: function(arg) {
     if (!utils.isArray(arg)) {
       this.setSelect([].concat(arg));
@@ -228,34 +228,34 @@ var Marker = Model.extend({
   },
 
   checkTimeLimits: function() {
-    
+
     var time = this._parent.time;
-    
+
     if(!time) return;
-    
+
     var tLimits = this.getTimeLimits();
 
     if(!tLimits) return;
-    if(!utils.isDate(tLimits.min) || !utils.isDate(tLimits.max)) 
+    if(!utils.isDate(tLimits.min) || !utils.isDate(tLimits.max))
         return utils.warn("checkTimeLimits(): min-max look wrong: " + tLimits.min + " " + tLimits.max + ". Expecting Date objects. Ensure that time is properly parsed in the data from reader");
 
     // change start and end (but keep startOrigin and endOrigin for furhter requests)
     var newTime = {}
     if(time.start - tLimits.min != 0 || !time.start && !this.startOrigin) newTime['start'] = d3.max([tLimits.min, time.parse(time.startOrigin)]);
     if(time.end - tLimits.max != 0 || !time.end && !this.endOrigin) newTime['end'] = d3.min([tLimits.max, time.parse(time.endOrigin)]);
-    
+
     time.set(newTime, false, false);
-    
+
     if (newTime.start || newTime.end) {
       utils.forEach(this.getSubhooks(), function(hook) {
-        if (hook.which == "time") {     
-          hook.buildScale();     
+        if (hook.which == "time") {
+          hook.buildScale();
         }
       });
     }
-    
+
     //force time validation because time.value might now fall outside of start-end
-    time.validate(); 
+    time.validate();
   },
 
   /**
@@ -271,7 +271,7 @@ var Marker = Model.extend({
       var min, max, minArray = [], maxArray = [], items = {};
       if (!this.cachedTimeLimits) this.cachedTimeLimits = {};
       utils.forEach(this.getSubhooks(), function(hook) {
-        
+
         //only indicators depend on time and therefore influence the limits
         if(hook.use !== "indicator" || !hook._important) return;
 
@@ -300,7 +300,7 @@ var Marker = Model.extend({
           resultMin = d3.min(minArray);
           resultMax = d3.max(maxArray);
       }
-    
+
       //return false for the case when neither of hooks was an "indicator" or "important"
       return !min && !max? false : {min: resultMin, max: resultMax}
   },
@@ -326,7 +326,7 @@ var Marker = Model.extend({
             // Get keys in data of this hook
             var nested = hook.getNestedItems([KEY, TIME]);
             var noDataPoints = hook.getHaveNoDataPointsPerKey();
-            
+
             if(nested["undefined"]) delete nested["undefined"];
 
             var keys = Object.keys(nested);
@@ -925,7 +925,7 @@ var Marker = Model.extend({
   getSpace: function() {
     if(utils.isArray(this.space)) {
       return this.space;
-    } 
+    }
 
     utils.error(
       'ERROR: space not found.\n You must specify the objects this hook will use under the "space" attribute in the state.\n Example:\n space: ["entities", "time"]'

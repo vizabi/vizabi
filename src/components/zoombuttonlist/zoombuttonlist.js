@@ -39,7 +39,7 @@ var ZoomButtonList = Component.extend({
       name: "locale",
       type: "locale"
     }];
-    
+
     this._available_buttons = {
       'arrow': {
         title: "buttons/cursorarrow",
@@ -75,7 +75,7 @@ var ZoomButtonList = Component.extend({
         // statebindfunc: this.setBubbleTrails.bind(this)
       }
     }
-    
+
     this.model_binds = {};
 
     Object.keys(this._available_buttons).forEach(function(buttonId) {
@@ -90,18 +90,18 @@ var ZoomButtonList = Component.extend({
     this._super(config, context);
 
   },
-  
+
   readyOnce: function() {
     var _this = this;
-    
+
     this.element = d3.select(this.placeholder);
     this.element.selectAll("div").remove();
 
     this._addButtons(Object.keys(this._available_buttons), []);
     this.setCursorMode('arrow');
 
-  },  
-     
+  },
+
   /*
    * adds buttons configuration to the components and template_data
    * @param {Array} button_list list of buttons to be added
@@ -156,13 +156,13 @@ var ZoomButtonList = Component.extend({
 
       d3.event.preventDefault();
       d3.event.stopPropagation();
-      
+
       var id = d3.select(this).attr("data-btn");
       _this.proceedClick(id);
     });
 
   },
-  
+
   proceedClick: function(id) {
     var _this = this;
     var btn = _this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
@@ -179,32 +179,32 @@ var ZoomButtonList = Component.extend({
       evt['id'] = id;
       evt['active'] = btn_active;
       _this.trigger('click', evt);
-    }    
+    }
   },
-  
+
   setButtonActive: function(id, boolActive) {
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
 
     btn.classed(class_active, boolActive);
   },
-  
+
   toggleCursorMode: function(id) {
     var value = id;
     this.model.ui.set('cursorMode', value, false, false);
   },
-  
+
   setCursorMode: function(id) {
     var value = this.model.ui.cursorMode ? this.model.ui.cursorMode : 'arrow';
     this.element.selectAll(".vzb-buttonlist-btn")
       .classed(class_active, function(d) {
         return d.id == value;
-      }); 
+      });
   },
-  
+
   toggleHundredPercent: function(id) {
     this.root.trigger("resetZoom");
   }
-  
+
 });
 
 export default ZoomButtonList;

@@ -11,7 +11,7 @@ var LabelModel = Hook.extend({
    * Default values for this model
    */
 
-  getClassDefaults: function() { 
+  getClassDefaults: function() {
     var defaults = {
       use: null,
       which: null
@@ -28,7 +28,7 @@ var LabelModel = Hook.extend({
   init: function(name, values, parent, bind) {
 
     this._type = "label";
-    
+
     this._super(name, values, parent, bind);
   }
 

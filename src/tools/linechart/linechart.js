@@ -68,7 +68,7 @@ var LineChart = Tool.extend('LineChart', {
     default_model: {
     state: {
       time: {},
-      marker: { 
+      marker: {
         axis_x: {allow: {scales: ["time"]}},
         axis_y: {allow: {scales: ["linear", "log"]}}
       }
@@ -94,8 +94,8 @@ var LineChart = Tool.extend('LineChart', {
       },
       "buttons": ['colors', 'find', 'show', 'moreoptions', 'fullscreen', 'presentation'],
       "dialogs": {
-        'popup': ['colors', 'find', 'show', 'moreoptions'], 
-        'sidebar': ['colors', 'show'], 
+        'popup': ['colors', 'find', 'show', 'moreoptions'],
+        'sidebar': ['colors', 'show'],
         'moreoptions': ['opacity', 'speed', 'axes', 'colors', 'presentation', 'about']
       },
       "presentation": false

@@ -283,7 +283,7 @@ var BubbleMapComponent = Component.extend({
         var rect = this.getBBox();
         var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
         var toolRect = _this.root.element.getBoundingClientRect();
-        var chartRect = _this.element.node().getBoundingClientRect();      
+        var chartRect = _this.element.node().getBoundingClientRect();
         _this.parent.findChildByName("gapminder-datanotes").setHook('size').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
       })
       this.yInfoEl.on("mouseout", function() {
@@ -302,7 +302,7 @@ var BubbleMapComponent = Component.extend({
         var rect = this.getBBox();
         var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
         var toolRect = _this.root.element.getBoundingClientRect();
-        var chartRect = _this.element.node().getBoundingClientRect();      
+        var chartRect = _this.element.node().getBoundingClientRect();
         _this.parent.findChildByName("gapminder-datanotes").setHook('color').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
       })
       this.cInfoEl.on("mouseout", function() {
@@ -736,7 +736,7 @@ var BubbleMapComponent = Component.extend({
       widthRatio: 2/10
     });
     this.year.resize(this.width, this.height);
-        
+
     this.yTitleEl
         .style("font-size", infoElHeight)
         .attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + margin.top + ")")
@@ -792,7 +792,7 @@ var BubbleMapComponent = Component.extend({
     var offset = this.model.ui.map.offset;
     var margin = this.activeProfile.margin;
 
-    // scale to aspect ratio 
+    // scale to aspect ratio
     // http://bl.ocks.org/mbostock/4707858
     var s = this.model.ui.map.scale / Math.max((this.mapBounds[1][0] - this.mapBounds[0][0]) / this.width, (this.mapBounds[1][1] - this.mapBounds[0][1]) / this.height),
 
@@ -814,7 +814,7 @@ var BubbleMapComponent = Component.extend({
       .translate(t);
 
     this.mapGraph
-      .selectAll('path').attr("d", this.mapPath);  
+      .selectAll('path').attr("d", this.mapPath);
 
     // handle scale to fit case
     var widthScale, heightScale;
@@ -829,7 +829,7 @@ var BubbleMapComponent = Component.extend({
       viewPortWidth = this.width * this.model.ui.map.scale;
 
       this.mapSvg
-        .attr('preserveAspectRatio', 'none')  
+        .attr('preserveAspectRatio', 'none')
         .attr('viewBox', [0, 0, viewBoxWidth, viewBoxHeight].join(' '));
 
       //            ratio between map, viewport and offset (for bubbles)
@@ -853,7 +853,7 @@ var BubbleMapComponent = Component.extend({
       .style("transform", "translate3d(" + (margin.left + (this.width-viewPortWidth)/2) + "px," + (margin.top + (this.height-viewPortHeight)/2) + "px,0)")
       .attr('width', viewPortWidth)
       .attr('height', viewPortHeight);
-    
+
     // set skew function used for bubbles in chart
     var _this = this;
     this.skew = (function () {
@@ -1065,7 +1065,7 @@ var BubbleMapComponent = Component.extend({
   preload: function() {
     var _this = this;
 
-    var shape_path = this.model.ui.map.topology.path 
+    var shape_path = this.model.ui.map.topology.path
       || globals.ext_resources.host + globals.ext_resources.preloadPath + "world-50m.json"
 
     return new Promise(function(resolve, reject) {

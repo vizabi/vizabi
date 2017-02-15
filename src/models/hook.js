@@ -14,8 +14,8 @@ var Hook = DataConnected.extend({
 
   objectLeafs: ['autogenerate'],
   dataConnectedChildren: ['use', 'which'],
-  
-  getClassDefaults: function() { 
+
+  getClassDefaults: function() {
     var defaults = {
       data: 'data',
       which: null
@@ -28,7 +28,7 @@ var Hook = DataConnected.extend({
   },
 
   /**
-   * After complete model tree is created, this allows models to listen to eachother. 
+   * After complete model tree is created, this allows models to listen to eachother.
    */
   setInterModelListeners: function() {
     var spaceRefs = this._parent.getSpace(this);
@@ -51,7 +51,7 @@ var Hook = DataConnected.extend({
   setWhich: function(newValue) {
 
     var obj = { which: newValue.concept }
-    
+
     if(newValue.dataSource) obj.data = newValue.dataSource;
     var newDataSource = this.getClosestModel(obj.data || this.data);
     var conceptProps = newDataSource.getConceptprops(newValue.concept);
@@ -61,7 +61,7 @@ var Hook = DataConnected.extend({
     }else{
       if(conceptProps.use) obj.use = conceptProps.use;
     }
-    
+
     if(conceptProps.scales) {
       obj.scaleType = conceptProps.scales[0];
     }
@@ -75,7 +75,7 @@ var Hook = DataConnected.extend({
 
     this.set(obj);
   },
-  
+
   setScaleType: function(newValue) {
     this.buildScale(newValue);
   },
@@ -117,7 +117,7 @@ var Hook = DataConnected.extend({
     this.dataSource = this.getClosestModel(this.data);
 
     var query = this.getQuery(opts.splashScreen);
-    
+
     if(query===true) return Promise.resolve();
 
     //useful to check if in the middle of a load call
@@ -182,13 +182,13 @@ var Hook = DataConnected.extend({
     // we remove this.which from values if it duplicates a dimension
     var allDimensions = utils.unique(this._getAllDimensions(exceptions));
     var dimensions = (prop && allDimensions.length > 1) ? [(this.spaceRef ? this._space[this.spaceRef].dim : this.which)] : allDimensions;
-    
+
     dimensions = dimensions.filter(f => f!=="_default");// && f!==null);
     if(!dimensions || !dimensions.length) {
       utils.warn('getQuery() produced no query because no keys are available');
       return true;
     }
-    
+
     select = {
       key: dimensions,
       value: dimensions.indexOf(this.which)!=-1 || this.use === "constant" ? [] : [this.which]
@@ -311,7 +311,7 @@ var Hook = DataConnected.extend({
         return true;
       }
       if(h.skipFilter) return;
-      
+
       var filter = h.getFilter(splashScreen);
       if (filter != null && !utils.isEmpty(filter)) {
         joins["$" + h.getDimension()] = {
@@ -574,7 +574,7 @@ var Hook = DataConnected.extend({
   getConceptprops: function() {
     return this.use !== 'constant' && this.dataSource? this.dataSource.getConceptprops(this.which) : {};
   },
-  
+
   /**
    * Find if a current model is discrete
    * @returns {boolean} true if it's a discrete model, false if continious
@@ -582,10 +582,10 @@ var Hook = DataConnected.extend({
   isDiscrete: function() {
     return this.scaleType === "ordinal";
   },
-  
+
   validate: function() {
     this._super();
-    
+
     var allowedScales = this.getConceptprops().scales;
     if(allowedScales && allowedScales.length>0 && !allowedScales.includes(this.scaleType)) {
       this.set({scaleType: allowedScales[0] === "nominal"? "ordinal":allowedScales[0]}, null, false);

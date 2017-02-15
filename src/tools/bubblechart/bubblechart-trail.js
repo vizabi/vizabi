@@ -19,7 +19,7 @@ export default Class.extend({
   toggle: function(arg) {
     var _context = this.context;
     if(arg) {
-      
+
       _context._trails.create().then(function() {
         _context._trails.run(["findVisible", "reveal", "opacityHandler"]);
       })
@@ -71,7 +71,7 @@ export default Class.extend({
         .merge(_trails)
         .each(function(d, index) {
           // used for prevent move trail start time forward when we have empty values at end of time range
-        var trail = this;  
+        var trail = this;
         promises.push(new Promise(function(resolve, reject) {
             var trailSegmentData = timePoints.map(function(m) {
               return {
@@ -174,7 +174,7 @@ export default Class.extend({
       _this.delayedIterations[d[KEY]] = {};
       if (!_this.activePromises[d[KEY]]) _this.activePromises[d[KEY]] = [];
       utils.forEach(_this.activePromises[d[KEY]], function(promise, key) {
-        if (promise.status === "pending") promise.reject(); 
+        if (promise.status === "pending") promise.reject();
       });
       _this.trailsInProgress[d[KEY]] = null;
       _this.activePromises[d[KEY]] = [];
@@ -563,7 +563,7 @@ export default Class.extend({
         var segment = view.datum();
 
         if ((!previousSegment.previous && !previousSegment.next) || (!nextSegment.previous && !nextSegment.next)) {
-          // segment data cleared by create action  
+          // segment data cleared by create action
           return resolve();
         }
 
@@ -643,7 +643,7 @@ export default Class.extend({
           }
           addNewIntervals(previousIndex, index, nextIndex);
           resolve();
-        });       
+        });
       });
     };
     var addNewIntervals = function(previousIndex, index, nextIndex) {

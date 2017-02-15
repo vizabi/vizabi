@@ -90,17 +90,17 @@ d3.scale.ordinal = d3.scaleOrdinal
 d3.time = {}
 d3.time.scale = d3.scaleTime
 d3.time.scale.utc = d3.scaleUtc
-d3.time.format = function(f) { 
+d3.time.format = function(f) {
   var format = d3.timeFormat(f);
   format.parse = d3.timeParse(f);
   return format;
 }
-d3.time.format.utc = function(f) { 
+d3.time.format.utc = function(f) {
   var format = d3.utcFormat(f);
   format.parse = d3.utcParse(f);
   return format;
 }
-d3.time.format.iso = function(f) { 
+d3.time.format.iso = function(f) {
   var format = d3.isoFormat(f);
   format.parse = d3.isoParse(f);
   return format;

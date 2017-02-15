@@ -87,8 +87,8 @@ var MountainChart = Tool.extend('MountainChart', {
       },
       "buttons": ['colors', 'find', 'stack', 'show', 'moreoptions', 'fullscreen', 'presentation'],
       "dialogs": {
-        'popup': ['colors', 'find', 'stack', 'show', 'moreoptions'], 
-        'sidebar': ['colors', 'find', 'stack'], 
+        'popup': ['colors', 'find', 'stack', 'show', 'moreoptions'],
+        'sidebar': ['colors', 'find', 'stack'],
         'moreoptions': ['opacity', 'speed', 'stack', 'axesmc', 'colors', 'presentation', 'about']
       },
       datawarning: {

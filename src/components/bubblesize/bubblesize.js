@@ -59,13 +59,13 @@ var BubbleSize = Component.extend({
       'change:size.extent': changeMinMaxHandler,
       'ready': readyHandler
     }
-    
+
     function changeMinMaxHandler(evt, path) {
       var extent = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
       _this._updateLabels(extent);
       _this._moveBrush(extent);
     }
-    
+
     function readyHandler(evt) {
         _this.sizeScaleMinMax = _this.model.size.getScale().domain();
         _this._setLabelsText();
@@ -122,7 +122,7 @@ var BubbleSize = Component.extend({
         if(d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
           var brushDatum = _this.sliderEl.node().__brush;
           brushDatum.selection[1][0] += 0.01;
-        }        
+        }
         _this._setFromExtent(false, false, false);
       })
       .on("brush", function () {
@@ -170,7 +170,7 @@ var BubbleSize = Component.extend({
     }
 
     this.sliderArcsEl = this.sliderEl.selectAll(".vzb-bs-slider-thumb-arc");
-    
+
     this.sliderEl.selectAll("text").data([0,0]).enter()
       .append("text")
       .attr("class", "vzb-bs-slider-thumb-label")

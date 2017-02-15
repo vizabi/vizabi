@@ -360,7 +360,7 @@ var ColorLegend = Component.extend({
       mouseover: function(d, i) {
         //disable interaction if so stated in concept properties
         if(!_this.colorModel.isDiscrete()) return;
-        
+
         var view = d3.select(this);
         var target = d[colorlegendDim];
 
@@ -418,7 +418,7 @@ var ColorLegend = Component.extend({
         }
 
         var show = {};
-        if (oldShow.length > 0) 
+        if (oldShow.length > 0)
           show[colorlegendDim] = { "$in": oldShow };
 
         _this.model.entities.set({ show: show });
@@ -440,7 +440,7 @@ var ColorLegend = Component.extend({
           .map(function(d) {
             return utils.clone(d, [KEY]);
           });
-        
+
         if(select.filter(function(d){return _this.model.marker.isSelected(d) }).length == select.length) {
           _this.model.marker.clearSelected();
         }else{
@@ -463,12 +463,12 @@ var ColorLegend = Component.extend({
    */
   updateGroupsOpacity: function(highlight = []) {
     var _this = this;
-    
+
     var clMarker = this.colorModel.getColorlegendMarker()||{};
     var OPACITY_REGULAR = clMarker.opacityRegular || 0.8;
     var OPACITY_DIM = clMarker.opacityHighlightDim || 0.5;
     var OPACITY_HIGHLIGHT = 1;
-    
+
     var selection = _this.canShowMap ? ".vzb-cl-minimap path" : ".vzb-cl-option .vzb-cl-color-sample";
 
     this.listColorsEl.selectAll(selection).style("opacity", function(d){

@@ -683,8 +683,8 @@ export default Class.extend({
 
       var xRangeBoundsBumped = _this._rangeBump(xRangeBounds);
       var yRangeBoundsBumped = _this._rangeBump(yRangeBounds);
-      
-      
+
+
         var xDomain = _this.xScale.domain();
         var yDomain = _this.yScale.domain();
 
@@ -734,7 +734,7 @@ export default Class.extend({
              * calculating the next ratioX and ratioY.
              */
             if(zoom < minZoom) {
-              zoomer.ratioY *= zoom / transform.k; 
+              zoomer.ratioY *= zoom / transform.k;
               zoom = minZoom;
             }
             if (zoom > maxZoom) zoom = maxZoom;
@@ -749,7 +749,7 @@ export default Class.extend({
              * calculating the next ratioX and ratioY.
              */
             if(zoom < minZoom) {
-              zoomer.ratioX *= zoom / transform.k; 
+              zoomer.ratioX *= zoom / transform.k;
               zoom = minZoom;
             }
             if (zoom > maxZoom) zoom = maxZoom;

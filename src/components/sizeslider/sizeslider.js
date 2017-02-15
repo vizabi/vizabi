@@ -157,7 +157,7 @@ var SizeSlider = Component.extend({
         if(d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
           var brushDatum = _this.sliderEl.node().__brush;
           brushDatum.selection[1][0] += 0.01;
-        }        
+        }
         _this._setFromExtent(false, false, false);
       })
       .on("brush", function () {

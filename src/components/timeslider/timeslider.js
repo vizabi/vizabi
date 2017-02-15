@@ -133,7 +133,7 @@ var TimeSlider = Component.extend({
     // Same constructor as the superclass
     this._super(model, context);
 
-    // Sort of defaults. Actually should be in ui default or bubblechart. 
+    // Sort of defaults. Actually should be in ui default or bubblechart.
     // By not having "this.model.ui =" we prevent it from going to url (not defined in defaults)
     // Should be in defaults when we make components config part of external config (& every component gets own config)
     this.ui = utils.extend({
@@ -248,7 +248,7 @@ var TimeSlider = Component.extend({
 
       _this.updateSize([0, arg.rangeMax]);
     });
-    
+
     this.on("resize", function() {
       _this.updateSize();
     });
@@ -315,9 +315,9 @@ var TimeSlider = Component.extend({
 
     var slider_w = parseInt(this.slider_outer.style("width"), 10) || 0;
     var slider_h = parseInt(this.slider_outer.style("height"), 10) || 0;
-    
+
     if(!slider_h || !slider_w) return utils.warn("time slider resize() aborted because element is too small or has display:none");
-    
+
     this.width = slider_w - this.profile.margin.left - this.profile.margin.right;
     this.height = slider_h - this.profile.margin.bottom - this.profile.margin.top;
     var _this = this;
@@ -326,7 +326,7 @@ var TimeSlider = Component.extend({
     this.slider.attr("transform", "translate(" + this.profile.margin.left + "," + this.profile.margin.top + ")");
 
     this.xScale.range(range || [0, this.width]);
-    
+
     this.slide
       .attr("transform", "translate(0," + this.height / 2 + ")")
       .attr("x1", this.xScale.range()[0])

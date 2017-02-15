@@ -70,8 +70,8 @@ var BarChart = Tool.extend('BarChart', {
       presentation: false,
       chart: { },
       "buttons": ['axes', 'colors', 'fullscreen'],
-      "dialogs": { 
-        'popup': ['axes', 'colors'] 
+      "dialogs": {
+        'popup': ['axes', 'colors']
       },
     }
   }
