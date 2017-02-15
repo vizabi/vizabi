@@ -96,14 +96,7 @@ const plugins = [
   new webpack.DefinePlugin({
     __VERSION: JSON.stringify(pkg.version),
     __BUILD: +timestamp
-  }),
-  new webpack.LoaderOptionsPlugin({
-    options: {
-      eslint: {
-        fix: __FIX__,
-      },
-    },
-  }),
+  })
 ];
 
 if (__PROD__) {
@@ -177,7 +170,10 @@ const loaders = [
         }
       },
       {
-        loader: 'eslint-loader'
+        loader: 'eslint-loader',
+        options: {
+          fix: __FIX__
+        }
       }
     ]
   },
