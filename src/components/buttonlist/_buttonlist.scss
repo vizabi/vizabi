@@ -23,8 +23,8 @@ $vzb-button-color-border: #cce6ed;
     width: $vzb-button-width;
 
     > .vzb-buttonlist-btn-icon {
-      transition: all 100ms ease-in;
       @include border-radius($vzb-button-radius);
+      transition: 100ms ease-in;
       cursor: pointer;
       background-color: $vzb-button-bg;
       border: 1px solid $vzb-button-color-border;
