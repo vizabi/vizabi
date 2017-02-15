@@ -1,9 +1,12 @@
-//https://github.com/airbnb/javascript
-
 {
-  "extends": "airbnb",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "env": {
+    "browser": true
+  },
   "rules": {
-    "react/jsx-quotes": 0,
-    "space-before-function-paren": 0
+    "no-unused-vars": 1
   }
 }
