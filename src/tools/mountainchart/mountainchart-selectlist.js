@@ -154,36 +154,36 @@ var MCSelectList = Class.extend({
             .classed("vzb-revert-color", true)
             .select(".vzb-mc-label-x-text")
             .classed("vzb-revert-color", true)
-            .attr("x", contentBBox.width + contentBBox.height * 1.12 + closeTextBBox.width * .5)
-            .attr("y", contentBBox.height * .55);
+            .attr("x", contentBBox.width + contentBBox.height * 1.12 + closeTextBBox.width * 0.5)
+            .attr("y", contentBBox.height * 0.55);
 
           closeGroup.select("rect")
-            .attr("width", closeTextBBox.width + contentBBox.height * .6)
+            .attr("width", closeTextBBox.width + contentBBox.height * 0.6)
             .attr("height", contentBBox.height)
-            .attr("x", contentBBox.width + contentBBox.height * .9)
+            .attr("x", contentBBox.width + contentBBox.height * 0.9)
             .attr("y", 0)
-            .attr("rx", contentBBox.height * .25)
-            .attr("ry", contentBBox.height * .25);
+            .attr("rx", contentBBox.height * 0.25)
+            .attr("ry", contentBBox.height * 0.25);
         } else {
           closeGroup
             .attr("x", contentBBox.width + contentBBox.height * 1.1)
             .attr("y", contentBBox.height / 3);
 
           closeGroup.select("circle")
-            .attr("r", contentBBox.height * .4)
+            .attr("r", contentBBox.height * 0.4)
             .attr("cx", (isRTL ? -1 : 1) * (contentBBox.width + contentBBox.height * 1.1))
             .attr("cy", contentBBox.height / 3);
 
           closeGroup.select("svg")
-            .attr("x", (isRTL ? -1 : 1) * (contentBBox.width + contentBBox.height * (1.1 - (isRTL ? -.4 : .4))))
-            .attr("y", contentBBox.height * (1 / 3 - .4))
-            .attr("width", contentBBox.height * .8)
-            .attr("height", contentBBox.height * .8);
+            .attr("x", (isRTL ? -1 : 1) * (contentBBox.width + contentBBox.height * (1.1 - (isRTL ? -0.4 : 0.4))))
+            .attr("y", contentBBox.height * (1 / 3 - 0.4))
+            .attr("width", contentBBox.height * 0.8)
+            .attr("height", contentBBox.height * 0.8);
         }
 
         view.select(".vzb-mc-label-legend")
           .attr("r", fontHeight / 3)
-          .attr("cx", (isRTL ? -1 : 1) * fontHeight * .4)
+          .attr("cx", (isRTL ? -1 : 1) * fontHeight * 0.4)
           .attr("cy", fontHeight / 1.5)
           .style("fill", _this.cScale(_this.values.color[d.KEY()]));
 

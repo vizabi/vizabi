@@ -21,13 +21,13 @@ export default function colorPicker() {
     // which hue do we start from: 0 to 1 instead of 0 to 365
     var nCellsL = 4;
     // number of cells by lightness (radial)
-    var minL = .5;
+    var minL = 0.5;
     // which lightness to start from: 0 to 1. Recommended .3...0.5
-    var satConstant = .7;
+    var satConstant = 0.7;
     // constant saturation for color wheel: 0 to 1. Recommended .7...0.8
-    var outerL_display = .4;
+    var outerL_display = 0.4;
     // ecxeptional saturation of the outer circle. the one displayed 0 to 1
-    var outerL_meaning = .3;
+    var outerL_meaning = 0.3;
     // ecxeptional saturation of the outer circle. the one actually ment 0 to 1
     var firstAngleSat = 0;
     // exceptional saturation at first angular segment. Set 0 to have shades of grey
@@ -36,10 +36,10 @@ export default function colorPicker() {
     var maxWidth = 280;
     var maxHeight = 323;
     var margin = {
-      top: .1,
-      bottom: .1,
-      left: .1,
-      right: .1
+      top: 0.1,
+      bottom: 0.1,
+      left: 0.1,
+      right: 0.1
     };
     //margins in % of container's width and height
     var colorOld = '#000';
@@ -135,7 +135,7 @@ export default function colorPicker() {
             return p + (q - p) * (2 / 3 - t) * 6;
           return p;
         };
-        var q = l < .5 ? l * (1 + s) : l + s - l * s;
+        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
         var p = 2 * l - q;
         r = _hue2rgb(p, q, h + 1 / 3);
         g = _hue2rgb(p, q, h);
@@ -214,7 +214,7 @@ export default function colorPicker() {
         .style('text-anchor', 'end');
 
       svg.append('text')
-        .attr('x', width * .1)
+        .attr('x', width * 0.1)
         .attr('y', height * (1 - margin.bottom))
         .attr('dy', '1.2em')
         .attr('class', "vzb-default-label")
@@ -490,13 +490,13 @@ export default function colorPicker() {
         var circles = svg.select('.' + css.COLOR_CIRCLES);
 
         var hPos = maxRadius + height * margin.top;
-        var hPosCenter = (1 + margin.top * .5) * height * .5;
+        var hPosCenter = (1 + margin.top * 0.5) * height * 0.5;
         hPos = hPos > hPosCenter ? hPosCenter : hPos;
         circles.attr('transform', 'translate(' + (maxRadius + width * margin.left) +
         ',' + hPos + ')');
         selectedColor.attr('cx', width * margin.left * 1.5)
                      .attr('cy', height * (1 - margin.bottom * 1.5));
-        defaultLabel.attr('x', width * .1)
+        defaultLabel.attr('x', width * 0.1)
                     .attr('y', height * (1 - margin.bottom));
       }
       colorPicker.fitToScreen();

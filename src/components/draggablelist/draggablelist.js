@@ -84,10 +84,10 @@ var DraggableList = Component.extend({
             .style('top', function(d, i) {
               var top = 0;
 
-              if (i < draggedIndex && d._y + draggedData._height * .5 > newDraggedY) {
+              if (i < draggedIndex && d._y + draggedData._height * 0.5 > newDraggedY) {
                 top = draggedData._height;
               }
-              else if (i > draggedIndex && d._y - draggedData._height * .5 < newDraggedY) {
+              else if (i > draggedIndex && d._y - draggedData._height * 0.5 < newDraggedY) {
                 top = -draggedData._height;
               }
 

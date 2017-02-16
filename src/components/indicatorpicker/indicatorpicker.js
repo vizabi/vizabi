@@ -125,7 +125,7 @@ var IndPicker = Component.extend({
             var treemenuPaddLeft = parseInt(treemenuComp.wrapper.style('padding-left'), 10) || 0;
             var treemenuPaddRight = parseInt(treemenuComp.wrapper.style('padding-right'), 10) || 0;
             var topPos = rect.bottom - rootRect.top;
-            var leftPos = rect.left - rootRect.left - (treemenuPaddLeft + treemenuPaddRight + treemenuColWidth - rect.width) * .5;
+            var leftPos = rect.left - rootRect.left - (treemenuPaddLeft + treemenuPaddRight + treemenuColWidth - rect.width) * 0.5;
 
             treemenuComp
                 .markerID(_this.markerID)

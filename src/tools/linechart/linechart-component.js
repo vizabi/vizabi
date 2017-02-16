@@ -637,7 +637,7 @@ var LCComponent = Component.extend({
         .attr("width", infoElHeight + "px")
         .attr("height", infoElHeight + "px");
       this.yInfoEl.attr('transform', 'translate('
-        + (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4) + ','
+        + (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4) + ','
         + (t.translateY - infoElHeight * 0.8) + ')');
     }
 
@@ -983,7 +983,7 @@ var LCComponent = Component.extend({
     var _this = this;
 
     var OPACITY_HIGHLT = 1.0;
-    var OPACITY_HIGHLT_DIM = .3;
+    var OPACITY_HIGHLT_DIM = 0.3;
     var OPACITY_SELECT = this.model.marker.opacityRegular;
     var OPACITY_REGULAR = this.model.marker.opacityRegular;
     var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;

@@ -893,7 +893,7 @@ var AgePyramid = Component.extend({
         //var value = (_this.dataWithTotal || _this.stacked) ? _this.values1.axis_x[d[shiftedAgeDim]][d[sideDim]][d[stackDim]] / total : _this.xScale.invert(d["width_"]);
         return text + ": " + formatter(value);
       })
-      .attr("x", (left?-1:1) * (_this.activeProfile.centerWidth * .5 + 7))
+      .attr("x", (left?-1:1) * (_this.activeProfile.centerWidth * 0.5 + 7))
       .classed("vzb-text-left", left);
 
     label.classed('vzb-hovered', true);
@@ -1007,7 +1007,7 @@ var AgePyramid = Component.extend({
       this.yScale.rangePoints([this.height, 0]).range();
     }
 
-    var maxRange = this.twoSided ? ((this.width - this.activeProfile.centerWidth) * .5) : this.width;
+    var maxRange = this.twoSided ? ((this.width - this.activeProfile.centerWidth) * 0.5) : this.width;
 
     if (this.model.marker.axis_x.scaleType !== "ordinal") {
       this.xScale.range([0, maxRange]);
@@ -1041,7 +1041,7 @@ var AgePyramid = Component.extend({
         limitMaxTickNumber: 6
       });
 
-    var translateX = this.twoSided ? ((this.width + _this.activeProfile.centerWidth) * .5) : 0;
+    var translateX = this.twoSided ? ((this.width + _this.activeProfile.centerWidth) * 0.5) : 0;
 
     this.xAxisEl.attr("transform", "translate(" + translateX + "," + this.height + ")")
       .call(this.xAxis);
@@ -1052,9 +1052,9 @@ var AgePyramid = Component.extend({
     this.xAxisLeftEl.classed("vzb-hidden", !this.twoSided);
     if (this.twoSided) {
       if (this.model.marker.axis_x.scaleType !== "ordinal") {
-        this.xScaleLeft.range([(this.width - this.activeProfile.centerWidth) * .5, 0]);
+        this.xScaleLeft.range([(this.width - this.activeProfile.centerWidth) * 0.5, 0]);
       } else {
-        this.xScaleLeft.rangePoints([(this.width - this.activeProfile.centerWidth) * .5, 0]).range();
+        this.xScaleLeft.rangePoints([(this.width - this.activeProfile.centerWidth) * 0.5, 0]).range();
       }
 
       this.xAxisLeft.scale(this.xScaleLeft)
@@ -1074,7 +1074,7 @@ var AgePyramid = Component.extend({
       var zeroTickEl = this.xAxisEl.select(".tick text");
       if (!zeroTickEl.empty()) {
         var zeroTickWidth = zeroTickEl.node().getBBox().width;
-        zeroTickEl.attr("dx", -(this.activeProfile.centerWidth + zeroTickWidth) * .5);
+        zeroTickEl.attr("dx", -(this.activeProfile.centerWidth + zeroTickWidth) * 0.5);
       }
     }
 
@@ -1086,14 +1086,14 @@ var AgePyramid = Component.extend({
     this.title
       .attr('x', margin.left + (this.twoSided ? translateX - this.activeProfile.titlesSpacing : 0))
       .style('text-anchor', this.twoSided ? "end":"")
-      .attr('y', margin.top * .7);
+      .attr('y', margin.top * 0.7);
     this.titleRight
       .attr('x', margin.left + translateX + this.activeProfile.titlesSpacing)
-      .attr('y', margin.top * .7);
+      .attr('y', margin.top * 0.7);
 
     this.xTitleEl
       .style("font-size", infoElHeight + "px")
-      .attr("transform", "translate(" + (isRTL ? this.width : margin.left * .4) + "," + (margin.top * .4) + ")");
+      .attr("transform", "translate(" + (isRTL ? this.width : margin.left * 0.4) + "," + (margin.top * 0.4) + ")");
     // this.xTitleEl.select("text")
     //   .attr('x', margin.left / 2)
     //   .attr('y', margin.top / 2);
@@ -1101,7 +1101,7 @@ var AgePyramid = Component.extend({
     if (this.xInfoEl.select('svg').node()) {
       var titleBBox = this.xTitleEl.node().getBBox();
       var t = utils.transform(this.xTitleEl.node());
-      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4);
+      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
       this.xInfoEl.select('svg')
         .attr("width", infoElHeight + "px")
@@ -1112,7 +1112,7 @@ var AgePyramid = Component.extend({
     }
 
 
-    this.year.attr('x', this.width + margin.left).attr('y', margin.top * .4);
+    this.year.attr('x', this.width + margin.left).attr('y', margin.top * 0.4);
 
   },
 
@@ -1146,7 +1146,7 @@ var AgePyramid = Component.extend({
       });
 
 
-    var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
+    var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
 
     // when pointer events need update...
     if (nonSelectedOpacityZero != this.nonSelectedOpacityZero) {
@@ -1156,7 +1156,7 @@ var AgePyramid = Component.extend({
       });
     }
 
-    this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
+    this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
   }
 
 });

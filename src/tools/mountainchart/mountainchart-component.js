@@ -457,7 +457,7 @@ updateSize: function(meshLength) {
         this.dataWarningEl.select("svg")
             .attr("width", warnBB.height)
             .attr("height", warnBB.height)
-            .attr("x", warnBB.height * .1)
+            .attr("x", warnBB.height * 0.1)
             .attr("y", -warnBB.height * 1.0 + 1);
 
         this.dataWarningEl
@@ -468,14 +468,14 @@ updateSize: function(meshLength) {
         if (this.infoEl.select('svg').node()) {
             var titleBBox = this.yTitleEl.node().getBBox();
             var t = utils.transform(this.yTitleEl.node());
-            var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4);
+            var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
             this.infoEl.select('svg')
                 .attr("width", infoElHeight + "px")
                 .attr("height", infoElHeight + "px");
             this.infoEl.attr('transform', 'translate('
                 + hTranslate + ','
-                + (t.translateY - infoElHeight * .8) + ')');
+                + (t.translateY - infoElHeight * 0.8) + ')');
         }
 
         this.eventAreaEl
@@ -780,7 +780,7 @@ updateSize: function(meshLength) {
         //if(!duration)duration = 0;
 
         var OPACITY_HIGHLT = 1.0;
-        var OPACITY_HIGHLT_DIM = .3;
+        var OPACITY_HIGHLT_DIM = 0.3;
         var OPACITY_SELECT = this.model.marker.opacityRegular;
         var OPACITY_REGULAR = this.model.marker.opacityRegular;
         var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
@@ -807,7 +807,7 @@ updateSize: function(meshLength) {
             return _this.model.marker.isSelected(d);
         });
 
-        var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
+        var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
 
         // when pointer events need update...
         if (nonSelectedOpacityZero !== this.nonSelectedOpacityZero) {
@@ -817,7 +817,7 @@ updateSize: function(meshLength) {
             });
         }
 
-        this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
+        this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
     },
 
     updateTime: function() {
@@ -1141,7 +1141,7 @@ updateSize: function(meshLength) {
 
         if (stack !== "none") view
             .transition().duration(Math.random() * 900 + 100).ease(d3.easeCircle)
-            .style("stroke-opacity", .5);
+            .style("stroke-opacity", 0.5);
 
         if (this.model.time.record) this._export.write({
             type: "path",
@@ -1171,8 +1171,8 @@ updateSize: function(meshLength) {
                 .attr("height", contentBBox.height + 8)
                 .attr("x", -contentBBox.width - 25)
                 .attr("y", -contentBBox.height - 25)
-                .attr("rx", contentBBox.height * .2)
-                .attr("ry", contentBBox.height * .2);
+                .attr("rx", contentBBox.height * 0.2)
+                .attr("ry", contentBBox.height * 0.2);
 
             this.tooltip.selectAll("text")
                 .attr("x", -contentBBox.width - 25 + ((contentBBox.width + 8)/2))

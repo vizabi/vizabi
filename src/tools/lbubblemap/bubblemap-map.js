@@ -195,7 +195,7 @@ var MapLayer = Class.extend({
     this.projection
         .translate([canvas[0][0] - (currentNW[0] * scaleDelta) + mapLeftOffset, canvas[0][1] - (currentNW[1] * scaleDelta) + mapTopOffset])
         .scale(scaleDelta)
-        .precision(.1);
+        .precision(0.1);
 
     this.mapGraph
         .selectAll('path').attr("d", this.mapPath);

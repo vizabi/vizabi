@@ -478,7 +478,7 @@ export default Class.extend({
             y2: yBounds[1]
         };
 
-        var TOLERANCE = .0;
+        var TOLERANCE = 0.0;
 
         /*
          * If there is no current zoom frame, or if any of the suggested frame

@@ -257,7 +257,7 @@ var BubbleSize = Component.extend({
     this.sliderLabelsEl.data(s)
       .attr("transform", function(d, i) {
         var textMargin = { v: OPTIONS.TEXT_PARAMS.TOP, h: OPTIONS.TEXT_PARAMS.LEFT },
-            dX = textMargin.h * (i ? .5 : -1.0) + _this.xScale(d),
+            dX = textMargin.h * (i ? 0.5 : -1.0) + _this.xScale(d),
             dY = 0;
         return "translate(" + (dX) + "," + (dY) + ")";
       });

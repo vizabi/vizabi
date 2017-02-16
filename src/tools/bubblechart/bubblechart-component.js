@@ -989,7 +989,7 @@ var BubbleChartComp = Component.extend({
     if (this.yInfoEl.select('svg').node()) {
       var titleBBox = this.yTitleEl.node().getBBox();
       var t = utils.transform(this.yTitleEl.node());
-      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4);
+      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
       this.yInfoEl.select('svg')
         .attr("width", infoElHeight + "px")
@@ -1002,7 +1002,7 @@ var BubbleChartComp = Component.extend({
     if (this.xInfoEl.select('svg').node()) {
       var titleBBox = this.xTitleEl.node().getBBox();
       var t = utils.transform(this.xTitleEl.node());
-      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4);
+      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
       this.xInfoEl.select('svg')
         .attr("width", infoElHeight + "px")
@@ -1438,8 +1438,8 @@ var BubbleChartComp = Component.extend({
         yOffset = 0;
 
       if (offset) {
-        xOffset = offset * .71; // .71 - sin and cos for 315
-        yOffset = offset * .71;
+        xOffset = offset * 0.71; // .71 - sin and cos for 315
+        yOffset = offset * 0.71;
       }
       //position tooltip
       this.tooltip.classed("vzb-hidden", false)
@@ -1473,9 +1473,9 @@ var BubbleChartComp = Component.extend({
         .attr("width", contentBBox.width + 8)
         .attr("height", contentBBox.height * 1.2)
         .attr("x", -contentBBox.width - 4)
-        .attr("y", -contentBBox.height * .85)
-        .attr("rx", contentBBox.height * .2)
-        .attr("ry", contentBBox.height * .2);
+        .attr("y", -contentBBox.height * 0.85)
+        .attr("rx", contentBBox.height * 0.2)
+        .attr("ry", contentBBox.height * 0.2);
 
       this.tooltip.select(".vzb-tooltip-glow")
         .attr("stroke", glow);
@@ -1660,7 +1660,7 @@ var BubbleChartComp = Component.extend({
       });
 
 
-    var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
+    var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
 
     // when pointer events need update...
     if (nonSelectedOpacityZero != this.nonSelectedOpacityZero) {
@@ -1670,7 +1670,7 @@ var BubbleChartComp = Component.extend({
       });
     }
 
-    this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
+    this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
   }
 
 });

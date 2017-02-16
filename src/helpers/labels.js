@@ -179,11 +179,11 @@ var label = function(context) {
         _X = viewWidth - 5;
         cache.labelX_ = (_X - _this.xScale(cache.labelX0)) / viewWidth;
       }
-      if (_Y - height * .75 <= 0) { // check top
-        _Y = height * .75;
+      if (_Y - height * 0.75 <= 0) { // check top
+        _Y = height * 0.75;
         cache.labelY_ = (_Y - _this.yScale(cache.labelY0)) / viewHeight;
-      } else if (_Y + height * .35 > viewHeight) { //check bottom
-        _Y = viewHeight - height * .35;
+      } else if (_Y + height * 0.35 > viewHeight) { //check bottom
+        _Y = viewHeight - height * 0.35;
         cache.labelY_ = (_Y - _this.yScale(cache.labelY0)) / viewHeight;
       }
 
@@ -270,8 +270,8 @@ var label = function(context) {
       var diffX1 = _X0 - _X;
       var diffY1 = _Y0 - _Y;
       var textBBox = labelGroup.select('text').node().getBBox();
-      var diffX2 = -textBBox.width * .5;
-      var diffY2 = -height * .2;
+      var diffX2 = -textBBox.width * 0.5;
+      var diffY2 = -height * 0.2;
       var labels = _this.model.ui.chart.labels;
 
       var bBox = labels.removeLabelBox ? textBBox : rectBBox;
@@ -285,10 +285,10 @@ var label = function(context) {
 
       if (labels.removeLabelBox) {
         var angle = Math.atan2(diffX1 - diffX2, diffY1 - diffY2) * 180 / Math.PI;
-        var deltaDiffX2 = (angle >= 0 && angle <= 180) ? (bBox.width * .5) : (-bBox.width * .5);
-        var deltaDiffY2 = (Math.abs(angle) <= 90) ? (bBox.height * .55) : (-bBox.height * .45);
-        diffX2 += Math.abs(diffX1 - diffX2) > textBBox.width * .5 ? deltaDiffX2 : 0;
-        diffY2 += Math.abs(diffY1 - diffY2) > textBBox.height * .5 ? deltaDiffY2 : (textBBox.height * .05);
+        var deltaDiffX2 = (angle >= 0 && angle <= 180) ? (bBox.width * 0.5) : (-bBox.width * 0.5);
+        var deltaDiffY2 = (Math.abs(angle) <= 90) ? (bBox.height * 0.55) : (-bBox.height * 0.45);
+        diffX2 += Math.abs(diffX1 - diffX2) > textBBox.width * 0.5 ? deltaDiffX2 : 0;
+        diffY2 += Math.abs(diffY1 - diffY2) > textBBox.height * 0.5 ? deltaDiffY2 : (textBBox.height * 0.05);
       }
 
       var longerSideCoeff = Math.abs(diffX1) > Math.abs(diffY1) ? Math.abs(diffX1) : Math.abs(diffY1);
@@ -322,8 +322,8 @@ var label = function(context) {
     function circleRectIntersects(circle, rect) {
       var circleDistanceX = Math.abs(circle.x - rect.x);
       var circleDistanceY = Math.abs(circle.y - rect.y);
-      var halfRectWidth = rect.width * .5;
-      var halfRectHeight = rect.height * .5;
+      var halfRectWidth = rect.width * 0.5;
+      var halfRectHeight = rect.height * 0.5;
 
       if (circleDistanceX > (halfRectWidth + circle.r)) { return false; }
       if (circleDistanceY > (halfRectHeight + circle.r)) { return false; }
@@ -631,16 +631,16 @@ var Labels = Class.extend({
 
       var isRTL = _this.model.locale.isRTL();
       var labelCloseGroup = labelGroup.select("." + _cssPrefix + "-label-x")
-        .attr('transform', 'translate(' + (isRTL ? -contentBBox.width - 4 : 4) + ',' + (-contentBBox.height * .85) + ')');
+        .attr('transform', 'translate(' + (isRTL ? -contentBBox.width - 4 : 4) + ',' + (-contentBBox.height * 0.85) + ')');
 
       this.updateLabelCloseGroupSize(labelCloseGroup, labelCloseHeight);
 
       rect.attr("width", contentBBox.width + 8)
         .attr("height", contentBBox.height * 1.2)
         .attr("x", -contentBBox.width - 4)
-        .attr("y", -contentBBox.height * .85)
-        .attr("rx", contentBBox.height * .2)
-        .attr("ry", contentBBox.height * .2);
+        .attr("y", -contentBBox.height * 0.85)
+        .attr("rx", contentBBox.height * 0.2)
+        .attr("ry", contentBBox.height * 0.2);
 
       //cache label bound rect for reposition
       cached.rectBBox = rect.node().getBBox();
@@ -658,11 +658,11 @@ var Labels = Class.extend({
     labelCloseGroup.select("circle")
       .attr("cx", /*contentBBox.height * .0 + */ 0)
       .attr("cy", 0)
-      .attr("r", labelCloseHeight * .5);
+      .attr("r", labelCloseHeight * 0.5);
 
     labelCloseGroup.select("svg")
-      .attr("x", -labelCloseHeight * .5)
-      .attr("y", labelCloseHeight * -.5)
+      .attr("x", -labelCloseHeight * 0.5)
+      .attr("y", labelCloseHeight * -0.5)
       .attr("width", labelCloseHeight)
       .attr("height", labelCloseHeight);
 
@@ -725,8 +725,8 @@ var Labels = Class.extend({
     var resolvedY0 = this.yScale(cached.labelY0);
 
     if (!cached.labelOffset) cached.labelOffset = [0, 0];
-    cached.labelX_ = cached.labelOffset[0] || (-cached.scaledS0 * .75 - 5) / viewWidth;
-    cached.labelY_ = cached.labelOffset[1] || (-cached.scaledS0 * .75 - 11) / viewHeight;
+    cached.labelX_ = cached.labelOffset[0] || (-cached.scaledS0 * 0.75 - 5) / viewWidth;
+    cached.labelY_ = cached.labelOffset[1] || (-cached.scaledS0 * 0.75 - 11) / viewHeight;
 
     //check default label position and switch to mirror position if position
     //does not bind to visible field
@@ -734,7 +734,7 @@ var Labels = Class.extend({
     var resolvedX = resolvedX0 + cached.labelX_ * viewWidth;
     if (cached.labelOffset[0] == 0) {
       if (resolvedX - cached.rectBBox.width <= 0) { //check left
-        cached.labelX_ = (cached.scaledS0 * .75 + cached.rectBBox.width) / viewWidth;
+        cached.labelX_ = (cached.scaledS0 * 0.75 + cached.rectBBox.width) / viewWidth;
         resolvedX = resolvedX0 + cached.labelX_ * viewWidth;
       } else if (resolvedX + 15 > viewWidth) { //check right
         cached.labelX_ = (viewWidth - 15 - resolvedX0) / viewWidth;
@@ -744,7 +744,7 @@ var Labels = Class.extend({
     var resolvedY = resolvedY0 + cached.labelY_ * viewHeight;
     if (cached.labelOffset[1] == 0) {
       if (resolvedY - cached.rectBBox.height <= 0) { // check top
-        cached.labelY_ = (cached.scaledS0 * .75 + cached.rectBBox.height) / viewHeight;
+        cached.labelY_ = (cached.scaledS0 * 0.75 + cached.rectBBox.height) / viewHeight;
         resolvedY = resolvedY0 + cached.labelY_ * viewHeight;
       } else if (resolvedY + 10 > viewHeight) { //check bottom
         cached.labelY_ = (viewHeight - 10 - resolvedY0) / viewHeight;

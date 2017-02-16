@@ -256,7 +256,7 @@ var ColorLegend = Component.extend({
       });
 
       var gColors = paletteKeys.map(function(val, i) {
-        return colorRange[i] + " " + d3.format("%")(val * .01);
+        return colorRange[i] + " " + d3.format("%")(val * 0.01);
       }).join(", ");
 
       this.rainbowEl

@@ -132,7 +132,7 @@ var CartogramComponent = Component.extend({
       .center([25, -29])
       .scale(1900)
       .translate([this.defaultWidth / 2, this.defaultHeight / 2])
-      .precision(.1);
+      .precision(0.1);
 
     this.cartogram = d3.cartogram()
       .projection(this.projection)
@@ -611,7 +611,7 @@ var CartogramComponent = Component.extend({
         .attr("width", infoElHeight)
         .attr("height", infoElHeight);
       this.yInfoEl.attr('transform', 'translate('
-        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
+        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ','
         + (translate[1] - infoElHeight * 0.8) + ')');
     }
 
@@ -625,7 +625,7 @@ var CartogramComponent = Component.extend({
         .attr("width", infoElHeight)
         .attr("height", infoElHeight);
       this.sInfoEl.attr('transform', 'translate('
-        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
+        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ','
         + (translate[1] - infoElHeight * 0.8) + ')');
     }
   },
@@ -756,8 +756,8 @@ var CartogramComponent = Component.extend({
         yOffset = 0;
 
       if (offset) {
-        xOffset = offset * .71; // .71 - sin and cos for 315
-        yOffset = offset * .71;
+        xOffset = offset * 0.71; // .71 - sin and cos for 315
+        yOffset = offset * 0.71;
       }
       //position tooltip
       this.tooltip.classed("vzb-hidden", false)
@@ -791,9 +791,9 @@ var CartogramComponent = Component.extend({
       this.tooltip.select('rect').attr("width", contentBBox.width + 8)
         .attr("height", contentBBox.height * 1.2)
         .attr("x", -contentBBox.width - 4)
-        .attr("y", -contentBBox.height * .85)
-        .attr("rx", contentBBox.height * .2)
-        .attr("ry", contentBBox.height * .2);
+        .attr("y", -contentBBox.height * 0.85)
+        .attr("rx", contentBBox.height * 0.2)
+        .attr("ry", contentBBox.height * 0.2);
 
 
     } else {
@@ -807,7 +807,7 @@ var CartogramComponent = Component.extend({
     //if(!duration)duration = 0;
 
     var OPACITY_HIGHLT = 0.8;
-    var OPACITY_HIGHLT_DIM = .3;
+    var OPACITY_HIGHLT_DIM = 0.3;
     var OPACITY_SELECT = this.model.entities.opacityRegular;
     var OPACITY_REGULAR = this.model.entities.opacityRegular;
     var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
@@ -832,7 +832,7 @@ var CartogramComponent = Component.extend({
       });
 
 
-    var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
+    var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
 
     // when pointer events need update...
     if (someSelectedAndOpacityZero != this.someSelectedAndOpacityZero_1) {
@@ -842,7 +842,7 @@ var CartogramComponent = Component.extend({
       });
     }
 
-    this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
+    this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
   },
 
   preload: function() {
