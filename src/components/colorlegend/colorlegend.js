@@ -239,7 +239,7 @@ var ColorLegend = Component.extend({
       var colorRange = cScale.range();
 
       var gIndicators = range.map(function(val, i) {
-        return {val: val, color: colorRange[i], paletteKey: paletteKeys[i]};
+        return { val: val, color: colorRange[i], paletteKey: paletteKeys[i] };
       });
       this.rainbowLegend = this.rainbowLegendG.selectAll('circle')
         .data(gIndicators);

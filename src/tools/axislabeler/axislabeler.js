@@ -75,12 +75,12 @@ var AxisLabeler = Tool.extend('AxisLabeler', {
       },
       show:{
           labelSize: "16px",
-          labelMargin: {LR: "5px", TB: "5px"},
-          toolMargin: {top: 30, right: 20, left: 40, bottom: 40}
+          labelMargin: { LR: "5px", TB: "5px" },
+          toolMargin: { top: 30, right: 20, left: 40, bottom: 40 }
       }
 
     },
-    data: {noConceptprops: true},
+    data: { noConceptprops: true },
     locale: { },
     ui: { }
   }

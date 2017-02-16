@@ -350,7 +350,7 @@ var GoogleMapLayer = Class.extend({
   getCenter: function() {
     var center = this.map.getCenter();
     this.centerMapker.setPosition(center);
-    return {lat: center.lat(), lng: center.lng()};
+    return { lat: center.lat(), lng: center.lng() };
   }
 });
 
@@ -406,7 +406,7 @@ var MapboxLayer = Class.extend({
         .style("bottom", margin.bottom + "px");
 
     utils.defer(function() {
-      _this.map.fitBounds(_this.bounds, {duration: 0});
+      _this.map.fitBounds(_this.bounds, { duration: 0 });
       _this.map.resize();
       _this.parent.boundsChanged();
     });

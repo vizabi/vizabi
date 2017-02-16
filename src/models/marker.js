@@ -35,7 +35,7 @@ var Marker = Model.extend({
 
   setDataSourceForAllSubhooks: function(data) {
     var obj = {};
-    this.getSubhooks().forEach(hook => { obj[hook._name] = {data: data}; });
+    this.getSubhooks().forEach(hook => { obj[hook._name] = { data: data }; });
     this.set(obj, null, false);
   },
 
@@ -108,7 +108,7 @@ var Marker = Model.extend({
     if(!this.allowSelectMultiple) return;
 
     var added,
-      dimension = this._getFirstDimension({exceptType: "time"});
+      dimension = this._getFirstDimension({ exceptType: "time" });
 
     var select = this._visible.map(function(d) {
       added = {};
@@ -288,7 +288,7 @@ var Marker = Model.extend({
             min = d3.min(items);
             max = d3.max(items);
         }
-        _this.cachedTimeLimits[hook._dataId + hook.which] = {min: min, max: max};
+        _this.cachedTimeLimits[hook._dataId + hook.which] = { min: min, max: max };
         minArray.push(min);
         maxArray.push(max);
       });
@@ -302,7 +302,7 @@ var Marker = Model.extend({
       }
 
       //return false for the case when neither of hooks was an "indicator" or "important"
-      return !min && !max? false : {min: resultMin, max: resultMax};
+      return !min && !max? false : { min: resultMin, max: resultMax };
   },
 
 
@@ -315,7 +315,7 @@ var Marker = Model.extend({
         var resultKeys = [];
 
         KEY = KEY || this._getFirstDimension();
-        var TIME = this._getFirstDimension({type: "time"});
+        var TIME = this._getFirstDimension({ type: "time" });
 
         utils.forEach(this._dataCube||this.getSubhooks(true), function(hook, name) {
 
@@ -593,7 +593,7 @@ var Marker = Model.extend({
       if (!this.cachedFrames) this.cachedFrames = {};
 
       var KEY = this._getFirstDimension();
-      var TIME = this._getFirstDimension({type: "time"});
+      var TIME = this._getFirstDimension({ type: "time" });
 
       if (!this.frameQueues) this.frameQueues = {}; //static queue of frames
       if (!this.partialResult) this.partialResult = {};
@@ -719,7 +719,7 @@ var Marker = Model.extend({
     listenFramesQueue: function(keys, cb) {
       var _this = this;
       var KEY = this._getFirstDimension();
-      var TIME = this._getFirstDimension({type: "time"});
+      var TIME = this._getFirstDimension({ type: "time" });
       var steps = this._parent.time.getAllSteps();
       var preparedFrames = {};
       this.getFrames();
@@ -913,7 +913,7 @@ var Marker = Model.extend({
     }));
 
     return Promise.all(promises).then(function() {
-      return ({"min": selectedEdgeTimes[0],"max": selectedEdgeTimes[1]});
+      return ({ "min": selectedEdgeTimes[0],"max": selectedEdgeTimes[1] });
     });
   },
 

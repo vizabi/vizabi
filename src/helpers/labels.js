@@ -1,7 +1,7 @@
 import * as utils from 'base/utils';
 import Class from 'base/class';
 
-import {close as iconClose} from 'base/iconset';
+import { close as iconClose } from 'base/iconset';
 
 var label = function(context) {
 
@@ -280,8 +280,8 @@ var label = function(context) {
 
       var FAR_COEFF = _this.activeProfile.labelLeashCoeff||0;
 
-      var lineHidden = circleRectIntersects({x: diffX1, y: diffY1, r: cache.scaledS0},
-        {x: diffX2, y: diffY2, width: (bBox.height * 2 * FAR_COEFF + bBox.width), height: (bBox.height * (2 * FAR_COEFF + 1))});
+      var lineHidden = circleRectIntersects({ x: diffX1, y: diffY1, r: cache.scaledS0 },
+        { x: diffX2, y: diffY2, width: (bBox.height * 2 * FAR_COEFF + bBox.width), height: (bBox.height * (2 * FAR_COEFF + 1)) });
       lineGroup.select('line').classed("vzb-invisible", lineHidden);
       if(lineHidden) return;
 
@@ -512,7 +512,7 @@ var Labels = Class.extend({
       .enter().append("g")
       .attr("class", function(d, index) {return _cssPrefix + "-entity label-" + d[KEY];})
       .each(function(d, index) {
-        _this.cached[d[KEY]] = {_new: true};
+        _this.cached[d[KEY]] = { _new: true };
         _this.label(d3.select(this));
       })
       .merge(this.entityLabels);

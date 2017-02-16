@@ -18,7 +18,7 @@ var AxisLabelerComponent = Component.extend({
     this.template = require('./axislabeler.html');
 
     //define expected models for this component
-    this.model_expects = [{name: "scales"}, {name: "show"}];
+    this.model_expects = [{ name: "scales" }, { name: "show" }];
 
     var _this = this;
 

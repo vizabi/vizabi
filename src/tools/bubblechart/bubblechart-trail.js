@@ -109,7 +109,7 @@ export default Class.extend({
                     _context._setTooltip(text, x, y, s + 3, c);
                   }
                   _context._setBubbleCrown(x, y, s, c);
-                  _context.model.marker.getModelObject("highlight").trigger('change', {'size': values.size[pointer[KEY]], 'color': values.color[pointer[KEY]]});
+                  _context.model.marker.getModelObject("highlight").trigger('change', { 'size': values.size[pointer[KEY]], 'color': values.color[pointer[KEY]] });
                 });
                 //change opacity to OPACITY_HIGHLT = 1.0;
                 d3.select(this).style("opacity", 1.0);
@@ -285,7 +285,7 @@ export default Class.extend({
 
       if(!updateLabel && !segment.transparent) {
         updateLabel = true;
-        _context._labels.updateLabelOnlyPosition(d, null, {'scaledS0': utils.areaToRadius(_context.sScale(segment.valueS))});
+        _context._labels.updateLabelOnlyPosition(d, null, { 'scaledS0': utils.areaToRadius(_context.sScale(segment.valueS)) });
       }
 
       if(!segment.next) return;

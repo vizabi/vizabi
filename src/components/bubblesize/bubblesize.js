@@ -139,7 +139,7 @@ var BubbleSize = Component.extend({
       });
 
     this.sliderThumbs = this.sliderEl.selectAll(".handle")
-      .data([{type:"w"},{type:"e"}], function(d) { return d.type; })
+      .data([{ type:"w" },{ type:"e" }], function(d) { return d.type; })
       .enter().append("svg").attr("class", function(d) { return "handle handle--" + d.type; })
       .classed("vzb-bs-slider-thumb", true);
 
@@ -215,7 +215,7 @@ var BubbleSize = Component.extend({
   },
 
   getMinMaxBubbleRadius: function() {
-    return { min: profiles[this.getLayoutProfile()].minRadius, max: profiles[this.getLayoutProfile()].maxRadius};
+    return { min: profiles[this.getLayoutProfile()].minRadius, max: profiles[this.getLayoutProfile()].maxRadius };
   },
 
   _moveBrush: function(s) {
@@ -293,7 +293,7 @@ var BubbleSize = Component.extend({
    */
   _setModel: function (value, force, persistent) {
     value = [+value[0].toFixed(2), +value[1].toFixed(2)];
-    this.model.size.set({"extent": value}, force, persistent);
+    this.model.size.set({ "extent": value }, force, persistent);
   }
 
 });

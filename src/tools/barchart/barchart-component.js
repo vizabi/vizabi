@@ -286,7 +286,7 @@ var BarComponent = Component.extend({
       .labelerOptions({
         scaleType: this.model.marker.axis_y.scaleType,
         timeFormat: this.model.time.getFormatter(),
-        toolMargin: {top: 5, right: margin.right, left: margin.left, bottom: margin.bottom},
+        toolMargin: { top: 5, right: margin.right, left: margin.left, bottom: margin.bottom },
         limitMaxTickNumber: 6
       });
 

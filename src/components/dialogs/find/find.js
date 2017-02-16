@@ -20,7 +20,7 @@ var Find = Dialog.extend({
       placeholder: '.vzb-dialog-bubbleopacity',
       model: ["state.marker"],
       arg: "opacitySelectDim",
-      properties: {step: 0.01}
+      properties: { step: 0.01 }
     }];
 
     this.model_binds = {

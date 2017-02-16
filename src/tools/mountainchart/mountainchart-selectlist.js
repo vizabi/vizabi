@@ -1,6 +1,6 @@
 import * as utils from 'base/utils';
 import Class from 'base/class';
-import { close as iconClose} from 'base/iconset';
+import { close as iconClose } from 'base/iconset';
 
 var MCSelectList = Class.extend({
 

@@ -72,9 +72,9 @@ var AxisModel = Hook.extend({
 
       var timeMdl = this._space.time;
       var limits = timeMdl.splash ?
-          {min: timeMdl.parse(timeMdl.startOrigin), max: timeMdl.parse(timeMdl.endOrigin)}
+          { min: timeMdl.parse(timeMdl.startOrigin), max: timeMdl.parse(timeMdl.endOrigin) }
           :
-          {min: timeMdl.start, max: timeMdl.end};
+          { min: timeMdl.start, max: timeMdl.end };
 
       domain = [limits.min, limits.max];
       this.scale = d3.time.scale.utc().domain(domain);

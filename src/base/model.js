@@ -1,5 +1,5 @@
 import * as utils from 'base/utils';
-import EventSource, {DefaultEvent, ChangeEvent} from 'base/events';
+import EventSource, { DefaultEvent, ChangeEvent } from 'base/events';
 import Intervals from 'base/intervals';
 
 var ModelLeaf = EventSource.extend({

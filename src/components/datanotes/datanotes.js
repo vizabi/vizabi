@@ -1,7 +1,7 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
 
-import {close as iconClose} from 'base/iconset';
+import { close as iconClose } from 'base/iconset';
 
 var hidden = true;
 var showNotes = false;

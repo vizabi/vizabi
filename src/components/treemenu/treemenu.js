@@ -1,7 +1,7 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
 import Class from 'base/class';
-import {close as iconClose} from 'base/iconset';
+import { close as iconClose } from 'base/iconset';
 
 /*!
  * VIZABI INDICATOR PICKER
@@ -697,11 +697,11 @@ var TreeMenu = Component.extend({
 
       //init the dictionary of tags
       var tags = {};
-      tags[ROOT] = {id: ROOT, children: []};
-      tags[UNCLASSIFIED] = {id: UNCLASSIFIED, type: "folder", name: this.translator("buttons/unclassified"), children:[]};
+      tags[ROOT] = { id: ROOT, children: [] };
+      tags[UNCLASSIFIED] = { id: UNCLASSIFIED, type: "folder", name: this.translator("buttons/unclassified"), children:[] };
 
       //populate the dictionary of tags
-      tagsArray.forEach(function(tag) {tags[tag.tag] = {id: tag.tag, name: tag.name, type: "folder", children: []};});
+      tagsArray.forEach(function(tag) {tags[tag.tag] = { id: tag.tag, name: tag.name, type: "folder", children: [] };});
 
       //init the tag tree
       indicatorsTree = tags[ROOT];
@@ -723,7 +723,7 @@ var TreeMenu = Component.extend({
 
       var indicatorsDB = dataSource.getConceptprops();
       var datasetName = dataSource.getDatasetName();
-      tags[datasetName] = {id: datasetName, type: "dataset", children:[]};
+      tags[datasetName] = { id: datasetName, type: "dataset", children:[] };
       tags[ROOT].children.push(tags[datasetName]);
 
       utils.forEach(indicatorsDB, function(entry, id) {

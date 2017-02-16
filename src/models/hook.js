@@ -195,7 +195,7 @@ var Hook = DataConnected.extend({
     };
 
     // animatable
-    animatable = this._getFirstDimension({type: "time"});
+    animatable = this._getFirstDimension({ type: "time" });
 
     // from
     from = prop ? "entities" : "datapoints";
@@ -448,7 +448,7 @@ var Hook = DataConnected.extend({
    */
   getUnique: function(attr) {
     if(!this.isHook()) return;
-    if(!attr) attr = this._getFirstDimension({type: "time"});
+    if(!attr) attr = this._getFirstDimension({ type: "time" });
     return this.dataSource.getData(this._dataId, 'unique', attr);
   },
 
@@ -501,7 +501,7 @@ var Hook = DataConnected.extend({
    */
   getItems: function() {
     var _this = this;
-    var dim = this.spaceRef && this._space[this.spaceRef] ? this._space[this.spaceRef].dim : _this._getFirstDimension({exceptType: "time"});
+    var dim = this.spaceRef && this._space[this.spaceRef] ? this._space[this.spaceRef].dim : _this._getFirstDimension({ exceptType: "time" });
     var items = {};
     this.getValidItems().forEach(function(d) {
       items[d[dim]] = d[_this.which];
@@ -588,7 +588,7 @@ var Hook = DataConnected.extend({
 
     var allowedScales = this.getConceptprops().scales;
     if(allowedScales && allowedScales.length>0 && !allowedScales.includes(this.scaleType)) {
-      this.set({scaleType: allowedScales[0] === "nominal"? "ordinal":allowedScales[0]}, null, false);
+      this.set({ scaleType: allowedScales[0] === "nominal"? "ordinal":allowedScales[0] }, null, false);
     }
   },
 

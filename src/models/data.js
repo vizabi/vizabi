@@ -282,7 +282,7 @@ var DataModel = Model.extend({
 
   handleConceptPropsResponse: function(dataId) {
 
-    this.conceptDictionary = {_default: {concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root"}};
+    this.conceptDictionary = { _default: { concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root" } };
     this.conceptArray = [];
 
     this.getData(dataId).forEach(d => {

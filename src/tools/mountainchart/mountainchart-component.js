@@ -265,7 +265,7 @@ var MountainChartComponent = Component.extend({
         _this.updateSize(shape.length);
         _this.zoomToMaxMin();
 
-        shape = shape.map(function (m, i) {return {x: _this.mesh[i], y0: 0, y: +m};});
+        shape = shape.map(function (m, i) {return { x: _this.mesh[i], y0: 0, y: +m };});
 
         this.mountainAtomicContainer.selectAll(".vzb-mc-prerender")
             .data([0])
@@ -334,7 +334,7 @@ var MountainChartComponent = Component.extend({
           _this._spawnMasks();
           _this.updateTime();
           _this.updatePointers();
-          _this._adjustMaxY({force: true});
+          _this._adjustMaxY({ force: true });
           _this.redrawDataPoints();
           _this.redrawDataPointsOnlyColors();
           _this.highlightMarkers();

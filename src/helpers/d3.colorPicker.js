@@ -445,7 +445,7 @@ export default function colorPicker() {
         yPos = arg[1] - screen.top;
       }
 
-      var styles = {left: ''};
+      var styles = { left: '' };
       if (screen.width * 0.8 <= width) {
         styles.right = (screen.width - width) * 0.5 + "px";
       } else if (xPos + width > screen.width) {

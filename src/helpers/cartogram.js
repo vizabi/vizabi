@@ -60,7 +60,7 @@ import * as utils from 'base/utils';
           };
           var calculateMetaSequence = function(index) {
             if (index >= objects.length) {
-              return resolve({meta: meta, sizeError: (sizeErrorsTot/sizeErrorsNum)});
+              return resolve({ meta: meta, sizeError: (sizeErrorsTot/sizeErrorsNum) });
             }
             calculateMeta(index, function(response) {
               meta.push(response);
@@ -129,7 +129,7 @@ import * as utils from 'base/utils';
           // path with identity projection
           var path = d3.geo.path()
             .projection(null);
-          var objects = object(projectedArcs, {type: "GeometryCollection", geometries: geometries})
+          var objects = object(projectedArcs, { type: "GeometryCollection", geometries: geometries })
             .geometries.map(function(geom) {
               return {
                 type: "Feature",

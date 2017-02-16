@@ -135,7 +135,7 @@ var DraggableList = Component.extend({
     var _this = this;
 
     this.items = this.element.selectAll('div').data(function() {
-      return _this.dataArrFn().map(function(d) { return {data:d};});});
+      return _this.dataArrFn().map(function(d) { return { data:d };});});
     this.items.exit().remove();
     this.items = this.items.enter()
       .append('div')

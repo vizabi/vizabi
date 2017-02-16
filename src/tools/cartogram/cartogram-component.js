@@ -190,7 +190,7 @@ var CartogramComponent = Component.extend({
     // year background
     this.yearEl = this.graph.select('.vzb-ct-year');
     this.year = new DynamicBackground(this.yearEl);
-    this.year.setConditions({xAlign: 'left', yAlign: 'bottom', bottomOffset: 5});
+    this.year.setConditions({ xAlign: 'left', yAlign: 'bottom', bottomOffset: 5 });
     this.mapGraph = this.element.select(".vzb-ct-map-graph")
       .attr("width", this.defaultWidth)
       .attr("height", this.defaultHeight);
@@ -399,7 +399,7 @@ var CartogramComponent = Component.extend({
   updateEntities: function(duration) {
     var time = this.model.time.value;
 
-    this.updateEntitiesQueue.push({time:time, duration: duration});
+    this.updateEntitiesQueue.push({ time:time, duration: duration });
     this._redrawEntities();
   },
 

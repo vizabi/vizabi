@@ -146,7 +146,7 @@ var BubbleMapComponent = Component.extend({
     // year background
     this.yearEl = this.graph.select('.vzb-bmc-year');
     this.year = new DynamicBackground(this.yearEl);
-    this.year.setConditions({xAlign: 'left', yAlign: 'bottom'});
+    this.year.setConditions({ xAlign: 'left', yAlign: 'bottom' });
 
     var _this = this;
     this.on("resize", function () {

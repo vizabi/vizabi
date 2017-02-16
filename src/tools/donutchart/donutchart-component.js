@@ -57,8 +57,8 @@ var DonutComponent = Component.extend('donut', {
         //link DOM elements to the variables
         this.element = d3.select(this.element);
         this.svgEl = this.element.select("svg").append("g");
-        this.yearEl = this.svgEl.append("text").attr("class", "year").style({'font-size':'4em'});
-        this.titleEl = this.svgEl.append("text").attr("class", "title").style({'font-size':'2em'});
+        this.yearEl = this.svgEl.append("text").attr("class", "year").style({ 'font-size':'4em' });
+        this.titleEl = this.svgEl.append("text").attr("class", "title").style({ 'font-size':'2em' });
 
         //bind the resize() and updateTime() events to container resize
         this.on("resize", function() {
@@ -94,7 +94,7 @@ var DonutComponent = Component.extend('donut', {
           .attr("class", "vzb-dc-entity")
           .each(function() {
             d3.select(this).append("path");
-            d3.select(this).append("text").attr("class", "label").style({'font-size':'1.2em'});
+            d3.select(this).append("text").attr("class", "label").style({ 'font-size':'1.2em' });
           });
       },
 
@@ -105,7 +105,7 @@ var DonutComponent = Component.extend('donut', {
         var _this = this;
 
         //request the values for the current time from the model
-        this.values = this.model.marker.getValues({time: _this.time}, ["geo"]);
+        this.values = this.model.marker.getValues({ time: _this.time }, ["geo"]);
 
         //prepare the data
         var data = this.keys.map(function(d) { return {

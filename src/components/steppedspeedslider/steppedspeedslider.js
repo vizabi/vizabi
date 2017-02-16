@@ -94,7 +94,7 @@ const SteppedSlider = Component.extend({
     this.drag = d3.drag()
       .on('drag', () => {
         const { dy } = d3.event;
-        const {translateY} = transform(this.slide.node());
+        const { translateY } = transform(this.slide.node());
         const y = Math.max(0, Math.min(dy + translateY, height));
 
         this.setDelay(Math.round(this.delayScale(this.axisScale.invert(y))));

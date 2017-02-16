@@ -91,7 +91,7 @@ export default function axisSmart(_orient) {
         g.selectAll(".tick")
           .each(function(d) {
             var view = d3.select(this).select("text");
-            var shift = axis.repositionLabels()[d] || {x: 0, y: 0};
+            var shift = axis.repositionLabels()[d] || { x: 0, y: 0 };
             view.attr("x", +view.attr("x") + shift.x);
             view.attr("y", +view.attr("y") + shift.y);
           });
@@ -181,7 +181,7 @@ export default function axisSmart(_orient) {
       }
 
       // this will give additive shifting for the hovered value in case it sticks out a little outside viewport
-      var hlValueShift = (highlightValue == "none" ? {x:0, y:0} :
+      var hlValueShift = (highlightValue == "none" ? { x:0, y:0 } :
           repositionLabelsThatStickOut([highlightValue], o, orient, axis.scale(), dimension)[highlightValue])[dimension];
 
       // this function will help to move the hovered value to the right place
@@ -198,7 +198,7 @@ export default function axisSmart(_orient) {
         if(highlightValue == "none") return 1;
 
         var wh = orient==HORIZONTAL? "width" : "height";
-        var shift = (axis.repositionLabels()[d] || {x: 0, y: 0})[dimension];
+        var shift = (axis.repositionLabels()[d] || { x: 0, y: 0 })[dimension];
 
         // opacity depends on the collision between label's boundary boxes
         return axis.hlOpacityScale()(
@@ -925,7 +925,7 @@ export default function axisSmart(_orient) {
         if(repositionTail > 0) repositionTail = 0;
 
         // add them up with appropriate signs, save to the axis
-        result[d] = {x: 0, y: 0};
+        result[d] = { x: 0, y: 0 };
         result[d][dimension] = (dimension == "y" && orient == VERTICAL ? -1 : 1) * (repositionHead - repositionTail);
       });
 
@@ -976,7 +976,7 @@ export default function axisSmart(_orient) {
         if(repositionTail > 0) repositionTail = 0;
 
         // add them up with appropriate signs, save to the axis
-        result[d] = {x: 0, y: 0};
+        result[d] = { x: 0, y: 0 };
         result[d][dimension] = (dimension == "y" && orient == VERTICAL ? -1 : 1) * (repositionHead - repositionTail);
       });
 

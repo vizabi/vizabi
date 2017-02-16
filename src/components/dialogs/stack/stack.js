@@ -117,7 +117,7 @@ var Stack = Dialog.extend({
 
     setModel: function(what, value) {
 
-        var obj = {stack: {}, group: {}};
+        var obj = { stack: {}, group: {} };
 
         if(what === "merge") {
             switch (value) {

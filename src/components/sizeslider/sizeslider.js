@@ -15,7 +15,7 @@ var OPTIONS = {
   THUMB_RADIUS: 10,
   THUMB_STROKE_WIDTH: 4,
   INTRO_DURATION: 250,
-  MARGIN: { TOP: 2, LEFT: 5, RIGHT:5}
+  MARGIN: { TOP: 2, LEFT: 5, RIGHT:5 }
 };
 
 var profiles = {
@@ -119,7 +119,7 @@ var SizeSlider = Component.extend({
     this.sliderEl = this.sliderWrap.select(".vzb-szs-slider");
 
     var
-      textMargin = {v: OPTIONS.TEXT_PARAMS.TOP, h: OPTIONS.TEXT_PARAMS.LEFT},
+      textMargin = { v: OPTIONS.TEXT_PARAMS.TOP, h: OPTIONS.TEXT_PARAMS.LEFT },
       textMaxWidth = OPTIONS.TEXT_PARAMS.MAX_WIDTH,
       textMaxHeight = OPTIONS.TEXT_PARAMS.MAX_HEIGHT,
       barWidth = OPTIONS.BAR_WIDTH,
@@ -174,7 +174,7 @@ var SizeSlider = Component.extend({
       });
 
     this.sliderThumbs = this.sliderEl.selectAll(".handle")
-      .data([{type:"w"},{type:"e"}], function(d) { return d.type; })
+      .data([{ type:"w" },{ type:"e" }], function(d) { return d.type; })
       .enter().append("svg").attr("class", function(d) { return "handle handle--" + d.type + " " + d.type; })
       .classed("vzb-szs-slider-thumb", true);
 
@@ -232,7 +232,7 @@ var SizeSlider = Component.extend({
 
   getPropertyActiveProfile: function() {
     var profile = profiles[this.getLayoutProfile()];
-    return { min: profile['min' + this.propertyName], max: profile['max' + this.propertyName], default: profile['default' + this.propertyName]};
+    return { min: profile['min' + this.propertyName], max: profile['max' + this.propertyName], default: profile['default' + this.propertyName] };
   },
 
   _moveBrush: function(s) {
@@ -301,7 +301,7 @@ var SizeSlider = Component.extend({
    */
   _setModel: function (value, force, persistent) {
     value = [+value[0].toFixed(2), +value[1].toFixed(2)];
-    this.model.size.set({"extent": value}, force, persistent);
+    this.model.size.set({ "extent": value }, force, persistent);
   }
 
 });

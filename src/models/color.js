@@ -159,7 +159,7 @@ var ColorModel = Hook.extend({
       var entities = marker.getClosestModel(marker.space[0]);
 
       //save the references here locally
-      _this._syncModelReferences[modelName] = {model: model, marker: marker, entities: entities};
+      _this._syncModelReferences[modelName] = { model: model, marker: marker, entities: entities };
 
       if(_this.isDiscrete()) _this._setSyncModel(model, marker, entities);
     });
@@ -174,7 +174,7 @@ var ColorModel = Hook.extend({
       marker.setDataSourceForAllSubhooks(this.data);
       entities.set(newFilter, false, false);
     }else{
-      if(model.isDiscrete() && model.use !== "constant") model.set({which: this.which, data: this.data}, false, false);
+      if(model.isDiscrete() && model.use !== "constant") model.set({ which: this.which, data: this.data }, false, false);
     }
   },
 
@@ -225,7 +225,7 @@ var ColorModel = Hook.extend({
       } else if(this.use === "constant") {
         //an explicit hex color constant #abc or #adcdef is provided
         if(/^#([0-9a-f]{3}|[0-9a-f]{6})$/.test(this.which)) {
-          palette = {"_default": this.which};
+          palette = { "_default": this.which };
         }else{
           palette = utils.clone(defaultPalettes["_default"]);
         }
@@ -284,9 +284,9 @@ var ColorModel = Hook.extend({
 
       var timeMdl = this._space.time;
       var limits = timeMdl.splash ?
-          {min: timeMdl.parse(timeMdl.startOrigin), max: timeMdl.parse(timeMdl.endOrigin)}
+          { min: timeMdl.parse(timeMdl.startOrigin), max: timeMdl.parse(timeMdl.endOrigin) }
           :
-          {min: timeMdl.start, max: timeMdl.end};
+          { min: timeMdl.start, max: timeMdl.end };
 
       var singlePoint = (limits.max - limits.min == 0);
 

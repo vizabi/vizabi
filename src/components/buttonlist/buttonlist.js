@@ -302,7 +302,7 @@ var ButtonList = Component.extend({
       var button_data = d;
       var button = d3.select(this);
       var expandable = button_expand.indexOf(button_data.id) !== -1;
-      var button_margin = {top: parseInt(button.style("margin-top")), right: parseInt(button.style("margin-right")), left: parseInt(button.style("margin-left")), bottom: parseInt(button.style("margin-bottom"))};
+      var button_margin = { top: parseInt(button.style("margin-top")), right: parseInt(button.style("margin-right")), left: parseInt(button.style("margin-left")), bottom: parseInt(button.style("margin-bottom")) };
       button_width = button.node().getBoundingClientRect().width + button_margin.right + button_margin.left;
       button_height = button.node().getBoundingClientRect().height + button_margin.top + button_margin.bottom;
 

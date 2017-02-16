@@ -1,7 +1,7 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
 
-import {warn as iconWarn, close as iconClose} from 'base/iconset';
+import { warn as iconWarn, close as iconClose } from 'base/iconset';
 
 var hidden = true;
 

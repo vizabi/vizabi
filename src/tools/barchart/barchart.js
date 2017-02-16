@@ -60,8 +60,8 @@ var BarChart = Tool.extend('BarChart', {
       entities: { },
       marker: {
         label: { },
-        axis_y: {allow: {scales: ["linear", "log"]}},
-        axis_x: {allow: {scales: ["ordinal", "nominal"]}},
+        axis_y: { allow: { scales: ["linear", "log"] } },
+        axis_x: { allow: { scales: ["ordinal", "nominal"] } },
         color: { }
       }
     },

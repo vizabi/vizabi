@@ -25,7 +25,7 @@ export default Class.extend({
         this.zoomer.ratioX = 1;
         this.zoomer.ratioY = 1;
 
-        context._zoomedXYMinMax = {axis_x:{zoomedMin: null, zoomedMax: null}, axis_y:{zoomedMin: null, zoomedMax: null}};
+        context._zoomedXYMinMax = { axis_x:{ zoomedMin: null, zoomedMax: null }, axis_y:{ zoomedMin: null, zoomedMax: null } };
     },
 
     dragSubject: function() {

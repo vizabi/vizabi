@@ -31,7 +31,7 @@ var SideModel = Hook.extend({
 
     bind["readyOnce"] = this.readyOnce;
 
-    this.state = {left: {}, right:{}};
+    this.state = { left: {}, right:{} };
     this._super(name, values, parent, bind);
   },
 
@@ -49,7 +49,7 @@ var SideModel = Hook.extend({
   },
 
   clearSideState: function() {
-    this.state = {left: {}, right:{}};
+    this.state = { left: {}, right:{} };
   }
 
 });
