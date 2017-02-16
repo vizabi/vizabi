@@ -112,10 +112,8 @@ export default Class.extend({
     switch (this.xAlign) {
       case 'right':
         return this.width - this.textWidth / 2 - this.rightOffset;
-        break;
       case 'left':
         return this.textWidth / 2 + this.leftOffset;
-        break;
       default :
         return this.width / 2;
     }
@@ -125,10 +123,8 @@ export default Class.extend({
     switch (this.yAlign) {
       case 'top':
         return this.textHeight / 2 + this.topOffset;
-        break;
       case 'bottom':
         return this.height - this.textHeight / 2 - this.bottomOffset;
-        break;
       default :
         return this.height / 2;
     }
