@@ -33,7 +33,7 @@ var Marker = Model.extend({
     });
   },
 
-  setDataSourceForAllSubhooks: function(data){
+  setDataSourceForAllSubhooks: function(data) {
     var obj = {};
     this.getSubhooks().forEach(hook => { obj[hook._name] = {data: data} });
     this.set(obj, null, false);
@@ -277,13 +277,13 @@ var Marker = Model.extend({
 
         var cachedLimits = _this.cachedTimeLimits[hook._dataId + hook.which];
 
-        if (cachedLimits){
+        if (cachedLimits) {
             //if already calculated the limits then no ned to do it again
             min = cachedLimits.min;
             max = cachedLimits.max;
         }else{
             //otherwise calculate own date limits (a costly operation)
-            items = hook.getValidItems().map(function(m){return m[time.getDimension()];});
+            items = hook.getValidItems().map(function(m) {return m[time.getDimension()];});
             if(items.length == 0) utils.warn("getTimeLimits() was unable to work with an empty array of valid datapoints")
             min = d3.min(items);
             max = d3.max(items);
@@ -340,7 +340,7 @@ var Marker = Model.extend({
               return keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1;
             })
         });
-        return resultKeys.map(function(d){var r = {}; r[KEY] = d; return r; });
+        return resultKeys.map(function(d) {var r = {}; r[KEY] = d; return r; });
     },
 
   /**
@@ -572,9 +572,9 @@ var Marker = Model.extend({
 
             function mapValue(hookDataBF, firstKey, lastKey, firstKeyObject, lastKeyObject, val1, val2) {
               hookDataBF[firstKey] = firstKeyObject[firstKey];
-              if(utils.isDate(val1)){
+              if(utils.isDate(val1)) {
                 lastKeyObject[lastKey] = time;
-              } else if(!utils.isNumber(val1)){
+              } else if(!utils.isNumber(val1)) {
                 //we can be interpolating string values
                 lastKeyObject[lastKey] = val1;
               } else {
@@ -815,7 +815,7 @@ var Marker = Model.extend({
 
         var interpolate = function(arr, result, id) {
           //TODO: this saves when geos have different data length. line can be optimised.
-          next = d3.bisectLeft(arr.map(function(m){return m[dimTime]}), time);
+          next = d3.bisectLeft(arr.map(function(m) {return m[dimTime]}), time);
 
           value = utils.interpolatePoint(arr, u, w, next, dimTime, time, method);
           result[id] = hook.mapValue(value);
@@ -885,13 +885,13 @@ var Marker = Model.extend({
     promises.push(new Promise(function(resolve, reject) {
 
       //find startSelected time
-      findSelectedTime(function(){
+      findSelectedTime(function() {
         var max = timePoints.length;
         var i = 0;
         return function() {
           return i < max ? i++ : null;
         };
-      }(), function(point){
+      }(), function(point) {
         selectedEdgeTimes[0] = timePoints[point];
         resolve();
       });
@@ -900,12 +900,12 @@ var Marker = Model.extend({
     promises.push(new Promise(function(resolve, reject) {
 
       //find endSelected time
-      findSelectedTime(function(){
+      findSelectedTime(function() {
         var i = timePoints.length - 1;
         return function() {
           return i >= 0 ? i-- : null;
         };
-      }(), function(point){
+      }(), function(point) {
         selectedEdgeTimes[1] = timePoints[point];
         resolve();
       });

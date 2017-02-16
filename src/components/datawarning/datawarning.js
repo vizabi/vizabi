@@ -72,7 +72,7 @@ var DataWarning = Component.extend({
       .attr("class", "vzb-data-warning-body vzb-dialog-scrollable")
   },
 
-  redraw: function(){
+  redraw: function() {
     this.translator = this.model.locale.getTFunction();
 
     this.container.select(".vzb-data-warning-link div")

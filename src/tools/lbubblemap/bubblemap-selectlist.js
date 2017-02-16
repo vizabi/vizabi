@@ -65,7 +65,7 @@ var MCSelectList = Class.extend({
             _this.model.marker.selectMarker(d);
           });
         var labelCloseGroup = label.select("g.vzb-bmc-label-x")
-        if (!utils.isTouchDevice()){
+        if (!utils.isTouchDevice()) {
           labelCloseGroup
             .html(iconClose)
             .select("svg")

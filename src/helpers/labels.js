@@ -195,7 +195,7 @@ var label = function(context) {
         delete cache._new;
       }
       if(duration) {
-        if(showhide && !d.hidden){
+        if(showhide && !d.hidden) {
             //if need to show label
 
             labelGroup.classed("vzb-invisible", d.hidden);
@@ -206,7 +206,7 @@ var label = function(context) {
                 .style("opacity", 1)
                 //i would like to set opactiy to null in the end of transition.
                 //but then fade in animation is not working for some reason
-                .on("interrupt", function(){
+                .on("interrupt", function() {
                     labelGroup
                         .style("opacity", 1)
                 });
@@ -218,7 +218,7 @@ var label = function(context) {
                 .style("opacity", 1)
                 //i would like to set opactiy to null in the end of transition.
                 //but then fade in animation is not working for some reason
-                .on("interrupt", function(){
+                .on("interrupt", function() {
                     lineGroup
                         .style("opacity", 1)
                 });
@@ -230,7 +230,7 @@ var label = function(context) {
                 .style("opacity", 1)
                 .transition().duration(duration).ease(d3.easeExp)
                 .style("opacity", 0)
-                .on("end", function(){
+                .on("end", function() {
                     labelGroup
                         .style("opacity", 1) //i would like to set it to null. but then fade in animation is not working for some reason
                         .classed("vzb-invisible", d.hidden);
@@ -239,7 +239,7 @@ var label = function(context) {
                 .style("opacity", 1)
                 .transition().duration(duration).ease(d3.easeExp)
                 .style("opacity", 0)
-                .on("end", function(){
+                .on("end", function() {
                     lineGroup
                         .style("opacity", 1) //i would like to set it to null. but then fade in animation is not working for some reason
                         .classed("vzb-invisible", d.hidden);
@@ -502,7 +502,7 @@ var Labels = Class.extend({
       .enter().insert('g', function(d) {
         return this.querySelector("." + _this.options.LINES_CONTAINER_SELECTOR_PREFIX + d[KEY]);
       })
-      .attr("class", function(d, index){return _cssPrefix + "-entity entity-line line-" + d[KEY]})
+      .attr("class", function(d, index) {return _cssPrefix + "-entity entity-line line-" + d[KEY]})
       .each(function(d, index) {
         _this.label.line(d3.select(this));
       })
@@ -510,7 +510,7 @@ var Labels = Class.extend({
 
     this.entityLabels = this.entityLabels
       .enter().append("g")
-      .attr("class", function(d, index){return _cssPrefix + "-entity label-" + d[KEY]})
+      .attr("class", function(d, index) {return _cssPrefix + "-entity label-" + d[KEY]})
       .each(function(d, index) {
         _this.cached[d[KEY]] = {_new: true};
         _this.label(d3.select(this));
@@ -522,7 +522,7 @@ var Labels = Class.extend({
     var KEY = this.KEY;
     //show the little cross on the selected label
     this.entityLabels
-        .filter(function(f){return d ? f[KEY] == d[KEY] : true;})
+        .filter(function(f) {return d ? f[KEY] == d[KEY] : true;})
         .select("." + this.options.CSS_PREFIX + "-label-x")
         .classed("vzb-transparent", !show);
   },

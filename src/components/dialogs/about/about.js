@@ -19,7 +19,7 @@ init: function(config, parent) {
   this._super(config, parent);
 },
 
-readyOnce: function(){
+readyOnce: function() {
   var version = globals.version;
   var updated = new Date(parseInt(globals.build));
 

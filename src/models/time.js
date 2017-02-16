@@ -410,7 +410,7 @@ var TimeModel = DataConnected.extend({
     this.trigger("play");
   },
 
-  playInterval: function(immediatePlay){
+  playInterval: function(immediatePlay) {
     if(!this.playing) return;
     var _this = this;
     this.delayAnimations = this.delay;

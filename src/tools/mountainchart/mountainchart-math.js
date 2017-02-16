@@ -40,7 +40,7 @@ var MCMath = Class.extend({
             return mesh;
         },
 
-        gdpToMu: function(gdp, sigma, xScaleFactor, xScaleShift){
+        gdpToMu: function(gdp, sigma, xScaleFactor, xScaleShift) {
             // converting gdp per capita per day into MU for lognormal distribution
             // see https://en.wikipedia.org/wiki/Log-normal_distribution
             return Math.log(gdp/365) - sigma*sigma/2;
@@ -54,14 +54,14 @@ var MCMath = Class.extend({
 
         // this function returns PDF values for a specified distribution
         pdf: {
-            normal: function(x, mu, sigma){
+            normal: function(x, mu, sigma) {
                 return Math.exp(
                     -.5 * Math.log(2 * Math.PI)
                     - Math.log(sigma)
                     - Math.pow(x - mu, 2) / (2 * sigma * sigma)
                     );
             },
-            lognormal: function(x, mu, sigma){
+            lognormal: function(x, mu, sigma) {
                 return Math.exp(
                     -.5 * Math.log(2 * Math.PI) //should not be different for the two scales- (scaleType=="linear"?Math.log(x):0)
                     - Math.log(sigma)

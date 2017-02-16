@@ -62,7 +62,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
 
   },
 
-  validate: function(model){
+  validate: function(model) {
     model = this.model || model;
 
     this._super(model);

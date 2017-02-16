@@ -307,12 +307,12 @@ var ButtonList = Component.extend({
       button_height = button.node().getBoundingClientRect().height + button_margin.top + button_margin.bottom;
 
       if(!button.classed(class_hidden)) {
-        if(!expandable || (_this.getLayoutProfile() !== 'large')){
+        if(!expandable || (_this.getLayoutProfile() !== 'large')) {
           buttons_width += button_width;
           buttons_height += button_height;
           //sort buttons between required and not required buttons.
           // Not required buttons will only be shown if there is space available
-          if(button_data.required){
+          if(button_data.required) {
             required.push(button);
           } else {
             not_required.push(button);
@@ -332,22 +332,22 @@ var ButtonList = Component.extend({
     || parent.classed("vzb-small") && parent.classed("vzb-portrait")) {
       //check if the width_diff is small. If it is, add to the container
       // width, to allow more buttons in a way that is still usable
-      if(width_diff > 0 && width_diff <=10){
+      if(width_diff > 0 && width_diff <=10) {
         container_width += width_diff;
       }
       number_of_buttons = Math.floor(container_width / button_width) - required.length;
-      if(number_of_buttons < 0){
+      if(number_of_buttons < 0) {
         number_of_buttons = 0;
       }
     // else, use height
     } else {
       //check if the width_diff is small. If it is, add to the container
       // width, to allow more buttons in a way that is still usable
-      if(height_diff > 0 && height_diff <=10){
+      if(height_diff > 0 && height_diff <=10) {
         container_height += height_diff;
       }
       number_of_buttons = Math.floor(container_height / button_height) - required.length;
-      if(number_of_buttons < 0){
+      if(number_of_buttons < 0) {
         number_of_buttons = 0;
       }
     }

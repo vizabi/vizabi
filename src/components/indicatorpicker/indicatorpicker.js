@@ -77,7 +77,7 @@ var IndPicker = Component.extend({
                             var value = frame[_this.markerID][_highlightedEntity[0]];
 
                             // resolve strings via the color legend model
-                            if(value && mdl._type === "color" && mdl.isDiscrete()){
+                            if(value && mdl._type === "color" && mdl.isDiscrete()) {
                               var clModel = mdl.getColorlegendMarker();
                               if(clModel.label.getItems()[value]) value = clModel.label.getItems()[value];
                             }

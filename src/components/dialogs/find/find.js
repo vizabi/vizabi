@@ -169,7 +169,7 @@ var Find = Dialog.extend({
         .attr("for", function(d) {
           return "-find-" + d[KEY] + "-" + _this._id;
         })
-        .text(function(d){return d.name})
+        .text(function(d) {return d.name})
         .on("mouseover", function(d) {
           if(!utils.isTouchDevice() && !d.brokenData) _this.model.state.marker.highlightMarker(d);
         })
@@ -186,12 +186,12 @@ var Find = Dialog.extend({
     });
   },
 
-  redrawDataPoints: function(values){
+  redrawDataPoints: function(values) {
     var _this = this;
     var KEY = this.KEY;
 
     _this.items
-      .each(function(d){
+      .each(function(d) {
         var view = d3.select(this).select("label");
 
         d.brokenData = false;
@@ -208,7 +208,7 @@ var Find = Dialog.extend({
       })
   },
 
-  selectDataPoints: function(){
+  selectDataPoints: function() {
     var KEY = this.KEY;
     var selected = this.model.state.marker.getSelected(KEY);
     this.items.selectAll("input")

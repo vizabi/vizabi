@@ -9,9 +9,9 @@ import interpolator from 'vizabi-interpolators/interpolators';
  */
 export var approxEqual = function(a, b, tolerance) {
   tolerance = tolerance||0;
-  if(b > 0){
+  if(b > 0) {
     return (1 - tolerance) * b <= a && a <= b * (1 + tolerance);
-  }else if(b < 0){
+  }else if(b < 0) {
     return (1 + tolerance) * b <= a && a <= b * (1 - tolerance);
   }else{
     return Math.abs(a) <= tolerance;
@@ -803,7 +803,7 @@ export var mapRows = function(original, formatters) {
   //TODO: default formatter is moved to utils. need to return it to hook prototype class, but retest #1212 #1230 #1253
   var defaultFormatter = function (val) {
       var newVal = val;
-      if(val === ""){
+      if(val === "") {
         newVal = null;
       } else {
         // check for numeric
@@ -862,7 +862,7 @@ export var timeStamp = function(message) {
  */
 export var warn = function(message) {
   message = Array.prototype.slice.call(arguments)
-    .map(function(m){return m instanceof Object? JSON.stringify(m, null, 4) : m })
+    .map(function(m) {return m instanceof Object? JSON.stringify(m, null, 4) : m })
     .join(' ');
   if(console && typeof console.warn === 'function') {
 
@@ -1206,7 +1206,7 @@ export var nestArrayToObj = function(arr) {
 }
 
 
-export var interpolateVector = function(){
+export var interpolateVector = function() {
 
 }
 
@@ -1222,7 +1222,7 @@ export var interpolateVector = function(){
  * @param {Boolean} extrapolate indicates if we should use zero-order extrapolation outside the range of available data
  * @returns {Number} interpolated value
  */
-export var interpolatePoint = function(items, use, which, next, dimTime, time, method, extrapolate){
+export var interpolatePoint = function(items, use, which, next, dimTime, time, method, extrapolate) {
 
 
   if(!items || items.length === 0) {
@@ -1237,7 +1237,7 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
 
   // the rest is for the continuous measurements
 
-  if (extrapolate){
+  if (extrapolate) {
     // check if the desired value is out of range. 0-order extrapolation
     if(time - items[0][dimTime] <= 0) return items[0][which];
     if(time - items[items.length - 1][dimTime] >= 0) return items[items.length - 1][which];
@@ -1246,7 +1246,7 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
     if(time < items[0][dimTime] || time > items[items.length - 1][dimTime]) return null;
   }
 
-  if(!next && next !== 0) next = d3.bisectLeft(items.map(function(m){return m[dimTime]}), time);
+  if(!next && next !== 0) next = d3.bisectLeft(items.map(function(m) {return m[dimTime]}), time);
 
   if(next === 0) return items[0][which];
 
@@ -1457,18 +1457,18 @@ export function makeAbsoluteContext(element, svgDocument) {
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-export function firstBy(){
+export function firstBy() {
 
-    function identity(v){return v;}
+    function identity(v) {return v;}
 
-    function ignoreCase(v){return typeof (v)==="string" ? v.toLowerCase() : v;}
+    function ignoreCase(v) {return typeof (v)==="string" ? v.toLowerCase() : v;}
 
-    function makeCompareFunction(f, opt){
+    function makeCompareFunction(f, opt) {
      opt = typeof (opt)==="number" ? {direction:opt} : opt||{};
-     if(typeof (f)!="function"){
+     if(typeof (f)!="function") {
         var prop = f;
         // make unary function
-        f = function(v1){return v1[prop] ? v1[prop] : "";}
+        f = function(v1) {return v1[prop] ? v1[prop] : "";}
       }
       if(f.length === 1) {
         // f is a unary function mapping a single item to its sort score
@@ -1476,7 +1476,7 @@ export function firstBy(){
         var preprocess = opt.ignoreCase?ignoreCase:identity;
         f = function(v1,v2) {return preprocess(uf(v1)) < preprocess(uf(v2)) ? -1 : preprocess(uf(v1)) > preprocess(uf(v2)) ? 1 : 0;}
       }
-      if(opt.direction === -1)return function(v1,v2){return -f(v1,v2)};
+      if(opt.direction === -1)return function(v1,v2) {return -f(v1,v2)};
       return f;
     }
 

@@ -60,7 +60,7 @@ var MountainChartComponent = Component.extend({
             "change:time.playing": function (evt) {
                 // this listener is a patch for fixing #1228. time.js doesn't produce the last event
                 // with playing == false when paused softly
-                if(!_this.model.time.playing){
+                if(!_this.model.time.playing) {
                    _this.redrawDataPoints();
                 }
             },
@@ -488,7 +488,7 @@ updateSize: function (meshLength) {
     },
 
 
-    zoomToMaxMin: function(){
+    zoomToMaxMin: function() {
         var _this = this;
 
         if(this.model.marker.axis_x.zoomedMin==null || this.model.marker.axis_x.zoomedMax==null) return;

@@ -64,7 +64,7 @@ var Show = Dialog.extend({
 
   },
 
-  redraw: function(){
+  redraw: function() {
 
     var _this = this;
     this.translator = this.model.locale.getTFunction();
@@ -72,7 +72,7 @@ var Show = Dialog.extend({
     this.model.state.marker_allpossible.getFrame(this.model.state.time.value, function(values) {
     if(!values) return;
     var data = utils.keys(values.label)
-        .map(function(d){
+        .map(function(d) {
             var result = {};
             result[_this.KEY] = d;
             result["label"] = values.label[d];

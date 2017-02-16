@@ -92,7 +92,7 @@ import * as utils from 'base/utils';
         var generateTopologySegment = function(segmentIndex, segmentLength) {
           return new Promise(function(resolve, reject) {
             i1 = 0;
-            while(i1<segmentLength){
+            while(i1<segmentLength) {
               topology.arcs[segmentIndex][i1][0] = (x += topology.arcs[segmentIndex][i1][0]);
               topology.arcs[segmentIndex][i1][1] = (y += topology.arcs[segmentIndex][i1][1]);
               out1[i1] = projection === null ? tf(topology.arcs[segmentIndex][i1]) : projection(tf(topology.arcs[segmentIndex][i1]));
@@ -163,10 +163,10 @@ import * as utils from 'base/utils';
               var delta,centroid,mass,radius,rSquared,dx,dy,distSquared,dist,Fij;
               var updatePoint = function(i2, len2) {
                 var len1,i1,delta,len3,i3,centroid,mass,radius,rSquared,dx,dy,distSquared,dist,Fij;
-                while(i2<len2){
+                while(i2<len2) {
                   len1=projectedArcs[i2].length;
                   i1=0;
-                  while(i1<len1){
+                  while(i1<len1) {
                     // create an array of vectors: [x, y]
                     delta = [0,0];
                     len3 = response.meta.length;
@@ -503,14 +503,14 @@ import * as utils from 'base/utils';
       return types[geom.type](geom.coordinates);
     };
   }
-  function cosArctan(dx,dy){
+  function cosArctan(dx,dy) {
     if (dy===0) return 0;
     var div = dx/dy;
     return (dy>0)?
       (1/Math.sqrt(1+(div*div))):
       (-1/Math.sqrt(1+(div*div)));
   }
-  function sinArctan(dx,dy){
+  function sinArctan(dx,dy) {
     if (dy===0) return 1;
     var div = dx/dy;
     return (dy>0)?

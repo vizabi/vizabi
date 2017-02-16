@@ -118,7 +118,7 @@ var Side = Dialog.extend({
     this.switchSides.classed("vzb-hidden", hidden || this.state["left"][sideDim] == this.state["right"][sideDim]);
   },
 
-  redraw: function(){
+  redraw: function() {
 
     var _this = this;
     this.translator = this.model.locale.getTFunction();
@@ -127,7 +127,7 @@ var Side = Dialog.extend({
     this.model.state.marker_allpossibleside.getFrame(this.model.state.time.value, function(values) {
     if(!values) return;
     var data = utils.keys(values.label)
-        .map(function(d){
+        .map(function(d) {
             var result = {};
             result[_this.KEY] = d;
             result["label"] = values.label[d];

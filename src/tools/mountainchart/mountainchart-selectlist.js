@@ -60,7 +60,7 @@ var MCSelectList = Class.extend({
             _this.model.marker.selectMarker(d);
           });
         var labelCloseGroup = label.select("g.vzb-mc-label-x")
-        if (!utils.isTouchDevice()){
+        if (!utils.isTouchDevice()) {
           utils.setIcon(labelCloseGroup, iconClose)
             .select("svg")
             .attr("class", "vzb-mc-label-x-icon")
@@ -128,7 +128,7 @@ var MCSelectList = Class.extend({
 
         var view = d3.select(this).attr("id", d.geo + '-label-' + _this._id);
         var name = "";
-        if(d.key){
+        if(d.key) {
           name = d.key === "all"? _this.translator("mount/merging/world") : groupLabels[d.key];
         }else{
           name = _this.values.label[d.KEY()];
@@ -202,7 +202,7 @@ var MCSelectList = Class.extend({
     var KEY = _this.KEY;
     //show the little cross on the selected label
     _this.selectList
-        .filter(function(f){return f[KEY] == d[KEY]})
+        .filter(function(f) {return f[KEY] == d[KEY]})
         .select(".vzb-mc-label-x")
         .classed("vzb-invisible", !show);
   },

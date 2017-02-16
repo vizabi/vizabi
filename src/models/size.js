@@ -29,7 +29,7 @@ var SizeModel = Axis.extend({
 
   _type: "size",
 
-  buildScale: function(){
+  buildScale: function() {
     //do whatever axis.buildScale does
     this._super();
     //but then also clamp a numeric scale

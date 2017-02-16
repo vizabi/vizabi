@@ -118,7 +118,7 @@ var ColorModel = Hook.extend({
   },
 
   // args: {colorID, shadeID}
-  getColorShade: function(args){
+  getColorShade: function(args) {
     var palette = this.getPalette();
 
     if(!args) return utils.warn("getColorShade() is missing arguments");
@@ -152,7 +152,7 @@ var ColorModel = Hook.extend({
 
   _setSyncModels: function() {
     var _this = this;
-    this.syncModels.forEach(function(modelName){
+    this.syncModels.forEach(function(modelName) {
       //fetch the model to sync, it's marker and entities
       var model = _this.getClosestModel(modelName);
       var marker = model.isHook()? model._parent : model;
@@ -166,7 +166,7 @@ var ColorModel = Hook.extend({
   },
 
   _setSyncModel: function(model, marker, entities) {
-    if(model == marker){
+    if(model == marker) {
       var newFilter = {
         dim: this.which,
         show: {}
@@ -224,7 +224,7 @@ var ColorModel = Hook.extend({
         palette = utils.clone(defaultPalettes[this.which]);
       } else if(this.use === "constant") {
         //an explicit hex color constant #abc or #adcdef is provided
-        if(/^#([0-9a-f]{3}|[0-9a-f]{6})$/.test(this.which)){
+        if(/^#([0-9a-f]{3}|[0-9a-f]{6})$/.test(this.which)) {
           palette = {"_default": this.which};
         }else{
           palette = utils.clone(defaultPalettes["_default"]);
@@ -252,9 +252,9 @@ var ColorModel = Hook.extend({
     return this.paletteLabels.getPlainObject();
   },
 
-  getPalette: function(includeDefault){
+  getPalette: function(includeDefault) {
     //rebuild palette if it's empty
-    if (!this.palette || Object.keys(this.palette._data).length===0){
+    if (!this.palette || Object.keys(this.palette._data).length===0) {
       var palette = this.getDefaultPalette();
       this.set("palette", palette, false, false);
       var paletteLabels = this._getPaletteLabels();
@@ -299,7 +299,7 @@ var ColorModel = Hook.extend({
         .range(range)
         .interpolate(d3.interpolateRgb);
 
-    }else if(!this.isDiscrete()){
+    }else if(!this.isDiscrete()) {
 
       var limits = this.getLimits(this.which);
       //default domain is based on limits

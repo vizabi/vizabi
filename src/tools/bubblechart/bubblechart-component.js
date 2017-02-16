@@ -225,10 +225,10 @@ var BubbleChartComp = Component.extend({
       },
       'change:ui.cursorMode': function() {
         var svg = _this.element.select("svg");
-        if(_this.model.ui.cursorMode === "plus"){
+        if(_this.model.ui.cursorMode === "plus") {
             svg.classed("vzb-zoomin", true);
             svg.classed("vzb-zoomout", false);
-        }else if(_this.model.ui.cursorMode === "minus"){
+        }else if(_this.model.ui.cursorMode === "minus") {
             svg.classed("vzb-zoomin", false);
             svg.classed("vzb-zoomout", true);
         }else{
@@ -405,12 +405,12 @@ var BubbleChartComp = Component.extend({
       })
       //this is for the case when user would press ctrl and move away from the browser tab or window
       //keyup event would happen somewhere else and won't be captured, so zoomin class would get stuck
-      .on("mouseenter", function(){
+      .on("mouseenter", function() {
         if(_this.model.ui.cursorMode !== 'arrow') return;
         if(!d3.event.metaKey && !d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", false);
       });
 
-    this.root.on('resetZoom', function(){
+    this.root.on('resetZoom', function() {
         _this._panZoom.reset(null, 500);
     });
 
@@ -736,7 +736,7 @@ var BubbleChartComp = Component.extend({
     this._reorderEntities();
   },
 
-  unselectBubblesWithNoData: function(entities){
+  unselectBubblesWithNoData: function(entities) {
       var _this = this;
       var KEY = this.KEY;
       if(!this.model.marker.select.length) return;
@@ -746,7 +746,7 @@ var BubbleChartComp = Component.extend({
         return d[KEY];
       });
 
-      this.model.marker.select.forEach(function(d){
+      this.model.marker.select.forEach(function(d) {
         if(keys.indexOf(d[KEY]) !== -1) _select.push(d);
       });
 
@@ -1020,7 +1020,7 @@ var BubbleChartComp = Component.extend({
   },
 
 
-  _updateLineEqualXY: function (duration){
+  _updateLineEqualXY: function (duration) {
     var oneMeasure = this.model.marker.axis_x.which == this.model.marker.axis_y.which;
     this.lineEqualXY.classed("vzb-invisible", !oneMeasure);
     if(!oneMeasure) return;
@@ -1037,7 +1037,7 @@ var BubbleChartComp = Component.extend({
       .attr("x2", this.xScale(max));
   },
 
-  _resizeDataWarning: function(){
+  _resizeDataWarning: function() {
     // reset font size to remove jumpy measurement
     var dataWarningText = this.dataWarningEl.select("text").style("font-size", null);
 

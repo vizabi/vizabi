@@ -81,7 +81,7 @@ var AxisModel = Hook.extend({
 
     }else{
 
-      if(!this.isDiscrete()){
+      if(!this.isDiscrete()) {
         var limits = this.getLimits(this.which);
         //default domain is based on limits
         domain = [limits.min, limits.max];

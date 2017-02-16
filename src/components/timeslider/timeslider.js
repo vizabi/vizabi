@@ -213,7 +213,7 @@ var TimeSlider = Component.extend({
 
     this.slider_outer.on("mousewheel", function () {
         //do nothing and dont pass the event on if we are currently dragging the slider
-        if(_this.model.time.dragging){
+        if(_this.model.time.dragging) {
             d3.event.stopPropagation();
             d3.event.preventDefault();
             d3.event.returnValue = false;

@@ -56,8 +56,8 @@ var AxisLabelerComponent = Component.extend({
     this.yAxisEl = this.graph.select('.vzb-al-axis-y');
 
     //$(".vzb-bc-axis-x, .vzb-bc-axis-y").css('font-size',this.model.show.labelSize);
-    this.xInvert = function(d){return _this.xScale(_this.xScale.invert(_this.xScale(d)));}
-    this.yInvert = function(d){return _this.yScale(_this.yScale.invert(_this.yScale(d)));}
+    this.xInvert = function(d) {return _this.xScale(_this.xScale.invert(_this.xScale(d)));}
+    this.yInvert = function(d) {return _this.yScale(_this.yScale.invert(_this.yScale(d)));}
 
     this.line = d3.svg.line()
       .x(function(d) { return _this.xScale(d); })
@@ -163,7 +163,7 @@ var AxisLabelerComponent = Component.extend({
     dots.enter().append("circle")
       .attr("class", "vzb-al-dots")
       .attr("r", 5)
-      .on("mouseenter", function(d, i){
+      .on("mouseenter", function(d, i) {
         console.log("Point #" + i + ": " + d + " x=" + format(_this.xScale(d)) + " y=" + format(_this.yScale(d)))
       });
     dots.exit().remove();
@@ -178,7 +178,7 @@ var AxisLabelerComponent = Component.extend({
     dotsInvert.enter().append("circle")
       .attr("class", "vzb-al-dots-invert")
       .attr("r", 5)
-      .on("mouseenter", function(d, i){
+      .on("mouseenter", function(d, i) {
         console.log("Point #" + i + ": " + d + " x=" + format(_this.xScale(d)) + " y=" + format(_this.yScale(d)))
       });
     dotsInvert.exit().remove();

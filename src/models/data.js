@@ -186,8 +186,8 @@ var DataModel = Model.extend({
     if (response.length > 0) {
       // search data for the entirely missing columns
       var columnsMissing = (query.select.key||[]).concat(query.select.value||[]);
-      for (var i = response.length-1; i>=0; i--){
-        for (var c = columnsMissing.length-1; c>=0; c--){
+      for (var i = response.length-1; i>=0; i--) {
+        for (var c = columnsMissing.length-1; c>=0; c--) {
           // if found value for column c in row i then remove that column name from the list of missing columns
           if (response[i][columnsMissing[c]] || response[i][columnsMissing[c]]===0) columnsMissing.splice(c,1);
         }
@@ -195,7 +195,7 @@ var DataModel = Model.extend({
         if (!columnsMissing.length) break;
       }
       columnsMissing.forEach(function(d) {
-        if (query.select.key.indexOf(d)==-1){
+        if (query.select.key.indexOf(d)==-1) {
           utils.warn('Reader result: Column "' + d + '" is missing from "' + query.from + '" data, but it might be ok');
         } else {
           utils.error('Reader result: Key column "' + d + '" is missing from "' + query.from + '" data for query:', JSON.stringify(query));
@@ -302,8 +302,8 @@ var DataModel = Model.extend({
       } catch (e) {
         concept["scales"] = null;
       }
-      if(!concept.scales){
-        switch (d.concept_type){
+      if(!concept.scales) {
+        switch (d.concept_type) {
           case "measure": concept.scales=["linear", "log"]; break;
           case "string": concept.scales=["nominal"]; break;
           case "entity_domain": concept.scales=["ordinal"]; break;
@@ -312,11 +312,11 @@ var DataModel = Model.extend({
         }
       }
       if(concept["scales"]==null) concept["scales"] = ["linear", "log"];
-      if(d.interpolation){
+      if(d.interpolation) {
         concept["interpolation"] = d.interpolation;
-      }else if(d.concept_type == "measure"){
+      }else if(d.concept_type == "measure") {
         concept["interpolation"] = concept.scales && concept.scales[0]=="log"? "exp" : "linear";
-      }else if(d.concept_type == "time"){
+      }else if(d.concept_type == "time") {
         concept["interpolation"] = "linear";
       }else{
         concept["interpolation"] = "stepMiddle";
@@ -334,7 +334,7 @@ var DataModel = Model.extend({
 
   },
 
-  getConceptprops: function(which){
+  getConceptprops: function(which) {
      if(which) {
        if(this.conceptDictionary[which]) {
          return this.conceptDictionary[which];
@@ -352,7 +352,7 @@ var DataModel = Model.extend({
     return concept;
   },
 
-  getDatasetName: function(){
+  getDatasetName: function() {
     if(this.readerObject.getDatasetInfo) {
       var meta = this.readerObject.getDatasetInfo();
       return meta.name + (meta.version ? " " + meta.version : "");
@@ -472,7 +472,7 @@ var DataModel = Model.extend({
       this.mute = function() {
         var _this = this;
         this.isActive = false;
-        new Promise(function(resolve, reject){
+        new Promise(function(resolve, reject) {
           _this.delayedAction = resolve;
         });
       };
@@ -640,7 +640,7 @@ var DataModel = Model.extend({
       // Get the list of columns that are in the dataset, exclude key column and animatable column
       // Example: [“lex”, “gdp”, “u5mr"]
       var query = _this._collection[dataId].query;
-      var columns = query.select.value.filter(function(f){return f !== "_default"});
+      var columns = query.select.value.filter(function(f) {return f !== "_default"});
 
       var cLength = columns.length;
       var key, k, column, c;
@@ -874,7 +874,7 @@ var DataModel = Model.extend({
   },
 
   _getValid: function(dataId, column) {
-    return this._collection[dataId].data.filter(function(f){return f[column] || f[column]===0});
+    return this._collection[dataId].data.filter(function(f) {return f[column] || f[column]===0});
   },
 
   _getLimits: function(dataId, attr) {

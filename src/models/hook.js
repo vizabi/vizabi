@@ -362,7 +362,7 @@ var Hook = DataConnected.extend({
     // percentageMode works like rounded if set to SHARE, but multiplies by 100 and suffixes with "%"
     // percentageMode works like rounded if set to PERCENT, but suffixes with "%"
 
-    return function format(x, index, group, removePrefix, percentageMode){
+    return function format(x, index, group, removePrefix, percentageMode) {
 
     percentageMode = _this.getConceptprops().format;
     if(percentageMode===SHARE) x*=100;
@@ -503,7 +503,7 @@ var Hook = DataConnected.extend({
     var _this = this;
     var dim = this.spaceRef && this._space[this.spaceRef] ? this._space[this.spaceRef].dim : _this._getFirstDimension({exceptType: "time"});
     var items = {};
-    this.getValidItems().forEach(function(d){
+    this.getValidItems().forEach(function(d) {
       items[d[dim]] = d[_this.which];
     })
     return items;

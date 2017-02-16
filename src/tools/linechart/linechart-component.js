@@ -423,7 +423,7 @@ var LCComponent = Component.extend({
 
     filter[timeDim] = this.time;
 
-    this.prev_steps = this.all_steps.filter(function(f){return f < _this.time;});
+    this.prev_steps = this.all_steps.filter(function(f) {return f < _this.time;});
 
     this.timeUpdatedOnce = true;
 

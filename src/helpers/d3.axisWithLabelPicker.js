@@ -22,7 +22,7 @@ export default function axisSmart(_orient) {
       var checkDmn = axis.scale().domain();
       var checkRng = axis.scale().range();
       if(!checkDmn[0] && checkDmn[0]!==0 || !checkDmn[1] && checkDmn[1]!==0
-      || !checkRng[0] && checkRng[0]!==0 || !checkRng[1] && checkRng[1]!==0){
+      || !checkRng[0] && checkRng[0]!==0 || !checkRng[1] && checkRng[1]!==0) {
         return utils.warn("d3.axisSmart() skips action because of invalid domain " + JSON.stringify(checkDmn) + " or range " + JSON.stringify(checkRng) + " of the attached scale");
       }
 
@@ -87,7 +87,7 @@ export default function axisSmart(_orient) {
         });
 
       //apply label repositioning: first and last visible values would shift away from the borders
-      if(axis.repositionLabels() != null){
+      if(axis.repositionLabels() != null) {
         g.selectAll(".tick")
           .each(function(d) {
             var view = d3.select(this).select("text");
@@ -99,7 +99,7 @@ export default function axisSmart(_orient) {
 
       //hide axis labels that are outside the available viewport
       var scale = axis.scale();
-      if(options.viewportLength){
+      if(options.viewportLength) {
         g.selectAll(".tick")
           .classed("vzb-hidden", function(d) {return scale(d)<0 || scale(d)>options.viewportLength})
       }
@@ -129,7 +129,7 @@ export default function axisSmart(_orient) {
         .attr("class", "vzb-axis-line")
         .merge(rake);
 
-      if(options.viewportLength){
+      if(options.viewportLength) {
         rake
           .attr("x1", orient == VERTICAL ? 0 : -1)
           .attr("x2", orient == VERTICAL ? 0 : options.viewportLength)
@@ -185,7 +185,7 @@ export default function axisSmart(_orient) {
           repositionLabelsThatStickOut([highlightValue], o, orient, axis.scale(), dimension)[highlightValue])[dimension];
 
       // this function will help to move the hovered value to the right place
-      var getTransform = function(d){
+      var getTransform = function(d) {
         return highlightValue == "none" ? "translate(0,0)" :
             "translate("
             + (orient == HORIZONTAL ? axis.scale()(highlightValue) + hlValueShift * pivot : 0) + ","
@@ -194,7 +194,7 @@ export default function axisSmart(_orient) {
       }
 
       // this function will help to compute opacity for the axis labels that would overlap with the HL label
-      var getOpacity = function(d, t, view){
+      var getOpacity = function(d, t, view) {
         if(highlightValue == "none") return 1;
 
         var wh = orient==HORIZONTAL? "width" : "height";
@@ -211,7 +211,7 @@ export default function axisSmart(_orient) {
       }
 
       // apply translation of the HL value and opacity of tick labels
-      if(highlightTransDuration){
+      if(highlightTransDuration) {
         g.select('.vzb-axis-value')
           .transition()
           .duration(highlightTransDuration)
@@ -706,7 +706,7 @@ export default function axisSmart(_orient) {
         if(bothSidesUsed) tickValues.push(0);
         var avoidCollidingWith = [].concat(tickValues);
 
-        if(labelsStackOnTop){
+        if(labelsStackOnTop) {
             ticksNumber = Math.max(Math.floor(lengthRange / (options.heightOfOneDigit + parseInt(options.cssMargin.top))), 2);
         }else{
             ticksNumber = Math.max(Math.floor(lengthRange / estLongestLabelLength), 2);
@@ -884,9 +884,9 @@ export default function axisSmart(_orient) {
 
       //when a viewportLength is given: adjust outer VISIBLE tick values
       //this is helpful when the scaled is zoomed, so labels don't get truncated by a viewport svg
-      if(options.viewportLength){
+      if(options.viewportLength) {
         //remove invisible ticks from the array
-        tickValues = tickValues.filter(function(d){return scale(d)>=0 && scale(d)<=options.viewportLength});
+        tickValues = tickValues.filter(function(d) {return scale(d)>=0 && scale(d)<=options.viewportLength});
         //overwrite the available range with viewport limits. direction doesn't matter because we take min-max later anyway
         range = [0, options.viewportLength];
         //reset the bump because zoomed axis has no bump

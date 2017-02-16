@@ -87,7 +87,7 @@ var Stack = Dialog.extend({
                 if(d3.select(this).node().value === "bycolor") return _this.stack.which===_this.model.state.marker.color.which;
                 if(d3.select(this).node().value === "all") return _this.stack.which==="all";
             })
-            .attr('disabled', function(){
+            .attr('disabled', function() {
                 if(d3.select(this).node().value === "none") return null; // always enabled
                 if(d3.select(this).node().value === "all") return null; // always enabled
                 if(d3.select(this).node().value === "bycolor") return _this.model.state.marker.color.use !== "property" ? true : null;
@@ -101,7 +101,7 @@ var Stack = Dialog.extend({
                 if(d3.select(this).node().value === "grouped") return _this.group.merge;
                 if(d3.select(this).node().value === "stacked") return _this.stack.merge;
             })
-            .attr('disabled', function(){
+            .attr('disabled', function() {
                 if(d3.select(this).node().value === "none") return null; // always enabled
                 if(d3.select(this).node().value === "grouped") return _this.stack.which === "none" || _this.model.state.marker.color.use !== "property" ? true : null;
                 if(d3.select(this).node().value === "stacked") return _this.stack.which === "all" ? null : true;
@@ -120,7 +120,7 @@ var Stack = Dialog.extend({
         var obj = {stack: {}, group: {}};
 
         if(what === "merge") {
-            switch (value){
+            switch (value) {
                 case "none":
                     obj.group.merge = false;
                     obj.stack.merge = false;
@@ -137,7 +137,7 @@ var Stack = Dialog.extend({
         }
         if(what === "stack") {
 
-          switch (value){
+          switch (value) {
             case "all":
               obj.stack.use = "constant";
               obj.stack.which = "all";

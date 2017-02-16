@@ -101,7 +101,7 @@ var ColorLegend = Component.extend({
   },
 
 
-  ready: function(){
+  ready: function() {
     var _this = this;
 
     this.KEY = this.model.entities.getDimension();
@@ -119,7 +119,7 @@ var ColorLegend = Component.extend({
 
         _this.colorlegendKeys = _this.colorlegendMarker.getKeys(_this.colorlegendDim);
 
-        _this.colorlegendKeys.forEach(function(d){
+        _this.colorlegendKeys.forEach(function(d) {
           if(!((_this.frame||{}).hook_geoshape||{})[d[_this.colorlegendDim]]) _this.canShowMap = false;
         });
         _this.updateView();
@@ -322,11 +322,11 @@ var ColorLegend = Component.extend({
           .on("mouseout", _this._interact().mouseout)
           .on("click", _this._interact().clickToSelect)
           .on("dblclick", _this._interact().clickToShow)
-          .each(function(d){
+          .each(function(d) {
             var shapeString = _this.frame.hook_geoshape[d[_this.colorlegendDim]].trim();
 
             //check if shape string starts with svg tag -- then it's a complete svg
-            if(shapeString.slice(0,4) == "<svg"){
+            if(shapeString.slice(0,4) == "<svg") {
               //append svg element from string to the temporary div
               tempdivEl.html(shapeString);
               //replace the shape string with just the path data from svg
@@ -441,7 +441,7 @@ var ColorLegend = Component.extend({
             return utils.clone(d, [KEY]);
           });
 
-        if(select.filter(function(d){return _this.model.marker.isSelected(d) }).length == select.length) {
+        if(select.filter(function(d) {return _this.model.marker.isSelected(d) }).length == select.length) {
           _this.model.marker.clearSelected();
         }else{
           _this.model.marker.setSelect(select);
@@ -471,7 +471,7 @@ var ColorLegend = Component.extend({
 
     var selection = _this.canShowMap ? ".vzb-cl-minimap path" : ".vzb-cl-option .vzb-cl-color-sample";
 
-    this.listColorsEl.selectAll(selection).style("opacity", function(d){
+    this.listColorsEl.selectAll(selection).style("opacity", function(d) {
       if(!highlight.length) return OPACITY_REGULAR;
       return highlight.indexOf(d[_this.colorlegendDim]) > -1 ? OPACITY_HIGHLIGHT : OPACITY_DIM;
     });

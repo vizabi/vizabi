@@ -684,7 +684,7 @@ var TreeMenu = Component.extend({
   },
 
 
-  _buildIndicatorsTree: function(tagsArray){
+  _buildIndicatorsTree: function(tagsArray) {
       if(tagsArray===true || !tagsArray) tagsArray = [];
 
       var _this = this;
@@ -701,14 +701,14 @@ var TreeMenu = Component.extend({
       tags[UNCLASSIFIED] = {id: UNCLASSIFIED, type: "folder", name: this.translator("buttons/unclassified"), children:[]};
 
       //populate the dictionary of tags
-      tagsArray.forEach(function(tag){tags[tag.tag] = {id: tag.tag, name: tag.name, type: "folder", children: []};})
+      tagsArray.forEach(function(tag) {tags[tag.tag] = {id: tag.tag, name: tag.name, type: "folder", children: []};})
 
       //init the tag tree
       indicatorsTree = tags[ROOT];
       indicatorsTree.children.push(tags[UNCLASSIFIED]);
 
       //populate the tag tree
-      tagsArray.forEach(function(tag){
+      tagsArray.forEach(function(tag) {
         if(!tag.parent || !tags[tag.parent]) {
           // add tag to a root
           indicatorsTree.children.push(tags[tag.tag]);
@@ -726,12 +726,12 @@ var TreeMenu = Component.extend({
       tags[datasetName] = {id: datasetName, type: "dataset", children:[]};
       tags[ROOT].children.push(tags[datasetName]);
 
-      utils.forEach(indicatorsDB, function(entry, id){
+      utils.forEach(indicatorsDB, function(entry, id) {
         //if entry's tag are empty don't include it in the menu
         if(entry.tags=="_none") return;
         if(!entry.tags) entry.tags = datasetName || UNCLASSIFIED;
         var concept = { id: id, name: entry.name, unit: entry.unit, description: entry.description, dataSource: dataSource._name };
-        entry.tags.split(",").forEach(function(tag){
+        entry.tags.split(",").forEach(function(tag) {
           if(tags[tag.trim()]) {
             tags[tag.trim()].children.push(concept);
           } else {
@@ -746,7 +746,7 @@ var TreeMenu = Component.extend({
         });
       });
     });
-    if(_this.consoleGroupOpen){
+    if(_this.consoleGroupOpen) {
       console.groupEnd();
       delete _this.consoleGroupOpen;
     }
@@ -754,17 +754,17 @@ var TreeMenu = Component.extend({
     this.indicatorsTree = indicatorsTree;
   },
 
-  _sortChildren: function(tree, isSubfolder){
+  _sortChildren: function(tree, isSubfolder) {
     var _this = this;
     if(!tree.children) return;
     tree.children.sort(
       utils
       //in each folder including root: put subfolders below loose items
-      .firstBy()(function(a,b){a=a.type==="dataset"?1:0;  b=b.type==="dataset"?1:0; return b-a;})
-      .thenBy(function(a,b){a=a.children?1:0;  b=b.children?1:0; return a-b;})
-      .thenBy(function(a,b){
+      .firstBy()(function(a,b) {a=a.type==="dataset"?1:0;  b=b.type==="dataset"?1:0; return b-a;})
+      .thenBy(function(a,b) {a=a.children?1:0;  b=b.children?1:0; return a-b;})
+      .thenBy(function(a,b) {
         //in the root level put "time" on top and send "anvanced" to the bottom
-        if(!isSubfolder){
+        if(!isSubfolder) {
           if (a.id == "time") return -1;
           if (b.id == "time") return 1;
           if (a.id == "advanced") return 1;
@@ -778,7 +778,7 @@ var TreeMenu = Component.extend({
     );
 
     //recursively sort items in subfolders too
-    tree.children.forEach(function(d){
+    tree.children.forEach(function(d) {
       _this._sortChildren(d, true);
     });
   },
@@ -1287,12 +1287,12 @@ var TreeMenu = Component.extend({
       } else {
 
         var scaleTypes = this.element.select('.' + css.scaletypes).classed(css.hidden, false).selectAll("span")
-            .data(scaleTypesData, function(d){return d});
+            .data(scaleTypesData, function(d) {return d});
 
         scaleTypes.exit().remove();
 
         scaleTypes = scaleTypes.enter().append("span")
-          .on("click", function(d){
+          .on("click", function(d) {
             d3.event.stopPropagation();
             _this._setModel("scaleType", d, _this._markerID);
           })
@@ -1302,10 +1302,10 @@ var TreeMenu = Component.extend({
 
         scaleTypes
           .classed(css.scaletypesDisabled, scaleTypesData.length < 2)
-          .classed(css.scaletypesActive, function(d){
+          .classed(css.scaletypesActive, function(d) {
             return (d == mdlScaleType || d === "log" && mdlScaleType === "genericLog") && scaleTypesData.length > 1;
           })
-          .text(function(d){
+          .text(function(d) {
             return _this.translator("scaletype/" + d);
           });
       }

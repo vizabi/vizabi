@@ -47,7 +47,7 @@ export default Class.extend({
         }
     },
 
-    drag: function(){
+    drag: function() {
         var _this = this.context;
         var self = this;
 
@@ -365,13 +365,13 @@ export default Class.extend({
                     }
                 }
 
-                if(_this.model.marker.axis_x.scaleType === 'ordinal'){
+                if(_this.model.marker.axis_x.scaleType === 'ordinal') {
                     _this.xScale.rangeBands(xRange);
                 }else{
                     _this.xScale.range(xRange);
                 }
 
-                if(_this.model.marker.axis_y.scaleType === 'ordinal'){
+                if(_this.model.marker.axis_y.scaleType === 'ordinal') {
                     _this.yScale.rangeBands(yRange);
                 }else{
                     _this.yScale.range(yRange);
@@ -431,7 +431,7 @@ export default Class.extend({
                 zoomer.duration = 0;
             },
 
-            stop: function(){
+            stop: function() {
 
                 _this.draggingNow = false;
 
@@ -544,7 +544,7 @@ export default Class.extend({
         }
     },
 
-    zoomToMaxMin: function(zoomedMinX, zoomedMaxX, zoomedMinY, zoomedMaxY, duration, dontFeedToState){
+    zoomToMaxMin: function(zoomedMinX, zoomedMaxX, zoomedMinY, zoomedMaxY, duration, dontFeedToState) {
         var _this = this.context;
         var minX = zoomedMinX;
         var maxX = zoomedMaxX;
