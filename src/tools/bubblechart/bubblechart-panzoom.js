@@ -277,11 +277,11 @@ export default Class.extend({
                 var yRangeMinOffset = (yRangeBumped[0] - yRange[0]) * zoom * ratioY;
                 var yRangeMaxOffset = (yRangeBumped[1] - yRange[1]) * zoom * ratioY;
 
-                xRange[0] = xRange[0] + xRangeMinOffset;
-                xRange[1] = xRange[1] + xRangeMaxOffset;
+                xRange[0] += xRangeMinOffset;
+                xRange[1] += xRangeMaxOffset;
 
-                yRange[0] = yRange[0] + yRangeMinOffset;
-                yRange[1] = yRange[1] + yRangeMaxOffset;
+                yRange[0] += yRangeMinOffset;
+                yRange[1] += yRangeMaxOffset;
 
                 // Calculate the maximum xRange and yRange available.
                 var xRangeBounds = [0,  _this.width];
@@ -323,44 +323,44 @@ export default Class.extend({
                  */
                 if(!zoomXOut) {
                     if(xRange[0] > xRangeBoundsBumped[0]) {
-                        xRange[1] = xRange[1] - Math.abs(xRange[0] - xRangeBoundsBumped[0]);
+                        xRange[1] -= Math.abs(xRange[0] - xRangeBoundsBumped[0]);
                         xRange[0] = xRangeBoundsBumped[0];
                     }
 
                     if(xRange[1] < xRangeBoundsBumped[1]) {
-                        xRange[0] = xRange[0] + Math.abs(xRange[1] - xRangeBoundsBumped[1]);
+                        xRange[0] += Math.abs(xRange[1] - xRangeBoundsBumped[1]);
                         xRange[1] = xRangeBoundsBumped[1];
                     }
                 } else {
                     if(xRange[0] < xRangeBoundsBumped[0]) {
-                        xRange[1] = xRange[1] + Math.abs(xRange[0] - xRangeBoundsBumped[0]);
+                        xRange[1] += Math.abs(xRange[0] - xRangeBoundsBumped[0]);
                         xRange[0] = xRangeBoundsBumped[0];
                     }
 
                     if(xRange[1] > xRangeBoundsBumped[1]) {
-                        xRange[0] = xRange[0] - Math.abs(xRange[1] - xRangeBoundsBumped[1]);
+                        xRange[0] -= Math.abs(xRange[1] - xRangeBoundsBumped[1]);
                         xRange[1] = xRangeBoundsBumped[1];
                     }
                 }
 
                 if(!zoomYOut) {
                     if(yRange[0] < yRangeBoundsBumped[0]) {
-                        yRange[1] = yRange[1] + Math.abs(yRange[0] - yRangeBoundsBumped[0]);
+                        yRange[1] += Math.abs(yRange[0] - yRangeBoundsBumped[0]);
                         yRange[0] = yRangeBoundsBumped[0];
                     }
 
                     if(yRange[1] > yRangeBoundsBumped[1]) {
-                        yRange[0] = yRange[0] - Math.abs(yRange[1] - yRangeBoundsBumped[1]);
+                        yRange[0] -= Math.abs(yRange[1] - yRangeBoundsBumped[1]);
                         yRange[1] = yRangeBoundsBumped[1];
                     }
                 } else {
                     if(yRange[0] > yRangeBoundsBumped[0]) {
-                        yRange[1] = yRange[1] - Math.abs(yRange[0] - yRangeBoundsBumped[0]);
+                        yRange[1] -= Math.abs(yRange[0] - yRangeBoundsBumped[0]);
                         yRange[0] = yRangeBoundsBumped[0];
                     }
 
                     if(yRange[1] < yRangeBoundsBumped[1]) {
-                        yRange[0] = yRange[0] + Math.abs(yRange[1] - yRangeBoundsBumped[1]);
+                        yRange[0] += Math.abs(yRange[1] - yRangeBoundsBumped[1]);
                         yRange[1] = yRangeBoundsBumped[1];
                     }
                 }

@@ -871,7 +871,7 @@ var TreeMenu = Component.extend({
           this.OPTIONS.MAX_MENU_WIDTH = leftPos - 10; // 10 - padding around wrapper
         } else {
           if (this.OPTIONS.MAX_MENU_WIDTH < minMenuWidth) {
-            leftPos = leftPos - (minMenuWidth - this.OPTIONS.MAX_MENU_WIDTH);
+            leftPos -= (minMenuWidth - this.OPTIONS.MAX_MENU_WIDTH);
             this.OPTIONS.MAX_MENU_WIDTH = minMenuWidth;
           }
         }

@@ -147,10 +147,10 @@ var Dialog = Component.extend({
     if(this.getLayoutProfile() !== 'small') {
       if(!this.topPos && (this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true"))) {
         var dialogBottom = parseInt(this.placeholderEl.style('bottom'), 10);
-        totalHeight = totalHeight - dialogBottom;
+        totalHeight -= dialogBottom;
       } else {
         var topPos = this.topPos ? parseInt(this.topPos, 10) : this.placeholderEl.node().offsetTop;
-        totalHeight = totalHeight - topPos;
+        totalHeight -= topPos;
       }
     } else {
         totalHeight = this.rootEl.classed('vzb-portrait') ? totalHeight - 50 : totalHeight - 10;

@@ -255,7 +255,7 @@ export default function genericLog() {
       }
       //if the domain is just a single value
       if(arg[0] == arg[arg.length - 1]) {
-        arg[0] = arg[0] / 2;
+        arg[0] /= 2;
         arg[arg.length - 1] = arg[arg.length - 1] * 2;
       }
       domain = arg;
