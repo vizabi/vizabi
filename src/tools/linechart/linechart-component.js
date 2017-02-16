@@ -256,9 +256,9 @@ var LCComponent = Component.extend({
     if(this.strings.unit.X === "unit/" + this.model.marker.axis_x.which) this.strings.unit.X = "";
     if(this.strings.unit.C === "unit/" + this.model.marker.color.which) this.strings.unit.C = "";
 
-    if(!!this.strings.unit.Y) this.strings.unit.Y = ", " + this.strings.unit.Y;
-    if(!!this.strings.unit.X) this.strings.unit.X = ", " + this.strings.unit.X;
-    if(!!this.strings.unit.C) this.strings.unit.C = ", " + this.strings.unit.C;
+    if(this.strings.unit.Y) this.strings.unit.Y = ", " + this.strings.unit.Y;
+    if(this.strings.unit.X) this.strings.unit.X = ", " + this.strings.unit.X;
+    if(this.strings.unit.C) this.strings.unit.C = ", " + this.strings.unit.C;
 
     utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
     this.dataWarningEl.append("text")
