@@ -267,7 +267,7 @@ var ButtonList = Component.extend({
     // show all existing buttons
     var _this = this;
     var buttons = this.element.selectAll(".vzb-buttonlist-btn");
-    buttons.each(function(d,i) {
+    buttons.each(function(d, i) {
       var button = d3.select(this);
       button.style('display', '');
     });
@@ -298,7 +298,7 @@ var ButtonList = Component.extend({
     var buttons_width = 0;
     var buttons_height = 0;
 
-    buttons.each(function(d,i) {
+    buttons.each(function(d, i) {
       var button_data = d;
       var button = d3.select(this);
       var expandable = button_expand.indexOf(button_data.id) !== -1;

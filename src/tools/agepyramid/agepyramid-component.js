@@ -693,7 +693,7 @@ var AgePyramid = Component.extend({
 
     var _attributeUpdaters = this._attributeUpdaters;
 
-    this.stackBars = this.sideBars.selectAll('.vzb-bc-stack').data(function(d,i) {
+    this.stackBars = this.sideBars.selectAll('.vzb-bc-stack').data(function(d, i) {
       var stacks = _this.stacked ? _this.stackKeys : [_this.totalFieldName];
       return stacks.map(function(m) {
         var r = {};

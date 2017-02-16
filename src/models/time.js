@@ -143,7 +143,7 @@ var TimeModel = DataConnected.extend({
    * @returns {String}
    */
   formatDate: function(dateObject, type = 'data') {
-    if (['data','ui'].indexOf(type) === -1) {
+    if (['data', 'ui'].indexOf(type) === -1) {
       utils.warn('Time.formatDate type parameter (' + type + ') invalid. Using "data".');
       type = data;
     }

@@ -189,7 +189,7 @@ var DataModel = Model.extend({
       for (var i = response.length-1; i>=0; i--) {
         for (var c = columnsMissing.length-1; c>=0; c--) {
           // if found value for column c in row i then remove that column name from the list of missing columns
-          if (response[i][columnsMissing[c]] || response[i][columnsMissing[c]]===0) columnsMissing.splice(c,1);
+          if (response[i][columnsMissing[c]] || response[i][columnsMissing[c]]===0) columnsMissing.splice(c, 1);
         }
         // all columns were found to have value in at least one of the rows then stop iterating
         if (!columnsMissing.length) break;

@@ -79,7 +79,7 @@ var brush = function (_d3_svg_brush) {
         brush.on("brushstart.touchcancel", brushstart);
       }
 
-      return d3.rebind(brush, _super, "x","y", "extent", "clamp", "clear", "empty", "on", "event");
+      return d3.rebind(brush, _super, "x", "y", "extent", "clamp", "clear", "empty", "on", "event");
     }(_d3_svg_brush());
   };
 }(d3.svg.brush);

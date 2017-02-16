@@ -294,8 +294,8 @@ export default Class.extend({
       if (next.valueY==null || next.valueX==null) return;
 
       var lineLength = Math.sqrt(
-          Math.pow(_context.xScale(segment.valueX) - _context.xScale(next.valueX),2) +
-          Math.pow(_context.yScale(segment.valueY) - _context.yScale(next.valueY),2)
+          Math.pow(_context.xScale(segment.valueX) - _context.xScale(next.valueX), 2) +
+          Math.pow(_context.yScale(segment.valueY) - _context.yScale(next.valueY), 2)
       );
       if (duration) {
         view.select("line")
@@ -527,8 +527,8 @@ export default Class.extend({
                       (segment.valueC!=null?_context.cScale(segment.valueC):_context.COLOR_BLACKISH);
 
                     var lineLength = Math.sqrt(
-                      Math.pow(_context.xScale(segment.valueX) - _context.xScale(nextFrame.axis_x[d[KEY]]),2) +
-                      Math.pow(_context.yScale(segment.valueY) - _context.yScale(nextFrame.axis_y[d[KEY]]),2)
+                      Math.pow(_context.xScale(segment.valueX) - _context.xScale(nextFrame.axis_x[d[KEY]]), 2) +
+                      Math.pow(_context.yScale(segment.valueY) - _context.yScale(nextFrame.axis_y[d[KEY]]), 2)
                     );
                     view.select("line")
                       .transition().duration(duration).ease(d3.easeLinear)

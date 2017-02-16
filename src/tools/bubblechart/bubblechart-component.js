@@ -367,11 +367,11 @@ var BubbleChartComp = Component.extend({
     this.bubbleCrown = this.element.select('.vzb-bc-bubble-crown');
     //set filter
     this.bubbleCrown.selectAll(".vzb-crown-glow")
-      .attr("filter","url(" + location.pathname + "#vzb-glow-filter)");
+      .attr("filter", "url(" + location.pathname + "#vzb-glow-filter)");
     this.tooltip = this.element.select('.vzb-bc-tooltip');
     //set filter
     this.tooltip.select(".vzb-tooltip-glow")
-      .attr("filter","url(" + location.pathname + "#vzb-glow-filter)");
+      .attr("filter", "url(" + location.pathname + "#vzb-glow-filter)");
 
     this.tooltipMobile = this.element.select('.vzb-tooltip-mobile');
     //component events
@@ -1060,7 +1060,7 @@ var BubbleChartComp = Component.extend({
 
   updateMarkerSizeLimits: function() {
     var _this = this;
-    var extent = this.model.marker.size.extent || [0,1];
+    var extent = this.model.marker.size.extent || [0, 1];
 
     if (!this.activeProfile) return utils.warn("updateMarkerSizeLimits() is called before ready(). This can happen if events get unfrozen and getFrame() still didn't return data");
 

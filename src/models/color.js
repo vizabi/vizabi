@@ -290,7 +290,7 @@ var ColorModel = Hook.extend({
 
       var singlePoint = (limits.max - limits.min == 0);
 
-      domain = domain.sort((a,b) => a-b);
+      domain = domain.sort((a, b) => a-b);
       range = domain.map(m => singlePoint? paletteObject[domain[0]] : paletteObject[m]);
       domain = domain.map(m => limits.min.valueOf() + m/100 * (limits.max.valueOf() - limits.min.valueOf()));
 
@@ -309,7 +309,7 @@ var ColorModel = Hook.extend({
 
       var singlePoint = (limits[1] - limits[0] == 0);
 
-      domain = domain.sort((a,b) => a-b);
+      domain = domain.sort((a, b) => a-b);
       range = domain.map(m => singlePoint? paletteObject[domain[0]] : paletteObject[m]);
       domain = domain.map(m => limits[0] + m/100 * (limits[1] - limits[0]));
 

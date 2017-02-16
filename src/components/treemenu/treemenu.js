@@ -262,7 +262,7 @@ var Menu = Class.extend({
   },
   _openVertical: function() {
     var _this = this;
-    _this.entity.style('height','0px');
+    _this.entity.style('height', '0px');
     _this.entity.transition()
       .delay(0)
       .duration(250)
@@ -760,9 +760,9 @@ var TreeMenu = Component.extend({
     tree.children.sort(
       utils
       //in each folder including root: put subfolders below loose items
-      .firstBy()(function(a,b) {a=a.type==="dataset"?1:0;  b=b.type==="dataset"?1:0; return b-a;})
-      .thenBy(function(a,b) {a=a.children?1:0;  b=b.children?1:0; return a-b;})
-      .thenBy(function(a,b) {
+      .firstBy()(function(a, b) {a=a.type==="dataset"?1:0;  b=b.type==="dataset"?1:0; return b-a;})
+      .thenBy(function(a, b) {a=a.children?1:0;  b=b.children?1:0; return a-b;})
+      .thenBy(function(a, b) {
         //in the root level put "time" on top and send "anvanced" to the bottom
         if (!isSubfolder) {
           if (a.id == "time") return -1;
@@ -956,7 +956,7 @@ var TreeMenu = Component.extend({
       while (!(utils.hasClass(parent, css.list_top_level))) {
         if (parent.tagName == 'LI') {
           listNode = utils.hasClass(parent.parentNode, css.list_top_level) ? parent.parentNode.parentNode : parent.parentNode;
-          scrollToItem(listNode , parent);
+          scrollToItem(listNode, parent);
         }
         parent = parent.parentNode;
       }

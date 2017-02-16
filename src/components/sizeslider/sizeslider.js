@@ -56,7 +56,7 @@ var SizeSlider = Component.extend({
     this.model_expects = [{
       name: "size",
       type: "size"
-    },{
+    }, {
       name: "locale",
       type: "locale"
     }];
@@ -174,7 +174,7 @@ var SizeSlider = Component.extend({
       });
 
     this.sliderThumbs = this.sliderEl.selectAll(".handle")
-      .data([{ type: "w" },{ type: "e" }], function(d) { return d.type; })
+      .data([{ type: "w" }, { type: "e" }], function(d) { return d.type; })
       .enter().append("svg").attr("class", function(d) { return "handle handle--" + d.type + " " + d.type; })
       .classed("vzb-szs-slider-thumb", true);
 
@@ -186,7 +186,7 @@ var SizeSlider = Component.extend({
     this.sliderEl
       .call(_this.brush);
 
-    this.sliderEl.selectAll("text").data([0,0]).enter()
+    this.sliderEl.selectAll("text").data([0, 0]).enter()
       .append("text")
       .attr("class", function(d, i) {
         return "vzb-szs-slider-thumb-label " + (i ? 'e' : 'w');})
@@ -275,7 +275,7 @@ var SizeSlider = Component.extend({
   _setLabelsText: function() {
     var _this = this;
     _this.sliderLabelsEl
-      .data([_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[0]),_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[1])])
+      .data([_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[0]), _this.model.size.getTickFormatter()(_this.sizeScaleMinMax[1])])
       .text(function (d) { return d; });
   },
 

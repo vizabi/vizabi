@@ -74,7 +74,7 @@ var ColorLegend = Component.extend({
     }
     this.listColorsEl = this.element
       .append("div").attr("class", "vzb-cl-holder")
-      .append("div").attr("class","vzb-cl-colorlist");
+      .append("div").attr("class", "vzb-cl-colorlist");
 
     this.rainbowEl = this.listColorsEl.append("div").attr("class", "vzb-cl-rainbow");
     this.minimapEl = this.listColorsEl.append("div").attr("class", "vzb-cl-minimap");
@@ -210,9 +210,9 @@ var ColorLegend = Component.extend({
       var marginRight = parseInt(this.rainbowEl.style('right'), 10) || marginLeft;
 
       this.labelScaleSVG.style("width", marginLeft + gradientWidth + marginRight + "px");
-      this.labelScaleG.attr("transform","translate(" + marginLeft + ",0)");
+      this.labelScaleG.attr("transform", "translate(" + marginLeft + ",0)");
       this.rainbowLegendSVG.style("width", marginLeft + gradientWidth + marginRight + "px");
-      this.rainbowLegendG.attr("transform","translate(" + marginLeft + ", " + 7 + ")");
+      this.rainbowLegendG.attr("transform", "translate(" + marginLeft + ", " + 7 + ")");
       var labelsAxis = axisSmart("bottom");
       labelsAxis.scale(labelScale)
         //.tickFormat(formatter)
@@ -310,9 +310,9 @@ var ColorLegend = Component.extend({
 
         //Drawing a minimap from the hook data
 
-        var tempdivEl = this.minimapEl.append("div").attr("class","vzb-temp");
+        var tempdivEl = this.minimapEl.append("div").attr("class", "vzb-temp");
 
-        this.minimapSVG.attr("viewBox",null);
+        this.minimapSVG.attr("viewBox", null);
         this.minimapSVG.selectAll("g").remove();
         this.minimapG = this.minimapSVG.append("g");
         this.minimapG.selectAll("path")
@@ -326,7 +326,7 @@ var ColorLegend = Component.extend({
             var shapeString = _this.frame.hook_geoshape[d[_this.colorlegendDim]].trim();
 
             //check if shape string starts with svg tag -- then it's a complete svg
-            if (shapeString.slice(0,4) == "<svg") {
+            if (shapeString.slice(0, 4) == "<svg") {
               //append svg element from string to the temporary div
               tempdivEl.html(shapeString);
               //replace the shape string with just the path data from svg
@@ -412,7 +412,7 @@ var ColorLegend = Component.extend({
 
         var entityIndex = oldShow.indexOf(d[colorlegendDim]);
         if (entityIndex !== -1) {
-          oldShow.splice(entityIndex,1);
+          oldShow.splice(entityIndex, 1);
         } else {
           oldShow.push(d[colorlegendDim]);
         }

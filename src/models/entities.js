@@ -19,8 +19,8 @@ var EntitiesModel = DataConnected.extend({
     return utils.deepExtend(this._super(), defaults);
   },
 
-  objectLeafs: ['show','autogenerate'],
-  dataConnectedChildren: ['show','dim'],
+  objectLeafs: ['show', 'autogenerate'],
+  dataConnectedChildren: ['show', 'dim'],
 
   /**
    * Initializes the entities model.

@@ -423,7 +423,7 @@ var Hook = DataConnected.extend({
 
     var formatted = d3.format("." + prec + format)(x);
     //remove trailing zeros if dot exists to avoid numbers like 1.0M, 3.0B, 1.500, 0.9700, 0.0
-    if (formatted.indexOf(".")>-1) formatted = formatted.replace(/0+$/,"").replace(/\.$/,"");
+    if (formatted.indexOf(".")>-1) formatted = formatted.replace(/0+$/, "").replace(/\.$/, "");
 
 
     // use manual formatting for the cases above

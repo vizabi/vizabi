@@ -49,7 +49,7 @@ var MCMath = Class.extend({
         giniToSigma: function (gini) {
             // The ginis are turned into std deviation.
             // Mattias uses this formula in Excel: stddev = NORMSINV( ((gini/100)+1)/2 )*2^0.5
-            return this.normsinv(((gini / 100) + 1) / 2) * Math.pow(2,0.5);
+            return this.normsinv(((gini / 100) + 1) / 2) * Math.pow(2, 0.5);
         },
 
         // this function returns PDF values for a specified distribution

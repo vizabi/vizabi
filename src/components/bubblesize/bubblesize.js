@@ -139,7 +139,7 @@ var BubbleSize = Component.extend({
       });
 
     this.sliderThumbs = this.sliderEl.selectAll(".handle")
-      .data([{ type: "w" },{ type: "e" }], function(d) { return d.type; })
+      .data([{ type: "w" }, { type: "e" }], function(d) { return d.type; })
       .enter().append("svg").attr("class", function(d) { return "handle handle--" + d.type; })
       .classed("vzb-bs-slider-thumb", true);
 
@@ -164,14 +164,14 @@ var BubbleSize = Component.extend({
     //.attr("d", thumbArc)
 
     if (_this.showArcs) {
-      this.sliderEl.selectAll(".vzb-bs-slider-thumb-arc").data([0,0]).enter()
+      this.sliderEl.selectAll(".vzb-bs-slider-thumb-arc").data([0, 0]).enter()
         .append("path")
         .attr("class", "vzb-bs-slider-thumb-arc");
     }
 
     this.sliderArcsEl = this.sliderEl.selectAll(".vzb-bs-slider-thumb-arc");
 
-    this.sliderEl.selectAll("text").data([0,0]).enter()
+    this.sliderEl.selectAll("text").data([0, 0]).enter()
       .append("text")
       .attr("class", "vzb-bs-slider-thumb-label")
       .attr("text-anchor", function(d, i) {
@@ -266,7 +266,7 @@ var BubbleSize = Component.extend({
   _setLabelsText: function() {
       var _this = this;
       _this.sliderLabelsEl
-        .data([_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[0]),_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[1])])
+        .data([_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[0]), _this.model.size.getTickFormatter()(_this.sizeScaleMinMax[1])])
         .text(function (d) { return d; });
   },
 

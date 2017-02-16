@@ -67,10 +67,10 @@ var label = function(context) {
   // This feature will be activated later, by making the label into a "context menu" where users can click Split, or zoom,.. hide others etc....
 
           view.append("rect")
-            .attr("class","vzb-label-glow")
+            .attr("class", "vzb-label-glow")
             .attr("filter", "url(" + location.pathname + "#vzb-glow-filter)");
           view.append("rect")
-            .attr("class","vzb-label-fill vzb-tooltip-border");
+            .attr("class", "vzb-label-fill vzb-tooltip-border");
   //          .on("click", function(d, i) {
   //            //default prevented is needed to distinguish click from drag
   //            if(d3.event.defaultPrevented) return;
@@ -334,7 +334,7 @@ var label = function(context) {
       var cornerDistance_sq = Math.pow(circleDistanceX - halfRectWidth, 2) +
                           Math.pow(circleDistanceY - halfRectHeight, 2);
 
-      return (cornerDistance_sq <= Math.pow(circle.r,2));
+      return (cornerDistance_sq <= Math.pow(circle.r, 2));
     }
 
     return label;
@@ -417,7 +417,7 @@ var Labels = Class.extend({
   updateLabelSizeLimits: function() {
     var _this = this;
     if (!this.model.marker.size_label) return;
-    var extent = this.model.marker.size_label.extent || [0,1];
+    var extent = this.model.marker.size_label.extent || [0, 1];
 
     var minLabelTextSize = this.activeProfile.minLabelTextSize;
     var maxLabelTextSize = this.activeProfile.maxLabelTextSize;
@@ -565,7 +565,7 @@ var Labels = Class.extend({
         var select = utils.find(_this.model.marker.select, function(f) {
           return f[KEY] == d[KEY];
         });
-        cached.labelOffset = select.labelOffset || [0,0];
+        cached.labelOffset = select.labelOffset || [0, 0];
       }
 
       var brokenInputs = !cached.labelX0 && cached.labelX0 !==0 || !cached.labelY0 && cached.labelY0 !==0 || !cached.scaledS0 && cached.scaledS0 !==0;
@@ -724,7 +724,7 @@ var Labels = Class.extend({
     var resolvedX0 = this.xScale(cached.labelX0);
     var resolvedY0 = this.yScale(cached.labelY0);
 
-    if (!cached.labelOffset) cached.labelOffset = [0,0];
+    if (!cached.labelOffset) cached.labelOffset = [0, 0];
     cached.labelX_ = cached.labelOffset[0] || (-cached.scaledS0 * .75 - 5) / viewWidth;
     cached.labelY_ = cached.labelOffset[1] || (-cached.scaledS0 * .75 - 11) / viewHeight;
 

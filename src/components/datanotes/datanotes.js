@@ -21,7 +21,7 @@ var DataNotes = Component.extend({
     this.model_expects = [{
       name: "marker",
       type: "model"
-    },{
+    }, {
       name: "locale",
       type: "locale"
     }];

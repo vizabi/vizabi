@@ -229,7 +229,7 @@ export default function axisSmart(_orient) {
             .transition()
             .duration(highlightTransDuration)
             .ease(d3.easeLinear)
-            .style("opacity", getOpacity(d,t, this));
+            .style("opacity", getOpacity(d, t, this));
         });
 
       } else {
@@ -247,7 +247,7 @@ export default function axisSmart(_orient) {
         g.selectAll(".tick:not(.vzb-hidden)").each(function(d, t) {
           d3.select(this).select("text")
             .interrupt()
-            .style("opacity", getOpacity(d,t, this))
+            .style("opacity", getOpacity(d, t, this))
             .transition();
         });
 
@@ -257,7 +257,7 @@ export default function axisSmart(_orient) {
     };
 
 
-    var hlOpacityScale = d3.scale.linear().domain([0,5]).range([0,1]).clamp(true);
+    var hlOpacityScale = d3.scale.linear().domain([0, 5]).range([0, 1]).clamp(true);
     axis.hlOpacityScale = function(arg) {
       if (!arguments.length) return hlOpacityScale;
       hlOpacityScale = arg;

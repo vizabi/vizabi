@@ -86,7 +86,7 @@ import * as utils from 'base/utils';
         // objects are projected into screen coordinates
 
         // project the arcs into screen space
-        var tf = transformer(topology.transform),x,y,len1,i1,out1,len2=topology.arcs.length,i2=0,
+        var tf = transformer(topology.transform), x, y, len1, i1, out1, len2=topology.arcs.length, i2=0,
           projectedArcs = new Array(len2);
         var projectedArcsDefer = new Promise();
         var generateTopologySegment = function(segmentIndex, segmentLength) {
@@ -160,15 +160,15 @@ import * as utils from 'base/utils';
               // console.log("meta:", meta);
               // console.log("  total area:", totalArea);
               // console.log("  force reduction factor:", forceReductionFactor, "mean error:", sizeError);
-              var delta,centroid,mass,radius,rSquared,dx,dy,distSquared,dist,Fij;
+              var delta, centroid, mass, radius, rSquared, dx, dy, distSquared, dist, Fij;
               var updatePoint = function(i2, len2) {
-                var len1,i1,delta,len3,i3,centroid,mass,radius,rSquared,dx,dy,distSquared,dist,Fij;
+                var len1, i1, delta, len3, i3, centroid, mass, radius, rSquared, dx, dy, distSquared, dist, Fij;
                 while (i2<len2) {
                   len1=projectedArcs[i2].length;
                   i1=0;
                   while (i1<len1) {
                     // create an array of vectors: [x, y]
-                    delta = [0,0];
+                    delta = [0, 0];
                     len3 = response.meta.length;
                     i3=0;
                     while (i3<len3) {
@@ -185,8 +185,8 @@ import * as utils from 'base/utils';
                         : mass *
                       (distSquared / rSquared) *
                       (4 - 3 * dist / radius);
-                      delta[0]+=(Fij * cosArctan(dy,dx));
-                      delta[1]+=(Fij * sinArctan(dy,dx));
+                      delta[0]+=(Fij * cosArctan(dy, dx));
+                      delta[1]+=(Fij * sinArctan(dy, dx));
                       i3++;
                     }
                     projectedArcs[i2][i1][0] += (delta[0]*forceReductionFactor);
@@ -503,14 +503,14 @@ import * as utils from 'base/utils';
       return types[geom.type](geom.coordinates);
     };
   }
-  function cosArctan(dx,dy) {
+  function cosArctan(dx, dy) {
     if (dy===0) return 0;
     var div = dx/dy;
     return (dy>0)?
       (1/Math.sqrt(1+(div*div))):
       (-1/Math.sqrt(1+(div*div)));
   }
-  function sinArctan(dx,dy) {
+  function sinArctan(dx, dy) {
     if (dy===0) return 1;
     var div = dx/dy;
     return (dy>0)?

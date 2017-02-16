@@ -913,7 +913,7 @@ var Marker = Model.extend({
     }));
 
     return Promise.all(promises).then(function() {
-      return ({ "min": selectedEdgeTimes[0],"max": selectedEdgeTimes[1] });
+      return ({ "min": selectedEdgeTimes[0], "max": selectedEdgeTimes[1] });
     });
   },
 

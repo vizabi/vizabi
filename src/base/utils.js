@@ -1428,7 +1428,7 @@ export var setIcon = function(element, icon) {
 
 //http://stackoverflow.com/questions/26049488/how-to-get-absolute-coordinates-of-object-inside-a-g-group
 export function makeAbsoluteContext(element, svgDocument) {
-  return function(x,y) {
+  return function(x, y) {
     var offset = svgDocument.getBoundingClientRect();
     var matrix = element.getScreenCTM();
     return {
@@ -1471,9 +1471,9 @@ export function firstBy() {
         // f is a unary function mapping a single item to its sort score
         var uf = f;
         var preprocess = opt.ignoreCase?ignoreCase:identity;
-        f = function(v1,v2) {return preprocess(uf(v1)) < preprocess(uf(v2)) ? -1 : preprocess(uf(v1)) > preprocess(uf(v2)) ? 1 : 0;};
+        f = function(v1, v2) {return preprocess(uf(v1)) < preprocess(uf(v2)) ? -1 : preprocess(uf(v1)) > preprocess(uf(v2)) ? 1 : 0;};
       }
-      if (opt.direction === -1) return function(v1,v2) {return -f(v1,v2);};
+      if (opt.direction === -1) return function(v1, v2) {return -f(v1, v2);};
       return f;
     }
 
@@ -1484,7 +1484,7 @@ export function firstBy() {
         var x = typeof (this) == "function" ? this : false;
         var y = makeCompareFunction(func, opt);
         var f = x ? function(a, b) {
-                        return x(a,b) || y(a,b);
+                        return x(a, b) || y(a, b);
                     }
                   : y;
         f.thenBy = tb;
