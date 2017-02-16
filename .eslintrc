@@ -1,12 +1,24 @@
 {
   "parserOptions": {
     "ecmaVersion": 6,
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true
+    },
     "sourceType": "module"
   },
   "env": {
     "browser": true
   },
   "rules": {
+    //    "prefer-destructuring": [
+    //      "warn"
+    //    ],
+    //    "prefer-arrow-callback": [
+    //      "warn"
+    //    ],
+    //    "object-shorthand": [
+    //      "warn"
+    //    ],
     //    "space-unary-ops": [
     //      "warn",
     //      {
@@ -76,6 +88,9 @@
     //      "warn",
     //      "never"
     //    ],
+    //    "no-var": 1,
+    //    "prefer-rest-params": 1,
+    //    "prefer-spread": 1,
     "block-spacing": 0,
     "callback-return": 0,
     "no-undefined": 0,
@@ -188,6 +203,35 @@
       "as-needed"
     ],
     "arrow-spacing": [
+      "warn"
+    ],
+    "generator-star-spacing": [
+      "warn",
+      "after"
+    ],
+    "no-class-assign": 1,
+    "no-const-assign": 1,
+    "no-dupe-class-members": 1,
+    "no-duplicate-imports": [
+      "warn"
+    ],
+    "no-new-symbol": 1,
+    "no-useless-computed-key": 1,
+    "no-useless-constructor": 1,
+    "no-useless-rename": 1,
+    "prefer-const": [
+      "warn"
+    ],
+    "prefer-numeric-literals": 1,
+    "require-yield": 1,
+    "rest-spread-spacing": [
+      "warn"
+    ],
+    "symbol-description": 1,
+    "template-curly-spacing": [
+      "warn"
+    ],
+    "yield-star-spacing": [
       "warn"
     ]
   }
