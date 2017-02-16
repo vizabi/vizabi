@@ -57,7 +57,7 @@ var MoreOptions = Dialog.extend({
     //accordion
     if(this.accordionEl) {
       var titleEl = this.accordionEl.selectAll('.vzb-accordion-section')
-        .select('.vzb-dialog-title>span:first-child')
+        .select('.vzb-dialog-title>span:first-child');
       titleEl.on('click', function(d) {
         var element = _this.components[d.component].element;
         var sectionEl = _this.components[d.component].placeholderEl;
@@ -68,7 +68,7 @@ var MoreOptions = Dialog.extend({
         if(sectionEl.node() !== activeEl.node()) {
           sectionEl.classed('vzb-accordion-active', true);
         }
-      })
+      });
     }
   },
 

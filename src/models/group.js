@@ -16,7 +16,7 @@ var GroupModel = Hook.extend({
       merge: false,
       manualSorting: null
     };
-    return utils.deepExtend(this._super(), defaults)
+    return utils.deepExtend(this._super(), defaults);
   },
 
   /**
@@ -40,7 +40,7 @@ var GroupModel = Hook.extend({
 
     //use must be "property"
     if(this.use != "property") {
-      utils.warn("group model: use must be 'property'. Resetting...")
+      utils.warn("group model: use must be 'property'. Resetting...");
       this.use = "property";
     }
   }

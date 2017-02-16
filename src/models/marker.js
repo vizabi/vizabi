@@ -16,7 +16,7 @@ var Marker = Model.extend({
       opacityRegular: 1,
       allowSelectMultiple: true
     };
-    return utils.deepExtend(this._super(), defaults)
+    return utils.deepExtend(this._super(), defaults);
   },
 
   init: function(name, value, parent, binds, persistent) {
@@ -35,7 +35,7 @@ var Marker = Model.extend({
 
   setDataSourceForAllSubhooks: function(data) {
     var obj = {};
-    this.getSubhooks().forEach(hook => { obj[hook._name] = {data: data} });
+    this.getSubhooks().forEach(hook => { obj[hook._name] = {data: data}; });
     this.set(obj, null, false);
   },
 
@@ -47,7 +47,7 @@ var Marker = Model.extend({
     var _this = this;
     var dimension = this.getDimension();
     var visible_array = this._visible.map(function(d) {
-      return d[dimension]
+      return d[dimension];
     });
 
     if(visible_array.length) {
@@ -240,7 +240,7 @@ var Marker = Model.extend({
         return utils.warn("checkTimeLimits(): min-max look wrong: " + tLimits.min + " " + tLimits.max + ". Expecting Date objects. Ensure that time is properly parsed in the data from reader");
 
     // change start and end (but keep startOrigin and endOrigin for furhter requests)
-    var newTime = {}
+    var newTime = {};
     if(time.start - tLimits.min != 0 || !time.start && !this.startOrigin) newTime['start'] = d3.max([tLimits.min, time.parse(time.startOrigin)]);
     if(time.end - tLimits.max != 0 || !time.end && !this.endOrigin) newTime['end'] = d3.min([tLimits.max, time.parse(time.endOrigin)]);
 
@@ -284,7 +284,7 @@ var Marker = Model.extend({
         }else{
             //otherwise calculate own date limits (a costly operation)
             items = hook.getValidItems().map(function(m) {return m[time.getDimension()];});
-            if(items.length == 0) utils.warn("getTimeLimits() was unable to work with an empty array of valid datapoints")
+            if(items.length == 0) utils.warn("getTimeLimits() was unable to work with an empty array of valid datapoints");
             min = d3.min(items);
             max = d3.max(items);
         }
@@ -296,13 +296,13 @@ var Marker = Model.extend({
       var resultMin = d3.max(minArray);
       var resultMax = d3.min(maxArray);
       if(resultMin > resultMax) {
-          utils.warn("getTimeLimits(): Availability of the indicator's data has no intersection. I give up and just return some valid time range where you'll find no data points. Enjoy!")
+          utils.warn("getTimeLimits(): Availability of the indicator's data has no intersection. I give up and just return some valid time range where you'll find no data points. Enjoy!");
           resultMin = d3.min(minArray);
           resultMax = d3.max(maxArray);
       }
 
       //return false for the case when neither of hooks was an "indicator" or "important"
-      return !min && !max? false : {min: resultMin, max: resultMax}
+      return !min && !max? false : {min: resultMin, max: resultMax};
   },
 
 
@@ -338,7 +338,7 @@ var Marker = Model.extend({
             // Remove the keys from it that are not in this hook
             if(hook._important) resultKeys = resultKeys.filter(function(f) {
               return keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1;
-            })
+            });
         });
         return resultKeys.map(function(d) {var r = {}; r[KEY] = d; return r; });
     },
@@ -548,7 +548,7 @@ var Marker = Model.extend({
                       iterateKeys(firstKeyObject, lastKeyObject[keys[i]], firstKey, pValues[keys[i]], nValues[keys[i]], nextIndex);
                     }
                   }
-                }
+                };
 
                 iterateKeys(null, null, null, values, nValues[hook], 0);
 
@@ -583,8 +583,8 @@ var Marker = Model.extend({
               }
             }
 
-          }, keys)
-        }, keys)
+          }, keys);
+        }, keys);
       }
     },
 
@@ -602,7 +602,7 @@ var Marker = Model.extend({
       var steps = this._parent.time.getAllSteps();
 
       var cachePath = this._getCachePath(selected);
-      if (!cachePath) return new Promise(function(resolve, reject) {resolve()});
+      if (!cachePath) return new Promise(function(resolve, reject) {resolve();});
       //if the collection of frames for this data cube is not scheduled yet (otherwise no need to repeat calculation)
       if (!this.frameQueues[cachePath] || !(this.frameQueues[cachePath] instanceof Promise)) {
 
@@ -661,13 +661,13 @@ var Marker = Model.extend({
                 var currentHookState = {
                   name: hook._name,
                   which: hook.which
-                }
+                };
                 hook.getFrames(steps, selected).then(function(response) {
                   utils.forEach(response, function (frame, t) {
                     _this.partialResult[cachePath][t][currentHookState.name] = frame[currentHookState.which];
                   });
                   res();
-                })
+                });
               }));
             });
             Promise.all(promises).then(function() {
@@ -697,7 +697,7 @@ var Marker = Model.extend({
                   _hook.getFrame(steps, forceFrame, selected).then(function(response) {
                     _this.partialResult[cachePath][forceFrame][_name] = response[forceFrame][_hook.which];
                     res();
-                  })
+                  });
                 }));
               }(hook, name)); //isolate this () code with its own hook and name
             }
@@ -815,7 +815,7 @@ var Marker = Model.extend({
 
         var interpolate = function(arr, result, id) {
           //TODO: this saves when geos have different data length. line can be optimised.
-          next = d3.bisectLeft(arr.map(function(m) {return m[dimTime]}), time);
+          next = d3.bisectLeft(arr.map(function(m) {return m[dimTime];}), time);
 
           value = utils.interpolatePoint(arr, u, w, next, dimTime, time, method);
           result[id] = hook.mapValue(value);
@@ -830,7 +830,7 @@ var Marker = Model.extend({
             result[id] = values;
           }
 
-        }
+        };
 
         var iterateGroupKeys = function(data, deep, result, cb) {
           deep--;
@@ -842,7 +842,7 @@ var Marker = Model.extend({
               cb(d, result, id);
             }
           });
-        }
+        };
 
         iterateGroupKeys(filtered, group_by.length, response[name], interpolate);
 

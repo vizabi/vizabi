@@ -1,6 +1,6 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
-import { drag as iconDrag, pin as iconPin } from 'base/iconset'
+import { drag as iconDrag, pin as iconPin } from 'base/iconset';
 import requireAll from 'helpers/requireAll';
 const dialogTemplates = requireAll(require.context('components/dialogs/', true, /\.html$/));
 
@@ -47,7 +47,7 @@ var Dialog = Component.extend({
   ready: function() {
     var _this = this;
     this.placeholderEl = d3.select(this.placeholder);
-    this.rootEl = this.root.element instanceof Array? this.root.element : d3.select(this.root.element)
+    this.rootEl = this.root.element instanceof Array? this.root.element : d3.select(this.root.element);
     this.dragHandler = this.placeholderEl.select("[data-click='dragDialog']");
     this.dragHandler.html(iconDrag);
     this.pinIcon = this.placeholderEl.select("[data-click='pinDialog']");
@@ -313,7 +313,7 @@ function dialogDrag(element, container, xOffset) {
 
       this.move(aX, aY);
     }
-  }
+  };
 }
 
 export default Dialog;

@@ -50,7 +50,7 @@ var ColorModel = Hook.extend({
         scales: ["linear", "log", "genericLog", "time", "pow", "ordinal"]
       }
     };
-    return utils.deepExtend(this._super(), defaults)
+    return utils.deepExtend(this._super(), defaults);
   },
 
   autoGenerateModel: function() {
@@ -58,7 +58,7 @@ var ColorModel = Hook.extend({
       var concept;
       if (this.autogenerate) {
         var concept = this.dataSource
-          .getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType)
+          .getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType);
 
         if (concept) {
           this.which = concept.concept;

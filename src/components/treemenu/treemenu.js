@@ -110,7 +110,7 @@ var Menu = Class.extend({
           this.entity.transition()
             .delay(0)
             .duration(100)
-            .style('width', this.width + "px")
+            .style('width', this.width + "px");
         } else {
           this.entity.style('width', this.width + "px");
         }
@@ -155,7 +155,7 @@ var Menu = Class.extend({
     }
   },
   addSubmenu: function(item) {
-    this.menuItems.push(new MenuItem(this, item, this.OPTIONS))
+    this.menuItems.push(new MenuItem(this, item, this.OPTIONS));
   },
   open: function() {
     var _this = this;
@@ -305,7 +305,7 @@ var Menu = Class.extend({
       } else {
         _this._closeVertical(cb);
       }
-    })
+    });
   },
   _closeHorizontal: function(cb) {
     var elementWidth = this.entity.node().offsetWidth;
@@ -395,7 +395,7 @@ var Menu = Class.extend({
           var i = d3.interpolateNumber(this.scrollTop, scrollTop);
           return function(t) { this.scrollTop = i(t); };
         };
-      }
+      };
 
       d3.select(treeMenuNode).transition().duration(20)
       .tween("scrolltoptween", scrollTopTween(newScrollTop));
@@ -624,7 +624,7 @@ var TreeMenu = Component.extend({
       .attr("class", css.background)
       .on("click", function() {
         d3.event.stopPropagation();
-        _this.toggle()
+        _this.toggle();
       });
 
     this.wrapperOuter = this.element
@@ -641,14 +641,14 @@ var TreeMenu = Component.extend({
     this.wrapper
       .on("click", function() {
         d3.event.stopPropagation();
-      })
+      });
 
     this.wrapper.append("div")
       .attr("class", css.close)
       .html(iconClose)
       .on("click", function() {
         d3.event.stopPropagation();
-        _this.toggle()
+        _this.toggle();
       })
       .select("svg")
       .attr("width", "0px")
@@ -701,7 +701,7 @@ var TreeMenu = Component.extend({
       tags[UNCLASSIFIED] = {id: UNCLASSIFIED, type: "folder", name: this.translator("buttons/unclassified"), children:[]};
 
       //populate the dictionary of tags
-      tagsArray.forEach(function(tag) {tags[tag.tag] = {id: tag.tag, name: tag.name, type: "folder", children: []};})
+      tagsArray.forEach(function(tag) {tags[tag.tag] = {id: tag.tag, name: tag.name, type: "folder", children: []};});
 
       //init the tag tree
       indicatorsTree = tags[ROOT];
@@ -714,9 +714,9 @@ var TreeMenu = Component.extend({
           indicatorsTree.children.push(tags[tag.tag]);
         } else {
           //add tag to a branch
-          tags[tag.parent].children.push(tags[tag.tag])
+          tags[tag.parent].children.push(tags[tag.tag]);
         }
-      })
+      });
 
     utils.forEach(this.model.marker._root._data, dataSource => {
       if(dataSource._type !== "data") return;
@@ -750,7 +750,7 @@ var TreeMenu = Component.extend({
       console.groupEnd();
       delete _this.consoleGroupOpen;
     }
-    this._sortChildren(indicatorsTree)
+    this._sortChildren(indicatorsTree);
     this.indicatorsTree = indicatorsTree;
   },
 
@@ -773,7 +773,7 @@ var TreeMenu = Component.extend({
           if (b.id == "_default") return -1;
         }
         //sort items alphabetically. folders go down because of the emoji folder in the beginning of the name
-        return a.name > b.name? 1:-1
+        return a.name > b.name? 1:-1;
       })
     );
 
@@ -940,7 +940,7 @@ var TreeMenu = Component.extend({
       var itemRect = itemNode.getBoundingClientRect();
       var scrollTop = itemRect.bottom - rect.top - listNode.offsetHeight + 10;
       listNode.scrollTop = scrollTop;
-    }
+    };
 
     if (this.menuEntity.direction == MENU_VERTICAL) {
       scrollToItem(this.wrapper.node(), this.selectedNode);
@@ -1083,10 +1083,10 @@ var TreeMenu = Component.extend({
 
     var dataFiltered;
 
-    var indicatorsDB = {}
+    var indicatorsDB = {};
     utils.forEach(this.model.marker._root._data, m => {
       if(m._type === "data") utils.deepExtend(indicatorsDB, m.getConceptprops());
-    })
+    });
 
     var hookType = _this.model.marker[markerID]._type;
 
@@ -1107,7 +1107,7 @@ var TreeMenu = Component.extend({
         if(_this.model.marker[markerID].allow.scales[0] == "*") return true;
 
         // if no scales defined, all are allowed
-        if (!indicatorsDB[f].scales) return true
+        if (!indicatorsDB[f].scales) return true;
 
         //check if there is an intersection between the allowed tool scale types and the ones of indicator
         for(var i = indicatorsDB[f].scales.length - 1; i >= 0; i--) {
@@ -1115,10 +1115,10 @@ var TreeMenu = Component.extend({
         }
 
         return false;
-      })
+      });
 
       dataFiltered = utils.pruneTree(data, function(f) {
-        return allowedIDs.indexOf(f.id) > -1
+        return allowedIDs.indexOf(f.id) > -1;
       });
 
       this.dataFiltered = dataFiltered;
@@ -1287,7 +1287,7 @@ var TreeMenu = Component.extend({
       } else {
 
         var scaleTypes = this.element.select('.' + css.scaletypes).classed(css.hidden, false).selectAll("span")
-            .data(scaleTypesData, function(d) {return d});
+            .data(scaleTypesData, function(d) {return d;});
 
         scaleTypes.exit().remove();
 

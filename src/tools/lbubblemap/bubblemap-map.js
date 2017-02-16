@@ -44,7 +44,7 @@ export default Class.extend({
       return Promise.all([
         this.mapInstance.initMap(domSelector),
         this.topojsonMap.initMap(domSelector)
-      ])
+      ]);
     }
   },
 
@@ -125,7 +125,7 @@ var MapLayer = Class.extend({
             .datum(boundaries)
             .attr("class", "boundary");
       }
-    )
+    );
   },
 
   _loadShapes: function (shape_path) {
@@ -245,7 +245,7 @@ var MapLayer = Class.extend({
         var x = points[0] * widthScale  + ((w - viewPortWidth) / 2)  + mapLeftOffset * widthScale;
         var y = points[1] * heightScale + ((h - viewPortHeight) / 2) + mapTopOffset  * heightScale;
         return [x, y];
-      }
+      };
     }());
 
     // if canvas not received this map is main and shound trigger redraw points on tool
@@ -409,7 +409,7 @@ var MapboxLayer = Class.extend({
       _this.map.fitBounds(_this.bounds, {duration: 0});
       _this.map.resize();
       _this.parent.boundsChanged();
-    })
+    });
   },
 
   getCanvas: function() {

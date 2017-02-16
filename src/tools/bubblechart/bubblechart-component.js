@@ -170,7 +170,7 @@ var BubbleChartComp = Component.extend({
       'change:time.value': function() {
         if (!_this._readyOnce || !_this.entityBubbles) return;
         if (!_this.calculationQueue) { // collect timestamp that we request
-          _this.calculationQueue = [_this.model.time.value.toString()]
+          _this.calculationQueue = [_this.model.time.value.toString()];
         } else {
           _this.calculationQueue.push(_this.model.time.value.toString());
         }
@@ -457,7 +457,7 @@ var BubbleChartComp = Component.extend({
     this.updateIndicators();
     this.updateTime();
     if (!_this.model.time.splash) {
-      _this._trails.create()
+      _this._trails.create();
     }
     this.model.marker.getFrame(this.model.time.value, function(frame, time) {
       // TODO: temporary fix for case when after data loading time changed on validation
@@ -494,7 +494,7 @@ var BubbleChartComp = Component.extend({
          * Reset just the zoom values without triggering a zoom event. This ensures
          * a clean zoom state for the subsequent zoom event.
          */
-        this._panZoom.resetZoomState()
+        this._panZoom.resetZoomState();
 
         var xAxis = this.model.marker.axis_x;
         var yAxis = this.model.marker.axis_y;
@@ -571,7 +571,7 @@ var BubbleChartComp = Component.extend({
         S: conceptPropsS.unit || "",
         C: conceptPropsC.unit || ""
       }
-    }
+    };
 
     var yTitle = this.yTitleEl.selectAll("text").data([0]);
     yTitle.enter().append("text");
@@ -620,20 +620,20 @@ var BubbleChartComp = Component.extend({
     //TODO: move away from UI strings, maybe to ready or ready once
     this.yInfoEl.on("click", function() {
       _this.parent.findChildByName("gapminder-datanotes").pin();
-    })
+    });
     this.yInfoEl.on("mouseover", function() {
       var rect = this.getBBox();
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
       var toolRect = _this.root.element.getBoundingClientRect();
       var chartRect = _this.element.node().getBoundingClientRect();
       _this.parent.findChildByName("gapminder-datanotes").setHook('axis_y').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
-    })
+    });
     this.yInfoEl.on("mouseout", function() {
       _this.parent.findChildByName("gapminder-datanotes").hide();
-    })
+    });
     this.xInfoEl.on("click", function() {
       _this.parent.findChildByName("gapminder-datanotes").pin();
-    })
+    });
     this.xInfoEl.on("mouseover", function() {
       if (_this.model.time.dragging) return;
       var rect = this.getBBox();
@@ -641,11 +641,11 @@ var BubbleChartComp = Component.extend({
       var toolRect = _this.root.element.getBoundingClientRect();
       var chartRect = _this.element.node().getBoundingClientRect();
       _this.parent.findChildByName("gapminder-datanotes").setHook('axis_x').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
-    })
+    });
     this.xInfoEl.on("mouseout", function() {
        if (_this.model.time.dragging) return;
       _this.parent.findChildByName("gapminder-datanotes").hide();
-    })
+    });
     this.dataWarningEl
       .on("click", function() {
         _this.parent.findChildByName("gapminder-datawarning").toggle();
@@ -655,7 +655,7 @@ var BubbleChartComp = Component.extend({
       })
       .on("mouseout", function() {
         _this._updateDoubtOpacity();
-      })
+      });
   },
 
   _updateDoubtOpacity: function(opacity) {
@@ -686,7 +686,7 @@ var BubbleChartComp = Component.extend({
         })
         .sort(function(a, b) {
           return b.sortValue - a.sortValue;
-        })
+        });
     };
 
     // get array of GEOs, sorted by the size hook
@@ -702,7 +702,7 @@ var BubbleChartComp = Component.extend({
       this.unselectBubblesWithNoData(markers);
     }
     this.entityBubbles = this.bubbleContainer.selectAll('circle.vzb-bc-entity')
-      .data(this.model.marker.getVisible(), function(d) {return d[KEY]}); // trails have not keys
+      .data(this.model.marker.getVisible(), function(d) {return d[KEY];}); // trails have not keys
 
     //exit selection
     this.entityBubbles.exit().remove();
@@ -799,7 +799,7 @@ var BubbleChartComp = Component.extend({
             _this.highlightDataPoints();
         }
       }
-    }
+    };
   },
 
 
@@ -870,7 +870,7 @@ var BubbleChartComp = Component.extend({
         infoElHeight: 32,
         hideSTitle: true
       }
-    }
+    };
 
     var _this = this;
 
@@ -997,7 +997,7 @@ var BubbleChartComp = Component.extend({
 
       this.yInfoEl.select('svg')
         .attr("width", infoElHeight + "px")
-        .attr("height", infoElHeight + "px")
+        .attr("height", infoElHeight + "px");
       this.yInfoEl.attr('transform', 'translate('
         + hTranslate + ','
         + (t.translateY - infoElHeight * 0.8) + ')');
@@ -1010,7 +1010,7 @@ var BubbleChartComp = Component.extend({
 
       this.xInfoEl.select('svg')
         .attr("width", infoElHeight + "px")
-        .attr("height", infoElHeight + "px")
+        .attr("height", infoElHeight + "px");
       this.xInfoEl.attr('transform', 'translate('
         + hTranslate + ','
         + (t.translateY - infoElHeight * 0.8) + ')');
@@ -1113,7 +1113,7 @@ var BubbleChartComp = Component.extend({
       if(selected) {
 
         var select = utils.find(_this.model.marker.select, function(f) {
-          return f[KEY] == d[KEY]
+          return f[KEY] == d[KEY];
         });
 
         var trailStartTime = _this.model.time.parse("" + select.trailStartTime);
@@ -1168,7 +1168,7 @@ var BubbleChartComp = Component.extend({
       if(selected) {
 
         var select = utils.find(_this.model.marker.select, function(f) {
-          return f[KEY] == d[KEY]
+          return f[KEY] == d[KEY];
         });
 
         var trailStartTime = _this.model.time.parse("" + select.trailStartTime);
@@ -1210,7 +1210,7 @@ var BubbleChartComp = Component.extend({
 
             // each bubble
             _this.entityBubbles.each(function(d, index) {
-                var frame = _this.model.marker.isSelected(d) ? _this.frame : lockedFrame
+                var frame = _this.model.marker.isSelected(d) ? _this.frame : lockedFrame;
                 _this._updateBubble(d, frame, index, d3.select(this), duration);
             });
         });
@@ -1255,7 +1255,7 @@ var BubbleChartComp = Component.extend({
                     //to avoid transition from null state add class with a delay
                     view.classed("vzb-invisible", d.hidden);
                     view.style("opacity", opacity);
-                })
+                });
            }else{
                //immediately hide the bubble
                view.classed("vzb-invisible", d.hidden);
@@ -1327,7 +1327,7 @@ var BubbleChartComp = Component.extend({
       var cache = {};
 
       var select = utils.find(_this.model.marker.select, function(f) {
-        return f[KEY] == d[KEY]
+        return f[KEY] == d[KEY];
       });
 
       var time = _this.model.time.formatDate(_this.time);
@@ -1471,7 +1471,7 @@ var BubbleChartComp = Component.extend({
         xPos = x + xOffset * xSign; // .71 - sin and cos for 315
         yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
       }
-      this.tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")")
+      this.tooltip.attr("transform", "translate(" + xPos + "," + yPos + ")");
 
       this.tooltip.selectAll("rect")
         .attr("width", contentBBox.width + 8)
@@ -1588,7 +1588,7 @@ var BubbleChartComp = Component.extend({
           if(_this.model.marker.isSelected(d) && _this.model.ui.chart.trails) {
             text = _this.model.time.formatDate(_this.time);
             var selectedData = utils.find(_this.model.marker.select, function(f) {
-              return f[KEY] == d[KEY]
+              return f[KEY] == d[KEY];
             });
             hoverTrail = text !== selectedData.trailStartTime && !d3.select(d3.event.target).classed('bubble-' + d[KEY]);
             text = text !== selectedData.trailStartTime && _this.time === d[TIMEDIM] ? text : '';

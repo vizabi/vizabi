@@ -14,7 +14,7 @@ var LocaleModel = DataConnected.extend({
       id: "en",
       filePath: "assets/translation/"
     };
-    return utils.deepExtend(this._super(), defaults)
+    return utils.deepExtend(this._super(), defaults);
   },
 
   dataConnectedChildren: ["id"],
@@ -53,12 +53,12 @@ var LocaleModel = DataConnected.extend({
 
     promises = [];
     utils.forEach(this._root._data, mdl => {
-      if(mdl._type === "data") promises.push(mdl.loadConceptProps())
-    })
+      if(mdl._type === "data") promises.push(mdl.loadConceptProps());
+    });
     promises.push(new Promise((resolve, reject) => {
         d3.json(this.filePath + this.id + ".json", (error, strings) => {
           if (error) reject(error);
-          this.handleNewStrings(strings)
+          this.handleNewStrings(strings);
           resolve();
         });
       })

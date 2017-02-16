@@ -27,13 +27,13 @@ var AxisModel = Hook.extend({
         scales: ["linear", "log", "genericLog", "time", "pow"]
       }
     };
-    return utils.deepExtend(this._super(), defaults)
+    return utils.deepExtend(this._super(), defaults);
   },
 
   autoGenerateModel: function() {
     if (this.which == null && this.autogenerate) {
 
-      var concept = this.dataSource.getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType)
+      var concept = this.dataSource.getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType);
 
       if (!concept) {
         concept = this.dataSource.getConceptByIndex(0, "time");

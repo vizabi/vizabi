@@ -274,7 +274,7 @@ var LCComponent = Component.extend({
       })
       .on("mouseout", function () {
         _this.updateDoubtOpacity();
-      })
+      });
 
     var xTitle = this.xTitleEl.selectAll("text").data([0]);
     xTitle = xTitle.enter().append("text").merge(xTitle);
@@ -334,7 +334,7 @@ var LCComponent = Component.extend({
         var entity = d3.select(this);
 
         entity.append("path")
-          .attr("class", "vzb-lc-line-shadow")
+          .attr("class", "vzb-lc-line-shadow");
 
         entity.append("path")
           .attr("class", "vzb-lc-line");
@@ -635,7 +635,7 @@ var LCComponent = Component.extend({
 
       this.yInfoEl.select('svg')
         .attr("width", infoElHeight + "px")
-        .attr("height", infoElHeight + "px")
+        .attr("height", infoElHeight + "px");
       this.yInfoEl.attr('transform', 'translate('
         + (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4) + ','
         + (t.translateY - infoElHeight * 0.8) + ')');
@@ -646,7 +646,7 @@ var LCComponent = Component.extend({
       .attr("width", warnBB.height * 0.75)
       .attr("height", warnBB.height * 0.75)
       .attr("x", -warnBB.width - warnBB.height * 1.2)
-      .attr("y", -warnBB.height * 0.65)
+      .attr("y", -warnBB.height * 0.65);
 
     this.dataWarningEl
       .attr("transform", "translate(" + (this.width + warnBB.width + warnBB.height * 2) +

@@ -260,7 +260,7 @@ var Component = Events.extend({
    */
   findChildByName: function(name) {
     return utils.find(this.components, function(f) {
-      return f.name === name
+      return f.name === name;
     });
   },
 
@@ -515,7 +515,7 @@ function templateFunc(str, data) {
       }
       return s;
     });
-  }
+  };
   // Figure out if we're getting a template, or if we need to
   // load the template - and be sure to cache the result.
   var fn = !/<[a-z][\s\S]*>/i.test(str) ? templates[str] = templates[str] || templateFunc(globals.templates[str]) : func;

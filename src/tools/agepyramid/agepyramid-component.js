@@ -111,7 +111,7 @@ var AgePyramid = Component.extend({
         if (!_this._readyOnce) return;
         var sideDim = _this.model.marker.side.use == "constant" ? null : _this.model.marker.side.which;
         _this.model.marker.side.clearSideState();
-        _this.model.entities_side.clearShow()
+        _this.model.entities_side.clearShow();
         _this.model.entities_side.set("dim", sideDim);
       },
       "change:entities.show":function (evt) {
@@ -136,7 +136,7 @@ var AgePyramid = Component.extend({
           if(h.dim === _this.model.entities_side.dim && h._name !== _this.model.entities_side._name) {
             _entitiesSameDimWithSide = h;
           }
-        })
+        });
         if(_entitiesSameDimWithSide && !utils.isEmpty(_entitiesSameDimWithSide.show)) {
           utils.forEach(_this.model.entities_side.getFilteredEntities(), s => {
             if(!_entitiesSameDimWithSide.isShown(s)) {
@@ -247,7 +247,7 @@ var AgePyramid = Component.extend({
         }
         return d.x_;
       }
-    }
+    };
   },
 
   /*
@@ -364,7 +364,7 @@ var AgePyramid = Component.extend({
 
     this.xInfoEl.on("click", function() {
       _this.parent.findChildByName("gapminder-datanotes").pin();
-    })
+    });
     this.xInfoEl.on("mouseover", function() {
       if (_this.model.time.dragging) return;
       var rect = this.getBBox();
@@ -372,11 +372,11 @@ var AgePyramid = Component.extend({
       var toolRect = _this.root.element.getBoundingClientRect();
       var chartRect = _this.element.node().getBoundingClientRect();
       _this.parent.findChildByName("gapminder-datanotes").setHook('axis_x').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
-    })
+    });
     this.xInfoEl.on("mouseout", function() {
        if (_this.model.time.dragging) return;
       _this.parent.findChildByName("gapminder-datanotes").hide();
-    })
+    });
 
     // var titleStringY = this.model.marker.axis_y.getConceptprops().name;
 
@@ -561,7 +561,7 @@ var AgePyramid = Component.extend({
     this.maxLimits = {};
     this.inpercentMaxLimits = {};
     sideKeysNF.forEach(s => {
-      _this.maxLimits[s] = Math.max.apply(Math, maxLimits[s])
+      _this.maxLimits[s] = Math.max.apply(Math, maxLimits[s]);
       _this.inpercentMaxLimits[s] = Math.max.apply(Math, inpercentMaxLimits[s]);
     });
     this.totals = totals;
@@ -628,7 +628,7 @@ var AgePyramid = Component.extend({
       o[ageDim] = o[shiftedAgeDim] = +data[ageDim];
       o[ageDim] -= nextStep * groupBy;
       return o;
-    })
+    });
 
     var ageBars = markers.slice(0);
 
@@ -641,7 +641,7 @@ var AgePyramid = Component.extend({
     if (nextStep) ageBars.push(outAge);
 
     this.entityBars = this.bars.selectAll('.vzb-bc-bar')
-      .data(ageBars, function(d) {return d[ageDim]});
+      .data(ageBars, function(d) {return d[ageDim];});
     //exit selection
     this.entityBars.exit().remove();
 
@@ -657,7 +657,7 @@ var AgePyramid = Component.extend({
       .attr("transform", function(d, i) {
         return "translate(0," + (firstBarOffsetY - (d[shiftedAgeDim] - domain[0] - groupBy) * oneBarHeight) + ")";
       })
-      .merge(this.entityBars)
+      .merge(this.entityBars);
 
     // this.entityBars.attr("class", function(d) {
     //     return "vzb-bc-bar " + "vzb-bc-bar-" + d[ageDim];
@@ -673,14 +673,14 @@ var AgePyramid = Component.extend({
         r[sideDim] = m;
         return r;
       });
-    }, function(d) {return d[prefixedSideDim]})
+    }, function(d) {return d[prefixedSideDim];});
 
     this.sideBars.exit().remove();
     this.sideBars = this.sideBars.enter().append("g")
       .attr("class", function(d, i) {
         return "vzb-bc-side " + "vzb-bc-side-" + (!i != !_this.twoSided ? "right": "left");
       })
-      .merge(this.sideBars)
+      .merge(this.sideBars);
 
     this.sideBars.attr("transform", function(d, i) {
       return i ? ("scale(-1,1) translate(" + _this.activeProfile.centerWidth + ",0)") : "";
@@ -689,7 +689,7 @@ var AgePyramid = Component.extend({
     if(reorder) {
       this.sideBars.attr("transform", function(d, i) {
         return i ? ("scale(-1,1) translate(" + _this.activeProfile.centerWidth + ",0)") : "";
-      })
+      });
     }
 
     var _attributeUpdaters = this._attributeUpdaters;
@@ -706,7 +706,7 @@ var AgePyramid = Component.extend({
         r[prefixedStackDim] = m;
         return r;
       });
-    }, function(d) {return d[prefixedStackDim]});
+    }, function(d) {return d[prefixedStackDim];});
 
     this.stackBars.exit().remove();
     this.stackBars = this.stackBars.enter().append("rect")
@@ -724,7 +724,7 @@ var AgePyramid = Component.extend({
       .on("mouseout", _this.interaction.mouseout)
       .on("click", _this.interaction.click)
       .onTap(_this.interaction.tap)
-      .merge(this.stackBars)
+      .merge(this.stackBars);
 
 
     if(reorder) this.stackBars.order();
@@ -859,7 +859,7 @@ var AgePyramid = Component.extend({
         d3.event.stopPropagation();
         _this.model.marker.selectMarker(d);
       }
-    }
+    };
   },
 
   _highlightBars: function(d) {
@@ -998,7 +998,7 @@ var AgePyramid = Component.extend({
     if(this.sideBars) this.sideBars
       .attr("transform", function(d, i) {
         return i ? ("scale(-1,1) translate(" + _this.activeProfile.centerWidth + ",0)") : "";
-      })
+      });
 
 
     //update scales to the new range
@@ -1075,7 +1075,7 @@ var AgePyramid = Component.extend({
       var zeroTickEl = this.xAxisEl.select(".tick text");
       if(!zeroTickEl.empty()) {
         var zeroTickWidth = zeroTickEl.node().getBBox().width;
-        zeroTickEl.attr("dx", -(this.activeProfile.centerWidth + zeroTickWidth) * .5)
+        zeroTickEl.attr("dx", -(this.activeProfile.centerWidth + zeroTickWidth) * .5);
       }
     }
 
@@ -1106,7 +1106,7 @@ var AgePyramid = Component.extend({
 
       this.xInfoEl.select('svg')
         .attr("width", infoElHeight + "px")
-        .attr("height", infoElHeight + "px")
+        .attr("height", infoElHeight + "px");
       this.xInfoEl.attr('transform', 'translate('
         + hTranslate + ','
         + (t.translateY - infoElHeight * 0.8) + ')');

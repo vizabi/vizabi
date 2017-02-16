@@ -24,7 +24,7 @@ var DataWarning = Component.extend({
         if(!_this._ready) return;
         _this.redraw();
       }
-    }
+    };
 
     //contructor is the same as any component
     this._super(config, context);
@@ -43,7 +43,7 @@ var DataWarning = Component.extend({
     this.element.append("div")
       .attr("class", "vzb-data-warning-background")
       .on("click", function() {
-        _this.toggle(true)
+        _this.toggle(true);
       });
 
     this.container = this.element.append("div")
@@ -52,7 +52,7 @@ var DataWarning = Component.extend({
     this.container.append("div")
       .html(iconClose)
       .on("click", function() {
-        _this.toggle()
+        _this.toggle();
       })
       .select("svg")
       .attr("width", "0px")
@@ -61,22 +61,22 @@ var DataWarning = Component.extend({
 
     var icon = this.container.append("div")
       .attr("class", "vzb-data-warning-link")
-      .html(iconWarn)
+      .html(iconWarn);
 
-    icon.append("div")
-
-    this.container.append("div")
-      .attr("class", "vzb-data-warning-title")
+    icon.append("div");
 
     this.container.append("div")
-      .attr("class", "vzb-data-warning-body vzb-dialog-scrollable")
+      .attr("class", "vzb-data-warning-title");
+
+    this.container.append("div")
+      .attr("class", "vzb-data-warning-body vzb-dialog-scrollable");
   },
 
   redraw: function() {
     this.translator = this.model.locale.getTFunction();
 
     this.container.select(".vzb-data-warning-link div")
-      .text(this.translator("hints/dataWarning"))
+      .text(this.translator("hints/dataWarning"));
 
     var title = this.translator("datawarning/title/"+this.parent.name);
     this.container.select(".vzb-data-warning-title")
@@ -95,7 +95,7 @@ var DataWarning = Component.extend({
     var _this = this;
     this.parent.components.forEach(function(c) {
       c.element.classed("vzb-blur", c != _this && !hidden);
-    })
+    });
   }
 
 });

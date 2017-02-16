@@ -130,14 +130,14 @@ var Dialogs = Component.extend({
           if (!_this._available_dialogs[button.id]) return;
 
           if (button.active) {
-            _this.openDialog(button.id)
+            _this.openDialog(button.id);
           } else {
-            _this.closeDialog(button.id)
+            _this.closeDialog(button.id);
           }
         });
 
       var popupDialogs = this.element.selectAll(".vzb-top-dialog").filter(function (d) {
-        return _this.dialog_popup.indexOf(d.id) > -1
+        return _this.dialog_popup.indexOf(d.id) > -1;
       });
 
       var close_buttons = popupDialogs.select(".vzb-top-dialog>.vzb-dialog-modal>.vzb-dialog-buttons>[data-click='closeDialog']");
@@ -350,7 +350,7 @@ var Dialogs = Component.extend({
     var dialogClass = forceclose ? ".vzb-popup.vzb-dialogs-dialog.vzb-active" : ".vzb-popup.vzb-dialogs-dialog.vzb-active:not(.pinned)";
     var all_dialogs = this.element.selectAll(dialogClass);
     all_dialogs.each(function (d) {
-      _this.closeDialog(d.id)
+      _this.closeDialog(d.id);
     });
   }
 

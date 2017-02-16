@@ -25,7 +25,7 @@ export var ChangeEvent = DefaultEvent.extend('change', {
     this._super(source);
   }
 
-})
+});
 
 var EventSource = Class.extend({
 
@@ -203,7 +203,7 @@ var EventSource = Class.extend({
 
   createEventFromType: function(evtType) {
     if ((evtType instanceof DefaultEvent)) {
-      return evtType
+      return evtType;
     }
 
     var eventClass = DefaultEvent.get(evtType, true); // silent
@@ -265,13 +265,13 @@ var EventSource = Class.extend({
         }
       }
 
-    })
+    });
   },
 
   allowExecution: function(evt) {
     return (!this._freeze && !_freezeAllEvents) ||                                           // nothing frozen
       (_freezeAllEvents && _freezeAllExceptions.hasOwnProperty(evt.type)) ||                 // freeze all but exception
-      (!_freezeAllEvents && this._freeze && this._freezeExceptions.hasOwnProperty(evt.type)) // freeze but exception
+      (!_freezeAllEvents && this._freeze && this._freezeExceptions.hasOwnProperty(evt.type)); // freeze but exception
   },
 
   /**

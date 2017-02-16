@@ -33,7 +33,7 @@ var DataNotes = Component.extend({
         if(!_this._ready || !_this._readyOnce) return;
         _this.ready();
       }
-    }
+    };
 
     //contructor is the same as any component
     this._super(config, context);
@@ -68,10 +68,10 @@ var DataNotes = Component.extend({
       .classed('vzb-hidden', true);
 
     container.append("div")
-      .attr("class", "vzb-data-notes-body vzb-dialog-scrollable")
+      .attr("class", "vzb-data-notes-body vzb-dialog-scrollable");
 
     container.append("div")
-      .attr("class", "vzb-data-notes-link")
+      .attr("class", "vzb-data-notes-link");
 
   },
 
@@ -144,7 +144,7 @@ var DataNotes = Component.extend({
       topPos = top - height - 30;
     }
 
-    this.element.style('top', topPos + 'px')
+    this.element.style('top', topPos + 'px');
     this.element.style('left', leftPos + 'px');
 
     return this;

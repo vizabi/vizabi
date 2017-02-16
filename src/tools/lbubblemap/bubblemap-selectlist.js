@@ -64,7 +64,7 @@ var MCSelectList = Class.extend({
             _this.model.entities.clearHighlighted();
             _this.model.marker.selectMarker(d);
           });
-        var labelCloseGroup = label.select("g.vzb-bmc-label-x")
+        var labelCloseGroup = label.select("g.vzb-bmc-label-x");
         if (!utils.isTouchDevice()) {
           labelCloseGroup
             .html(iconClose)
@@ -181,7 +181,7 @@ var MCSelectList = Class.extend({
           _this.model.marker.highlightMarker(d);
           setTimeout(function() {
             _this.model.marker.unhighlightMarker(d);
-          }, 2000)
+          }, 2000);
         });
       });
   }

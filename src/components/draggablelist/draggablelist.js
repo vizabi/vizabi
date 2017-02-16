@@ -68,9 +68,9 @@ var DraggableList = Component.extend({
               d._height = boundRect.height;
               _this.selectedNode = this;
             }
-          })
+          });
         d3.select(_this.selectedNode)
-          .classed('dragged', true)
+          .classed('dragged', true);
       })
 
       .on('drag', function(draggedData, draggedIndex) {
@@ -93,14 +93,14 @@ var DraggableList = Component.extend({
 
               if (i != draggedIndex) d._top = top;
               return d._top + "px";
-           })
+           });
         }
       })
 
       .on('end', function(d, i) {
         if(_this.dataUpdateFlag || !_this.draggable) return;
         _this.getData();
-      })
+      });
 
   },
 
@@ -113,7 +113,7 @@ var DraggableList = Component.extend({
     this.updateView();
 
     this.itemsEl = this.element
-      .selectAll('div')
+      .selectAll('div');
 
     this.itemsEl
       .call(_this.itemDragger);
@@ -127,7 +127,7 @@ var DraggableList = Component.extend({
       })
       .on('touchstart', function() {
         d3.event.preventDefault();
-      })
+      });
 
   },
 
@@ -135,7 +135,7 @@ var DraggableList = Component.extend({
     var _this = this;
 
     this.items = this.element.selectAll('div').data(function() {
-      return _this.dataArrFn().map(function(d) { return {data:d};})});
+      return _this.dataArrFn().map(function(d) { return {data:d};});});
     this.items.exit().remove();
     this.items = this.items.enter()
       .append('div')
@@ -166,8 +166,8 @@ var DraggableList = Component.extend({
         return (a._y + a._top) - (b._y + b._top);
       })
       .map(function(d) {
-        return d.data
-      })
+        return d.data;
+      });
     if(utils.arrayEquals(this.dataArrFn(), dataArr)) {
       this.updateView();
     } else {

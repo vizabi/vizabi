@@ -74,7 +74,7 @@ var ZoomButtonList = Component.extend({
         // statebind: "ui.chart.trails",
         // statebindfunc: this.setBubbleTrails.bind(this)
       }
-    }
+    };
 
     this.model_binds = {};
 
@@ -83,7 +83,7 @@ var ZoomButtonList = Component.extend({
       if(button && button.statebind) {
         _this.model_binds['change:' + button.statebind] = function(evt) {
           button.statebindfunc(buttonId, evt.source.value);
-        }
+        };
       }
     });
 

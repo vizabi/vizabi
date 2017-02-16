@@ -40,7 +40,7 @@ init: function(config, parent) {
       ui: {
         show_button: false
       }
-    })
+    });
   }
 
   this._super(config, parent);

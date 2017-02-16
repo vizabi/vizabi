@@ -46,7 +46,7 @@ var StackModel = Hook.extend({
 
     //use must not be "indicator"
     if(this.use === "indicator") {
-      utils.warn("stack model: use must not be 'indicator'. Resetting use to 'constant' and which to '" + palettes._default)
+      utils.warn("stack model: use must not be 'indicator'. Resetting use to 'constant' and which to '" + palettes._default);
       this.use = "constant";
       this.which = palettes._default;
     }
@@ -54,7 +54,7 @@ var StackModel = Hook.extend({
     //if use is "constant"
     if(this.use === "constant" && utils.values(palettes).indexOf(this.which) == -1) {
       utils.warn("stack model: the requested value '" + this.which + "' is not allowed. resetting to '" +
-        palettes._default)
+        palettes._default);
       this.which == palettes._default;
     }
   },

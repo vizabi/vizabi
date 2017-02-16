@@ -459,7 +459,7 @@ export var deepExtend = function(/*obj_1, [obj_2], [obj_N]*/) {
   });
 
   return target;
-}
+};
 
 /*
  * merges objects instead of replacing
@@ -746,7 +746,7 @@ export var preventAncestorScrolling = function(element) {
         return function (t) {
           this.scrollTop = i(t);
         };
-      }
+      };
     };
     if (!up) {
       // Scrolling down
@@ -813,7 +813,7 @@ export var mapRows = function(original, formatters) {
         }
       }
       return newVal;
-  }
+  };
 
   original = original.map(function(row) {
     var columns = Object.keys(row);
@@ -862,7 +862,7 @@ export var timeStamp = function(message) {
  */
 export var warn = function(message) {
   message = Array.prototype.slice.call(arguments)
-    .map(function(m) {return m instanceof Object? JSON.stringify(m, null, 4) : m })
+    .map(function(m) {return m instanceof Object? JSON.stringify(m, null, 4) : m; })
     .join(' ');
   if(console && typeof console.warn === 'function') {
 
@@ -1203,12 +1203,12 @@ export var nestArrayToObj = function(arr) {
     res[arr[i].key] = nestArrayToObj(arr[i].values);
   }
   return res;
-}
+};
 
 
 export var interpolateVector = function() {
 
-}
+};
 
 /**
  * interpolates the specific value
@@ -1246,7 +1246,7 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
     if(time < items[0][dimTime] || time > items[items.length - 1][dimTime]) return null;
   }
 
-  if(!next && next !== 0) next = d3.bisectLeft(items.map(function(m) {return m[dimTime]}), time);
+  if(!next && next !== 0) next = d3.bisectLeft(items.map(function(m) {return m[dimTime];}), time);
 
   if(next === 0) return items[0][which];
 
@@ -1275,7 +1275,7 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
 
   return result;
 
-}
+};
 
 
 /*
@@ -1384,7 +1384,7 @@ export var debounce = function(func, wait, immediate) {
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
     if(callNow) func.apply(context, args);
-  }
+  };
 };
 
 export var isTouchDevice = function() {
@@ -1408,7 +1408,7 @@ export var pruneTree = function(tree, filterCallback) {
   }
   if(filteredChildrens.length != 0 || filterCallback(tree)) {
     //copy all the properties to the new tree
-    forEach(tree, function(value, key) {filteredTree[key] = value;})
+    forEach(tree, function(value, key) {filteredTree[key] = value;});
   }
   if(filteredChildrens.length != 0) {
     filteredTree["children"] = filteredChildrens;
@@ -1468,15 +1468,15 @@ export function firstBy() {
      if(typeof (f)!="function") {
         var prop = f;
         // make unary function
-        f = function(v1) {return v1[prop] ? v1[prop] : "";}
+        f = function(v1) {return v1[prop] ? v1[prop] : "";};
       }
       if(f.length === 1) {
         // f is a unary function mapping a single item to its sort score
         var uf = f;
         var preprocess = opt.ignoreCase?ignoreCase:identity;
-        f = function(v1,v2) {return preprocess(uf(v1)) < preprocess(uf(v2)) ? -1 : preprocess(uf(v1)) > preprocess(uf(v2)) ? 1 : 0;}
+        f = function(v1,v2) {return preprocess(uf(v1)) < preprocess(uf(v2)) ? -1 : preprocess(uf(v1)) > preprocess(uf(v2)) ? 1 : 0;};
       }
-      if(opt.direction === -1)return function(v1,v2) {return -f(v1,v2)};
+      if(opt.direction === -1)return function(v1,v2) {return -f(v1,v2);};
       return f;
     }
 

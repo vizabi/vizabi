@@ -13,7 +13,7 @@ var label = function(context) {
     label.setCssPrefix = function(cssPrefix) {
       _cssPrefix = cssPrefix;
       return label;
-    }
+    };
 
     var labelDragger = d3.drag()
       .on("start", function(d, i) {
@@ -208,7 +208,7 @@ var label = function(context) {
                 //but then fade in animation is not working for some reason
                 .on("interrupt", function() {
                     labelGroup
-                        .style("opacity", 1)
+                        .style("opacity", 1);
                 });
             lineGroup.classed("vzb-invisible", d.hidden);
             lineGroup
@@ -220,7 +220,7 @@ var label = function(context) {
                 //but then fade in animation is not working for some reason
                 .on("interrupt", function() {
                     lineGroup
-                        .style("opacity", 1)
+                        .style("opacity", 1);
                 });
 
         } else if(showhide && d.hidden) {
@@ -234,7 +234,7 @@ var label = function(context) {
                     labelGroup
                         .style("opacity", 1) //i would like to set it to null. but then fade in animation is not working for some reason
                         .classed("vzb-invisible", d.hidden);
-                })
+                });
             lineGroup
                 .style("opacity", 1)
                 .transition().duration(duration).ease(d3.easeExp)
@@ -243,7 +243,7 @@ var label = function(context) {
                     lineGroup
                         .style("opacity", 1) //i would like to set it to null. but then fade in animation is not working for some reason
                         .classed("vzb-invisible", d.hidden);
-                })
+                });
 
         } else {
             // just update the position
@@ -341,7 +341,7 @@ var label = function(context) {
 
     return label;
   }();
-}
+};
 
 var OPTIONS = {
   LABELS_CONTAINER_CLASS: '',
@@ -502,7 +502,7 @@ var Labels = Class.extend({
       .enter().insert('g', function(d) {
         return this.querySelector("." + _this.options.LINES_CONTAINER_SELECTOR_PREFIX + d[KEY]);
       })
-      .attr("class", function(d, index) {return _cssPrefix + "-entity entity-line line-" + d[KEY]})
+      .attr("class", function(d, index) {return _cssPrefix + "-entity entity-line line-" + d[KEY];})
       .each(function(d, index) {
         _this.label.line(d3.select(this));
       })
@@ -510,7 +510,7 @@ var Labels = Class.extend({
 
     this.entityLabels = this.entityLabels
       .enter().append("g")
-      .attr("class", function(d, index) {return _cssPrefix + "-entity label-" + d[KEY]})
+      .attr("class", function(d, index) {return _cssPrefix + "-entity label-" + d[KEY];})
       .each(function(d, index) {
         _this.cached[d[KEY]] = {_new: true};
         _this.label(d3.select(this));
@@ -565,7 +565,7 @@ var Labels = Class.extend({
       if(cached.labelX_ == null || cached.labelY_ == null)
       {
         var select = utils.find(_this.model.marker.select, function(f) {
-          return f[KEY] == d[KEY]
+          return f[KEY] == d[KEY];
         });
         cached.labelOffset = select.labelOffset || [0,0];
       }
@@ -577,7 +577,7 @@ var Labels = Class.extend({
       });
       // reposition label
       _this.entityLabels.filter(function(f) {
-          return f[KEY] == d[KEY]
+          return f[KEY] == d[KEY];
         })
         .each(function(groupData) {
 
@@ -650,7 +650,7 @@ var Labels = Class.extend({
       //cached.moveY = contentBBox.height * .3;
     }
 
-    var glowRect = labelGroup.select(".vzb-label-glow")
+    var glowRect = labelGroup.select(".vzb-label-glow");
     if(glowRect.attr("stroke") !== cached.scaledC0) {
       glowRect.attr("stroke", cached.scaledC0);
     }
@@ -666,7 +666,7 @@ var Labels = Class.extend({
       .attr("x", -labelCloseHeight * .5)
       .attr("y", labelCloseHeight * -.5)
       .attr("width", labelCloseHeight)
-      .attr("height", labelCloseHeight)
+      .attr("height", labelCloseHeight);
 
   },
 
@@ -695,7 +695,7 @@ var Labels = Class.extend({
     });
 
     this.entityLabels.filter(function(f) {
-        return f[KEY] == d[KEY]
+        return f[KEY] == d[KEY];
       })
       .each(function(groupData) {
         _this.positionLabel(d, index, this, 0, null, lineGroup);

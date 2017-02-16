@@ -16,16 +16,16 @@ var DataConnected = Model.extend({
     var _this = this;
 
     if (!changedChildren || !this.dataConnectedChildren)
-      return
+      return;
 
     if (!utils.isArray(changedChildren) && utils.isObject(changedChildren))
       changedChildren = Object.keys(changedChildren);
 
     if (changedChildren.length == 0 || this.dataConnectedChildren.length == 0)
-      return
+      return;
 
     var dataConnectedChangedChildren = changedChildren.filter(function (child) {
-      return _this.dataConnectedChildren.indexOf(child) !== -1
+      return _this.dataConnectedChildren.indexOf(child) !== -1;
     });
 
     if (dataConnectedChangedChildren.length > 0) {

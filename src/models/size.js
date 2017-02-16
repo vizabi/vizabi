@@ -42,7 +42,7 @@ var SizeModel = Axis.extend({
       var concept;
       if (this.autogenerate) {
         var concept = this.dataSource
-          .getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType)
+          .getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType);
 
         if (concept) {
           this.which = concept.concept;

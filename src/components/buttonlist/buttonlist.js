@@ -160,7 +160,7 @@ var ButtonList = Component.extend({
           _this.setBubbleLock();
         }
       }
-    }
+    };
 
     // config.ui is same as this.model.ui here but this.model.ui is not yet available because constructor hasn't been called.
     // can't call constructor earlier because this.model_binds needs to be complete before calling constructor
@@ -169,7 +169,7 @@ var ButtonList = Component.extend({
       if(button && button.statebind) {
         _this.model_binds['change:' + button.statebind] = function(evt) {
           button.statebindfunc(buttonId, evt.source.value);
-        }
+        };
       }
     });
 
@@ -435,10 +435,10 @@ var ButtonList = Component.extend({
     var parent = d3.select(".vzb-tool");
 
     if(parent.classed("vzb-portrait") && parent.classed("vzb-small")) {
-      if(this.model.state.marker.select.length > 0) target = this.element.node().scrollWidth
+      if(this.model.state.marker.select.length > 0) target = this.element.node().scrollWidth;
       this.element.node().scrollLeft = target;
     } else {
-      if(this.model.state.marker.select.length > 0) target = this.element.node().scrollHeight
+      if(this.model.state.marker.select.length > 0) target = this.element.node().scrollHeight;
       this.element.node().scrollTop = target;
     }
   },
@@ -514,7 +514,7 @@ var ButtonList = Component.extend({
       btn.classed(class_hidden, !active);
     }
 
-    btn.classed(class_active_locked, locked)
+    btn.classed(class_active_locked, locked);
     btn.select(".vzb-buttonlist-btn-title")
       .text(locked ? locked : translator("buttons/lock"));
 

@@ -1,4 +1,4 @@
-import Class from 'base/class'
+import Class from 'base/class';
 
 var prefix = "";
 var deleteClasses = [];
@@ -83,7 +83,7 @@ export default Class.extend({
         _this.counterEl.text(_this.label);
       })
       .on("click", function() {
-        _this.close()
+        _this.close();
       });
 
     this.counterEl = element.append("div")
@@ -95,7 +95,7 @@ export default Class.extend({
       .style("opacity", .8)
       .style("line-height", "20px")
       .style("font-size", "14px")
-      .style("text-align", "center")
+      .style("text-align", "center");
 
 
 
@@ -107,7 +107,7 @@ export default Class.extend({
         var result = false;
         deleteClasses.forEach(function(one) {
           result = result || view.classed(one);
-        })
+        });
         return result;
       })
       .remove();
@@ -177,14 +177,14 @@ export default Class.extend({
       .replace("param2", "xmlns:xlink")
       //round all numbers in SVG code
       .replace(/\d+(\.\d+)/g, function(x) {
-        return Math.round(+x * 100) / 100 + ""
+        return Math.round(+x * 100) / 100 + "";
       });
 
 
     if(result.length / 1024 / 1024 > 2) {
 
       alert("The file size is " + Math.round(result.length / 1024) +
-        "kB, which is too large to download. Will try to print it in the console instead...")
+        "kB, which is too large to download. Will try to print it in the console instead...");
       console.log(result);
 
     } else {

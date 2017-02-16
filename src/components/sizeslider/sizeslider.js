@@ -16,7 +16,7 @@ var OPTIONS = {
   THUMB_STROKE_WIDTH: 4,
   INTRO_DURATION: 250,
   MARGIN: { TOP: 2, LEFT: 5, RIGHT:5}
-}
+};
 
 var profiles = {
     "small": {
@@ -130,7 +130,7 @@ var SizeSlider = Component.extend({
         left: thumbRadius,
         right: thumbRadius,
         bottom: barWidth + textMaxHeight
-      }
+      };
 
     var componentWidth = this.element.node().offsetWidth;
 
@@ -142,12 +142,12 @@ var SizeSlider = Component.extend({
     this.propertyScale = d3.scale.linear()
       .domain([OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX])
       .range([this.propertyActiveProfile.min, this.propertyActiveProfile.max])
-      .clamp(true)
+      .clamp(true);
 
     this.xScale = d3.scale.linear()
       .domain([OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX])
       .range([0, componentWidth - padding.left - padding.right])
-      .clamp(true)
+      .clamp(true);
 
     this.brush = d3.brushX()
       .extent([[0, 0], [componentWidth - padding.left - padding.right, barWidth]])
@@ -176,12 +176,12 @@ var SizeSlider = Component.extend({
     this.sliderThumbs = this.sliderEl.selectAll(".handle")
       .data([{type:"w"},{type:"e"}], function(d) { return d.type; })
       .enter().append("svg").attr("class", function(d) { return "handle handle--" + d.type + " " + d.type; })
-      .classed("vzb-szs-slider-thumb", true)
+      .classed("vzb-szs-slider-thumb", true);
 
     this.sliderThumbs.append("g")
       .attr("class", "vzb-szs-slider-thumb-badge")
       .append("path")
-      .attr('d', "M" + (thumbRadius + barWidth) + " " + (thumbRadius + barWidth * 1.5) + "l" + (-thumbRadius) + " " + (thumbRadius * 1.5) + "h" + (thumbRadius * 2) + "Z")
+      .attr('d', "M" + (thumbRadius + barWidth) + " " + (thumbRadius + barWidth * 1.5) + "l" + (-thumbRadius) + " " + (thumbRadius * 1.5) + "h" + (thumbRadius * 2) + "Z");
 
     this.sliderEl
       .call(_this.brush);
@@ -192,7 +192,7 @@ var SizeSlider = Component.extend({
         return "vzb-szs-slider-thumb-label " + (i ? 'e' : 'w');})
       .attr("dy", (-barWidth * 1.25) + 'px')
       .attr("text-anchor", function(d, i) {
-        return 1 - i ? "start" : "end"})
+        return 1 - i ? "start" : "end";});
 
     this.sliderLabelsEl = this.sliderEl.selectAll("text.vzb-szs-slider-thumb-label");
 
@@ -200,18 +200,18 @@ var SizeSlider = Component.extend({
       .attr("height", barWidth)
       .attr("rx", barWidth * 0.25)
       .attr("ry", barWidth * 0.25)
-      .attr("transform", "translate(0," + (-barWidth * 0.5) + ")")
+      .attr("transform", "translate(0," + (-barWidth * 0.5) + ")");
     this.sliderEl.select(".extent")
-      .classed("vzb-szs-slider-extent", true)
+      .classed("vzb-szs-slider-extent", true);
 
     this.on("resize", function() {
       //console.log("EVENT: resize");
       _this.propertyActiveProfile = _this.getPropertyActiveProfile();
-      _this.propertyScale.range([_this.propertyActiveProfile.min, _this.propertyActiveProfile.max])
+      _this.propertyScale.range([_this.propertyActiveProfile.min, _this.propertyActiveProfile.max]);
 
       var componentWidth = _this.element.node().offsetWidth;
 
-      _this.xScale.range([0, componentWidth - _this.padding.left - _this.padding.right])
+      _this.xScale.range([0, componentWidth - _this.padding.left - _this.padding.right]);
       _this._updateSize();
       _this.sliderEl.call(_this.brush.extent([[0, 0], [componentWidth - padding.left - padding.right, barWidth]]));
       var extent = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
@@ -250,9 +250,9 @@ var SizeSlider = Component.extend({
   _updateSize: function() {
     this.sliderSvg
       .attr("height", this.propertyActiveProfile.max + this.padding.top + this.padding.bottom)
-      .attr("width", '100%')
+      .attr("width", '100%');
     this.sliderWrap
-      .attr("transform", "translate(" + this.padding.left + "," + (this.propertyActiveProfile.max + this.padding.top) + ")")
+      .attr("transform", "translate(" + this.padding.left + "," + (this.propertyActiveProfile.max + this.padding.top) + ")");
   },
 
   _updateLabels: function(s) {
@@ -265,11 +265,11 @@ var SizeSlider = Component.extend({
       })
       .attr("font-size", function(d, i) {
         return _this.propertyScale(d);
-      })
+      });
     if(_this.model.size.use === 'constant')
       this.sliderLabelsEl.text(function(d) {
         return ~~(_this.propertyScale(d)) + (_this.translator(_this.ui.constantUnit)||"");
-      })
+      });
   },
 
   _setLabelsText: function() {

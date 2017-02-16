@@ -17,7 +17,7 @@ var Show = Dialog.extend({
       "change:state.entities.show": function(evt) {
         _this.redraw();
       }
-    }
+    };
 
     this._super(config, parent);
   },
@@ -47,7 +47,7 @@ var Show = Dialog.extend({
     //make sure it refreshes when all is reloaded
     this.root.on('ready', function() {
       _this.redraw();
-    })
+    });
   },
 
   open: function() {
@@ -90,7 +90,7 @@ var Show = Dialog.extend({
       .data(data)
       .enter()
       .append("div")
-      .attr("class", "vzb-show-item vzb-dialog-checkbox")
+      .attr("class", "vzb-show-item vzb-dialog-checkbox");
 
     items.append("input")
       .attr("type", "checkbox")

@@ -20,7 +20,7 @@ var Hook = DataConnected.extend({
       data: 'data',
       which: null
     };
-    return utils.deepExtend(this._super(), defaults)
+    return utils.deepExtend(this._super(), defaults);
   },
 
   buildScale: function() {
@@ -50,7 +50,7 @@ var Hook = DataConnected.extend({
 
   setWhich: function(newValue) {
 
-    var obj = { which: newValue.concept }
+    var obj = { which: newValue.concept };
 
     if(newValue.dataSource) obj.data = newValue.dataSource;
     var newDataSource = this.getClosestModel(obj.data || this.data);
@@ -192,7 +192,7 @@ var Hook = DataConnected.extend({
     select = {
       key: dimensions,
       value: dimensions.indexOf(this.which)!=-1 || this.use === "constant" ? [] : [this.which]
-    }
+    };
 
     // animatable
     animatable = this._getFirstDimension({type: "time"});
@@ -429,7 +429,7 @@ var Hook = DataConnected.extend({
 
     // use manual formatting for the cases above
     return(formatted + prefix + (percentageMode===PERCENT || percentageMode===SHARE?"%":""));
-    }
+    };
   },
 
   /**
@@ -437,7 +437,7 @@ var Hook = DataConnected.extend({
    * @returns {Array} domain
    */
   getScale: function() {
-    if (this.scale == null) console.warn('scale is null')
+    if (this.scale == null) console.warn('scale is null');
     return this.scale;
   },
 
@@ -505,7 +505,7 @@ var Hook = DataConnected.extend({
     var items = {};
     this.getValidItems().forEach(function(d) {
       items[d[dim]] = d[_this.which];
-    })
+    });
     return items;
   },
 
@@ -548,7 +548,7 @@ var Hook = DataConnected.extend({
       limits.max = max || 100;
       limitsDim[id] = limits;
 
-    }
+    };
 
     var iterateGroupKeys = function(data, deep, result, cb) {
       deep--;
@@ -560,7 +560,7 @@ var Hook = DataConnected.extend({
           cb(d, result, id);
         }
       });
-    }
+    };
 
     iterateGroupKeys(filtered, dims.length, limitsDim, countLimits);
 

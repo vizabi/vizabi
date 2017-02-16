@@ -43,8 +43,8 @@ export default Class.extend({
             return {
                 x: d3.mouse(this)[0],
                 y: d3.mouse(this)[1]
-            }
-        }
+            };
+        };
     },
 
     drag: function() {
@@ -219,7 +219,7 @@ export default Class.extend({
                     zoomer.ratioX = 1;
                     ratioX = 1;
                     zoomer.ratioY = 1;
-                    ratioY = 1
+                    ratioY = 1;
                 }
 
 //                if(isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = zoomer.translate();
@@ -229,11 +229,11 @@ export default Class.extend({
                 var minZoomScale = zoomer.scaleExtent()[0];
                 if(zoom * ratioY < minZoomScale) {
                     ratioY = minZoomScale / zoom;
-                    zoomer.ratioY = ratioY
+                    zoomer.ratioY = ratioY;
                 }
                 if(zoom * ratioX < minZoomScale) {
                     ratioX = minZoomScale / zoom;
-                    zoomer.ratioX = ratioX
+                    zoomer.ratioX = ratioX;
                 }
 
                 var zoomXOut = zoom * ratioX < 1;
@@ -407,7 +407,7 @@ export default Class.extend({
                     zoomedMin: formatter(_this.yScale.invert(zoomedYRange[0])),
                     zoomedMax: formatter(_this.yScale.invert(zoomedYRange[1]))
                   }
-                }
+                };
 
 
                 if(!zoomer.dontFeedToState) _this.model.marker.set(_this._zoomedXYMinMax, null, false /*avoid storing it in URL*/);
@@ -870,7 +870,7 @@ export default Class.extend({
     rerun: function(element) {
         var _this = this.context;
         //this.zoomer.event(element || _this.element);
-        (element || this.zoomSelection).call(this.zoomer.scaleBy, 1)
+        (element || this.zoomSelection).call(this.zoomer.scaleBy, 1);
     },
 
     zoomSelection: function(element) {

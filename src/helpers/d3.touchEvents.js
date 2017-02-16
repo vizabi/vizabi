@@ -24,14 +24,14 @@ function detectTouchEvent(element, onTap, onLongTap) {
 var onTap = function(callback) {
   return this.each(function() {
     detectTouchEvent(this, callback);
-  })
+  });
 };
 
 //d3.selection.prototype.onLongTap
 var onLongTap = function(callback) {
   return this.each(function() {
     detectTouchEvent(this, null, callback);
-  })
+  });
 };
 
 export default {

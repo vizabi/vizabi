@@ -33,7 +33,7 @@ var Side = Dialog.extend({
         _this.redraw();
       }
 
-    }
+    };
 
     this.components = [
     {
@@ -68,7 +68,7 @@ var Side = Dialog.extend({
     //make sure it refreshes when all is reloaded
     this.root.on('ready', function() {
       _this.redraw();
-    })
+    });
   },
 
   ready: function() {
@@ -155,7 +155,7 @@ var Side = Dialog.extend({
       .data(data)
       .enter()
       .append("div")
-      .attr("class", "vzb-side-item vzb-dialog-radio")
+      .attr("class", "vzb-side-item vzb-dialog-radio");
 
     items.append("input")
       .attr("type", "radio")
@@ -189,7 +189,7 @@ var Side = Dialog.extend({
         }
 
         if(d[sideDim] !== _this.state[otherSide][sideDim]) {
-          var sideKeys = [d[sideDim], _this.state[otherSide][sideDim]]
+          var sideKeys = [d[sideDim], _this.state[otherSide][sideDim]];
           var sortFunc = _this.ui.chart.flipSides ? d3.ascending : d3.descending;
           sideKeys.sort(sortFunc);
           if(sideKeys[name == "left" ? 0 : 1] == d[sideDim]) {

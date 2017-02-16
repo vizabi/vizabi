@@ -58,7 +58,7 @@ var presentationProfileChanges = {
     margin: {
     }
   }
-}
+};
 
 var TimeSlider = Component.extend({
   /**
@@ -402,7 +402,7 @@ var TimeSlider = Component.extend({
     if(this.model.time.startSelected && this.model.time.startSelected > this.model.time.start) {
       this.select.append("clipPath")
         .attr("id", "clip-start-" + _this._id)
-        .append('rect')
+        .append('rect');
       this.select.append('path')
         .attr("clip-path", "url(" + location.pathname + "#clip-start-" + _this._id + ")")
         .classed('selected-start', true);
@@ -417,7 +417,7 @@ var TimeSlider = Component.extend({
     if(this.model.time.endSelected && this.model.time.endSelected < this.model.time.end) {
       this.select.append("clipPath")
         .attr("id", "clip-end-" + _this._id)
-        .append('rect')
+        .append('rect');
       this.select.append('path')
         .attr("clip-path", "url(" + location.pathname + "#clip-end-" + _this._id + ")")
         .classed('selected-end', true);
@@ -494,7 +494,7 @@ var TimeSlider = Component.extend({
       }
     } else {
       _this.availableTimeFrames = [];
-      _this.completedTimeFrames = []
+      _this.completedTimeFrames = [];
     }
 
     var progress = this.progressBar.selectAll('path').data(_this.availableTimeFrames);

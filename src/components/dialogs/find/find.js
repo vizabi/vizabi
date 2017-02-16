@@ -52,7 +52,7 @@ var Find = Dialog.extend({
       "translate:locale": function() {
         _this.input_search.attr("placeholder", _this.translator("placeholder/search") + "...");
       }
-    }
+    };
 
     this._super(config, parent);
   },
@@ -96,7 +96,7 @@ var Find = Dialog.extend({
     //make sure it refreshes when all is reloaded
     this.root.on('ready', function() {
       _this.ready();
-    })
+    });
 
   },
 
@@ -149,7 +149,7 @@ var Find = Dialog.extend({
         .data(data)
         .enter()
         .append("div")
-        .attr("class", "vzb-find-item vzb-dialog-checkbox")
+        .attr("class", "vzb-find-item vzb-dialog-checkbox");
 
       _this.items.append("input")
         .attr("type", "checkbox")
@@ -169,7 +169,7 @@ var Find = Dialog.extend({
         .attr("for", function(d) {
           return "-find-" + d[KEY] + "-" + _this._id;
         })
-        .text(function(d) {return d.name})
+        .text(function(d) {return d.name;})
         .on("mouseover", function(d) {
           if(!utils.isTouchDevice() && !d.brokenData) _this.model.state.marker.highlightMarker(d);
         })
@@ -205,7 +205,7 @@ var Find = Dialog.extend({
         view
           .classed("vzb-find-item-brokendata", d.brokenData)
           .attr("title", d.brokenData? _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : "");
-      })
+      });
   },
 
   selectDataPoints: function() {

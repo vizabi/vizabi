@@ -133,7 +133,7 @@ const Reader = Class.extend({
       }
 
       return result;
-    })
+    });
   },
 
   _isDataQuery(from) {

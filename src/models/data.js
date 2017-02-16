@@ -16,7 +16,7 @@ var DataModel = Model.extend({
     var defaults = {
       reader: "csv"
     };
-    return utils.deepExtend(this._super(), defaults)
+    return utils.deepExtend(this._super(), defaults);
   },
 
   trackInstances: true,
@@ -181,7 +181,7 @@ var DataModel = Model.extend({
   },
 
   checkQueryResponse: function(query, response) {
-    if (response.length == 0) utils.warn("Reader for data source '" + this._name + "' returned empty array for query:", JSON.stringify(query, null, 2))
+    if (response.length == 0) utils.warn("Reader for data source '" + this._name + "' returned empty array for query:", JSON.stringify(query, null, 2));
 
     if (response.length > 0) {
       // search data for the entirely missing columns
@@ -386,7 +386,7 @@ var DataModel = Model.extend({
           _this._collection[dataId]["frames"][whatId] = frames;
           resolve(_this._collection[dataId]["frames"][whatId]);
         });
-      })
+      });
 
     }
     return this._collectionPromises[dataId][whatId]["promise"];
@@ -583,7 +583,7 @@ var DataModel = Model.extend({
             }
           }
         }
-      }
+      };
     }();
   },
 
@@ -640,7 +640,7 @@ var DataModel = Model.extend({
       // Get the list of columns that are in the dataset, exclude key column and animatable column
       // Example: [“lex”, “gdp”, “u5mr"]
       var query = _this._collection[dataId].query;
-      var columns = query.select.value.filter(function(f) {return f !== "_default"});
+      var columns = query.select.value.filter(function(f) {return f !== "_default";});
 
       var cLength = columns.length;
       var key, k, column, c;
@@ -657,7 +657,7 @@ var DataModel = Model.extend({
             createFiltered(parent[keys[i]], nextIndex);
           }
         }
-      }
+      };
 
       createFiltered(filtered, 0);
 
@@ -710,7 +710,7 @@ var DataModel = Model.extend({
                   iterateKeys(firstKeyObject, lastKeyObject[keys[i]], firstKey, nested[keys[i]], filtered[keys[i]], nextIndex);
                 }
               }
-            }
+            };
 
             iterateKeys(null, null, null, nested, filtered, 0);
 
@@ -874,7 +874,7 @@ var DataModel = Model.extend({
   },
 
   _getValid: function(dataId, column) {
-    return this._collection[dataId].data.filter(function(f) {return f[column] || f[column]===0});
+    return this._collection[dataId].data.filter(function(f) {return f[column] || f[column]===0;});
   },
 
   _getLimits: function(dataId, attr) {

@@ -22,7 +22,7 @@ var drag = function (_d3_behaviour_drag) {
 
       return d3.rebind(drag, _super, "origin", "on");
     }(_d3_behaviour_drag());
-  }
+  };
 }(d3.behavior.drag);
 
 
@@ -44,7 +44,7 @@ var zoom = function (_d3_behaviour_zoom) {
 
       return d3.rebind(zoom, _super, "translate", "scale", "scaleExtent", "center", "size", "x", "y", "on", "event");
     }(_d3_behaviour_zoom());
-  }
+  };
 }(d3.behavior.zoom);
 
 
@@ -81,7 +81,7 @@ var brush = function (_d3_svg_brush) {
 
       return d3.rebind(brush, _super, "x","y", "extent", "clamp", "clear", "empty", "on", "event");
     }(_d3_svg_brush());
-  }
+  };
 }(d3.svg.brush);
 
 export default {

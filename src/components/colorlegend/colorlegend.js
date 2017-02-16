@@ -157,7 +157,7 @@ var ColorLegend = Component.extend({
 
     //Hide rainbow element if showing minimap or if color is discrete
     this.rainbowEl.classed("vzb-hidden", this.colorModel.isDiscrete());
-    this.labelScaleEl.classed("vzb-hidden", this.colorModel.isDiscrete())
+    this.labelScaleEl.classed("vzb-hidden", this.colorModel.isDiscrete());
     this.rainbowLegendEl.classed("vzb-hidden", this.colorModel.isDiscrete());
     //Hide minimap if no data to draw it
     this.minimapEl.classed("vzb-hidden", !canShowMap || !this.colorModel.isDiscrete());
@@ -239,7 +239,7 @@ var ColorLegend = Component.extend({
       var colorRange = cScale.range();
 
       var gIndicators = range.map(function(val, i) {
-        return {val: val, color: colorRange[i], paletteKey: paletteKeys[i]}
+        return {val: val, color: colorRange[i], paletteKey: paletteKeys[i]};
       });
       this.rainbowLegend = this.rainbowLegendG.selectAll('circle')
         .data(gIndicators);
@@ -281,7 +281,7 @@ var ColorLegend = Component.extend({
             var result = {};
             result[_this.colorlegendDim] = value;
             return result;
-          }), function(d) {return d[_this.colorlegendDim]});
+          }), function(d) {return d[_this.colorlegendDim];});
         }
 
         colorOptions.exit().remove();
@@ -312,11 +312,11 @@ var ColorLegend = Component.extend({
 
         var tempdivEl = this.minimapEl.append("div").attr("class","vzb-temp");
 
-        this.minimapSVG.attr("viewBox",null)
-        this.minimapSVG.selectAll("g").remove()
+        this.minimapSVG.attr("viewBox",null);
+        this.minimapSVG.selectAll("g").remove();
         this.minimapG = this.minimapSVG.append("g");
         this.minimapG.selectAll("path")
-          .data(colorlegendKeys, function(d) {return d[_this.colorlegendDim]})
+          .data(colorlegendKeys, function(d) {return d[_this.colorlegendDim];})
           .enter().append("path")
           .on("mouseover", _this._interact().mouseover)
           .on("mouseout", _this._interact().mouseout)
@@ -331,7 +331,7 @@ var ColorLegend = Component.extend({
               tempdivEl.html(shapeString);
               //replace the shape string with just the path data from svg
               //TODO: this is not very resilient. potentially only the first path will be taken!
-              shapeString = tempdivEl.select("svg").select("path").attr("d")
+              shapeString = tempdivEl.select("svg").select("path").attr("d");
             }
 
             d3.select(this)
@@ -340,7 +340,7 @@ var ColorLegend = Component.extend({
               .append("title").html(_this.frame.label[d[_this.colorlegendDim]]);
 
             tempdivEl.html("");
-          })
+          });
 
         var gbbox = this.minimapG.node().getBBox();
         this.minimapSVG.attr("viewBox", "0 0 " + gbbox.width*1.05 + " " + gbbox.height*1.05);
@@ -367,7 +367,7 @@ var ColorLegend = Component.extend({
         var highlight = _this.colorModel.getValidItems()
           //filter so that only countries of the correct target remain
           .filter(function(f) {
-            return f[_this.colorModel.which] == target
+            return f[_this.colorModel.which] == target;
           })
           //fish out the "key" field, leave the rest behind
           .map(function(d) {
@@ -393,7 +393,7 @@ var ColorLegend = Component.extend({
           .colorOld(palette[target])
           .colorDef(defaultPalette[target])
           .callback(function(value, permanent) {
-            _this.colorModel.setColor(value, target)
+            _this.colorModel.setColor(value, target);
           })
           .fitToScreen([d3.event.pageX, d3.event.pageY])
           .show(true);
@@ -410,7 +410,7 @@ var ColorLegend = Component.extend({
         else
           var oldShow = [];
 
-        var entityIndex = oldShow.indexOf(d[colorlegendDim])
+        var entityIndex = oldShow.indexOf(d[colorlegendDim]);
         if (entityIndex !== -1) {
           oldShow.splice(entityIndex,1);
         } else {
@@ -434,20 +434,20 @@ var ColorLegend = Component.extend({
         var select = _this.colorModel.getValidItems()
           //filter so that only countries of the correct target remain
           .filter(function(f) {
-            return f[_this.colorModel.which] == target
+            return f[_this.colorModel.which] == target;
           })
           //fish out the "key" field, leave the rest behind
           .map(function(d) {
             return utils.clone(d, [KEY]);
           });
 
-        if(select.filter(function(d) {return _this.model.marker.isSelected(d) }).length == select.length) {
+        if(select.filter(function(d) {return _this.model.marker.isSelected(d); }).length == select.length) {
           _this.model.marker.clearSelected();
         }else{
           _this.model.marker.setSelect(select);
         }
       }
-    }
+    };
   },
 
   resize: function() {

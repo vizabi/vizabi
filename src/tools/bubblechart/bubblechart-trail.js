@@ -22,7 +22,7 @@ export default Class.extend({
 
       _context._trails.create().then(function() {
         _context._trails.run(["findVisible", "reveal", "opacityHandler"]);
-      })
+      });
     } else {
       _context._trails.run("remove");
       _context.model.marker.select.forEach(function(d) {
@@ -77,7 +77,7 @@ export default Class.extend({
               return {
                 t: m,
                 key: d[KEY]
-              }
+              };
             });
             var entityTrails = d3.select(trail).selectAll("g")
               .data(trailSegmentData)
@@ -98,7 +98,7 @@ export default Class.extend({
                 _context._labels.highlight(d, true);
                 var text = _context.model.time.formatDate(segment.t);
                 var selectedData = utils.find(_context.model.marker.select, function(f) {
-                  return f[KEY] == d[KEY]
+                  return f[KEY] == d[KEY];
                 });
                 _context.model.marker.getFrame(pointer[TIMEDIM], function(values) {
                   var x = _context.xScale(values.axis_x[pointer[KEY]]);
@@ -232,7 +232,7 @@ export default Class.extend({
                 executeSequential(index + 1);
               }, function() {
                 _this.trailsInProgress[d[KEY]] = null;
-              })
+              });
             } else {
               _this.trailsInProgress[d[KEY]] = null;
               executeSequential(index + 1);

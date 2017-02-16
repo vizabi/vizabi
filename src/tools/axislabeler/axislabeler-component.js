@@ -56,8 +56,8 @@ var AxisLabelerComponent = Component.extend({
     this.yAxisEl = this.graph.select('.vzb-al-axis-y');
 
     //$(".vzb-bc-axis-x, .vzb-bc-axis-y").css('font-size',this.model.show.labelSize);
-    this.xInvert = function(d) {return _this.xScale(_this.xScale.invert(_this.xScale(d)));}
-    this.yInvert = function(d) {return _this.yScale(_this.yScale.invert(_this.yScale(d)));}
+    this.xInvert = function(d) {return _this.xScale(_this.xScale.invert(_this.xScale(d)));};
+    this.yInvert = function(d) {return _this.yScale(_this.yScale.invert(_this.yScale(d)));};
 
     this.line = d3.svg.line()
       .x(function(d) { return _this.xScale(d); })
@@ -70,7 +70,7 @@ var AxisLabelerComponent = Component.extend({
     //component events
     this.on("resize", function() {
       _this.update();
-    })
+    });
   },
 
   /*
@@ -117,8 +117,8 @@ var AxisLabelerComponent = Component.extend({
     //update scales to the new range
     var xLength = this.xScale.domain().length;
     var yLength = this.yScale.domain().length;
-    this.xScale.range(d3.range(xLength).map(function(n) { return width/(xLength-1) * n })) //.nice();
-    this.yScale.range(d3.range(yLength).map(function(n) { return height/(yLength-1) * n }).reverse()) //.nice();
+    this.xScale.range(d3.range(xLength).map(function(n) { return width/(xLength-1) * n; })); //.nice();
+    this.yScale.range(d3.range(yLength).map(function(n) { return height/(yLength-1) * n; }).reverse()); //.nice();
 
     this.xAxis.scale(this.xScale)
       .tickSize(6, 0)
@@ -149,12 +149,12 @@ var AxisLabelerComponent = Component.extend({
 
     var path = this.graph.selectAll(".vzb-al-line").data([0]);
     path.enter().append("path")
-      .attr("class", "vzb-al-line")
+      .attr("class", "vzb-al-line");
     path.datum(this.mockData).attr("d", this.line);
 
     var pathInvert = this.graph.selectAll(".vzb-al-line-invert").data([0]);
     pathInvert.enter().append("path")
-      .attr("class", "vzb-al-line-invert")
+      .attr("class", "vzb-al-line-invert");
     pathInvert.datum(this.mockData).attr("d", this.lineInvert);
 
     var format = d3.format(".4r");
@@ -164,14 +164,14 @@ var AxisLabelerComponent = Component.extend({
       .attr("class", "vzb-al-dots")
       .attr("r", 5)
       .on("mouseenter", function(d, i) {
-        console.log("Point #" + i + ": " + d + " x=" + format(_this.xScale(d)) + " y=" + format(_this.yScale(d)))
+        console.log("Point #" + i + ": " + d + " x=" + format(_this.xScale(d)) + " y=" + format(_this.yScale(d)));
       });
     dots.exit().remove();
     dots.attr("cx", function(d) {
-        return _this.xScale(d)
+        return _this.xScale(d);
       })
       .attr("cy", function(d) {
-        return _this.yScale(d)
+        return _this.yScale(d);
       });
 
     var dotsInvert = this.graph.selectAll(".vzb-al-dots-invert").data(this.mockData);
@@ -179,14 +179,14 @@ var AxisLabelerComponent = Component.extend({
       .attr("class", "vzb-al-dots-invert")
       .attr("r", 5)
       .on("mouseenter", function(d, i) {
-        console.log("Point #" + i + ": " + d + " x=" + format(_this.xScale(d)) + " y=" + format(_this.yScale(d)))
+        console.log("Point #" + i + ": " + d + " x=" + format(_this.xScale(d)) + " y=" + format(_this.yScale(d)));
       });
     dotsInvert.exit().remove();
     dotsInvert.attr("cx", function(d) {
-        return _this.xInvert(d)
+        return _this.xInvert(d);
       })
       .attr("cy", function(d) {
-        return _this.yInvert(d)
+        return _this.yInvert(d);
       });
   }
 });

@@ -28,7 +28,7 @@ var MCProbe = Class.extend({
                 _this.cached[d.KEY()].forEach(function (d) {
                     totalArea += d.y;
                     if (_this._math.rescale(d.x) < options.level) leftArea += d.y;
-                })
+                });
             };
 
             if (_this.model.marker.stack.which === "all") {

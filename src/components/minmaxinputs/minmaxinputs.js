@@ -84,17 +84,17 @@ var MinMaxInputs = Component.extend({
 
 
         _this.el_domain_fieldMin.on("change", function() {
-            _this._setModel(DOMAINMIN, this.value)
+            _this._setModel(DOMAINMIN, this.value);
         });
         _this.el_domain_fieldMax.on("change", function() {
-            _this._setModel(DOMAINMAX, this.value)
+            _this._setModel(DOMAINMAX, this.value);
         });
 
         _this.el_zoomed_fieldMin.on("change", function() {
-            _this._setModel(ZOOMEDMIN, this.value)
+            _this._setModel(ZOOMEDMIN, this.value);
         });
         _this.el_zoomed_fieldMax.on("change", function() {
-            _this._setModel(ZOOMEDMAX, this.value)
+            _this._setModel(ZOOMEDMAX, this.value);
         });
 
         this.element.selectAll("input")
@@ -128,7 +128,7 @@ var MinMaxInputs = Component.extend({
         if(!n && n!==0) return n;
         if(utils.isDate(n)) return _this.model.time.formatDate(n);
         return d3.format(".2r")(n);
-      }
+      };
 
       this.el_domain_fieldMin.property("value", formatter(this.model.marker[this.markerID].getScale().domain()[0]));
       this.el_domain_fieldMax.property("value", formatter(this.model.marker[this.markerID].getScale().domain()[1]));

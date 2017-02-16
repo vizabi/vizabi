@@ -1,7 +1,7 @@
-import * as utils from 'base/utils'
-import Model from 'base/model'
-import Component from 'base/component'
-import { warn as warnIcon } from 'base/iconset'
+import * as utils from 'base/utils';
+import Model from 'base/model';
+import Component from 'base/component';
+import { warn as warnIcon } from 'base/iconset';
 import EventSource, { DefaultEvent } from 'base/events';
 
 var class_loading_first = 'vzb-loading-first';
@@ -217,7 +217,7 @@ var Tool = Component.extend({
         else if(typeof model[childKey] === 'object')
           removeFunctions(model[childKey]);
       }
-    }
+    };
 
     var currentToolModel = this.model.getPlainObject(true); // true = get only persistent model values
     removeFunctions(currentToolModel);

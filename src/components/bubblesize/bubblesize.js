@@ -15,7 +15,7 @@ var OPTIONS = {
   THUMB_RADIUS: 10,
   THUMB_STROKE_WIDTH: 4,
   INTRO_DURATION: 250
-}
+};
 
 var profiles = {
     "small": {
@@ -58,7 +58,7 @@ var BubbleSize = Component.extend({
       'change:size.domainMax': changeMinMaxHandler,
       'change:size.extent': changeMinMaxHandler,
       'ready': readyHandler
-    }
+    };
 
     function changeMinMaxHandler(evt, path) {
       var extent = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
@@ -103,7 +103,7 @@ var BubbleSize = Component.extend({
         left: textMargin.h + textMaxWidth,
         right: textMargin.h + textMaxWidth,
         bottom: barWidth + textMaxHeight
-      }
+      };
 
     this.padding = padding;
 
@@ -112,7 +112,7 @@ var BubbleSize = Component.extend({
     this.xScale = d3.scale.linear()
       .domain([OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX])
       .range([minMaxBubbleRadius.min * 2, minMaxBubbleRadius.max * 2])
-      .clamp(true)
+      .clamp(true);
 
     this.brush = d3.brushX()
       .extent([[0, 0], [minMaxBubbleRadius.max * 2, barWidth]])
@@ -141,12 +141,12 @@ var BubbleSize = Component.extend({
     this.sliderThumbs = this.sliderEl.selectAll(".handle")
       .data([{type:"w"},{type:"e"}], function(d) { return d.type; })
       .enter().append("svg").attr("class", function(d) { return "handle handle--" + d.type; })
-      .classed("vzb-bs-slider-thumb", true)
+      .classed("vzb-bs-slider-thumb", true);
 
     this.sliderThumbs.append("g")
       .attr("class", "vzb-bs-slider-thumb-badge")
       .append("path")
-      .attr("d", "M" + (thumbRadius + barWidth) + " " + (thumbRadius + barWidth * 1.5) + "l" + (-thumbRadius) + " " + (thumbRadius * 1.5) + "h" + (thumbRadius * 2) + "Z")
+      .attr("d", "M" + (thumbRadius + barWidth) + " " + (thumbRadius + barWidth * 1.5) + "l" + (-thumbRadius) + " " + (thumbRadius * 1.5) + "h" + (thumbRadius * 2) + "Z");
 
     this.sliderEl
       .call(_this.brush);
@@ -166,7 +166,7 @@ var BubbleSize = Component.extend({
     if(_this.showArcs) {
       this.sliderEl.selectAll(".vzb-bs-slider-thumb-arc").data([0,0]).enter()
         .append("path")
-        .attr("class", "vzb-bs-slider-thumb-arc")
+        .attr("class", "vzb-bs-slider-thumb-arc");
     }
 
     this.sliderArcsEl = this.sliderEl.selectAll(".vzb-bs-slider-thumb-arc");
@@ -175,9 +175,9 @@ var BubbleSize = Component.extend({
       .append("text")
       .attr("class", "vzb-bs-slider-thumb-label")
       .attr("text-anchor", function(d, i) {
-        return i ? "start" : "end"})
+        return i ? "start" : "end";})
       .attr("dy", function(d, i) {
-        return i ? "-0.7em" : "1.4em"})
+        return i ? "-0.7em" : "1.4em";});
 
     this.sliderLabelsEl = this.sliderEl.selectAll("text.vzb-bs-slider-thumb-label");
 
@@ -185,7 +185,7 @@ var BubbleSize = Component.extend({
       .attr("height", barWidth)
       .attr("rx", barWidth * 0.25)
       .attr("ry", barWidth * 0.25)
-      .attr("transform", "translate(0," + (-barWidth * 0.5) + ")")
+      .attr("transform", "translate(0," + (-barWidth * 0.5) + ")");
 
     //For return to circles
     // var circleLabelTransform = function(d, i) {
@@ -234,22 +234,22 @@ var BubbleSize = Component.extend({
     var maxBubbleRadius = this.showArcs ? this.getMinMaxBubbleRadius().max : OPTIONS.TEXT_PARAMS.TOP * 2;
     this.sliderSvg
       .attr("height", maxBubbleRadius + this.padding.top + this.padding.bottom)
-      .attr("width", this.getMinMaxBubbleRadius().max * 2 + this.padding.left + this.padding.right)
+      .attr("width", this.getMinMaxBubbleRadius().max * 2 + this.padding.left + this.padding.right);
     this.sliderWrap
-      .attr("transform", "translate(" + this.padding.left + "," + (maxBubbleRadius + this.padding.top) + ")")
+      .attr("transform", "translate(" + this.padding.left + "," + (maxBubbleRadius + this.padding.top) + ")");
   },
 
   _updateArcs: function(s) {
     if (!this.showArcs) return;
     var _this = this;
     var valueArc = d3.arc()
-      .outerRadius(function (d) { return _this.xScale(d) * 0.5 })
-      .innerRadius(function (d) { return _this.xScale(d) * 0.5 })
+      .outerRadius(function (d) { return _this.xScale(d) * 0.5; })
+      .innerRadius(function (d) { return _this.xScale(d) * 0.5; })
       .startAngle(-Math.PI * 0.5)
       .endAngle(Math.PI * 0.5);
     this.sliderArcsEl.data(s)
       .attr("d", valueArc)
-      .attr("transform", function (d) {return "translate(" + (_this.xScale(d) * 0.5) + ",0)"; })
+      .attr("transform", function (d) {return "translate(" + (_this.xScale(d) * 0.5) + ",0)"; });
   },
 
   _updateLabels: function(s) {

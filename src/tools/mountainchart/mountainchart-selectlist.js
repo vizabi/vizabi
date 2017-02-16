@@ -36,7 +36,7 @@ var MCSelectList = Class.extend({
       });
     _this.selectList = _this.mountainLabelContainer.selectAll("g.vzb-mc-label")
       .data(utils.unique(listData, function (d) {
-        return d.KEY()
+        return d.KEY();
       }));
     _this.selectList.exit().remove();
     _this.selectList = _this.selectList.enter().append("g")
@@ -59,7 +59,7 @@ var MCSelectList = Class.extend({
             _this.model.marker.clearHighlighted();
             _this.model.marker.selectMarker(d);
           });
-        var labelCloseGroup = label.select("g.vzb-mc-label-x")
+        var labelCloseGroup = label.select("g.vzb-mc-label-x");
         if (!utils.isTouchDevice()) {
           utils.setIcon(labelCloseGroup, iconClose)
             .select("svg")
@@ -192,7 +192,7 @@ var MCSelectList = Class.extend({
           _this.model.marker.highlightMarker(d);
           setTimeout(function() {
             _this.model.marker.unhighlightMarker(d);
-          }, 2000)
+          }, 2000);
         });
       });
   },
@@ -202,7 +202,7 @@ var MCSelectList = Class.extend({
     var KEY = _this.KEY;
     //show the little cross on the selected label
     _this.selectList
-        .filter(function(f) {return f[KEY] == d[KEY]})
+        .filter(function(f) {return f[KEY] == d[KEY];})
         .select(".vzb-mc-label-x")
         .classed("vzb-invisible", !show);
   },

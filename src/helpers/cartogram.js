@@ -1,4 +1,4 @@
-import topojson from 'helpers/topojson'
+import topojson from 'helpers/topojson';
 import * as utils from 'base/utils';
 (function(exports) {
 
@@ -60,7 +60,7 @@ import * as utils from 'base/utils';
           };
           var calculateMetaSequence = function(index) {
             if (index >= objects.length) {
-              return resolve({meta: meta, sizeError: (sizeErrorsTot/sizeErrorsNum)})
+              return resolve({meta: meta, sizeError: (sizeErrorsTot/sizeErrorsNum)});
             }
             calculateMeta(index, function(response) {
               meta.push(response);
@@ -117,7 +117,7 @@ import * as utils from 'base/utils';
             if (index % 400 == 0) {
               utils.defer(function() {
                 generateTopologyArcs(index, totalLength);
-              })
+              });
             } else {
               generateTopologyArcs(index, totalLength);
             }
@@ -204,7 +204,7 @@ import * as utils from 'base/utils';
                   }
                   utils.defer(function() {
                     resizeSegments(++index, iterations);
-                  })
+                  });
                   return;
                 }
                 var end = Math.min(start + 400, projectedArcs.length);
@@ -435,7 +435,7 @@ import * as utils from 'base/utils';
       return object(topology, {
         type: "MultiLineString",
         arcs: fragments
-      })
+      });
     };
 
     carto.features = function(topo, geometries) {

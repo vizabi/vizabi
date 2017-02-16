@@ -265,7 +265,7 @@ var MountainChartComponent = Component.extend({
         _this.updateSize(shape.length);
         _this.zoomToMaxMin();
 
-        shape = shape.map(function (m, i) {return {x: _this.mesh[i], y0: 0, y: +m};})
+        shape = shape.map(function (m, i) {return {x: _this.mesh[i], y0: 0, y: +m};});
 
         this.mountainAtomicContainer.selectAll(".vzb-mc-prerender")
             .data([0])
@@ -450,7 +450,7 @@ updateSize: function (meshLength) {
 
         this.yTitleEl
           .style("font-size", infoElHeight + "px")
-          .attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + margin.top + ")")
+          .attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + margin.top + ")");
 
 
         var warnBB = this.dataWarningEl.select("text").node().getBBox();
@@ -458,7 +458,7 @@ updateSize: function (meshLength) {
             .attr("width", warnBB.height)
             .attr("height", warnBB.height)
             .attr("x", warnBB.height * .1)
-            .attr("y", -warnBB.height * 1.0 + 1)
+            .attr("y", -warnBB.height * 1.0 + 1);
 
         this.dataWarningEl
             .attr("transform", "translate(" + (isRTL ? this.width - warnBB.width - warnBB.height * 2 : 0) + "," + (margin.top + warnBB.height * 1.5) + ")")
@@ -527,17 +527,17 @@ updateSize: function (meshLength) {
         //TODO: move away from UI strings, maybe to ready or ready once
         this.infoEl.on("click", function() {
           _this.parent.findChildByName("gapminder-datanotes").pin();
-        })
+        });
         this.infoEl.on("mouseover", function() {
           var rect = this.getBBox();
           var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
           var toolRect = _this.root.element.getBoundingClientRect();
           var chartRect = _this.element.node().getBoundingClientRect();
           _this.parent.findChildByName("gapminder-datanotes").setHook('axis_y').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
-        })
+        });
         this.infoEl.on("mouseout", function() {
           _this.parent.findChildByName("gapminder-datanotes").hide();
-        })
+        });
 
 
 
@@ -550,7 +550,7 @@ updateSize: function (meshLength) {
             })
             .on("mouseout", function () {
                 _this.updateDoubtOpacity();
-            })
+            });
     },
 
     updateDoubtOpacity: function (opacity) {
@@ -684,7 +684,7 @@ updateSize: function (meshLength) {
             .merge(this.mountainsMergeStacked);
         this.mountainsMergeGrouped = this.mountainsMergeGrouped.enter().append("path")
             .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel1")
-            .merge(this.mountainsMergeGrouped)
+            .merge(this.mountainsMergeGrouped);
         this.mountainsAtomic = this.mountainsAtomic.enter().append("path")
             .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel0")
             .merge(this.mountainsAtomic);
@@ -711,7 +711,7 @@ updateSize: function (meshLength) {
                 d3.event.stopPropagation();
             })
             .onLongTap(function (d, i) {
-            })
+            });
     },
 
     _interact: function () {
@@ -805,7 +805,7 @@ updateSize: function (meshLength) {
         });
 
         this.mountains.classed("vzb-selected", function (d) {
-            return _this.model.marker.isSelected(d)
+            return _this.model.marker.isSelected(d);
         });
 
         var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
@@ -968,7 +968,7 @@ updateSize: function (meshLength) {
         this.cosineArea = 0;
 
         this.mesh.forEach(function (dX, i) {
-            _this.spawnMask[i] = dX < tailCutX ? 1 : (dX > tailFade * 7 ? 0 : Math.exp((tailCutX - dX) / tailFade))
+            _this.spawnMask[i] = dX < tailCutX ? 1 : (dX > tailFade * 7 ? 0 : Math.exp((tailCutX - dX) / tailFade));
             _this.cosineShape[i] = (dX > tailCutX && dX < tailFatX ? (1 + Math.cos(Math.log(dX) * k + m)) : 0);
             _this.cosineArea += _this.cosineShape[i];
         });
@@ -996,7 +996,7 @@ updateSize: function (meshLength) {
                 x: dX,
                 y0: 0,
                 y: norm * (distribution[i] * (1 - _this.spawnMask[i]) + _this.cosineShape[i] / _this.cosineArea * acc)
-            }
+            };
         });
 
         return result;
@@ -1038,7 +1038,7 @@ updateSize: function (meshLength) {
         //because if that is the case, the mountain chart will merge the stacked entities to save performance
         var dragOrPlay = (this.model.time.dragging || this.model.time.playing)
             //never merge when no entities are stacked
-            && stackMode !== "none"
+            && stackMode !== "none";
 
         this._adjustMaxY();
 
@@ -1046,7 +1046,7 @@ updateSize: function (meshLength) {
             var view = d3.select(this);
             var hidden = !mergeStacked;
             _this._renderShape(view, d.KEY(), hidden);
-        })
+        });
 
         this.mountainsMergeGrouped.each(function (d) {
             var view = d3.select(this);
@@ -1058,7 +1058,7 @@ updateSize: function (meshLength) {
             var view = d3.select(this);
             var hidden = d.hidden || ((mergeGrouped || mergeStacked || dragOrPlay) && !_this.model.marker.isSelected(d));
             _this._renderShape(view, d.KEY(), hidden);
-        })
+        });
 
         if (stackMode === "none") {
             this.mountainsAtomic.sort(function (a, b) {
@@ -1121,7 +1121,7 @@ updateSize: function (meshLength) {
         var filter = {};
         filter[this.KEY] = key;
         if (this.model.marker.isSelected(filter)) {
-            view.attr("d", this.area(this.cached[key].filter(function (f) {return f.y > _this.values.axis_y[key] * THICKNESS_THRESHOLD })));
+            view.attr("d", this.area(this.cached[key].filter(function (f) {return f.y > _this.values.axis_y[key] * THICKNESS_THRESHOLD; })));
         } else {
             view.attr("d", this.area(this.cached[key]));
         }
@@ -1163,7 +1163,7 @@ updateSize: function (meshLength) {
                 .selectAll("text")
                 .attr("text-anchor", "middle")
                 .attr("alignment-baseline", "middle")
-                .text(tooltipText)
+                .text(tooltipText);
 
             var contentBBox = this.tooltip.select("text").node().getBBox();
 

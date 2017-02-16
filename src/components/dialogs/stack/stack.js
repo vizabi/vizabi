@@ -54,11 +54,11 @@ var Stack = Dialog.extend({
       this.howToStackEl = this.element.select('.vzb-howtostack').selectAll("input")
           .on("change", function() {
               _this.setModel("stack", d3.select(this).node().value);
-          })
+          });
       this.howToMergeEl = this.element.select('.vzb-howtomerge').selectAll("input")
           .on("change", function() {
               _this.setModel("merge", d3.select(this).node().value);
-          })
+          });
 
       this.updateView();
     },

@@ -16,7 +16,7 @@ var EntitiesModel = DataConnected.extend({
       dim: null,
       skipFilter: false
     };
-    return utils.deepExtend(this._super(), defaults)
+    return utils.deepExtend(this._super(), defaults);
   },
 
   objectLeafs: ['show','autogenerate'],

@@ -55,7 +55,7 @@ var IndPicker = Component.extend({
         if(this.markerID) {
           this.model_binds["change:marker." + this.markerID + ".which"] = function(evt) {
               _this.updateView();
-            }
+            };
         }
 
         if(this.showHoverValues) {
@@ -99,7 +99,7 @@ var IndPicker = Component.extend({
                     }
                     _this.updateView();
                 }
-            }
+            };
         }
 
         //contructor is the same as any component
@@ -143,7 +143,7 @@ var IndPicker = Component.extend({
 
         this.infoEl.on("click", function() {
           _this.root.findChildByName("gapminder-datanotes").pin();
-        })
+        });
         this.infoEl.on("mouseover", function() {
           var rect = _this.el_select.node().getBoundingClientRect();
           var rootRect = _this.root.element.getBoundingClientRect();
@@ -151,10 +151,10 @@ var IndPicker = Component.extend({
           var leftPos = rect.left - rootRect.left + rect.width;
 
           _this.root.findChildByName("gapminder-datanotes").setHook(_this.markerID).show().setPos(leftPos, topPos);
-        })
+        });
         this.infoEl.on("mouseout", function() {
           _this.root.findChildByName("gapminder-datanotes").hide();
-        })
+        });
 
 
     },

@@ -55,7 +55,7 @@ var DonutComponent = Component.extend('donut', {
         var _this = this;
 
         //link DOM elements to the variables
-        this.element = d3.select(this.element)
+        this.element = d3.select(this.element);
         this.svgEl = this.element.select("svg").append("g");
         this.yearEl = this.svgEl.append("text").attr("class", "year").style({'font-size':'4em'});
         this.titleEl = this.svgEl.append("text").attr("class", "title").style({'font-size':'2em'});
@@ -113,7 +113,7 @@ var DonutComponent = Component.extend('donut', {
             pop: _this.values.axis[d.geo],
             color: _this.values.color[d.geo],
             label: _this.values.label[d.geo]
-        }});
+        };});
 
         data = this.pie(data);
 
@@ -123,7 +123,7 @@ var DonutComponent = Component.extend('donut', {
           .select("path")
           .attr("d", this.arc)
           .style("fill", function(d) {
-            return _this.colorScale(d.data.color)
+            return _this.colorScale(d.data.color);
           })
           .style("stroke", "white");
 
@@ -157,7 +157,7 @@ var DonutComponent = Component.extend('donut', {
 
         this.arc
           .outerRadius(min / 2 * 0.9)
-          .innerRadius(min / 2 - min * 0.1)
+          .innerRadius(min / 2 - min * 0.1);
       }
 
 

@@ -52,7 +52,7 @@ const CSVTimeInColumnsReader = CSVReader.extend({
                     )
                   );
                 }
-              })
+              });
             }
 
             return result;

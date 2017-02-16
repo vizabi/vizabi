@@ -65,7 +65,7 @@ var ModelLeaf = EventSource.extend({
     }
   }
 
-})
+});
 
 var Model = EventSource.extend({
 
@@ -109,7 +109,7 @@ var Model = EventSource.extend({
 
     // initial values
     // add defaults to initialValues
-    var initialValues = utils.deepExtend({}, this.getClassDefaults(), values)
+    var initialValues = utils.deepExtend({}, this.getClassDefaults(), values);
     this.set(initialValues);
 
     // bind initial events
@@ -438,7 +438,7 @@ var Model = EventSource.extend({
   },
 
   loadData: function(opts) {
-    if (this.isHook()) utils.warn('Hook ' + this._name + ' is not loading because it\'s not extending Hook prototype.')
+    if (this.isHook()) utils.warn('Hook ' + this._name + ' is not loading because it\'s not extending Hook prototype.');
     return Promise.resolve();
   },
 
@@ -607,7 +607,7 @@ var Model = EventSource.extend({
    * @return {Boolean} if the child is a leaf with a plain object as value
    */
   isObjectLeaf: function(name) {
-    return (this.objectLeafs.indexOf(name) !== -1)
+    return (this.objectLeafs.indexOf(name) !== -1);
   },
 
   /**
@@ -653,7 +653,7 @@ var Model = EventSource.extend({
  */
 Model.isModel = function(model, includeLeaf) {
   return model && (model.hasOwnProperty('_data') || (includeLeaf &&  model.hasOwnProperty('_val')));
-}
+};
 
 
 function bindSetterGetter(model, prop) {
@@ -691,7 +691,7 @@ function initSubmodel(attr, val, ctx, persistent) {
     var binds = {
       //the submodel has changed (multiple times)
       'change': onChange
-    }
+    };
     submodel = new ModelLeaf(attr, val, ctx, binds, persistent);
   }
 
@@ -741,7 +741,7 @@ function initSubmodel(attr, val, ctx, persistent) {
   // Default event handlers for models
   function onChange(evt, path) {
     if(!ctx._ready) return; //block change propagation if model isnt ready
-    path = ctx._name + '.' + path
+    path = ctx._name + '.' + path;
     ctx.trigger(evt, path);
   }
   function onHookChange(evt, vals) {

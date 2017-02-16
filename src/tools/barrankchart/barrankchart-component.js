@@ -470,7 +470,7 @@ const BarRankChart = Component.extend({
         if (force || bar.changedWidth || presentationModeChanged) {
           bar.barRect
             .transition().duration(duration).ease(d3.easeLinear)
-            .attr('width', width)
+            .attr('width', width);
         }
 
         bar.barRect
@@ -529,7 +529,7 @@ const BarRankChart = Component.extend({
           .on('mousemove', d => _this.model.marker.highlightMarker(d))
           .on('mouseout', () => _this.model.marker.clearHighlighted())
           .on('click', d => {
-            _this.model.marker.selectMarker(d)
+            _this.model.marker.selectMarker(d);
           });
 
         const barRect = self.append('rect')
@@ -539,14 +539,14 @@ const BarRankChart = Component.extend({
         const labelSmall = labelFull.length < 12 ? labelFull : `${labelFull.substring(0, 9)}...`;
         const barLabel = self.append('text')
           .attr('class', 'vzb-br-label')
-          .attr('dy', '.325em')
+          .attr('dy', '.325em');
 
         const labelFullWidth = barLabel.text(labelFull).node().getBBox().width;
         const labelSmallWidth = barLabel.text(labelSmall).node().getBBox().width;
 
         const barValue = self.append('text')
           .attr('class', 'vzb-br-value')
-          .attr('dy', '.325em')
+          .attr('dy', '.325em');
 
         Object.assign(d, {
           self,
@@ -588,7 +588,7 @@ const BarRankChart = Component.extend({
         if (!color && color !== 0) {
           self
             .style('fill', COLOR_WHITEISH)
-            .attr('stroke', COLOR_BLACKISH)
+            .attr('stroke', COLOR_BLACKISH);
         } else {
           self
             .style('fill', _this._getColor(color))

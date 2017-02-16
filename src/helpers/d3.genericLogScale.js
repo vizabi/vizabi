@@ -86,7 +86,7 @@ export default function genericLog() {
               _buildLogScale(domainParts[1], [point1,  range[range.length - 1]], !domainPointingForward)
             ];
           } else if (domain[domain.length - 1] == 0 || abs(domain[domain.length - 1]) <= eps) {// example: [-val,-eps][-eps, 0..eps]
-            point1 = range[range.length - 1] - (firstEps + secondEps) * rangePointKoef * rangePointingSign
+            point1 = range[range.length - 1] - (firstEps + secondEps) * rangePointKoef * rangePointingSign;
             scales = [
               _buildLogScale(domainParts[0], [range[0], point1], domainPointingForward),
               _buildLinearScale(domainParts[1], [point1, range[range.length - 1]])
@@ -208,7 +208,7 @@ export default function genericLog() {
           return x;
         }
         return x > 0 ? 1 : -1;
-      }
+      };
 
     function scale(x) {
       var currScale = _getScaleByDomain(x);
@@ -259,7 +259,7 @@ export default function genericLog() {
         arg[arg.length - 1] = arg[arg.length - 1] * 2;
       }
       domain = arg;
-      var min = d3.min(abs(domain).filter(function(val) { return !!val}));
+      var min = d3.min(abs(domain).filter(function(val) { return !!val;}));
       if (min) eps = Math.min(eps, min / 100);
       buildDomain();
       return scale;
@@ -290,7 +290,7 @@ export default function genericLog() {
         interpolator.range(arg);
       } else {
         range = arg;
-        var min = d3.min(abs(range).filter(function(val) { return !!val}));
+        var min = d3.min(abs(range).filter(function(val) { return !!val;}));
 
         if (min) delta = Math.min(delta, min/100);
         buildScales();
@@ -313,7 +313,7 @@ export default function genericLog() {
       var ticks = [], partTicks;
       for (var i = 0; i < scales.length; i++) {
         if (scales[i].sign == -1) {
-          partTicks = scales[i].scale.ticks().reverse().map(function(val) { return val * -1 });
+          partTicks = scales[i].scale.ticks().reverse().map(function(val) { return val * -1; });
         } else {
           partTicks = scales[i].scale.ticks();
         }

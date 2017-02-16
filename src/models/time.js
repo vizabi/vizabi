@@ -486,7 +486,7 @@ function weekFormat() {
 
   var format = function(d) {
     return formatWeekYear(d) + 'w' + formatWeek(d);
-  }
+  };
 
   format.parse = function parse(dateString) {
     var matchedDate = dateString.match(/^(\d{4})w(\d{2})$/);
@@ -500,7 +500,7 @@ function weekFormat() {
 
   var formatWeek = function(d) {
     var origin = +d;
-    var quote = new Date(origin + ((4 - (d.getUTCDay() || 7)) * 86400000))
+    var quote = new Date(origin + ((4 - (d.getUTCDay() || 7)) * 86400000));
     var week = Math.ceil(((quote.getTime() - quote.setUTCMonth(0, 1)) / 86400000 + 1) / 7);
     return week < 10 ? '0' + week : week;
   };
@@ -520,7 +520,7 @@ function weekFormat() {
     date = new Date(date.getTime() + dayOfYear * 24 * 60 * 60 * 1000);
 
     return date;
-  }
+  };
 
   return format;
 
@@ -534,13 +534,13 @@ function weekFormat() {
 function quarterFormat() {
 
   var format = function(d) {
-    return formats.year.data(d) + 'q' + formatQuarter(d)
-  }
+    return formats.year.data(d) + 'q' + formatQuarter(d);
+  };
 
   format.parse = function(dateString) {
     var matchedDate = dateString.match(/^(\d{4})q(\d)$/);
     return matchedDate ? getDateFromQuarter(matchedDate[1], matchedDate[2]): null;
-  }
+  };
 
   var formatQuarter = function(d) {
     return ((d.getUTCMonth() / 3) | 0) + 1;
@@ -551,7 +551,7 @@ function quarterFormat() {
     var month = 3 * quarter - 2; // first month in quarter
     var year = p1;
     return formats.month.data.parse([year, (month < 9 ? '0': '') + month].join('-'));
-  }
+  };
 
   return format;
 }
