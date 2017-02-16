@@ -734,7 +734,7 @@ var LCComponent = Component.extend({
           //TODO: optimization is possible if getValues would return a limited number of points, say 1 point per screen pixel
 
           var xy = _this.prev_steps.map(function(frame, i) {
-              return [frame, _this.all_values[frame] ? _this.all_values[frame].axis_y[d[KEY]] : null] ;
+              return [frame, _this.all_values[frame] ? _this.all_values[frame].axis_y[d[KEY]] : null];
             })
             .filter(function(d) { return d[1] || d[1] === 0; });
 

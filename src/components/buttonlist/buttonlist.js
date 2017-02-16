@@ -355,7 +355,7 @@ var ButtonList = Component.extend({
     // left
     not_required.reverse();
     var hiddenButtons = [];
-    for (var i = 0, j = not_required.length - number_of_buttons; i < j ; i++) {
+    for (var i = 0, j = not_required.length - number_of_buttons; i < j; i++) {
         not_required[i].style("display", "none");
         hiddenButtons.push(not_required[i].attr("data-btn"));
     }
