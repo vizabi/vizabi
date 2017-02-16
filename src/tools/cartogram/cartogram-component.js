@@ -564,7 +564,7 @@ var CartogramComponent = Component.extend({
     if (this.height<=0 || this.width<=0) return utils.warn("Bubble map updateSize() abort: vizabi container is too little or has display:none");
 
     var boundBox = this.boundBox;
-    var viewBox = [ boundBox[0][0] * this.defaultWidth,
+    var viewBox = [boundBox[0][0] * this.defaultWidth,
       boundBox[0][1] * this.defaultHeight,
       Math.abs(boundBox[1][0] - boundBox[0][0]) * this.defaultWidth,
       Math.abs(boundBox[1][1] - boundBox[0][1]) * this.defaultHeight];
