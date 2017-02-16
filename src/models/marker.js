@@ -604,7 +604,7 @@ var Marker = Model.extend({
       var cachePath = this._getCachePath(selected);
       if (!cachePath) return new Promise(function(resolve, reject) {resolve()});
       //if the collection of frames for this data cube is not scheduled yet (otherwise no need to repeat calculation)
-      if (!this.frameQueues[cachePath] || !this.frameQueues[cachePath] instanceof Promise) {
+      if (!this.frameQueues[cachePath] || !(this.frameQueues[cachePath] instanceof Promise)) {
 
         //this is a promise nobody listens to - it prepares all the frames we need without forcing any
         this.frameQueues[cachePath] = new Promise(function(resolve, reject) {
