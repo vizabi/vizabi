@@ -220,7 +220,7 @@ export default function genericLog() {
     }
 
     scale.eps = function(arg) {
-      if(!arguments.length)
+      if (!arguments.length)
         return eps;
       eps = arg;
       scale.domain(domain);
@@ -228,7 +228,7 @@ export default function genericLog() {
     };
 
     scale.delta = function(arg) {
-      if(!arguments.length)
+      if (!arguments.length)
         return delta;
       delta = arg;
       scale.range(range);
@@ -236,11 +236,11 @@ export default function genericLog() {
     };
 
     scale.domain = function(arg) {
-      if(!arguments.length)
+      if (!arguments.length)
         return domain;
 
       // this is an internal array, it will be modified. the input _arg should stay intact
-      switch(arg.length) {
+      switch (arg.length) {
         // if no values are given, reset input to the default domain (do nothing)
         case 0:
           arg = domain;
@@ -254,7 +254,7 @@ export default function genericLog() {
           break;
       }
       //if the domain is just a single value
-      if(arg[0] == arg[arg.length - 1]) {
+      if (arg[0] == arg[arg.length - 1]) {
         arg[0] /= 2;
         arg[arg.length - 1] = arg[arg.length - 1] * 2;
       }
@@ -267,10 +267,10 @@ export default function genericLog() {
 
 
     scale.range = function(arg, force) {
-      if(!arguments.length)
+      if (!arguments.length)
         return interpolator ? interpolator.range() : range;
 
-      switch(arg.length) {
+      switch (arg.length) {
         // reset input to the default range
         case 0:
           arg = range;

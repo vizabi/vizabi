@@ -80,7 +80,7 @@ var ZoomButtonList = Component.extend({
 
     Object.keys(this._available_buttons).forEach(function(buttonId) {
       var button = _this._available_buttons[buttonId];
-      if(button && button.statebind) {
+      if (button && button.statebind) {
         _this.model_binds['change:' + button.statebind] = function(evt) {
           button.statebindfunc(buttonId, evt.source.value);
         };
@@ -110,9 +110,9 @@ var ZoomButtonList = Component.extend({
     var _this = this;
     this._components_config = [];
     var details_btns = [];
-    if(!button_list.length) return;
+    if (!button_list.length) return;
     //add a component for each button
-    for(var i = 0; i < button_list.length; i++) {
+    for (var i = 0; i < button_list.length; i++) {
 
       var btn = button_list[i];
       var btn_config = this._available_buttons[btn];
@@ -169,7 +169,7 @@ var ZoomButtonList = Component.extend({
       classes = btn.attr("class"),
       btn_config = _this._available_buttons[id];
 
-    if(btn_config && btn_config.func) {
+    if (btn_config && btn_config.func) {
       btn_config.func(id);
     } else {
       var btn_active = classes.indexOf(class_active) === -1;

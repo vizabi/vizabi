@@ -67,7 +67,7 @@ var EntitiesModel = DataConnected.extend({
     var dimension = this.getDimension();
     var _d;
 
-    if(!utils.isArray(d)) {
+    if (!utils.isArray(d)) {
       _d = [d];
     } else {
       _d = d;
@@ -81,7 +81,7 @@ var EntitiesModel = DataConnected.extend({
 
     utils.forEach(_d, d => {
       var value = d[dimension];
-      if(this.isShown(d)) {
+      if (this.isShown(d)) {
         showArray = showArray.filter(function(d) { return d !== value; });
       } else {
         showArray = showArray.concat(value);

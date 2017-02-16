@@ -35,7 +35,7 @@ var Stack = Dialog.extend({
         this.model_binds = {
           'change:state.marker.group': function(evt) {
             //console.log("group change " + evt);
-            if(!_this._ready) return;
+            if (!_this._ready) return;
             _this.updateView();
           }
         };
@@ -65,12 +65,12 @@ var Stack = Dialog.extend({
 
     ready: function() {
       this._super();
-      if(!this.model.state.marker.color.isDiscrete()) {
-        if(this.stack.use == "property") {
+      if (!this.model.state.marker.color.isDiscrete()) {
+        if (this.stack.use == "property") {
           this.setModel("stack", "none");
           return;
         }
-        else if(this.group.merge) {
+        else if (this.group.merge) {
           this.setModel("merge", "none");
           return;
         }
@@ -83,35 +83,35 @@ var Stack = Dialog.extend({
 
         this.howToStackEl
             .property('checked', function() {
-                if(d3.select(this).node().value === "none") return _this.stack.which==="none";
-                if(d3.select(this).node().value === "bycolor") return _this.stack.which===_this.model.state.marker.color.which;
-                if(d3.select(this).node().value === "all") return _this.stack.which==="all";
+                if (d3.select(this).node().value === "none") return _this.stack.which==="none";
+                if (d3.select(this).node().value === "bycolor") return _this.stack.which===_this.model.state.marker.color.which;
+                if (d3.select(this).node().value === "all") return _this.stack.which==="all";
             })
             .attr('disabled', function() {
-                if(d3.select(this).node().value === "none") return null; // always enabled
-                if(d3.select(this).node().value === "all") return null; // always enabled
-                if(d3.select(this).node().value === "bycolor") return _this.model.state.marker.color.use !== "property" ? true : null;
+                if (d3.select(this).node().value === "none") return null; // always enabled
+                if (d3.select(this).node().value === "all") return null; // always enabled
+                if (d3.select(this).node().value === "bycolor") return _this.model.state.marker.color.use !== "property" ? true : null;
             });
 
         _this.model.ui.chart.manualSortingEnabled = _this.stack.which == "all";
 
         this.howToMergeEl
             .property('checked', function() {
-                if(d3.select(this).node().value === "none") return !_this.group.merge && !_this.stack.merge;
-                if(d3.select(this).node().value === "grouped") return _this.group.merge;
-                if(d3.select(this).node().value === "stacked") return _this.stack.merge;
+                if (d3.select(this).node().value === "none") return !_this.group.merge && !_this.stack.merge;
+                if (d3.select(this).node().value === "grouped") return _this.group.merge;
+                if (d3.select(this).node().value === "stacked") return _this.stack.merge;
             })
             .attr('disabled', function() {
-                if(d3.select(this).node().value === "none") return null; // always enabled
-                if(d3.select(this).node().value === "grouped") return _this.stack.which === "none" || _this.model.state.marker.color.use !== "property" ? true : null;
-                if(d3.select(this).node().value === "stacked") return _this.stack.which === "all" ? null : true;
+                if (d3.select(this).node().value === "none") return null; // always enabled
+                if (d3.select(this).node().value === "grouped") return _this.stack.which === "none" || _this.model.state.marker.color.use !== "property" ? true : null;
+                if (d3.select(this).node().value === "stacked") return _this.stack.which === "all" ? null : true;
             });
 
 
     },
 
     manualSorting: function(value) {
-        if(arguments.length === 0) return this.model.state.marker.group.manualSorting;
+        if (arguments.length === 0) return this.model.state.marker.group.manualSorting;
         this.model.state.marker.group.manualSorting = value;
     },
 
@@ -119,7 +119,7 @@ var Stack = Dialog.extend({
 
         var obj = { stack: {}, group: {} };
 
-        if(what === "merge") {
+        if (what === "merge") {
             switch (value) {
                 case "none":
                     obj.group.merge = false;
@@ -135,7 +135,7 @@ var Stack = Dialog.extend({
                     break;
             }
         }
-        if(what === "stack") {
+        if (what === "stack") {
 
           switch (value) {
             case "all":
@@ -153,8 +153,8 @@ var Stack = Dialog.extend({
           }
 
             //validate possible merge values in group and stack hooks
-            if(value === "none" && this.group.merge) obj.group.merge = false;
-            if(value !== "all" && this.stack.merge) obj.stack.merge = false;
+            if (value === "none" && this.group.merge) obj.group.merge = false;
+            if (value !== "all" && this.stack.merge) obj.stack.merge = false;
         }
 
         this.model.state.marker.set(obj);

@@ -53,7 +53,7 @@ var OptionsButtonList = ButtonList.extend({
         var button = d3.select(this);
         var isHidden = params.hiddenButtons.indexOf(d.id) == -1;
         button.style('display', isHidden ? 'none' : '');
-        if(!isHidden) visibleButton++;
+        if (!isHidden) visibleButton++;
       });
     });
 
@@ -64,7 +64,7 @@ var OptionsButtonList = ButtonList.extend({
     var _this = this;
     this.buttonListComp.proceedClick(id);
     var btn_data = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']").datum();
-    if(btn_data.func) {
+    if (btn_data.func) {
       setTimeout(function() {
         _this.root.findChildByName("gapminder-dialogs").closeAllDialogs();
       }, 200);

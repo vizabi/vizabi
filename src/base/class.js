@@ -15,7 +15,7 @@ function extend(name, extensions) {
   initializing = false;
 
   forEach(extensions, function(method, name) {
-    if(typeof extensions[name] === 'function' && typeof _super[name] === 'function' && fnTest.test(extensions[name])) {
+    if (typeof extensions[name] === 'function' && typeof _super[name] === 'function' && fnTest.test(extensions[name])) {
       prototype[name] = function(name, fn) {
         return function() {
           var tmp = this._super;
@@ -33,7 +33,7 @@ function extend(name, extensions) {
   function Class() {
     if (this.trackInstances)
       Class.instances.push(this);
-    if(!initializing && this.init) {
+    if (!initializing && this.init) {
       this.init.apply(this, arguments);
     }
   }
@@ -46,7 +46,7 @@ function extend(name, extensions) {
   Class._collection = {};
   Class.instances = [];
   Class.register = function(name, code) {
-    if(typeof this._collection[name] !== 'undefined') {
+    if (typeof this._collection[name] !== 'undefined') {
       warn('"' + name + '" is already registered. Overwriting...');
     }
     this._collection[name] = code;
@@ -67,16 +67,16 @@ function extend(name, extensions) {
 
   //get an item of the collection from this class
   Class.get = function(name, silent) {
-    if(this._collection.hasOwnProperty(name)) {
+    if (this._collection.hasOwnProperty(name)) {
       return this._collection[name];
     }
-    if(!silent) {
+    if (!silent) {
       warn('"' + name + '" was not found.');
     }
     return false;
   };
   //register extension by name
-  if(arguments.length > 1 && this.register) {
+  if (arguments.length > 1 && this.register) {
     this.register(name, Class);
   }
   return Class;

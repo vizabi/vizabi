@@ -60,7 +60,7 @@ var MountainChartComponent = Component.extend({
             "change:time.playing": function (evt) {
                 // this listener is a patch for fixing #1228. time.js doesn't produce the last event
                 // with playing == false when paused softly
-                if(!_this.model.time.playing) {
+                if (!_this.model.time.playing) {
                    _this.redrawDataPoints();
                 }
             },
@@ -123,7 +123,7 @@ var MountainChartComponent = Component.extend({
             },
             "change:marker": function (evt, path) {
                 if (!_this._readyOnce) return;
-                if(path.indexOf("scaleType") > -1) {
+                if (path.indexOf("scaleType") > -1) {
                     _this.ready();
                     return;
                 }
@@ -299,7 +299,7 @@ var MountainChartComponent = Component.extend({
         this.on("resize", function () {
             //console.log("acting on resize");
             //return if updatesize exists with error
-            if(_this.updateSize()) return;
+            if (_this.updateSize()) return;
             _this.updatePointers(); // respawn is needed
             _this.redrawDataPoints();
             _this._selectlist.redraw();
@@ -398,7 +398,7 @@ updateSize: function (meshLength) {
         this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
         this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
 
-        if(this.height<=0 || this.width<=0) return utils.warn("Mountain chart updateSize() abort: vizabi container is too little or has display:none");
+        if (this.height<=0 || this.width<=0) return utils.warn("Mountain chart updateSize() abort: vizabi container is too little or has display:none");
 
         //graph group is shifted according to margins (while svg element is at 100 by 100%)
         this.graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -465,7 +465,7 @@ updateSize: function (meshLength) {
             .select("text")
             .attr("dx", warnBB.height * 1.5);
 
-        if(this.infoEl.select('svg').node()) {
+        if (this.infoEl.select('svg').node()) {
             var titleBBox = this.yTitleEl.node().getBBox();
             var t = utils.transform(this.yTitleEl.node());
             var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4);
@@ -491,7 +491,7 @@ updateSize: function (meshLength) {
     zoomToMaxMin: function() {
         var _this = this;
 
-        if(this.model.marker.axis_x.zoomedMin==null || this.model.marker.axis_x.zoomedMax==null) return;
+        if (this.model.marker.axis_x.zoomedMin==null || this.model.marker.axis_x.zoomedMax==null) return;
 
         var x1 = this.xScale(this.model.marker.axis_x.zoomedMin);
         var x2 = this.xScale(this.model.marker.axis_x.zoomedMax);
@@ -1010,7 +1010,7 @@ updateSize: function (meshLength) {
         if (method === "latest") {
           var prevValues = _this.values;
           _this.model.marker.getFrame(_this.model.time.end, function(values) {
-            if(!values) return;
+            if (!values) return;
 
             //below is a complicated issue when updatePointers() is first calculated for one set of values (at the end of time series), then yMax is taken from that data (assuming that population always grows, so the last year has the highest mountain)
             _this.values = values;
@@ -1091,7 +1091,7 @@ updateSize: function (meshLength) {
 
     redrawDataPointsOnlyColors: function () {
         var _this = this;
-        if(!this.mountains) return utils.warn("redrawDataPointsOnlyColors(): no mountains  defined. likely a premature call, fix it!");
+        if (!this.mountains) return utils.warn("redrawDataPointsOnlyColors(): no mountains  defined. likely a premature call, fix it!");
         var isColorUseIndicator = this.model.marker.color.use === "indicator";
         this.mountains.style("fill", function (d) {
             return _this.values.color[d.KEY()] ?
@@ -1197,7 +1197,7 @@ updateSize: function (meshLength) {
       return new Promise(function(resolve, reject) {
 
         d3.json(shape_path, function(error, json) {
-          if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
+          if (error) return console.warn("Failed loading json " + shape_path + ". " + error);
           _this.precomputedShapes = json;
           resolve();
         });

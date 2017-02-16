@@ -54,9 +54,9 @@ var ToolModel = Model.extend({
       _this._component.validate(_this);
       var model2 = JSON.stringify(_this.getPlainObject());
 
-      if(c >= max) {
+      if (c >= max) {
         utils.error('Max validation loop.');
-      } else if(model !== model2) {
+      } else if (model !== model2) {
         validate_func(c++);
       }
     }
@@ -134,7 +134,7 @@ var Tool = Component.extend({
       this.model_binds,
       {
         'change': function(evt, path) {
-          if(_this._ready) {
+          if (_this._ready) {
             _this.model.validate();
 
             if (evt.source.persistent)
@@ -147,7 +147,7 @@ var Tool = Component.extend({
           }
         },
         'resize:ui': function() {
-          if(_this._ready) {
+          if (_this._ready) {
             _this.triggerResize();
           }
         },
@@ -191,7 +191,7 @@ var Tool = Component.extend({
   },
 
   loadSplashScreen: function() {
-    if(this.model.ui.splash) {
+    if (this.model.ui.splash) {
       //TODO: cleanup hardcoded splash screen
       this.model.state.time.splash = true;
       return this.model.startLoading({
@@ -209,12 +209,12 @@ var Tool = Component.extend({
   getPersistentModel: function() {
     //try to find functions in properties of model.
     var removeFunctions = function(model) {
-      for(var childKey in model) {
-        if(typeof model[childKey] === 'function') {
+      for (var childKey in model) {
+        if (typeof model[childKey] === 'function') {
           delete model[childKey];
           utils.warn('minModel validation. Function found in enumerable properties of ' + childKey + ". This key is deleted from minModel");
         }
-        else if(typeof model[childKey] === 'object')
+        else if (typeof model[childKey] === 'object')
           removeFunctions(model[childKey]);
       }
     };
@@ -262,7 +262,7 @@ var Tool = Component.extend({
    * @param {Boolean} overwrite overwrite everything instead of extending
    */
   setModel: function(newModelJSON, overwrite) {
-    if(overwrite) {
+    if (overwrite) {
       this.model.reset(newModelJSON);
     } else {
       this.model.set(newModelJSON);
@@ -295,14 +295,14 @@ var Tool = Component.extend({
   validate: function(model) {
     model = this.model || model;
 
-    if(!model || !model.state) return utils.warn("tool validation aborted: model.state looks wrong: " + model);
+    if (!model || !model.state) return utils.warn("tool validation aborted: model.state looks wrong: " + model);
   },
 
   setCSSClasses: function() {
     //add placeholder class
     utils.addClass(this.placeholder, class_placeholder);
     //add-remove buttonlist class
-    if(!this.model.ui || !this.model.ui.buttons || !this.model.ui.buttons.length) {
+    if (!this.model.ui || !this.model.ui.buttons || !this.model.ui.buttons.length) {
       utils.addClass(this.element, class_buttons_off);
     } else {
       utils.removeClass(this.element, class_buttons_off);

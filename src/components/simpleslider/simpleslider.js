@@ -56,12 +56,12 @@ var SimpleSlider = Component.extend({
       this.slider.style('left', (this.elementSize.left - this.sliderSize.left) + 'px');
 
       //TODO: replace this with utils.extend
-      if(this.slider_properties) {
-        if(this.slider_properties.min != null) min = this.slider_properties.min;
-        if(this.slider_properties.max != null) max = this.slider_properties.max;
-        if(this.slider_properties.step != null) step = this.slider_properties.step;
+      if (this.slider_properties) {
+        if (this.slider_properties.min != null) min = this.slider_properties.min;
+        if (this.slider_properties.max != null) max = this.slider_properties.max;
+        if (this.slider_properties.step != null) step = this.slider_properties.step;
 
-        if(this.slider_properties.scale) {
+        if (this.slider_properties.scale) {
           value = this.slider_properties.scale(min);
         }
       }
@@ -70,7 +70,7 @@ var SimpleSlider = Component.extend({
       this.roundTo = step > 1 ? 0 : Math.round(Math.abs(Math.log(step)/Math.LN10));
 
       //check and change the slider's thumb size
-      if(this.thumb_size) {
+      if (this.thumb_size) {
         this.slider.classed('vzb-ss-slider-normal', false);
         this.slider.classed('vzb-ss-slider-'+this.thumb_size, true);
       }
@@ -97,7 +97,7 @@ var SimpleSlider = Component.extend({
       var slider_properties = this.slider_properties;
       var scale;
 
-      if(slider_properties) {
+      if (slider_properties) {
         scale = slider_properties.scale;
       }
       if (scale) {
@@ -110,7 +110,7 @@ var SimpleSlider = Component.extend({
 
     _setModel: function (value, force, persistent) {
       // rescale value if scale is supplied in slider_properties
-      if(this.slider_properties && this.slider_properties.scale) value = this.slider_properties.scale(value);
+      if (this.slider_properties && this.slider_properties.scale) value = this.slider_properties.scale(value);
 
       this.model.submodel.getModelObject(this.arg).set(value.toFixed(this.roundTo), force, persistent);
     }

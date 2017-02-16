@@ -29,7 +29,7 @@ var DraggableList = Component.extend({
     this.isEnabled = config.isEnabled;
     this.draggable = true;
 
-    if(!config.groupID) utils.warn("draggablelist.js complains on 'groupID' property: " + config.groupID);
+    if (!config.groupID) utils.warn("draggablelist.js complains on 'groupID' property: " + config.groupID);
 
     this.model_binds = {
       "translate:locale": function(evt) {
@@ -55,7 +55,7 @@ var DraggableList = Component.extend({
 
     this.itemDragger = d3.drag()
       .on('start', function(draggedData, i) {
-        if(_this.dataUpdateFlag || !_this.draggable) return;
+        if (_this.dataUpdateFlag || !_this.draggable) return;
         d3.event.sourceEvent.stopPropagation();
         _this.parentBoundRect = _this.element.node().getBoundingClientRect();
         _this.element
@@ -64,7 +64,7 @@ var DraggableList = Component.extend({
             var boundRect = this.getBoundingClientRect();
             d._y = boundRect.top;
             d._top = 0;
-            if(draggedData.data === d.data) {
+            if (draggedData.data === d.data) {
               d._height = boundRect.height;
               _this.selectedNode = this;
             }
@@ -74,10 +74,10 @@ var DraggableList = Component.extend({
       })
 
       .on('drag', function(draggedData, draggedIndex) {
-        if(_this.dataUpdateFlag || !_this.draggable) return;
+        if (_this.dataUpdateFlag || !_this.draggable) return;
         draggedData._top += d3.event.dy;
         var newDraggedY = draggedData._y + draggedData._top;
-        if(newDraggedY > _this.parentBoundRect.top
+        if (newDraggedY > _this.parentBoundRect.top
           && newDraggedY + draggedData._height < _this.parentBoundRect.top + _this.parentBoundRect.height)
         {
           _this.itemsEl
@@ -87,7 +87,7 @@ var DraggableList = Component.extend({
               if (i < draggedIndex && d._y + draggedData._height * .5 > newDraggedY) {
                 top = draggedData._height;
               }
-              else if(i > draggedIndex && d._y - draggedData._height * .5 < newDraggedY) {
+              else if (i > draggedIndex && d._y - draggedData._height * .5 < newDraggedY) {
                 top = -draggedData._height;
               }
 
@@ -98,7 +98,7 @@ var DraggableList = Component.extend({
       })
 
       .on('end', function(d, i) {
-        if(_this.dataUpdateFlag || !_this.draggable) return;
+        if (_this.dataUpdateFlag || !_this.draggable) return;
         _this.getData();
       });
 
@@ -168,7 +168,7 @@ var DraggableList = Component.extend({
       .map(function(d) {
         return d.data;
       });
-    if(utils.arrayEquals(this.dataArrFn(), dataArr)) {
+    if (utils.arrayEquals(this.dataArrFn(), dataArr)) {
       this.updateView();
     } else {
       this.dataUpdateFlag = true;

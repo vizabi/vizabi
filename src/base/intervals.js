@@ -32,7 +32,7 @@ var Intervals = Class.extend({
    * Clears all intervals
    */
   clearAllIntervals: function() {
-    for(var i in this.intervals) {
+    for (var i in this.intervals) {
       this.clearInterval(i);
     }
   }

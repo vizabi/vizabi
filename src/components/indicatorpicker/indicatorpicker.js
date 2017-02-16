@@ -41,7 +41,7 @@ var IndPicker = Component.extend({
 
         this.markerID = config.markerID;
         this.showHoverValues = config.showHoverValues || false;
-        if(!config.markerID) utils.warn("indicatorpicker.js complains on 'markerID' property: " + config.markerID);
+        if (!config.markerID) utils.warn("indicatorpicker.js complains on 'markerID' property: " + config.markerID);
 
         this.model_binds = {
             "translate:locale": function(evt) {
@@ -52,34 +52,34 @@ var IndPicker = Component.extend({
             }
         };
 
-        if(this.markerID) {
+        if (this.markerID) {
           this.model_binds["change:marker." + this.markerID + ".which"] = function(evt) {
               _this.updateView();
             };
         }
 
-        if(this.showHoverValues) {
+        if (this.showHoverValues) {
             this.model_binds["change:marker.highlight"] = function(evt, values) {
                 var mdl = _this.model.marker[_this.markerID];
-                if(!_this.showHoverValues || mdl.use == "constant") return;
+                if (!_this.showHoverValues || mdl.use == "constant") return;
                 var _highlightedEntity = _this.model.marker.getHighlighted();
-                if(_highlightedEntity.length > 1) return;
+                if (_highlightedEntity.length > 1) return;
 
                 if (_highlightedEntity.length) {
                     _this.model.marker.getFrame(_this.model.time.value, function(frame) {
-                        if(_this._highlighted || !frame) return;
+                        if (_this._highlighted || !frame) return;
 
                         // should be replaced by dimension of entity set for this hook (if use == property)
                         var dimension = _this.model.entities.getDimension();
                         var _highlightedEntity = _this.model.marker.getHighlighted(dimension);
-                        if(_highlightedEntity.length) {
+                        if (_highlightedEntity.length) {
 
                             var value = frame[_this.markerID][_highlightedEntity[0]];
 
                             // resolve strings via the color legend model
-                            if(value && mdl._type === "color" && mdl.isDiscrete()) {
+                            if (value && mdl._type === "color" && mdl.isDiscrete()) {
                               var clModel = mdl.getColorlegendMarker();
-                              if(clModel.label.getItems()[value]) value = clModel.label.getItems()[value];
+                              if (clModel.label.getItems()[value]) value = clModel.label.getItems()[value];
                             }
 
                             _this._highlightedValue = value;
@@ -89,8 +89,8 @@ var IndPicker = Component.extend({
                         }
                     });
                 } else {
-                    if(values !== null && values !== "highlight") {
-                        if(values) {
+                    if (values !== null && values !== "highlight") {
+                        if (values) {
                             _this._highlightedValue = values[_this.markerID];
                             _this._highlighted = (!_this._highlightedValue && _this._highlightedValue !== 0) || mdl.use !== "constant";
                         }
@@ -161,7 +161,7 @@ var IndPicker = Component.extend({
 
 
     updateView: function() {
-        if(!this._readyOnce) return;
+        if (!this._readyOnce) return;
 
         var _this = this;
         var translator = this.model.locale.getTFunction();
@@ -172,7 +172,7 @@ var IndPicker = Component.extend({
 
         var selectText;
 
-        if(this.showHoverValues && this._highlighted) {
+        if (this.showHoverValues && this._highlighted) {
           var unit = !concept.unit ? "" : " " + concept.unit;
           var formatter = _this.model.marker[this.markerID].getTickFormatter();
 

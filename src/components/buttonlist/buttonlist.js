@@ -142,7 +142,7 @@ var ButtonList = Component.extend({
 
     this.model_binds = {
       "change:state.marker.select": function(evt) {
-        if(!_this._readyOnce) return;
+        if (!_this._readyOnce) return;
 
         _this.setBubbleTrails();
         _this.setBubbleLock();
@@ -156,7 +156,7 @@ var ButtonList = Component.extend({
         // _this.entitiesSelected_1 = _this.model.state.marker.select.length > 0;
       },
       "change:ui.chart": function(evt, path) {
-        if(path.indexOf("lockActive") > -1) {
+        if (path.indexOf("lockActive") > -1) {
           _this.setBubbleLock();
         }
       }
@@ -166,7 +166,7 @@ var ButtonList = Component.extend({
     // can't call constructor earlier because this.model_binds needs to be complete before calling constructor
     config.ui.buttons.forEach(function(buttonId) {
       var button = _this._available_buttons[buttonId];
-      if(button && button.statebind) {
+      if (button && button.statebind) {
         _this.model_binds['change:' + button.statebind] = function(evt) {
           button.statebindfunc(buttonId, evt.source.value);
         };
@@ -232,7 +232,7 @@ var ButtonList = Component.extend({
       classes = btn.attr("class"),
       btn_config = _this._available_buttons[id];
 
-    if(btn_config && btn_config.func) {
+    if (btn_config && btn_config.func) {
       btn_config.func(id);
     } else {
       var btn_active = classes.indexOf(class_active) === -1;
@@ -252,8 +252,8 @@ var ButtonList = Component.extend({
     var popupButtons = buttons.filter(function(d) {
       return (_this._available_buttons[d] && !_this._available_buttons[d].func);
       });
-    for(var i = 0, j = popupButtons.length; i < j; i++) {
-       if(popupDialogs.indexOf(popupButtons[i]) == -1) {
+    for (var i = 0, j = popupButtons.length; i < j; i++) {
+       if (popupDialogs.indexOf(popupButtons[i]) == -1) {
            return utils.error('Buttonlist: bad buttons config: "' + popupButtons[i] + '" is missing in popups list');
        }
     }
@@ -306,13 +306,13 @@ var ButtonList = Component.extend({
       button_width = button.node().getBoundingClientRect().width + button_margin.right + button_margin.left;
       button_height = button.node().getBoundingClientRect().height + button_margin.top + button_margin.bottom;
 
-      if(!button.classed(class_hidden)) {
-        if(!expandable || (_this.getLayoutProfile() !== 'large')) {
+      if (!button.classed(class_hidden)) {
+        if (!expandable || (_this.getLayoutProfile() !== 'large')) {
           buttons_width += button_width;
           buttons_height += button_height;
           //sort buttons between required and not required buttons.
           // Not required buttons will only be shown if there is space available
-          if(button_data.required) {
+          if (button_data.required) {
             required.push(button);
           } else {
             not_required.push(button);
@@ -328,26 +328,26 @@ var ButtonList = Component.extend({
 
     //check if container is landscape or portrait
     // if portrait small or large with expand, use width
-    if(parent.classed("vzb-large") && parent.classed("vzb-dialog-expand-true")
+    if (parent.classed("vzb-large") && parent.classed("vzb-dialog-expand-true")
     || parent.classed("vzb-small") && parent.classed("vzb-portrait")) {
       //check if the width_diff is small. If it is, add to the container
       // width, to allow more buttons in a way that is still usable
-      if(width_diff > 0 && width_diff <=10) {
+      if (width_diff > 0 && width_diff <=10) {
         container_width += width_diff;
       }
       number_of_buttons = Math.floor(container_width / button_width) - required.length;
-      if(number_of_buttons < 0) {
+      if (number_of_buttons < 0) {
         number_of_buttons = 0;
       }
     // else, use height
     } else {
       //check if the width_diff is small. If it is, add to the container
       // width, to allow more buttons in a way that is still usable
-      if(height_diff > 0 && height_diff <=10) {
+      if (height_diff > 0 && height_diff <=10) {
         container_height += height_diff;
       }
       number_of_buttons = Math.floor(container_height / button_height) - required.length;
-      if(number_of_buttons < 0) {
+      if (number_of_buttons < 0) {
         number_of_buttons = 0;
       }
     }
@@ -374,9 +374,9 @@ var ButtonList = Component.extend({
     var _this = this;
     this._components_config = [];
     var details_btns = [];
-    if(!button_list.length) return;
+    if (!button_list.length) return;
     //add a component for each button
-    for(var i = 0; i < button_list.length; i++) {
+    for (var i = 0; i < button_list.length; i++) {
 
       var btn = button_list[i];
       var btn_config = this._available_buttons[btn];
@@ -384,7 +384,7 @@ var ButtonList = Component.extend({
       //add template data
       var d = (btn_config) ? btn : "_default";
       var details_btn = utils.clone(this._available_buttons[d]);
-      if(d == "_default") {
+      if (d == "_default") {
         details_btn.title = "buttons/" + btn;
       }
       details_btn.id = btn;
@@ -434,11 +434,11 @@ var ButtonList = Component.extend({
     var target = 0;
     var parent = d3.select(".vzb-tool");
 
-    if(parent.classed("vzb-portrait") && parent.classed("vzb-small")) {
-      if(this.model.state.marker.select.length > 0) target = this.element.node().scrollWidth;
+    if (parent.classed("vzb-portrait") && parent.classed("vzb-small")) {
+      if (this.model.state.marker.select.length > 0) target = this.element.node().scrollWidth;
       this.element.node().scrollLeft = target;
     } else {
-      if(this.model.state.marker.select.length > 0) target = this.element.node().scrollHeight;
+      if (this.model.state.marker.select.length > 0) target = this.element.node().scrollHeight;
       this.element.node().scrollTop = target;
     }
   },
@@ -453,7 +453,7 @@ var ButtonList = Component.extend({
     //TODO: what to do when resizing?
 
     //toggle presentaion off is switch to 'small' profile
-    if(this.getLayoutProfile() === 'small' && this.model.ui.presentation) {
+    if (this.getLayoutProfile() === 'small' && this.model.ui.presentation) {
       this.togglePresentationMode();
     }
 
@@ -472,10 +472,10 @@ var ButtonList = Component.extend({
   },
   setBubbleTrails: function() {
     var trails = (this.model.ui.chart||{}).trails;
-    if(!trails && trails !== false) return;
+    if (!trails && trails !== false) return;
     var id = "trails";
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
-    if(!btn.node()) return utils.warn("setBubbleTrails: no button '" +id+ "' found in DOM. doing nothing");
+    if (!btn.node()) return utils.warn("setBubbleTrails: no button '" +id+ "' found in DOM. doing nothing");
 
     btn.classed(class_active_locked, trails);
     btn.classed(class_hidden, this.model.state.marker.select.length == 0);
@@ -483,7 +483,7 @@ var ButtonList = Component.extend({
   toggleBubbleLock: function(id) {
     var active = (this.model.ui.chart||{}).lockActive;
 
-    if(this.model.state.marker.select.length == 0 && !active) return;
+    if (this.model.state.marker.select.length == 0 && !active) return;
 
     var locked = this.model.ui.chart.lockNonSelected;
     var time = this.model.state.time;
@@ -495,15 +495,15 @@ var ButtonList = Component.extend({
   setBubbleLock: function() {
     var locked = (this.model.ui.chart||{}).lockNonSelected;
     var active = (this.model.ui.chart||{}).lockActive;
-    if(!locked && locked !== 0) return;
+    if (!locked && locked !== 0) return;
 
-    if(locked !== 0 && this.model.state.marker.select.length === 0 && !active) {
+    if (locked !== 0 && this.model.state.marker.select.length === 0 && !active) {
        locked = this.model.ui.chart.lockNonSelected = 0;
     }
 
     var id = "lock";
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
-    if(!btn.node()) return utils.warn("setBubbleLock: no button '" +id+ "' found in DOM. doing nothing");
+    if (!btn.node()) return utils.warn("setBubbleLock: no button '" +id+ "' found in DOM. doing nothing");
 
     var translator = this.model.locale.getTFunction();
 
@@ -546,7 +546,7 @@ var ButtonList = Component.extend({
   },
   toggleFullScreen: function(id, emulateClick) {
 
-    if(!window) return;
+    if (!window) return;
 
     var component = this;
     var pholder = component.placeholder;
@@ -555,13 +555,13 @@ var ButtonList = Component.extend({
     var fs = !this.model.ui.fullscreen;
     var body_overflow = (fs) ? "hidden" : this._prev_body_overflow;
 
-    while(!(pholder_found = utils.hasClass(pholder, 'vzb-placeholder'))) {
+    while (!(pholder_found = utils.hasClass(pholder, 'vzb-placeholder'))) {
       component = component.parent;
       pholder = component.placeholder;
     }
 
     //TODO: figure out a way to avoid fullscreen resize delay in firefox
-    if(fs) {
+    if (fs) {
       this.resizeInExitHandler = false;
       launchIntoFullscreen(pholder);
       subscribeFullscreenChangeEvent.call(this, this.toggleFullScreen.bind(this, id, true));
@@ -588,7 +588,7 @@ var ButtonList = Component.extend({
     //restore body overflow
     document.body.style.overflow = body_overflow;
 
-    if(!this.resizeInExitHandler) this.root.ui.resizeHandler();
+    if (!this.resizeInExitHandler) this.root.ui.resizeHandler();
 
     //force window resize event
     // utils.defer(function() {
@@ -602,21 +602,21 @@ var ButtonList = Component.extend({
 });
 
 function isFullscreen() {
-  if(!window) return false;
-  if(window.document.webkitIsFullScreen !== undefined)
+  if (!window) return false;
+  if (window.document.webkitIsFullScreen !== undefined)
     return window.document.webkitIsFullScreen;
-  if(window.document.mozFullScreen !== undefined)
+  if (window.document.mozFullScreen !== undefined)
     return window.document.mozFullScreen;
-  if(window.document.msFullscreenElement !== undefined)
+  if (window.document.msFullscreenElement !== undefined)
     return window.document.msFullscreenElement;
 
   return false;
 }
 
 function exitHandler(emulateClickFunc) {
-  if(!isFullscreen()) {
+  if (!isFullscreen()) {
     removeFullscreenChangeEvent.call(this);
-    if(!this.resizeInExitHandler) {
+    if (!this.resizeInExitHandler) {
       emulateClickFunc();
     } else {
       this.root.ui.resizeHandler();
@@ -625,7 +625,7 @@ function exitHandler(emulateClickFunc) {
 }
 
 function subscribeFullscreenChangeEvent(exitFunc) {
-  if(!window) return;
+  if (!window) return;
   var doc = window.document;
 
   this.exitFullscreenHandler = exitHandler.bind(this, exitFunc);
@@ -645,13 +645,13 @@ function removeFullscreenChangeEvent() {
 }
 
 function launchIntoFullscreen(elem) {
-  if(elem.requestFullscreen) {
+  if (elem.requestFullscreen) {
     elem.requestFullscreen();
-  } else if(elem.msRequestFullscreen) {
+  } else if (elem.msRequestFullscreen) {
     elem.msRequestFullscreen();
-  } else if(elem.mozRequestFullScreen) {
+  } else if (elem.mozRequestFullScreen) {
     elem.mozRequestFullScreen();
-  } else if(elem.webkitRequestFullscreen) {
+  } else if (elem.webkitRequestFullscreen) {
     if (!(navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
     navigator.userAgent && !navigator.userAgent.match('CriOS'))) {
       elem.webkitRequestFullscreen();
@@ -661,13 +661,13 @@ function launchIntoFullscreen(elem) {
 }
 
 function exitFullscreen() {
-  if(document.exitFullscreen) {
+  if (document.exitFullscreen) {
     document.exitFullscreen();
-  } else if(document.msExitFullscreen) {
+  } else if (document.msExitFullscreen) {
     document.msExitFullscreen();
-  } else if(document.mozCancelFullScreen) {
+  } else if (document.mozCancelFullScreen) {
     document.mozCancelFullScreen();
-  } else if(document.webkitExitFullscreen) {
+  } else if (document.webkitExitFullscreen) {
     document.webkitExitFullscreen();
   } else {
     removeFullscreenChangeEvent.call(this);

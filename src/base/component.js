@@ -26,10 +26,10 @@ var Component = Events.extend({
       name: this.name
     };
     //make sure placeholder is DOM element
-    if(this.placeholder && !utils.isElement(this.placeholder)) {
+    if (this.placeholder && !utils.isElement(this.placeholder)) {
       try {
         this.placeholder = parent.placeholder.querySelector(this.placeholder);
-      } catch(e) {
+      } catch (e) {
         utils.error('Error finding placeholder \'' + this.placeholder + '\' for component \'' + this.name + '\'');
       }
     }
@@ -89,7 +89,7 @@ var Component = Events.extend({
    * Executes after preloading is finished
    */
   afterPreload: function() {
-    if(this.model) {
+    if (this.model) {
       this.model.afterPreload();
     }
     utils.forEach(this.components, function(subcomp) {
@@ -129,7 +129,7 @@ var Component = Events.extend({
       _this.loadingDone();
     });
 
-    if(!(this.model && this.model.isLoading())) {
+    if (!(this.model && this.model.isLoading())) {
       this.loadingDone();
     }
 
@@ -152,13 +152,13 @@ var Component = Events.extend({
   },
 
   setError: function(opts) {
-    if(typeof this.error === 'function') {
+    if (typeof this.error === 'function') {
       this.error(opts);
     }
   },
 
   setReady: function(value) {
-    if(!this._readyOnce) {
+    if (!this._readyOnce) {
       this.trigger('readyOnce');
       this._readyOnce = true;
     }
@@ -175,17 +175,17 @@ var Component = Events.extend({
     var data = this.template_data;
     var _this = this;
     var rendered = '';
-    if(!this.placeholder) {
+    if (!this.placeholder) {
       return;
     }
     //todo: improve t function getter + generalize this
     data = utils.extend(data, {
       t: this.getTranslationFunction(true)
     });
-    if(this.template) {
+    if (this.template) {
       try {
         rendered = templateFunc(tmpl, data);
-      } catch(e) {
+      } catch (e) {
         utils.error('Templating error for component: \'' + this.name +
           '\' - Check if template name is unique and correct. E.g.: \'bubblechart\'');
 
@@ -235,14 +235,14 @@ var Component = Events.extend({
 
       component_config.model = component_config.model || {};
 
-      if(!component_config.component) {
+      if (!component_config.component) {
         utils.error('Error loading component: name not provided');
         return;
       }
 
       comp = (utils.isString(component_config.component)) ? Component.get(component_config.component) : component_config.component;
 
-      if(!comp) return;
+      if (!comp) return;
 
       config = utils.extend(component_config, {
         name: component_config.component,
@@ -270,7 +270,7 @@ var Component = Events.extend({
    */
   getLayoutProfile: function() {
     //get profile from parent if layout is not available
-    if(this.model.ui) {
+    if (this.model.ui) {
       return this.model.ui.currentProfile();
     } else {
       return this.parent.getLayoutProfile();
@@ -283,7 +283,7 @@ var Component = Events.extend({
    */
   getPresentationMode: function() {
     //get profile from parent if layout is not available
-    if(this.model.ui) {
+    if (this.model.ui) {
       return this.model.ui.getPresentationMode();
     } else {
       return this.parent.getPresentationMode();
@@ -299,14 +299,14 @@ var Component = Events.extend({
    */
   _uiMapping: function(id, ui) {
     //if overwritting UI
-    if(ui) {
+    if (ui) {
       return new Model('ui', ui);
     }
-    if(id && this.ui) {
+    if (id && this.ui) {
       id = id.replace('.', '');
       //remove trailing period
       var sub_ui = this.ui[id];
-      if(sub_ui) {
+      if (sub_ui) {
         return sub_ui;
       }
     }
@@ -322,10 +322,10 @@ var Component = Events.extend({
     var _this = this;
     var values = {};
     //If model_config is an array, we map it
-    if(utils.isArray(model_config) && utils.isArray(this.model_expects)) {
+    if (utils.isArray(model_config) && utils.isArray(this.model_expects)) {
 
       //if there's a different number of models received and expected
-      if(this.model_expects.length !== model_config.length) {
+      if (this.model_expects.length !== model_config.length) {
         utils.groupCollapsed('DIFFERENCE IN NUMBER OF MODELS EXPECTED AND RECEIVED');
         utils.warn("Please, configure the 'model_expects' attribute accordingly in '" + this.name + "' or check the models passed in '" + _this.parent.name + "'.\n\n" +
           "Component: '" + _this.parent.name + "'\n" +
@@ -336,9 +336,9 @@ var Component = Events.extend({
       utils.forEach(model_config, function(m, i) {
         var model_info = _mapOne(m);
         var new_name;
-        if(_this.model_expects[i]) {
+        if (_this.model_expects[i]) {
           new_name = _this.model_expects[i].name;
-          if(_this.model_expects[i].type && model_info.type !== _this.model_expects[i].type &&
+          if (_this.model_expects[i].type && model_info.type !== _this.model_expects[i].type &&
             (!utils.isArray(_this.model_expects[i].type) || _this.model_expects[i].type.indexOf(model_info.type) === -1)) {
 
             utils.groupCollapsed("UNEXPECTED MODEL TYPE: '" + model_info.type + "' instead of '" + _this.model_expects[i].type + "'");
@@ -369,7 +369,7 @@ var Component = Events.extend({
       // it will fill values up to [ui, locale, {}]
       var existing = model_config.length;
       var expected = this.model_expects.length;
-      if(expected > existing) {
+      if (expected > existing) {
         //skip existing
         this.model_expects.splice(0, existing);
         //adds new expected models if needed
@@ -391,7 +391,7 @@ var Component = Events.extend({
       var parts = name.split('.');
       var current = _this.parent.model;
       var current_name = '';
-      while(parts.length) {
+      while (parts.length) {
         current_name = parts.shift();
         current = current[current_name];
       }
@@ -412,17 +412,17 @@ var Component = Events.extend({
     var t_func;
     try {
       t_func = this.model.get('locale').getTFunction();
-    } catch(err) {
-      if(this.parent && this.parent !== this) {
+    } catch (err) {
+      if (this.parent && this.parent !== this) {
         t_func = this.parent.getTranslationFunction();
       }
     }
-    if(!t_func) {
+    if (!t_func) {
       t_func = function(s) {
         return s;
       };
     }
-    if(wrap) {
+    if (wrap) {
       return this._translatedStringFunction(t_func);
     } else {
       return t_func;
@@ -447,11 +447,11 @@ var Component = Events.extend({
   translateStrings: function() {
     var t = this.getTranslationFunction();
     var strings = this.placeholder.querySelectorAll('[data-vzb-translate]');
-    if(strings.length === 0) {
+    if (strings.length === 0) {
       return;
     }
     utils.forEach(strings, function(str) {
-      if(!str || !str.getAttribute) {
+      if (!str || !str.getAttribute) {
         return;
       }
       str.innerHTML = t(str.getAttribute('data-vzb-translate'));
@@ -488,7 +488,7 @@ var Component = Events.extend({
    */
   clear: function() {
     this.freeze();
-    if(this.model) this.model.freeze();
+    if (this.model) this.model.freeze();
     utils.forEach(this.components, function(c) {
       c.clear();
     });
@@ -505,7 +505,7 @@ function templateFunc(str, data) {
       //match t("...")
       var s = match.match(/t\s*\(([^)]+)\)/g);
       //replace with translation
-      if(s.length) {
+      if (s.length) {
         s = obj.t(s[0].match(/\"([^"]+)\"/g)[0].split('"').join(''));
       }
       //use object[name]

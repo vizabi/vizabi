@@ -59,7 +59,7 @@ var EventSource = Class.extend({
 
     // register the event to this object
     target._events[type] = target._events[type] || [];
-    if(typeof func === 'function') {
+    if (typeof func === 'function') {
       target._events[type].push(func);
     } else {
       utils.warn('Can\'t bind event \'' + type + '\'. It must be a function.');
@@ -88,7 +88,7 @@ var EventSource = Class.extend({
     if (!target) return;
 
     // unbind events
-    if(target._events.hasOwnProperty(type)) {
+    if (target._events.hasOwnProperty(type)) {
       // if function not given, remove all events of type
       if (typeof func === 'undefined') {
         target._events[type] = [];
@@ -118,16 +118,16 @@ var EventSource = Class.extend({
 
     // multiple at a time, array format: [{type: function}, {'type:path': function}, ... ]
     // seems redundant but used so that binding-sets won't be turned into models (which happens when it's a pure object). Used e.g. in Tool.init();
-    if(utils.isArray(type)) {
-      for(i = 0; i < type.length; i += 1) {
+    if (utils.isArray(type)) {
+      for (i = 0; i < type.length; i += 1) {
         eventFunc.call(this, type[i], func);
       }
       return true;
     }
 
     //multiple at a time, object format: {type: function, 'type:path': function, ... }
-    if(utils.isObject(type)) {
-      for(i in type) {
+    if (utils.isObject(type)) {
+      for (i in type) {
         eventFunc.call(this, i, type[i]);
       }
       return true;
@@ -136,7 +136,7 @@ var EventSource = Class.extend({
     // type and path are both in type: on('type:path', function)
     // or
     // path undefined: on('type', function)
-    if(typeof path === 'function') {
+    if (typeof path === 'function') {
       func = path; // put callback function in func variable
       // on('type:path', func)
       if (type.indexOf(':') !== -1) {
@@ -153,16 +153,16 @@ var EventSource = Class.extend({
     }
 
     // bind multiple paths at a time to one function: on(type, [path1, path2], function)
-    if(utils.isArray(path)) {
-      for(i = 0; i < path.length; i += 1) {
+    if (utils.isArray(path)) {
+      for (i = 0; i < path.length; i += 1) {
         eventFunc.call(this, type, path[i], func);
       }
       return true;
     }
 
     //bind multiple functions at the same time to one path: on(type, path, [function1, function2])
-    if(func && utils.isArray(func)) {
-      for(i = 0; i < func.length; i += 1) {
+    if (func && utils.isArray(func)) {
+      for (i = 0; i < func.length; i += 1) {
         eventFunc.call(this, type, path, func[i]);
       }
       return true;
@@ -224,8 +224,8 @@ var EventSource = Class.extend({
     var size;
 
     // split up eventType-paremeter for multiple event-triggers
-    if(utils.isArray(evtType)) {
-      for(i = 0, size = evtType.length; i < size; i += 1) {
+    if (utils.isArray(evtType)) {
+      for (i = 0, size = evtType.length; i < size; i += 1) {
         this.trigger(evtType[i], args);
       }
       return;
@@ -235,7 +235,7 @@ var EventSource = Class.extend({
     var evt = this.createEventFromType(evtType);
 
     // if this eventType has no events registered
-    if(!this._events.hasOwnProperty(evt.type)) {
+    if (!this._events.hasOwnProperty(evt.type)) {
       return;
     }
 
@@ -255,11 +255,11 @@ var EventSource = Class.extend({
 
       //TODO: improve readability of freezer code
       //only execute if not frozen and exception doesnt exist
-      if(this.allowExecution(evt)) {
+      if (this.allowExecution(evt)) {
         execute();
       } else {
         this._freezer.push(execute);
-        if(_freezeAllEvents && !_frozenEventInstances[this._id]) {
+        if (_freezeAllEvents && !_frozenEventInstances[this._id]) {
           this.freeze();
           _frozenEventInstances[this._id] = this;
         }
@@ -279,13 +279,13 @@ var EventSource = Class.extend({
    */
   freeze: function(exceptions) {
     this._freeze = true;
-    if(!exceptions) {
+    if (!exceptions) {
       return;
     }
-    if(!utils.isArray(exceptions)) {
+    if (!utils.isArray(exceptions)) {
       exceptions = [exceptions];
     }
-    for(var i = 0; i < exceptions.length; i += 1) {
+    for (var i = 0; i < exceptions.length; i += 1) {
       this._freezeExceptions[exceptions[i]] = true;
     }
   },
@@ -297,7 +297,7 @@ var EventSource = Class.extend({
     this._freeze = false;
     this._freezeExceptions = {};
     //execute old frozen events
-    while(this._freezer.length) {
+    while (this._freezer.length) {
       var execute = this._freezer.shift();
       execute();
     }
@@ -322,10 +322,10 @@ EventSource.unfreezeAll = unfreezeAll;
  */
 function freezeAll(exceptions) {
   _freezeAllEvents = true;
-  if(!exceptions) {
+  if (!exceptions) {
     return;
   }
-  if(!utils.isArray(exceptions)) {
+  if (!utils.isArray(exceptions)) {
     exceptions = [exceptions];
   }
   utils.forEach(exceptions, function(e) {
@@ -341,9 +341,9 @@ function unfreezeAll() {
   _freezeAllExceptions = {};
   //unfreeze all instances
   var keys = Object.keys(_frozenEventInstances);
-  for(var i = 0; i < keys.length; i++) {
+  for (var i = 0; i < keys.length; i++) {
     var instance = _frozenEventInstances[keys[i]];
-    if(!instance) {
+    if (!instance) {
       continue;
     }
     instance.unfreeze();

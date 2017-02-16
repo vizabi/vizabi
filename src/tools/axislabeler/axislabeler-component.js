@@ -108,7 +108,7 @@ var AxisLabelerComponent = Component.extend({
     var height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
     var width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
 
-    if(height<=0 || width<=0) return utils.warn("Axis Labeler update() call interrupted for Vizabi container is too little or has display:none");
+    if (height<=0 || width<=0) return utils.warn("Axis Labeler update() call interrupted for Vizabi container is too little or has display:none");
 
     //graph group is shifted according to margins (while svg element is at 100 by 100%)
     this.graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");

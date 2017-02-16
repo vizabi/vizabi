@@ -114,7 +114,7 @@ var Model = EventSource.extend({
 
     // bind initial events
     // bind after setting, so no events are fired by setting initial values
-    if(bind) {
+    if (bind) {
       this.on(bind);
     }
   },
@@ -130,7 +130,7 @@ var Model = EventSource.extend({
    * @returns attr value or all values if attr is undefined
    */
   get: function(attr) {
-    if(!attr) {
+    if (!attr) {
       return this._data;
     }
     if (Model.isModel(this._data[attr]))
@@ -153,7 +153,7 @@ var Model = EventSource.extend({
     var freezeCall = false; // boolean, indicates if this .set()-call froze the modelTree
 
     //expect object as default
-    if(!utils.isPlainObject(attr)) {
+    if (!utils.isPlainObject(attr)) {
       (attrs = {})[attr] = val;
     } else {
       // move all arguments one place
@@ -176,7 +176,7 @@ var Model = EventSource.extend({
 
     // init/set all given values
     var changes = [];
-    for(var attribute in attrs) {
+    for (var attribute in attrs) {
       val = attrs[attribute];
 
       var bothModel = utils.isPlainObject(val) && this._data[attribute] instanceof Model;
@@ -197,12 +197,12 @@ var Model = EventSource.extend({
 
     if (!setting) {
       this.checkDataChanges(changes);
-      if(this.validate) {
+      if (this.validate) {
         this.validate();
       }
     }
 
-    if(!setting || force) {
+    if (!setting || force) {
       this._setting = false;
       if (freezeCall && (!this.isHook() || !this.isLoading())) {
         this.setTreeFreezer(false);
@@ -256,8 +256,8 @@ var Model = EventSource.extend({
     };
     var _this = this;
     utils.forEach(this._data, function(subModel, name) {
-      if(subModel && typeof subModel._id !== 'undefined' && Model.isModel(subModel) && validationFunction(subModel)) {
-        if(object) {
+      if (subModel && typeof subModel._id !== 'undefined' && Model.isModel(subModel) && validationFunction(subModel)) {
+        if (object) {
           submodels[name] = subModel;
         } else {
           submodels.push(subModel);
@@ -276,14 +276,14 @@ var Model = EventSource.extend({
     var _this = this;
     utils.forEach(this._data, function(dataItem, i) {
       // if it's a submodel
-      if(dataItem instanceof Model) {
+      if (dataItem instanceof Model) {
         obj[i] = dataItem.getPlainObject(persistent);
       }
       // if it's a modelLeaf
       else {
         //if asked for persistent then add value to result only if modelLeaf state is
         //persistent
-        if(!persistent || dataItem.persistent) {
+        if (!persistent || dataItem.persistent) {
           var leafValue = dataItem.get(persistent);
           if (utils.isDate(leafValue))
             leafValue = _this.formatDate(leafValue);
@@ -314,7 +314,7 @@ var Model = EventSource.extend({
    */
   clear: function() {
     var submodels = this.getSubmodels();
-    for(var i in submodels) {
+    for (var i in submodels) {
       submodels[i].clear();
     }
     this.setReady(false);
@@ -346,14 +346,14 @@ var Model = EventSource.extend({
    * @returns {Boolean} is it loading?
    */
   isLoading: function() {
-    if(this._isLoading())
+    if (this._isLoading())
       return true;
 
     //if not loading anything, check submodels
     var submodels = this.getSubmodels();
     var i;
-    for(i = 0; i < submodels.length; i += 1) {
-      if(submodels[i].isLoading()) {
+    for (i = 0; i < submodels.length; i += 1) {
+      if (submodels[i].isLoading()) {
         return true;
       }
     }
@@ -365,9 +365,9 @@ var Model = EventSource.extend({
    * Sets the model as ready or not depending on its loading status
    */
   setReady: function(value) {
-    if(value === false) {
+    if (value === false) {
       this._ready = false;
-      if(this._parent && this._parent.setReady) {
+      if (this._parent && this._parent.setReady) {
         this._parent.setReady(false);
       }
       return;
@@ -376,8 +376,8 @@ var Model = EventSource.extend({
     var prev_ready = this._ready;
     this._ready = !this.isLoading() && !this._setting;
     // if now ready and wasn't ready yet
-    if(this._ready && prev_ready !== this._ready) {
-      if(!this._readyOnce) {
+    if (this._ready && prev_ready !== this._ready) {
+      if (!this._readyOnce) {
         this._readyOnce = true;
         this.trigger('readyOnce');
       }
@@ -514,7 +514,7 @@ var Model = EventSource.extend({
    */
   getHookWhich: function(type) {
     var values = [];
-    if(this.use && this.use === type) {
+    if (this.use && this.use === type) {
       values.push(this.which);
     }
     //repeat for each submodel
@@ -617,9 +617,9 @@ var Model = EventSource.extend({
    */
   getClosestModel: function(name) {
     var model = this.findSubmodel(name);
-    if(model) {
+    if (model) {
       return model;
-    } else if(this._parent) {
+    } else if (this._parent) {
       return this._parent.getClosestModel(name);
     }
     return null;
@@ -631,9 +631,9 @@ var Model = EventSource.extend({
    * @returns {Object} submodel or false if nothing is found
    */
   findSubmodel: function(name) {
-    for(var i in this._data) {
+    for (var i in this._data) {
       //found submodel
-      if(i === name && Model.isModel(this._data[i])) {
+      if (i === name && Model.isModel(this._data[i])) {
         return this._data[i];
       }
     }
@@ -686,7 +686,7 @@ function initSubmodel(attr, val, ctx, persistent) {
   var submodel;
 
   // if value is a value -> leaf
-  if(!utils.isPlainObject(val) || utils.isArray(val) || ctx.isObjectLeaf(attr)) {
+  if (!utils.isPlainObject(val) || utils.isArray(val) || ctx.isObjectLeaf(attr)) {
 
     var binds = {
       //the submodel has changed (multiple times)
@@ -740,7 +740,7 @@ function initSubmodel(attr, val, ctx, persistent) {
 
   // Default event handlers for models
   function onChange(evt, path) {
-    if(!ctx._ready) return; //block change propagation if model isnt ready
+    if (!ctx._ready) return; //block change propagation if model isnt ready
     path = ctx._name + '.' + path;
     ctx.trigger(evt, path);
   }
@@ -763,9 +763,9 @@ function initSubmodel(attr, val, ctx, persistent) {
  * @returns {Object} Intervals object
  */
 function getIntervals(ctx) {
-  if(ctx._intervals) {
+  if (ctx._intervals) {
     return ctx._intervals;
-  } else if(ctx._parent) {
+  } else if (ctx._parent) {
     return getIntervals(ctx._parent);
   } else {
     return new Intervals();

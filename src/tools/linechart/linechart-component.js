@@ -42,7 +42,7 @@ var LCComponent = Component.extend({
 
     this.model_binds = {
       'change:time.value': function() {
-        if(!_this._readyOnce) return;
+        if (!_this._readyOnce) return;
         _this.model.marker.getFrame(_this.model.time.value, function(frame, time) {
           if (!_this._frameIsValid(frame)) return utils.warn("change:time.value: empty data received from marker.getFrame(). doing nothing");
           _this.frameChanged(frame, time);
@@ -53,18 +53,18 @@ var LCComponent = Component.extend({
         if (_this.model.time.playing && utils.isTouchDevice() && !_this.tooltip.classed("vzb-hidden")) _this.tooltip.classed("vzb-hidden", true);
       },
       'change:time.start': function() {
-        if(!_this._readyOnce) return;
+        if (!_this._readyOnce) return;
         _this.updateShow();
       },
       'change:time.end': function() {
-        if(!_this._readyOnce) return;
+        if (!_this._readyOnce) return;
         _this.updateShow();
       },
       'change:marker': function(evt, path) {
-        if(!_this._readyOnce) return;
-        if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1 ||
+        if (!_this._readyOnce) return;
+        if (path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1 ||
           path.indexOf("zoomedMin") > -1 || path.indexOf("zoomedMax") > -1) {
-          if(!_this.yScale || !_this.xScale) return; //abort if building of the scale is in progress
+          if (!_this.yScale || !_this.xScale) return; //abort if building of the scale is in progress
           _this.updateShow();
           _this.zoomToMaxMin();
           _this.updateSize();
@@ -72,7 +72,7 @@ var LCComponent = Component.extend({
           _this.redrawDataPoints();
           return;
         }
-        if(path.indexOf("scaleType") > -1) {
+        if (path.indexOf("scaleType") > -1) {
           _this.updateShow();
           _this.zoomToMaxMin();
           _this.updateSize();
@@ -80,20 +80,20 @@ var LCComponent = Component.extend({
         }
       },
       "change:marker.highlight": function() {
-        if(!_this._readyOnce) return;
+        if (!_this._readyOnce) return;
         _this.highlightLines();
       },
       "change:marker.select": function() {
-        if(!_this._readyOnce) return;
+        if (!_this._readyOnce) return;
         _this.updateDoubtOpacity();
         _this.highlightLines();
       },
       'change:marker.opacitySelectDim': function() {
-        if(!_this._readyOnce) return;
+        if (!_this._readyOnce) return;
         _this.highlightLines();
       },
       'change:marker.opacityRegular': function() {
-        if(!_this._readyOnce) return;
+        if (!_this._readyOnce) return;
         _this.highlightLines();
       }
     };
@@ -184,7 +184,7 @@ var LCComponent = Component.extend({
 
     this.on("resize", function() {
       //return if updatesize exists with error
-      if(_this.updateSize()) return;
+      if (_this.updateSize()) return;
       _this.updateTime();
       _this.redrawDataPoints();
     });
@@ -252,13 +252,13 @@ var LCComponent = Component.extend({
       }
     };
 
-    if(this.strings.unit.Y === "unit/" + this.model.marker.axis_y.which) this.strings.unit.Y = "";
-    if(this.strings.unit.X === "unit/" + this.model.marker.axis_x.which) this.strings.unit.X = "";
-    if(this.strings.unit.C === "unit/" + this.model.marker.color.which) this.strings.unit.C = "";
+    if (this.strings.unit.Y === "unit/" + this.model.marker.axis_y.which) this.strings.unit.Y = "";
+    if (this.strings.unit.X === "unit/" + this.model.marker.axis_x.which) this.strings.unit.X = "";
+    if (this.strings.unit.C === "unit/" + this.model.marker.color.which) this.strings.unit.C = "";
 
-    if(this.strings.unit.Y) this.strings.unit.Y = ", " + this.strings.unit.Y;
-    if(this.strings.unit.X) this.strings.unit.X = ", " + this.strings.unit.X;
-    if(this.strings.unit.C) this.strings.unit.C = ", " + this.strings.unit.C;
+    if (this.strings.unit.Y) this.strings.unit.Y = ", " + this.strings.unit.Y;
+    if (this.strings.unit.X) this.strings.unit.X = ", " + this.strings.unit.X;
+    if (this.strings.unit.C) this.strings.unit.C = ", " + this.strings.unit.C;
 
     utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
     this.dataWarningEl.append("text")
@@ -565,7 +565,7 @@ var LCComponent = Component.extend({
       .attr("width", this.width + this.margin.right)
       .attr("height", Math.max(0, this.height));
 
-    if(this.height<=0 || this.width<=0) return utils.warn("Line chart updateSize() abort: vizabi container is too little or has display:none");
+    if (this.height<=0 || this.width<=0) return utils.warn("Line chart updateSize() abort: vizabi container is too little or has display:none");
 
     this.collisionResolver.height(this.height);
 
@@ -627,9 +627,9 @@ var LCComponent = Component.extend({
       .attr("transform", "translate(" + (10-this.activeProfile.margin.left) + ", -" + this.activeProfile.yAxisTitleBottomMargin + ")");
 
     var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
-    if(yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
+    if (yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
 
-    if(this.yInfoEl.select('svg').node()) {
+    if (this.yInfoEl.select('svg').node()) {
       var titleBBox = this.yTitleEl.node().getBBox();
       var t = utils.transform(this.yTitleEl.node());
 
@@ -662,7 +662,7 @@ var LCComponent = Component.extend({
         (this.width + this.activeProfile.text_padding + this.activeProfile.yAxisTitleBottomMargin) + "," +
         (this.height + xTitleText.node().getBBox().height  * 0.72) + ")");
 
-    if(xTitleText.node().getBBox().width > this.width - 100) xTitleText.text(this.strings.title.X);
+    if (xTitleText.node().getBBox().width > this.width - 100) xTitleText.text(this.strings.title.X);
 
     // adjust the vertical dashed line
     this.verticalNow.attr("y1", this.yScale.range()[0]).attr("y2", this.yScale.range()[1])
@@ -670,7 +670,7 @@ var LCComponent = Component.extend({
     this.projectionX.attr("y1", _this.yScale.range()[0]);
     this.projectionY.attr("x2", _this.xScale.range()[0]);
 
-    if(utils.isTouchDevice()) {
+    if (utils.isTouchDevice()) {
       _this.tooltip.classed("vzb-hidden", true);
       _this.verticalNow.style("opacity", 1);
       _this.projectionX.style("opacity", 0);
@@ -706,10 +706,10 @@ var LCComponent = Component.extend({
     this.model.marker.getFrame(this.time, function(values, time) {
       if (!_this._frameIsValid(values)) return;
       _this.values = values;
-      if(!_this.timeUpdatedOnce) {
+      if (!_this.timeUpdatedOnce) {
         _this.updateTime();
       }
-      if(!_this.sizeUpdatedOnce) {
+      if (!_this.sizeUpdatedOnce) {
         _this.updateSize();
       }
       _this.updateDoubtOpacity();
@@ -757,7 +757,7 @@ var LCComponent = Component.extend({
           //if(x[0]!=null && x[1]!=null) xy.splice(1, 0, [(+x[0]*0.99+x[1]*0.01), y[0]]);
           var path2 = entity.select(".vzb-lc-line");
 
-          if(_this.model.time.playing && _this.totalLength_1[d[KEY]] === null) {
+          if (_this.model.time.playing && _this.totalLength_1[d[KEY]] === null) {
             _this.totalLength_1[d[KEY]] = path2.node().getTotalLength();
           }
 
@@ -775,7 +775,7 @@ var LCComponent = Component.extend({
           var totalLength = path2.node().getTotalLength();
 
           // this section ensures the smooth transition while playing and not needed otherwise
-          if(_this.model.time.playing) {
+          if (_this.model.time.playing) {
 
             path1
               .interrupt()
@@ -847,20 +847,20 @@ var LCComponent = Component.extend({
         .attr("transform", "translate(" + _this.xScale(d3.min([_this.model.marker.axis_x.zoomedMax, _this.time])) + ",0)");
 
 
-      if(!_this.hoveringNow && _this.time - _this.model.time.start !== 0) {
+      if (!_this.hoveringNow && _this.time - _this.model.time.start !== 0) {
         if (!_this.ui.chart.hideXAxisValue) _this.xAxisEl.call(
            _this.xAxis
             .highlightTransDuration(_this.duration)
             .highlightValue(_this.time)
         );
         _this.verticalNow.style("opacity", 1);
-      }else{
+      } else {
         _this.verticalNow.style("opacity", 0);
       }
 
       // Call flush() after any zero-duration transitions to synchronously flush the timer queue
       // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
-      if(_this.duration == 0) {
+      if (_this.duration == 0) {
         d3.timerFlush();
       }
 
@@ -884,9 +884,9 @@ var LCComponent = Component.extend({
     });
 
     var resolvedTime = _this.xScale.invert(mouse[0] - _this.margin.left);
-    if(_this.time - resolvedTime < 0) {
+    if (_this.time - resolvedTime < 0) {
       resolvedTime = _this.time;
-    } else if(resolvedTime < this.model.time['start']) {
+    } else if (resolvedTime < this.model.time['start']) {
       resolvedTime = this.model.time['start'];
     }
     var resolvedValue;
@@ -894,13 +894,13 @@ var LCComponent = Component.extend({
 
     var mousePos = mouse[1] - _this.margin.top;
 
-    if(!utils.isDate(resolvedTime)) resolvedTime = this.model.time.parse(resolvedTime);
+    if (!utils.isDate(resolvedTime)) resolvedTime = this.model.time.parse(resolvedTime);
 
     this.model.marker.getFrame(resolvedTime, function(data) {
       if (!_this._frameIsValid(data)) return;
       var nearestKey = _this.getNearestKey(mousePos, data.axis_y, _this.yScale.bind(_this));
       resolvedValue = data.axis_y[nearestKey];
-      if(!me) me = {};
+      if (!me) me = {};
       me[KEY] = nearestKey;
       if (!_this.model.marker.isHighlighted(me)) {
         _this.model.marker.clearHighlighted();
@@ -908,12 +908,12 @@ var LCComponent = Component.extend({
       }
       _this.hoveringNow = me;
 
-      if(utils.isNaN(resolvedValue)) return;
+      if (utils.isNaN(resolvedValue)) return;
 
       var scaledTime = _this.xScale(resolvedTime);
       var scaledValue = _this.yScale(resolvedValue);
 
-      if(_this.ui.chart.whenHovering.showTooltip) {
+      if (_this.ui.chart.whenHovering.showTooltip) {
         //position tooltip
         _this.tooltip
           //.style("right", (_this.width - scaledTime + _this.margin.right ) + "px")
@@ -924,18 +924,18 @@ var LCComponent = Component.extend({
       }
 
       // bring the projection lines to the hovering point
-      if(_this.ui.chart.whenHovering.hideVerticalNow) {
+      if (_this.ui.chart.whenHovering.hideVerticalNow) {
         _this.verticalNow.style("opacity", 0);
       }
 
-      if(_this.ui.chart.whenHovering.showProjectionLineX) {
+      if (_this.ui.chart.whenHovering.showProjectionLineX) {
         _this.projectionX
           .style("opacity", 1)
           .attr("y2", scaledValue)
           .attr("x1", scaledTime)
           .attr("x2", scaledTime);
       }
-      if(_this.ui.chart.whenHovering.showProjectionLineY) {
+      if (_this.ui.chart.whenHovering.showProjectionLineY) {
         _this.projectionY
           .style("opacity", 1)
           .attr("y1", scaledValue)
@@ -943,11 +943,11 @@ var LCComponent = Component.extend({
           .attr("x1", scaledTime);
       }
 
-      if(_this.ui.chart.whenHovering.higlightValueX) _this.xAxisEl.call(
+      if (_this.ui.chart.whenHovering.higlightValueX) _this.xAxisEl.call(
         _this.xAxis.highlightValue(resolvedTime).highlightTransDuration(0)
       );
 
-      if(_this.ui.chart.whenHovering.higlightValueY) _this.yAxisEl.call(
+      if (_this.ui.chart.whenHovering.higlightValueY) _this.yAxisEl.call(
         _this.yAxis.highlightValue(resolvedValue).highlightTransDuration(0)
       );
 
@@ -958,7 +958,7 @@ var LCComponent = Component.extend({
 
   entityMouseout: function(me, index, context) {
     var _this = context;
-    if(d3.event.relatedTarget && d3.select(d3.event.relatedTarget).classed('vzb-tooltip')) return;
+    if (d3.event.relatedTarget && d3.select(d3.event.relatedTarget).classed('vzb-tooltip')) return;
 
     // hide and show things like it was before hovering
     _this.unhoverTimeout = setTimeout(function() {
@@ -994,10 +994,10 @@ var LCComponent = Component.extend({
       d3.select(this)
         .style("opacity", function(d) {
           if (_this.model.marker.isHighlighted(d)) return OPACITY_HIGHLT;
-          if(someSelected) {
+          if (someSelected) {
             return _this.model.marker.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
           }
-          if(someHighlighted) return OPACITY_HIGHLT_DIM;
+          if (someHighlighted) return OPACITY_HIGHLT_DIM;
           return OPACITY_REGULAR;
         });
     });
@@ -1045,9 +1045,9 @@ var LCComponent = Component.extend({
   getNearestKey: function(val, obj, fn) {
     var keys = Object.keys(obj);
     var resKey = keys[0];
-    for(var i = 1; i < keys.length; i++) {
+    for (var i = 1; i < keys.length; i++) {
       var key = keys[i];
-      if(Math.abs((fn ? fn(obj[key]) : obj[key]) - val) < Math.abs((fn ? fn(obj[resKey]) : obj[resKey]) - val)) {
+      if (Math.abs((fn ? fn(obj[key]) : obj[key]) - val) < Math.abs((fn ? fn(obj[resKey]) : obj[resKey]) - val)) {
         resKey = key;
       }
     }

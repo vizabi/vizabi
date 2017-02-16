@@ -29,7 +29,7 @@ var LBubbleMapComponent = Component.extend({
     //http://stackoverflow.com/questions/11381673/detecting-a-mobile-browser
     var mobileAndTabletcheck = function() {
       var check = false;
-      (function(a) {if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4)))check = true;})(navigator.userAgent||navigator.vendor||window.opera);
+      (function(a) {if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4)))check = true;})(navigator.userAgent||navigator.vendor||window.opera);
       return check;
     };
     this.isMobile = mobileAndTabletcheck();
@@ -64,15 +64,15 @@ var LBubbleMapComponent = Component.extend({
       },
       "change:marker": function(evt, path) {
         // bubble size change is processed separately
-        if(!_this._readyOnce) return;
+        if (!_this._readyOnce) return;
 
-        if(path.indexOf("scaleType") > -1) {
+        if (path.indexOf("scaleType") > -1) {
           _this.ready();
         }
       },
       'change:marker.size.extent': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
-        if(!_this._readyOnce || !_this.entityBubbles) return;
+        if (!_this._readyOnce || !_this.entityBubbles) return;
         _this.updateMarkerSizeLimits();
         _this.redrawDataPoints(null, false);
       },
@@ -147,7 +147,7 @@ var LBubbleMapComponent = Component.extend({
     var _this = this;
     this.on("resize", function () {
       //return if updatesize exists with error
-      if(_this.updateSize()) return;
+      if (_this.updateSize()) return;
       _this.map.rescaleMap();
     });
 
@@ -310,7 +310,7 @@ var LBubbleMapComponent = Component.extend({
       mobile = _this.model.marker.select[0];
     }
 
-    if(_this.hovered || mobile) {
+    if (_this.hovered || mobile) {
       var conceptPropsS = _this.model.marker.size.getConceptprops();
       var conceptPropsC = _this.model.marker.color.getConceptprops();
 
@@ -325,7 +325,7 @@ var LBubbleMapComponent = Component.extend({
       var valueC = _this.values.color[hovered[_this.KEY]];
 
       //resolve value for color from the color legend model
-      if(_this.model.marker.color.isDiscrete() && valueC) {
+      if (_this.model.marker.color.isDiscrete() && valueC) {
         valueC = this.model.marker.color.getColorlegendMarker().label.getItems()[valueC] || "";
       }
 
@@ -500,21 +500,21 @@ var LBubbleMapComponent = Component.extend({
   unselectBubblesWithNoData: function(frame) {
     var _this = this;
     var KEY = this.KEY;
-    if(!frame) frame = this.values;
+    if (!frame) frame = this.values;
 
-    if(!frame || !frame.size) return;
+    if (!frame || !frame.size) return;
 
     this.model.marker.select.forEach(function(d) {
-      if(!frame.size[d[KEY]] && frame.size[d[KEY]] !== 0)
+      if (!frame.size[d[KEY]] && frame.size[d[KEY]] !== 0)
         _this.model.marker.selectMarker(d);
     });
   },
 
   redrawDataPoints: function(duration, reposition) {
     var _this = this;
-    if(!duration) duration = this.duration;
-    if(!reposition) reposition = true;
-    if(!this.entityBubbles) return utils.warn("redrawDataPoints(): no entityBubbles defined. likely a premature call, fix it!");
+    if (!duration) duration = this.duration;
+    if (!reposition) reposition = true;
+    if (!this.entityBubbles) return utils.warn("redrawDataPoints(): no entityBubbles defined. likely a premature call, fix it!");
     this.entityBubbles.each(function(d, index) {
       var view = d3.select(this);
       var geo = d3.select("#" + d[_this.KEY]);
@@ -529,8 +529,8 @@ var LBubbleMapComponent = Component.extend({
       d.hidden = (!valueS && valueS !== 0)|| valueX==null || valueY==null;
 
 
-      if(d.hidden !== d.hidden_1) {
-        if(duration) {
+      if (d.hidden !== d.hidden_1) {
+        if (duration) {
           view.transition().duration(duration).ease(d3.easeLinear)
               .style("opacity", 0)
               .on("end", () => view.classed("vzb-hidden", d.hidden).style("opacity", _this.model.marker.opacityRegular));
@@ -538,7 +538,7 @@ var LBubbleMapComponent = Component.extend({
           view.classed("vzb-hidden", d.hidden);
         }
       }
-      if(!d.hidden) {
+      if (!d.hidden) {
 
         d.r = utils.areaToRadius(_this.sScale(valueS||0));
         d.label = valueL;
@@ -549,17 +549,17 @@ var LBubbleMapComponent = Component.extend({
         if (_this.model.ui.map.colorGeo)
           geo.style("fill", valueC!=null?_this.cScale(valueC):"#999");
 
-        if(reposition) {
+        if (reposition) {
               d.cLoc = _this.map.invert(valueX, valueY);
 
           view.attr("cx", d.cLoc[0])
               .attr("cy", d.cLoc[1]);
         }
 
-        if(duration) {
+        if (duration) {
           view.transition().duration(duration).ease(d3.easeLinear)
               .attr("r", d.r);
-        }else{
+        } else {
           view.interrupt()
               .attr("r", d.r)
               .transition();
@@ -608,7 +608,7 @@ var LBubbleMapComponent = Component.extend({
         Math.max(parseInt(yTitleText.style("font-size")), parseInt(cTitleText.style("font-size")))
         * this.width / Math.max(yTitleBB.width, cTitleBB.width);
 
-    if(Math.max(yTitleBB.width, cTitleBB.width) > this.width) {
+    if (Math.max(yTitleBB.width, cTitleBB.width) > this.width) {
       yTitleText.style("font-size", font + "px");
       cTitleText.style("font-size", font + "px");
     } else {
@@ -662,7 +662,7 @@ var LBubbleMapComponent = Component.extend({
     this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
     this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
 
-    if(this.height<=0 || this.width<=0) return utils.warn("Bubble map updateSize() abort: vizabi container is too little or has display:none");
+    if (this.height<=0 || this.width<=0) return utils.warn("Bubble map updateSize() abort: vizabi container is too little or has display:none");
 
     this.repositionElements();
   },
@@ -710,7 +710,7 @@ var LBubbleMapComponent = Component.extend({
         .attr("transform", "translate(" + (this.width) + "," + (this.height - warnBB.height * 0.5) + ")")
         .select("text");
 
-    if(this.yInfoEl.select('svg').node()) {
+    if (this.yInfoEl.select('svg').node()) {
       var titleBBox = this.yTitleEl.node().getBBox();
       var t = utils.transform(this.yTitleEl.node());
       var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4);
@@ -725,7 +725,7 @@ var LBubbleMapComponent = Component.extend({
 
     this.cInfoEl.classed("vzb-hidden", this.cTitleEl.classed("vzb-hidden"));
 
-    if(!this.cInfoEl.classed("vzb-hidden") && this.cInfoEl.select('svg').node()) {
+    if (!this.cInfoEl.classed("vzb-hidden") && this.cInfoEl.select('svg').node()) {
       var titleBBox = this.cTitleEl.node().getBBox();
       var t = utils.transform(this.cTitleEl.node());
       var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4);
@@ -750,7 +750,7 @@ var LBubbleMapComponent = Component.extend({
     this.minRadius = Math.max(maxRadius * extent[0], minRadius);
     this.maxRadius = Math.max(maxRadius * extent[1], minRadius);
 
-    if(this.model.marker.size.scaleType !== "ordinal") {
+    if (this.model.marker.size.scaleType !== "ordinal") {
       this.sScale.range([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)]);
     } else {
       this.sScale.rangePoints([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)], 0).range();
@@ -799,8 +799,8 @@ var LBubbleMapComponent = Component.extend({
     var _this = this;
     this.someHighlighted = (this.model.marker.highlight.length > 0);
 
-    if(utils.isTouchDevice()) {
-      if(this.someHighlighted) {
+    if (utils.isTouchDevice()) {
+      if (this.someHighlighted) {
         _this.hovered = this.model.marker.highlight[0];
       } else {
         _this.hovered = null;
@@ -827,11 +827,11 @@ var LBubbleMapComponent = Component.extend({
   _updateLabel: function(d, index, valueX, valueY, valueS, valueC, valueL, duration) {
     var _this = this;
     var KEY = this.KEY;
-    if(d[KEY] == _this.druging) return;
-    if(duration == null) duration = _this.duration;
+    if (d[KEY] == _this.druging) return;
+    if (duration == null) duration = _this.duration;
 
     // only for selected entities
-    if(_this.model.marker.isSelected(d)) {
+    if (_this.model.marker.isSelected(d)) {
 
       var showhide = d.hidden !== d.hidden_1;
       var valueLST = null;
@@ -851,9 +851,9 @@ var LBubbleMapComponent = Component.extend({
     this.someSelected = (this.model.marker.select.length > 0);
 
 //      this._selectlist.rebuild();
-    if(utils.isTouchDevice()) {
+    if (utils.isTouchDevice()) {
       _this._labels.showCloseCross(null, false);
-      if(_this.someHighlighted) {
+      if (_this.someHighlighted) {
         _this.model.marker.clearHighlighted();
       } else {
         _this.updateTitleNumbers();
@@ -884,7 +884,7 @@ var LBubbleMapComponent = Component.extend({
           xOffset = 0,
           yOffset = 0;
 
-      if(offset) {
+      if (offset) {
         xOffset = offset * .71; // .71 - sin and cos for 315
         yOffset = offset * .71;
       }
@@ -895,19 +895,19 @@ var LBubbleMapComponent = Component.extend({
           .text(tooltipText);
 
       var contentBBox = this.tooltip.select('text').node().getBBox();
-      if(x - xOffset - contentBBox.width < 0) {
+      if (x - xOffset - contentBBox.width < 0) {
         xSign = 1;
         x += contentBBox.width + 5; // corrective to the block Radius and text padding
       } else {
         x -= 5; // corrective to the block Radius and text padding
       }
-      if(y - yOffset - contentBBox.height < 0) {
+      if (y - yOffset - contentBBox.height < 0) {
         ySign = 1;
         y += contentBBox.height;
       } else {
         y -= 11; // corrective to the block Radius and text padding
       }
-      if(offset) {
+      if (offset) {
         xPos = x + xOffset * xSign;
         yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
       } else {

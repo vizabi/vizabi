@@ -210,10 +210,10 @@ var DataModel = Model.extend({
    */
   getData: function(dataId, what, whatId, args) {
     // if not specified data from what query, return nothing
-    if(!dataId) return utils.warn("Data.js 'get' method doesn't like the dataId you gave it: " + dataId);
+    if (!dataId) return utils.warn("Data.js 'get' method doesn't like the dataId you gave it: " + dataId);
 
     // if they want data, return the data
-    if(!what || what == 'data') {
+    if (!what || what == 'data') {
       return this._collection[dataId]['data'];
     }
 
@@ -226,12 +226,12 @@ var DataModel = Model.extend({
 
     // if they want a certain processing of the data, see if it's already in cache
     var id = (typeof whatId == "string")? whatId : JSON.stringify(whatId);
-    if(this._collection[dataId][what][id]) {
+    if (this._collection[dataId][what][id]) {
       return this._collection[dataId][what][id];
     }
 
     // if it's not cached, process the data and then return it
-    switch(what) {
+    switch (what) {
       case 'unique':
         this._collection[dataId][what][id] = this._getUnique(dataId, whatId);
         break;
@@ -288,7 +288,7 @@ var DataModel = Model.extend({
     this.getData(dataId).forEach(d => {
       var concept = {};
 
-      if(d.concept_type) concept["use"] = (d.concept_type=="measure" || d.concept_type=="time")?"indicator":"property";
+      if (d.concept_type) concept["use"] = (d.concept_type=="measure" || d.concept_type=="time")?"indicator":"property";
 
       concept["concept_type"] = d.concept_type;
       concept["sourceLink"] = d.indicator_url;
@@ -302,7 +302,7 @@ var DataModel = Model.extend({
       } catch (e) {
         concept["scales"] = null;
       }
-      if(!concept.scales) {
+      if (!concept.scales) {
         switch (d.concept_type) {
           case "measure": concept.scales=["linear", "log"]; break;
           case "string": concept.scales=["nominal"]; break;
@@ -311,14 +311,14 @@ var DataModel = Model.extend({
           case "time": concept.scales=["time"]; break;
         }
       }
-      if(concept["scales"]==null) concept["scales"] = ["linear", "log"];
-      if(d.interpolation) {
+      if (concept["scales"]==null) concept["scales"] = ["linear", "log"];
+      if (d.interpolation) {
         concept["interpolation"] = d.interpolation;
-      }else if(d.concept_type == "measure") {
+      } else if (d.concept_type == "measure") {
         concept["interpolation"] = concept.scales && concept.scales[0]=="log"? "exp" : "linear";
-      }else if(d.concept_type == "time") {
+      } else if (d.concept_type == "time") {
         concept["interpolation"] = "linear";
-      }else{
+      } else {
         concept["interpolation"] = "stepMiddle";
       }
       concept["concept"] = d.concept;
@@ -335,13 +335,13 @@ var DataModel = Model.extend({
   },
 
   getConceptprops: function(which) {
-     if(which) {
-       if(this.conceptDictionary[which]) {
+     if (which) {
+       if (this.conceptDictionary[which]) {
          return this.conceptDictionary[which];
-       }else{
+       } else {
          return utils.warn("The concept " + which + " is not found in the dictionary");
        }
-     }else{
+     } else {
        return this.conceptDictionary;
      }
   },
@@ -353,7 +353,7 @@ var DataModel = Model.extend({
   },
 
   getDatasetName: function() {
-    if(this.readerObject.getDatasetInfo) {
+    if (this.readerObject.getDatasetInfo) {
       var meta = this.readerObject.getDatasetInfo();
       return meta.name + (meta.version ? " " + meta.version : "");
     }
@@ -424,7 +424,7 @@ var DataModel = Model.extend({
   _muteAllQueues: function(except) {
     utils.forEach(this._collectionPromises, function(queries, dataId) {
         utils.forEach(queries, function(promise, whatId) {
-          if(promise.queue.isActive == true && promise.queue.whatId != except) {
+          if (promise.queue.isActive == true && promise.queue.whatId != except) {
             promise.queue.mute();
           }
         });
@@ -434,7 +434,7 @@ var DataModel = Model.extend({
   _checkForcedQueuesExists: function() {
     utils.forEach(this._collectionPromises, function(queries, dataId) {
       utils.forEach(queries, function(promise, whatId) {
-        if(promise.queue.forcedQueue.length > 0) {
+        if (promise.queue.forcedQueue.length > 0) {
           promise.queue.unMute();
         }
       });
@@ -444,7 +444,7 @@ var DataModel = Model.extend({
   _unmuteQueue: function() {
     utils.forEach(this._collectionPromises, function(queries, dataId) {
       utils.forEach(queries, function(promise, whatId) {
-        if(promise.queue.isActive == false) {
+        if (promise.queue.isActive == false) {
           promise.queue.unMute();
         }
       });
@@ -551,7 +551,7 @@ var DataModel = Model.extend({
         var objIndexOf = function(obj, need) {
           var search = need.toString();
           var index = -1;
-          for(var i = 0, len = obj.length; i < len; i++) {
+          for (var i = 0, len = obj.length; i < len; i++) {
             if (obj[i].toString() == search) {
               index = i;
               break;
@@ -614,18 +614,18 @@ var DataModel = Model.extend({
 
       var indicatorsDB = _this.getConceptprops();
 
-      if(!indicatorsDB) utils.warn("_getFrames in data.js is missing indicatorsDB, it's needed for gap filling");
-      if(!framesArray) utils.warn("_getFrames in data.js is missing framesArray, it's needed so much");
+      if (!indicatorsDB) utils.warn("_getFrames in data.js is missing indicatorsDB, it's needed for gap filling");
+      if (!framesArray) utils.warn("_getFrames in data.js is missing framesArray, it's needed so much");
 
       var TIME = _this._collection[dataId].query.animatable;
       var KEY = _this._collection[dataId].query.select.key.slice(0);
-      if(TIME && KEY.indexOf(TIME) != -1) KEY.splice(KEY.indexOf(TIME), 1);
+      if (TIME && KEY.indexOf(TIME) != -1) KEY.splice(KEY.indexOf(TIME), 1);
 
       var filtered = {};
       var k, items, itemsIndex, oneFrame, method, use, next;
 
       var entitiesByKey = {};
-      if(KEY.length > 1) {
+      if (KEY.length > 1) {
         for (k = 1; k < KEY.length; k++) {
           var nested = _this.getData(dataId, 'nested', [KEY[k]].concat([TIME]));
           entitiesByKey[KEY[k]] = Object.keys(nested);
@@ -648,9 +648,9 @@ var DataModel = Model.extend({
       var lastIndex = KEY.length - 1;
       var createFiltered = function(parent, index) {
         var keys = entitiesByKey[KEY[index]];
-        for(var i = 0, j = keys.length; i < j; i++) {
+        for (var i = 0, j = keys.length; i < j; i++) {
           parent[keys[i]] = {};
-          if(index == lastIndex) {
+          if (index == lastIndex) {
             for (c = 0; c < cLength; c++) parent[keys[i]][columns[c]] = null;
           } else {
             var nextIndex = index + 1;
@@ -676,7 +676,7 @@ var DataModel = Model.extend({
                 frame[columns[c]][d[KEY[0]]] = d[columns[c]];
                 //check data for properties with missed data. If founded then write key to haveNoDataPointsPerKey with
                 //count of broken datapoints
-                if(d[columns[c]] == null) {
+                if (d[columns[c]] == null) {
                   _this._collection[dataId].haveNoDataPointsPerKey[columns[c]][d[KEY[0]]] = dataset.length;
                 }
               }
@@ -693,16 +693,16 @@ var DataModel = Model.extend({
 
             var iterateKeys = function(firstKeyObject, lastKeyObject, firstKey, nested, filtered, index) {
               var keys = entitiesByKey[KEY[index]];
-              for(var i = 0, j = keys.length; i < j; i++) {
-                if(index == 0) {
+              for (var i = 0, j = keys.length; i < j; i++) {
+                if (index == 0) {
                   firstKey = keys[i];//root level
                 }
-                if(index == lastIndex) {
+                if (index == lastIndex) {
                   for (c = 0; c < cLength; c++) {
                     mapValue(columns[c], firstKey, keys[i], firstKeyObject, lastKeyObject, nested[keys[i]], filtered[keys[i]]);
                   }
                 } else {
-                  if(index == 0) {
+                  if (index == 0) {
                     lastKeyObject = firstKeyObject = {};
                   }
                   var nextIndex = index + 1;
@@ -722,7 +722,7 @@ var DataModel = Model.extend({
                 use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
 
 
-                if(firstKeyObject) {
+                if (firstKeyObject) {
                   frame[column][firstKey] = firstKeyObject[firstKey];
                 } else {
                   lastKeyObject = frame[column];
@@ -768,7 +768,7 @@ var DataModel = Model.extend({
                       filtered[column] = items;
                     }
 
-                    if(items.length==0) _this._collection[dataId].haveNoDataPointsPerKey[column][key] = items.length;
+                    if (items.length==0) _this._collection[dataId].haveNoDataPointsPerKey[column][key] = items.length;
                   }
 
                   // Now we are left with a fewer frames in the filtered array. Let's check its length.
@@ -838,7 +838,7 @@ var DataModel = Model.extend({
     // };
 
     var nest = d3.nest();
-    for(var i = 0; i < order.length; i++) {
+    for (var i = 0; i < order.length; i++) {
       nest = nest.key(
         (function(k) {
           return function(d) {
@@ -856,7 +856,7 @@ var DataModel = Model.extend({
     var uniq;
     var items = this._collection[dataId].data;
     //if it's an array, it will return a list of unique combinations.
-    if(utils.isArray(attr)) {
+    if (utils.isArray(attr)) {
       var values = items.map(function(d) {
         return utils.clone(d, attr); //pick attrs
       });
@@ -887,7 +887,7 @@ var DataModel = Model.extend({
       var f = (utils.isDate(d[attr])) ? d[attr] : parseFloat(d[attr]);
 
       // if it is a number
-      if(!isNaN(f)) {
+      if (!isNaN(f)) {
         filtered.push(f);
       }
 
@@ -899,12 +899,12 @@ var DataModel = Model.extend({
     var min;
     var max;
     var limits = {};
-    for(var i = 0; i < filtered.length; i += 1) {
+    for (var i = 0; i < filtered.length; i += 1) {
       var c = filtered[i];
-      if(typeof min === 'undefined' || c < min) {
+      if (typeof min === 'undefined' || c < min) {
         min = c;
       }
-      if(typeof max === 'undefined' || c > max) {
+      if (typeof max === 'undefined' || c > max) {
         max = c;
       }
     }
@@ -922,7 +922,7 @@ var DataModel = Model.extend({
       query
     ]);
     //simply check if we have this in internal data
-    if(Object.keys(this._collection).indexOf(q) !== -1) {
+    if (Object.keys(this._collection).indexOf(q) !== -1) {
       return q;
     }
     return false;

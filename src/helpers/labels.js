@@ -22,8 +22,8 @@ var label = function(context) {
       })
       .on("drag", function(d, i) {
         var KEY = _this.KEY;
-        if(!_this.model.ui.chart.labels.dragging) return;
-        if(!this.druging) _this.druging = d[KEY];
+        if (!_this.model.ui.chart.labels.dragging) return;
+        if (!this.druging) _this.druging = d[KEY];
         var cache = _this.cached[d[KEY]];
         cache.labelFixed = true;
 
@@ -47,7 +47,7 @@ var label = function(context) {
       })
       .on("end", function(d, i) {
         var KEY = _this.KEY;
-        if(_this.druging) {
+        if (_this.druging) {
           var cache = _this.cached[d[KEY]];
           _this.druging = null;
           cache.labelOffset[0] = cache.labelX_;
@@ -101,14 +101,14 @@ var label = function(context) {
 
           cross.on("click", function() {
             //default prevented is needed to distinguish click from drag
-            if(d3.event.defaultPrevented) return;
+            if (d3.event.defaultPrevented) return;
             _this.model.marker.clearHighlighted();
             _this.model.marker.selectMarker(d);
           });
 
         })
         .on("mouseover", function(d) {
-          if(utils.isTouchDevice()) return;
+          if (utils.isTouchDevice()) return;
           _this.model.marker.highlightMarker(d);
           var KEY = _this.KEY || _this.model.entities.getDimension();
           // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
@@ -117,24 +117,24 @@ var label = function(context) {
             .classed("vzb-transparent", false);
         })
         .on("mouseout", function(d) {
-          if(utils.isTouchDevice()) return;
+          if (utils.isTouchDevice()) return;
           _this.model.marker.clearHighlighted();
           d3.select(this).selectAll("." + _cssPrefix + "-label-x")
             .classed("vzb-transparent", true);
         })
         .on("click", function(d) {
-          if(!utils.isTouchDevice()) return;
+          if (!utils.isTouchDevice()) return;
           var cross = d3.select(this).selectAll("." + _cssPrefix + "-label-x");
           var KEY = _this.KEY || _this.model.entities.getDimension();
           var hidden = cross.classed("vzb-transparent");
-          if(hidden) {
+          if (hidden) {
             // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
             _this.entityLabels.sort(function (a, b) { return a[KEY] != d[KEY]? -1 : 1; });
             _this.showCloseCross(null, false);
           }
           cross.classed("vzb-transparent", !hidden);
-          if(!_this.options.SUPPRESS_HIGHLIGHT_DURING_PLAY || !_this.model.time.playing) {
-            if(hidden) {
+          if (!_this.options.SUPPRESS_HIGHLIGHT_DURING_PLAY || !_this.model.time.playing) {
+            if (hidden) {
               _this.model.marker.setHighlight(d);
             } else {
               _this.model.marker.clearHighlighted();
@@ -159,7 +159,7 @@ var label = function(context) {
 
       //protect label and line from the broken data
       var brokenInputs = !_X && _X !==0 || !_Y && _Y !==0 || !_X0 && _X0 !==0 || !_Y0 && _Y0 !==0;
-      if(brokenInputs) {
+      if (brokenInputs) {
           labelGroup.classed("vzb-invisible", brokenInputs);
           lineGroup.classed("vzb-invisible", brokenInputs);
           return;
@@ -172,28 +172,28 @@ var label = function(context) {
       var height = rectBBox.height;
 
       //apply limits so that the label doesn't stick out of the visible field
-      if(_X - width <= 0) { //check left
+      if (_X - width <= 0) { //check left
         _X = width;
         cache.labelX_ = (_X - _this.xScale(cache.labelX0)) / viewWidth;
-      } else if(_X + 5 > viewWidth) { //check right
+      } else if (_X + 5 > viewWidth) { //check right
         _X = viewWidth - 5;
         cache.labelX_ = (_X - _this.xScale(cache.labelX0)) / viewWidth;
       }
-      if(_Y - height * .75 <= 0) { // check top
+      if (_Y - height * .75 <= 0) { // check top
         _Y = height * .75;
         cache.labelY_ = (_Y - _this.yScale(cache.labelY0)) / viewHeight;
-      } else if(_Y + height * .35 > viewHeight) { //check bottom
+      } else if (_Y + height * .35 > viewHeight) { //check bottom
         _Y = viewHeight - height * .35;
         cache.labelY_ = (_Y - _this.yScale(cache.labelY0)) / viewHeight;
       }
 
-      if(duration == null) duration = _this.context.duration;
-      if(cache._new) {
+      if (duration == null) duration = _this.context.duration;
+      if (cache._new) {
         duration = 0;
         delete cache._new;
       }
-      if(duration) {
-        if(showhide && !d.hidden) {
+      if (duration) {
+        if (showhide && !d.hidden) {
             //if need to show label
 
             labelGroup.classed("vzb-invisible", d.hidden);
@@ -221,7 +221,7 @@ var label = function(context) {
                         .style("opacity", 1);
                 });
 
-        } else if(showhide && d.hidden) {
+        } else if (showhide && d.hidden) {
             //if need to hide label
 
             labelGroup
@@ -263,8 +263,8 @@ var label = function(context) {
             .interrupt()
             .attr("transform", "translate(" + _X + "," + _Y + ")")
             .transition();
-        if(showhide) labelGroup.classed("vzb-invisible", d.hidden);
-        if(showhide) lineGroup.classed("vzb-invisible", d.hidden);
+        if (showhide) labelGroup.classed("vzb-invisible", d.hidden);
+        if (showhide) lineGroup.classed("vzb-invisible", d.hidden);
       }
 
       var diffX1 = _X0 - _X;
@@ -281,9 +281,9 @@ var label = function(context) {
       var lineHidden = circleRectIntersects({ x: diffX1, y: diffY1, r: cache.scaledS0 },
         { x: diffX2, y: diffY2, width: (bBox.height * 2 * FAR_COEFF + bBox.width), height: (bBox.height * (2 * FAR_COEFF + 1)) });
       lineGroup.select('line').classed("vzb-invisible", lineHidden);
-      if(lineHidden) return;
+      if (lineHidden) return;
 
-      if(labels.removeLabelBox) {
+      if (labels.removeLabelBox) {
         var angle = Math.atan2(diffX1 - diffX2, diffY1 - diffY2) * 180 / Math.PI;
         var deltaDiffX2 = (angle >= 0 && angle <= 180) ? (bBox.width * .5) : (-bBox.width * .5);
         var deltaDiffY2 = (Math.abs(angle) <= 90) ? (bBox.height * .55) : (-bBox.height * .45);
@@ -375,24 +375,24 @@ var Labels = Class.extend({
     this.model = this.context.model;
 
     this.model.on("change:marker.select", function() {
-        if(!_this.context._readyOnce) return;
+        if (!_this.context._readyOnce) return;
         //console.log("EVENT change:entities:select");
         _this.selectDataPoints();
       });
 
-    if(this.model.marker.size_label)
+    if (this.model.marker.size_label)
       this.model.on('change:marker.size_label.extent', function(evt, path) {
         //console.log("EVENT change:marker:size:max");
-        if(!_this.context._readyOnce) return;
+        if (!_this.context._readyOnce) return;
         _this.updateLabelSizeLimits();
-        if(_this.model.time.splash) return;
+        if (_this.model.time.splash) return;
         _this.updateLabelsOnlyTextSize();
       });
 
-    if(this.model.ui.chart.labels.hasOwnProperty('removeLabelBox'))
+    if (this.model.ui.chart.labels.hasOwnProperty('removeLabelBox'))
       this.model.on('change:ui.chart.labels.removeLabelBox', function(evt, path) {
         //console.log("EVENT change:marker:size:max");
-        if(!_this.context._readyOnce) return;
+        if (!_this.context._readyOnce) return;
         _this.updateLabelsOnlyTextSize();
       });
 
@@ -426,7 +426,7 @@ var Labels = Class.extend({
     this.minLabelTextSize = Math.max(minLabelTextSize + minMaxDelta * extent[0], minLabelTextSize);
     this.maxLabelTextSize = Math.max(minLabelTextSize + minMaxDelta * extent[1], minLabelTextSize);
 
-    if(this.model.marker.size_label.use == 'constant') {
+    if (this.model.marker.size_label.use == 'constant') {
       // if(!this.model.marker.size_label.which) {
       //   this.maxLabelTextSize = this.activeProfile.defaultLabelTextSize;
       //   this.model.marker.size_label.set({'domainMax': (this.maxLabelTextSize - minLabelTextSize) / minMaxDelta, 'which': '_default'});
@@ -435,7 +435,7 @@ var Labels = Class.extend({
       this.minLabelTextSize = this.maxLabelTextSize;
     }
 
-    if(this.model.marker.size_label.scaleType !== "ordinal" || this.model.marker.size_label.use == 'constant') {
+    if (this.model.marker.size_label.scaleType !== "ordinal" || this.model.marker.size_label.use == 'constant') {
       this.labelSizeTextScale.range([_this.minLabelTextSize, _this.maxLabelTextSize]);
     } else {
       this.labelSizeTextScale.rangePoints([_this.minLabelTextSize, _this.maxLabelTextSize], 0).range();
@@ -447,7 +447,7 @@ var Labels = Class.extend({
     var _this = this;
 
     //scales
-    if(this.model.marker.size_label) {
+    if (this.model.marker.size_label) {
       this.labelSizeTextScale = this.model.marker.size_label.getScale();
     }
   },
@@ -458,7 +458,7 @@ var Labels = Class.extend({
   },
 
   setCloseCrossHeight: function(closeCrossHeight) {
-    if(this._closeCrossHeight != closeCrossHeight) {
+    if (this._closeCrossHeight != closeCrossHeight) {
       this._closeCrossHeight = closeCrossHeight;
       this.updateLabelCloseGroupSize(this.entityLabels.selectAll("." + this.options.CSS_PREFIX + "-label-x"), this._closeCrossHeight);
     }
@@ -479,16 +479,16 @@ var Labels = Class.extend({
 
     this.entityLabels = this.labelsContainer.selectAll("." + _cssPrefix + "-entity")
       .data(_this.model.marker.select, function(d) {
-        return(d[KEY]);
+        return (d[KEY]);
       });
     this.entityLines = this.linesContainer.selectAll("g.entity-line." + _cssPrefix + "-entity")
       .data(_this.model.marker.select, function(d) {
-        return(d[KEY]);
+        return (d[KEY]);
       });
 
     this.entityLabels.exit()
       .each(function(d) {
-        if(_this.cached[d[KEY]] != null) {
+        if (_this.cached[d[KEY]] != null) {
             _this.cached[d[KEY]] = void 0;
         }
       })
@@ -528,7 +528,7 @@ var Labels = Class.extend({
   highlight: function(d, highlight) {
     var KEY = this.KEY;
     var labels = this.entityLabels;
-    if(d) {
+    if (d) {
       labels = labels.filter(function(f) {
           return d ? f[KEY] == d[KEY] : true;
         });
@@ -539,28 +539,28 @@ var Labels = Class.extend({
   updateLabel: function(d, index, cache, valueX, valueY, valueS, valueC, valueL, valueLST, duration, showhide) {
     var _this = this;
     var KEY = this.KEY;
-    if(d[KEY] == _this.druging)
+    if (d[KEY] == _this.druging)
       return;
 
     var _cssPrefix = this.options.CSS_PREFIX;
 
     // only for selected entities
-    if(_this.model.marker.isSelected(d) && _this.entityLabels != null) {
-      if(_this.cached[d[KEY]] == null) this.selectDataPoints();
+    if (_this.model.marker.isSelected(d) && _this.entityLabels != null) {
+      if (_this.cached[d[KEY]] == null) this.selectDataPoints();
 
       var cached = _this.cached[d[KEY]];
-      if(cache) utils.extend(cached, cache);
+      if (cache) utils.extend(cached, cache);
 
 
-      if(cached.scaledS0 == null || cached.labelX0 == null || cached.labelY0 == null) { //initialize label once
-        if(valueS || valueS === 0) cached.scaledS0 = utils.areaToRadius(this.context.sScale(valueS));
+      if (cached.scaledS0 == null || cached.labelX0 == null || cached.labelY0 == null) { //initialize label once
+        if (valueS || valueS === 0) cached.scaledS0 = utils.areaToRadius(this.context.sScale(valueS));
         cached.labelX0 = valueX;
         cached.labelY0 = valueY;
         cached.valueLST = valueLST;
         cached.scaledC0 = valueC!=null?this.context.cScale(valueC):this.context.COLOR_WHITEISH;
       }
 
-      if(cached.labelX_ == null || cached.labelY_ == null)
+      if (cached.labelX_ == null || cached.labelY_ == null)
       {
         var select = utils.find(_this.model.marker.select, function(f) {
           return f[KEY] == d[KEY];
@@ -610,8 +610,8 @@ var Labels = Class.extend({
 
     var _text = text || labelGroup.selectAll("." + _cssPrefix + "-label-content");
 
-    if(_this.labelSizeTextScale) {
-      if(valueLST != null) {
+    if (_this.labelSizeTextScale) {
+      if (valueLST != null) {
       var range = _this.labelSizeTextScale.range();
       var fontSize = range[0] + Math.sqrt((_this.labelSizeTextScale(valueLST) - range[0]) * (range[1] - range[0]));
         _text.attr('font-size', fontSize + 'px');
@@ -624,7 +624,7 @@ var Labels = Class.extend({
 
     var rect = labelGroup.selectAll("rect");
 
-    if(!cached.textWidth || cached.textWidth != contentBBox.width) {
+    if (!cached.textWidth || cached.textWidth != contentBBox.width) {
       cached.textWidth = contentBBox.width;
 
       var labelCloseHeight = _this._closeCrossHeight || contentBBox.height;//_this.activeProfile.infoElHeight * 1.2;//contentBBox.height;
@@ -649,7 +649,7 @@ var Labels = Class.extend({
     }
 
     var glowRect = labelGroup.select(".vzb-label-glow");
-    if(glowRect.attr("stroke") !== cached.scaledC0) {
+    if (glowRect.attr("stroke") !== cached.scaledC0) {
       glowRect.attr("stroke", cached.scaledC0);
     }
   },
@@ -686,7 +686,7 @@ var Labels = Class.extend({
     var _this = this;
     var KEY = this.KEY;
     var cached = this.cached[d[KEY]];
-    if(cache) utils.extend(cached, cache);
+    if (cache) utils.extend(cached, cache);
 
     var lineGroup = _this.entityLines.filter(function(f) {
       return f[KEY] == d[KEY];
@@ -704,7 +704,7 @@ var Labels = Class.extend({
     var _this = this;
     var KEY = this.KEY;
     var cached = this.cached[d[KEY]];
-    if(cache) utils.extend(cached, cache);
+    if (cache) utils.extend(cached, cache);
 
     var labelGroup = _this.entityLabels.filter(function(f) {
       return f[KEY] == d[KEY];
@@ -724,7 +724,7 @@ var Labels = Class.extend({
     var resolvedX0 = this.xScale(cached.labelX0);
     var resolvedY0 = this.yScale(cached.labelY0);
 
-    if(!cached.labelOffset) cached.labelOffset = [0,0];
+    if (!cached.labelOffset) cached.labelOffset = [0,0];
     cached.labelX_ = cached.labelOffset[0] || (-cached.scaledS0 * .75 - 5) / viewWidth;
     cached.labelY_ = cached.labelOffset[1] || (-cached.scaledS0 * .75 - 11) / viewHeight;
 
@@ -732,21 +732,21 @@ var Labels = Class.extend({
     //does not bind to visible field
 
     var resolvedX = resolvedX0 + cached.labelX_ * viewWidth;
-    if(cached.labelOffset[0] == 0) {
-      if(resolvedX - cached.rectBBox.width <= 0) { //check left
+    if (cached.labelOffset[0] == 0) {
+      if (resolvedX - cached.rectBBox.width <= 0) { //check left
         cached.labelX_ = (cached.scaledS0 * .75 + cached.rectBBox.width) / viewWidth;
         resolvedX = resolvedX0 + cached.labelX_ * viewWidth;
-      } else if(resolvedX + 15 > viewWidth) { //check right
+      } else if (resolvedX + 15 > viewWidth) { //check right
         cached.labelX_ = (viewWidth - 15 - resolvedX0) / viewWidth;
         resolvedX = resolvedX0 + cached.labelX_ * viewWidth;
       }
     }
     var resolvedY = resolvedY0 + cached.labelY_ * viewHeight;
-    if(cached.labelOffset[1] == 0) {
-      if(resolvedY - cached.rectBBox.height <= 0) { // check top
+    if (cached.labelOffset[1] == 0) {
+      if (resolvedY - cached.rectBBox.height <= 0) { // check top
         cached.labelY_ = (cached.scaledS0 * .75 + cached.rectBBox.height) / viewHeight;
         resolvedY = resolvedY0 + cached.labelY_ * viewHeight;
-      } else if(resolvedY + 10 > viewHeight) { //check bottom
+      } else if (resolvedY + 10 > viewHeight) { //check bottom
         cached.labelY_ = (viewHeight - 10 - resolvedY0) / viewHeight;
         resolvedY = resolvedY0 + cached.labelY_ * viewHeight;
       }

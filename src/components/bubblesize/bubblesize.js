@@ -119,7 +119,7 @@ var BubbleSize = Component.extend({
       .handleSize(thumbRadius * 2 + barWidth * 2)
       .on("start", function () {
         if (_this.nonBrushChange || !d3.event.sourceEvent) return;
-        if(d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
+        if (d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
           var brushDatum = _this.sliderEl.node().__brush;
           brushDatum.selection[1][0] += 0.01;
         }
@@ -127,7 +127,7 @@ var BubbleSize = Component.extend({
       })
       .on("brush", function () {
         if (_this.nonBrushChange || !d3.event.sourceEvent) return;
-        if(d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
+        if (d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
           var brushDatum = _this.sliderEl.node().__brush;
           brushDatum.selection[1][0] += 0.01;
         }
@@ -163,7 +163,7 @@ var BubbleSize = Component.extend({
     //For return to round thumbs
     //.attr("d", thumbArc)
 
-    if(_this.showArcs) {
+    if (_this.showArcs) {
       this.sliderEl.selectAll(".vzb-bs-slider-thumb-arc").data([0,0]).enter()
         .append("path")
         .attr("class", "vzb-bs-slider-thumb-arc");
@@ -209,7 +209,7 @@ var BubbleSize = Component.extend({
 
     this.sizeScaleMinMax = this.model.size.getScale().domain();
 
-    if(this.sizeScaleMinMax) {
+    if (this.sizeScaleMinMax) {
       this._setLabelsText();
     }
   },
@@ -278,11 +278,11 @@ var BubbleSize = Component.extend({
    */
   _setFromExtent: function(setModel, force, persistent) {
     var s = d3.brushSelection(this.sliderEl.node());
-    if(!s) return;
+    if (!s) return;
     s = [this.xScale.invert(s[0]), this.xScale.invert(+s[1].toFixed(1))];
     this._updateArcs(s);
     this._updateLabels(s);
-    if(setModel) this._setModel(s, force, persistent);
+    if (setModel) this._setModel(s, force, persistent);
   },
 
   /**

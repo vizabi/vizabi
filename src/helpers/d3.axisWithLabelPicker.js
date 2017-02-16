@@ -21,12 +21,12 @@ export default function axisSmart(_orient) {
     function axis(g) {
       var checkDmn = axis.scale().domain();
       var checkRng = axis.scale().range();
-      if(!checkDmn[0] && checkDmn[0]!==0 || !checkDmn[1] && checkDmn[1]!==0
+      if (!checkDmn[0] && checkDmn[0]!==0 || !checkDmn[1] && checkDmn[1]!==0
       || !checkRng[0] && checkRng[0]!==0 || !checkRng[1] && checkRng[1]!==0) {
         return utils.warn("d3.axisSmart() skips action because of invalid domain " + JSON.stringify(checkDmn) + " or range " + JSON.stringify(checkRng) + " of the attached scale");
       }
 
-      if(highlightValue != null) {
+      if (highlightValue != null) {
         axis.highlightValueRun(g);
         return;
       }
@@ -34,7 +34,7 @@ export default function axisSmart(_orient) {
       // measure the width and height of one digit
       var widthSampleG = g.append("g").attr("class", "tick widthSampling");
       var widthSampleT = widthSampleG.append('text').text('0');
-      if(!options.cssMargin) options.cssMargin = {};
+      if (!options.cssMargin) options.cssMargin = {};
       options.cssMargin.top = widthSampleT.style("margin-top");
       options.cssMargin.bottom = widthSampleT.style("margin-bottom");
       options.cssMargin.left = widthSampleT.style("margin-left");
@@ -47,7 +47,7 @@ export default function axisSmart(_orient) {
       axis.labelFactory(options);
 
       // construct the view (d3 constructor is used)
-      if(options.transitionDuration > 0) {
+      if (options.transitionDuration > 0) {
         _super(g.transition().duration(options.transitionDuration));
       } else {
         _super(g);
@@ -75,7 +75,7 @@ export default function axisSmart(_orient) {
       var padding = axis.tickPadding();
       g.selectAll("text")
         .each(function(d, i) {
-          if(axis.pivot() == null) return;
+          if (axis.pivot() == null) return;
 
           var view = d3.select(this);
           view.attr("transform", "rotate(" + (axis.pivot() ? -90 : 0) + ")");
@@ -87,7 +87,7 @@ export default function axisSmart(_orient) {
         });
 
       //apply label repositioning: first and last visible values would shift away from the borders
-      if(axis.repositionLabels() != null) {
+      if (axis.repositionLabels() != null) {
         g.selectAll(".tick")
           .each(function(d) {
             var view = d3.select(this).select("text");
@@ -99,13 +99,13 @@ export default function axisSmart(_orient) {
 
       //hide axis labels that are outside the available viewport
       var scale = axis.scale();
-      if(options.viewportLength) {
+      if (options.viewportLength) {
         g.selectAll(".tick")
           .classed("vzb-hidden", function(d) {return scale(d)<0 || scale(d)>options.viewportLength;});
       }
 
       // add minor ticks. if none exist add an empty array
-      if(axis.tickValuesMinor() == null) axis.tickValuesMinor([]);
+      if (axis.tickValuesMinor() == null) axis.tickValuesMinor([]);
       var minorTicks = g.selectAll(".tick-minor").data(tickValuesMinor);
       minorTicks.exit().remove();
       minorTicks = minorTicks.enter().append("line")
@@ -129,13 +129,13 @@ export default function axisSmart(_orient) {
         .attr("class", "vzb-axis-line")
         .merge(rake);
 
-      if(options.viewportLength) {
+      if (options.viewportLength) {
         rake
           .attr("x1", orient == VERTICAL ? 0 : -1)
           .attr("x2", orient == VERTICAL ? 0 : options.viewportLength)
           .attr("y1", orient == HORIZONTAL ? 0 : 0)
           .attr("y2", orient == HORIZONTAL ? 0 : options.viewportLength);
-      }else{
+      } else {
         //TODO: this will not work for the "ordinal" scaleType
         rake
           .attr("x1", orient == VERTICAL ? 0 : d3.min(scale.range()) - (options.bump||0) - 1)
@@ -149,7 +149,7 @@ export default function axisSmart(_orient) {
     axis.highlightValueRun = function(g) {
 
       //if viewport is defined and HL value is outside then behave as reset HL
-      if(options.viewportLength && highlightValue != "none" && (
+      if (options.viewportLength && highlightValue != "none" && (
         axis.scale()(highlightValue) > options.viewportLength ||
         axis.scale()(highlightValue) < 0
       )) highlightValue = "none";
@@ -166,7 +166,7 @@ export default function axisSmart(_orient) {
       var bbox;
       var o = {};
 
-      if(highlightValue != "none") {
+      if (highlightValue != "none") {
         // measure its width and height for collision resolving
         bbox = g.select('.vzb-axis-value').node().getBBox();
 
@@ -195,7 +195,7 @@ export default function axisSmart(_orient) {
 
       // this function will help to compute opacity for the axis labels that would overlap with the HL label
       var getOpacity = function(d, t, view) {
-        if(highlightValue == "none") return 1;
+        if (highlightValue == "none") return 1;
 
         var wh = orient==HORIZONTAL? "width" : "height";
         var shift = (axis.repositionLabels()[d] || { x: 0, y: 0 })[dimension];
@@ -211,7 +211,7 @@ export default function axisSmart(_orient) {
       };
 
       // apply translation of the HL value and opacity of tick labels
-      if(highlightTransDuration) {
+      if (highlightTransDuration) {
         g.select('.vzb-axis-value')
           .transition()
           .duration(highlightTransDuration)
@@ -232,7 +232,7 @@ export default function axisSmart(_orient) {
             .style("opacity", getOpacity(d,t, this));
         });
 
-      }else{
+      } else {
         g.select('.vzb-axis-value')
           .interrupt()
           .attr("transform", getTransform)
@@ -259,42 +259,42 @@ export default function axisSmart(_orient) {
 
     var hlOpacityScale = d3.scale.linear().domain([0,5]).range([0,1]).clamp(true);
     axis.hlOpacityScale = function(arg) {
-      if(!arguments.length) return hlOpacityScale;
+      if (!arguments.length) return hlOpacityScale;
       hlOpacityScale = arg;
       return axis;
     };
 
     var highlightValue = null;
     axis.highlightValue = function(arg) {
-      if(!arguments.length) return highlightValue;
+      if (!arguments.length) return highlightValue;
       highlightValue = arg;
       return axis;
     };
 
     var highlightTransDuration = 0;
     axis.highlightTransDuration = function(arg) {
-      if(!arguments.length) return highlightTransDuration;
+      if (!arguments.length) return highlightTransDuration;
       highlightTransDuration = arg;
       return axis;
     };
 
     var repositionLabels = null;
     axis.repositionLabels = function(arg) {
-      if(!arguments.length) return repositionLabels;
+      if (!arguments.length) return repositionLabels;
       repositionLabels = arg;
       return axis;
     };
 
     var pivot = false;
     axis.pivot = function(arg) {
-      if(!arguments.length) return pivot;
+      if (!arguments.length) return pivot;
       pivot = !!arg;
       return axis;
     };
 
     var tickValuesMinor = [];
     axis.tickValuesMinor = function(arg) {
-      if(!arguments.length) return tickValuesMinor;
+      if (!arguments.length) return tickValuesMinor;
       tickValuesMinor = arg;
       return axis;
     };
@@ -304,7 +304,7 @@ export default function axisSmart(_orient) {
       inbound: 0
     };
     axis.tickSizeMinor = function(arg1, arg2) {
-      if(!arguments.length) return tickSizeMinor;
+      if (!arguments.length) return tickSizeMinor;
       tickSizeMinor = {
         outbound: arg1,
         inbound: arg2 || 0
@@ -315,7 +315,7 @@ export default function axisSmart(_orient) {
 
     var options = {};
     axis.labelerOptions = function(arg) {
-      if(!arguments.length) return options;
+      if (!arguments.length) return options;
       options = arg;
       return axis;
     };
@@ -324,8 +324,8 @@ export default function axisSmart(_orient) {
     axis.METHOD_DOUBLING = 'doubling the value';
 
     axis.labelFactory = function(options) {
-      if(options == null) options = {};
-      if(options.scaleType != "linear" &&
+      if (options == null) options = {};
+      if (options.scaleType != "linear" &&
         options.scaleType != "time" &&
         options.scaleType != "genericLog" &&
         options.scaleType != "log" &&
@@ -337,54 +337,54 @@ export default function axisSmart(_orient) {
           .pivot(null)
           .repositionLabels(null);
       }
-      if(options.scaleType == 'ordinal') return axis.tickValues(null);
+      if (options.scaleType == 'ordinal') return axis.tickValues(null);
 
-      if(options.logBase == null) options.logBase = DEFAULT_LOGBASE;
-      if(options.stops == null) options.stops = [1, 2, 5, 3, 7, 4, 6, 8, 9];
+      if (options.logBase == null) options.logBase = DEFAULT_LOGBASE;
+      if (options.stops == null) options.stops = [1, 2, 5, 3, 7, 4, 6, 8, 9];
 
 
-      if(options.removeAllLabels == null) options.removeAllLabels = false;
+      if (options.removeAllLabels == null) options.removeAllLabels = false;
 
-      if(options.formatter == null) options.formatter = axis.tickFormat()?
+      if (options.formatter == null) options.formatter = axis.tickFormat()?
         axis.tickFormat() : function(d) {return d+"";};
       options.cssLabelMarginLimit = 5; //px
 
-      if(options.cssMargin == null) options.cssMargin = {};
-      if(options.cssMargin.left == null || parseInt(options.cssMargin.left) < options.cssLabelMarginLimit)
+      if (options.cssMargin == null) options.cssMargin = {};
+      if (options.cssMargin.left == null || parseInt(options.cssMargin.left) < options.cssLabelMarginLimit)
         options.cssMargin.left = options.cssLabelMarginLimit + "px";
-      if(options.cssMargin.right == null || parseInt(options.cssMargin.right) < options.cssLabelMarginLimit)
+      if (options.cssMargin.right == null || parseInt(options.cssMargin.right) < options.cssLabelMarginLimit)
         options.cssMargin.right = options.cssLabelMarginLimit + "px";
-      if(options.cssMargin.top == null || parseInt(options.cssMargin.top) < options.cssLabelMarginLimit)
+      if (options.cssMargin.top == null || parseInt(options.cssMargin.top) < options.cssLabelMarginLimit)
         options.cssMargin.top = options.cssLabelMarginLimit + "px";
-      if(options.cssMargin.bottom == null || parseInt(options.cssMargin.bottom) < options.cssLabelMarginLimit)
+      if (options.cssMargin.bottom == null || parseInt(options.cssMargin.bottom) < options.cssLabelMarginLimit)
         options.cssMargin.bottom = options.cssLabelMarginLimit + "px";
-      if(options.toolMargin == null) options.toolMargin = {
+      if (options.toolMargin == null) options.toolMargin = {
         left: 30,
         bottom: 30,
         right: 30,
         top: 30
       };
-      if(options.bump == null) options.bump = 0;
-      if(options.viewportLength == null) options.viewportLength = 0;
+      if (options.bump == null) options.bump = 0;
+      if (options.viewportLength == null) options.viewportLength = 0;
 
-      if(options.pivotingLimit == null) options.pivotingLimit = options.toolMargin[this.orient()];
+      if (options.pivotingLimit == null) options.pivotingLimit = options.toolMargin[this.orient()];
 
-      if(options.showOuter == null) options.showOuter = false;
-      if(options.limitMaxTickNumber == null) options.limitMaxTickNumber = 0; //0 is unlimited
+      if (options.showOuter == null) options.showOuter = false;
+      if (options.limitMaxTickNumber == null) options.limitMaxTickNumber = 0; //0 is unlimited
 
       var orient = this.orient() == "top" || this.orient() == "bottom" ? HORIZONTAL : VERTICAL;
 
-      if(options.isPivotAuto == null) options.isPivotAuto = orient == VERTICAL;
+      if (options.isPivotAuto == null) options.isPivotAuto = orient == VERTICAL;
 
-      if(options.cssFontSize == null) options.cssFontSize = "13px";
-      if(options.widthToFontsizeRatio == null) options.widthToFontsizeRatio = .75;
-      if(options.heightToFontsizeRatio == null) options.heightToFontsizeRatio = 1.20;
-      if(options.widthOfOneDigit == null) options.widthOfOneDigit =
+      if (options.cssFontSize == null) options.cssFontSize = "13px";
+      if (options.widthToFontsizeRatio == null) options.widthToFontsizeRatio = .75;
+      if (options.heightToFontsizeRatio == null) options.heightToFontsizeRatio = 1.20;
+      if (options.widthOfOneDigit == null) options.widthOfOneDigit =
         parseInt(options.cssFontSize) * options.widthToFontsizeRatio;
-      if(options.heightOfOneDigit == null) options.heightOfOneDigit =
+      if (options.heightOfOneDigit == null) options.heightOfOneDigit =
         parseInt(options.cssFontSize) * options.heightToFontsizeRatio;
-      if(options.fitIntoScale == null || options.fitIntoScale == 'pessimistic') options.fitIntoScale = PESSIMISTIC;
-      if(options.fitIntoScale == 'optimistic') options.fitIntoScale = OPTIMISTIC;
+      if (options.fitIntoScale == null || options.fitIntoScale == 'pessimistic') options.fitIntoScale = PESSIMISTIC;
+      if (options.fitIntoScale == 'optimistic') options.fitIntoScale = OPTIMISTIC;
 
 
       meow("********** " + orient + " **********");
@@ -406,7 +406,7 @@ export default function axisSmart(_orient) {
         if (x == 0 || base == 0) {
           return 0;
         }
-        if(base == null) base = options.logBase;
+        if (base == null) base = options.logBase;
         return Math.log(x) / Math.log(base);
       }
 
@@ -428,10 +428,10 @@ export default function axisSmart(_orient) {
 
       // conditions to remove labels altogether
       var labelsJustDontFit = (!labelsStackOnTop && options.heightOfOneDigit > options.pivotingLimit);
-      if(options.removeAllLabels) return axis.tickValues([]);
+      if (options.removeAllLabels) return axis.tickValues([]);
 
       // return a single tick if have only one point in the domain
-      if(min == max) return axis.tickValues([min]).ticks(1).tickFormat(options.formatter);
+      if (min == max) return axis.tickValues([min]).ticks(1).tickFormat(options.formatter);
 
 
       // LABELS FIT INTO SCALE
@@ -441,12 +441,12 @@ export default function axisSmart(_orient) {
       // in pessimistic style we assume all labels have the length of the longest label from tickValues
       // returns TRUE if labels fit and FALSE otherwise
       var labelsFitIntoScale = function(tickValues, lengthRange, approximationStyle, rescalingLabels) {
-        if(tickValues == null || tickValues.length <= 1) return true;
-        if(approximationStyle == null) approximationStyle = PESSIMISTIC;
-        if(rescalingLabels == null) scaleType = "none";
+        if (tickValues == null || tickValues.length <= 1) return true;
+        if (approximationStyle == null) approximationStyle = PESSIMISTIC;
+        if (rescalingLabels == null) scaleType = "none";
 
 
-        if(labelsStackOnTop) {
+        if (labelsStackOnTop) {
           //labels stack on top of each other. digit height matters
           return lengthRange >
             tickValues.length * (
@@ -462,14 +462,14 @@ export default function axisSmart(_orient) {
           }));
 
           // log scales need to rescale labels, so that 9 takes more space than 2
-          if(rescalingLabels == "log") {
+          if (rescalingLabels == "log") {
             // sometimes only a fragment of axis is used. in this case we want to limit the scope to that fragment
             // yes, this is hacky and experimental
             lengthRange = Math.abs(axis.scale()(d3.max(tickValues)) - axis.scale()(d3.min(tickValues)));
 
             return lengthRange >
               d3.sum(tickValues.map(function(d) {
-                return(
+                return (
                     options.widthOfOneDigit * (approximationStyle == PESSIMISTIC ? maxLength : options.formatter(
                       d).length) + marginsLR
                   )
@@ -496,11 +496,11 @@ export default function axisSmart(_orient) {
       // ONE is a value, TWO can be a value or an array
       // returns TRUE if collision takes place and FALSE otherwise
       var collisionBetween = function(one, two) {
-        if(two == null || two.length == 0) return false;
-        if(!(two instanceof Array)) two = [two];
+        if (two == null || two.length == 0) return false;
+        if (!(two instanceof Array)) two = [two];
 
-        for(var i = 0; i < two.length; i++) {
-          if(
+        for (var i = 0; i < two.length; i++) {
+          if (
             one != two[i] && one != 0 &&
             Math.abs(axis.scale()(one) - axis.scale()(two[i])) <
             (labelsStackOnTop ?
@@ -513,7 +513,7 @@ export default function axisSmart(_orient) {
         return false;
       };
 
-      if(options.scaleType == "genericLog" || options.scaleType == "log") {
+      if (options.scaleType == "genericLog" || options.scaleType == "log") {
         var eps = axis.scale().eps ? axis.scale().eps() : 0;
 
         var spawnZero = bothSidesUsed ? [0] : [];
@@ -544,7 +544,7 @@ export default function axisSmart(_orient) {
 
 
         // automatic chosing of method if it's not explicitly defined
-        if(options.method == null) {
+        if (options.method == null) {
           var coverage = bothSidesUsed ?
             Math.max(Math.abs(max), Math.abs(min)) / eps :
             Math.max(Math.abs(max), Math.abs(min)) / Math.min(Math.abs(max), Math.abs(min));
@@ -555,9 +555,9 @@ export default function axisSmart(_orient) {
         //meow('spawn pos/neg: ', spawnPos, spawnNeg);
 
 
-        if(options.method == this.METHOD_DOUBLING) {
+        if (options.method == this.METHOD_DOUBLING) {
           var doublingLabels = [];
-          if(bothSidesUsed) tickValues.push(0);
+          if (bothSidesUsed) tickValues.push(0);
           var avoidCollidingWith = [].concat(tickValues);
 
           // start with the smallest abs number on the scale, rounded to nearest nice power
@@ -569,17 +569,17 @@ export default function axisSmart(_orient) {
 
           //meow('starter pos/neg: ', startPos, startNeg);
 
-          if(startPos) {
-            for(var l = startPos; l <= max; l *= 2) doublingLabels.push(l);
+          if (startPos) {
+            for (var l = startPos; l <= max; l *= 2) doublingLabels.push(l);
           }
-          if(startPos) {
-            for(var l = startPos / 2; l >= Math.max(min, eps); l /= 2) doublingLabels.push(l);
+          if (startPos) {
+            for (var l = startPos / 2; l >= Math.max(min, eps); l /= 2) doublingLabels.push(l);
           }
-          if(startNeg) {
-            for(var l = startNeg; l >= min; l *= 2) doublingLabels.push(l);
+          if (startNeg) {
+            for (var l = startNeg; l >= min; l *= 2) doublingLabels.push(l);
           }
-          if(startNeg) {
-            for(var l = startNeg / 2; l <= Math.min(max, -eps); l /= 2) doublingLabels.push(l);
+          if (startNeg) {
+            for (var l = startNeg / 2; l <= Math.min(max, -eps); l /= 2) doublingLabels.push(l);
           }
 
           doublingLabels = doublingLabels
@@ -593,7 +593,7 @@ export default function axisSmart(_orient) {
           doublingLabels = groupByPriorities(doublingLabels, false); // don't skip taken values
 
           var tickValues_1 = tickValues;
-          for(var j = 0; j < doublingLabels.length; j++) {
+          for (var j = 0; j < doublingLabels.length; j++) {
 
             // compose an attempt to add more axis labels
             var trytofit = tickValues_1.concat(doublingLabels[j])
@@ -603,7 +603,7 @@ export default function axisSmart(_orient) {
               .filter(onlyUnique);
 
             // stop populating if labels don't fit
-            if(!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC, "none")) break;
+            if (!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC, "none")) break;
 
             // apply changes if no blocking instructions
             tickValues = trytofit;
@@ -611,7 +611,7 @@ export default function axisSmart(_orient) {
         }
 
 
-        if(options.method == this.METHOD_REPEATING) {
+        if (options.method == this.METHOD_REPEATING) {
 
           var spawn = spawnZero.concat(spawnPos).concat(spawnNeg).sort(d3.ascending);
 
@@ -627,8 +627,8 @@ export default function axisSmart(_orient) {
           var stopTrying = false;
 
           options.stops.forEach(function(stop, i) {
-            if(i == 0) {
-              for(var j = 0; j < spawn.length; j++) {
+            if (i == 0) {
+              for (var j = 0; j < spawn.length; j++) {
 
                 // compose an attempt to add more axis labels
                 var trytofit = tickValues
@@ -645,7 +645,7 @@ export default function axisSmart(_orient) {
                   .filter(onlyUnique);
 
                 // stop populating if labels don't fit
-                if(!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC, "none")) break;
+                if (!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC, "none")) break;
 
                 // apply changes if no blocking instructions
                 tickValues = trytofit;
@@ -654,7 +654,7 @@ export default function axisSmart(_orient) {
               //flatten the spawn array
               spawn = [].concat.apply([], spawn);
             } else {
-              if(stopTrying) return;
+              if (stopTrying) return;
 
               // compose an attempt to add more axis labels
               var trytofit = tickValues
@@ -667,12 +667,12 @@ export default function axisSmart(_orient) {
                 .filter(onlyUnique);
 
               // stop populating if the new composition doesn't fit
-              if(!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC, "log")) {
+              if (!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC, "log")) {
                 stopTrying = true;
                 return;
               }
               // stop populating if the number of labels is limited in options
-              if(tickValues.length > options.limitMaxTickNumber && options.limitMaxTickNumber != 0) {
+              if (tickValues.length > options.limitMaxTickNumber && options.limitMaxTickNumber != 0) {
                 stopTrying = true;
                 return;
               }
@@ -689,18 +689,18 @@ export default function axisSmart(_orient) {
       } //logarithmic
 
 
-      if(options.scaleType == "linear" || options.scaleType == "time") {
-        if(bothSidesUsed) tickValues.push(0);
+      if (options.scaleType == "linear" || options.scaleType == "time") {
+        if (bothSidesUsed) tickValues.push(0);
         var avoidCollidingWith = [].concat(tickValues);
 
-        if(labelsStackOnTop) {
+        if (labelsStackOnTop) {
             ticksNumber = Math.max(Math.floor(lengthRange / (options.heightOfOneDigit + parseInt(options.cssMargin.top))), 2);
-        }else{
+        } else {
             ticksNumber = Math.max(Math.floor(lengthRange / estLongestLabelLength), 2);
         }
 
         // limit maximum ticks number
-        if(options.limitMaxTickNumber != 0 && ticksNumber > options.limitMaxTickNumber) ticksNumber = options.limitMaxTickNumber;
+        if (options.limitMaxTickNumber != 0 && ticksNumber > options.limitMaxTickNumber) ticksNumber = options.limitMaxTickNumber;
 
         var addLabels = axis.scale().ticks.apply(axis.scale(), [ticksNumber])
           .sort(d3.ascending)
@@ -713,7 +713,7 @@ export default function axisSmart(_orient) {
         addLabels = groupByPriorities(addLabels, false);
 
         var tickValues_1 = tickValues;
-        for(var j = 0; j < addLabels.length; j++) {
+        for (var j = 0; j < addLabels.length; j++) {
 
           // compose an attempt to add more axis labels
           var trytofit = tickValues_1.concat(addLabels[j])
@@ -723,7 +723,7 @@ export default function axisSmart(_orient) {
             .filter(onlyUnique);
 
           // stop populating if labels don't fit
-          if(!labelsFitIntoScale(trytofit, lengthRange, options.fitIntoScale, "none")) break;
+          if (!labelsFitIntoScale(trytofit, lengthRange, options.fitIntoScale, "none")) break;
 
           // apply changes if no blocking instructions
           tickValues = trytofit;
@@ -739,21 +739,21 @@ export default function axisSmart(_orient) {
       }
 
 
-      if(tickValues != null && tickValues.length <= 2 && !bothSidesUsed) tickValues = [min, max];
+      if (tickValues != null && tickValues.length <= 2 && !bothSidesUsed) tickValues = [min, max];
 
-      if(tickValues != null && tickValues.length <= 3 && bothSidesUsed) {
-        if(!collisionBetween(0, [min, max])) {
+      if (tickValues != null && tickValues.length <= 3 && bothSidesUsed) {
+        if (!collisionBetween(0, [min, max])) {
           tickValues = [min, 0, max];
         } else {
           tickValues = [min, max];
         }
       }
 
-      if(tickValues != null) tickValues.sort(function(a, b) {
-        return(orient == HORIZONTAL ? -1 : 1) * (axis.scale()(b) - axis.scale()(a));
+      if (tickValues != null) tickValues.sort(function(a, b) {
+        return (orient == HORIZONTAL ? -1 : 1) * (axis.scale()(b) - axis.scale()(a));
       });
 
-      if(labelsJustDontFit) tickValues = [];
+      if (labelsJustDontFit) tickValues = [];
       tickValuesMinor = tickValuesMinor.filter(function(d) {
         return tickValues.indexOf(d) == -1 && min <= d && d <= max;
       });
@@ -790,21 +790,21 @@ export default function axisSmart(_orient) {
     // returns:
     // the nested array
     function groupByPriorities(array, removeDuplicates) {
-      if(removeDuplicates == null) removeDuplicates = true;
+      if (removeDuplicates == null) removeDuplicates = true;
 
       var result = [];
       var taken = [];
 
       //zero is an exception, if it's present we manually take it to the front
-      if(array.indexOf(0) != -1) {
+      if (array.indexOf(0) != -1) {
         result.push([0]);
         taken.push(array.indexOf(0));
       }
 
-      for(var k = array.length; k >= 1; k = k < 4 ? k - 1 : k / 2) {
+      for (var k = array.length; k >= 1; k = k < 4 ? k - 1 : k / 2) {
         // push the next group of elements to the result
         result.push(array.filter(function(d, i) {
-          if(i % Math.floor(k) == 0 && (taken.indexOf(i) == -1 || !removeDuplicates)) {
+          if (i % Math.floor(k) == 0 && (taken.indexOf(i) == -1 || !removeDuplicates)) {
             taken.push(i);
             return true;
           }
@@ -835,7 +835,7 @@ export default function axisSmart(_orient) {
     // returns the array of recommended {x,y} shifts
 
     function repositionLabelsThatStickOut(tickValues, options, orient, scale, dimension) {
-      if(!tickValues) return null;
+      if (!tickValues) return null;
       var result = {};
 
       // make an abstraction layer for margin sizes
@@ -854,7 +854,7 @@ export default function axisSmart(_orient) {
 
       //when a viewportLength is given: adjust outer VISIBLE tick values
       //this is helpful when the scaled is zoomed, so labels don't get truncated by a viewport svg
-      if(options.viewportLength) {
+      if (options.viewportLength) {
         //remove invisible ticks from the array
         tickValues = tickValues.filter(function(d) {return scale(d)>=0 && scale(d)<=options.viewportLength;});
         //overwrite the available range with viewport limits. direction doesn't matter because we take min-max later anyway
@@ -866,7 +866,7 @@ export default function axisSmart(_orient) {
       // STEP 1:
       // for outer labels: avoid sticking out from the tool margin
       tickValues.forEach(function(d, i) {
-        if(i != 0 && i != tickValues.length - 1) return;
+        if (i != 0 && i != tickValues.length - 1) return;
 
         // compute the influence of the axis head
         var repositionHead = Math.min(margin.head, options.widthOfOneDigit * 0.5) + bump
@@ -891,8 +891,8 @@ export default function axisSmart(_orient) {
           - (dimension == "y") * parseInt(options.cssMargin.bottom);
 
         // apply limits in order to cancel repositioning of labels that are good
-        if(repositionHead > 0) repositionHead = 0;
-        if(repositionTail > 0) repositionTail = 0;
+        if (repositionHead > 0) repositionHead = 0;
+        if (repositionTail > 0) repositionTail = 0;
 
         // add them up with appropriate signs, save to the axis
         result[d] = { x: 0, y: 0 };
@@ -903,7 +903,7 @@ export default function axisSmart(_orient) {
       // STEP 2:
       // for inner labels: avoid collision with outer labels
       tickValues.forEach(function(d, i) {
-        if(i == 0 || i == tickValues.length - 1) return;
+        if (i == 0 || i == tickValues.length - 1) return;
 
         // compute the influence of the head-side outer label
         var repositionHead =
@@ -942,8 +942,8 @@ export default function axisSmart(_orient) {
           - (dimension == "y") * parseInt(options.cssMargin.bottom);
 
         // apply limits in order to cancel repositioning of labels that are good
-        if(repositionHead > 0) repositionHead = 0;
-        if(repositionTail > 0) repositionTail = 0;
+        if (repositionHead > 0) repositionHead = 0;
+        if (repositionTail > 0) repositionTail = 0;
 
         // add them up with appropriate signs, save to the axis
         result[d] = { x: 0, y: 0 };
@@ -960,7 +960,7 @@ export default function axisSmart(_orient) {
     };
 
     axis.orient = function() {
-      if(!arguments.length) return _orient;
+      if (!arguments.length) return _orient;
       return axis;
     };
 
@@ -971,24 +971,24 @@ export default function axisSmart(_orient) {
 
 
     function meow(l1, l2, l3, l4, l5) {
-      if(!axis.labelerOptions().isDevMode) return;
-      if(l5 != null) {
+      if (!axis.labelerOptions().isDevMode) return;
+      if (l5 != null) {
         console.log(l1, l2, l3, l4, l5);
         return;
       }
-      if(l4 != null) {
+      if (l4 != null) {
         console.log(l1, l2, l3, l4);
         return;
       }
-      if(l3 != null) {
+      if (l3 != null) {
         console.log(l1, l2, l3);
         return;
       }
-      if(l2 != null) {
+      if (l2 != null) {
         console.log(l1, l2);
         return;
       }
-      if(l1 != null) {
+      if (l1 != null) {
         console.log(l1);
         return;
       }

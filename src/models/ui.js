@@ -59,7 +59,7 @@ var UI = Model.extend({
   },
 
   resizeHandler: function() {
-    if(this._container) {
+    if (this._container) {
       this.setSize();
     }
   },
@@ -91,7 +91,7 @@ var UI = Model.extend({
       }
     }
 
-    if(!force && this._prev_size && this._prev_size.width === width && this._prev_size.height === height) {
+    if (!force && this._prev_size && this._prev_size.width === width && this._prev_size.height === height) {
       return;
     }
 
@@ -100,7 +100,7 @@ var UI = Model.extend({
       //remove class
       utils.removeClass(_this._container, class_prefix + size);
       //find best fit
-      if(width >= range.min_width && height >= range.min_height) {
+      if (width >= range.min_width && height >= range.min_height) {
         _this._curr_profile = size;
       }
     });

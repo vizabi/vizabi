@@ -42,14 +42,14 @@ var BarComponent = Component.extend({
         });
       },
       'change:marker': function(evt, path) {
-        if(!_this._readyOnce) return;
-        if(path.indexOf("color.palette") > -1) return;
-        if(path.indexOf("which") > -1 || path.indexOf("use") > -1) return;
+        if (!_this._readyOnce) return;
+        if (path.indexOf("color.palette") > -1) return;
+        if (path.indexOf("which") > -1 || path.indexOf("use") > -1) return;
 
         _this.ready();
       },
       'change:marker.color.palette': utils.debounce(function(evt) {
-        if(!_this._readyOnce) return;
+        if (!_this._readyOnce) return;
         _this.updateEntities();
       }, 200)
     };
@@ -262,18 +262,18 @@ var BarComponent = Component.extend({
     this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
     this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
 
-    if(this.height<=0 || this.width<=0) return utils.warn("Bar chart resize() abort: vizabi container is too little or has display:none");
+    if (this.height<=0 || this.width<=0) return utils.warn("Bar chart resize() abort: vizabi container is too little or has display:none");
 
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     //update scales to the new range
-    if(this.model.marker.axis_y.scaleType !== "ordinal") {
+    if (this.model.marker.axis_y.scaleType !== "ordinal") {
       this.yScale.range([this.height, 0]);
     } else {
       this.yScale.rangePoints([this.height, 0], _this.activeProfile.padding).range();
     }
-    if(this.model.marker.axis_x.scaleType !== "ordinal") {
+    if (this.model.marker.axis_x.scaleType !== "ordinal") {
       this.xScale.range([0, this.width]);
     } else {
       this.xScale.rangePoints([0, this.width], _this.activeProfile.padding).range();

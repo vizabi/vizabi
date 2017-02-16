@@ -97,7 +97,7 @@ export default Class.extend({
     this.textHeight = bbox.height * this.scalar;
     this.textWidth = bbox.width * this.scalar;
 
-    switch(this.yAlign) {
+    switch (this.yAlign) {
       case 'bottom': this.context.select("text").attr("dy", ".325em"); break;
       case 'center': this.context.select("text").attr("dy", ".325em"); break;
       case 'top': this.context.select("text").attr("dy", "0"); break;

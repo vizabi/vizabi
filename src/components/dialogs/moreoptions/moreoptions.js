@@ -55,17 +55,17 @@ var MoreOptions = Dialog.extend({
     this._addDialogs(dialog_moreoptions);
 
     //accordion
-    if(this.accordionEl) {
+    if (this.accordionEl) {
       var titleEl = this.accordionEl.selectAll('.vzb-accordion-section')
         .select('.vzb-dialog-title>span:first-child');
       titleEl.on('click', function(d) {
         var element = _this.components[d.component].element;
         var sectionEl = _this.components[d.component].placeholderEl;
         var activeEl = _this.accordionEl.select('.vzb-accordion-active');
-        if(activeEl) {
+        if (activeEl) {
           activeEl.classed('vzb-accordion-active', false);
         }
-        if(sectionEl.node() !== activeEl.node()) {
+        if (sectionEl.node() !== activeEl.node()) {
           sectionEl.classed('vzb-accordion-active', true);
         }
       });
@@ -75,18 +75,18 @@ var MoreOptions = Dialog.extend({
   _addDialogs: function(dialog_list) {
     this._components_config = [];
     var details_dlgs = [];
-    if(!dialog_list.length) return;
+    if (!dialog_list.length) return;
     //add a component for each dialog
-    for(var i = 0; i < dialog_list.length; i++) {
+    for (var i = 0; i < dialog_list.length; i++) {
 
       //check moreoptions in dialog.moreoptions
-      if(dialog_list[i] === "moreoptions") continue;
+      if (dialog_list[i] === "moreoptions") continue;
 
       var dlg = dialog_list[i];
       var dlg_config = utils.deepClone(this.parent._available_dialogs[dlg]);
 
       //if it's a dialog, add component
-      if(dlg_config && dlg_config.dialog) {
+      if (dlg_config && dlg_config.dialog) {
         var comps = this._components_config;
 
         //add corresponding component

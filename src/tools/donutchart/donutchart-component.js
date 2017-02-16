@@ -27,7 +27,7 @@ var DonutComponent = Component.extend('donut', {
         //bind the function updateTime() to the change of time value in the model
         this.model_binds = {
           "change:time:value": function(evt) {
-            if(!_this._readyOnce) return;
+            if (!_this._readyOnce) return;
             //fetch the time from the model and update the text on screen
             _this.time = _this.model.time.value;
             _this.yearEl.text(_this.timeFormatter(_this.time));
@@ -149,7 +149,7 @@ var DonutComponent = Component.extend('donut', {
         var width = parseInt(this.element.style("width"), 10) || 0;
         var min = Math.min(height, width);
 
-        if(height<=0 || width<=0) return utils.warn("Donut chart resize() abort: vizabi container is too little or has display:none");
+        if (height<=0 || width<=0) return utils.warn("Donut chart resize() abort: vizabi container is too little or has display:none");
 
         this.svgEl.attr("transform", "translate(" + (width / 2) + "," + (height / 2) + ")");
         this.titleEl.attr("y", "-0.1em");

@@ -52,10 +52,10 @@ var AxisModel = Hook.extend({
     this._super();
 
     //restore the correct object type for time values
-    if(this.scale && this.scaleType == "time") {
+    if (this.scale && this.scaleType == "time") {
       var obj = {};
-      if(this.zoomedMin != null && !utils.isDate(this.zoomedMin)) obj.zoomedMin = this._space.time.parse(this.zoomedMin.toString());
-      if(this.zoomedMax != null && !utils.isDate(this.zoomedMax)) obj.zoomedMax = this._space.time.parse(this.zoomedMax.toString());
+      if (this.zoomedMin != null && !utils.isDate(this.zoomedMin)) obj.zoomedMin = this._space.time.parse(this.zoomedMin.toString());
+      if (this.zoomedMax != null && !utils.isDate(this.zoomedMax)) obj.zoomedMax = this._space.time.parse(this.zoomedMax.toString());
       this.set(obj);
     }
 
@@ -68,7 +68,7 @@ var AxisModel = Hook.extend({
   buildScale: function(scaleType = this.scaleType) {
     var domain;
 
-    if(scaleType == "time") {
+    if (scaleType == "time") {
 
       var timeMdl = this._space.time;
       var limits = timeMdl.splash ?
@@ -79,16 +79,16 @@ var AxisModel = Hook.extend({
       domain = [limits.min, limits.max];
       this.scale = d3.time.scale.utc().domain(domain);
 
-    }else{
+    } else {
 
-      if(!this.isDiscrete()) {
+      if (!this.isDiscrete()) {
         var limits = this.getLimits(this.which);
         //default domain is based on limits
         domain = [limits.min, limits.max];
         //min and max can override the domain if defined
         domain[0] = this.domainMin!=null ? +this.domainMin : domain[0];
         domain[1] = this.domainMax!=null ? +this.domainMax : domain[1];
-      }else{
+      } else {
         domain = this.use === "constant"? [this.which] : this.getUnique(this.which);
       }
 

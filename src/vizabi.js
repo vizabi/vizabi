@@ -9,7 +9,7 @@ import globals from 'base/globals';
 
 var Vzb = function(name, placeholder, external_model) {
   var tool = Tool.get(name);
-  if(tool) {
+  if (tool) {
     var t = new tool(placeholder, external_model);
     Vzb._instances[t._id] = t;
     return t;
@@ -26,10 +26,10 @@ Vzb._globals = globals;
 //TODO: clear all objects and intervals as well
 //garbage collection
 Vzb.clearInstances = function(id) {
-  if(id) {
+  if (id) {
     Vzb._instances[id] = void 0;
   } else {
-    for(var i in Vzb._instances) {
+    for (var i in Vzb._instances) {
       Vzb._instances[i].clear();
     }
     Vzb._instances = {};

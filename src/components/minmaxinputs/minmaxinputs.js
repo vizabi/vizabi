@@ -37,7 +37,7 @@ var MinMaxInputs = Component.extend({
         }];
 
         this.markerID = config.markerID;
-        if(!config.markerID) utils.warn("minmaxinputs.js complains on 'markerID' property: " + config.markerID);
+        if (!config.markerID) utils.warn("minmaxinputs.js complains on 'markerID' property: " + config.markerID);
 
         this.model_binds = {};
         this.model_binds["translate:locale"] = function(evt) {
@@ -99,7 +99,7 @@ var MinMaxInputs = Component.extend({
 
         this.element.selectAll("input")
             .on("keypress", function(e) {
-                if(d3.event.which == 13) document.activeElement.blur();
+                if (d3.event.which == 13) document.activeElement.blur();
             });
     },
 
@@ -125,8 +125,8 @@ var MinMaxInputs = Component.extend({
       this.el_zoomed_fieldMax.classed('vzb-hidden', !this.ui.selectZoomedMinMax);
 
       var formatter = function(n) {
-        if(!n && n!==0) return n;
-        if(utils.isDate(n)) return _this.model.time.formatDate(n);
+        if (!n && n!==0) return n;
+        if (utils.isDate(n)) return _this.model.time.formatDate(n);
         return d3.format(".2r")(n);
       };
 

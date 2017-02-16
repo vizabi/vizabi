@@ -52,21 +52,21 @@ var Hook = DataConnected.extend({
 
     var obj = { which: newValue.concept };
 
-    if(newValue.dataSource) obj.data = newValue.dataSource;
+    if (newValue.dataSource) obj.data = newValue.dataSource;
     var newDataSource = this.getClosestModel(obj.data || this.data);
     var conceptProps = newDataSource.getConceptprops(newValue.concept);
 
-    if(newValue.which==="_default") {
+    if (newValue.which==="_default") {
       obj.use = "constant";
-    }else{
-      if(conceptProps.use) obj.use = conceptProps.use;
+    } else {
+      if (conceptProps.use) obj.use = conceptProps.use;
     }
 
-    if(conceptProps.scales) {
+    if (conceptProps.scales) {
       obj.scaleType = conceptProps.scales[0];
     }
 
-    if(this.getType() === 'axis' || this.getType() === 'size') {
+    if (this.getType() === 'axis' || this.getType() === 'size') {
       obj.domainMin = null;
       obj.domainMax = null;
       obj.zoomedMin = null;
@@ -109,7 +109,7 @@ var Hook = DataConnected.extend({
 
     // then start loading data
 
-    if(!this.which) return Promise.resolve();
+    if (!this.which) return Promise.resolve();
 
     this.trigger('hook_change');
 
@@ -118,7 +118,7 @@ var Hook = DataConnected.extend({
 
     var query = this.getQuery(opts.splashScreen);
 
-    if(query===true) return Promise.resolve();
+    if (query===true) return Promise.resolve();
 
     //useful to check if in the middle of a load call
     this._loadCall = true;
@@ -170,7 +170,7 @@ var Hook = DataConnected.extend({
     var dimensions, filters, select, from, order_by, q, animatable;
 
     //error if there's nothing to hook to
-    if(Object.keys(this._space).length < 1) {
+    if (Object.keys(this._space).length < 1) {
       utils.error('Error:', this._id, 'can\'t find the space');
       return true;
     }
@@ -184,7 +184,7 @@ var Hook = DataConnected.extend({
     var dimensions = (prop && allDimensions.length > 1) ? [(this.spaceRef ? this._space[this.spaceRef].dim : this.which)] : allDimensions;
 
     dimensions = dimensions.filter(f => f!=="_default");// && f!==null);
-    if(!dimensions || !dimensions.length) {
+    if (!dimensions || !dimensions.length) {
       utils.warn('getQuery() produced no query because no keys are available');
       return true;
     }
@@ -202,9 +202,9 @@ var Hook = DataConnected.extend({
 
     // where
     filters = this._getAllFilters(exceptions, splashScreen);
-    if(prop && allDimensions.length > 1) {
+    if (prop && allDimensions.length > 1) {
       var f = {};
-      if(filters[dimensions]) f[dimensions] = filters[dimensions];
+      if (filters[dimensions]) f[dimensions] = filters[dimensions];
       filters = f;
     }
 
@@ -221,9 +221,9 @@ var Hook = DataConnected.extend({
 
     // join
     var join = this._getAllJoins(exceptions, splashScreen);
-    if(prop && allDimensions.length > 1) {
+    if (prop && allDimensions.length > 1) {
       var j = {};
-      if(join["$" + dimensions]) j["$" + dimensions] = join["$" + dimensions];
+      if (join["$" + dimensions]) j["$" + dimensions] = join["$" + dimensions];
       join = j;
     }
 
@@ -275,13 +275,13 @@ var Hook = DataConnected.extend({
     var filters = {};
     var _this = this;
     utils.forEach(this._space, function(h) {
-      if(opts.exceptType && h.getType() === opts.exceptType) {
+      if (opts.exceptType && h.getType() === opts.exceptType) {
         return true;
       }
-      if(opts.onlyType && h.getType() !== opts.onlyType) {
+      if (opts.onlyType && h.getType() !== opts.onlyType) {
         return true;
       }
-      if(h.skipFilter) return;
+      if (h.skipFilter) return;
       // if query's dimensions are the same as the hook's, no join
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
         filters = utils.extend(filters, h.getFilter(splashScreen));
@@ -301,16 +301,16 @@ var Hook = DataConnected.extend({
     var joins = {};
     var _this = this;
     utils.forEach(this._space, function(h) {
-      if(opts.exceptType && h.getType() === opts.exceptType) {
+      if (opts.exceptType && h.getType() === opts.exceptType) {
         return true;
       }
-      if(opts.onlyType && h.getType() !== opts.onlyType) {
+      if (opts.onlyType && h.getType() !== opts.onlyType) {
         return true;
       }
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
         return true;
       }
-      if(h.skipFilter) return;
+      if (h.skipFilter) return;
 
       var filter = h.getFilter(splashScreen);
       if (filter != null && !utils.isEmpty(filter)) {
@@ -365,34 +365,34 @@ var Hook = DataConnected.extend({
     return function format(x, index, group, removePrefix, percentageMode) {
 
     percentageMode = _this.getConceptprops().format;
-    if(percentageMode===SHARE) x*=100;
+    if (percentageMode===SHARE) x*=100;
 
     // Format time values
     // Assumption: a hook has always time in its space
-    if(utils.isDate(x)) return _this._space.time.formatDate(x);
+    if (utils.isDate(x)) return _this._space.time.formatDate(x);
 
     // Dealing with values that are supposed to be time
-    if(_this.scaleType === "time" && !utils.isDate(x)) {
+    if (_this.scaleType === "time" && !utils.isDate(x)) {
         return _this._space.time.formatDate(new Date(x));
     }
 
     // Strings, null, NaN and undefined are bypassing any formatter
-    if(utils.isString(x) || !x && x!==0) return x;
+    if (utils.isString(x) || !x && x!==0) return x;
 
-    if(Math.abs(x)<0.00000000000001) return "0";
+    if (Math.abs(x)<0.00000000000001) return "0";
 
     var format = "r"; //rounded format. use "f" for fixed
     var prec = 3; //round to so many significant digits
 
     var prefix = "";
-    if(removePrefix) return d3.format("." + prec + format)(x);
+    if (removePrefix) return d3.format("." + prec + format)(x);
 
     //---------------------
     // BEAUTIFIERS GO HOME!
     // don't break formatting please
     //---------------------
     // the tiny constant compensates epsilon-error when doing logsrithms
-    switch(Math.floor(Math.log(Math.abs(x))/Math.LN10 + 0.00000000000001)) {
+    switch (Math.floor(Math.log(Math.abs(x))/Math.LN10 + 0.00000000000001)) {
       case -13: x *= 1000000000000; prefix = "p"; break; //0.1p
       case -10: x *= 1000000000; prefix = "n"; break; //0.1n
       case -7: x *= 1000000; prefix = "µ"; break; //0.1µ
@@ -418,7 +418,7 @@ var Hook = DataConnected.extend({
       case 13: x /= 1000000000000; prefix = "TR"; break; //10TR
       case 14: x /= 1000000000000; prefix = "TR"; break; //100TR
       //use the D3 SI formatting for the extreme cases
-      default: return(d3.format("." + prec + "s")(x)).replace("G", "B");
+      default: return (d3.format("." + prec + "s")(x)).replace("G", "B");
     }
 
     var formatted = d3.format("." + prec + format)(x);
@@ -427,7 +427,7 @@ var Hook = DataConnected.extend({
 
 
     // use manual formatting for the cases above
-    return(formatted + prefix + (percentageMode===PERCENT || percentageMode===SHARE?"%":""));
+    return (formatted + prefix + (percentageMode===PERCENT || percentageMode===SHARE?"%":""));
     };
   },
 
@@ -446,8 +446,8 @@ var Hook = DataConnected.extend({
    * @returns {Array} unique values
    */
   getUnique: function(attr) {
-    if(!this.isHook()) return;
-    if(!attr) attr = this._getFirstDimension({ type: "time" });
+    if (!this.isHook()) return;
+    if (!attr) attr = this._getFirstDimension({ type: "time" });
     return this.dataSource.getData(this._dataId, 'unique', attr);
   },
 
@@ -470,7 +470,7 @@ var Hook = DataConnected.extend({
    * @returns {Object} hash-map of key-value pairs
    */
   getNestedItems: function(keys) {
-    if(!keys) return utils.warn("No keys provided to getNestedItems(<keys>)");
+    if (!keys) return utils.warn("No keys provided to getNestedItems(<keys>)");
     return this.dataSource.getData(this._dataId, 'nested', keys);
   },
 
@@ -522,7 +522,7 @@ var Hook = DataConnected.extend({
         var f = (utils.isDate(d[attr])) ? d[attr] : parseFloat(d[attr]);
 
         // if it is a number
-        if(!isNaN(f)) {
+        if (!isNaN(f)) {
           filtered.push(f);
         }
 
@@ -534,12 +534,12 @@ var Hook = DataConnected.extend({
       var min;
       var max;
       var limits = {};
-      for(var i = 0; i < filtered.length; i += 1) {
+      for (var i = 0; i < filtered.length; i += 1) {
         var c = filtered[i];
-        if(typeof min === 'undefined' || c < min) {
+        if (typeof min === 'undefined' || c < min) {
           min = c;
         }
-        if(typeof max === 'undefined' || c > max) {
+        if (typeof max === 'undefined' || c > max) {
           max = c;
         }
       }
@@ -552,7 +552,7 @@ var Hook = DataConnected.extend({
     var iterateGroupKeys = function(data, deep, result, cb) {
       deep--;
       utils.forEach(data, function(d, id) {
-        if(deep) {
+        if (deep) {
           result[id] = {};
           iterateGroupKeys(d, deep, result[id], cb);
         } else {
@@ -586,7 +586,7 @@ var Hook = DataConnected.extend({
     this._super();
 
     var allowedScales = this.getConceptprops().scales;
-    if(allowedScales && allowedScales.length>0 && !allowedScales.includes(this.scaleType)) {
+    if (allowedScales && allowedScales.length>0 && !allowedScales.includes(this.scaleType)) {
       this.set({ scaleType: allowedScales[0] === "nominal"? "ordinal":allowedScales[0] }, null, false);
     }
   },

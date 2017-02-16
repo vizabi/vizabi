@@ -29,7 +29,7 @@ var Find = Dialog.extend({
         _this.showHideDeselect();
       },
       "change:state.time.playing": function(evt) {
-        if(!_this.model.state.time.playing) {
+        if (!_this.model.state.time.playing) {
           _this.time = _this.model.state.time.value;
 
           _this.model.state.marker.getFrame(_this.time, function(values, time) {
@@ -40,7 +40,7 @@ var Find = Dialog.extend({
       },
       "change:state.time.value": function(evt) {
         // hide changes if the dialog is not visible
-        if(!_this.placeholderEl.classed('vzb-active') && !_this.placeholderEl.classed('vzb-sidebar')) return;
+        if (!_this.placeholderEl.classed('vzb-active') && !_this.placeholderEl.classed('vzb-sidebar')) return;
 
         _this.time = _this.model.state.time.value;
 
@@ -74,10 +74,10 @@ var Find = Dialog.extend({
 
     this.input_search.on("keyup", function() {
       var event = d3.event;
-      if(event.keyCode == 13 && _this.input_search.node().value == "select all") {
+      if (event.keyCode == 13 && _this.input_search.node().value == "select all") {
         _this.input_search.node().value = "";
         //clear highlight so it doesn't get in the way when selecting an entity
-        if(!utils.isTouchDevice()) _this.model.state.marker.clearHighlighted();
+        if (!utils.isTouchDevice()) _this.model.state.marker.clearHighlighted();
         _this.model.state.marker.selectAll();
       }
     });
@@ -140,7 +140,7 @@ var Find = Dialog.extend({
 
       //sort data alphabetically
       data.sort(function(a, b) {
-        return(a.name < b.name) ? -1 : 1;
+        return (a.name < b.name) ? -1 : 1;
       });
 
       _this.list.html("");
@@ -159,10 +159,10 @@ var Find = Dialog.extend({
         })
         .on("change", function(d) {
           //clear highlight so it doesn't get in the way when selecting an entity
-          if(!utils.isTouchDevice()) _this.model.state.marker.clearHighlighted();
+          if (!utils.isTouchDevice()) _this.model.state.marker.clearHighlighted();
           _this.model.state.marker.selectMarker(d);
           //return to highlighted state
-          if(!utils.isTouchDevice() && !d.brokenData) _this.model.state.marker.highlightMarker(d);
+          if (!utils.isTouchDevice() && !d.brokenData) _this.model.state.marker.highlightMarker(d);
         });
 
       _this.items.append("label")
@@ -171,10 +171,10 @@ var Find = Dialog.extend({
         })
         .text(function(d) {return d.name;})
         .on("mouseover", function(d) {
-          if(!utils.isTouchDevice() && !d.brokenData) _this.model.state.marker.highlightMarker(d);
+          if (!utils.isTouchDevice() && !d.brokenData) _this.model.state.marker.highlightMarker(d);
         })
         .on("mouseout", function(d) {
-          if(!utils.isTouchDevice()) _this.model.state.marker.clearHighlighted();
+          if (!utils.isTouchDevice()) _this.model.state.marker.clearHighlighted();
         });
         utils.preventAncestorScrolling(_this.element.select('.vzb-dialog-scrollable'));
 
@@ -197,7 +197,7 @@ var Find = Dialog.extend({
         d.brokenData = false;
         utils.forEach(values, function(hook, name) {
           //TODO: remove the hack with hardcoded hook names (see discussion in #1389)
-          if(name!=="color" && name!=="size_label" && _this.model.state.marker[name].use!=="constant" && !hook[d[KEY]] && hook[d[KEY]] !== 0) {
+          if (name!=="color" && name!=="size_label" && _this.model.state.marker[name].use!=="constant" && !hook[d[KEY]] && hook[d[KEY]] !== 0) {
             d.brokenData = true;
           }
         });
@@ -213,7 +213,7 @@ var Find = Dialog.extend({
     var selected = this.model.state.marker.getSelected(KEY);
     this.items.selectAll("input")
         .property("checked", function(d) {
-          return(selected.indexOf(d[KEY]) !== -1);
+          return (selected.indexOf(d[KEY]) !== -1);
         });
   },
 
@@ -224,7 +224,7 @@ var Find = Dialog.extend({
     this.list.selectAll(".vzb-find-item")
       .classed("vzb-hidden", function(d) {
         var lower = (d.name||"").toLowerCase();
-        return(lower.indexOf(search) === -1);
+        return (lower.indexOf(search) === -1);
       });
   },
 
@@ -241,7 +241,7 @@ var Find = Dialog.extend({
   transitionEnd: function(event) {
     this._super(event);
 
-    if(!utils.isTouchDevice()) this.input_search.node().focus();
+    if (!utils.isTouchDevice()) this.input_search.node().focus();
   }
 
 });

@@ -111,7 +111,7 @@ var MCSelectList = Class.extend({
     var titleHeight = _this.yTitleEl.select("text").node().getBBox().height || 0;
 
     var maxFontHeight = (_this.height - titleHeight * 3) / (_this.selectList.data().length + 2);
-    if(fontHeight > maxFontHeight) fontHeight = maxFontHeight;
+    if (fontHeight > maxFontHeight) fontHeight = maxFontHeight;
 
     _this.selectList
       .attr("transform", function (d, i) {

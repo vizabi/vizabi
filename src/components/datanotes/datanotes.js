@@ -30,7 +30,7 @@ var DataNotes = Component.extend({
 
     this.model_binds = {
       "translate:locale": function(evt) {
-        if(!_this._ready || !_this._readyOnce) return;
+        if (!_this._ready || !_this._readyOnce) return;
         _this.ready();
       }
     };
@@ -80,18 +80,18 @@ var DataNotes = Component.extend({
   },
 
   close: function() {
-    if(!hidden) {
+    if (!hidden) {
       this.pin(false).hide();
     }
   },
 
   setHook: function(_hookName) {
-    if(!this._readyOnce) return this;
-    if(pin) {
+    if (!this._readyOnce) return this;
+    if (pin) {
       newHookName = _hookName;
       return this;
     }
-    if(hookName) this.model.marker[hookName].off('change:which', this.close);
+    if (hookName) this.model.marker[hookName].off('change:which', this.close);
     hookName = newHookName = _hookName;
     this.model.marker[hookName].on('change:which', this.close);
 
@@ -101,7 +101,7 @@ var DataNotes = Component.extend({
   },
 
   setValues: function() {
-    if(!hookName) return;
+    if (!hookName) return;
     var hook = this.model.marker[hookName];
     var concept = hook.getConceptprops();
 
@@ -111,7 +111,7 @@ var DataNotes = Component.extend({
 
     this.element.select('.vzb-data-notes-link').classed('vzb-hidden', !concept.sourceLink);
 
-    if(concept.sourceLink) {
+    if (concept.sourceLink) {
       var _source = this.translator('hints/source');
       var sourceName = concept.sourceName||"";
       this.element.select('.vzb-data-notes-link').html('<span>' + (sourceName ? (_source + ':') : '') +
@@ -123,7 +123,7 @@ var DataNotes = Component.extend({
   setPos: function(_left, _top, force) {
     left = _left;
     top = _top;
-    if(pin && !force) return this;
+    if (pin && !force) return this;
     var parentHeight = this.parent.element.offsetHeight;
     var width = this.element.node().offsetWidth;
     var height = this.element.node().offsetHeight;
@@ -131,16 +131,16 @@ var DataNotes = Component.extend({
     var topMove;
     var leftPos = left - width;
     var topPos = top;
-    if(leftPos < 10) {
+    if (leftPos < 10) {
       leftPos = 10;
       leftMove = true;
     }
-    if((topPos + height + 10) > parentHeight) {
+    if ((topPos + height + 10) > parentHeight) {
       topPos = parentHeight - height - 10;
       topMove = true;
     }
 
-    if(leftMove && topMove) {
+    if (leftMove && topMove) {
       topPos = top - height - 30;
     }
 
@@ -151,14 +151,14 @@ var DataNotes = Component.extend({
   },
 
   pin: function(arg) {
-    if(hidden) return this;
+    if (hidden) return this;
     pin = !pin;
-    if(arg != null) pin = arg;
+    if (arg != null) pin = arg;
     this.element.select('.vzb-data-notes-close').classed('vzb-hidden', !pin);
     this.element.classed('vzb-data-notes-pinned', pin);
-    if(hookName != newHookName) this.setHook(newHookName);
+    if (hookName != newHookName) this.setHook(newHookName);
     this.element.select('.vzb-data-notes-body').node().scrollTop = 0;
-    if(!showNotes) {
+    if (!showNotes) {
       return this.hide();
     } else {
       return this.setPos(left, top, true);
@@ -166,8 +166,8 @@ var DataNotes = Component.extend({
   },
 
   toggle: function(arg) {
-    if(pin || !hookName) return this;
-    if(arg == null) arg = !hidden;
+    if (pin || !hookName) return this;
+    if (arg == null) arg = !hidden;
     hidden = arg;
     this.element.classed("vzb-hidden", hidden || !showNotes);
     return this;

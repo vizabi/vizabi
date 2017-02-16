@@ -9,11 +9,11 @@ import interpolator from 'vizabi-interpolators/interpolators';
  */
 export var approxEqual = function(a, b, tolerance) {
   tolerance = tolerance||0;
-  if(b > 0) {
+  if (b > 0) {
     return (1 - tolerance) * b <= a && a <= b * (1 + tolerance);
-  }else if(b < 0) {
+  } else if (b < 0) {
     return (1 + tolerance) * b <= a && a <= b * (1 - tolerance);
-  }else{
+  } else {
     return Math.abs(a) <= tolerance;
   }
 };
@@ -122,11 +122,11 @@ export var isPlainObject = function(obj) {
  * @returns {Boolean}
  */
 export var arrayEquals = function(a, b) {
-  if(a === b) return true;
-  if(a == null || b == null) return false;
-  if(a.length != b.length) return false;
-  for(var i = 0; i < a.length; ++i) {
-    if(a[i] !== b[i]) return false;
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; ++i) {
+    if (a[i] !== b[i]) return false;
   }
   return true;
 };
@@ -254,7 +254,7 @@ export var getViewportPosition = function(element) {
   var xPosition = 0;
   var yPosition = 0;
 
-  while(element) {
+  while (element) {
     xPosition += (element.offsetLeft - element.scrollLeft + element.clientLeft);
     yPosition += (element.offsetTop - element.scrollTop + element.clientTop);
     element = element.offsetParent;
@@ -269,7 +269,7 @@ export var getViewportPosition = function(element) {
 
 export var findScrollableAncestor = function(node) {
   var scrollable = ["scroll", "auto"];
-  while(node = node.parentNode) {
+  while (node = node.parentNode) {
     var scrollHeight = node.scrollHeight,
       height = node.clientHeight;
       if (scrollHeight > height && scrollable.indexOf(d3.select(node).style("overflow")) !== -1) {
@@ -298,14 +298,14 @@ export var strToFloat = function(string) {
  * @param {Object} ctx context object
  */
 export var forEach = function(obj, callback, ctx) {
-  if(!obj) {
+  if (!obj) {
     return;
   }
   var i, size;
-  if(isArray(obj)) {
+  if (isArray(obj)) {
     size = obj.length;
-    for(i = 0; i < size; i += 1) {
-      if(callback.apply(ctx, [
+    for (i = 0; i < size; i += 1) {
+      if (callback.apply(ctx, [
           obj[i],
           i
         ]) === false) {
@@ -315,8 +315,8 @@ export var forEach = function(obj, callback, ctx) {
   } else {
     var keys = Object.keys(obj);
     size = keys.length;
-    for(i = 0; i < size; i += 1) {
-      if(callback.apply(ctx, [
+    for (i = 0; i < size; i += 1) {
+      if (callback.apply(ctx, [
           obj[keys[i]],
           keys[i]
         ]) === false) {
@@ -337,7 +337,7 @@ export var extend = function(dest) {
   //loop through each obj and each argument, left to right
   forEach(objs, function(obj, i) {
     forEach(obj, function(value, k) {
-      if(obj.hasOwnProperty(k)) {
+      if (obj.hasOwnProperty(k)) {
         dest[k] = value;
       }
     });
@@ -474,9 +474,9 @@ export var merge = function(dest) {
   // loop through each obj and each argument, left to right
   forEach(objs, function(obj, i) {
     forEach(obj, function(value, k) {
-      if(obj.hasOwnProperty(k)) {
-        if(dest.hasOwnProperty(k)) {
-          if(!isArray(dest[k])) {
+      if (obj.hasOwnProperty(k)) {
+        if (dest.hasOwnProperty(k)) {
+          if (!isArray(dest[k])) {
             dest[k] = [dest[k]];
           }
           dest[k].push(value);
@@ -497,15 +497,15 @@ export var merge = function(dest) {
  * @returns {Object} cloned object
  */
 export var clone = function(src, arr, exclude) {
-  if(isArray(src)) {
+  if (isArray(src)) {
     return src.slice(0);
   }
   var clone = {};
   forEach(src, function(value, k) {
-    if((arr && arr.indexOf(k) === -1) || (exclude && exclude.indexOf(k) !== -1)) {
+    if ((arr && arr.indexOf(k) === -1) || (exclude && exclude.indexOf(k) !== -1)) {
       return;
     }
-    if(src.hasOwnProperty(k)) {
+    if (src.hasOwnProperty(k)) {
       clone[k] = value;
     }
   });
@@ -519,10 +519,10 @@ export var clone = function(src, arr, exclude) {
  */
 export var deepClone = function(src) {
   var clone = {};
-  if(isArray(src)) clone = [];
+  if (isArray(src)) clone = [];
 
   forEach(src, function(value, k) {
-    if(isObject(value) || isArray(value)) {
+    if (isObject(value) || isArray(value)) {
       clone[k] = deepClone(value);
     } else {
       clone[k] = value;
@@ -538,7 +538,7 @@ export var deepClone = function(src) {
  */
 export var without = function(arr, el) {
   var idx = arr.indexOf(el);
-  if(idx !== -1) {
+  if (idx !== -1) {
     arr.splice(idx, 1);
   }
   return arr;
@@ -555,14 +555,14 @@ export var without = function(arr, el) {
 export var unique = function(arr, func) {
   var u = {};
   var a = [];
-  if(!func) {
+  if (!func) {
     func = function(d) {
       return d;
     };
   }
-  for(var i = 0, l = arr.length; i < l; i += 1) {
+  for (var i = 0, l = arr.length; i < l; i += 1) {
     var key = func(arr[i]);
-    if(u.hasOwnProperty(key)) {
+    if (u.hasOwnProperty(key)) {
       continue;
     }
     a.push(arr[i]);
@@ -581,14 +581,14 @@ export var unique = function(arr, func) {
 export var uniqueLast = function(arr, func) {
   var u = {};
   var a = [];
-  if(!func) {
+  if (!func) {
     func = function(d) {
       return d;
     };
   }
-  for(var i = 0, l = arr.length; i < l; i += 1) {
+  for (var i = 0, l = arr.length; i < l; i += 1) {
     var key = func(arr[i]);
-    if(u.hasOwnProperty(key)) {
+    if (u.hasOwnProperty(key)) {
       a.splice(u[key], 1); //remove old item from array
     }
     a.push(arr[i]);
@@ -605,7 +605,7 @@ export var uniqueLast = function(arr, func) {
 export var find = function(arr, func) {
   var found;
   forEach(arr, function(i) {
-    if(func(i)) {
+    if (func(i)) {
       found = i;
       return false; //break
     }
@@ -627,17 +627,17 @@ export var filter = function(arr, filter) {
   var s_keys = keys.length;
   var i;
   var f;
-  while((index += 1) < length) {
+  while ((index += 1) < length) {
     var value = arr[index];
     var match = true;
-    for(i = 0; i < s_keys; i += 1) {
+    for (i = 0; i < s_keys; i += 1) {
       f = keys[i];
-      if(!value.hasOwnProperty(f) || value[f] !== filter[f]) {
+      if (!value.hasOwnProperty(f) || value[f] !== filter[f]) {
         match = false;
         break;
       }
     }
-    if(match) {
+    if (match) {
       result[resIndex += 1] = value;
     }
   }
@@ -658,18 +658,18 @@ export var filterAny = function(arr, filter, wildcard) {
   var keys = Object.keys(filter);
   var s_keys = keys.length;
   var i, f;
-  while((index += 1) < length) {
+  while ((index += 1) < length) {
     var value = arr[index];
     //normalize to array
     var match = true;
-    for(i = 0; i < s_keys; i += 1) {
+    for (i = 0; i < s_keys; i += 1) {
       f = keys[i];
-      if(!value.hasOwnProperty(f) || !matchAny(value[f], filter[f], wildcard)) {
+      if (!value.hasOwnProperty(f) || !matchAny(value[f], filter[f], wildcard)) {
         match = false;
         break;
       }
     }
-    if(match) {
+    if (match) {
       result[resIndex += 1] = value;
     }
   }
@@ -686,32 +686,32 @@ export var filterAny = function(arr, filter, wildcard) {
  */
 export var matchAny = function(values, compare, wildc) {
   //normalize value
-  if(!isArray(values)) values = [values];
-  if(!wildc) wildc = "*"; //star by default
+  if (!isArray(values)) values = [values];
+  if (!wildc) wildc = "*"; //star by default
   var match = false;
-  for(var e = 0; e < values.length; e++) {
+  for (var e = 0; e < values.length; e++) {
     var value = values[e];
 
-    if(!isArray(compare) && value == compare) {
+    if (!isArray(compare) && value == compare) {
       match = true;
       break;
-    } else if(isArray(compare)) {
+    } else if (isArray(compare)) {
       var found = -1;
-      for(var i = 0; i < compare.length; i++) {
+      for (var i = 0; i < compare.length; i++) {
         var c = compare[i];
-        if(!isArray(c) && (c == value || c === wildc)) {
+        if (!isArray(c) && (c == value || c === wildc)) {
           found = i;
           break;
-        } else if(isArray(c)) { //range
+        } else if (isArray(c)) { //range
           var min = c[0];
           var max = c[1] || min;
-          if(value >= min && value <= max) {
+          if (value >= min && value <= max) {
             found = i;
             break;
           }
         }
       }
-      if(found !== -1) {
+      if (found !== -1) {
         match = true;
         break;
       }
@@ -788,11 +788,11 @@ export var preventAncestorScrolling = function(element) {
 export var mapRows = function(original, formatters) {
 
   function mapRow(value, fmt) {
-    if(!isArray(value)) {
+    if (!isArray(value)) {
       return fmt(value);
     } else {
       var res = [];
-      for(var i = 0; i < value.length; i++) {
+      for (var i = 0; i < value.length; i++) {
         res[i] = mapRow(value[i], fmt);
       }
       return res;
@@ -803,7 +803,7 @@ export var mapRows = function(original, formatters) {
   //TODO: default formatter is moved to utils. need to return it to hook prototype class, but retest #1212 #1230 #1253
   var defaultFormatter = function (val) {
       var newVal = val;
-      if(val === "") {
+      if (val === "") {
         newVal = null;
       } else {
         // check for numeric
@@ -818,7 +818,7 @@ export var mapRows = function(original, formatters) {
   original = original.map(function(row) {
     var columns = Object.keys(row);
 
-    for(var i = 0; i < columns.length; i++) {
+    for (var i = 0; i < columns.length; i++) {
       var col = columns[i];
       row[col] = mapRow(row[col], formatters[col] || defaultFormatter);
     }
@@ -851,7 +851,7 @@ export var areaToRadius = function(a) {
  * @param {String} message
  */
 export var timeStamp = function(message) {
-  if(console && typeof console.timeStamp === 'function') {
+  if (console && typeof console.timeStamp === 'function') {
     console.timeStamp(message);
   }
 };
@@ -864,7 +864,7 @@ export var warn = function(message) {
   message = Array.prototype.slice.call(arguments)
     .map(function(m) {return m instanceof Object? JSON.stringify(m, null, 4) : m; })
     .join(' ');
-  if(console && typeof console.warn === 'function') {
+  if (console && typeof console.warn === 'function') {
 
     console.warn(message);
   }
@@ -882,7 +882,7 @@ export var warn = function(message) {
  */
 export var groupCollapsed = function(message) {
   message = Array.prototype.slice.call(arguments).join(' ');
-  if(console && typeof console.groupCollapsed === 'function') {
+  if (console && typeof console.groupCollapsed === 'function') {
     console.groupCollapsed(message);
   }
 };
@@ -892,7 +892,7 @@ export var groupCollapsed = function(message) {
  * @param {String} message
  */
 export var groupEnd = function() {
-  if(console && typeof console.groupEnd === 'function') {
+  if (console && typeof console.groupEnd === 'function') {
     console.groupEnd();
   }
 };
@@ -902,7 +902,7 @@ export var groupEnd = function() {
  * @param {String} message
  */
 export var error = function(err) {
-  if(console && typeof console.error === 'function') {
+  if (console && typeof console.error === 'function') {
     if (err.stack) {
       console.error(err.stack);
     } else {
@@ -919,7 +919,7 @@ export var error = function(err) {
  * @param {Number} number
  */
 export var countDecimals = function(number) {
-  if(Math.floor(number.valueOf()) === number.valueOf()) {
+  if (Math.floor(number.valueOf()) === number.valueOf()) {
     return 0;
   }
   return number.toString().split('.')[1].length || 0;
@@ -931,7 +931,7 @@ export var countDecimals = function(number) {
  * @param {String} className
  */
 export var addClass = function(el, className) {
-  if(el.classList) {
+  if (el.classList) {
     el.classList.add(className);
   } else {
     //IE<10
@@ -945,7 +945,7 @@ export var addClass = function(el, className) {
  * @param {String} className
  */
 export var removeClass = function(el, className) {
-  if(el.classList) {
+  if (el.classList) {
     el.classList.remove(className);
   } else {
     //IE<10
@@ -961,9 +961,9 @@ export var removeClass = function(el, className) {
  * @param {Boolean} value
  */
 export var classed = function(el, className, value) {
-  if(value === true) {
+  if (value === true) {
     addClass(el, className);
-  } else if(value === false) {
+  } else if (value === false) {
     removeClass(el, className);
   } else {
     return hasClass(el, className);
@@ -977,7 +977,7 @@ export var classed = function(el, className, value) {
  * @return {Boolean}
  */
 export var hasClass = function(el, className) {
-  if(el.classList) {
+  if (el.classList) {
     return el.classList.contains(className);
   } else {
     //IE<10
@@ -1002,7 +1002,7 @@ export var throttle = function(func, ms) {
     nextTime,
     wrapper = function() {
 
-      if(nextTime > Date.now()) {
+      if (nextTime > Date.now()) {
         throttled = true;
         savedArgs = arguments;
         savedThis = this;
@@ -1021,7 +1021,7 @@ export var throttle = function(func, ms) {
     },
 
     __recallLast = function() {
-      if(throttled) {
+      if (throttled) {
         throttled = false;
         func.apply(savedThis, savedArgs);
       }
@@ -1051,7 +1051,7 @@ export var values = function(obj) {
   var arr = [];
   var keys = Object.keys(obj);
   var size = keys.length;
-  for(var i = 0; i < size; i += 1) {
+  for (var i = 0; i < size; i += 1) {
     arr.push(obj[keys[i]]);
   }
   return arr;
@@ -1064,7 +1064,7 @@ export var values = function(obj) {
  */
 export var arrayMin = function(arr) {
   return arr.reduce(function(p, v) {
-    return(p < v ? p : v);
+    return (p < v ? p : v);
   });
 };
 
@@ -1074,7 +1074,7 @@ export var arrayMin = function(arr) {
  */
 export var arrayMax = function(arr) {
   return arr.reduce(function(p, v) {
-    return(p > v ? p : v);
+    return (p > v ? p : v);
   });
 };
 
@@ -1105,10 +1105,10 @@ export var arrayMedian = function(arr) {
     return a - b;
   });
   var middle = Math.floor((arr.length - 1) / 2);
-  if(arr.length % 2) {
+  if (arr.length % 2) {
     return arr[middle];
   } else {
-    return(arr[middle] + arr[middle + 1]) / 2;
+    return (arr[middle] + arr[middle + 1]) / 2;
   }
 };
 
@@ -1117,7 +1117,7 @@ export var arrayMedian = function(arr) {
  * @param {Array} arr
  */
 export var arrayLast = function(arr) {
-  if(!arr.length) return null;
+  if (!arr.length) return null;
   return arr[arr.length - 1];
 };
 
@@ -1130,15 +1130,15 @@ export var arrayLast = function(arr) {
 export var diffObject = function(obj2, obj1) {
   var diff = {};
   forEach(obj2, function(value, key) {
-    if(!obj1.hasOwnProperty(key)) {
+    if (!obj1.hasOwnProperty(key)) {
       diff[key] = value;
-    } else if(value !== obj1[key]) {
-      if(isPlainObject(value) && isPlainObject(obj1[key])) {
+    } else if (value !== obj1[key]) {
+      if (isPlainObject(value) && isPlainObject(obj1[key])) {
         var d = diffObject(value, obj1[key]);
-        if(Object.keys(d).length > 0) {
+        if (Object.keys(d).length > 0) {
           diff[key] = d;
         }
-      } else if(!isArray(value) || !isArray(obj1[key]) || !arrayEquals(value, obj1[key])) {
+      } else if (!isArray(value) || !isArray(obj1[key]) || !arrayEquals(value, obj1[key])) {
         diff[key] = value;
       }
     }
@@ -1172,16 +1172,16 @@ export var clearDelay = function(delayId) {
  * @return {Number} hashCode
  */
 export var hashCode = function(str) {
-  if(!isString(str)) {
+  if (!isString(str)) {
     str = JSON.stringify(str);
   }
   var hash = 0;
   var size = str.length;
   var c;
-  if(size === 0) {
+  if (size === 0) {
     return hash;
   }
-  for(var i = 0; i < size; i += 1) {
+  for (var i = 0; i < size; i += 1) {
     c = str.charCodeAt(i);
     hash = (hash << 5) - hash + c;
     hash &= hash; // Convert to 32bit integer
@@ -1197,9 +1197,9 @@ export var hashCode = function(str) {
  */
 //
 export var nestArrayToObj = function(arr) {
-  if(!arr || !arr.length || !arr[0].key) return arr;
+  if (!arr || !arr.length || !arr[0].key) return arr;
   var res = {};
-  for(var i = 0; i < arr.length; i++) {
+  for (var i = 0; i < arr.length; i++) {
     res[arr[i].key] = nestArrayToObj(arr[i].values);
   }
   return res;
@@ -1225,33 +1225,33 @@ export var interpolateVector = function() {
 export var interpolatePoint = function(items, use, which, next, dimTime, time, method, extrapolate) {
 
 
-  if(!items || items.length === 0) {
+  if (!items || items.length === 0) {
     warn('interpolatePoint failed because incoming array is empty. It was ' + which);
     return null;
   }
   // return constant for the use of "constant"
-  if(use === 'constant') return which;
+  if (use === 'constant') return which;
 
   // zero-order interpolation for the use of properties
-  if(use === 'property') return items[0][which];
+  if (use === 'property') return items[0][which];
 
   // the rest is for the continuous measurements
 
   if (extrapolate) {
     // check if the desired value is out of range. 0-order extrapolation
-    if(time - items[0][dimTime] <= 0) return items[0][which];
-    if(time - items[items.length - 1][dimTime] >= 0) return items[items.length - 1][which];
+    if (time - items[0][dimTime] <= 0) return items[0][which];
+    if (time - items[items.length - 1][dimTime] >= 0) return items[items.length - 1][which];
   } else {
     // no extrapolation according to Ola's request
-    if(time < items[0][dimTime] || time > items[items.length - 1][dimTime]) return null;
+    if (time < items[0][dimTime] || time > items[items.length - 1][dimTime]) return null;
   }
 
-  if(!next && next !== 0) next = d3.bisectLeft(items.map(function(m) {return m[dimTime];}), time);
+  if (!next && next !== 0) next = d3.bisectLeft(items.map(function(m) {return m[dimTime];}), time);
 
-  if(next === 0) return items[0][which];
+  if (next === 0) return items[0][which];
 
   //return null if data is missing
-  if(items[next]===undefined || items[next][which] === null || items[next - 1][which] === null || items[next][which] === "") {
+  if (items[next]===undefined || items[next][which] === null || items[next - 1][which] === null || items[next][which] === "") {
     warn('interpolatePoint failed because next/previous points are bad in ' + which);
     return null;
   }
@@ -1267,8 +1267,8 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
   );
 
   // cast to time object if we are interpolating time
-  if(which === dimTime) result = new Date(result);
-  if(isNaN(result)) {
+  if (which === dimTime) result = new Date(result);
+  if (isNaN(result)) {
       warn('interpolatePoint failed because result is NaN. It was ' + which);
       result = null;
   }
@@ -1287,26 +1287,26 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
 export var ajax = function(options) {
   var request = new XMLHttpRequest();
   request.open(options.method, options.url, true);
-  if(options.method === 'POST' && !options.json) {
+  if (options.method === 'POST' && !options.json) {
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-  } else if(options.method === 'POST' && options.json) {
+  } else if (options.method === 'POST' && options.json) {
     request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
   }
   request.onload = function() {
-    if(request.status >= 200 && request.status < 400) {
+    if (request.status >= 200 && request.status < 400) {
       // Success!
       var data = options.json ? JSON.parse(request.responseText) : request.responseText;
-      if(options.success) {
+      if (options.success) {
         options.success(data);
       }
     } else {
-      if(options.error) {
+      if (options.error) {
         options.error();
       }
     }
   };
   request.onerror = function() {
-    if(options.error) {
+    if (options.error) {
       options.error();
     }
   };
@@ -1357,13 +1357,13 @@ export var memoize = function(fn) {
     var i = args.length;
     var currentArg = null;
 
-    while(i--) {
+    while (i--) {
       currentArg = args[i];
       hash += (currentArg === Object(currentArg)) ? JSON.stringify(currentArg) : currentArg;
       fn.memoize || (fn.memoize = {});
     }
 
-    return(hash in fn.memoize) ? fn.memoize[hash] : fn.memoize[hash] = fn.apply(this, args);
+    return (hash in fn.memoize) ? fn.memoize[hash] : fn.memoize[hash] = fn.apply(this, args);
   };
 };
 
@@ -1378,18 +1378,18 @@ export var debounce = function(func, wait, immediate) {
       args = arguments;
     var later = function() {
       timeout = null;
-      if(!immediate) func.apply(context, args);
+      if (!immediate) func.apply(context, args);
     };
     var callNow = immediate && !timeout;
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
-    if(callNow) func.apply(context, args);
+    if (callNow) func.apply(context, args);
   };
 };
 
 export var isTouchDevice = function() {
   //'ontouchstart' is not reliable in Google Chrome #2116, but Chrome has this firesTouchEvents flag
-  if(((d3.event||{}).sourceCapabilities||{}).firesTouchEvents != null) {
+  if (((d3.event||{}).sourceCapabilities||{}).firesTouchEvents != null) {
     return d3.event.sourceCapabilities.firesTouchEvents;
   }
   return !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
@@ -1399,18 +1399,18 @@ export var isTouchDevice = function() {
 export var pruneTree = function(tree, filterCallback) {
   var filteredTree = {};
   var filteredChildrens = [];
-  if(tree.hasOwnProperty("children")) {
+  if (tree.hasOwnProperty("children")) {
     filteredChildrens = tree.children.map(function(childrenTree) {
       return pruneTree(childrenTree, filterCallback);
     }).filter(function(childrenTree) {
       return Object.keys(childrenTree).length !== 0;
     });
   }
-  if(filteredChildrens.length != 0 || filterCallback(tree)) {
+  if (filteredChildrens.length != 0 || filterCallback(tree)) {
     //copy all the properties to the new tree
     forEach(tree, function(value, key) {filteredTree[key] = value;});
   }
-  if(filteredChildrens.length != 0) {
+  if (filteredChildrens.length != 0) {
     filteredTree["children"] = filteredChildrens;
   }
   return filteredTree;
@@ -1462,18 +1462,18 @@ export function firstBy() {
 
     function makeCompareFunction(f, opt) {
      opt = typeof (opt)==="number" ? { direction: opt } : opt||{};
-     if(typeof (f)!="function") {
+     if (typeof (f)!="function") {
         var prop = f;
         // make unary function
         f = function(v1) {return v1[prop] ? v1[prop] : "";};
       }
-      if(f.length === 1) {
+      if (f.length === 1) {
         // f is a unary function mapping a single item to its sort score
         var uf = f;
         var preprocess = opt.ignoreCase?ignoreCase:identity;
         f = function(v1,v2) {return preprocess(uf(v1)) < preprocess(uf(v2)) ? -1 : preprocess(uf(v1)) > preprocess(uf(v2)) ? 1 : 0;};
       }
-      if(opt.direction === -1)return function(v1,v2) {return -f(v1,v2);};
+      if (opt.direction === -1) return function(v1,v2) {return -f(v1,v2);};
       return f;
     }
 

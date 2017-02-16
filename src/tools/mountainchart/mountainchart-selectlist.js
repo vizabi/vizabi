@@ -20,7 +20,7 @@ var MCSelectList = Class.extend({
         return _this.model.marker.isSelected(f);
       }).sort(function (a, b) {
         if (a.sortValue && b.sortValue) {
-          if(a.sortValue[1] === b.sortValue[1]) {
+          if (a.sortValue[1] === b.sortValue[1]) {
             return d3.descending(a.sortValue[0], b.sortValue[0]);
           }
           return d3.descending(a.sortValue[1], b.sortValue[1]);
@@ -108,7 +108,7 @@ var MCSelectList = Class.extend({
     var titleHeight = _this.yTitleEl.select("text").node().getBBox().height || 0;
 
     var maxFontHeight = (_this.height - titleHeight * 3) / (_this.selectList.data().length + 2);
-    if(fontHeight > maxFontHeight) fontHeight = maxFontHeight;
+    if (fontHeight > maxFontHeight) fontHeight = maxFontHeight;
 
     var currentAggrLevel = "null";
     var aggrLevelSpacing = 0;
@@ -119,7 +119,7 @@ var MCSelectList = Class.extend({
 
     _this.selectList
       .attr("transform", function (d, i) {
-        if(d.aggrLevel != currentAggrLevel) aggrLevelSpacing += fontHeight;
+        if (d.aggrLevel != currentAggrLevel) aggrLevelSpacing += fontHeight;
         var spacing = fontHeight * i + titleHeight * 1.5 + aggrLevelSpacing;
         currentAggrLevel = d.aggrLevel;
         return "translate(" + (isRTL ? _this.width : 0) + "," + spacing + ")";
@@ -128,9 +128,9 @@ var MCSelectList = Class.extend({
 
         var view = d3.select(this).attr("id", d.geo + '-label-' + _this._id);
         var name = "";
-        if(d.key) {
+        if (d.key) {
           name = d.key === "all"? _this.translator("mount/merging/world") : groupLabels[d.key];
-        }else{
+        } else {
           name = _this.values.label[d.KEY()];
         }
 

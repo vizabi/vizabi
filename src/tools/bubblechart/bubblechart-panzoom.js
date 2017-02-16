@@ -33,7 +33,7 @@ export default Class.extend({
         var self = this;
 
         return function(d) {
-            if(!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey ||
+            if (!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey ||
                     _this.ui.cursorMode === "plus") || (_this.ui.cursorMode === "minus") ||
                     (d3.event.sourceEvent.type === "touchmove" || d3.event.sourceEvent.type === "touchstart") &&
                     (d3.event.sourceEvent.touches.length > 1 || d3.event.sourceEvent.targetTouches.length > 1)) {
@@ -78,7 +78,7 @@ export default Class.extend({
                  * Cancel drag if drag lock is false, or when zoom-pinching via
                  * touchmove events.
                  */
-              if(!self.dragLock || (d3.event.sourceEvent.type === "touchmove" || d3.event.sourceEvent.type === "touchstart") &&
+              if (!self.dragLock || (d3.event.sourceEvent.type === "touchmove" || d3.event.sourceEvent.type === "touchstart") &&
                     (d3.event.sourceEvent.touches.length > 1 || d3.event.sourceEvent.targetTouches.length > 1)) {
                     self.dragLock = false;
 
@@ -104,7 +104,7 @@ export default Class.extend({
             },
 
             stop: function(e) {
-              if(!self.dragLock) return;
+              if (!self.dragLock) return;
               self.dragLock = false;
 
                 _this.zoomRect
@@ -116,7 +116,7 @@ export default Class.extend({
                     x: d3.mouse(this)[0],
                     y: d3.mouse(this)[1]
                 };
-                if(Math.abs(this.origin.x - this.target.x) < 10 || Math.abs(this.origin.y - this.target.y) < 10) return;
+                if (Math.abs(this.origin.x - this.target.x) < 10 || Math.abs(this.origin.y - this.target.y) < 10) return;
 
                 /*
                  * Only compensate for dragging when the Ctrl key or Meta key
@@ -151,7 +151,7 @@ export default Class.extend({
 
                 var sourceEvent = d3.event.sourceEvent;
 
-                if(sourceEvent != null && (sourceEvent.ctrlKey || sourceEvent.metaKey)) return;
+                if (sourceEvent != null && (sourceEvent.ctrlKey || sourceEvent.metaKey)) return;
 
                 // Cancel drag lock when zoom-pinching via touchmove events.
                 if (sourceEvent !== null &&
@@ -202,8 +202,8 @@ export default Class.extend({
                 _this.draggingNow = true;
 
                 //value protections and fallbacks
-                if(isNaN(zoom) || zoom == null) zoom = zoomer.scale;
-                if(isNaN(zoom) || zoom == null) zoom = 1;
+                if (isNaN(zoom) || zoom == null) zoom = zoomer.scale;
+                if (isNaN(zoom) || zoom == null) zoom = 1;
 
                 //TODO: this is a patch to fix #221. A proper code review of zoom and zoomOnRectangle logic is needed
                 /*
@@ -213,7 +213,7 @@ export default Class.extend({
                  * more than 1 contact that sets zoom to 1, then set the axis
                  * ratios to 1 as well, which will fully zoom out.
                  */
-                if(zoom === 1 && sourceEvent !== null &&
+                if (zoom === 1 && sourceEvent !== null &&
                     ((sourceEvent.type === "wheel" || sourceEvent.type === "mousewheel") && (sourceEvent.deltaY || -sourceEvent.wheelDelta) > 0 ||
                      sourceEvent.type === "touchmove" && sourceEvent.touches.length > 1)) {
                     zoomer.ratioX = 1;
@@ -223,15 +223,15 @@ export default Class.extend({
                 }
 
 //                if(isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = zoomer.translate();
-                if(isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = [0, 0];
+                if (isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = [0, 0];
 
                 // limit the zooming, so that it never goes below min value of zoom for any of the axes
                 var minZoomScale = zoomer.scaleExtent()[0];
-                if(zoom * ratioY < minZoomScale) {
+                if (zoom * ratioY < minZoomScale) {
                     ratioY = minZoomScale / zoom;
                     zoomer.ratioY = ratioY;
                 }
-                if(zoom * ratioX < minZoomScale) {
+                if (zoom * ratioX < minZoomScale) {
                     ratioX = minZoomScale / zoom;
                     zoomer.ratioX = ratioX;
                 }
@@ -240,20 +240,20 @@ export default Class.extend({
                 var zoomYOut = zoom * ratioY < 1;
 
                 //limit the panning, so that we are never outside the possible range
-                if(!zoomXOut) {
-                    if(pan[0] > 0) pan[0] = 0;
-                    if(pan[0] < (1 - zoom * ratioX) * _this.width) pan[0] = (1 - zoom * ratioX) * _this.width;
+                if (!zoomXOut) {
+                    if (pan[0] > 0) pan[0] = 0;
+                    if (pan[0] < (1 - zoom * ratioX) * _this.width) pan[0] = (1 - zoom * ratioX) * _this.width;
                 } else {
-                    if(pan[0] < 0) pan[0] = 0;
-                    if(pan[0] > (1 - zoom * ratioX) * _this.width) pan[0] = (1 - zoom * ratioX) * _this.width;
+                    if (pan[0] < 0) pan[0] = 0;
+                    if (pan[0] > (1 - zoom * ratioX) * _this.width) pan[0] = (1 - zoom * ratioX) * _this.width;
                 }
 
-                if(!zoomYOut) {
-                    if(pan[1] > 0) pan[1] = 0;
-                    if(pan[1] < (1 - zoom * ratioY) * _this.height) pan[1] = (1 - zoom * ratioY) * _this.height;
+                if (!zoomYOut) {
+                    if (pan[1] > 0) pan[1] = 0;
+                    if (pan[1] < (1 - zoom * ratioY) * _this.height) pan[1] = (1 - zoom * ratioY) * _this.height;
                 } else {
-                    if(pan[1] < 0) pan[1] = 0;
-                    if(pan[1] > (1 - zoom * ratioY) * _this.height) pan[1] = (1 - zoom * ratioY) * _this.height;
+                    if (pan[1] < 0) pan[1] = 0;
+                    if (pan[1] > (1 - zoom * ratioY) * _this.height) pan[1] = (1 - zoom * ratioY) * _this.height;
                 }
 
                 var xPanOffset = _this.width * zoom * ratioX;
@@ -294,20 +294,20 @@ export default Class.extend({
                  * Set the pan to account for the range bump by subtracting
                  * offsets and preventing panning past the range bump gutter.
                  */
-                if(!zoomXOut) {
-                    if(xRange[0] > xRangeBoundsBumped[0]) pan[0] = xRangeBoundsBumped[0] - xRangeMinOffset;
-                    if(xRange[1] < xRangeBoundsBumped[1]) pan[0] = xRangeBoundsBumped[1] - xRangeMaxOffset - xPanOffset;
+                if (!zoomXOut) {
+                    if (xRange[0] > xRangeBoundsBumped[0]) pan[0] = xRangeBoundsBumped[0] - xRangeMinOffset;
+                    if (xRange[1] < xRangeBoundsBumped[1]) pan[0] = xRangeBoundsBumped[1] - xRangeMaxOffset - xPanOffset;
                 } else {
-                    if(xRange[0] < xRangeBoundsBumped[0]) pan[0] = xRangeBoundsBumped[0] - xRangeMinOffset;
-                    if(xRange[1] > xRangeBoundsBumped[1]) pan[0] = xRangeBoundsBumped[1] - xRangeMaxOffset - xPanOffset;
+                    if (xRange[0] < xRangeBoundsBumped[0]) pan[0] = xRangeBoundsBumped[0] - xRangeMinOffset;
+                    if (xRange[1] > xRangeBoundsBumped[1]) pan[0] = xRangeBoundsBumped[1] - xRangeMaxOffset - xPanOffset;
                 }
 
-                if(!zoomYOut) {
-                    if(yRange[0] < yRangeBoundsBumped[0]) pan[1] = yRangeBoundsBumped[0] - yRangeMinOffset - yPanOffset;
-                    if(yRange[1] > yRangeBoundsBumped[1]) pan[1] = yRangeBoundsBumped[1] - yRangeMaxOffset;
+                if (!zoomYOut) {
+                    if (yRange[0] < yRangeBoundsBumped[0]) pan[1] = yRangeBoundsBumped[0] - yRangeMinOffset - yPanOffset;
+                    if (yRange[1] > yRangeBoundsBumped[1]) pan[1] = yRangeBoundsBumped[1] - yRangeMaxOffset;
                 } else {
-                    if(yRange[0] > yRangeBoundsBumped[0]) pan[1] = yRangeBoundsBumped[0] - yRangeMinOffset - yPanOffset;
-                    if(yRange[1] < yRangeBoundsBumped[1]) pan[1] = yRangeBoundsBumped[1] - yRangeMaxOffset;
+                    if (yRange[0] > yRangeBoundsBumped[0]) pan[1] = yRangeBoundsBumped[0] - yRangeMinOffset - yPanOffset;
+                    if (yRange[1] < yRangeBoundsBumped[1]) pan[1] = yRangeBoundsBumped[1] - yRangeMaxOffset;
                 }
 
                 //zoomer.translate = pan;
@@ -321,59 +321,59 @@ export default Class.extend({
                  * and either subtract or add it to the range's other end. This
                  * prevents visible stretching of the range when only panning.
                  */
-                if(!zoomXOut) {
-                    if(xRange[0] > xRangeBoundsBumped[0]) {
+                if (!zoomXOut) {
+                    if (xRange[0] > xRangeBoundsBumped[0]) {
                         xRange[1] -= Math.abs(xRange[0] - xRangeBoundsBumped[0]);
                         xRange[0] = xRangeBoundsBumped[0];
                     }
 
-                    if(xRange[1] < xRangeBoundsBumped[1]) {
+                    if (xRange[1] < xRangeBoundsBumped[1]) {
                         xRange[0] += Math.abs(xRange[1] - xRangeBoundsBumped[1]);
                         xRange[1] = xRangeBoundsBumped[1];
                     }
                 } else {
-                    if(xRange[0] < xRangeBoundsBumped[0]) {
+                    if (xRange[0] < xRangeBoundsBumped[0]) {
                         xRange[1] += Math.abs(xRange[0] - xRangeBoundsBumped[0]);
                         xRange[0] = xRangeBoundsBumped[0];
                     }
 
-                    if(xRange[1] > xRangeBoundsBumped[1]) {
+                    if (xRange[1] > xRangeBoundsBumped[1]) {
                         xRange[0] -= Math.abs(xRange[1] - xRangeBoundsBumped[1]);
                         xRange[1] = xRangeBoundsBumped[1];
                     }
                 }
 
-                if(!zoomYOut) {
-                    if(yRange[0] < yRangeBoundsBumped[0]) {
+                if (!zoomYOut) {
+                    if (yRange[0] < yRangeBoundsBumped[0]) {
                         yRange[1] += Math.abs(yRange[0] - yRangeBoundsBumped[0]);
                         yRange[0] = yRangeBoundsBumped[0];
                     }
 
-                    if(yRange[1] > yRangeBoundsBumped[1]) {
+                    if (yRange[1] > yRangeBoundsBumped[1]) {
                         yRange[0] -= Math.abs(yRange[1] - yRangeBoundsBumped[1]);
                         yRange[1] = yRangeBoundsBumped[1];
                     }
                 } else {
-                    if(yRange[0] > yRangeBoundsBumped[0]) {
+                    if (yRange[0] > yRangeBoundsBumped[0]) {
                         yRange[1] -= Math.abs(yRange[0] - yRangeBoundsBumped[0]);
                         yRange[0] = yRangeBoundsBumped[0];
                     }
 
-                    if(yRange[1] < yRangeBoundsBumped[1]) {
+                    if (yRange[1] < yRangeBoundsBumped[1]) {
                         yRange[0] += Math.abs(yRange[1] - yRangeBoundsBumped[1]);
                         yRange[1] = yRangeBoundsBumped[1];
                     }
                 }
 
-                if(_this.model.marker.axis_x.scaleType === 'ordinal') {
+                if (_this.model.marker.axis_x.scaleType === 'ordinal') {
                     _this.xScale.rangeBands(xRange);
-                }else{
+                } else {
                     _this.xScale.range(xRange);
                 }
 
-                if(_this.model.marker.axis_y.scaleType === 'ordinal') {
+                if (_this.model.marker.axis_y.scaleType === 'ordinal') {
                     _this.yScale.rangeBands(yRange);
-                }else{
+                } else {
                     _this.yScale.range(yRange);
                 }
 
@@ -410,7 +410,7 @@ export default Class.extend({
                 };
 
 
-                if(!zoomer.dontFeedToState) _this.model.marker.set(_this._zoomedXYMinMax, null, false /*avoid storing it in URL*/);
+                if (!zoomer.dontFeedToState) _this.model.marker.set(_this._zoomedXYMinMax, null, false /*avoid storing it in URL*/);
 
                 // Keep the min and max size (pixels) constant, when zooming.
                 //                    _this.sScale.range([utils.radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
@@ -438,7 +438,7 @@ export default Class.extend({
                 if (this.quitZoom) return;
 
                 //Force the update of the URL and history, with the same values
-                if(!zoomer.dontFeedToState) _this.model.marker.set(_this._zoomedXYMinMax, true, true);
+                if (!zoomer.dontFeedToState) _this.model.marker.set(_this._zoomedXYMinMax, true, true);
                 zoomer.dontFeedToState = null;
             }
         };
@@ -485,7 +485,7 @@ export default Class.extend({
          * points extend outside of the current zoom frame, then expand the
          * canvas.
          */
-        if(!_this.isCanvasPreviouslyExpanded ||
+        if (!_this.isCanvasPreviouslyExpanded ||
             suggestedFrame.x1 < frame.x1 * (1 - TOLERANCE) || suggestedFrame.x2 > frame.x2 * (1 + TOLERANCE) ||
             suggestedFrame.y2 < frame.y2 * (1 - TOLERANCE) || suggestedFrame.y1 > frame.y1 * (1 + TOLERANCE)) {
             /*
@@ -563,10 +563,10 @@ export default Class.extend({
         /*
          * Prevent zoomout if only one of zoom edges set outside domain
          */
-        if(minX < xDomain[0] && maxX < xDomain[1]) minX = xDomain[0];
-        if(minX > xDomain[0] && maxX > xDomain[1]) maxX = xDomain[1];
-        if(minY < yDomain[0] && maxY < yDomain[1]) minY = yDomain[0];
-        if(minY > yDomain[0] && maxY > yDomain[1]) maxY = yDomain[1];
+        if (minX < xDomain[0] && maxX < xDomain[1]) minX = xDomain[0];
+        if (minX > xDomain[0] && maxX > xDomain[1]) maxX = xDomain[1];
+        if (minY < yDomain[0] && maxY < yDomain[1]) minY = yDomain[0];
+        if (minY > yDomain[0] && maxY > yDomain[1]) maxY = yDomain[1];
 
         var zoomXOut = minX <= xDomain[0] && xDomain[1] <= maxX && (xDomain[1] - xDomain[0]) < (maxX - zoomedMinX);
         var zoomYOut = minY <= yDomain[0] && yDomain[1] <= maxY && (yDomain[1] - yDomain[0]) < (maxY - zoomedMinY);
@@ -667,7 +667,7 @@ export default Class.extend({
          * update the translate vector with new values based on the rectangle
          * dimensions.
          */
-        if(compensateDragging) {
+        if (compensateDragging) {
             transform.translate(
                 x1 - x2,
                 y1 - y2
@@ -726,14 +726,14 @@ export default Class.extend({
         var minZoom = zoomer.scaleExtent()[0];
         var maxZoom = zoomer.scaleExtent()[1];
 
-        if(Math.abs(x1 - x2) > Math.abs(y1 - y2)) {
+        if (Math.abs(x1 - x2) > Math.abs(y1 - y2)) {
             var zoom =  Math.abs(yRangeBoundsBumped[0] - yRangeBoundsBumped[1]) / Math.abs(y1 - y2) * transform.k;
 
             /*
              * Clamp the zoom scalar to the maximum zoom allowed before
              * calculating the next ratioX and ratioY.
              */
-            if(zoom < minZoom) {
+            if (zoom < minZoom) {
               zoomer.ratioY *= zoom / transform.k;
               zoom = minZoom;
             }
@@ -748,7 +748,7 @@ export default Class.extend({
              * Clamp the zoom scalar to the maximum zoom allowed before
              * calculating the next ratioX and ratioY.
              */
-            if(zoom < minZoom) {
+            if (zoom < minZoom) {
               zoomer.ratioX *= zoom / transform.k;
               zoom = minZoom;
             }
@@ -814,15 +814,15 @@ export default Class.extend({
         var k = Math.log(ratio) / Math.LN2;
 
         //change factor direction based on the input. default is no direction supplied
-        if(direction=="plus" || !direction) k = Math.floor(k) + 1;
-        if(direction=="minus") k = Math.ceil(k) - 1;
+        if (direction=="plus" || !direction) k = Math.floor(k) + 1;
+        if (direction=="minus") k = Math.ceil(k) - 1;
 
         //decode panning
         var locus = [(mouse[0] - pan[0]) / ratio, (mouse[1] - pan[1]) / ratio];
 
         //recalculate zoom ratio
         var scaleExtent = this.zoomer.scaleExtent();
-        if(ratio == scaleExtent[0]) {
+        if (ratio == scaleExtent[0]) {
             this.zoomer.ratioY = 1;
             this.zoomer.ratioX = 1;
         }

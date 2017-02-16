@@ -18,7 +18,7 @@ export default Class.extend({
 
   toggle: function(arg) {
     var _context = this.context;
-    if(arg) {
+    if (arg) {
 
       _context._trails.create().then(function() {
         _context._trails.run(["findVisible", "reveal", "opacityHandler"]);
@@ -38,7 +38,7 @@ export default Class.extend({
     var TIMEDIM = _context.TIMEDIM;
     this._isCreated = new Promise(function(resolve, reject) {
       //quit if the function is called accidentally
-      if(!_context.model.ui.chart.trails) return;
+      if (!_context.model.ui.chart.trails) return;
 
       var timePoints = _context.model.time.getAllSteps();
 
@@ -57,7 +57,7 @@ export default Class.extend({
       _this.trailTransitions = {};
       var _trails = _context.bubbleContainer.selectAll('g.vzb-bc-entity.entity-trail')
         .data(_this.trailsData, function(d) {
-          return(d[KEY]);
+          return (d[KEY]);
         });
 
       _trails.exit().remove();
@@ -88,7 +88,7 @@ export default Class.extend({
             _this.entityTrails[d[KEY]] = entityTrails.enter().append("g")
               .attr("class", "vzb-bc-trailsegment")
               .on("mouseover", function(segment, index) {
-                if(utils.isTouchDevice()) return;
+                if (utils.isTouchDevice()) return;
 
                 var pointer = {};
                 pointer[KEY] = segment.key;
@@ -105,7 +105,7 @@ export default Class.extend({
                   var y = _context.yScale(values.axis_y[pointer[KEY]]);
                   var s = utils.areaToRadius(_context.sScale(values.size[pointer[KEY]]));
                   var c = values.color[pointer[KEY]]!=null?_context.cScale(values.color[pointer[KEY]]):_context.COLOR_WHITEISH;
-                  if(text !== selectedData.trailStartTime) {
+                  if (text !== selectedData.trailStartTime) {
                     _context._setTooltip(text, x, y, s + 3, c);
                   }
                   _context._setBubbleCrown(x, y, s, c);
@@ -115,7 +115,7 @@ export default Class.extend({
                 d3.select(this).style("opacity", 1.0);
               })
               .on("mouseout", function(segment, index) {
-                if(utils.isTouchDevice()) return;
+                if (utils.isTouchDevice()) return;
                 _context._axisProjections();
                 _context._setTooltip();
                 _context._setBubbleCrown();
@@ -194,9 +194,9 @@ export default Class.extend({
 
     this._isCreated.then(function() {
       //quit if function is called accidentally
-      if((!_context.model.ui.chart.trails || !_context.model.marker.select.length) && actions != "remove") return;
+      if ((!_context.model.ui.chart.trails || !_context.model.marker.select.length) && actions != "remove") return;
 
-      if(!duration) duration = 0;
+      if (!duration) duration = 0;
 
       //work with marker.select (all selected entities), if no particular selection is specified
       selection = selection == null ? _context.model.marker.select : [selection];
@@ -266,7 +266,7 @@ export default Class.extend({
 
     trail.each(function(segment, index) {
 
-      if(segment.valueY==null || segment.valueX==null || segment.valueS==null) return;
+      if (segment.valueY==null || segment.valueX==null || segment.valueS==null) return;
 
       var view = d3.select(this);
       if (duration) {
@@ -283,15 +283,15 @@ export default Class.extend({
           .transition();
       }
 
-      if(!updateLabel && !segment.transparent) {
+      if (!updateLabel && !segment.transparent) {
         updateLabel = true;
         _context._labels.updateLabelOnlyPosition(d, null, { 'scaledS0': utils.areaToRadius(_context.sScale(segment.valueS)) });
       }
 
-      if(!segment.next) return;
+      if (!segment.next) return;
       var next = segment.next;
-      if(next == null) return;
-      if(next.valueY==null || next.valueX==null) return;
+      if (next == null) return;
+      if (next.valueY==null || next.valueX==null) return;
 
       var lineLength = Math.sqrt(
           Math.pow(_context.xScale(segment.valueX) - _context.xScale(next.valueX),2) +
@@ -441,7 +441,7 @@ export default Class.extend({
 
         //console.log(d[KEY] + " transparent: " + segment.transparent + " vis_changed:" + segment.visibilityChanged);
         if (nextIndex - index == 1) {
-          if(segment.transparent) {
+          if (segment.transparent) {
             view.classed("vzb-invisible", segment.transparent);
             return resolve();
           } else if (!segment.visibilityChanged) { // pass segment if it is not changed
@@ -456,7 +456,7 @@ export default Class.extend({
           segment.valueS = frame.size[d[KEY]];
           segment.valueC = frame.color[d[KEY]];
 
-          if(segment.valueY==null || segment.valueX==null || segment.valueS==null) {
+          if (segment.valueY==null || segment.valueX==null || segment.valueS==null) {
             return resolve();
           } else {
             // fix label position if it not in correct place
@@ -490,7 +490,7 @@ export default Class.extend({
               view.classed("vzb-invisible", true);
             }
 
-            if(!trail._groups[0][nextIndex] || _context.time.toString() == segment.t.toString()) {
+            if (!trail._groups[0][nextIndex] || _context.time.toString() == segment.t.toString()) {
               return resolve();
             } else {
               var next = d3.select(trail._groups[0][nextIndex]);
@@ -504,10 +504,10 @@ export default Class.extend({
               }
               _context.model.marker.getFrame(nextTime, function(nextFrame) {
                 if (d.status != "reveal") return resolve();
-                if(!nextFrame || segment.valueY==null || segment.valueX==null || segment.valueS==null) {
+                if (!nextFrame || segment.valueY==null || segment.valueX==null || segment.valueS==null) {
                   return resolve();
                 } else {
-                  if(nextFrame.axis_x[d[KEY]]==null || nextFrame.axis_y[d[KEY]]==null) {
+                  if (nextFrame.axis_x[d[KEY]]==null || nextFrame.axis_y[d[KEY]]==null) {
                     return resolve();
                   } else {
                     nextSegment.valueY = nextFrame.axis_y[d[KEY]];
@@ -586,7 +586,7 @@ export default Class.extend({
           previousSegment.next = segment;
           nextSegment.previous = segment;
 
-          if(segment.valueY==null || segment.valueX==null || segment.valueS==null) {
+          if (segment.valueY==null || segment.valueX==null || segment.valueS==null) {
             utils.warn("Data for trail point missed: " + segment.t);
             return resolve();
           }

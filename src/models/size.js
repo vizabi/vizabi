@@ -33,7 +33,7 @@ var SizeModel = Axis.extend({
     //do whatever axis.buildScale does
     this._super();
     //but then also clamp a numeric scale
-    if(this.scaleType !== 'ordinal') this.scale.clamp(true);
+    if (this.scaleType !== 'ordinal') this.scale.clamp(true);
 
   },
 

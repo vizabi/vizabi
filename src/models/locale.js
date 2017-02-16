@@ -53,7 +53,7 @@ var LocaleModel = DataConnected.extend({
 
     promises = [];
     utils.forEach(this._root._data, mdl => {
-      if(mdl._type === "data") promises.push(mdl.loadConceptProps());
+      if (mdl._type === "data") promises.push(mdl.loadConceptProps());
     });
     promises.push(new Promise((resolve, reject) => {
         d3.json(this.filePath + this.id + ".json", (error, strings) => {
@@ -80,10 +80,10 @@ var LocaleModel = DataConnected.extend({
    * @returns {string} translated string
    */
   getUIString: function(stringId) {
-    if(this.strings && this.strings[this.id] && (this.strings[this.id][stringId] || this.strings[this.id][stringId]==="")) {
+    if (this.strings && this.strings[this.id] && (this.strings[this.id][stringId] || this.strings[this.id][stringId]==="")) {
       return this.strings[this.id][stringId];
     } else {
-      if(!this.strings || !this.strings[this.id]) utils.warn("Strings are not loaded for the " + this.id + " locale. Check if translation JSON is valid");
+      if (!this.strings || !this.strings[this.id]) utils.warn("Strings are not loaded for the " + this.id + " locale. Check if translation JSON is valid");
       return stringId;
     }
   },

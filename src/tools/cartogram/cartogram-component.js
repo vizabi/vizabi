@@ -29,7 +29,7 @@ var CartogramComponent = Component.extend({
     //http://stackoverflow.com/questions/11381673/detecting-a-mobile-browser
     var mobileAndTabletcheck = function() {
       var check = false;
-      (function(a) {if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4)))check = true;})(navigator.userAgent||navigator.vendor||window.opera);
+      (function(a) {if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4)))check = true;})(navigator.userAgent||navigator.vendor||window.opera);
       return check;
     };
     this.isMobile = mobileAndTabletcheck();
@@ -76,7 +76,7 @@ var CartogramComponent = Component.extend({
       },
       'change:marker.size.extent': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
-        if(!_this._readyOnce) return;
+        if (!_this._readyOnce) return;
         _this.updateMarkerSizeLimits();
         _this.updateEntities();
       },
@@ -95,11 +95,11 @@ var CartogramComponent = Component.extend({
         _this.updateEntities(900);
       },
       "change:entities.select": function() {
-        if(!_this._readyOnce) return;
+        if (!_this._readyOnce) return;
         _this.updateLandOpacity();
       },
       "change:entities.highlight": function() {
-        if(!_this._readyOnce) return;
+        if (!_this._readyOnce) return;
         //console.log("EVENT change:entities:highlight");
         _this.updateLandOpacity();
       },
@@ -151,8 +151,8 @@ var CartogramComponent = Component.extend({
 
   afterPreload: function() {
     var _this = this;
-    if(!this.world) utils.warn("cartogram afterPreload: missing country shapes " + this.world);
-    if(!this.geometries) utils.warn("cartogram afterPreload: missing country shapes " + this.geometries);
+    if (!this.world) utils.warn("cartogram afterPreload: missing country shapes " + this.world);
+    if (!this.geometries) utils.warn("cartogram afterPreload: missing country shapes " + this.geometries);
 
     // http://bl.ocks.org/mbostock/d4021aa4dccfd65edffd patterson
     // http://bl.ocks.org/mbostock/3710566 robinson
@@ -203,7 +203,7 @@ var CartogramComponent = Component.extend({
     var _this = this;
     this.updateUIStrings();
     this.on("resize", function() {
-      if(_this.updateSize()) return;
+      if (_this.updateSize()) return;
     });
     this.wScale = d3.scale.linear()
       .domain(this.model.ui.datawarning.doubtDomain)
@@ -230,7 +230,7 @@ var CartogramComponent = Component.extend({
           _this._interact()._mouseout(d, i);
         })
         .on("click", function(d, i) {
-          if(utils.isTouchDevice()) return;
+          if (utils.isTouchDevice()) return;
           _this._interact()._click(d, i);
         })
         .each(function(d) {
@@ -284,7 +284,7 @@ var CartogramComponent = Component.extend({
     this.maxRadius = Math.max(100 * extent[1], 0);
 
     this.sScale.domain([0, this.sScale.domain()[1]]);
-    if(this.model.marker.size.scaleType !== "ordinal") {
+    if (this.model.marker.size.scaleType !== "ordinal") {
       this.sScale.range([this.minRadius, this.maxRadius]);
     } else {
       this.sScale.rangePoints([this.minRadius, this.maxRadius], 0).range();
@@ -316,7 +316,7 @@ var CartogramComponent = Component.extend({
     var time = this.updateEntitiesQueue[this.updateEntitiesQueue.length - 1].time;
     var duration = this.updateEntitiesQueue[this.updateEntitiesQueue.length - 1].duration;
     this.updateEntitiesQueue = [];
-    if(this.model.ui.chart.lockNonSelected) {
+    if (this.model.ui.chart.lockNonSelected) {
       time = this.model.time.parse("" + this.model.ui.chart.lockNonSelected);
     }
     this.model.marker.getFrame(time, function(lockedFrame) {
@@ -561,7 +561,7 @@ var CartogramComponent = Component.extend({
     var height = this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
     var width = this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
 
-    if(this.height<=0 || this.width<=0) return utils.warn("Bubble map updateSize() abort: vizabi container is too little or has display:none");
+    if (this.height<=0 || this.width<=0) return utils.warn("Bubble map updateSize() abort: vizabi container is too little or has display:none");
 
     var boundBox = this.boundBox;
     var viewBox = [ boundBox[0][0] * this.defaultWidth,
@@ -603,7 +603,7 @@ var CartogramComponent = Component.extend({
       .attr("transform", "translate(" + (this.width) + "," + (this.height - warnBB.height * 0.5) + ")")
       .select("text");
 
-    if(this.yInfoEl.select('svg').node()) {
+    if (this.yInfoEl.select('svg').node()) {
       var titleBBox = this.yTitleEl.node().getBBox();
       var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
 
@@ -617,7 +617,7 @@ var CartogramComponent = Component.extend({
 
     this.sInfoEl.classed("vzb-hidden", this.sTitleEl.classed("vzb-hidden"));
 
-    if(!this.sInfoEl.classed("vzb-hidden") && this.sInfoEl.select('svg').node()) {
+    if (!this.sInfoEl.classed("vzb-hidden") && this.sInfoEl.select('svg').node()) {
       var titleBBox = this.sTitleEl.node().getBBox();
       var translate = d3.transform(this.sTitleEl.attr('transform')).translate;
 
@@ -646,7 +646,7 @@ var CartogramComponent = Component.extend({
       Math.max(parseInt(yTitleText.style("font-size")), parseInt(sTitleText.style("font-size")))
       * this.width / Math.max(yTitleBB.width, sTitleBB.width);
 
-    if(Math.max(yTitleBB.width, sTitleBB.width) > this.width) {
+    if (Math.max(yTitleBB.width, sTitleBB.width) > this.width) {
       yTitleText.style("font-size", font + "px");
       sTitleText.style("font-size", font + "px");
     } else {
@@ -700,13 +700,13 @@ var CartogramComponent = Component.extend({
       mobile = _this.model.entities.select[0];
     }
 
-    if(_this.hovered || mobile) {
+    if (_this.hovered || mobile) {
       var hovered = _this.hovered || mobile;
       var formatterC = _this.model.marker.color.getTickFormatter();
 
       var unitC = _this.translator("unit/" + _this.model.marker.color.which);
       //suppress unit strings that found no translation (returns same thing as requested)
-      if(unitC === "unit/" + _this.model.marker.color.which) unitC = "";
+      if (unitC === "unit/" + _this.model.marker.color.which) unitC = "";
 
       var valueC = _this.values.color[_this._getKey(hovered)];
       _this.yTitleEl.select("text")
@@ -718,7 +718,7 @@ var CartogramComponent = Component.extend({
 
         var unitS = _this.translator("unit/" + _this.model.marker.size.which);
         //suppress unit strings that found no translation (returns same thing as requested)
-        if(unitS === "unit/" + _this.model.marker.size.which) unitS = "";
+        if (unitS === "unit/" + _this.model.marker.size.which) unitS = "";
 
         var valueS = _this.values.size[_this._getKey(hovered)];
         _this.sTitleEl.select("text")
@@ -755,7 +755,7 @@ var CartogramComponent = Component.extend({
         xOffset = 0,
         yOffset = 0;
 
-      if(offset) {
+      if (offset) {
         xOffset = offset * .71; // .71 - sin and cos for 315
         yOffset = offset * .71;
       }
@@ -766,19 +766,19 @@ var CartogramComponent = Component.extend({
         .text(tooltipText);
 
       var contentBBox = this.tooltip.select('text').node().getBBox();
-      if(x - xOffset - contentBBox.width < 0) {
+      if (x - xOffset - contentBBox.width < 0) {
         xSign = 1;
         x += contentBBox.width + 5; // corrective to the block Radius and text padding
       } else {
         x -= 5; // corrective to the block Radius and text padding
       }
-      if(y - yOffset - contentBBox.height < 0) {
+      if (y - yOffset - contentBBox.height < 0) {
         ySign = 1;
         y += contentBBox.height;
       } else {
         y -= 11; // corrective to the block Radius and text padding
       }
-      if(offset) {
+      if (offset) {
         xPos = x + xOffset * xSign;
         yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
       } else {
@@ -816,17 +816,17 @@ var CartogramComponent = Component.extend({
     this.lands
       .style("opacity", function(d) {
 
-        if(_this.someHighlighted) {
+        if (_this.someHighlighted) {
           //highlight or non-highlight
-          if(_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
+          if (_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
         }
 
-        if(_this.someSelected) {
+        if (_this.someSelected) {
           //selected or non-selected
           return _this.model.entities.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
         }
 
-        if(_this.someHighlighted) return OPACITY_HIGHLT_DIM;
+        if (_this.someHighlighted) return OPACITY_HIGHLT_DIM;
 
         return OPACITY_REGULAR;
       });
@@ -835,9 +835,9 @@ var CartogramComponent = Component.extend({
     var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
 
     // when pointer events need update...
-    if(someSelectedAndOpacityZero != this.someSelectedAndOpacityZero_1) {
+    if (someSelectedAndOpacityZero != this.someSelectedAndOpacityZero_1) {
       this.lands.style("pointer-events", function(d) {
-        return(!someSelectedAndOpacityZero || _this.model.entities.isSelected(d)) ?
+        return (!someSelectedAndOpacityZero || _this.model.entities.isSelected(d)) ?
           "visible" : "none";
       });
     }
@@ -852,7 +852,7 @@ var CartogramComponent = Component.extend({
 
     return new Promise(function(resolve, reject) {
       d3.json(shape_path, function(error, json) {
-        if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
+        if (error) return console.warn("Failed loading json " + shape_path + ". " + error);
         _this.world = json;
         _this.geometries = json.objects.topo.geometries;
         _this.id_lookup = json.objects.id_lookup;

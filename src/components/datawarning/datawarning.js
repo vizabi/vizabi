@@ -21,7 +21,7 @@ var DataWarning = Component.extend({
 
     this.model_binds = {
       "translate:locale": function(evt) {
-        if(!_this._ready) return;
+        if (!_this._ready) return;
         _this.redraw();
       }
     };
@@ -88,7 +88,7 @@ var DataWarning = Component.extend({
   },
 
   toggle: function(arg) {
-    if(arg == null) arg = !hidden;
+    if (arg == null) arg = !hidden;
     hidden = arg;
     this.element.classed("vzb-hidden", hidden);
 

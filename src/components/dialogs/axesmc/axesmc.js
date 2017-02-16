@@ -67,10 +67,10 @@ var Axes = Dialog.extend({
     this.probeFieldEl = this.element.select(".vzb-probe-field")
       .on("change", function() {
         var result = parseFloat(this.value.replace(",", "."));
-        if(!result || result <= _this.model.state.marker.axis_x.tailCutX) {
+        if (!result || result <= _this.model.state.marker.axis_x.tailCutX) {
           this.value = _this.model.ui.chart.probeX;
           return;
-        } else if(result > _this.model.state.marker.axis_x.domainMax) {
+        } else if (result > _this.model.state.marker.axis_x.domainMax) {
           result = _this.model.state.marker.axis_x.domainMax;
         }
         this.value = result;
@@ -97,16 +97,16 @@ var Axes = Dialog.extend({
   setModel: function(what, value) {
     var result;
 
-    if(what == "yMaxMethod") {
+    if (what == "yMaxMethod") {
       result = value;
     }
-    if(what == "xLogStops") {
+    if (what == "xLogStops") {
       result = [];
       this.xLogStops.each(function() {
-        if(d3.select(this).property('checked')) result.push(+d3.select(this).node().value);
+        if (d3.select(this).property('checked')) result.push(+d3.select(this).node().value);
       });
     }
-    if(what == "probeX" || what == "showProbeX") {
+    if (what == "probeX" || what == "showProbeX") {
       result = value;
     }
 

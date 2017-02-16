@@ -91,35 +91,35 @@ var TimeSlider = Component.extend({
     //binds methods to this model
     this.model_binds = {
       'change:time': function(evt, path) {
-        if(_this.slide) {
-          if((['time.start', 'time.end']).indexOf(path) !== -1) {
+        if (_this.slide) {
+          if ((['time.start', 'time.end']).indexOf(path) !== -1) {
             if (!_this.xScale) return;
             _this.changeLimits();
           }
           _this._optionClasses();
           //only set handle position if change is external
-          if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
+          if (!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
       'change:time.start': function(evt, path) {
-        if(_this.slide) {
+        if (_this.slide) {
           //only set handle position if change is external
-          if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
+          if (!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
       'change:time.end': function(evt, path) {
-        if(_this.slide) {
+        if (_this.slide) {
           //only set handle position if change is external
-          if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
+          if (!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
       'change:time.startSelected': function(evt, path) {
-        if(_this.slide) {
+        if (_this.slide) {
           _this.updateSelectedStartLimiter();
         }
       },
       'change:time.endSelected': function(evt, path) {
-        if(_this.slide) {
+        if (_this.slide) {
           _this.updateSelectedEndLimiter();
         }
       },
@@ -212,7 +212,7 @@ var TimeSlider = Component.extend({
 
     this.slider_outer.on("mousewheel", function () {
         //do nothing and dont pass the event on if we are currently dragging the slider
-        if(_this.model.time.dragging) {
+        if (_this.model.time.dragging) {
             d3.event.stopPropagation();
             d3.event.preventDefault();
             d3.event.returnValue = false;
@@ -225,11 +225,11 @@ var TimeSlider = Component.extend({
 
     this._setSelectedLimitsId = 0; //counter for setSelectedLimits
 
-    if(this.model.time.startSelected > this.model.time.start) {
+    if (this.model.time.startSelected > this.model.time.start) {
       _this.updateSelectedStartLimiter();
     }
 
-    if(this.model.time.endSelected < this.model.time.end) {
+    if (this.model.time.endSelected < this.model.time.end) {
       _this.updateSelectedEndLimiter();
     }
 
@@ -255,7 +255,7 @@ var TimeSlider = Component.extend({
 
   //template and model are ready
   ready: function () {
-    if(this.model.time.splash) return;
+    if (this.model.time.splash) return;
 
     this.element.classed(class_loading, false);
 
@@ -306,7 +306,7 @@ var TimeSlider = Component.extend({
    * Ideally,it contains only operations related to size
    */
   updateSize: function (range) {
-    if(this.model.time.splash) return;
+    if (this.model.time.splash) return;
 
     this.model.time.pause();
 
@@ -315,7 +315,7 @@ var TimeSlider = Component.extend({
     var slider_w = parseInt(this.slider_outer.style("width"), 10) || 0;
     var slider_h = parseInt(this.slider_outer.style("height"), 10) || 0;
 
-    if(!slider_h || !slider_w) return utils.warn("time slider resize() aborted because element is too small or has display:none");
+    if (!slider_h || !slider_w) return utils.warn("time slider resize() aborted because element is too small or has display:none");
 
     this.width = slider_w - this.profile.margin.left - this.profile.margin.right;
     this.height = slider_h - this.profile.margin.bottom - this.profile.margin.top;
@@ -365,7 +365,7 @@ var TimeSlider = Component.extend({
     var _setSelectedLimitsId = this._setSelectedLimitsId;
 
     var select = _this.model.marker.select;
-    if(select.length == 0) {
+    if (select.length == 0) {
       _this.model.time.set({
         startSelected: new Date(_this.model.time.start),
         endSelected: new Date(_this.model.time.end)
@@ -378,7 +378,7 @@ var TimeSlider = Component.extend({
       proms.push(_this.model.marker.getEntityLimits(entity[KEY]));
     });
     Promise.all(proms).then(function(limits) {
-      if(_setSelectedLimitsId != _this._setSelectedLimitsId) return;
+      if (_setSelectedLimitsId != _this._setSelectedLimitsId) return;
       var first = limits.shift();
       var min = first.min;
       var max = first.max;
@@ -398,7 +398,7 @@ var TimeSlider = Component.extend({
     var _this = this;
     this.select.select('#clip-start-' + _this._id).remove();
     this.select.select(".selected-start").remove();
-    if(this.model.time.startSelected && this.model.time.startSelected > this.model.time.start) {
+    if (this.model.time.startSelected && this.model.time.startSelected > this.model.time.start) {
       this.select.append("clipPath")
         .attr("id", "clip-start-" + _this._id)
         .append('rect');
@@ -413,7 +413,7 @@ var TimeSlider = Component.extend({
     var _this = this;
     this.select.select('#clip-end-' + _this._id).remove();
     this.select.select(".selected-end").remove();
-    if(this.model.time.endSelected && this.model.time.endSelected < this.model.time.end) {
+    if (this.model.time.endSelected && this.model.time.endSelected < this.model.time.end) {
       this.select.append("clipPath")
         .attr("id", "clip-end-" + _this._id)
         .append('rect');
@@ -540,7 +540,7 @@ var TimeSlider = Component.extend({
 
       //set brushed properties
 
-      if(d3.event.sourceEvent) {
+      if (d3.event.sourceEvent) {
         // Prevent window scrolling on cursor drag in Chrome/Chromium.
         d3.event.sourceEvent.preventDefault();
 
@@ -549,9 +549,9 @@ var TimeSlider = Component.extend({
         value = _this.xScale.invert(posX);
         var maxPosX = _this.width;
 
-        if(posX > maxPosX) {
+        if (posX > maxPosX) {
           posX = maxPosX;
-        } else if(posX < 0) {
+        } else if (posX < 0) {
           posX = 0;
         }
 
@@ -562,7 +562,7 @@ var TimeSlider = Component.extend({
       }
 
       //set time according to dragged position
-      if(value - _this.model.time.value !== 0) {
+      if (value - _this.model.time.value !== 0) {
         _this._setTime(value);
       }
     };
@@ -598,9 +598,9 @@ var TimeSlider = Component.extend({
 
 //    var old_pos = this.handle.attr("cx");
     //var new_pos = this.xScale(value);
-    if(_this.prevPosition == null) _this.prevPosition = new_pos;
+    if (_this.prevPosition == null) _this.prevPosition = new_pos;
     var delayAnimations = new_pos > _this.prevPosition ? this.model.time.delayAnimations : 0;
-    if(transition) {
+    if (transition) {
       this.handle.attr("cx", _this.prevPosition)
         .transition()
         .duration(delayAnimations)
@@ -665,7 +665,7 @@ var TimeSlider = Component.extend({
     var axis_aligned = this.ui.axis_aligned;
     var show_play = (this.ui.show_button) && (this.model.time.playable);
 
-    if(!show_limits) {
+    if (!show_limits) {
       this.xAxis.tickValues([]).ticks(0);
     }
 

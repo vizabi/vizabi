@@ -100,12 +100,12 @@ export default function colorPicker() {
     function _generateColorData() {
       var result = [];
       // loop across circles
-      for(var l = 0; l < nCellsL; l++) {
+      for (var l = 0; l < nCellsL; l++) {
         var lightness = minL + (1 - minL) / nCellsL * l;
         // new circle of cells
         result.push([]);
         // loop across angles
-        for(var h = 0; h <= nCellsH; h++) {
+        for (var h = 0; h <= nCellsH; h++) {
           var hue = minH + (1 - minH) / nCellsH * h;
           // new cell
           result[l].push({
@@ -119,19 +119,19 @@ export default function colorPicker() {
 
     function _hslToRgb(h, s, l) {
       var r, g, b;
-      if(s == 0) {
+      if (s == 0) {
         r = g = b = l; // achromatic
       } else {
         var _hue2rgb = function _hue2rgb(p, q, t) {
-          if(t < 0)
+          if (t < 0)
             t += 1;
-          if(t > 1)
+          if (t > 1)
             t -= 1;
-          if(t < 1 / 6)
+          if (t < 1 / 6)
             return p + (q - p) * 6 * t;
-          if(t < 1 / 2)
+          if (t < 1 / 2)
             return q;
-          if(t < 2 / 3)
+          if (t < 2 / 3)
             return p + (q - p) * (2 / 3 - t) * 6;
           return p;
         };
@@ -151,7 +151,7 @@ export default function colorPicker() {
     function colorPicker(container) {
       colorPicker.container = container;
       svg = container.select('.' + css.COLOR_PICKER);
-      if(!svg.empty()) {
+      if (!svg.empty()) {
         return;
       }
       container.on('click', function() {
@@ -315,7 +315,7 @@ export default function colorPicker() {
     var _this = colorPicker;
     var _cellHover = function(value, view) {
       // show color pointer if the view is set (a cell of colorwheel)
-      if(view != null)
+      if (view != null)
         colorPointer.classed(css.INVISIBLE, false)
           .attr('d', d3.select(view)
           .attr('d'));
@@ -331,9 +331,9 @@ export default function colorPicker() {
     //true = show, false = hide, "toggle" or TOGGLE = toggle
     var TOGGLE = 'toggle';
     colorPicker.show = function(arg) {
-      if(!arguments.length)
+      if (!arguments.length)
         return showColorPicker;
-      if(svg == null)
+      if (svg == null)
         console.warn('Color picker is missing SVG element. Was init sequence performed?');
       showColorPicker = arg == TOGGLE ? !showColorPicker : arg;
       if (!showColorPicker) {
@@ -343,84 +343,84 @@ export default function colorPicker() {
     };
     // getters and setters
     colorPicker.nCellsH = function(arg) {
-      if(!arguments.length)
+      if (!arguments.length)
         return nCellsH;
       nCellsH = arg;
       return colorPicker;
     };
     colorPicker.minH = function(arg) {
-      if(!arguments.length)
+      if (!arguments.length)
         return minH;
       minH = arg;
       return colorPicker;
     };
     colorPicker.nCellsL = function(arg) {
-      if(!arguments.length)
+      if (!arguments.length)
         return nCellsL;
       nCellsL = arg;
       return colorPicker;
     };
     colorPicker.minL = function(arg) {
-      if(!arguments.length)
+      if (!arguments.length)
         return minL;
       minL = arg;
       return colorPicker;
     };
     colorPicker.outerL_display = function(arg) {
-      if(!arguments.length)
+      if (!arguments.length)
         return outerL_display;
       outerL_display = arg;
       return colorPicker;
     };
     colorPicker.outerL_meaning = function(arg) {
-      if(!arguments.length)
+      if (!arguments.length)
         return outerL_meaning;
       outerL_meaning = arg;
       return colorPicker;
     };
     colorPicker.satConstant = function(arg) {
-      if(!arguments.length)
+      if (!arguments.length)
         return satConstant;
       satConstant = arg;
       return colorPicker;
     };
     colorPicker.firstAngleSat = function(arg) {
-      if(!arguments.length)
+      if (!arguments.length)
         return firstAngleSat;
       firstAngleSat = arg;
       return colorPicker;
     };
     colorPicker.minRadius = function(arg) {
-      if(!arguments.length)
+      if (!arguments.length)
         return minRadius;
       minRadius = arg;
       return colorPicker;
     };
     colorPicker.margin = function(arg) {
-      if(!arguments.length)
+      if (!arguments.length)
         return margin;
       margin = arg;
       return colorPicker;
     };
     colorPicker.callback = function(arg) {
-      if(!arguments.length)
+      if (!arguments.length)
         return callback;
       callback = arg;
       return colorPicker;
     };
     colorPicker.colorDef = function(arg) {
-      if(!arguments.length)
+      if (!arguments.length)
         return colorDef;
       if (typeof arg !== 'undefined') {
         colorDef = arg;
       }
-      if(svg == null)
+      if (svg == null)
         console.warn('Color picker is missing SVG element. Was init sequence performed?');
       svg.select('.' + css.COLOR_DEFAULT).style('fill', colorDef);
       return colorPicker;
     };
     colorPicker.translate = function(translator) {
-      if(translator instanceof Function) {
+      if (translator instanceof Function) {
         svg.select(".vzb-default-label")
           .text(translator("colorpicker/default"));
       }
@@ -453,7 +453,7 @@ export default function colorPicker() {
       } else {
         styles.right = screen.width - xPos - width + "px";
       }
-      if(styles.right) { svg.style("right", styles.right); }
+      if (styles.right) { svg.style("right", styles.right); }
       if (screen.height * 0.8 <= height) {
         styles.top = (screen.height - height) * 0.5 + "px";
       } else if (yPos + height * 1.2 > screen.height) {
@@ -461,15 +461,15 @@ export default function colorPicker() {
       } else {
         styles.top = yPos + "px";
       }
-      if(styles.top) { svg.style("top", styles.top); }
+      if (styles.top) { svg.style("top", styles.top); }
       svg.style("left", styles.left);
       return colorPicker;
     };
     colorPicker.colorOld = function(arg) {
-      if(!arguments.length)
+      if (!arguments.length)
         return colorOld;
       colorOld = arg;
-      if(svg == null)
+      if (svg == null)
         console.warn('Color picker is missing SVG element. Was init sequence performed?');
       svg.select('rect.' + css.COLOR_SAMPLE).style('fill', colorOld);
       svg.select('text.' + css.COLOR_SAMPLE).text(colorOld);
@@ -478,7 +478,7 @@ export default function colorPicker() {
 
     colorPicker.resize = function(arg) {
 
-      if(!arguments.length)
+      if (!arguments.length)
         return resize;
       if (typeof arg !== 'undefined') {
         var svg = arg;

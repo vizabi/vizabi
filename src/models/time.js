@@ -82,7 +82,7 @@ var TimeModel = DataConnected.extend({
     this.on({
 
       "change:playing": function() {
-        if(_this.playing === true) {
+        if (_this.playing === true) {
           _this._startPlaying();
         } else {
           _this._stopPlaying();
@@ -127,9 +127,9 @@ var TimeModel = DataConnected.extend({
   _formatToDates: function() {
     var persistentValues = ["value"];
     var date_attr = ["value", "start", "end", "startSelected", "endSelected"];
-    for(var i = 0; i < date_attr.length; i++) {
+    for (var i = 0; i < date_attr.length; i++) {
       var attr = date_attr[i];
-      if(!utils.isDate(this[attr])) {
+      if (!utils.isDate(this[attr])) {
         var date = this.parse(this[attr]);
         this.set(attr, date, null, (persistentValues.indexOf(attr) !== -1));
       }
@@ -175,63 +175,63 @@ var TimeModel = DataConnected.extend({
   validate: function() {
 
     //check if time start and end are not defined but start and end origins are defined
-    if(this.start == null && this.startOrigin) this.set("start", this.startOrigin, null, false);
-    if(this.end == null && this.endOrigin) this.set("end", this.endOrigin, null, false);
+    if (this.start == null && this.startOrigin) this.set("start", this.startOrigin, null, false);
+    if (this.end == null && this.endOrigin) this.set("end", this.endOrigin, null, false);
 
     if (this.formatters) {
       this.validateFormatting();
     }
 
     //unit has to be one of the available_time_units
-    if(!formats[this.unit]) {
+    if (!formats[this.unit]) {
       utils.warn(this.unit + ' is not a valid time unit, using "year" instead.');
       this.unit = "year";
     }
 
-    if(this.step < 1) {
+    if (this.step < 1) {
       this.step = 1;
     }
 
     //end has to be >= than start
-    if(this.end < this.start && this.start != null) {
+    if (this.end < this.start && this.start != null) {
       this.set("end", new Date(this.start), null, false);
     }
 
-    if(this.value < this.startSelected && this.startSelected != null) {
+    if (this.value < this.startSelected && this.startSelected != null) {
       this.value = new Date(this.startSelected);
     }
 
-    if(this.value > this.endSelected && this.endSelected != null) {
+    if (this.value > this.endSelected && this.endSelected != null) {
       this.value = new Date(this.endSelected);
     }
     if (this.splash === false) {
-      if(this.startSelected < this.start && this.start != null) {
+      if (this.startSelected < this.start && this.start != null) {
         this.set({ startSelected: new Date(this.start) }, null, false /*make change non-persistent for URL and history*/);
       }
 
-      if(this.endSelected > this.end && this.end != null) {
+      if (this.endSelected > this.end && this.end != null) {
         this.set({ endSelected: new Date(this.end) }, null, false /*make change non-persistent for URL and history*/);
       }
     }
 
     //value has to be between start and end
-    if(this.value < this.start && this.start != null) {
+    if (this.value < this.start && this.start != null) {
       this.value = new Date(this.start);
-    } else if(this.value > this.end && this.end != null) {
+    } else if (this.value > this.end && this.end != null) {
       this.value = new Date(this.end);
     }
 
-    if(this.playable === false && this.playing === true) {
+    if (this.playable === false && this.playing === true) {
       this.set("playing", false, null, false);
     }
   },
 
   validateFormatting: function() {
     // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
-    if(this.value == null) this.set("value", this.parse(this.formatDate(new Date())), null, false);
+    if (this.value == null) this.set("value", this.parse(this.formatDate(new Date())), null, false);
 
     //make sure dates are transformed into dates at all times
-    if(!utils.isDate(this.start) || !utils.isDate(this.end) || !utils.isDate(this.value)
+    if (!utils.isDate(this.start) || !utils.isDate(this.end) || !utils.isDate(this.value)
       || !utils.isDate(this.startSelected) || !utils.isDate(this.endSelected)) {
       this._formatToDates();
     }
@@ -248,10 +248,10 @@ var TimeModel = DataConnected.extend({
    * Pauses time
    */
   pause: function(soft) {
-    if(soft) {
+    if (soft) {
       this.postponePause = true;
     } else {
-      if(this.playing) {
+      if (this.playing) {
         this.set("playing", false, null, false);
         this.set("value", this.value, true, true);
       }
@@ -348,18 +348,18 @@ var TimeModel = DataConnected.extend({
    * @returns {Array} time array
    */
   getAllSteps: function() {
-    if(!this.start || !this.end) {
+    if (!this.start || !this.end) {
       utils.warn("getAllSteps(): invalid start/end time is detected: " + this.start + ", " + this.end);
       return [];
     }
     var hash = "" + this.start + this.end + this.step;
 
     //return if cached
-    if(this.allSteps[hash]) return this.allSteps[hash];
+    if (this.allSteps[hash]) return this.allSteps[hash];
 
     this.allSteps[hash] = [];
     var curr = this.start;
-    while(+curr <= +this.end) {
+    while (+curr <= +this.end) {
       var is = this.getIntervalAndStep();
       this.allSteps[hash].push(curr);
       curr = d3["utc" + is.interval].offset(curr, is.step);
@@ -372,14 +372,14 @@ var TimeModel = DataConnected.extend({
    * possible inputs are "start", "end", "value". "value" is default
    */
   snap: function(what) {
-    if(!this.round) return;
-    if(what == null) what = "value";
+    if (!this.round) return;
+    if (what == null) what = "value";
     var op = 'round';
-    if(this.round === 'ceil') op = 'ceil';
-    if(this.round === 'floor') op = 'floor';
+    if (this.round === 'ceil') op = 'ceil';
+    if (this.round === 'floor') op = 'floor';
     var is = this.getIntervalAndStep();
     var time = d3["utc" + is.interval][op](this[what]);
-    if((this.value - time) != 0 || (this.value - this.start) == 0 || (this.value - this.end) == 0) {
+    if ((this.value - time) != 0 || (this.value - this.start) == 0 || (this.value - this.end) == 0) {
       this.set(what, time, true); //3rd argumennt forces update
     }
   },
@@ -389,12 +389,12 @@ var TimeModel = DataConnected.extend({
    */
   _startPlaying: function() {
     //don't play if it's not playable
-    if(!this.playable) return;
+    if (!this.playable) return;
 
     var _this = this;
 
     //go to start if we start from end point
-    if(this.value >= this.endSelected) {
+    if (this.value >= this.endSelected) {
       _this.getModelObject('value').set(_this.startSelected, null, false /*make change non-persistent for URL and history*/);
     } else {
       //the assumption is that the time is already snapped when we start playing
@@ -411,19 +411,19 @@ var TimeModel = DataConnected.extend({
   },
 
   playInterval: function(immediatePlay) {
-    if(!this.playing) return;
+    if (!this.playing) return;
     var _this = this;
     this.delayAnimations = this.delay;
-    if(this.delay < this.delayThresholdX2) this.delayAnimations*=2;
-    if(this.delay < this.delayThresholdX4) this.delayAnimations*=2;
+    if (this.delay < this.delayThresholdX2) this.delayAnimations*=2;
+    if (this.delay < this.delayThresholdX4) this.delayAnimations*=2;
 
     var delayAnimations = immediatePlay ? 1 : this.delayAnimations;
 
     this._intervals.setInterval('playInterval_' + this._id, function() {
       // when time is playing and it reached the end
-      if(_this.value >= _this.endSelected) {
+      if (_this.value >= _this.endSelected) {
         // if looping
-        if(_this.loop) {
+        if (_this.loop) {
           // reset time to start, silently
           _this.getModelObject('value').set(_this.startSelected, null, false /*make change non-persistent for URL and history*/);
         } else {
@@ -434,19 +434,19 @@ var TimeModel = DataConnected.extend({
 
         _this._intervals.clearInterval('playInterval_' + _this._id);
 
-        if(_this.postponePause || !_this.playing) {
+        if (_this.postponePause || !_this.playing) {
           _this.set("playing", false, null, false);
           _this.postponePause = false;
           _this.getModelObject('value').set(_this.value, true, true /*force the change and make it persistent for URL and history*/);
         } else {
           var is = _this.getIntervalAndStep();
-          if(_this.delay < _this.delayThresholdX2) is.step*=2;
-          if(_this.delay < _this.delayThresholdX4) is.step*=2;
+          if (_this.delay < _this.delayThresholdX2) is.step*=2;
+          if (_this.delay < _this.delayThresholdX4) is.step*=2;
           var time = d3["utc" + is.interval].offset(_this.value, is.step);
-          if(time >= _this.endSelected) {
+          if (time >= _this.endSelected) {
             // if no playing needed anymore then make the last update persistent and not overshooting
             _this.getModelObject('value').set(_this.endSelected, null, true /*force the change and make it persistent for URL and history*/);
-          }else{
+          } else {
             _this.getModelObject('value').set(time, null, false /*make change non-persistent for URL and history*/);
           }
           _this.playInterval();

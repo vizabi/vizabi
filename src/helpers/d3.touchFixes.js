@@ -8,7 +8,7 @@ function touchcancel() {
 }
 
 var drag = function (_d3_behaviour_drag) {
-  if(!isTouchDevice()) return _d3_behaviour_drag;
+  if (!isTouchDevice()) return _d3_behaviour_drag;
 
   return function() {
 
@@ -27,7 +27,7 @@ var drag = function (_d3_behaviour_drag) {
 
 
 var zoom = function (_d3_behaviour_zoom) {
-  if(!isTouchDevice()) return _d3_behaviour_zoom;
+  if (!isTouchDevice()) return _d3_behaviour_zoom;
 
   return function() {
 
@@ -49,7 +49,7 @@ var zoom = function (_d3_behaviour_zoom) {
 
 
 var brush = function (_d3_svg_brush) {
-  if(!isTouchDevice()) return _d3_svg_brush;
+  if (!isTouchDevice()) return _d3_svg_brush;
 
   function d3_window(node) {
     return node && (node.ownerDocument && node.ownerDocument.defaultView || node.document && node || node.defaultView);

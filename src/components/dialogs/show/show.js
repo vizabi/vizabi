@@ -70,7 +70,7 @@ var Show = Dialog.extend({
     this.translator = this.model.locale.getTFunction();
 
     this.model.state.marker_allpossible.getFrame(this.model.state.time.value, function(values) {
-    if(!values) return;
+    if (!values) return;
     var data = utils.keys(values.label)
         .map(function(d) {
             var result = {};
@@ -81,7 +81,7 @@ var Show = Dialog.extend({
 
     //sort data alphabetically
     data.sort(function(a, b) {
-      return(a.label < b.label) ? -1 : 1;
+      return (a.label < b.label) ? -1 : 1;
     });
 
       _this.list.html("");
@@ -132,7 +132,7 @@ var Show = Dialog.extend({
     this.list.selectAll(".vzb-show-item")
       .classed("vzb-hidden", function(d) {
         var lower = d.label.toLowerCase();
-        return(lower.indexOf(search) === -1);
+        return (lower.indexOf(search) === -1);
       });
   },
 
@@ -149,7 +149,7 @@ var Show = Dialog.extend({
   transitionEnd: function(event) {
     this._super(event);
 
-    if(!utils.isTouchDevice()) this.input_search.node().focus();
+    if (!utils.isTouchDevice()) this.input_search.node().focus();
   }
 
 });

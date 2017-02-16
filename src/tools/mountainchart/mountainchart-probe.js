@@ -58,7 +58,7 @@ var MCProbe = Class.extend({
                         .attr("transform", "rotate(-90)");
 
                     _this.heightOfLabels = _this.height - view.node().getBBox().width - view.node().getBBox().height * 1.75;
-                }else{
+                } else {
                     view.classed("vzb-hidden", true);
                 }
             });

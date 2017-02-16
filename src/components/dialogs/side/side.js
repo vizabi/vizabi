@@ -17,7 +17,7 @@ var Side = Dialog.extend({
 
     this.model_binds = {
       "change:state.marker.side.which": function(evt) {
-        if(_this.model.state.entities_allpossibleside) {
+        if (_this.model.state.entities_allpossibleside) {
           var sideDim = _this.model.state.marker.side.use == "constant" ? null : _this.model.state.marker.side.which;
           _this.model.state.entities_allpossibleside.set("dim", sideDim);
         }
@@ -88,7 +88,7 @@ var Side = Dialog.extend({
 
     this.state["right"] = {};
     this.state["left"] = {};
-    if(modelSide.state["left"][sideDim] && modelSide.state["right"][sideDim]) {
+    if (modelSide.state["left"][sideDim] && modelSide.state["right"][sideDim]) {
       this.state["left"][sideDim] = modelSide.state["left"][sideDim];
       this.state["right"][sideDim] = modelSide.state["right"][sideDim];
     } else {
@@ -99,8 +99,8 @@ var Side = Dialog.extend({
           return m[sideDim];
         });
 
-      if(sideKeys.length > 2) sideKeys.length = 2;
-      if(sideKeys.length > 1) {
+      if (sideKeys.length > 2) sideKeys.length = 2;
+      if (sideKeys.length > 1) {
         var sortFunc = this.ui.chart.flipSides ? d3.ascending : d3.descending;
         sideKeys.sort(sortFunc);
       }
@@ -123,9 +123,9 @@ var Side = Dialog.extend({
     var _this = this;
     this.translator = this.model.locale.getTFunction();
 
-    if(!_this.model.state.entities_allpossibleside.dim) return;
+    if (!_this.model.state.entities_allpossibleside.dim) return;
     this.model.state.marker_allpossibleside.getFrame(this.model.state.time.value, function(values) {
-    if(!values) return;
+    if (!values) return;
     var data = utils.keys(values.label)
         .map(function(d) {
             var result = {};
@@ -136,7 +136,7 @@ var Side = Dialog.extend({
 
     //sort data alphabetically
     data.sort(function(a, b) {
-      return(a.label < b.label) ? -1 : 1;
+      return (a.label < b.label) ? -1 : 1;
     });
 
     _this.listLeft.html("");
@@ -178,27 +178,27 @@ var Side = Dialog.extend({
 
         var showArray = [];
 
-        if(!sideEntities.isShown(d)) {
+        if (!sideEntities.isShown(d)) {
           showArray.push(d);
         }
-        if(d[sideDim] !== _this.state[otherSide][sideDim] && !sideEntities.isShown(_this.state[otherSide])) {
+        if (d[sideDim] !== _this.state[otherSide][sideDim] && !sideEntities.isShown(_this.state[otherSide])) {
           showArray.push(_this.state[otherSide]);
         }
-        if(_this.state[name][sideDim] !== _this.state[otherSide][sideDim] && sideEntities.isShown(_this.state[name])) {
+        if (_this.state[name][sideDim] !== _this.state[otherSide][sideDim] && sideEntities.isShown(_this.state[name])) {
           showArray.push(_this.state[name]);
         }
 
-        if(d[sideDim] !== _this.state[otherSide][sideDim]) {
+        if (d[sideDim] !== _this.state[otherSide][sideDim]) {
           var sideKeys = [d[sideDim], _this.state[otherSide][sideDim]];
           var sortFunc = _this.ui.chart.flipSides ? d3.ascending : d3.descending;
           sideKeys.sort(sortFunc);
-          if(sideKeys[name == "left" ? 0 : 1] == d[sideDim]) {
+          if (sideKeys[name == "left" ? 0 : 1] == d[sideDim]) {
             _this.model.state.marker.side.switchSideState();
             _this.ui.chart.flipSides = !_this.ui.chart.flipSides;
           }
         }
 
-        if(showArray.length) {
+        if (showArray.length) {
           sideEntities.showEntity(showArray);
         }
 

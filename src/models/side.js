@@ -36,7 +36,7 @@ var SideModel = Hook.extend({
   },
 
   readyOnce: function() {
-    if(!this.spaceRef) return;
+    if (!this.spaceRef) return;
     var dataConnChildren = this._space[this.spaceRef].dataConnectedChildren.slice(0);
     dataConnChildren.splice(dataConnChildren.indexOf("show"), 1);
     this._space[this.spaceRef].dataConnectedChildren = dataConnChildren;
