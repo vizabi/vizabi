@@ -2,7 +2,6 @@ import * as utils from 'base/utils';
 import Model from 'base/model';
 import Reader from 'base/reader';
 import EventSource from 'base/events';
-import { isObject } from 'base/utils';
 
 /*
  * VIZABI Data Model (model.data)
@@ -930,7 +929,7 @@ var DataModel = Model.extend({
   },
 
   handleReaderError(error, query) {
-    if (isObject(error)) {
+    if (utils.isObject(error)) {
       const locale = this.getClosestModel('locale');
       const translation = locale.getTFunction()(error.code, error.payload) || '';
       error = `${translation} ${error.message || ''}`.trim();

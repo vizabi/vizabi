@@ -1,9 +1,8 @@
 import * as utils from 'base/utils'
 import Model from 'base/model'
 import Component from 'base/component'
-import { DefaultEvent } from 'base/events'
 import { warn as warnIcon } from 'base/iconset'
-import EventSource from 'base/events';
+import EventSource, { DefaultEvent } from 'base/events';
 
 var class_loading_first = 'vzb-loading-first';
 var class_loading_data = 'vzb-loading-data';
