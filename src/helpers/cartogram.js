@@ -41,7 +41,7 @@ import * as utils from 'base/utils';
 
           var calculateMeta = function(index, cb) {
             var area = Math.abs(areas[index]), // XXX: why do we have negative areas?
-              v = + values[index],
+              v = +values[index],
               desired = totalArea * v / totalValue,
               radius = Math.sqrt(area / Math.PI),
               mass = Math.sqrt(desired / Math.PI) - radius,

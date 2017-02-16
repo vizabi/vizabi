@@ -1053,7 +1053,7 @@ var BubbleChartComp = Component.extend({
       .attr("width", warnBB.height * 0.75)
       .attr("height", warnBB.height * 0.75)
       .attr("x", -warnBB.width - warnBB.height * 1.2)
-      .attr("y", - warnBB.height * 0.65);
+      .attr("y", -warnBB.height * 0.65);
 
     this.dataWarningEl
       .attr("transform", "translate("

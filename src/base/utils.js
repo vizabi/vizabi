@@ -1461,11 +1461,11 @@ export function firstBy(){
 
     function identity(v){return v;}
 
-    function ignoreCase(v){return typeof(v)==="string" ? v.toLowerCase() : v;}
+    function ignoreCase(v){return typeof (v)==="string" ? v.toLowerCase() : v;}
 
     function makeCompareFunction(f, opt){
-     opt = typeof(opt)==="number" ? {direction:opt} : opt||{};
-     if(typeof(f)!="function"){
+     opt = typeof (opt)==="number" ? {direction:opt} : opt||{};
+     if(typeof (f)!="function"){
         var prop = f;
         // make unary function
         f = function(v1){return v1[prop] ? v1[prop] : "";}
@@ -1484,7 +1484,7 @@ export function firstBy(){
        which is applied in case the first one returns 0 (equal)
        returns a new compare function, which has a `thenBy` method as well */
     function tb(func, opt) {
-        var x = typeof(this) == "function" ? this : false;
+        var x = typeof (this) == "function" ? this : false;
         var y = makeCompareFunction(func, opt);
         var f = x ? function(a, b) {
                         return x(a,b) || y(a,b);

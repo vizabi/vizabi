@@ -606,8 +606,8 @@ var LCComponent = Component.extend({
     this.xAxisElContainer
       .attr("width", this.width + this.activeProfile.text_padding * 2)
       .attr("height", this.activeProfile.margin.bottom + this.height)
-      .attr("y", - 1)
-      .attr("x", - this.activeProfile.text_padding);
+      .attr("y", -1)
+      .attr("x", -this.activeProfile.text_padding);
 
     this.xAxisEl
       .attr("transform", "translate(" + (this.activeProfile.text_padding - 1) + "," + (this.height + 1) + ")");

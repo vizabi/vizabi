@@ -56,14 +56,14 @@ var MCMath = Class.extend({
         pdf: {
             normal: function(x, mu, sigma){
                 return Math.exp(
-                    - .5 * Math.log(2 * Math.PI)
+                    -.5 * Math.log(2 * Math.PI)
                     - Math.log(sigma)
                     - Math.pow(x - mu, 2) / (2 * sigma * sigma)
                     );
             },
             lognormal: function(x, mu, sigma){
                 return Math.exp(
-                    - .5 * Math.log(2 * Math.PI) //should not be different for the two scales- (scaleType=="linear"?Math.log(x):0)
+                    -.5 * Math.log(2 * Math.PI) //should not be different for the two scales- (scaleType=="linear"?Math.log(x):0)
                     - Math.log(sigma)
                     - Math.pow(Math.log(x) - mu, 2) / (2 * sigma * sigma)
                 );
