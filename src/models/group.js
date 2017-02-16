@@ -9,7 +9,7 @@ var GroupModel = Hook.extend({
   /**
    * Default values for this model
    */
-  getClassDefaults: function() {
+  getClassDefaults() {
     var defaults = {
       use: null,
       which: null,
@@ -25,7 +25,7 @@ var GroupModel = Hook.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(name, values, parent, bind) {
+  init(name, values, parent, bind) {
     this._type = "model";
 
     this._super(name, values, parent, bind);
@@ -34,7 +34,7 @@ var GroupModel = Hook.extend({
   /**
    * Validates a color hook
    */
-  validate: function() {
+  validate() {
     //there must be no scale
     if (this.scale) this.scale = null;
 

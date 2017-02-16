@@ -3,7 +3,7 @@ import Component from 'base/component';
 
 var DraggableList = Component.extend({
 
-  init: function(config, context) {
+  init(config, context) {
     this.template = '<span class="vzb-dl-holder"><ul class="vzb-draggable list vzb-dialog-scrollable"></ul></span>';
     var _this = this;
     this.name = 'draggableList';
@@ -104,7 +104,7 @@ var DraggableList = Component.extend({
 
   },
 
-  ready: function() {
+  ready() {
     var _this = this;
 
     var labels = _this.model.color.getColorlegendMarker().label.getItems();
@@ -131,7 +131,7 @@ var DraggableList = Component.extend({
 
   },
 
-  updateView: function() {
+  updateView() {
     var _this = this;
 
     this.items = this.element.selectAll('div').data(function() {
@@ -156,7 +156,7 @@ var DraggableList = Component.extend({
 
   },
 
-  getData: function() {
+  getData() {
     var dataArr = [];
     var data = this.element
       .selectAll('div').data();
@@ -176,11 +176,11 @@ var DraggableList = Component.extend({
     }
   },
 
-  updateData: function(dataArr) {
+  updateData(dataArr) {
     this.dataArrFn(dataArr);
   },
 
-  readyOnce: function() {
+  readyOnce() {
     var _this = this;
 
     this.element = d3.select(this.element).select('.list');

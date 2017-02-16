@@ -15,7 +15,7 @@ var Dialog = Component.extend({
    * @param {Object} config Initial config, with name and placeholder
    * @param {Object} parent Reference to tool
    */
-  init: function(config, parent) {
+  init(config, parent) {
     this.name = this.name || '';
 
     this.model_expects = this.model_expects || [{
@@ -37,14 +37,14 @@ var Dialog = Component.extend({
   /**
    * Executed when the dialog has been rendered
    */
-  readyOnce: function() {
+  readyOnce() {
     this.element = d3.select(this.element);
     this.titleEl = this.element.selectAll('.vzb-top-dialog > .vzb-dialog-modal > .vzb-dialog-title');
     this.buttonsEl = this.element.selectAll('.vzb-top-dialog > .vzb-dialog-modal > .vzb-dialog-buttons');
     this.contentEl = this.element.selectAll('.vzb-top-dialog > .vzb-dialog-modal > .vzb-dialog-content');
   },
 
-  ready: function() {
+  ready() {
     var _this = this;
     this.placeholderEl = d3.select(this.placeholder);
     this.rootEl = this.root.element instanceof Array? this.root.element : d3.select(this.root.element);
@@ -80,7 +80,7 @@ var Dialog = Component.extend({
     this.resize();
   },
 
-  resize: function() {
+  resize() {
     if (this.placeholderEl && this.rootEl && this.placeholderEl.classed('vzb-top-dialog')) {
       this.placeholderEl.classed('notransition', true);
 
@@ -142,7 +142,7 @@ var Dialog = Component.extend({
     }
   },
 
-  _setMaxHeight: function() {
+  _setMaxHeight() {
     var totalHeight = this.root.element.offsetHeight;
     if (this.getLayoutProfile() !== 'small') {
       if (!this.topPos && (this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true"))) {
@@ -163,7 +163,7 @@ var Dialog = Component.extend({
     this.contentEl.style('max-height', contentHeight + 'px');
   },
 
-  beforeOpen: function() {
+  beforeOpen() {
     var _this = this;
 
     this.transitionEvents = ['webkitTransitionEnd', 'transitionend', 'msTransitionEnd', 'oTransitionEnd'];
@@ -209,7 +209,7 @@ var Dialog = Component.extend({
   /**
    * User has clicked to open this dialog
    */
-  open: function() {
+  open() {
     this.isOpen = true;
     if (this.getLayoutProfile() !== 'small') {
       if (this.topPos) {
@@ -219,7 +219,7 @@ var Dialog = Component.extend({
     }
   },
 
-  beforeClose: function() {
+  beforeClose() {
 //issues: 369 & 442
     if (this.rootEl.classed('vzb-portrait') && this.getLayoutProfile() === 'small') {
       this.placeholderEl.style('top', 'auto'); // issues: 369 & 442
@@ -234,7 +234,7 @@ var Dialog = Component.extend({
   /**
    * User has closed this dialog
    */
-  close: function() {
+  close() {
 //issues: 369 & 442
     if (!(this.rootEl.classed('vzb-portrait') && this.getLayoutProfile() === 'small')) {
       this.placeholderEl.style('top', ''); // issues: 369 & 442
@@ -250,7 +250,7 @@ var Dialog = Component.extend({
   },
 
 
-  transitionEnd: function(eventName) {
+  transitionEnd(eventName) {
     var _this = this;
 
     this.transitionEvents.forEach(function(event) {
@@ -267,12 +267,12 @@ function dialogDrag(element, container, xOffset) {
   var posX, posY, divTop, divRight, marginRight, marginLeft, xOffsetRight, xOffsetLeft, eWi, eHe, cWi, cHe, diffX, diffY;
 
   return {
-    move: function(x, y) {
+    move(x, y) {
       element.style('right', x + 'px');
       element.style('top', y + 'px');
     },
 
-    dragStart: function(evt) {
+    dragStart(evt) {
       if (!utils.isTouchDevice()) {
         posX = evt.sourceEvent.clientX;
         posY = evt.sourceEvent.clientY;
@@ -295,7 +295,7 @@ function dialogDrag(element, container, xOffset) {
       diffY = posY - divTop;
     },
 
-    drag: function(evt) {
+    drag(evt) {
       if (!utils.isTouchDevice()) {
         posX = evt.sourceEvent.clientX;
         posY = evt.sourceEvent.clientY;

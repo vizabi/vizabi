@@ -10,7 +10,7 @@ var SizeModel = Axis.extend({
   /**
    * Default values for this model
    */
-  getClassDefaults: function() {
+  getClassDefaults() {
     var defaults = {
       use: null,
       which: null,
@@ -29,7 +29,7 @@ var SizeModel = Axis.extend({
 
   _type: "size",
 
-  buildScale: function() {
+  buildScale() {
     //do whatever axis.buildScale does
     this._super();
     //but then also clamp a numeric scale
@@ -37,7 +37,7 @@ var SizeModel = Axis.extend({
 
   },
 
-  autoGenerateModel: function() {
+  autoGenerateModel() {
     if (this.which == null) {
       var concept;
       if (this.autogenerate) {

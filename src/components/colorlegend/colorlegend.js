@@ -9,7 +9,7 @@ import axisSmart from 'helpers/d3.axisWithLabelPicker';
 
 var ColorLegend = Component.extend({
 
-  init: function(config, context) {
+  init(config, context) {
     var _this = this;
     this.template = '<div class="vzb-cl-outer"></div>';
     this.name = 'colorlegend';
@@ -58,7 +58,7 @@ var ColorLegend = Component.extend({
     this._super(config, context);
   },
 
-  readyOnce: function() {
+  readyOnce() {
     var _this = this;
     this.element = d3.select(this.element);
 
@@ -101,7 +101,7 @@ var ColorLegend = Component.extend({
   },
 
 
-  ready: function() {
+  ready() {
     var _this = this;
 
     this.KEY = this.model.entities.getDimension();
@@ -133,7 +133,7 @@ var ColorLegend = Component.extend({
   },
 
 
-  updateView: function() {
+  updateView() {
     var _this = this;
     var KEY = this.KEY;
 
@@ -228,10 +228,10 @@ var ColorLegend = Component.extend({
           showOuter: true,
           //bump: this.activeProfile.maxRadius/2,
           //viewportLength: gradientWidth,
-          formatter: formatter,
+          formatter,
           bump: marginLeft,
           cssFontSize: "11px",
-          fitIntoScale: fitIntoScale
+          fitIntoScale
         });
 
       this.labelScaleG.call(labelsAxis);
@@ -239,7 +239,7 @@ var ColorLegend = Component.extend({
       var colorRange = cScale.range();
 
       var gIndicators = range.map(function(val, i) {
-        return { val: val, color: colorRange[i], paletteKey: paletteKeys[i] };
+        return { val, color: colorRange[i], paletteKey: paletteKeys[i] };
       });
       this.rainbowLegend = this.rainbowLegendG.selectAll('circle')
         .data(gIndicators);
@@ -351,13 +351,13 @@ var ColorLegend = Component.extend({
   },
 
 
-  _interact: function() {
+  _interact() {
     var _this = this;
     var KEY = this.KEY;
     var colorlegendDim = this.colorlegendDim;
 
     return {
-      mouseover: function(d, i) {
+      mouseover(d, i) {
         //disable interaction if so stated in concept properties
         if (!_this.colorModel.isDiscrete()) return;
 
@@ -377,12 +377,12 @@ var ColorLegend = Component.extend({
         _this.model.marker.setHighlight(highlight);
       },
 
-      mouseout: function(d, i) {
+      mouseout(d, i) {
         //disable interaction if so stated in concept properties
         if (!_this.colorModel.isDiscrete()) return;
         _this.model.marker.clearHighlighted();
       },
-      clickToChangeColor: function(d, i) {
+      clickToChangeColor(d, i) {
         //disable interaction if so stated in concept properties
         if (!_this.colorModel.isUserSelectable()) return;
         var palette = _this.colorModel.getPalette();
@@ -398,7 +398,7 @@ var ColorLegend = Component.extend({
           .fitToScreen([d3.event.pageX, d3.event.pageY])
           .show(true);
       },
-      clickToShow: function(d, i) {
+      clickToShow(d, i) {
         //disable interaction if so stated in concept properties
         if (!_this.colorModel.isDiscrete()) return;
 
@@ -421,10 +421,10 @@ var ColorLegend = Component.extend({
         if (oldShow.length > 0)
           show[colorlegendDim] = { "$in": oldShow };
 
-        _this.model.entities.set({ show: show });
+        _this.model.entities.set({ show });
 
       },
-      clickToSelect: function(d, i) {
+      clickToSelect(d, i) {
         //disable interaction if so stated in concept properties
         if (!_this.colorModel.isDiscrete()) return;
 
@@ -450,7 +450,7 @@ var ColorLegend = Component.extend({
     };
   },
 
-  resize: function() {
+  resize() {
     if (!this.colorModel.isDiscrete()) {
       this.updateView();
     }
@@ -461,7 +461,7 @@ var ColorLegend = Component.extend({
    * Function updates the opacity of color legend elements
    * @param   {Array} value = [] array of highlighted elements
    */
-  updateGroupsOpacity: function(highlight = []) {
+  updateGroupsOpacity(highlight = []) {
     var _this = this;
 
     var clMarker = this.colorModel.getColorlegendMarker()||{};

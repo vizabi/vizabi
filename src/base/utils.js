@@ -1324,10 +1324,10 @@ export var get = function(url, pars, success, error, json) {
   url = pars.length ? url + '?' + pars.join('&') : url;
   ajax({
     method: 'GET',
-    url: url,
-    success: success,
-    error: error,
-    json: json
+    url,
+    success,
+    error,
+    json
   });
 };
 
@@ -1337,10 +1337,10 @@ export var get = function(url, pars, success, error, json) {
 export var post = function(url, pars, success, error, json) {
   ajax({
     method: 'POST',
-    url: url,
-    success: success,
-    error: error,
-    json: json,
+    url,
+    success,
+    error,
+    json,
     data: pars
   });
 };
@@ -1508,8 +1508,8 @@ export function transform(node) {
       translateY: f,
       rotate: Math.atan2(b, a) * Math.PI/180,
       skewX: Math.atan(skewX) * Math.PI/180,
-      scaleX: scaleX,
-      scaleY: scaleY
+      scaleX,
+      scaleY
     };
   }(a, b, c, d, e, f);
 }

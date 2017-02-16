@@ -67,7 +67,7 @@ var TimeSlider = Component.extend({
    * @param model The model passed to the component
    * @param context The component's parent
    */
-  init: function(model, context) {
+  init(model, context) {
 
     this.name = "gapminder-timeslider";
     this.template = this.template || require('./timeslider.html');
@@ -154,7 +154,7 @@ var TimeSlider = Component.extend({
   },
 
   //template is ready
-  readyOnce: function() {
+  readyOnce() {
 
     var _this = this;
 
@@ -254,7 +254,7 @@ var TimeSlider = Component.extend({
   },
 
   //template and model are ready
-  ready: function() {
+  ready() {
     if (this.model.time.splash) return;
 
     this.element.classed(class_loading, false);
@@ -284,7 +284,7 @@ var TimeSlider = Component.extend({
     _this.setSelectedLimits(true);
   },
 
-  changeLimits: function() {
+  changeLimits() {
     var minValue = this.model.time.start;
     var maxValue = this.model.time.end;
     //scale
@@ -294,7 +294,7 @@ var TimeSlider = Component.extend({
       .tickFormat(this.model.time.getFormatter());
   },
 
-  changeTime: function() {
+  changeTime() {
     //time slider should always receive a time model
     var time = this.model.time.value;
     //special classes
@@ -305,7 +305,7 @@ var TimeSlider = Component.extend({
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
    */
-  updateSize: function(range) {
+  updateSize(range) {
     if (this.model.time.splash) return;
 
     this.model.time.pause();
@@ -359,7 +359,7 @@ var TimeSlider = Component.extend({
 
   },
 
-  setSelectedLimits: function(force) {
+  setSelectedLimits(force) {
     var _this = this;
     this._setSelectedLimitsId++;
     var _setSelectedLimitsId = this._setSelectedLimitsId;
@@ -394,7 +394,7 @@ var TimeSlider = Component.extend({
     });
   },
 
-  updateSelectedStartLimiter: function() {
+  updateSelectedStartLimiter() {
     var _this = this;
     this.select.select('#clip-start-' + _this._id).remove();
     this.select.select(".selected-start").remove();
@@ -409,7 +409,7 @@ var TimeSlider = Component.extend({
     }
   },
 
-  updateSelectedEndLimiter: function() {
+  updateSelectedEndLimiter() {
     var _this = this;
     this.select.select('#clip-end-' + _this._id).remove();
     this.select.select(".selected-end").remove();
@@ -424,7 +424,7 @@ var TimeSlider = Component.extend({
     }
   },
 
-  resizeSelectedLimiters: function() {
+  resizeSelectedLimiters() {
     var _this = this;
     this.select.select('.selected-start')
       .attr('d', "M0,0H" + this.xScale(this.model.time.startSelected));
@@ -442,7 +442,7 @@ var TimeSlider = Component.extend({
       .attr("width", this.xScale(this.model.time.end) - this.xScale(this.model.time.endSelected) + this.height / 2);
   },
 
-  _resizeProgressBar: function() {
+  _resizeProgressBar() {
     var _this = this;
     this.progressBar.selectAll('path')
     .each(function(d) {
@@ -451,7 +451,7 @@ var TimeSlider = Component.extend({
       });
   },
 
-  _updateProgressBar: function(time) {
+  _updateProgressBar(time) {
     var _this = this;
     if (time) {
       if (_this.completedTimeFrames.indexOf(time) != -1) return;
@@ -515,7 +515,7 @@ var TimeSlider = Component.extend({
    * Returns width of slider text value.
    * Parameters in this function needed for memoize function, so they are not redundant.
    */
-  getValueWidth: function(layout, value) {
+  getValueWidth(layout, value) {
     return this.valueText.node().getBoundingClientRect().width;
   },
 
@@ -523,7 +523,7 @@ var TimeSlider = Component.extend({
    * Gets brushed function to be executed when dragging
    * @returns {Function} brushed function
    */
-  _getBrushed: function() {
+  _getBrushed() {
     var _this = this;
     return function() {
 
@@ -572,7 +572,7 @@ var TimeSlider = Component.extend({
    * Gets brushedEnd function to be executed when dragging ends
    * @returns {Function} brushedEnd function
    */
-  _getBrushedEnd: function() {
+  _getBrushedEnd() {
     var _this = this;
     return function() {
       _this._setTime.recallLast();
@@ -586,7 +586,7 @@ var TimeSlider = Component.extend({
    * Sets the handle to the correct position
    * @param {Boolean} transition whether to use transition or not
    */
-  _setHandle: function(transition) {
+  _setHandle(transition) {
     var _this = this;
     var value = this.model.time.value;
     //this.slide.call(this.brush.extent([value, value]));
@@ -639,7 +639,7 @@ var TimeSlider = Component.extend({
    * Sets the current time model to time
    * @param {number} time The time
    */
-  _setTime: function(time) {
+  _setTime(time) {
     //update state
     var _this = this;
     //  frameRate = 50;
@@ -656,7 +656,7 @@ var TimeSlider = Component.extend({
   /**
    * Applies some classes to the element according to options
    */
-  _optionClasses: function() {
+  _optionClasses() {
     //show/hide classes
 
     var show_limits = this.ui.show_limits;

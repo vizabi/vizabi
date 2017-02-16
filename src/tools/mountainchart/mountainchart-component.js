@@ -36,7 +36,7 @@ var MountainChartComponent = Component.extend({
      * @param {Object} config The config passed to the component
      * @param {Object} context The component's parent
      */
-    init: function(config, context) {
+    init(config, context) {
 
         var _this = this;
         this.name = "mountainchart";
@@ -212,7 +212,7 @@ var MountainChartComponent = Component.extend({
         this.yMax = 0;
     },
 
-    domReady: function() {
+    domReady() {
         var _this = this;
 
         // reference elements
@@ -243,7 +243,7 @@ var MountainChartComponent = Component.extend({
             });
     },
 
-    afterPreload: function() {
+    afterPreload() {
         var _this = this;
 
         var yearNow = _this.model.time.formatDate(this.model.time.value);
@@ -278,7 +278,7 @@ var MountainChartComponent = Component.extend({
             .style("opacity", 1);
     },
 
-    readyOnce: function() {
+    readyOnce() {
 
         this.eventAreaEl
             .on("mousemove", function() {
@@ -316,7 +316,7 @@ var MountainChartComponent = Component.extend({
             .range(this.model.ui.datawarning.doubtRange);
     },
 
-    ready: function() {
+    ready() {
         //console.log("ready")
         var _this= this;
 
@@ -346,7 +346,7 @@ var MountainChartComponent = Component.extend({
         });
     },
 
-  frameChanged: function(frame, time) {
+  frameChanged(frame, time) {
     if (!frame) return utils.warn("change:time.value: empty data received from marker.getFrame(). doing nothing");
     if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
     this.values = frame;
@@ -359,7 +359,7 @@ var MountainChartComponent = Component.extend({
   },
 
 
-updateSize: function(meshLength) {
+updateSize(meshLength) {
 
         var margin, infoElHeight;
         var padding = 2;
@@ -431,7 +431,7 @@ updateSize: function(meshLength) {
             .tickPadding(9)
             .tickSizeMinor(3, 0)
             .labelerOptions({
-                scaleType: scaleType,
+                scaleType,
                 toolMargin: margin,
                 pivotingLimit: margin.bottom * 1.5,
                 method: this.xAxis.METHOD_REPEATING,
@@ -488,7 +488,7 @@ updateSize: function(meshLength) {
     },
 
 
-    zoomToMaxMin: function() {
+    zoomToMaxMin() {
         var _this = this;
 
         if (this.model.marker.axis_x.zoomedMin==null || this.model.marker.axis_x.zoomedMax==null) return;
@@ -505,7 +505,7 @@ updateSize: function(meshLength) {
     },
 
 
-    updateUIStrings: function() {
+    updateUIStrings() {
         var _this = this;
 
         this.translator = this.model.locale.getTFunction();
@@ -552,13 +552,13 @@ updateSize: function(meshLength) {
             });
     },
 
-    updateDoubtOpacity: function(opacity) {
+    updateDoubtOpacity(opacity) {
         if (opacity == null) opacity = this.wScale(+this.time.getUTCFullYear().toString());
         if (this.someSelected) opacity = 1;
         this.dataWarningEl.style("opacity", opacity);
     },
 
-    updateIndicators: function() {
+    updateIndicators() {
         var _this = this;
 
         //fetch scales, or rebuild scales if there are none, then fetch
@@ -569,7 +569,7 @@ updateSize: function(meshLength) {
         this.xAxis.tickFormat(_this.model.marker.axis_x.getTickFormatter());
     },
 
-    updateEntities: function() {
+    updateEntities() {
         var _this = this;
 
         // construct pointers
@@ -713,11 +713,11 @@ updateSize: function(meshLength) {
             });
     },
 
-    _interact: function() {
+    _interact() {
         var _this = this;
 
         return {
-            _mousemove: function(d, i) {
+            _mousemove(d, i) {
                 if (_this.model.time.dragging || _this.model.time.playing) return;
 
                 _this.model.marker.highlightMarker(d);
@@ -731,7 +731,7 @@ updateSize: function(meshLength) {
                 _this._selectlist.showCloseCross(d, true);
 
             },
-            _mouseout: function(d, i) {
+            _mouseout(d, i) {
                 if (_this.model.time.dragging || _this.model.time.playing) return;
 
                 _this._setTooltip("");
@@ -739,7 +739,7 @@ updateSize: function(meshLength) {
                 _this._selectlist.showCloseCross(d, false);
 
             },
-            _click: function(d, i) {
+            _click(d, i) {
                 if (_this.model.time.dragging || _this.model.time.playing) return;
 
                 _this.model.marker.selectMarker(d);
@@ -748,7 +748,7 @@ updateSize: function(meshLength) {
 
     },
 
-    highlightMarkers: function() {
+    highlightMarkers() {
         var _this = this;
         this.someHighlighted = (this.model.marker.highlight.length > 0);
 
@@ -759,7 +759,7 @@ updateSize: function(meshLength) {
 
     },
 
-    selectMarkers: function() {
+    selectMarkers() {
         var _this = this;
         this.someSelected = (this.model.marker.select.length > 0);
 
@@ -767,7 +767,7 @@ updateSize: function(meshLength) {
         this.nonSelectedOpacityZero = false;
     },
 
-    _sumLeafPointersByMarker: function(branch, marker) {
+    _sumLeafPointersByMarker(branch, marker) {
         var _this = this;
         if (!branch.key) return _this.values[marker][branch.KEY()];
         return d3.sum(branch.values.map(function(m) {
@@ -775,7 +775,7 @@ updateSize: function(meshLength) {
         }));
     },
 
-    updateOpacity: function() {
+    updateOpacity() {
         var _this = this;
         //if(!duration)duration = 0;
 
@@ -820,7 +820,7 @@ updateSize: function(meshLength) {
         this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
     },
 
-    updateTime: function() {
+    updateTime() {
         var _this = this;
 
         this.time_1 = this.time == null ? this.model.time.value : this.time;
@@ -829,7 +829,7 @@ updateSize: function(meshLength) {
         this.year.setText(this.model.time.formatDate(this.time), this.duration);
     },
 
-    updatePointers: function() {
+    updatePointers() {
         var _this = this;
         this.yMax = 0;
 
@@ -905,7 +905,7 @@ updateSize: function(meshLength) {
 
     },
 
-    _getFirstLastPointersInStack: function(group) {
+    _getFirstLastPointersInStack(group) {
         var _this = this;
 
         var visible, visible2;
@@ -930,12 +930,12 @@ updateSize: function(meshLength) {
         if (!visible.length || (visible2 && !visible2.length)) utils.warn('mountain chart failed to generate shapes. check the incoming data');
 
         return {
-            first: first,
-            last: last
+            first,
+            last
         };
     },
 
-    _getVerticesOfaMergedShape: function(arg) {
+    _getVerticesOfaMergedShape(arg) {
         var _this = this;
 
         var first = arg.first.KEY();
@@ -946,13 +946,13 @@ updateSize: function(meshLength) {
             var y0 = _this.cached[last][i].y0;
             return {
                 x: m,
-                y0: y0,
-                y: y
+                y0,
+                y
             };
         });
     },
 
-    _spawnMasks: function() {
+    _spawnMasks() {
         var _this = this;
 
         var tailFatX = this._math.unscale(this.model.marker.axis_x.tailFatX);
@@ -973,7 +973,7 @@ updateSize: function(meshLength) {
         });
     },
 
-    _spawn: function(values, d) {
+    _spawn(values, d) {
         var _this = this;
 
         var norm = values.axis_y[d.KEY()];
@@ -1001,7 +1001,7 @@ updateSize: function(meshLength) {
         return result;
     },
 
-    _adjustMaxY: function(options) {
+    _adjustMaxY(options) {
         if (!options) options = {};
         var _this = this;
         var method = this.model.ui.chart.yMaxMethod;
@@ -1028,7 +1028,7 @@ updateSize: function(meshLength) {
         }
     },
 
-    redrawDataPoints: function() {
+    redrawDataPoints() {
         var _this = this;
         var mergeGrouped = this.model.marker.group.merge;
         var mergeStacked = this.model.marker.stack.merge;
@@ -1089,7 +1089,7 @@ updateSize: function(meshLength) {
 
     },
 
-    redrawDataPointsOnlyColors: function() {
+    redrawDataPointsOnlyColors() {
         var _this = this;
         if (!this.mountains) return utils.warn("redrawDataPointsOnlyColors(): no mountains  defined. likely a premature call, fix it!");
         var isColorUseIndicator = this.model.marker.color.use === "indicator";
@@ -1106,7 +1106,7 @@ updateSize: function(meshLength) {
         });
     },
 
-    _renderShape: function(view, key, hidden) {
+    _renderShape(view, key, hidden) {
         var stack = this.model.marker.stack.which;
         var _this = this;
 
@@ -1152,7 +1152,7 @@ updateSize: function(meshLength) {
         });
     },
 
-    _setTooltip: function(tooltipText) {
+    _setTooltip(tooltipText) {
         if (tooltipText) {
             var mouse = d3.mouse(this.graph.node()).map(function(d) { return parseInt(d); });
 
@@ -1188,7 +1188,7 @@ updateSize: function(meshLength) {
         }
     },
 
-    preload: function() {
+    preload() {
       var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
           globals.ext_resources.host + globals.ext_resources.preloadPath + "mc_precomputed_shapes.json";
 

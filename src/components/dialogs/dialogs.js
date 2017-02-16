@@ -22,7 +22,7 @@ var Dialogs = Component.extend({
    * @param config component configuration
    * @param context component context (parent)
    */
-  init: function(config, context) {
+  init(config, context) {
 
     //set properties
     var _this = this;
@@ -96,7 +96,7 @@ var Dialogs = Component.extend({
 
   },
 
-  domReady: function() {
+  domReady() {
     var dialog_popup = (this.model.ui.dialogs || {}).popup || [];
     var dialog_sidebar = (this.model.ui.dialogs || {}).sidebar || [];
 
@@ -114,7 +114,7 @@ var Dialogs = Component.extend({
     this.dialog_sidebar = dialog_sidebar;
   },
 
-  readyOnce: function() {
+  readyOnce() {
     var _this = this;
 
     this.element = d3.select(this.placeholder);
@@ -178,7 +178,7 @@ var Dialogs = Component.extend({
 
   },
 
-  resize: function() {
+  resize() {
     var _this = this;
     var profile = this.getLayoutProfile();
 
@@ -201,7 +201,7 @@ var Dialogs = Component.extend({
    * adds dialogs configuration to the components and template_data
    * @param {Array} dialog_list list of dialogs to be added
    */
-  _addDialogs: function(dialog_popup, dialog_sidebar) {
+  _addDialogs(dialog_popup, dialog_sidebar) {
 
     var profile = this.getLayoutProfile();
     var dialog_list = [];
@@ -269,7 +269,7 @@ var Dialogs = Component.extend({
 
   },
 
-  bringForward: function(id) {
+  bringForward(id) {
     var dialog = this.element.select(".vzb-popup.vzb-dialogs-dialog[data-dlg='" + id + "']");
     dialog.style('z-index', this._curr_dialog_index);
     this._curr_dialog_index += 10;
@@ -280,7 +280,7 @@ var Dialogs = Component.extend({
    * Activate a dialog
    * @param {String} id dialog id
    */
-  openDialog: function(id) {
+  openDialog(id) {
     //close pinned dialogs for small profile
     var forceClose = this.getLayoutProfile() === 'small';
     this.closeAllDialogs(forceClose);
@@ -300,7 +300,7 @@ var Dialogs = Component.extend({
   },
 
 
-  pinDialog: function(id) {
+  pinDialog(id) {
     var dialog = this.element.select(".vzb-popup.vzb-dialogs-dialog[data-dlg='" + id + "']");
 
     if (this._available_dialogs[id].ispin) {
@@ -317,7 +317,7 @@ var Dialogs = Component.extend({
    * Closes a dialog
    * @param {String} id dialog id
    */
-  closeDialog: function(id) {
+  closeDialog(id) {
     var dialog = this.element.selectAll(".vzb-popup.vzb-dialogs-dialog[data-dlg='" + id + "']");
 
     this._active_comp = this.components[this._available_dialogs[id].component];
@@ -344,7 +344,7 @@ var Dialogs = Component.extend({
   /*
    * Close all dialogs
    */
-  closeAllDialogs: function(forceclose) {
+  closeAllDialogs(forceclose) {
     var _this = this;
     //remove classes
     var dialogClass = forceclose ? ".vzb-popup.vzb-dialogs-dialog.vzb-active" : ".vzb-popup.vzb-dialogs-dialog.vzb-active:not(.pinned)";

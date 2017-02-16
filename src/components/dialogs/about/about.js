@@ -13,13 +13,13 @@ var About = Dialog.extend({
  * @param config component configuration
  * @param context component context (parent)
  */
-init: function(config, parent) {
+init(config, parent) {
   this.name = 'about';
 
   this._super(config, parent);
 },
 
-readyOnce: function() {
+readyOnce() {
   var version = globals.version;
   var updated = new Date(parseInt(globals.build));
 

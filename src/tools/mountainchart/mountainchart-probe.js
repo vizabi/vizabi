@@ -3,12 +3,12 @@ import Class from 'base/class';
 
 var MCProbe = Class.extend({
 
-        init: function(context) {
+        init(context) {
             this.context = context;
 
         },
 
-        redraw: function(options) {
+        redraw(options) {
             var _this = this.context;
             if (!options) options = {};
 

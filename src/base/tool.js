@@ -18,7 +18,7 @@ var ToolModel = Model.extend({
    * @param {Tool}   the tool this tool model belongs to
    * @param {Object} values The initial values of this model
    */
-  init: function(tool, external_model) {
+  init(tool, external_model) {
     this._id = utils.uniqueId('tm');
     this._type = 'tool';
     this._component = tool;
@@ -38,11 +38,11 @@ var ToolModel = Model.extend({
    * @return {object} Defaults of tool model and children
    * Tool defaults overwrite other models' default
    */
-  getDefaults: function() {
+  getDefaults() {
     return utils.deepExtend({}, this.getSubmodelDefaults(), this.getClassDefaults());
   },
 
-  validate: function() {
+  validate() {
 
     var max = 10;
     var c = 0;
@@ -74,14 +74,14 @@ var Tool = Component.extend({
    * @param {Object} placeholder object
    * @param {Object} external_model External model such as state, data, etc
    */
-  init: function(placeholder, external_model) {
+  init(placeholder, external_model) {
     this._id = utils.uniqueId('t');
 
     this.template = this.getToolTemplate();
 
     // super also calls createModel
     this._super({
-      placeholder: placeholder,
+      placeholder,
       model: external_model
     });
 
@@ -91,14 +91,14 @@ var Tool = Component.extend({
     this.setResizeHandler();
   },
 
-  createModel: function(external_model) {
+  createModel(external_model) {
     external_model      = external_model      || {}; //external model can be undefined
     external_model.bind = external_model.bind || {}; //bind functions can be undefined
     this.model = new ToolModel(this, external_model);
     this.model.setInterModelListeners();
   },
 
-  getToolTemplate: function() {
+  getToolTemplate() {
     return this.template ||
       '<div class="vzb-tool vzb-tool-' + this.name + '">' +
         '<div class="vzb-tool-stage">' +
@@ -128,7 +128,7 @@ var Tool = Component.extend({
       '</div>';
   },
 
-  getToolListeners: function() {
+  getToolListeners() {
     var _this = this;
     return utils.extend(
       this.model_binds,
@@ -162,7 +162,7 @@ var Tool = Component.extend({
       });
   },
 
-  setResizeHandler: function() {
+  setResizeHandler() {
     //only tools have layout (manage sizes)
     this.model.ui.setContainer(this.element);
   },
@@ -171,7 +171,7 @@ var Tool = Component.extend({
     this.trigger('resize');
   }, 100),
 
-  startLoading: function() {
+  startLoading() {
     this._super();
 
     Promise.all([
@@ -190,7 +190,7 @@ var Tool = Component.extend({
 
   },
 
-  loadSplashScreen: function() {
+  loadSplashScreen() {
     if (this.model.ui.splash) {
       //TODO: cleanup hardcoded splash screen
       this.model.state.time.splash = true;
@@ -202,11 +202,11 @@ var Tool = Component.extend({
     }
   },
 
-  finishLoading: function() {
+  finishLoading() {
     this.model.state.time.splash = false;
   },
 
-  getPersistentModel: function() {
+  getPersistentModel() {
     //try to find functions in properties of model.
     var removeFunctions = function(model) {
       for (var childKey in model) {
@@ -224,7 +224,7 @@ var Tool = Component.extend({
     return currentToolModel;
   },
 
-  getPersistentMinimalModel: function(diffModel) {
+  getPersistentMinimalModel(diffModel) {
     var defaultModel = this.model.getDefaults();
     var currentPersistentModel = this.getPersistentModel();
     var redundantModel = utils.deepExtend(defaultModel, diffModel);
@@ -235,7 +235,7 @@ var Tool = Component.extend({
    * Clears a tool
    */
 
-  clear: function() {
+  clear() {
     this.model.ui.clear();
     this.setModel = this.getModel = function() {
       return;
@@ -261,7 +261,7 @@ var Tool = Component.extend({
    * @param {Object} JSONModel new model in JSON format
    * @param {Boolean} overwrite overwrite everything instead of extending
    */
-  setModel: function(newModelJSON, overwrite) {
+  setModel(newModelJSON, overwrite) {
     if (overwrite) {
       this.model.reset(newModelJSON);
     } else {
@@ -274,13 +274,13 @@ var Tool = Component.extend({
    * get model
    * @return {Object} JSON object of model
    */
-  getModel: function() {
+  getModel() {
     return this.model.getPlainObject() || {};
   },
   /**
    * Displays loading class
    */
-  beforeLoading: function() {
+  beforeLoading() {
     utils.addClass(this.placeholder, class_loading_data);
   },
 
@@ -292,13 +292,13 @@ var Tool = Component.extend({
    * Validating the tool model
    * @param model the current tool model to be validated
    */
-  validate: function(model) {
+  validate(model) {
     model = this.model || model;
 
     if (!model || !model.state) return utils.warn("tool validation aborted: model.state looks wrong: " + model);
   },
 
-  setCSSClasses: function() {
+  setCSSClasses() {
     //add placeholder class
     utils.addClass(this.placeholder, class_placeholder);
     //add-remove buttonlist class

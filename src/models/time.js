@@ -31,7 +31,7 @@ var TimeModel = DataConnected.extend({
   /**
    * Default values for this model
    */
-  getClassDefaults: function() {
+  getClassDefaults() {
     var defaults = {
       dim: null,
       value: null,
@@ -66,7 +66,7 @@ var TimeModel = DataConnected.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(name, values, parent, bind) {
+  init(name, values, parent, bind) {
     this._type = "time";
 
     //same constructor
@@ -96,7 +96,7 @@ var TimeModel = DataConnected.extend({
     });
   },
 
-  initFormatters: function() {
+  initFormatters() {
     if (formats[this.unit]) {
       this.formatters = formats[this.unit];
     }
@@ -114,7 +114,7 @@ var TimeModel = DataConnected.extend({
     this.validateFormatting();
   },
 
-  afterPreload: function() {
+  afterPreload() {
     if (this.dim == null && this.autogenerate) {
       var dataSource = this.getClosestModel(this.autogenerate.data);
       this.dim = dataSource.getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType).concept;
@@ -124,7 +124,7 @@ var TimeModel = DataConnected.extend({
   /**
    * Formats value, start and end dates to actual Date objects
    */
-  _formatToDates: function() {
+  _formatToDates() {
     var persistentValues = ["value"];
     var date_attr = ["value", "start", "end", "startSelected", "endSelected"];
     for (var i = 0; i < date_attr.length; i++) {
@@ -142,7 +142,7 @@ var TimeModel = DataConnected.extend({
    * @param {String} type Either data or ui.
    * @returns {String}
    */
-  formatDate: function(dateObject, type = 'data') {
+  formatDate(dateObject, type = 'data') {
     if (['data', 'ui'].indexOf(type) === -1) {
       utils.warn('Time.formatDate type parameter (' + type + ') invalid. Using "data".');
       type = data;
@@ -151,13 +151,13 @@ var TimeModel = DataConnected.extend({
     return this.formatters[type](dateObject);
   },
   /* parse to predefined unit */
-  parse: function(timeString, type = 'data') {
+  parse(timeString, type = 'data') {
     if (timeString == null) return null;
     return this.formatters[type].parse(timeString.toString());
   },
 
   /* auto-determines unit from timestring */
-  findFormat: function(timeString) {
+  findFormat(timeString) {
     var keys = Object.keys(formats), i = 0;
     for (; i < keys.length; i++) {
       var dateObject = formats[keys[i]].data.parse(timeString);
@@ -172,7 +172,7 @@ var TimeModel = DataConnected.extend({
   /**
    * Validates the model
    */
-  validate: function() {
+  validate() {
 
     //check if time start and end are not defined but start and end origins are defined
     if (this.start == null && this.startOrigin) this.set("start", this.startOrigin, null, false);
@@ -226,7 +226,7 @@ var TimeModel = DataConnected.extend({
     }
   },
 
-  validateFormatting: function() {
+  validateFormatting() {
     // default to current date. Other option: newTime['start'] || newTime['end'] || time.start || time.end;
     if (this.value == null) this.set("value", this.parse(this.formatDate(new Date())), null, false);
 
@@ -240,14 +240,14 @@ var TimeModel = DataConnected.extend({
   /**
    * Plays time
    */
-  play: function() {
+  play() {
     this._startPlaying();
   },
 
   /**
    * Pauses time
    */
-  pause: function(soft) {
+  pause(soft) {
     if (soft) {
       this.postponePause = true;
     } else {
@@ -261,10 +261,10 @@ var TimeModel = DataConnected.extend({
   /**
    * Indicates dragging of time
    */
-  dragStart: function() {
+  dragStart() {
     this.dragging = true;
   },
-  dragStop: function() {
+  dragStop() {
     this.dragging = false;
   },
 
@@ -273,7 +273,7 @@ var TimeModel = DataConnected.extend({
    * gets time range
    * @returns range between start and end
    */
-  getRange: function() {
+  getRange() {
     var is = this.getIntervalAndStep();
     return d3["utc" + is.interval].range(this.start, this.end, is.step);
   },
@@ -282,14 +282,14 @@ var TimeModel = DataConnected.extend({
    * gets the d3 interval and stepsize for d3 time interval methods
    * D3's week-interval starts on sunday and d3 does not support a quarter interval
    **/
-  getIntervalAndStep: function() {
+  getIntervalAndStep() {
     var d3Interval, step;
     switch (this.unit) {
       case 'week': d3Interval = 'monday'; step = this.step; break;
       case 'quarter': d3Interval = 'month'; step = this.step*3; break;
       default: d3Interval = this.unit; step = this.step; break;
     }
-    return { interval: utils.capitalize(d3Interval), step: step };
+    return { interval: utils.capitalize(d3Interval), step };
   },
 
   /**
@@ -297,7 +297,7 @@ var TimeModel = DataConnected.extend({
    * @param {Boolean} splash: get filter for current year only
    * @returns {Object} time filter
    */
-  getFilter: function(splash) {
+  getFilter(splash) {
     var defaultStart = this.parse(this.startOrigin);
     var defaultEnd = this.parse(this.endOrigin);
 
@@ -331,7 +331,7 @@ var TimeModel = DataConnected.extend({
    * Gets parser for this model
    * @returns {Function} parser function
    */
-  getParser: function(type = 'data') {
+  getParser(type = 'data') {
     return this.formatters[type].parse;
   },
 
@@ -339,7 +339,7 @@ var TimeModel = DataConnected.extend({
   * Gets formatter for this model
   * @returns {Function} formatter function
   */
-  getFormatter: function(type = 'data') {
+  getFormatter(type = 'data') {
     return this.formatters[type];
   },
 
@@ -347,7 +347,7 @@ var TimeModel = DataConnected.extend({
    * Gets an array with all time steps for this model
    * @returns {Array} time array
    */
-  getAllSteps: function() {
+  getAllSteps() {
     if (!this.start || !this.end) {
       utils.warn("getAllSteps(): invalid start/end time is detected: " + this.start + ", " + this.end);
       return [];
@@ -371,7 +371,7 @@ var TimeModel = DataConnected.extend({
    * Snaps the time to integer
    * possible inputs are "start", "end", "value". "value" is default
    */
-  snap: function(what) {
+  snap(what) {
     if (!this.round) return;
     if (what == null) what = "value";
     var op = 'round';
@@ -387,7 +387,7 @@ var TimeModel = DataConnected.extend({
   /**
    * Starts playing the time, initializing the interval
    */
-  _startPlaying: function() {
+  _startPlaying() {
     //don't play if it's not playable
     if (!this.playable) return;
 
@@ -410,7 +410,7 @@ var TimeModel = DataConnected.extend({
     this.trigger("play");
   },
 
-  playInterval: function(immediatePlay) {
+  playInterval(immediatePlay) {
     if (!this.playing) return;
     var _this = this;
     this.delayAnimations = this.delay;
@@ -456,12 +456,12 @@ var TimeModel = DataConnected.extend({
 
   },
 
-  incrementTime: function(time) {
+  incrementTime(time) {
     var is = this.getIntervalAndStep();
     return d3["utc" + is.interval].offset(time, is.step);
   },
 
-  decrementTime: function(time) {
+  decrementTime(time) {
     var is = this.getIntervalAndStep();
     return d3["utc" + is.interval].offset(time, -is.step);
   },
@@ -469,7 +469,7 @@ var TimeModel = DataConnected.extend({
   /**
    * Stops playing the time, clearing the interval
    */
-  _stopPlaying: function() {
+  _stopPlaying() {
     this._intervals.clearInterval('playInterval_' + this._id);
     //this.snap();
     this.trigger("pause");

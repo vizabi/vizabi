@@ -37,7 +37,7 @@ var ColorModel = Hook.extend({
   /**
    * Default values for this model
    */
-  getClassDefaults: function() {
+  getClassDefaults() {
     var defaults = {
       use: null,
       which: null,
@@ -53,7 +53,7 @@ var ColorModel = Hook.extend({
     return utils.deepExtend(this._super(), defaults);
   },
 
-  autoGenerateModel: function() {
+  autoGenerateModel() {
     if (this.which == null) {
       var concept;
       if (this.autogenerate) {
@@ -85,7 +85,7 @@ var ColorModel = Hook.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(name, values, parent, bind) {
+  init(name, values, parent, bind) {
     var _this = this;
     this._type = "color";
 
@@ -112,13 +112,13 @@ var ColorModel = Hook.extend({
     });
   },
 
-  setInterModelListeners: function() {
+  setInterModelListeners() {
     this._super();
     this._setSyncModels();
   },
 
   // args: {colorID, shadeID}
-  getColorShade: function(args) {
+  getColorShade(args) {
     var palette = this.getPalette();
 
     if (!args) return utils.warn("getColorShade() is missing arguments");
@@ -139,18 +139,18 @@ var ColorModel = Hook.extend({
   /**
    * Get the above constants
    */
-  isUserSelectable: function() {
+  isUserSelectable() {
     var conceptpropsColor = this.getConceptprops().color;
     return conceptpropsColor == null || conceptpropsColor.selectable == null || conceptpropsColor.selectable;
   },
 
-  setWhich: function(newValue) {
+  setWhich(newValue) {
     this._super(newValue);
     if (this.palette) this.palette._data = {};
     this._setSyncModels();
   },
 
-  _setSyncModels: function() {
+  _setSyncModels() {
     var _this = this;
     this.syncModels.forEach(function(modelName) {
       //fetch the model to sync, it's marker and entities
@@ -159,13 +159,13 @@ var ColorModel = Hook.extend({
       var entities = marker.getClosestModel(marker.space[0]);
 
       //save the references here locally
-      _this._syncModelReferences[modelName] = { model: model, marker: marker, entities: entities };
+      _this._syncModelReferences[modelName] = { model, marker, entities };
 
       if (_this.isDiscrete()) _this._setSyncModel(model, marker, entities);
     });
   },
 
-  _setSyncModel: function(model, marker, entities) {
+  _setSyncModel(model, marker, entities) {
     if (model == marker) {
       var newFilter = {
         dim: this.which,
@@ -178,18 +178,18 @@ var ColorModel = Hook.extend({
     }
   },
 
-  getColorlegendMarker: function() {
+  getColorlegendMarker() {
     return (this._syncModelReferences["marker_colorlegend"]||{})["marker"];
   },
 
-  getColorlegendEntities: function() {
+  getColorlegendEntities() {
     return (this._syncModelReferences["marker_colorlegend"]||{})["entities"];
   },
 
   /**
    * set color
    */
-  setColor: function(value, pointer) {
+  setColor(value, pointer) {
     var temp = this.getPalette();
     temp[pointer] = value;
     this.scale.range(utils.values(temp));
@@ -202,7 +202,7 @@ var ColorModel = Hook.extend({
    * @param value Original value
    * @returns hooked value
    */
-  mapValue: function(value) {
+  mapValue(value) {
     //if the property value does not exist, supply the _default
     // otherwise the missing value would be added to the domain
     if (this.scale != null && this.isDiscrete() && this._hasDefaultColor && this.scale.domain().indexOf(value) == -1) value = "_default";
@@ -210,7 +210,7 @@ var ColorModel = Hook.extend({
   },
 
 
-  getDefaultPalette: function() {
+  getDefaultPalette() {
       var conceptpropsColor = this.getConceptprops().color;
       var palette;
 
@@ -237,7 +237,7 @@ var ColorModel = Hook.extend({
       return palette;
   },
 
-  _getPaletteLabels: function() {
+  _getPaletteLabels() {
       var conceptpropsColor = this.getConceptprops().color;
       var paletteLabels = null;
 
@@ -248,11 +248,11 @@ var ColorModel = Hook.extend({
       return paletteLabels;
   },
 
-  getPaletteLabels: function() {
+  getPaletteLabels() {
     return this.paletteLabels.getPlainObject();
   },
 
-  getPalette: function(includeDefault) {
+  getPalette(includeDefault) {
     //rebuild palette if it's empty
     if (!this.palette || Object.keys(this.palette._data).length===0) {
       var palette = this.getDefaultPalette();
@@ -271,7 +271,7 @@ var ColorModel = Hook.extend({
    * Gets the domain for this hook
    * @returns {Array} domain
    */
-  buildScale: function(scaleType = this.scaleType) {
+  buildScale(scaleType = this.scaleType) {
     var _this = this;
 
     var paletteObject = _this.getPalette();

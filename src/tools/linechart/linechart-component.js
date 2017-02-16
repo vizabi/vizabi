@@ -16,7 +16,7 @@ import {
 //LINE CHART COMPONENT
 var LCComponent = Component.extend({
 
-  init: function(config, context) {
+  init(config, context) {
     var _this = this;
     this.name = 'linechart';
     this.template = require('./linechart.html');
@@ -124,7 +124,7 @@ var LCComponent = Component.extend({
    * Executed after template is loaded
    * Ideally, it contains instantiations related to template
    */
-  readyOnce: function() {
+  readyOnce() {
     var _this = this;
 
     this.element = d3.select(this.element);
@@ -190,7 +190,7 @@ var LCComponent = Component.extend({
     });
   },
 
-  ready: function() {
+  ready() {
     this.all_steps = this.model.time.getAllSteps();
     this.all_values = this.values = null;
     this.updateTime();
@@ -216,14 +216,14 @@ var LCComponent = Component.extend({
     });
   },
 
-  _frameIsValid: function(frame) {
+  _frameIsValid(frame) {
     return !(!frame
     || Object.keys(frame.axis_y).length === 0
     || Object.keys(frame.axis_x).length === 0
     || Object.keys(frame.color).length === 0);
   },
 
-  frameChanged: function(frame, time) {
+  frameChanged(frame, time) {
 //    if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
     this.frame = frame;
     this.updateTime();
@@ -232,7 +232,7 @@ var LCComponent = Component.extend({
   },
 
 
-  updateUIStrings: function() {
+  updateUIStrings() {
     var _this = this;
     var conceptPropsY = _this.model.marker.axis_y.getConceptprops();
     var conceptPropsX = _this.model.marker.axis_x.getConceptprops();
@@ -294,7 +294,7 @@ var LCComponent = Component.extend({
 
   },
 
-  updateDoubtOpacity: function(opacity) {
+  updateDoubtOpacity(opacity) {
     if (opacity == null) opacity = this.wScale(+this.time.getUTCFullYear().toString());
     if (this.someSelected) opacity = 1;
     this.dataWarningEl.style("opacity", opacity);
@@ -305,7 +305,7 @@ var LCComponent = Component.extend({
    * UPDATE SHOW:
    * Ideally should only update when show parameters change or data changes
    */
-  updateShow: function() {
+  updateShow() {
     var _this = this;
     var KEY = this.KEY;
 
@@ -411,7 +411,7 @@ var LCComponent = Component.extend({
    * UPDATE TIME:
    * Ideally should only update when time or data changes
    */
-  updateTime: function() {
+  updateTime() {
     var _this = this;
     var KEY = this.KEY;
     var time_1 = (this.time === null) ? this.model.time.value : this.time;
@@ -523,7 +523,7 @@ var LCComponent = Component.extend({
    * Executed whenever the container is resized
    * Ideally, it contains only operations related to size
    */
-  updateSize: function() {
+  updateSize() {
 
     var _this = this;
     var values = this.values;
@@ -697,7 +697,7 @@ var LCComponent = Component.extend({
    * REDRAW DATA POINTS:
    * Here plotting happens
    */
-  redrawDataPoints: function() {
+  redrawDataPoints() {
     var _this = this;
     var KEY = this.KEY;
 //    var values = this.values;
@@ -874,7 +874,7 @@ var LCComponent = Component.extend({
     });
   },
 
-  entityMousemove: function(me, index, context, closestToMouse) {
+  entityMousemove(me, index, context, closestToMouse) {
     var _this = context;
     var KEY = _this.KEY;
     var values = _this.values;
@@ -956,7 +956,7 @@ var LCComponent = Component.extend({
     });
   },
 
-  entityMouseout: function(me, index, context) {
+  entityMouseout(me, index, context) {
     var _this = context;
     if (d3.event.relatedTarget && d3.select(d3.event.relatedTarget).classed('vzb-tooltip')) return;
 
@@ -979,7 +979,7 @@ var LCComponent = Component.extend({
   /*
    * Highlights all hovered lines
    */
-  highlightLines: function() {
+  highlightLines() {
     var _this = this;
 
     var OPACITY_HIGHLT = 1.0;
@@ -1004,7 +1004,7 @@ var LCComponent = Component.extend({
 
   },
 
-  zoomToMaxMin: function() {
+  zoomToMaxMin() {
     var _this = this;
     //
 /*
@@ -1042,7 +1042,7 @@ var LCComponent = Component.extend({
   /**
    * Returns key from obj which value has the smallest difference with val
    */
-  getNearestKey: function(val, obj, fn) {
+  getNearestKey(val, obj, fn) {
     var keys = Object.keys(obj);
     var resKey = keys[0];
     for (var i = 1; i < keys.length; i++) {

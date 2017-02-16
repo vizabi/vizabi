@@ -20,7 +20,7 @@ var MountainChart = Tool.extend('MountainChart', {
    * @param {Object} placeholder Placeholder element for the tool
    * @param {Object} external_model Model as given by the external page
    */
-  init: function(placeholder, external_model) {
+  init(placeholder, external_model) {
 
     this.name = "mountainchart";
 

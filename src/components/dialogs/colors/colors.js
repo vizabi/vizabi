@@ -16,7 +16,7 @@ var Colors = Dialog.extend({
    * @param config component configuration
    * @param context component context (parent)
    */
-  init: function(config, parent) {
+  init(config, parent) {
     this.name = 'colors';
 
     this.components = [{

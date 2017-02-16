@@ -11,7 +11,7 @@ import simpleslider from 'components/simpleslider/simpleslider';
 
 var Find = Dialog.extend({
 
-  init: function(config, parent) {
+  init(config, parent) {
     this.name = 'find';
     var _this = this;
 
@@ -60,7 +60,7 @@ var Find = Dialog.extend({
   /**
    * Grab the list div
    */
-  readyOnce: function() {
+  readyOnce() {
     this._super();
 
     this.list = this.element.select(".vzb-find-list");
@@ -100,7 +100,7 @@ var Find = Dialog.extend({
 
   },
 
-  open: function() {
+  open() {
     var _this = this;
     this._super();
 
@@ -119,7 +119,7 @@ var Find = Dialog.extend({
    * Build the list everytime it updates
    */
   //TODO: split update in render and update methods
-  ready: function() {
+  ready() {
     this._super();
 
     var _this = this;
@@ -186,7 +186,7 @@ var Find = Dialog.extend({
     });
   },
 
-  redrawDataPoints: function(values) {
+  redrawDataPoints(values) {
     var _this = this;
     var KEY = this.KEY;
 
@@ -208,7 +208,7 @@ var Find = Dialog.extend({
       });
   },
 
-  selectDataPoints: function() {
+  selectDataPoints() {
     var KEY = this.KEY;
     var selected = this.model.state.marker.getSelected(KEY);
     this.items.selectAll("input")
@@ -217,7 +217,7 @@ var Find = Dialog.extend({
         });
   },
 
-  showHideSearch: function() {
+  showHideSearch() {
     var search = this.input_search.node().value || "";
     search = search.toLowerCase();
 
@@ -228,17 +228,17 @@ var Find = Dialog.extend({
       });
   },
 
-  showHideDeselect: function() {
+  showHideDeselect() {
     var someSelected = !!this.model.state.marker.select.length;
     this.deselect_all.classed('vzb-hidden', !someSelected);
     this.opacity_nonselected.classed('vzb-hidden', !someSelected);
   },
 
-  deselectMarkers: function() {
+  deselectMarkers() {
     this.model.state.marker.clearSelected();
   },
 
-  transitionEnd: function(event) {
+  transitionEnd(event) {
     this._super(event);
 
     if (!utils.isTouchDevice()) this.input_search.node().focus();

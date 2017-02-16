@@ -19,7 +19,7 @@ var comp_template = 'barchart.html';
 var DonutChart = Tool.extend('DonutChart', {
 
   //Run when the tool is created
-  init: function(placeholder, external_model) {
+  init(placeholder, external_model) {
 
     //Let's give it a name
     this.name = "donutchart";

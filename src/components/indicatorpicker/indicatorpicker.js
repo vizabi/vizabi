@@ -18,7 +18,7 @@ var IndPicker = Component.extend({
      * @param config The options passed to the component
      * @param context The component's parent
      */
-    init: function(config, context) {
+    init(config, context) {
 
         this.name = 'gapminder-indicatorpicker';
         this.template = '<span class="vzb-ip-holder"><span class="vzb-ip-select"></span><span class="vzb-ip-info"></span></span>';
@@ -106,12 +106,12 @@ var IndPicker = Component.extend({
         this._super(config, context);
     },
 
-    ready: function() {
+    ready() {
         this.updateView();
     },
 
 
-    readyOnce: function() {
+    readyOnce() {
         var _this = this;
 
         this.el_select = d3.select(this.element).select('.vzb-ip-select');
@@ -160,7 +160,7 @@ var IndPicker = Component.extend({
     },
 
 
-    updateView: function() {
+    updateView() {
         if (!this._readyOnce) return;
 
         var _this = this;

@@ -4,12 +4,12 @@ import { close as iconClose } from 'base/iconset';
 
 var MCSelectList = Class.extend({
 
-  init: function(context) {
+  init(context) {
     this.context = context;
 
   },
 
-  rebuild: function(data) {
+  rebuild(data) {
     var _this = this.context;
 
     /*
@@ -98,7 +98,7 @@ var MCSelectList = Class.extend({
       });
   },
 
-  redraw: function() {
+  redraw() {
     var _this = this.context;
     if (!_this.selectList || !_this.someSelected) return;
 

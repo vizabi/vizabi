@@ -9,7 +9,7 @@ import Dialog from 'components/dialogs/_dialog';
 
 var Show = Dialog.extend({
 
-  init: function(config, parent) {
+  init(config, parent) {
     this.name = 'show';
     var _this = this;
 
@@ -25,7 +25,7 @@ var Show = Dialog.extend({
   /**
    * Grab the list div
    */
-  readyOnce: function() {
+  readyOnce() {
     this._super();
     this.list = this.element.select(".vzb-show-list");
     this.input_search = this.element.select(".vzb-show-search");
@@ -50,21 +50,21 @@ var Show = Dialog.extend({
     });
   },
 
-  open: function() {
+  open() {
     this._super();
 
     this.input_search.node().value = "";
     this.showHideSearch();
   },
 
-  ready: function() {
+  ready() {
     this._super();
     this.redraw();
     utils.preventAncestorScrolling(this.element.select('.vzb-dialog-scrollable'));
 
   },
 
-  redraw: function() {
+  redraw() {
 
     var _this = this;
     this.translator = this.model.locale.getTFunction();
@@ -124,7 +124,7 @@ var Show = Dialog.extend({
     });
   },
 
-  showHideSearch: function() {
+  showHideSearch() {
 
     var search = this.input_search.node().value || "";
     search = search.toLowerCase();
@@ -136,17 +136,17 @@ var Show = Dialog.extend({
       });
   },
 
-  showHideDeselect: function() {
+  showHideDeselect() {
     var show = this.model.state.entities.show[this.KEY];
     this.deselect_all.classed('vzb-hidden', !show || show.length == 0);
   },
 
-  deselectEntities: function() {
+  deselectEntities() {
     this.model.state.entities.clearShow();
     this.showHideDeselect();
   },
 
-  transitionEnd: function(event) {
+  transitionEnd(event) {
     this._super(event);
 
     if (!utils.isTouchDevice()) this.input_search.node().focus();

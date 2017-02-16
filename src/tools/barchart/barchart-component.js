@@ -13,7 +13,7 @@ var BarComponent = Component.extend({
    * @param {Object} config The options passed to the component
    * @param {Object} context The component's parent
    */
-  init: function(config, context) {
+  init(config, context) {
     this.name = 'barchart';
     this.template = require('./barchart.html');
 
@@ -68,7 +68,7 @@ var BarComponent = Component.extend({
   /**
    * DOM is ready
    */
-  readyOnce: function() {
+  readyOnce() {
     this.element = d3.select(this.element);
 
     this.graph = this.element.select('.vzb-bc-graph');
@@ -88,7 +88,7 @@ var BarComponent = Component.extend({
   /*
    * Both model and DOM are ready
    */
-  ready: function() {
+  ready() {
     var _this = this;
     this.model.marker.getFrame(this.model.time.value, function(values) {
       _this.values = values;
@@ -102,7 +102,7 @@ var BarComponent = Component.extend({
   /**
    * Changes labels for indicators
    */
-  updateIndicators: function() {
+  updateIndicators() {
 
     var _this = this;
     this.translator = this.model.locale.getTFunction();
@@ -163,7 +163,7 @@ var BarComponent = Component.extend({
   /**
    * Updates entities
    */
-  updateEntities: function() {
+  updateEntities() {
 
     var _this = this;
     var time = this.model.time;
@@ -214,7 +214,7 @@ var BarComponent = Component.extend({
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
    */
-  resize: function() {
+  resize() {
 
     var _this = this;
 

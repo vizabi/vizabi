@@ -25,7 +25,7 @@ var UI = Model.extend({
     }
   },
 
-  getClassDefaults: function() {
+  getClassDefaults() {
     var defaults = {
       presentation: false,
       buttons: [],
@@ -42,7 +42,7 @@ var UI = Model.extend({
   /**
    * Initializes the layout manager
    */
-  init: function(name, values, parent, bind) {
+  init(name, values, parent, bind) {
 
     this._type = 'ui';
     this._container = null;
@@ -58,7 +58,7 @@ var UI = Model.extend({
     this._super(name, values, parent, bind);
   },
 
-  resizeHandler: function() {
+  resizeHandler() {
     if (this._container) {
       this.setSize();
     }
@@ -67,7 +67,7 @@ var UI = Model.extend({
   /**
    * Calculates the size of the newly resized container
    */
-  setSize: function(force) {
+  setSize(force) {
     var _this = this;
     var width = this._container.clientWidth;
     var height = this._container.clientHeight;
@@ -121,7 +121,7 @@ var UI = Model.extend({
    * Sets the container for this layout
    * @param container DOM element
    */
-  setContainer: function(container) {
+  setContainer(container) {
     this._container = container;
     this.setSize();
     this.updatePresentation();
@@ -131,16 +131,16 @@ var UI = Model.extend({
    * Sets the presentation mode for this layout
    * @param {Bool} presentation mode on or off
    */
-  updatePresentation: function() {
+  updatePresentation() {
     utils.classed(this._container, class_prefix + class_presentation, this.presentation);
     this.trigger('resize');
   },
 
-  getPresentationMode: function() {
+  getPresentationMode() {
     return this.presentation;
   },
 
-  setRTL: function(flag) {
+  setRTL(flag) {
     utils.classed(this._container, class_prefix + class_rtl, flag);
   },
 
@@ -148,11 +148,11 @@ var UI = Model.extend({
    * Gets the current selected profile
    * @returns {String} name of current profile
    */
-  currentProfile: function() {
+  currentProfile() {
     return this._curr_profile;
   },
 
-  clear: function() {
+  clear() {
     window.removeEventListener('resize', this.resizeHandler);
   }
 

@@ -15,7 +15,7 @@ var StackModel = Hook.extend({
   /**
    * Default values for this model
    */
-  getClassDefaults: function() {
+  getClassDefaults() {
     var defaults = {
       use: null,
       which: null,
@@ -30,7 +30,7 @@ var StackModel = Hook.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(name, values, parent, bind) {
+  init(name, values, parent, bind) {
 
     this._type = "model";
 
@@ -40,7 +40,7 @@ var StackModel = Hook.extend({
   /**
    * Validates a color hook
    */
-  validate: function() {
+  validate() {
     //there must be no scale
     if (this.scale) this.scale = null;
 
@@ -62,14 +62,14 @@ var StackModel = Hook.extend({
   /**
    * Get the above constants
    */
-  getPalettes: function() {
+  getPalettes() {
     return palettes;
   },
 
   /**
    * There must be no scale
    */
-  buildScale: function() {}
+  buildScale() {}
 
 });
 

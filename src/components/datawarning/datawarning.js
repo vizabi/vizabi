@@ -7,7 +7,7 @@ var hidden = true;
 
 var DataWarning = Component.extend({
 
-  init: function(config, context) {
+  init(config, context) {
     var _this = this;
 
     this.name = 'gapminder-datawarning';
@@ -30,11 +30,11 @@ var DataWarning = Component.extend({
     this._super(config, context);
   },
 
-  ready: function() {
+  ready() {
     this.redraw();
   },
 
-  readyOnce: function() {
+  readyOnce() {
     var _this = this;
     this.element = d3.select(this.placeholder);
 
@@ -72,7 +72,7 @@ var DataWarning = Component.extend({
       .attr("class", "vzb-data-warning-body vzb-dialog-scrollable");
   },
 
-  redraw: function() {
+  redraw() {
     this.translator = this.model.locale.getTFunction();
 
     this.container.select(".vzb-data-warning-link div")
@@ -87,7 +87,7 @@ var DataWarning = Component.extend({
       .html(this.translator("datawarning/body/"+this.parent.name));
   },
 
-  toggle: function(arg) {
+  toggle(arg) {
     if (arg == null) arg = !hidden;
     hidden = arg;
     this.element.classed("vzb-hidden", hidden);

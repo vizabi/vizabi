@@ -20,7 +20,7 @@ var MoreOptions = Dialog.extend({
    * @param config component configuration
    * @param context component context (parent)
    */
-  init: function(config, parent) {
+  init(config, parent) {
     this.name = 'moreoptions';
 
     //specifying components
@@ -33,7 +33,7 @@ var MoreOptions = Dialog.extend({
     this._super(config, parent);
   },
 
-  readyOnce: function() {
+  readyOnce() {
     this._super();
 
     var _this = this;
@@ -72,7 +72,7 @@ var MoreOptions = Dialog.extend({
     }
   },
 
-  _addDialogs: function(dialog_list) {
+  _addDialogs(dialog_list) {
     this._components_config = [];
     var details_dlgs = [];
     if (!dialog_list.length) return;

@@ -15,7 +15,7 @@ var Hook = DataConnected.extend({
   objectLeafs: ['autogenerate'],
   dataConnectedChildren: ['use', 'which'],
 
-  getClassDefaults: function() {
+  getClassDefaults() {
     var defaults = {
       data: 'data',
       which: null
@@ -23,14 +23,14 @@ var Hook = DataConnected.extend({
     return utils.deepExtend(this._super(), defaults);
   },
 
-  buildScale: function() {
+  buildScale() {
     //overloaded by specific hook models, like axis and color
   },
 
   /**
    * After complete model tree is created, this allows models to listen to eachother.
    */
-  setInterModelListeners: function() {
+  setInterModelListeners() {
     var spaceRefs = this._parent.getSpace(this);
 
     //check what we want to hook this model to
@@ -43,12 +43,12 @@ var Hook = DataConnected.extend({
     this.getClosestModel('locale').on('dataConnectedChange', this.handleDataConnectedChange.bind(this));
   },
 
-  onSuccessfullLoad: function() {
+  onSuccessfullLoad() {
     this.buildScale();
     this._super();
   },
 
-  setWhich: function(newValue) {
+  setWhich(newValue) {
 
     var obj = { which: newValue.concept };
 
@@ -76,20 +76,20 @@ var Hook = DataConnected.extend({
     this.set(obj);
   },
 
-  setScaleType: function(newValue) {
+  setScaleType(newValue) {
     this.buildScale(newValue);
   },
 
-  preloadData: function() {
+  preloadData() {
     this.dataSource = this.getClosestModel(this.data);
     return this._super();
   },
 
-  afterPreload: function() {
+  afterPreload() {
     this.autoGenerateModel();
   },
 
-  autoGenerateModel: function() {
+  autoGenerateModel() {
     if (this.which == null && this.autogenerate) {
       this.which = this.dataSource
         .getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType)
@@ -105,7 +105,7 @@ var Hook = DataConnected.extend({
    * @param {Object} options (includes splashScreen)
    * @returns defer
    */
-  loadData: function(opts = {}) {
+  loadData(opts = {}) {
 
     // then start loading data
 
@@ -139,7 +139,7 @@ var Hook = DataConnected.extend({
 
   },
 
-  handleDataConnectedChange: function(evt) {
+  handleDataConnectedChange(evt) {
     //defer is necessary because other events might be queued.
     //load right after such events
     utils.defer(() => {
@@ -148,14 +148,14 @@ var Hook = DataConnected.extend({
     });
   },
 
-  _isLoading: function() {
+  _isLoading() {
     return (!this._loadedOnce || this._loadCall);
   },
 
   /**
    * executes after data has actually been loaded
    */
-  afterLoad: function(dataId) {
+  afterLoad(dataId) {
     this._dataId = dataId;
     utils.timeStamp('Vizabi Model: Data loaded: ' + this._id);
   },
@@ -164,7 +164,7 @@ var Hook = DataConnected.extend({
    * gets query that this model/hook needs to get data
    * @returns {Array} query
    */
-  getQuery: function(splashScreen) {
+  getQuery(splashScreen) {
     var _this = this;
 
     var dimensions, filters, select, from, order_by, q, animatable;
@@ -245,7 +245,7 @@ var Hook = DataConnected.extend({
    * @param {Object} opts options with exceptType or onlyType
    * @returns {Array} all unique dimensions
    */
-  _getAllDimensions: function(opts) {
+  _getAllDimensions(opts) {
 
     // hook dimensions = marker dimensions. Later, hooks might have extra dimensions : )
     return this._parent._getAllDimensions(opts);
@@ -257,7 +257,7 @@ var Hook = DataConnected.extend({
    * @param {Object} options
    * @returns {Array} all unique dimensions
    */
-  _getFirstDimension: function(opts) {
+  _getFirstDimension(opts) {
 
     // hook dimensions = marker dimensions. Later, hooks might have extra dimensions : )
     return this._parent._getFirstDimension(opts);
@@ -270,7 +270,7 @@ var Hook = DataConnected.extend({
    * @param {Boolean} splashScreen get filters for first screen only
    * @returns {Object} filters
    */
-  _getAllFilters: function(opts, splashScreen) {
+  _getAllFilters(opts, splashScreen) {
     opts = opts || {};
     var filters = {};
     var _this = this;
@@ -297,7 +297,7 @@ var Hook = DataConnected.extend({
     return filters;
   },
 
-  _getAllJoins: function(opts, splashScreen) {
+  _getAllJoins(opts, splashScreen) {
     var joins = {};
     var _this = this;
     utils.forEach(this._space, function(h) {
@@ -327,7 +327,7 @@ var Hook = DataConnected.extend({
    * gets all hook filters
    * @returns {Object} filters
    */
-  _getAllParsers: function() {
+  _getAllParsers() {
 
     var parsers = {};
 
@@ -353,7 +353,7 @@ var Hook = DataConnected.extend({
    * Gets tick values for this hook
    * @returns {Number|String} value The value for this tick
    */
-  getTickFormatter: function() {
+  getTickFormatter() {
 
     var _this = this;
     var SHARE = "share";
@@ -435,7 +435,7 @@ var Hook = DataConnected.extend({
    * Gets the d3 scale for this hook. if no scale then builds it
    * @returns {Array} domain
    */
-  getScale: function() {
+  getScale() {
     if (this.scale == null) console.warn('scale is null');
     return this.scale;
   },
@@ -445,14 +445,14 @@ var Hook = DataConnected.extend({
    * @param {String|Array} attr parameter
    * @returns {Array} unique values
    */
-  getUnique: function(attr) {
+  getUnique(attr) {
     if (!this.isHook()) return;
     if (!attr) attr = this._getFirstDimension({ type: "time" });
     return this.dataSource.getData(this._dataId, 'unique', attr);
   },
 
 
-  getData: function() {
+  getData() {
     return this.dataSource.getData(this._dataId);
   },
 
@@ -460,7 +460,7 @@ var Hook = DataConnected.extend({
    * gets dataset without null or nan values with respect to this hook's which
    * @returns {Object} filtered items object
    */
-  getValidItems: function() {
+  getValidItems() {
     return this.dataSource.getData(this._dataId, 'valid', this.which);
   },
 
@@ -469,12 +469,12 @@ var Hook = DataConnected.extend({
    * @param {Array} keys define how to nest the set
    * @returns {Object} hash-map of key-value pairs
    */
-  getNestedItems: function(keys) {
+  getNestedItems(keys) {
     if (!keys) return utils.warn("No keys provided to getNestedItems(<keys>)");
     return this.dataSource.getData(this._dataId, 'nested', keys);
   },
 
-  getHaveNoDataPointsPerKey: function() {
+  getHaveNoDataPointsPerKey() {
     return this.dataSource.getData(this._dataId, 'haveNoDataPointsPerKey', this.which);
   },
 
@@ -483,22 +483,22 @@ var Hook = DataConnected.extend({
    * @param {String} attr parameter
    * @returns {Object} limits (min and max)
    */
-  getLimits: function(attr) {
+  getLimits(attr) {
     return this.dataSource.getData(this._dataId, 'limits', attr);
   },
 
-  getFrame: function(steps, forceFrame, selected) {
+  getFrame(steps, forceFrame, selected) {
     return this.dataSource.getFrame(this._dataId, steps, forceFrame, selected);
   },
 
-  getFrames: function(steps, selected) {
+  getFrames(steps, selected) {
     return this.dataSource.getFrames(this._dataId, steps, selected);
   },
 
   /**
    * gets hook values according dimension values
    */
-  getItems: function() {
+  getItems() {
     var _this = this;
     var dim = this.spaceRef && this._space[this.spaceRef] ? this._space[this.spaceRef].dim : _this._getFirstDimension({ exceptType: "time" });
     var items = {};
@@ -508,7 +508,7 @@ var Hook = DataConnected.extend({
     return items;
   },
 
-  getLimitsByDimensions: function(dims) {
+  getLimitsByDimensions(dims) {
     var filtered = this.dataSource.getData(this._dataId, 'nested', dims);
     var values = {};
     var limitsDim = {};
@@ -570,7 +570,7 @@ var Hook = DataConnected.extend({
    * Gets the concept properties of the hook's "which"
    * @returns {Object} concept properties
    */
-  getConceptprops: function() {
+  getConceptprops() {
     return this.use !== 'constant' && this.dataSource? this.dataSource.getConceptprops(this.which) : {};
   },
 
@@ -578,11 +578,11 @@ var Hook = DataConnected.extend({
    * Find if a current model is discrete
    * @returns {boolean} true if it's a discrete model, false if continious
    */
-  isDiscrete: function() {
+  isDiscrete() {
     return this.scaleType === "ordinal";
   },
 
-  validate: function() {
+  validate() {
     this._super();
 
     var allowedScales = this.getConceptprops().scales;
@@ -591,7 +591,7 @@ var Hook = DataConnected.extend({
     }
   },
 
-  getEntity: function() {
+  getEntity() {
     return  this._space[this.spaceRef ? this.spaceRef : this._parent.getSpace()[0]];
   }
 });

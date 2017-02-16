@@ -11,7 +11,7 @@ import simplecheckbox from 'components/simplecheckbox/simplecheckbox';
 
 var Side = Dialog.extend({
 
-  init: function(config, parent) {
+  init(config, parent) {
     this.name = 'side';
     var _this = this;
 
@@ -51,7 +51,7 @@ var Side = Dialog.extend({
   /**
    * Grab the list div
    */
-  readyOnce: function() {
+  readyOnce() {
     this._super();
     this.listLeft = this.element.select(".vzb-side-list-left");
     this.listRight = this.element.select(".vzb-side-list-right");
@@ -71,7 +71,7 @@ var Side = Dialog.extend({
     });
   },
 
-  ready: function() {
+  ready() {
     this._super();
 
     this.KEY = this.model.state.entities_side.getDimension();
@@ -81,7 +81,7 @@ var Side = Dialog.extend({
 
   },
 
-  updateState: function() {
+  updateState() {
     var _this = this;
     var sideDim = this.model.state.marker.side.getEntity().getDimension();
     var modelSide = this.model.state.marker.side;
@@ -118,7 +118,7 @@ var Side = Dialog.extend({
     this.switchSides.classed("vzb-hidden", hidden || this.state["left"][sideDim] == this.state["right"][sideDim]);
   },
 
-  redraw: function() {
+  redraw() {
 
     var _this = this;
     this.translator = this.model.locale.getTFunction();
@@ -147,7 +147,7 @@ var Side = Dialog.extend({
     });
   },
 
-  createList: function(listSel, name, data) {
+  createList(listSel, name, data) {
     var _this = this;
     var sideDim = this.model.state.marker.side.getEntity().getDimension();
 

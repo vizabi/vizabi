@@ -23,7 +23,7 @@ var ZoomButtonList = Component.extend({
    * @param config component configuration
    * @param context component context (parent)
    */
-  init: function(config, context) {
+  init(config, context) {
 
     //set properties
     var _this = this;
@@ -91,7 +91,7 @@ var ZoomButtonList = Component.extend({
 
   },
 
-  readyOnce: function() {
+  readyOnce() {
     var _this = this;
 
     this.element = d3.select(this.placeholder);
@@ -106,7 +106,7 @@ var ZoomButtonList = Component.extend({
    * adds buttons configuration to the components and template_data
    * @param {Array} button_list list of buttons to be added
    */
-  _addButtons: function(button_list, button_expand) {
+  _addButtons(button_list, button_expand) {
     var _this = this;
     this._components_config = [];
     var details_btns = [];
@@ -163,7 +163,7 @@ var ZoomButtonList = Component.extend({
 
   },
 
-  proceedClick: function(id) {
+  proceedClick(id) {
     var _this = this;
     var btn = _this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
       classes = btn.attr("class"),
@@ -182,18 +182,18 @@ var ZoomButtonList = Component.extend({
     }
   },
 
-  setButtonActive: function(id, boolActive) {
+  setButtonActive(id, boolActive) {
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
 
     btn.classed(class_active, boolActive);
   },
 
-  toggleCursorMode: function(id) {
+  toggleCursorMode(id) {
     var value = id;
     this.model.ui.set('cursorMode', value, false, false);
   },
 
-  setCursorMode: function(id) {
+  setCursorMode(id) {
     var value = this.model.ui.cursorMode ? this.model.ui.cursorMode : 'arrow';
     this.element.selectAll(".vzb-buttonlist-btn")
       .classed(class_active, function(d) {
@@ -201,7 +201,7 @@ var ZoomButtonList = Component.extend({
       });
   },
 
-  toggleHundredPercent: function(id) {
+  toggleHundredPercent(id) {
     this.root.trigger("resetZoom");
   }
 

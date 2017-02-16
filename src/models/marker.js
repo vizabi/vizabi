@@ -7,7 +7,7 @@ import Model from 'base/model';
 
 var Marker = Model.extend({
 
-  getClassDefaults: function() {
+  getClassDefaults() {
     var defaults = {
       select: [],
       highlight: [],
@@ -19,7 +19,7 @@ var Marker = Model.extend({
     return utils.deepExtend(this._super(), defaults);
   },
 
-  init: function(name, value, parent, binds, persistent) {
+  init(name, value, parent, binds, persistent) {
     var _this = this;
 
     this._visible = [];
@@ -33,9 +33,9 @@ var Marker = Model.extend({
     });
   },
 
-  setDataSourceForAllSubhooks: function(data) {
+  setDataSourceForAllSubhooks(data) {
     var obj = {};
-    this.getSubhooks().forEach(hook => { obj[hook._name] = { data: data }; });
+    this.getSubhooks().forEach(hook => { obj[hook._name] = { data }; });
     this.set(obj, null, false);
   },
 
@@ -43,7 +43,7 @@ var Marker = Model.extend({
   /**
    * Validates the model
    */
-  validate: function() {
+  validate() {
     var _this = this;
     var dimension = this.getDimension();
     var visible_array = this._visible.map(function(d) {
@@ -64,7 +64,7 @@ var Marker = Model.extend({
    * Sets the visible entities
    * @param {Array} arr
    */
-  setVisible: function(arr) {
+  setVisible(arr) {
     this._visible = arr;
   },
 
@@ -72,7 +72,7 @@ var Marker = Model.extend({
    * Gets the visible entities
    * @returns {Array} visible
    */
-  getVisible: function(arr) {
+  getVisible(arr) {
     return this._visible;
   },
 
@@ -80,7 +80,7 @@ var Marker = Model.extend({
    * Gets the selected items
    * @returns {Array} Array of unique selected values
    */
-  getSelected: function(dim) {
+  getSelected(dim) {
     if (dim)
       return this.select.map(
         d => d[dim]
@@ -89,7 +89,7 @@ var Marker = Model.extend({
       return this.select;
   },
 
-  selectMarker: function(d) {
+  selectMarker(d) {
     var _this = this;
     var value = this._createValue(d);
     if (this.isSelected(d)) {
@@ -104,7 +104,7 @@ var Marker = Model.extend({
   /**
    * Select all entities
    */
-  selectAll: function(timeDim, timeFormatter) {
+  selectAll(timeDim, timeFormatter) {
     if (!this.allowSelectMultiple) return;
 
     var added,
@@ -119,7 +119,7 @@ var Marker = Model.extend({
     this.select = select;
   },
 
-  isSelected: function(d) {
+  isSelected(d) {
     var _this = this;
     var value = this._createValue(d);
 
@@ -130,7 +130,7 @@ var Marker = Model.extend({
       .indexOf(true) !== -1;
   },
 
-  _createValue: function(d) {
+  _createValue(d) {
     var dims = this._getAllDimensions({ exceptType: 'time' });
     return dims.reduce(function(value, key) {
       value[key] = d[key];
@@ -143,7 +143,7 @@ var Marker = Model.extend({
    * Gets the highlighted items
    * @returns {Array} Array of unique highlighted values
    */
-  getHighlighted: function(dim) {
+  getHighlighted(dim) {
     if (dim)
       return this.highlight.map(
         d => d[dim]
@@ -152,7 +152,7 @@ var Marker = Model.extend({
       return this.highlight;
   },
 
-  setHighlight: function(arg) {
+  setHighlight(arg) {
     if (!utils.isArray(arg)) {
       this.setHighlight([].concat(arg));
       return;
@@ -160,7 +160,7 @@ var Marker = Model.extend({
     this.getModelObject('highlight').set(arg, false, false); // highlights are always non persistent changes
   },
 
-  setSelect: function(arg) {
+  setSelect(arg) {
     if (!utils.isArray(arg)) {
       this.setSelect([].concat(arg));
       return;
@@ -173,7 +173,7 @@ var Marker = Model.extend({
   /**
    * Highlights an entity from the set
    */
-  highlightMarker: function(d) {
+  highlightMarker(d) {
     var value = this._createValue(d);
     if (!this.isHighlighted(d)) {
       this.setHighlight(this.highlight.concat(value));
@@ -183,7 +183,7 @@ var Marker = Model.extend({
   /**
    * Unhighlights an entity from the set
    */
-  unhighlightEntity: function(d) {
+  unhighlightEntity(d) {
     var value = this._createValue(d);
     if (this.isHighlighted(d)) {
       this.setHighlight(this.highlight.filter(function(d) {
@@ -196,7 +196,7 @@ var Marker = Model.extend({
    * Checks whether an entity is highlighted from the set
    * @returns {Boolean} whether the item is highlighted or not
    */
-  isHighlighted: function(d) {
+  isHighlighted(d) {
     var _this = this;
     var value = this._createValue(d);
     return this.highlight
@@ -209,14 +209,14 @@ var Marker = Model.extend({
   /**
    * Clears selection of items
    */
-  clearHighlighted: function() {
+  clearHighlighted() {
     this.setHighlight([]);
   },
-  clearSelected: function() {
+  clearSelected() {
     this.select = [];
   },
 
-  setLabelOffset: function(d, xy) {
+  setLabelOffset(d, xy) {
     if (xy[0]===0 && xy[1]===1) return;
 
     this.select
@@ -227,7 +227,7 @@ var Marker = Model.extend({
     this.set("select", this.select, true);
   },
 
-  checkTimeLimits: function() {
+  checkTimeLimits() {
 
     var time = this._parent.time;
 
@@ -265,7 +265,7 @@ var Marker = Model.extend({
    * this function is only needed to route the "time" to some indicator,
    * to adjust time start and end to the max and min time available in data
    */
-  getTimeLimits: function() {
+  getTimeLimits() {
       var _this = this;
       var time = this._parent.time;
       var min, max, minArray = [], maxArray = [], items = {};
@@ -288,7 +288,7 @@ var Marker = Model.extend({
             min = d3.min(items);
             max = d3.max(items);
         }
-        _this.cachedTimeLimits[hook._dataId + hook.which] = { min: min, max: max };
+        _this.cachedTimeLimits[hook._dataId + hook.which] = { min, max };
         minArray.push(min);
         maxArray.push(max);
       });
@@ -310,7 +310,7 @@ var Marker = Model.extend({
    * Computes the intersection of keys in all hooks: a set of keys that have data in each hook
    * @returns array of keys that have data in all hooks of this._datacube
    */
-    getKeys: function(KEY) {
+    getKeys(KEY) {
         var _this = this;
         var resultKeys = [];
 
@@ -347,7 +347,7 @@ var Marker = Model.extend({
    * @param {Array} entities array of entities
    * @return String
    */
-  _getCachePath: function(keys) {
+  _getCachePath(keys) {
     //array of steps -- names of all frames
     var steps = this._parent.time.getAllSteps();
     var cachePath = steps[0] + " - " + steps[steps.length-1];
@@ -366,7 +366,7 @@ var Marker = Model.extend({
     return cachePath;
   },
 
-  _getAllDimensions: function(opts) {
+  _getAllDimensions(opts) {
 
     var models = [];
     var _this = this;
@@ -399,7 +399,7 @@ var Marker = Model.extend({
    * @param {Object} options
    * @returns {Array} all unique dimensions
    */
-  _getFirstDimension: function(opts) {
+  _getFirstDimension(opts) {
     var models = [];
     var _this = this;
     utils.forEach(this.space, function(name) {
@@ -425,7 +425,7 @@ var Marker = Model.extend({
   },
 
 
-  framesAreReady: function() {
+  framesAreReady() {
     var cachePath = this._getCachePath();
     if (!this.cachedFrames) return false;
     return Object.keys(this.cachedFrames[cachePath]).length == this._parent.time.getAllSteps().length;
@@ -438,7 +438,7 @@ var Marker = Model.extend({
    * @param {Array} keys array of entities
    * @return null
    */
-    getFrame: function(time, cb, keys) {
+    getFrame(time, cb, keys) {
       //keys = null;
       var _this = this;
       if (!this.cachedFrames) this.cachedFrames = {};
@@ -502,7 +502,7 @@ var Marker = Model.extend({
       }
     },
 
-    _interpolateBetweenFrames: function(time, nextFrameIndex, steps, cb, keys) {
+    _interpolateBetweenFrames(time, nextFrameIndex, steps, cb, keys) {
       var _this = this;
 
       if (nextFrameIndex == 0) {
@@ -588,7 +588,7 @@ var Marker = Model.extend({
       }
     },
 
-    getFrames: function(forceFrame, selected) {
+    getFrames(forceFrame, selected) {
       var _this = this;
       if (!this.cachedFrames) this.cachedFrames = {};
 
@@ -716,7 +716,7 @@ var Marker = Model.extend({
 
     },
 
-    listenFramesQueue: function(keys, cb) {
+    listenFramesQueue(keys, cb) {
       var _this = this;
       var KEY = this._getFirstDimension();
       var TIME = this._getFirstDimension({ type: "time" });
@@ -749,7 +749,7 @@ var Marker = Model.extend({
    * @param {Boolean} [previous = false] previous Append previous data points
    * @returns an array of values
    */
-  getValues: function(filter, group_by, previous) {
+  getValues(filter, group_by, previous) {
     var _this = this;
 
     if (this.isHook()) {
@@ -852,7 +852,7 @@ var Marker = Model.extend({
     return response;
   },
 
-  getEntityLimits: function(entity) {
+  getEntityLimits(entity) {
     var _this = this;
     var timePoints = this._parent.time.getAllSteps();
     var selectedEdgeTimes = [];
@@ -922,7 +922,7 @@ var Marker = Model.extend({
    * Learn what this model should hook to
    * @returns {Array} space array
    */
-  getSpace: function() {
+  getSpace() {
     if (utils.isArray(this.space)) {
       return this.space;
     }

@@ -18,7 +18,7 @@ var MinMaxInputs = Component.extend({
      * @param config The options passed to the component
      * @param context The component's parent
      */
-    init: function(config, context) {
+    init(config, context) {
 
         this.name = 'gapminder-minmaxinputs';
         this.template = require('./minmaxinputs.html');
@@ -61,11 +61,11 @@ var MinMaxInputs = Component.extend({
 
     },
 
-    ready: function() {
+    ready() {
         this.updateView();
     },
 
-    readyOnce: function() {
+    readyOnce() {
         var _this = this;
 
         this.element = d3.select(this.element);
@@ -103,7 +103,7 @@ var MinMaxInputs = Component.extend({
             });
     },
 
-    updateView: function() {
+    updateView() {
       var _this = this;
       this.translator = this.model.locale.getTFunction();
 
@@ -136,7 +136,7 @@ var MinMaxInputs = Component.extend({
       this.el_zoomed_fieldMax.property("value", formatter(this.model.marker[this.markerID].zoomedMax));
     },
 
-    _setModel: function(what, value) {
+    _setModel(what, value) {
         this.model.marker[this.markerID][what] = utils.strToFloat(value);
     }
 

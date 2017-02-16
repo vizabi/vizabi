@@ -19,7 +19,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
    * @param {Object} placeholder Placeholder element for the tool
    * @param {Object} external_model Model as given by the external page
    */
-  init: function(placeholder, external_model) {
+  init(placeholder, external_model) {
 
     this.name = "bubblechart";
 
@@ -62,7 +62,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
 
   },
 
-  validate: function(model) {
+  validate(model) {
     model = this.model || model;
 
     this._super(model);

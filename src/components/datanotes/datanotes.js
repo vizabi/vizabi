@@ -13,7 +13,7 @@ var newHookName = null;
 
 var DataNotes = Component.extend({
 
-  init: function(config, context) {
+  init(config, context) {
     var _this = this;
 
     this.name = 'gapminder-datanotes';
@@ -41,11 +41,11 @@ var DataNotes = Component.extend({
     this.close = this.close.bind(this);
   },
 
-  ready: function() {
+  ready() {
     this.setValues();
   },
 
-  readyOnce: function() {
+  readyOnce() {
     var _this = this;
 
     this.translator = this.model.locale.getTFunction();
@@ -75,17 +75,17 @@ var DataNotes = Component.extend({
 
   },
 
-  resize: function() {
+  resize() {
     this.close();
   },
 
-  close: function() {
+  close() {
     if (!hidden) {
       this.pin(false).hide();
     }
   },
 
-  setHook: function(_hookName) {
+  setHook(_hookName) {
     if (!this._readyOnce) return this;
     if (pin) {
       newHookName = _hookName;
@@ -100,7 +100,7 @@ var DataNotes = Component.extend({
     return this;
   },
 
-  setValues: function() {
+  setValues() {
     if (!hookName) return;
     var hook = this.model.marker[hookName];
     var concept = hook.getConceptprops();
@@ -120,7 +120,7 @@ var DataNotes = Component.extend({
     showNotes = concept.sourceLink || concept.description;
   },
 
-  setPos: function(_left, _top, force) {
+  setPos(_left, _top, force) {
     left = _left;
     top = _top;
     if (pin && !force) return this;
@@ -150,7 +150,7 @@ var DataNotes = Component.extend({
     return this;
   },
 
-  pin: function(arg) {
+  pin(arg) {
     if (hidden) return this;
     pin = !pin;
     if (arg != null) pin = arg;
@@ -165,7 +165,7 @@ var DataNotes = Component.extend({
     }
   },
 
-  toggle: function(arg) {
+  toggle(arg) {
     if (pin || !hookName) return this;
     if (arg == null) arg = !hidden;
     hidden = arg;
@@ -173,11 +173,11 @@ var DataNotes = Component.extend({
     return this;
   },
 
-  show: function() {
+  show() {
     return this.toggle(false);
   },
 
-  hide: function() {
+  hide() {
     return this.toggle(true);
   }
 

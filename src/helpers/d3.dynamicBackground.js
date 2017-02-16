@@ -5,7 +5,7 @@ import Class from 'base/class';
 
 export default Class.extend({
 
-  init: function(context, conditions) {
+  init(context, conditions) {
     this.context = context;
     this.width = 0;
     this.height = 0;
@@ -26,7 +26,7 @@ export default Class.extend({
     }
   },
 
-  setConditions: function(conditions) {
+  setConditions(conditions) {
     if (!isNaN(parseFloat(conditions.rightOffset)) && isFinite(conditions.rightOffset)) {
       this.rightOffset = conditions.rightOffset;
     }
@@ -54,7 +54,7 @@ export default Class.extend({
     return this;
   },
 
-  resize: function(width, height, topOffset, leftOffset) {
+  resize(width, height, topOffset, leftOffset) {
     [
       this.width,
       this.height
@@ -82,7 +82,7 @@ export default Class.extend({
     return this;
   },
 
-  _resizeText: function() {
+  _resizeText() {
 
     var bbox = this.element.node().getBBox();
 
@@ -108,7 +108,7 @@ export default Class.extend({
     return this;
   },
 
-  _getLeftOffset: function() {
+  _getLeftOffset() {
     switch (this.xAlign) {
       case 'right':
         return this.width - this.textWidth / 2 - this.rightOffset;
@@ -119,7 +119,7 @@ export default Class.extend({
     }
   },
 
-  _getTopOffset: function() {
+  _getTopOffset() {
     switch (this.yAlign) {
       case 'top':
         return this.textHeight / 2 + this.topOffset;

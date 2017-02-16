@@ -74,7 +74,7 @@ var OPTIONS = {
 };
 
 var Menu = Class.extend({
-  init: function(parent, menu, options) {
+  init(parent, menu, options) {
     var _this = this;
     this.parent = parent;
     this.entity = menu;
@@ -102,7 +102,7 @@ var Menu = Class.extend({
       });
     return this;
   },
-  setWidth: function(width, recursive, immediate) {
+  setWidth(width, recursive, immediate) {
     if (this.width != width && this.entity.node()) {
       this.width = width;
       if ((this.entity.classed(css.list_top_level) || this.entity.classed('active')) && this.direction == MENU_HORIZONTAL) {
@@ -132,7 +132,7 @@ var Menu = Class.extend({
    * @param recursive change direction over menu sublevels
    * @returns {Menu}
    */
-  setDirection: function(direction, recursive) {
+  setDirection(direction, recursive) {
     this.direction = direction;
     this.entity
       .style('width', '')
@@ -145,7 +145,7 @@ var Menu = Class.extend({
     this._setDirectionClass();
     return this;
   },
-  _setDirectionClass: function() {
+  _setDirectionClass() {
     if (this.direction == MENU_HORIZONTAL) {
       this.entity.classed(css.menuVertical, false);
       this.entity.classed(css.menuHorizontal, true);
@@ -154,10 +154,10 @@ var Menu = Class.extend({
       this.entity.classed(css.menuVertical, true);
     }
   },
-  addSubmenu: function(item) {
+  addSubmenu(item) {
     this.menuItems.push(new MenuItem(this, item, this.OPTIONS));
   },
-  open: function() {
+  open() {
     var _this = this;
     if (!this.isActive()) {
       _this.parent.parentMenu.openSubmenuNow = true;
@@ -178,7 +178,7 @@ var Menu = Class.extend({
    * @param width
    * @param cb
    */
-  calculateMissingWidth: function(width, cb) {
+  calculateMissingWidth(width, cb) {
     var _this = this;
     if (this.entity.classed(css.list_top_level)) {
       if (width > this.OPTIONS.MAX_MENU_WIDTH) {
@@ -200,7 +200,7 @@ var Menu = Class.extend({
    * @param isClosedElement (parameter for check if curent element emit this action)
    * @param cb
    */
-  restoreWidth: function(width, isClosedElement, cb) {
+  restoreWidth(width, isClosedElement, cb) {
     var _this = this;
     if (isClosedElement) {
       this.parent.parentMenu.restoreWidth(width, false, cb);
@@ -230,7 +230,7 @@ var Menu = Class.extend({
    * @param width
    * @param cb
    */
-  reduceWidth: function(width, cb) {
+  reduceWidth(width, cb) {
     var _this = this;
     var currWidth = this.entity.node().offsetWidth;
 
@@ -249,7 +249,7 @@ var Menu = Class.extend({
         });
     }
   },
-  _openHorizontal: function() {
+  _openHorizontal() {
     var _this = this;
     _this.entity.classed('active', true)
       .transition()
@@ -260,7 +260,7 @@ var Menu = Class.extend({
         _this.marqueeToggle(true);
       });
   },
-  _openVertical: function() {
+  _openVertical() {
     var _this = this;
     _this.entity.style('height', '0px');
     _this.entity.transition()
@@ -274,7 +274,7 @@ var Menu = Class.extend({
       });
     _this.entity.classed('active', true);
   },
-  closeAllChildren: function(cb) {
+  closeAllChildren(cb) {
     var callbacks = 0;
     for (var i = 0; i < this.menuItems.length; i++) {
       if (this.menuItems[i].isActive()) {
@@ -290,14 +290,14 @@ var Menu = Class.extend({
       if (typeof cb === "function") cb();
     }
   },
-  closeNeighbors: function(cb) {
+  closeNeighbors(cb) {
     if (this.parent) {
       this.parent.closeNeighbors(cb);
     } else {
       cb();
     }
   },
-  close: function(cb) {
+  close(cb) {
     var _this = this;
     this.closeAllChildren(function() {
       if (_this.direction == MENU_HORIZONTAL) {
@@ -307,7 +307,7 @@ var Menu = Class.extend({
       }
     });
   },
-  _closeHorizontal: function(cb) {
+  _closeHorizontal(cb) {
     var elementWidth = this.entity.node().offsetWidth;
     var _this = this;
     var openSubmenuNow = _this.parent.parentMenu.openSubmenuNow;
@@ -327,7 +327,7 @@ var Menu = Class.extend({
         }
       });
   },
-  _closeVertical: function(cb) {
+  _closeVertical(cb) {
     var _this = this;
     _this.entity
       .transition()
@@ -340,7 +340,7 @@ var Menu = Class.extend({
         if (typeof cb === "function") cb();
       });
   },
-  isActive: function() {
+  isActive() {
     return this.entity.classed('active');
   },
   hasActiveParentNeighbour() {
@@ -348,17 +348,17 @@ var Menu = Class.extend({
       .filter(item => item.isActive())
       .some(item => !!d3.select(item.entity).node().classed(css.hasChild));
   },
-  marqueeToggle: function(toggle) {
+  marqueeToggle(toggle) {
     for (var i = 0; i < this.menuItems.length; i++) {
       this.menuItems[i].marqueeToggle(toggle);
     }
   },
-  marqueeToggleAll: function(toggle) {
+  marqueeToggleAll(toggle) {
     for (var i = 0; i < this.menuItems.length; i++) {
       this.menuItems[i].marqueeToggleAll(toggle);
     }
   },
-  findItemById: function(id) {
+  findItemById(id) {
     for (var i = 0; i < this.menuItems.length; i++) {
       if (this.menuItems[i].entity.data().id == id) {
         return this.menuItems[i];
@@ -370,7 +370,7 @@ var Menu = Class.extend({
     }
     return null;
   },
-  getTopMenu: function() {
+  getTopMenu() {
     if (this.parent) {
       return this.parent.parentMenu.getTopMenu();
     } else {
@@ -378,7 +378,7 @@ var Menu = Class.extend({
     }
   },
 
-  scrollToFitView: function() {
+  scrollToFitView() {
     var treeMenuNode = this.getTopMenu().entity.node().parentNode;
     var parentItemNode = this.entity.node().parentNode;
     var menuRect = treeMenuNode.getBoundingClientRect();
@@ -408,7 +408,7 @@ var Menu = Class.extend({
 });
 
 var MenuItem = Class.extend({
-  init: function(parent, item, options) {
+  init(parent, item, options) {
     var _this = this;
     this.parentMenu = parent;
     this.entity = item;
@@ -447,19 +447,19 @@ var MenuItem = Class.extend({
     });
     return this;
   },
-  setWidth: function(width, recursive, immediate) {
+  setWidth(width, recursive, immediate) {
     if (this.submenu && recursive) {
       this.submenu.setWidth(width, recursive, immediate);
     }
     return this;
   },
-  setDirection: function(direction, recursive) {
+  setDirection(direction, recursive) {
     if (this.submenu && recursive) {
       this.submenu.setDirection(direction, recursive);
     }
     return this;
   },
-  toggleSubmenu: function() {
+  toggleSubmenu() {
     if (this.submenu) {
       if (this.submenu.isActive()) {
         this.submenu.close();
@@ -468,20 +468,20 @@ var MenuItem = Class.extend({
       }
     }
   },
-  openSubmenu: function() {
+  openSubmenu() {
     if (this.submenu) {
       this.submenu.open();
     } else {
       this.closeNeighbors();
     }
   },
-  closeNeighbors: function(cb) {
+  closeNeighbors(cb) {
     this.parentMenu.closeAllChildren(cb);
   },
-  isActive: function() {
+  isActive() {
     return this.submenu && this.submenu.isActive();
   },
-  marqueeToggleAll: function(toggle) {
+  marqueeToggleAll(toggle) {
     var _this = this;
     var labels = this.entity.selectAll('.' + css.list_item_label);
     labels.each(function() {
@@ -501,7 +501,7 @@ var MenuItem = Class.extend({
       }
     });
   },
-  marqueeToggle: function(toggle) {
+  marqueeToggle(toggle) {
     var label = this.entity.select('.' + css.list_item_label).select('span');
     this.entity.classed('marquee', false);
     label.style("left", '');
@@ -521,43 +521,43 @@ var MenuItem = Class.extend({
 var TreeMenu = Component.extend({
 
   //setters-getters
-  tree: function(input) {
+  tree(input) {
     if (!arguments.length) return this._tree;
     this._tree = input;
     return this;
   },
-  callback: function(input) {
+  callback(input) {
     if (!arguments.length) return this._callback;
     this._callback = input;
     return this;
   },
-  markerID: function(input) {
+  markerID(input) {
     if (!arguments.length) return this._markerID;
     this._markerID = input;
     return this;
   },
-  alignX: function(input) {
+  alignX(input) {
     if (!arguments.length) return this._alignX;
     this._alignX = input;
     return this;
   },
-  alignY: function(input) {
+  alignY(input) {
     if (!arguments.length) return this._alignY;
     this._alignY = input;
     return this;
   },
-  top: function(input) {
+  top(input) {
     if (!arguments.length) return this._top;
     this._top = input;
     return this;
   },
-  left: function(input) {
+  left(input) {
     if (!arguments.length) return this._left;
     this._left = input;
     return this;
   },
 
-  init: function(config, context) {
+  init(config, context) {
 
     var _this = this;
 
@@ -601,7 +601,7 @@ var TreeMenu = Component.extend({
 
   },
 
-  ready: function() {
+  ready() {
     this.updateView();
 
     //TODO: hack! potentially unsafe operation here
@@ -609,7 +609,7 @@ var TreeMenu = Component.extend({
     this._buildIndicatorsTree(tags);
   },
 
-  readyOnce: function() {
+  readyOnce() {
     //this function is only called once at start, when both DOM and this.model are ready
     //this.element contains the view where you can append the menu
     this.element = d3.select(this.placeholder);
@@ -684,7 +684,7 @@ var TreeMenu = Component.extend({
   },
 
 
-  _buildIndicatorsTree: function(tagsArray) {
+  _buildIndicatorsTree(tagsArray) {
       if (tagsArray===true || !tagsArray) tagsArray = [];
 
       var _this = this;
@@ -730,7 +730,7 @@ var TreeMenu = Component.extend({
         //if entry's tag are empty don't include it in the menu
         if (entry.tags=="_none") return;
         if (!entry.tags) entry.tags = datasetName || UNCLASSIFIED;
-        var concept = { id: id, name: entry.name, unit: entry.unit, description: entry.description, dataSource: dataSource._name };
+        var concept = { id, name: entry.name, unit: entry.unit, description: entry.description, dataSource: dataSource._name };
         entry.tags.split(",").forEach(function(tag) {
           if (tags[tag.trim()]) {
             tags[tag.trim()].children.push(concept);
@@ -754,7 +754,7 @@ var TreeMenu = Component.extend({
     this.indicatorsTree = indicatorsTree;
   },
 
-  _sortChildren: function(tree, isSubfolder) {
+  _sortChildren(tree, isSubfolder) {
     var _this = this;
     if (!tree.children) return;
     tree.children.sort(
@@ -784,7 +784,7 @@ var TreeMenu = Component.extend({
   },
 
   //happens on resizing of the container
-  resize: function() {
+  resize() {
     var _this = this;
 
     this.profiles = {
@@ -902,7 +902,7 @@ var TreeMenu = Component.extend({
     return this;
   },
 
-  toggle: function() {
+  toggle() {
     var _this = this;
     var hidden = !this.element.classed(css.hidden);
     this.element.classed(css.hidden, hidden);
@@ -932,7 +932,7 @@ var TreeMenu = Component.extend({
     this.width = _this.element.node().offsetWidth;
   },
 
-  scrollToSelected: function() {
+  scrollToSelected() {
     var _this = this;
     var scrollToItem = function(listNode, itemNode) {
       listNode.scrollTop = 0;
@@ -963,7 +963,7 @@ var TreeMenu = Component.extend({
     }
   },
 
-  setPos: function() {
+  setPos() {
     var top = this._top;
     var left = this._left;
     var rect = this.wrapperOuter.node().getBoundingClientRect();
@@ -983,7 +983,7 @@ var TreeMenu = Component.extend({
 
   },
 
-  clearPos: function() {
+  clearPos() {
     this._top = '';
     this._left = '';
     this.wrapperOuter.attr("style", "");
@@ -993,7 +993,7 @@ var TreeMenu = Component.extend({
     this.wrapper.style('max-height', '');
   },
 
-  setHorizontalMenuHeight: function() {
+  setHorizontalMenuHeight() {
     var wrapperHeight = null;
     if (this.menuEntity && this.OPTIONS.MENU_DIRECTION == MENU_HORIZONTAL && this.menuEntity.menuItems.length) {
       var oneItemHeight = parseInt(this.menuEntity.menuItems[0].entity.style('height'), 10);
@@ -1008,7 +1008,7 @@ var TreeMenu = Component.extend({
     this.wrapper.classed(css.noTransition, false);
   },
   //search listener
-  _enableSearch: function() {
+  _enableSearch() {
     var _this = this;
 
     var input = this.wrapper.select('.' + css.search);
@@ -1069,14 +1069,14 @@ var TreeMenu = Component.extend({
     input.on('input', searchIt);
   },
 
-  _selectIndicator: function(value) {
+  _selectIndicator(value) {
     this._callback("which", value, this._markerID);
     this.toggle();
   },
 
 
   //function is redrawing data and built structure
-  redraw: function(data, useDataFiltered) {
+  redraw(data, useDataFiltered) {
     var _this = this;
 
     var markerID = this._markerID;
@@ -1316,7 +1316,7 @@ var TreeMenu = Component.extend({
   },
 
 
-  updateView: function() {
+  updateView() {
     var _this = this;
 
     if (!this._markerID) return;
@@ -1339,7 +1339,7 @@ var TreeMenu = Component.extend({
     return this;
   },
 
-  _setModel: function(what, value, hookID) {
+  _setModel(what, value, hookID) {
 
     var mdl = this.model.marker[hookID];
     if (what == 'which') mdl.setWhich(value);

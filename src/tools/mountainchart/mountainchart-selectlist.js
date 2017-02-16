@@ -4,12 +4,12 @@ import { close as iconClose } from 'base/iconset';
 
 var MCSelectList = Class.extend({
 
-  init: function(context) {
+  init(context) {
     this.context = context;
 
   },
 
-  rebuild: function(data) {
+  rebuild(data) {
     var _this = this.context;
     var _local = this;
 
@@ -95,7 +95,7 @@ var MCSelectList = Class.extend({
       .merge(_this.selectList);
   },
 
-  redraw: function() {
+  redraw() {
     var _this = this.context;
     if (!_this.selectList || !_this.someSelected) return;
 
@@ -197,7 +197,7 @@ var MCSelectList = Class.extend({
       });
   },
 
-  showCloseCross: function(d, show) {
+  showCloseCross(d, show) {
     var _this = this.context;
     var KEY = _this.KEY;
     //show the little cross on the selected label

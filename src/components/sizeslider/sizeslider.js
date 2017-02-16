@@ -45,7 +45,7 @@ var SizeSlider = Component.extend({
    * @param config The options passed to the component
    * @param context The component's parent
    */
-  init: function(config, context) {
+  init(config, context) {
 
     this.name = 'sizeslider';
 
@@ -82,7 +82,7 @@ var SizeSlider = Component.extend({
     this._super(config, context);
   },
 
-  modelReady: function() {
+  modelReady() {
     var _this = this;
     _this.modelUse = _this.model.size.use;
     var extent = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
@@ -110,7 +110,7 @@ var SizeSlider = Component.extend({
    * Ideally, it contains HTML instantiations related to template
    * At this point, this.element and this.placeholder are available as a d3 object
    */
-  readyOnce: function() {
+  readyOnce() {
     var _this = this;
     var extent = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
     this.element = d3.select(this.element);
@@ -230,12 +230,12 @@ var SizeSlider = Component.extend({
     if (_this.model._ready) this.modelReady();
   },
 
-  getPropertyActiveProfile: function() {
+  getPropertyActiveProfile() {
     var profile = profiles[this.getLayoutProfile()];
     return { min: profile['min' + this.propertyName], max: profile['max' + this.propertyName], default: profile['default' + this.propertyName] };
   },
 
-  _moveBrush: function(s) {
+  _moveBrush(s) {
     var _s = s.map(this.xScale);
     this.nonBrushChange = true;
     this.sliderEl.call(this.brush.move, [_s[0], _s[1] + 0.01]);
@@ -247,7 +247,7 @@ var SizeSlider = Component.extend({
    * RESIZE:
    * Executed whenever the container is resized
    */
-  _updateSize: function() {
+  _updateSize() {
     this.sliderSvg
       .attr("height", this.propertyActiveProfile.max + this.padding.top + this.padding.bottom)
       .attr("width", '100%');
@@ -255,7 +255,7 @@ var SizeSlider = Component.extend({
       .attr("transform", "translate(" + this.padding.left + "," + (this.propertyActiveProfile.max + this.padding.top) + ")");
   },
 
-  _updateLabels: function(s) {
+  _updateLabels(s) {
     var _this = this;
     this.sliderLabelsEl.data(s)
       .attr("transform", function(d, i) {
@@ -272,7 +272,7 @@ var SizeSlider = Component.extend({
       });
   },
 
-  _setLabelsText: function() {
+  _setLabelsText() {
     var _this = this;
     _this.sliderLabelsEl
       .data([_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[0]), _this.model.size.getTickFormatter()(_this.sizeScaleMinMax[1])])
@@ -285,7 +285,7 @@ var SizeSlider = Component.extend({
    * @param {boolean} force force firing the change event
    * @param {boolean} persistent sets the persistency of the change event
    */
-  _setFromExtent: function(setModel, force, persistent) {
+  _setFromExtent(setModel, force, persistent) {
     var s = d3.brushSelection(this.sliderEl.node());
     if (!s) return;
     s = [this.xScale.invert(s[0]), this.xScale.invert(+s[1].toFixed(1))];
@@ -299,7 +299,7 @@ var SizeSlider = Component.extend({
    * @param {boolean} force force firing the change event
    * @param {boolean} persistent sets the persistency of the change event
    */
-  _setModel: function(value, force, persistent) {
+  _setModel(value, force, persistent) {
     value = [+value[0].toFixed(2), +value[1].toFixed(2)];
     this.model.size.set({ "extent": value }, force, persistent);
   }

@@ -21,7 +21,7 @@ var CartogramComponent = Component.extend({
    * @param {Object} config The config passed to the component
    * @param {Object} context The component's parent
    */
-  init: function(config, context) {
+  init(config, context) {
     this.name = 'cartogram';
     this.template = require('./cartogram.html');
 
@@ -149,7 +149,7 @@ var CartogramComponent = Component.extend({
 
   },
 
-  afterPreload: function() {
+  afterPreload() {
     var _this = this;
     if (!this.world) utils.warn("cartogram afterPreload: missing country shapes " + this.world);
     if (!this.geometries) utils.warn("cartogram afterPreload: missing country shapes " + this.geometries);
@@ -163,13 +163,13 @@ var CartogramComponent = Component.extend({
     });
 
   },
-  _getKey: function(d) {
+  _getKey(d) {
     return d.properties[this.id_lookup]? d.properties[this.id_lookup].toString() : d.id.toString();
   },
   /**
    * DOM is ready
    */
-  readyOnce: function() {
+  readyOnce() {
 
     this.element = d3.select(this.element);
 
@@ -247,7 +247,7 @@ var CartogramComponent = Component.extend({
     });
   },
 
-  frameChanged: function(frame, time) {
+  frameChanged(frame, time) {
     if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
     if (!frame) return;
     this.values = frame;
@@ -259,7 +259,7 @@ var CartogramComponent = Component.extend({
   /*
    * Both model and DOM are ready
    */
-  ready: function() {
+  ready() {
     var _this = this;
     this.cached = [];
     this.updateIndicators();
@@ -272,12 +272,12 @@ var CartogramComponent = Component.extend({
   /**
    * Changes labels for indicators
    */
-  updateIndicators: function() {
+  updateIndicators() {
     this.sScale = this.model.marker.size.getScale();
     this.cScale = this.model.marker.color.getScale();
   },
 
-  updateMarkerSizeLimits: function() {
+  updateMarkerSizeLimits() {
     var _this = this;
     var extent = this.model.marker.size.extent || [0, 1];
     this.minRadius = Math.max(100 * extent[0], 0);
@@ -291,7 +291,7 @@ var CartogramComponent = Component.extend({
     }
   },
 
-  _calculateTotalSize: function(year, frame) {
+  _calculateTotalSize(year, frame) {
     if (this.cached[year]) {
       return this.cached[year];
     }
@@ -303,7 +303,7 @@ var CartogramComponent = Component.extend({
     return this.cached[year];
   },
 
-  _redrawEntities: function() {
+  _redrawEntities() {
     var _this = this;
     if (this.updateEntitiesQueue.length == 0) return;
     if (this.redrawInProgress) {
@@ -396,14 +396,14 @@ var CartogramComponent = Component.extend({
     });
   },
 
-  updateEntities: function(duration) {
+  updateEntities(duration) {
     var time = this.model.time.value;
 
-    this.updateEntitiesQueue.push({ time: time, duration: duration });
+    this.updateEntitiesQueue.push({ time, duration });
     this._redrawEntities();
   },
 
-  updateEntitityColor: function() {
+  updateEntitityColor() {
     var _this = this;
     this.lands.transition()
       .duration(_this.duration)
@@ -413,7 +413,7 @@ var CartogramComponent = Component.extend({
       });
 
   },
-  updateUIStrings: function() {
+  updateUIStrings() {
     var _this = this;
 
     this.translator = this.model.locale.getTFunction();
@@ -501,7 +501,7 @@ var CartogramComponent = Component.extend({
     });
   },
 
-  updateDoubtOpacity: function(opacity) {
+  updateDoubtOpacity(opacity) {
     if (opacity == null) opacity = this.wScale(+this.time.getUTCFullYear().toString());
     if (this.someSelected) opacity = 1;
     this.dataWarningEl.style("opacity", opacity);
@@ -511,7 +511,7 @@ var CartogramComponent = Component.extend({
    * UPDATE TIME:
    * Ideally should only update when time or data changes
    */
-  updateTime: function() {
+  updateTime() {
     var _this = this;
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
@@ -524,7 +524,7 @@ var CartogramComponent = Component.extend({
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
    */
-  updateSize: function() {
+  updateSize() {
 
     var _this = this;
     var margin, infoElHeight;
@@ -630,7 +630,7 @@ var CartogramComponent = Component.extend({
     }
   },
 
-  fitSizeOfTitles: function() {
+  fitSizeOfTitles() {
 
     //reset font sizes first to make the measurement consistent
     var yTitleText = this.yTitleEl.select("text")
@@ -655,11 +655,11 @@ var CartogramComponent = Component.extend({
       sTitleText.style("font-size", null);
     }
   },
-  _interact: function() {
+  _interact() {
     var _this = this;
 
     return {
-      _mouseover: function(d, i) {
+      _mouseover(d, i) {
         if (_this.model.time.dragging) return;
 
         _this.model.entities.highlightEntity(d);
@@ -676,7 +676,7 @@ var CartogramComponent = Component.extend({
           _this._setTooltip(d);
         }
       },
-      _mouseout: function(d, i) {
+      _mouseout(d, i) {
         if (_this.model.time.dragging) return;
         _this._setTooltip();
         _this.hovered = null;
@@ -684,7 +684,7 @@ var CartogramComponent = Component.extend({
         _this.fitSizeOfTitles();
         _this.model.entities.clearHighlighted();
       },
-      _click: function(d, i) {
+      _click(d, i) {
         _this.model.entities.selectEntity(d);
       }
     };
@@ -692,7 +692,7 @@ var CartogramComponent = Component.extend({
   },
 
   // show size number on title when hovered on a bubble
-  updateTitleNumbers: function() {
+  updateTitleNumbers() {
     var _this = this;
 
     var mobile; // if is mobile device and only one bubble is selected, update the ytitle for the bubble
@@ -738,7 +738,7 @@ var CartogramComponent = Component.extend({
     }
   },
 
-  _setTooltip: function(d) {
+  _setTooltip(d) {
     var _this = this;
     if (d) {
       var tooltipText = this.values.label[this._getKey(d)]?
@@ -802,7 +802,7 @@ var CartogramComponent = Component.extend({
     }
   },
 
-  updateLandOpacity: function() {
+  updateLandOpacity() {
     var _this = this;
     //if(!duration)duration = 0;
 
@@ -845,7 +845,7 @@ var CartogramComponent = Component.extend({
     this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
   },
 
-  preload: function() {
+  preload() {
     var _this = this;
     var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
         globals.ext_resources.host + globals.ext_resources.preloadPath + "municipalities.json";

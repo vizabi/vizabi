@@ -14,7 +14,7 @@ var AxisModel = Hook.extend({
   /**
    * Default values for this model
    */
-  getClassDefaults: function() {
+  getClassDefaults() {
     var defaults = {
       use: null,
       which: null,
@@ -30,7 +30,7 @@ var AxisModel = Hook.extend({
     return utils.deepExtend(this._super(), defaults);
   },
 
-  autoGenerateModel: function() {
+  autoGenerateModel() {
     if (this.which == null && this.autogenerate) {
 
       var concept = this.dataSource.getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType);
@@ -48,7 +48,7 @@ var AxisModel = Hook.extend({
   /**
    * Validates a color hook
    */
-  validate: function() {
+  validate() {
     this._super();
 
     //restore the correct object type for time values
@@ -65,7 +65,7 @@ var AxisModel = Hook.extend({
    * Gets the domain for this hook
    * @returns {Array} domain
    */
-  buildScale: function(scaleType = this.scaleType) {
+  buildScale(scaleType = this.scaleType) {
     var domain;
 
     if (scaleType == "time") {
@@ -104,7 +104,7 @@ var AxisModel = Hook.extend({
    * @param {Date} date object to format
    * @returns {String} formatted date
    */
-  formatDate: function(dateObject) {
+  formatDate(dateObject) {
     // improvement would be to check concept type of each space-dimension if it's time.
     // Below code works as long we have one time model: time.
     return this._space.time.formatDate(dateObject);

@@ -14,7 +14,7 @@ var Opacity = Dialog.extend({
  * @param config component configuration
  * @param context component context (parent)
  */
-init: function(config, parent) {
+init(config, parent) {
   this.name = 'opacity';
 
   // in dialog, this.model_expects = ["state", "data"];

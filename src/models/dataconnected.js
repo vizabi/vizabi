@@ -12,7 +12,7 @@ var DataConnected = Model.extend({
 
   dataConnectedChildren: [],
 
-  checkDataChanges: function(changedChildren) {
+  checkDataChanges(changedChildren) {
     var _this = this;
 
     if (!changedChildren || !this.dataConnectedChildren)

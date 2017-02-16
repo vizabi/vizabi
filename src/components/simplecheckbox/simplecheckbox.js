@@ -2,7 +2,7 @@ import Component from 'base/component';
 
 export default Component.extend({
 
-  init: function(config, context) {
+  init(config, context) {
     this.template =
       '<span class="vzb-sc-holder vzb-dialog-checkbox"><input type="checkbox"><label></label></span>';
     var _this = this;
@@ -38,12 +38,12 @@ export default Component.extend({
     this._super(config, context);
   },
 
-  ready: function() {
+  ready() {
     this.parentModel = (this.submodel) ? this.model.mdl[this.submodel] : this.model.mdl;
     this.updateView();
   },
 
-  readyOnce: function() {
+  readyOnce() {
     var _this = this;
     this.element = d3.select(this.element);
     var id = "-check-" + _this._id;
@@ -54,13 +54,13 @@ export default Component.extend({
       });
   },
 
-  updateView: function() {
+  updateView() {
     this.translator = this.model.locale.getTFunction();
     this.labelEl.text(this.translator("check/" + this.checkbox));
     this.checkEl.property("checked", !!this.parentModel[this.checkbox]);
   },
 
-  _setModel: function(value) {
+  _setModel(value) {
     this.parentModel[this.checkbox] = value;
   }
 

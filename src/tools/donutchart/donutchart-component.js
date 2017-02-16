@@ -9,7 +9,7 @@ import Component from 'base/component';
 //DONUT CHART COMPONENT
 var DonutComponent = Component.extend('donut', {
 
-      init: function(config, context) {
+      init(config, context) {
         var _this = this;
 
         this.name = 'donutchart';
@@ -51,7 +51,7 @@ var DonutComponent = Component.extend('donut', {
       /**
        * DOM is ready and the model is ready -- happens once on the load and never again
        */
-      readyOnce: function() {
+      readyOnce() {
         var _this = this;
 
         //link DOM elements to the variables
@@ -75,7 +75,7 @@ var DonutComponent = Component.extend('donut', {
       /**
        * Populate the visuals according to the number of entities
        */
-      update: function() {
+      update() {
         this.timeFormatter = this.model.time.formatters.data("%Y");
         this.colorScale = this.model.marker.color.getScale();
 
@@ -101,7 +101,7 @@ var DonutComponent = Component.extend('donut', {
       /**
        * Updates the visuals
        */
-      redraw: function() {
+      redraw() {
         var _this = this;
 
         //request the values for the current time from the model
@@ -143,7 +143,7 @@ var DonutComponent = Component.extend('donut', {
       /**
        * Executes every time the container or vizabi is resized
        */
-      resize: function() {
+      resize() {
 
         var height = parseInt(this.element.style("height"), 10) || 0;
         var width = parseInt(this.element.style("width"), 10) || 0;

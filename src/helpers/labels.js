@@ -351,7 +351,7 @@ var OPTIONS = {
 
 var Labels = Class.extend({
 
-  init: function(context, conditions) {
+  init(context, conditions) {
     var _this = this;
     this.context = context;
 
@@ -363,13 +363,13 @@ var Labels = Class.extend({
     this.labelSizeTextScale = null;
   },
 
-  ready: function() {
+  ready() {
     this.updateIndicators();
     this.updateLabelSizeLimits();
     //this.updateLabelsOnlyTextSize();
   },
 
-  readyOnce: function() {
+  readyOnce() {
     var _this = this;
 
     this.model = this.context.model;
@@ -410,11 +410,11 @@ var Labels = Class.extend({
     this.selectDataPoints();
   },
 
-  config: function(newOptions) {
+  config(newOptions) {
     utils.extend(this.options, newOptions);
   },
 
-  updateLabelSizeLimits: function() {
+  updateLabelSizeLimits() {
     var _this = this;
     if (!this.model.marker.size_label) return;
     var extent = this.model.marker.size_label.extent || [0, 1];
@@ -443,7 +443,7 @@ var Labels = Class.extend({
 
   },
 
-  updateIndicators: function() {
+  updateIndicators() {
     var _this = this;
 
     //scales
@@ -452,27 +452,27 @@ var Labels = Class.extend({
     }
   },
 
-  setScales: function(xScale, yScale) {
+  setScales(xScale, yScale) {
     this._xScale = xScale;
     this._yScale = yScale;
   },
 
-  setCloseCrossHeight: function(closeCrossHeight) {
+  setCloseCrossHeight(closeCrossHeight) {
     if (this._closeCrossHeight != closeCrossHeight) {
       this._closeCrossHeight = closeCrossHeight;
       this.updateLabelCloseGroupSize(this.entityLabels.selectAll("." + this.options.CSS_PREFIX + "-label-x"), this._closeCrossHeight);
     }
   },
 
-  xScale: function(x) {
+  xScale(x) {
     return this._xScale ? this._xScale(x) : (x * this.context.width);
   },
 
-  yScale: function(y) {
+  yScale(y) {
     return this._yScale ? this._yScale(y) : (y * this.context.height);
   },
 
-  selectDataPoints: function() {
+  selectDataPoints() {
     var _this = this;
     var KEY = this.KEY;
     var _cssPrefix = this.options.CSS_PREFIX;
@@ -516,7 +516,7 @@ var Labels = Class.extend({
       .merge(this.entityLabels);
   },
 
-  showCloseCross: function(d, show) {
+  showCloseCross(d, show) {
     var KEY = this.KEY;
     //show the little cross on the selected label
     this.entityLabels
@@ -525,7 +525,7 @@ var Labels = Class.extend({
         .classed("vzb-transparent", !show);
   },
 
-  highlight: function(d, highlight) {
+  highlight(d, highlight) {
     var KEY = this.KEY;
     var labels = this.entityLabels;
     if (d) {
@@ -536,7 +536,7 @@ var Labels = Class.extend({
     labels.classed("vzb-highlighted", highlight);
   },
 
-  updateLabel: function(d, index, cache, valueX, valueY, valueS, valueC, valueL, valueLST, duration, showhide) {
+  updateLabel(d, index, cache, valueX, valueY, valueS, valueC, valueL, valueLST, duration, showhide) {
     var _this = this;
     var KEY = this.KEY;
     if (d[KEY] == _this.druging)
@@ -597,7 +597,7 @@ var Labels = Class.extend({
     }
   },
 
-  _updateLabelSize: function(d, index, labelGroup, valueLST, text) {
+  _updateLabelSize(d, index, labelGroup, valueLST, text) {
     var _this = this;
     var KEY = this.KEY;
     var cached = _this.cached[d[KEY]];
@@ -654,7 +654,7 @@ var Labels = Class.extend({
     }
   },
 
-  updateLabelCloseGroupSize: function(labelCloseGroup, labelCloseHeight) {
+  updateLabelCloseGroupSize(labelCloseGroup, labelCloseHeight) {
     labelCloseGroup.select("circle")
       .attr("cx", /*contentBBox.height * .0 + */ 0)
       .attr("cy", 0)
@@ -668,7 +668,7 @@ var Labels = Class.extend({
 
   },
 
-  updateLabelsOnlyTextSize: function() {
+  updateLabelsOnlyTextSize() {
     var _this = this;
     var KEY = this.KEY;
 
@@ -682,7 +682,7 @@ var Labels = Class.extend({
       });
   },
 
-  updateLabelOnlyPosition: function(d, index, cache) {
+  updateLabelOnlyPosition(d, index, cache) {
     var _this = this;
     var KEY = this.KEY;
     var cached = this.cached[d[KEY]];
@@ -700,7 +700,7 @@ var Labels = Class.extend({
       });
   },
 
-  updateLabelOnlyColor: function(d, index, cache) {
+  updateLabelOnlyColor(d, index, cache) {
     var _this = this;
     var KEY = this.KEY;
     var cached = this.cached[d[KEY]];
@@ -714,7 +714,7 @@ var Labels = Class.extend({
 
   },
 
-  positionLabel: function(d, index, context, duration, showhide, lineGroup) {
+  positionLabel(d, index, context, duration, showhide, lineGroup) {
     var KEY = this.KEY;
     var cached = this.cached[d[KEY]];
 

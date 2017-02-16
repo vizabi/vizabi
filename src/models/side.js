@@ -11,7 +11,7 @@ var SideModel = Hook.extend({
    * Default values for this model
    */
 
-  getClassDefaults: function() {
+  getClassDefaults() {
     var defaults = {
       use: null,
       which: null
@@ -25,7 +25,7 @@ var SideModel = Hook.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(name, values, parent, bind) {
+  init(name, values, parent, bind) {
 
     this._type = "side";
 
@@ -35,20 +35,20 @@ var SideModel = Hook.extend({
     this._super(name, values, parent, bind);
   },
 
-  readyOnce: function() {
+  readyOnce() {
     if (!this.spaceRef) return;
     var dataConnChildren = this._space[this.spaceRef].dataConnectedChildren.slice(0);
     dataConnChildren.splice(dataConnChildren.indexOf("show"), 1);
     this._space[this.spaceRef].dataConnectedChildren = dataConnChildren;
   },
 
-  switchSideState: function() {
+  switchSideState() {
     var left = this.state.left;
     this.state.left = this.state.right;
     this.state.right = left;
   },
 
-  clearSideState: function() {
+  clearSideState() {
     this.state = { left: {}, right: {} };
   }
 

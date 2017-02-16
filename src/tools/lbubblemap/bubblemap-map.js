@@ -9,13 +9,13 @@ var GoogleMapsLoader = require('google-maps');
 import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js';
 
 export default Class.extend({
-  init: function(context) {
+  init(context) {
     this.context = context;
     this.topojsonMap = null;
     this.mapInstance = null;
   },
 
-  getMap: function() {
+  getMap() {
     if (!this.mapInstance) {
       switch (this.context.model.ui.map.mapEngine) {
         case "google":
@@ -39,7 +39,7 @@ export default Class.extend({
     }
   },
 
-  initMap: function(domSelector) {
+  initMap(domSelector) {
     if (this.topojsonMap && this.mapInstance) {
       return Promise.all([
         this.mapInstance.initMap(domSelector),
@@ -48,33 +48,33 @@ export default Class.extend({
     }
   },
 
-  boundsChanged: function() {
+  boundsChanged() {
     if (this.topojsonMap) {
       this.topojsonMap.rescaleMap(this.mapInstance.getCanvas());
     }
     this.context.mapBoundsChanged();
   },
 
-  rescaleMap: function() {
+  rescaleMap() {
     var _this = this;
     return this.mapInstance.rescaleMap();
   },
 
-  invert: function(x, y) {
+  invert(x, y) {
     return this.mapInstance.invert(x, y);
   }
 
 });
 
 var MapLayer = Class.extend({
-  init: function(context, parent) {
+  init(context, parent) {
     this.shapes = null;
     this.parent = parent;
     this.context = context;
     d3_geo_projection();
   },
 
-  initMap: function() {
+  initMap() {
     this.mapSvg = d3.select(this.context.element).select(".vzb-bmc-map-background");
     this.mapGraph = this.mapSvg.html('').append("g")
       .attr("class", "vzb-bmc-map-graph");
@@ -128,7 +128,7 @@ var MapLayer = Class.extend({
     );
   },
 
-  _loadShapes: function(shape_path) {
+  _loadShapes(shape_path) {
     return new Promise(function(resolve, reject) {
       d3.json(shape_path, function(error, json) {
         if (error) return console.warn("Failed loading json " + shape_path + ". " + error);
@@ -138,7 +138,7 @@ var MapLayer = Class.extend({
 
   },
 
-  rescaleMap: function(canvas) {
+  rescaleMap(canvas) {
     //var topoCanvas =
     var emitEvent = false;
     var offset = this.context.model.ui.map.offset;
@@ -254,7 +254,7 @@ var MapLayer = Class.extend({
     }
   },
 
-  invert: function(x, y) {
+  invert(x, y) {
      return this.projection([x||0, y||0]);
   }
 
@@ -262,12 +262,12 @@ var MapLayer = Class.extend({
 
 var GoogleMapLayer = Class.extend({
 
-  init: function(context, parent) {
+  init(context, parent) {
     this.context = context;
     this.parent = parent;
   },
 
-  initMap: function(domSelector) {
+  initMap(domSelector) {
     var _this = this;
     this.mapRoot = d3.select(this.context.element).select(domSelector);
     this.mapCanvas = this.mapRoot.html('').append("div");
@@ -308,7 +308,7 @@ var GoogleMapLayer = Class.extend({
     });
    },
 
-  rescaleMap: function() {
+  rescaleMap() {
     var _this = this;
     var margin = this.context.activeProfile.margin;
 
@@ -331,23 +331,23 @@ var GoogleMapLayer = Class.extend({
     );
     this.map.fitBounds(rectBounds);
   },
-  invert: function(x, y) {
+  invert(x, y) {
     var coords = this.overlay.getProjection().fromLatLngToContainerPixel(new google.maps.LatLng(y, x));
     return [coords.x, coords.y];
   },
 
-  getZoom: function() {
+  getZoom() {
     return this.map.getZoom();
   },
 
-  getCanvas: function() {
+  getCanvas() {
     return [
       this.invert(this.context.model.ui.map.bounds.west, this.context.model.ui.map.bounds.north),
       this.invert(this.context.model.ui.map.bounds.east, this.context.model.ui.map.bounds.south)
     ];
   },
 
-  getCenter: function() {
+  getCenter() {
     var center = this.map.getCenter();
     this.centerMapker.setPosition(center);
     return { lat: center.lat(), lng: center.lng() };
@@ -356,13 +356,13 @@ var GoogleMapLayer = Class.extend({
 
 var MapboxLayer = Class.extend({
 
-  init: function(context, parent) {
+  init(context, parent) {
     mapboxgl.accessToken = "pk.eyJ1Ijoic2VyZ2V5ZiIsImEiOiJjaXlqeWo5YnYwMDBzMzJwZnlwZXJ2bnA2In0.e711ku9KzcFW_x5wmOZTag";
     this.context = context;
     this.parent = parent;
   },
 
-  initMap: function(domSelector) {
+  initMap(domSelector) {
     var _this = this;
     this.mapRoot = d3.select(this.context.element).select(domSelector);
     this.mapCanvas = this.mapRoot.html('').append("div");
@@ -385,7 +385,7 @@ var MapboxLayer = Class.extend({
     });
   },
 
-  rescaleMap: function() {
+  rescaleMap() {
     var _this = this;
     var offset = this.context.model.ui.map.offset;
     var margin = this.context.activeProfile.margin;
@@ -412,14 +412,14 @@ var MapboxLayer = Class.extend({
     });
   },
 
-  getCanvas: function() {
+  getCanvas() {
     return [
       this.invert(this.context.model.ui.map.bounds.west, this.context.model.ui.map.bounds.north),
       this.invert(this.context.model.ui.map.bounds.east, this.context.model.ui.map.bounds.south)
     ];
   },
 
-  invert: function(x, y) {
+  invert(x, y) {
     var coords = this.map.project([x, y]);
     return [coords.x, coords.y];
   }

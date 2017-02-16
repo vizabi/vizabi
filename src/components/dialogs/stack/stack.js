@@ -16,7 +16,7 @@ var Stack = Dialog.extend({
      * @param config component configuration
      * @param context component context (parent)
      */
-    init: function(config, parent) {
+    init(config, parent) {
         this.name = 'stack';
         var _this = this;
 
@@ -44,7 +44,7 @@ var Stack = Dialog.extend({
     },
 
 
-    readyOnce: function() {
+    readyOnce() {
       this._super();
 
       var _this = this;
@@ -63,7 +63,7 @@ var Stack = Dialog.extend({
       this.updateView();
     },
 
-    ready: function() {
+    ready() {
       this._super();
       if (!this.model.state.marker.color.isDiscrete()) {
         if (this.stack.use == "property") {
@@ -78,7 +78,7 @@ var Stack = Dialog.extend({
       this.updateView();
     },
 
-    updateView: function() {
+    updateView() {
         var _this = this;
 
         this.howToStackEl
@@ -110,12 +110,12 @@ var Stack = Dialog.extend({
 
     },
 
-    manualSorting: function(value) {
+    manualSorting(value) {
         if (arguments.length === 0) return this.model.state.marker.group.manualSorting;
         this.model.state.marker.group.manualSorting = value;
     },
 
-    setModel: function(what, value) {
+    setModel(what, value) {
 
         var obj = { stack: {}, group: {} };
 

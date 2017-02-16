@@ -10,7 +10,7 @@ export var DefaultEvent = Class.extend({
   source: '',
   type: 'default',
 
-  init: function(source, type) {
+  init(source, type) {
     this.source = source;
     if (type) this.type = type;
   }
@@ -21,7 +21,7 @@ export var ChangeEvent = DefaultEvent.extend('change', {
 
   type: 'change',
 
-  init: function(source) {
+  init(source) {
     this._super(source);
   }
 
@@ -32,7 +32,7 @@ var EventSource = Class.extend({
   /**
    * Initializes the event class
    */
-  init: function() {
+  init() {
     this._id = this._id || utils.uniqueId('e');
     this._events = {};
     //freezing events
@@ -47,7 +47,7 @@ var EventSource = Class.extend({
    * @param {String|Array} target path to object the event should be bound to or array of target paths
    * @param {Function|Array} func function to be bound with event or array with functions
    */
-  on: function(type, path, func) {
+  on(type, path, func) {
 
     // if parameters had to be split up in seperate calls, don't continue with this call
     if (this.splitEventParameters(type, path, func, this.on))
@@ -71,7 +71,7 @@ var EventSource = Class.extend({
    * Unbinds all events associated with a name or a specific one
    * @param {String|Array} name name of event or array with names
    */
-  off: function(type, path, func) {
+  off(type, path, func) {
 
     // if no arguments, unbind all
     if (arguments.length == 0) {
@@ -112,7 +112,7 @@ var EventSource = Class.extend({
    * @return {Boolean} true if the parameters where split up, false if nothing was split up
    * eventFunc is mostly arguments.callee but this is deprecated in ECMAscript 5: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments/callee
    */
-  splitEventParameters: function(type, path, func, eventFunc) {
+  splitEventParameters(type, path, func, eventFunc) {
     var i;
     var calls = [];
 
@@ -175,7 +175,7 @@ var EventSource = Class.extend({
    * Traverse path down the model tree
    * @param {String|Array} target path to object that should be returned. Either in string or array form
    */
-  traversePath: function(path) {
+  traversePath(path) {
 
     // if there's no path to traverse
     if (typeof path === 'undefined' || utils.isArray(path) && path.length == 0) {
@@ -201,7 +201,7 @@ var EventSource = Class.extend({
       return this.getModelObject(currentTarget).traversePath(path);
   },
 
-  createEventFromType: function(evtType) {
+  createEventFromType(evtType) {
     if ((evtType instanceof DefaultEvent)) {
       return evtType;
     }
@@ -219,7 +219,7 @@ var EventSource = Class.extend({
    * @param {String|Array} name name of event or array with names
    * @param args Optional arguments (values to be passed)
    */
-  trigger: function(evtType, args) {
+  trigger(evtType, args) {
     var i;
     var size;
 
@@ -268,7 +268,7 @@ var EventSource = Class.extend({
     });
   },
 
-  allowExecution: function(evt) {
+  allowExecution(evt) {
     return (!this._freeze && !_freezeAllEvents) ||                                           // nothing frozen
       (_freezeAllEvents && _freezeAllExceptions.hasOwnProperty(evt.type)) ||                 // freeze all but exception
       (!_freezeAllEvents && this._freeze && this._freezeExceptions.hasOwnProperty(evt.type)); // freeze but exception
@@ -277,7 +277,7 @@ var EventSource = Class.extend({
   /**
    * Prevents all events from being triggered, buffering them
    */
-  freeze: function(exceptions) {
+  freeze(exceptions) {
     this._freeze = true;
     if (!exceptions) {
       return;
@@ -293,7 +293,7 @@ var EventSource = Class.extend({
   /**
    * triggers all frozen events
    */
-  unfreeze: function() {
+  unfreeze() {
     this._freeze = false;
     this._freezeExceptions = {};
     //execute old frozen events
@@ -306,7 +306,7 @@ var EventSource = Class.extend({
   /**
    * clears all frozen events
    */
-  clearFrozen: function() {
+  clearFrozen() {
     this._freeze = false;
     this._freezeExceptions = {};
     this._freezer = [];

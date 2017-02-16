@@ -3,7 +3,7 @@ import Class from 'base/class';
 
 export default Class.extend({
 
-    init: function(context) {
+    init(context) {
         this.context = context;
 
         this.dragRectangle = d3.drag();
@@ -28,7 +28,7 @@ export default Class.extend({
         context._zoomedXYMinMax = { axis_x: { zoomedMin: null, zoomedMax: null }, axis_y: { zoomedMin: null, zoomedMax: null } };
     },
 
-    dragSubject: function() {
+    dragSubject() {
         var _this = this.context;
         var self = this;
 
@@ -47,12 +47,12 @@ export default Class.extend({
         };
     },
 
-    drag: function() {
+    drag() {
         var _this = this.context;
         var self = this;
 
         return {
-            start: function(d, i) {
+            start(d, i) {
                 /*
                  * Do not drag if the Ctrl key, Meta key, or plus cursor mode is
                  * not enabled. Also do not drag if zoom-pinching on touchmove
@@ -73,7 +73,7 @@ export default Class.extend({
                 _this.zoomRect.classed("vzb-invisible", false);
             },
 
-            go: function(d, i) {
+            go(d, i) {
                 /*
                  * Cancel drag if drag lock is false, or when zoom-pinching via
                  * touchmove events.
@@ -103,7 +103,7 @@ export default Class.extend({
                     .attr("height", Math.abs(mouse.y - origin.y));
             },
 
-            stop: function(e) {
+            stop(e) {
               if (!self.dragLock) return;
               self.dragLock = false;
 
@@ -138,16 +138,16 @@ export default Class.extend({
         };
     },
 
-    zoom: function() {
+    zoom() {
         var _this = this.context;
         var zoomer = this.zoomer;
         var self = this;
 
         return {
-            start: function() {
+            start() {
                 //this.savedScale = zoomer.scale;
             },
-            go: function() {
+            go() {
 
                 var sourceEvent = d3.event.sourceEvent;
 
@@ -431,7 +431,7 @@ export default Class.extend({
                 zoomer.duration = 0;
             },
 
-            stop: function() {
+            stop() {
 
                 _this.draggingNow = false;
 
@@ -444,7 +444,7 @@ export default Class.extend({
         };
     },
 
-    expandCanvas: function(duration) {
+    expandCanvas(duration) {
         var _this = this.context;
         if (!duration) duration = _this.duration;
 
@@ -544,7 +544,7 @@ export default Class.extend({
         }
     },
 
-    zoomToMaxMin: function(zoomedMinX, zoomedMaxX, zoomedMinY, zoomedMaxY, duration, dontFeedToState) {
+    zoomToMaxMin(zoomedMinX, zoomedMaxX, zoomedMinY, zoomedMaxY, duration, dontFeedToState) {
         var _this = this.context;
         var minX = zoomedMinX;
         var maxX = zoomedMaxX;
@@ -647,7 +647,7 @@ export default Class.extend({
         this._zoomOnRectangle(_this.element, xRange[0], yRange[0], xRange[1], yRange[1], false, duration, dontFeedToState);
     },
 
-    _zoomOnRectangle: function(element, zoomedX1, zoomedY1, zoomedX2, zoomedY2, compensateDragging, duration, dontFeedToState) {
+    _zoomOnRectangle(element, zoomedX1, zoomedY1, zoomedX2, zoomedY2, compensateDragging, duration, dontFeedToState) {
         var _this = this.context;
         var zoomer = this.zoomer;
         var transform = d3.zoomTransform(this.zoomSelection.node());
@@ -778,7 +778,7 @@ export default Class.extend({
      * Helper function that returns a scaled coordinate value based on the
      * distance between the given coordinate and the data boundary.
      */
-    _scaleCoordinate: function(coordValue, scaleDifference, dataBoundary, viewportBoundary) {
+    _scaleCoordinate(coordValue, scaleDifference, dataBoundary, viewportBoundary) {
         var scalar = scaleDifference / Math.abs(dataBoundary - viewportBoundary);
         return (coordValue - dataBoundary) * (1 - scalar) + dataBoundary;
     },
@@ -789,7 +789,7 @@ export default Class.extend({
      *
      * Return the larger of the two calculated values.
      */
-    _scaleToMin: function(scalar, minScalar, proportion, constant) {
+    _scaleToMin(scalar, minScalar, proportion, constant) {
         var scalarProportionDelta = (scalar - minScalar) * proportion;
         var scalarDifferenceDelta = Math.max(constant, minScalar - constant);
         var scalarDelta = Math.max(scalarProportionDelta, scalarDifferenceDelta);
@@ -803,7 +803,7 @@ export default Class.extend({
      * for the original code see https://github.com/mbostock/d3/blob/master/src/behavior/zoom.js
      * function dblclicked() and what it refers to
      */
-    zoomByIncrement: function(direction, duration) {
+    zoomByIncrement(direction, duration) {
         var _this = this.context;
         var transform = d3.zoomTransform(this.zoomSelection.node());
 
@@ -846,7 +846,7 @@ export default Class.extend({
     /*
      * Reset zoom values without triggering a zoom event.
      */
-     resetZoomState: function(element) {
+     resetZoomState(element) {
         //this.zoomer.scaleTo(element, 1);
         this.zoomer.ratioY = 1;
         this.zoomer.ratioX = 1;
@@ -854,7 +854,7 @@ export default Class.extend({
         (element || this.zoomSelection).property("__zoom", d3.zoomIdentity);
     },
 
-    reset: function(element, duration) {
+    reset(element, duration) {
         var _this = this.context;
         _this.isCanvasPreviouslyExpanded = false;
 
@@ -867,13 +867,13 @@ export default Class.extend({
         (element || this.zoomSelection).call(this.zoomer.transform, d3.zoomIdentity);
     },
 
-    rerun: function(element) {
+    rerun(element) {
         var _this = this.context;
         //this.zoomer.event(element || _this.element);
         (element || this.zoomSelection).call(this.zoomer.scaleBy, 1);
     },
 
-    zoomSelection: function(element) {
+    zoomSelection(element) {
         this.zoomSelection = element;
     }
 

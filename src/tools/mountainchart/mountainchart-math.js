@@ -3,21 +3,21 @@ import Class from 'base/class';
 
 var MCMath = Class.extend({
 
-        init: function(context) {
+        init(context) {
             this.context = context;
 
             this.xScaleFactor = 1;
             this.xScaleShift = 0;
         },
 
-        rescale: function(x) {
+        rescale(x) {
             return Math.exp(this.xScaleFactor * Math.log(x) + this.xScaleShift);
         },
-        unscale: function(x) {
+        unscale(x) {
             return Math.exp((Math.log(x) - this.xScaleShift) / this.xScaleFactor);
         },
 
-        generateMesh: function(length, scaleType, domain) {
+        generateMesh(length, scaleType, domain) {
             // span a uniform mesh across the entire X scale
             // if the scale is log, the mesh would be exponentially distorted to look uniform
 
@@ -40,13 +40,13 @@ var MCMath = Class.extend({
             return mesh;
         },
 
-        gdpToMu: function(gdp, sigma, xScaleFactor, xScaleShift) {
+        gdpToMu(gdp, sigma, xScaleFactor, xScaleShift) {
             // converting gdp per capita per day into MU for lognormal distribution
             // see https://en.wikipedia.org/wiki/Log-normal_distribution
             return Math.log(gdp/365) - sigma*sigma/2;
         },
 
-        giniToSigma: function(gini) {
+        giniToSigma(gini) {
             // The ginis are turned into std deviation.
             // Mattias uses this formula in Excel: stddev = NORMSINV( ((gini/100)+1)/2 )*2^0.5
             return this.normsinv(((gini / 100) + 1) / 2) * Math.pow(2, 0.5);
@@ -54,14 +54,14 @@ var MCMath = Class.extend({
 
         // this function returns PDF values for a specified distribution
         pdf: {
-            normal: function(x, mu, sigma) {
+            normal(x, mu, sigma) {
                 return Math.exp(
                     -0.5 * Math.log(2 * Math.PI)
                     - Math.log(sigma)
                     - Math.pow(x - mu, 2) / (2 * sigma * sigma)
                     );
             },
-            lognormal: function(x, mu, sigma) {
+            lognormal(x, mu, sigma) {
                 return Math.exp(
                     -0.5 * Math.log(2 * Math.PI) //should not be different for the two scales- (scaleType=="linear"?Math.log(x):0)
                     - Math.log(sigma)
@@ -71,7 +71,7 @@ var MCMath = Class.extend({
         },
 
 
-        normsinv: function(p) {
+        normsinv(p) {
             //
             // Lower tail quantile for standard normal distribution function.
             //

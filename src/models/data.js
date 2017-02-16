@@ -12,7 +12,7 @@ var DataModel = Model.extend({
   /**
    * Default values for this model
    */
-  getClassDefaults: function() {
+  getClassDefaults() {
     var defaults = {
       reader: "csv"
     };
@@ -27,7 +27,7 @@ var DataModel = Model.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(name, values, parent, bind) {
+  init(name, values, parent, bind) {
 
     this._type = "data";
 
@@ -46,7 +46,7 @@ var DataModel = Model.extend({
    * Loads concept properties when all other models are also starting to load data
    * @return {Promise} Promise which resolves when concepts are loaded
    */
-  preloadData: function() {
+  preloadData() {
     return this.loadConceptProps();
   },
 
@@ -56,7 +56,7 @@ var DataModel = Model.extend({
    * @param {Object} parsers An object with concepts as key and parsers as value
    * @param {*} evts ?
    */
-  load: function(query, parsers = {}) {
+  load(query, parsers = {}) {
 
     // add waffle server specific query clauses if set
     if (this.dataset) query.dataset = this.dataset;
@@ -87,7 +87,7 @@ var DataModel = Model.extend({
    * @param {Array} query Array with queries to be loaded
    * @param {Object} parsers An object with concepts as key and parsers as value
    */
-  loadFromReader: function(query, parsers) {
+  loadFromReader(query, parsers) {
     var _this = this;
 
     var dataId = utils.hashCode([
@@ -154,9 +154,9 @@ var DataModel = Model.extend({
 
 
       this.queryQueue[queryMergeId] = {
-        query: query,
-        parsers: parsers,
-        promise: promise
+        query,
+        parsers,
+        promise
       };
 
       return this.queryQueue[queryMergeId].promise;
@@ -165,7 +165,7 @@ var DataModel = Model.extend({
 
   },
 
-  getReader: function() {
+  getReader() {
     // Create a new reader for this query
     var readerClass = Reader.get(this.reader);
     if (!readerClass) {
@@ -180,7 +180,7 @@ var DataModel = Model.extend({
     });
   },
 
-  checkQueryResponse: function(query, response) {
+  checkQueryResponse(query, response) {
     if (response.length == 0) utils.warn("Reader for data source '" + this._name + "' returned empty array for query:", JSON.stringify(query, null, 2));
 
     if (response.length > 0) {
@@ -208,7 +208,7 @@ var DataModel = Model.extend({
   /**
    * get data
    */
-  getData: function(dataId, what, whatId, args) {
+  getData(dataId, what, whatId, args) {
     // if not specified data from what query, return nothing
     if (!dataId) return utils.warn("Data.js 'get' method doesn't like the dataId you gave it: " + dataId);
 
@@ -280,7 +280,7 @@ var DataModel = Model.extend({
 
   },
 
-  handleConceptPropsResponse: function(dataId) {
+  handleConceptPropsResponse(dataId) {
 
     this.conceptDictionary = { _default: { concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root" } };
     this.conceptArray = [];
@@ -334,7 +334,7 @@ var DataModel = Model.extend({
 
   },
 
-  getConceptprops: function(which) {
+  getConceptprops(which) {
      if (which) {
        if (this.conceptDictionary[which]) {
          return this.conceptDictionary[which];
@@ -346,13 +346,13 @@ var DataModel = Model.extend({
      }
   },
 
-  getConceptByIndex: function(index, type) {
+  getConceptByIndex(index, type) {
     var concept = this.conceptArray.filter(f => !type || !f.concept_type || f.concept_type===type)[index];
     //if(!concept && type == "measure") concept = this.conceptArray.filter(f => f.concept_type==="time")[0];
     return concept;
   },
 
-  getDatasetName: function() {
+  getDatasetName() {
     if (this.readerObject.getDatasetInfo) {
       var meta = this.readerObject.getDatasetInfo();
       return meta.name + (meta.version ? " " + meta.version : "");
@@ -360,7 +360,7 @@ var DataModel = Model.extend({
     return this._name;
   },
 
-  _getCacheKey: function(frames, keys) {
+  _getCacheKey(frames, keys) {
     var result = frames[0] + " - " + frames[frames.length-1];
     if (keys) {
       result = result + "_" + keys.join();
@@ -368,7 +368,7 @@ var DataModel = Model.extend({
     return result;
   },
 
-  getFrames: function(dataId, framesArray, keys) {
+  getFrames(dataId, framesArray, keys) {
     var _this = this;
     var whatId = this._getCacheKey(framesArray, keys);
     if (!this._collectionPromises[dataId][whatId]) {
@@ -393,7 +393,7 @@ var DataModel = Model.extend({
   },
 
 
-  getFrame: function(dataId, framesArray, neededFrame, keys) {
+  getFrame(dataId, framesArray, neededFrame, keys) {
     //can only be called after getFrames()
     var _this = this;
     var whatId = this._getCacheKey(framesArray, keys);
@@ -408,7 +408,7 @@ var DataModel = Model.extend({
     });
   },
 
-  listenFrame: function(dataId, framesArray, keys,  cb) {
+  listenFrame(dataId, framesArray, keys,  cb) {
     var _this = this;
     var whatId = this._getCacheKey(framesArray, keys);
     this._collectionPromises[dataId][whatId]["queue"].defaultCallbacks.push(function(time) {
@@ -421,7 +421,7 @@ var DataModel = Model.extend({
     }
   },
 
-  _muteAllQueues: function(except) {
+  _muteAllQueues(except) {
     utils.forEach(this._collectionPromises, function(queries, dataId) {
         utils.forEach(queries, function(promise, whatId) {
           if (promise.queue.isActive == true && promise.queue.whatId != except) {
@@ -431,7 +431,7 @@ var DataModel = Model.extend({
     });
   },
 
-  _checkForcedQueuesExists: function() {
+  _checkForcedQueuesExists() {
     utils.forEach(this._collectionPromises, function(queries, dataId) {
       utils.forEach(queries, function(promise, whatId) {
         if (promise.queue.forcedQueue.length > 0) {
@@ -441,7 +441,7 @@ var DataModel = Model.extend({
     });
   },
 
-  _unmuteQueue: function() {
+  _unmuteQueue() {
     utils.forEach(this._collectionPromises, function(queries, dataId) {
       utils.forEach(queries, function(promise, whatId) {
         if (promise.queue.isActive == false) {
@@ -455,7 +455,7 @@ var DataModel = Model.extend({
    * @param framesArray
    * @returns {*}
    */
-  framesQueue: function(framesArray, whatId) {
+  framesQueue(framesArray, whatId) {
     var _context = this;
     return new function() {
       this.defaultCallbacks = [];
@@ -596,7 +596,7 @@ var DataModel = Model.extend({
    * @param {Array} keys -- array of keys
    * @returns {Object} regularised dataset, nested by [animatable, column, key]
    */
-  _getFrames: function(dataId, whatId, framesArray, keys) {
+  _getFrames(dataId, whatId, framesArray, keys) {
     var _this = this;
 
     if (!_this._collection[dataId]["frames"][whatId]) {
@@ -813,7 +813,7 @@ var DataModel = Model.extend({
   },
 
 
-  _getNested: function(dataId, order) {
+  _getNested(dataId, order) {
     // Nests are objects of key-value pairs
     // Example:
     //
@@ -852,7 +852,7 @@ var DataModel = Model.extend({
   },
 
 
-  _getUnique: function(dataId, attr) {
+  _getUnique(dataId, attr) {
     var uniq;
     var items = this._collection[dataId].data;
     //if it's an array, it will return a list of unique combinations.
@@ -873,11 +873,11 @@ var DataModel = Model.extend({
     return uniq;
   },
 
-  _getValid: function(dataId, column) {
+  _getValid(dataId, column) {
     return this._collection[dataId].data.filter(function(f) {return f[column] || f[column]===0;});
   },
 
-  _getLimits: function(dataId, attr) {
+  _getLimits(dataId, attr) {
 
     var items = this._collection[dataId].data;
     // get only column attr and only rows with number or date
@@ -916,7 +916,7 @@ var DataModel = Model.extend({
   /**
    * checks whether this combination is cached or not
    */
-  getDataId: function(query) {
+  getDataId(query) {
     //encode in hashCode
     var q = utils.hashCode([
       query

@@ -3,7 +3,7 @@ import Class from 'base/class';
 
 export default Class.extend({
 
-  init: function(context) {
+  init(context) {
     this.context = context;
     this._isCreated = null;
     this.actionsQueue = {};
@@ -16,7 +16,7 @@ export default Class.extend({
     this.drawingQueue = {};
   },
 
-  toggle: function(arg) {
+  toggle(arg) {
     var _context = this.context;
     if (arg) {
 
@@ -31,7 +31,7 @@ export default Class.extend({
     }
   },
 
-  create: function(selection) {
+  create(selection) {
     var _context = this.context;
     var _this = this;
     var KEY = _context.KEY;
@@ -149,7 +149,7 @@ export default Class.extend({
    * @param actions
    * @private
    */
-  _addActions: function(selections, actions) {
+  _addActions(selections, actions) {
     var _context = this.context;
     var _this = this;
     var KEY = _context.KEY;
@@ -162,7 +162,7 @@ export default Class.extend({
     });
   },
 
-  _clearActions: function(selections) {
+  _clearActions(selections) {
     var _context = this.context;
     var _this = this;
     var KEY = _context.KEY;
@@ -181,11 +181,11 @@ export default Class.extend({
     });
   },
 
-  _getNextAction: function(key) {
+  _getNextAction(key) {
     return this.actionsQueue[key].shift();
   },
 
-  run: function(actions, selection, duration) {
+  run(actions, selection, duration) {
     var _context = this.context;
     var _this = this;
     var KEY = _context.KEY;
@@ -248,7 +248,7 @@ export default Class.extend({
   },
 
 
-  _remove: function(trail, duration, d) {
+  _remove(trail, duration, d) {
     this.actionsQueue[d[this.context.KEY]] = [];
     if (trail) { // TODO: in some reason run twice
       d3.select(this.entityTrails[d[this.context.KEY]].node().parentNode).remove();
@@ -256,7 +256,7 @@ export default Class.extend({
     }
   },
 
-  _resize: function(trail, duration, d) {
+  _resize(trail, duration, d) {
     var _context = this.context;
     if (_context.model.time.splash) {
       return;
@@ -319,7 +319,7 @@ export default Class.extend({
     });
   },
 
-  _recolor: function(trail, duration, d) {
+  _recolor(trail, duration, d) {
     var _context = this.context;
 
     trail.each(function(segment, index) {
@@ -345,7 +345,7 @@ export default Class.extend({
     });
   },
 
-  _opacityHandler: function(trail, duration, d) {
+  _opacityHandler(trail, duration, d) {
     var _context = this.context;
 
     trail.each(function(segment, index) {
@@ -359,7 +359,7 @@ export default Class.extend({
   },
 
 
-  _findVisible: function(trail, duration, d) {
+  _findVisible(trail, duration, d) {
     var _context = this.context;
     var _this = this;
     var KEY = _context.KEY;
@@ -416,7 +416,7 @@ export default Class.extend({
     });
   },
 
-  _abortAnimation: function() {
+  _abortAnimation() {
     var _context = this.context;
     var _this = this;
     var KEY = _context.KEY;
@@ -427,7 +427,7 @@ export default Class.extend({
     });
   },
 
-  _reveal: function(trail, duration, d) {
+  _reveal(trail, duration, d) {
     var _context = this.context;
     var _this = this;
     var KEY = _context.KEY;

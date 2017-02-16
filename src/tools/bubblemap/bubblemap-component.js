@@ -21,7 +21,7 @@ var BubbleMapComponent = Component.extend({
    * @param {Object} config The config passed to the component
    * @param {Object} context The component's parent
    */
-  init: function(config, context) {
+  init(config, context) {
     this.name = 'bubblemap';
     this.template = require('./bubblemap.html');
     this.bubblesDrawing = null;
@@ -123,7 +123,7 @@ var BubbleMapComponent = Component.extend({
   /**
    * DOM is ready
    */
-  readyOnce: function() {
+  readyOnce() {
 
     this.element = d3.select(this.element);
 
@@ -176,7 +176,7 @@ var BubbleMapComponent = Component.extend({
   /*
    * Both model and DOM are ready
    */
-  ready: function() {
+  ready() {
     var _this = this;
     this.updateUIStrings();
     this.updateIndicators();
@@ -206,7 +206,7 @@ var BubbleMapComponent = Component.extend({
 
   },
 
-  frameChanged: function(frame, time) {
+  frameChanged(frame, time) {
     if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
     if (!frame) return;
 
@@ -217,7 +217,7 @@ var BubbleMapComponent = Component.extend({
 
   },
 
-  updateUIStrings: function() {
+  updateUIStrings() {
       var _this = this;
 
       this.translator = this.model.locale.getTFunction();
@@ -311,7 +311,7 @@ var BubbleMapComponent = Component.extend({
   },
 
   // show size number on title when hovered on a bubble
-  updateTitleNumbers: function() {
+  updateTitleNumbers() {
       var _this = this;
 
       var mobile; // if is mobile device and only one bubble is selected, update the ytitle for the bubble
@@ -358,13 +358,13 @@ var BubbleMapComponent = Component.extend({
       }
   },
 
-  updateDoubtOpacity: function(opacity) {
+  updateDoubtOpacity(opacity) {
       if (opacity == null) opacity = this.wScale(+this.time.getUTCFullYear().toString());
       if (this.someSelected) opacity = 1;
       this.dataWarningEl.style("opacity", opacity);
   },
 
-  updateOpacity: function() {
+  updateOpacity() {
       var _this = this;
       /*
       this.entityBubbles.classed("vzb-selected", function (d) {
@@ -416,7 +416,7 @@ var BubbleMapComponent = Component.extend({
   /**
    * Changes labels for indicators
    */
-  updateIndicators: function() {
+  updateIndicators() {
     this.sScale = this.model.marker.size.getScale();
     this.cScale = this.model.marker.color.getScale();
   },
@@ -424,7 +424,7 @@ var BubbleMapComponent = Component.extend({
   /**
    * Updates entities
    */
-  updateEntities: function() {
+  updateEntities() {
 
     var _this = this;
     var KEY = this.KEY;
@@ -506,7 +506,7 @@ var BubbleMapComponent = Component.extend({
 
   },
 
-  unselectBubblesWithNoData: function(frame) {
+  unselectBubblesWithNoData(frame) {
       var _this = this;
       var KEY = this.KEY;
       if (!frame) frame = this.values;
@@ -519,7 +519,7 @@ var BubbleMapComponent = Component.extend({
       });
   },
 
-  redrawDataPoints: function(duration, reposition) {
+  redrawDataPoints(duration, reposition) {
     var _this = this;
     if (!duration) duration = this.duration;
     if (!reposition) reposition = true;
@@ -586,7 +586,7 @@ var BubbleMapComponent = Component.extend({
    * UPDATE TIME:
    * Ideally should only update when time or data changes
    */
-  updateTime: function() {
+  updateTime() {
     var _this = this;
 
     this.time_1 = this.time == null ? this.model.time.value : this.time;
@@ -599,7 +599,7 @@ var BubbleMapComponent = Component.extend({
   },
 
 
-  fitSizeOfTitles: function() {
+  fitSizeOfTitles() {
 
     //reset font sizes first to make the measurement consistent
     var yTitleText = this.yTitleEl.select("text")
@@ -629,7 +629,7 @@ var BubbleMapComponent = Component.extend({
 
   },
 
-  initMap: function() {
+  initMap() {
     if (!this.topology) utils.warn("bubble map afterPreload: missing country shapes " + this.topology);
 
     // http://bl.ocks.org/mbostock/d4021aa4dccfd65edffd patterson
@@ -708,7 +708,7 @@ var BubbleMapComponent = Component.extend({
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
    */
-  updateSize: function() {
+  updateSize() {
 
     this.activeProfile = this.getActiveProfile(this.profiles, this.presentationProfileChanges);
     var margin = this.activeProfile.margin;
@@ -723,7 +723,7 @@ var BubbleMapComponent = Component.extend({
 
   },
 
-  repositionElements: function() {
+  repositionElements() {
 
     var margin = this.activeProfile.margin,
         infoElHeight = this.activeProfile.infoElHeight,
@@ -787,7 +787,7 @@ var BubbleMapComponent = Component.extend({
     }
   },
 
-  rescaleMap: function() {
+  rescaleMap() {
 
     var offset = this.model.ui.map.offset;
     var margin = this.activeProfile.margin;
@@ -871,7 +871,7 @@ var BubbleMapComponent = Component.extend({
 
   },
 
-  updateMarkerSizeLimits: function() {
+  updateMarkerSizeLimits() {
     var _this = this;
     var extent = this.model.marker.size.extent || [0, 1];
 
@@ -889,11 +889,11 @@ var BubbleMapComponent = Component.extend({
 
   },
 
-  _interact: function() {
+  _interact() {
       var _this = this;
 
       return {
-          _mouseover: function(d, i) {
+          _mouseover(d, i) {
               if (_this.model.time.dragging) return;
 
               _this.model.marker.highlightMarker(d);
@@ -910,7 +910,7 @@ var BubbleMapComponent = Component.extend({
                 _this._setTooltip(d);
               }
           },
-          _mouseout: function(d, i) {
+          _mouseout(d, i) {
               if (_this.model.time.dragging) return;
               _this._setTooltip();
               _this.hovered = null;
@@ -918,7 +918,7 @@ var BubbleMapComponent = Component.extend({
               _this.fitSizeOfTitles();
               _this.model.marker.clearHighlighted();
           },
-          _click: function(d, i) {
+          _click(d, i) {
               _this.model.marker.selectMarker(d);
           }
       };
@@ -926,7 +926,7 @@ var BubbleMapComponent = Component.extend({
   },
 
 
-  highlightMarkers: function() {
+  highlightMarkers() {
       var _this = this;
       this.someHighlighted = (this.model.marker.highlight.length > 0);
 
@@ -955,7 +955,7 @@ var BubbleMapComponent = Component.extend({
 
   },
 
-  _updateLabel: function(d, index, valueX, valueY, valueS, valueC, valueL, duration) {
+  _updateLabel(d, index, valueX, valueY, valueS, valueC, valueL, duration) {
     var _this = this;
     var KEY = this.KEY;
     if (d[KEY] == _this.druging) return;
@@ -976,7 +976,7 @@ var BubbleMapComponent = Component.extend({
     }
   },
 
-  selectMarkers: function() {
+  selectMarkers() {
       var _this = this;
       var KEY = this.KEY;
       this.someSelected = (this.model.marker.select.length > 0);
@@ -1000,7 +1000,7 @@ var BubbleMapComponent = Component.extend({
       this.nonSelectedOpacityZero = false;
   },
 
-  _setTooltip: function(d) {
+  _setTooltip(d) {
     var _this = this;
     if (d) {
       var tooltipText = d.label;
@@ -1062,7 +1062,7 @@ var BubbleMapComponent = Component.extend({
     }
   },
 
-  preload: function() {
+  preload() {
     var _this = this;
 
     var shape_path = this.model.ui.map.topology.path

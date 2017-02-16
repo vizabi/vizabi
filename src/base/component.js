@@ -15,7 +15,7 @@ var Component = Events.extend({
    * @param {Object} config Initial config, with name and placeholder
    * @param {Object} parent Reference to tool
    */
-  init: function(config, parent) {
+  init(config, parent) {
     this._id = this._id || utils.uniqueId('c');
     this._ready = false;
     this._readyOnce = false;
@@ -52,11 +52,11 @@ var Component = Events.extend({
     this.registerListeners();
   },
 
-  createModel: function(configModel) {
+  createModel(configModel) {
     this.model = this._modelMapping(configModel);
   },
 
-  registerListeners: function() {
+  registerListeners() {
     this.on({
       'readyOnce': this.readyOnce,
       'ready': this.ready,
@@ -69,7 +69,7 @@ var Component = Events.extend({
    * Recursively starts preloading in components
    * @return {[type]} [description]
    */
-  startPreload: function() {
+  startPreload() {
 
     var promises = [];
     promises.push(this.preload());
@@ -81,14 +81,14 @@ var Component = Events.extend({
     return Promise.all(promises);
   },
 
-  preload: function() {
+  preload() {
     return Promise.resolve();
   },
 
   /**
    * Executes after preloading is finished
    */
-  afterPreload: function() {
+  afterPreload() {
     if (this.model) {
       this.model.afterPreload();
     }
@@ -100,7 +100,7 @@ var Component = Events.extend({
   /**
    * Renders the component (after data is ready)
    */
-  render: function() {
+  render() {
     var _this = this;
     this.loadTemplate();
     this.loadSubComponents();
@@ -121,7 +121,7 @@ var Component = Events.extend({
    * Overloaded by Tool which starts loading of model
    * @return {[type]} [description]
    */
-  startLoading: function() {
+  startLoading() {
     var _this = this;
 
     // if a componente's model is ready, the component is ready
@@ -136,13 +136,13 @@ var Component = Events.extend({
 
   },
 
-  loadingDone: function() {
+  loadingDone() {
     utils.removeClass(this.placeholder, class_loading_first);
     utils.removeClass(this.placeholder, class_loading_data);
     this.setReady();
   },
 
-  renderError: function() {
+  renderError() {
     utils.removeClass(this.placeholder, class_loading_first);
     utils.removeClass(this.placeholder, class_loading_data);
     utils.addClass(this.placeholder, class_error);
@@ -151,13 +151,13 @@ var Component = Events.extend({
     });
   },
 
-  setError: function(opts) {
+  setError(opts) {
     if (typeof this.error === 'function') {
       this.error(opts);
     }
   },
 
-  setReady: function(value) {
+  setReady(value) {
     if (!this._readyOnce) {
       this.trigger('readyOnce');
       this._readyOnce = true;
@@ -170,7 +170,7 @@ var Component = Events.extend({
    * Loads the template
    * @returns defer a promise to be resolved when template is loaded
    */
-  loadTemplate: function() {
+  loadTemplate() {
     var tmpl = this.template;
     var data = this.template_data;
     var _this = this;
@@ -206,7 +206,7 @@ var Component = Events.extend({
     this.trigger('domReady');
   },
 
-  getActiveProfile: function(profiles, presentationProfileChanges) {
+  getActiveProfile(profiles, presentationProfileChanges) {
     // get layout values
     var layoutProfile = this.getLayoutProfile();
     var presentationMode = this.getPresentationMode();
@@ -223,7 +223,7 @@ var Component = Events.extend({
   /*
    * Loads all subcomponents
    */
-  loadSubComponents: function() {
+  loadSubComponents() {
     var _this = this;
     var config;
     var comp;
@@ -258,7 +258,7 @@ var Component = Events.extend({
    * Returns subcomponent by name
    * @returns {Boolean}
    */
-  findChildByName: function(name) {
+  findChildByName(name) {
     return utils.find(this.components, function(f) {
       return f.name === name;
     });
@@ -268,7 +268,7 @@ var Component = Events.extend({
    * Get layout profile of the current resolution
    * @returns {String} profile
    */
-  getLayoutProfile: function() {
+  getLayoutProfile() {
     //get profile from parent if layout is not available
     if (this.model.ui) {
       return this.model.ui.currentProfile();
@@ -281,7 +281,7 @@ var Component = Events.extend({
    * Get if presentation mode is set of the current tool
    * @returns {Bool} presentation mode
    */
-  getPresentationMode: function() {
+  getPresentationMode() {
     //get profile from parent if layout is not available
     if (this.model.ui) {
       return this.model.ui.getPresentationMode();
@@ -297,7 +297,7 @@ var Component = Events.extend({
    * @param {Object} ui Optional ui parameters to overwrite existing
    * @returns {Object} the UI object
    */
-  _uiMapping: function(id, ui) {
+  _uiMapping(id, ui) {
     //if overwritting UI
     if (ui) {
       return new Model('ui', ui);
@@ -318,7 +318,7 @@ var Component = Events.extend({
    * @param {String|Array} model_config Configuration of model
    * @returns {Object} the model
    */
-  _modelMapping: function(model_config) {
+  _modelMapping(model_config) {
     var _this = this;
     var values = {};
     //If model_config is an array, we map it
@@ -396,7 +396,7 @@ var Component = Events.extend({
         current = current[current_name];
       }
       return {
-        name: name,
+        name,
         model: current,
         type: current ? current.getType() : null
       };
@@ -408,7 +408,7 @@ var Component = Events.extend({
    * @param {Boolean} wrap wrap in spam tags
    * @returns {Function}
    */
-  getTranslationFunction: function(wrap) {
+  getTranslationFunction(wrap) {
     var t_func;
     try {
       t_func = this.model.get('locale').getTFunction();
@@ -434,7 +434,7 @@ var Component = Events.extend({
    * @param {Function} translation_function The translation function
    * @returns {Function}
    */
-  _translatedStringFunction: function(translation_function) {
+  _translatedStringFunction(translation_function) {
     return function(string) {
       var translated = translation_function(string);
       return '<span data-vzb-translate="' + string + '">' + translated + '</span>';
@@ -444,7 +444,7 @@ var Component = Events.extend({
   /**
    * Translate all strings in the template
    */
-  translateStrings: function() {
+  translateStrings() {
     var t = this.getTranslationFunction();
     var strings = this.placeholder.querySelectorAll('[data-vzb-translate]');
     if (strings.length === 0) {
@@ -464,29 +464,29 @@ var Component = Events.extend({
    * At this point, this.element and this.placeholder are available
    * as DOM elements
    */
-  readyOnce: function() {},
+  readyOnce() {},
 
   /**
    * Executes after the template and model (if any) are ready
    */
-  ready: function() {},
+  ready() {},
 
   /**
    * Executes when the resize event is triggered.
    * Ideally, it only contains operations related to size
    */
-  resize: function() {},
+  resize() {},
 
   /**
    * Executed after template is loaded
    * Ideally, it contains instantiations related to template
    */
-  domReady: function() {},
+  domReady() {},
 
   /**
    * Clears a component
    */
-  clear: function() {
+  clear() {
     this.freeze();
     if (this.model) this.model.freeze();
     utils.forEach(this.components, function(c) {

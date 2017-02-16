@@ -16,7 +16,7 @@ var Label = Dialog.extend({
  * @param config component configuration
  * @param context component context (parent)
  */
-init: function(config, parent) {
+init(config, parent) {
   this.name = 'label';
 
   // in dialog, this.model_expects = ["state", "data"];

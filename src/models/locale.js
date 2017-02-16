@@ -9,7 +9,7 @@ var LocaleModel = DataConnected.extend({
   /**
    * Default values for this model
    */
-  getClassDefaults: function() {
+  getClassDefaults() {
     var defaults = {
       id: "en",
       filePath: "assets/translation/"
@@ -26,14 +26,14 @@ var LocaleModel = DataConnected.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(name, values, parent, bind) {
+  init(name, values, parent, bind) {
     this._type = "locale";
 
     //same constructor, with same arguments
     this._super(name, values, parent, bind);
   },
 
-  _isLoading: function() {
+  _isLoading() {
     return (!this._loadedOnce || this._loadCall);
   },
 
@@ -41,7 +41,7 @@ var LocaleModel = DataConnected.extend({
     return this.loadData();
   },
 
-  loadData: function() {
+  loadData() {
     var promises;
 
     this.setReady(false);
@@ -68,7 +68,7 @@ var LocaleModel = DataConnected.extend({
       .then(() => this.trigger('translate'));
   },
 
-  handleNewStrings: function(receivedStrings) {
+  handleNewStrings(receivedStrings) {
     this.strings[this.id] = this.strings[this.id]
       ? utils.extend(this.strings[this.id], receivedStrings)
       : receivedStrings;
@@ -79,7 +79,7 @@ var LocaleModel = DataConnected.extend({
    * @param {String} id string identifier
    * @returns {string} translated string
    */
-  getUIString: function(stringId) {
+  getUIString(stringId) {
     if (this.strings && this.strings[this.id] && (this.strings[this.id][stringId] || this.strings[this.id][stringId]==="")) {
       return this.strings[this.id][stringId];
     } else {
@@ -103,7 +103,7 @@ var LocaleModel = DataConnected.extend({
     );
   },
 
-  isRTL: function() {
+  isRTL() {
     return (rtlLocales.indexOf(this.id) !== -1);
   }
 

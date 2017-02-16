@@ -10,7 +10,7 @@ var EntitiesModel = DataConnected.extend({
   /**
    * Default values for this model
    */
-  getClassDefaults: function() {
+  getClassDefaults() {
     var defaults = {
       show: {},
       dim: null,
@@ -28,14 +28,14 @@ var EntitiesModel = DataConnected.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(name, values, parent, bind) {
+  init(name, values, parent, bind) {
 
     this._type = "entities";
 
     this._super(name, values, parent, bind);
   },
 
-  afterPreload: function() {
+  afterPreload() {
     if (this.dim == null && this.autogenerate) {
       var dataSource = this.getClosestModel(this.autogenerate.data);
       this.dim = dataSource.getConceptByIndex(this.autogenerate.conceptIndex).concept;
@@ -46,7 +46,7 @@ var EntitiesModel = DataConnected.extend({
    * Gets the dimensions in this entities
    * @returns {String} String with dimension
    */
-  getDimension: function() {
+  getDimension() {
     return this.dim;
   },
 
@@ -54,14 +54,14 @@ var EntitiesModel = DataConnected.extend({
    * Gets the filter in this entities
    * @returns {Array} Array of unique values
    */
-  getFilter: function() {
+  getFilter() {
     return this.skipFilter ? [] : this.show;
   },
 
   /**
    * Shows or unshows an entity from the set
    */
-  showEntity: function(d) {
+  showEntity(d) {
     //clear selected countries when showing something new
     var newShow = utils.deepClone(this.show);
     var dimension = this.getDimension();
@@ -100,7 +100,7 @@ var EntitiesModel = DataConnected.extend({
    * Selects an entity from the set
    * @returns {Boolean} whether the item is shown or not
    */
-  isShown: function(d) {
+  isShown(d) {
     var dimension = this.getDimension();
     return this.show[dimension] && this.show[dimension]['$in'] && this.show[dimension]['$in'].indexOf(d[dimension]) !== -1;
   },
@@ -108,14 +108,14 @@ var EntitiesModel = DataConnected.extend({
   /**
    * Clears showing of items
    */
-  clearShow: function() {
+  clearShow() {
     var dimension = this.getDimension();
     var show = utils.deepClone(this.show);
     delete show[dimension];
     this.show = show;
   },
 
-  getFilteredEntities: function() {
+  getFilteredEntities() {
     var dimension = this.getDimension();
     if (this.show[dimension] && this.show[dimension]['$in'] && utils.isArray(this.show[dimension]['$in'])) {
       var showArray = this.show[dimension]['$in'];

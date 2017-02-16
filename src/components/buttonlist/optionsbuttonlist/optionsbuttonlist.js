@@ -23,7 +23,7 @@ var OptionsButtonList = ButtonList.extend({
    * @param config component configuration
    * @param context component context (parent)
    */
-  init: function(config, context) {
+  init(config, context) {
 
     //set properties
     var _this = this;
@@ -32,7 +32,7 @@ var OptionsButtonList = ButtonList.extend({
     this._super(config, context);
   },
 
-  readyOnce: function() {
+  readyOnce() {
     var _this = this;
     Object.keys(this._available_buttons).forEach(function(buttonId) {
       var button = _this._available_buttons[buttonId];
@@ -60,7 +60,7 @@ var OptionsButtonList = ButtonList.extend({
     this._super();
   },
 
-  proceedClick: function(id) {
+  proceedClick(id) {
     var _this = this;
     this.buttonListComp.proceedClick(id);
     var btn_data = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']").datum();
@@ -71,7 +71,7 @@ var OptionsButtonList = ButtonList.extend({
     }
   },
 
-  _toggleButtons: function() {
+  _toggleButtons() {
     //
   }
 

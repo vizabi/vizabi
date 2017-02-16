@@ -16,7 +16,7 @@ var Axes = Dialog.extend({
    * @param config component configuration
    * @param context component context (parent)
    */
-  init: function(config, parent) {
+  init(config, parent) {
     this.name = 'axes';
     var _this = this;
 

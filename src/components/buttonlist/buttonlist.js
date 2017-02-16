@@ -24,7 +24,7 @@ var ButtonList = Component.extend({
    * @param config component configuration
    * @param context component context (parent)
    */
-  init: function(config, context) {
+  init(config, context) {
 
     //set properties
     var _this = this;
@@ -180,7 +180,7 @@ var ButtonList = Component.extend({
 
   },
 
-  readyOnce: function() {
+  readyOnce() {
     var _this = this;
 
     this.element = d3.select(this.placeholder);
@@ -226,7 +226,7 @@ var ButtonList = Component.extend({
 
   },
 
-  proceedClick: function(id) {
+  proceedClick(id) {
     var _this = this;
     var btn = _this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
       classes = btn.attr("class"),
@@ -245,7 +245,7 @@ var ButtonList = Component.extend({
     }
   },
 
-  validatePopupButtons: function(buttons, dialogs) {
+  validatePopupButtons(buttons, dialogs) {
     var _this = this;
 
     var popupDialogs = dialogs.popup;
@@ -263,7 +263,7 @@ var ButtonList = Component.extend({
   /*
    * reset buttons show state
    */
-  _showAllButtons: function() {
+  _showAllButtons() {
     // show all existing buttons
     var _this = this;
     var buttons = this.element.selectAll(".vzb-buttonlist-btn");
@@ -276,7 +276,7 @@ var ButtonList = Component.extend({
   /*
   * determine which buttons are shown on the buttonlist
   */
-  _toggleButtons: function() {
+  _toggleButtons() {
     var _this = this;
     var parent = this.parent.element.node ? this.parent.element : d3.select(this.parent.element);
 
@@ -370,7 +370,7 @@ var ButtonList = Component.extend({
    * adds buttons configuration to the components and template_data
    * @param {Array} button_list list of buttons to be added
    */
-  _addButtons: function(button_list, button_expand) {
+  _addButtons(button_list, button_expand) {
     var _this = this;
     this._components_config = [];
     var details_btns = [];
@@ -430,7 +430,7 @@ var ButtonList = Component.extend({
   },
 
 
-  scrollToEnd: function() {
+  scrollToEnd() {
     var target = 0;
     var parent = d3.select(".vzb-tool");
 
@@ -449,7 +449,7 @@ var ButtonList = Component.extend({
    * Executed whenever the container is resized
    * Ideally, it contains only operations related to size
    */
-  resize: function() {
+  resize() {
     //TODO: what to do when resizing?
 
     //toggle presentaion off is switch to 'small' profile
@@ -460,17 +460,17 @@ var ButtonList = Component.extend({
     this._toggleButtons();
   },
 
-  setButtonActive: function(id, boolActive) {
+  setButtonActive(id, boolActive) {
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
 
     btn.classed(class_active, boolActive);
   },
 
-  toggleBubbleTrails: function() {
+  toggleBubbleTrails() {
     this.model.ui.chart.trails = !this.model.ui.chart.trails;
     this.setBubbleTrails();
   },
-  setBubbleTrails: function() {
+  setBubbleTrails() {
     var trails = (this.model.ui.chart||{}).trails;
     if (!trails && trails !== false) return;
     var id = "trails";
@@ -480,7 +480,7 @@ var ButtonList = Component.extend({
     btn.classed(class_active_locked, trails);
     btn.classed(class_hidden, this.model.state.marker.select.length == 0);
   },
-  toggleBubbleLock: function(id) {
+  toggleBubbleLock(id) {
     var active = (this.model.ui.chart||{}).lockActive;
 
     if (this.model.state.marker.select.length == 0 && !active) return;
@@ -492,7 +492,7 @@ var ButtonList = Component.extend({
 
     this.setBubbleLock();
   },
-  setBubbleLock: function() {
+  setBubbleLock() {
     var locked = (this.model.ui.chart||{}).lockNonSelected;
     var active = (this.model.ui.chart||{}).lockActive;
     if (!locked && locked !== 0) return;
@@ -521,11 +521,11 @@ var ButtonList = Component.extend({
     btn.select(".vzb-buttonlist-btn-icon")
       .html(iconset[locked ? "lock" : "unlock"]);
   },
-  toggleInpercent: function() {
+  toggleInpercent() {
     this.model.ui.chart.inpercent = !this.model.ui.chart.inpercent;
     this.setInpercent();
   },
-  setInpercent: function() {
+  setInpercent() {
     if (typeof ((this.model.ui.chart||{}).inpercent) == "undefined") return;
     var id = 'inpercent';
     var translator = this.model.locale.getTFunction();
@@ -533,18 +533,18 @@ var ButtonList = Component.extend({
 
     btn.classed(class_active_locked, this.model.ui.chart.inpercent);
   },
-  togglePresentationMode: function() {
+  togglePresentationMode() {
     this.model.ui.presentation = !this.model.ui.presentation;
     this.setPresentationMode();
   },
-  setPresentationMode: function() {
+  setPresentationMode() {
     var id = 'presentation';
     var translator = this.model.locale.getTFunction();
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
 
     btn.classed(class_active_locked, this.model.ui.presentation);
   },
-  toggleFullScreen: function(id, emulateClick) {
+  toggleFullScreen(id, emulateClick) {
 
     if (!window) return;
 

@@ -8,7 +8,7 @@ import * as utils from 'base/utils';
 
 var SimpleSlider = Component.extend({
 
-    init: function(config, context) {
+    init(config, context) {
       this.template = '<div class="vzb-ss-holder"><input type="range" class="vzb-ss-slider vzb-ss-slider-normal" step="1"></div>';
 
       this.model_expects = [{
@@ -38,7 +38,7 @@ var SimpleSlider = Component.extend({
      * Ideally, it contains HTML instantiations related to template
      * At this point, this.element and this.placeholder are available as a d3 object
      */
-    readyOnce: function() {
+    readyOnce() {
 
       //default values
       var min = 0;
@@ -92,7 +92,7 @@ var SimpleSlider = Component.extend({
       this.updateView();
     },
 
-    updateView: function() {
+    updateView() {
       var value = this.model.submodel[this.arg];
       var slider_properties = this.slider_properties;
       var scale;
@@ -108,7 +108,7 @@ var SimpleSlider = Component.extend({
       this.slider.node().value = value;
     },
 
-    _setModel: function(value, force, persistent) {
+    _setModel(value, force, persistent) {
       // rescale value if scale is supplied in slider_properties
       if (this.slider_properties && this.slider_properties.scale) value = this.slider_properties.scale(value);
 

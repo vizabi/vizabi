@@ -16,7 +16,7 @@ var Axes = Dialog.extend({
    * @param config component configuration
    * @param context component context (parent)
    */
-  init: function(config, parent) {
+  init(config, parent) {
     this.name = 'axesmc';
     var _this = this;
 
@@ -44,7 +44,7 @@ var Axes = Dialog.extend({
     this._super(config, parent);
   },
 
-  readyOnce: function() {
+  readyOnce() {
     this._super();
 
     var _this = this;
@@ -81,7 +81,7 @@ var Axes = Dialog.extend({
 
   },
 
-  updateView: function() {
+  updateView() {
     var _this = this;
 
     this.yMaxRadio.property('checked', function() {
@@ -94,7 +94,7 @@ var Axes = Dialog.extend({
     this.probeFieldEl.property("value", this.model.ui.chart.probeX);
   },
 
-  setModel: function(what, value) {
+  setModel(what, value) {
     var result;
 
     if (what == "yMaxMethod") {

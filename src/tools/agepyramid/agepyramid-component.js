@@ -21,7 +21,7 @@ var AgePyramid = Component.extend({
    * @param {Object} config The config passed to the component
    * @param {Object} context The component's parent
    */
-  init: function(config, context) {
+  init(config, context) {
     this.name = 'agepyramid';
     this.template = require('./agepyramid.html');
 
@@ -193,7 +193,7 @@ var AgePyramid = Component.extend({
   /**
    * DOM is ready
    */
-  readyOnce: function() {
+  readyOnce() {
     var _this = this;
     this.el = (this.el) ? this.el : d3.select(this.element);
     this.element = this.el;
@@ -221,7 +221,7 @@ var AgePyramid = Component.extend({
     });
 
     this._attributeUpdaters = {
-      _newWidth: function(d, i) {
+      _newWidth(d, i) {
         d["x_"] = 0;
         var width;
         if (_this.stackSkip) {
@@ -237,7 +237,7 @@ var AgePyramid = Component.extend({
         }
         return d.width_;
       },
-      _newX: function(d, i) {
+      _newX(d, i) {
         var prevSbl = this.previousSibling;
         if (prevSbl) {
           var prevSblDatum = d3.select(prevSbl).datum();
@@ -253,7 +253,7 @@ var AgePyramid = Component.extend({
   /*
    * Both model and DOM are ready
    */
-  ready: function() {
+  ready() {
     //TODO: get component ready if some submodel doesn't ready ??????
     if (!this.model.marker._ready) return;
 
@@ -294,7 +294,7 @@ var AgePyramid = Component.extend({
     });
   },
 
-  interpolateDiagonal: function(pValues, nValues, fraction) {
+  interpolateDiagonal(pValues, nValues, fraction) {
     var _this = this;
     var data, dataBetweenFrames = {};
     var val1, val2, shiftedAge;
@@ -339,7 +339,7 @@ var AgePyramid = Component.extend({
     return dataBetweenFrames;
   },
 
-  updateUIStrings: function() {
+  updateUIStrings() {
     var _this = this;
     this.translator = this.model.locale.getTFunction();
 
@@ -392,7 +392,7 @@ var AgePyramid = Component.extend({
   /**
    * Changes labels for indicators
    */
-  _updateIndicators: function() {
+  _updateIndicators() {
     var _this = this;
     this.duration = this.model.time.delayAnimations;
     this.yScale = this.model.marker.axis_y.getScale();
@@ -475,7 +475,7 @@ var AgePyramid = Component.extend({
     this.markers = this.model.marker.getKeys(ageDim);
   },
 
-  _createLimits: function() {
+  _createLimits() {
     var _this = this;
     var limits, domain;
     var axisX = this.model.marker.axis_x;
@@ -567,7 +567,7 @@ var AgePyramid = Component.extend({
     this.totals = totals;
   },
 
-  _updateLimits: function() {
+  _updateLimits() {
     var _this = this;
     var axisX = this.model.marker.axis_x;
     var domain;
@@ -581,7 +581,7 @@ var AgePyramid = Component.extend({
   },
 
 
-  _interpolateBetweenTotals: function(timeSteps, totals, time) {
+  _interpolateBetweenTotals(timeSteps, totals, time) {
     var nextStep = d3.bisectLeft(timeSteps, time);
     var fraction = (time - timeSteps[nextStep - 1]) / (timeSteps[nextStep] - timeSteps[nextStep - 1]);
     var total = {};
@@ -594,7 +594,7 @@ var AgePyramid = Component.extend({
   /**
    * Updates entities
    */
-  _updateEntities: function(reorder) {
+  _updateEntities(reorder) {
 
     var _this = this;
     var time = this.model.time;
@@ -833,35 +833,35 @@ var AgePyramid = Component.extend({
     }
   },
 
-  _setYear: function(timeValue) {
+  _setYear(timeValue) {
       var formattedTime = this.model.time.formatDate(timeValue);
       return function() { d3.select(this).text(formattedTime);};
   },
 
-  _interaction: function() {
+  _interaction() {
     var _this = this;
     return {
-      mouseover: function(d, i) {
+      mouseover(d, i) {
         if (utils.isTouchDevice()) return;
         _this.model.marker.highlightMarker(d);
         _this._showLabel(d);
       },
-      mouseout: function(d, i) {
+      mouseout(d, i) {
         if (utils.isTouchDevice()) return;
         _this.model.marker.clearHighlighted();
       },
-      click: function(d, i) {
+      click(d, i) {
         if (utils.isTouchDevice()) return;
         _this.model.marker.selectMarker(d);
       },
-      tap: function(d) {
+      tap(d) {
         d3.event.stopPropagation();
         _this.model.marker.selectMarker(d);
       }
     };
   },
 
-  _highlightBars: function(d) {
+  _highlightBars(d) {
     var _this = this;
 
     _this.someHighlighted = (_this.model.marker.highlight.length > 0);
@@ -874,7 +874,7 @@ var AgePyramid = Component.extend({
     }
   },
 
-  _showLabel: function(d) {
+  _showLabel(d) {
     var _this = this;
     var formatter = _this.ui.chart.inpercent ? d3.format(".1%") : _this.model.marker.axis_x.getTickFormatter();
     var sideDim = _this.SIDEDIM;
@@ -958,7 +958,7 @@ var AgePyramid = Component.extend({
     }
   },
 
-  resize: function() {
+  resize() {
 
     var _this = this;
 
@@ -1116,7 +1116,7 @@ var AgePyramid = Component.extend({
 
   },
 
-  updateBarsOpacity: function(duration) {
+  updateBarsOpacity(duration) {
     var _this = this;
     //if(!duration)duration = 0;
 

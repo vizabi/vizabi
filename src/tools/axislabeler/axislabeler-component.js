@@ -13,7 +13,7 @@ var AxisLabelerComponent = Component.extend({
    * @param {Object} config The options passed to the component
    * @param {Object} context The component's parent
    */
-  init: function(config, context) {
+  init(config, context) {
     this.name = 'axislabeler';
     this.template = require('./axislabeler.html');
 
@@ -46,7 +46,7 @@ var AxisLabelerComponent = Component.extend({
   /**
    * DOM is ready
    */
-  readyOnce: function() {
+  readyOnce() {
     var _this = this;
     this.element = d3.select(this.element);
 
@@ -76,13 +76,13 @@ var AxisLabelerComponent = Component.extend({
   /*
    * Both model and DOM are ready
    */
-  ready: function() {
+  ready() {
     console.log("Model ready");
     this.initScales();
     this.update();
   },
 
-  initScales: function() {
+  initScales() {
     var _this = this;
 
     var domain = this.model.scales.domain;
@@ -99,7 +99,7 @@ var AxisLabelerComponent = Component.extend({
   },
 
 
-  update: function() {
+  update() {
     var _this = this;
 
     var margin = this.model.show.toolMargin.getPlainObject();

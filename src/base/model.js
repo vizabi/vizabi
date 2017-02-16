@@ -8,7 +8,7 @@ var ModelLeaf = EventSource.extend({
   _parent: null,
   _persistent: true,
 
-  init: function(name, value, parent, binds, persistent) {
+  init(name, value, parent, binds, persistent) {
 
     // getter and setter for the value
     Object.defineProperty(this, 'value', {
@@ -16,7 +16,7 @@ var ModelLeaf = EventSource.extend({
       set: this.set
     });
     Object.defineProperty(this, 'persistent', {
-      get: function() { return this._persistent; }
+      get() { return this._persistent; }
     });
 
     this._super();
@@ -29,11 +29,11 @@ var ModelLeaf = EventSource.extend({
   },
 
   // if they want a persistent value and the current value is not persistent, return the last persistent value
-  get: function(persistent) {
+  get(persistent) {
     return (persistent && !this._persistent) ? this._persistentVal : this._val;
   },
 
-  set: function(val, force, persistent) {
+  set(val, force, persistent) {
     if (this.isSetAllowed(val, force)) {
       // persistent defaults to true
       persistent = (typeof persistent !== 'undefined') ? persistent : true;
@@ -52,12 +52,12 @@ var ModelLeaf = EventSource.extend({
     return false;
   },
 
-  isSetAllowed: function(val, force) {
+  isSetAllowed(val, force) {
     return force || (this._val !== val && JSON.stringify(this._val) !== JSON.stringify(val));
   },
 
   // duplicate from Model. Should be in a shared parent class.
-  setTreeFreezer: function(freezerStatus) {
+  setTreeFreezer(freezerStatus) {
     if (freezerStatus) {
       this.freeze(['hook_change']);
     } else {
@@ -84,7 +84,7 @@ var Model = EventSource.extend({
    * @param {Object} bind Initial events to bind
    * @param {Boolean} freeze block events from being dispatched
    */
-  init: function(name, values, parent, bind) {
+  init(name, values, parent, bind) {
     this._type = this._type || 'model';
     this._id = this._id || utils.uniqueId('m');
     this._data = {};
@@ -129,7 +129,7 @@ var Model = EventSource.extend({
    * @param attr Optional attribute
    * @returns attr value or all values if attr is undefined
    */
-  get: function(attr) {
+  get(attr) {
     if (!attr) {
       return this._data;
     }
@@ -147,7 +147,7 @@ var Model = EventSource.extend({
    * @param {Boolean} persistent true if the change is a persistent change
    * @returns defer defer that will be resolved when set is done
    */
-  set: function(attr, val, force, persistent) {
+  set(attr, val, force, persistent) {
     var setting = this._setting;
     var attrs;
     var freezeCall = false; // boolean, indicates if this .set()-call froze the modelTree
@@ -218,9 +218,9 @@ var Model = EventSource.extend({
 
   // standard model doesn't do anything with data
   // overloaded by hook/entities
-  checkDataChanges: function() { },
+  checkDataChanges() { },
 
-  setTreeFreezer: function(freezerStatus) {
+  setTreeFreezer(freezerStatus) {
     // first traverse down
     // this ensures deepest events are triggered first
     utils.forEach(this._data, function(submodel) {
@@ -239,7 +239,7 @@ var Model = EventSource.extend({
    * Gets the type of this model
    * @returns {String} type of the model
    */
-  getType: function() {
+  getType() {
     return this._type;
   },
 
@@ -249,7 +249,7 @@ var Model = EventSource.extend({
    * @param {Function} validationFunction Validation function
    * @returns {Array} submodels
    */
-  getSubmodels: function(object = false, validationFunction) {
+  getSubmodels(object = false, validationFunction) {
     var submodels = (object) ? {} : [];
     var validationFunction = validationFunction || function() {
       return true;
@@ -271,7 +271,7 @@ var Model = EventSource.extend({
    * Gets the current model and submodel values as a JS object
    * @returns {Object} All model as JS object, leafs will return their values
    */
-  getPlainObject: function(persistent) {
+  getPlainObject(persistent) {
     var obj = {};
     var _this = this;
     utils.forEach(this._data, function(dataItem, i) {
@@ -294,7 +294,7 @@ var Model = EventSource.extend({
     return obj;
   },
 
-  formatDate: function(dateObject) {
+  formatDate(dateObject) {
     return dateObject.toString();
   },
 
@@ -302,7 +302,7 @@ var Model = EventSource.extend({
    * Gets the requested object, including the leaf-object, not the value
    * @returns {Object} Model or ModelLeaf object.
    */
-  getModelObject: function(name) {
+  getModelObject(name) {
     if (name)
       return this._data[name];
     else
@@ -312,7 +312,7 @@ var Model = EventSource.extend({
   /**
    * Clears this model, submodels, data and events
    */
-  clear: function() {
+  clear() {
     var submodels = this.getSubmodels();
     for (var i in submodels) {
       submodels[i].clear();
@@ -328,7 +328,7 @@ var Model = EventSource.extend({
    * Interface for the validation function implemented by a model
    * @returns Promise or nothing
    */
-  validate: function() {},
+  validate() {},
 
   /* ==========================
    * Model loading
@@ -336,7 +336,7 @@ var Model = EventSource.extend({
    */
 
    // normal model is never loading
-  _isLoading: function() {
+  _isLoading() {
     return false;
   },
 
@@ -345,7 +345,7 @@ var Model = EventSource.extend({
    * @param {String} optional process id (to check only one)
    * @returns {Boolean} is it loading?
    */
-  isLoading: function() {
+  isLoading() {
     if (this._isLoading())
       return true;
 
@@ -364,7 +364,7 @@ var Model = EventSource.extend({
   /**
    * Sets the model as ready or not depending on its loading status
    */
-  setReady: function(value) {
+  setReady(value) {
     if (value === false) {
       this._ready = false;
       if (this._parent && this._parent.setReady) {
@@ -385,13 +385,13 @@ var Model = EventSource.extend({
     }
   },
 
-  setInterModelListeners: function() {
+  setInterModelListeners() {
     utils.forEach(this.getSubmodels(),
       subModel => subModel.setInterModelListeners()
     );
   },
 
-  startPreload: function() {
+  startPreload() {
 
     var promises = [];
     promises.push(this.preloadData());
@@ -403,7 +403,7 @@ var Model = EventSource.extend({
     return Promise.all(promises);
   },
 
-  preloadData: function() {
+  preloadData() {
     return Promise.resolve();
   },
 
@@ -416,7 +416,7 @@ var Model = EventSource.extend({
    * @param {Object} options (includes splashScreen)
    * @returns defer
    */
-  startLoading: function(opts) {
+  startLoading(opts) {
 
     var promises = [];
     promises.push(this.loadData(opts));
@@ -437,12 +437,12 @@ var Model = EventSource.extend({
       });
   },
 
-  loadData: function(opts) {
+  loadData(opts) {
     if (this.isHook()) utils.warn('Hook ' + this._name + ' is not loading because it\'s not extending Hook prototype.');
     return Promise.resolve();
   },
 
-  loadSubmodels: function(options) {
+  loadSubmodels(options) {
     var promises = [];
     var subModels = this.getSubmodels();
     utils.forEach(subModels, function(subModel) {
@@ -451,7 +451,7 @@ var Model = EventSource.extend({
     return promises.length > 0 ? Promise.all(promises) : Promise.resolve();
   },
 
-  onSuccessfullLoad: function() {
+  onSuccessfullLoad() {
 
     this.validate();
     utils.timeStamp('Vizabi Model: Model loaded: ' + this._name + '(' + this._id + ')');
@@ -476,7 +476,7 @@ var Model = EventSource.extend({
   /**
    * executes after preloading processing is done
    */
-  afterPreload: function() {
+  afterPreload() {
     var submodels = this.getSubmodels();
     utils.forEach(submodels, function(s) {
       s.afterPreload();
@@ -491,7 +491,7 @@ var Model = EventSource.extend({
   /**
    * is this model hooked to data?
    */
-  isHook: function() {
+  isHook() {
     return Boolean(this.use);
   },
 
@@ -500,7 +500,7 @@ var Model = EventSource.extend({
    * @param object [object=false] Should it return an object?
    * @returns {Array|Object} hooks array or object
    */
-  getSubhooks: function(object) {
+  getSubhooks(object) {
     return this.getSubmodels(object, function(s) {
       return s.isHook();
     });
@@ -512,7 +512,7 @@ var Model = EventSource.extend({
    * @param {String} type specific type to lookup
    * @returns {Array} all unique values with specific hook use
    */
-  getHookWhich: function(type) {
+  getHookWhich(type) {
     var values = [];
     if (this.use && this.use === type) {
       values.push(this.which);
@@ -529,7 +529,7 @@ var Model = EventSource.extend({
    * gets all sub values for indicators in this model
    * @returns {Array} all unique values of indicator hooks
    */
-  getIndicators: function() {
+  getIndicators() {
     return this.getHookWhich('indicator');
   },
 
@@ -537,7 +537,7 @@ var Model = EventSource.extend({
    * gets all sub values for indicators in this model
    * @returns {Array} all unique values of property hooks
    */
-  getProperties: function() {
+  getProperties() {
     return this.getHookWhich('property');
   },
 
@@ -545,7 +545,7 @@ var Model = EventSource.extend({
    * Gets the dimension of this model if it has one
    * @returns {String|Boolean} dimension
    */
-  getDimension: function() {
+  getDimension() {
     return this.dim || false; //defaults to dim if it exists
   },
 
@@ -553,7 +553,7 @@ var Model = EventSource.extend({
    * Gets the dimension (if entity) or which (if hook) of this model
    * @returns {String|Boolean} dimension
    */
-  getDimensionOrWhich: function() {
+  getDimensionOrWhich() {
     return this.dim || (this.use != 'constant' ? this.which : false); //defaults to dim or which if it exists
   },
 
@@ -561,7 +561,7 @@ var Model = EventSource.extend({
    * Gets the filter for this model if it has one
    * @returns {Object} filters
    */
-  getFilter: function() {
+  getFilter() {
     return {}; //defaults to no filter
   },
 
@@ -571,7 +571,7 @@ var Model = EventSource.extend({
    * @param value Original value
    * @returns hooked value
    */
-  mapValue: function(value) {
+  mapValue(value) {
     return value;
   },
 
@@ -579,7 +579,7 @@ var Model = EventSource.extend({
    * Gets formatter for this model
    * @returns {Function|Boolean} formatter function
    */
-  getParser: function() {
+  getParser() {
     //TODO: default formatter is moved to utils. need to return it to hook prototype class, but retest #1212 #1230 #1253
     return null;
   },
@@ -587,14 +587,14 @@ var Model = EventSource.extend({
   /**
    * @return {Object} defaults of this model, and when available overwritten by submodel defaults
    */
-  getDefaults: function() {
+  getDefaults() {
     return utils.deepExtend({}, this.getClassDefaults(), this.getSubmodelDefaults());
   },
 
   /**
    * @return {Object} All defaults coming from submodels
    */
-  getSubmodelDefaults: function() {
+  getSubmodelDefaults() {
     var d = {};
     utils.forEach(this.getSubmodels(true), function(model, name) {
       d[name] = model.getDefaults();
@@ -606,7 +606,7 @@ var Model = EventSource.extend({
    * @param  {name} name of the child to check
    * @return {Boolean} if the child is a leaf with a plain object as value
    */
-  isObjectLeaf: function(name) {
+  isObjectLeaf(name) {
     return (this.objectLeafs.indexOf(name) !== -1);
   },
 
@@ -615,7 +615,7 @@ var Model = EventSource.extend({
    * @param {String} prefix
    * @returns {Object} submodel
    */
-  getClosestModel: function(name) {
+  getClosestModel(name) {
     var model = this.findSubmodel(name);
     if (model) {
       return model;
@@ -630,7 +630,7 @@ var Model = EventSource.extend({
    * @param {String} prefix
    * @returns {Object} submodel or false if nothing is found
    */
-  findSubmodel: function(name) {
+  findSubmodel(name) {
     for (var i in this._data) {
       //found submodel
       if (i === name && Model.isModel(this._data[i])) {

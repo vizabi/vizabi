@@ -85,9 +85,9 @@ var brush = function(_d3_svg_brush) {
 }(d3.svg.brush);
 
 export default {
-  brush: brush,
-  drag: drag,
-  zoom: zoom
+  brush,
+  drag,
+  zoom
 };
 
 export { brush, drag, zoom };
