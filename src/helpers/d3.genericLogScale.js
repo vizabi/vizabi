@@ -164,7 +164,6 @@ export default function genericLog() {
           return scales[scales.length - 1];
         } else {
           for (var i = 0; i < scales.length; i++) {
-            scale = scales[i];
             if (x <= scales[i].domain[0] && x >= scales[i].domain[scales[i].domain.length - 1]) {
               return scales[i];
             }
