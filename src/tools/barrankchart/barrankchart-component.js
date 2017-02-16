@@ -568,9 +568,7 @@ const BarRankChart = Component.extend({
     const labelKey = big ? 'labelFull' : 'labelSmall';
 
     const bar = this.sortedEntities
-      .reduce((a, b) => {
-        return a[widthKey] < b[widthKey] ? b : a;
-      });
+      .reduce((a, b) => a[widthKey] < b[widthKey] ? b : a);
 
     const text = bar.barLabel.text();
     const width = bar.barLabel.text(bar[labelKey]).node().getBBox().width;
@@ -656,12 +654,11 @@ const BarRankChart = Component.extend({
         isNew: true
       };
     }).sort(({ value: a }, { value: b }) => b - a)
-      .map((entity, index) => {
-        return Object.assign(entity, {
+      .map((entity, index) =>
+        Object.assign(entity, {
           index,
           changedIndex: index !== entity.index
-        });
-      });
+        }));
   },
 
   _selectBars() {
