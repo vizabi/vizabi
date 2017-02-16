@@ -489,7 +489,7 @@ var AgePyramid = Component.extend({
     var totals = {};
     var inpercentMaxLimits = {};
     var maxLimits = {};
-    sideKeysNF.map((s) => {
+    sideKeysNF.forEach((s) => {
       maxLimits[s] = [];
       inpercentMaxLimits[s] = [];
     });
@@ -560,7 +560,7 @@ var AgePyramid = Component.extend({
 
     this.maxLimits = {};
     this.inpercentMaxLimits = {};
-    sideKeysNF.map((s) => {
+    sideKeysNF.forEach((s) => {
       _this.maxLimits[s] = Math.max.apply(Math, maxLimits[s])
       _this.inpercentMaxLimits[s] = Math.max.apply(Math, inpercentMaxLimits[s]);
     });

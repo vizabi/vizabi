@@ -623,7 +623,7 @@ updateSize: function (meshLength) {
         });
 
         var sortGroupKeys = {};
-        _this.groupedPointers.map(function (m) {
+        _this.groupedPointers.forEach(function (m) {
             sortGroupKeys[m.key] = m.values[0].sortValue[1];
         });
 
@@ -967,7 +967,7 @@ updateSize: function (meshLength) {
         this.cosineShape = [];
         this.cosineArea = 0;
 
-        this.mesh.map(function (dX, i) {
+        this.mesh.forEach(function (dX, i) {
             _this.spawnMask[i] = dX < tailCutX ? 1 : (dX > tailFade * 7 ? 0 : Math.exp((tailCutX - dX) / tailFade))
             _this.cosineShape[i] = (dX > tailCutX && dX < tailFatX ? (1 + Math.cos(Math.log(dX) * k + m)) : 0);
             _this.cosineArea += _this.cosineShape[i];
@@ -986,7 +986,7 @@ updateSize: function (meshLength) {
         var distribution = [];
         var acc = 0;
 
-        this.mesh.map(function (dX, i) {
+        this.mesh.forEach(function (dX, i) {
             distribution[i] = _this._math.pdf.lognormal(dX, mu, sigma);
             acc += _this.spawnMask[i] * distribution[i];
         });

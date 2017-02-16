@@ -101,6 +101,7 @@ export default function() {
             polygon.push(hole);
             return true;
           }
+          return false;
         }) || polygons.push([ hole ]);
       });
       d3_geo_projectLines = [];

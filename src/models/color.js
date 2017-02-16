@@ -104,7 +104,7 @@ var ColorModel = Hook.extend({
         //extend partial current palette with default palette and
         //switch current palette elements which equals
         //default palette elments to nonpersistent state
-        Object.keys(defaultPalette).map(function(key) {
+        Object.keys(defaultPalette).forEach(function(key) {
           if(!currentPalette[key]||defaultPalette[key]==currentPalette[key]) palette[key] = defaultPalette[key];
         });
         _this.set("palette", palette, false, false);
