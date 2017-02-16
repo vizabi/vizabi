@@ -1201,7 +1201,7 @@ export var nestArrayToObj = function(arr) {
   var res = {};
   for(var i = 0; i < arr.length; i++) {
     res[arr[i].key] = nestArrayToObj(arr[i].values);
-  };
+  }
   return res;
 }
 
@@ -1517,4 +1517,4 @@ export function transform(node) {
   }(a, b, c, d, e, f);
 }
 
-export function capitalize(string) { return string && string[0].toUpperCase() + string.slice(1).toLowerCase(); };
+export function capitalize(string) { return string && string[0].toUpperCase() + string.slice(1).toLowerCase(); }

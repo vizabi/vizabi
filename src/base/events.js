@@ -331,7 +331,7 @@ function freezeAll(exceptions) {
   utils.forEach(exceptions, function(e) {
     _freezeAllExceptions[e] = true;
   });
-};
+}
 
 /**
  * triggers all frozen events form all instances
@@ -349,6 +349,6 @@ function unfreezeAll() {
     instance.unfreeze();
   }
   _frozenEventInstances = {};
-};
+}
 
 export default EventSource;

@@ -1892,4 +1892,4 @@ export default function() {
   (d3.geoWinkel3 = function() {
     return projection(winkel3);
   }).raw = winkel3;
-};
+}

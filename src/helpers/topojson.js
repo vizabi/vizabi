@@ -474,7 +474,7 @@ export default(function() {
     }
 
     return topology;
-  };
+  }
 
   function cartesianRingArea(ring) {
     var i = -1,

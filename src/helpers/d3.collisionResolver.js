@@ -153,4 +153,4 @@ export default function collisionResolver() {
     };
     return resolver;
   }();
-};
+}

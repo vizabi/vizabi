@@ -847,7 +847,7 @@ var DataModel = Model.extend({
           };
         })(order[i])
       );
-    };
+    }
 
     return utils.nestArrayToObj(nest.entries(this._collection[dataId]['data']));
   },

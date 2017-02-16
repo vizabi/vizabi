@@ -237,7 +237,7 @@ var Dialogs = Component.extend({
       dlg_config.id = dlg;
       details_dlgs.push(dlg_config);
     }
-    ;
+
 
     this.element.selectAll('div').data(details_dlgs)
       .enter().append("div")

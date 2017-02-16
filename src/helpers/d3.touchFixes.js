@@ -18,7 +18,7 @@ var drag = function (_d3_behaviour_drag) {
         _super.call(this);
         this.on("mousedown.drag", null);
         this.on("touchcancel", touchcancel);
-      };
+      }
 
       return d3.rebind(drag, _super, "origin", "on");
     }(_d3_behaviour_drag());
@@ -40,7 +40,7 @@ var zoom = function (_d3_behaviour_zoom) {
         zoom.on("zoomend.clearmousedown", function() {
           g.on("mousedown.zoom", null);
         });
-      };
+      }
 
       return d3.rebind(zoom, _super, "translate", "scale", "scaleExtent", "center", "size", "x", "y", "on", "event");
     }(_d3_behaviour_zoom());
@@ -77,7 +77,7 @@ var brush = function (_d3_svg_brush) {
           var g = d3.select(this).on("mousedown.brush", null);
         });
         brush.on("brushstart.touchcancel", brushstart);
-      };
+      }
 
       return d3.rebind(brush, _super, "x","y", "extent", "clamp", "clear", "empty", "on", "event");
     }(_d3_svg_brush());

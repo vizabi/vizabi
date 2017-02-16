@@ -143,7 +143,7 @@ var label = function(context) {
         });
 
       return label;
-    };
+    }
 
     label.line = function(container) {
       container.append("line").attr("class", _cssPrefix + "-label-line");

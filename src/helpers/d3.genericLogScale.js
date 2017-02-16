@@ -333,4 +333,4 @@ export default function genericLog() {
     return d3.rebind(scale, logScale, 'base', 'rangeRound', 'clamp', 'nice',
       'tickFormat');
   }(d3.scale.log().domain([0.1, 200]).range([0, 1000]));
-};
+}

@@ -143,7 +143,7 @@ export default function axisSmart(_orient) {
           .attr("y1", orient == HORIZONTAL ? 0 : d3.min(scale.range()) - (options.bump||0))
           .attr("y2", orient == HORIZONTAL ? 0 : d3.max(scale.range()) + (options.bump||0))
       }
-    };
+    }
 
 
     axis.highlightValueRun = function(g) {
@@ -336,7 +336,7 @@ export default function axisSmart(_orient) {
           .tickValuesMinor(null)
           .pivot(null)
           .repositionLabels(null);
-      };
+      }
       if(options.scaleType == 'ordinal') return axis.tickValues(null);
 
       if(options.logBase == null) options.logBase = DEFAULT_LOGBASE;
@@ -409,7 +409,7 @@ export default function axisSmart(_orient) {
         }
         if(base == null) base = options.logBase;
         return Math.log(x) / Math.log(base);
-      };
+      }
 
       // estimate the longest formatted label in pixels
       var estLongestLabelLength =
@@ -560,7 +560,7 @@ export default function axisSmart(_orient) {
             Math.max(Math.abs(max), Math.abs(min)) / eps :
             Math.max(Math.abs(max), Math.abs(min)) / Math.min(Math.abs(max), Math.abs(min));
           options.method = 10 <= coverage && coverage <= 1024 ? this.METHOD_DOUBLING : this.METHOD_REPEATING;
-        };
+        }
 
 
         //meow('spawn pos/neg: ', spawnPos, spawnNeg);
@@ -1028,4 +1028,4 @@ export default function axisSmart(_orient) {
 
   }(d3["axis" + utils.capitalize(_orient)]());
 
-};
+}

@@ -124,7 +124,7 @@ var ZoomButtonList = Component.extend({
       details_btn.id = btn;
       details_btn.icon = iconset[details_btn.icon];
       details_btns.push(details_btn);
-    };
+    }
 
     var t = this.getTranslationFunction(true);
 

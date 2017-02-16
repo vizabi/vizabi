@@ -524,7 +524,7 @@ function weekFormat() {
 
   return format;
 
-};
+}
 
 /*
  * Quarter Format to format and parse quarter dates

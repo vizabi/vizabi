@@ -101,7 +101,7 @@ var MoreOptions = Dialog.extend({
         dlg_config.id = dlg;
         details_dlgs.push(dlg_config);
       }
-    };
+    }
 
     this.accordionEl.selectAll('div').data(details_dlgs)
       .enter().append("div")

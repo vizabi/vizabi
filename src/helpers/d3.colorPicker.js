@@ -504,5 +504,5 @@ export default function colorPicker() {
       return colorPicker;
     };
     return colorPicker;
-  };
-};
+  }
+}
