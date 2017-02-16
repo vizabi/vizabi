@@ -566,7 +566,7 @@ var ButtonList = Component.extend({
       launchIntoFullscreen(pholder);
       subscribeFullscreenChangeEvent.call(this, this.toggleFullScreen.bind(this, id, true));
     } else {
-      this.resizeInExitHandler = emulateClick ? false : true;
+      this.resizeInExitHandler = !emulateClick;
       exitFullscreen.call(this);
     }
     utils.classed(pholder, class_vzb_fullscreen, fs);

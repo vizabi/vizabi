@@ -275,8 +275,8 @@ var AgePyramid = Component.extend({
     this.AGEDIM = this.age.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
     this.groupBy = this.age.grouping || 1;
-    this.stackSkip = this.STACKDIM == this.SIDEDIM ? true : false;
-    this.sideSkip = _this.model.marker.side.use == "constant" ? true : false;
+    this.stackSkip = this.STACKDIM == this.SIDEDIM;
+    this.sideSkip = _this.model.marker.side.use == "constant";
     this.updateUIStrings();
     this._updateIndicators();
 

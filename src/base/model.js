@@ -492,7 +492,7 @@ var Model = EventSource.extend({
    * is this model hooked to data?
    */
   isHook: function() {
-    return this.use ? true : false;
+    return Boolean(this.use);
   },
 
   /**

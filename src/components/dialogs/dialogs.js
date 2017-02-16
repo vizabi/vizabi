@@ -282,7 +282,7 @@ var Dialogs = Component.extend({
    */
   openDialog: function (id) {
     //close pinned dialogs for small profile
-    var forceClose = this.getLayoutProfile() === 'small' ? true : false;
+    var forceClose = this.getLayoutProfile() === 'small';
     this.closeAllDialogs(forceClose);
 
     var dialog = this.element.selectAll(".vzb-popup.vzb-dialogs-dialog[data-dlg='" + id + "']");

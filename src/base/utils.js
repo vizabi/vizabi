@@ -349,10 +349,10 @@ export var extend = function(dest) {
 // https://github.com/unclechu/node-deep-extend/blob/master/lib/deep-extend.js
 
 function isSpecificValue(val) {
-  return (
+  return Boolean((
     val instanceof Date
     || val instanceof RegExp
-  ) ? true : false;
+  ));
 }
 
 function cloneSpecificValue(val) {

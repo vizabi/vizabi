@@ -29,7 +29,7 @@ var Marker = Model.extend({
     this.on('readyOnce', () => {
       var exceptions = { exceptType: 'time' };
       var allDimensions = _this._getAllDimensions(exceptions);
-      _this._multiDim = allDimensions.length > 1 ? true : false;
+      _this._multiDim = allDimensions.length > 1;
     });
   },
 
