@@ -1,4 +1,4 @@
-import {isTouchDevice as isTouchDevice} from 'base/utils';
+import { isTouchDevice } from 'base/utils';
 
 //TODO: Fix for scroll on mobile chrome on d3 v3.5.17. It must be retested/removed on d3 v4.x.x
 //see explanation here https://github.com/vizabi/vizabi/issues/2020#issuecomment-250205191
