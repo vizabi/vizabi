@@ -78,13 +78,13 @@ var DataWarning = Component.extend({
     this.container.select(".vzb-data-warning-link div")
       .text(this.translator("hints/dataWarning"));
 
-    var title = this.translator("datawarning/title/"+this.parent.name);
+    var title = this.translator("datawarning/title/" + this.parent.name);
     this.container.select(".vzb-data-warning-title")
       .html(title)
-      .classed("vzb-hidden", !title || title==("datawarning/title/"+this.parent.name));
+      .classed("vzb-hidden", !title || title == ("datawarning/title/" + this.parent.name));
 
     this.container.select(".vzb-data-warning-body")
-      .html(this.translator("datawarning/body/"+this.parent.name));
+      .html(this.translator("datawarning/body/" + this.parent.name));
   },
 
   toggle(arg) {

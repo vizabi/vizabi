@@ -86,13 +86,13 @@ var AxisModel = Hook.extend({
         //default domain is based on limits
         domain = [limits.min, limits.max];
         //min and max can override the domain if defined
-        domain[0] = this.domainMin!=null ? +this.domainMin : domain[0];
-        domain[1] = this.domainMax!=null ? +this.domainMax : domain[1];
+        domain[0] = this.domainMin != null ? +this.domainMin : domain[0];
+        domain[1] = this.domainMax != null ? +this.domainMax : domain[1];
       } else {
-        domain = this.use === "constant"? [this.which] : this.getUnique(this.which);
+        domain = this.use === "constant" ? [this.which] : this.getUnique(this.which);
       }
 
-      scaleType = (d3.min(domain)<=0 && d3.max(domain)>=0 && scaleType === "log")? "genericLog" : scaleType;
+      scaleType = (d3.min(domain) <= 0 && d3.max(domain) >= 0 && scaleType === "log") ? "genericLog" : scaleType;
       this.scale = d3.scale[scaleType || "linear"]().domain(domain);
     }
 

@@ -147,7 +147,7 @@ var DraggableList = Component.extend({
         d3.select(this).attr('data', val['data']).text(labels[val['data']]);
       });
 
-    var draggable = _this.draggable?true:null;
+    var draggable = _this.draggable ? true : null;
     this.element.selectAll('div')
       .style('top', '')
       .attr('draggable', draggable)

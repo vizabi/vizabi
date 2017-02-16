@@ -56,7 +56,7 @@ var Hook = DataConnected.extend({
     var newDataSource = this.getClosestModel(obj.data || this.data);
     var conceptProps = newDataSource.getConceptprops(newValue.concept);
 
-    if (newValue.which==="_default") {
+    if (newValue.which === "_default") {
       obj.use = "constant";
     } else {
       if (conceptProps.use) obj.use = conceptProps.use;
@@ -118,7 +118,7 @@ var Hook = DataConnected.extend({
 
     var query = this.getQuery(opts.splashScreen);
 
-    if (query===true) return Promise.resolve();
+    if (query === true) return Promise.resolve();
 
     //useful to check if in the middle of a load call
     this._loadCall = true;
@@ -183,7 +183,7 @@ var Hook = DataConnected.extend({
     var allDimensions = utils.unique(this._getAllDimensions(exceptions));
     var dimensions = (prop && allDimensions.length > 1) ? [(this.spaceRef ? this._space[this.spaceRef].dim : this.which)] : allDimensions;
 
-    dimensions = dimensions.filter(f => f!=="_default");// && f!==null);
+    dimensions = dimensions.filter(f => f !== "_default");// && f!==null);
     if (!dimensions || !dimensions.length) {
       utils.warn('getQuery() produced no query because no keys are available');
       return true;
@@ -191,7 +191,7 @@ var Hook = DataConnected.extend({
 
     select = {
       key: dimensions,
-      value: dimensions.indexOf(this.which)!=-1 || this.use === "constant" ? [] : [this.which]
+      value: dimensions.indexOf(this.which) != -1 || this.use === "constant" ? [] : [this.which]
     };
 
     // animatable
@@ -365,7 +365,7 @@ var Hook = DataConnected.extend({
     return function format(x, index, group, removePrefix, percentageMode) {
 
     percentageMode = _this.getConceptprops().format;
-    if (percentageMode===SHARE) x*=100;
+    if (percentageMode === SHARE) x *= 100;
 
     // Format time values
     // Assumption: a hook has always time in its space
@@ -377,9 +377,9 @@ var Hook = DataConnected.extend({
     }
 
     // Strings, null, NaN and undefined are bypassing any formatter
-    if (utils.isString(x) || !x && x!==0) return x;
+    if (utils.isString(x) || !x && x !== 0) return x;
 
-    if (Math.abs(x)<0.00000000000001) return "0";
+    if (Math.abs(x) < 0.00000000000001) return "0";
 
     var format = "r"; //rounded format. use "f" for fixed
     var prec = 3; //round to so many significant digits
@@ -392,7 +392,7 @@ var Hook = DataConnected.extend({
     // don't break formatting please
     //---------------------
     // the tiny constant compensates epsilon-error when doing logsrithms
-    switch (Math.floor(Math.log(Math.abs(x))/Math.LN10 + 0.00000000000001)) {
+    switch (Math.floor(Math.log(Math.abs(x)) / Math.LN10 + 0.00000000000001)) {
       case -13: x *= 1000000000000; prefix = "p"; break; //0.1p
       case -10: x *= 1000000000; prefix = "n"; break; //0.1n
       case -7: x *= 1000000; prefix = "µ"; break; //0.1µ
@@ -423,11 +423,11 @@ var Hook = DataConnected.extend({
 
     var formatted = d3.format("." + prec + format)(x);
     //remove trailing zeros if dot exists to avoid numbers like 1.0M, 3.0B, 1.500, 0.9700, 0.0
-    if (formatted.indexOf(".")>-1) formatted = formatted.replace(/0+$/, "").replace(/\.$/, "");
+    if (formatted.indexOf(".") > -1) formatted = formatted.replace(/0+$/, "").replace(/\.$/, "");
 
 
     // use manual formatting for the cases above
-    return (formatted + prefix + (percentageMode===PERCENT || percentageMode===SHARE?"%":""));
+    return (formatted + prefix + (percentageMode === PERCENT || percentageMode === SHARE ? "%" : ""));
     };
   },
 
@@ -571,7 +571,7 @@ var Hook = DataConnected.extend({
    * @returns {Object} concept properties
    */
   getConceptprops() {
-    return this.use !== 'constant' && this.dataSource? this.dataSource.getConceptprops(this.which) : {};
+    return this.use !== 'constant' && this.dataSource ? this.dataSource.getConceptprops(this.which) : {};
   },
 
   /**
@@ -586,8 +586,8 @@ var Hook = DataConnected.extend({
     this._super();
 
     var allowedScales = this.getConceptprops().scales;
-    if (allowedScales && allowedScales.length>0 && !allowedScales.includes(this.scaleType)) {
-      this.set({ scaleType: allowedScales[0] === "nominal"? "ordinal":allowedScales[0] }, null, false);
+    if (allowedScales && allowedScales.length > 0 && !allowedScales.includes(this.scaleType)) {
+      this.set({ scaleType: allowedScales[0] === "nominal" ? "ordinal" : allowedScales[0] }, null, false);
     }
   },
 

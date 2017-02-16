@@ -43,7 +43,7 @@ var MCMath = Class.extend({
         gdpToMu(gdp, sigma, xScaleFactor, xScaleShift) {
             // converting gdp per capita per day into MU for lognormal distribution
             // see https://en.wikipedia.org/wiki/Log-normal_distribution
-            return Math.log(gdp/365) - sigma*sigma/2;
+            return Math.log(gdp / 365) - sigma * sigma / 2;
         },
 
         giniToSigma(gini) {

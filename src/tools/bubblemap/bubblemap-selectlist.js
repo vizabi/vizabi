@@ -104,7 +104,7 @@ var MCSelectList = Class.extend({
     if (!_this.selectList || !_this.someSelected) return;
 
     var sample = _this.labelListContainer.append("g").attr("class", "vzb-bmc-label").append("text").text("0");
-    var fontHeight = sample.node().getBBox().height*1.2;
+    var fontHeight = sample.node().getBBox().height * 1.2;
     var fontSizeToFontHeight = parseFloat(sample.style("font-size")) / fontHeight;
     d3.select(sample.node().parentNode).remove();
     var formatter = _this.model.marker.size.getTickFormatter();

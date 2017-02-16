@@ -185,17 +185,17 @@ var DataModel = Model.extend({
 
     if (response.length > 0) {
       // search data for the entirely missing columns
-      var columnsMissing = (query.select.key||[]).concat(query.select.value||[]);
-      for (var i = response.length-1; i>=0; i--) {
-        for (var c = columnsMissing.length-1; c>=0; c--) {
+      var columnsMissing = (query.select.key || []).concat(query.select.value || []);
+      for (var i = response.length - 1; i >= 0; i--) {
+        for (var c = columnsMissing.length - 1; c >= 0; c--) {
           // if found value for column c in row i then remove that column name from the list of missing columns
-          if (response[i][columnsMissing[c]] || response[i][columnsMissing[c]]===0) columnsMissing.splice(c, 1);
+          if (response[i][columnsMissing[c]] || response[i][columnsMissing[c]] === 0) columnsMissing.splice(c, 1);
         }
         // all columns were found to have value in at least one of the rows then stop iterating
         if (!columnsMissing.length) break;
       }
       columnsMissing.forEach(function(d) {
-        if (query.select.key.indexOf(d)==-1) {
+        if (query.select.key.indexOf(d) == -1) {
           utils.warn('Reader result: Column "' + d + '" is missing from "' + query.from + '" data, but it might be ok');
         } else {
           utils.error('Reader result: Key column "' + d + '" is missing from "' + query.from + '" data for query:', JSON.stringify(query));
@@ -225,7 +225,7 @@ var DataModel = Model.extend({
     }
 
     // if they want a certain processing of the data, see if it's already in cache
-    var id = (typeof whatId == "string")? whatId : JSON.stringify(whatId);
+    var id = (typeof whatId == "string") ? whatId : JSON.stringify(whatId);
     if (this._collection[dataId][what][id]) {
       return this._collection[dataId][what][id];
     }
@@ -288,7 +288,7 @@ var DataModel = Model.extend({
     this.getData(dataId).forEach(d => {
       var concept = {};
 
-      if (d.concept_type) concept["use"] = (d.concept_type=="measure" || d.concept_type=="time")?"indicator":"property";
+      if (d.concept_type) concept["use"] = (d.concept_type == "measure" || d.concept_type == "time") ? "indicator" : "property";
 
       concept["concept_type"] = d.concept_type;
       concept["sourceLink"] = d.indicator_url;
@@ -304,18 +304,18 @@ var DataModel = Model.extend({
       }
       if (!concept.scales) {
         switch (d.concept_type) {
-          case "measure": concept.scales=["linear", "log"]; break;
-          case "string": concept.scales=["nominal"]; break;
-          case "entity_domain": concept.scales=["ordinal"]; break;
-          case "entity_set": concept.scales=["ordinal"]; break;
-          case "time": concept.scales=["time"]; break;
+          case "measure": concept.scales = ["linear", "log"]; break;
+          case "string": concept.scales = ["nominal"]; break;
+          case "entity_domain": concept.scales = ["ordinal"]; break;
+          case "entity_set": concept.scales = ["ordinal"]; break;
+          case "time": concept.scales = ["time"]; break;
         }
       }
-      if (concept["scales"]==null) concept["scales"] = ["linear", "log"];
+      if (concept["scales"] == null) concept["scales"] = ["linear", "log"];
       if (d.interpolation) {
         concept["interpolation"] = d.interpolation;
       } else if (d.concept_type == "measure") {
-        concept["interpolation"] = concept.scales && concept.scales[0]=="log"? "exp" : "linear";
+        concept["interpolation"] = concept.scales && concept.scales[0] == "log" ? "exp" : "linear";
       } else if (d.concept_type == "time") {
         concept["interpolation"] = "linear";
       } else {
@@ -325,8 +325,8 @@ var DataModel = Model.extend({
       concept["domain"] = d.domain;
       concept["tags"] = d.tags;
       concept["format"] = d.format;
-      concept["name"] = d.name||d.concept||"";
-      concept["unit"] = d.unit||"";
+      concept["name"] = d.name || d.concept || "";
+      concept["unit"] = d.unit || "";
       concept["description"] = d.description;
       this.conceptDictionary[d.concept] = concept;
       this.conceptArray.push(concept);
@@ -347,7 +347,7 @@ var DataModel = Model.extend({
   },
 
   getConceptByIndex(index, type) {
-    var concept = this.conceptArray.filter(f => !type || !f.concept_type || f.concept_type===type)[index];
+    var concept = this.conceptArray.filter(f => !type || !f.concept_type || f.concept_type === type)[index];
     //if(!concept && type == "measure") concept = this.conceptArray.filter(f => f.concept_type==="time")[0];
     return concept;
   },
@@ -361,7 +361,7 @@ var DataModel = Model.extend({
   },
 
   _getCacheKey(frames, keys) {
-    var result = frames[0] + " - " + frames[frames.length-1];
+    var result = frames[0] + " - " + frames[frames.length - 1];
     if (keys) {
       result = result + "_" + keys.join();
     }
@@ -768,7 +768,7 @@ var DataModel = Model.extend({
                       filtered[column] = items;
                     }
 
-                    if (items.length==0) _this._collection[dataId].haveNoDataPointsPerKey[column][key] = items.length;
+                    if (items.length == 0) _this._collection[dataId].haveNoDataPointsPerKey[column][key] = items.length;
                   }
 
                   // Now we are left with a fewer frames in the filtered array. Let's check its length.
@@ -874,7 +874,7 @@ var DataModel = Model.extend({
   },
 
   _getValid(dataId, column) {
-    return this._collection[dataId].data.filter(function(f) {return f[column] || f[column]===0;});
+    return this._collection[dataId].data.filter(function(f) {return f[column] || f[column] === 0;});
   },
 
   _getLimits(dataId, attr) {

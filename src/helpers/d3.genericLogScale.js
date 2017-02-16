@@ -37,7 +37,7 @@ export default function genericLog() {
       }
       return {
         domain: fakeDomain,
-        sign: revertDomain?-1:1,
+        sign: revertDomain ? -1 : 1,
         range: fakeRange,
         scale: d3.scale.log().domain(normalizedDomain).range(fakeRange)
       };
@@ -93,8 +93,8 @@ export default function genericLog() {
             ];
           }
         } else {
-          point1 = range[0] + rangeLength / (1/rangePointKoef + 1) * rangePointingSign;
-          point2 = range[0] + (rangeLength / (1/rangePointKoef + 1) + firstEps + secondEps) * rangePointingSign;
+          point1 = range[0] + rangeLength / (1 / rangePointKoef + 1) * rangePointingSign;
+          point2 = range[0] + (rangeLength / (1 / rangePointKoef + 1) + firstEps + secondEps) * rangePointingSign;
           scales = [
             _buildLogScale(domainParts[0], [range[0], point1], domainPointingForward),
             _buildLinearScale(domainParts[1], [point1, point2]),
@@ -292,7 +292,7 @@ export default function genericLog() {
         range = arg;
         var min = d3.min(abs(range).filter(function(val) { return !!val;}));
 
-        if (min) delta = Math.min(delta, min/100);
+        if (min) delta = Math.min(delta, min / 100);
         buildScales();
       }
       return scale;

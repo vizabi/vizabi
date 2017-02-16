@@ -118,7 +118,7 @@ var IndPicker = Component.extend({
 
         this.el_select.on("click", function() {
             var rect = _this.el_select.node().getBoundingClientRect();
-            var rootEl = _this.root.element instanceof Array? _this.root.element : d3.select(_this.root.element);
+            var rootEl = _this.root.element instanceof Array ? _this.root.element : d3.select(_this.root.element);
             var rootRect = rootEl.node().getBoundingClientRect();
             var treemenuComp = _this.root.findChildByName("gapminder-treemenu");
             var treemenuColWidth = treemenuComp.activeProfile.col_width;
@@ -176,11 +176,11 @@ var IndPicker = Component.extend({
           var unit = !concept.unit ? "" : " " + concept.unit;
           var formatter = _this.model.marker[this.markerID].getTickFormatter();
 
-          selectText = (this._highlightedValue||this._highlightedValue===0) ? formatter(this._highlightedValue) + unit : translator("hints/nodata");
+          selectText = (this._highlightedValue || this._highlightedValue === 0) ? formatter(this._highlightedValue) + unit : translator("hints/nodata");
 
         } else {
             //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-            selectText = (which==="_default") ? translator("indicator/_default/" + type) : concept.name;
+            selectText = (which === "_default") ? translator("indicator/_default/" + type) : concept.name;
         }
 
         this.el_select.text(selectText);

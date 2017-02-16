@@ -8,7 +8,7 @@ import interpolator from 'vizabi-interpolators/interpolators';
  * @returns {Boolean} true if values are approximately equal or false otherwise
  */
 export var approxEqual = function(a, b, tolerance) {
-  tolerance = tolerance||0;
+  tolerance = tolerance || 0;
   if (b > 0) {
     return (1 - tolerance) * b <= a && a <= b * (1 + tolerance);
   } else if (b < 0) {
@@ -862,7 +862,7 @@ export var timeStamp = function(message) {
  */
 export var warn = function(message) {
   message = Array.prototype.slice.call(arguments)
-    .map(function(m) {return m instanceof Object? JSON.stringify(m, null, 4) : m; })
+    .map(function(m) {return m instanceof Object ? JSON.stringify(m, null, 4) : m; })
     .join(' ');
   if (console && typeof console.warn === 'function') {
 
@@ -1251,14 +1251,14 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
   if (next === 0) return items[0][which];
 
   //return null if data is missing
-  if (items[next]===undefined || items[next][which] === null || items[next - 1][which] === null || items[next][which] === "") {
+  if (items[next] === undefined || items[next][which] === null || items[next - 1][which] === null || items[next][which] === "") {
     warn('interpolatePoint failed because next/previous points are bad in ' + which);
     return null;
   }
 
 
   //do the math to calculate a value between the two points
-  var result = interpolator[method||"linear"](
+  var result = interpolator[method || "linear"](
     items[next - 1][dimTime],
     items[next][dimTime],
     items[next - 1][which],
@@ -1389,7 +1389,7 @@ export var debounce = function(func, wait, immediate) {
 
 export var isTouchDevice = function() {
   //'ontouchstart' is not reliable in Google Chrome #2116, but Chrome has this firesTouchEvents flag
-  if (((d3.event||{}).sourceCapabilities||{}).firesTouchEvents != null) {
+  if (((d3.event || {}).sourceCapabilities || {}).firesTouchEvents != null) {
     return d3.event.sourceCapabilities.firesTouchEvents;
   }
   return !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
@@ -1458,11 +1458,11 @@ export function firstBy() {
 
     function identity(v) {return v;}
 
-    function ignoreCase(v) {return typeof (v)==="string" ? v.toLowerCase() : v;}
+    function ignoreCase(v) {return typeof (v) === "string" ? v.toLowerCase() : v;}
 
     function makeCompareFunction(f, opt) {
-     opt = typeof (opt)==="number" ? { direction: opt } : opt||{};
-     if (typeof (f)!="function") {
+     opt = typeof (opt) === "number" ? { direction: opt } : opt || {};
+     if (typeof (f) != "function") {
         var prop = f;
         // make unary function
         f = function(v1) {return v1[prop] ? v1[prop] : "";};
@@ -1470,7 +1470,7 @@ export function firstBy() {
       if (f.length === 1) {
         // f is a unary function mapping a single item to its sort score
         var uf = f;
-        var preprocess = opt.ignoreCase?ignoreCase:identity;
+        var preprocess = opt.ignoreCase ? ignoreCase : identity;
         f = function(v1, v2) {return preprocess(uf(v1)) < preprocess(uf(v2)) ? -1 : preprocess(uf(v1)) > preprocess(uf(v2)) ? 1 : 0;};
       }
       if (opt.direction === -1) return function(v1, v2) {return -f(v1, v2);};
@@ -1506,8 +1506,8 @@ export function transform(node) {
     return {
       translateX: e,
       translateY: f,
-      rotate: Math.atan2(b, a) * Math.PI/180,
-      skewX: Math.atan(skewX) * Math.PI/180,
+      rotate: Math.atan2(b, a) * Math.PI / 180,
+      skewX: Math.atan(skewX) * Math.PI / 180,
       scaleX,
       scaleY
     };

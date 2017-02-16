@@ -179,7 +179,7 @@ export default function colorPicker() {
       background = svg.append('rect')
         .attr('width', width)
         .attr('height', maxHeight)
-        .attr('class', css.COLOR_BUTTON +' '+ css.COLOR_BACKGR)
+        .attr('class', css.COLOR_BUTTON + ' ' + css.COLOR_BACKGR)
         .on('mouseover',
           function(d) {
             _cellHover(colorOld);
@@ -485,7 +485,7 @@ export default function colorPicker() {
         var width = parseInt(svg.style('width'));
         var height = parseInt(svg.style('height'));
         var maxRadius = width / 2 * (1 - margin.left - margin.right);
-        var selectedColor = svg.select('.'+css.COLOR_DEFAULT);
+        var selectedColor = svg.select('.' + css.COLOR_DEFAULT);
         var defaultLabel = svg.select('.vzb-default-label');
         var circles = svg.select('.' + css.COLOR_CIRCLES);
 

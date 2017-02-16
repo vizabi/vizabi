@@ -104,7 +104,7 @@ export default Class.extend({
                   var x = _context.xScale(values.axis_x[pointer[KEY]]);
                   var y = _context.yScale(values.axis_y[pointer[KEY]]);
                   var s = utils.areaToRadius(_context.sScale(values.size[pointer[KEY]]));
-                  var c = values.color[pointer[KEY]]!=null?_context.cScale(values.color[pointer[KEY]]):_context.COLOR_WHITEISH;
+                  var c = values.color[pointer[KEY]] != null ? _context.cScale(values.color[pointer[KEY]]) : _context.COLOR_WHITEISH;
                   if (text !== selectedData.trailStartTime) {
                     _context._setTooltip(text, x, y, s + 3, c);
                   }
@@ -266,7 +266,7 @@ export default Class.extend({
 
     trail.each(function(segment, index) {
 
-      if (segment.valueY==null || segment.valueX==null || segment.valueS==null) return;
+      if (segment.valueY == null || segment.valueX == null || segment.valueS == null) return;
 
       var view = d3.select(this);
       if (duration) {
@@ -291,7 +291,7 @@ export default Class.extend({
       if (!segment.next) return;
       var next = segment.next;
       if (next == null) return;
-      if (next.valueY==null || next.valueX==null) return;
+      if (next.valueY == null || next.valueX == null) return;
 
       var lineLength = Math.sqrt(
           Math.pow(_context.xScale(segment.valueX) - _context.xScale(next.valueX), 2) +
@@ -326,7 +326,7 @@ export default Class.extend({
 
       var view = d3.select(this);
 
-      var strokeColor = _context.model.marker.color.which == "geo.world_4region"?
+      var strokeColor = _context.model.marker.color.which == "geo.world_4region" ?
         //use predefined shades for color palette for "geo.world_4region" (hardcoded)
         _context.model.marker.color.getColorShade({
           colorID: segment.valueC,
@@ -334,11 +334,11 @@ export default Class.extend({
         })
         :
         //otherwise use color of the bubble with a fallback to bubble stroke color (blackish)
-        (segment.valueC!=null?_context.cScale(segment.valueC):_context.COLOR_BLACKISH);
+        (segment.valueC != null ? _context.cScale(segment.valueC) : _context.COLOR_BLACKISH);
 
       view.select("circle")
         //.transition().duration(duration).ease(d3.easeLinear)
-        .style("fill", segment.valueC!=null?_context.cScale(segment.valueC):_context.COLOR_WHITEISH);
+        .style("fill", segment.valueC != null ? _context.cScale(segment.valueC) : _context.COLOR_WHITEISH);
       view.select("line")
         //.transition().duration(duration).ease(d3.easeLinear)
         .style("stroke", strokeColor);
@@ -393,7 +393,7 @@ export default Class.extend({
             var valueC = _context.frame.color[d[KEY]];
             cache.labelX0 = _context.frame.axis_x[d[KEY]];
             cache.labelY0 = _context.frame.axis_y[d[KEY]];
-            cache.scaledS0 = (valueS || valueS===0) ? utils.areaToRadius(_context.sScale(valueS)) : null;
+            cache.scaledS0 = (valueS || valueS === 0) ? utils.areaToRadius(_context.sScale(valueS)) : null;
             cache.scaledC0 = valueC != null ? _context.cScale(valueC) : _context.COLOR_WHITEISH;
             _context._updateLabel(d, 0, _context.frame.axis_x[d[KEY]], _context.frame.axis_y[d[KEY]], _context.frame.size[d[KEY]], _context.frame.color[d[KEY]], _context.frame.label[d[KEY]], _context.frame.size_label[d[KEY]], 0, true);
           }
@@ -456,7 +456,7 @@ export default Class.extend({
           segment.valueS = frame.size[d[KEY]];
           segment.valueC = frame.color[d[KEY]];
 
-          if (segment.valueY==null || segment.valueX==null || segment.valueS==null) {
+          if (segment.valueY == null || segment.valueX == null || segment.valueS == null) {
             return resolve();
           } else {
             // fix label position if it not in correct place
@@ -465,8 +465,8 @@ export default Class.extend({
               cache.labelX0 = segment.valueX;
               cache.labelY0 = segment.valueY;
               var valueS = segment.valueS;
-              cache.scaledS0 = (valueS || valueS===0) ? utils.areaToRadius(_context.sScale(valueS)) : null;
-              cache.scaledC0 = segment.valueC!=null?_context.cScale(segment.valueC):_context.COLOR_WHITEISH;
+              cache.scaledS0 = (valueS || valueS === 0) ? utils.areaToRadius(_context.sScale(valueS)) : null;
+              cache.scaledC0 = segment.valueC != null ? _context.cScale(segment.valueC) : _context.COLOR_WHITEISH;
               _context._updateLabel(d, index, segment.valueX, segment.valueY, segment.valueS, segment.valueC, frame.label[d[KEY]], frame.size_label[d[KEY]], 0, true);
             }
             view.select("circle")
@@ -474,7 +474,7 @@ export default Class.extend({
               .attr("cy", _context.yScale(segment.valueY))
               .attr("cx", _context.xScale(segment.valueX))
               .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)))
-              .style("fill", segment.valueC!=null?_context.cScale(segment.valueC):_context.COLOR_WHITEISH);
+              .style("fill", segment.valueC != null ? _context.cScale(segment.valueC) : _context.COLOR_WHITEISH);
 
             view.select("line")
               .attr("x2", _context.xScale(segment.valueX))
@@ -504,10 +504,10 @@ export default Class.extend({
               }
               _context.model.marker.getFrame(nextTime, function(nextFrame) {
                 if (d.status != "reveal") return resolve();
-                if (!nextFrame || segment.valueY==null || segment.valueX==null || segment.valueS==null) {
+                if (!nextFrame || segment.valueY == null || segment.valueX == null || segment.valueS == null) {
                   return resolve();
                 } else {
-                  if (nextFrame.axis_x[d[KEY]]==null || nextFrame.axis_y[d[KEY]]==null) {
+                  if (nextFrame.axis_x[d[KEY]] == null || nextFrame.axis_y[d[KEY]] == null) {
                     return resolve();
                   } else {
                     nextSegment.valueY = nextFrame.axis_y[d[KEY]];
@@ -516,7 +516,7 @@ export default Class.extend({
                     nextSegment.valueC = nextFrame.color[d[KEY]];
 
                     _this.trailTransitions[d[KEY]] = view;
-                    var strokeColor = _context.model.marker.color.which == "geo.world_4region"?
+                    var strokeColor = _context.model.marker.color.which == "geo.world_4region" ?
                       //use predefined shades for color palette for "geo.world_4region" (hardcoded)
                       _context.model.marker.color.getColorShade({
                         colorID: segment.valueC,
@@ -524,7 +524,7 @@ export default Class.extend({
                       })
                       :
                       //otherwise use color of the bubble with a fallback to bubble stroke color (blackish)
-                      (segment.valueC!=null?_context.cScale(segment.valueC):_context.COLOR_BLACKISH);
+                      (segment.valueC != null ? _context.cScale(segment.valueC) : _context.COLOR_BLACKISH);
 
                     var lineLength = Math.sqrt(
                       Math.pow(_context.xScale(segment.valueX) - _context.xScale(nextFrame.axis_x[d[KEY]]), 2) +
@@ -570,8 +570,8 @@ export default Class.extend({
         _context.model.marker.getFrame(segment.t, function(frame) {
           if (d.status != "reveal") return resolve();
           if (!frame ||
-            (typeof frame.axis_x == "undefined") ||  frame.axis_x[d[KEY]]==null ||
-            (typeof frame.axis_y == "undefined") ||  frame.axis_y[d[KEY]]==null)
+            (typeof frame.axis_x == "undefined") ||  frame.axis_x[d[KEY]] == null ||
+            (typeof frame.axis_y == "undefined") ||  frame.axis_y[d[KEY]] == null)
           {
             utils.warn("Frame for trail missed: " + segment.t);
             return resolve();
@@ -586,12 +586,12 @@ export default Class.extend({
           previousSegment.next = segment;
           nextSegment.previous = segment;
 
-          if (segment.valueY==null || segment.valueX==null || segment.valueS==null) {
+          if (segment.valueY == null || segment.valueX == null || segment.valueS == null) {
             utils.warn("Data for trail point missed: " + segment.t);
             return resolve();
           }
 
-          var strokeColor = _context.model.marker.color.which == "geo.world_4region"?
+          var strokeColor = _context.model.marker.color.which == "geo.world_4region" ?
             //use predefined shades for color palette for "geo.world_4region" (hardcoded)
             _context.model.marker.color.getColorShade({
               colorID: segment.valueC,
@@ -599,7 +599,7 @@ export default Class.extend({
             })
             :
             //otherwise use color of the bubble with a fallback to bubble stroke color (blackish)
-            (segment.valueC!=null?_context.cScale(segment.valueC):_context.COLOR_BLACKISH);
+            (segment.valueC != null ? _context.cScale(segment.valueC) : _context.COLOR_BLACKISH);
 
           var firstLineLength = Math.sqrt(
             Math.pow(_context.xScale(previousSegment.valueX) - _context.xScale(segment.valueX), 2) +
@@ -624,7 +624,7 @@ export default Class.extend({
               .attr("cy", _context.yScale(segment.valueY))
               .attr("cx", _context.xScale(segment.valueX))
               .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)))
-              .style("fill", segment.valueC!=null?_context.cScale(segment.valueC):_context.COLOR_WHITEISH);
+              .style("fill", segment.valueC != null ? _context.cScale(segment.valueC) : _context.COLOR_WHITEISH);
 
             var secondLineLength = Math.sqrt(
               Math.pow(_context.xScale(segment.valueX) - _context.xScale(nextSegment.valueX), 2) +

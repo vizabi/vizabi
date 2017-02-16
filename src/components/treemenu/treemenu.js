@@ -210,7 +210,7 @@ var Menu = Class.extend({
       var currentElementWidth =  this.entity.node().offsetWidth;
       var newElementWidth = Math.min(width, _this.width);
       if (currentElementWidth < newElementWidth) {
-        var duration = 250*(currentElementWidth / newElementWidth);
+        var duration = 250 * (currentElementWidth / newElementWidth);
         this.entity.transition()
           .delay(0)
           .duration(duration)
@@ -581,7 +581,7 @@ var TreeMenu = Component.extend({
     this.menuEntity = null;
     this.model_binds = {
       "change:marker": function(evt, path) {
-        if (path.indexOf(_this._markerID + '.which')==-1 && path.indexOf(_this._markerID + '.scaleType')==-1) return;
+        if (path.indexOf(_this._markerID + '.which') == -1 && path.indexOf(_this._markerID + '.scaleType') == -1) return;
         _this.updateView();
       }
     };
@@ -685,7 +685,7 @@ var TreeMenu = Component.extend({
 
 
   _buildIndicatorsTree(tagsArray) {
-      if (tagsArray===true || !tagsArray) tagsArray = [];
+      if (tagsArray === true || !tagsArray) tagsArray = [];
 
       var _this = this;
       var ROOT = "_root";
@@ -728,7 +728,7 @@ var TreeMenu = Component.extend({
 
       utils.forEach(indicatorsDB, function(entry, id) {
         //if entry's tag are empty don't include it in the menu
-        if (entry.tags=="_none") return;
+        if (entry.tags == "_none") return;
         if (!entry.tags) entry.tags = datasetName || UNCLASSIFIED;
         var concept = { id, name: entry.name, unit: entry.unit, description: entry.description, dataSource: dataSource._name };
         entry.tags.split(",").forEach(function(tag) {
@@ -760,8 +760,8 @@ var TreeMenu = Component.extend({
     tree.children.sort(
       utils
       //in each folder including root: put subfolders below loose items
-      .firstBy()(function(a, b) {a=a.type==="dataset"?1:0;  b=b.type==="dataset"?1:0; return b-a;})
-      .thenBy(function(a, b) {a=a.children?1:0;  b=b.children?1:0; return a-b;})
+      .firstBy()(function(a, b) {a = a.type === "dataset" ? 1 : 0;  b = b.type === "dataset" ? 1 : 0; return b - a;})
+      .thenBy(function(a, b) {a = a.children ? 1 : 0;  b = b.children ? 1 : 0; return a - b;})
       .thenBy(function(a, b) {
         //in the root level put "time" on top and send "anvanced" to the bottom
         if (!isSubfolder) {
@@ -773,7 +773,7 @@ var TreeMenu = Component.extend({
           if (b.id == "_default") return -1;
         }
         //sort items alphabetically. folders go down because of the emoji folder in the beginning of the name
-        return a.name > b.name? 1:-1;
+        return a.name > b.name ? 1 : -1;
       })
     );
 
@@ -856,9 +856,9 @@ var TreeMenu = Component.extend({
         this.wrapper.style('max-height', (maxHeight - 10) + 'px');
 
         this.wrapperOuter.classed(css.alignXc, this._alignX === "center");
-        this.wrapperOuter.style("margin-left", this._alignX === "center"? "-" + containerWidth/2 + "px" : null);
+        this.wrapperOuter.style("margin-left", this._alignX === "center" ? "-" + containerWidth / 2 + "px" : null);
         if (this._alignX === "center") {
-          this.OPTIONS.MAX_MENU_WIDTH = this.width/2 - containerWidth * 0.5 - 10;
+          this.OPTIONS.MAX_MENU_WIDTH = this.width / 2 - containerWidth * 0.5 - 10;
         } else {
           this.OPTIONS.MAX_MENU_WIDTH = this.width - this.wrapperOuter.node().offsetLeft - containerWidth - 10; // 10 - padding around wrapper
         }
@@ -1172,9 +1172,9 @@ var TreeMenu = Component.extend({
         .append('span')
         .text(function(d) {
           //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-          var translated = d.id==="_default" ? _this.translator("indicator/_default/" + hookType) : d.name||d.id;
-          if (!translated && translated!=="") utils.warn("translation missing: NAME of " + d.id);
-          return translated||"";
+          var translated = d.id === "_default" ? _this.translator("indicator/_default/" + hookType) : d.name || d.id;
+          if (!translated && translated !== "") utils.warn("translation missing: NAME of " + d.id);
+          return translated || "";
         });
 
       li.classed(css.list_item, true)
@@ -1197,25 +1197,25 @@ var TreeMenu = Component.extend({
             deepLeafContent.append('span').classed(css.leaf_content_item + ' ' + css.leaf_content_item_title, true)
               .text(function(d) {
                 //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-                var translated = d.id==="_default" ? _this.translator("indicator/_default/" + hookType) : d.name;
-                return translated||"";
+                var translated = d.id === "_default" ? _this.translator("indicator/_default/" + hookType) : d.name;
+                return translated || "";
               });
             var hideUnits;
             var units = deepLeafContent.append('span').classed(css.leaf_content_item, true)
               .text(function(d) {
                 //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-                var translated = d.id==="_default" ? _this.translator("unit/_default/" + hookType) : d.unit;
+                var translated = d.id === "_default" ? _this.translator("unit/_default/" + hookType) : d.unit;
                 hideUnits = !translated;
-                return _this.translator('hints/units') + ': ' + translated||"";
+                return _this.translator('hints/units') + ': ' + translated || "";
               });
             units.classed('vzb-hidden', hideUnits);
             var hideDescription;
             var description = deepLeafContent.append('span').classed(css.leaf_content_item + ' ' + css.leaf_content_item_descr, true)
               .text(function(d) {
                 //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-                var translated = d.id==="_default" ? _this.translator("description/_default/" + hookType) : d.description;
+                var translated = d.id === "_default" ? _this.translator("description/_default/" + hookType) : d.description;
                 hideDescription = !translated;
-                return (hideUnits && hideDescription) ? _this.translator("hints/nodescr") : translated||"";
+                return (hideUnits && hideDescription) ? _this.translator("hints/nodescr") : translated || "";
               });
             description.classed('vzb-hidden', hideDescription && !hideUnits);
           }

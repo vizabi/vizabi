@@ -125,7 +125,7 @@ var MinMaxInputs = Component.extend({
       this.el_zoomed_fieldMax.classed('vzb-hidden', !this.ui.selectZoomedMinMax);
 
       var formatter = function(n) {
-        if (!n && n!==0) return n;
+        if (!n && n !== 0) return n;
         if (utils.isDate(n)) return _this.model.time.formatDate(n);
         return d3.format(".2r")(n);
       };

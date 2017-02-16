@@ -190,7 +190,7 @@ var ButtonList = Component.extend({
       _this.setButtonActive(params.id, false);
     });
 
-    var button_expand = (this.model.ui.dialogs||{}).sidebar || [];
+    var button_expand = (this.model.ui.dialogs || {}).sidebar || [];
 
     // // if button_expand has been passed in with boolean param or array must check and covert to array
     // if (button_expand){
@@ -281,7 +281,7 @@ var ButtonList = Component.extend({
     var parent = this.parent.element.node ? this.parent.element : d3.select(this.parent.element);
 
     //HERE
-    var button_expand = (this.model.ui.dialogs||{}).sidebar || [];
+    var button_expand = (this.model.ui.dialogs || {}).sidebar || [];
     _this._showAllButtons();
 
     var buttons = this.element.selectAll(".vzb-buttonlist-btn");
@@ -332,7 +332,7 @@ var ButtonList = Component.extend({
     || parent.classed("vzb-small") && parent.classed("vzb-portrait")) {
       //check if the width_diff is small. If it is, add to the container
       // width, to allow more buttons in a way that is still usable
-      if (width_diff > 0 && width_diff <=10) {
+      if (width_diff > 0 && width_diff <= 10) {
         container_width += width_diff;
       }
       number_of_buttons = Math.floor(container_width / button_width) - required.length;
@@ -343,7 +343,7 @@ var ButtonList = Component.extend({
     } else {
       //check if the width_diff is small. If it is, add to the container
       // width, to allow more buttons in a way that is still usable
-      if (height_diff > 0 && height_diff <=10) {
+      if (height_diff > 0 && height_diff <= 10) {
         container_height += height_diff;
       }
       number_of_buttons = Math.floor(container_height / button_height) - required.length;
@@ -471,17 +471,17 @@ var ButtonList = Component.extend({
     this.setBubbleTrails();
   },
   setBubbleTrails() {
-    var trails = (this.model.ui.chart||{}).trails;
+    var trails = (this.model.ui.chart || {}).trails;
     if (!trails && trails !== false) return;
     var id = "trails";
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
-    if (!btn.node()) return utils.warn("setBubbleTrails: no button '" +id+ "' found in DOM. doing nothing");
+    if (!btn.node()) return utils.warn("setBubbleTrails: no button '" + id + "' found in DOM. doing nothing");
 
     btn.classed(class_active_locked, trails);
     btn.classed(class_hidden, this.model.state.marker.select.length == 0);
   },
   toggleBubbleLock(id) {
-    var active = (this.model.ui.chart||{}).lockActive;
+    var active = (this.model.ui.chart || {}).lockActive;
 
     if (this.model.state.marker.select.length == 0 && !active) return;
 
@@ -493,8 +493,8 @@ var ButtonList = Component.extend({
     this.setBubbleLock();
   },
   setBubbleLock() {
-    var locked = (this.model.ui.chart||{}).lockNonSelected;
-    var active = (this.model.ui.chart||{}).lockActive;
+    var locked = (this.model.ui.chart || {}).lockNonSelected;
+    var active = (this.model.ui.chart || {}).lockActive;
     if (!locked && locked !== 0) return;
 
     if (locked !== 0 && this.model.state.marker.select.length === 0 && !active) {
@@ -503,7 +503,7 @@ var ButtonList = Component.extend({
 
     var id = "lock";
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
-    if (!btn.node()) return utils.warn("setBubbleLock: no button '" +id+ "' found in DOM. doing nothing");
+    if (!btn.node()) return utils.warn("setBubbleLock: no button '" + id + "' found in DOM. doing nothing");
 
     var translator = this.model.locale.getTFunction();
 
@@ -526,7 +526,7 @@ var ButtonList = Component.extend({
     this.setInpercent();
   },
   setInpercent() {
-    if (typeof ((this.model.ui.chart||{}).inpercent) == "undefined") return;
+    if (typeof ((this.model.ui.chart || {}).inpercent) == "undefined") return;
     var id = 'inpercent';
     var translator = this.model.locale.getTFunction();
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");

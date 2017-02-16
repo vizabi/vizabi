@@ -149,7 +149,7 @@ var DonutComponent = Component.extend('donut', {
         var width = parseInt(this.element.style("width"), 10) || 0;
         var min = Math.min(height, width);
 
-        if (height<=0 || width<=0) return utils.warn("Donut chart resize() abort: vizabi container is too little or has display:none");
+        if (height <= 0 || width <= 0) return utils.warn("Donut chart resize() abort: vizabi container is too little or has display:none");
 
         this.svgEl.attr("transform", "translate(" + (width / 2) + "," + (height / 2) + ")");
         this.titleEl.attr("y", "-0.1em");

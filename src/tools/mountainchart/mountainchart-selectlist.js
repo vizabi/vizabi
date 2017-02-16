@@ -100,7 +100,7 @@ var MCSelectList = Class.extend({
     if (!_this.selectList || !_this.someSelected) return;
 
     var sample = _this.mountainLabelContainer.append("g").attr("class", "vzb-mc-label").append("text").text("0");
-    var fontHeight = sample.node().getBBox().height*1.2;
+    var fontHeight = sample.node().getBBox().height * 1.2;
     var fontSizeToFontHeight = parseFloat(sample.style("font-size")) / fontHeight;
     d3.select(sample.node().parentNode).remove();
     var formatter = _this.model.marker.axis_y.getTickFormatter();
@@ -129,14 +129,14 @@ var MCSelectList = Class.extend({
         var view = d3.select(this).attr("id", d.geo + '-label-' + _this._id);
         var name = "";
         if (d.key) {
-          name = d.key === "all"? _this.translator("mount/merging/world") : groupLabels[d.key];
+          name = d.key === "all" ? _this.translator("mount/merging/world") : groupLabels[d.key];
         } else {
           name = _this.values.label[d.KEY()];
         }
 
         var number = _this.values.axis_y[d.KEY()];
 
-        var string = name + ": " + formatter(number) + (i === 0 ? " "+ _this.translator("mount/people") : "");
+        var string = name + ": " + formatter(number) + (i === 0 ? " " + _this.translator("mount/people") : "");
 
         var text = view.selectAll(".vzb-mc-label-text")
           .attr("x", (isRTL ? -1 : 1) * fontHeight)

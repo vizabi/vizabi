@@ -72,7 +72,7 @@ var SizeSlider = Component.extend({
     };
 
     function changeMinMaxHandler(evt, path) {
-      var extent = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
+      var extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
       _this._updateLabels(extent);
       _this._moveBrush(extent);
     }
@@ -85,7 +85,7 @@ var SizeSlider = Component.extend({
   modelReady() {
     var _this = this;
     _this.modelUse = _this.model.size.use;
-    var extent = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
+    var extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
     if (_this.modelUse != 'constant') {
       _this.sizeScaleMinMax = _this.model.size.getScale().domain();
       _this.sliderEl.selectAll('.w').classed('vzb-hidden', false);
@@ -112,7 +112,7 @@ var SizeSlider = Component.extend({
    */
   readyOnce() {
     var _this = this;
-    var extent = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
+    var extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
     this.element = d3.select(this.element);
     this.sliderSvg = this.element.select(".vzb-szs-svg");
     this.sliderWrap = this.sliderSvg.select(".vzb-szs-slider-wrap");
@@ -214,7 +214,7 @@ var SizeSlider = Component.extend({
       _this.xScale.range([0, componentWidth - _this.padding.left - _this.padding.right]);
       _this._updateSize();
       _this.sliderEl.call(_this.brush.extent([[0, 0], [componentWidth - padding.left - padding.right, barWidth]]));
-      var extent = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
+      var extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
       _this._moveBrush(extent);
     });
 
@@ -268,7 +268,7 @@ var SizeSlider = Component.extend({
       });
     if (_this.model.size.use === 'constant')
       this.sliderLabelsEl.text(function(d) {
-        return ~~(_this.propertyScale(d)) + (_this.translator(_this.ui.constantUnit)||"");
+        return ~~(_this.propertyScale(d)) + (_this.translator(_this.ui.constantUnit) || "");
       });
   },
 

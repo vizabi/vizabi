@@ -377,7 +377,7 @@ export default Class.extend({
                     _this.yScale.range(yRange);
                 }
 
-                var formatter = function(n) { return utils.isDate(n)? n : d3.round(n, 2); };
+                var formatter = function(n) { return utils.isDate(n) ? n : d3.round(n, 2); };
 
                 var zoomedXRange = xRangeBoundsBumped;
                 var zoomedYRange = yRangeBoundsBumped;
@@ -454,7 +454,7 @@ export default Class.extend({
         var radiusMax = utils.areaToRadius(_this.sScale(d3.extent(utils.values(_this.frame.size))[1])) || 0;
 
         //protection agains unreasonable min-max results -- abort function
-        if (!mmX[0] && mmX[0]!==0 || !mmX[1] && mmX[1]!==0 || !mmY[0] && mmY[0]!==0 || !mmY[1] && mmY[1]!==0) {
+        if (!mmX[0] && mmX[0] !== 0 || !mmX[1] && mmX[1] !== 0 || !mmY[0] && mmY[0] !== 0 || !mmY[1] && mmY[1] !== 0) {
           return utils.warn("panZoom.expandCanvas: X or Y min/max are broken. Aborting with no action");
         }
         /*
@@ -814,8 +814,8 @@ export default Class.extend({
         var k = Math.log(ratio) / Math.LN2;
 
         //change factor direction based on the input. default is no direction supplied
-        if (direction=="plus" || !direction) k = Math.floor(k) + 1;
-        if (direction=="minus") k = Math.ceil(k) - 1;
+        if (direction == "plus" || !direction) k = Math.floor(k) + 1;
+        if (direction == "minus") k = Math.ceil(k) - 1;
 
         //decode panning
         var locus = [(mouse[0] - pan[0]) / ratio, (mouse[1] - pan[1]) / ratio];
@@ -836,7 +836,7 @@ export default Class.extend({
         //save changes to the zoom behavior and run the event
         //this.zoomer.scale(ratio);
         //this.zoomer.translate([pan[0], pan[1]]);
-        this.zoomer.duration = duration||0;
+        this.zoomer.duration = duration || 0;
         //this.zoomer.event(_this.element);
         this.zoomSelection.call(this.zoomer.transform, d3.zoomIdentity.translate(pan[0], pan[1]).scale(ratio));
 
@@ -862,7 +862,7 @@ export default Class.extend({
         this.zoomer.ratioY = 1;
         this.zoomer.ratioX = 1;
         //this.zoomer.translate([0, 0]);
-        this.zoomer.duration = duration||0;
+        this.zoomer.duration = duration || 0;
         //this.zoomer.event(element || _this.element);
         (element || this.zoomSelection).call(this.zoomer.transform, d3.zoomIdentity);
     },

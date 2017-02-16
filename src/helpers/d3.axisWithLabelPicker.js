@@ -21,8 +21,8 @@ export default function axisSmart(_orient) {
     function axis(g) {
       var checkDmn = axis.scale().domain();
       var checkRng = axis.scale().range();
-      if (!checkDmn[0] && checkDmn[0]!==0 || !checkDmn[1] && checkDmn[1]!==0
-      || !checkRng[0] && checkRng[0]!==0 || !checkRng[1] && checkRng[1]!==0) {
+      if (!checkDmn[0] && checkDmn[0] !== 0 || !checkDmn[1] && checkDmn[1] !== 0
+      || !checkRng[0] && checkRng[0] !== 0 || !checkRng[1] && checkRng[1] !== 0) {
         return utils.warn("d3.axisSmart() skips action because of invalid domain " + JSON.stringify(checkDmn) + " or range " + JSON.stringify(checkRng) + " of the attached scale");
       }
 
@@ -101,7 +101,7 @@ export default function axisSmart(_orient) {
       var scale = axis.scale();
       if (options.viewportLength) {
         g.selectAll(".tick")
-          .classed("vzb-hidden", function(d) {return scale(d)<0 || scale(d)>options.viewportLength;});
+          .classed("vzb-hidden", function(d) {return scale(d) < 0 || scale(d) > options.viewportLength;});
       }
 
       // add minor ticks. if none exist add an empty array
@@ -115,7 +115,7 @@ export default function axisSmart(_orient) {
       var tickLengthOut = axis.tickSizeMinor().outbound;
       var tickLengthIn = axis.tickSizeMinor().inbound;
       minorTicks
-        .classed("vzb-hidden", function(d) {return scale(d)<0 || scale(d)>options.viewportLength;})
+        .classed("vzb-hidden", function(d) {return scale(d) < 0 || scale(d) > options.viewportLength;})
         .attr("y1", orient == HORIZONTAL ? (axis.orient() == "top" ? 1 : -1) * tickLengthIn : scale)
         .attr("y2", orient == HORIZONTAL ? (axis.orient() == "top" ? -1 : 1) * tickLengthOut : scale)
         .attr("x1", orient == VERTICAL ? (axis.orient() == "right" ? -1 : 1) * tickLengthIn : scale)
@@ -138,10 +138,10 @@ export default function axisSmart(_orient) {
       } else {
         //TODO: this will not work for the "ordinal" scaleType
         rake
-          .attr("x1", orient == VERTICAL ? 0 : d3.min(scale.range()) - (options.bump||0) - 1)
-          .attr("x2", orient == VERTICAL ? 0 : d3.max(scale.range()) + (options.bump||0))
-          .attr("y1", orient == HORIZONTAL ? 0 : d3.min(scale.range()) - (options.bump||0))
-          .attr("y2", orient == HORIZONTAL ? 0 : d3.max(scale.range()) + (options.bump||0));
+          .attr("x1", orient == VERTICAL ? 0 : d3.min(scale.range()) - (options.bump || 0) - 1)
+          .attr("x2", orient == VERTICAL ? 0 : d3.max(scale.range()) + (options.bump || 0))
+          .attr("y1", orient == HORIZONTAL ? 0 : d3.min(scale.range()) - (options.bump || 0))
+          .attr("y2", orient == HORIZONTAL ? 0 : d3.max(scale.range()) + (options.bump || 0));
       }
     }
 
@@ -176,8 +176,8 @@ export default function axisSmart(_orient) {
         o.viewportLength = options.viewportLength;
         o.toolMargin = options.toolMargin;
         o.cssMargin = options.cssMargin;
-        o.widthOfOneDigit = bbox[axis.pivot()?"height":"width"]/(options.formatter(highlightValue).length);
-        o.heightOfOneDigit = bbox[axis.pivot()?"width":"height"];
+        o.widthOfOneDigit = bbox[axis.pivot() ? "height" : "width"] / (options.formatter(highlightValue).length);
+        o.heightOfOneDigit = bbox[axis.pivot() ? "width" : "height"];
       }
 
       // this will give additive shifting for the hovered value in case it sticks out a little outside viewport
@@ -197,7 +197,7 @@ export default function axisSmart(_orient) {
       var getOpacity = function(d, t, view) {
         if (highlightValue == "none") return 1;
 
-        var wh = orient==HORIZONTAL? "width" : "height";
+        var wh = orient == HORIZONTAL ? "width" : "height";
         var shift = (axis.repositionLabels()[d] || { x: 0, y: 0 })[dimension];
 
         // opacity depends on the collision between label's boundary boxes
@@ -206,7 +206,7 @@ export default function axisSmart(_orient) {
           // shifts of labels that stick out from the viewport are also taken into account
           Math.abs(axis.scale()(d) + shift * pivot - axis.scale()(highlightValue) -  hlValueShift * pivot)
           // this computes the sides of boundary boxes, each has a half-size to reduce the distance between centers
-          - view.getBBox()[wh]/2 - bbox[wh]/2
+          - view.getBBox()[wh] / 2 - bbox[wh] / 2
         );
       };
 
@@ -345,8 +345,8 @@ export default function axisSmart(_orient) {
 
       if (options.removeAllLabels == null) options.removeAllLabels = false;
 
-      if (options.formatter == null) options.formatter = axis.tickFormat()?
-        axis.tickFormat() : function(d) {return d+"";};
+      if (options.formatter == null) options.formatter = axis.tickFormat() ?
+        axis.tickFormat() : function(d) {return d + "";};
       options.cssLabelMarginLimit = 5; //px
 
       if (options.cssMargin == null) options.cssMargin = {};
@@ -474,7 +474,7 @@ export default function axisSmart(_orient) {
                       d).length) + marginsLR
                   )
                   // this is a logarithmic rescaling of labels
-                  * (1 + Math.log(d.toString().replace(/([0\.])/g, "")[0])/Math.LN10);
+                  * (1 + Math.log(d.toString().replace(/([0\.])/g, "")[0]) / Math.LN10);
               }));
 
           } else {
@@ -856,7 +856,7 @@ export default function axisSmart(_orient) {
       //this is helpful when the scaled is zoomed, so labels don't get truncated by a viewport svg
       if (options.viewportLength) {
         //remove invisible ticks from the array
-        tickValues = tickValues.filter(function(d) {return scale(d)>=0 && scale(d)<=options.viewportLength;});
+        tickValues = tickValues.filter(function(d) {return scale(d) >= 0 && scale(d) <= options.viewportLength;});
         //overwrite the available range with viewport limits. direction doesn't matter because we take min-max later anyway
         range = [0, options.viewportLength];
         //reset the bump because zoomed axis has no bump

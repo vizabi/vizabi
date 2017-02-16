@@ -83,9 +83,9 @@ var Stack = Dialog.extend({
 
         this.howToStackEl
             .property('checked', function() {
-                if (d3.select(this).node().value === "none") return _this.stack.which==="none";
-                if (d3.select(this).node().value === "bycolor") return _this.stack.which===_this.model.state.marker.color.which;
-                if (d3.select(this).node().value === "all") return _this.stack.which==="all";
+                if (d3.select(this).node().value === "none") return _this.stack.which === "none";
+                if (d3.select(this).node().value === "bycolor") return _this.stack.which === _this.model.state.marker.color.which;
+                if (d3.select(this).node().value === "all") return _this.stack.which === "all";
             })
             .attr('disabled', function() {
                 if (d3.select(this).node().value === "none") return null; // always enabled

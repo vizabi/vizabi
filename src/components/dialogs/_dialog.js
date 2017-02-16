@@ -47,7 +47,7 @@ var Dialog = Component.extend({
   ready() {
     var _this = this;
     this.placeholderEl = d3.select(this.placeholder);
-    this.rootEl = this.root.element instanceof Array? this.root.element : d3.select(this.root.element);
+    this.rootEl = this.root.element instanceof Array ? this.root.element : d3.select(this.root.element);
     this.dragHandler = this.placeholderEl.select("[data-click='dragDialog']");
     this.dragHandler.html(iconDrag);
     this.pinIcon = this.placeholderEl.select("[data-click='pinDialog']");

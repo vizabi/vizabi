@@ -306,7 +306,7 @@ var AgePyramid = Component.extend({
           shiftedAge = +age + groupBy;
           val1 = pValues[side][age];
           val2 = nValues[side][shiftedAge] || 0;
-          data[shiftedAge] = (val1==null || val2==null) ? null : val1 + ((val2 - val1) * fraction);
+          data[shiftedAge] = (val1 == null || val2 == null) ? null : val1 + ((val2 - val1) * fraction);
         });
         data[0] = nValues[side][0] || 0;
       });
@@ -317,7 +317,7 @@ var AgePyramid = Component.extend({
           shiftedAge = +age + groupBy;
           val1 = pValues[stack][age];
           val2 = nValues[stack][shiftedAge] || 0;
-          data[shiftedAge] = (val1==null || val2==null) ? null : val1 + ((val2 - val1) * fraction);
+          data[shiftedAge] = (val1 == null || val2 == null) ? null : val1 + ((val2 - val1) * fraction);
         });
         data[0] = nValues[stack][0] || 0;
       });
@@ -330,7 +330,7 @@ var AgePyramid = Component.extend({
             shiftedAge = +age + groupBy;
             val1 = pValues[stack][side][age];
             val2 = nValues[stack][side][shiftedAge] || 0;
-            data[shiftedAge] = (val1==null || val2==null) ? null : val1 + ((val2 - val1) * fraction);
+            data[shiftedAge] = (val1 == null || val2 == null) ? null : val1 + ((val2 - val1) * fraction);
           });
           data[0] = nValues[stack][side][0] || 0;
         });
@@ -574,7 +574,7 @@ var AgePyramid = Component.extend({
     if (this.ui.chart.inpercent) {
       domain = [0, Math.max.apply(Math, this.sideKeys.map(s => _this.inpercentMaxLimits[s]))];
     } else {
-      domain = (axisX.domainMin!=null && axisX.domainMax!=null) ? [+axisX.domainMin, +axisX.domainMax] : [0, Math.max.apply(Math, this.sideKeys.map(s => _this.maxLimits[s]))];
+      domain = (axisX.domainMin != null && axisX.domainMax != null) ? [+axisX.domainMin, +axisX.domainMax] : [0, Math.max.apply(Math, this.sideKeys.map(s => _this.maxLimits[s]))];
     }
     this.xScale.domain(domain);
     if (this.xScaleLeft) this.xScaleLeft.domain(this.xScale.domain());
@@ -677,7 +677,7 @@ var AgePyramid = Component.extend({
     this.sideBars.exit().remove();
     this.sideBars = this.sideBars.enter().append("g")
       .attr("class", function(d, i) {
-        return "vzb-bc-side " + "vzb-bc-side-" + (!i != !_this.twoSided ? "right": "left");
+        return "vzb-bc-side " + "vzb-bc-side-" + (!i != !_this.twoSided ? "right" : "left");
       })
       .merge(this.sideBars);
 
@@ -887,13 +887,13 @@ var AgePyramid = Component.extend({
     label.selectAll('.vzb-bc-age')
       .text(function(textData) {
         //var total = _this.ui.chart.inpercent ? _this.totalValues[d[sideDim]] : 1;
-        var text = _this.stackKeys.length > 1 ? _this.stackItems[d[stackDim]]: textData.text;
+        var text = _this.stackKeys.length > 1 ? _this.stackItems[d[stackDim]] : textData.text;
         text = _this.twoSided ? text : textData.text + " " + _this.stackItems[d[stackDim]];
         var value = _this.xScale.invert(d["width_"]);
         //var value = (_this.dataWithTotal || _this.stacked) ? _this.values1.axis_x[d[shiftedAgeDim]][d[sideDim]][d[stackDim]] / total : _this.xScale.invert(d["width_"]);
         return text + ": " + formatter(value);
       })
-      .attr("x", (left?-1:1) * (_this.activeProfile.centerWidth * 0.5 + 7))
+      .attr("x", (left ? -1 : 1) * (_this.activeProfile.centerWidth * 0.5 + 7))
       .classed("vzb-text-left", left);
 
     label.classed('vzb-hovered', true);
@@ -972,7 +972,7 @@ var AgePyramid = Component.extend({
     this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
     this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
 
-    if (this.height<=0 || this.width<=0) return utils.warn("Pop by age resize() abort: vizabi container is too little or has display:none");
+    if (this.height <= 0 || this.width <= 0) return utils.warn("Pop by age resize() abort: vizabi container is too little or has display:none");
 
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -1027,7 +1027,7 @@ var AgePyramid = Component.extend({
         limitMaxTickNumber: 19
       });
 
-    var format = this.ui.chart.inpercent ? d3.format((groupBy > 3 ? "":".1") + "%") : this.model.marker.axis_x.getTickFormatter();
+    var format = this.ui.chart.inpercent ? d3.format((groupBy > 3 ? "" : ".1") + "%") : this.model.marker.axis_x.getTickFormatter();
 
     this.xAxis.scale(this.xScale)
       .tickFormat(format)
@@ -1085,7 +1085,7 @@ var AgePyramid = Component.extend({
 
     this.title
       .attr('x', margin.left + (this.twoSided ? translateX - this.activeProfile.titlesSpacing : 0))
-      .style('text-anchor', this.twoSided ? "end":"")
+      .style('text-anchor', this.twoSided ? "end" : "")
       .attr('y', margin.top * 0.7);
     this.titleRight
       .attr('x', margin.left + translateX + this.activeProfile.titlesSpacing)

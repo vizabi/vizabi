@@ -286,7 +286,7 @@ var TimeModel = DataConnected.extend({
     var d3Interval, step;
     switch (this.unit) {
       case 'week': d3Interval = 'monday'; step = this.step; break;
-      case 'quarter': d3Interval = 'month'; step = this.step*3; break;
+      case 'quarter': d3Interval = 'month'; step = this.step * 3; break;
       default: d3Interval = this.unit; step = this.step; break;
     }
     return { interval: utils.capitalize(d3Interval), step };
@@ -414,8 +414,8 @@ var TimeModel = DataConnected.extend({
     if (!this.playing) return;
     var _this = this;
     this.delayAnimations = this.delay;
-    if (this.delay < this.delayThresholdX2) this.delayAnimations*=2;
-    if (this.delay < this.delayThresholdX4) this.delayAnimations*=2;
+    if (this.delay < this.delayThresholdX2) this.delayAnimations *= 2;
+    if (this.delay < this.delayThresholdX4) this.delayAnimations *= 2;
 
     var delayAnimations = immediatePlay ? 1 : this.delayAnimations;
 
@@ -440,8 +440,8 @@ var TimeModel = DataConnected.extend({
           _this.getModelObject('value').set(_this.value, true, true /*force the change and make it persistent for URL and history*/);
         } else {
           var is = _this.getIntervalAndStep();
-          if (_this.delay < _this.delayThresholdX2) is.step*=2;
-          if (_this.delay < _this.delayThresholdX4) is.step*=2;
+          if (_this.delay < _this.delayThresholdX2) is.step *= 2;
+          if (_this.delay < _this.delayThresholdX4) is.step *= 2;
           var time = d3["utc" + is.interval].offset(_this.value, is.step);
           if (time >= _this.endSelected) {
             // if no playing needed anymore then make the last update persistent and not overshooting
@@ -490,7 +490,7 @@ function weekFormat() {
 
   format.parse = function parse(dateString) {
     var matchedDate = dateString.match(/^(\d{4})w(\d{2})$/);
-    return matchedDate ? getDateFromWeek(matchedDate[1], matchedDate[2]): null;
+    return matchedDate ? getDateFromWeek(matchedDate[1], matchedDate[2]) : null;
   };
 
   var formatWeekYear = function(d) {
@@ -539,7 +539,7 @@ function quarterFormat() {
 
   format.parse = function(dateString) {
     var matchedDate = dateString.match(/^(\d{4})q(\d)$/);
-    return matchedDate ? getDateFromQuarter(matchedDate[1], matchedDate[2]): null;
+    return matchedDate ? getDateFromQuarter(matchedDate[1], matchedDate[2]) : null;
   };
 
   var formatQuarter = function(d) {
@@ -550,7 +550,7 @@ function quarterFormat() {
     var quarter = parseInt(p2);
     var month = 3 * quarter - 2; // first month in quarter
     var year = p1;
-    return formats.month.data.parse([year, (month < 9 ? '0': '') + month].join('-'));
+    return formats.month.data.parse([year, (month < 9 ? '0' : '') + month].join('-'));
   };
 
   return format;

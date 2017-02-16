@@ -369,7 +369,7 @@ var LCComponent = Component.extend({
       this.entityLabels.each(function(d, index) {
         var entity = d3.select(this);
         var color = _this.cScale(_this.values.color[d[KEY]]);
-        var colorShadow = _this.model.marker.color.which == "geo.world_4region"?
+        var colorShadow = _this.model.marker.color.which == "geo.world_4region" ?
           _this.model.marker.color.getColorShade({
             colorID: _this.values.color[d[KEY]],
             shadeID: "shade"
@@ -565,7 +565,7 @@ var LCComponent = Component.extend({
       .attr("width", this.width + this.margin.right)
       .attr("height", Math.max(0, this.height));
 
-    if (this.height<=0 || this.width<=0) return utils.warn("Line chart updateSize() abort: vizabi container is too little or has display:none");
+    if (this.height <= 0 || this.width <= 0) return utils.warn("Line chart updateSize() abort: vizabi container is too little or has display:none");
 
     this.collisionResolver.height(this.height);
 
@@ -624,7 +624,7 @@ var LCComponent = Component.extend({
 
     this.yTitleEl
       .style("font-size", infoElHeight + "px")
-      .attr("transform", "translate(" + (10-this.activeProfile.margin.left) + ", -" + this.activeProfile.yAxisTitleBottomMargin + ")");
+      .attr("transform", "translate(" + (10 - this.activeProfile.margin.left) + ", -" + this.activeProfile.yAxisTitleBottomMargin + ")");
 
     var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
     if (yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
@@ -722,7 +722,7 @@ var LCComponent = Component.extend({
           var label = values.label[d[KEY]];
 
           var color = _this.cScale(values.color[d[KEY]]);
-          var colorShadow = _this.model.marker.color.which == "geo.world_4region"?
+          var colorShadow = _this.model.marker.color.which == "geo.world_4region" ?
               _this.model.marker.color.getColorShade({
                 colorID: values.color[d[KEY]],
                 shadeID: "shade"

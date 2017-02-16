@@ -95,7 +95,7 @@ var ColorLegend = Component.extend({
     this.colorPicker = colorPicker();
 
     // append color picker to the tool DOM. need to check if element is already a d3 selection to not do it twice
-    this.root.element instanceof Array? this.root.element : d3.select(this.root.element)
+    this.root.element instanceof Array ? this.root.element : d3.select(this.root.element)
       .call(this.colorPicker);
     this.colorPicker.translate(this.model.locale.getTFunction());
   },
@@ -108,19 +108,19 @@ var ColorLegend = Component.extend({
     this.colorlegendDim = this.KEY;
     this.canShowMap = false;
 
-    if (this.colorModel.isDiscrete() && this.colorModel.use!=="constant" && this.colorlegendMarker) {
+    if (this.colorModel.isDiscrete() && this.colorModel.use !== "constant" && this.colorlegendMarker) {
       if (!this.colorlegendMarker._ready) return;
 
       this.colorlegendDim = this.colorModel.getColorlegendEntities().getDimension();
 
       this.colorlegendMarker.getFrame(this.model.time.value, function(frame) {
         _this.frame = frame;
-        _this.canShowMap = utils.keys((_this.frame||{}).hook_geoshape||{}).length;
+        _this.canShowMap = utils.keys((_this.frame || {}).hook_geoshape || {}).length;
 
         _this.colorlegendKeys = _this.colorlegendMarker.getKeys(_this.colorlegendDim);
 
         _this.colorlegendKeys.forEach(function(d) {
-          if (!((_this.frame||{}).hook_geoshape||{})[d[_this.colorlegendDim]]) _this.canShowMap = false;
+          if (!((_this.frame || {}).hook_geoshape || {})[d[_this.colorlegendDim]]) _this.canShowMap = false;
         });
         _this.updateView();
         _this.updateGroupsOpacity();
@@ -200,7 +200,7 @@ var ColorLegend = Component.extend({
 
       }
 
-      var labelScaletype = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.colorModel.scaleType === "log")? "genericLog" : this.colorModel.scaleType;
+      var labelScaletype = (d3.min(domain) <= 0 && d3.max(domain) >= 0 && this.colorModel.scaleType === "log") ? "genericLog" : this.colorModel.scaleType;
 
       labelScale = d3.scale[labelScaletype == "time" ? "linear" : labelScaletype]()
         .domain(domain)
@@ -277,7 +277,7 @@ var ColorLegend = Component.extend({
         if (this.colorModel.which == "_default") {
           colorOptions = colorOptions.data([]);
         } else {
-          colorOptions = colorOptions.data(hideColorOptions? [] : colorlegendKeys.length ? colorlegendKeys : Object.keys(this.colorModel.getPalette()).map(function(value) {
+          colorOptions = colorOptions.data(hideColorOptions ? [] : colorlegendKeys.length ? colorlegendKeys : Object.keys(this.colorModel.getPalette()).map(function(value) {
             var result = {};
             result[_this.colorlegendDim] = value;
             return result;
@@ -302,7 +302,7 @@ var ColorLegend = Component.extend({
             .style("border", "1px solid " + cScale(d[_this.colorlegendDim]));
           //Apply names to color legend entries if color is a property
           var label = _this.colorlegendMarker ? _this.frame.label[d[_this.colorlegendDim]] : null;
-          if (!label && label!==0) label = d[_this.colorlegendDim];
+          if (!label && label !== 0) label = d[_this.colorlegendDim];
           d3.select(this).select(".vzb-cl-color-legend").text(label);
         });
 
@@ -343,7 +343,7 @@ var ColorLegend = Component.extend({
           });
 
         var gbbox = this.minimapG.node().getBBox();
-        this.minimapSVG.attr("viewBox", "0 0 " + gbbox.width*1.05 + " " + gbbox.height*1.05);
+        this.minimapSVG.attr("viewBox", "0 0 " + gbbox.width * 1.05 + " " + gbbox.height * 1.05);
         tempdivEl.remove();
       }
     }
@@ -388,7 +388,7 @@ var ColorLegend = Component.extend({
         var palette = _this.colorModel.getPalette();
         var defaultPalette = _this.colorModel.getDefaultPalette();
         var view = d3.select(this);
-        var target = !_this.colorModel.isDiscrete()? d.paletteKey : d[colorlegendDim];
+        var target = !_this.colorModel.isDiscrete() ? d.paletteKey : d[colorlegendDim];
         _this.colorPicker
           .colorOld(palette[target])
           .colorDef(defaultPalette[target])
@@ -464,7 +464,7 @@ var ColorLegend = Component.extend({
   updateGroupsOpacity(highlight = []) {
     var _this = this;
 
-    var clMarker = this.colorModel.getColorlegendMarker()||{};
+    var clMarker = this.colorModel.getColorlegendMarker() || {};
     var OPACITY_REGULAR = clMarker.opacityRegular || 0.8;
     var OPACITY_DIM = clMarker.opacityHighlightDim || 0.5;
     var OPACITY_HIGHLIGHT = 1;

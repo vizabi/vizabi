@@ -61,7 +61,7 @@ var BubbleSize = Component.extend({
     };
 
     function changeMinMaxHandler(evt, path) {
-      var extent = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
+      var extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
       _this._updateLabels(extent);
       _this._moveBrush(extent);
     }
@@ -83,7 +83,7 @@ var BubbleSize = Component.extend({
    */
   readyOnce() {
     var _this = this;
-    var extent = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
+    var extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
     this.showArcs = _this.model.size.showArcs !== false;
 
     this.element = d3.select(this.element);
@@ -200,7 +200,7 @@ var BubbleSize = Component.extend({
       _this.xScale.range([minMaxBubbleRadius.min * 2, minMaxBubbleRadius.max * 2]);
       _this._updateSize();
       _this.sliderEl.call(_this.brush.extent([[0, 0], [minMaxBubbleRadius.max * 2, barWidth]]));
-      var extent = _this.model.size.extent||[OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
+      var extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
       _this._moveBrush(extent);
     });
 

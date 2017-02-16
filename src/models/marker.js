@@ -217,11 +217,11 @@ var Marker = Model.extend({
   },
 
   setLabelOffset(d, xy) {
-    if (xy[0]===0 && xy[1]===1) return;
+    if (xy[0] === 0 && xy[1] === 1) return;
 
     this.select
       .find(selectedMarker => utils.comparePlainObjects(selectedMarker, d))
-      .labelOffset = [Math.round(xy[0]*1000)/1000, Math.round(xy[1]*1000)/1000];
+      .labelOffset = [Math.round(xy[0] * 1000) / 1000, Math.round(xy[1] * 1000) / 1000];
 
     //force the model to trigger events even if value is the same
     this.set("select", this.select, true);
@@ -302,7 +302,7 @@ var Marker = Model.extend({
       }
 
       //return false for the case when neither of hooks was an "indicator" or "important"
-      return !min && !max? false : { min: resultMin, max: resultMax };
+      return !min && !max ? false : { min: resultMin, max: resultMax };
   },
 
 
@@ -317,7 +317,7 @@ var Marker = Model.extend({
         KEY = KEY || this._getFirstDimension();
         var TIME = this._getFirstDimension({ type: "time" });
 
-        utils.forEach(this._dataCube||this.getSubhooks(true), function(hook, name) {
+        utils.forEach(this._dataCube || this.getSubhooks(true), function(hook, name) {
 
             // If hook use is constant, then we can provide no additional info about keys
             // We can just hope that we have something else than constants =)
@@ -350,7 +350,7 @@ var Marker = Model.extend({
   _getCachePath(keys) {
     //array of steps -- names of all frames
     var steps = this._parent.time.getAllSteps();
-    var cachePath = steps[0] + " - " + steps[steps.length-1];
+    var cachePath = steps[0] + " - " + steps[steps.length - 1];
     this._dataCube = this._dataCube || this.getSubhooks(true);
     var dataLoading = false;
     utils.forEach(this._dataCube, function(hook, name) {
@@ -563,7 +563,7 @@ var Marker = Model.extend({
                     dataBetweenFrames[hook][key] = val1;
                   } else {
                     //interpolation between number and null should rerurn null, not a value in between (#1350)
-                    dataBetweenFrames[hook][key] = (val1==null || val2==null) ? null : val1 + ((val2 - val1) * fraction);
+                    dataBetweenFrames[hook][key] = (val1 == null || val2 == null) ? null : val1 + ((val2 - val1) * fraction);
                   }
                 });
               }
@@ -579,7 +579,7 @@ var Marker = Model.extend({
                 lastKeyObject[lastKey] = val1;
               } else {
                 //interpolation between number and null should rerurn null, not a value in between (#1350)
-                lastKeyObject[lastKey] = (val1==null || val2==null) ? null : val1 + ((val2 - val1) * fraction);
+                lastKeyObject[lastKey] = (val1 == null || val2 == null) ? null : val1 + ((val2 - val1) * fraction);
               }
             }
 
@@ -865,7 +865,7 @@ var Marker = Model.extend({
     var findEntityWithCompleteHooks = function(values) {
       if (!values) return false;
       for (var i = 0, j = hooks.length; i < j; i++) {
-        if (!(values[hooks[i]][entity] || values[hooks[i]][entity]===0)) return false;
+        if (!(values[hooks[i]][entity] || values[hooks[i]][entity] === 0)) return false;
       }
       return true;
     };

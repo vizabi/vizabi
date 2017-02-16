@@ -318,7 +318,7 @@ var MountainChartComponent = Component.extend({
 
     ready() {
         //console.log("ready")
-        var _this= this;
+        var _this = this;
 
         this._math.xScaleFactor = this.model.marker.axis_x.xScaleFactor;
         this._math.xScaleShift = this.model.marker.axis_x.xScaleShift;
@@ -398,7 +398,7 @@ updateSize(meshLength) {
         this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
         this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
 
-        if (this.height<=0 || this.width<=0) return utils.warn("Mountain chart updateSize() abort: vizabi container is too little or has display:none");
+        if (this.height <= 0 || this.width <= 0) return utils.warn("Mountain chart updateSize() abort: vizabi container is too little or has display:none");
 
         //graph group is shifted according to margins (while svg element is at 100 by 100%)
         this.graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -406,10 +406,10 @@ updateSize(meshLength) {
         var isRTL = this.model.locale.isRTL();
 
         var yearLabelOptions = {
-            topOffset: this.getLayoutProfile()==="large"? margin.top * 2 : 0,
-            xAlign: this.getLayoutProfile()==="large"? (isRTL ? 'left' : 'right') : 'center',
-            yAlign: this.getLayoutProfile()==="large"? 'top' : 'center',
-            widthRatio: this.getLayoutProfile()==="large" ? 3/8 : 8/10
+            topOffset: this.getLayoutProfile() === "large" ? margin.top * 2 : 0,
+            xAlign: this.getLayoutProfile() === "large" ? (isRTL ? 'left' : 'right') : 'center',
+            yAlign: this.getLayoutProfile() === "large" ? 'top' : 'center',
+            widthRatio: this.getLayoutProfile() === "large" ? 3 / 8 : 8 / 10
         };
 
         //year is centered and resized
@@ -491,7 +491,7 @@ updateSize(meshLength) {
     zoomToMaxMin() {
         var _this = this;
 
-        if (this.model.marker.axis_x.zoomedMin==null || this.model.marker.axis_x.zoomedMax==null) return;
+        if (this.model.marker.axis_x.zoomedMin == null || this.model.marker.axis_x.zoomedMax == null) return;
 
         var x1 = this.xScale(this.model.marker.axis_x.zoomedMin);
         var x2 = this.xScale(this.model.marker.axis_x.zoomedMax);
@@ -499,7 +499,7 @@ updateSize(meshLength) {
         this.rangeRatio = this.width / (x2 - x1) * this.rangeRatio;
         this.rangeShift = (this.rangeShift - x1) / (x2 - x1) * this.width;
 
-        this.xScale.range([this.rangeShift, this.width*this.rangeRatio + this.rangeShift]);
+        this.xScale.range([this.rangeShift, this.width * this.rangeRatio + this.rangeShift]);
 
         this.xAxisEl.call(this.xAxis);
     },
@@ -585,7 +585,7 @@ updateSize(meshLength) {
                 pointer.KEY = function() {
                     return this[_this.KEY];
                 };
-                pointer.sortValue = [_this.values.axis_y[pointer.KEY()]||0, 0];
+                pointer.sortValue = [_this.values.axis_y[pointer.KEY()] || 0, 0];
                 pointer.aggrLevel = 0;
                 return pointer;
             });
@@ -608,7 +608,7 @@ updateSize(meshLength) {
                 return m.sortValue[0];
             }));
 
-            if (groupManualSort && groupManualSort.length > 1) groupSortValue = groupManualSort.length-1 - groupManualSort.indexOf(group.key);
+            if (groupManualSort && groupManualSort.length > 1) groupSortValue = groupManualSort.length - 1 - groupManualSort.indexOf(group.key);
 
             group.values.forEach(function(d) {
                 d.sortValue[1] = groupSortValue;
@@ -1096,7 +1096,7 @@ updateSize(meshLength) {
         this.mountains.style("fill", function(d) {
             return _this.values.color[d.KEY()] ?
               (
-                isColorUseIndicator &&_this.values.color[d.KEY()] == "_default" ?
+                isColorUseIndicator && _this.values.color[d.KEY()] == "_default" ?
                  _this.model.marker.color.palette["_default"]
                  :
                  _this.cScale(_this.values.color[d.KEY()])
@@ -1175,8 +1175,8 @@ updateSize(meshLength) {
                 .attr("ry", contentBBox.height * 0.2);
 
             this.tooltip.selectAll("text")
-                .attr("x", -contentBBox.width - 25 + ((contentBBox.width + 8)/2))
-                .attr("y", -contentBBox.height - 25 + ((contentBBox.height + 11)/2)); // 11 is 8 for margin + 3 for strokes
+                .attr("x", -contentBBox.width - 25 + ((contentBBox.width + 8) / 2))
+                .attr("y", -contentBBox.height - 25 + ((contentBBox.height + 11) / 2)); // 11 is 8 for margin + 3 for strokes
             var translateX = (mouse[0] - contentBBox.width - 25) > 0 ? mouse[0] : (contentBBox.width + 25);
             var translateY = (mouse[1] - contentBBox.height - 25) > 0 ? mouse[1] : (contentBBox.height + 25);
             this.tooltip

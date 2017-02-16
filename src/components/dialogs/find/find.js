@@ -197,14 +197,14 @@ var Find = Dialog.extend({
         d.brokenData = false;
         utils.forEach(values, function(hook, name) {
           //TODO: remove the hack with hardcoded hook names (see discussion in #1389)
-          if (name!=="color" && name!=="size_label" && _this.model.state.marker[name].use!=="constant" && !hook[d[KEY]] && hook[d[KEY]] !== 0) {
+          if (name !== "color" && name !== "size_label" && _this.model.state.marker[name].use !== "constant" && !hook[d[KEY]] && hook[d[KEY]] !== 0) {
             d.brokenData = true;
           }
         });
 
         view
           .classed("vzb-find-item-brokendata", d.brokenData)
-          .attr("title", d.brokenData? _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : "");
+          .attr("title", d.brokenData ? _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : "");
       });
   },
 
@@ -223,7 +223,7 @@ var Find = Dialog.extend({
 
     this.list.selectAll(".vzb-find-item")
       .classed("vzb-hidden", function(d) {
-        var lower = (d.name||"").toLowerCase();
+        var lower = (d.name || "").toLowerCase();
         return (lower.indexOf(search) === -1);
       });
   },

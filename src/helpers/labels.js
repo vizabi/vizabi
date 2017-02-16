@@ -112,7 +112,7 @@ var label = function(context) {
           _this.model.marker.highlightMarker(d);
           var KEY = _this.KEY || _this.model.entities.getDimension();
           // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
-          _this.entityLabels.sort(function(a, b) { return a[KEY] != d[KEY]? -1 : 1; });
+          _this.entityLabels.sort(function(a, b) { return a[KEY] != d[KEY] ? -1 : 1; });
           d3.select(this).selectAll("." + _cssPrefix + "-label-x")
             .classed("vzb-transparent", false);
         })
@@ -129,7 +129,7 @@ var label = function(context) {
           var hidden = cross.classed("vzb-transparent");
           if (hidden) {
             // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
-            _this.entityLabels.sort(function(a, b) { return a[KEY] != d[KEY]? -1 : 1; });
+            _this.entityLabels.sort(function(a, b) { return a[KEY] != d[KEY] ? -1 : 1; });
             _this.showCloseCross(null, false);
           }
           cross.classed("vzb-transparent", !hidden);
@@ -158,7 +158,7 @@ var label = function(context) {
       var labelGroup = d3.select(labelContext);
 
       //protect label and line from the broken data
-      var brokenInputs = !_X && _X !==0 || !_Y && _Y !==0 || !_X0 && _X0 !==0 || !_Y0 && _Y0 !==0;
+      var brokenInputs = !_X && _X !== 0 || !_Y && _Y !== 0 || !_X0 && _X0 !== 0 || !_Y0 && _Y0 !== 0;
       if (brokenInputs) {
           labelGroup.classed("vzb-invisible", brokenInputs);
           lineGroup.classed("vzb-invisible", brokenInputs);
@@ -276,7 +276,7 @@ var label = function(context) {
 
       var bBox = labels.removeLabelBox ? textBBox : rectBBox;
 
-      var FAR_COEFF = _this.activeProfile.labelLeashCoeff||0;
+      var FAR_COEFF = _this.activeProfile.labelLeashCoeff || 0;
 
       var lineHidden = circleRectIntersects({ x: diffX1, y: diffY1, r: cache.scaledS0 },
         { x: diffX2, y: diffY2, width: (bBox.height * 2 * FAR_COEFF + bBox.width), height: (bBox.height * (2 * FAR_COEFF + 1)) });
@@ -292,7 +292,7 @@ var label = function(context) {
       }
 
       var longerSideCoeff = Math.abs(diffX1) > Math.abs(diffY1) ? Math.abs(diffX1) : Math.abs(diffY1);
-      lineGroup.select("line").style("stroke-dasharray", "0 " + (cache.scaledS0) + " " + ~~(longerSideCoeff)*2);
+      lineGroup.select("line").style("stroke-dasharray", "0 " + (cache.scaledS0) + " " + ~~(longerSideCoeff) * 2);
 
       lineGroup.selectAll("line")
         .attr("x1", diffX1)
@@ -402,7 +402,7 @@ var Labels = Class.extend({
 
     this.label.setCssPrefix(this.options.CSS_PREFIX);
 
-    this.rootEl = this.context.root.element instanceof Array? this.context.root.element : d3.select(this.context.root.element);
+    this.rootEl = this.context.root.element instanceof Array ? this.context.root.element : d3.select(this.context.root.element);
     this.labelsContainer = this.rootEl.select("." + this.options.LABELS_CONTAINER_CLASS);
     this.linesContainer = this.rootEl.select("." + this.options.LINES_CONTAINER_CLASS);
     this.updateIndicators();
@@ -557,7 +557,7 @@ var Labels = Class.extend({
         cached.labelX0 = valueX;
         cached.labelY0 = valueY;
         cached.valueLST = valueLST;
-        cached.scaledC0 = valueC!=null?this.context.cScale(valueC):this.context.COLOR_WHITEISH;
+        cached.scaledC0 = valueC != null ? this.context.cScale(valueC) : this.context.COLOR_WHITEISH;
       }
 
       if (cached.labelX_ == null || cached.labelY_ == null)
@@ -568,7 +568,7 @@ var Labels = Class.extend({
         cached.labelOffset = select.labelOffset || [0, 0];
       }
 
-      var brokenInputs = !cached.labelX0 && cached.labelX0 !==0 || !cached.labelY0 && cached.labelY0 !==0 || !cached.scaledS0 && cached.scaledS0 !==0;
+      var brokenInputs = !cached.labelX0 && cached.labelX0 !== 0 || !cached.labelY0 && cached.labelY0 !== 0 || !cached.scaledS0 && cached.scaledS0 !== 0;
 
       var lineGroup = _this.entityLines.filter(function(f) {
         return f[KEY] == d[KEY];

@@ -141,7 +141,7 @@ var BubbleChartComp = Component.extend({
 
         //disable trails if too many items get selected at once
         //otherwise it's too much waiting time
-        if ((evt.source._val||[]).length - (evt.source._previousVal||[]).length > 50) _this.model.ui.chart.trails = false;
+        if ((evt.source._val || []).length - (evt.source._previousVal || []).length > 50) _this.model.ui.chart.trails = false;
 
         _this.selectDataPoints();
         _this.redrawDataPoints();
@@ -279,8 +279,8 @@ var BubbleChartComp = Component.extend({
   },
 
   _rangeBump(arg, undo) {
-    var bump = this.activeProfile.maxRadius/2;
-    undo = undo?-1:1;
+    var bump = this.activeProfile.maxRadius / 2;
+    undo = undo ? -1 : 1;
     if (utils.isArray(arg) && arg.length > 1) {
       var z1 = arg[0];
       var z2 = arg[arg.length - 1];
@@ -423,7 +423,7 @@ var BubbleChartComp = Component.extend({
       })
       .on("click", function() {
         var cursor = _this.model.ui.cursorMode;
-        if (!d3.event.defaultPrevented && cursor!=="arrow") {
+        if (!d3.event.defaultPrevented && cursor !== "arrow") {
           _this._panZoom.zoomByIncrement(cursor, 500);
         }
       });
@@ -679,7 +679,7 @@ var BubbleChartComp = Component.extend({
           var pointer = {};
           pointer[KEY] = d[KEY];
           pointer[TIMEDIM] = endTime;
-          pointer.sortValue = _this.frame.size[d[KEY]]||0;
+          pointer.sortValue = _this.frame.size[d[KEY]] || 0;
           pointer[KEY] = prefix + d[KEY];
           return pointer;
         })
@@ -882,7 +882,7 @@ var BubbleChartComp = Component.extend({
     this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
     this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
 
-    if (this.height<=0 || this.width<=0) return utils.warn("Bubble chart updateSize() abort: vizabi container is too little or has display:none");
+    if (this.height <= 0 || this.width <= 0) return utils.warn("Bubble chart updateSize() abort: vizabi container is too little or has display:none");
 
     //graph group is shifted according to margins (while svg element is at 100 by 100%)
     this.graph
@@ -915,7 +915,7 @@ var BubbleChartComp = Component.extend({
         scaleType: this.model.marker.axis_y.scaleType,
         toolMargin: margin,
         limitMaxTickNumber: 6,
-        bump: this.activeProfile.maxRadius/2,
+        bump: this.activeProfile.maxRadius / 2,
         viewportLength: this.height,
         formatter: this.model.marker.axis_y.getTickFormatter()
       });
@@ -928,7 +928,7 @@ var BubbleChartComp = Component.extend({
       .labelerOptions({
         scaleType: this.model.marker.axis_x.scaleType,
         toolMargin: margin,
-        bump: this.activeProfile.maxRadius/2,
+        bump: this.activeProfile.maxRadius / 2,
         viewportLength: this.width,
         formatter: this.model.marker.axis_x.getTickFormatter()
       });
@@ -960,8 +960,8 @@ var BubbleChartComp = Component.extend({
     this.yAxisEl.call(this.yAxis);
     this.xAxisEl.call(this.xAxis);
 
-    this.projectionX.attr("y1", _this.yScale.range()[0] + this.activeProfile.maxRadius/2);
-    this.projectionY.attr("x2", _this.xScale.range()[0] - this.activeProfile.maxRadius/2);
+    this.projectionX.attr("y1", _this.yScale.range()[0] + this.activeProfile.maxRadius / 2);
+    this.projectionY.attr("x2", _this.xScale.range()[0] - this.activeProfile.maxRadius / 2);
 
 
     // reduce font size if the caption doesn't fit
@@ -972,17 +972,17 @@ var BubbleChartComp = Component.extend({
     var isRTL = this.model.locale.isRTL();
     this.yTitleEl
       .style("font-size", infoElHeight + "px")
-      .attr("transform", "translate(" + (isRTL ? this.width : 10-this.activeProfile.margin.left) + ", -" + this.activeProfile.yAxisTitleBottomMargin + ")");
+      .attr("transform", "translate(" + (isRTL ? this.width : 10 - this.activeProfile.margin.left) + ", -" + this.activeProfile.yAxisTitleBottomMargin + ")");
 
     this.xTitleEl
       .style("font-size", infoElHeight + "px")
       .attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + (this.height + margin.bottom - this.activeProfile.xAxisTitleBottomMargin) + ")");
 
-    var ySeparator = this.strings.unit.Y? ", ":"";
+    var ySeparator = this.strings.unit.Y ? ", " : "";
     var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + ySeparator + this.strings.unit.Y);
     if (yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
 
-    var xSeparator = this.strings.unit.Y? ", ":"";
+    var xSeparator = this.strings.unit.Y ? ", " : "";
     var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + xSeparator + this.strings.unit.X);
     if (xTitleText.node().getBBox().width > this.width - 100) xTitleText.text(this.strings.title.X);
 
@@ -1026,7 +1026,7 @@ var BubbleChartComp = Component.extend({
 
     this.lineEqualXY
       .transition()
-      .duration(duration||0)
+      .duration(duration || 0)
       .attr("y1", this.yScale(min))
       .attr("y2", this.yScale(max))
       .attr("x1", this.xScale(min))
@@ -1041,7 +1041,7 @@ var BubbleChartComp = Component.extend({
     var dataWarningWidth = dataWarningText.node().getBBox().width + dataWarningText.node().getBBox().height * 3;
     var remainingWidth = this.width - this.xTitleEl.node().getBBox().width - this.activeProfile.infoElHeight;
     var font = parseInt(dataWarningText.style("font-size")) * remainingWidth / dataWarningWidth;
-    dataWarningText.style("font-size", dataWarningWidth > remainingWidth? font + "px" : null);
+    dataWarningText.style("font-size", dataWarningWidth > remainingWidth ? font + "px" : null);
 
     // position the warning icon
     var warnBB = dataWarningText.node().getBBox();
@@ -1101,7 +1101,7 @@ var BubbleChartComp = Component.extend({
 
       var valueC = selected ? valuesNow.color[d[KEY]] : valuesLocked.color[d[KEY]];
 
-      var scaledC = valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH;
+      var scaledC = valueC != null ? _this.cScale(valueC) : _this.COLOR_WHITEISH;
 
       d3.select(this).style("fill", scaledC);
 
@@ -1122,7 +1122,7 @@ var BubbleChartComp = Component.extend({
             cache.scaledC0 = scaledC;
           } else {
             var valueC = valuesTrailStart.color[d[KEY]];
-            cache.scaledC0 = valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH;
+            cache.scaledC0 = valueC != null ? _this.cScale(valueC) : _this.COLOR_WHITEISH;
           }
 
           _this._labels.updateLabelOnlyColor(d, index, cache);
@@ -1235,7 +1235,7 @@ var BubbleChartComp = Component.extend({
     var valueLST = values.size_label[d[KEY]];
 
     // check if fetching data succeeded
-    if (!valueL && valueL!==0 || !valueY && valueY!==0 || !valueX && valueX!==0 || !valueS && valueS!==0) {
+    if (!valueL && valueL !== 0 || !valueY && valueY !== 0 || !valueX && valueX !== 0 || !valueS && valueS !== 0) {
       // if entity is missing data it should hide
        if (!d.hidden) {
            d.hidden = true;
@@ -1267,7 +1267,7 @@ var BubbleChartComp = Component.extend({
       // if entity has all the data we update the visuals
       var scaledS = utils.areaToRadius(_this.sScale(valueS));
 
-      view.style("fill", valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH);
+      view.style("fill", valueC != null ? _this.cScale(valueC) : _this.COLOR_WHITEISH);
 
       if (duration) {
         if (showhide) {
@@ -1303,7 +1303,7 @@ var BubbleChartComp = Component.extend({
         type: "circle",
         id: d[KEY],
         time: this.model.time.value.getUTCFullYear(),
-        fill: valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH,
+        fill: valueC != null ? _this.cScale(valueC) : _this.COLOR_WHITEISH,
         cx: _this.xScale(valueX),
         cy: _this.yScale(valueY),
         r: scaledS
@@ -1332,8 +1332,8 @@ var BubbleChartComp = Component.extend({
 
         cache.labelX0 = valueX;
         cache.labelY0 = valueY;
-        cache.scaledC0 = valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH,
-        cache.scaledS0 = (valueS || valueS===0) ? utils.areaToRadius(_this.sScale(valueS)) : null;
+        cache.scaledC0 = valueC != null ? _this.cScale(valueC) : _this.COLOR_WHITEISH,
+        cache.scaledS0 = (valueS || valueS === 0) ? utils.areaToRadius(_this.sScale(valueS)) : null;
       }
 
       var trailStartTime = _this.model.time.parse("" + select.trailStartTime);
@@ -1362,15 +1362,15 @@ var BubbleChartComp = Component.extend({
     }
 
     return [formatterS(titleS) + " " + unitS,
-      titleC || titleC===0 ? formatterC(titleC) + " " + unitC : this.translator("hints/nodata")];
+      titleC || titleC === 0 ? formatterC(titleC) + " " + unitC : this.translator("hints/nodata")];
   },
 
   _updateSTitle(titleS, titleC) {
 
     // vertical text about size and color
     if (this.activeProfile.hideSTitle
-        && this.model.ui.dialogs.sidebar.indexOf("colors")>-1
-        && this.model.ui.dialogs.sidebar.indexOf("size")>-1) {
+        && this.model.ui.dialogs.sidebar.indexOf("colors") > -1
+        && this.model.ui.dialogs.sidebar.indexOf("size") > -1) {
       this.sTitleEl.classed("vzb-invisible", true);
       return;
     }
@@ -1390,7 +1390,7 @@ var BubbleChartComp = Component.extend({
     var sTitleWidth = sTitleText.node().getBBox().width;
     var remainigHeight = this.height - 30;
     var font = parseInt(sTitleText.style("font-size")) * remainigHeight / sTitleWidth;
-    sTitleText.style("font-size", sTitleWidth > remainigHeight? font + "px" : null);
+    sTitleText.style("font-size", sTitleWidth > remainigHeight ? font + "px" : null);
   },
 
   selectDataPoints() {
@@ -1501,7 +1501,7 @@ var BubbleChartComp = Component.extend({
         var valueS = values.size[d[KEY]];
         var radius = utils.areaToRadius(_this.sScale(valueS));
 
-        if (!valueY && valueY!==0 || !valueX && valueX!==0 || !valueS && valueS!==0) return;
+        if (!valueY && valueY !== 0 || !valueX && valueX !== 0 || !valueS && valueS !== 0) return;
 
         if (_this.model.ui.chart.whenHovering.showProjectionLineX
           && _this.xScale(valueX) > 0 && _this.xScale(valueX) < _this.width
@@ -1569,7 +1569,7 @@ var BubbleChartComp = Component.extend({
           var x = _this.xScale(values.axis_x[d[KEY]]);
           var y = _this.yScale(values.axis_y[d[KEY]]);
           var s = utils.areaToRadius(_this.sScale(values.size[d[KEY]]));
-          var c = values.color[d[KEY]]!=null?_this.cScale(values.color[d[KEY]]):_this.COLOR_WHITEISH;
+          var c = values.color[d[KEY]] != null ? _this.cScale(values.color[d[KEY]]) : _this.COLOR_WHITEISH;
           var entityOutOfView = false;
 
           var titles = _this._formatSTitleValues(values.size[d[KEY]], values.color[d[KEY]]);
@@ -1589,7 +1589,7 @@ var BubbleChartComp = Component.extend({
             hoverTrail = text !== selectedData.trailStartTime && !d3.select(d3.event.target).classed('bubble-' + d[KEY]);
             text = text !== selectedData.trailStartTime && _this.time === d[TIMEDIM] ? text : '';
           } else {
-            text = _this.model.marker.isSelected(d) ? '': values.label[d[KEY]];
+            text = _this.model.marker.isSelected(d) ? '' : values.label[d[KEY]];
           }
 
           _this._labels.highlight(null, false);

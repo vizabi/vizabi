@@ -163,8 +163,8 @@ var MapLayer = Class.extend({
         [0, 0],
         [this.context.width, this.context.height]
       ];
-      var scaleX = (canvas[1][0] - canvas[0][0])/(currentSE[0] - currentNW[0]);
-      var scaleY = (canvas[1][1] - canvas[0][1])/(currentSE[1] - currentNW[1]);
+      var scaleX = (canvas[1][0] - canvas[0][0]) / (currentSE[0] - currentNW[0]);
+      var scaleY = (canvas[1][1] - canvas[0][1]) / (currentSE[1] - currentNW[1]);
       if (scaleX != scaleY) {
         if (scaleX > scaleY) {
           scaleDelta = scaleY;
@@ -176,12 +176,12 @@ var MapLayer = Class.extend({
       }
 
     } else {
-      scaleDelta = (canvas[1][0] - canvas[0][0])/(currentSE[0] - currentNW[0]);
+      scaleDelta = (canvas[1][0] - canvas[0][0]) / (currentSE[0] - currentNW[0]);
     }
 
     // scale to aspect ratio
     // http://bl.ocks.org/mbostock/4707858
-    var s = this.context.model.ui.map.scale/ Math.max((this.mapBounds[1][0] - this.mapBounds[0][0]) / this.context.width, (this.mapBounds[1][1] - this.mapBounds[0][1]) / this.context.height),
+    var s = this.context.model.ui.map.scale / Math.max((this.mapBounds[1][0] - this.mapBounds[0][0]) / this.context.width, (this.mapBounds[1][1] - this.mapBounds[0][1]) / this.context.height),
 
     // dimensions of the map itself (regardless of cropping)
         mapWidth = (s * (this.mapBounds[1][0] - this.mapBounds[0][0])),
@@ -255,7 +255,7 @@ var MapLayer = Class.extend({
   },
 
   invert(x, y) {
-     return this.projection([x||0, y||0]);
+     return this.projection([x || 0, y || 0]);
   }
 
 });

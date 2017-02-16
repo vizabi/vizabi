@@ -90,7 +90,7 @@ var Model = EventSource.extend({
     this._data = {};
     //holds attributes of this model
     this._parent = parent;
-    this._root = parent? parent._root : this;
+    this._root = parent ? parent._root : this;
     this._name = name;
     this._ready = false;
     this._readyOnce = false;

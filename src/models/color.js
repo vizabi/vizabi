@@ -97,7 +97,7 @@ var ColorModel = Hook.extend({
     this.on('hook_change', function() {
       if (_this._readyOnce) return;
 
-      if (_this.palette && Object.keys(_this.palette._data).length!==0) {
+      if (_this.palette && Object.keys(_this.palette._data).length !== 0) {
         var defaultPalette = _this.getDefaultPalette();
         var currentPalette = _this.getPalette(true);
         var palette = {};
@@ -105,7 +105,7 @@ var ColorModel = Hook.extend({
         //switch current palette elements which equals
         //default palette elments to nonpersistent state
         Object.keys(defaultPalette).forEach(function(key) {
-          if (!currentPalette[key]||defaultPalette[key]==currentPalette[key]) palette[key] = defaultPalette[key];
+          if (!currentPalette[key] || defaultPalette[key] == currentPalette[key]) palette[key] = defaultPalette[key];
         });
         _this.set("palette", palette, false, false);
       }
@@ -155,7 +155,7 @@ var ColorModel = Hook.extend({
     this.syncModels.forEach(function(modelName) {
       //fetch the model to sync, it's marker and entities
       var model = _this.getClosestModel(modelName);
-      var marker = model.isHook()? model._parent : model;
+      var marker = model.isHook() ? model._parent : model;
       var entities = marker.getClosestModel(marker.space[0]);
 
       //save the references here locally
@@ -179,11 +179,11 @@ var ColorModel = Hook.extend({
   },
 
   getColorlegendMarker() {
-    return (this._syncModelReferences["marker_colorlegend"]||{})["marker"];
+    return (this._syncModelReferences["marker_colorlegend"] || {})["marker"];
   },
 
   getColorlegendEntities() {
-    return (this._syncModelReferences["marker_colorlegend"]||{})["entities"];
+    return (this._syncModelReferences["marker_colorlegend"] || {})["entities"];
   },
 
   /**
@@ -230,7 +230,7 @@ var ColorModel = Hook.extend({
           palette = utils.clone(defaultPalettes["_default"]);
         }
       } else {
-        palette = utils.clone(defaultPalettes[this.isDiscrete()? "_discrete" : "_continuous"]);
+        palette = utils.clone(defaultPalettes[this.isDiscrete() ? "_discrete" : "_continuous"]);
         this.discreteDefaultPalette = true;
      }
 
@@ -254,7 +254,7 @@ var ColorModel = Hook.extend({
 
   getPalette(includeDefault) {
     //rebuild palette if it's empty
-    if (!this.palette || Object.keys(this.palette._data).length===0) {
+    if (!this.palette || Object.keys(this.palette._data).length === 0) {
       var palette = this.getDefaultPalette();
       this.set("palette", palette, false, false);
       var paletteLabels = this._getPaletteLabels();
@@ -290,9 +290,9 @@ var ColorModel = Hook.extend({
 
       var singlePoint = (limits.max - limits.min == 0);
 
-      domain = domain.sort((a, b) => a-b);
-      range = domain.map(m => singlePoint? paletteObject[domain[0]] : paletteObject[m]);
-      domain = domain.map(m => limits.min.valueOf() + m/100 * (limits.max.valueOf() - limits.min.valueOf()));
+      domain = domain.sort((a, b) => a - b);
+      range = domain.map(m => singlePoint ? paletteObject[domain[0]] : paletteObject[m]);
+      domain = domain.map(m => limits.min.valueOf() + m / 100 * (limits.max.valueOf() - limits.min.valueOf()));
 
       this.scale = d3.time.scale.utc()
         .domain(domain)
@@ -309,11 +309,11 @@ var ColorModel = Hook.extend({
 
       var singlePoint = (limits[1] - limits[0] == 0);
 
-      domain = domain.sort((a, b) => a-b);
-      range = domain.map(m => singlePoint? paletteObject[domain[0]] : paletteObject[m]);
-      domain = domain.map(m => limits[0] + m/100 * (limits[1] - limits[0]));
+      domain = domain.sort((a, b) => a - b);
+      range = domain.map(m => singlePoint ? paletteObject[domain[0]] : paletteObject[m]);
+      domain = domain.map(m => limits[0] + m / 100 * (limits[1] - limits[0]));
 
-      if (d3.min(domain)<=0 && d3.max(domain)>=0 && scaleType === "log") scaleType = "genericLog";
+      if (d3.min(domain) <= 0 && d3.max(domain) >= 0 && scaleType === "log") scaleType = "genericLog";
 
       if (scaleType == "log" || scaleType == "genericLog") {
         var s = d3.scale.genericLog()
@@ -327,7 +327,7 @@ var ColorModel = Hook.extend({
         .interpolate(d3.interpolateRgb);
 
     } else {
-      range = range.map(m => utils.isArray(m)? m[0] : m);
+      range = range.map(m => utils.isArray(m) ? m[0] : m);
 
       scaleType = "ordinal";
 
