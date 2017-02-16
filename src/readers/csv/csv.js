@@ -87,7 +87,7 @@ const CSVReader = Reader.extend({
 
   _guessDelimiter(text) {
     const stringsToCheck = 2;
-    const rows = this._getRows(text, stringsToCheck).map((row) => row.replace(/".*?"/g, ''));
+    const rows = this._getRows(text, stringsToCheck).map(row => row.replace(/".*?"/g, ''));
 
     if (rows.length !== stringsToCheck) {
       throw this.error(this.ERRORS.NOT_ENOUGH_ROWS_IN_FILE);

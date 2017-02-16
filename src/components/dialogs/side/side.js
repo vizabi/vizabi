@@ -95,7 +95,7 @@ var Side = Dialog.extend({
       var sides = this.model.state.marker.getKeys(sideDim);
       var sideKeys = [];
       var sideFiltered = !!this.model.state.marker.side.getEntity().show[sideDim];
-      sideKeys = sides.filter((f) => !sideFiltered || _this.model.state.marker.side.getEntity().isShown(f)).map(function(m) {
+      sideKeys = sides.filter(f => !sideFiltered || _this.model.state.marker.side.getEntity().isShown(f)).map(function(m) {
           return m[sideDim];
         });
 

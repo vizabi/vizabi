@@ -78,7 +78,7 @@ var DataModel = Model.extend({
           EventSource.unfreezeAll();
           return dataId;
         })
-        .catch((error) => this.handleReaderError(error, query));
+        .catch(error => this.handleReaderError(error, query));
     }
 
   },
@@ -277,7 +277,7 @@ var DataModel = Model.extend({
 
     return this.load(query)
       .then(this.handleConceptPropsResponse.bind(this))
-      .catch((error) => this.handleReaderError(error, query));
+      .catch(error => this.handleReaderError(error, query));
 
   },
 

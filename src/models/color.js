@@ -291,8 +291,8 @@ var ColorModel = Hook.extend({
       var singlePoint = (limits.max - limits.min == 0);
 
       domain = domain.sort((a,b) => a-b);
-      range = domain.map((m) => singlePoint? paletteObject[domain[0]] : paletteObject[m]);
-      domain = domain.map((m) => limits.min.valueOf() + m/100 * (limits.max.valueOf() - limits.min.valueOf()));
+      range = domain.map(m => singlePoint? paletteObject[domain[0]] : paletteObject[m]);
+      domain = domain.map(m => limits.min.valueOf() + m/100 * (limits.max.valueOf() - limits.min.valueOf()));
 
       this.scale = d3.time.scale.utc()
         .domain(domain)
@@ -310,8 +310,8 @@ var ColorModel = Hook.extend({
       var singlePoint = (limits[1] - limits[0] == 0);
 
       domain = domain.sort((a,b) => a-b);
-      range = domain.map((m) => singlePoint? paletteObject[domain[0]] : paletteObject[m]);
-      domain = domain.map((m) => limits[0] + m/100 * (limits[1] - limits[0]));
+      range = domain.map(m => singlePoint? paletteObject[domain[0]] : paletteObject[m]);
+      domain = domain.map(m => limits[0] + m/100 * (limits[1] - limits[0]));
 
       if(d3.min(domain)<=0 && d3.max(domain)>=0 && scaleType === "log") scaleType = "genericLog";
 
@@ -319,7 +319,7 @@ var ColorModel = Hook.extend({
         var s = d3.scale.genericLog()
           .domain(limits)
           .range(limits);
-        domain = domain.map((d) => s.invert(d));
+        domain = domain.map(d => s.invert(d));
       }
       this.scale = d3.scale[scaleType]()
         .domain(domain)
@@ -327,7 +327,7 @@ var ColorModel = Hook.extend({
         .interpolate(d3.interpolateRgb);
 
     }else{
-      range = range.map((m) => utils.isArray(m)? m[0] : m);
+      range = range.map(m => utils.isArray(m)? m[0] : m);
 
       scaleType = "ordinal";
 

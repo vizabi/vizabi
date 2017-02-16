@@ -427,7 +427,7 @@ var Model = EventSource.extend({
 
     return Promise.all(promises)
       .then(this.onSuccessfullLoad.bind(this))
-      .catch((error) => {
+      .catch(error => {
         const translator = this.getClosestModel('locale').getTFunction();
         this.triggerLoadError([
           translator('crash/error'),

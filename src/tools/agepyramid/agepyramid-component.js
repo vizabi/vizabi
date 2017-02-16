@@ -62,7 +62,7 @@ var AgePyramid = Component.extend({
           }
         }
         if(!_this.snapped) {
-          if(_this.timeSteps.filter((t) => (t - _this.model.time.value) == 0).length) {
+          if(_this.timeSteps.filter(t => (t - _this.model.time.value) == 0).length) {
             _this.model.marker.getFrame(_this.model.time.value, function(frame) {
               _this.frame = frame;
               _this.frameAxisX = frame.axis_x;
@@ -119,7 +119,7 @@ var AgePyramid = Component.extend({
         if(_this.model.entities.dim === _this.model.entities_side.dim
         && !utils.isEmpty(_this.model.entities.show)
         && !utils.isEmpty(_this.model.entities_side.show)) {
-          utils.forEach(_this.model.entities_side.getFilteredEntities(), (s) => {
+          utils.forEach(_this.model.entities_side.getFilteredEntities(), s => {
             if(!_this.model.entities.isShown(s)) {
               _this.model.marker.side.clearSideState();
               _this.model.entities_side.showEntity(s);
@@ -132,13 +132,13 @@ var AgePyramid = Component.extend({
 
         var doReturn = false;
         var _entitiesSameDimWithSide = null;
-        utils.forEach(_this.model.marker.side._space, (h) => {
+        utils.forEach(_this.model.marker.side._space, h => {
           if(h.dim === _this.model.entities_side.dim && h._name !== _this.model.entities_side._name) {
             _entitiesSameDimWithSide = h;
           }
         })
         if(_entitiesSameDimWithSide && !utils.isEmpty(_entitiesSameDimWithSide.show)) {
-          utils.forEach(_this.model.entities_side.getFilteredEntities(), (s) => {
+          utils.forEach(_this.model.entities_side.getFilteredEntities(), s => {
             if(!_entitiesSameDimWithSide.isShown(s)) {
               _entitiesSameDimWithSide.showEntity(s);
               doReturn = true;
@@ -421,7 +421,7 @@ var AgePyramid = Component.extend({
     if(!utils.isEmpty(sideItems)) {
       var sideFiltered = !!this.model.marker.side.getEntity().show[sideDim];
       var sides = this.model.marker.getKeys(sideDim)
-        .filter((f) => !sideFiltered || this.model.marker.side.getEntity().isShown(f));
+        .filter(f => !sideFiltered || this.model.marker.side.getEntity().isShown(f));
       sideKeys = sides.map(function(m) {
           return m[sideDim];
         });
@@ -489,7 +489,7 @@ var AgePyramid = Component.extend({
     var totals = {};
     var inpercentMaxLimits = {};
     var maxLimits = {};
-    sideKeysNF.forEach((s) => {
+    sideKeysNF.forEach(s => {
       maxLimits[s] = [];
       inpercentMaxLimits[s] = [];
     });
@@ -560,7 +560,7 @@ var AgePyramid = Component.extend({
 
     this.maxLimits = {};
     this.inpercentMaxLimits = {};
-    sideKeysNF.forEach((s) => {
+    sideKeysNF.forEach(s => {
       _this.maxLimits[s] = Math.max.apply(Math, maxLimits[s])
       _this.inpercentMaxLimits[s] = Math.max.apply(Math, inpercentMaxLimits[s]);
     });
@@ -572,9 +572,9 @@ var AgePyramid = Component.extend({
     var axisX = this.model.marker.axis_x;
     var domain;
     if(this.ui.chart.inpercent) {
-      domain = [0, Math.max.apply(Math, this.sideKeys.map((s) => _this.inpercentMaxLimits[s]))];
+      domain = [0, Math.max.apply(Math, this.sideKeys.map(s => _this.inpercentMaxLimits[s]))];
     } else {
-      domain = (axisX.domainMin!=null && axisX.domainMax!=null) ? [+axisX.domainMin, +axisX.domainMax] : [0, Math.max.apply(Math, this.sideKeys.map((s) => _this.maxLimits[s]))];
+      domain = (axisX.domainMin!=null && axisX.domainMax!=null) ? [+axisX.domainMin, +axisX.domainMax] : [0, Math.max.apply(Math, this.sideKeys.map(s => _this.maxLimits[s]))];
     }
     this.xScale.domain(domain);
     if(this.xScaleLeft) this.xScaleLeft.domain(this.xScale.domain());

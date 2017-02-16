@@ -345,8 +345,8 @@ var Menu = Class.extend({
   },
   hasActiveParentNeighbour() {
     return this.menuItems
-      .filter((item) => item.isActive())
-      .some((item) => !!d3.select(item.entity).node().classed(css.hasChild));
+      .filter(item => item.isActive())
+      .some(item => !!d3.select(item.entity).node().classed(css.hasChild));
   },
   marqueeToggle: function(toggle) {
     for (var i = 0; i < this.menuItems.length; i++) {
@@ -718,7 +718,7 @@ var TreeMenu = Component.extend({
         }
       })
 
-    utils.forEach(this.model.marker._root._data, (dataSource)=>{
+    utils.forEach(this.model.marker._root._data, dataSource=>{
       if(dataSource._type !== "data") return;
 
       var indicatorsDB = dataSource.getConceptprops();
@@ -1084,7 +1084,7 @@ var TreeMenu = Component.extend({
     var dataFiltered;
 
     var indicatorsDB = {}
-    utils.forEach(this.model.marker._root._data, (m)=>{
+    utils.forEach(this.model.marker._root._data, m=>{
       if(m._type === "data") utils.deepExtend(indicatorsDB, m.getConceptprops());
     })
 

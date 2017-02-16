@@ -661,7 +661,7 @@ var BubbleMapComponent = Component.extend({
           .data(this.mapFeature.features)
           .enter().insert("path")
             .attr("d", this.mapPath)
-            .attr("id", (d) => d.properties[this.model.ui.map.topology.geoIdProperty].toLowerCase())
+            .attr("id", d => d.properties[this.model.ui.map.topology.geoIdProperty].toLowerCase())
             .attr("class", "land");
     } else {
       this.mapGraph.insert("path")

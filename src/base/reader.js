@@ -44,7 +44,7 @@ const Reader = Class.extend({
     const [orderBy] = order_by;
 
     return this.load()
-      .then((result) => {
+      .then(result => {
         const { data, columns } = result;
         this.ensureDataIsCorrect(result, parsers);
 
@@ -61,7 +61,7 @@ const Reader = Class.extend({
             return [];
         }
       })
-      .catch((error) => {
+      .catch(error => {
         throw ({}).toString.call(error) === '[object Error]' ?
           this.error(this.ERRORS.GENERIC_ERROR, error) :
           error;
@@ -146,7 +146,7 @@ const Reader = Class.extend({
   _getRowMapper(query, parsers) {
     const { select } = query;
 
-    return (row) => {
+    return row => {
       let correct = true;
 
       const result = Object.keys(row).reduce((result, key) => {

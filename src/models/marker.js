@@ -35,7 +35,7 @@ var Marker = Model.extend({
 
   setDataSourceForAllSubhooks: function(data){
     var obj = {};
-    this.getSubhooks().forEach((hook) => { obj[hook._name] = {data: data} });
+    this.getSubhooks().forEach(hook => { obj[hook._name] = {data: data} });
     this.set(obj, null, false);
   },
 

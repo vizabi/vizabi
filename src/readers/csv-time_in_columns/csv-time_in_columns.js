@@ -16,7 +16,7 @@ const CSVTimeInColumnsReader = CSVReader.extend({
         const indicatorKey = columns[this.keySize];
 
         let concepts = data.reduce((result, row) => {
-          Object.keys(row).forEach((concept) => {
+          Object.keys(row).forEach(concept => {
             concept = concept === indicatorKey ? row[indicatorKey] : concept;
 
             if (Number(concept) != concept && !result.includes(concept)) {
@@ -33,13 +33,13 @@ const CSVTimeInColumnsReader = CSVReader.extend({
         return {
           columns: concepts,
           data: data.reduce((result, row) => {
-            const resultRows = result.filter((resultRow) => resultRow[entityDomain] === row[entityDomain]);
+            const resultRows = result.filter(resultRow => resultRow[entityDomain] === row[entityDomain]);
             if (resultRows.length) {
-              resultRows.forEach((resultRow) => {
+              resultRows.forEach(resultRow => {
                 resultRow[row[indicatorKey]] = row[resultRow[this.timeKey]];
               });
             } else {
-              Object.keys(row).forEach((key) => {
+              Object.keys(row).forEach(key => {
                 if (![entityDomain, indicatorKey].includes(key)) {
                   result.push(
                     Object.assign({

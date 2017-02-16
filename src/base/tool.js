@@ -184,7 +184,7 @@ var Tool = Component.extend({
       .then(() => utils.delay(300))
       .then(this.model.startLoading.bind(this.model))
       .then(this.finishLoading.bind(this))
-      .catch((error) => {
+      .catch(error => {
         EventSource.unfreezeAll();
         this.model.triggerLoadError(error);
       });

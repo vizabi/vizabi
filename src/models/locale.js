@@ -52,7 +52,7 @@ var LocaleModel = DataConnected.extend({
     // through the listeners
 
     promises = [];
-    utils.forEach(this._root._data, (mdl)=>{
+    utils.forEach(this._root._data, mdl=>{
       if(mdl._type === "data") promises.push(mdl.loadConceptProps())
     })
     promises.push(new Promise((resolve, reject) => {

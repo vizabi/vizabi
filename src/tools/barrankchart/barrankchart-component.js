@@ -425,7 +425,7 @@ const BarRankChart = Component.extend({
       zeroValueWidth = this.xScale(0) || 0;
     }
 
-    const barWidth = (value) => this.xScale(value) - zeroValueWidth;
+    const barWidth = value => this.xScale(value) - zeroValueWidth;
 
     const labelAnchor = ltr ? 'end' : 'start';
     const valueAnchor = ltr ? 'start' : 'end';
@@ -443,7 +443,7 @@ const BarRankChart = Component.extend({
       (barX - barValueMargin);
 
     const isLabelBig = (this._getWidestLabelWidth(true) + (ltr ? margin.left : margin.right)) < shift;
-    this.sortedEntities.forEach((bar) => {
+    this.sortedEntities.forEach(bar => {
       const { value } = bar;
 
       if (force || presentationModeChanged || bar.isNew) {
