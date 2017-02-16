@@ -1025,8 +1025,8 @@ var BubbleChartComp = Component.extend({
     this.lineEqualXY.classed("vzb-invisible", !oneMeasure);
     if(!oneMeasure) return;
 
-    var min = d3.min(this.yScale.domain().concat(this.xScale.domain()) );
-    var max = d3.max(this.yScale.domain().concat(this.xScale.domain()) );
+    var min = d3.min(this.yScale.domain().concat(this.xScale.domain()));
+    var max = d3.max(this.yScale.domain().concat(this.xScale.domain()));
 
     this.lineEqualXY
       .transition()

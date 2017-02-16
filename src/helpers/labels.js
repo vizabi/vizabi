@@ -663,7 +663,7 @@ var Labels = Class.extend({
       .attr("r", labelCloseHeight * .5);
 
     labelCloseGroup.select("svg")
-      .attr("x", -labelCloseHeight * .5 )
+      .attr("x", -labelCloseHeight * .5)
       .attr("y", labelCloseHeight * -.5)
       .attr("width", labelCloseHeight)
       .attr("height", labelCloseHeight)

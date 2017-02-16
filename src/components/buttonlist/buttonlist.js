@@ -186,7 +186,7 @@ var ButtonList = Component.extend({
     this.element = d3.select(this.placeholder);
     this.element.selectAll("div").remove();
 
-    this.root.findChildByName("gapminder-dialogs").on('close', function( evt, params) {
+    this.root.findChildByName("gapminder-dialogs").on('close', function(evt, params) {
       _this.setButtonActive(params.id, false);
     });
 

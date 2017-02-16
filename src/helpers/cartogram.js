@@ -47,7 +47,7 @@ import * as utils from 'base/utils';
               mass = Math.sqrt(desired / Math.PI) - radius,
               sizeError = Math.max(area, desired) / Math.min(area, desired);
             // console.log(o.id, "@", j, "area:", area, "value:", v, "->", desired, radius, mass, sizeError);
-            cb( {
+            cb({
               id:         objects[index].id,
               area:       area,
               centroid:   path.centroid(objects[index]),
@@ -144,7 +144,7 @@ import * as utils from 'base/utils';
           }
           // no iterations; just return the features
           if (iterations <= 0) {
-            resolve( {
+            resolve({
               features: objects,
               arcs: projectedArcs
             });
@@ -221,7 +221,7 @@ import * as utils from 'base/utils';
 
           resizeSegments(0, iterations);
           iterationsDefer.then(function() {
-            resolve( {
+            resolve({
               features: objects,
               arcs: projectedArcs
             });

@@ -451,7 +451,7 @@ export default Class.extend({
         //d3 extent returns min and max of the input array as [min, max]
         var mmX = d3.extent(utils.values(_this.frame.axis_x));
         var mmY = d3.extent(utils.values(_this.frame.axis_y));
-        var radiusMax = utils.areaToRadius(_this.sScale( d3.extent(utils.values(_this.frame.size))[1] )) || 0;
+        var radiusMax = utils.areaToRadius(_this.sScale(d3.extent(utils.values(_this.frame.size))[1])) || 0;
 
         //protection agains unreasonable min-max results -- abort function
         if (!mmX[0] && mmX[0]!==0 || !mmX[1] && mmX[1]!==0 || !mmY[0] && mmY[0]!==0 || !mmY[1] && mmY[1]!==0) {
@@ -826,7 +826,7 @@ export default Class.extend({
             this.zoomer.ratioY = 1;
             this.zoomer.ratioX = 1;
         }
-        ratio = Math.max(scaleExtent[0], Math.min( scaleExtent[1], Math.pow(2, k) ));
+        ratio = Math.max(scaleExtent[0], Math.min(scaleExtent[1], Math.pow(2, k)));
 
         //recalculate panning
         locus = [locus[0] * ratio + pan[0], locus[1] * ratio + pan[1]];
