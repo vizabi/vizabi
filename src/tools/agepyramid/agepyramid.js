@@ -72,7 +72,7 @@ var AgePyramid = Tool.extend('AgePyramid', {
         inpercent: false,
         flipSides: true
       },
-      "buttons":['colors', 'inpercent', 'side', 'moreoptions', 'fullscreen'],
+      "buttons": ['colors', 'inpercent', 'side', 'moreoptions', 'fullscreen'],
       "dialogs": {
         'popup': ['timedisplay', 'colors', 'side', 'moreoptions'],
         'sidebar': ['timedisplay', 'colors', 'show'],

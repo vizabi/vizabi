@@ -120,7 +120,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
             conceptType: "measure"
           }
         },
-        label:  {
+        label: {
           use: "property",
           autogenerate: {
             conceptIndex: 0
@@ -147,7 +147,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
           extent: [0, 0.33]
         },
       },
-      "marker_colorlegend":{
+      "marker_colorlegend": {
         "space": ["entities_colorlegend"],
         "label": {
           "use": "property",

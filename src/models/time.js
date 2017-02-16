@@ -14,13 +14,13 @@ Date.prototype.utc = Date.prototype.toUTCString;
  * all in UTC
  */
 var formats = {
-  'year':    { data: d3.time.format.utc('%Y'),            ui: d3.time.format.utc('%Y') },
-  'month':   { data: d3.time.format.utc('%Y-%m'),         ui: d3.time.format.utc('%b %Y') }, // month needs separator according to ISO to not confuse YYYYMM with YYMMDD
-  'day':     { data: d3.time.format.utc('%Y%m%d'),        ui: d3.time.format.utc('%c') },
-  'hour':    { data: d3.time.format.utc("%Y%m%dT%H"),     ui: d3.time.format.utc('%b %d %Y, %H') },
-  'minute':  { data: d3.time.format.utc("%Y%m%dT%H%M"),   ui: d3.time.format.utc('%b %d %Y, %H:%M') },
-  'second':  { data: d3.time.format.utc("%Y%m%dT%H%M%S"), ui: d3.time.format.utc('%b %d %Y, %H:%M:%S') },
-  'week':    { data: weekFormat(),    ui: weekFormat() },   // %Yw%W d3 week format does not comply with ISO
+  'year': { data: d3.time.format.utc('%Y'),            ui: d3.time.format.utc('%Y') },
+  'month': { data: d3.time.format.utc('%Y-%m'),         ui: d3.time.format.utc('%b %Y') }, // month needs separator according to ISO to not confuse YYYYMM with YYMMDD
+  'day': { data: d3.time.format.utc('%Y%m%d'),        ui: d3.time.format.utc('%c') },
+  'hour': { data: d3.time.format.utc("%Y%m%dT%H"),     ui: d3.time.format.utc('%b %d %Y, %H') },
+  'minute': { data: d3.time.format.utc("%Y%m%dT%H%M"),   ui: d3.time.format.utc('%b %d %Y, %H:%M') },
+  'second': { data: d3.time.format.utc("%Y%m%dT%H%M%S"), ui: d3.time.format.utc('%b %d %Y, %H:%M:%S') },
+  'week': { data: weekFormat(),    ui: weekFormat() },   // %Yw%W d3 week format does not comply with ISO
   'quarter': { data: quarterFormat(), ui: quarterFormat() } // %Yq%Q d3 does not support quarters
 };
 

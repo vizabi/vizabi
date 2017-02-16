@@ -289,7 +289,7 @@ var GoogleMapLayer = Class.extend({
         });
         var rectangle = new google.maps.Rectangle({
           bounds: {
-            north:_this.context.model.ui.map.bounds.north,
+            north: _this.context.model.ui.map.bounds.north,
             east: _this.context.model.ui.map.bounds.east,
             south: _this.context.model.ui.map.bounds.south,
             west: _this.context.model.ui.map.bounds.west

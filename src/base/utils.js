@@ -1461,7 +1461,7 @@ export function firstBy() {
     function ignoreCase(v) {return typeof (v)==="string" ? v.toLowerCase() : v;}
 
     function makeCompareFunction(f, opt) {
-     opt = typeof (opt)==="number" ? { direction:opt } : opt||{};
+     opt = typeof (opt)==="number" ? { direction: opt } : opt||{};
      if(typeof (f)!="function") {
         var prop = f;
         // make unary function

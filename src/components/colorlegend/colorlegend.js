@@ -49,7 +49,7 @@ var ColorLegend = Component.extend({
           }
         });
       },
-      "translate:locale":  function() {
+      "translate:locale": function() {
         _this.colorPicker.translate(_this.model.locale.getTFunction());
       }
     };

@@ -139,7 +139,7 @@ var BubbleSize = Component.extend({
       });
 
     this.sliderThumbs = this.sliderEl.selectAll(".handle")
-      .data([{ type:"w" },{ type:"e" }], function(d) { return d.type; })
+      .data([{ type: "w" },{ type: "e" }], function(d) { return d.type; })
       .enter().append("svg").attr("class", function(d) { return "handle handle--" + d.type; })
       .classed("vzb-bs-slider-thumb", true);
 

@@ -399,7 +399,7 @@ var CartogramComponent = Component.extend({
   updateEntities: function(duration) {
     var time = this.model.time.value;
 
-    this.updateEntitiesQueue.push({ time:time, duration: duration });
+    this.updateEntitiesQueue.push({ time: time, duration: duration });
     this._redrawEntities();
   },
 

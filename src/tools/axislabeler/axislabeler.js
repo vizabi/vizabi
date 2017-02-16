@@ -68,12 +68,12 @@ var AxisLabeler = Tool.extend('AxisLabeler', {
 
   default_model: {
     state: {
-      scales:{
+      scales: {
           domain: listData[listPointer],
           xScaleType: 'linear',
           yScaleType: 'genericLog'
       },
-      show:{
+      show: {
           labelSize: "16px",
           labelMargin: { LR: "5px", TB: "5px" },
           toolMargin: { top: 30, right: 20, left: 40, bottom: 40 }

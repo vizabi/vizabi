@@ -48,14 +48,14 @@ import * as utils from 'base/utils';
               sizeError = Math.max(area, desired) / Math.min(area, desired);
             // console.log(o.id, "@", j, "area:", area, "value:", v, "->", desired, radius, mass, sizeError);
             cb({
-              id:         objects[index].id,
-              area:       area,
-              centroid:   path.centroid(objects[index]),
-              value:      v,
-              desired:    desired,
-              radius:     radius,
-              mass:       mass,
-              sizeError:  sizeError
+              id: objects[index].id,
+              area: area,
+              centroid: path.centroid(objects[index]),
+              value: v,
+              desired: desired,
+              radius: radius,
+              mass: mass,
+              sizeError: sizeError
             });
           };
           var calculateMetaSequence = function(index) {

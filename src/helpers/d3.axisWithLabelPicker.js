@@ -181,7 +181,7 @@ export default function axisSmart(_orient) {
       }
 
       // this will give additive shifting for the hovered value in case it sticks out a little outside viewport
-      var hlValueShift = (highlightValue == "none" ? { x:0, y:0 } :
+      var hlValueShift = (highlightValue == "none" ? { x: 0, y: 0 } :
           repositionLabelsThatStickOut([highlightValue], o, orient, axis.scale(), dimension)[highlightValue])[dimension];
 
       // this function will help to move the hovered value to the right place

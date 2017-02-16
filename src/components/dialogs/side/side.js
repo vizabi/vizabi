@@ -27,7 +27,7 @@ var Side = Dialog.extend({
         _this.updateState();
         _this.redraw();
       },
-      "change:ui.chart.flipSides":function (evt) {
+      "change:ui.chart.flipSides": function (evt) {
         if (!_this._readyOnce) return;
         _this.updateState();
         _this.redraw();

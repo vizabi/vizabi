@@ -25,7 +25,7 @@ init: function(config, parent) {
     placeholder: '.vzb-dialog-placeholder',
     model: ["state.time"],
     arg: "delay",
-    properties: { min:1, max:6, step:0.1, scale: d3.scale.linear()
+    properties: { min: 1, max: 6, step: 0.1, scale: d3.scale.linear()
       .domain([1,2,3,4,5,6])
       .range([1200,900,450,200,150,100])
     }

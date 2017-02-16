@@ -71,7 +71,7 @@ var Cartogram = Tool.extend('Cartogram', {
         },
         lockNonSelected: 0,
         lockActive: 0,
-        sizeSelectorActive:0
+        sizeSelectorActive: 0
       },
       datawarning: {
         doubtDomain: [],

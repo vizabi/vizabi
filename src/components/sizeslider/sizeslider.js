@@ -15,7 +15,7 @@ var OPTIONS = {
   THUMB_RADIUS: 10,
   THUMB_STROKE_WIDTH: 4,
   INTRO_DURATION: 250,
-  MARGIN: { TOP: 2, LEFT: 5, RIGHT:5 }
+  MARGIN: { TOP: 2, LEFT: 5, RIGHT: 5 }
 };
 
 var profiles = {
@@ -174,7 +174,7 @@ var SizeSlider = Component.extend({
       });
 
     this.sliderThumbs = this.sliderEl.selectAll(".handle")
-      .data([{ type:"w" },{ type:"e" }], function(d) { return d.type; })
+      .data([{ type: "w" },{ type: "e" }], function(d) { return d.type; })
       .enter().append("svg").attr("class", function(d) { return "handle handle--" + d.type + " " + d.type; })
       .classed("vzb-szs-slider-thumb", true);
 
