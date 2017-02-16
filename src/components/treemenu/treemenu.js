@@ -718,7 +718,7 @@ var TreeMenu = Component.extend({
         }
       })
 
-    utils.forEach(this.model.marker._root._data, dataSource=>{
+    utils.forEach(this.model.marker._root._data, dataSource => {
       if(dataSource._type !== "data") return;
 
       var indicatorsDB = dataSource.getConceptprops();
@@ -1084,7 +1084,7 @@ var TreeMenu = Component.extend({
     var dataFiltered;
 
     var indicatorsDB = {}
-    utils.forEach(this.model.marker._root._data, m=>{
+    utils.forEach(this.model.marker._root._data, m => {
       if(m._type === "data") utils.deepExtend(indicatorsDB, m.getConceptprops());
     })
 
