@@ -773,5 +773,4 @@ function getIntervals(ctx) {
 }
 
 
-
 export default Model;

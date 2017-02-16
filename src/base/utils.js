@@ -1439,9 +1439,6 @@ export function makeAbsoluteContext(element, svgDocument) {
 }
 
 
-
-
-
 /***
    thenBy.js
    Copyright 2013 Teun Duynstee

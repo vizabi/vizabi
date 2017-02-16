@@ -98,7 +98,6 @@ export default Class.extend({
       .style("text-align", "center");
 
 
-
     this.root = this.svg.select("." + prefix + "graph");
 
     this.root.selectAll("g, text, svg, line, rect")
@@ -195,7 +194,6 @@ export default Class.extend({
       link.click();
     }
   }
-
 
 
 });

@@ -581,7 +581,6 @@ var AgePyramid = Component.extend({
   },
 
 
-
   _interpolateBetweenTotals: function(timeSteps, totals, time) {
     var nextStep = d3.bisectLeft(timeSteps, time);
     var fraction = (time - timeSteps[nextStep - 1]) / (timeSteps[nextStep] - timeSteps[nextStep - 1]);

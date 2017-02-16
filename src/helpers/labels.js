@@ -150,8 +150,6 @@ var label = function(context) {
     };
 
 
-
-
     label._repositionLabels = _repositionLabels;
     function _repositionLabels(d, i, labelContext, _X, _Y, _X0, _Y0, duration, showhide, lineGroup) {
 

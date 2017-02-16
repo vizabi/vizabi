@@ -540,7 +540,6 @@ updateSize: function (meshLength) {
         });
 
 
-
         this.dataWarningEl
             .on("click", function () {
                 _this.parent.findChildByName("gapminder-datawarning").toggle();

@@ -343,7 +343,6 @@ export default function axisSmart(_orient) {
       if(options.stops == null) options.stops = [1, 2, 5, 3, 7, 4, 6, 8, 9];
 
 
-
       if(options.removeAllLabels == null) options.removeAllLabels = false;
 
       if(options.formatter == null) options.formatter = axis.tickFormat()?
@@ -427,18 +426,12 @@ export default function axisSmart(_orient) {
       var labelsStackOnTop = (orient == HORIZONTAL && pivot || orient == VERTICAL && !pivot);
 
 
-
-
       // conditions to remove labels altogether
       var labelsJustDontFit = (!labelsStackOnTop && options.heightOfOneDigit > options.pivotingLimit);
       if(options.removeAllLabels) return axis.tickValues([]);
 
       // return a single tick if have only one point in the domain
       if(min == max) return axis.tickValues([min]).ticks(1).tickFormat(options.formatter);
-
-
-
-
 
 
       // LABELS FIT INTO SCALE
@@ -451,7 +444,6 @@ export default function axisSmart(_orient) {
         if(tickValues == null || tickValues.length <= 1) return true;
         if(approximationStyle == null) approximationStyle = PESSIMISTIC;
         if(rescalingLabels == null) scaleType = "none";
-
 
 
         if(labelsStackOnTop) {
@@ -497,9 +489,6 @@ export default function axisSmart(_orient) {
           }
         }
       };
-
-
-
 
 
       // COLLISION BETWEEN
@@ -700,8 +689,6 @@ export default function axisSmart(_orient) {
       } //logarithmic
 
 
-
-
       if(options.scaleType == "linear" || options.scaleType == "time") {
         if(bothSidesUsed) tickValues.push(0);
         var avoidCollidingWith = [].concat(tickValues);
@@ -752,8 +739,6 @@ export default function axisSmart(_orient) {
       }
 
 
-
-
       if(tickValues != null && tickValues.length <= 2 && !bothSidesUsed) tickValues = [min, max];
 
       if(tickValues != null && tickValues.length <= 3 && bothSidesUsed) {
@@ -786,15 +771,6 @@ export default function axisSmart(_orient) {
           repositionLabelsThatStickOut(tickValues, options, orient, axis.scale(), labelsStackOnTop ? "y" : "x")
         );
     };
-
-
-
-
-
-
-
-
-
 
 
     // GROUP ELEMENTS OF AN ARRAY, SO THAT...
@@ -838,12 +814,6 @@ export default function axisSmart(_orient) {
 
       return result;
     }
-
-
-
-
-
-
 
 
     // REPOSITION LABELS THAT STICK OUT
@@ -983,8 +953,6 @@ export default function axisSmart(_orient) {
 
       return result;
     } // function repositionLabelsThatStickOut()
-
-
 
 
     axis.copy = function() {

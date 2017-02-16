@@ -129,7 +129,6 @@ var TimeSlider = Component.extend({
     };
 
 
-
     // Same constructor as the superclass
     this._super(model, context);
 

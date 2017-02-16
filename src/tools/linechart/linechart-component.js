@@ -830,7 +830,6 @@ var LCComponent = Component.extend({
               .attr("cy", _this.yScale(_this.cached[d[KEY]]["valueY"]) + 1);
 
 
-
             entity.select(".vzb-lc-label")
               .transition()
               .duration(_this.duration)
@@ -846,7 +845,6 @@ var LCComponent = Component.extend({
         .duration(_this.duration)
         .ease(d3.easeLinear)
         .attr("transform", "translate(" + _this.xScale(d3.min([_this.model.marker.axis_x.zoomedMax, _this.time])) + ",0)");
-
 
 
       if(!_this.hoveringNow && _this.time - _this.model.time.start !== 0) {

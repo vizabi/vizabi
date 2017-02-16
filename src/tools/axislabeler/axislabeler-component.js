@@ -99,7 +99,6 @@ var AxisLabelerComponent = Component.extend({
   },
 
 
-
   update: function() {
     var _this = this;
 
@@ -135,7 +134,6 @@ var AxisLabelerComponent = Component.extend({
         scaleType: this.model.scales.yScaleType,
         toolMargin: margin
       });
-
 
 
     this.xAxisEl.attr("transform", "translate(0," + height + ")");

@@ -1316,10 +1316,6 @@ var TreeMenu = Component.extend({
   },
 
 
-
-
-
-
   updateView: function() {
     var _this = this;
 

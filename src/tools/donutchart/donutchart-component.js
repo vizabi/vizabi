@@ -161,9 +161,7 @@ var DonutComponent = Component.extend('donut', {
       }
 
 
-
 });
-
 
 
 export default DonutComponent;

@@ -128,7 +128,6 @@ var MCMath = Class.extend({
         }
 
 
-
     });
 
 export default MCMath;

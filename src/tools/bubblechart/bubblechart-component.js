@@ -13,7 +13,6 @@ import {
 } from 'base/iconset';
 
 
-
 //BUBBLE CHART COMPONENT
 var BubbleChartComp = Component.extend({
 
@@ -803,8 +802,6 @@ var BubbleChartComp = Component.extend({
   },
 
 
-
-
   /*
    * UPDATE TIME:
    * Ideally should only update when time or data changes
@@ -965,7 +962,6 @@ var BubbleChartComp = Component.extend({
 
     this.projectionX.attr("y1", _this.yScale.range()[0] + this.activeProfile.maxRadius/2);
     this.projectionY.attr("x2", _this.xScale.range()[0] - this.activeProfile.maxRadius/2);
-
 
 
     // reduce font size if the caption doesn't fit

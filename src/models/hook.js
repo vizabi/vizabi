@@ -426,7 +426,6 @@ var Hook = DataConnected.extend({
     if (formatted.indexOf(".")>-1) formatted = formatted.replace(/0+$/,"").replace(/\.$/,"");
 
 
-
     // use manual formatting for the cases above
     return(formatted + prefix + (percentageMode===PERCENT || percentageMode===SHARE?"%":""));
     };

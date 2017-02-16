@@ -92,7 +92,6 @@ var MCProbe = Class.extend({
         },
 
 
-
     });
 
 export default MCProbe;
