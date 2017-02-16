@@ -143,16 +143,16 @@ export var arrayEquals = function(a, b) {
  * @param b
  * @returns {boolean} if objects are equal
  */
-export var comparePlainObjects = function (a, b) {
+export var comparePlainObjects = function(a, b) {
 
     //Returns the object's class, Array, Date, RegExp, Object are of interest to us
-    var getClass = function (val) {
+    var getClass = function(val) {
         return Object.prototype.toString.call(val)
             .match(/^\[object\s(.*)\]$/)[1];
     };
 
     //Defines the type of the value, extended typeof
-    var whatis = function (val) {
+    var whatis = function(val) {
 
         if (val === undefined) {
             return 'undefined';
@@ -179,7 +179,7 @@ export var comparePlainObjects = function (a, b) {
         return type;
     };
 
-    var compare = function (a, b) {
+    var compare = function(a, b) {
         if (a === b) {
             return true;
         }
@@ -201,7 +201,7 @@ export var comparePlainObjects = function (a, b) {
         return true;
     };
 
-    var compareArrays = function (a, b) {
+    var compareArrays = function(a, b) {
         if (a === b) {
             return true;
         }
@@ -219,10 +219,10 @@ export var comparePlainObjects = function (a, b) {
     var _equal = {};
     _equal.array = compareArrays;
     _equal.object = compare;
-    _equal.date = function (a, b) {
+    _equal.date = function(a, b) {
         return a.getTime() === b.getTime();
     };
-    _equal.regexp = function (a, b) {
+    _equal.regexp = function(a, b) {
         return a.toString() === b.toString();
     };
 
@@ -232,7 +232,7 @@ export var comparePlainObjects = function (a, b) {
      * @param b {any}
      * @return {boolean} Are equal?
      */
-    var equal = function (a, b) {
+    var equal = function(a, b) {
         if (a !== b) {
             var atype = whatis(a), btype = whatis(b);
 
@@ -370,7 +370,7 @@ function cloneSpecificValue(val) {
  */
 function deepCloneArray(arr) {
   var clone = [];
-  forEach(arr, function (item, index) {
+  forEach(arr, function(item, index) {
     if (typeof item === 'object' && item !== null) {
       if (isArray(item)) {
         clone[index] = deepCloneArray(item);
@@ -411,13 +411,13 @@ export var deepExtend = function(/*obj_1, [obj_2], [obj_N]*/) {
 
   var val, src, clone;
 
-  forEach(args, function (obj) {
+  forEach(args, function(obj) {
     // skip argument if it is array or isn't object
     if (typeof obj !== 'object' || isArray(obj)) {
       return;
     }
 
-    forEach(Object.keys(obj), function (key) {
+    forEach(Object.keys(obj), function(key) {
       src = target[key]; // source value
       val = obj[key]; // new value
 
@@ -741,9 +741,9 @@ export var preventAncestorScrolling = function(element) {
     };
 
     var scrollTopTween = function(scrollTop) {
-      return function () {
+      return function() {
         var i = d3.interpolateNumber(this.scrollTop, scrollTop);
-        return function (t) {
+        return function(t) {
           this.scrollTop = i(t);
         };
       };
@@ -801,7 +801,7 @@ export var mapRows = function(original, formatters) {
 
   // default formatter turns empty strings in null and converts numeric values into number
   //TODO: default formatter is moved to utils. need to return it to hook prototype class, but retest #1212 #1230 #1253
-  var defaultFormatter = function (val) {
+  var defaultFormatter = function(val) {
       var newVal = val;
       if (val === "") {
         newVal = null;

@@ -133,7 +133,7 @@ export default Class.extend({
           }));
         });
       if (promises.length > 0) {
-        Promise.all(promises).then(function (segments) {
+        Promise.all(promises).then(function(segments) {
           resolve(true);
         });
       } else {
@@ -701,7 +701,7 @@ export default Class.extend({
           var pointIndex = Object.keys(_this.drawingQueue[d[KEY]])[Math.floor(Math.random() *  Object.keys(_this.drawingQueue[d[KEY]]).length)];
           var point = JSON.parse(JSON.stringify(_this.drawingQueue[d[KEY]][pointIndex]));
           delete _this.drawingQueue[d[KEY]][pointIndex];
-          addPointBetween(point.first, point.next, point.medium).then(function () {
+          addPointBetween(point.first, point.next, point.medium).then(function() {
               if (Object.keys(_this.drawingQueue[d[KEY]]).length > 0) {
                 processPoint();
               } else {

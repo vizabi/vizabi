@@ -22,7 +22,7 @@ var Dialogs = Component.extend({
    * @param config component configuration
    * @param context component context (parent)
    */
-  init: function (config, context) {
+  init: function(config, context) {
 
     //set properties
     var _this = this;
@@ -96,7 +96,7 @@ var Dialogs = Component.extend({
 
   },
 
-  domReady: function () {
+  domReady: function() {
     var dialog_popup = (this.model.ui.dialogs || {}).popup || [];
     var dialog_sidebar = (this.model.ui.dialogs || {}).sidebar || [];
 
@@ -114,7 +114,7 @@ var Dialogs = Component.extend({
     this.dialog_sidebar = dialog_sidebar;
   },
 
-  readyOnce: function () {
+  readyOnce: function() {
     var _this = this;
 
     this.element = d3.select(this.placeholder);
@@ -126,7 +126,7 @@ var Dialogs = Component.extend({
 
     if (this.dialog_popup.length !== 0) {
       this.root.findChildByName("gapminder-buttonlist")
-        .on("click", function (evt, button) {
+        .on("click", function(evt, button) {
           if (!_this._available_dialogs[button.id]) return;
 
           if (button.active) {
@@ -136,25 +136,25 @@ var Dialogs = Component.extend({
           }
         });
 
-      var popupDialogs = this.element.selectAll(".vzb-top-dialog").filter(function (d) {
+      var popupDialogs = this.element.selectAll(".vzb-top-dialog").filter(function(d) {
         return _this.dialog_popup.indexOf(d.id) > -1;
       });
 
       var close_buttons = popupDialogs.select(".vzb-top-dialog>.vzb-dialog-modal>.vzb-dialog-buttons>[data-click='closeDialog']");
-      close_buttons.on('click', function (d, i) {
+      close_buttons.on('click', function(d, i) {
         _this.closeDialog(d.id);
       });
 
       var pinDialog = popupDialogs.select(".vzb-top-dialog>.vzb-dialog-modal>[data-click='pinDialog']");
-      pinDialog.on('click', function (d, i) {
+      pinDialog.on('click', function(d, i) {
         _this.pinDialog(d.id);
       });
 
-      this.rootEl.node().addEventListener('click', function () {
+      this.rootEl.node().addEventListener('click', function() {
         _this.closeAllDialogs();
       });
 
-      this.rootEl.on("mousedown", function (e) {
+      this.rootEl.on("mousedown", function(e) {
         if (!this._active_comp) return; //don't do anything if nothing is open
 
         var target = d3.event.target;
@@ -172,17 +172,17 @@ var Dialogs = Component.extend({
       });
     }
 
-    this.element.on('click', function () {
+    this.element.on('click', function() {
       d3.event.stopPropagation();
     });
 
   },
 
-  resize: function () {
+  resize: function() {
     var _this = this;
     var profile = this.getLayoutProfile();
 
-    this.element.selectAll(".vzb-top-dialog").each(function (d) {
+    this.element.selectAll(".vzb-top-dialog").each(function(d) {
       var dialogEl = d3.select(this);
       var cls = dialogEl.attr('class').replace(' vzb-popup', '').replace(' vzb-sidebar', '');
 
@@ -201,7 +201,7 @@ var Dialogs = Component.extend({
    * adds dialogs configuration to the components and template_data
    * @param {Array} dialog_list list of dialogs to be added
    */
-  _addDialogs: function (dialog_popup, dialog_sidebar) {
+  _addDialogs: function(dialog_popup, dialog_sidebar) {
 
     var profile = this.getLayoutProfile();
     var dialog_list = [];
@@ -241,7 +241,7 @@ var Dialogs = Component.extend({
 
     this.element.selectAll('div').data(details_dlgs)
       .enter().append("div")
-      .attr('data-dlg', function (d) {
+      .attr('data-dlg', function(d) {
         return d.id;
       })
       .attr('class', 'vzb-top-dialog vzb-dialogs-dialog vzb-dialog-shadow');
@@ -250,16 +250,16 @@ var Dialogs = Component.extend({
 
     var _this = this;
     //render each subcomponent
-    utils.forEach(this.components, function (subcomp) {
+    utils.forEach(this.components, function(subcomp) {
       subcomp.render();
-      _this.on('resize', function () {
+      _this.on('resize', function() {
         subcomp.trigger('resize');
       });
-      subcomp.on('dragstart', function () {
+      subcomp.on('dragstart', function() {
         _this.bringForward(subcomp.name);
       });
-      subcomp.on('close', function () {
-        this.placeholderEl.each(function (d) {
+      subcomp.on('close', function() {
+        this.placeholderEl.each(function(d) {
           var evt = {};
           evt.id = d.id;
           _this.trigger('close', evt);
@@ -269,7 +269,7 @@ var Dialogs = Component.extend({
 
   },
 
-  bringForward: function (id) {
+  bringForward: function(id) {
     var dialog = this.element.select(".vzb-popup.vzb-dialogs-dialog[data-dlg='" + id + "']");
     dialog.style('z-index', this._curr_dialog_index);
     this._curr_dialog_index += 10;
@@ -280,7 +280,7 @@ var Dialogs = Component.extend({
    * Activate a dialog
    * @param {String} id dialog id
    */
-  openDialog: function (id) {
+  openDialog: function(id) {
     //close pinned dialogs for small profile
     var forceClose = this.getLayoutProfile() === 'small';
     this.closeAllDialogs(forceClose);
@@ -300,7 +300,7 @@ var Dialogs = Component.extend({
   },
 
 
-  pinDialog: function (id) {
+  pinDialog: function(id) {
     var dialog = this.element.select(".vzb-popup.vzb-dialogs-dialog[data-dlg='" + id + "']");
 
     if (this._available_dialogs[id].ispin) {
@@ -317,7 +317,7 @@ var Dialogs = Component.extend({
    * Closes a dialog
    * @param {String} id dialog id
    */
-  closeDialog: function (id) {
+  closeDialog: function(id) {
     var dialog = this.element.selectAll(".vzb-popup.vzb-dialogs-dialog[data-dlg='" + id + "']");
 
     this._active_comp = this.components[this._available_dialogs[id].component];
@@ -344,12 +344,12 @@ var Dialogs = Component.extend({
   /*
    * Close all dialogs
    */
-  closeAllDialogs: function (forceclose) {
+  closeAllDialogs: function(forceclose) {
     var _this = this;
     //remove classes
     var dialogClass = forceclose ? ".vzb-popup.vzb-dialogs-dialog.vzb-active" : ".vzb-popup.vzb-dialogs-dialog.vzb-active:not(.pinned)";
     var all_dialogs = this.element.selectAll(dialogClass);
-    all_dialogs.each(function (d) {
+    all_dialogs.each(function(d) {
       _this.closeDialog(d.id);
     });
   }

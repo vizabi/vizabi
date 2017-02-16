@@ -136,7 +136,7 @@ var Component = Events.extend({
 
   },
 
-  loadingDone: function () {
+  loadingDone: function() {
     utils.removeClass(this.placeholder, class_loading_first);
     utils.removeClass(this.placeholder, class_loading_data);
     this.setReady();

@@ -3,21 +3,21 @@ import Class from 'base/class';
 
 var MCMath = Class.extend({
 
-        init: function (context) {
+        init: function(context) {
             this.context = context;
 
             this.xScaleFactor = 1;
             this.xScaleShift = 0;
         },
 
-        rescale: function (x) {
+        rescale: function(x) {
             return Math.exp(this.xScaleFactor * Math.log(x) + this.xScaleShift);
         },
-        unscale: function (x) {
+        unscale: function(x) {
             return Math.exp((Math.log(x) - this.xScaleShift) / this.xScaleFactor);
         },
 
-        generateMesh: function (length, scaleType, domain) {
+        generateMesh: function(length, scaleType, domain) {
             // span a uniform mesh across the entire X scale
             // if the scale is log, the mesh would be exponentially distorted to look uniform
 
@@ -32,9 +32,9 @@ var MCMath = Class.extend({
             var mesh = d3.range(rangeFrom, rangeTo, rangeStep).concat(rangeTo);
 
             if (scaleType !== "linear") {
-                mesh = mesh.map(function (dX) { return Math.exp(dX); });
+                mesh = mesh.map(function(dX) { return Math.exp(dX); });
             } else {
-                mesh = mesh.filter(function (dX) { return dX > 0; });
+                mesh = mesh.filter(function(dX) { return dX > 0; });
             }
 
             return mesh;
@@ -46,7 +46,7 @@ var MCMath = Class.extend({
             return Math.log(gdp/365) - sigma*sigma/2;
         },
 
-        giniToSigma: function (gini) {
+        giniToSigma: function(gini) {
             // The ginis are turned into std deviation.
             // Mattias uses this formula in Excel: stddev = NORMSINV( ((gini/100)+1)/2 )*2^0.5
             return this.normsinv(((gini / 100) + 1) / 2) * Math.pow(2, 0.5);
@@ -71,7 +71,7 @@ var MCMath = Class.extend({
         },
 
 
-        normsinv: function (p) {
+        normsinv: function(p) {
             //
             // Lower tail quantile for standard normal distribution function.
             //

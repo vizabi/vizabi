@@ -11,9 +11,9 @@ export default function genericLog() {
     var interpolator = null;
     var rangePointingForward, domainPointingForward;
 
-    var abs = function (arg) {
+    var abs = function(arg) {
       if (arg instanceof Array)
-        return arg.map(function (d) {
+        return arg.map(function(d) {
           return Math.abs(d);
         });
       return Math.abs(arg);
@@ -44,7 +44,7 @@ export default function genericLog() {
     };
 
 
-    var buildScales = function () {
+    var buildScales = function() {
       rangePointingForward = range[0] < range[range.length - 1];
       var rangePointingSign = rangePointingForward ? 1 : -1;
       scales = [];
@@ -104,7 +104,7 @@ export default function genericLog() {
       }
     };
 
-    var buildDomain = function () {
+    var buildDomain = function() {
       domainPointingForward = domain[0] < domain[domain.length - 1];
       domainParts = [];
       if ((d3.min(domain) > 0 && d3.max(domain) > 0) || (d3.min(domain) < 0 && d3.max(domain) < 0)) {
@@ -202,7 +202,7 @@ export default function genericLog() {
     };
 
     //polyfill for IE11
-    Math.sign = Math.sign || function (x) {
+    Math.sign = Math.sign || function(x) {
         x = +x;
         if (x === 0 || isNaN(x)) {
           return x;

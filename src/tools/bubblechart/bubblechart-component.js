@@ -1016,7 +1016,7 @@ var BubbleChartComp = Component.extend({
   },
 
 
-  _updateLineEqualXY: function (duration) {
+  _updateLineEqualXY: function(duration) {
     var oneMeasure = this.model.marker.axis_x.which == this.model.marker.axis_y.which;
     this.lineEqualXY.classed("vzb-invisible", !oneMeasure);
     if (!oneMeasure) return;

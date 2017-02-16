@@ -41,7 +41,7 @@ var BubbleSize = Component.extend({
    * @param config The options passed to the component
    * @param context The component's parent
    */
-  init: function (config, context) {
+  init: function(config, context) {
 
     this.name = 'bubblesize';
 
@@ -117,7 +117,7 @@ var BubbleSize = Component.extend({
     this.brush = d3.brushX()
       .extent([[0, 0], [minMaxBubbleRadius.max * 2, barWidth]])
       .handleSize(thumbRadius * 2 + barWidth * 2)
-      .on("start", function () {
+      .on("start", function() {
         if (_this.nonBrushChange || !d3.event.sourceEvent) return;
         if (d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
           var brushDatum = _this.sliderEl.node().__brush;
@@ -125,7 +125,7 @@ var BubbleSize = Component.extend({
         }
         _this._setFromExtent(false, false, false);
       })
-      .on("brush", function () {
+      .on("brush", function() {
         if (_this.nonBrushChange || !d3.event.sourceEvent) return;
         if (d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
           var brushDatum = _this.sliderEl.node().__brush;
@@ -133,7 +133,7 @@ var BubbleSize = Component.extend({
         }
         _this._setFromExtent(true, false, false); // non persistent change
       })
-      .on("end", function () {
+      .on("end", function() {
         if (_this.nonBrushChange || !d3.event.sourceEvent) return;
         _this._setFromExtent(true, true); // force a persistent change
       });
@@ -243,13 +243,13 @@ var BubbleSize = Component.extend({
     if (!this.showArcs) return;
     var _this = this;
     var valueArc = d3.arc()
-      .outerRadius(function (d) { return _this.xScale(d) * 0.5; })
-      .innerRadius(function (d) { return _this.xScale(d) * 0.5; })
+      .outerRadius(function(d) { return _this.xScale(d) * 0.5; })
+      .innerRadius(function(d) { return _this.xScale(d) * 0.5; })
       .startAngle(-Math.PI * 0.5)
       .endAngle(Math.PI * 0.5);
     this.sliderArcsEl.data(s)
       .attr("d", valueArc)
-      .attr("transform", function (d) {return "translate(" + (_this.xScale(d) * 0.5) + ",0)"; });
+      .attr("transform", function(d) {return "translate(" + (_this.xScale(d) * 0.5) + ",0)"; });
   },
 
   _updateLabels: function(s) {
@@ -267,7 +267,7 @@ var BubbleSize = Component.extend({
       var _this = this;
       _this.sliderLabelsEl
         .data([_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[0]), _this.model.size.getTickFormatter()(_this.sizeScaleMinMax[1])])
-        .text(function (d) { return d; });
+        .text(function(d) { return d; });
   },
 
   /**
@@ -291,7 +291,7 @@ var BubbleSize = Component.extend({
    * @param {boolean} force force firing the change event
    * @param {boolean} persistent sets the persistency of the change event
    */
-  _setModel: function (value, force, persistent) {
+  _setModel: function(value, force, persistent) {
     value = [+value[0].toFixed(2), +value[1].toFixed(2)];
     this.model.size.set({ "extent": value }, force, persistent);
   }

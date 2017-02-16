@@ -380,9 +380,9 @@ var DataModel = Model.extend({
     if (this._collectionPromises[dataId][whatId] && this._collectionPromises[dataId][whatId]["promise"] instanceof Promise) {
       return this._collectionPromises[dataId][whatId]["promise"];
     } else {
-      this._collectionPromises[dataId][whatId]["promise"] = new Promise(function (resolve, reject) {
+      this._collectionPromises[dataId][whatId]["promise"] = new Promise(function(resolve, reject) {
         if (!dataId) reject(utils.warn("Data.js 'get' method doesn't like the dataId you gave it: " + dataId));
-        _this._getFrames(dataId, whatId, framesArray, keys).then(function (frames) {
+        _this._getFrames(dataId, whatId, framesArray, keys).then(function(frames) {
           _this._collection[dataId]["frames"][whatId] = frames;
           resolve(_this._collection[dataId]["frames"][whatId]);
         });

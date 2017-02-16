@@ -21,7 +21,7 @@ var CartogramComponent = Component.extend({
    * @param {Object} config The config passed to the component
    * @param {Object} context The component's parent
    */
-  init: function (config, context) {
+  init: function(config, context) {
     this.name = 'cartogram';
     this.template = require('./cartogram.html');
 
@@ -54,7 +54,7 @@ var CartogramComponent = Component.extend({
 
     var _this = this;
     this.model_binds = {
-      "change:time.value": function (evt) {
+      "change:time.value": function(evt) {
         if (!_this._readyOnce) return;
         if (!_this.calculationQueue) { // collect timestamp that we request
           _this.calculationQueue = [_this.model.time.value.toString()];
@@ -169,7 +169,7 @@ var CartogramComponent = Component.extend({
   /**
    * DOM is ready
    */
-  readyOnce: function () {
+  readyOnce: function() {
 
     this.element = d3.select(this.element);
 
@@ -221,11 +221,11 @@ var CartogramComponent = Component.extend({
         .enter().append("path")
         .attr("class", function(d) { return "land " + (d.properties[_this.id_lookup]?d.properties[_this.id_lookup]:d.id); })
         .attr("d", _this.cartogram.path)
-        .on("mouseover", function (d, i) {
+        .on("mouseover", function(d, i) {
           if (utils.isTouchDevice()) return;
           _this._interact()._mouseover(d, i);
         })
-        .on("mouseout", function (d, i) {
+        .on("mouseout", function(d, i) {
           if (utils.isTouchDevice()) return;
           _this._interact()._mouseout(d, i);
         })
@@ -259,7 +259,7 @@ var CartogramComponent = Component.extend({
   /*
    * Both model and DOM are ready
    */
-  ready: function () {
+  ready: function() {
     var _this = this;
     this.cached = [];
     this.updateIndicators();
@@ -272,7 +272,7 @@ var CartogramComponent = Component.extend({
   /**
    * Changes labels for indicators
    */
-  updateIndicators: function () {
+  updateIndicators: function() {
     this.sScale = this.model.marker.size.getScale();
     this.cScale = this.model.marker.color.getScale();
   },
@@ -413,7 +413,7 @@ var CartogramComponent = Component.extend({
       });
 
   },
-  updateUIStrings: function () {
+  updateUIStrings: function() {
     var _this = this;
 
     this.translator = this.model.locale.getTFunction();
@@ -456,13 +456,13 @@ var CartogramComponent = Component.extend({
       .text(this.translator("hints/dataWarning"));
 
     this.dataWarningEl
-      .on("click", function () {
+      .on("click", function() {
         _this.parent.findChildByName("gapminder-datawarning").toggle();
       })
-      .on("mouseover", function () {
+      .on("mouseover", function() {
         _this.updateDoubtOpacity(1);
       })
-      .on("mouseout", function () {
+      .on("mouseout", function() {
         _this.updateDoubtOpacity();
       });
 
@@ -501,7 +501,7 @@ var CartogramComponent = Component.extend({
     });
   },
 
-  updateDoubtOpacity: function (opacity) {
+  updateDoubtOpacity: function(opacity) {
     if (opacity == null) opacity = this.wScale(+this.time.getUTCFullYear().toString());
     if (this.someSelected) opacity = 1;
     this.dataWarningEl.style("opacity", opacity);
@@ -524,7 +524,7 @@ var CartogramComponent = Component.extend({
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
    */
-  updateSize: function () {
+  updateSize: function() {
 
     var _this = this;
     var margin, infoElHeight;
@@ -655,11 +655,11 @@ var CartogramComponent = Component.extend({
       sTitleText.style("font-size", null);
     }
   },
-  _interact: function () {
+  _interact: function() {
     var _this = this;
 
     return {
-      _mouseover: function (d, i) {
+      _mouseover: function(d, i) {
         if (_this.model.time.dragging) return;
 
         _this.model.entities.highlightEntity(d);
@@ -676,7 +676,7 @@ var CartogramComponent = Component.extend({
           _this._setTooltip(d);
         }
       },
-      _mouseout: function (d, i) {
+      _mouseout: function(d, i) {
         if (_this.model.time.dragging) return;
         _this._setTooltip();
         _this.hovered = null;
@@ -684,7 +684,7 @@ var CartogramComponent = Component.extend({
         _this.fitSizeOfTitles();
         _this.model.entities.clearHighlighted();
       },
-      _click: function (d, i) {
+      _click: function(d, i) {
         _this.model.entities.selectEntity(d);
       }
     };
@@ -738,7 +738,7 @@ var CartogramComponent = Component.extend({
     }
   },
 
-  _setTooltip: function (d) {
+  _setTooltip: function(d) {
     var _this = this;
     if (d) {
       var tooltipText = this.values.label[this._getKey(d)]?

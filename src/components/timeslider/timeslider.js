@@ -154,7 +154,7 @@ var TimeSlider = Component.extend({
   },
 
   //template is ready
-  readyOnce: function () {
+  readyOnce: function() {
 
     var _this = this;
 
@@ -200,17 +200,17 @@ var TimeSlider = Component.extend({
 
     this.brush = d3.drag()
       //.on("start.interrupt", function() { _this.slide.interrupt(); })
-      .on("start drag", function () {
+      .on("start drag", function() {
         brushed.call(this);
       })
-      .on("end", function () {
+      .on("end", function() {
         brushedEnd.call(this);
       });
 
     //Slide
     this.slide.call(this.brush);
 
-    this.slider_outer.on("mousewheel", function () {
+    this.slider_outer.on("mousewheel", function() {
         //do nothing and dont pass the event on if we are currently dragging the slider
         if (_this.model.time.dragging) {
             d3.event.stopPropagation();
@@ -234,7 +234,7 @@ var TimeSlider = Component.extend({
     }
 
     // special for linechart: resize timeslider to match time x-axis length
-    this.parent.on('myEvent', function (evt, arg) {
+    this.parent.on('myEvent', function(evt, arg) {
       var layoutProfile = _this.getLayoutProfile();
 
       if (arg.profile && arg.profile.margin) {
@@ -254,7 +254,7 @@ var TimeSlider = Component.extend({
   },
 
   //template and model are ready
-  ready: function () {
+  ready: function() {
     if (this.model.time.splash) return;
 
     this.element.classed(class_loading, false);
@@ -264,12 +264,12 @@ var TimeSlider = Component.extend({
     var _this = this;
     var time = this.model.time;
 
-    play.on('click', function () {
+    play.on('click', function() {
 
       _this.model.time.play();
     });
 
-    pause.on('click', function () {
+    pause.on('click', function() {
       _this.model.time.pause("soft");
     });
 
@@ -305,7 +305,7 @@ var TimeSlider = Component.extend({
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
    */
-  updateSize: function (range) {
+  updateSize: function(range) {
     if (this.model.time.splash) return;
 
     this.model.time.pause();

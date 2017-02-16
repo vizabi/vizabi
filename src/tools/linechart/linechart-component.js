@@ -200,7 +200,7 @@ var LCComponent = Component.extend({
     //null means we need to calculate all frames before we get to the callback
     this.model.marker.getFrame(null, function(allValues) {
       _this.all_values = allValues;
-      _this.model.marker.getFrame(_this.model.time.value, function (values) {
+      _this.model.marker.getFrame(_this.model.time.value, function(values) {
         if (!_this._frameIsValid(values)) return;
         _this.values = values;
         _this.updateShow();
@@ -266,13 +266,13 @@ var LCComponent = Component.extend({
       .text(this.translator("hints/dataWarning"));
 
     this.dataWarningEl
-      .on("click", function () {
+      .on("click", function() {
         _this.parent.findChildByName("gapminder-datawarning").toggle();
       })
-      .on("mouseover", function () {
+      .on("mouseover", function() {
         _this.updateDoubtOpacity(1);
       })
-      .on("mouseout", function () {
+      .on("mouseout", function() {
         _this.updateDoubtOpacity();
       });
 
@@ -294,7 +294,7 @@ var LCComponent = Component.extend({
 
   },
 
-  updateDoubtOpacity: function (opacity) {
+  updateDoubtOpacity: function(opacity) {
     if (opacity == null) opacity = this.wScale(+this.time.getUTCFullYear().toString());
     if (this.someSelected) opacity = 1;
     this.dataWarningEl.style("opacity", opacity);

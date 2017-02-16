@@ -4,21 +4,21 @@ import { close as iconClose } from 'base/iconset';
 
 var MCSelectList = Class.extend({
 
-  init: function (context) {
+  init: function(context) {
     this.context = context;
 
   },
 
-  rebuild: function (data) {
+  rebuild: function(data) {
     var _this = this.context;
     var _local = this;
 
     var listData = _this.mountainPointers
       .concat(_this.groupedPointers)
       .concat(_this.stackedPointers)
-      .filter(function (f) {
+      .filter(function(f) {
         return _this.model.marker.isSelected(f);
-      }).sort(function (a, b) {
+      }).sort(function(a, b) {
         if (a.sortValue && b.sortValue) {
           if (a.sortValue[1] === b.sortValue[1]) {
             return d3.descending(a.sortValue[0], b.sortValue[0]);
@@ -35,26 +35,26 @@ var MCSelectList = Class.extend({
         }
       });
     _this.selectList = _this.mountainLabelContainer.selectAll("g.vzb-mc-label")
-      .data(utils.unique(listData, function (d) {
+      .data(utils.unique(listData, function(d) {
         return d.KEY();
       }));
     _this.selectList.exit().remove();
     _this.selectList = _this.selectList.enter().append("g")
       .attr("class", "vzb-mc-label")
-      .each(function (d, i) {
+      .each(function(d, i) {
         var label = d3.select(this);
         label.append("circle").attr('class', 'vzb-mc-label-legend');
         label.append("text").attr("class", "vzb-mc-label-shadow vzb-mc-label-text");
         label.append("text").attr("class", "vzb-mc-label-text");
         label.append("g").attr("class", "vzb-mc-label-x vzb-label-shadow vzb-invisible")
-          .on("click", function (d, i) {
+          .on("click", function(d, i) {
             if (utils.isTouchDevice()) return;
             d3.event.stopPropagation();
             _this.model.marker.clearHighlighted();
             _this.model.marker.selectMarker(d);
             d3.event.stopPropagation();
           })
-          .onTap(function (d, i) {
+          .onTap(function(d, i) {
             d3.select("#" + d.geo + "-label-" + _this._id).remove();
             _this.model.marker.clearHighlighted();
             _this.model.marker.selectMarker(d);
@@ -76,18 +76,18 @@ var MCSelectList = Class.extend({
             .text("Deselect");
         }
       })
-      .on("mousemove", function (d, i) {
+      .on("mousemove", function(d, i) {
         if (utils.isTouchDevice()) return;
         _local.showCloseCross(d, true);
         _this.model.marker.highlightMarker(d);
       })
-      .on("mouseout", function (d, i) {
+      .on("mouseout", function(d, i) {
         if (utils.isTouchDevice()) return;
         _local.showCloseCross(d, false);
         _this.model.marker.clearHighlighted();
 
       })
-      .on("click", function (d, i) {
+      .on("click", function(d, i) {
         if (utils.isTouchDevice()) return;
         _this.model.marker.clearHighlighted();
         _this.model.marker.selectMarker(d);
@@ -95,7 +95,7 @@ var MCSelectList = Class.extend({
       .merge(_this.selectList);
   },
 
-  redraw: function () {
+  redraw: function() {
     var _this = this.context;
     if (!_this.selectList || !_this.someSelected) return;
 
@@ -118,13 +118,13 @@ var MCSelectList = Class.extend({
     var isRTL = _this.model.locale.isRTL();
 
     _this.selectList
-      .attr("transform", function (d, i) {
+      .attr("transform", function(d, i) {
         if (d.aggrLevel != currentAggrLevel) aggrLevelSpacing += fontHeight;
         var spacing = fontHeight * i + titleHeight * 1.5 + aggrLevelSpacing;
         currentAggrLevel = d.aggrLevel;
         return "translate(" + (isRTL ? _this.width : 0) + "," + spacing + ")";
       })
-      .each(function (d, i) {
+      .each(function(d, i) {
 
         var view = d3.select(this).attr("id", d.geo + '-label-' + _this._id);
         var name = "";
@@ -187,7 +187,7 @@ var MCSelectList = Class.extend({
           .attr("cy", fontHeight / 1.5)
           .style("fill", _this.cScale(_this.values.color[d.KEY()]));
 
-        view.onTap(function (d, i) {
+        view.onTap(function(d, i) {
           d3.event.stopPropagation();
           _this.model.marker.highlightMarker(d);
           setTimeout(function() {

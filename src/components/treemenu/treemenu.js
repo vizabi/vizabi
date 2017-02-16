@@ -74,7 +74,7 @@ var OPTIONS = {
 };
 
 var Menu = Class.extend({
-  init: function (parent, menu, options) {
+  init: function(parent, menu, options) {
     var _this = this;
     this.parent = parent;
     this.entity = menu;
@@ -408,7 +408,7 @@ var Menu = Class.extend({
 });
 
 var MenuItem = Class.extend({
-  init: function (parent, item, options) {
+  init: function(parent, item, options) {
     var _this = this;
     this.parentMenu = parent;
     this.entity = item;
@@ -416,7 +416,7 @@ var MenuItem = Class.extend({
     if (submenu.node()) {
       this.submenu = new Menu(this, submenu, options);
     }
-    this.entity.select('.' + css.list_item_label).on('mouseenter', function () {
+    this.entity.select('.' + css.list_item_label).on('mouseenter', function() {
       if (utils.isTouchDevice()) return;
 
       if (_this.parentMenu.direction == MENU_HORIZONTAL && !d3.select(this).attr('children')) {

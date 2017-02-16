@@ -130,7 +130,7 @@ var ZoomButtonList = Component.extend({
 
     this.element.selectAll('button').data(details_btns)
       .enter().append("button")
-      .attr('class', function (d) {
+      .attr('class', function(d) {
         var cls = 'vzb-buttonlist-btn';
         if (button_expand.length > 0) {
           if (button_expand.indexOf(d.id) > -1) {

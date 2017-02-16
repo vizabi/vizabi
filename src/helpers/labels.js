@@ -112,7 +112,7 @@ var label = function(context) {
           _this.model.marker.highlightMarker(d);
           var KEY = _this.KEY || _this.model.entities.getDimension();
           // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
-          _this.entityLabels.sort(function (a, b) { return a[KEY] != d[KEY]? -1 : 1; });
+          _this.entityLabels.sort(function(a, b) { return a[KEY] != d[KEY]? -1 : 1; });
           d3.select(this).selectAll("." + _cssPrefix + "-label-x")
             .classed("vzb-transparent", false);
         })
@@ -129,7 +129,7 @@ var label = function(context) {
           var hidden = cross.classed("vzb-transparent");
           if (hidden) {
             // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
-            _this.entityLabels.sort(function (a, b) { return a[KEY] != d[KEY]? -1 : 1; });
+            _this.entityLabels.sort(function(a, b) { return a[KEY] != d[KEY]? -1 : 1; });
             _this.showCloseCross(null, false);
           }
           cross.classed("vzb-transparent", !hidden);

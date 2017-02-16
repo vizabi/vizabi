@@ -14,7 +14,7 @@ import steppedSpeedSlider from 'components/steppedspeedslider/steppedspeedslider
 var BarRankChart = Tool.extend('BarRankChart', {
 
   //Run when the tool is created
-  init: function (placeholder, external_model) {
+  init: function(placeholder, external_model) {
 
     this.name = "barrankchart";
 

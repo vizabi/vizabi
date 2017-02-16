@@ -20,7 +20,7 @@ var LBubbleMapComponent = Component.extend({
    * @param {Object} config The config passed to the component
    * @param {Object} context The component's parent
    */
-  init: function (config, context) {
+  init: function(config, context) {
     this.name = 'bubblemap';
     this.template = require('./bubblemap.html');
     this.bubblesDrawing = null;
@@ -53,11 +53,11 @@ var LBubbleMapComponent = Component.extend({
 
     var _this = this;
     this.model_binds = {
-      "change:time.value": function (evt) {
+      "change:time.value": function(evt) {
         if (!_this._readyOnce) return;
         _this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
       },
-      "change:marker.highlight": function (evt) {
+      "change:marker.highlight": function(evt) {
         if (!_this._readyOnce) return;
         _this.highlightMarkers();
         _this.updateOpacity();
@@ -76,11 +76,11 @@ var LBubbleMapComponent = Component.extend({
         _this.updateMarkerSizeLimits();
         _this.redrawDataPoints(null, false);
       },
-      "change:marker.color.palette": function (evt, path) {
+      "change:marker.color.palette": function(evt, path) {
           if (!_this._readyOnce) return;
           _this.redrawDataPoints(null, false);
       },
-      "change:marker.select": function (evt) {
+      "change:marker.select": function(evt) {
           if (!_this._readyOnce) return;
           _this.selectMarkers();
           _this.redrawDataPoints(null, false);
@@ -88,10 +88,10 @@ var LBubbleMapComponent = Component.extend({
           _this.updateDoubtOpacity();
 
       },
-      "change:marker.opacitySelectDim": function (evt) {
+      "change:marker.opacitySelectDim": function(evt) {
           _this.updateOpacity();
       },
-      "change:marker.opacityRegular": function (evt) {
+      "change:marker.opacityRegular": function(evt) {
           _this.updateOpacity();
       },
     };
@@ -121,7 +121,7 @@ var LBubbleMapComponent = Component.extend({
   /**
    * DOM is ready
    */
-  readyOnce: function () {
+  readyOnce: function() {
     this.element = d3.select(this.element);
 
     this.graph = this.element.select('.vzb-bmc-graph');
@@ -145,7 +145,7 @@ var LBubbleMapComponent = Component.extend({
     this.year.setConditions({ xAlign: 'left', yAlign: 'bottom' });
 
     var _this = this;
-    this.on("resize", function () {
+    this.on("resize", function() {
       //return if updatesize exists with error
       if (_this.updateSize()) return;
       _this.map.rescaleMap();
@@ -166,7 +166,7 @@ var LBubbleMapComponent = Component.extend({
   /*
    * Both model and DOM are ready
    */
-  ready: function () {
+  ready: function() {
     var _this = this;
     this.updateUIStrings();
     this.updateIndicators();
@@ -208,7 +208,7 @@ var LBubbleMapComponent = Component.extend({
 
   },
 
-  updateUIStrings: function () {
+  updateUIStrings: function() {
       var _this = this;
 
       this.translator = this.model.locale.getTFunction();
@@ -252,13 +252,13 @@ var LBubbleMapComponent = Component.extend({
         .text(this.translator("hints/dataWarning"));
 
     this.dataWarningEl
-        .on("click", function () {
+        .on("click", function() {
           _this.parent.findChildByName("gapminder-datawarning").toggle();
         })
-        .on("mouseover", function () {
+        .on("mouseover", function() {
           _this.updateDoubtOpacity(1);
         })
-        .on("mouseout", function () {
+        .on("mouseout", function() {
           _this.updateDoubtOpacity();
         });
 
@@ -349,13 +349,13 @@ var LBubbleMapComponent = Component.extend({
     }
   },
 
-  updateDoubtOpacity: function (opacity) {
+  updateDoubtOpacity: function(opacity) {
     if (opacity == null) opacity = this.wScale(+this.time.getUTCFullYear().toString());
     if (this.someSelected) opacity = 1;
     this.dataWarningEl.style("opacity", opacity);
   },
 
-  updateOpacity: function () {
+  updateOpacity: function() {
     var _this = this;
     /*
      this.entityBubbles.classed("vzb-selected", function (d) {
@@ -369,7 +369,7 @@ var LBubbleMapComponent = Component.extend({
     var OPACITY_REGULAR = this.model.marker.opacityRegular;
     var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
 
-    this.entityBubbles.style("opacity", function (d) {
+    this.entityBubbles.style("opacity", function(d) {
 
       if (_this.someHighlighted) {
         //highlight or non-highlight
@@ -387,7 +387,7 @@ var LBubbleMapComponent = Component.extend({
 
     });
 
-    this.entityBubbles.classed("vzb-selected", function (d) {
+    this.entityBubbles.classed("vzb-selected", function(d) {
       return _this.model.marker.isSelected(d);
     });
 
@@ -395,7 +395,7 @@ var LBubbleMapComponent = Component.extend({
 
     // when pointer events need update...
     if (nonSelectedOpacityZero !== this.nonSelectedOpacityZero) {
-      this.entityBubbles.style("pointer-events", function (d) {
+      this.entityBubbles.style("pointer-events", function(d) {
         return (!_this.someSelected || !nonSelectedOpacityZero || _this.model.marker.isSelected(d)) ?
             "visible" : "none";
       });
@@ -407,7 +407,7 @@ var LBubbleMapComponent = Component.extend({
   /**
    * Changes labels for indicators
    */
-  updateIndicators: function () {
+  updateIndicators: function() {
     this.sScale = this.model.marker.size.getScale();
     this.cScale = this.model.marker.color.getScale();
   },
@@ -415,7 +415,7 @@ var LBubbleMapComponent = Component.extend({
   /**
    * Updates entities
    */
-  updateEntities: function () {
+  updateEntities: function() {
 
     var _this = this;
     var KEY = this.KEY;
@@ -474,24 +474,24 @@ var LBubbleMapComponent = Component.extend({
     //enter selection -- init circles
     this.entityBubbles = this.entityBubbles.enter().append("circle")
         .attr("class", "vzb-bmc-bubble")
-        .on("mouseover", function (d, i) {
+        .on("mouseover", function(d, i) {
           if (utils.isTouchDevice()) return;
           _this._interact()._mouseover(d, i);
         })
-        .on("mouseout", function (d, i) {
+        .on("mouseout", function(d, i) {
           if (utils.isTouchDevice()) return;
           _this._interact()._mouseout(d, i);
         })
-        .on("click", function (d, i) {
+        .on("click", function(d, i) {
           if (utils.isTouchDevice()) return;
           _this._interact()._click(d, i);
           _this.highlightMarkers();
         })
-        .onTap(function (d, i) {
+        .onTap(function(d, i) {
           _this._interact()._click(d, i);
           d3.event.stopPropagation();
         })
-        .onLongTap(function (d, i) {
+        .onLongTap(function(d, i) {
         })
         .merge(this.entityBubbles);
 
@@ -654,7 +654,7 @@ var LBubbleMapComponent = Component.extend({
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
    */
-  updateSize: function () {
+  updateSize: function() {
 
     this.activeProfile = this.getActiveProfile(this.profiles, this.presentationProfileChanges);
     var margin = this.activeProfile.margin;
@@ -758,11 +758,11 @@ var LBubbleMapComponent = Component.extend({
 
   },
 
-  _interact: function () {
+  _interact: function() {
     var _this = this;
 
     return {
-      _mouseover: function (d, i) {
+      _mouseover: function(d, i) {
         if (_this.model.time.dragging) return;
 
         _this.model.marker.highlightMarker(d);
@@ -779,7 +779,7 @@ var LBubbleMapComponent = Component.extend({
           _this._setTooltip(d);
         }
       },
-      _mouseout: function (d, i) {
+      _mouseout: function(d, i) {
         if (_this.model.time.dragging) return;
         _this._setTooltip();
         _this.hovered = null;
@@ -787,7 +787,7 @@ var LBubbleMapComponent = Component.extend({
         _this.fitSizeOfTitles();
         _this.model.marker.clearHighlighted();
       },
-      _click: function (d, i) {
+      _click: function(d, i) {
         _this.model.marker.selectMarker(d);
       }
     };
@@ -795,7 +795,7 @@ var LBubbleMapComponent = Component.extend({
   },
 
 
-  highlightMarkers: function () {
+  highlightMarkers: function() {
     var _this = this;
     this.someHighlighted = (this.model.marker.highlight.length > 0);
 
@@ -845,7 +845,7 @@ var LBubbleMapComponent = Component.extend({
     }
   },
 
-  selectMarkers: function () {
+  selectMarkers: function() {
     var _this = this;
     var KEY = this.KEY;
     this.someSelected = (this.model.marker.select.length > 0);
@@ -869,7 +869,7 @@ var LBubbleMapComponent = Component.extend({
     this.nonSelectedOpacityZero = false;
   },
 
-  _setTooltip: function (d) {
+  _setTooltip: function(d) {
     var _this = this;
     if (d) {
       var tooltipText = d.label;

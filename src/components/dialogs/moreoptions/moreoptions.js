@@ -105,7 +105,7 @@ var MoreOptions = Dialog.extend({
 
     this.accordionEl.selectAll('div').data(details_dlgs)
       .enter().append("div")
-      .attr('class', function (d) {
+      .attr('class', function(d) {
         var cls = 'vzb-dialogs-dialog vzb-moreoptions vzb-accordion-section';
         return cls;
       })

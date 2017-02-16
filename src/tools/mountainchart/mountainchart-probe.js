@@ -3,12 +3,12 @@ import Class from 'base/class';
 
 var MCProbe = Class.extend({
 
-        init: function (context) {
+        init: function(context) {
             this.context = context;
 
         },
 
-        redraw: function (options) {
+        redraw: function(options) {
             var _this = this.context;
             if (!options) options = {};
 
@@ -23,9 +23,9 @@ var MCProbe = Class.extend({
             var totalArea = 0;
             var leftArea = 0;
 
-            var _computeAreas = function (d) {
+            var _computeAreas = function(d) {
                 sumValue += _this.values.axis_y[d.KEY()];
-                _this.cached[d.KEY()].forEach(function (d) {
+                _this.cached[d.KEY()].forEach(function(d) {
                     totalArea += d.y;
                     if (_this._math.rescale(d.x) < options.level) leftArea += d.y;
                 });
@@ -43,7 +43,7 @@ var MCProbe = Class.extend({
             var formatter2 = _this.model.marker.axis_y.getTickFormatter();
             _this.heightOfLabels = _this.heightOfLabels || (.66 * _this.height);
 
-            _this.probeTextEl.each(function (d, i) {
+            _this.probeTextEl.each(function(d, i) {
                 if (i !== 8) return;
                 var view = d3.select(this);
 
@@ -64,7 +64,7 @@ var MCProbe = Class.extend({
             });
 
 
-            _this.probeTextEl.each(function (d, i) {
+            _this.probeTextEl.each(function(d, i) {
                 if (i === 8) return;
                 var view = d3.select(this);
 

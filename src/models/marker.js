@@ -478,7 +478,7 @@ var Marker = Model.extend({
           if (steps[nextFrameIndex].toString() != time.toString()) {
 
             //interpolate between frames and fire the callback
-            this._interpolateBetweenFrames(time, nextFrameIndex, steps, function (response) {
+            this._interpolateBetweenFrames(time, nextFrameIndex, steps, function(response) {
               cb(response, time);
             }, keys);
             return null;
@@ -663,7 +663,7 @@ var Marker = Model.extend({
                   which: hook.which
                 };
                 hook.getFrames(steps, selected).then(function(response) {
-                  utils.forEach(response, function (frame, t) {
+                  utils.forEach(response, function(frame, t) {
                     _this.partialResult[cachePath][t][currentHookState.name] = frame[currentHookState.which];
                   });
                   res();

@@ -99,22 +99,22 @@ var AgePyramid = Component.extend({
       "change:marker.opacityRegular": function() {
         _this.updateBarsOpacity();
       },
-      "change:marker.color.palette": function (evt) {
+      "change:marker.color.palette": function(evt) {
         if (!_this._readyOnce) return;
         _this._updateEntities();
       },
-      "change:marker.color.scaleType": function (evt) {
+      "change:marker.color.scaleType": function(evt) {
         if (!_this._readyOnce) return;
         _this._updateEntities();
       },
-      "change:marker.side.which": function (evt) {
+      "change:marker.side.which": function(evt) {
         if (!_this._readyOnce) return;
         var sideDim = _this.model.marker.side.use == "constant" ? null : _this.model.marker.side.which;
         _this.model.marker.side.clearSideState();
         _this.model.entities_side.clearShow();
         _this.model.entities_side.set("dim", sideDim);
       },
-      "change:entities.show": function (evt) {
+      "change:entities.show": function(evt) {
         if (!_this._readyOnce) return;
         if (_this.model.entities.dim === _this.model.entities_side.dim
         && !utils.isEmpty(_this.model.entities.show)
@@ -127,7 +127,7 @@ var AgePyramid = Component.extend({
           });
         }
       },
-      "change:entities_side.show": function (evt) {
+      "change:entities_side.show": function(evt) {
         if (!_this._readyOnce) return;
 
         var doReturn = false;
@@ -152,13 +152,13 @@ var AgePyramid = Component.extend({
         _this.resize();
         _this._updateEntities();
       },
-      "change:ui.chart.inpercent": function (evt) {
+      "change:ui.chart.inpercent": function(evt) {
         if (!_this._readyOnce) return;
         _this._updateLimits();
         _this.resize();
         _this._updateEntities();
       },
-      "change:ui.chart.flipSides": function (evt) {
+      "change:ui.chart.flipSides": function(evt) {
         if (!_this._readyOnce) return;
         _this.model.marker.side.switchSideState();
         _this._updateIndicators();

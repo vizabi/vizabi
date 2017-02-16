@@ -15,7 +15,7 @@ export default Class.extend({
     this.mapInstance = null;
   },
 
-  getMap: function () {
+  getMap: function() {
     if (!this.mapInstance) {
       switch (this.context.model.ui.map.mapEngine) {
         case "google":
@@ -67,14 +67,14 @@ export default Class.extend({
 });
 
 var MapLayer = Class.extend({
-  init: function (context, parent) {
+  init: function(context, parent) {
     this.shapes = null;
     this.parent = parent;
     this.context = context;
     d3_geo_projection();
   },
 
-  initMap: function () {
+  initMap: function() {
     this.mapSvg = d3.select(this.context.element).select(".vzb-bmc-map-background");
     this.mapGraph = this.mapSvg.html('').append("g")
       .attr("class", "vzb-bmc-map-graph");
@@ -128,9 +128,9 @@ var MapLayer = Class.extend({
     );
   },
 
-  _loadShapes: function (shape_path) {
-    return new Promise(function (resolve, reject) {
-      d3.json(shape_path, function (error, json) {
+  _loadShapes: function(shape_path) {
+    return new Promise(function(resolve, reject) {
+      d3.json(shape_path, function(error, json) {
         if (error) return console.warn("Failed loading json " + shape_path + ". " + error);
         resolve(json);
       });
@@ -236,11 +236,11 @@ var MapLayer = Class.extend({
 
     // set skew function used for bubbles in chart
     var _this = this;
-    this.skew = (function () {
+    this.skew = (function() {
       var w = _this.context.width;
       var h = _this.context.height;
       //input pixel loc after projection, return pixel loc after skew;
-      return function (points) {
+      return function(points) {
         //      input       scale         translate                    translate offset
         var x = points[0] * widthScale  + ((w - viewPortWidth) / 2)  + mapLeftOffset * widthScale;
         var y = points[1] * heightScale + ((h - viewPortHeight) / 2) + mapTopOffset  * heightScale;
@@ -262,19 +262,19 @@ var MapLayer = Class.extend({
 
 var GoogleMapLayer = Class.extend({
 
-  init: function (context, parent) {
+  init: function(context, parent) {
     this.context = context;
     this.parent = parent;
   },
 
-  initMap: function (domSelector) {
+  initMap: function(domSelector) {
     var _this = this;
     this.mapRoot = d3.select(this.context.element).select(domSelector);
     this.mapCanvas = this.mapRoot.html('').append("div");
 
     GoogleMapsLoader.KEY = "AIzaSyAP0vMZwYojifwGYHTnEtYV40v6-MdLGFM";
     return new Promise(function(resolve, reject) {
-      GoogleMapsLoader.load(function (google) {
+      GoogleMapsLoader.load(function(google) {
         _this.map = new google.maps.Map(_this.mapCanvas.node(), {
           disableDefaultUI: true,
           backgroundColor: '#FFFFFF'
@@ -297,7 +297,7 @@ var GoogleMapLayer = Class.extend({
           editable: true,
           draggable: true
         });
-        google.maps.event.addListener(_this.map, 'bounds_changed', function () {
+        google.maps.event.addListener(_this.map, 'bounds_changed', function() {
             _this.parent.boundsChanged();
         });
 
@@ -356,13 +356,13 @@ var GoogleMapLayer = Class.extend({
 
 var MapboxLayer = Class.extend({
 
-  init: function (context, parent) {
+  init: function(context, parent) {
     mapboxgl.accessToken = "pk.eyJ1Ijoic2VyZ2V5ZiIsImEiOiJjaXlqeWo5YnYwMDBzMzJwZnlwZXJ2bnA2In0.e711ku9KzcFW_x5wmOZTag";
     this.context = context;
     this.parent = parent;
   },
 
-  initMap: function (domSelector) {
+  initMap: function(domSelector) {
     var _this = this;
     this.mapRoot = d3.select(this.context.element).select(domSelector);
     this.mapCanvas = this.mapRoot.html('').append("div");
