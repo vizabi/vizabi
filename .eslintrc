@@ -13,20 +13,19 @@
     // "callback-return": 1,
     // "no-undefined": 1,
     // "no-unused-vars": 1,
-    // "no-useless-return": 1,
-    // "no-useless-escape": 1,
-    // "no-unmodified-loop-condition": 1,
-    // "no-else-return": 1,
     // "consistent-return": 1,
-    // "block-scoped-var": 1,
     // "no-inner-declarations": 1,
     //    "prefer-destructuring": [
     //      "warn"
     //    ],
-    //        "no-var": 1,
-    //    "prefer-rest-params": 1,
-    //    "prefer-spread": 1,
-    //    "no-redeclare": 1,
+    "no-else-return": 1,
+    "no-useless-return": 1,
+    "no-useless-escape": 1,
+    "prefer-spread": 1,
+    "no-unmodified-loop-condition": 1,
+    "block-scoped-var": 1,
+    "no-redeclare": 1,
+    "no-var": 1,
     "wrap-iife": [
       "warn",
       "inside"
