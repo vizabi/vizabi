@@ -34,7 +34,7 @@ function extend(name, extensions) {
     if (this.trackInstances)
       Class.instances.push(this);
     if (!initializing && this.init) {
-      this.init.apply(this, arguments);
+      this.init(...arguments);
     }
   }
 

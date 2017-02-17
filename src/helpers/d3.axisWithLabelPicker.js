@@ -627,8 +627,8 @@ export default function axisSmart(_orient) {
                 tickValues = trytofit;
               }
 
-              //flatten the spawn array
-              spawn = [].concat.apply([], spawn);
+              // flatten the spawn array
+              spawn = [].concat(...spawn);
             } else {
               if (stopTrying) return;
 

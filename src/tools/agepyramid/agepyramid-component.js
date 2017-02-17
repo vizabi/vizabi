@@ -505,7 +505,7 @@ const AgePyramid = Component.extend({
           sideMaxLimits.push(stackSum);
         });
         totals[time][sideKeysNF[0]] = ageSum;
-        const maxSideLimit = Math.max.apply(Math, sideMaxLimits);
+        const maxSideLimit = Math.max(...sideMaxLimits);
         inpercentMaxLimits[sideKeysNF[0]].push(maxSideLimit / ageSum);
         maxLimits[sideKeysNF[0]].push(maxSideLimit);
       });
@@ -524,7 +524,7 @@ const AgePyramid = Component.extend({
             sideMaxLimits.push(stackSum);
           });
           totals[time][side] = ageSum;
-          const maxSideLimit = Math.max.apply(Math, sideMaxLimits);
+          const maxSideLimit = Math.max(...sideMaxLimits);
           inpercentMaxLimits[side].push(maxSideLimit / ageSum);
           maxLimits[side].push(maxSideLimit);
         });
@@ -546,7 +546,7 @@ const AgePyramid = Component.extend({
             sideMaxLimits.push(stackSum);
           });
           totals[time][side] = ageSum;
-          const maxSideLimit = Math.max.apply(Math, sideMaxLimits);
+          const maxSideLimit = Math.max(...sideMaxLimits);
           inpercentMaxLimits[side].push(maxSideLimit / ageSum);
           maxLimits[side].push(maxSideLimit);
         });
@@ -556,8 +556,8 @@ const AgePyramid = Component.extend({
     this.maxLimits = {};
     this.inpercentMaxLimits = {};
     sideKeysNF.forEach(s => {
-      _this.maxLimits[s] = Math.max.apply(Math, maxLimits[s]);
-      _this.inpercentMaxLimits[s] = Math.max.apply(Math, inpercentMaxLimits[s]);
+      _this.maxLimits[s] = Math.max(...maxLimits[s]);
+      _this.inpercentMaxLimits[s] = Math.max(...inpercentMaxLimits[s]);
     });
     this.totals = totals;
   },
@@ -567,9 +567,9 @@ const AgePyramid = Component.extend({
     const axisX = this.model.marker.axis_x;
     let domain;
     if (this.ui.chart.inpercent) {
-      domain = [0, Math.max.apply(Math, this.sideKeys.map(s => _this.inpercentMaxLimits[s]))];
+      domain = [0, Math.max(...this.sideKeys.map(s => _this.inpercentMaxLimits[s]))];
     } else {
-      domain = (axisX.domainMin != null && axisX.domainMax != null) ? [+axisX.domainMin, +axisX.domainMax] : [0, Math.max.apply(Math, this.sideKeys.map(s => _this.maxLimits[s]))];
+      domain = (axisX.domainMin != null && axisX.domainMax != null) ? [+axisX.domainMin, +axisX.domainMax] : [0, Math.max(...this.sideKeys.map(s => _this.maxLimits[s]))];
     }
     this.xScale.domain(domain);
     if (this.xScaleLeft) this.xScaleLeft.domain(this.xScale.domain());

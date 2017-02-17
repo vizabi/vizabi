@@ -318,7 +318,7 @@ export default function genericLog() {
         if (ticks.length > 0 && partTicks.length > 0 && ticks[ticks.length - 1] == partTicks[0]) {
           partTicks.splice(0, 1);
         }
-        ticks.push.apply(ticks, partTicks);
+        ticks.push(...partTicks);
       }
       return ticks;
     };
