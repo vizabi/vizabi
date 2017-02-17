@@ -674,7 +674,7 @@ export default function axisSmart(_orient) {
         // limit maximum ticks number
         if (options.limitMaxTickNumber != 0 && ticksNumber > options.limitMaxTickNumber) ticksNumber = options.limitMaxTickNumber;
 
-        var addLabels = axis.scale().ticks.apply(axis.scale(), [ticksNumber])
+        var addLabels = axis.scale().ticks(ticksNumber)
           .sort(d3.ascending)
           .filter(d => min <= d && d <= max);
 
