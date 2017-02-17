@@ -5,7 +5,8 @@
   "main": "build/dist/vizabi.js",
   "scripts": {
     "start": "webpack-dev-server",
-    "fix": "cross-env FIX=1 webpack",
+    "lint": "eslint -c .eslintrc src/ --ignore-path .eslintignore src/",
+    "lint:fix": "npm run lint -- --fix",
     "build:prod": "cross-env NODE_ENV=production webpack",
     "e2e:local": "./node_modules/protractor/bin/webdriver-manager update && ./node_modules/.bin/protractor .cicd/protractor.conf.js",
     "build": "sh ./docker_run.sh"

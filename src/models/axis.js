@@ -1,11 +1,11 @@
-import * as utils from 'base/utils';
-import Hook from 'models/hook';
+import * as utils from "base/utils";
+import Hook from "models/hook";
 
 /*!
  * VIZABI Axis Model (hook)
  */
 
-var AxisModel = Hook.extend({
+const AxisModel = Hook.extend({
 
   //some hooks can be important. like axis x and y
   //that means, if X or Y doesn't have data at some point, we can't show markers
@@ -14,8 +14,8 @@ var AxisModel = Hook.extend({
   /**
    * Default values for this model
    */
-  getClassDefaults: function() {
-    var defaults = {
+  getClassDefaults() {
+    const defaults = {
       use: null,
       which: null,
       domainMin: null,
@@ -27,13 +27,13 @@ var AxisModel = Hook.extend({
         scales: ["linear", "log", "genericLog", "time", "pow"]
       }
     };
-    return utils.deepExtend(this._super(), defaults)
+    return utils.deepExtend(this._super(), defaults);
   },
 
-  autoGenerateModel: function() {
+  autoGenerateModel() {
     if (this.which == null && this.autogenerate) {
 
-      var concept = this.dataSource.getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType)
+      let concept = this.dataSource.getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType);
 
       if (!concept) {
         concept = this.dataSource.getConceptByIndex(0, "time");
@@ -48,14 +48,14 @@ var AxisModel = Hook.extend({
   /**
    * Validates a color hook
    */
-  validate: function() {
+  validate() {
     this._super();
 
     //restore the correct object type for time values
-    if(this.scale && this.scaleType == "time") {
-      var obj = {};
-      if(this.zoomedMin != null && !utils.isDate(this.zoomedMin)) obj.zoomedMin = this._space.time.parse(this.zoomedMin.toString());
-      if(this.zoomedMax != null && !utils.isDate(this.zoomedMax)) obj.zoomedMax = this._space.time.parse(this.zoomedMax.toString());
+    if (this.scale && this.scaleType == "time") {
+      const obj = {};
+      if (this.zoomedMin != null && !utils.isDate(this.zoomedMin)) obj.zoomedMin = this._space.time.parse(this.zoomedMin.toString());
+      if (this.zoomedMax != null && !utils.isDate(this.zoomedMax)) obj.zoomedMax = this._space.time.parse(this.zoomedMax.toString());
       this.set(obj);
     }
 
@@ -65,34 +65,34 @@ var AxisModel = Hook.extend({
    * Gets the domain for this hook
    * @returns {Array} domain
    */
-  buildScale: function(scaleType = this.scaleType) {
-    var domain;
+  buildScale(scaleType = this.scaleType) {
+    let domain;
 
-    if(scaleType == "time") {
+    if (scaleType == "time") {
 
-      var timeMdl = this._space.time;
-      var limits = timeMdl.splash ?
-          {min: timeMdl.parse(timeMdl.startOrigin), max: timeMdl.parse(timeMdl.endOrigin)}
+      const timeMdl = this._space.time;
+      const limits = timeMdl.splash ?
+          { min: timeMdl.parse(timeMdl.startOrigin), max: timeMdl.parse(timeMdl.endOrigin) }
           :
-          {min: timeMdl.start, max: timeMdl.end};
+          { min: timeMdl.start, max: timeMdl.end };
 
       domain = [limits.min, limits.max];
       this.scale = d3.time.scale.utc().domain(domain);
 
-    }else{
+    } else {
 
-      if(!this.isDiscrete()){
-        var limits = this.getLimits(this.which);
+      if (!this.isDiscrete()) {
+        const limits = this.getLimits(this.which);
         //default domain is based on limits
         domain = [limits.min, limits.max];
         //min and max can override the domain if defined
-        domain[0] = this.domainMin!=null ? +this.domainMin : domain[0];
-        domain[1] = this.domainMax!=null ? +this.domainMax : domain[1];
-      }else{
-        domain = this.use === "constant"? [this.which] : this.getUnique(this.which);
+        domain[0] = this.domainMin != null ? +this.domainMin : domain[0];
+        domain[1] = this.domainMax != null ? +this.domainMax : domain[1];
+      } else {
+        domain = this.use === "constant" ? [this.which] : this.getUnique(this.which);
       }
 
-      scaleType = (d3.min(domain)<=0 && d3.max(domain)>=0 && scaleType === "log")? "genericLog" : scaleType;
+      scaleType = (d3.min(domain) <= 0 && d3.max(domain) >= 0 && scaleType === "log") ? "genericLog" : scaleType;
       this.scale = d3.scale[scaleType || "linear"]().domain(domain);
     }
 
@@ -104,7 +104,7 @@ var AxisModel = Hook.extend({
    * @param {Date} date object to format
    * @returns {String} formatted date
    */
-  formatDate: function(dateObject) {
+  formatDate(dateObject) {
     // improvement would be to check concept type of each space-dimension if it's time.
     // Below code works as long we have one time model: time.
     return this._space.time.formatDate(dateObject);

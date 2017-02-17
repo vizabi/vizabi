@@ -1,26 +1,26 @@
-import * as utils from 'base/utils';
-import DataConnected from 'models/dataconnected';
+import * as utils from "base/utils";
+import DataConnected from "models/dataconnected";
 
 /*!
  * VIZABI Entities Model
  */
 
-var EntitiesModel = DataConnected.extend({
+const EntitiesModel = DataConnected.extend({
 
   /**
    * Default values for this model
    */
-  getClassDefaults: function() {
-    var defaults = {
+  getClassDefaults() {
+    const defaults = {
       show: {},
       dim: null,
       skipFilter: false
     };
-    return utils.deepExtend(this._super(), defaults)
+    return utils.deepExtend(this._super(), defaults);
   },
 
-  objectLeafs: ['show','autogenerate'],
-  dataConnectedChildren: ['show','dim'],
+  objectLeafs: ["show", "autogenerate"],
+  dataConnectedChildren: ["show", "dim"],
 
   /**
    * Initializes the entities model.
@@ -28,16 +28,16 @@ var EntitiesModel = DataConnected.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(name, values, parent, bind) {
+  init(name, values, parent, bind) {
 
     this._type = "entities";
 
     this._super(name, values, parent, bind);
   },
 
-  afterPreload: function() {
+  afterPreload() {
     if (this.dim == null && this.autogenerate) {
-      var dataSource = this.getClosestModel(this.autogenerate.data);
+      const dataSource = this.getClosestModel(this.autogenerate.data);
       this.dim = dataSource.getConceptByIndex(this.autogenerate.conceptIndex).concept;
     }
   },
@@ -46,7 +46,7 @@ var EntitiesModel = DataConnected.extend({
    * Gets the dimensions in this entities
    * @returns {String} String with dimension
    */
-  getDimension: function() {
+  getDimension() {
     return this.dim;
   },
 
@@ -54,35 +54,35 @@ var EntitiesModel = DataConnected.extend({
    * Gets the filter in this entities
    * @returns {Array} Array of unique values
    */
-  getFilter: function() {
+  getFilter() {
     return this.skipFilter ? [] : this.show;
   },
 
   /**
    * Shows or unshows an entity from the set
    */
-  showEntity: function(d) {
+  showEntity(d) {
     //clear selected countries when showing something new
-    var newShow = utils.deepClone(this.show);
-    var dimension = this.getDimension();
-    var _d;
+    const newShow = utils.deepClone(this.show);
+    const dimension = this.getDimension();
+    let _d;
 
-    if(!utils.isArray(d)) {
+    if (!utils.isArray(d)) {
       _d = [d];
     } else {
       _d = d;
     }
 
-    var showArray = [];
+    let showArray = [];
 
     // get array from show
-    if (this.show[dimension] && this.show[dimension]['$in'] && utils.isArray(this.show[dimension]['$in']))
-      showArray = this.show[dimension]['$in'];
+    if (this.show[dimension] && this.show[dimension]["$in"] && utils.isArray(this.show[dimension]["$in"]))
+      showArray = this.show[dimension]["$in"];
 
-    utils.forEach(_d, (d) => {
-      var value = d[dimension];
-      if(this.isShown(d)) {
-        showArray = showArray.filter(function(d) { return d !== value; });
+    utils.forEach(_d, d => {
+      const value = d[dimension];
+      if (this.isShown(d)) {
+        showArray = showArray.filter(d => d !== value);
       } else {
         showArray = showArray.concat(value);
       }
@@ -91,7 +91,7 @@ var EntitiesModel = DataConnected.extend({
     if (showArray.length === 0)
       delete newShow[dimension];
     else
-      newShow[dimension] = { '$in': showArray };
+      newShow[dimension] = { "$in": showArray };
 
     this.show = newShow;
   },
@@ -100,27 +100,27 @@ var EntitiesModel = DataConnected.extend({
    * Selects an entity from the set
    * @returns {Boolean} whether the item is shown or not
    */
-  isShown: function(d) {
-    var dimension = this.getDimension();
-    return this.show[dimension] && this.show[dimension]['$in'] && this.show[dimension]['$in'].indexOf(d[dimension]) !== -1;
+  isShown(d) {
+    const dimension = this.getDimension();
+    return this.show[dimension] && this.show[dimension]["$in"] && this.show[dimension]["$in"].indexOf(d[dimension]) !== -1;
   },
 
   /**
    * Clears showing of items
    */
-  clearShow: function() {
-    var dimension = this.getDimension();
-    var show = utils.deepClone(this.show);
+  clearShow() {
+    const dimension = this.getDimension();
+    const show = utils.deepClone(this.show);
     delete show[dimension];
     this.show = show;
   },
 
-  getFilteredEntities: function() {
-    var dimension = this.getDimension();
-    if (this.show[dimension] && this.show[dimension]['$in'] && utils.isArray(this.show[dimension]['$in'])) {
-      var showArray = this.show[dimension]['$in'];
-      return showArray.map((m) => {
-        var _m = {};
+  getFilteredEntities() {
+    const dimension = this.getDimension();
+    if (this.show[dimension] && this.show[dimension]["$in"] && utils.isArray(this.show[dimension]["$in"])) {
+      const showArray = this.show[dimension]["$in"];
+      return showArray.map(m => {
+        const _m = {};
         _m[dimension] = m;
         return _m;
       });

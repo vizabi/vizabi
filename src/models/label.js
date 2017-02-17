@@ -1,18 +1,18 @@
-import * as utils from 'base/utils';
-import Hook from 'models/hook';
+import * as utils from "base/utils";
+import Hook from "models/hook";
 
 /*
  * VIZABI Data Model (options.data)
  */
 
-var LabelModel = Hook.extend({
+const LabelModel = Hook.extend({
 
   /**
    * Default values for this model
    */
 
-  getClassDefaults: function() {
-    var defaults = {
+  getClassDefaults() {
+    const defaults = {
       use: null,
       which: null
     };
@@ -25,7 +25,7 @@ var LabelModel = Hook.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(name, values, parent, bind) {
+  init(name, values, parent, bind) {
 
     this._type = "label";
 

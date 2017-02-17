@@ -1,5 +1,5 @@
-import * as utils from 'base/utils';
-import Class from 'base/class';
+import * as utils from "base/utils";
+import Class from "base/class";
 
 /**
  * Initializes the reader.
@@ -7,9 +7,9 @@ import Class from 'base/class';
  */
 const Reader = Class.extend({
 
-  QUERY_FROM_CONCEPTS: 'concepts',
-  QUERY_FROM_DATAPOINTS: 'datapoints',
-  QUERY_FROM_ENTITIES: 'entities',
+  QUERY_FROM_CONCEPTS: "concepts",
+  QUERY_FROM_DATAPOINTS: "datapoints",
+  QUERY_FROM_ENTITIES: "entities",
 
   CONDITION_CALLBACKS: {
     $gt: (configValue, rowValue) => rowValue > configValue,
@@ -20,10 +20,10 @@ const Reader = Class.extend({
   },
 
   ERRORS: {
-    GENERIC_ERROR: 'reader/error/generic'
+    GENERIC_ERROR: "reader/error/generic"
   },
 
-  _name: 'reader',
+  _name: "reader",
 
   load() {
     return Promise.resolve({
@@ -44,7 +44,7 @@ const Reader = Class.extend({
     const [orderBy] = order_by;
 
     return this.load()
-      .then((result) => {
+      .then(result => {
         const { data, columns } = result;
         this.ensureDataIsCorrect(result, parsers);
 
@@ -61,8 +61,8 @@ const Reader = Class.extend({
             return [];
         }
       })
-      .catch((error) => {
-        throw ({}).toString.call(error) === '[object Error]' ?
+      .catch(error => {
+        throw ({}).toString.call(error) === "[object Error]" ?
           this.error(this.ERRORS.GENERIC_ERROR, error) :
           error;
       });
@@ -81,7 +81,7 @@ const Reader = Class.extend({
         Object.keys(condition).forEach(rowKey => {
           const conditionValue = condition[rowKey];
 
-          if (typeof conditionValue === 'string' && conditionValue.startsWith('$')) {
+          if (typeof conditionValue === "string" && conditionValue.startsWith("$")) {
             const joinWhere = join[conditionValue].where;
 
             Object.keys(joinWhere)
@@ -90,7 +90,7 @@ const Reader = Class.extend({
                 const parser = parsers[joinRowKey];
 
                 whereResult[joinRowKey] = parser ?
-                  typeof value === 'object' ?
+                  typeof value === "object" ?
                     Object.keys(value).reduce((callbackConditions, callbackKey) => {
                       callbackConditions[callbackKey] = parser(value[callbackKey]);
                       return callbackConditions;
@@ -116,16 +116,16 @@ const Reader = Class.extend({
       const result = { concept };
 
       if (index < this.keySize) {
-        result.concept_type = 'entity_domain';
+        result.concept_type = "entity_domain";
       } else if (index === this.keySize) {
         //the column after is expected to have time
-        result.concept_type = 'time';
+        result.concept_type = "time";
       } else {
-        result.concept_type = 'measure';
+        result.concept_type = "measure";
 
         for (let i = data.length - 1; i >= 0; i--) {
-          if (utils.isString(data[i][concept]) && data[i][concept] !== '') {
-            result.concept_type = 'entity_set';
+          if (utils.isString(data[i][concept]) && data[i][concept] !== "") {
+            result.concept_type = "entity_set";
             [result.domain] = columns;
             break;
           }
@@ -133,7 +133,7 @@ const Reader = Class.extend({
       }
 
       return result;
-    })
+    });
   },
 
   _isDataQuery(from) {
@@ -146,7 +146,7 @@ const Reader = Class.extend({
   _getRowMapper(query, parsers) {
     const { select } = query;
 
-    return (row) => {
+    return row => {
       let correct = true;
 
       const result = Object.keys(row).reduce((result, key) => {
@@ -159,7 +159,7 @@ const Reader = Class.extend({
             resultValue = parser(value);
           } else {
             const numeric = parseFloat(value);
-            resultValue = !isNaN(numeric) && isFinite(numeric) ? parseFloat(value.replace(',', '.')) : value;
+            resultValue = !isNaN(numeric) && isFinite(numeric) ? parseFloat(value.replace(",", ".")) : value;
           }
 
           if (!resultValue && resultValue !== 0) {
@@ -228,11 +228,11 @@ const Reader = Class.extend({
 
         // if the column is missing, then don't apply filter
         return rowValue === undefined
-          || (typeof condition !== 'object' ?
+          || (typeof condition !== "object" ?
             (rowValue === condition
               //resolve booleans via strings
-              || condition === true && utils.isString(rowValue) && rowValue.toLowerCase().trim() === 'true'
-              || condition === false && utils.isString(rowValue) && rowValue.toLowerCase().trim() === 'false'
+              || condition === true && utils.isString(rowValue) && rowValue.toLowerCase().trim() === "true"
+              || condition === false && utils.isString(rowValue) && rowValue.toLowerCase().trim() === "false"
             ) :
             Object.keys(condition).every(callbackKey =>
               this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], rowValue)

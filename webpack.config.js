@@ -169,12 +169,12 @@ const loaders = [
           presets: ['es2015']
         }
       },
-      {
-        loader: 'eslint-loader',
-        options: {
-          fix: __FIX__
-        }
-      }
+      // {
+      //   loader: 'eslint-loader',
+      //   options: {
+      //     fix: __FIX__
+      //   }
+      // }
     ]
   },
   {

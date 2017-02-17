@@ -1,11 +1,11 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
+import * as utils from "base/utils";
+import Component from "base/component";
 
-import axisSmart from 'helpers/d3.axisWithLabelPicker';
+import axisSmart from "helpers/d3.axisWithLabelPicker";
 
 
 //BAR CHART COMPONENT
-var BarComponent = Component.extend({
+const BarComponent = Component.extend({
 
   /**
    * Initializes the component (Bar Chart).
@@ -13,9 +13,9 @@ var BarComponent = Component.extend({
    * @param {Object} config The options passed to the component
    * @param {Object} context The component's parent
    */
-  init: function(config, context) {
-    this.name = 'barchart';
-    this.template = require('./barchart.html');
+  init(config, context) {
+    this.name = "barchart";
+    this.template = require("./barchart.html");
 
     //define expected models for this component
     this.model_expects = [{
@@ -32,24 +32,24 @@ var BarComponent = Component.extend({
       type: "locale"
     }];
 
-    var _this = this;
+    const _this = this;
 
     this.model_binds = {
       "change:time.value": function(evt) {
-        _this.model.marker.getFrame(_this.model.time.value, function(values) {
-        _this.values = values;
-        _this.updateEntities();
+        _this.model.marker.getFrame(_this.model.time.value, values => {
+          _this.values = values;
+          _this.updateEntities();
         });
       },
-      'change:marker': function(evt, path) {
-        if(!_this._readyOnce) return;
-        if(path.indexOf("color.palette") > -1) return;
-        if(path.indexOf("which") > -1 || path.indexOf("use") > -1) return;
+      "change:marker": function(evt, path) {
+        if (!_this._readyOnce) return;
+        if (path.indexOf("color.palette") > -1) return;
+        if (path.indexOf("which") > -1 || path.indexOf("use") > -1) return;
 
         _this.ready();
       },
-      'change:marker.color.palette': utils.debounce(function(evt) {
-        if(!_this._readyOnce) return;
+      "change:marker.color.palette": utils.debounce(evt => {
+        if (!_this._readyOnce) return;
         _this.updateEntities();
       }, 200)
     };
@@ -68,29 +68,29 @@ var BarComponent = Component.extend({
   /**
    * DOM is ready
    */
-  readyOnce: function() {
+  readyOnce() {
     this.element = d3.select(this.element);
 
-    this.graph = this.element.select('.vzb-bc-graph');
-    this.yAxisEl = this.graph.select('.vzb-bc-axis-y');
-    this.xAxisEl = this.graph.select('.vzb-bc-axis-x');
-    this.yTitleEl = this.graph.select('.vzb-bc-axis-y-title');
-    this.xTitleEl = this.graph.select('.vzb-bc-axis-x-title');
-    this.bars = this.graph.select('.vzb-bc-bars');
-    this.year = this.element.select('.vzb-bc-year');
+    this.graph = this.element.select(".vzb-bc-graph");
+    this.yAxisEl = this.graph.select(".vzb-bc-axis-y");
+    this.xAxisEl = this.graph.select(".vzb-bc-axis-x");
+    this.yTitleEl = this.graph.select(".vzb-bc-axis-y-title");
+    this.xTitleEl = this.graph.select(".vzb-bc-axis-x-title");
+    this.bars = this.graph.select(".vzb-bc-bars");
+    this.year = this.element.select(".vzb-bc-year");
 
-    var _this = this;
-    this.on("resize", function() {
-        _this.updateEntities();
+    const _this = this;
+    this.on("resize", () => {
+      _this.updateEntities();
     });
   },
 
   /*
    * Both model and DOM are ready
    */
-  ready: function() {
-    var _this = this;
-    this.model.marker.getFrame(this.model.time.value, function(values) {
+  ready() {
+    const _this = this;
+    this.model.marker.getFrame(this.model.time.value, values => {
       _this.values = values;
       _this.updateIndicators();
       _this.resize();
@@ -102,23 +102,23 @@ var BarComponent = Component.extend({
   /**
    * Changes labels for indicators
    */
-  updateIndicators: function() {
+  updateIndicators() {
 
-    var _this = this;
+    const _this = this;
     this.translator = this.model.locale.getTFunction();
     this.duration = this.model.time.delayAnimations;
 
-    var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
-    var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.which);
+    const titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
+    const titleStringX = this.translator("indicator/" + this.model.marker.axis_x.which);
 
-    var yTitle = this.yTitleEl.selectAll("text").data([0]);
+    const yTitle = this.yTitleEl.selectAll("text").data([0]);
     yTitle.enter().append("text");
     yTitle
       .attr("y", "-6px")
       .attr("x", "-9px")
       .attr("dx", "-0.72em")
       .text(titleStringY)
-      .on("click", function() {
+      .on("click", () => {
         //TODO: Optimise updateView
         _this.parent
           .findChildByName("gapminder-treemenu")
@@ -129,13 +129,13 @@ var BarComponent = Component.extend({
           .toggle();
       });
 
-    var xTitle = this.xTitleEl.selectAll("text").data([0]);
+    const xTitle = this.xTitleEl.selectAll("text").data([0]);
     xTitle.enter().append("text");
     xTitle
       .attr("y", "-3px")
       .attr("dx", "-0.72em")
       .text(titleStringX)
-      .on("click", function() {
+      .on("click", () => {
         //TODO: Optimise updateView
         _this.parent
           .findChildByName("gapminder-treemenu")
@@ -150,8 +150,8 @@ var BarComponent = Component.extend({
     this.xScale = this.model.marker.axis_x.getScale();
     this.cScale = this.model.marker.color.getScale();
 
-    var xFormatter = this.model.marker.axis_x.which == "geo.world_4region"?
-        function(x){return _this.translator("entity/geo.world_4region/" + x)}
+    const xFormatter = this.model.marker.axis_x.which == "geo.world_4region" ?
+        function(x) { return _this.translator("entity/geo.world_4region/" + x); }
         :
         _this.model.marker.axis_x.getTickFormatter();
 
@@ -163,18 +163,18 @@ var BarComponent = Component.extend({
   /**
    * Updates entities
    */
-  updateEntities: function() {
+  updateEntities() {
 
-    var _this = this;
-    var time = this.model.time;
-    var timeDim = time.getDimension();
-    var entityDim = this.model.entities.getDimension();
-    var duration = (time.playing) ? time.delayAnimations : 0;
-    var filter = {};
+    const _this = this;
+    const time = this.model.time;
+    const timeDim = time.getDimension();
+    const entityDim = this.model.entities.getDimension();
+    const duration = (time.playing) ? time.delayAnimations : 0;
+    const filter = {};
     filter[timeDim] = time.value;
-    var items = this.model.marker.getKeys(filter);
+    const items = this.model.marker.getKeys(filter);
 
-    this.entityBars = this.bars.selectAll('.vzb-bc-bar')
+    this.entityBars = this.bars.selectAll(".vzb-bc-bar")
       .data(items);
 
     //exit selection
@@ -183,40 +183,32 @@ var BarComponent = Component.extend({
     //enter selection -- init circles
     this.entityBars.enter().append("rect")
       .attr("class", "vzb-bc-bar")
-      .on("mousemove", function(d, i) {})
-      .on("mouseout", function(d, i) {})
-      .on("click", function(d, i) {});
+      .on("mousemove", (d, i) => {})
+      .on("mouseout", (d, i) => {})
+      .on("click", (d, i) => {});
 
     //positioning and sizes of the bars
 
-    var bars = this.bars.selectAll('.vzb-bc-bar');
-    var barWidth = this.xScale.rangeBand();
+    const bars = this.bars.selectAll(".vzb-bc-bar");
+    const barWidth = this.xScale.rangeBand();
 
-    this.bars.selectAll('.vzb-bc-bar')
+    this.bars.selectAll(".vzb-bc-bar")
       .attr("width", barWidth)
-      .attr("fill", function(d) {
-        return _this.cScale(_this.values.color[d[entityDim]]);
-      })
-      .attr("x", function(d) {
-        return _this.xScale(_this.values.axis_x[d[entityDim]]);
-      })
+      .attr("fill", d => _this.cScale(_this.values.color[d[entityDim]]))
+      .attr("x", d => _this.xScale(_this.values.axis_x[d[entityDim]]))
       .transition().duration(duration).ease(d3.easeLinear)
-      .attr("y", function(d) {
-        return _this.yScale(_this.values.axis_y[d[entityDim]]);
-      })
-      .attr("height", function(d) {
-        return _this.height - _this.yScale(_this.values.axis_y[d[entityDim]]);
-      });
-      this.year.text(this.model.time.formatDate(this.model.time.value));
+      .attr("y", d => _this.yScale(_this.values.axis_y[d[entityDim]]))
+      .attr("height", d => _this.height - _this.yScale(_this.values.axis_y[d[entityDim]]));
+    this.year.text(this.model.time.formatDate(this.model.time.value));
   },
 
   /**
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
    */
-  resize: function() {
+  resize() {
 
-    var _this = this;
+    const _this = this;
 
     this.profiles = {
       "small": {
@@ -255,25 +247,25 @@ var BarComponent = Component.extend({
     };
 
     this.activeProfile = this.profiles[this.getLayoutProfile()];
-    var margin = this.activeProfile.margin;
+    const margin = this.activeProfile.margin;
 
 
     //stage
     this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
     this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
 
-    if(this.height<=0 || this.width<=0) return utils.warn("Bar chart resize() abort: vizabi container is too little or has display:none");
+    if (this.height <= 0 || this.width <= 0) return utils.warn("Bar chart resize() abort: vizabi container is too little or has display:none");
 
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     //update scales to the new range
-    if(this.model.marker.axis_y.scaleType !== "ordinal") {
+    if (this.model.marker.axis_y.scaleType !== "ordinal") {
       this.yScale.range([this.height, 0]);
     } else {
       this.yScale.rangePoints([this.height, 0], _this.activeProfile.padding).range();
     }
-    if(this.model.marker.axis_x.scaleType !== "ordinal") {
+    if (this.model.marker.axis_x.scaleType !== "ordinal") {
       this.xScale.range([0, this.width]);
     } else {
       this.xScale.rangePoints([0, this.width], _this.activeProfile.padding).range();
@@ -286,7 +278,7 @@ var BarComponent = Component.extend({
       .labelerOptions({
         scaleType: this.model.marker.axis_y.scaleType,
         timeFormat: this.model.time.getFormatter(),
-        toolMargin: {top: 5, right: margin.right, left: margin.left, bottom: margin.bottom},
+        toolMargin: { top: 5, right: margin.right, left: margin.left, bottom: margin.bottom },
         limitMaxTickNumber: 6
       });
 
@@ -303,17 +295,17 @@ var BarComponent = Component.extend({
     this.xAxisEl.attr("transform", "translate(0," + this.height + ")")
       .call(this.xAxis);
 
-    this.xScale.rangeRoundBands([0, this.width], .1, .2);
+    this.xScale.rangeRoundBands([0, this.width], 0.1, 0.2);
 
     this.yAxisEl.call(this.yAxis);
     this.xAxisEl.call(this.xAxis);
 
-    var xAxisSize = this.xAxisEl.node().getBoundingClientRect();
-    var xTitleSize = this.xTitleEl.node().getBoundingClientRect();
-    var xTitleXPos = xAxisSize.width / 2 - xTitleSize.width / 2;
-    var xTitleYPos = this.height + xAxisSize.height + xTitleSize.height;
+    const xAxisSize = this.xAxisEl.node().getBoundingClientRect();
+    const xTitleSize = this.xTitleEl.node().getBoundingClientRect();
+    const xTitleXPos = xAxisSize.width / 2 - xTitleSize.width / 2;
+    const xTitleYPos = this.height + xAxisSize.height + xTitleSize.height;
     this.xTitleEl.attr("transform", "translate(" + xTitleXPos + "," + xTitleYPos + ")");
-    this.year.attr('x', this.width).attr('y', 0);
+    this.year.attr("x", this.width).attr("y", 0);
   }
 });
 

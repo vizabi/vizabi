@@ -1,25 +1,23 @@
 //  d3.scale.genericLog
 export default function genericLog() {
-  return function d3_scale_genericLog(logScale) {
-    var _this = this;
-    var scales = [];
-    var domainParts = [];
-    var eps = 0.1;
-    var delta = 5;
-    var domain = logScale.domain();
-    var range = logScale.range();
-    var interpolator = null;
-    var rangePointingForward, domainPointingForward;
+  return (function d3_scale_genericLog(logScale) {
+    const _this = this;
+    let scales = [];
+    let domainParts = [];
+    let eps = 0.1;
+    let delta = 5;
+    let domain = logScale.domain();
+    let range = logScale.range();
+    let interpolator = null;
+    let rangePointingForward, domainPointingForward;
 
-    var abs = function (arg) {
+    const abs = function(arg) {
       if (arg instanceof Array)
-        return arg.map(function (d) {
-          return Math.abs(d);
-        });
+        return arg.map(d => Math.abs(d));
       return Math.abs(arg);
     };
 
-    var _buildLinearScale = function(fakeDomain, fakeRange) {
+    const _buildLinearScale = function(fakeDomain, fakeRange) {
       return {
         domain: fakeDomain,
         sign: 1,
@@ -28,8 +26,8 @@ export default function genericLog() {
       };
     };
 
-    var _buildLogScale = function(fakeDomain, fakeRange, revertDomain) {
-      var normalizedDomain = fakeDomain;
+    const _buildLogScale = function(fakeDomain, fakeRange, revertDomain) {
+      let normalizedDomain = fakeDomain;
       //var normalizedRange = fakeRange.slice(0);
       if (revertDomain) {
         normalizedDomain = abs(fakeDomain);
@@ -37,16 +35,16 @@ export default function genericLog() {
       }
       return {
         domain: fakeDomain,
-        sign: revertDomain?-1:1,
+        sign: revertDomain ? -1 : 1,
         range: fakeRange,
         scale: d3.scale.log().domain(normalizedDomain).range(fakeRange)
       };
     };
 
 
-    var buildScales = function () {
+    const buildScales = function() {
       rangePointingForward = range[0] < range[range.length - 1];
-      var rangePointingSign = rangePointingForward ? 1 : -1;
+      const rangePointingSign = rangePointingForward ? 1 : -1;
       scales = [];
       if (domainParts.length == 1) {
         if (domainParts[0][0] <= 0 && domainParts[0][1] >= 0) {
@@ -55,12 +53,12 @@ export default function genericLog() {
           scales = [_buildLogScale(domainParts[0], range, domainParts[0][0] <= 0)];
         }
       } else {
-        var maxDomain = d3.max(abs(domain));
-        var rangeLength = abs(d3.max(range) - d3.min(range));
-        var minRangePoint, rangePointKoef = 1;
-        var firstRangePoint = 0, secondRangePoint = 0, firstEps = 0, secondEps = 0;
+        const maxDomain = d3.max(abs(domain));
+        let rangeLength = abs(d3.max(range) - d3.min(range));
+        let rangePointKoef = 1;
+        let firstRangePoint = 0, secondRangePoint = 0, firstEps = 0, secondEps = 0;
         logScale.domain([eps, maxDomain]).range([0, rangeLength]);
-        minRangePoint = delta;//logScale(eps * 2);
+        const minRangePoint = delta;//logScale(eps * 2);
         if (domain[0] != 0 && abs(domain[0]) > eps)
           firstRangePoint = logScale(abs(domain[0]));
         if (domain[domain.length - 1] != 0  && abs(domain.length - 1) > eps)
@@ -75,7 +73,7 @@ export default function genericLog() {
         rangeLength = rangeLength - firstEps - secondEps;
         if (secondRangePoint != 0) rangePointKoef = abs((firstRangePoint) / (secondRangePoint));
 
-        var point1, point2;
+        let point1, point2;
         if (domainParts.length == 2) {
           // example: [-eps..0,eps][eps, val]
           if (domain[0] == 0 || abs(domain[0]) <= eps) {
@@ -85,16 +83,16 @@ export default function genericLog() {
               _buildLinearScale(domainParts[0], [range[0], point1]),
               _buildLogScale(domainParts[1], [point1,  range[range.length - 1]], !domainPointingForward)
             ];
-          } else if (domain[domain.length - 1] == 0 || abs(domain[domain.length - 1]) <= eps) {// example: [-val,-eps][-eps, 0..eps]
-            point1 = range[range.length - 1] - (firstEps + secondEps) * rangePointKoef * rangePointingSign
+          } else if (domain[domain.length - 1] == 0 || abs(domain[domain.length - 1]) <= eps) { // example: [-val,-eps][-eps, 0..eps]
+            point1 = range[range.length - 1] - (firstEps + secondEps) * rangePointKoef * rangePointingSign;
             scales = [
               _buildLogScale(domainParts[0], [range[0], point1], domainPointingForward),
               _buildLinearScale(domainParts[1], [point1, range[range.length - 1]])
             ];
           }
         } else {
-          point1 = range[0] + rangeLength / (1/rangePointKoef + 1) * rangePointingSign;
-          point2 = range[0] + (rangeLength / (1/rangePointKoef + 1) + firstEps + secondEps) * rangePointingSign;
+          point1 = range[0] + rangeLength / (1 / rangePointKoef + 1) * rangePointingSign;
+          point2 = range[0] + (rangeLength / (1 / rangePointKoef + 1) + firstEps + secondEps) * rangePointingSign;
           scales = [
             _buildLogScale(domainParts[0], [range[0], point1], domainPointingForward),
             _buildLinearScale(domainParts[1], [point1, point2]),
@@ -104,13 +102,13 @@ export default function genericLog() {
       }
     };
 
-    var buildDomain = function () {
+    const buildDomain = function() {
       domainPointingForward = domain[0] < domain[domain.length - 1];
       domainParts = [];
       if ((d3.min(domain) > 0 && d3.max(domain) > 0) || (d3.min(domain) < 0 && d3.max(domain) < 0)) {
         domainParts = [domain];
       } else {
-        var start, end;
+        let start, end;
         if (domainPointingForward) {
           start = domain[0];
           end = domain[domain.length - 1];
@@ -118,7 +116,7 @@ export default function genericLog() {
           start = domain[domain.length - 1];
           end = domain[0];
         }
-        var _addSubdomain = function(first, second) {
+        const _addSubdomain = function(first, second) {
           if (domainPointingForward) {
             domainParts.push([first, second]);
           } else {
@@ -144,14 +142,14 @@ export default function genericLog() {
       buildScales();
     };
 
-    var _getScaleByDomain = function(x) {
+    const _getScaleByDomain = function(x) {
       if (domainPointingForward) {
         if (x < domain[0]) {
           return scales[0];
         } else if (x > domain[domain.length - 1]) {
           return scales[scales.length - 1];
         } else {
-          for (var i = 0; i < scales.length; i++) {
+          for (let i = 0; i < scales.length; i++) {
             if (x >= scales[i].domain[0] && x <= scales[i].domain[scales[i].domain.length - 1]) {
               return scales[i];
             }
@@ -163,8 +161,7 @@ export default function genericLog() {
         } else if (x < domain[domain.length - 1]) {
           return scales[scales.length - 1];
         } else {
-          for (var i = 0; i < scales.length; i++) {
-            scale = scales[i];
+          for (let i = 0; i < scales.length; i++) {
             if (x <= scales[i].domain[0] && x >= scales[i].domain[scales[i].domain.length - 1]) {
               return scales[i];
             }
@@ -173,14 +170,14 @@ export default function genericLog() {
       }
     };
 
-    var getScaleByRange = function(x) {
+    const getScaleByRange = function(x) {
       if (rangePointingForward) {
         if (x < range[0]) {
           return scales[0];
         } else if (x > range[range.length - 1]) {
           return scales[scales.length - 1];
         } else {
-          for (var i = 0; i < scales.length; i++) {
+          for (let i = 0; i < scales.length; i++) {
             if (x >= scales[i].range[0] && x <= scales[i].range[scales[i].range.length - 1]) {
               return scales[i];
             }
@@ -192,8 +189,7 @@ export default function genericLog() {
         } else if (x < range[range.length - 1]) {
           return scales[scales.length - 1];
         } else {
-          for (var i = 0; i < scales.length; i++) {
-            var scalePart = scales[i];
+          for (let i = 0; i < scales.length; i++) {
             if (x <= scales[i].range[0] && x >= scales[i].range[1]) {
               return scales[i];
             }
@@ -203,16 +199,16 @@ export default function genericLog() {
     };
 
     //polyfill for IE11
-    Math.sign = Math.sign || function (x) {
-        x = +x;
-        if (x === 0 || isNaN(x)) {
-          return x;
-        }
-        return x > 0 ? 1 : -1;
+    Math.sign = Math.sign || function(x) {
+      x = +x;
+      if (x === 0 || isNaN(x)) {
+        return x;
       }
+      return x > 0 ? 1 : -1;
+    };
 
     function scale(x) {
-      var currScale = _getScaleByDomain(x);
+      const currScale = _getScaleByDomain(x);
       if (interpolator) {
         return interpolator(currScale.scale(x * currScale.sign));
       } else {
@@ -221,7 +217,7 @@ export default function genericLog() {
     }
 
     scale.eps = function(arg) {
-      if(!arguments.length)
+      if (!arguments.length)
         return eps;
       eps = arg;
       scale.domain(domain);
@@ -229,7 +225,7 @@ export default function genericLog() {
     };
 
     scale.delta = function(arg) {
-      if(!arguments.length)
+      if (!arguments.length)
         return delta;
       delta = arg;
       scale.range(range);
@@ -237,11 +233,11 @@ export default function genericLog() {
     };
 
     scale.domain = function(arg) {
-      if(!arguments.length)
+      if (!arguments.length)
         return domain;
 
       // this is an internal array, it will be modified. the input _arg should stay intact
-      switch(arg.length) {
+      switch (arg.length) {
         // if no values are given, reset input to the default domain (do nothing)
         case 0:
           arg = domain;
@@ -255,12 +251,12 @@ export default function genericLog() {
           break;
       }
       //if the domain is just a single value
-      if(arg[0] == arg[arg.length - 1]) {
-        arg[0] = arg[0] / 2;
+      if (arg[0] == arg[arg.length - 1]) {
+        arg[0] /= 2;
         arg[arg.length - 1] = arg[arg.length - 1] * 2;
       }
       domain = arg;
-      var min = d3.min(abs(domain).filter(function(val){ return !!val}));
+      const min = d3.min(abs(domain).filter(val => !!val));
       if (min) eps = Math.min(eps, min / 100);
       buildDomain();
       return scale;
@@ -268,10 +264,10 @@ export default function genericLog() {
 
 
     scale.range = function(arg, force) {
-      if(!arguments.length)
+      if (!arguments.length)
         return interpolator ? interpolator.range() : range;
 
-      switch(arg.length) {
+      switch (arg.length) {
         // reset input to the default range
         case 0:
           arg = range;
@@ -291,9 +287,9 @@ export default function genericLog() {
         interpolator.range(arg);
       } else {
         range = arg;
-        var min = d3.min(abs(range).filter(function(val){ return !!val}));
+        const min = d3.min(abs(range).filter(val => !!val));
 
-        if (min) delta = Math.min(delta, min/100);
+        if (min) delta = Math.min(delta, min / 100);
         buildScales();
       }
       return scale;
@@ -306,22 +302,23 @@ export default function genericLog() {
     };
 
     scale.invert = function(arg) {
-      var currScale = getScaleByRange(arg);
+      const currScale = getScaleByRange(arg);
       return currScale.scale.invert(arg) * currScale.sign;
     };
 
     scale.ticks = function(arg) {
-      var ticks = [], partTicks;
-      for (var i = 0; i < scales.length; i++) {
+      let partTicks;
+      const ticks = [];
+      for (let i = 0; i < scales.length; i++) {
         if (scales[i].sign == -1) {
-          partTicks = scales[i].scale.ticks().reverse().map(function(val){ return val * -1 });
+          partTicks = scales[i].scale.ticks().reverse().map(val => val * -1);
         } else {
           partTicks = scales[i].scale.ticks();
         }
         if (ticks.length > 0 && partTicks.length > 0 && ticks[ticks.length - 1] == partTicks[0]) {
           partTicks.splice(0, 1);
         }
-        ticks.push.apply(ticks, partTicks);
+        ticks.push(...partTicks);
       }
       return ticks;
     };
@@ -330,7 +327,7 @@ export default function genericLog() {
       return d3_scale_genericLog(logScale).domain(domain).range(range).delta(delta).eps(eps);
     };
 
-    return d3.rebind(scale, logScale, 'base', 'rangeRound', 'clamp', 'nice',
-      'tickFormat');
-  }(d3.scale.log().domain([0.1, 200]).range([0, 1000]));
-};
+    return d3.rebind(scale, logScale, "base", "rangeRound", "clamp", "nice",
+      "tickFormat");
+  })(d3.scale.log().domain([0.1, 200]).range([0, 1000]));
+}

@@ -1,38 +1,33 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import Labels from 'helpers/labels';
+import * as utils from "base/utils";
+import Component from "base/component";
+import Labels from "helpers/labels";
 import {
   warn as iconWarn,
   question as iconQuestion
-} from 'base/iconset';
+} from "base/iconset";
 
-import DynamicBackground from 'helpers/d3.dynamicBackground';
-import globals from 'base/globals';
-import MapEngine from "tools/lbubblemap/bubblemap-map"
+import DynamicBackground from "helpers/d3.dynamicBackground";
+import globals from "base/globals";
+import MapEngine from "tools/lbubblemap/bubblemap-map";
 
 //import Selectlist from 'bubblemap-selectlist';
 
 //BUBBLE MAP CHART COMPONENT
-var LBubbleMapComponent = Component.extend({
+const LBubbleMapComponent = Component.extend({
   /**
    * Initializes the component (Bubble Map Chart).
    * Executed once before any template is rendered.
    * @param {Object} config The config passed to the component
    * @param {Object} context The component's parent
    */
-  init: function (config, context) {
-    this.name = 'bubblemap';
-    this.template = require('./bubblemap.html');
+  init(config, context) {
+    this.name = "bubblemap";
+    this.template = require("./bubblemap.html");
     this.bubblesDrawing = null;
 
 
-    //http://stackoverflow.com/questions/11381673/detecting-a-mobile-browser
-    var mobileAndTabletcheck = function() {
-      var check = false;
-      (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4)))check = true})(navigator.userAgent||navigator.vendor||window.opera);
-      return check;
-    };
-    this.isMobile = mobileAndTabletcheck();
+    this.isMobile = utils.isMobileOrTablet();
+
     //define expected models for this component
     this.model_expects = [{
       name: "time",
@@ -51,48 +46,48 @@ var LBubbleMapComponent = Component.extend({
       type: "ui"
     }];
 
-    var _this = this;
+    const _this = this;
     this.model_binds = {
-      "change:time.value": function (evt) {
+      "change:time.value": function(evt) {
         if (!_this._readyOnce) return;
         _this.model.marker.getFrame(_this.model.time.value, _this.frameChanged.bind(_this));
       },
-      "change:marker.highlight": function (evt) {
+      "change:marker.highlight": function(evt) {
         if (!_this._readyOnce) return;
         _this.highlightMarkers();
         _this.updateOpacity();
       },
       "change:marker": function(evt, path) {
         // bubble size change is processed separately
-        if(!_this._readyOnce) return;
+        if (!_this._readyOnce) return;
 
-        if(path.indexOf("scaleType") > -1) {
+        if (path.indexOf("scaleType") > -1) {
           _this.ready();
         }
       },
-      'change:marker.size.extent': function(evt, path) {
+      "change:marker.size.extent": function(evt, path) {
         //console.log("EVENT change:marker:size:max");
-        if(!_this._readyOnce || !_this.entityBubbles) return;
+        if (!_this._readyOnce || !_this.entityBubbles) return;
         _this.updateMarkerSizeLimits();
         _this.redrawDataPoints(null, false);
       },
-      "change:marker.color.palette": function (evt, path) {
-          if (!_this._readyOnce) return;
-          _this.redrawDataPoints(null, false);
+      "change:marker.color.palette": function(evt, path) {
+        if (!_this._readyOnce) return;
+        _this.redrawDataPoints(null, false);
       },
-      "change:marker.select": function (evt) {
-          if (!_this._readyOnce) return;
-          _this.selectMarkers();
-          _this.redrawDataPoints(null, false);
-          _this.updateOpacity();
-          _this.updateDoubtOpacity();
+      "change:marker.select": function(evt) {
+        if (!_this._readyOnce) return;
+        _this.selectMarkers();
+        _this.redrawDataPoints(null, false);
+        _this.updateOpacity();
+        _this.updateDoubtOpacity();
 
       },
-      "change:marker.opacitySelectDim": function (evt) {
-          _this.updateOpacity();
+      "change:marker.opacitySelectDim": function(evt) {
+        _this.updateOpacity();
       },
-      "change:marker.opacityRegular": function (evt) {
-          _this.updateOpacity();
+      "change:marker.opacityRegular": function(evt) {
+        _this.updateOpacity();
       },
     };
 
@@ -110,9 +105,9 @@ var LBubbleMapComponent = Component.extend({
     this._labels = new Labels(this);
 
     this._labels.config({
-      CSS_PREFIX: 'vzb-bmc',
-      LABELS_CONTAINER_CLASS: 'vzb-bmc-labels',
-      LINES_CONTAINER_CLASS: 'vzb-bmc-lines',
+      CSS_PREFIX: "vzb-bmc",
+      LABELS_CONTAINER_CLASS: "vzb-bmc-labels",
+      LINES_CONTAINER_CLASS: "vzb-bmc-lines",
       SUPPRESS_HIGHLIGHT_DURING_PLAY: false
     });
   },
@@ -121,14 +116,14 @@ var LBubbleMapComponent = Component.extend({
   /**
    * DOM is ready
    */
-  readyOnce: function () {
+  readyOnce() {
     this.element = d3.select(this.element);
 
-    this.graph = this.element.select('.vzb-bmc-graph');
+    this.graph = this.element.select(".vzb-bmc-graph");
 
-    this.bubbleContainerCrop = this.graph.select('.vzb-bmc-bubbles-crop');
-    this.bubbleContainer = this.graph.select('.vzb-bmc-bubbles');
-    this.labelListContainer = this.graph.select('.vzb-bmc-bubble-labels');
+    this.bubbleContainerCrop = this.graph.select(".vzb-bmc-bubbles-crop");
+    this.bubbleContainer = this.graph.select(".vzb-bmc-bubbles");
+    this.labelListContainer = this.graph.select(".vzb-bmc-bubble-labels");
     this.dataWarningEl = this.graph.select(".vzb-data-warning");
 
     this.yTitleEl = this.graph.select(".vzb-bmc-axis-y-title");
@@ -137,17 +132,17 @@ var LBubbleMapComponent = Component.extend({
     this.cInfoEl = this.graph.select(".vzb-bmc-axis-c-info");
 
     this.entityBubbles = null;
-    this.tooltip = this.element.select('.vzb-bmc-tooltip');
+    this.tooltip = this.element.select(".vzb-bmc-tooltip");
 
     // year background
-    this.yearEl = this.graph.select('.vzb-bmc-year');
+    this.yearEl = this.graph.select(".vzb-bmc-year");
     this.year = new DynamicBackground(this.yearEl);
-    this.year.setConditions({xAlign: 'left', yAlign: 'bottom'});
+    this.year.setConditions({ xAlign: "left", yAlign: "bottom" });
 
-    var _this = this;
-    this.on("resize", function () {
+    const _this = this;
+    this.on("resize", () => {
       //return if updatesize exists with error
-      if(_this.updateSize()) return;
+      if (_this.updateSize()) return;
       _this.map.rescaleMap();
     });
 
@@ -166,17 +161,17 @@ var LBubbleMapComponent = Component.extend({
   /*
    * Both model and DOM are ready
    */
-  ready: function () {
-    var _this = this;
+  ready() {
+    const _this = this;
     this.updateUIStrings();
     this.updateIndicators();
     this.updateSize();
     this.map.rescaleMap();
     this.updateMarkerSizeLimits();
-    this.model.marker.getFrame(this.model.time.value, function(values, time) {
+    this.model.marker.getFrame(this.model.time.value, (values, time) => {
       // TODO: temporary fix for case when after data loading time changed on validation
       if (time.toString() != _this.model.time.value.toString()) {
-        utils.defer(function() {
+        utils.defer(() => {
           _this.ready();
         });
         return;
@@ -197,7 +192,7 @@ var LBubbleMapComponent = Component.extend({
 
   },
 
-  frameChanged: function(frame, time) {
+  frameChanged(frame, time) {
     if (time.toString() != this.model.time.value.toString()) return; // frame is outdated
     if (!frame) return;
 
@@ -208,12 +203,12 @@ var LBubbleMapComponent = Component.extend({
 
   },
 
-  updateUIStrings: function () {
-      var _this = this;
+  updateUIStrings() {
+    const _this = this;
 
-      this.translator = this.model.locale.getTFunction();
-      var conceptPropsS = _this.model.marker.size.getConceptprops();
-      var conceptPropsC = _this.model.marker.color.getConceptprops();
+    this.translator = this.model.locale.getTFunction();
+    const conceptPropsS = _this.model.marker.size.getConceptprops();
+    const conceptPropsC = _this.model.marker.color.getConceptprops();
 
     this.strings = {
       title: {
@@ -223,153 +218,153 @@ var LBubbleMapComponent = Component.extend({
     };
 
     this.yTitleEl.select("text")
-        .text(this.translator("buttons/size") + ": " + this.strings.title.S)
-        .on("click", function() {
-          _this.parent
-              .findChildByName("gapminder-treemenu")
-              .markerID("size")
-              .alignX(_this.model.locale.isRTL() ? "right" : "left")
-              .alignY("top")
-              .updateView()
-              .toggle();
-        });
+      .text(this.translator("buttons/size") + ": " + this.strings.title.S)
+      .on("click", () => {
+        _this.parent
+          .findChildByName("gapminder-treemenu")
+          .markerID("size")
+          .alignX(_this.model.locale.isRTL() ? "right" : "left")
+          .alignY("top")
+          .updateView()
+          .toggle();
+      });
 
     this.cTitleEl.select("text")
-        .text(this.translator("buttons/color") + ": " + this.strings.title.C)
-        .on("click", function() {
-          _this.parent
-              .findChildByName("gapminder-treemenu")
-              .markerID("color")
-              .alignX(_this.model.locale.isRTL() ? "right" : "left")
-              .alignY("top")
-              .updateView()
-              .toggle();
-        });
+      .text(this.translator("buttons/color") + ": " + this.strings.title.C)
+      .on("click", () => {
+        _this.parent
+          .findChildByName("gapminder-treemenu")
+          .markerID("color")
+          .alignX(_this.model.locale.isRTL() ? "right" : "left")
+          .alignY("top")
+          .updateView()
+          .toggle();
+      });
 
     utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
     this.dataWarningEl.append("text")
-        .attr("text-anchor", "end")
-        .text(this.translator("hints/dataWarning"));
+      .attr("text-anchor", "end")
+      .text(this.translator("hints/dataWarning"));
 
     this.dataWarningEl
-        .on("click", function () {
-          _this.parent.findChildByName("gapminder-datawarning").toggle();
-        })
-        .on("mouseover", function () {
-          _this.updateDoubtOpacity(1);
-        })
-        .on("mouseout", function () {
-          _this.updateDoubtOpacity();
-        })
+      .on("click", () => {
+        _this.parent.findChildByName("gapminder-datawarning").toggle();
+      })
+      .on("mouseover", () => {
+        _this.updateDoubtOpacity(1);
+      })
+      .on("mouseout", () => {
+        _this.updateDoubtOpacity();
+      });
 
     this.yInfoEl
-        .html(iconQuestion)
-        .select("svg").attr("width", "0px").attr("height", "0px");
+      .html(iconQuestion)
+      .select("svg").attr("width", "0px").attr("height", "0px");
 
     //TODO: move away from UI strings, maybe to ready or ready once
-    this.yInfoEl.on("click", function() {
+    this.yInfoEl.on("click", () => {
       _this.parent.findChildByName("gapminder-datanotes").pin();
-    })
+    });
     this.yInfoEl.on("mouseover", function() {
-      var rect = this.getBBox();
-      var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-      var toolRect = _this.root.element.getBoundingClientRect();
-      var chartRect = _this.element.node().getBoundingClientRect();
-      _this.parent.findChildByName("gapminder-datanotes").setHook('size').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
-    })
-    this.yInfoEl.on("mouseout", function() {
+      const rect = this.getBBox();
+      const coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+      const toolRect = _this.root.element.getBoundingClientRect();
+      const chartRect = _this.element.node().getBoundingClientRect();
+      _this.parent.findChildByName("gapminder-datanotes").setHook("size").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
+    });
+    this.yInfoEl.on("mouseout", () => {
       _this.parent.findChildByName("gapminder-datanotes").hide();
-    })
+    });
 
     this.cInfoEl
-        .html(iconQuestion)
-        .select("svg").attr("width", "0px").attr("height", "0px");
+      .html(iconQuestion)
+      .select("svg").attr("width", "0px").attr("height", "0px");
 
     //TODO: move away from UI strings, maybe to ready or ready once
-    this.cInfoEl.on("click", function() {
+    this.cInfoEl.on("click", () => {
       _this.parent.findChildByName("gapminder-datanotes").pin();
-    })
+    });
     this.cInfoEl.on("mouseover", function() {
-      var rect = this.getBBox();
-      var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-      var toolRect = _this.root.element.getBoundingClientRect();
-      var chartRect = _this.element.node().getBoundingClientRect();
-      _this.parent.findChildByName("gapminder-datanotes").setHook('color').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
-    })
-    this.cInfoEl.on("mouseout", function() {
+      const rect = this.getBBox();
+      const coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+      const toolRect = _this.root.element.getBoundingClientRect();
+      const chartRect = _this.element.node().getBoundingClientRect();
+      _this.parent.findChildByName("gapminder-datanotes").setHook("color").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
+    });
+    this.cInfoEl.on("mouseout", () => {
       _this.parent.findChildByName("gapminder-datanotes").hide();
-    })
+    });
   },
 
   // show size number on title when hovered on a bubble
-  updateTitleNumbers: function(){
-    var _this = this;
+  updateTitleNumbers() {
+    const _this = this;
 
-    var mobile; // if is mobile device and only one bubble is selected, update the ytitle for the bubble
+    let mobile; // if is mobile device and only one bubble is selected, update the ytitle for the bubble
     if (_this.isMobile && _this.model.marker.select && _this.model.marker.select.length === 1) {
       mobile = _this.model.marker.select[0];
     }
 
-    if(_this.hovered || mobile) {
-      var conceptPropsS = _this.model.marker.size.getConceptprops();
-      var conceptPropsC = _this.model.marker.color.getConceptprops();
+    if (_this.hovered || mobile) {
+      const conceptPropsS = _this.model.marker.size.getConceptprops();
+      const conceptPropsC = _this.model.marker.color.getConceptprops();
 
-      var hovered = _this.hovered || mobile;
-      var formatterS = _this.model.marker.size.getTickFormatter();
-      var formatterC = _this.model.marker.color.getTickFormatter();
+      const hovered = _this.hovered || mobile;
+      const formatterS = _this.model.marker.size.getTickFormatter();
+      const formatterC = _this.model.marker.color.getTickFormatter();
 
-      var unitS = conceptPropsS.unit || "";
-      var unitC = conceptPropsC.unit || "";
+      const unitS = conceptPropsS.unit || "";
+      const unitC = conceptPropsC.unit || "";
 
-      var valueS = _this.values.size[hovered[_this.KEY]];
-      var valueC = _this.values.color[hovered[_this.KEY]];
+      const valueS = _this.values.size[hovered[_this.KEY]];
+      let valueC = _this.values.color[hovered[_this.KEY]];
 
       //resolve value for color from the color legend model
-      if(_this.model.marker.color.isDiscrete() && valueC) {
+      if (_this.model.marker.color.isDiscrete() && valueC) {
         valueC = this.model.marker.color.getColorlegendMarker().label.getItems()[valueC] || "";
       }
 
       _this.yTitleEl.select("text")
-          .text(_this.translator("buttons/size") + ": " + formatterS(valueS) + " " + unitS);
+        .text(_this.translator("buttons/size") + ": " + formatterS(valueS) + " " + unitS);
 
       _this.cTitleEl.select("text")
-          .text(_this.translator("buttons/color") + ": " +
-          (valueC || valueC===0 ? formatterC(valueC) + " " + unitC : _this.translator("hints/nodata")));
+        .text(_this.translator("buttons/color") + ": " +
+          (valueC || valueC === 0 ? formatterC(valueC) + " " + unitC : _this.translator("hints/nodata")));
 
       this.yInfoEl.classed("vzb-hidden", true);
       this.cInfoEl.classed("vzb-hidden", true);
     } else {
       this.yTitleEl.select("text")
-          .text(this.translator("buttons/size") + ": " + this.strings.title.S);
+        .text(this.translator("buttons/size") + ": " + this.strings.title.S);
       this.cTitleEl.select("text")
-          .text(this.translator("buttons/color") + ": " + this.strings.title.C);
+        .text(this.translator("buttons/color") + ": " + this.strings.title.C);
 
       this.yInfoEl.classed("vzb-hidden", false);
-      this.cInfoEl.classed("vzb-hidden", false || this.cTitleEl.classed('vzb-hidden'));
+      this.cInfoEl.classed("vzb-hidden", false || this.cTitleEl.classed("vzb-hidden"));
     }
   },
 
-  updateDoubtOpacity: function (opacity) {
+  updateDoubtOpacity(opacity) {
     if (opacity == null) opacity = this.wScale(+this.time.getUTCFullYear().toString());
     if (this.someSelected) opacity = 1;
     this.dataWarningEl.style("opacity", opacity);
   },
 
-  updateOpacity: function () {
-    var _this = this;
+  updateOpacity() {
+    const _this = this;
     /*
      this.entityBubbles.classed("vzb-selected", function (d) {
      return _this.model.marker.isSelected(d);
      });
      */
 
-    var OPACITY_HIGHLT = 1.0;
-    var OPACITY_HIGHLT_DIM = .3;
-    var OPACITY_SELECT = this.model.marker.opacityRegular;
-    var OPACITY_REGULAR = this.model.marker.opacityRegular;
-    var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
+    const OPACITY_HIGHLT = 1.0;
+    const OPACITY_HIGHLT_DIM = 0.3;
+    const OPACITY_SELECT = this.model.marker.opacityRegular;
+    const OPACITY_REGULAR = this.model.marker.opacityRegular;
+    const OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
 
-    this.entityBubbles.style("opacity", function (d) {
+    this.entityBubbles.style("opacity", d => {
 
       if (_this.someHighlighted) {
         //highlight or non-highlight
@@ -387,27 +382,23 @@ var LBubbleMapComponent = Component.extend({
 
     });
 
-    this.entityBubbles.classed("vzb-selected", function (d) {
-      return _this.model.marker.isSelected(d)
-    });
+    this.entityBubbles.classed("vzb-selected", d => _this.model.marker.isSelected(d));
 
-    var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
+    const nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
 
     // when pointer events need update...
     if (nonSelectedOpacityZero !== this.nonSelectedOpacityZero) {
-      this.entityBubbles.style("pointer-events", function (d) {
-        return (!_this.someSelected || !nonSelectedOpacityZero || _this.model.marker.isSelected(d)) ?
-            "visible" : "none";
-      });
+      this.entityBubbles.style("pointer-events", d => (!_this.someSelected || !nonSelectedOpacityZero || _this.model.marker.isSelected(d)) ?
+            "visible" : "none");
     }
 
-    this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < .01;
+    this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
   },
 
   /**
    * Changes labels for indicators
    */
-  updateIndicators: function () {
+  updateIndicators() {
     this.sScale = this.model.marker.size.getScale();
     this.cScale = this.model.marker.color.getScale();
   },
@@ -415,31 +406,29 @@ var LBubbleMapComponent = Component.extend({
   /**
    * Updates entities
    */
-  updateEntities: function () {
+  updateEntities() {
 
-    var _this = this;
-    var KEY = this.KEY;
-    var TIMEDIM = this.TIMEDIM;
+    const _this = this;
+    const KEY = this.KEY;
+    const TIMEDIM = this.TIMEDIM;
 
-    var getKeys = function(prefix) {
+    const getKeys = function(prefix) {
       prefix = prefix || "";
       return _this.model.marker.getKeys()
-          .map(function(d) {
-            var pointer = {};
-            pointer[KEY] = d[KEY];
-            pointer[TIMEDIM] = endTime;
-            pointer.sortValue = _this.values.size[d[KEY]]||0;
-            pointer[KEY] = prefix + d[KEY];
-            return pointer;
-          })
-          .sort(function(a, b) {
-            return b.sortValue - a.sortValue;
-          })
+        .map(d => {
+          const pointer = {};
+          pointer[KEY] = d[KEY];
+          pointer[TIMEDIM] = endTime;
+          pointer.sortValue = _this.values.size[d[KEY]] || 0;
+          pointer[KEY] = prefix + d[KEY];
+          return pointer;
+        })
+        .sort((a, b) => b.sortValue - a.sortValue);
     };
 
     // get array of GEOs, sorted by the size hook
     // that makes larger bubbles go behind the smaller ones
-    var endTime = this.model.time.end;
+    const endTime = this.model.time.end;
     this.model.marker.setVisible(getKeys.call(this));
 
     //unselecting bubbles with no data is used for the scenario when
@@ -464,8 +453,8 @@ var LBubbleMapComponent = Component.extend({
      */
 
 
-    this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bmc-bubble')
-        .data(this.model.marker.getVisible(), function(d) { return d[KEY]; })
+    this.entityBubbles = this.bubbleContainer.selectAll(".vzb-bmc-bubble")
+        .data(this.model.marker.getVisible(), d => d[KEY])
         .order();
 
     //exit selection
@@ -474,95 +463,95 @@ var LBubbleMapComponent = Component.extend({
     //enter selection -- init circles
     this.entityBubbles = this.entityBubbles.enter().append("circle")
         .attr("class", "vzb-bmc-bubble")
-        .on("mouseover", function (d, i) {
+        .on("mouseover", (d, i) => {
           if (utils.isTouchDevice()) return;
           _this._interact()._mouseover(d, i);
         })
-        .on("mouseout", function (d, i) {
+        .on("mouseout", (d, i) => {
           if (utils.isTouchDevice()) return;
           _this._interact()._mouseout(d, i);
         })
-        .on("click", function (d, i) {
+        .on("click", (d, i) => {
           if (utils.isTouchDevice()) return;
           _this._interact()._click(d, i);
           _this.highlightMarkers();
         })
-        .onTap(function (d, i) {
+        .onTap((d, i) => {
           _this._interact()._click(d, i);
           d3.event.stopPropagation();
         })
-        .onLongTap(function (d, i) {
+        .onLongTap((d, i) => {
         })
         .merge(this.entityBubbles);
 
   },
 
-  unselectBubblesWithNoData: function(frame){
-    var _this = this;
-    var KEY = this.KEY;
-    if(!frame) frame = this.values;
+  unselectBubblesWithNoData(frame) {
+    const _this = this;
+    const KEY = this.KEY;
+    if (!frame) frame = this.values;
 
-    if(!frame || !frame.size) return;
+    if (!frame || !frame.size) return;
 
-    this.model.marker.select.forEach(function(d){
-      if(!frame.size[d[KEY]] && frame.size[d[KEY]] !== 0)
+    this.model.marker.select.forEach(d => {
+      if (!frame.size[d[KEY]] && frame.size[d[KEY]] !== 0)
         _this.model.marker.selectMarker(d);
-    })
+    });
   },
 
-  redrawDataPoints: function(duration, reposition){
-    var _this = this;
-    if(!duration) duration = this.duration;
-    if(!reposition) reposition = true;
-    if(!this.entityBubbles) return utils.warn("redrawDataPoints(): no entityBubbles defined. likely a premature call, fix it!");
-    this.entityBubbles.each(function(d, index){
-      var view = d3.select(this);
-      var geo = d3.select("#" + d[_this.KEY]);
+  redrawDataPoints(duration, reposition) {
+    const _this = this;
+    if (!duration) duration = this.duration;
+    if (!reposition) reposition = true;
+    if (!this.entityBubbles) return utils.warn("redrawDataPoints(): no entityBubbles defined. likely a premature call, fix it!");
+    this.entityBubbles.each(function(d, index) {
+      const view = d3.select(this);
+      const geo = d3.select("#" + d[_this.KEY]);
 
-      var valueX = _this.values.hook_lng[d[_this.KEY]];
-      var valueY = _this.values.hook_lat[d[_this.KEY]];
-      var valueS = _this.values.size[d[_this.KEY]];
-      var valueC = _this.values.color[d[_this.KEY]];
-      var valueL = _this.values.label[d[_this.KEY]];
+      const valueX = _this.values.hook_lng[d[_this.KEY]];
+      const valueY = _this.values.hook_lat[d[_this.KEY]];
+      const valueS = _this.values.size[d[_this.KEY]];
+      const valueC = _this.values.color[d[_this.KEY]];
+      const valueL = _this.values.label[d[_this.KEY]];
 
       d.hidden_1 = d.hidden;
-      d.hidden = (!valueS && valueS !== 0)|| valueX==null || valueY==null;
+      d.hidden = (!valueS && valueS !== 0) || valueX == null || valueY == null;
 
 
-      if(d.hidden !== d.hidden_1) {
-        if(duration){
+      if (d.hidden !== d.hidden_1) {
+        if (duration) {
           view.transition().duration(duration).ease(d3.easeLinear)
-              .style("opacity", 0)
-              .on("end", () => view.classed("vzb-hidden", d.hidden).style("opacity", _this.model.marker.opacityRegular));
+            .style("opacity", 0)
+            .on("end", () => view.classed("vzb-hidden", d.hidden).style("opacity", _this.model.marker.opacityRegular));
         } else {
           view.classed("vzb-hidden", d.hidden);
         }
       }
-      if(!d.hidden){
+      if (!d.hidden) {
 
-        d.r = utils.areaToRadius(_this.sScale(valueS||0));
+        d.r = utils.areaToRadius(_this.sScale(valueS || 0));
         d.label = valueL;
 
         view.classed("vzb-hidden", false)
-            .attr("fill", valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH);
+          .attr("fill", valueC != null ? _this.cScale(valueC) : _this.COLOR_WHITEISH);
 
         if (_this.model.ui.map.colorGeo)
-          geo.style("fill", valueC!=null?_this.cScale(valueC):"#999");
+          geo.style("fill", valueC != null ? _this.cScale(valueC) : "#999");
 
-        if(reposition){
-              d.cLoc = _this.map.invert(valueX, valueY);
+        if (reposition) {
+          d.cLoc = _this.map.invert(valueX, valueY);
 
           view.attr("cx", d.cLoc[0])
-              .attr("cy", d.cLoc[1]);
+            .attr("cy", d.cLoc[1]);
         }
 
-        if(duration){
+        if (duration) {
           view.transition().duration(duration).ease(d3.easeLinear)
-              .attr("r", d.r);
-        }else{
+            .attr("r", d.r);
+        } else {
           view.interrupt()
-              .attr("r", d.r)
-              .transition();
+            .attr("r", d.r)
+            .transition();
         }
 
         _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], valueS, valueC, d.label, duration);
@@ -577,8 +566,8 @@ var LBubbleMapComponent = Component.extend({
    * UPDATE TIME:
    * Ideally should only update when time or data changes
    */
-  updateTime: function() {
-    var _this = this;
+  updateTime() {
+    const _this = this;
 
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
@@ -590,25 +579,22 @@ var LBubbleMapComponent = Component.extend({
   },
 
 
-  fitSizeOfTitles: function(){
+  fitSizeOfTitles() {
+    // reset font sizes first to make the measurement consistent
+    const yTitleText = this.yTitleEl.select("text");
+    yTitleText.style("font-size", null);
 
-    //reset font sizes first to make the measurement consistent
-    var yTitleText = this.yTitleEl.select("text")
-        .style("font-size", null);
-    var cTitleText = this.cTitleEl.select("text")
-        .style("font-size", null);
+    const cTitleText = this.cTitleEl.select("text");
+    cTitleText.style("font-size", null);
 
-    var yTitleText = this.yTitleEl.select("text");
-    var cTitleText = this.cTitleEl.select("text");
+    const yTitleBB = yTitleText.node().getBBox();
+    const cTitleBB = this.cTitleEl.classed("vzb-hidden") ? yTitleBB : cTitleText.node().getBBox();
 
-    var yTitleBB = yTitleText.node().getBBox();
-    var cTitleBB = this.cTitleEl.classed('vzb-hidden') ? yTitleBB : cTitleText.node().getBBox();
-
-    var font =
+    const font =
         Math.max(parseInt(yTitleText.style("font-size")), parseInt(cTitleText.style("font-size")))
         * this.width / Math.max(yTitleBB.width, cTitleBB.width);
 
-    if(Math.max(yTitleBB.width, cTitleBB.width) > this.width) {
+    if (Math.max(yTitleBB.width, cTitleBB.width) > this.width) {
       yTitleText.style("font-size", font + "px");
       cTitleText.style("font-size", font + "px");
     } else {
@@ -654,20 +640,20 @@ var LBubbleMapComponent = Component.extend({
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
    */
-  updateSize: function () {
+  updateSize() {
 
     this.activeProfile = this.getActiveProfile(this.profiles, this.presentationProfileChanges);
-    var margin = this.activeProfile.margin;
+    const margin = this.activeProfile.margin;
 
     this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
     this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
 
-    if(this.height<=0 || this.width<=0) return utils.warn("Bubble map updateSize() abort: vizabi container is too little or has display:none");
+    if (this.height <= 0 || this.width <= 0) return utils.warn("Bubble map updateSize() abort: vizabi container is too little or has display:none");
 
     this.repositionElements();
   },
 
-  mapBoundsChanged: function() {
+  mapBoundsChanged() {
     this.updateMarkerSizeLimits();
     this._labels.updateSize();
     this.redrawDataPoints();
@@ -675,82 +661,81 @@ var LBubbleMapComponent = Component.extend({
 
   },
 
-  repositionElements: function() {
-
-    var margin = this.activeProfile.margin,
-        infoElHeight = this.activeProfile.infoElHeight,
-        isRTL = this.model.locale.isRTL();
+  repositionElements() {
+    const margin = this.activeProfile.margin;
+    const infoElHeight = this.activeProfile.infoElHeight;
+    const isRTL = this.model.locale.isRTL();
 
     this.graph
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     this.year.setConditions({
-      widthRatio: 2/10
+      widthRatio: 2 / 10
     });
     this.year.resize(this.width, this.height);
 
     this.yTitleEl
-        .style("font-size", infoElHeight)
-        .attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + margin.top + ")")
+      .style("font-size", infoElHeight)
+      .attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + margin.top + ")");
 
-    var yTitleBB = this.yTitleEl.select("text").node().getBBox();
+    const yTitleBB = this.yTitleEl.select("text").node().getBBox();
 
     //hide the second line about color in large profile or when color is constant
     this.cTitleEl.attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + (margin.top + yTitleBB.height) + ")")
-        .classed("vzb-hidden", this.getLayoutProfile()==="large" || this.model.marker.color.use == "constant");
+      .classed("vzb-hidden", this.getLayoutProfile() === "large" || this.model.marker.color.use == "constant");
 
-    var warnBB = this.dataWarningEl.select("text").node().getBBox();
+    const warnBB = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl.select("svg")
-        .attr("width", warnBB.height * 0.75)
-        .attr("height", warnBB.height * 0.75)
-        .attr("x", -warnBB.width - warnBB.height * 1.2)
-        .attr("y", -warnBB.height * 0.65);
+      .attr("width", warnBB.height * 0.75)
+      .attr("height", warnBB.height * 0.75)
+      .attr("x", -warnBB.width - warnBB.height * 1.2)
+      .attr("y", -warnBB.height * 0.65);
 
     this.dataWarningEl
-        .attr("transform", "translate(" + (this.width) + "," + (this.height - warnBB.height * 0.5) + ")")
-        .select("text");
+      .attr("transform", "translate(" + (this.width) + "," + (this.height - warnBB.height * 0.5) + ")")
+      .select("text");
 
-    if(this.yInfoEl.select('svg').node()) {
-      var titleBBox = this.yTitleEl.node().getBBox();
-      var t = utils.transform(this.yTitleEl.node());
-      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4);
+    if (this.yInfoEl.select("svg").node()) {
+      const titleBBox = this.yTitleEl.node().getBBox();
+      const t = utils.transform(this.yTitleEl.node());
+      const hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
-      this.yInfoEl.select('svg')
-          .attr("width", infoElHeight)
-          .attr("height", infoElHeight);
-      this.yInfoEl.attr('transform', 'translate('
-          + hTranslate + ','
-          + (t.translateY - infoElHeight * 0.8) + ')');
+      this.yInfoEl.select("svg")
+        .attr("width", infoElHeight)
+        .attr("height", infoElHeight);
+      this.yInfoEl.attr("transform", "translate("
+          + hTranslate + ","
+          + (t.translateY - infoElHeight * 0.8) + ")");
     }
 
     this.cInfoEl.classed("vzb-hidden", this.cTitleEl.classed("vzb-hidden"));
 
-    if(!this.cInfoEl.classed("vzb-hidden") && this.cInfoEl.select('svg').node()) {
-      var titleBBox = this.cTitleEl.node().getBBox();
-      var t = utils.transform(this.cTitleEl.node());
-      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * .4);
+    if (!this.cInfoEl.classed("vzb-hidden") && this.cInfoEl.select("svg").node()) {
+      const titleBBox = this.cTitleEl.node().getBBox();
+      const t = utils.transform(this.cTitleEl.node());
+      const hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
-      this.cInfoEl.select('svg')
-          .attr("width", infoElHeight)
-          .attr("height", infoElHeight)
-      this.cInfoEl.attr('transform', 'translate('
-          + hTranslate + ','
-          + (t.translateY - infoElHeight * 0.8) + ')');
+      this.cInfoEl.select("svg")
+        .attr("width", infoElHeight)
+        .attr("height", infoElHeight);
+      this.cInfoEl.attr("transform", "translate("
+          + hTranslate + ","
+          + (t.translateY - infoElHeight * 0.8) + ")");
     }
   },
 
 
-  updateMarkerSizeLimits: function() {
-    var _this = this;
-    var extent = this.model.marker.size.extent || [0,1];
+  updateMarkerSizeLimits() {
+    const _this = this;
+    const extent = this.model.marker.size.extent || [0, 1];
 
-    var minRadius = this.activeProfile.minRadius;
-    var maxRadius = this.activeProfile.maxRadius;
+    const minRadius = this.activeProfile.minRadius;
+    const maxRadius = this.activeProfile.maxRadius;
 
     this.minRadius = Math.max(maxRadius * extent[0], minRadius);
     this.maxRadius = Math.max(maxRadius * extent[1], minRadius);
 
-    if(this.model.marker.size.scaleType !== "ordinal") {
+    if (this.model.marker.size.scaleType !== "ordinal") {
       this.sScale.range([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)]);
     } else {
       this.sScale.rangePoints([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)], 0).range();
@@ -758,11 +743,11 @@ var LBubbleMapComponent = Component.extend({
 
   },
 
-  _interact: function () {
-    var _this = this;
+  _interact() {
+    const _this = this;
 
     return {
-      _mouseover: function (d, i) {
+      _mouseover(d, i) {
         if (_this.model.time.dragging) return;
 
         _this.model.marker.highlightMarker(d);
@@ -779,7 +764,7 @@ var LBubbleMapComponent = Component.extend({
           _this._setTooltip(d);
         }
       },
-      _mouseout: function (d, i) {
+      _mouseout(d, i) {
         if (_this.model.time.dragging) return;
         _this._setTooltip();
         _this.hovered = null;
@@ -787,7 +772,7 @@ var LBubbleMapComponent = Component.extend({
         _this.fitSizeOfTitles();
         _this.model.marker.clearHighlighted();
       },
-      _click: function (d, i) {
+      _click(d, i) {
         _this.model.marker.selectMarker(d);
       }
     };
@@ -795,12 +780,12 @@ var LBubbleMapComponent = Component.extend({
   },
 
 
-  highlightMarkers: function () {
-    var _this = this;
+  highlightMarkers() {
+    const _this = this;
     this.someHighlighted = (this.model.marker.highlight.length > 0);
 
-    if(utils.isTouchDevice()) {
-      if(this.someHighlighted) {
+    if (utils.isTouchDevice()) {
+      if (this.someHighlighted) {
         _this.hovered = this.model.marker.highlight[0];
       } else {
         _this.hovered = null;
@@ -824,36 +809,36 @@ var LBubbleMapComponent = Component.extend({
 
   },
 
-  _updateLabel: function(d, index, valueX, valueY, valueS, valueC, valueL, duration) {
-    var _this = this;
-    var KEY = this.KEY;
-    if(d[KEY] == _this.druging) return;
-    if(duration == null) duration = _this.duration;
+  _updateLabel(d, index, valueX, valueY, valueS, valueC, valueL, duration) {
+    const _this = this;
+    const KEY = this.KEY;
+    if (d[KEY] == _this.druging) return;
+    if (duration == null) duration = _this.duration;
 
     // only for selected entities
-    if(_this.model.marker.isSelected(d)) {
+    if (_this.model.marker.isSelected(d)) {
 
-      var showhide = d.hidden !== d.hidden_1;
-      var valueLST = null;
-      var cache = {};
+      const showhide = d.hidden !== d.hidden_1;
+      const valueLST = null;
+      const cache = {};
       cache.labelX0 = valueX / this.width;
       cache.labelY0 = valueY / this.height;
       cache.scaledS0 = valueS ? utils.areaToRadius(_this.sScale(valueS)) : null;
-      cache.scaledC0 = valueC!=null?_this.cScale(valueC):_this.COLOR_WHITEISH;
+      cache.scaledC0 = valueC != null ? _this.cScale(valueC) : _this.COLOR_WHITEISH;
 
       this._labels.updateLabel(d, index, cache, valueX / this.width, valueY / this.height, valueS, valueC, valueL, valueLST, duration, showhide);
     }
   },
 
-  selectMarkers: function () {
-    var _this = this;
-    var KEY = this.KEY;
+  selectMarkers() {
+    const _this = this;
+    const KEY = this.KEY;
     this.someSelected = (this.model.marker.select.length > 0);
 
 //      this._selectlist.rebuild();
-    if(utils.isTouchDevice()) {
+    if (utils.isTouchDevice()) {
       _this._labels.showCloseCross(null, false);
-      if(_this.someHighlighted) {
+      if (_this.someHighlighted) {
         _this.model.marker.clearHighlighted();
       } else {
         _this.updateTitleNumbers();
@@ -869,45 +854,43 @@ var LBubbleMapComponent = Component.extend({
     this.nonSelectedOpacityZero = false;
   },
 
-  _setTooltip: function (d) {
-    var _this = this;
+  _setTooltip(d) {
+    const _this = this;
     if (d) {
-      var tooltipText = d.label;
-      var x = d.cLoc[0];
-      var y = d.cLoc[1];
-      var offset = d.r;
-      var mouse = d3.mouse(this.graph.node()).map(function(d) {
-        return parseInt(d)
-      });
-      var xPos, yPos, xSign = -1,
-          ySign = -1,
-          xOffset = 0,
-          yOffset = 0;
+      const tooltipText = d.label;
+      let x = d.cLoc[0];
+      let y = d.cLoc[1];
+      const offset = d.r;
+      const mouse = d3.mouse(this.graph.node()).map(d => parseInt(d));
+      let xPos, yPos, xSign = -1,
+        ySign = -1,
+        xOffset = 0,
+        yOffset = 0;
 
-      if(offset) {
-        xOffset = offset * .71; // .71 - sin and cos for 315
-        yOffset = offset * .71;
+      if (offset) {
+        xOffset = offset * 0.71; // .71 - sin and cos for 315
+        yOffset = offset * 0.71;
       }
       //position tooltip
       this.tooltip.classed("vzb-hidden", false)
         //.attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
-          .selectAll("text")
-          .text(tooltipText);
+        .selectAll("text")
+        .text(tooltipText);
 
-      var contentBBox = this.tooltip.select('text').node().getBBox();
-      if(x - xOffset - contentBBox.width < 0) {
+      const contentBBox = this.tooltip.select("text").node().getBBox();
+      if (x - xOffset - contentBBox.width < 0) {
         xSign = 1;
         x += contentBBox.width + 5; // corrective to the block Radius and text padding
       } else {
         x -= 5; // corrective to the block Radius and text padding
       }
-      if(y - yOffset - contentBBox.height < 0) {
+      if (y - yOffset - contentBBox.height < 0) {
         ySign = 1;
         y += contentBBox.height;
       } else {
         y -= 11; // corrective to the block Radius and text padding
       }
-      if(offset) {
+      if (offset) {
         xPos = x + xOffset * xSign;
         yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
       } else {
@@ -915,14 +898,14 @@ var LBubbleMapComponent = Component.extend({
         yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
       }
       this.tooltip.attr("transform", "translate(" + (xPos ? xPos : mouse[0]) + "," + (yPos ? yPos : mouse[1]) +
-          ")")
+          ")");
 
-      this.tooltip.select('rect').attr("width", contentBBox.width + 8)
-          .attr("height", contentBBox.height * 1.2)
-          .attr("x", -contentBBox.width - 4)
-          .attr("y", -contentBBox.height * .85)
-          .attr("rx", contentBBox.height * .2)
-          .attr("ry", contentBBox.height * .2);
+      this.tooltip.select("rect").attr("width", contentBBox.width + 8)
+        .attr("height", contentBBox.height * 1.2)
+        .attr("x", -contentBBox.width - 4)
+        .attr("y", -contentBBox.height * 0.85)
+        .attr("rx", contentBBox.height * 0.2)
+        .attr("ry", contentBBox.height * 0.2);
 
 
     } else {
@@ -931,8 +914,8 @@ var LBubbleMapComponent = Component.extend({
     }
   },
 
-  preload: function() {
-    var _this = this;
+  preload() {
+    const _this = this;
     this.map = new MapEngine(this).getMap();
     return this.map.initMap("#vzb-map-background");
   }

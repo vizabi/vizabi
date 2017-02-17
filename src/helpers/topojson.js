@@ -26,7 +26,7 @@ export default(function() {
     arcs.forEach(function(i, j) {
       var arc = topology.arcs[i < 0 ? ~i : i],
         t;
-      if(arc.length < 3 && !arc[1][0] && !arc[1][1]) {
+      if (arc.length < 3 && !arc[1][0] && !arc[1][1]) {
         t = arcs[++emptyIndex], arcs[emptyIndex] = i, arcs[j] = t;
       }
     });
@@ -37,22 +37,22 @@ export default(function() {
         end = e[1],
         f, g;
 
-      if(f = fragmentByEnd[start]) {
+      if (f = fragmentByEnd[start]) {
         delete fragmentByEnd[f.end];
         f.push(i);
         f.end = end;
-        if(g = fragmentByStart[end]) {
+        if (g = fragmentByStart[end]) {
           delete fragmentByStart[g.start];
           var fg = g === f ? f : f.concat(g);
           fragmentByStart[fg.start = f.start] = fragmentByEnd[fg.end = g.end] = fg;
         } else {
           fragmentByStart[f.start] = fragmentByEnd[f.end] = f;
         }
-      } else if(f = fragmentByStart[end]) {
+      } else if (f = fragmentByStart[end]) {
         delete fragmentByStart[f.start];
         f.unshift(i);
         f.start = start;
-        if(g = fragmentByEnd[start]) {
+        if (g = fragmentByEnd[start]) {
           delete fragmentByEnd[g.end];
           var gf = g === f ? f : g.concat(f);
           fragmentByStart[gf.start = g.start] = fragmentByEnd[gf.end = f.end] = gf;
@@ -69,7 +69,7 @@ export default(function() {
       var arc = topology.arcs[i < 0 ? ~i : i],
         p0 = arc[0],
         p1;
-      if(topology.transform) p1 = [0, 0], arc.forEach(function(dp) {
+      if (topology.transform) p1 = [0, 0], arc.forEach(function(dp) {
         p1[0] += dp[0], p1[1] += dp[1];
       });
       else p1 = arc[arc.length - 1];
@@ -77,7 +77,7 @@ export default(function() {
     }
 
     function flush(fragmentByEnd, fragmentByStart) {
-      for(var k in fragmentByEnd) {
+      for (var k in fragmentByEnd) {
         var f = fragmentByEnd[k];
         delete fragmentByStart[f.start];
         delete f.start;
@@ -92,7 +92,7 @@ export default(function() {
     flush(fragmentByEnd, fragmentByStart);
     flush(fragmentByStart, fragmentByEnd);
     arcs.forEach(function(i) {
-      if(!stitchedArcs[i < 0 ? ~i : i]) fragments.push([i]);
+      if (!stitchedArcs[i < 0 ? ~i : i]) fragments.push([i]);
     });
 
     return fragments;
@@ -118,11 +118,11 @@ export default(function() {
     }
 
     function geometry(o) {
-      if(o.type === "GeometryCollection") o.geometries.forEach(geometry);
-      else if(o.type in geometryType) geom = o, geometryType[o.type](o.arcs);
+      if (o.type === "GeometryCollection") o.geometries.forEach(geometry);
+      else if (o.type in geometryType) geom = o, geometryType[o.type](o.arcs);
     }
 
-    if(arguments.length > 1) {
+    if (arguments.length > 1) {
       var geomsByArc = [],
         geom;
 
@@ -140,10 +140,10 @@ export default(function() {
       geomsByArc.forEach(arguments.length < 3 ? function(geoms) {
         arcs.push(geoms[0].i);
       } : function(geoms) {
-        if(filter(geoms[0].g, geoms[geoms.length - 1].g)) arcs.push(geoms[0].i);
+        if (filter(geoms[0].g, geoms[geoms.length - 1].g)) arcs.push(geoms[0].i);
       });
     } else {
-      for(var i = 0, n = topology.arcs.length; i < n; ++i) arcs.push(i);
+      for (var i = 0, n = topology.arcs.length; i < n; ++i) arcs.push(i);
     }
 
     return {
@@ -158,8 +158,8 @@ export default(function() {
       components = [];
 
     objects.forEach(function(o) {
-      if(o.type === "Polygon") register(o.arcs);
-      else if(o.type === "MultiPolygon") o.arcs.forEach(register);
+      if (o.type === "Polygon") register(o.arcs);
+      else if (o.type === "MultiPolygon") o.arcs.forEach(register);
     });
 
     function register(polygon) {
@@ -179,17 +179,17 @@ export default(function() {
     }
 
     polygons.forEach(function(polygon) {
-      if(!polygon._) {
+      if (!polygon._) {
         var component = [],
           neighbors = [polygon];
         polygon._ = 1;
         components.push(component);
-        while(polygon = neighbors.pop()) {
+        while (polygon = neighbors.pop()) {
           component.push(polygon);
           polygon.forEach(function(ring) {
             ring.forEach(function(arc) {
               polygonsByArc[arc < 0 ? ~arc : arc].forEach(function(polygon) {
-                if(!polygon._) {
+                if (!polygon._) {
                   polygon._ = 1;
                   neighbors.push(polygon);
                 }
@@ -213,7 +213,7 @@ export default(function() {
         polygons.forEach(function(polygon) {
           polygon.forEach(function(ring) {
             ring.forEach(function(arc) {
-              if(polygonsByArc[arc < 0 ? ~arc : arc].length < 2) {
+              if (polygonsByArc[arc < 0 ? ~arc : arc].length < 2) {
                 arcs.push(arc);
               }
             });
@@ -227,10 +227,10 @@ export default(function() {
         // at most one of these rings can be the exterior;
         // this exterior ring has the same winding order
         // as any exterior ring in the original polygons.
-        if((n = arcs.length) > 1) {
+        if ((n = arcs.length) > 1) {
           var sgn = exterior(polygons[0][0]);
-          for(var i = 0, t; i < n; ++i) {
-            if(sgn === exterior(arcs[i])) {
+          for (var i = 0, t; i < n; ++i) {
+            if (sgn === exterior(arcs[i])) {
               t = arcs[0], arcs[0] = arcs[i], arcs[i] = t;
               break;
             }
@@ -258,7 +258,7 @@ export default(function() {
       properties: o.properties || {},
       geometry: object(topology, o)
     };
-    if(o.id == null) delete f.id;
+    if (o.id == null) delete f.id;
     return f;
   }
 
@@ -267,12 +267,12 @@ export default(function() {
       arcs = topology.arcs;
 
     function arc(i, points) {
-      if(points.length) points.pop();
-      for(var a = arcs[i < 0 ? ~i : i], k = 0, n = a.length, p; k < n; ++k) {
+      if (points.length) points.pop();
+      for (var a = arcs[i < 0 ? ~i : i], k = 0, n = a.length, p; k < n; ++k) {
         points.push(p = a[k].slice());
         absolute(p, k);
       }
-      if(i < 0) reverse(points, n);
+      if (i < 0) reverse(points, n);
     }
 
     function point(p) {
@@ -283,14 +283,14 @@ export default(function() {
 
     function line(arcs) {
       var points = [];
-      for(var i = 0, n = arcs.length; i < n; ++i) arc(arcs[i], points);
-      if(points.length < 2) points.push(points[0].slice());
+      for (var i = 0, n = arcs.length; i < n; ++i) arc(arcs[i], points);
+      if (points.length < 2) points.push(points[0].slice());
       return points;
     }
 
     function ring(arcs) {
       var points = line(arcs);
-      while(points.length < 4) points.push(points[0].slice());
+      while (points.length < 4) points.push(points[0].slice());
       return points;
     }
 
@@ -336,15 +336,15 @@ export default(function() {
   function reverse(array, n) {
     var t, j = array.length,
       i = j - n;
-    while(i < --j) t = array[i], array[i++] = array[j], array[j] = t;
+    while (i < --j) t = array[i], array[i++] = array[j], array[j] = t;
   }
 
   function bisect(a, x) {
     var lo = 0,
       hi = a.length;
-    while(lo < hi) {
+    while (lo < hi) {
       var mid = lo + hi >>> 1;
-      if(a[mid] < x) lo = mid + 1;
+      if (a[mid] < x) lo = mid + 1;
       else hi = mid;
     }
     return lo;
@@ -358,9 +358,9 @@ export default(function() {
 
     function line(arcs, i) {
       arcs.forEach(function(a) {
-        if(a < 0) a = ~a;
+        if (a < 0) a = ~a;
         var o = indexesByArc[a];
-        if(o) o.push(i);
+        if (o) o.push(i);
         else indexesByArc[a] = [i];
       });
     }
@@ -372,10 +372,10 @@ export default(function() {
     }
 
     function geometry(o, i) {
-      if(o.type === "GeometryCollection") o.geometries.forEach(function(o) {
+      if (o.type === "GeometryCollection") o.geometries.forEach(function(o) {
         geometry(o, i);
       });
-      else if(o.type in geometryType) geometryType[o.type](o.arcs, i);
+      else if (o.type in geometryType) geometryType[o.type](o.arcs, i);
     }
 
     var geometryType = {
@@ -391,14 +391,14 @@ export default(function() {
 
     objects.forEach(geometry);
 
-    for(var i in indexesByArc) {
-      for(var indexes = indexesByArc[i], m = indexes.length, j = 0; j < m; ++j) {
-        for(var k = j + 1; k < m; ++k) {
+    for (var i in indexesByArc) {
+      for (var indexes = indexesByArc[i], m = indexes.length, j = 0; j < m; ++j) {
+        for (var k = j + 1; k < m; ++k) {
           var ij = indexes[j],
             ik = indexes[k],
             n;
-          if((n = neighbors[ij])[i = bisect(n, ik)] !== ik) n.splice(i, 0, ik);
-          if((n = neighbors[ik])[i = bisect(n, ij)] !== ij) n.splice(i, 0, ij);
+          if ((n = neighbors[ij])[i = bisect(n, ik)] !== ik) n.splice(i, 0, ik);
+          if ((n = neighbors[ik])[i = bisect(n, ij)] !== ij) n.splice(i, 0, ij);
         }
       }
     }
@@ -411,7 +411,7 @@ export default(function() {
       relative = transformRelative(topology.transform),
       heap = minAreaHeap();
 
-    if(!triangleArea) triangleArea = cartesianTriangleArea;
+    if (!triangleArea) triangleArea = cartesianTriangleArea;
 
     topology.arcs.forEach(function(arc) {
       var triangles = [],
@@ -422,25 +422,25 @@ export default(function() {
       // extending the passed-in point to workaround a Chrome/V8 bug (getting
       // stuck in smi mode). For midpoints, the initial effective area of
       // Infinity will be computed in the next step.
-      for(var i = 0, n = arc.length, p; i < n; ++i) {
+      for (var i = 0, n = arc.length, p; i < n; ++i) {
         p = arc[i];
         absolute(arc[i] = [p[0], p[1], Infinity], i);
       }
 
-      for(var i = 1, n = arc.length - 1; i < n; ++i) {
+      for (var i = 1, n = arc.length - 1; i < n; ++i) {
         triangle = arc.slice(i - 1, i + 2);
         triangle[1][2] = triangleArea(triangle);
         triangles.push(triangle);
         heap.push(triangle);
       }
 
-      for(var i = 0, n = triangles.length; i < n; ++i) {
+      for (var i = 0, n = triangles.length; i < n; ++i) {
         triangle = triangles[i];
         triangle.previous = triangles[i - 1];
         triangle.next = triangles[i + 1];
       }
 
-      while(triangle = heap.pop()) {
+      while (triangle = heap.pop()) {
         var previous = triangle.previous,
           next = triangle.next;
 
@@ -448,16 +448,16 @@ export default(function() {
         // to be eliminated, use the latter's area instead. This ensures that the
         // current point cannot be eliminated without eliminating previously-
         // eliminated points.
-        if(triangle[1][2] < maxArea) triangle[1][2] = maxArea;
+        if (triangle[1][2] < maxArea) triangle[1][2] = maxArea;
         else maxArea = triangle[1][2];
 
-        if(previous) {
+        if (previous) {
           previous.next = next;
           previous[2] = triangle[2];
           update(previous);
         }
 
-        if(next) {
+        if (next) {
           next.previous = previous;
           next[0] = triangle[0];
           update(next);
@@ -474,7 +474,7 @@ export default(function() {
     }
 
     return topology;
-  };
+  }
 
   function cartesianRingArea(ring) {
     var i = -1,
@@ -483,7 +483,7 @@ export default(function() {
       b = ring[n - 1],
       area = 0;
 
-    while(++i < n) {
+    while (++i < n) {
       a = b;
       b = ring[i];
       area += a[0] * b[1] - a[1] * b[0];
@@ -514,41 +514,41 @@ export default(function() {
     };
 
     heap.pop = function() {
-      if(size <= 0) return;
+      if (size <= 0) return;
       var removed = array[0],
         object;
-      if(--size > 0) object = array[size], down(array[object._ = 0] = object, 0);
+      if (--size > 0) object = array[size], down(array[object._ = 0] = object, 0);
       return removed;
     };
 
     heap.remove = function(removed) {
       var i = removed._,
         object;
-      if(array[i] !== removed) return; // invalid request
-      if(i !== --size) object = array[size], (compareArea(object, removed) < 0 ? up : down)(array[object._ = i] =
+      if (array[i] !== removed) return; // invalid request
+      if (i !== --size) object = array[size], (compareArea(object, removed) < 0 ? up : down)(array[object._ = i] =
         object, i);
       return i;
     };
 
     function up(object, i) {
-      while(i > 0) {
+      while (i > 0) {
         var j = ((i + 1) >> 1) - 1,
           parent = array[j];
-        if(compareArea(object, parent) >= 0) break;
+        if (compareArea(object, parent) >= 0) break;
         array[parent._ = i] = parent;
         array[object._ = i = j] = object;
       }
     }
 
     function down(object, i) {
-      while(true) {
+      while (true) {
         var r = (i + 1) << 1,
           l = r - 1,
           j = i,
           child = array[j];
-        if(l < size && compareArea(array[l], child) < 0) child = array[j = l];
-        if(r < size && compareArea(array[r], child) < 0) child = array[j = r];
-        if(j === i) break;
+        if (l < size && compareArea(array[l], child) < 0) child = array[j = l];
+        if (r < size && compareArea(array[r], child) < 0) child = array[j = r];
+        if (j === i) break;
         array[child._ = i] = child;
         array[object._ = i = j] = object;
       }
@@ -558,7 +558,7 @@ export default(function() {
   }
 
   function transformAbsolute(transform) {
-    if(!transform) return noop;
+    if (!transform) return noop;
     var x0,
       y0,
       kx = transform.scale[0],
@@ -566,14 +566,14 @@ export default(function() {
       dx = transform.translate[0],
       dy = transform.translate[1];
     return function(point, i) {
-      if(!i) x0 = y0 = 0;
+      if (!i) x0 = y0 = 0;
       point[0] = (x0 += point[0]) * kx + dx;
       point[1] = (y0 += point[1]) * ky + dy;
     };
   }
 
   function transformRelative(transform) {
-    if(!transform) return noop;
+    if (!transform) return noop;
     var x0,
       y0,
       kx = transform.scale[0],
@@ -581,7 +581,7 @@ export default(function() {
       dx = transform.translate[0],
       dy = transform.translate[1];
     return function(point, i) {
-      if(!i) x0 = y0 = 0;
+      if (!i) x0 = y0 = 0;
       var x1 = (point[0] - dx) / kx | 0,
         y1 = (point[1] - dy) / ky | 0;
       point[0] = x1 - x0;

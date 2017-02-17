@@ -1,6 +1,6 @@
-import * as utils from 'base/utils';
-import Model from 'base/model';
-import EventSource from 'base/events';
+import * as utils from "base/utils";
+import Model from "base/model";
+import EventSource from "base/events";
 
 /*!
  * DATACONNECTED MODEL
@@ -8,28 +8,26 @@ import EventSource from 'base/events';
  * Any model which may trigger a reload of data is here. Dimensions, Time, Hooks and Locales are DataConnected
  */
 
-var DataConnected = Model.extend({
+const DataConnected = Model.extend({
 
   dataConnectedChildren: [],
 
-  checkDataChanges: function(changedChildren) {
-    var _this = this;
+  checkDataChanges(changedChildren) {
+    const _this = this;
 
     if (!changedChildren || !this.dataConnectedChildren)
-      return
+      return;
 
     if (!utils.isArray(changedChildren) && utils.isObject(changedChildren))
       changedChildren = Object.keys(changedChildren);
 
     if (changedChildren.length == 0 || this.dataConnectedChildren.length == 0)
-      return
+      return;
 
-    var dataConnectedChangedChildren = changedChildren.filter(function (child) {
-      return _this.dataConnectedChildren.indexOf(child) !== -1
-    });
+    const dataConnectedChangedChildren = changedChildren.filter(child => _this.dataConnectedChildren.indexOf(child) !== -1);
 
     if (dataConnectedChangedChildren.length > 0) {
-      this.trigger('dataConnectedChange');
+      this.trigger("dataConnectedChange");
       this.startLoading();
     }
 

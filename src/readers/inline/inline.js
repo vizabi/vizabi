@@ -1,4 +1,4 @@
-import Reader from 'base/reader';
+import Reader from "base/reader";
 
 /**
  * Inline Reader
@@ -7,7 +7,7 @@ import Reader from 'base/reader';
 
 const InlineReader = Reader.extend({
 
-  _name: 'inline',
+  _name: "inline",
 
   init(readerInfo) {
     this._data = readerInfo.data || [{}];

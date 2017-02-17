@@ -1,11 +1,11 @@
-import Class from 'base/class';
+import Class from "base/class";
 
-var Intervals = Class.extend({
+const Intervals = Class.extend({
 
   /**
    * Initializes intervals
    */
-  init: function() {
+  init() {
     this.intervals = {};
   },
 
@@ -15,7 +15,7 @@ var Intervals = Class.extend({
    * @param {Function} func function to be executed
    * @param {Number} duration duration in milliseconds
    */
-  setInterval: function(name, func, duration) {
+  setInterval(name, func, duration) {
     this.clearInterval(name);
     this.intervals[name] = setInterval(func, duration);
   },
@@ -24,15 +24,15 @@ var Intervals = Class.extend({
    * Clears an interval
    * @param {String} name name of interval to be removed
    */
-  clearInterval: function(name) {
+  clearInterval(name) {
     return name ? clearInterval(this.intervals[name]) : this.clearAllIntervals();
   },
 
   /**
    * Clears all intervals
    */
-  clearAllIntervals: function() {
-    for(var i in this.intervals) {
+  clearAllIntervals() {
+    for (const i in this.intervals) {
       this.clearInterval(i);
     }
   }

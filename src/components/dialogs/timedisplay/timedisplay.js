@@ -1,5 +1,5 @@
-import Dialog from 'components/dialogs/_dialog';
-import DynamicBackground from 'helpers/d3.dynamicBackground';
+import Dialog from "components/dialogs/_dialog";
+import DynamicBackground from "helpers/d3.dynamicBackground";
 
 /*
  * Timedisplay dialog
@@ -7,10 +7,10 @@ import DynamicBackground from 'helpers/d3.dynamicBackground';
 const TimeDisplay = Dialog.extend({
 
   init(config, parent) {
-    this.name = 'timedisplay';
+    this.name = "timedisplay";
 
     this.model_binds = {
-      'change:state.time.value': () => {
+      "change:state.time.value": () => {
         this.updateTime();
       }
     };
@@ -24,17 +24,17 @@ const TimeDisplay = Dialog.extend({
 
   readyOnce() {
     this._super();
-    this.timeLabel = new DynamicBackground(this.element.select('.vzb-timedisplay'));
+    this.timeLabel = new DynamicBackground(this.element.select(".vzb-timedisplay"));
     this.timeLabel.setConditions({ widthRatio: 1, heightRatio: 1 });
-    this.timeLabel.resize(this.contentEl.style('width'), this.contentEl.style('height'));
+    this.timeLabel.resize(this.contentEl.style("width"), this.contentEl.style("height"));
   },
 
   updateTime() {
-    var timeMdl = this.model.state.time;
+    const timeMdl = this.model.state.time;
     this.time_1 = this.time == null ? timeMdl.value : this.time;
     this.time = timeMdl.value;
-    var duration = timeMdl.playing && (this.time - this.time_1 > 0) ? timeMdl.delayAnimations : 0;
-    this.timeLabel.setText(timeMdl.formatDate(this.time, 'ui'), duration);
+    const duration = timeMdl.playing && (this.time - this.time_1 > 0) ? timeMdl.delayAnimations : 0;
+    this.timeLabel.setText(timeMdl.formatDate(this.time, "ui"), duration);
   }
 
 });

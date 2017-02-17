@@ -1,17 +1,17 @@
-import Axis from 'models/axis';
-import * as utils from 'base/utils';
+import Axis from "models/axis";
+import * as utils from "base/utils";
 
 /*
  * VIZABI Size Model
  */
 
-var SizeModel = Axis.extend({
+const SizeModel = Axis.extend({
 
   /**
    * Default values for this model
    */
-  getClassDefaults: function() {
-    var defaults = {
+  getClassDefaults() {
+    const defaults = {
       use: null,
       which: null,
       domainMin: null,
@@ -29,20 +29,20 @@ var SizeModel = Axis.extend({
 
   _type: "size",
 
-  buildScale: function(){
+  buildScale() {
     //do whatever axis.buildScale does
     this._super();
     //but then also clamp a numeric scale
-    if(this.scaleType !== 'ordinal') this.scale.clamp(true);
+    if (this.scaleType !== "ordinal") this.scale.clamp(true);
 
   },
 
-  autoGenerateModel: function() {
+  autoGenerateModel() {
     if (this.which == null) {
-      var concept;
+      let concept;
       if (this.autogenerate) {
-        var concept = this.dataSource
-          .getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType)
+        concept = this.dataSource
+          .getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType);
 
         if (concept) {
           this.which = concept.concept;
@@ -58,8 +58,8 @@ var SizeModel = Axis.extend({
       }
     }
     if (this.scaleType == null) {
-        this.scaleType = this.dataSource
-          .getConceptprops(this.which).scales[0];
+      this.scaleType = this.dataSource
+        .getConceptprops(this.which).scales[0];
     }
   }
 

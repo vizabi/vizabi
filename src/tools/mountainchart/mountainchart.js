@@ -1,18 +1,18 @@
-import * as utils from 'base/utils';
-import Tool from 'base/tool';
+import * as utils from "base/utils";
+import Tool from "base/tool";
 
-import MountainChartComponent from 'tools/mountainchart/mountainchart-component';
+import MountainChartComponent from "tools/mountainchart/mountainchart-component";
 
-import timeslider from 'components/timeslider/timeslider';
-import dialogs from 'components/dialogs/dialogs';
-import buttonlist from 'components/buttonlist/buttonlist';
-import treemenu from 'components/treemenu/treemenu';
-import datawarning from 'components/datawarning/datawarning';
-import datanotes from 'components/datanotes/datanotes';
-import steppedSpeedSlider from 'components/steppedspeedslider/steppedspeedslider';
+import timeslider from "components/timeslider/timeslider";
+import dialogs from "components/dialogs/dialogs";
+import buttonlist from "components/buttonlist/buttonlist";
+import treemenu from "components/treemenu/treemenu";
+import datawarning from "components/datawarning/datawarning";
+import datanotes from "components/datanotes/datanotes";
+import steppedSpeedSlider from "components/steppedspeedslider/steppedspeedslider";
 
 //MOUNTAIN CHART TOOL
-var MountainChart = Tool.extend('MountainChart', {
+const MountainChart = Tool.extend("MountainChart", {
 
   /**
    * Initializes the tool (MountainChart Tool).
@@ -20,43 +20,43 @@ var MountainChart = Tool.extend('MountainChart', {
    * @param {Object} placeholder Placeholder element for the tool
    * @param {Object} external_model Model as given by the external page
    */
-  init: function(placeholder, external_model) {
+  init(placeholder, external_model) {
 
     this.name = "mountainchart";
 
     //specifying components
     this.components = [{
       component: MountainChartComponent,
-      placeholder: '.vzb-tool-viz',
+      placeholder: ".vzb-tool-viz",
       model: ["state.time", "state.entities", "state.marker", "locale", "ui"] //pass models to component
     }, {
       component: timeslider,
-      placeholder: '.vzb-tool-timeslider',
+      placeholder: ".vzb-tool-timeslider",
       model: ["state.time", "state.entities", "state.marker", "ui"]
     }, {
       component: dialogs,
-      placeholder: '.vzb-tool-dialogs',
-      model: ['state', 'ui', 'locale']
+      placeholder: ".vzb-tool-dialogs",
+      model: ["state", "ui", "locale"]
     }, {
       component: buttonlist,
-      placeholder: '.vzb-tool-buttonlist',
-      model: ['state', 'ui', 'locale']
+      placeholder: ".vzb-tool-buttonlist",
+      model: ["state", "ui", "locale"]
     }, {
       component: treemenu,
-      placeholder: '.vzb-tool-treemenu',
-      model: ['state.marker', 'state.marker_tags', 'state.time', 'locale']
+      placeholder: ".vzb-tool-treemenu",
+      model: ["state.marker", "state.marker_tags", "state.time", "locale"]
     }, {
       component: datawarning,
-      placeholder: '.vzb-tool-datawarning',
-      model: ['locale']
+      placeholder: ".vzb-tool-datawarning",
+      model: ["locale"]
     }, {
       component: datanotes,
-      placeholder: '.vzb-tool-datanotes',
-      model: ['state.marker', 'locale']
+      placeholder: ".vzb-tool-datanotes",
+      model: ["state.marker", "locale"]
     }, {
       component: steppedSpeedSlider,
-      placeholder: '.vzb-tool-stepped-speed-slider',
-      model: ['state.time', 'locale']
+      placeholder: ".vzb-tool-stepped-speed-slider",
+      model: ["state.time", "locale"]
     }];
 
     //constructor is the same as any tool
@@ -85,11 +85,11 @@ var MountainChart = Tool.extend('MountainChart', {
         xLogStops: [1, 2, 5],
         xPoints: 50
       },
-      "buttons": ['colors', 'find', 'stack', 'show', 'moreoptions', 'fullscreen', 'presentation'],
+      "buttons": ["colors", "find", "stack", "show", "moreoptions", "fullscreen", "presentation"],
       "dialogs": {
-        'popup': ['colors', 'find', 'stack', 'show', 'moreoptions'],
-        'sidebar': ['colors', 'find', 'stack'],
-        'moreoptions': ['opacity', 'speed', 'stack', 'axesmc', 'colors', 'presentation', 'about']
+        "popup": ["colors", "find", "stack", "show", "moreoptions"],
+        "sidebar": ["colors", "find", "stack"],
+        "moreoptions": ["opacity", "speed", "stack", "axesmc", "colors", "presentation", "about"]
       },
       datawarning: {
         doubtDomain: [],
