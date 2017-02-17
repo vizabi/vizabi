@@ -56,8 +56,8 @@ var AxisLabelerComponent = Component.extend({
     this.yAxisEl = this.graph.select(".vzb-al-axis-y");
 
     //$(".vzb-bc-axis-x, .vzb-bc-axis-y").css('font-size',this.model.show.labelSize);
-    this.xInvert = function(d) {return _this.xScale(_this.xScale.invert(_this.xScale(d)));};
-    this.yInvert = function(d) {return _this.yScale(_this.yScale.invert(_this.yScale(d)));};
+    this.xInvert = function(d) { return _this.xScale(_this.xScale.invert(_this.xScale(d))); };
+    this.yInvert = function(d) { return _this.yScale(_this.yScale.invert(_this.yScale(d))); };
 
     this.line = d3.svg.line()
       .x(d => _this.xScale(d))

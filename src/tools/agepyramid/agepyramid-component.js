@@ -807,7 +807,7 @@ var AgePyramid = Component.extend({
 
   _setYear(timeValue) {
     var formattedTime = this.model.time.formatDate(timeValue);
-    return function() { d3.select(this).text(formattedTime);};
+    return function() { d3.select(this).text(formattedTime); };
   },
 
   _interaction() {

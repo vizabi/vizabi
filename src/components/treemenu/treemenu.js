@@ -701,7 +701,7 @@ var TreeMenu = Component.extend({
     tags[UNCLASSIFIED] = { id: UNCLASSIFIED, type: "folder", name: this.translator("buttons/unclassified"), children: [] };
 
       //populate the dictionary of tags
-    tagsArray.forEach(tag => {tags[tag.tag] = { id: tag.tag, name: tag.name, type: "folder", children: [] };});
+    tagsArray.forEach(tag => { tags[tag.tag] = { id: tag.tag, name: tag.name, type: "folder", children: [] }; });
 
       //init the tag tree
     indicatorsTree = tags[ROOT];
@@ -760,8 +760,8 @@ var TreeMenu = Component.extend({
     tree.children.sort(
       utils
       //in each folder including root: put subfolders below loose items
-        .firstBy()((a, b) => {a = a.type === "dataset" ? 1 : 0;  b = b.type === "dataset" ? 1 : 0; return b - a;})
-        .thenBy((a, b) => {a = a.children ? 1 : 0;  b = b.children ? 1 : 0; return a - b;})
+        .firstBy()((a, b) => { a = a.type === "dataset" ? 1 : 0;  b = b.type === "dataset" ? 1 : 0; return b - a; })
+        .thenBy((a, b) => { a = a.children ? 1 : 0;  b = b.children ? 1 : 0; return a - b; })
         .thenBy((a, b) => {
         //in the root level put "time" on top and send "anvanced" to the bottom
           if (!isSubfolder) {

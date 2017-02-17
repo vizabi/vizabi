@@ -324,7 +324,7 @@ var Marker = Model.extend({
             // Remove the keys from it that are not in this hook
       if (hook._important) resultKeys = resultKeys.filter(f => keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1);
     });
-    return resultKeys.map(d => {var r = {}; r[KEY] = d; return r; });
+    return resultKeys.map(d => { var r = {}; r[KEY] = d; return r; });
   },
 
   /**
@@ -584,7 +584,7 @@ var Marker = Model.extend({
     var steps = this._parent.time.getAllSteps();
 
     var cachePath = this._getCachePath(selected);
-    if (!cachePath) return new Promise((resolve, reject) => {resolve();});
+    if (!cachePath) return new Promise((resolve, reject) => { resolve(); });
       //if the collection of frames for this data cube is not scheduled yet (otherwise no need to repeat calculation)
     if (!this.frameQueues[cachePath] || !(this.frameQueues[cachePath] instanceof Promise)) {
 

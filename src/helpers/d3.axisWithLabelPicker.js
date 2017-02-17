@@ -346,7 +346,7 @@ export default function axisSmart(_orient) {
       if (options.removeAllLabels == null) options.removeAllLabels = false;
 
       if (options.formatter == null) options.formatter = axis.tickFormat() ?
-        axis.tickFormat() : function(d) {return d + "";};
+        axis.tickFormat() : function(d) { return d + ""; };
       options.cssLabelMarginLimit = 5; //px
 
       if (options.cssMargin == null) options.cssMargin = {};

@@ -1396,7 +1396,7 @@ export var pruneTree = function(tree, filterCallback) {
   }
   if (filteredChildrens.length != 0 || filterCallback(tree)) {
     //copy all the properties to the new tree
-    forEach(tree, (value, key) => {filteredTree[key] = value;});
+    forEach(tree, (value, key) => { filteredTree[key] = value; });
   }
   if (filteredChildrens.length != 0) {
     filteredTree["children"] = filteredChildrens;
@@ -1444,24 +1444,24 @@ export function makeAbsoluteContext(element, svgDocument) {
  */
 export function firstBy() {
 
-  function identity(v) {return v;}
+  function identity(v) { return v; }
 
-  function ignoreCase(v) {return typeof (v) === "string" ? v.toLowerCase() : v;}
+  function ignoreCase(v) { return typeof (v) === "string" ? v.toLowerCase() : v; }
 
   function makeCompareFunction(f, opt) {
     opt = typeof (opt) === "number" ? { direction: opt } : opt || {};
     if (typeof (f) != "function") {
       var prop = f;
         // make unary function
-      f = function(v1) {return v1[prop] ? v1[prop] : "";};
+      f = function(v1) { return v1[prop] ? v1[prop] : ""; };
     }
     if (f.length === 1) {
         // f is a unary function mapping a single item to its sort score
       var uf = f;
       var preprocess = opt.ignoreCase ? ignoreCase : identity;
-      f = function(v1, v2) {return preprocess(uf(v1)) < preprocess(uf(v2)) ? -1 : preprocess(uf(v1)) > preprocess(uf(v2)) ? 1 : 0;};
+      f = function(v1, v2) { return preprocess(uf(v1)) < preprocess(uf(v2)) ? -1 : preprocess(uf(v1)) > preprocess(uf(v2)) ? 1 : 0; };
     }
-    if (opt.direction === -1) return function(v1, v2) {return -f(v1, v2);};
+    if (opt.direction === -1) return function(v1, v2) { return -f(v1, v2); };
     return f;
   }
 
