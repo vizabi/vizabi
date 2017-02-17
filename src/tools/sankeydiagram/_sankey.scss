@@ -1,0 +1,35 @@
+.vzb-tool {
+	.vzb-sankeychart {
+		@extend %vzb-chart-svg;
+		.vzb-sk-graph-title {
+			@extend %vzb-chart-label-shadow;
+		}
+		.vzb-sk-node-labels {
+			@extend %vzb-chart-axis-title;
+		}
+	}
+	&.vzb-large {
+		.vzb-sk-graph-title {
+			@extend %vzb-chart-label-shadow-large;
+		}
+		.vzb-sk-node-labels {
+			@extend %vzb-chart-axis-title-large;
+		}
+	}
+	&.vzb-medium {
+		.vzb-sk-graph-title {
+			@extend %vzb-chart-label-shadow-medium;
+		}
+		.vzb-sk-node-labels {
+			@extend %vzb-chart-axis-title-medium;
+		}
+	}
+	&.vzb-small {
+		.vzb-sk-graph-title {
+			@extend %vzb-chart-label-shadow-small;
+		}
+		.vzb-sk-node-labels {
+			@extend %vzb-chart-axis-title-small;
+		}
+	}
+}
