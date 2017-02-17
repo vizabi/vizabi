@@ -1,4 +1,4 @@
-import interpolator from 'vizabi-interpolators/interpolators';
+import interpolator from "vizabi-interpolators/interpolators";
 
 /*
  * Check if value A is in +- proximity of value B
@@ -47,7 +47,7 @@ export var isElement = function(obj) {
  * from underscore: https://github.com/jashkenas/underscore/blob/master/underscore.js
  */
 export var isArray = Array.isArray || function(obj) {
-  return toString.call(obj) === '[object Array]';
+  return toString.call(obj) === "[object Array]";
 };
 
 /*
@@ -58,7 +58,7 @@ export var isArray = Array.isArray || function(obj) {
  */
 export var isObject = function(obj) {
   var type = typeof obj;
-  return type === 'object' && !!obj;
+  return type === "object" && !!obj;
 };
 
 /*
@@ -76,7 +76,7 @@ export var isDate = function(arg) {
  * @returns {Boolean}
  */
 export var isString = function(arg) {
-  return typeof arg === 'string';
+  return typeof arg === "string";
 };
 
 /*
@@ -102,8 +102,8 @@ export var isEmpty = function(obj) {
  * dependencies are resolved and included here
  */
 export var isNumber = function(arg) {
-  return typeof arg === 'number' || !!arg && typeof arg === 'object' && Object.prototype.toString.call(arg) ===
-    '[object Number]';
+  return typeof arg === "number" || !!arg && typeof arg === "object" && Object.prototype.toString.call(arg) ===
+    "[object Number]";
 };
 
 /*
@@ -112,7 +112,7 @@ export var isNumber = function(arg) {
  * @returns {Boolean}
  */
 export var isPlainObject = function(obj) {
-  return obj !== null && Object.prototype.toString.call(obj) === '[object Object]';
+  return obj !== null && Object.prototype.toString.call(obj) === "[object Object]";
 };
 
 /*
@@ -155,24 +155,24 @@ export var comparePlainObjects = function(a, b) {
     var whatis = function(val) {
 
         if (val === undefined) {
-            return 'undefined';
+            return "undefined";
         }
         if (val === null) {
-            return 'null';
+            return "null";
         }
 
         var type = typeof val;
 
-        if (type === 'object') {
+        if (type === "object") {
             type = getClass(val).toLowerCase();
         }
 
-        if (type === 'number') {
-            if (val.toString().indexOf('.') > 0) {
-                return 'float';
+        if (type === "number") {
+            if (val.toString().indexOf(".") > 0) {
+                return "float";
             }
             else {
-                return 'integer';
+                return "integer";
             }
         }
 
@@ -288,7 +288,7 @@ export var roundStep = function(number, step) {
  * @param {string} string to be transformed
  */
 export var strToFloat = function(string) {
-  return +string.replace(/[^\d.-]/g, '');
+  return +string.replace(/[^\d.-]/g, "");
 };
 
 /*
@@ -361,7 +361,7 @@ function cloneSpecificValue(val) {
   } else if (val instanceof RegExp) {
     return new RegExp(val);
   } else {
-    throw new Error('Unexpected situation');
+    throw new Error("Unexpected situation");
   }
 }
 
@@ -371,7 +371,7 @@ function cloneSpecificValue(val) {
 function deepCloneArray(arr) {
   var clone = [];
   forEach(arr, function(item, index) {
-    if (typeof item === 'object' && item !== null) {
+    if (typeof item === "object" && item !== null) {
       if (isArray(item)) {
         clone[index] = deepCloneArray(item);
       } else if (isSpecificValue(item)) {
@@ -396,7 +396,7 @@ function deepCloneArray(arr) {
  *   deepExtend({}, yourObj_1, [yourObj_N]);
  */
 export var deepExtend = function(/*obj_1, [obj_2], [obj_N]*/) {
-  if (arguments.length < 1 || typeof arguments[0] !== 'object') {
+  if (arguments.length < 1 || typeof arguments[0] !== "object") {
     return false;
   }
 
@@ -413,7 +413,7 @@ export var deepExtend = function(/*obj_1, [obj_2], [obj_N]*/) {
 
   forEach(args, function(obj) {
     // skip argument if it is array or isn't object
-    if (typeof obj !== 'object' || isArray(obj)) {
+    if (typeof obj !== "object" || isArray(obj)) {
       return;
     }
 
@@ -431,7 +431,7 @@ export var deepExtend = function(/*obj_1, [obj_2], [obj_N]*/) {
        * 2016-11-07 / Jasper: Added specific check for val instanceof Model for merging defaults & values of ComponentModels
        * 2016-11-07 / Jasper: Hack because importing Model doesn't work: instead check for val._data
        */
-      } else if (typeof val !== 'object' || val === null || val._data) {
+      } else if (typeof val !== "object" || val === null || val._data) {
         target[key] = val;
         return;
 
@@ -446,7 +446,7 @@ export var deepExtend = function(/*obj_1, [obj_2], [obj_N]*/) {
         return;
 
       // overwrite by new value if source isn't object or array
-      } else if (typeof src !== 'object' || src === null || isArray(src)) {
+      } else if (typeof src !== "object" || src === null || isArray(src)) {
         target[key] = deepExtend({}, val);
         return;
 
@@ -727,7 +727,7 @@ export var matchAny = function(values, compare, wildc) {
 
 export var preventAncestorScrolling = function(element) {
   var preventScrolling = false;
-  element.on('mousewheel', function(d, i) {
+  element.on("mousewheel", function(d, i) {
     var scrollTop = this.scrollTop,
       scrollHeight = this.scrollHeight,
       height = element.node().offsetHeight,
@@ -851,7 +851,7 @@ export var areaToRadius = function(a) {
  * @param {String} message
  */
 export var timeStamp = function(message) {
-  if (console && typeof console.timeStamp === 'function') {
+  if (console && typeof console.timeStamp === "function") {
     console.timeStamp(message);
   }
 };
@@ -863,8 +863,8 @@ export var timeStamp = function(message) {
 export var warn = function(message) {
   message = Array.prototype.slice.call(arguments)
     .map(function(m) {return m instanceof Object ? JSON.stringify(m, null, 4) : m; })
-    .join(' ');
-  if (console && typeof console.warn === 'function') {
+    .join(" ");
+  if (console && typeof console.warn === "function") {
 
     console.warn(message);
   }
@@ -881,8 +881,8 @@ export var warn = function(message) {
  * @param {String} message
  */
 export var groupCollapsed = function(message) {
-  message = Array.prototype.slice.call(arguments).join(' ');
-  if (console && typeof console.groupCollapsed === 'function') {
+  message = Array.prototype.slice.call(arguments).join(" ");
+  if (console && typeof console.groupCollapsed === "function") {
     console.groupCollapsed(message);
   }
 };
@@ -892,7 +892,7 @@ export var groupCollapsed = function(message) {
  * @param {String} message
  */
 export var groupEnd = function() {
-  if (console && typeof console.groupEnd === 'function') {
+  if (console && typeof console.groupEnd === "function") {
     console.groupEnd();
   }
 };
@@ -902,7 +902,7 @@ export var groupEnd = function() {
  * @param {String} message
  */
 export var error = function(err) {
-  if (console && typeof console.error === 'function') {
+  if (console && typeof console.error === "function") {
     if (err.stack) {
       console.error(err.stack);
     } else {
@@ -922,7 +922,7 @@ export var countDecimals = function(number) {
   if (Math.floor(number.valueOf()) === number.valueOf()) {
     return 0;
   }
-  return number.toString().split('.')[1].length || 0;
+  return number.toString().split(".")[1].length || 0;
 };
 
 /*
@@ -935,7 +935,7 @@ export var addClass = function(el, className) {
     el.classList.add(className);
   } else {
     //IE<10
-    el.className += ' ' + className;
+    el.className += " " + className;
   }
 };
 
@@ -949,8 +949,8 @@ export var removeClass = function(el, className) {
     el.classList.remove(className);
   } else {
     //IE<10
-    el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'),
-      ' ');
+    el.className = el.className.replace(new RegExp("(^|\\b)" + className.split(" ").join("|") + "(\\b|$)", "gi"),
+      " ");
   }
 };
 
@@ -981,7 +981,7 @@ export var hasClass = function(el, className) {
     return el.classList.contains(className);
   } else {
     //IE<10
-    return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
+    return new RegExp("(^| )" + className + "( |$)", "gi").test(el.className);
   }
 };
 
@@ -1226,14 +1226,14 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
 
 
   if (!items || items.length === 0) {
-    warn('interpolatePoint failed because incoming array is empty. It was ' + which);
+    warn("interpolatePoint failed because incoming array is empty. It was " + which);
     return null;
   }
   // return constant for the use of "constant"
-  if (use === 'constant') return which;
+  if (use === "constant") return which;
 
   // zero-order interpolation for the use of properties
-  if (use === 'property') return items[0][which];
+  if (use === "property") return items[0][which];
 
   // the rest is for the continuous measurements
 
@@ -1252,7 +1252,7 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
 
   //return null if data is missing
   if (items[next] === undefined || items[next][which] === null || items[next - 1][which] === null || items[next][which] === "") {
-    warn('interpolatePoint failed because next/previous points are bad in ' + which);
+    warn("interpolatePoint failed because next/previous points are bad in " + which);
     return null;
   }
 
@@ -1269,7 +1269,7 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
   // cast to time object if we are interpolating time
   if (which === dimTime) result = new Date(result);
   if (isNaN(result)) {
-      warn('interpolatePoint failed because result is NaN. It was ' + which);
+      warn("interpolatePoint failed because result is NaN. It was " + which);
       result = null;
   }
 
@@ -1287,10 +1287,10 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
 export var ajax = function(options) {
   var request = new XMLHttpRequest();
   request.open(options.method, options.url, true);
-  if (options.method === 'POST' && !options.json) {
-    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-  } else if (options.method === 'POST' && options.json) {
-    request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+  if (options.method === "POST" && !options.json) {
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+  } else if (options.method === "POST" && options.json) {
+    request.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
   }
   request.onload = function() {
     if (request.status >= 200 && request.status < 400) {
@@ -1319,11 +1319,11 @@ export var ajax = function(options) {
 export var get = function(url, pars, success, error, json) {
   pars = pars || [];
   forEach(pars, function(value, key) {
-    pars.push(key + '=' + value);
+    pars.push(key + "=" + value);
   });
-  url = pars.length ? url + '?' + pars.join('&') : url;
+  url = pars.length ? url + "?" + pars.join("&") : url;
   ajax({
-    method: 'GET',
+    method: "GET",
     url,
     success,
     error,
@@ -1336,7 +1336,7 @@ export var get = function(url, pars, success, error, json) {
  */
 export var post = function(url, pars, success, error, json) {
   ajax({
-    method: 'POST',
+    method: "POST",
     url,
     success,
     error,
@@ -1353,7 +1353,7 @@ export var post = function(url, pars, success, error, json) {
 export var memoize = function(fn) {
   return function() {
     var args = Array.prototype.slice.call(arguments);
-    var hash = '';
+    var hash = "";
     var i = args.length;
     var currentArg = null;
 
@@ -1392,7 +1392,7 @@ export var isTouchDevice = function() {
   if (((d3.event || {}).sourceCapabilities || {}).firesTouchEvents != null) {
     return d3.event.sourceCapabilities.firesTouchEvents;
   }
-  return !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
+  return !!(("ontouchstart" in window) || window.DocumentTouch && document instanceof DocumentTouch);
 };
 
 //return a pruneed tree
@@ -1417,11 +1417,11 @@ export var pruneTree = function(tree, filterCallback) {
 };
 
 export var setIcon = function(element, icon) {
-  element.selectAll('*').remove();
+  element.selectAll("*").remove();
   element.node().appendChild(
     element.node().ownerDocument.importNode(
       new DOMParser().parseFromString(
-        icon, 'application/xml').documentElement, true)
+        icon, "application/xml").documentElement, true)
   );
   return element;
 };

@@ -1,7 +1,7 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
+import * as utils from "base/utils";
+import Component from "base/component";
 
-import { warn as iconWarn, close as iconClose } from 'base/iconset';
+import { warn as iconWarn, close as iconClose } from "base/iconset";
 
 var hidden = true;
 
@@ -10,7 +10,7 @@ var DataWarning = Component.extend({
   init(config, context) {
     var _this = this;
 
-    this.name = 'gapminder-datawarning';
+    this.name = "gapminder-datawarning";
 
     this.model_expects = [{
       name: "locale",

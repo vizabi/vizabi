@@ -1,8 +1,8 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import Dialog from 'components/dialogs/_dialog';
+import * as utils from "base/utils";
+import Component from "base/component";
+import Dialog from "components/dialogs/_dialog";
 
-import draggablelist from 'components/draggablelist/draggablelist';
+import draggablelist from "components/draggablelist/draggablelist";
 
 
 /*
@@ -17,23 +17,23 @@ var Stack = Dialog.extend({
      * @param context component context (parent)
      */
     init(config, parent) {
-        this.name = 'stack';
+        this.name = "stack";
         var _this = this;
 
         // in dialog, this.model_expects = ["state", "ui", "locale"];
 
         this.components = [{
             component: draggablelist,
-            placeholder: '.vzb-dialog-draggablelist',
+            placeholder: ".vzb-dialog-draggablelist",
             model: ["state.marker.group", "state.marker.color", "locale", "ui.chart"],
             groupID: "manualSorting",
             isEnabled: "manualSortingEnabled",
             dataArrFn: _this.manualSorting.bind(_this),
-            lang: ''
+            lang: ""
         }];
 
         this.model_binds = {
-          'change:state.marker.group': function(evt) {
+          "change:state.marker.group": function(evt) {
             //console.log("group change " + evt);
             if (!_this._ready) return;
             _this.updateView();
@@ -51,11 +51,11 @@ var Stack = Dialog.extend({
       this.group = this.model.state.marker.group;
       this.stack = this.model.state.marker.stack;
 
-      this.howToStackEl = this.element.select('.vzb-howtostack').selectAll("input")
+      this.howToStackEl = this.element.select(".vzb-howtostack").selectAll("input")
           .on("change", function() {
               _this.setModel("stack", d3.select(this).node().value);
           });
-      this.howToMergeEl = this.element.select('.vzb-howtomerge').selectAll("input")
+      this.howToMergeEl = this.element.select(".vzb-howtomerge").selectAll("input")
           .on("change", function() {
               _this.setModel("merge", d3.select(this).node().value);
           });
@@ -82,12 +82,12 @@ var Stack = Dialog.extend({
         var _this = this;
 
         this.howToStackEl
-            .property('checked', function() {
+            .property("checked", function() {
                 if (d3.select(this).node().value === "none") return _this.stack.which === "none";
                 if (d3.select(this).node().value === "bycolor") return _this.stack.which === _this.model.state.marker.color.which;
                 if (d3.select(this).node().value === "all") return _this.stack.which === "all";
             })
-            .attr('disabled', function() {
+            .attr("disabled", function() {
                 if (d3.select(this).node().value === "none") return null; // always enabled
                 if (d3.select(this).node().value === "all") return null; // always enabled
                 if (d3.select(this).node().value === "bycolor") return _this.model.state.marker.color.use !== "property" ? true : null;
@@ -96,12 +96,12 @@ var Stack = Dialog.extend({
         _this.model.ui.chart.manualSortingEnabled = _this.stack.which == "all";
 
         this.howToMergeEl
-            .property('checked', function() {
+            .property("checked", function() {
                 if (d3.select(this).node().value === "none") return !_this.group.merge && !_this.stack.merge;
                 if (d3.select(this).node().value === "grouped") return _this.group.merge;
                 if (d3.select(this).node().value === "stacked") return _this.stack.merge;
             })
-            .attr('disabled', function() {
+            .attr("disabled", function() {
                 if (d3.select(this).node().value === "none") return null; // always enabled
                 if (d3.select(this).node().value === "grouped") return _this.stack.which === "none" || _this.model.state.marker.color.use !== "property" ? true : null;
                 if (d3.select(this).node().value === "stacked") return _this.stack.which === "all" ? null : true;

@@ -1,21 +1,21 @@
-import * as utils from 'base/utils';
-import EventSource, { DefaultEvent, ChangeEvent } from 'base/events';
-import Intervals from 'base/intervals';
+import * as utils from "base/utils";
+import EventSource, { DefaultEvent, ChangeEvent } from "base/events";
+import Intervals from "base/intervals";
 
 var ModelLeaf = EventSource.extend({
 
-  _name: '',
+  _name: "",
   _parent: null,
   _persistent: true,
 
   init(name, value, parent, binds, persistent) {
 
     // getter and setter for the value
-    Object.defineProperty(this, 'value', {
+    Object.defineProperty(this, "value", {
       get: this.get,
       set: this.set
     });
-    Object.defineProperty(this, 'persistent', {
+    Object.defineProperty(this, "persistent", {
       get() { return this._persistent; }
     });
 
@@ -36,7 +36,7 @@ var ModelLeaf = EventSource.extend({
   set(val, force, persistent) {
     if (this.isSetAllowed(val, force)) {
       // persistent defaults to true
-      persistent = (typeof persistent !== 'undefined') ? persistent : true;
+      persistent = (typeof persistent !== "undefined") ? persistent : true;
 
       // set leaf properties
       if (persistent) this._persistentVal = val; // set persistent value if change is persistent.
@@ -59,7 +59,7 @@ var ModelLeaf = EventSource.extend({
   // duplicate from Model. Should be in a shared parent class.
   setTreeFreezer(freezerStatus) {
     if (freezerStatus) {
-      this.freeze(['hook_change']);
+      this.freeze(["hook_change"]);
     } else {
       this.unfreeze();
     }
@@ -85,8 +85,8 @@ var Model = EventSource.extend({
    * @param {Boolean} freeze block events from being dispatched
    */
   init(name, values, parent, bind) {
-    this._type = this._type || 'model';
-    this._id = this._id || utils.uniqueId('m');
+    this._type = this._type || "model";
+    this._id = this._id || utils.uniqueId("m");
     this._data = {};
     //holds attributes of this model
     this._parent = parent;
@@ -229,7 +229,7 @@ var Model = EventSource.extend({
 
     // then freeze/unfreeze
     if (freezerStatus) {
-      this.freeze(['hook_change']);
+      this.freeze(["hook_change"]);
     } else {
       this.unfreeze();
     }
@@ -256,7 +256,7 @@ var Model = EventSource.extend({
     };
     var _this = this;
     utils.forEach(this._data, function(subModel, name) {
-      if (subModel && typeof subModel._id !== 'undefined' && Model.isModel(subModel) && validationFunction(subModel)) {
+      if (subModel && typeof subModel._id !== "undefined" && Model.isModel(subModel) && validationFunction(subModel)) {
         if (object) {
           submodels[name] = subModel;
         } else {
@@ -379,9 +379,9 @@ var Model = EventSource.extend({
     if (this._ready && prev_ready !== this._ready) {
       if (!this._readyOnce) {
         this._readyOnce = true;
-        this.trigger('readyOnce');
+        this.trigger("readyOnce");
       }
-      this.trigger('ready');
+      this.trigger("ready");
     }
   },
 
@@ -428,17 +428,17 @@ var Model = EventSource.extend({
     return Promise.all(promises)
       .then(this.onSuccessfullLoad.bind(this))
       .catch(error => {
-        const translator = this.getClosestModel('locale').getTFunction();
+        const translator = this.getClosestModel("locale").getTFunction();
         this.triggerLoadError([
-          translator('crash/error'),
+          translator("crash/error"),
           window.navigator.userAgent,
           error
-        ].join('<br>'));
+        ].join("<br>"));
       });
   },
 
   loadData(opts) {
-    if (this.isHook()) utils.warn('Hook ' + this._name + ' is not loading because it\'s not extending Hook prototype.');
+    if (this.isHook()) utils.warn("Hook " + this._name + " is not loading because it's not extending Hook prototype.");
     return Promise.resolve();
   },
 
@@ -454,7 +454,7 @@ var Model = EventSource.extend({
   onSuccessfullLoad() {
 
     this.validate();
-    utils.timeStamp('Vizabi Model: Model loaded: ' + this._name + '(' + this._id + ')');
+    utils.timeStamp("Vizabi Model: Model loaded: " + this._name + "(" + this._id + ")");
     //end this load call
     this._loadedOnce = true;
 
@@ -470,7 +470,7 @@ var Model = EventSource.extend({
 
   triggerLoadError(error) {
     utils.error(error);
-    this.trigger('load_error', error);
+    this.trigger("load_error", error);
   },
 
   /**
@@ -530,7 +530,7 @@ var Model = EventSource.extend({
    * @returns {Array} all unique values of indicator hooks
    */
   getIndicators() {
-    return this.getHookWhich('indicator');
+    return this.getHookWhich("indicator");
   },
 
   /**
@@ -538,7 +538,7 @@ var Model = EventSource.extend({
    * @returns {Array} all unique values of property hooks
    */
   getProperties() {
-    return this.getHookWhich('property');
+    return this.getHookWhich("property");
   },
 
   /**
@@ -554,7 +554,7 @@ var Model = EventSource.extend({
    * @returns {String|Boolean} dimension
    */
   getDimensionOrWhich() {
-    return this.dim || (this.use != 'constant' ? this.which : false); //defaults to dim or which if it exists
+    return this.dim || (this.use != "constant" ? this.which : false); //defaults to dim or which if it exists
   },
 
   /**
@@ -652,7 +652,7 @@ var Model = EventSource.extend({
  * if includeLeaf is true, a leaf is also seen as a model
  */
 Model.isModel = function(model, includeLeaf) {
-  return model && (model.hasOwnProperty('_data') || (includeLeaf &&  model.hasOwnProperty('_val')));
+  return model && (model.hasOwnProperty("_data") || (includeLeaf &&  model.hasOwnProperty("_val")));
 };
 
 
@@ -690,7 +690,7 @@ function initSubmodel(attr, val, ctx, persistent) {
 
     var binds = {
       //the submodel has changed (multiple times)
-      'change': onChange
+      "change": onChange
     };
     submodel = new ModelLeaf(attr, val, ctx, binds, persistent);
   }
@@ -700,13 +700,13 @@ function initSubmodel(attr, val, ctx, persistent) {
 
     var binds = {
       //the submodel has changed (multiple times)
-      'change': onChange,
+      "change": onChange,
       //loading has started in this submodel (multiple times)
-      'hook_change': onHookChange,
+      "hook_change": onHookChange,
       // error triggered in loading
-      'load_error': (...args) => ctx.trigger(...args),
+      "load_error": (...args) => ctx.trigger(...args),
         //loading has ended in this submodel (multiple times)
-      'ready': onReady
+      "ready": onReady
     };
 
     // if the value is an already instantiated submodel (Model or ModelLeaf)
@@ -720,12 +720,12 @@ function initSubmodel(attr, val, ctx, persistent) {
     // if it's just a plain object, create a new model
     else {
       // construct model
-      var modelType = attr.split('_')[0];
+      var modelType = attr.split("_")[0];
 
       let Modl = Model.get(modelType, true);
       if (!Modl) {
         try {
-          Modl = require('../models/' + modelType).default;
+          Modl = require("../models/" + modelType).default;
         } catch (err) {
           Modl = Model;
         }
@@ -741,7 +741,7 @@ function initSubmodel(attr, val, ctx, persistent) {
   // Default event handlers for models
   function onChange(evt, path) {
     if (!ctx._ready) return; //block change propagation if model isnt ready
-    path = ctx._name + '.' + path;
+    path = ctx._name + "." + path;
     ctx.trigger(evt, path);
   }
   function onHookChange(evt, vals) {

@@ -2,12 +2,12 @@
  * VIZABI BARCHART
  */
 
-import * as utils from 'base/utils';
-import Tool from 'base/tool';
+import * as utils from "base/utils";
+import Tool from "base/tool";
 
-import AxisLabelerComponent from 'tools/axislabeler/axislabeler-component';
+import AxisLabelerComponent from "tools/axislabeler/axislabeler-component";
 
-var comp_template = 'axislabeler.html';
+var comp_template = "axislabeler.html";
 
 var listPointer = 0;
 var listData = [
@@ -43,7 +43,7 @@ var listData = [
 ];
 
 //AXIS LABELER TOOL
-var AxisLabeler = Tool.extend('AxisLabeler', {
+var AxisLabeler = Tool.extend("AxisLabeler", {
 
   /**
    * Initializes the tool (Bar Chart Tool).
@@ -58,7 +58,7 @@ var AxisLabeler = Tool.extend('AxisLabeler', {
     //specifying components
     this.components = [{
       component: AxisLabelerComponent,
-      placeholder: '.vzb-tool-viz',
+      placeholder: ".vzb-tool-viz",
       model: ["state.scales", "state.show"] //pass models to component
     }];
 
@@ -70,8 +70,8 @@ var AxisLabeler = Tool.extend('AxisLabeler', {
     state: {
       scales: {
           domain: listData[listPointer],
-          xScaleType: 'linear',
-          yScaleType: 'genericLog'
+          xScaleType: "linear",
+          yScaleType: "genericLog"
       },
       show: {
           labelSize: "16px",

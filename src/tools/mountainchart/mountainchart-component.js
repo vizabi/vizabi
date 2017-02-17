@@ -12,17 +12,17 @@
 * Developed in Gapminder Foundation, 2015
 */
 
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import { warn as iconWarn, question as iconQuestion } from 'base/iconset';
+import * as utils from "base/utils";
+import Component from "base/component";
+import { warn as iconWarn, question as iconQuestion } from "base/iconset";
 
-import Exporter from 'helpers/svgexport';
-import axisSmart from 'helpers/d3.axisWithLabelPicker';
-import MountainChartMath from 'tools/mountainchart/mountainchart-math';
-import Selectlist from 'tools/mountainchart/mountainchart-selectlist';
-import Probe from 'tools/mountainchart/mountainchart-probe';
-import DynamicBackground from 'helpers/d3.dynamicBackground';
-import globals from 'base/globals';
+import Exporter from "helpers/svgexport";
+import axisSmart from "helpers/d3.axisWithLabelPicker";
+import MountainChartMath from "tools/mountainchart/mountainchart-math";
+import Selectlist from "tools/mountainchart/mountainchart-selectlist";
+import Probe from "tools/mountainchart/mountainchart-probe";
+import DynamicBackground from "helpers/d3.dynamicBackground";
+import globals from "base/globals";
 
 var THICKNESS_THRESHOLD = 0.001;
 const COLOR_WHITEISH = "#d3d3d3";
@@ -407,8 +407,8 @@ updateSize(meshLength) {
 
         var yearLabelOptions = {
             topOffset: this.getLayoutProfile() === "large" ? margin.top * 2 : 0,
-            xAlign: this.getLayoutProfile() === "large" ? (isRTL ? 'left' : 'right') : 'center',
-            yAlign: this.getLayoutProfile() === "large" ? 'top' : 'center',
+            xAlign: this.getLayoutProfile() === "large" ? (isRTL ? "left" : "right") : "center",
+            yAlign: this.getLayoutProfile() === "large" ? "top" : "center",
             widthRatio: this.getLayoutProfile() === "large" ? 3 / 8 : 8 / 10
         };
 
@@ -465,17 +465,17 @@ updateSize(meshLength) {
             .select("text")
             .attr("dx", warnBB.height * 1.5);
 
-        if (this.infoEl.select('svg').node()) {
+        if (this.infoEl.select("svg").node()) {
             var titleBBox = this.yTitleEl.node().getBBox();
             var t = utils.transform(this.yTitleEl.node());
             var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
-            this.infoEl.select('svg')
+            this.infoEl.select("svg")
                 .attr("width", infoElHeight + "px")
                 .attr("height", infoElHeight + "px");
-            this.infoEl.attr('transform', 'translate('
-                + hTranslate + ','
-                + (t.translateY - infoElHeight * 0.8) + ')');
+            this.infoEl.attr("transform", "translate("
+                + hTranslate + ","
+                + (t.translateY - infoElHeight * 0.8) + ")");
         }
 
         this.eventAreaEl
@@ -533,7 +533,7 @@ updateSize(meshLength) {
           var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
           var toolRect = _this.root.element.getBoundingClientRect();
           var chartRect = _this.element.node().getBoundingClientRect();
-          _this.parent.findChildByName("gapminder-datanotes").setHook('axis_y').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
+          _this.parent.findChildByName("gapminder-datanotes").setHook("axis_y").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
         });
         this.infoEl.on("mouseout", function() {
           _this.parent.findChildByName("gapminder-datanotes").hide();
@@ -927,7 +927,7 @@ updateSize(meshLength) {
             var last = visible[visible.length - 1];
         }
 
-        if (!visible.length || (visible2 && !visible2.length)) utils.warn('mountain chart failed to generate shapes. check the incoming data');
+        if (!visible.length || (visible2 && !visible2.length)) utils.warn("mountain chart failed to generate shapes. check the incoming data");
 
         return {
             first,

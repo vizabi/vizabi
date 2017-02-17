@@ -1,12 +1,12 @@
-import Class from 'base/class';
-import globals from 'base/globals';
-import * as utils from 'base/utils';
+import Class from "base/class";
+import globals from "base/globals";
+import * as utils from "base/utils";
 
-import topojson from 'helpers/topojson';
-import d3_geo_projection from 'helpers/d3.geoProjection';
-var GoogleMapsLoader = require('google-maps');
+import topojson from "helpers/topojson";
+import d3_geo_projection from "helpers/d3.geoProjection";
+var GoogleMapsLoader = require("google-maps");
 
-import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js';
+import mapboxgl from "mapbox-gl/dist/mapbox-gl.js";
 
 export default Class.extend({
   init(context) {
@@ -76,7 +76,7 @@ var MapLayer = Class.extend({
 
   initMap() {
     this.mapSvg = d3.select(this.context.element).select(".vzb-bmc-map-background");
-    this.mapGraph = this.mapSvg.html('').append("g")
+    this.mapGraph = this.mapSvg.html("").append("g")
       .attr("class", "vzb-bmc-map-graph");
 
     var _this = this;
@@ -198,7 +198,7 @@ var MapLayer = Class.extend({
         .precision(0.1);
 
     this.mapGraph
-        .selectAll('path').attr("d", this.mapPath);
+        .selectAll("path").attr("d", this.mapPath);
 
     // handle scale to fit case
     var widthScale, heightScale;
@@ -231,8 +231,8 @@ var MapLayer = Class.extend({
     // resize and put in center
     this.mapSvg
         .style("transform", "translate(" + margin.left + "px," + margin.top + "px)")
-        .attr('width', this.context.width)
-        .attr('height', this.context.height);
+        .attr("width", this.context.width)
+        .attr("height", this.context.height);
 
     // set skew function used for bubbles in chart
     var _this = this;
@@ -270,14 +270,14 @@ var GoogleMapLayer = Class.extend({
   initMap(domSelector) {
     var _this = this;
     this.mapRoot = d3.select(this.context.element).select(domSelector);
-    this.mapCanvas = this.mapRoot.html('').append("div");
+    this.mapCanvas = this.mapRoot.html("").append("div");
 
     GoogleMapsLoader.KEY = "AIzaSyAP0vMZwYojifwGYHTnEtYV40v6-MdLGFM";
     return new Promise(function(resolve, reject) {
       GoogleMapsLoader.load(function(google) {
         _this.map = new google.maps.Map(_this.mapCanvas.node(), {
           disableDefaultUI: true,
-          backgroundColor: '#FFFFFF'
+          backgroundColor: "#FFFFFF"
         });
 
         _this.overlay = new google.maps.OverlayView();
@@ -285,7 +285,7 @@ var GoogleMapLayer = Class.extend({
         _this.overlay.setMap(_this.map);
         _this.centerMapker = new google.maps.Marker({
           map: _this.map,
-          title: 'Hello World!'
+          title: "Hello World!"
         });
         var rectangle = new google.maps.Rectangle({
           bounds: {
@@ -297,7 +297,7 @@ var GoogleMapLayer = Class.extend({
           editable: true,
           draggable: true
         });
-        google.maps.event.addListener(_this.map, 'bounds_changed', function() {
+        google.maps.event.addListener(_this.map, "bounds_changed", function() {
             _this.parent.boundsChanged();
         });
 
@@ -316,8 +316,8 @@ var GoogleMapLayer = Class.extend({
         .style("width", this.context.width + "px")
         .style("height", this.context.height + "px");
     this.mapRoot
-        .attr('width', this.context.width)
-        .attr('height', this.context.height)
+        .attr("width", this.context.width)
+        .attr("height", this.context.height)
         .style("position", "absolute")
         .style("left", margin.left + "px")
         .style("right", margin.right + "px")
@@ -365,12 +365,12 @@ var MapboxLayer = Class.extend({
   initMap(domSelector) {
     var _this = this;
     this.mapRoot = d3.select(this.context.element).select(domSelector);
-    this.mapCanvas = this.mapRoot.html('').append("div");
+    this.mapCanvas = this.mapRoot.html("").append("div");
     return new Promise(function(resolve, reject) {
       _this.map = new mapboxgl.Map({
         container: _this.mapCanvas.node(),
         interactive: false,
-        style: 'mapbox://styles/mapbox/satellite-streets-v9',
+        style: "mapbox://styles/mapbox/satellite-streets-v9",
         hash: false
       });
       _this.bounds = [[
@@ -397,8 +397,8 @@ var MapboxLayer = Class.extend({
         .style("height", viewPortHeight + "px");
 
     this.mapRoot
-        .attr('width', viewPortWidth)
-        .attr('height', viewPortHeight)
+        .attr("width", viewPortWidth)
+        .attr("height", viewPortHeight)
         .style("position", "absolute")
         .style("left", margin.left + "px")
         .style("right", margin.right + "px")

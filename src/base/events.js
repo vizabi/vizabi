@@ -1,5 +1,5 @@
-import * as utils from 'base/utils';
-import Class from 'base/class';
+import * as utils from "base/utils";
+import Class from "base/class";
 
 var _freezeAllEvents = false;
 var _frozenEventInstances = [];
@@ -7,8 +7,8 @@ var _freezeAllExceptions = {};
 
 export var DefaultEvent = Class.extend({
 
-  source: '',
-  type: 'default',
+  source: "",
+  type: "default",
 
   init(source, type) {
     this.source = source;
@@ -17,9 +17,9 @@ export var DefaultEvent = Class.extend({
 
 });
 
-export var ChangeEvent = DefaultEvent.extend('change', {
+export var ChangeEvent = DefaultEvent.extend("change", {
 
-  type: 'change',
+  type: "change",
 
   init(source) {
     this._super(source);
@@ -33,7 +33,7 @@ var EventSource = Class.extend({
    * Initializes the event class
    */
   init() {
-    this._id = this._id || utils.uniqueId('e');
+    this._id = this._id || utils.uniqueId("e");
     this._events = {};
     //freezing events
     this._freeze = false;
@@ -59,10 +59,10 @@ var EventSource = Class.extend({
 
     // register the event to this object
     target._events[type] = target._events[type] || [];
-    if (typeof func === 'function') {
+    if (typeof func === "function") {
       target._events[type].push(func);
     } else {
-      utils.warn('Can\'t bind event \'' + type + '\'. It must be a function.');
+      utils.warn("Can't bind event '" + type + "'. It must be a function.");
     }
   },
 
@@ -90,7 +90,7 @@ var EventSource = Class.extend({
     // unbind events
     if (target._events.hasOwnProperty(type)) {
       // if function not given, remove all events of type
-      if (typeof func === 'undefined') {
+      if (typeof func === "undefined") {
         target._events[type] = [];
         return;
       }
@@ -98,7 +98,7 @@ var EventSource = Class.extend({
       if (index > -1) {
         target._events[type].splice(index, 1);
       } else {
-        utils.warn('Could not unbind function ' + func.name + '. Function not in bound function list.');
+        utils.warn("Could not unbind function " + func.name + ". Function not in bound function list.");
       }
     }
   },
@@ -136,11 +136,11 @@ var EventSource = Class.extend({
     // type and path are both in type: on('type:path', function)
     // or
     // path undefined: on('type', function)
-    if (typeof path === 'function') {
+    if (typeof path === "function") {
       func = path; // put callback function in func variable
       // on('type:path', func)
-      if (type.indexOf(':') !== -1) {
-        var split = type.split(':');
+      if (type.indexOf(":") !== -1) {
+        var split = type.split(":");
         type = split[0];
         path = split[1];
       }
@@ -178,25 +178,25 @@ var EventSource = Class.extend({
   traversePath(path) {
 
     // if there's no path to traverse
-    if (typeof path === 'undefined' || utils.isArray(path) && path.length == 0) {
+    if (typeof path === "undefined" || utils.isArray(path) && path.length == 0) {
       return this;
     }
 
     // prepare path to array
-    if (typeof path === 'string') {
-      path = path.split('.');
+    if (typeof path === "string") {
+      path = path.split(".");
     }
 
     // check if path is an array
     if (!utils.isArray(path)) {
-      utils.error('Path is wrong type. Path should be a string or array but is ' + typeof path + '.');
+      utils.error("Path is wrong type. Path should be a string or array but is " + typeof path + ".");
       return null;
     }
 
     // descent to next child to find target object
     var currentTarget = path.shift();
     if (this[currentTarget] === undefined)
-      utils.warn('Can\'t find child "' + currentTarget + '" of the model ' + this._name + '.');
+      utils.warn('Can\'t find child "' + currentTarget + '" of the model ' + this._name + ".");
     else
       return this.getModelObject(currentTarget).traversePath(path);
   },
@@ -245,7 +245,7 @@ var EventSource = Class.extend({
 
       // prepare execution
       var execute = function() {
-        var msg = 'Vizabi Event: ' + evt.type; // + ' - ' + eventPath;
+        var msg = "Vizabi Event: " + evt.type; // + ' - ' + eventPath;
         utils.timeStamp(msg);
         func.apply(_this, [
           evt,

@@ -1,13 +1,13 @@
-import CSVReader from 'readers/csv/csv';
-import { isNumber } from 'base/utils';
+import CSVReader from "readers/csv/csv";
+import { isNumber } from "base/utils";
 
 const CSVTimeInColumnsReader = CSVReader.extend({
 
-  _name: 'csv-time_in_columns',
+  _name: "csv-time_in_columns",
 
   init(readerInfo) {
     this._super(readerInfo);
-    this.timeKey = 'time';
+    this.timeKey = "time";
   },
 
   load() {

@@ -1,6 +1,6 @@
-import * as utils from 'base/utils';
-import DataConnected from 'models/dataconnected';
-import EventSource from 'base/events';
+import * as utils from "base/utils";
+import DataConnected from "models/dataconnected";
+import EventSource from "base/events";
 
 /*!
  * HOOK MODEL
@@ -12,12 +12,12 @@ var Hook = DataConnected.extend({
   //that means, if X or Y doesn't have data at some point, we can't show markers
   _important: false,
 
-  objectLeafs: ['autogenerate'],
-  dataConnectedChildren: ['use', 'which'],
+  objectLeafs: ["autogenerate"],
+  dataConnectedChildren: ["use", "which"],
 
   getClassDefaults() {
     var defaults = {
-      data: 'data',
+      data: "data",
       which: null
     };
     return utils.deepExtend(this._super(), defaults);
@@ -38,9 +38,9 @@ var Hook = DataConnected.extend({
       //hook with the closest prefix to this model
       this._space[name] = this.getClosestModel(name);
       //if hooks change, this should load again
-      this._space[name].on('dataConnectedChange', this.handleDataConnectedChange.bind(this));
+      this._space[name].on("dataConnectedChange", this.handleDataConnectedChange.bind(this));
     });
-    this.getClosestModel('locale').on('dataConnectedChange', this.handleDataConnectedChange.bind(this));
+    this.getClosestModel("locale").on("dataConnectedChange", this.handleDataConnectedChange.bind(this));
   },
 
   onSuccessfullLoad() {
@@ -66,7 +66,7 @@ var Hook = DataConnected.extend({
       obj.scaleType = conceptProps.scales[0];
     }
 
-    if (this.getType() === 'axis' || this.getType() === 'size') {
+    if (this.getType() === "axis" || this.getType() === "size") {
       obj.domainMin = null;
       obj.domainMax = null;
       obj.zoomedMin = null;
@@ -111,7 +111,7 @@ var Hook = DataConnected.extend({
 
     if (!this.which) return Promise.resolve();
 
-    this.trigger('hook_change');
+    this.trigger("hook_change");
 
     // TODO: should be set on data source switch, but load happens before change events
     this.dataSource = this.getClosestModel(this.data);
@@ -125,14 +125,14 @@ var Hook = DataConnected.extend({
 
     this.setReady(false);
 
-    utils.timeStamp('Vizabi Model: Loading Data: ' + this._id);
+    utils.timeStamp("Vizabi Model: Loading Data: " + this._id);
 
     var parsers = this._getAllParsers();
     var dataPromise = this.dataSource.load(query, parsers);
 
     dataPromise.then(
       this.afterLoad.bind(this),
-      err => utils.warn('Problem with query: ', err, JSON.stringify(query))
+      err => utils.warn("Problem with query: ", err, JSON.stringify(query))
     );
 
     return dataPromise;
@@ -157,7 +157,7 @@ var Hook = DataConnected.extend({
    */
   afterLoad(dataId) {
     this._dataId = dataId;
-    utils.timeStamp('Vizabi Model: Data loaded: ' + this._id);
+    utils.timeStamp("Vizabi Model: Data loaded: " + this._id);
   },
 
   /**
@@ -171,12 +171,12 @@ var Hook = DataConnected.extend({
 
     //error if there's nothing to hook to
     if (Object.keys(this._space).length < 1) {
-      utils.error('Error:', this._id, 'can\'t find the space');
+      utils.error("Error:", this._id, "can't find the space");
       return true;
     }
 
     var prop = (this.use === "property") || (this.use === "constant");
-    var exceptions = (prop) ? { exceptType: 'time' } : {};
+    var exceptions = (prop) ? { exceptType: "time" } : {};
 
     // select
     // we remove this.which from values if it duplicates a dimension
@@ -185,7 +185,7 @@ var Hook = DataConnected.extend({
 
     dimensions = dimensions.filter(f => f !== "_default");// && f!==null);
     if (!dimensions || !dimensions.length) {
-      utils.warn('getQuery() produced no query because no keys are available');
+      utils.warn("getQuery() produced no query because no keys are available");
       return true;
     }
 
@@ -211,11 +211,11 @@ var Hook = DataConnected.extend({
     // make root $and explicit
     var explicitAndFilters =  {};
     if (Object.keys(filters).length > 0) {
-      explicitAndFilters['$and'] = [];
+      explicitAndFilters["$and"] = [];
       for (var filterKey in filters) {
         var filter = {};
         filter[filterKey] = filters[filterKey];
-        explicitAndFilters['$and'].push(filter);
+        explicitAndFilters["$and"].push(filter);
       }
     }
 
@@ -229,13 +229,13 @@ var Hook = DataConnected.extend({
 
     //return query
     return {
-      'language': this.getClosestModel('locale').id,
-      'from': from,
-      'animatable': animatable,
-      'select': select,
-      'where': explicitAndFilters,
-      'join': join,
-      'order_by': prop ? ["rank"] : [this._space.time.dim]
+      "language": this.getClosestModel("locale").id,
+      "from": from,
+      "animatable": animatable,
+      "select": select,
+      "where": explicitAndFilters,
+      "join": join,
+      "order_by": prop ? ["rank"] : [this._space.time.dim]
     };
   },
 
@@ -438,7 +438,7 @@ var Hook = DataConnected.extend({
    * @returns {Array} domain
    */
   getScale() {
-    if (this.scale == null) console.warn('scale is null');
+    if (this.scale == null) console.warn("scale is null");
     return this.scale;
   },
 
@@ -450,7 +450,7 @@ var Hook = DataConnected.extend({
   getUnique(attr) {
     if (!this.isHook()) return;
     if (!attr) attr = this._getFirstDimension({ type: "time" });
-    return this.dataSource.getData(this._dataId, 'unique', attr);
+    return this.dataSource.getData(this._dataId, "unique", attr);
   },
 
 
@@ -463,7 +463,7 @@ var Hook = DataConnected.extend({
    * @returns {Object} filtered items object
    */
   getValidItems() {
-    return this.dataSource.getData(this._dataId, 'valid', this.which);
+    return this.dataSource.getData(this._dataId, "valid", this.which);
   },
 
   /**
@@ -473,11 +473,11 @@ var Hook = DataConnected.extend({
    */
   getNestedItems(keys) {
     if (!keys) return utils.warn("No keys provided to getNestedItems(<keys>)");
-    return this.dataSource.getData(this._dataId, 'nested', keys);
+    return this.dataSource.getData(this._dataId, "nested", keys);
   },
 
   getHaveNoDataPointsPerKey() {
-    return this.dataSource.getData(this._dataId, 'haveNoDataPointsPerKey', this.which);
+    return this.dataSource.getData(this._dataId, "haveNoDataPointsPerKey", this.which);
   },
 
   /**
@@ -486,7 +486,7 @@ var Hook = DataConnected.extend({
    * @returns {Object} limits (min and max)
    */
   getLimits(attr) {
-    return this.dataSource.getData(this._dataId, 'limits', attr);
+    return this.dataSource.getData(this._dataId, "limits", attr);
   },
 
   getFrame(steps, forceFrame, selected) {
@@ -511,7 +511,7 @@ var Hook = DataConnected.extend({
   },
 
   getLimitsByDimensions(dims) {
-    var filtered = this.dataSource.getData(this._dataId, 'nested', dims);
+    var filtered = this.dataSource.getData(this._dataId, "nested", dims);
     var values = {};
     var limitsDim = {};
     var attr = this.which;
@@ -538,10 +538,10 @@ var Hook = DataConnected.extend({
       var limits = {};
       for (var i = 0; i < filtered.length; i += 1) {
         var c = filtered[i];
-        if (typeof min === 'undefined' || c < min) {
+        if (typeof min === "undefined" || c < min) {
           min = c;
         }
-        if (typeof max === 'undefined' || c > max) {
+        if (typeof max === "undefined" || c > max) {
           max = c;
         }
       }
@@ -573,7 +573,7 @@ var Hook = DataConnected.extend({
    * @returns {Object} concept properties
    */
   getConceptprops() {
-    return this.use !== 'constant' && this.dataSource ? this.dataSource.getConceptprops(this.which) : {};
+    return this.use !== "constant" && this.dataSource ? this.dataSource.getConceptprops(this.which) : {};
   },
 
   /**

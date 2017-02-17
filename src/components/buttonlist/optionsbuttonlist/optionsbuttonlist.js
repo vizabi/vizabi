@@ -1,6 +1,6 @@
-import * as utils from 'base/utils';
-import ButtonList from 'components/buttonlist/buttonlist';
-import * as iconset from 'base/iconset';
+import * as utils from "base/utils";
+import ButtonList from "components/buttonlist/buttonlist";
+import * as iconset from "base/iconset";
 
 /*!
  * VIZABI OPTIONSBUTTONLIST
@@ -27,7 +27,7 @@ var OptionsButtonList = ButtonList.extend({
 
     //set properties
     var _this = this;
-    this.name = 'gapminder-optionsbuttonlist';
+    this.name = "gapminder-optionsbuttonlist";
 
     this._super(config, context);
   },
@@ -52,7 +52,7 @@ var OptionsButtonList = ButtonList.extend({
       btn.each(function(d) {
         var button = d3.select(this);
         var isHidden = params.hiddenButtons.indexOf(d.id) == -1;
-        button.style('display', isHidden ? 'none' : '');
+        button.style("display", isHidden ? "none" : "");
         if (!isHidden) visibleButton++;
       });
     });

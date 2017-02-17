@@ -1,7 +1,7 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
+import * as utils from "base/utils";
+import Component from "base/component";
 
-import axisSmart from 'helpers/d3.axisWithLabelPicker';
+import axisSmart from "helpers/d3.axisWithLabelPicker";
 
 
 //BAR CHART COMPONENT
@@ -14,8 +14,8 @@ var BarComponent = Component.extend({
    * @param {Object} context The component's parent
    */
   init(config, context) {
-    this.name = 'barchart';
-    this.template = require('./barchart.html');
+    this.name = "barchart";
+    this.template = require("./barchart.html");
 
     //define expected models for this component
     this.model_expects = [{
@@ -41,14 +41,14 @@ var BarComponent = Component.extend({
         _this.updateEntities();
         });
       },
-      'change:marker': function(evt, path) {
+      "change:marker": function(evt, path) {
         if (!_this._readyOnce) return;
         if (path.indexOf("color.palette") > -1) return;
         if (path.indexOf("which") > -1 || path.indexOf("use") > -1) return;
 
         _this.ready();
       },
-      'change:marker.color.palette': utils.debounce(function(evt) {
+      "change:marker.color.palette": utils.debounce(function(evt) {
         if (!_this._readyOnce) return;
         _this.updateEntities();
       }, 200)
@@ -71,13 +71,13 @@ var BarComponent = Component.extend({
   readyOnce() {
     this.element = d3.select(this.element);
 
-    this.graph = this.element.select('.vzb-bc-graph');
-    this.yAxisEl = this.graph.select('.vzb-bc-axis-y');
-    this.xAxisEl = this.graph.select('.vzb-bc-axis-x');
-    this.yTitleEl = this.graph.select('.vzb-bc-axis-y-title');
-    this.xTitleEl = this.graph.select('.vzb-bc-axis-x-title');
-    this.bars = this.graph.select('.vzb-bc-bars');
-    this.year = this.element.select('.vzb-bc-year');
+    this.graph = this.element.select(".vzb-bc-graph");
+    this.yAxisEl = this.graph.select(".vzb-bc-axis-y");
+    this.xAxisEl = this.graph.select(".vzb-bc-axis-x");
+    this.yTitleEl = this.graph.select(".vzb-bc-axis-y-title");
+    this.xTitleEl = this.graph.select(".vzb-bc-axis-x-title");
+    this.bars = this.graph.select(".vzb-bc-bars");
+    this.year = this.element.select(".vzb-bc-year");
 
     var _this = this;
     this.on("resize", function() {
@@ -174,7 +174,7 @@ var BarComponent = Component.extend({
     filter[timeDim] = time.value;
     var items = this.model.marker.getKeys(filter);
 
-    this.entityBars = this.bars.selectAll('.vzb-bc-bar')
+    this.entityBars = this.bars.selectAll(".vzb-bc-bar")
       .data(items);
 
     //exit selection
@@ -189,10 +189,10 @@ var BarComponent = Component.extend({
 
     //positioning and sizes of the bars
 
-    var bars = this.bars.selectAll('.vzb-bc-bar');
+    var bars = this.bars.selectAll(".vzb-bc-bar");
     var barWidth = this.xScale.rangeBand();
 
-    this.bars.selectAll('.vzb-bc-bar')
+    this.bars.selectAll(".vzb-bc-bar")
       .attr("width", barWidth)
       .attr("fill", function(d) {
         return _this.cScale(_this.values.color[d[entityDim]]);
@@ -313,7 +313,7 @@ var BarComponent = Component.extend({
     var xTitleXPos = xAxisSize.width / 2 - xTitleSize.width / 2;
     var xTitleYPos = this.height + xAxisSize.height + xTitleSize.height;
     this.xTitleEl.attr("transform", "translate(" + xTitleXPos + "," + xTitleYPos + ")");
-    this.year.attr('x', this.width).attr('y', 0);
+    this.year.attr("x", this.width).attr("y", 0);
   }
 });
 

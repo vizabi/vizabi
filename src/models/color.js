@@ -1,5 +1,5 @@
-import * as utils from 'base/utils';
-import Hook from 'models/hook';
+import * as utils from "base/utils";
+import Hook from "models/hook";
 
 /*!
  * VIZABI Color Model (hook)
@@ -94,7 +94,7 @@ var ColorModel = Hook.extend({
     this._syncModelReferences = {};
     this._hasDefaultColor = false;
 
-    this.on('hook_change', function() {
+    this.on("hook_change", function() {
       if (_this._readyOnce) return;
 
       if (_this.palette && Object.keys(_this.palette._data).length !== 0) {

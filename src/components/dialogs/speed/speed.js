@@ -1,8 +1,8 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import Dialog from 'components/dialogs/_dialog';
+import * as utils from "base/utils";
+import Component from "base/component";
+import Dialog from "components/dialogs/_dialog";
 
-import simpleslider from 'components/simpleslider/simpleslider';
+import simpleslider from "components/simpleslider/simpleslider";
 /*
  * Size dialog
  */
@@ -15,14 +15,14 @@ var Speed = Dialog.extend({
  * @param context component context (parent)
  */
 init(config, parent) {
-  this.name = 'speed';
+  this.name = "speed";
 
   // in dialog, this.model_expects = ["state", "data"];
 
   this.components = [
   {
     component: simpleslider,
-    placeholder: '.vzb-dialog-placeholder',
+    placeholder: ".vzb-dialog-placeholder",
     model: ["state.time"],
     arg: "delay",
     properties: { min: 1, max: 6, step: 0.1, scale: d3.scale.linear()

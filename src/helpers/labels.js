@@ -1,7 +1,7 @@
-import * as utils from 'base/utils';
-import Class from 'base/class';
+import * as utils from "base/utils";
+import Class from "base/class";
 
-import { close as iconClose } from 'base/iconset';
+import { close as iconClose } from "base/iconset";
 
 var label = function(context) {
 
@@ -269,7 +269,7 @@ var label = function(context) {
 
       var diffX1 = _X0 - _X;
       var diffY1 = _Y0 - _Y;
-      var textBBox = labelGroup.select('text').node().getBBox();
+      var textBBox = labelGroup.select("text").node().getBBox();
       var diffX2 = -textBBox.width * 0.5;
       var diffY2 = -height * 0.2;
       var labels = _this.model.ui.chart.labels;
@@ -280,7 +280,7 @@ var label = function(context) {
 
       var lineHidden = circleRectIntersects({ x: diffX1, y: diffY1, r: cache.scaledS0 },
         { x: diffX2, y: diffY2, width: (bBox.height * 2 * FAR_COEFF + bBox.width), height: (bBox.height * (2 * FAR_COEFF + 1)) });
-      lineGroup.select('line').classed("vzb-invisible", lineHidden);
+      lineGroup.select("line").classed("vzb-invisible", lineHidden);
       if (lineHidden) return;
 
       if (labels.removeLabelBox) {
@@ -342,10 +342,10 @@ var label = function(context) {
 };
 
 var OPTIONS = {
-  LABELS_CONTAINER_CLASS: '',
-  LINES_CONTAINER_CLASS: '',
-  LINES_CONTAINER_SELECTOR: '',
-  CSS_PREFIX: '',
+  LABELS_CONTAINER_CLASS: "",
+  LINES_CONTAINER_CLASS: "",
+  LINES_CONTAINER_SELECTOR: "",
+  CSS_PREFIX: "",
   SUPPRESS_HIGHLIGHT_DURING_PLAY: true
 };
 
@@ -381,7 +381,7 @@ var Labels = Class.extend({
       });
 
     if (this.model.marker.size_label)
-      this.model.on('change:marker.size_label.extent', function(evt, path) {
+      this.model.on("change:marker.size_label.extent", function(evt, path) {
         //console.log("EVENT change:marker:size:max");
         if (!_this.context._readyOnce) return;
         _this.updateLabelSizeLimits();
@@ -389,8 +389,8 @@ var Labels = Class.extend({
         _this.updateLabelsOnlyTextSize();
       });
 
-    if (this.model.ui.chart.labels.hasOwnProperty('removeLabelBox'))
-      this.model.on('change:ui.chart.labels.removeLabelBox', function(evt, path) {
+    if (this.model.ui.chart.labels.hasOwnProperty("removeLabelBox"))
+      this.model.on("change:ui.chart.labels.removeLabelBox", function(evt, path) {
         //console.log("EVENT change:marker:size:max");
         if (!_this.context._readyOnce) return;
         _this.updateLabelsOnlyTextSize();
@@ -426,7 +426,7 @@ var Labels = Class.extend({
     this.minLabelTextSize = Math.max(minLabelTextSize + minMaxDelta * extent[0], minLabelTextSize);
     this.maxLabelTextSize = Math.max(minLabelTextSize + minMaxDelta * extent[1], minLabelTextSize);
 
-    if (this.model.marker.size_label.use == 'constant') {
+    if (this.model.marker.size_label.use == "constant") {
       // if(!this.model.marker.size_label.which) {
       //   this.maxLabelTextSize = this.activeProfile.defaultLabelTextSize;
       //   this.model.marker.size_label.set({'domainMax': (this.maxLabelTextSize - minLabelTextSize) / minMaxDelta, 'which': '_default'});
@@ -435,7 +435,7 @@ var Labels = Class.extend({
       this.minLabelTextSize = this.maxLabelTextSize;
     }
 
-    if (this.model.marker.size_label.scaleType !== "ordinal" || this.model.marker.size_label.use == 'constant') {
+    if (this.model.marker.size_label.scaleType !== "ordinal" || this.model.marker.size_label.use == "constant") {
       this.labelSizeTextScale.range([_this.minLabelTextSize, _this.maxLabelTextSize]);
     } else {
       this.labelSizeTextScale.rangePoints([_this.minLabelTextSize, _this.maxLabelTextSize], 0).range();
@@ -497,7 +497,7 @@ var Labels = Class.extend({
       .remove();
 
     this.entityLines = this.entityLines
-      .enter().insert('g', function(d) {
+      .enter().insert("g", function(d) {
         return this.querySelector("." + _this.options.LINES_CONTAINER_SELECTOR_PREFIX + d[KEY]);
       })
       .attr("class", function(d, index) {return _cssPrefix + "-entity entity-line line-" + d[KEY];})
@@ -606,7 +606,7 @@ var Labels = Class.extend({
     var _cssPrefix = this.options.CSS_PREFIX;
 
     var labels = _this.model.ui.chart.labels || {};
-    labelGroup.classed('vzb-label-boxremoved', labels.removeLabelBox);
+    labelGroup.classed("vzb-label-boxremoved", labels.removeLabelBox);
 
     var _text = text || labelGroup.selectAll("." + _cssPrefix + "-label-content");
 
@@ -614,9 +614,9 @@ var Labels = Class.extend({
       if (valueLST != null) {
       var range = _this.labelSizeTextScale.range();
       var fontSize = range[0] + Math.sqrt((_this.labelSizeTextScale(valueLST) - range[0]) * (range[1] - range[0]));
-        _text.attr('font-size', fontSize + 'px');
+        _text.attr("font-size", fontSize + "px");
       } else {
-        _text.attr('font-size', '');
+        _text.attr("font-size", "");
       }
     }
 
@@ -631,7 +631,7 @@ var Labels = Class.extend({
 
       var isRTL = _this.model.locale.isRTL();
       var labelCloseGroup = labelGroup.select("." + _cssPrefix + "-label-x")
-        .attr('transform', 'translate(' + (isRTL ? -contentBBox.width - 4 : 4) + ',' + (-contentBBox.height * 0.85) + ')');
+        .attr("transform", "translate(" + (isRTL ? -contentBBox.width - 4 : 4) + "," + (-contentBBox.height * 0.85) + ")");
 
       this.updateLabelCloseGroupSize(labelCloseGroup, labelCloseHeight);
 

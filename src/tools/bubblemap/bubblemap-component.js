@@ -1,15 +1,15 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import Labels from 'helpers/labels';
+import * as utils from "base/utils";
+import Component from "base/component";
+import Labels from "helpers/labels";
 import {
   warn as iconWarn,
   question as iconQuestion
-} from 'base/iconset';
+} from "base/iconset";
 
-import topojson from 'helpers/topojson';
-import d3_geo_projection from 'helpers/d3.geoProjection';
-import DynamicBackground from 'helpers/d3.dynamicBackground';
-import globals from 'base/globals';
+import topojson from "helpers/topojson";
+import d3_geo_projection from "helpers/d3.geoProjection";
+import DynamicBackground from "helpers/d3.dynamicBackground";
+import globals from "base/globals";
 
 //import Selectlist from 'bubblemap-selectlist';
 
@@ -22,8 +22,8 @@ var BubbleMapComponent = Component.extend({
    * @param {Object} context The component's parent
    */
   init(config, context) {
-    this.name = 'bubblemap';
-    this.template = require('./bubblemap.html');
+    this.name = "bubblemap";
+    this.template = require("./bubblemap.html");
     this.bubblesDrawing = null;
 
 
@@ -72,7 +72,7 @@ var BubbleMapComponent = Component.extend({
           _this.ready();
         }
       },
-      'change:marker.size.extent': function(evt, path) {
+      "change:marker.size.extent": function(evt, path) {
         //console.log("EVENT change:marker:size:max");
         if (!_this._readyOnce || !_this.entityBubbles) return;
         _this.updateMarkerSizeLimits();
@@ -112,9 +112,9 @@ var BubbleMapComponent = Component.extend({
 
     this._labels = new Labels(this);
     this._labels.config({
-      CSS_PREFIX: 'vzb-bmc',
-      LABELS_CONTAINER_CLASS: 'vzb-bmc-labels',
-      LINES_CONTAINER_CLASS: 'vzb-bmc-lines',
+      CSS_PREFIX: "vzb-bmc",
+      LABELS_CONTAINER_CLASS: "vzb-bmc-labels",
+      LINES_CONTAINER_CLASS: "vzb-bmc-lines",
       SUPPRESS_HIGHLIGHT_DURING_PLAY: false
     });
   },
@@ -127,12 +127,12 @@ var BubbleMapComponent = Component.extend({
 
     this.element = d3.select(this.element);
 
-    this.graph = this.element.select('.vzb-bmc-graph');
-    this.mapSvg = this.element.select('.vzb-bmc-map-background');
+    this.graph = this.element.select(".vzb-bmc-graph");
+    this.mapSvg = this.element.select(".vzb-bmc-map-background");
 
-    this.bubbleContainerCrop = this.graph.select('.vzb-bmc-bubbles-crop');
-    this.bubbleContainer = this.graph.select('.vzb-bmc-bubbles');
-    this.labelListContainer = this.graph.select('.vzb-bmc-bubble-labels');
+    this.bubbleContainerCrop = this.graph.select(".vzb-bmc-bubbles-crop");
+    this.bubbleContainer = this.graph.select(".vzb-bmc-bubbles");
+    this.labelListContainer = this.graph.select(".vzb-bmc-bubble-labels");
     this.dataWarningEl = this.graph.select(".vzb-data-warning");
 
     this.yTitleEl = this.graph.select(".vzb-bmc-axis-y-title");
@@ -141,12 +141,12 @@ var BubbleMapComponent = Component.extend({
     this.cInfoEl = this.graph.select(".vzb-bmc-axis-c-info");
 
     this.entityBubbles = null;
-    this.tooltip = this.element.select('.vzb-bmc-tooltip');
+    this.tooltip = this.element.select(".vzb-bmc-tooltip");
 
     // year background
-    this.yearEl = this.graph.select('.vzb-bmc-year');
+    this.yearEl = this.graph.select(".vzb-bmc-year");
     this.year = new DynamicBackground(this.yearEl);
-    this.year.setConditions({ xAlign: 'left', yAlign: 'bottom' });
+    this.year.setConditions({ xAlign: "left", yAlign: "bottom" });
 
     var _this = this;
     this.on("resize", function() {
@@ -284,7 +284,7 @@ var BubbleMapComponent = Component.extend({
         var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
         var toolRect = _this.root.element.getBoundingClientRect();
         var chartRect = _this.element.node().getBoundingClientRect();
-        _this.parent.findChildByName("gapminder-datanotes").setHook('size').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
+        _this.parent.findChildByName("gapminder-datanotes").setHook("size").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
       });
       this.yInfoEl.on("mouseout", function() {
         _this.parent.findChildByName("gapminder-datanotes").hide();
@@ -303,7 +303,7 @@ var BubbleMapComponent = Component.extend({
         var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
         var toolRect = _this.root.element.getBoundingClientRect();
         var chartRect = _this.element.node().getBoundingClientRect();
-        _this.parent.findChildByName("gapminder-datanotes").setHook('color').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
+        _this.parent.findChildByName("gapminder-datanotes").setHook("color").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
       });
       this.cInfoEl.on("mouseout", function() {
         _this.parent.findChildByName("gapminder-datanotes").hide();
@@ -354,7 +354,7 @@ var BubbleMapComponent = Component.extend({
             .text(this.translator("buttons/color") + ": " + this.strings.title.C);
 
         this.yInfoEl.classed("vzb-hidden", false);
-        this.cInfoEl.classed("vzb-hidden", false || this.cTitleEl.classed('vzb-hidden'));
+        this.cInfoEl.classed("vzb-hidden", false || this.cTitleEl.classed("vzb-hidden"));
       }
   },
 
@@ -473,7 +473,7 @@ var BubbleMapComponent = Component.extend({
     */
 
 
-    this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bmc-bubble')
+    this.entityBubbles = this.bubbleContainer.selectAll(".vzb-bmc-bubble")
       .data(this.model.marker.getVisible(), function(d) { return d[KEY]; })
       .order();
 
@@ -611,7 +611,7 @@ var BubbleMapComponent = Component.extend({
     var cTitleText = this.cTitleEl.select("text");
 
     var yTitleBB = yTitleText.node().getBBox();
-    var cTitleBB = this.cTitleEl.classed('vzb-hidden') ? yTitleBB : cTitleText.node().getBBox();
+    var cTitleBB = this.cTitleEl.classed("vzb-hidden") ? yTitleBB : cTitleText.node().getBBox();
 
     var font =
         Math.max(parseInt(yTitleText.style("font-size")), parseInt(cTitleText.style("font-size")))
@@ -644,7 +644,7 @@ var BubbleMapComponent = Component.extend({
         .projection(this.projection);
 
     this.mapGraph = this.element.select(".vzb-bmc-map-graph");
-    this.mapGraph.html('');
+    this.mapGraph.html("");
 
     this.mapFeature = topojson.feature(this.topology, this.topology.objects[this.model.ui.map.topology.objects.geo]);
     var boundaries = topojson.mesh(this.topology, this.topology.objects[this.model.ui.map.topology.objects.boundaries], function(a, b) { return a !== b; });
@@ -758,32 +758,32 @@ var BubbleMapComponent = Component.extend({
         .attr("transform", "translate(" + (this.width) + "," + (this.height - warnBB.height * 0.5) + ")")
         .select("text");
 
-    if (this.yInfoEl.select('svg').node()) {
+    if (this.yInfoEl.select("svg").node()) {
         var titleBBox = this.yTitleEl.node().getBBox();
         var t = utils.transform(this.yTitleEl.node());
         var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
-        this.yInfoEl.select('svg')
+        this.yInfoEl.select("svg")
             .attr("width", infoElHeight)
             .attr("height", infoElHeight);
-        this.yInfoEl.attr('transform', 'translate('
-            + hTranslate + ','
-            + (t.translateY - infoElHeight * 0.8) + ')');
+        this.yInfoEl.attr("transform", "translate("
+            + hTranslate + ","
+            + (t.translateY - infoElHeight * 0.8) + ")");
     }
 
     this.cInfoEl.classed("vzb-hidden", this.cTitleEl.classed("vzb-hidden"));
 
-    if (!this.cInfoEl.classed("vzb-hidden") && this.cInfoEl.select('svg').node()) {
+    if (!this.cInfoEl.classed("vzb-hidden") && this.cInfoEl.select("svg").node()) {
         var titleBBox = this.cTitleEl.node().getBBox();
         var t = utils.transform(this.cTitleEl.node());
         var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
-        this.cInfoEl.select('svg')
+        this.cInfoEl.select("svg")
             .attr("width", infoElHeight)
             .attr("height", infoElHeight);
-        this.cInfoEl.attr('transform', 'translate('
-            + hTranslate + ','
-            + (t.translateY - infoElHeight * 0.8) + ')');
+        this.cInfoEl.attr("transform", "translate("
+            + hTranslate + ","
+            + (t.translateY - infoElHeight * 0.8) + ")");
     }
   },
 
@@ -814,7 +814,7 @@ var BubbleMapComponent = Component.extend({
       .translate(t);
 
     this.mapGraph
-      .selectAll('path').attr("d", this.mapPath);
+      .selectAll("path").attr("d", this.mapPath);
 
     // handle scale to fit case
     var widthScale, heightScale;
@@ -829,8 +829,8 @@ var BubbleMapComponent = Component.extend({
       viewPortWidth = this.width * this.model.ui.map.scale;
 
       this.mapSvg
-        .attr('preserveAspectRatio', 'none')
-        .attr('viewBox', [0, 0, viewBoxWidth, viewBoxHeight].join(' '));
+        .attr("preserveAspectRatio", "none")
+        .attr("viewBox", [0, 0, viewBoxWidth, viewBoxHeight].join(" "));
 
       //            ratio between map, viewport and offset (for bubbles)
       widthScale  = viewPortWidth  / mapWidth  / (1 + offset.left + offset.right);
@@ -846,13 +846,13 @@ var BubbleMapComponent = Component.extend({
 
     // internal offset against parent container (mapSvg)
     this.mapGraph
-      .attr('transform', 'translate(' + mapLeftOffset + ',' + mapTopOffset + ')');
+      .attr("transform", "translate(" + mapLeftOffset + "," + mapTopOffset + ")");
 
     // resize and put in center
     this.mapSvg
       .style("transform", "translate3d(" + (margin.left + (this.width - viewPortWidth) / 2) + "px," + (margin.top + (this.height - viewPortHeight) / 2) + "px,0)")
-      .attr('width', viewPortWidth)
-      .attr('height', viewPortHeight);
+      .attr("width", viewPortWidth)
+      .attr("height", viewPortHeight);
 
     // set skew function used for bubbles in chart
     var _this = this;
@@ -1025,7 +1025,7 @@ var BubbleMapComponent = Component.extend({
         .selectAll("text")
         .text(tooltipText);
 
-      var contentBBox = this.tooltip.select('text').node().getBBox();
+      var contentBBox = this.tooltip.select("text").node().getBBox();
       if (x - xOffset - contentBBox.width < 0) {
         xSign = 1;
         x += contentBBox.width + 5; // corrective to the block Radius and text padding
@@ -1048,7 +1048,7 @@ var BubbleMapComponent = Component.extend({
       this.tooltip.attr("transform", "translate(" + (xPos ? xPos : mouse[0]) + "," + (yPos ? yPos : mouse[1]) +
         ")");
 
-      this.tooltip.select('rect').attr("width", contentBBox.width + 8)
+      this.tooltip.select("rect").attr("width", contentBBox.width + 8)
         .attr("height", contentBBox.height * 1.2)
         .attr("x", -contentBBox.width - 4)
         .attr("y", -contentBBox.height * 0.85)

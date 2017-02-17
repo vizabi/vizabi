@@ -1,6 +1,6 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import * as iconset from 'base/iconset';
+import * as utils from "base/utils";
+import Component from "base/component";
+import * as iconset from "base/iconset";
 
 /*!
  * VIZABI OPTIONSBUTTONLIST
@@ -27,7 +27,7 @@ var ZoomButtonList = Component.extend({
 
     //set properties
     var _this = this;
-    this.name = 'gapminder-zoombuttonlist';
+    this.name = "gapminder-zoombuttonlist";
 
     this.model_expects = [{
       name: "state",
@@ -41,7 +41,7 @@ var ZoomButtonList = Component.extend({
     }];
 
     this._available_buttons = {
-      'arrow': {
+      "arrow": {
         title: "buttons/cursorarrow",
         icon: "cursorArrow",
         func: this.toggleCursorMode.bind(this),
@@ -49,7 +49,7 @@ var ZoomButtonList = Component.extend({
         statebind: "ui.cursorMode",
         statebindfunc: this.setCursorMode.bind(this)
       },
-      'plus': {
+      "plus": {
         title: "buttons/cursorplus",
         icon: "cursorPlus",
         func: this.toggleCursorMode.bind(this),
@@ -57,7 +57,7 @@ var ZoomButtonList = Component.extend({
         statebind: "ui.cursorMode",
         statebindfunc: this.setCursorMode.bind(this)
       },
-      'minus': {
+      "minus": {
         title: "buttons/cursorminus",
         icon: "cursorMinus",
         func: this.toggleCursorMode.bind(this),
@@ -65,7 +65,7 @@ var ZoomButtonList = Component.extend({
         statebind: "ui.cursorMode",
         statebindfunc: this.setCursorMode.bind(this)
       },
-      'hundredpercent': {
+      "hundredpercent": {
         title: "buttons/hundredpercent",
         icon: "hundredPercent",
         func: this.toggleHundredPercent.bind(this),
@@ -81,7 +81,7 @@ var ZoomButtonList = Component.extend({
     Object.keys(this._available_buttons).forEach(function(buttonId) {
       var button = _this._available_buttons[buttonId];
       if (button && button.statebind) {
-        _this.model_binds['change:' + button.statebind] = function(evt) {
+        _this.model_binds["change:" + button.statebind] = function(evt) {
           button.statebindfunc(buttonId, evt.source.value);
         };
       }
@@ -98,7 +98,7 @@ var ZoomButtonList = Component.extend({
     this.element.selectAll("div").remove();
 
     this._addButtons(Object.keys(this._available_buttons), []);
-    this.setCursorMode('arrow');
+    this.setCursorMode("arrow");
 
   },
 
@@ -128,19 +128,19 @@ var ZoomButtonList = Component.extend({
 
     var t = this.getTranslationFunction(true);
 
-    this.element.selectAll('button').data(details_btns)
+    this.element.selectAll("button").data(details_btns)
       .enter().append("button")
-      .attr('class', function(d) {
-        var cls = 'vzb-buttonlist-btn';
+      .attr("class", function(d) {
+        var cls = "vzb-buttonlist-btn";
         if (button_expand.length > 0) {
           if (button_expand.indexOf(d.id) > -1) {
-            cls += ' vzb-dialog-side-btn';
+            cls += " vzb-dialog-side-btn";
           }
         }
 
         return cls;
       })
-      .attr('data-btn', function(d) {
+      .attr("data-btn", function(d) {
         return d.id;
       })
       .html(function(btn) {
@@ -152,7 +152,7 @@ var ZoomButtonList = Component.extend({
     var buttons = this.element.selectAll(".vzb-buttonlist-btn");
 
     //clicking the button
-    buttons.on('click', function() {
+    buttons.on("click", function() {
 
       d3.event.preventDefault();
       d3.event.stopPropagation();
@@ -176,9 +176,9 @@ var ZoomButtonList = Component.extend({
 
       btn.classed(class_active, btn_active);
       var evt = {};
-      evt['id'] = id;
-      evt['active'] = btn_active;
-      _this.trigger('click', evt);
+      evt["id"] = id;
+      evt["active"] = btn_active;
+      _this.trigger("click", evt);
     }
   },
 
@@ -190,11 +190,11 @@ var ZoomButtonList = Component.extend({
 
   toggleCursorMode(id) {
     var value = id;
-    this.model.ui.set('cursorMode', value, false, false);
+    this.model.ui.set("cursorMode", value, false, false);
   },
 
   setCursorMode(id) {
-    var value = this.model.ui.cursorMode ? this.model.ui.cursorMode : 'arrow';
+    var value = this.model.ui.cursorMode ? this.model.ui.cursorMode : "arrow";
     this.element.selectAll(".vzb-buttonlist-btn")
       .classed(class_active, function(d) {
         return d.id == value;

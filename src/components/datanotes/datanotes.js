@@ -1,7 +1,7 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
+import * as utils from "base/utils";
+import Component from "base/component";
 
-import { close as iconClose } from 'base/iconset';
+import { close as iconClose } from "base/iconset";
 
 var hidden = true;
 var showNotes = false;
@@ -16,7 +16,7 @@ var DataNotes = Component.extend({
   init(config, context) {
     var _this = this;
 
-    this.name = 'gapminder-datanotes';
+    this.name = "gapminder-datanotes";
 
     this.model_expects = [{
       name: "marker",
@@ -65,7 +65,7 @@ var DataNotes = Component.extend({
       .attr("width", "0px")
       .attr("height", "0px")
       .attr("class", "vzb-data-notes-close")
-      .classed('vzb-hidden', true);
+      .classed("vzb-hidden", true);
 
     container.append("div")
       .attr("class", "vzb-data-notes-body vzb-dialog-scrollable");
@@ -91,9 +91,9 @@ var DataNotes = Component.extend({
       newHookName = _hookName;
       return this;
     }
-    if (hookName) this.model.marker[hookName].off('change:which', this.close);
+    if (hookName) this.model.marker[hookName].off("change:which", this.close);
     hookName = newHookName = _hookName;
-    this.model.marker[hookName].on('change:which', this.close);
+    this.model.marker[hookName].on("change:which", this.close);
 
     this.setValues();
 
@@ -105,17 +105,17 @@ var DataNotes = Component.extend({
     var hook = this.model.marker[hookName];
     var concept = hook.getConceptprops();
 
-    this.element.select('.vzb-data-notes-body')
-      .classed('vzb-hidden', !concept.description)
+    this.element.select(".vzb-data-notes-body")
+      .classed("vzb-hidden", !concept.description)
       .text(concept.description || "");
 
-    this.element.select('.vzb-data-notes-link').classed('vzb-hidden', !concept.sourceLink);
+    this.element.select(".vzb-data-notes-link").classed("vzb-hidden", !concept.sourceLink);
 
     if (concept.sourceLink) {
-      var _source = this.translator('hints/source');
+      var _source = this.translator("hints/source");
       var sourceName = concept.sourceName || "";
-      this.element.select('.vzb-data-notes-link').html('<span>' + (sourceName ? (_source + ':') : '') +
-        '<a href="' + concept.sourceLink + '" target="_blank">' + (sourceName ? sourceName : _source) + '</a></span>');
+      this.element.select(".vzb-data-notes-link").html("<span>" + (sourceName ? (_source + ":") : "") +
+        '<a href="' + concept.sourceLink + '" target="_blank">' + (sourceName ? sourceName : _source) + "</a></span>");
     }
     showNotes = concept.sourceLink || concept.description;
   },
@@ -144,8 +144,8 @@ var DataNotes = Component.extend({
       topPos = top - height - 30;
     }
 
-    this.element.style('top', topPos + 'px');
-    this.element.style('left', leftPos + 'px');
+    this.element.style("top", topPos + "px");
+    this.element.style("left", leftPos + "px");
 
     return this;
   },
@@ -154,10 +154,10 @@ var DataNotes = Component.extend({
     if (hidden) return this;
     pin = !pin;
     if (arg != null) pin = arg;
-    this.element.select('.vzb-data-notes-close').classed('vzb-hidden', !pin);
-    this.element.classed('vzb-data-notes-pinned', pin);
+    this.element.select(".vzb-data-notes-close").classed("vzb-hidden", !pin);
+    this.element.classed("vzb-data-notes-pinned", pin);
     if (hookName != newHookName) this.setHook(newHookName);
-    this.element.select('.vzb-data-notes-body').node().scrollTop = 0;
+    this.element.select(".vzb-data-notes-body").node().scrollTop = 0;
     if (!showNotes) {
       return this.hide();
     } else {

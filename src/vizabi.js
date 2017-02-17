@@ -1,11 +1,11 @@
-import requireAll from 'helpers/requireAll';
-import * as utils from 'base/utils';
-import Tool from 'base/tool';
-import Component from 'base/component';
-import Model from 'base/model';
-import Reader from 'base/reader';
-import Events from 'base/events';
-import globals from 'base/globals';
+import requireAll from "helpers/requireAll";
+import * as utils from "base/utils";
+import Tool from "base/tool";
+import Component from "base/component";
+import Model from "base/model";
+import Reader from "base/reader";
+import Events from "base/events";
+import globals from "base/globals";
 
 var Vzb = function(name, placeholder, external_model) {
   var tool = Tool.get(name);
@@ -37,14 +37,14 @@ Vzb.clearInstances = function(id) {
 };
 
 //available readers = all
-const readers = requireAll(require.context('./readers', true, /\.js$/));
+const readers = requireAll(require.context("./readers", true, /\.js$/));
 
 //register available readers
 utils.forEach(readers, function(reader, name) {
   Reader.register(name, reader);
 });
 
-const components = requireAll(require.context('./components', true, /\.js$/), 1);
+const components = requireAll(require.context("./components", true, /\.js$/), 1);
 
 //register available components
 utils.forEach(components, function(component, name) {
@@ -54,8 +54,8 @@ utils.forEach(components, function(component, name) {
 
 //d3 addons
 
-import genericLog from 'helpers/d3.genericLogScale';
-import { onTap, onLongTap } from 'helpers/d3.touchEvents';
+import genericLog from "helpers/d3.genericLogScale";
+import { onTap, onLongTap } from "helpers/d3.touchEvents";
 //import * as touchFixes from 'helpers/d3.touchFixes';
 
 //d3 v3 -> v4

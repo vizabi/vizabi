@@ -1,11 +1,11 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
+import * as utils from "base/utils";
+import Component from "base/component";
 
-import axisSmart from 'helpers/d3.axisWithLabelPicker';
+import axisSmart from "helpers/d3.axisWithLabelPicker";
 
 import {
   question as iconQuestion
-} from 'base/iconset';
+} from "base/iconset";
 
 /*!
  * VIZABI POP BY AGE Component
@@ -22,8 +22,8 @@ var AgePyramid = Component.extend({
    * @param {Object} context The component's parent
    */
   init(config, context) {
-    this.name = 'agepyramid';
-    this.template = require('./agepyramid.html');
+    this.name = "agepyramid";
+    this.template = require("./agepyramid.html");
 
     //define expected models for this component
     this.model_expects = [{
@@ -200,21 +200,21 @@ var AgePyramid = Component.extend({
 
     this.interaction = this._interaction();
 
-    this.graph = this.element.select('.vzb-bc-graph');
-    this.yAxisEl = this.graph.select('.vzb-bc-axis-y');
-    this.xAxisEl = this.graph.select('.vzb-bc-axis-x');
-    this.xAxisLeftEl = this.graph.select('.vzb-bc-axis-x-left');
-    this.xTitleEl = this.element.select('.vzb-bc-axis-x-title');
-    this.xInfoEl = this.element.select('.vzb-bc-axis-x-info');
-    this.yTitleEl = this.graph.select('.vzb-bc-axis-y-title');
-    this.barsCrop = this.graph.select('.vzb-bc-bars-crop');
-    this.labelsCrop = this.graph.select('.vzb-bc-labels-crop');
-    this.bars = this.graph.select('.vzb-bc-bars');
-    this.labels = this.graph.select('.vzb-bc-labels');
+    this.graph = this.element.select(".vzb-bc-graph");
+    this.yAxisEl = this.graph.select(".vzb-bc-axis-y");
+    this.xAxisEl = this.graph.select(".vzb-bc-axis-x");
+    this.xAxisLeftEl = this.graph.select(".vzb-bc-axis-x-left");
+    this.xTitleEl = this.element.select(".vzb-bc-axis-x-title");
+    this.xInfoEl = this.element.select(".vzb-bc-axis-x-info");
+    this.yTitleEl = this.graph.select(".vzb-bc-axis-y-title");
+    this.barsCrop = this.graph.select(".vzb-bc-bars-crop");
+    this.labelsCrop = this.graph.select(".vzb-bc-labels-crop");
+    this.bars = this.graph.select(".vzb-bc-bars");
+    this.labels = this.graph.select(".vzb-bc-labels");
 
-    this.title = this.element.select('.vzb-bc-title');
-    this.titleRight = this.element.select('.vzb-bc-title-right');
-    this.year = this.element.select('.vzb-bc-year');
+    this.title = this.element.select(".vzb-bc-title");
+    this.titleRight = this.element.select(".vzb-bc-title-right");
+    this.year = this.element.select(".vzb-bc-year");
 
     this.on("resize", function() {
       _this._updateEntities();
@@ -371,7 +371,7 @@ var AgePyramid = Component.extend({
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
       var toolRect = _this.root.element.getBoundingClientRect();
       var chartRect = _this.element.node().getBoundingClientRect();
-      _this.parent.findChildByName("gapminder-datanotes").setHook('axis_x').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
+      _this.parent.findChildByName("gapminder-datanotes").setHook("axis_x").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
     });
     this.xInfoEl.on("mouseout", function() {
        if (_this.model.time.dragging) return;
@@ -639,7 +639,7 @@ var AgePyramid = Component.extend({
 
     if (nextStep) ageBars.push(outAge);
 
-    this.entityBars = this.bars.selectAll('.vzb-bc-bar')
+    this.entityBars = this.bars.selectAll(".vzb-bc-bar")
       .data(ageBars, function(d) {return d[ageDim];});
     //exit selection
     this.entityBars.exit().remove();
@@ -663,7 +663,7 @@ var AgePyramid = Component.extend({
     //   })
 
 
-    this.sideBars = this.entityBars.selectAll('.vzb-bc-side').data(function(d) {
+    this.sideBars = this.entityBars.selectAll(".vzb-bc-side").data(function(d) {
       return _this.sideKeys.map(function(m) {
         var r = {};
         r[ageDim] = d[ageDim];
@@ -693,7 +693,7 @@ var AgePyramid = Component.extend({
 
     var _attributeUpdaters = this._attributeUpdaters;
 
-    this.stackBars = this.sideBars.selectAll('.vzb-bc-stack').data(function(d, i) {
+    this.stackBars = this.sideBars.selectAll(".vzb-bc-stack").data(function(d, i) {
       var stacks = _this.stacked ? _this.stackKeys : [_this.totalFieldName];
       return stacks.map(function(m) {
         var r = {};
@@ -793,7 +793,7 @@ var AgePyramid = Component.extend({
         .attr("x", _attributeUpdaters._newX);
     }
 
-    this.entityLabels = this.labels.selectAll('.vzb-bc-label')
+    this.entityLabels = this.labels.selectAll(".vzb-bc-label")
       .data(markers);
     //exit selection
     this.entityLabels.exit().remove();
@@ -803,7 +803,7 @@ var AgePyramid = Component.extend({
       .attr("id", function(d) {
         return "vzb-bc-label-" + d[shiftedAgeDim] + "-" + _this._id;
       })
-      .append('text')
+      .append("text")
       .attr("class", "vzb-bc-age")
       .merge(this.entityLabels)
       .each(function(d, i) {
@@ -870,7 +870,7 @@ var AgePyramid = Component.extend({
 
     if (!_this.someHighlighted) {
       //hide labels
-      _this.labels.selectAll('.vzb-hovered').classed('vzb-hovered', false);
+      _this.labels.selectAll(".vzb-hovered").classed("vzb-hovered", false);
     }
   },
 
@@ -884,7 +884,7 @@ var AgePyramid = Component.extend({
 
     var left = _this.sideKeys.indexOf(d[sideDim]);
     var label = _this.labels.select("#vzb-bc-label-" + d[shiftedAgeDim] + "-" + _this._id);
-    label.selectAll('.vzb-bc-age')
+    label.selectAll(".vzb-bc-age")
       .text(function(textData) {
         //var total = _this.ui.chart.inpercent ? _this.totalValues[d[sideDim]] : 1;
         var text = _this.stackKeys.length > 1 ? _this.stackItems[d[stackDim]] : textData.text;
@@ -896,7 +896,7 @@ var AgePyramid = Component.extend({
       .attr("x", (left ? -1 : 1) * (_this.activeProfile.centerWidth * 0.5 + 7))
       .classed("vzb-text-left", left);
 
-    label.classed('vzb-hovered', true);
+    label.classed("vzb-hovered", true);
   },
 
   /**
@@ -1084,12 +1084,12 @@ var AgePyramid = Component.extend({
     this.labels.attr("transform", "translate(" + translateX + ",0)");
 
     this.title
-      .attr('x', margin.left + (this.twoSided ? translateX - this.activeProfile.titlesSpacing : 0))
-      .style('text-anchor', this.twoSided ? "end" : "")
-      .attr('y', margin.top * 0.7);
+      .attr("x", margin.left + (this.twoSided ? translateX - this.activeProfile.titlesSpacing : 0))
+      .style("text-anchor", this.twoSided ? "end" : "")
+      .attr("y", margin.top * 0.7);
     this.titleRight
-      .attr('x', margin.left + translateX + this.activeProfile.titlesSpacing)
-      .attr('y', margin.top * 0.7);
+      .attr("x", margin.left + translateX + this.activeProfile.titlesSpacing)
+      .attr("y", margin.top * 0.7);
 
     this.xTitleEl
       .style("font-size", infoElHeight + "px")
@@ -1098,21 +1098,21 @@ var AgePyramid = Component.extend({
     //   .attr('x', margin.left / 2)
     //   .attr('y', margin.top / 2);
 
-    if (this.xInfoEl.select('svg').node()) {
+    if (this.xInfoEl.select("svg").node()) {
       var titleBBox = this.xTitleEl.node().getBBox();
       var t = utils.transform(this.xTitleEl.node());
       var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
-      this.xInfoEl.select('svg')
+      this.xInfoEl.select("svg")
         .attr("width", infoElHeight + "px")
         .attr("height", infoElHeight + "px");
-      this.xInfoEl.attr('transform', 'translate('
-        + hTranslate + ','
-        + (t.translateY - infoElHeight * 0.8) + ')');
+      this.xInfoEl.attr("transform", "translate("
+        + hTranslate + ","
+        + (t.translateY - infoElHeight * 0.8) + ")");
     }
 
 
-    this.year.attr('x', this.width + margin.left).attr('y', margin.top * 0.4);
+    this.year.attr("x", this.width + margin.left).attr("y", margin.top * 0.4);
 
   },
 

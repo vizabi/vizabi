@@ -1,13 +1,13 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import Labels from 'helpers/labels';
+import * as utils from "base/utils";
+import Component from "base/component";
+import Labels from "helpers/labels";
 import {
   warn as iconWarn,
   question as iconQuestion
-} from 'base/iconset';
+} from "base/iconset";
 
-import DynamicBackground from 'helpers/d3.dynamicBackground';
-import globals from 'base/globals';
+import DynamicBackground from "helpers/d3.dynamicBackground";
+import globals from "base/globals";
 import MapEngine from "tools/lbubblemap/bubblemap-map";
 
 //import Selectlist from 'bubblemap-selectlist';
@@ -21,8 +21,8 @@ var LBubbleMapComponent = Component.extend({
    * @param {Object} context The component's parent
    */
   init(config, context) {
-    this.name = 'bubblemap';
-    this.template = require('./bubblemap.html');
+    this.name = "bubblemap";
+    this.template = require("./bubblemap.html");
     this.bubblesDrawing = null;
 
 
@@ -70,7 +70,7 @@ var LBubbleMapComponent = Component.extend({
           _this.ready();
         }
       },
-      'change:marker.size.extent': function(evt, path) {
+      "change:marker.size.extent": function(evt, path) {
         //console.log("EVENT change:marker:size:max");
         if (!_this._readyOnce || !_this.entityBubbles) return;
         _this.updateMarkerSizeLimits();
@@ -110,9 +110,9 @@ var LBubbleMapComponent = Component.extend({
     this._labels = new Labels(this);
 
     this._labels.config({
-      CSS_PREFIX: 'vzb-bmc',
-      LABELS_CONTAINER_CLASS: 'vzb-bmc-labels',
-      LINES_CONTAINER_CLASS: 'vzb-bmc-lines',
+      CSS_PREFIX: "vzb-bmc",
+      LABELS_CONTAINER_CLASS: "vzb-bmc-labels",
+      LINES_CONTAINER_CLASS: "vzb-bmc-lines",
       SUPPRESS_HIGHLIGHT_DURING_PLAY: false
     });
   },
@@ -124,11 +124,11 @@ var LBubbleMapComponent = Component.extend({
   readyOnce() {
     this.element = d3.select(this.element);
 
-    this.graph = this.element.select('.vzb-bmc-graph');
+    this.graph = this.element.select(".vzb-bmc-graph");
 
-    this.bubbleContainerCrop = this.graph.select('.vzb-bmc-bubbles-crop');
-    this.bubbleContainer = this.graph.select('.vzb-bmc-bubbles');
-    this.labelListContainer = this.graph.select('.vzb-bmc-bubble-labels');
+    this.bubbleContainerCrop = this.graph.select(".vzb-bmc-bubbles-crop");
+    this.bubbleContainer = this.graph.select(".vzb-bmc-bubbles");
+    this.labelListContainer = this.graph.select(".vzb-bmc-bubble-labels");
     this.dataWarningEl = this.graph.select(".vzb-data-warning");
 
     this.yTitleEl = this.graph.select(".vzb-bmc-axis-y-title");
@@ -137,12 +137,12 @@ var LBubbleMapComponent = Component.extend({
     this.cInfoEl = this.graph.select(".vzb-bmc-axis-c-info");
 
     this.entityBubbles = null;
-    this.tooltip = this.element.select('.vzb-bmc-tooltip');
+    this.tooltip = this.element.select(".vzb-bmc-tooltip");
 
     // year background
-    this.yearEl = this.graph.select('.vzb-bmc-year');
+    this.yearEl = this.graph.select(".vzb-bmc-year");
     this.year = new DynamicBackground(this.yearEl);
-    this.year.setConditions({ xAlign: 'left', yAlign: 'bottom' });
+    this.year.setConditions({ xAlign: "left", yAlign: "bottom" });
 
     var _this = this;
     this.on("resize", function() {
@@ -275,7 +275,7 @@ var LBubbleMapComponent = Component.extend({
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
       var toolRect = _this.root.element.getBoundingClientRect();
       var chartRect = _this.element.node().getBoundingClientRect();
-      _this.parent.findChildByName("gapminder-datanotes").setHook('size').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
+      _this.parent.findChildByName("gapminder-datanotes").setHook("size").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
     });
     this.yInfoEl.on("mouseout", function() {
       _this.parent.findChildByName("gapminder-datanotes").hide();
@@ -294,7 +294,7 @@ var LBubbleMapComponent = Component.extend({
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
       var toolRect = _this.root.element.getBoundingClientRect();
       var chartRect = _this.element.node().getBoundingClientRect();
-      _this.parent.findChildByName("gapminder-datanotes").setHook('color').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
+      _this.parent.findChildByName("gapminder-datanotes").setHook("color").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
     });
     this.cInfoEl.on("mouseout", function() {
       _this.parent.findChildByName("gapminder-datanotes").hide();
@@ -345,7 +345,7 @@ var LBubbleMapComponent = Component.extend({
           .text(this.translator("buttons/color") + ": " + this.strings.title.C);
 
       this.yInfoEl.classed("vzb-hidden", false);
-      this.cInfoEl.classed("vzb-hidden", false || this.cTitleEl.classed('vzb-hidden'));
+      this.cInfoEl.classed("vzb-hidden", false || this.cTitleEl.classed("vzb-hidden"));
     }
   },
 
@@ -464,7 +464,7 @@ var LBubbleMapComponent = Component.extend({
      */
 
 
-    this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bmc-bubble')
+    this.entityBubbles = this.bubbleContainer.selectAll(".vzb-bmc-bubble")
         .data(this.model.marker.getVisible(), function(d) { return d[KEY]; })
         .order();
 
@@ -602,7 +602,7 @@ var LBubbleMapComponent = Component.extend({
     var cTitleText = this.cTitleEl.select("text");
 
     var yTitleBB = yTitleText.node().getBBox();
-    var cTitleBB = this.cTitleEl.classed('vzb-hidden') ? yTitleBB : cTitleText.node().getBBox();
+    var cTitleBB = this.cTitleEl.classed("vzb-hidden") ? yTitleBB : cTitleText.node().getBBox();
 
     var font =
         Math.max(parseInt(yTitleText.style("font-size")), parseInt(cTitleText.style("font-size")))
@@ -710,32 +710,32 @@ var LBubbleMapComponent = Component.extend({
         .attr("transform", "translate(" + (this.width) + "," + (this.height - warnBB.height * 0.5) + ")")
         .select("text");
 
-    if (this.yInfoEl.select('svg').node()) {
+    if (this.yInfoEl.select("svg").node()) {
       var titleBBox = this.yTitleEl.node().getBBox();
       var t = utils.transform(this.yTitleEl.node());
       var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
-      this.yInfoEl.select('svg')
+      this.yInfoEl.select("svg")
           .attr("width", infoElHeight)
           .attr("height", infoElHeight);
-      this.yInfoEl.attr('transform', 'translate('
-          + hTranslate + ','
-          + (t.translateY - infoElHeight * 0.8) + ')');
+      this.yInfoEl.attr("transform", "translate("
+          + hTranslate + ","
+          + (t.translateY - infoElHeight * 0.8) + ")");
     }
 
     this.cInfoEl.classed("vzb-hidden", this.cTitleEl.classed("vzb-hidden"));
 
-    if (!this.cInfoEl.classed("vzb-hidden") && this.cInfoEl.select('svg').node()) {
+    if (!this.cInfoEl.classed("vzb-hidden") && this.cInfoEl.select("svg").node()) {
       var titleBBox = this.cTitleEl.node().getBBox();
       var t = utils.transform(this.cTitleEl.node());
       var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
-      this.cInfoEl.select('svg')
+      this.cInfoEl.select("svg")
           .attr("width", infoElHeight)
           .attr("height", infoElHeight);
-      this.cInfoEl.attr('transform', 'translate('
-          + hTranslate + ','
-          + (t.translateY - infoElHeight * 0.8) + ')');
+      this.cInfoEl.attr("transform", "translate("
+          + hTranslate + ","
+          + (t.translateY - infoElHeight * 0.8) + ")");
     }
   },
 
@@ -894,7 +894,7 @@ var LBubbleMapComponent = Component.extend({
           .selectAll("text")
           .text(tooltipText);
 
-      var contentBBox = this.tooltip.select('text').node().getBBox();
+      var contentBBox = this.tooltip.select("text").node().getBBox();
       if (x - xOffset - contentBBox.width < 0) {
         xSign = 1;
         x += contentBBox.width + 5; // corrective to the block Radius and text padding
@@ -917,7 +917,7 @@ var LBubbleMapComponent = Component.extend({
       this.tooltip.attr("transform", "translate(" + (xPos ? xPos : mouse[0]) + "," + (yPos ? yPos : mouse[1]) +
           ")");
 
-      this.tooltip.select('rect').attr("width", contentBBox.width + 8)
+      this.tooltip.select("rect").attr("width", contentBBox.width + 8)
           .attr("height", contentBBox.height * 1.2)
           .attr("x", -contentBBox.width - 4)
           .attr("y", -contentBBox.height * 0.85)

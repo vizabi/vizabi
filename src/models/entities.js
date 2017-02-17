@@ -1,5 +1,5 @@
-import * as utils from 'base/utils';
-import DataConnected from 'models/dataconnected';
+import * as utils from "base/utils";
+import DataConnected from "models/dataconnected";
 
 /*!
  * VIZABI Entities Model
@@ -19,8 +19,8 @@ var EntitiesModel = DataConnected.extend({
     return utils.deepExtend(this._super(), defaults);
   },
 
-  objectLeafs: ['show', 'autogenerate'],
-  dataConnectedChildren: ['show', 'dim'],
+  objectLeafs: ["show", "autogenerate"],
+  dataConnectedChildren: ["show", "dim"],
 
   /**
    * Initializes the entities model.
@@ -76,8 +76,8 @@ var EntitiesModel = DataConnected.extend({
     var showArray = [];
 
     // get array from show
-    if (this.show[dimension] && this.show[dimension]['$in'] && utils.isArray(this.show[dimension]['$in']))
-      showArray = this.show[dimension]['$in'];
+    if (this.show[dimension] && this.show[dimension]["$in"] && utils.isArray(this.show[dimension]["$in"]))
+      showArray = this.show[dimension]["$in"];
 
     utils.forEach(_d, d => {
       var value = d[dimension];
@@ -91,7 +91,7 @@ var EntitiesModel = DataConnected.extend({
     if (showArray.length === 0)
       delete newShow[dimension];
     else
-      newShow[dimension] = { '$in': showArray };
+      newShow[dimension] = { "$in": showArray };
 
     this.show = newShow;
   },
@@ -102,7 +102,7 @@ var EntitiesModel = DataConnected.extend({
    */
   isShown(d) {
     var dimension = this.getDimension();
-    return this.show[dimension] && this.show[dimension]['$in'] && this.show[dimension]['$in'].indexOf(d[dimension]) !== -1;
+    return this.show[dimension] && this.show[dimension]["$in"] && this.show[dimension]["$in"].indexOf(d[dimension]) !== -1;
   },
 
   /**
@@ -117,8 +117,8 @@ var EntitiesModel = DataConnected.extend({
 
   getFilteredEntities() {
     var dimension = this.getDimension();
-    if (this.show[dimension] && this.show[dimension]['$in'] && utils.isArray(this.show[dimension]['$in'])) {
-      var showArray = this.show[dimension]['$in'];
+    if (this.show[dimension] && this.show[dimension]["$in"] && utils.isArray(this.show[dimension]["$in"])) {
+      var showArray = this.show[dimension]["$in"];
       return showArray.map(m => {
         var _m = {};
         _m[dimension] = m;

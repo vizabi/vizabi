@@ -1,13 +1,13 @@
-import * as utils from 'base/utils';
-import Model from 'base/model';
-import Component from 'base/component';
-import { warn as warnIcon } from 'base/iconset';
-import EventSource, { DefaultEvent } from 'base/events';
+import * as utils from "base/utils";
+import Model from "base/model";
+import Component from "base/component";
+import { warn as warnIcon } from "base/iconset";
+import EventSource, { DefaultEvent } from "base/events";
 
-var class_loading_first = 'vzb-loading-first';
-var class_loading_data = 'vzb-loading-data';
-var class_placeholder = 'vzb-placeholder';
-var class_buttons_off = 'vzb-buttonlist-off';
+var class_loading_first = "vzb-loading-first";
+var class_loading_data = "vzb-loading-data";
+var class_placeholder = "vzb-placeholder";
+var class_buttons_off = "vzb-buttonlist-off";
 
 var templates = {};
 
@@ -19,8 +19,8 @@ var ToolModel = Model.extend({
    * @param {Object} values The initial values of this model
    */
   init(tool, external_model) {
-    this._id = utils.uniqueId('tm');
-    this._type = 'tool';
+    this._id = utils.uniqueId("tm");
+    this._type = "tool";
     this._component = tool;
 
     // defaults are defined on the Tool
@@ -55,7 +55,7 @@ var ToolModel = Model.extend({
       var model2 = JSON.stringify(_this.getPlainObject());
 
       if (c >= max) {
-        utils.error('Max validation loop.');
+        utils.error("Max validation loop.");
       } else if (model !== model2) {
         validate_func(c++);
       }
@@ -75,7 +75,7 @@ var Tool = Component.extend({
    * @param {Object} external_model External model such as state, data, etc
    */
   init(placeholder, external_model) {
-    this._id = utils.uniqueId('t');
+    this._id = utils.uniqueId("t");
 
     this.template = this.getToolTemplate();
 
@@ -103,29 +103,29 @@ var Tool = Component.extend({
       '<div class="vzb-tool vzb-tool-' + this.name + '">' +
         '<div class="vzb-tool-stage">' +
           '<div class="vzb-tool-viz">' +
-          '</div>' +
+          "</div>" +
           '<div class="vzb-tool-time-speed-sliders">' +
             '<div class="vzb-tool-timeslider">' +
-            '</div>' +
+            "</div>" +
             '<div class="vzb-tool-stepped-speed-slider">' +
-            '</div>' +
-          '</div>' +
-        '</div>' +
+            "</div>" +
+          "</div>" +
+        "</div>" +
         '<div class="vzb-tool-sidebar">' +
           '<div class="vzb-tool-dialogs">' +
-          '</div>' +
+          "</div>" +
           '<div class="vzb-tool-buttonlist">' +
-          '</div>' +
-        '</div>' +
+          "</div>" +
+        "</div>" +
         '<div class="vzb-tool-datanotes vzb-hidden">' +
-        '</div>' +
+        "</div>" +
         '<div class="vzb-tool-treemenu vzb-hidden">' +
-        '</div>' +
+        "</div>" +
         '<div class="vzb-tool-datawarning vzb-hidden">' +
-        '</div>' +
+        "</div>" +
         '<div class="vzb-tool-labels vzb-hidden">' +
-        '</div>' +
-      '</div>';
+        "</div>" +
+      "</div>";
   },
 
   getToolListeners() {
@@ -133,29 +133,29 @@ var Tool = Component.extend({
     return utils.extend(
       this.model_binds,
       {
-        'change': function(evt, path) {
+        "change": function(evt, path) {
           if (_this._ready) {
             _this.model.validate();
 
             if (evt.source.persistent)
-              _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'));
+              _this.model.trigger(new DefaultEvent(evt.source, "persistentChange"));
           }
         },
-        'hook_change': function() {
+        "hook_change": function() {
           if (!_this.model.state.time.splash) { // not block when it initial splash screen
             _this.beforeLoading();
           }
         },
-        'resize:ui': function() {
+        "resize:ui": function() {
           if (_this._ready) {
             _this.triggerResize();
           }
         },
-        'translate:locale': function() {
+        "translate:locale": function() {
           _this.translateStrings();
           _this.model.ui.setRTL(_this.model.locale.isRTL());
         },
-        'load_error': (...args) => {
+        "load_error": (...args) => {
           this.renderError();
           this.error(...args);
         }
@@ -168,7 +168,7 @@ var Tool = Component.extend({
   },
 
   triggerResize: utils.throttle(function() {
-    this.trigger('resize');
+    this.trigger("resize");
   }, 100),
 
   startLoading() {
@@ -210,11 +210,11 @@ var Tool = Component.extend({
     //try to find functions in properties of model.
     var removeFunctions = function(model) {
       for (var childKey in model) {
-        if (typeof model[childKey] === 'function') {
+        if (typeof model[childKey] === "function") {
           delete model[childKey];
-          utils.warn('minModel validation. Function found in enumerable properties of ' + childKey + ". This key is deleted from minModel");
+          utils.warn("minModel validation. Function found in enumerable properties of " + childKey + ". This key is deleted from minModel");
         }
-        else if (typeof model[childKey] === 'object')
+        else if (typeof model[childKey] === "object")
           removeFunctions(model[childKey]);
       }
     };
@@ -248,9 +248,9 @@ var Tool = Component.extend({
    */
   error(options, message) {
     if (!message) {
-      message = options && options.type === 'data' ?
-        'Error loading chart data. <br>Please, try again later.' :
-        'Error loading chart';
+      message = options && options.type === "data" ?
+        "Error loading chart data. <br>Please, try again later." :
+        "Error loading chart";
     }
 
     this.placeholder.innerHTML = `<div class="vzb-error-message"><h1>${warnIcon}</h1><p>${message}</p></div>`;

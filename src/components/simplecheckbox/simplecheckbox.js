@@ -1,4 +1,4 @@
-import Component from 'base/component';
+import Component from "base/component";
 
 export default Component.extend({
 
@@ -6,7 +6,7 @@ export default Component.extend({
     this.template =
       '<span class="vzb-sc-holder vzb-dialog-checkbox"><input type="checkbox"><label></label></span>';
     var _this = this;
-    this.name = 'gapminder-simplecheckbox';
+    this.name = "gapminder-simplecheckbox";
 
     this.checkbox = config.checkbox;
     this.submodel = config.submodel;
@@ -29,7 +29,7 @@ export default Component.extend({
       }
     };
 
-    var submodel = (this.submodel) ? this.submodel + ':' : '';
+    var submodel = (this.submodel) ? this.submodel + ":" : "";
     this.model_binds["change:mdl." + submodel + this.checkbox] = function() {
       _this.updateView();
     };
@@ -47,8 +47,8 @@ export default Component.extend({
     var _this = this;
     this.element = d3.select(this.element);
     var id = "-check-" + _this._id;
-    this.labelEl = this.element.select('label').attr("for", id);
-    this.checkEl = this.element.select('input').attr("id", id)
+    this.labelEl = this.element.select("label").attr("for", id);
+    this.checkEl = this.element.select("input").attr("id", id)
       .on("change", function() {
         _this._setModel(d3.select(this).property("checked"));
       });

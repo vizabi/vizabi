@@ -1,6 +1,6 @@
-import * as utils from 'base/utils';
-import Dialog from 'components/dialogs/_dialog';
-import globals from 'base/globals';
+import * as utils from "base/utils";
+import Dialog from "components/dialogs/_dialog";
+import globals from "base/globals";
 
 /*
  * Size dialog
@@ -14,7 +14,7 @@ var About = Dialog.extend({
  * @param context component context (parent)
  */
 init(config, parent) {
-  this.name = 'about';
+  this.name = "about";
 
   this._super(config, parent);
 },

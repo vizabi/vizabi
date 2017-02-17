@@ -1,7 +1,7 @@
 //d3.svg.dynamicBackground
 
 
-import Class from 'base/class';
+import Class from "base/class";
 
 export default Class.extend({
 
@@ -17,9 +17,9 @@ export default Class.extend({
     this.textHeight = 0;
     this.widthRatio = 0.9;
     this.heightRatio = 0.9;
-    this.xAlign = 'center';
-    this.yAlign = 'center';
-    this.element = this.context.append('text').style("font-size", '20px');
+    this.xAlign = "center";
+    this.yAlign = "center";
+    this.element = this.context.append("text").style("font-size", "20px");
 
     if (conditions) {
       this.setConditions(conditions);
@@ -61,7 +61,7 @@ export default Class.extend({
     ] = [
       width,
       height
-    ].map(v => Number(String(v).replace('px', '')));
+    ].map(v => Number(String(v).replace("px", "")));
 
     if (topOffset) {
       this.topOffset = topOffset;
@@ -98,9 +98,9 @@ export default Class.extend({
     this.textWidth = bbox.width * this.scalar;
 
     switch (this.yAlign) {
-      case 'bottom': this.context.select("text").attr("dy", ".325em"); break;
-      case 'center': this.context.select("text").attr("dy", ".325em"); break;
-      case 'top': this.context.select("text").attr("dy", "0"); break;
+      case "bottom": this.context.select("text").attr("dy", ".325em"); break;
+      case "center": this.context.select("text").attr("dy", ".325em"); break;
+      case "top": this.context.select("text").attr("dy", "0"); break;
     }
 
     this.context.attr("transform", "translate(" + this._getLeftOffset() + "," + this._getTopOffset() + ")");
@@ -110,9 +110,9 @@ export default Class.extend({
 
   _getLeftOffset() {
     switch (this.xAlign) {
-      case 'right':
+      case "right":
         return this.width - this.textWidth / 2 - this.rightOffset;
-      case 'left':
+      case "left":
         return this.textWidth / 2 + this.leftOffset;
       default :
         return this.width / 2;
@@ -121,9 +121,9 @@ export default Class.extend({
 
   _getTopOffset() {
     switch (this.yAlign) {
-      case 'top':
+      case "top":
         return this.textHeight / 2 + this.topOffset;
-      case 'bottom':
+      case "bottom":
         return this.height - this.textHeight / 2 - this.bottomOffset;
       default :
         return this.height / 2;

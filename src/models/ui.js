@@ -1,12 +1,12 @@
-import * as utils from 'base/utils';
-import Model from 'base/model';
+import * as utils from "base/utils";
+import Model from "base/model";
 
 //classes are vzb-portrait, vzb-landscape...
-var class_prefix = 'vzb-';
-var class_presentation = 'presentation';
-var class_rtl = 'rtl';
-var class_portrait = 'vzb-portrait';
-var class_landscape = 'vzb-landscape';
+var class_prefix = "vzb-";
+var class_presentation = "presentation";
+var class_rtl = "rtl";
+var class_portrait = "vzb-portrait";
+var class_landscape = "vzb-landscape";
 
 var UI = Model.extend({
 
@@ -44,7 +44,7 @@ var UI = Model.extend({
    */
   init(name, values, parent, bind) {
 
-    this._type = 'ui';
+    this._type = "ui";
     this._container = null;
     //dom element
     this._curr_profile = null;
@@ -52,8 +52,8 @@ var UI = Model.extend({
 
     //resize when window resizes
     this.resizeHandler = this.resizeHandler.bind(this);
-    window.addEventListener('resize', this.resizeHandler);
-    bind['change:presentation'] = this.updatePresentation.bind(this);
+    window.addEventListener("resize", this.resizeHandler);
+    bind["change:presentation"] = this.updatePresentation.bind(this);
 
     this._super(name, values, parent, bind);
   },
@@ -114,7 +114,7 @@ var UI = Model.extend({
 
     this._prev_size.width = width;
     this._prev_size.height = height;
-    this.trigger('resize');
+    this.trigger("resize");
   },
 
   /**
@@ -133,7 +133,7 @@ var UI = Model.extend({
    */
   updatePresentation() {
     utils.classed(this._container, class_prefix + class_presentation, this.presentation);
-    this.trigger('resize');
+    this.trigger("resize");
   },
 
   getPresentationMode() {
@@ -153,7 +153,7 @@ var UI = Model.extend({
   },
 
   clear() {
-    window.removeEventListener('resize', this.resizeHandler);
+    window.removeEventListener("resize", this.resizeHandler);
   }
 
 });

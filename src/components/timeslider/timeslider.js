@@ -1,5 +1,5 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
+import * as utils from "base/utils";
+import Component from "base/component";
 
 
 var precision = 1;
@@ -70,7 +70,7 @@ var TimeSlider = Component.extend({
   init(model, context) {
 
     this.name = "gapminder-timeslider";
-    this.template = this.template || require('./timeslider.html');
+    this.template = this.template || require("./timeslider.html");
     this.prevPosition = null;
     //define expected models/hooks for this component
     this.model_expects = [{
@@ -90,9 +90,9 @@ var TimeSlider = Component.extend({
     var _this = this;
     //binds methods to this model
     this.model_binds = {
-      'change:time': function(evt, path) {
+      "change:time": function(evt, path) {
         if (_this.slide) {
-          if ((['time.start', 'time.end']).indexOf(path) !== -1) {
+          if ((["time.start", "time.end"]).indexOf(path) !== -1) {
             if (!_this.xScale) return;
             _this.changeLimits();
           }
@@ -101,29 +101,29 @@ var TimeSlider = Component.extend({
           if (!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
-      'change:time.start': function(evt, path) {
+      "change:time.start": function(evt, path) {
         if (_this.slide) {
           //only set handle position if change is external
           if (!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
-      'change:time.end': function(evt, path) {
+      "change:time.end": function(evt, path) {
         if (_this.slide) {
           //only set handle position if change is external
           if (!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
-      'change:time.startSelected': function(evt, path) {
+      "change:time.startSelected": function(evt, path) {
         if (_this.slide) {
           _this.updateSelectedStartLimiter();
         }
       },
-      'change:time.endSelected': function(evt, path) {
+      "change:time.endSelected": function(evt, path) {
         if (_this.slide) {
           _this.updateSelectedEndLimiter();
         }
       },
-      'change:marker.select': function(evt, path) {
+      "change:marker.select": function(evt, path) {
         _this.setSelectedLimits();
       }
     };
@@ -170,7 +170,7 @@ var TimeSlider = Component.extend({
     this.progressBar = this.element.select(".vzb-ts-slider-progress");
     this.slide = this.element.select(".vzb-ts-slider-slide");
     this.handle = this.element.select(".vzb-ts-slider-handle");
-    this.valueText = this.element.select('.vzb-ts-slider-value');
+    this.valueText = this.element.select(".vzb-ts-slider-value");
     //Scale
     this.xScale = d3.time.scale.utc()
       .clamp(true);
@@ -234,7 +234,7 @@ var TimeSlider = Component.extend({
     }
 
     // special for linechart: resize timeslider to match time x-axis length
-    this.parent.on('myEvent', function(evt, arg) {
+    this.parent.on("myEvent", function(evt, arg) {
       var layoutProfile = _this.getLayoutProfile();
 
       if (arg.profile && arg.profile.margin) {
@@ -264,12 +264,12 @@ var TimeSlider = Component.extend({
     var _this = this;
     var time = this.model.time;
 
-    play.on('click', function() {
+    play.on("click", function() {
 
       _this.model.time.play();
     });
 
-    pause.on('click', function() {
+    pause.on("click", function() {
       _this.model.time.pause("soft");
     });
 
@@ -396,46 +396,46 @@ var TimeSlider = Component.extend({
 
   updateSelectedStartLimiter() {
     var _this = this;
-    this.select.select('#clip-start-' + _this._id).remove();
+    this.select.select("#clip-start-" + _this._id).remove();
     this.select.select(".selected-start").remove();
     if (this.model.time.startSelected && this.model.time.startSelected > this.model.time.start) {
       this.select.append("clipPath")
         .attr("id", "clip-start-" + _this._id)
-        .append('rect');
-      this.select.append('path')
+        .append("rect");
+      this.select.append("path")
         .attr("clip-path", "url(" + location.pathname + "#clip-start-" + _this._id + ")")
-        .classed('selected-start', true);
+        .classed("selected-start", true);
       this.resizeSelectedLimiters();
     }
   },
 
   updateSelectedEndLimiter() {
     var _this = this;
-    this.select.select('#clip-end-' + _this._id).remove();
+    this.select.select("#clip-end-" + _this._id).remove();
     this.select.select(".selected-end").remove();
     if (this.model.time.endSelected && this.model.time.endSelected < this.model.time.end) {
       this.select.append("clipPath")
         .attr("id", "clip-end-" + _this._id)
-        .append('rect');
-      this.select.append('path')
+        .append("rect");
+      this.select.append("path")
         .attr("clip-path", "url(" + location.pathname + "#clip-end-" + _this._id + ")")
-        .classed('selected-end', true);
+        .classed("selected-end", true);
       this.resizeSelectedLimiters();
     }
   },
 
   resizeSelectedLimiters() {
     var _this = this;
-    this.select.select('.selected-start')
-      .attr('d', "M0,0H" + this.xScale(this.model.time.startSelected));
-    this.select.select("#clip-start-" + _this._id).select('rect')
+    this.select.select(".selected-start")
+      .attr("d", "M0,0H" + this.xScale(this.model.time.startSelected));
+    this.select.select("#clip-start-" + _this._id).select("rect")
       .attr("x", -this.height / 2)
       .attr("y", -this.height / 2)
       .attr("height", this.height)
       .attr("width", this.xScale(this.model.time.startSelected) + this.height / 2);
-    this.select.select('.selected-end')
-      .attr('d', "M" + this.xScale(this.model.time.endSelected) + ",0H" + this.xScale(this.model.time.end));
-    this.select.select("#clip-end-" + _this._id).select('rect')
+    this.select.select(".selected-end")
+      .attr("d", "M" + this.xScale(this.model.time.endSelected) + ",0H" + this.xScale(this.model.time.end));
+    this.select.select("#clip-end-" + _this._id).select("rect")
       .attr("x", this.xScale(this.model.time.endSelected))
       .attr("y", -this.height / 2)
       .attr("height", this.height)
@@ -444,10 +444,10 @@ var TimeSlider = Component.extend({
 
   _resizeProgressBar() {
     var _this = this;
-    this.progressBar.selectAll('path')
+    this.progressBar.selectAll("path")
     .each(function(d) {
         d3.select(this)
-          .attr('d', "M" + _this.xScale(d[0]) + ",0H" + _this.xScale(d[1]));
+          .attr("d", "M" + _this.xScale(d[0]) + ",0H" + _this.xScale(d[1]));
       });
   },
 
@@ -496,15 +496,15 @@ var TimeSlider = Component.extend({
       _this.completedTimeFrames = [];
     }
 
-    var progress = this.progressBar.selectAll('path').data(_this.availableTimeFrames);
+    var progress = this.progressBar.selectAll("path").data(_this.availableTimeFrames);
     progress.exit().remove();
     progress.enter()
-      .append('path')
-      .attr('class', 'domain')
+      .append("path")
+      .attr("class", "domain")
       .merge(progress)
       .each(function(d) {
         var element = d3.select(this);
-        element.attr('d', "M" + _this.xScale(d[0]) + ",0H" + _this.xScale(d[1]))
+        element.attr("d", "M" + _this.xScale(d[0]) + ",0H" + _this.xScale(d[1]))
         .classed("rounded", _this.availableTimeFrames.length == 1);
 
       });
@@ -558,7 +558,7 @@ var TimeSlider = Component.extend({
         //set handle position
         _this.handle.attr("cx", posX);
         _this.valueText.attr("transform", "translate(" + posX + "," + (_this.height / 2) + ")");
-        _this.valueText.text(_this.model.time.formatDate(value, 'ui'));
+        _this.valueText.text(_this.model.time.formatDate(value, "ui"));
       }
 
       //set time according to dragged position
@@ -608,9 +608,9 @@ var TimeSlider = Component.extend({
         .attr("cx", new_pos);
 
       this.valueText.attr("transform", "translate(" + _this.prevPosition + "," + (this.height / 2) + ")")
-        .transition('text')
+        .transition("text")
         .delay(delayAnimations)
-        .text(this.model.time.formatDate(value, 'ui'));
+        .text(this.model.time.formatDate(value, "ui"));
       this.valueText
         .transition()
         .duration(delayAnimations)
@@ -625,11 +625,11 @@ var TimeSlider = Component.extend({
       this.valueText
         //cancel active transition
         .interrupt()
-        .interrupt('text')
-        .transition('text');
+        .interrupt("text")
+        .transition("text");
       this.valueText
         .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")")
-        .text(this.model.time.formatDate(value, 'ui'));
+        .text(this.model.time.formatDate(value, "ui"));
     }
     _this.prevPosition = new_pos;
 
@@ -649,7 +649,7 @@ var TimeSlider = Component.extend({
     //if (this._updTime != null && now - this._updTime < frameRate) return;
     //this._updTime = now;
     var persistent = !this.model.time.dragging && !this.model.time.playing;
-    _this.model.time.getModelObject('value').set(time, false, persistent); // non persistent
+    _this.model.time.getModelObject("value").set(time, false, persistent); // non persistent
   },
 
 

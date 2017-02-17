@@ -1,7 +1,7 @@
-import * as utils from 'base/utils';
-import Model from 'base/model';
-import Reader from 'base/reader';
-import EventSource from 'base/events';
+import * as utils from "base/utils";
+import Model from "base/model";
+import Reader from "base/reader";
+import EventSource from "base/events";
 
 /*
  * VIZABI Data Model (model.data)
@@ -67,10 +67,10 @@ var DataModel = Model.extend({
     if (dataId) {
       return Promise.resolve(dataId);
     } else {
-      utils.timeStamp('Vizabi Data: Loading Data');
+      utils.timeStamp("Vizabi Data: Loading Data");
       EventSource.freezeAll([
-        'hook_change',
-        'resize'
+        "hook_change",
+        "resize"
       ]);
       return this.loadFromReader(query, parsers)
         .then(dataId => {
@@ -169,7 +169,7 @@ var DataModel = Model.extend({
     // Create a new reader for this query
     var readerClass = Reader.get(this.reader);
     if (!readerClass) {
-      throw new Error('Unknown reader: ' + this.reader);
+      throw new Error("Unknown reader: " + this.reader);
     }
 
     return new readerClass({
@@ -213,8 +213,8 @@ var DataModel = Model.extend({
     if (!dataId) return utils.warn("Data.js 'get' method doesn't like the dataId you gave it: " + dataId);
 
     // if they want data, return the data
-    if (!what || what == 'data') {
-      return this._collection[dataId]['data'];
+    if (!what || what == "data") {
+      return this._collection[dataId]["data"];
     }
 
     // if they didn't give an instruction, give them the whole thing
@@ -232,19 +232,19 @@ var DataModel = Model.extend({
 
     // if it's not cached, process the data and then return it
     switch (what) {
-      case 'unique':
+      case "unique":
         this._collection[dataId][what][id] = this._getUnique(dataId, whatId);
         break;
-      case 'valid':
+      case "valid":
         this._collection[dataId][what][id] = this._getValid(dataId, whatId);
         break;
-      case 'limits':
+      case "limits":
         this._collection[dataId][what][id] = this._getLimits(dataId, whatId);
         break;
-      case 'nested':
+      case "nested":
         this._collection[dataId][what][id] = this._getNested(dataId, whatId);
         break;
-      case 'haveNoDataPointsPerKey':
+      case "haveNoDataPointsPerKey":
         //do nothing. no caching is available for this option, served directly from collection
         break;
     }
@@ -254,24 +254,24 @@ var DataModel = Model.extend({
   loadConceptProps() {
     const query = {
       select: {
-        key: ['concept'],
+        key: ["concept"],
         value: [
-          'concept_type',
-          'domain',
-          'indicator_url',
-          'color',
-          'scales',
-          'interpolation',
-          'tags',
-          'name',
-          'unit',
-          'description',
-          'format'
+          "concept_type",
+          "domain",
+          "indicator_url",
+          "color",
+          "scales",
+          "interpolation",
+          "tags",
+          "name",
+          "unit",
+          "description",
+          "format"
         ]
       },
-      from: 'concepts',
+      from: "concepts",
       where: {},
-      language: this.getClosestModel('locale').id,
+      language: this.getClosestModel("locale").id,
     };
 
     return this.load(query)
@@ -627,14 +627,14 @@ var DataModel = Model.extend({
       var entitiesByKey = {};
       if (KEY.length > 1) {
         for (k = 1; k < KEY.length; k++) {
-          var nested = _this.getData(dataId, 'nested', [KEY[k]].concat([TIME]));
+          var nested = _this.getData(dataId, "nested", [KEY[k]].concat([TIME]));
           entitiesByKey[KEY[k]] = Object.keys(nested);
         }
       }
 
       // We _nest_ the flat dataset in two levels: first by “key” (example: geo), then by “animatable” (example: year)
       // See the _getNested function for more details
-      var nested = _this.getData(dataId, 'nested', KEY.concat([TIME]));
+      var nested = _this.getData(dataId, "nested", KEY.concat([TIME]));
       keys = keys ? keys : Object.keys(nested);
       entitiesByKey[KEY[0]] = keys;
       // Get the list of columns that are in the dataset, exclude key column and animatable column
@@ -848,7 +848,7 @@ var DataModel = Model.extend({
       );
     }
 
-    return utils.nestArrayToObj(nest.entries(this._collection[dataId]['data']));
+    return utils.nestArrayToObj(nest.entries(this._collection[dataId]["data"]));
   },
 
 
@@ -901,10 +901,10 @@ var DataModel = Model.extend({
     var limits = {};
     for (var i = 0; i < filtered.length; i += 1) {
       var c = filtered[i];
-      if (typeof min === 'undefined' || c < min) {
+      if (typeof min === "undefined" || c < min) {
         min = c;
       }
-      if (typeof max === 'undefined' || c > max) {
+      if (typeof max === "undefined" || c > max) {
         max = c;
       }
     }
@@ -930,12 +930,12 @@ var DataModel = Model.extend({
 
   handleReaderError(error, query) {
     if (utils.isObject(error)) {
-      const locale = this.getClosestModel('locale');
-      const translation = locale.getTFunction()(error.code, error.payload) || '';
-      error = `${translation} ${error.message || ''}`.trim();
+      const locale = this.getClosestModel("locale");
+      const translation = locale.getTFunction()(error.code, error.payload) || "";
+      error = `${translation} ${error.message || ""}`.trim();
     }
 
-    utils.warn('Problem with query: ', query);
+    utils.warn("Problem with query: ", query);
     throw error;
   },
 

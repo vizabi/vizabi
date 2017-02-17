@@ -1,5 +1,5 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
+import * as utils from "base/utils";
+import Component from "base/component";
 
 
 /*!
@@ -43,9 +43,9 @@ var BubbleSize = Component.extend({
    */
   init(config, context) {
 
-    this.name = 'bubblesize';
+    this.name = "bubblesize";
 
-    this.template = this.template || require('./bubblesize.html');
+    this.template = this.template || require("./bubblesize.html");
 
     this.model_expects = [{
       name: "size",
@@ -54,10 +54,10 @@ var BubbleSize = Component.extend({
 
     var _this = this;
     this.model_binds = {
-      'change:size.domainMin': changeMinMaxHandler,
-      'change:size.domainMax': changeMinMaxHandler,
-      'change:size.extent': changeMinMaxHandler,
-      'ready': readyHandler
+      "change:size.domainMin": changeMinMaxHandler,
+      "change:size.domainMax": changeMinMaxHandler,
+      "change:size.extent": changeMinMaxHandler,
+      "ready": readyHandler
     };
 
     function changeMinMaxHandler(evt, path) {

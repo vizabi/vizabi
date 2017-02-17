@@ -1,6 +1,6 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import * as iconset from 'base/iconset';
+import * as utils from "base/utils";
+import Component from "base/component";
+import * as iconset from "base/iconset";
 
 /*!
  * VIZABI BUTTONLIST
@@ -28,7 +28,7 @@ var ButtonList = Component.extend({
 
     //set properties
     var _this = this;
-    this.name = this.name || 'gapminder-buttonlist';
+    this.name = this.name || "gapminder-buttonlist";
 //    this.template = '<div class="vzb-buttonlist"></div>';
 
     this.model_expects = [{
@@ -43,38 +43,38 @@ var ButtonList = Component.extend({
     }];
 
     this._available_buttons = {
-      'find': {
+      "find": {
         title: "buttons/find",
         icon: "search",
         required: false
       },
-      'show': {
+      "show": {
         title: "buttons/show",
         icon: "asterisk",
         required: false
       },
-      'moreoptions': {
+      "moreoptions": {
         title: "buttons/more_options",
         icon: "gear",
         required: true
       },
-      'colors': {
+      "colors": {
         title: "buttons/colors",
         icon: "paintbrush",
         required: false
       },
-      'size': {
+      "size": {
         title: "buttons/size",
         icon: "circle",
         required: false
       },
-      'fullscreen': {
+      "fullscreen": {
         title: "buttons/expand",
         icon: "expand",
         func: this.toggleFullScreen.bind(this),
         required: true
       },
-      'trails': {
+      "trails": {
         title: "buttons/trails",
         icon: "trails",
         func: this.toggleBubbleTrails.bind(this),
@@ -82,7 +82,7 @@ var ButtonList = Component.extend({
         statebind: "ui.chart.trails",
         statebindfunc: this.setBubbleTrails.bind(this)
       },
-      'lock': {
+      "lock": {
         title: "buttons/lock",
         icon: "lock",
         func: this.toggleBubbleLock.bind(this),
@@ -90,7 +90,7 @@ var ButtonList = Component.extend({
         statebind: "ui.chart.lockNonSelected",
         statebindfunc: this.setBubbleLock.bind(this)
       },
-      'inpercent': {
+      "inpercent": {
         title: "buttons/inpercent",
         icon: "percent",
         func: this.toggleInpercent.bind(this),
@@ -98,7 +98,7 @@ var ButtonList = Component.extend({
         statebind: "ui.chart.inpercent",
         statebindfunc: this.setInpercent.bind(this)
       },
-      'presentation': {
+      "presentation": {
         title: "buttons/presentation",
         icon: "presentation",
         func: this.togglePresentationMode.bind(this),
@@ -106,32 +106,32 @@ var ButtonList = Component.extend({
         statebind: "ui.presentation",
         statebindfunc: this.setPresentationMode.bind(this)
       },
-      'about': {
+      "about": {
         title: "buttons/about",
         icon: "about",
         required: false
       },
-      'axes': {
+      "axes": {
         title: "buttons/axes",
         icon: "axes",
         required: false
       },
-      'axesmc': {
+      "axesmc": {
         title: "buttons/axesmc",
         icon: "axes",
         required: false
       },
-      'stack': {
+      "stack": {
         title: "buttons/stack",
         icon: "stack",
         required: false
       },
-      'side': {
+      "side": {
         title: "buttons/side",
         icon: "side",
         required: false
       },
-      '_default': {
+      "_default": {
         title: "Button",
         icon: "asterisk",
         required: false
@@ -167,7 +167,7 @@ var ButtonList = Component.extend({
     config.ui.buttons.forEach(function(buttonId) {
       var button = _this._available_buttons[buttonId];
       if (button && button.statebind) {
-        _this.model_binds['change:' + button.statebind] = function(evt) {
+        _this.model_binds["change:" + button.statebind] = function(evt) {
           button.statebindfunc(buttonId, evt.source.value);
         };
       }
@@ -186,7 +186,7 @@ var ButtonList = Component.extend({
     this.element = d3.select(this.placeholder);
     this.element.selectAll("div").remove();
 
-    this.root.findChildByName("gapminder-dialogs").on('close', function(evt, params) {
+    this.root.findChildByName("gapminder-dialogs").on("close", function(evt, params) {
       _this.setButtonActive(params.id, false);
     });
 
@@ -239,9 +239,9 @@ var ButtonList = Component.extend({
 
       btn.classed(class_active, btn_active);
       var evt = {};
-      evt['id'] = id;
-      evt['active'] = btn_active;
-      _this.trigger('click', evt);
+      evt["id"] = id;
+      evt["active"] = btn_active;
+      _this.trigger("click", evt);
     }
   },
 
@@ -269,7 +269,7 @@ var ButtonList = Component.extend({
     var buttons = this.element.selectAll(".vzb-buttonlist-btn");
     buttons.each(function(d, i) {
       var button = d3.select(this);
-      button.style('display', '');
+      button.style("display", "");
     });
   },
 
@@ -307,7 +307,7 @@ var ButtonList = Component.extend({
       button_height = button.node().getBoundingClientRect().height + button_margin.top + button_margin.bottom;
 
       if (!button.classed(class_hidden)) {
-        if (!expandable || (_this.getLayoutProfile() !== 'large')) {
+        if (!expandable || (_this.getLayoutProfile() !== "large")) {
           buttons_width += button_width;
           buttons_height += button_height;
           //sort buttons between required and not required buttons.
@@ -361,8 +361,8 @@ var ButtonList = Component.extend({
     }
 
     var evt = {};
-    evt['hiddenButtons'] = hiddenButtons;
-    _this.trigger('toggle', evt);
+    evt["hiddenButtons"] = hiddenButtons;
+    _this.trigger("toggle", evt);
 
   },
 
@@ -394,19 +394,19 @@ var ButtonList = Component.extend({
 
     var t = this.getTranslationFunction(true);
 
-    this.element.selectAll('button').data(details_btns)
+    this.element.selectAll("button").data(details_btns)
       .enter().append("button")
-      .attr('class', function(d) {
-        var cls = 'vzb-buttonlist-btn';
+      .attr("class", function(d) {
+        var cls = "vzb-buttonlist-btn";
         if (button_expand.length > 0) {
           if (button_expand.indexOf(d.id) > -1) {
-            cls += ' vzb-dialog-side-btn';
+            cls += " vzb-dialog-side-btn";
           }
         }
 
         return cls;
       })
-      .attr('data-btn', function(d) {
+      .attr("data-btn", function(d) {
         return d.id;
       })
       .html(function(btn) {
@@ -418,7 +418,7 @@ var ButtonList = Component.extend({
     var buttons = this.element.selectAll(".vzb-buttonlist-btn");
 
     //clicking the button
-    buttons.on('click', function() {
+    buttons.on("click", function() {
 
       d3.event.preventDefault();
       d3.event.stopPropagation();
@@ -453,7 +453,7 @@ var ButtonList = Component.extend({
     //TODO: what to do when resizing?
 
     //toggle presentaion off is switch to 'small' profile
-    if (this.getLayoutProfile() === 'small' && this.model.ui.presentation) {
+    if (this.getLayoutProfile() === "small" && this.model.ui.presentation) {
       this.togglePresentationMode();
     }
 
@@ -527,7 +527,7 @@ var ButtonList = Component.extend({
   },
   setInpercent() {
     if (typeof ((this.model.ui.chart || {}).inpercent) == "undefined") return;
-    var id = 'inpercent';
+    var id = "inpercent";
     var translator = this.model.locale.getTFunction();
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
 
@@ -538,7 +538,7 @@ var ButtonList = Component.extend({
     this.setPresentationMode();
   },
   setPresentationMode() {
-    var id = 'presentation';
+    var id = "presentation";
     var translator = this.model.locale.getTFunction();
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
 
@@ -555,7 +555,7 @@ var ButtonList = Component.extend({
     var fs = !this.model.ui.fullscreen;
     var body_overflow = (fs) ? "hidden" : this._prev_body_overflow;
 
-    while (!(pholder_found = utils.hasClass(pholder, 'vzb-placeholder'))) {
+    while (!(pholder_found = utils.hasClass(pholder, "vzb-placeholder"))) {
       component = component.parent;
       pholder = component.placeholder;
     }
@@ -570,7 +570,7 @@ var ButtonList = Component.extend({
       exitFullscreen.call(this);
     }
     utils.classed(pholder, class_vzb_fullscreen, fs);
-    if (typeof container != 'undefined') {
+    if (typeof container != "undefined") {
       utils.classed(container, class_container_fullscreen, fs);
     }
 
@@ -629,19 +629,19 @@ function subscribeFullscreenChangeEvent(exitFunc) {
   var doc = window.document;
 
   this.exitFullscreenHandler = exitHandler.bind(this, exitFunc);
-  doc.addEventListener('webkitfullscreenchange', this.exitFullscreenHandler, false);
-  doc.addEventListener('mozfullscreenchange', this.exitFullscreenHandler, false);
-  doc.addEventListener('fullscreenchange', this.exitFullscreenHandler, false);
-  doc.addEventListener('MSFullscreenChange', this.exitFullscreenHandler, false);
+  doc.addEventListener("webkitfullscreenchange", this.exitFullscreenHandler, false);
+  doc.addEventListener("mozfullscreenchange", this.exitFullscreenHandler, false);
+  doc.addEventListener("fullscreenchange", this.exitFullscreenHandler, false);
+  doc.addEventListener("MSFullscreenChange", this.exitFullscreenHandler, false);
 }
 
 function removeFullscreenChangeEvent() {
   var doc = window.document;
 
-  doc.removeEventListener('webkitfullscreenchange', this.exitFullscreenHandler);
-  doc.removeEventListener('mozfullscreenchange', this.exitFullscreenHandler);
-  doc.removeEventListener('fullscreenchange', this.exitFullscreenHandler);
-  doc.removeEventListener('MSFullscreenChange', this.exitFullscreenHandler);
+  doc.removeEventListener("webkitfullscreenchange", this.exitFullscreenHandler);
+  doc.removeEventListener("mozfullscreenchange", this.exitFullscreenHandler);
+  doc.removeEventListener("fullscreenchange", this.exitFullscreenHandler);
+  doc.removeEventListener("MSFullscreenChange", this.exitFullscreenHandler);
 }
 
 function launchIntoFullscreen(elem) {
@@ -652,8 +652,8 @@ function launchIntoFullscreen(elem) {
   } else if (elem.mozRequestFullScreen) {
     elem.mozRequestFullScreen();
   } else if (elem.webkitRequestFullscreen) {
-    if (!(navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
-    navigator.userAgent && !navigator.userAgent.match('CriOS'))) {
+    if (!(navigator.vendor && navigator.vendor.indexOf("Apple") > -1 &&
+    navigator.userAgent && !navigator.userAgent.match("CriOS"))) {
       elem.webkitRequestFullscreen();
     }
 

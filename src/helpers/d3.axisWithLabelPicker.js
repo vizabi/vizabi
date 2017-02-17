@@ -1,17 +1,17 @@
-import * as utils from 'base/utils';
+import * as utils from "base/utils";
 //d3.axisSmart
 
 export default function axisSmart(_orient) {
 
   return function d3_axis_smart(_super) {
 
-    var VERTICAL = 'vertical axis';
-    var HORIZONTAL = 'horizontal axis';
-    var X = 'labels stack side by side';
-    var Y = 'labels stack top to bottom';
+    var VERTICAL = "vertical axis";
+    var HORIZONTAL = "horizontal axis";
+    var X = "labels stack side by side";
+    var Y = "labels stack top to bottom";
 
-    var OPTIMISTIC = 'optimistic approximation: labels have different lengths';
-    var PESSIMISTIC = 'pessimistic approximation: all labels have the largest length';
+    var OPTIMISTIC = "optimistic approximation: labels have different lengths";
+    var PESSIMISTIC = "pessimistic approximation: all labels have the largest length";
     var DEFAULT_LOGBASE = 10;
 
     function onlyUnique(value, index, self) {
@@ -33,7 +33,7 @@ export default function axisSmart(_orient) {
 
       // measure the width and height of one digit
       var widthSampleG = g.append("g").attr("class", "tick widthSampling");
-      var widthSampleT = widthSampleG.append('text').text('0');
+      var widthSampleT = widthSampleG.append("text").text("0");
       if (!options.cssMargin) options.cssMargin = {};
       options.cssMargin.top = widthSampleT.style("margin-top");
       options.cssMargin.bottom = widthSampleT.style("margin-bottom");
@@ -64,10 +64,10 @@ export default function axisSmart(_orient) {
       var dimension = (orient == HORIZONTAL && axis.pivot() || orient == VERTICAL && !axis.pivot()) ? Y : X;
 
       //add an invisible element that would represent hovered value
-      g.selectAll('.vzb-axis-value')
+      g.selectAll(".vzb-axis-value")
         .data([null])
-        .enter().append('g')
-        .attr("class", 'vzb-axis-value')
+        .enter().append("g")
+        .attr("class", "vzb-axis-value")
         .classed("vzb-hidden", true)
         .append("text");
 
@@ -160,7 +160,7 @@ export default function axisSmart(_orient) {
       var pivot = axis.pivot() ? -1 : 1;
 
       //set content and visibility of HL value
-      g.select('.vzb-axis-value')
+      g.select(".vzb-axis-value")
         .classed("vzb-hidden", highlightValue == "none");
 
       var bbox;
@@ -168,7 +168,7 @@ export default function axisSmart(_orient) {
 
       if (highlightValue != "none") {
         // measure its width and height for collision resolving
-        bbox = g.select('.vzb-axis-value').node().getBBox();
+        bbox = g.select(".vzb-axis-value").node().getBBox();
 
         // clone a known options object (because we don't want to overwrite widthOfOneDigit / heightOfOneDigit in the original one
         o.bump = options.bump;
@@ -212,13 +212,13 @@ export default function axisSmart(_orient) {
 
       // apply translation of the HL value and opacity of tick labels
       if (highlightTransDuration) {
-        g.select('.vzb-axis-value')
+        g.select(".vzb-axis-value")
           .transition()
           .duration(highlightTransDuration)
           .ease(d3.easeLinear)
           .attr("transform", getTransform);
 
-        g.select('.vzb-axis-value')
+        g.select(".vzb-axis-value")
           .select("text")
           .transition("text")
           .delay(highlightTransDuration)
@@ -233,12 +233,12 @@ export default function axisSmart(_orient) {
         });
 
       } else {
-        g.select('.vzb-axis-value')
+        g.select(".vzb-axis-value")
           .interrupt()
           .attr("transform", getTransform)
           .transition();
 
-        g.select('.vzb-axis-value')
+        g.select(".vzb-axis-value")
           .select("text")
           .interrupt()
           .text(highlightValue == "none" ? "" : options.formatter(highlightValue))
@@ -320,8 +320,8 @@ export default function axisSmart(_orient) {
       return axis;
     };
 
-    axis.METHOD_REPEATING = 'repeating specified powers';
-    axis.METHOD_DOUBLING = 'doubling the value';
+    axis.METHOD_REPEATING = "repeating specified powers";
+    axis.METHOD_DOUBLING = "doubling the value";
 
     axis.labelFactory = function(options) {
       if (options == null) options = {};
@@ -337,7 +337,7 @@ export default function axisSmart(_orient) {
           .pivot(null)
           .repositionLabels(null);
       }
-      if (options.scaleType == 'ordinal') return axis.tickValues(null);
+      if (options.scaleType == "ordinal") return axis.tickValues(null);
 
       if (options.logBase == null) options.logBase = DEFAULT_LOGBASE;
       if (options.stops == null) options.stops = [1, 2, 5, 3, 7, 4, 6, 8, 9];
@@ -383,8 +383,8 @@ export default function axisSmart(_orient) {
         parseInt(options.cssFontSize) * options.widthToFontsizeRatio;
       if (options.heightOfOneDigit == null) options.heightOfOneDigit =
         parseInt(options.cssFontSize) * options.heightToFontsizeRatio;
-      if (options.fitIntoScale == null || options.fitIntoScale == 'pessimistic') options.fitIntoScale = PESSIMISTIC;
-      if (options.fitIntoScale == 'optimistic') options.fitIntoScale = OPTIMISTIC;
+      if (options.fitIntoScale == null || options.fitIntoScale == "pessimistic") options.fitIntoScale = PESSIMISTIC;
+      if (options.fitIntoScale == "optimistic") options.fitIntoScale = OPTIMISTIC;
 
 
       meow("********** " + orient + " **********");

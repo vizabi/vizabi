@@ -1,5 +1,5 @@
-import * as utils from 'base/utils';
-import Model from 'base/model';
+import * as utils from "base/utils";
+import Model from "base/model";
 
 /*!
  * HOOK MODEL
@@ -25,9 +25,9 @@ var Marker = Model.extend({
     this._visible = [];
 
     this._super(name, value, parent, binds, persistent);
-    this.on('ready', this.checkTimeLimits.bind(this));
-    this.on('readyOnce', () => {
-      var exceptions = { exceptType: 'time' };
+    this.on("ready", this.checkTimeLimits.bind(this));
+    this.on("readyOnce", () => {
+      var exceptions = { exceptType: "time" };
       var allDimensions = _this._getAllDimensions(exceptions);
       _this._multiDim = allDimensions.length > 1;
     });
@@ -131,7 +131,7 @@ var Marker = Model.extend({
   },
 
   _createValue(d) {
-    var dims = this._getAllDimensions({ exceptType: 'time' });
+    var dims = this._getAllDimensions({ exceptType: "time" });
     return dims.reduce(function(value, key) {
       value[key] = d[key];
       return value;
@@ -157,7 +157,7 @@ var Marker = Model.extend({
       this.setHighlight([].concat(arg));
       return;
     }
-    this.getModelObject('highlight').set(arg, false, false); // highlights are always non persistent changes
+    this.getModelObject("highlight").set(arg, false, false); // highlights are always non persistent changes
   },
 
   setSelect(arg) {
@@ -165,7 +165,7 @@ var Marker = Model.extend({
       this.setSelect([].concat(arg));
       return;
     }
-    this.getModelObject('select').set(arg);
+    this.getModelObject("select").set(arg);
   },
 
   //TODO: join the following 3 methods with the previous 3
@@ -241,8 +241,8 @@ var Marker = Model.extend({
 
     // change start and end (but keep startOrigin and endOrigin for furhter requests)
     var newTime = {};
-    if (time.start - tLimits.min != 0 || !time.start && !this.startOrigin) newTime['start'] = d3.max([tLimits.min, time.parse(time.startOrigin)]);
-    if (time.end - tLimits.max != 0 || !time.end && !this.endOrigin) newTime['end'] = d3.min([tLimits.max, time.parse(time.endOrigin)]);
+    if (time.start - tLimits.min != 0 || !time.start && !this.startOrigin) newTime["start"] = d3.max([tLimits.min, time.parse(time.startOrigin)]);
+    if (time.end - tLimits.max != 0 || !time.end && !this.endOrigin) newTime["end"] = d3.min([tLimits.max, time.parse(time.endOrigin)]);
 
     time.set(newTime, false, false);
 
@@ -760,7 +760,7 @@ var Marker = Model.extend({
     this._dataCube = this._dataCube || this.getSubhooks(true);
     filter = utils.clone(filter, this._getAllDimensions());
     dimTime = this._getFirstDimension({
-      type: 'time'
+      type: "time"
     });
     time = new Date(filter[dimTime]); //clone date
     filter = utils.clone(filter, null, dimTime);
@@ -809,7 +809,7 @@ var Marker = Model.extend({
         u = hook.use;
         w = hook.which;
 
-        if (hook.use !== "property") next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
+        if (hook.use !== "property") next = (typeof next === "undefined") ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
 
         method = hook.getConceptprops ? hook.getConceptprops().interpolation : null;
 

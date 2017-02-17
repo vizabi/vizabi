@@ -1,13 +1,13 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import Dialog from 'components/dialogs/_dialog';
+import * as utils from "base/utils";
+import Component from "base/component";
+import Dialog from "components/dialogs/_dialog";
 
-import simpleslider from 'components/simpleslider/simpleslider';
-import bubblesize from 'components/bubblesize/bubblesize';
-import colorlegend from 'components/colorlegend/colorlegend';
-import indicatorpicker from 'components/indicatorpicker/indicatorpicker';
-import simplecheckbox from 'components/simplecheckbox/simplecheckbox';
-import optionsbuttonlist from 'components/buttonlist/optionsbuttonlist/optionsbuttonlist';
+import simpleslider from "components/simpleslider/simpleslider";
+import bubblesize from "components/bubblesize/bubblesize";
+import colorlegend from "components/colorlegend/colorlegend";
+import indicatorpicker from "components/indicatorpicker/indicatorpicker";
+import simplecheckbox from "components/simplecheckbox/simplecheckbox";
+import optionsbuttonlist from "components/buttonlist/optionsbuttonlist/optionsbuttonlist";
 
 /*
  * More options dialog
@@ -21,13 +21,13 @@ var MoreOptions = Dialog.extend({
    * @param context component context (parent)
    */
   init(config, parent) {
-    this.name = 'moreoptions';
+    this.name = "moreoptions";
 
     //specifying components
     this.components = [{
       component: optionsbuttonlist,
-      placeholder: '.vzb-dialog-options-buttonlist',
-      model: ['state', 'ui', 'locale']
+      placeholder: ".vzb-dialog-options-buttonlist",
+      model: ["state", "ui", "locale"]
     }];
 
     this._super(config, parent);
@@ -37,9 +37,9 @@ var MoreOptions = Dialog.extend({
     this._super();
 
     var _this = this;
-    this.accordionEl = this.contentEl.select('.vzb-accordion');
+    this.accordionEl = this.contentEl.select(".vzb-accordion");
 
-    this.on('dragend', function() {
+    this.on("dragend", function() {
       _this._setMaxHeight();
     });
 
@@ -56,17 +56,17 @@ var MoreOptions = Dialog.extend({
 
     //accordion
     if (this.accordionEl) {
-      var titleEl = this.accordionEl.selectAll('.vzb-accordion-section')
-        .select('.vzb-dialog-title>span:first-child');
-      titleEl.on('click', function(d) {
+      var titleEl = this.accordionEl.selectAll(".vzb-accordion-section")
+        .select(".vzb-dialog-title>span:first-child");
+      titleEl.on("click", function(d) {
         var element = _this.components[d.component].element;
         var sectionEl = _this.components[d.component].placeholderEl;
-        var activeEl = _this.accordionEl.select('.vzb-accordion-active');
+        var activeEl = _this.accordionEl.select(".vzb-accordion-active");
         if (activeEl) {
-          activeEl.classed('vzb-accordion-active', false);
+          activeEl.classed("vzb-accordion-active", false);
         }
         if (sectionEl.node() !== activeEl.node()) {
-          sectionEl.classed('vzb-accordion-active', true);
+          sectionEl.classed("vzb-accordion-active", true);
         }
       });
     }
@@ -103,13 +103,13 @@ var MoreOptions = Dialog.extend({
       }
     }
 
-    this.accordionEl.selectAll('div').data(details_dlgs)
+    this.accordionEl.selectAll("div").data(details_dlgs)
       .enter().append("div")
-      .attr('class', function(d) {
-        var cls = 'vzb-dialogs-dialog vzb-moreoptions vzb-accordion-section';
+      .attr("class", function(d) {
+        var cls = "vzb-dialogs-dialog vzb-moreoptions vzb-accordion-section";
         return cls;
       })
-      .attr('data-dlg', function(d) {
+      .attr("data-dlg", function(d) {
         return d.id;
       });
 
@@ -119,8 +119,8 @@ var MoreOptions = Dialog.extend({
     //render each subcomponent
     utils.forEach(this.components, function(subcomp) {
       subcomp.render();
-      _this.on('resize', function() {
-        subcomp.trigger('resize');
+      _this.on("resize", function() {
+        subcomp.trigger("resize");
       });
     });
   }

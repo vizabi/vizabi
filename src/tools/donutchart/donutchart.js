@@ -2,21 +2,21 @@
  * VIZABI BARCHART
  */
 
-import * as utils from 'base/utils';
-import Tool from 'base/tool';
+import * as utils from "base/utils";
+import Tool from "base/tool";
 
-import DonutComponent from 'tools/donutchart/donutchart-component';
+import DonutComponent from "tools/donutchart/donutchart-component";
 
-import timeslider from 'components/timeslider/timeslider';
-import dialogs from 'components/dialogs/dialogs';
-import buttonlist from 'components/buttonlist/buttonlist';
-import treemenu from 'components/treemenu/treemenu';
+import timeslider from "components/timeslider/timeslider";
+import dialogs from "components/dialogs/dialogs";
+import buttonlist from "components/buttonlist/buttonlist";
+import treemenu from "components/treemenu/treemenu";
 
-var comp_template = 'barchart.html';
+var comp_template = "barchart.html";
 
 //BAR CHART TOOL
 //extend the base Tool class and register it in Vizabi tools under a name 'DunutChart'
-var DonutChart = Tool.extend('DonutChart', {
+var DonutChart = Tool.extend("DonutChart", {
 
   //Run when the tool is created
   init(placeholder, external_model) {
@@ -28,14 +28,14 @@ var DonutChart = Tool.extend('DonutChart', {
     this.components = [{
       //choose which component to use:
       //at this point you can check Vizabi.Component.getCollection() to see which components are available
-      component: 'donut',
+      component: "donut",
       //these placeholdes are defined by the Tool prototype class
-      placeholder: '.vzb-tool-viz',
+      placeholder: ".vzb-tool-viz",
       //component should have access to the following models:
       model: ["state.time", "state.marker"]
     }, {
-      component: 'timeslider',
-      placeholder: '.vzb-tool-timeslider',
+      component: "timeslider",
+      placeholder: ".vzb-tool-timeslider",
       model: ["state.time", "state.entities", "state.marker", "ui"]
     }];
 

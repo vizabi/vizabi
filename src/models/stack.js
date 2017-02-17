@@ -1,12 +1,12 @@
-import * as utils from 'base/utils';
-import Hook from 'models/hook';
+import * as utils from "base/utils";
+import Hook from "models/hook";
 
 /*
  * VIZABI Stack Model
  */
 
 var palettes = {
-  'ALL': "all",
+  "ALL": "all",
   _default: "none"
 };
 

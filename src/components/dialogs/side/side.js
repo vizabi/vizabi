@@ -1,9 +1,9 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import Dialog from 'components/dialogs/_dialog';
+import * as utils from "base/utils";
+import Component from "base/component";
+import Dialog from "components/dialogs/_dialog";
 
-import indicatorpicker from 'components/indicatorpicker/indicatorpicker';
-import simplecheckbox from 'components/simplecheckbox/simplecheckbox';
+import indicatorpicker from "components/indicatorpicker/indicatorpicker";
+import simplecheckbox from "components/simplecheckbox/simplecheckbox";
 /*!
  * VIZABI SIDE CONTROL
  * Reusable side dialog
@@ -12,7 +12,7 @@ import simplecheckbox from 'components/simplecheckbox/simplecheckbox';
 var Side = Dialog.extend({
 
   init(config, parent) {
-    this.name = 'side';
+    this.name = "side";
     var _this = this;
 
     this.model_binds = {
@@ -38,7 +38,7 @@ var Side = Dialog.extend({
     this.components = [
     {
       component: indicatorpicker,
-      placeholder: '.vzb-side-selector',
+      placeholder: ".vzb-side-selector",
       model: ["state.time", "state.entities_side", "state.marker", "locale"],
       markerID: "side",
       showHoverValues: false
@@ -66,7 +66,7 @@ var Side = Dialog.extend({
     });
 
     //make sure it refreshes when all is reloaded
-    this.root.on('ready', function() {
+    this.root.on("ready", function() {
       _this.redraw();
     });
   },
@@ -77,7 +77,7 @@ var Side = Dialog.extend({
     this.KEY = this.model.state.entities_side.getDimension();
     this.updateState();
     this.redraw();
-    utils.preventAncestorScrolling(this.element.select('.vzb-dialog-scrollable'));
+    utils.preventAncestorScrolling(this.element.select(".vzb-dialog-scrollable"));
 
   },
 

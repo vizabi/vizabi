@@ -9,25 +9,25 @@ export default function collisionResolver() {
     function resolver(g) {
       if (data == null) {
         console.warn(
-          'D3 collision resolver stopped: missing data to work with. Example: data = {asi: {valueY: 45, valueX: 87}, ame: {valueY: 987, valueX: 767}}'
+          "D3 collision resolver stopped: missing data to work with. Example: data = {asi: {valueY: 45, valueX: 87}, ame: {valueY: 987, valueX: 767}}"
         );
         return;
       }
       if (selector == null) {
-        console.warn('D3 collision resolver stopped: missing a CSS slector');
+        console.warn("D3 collision resolver stopped: missing a CSS slector");
         return;
       }
       if (height == null) {
-        console.warn('D3 collision resolver stopped: missing height of the canvas');
+        console.warn("D3 collision resolver stopped: missing height of the canvas");
         return;
       }
       if (value == null) {
         console.warn(
-          'D3 collision resolver stopped: missing pointer within data objects. Example: value = \'valueY\' ');
+          "D3 collision resolver stopped: missing pointer within data objects. Example: value = 'valueY' ");
         return;
       }
       if (KEY == null) {
-        console.warn('D3 collision resolver stopped: missing a key for data. Example: key = \'geo\' ');
+        console.warn("D3 collision resolver stopped: missing a key for data. Example: key = 'geo' ");
         return;
       }
       g.each(function(d, index) {
@@ -44,8 +44,8 @@ export default function collisionResolver() {
           handleResult(d, i, this, resolvedX, resolvedY);
           return;
         }
-        d3.select(this).selectAll(selector).transition().duration(DURATION).attr('transform', 'translate(0,' +
-          resolvedY + ')');
+        d3.select(this).selectAll(selector).transition().duration(DURATION).attr("transform", "translate(0," +
+          resolvedY + ")");
       });
     }
 

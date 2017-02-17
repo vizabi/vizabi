@@ -1,6 +1,6 @@
-import * as utils from 'base/utils';
-import Class from 'base/class';
-import { close as iconClose } from 'base/iconset';
+import * as utils from "base/utils";
+import Class from "base/class";
+import { close as iconClose } from "base/iconset";
 
 var MCSelectList = Class.extend({
 
@@ -48,7 +48,7 @@ var MCSelectList = Class.extend({
       .attr("class", "vzb-bmc-label")
       .each(function(d, i) {
         var label = d3.select(this);
-        label.append("circle").attr('class', 'vzb-bmc-label-legend');
+        label.append("circle").attr("class", "vzb-bmc-label-legend");
         label.append("text").attr("class", "vzb-bmc-label-shadow vzb-bmc-label-text");
         label.append("text").attr("class", "vzb-bmc-label-text");
         label.append("g").attr("class", "vzb-bmc-label-x vzb-label-shadow vzb-invisible")
@@ -120,7 +120,7 @@ var MCSelectList = Class.extend({
       })
       .each(function(d, i) {
 
-        var view = d3.select(this).attr("id", d.geo + '-label');
+        var view = d3.select(this).attr("id", d.geo + "-label");
         var name = d.key ? _this.translator("entity/geo.world_4region/" + d.key) : _this.values.label[d.KEY()];
         //var number = _this.values.axis_y[d.KEY()];
         var number = _this.values.size[d.KEY()];

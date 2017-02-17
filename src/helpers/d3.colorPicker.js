@@ -42,21 +42,21 @@ export default function colorPicker() {
       right: 0.1
     };
     //margins in % of container's width and height
-    var colorOld = '#000';
-    var colorDef = '#000';
-    var colorWhite = '#f8f8f8';
+    var colorOld = "#000";
+    var colorDef = "#000";
+    var colorWhite = "#f8f8f8";
     // names of CSS classes
     var css = {
-      INVISIBLE: 'vzb-invisible',
-      COLOR_POINTER: 'vzb-colorpicker-pointer',
-      COLOR_BUTTON: 'vzb-colorpicker-cell',
-      COLOR_DEFAULT: 'vzb-colorpicker-default',
-      COLOR_SAMPLE: 'vzb-colorpicker-sample',
-      COLOR_PICKER: 'vzb-colorpicker-svg',
-      COLOR_CIRCLE: 'vzb-colorpicker-circle',
-      COLOR_CIRCLES: 'vzb-colorpicker-circles',
-      COLOR_SEGMENT: 'vzb-colorpicker-segment',
-      COLOR_BACKGR: 'vzb-colorpicker-background'
+      INVISIBLE: "vzb-invisible",
+      COLOR_POINTER: "vzb-colorpicker-pointer",
+      COLOR_BUTTON: "vzb-colorpicker-cell",
+      COLOR_DEFAULT: "vzb-colorpicker-default",
+      COLOR_SAMPLE: "vzb-colorpicker-sample",
+      COLOR_PICKER: "vzb-colorpicker-svg",
+      COLOR_CIRCLE: "vzb-colorpicker-circle",
+      COLOR_CIRCLES: "vzb-colorpicker-circles",
+      COLOR_SEGMENT: "vzb-colorpicker-segment",
+      COLOR_BACKGR: "vzb-colorpicker-background"
     };
     var colorData = [];
     //here we store color data. formatted as follows:
@@ -94,7 +94,7 @@ export default function colorPicker() {
     var sampleText = null;
     var background = null;
     var callback = function(value) {
-      console.info('Color picker callback example. Setting color to ' + value);
+      console.info("Color picker callback example. Setting color to " + value);
     };
 
     function _generateColorData() {
@@ -141,7 +141,7 @@ export default function colorPicker() {
         g = _hue2rgb(p, q, h);
         b = _hue2rgb(p, q, h - 1 / 3);
       }
-      return '#' + Math.round(r * 255).toString(16) + Math.round(g * 255).toString(16) + Math.round(b * 255).toString(
+      return "#" + Math.round(r * 255).toString(16) + Math.round(g * 255).toString(16) + Math.round(b * 255).toString(
         16);
     }
 
@@ -150,138 +150,138 @@ export default function colorPicker() {
     // that div should have !=0 width and height in its style
     function colorPicker(container) {
       colorPicker.container = container;
-      svg = container.select('.' + css.COLOR_PICKER);
+      svg = container.select("." + css.COLOR_PICKER);
       if (!svg.empty()) {
         return;
       }
-      container.on('click', function() {
+      container.on("click", function() {
         colorPicker.show(false);
         d3.event.stopPropagation();
       });
       colorData = _generateColorData();
 
-      svg = container.append('svg')
-        .style('position', 'absolute')
-        .style('top', '0')
-        .style('left', '0')
-        .style('width', '100%')
-        .style('max-width', maxWidth + "px")
-        .style('height', '100%')
-        .style('max-height', maxHeight + "px")
-        .style('z-index', 9999)
-        .attr('class', css.COLOR_PICKER + " vzb-dialog-shadow")
+      svg = container.append("svg")
+        .style("position", "absolute")
+        .style("top", "0")
+        .style("left", "0")
+        .style("width", "100%")
+        .style("max-width", maxWidth + "px")
+        .style("height", "100%")
+        .style("max-height", maxHeight + "px")
+        .style("z-index", 9999)
+        .attr("class", css.COLOR_PICKER + " vzb-dialog-shadow")
         .classed(css.INVISIBLE, !showColorPicker)
-        .on('mouseout', function(d) { _cellHover(colorOld); });
+        .on("mouseout", function(d) { _cellHover(colorOld); });
 
-      var width = parseInt(svg.style('width'));
-      var height = parseInt(svg.style('height'));
+      var width = parseInt(svg.style("width"));
+      var height = parseInt(svg.style("height"));
       var maxRadius = width / 2 * (1 - margin.left - margin.right);
-      background = svg.append('rect')
-        .attr('width', width)
-        .attr('height', maxHeight)
-        .attr('class', css.COLOR_BUTTON + ' ' + css.COLOR_BACKGR)
-        .on('mouseover',
+      background = svg.append("rect")
+        .attr("width", width)
+        .attr("height", maxHeight)
+        .attr("class", css.COLOR_BUTTON + " " + css.COLOR_BACKGR)
+        .on("mouseover",
           function(d) {
             _cellHover(colorOld);
           });
-      var circles = svg.append('g')
-        .attr('class', css.COLOR_CIRCLES)
-        .attr('transform', 'translate(' + (maxRadius + width * margin.left) +
-        ',' + (maxRadius + height * margin.top) + ')');
+      var circles = svg.append("g")
+        .attr("class", css.COLOR_CIRCLES)
+        .attr("transform", "translate(" + (maxRadius + width * margin.left) +
+        "," + (maxRadius + height * margin.top) + ")");
 
-      svg.append('rect')
-        .attr('class', css.COLOR_SAMPLE)
-        .attr('width', width / 2)
-        .attr('height', height * margin.top / 2);
+      svg.append("rect")
+        .attr("class", css.COLOR_SAMPLE)
+        .attr("width", width / 2)
+        .attr("height", height * margin.top / 2);
 
-      sampleRect = svg.append('rect')
-        .attr('class', css.COLOR_SAMPLE)
-        .attr('width', width / 2)
-        .attr('x', width / 2)
-        .attr('height', height * margin.top / 2);
+      sampleRect = svg.append("rect")
+        .attr("class", css.COLOR_SAMPLE)
+        .attr("width", width / 2)
+        .attr("x", width / 2)
+        .attr("height", height * margin.top / 2);
 
-      svg.append('text')
-        .attr('x', width * margin.left)
-        .attr('y', height * margin.top / 2)
-        .attr('dy', '1.3em')
-        .attr('class', css.COLOR_SAMPLE)
-        .style('text-anchor', 'start');
+      svg.append("text")
+        .attr("x", width * margin.left)
+        .attr("y", height * margin.top / 2)
+        .attr("dy", "1.3em")
+        .attr("class", css.COLOR_SAMPLE)
+        .style("text-anchor", "start");
 
-      sampleText = svg.append('text').attr('x', width * (1 - margin.right))
-        .attr('y', height * margin.top / 2)
-        .attr('dy', '1.3em')
-        .attr('class', css.COLOR_SAMPLE)
-        .style('text-anchor', 'end');
+      sampleText = svg.append("text").attr("x", width * (1 - margin.right))
+        .attr("y", height * margin.top / 2)
+        .attr("dy", "1.3em")
+        .attr("class", css.COLOR_SAMPLE)
+        .style("text-anchor", "end");
 
-      svg.append('text')
-        .attr('x', width * 0.1)
-        .attr('y', height * (1 - margin.bottom))
-        .attr('dy', '1.2em')
-        .attr('class', "vzb-default-label")
-        .style('text-anchor', 'start')
-        .text('default');
+      svg.append("text")
+        .attr("x", width * 0.1)
+        .attr("y", height * (1 - margin.bottom))
+        .attr("dy", "1.2em")
+        .attr("class", "vzb-default-label")
+        .style("text-anchor", "start")
+        .text("default");
 
-      svg.append('circle')
-        .attr('class', css.COLOR_DEFAULT + ' ' + css.COLOR_BUTTON)
-        .attr('r', width * margin.left / 2)
-        .attr('cx', width * margin.left * 1.5)
-        .attr('cy', height * (1 - margin.bottom * 1.5))
-        .on('mouseover',
+      svg.append("circle")
+        .attr("class", css.COLOR_DEFAULT + " " + css.COLOR_BUTTON)
+        .attr("r", width * margin.left / 2)
+        .attr("cx", width * margin.left * 1.5)
+        .attr("cy", height * (1 - margin.bottom * 1.5))
+        .on("mouseover",
           function() {
-            d3.select(this).style('stroke', '#444');
+            d3.select(this).style("stroke", "#444");
             _cellHover(colorDef);
         })
-        .on('mouseout', function() {
-          d3.select(this).style('stroke', 'none');
+        .on("mouseout", function() {
+          d3.select(this).style("stroke", "none");
         });
 
-      circles.selectAll('.' + css.COLOR_CIRCLE)
-        .data(colorData).enter().append('g')
-          .attr('class', css.COLOR_CIRCLE)
+      circles.selectAll("." + css.COLOR_CIRCLE)
+        .data(colorData).enter().append("g")
+          .attr("class", css.COLOR_CIRCLE)
             .each(
               function(circleData, index) {
                 arc.outerRadius(minRadius + (maxRadius - minRadius) / nCellsL *
                   (nCellsL - index)).innerRadius(minRadius +
                   (maxRadius - minRadius) / nCellsL * (nCellsL - index - 1));
-                var segment = d3.select(this).selectAll('.' + css.COLOR_SEGMENT)
-                  .data(pie(circleData)).enter().append('g')
-                    .attr('class', css.COLOR_SEGMENT);
+                var segment = d3.select(this).selectAll("." + css.COLOR_SEGMENT)
+                  .data(pie(circleData)).enter().append("g")
+                    .attr("class", css.COLOR_SEGMENT);
 
-              segment.append('path')
-                .attr('class', css.COLOR_BUTTON)
-                .attr('d', arc)
-                .style('fill', function(d) {
+              segment.append("path")
+                .attr("class", css.COLOR_BUTTON)
+                .attr("d", arc)
+                .style("fill", function(d) {
                   return d.data.display;
                 })
-                .style('stroke', function(d) {
+                .style("stroke", function(d) {
                   return d.data.display;
                 })
-                .on('mouseover', function(d) {
+                .on("mouseover", function(d) {
                   _cellHover(d.data.meaning, this);
                 })
-                .on('mouseout', function(d) {
+                .on("mouseout", function(d) {
                   _cellUnHover();
                 });
             });
 
-      circles.append('circle')
-        .attr('r', minRadius)
-        .attr('fill', colorWhite)
-        .attr('class', css.COLOR_BUTTON)
-        .on('mouseover',
+      circles.append("circle")
+        .attr("r", minRadius)
+        .attr("fill", colorWhite)
+        .attr("class", css.COLOR_BUTTON)
+        .on("mouseover",
           function() {
-            d3.select(this).style('stroke', "#555");
+            d3.select(this).style("stroke", "#555");
             _cellHover(colorWhite);
         })
-        .on('mouseout', function() {
-          d3.select(this).style('stroke', 'none');
+        .on("mouseout", function() {
+          d3.select(this).style("stroke", "none");
         });
 
-      colorPointer = circles.append('path')
-        .attr('class', css.COLOR_POINTER + ' ' + css.INVISIBLE);
+      colorPointer = circles.append("path")
+        .attr("class", css.COLOR_POINTER + " " + css.INVISIBLE);
 
-      svg.selectAll('.' + css.COLOR_BUTTON)
-        .on('click', function() {
+      svg.selectAll("." + css.COLOR_BUTTON)
+        .on("click", function() {
           d3.event.stopPropagation();
           _this.show(false);
         });
@@ -291,25 +291,25 @@ export default function colorPicker() {
 
     var _doTheStyling = function(svg) {
       //styling
-      svg.select('.' + css.COLOR_BACKGR)
-        .style('fill', 'white');
+      svg.select("." + css.COLOR_BACKGR)
+        .style("fill", "white");
 
-      svg.select('.' + css.COLOR_POINTER)
-        .style('stroke-width', 2)
-        .style('stroke', colorWhite)
-        .style('pointer-events', 'none')
-        .style('fill', 'none');
+      svg.select("." + css.COLOR_POINTER)
+        .style("stroke-width", 2)
+        .style("stroke", colorWhite)
+        .style("pointer-events", "none")
+        .style("fill", "none");
 
-      svg.selectAll('.' + css.COLOR_BUTTON)
-        .style('cursor', 'pointer');
+      svg.selectAll("." + css.COLOR_BUTTON)
+        .style("cursor", "pointer");
 
-      svg.selectAll('text')
-        .style('fill', '#D9D9D9')
-        .style('font-size', '0.7em')
-        .style('text-transform', 'uppercase');
+      svg.selectAll("text")
+        .style("fill", "#D9D9D9")
+        .style("font-size", "0.7em")
+        .style("text-transform", "uppercase");
 
-      svg.selectAll('circle.' + css.COLOR_BUTTON)
-        .style('stroke-width', 2);
+      svg.selectAll("circle." + css.COLOR_BUTTON)
+        .style("stroke-width", 2);
     };
 
     var _this = colorPicker;
@@ -317,10 +317,10 @@ export default function colorPicker() {
       // show color pointer if the view is set (a cell of colorwheel)
       if (view != null)
         colorPointer.classed(css.INVISIBLE, false)
-          .attr('d', d3.select(view)
-          .attr('d'));
+          .attr("d", d3.select(view)
+          .attr("d"));
 
-      sampleRect.style('fill', value);
+      sampleRect.style("fill", value);
       sampleText.text(value);
       callback(value);
     };
@@ -329,12 +329,12 @@ export default function colorPicker() {
     };
     //Use this function to hide or show the color picker
     //true = show, false = hide, "toggle" or TOGGLE = toggle
-    var TOGGLE = 'toggle';
+    var TOGGLE = "toggle";
     colorPicker.show = function(arg) {
       if (!arguments.length)
         return showColorPicker;
       if (svg == null)
-        console.warn('Color picker is missing SVG element. Was init sequence performed?');
+        console.warn("Color picker is missing SVG element. Was init sequence performed?");
       showColorPicker = arg == TOGGLE ? !showColorPicker : arg;
       if (!showColorPicker) {
         callback = function() {};
@@ -411,12 +411,12 @@ export default function colorPicker() {
     colorPicker.colorDef = function(arg) {
       if (!arguments.length)
         return colorDef;
-      if (typeof arg !== 'undefined') {
+      if (typeof arg !== "undefined") {
         colorDef = arg;
       }
       if (svg == null)
-        console.warn('Color picker is missing SVG element. Was init sequence performed?');
-      svg.select('.' + css.COLOR_DEFAULT).style('fill', colorDef);
+        console.warn("Color picker is missing SVG element. Was init sequence performed?");
+      svg.select("." + css.COLOR_DEFAULT).style("fill", colorDef);
       return colorPicker;
     };
     colorPicker.translate = function(translator) {
@@ -434,18 +434,18 @@ export default function colorPicker() {
       var screen = colorPicker.container.node().getBoundingClientRect();
       var xPos, yPos;
 
-      var width = parseInt(svg.style('width'));
-      var height = parseInt(svg.style('height'));
+      var width = parseInt(svg.style("width"));
+      var height = parseInt(svg.style("height"));
 
       if (!arg) {
-        xPos = screen.width - parseInt(svg.style('right')) - width;
-        yPos = parseInt(svg.style('top'));
+        xPos = screen.width - parseInt(svg.style("right")) - width;
+        yPos = parseInt(svg.style("top"));
       } else {
         xPos = arg[0] - screen.left;
         yPos = arg[1] - screen.top;
       }
 
-      var styles = { left: '' };
+      var styles = { left: "" };
       if (screen.width * 0.8 <= width) {
         styles.right = (screen.width - width) * 0.5 + "px";
       } else if (xPos + width > screen.width) {
@@ -470,9 +470,9 @@ export default function colorPicker() {
         return colorOld;
       colorOld = arg;
       if (svg == null)
-        console.warn('Color picker is missing SVG element. Was init sequence performed?');
-      svg.select('rect.' + css.COLOR_SAMPLE).style('fill', colorOld);
-      svg.select('text.' + css.COLOR_SAMPLE).text(colorOld);
+        console.warn("Color picker is missing SVG element. Was init sequence performed?");
+      svg.select("rect." + css.COLOR_SAMPLE).style("fill", colorOld);
+      svg.select("text." + css.COLOR_SAMPLE).text(colorOld);
       return colorPicker;
     };
 
@@ -480,24 +480,24 @@ export default function colorPicker() {
 
       if (!arguments.length)
         return resize;
-      if (typeof arg !== 'undefined') {
+      if (typeof arg !== "undefined") {
         var svg = arg;
-        var width = parseInt(svg.style('width'));
-        var height = parseInt(svg.style('height'));
+        var width = parseInt(svg.style("width"));
+        var height = parseInt(svg.style("height"));
         var maxRadius = width / 2 * (1 - margin.left - margin.right);
-        var selectedColor = svg.select('.' + css.COLOR_DEFAULT);
-        var defaultLabel = svg.select('.vzb-default-label');
-        var circles = svg.select('.' + css.COLOR_CIRCLES);
+        var selectedColor = svg.select("." + css.COLOR_DEFAULT);
+        var defaultLabel = svg.select(".vzb-default-label");
+        var circles = svg.select("." + css.COLOR_CIRCLES);
 
         var hPos = maxRadius + height * margin.top;
         var hPosCenter = (1 + margin.top * 0.5) * height * 0.5;
         hPos = hPos > hPosCenter ? hPosCenter : hPos;
-        circles.attr('transform', 'translate(' + (maxRadius + width * margin.left) +
-        ',' + hPos + ')');
-        selectedColor.attr('cx', width * margin.left * 1.5)
-                     .attr('cy', height * (1 - margin.bottom * 1.5));
-        defaultLabel.attr('x', width * 0.1)
-                    .attr('y', height * (1 - margin.bottom));
+        circles.attr("transform", "translate(" + (maxRadius + width * margin.left) +
+        "," + hPos + ")");
+        selectedColor.attr("cx", width * margin.left * 1.5)
+                     .attr("cy", height * (1 - margin.bottom * 1.5));
+        defaultLabel.attr("x", width * 0.1)
+                    .attr("y", height * (1 - margin.bottom));
       }
       colorPicker.fitToScreen();
 

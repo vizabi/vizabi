@@ -1,11 +1,11 @@
-import * as utils from 'base/utils';
-import Events from 'base/events';
-import Model from 'base/model';
-import globals from 'base/globals';
+import * as utils from "base/utils";
+import Events from "base/events";
+import Model from "base/model";
+import globals from "base/globals";
 
-var class_loading_first = 'vzb-loading-first';
-var class_loading_data = 'vzb-loading-data';
-var class_error = 'vzb-error';
+var class_loading_first = "vzb-loading-first";
+var class_loading_data = "vzb-loading-data";
+var class_error = "vzb-error";
 
 var templates = {};
 var Component = Events.extend({
@@ -16,11 +16,11 @@ var Component = Events.extend({
    * @param {Object} parent Reference to tool
    */
   init(config, parent) {
-    this._id = this._id || utils.uniqueId('c');
+    this._id = this._id || utils.uniqueId("c");
     this._ready = false;
     this._readyOnce = false;
     this.name = this.name || config.name || this._id;
-    this.template = this.template || '<div></div>';
+    this.template = this.template || "<div></div>";
     this.placeholder = this.placeholder || config.placeholder;
     this.template_data = this.template_data || {
       name: this.name
@@ -30,7 +30,7 @@ var Component = Events.extend({
       try {
         this.placeholder = parent.placeholder.querySelector(this.placeholder);
       } catch (e) {
-        utils.error('Error finding placeholder \'' + this.placeholder + '\' for component \'' + this.name + '\'');
+        utils.error("Error finding placeholder '" + this.placeholder + "' for component '" + this.name + "'");
       }
     }
     this.parent = parent || null;
@@ -58,10 +58,10 @@ var Component = Events.extend({
 
   registerListeners() {
     this.on({
-      'readyOnce': this.readyOnce,
-      'ready': this.ready,
-      'domReady': this.domReady,
-      'resize': this.resize
+      "readyOnce": this.readyOnce,
+      "ready": this.ready,
+      "domReady": this.domReady,
+      "resize": this.resize
     });
   },
 
@@ -108,8 +108,8 @@ var Component = Events.extend({
     //render each subcomponent
     utils.forEach(this.components, function(subcomp) {
       subcomp.render();
-      _this.on('resize', function() {
-        subcomp.trigger('resize');
+      _this.on("resize", function() {
+        subcomp.trigger("resize");
       });
     });
 
@@ -125,7 +125,7 @@ var Component = Events.extend({
     var _this = this;
 
     // if a componente's model is ready, the component is ready
-    this.model.on('ready', function() {
+    this.model.on("ready", function() {
       _this.loadingDone();
     });
 
@@ -147,23 +147,23 @@ var Component = Events.extend({
     utils.removeClass(this.placeholder, class_loading_data);
     utils.addClass(this.placeholder, class_error);
     this.setError({
-      type: 'data'
+      type: "data"
     });
   },
 
   setError(opts) {
-    if (typeof this.error === 'function') {
+    if (typeof this.error === "function") {
       this.error(opts);
     }
   },
 
   setReady(value) {
     if (!this._readyOnce) {
-      this.trigger('readyOnce');
+      this.trigger("readyOnce");
       this._readyOnce = true;
     }
     this._ready = true;
-    this.trigger('ready');
+    this.trigger("ready");
   },
 
   /**
@@ -174,7 +174,7 @@ var Component = Events.extend({
     var tmpl = this.template;
     var data = this.template_data;
     var _this = this;
-    var rendered = '';
+    var rendered = "";
     if (!this.placeholder) {
       return;
     }
@@ -186,13 +186,13 @@ var Component = Events.extend({
       try {
         rendered = templateFunc(tmpl, data);
       } catch (e) {
-        utils.error('Templating error for component: \'' + this.name +
-          '\' - Check if template name is unique and correct. E.g.: \'bubblechart\'');
+        utils.error("Templating error for component: '" + this.name +
+          "' - Check if template name is unique and correct. E.g.: 'bubblechart'");
 
         utils.removeClass(this.placeholder, class_loading_data);
         utils.addClass(this.placeholder, class_error);
         this.setError({
-          type: 'template'
+          type: "template"
         });
       }
     }
@@ -203,7 +203,7 @@ var Component = Events.extend({
     this.element = this.placeholder.children[0];
 
     //template is ready
-    this.trigger('domReady');
+    this.trigger("domReady");
   },
 
   getActiveProfile(profiles, presentationProfileChanges) {
@@ -236,7 +236,7 @@ var Component = Events.extend({
       component_config.model = component_config.model || {};
 
       if (!component_config.component) {
-        utils.error('Error loading component: name not provided');
+        utils.error("Error loading component: name not provided");
         return;
       }
 
@@ -300,10 +300,10 @@ var Component = Events.extend({
   _uiMapping(id, ui) {
     //if overwritting UI
     if (ui) {
-      return new Model('ui', ui);
+      return new Model("ui", ui);
     }
     if (id && this.ui) {
-      id = id.replace('.', '');
+      id = id.replace(".", "");
       //remove trailing period
       var sub_ui = this.ui[id];
       if (sub_ui) {
@@ -326,7 +326,7 @@ var Component = Events.extend({
 
       //if there's a different number of models received and expected
       if (this.model_expects.length !== model_config.length) {
-        utils.groupCollapsed('DIFFERENCE IN NUMBER OF MODELS EXPECTED AND RECEIVED');
+        utils.groupCollapsed("DIFFERENCE IN NUMBER OF MODELS EXPECTED AND RECEIVED");
         utils.warn("Please, configure the 'model_expects' attribute accordingly in '" + this.name + "' or check the models passed in '" + _this.parent.name + "'.\n\n" +
           "Component: '" + _this.parent.name + "'\n" +
           "Subcomponent: '" + this.name + "'\n" +
@@ -388,9 +388,9 @@ var Component = Events.extend({
      * @returns {Object} the model info, with name and the actual model
      */
     function _mapOne(name) {
-      var parts = name.split('.');
+      var parts = name.split(".");
       var current = _this.parent.model;
-      var current_name = '';
+      var current_name = "";
       while (parts.length) {
         current_name = parts.shift();
         current = current[current_name];
@@ -411,7 +411,7 @@ var Component = Events.extend({
   getTranslationFunction(wrap) {
     var t_func;
     try {
-      t_func = this.model.get('locale').getTFunction();
+      t_func = this.model.get("locale").getTFunction();
     } catch (err) {
       if (this.parent && this.parent !== this) {
         t_func = this.parent.getTranslationFunction();
@@ -437,7 +437,7 @@ var Component = Events.extend({
   _translatedStringFunction(translation_function) {
     return function(string) {
       var translated = translation_function(string);
-      return '<span data-vzb-translate="' + string + '">' + translated + '</span>';
+      return '<span data-vzb-translate="' + string + '">' + translated + "</span>";
     };
   },
 
@@ -446,7 +446,7 @@ var Component = Events.extend({
    */
   translateStrings() {
     var t = this.getTranslationFunction();
-    var strings = this.placeholder.querySelectorAll('[data-vzb-translate]');
+    var strings = this.placeholder.querySelectorAll("[data-vzb-translate]");
     if (strings.length === 0) {
       return;
     }
@@ -454,7 +454,7 @@ var Component = Events.extend({
       if (!str || !str.getAttribute) {
         return;
       }
-      str.innerHTML = t(str.getAttribute('data-vzb-translate'));
+      str.innerHTML = t(str.getAttribute("data-vzb-translate"));
     });
   },
 
@@ -506,7 +506,7 @@ function templateFunc(str, data) {
       var s = match.match(/t\s*\(([^)]+)\)/g);
       //replace with translation
       if (s.length) {
-        s = obj.t(s[0].match(/\"([^"]+)\"/g)[0].split('"').join(''));
+        s = obj.t(s[0].match(/\"([^"]+)\"/g)[0].split('"').join(""));
       }
       //use object[name]
       else {
@@ -527,7 +527,7 @@ function templateFunc(str, data) {
 //utility function to check if a component is a component
 //TODO: Move to utils?
 Component.isComponent = function(c) {
-  return c._id && (c._id[0] === 't' || c._id[0] === 'c');
+  return c._id && (c._id[0] === "t" || c._id[0] === "c");
 };
 
 export default Component;

@@ -1,5 +1,5 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
+import * as utils from "base/utils";
+import Component from "base/component";
 
 /*!
  * VIZABI MIN MAX INPUT FIELDS
@@ -20,8 +20,8 @@ var MinMaxInputs = Component.extend({
      */
     init(config, context) {
 
-        this.name = 'gapminder-minmaxinputs';
-        this.template = require('./minmaxinputs.html');
+        this.name = "gapminder-minmaxinputs";
+        this.template = require("./minmaxinputs.html");
 
         var _this = this;
 
@@ -70,17 +70,17 @@ var MinMaxInputs = Component.extend({
 
         this.element = d3.select(this.element);
 
-        this.el_domain_labelMin = this.element.select('.vzb-mmi-domainmin-label');
-        this.el_domain_labelMax = this.element.select('.vzb-mmi-domainmax-label');
-        this.el_domain_fieldMin = this.element.select('.vzb-mmi-domainmin');
-        this.el_domain_fieldMax = this.element.select('.vzb-mmi-domainmax');
+        this.el_domain_labelMin = this.element.select(".vzb-mmi-domainmin-label");
+        this.el_domain_labelMax = this.element.select(".vzb-mmi-domainmax-label");
+        this.el_domain_fieldMin = this.element.select(".vzb-mmi-domainmin");
+        this.el_domain_fieldMax = this.element.select(".vzb-mmi-domainmax");
 
-        this.el_break = this.element.select('.vzb-mmi-break');
+        this.el_break = this.element.select(".vzb-mmi-break");
 
-        this.el_zoomed_labelMin = this.element.select('.vzb-mmi-zoomedmin-label');
-        this.el_zoomed_labelMax = this.element.select('.vzb-mmi-zoomedmax-label');
-        this.el_zoomed_fieldMin = this.element.select('.vzb-mmi-zoomedmin');
-        this.el_zoomed_fieldMax = this.element.select('.vzb-mmi-zoomedmax');
+        this.el_zoomed_labelMin = this.element.select(".vzb-mmi-zoomedmin-label");
+        this.el_zoomed_labelMax = this.element.select(".vzb-mmi-zoomedmax-label");
+        this.el_zoomed_fieldMin = this.element.select(".vzb-mmi-zoomedmin");
+        this.el_zoomed_fieldMax = this.element.select(".vzb-mmi-zoomedmax");
 
 
         _this.el_domain_fieldMin.on("change", function() {
@@ -112,17 +112,17 @@ var MinMaxInputs = Component.extend({
       this.el_zoomed_labelMin.text(this.translator("hints/min") + ":");
       this.el_zoomed_labelMax.text(this.translator("hints/max") + ":");
 
-      this.el_domain_labelMin.classed('vzb-hidden', !this.ui.selectDomainMinMax);
-      this.el_domain_labelMax.classed('vzb-hidden', !this.ui.selectDomainMinMax);
-      this.el_domain_fieldMin.classed('vzb-hidden', !this.ui.selectDomainMinMax);
-      this.el_domain_fieldMax.classed('vzb-hidden', !this.ui.selectDomainMinMax);
+      this.el_domain_labelMin.classed("vzb-hidden", !this.ui.selectDomainMinMax);
+      this.el_domain_labelMax.classed("vzb-hidden", !this.ui.selectDomainMinMax);
+      this.el_domain_fieldMin.classed("vzb-hidden", !this.ui.selectDomainMinMax);
+      this.el_domain_fieldMax.classed("vzb-hidden", !this.ui.selectDomainMinMax);
 
-      this.el_break.classed('vzb-hidden', !(this.ui.selectDomainMinMax && this.ui.selectZoomedMinMax));
+      this.el_break.classed("vzb-hidden", !(this.ui.selectDomainMinMax && this.ui.selectZoomedMinMax));
 
-      this.el_zoomed_labelMin.classed('vzb-hidden', !this.ui.selectZoomedMinMax);
-      this.el_zoomed_labelMax.classed('vzb-hidden', !this.ui.selectZoomedMinMax);
-      this.el_zoomed_fieldMin.classed('vzb-hidden', !this.ui.selectZoomedMinMax);
-      this.el_zoomed_fieldMax.classed('vzb-hidden', !this.ui.selectZoomedMinMax);
+      this.el_zoomed_labelMin.classed("vzb-hidden", !this.ui.selectZoomedMinMax);
+      this.el_zoomed_labelMax.classed("vzb-hidden", !this.ui.selectZoomedMinMax);
+      this.el_zoomed_fieldMin.classed("vzb-hidden", !this.ui.selectZoomedMinMax);
+      this.el_zoomed_fieldMax.classed("vzb-hidden", !this.ui.selectZoomedMinMax);
 
       var formatter = function(n) {
         if (!n && n !== 0) return n;

@@ -1,5 +1,5 @@
-import * as utils from 'base/utils';
-import Class from 'base/class';
+import * as utils from "base/utils";
+import Class from "base/class";
 
 export default Class.extend({
 
@@ -20,7 +20,7 @@ export default Class.extend({
         this.zoomer
             .on("start", this.zoom().start)
             .on("zoom", this.zoom().go)
-            .on('end', this.zoom().stop);
+            .on("end", this.zoom().stop);
 
         this.zoomer.ratioX = 1;
         this.zoomer.ratioY = 1;
@@ -365,13 +365,13 @@ export default Class.extend({
                     }
                 }
 
-                if (_this.model.marker.axis_x.scaleType === 'ordinal') {
+                if (_this.model.marker.axis_x.scaleType === "ordinal") {
                     _this.xScale.rangeBands(xRange);
                 } else {
                     _this.xScale.range(xRange);
                 }
 
-                if (_this.model.marker.axis_y.scaleType === 'ordinal') {
+                if (_this.model.marker.axis_y.scaleType === "ordinal") {
                     _this.yScale.rangeBands(yRange);
                 } else {
                     _this.yScale.range(yRange);

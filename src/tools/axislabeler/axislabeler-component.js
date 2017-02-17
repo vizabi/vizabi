@@ -1,7 +1,7 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
+import * as utils from "base/utils";
+import Component from "base/component";
 
-import axisSmart from 'helpers/d3.axisWithLabelPicker';
+import axisSmart from "helpers/d3.axisWithLabelPicker";
 
 
 //BAR CHART COMPONENT
@@ -14,8 +14,8 @@ var AxisLabelerComponent = Component.extend({
    * @param {Object} context The component's parent
    */
   init(config, context) {
-    this.name = 'axislabeler';
-    this.template = require('./axislabeler.html');
+    this.name = "axislabeler";
+    this.template = require("./axislabeler.html");
 
     //define expected models for this component
     this.model_expects = [{ name: "scales" }, { name: "show" }];
@@ -27,7 +27,7 @@ var AxisLabelerComponent = Component.extend({
         _this.initScales();
         _this.update();
       },
-      'change:show': function(evt, path) {
+      "change:show": function(evt, path) {
         _this.initScales();
         _this.update();
       }
@@ -51,9 +51,9 @@ var AxisLabelerComponent = Component.extend({
     this.element = d3.select(this.element);
 
     // reference elements
-    this.graph = this.element.select('.vzb-al-graph');
-    this.xAxisEl = this.graph.select('.vzb-al-axis-x');
-    this.yAxisEl = this.graph.select('.vzb-al-axis-y');
+    this.graph = this.element.select(".vzb-al-graph");
+    this.xAxisEl = this.graph.select(".vzb-al-axis-x");
+    this.yAxisEl = this.graph.select(".vzb-al-axis-y");
 
     //$(".vzb-bc-axis-x, .vzb-bc-axis-y").css('font-size',this.model.show.labelSize);
     this.xInvert = function(d) {return _this.xScale(_this.xScale.invert(_this.xScale(d)));};

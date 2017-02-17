@@ -1,8 +1,8 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import Dialog from 'components/dialogs/_dialog';
+import * as utils from "base/utils";
+import Component from "base/component";
+import Dialog from "components/dialogs/_dialog";
 
-import simpleslider from 'components/simpleslider/simpleslider';
+import simpleslider from "components/simpleslider/simpleslider";
 
 /*!
  * VIZABI FIND CONTROL
@@ -12,12 +12,12 @@ import simpleslider from 'components/simpleslider/simpleslider';
 var Find = Dialog.extend({
 
   init(config, parent) {
-    this.name = 'find';
+    this.name = "find";
     var _this = this;
 
     this.components = [{
       component: simpleslider,
-      placeholder: '.vzb-dialog-bubbleopacity',
+      placeholder: ".vzb-dialog-bubbleopacity",
       model: ["state.marker"],
       arg: "opacitySelectDim",
       properties: { step: 0.01 }
@@ -40,7 +40,7 @@ var Find = Dialog.extend({
       },
       "change:state.time.value": function(evt) {
         // hide changes if the dialog is not visible
-        if (!_this.placeholderEl.classed('vzb-active') && !_this.placeholderEl.classed('vzb-sidebar')) return;
+        if (!_this.placeholderEl.classed("vzb-active") && !_this.placeholderEl.classed("vzb-sidebar")) return;
 
         _this.time = _this.model.state.time.value;
 
@@ -94,7 +94,7 @@ var Find = Dialog.extend({
     this.input_search.attr("placeholder", this.translator("placeholder/search") + "...");
 
     //make sure it refreshes when all is reloaded
-    this.root.on('ready', function() {
+    this.root.on("ready", function() {
       _this.ready();
     });
 
@@ -176,7 +176,7 @@ var Find = Dialog.extend({
         .on("mouseout", function(d) {
           if (!utils.isTouchDevice()) _this.model.state.marker.clearHighlighted();
         });
-        utils.preventAncestorScrolling(_this.element.select('.vzb-dialog-scrollable'));
+        utils.preventAncestorScrolling(_this.element.select(".vzb-dialog-scrollable"));
 
         _this.redrawDataPoints(values);
         _this.selectDataPoints();
@@ -230,8 +230,8 @@ var Find = Dialog.extend({
 
   showHideDeselect() {
     var someSelected = !!this.model.state.marker.select.length;
-    this.deselect_all.classed('vzb-hidden', !someSelected);
-    this.opacity_nonselected.classed('vzb-hidden', !someSelected);
+    this.deselect_all.classed("vzb-hidden", !someSelected);
+    this.opacity_nonselected.classed("vzb-hidden", !someSelected);
   },
 
   deselectMarkers() {

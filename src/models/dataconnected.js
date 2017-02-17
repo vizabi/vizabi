@@ -1,6 +1,6 @@
-import * as utils from 'base/utils';
-import Model from 'base/model';
-import EventSource from 'base/events';
+import * as utils from "base/utils";
+import Model from "base/model";
+import EventSource from "base/events";
 
 /*!
  * DATACONNECTED MODEL
@@ -29,7 +29,7 @@ var DataConnected = Model.extend({
     });
 
     if (dataConnectedChangedChildren.length > 0) {
-      this.trigger('dataConnectedChange');
+      this.trigger("dataConnectedChange");
       this.startLoading();
     }
 

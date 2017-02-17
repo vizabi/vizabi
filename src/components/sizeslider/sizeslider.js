@@ -1,5 +1,5 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
+import * as utils from "base/utils";
+import Component from "base/component";
 
 
 /*!
@@ -47,9 +47,9 @@ var SizeSlider = Component.extend({
    */
   init(config, context) {
 
-    this.name = 'sizeslider';
+    this.name = "sizeslider";
 
-    this.template = this.template || require('./sizeslider.html');
+    this.template = this.template || require("./sizeslider.html");
 
     this.propertyName = config.propertyname;
 
@@ -63,10 +63,10 @@ var SizeSlider = Component.extend({
 
     var _this = this;
     this.model_binds = {
-      'change:size.domainMin': changeMinMaxHandler,
-      'change:size.domainMax': changeMinMaxHandler,
-      'change:size.extent': changeMinMaxHandler,
-      'ready': function() {
+      "change:size.domainMin": changeMinMaxHandler,
+      "change:size.domainMax": changeMinMaxHandler,
+      "change:size.extent": changeMinMaxHandler,
+      "ready": function() {
         _this.modelReady();
       }
     };
@@ -86,20 +86,20 @@ var SizeSlider = Component.extend({
     var _this = this;
     _this.modelUse = _this.model.size.use;
     var extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
-    if (_this.modelUse != 'constant') {
+    if (_this.modelUse != "constant") {
       _this.sizeScaleMinMax = _this.model.size.getScale().domain();
-      _this.sliderEl.selectAll('.w').classed('vzb-hidden', false);
-      _this.sliderEl.select('.selection').classed('vzb-hidden', false);
-      _this.sliderEl.select('.overlay').classed('vzb-pointerevents-none', false);
+      _this.sliderEl.selectAll(".w").classed("vzb-hidden", false);
+      _this.sliderEl.select(".selection").classed("vzb-hidden", false);
+      _this.sliderEl.select(".overlay").classed("vzb-pointerevents-none", false);
       _this._setLabelsText();
     } else {
-      _this.sliderEl.selectAll('.w').classed('vzb-hidden', true);
-      _this.sliderEl.select('.selection').classed('vzb-hidden', true);
-      _this.sliderEl.select('.overlay').classed('vzb-pointerevents-none', true);
+      _this.sliderEl.selectAll(".w").classed("vzb-hidden", true);
+      _this.sliderEl.select(".selection").classed("vzb-hidden", true);
+      _this.sliderEl.select(".overlay").classed("vzb-pointerevents-none", true);
       if (!_this.model.size.which) {
         var p = _this.propertyActiveProfile;
         extent[1] = (p.default - p.min) / (p.max - p.min);
-        _this.model.size.which = '_default';
+        _this.model.size.which = "_default";
       }
     }
     _this._moveBrush(extent);
@@ -181,7 +181,7 @@ var SizeSlider = Component.extend({
     this.sliderThumbs.append("g")
       .attr("class", "vzb-szs-slider-thumb-badge")
       .append("path")
-      .attr('d', "M" + (thumbRadius + barWidth) + " " + (thumbRadius + barWidth * 1.5) + "l" + (-thumbRadius) + " " + (thumbRadius * 1.5) + "h" + (thumbRadius * 2) + "Z");
+      .attr("d", "M" + (thumbRadius + barWidth) + " " + (thumbRadius + barWidth * 1.5) + "l" + (-thumbRadius) + " " + (thumbRadius * 1.5) + "h" + (thumbRadius * 2) + "Z");
 
     this.sliderEl
       .call(_this.brush);
@@ -189,8 +189,8 @@ var SizeSlider = Component.extend({
     this.sliderEl.selectAll("text").data([0, 0]).enter()
       .append("text")
       .attr("class", function(d, i) {
-        return "vzb-szs-slider-thumb-label " + (i ? 'e' : 'w');})
-      .attr("dy", (-barWidth * 1.25) + 'px')
+        return "vzb-szs-slider-thumb-label " + (i ? "e" : "w");})
+      .attr("dy", (-barWidth * 1.25) + "px")
       .attr("text-anchor", function(d, i) {
         return 1 - i ? "start" : "end";});
 
@@ -232,7 +232,7 @@ var SizeSlider = Component.extend({
 
   getPropertyActiveProfile() {
     var profile = profiles[this.getLayoutProfile()];
-    return { min: profile['min' + this.propertyName], max: profile['max' + this.propertyName], default: profile['default' + this.propertyName] };
+    return { min: profile["min" + this.propertyName], max: profile["max" + this.propertyName], default: profile["default" + this.propertyName] };
   },
 
   _moveBrush(s) {
@@ -250,7 +250,7 @@ var SizeSlider = Component.extend({
   _updateSize() {
     this.sliderSvg
       .attr("height", this.propertyActiveProfile.max + this.padding.top + this.padding.bottom)
-      .attr("width", '100%');
+      .attr("width", "100%");
     this.sliderWrap
       .attr("transform", "translate(" + this.padding.left + "," + (this.propertyActiveProfile.max + this.padding.top) + ")");
   },
@@ -266,7 +266,7 @@ var SizeSlider = Component.extend({
       .attr("font-size", function(d, i) {
         return _this.propertyScale(d);
       });
-    if (_this.model.size.use === 'constant')
+    if (_this.model.size.use === "constant")
       this.sliderLabelsEl.text(function(d) {
         return ~~(_this.propertyScale(d)) + (_this.translator(_this.ui.constantUnit) || "");
       });

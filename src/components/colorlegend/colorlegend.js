@@ -1,7 +1,7 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import colorPicker from 'helpers/d3.colorPicker';
-import axisSmart from 'helpers/d3.axisWithLabelPicker';
+import * as utils from "base/utils";
+import Component from "base/component";
+import colorPicker from "helpers/d3.colorPicker";
+import axisSmart from "helpers/d3.axisWithLabelPicker";
 
 /*!
  * VIZABI BUBBLE COLOR LEGEND COMPONENT
@@ -12,7 +12,7 @@ var ColorLegend = Component.extend({
   init(config, context) {
     var _this = this;
     this.template = '<div class="vzb-cl-outer"></div>';
-    this.name = 'colorlegend';
+    this.name = "colorlegend";
 
     this.model_expects = [{
         name: "time",
@@ -68,7 +68,7 @@ var ColorLegend = Component.extend({
     this.colorModel = this.model.marker.color;
     this.colorlegendMarker = this.colorModel.getColorlegendMarker();
     if (this.colorlegendMarker) {
-      this.colorlegendMarker.on('ready', function() {
+      this.colorlegendMarker.on("ready", function() {
         _this.ready();
       });
     }
@@ -206,8 +206,8 @@ var ColorLegend = Component.extend({
         .domain(domain)
         .range(range);
 
-      var marginLeft = parseInt(this.rainbowEl.style('left'), 10) || 0;
-      var marginRight = parseInt(this.rainbowEl.style('right'), 10) || marginLeft;
+      var marginLeft = parseInt(this.rainbowEl.style("left"), 10) || 0;
+      var marginRight = parseInt(this.rainbowEl.style("right"), 10) || marginLeft;
 
       this.labelScaleSVG.style("width", marginLeft + gradientWidth + marginRight + "px");
       this.labelScaleG.attr("transform", "translate(" + marginLeft + ",0)");
@@ -241,18 +241,18 @@ var ColorLegend = Component.extend({
       var gIndicators = range.map(function(val, i) {
         return { val, color: colorRange[i], paletteKey: paletteKeys[i] };
       });
-      this.rainbowLegend = this.rainbowLegendG.selectAll('circle')
+      this.rainbowLegend = this.rainbowLegendG.selectAll("circle")
         .data(gIndicators);
       this.rainbowLegend.exit().remove();
       this.rainbowLegend = this.rainbowLegend.enter().append("circle")
-        .attr('r', "6px")
-        .attr('stroke', '#000')
+        .attr("r", "6px")
+        .attr("stroke", "#000")
         .on("click", _this._interact().clickToChangeColor)
         .merge(this.rainbowLegend);
 
       this.rainbowLegend.each(function(d, i) {
-        d3.select(this).attr('fill', d.color);
-        d3.select(this).attr('cx', d.val);
+        d3.select(this).attr("fill", d.color);
+        d3.select(this).attr("cx", d.val);
       });
 
       var gColors = paletteKeys.map(function(val, i) {
@@ -454,7 +454,7 @@ var ColorLegend = Component.extend({
     if (!this.colorModel.isDiscrete()) {
       this.updateView();
     }
-    this.colorPicker.resize(d3.select('.vzb-colorpicker-svg'));
+    this.colorPicker.resize(d3.select(".vzb-colorpicker-svg"));
   },
 
   /**

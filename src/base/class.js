@@ -1,4 +1,4 @@
-import { forEach, warn } from 'base/utils';
+import { forEach, warn } from "base/utils";
 
 var initializing = false;
 var fnTest = /xyz/.test(function() {
@@ -15,7 +15,7 @@ function extend(name, extensions) {
   initializing = false;
 
   forEach(extensions, function(method, name) {
-    if (typeof extensions[name] === 'function' && typeof _super[name] === 'function' && fnTest.test(extensions[name])) {
+    if (typeof extensions[name] === "function" && typeof _super[name] === "function" && fnTest.test(extensions[name])) {
       prototype[name] = function(name, fn) {
         return function() {
           var tmp = this._super;
@@ -46,7 +46,7 @@ function extend(name, extensions) {
   Class._collection = {};
   Class.instances = [];
   Class.register = function(name, code) {
-    if (typeof this._collection[name] !== 'undefined') {
+    if (typeof this._collection[name] !== "undefined") {
       warn('"' + name + '" is already registered. Overwriting...');
     }
     this._collection[name] = code;

@@ -1,9 +1,9 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import Dialog from 'components/dialogs/_dialog';
+import * as utils from "base/utils";
+import Component from "base/component";
+import Dialog from "components/dialogs/_dialog";
 
-import indicatorpicker from 'components/indicatorpicker/indicatorpicker';
-import minmaxinputs from 'components/minmaxinputs/minmaxinputs';
+import indicatorpicker from "components/indicatorpicker/indicatorpicker";
+import minmaxinputs from "components/minmaxinputs/minmaxinputs";
 
 /*
  * Axes dialog
@@ -17,17 +17,17 @@ var Axes = Dialog.extend({
    * @param context component context (parent)
    */
   init(config, parent) {
-    this.name = 'axes';
+    this.name = "axes";
     var _this = this;
 
     this.components = [{
       component: indicatorpicker,
-      placeholder: '.vzb-xaxis-selector',
+      placeholder: ".vzb-xaxis-selector",
       model: ["state.time", "state.entities", "state.marker", "locale"],
       markerID: "axis_x"
     }, {
       component: minmaxinputs,
-      placeholder: '.vzb-xaxis-minmax',
+      placeholder: ".vzb-xaxis-minmax",
       model: ["state.marker", "state.time", "locale"],
       markerID: "axis_x",
       ui: {
@@ -36,12 +36,12 @@ var Axes = Dialog.extend({
       }
     }, {
       component: indicatorpicker,
-      placeholder: '.vzb-yaxis-selector',
+      placeholder: ".vzb-yaxis-selector",
       model: ["state.time", "state.entities", "state.marker", "locale"],
       markerID: "axis_y"
     }, {
       component: minmaxinputs,
-      placeholder: '.vzb-yaxis-minmax',
+      placeholder: ".vzb-yaxis-minmax",
       model: ["state.marker", "state.time", "locale"],
       markerID: "axis_y",
       ui: {

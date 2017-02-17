@@ -2,21 +2,21 @@
  * VIZABI BUBBLEMAP
  */
 
-import * as utils from 'base/utils';
-import Tool from 'base/tool';
+import * as utils from "base/utils";
+import Tool from "base/tool";
 
-import BubbleMapComponent from 'tools/bubblemap/bubblemap-component';
+import BubbleMapComponent from "tools/bubblemap/bubblemap-component";
 
-import timeslider from 'components/timeslider/timeslider';
-import dialogs from 'components/dialogs/dialogs';
-import buttonlist from 'components/buttonlist/buttonlist';
-import treemenu from 'components/treemenu/treemenu';
-import datawarning from 'components/datawarning/datawarning';
-import datanotes from 'components/datanotes/datanotes';
-import steppedSpeedSlider from 'components/steppedspeedslider/steppedspeedslider';
+import timeslider from "components/timeslider/timeslider";
+import dialogs from "components/dialogs/dialogs";
+import buttonlist from "components/buttonlist/buttonlist";
+import treemenu from "components/treemenu/treemenu";
+import datawarning from "components/datawarning/datawarning";
+import datanotes from "components/datanotes/datanotes";
+import steppedSpeedSlider from "components/steppedspeedslider/steppedspeedslider";
 
 //BAR CHART TOOL
-var BubbleMap = Tool.extend('BubbleMap', {
+var BubbleMap = Tool.extend("BubbleMap", {
 
 
   /**
@@ -32,36 +32,36 @@ var BubbleMap = Tool.extend('BubbleMap', {
     //specifying components
     this.components = [{
       component: BubbleMapComponent,
-      placeholder: '.vzb-tool-viz',
+      placeholder: ".vzb-tool-viz",
       model: ["state.time", "state.entities", "state.marker", "locale", "ui"] //pass models to component
     }, {
       component: timeslider,
-      placeholder: '.vzb-tool-timeslider',
+      placeholder: ".vzb-tool-timeslider",
       model: ["state.time", "state.entities", "state.marker", "ui"]
     }, {
       component: dialogs,
-      placeholder: '.vzb-tool-dialogs',
-      model: ['state', 'ui', 'locale']
+      placeholder: ".vzb-tool-dialogs",
+      model: ["state", "ui", "locale"]
     }, {
       component: buttonlist,
-      placeholder: '.vzb-tool-buttonlist',
-      model: ['state', 'ui', 'locale']
+      placeholder: ".vzb-tool-buttonlist",
+      model: ["state", "ui", "locale"]
     }, {
       component: treemenu,
-      placeholder: '.vzb-tool-treemenu',
-      model: ['state.marker', 'state.marker_tags', 'state.time', 'locale']
+      placeholder: ".vzb-tool-treemenu",
+      model: ["state.marker", "state.marker_tags", "state.time", "locale"]
     }, {
       component: datawarning,
-      placeholder: '.vzb-tool-datawarning',
-      model: ['locale']
+      placeholder: ".vzb-tool-datawarning",
+      model: ["locale"]
     }, {
       component: datanotes,
-      placeholder: '.vzb-tool-datanotes',
-      model: ['state.marker', 'locale']
+      placeholder: ".vzb-tool-datanotes",
+      model: ["state.marker", "locale"]
     }, {
       component: steppedSpeedSlider,
-      placeholder: '.vzb-tool-stepped-speed-slider',
-      model: ['state.time', 'locale']
+      placeholder: ".vzb-tool-stepped-speed-slider",
+      model: ["state.time", "locale"]
     }
     ];
 
@@ -94,12 +94,12 @@ var BubbleMap = Tool.extend('BubbleMap', {
           bottom: 0,
           left: 0
         },
-        projection: 'robinson',
+        projection: "robinson",
         topology: {
           path: null,
           objects: {
-            geo: 'land',
-            boundaries: 'countries'
+            geo: "land",
+            boundaries: "countries"
           },
           geoIdProperty: null,
         }

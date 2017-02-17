@@ -1,9 +1,9 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
+import * as utils from "base/utils";
+import Component from "base/component";
 
 import {
   question as iconQuestion
-} from 'base/iconset';
+} from "base/iconset";
 
 /*!
  * VIZABI INDICATOR PICKER
@@ -20,7 +20,7 @@ var IndPicker = Component.extend({
      */
     init(config, context) {
 
-        this.name = 'gapminder-indicatorpicker';
+        this.name = "gapminder-indicatorpicker";
         this.template = '<span class="vzb-ip-holder"><span class="vzb-ip-select"></span><span class="vzb-ip-info"></span></span>';
 
         var _this = this;
@@ -114,7 +114,7 @@ var IndPicker = Component.extend({
     readyOnce() {
         var _this = this;
 
-        this.el_select = d3.select(this.element).select('.vzb-ip-select');
+        this.el_select = d3.select(this.element).select(".vzb-ip-select");
 
         this.el_select.on("click", function() {
             var rect = _this.el_select.node().getBoundingClientRect();
@@ -122,8 +122,8 @@ var IndPicker = Component.extend({
             var rootRect = rootEl.node().getBoundingClientRect();
             var treemenuComp = _this.root.findChildByName("gapminder-treemenu");
             var treemenuColWidth = treemenuComp.activeProfile.col_width;
-            var treemenuPaddLeft = parseInt(treemenuComp.wrapper.style('padding-left'), 10) || 0;
-            var treemenuPaddRight = parseInt(treemenuComp.wrapper.style('padding-right'), 10) || 0;
+            var treemenuPaddLeft = parseInt(treemenuComp.wrapper.style("padding-left"), 10) || 0;
+            var treemenuPaddRight = parseInt(treemenuComp.wrapper.style("padding-right"), 10) || 0;
             var topPos = rect.bottom - rootRect.top;
             var leftPos = rect.left - rootRect.left - (treemenuPaddLeft + treemenuPaddRight + treemenuColWidth - rect.width) * 0.5;
 
@@ -137,7 +137,7 @@ var IndPicker = Component.extend({
                 .toggle();
         });
 
-        this.infoEl = d3.select(this.element).select('.vzb-ip-info');
+        this.infoEl = d3.select(this.element).select(".vzb-ip-info");
         utils.setIcon(this.infoEl, iconQuestion)
           .select("svg").attr("width", "0px").attr("height", "0px");
 

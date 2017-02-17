@@ -1,8 +1,8 @@
-import * as utils from 'base/utils';
-import DataConnected from 'models/dataconnected';
+import * as utils from "base/utils";
+import DataConnected from "models/dataconnected";
 
 // this and many other locale information should at some point be stored in an external file with locale information (rtl, date formats etc)
-var rtlLocales = ['ar', 'ar-SA'];
+var rtlLocales = ["ar", "ar-SA"];
 
 var LocaleModel = DataConnected.extend({
 
@@ -65,7 +65,7 @@ var LocaleModel = DataConnected.extend({
     );
 
     return Promise.all(promises)
-      .then(() => this.trigger('translate'));
+      .then(() => this.trigger("translate"));
   },
 
   handleNewStrings(receivedStrings) {
@@ -95,7 +95,7 @@ var LocaleModel = DataConnected.extend({
   getTFunction() {
     return (stringId, payload = {}) => (
       Object.keys(payload).reduce((result, key) => {
-          const regexp = new RegExp('{{' + key + '}}', 'g');
+          const regexp = new RegExp("{{" + key + "}}", "g");
           return result.replace(regexp, payload[key]);
         },
         this.getUIString(stringId)

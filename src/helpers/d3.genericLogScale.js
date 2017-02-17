@@ -329,7 +329,7 @@ export default function genericLog() {
       return d3_scale_genericLog(logScale).domain(domain).range(range).delta(delta).eps(eps);
     };
 
-    return d3.rebind(scale, logScale, 'base', 'rangeRound', 'clamp', 'nice',
-      'tickFormat');
+    return d3.rebind(scale, logScale, "base", "rangeRound", "clamp", "nice",
+      "tickFormat");
   }(d3.scale.log().domain([0.1, 200]).range([0, 1000]));
 }

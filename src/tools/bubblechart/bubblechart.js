@@ -1,17 +1,17 @@
-import * as utils from 'base/utils';
-import Tool from 'base/tool';
+import * as utils from "base/utils";
+import Tool from "base/tool";
 
-import BubbleChartComponent from 'tools/bubblechart/bubblechart-component';
+import BubbleChartComponent from "tools/bubblechart/bubblechart-component";
 
-import timeslider from 'components/timeslider/timeslider';
-import dialogs from 'components/dialogs/dialogs';
-import buttonlist from 'components/buttonlist/buttonlist';
-import treemenu from 'components/treemenu/treemenu';
-import datawarning from 'components/datawarning/datawarning';
-import datanotes from 'components/datanotes/datanotes';
-import steppedSpeedSlider from 'components/steppedspeedslider/steppedspeedslider';
+import timeslider from "components/timeslider/timeslider";
+import dialogs from "components/dialogs/dialogs";
+import buttonlist from "components/buttonlist/buttonlist";
+import treemenu from "components/treemenu/treemenu";
+import datawarning from "components/datawarning/datawarning";
+import datanotes from "components/datanotes/datanotes";
+import steppedSpeedSlider from "components/steppedspeedslider/steppedspeedslider";
 
-var BubbleChart = Tool.extend('BubbleChart', {
+var BubbleChart = Tool.extend("BubbleChart", {
 
   /**
    * Initializes the tool (Bubble Chart Tool).
@@ -26,36 +26,36 @@ var BubbleChart = Tool.extend('BubbleChart', {
     //specifying components
     this.components = [{
       component: BubbleChartComponent,
-      placeholder: '.vzb-tool-viz',
+      placeholder: ".vzb-tool-viz",
       model: ["state.time", "state.entities", "state.marker", "locale", "ui"] //pass models to component
     }, {
       component: timeslider,
-      placeholder: '.vzb-tool-timeslider',
+      placeholder: ".vzb-tool-timeslider",
       model: ["state.time", "state.entities", "state.marker", "ui"]
     }, {
       component: dialogs,
-      placeholder: '.vzb-tool-dialogs',
-      model: ['state', 'ui', 'locale']
+      placeholder: ".vzb-tool-dialogs",
+      model: ["state", "ui", "locale"]
     }, {
       component: buttonlist,
-      placeholder: '.vzb-tool-buttonlist',
-      model: ['state', 'ui', 'locale']
+      placeholder: ".vzb-tool-buttonlist",
+      model: ["state", "ui", "locale"]
     }, {
       component: treemenu,
-      placeholder: '.vzb-tool-treemenu',
-      model: ['state.marker', 'state.marker_tags', 'state.time', 'locale']
+      placeholder: ".vzb-tool-treemenu",
+      model: ["state.marker", "state.marker_tags", "state.time", "locale"]
     }, {
       component: datawarning,
-      placeholder: '.vzb-tool-datawarning',
-      model: ['locale']
+      placeholder: ".vzb-tool-datawarning",
+      model: ["locale"]
     }, {
       component: datanotes,
-      placeholder: '.vzb-tool-datanotes',
-      model: ['state.marker', 'locale']
+      placeholder: ".vzb-tool-datanotes",
+      model: ["state.marker", "locale"]
     }, {
       component: steppedSpeedSlider,
-      placeholder: '.vzb-tool-stepped-speed-slider',
-      model: ['state.time', 'locale']
+      placeholder: ".vzb-tool-stepped-speed-slider",
+      model: ["state.time", "locale"]
     }];
 
     this._super(placeholder, external_model);
@@ -185,13 +185,13 @@ var BubbleChart = Tool.extend('BubbleChart', {
       },
       presentation: false,
       adaptMinMaxZoom: false,
-      cursorMode: 'arrow',
+      cursorMode: "arrow",
       zoomOnScrolling: false,
-      buttons: ['colors', 'find', 'trails', 'lock', 'moreoptions', 'fullscreen', 'presentation'],
+      buttons: ["colors", "find", "trails", "lock", "moreoptions", "fullscreen", "presentation"],
       dialogs: {
-        popup: ['colors', 'find', 'size', 'zoom', 'moreoptions'],
-        sidebar: ['colors', 'find', 'size', 'zoom'],
-        moreoptions: ['opacity', 'speed', 'axes', 'size', 'colors', 'label', 'zoom', 'presentation', 'about']
+        popup: ["colors", "find", "size", "zoom", "moreoptions"],
+        sidebar: ["colors", "find", "size", "zoom"],
+        moreoptions: ["opacity", "speed", "axes", "size", "colors", "label", "zoom", "presentation", "about"]
       }
     }
   }

@@ -1,6 +1,6 @@
-import * as utils from 'base/utils';
-import Class from 'base/class';
-import { close as iconClose } from 'base/iconset';
+import * as utils from "base/utils";
+import Class from "base/class";
+import { close as iconClose } from "base/iconset";
 
 var MCSelectList = Class.extend({
 
@@ -43,7 +43,7 @@ var MCSelectList = Class.extend({
       .attr("class", "vzb-mc-label")
       .each(function(d, i) {
         var label = d3.select(this);
-        label.append("circle").attr('class', 'vzb-mc-label-legend');
+        label.append("circle").attr("class", "vzb-mc-label-legend");
         label.append("text").attr("class", "vzb-mc-label-shadow vzb-mc-label-text");
         label.append("text").attr("class", "vzb-mc-label-text");
         label.append("g").attr("class", "vzb-mc-label-x vzb-label-shadow vzb-invisible")
@@ -126,7 +126,7 @@ var MCSelectList = Class.extend({
       })
       .each(function(d, i) {
 
-        var view = d3.select(this).attr("id", d.geo + '-label-' + _this._id);
+        var view = d3.select(this).attr("id", d.geo + "-label-" + _this._id);
         var name = "";
         if (d.key) {
           name = d.key === "all" ? _this.translator("mount/merging/world") : groupLabels[d.key];

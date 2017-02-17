@@ -2,17 +2,17 @@
  * VIZABI DONUT CHART
  */
 
-import * as utils from 'base/utils';
-import Component from 'base/component';
+import * as utils from "base/utils";
+import Component from "base/component";
 
 
 //DONUT CHART COMPONENT
-var DonutComponent = Component.extend('donut', {
+var DonutComponent = Component.extend("donut", {
 
       init(config, context) {
         var _this = this;
 
-        this.name = 'donutchart';
+        this.name = "donutchart";
         this.template = '<div class="vzb-donutchart"><svg class="vzb-donutchart-svg"></svg></div>';
 
         //define expected models for this component
@@ -57,8 +57,8 @@ var DonutComponent = Component.extend('donut', {
         //link DOM elements to the variables
         this.element = d3.select(this.element);
         this.svgEl = this.element.select("svg").append("g");
-        this.yearEl = this.svgEl.append("text").attr("class", "year").style({ 'font-size': '4em' });
-        this.titleEl = this.svgEl.append("text").attr("class", "title").style({ 'font-size': '2em' });
+        this.yearEl = this.svgEl.append("text").attr("class", "year").style({ "font-size": "4em" });
+        this.titleEl = this.svgEl.append("text").attr("class", "title").style({ "font-size": "2em" });
 
         //bind the resize() and updateTime() events to container resize
         this.on("resize", function() {
@@ -82,7 +82,7 @@ var DonutComponent = Component.extend('donut', {
         this.titleEl.text("Population");
         this.keys = this.model.marker.getKeys();
 
-        this.entities = this.svgEl.selectAll('.vzb-dc-entity')
+        this.entities = this.svgEl.selectAll(".vzb-dc-entity")
           .data(this.keys);
 
         //exit selection
@@ -94,7 +94,7 @@ var DonutComponent = Component.extend('donut', {
           .attr("class", "vzb-dc-entity")
           .each(function() {
             d3.select(this).append("path");
-            d3.select(this).append("text").attr("class", "label").style({ 'font-size': '1.2em' });
+            d3.select(this).append("text").attr("class", "label").style({ "font-size": "1.2em" });
           });
       },
 
@@ -130,7 +130,7 @@ var DonutComponent = Component.extend('donut', {
         this.entities
           .select("text")
           .style({
-            'text-transform': 'capitalize'
+            "text-transform": "capitalize"
           })
           .attr("transform", function(d) {
             return "translate(" + _this.arc.centroid(d) + ")";

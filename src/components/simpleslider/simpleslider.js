@@ -1,5 +1,5 @@
-import Component from 'base/component';
-import * as utils from 'base/utils';
+import Component from "base/component";
+import * as utils from "base/utils";
 
 /*!
  * VIZABI GENERIC SLIDER CONTROL
@@ -16,7 +16,7 @@ var SimpleSlider = Component.extend({
       }];
 
       var _this = this;
-      this.name = 'gapminder-simpleSlider';
+      this.name = "gapminder-simpleSlider";
 
       this.arg = config.arg;
       this.thumb_size = config.thumb_size;
@@ -49,11 +49,11 @@ var SimpleSlider = Component.extend({
       //selecting elements
       var _this = this;
       this.element = d3.select(this.element);
-      this.slider = this.element.selectAll('.vzb-ss-slider');
+      this.slider = this.element.selectAll(".vzb-ss-slider");
 
       this.elementSize = this.element.node().getBoundingClientRect();
       this.sliderSize = this.slider.node().getBoundingClientRect();
-      this.slider.style('left', (this.elementSize.left - this.sliderSize.left) + 'px');
+      this.slider.style("left", (this.elementSize.left - this.sliderSize.left) + "px");
 
       //TODO: replace this with utils.extend
       if (this.slider_properties) {
@@ -71,20 +71,20 @@ var SimpleSlider = Component.extend({
 
       //check and change the slider's thumb size
       if (this.thumb_size) {
-        this.slider.classed('vzb-ss-slider-normal', false);
-        this.slider.classed('vzb-ss-slider-' + this.thumb_size, true);
+        this.slider.classed("vzb-ss-slider-normal", false);
+        this.slider.classed("vzb-ss-slider-" + this.thumb_size, true);
       }
 
       this.slider
-        .attr('min', min)
-        .attr('max', max)
-        .attr('step', step)
-        .attr('value', value)
-        .on('input', function() {
+        .attr("min", min)
+        .attr("max", max)
+        .attr("step", step)
+        .attr("value", value)
+        .on("input", function() {
           var value = +d3.event.target.value;
           _this._setModel(value, false, false); // on drag - non-persistent changes while dragging
         })
-        .on('change', function() {
+        .on("change", function() {
           var value = +d3.event.target.value;
           _this._setModel(value, true); // on drag end - value is probably same as last 'input'-event, so force change
         });

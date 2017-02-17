@@ -1,16 +1,16 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import Trail from 'tools/bubblechart/bubblechart-trail';
-import PanZoom from 'tools/bubblechart/bubblechart-panzoom';
-import Exporter from 'helpers/svgexport';
-import Labels from 'helpers/labels';
-import axisSmart from 'helpers/d3.axisWithLabelPicker';
-import DynamicBackground from 'helpers/d3.dynamicBackground';
+import * as utils from "base/utils";
+import Component from "base/component";
+import Trail from "tools/bubblechart/bubblechart-trail";
+import PanZoom from "tools/bubblechart/bubblechart-panzoom";
+import Exporter from "helpers/svgexport";
+import Labels from "helpers/labels";
+import axisSmart from "helpers/d3.axisWithLabelPicker";
+import DynamicBackground from "helpers/d3.dynamicBackground";
 
 import {
   warn as iconWarn,
   question as iconQuestion
-} from 'base/iconset';
+} from "base/iconset";
 
 
 //BUBBLE CHART COMPONENT
@@ -24,8 +24,8 @@ var BubbleChartComp = Component.extend({
    */
   init(config, context) {
     var _this = this;
-    this.name = 'bubblechart';
-    this.template = require('./bubblechart.html');
+    this.name = "bubblechart";
+    this.template = require("./bubblechart.html");
 
     //define expected models for this component
     this.model_expects = [{
@@ -46,13 +46,13 @@ var BubbleChartComp = Component.extend({
     }];
 
     this.model_binds = {
-      'change:time.playing': function(evt, original) {
+      "change:time.playing": function(evt, original) {
         if (utils.isTouchDevice() && _this.model.time.playing && _this.someHighlighted) {
           _this.model.marker.clearHighlighted();
         }
       },
-      'change:time.start': function(evt, original) {
-        if (_this.model.marker.color.scaleType === 'time') {
+      "change:time.start": function(evt, original) {
+        if (_this.model.marker.color.scaleType === "time") {
           _this.model.marker.color.scale = null;
         }
         if (!_this._readyOnce || _this.model.time.splash) return;
@@ -60,7 +60,7 @@ var BubbleChartComp = Component.extend({
           _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
         });
       },
-      'change:time.end': function(evt, original) {
+      "change:time.end": function(evt, original) {
         if (!_this._readyOnce || _this.model.time.splash) return;
         _this._trails.create().then(function() {
           _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
@@ -154,7 +154,7 @@ var BubbleChartComp = Component.extend({
       "change:marker.highlight": function(evt, path) {
         if (!_this._readyOnce) return;
         //path have values if trail is highlighted
-        if (path != 'highlight') {
+        if (path != "highlight") {
           if (path !== null) {
             var titles = _this._formatSTitleValues(path.size, path.color);
             _this._updateSTitle(titles[0], titles[1]);
@@ -166,7 +166,7 @@ var BubbleChartComp = Component.extend({
         //console.log("EVENT change:entities:highlight");
         _this.highlightDataPoints();
       },
-      'change:time.value': function() {
+      "change:time.value": function() {
         if (!_this._readyOnce || !_this.entityBubbles) return;
         if (!_this.calculationQueue) { // collect timestamp that we request
           _this.calculationQueue = [_this.model.time.value.toString()];
@@ -188,7 +188,7 @@ var BubbleChartComp = Component.extend({
 
         }(_this.model.time.value));
       },
-      'change:ui.adaptMinMaxZoom': function() {
+      "change:ui.adaptMinMaxZoom": function() {
         //console.log("EVENT change:ui:adaptMinMaxZoom");
         if (_this.model.ui.adaptMinMaxZoom) {
           _this._panZoom.expandCanvas(500);
@@ -196,14 +196,14 @@ var BubbleChartComp = Component.extend({
           _this._panZoom.reset();
         }
       },
-      'change:marker.size.extent': function(evt, path) {
+      "change:marker.size.extent": function(evt, path) {
         //console.log("EVENT change:marker:size:max");
         if (!_this._readyOnce) return;
         _this.updateMarkerSizeLimits();
         _this.redrawDataPointsOnlySize();
         _this._trails.run("resize");
       },
-      'change:marker.color': function(evt, path) {
+      "change:marker.color": function(evt, path) {
         if (!_this._readyOnce) return;
         //console.log("EVENT change:marker:color:palette");
         _this.redrawDataPointsOnlyColors();
@@ -215,14 +215,14 @@ var BubbleChartComp = Component.extend({
       //   _this.redrawDataPointsOnlyColors();
       //   _this._trails.run("recolor");
       // },
-      'change:marker.opacitySelectDim': function() {
+      "change:marker.opacitySelectDim": function() {
         _this.updateBubbleOpacity();
       },
-      'change:marker.opacityRegular': function() {
+      "change:marker.opacityRegular": function() {
         _this.updateBubbleOpacity();
         _this._trails.run("opacityHandler");
       },
-      'change:ui.cursorMode': function() {
+      "change:ui.cursorMode": function() {
         var svg = _this.element.select("svg");
         if (_this.model.ui.cursorMode === "plus") {
             svg.classed("vzb-zoomin", true);
@@ -235,7 +235,7 @@ var BubbleChartComp = Component.extend({
             svg.classed("vzb-zoomout", false);
         }
       },
-      'ready': function() {
+      "ready": function() {
         // if(_this.model.marker.color.scaleType === 'time') {
         //   _this.model.marker.color.scale = null;
         //   utils.defer(function() {
@@ -271,10 +271,10 @@ var BubbleChartComp = Component.extend({
       ]);
     this._labels = new Labels(this);
     this._labels.config({
-      CSS_PREFIX: 'vzb-bc',
-      LABELS_CONTAINER_CLASS: 'vzb-bc-labels',
-      LINES_CONTAINER_CLASS: 'vzb-bc-bubbles',
-      LINES_CONTAINER_SELECTOR_PREFIX: 'bubble-'
+      CSS_PREFIX: "vzb-bc",
+      LABELS_CONTAINER_CLASS: "vzb-bc-labels",
+      LINES_CONTAINER_CLASS: "vzb-bc-bubbles",
+      LINES_CONTAINER_SELECTOR_PREFIX: "bubble-"
     });
   },
 
@@ -330,50 +330,50 @@ var BubbleChartComp = Component.extend({
     this.element = d3.select(this.element);
 
     // reference elements
-    this.graph = this.element.select('.vzb-bc-graph');
-    this.yAxisElContainer = this.graph.select('.vzb-bc-axis-y');
-    this.yAxisEl = this.yAxisElContainer.select('g');
+    this.graph = this.element.select(".vzb-bc-graph");
+    this.yAxisElContainer = this.graph.select(".vzb-bc-axis-y");
+    this.yAxisEl = this.yAxisElContainer.select("g");
 
-    this.xAxisElContainer = this.graph.select('.vzb-bc-axis-x');
-    this.xAxisEl = this.xAxisElContainer.select('g');
+    this.xAxisElContainer = this.graph.select(".vzb-bc-axis-x");
+    this.xAxisEl = this.xAxisElContainer.select("g");
 
-    this.yTitleEl = this.graph.select('.vzb-bc-axis-y-title');
-    this.xTitleEl = this.graph.select('.vzb-bc-axis-x-title');
-    this.sTitleEl = this.graph.select('.vzb-bc-axis-s-title');
-    this.cTitleEl = this.graph.select('.vzb-bc-axis-c-title');
-    this.yearEl = this.graph.select('.vzb-bc-year');
+    this.yTitleEl = this.graph.select(".vzb-bc-axis-y-title");
+    this.xTitleEl = this.graph.select(".vzb-bc-axis-x-title");
+    this.sTitleEl = this.graph.select(".vzb-bc-axis-s-title");
+    this.cTitleEl = this.graph.select(".vzb-bc-axis-c-title");
+    this.yearEl = this.graph.select(".vzb-bc-year");
 
     this.year = new DynamicBackground(this.yearEl);
 
-    this.yInfoEl = this.graph.select('.vzb-bc-axis-y-info');
-    this.xInfoEl = this.graph.select('.vzb-bc-axis-x-info');
-    this.dataWarningEl = this.graph.select('.vzb-data-warning');
+    this.yInfoEl = this.graph.select(".vzb-bc-axis-y-info");
+    this.xInfoEl = this.graph.select(".vzb-bc-axis-x-info");
+    this.dataWarningEl = this.graph.select(".vzb-data-warning");
 
     this.projectionX = this.graph.select(".vzb-bc-projection-x");
     this.projectionY = this.graph.select(".vzb-bc-projection-y");
     this.lineEqualXY = this.graph.select(".vzb-bc-line-equal-xy");
 
-    this.trailsContainer = this.graph.select('.vzb-bc-trails');
-    this.bubbleContainerCrop = this.graph.select('.vzb-bc-bubbles-crop');
-    this.zoomSelection = this.graph.select('.vzb-zoom-selection');
-    this.labelsContainerCrop = this.graph.select('.vzb-bc-labels-crop');
-    this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
-    this.labelsContainer = this.graph.select('.vzb-bc-labels');
-    this.linesContainer = this.graph.select('.vzb-bc-lines');
-    this.zoomRect = this.element.select('.vzb-bc-zoom-rect');
-    this.eventArea = this.element.select('.vzb-bc-eventarea');
+    this.trailsContainer = this.graph.select(".vzb-bc-trails");
+    this.bubbleContainerCrop = this.graph.select(".vzb-bc-bubbles-crop");
+    this.zoomSelection = this.graph.select(".vzb-zoom-selection");
+    this.labelsContainerCrop = this.graph.select(".vzb-bc-labels-crop");
+    this.bubbleContainer = this.graph.select(".vzb-bc-bubbles");
+    this.labelsContainer = this.graph.select(".vzb-bc-labels");
+    this.linesContainer = this.graph.select(".vzb-bc-lines");
+    this.zoomRect = this.element.select(".vzb-bc-zoom-rect");
+    this.eventArea = this.element.select(".vzb-bc-eventarea");
 
     this.entityBubbles = null;
-    this.bubbleCrown = this.element.select('.vzb-bc-bubble-crown');
+    this.bubbleCrown = this.element.select(".vzb-bc-bubble-crown");
     //set filter
     this.bubbleCrown.selectAll(".vzb-crown-glow")
       .attr("filter", "url(" + location.pathname + "#vzb-glow-filter)");
-    this.tooltip = this.element.select('.vzb-bc-tooltip');
+    this.tooltip = this.element.select(".vzb-bc-tooltip");
     //set filter
     this.tooltip.select(".vzb-tooltip-glow")
       .attr("filter", "url(" + location.pathname + "#vzb-glow-filter)");
 
-    this.tooltipMobile = this.element.select('.vzb-tooltip-mobile');
+    this.tooltipMobile = this.element.select(".vzb-tooltip-mobile");
     //component events
     this.on("resize", function() {
       //console.log("EVENT: resize");
@@ -395,21 +395,21 @@ var BubbleChartComp = Component.extend({
     //keyboard listeners
     d3.select("body")
       .on("keydown", function() {
-        if (_this.model.ui.cursorMode !== 'arrow') return;
+        if (_this.model.ui.cursorMode !== "arrow") return;
         if (d3.event.metaKey || d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", true);
       })
       .on("keyup", function() {
-        if (_this.model.ui.cursorMode !== 'arrow') return;
+        if (_this.model.ui.cursorMode !== "arrow") return;
         if (!d3.event.metaKey && !d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", false);
       })
       //this is for the case when user would press ctrl and move away from the browser tab or window
       //keyup event would happen somewhere else and won't be captured, so zoomin class would get stuck
       .on("mouseenter", function() {
-        if (_this.model.ui.cursorMode !== 'arrow') return;
+        if (_this.model.ui.cursorMode !== "arrow") return;
         if (!d3.event.metaKey && !d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", false);
       });
 
-    this.root.on('resetZoom', function() {
+    this.root.on("resetZoom", function() {
         _this._panZoom.reset(null, 500);
     });
 
@@ -417,7 +417,7 @@ var BubbleChartComp = Component.extend({
     this.bubbleContainerCrop
       .call(this._panZoom.dragRectangle)
       .call(this._panZoom.zoomer)
-      .on('dblclick.zoom', null)
+      .on("dblclick.zoom", null)
       .on("mouseup", function() {
         _this.draggingNow = false;
       })
@@ -544,7 +544,7 @@ var BubbleChartComp = Component.extend({
       this.redrawDataPoints();
     }
     this._trails.run("reveal", null, this.duration);
-    this.tooltipMobile.classed('vzb-hidden', true);
+    this.tooltipMobile.classed("vzb-hidden", true);
     this._reorderEntities();
   },
 
@@ -625,7 +625,7 @@ var BubbleChartComp = Component.extend({
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
       var toolRect = _this.root.element.getBoundingClientRect();
       var chartRect = _this.element.node().getBoundingClientRect();
-      _this.parent.findChildByName("gapminder-datanotes").setHook('axis_y').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
+      _this.parent.findChildByName("gapminder-datanotes").setHook("axis_y").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
     });
     this.yInfoEl.on("mouseout", function() {
       _this.parent.findChildByName("gapminder-datanotes").hide();
@@ -639,7 +639,7 @@ var BubbleChartComp = Component.extend({
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
       var toolRect = _this.root.element.getBoundingClientRect();
       var chartRect = _this.element.node().getBoundingClientRect();
-      _this.parent.findChildByName("gapminder-datanotes").setHook('axis_x').show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
+      _this.parent.findChildByName("gapminder-datanotes").setHook("axis_x").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
     });
     this.xInfoEl.on("mouseout", function() {
        if (_this.model.time.dragging) return;
@@ -700,7 +700,7 @@ var BubbleChartComp = Component.extend({
     if (!this.model.time.splash) {
       this.unselectBubblesWithNoData(markers);
     }
-    this.entityBubbles = this.bubbleContainer.selectAll('circle.vzb-bc-entity')
+    this.entityBubbles = this.bubbleContainer.selectAll("circle.vzb-bc-entity")
       .data(this.model.marker.getVisible(), function(d) {return d[KEY];}); // trails have not keys
 
     //exit selection
@@ -712,16 +712,16 @@ var BubbleChartComp = Component.extend({
         return "vzb-bc-entity " + "bubble-" + d[KEY];
       })
       .on("mouseover", function(d, i) {
-        if (utils.isTouchDevice() || _this.model.ui.cursorMode !== 'arrow') return;
+        if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
         _this._bubblesInteract().mouseover(d, i);
       })
       .on("mouseout", function(d, i) {
-        if (utils.isTouchDevice() || _this.model.ui.cursorMode !== 'arrow') return;
+        if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
 
         _this._bubblesInteract().mouseout(d, i);
       })
       .on("click", function(d, i) {
-        if (utils.isTouchDevice() || _this.model.ui.cursorMode !== 'arrow') return;
+        if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
 
         _this._bubblesInteract().click(d, i);
       })
@@ -755,7 +755,7 @@ var BubbleChartComp = Component.extend({
   _reorderEntities() {
     var _this = this;
     var KEY = this.KEY;
-    this.bubbleContainer.selectAll('.vzb-bc-entity')
+    this.bubbleContainer.selectAll(".vzb-bc-entity")
       .sort(function(a, b) {
         var sizeA = _this.frame.size[a[KEY]];
         var sizeB = _this.frame.size[b[KEY]];
@@ -812,7 +812,7 @@ var BubbleChartComp = Component.extend({
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
-    this.year.setText(this.model.time.formatDate(this.time, 'ui'), this.duration);
+    this.year.setText(this.model.time.formatDate(this.time, "ui"), this.duration);
   },
 
   /*
@@ -986,30 +986,30 @@ var BubbleChartComp = Component.extend({
     var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + xSeparator + this.strings.unit.X);
     if (xTitleText.node().getBBox().width > this.width - 100) xTitleText.text(this.strings.title.X);
 
-    if (this.yInfoEl.select('svg').node()) {
+    if (this.yInfoEl.select("svg").node()) {
       var titleBBox = this.yTitleEl.node().getBBox();
       var t = utils.transform(this.yTitleEl.node());
       var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
-      this.yInfoEl.select('svg')
+      this.yInfoEl.select("svg")
         .attr("width", infoElHeight + "px")
         .attr("height", infoElHeight + "px");
-      this.yInfoEl.attr('transform', 'translate('
-        + hTranslate + ','
-        + (t.translateY - infoElHeight * 0.8) + ')');
+      this.yInfoEl.attr("transform", "translate("
+        + hTranslate + ","
+        + (t.translateY - infoElHeight * 0.8) + ")");
     }
 
-    if (this.xInfoEl.select('svg').node()) {
+    if (this.xInfoEl.select("svg").node()) {
       var titleBBox = this.xTitleEl.node().getBBox();
       var t = utils.transform(this.xTitleEl.node());
       var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
-      this.xInfoEl.select('svg')
+      this.xInfoEl.select("svg")
         .attr("width", infoElHeight + "px")
         .attr("height", infoElHeight + "px");
-      this.xInfoEl.attr('transform', 'translate('
-        + hTranslate + ','
-        + (t.translateY - infoElHeight * 0.8) + ')');
+      this.xInfoEl.attr("transform", "translate("
+        + hTranslate + ","
+        + (t.translateY - infoElHeight * 0.8) + ")");
     }
 
     this._resizeDataWarning();
@@ -1447,7 +1447,7 @@ var BubbleChartComp = Component.extend({
         .selectAll("text")
         .text(tooltipText);
 
-      var contentBBox = this.tooltip.select('text').node().getBBox();
+      var contentBBox = this.tooltip.select("text").node().getBBox();
       if (x - xOffset - contentBBox.width < 0) {
         xSign = 1;
         x += contentBBox.width + 5; // corrective to the block Radius and text padding
@@ -1586,10 +1586,10 @@ var BubbleChartComp = Component.extend({
             var selectedData = utils.find(_this.model.marker.select, function(f) {
               return f[KEY] == d[KEY];
             });
-            hoverTrail = text !== selectedData.trailStartTime && !d3.select(d3.event.target).classed('bubble-' + d[KEY]);
-            text = text !== selectedData.trailStartTime && _this.time === d[TIMEDIM] ? text : '';
+            hoverTrail = text !== selectedData.trailStartTime && !d3.select(d3.event.target).classed("bubble-" + d[KEY]);
+            text = text !== selectedData.trailStartTime && _this.time === d[TIMEDIM] ? text : "";
           } else {
-            text = _this.model.marker.isSelected(d) ? '' : values.label[d[KEY]];
+            text = _this.model.marker.isSelected(d) ? "" : values.label[d[KEY]];
           }
 
           _this._labels.highlight(null, false);
