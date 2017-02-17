@@ -469,7 +469,7 @@ export default function axisSmart(_orient) {
                       d).length) + marginsLR
                   )
                   // this is a logarithmic rescaling of labels
-                  * (1 + Math.log(d.toString().replace(/([0\.])/g, "")[0]) / Math.LN10)));
+                  * (1 + Math.log(d.toString().replace(/([0.])/g, "")[0]) / Math.LN10)));
 
           } else {
             return lengthRange >

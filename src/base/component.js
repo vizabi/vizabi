@@ -497,12 +497,12 @@ const Component = Events.extend({
 function templateFunc(str, data) {
 
   const func = function(obj) {
-    return str.replace(/<%=([^\%]*)%>/g, match => {
+    return str.replace(/<%=([^%]*)%>/g, match => {
       //match t("...")
       let s = match.match(/t\s*\(([^)]+)\)/g);
       //replace with translation
       if (s.length) {
-        s = obj.t(s[0].match(/\"([^"]+)\"/g)[0].split('"').join(""));
+        s = obj.t(s[0].match(/"([^"]+)"/g)[0].split('"').join(""));
       }
       //use object[name]
       else {
