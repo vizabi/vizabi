@@ -10,6 +10,30 @@
     "browser": true
   },
   "rules": {
+    // "callback-return": 1,
+    // "no-undefined": 1,
+    // "no-unused-vars": 1,
+    // "no-useless-return": 1,
+    // "no-useless-escape": 1,
+    // "no-unmodified-loop-condition": 1,
+    // "no-else-return": 1,
+    // "consistent-return": 1,
+    // "block-scoped-var": 1,
+    // "no-inner-declarations": 1,
+    //    "prefer-destructuring": [
+    //      "warn"
+    //    ],
+    //        "no-var": 1,
+    //    "prefer-rest-params": 1,
+    //    "prefer-spread": 1,
+    //    "no-redeclare": 1,
+    "wrap-iife": [
+      "warn",
+      "inside"
+    ],
+    "no-useless-call": 1,
+    "block-spacing": 1,
+    "no-new": 1,
     "object-shorthand": [
       "warn",
       "always",
@@ -20,27 +44,25 @@
     "space-infix-ops": [
       "warn"
     ],
-    //    "prefer-destructuring": [
-    //      "warn"
-    //    ],
-    //    "prefer-arrow-callback": [
-    //      "warn"
-    //    ],
-    //    "quotes": [
-    //      "warn",
-    //      "double",
-    //      {
-    //        "avoidEscape": true,
-    //        "allowTemplateLiterals": true
-    //      }
-    //    ],
-    //    "indent": [
-    //      "warn",
-    //      2
-    //    ],
-    //    "no-var": 1,
-    //    "prefer-rest-params": 1,
-    //    "prefer-spread": 1,
+    "prefer-arrow-callback": [
+      "warn"
+    ],
+    "quotes": [
+      "warn",
+      "double",
+      {
+        "avoidEscape": true,
+        "allowTemplateLiterals": true
+      }
+    ],
+    "indent": [
+      "warn",
+      2,
+      {
+        "SwitchCase": 1,
+        "MemberExpression": 1
+      }
+    ],
     "space-unary-ops": [
       "warn",
       {
@@ -90,22 +112,6 @@
       "never"
     ],
     "no-floating-decimal": 1,
-    "block-spacing": 0,
-    "callback-return": 0,
-    "no-undefined": 0,
-    "no-unused-vars": 0,
-    "wrap-iife": 0,
-    "no-useless-return": 0,
-    "no-useless-escape": 0,
-    "no-useless-call": 0,
-    "no-unmodified-loop-condition": 0,
-    "no-redeclare": 0,
-    "no-new": 0,
-    "no-else-return": 0,
-    "curly": 0,
-    "consistent-return": 0,
-    "block-scoped-var": 0,
-    "no-inner-declarations": 0,
     "no-trailing-spaces": 1,
     "no-debugger": 1,
     "no-dupe-args": 1,
