@@ -429,7 +429,6 @@ const TimeModel = DataConnected.extend({
         } else {
           _this.set("playing", false, null, false);
         }
-        return;
       } else {
 
         _this._intervals.clearInterval("playInterval_" + _this._id);

@@ -424,9 +424,7 @@ export const deepExtend = function(/*obj_1, [obj_2], [obj_N]*/) {
 
       // recursion prevention
       if (val === target) {
-        return;
-
-        /**
+        /*
          * if new value isn't object then just overwrite by new value
          * instead of extending.
          * 2016-11-07 / Jasper: Added specific check for val instanceof Model for merging defaults & values of ComponentModels
@@ -434,27 +432,22 @@ export const deepExtend = function(/*obj_1, [obj_2], [obj_N]*/) {
          */
       } else if (typeof val !== "object" || val === null || val._data) {
         target[key] = val;
-        return;
 
         // just clone arrays (and recursive clone objects inside)
       } else if (isArray(val)) {
         target[key] = deepCloneArray(val);
-        return;
 
         // custom cloning and overwrite for specific objects
       } else if (isSpecificValue(val)) {
         target[key] = cloneSpecificValue(val);
-        return;
 
         // overwrite by new value if source isn't object or array
       } else if (typeof src !== "object" || src === null || isArray(src)) {
         target[key] = deepExtend({}, val);
-        return;
 
         // source value and new value is objects both, extending...
       } else {
         target[key] = deepExtend(src, val);
-        return;
       }
     });
   });

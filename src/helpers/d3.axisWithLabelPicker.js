@@ -932,28 +932,9 @@ export default function axisSmart(_orient) {
     );
 
 
-    function meow(l1, l2, l3, l4, l5) {
+    function meow() {
       if (!axis.labelerOptions().isDevMode) return;
-      if (l5 != null) {
-        console.log(l1, l2, l3, l4, l5);
-        return;
-      }
-      if (l4 != null) {
-        console.log(l1, l2, l3, l4);
-        return;
-      }
-      if (l3 != null) {
-        console.log(l1, l2, l3);
-        return;
-      }
-      if (l2 != null) {
-        console.log(l1, l2);
-        return;
-      }
-      if (l1 != null) {
-        console.log(l1);
-        return;
-      }
+      console.log(...arguments);
     }
 
   })(d3["axis" + utils.capitalize(_orient)]());

@@ -125,13 +125,10 @@ const MountainChartComponent = Component.extend({
         if (!_this._readyOnce) return;
         if (path.indexOf("scaleType") > -1) {
           _this.ready();
-          return;
-        }
-        if (path.indexOf("zoomedMin") > -1 || path.indexOf("zoomedMax") > -1) {
+        } else if (path.indexOf("zoomedMin") > -1 || path.indexOf("zoomedMax") > -1) {
           _this.zoomToMaxMin();
           _this.redrawDataPoints();
           _this._probe.redraw();
-          return;
         }
       },
       "change:marker.group": function(evt, path) {

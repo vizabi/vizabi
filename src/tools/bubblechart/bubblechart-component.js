@@ -102,9 +102,7 @@ const BubbleChartComp = Component.extend({
           _this._trails.run("findVisible");
           _this.redrawDataPoints();
           _this._trails.run("resize", null, 500);
-          return;
-        }
-        if (path.indexOf("zoomedMin") > -1 || path.indexOf("zoomedMax") > -1) {
+        } else if (path.indexOf("zoomedMin") > -1 || path.indexOf("zoomedMax") > -1) {
           if (_this.draggingNow) return;
 
           //avoid zooming again if values didn't change.
@@ -130,7 +128,6 @@ const BubbleChartComp = Component.extend({
           if (playAfterZoom) {
             _this.model.time.postponePause = false;
           }
-          return;
         }
 
         //console.log("EVENT change:marker", evt);

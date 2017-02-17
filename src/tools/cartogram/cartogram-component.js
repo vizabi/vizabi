@@ -192,9 +192,7 @@ const CartogramComponent = Component.extend({
 
     const _this = this;
     this.updateUIStrings();
-    this.on("resize", () => {
-      if (_this.updateSize()) return;
-    });
+    this.on("resize", () => this.updateSize());
     this.wScale = d3.scale.linear()
       .domain(this.model.ui.datawarning.doubtDomain)
       .range(this.model.ui.datawarning.doubtRange);

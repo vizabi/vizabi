@@ -237,9 +237,7 @@ const Tool = Component.extend({
 
   clear() {
     this.model.ui.clear();
-    this.setModel = this.getModel = function() {
-      return;
-    };
+    this.setModel = this.getModel = () => void 0;
     this._super();
   },
 
