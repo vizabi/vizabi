@@ -2,13 +2,13 @@ import * as utils from "base/utils";
 import Model from "base/model";
 
 //classes are vzb-portrait, vzb-landscape...
-var class_prefix = "vzb-";
-var class_presentation = "presentation";
-var class_rtl = "rtl";
-var class_portrait = "vzb-portrait";
-var class_landscape = "vzb-landscape";
+const class_prefix = "vzb-";
+const class_presentation = "presentation";
+const class_rtl = "rtl";
+const class_portrait = "vzb-portrait";
+const class_landscape = "vzb-landscape";
 
-var UI = Model.extend({
+const UI = Model.extend({
 
   screen_profiles: {
     small: {
@@ -26,7 +26,7 @@ var UI = Model.extend({
   },
 
   getClassDefaults() {
-    var defaults = {
+    const defaults = {
       presentation: false,
       buttons: [],
       dialogs: {
@@ -68,9 +68,9 @@ var UI = Model.extend({
    * Calculates the size of the newly resized container
    */
   setSize(force) {
-    var _this = this;
-    var width = this._container.clientWidth;
-    var height = this._container.clientHeight;
+    const _this = this;
+    const width = this._container.clientWidth;
+    const height = this._container.clientHeight;
 
     /**
      * issue #1118
@@ -82,8 +82,8 @@ var UI = Model.extend({
       this._container.style.top =  0;
       if (this._container.clientWidth > this._container.clientHeight // landscape mode
         && this._container.clientWidth < 700) {  // small device
-        var bodyHeight = this._container.clientHeight;
-        var windowHeight = window.innerHeight;
+        const bodyHeight = this._container.clientHeight;
+        const windowHeight = window.innerHeight;
         if (2 < (bodyHeight - windowHeight) && (bodyHeight - windowHeight) <= 45) { // check searchbar is visible
           this._container.style.top =  44 + "px";
           document.body.scrollTop = 44; // scrolling empty space

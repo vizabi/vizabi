@@ -17,7 +17,7 @@ export default Class.extend({
   },
 
   toggle(arg) {
-    var _context = this.context;
+    const _context = this.context;
     if (arg) {
 
       _context._trails.create().then(() => {
@@ -32,22 +32,22 @@ export default Class.extend({
   },
 
   create(selection) {
-    var _context = this.context;
-    var _this = this;
-    var KEY = _context.KEY;
-    var TIMEDIM = _context.TIMEDIM;
+    const _context = this.context;
+    const _this = this;
+    const KEY = _context.KEY;
+    const TIMEDIM = _context.TIMEDIM;
     this._isCreated = new Promise((resolve, reject) => {
       //quit if the function is called accidentally
       if (!_context.model.ui.chart.trails) return;
 
-      var timePoints = _context.model.time.getAllSteps();
+      const timePoints = _context.model.time.getAllSteps();
 
       //work with marker.select (all selected entities), if no particular selection is specified
-      var promises = [];
+      const promises = [];
       selection = selection == null ? _context.model.marker.select : [selection];
       _this._clearActions(selection);
       _this.trailsData = _context.model.marker.select.map(d => {
-        var r = {
+        const r = {
           status: "created",
           selectedEntityData: d
         };
@@ -55,7 +55,7 @@ export default Class.extend({
         return r;
       });
       _this.trailTransitions = {};
-      var _trails = _context.bubbleContainer.selectAll("g.vzb-bc-entity.entity-trail")
+      const _trails = _context.bubbleContainer.selectAll("g.vzb-bc-entity.entity-trail")
         .data(_this.trailsData, d => (d[KEY]));
 
       _trails.exit().remove();
@@ -67,13 +67,13 @@ export default Class.extend({
         .merge(_trails)
         .each(function(d, index) {
           // used for prevent move trail start time forward when we have empty values at end of time range
-          var trail = this;
+          const trail = this;
           promises.push(new Promise((resolve, reject) => {
-            var trailSegmentData = timePoints.map(m => ({
+            const trailSegmentData = timePoints.map(m => ({
               t: m,
               key: d[KEY]
             }));
-            var entityTrails = d3.select(trail).selectAll("g")
+            const entityTrails = d3.select(trail).selectAll("g")
               .data(trailSegmentData)
               .classed("vzb-invisible", true);
 
@@ -84,19 +84,19 @@ export default Class.extend({
               .on("mouseover", function(segment, index) {
                 if (utils.isTouchDevice()) return;
 
-                var pointer = {};
+                const pointer = {};
                 pointer[KEY] = segment.key;
                 pointer[TIMEDIM] = segment.t;
 
                 _context._axisProjections(pointer);
                 _context._labels.highlight(d, true);
-                var text = _context.model.time.formatDate(segment.t);
-                var selectedData = utils.find(_context.model.marker.select, f => f[KEY] == d[KEY]);
+                const text = _context.model.time.formatDate(segment.t);
+                const selectedData = utils.find(_context.model.marker.select, f => f[KEY] == d[KEY]);
                 _context.model.marker.getFrame(pointer[TIMEDIM], values => {
-                  var x = _context.xScale(values.axis_x[pointer[KEY]]);
-                  var y = _context.yScale(values.axis_y[pointer[KEY]]);
-                  var s = utils.areaToRadius(_context.sScale(values.size[pointer[KEY]]));
-                  var c = values.color[pointer[KEY]] != null ? _context.cScale(values.color[pointer[KEY]]) : _context.COLOR_WHITEISH;
+                  const x = _context.xScale(values.axis_x[pointer[KEY]]);
+                  const y = _context.yScale(values.axis_y[pointer[KEY]]);
+                  const s = utils.areaToRadius(_context.sScale(values.size[pointer[KEY]]));
+                  const c = values.color[pointer[KEY]] != null ? _context.cScale(values.color[pointer[KEY]]) : _context.COLOR_WHITEISH;
                   if (text !== selectedData.trailStartTime) {
                     _context._setTooltip(text, x, y, s + 3, c);
                   }
@@ -116,7 +116,7 @@ export default Class.extend({
                 d3.select(this).style("opacity", _context.model.marker.opacityRegular);
               })
               .each(function(segment, index) {
-                var view = d3.select(this);
+                const view = d3.select(this);
                 view.append("circle");
                 view.append("line");
               })
@@ -142,9 +142,9 @@ export default Class.extend({
    * @private
    */
   _addActions(selections, actions) {
-    var _context = this.context;
-    var _this = this;
-    var KEY = _context.KEY;
+    const _context = this.context;
+    const _this = this;
+    const KEY = _context.KEY;
 
     selections.forEach(d => {
       if (!_this.actionsQueue[d[KEY]]) _this.actionsQueue[d[KEY]] = [];
@@ -153,9 +153,9 @@ export default Class.extend({
   },
 
   _clearActions(selections) {
-    var _context = this.context;
-    var _this = this;
-    var KEY = _context.KEY;
+    const _context = this.context;
+    const _this = this;
+    const KEY = _context.KEY;
 
     selections.forEach(d => {
       if (!_this.actionsQueue[d[KEY]]) _this.actionsQueue[d[KEY]] = [];
@@ -176,9 +176,9 @@ export default Class.extend({
   },
 
   run(actions, selection, duration) {
-    var _context = this.context;
-    var _this = this;
-    var KEY = _context.KEY;
+    const _context = this.context;
+    const _this = this;
+    const KEY = _context.KEY;
     if (!this._isCreated || _context.model.time.splash) return;
     if (typeof actions == "string") actions = [actions];
 
@@ -190,12 +190,12 @@ export default Class.extend({
 
       //work with marker.select (all selected entities), if no particular selection is specified
       selection = selection == null ? _context.model.marker.select : [selection];
-      for (var i = 0; i < actions.length; i++) {
+      for (let i = 0; i < actions.length; i++) {
         if (["resize", "recolor"].indexOf(actions[i]) != -1) {
-          var action = actions.splice(i, 1).pop();
+          const action = actions.splice(i, 1).pop();
           --i;
           _this.trailsData.forEach(d => {
-            var trail = _this.entityTrails[d[KEY]];
+            const trail = _this.entityTrails[d[KEY]];
             _context._trails["_" + action](trail, duration, d);
           });
         }
@@ -209,13 +209,13 @@ export default Class.extend({
           _this.drawingQueue[d[KEY]] = {};
           _this.delayedIterations[d[KEY]] = {};
         }
-        var trail = _this.entityTrails[d[KEY]];
+        const trail = _this.entityTrails[d[KEY]];
         //do all the actions over "trail"
-        var executeSequential = function(index) { // some function can be async, but we should run next when previous completed
-          var action = _this._getNextAction(d[KEY]);
+        const executeSequential = function(index) { // some function can be async, but we should run next when previous completed
+          const action = _this._getNextAction(d[KEY]);
           if (action) {
             _this.trailsInProgress[d[KEY]] = action;
-            var response = _context._trails["_" + action](trail, duration, d);
+            const response = _context._trails["_" + action](trail, duration, d);
             if (response && response instanceof Promise) {
               response.then(() => {
                 _this.trailsInProgress[d[KEY]] = null;
@@ -247,18 +247,18 @@ export default Class.extend({
   },
 
   _resize(trail, duration, d) {
-    var _context = this.context;
+    const _context = this.context;
     if (_context.model.time.splash) {
       return;
     }
 //    this._isCreated.then(function() {
-    var updateLabel = false;
+    let updateLabel = false;
 
     trail.each(function(segment, index) {
 
       if (segment.valueY == null || segment.valueX == null || segment.valueS == null) return;
 
-      var view = d3.select(this);
+      const view = d3.select(this);
       if (duration) {
         view.select("circle")
           .transition().duration(duration).ease(d3.easeLinear)
@@ -279,11 +279,11 @@ export default Class.extend({
       }
 
       if (!segment.next) return;
-      var next = segment.next;
+      const next = segment.next;
       if (next == null) return;
       if (next.valueY == null || next.valueX == null) return;
 
-      var lineLength = Math.sqrt(
+      const lineLength = Math.sqrt(
           Math.pow(_context.xScale(segment.valueX) - _context.xScale(next.valueX), 2) +
           Math.pow(_context.yScale(segment.valueY) - _context.yScale(next.valueY), 2)
       );
@@ -310,13 +310,13 @@ export default Class.extend({
   },
 
   _recolor(trail, duration, d) {
-    var _context = this.context;
+    const _context = this.context;
 
     trail.each(function(segment, index) {
 
-      var view = d3.select(this);
+      const view = d3.select(this);
 
-      var strokeColor = _context.model.marker.color.which == "geo.world_4region" ?
+      const strokeColor = _context.model.marker.color.which == "geo.world_4region" ?
         //use predefined shades for color palette for "geo.world_4region" (hardcoded)
         _context.model.marker.color.getColorShade({
           colorID: segment.valueC,
@@ -336,11 +336,11 @@ export default Class.extend({
   },
 
   _opacityHandler(trail, duration, d) {
-    var _context = this.context;
+    const _context = this.context;
 
     trail.each(function(segment, index) {
 
-      var view = d3.select(this);
+      const view = d3.select(this);
 
       view
         //.transition().duration(duration).ease(d3.easeLinear)
@@ -350,9 +350,9 @@ export default Class.extend({
 
 
   _findVisible(trail, duration, d) {
-    var _context = this.context;
-    var _this = this;
-    var KEY = _context.KEY;
+    const _context = this.context;
+    const _this = this;
+    const KEY = _context.KEY;
     return new Promise((resolve, reject) => {
       new Promise((resolve1, reject1) => {
         if (!d.limits) {
@@ -367,7 +367,7 @@ export default Class.extend({
         if (!d.selectedEntityData.trailStartTime) {
           d.selectedEntityData.trailStartTime = _context.model.time.formatDate(_context.time);
         }
-        var trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
+        let trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
         if (_context.time - trailStartTime < 0 || d.limits.min - trailStartTime > 0) {
           if (_context.time - trailStartTime < 0) {
               // move trail start time with trail label back if need
@@ -378,9 +378,9 @@ export default Class.extend({
             d.selectedEntityData.trailStartTime = _context.model.time.formatDate(d.limits.min);
             trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
           }
-          var cache = _context._labels.cached[d[KEY]];
-          var valueS = _context.frame.size[d[KEY]];
-          var valueC = _context.frame.color[d[KEY]];
+          const cache = _context._labels.cached[d[KEY]];
+          const valueS = _context.frame.size[d[KEY]];
+          const valueC = _context.frame.color[d[KEY]];
           cache.labelX0 = _context.frame.axis_x[d[KEY]];
           cache.labelY0 = _context.frame.axis_y[d[KEY]];
           cache.scaledS0 = (valueS || valueS === 0) ? utils.areaToRadius(_context.sScale(valueS)) : null;
@@ -389,7 +389,7 @@ export default Class.extend({
         }
         trail.each((segment, index) => {
             // segment is transparent if it is after current time or before trail StartTime
-          var segmentVisibility = segment.transparent;
+          const segmentVisibility = segment.transparent;
           segment.transparent = d.selectedEntityData.trailStartTime == null || (segment.t - _context.time > 0) || (trailStartTime - segment.t > 0)
                 //no trail segment should be visible if leading bubble is shifted backwards, beyond start time
               || (d.selectedEntityData.trailStartTime - _context.model.time.formatDate(_context.time) >= 0);
@@ -407,9 +407,9 @@ export default Class.extend({
   },
 
   _abortAnimation() {
-    var _context = this.context;
-    var _this = this;
-    var KEY = _context.KEY;
+    const _context = this.context;
+    const _this = this;
+    const KEY = _context.KEY;
     _this.trailsData.forEach(d => {
       if (_this.trailTransitions[d[KEY]]) {
         _this.trailTransitions[d[KEY]].select("line").interrupt().transition();
@@ -418,16 +418,16 @@ export default Class.extend({
   },
 
   _reveal(trail, duration, d) {
-    var _context = this.context;
-    var _this = this;
-    var KEY = _context.KEY;
+    const _context = this.context;
+    const _this = this;
+    const KEY = _context.KEY;
     d.status = "reveal";
-    var trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
-    var generateTrailSegment = function(trail, index, nextIndex, level) {
+    const trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
+    const generateTrailSegment = function(trail, index, nextIndex, level) {
       return new Promise((resolve, reject) => {
-        var view = d3.select(trail._groups[0][index]);
+        const view = d3.select(trail._groups[0][index]);
 
-        var segment = view.datum();
+        const segment = view.datum();
 
         //console.log(d[KEY] + " transparent: " + segment.transparent + " vis_changed:" + segment.visibilityChanged);
         if (nextIndex - index == 1) {
@@ -451,10 +451,10 @@ export default Class.extend({
           } else {
             // fix label position if it not in correct place
             if (trailStartTime && trailStartTime.toString() == segment.t.toString()) {
-              var cache = _context._labels.cached[d[KEY]];
+              const cache = _context._labels.cached[d[KEY]];
               cache.labelX0 = segment.valueX;
               cache.labelY0 = segment.valueY;
-              var valueS = segment.valueS;
+              const valueS = segment.valueS;
               cache.scaledS0 = (valueS || valueS === 0) ? utils.areaToRadius(_context.sScale(valueS)) : null;
               cache.scaledC0 = segment.valueC != null ? _context.cScale(segment.valueC) : _context.COLOR_WHITEISH;
               _context._updateLabel(d, index, segment.valueX, segment.valueY, segment.valueS, segment.valueC, frame.label[d[KEY]], frame.size_label[d[KEY]], 0, true);
@@ -483,11 +483,11 @@ export default Class.extend({
             if (!trail._groups[0][nextIndex] || _context.time.toString() == segment.t.toString()) {
               return resolve();
             } else {
-              var next = d3.select(trail._groups[0][nextIndex]);
-              var nextSegment = next.datum();
+              const next = d3.select(trail._groups[0][nextIndex]);
+              const nextSegment = next.datum();
               nextSegment.previous = segment;
               segment.next = nextSegment;
-              var nextTime = nextSegment.t;
+              let nextTime = nextSegment.t;
               if (_context.time - nextSegment.t < 0) { // time is not equal start of year
                 segment.visibilityChanged = true; // redraw needed next time because line not have full length
                 nextTime = _context.time;
@@ -506,7 +506,7 @@ export default Class.extend({
                     nextSegment.valueC = nextFrame.color[d[KEY]];
 
                     _this.trailTransitions[d[KEY]] = view;
-                    var strokeColor = _context.model.marker.color.which == "geo.world_4region" ?
+                    const strokeColor = _context.model.marker.color.which == "geo.world_4region" ?
                       //use predefined shades for color palette for "geo.world_4region" (hardcoded)
                       _context.model.marker.color.getColorShade({
                         colorID: segment.valueC,
@@ -516,7 +516,7 @@ export default Class.extend({
                       //otherwise use color of the bubble with a fallback to bubble stroke color (blackish)
                       (segment.valueC != null ? _context.cScale(segment.valueC) : _context.COLOR_BLACKISH);
 
-                    var lineLength = Math.sqrt(
+                    const lineLength = Math.sqrt(
                       Math.pow(_context.xScale(segment.valueX) - _context.xScale(nextFrame.axis_x[d[KEY]]), 2) +
                       Math.pow(_context.yScale(segment.valueY) - _context.yScale(nextFrame.axis_y[d[KEY]]), 2)
                     );
@@ -543,14 +543,14 @@ export default Class.extend({
         });
       });
     };
-    var addPointBetween = function(previousIndex, nextIndex, index) {
+    const addPointBetween = function(previousIndex, nextIndex, index) {
       return new Promise((resolve, reject) => {
-        var previous = d3.select(trail._groups[0][previousIndex]);
-        var next = d3.select(trail._groups[0][nextIndex]);
-        var view = d3.select(trail._groups[0][index]);
-        var previousSegment = previous.datum();
-        var nextSegment = next.datum();
-        var segment = view.datum();
+        const previous = d3.select(trail._groups[0][previousIndex]);
+        const next = d3.select(trail._groups[0][nextIndex]);
+        const view = d3.select(trail._groups[0][index]);
+        const previousSegment = previous.datum();
+        const nextSegment = next.datum();
+        const segment = view.datum();
 
         if ((!previousSegment.previous && !previousSegment.next) || (!nextSegment.previous && !nextSegment.next)) {
           // segment data cleared by create action
@@ -581,7 +581,7 @@ export default Class.extend({
             return resolve();
           }
 
-          var strokeColor = _context.model.marker.color.which == "geo.world_4region" ?
+          const strokeColor = _context.model.marker.color.which == "geo.world_4region" ?
             //use predefined shades for color palette for "geo.world_4region" (hardcoded)
             _context.model.marker.color.getColorShade({
               colorID: segment.valueC,
@@ -591,7 +591,7 @@ export default Class.extend({
             //otherwise use color of the bubble with a fallback to bubble stroke color (blackish)
             (segment.valueC != null ? _context.cScale(segment.valueC) : _context.COLOR_BLACKISH);
 
-          var firstLineLength = Math.sqrt(
+          const firstLineLength = Math.sqrt(
             Math.pow(_context.xScale(previousSegment.valueX) - _context.xScale(segment.valueX), 2) +
             Math.pow(_context.yScale(previousSegment.valueY) - _context.yScale(segment.valueX), 2)
           );
@@ -616,7 +616,7 @@ export default Class.extend({
               .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)))
               .style("fill", segment.valueC != null ? _context.cScale(segment.valueC) : _context.COLOR_WHITEISH);
 
-            var secondLineLength = Math.sqrt(
+            const secondLineLength = Math.sqrt(
               Math.pow(_context.xScale(segment.valueX) - _context.xScale(nextSegment.valueX), 2) +
               Math.pow(_context.yScale(segment.valueY) - _context.yScale(nextSegment.valueY), 2)
             );
@@ -636,8 +636,8 @@ export default Class.extend({
         });
       });
     };
-    var addNewIntervals = function(previousIndex, index, nextIndex) {
-      var mediumIndex;
+    const addNewIntervals = function(previousIndex, index, nextIndex) {
+      let mediumIndex;
       if (index - previousIndex > 1) {
         mediumIndex = getPointBetween(previousIndex, index);
         _this.delayedIterations[d[KEY]][previousIndex] = {
@@ -655,17 +655,17 @@ export default Class.extend({
         };
       }
     };
-    var getPointBetween = function(previous, next) {
+    const getPointBetween = function(previous, next) {
       return Math.round(previous + (next - previous) / 2);
     };
 
-    var _generateKeys = function(d, trail, div) {
-      var response = [];
-      var min = 0, max = 0;
-      var maxValue = d3.min([d.limits.max, _context.time]);
-      var minValue = d3.max([d.limits.min, _context.model.time.parse("" + d.selectedEntityData.trailStartTime)]);
+    const _generateKeys = function(d, trail, div) {
+      const response = [];
+      let min = 0, max = 0;
+      const maxValue = d3.min([d.limits.max, _context.time]);
+      const minValue = d3.max([d.limits.min, _context.model.time.parse("" + d.selectedEntityData.trailStartTime)]);
       utils.forEach(trail._groups[0], (segment, index) => {
-        var data = segment.__data__;
+        const data = segment.__data__;
         if (data.t -  minValue == 0) {
           min = index;
         } else if (data.t -  maxValue == 0) {
@@ -685,11 +685,11 @@ export default Class.extend({
       return response;
     };
 
-    var processPoints = function() {
+    const processPoints = function() {
       return new Promise((resolve, reject) => {
-        var processPoint = function() {
-          var pointIndex = Object.keys(_this.drawingQueue[d[KEY]])[Math.floor(Math.random() *  Object.keys(_this.drawingQueue[d[KEY]]).length)];
-          var point = JSON.parse(JSON.stringify(_this.drawingQueue[d[KEY]][pointIndex]));
+        const processPoint = function() {
+          const pointIndex = Object.keys(_this.drawingQueue[d[KEY]])[Math.floor(Math.random() *  Object.keys(_this.drawingQueue[d[KEY]]).length)];
+          const point = JSON.parse(JSON.stringify(_this.drawingQueue[d[KEY]][pointIndex]));
           delete _this.drawingQueue[d[KEY]][pointIndex];
           addPointBetween(point.first, point.next, point.medium).then(() => {
             if (Object.keys(_this.drawingQueue[d[KEY]]).length > 0) {
@@ -713,7 +713,7 @@ export default Class.extend({
        * @param trail
        * @param index
        */
-      var generateTrails = function(trail, index) {
+      const generateTrails = function(trail, index) {
         if (index < 0 || index >= trail._groups[0].length) {
           return resolve();
         }
@@ -725,7 +725,7 @@ export default Class.extend({
       /**
        * recursive iteration for drawing point between points calculated in previous step
        */
-      var processPointsBetween = function() {
+      const processPointsBetween = function() {
         processPoints().then(() => {
           if (Object.keys(_this.delayedIterations[d[KEY]]).length == 0) {
             return resolve();
@@ -742,14 +742,14 @@ export default Class.extend({
       } else {
         _this.delayedIterations[d[KEY]] = {};
         _this.drawingQueue[d[KEY]] = {};
-        var trailKeys = _generateKeys(d, trail, 50);
-        var segments = [];
+        const trailKeys = _generateKeys(d, trail, 50);
+        const segments = [];
         if (trailKeys.length <= 1) {
           return resolve();
         }
 
         _this.delayedIterations[d[KEY]] = {};
-        for (var i = 0; i < trailKeys.length - 1; i++) {
+        for (let i = 0; i < trailKeys.length - 1; i++) {
           segments.push(generateTrailSegment(trail, trailKeys[i], trailKeys[i + 1], 1));
         }
         Promise.all(segments).then(() => {

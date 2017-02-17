@@ -14,10 +14,10 @@ import {
 } from "base/iconset";
 
 //LINE CHART COMPONENT
-var LCComponent = Component.extend({
+const LCComponent = Component.extend({
 
   init(config, context) {
-    var _this = this;
+    const _this = this;
     this.name = "linechart";
     this.template = require("./linechart.html");
 
@@ -125,7 +125,7 @@ var LCComponent = Component.extend({
    * Ideally, it contains instantiations related to template
    */
   readyOnce() {
-    var _this = this;
+    const _this = this;
 
     this.element = d3.select(this.element);
     this.graph = this.element.select(".vzb-lc-graph");
@@ -170,8 +170,8 @@ var LCComponent = Component.extend({
       _this.parent.findChildByName("gapminder-datanotes").pin();
     });
     this.yInfoEl.on("mouseover", function() {
-      var rect = this.getBBox();
-      var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+      const rect = this.getBBox();
+      const coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
       _this.parent.findChildByName("gapminder-datanotes").setHook("axis_y").show().setPos(coord.x, coord.y);
     });
     this.yInfoEl.on("mouseout", () => {
@@ -196,7 +196,7 @@ var LCComponent = Component.extend({
     this.updateTime();
     this.updateUIStrings();
     this.updateShow();
-    var _this = this;
+    const _this = this;
     //null means we need to calculate all frames before we get to the callback
     this.model.marker.getFrame(null, allValues => {
       _this.all_values = allValues;
@@ -233,10 +233,10 @@ var LCComponent = Component.extend({
 
 
   updateUIStrings() {
-    var _this = this;
-    var conceptPropsY = _this.model.marker.axis_y.getConceptprops();
-    var conceptPropsX = _this.model.marker.axis_x.getConceptprops();
-    var conceptPropsC = _this.model.marker.color.getConceptprops();
+    const _this = this;
+    const conceptPropsY = _this.model.marker.axis_y.getConceptprops();
+    const conceptPropsX = _this.model.marker.axis_x.getConceptprops();
+    const conceptPropsC = _this.model.marker.color.getConceptprops();
     this.translator = this.model.locale.getTFunction();
 
     this.strings = {
@@ -276,10 +276,10 @@ var LCComponent = Component.extend({
         _this.updateDoubtOpacity();
       });
 
-    var xTitle = this.xTitleEl.selectAll("text").data([0]);
+    let xTitle = this.xTitleEl.selectAll("text").data([0]);
     xTitle = xTitle.enter().append("text").merge(xTitle);
 
-    var yTitle = this.yTitleEl.selectAll("text").data([0]);
+    let yTitle = this.yTitleEl.selectAll("text").data([0]);
     yTitle = yTitle.enter().append("text").merge(yTitle);
     yTitle
       .on("click", () => {
@@ -306,14 +306,14 @@ var LCComponent = Component.extend({
    * Ideally should only update when show parameters change or data changes
    */
   updateShow() {
-    var _this = this;
-    var KEY = this.KEY;
+    const _this = this;
+    const KEY = this.KEY;
 
     this.cached = {};
     //scales
     this.yScale = this.model.marker.axis_y.getScale();
     if (!this.splash) {
-      var limits = this.model.marker.axis_y.getLimits(this.model.marker.axis_y.which);
+      const limits = this.model.marker.axis_y.getLimits(this.model.marker.axis_y.which);
       this.yScale.domain([limits.min, limits.max]);
     }
     this.xScale = this.model.marker.axis_x.getScale();
@@ -331,7 +331,7 @@ var LCComponent = Component.extend({
     this.entityLines = this.entityLines.enter().append("g")
       .attr("class", "vzb-lc-entity")
       .each(function(d, index) {
-        var entity = d3.select(this);
+        const entity = d3.select(this);
 
         entity.append("path")
           .attr("class", "vzb-lc-line-shadow");
@@ -347,13 +347,13 @@ var LCComponent = Component.extend({
     this.entityLabels = this.entityLabels.enter().append("g")
       .attr("class", "vzb-lc-entity")
       .each(function(d, index) {
-        var entity = d3.select(this);
+        const entity = d3.select(this);
 
         entity.append("circle")
           .attr("class", "vzb-lc-circle")
           .attr("cx", 0);
 
-        var labelGroup = entity.append("g").attr("class", "vzb-lc-label");
+        const labelGroup = entity.append("g").attr("class", "vzb-lc-label");
 
         labelGroup.append("text")
           .attr("class", "vzb-lc-labelname")
@@ -367,9 +367,9 @@ var LCComponent = Component.extend({
 
     if (this.all_values && this.values) {
       this.entityLabels.each(function(d, index) {
-        var entity = d3.select(this);
-        var color = _this.cScale(_this.values.color[d[KEY]]);
-        var colorShadow = _this.model.marker.color.which == "geo.world_4region" ?
+        const entity = d3.select(this);
+        const color = _this.cScale(_this.values.color[d[KEY]]);
+        const colorShadow = _this.model.marker.color.which == "geo.world_4region" ?
           _this.model.marker.color.getColorShade({
             colorID: _this.values.color[d[KEY]],
             shadeID: "shade"
@@ -377,10 +377,10 @@ var LCComponent = Component.extend({
           :
           d3.rgb(color).darker(0.5).toString();
 
-        var label = _this.values.label[d[KEY]];
-        var value = _this.yAxis.tickFormat()(_this.values.axis_y[d[KEY]]);
-        var name = label.length < 13 ? label : label.substring(0, 10) + "...";
-        var valueHideLimit = _this.ui.chart.labels.min_number_of_entities_when_values_hide;
+        const label = _this.values.label[d[KEY]];
+        const value = _this.yAxis.tickFormat()(_this.values.axis_y[d[KEY]]);
+        const name = label.length < 13 ? label : label.substring(0, 10) + "...";
+        const valueHideLimit = _this.ui.chart.labels.min_number_of_entities_when_values_hide;
 
         entity.select("circle").style("fill", color);
         entity.select(".vzb-lc-labelname")
@@ -408,14 +408,14 @@ var LCComponent = Component.extend({
    * Ideally should only update when time or data changes
    */
   updateTime() {
-    var _this = this;
-    var KEY = this.KEY;
-    var time_1 = (this.time === null) ? this.model.time.value : this.time;
+    const _this = this;
+    const KEY = this.KEY;
+    const time_1 = (this.time === null) ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - time_1 > 0) ? this.model.time.delayAnimations : 0;
 
-    var timeDim = this.model.time.getDimension();
-    var filter = {};
+    const timeDim = this.model.time.getDimension();
+    const filter = {};
 
     filter[timeDim] = this.time;
 
@@ -521,26 +521,26 @@ var LCComponent = Component.extend({
    */
   updateSize() {
 
-    var _this = this;
-    var values = this.values;
-    var KEY = this.KEY;
+    const _this = this;
+    const values = this.values;
+    const KEY = this.KEY;
 
-    var padding = 2;
+    const padding = 2;
 
     this.activeProfile = this.getActiveProfile(this.profiles, this.presentationProfileChanges);
     this.margin = this.activeProfile.margin;
     this.tick_spacing = this.activeProfile.tick_spacing;
 
-    var infoElHeight = this.activeProfile.infoElHeight;
+    const infoElHeight = this.activeProfile.infoElHeight;
 
     //adjust right this.margin according to biggest label
 
-    var longestLabelWidth = 0;
+    let longestLabelWidth = 0;
 
     this.entityLabels.selectAll(".vzb-lc-labelname")
       .attr("dx", _this.activeProfile.text_padding)
       .each(function(d, index) {
-        var width = this.getComputedTextLength();
+        const width = this.getComputedTextLength();
         if (width > longestLabelWidth) longestLabelWidth = width;
       });
 
@@ -622,12 +622,12 @@ var LCComponent = Component.extend({
       .style("font-size", infoElHeight + "px")
       .attr("transform", "translate(" + (10 - this.activeProfile.margin.left) + ", -" + this.activeProfile.yAxisTitleBottomMargin + ")");
 
-    var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
+    const yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
     if (yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
 
     if (this.yInfoEl.select("svg").node()) {
-      var titleBBox = this.yTitleEl.node().getBBox();
-      var t = utils.transform(this.yTitleEl.node());
+      const titleBBox = this.yTitleEl.node().getBBox();
+      const t = utils.transform(this.yTitleEl.node());
 
       this.yInfoEl.select("svg")
         .attr("width", infoElHeight + "px")
@@ -637,7 +637,7 @@ var LCComponent = Component.extend({
         + (t.translateY - infoElHeight * 0.8) + ")");
     }
 
-    var warnBB = this.dataWarningEl.select("text").node().getBBox();
+    const warnBB = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl.select("svg")
       .attr("width", warnBB.height * 0.75)
       .attr("height", warnBB.height * 0.75)
@@ -650,7 +650,7 @@ var LCComponent = Component.extend({
       .select("text");
 
 
-    var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
+    const xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
 
     this.xTitleEl
       .style("font-size", infoElHeight + "px")
@@ -679,7 +679,7 @@ var LCComponent = Component.extend({
 
       _this.hoveringNow = null;
     }
-    var opts = {
+    const opts = {
       rangeMax: this.xScale.range()[1],
       mRight: this.margin.right,
       profile: this.timeSliderProfiles[this.getLayoutProfile()]
@@ -694,8 +694,8 @@ var LCComponent = Component.extend({
    * Here plotting happens
    */
   redrawDataPoints() {
-    var _this = this;
-    var KEY = this.KEY;
+    const _this = this;
+    const KEY = this.KEY;
 //    var values = this.values;
 
     if (!_this.all_values) return;
@@ -714,11 +714,11 @@ var LCComponent = Component.extend({
       _this.shadowWidth = _this.lineWidth * 1.3;
       _this.entityLines
         .each(function(d, index) {
-          var entity = d3.select(this);
-          var label = values.label[d[KEY]];
+          const entity = d3.select(this);
+          const label = values.label[d[KEY]];
 
-          var color = _this.cScale(values.color[d[KEY]]);
-          var colorShadow = _this.model.marker.color.which == "geo.world_4region" ?
+          const color = _this.cScale(values.color[d[KEY]]);
+          const colorShadow = _this.model.marker.color.which == "geo.world_4region" ?
               _this.model.marker.color.getColorShade({
                 colorID: values.color[d[KEY]],
                 shadeID: "shade"
@@ -729,7 +729,7 @@ var LCComponent = Component.extend({
           //TODO: optimization is possible if getValues would return both x and time
           //TODO: optimization is possible if getValues would return a limited number of points, say 1 point per screen pixel
 
-          var xy = _this.prev_steps.map((frame, i) => [frame, _this.all_values[frame] ? _this.all_values[frame].axis_y[d[KEY]] : null])
+          const xy = _this.prev_steps.map((frame, i) => [frame, _this.all_values[frame] ? _this.all_values[frame].axis_y[d[KEY]] : null])
             .filter(d => d[1] || d[1] === 0);
 
           // add last point
@@ -749,13 +749,13 @@ var LCComponent = Component.extend({
 
           // the following fixes the ugly line butts sticking out of the axis line
           //if(x[0]!=null && x[1]!=null) xy.splice(1, 0, [(+x[0]*0.99+x[1]*0.01), y[0]]);
-          var path2 = entity.select(".vzb-lc-line");
+          const path2 = entity.select(".vzb-lc-line");
 
           if (_this.model.time.playing && _this.totalLength_1[d[KEY]] === null) {
             _this.totalLength_1[d[KEY]] = path2.node().getTotalLength();
           }
 
-          var path1 = entity.select(".vzb-lc-line-shadow")
+          const path1 = entity.select(".vzb-lc-line-shadow")
 
             .style("stroke", colorShadow)
             .style("stroke-width", _this.shadowWidth + "px")
@@ -766,7 +766,7 @@ var LCComponent = Component.extend({
             .style("stroke", color)
             .style("stroke-width", _this.lineWidth + "px")
             .attr("d", _this.line(xy));
-          var totalLength = path2.node().getTotalLength();
+          const totalLength = path2.node().getTotalLength();
 
           // this section ensures the smooth transition while playing and not needed otherwise
           if (_this.model.time.playing) {
@@ -808,7 +808,7 @@ var LCComponent = Component.extend({
 
       _this.entityLabels
         .each(function(d, index) {
-          var entity = d3.select(this);
+          const entity = d3.select(this);
           if (_this.cached[d[KEY]]) {
             entity
               .classed("vzb-hidden", false)
@@ -869,28 +869,28 @@ var LCComponent = Component.extend({
   },
 
   entityMousemove(me, index, context, closestToMouse) {
-    var _this = context;
-    var KEY = _this.KEY;
-    var values = _this.values;
+    const _this = context;
+    const KEY = _this.KEY;
+    const values = _this.values;
 
-    var mouse = d3.mouse(_this.element.node()).map(d => parseInt(d));
+    const mouse = d3.mouse(_this.element.node()).map(d => parseInt(d));
 
-    var resolvedTime = _this.xScale.invert(mouse[0] - _this.margin.left);
+    let resolvedTime = _this.xScale.invert(mouse[0] - _this.margin.left);
     if (_this.time - resolvedTime < 0) {
       resolvedTime = _this.time;
     } else if (resolvedTime < this.model.time["start"]) {
       resolvedTime = this.model.time["start"];
     }
-    var resolvedValue;
-    var timeDim = _this.model.time.getDimension();
+    let resolvedValue;
+    const timeDim = _this.model.time.getDimension();
 
-    var mousePos = mouse[1] - _this.margin.top;
+    const mousePos = mouse[1] - _this.margin.top;
 
     if (!utils.isDate(resolvedTime)) resolvedTime = this.model.time.parse(resolvedTime);
 
     this.model.marker.getFrame(resolvedTime, data => {
       if (!_this._frameIsValid(data)) return;
-      var nearestKey = _this.getNearestKey(mousePos, data.axis_y, _this.yScale.bind(_this));
+      const nearestKey = _this.getNearestKey(mousePos, data.axis_y, _this.yScale.bind(_this));
       resolvedValue = data.axis_y[nearestKey];
       if (!me) me = {};
       me[KEY] = nearestKey;
@@ -902,8 +902,8 @@ var LCComponent = Component.extend({
 
       if (utils.isNaN(resolvedValue)) return;
 
-      var scaledTime = _this.xScale(resolvedTime);
-      var scaledValue = _this.yScale(resolvedValue);
+      const scaledTime = _this.xScale(resolvedTime);
+      const scaledValue = _this.yScale(resolvedValue);
 
       if (_this.ui.chart.whenHovering.showTooltip) {
         //position tooltip
@@ -949,7 +949,7 @@ var LCComponent = Component.extend({
   },
 
   entityMouseout(me, index, context) {
-    var _this = context;
+    const _this = context;
     if (d3.event.relatedTarget && d3.select(d3.event.relatedTarget).classed("vzb-tooltip")) return;
 
     // hide and show things like it was before hovering
@@ -972,16 +972,16 @@ var LCComponent = Component.extend({
    * Highlights all hovered lines
    */
   highlightLines() {
-    var _this = this;
+    const _this = this;
 
-    var OPACITY_HIGHLT = 1.0;
-    var OPACITY_HIGHLT_DIM = 0.3;
-    var OPACITY_SELECT = this.model.marker.opacityRegular;
-    var OPACITY_REGULAR = this.model.marker.opacityRegular;
-    var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
+    const OPACITY_HIGHLT = 1.0;
+    const OPACITY_HIGHLT_DIM = 0.3;
+    const OPACITY_SELECT = this.model.marker.opacityRegular;
+    const OPACITY_REGULAR = this.model.marker.opacityRegular;
+    const OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
 
-    var someHighlighted = (this.model.marker.highlight.length > 0);
-    var someSelected = (this.model.marker.select.length > 0);
+    const someHighlighted = (this.model.marker.highlight.length > 0);
+    const someSelected = (this.model.marker.select.length > 0);
     this.graph.selectAll(".vzb-lc-entity").each(function() {
       d3.select(this)
         .style("opacity", d => {
@@ -997,7 +997,7 @@ var LCComponent = Component.extend({
   },
 
   zoomToMaxMin() {
-    var _this = this;
+    const _this = this;
     //
 /*
     if(this.model.marker.axis_y.zoomedMin == null ) this.model.marker.axis_y.zoomedMin = this.yScale.domain()[0];
@@ -1035,10 +1035,10 @@ var LCComponent = Component.extend({
    * Returns key from obj which value has the smallest difference with val
    */
   getNearestKey(val, obj, fn) {
-    var keys = Object.keys(obj);
-    var resKey = keys[0];
-    for (var i = 1; i < keys.length; i++) {
-      var key = keys[i];
+    const keys = Object.keys(obj);
+    let resKey = keys[0];
+    for (let i = 1; i < keys.length; i++) {
+      const key = keys[i];
       if (Math.abs((fn ? fn(obj[key]) : obj[key]) - val) < Math.abs((fn ? fn(obj[resKey]) : obj[resKey]) - val)) {
         resKey = key;
       }

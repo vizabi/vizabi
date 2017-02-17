@@ -9,16 +9,16 @@ import simplecheckbox from "components/simplecheckbox/simplecheckbox";
  * Reusable side dialog
  */
 
-var Side = Dialog.extend({
+const Side = Dialog.extend({
 
   init(config, parent) {
     this.name = "side";
-    var _this = this;
+    const _this = this;
 
     this.model_binds = {
       "change:state.marker.side.which": function(evt) {
         if (_this.model.state.entities_allpossibleside) {
-          var sideDim = _this.model.state.marker.side.use == "constant" ? null : _this.model.state.marker.side.which;
+          const sideDim = _this.model.state.marker.side.use == "constant" ? null : _this.model.state.marker.side.which;
           _this.model.state.entities_allpossibleside.set("dim", sideDim);
         }
       },
@@ -59,7 +59,7 @@ var Side = Dialog.extend({
 
     this.TIMEDIM = this.model.state.time.getDimension();
     this.state = {};
-    var _this = this;
+    const _this = this;
 
     this.switchSides.on("click", () => {
       _this.model.ui.chart.flipSides = !_this.model.ui.chart.flipSides;
@@ -82,9 +82,9 @@ var Side = Dialog.extend({
   },
 
   updateState() {
-    var _this = this;
-    var sideDim = this.model.state.marker.side.getEntity().getDimension();
-    var modelSide = this.model.state.marker.side;
+    const _this = this;
+    const sideDim = this.model.state.marker.side.getEntity().getDimension();
+    const modelSide = this.model.state.marker.side;
 
     this.state["right"] = {};
     this.state["left"] = {};
@@ -92,14 +92,14 @@ var Side = Dialog.extend({
       this.state["left"][sideDim] = modelSide.state["left"][sideDim];
       this.state["right"][sideDim] = modelSide.state["right"][sideDim];
     } else {
-      var sides = this.model.state.marker.getKeys(sideDim);
-      var sideKeys = [];
-      var sideFiltered = !!this.model.state.marker.side.getEntity().show[sideDim];
+      const sides = this.model.state.marker.getKeys(sideDim);
+      let sideKeys = [];
+      const sideFiltered = !!this.model.state.marker.side.getEntity().show[sideDim];
       sideKeys = sides.filter(f => !sideFiltered || _this.model.state.marker.side.getEntity().isShown(f)).map(m => m[sideDim]);
 
       if (sideKeys.length > 2) sideKeys.length = 2;
       if (sideKeys.length > 1) {
-        var sortFunc = this.ui.chart.flipSides ? d3.ascending : d3.descending;
+        const sortFunc = this.ui.chart.flipSides ? d3.ascending : d3.descending;
         sideKeys.sort(sortFunc);
       }
 
@@ -109,7 +109,7 @@ var Side = Dialog.extend({
       this.state["left"][sideDim] = sideKeys[1] ? sideKeys[1] : sideKeys[0];
     }
 
-    var hidden = this.model.state.marker.side.use == "constant";
+    const hidden = this.model.state.marker.side.use == "constant";
 
     this.listLeft.classed("vzb-hidden", hidden);
     this.listRight.classed("vzb-hidden", hidden);
@@ -118,15 +118,15 @@ var Side = Dialog.extend({
 
   redraw() {
 
-    var _this = this;
+    const _this = this;
     this.translator = this.model.locale.getTFunction();
 
     if (!_this.model.state.entities_allpossibleside.dim) return;
     this.model.state.marker_allpossibleside.getFrame(this.model.state.time.value, values => {
       if (!values) return;
-      var data = utils.keys(values.label)
+      const data = utils.keys(values.label)
         .map(d => {
-          var result = {};
+          const result = {};
           result[_this.KEY] = d;
           result["label"] = values.label[d];
           return result;
@@ -144,10 +144,10 @@ var Side = Dialog.extend({
   },
 
   createList(listSel, name, data) {
-    var _this = this;
-    var sideDim = this.model.state.marker.side.getEntity().getDimension();
+    const _this = this;
+    const sideDim = this.model.state.marker.side.getEntity().getDimension();
 
-    var items = listSel.selectAll(".vzb-side-item")
+    const items = listSel.selectAll(".vzb-side-item")
       .data(data)
       .enter()
       .append("div")
@@ -160,15 +160,15 @@ var Side = Dialog.extend({
       .attr("id", d => "-side-" + name + "-" + d[sideDim] + "-" + _this._id)
       .property("checked", d => _this.state[name][sideDim] === d[sideDim])
       .on("change", (d, i) => {
-        var sideEntities = _this.model.state.entities_side;
-        var sideDim = sideEntities.getDimension();
-        var otherSide = name == "left" ? "right" : "left";
-        var modelSide = _this.model.state.marker.side;
+        const sideEntities = _this.model.state.entities_side;
+        const sideDim = sideEntities.getDimension();
+        const otherSide = name == "left" ? "right" : "left";
+        const modelSide = _this.model.state.marker.side;
 
         modelSide.state[name][sideDim] = d[sideDim];
         modelSide.state[otherSide][sideDim] = _this.state[otherSide][sideDim];
 
-        var showArray = [];
+        const showArray = [];
 
         if (!sideEntities.isShown(d)) {
           showArray.push(d);
@@ -181,8 +181,8 @@ var Side = Dialog.extend({
         }
 
         if (d[sideDim] !== _this.state[otherSide][sideDim]) {
-          var sideKeys = [d[sideDim], _this.state[otherSide][sideDim]];
-          var sortFunc = _this.ui.chart.flipSides ? d3.ascending : d3.descending;
+          const sideKeys = [d[sideDim], _this.state[otherSide][sideDim]];
+          const sortFunc = _this.ui.chart.flipSides ? d3.ascending : d3.descending;
           sideKeys.sort(sortFunc);
           if (sideKeys[name == "left" ? 0 : 1] == d[sideDim]) {
             _this.model.state.marker.side.switchSideState();

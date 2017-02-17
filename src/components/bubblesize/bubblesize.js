@@ -7,7 +7,7 @@ import Component from "base/component";
  * Reusable bubble size slider
  */
 
-var OPTIONS = {
+const OPTIONS = {
   EXTENT_MIN: 0,
   EXTENT_MAX: 1,
   TEXT_PARAMS: { TOP: 11, LEFT: 10, MAX_WIDTH: 42, MAX_HEIGHT: 16 },
@@ -17,7 +17,7 @@ var OPTIONS = {
   INTRO_DURATION: 250
 };
 
-var profiles = {
+const profiles = {
   "small": {
     minRadius: 0.5,
     maxRadius: 40
@@ -33,7 +33,7 @@ var profiles = {
 };
 
 
-var BubbleSize = Component.extend({
+const BubbleSize = Component.extend({
 
   /**
    * Initializes the timeslider.
@@ -52,7 +52,7 @@ var BubbleSize = Component.extend({
       type: "size"
     }];
 
-    var _this = this;
+    const _this = this;
     this.model_binds = {
       "change:size.domainMin": changeMinMaxHandler,
       "change:size.domainMax": changeMinMaxHandler,
@@ -61,7 +61,7 @@ var BubbleSize = Component.extend({
     };
 
     function changeMinMaxHandler(evt, path) {
-      var extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
+      const extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
       _this._updateLabels(extent);
       _this._moveBrush(extent);
     }
@@ -82,8 +82,8 @@ var BubbleSize = Component.extend({
    * At this point, this.element and this.placeholder are available as a d3 object
    */
   readyOnce() {
-    var _this = this;
-    var extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
+    const _this = this;
+    const extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
     this.showArcs = _this.model.size.showArcs !== false;
 
     this.element = d3.select(this.element);
@@ -91,23 +91,21 @@ var BubbleSize = Component.extend({
     this.sliderWrap = this.sliderSvg.select(".vzb-bs-slider-wrap");
     this.sliderEl = this.sliderWrap.select(".vzb-bs-slider");
 
-    var
-      textMargin = { v: OPTIONS.TEXT_PARAMS.TOP, h: OPTIONS.TEXT_PARAMS.LEFT },
-      textMaxWidth = OPTIONS.TEXT_PARAMS.MAX_WIDTH,
-      textMaxHeight = OPTIONS.TEXT_PARAMS.MAX_HEIGHT,
-      barWidth = OPTIONS.BAR_WIDTH,
-      thumbRadius = OPTIONS.THUMB_RADIUS,
-      thumbStrokeWidth = OPTIONS.THUMB_STROKE_WIDTH,
-      padding = {
-        top: thumbStrokeWidth,
-        left: textMargin.h + textMaxWidth,
-        right: textMargin.h + textMaxWidth,
-        bottom: barWidth + textMaxHeight
-      };
+    const textMargin = { v: OPTIONS.TEXT_PARAMS.TOP, h: OPTIONS.TEXT_PARAMS.LEFT };
+    const textMaxWidth = OPTIONS.TEXT_PARAMS.MAX_WIDTH;
+    const textMaxHeight = OPTIONS.TEXT_PARAMS.MAX_HEIGHT;
+    const barWidth = OPTIONS.BAR_WIDTH;
+    const thumbRadius = OPTIONS.THUMB_RADIUS;
+    const thumbStrokeWidth = OPTIONS.THUMB_STROKE_WIDTH;
 
-    this.padding = padding;
+    this.padding = {
+      top: thumbStrokeWidth,
+      left: textMargin.h + textMaxWidth,
+      right: textMargin.h + textMaxWidth,
+      bottom: barWidth + textMaxHeight
+    };
 
-    var minMaxBubbleRadius = this.getMinMaxBubbleRadius();
+    const minMaxBubbleRadius = this.getMinMaxBubbleRadius();
 
     this.xScale = d3.scale.linear()
       .domain([OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX])
@@ -120,7 +118,7 @@ var BubbleSize = Component.extend({
       .on("start", () => {
         if (_this.nonBrushChange || !d3.event.sourceEvent) return;
         if (d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
-          var brushDatum = _this.sliderEl.node().__brush;
+          const brushDatum = _this.sliderEl.node().__brush;
           brushDatum.selection[1][0] += 0.01;
         }
         _this._setFromExtent(false, false, false);
@@ -128,7 +126,7 @@ var BubbleSize = Component.extend({
       .on("brush", () => {
         if (_this.nonBrushChange || !d3.event.sourceEvent) return;
         if (d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
-          var brushDatum = _this.sliderEl.node().__brush;
+          const brushDatum = _this.sliderEl.node().__brush;
           brushDatum.selection[1][0] += 0.01;
         }
         _this._setFromExtent(true, false, false); // non persistent change
@@ -194,11 +192,11 @@ var BubbleSize = Component.extend({
 
     this.on("resize", () => {
       //console.log("EVENT: resize");
-      var minMaxBubbleRadius = _this.getMinMaxBubbleRadius();
+      const minMaxBubbleRadius = _this.getMinMaxBubbleRadius();
       _this.xScale.range([minMaxBubbleRadius.min * 2, minMaxBubbleRadius.max * 2]);
       _this._updateSize();
       _this.sliderEl.call(_this.brush.extent([[0, 0], [minMaxBubbleRadius.max * 2, barWidth]]));
-      var extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
+      const extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
       _this._moveBrush(extent);
     });
 
@@ -217,7 +215,7 @@ var BubbleSize = Component.extend({
   },
 
   _moveBrush(s) {
-    var _s = s.map(this.xScale);
+    const _s = s.map(this.xScale);
     this.nonBrushChange = true;
     this.sliderEl.call(this.brush.move, [_s[0], _s[1] + 0.01]);
     this.nonBrushChange = false;
@@ -229,7 +227,7 @@ var BubbleSize = Component.extend({
    * Executed whenever the container is resized
    */
   _updateSize() {
-    var maxBubbleRadius = this.showArcs ? this.getMinMaxBubbleRadius().max : OPTIONS.TEXT_PARAMS.TOP * 2;
+    const maxBubbleRadius = this.showArcs ? this.getMinMaxBubbleRadius().max : OPTIONS.TEXT_PARAMS.TOP * 2;
     this.sliderSvg
       .attr("height", maxBubbleRadius + this.padding.top + this.padding.bottom)
       .attr("width", this.getMinMaxBubbleRadius().max * 2 + this.padding.left + this.padding.right);
@@ -239,8 +237,8 @@ var BubbleSize = Component.extend({
 
   _updateArcs(s) {
     if (!this.showArcs) return;
-    var _this = this;
-    var valueArc = d3.arc()
+    const _this = this;
+    const valueArc = d3.arc()
       .outerRadius(d => _this.xScale(d) * 0.5)
       .innerRadius(d => _this.xScale(d) * 0.5)
       .startAngle(-Math.PI * 0.5)
@@ -251,18 +249,18 @@ var BubbleSize = Component.extend({
   },
 
   _updateLabels(s) {
-    var _this = this;
+    const _this = this;
     this.sliderLabelsEl.data(s)
       .attr("transform", (d, i) => {
-        var textMargin = { v: OPTIONS.TEXT_PARAMS.TOP, h: OPTIONS.TEXT_PARAMS.LEFT },
-          dX = textMargin.h * (i ? 0.5 : -1.0) + _this.xScale(d),
-          dY = 0;
+        const textMargin = { v: OPTIONS.TEXT_PARAMS.TOP, h: OPTIONS.TEXT_PARAMS.LEFT };
+        const dX = textMargin.h * (i ? 0.5 : -1.0) + _this.xScale(d);
+        const dY = 0;
         return "translate(" + (dX) + "," + (dY) + ")";
       });
   },
 
   _setLabelsText() {
-    var _this = this;
+    const _this = this;
     _this.sliderLabelsEl
       .data([_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[0]), _this.model.size.getTickFormatter()(_this.sizeScaleMinMax[1])])
       .text(d => d);
@@ -275,7 +273,7 @@ var BubbleSize = Component.extend({
    * @param {boolean} persistent sets the persistency of the change event
    */
   _setFromExtent(setModel, force, persistent) {
-    var s = d3.brushSelection(this.sliderEl.node());
+    let s = d3.brushSelection(this.sliderEl.node());
     if (!s) return;
     s = [this.xScale.invert(s[0]), this.xScale.invert(+s[1].toFixed(1))];
     this._updateArcs(s);

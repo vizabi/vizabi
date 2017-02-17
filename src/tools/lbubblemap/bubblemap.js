@@ -15,7 +15,7 @@ import datawarning from "components/datawarning/datawarning";
 import datanotes from "components/datanotes/datanotes";
 
 //BAR CHART TOOL
-var LBubbleMap = Tool.extend("LBubbleMap", {
+const LBubbleMap = Tool.extend("LBubbleMap", {
 
 
   /**

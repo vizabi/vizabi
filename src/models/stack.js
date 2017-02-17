@@ -5,18 +5,18 @@ import Hook from "models/hook";
  * VIZABI Stack Model
  */
 
-var palettes = {
+const palettes = {
   "ALL": "all",
   _default: "none"
 };
 
-var StackModel = Hook.extend({
+const StackModel = Hook.extend({
 
   /**
    * Default values for this model
    */
   getClassDefaults() {
-    var defaults = {
+    const defaults = {
       use: null,
       which: null,
       merge: false

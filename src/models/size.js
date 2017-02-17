@@ -5,13 +5,13 @@ import * as utils from "base/utils";
  * VIZABI Size Model
  */
 
-var SizeModel = Axis.extend({
+const SizeModel = Axis.extend({
 
   /**
    * Default values for this model
    */
   getClassDefaults() {
-    var defaults = {
+    const defaults = {
       use: null,
       which: null,
       domainMin: null,
@@ -39,9 +39,9 @@ var SizeModel = Axis.extend({
 
   autoGenerateModel() {
     if (this.which == null) {
-      var concept;
+      let concept;
       if (this.autogenerate) {
-        var concept = this.dataSource
+        concept = this.dataSource
           .getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType);
 
         if (concept) {
@@ -59,7 +59,7 @@ var SizeModel = Axis.extend({
     }
     if (this.scaleType == null) {
       this.scaleType = this.dataSource
-          .getConceptprops(this.which).scales[0];
+        .getConceptprops(this.which).scales[0];
     }
   }
 

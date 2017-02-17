@@ -5,14 +5,14 @@ import Hook from "models/hook";
  * VIZABI Data Model (options.data)
  */
 
-var LabelModel = Hook.extend({
+const LabelModel = Hook.extend({
 
   /**
    * Default values for this model
    */
 
   getClassDefaults() {
-    var defaults = {
+    const defaults = {
       use: null,
       which: null
     };

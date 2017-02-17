@@ -7,10 +7,10 @@ import Tool from "base/tool";
 
 import AxisLabelerComponent from "tools/axislabeler/axislabeler-component";
 
-var comp_template = "axislabeler.html";
+const comp_template = "axislabeler.html";
 
-var listPointer = 0;
-var listData = [
+const listPointer = 0;
+const listData = [
     [-123, 123],
     [1.00000, 10000.0],
     [4.00000, 123.000],
@@ -43,7 +43,7 @@ var listData = [
 ];
 
 //AXIS LABELER TOOL
-var AxisLabeler = Tool.extend("AxisLabeler", {
+const AxisLabeler = Tool.extend("AxisLabeler", {
 
   /**
    * Initializes the tool (Bar Chart Tool).

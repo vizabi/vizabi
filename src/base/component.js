@@ -3,12 +3,12 @@ import Events from "base/events";
 import Model from "base/model";
 import globals from "base/globals";
 
-var class_loading_first = "vzb-loading-first";
-var class_loading_data = "vzb-loading-data";
-var class_error = "vzb-error";
+const class_loading_first = "vzb-loading-first";
+const class_loading_data = "vzb-loading-data";
+const class_error = "vzb-error";
 
-var templates = {};
-var Component = Events.extend({
+const templates = {};
+const Component = Events.extend({
 
   /**
    * Initializes the component
@@ -69,7 +69,7 @@ var Component = Events.extend({
    */
   startPreload() {
 
-    var promises = [];
+    const promises = [];
     promises.push(this.preload());
 
     utils.forEach(this.components,
@@ -99,7 +99,7 @@ var Component = Events.extend({
    * Renders the component (after data is ready)
    */
   render() {
-    var _this = this;
+    const _this = this;
     this.loadTemplate();
     this.loadSubComponents();
 
@@ -120,7 +120,7 @@ var Component = Events.extend({
    * @return {[type]} [description]
    */
   startLoading() {
-    var _this = this;
+    const _this = this;
 
     // if a componente's model is ready, the component is ready
     this.model.on("ready", () => {
@@ -169,10 +169,10 @@ var Component = Events.extend({
    * @returns defer a promise to be resolved when template is loaded
    */
   loadTemplate() {
-    var tmpl = this.template;
-    var data = this.template_data;
-    var _this = this;
-    var rendered = "";
+    const tmpl = this.template;
+    let data = this.template_data;
+    const _this = this;
+    let rendered = "";
     if (!this.placeholder) {
       return;
     }
@@ -206,9 +206,9 @@ var Component = Events.extend({
 
   getActiveProfile(profiles, presentationProfileChanges) {
     // get layout values
-    var layoutProfile = this.getLayoutProfile();
-    var presentationMode = this.getPresentationMode();
-    var activeProfile = utils.deepClone(profiles[layoutProfile]); // clone so it can be extended without changing the original profile
+    const layoutProfile = this.getLayoutProfile();
+    const presentationMode = this.getPresentationMode();
+    const activeProfile = utils.deepClone(profiles[layoutProfile]); // clone so it can be extended without changing the original profile
 
     // extend the profile with presentation mode values
     if (presentationMode && (presentationProfileChanges || {})[layoutProfile]) {
@@ -222,9 +222,9 @@ var Component = Events.extend({
    * Loads all subcomponents
    */
   loadSubComponents() {
-    var _this = this;
-    var config;
-    var comp;
+    const _this = this;
+    let config;
+    let comp;
     //use the same name for collection
     this.components = [];
 
@@ -247,7 +247,7 @@ var Component = Events.extend({
         ui: _this._uiMapping(component_config.placeholder, component_config.ui)
       });
       //instantiate new subcomponent
-      var subcomp = new comp(config, _this);
+      const subcomp = new comp(config, _this);
       _this.components.push(subcomp);
     });
   },
@@ -301,7 +301,7 @@ var Component = Events.extend({
     if (id && this.ui) {
       id = id.replace(".", "");
       //remove trailing period
-      var sub_ui = this.ui[id];
+      const sub_ui = this.ui[id];
       if (sub_ui) {
         return sub_ui;
       }
@@ -315,8 +315,8 @@ var Component = Events.extend({
    * @returns {Object} the model
    */
   _modelMapping(model_config) {
-    var _this = this;
-    var values = {};
+    const _this = this;
+    const values = {};
     //If model_config is an array, we map it
     if (utils.isArray(model_config) && utils.isArray(this.model_expects)) {
 
@@ -330,8 +330,8 @@ var Component = Events.extend({
         utils.groupEnd();
       }
       utils.forEach(model_config, (m, i) => {
-        var model_info = _mapOne(m);
-        var new_name;
+        const model_info = _mapOne(m);
+        let new_name;
         if (_this.model_expects[i]) {
           new_name = _this.model_expects[i].name;
           if (_this.model_expects[i].type && model_info.type !== _this.model_expects[i].type &&
@@ -363,8 +363,8 @@ var Component = Events.extend({
       // fill the models that weren't passed with empty objects
       // e.g. if expected = [ui, locale, color] and passed/existing = [ui, locale]
       // it will fill values up to [ui, locale, {}]
-      var existing = model_config.length;
-      var expected = this.model_expects.length;
+      const existing = model_config.length;
+      const expected = this.model_expects.length;
       if (expected > existing) {
         //skip existing
         this.model_expects.splice(0, existing);
@@ -384,9 +384,9 @@ var Component = Events.extend({
      * @returns {Object} the model info, with name and the actual model
      */
     function _mapOne(name) {
-      var parts = name.split(".");
-      var current = _this.parent.model;
-      var current_name = "";
+      const parts = name.split(".");
+      let current = _this.parent.model;
+      let current_name = "";
       while (parts.length) {
         current_name = parts.shift();
         current = current[current_name];
@@ -405,7 +405,7 @@ var Component = Events.extend({
    * @returns {Function}
    */
   getTranslationFunction(wrap) {
-    var t_func;
+    let t_func;
     try {
       t_func = this.model.get("locale").getTFunction();
     } catch (err) {
@@ -432,7 +432,7 @@ var Component = Events.extend({
    */
   _translatedStringFunction(translation_function) {
     return function(string) {
-      var translated = translation_function(string);
+      const translated = translation_function(string);
       return '<span data-vzb-translate="' + string + '">' + translated + "</span>";
     };
   },
@@ -441,8 +441,8 @@ var Component = Events.extend({
    * Translate all strings in the template
    */
   translateStrings() {
-    var t = this.getTranslationFunction();
-    var strings = this.placeholder.querySelectorAll("[data-vzb-translate]");
+    const t = this.getTranslationFunction();
+    const strings = this.placeholder.querySelectorAll("[data-vzb-translate]");
     if (strings.length === 0) {
       return;
     }
@@ -496,10 +496,10 @@ var Component = Events.extend({
 //generic templating function
 function templateFunc(str, data) {
 
-  var func = function(obj) {
+  const func = function(obj) {
     return str.replace(/<%=([^\%]*)%>/g, match => {
       //match t("...")
-      var s = match.match(/t\s*\(([^)]+)\)/g);
+      let s = match.match(/t\s*\(([^)]+)\)/g);
       //replace with translation
       if (s.length) {
         s = obj.t(s[0].match(/\"([^"]+)\"/g)[0].split('"').join(""));
@@ -514,7 +514,7 @@ function templateFunc(str, data) {
   };
   // Figure out if we're getting a template, or if we need to
   // load the template - and be sure to cache the result.
-  var fn = !/<[a-z][\s\S]*>/i.test(str) ? templates[str] = templates[str] || templateFunc(globals.templates[str]) : func;
+  const fn = !/<[a-z][\s\S]*>/i.test(str) ? templates[str] = templates[str] || templateFunc(globals.templates[str]) : func;
 
   // Provide some basic currying to the user
   return data ? fn(data) : fn;

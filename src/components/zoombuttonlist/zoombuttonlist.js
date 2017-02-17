@@ -8,7 +8,7 @@ import * as iconset from "base/iconset";
  */
 
 //default existing buttons
-var class_active = "vzb-active";
+const class_active = "vzb-active";
 // var class_active_locked = "vzb-active-locked";
 // var class_expand_dialog = "vzb-dialog-side";
 // var class_hide_btn = "vzb-dialog-side-btn";
@@ -16,7 +16,7 @@ var class_active = "vzb-active";
 // var class_vzb_fullscreen = "vzb-force-fullscreen";
 // var class_container_fullscreen = "vzb-container-fullscreen";
 
-var ZoomButtonList = Component.extend({
+const ZoomButtonList = Component.extend({
 
   /**
    * Initializes the buttonlist
@@ -26,7 +26,7 @@ var ZoomButtonList = Component.extend({
   init(config, context) {
 
     //set properties
-    var _this = this;
+    const _this = this;
     this.name = "gapminder-zoombuttonlist";
 
     this.model_expects = [{
@@ -79,7 +79,7 @@ var ZoomButtonList = Component.extend({
     this.model_binds = {};
 
     Object.keys(this._available_buttons).forEach(buttonId => {
-      var button = _this._available_buttons[buttonId];
+      const button = _this._available_buttons[buttonId];
       if (button && button.statebind) {
         _this.model_binds["change:" + button.statebind] = function(evt) {
           button.statebindfunc(buttonId, evt.source.value);
@@ -92,7 +92,7 @@ var ZoomButtonList = Component.extend({
   },
 
   readyOnce() {
-    var _this = this;
+    const _this = this;
 
     this.element = d3.select(this.placeholder);
     this.element.selectAll("div").remove();
@@ -107,31 +107,31 @@ var ZoomButtonList = Component.extend({
    * @param {Array} button_list list of buttons to be added
    */
   _addButtons(button_list, button_expand) {
-    var _this = this;
+    const _this = this;
     this._components_config = [];
-    var details_btns = [];
+    const details_btns = [];
     if (!button_list.length) return;
     //add a component for each button
-    for (var i = 0; i < button_list.length; i++) {
+    for (let i = 0; i < button_list.length; i++) {
 
-      var btn = button_list[i];
-      var btn_config = this._available_buttons[btn];
+      const btn = button_list[i];
+      const btn_config = this._available_buttons[btn];
 
       //add template data
-      var d = (btn_config) ? btn : "_default";
-      var details_btn = utils.clone(this._available_buttons[d]);
+      const d = (btn_config) ? btn : "_default";
+      const details_btn = utils.clone(this._available_buttons[d]);
 
       details_btn.id = btn;
       details_btn.icon = iconset[details_btn.icon];
       details_btns.push(details_btn);
     }
 
-    var t = this.getTranslationFunction(true);
+    const t = this.getTranslationFunction(true);
 
     this.element.selectAll("button").data(details_btns)
       .enter().append("button")
       .attr("class", d => {
-        var cls = "vzb-buttonlist-btn";
+        let cls = "vzb-buttonlist-btn";
         if (button_expand.length > 0) {
           if (button_expand.indexOf(d.id) > -1) {
             cls += " vzb-dialog-side-btn";
@@ -145,7 +145,7 @@ var ZoomButtonList = Component.extend({
           btn.icon + "</span><span class='vzb-buttonlist-btn-title'>" +
           t(btn.title) + "</span>");
 
-    var buttons = this.element.selectAll(".vzb-buttonlist-btn");
+    const buttons = this.element.selectAll(".vzb-buttonlist-btn");
 
     //clicking the button
     buttons.on("click", function() {
@@ -153,25 +153,25 @@ var ZoomButtonList = Component.extend({
       d3.event.preventDefault();
       d3.event.stopPropagation();
 
-      var id = d3.select(this).attr("data-btn");
+      const id = d3.select(this).attr("data-btn");
       _this.proceedClick(id);
     });
 
   },
 
   proceedClick(id) {
-    var _this = this;
-    var btn = _this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
-      classes = btn.attr("class"),
-      btn_config = _this._available_buttons[id];
+    const _this = this;
+    const btn = _this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
+    const classes = btn.attr("class");
+    const btn_config = _this._available_buttons[id];
 
     if (btn_config && btn_config.func) {
       btn_config.func(id);
     } else {
-      var btn_active = classes.indexOf(class_active) === -1;
+      const btn_active = classes.indexOf(class_active) === -1;
 
       btn.classed(class_active, btn_active);
-      var evt = {};
+      const evt = {};
       evt["id"] = id;
       evt["active"] = btn_active;
       _this.trigger("click", evt);
@@ -179,18 +179,18 @@ var ZoomButtonList = Component.extend({
   },
 
   setButtonActive(id, boolActive) {
-    var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
+    const btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
 
     btn.classed(class_active, boolActive);
   },
 
   toggleCursorMode(id) {
-    var value = id;
+    const value = id;
     this.model.ui.set("cursorMode", value, false, false);
   },
 
   setCursorMode(id) {
-    var value = this.model.ui.cursorMode ? this.model.ui.cursorMode : "arrow";
+    const value = this.model.ui.cursorMode ? this.model.ui.cursorMode : "arrow";
     this.element.selectAll(".vzb-buttonlist-btn")
       .classed(class_active, d => d.id == value);
   },

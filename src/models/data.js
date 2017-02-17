@@ -7,13 +7,13 @@ import EventSource from "base/events";
  * VIZABI Data Model (model.data)
  */
 
-var DataModel = Model.extend({
+const DataModel = Model.extend({
 
   /**
    * Default values for this model
    */
   getClassDefaults() {
-    var defaults = {
+    const defaults = {
       reader: "csv"
     };
     return utils.deepExtend(this._super(), defaults);
@@ -62,7 +62,7 @@ var DataModel = Model.extend({
     if (this.dataset) query.dataset = this.dataset;
     if (this.version) query.version = this.version;
 
-    var dataId = this.getDataId(query);
+    const dataId = this.getDataId(query);
 
     if (dataId) {
       return Promise.resolve(dataId);
@@ -88,12 +88,12 @@ var DataModel = Model.extend({
    * @param {Object} parsers An object with concepts as key and parsers as value
    */
   loadFromReader(query, parsers) {
-    var _this = this;
+    const _this = this;
 
-    var dataId = utils.hashCode([
+    const dataId = utils.hashCode([
       query
     ]);
-    var queryMergeId = utils.hashCode([
+    const queryMergeId = utils.hashCode([
       query.select.key,
       query.where,
       query.join
@@ -109,7 +109,7 @@ var DataModel = Model.extend({
     } else {
 
       // set up base query
-      var promise = new Promise((resolve, reject) => {
+      const promise = new Promise((resolve, reject) => {
 
         // wait one execution round for the queue to fill up
         utils.defer(() => {
@@ -127,7 +127,7 @@ var DataModel = Model.extend({
 
             _this._collection[dataId] = {};
             _this._collectionPromises[dataId] = {};
-            var col = _this._collection[dataId];
+            const col = _this._collection[dataId];
             col.data = response;
             col.valid = {};
             col.nested = {};
@@ -167,7 +167,7 @@ var DataModel = Model.extend({
 
   getReader() {
     // Create a new reader for this query
-    var readerClass = Reader.get(this.reader);
+    const readerClass = Reader.get(this.reader);
     if (!readerClass) {
       throw new Error("Unknown reader: " + this.reader);
     }
@@ -185,9 +185,9 @@ var DataModel = Model.extend({
 
     if (response.length > 0) {
       // search data for the entirely missing columns
-      var columnsMissing = (query.select.key || []).concat(query.select.value || []);
-      for (var i = response.length - 1; i >= 0; i--) {
-        for (var c = columnsMissing.length - 1; c >= 0; c--) {
+      const columnsMissing = (query.select.key || []).concat(query.select.value || []);
+      for (let i = response.length - 1; i >= 0; i--) {
+        for (let c = columnsMissing.length - 1; c >= 0; c--) {
           // if found value for column c in row i then remove that column name from the list of missing columns
           if (response[i][columnsMissing[c]] || response[i][columnsMissing[c]] === 0) columnsMissing.splice(c, 1);
         }
@@ -225,7 +225,7 @@ var DataModel = Model.extend({
     }
 
     // if they want a certain processing of the data, see if it's already in cache
-    var id = (typeof whatId == "string") ? whatId : JSON.stringify(whatId);
+    const id = (typeof whatId == "string") ? whatId : JSON.stringify(whatId);
     if (this._collection[dataId][what][id]) {
       return this._collection[dataId][what][id];
     }
@@ -286,7 +286,7 @@ var DataModel = Model.extend({
     this.conceptArray = [];
 
     this.getData(dataId).forEach(d => {
-      var concept = {};
+      const concept = {};
 
       if (d.concept_type) concept["use"] = (d.concept_type == "measure" || d.concept_type == "time") ? "indicator" : "property";
 
@@ -347,21 +347,21 @@ var DataModel = Model.extend({
   },
 
   getConceptByIndex(index, type) {
-    var concept = this.conceptArray.filter(f => !type || !f.concept_type || f.concept_type === type)[index];
+    const concept = this.conceptArray.filter(f => !type || !f.concept_type || f.concept_type === type)[index];
     //if(!concept && type == "measure") concept = this.conceptArray.filter(f => f.concept_type==="time")[0];
     return concept;
   },
 
   getDatasetName() {
     if (this.readerObject.getDatasetInfo) {
-      var meta = this.readerObject.getDatasetInfo();
+      const meta = this.readerObject.getDatasetInfo();
       return meta.name + (meta.version ? " " + meta.version : "");
     }
     return this._name;
   },
 
   _getCacheKey(frames, keys) {
-    var result = frames[0] + " - " + frames[frames.length - 1];
+    let result = frames[0] + " - " + frames[frames.length - 1];
     if (keys) {
       result = result + "_" + keys.join();
     }
@@ -369,8 +369,8 @@ var DataModel = Model.extend({
   },
 
   getFrames(dataId, framesArray, keys) {
-    var _this = this;
-    var whatId = this._getCacheKey(framesArray, keys);
+    const _this = this;
+    const whatId = this._getCacheKey(framesArray, keys);
     if (!this._collectionPromises[dataId][whatId]) {
       this._collectionPromises[dataId][whatId] = {
         queue: this.framesQueue(framesArray, whatId),
@@ -395,8 +395,8 @@ var DataModel = Model.extend({
 
   getFrame(dataId, framesArray, neededFrame, keys) {
     //can only be called after getFrames()
-    var _this = this;
-    var whatId = this._getCacheKey(framesArray, keys);
+    const _this = this;
+    const whatId = this._getCacheKey(framesArray, keys);
     return new Promise((resolve, reject) => {
       if (_this._collection[dataId]["frames"][whatId] && _this._collection[dataId]["frames"][whatId][neededFrame]) {
         resolve(_this._collection[dataId]["frames"][whatId]);
@@ -409,8 +409,8 @@ var DataModel = Model.extend({
   },
 
   listenFrame(dataId, framesArray, keys,  cb) {
-    var _this = this;
-    var whatId = this._getCacheKey(framesArray, keys);
+    const _this = this;
+    const whatId = this._getCacheKey(framesArray, keys);
     this._collectionPromises[dataId][whatId]["queue"].defaultCallbacks.push(time => {
       cb(dataId, time);
     });
@@ -456,7 +456,7 @@ var DataModel = Model.extend({
    * @returns {*}
    */
   framesQueue(framesArray, whatId) {
-    var _context = this;
+    const _context = this;
     return new function() {
       this.defaultCallbacks = [];
       this.callbacks = {};
@@ -465,7 +465,7 @@ var DataModel = Model.extend({
       this.delayedAction = null;
       this.whatId = whatId;
       this.queue = framesArray.slice(0); //clone array
-      var queue = this;
+      const queue = this;
       //put the last element to the start of the queue because we are likely to need it first
       this.queue.splice(0, 0, this.queue.splice(this.queue.length - 1, 1)[0]);
       this.key = 0;
@@ -485,7 +485,7 @@ var DataModel = Model.extend({
         }
       };
       this.frameComplete = function(frameName) { //function called after build each frame with name of frame build
-        var i;
+        let i;
         if (queue.defaultCallbacks.length > 0) {
           for (i = 0; i < queue.defaultCallbacks.length; i++) {
             queue.defaultCallbacks[i](frameName);
@@ -498,7 +498,7 @@ var DataModel = Model.extend({
         }
       };
       this._waitingForActivation = function() {
-        var _this = this;
+        const _this = this;
         return new Promise((resolve, reject) => {
           if (_this.isActive) {
             return resolve();
@@ -508,7 +508,7 @@ var DataModel = Model.extend({
       };
 
       this._getNextFrameName = function() {
-        var frameName = null;
+        let frameName = null;
         if (this.forcedQueue.length > 0 || this.queue.length > 0) {
           if (this.forcedQueue.length > 0) {
             frameName = this.forcedQueue.shift();
@@ -530,7 +530,7 @@ var DataModel = Model.extend({
 
       // returns the next frame in a queue
       this.getNext = function() {
-        var _this = this;
+        const _this = this;
         return new Promise((resolve, reject) => {
           _this.checkForcedFrames();
           if (_this.isActive) {
@@ -545,10 +545,10 @@ var DataModel = Model.extend({
 
       // force the particular frame up the queue
       this.forceFrame = function(frameName, cb) {
-        var objIndexOf = function(obj, need) {
-          var search = need.toString();
-          var index = -1;
-          for (var i = 0, len = obj.length; i < len; i++) {
+        const objIndexOf = function(obj, need) {
+          const search = need.toString();
+          let index = -1;
+          for (let i = 0, len = obj.length; i < len; i++) {
             if (obj[i].toString() == search) {
               index = i;
               break;
@@ -560,7 +560,7 @@ var DataModel = Model.extend({
 
           this.callbacks[frameName].push(cb);
         } else {
-          var newKey = objIndexOf(this.queue, frameName);//this.queue.indexOf(frameName.toString());
+          const newKey = objIndexOf(this.queue, frameName);//this.queue.indexOf(frameName.toString());
           if (newKey !== -1) {
             this.forcedQueue.unshift(this.queue.splice(newKey, 1).pop());
             _context._muteAllQueues(this.whatId);
@@ -594,7 +594,7 @@ var DataModel = Model.extend({
    * @returns {Object} regularised dataset, nested by [animatable, column, key]
    */
   _getFrames(dataId, whatId, framesArray, keys) {
-    var _this = this;
+    const _this = this;
 
     if (!_this._collection[dataId]["frames"][whatId]) {
       _this._collection[dataId]["frames"][whatId] = {};
@@ -609,48 +609,48 @@ var DataModel = Model.extend({
 
       // Check if query.where clause is missing a time field
 
-      var indicatorsDB = _this.getConceptprops();
+      const indicatorsDB = _this.getConceptprops();
 
       if (!indicatorsDB) utils.warn("_getFrames in data.js is missing indicatorsDB, it's needed for gap filling");
       if (!framesArray) utils.warn("_getFrames in data.js is missing framesArray, it's needed so much");
 
-      var TIME = _this._collection[dataId].query.animatable;
-      var KEY = _this._collection[dataId].query.select.key.slice(0);
+      const TIME = _this._collection[dataId].query.animatable;
+      const KEY = _this._collection[dataId].query.select.key.slice(0);
       if (TIME && KEY.indexOf(TIME) != -1) KEY.splice(KEY.indexOf(TIME), 1);
 
-      var filtered = {};
-      var k, items, itemsIndex, oneFrame, method, use, next;
+      const filtered = {};
+      let k, items, itemsIndex, oneFrame, method, use, next;
 
-      var entitiesByKey = {};
+      const entitiesByKey = {};
       if (KEY.length > 1) {
         for (k = 1; k < KEY.length; k++) {
-          var nested = _this.getData(dataId, "nested", [KEY[k]].concat([TIME]));
+          const nested = _this.getData(dataId, "nested", [KEY[k]].concat([TIME]));
           entitiesByKey[KEY[k]] = Object.keys(nested);
         }
       }
 
       // We _nest_ the flat dataset in two levels: first by “key” (example: geo), then by “animatable” (example: year)
       // See the _getNested function for more details
-      var nested = _this.getData(dataId, "nested", KEY.concat([TIME]));
+      const nested = _this.getData(dataId, "nested", KEY.concat([TIME]));
       keys = keys ? keys : Object.keys(nested);
       entitiesByKey[KEY[0]] = keys;
       // Get the list of columns that are in the dataset, exclude key column and animatable column
       // Example: [“lex”, “gdp”, “u5mr"]
-      var query = _this._collection[dataId].query;
-      var columns = query.select.value.filter(f => f !== "_default");
+      const query = _this._collection[dataId].query;
+      const columns = query.select.value.filter(f => f !== "_default");
 
-      var cLength = columns.length;
-      var key, k, column, c;
+      const cLength = columns.length;
+      let key, c;
 
-      var lastIndex = KEY.length - 1;
-      var createFiltered = function(parent, index) {
-        var keys = entitiesByKey[KEY[index]];
-        for (var i = 0, j = keys.length; i < j; i++) {
+      const lastIndex = KEY.length - 1;
+      const createFiltered = function(parent, index) {
+        const keys = entitiesByKey[KEY[index]];
+        for (let i = 0, j = keys.length; i < j; i++) {
           parent[keys[i]] = {};
           if (index == lastIndex) {
             for (c = 0; c < cLength; c++) parent[keys[i]][columns[c]] = null;
           } else {
-            var nextIndex = index + 1;
+            const nextIndex = index + 1;
             createFiltered(parent[keys[i]], nextIndex);
           }
         }
@@ -660,15 +660,15 @@ var DataModel = Model.extend({
 
       for (c = 0; c < cLength; c++) _this._collection[dataId].haveNoDataPointsPerKey[columns[c]] = {};
 
-      var buildFrame = function(frameName, entitiesByKey, KEY, dataId, callback) {
-        var frame = {};
+      const buildFrame = function(frameName, entitiesByKey, KEY, dataId, callback) {
+        const frame = {};
         if (query.from !== "datapoints") {
             // we populate the regular set with a single value (unpack properties into constant time series)
-          var dataset = _this._collection[dataId].data;
+          const dataset = _this._collection[dataId].data;
           for (c = 0; c < cLength; c++) frame[columns[c]] = {};
 
-          for (var i = 0; i < dataset.length; i++) {
-            var d = dataset[i];
+          for (let i = 0; i < dataset.length; i++) {
+            const d = dataset[i];
             for (c = 0; c < cLength; c++) {
               frame[columns[c]][d[KEY[0]]] = d[columns[c]];
                 //check data for properties with missed data. If founded then write key to haveNoDataPointsPerKey with
@@ -688,9 +688,9 @@ var DataModel = Model.extend({
 
           for (c = 0; c < cLength; c++) frame[columns[c]] = {};
 
-          var iterateKeys = function(firstKeyObject, lastKeyObject, firstKey, nested, filtered, index) {
-            var keys = entitiesByKey[KEY[index]];
-            for (var i = 0, j = keys.length; i < j; i++) {
+          const iterateKeys = function(firstKeyObject, lastKeyObject, firstKey, nested, filtered, index) {
+            const keys = entitiesByKey[KEY[index]];
+            for (let i = 0, j = keys.length; i < j; i++) {
               if (index == 0) {
                 firstKey = keys[i];//root level
               }
@@ -702,7 +702,7 @@ var DataModel = Model.extend({
                 if (index == 0) {
                   lastKeyObject = firstKeyObject = {};
                 }
-                var nextIndex = index + 1;
+                const nextIndex = index + 1;
                 lastKeyObject[keys[i]] = {};
                 iterateKeys(firstKeyObject, lastKeyObject[keys[i]], firstKey, nested[keys[i]], filtered[keys[i]], nextIndex);
               }
@@ -747,11 +747,11 @@ var DataModel = Model.extend({
                   // Let’s cache it because we will most likely encounter another gap in the same column for the same key
               items = filtered[column];
               if (items === null) {
-                var givenFrames = Object.keys(nested);
+                const givenFrames = Object.keys(nested);
                 items = new Array(givenFrames.length);
                 itemsIndex = 0;
 
-                for (var z = 0, length = givenFrames.length; z < length; z++) {
+                for (let z = 0, length = givenFrames.length; z < length; z++) {
                   oneFrame = nested[givenFrames[z]];
                   if (oneFrame[0][column] || oneFrame[0][column] === 0) items[itemsIndex++] = oneFrame[0];
                 }
@@ -834,8 +834,8 @@ var DataModel = Model.extend({
     //   }
     // };
 
-    var nest = d3.nest();
-    for (var i = 0; i < order.length; i++) {
+    let nest = d3.nest();
+    for (let i = 0; i < order.length; i++) {
       nest = nest.key(
         (function(k) {
           return function(d) {
@@ -850,16 +850,15 @@ var DataModel = Model.extend({
 
 
   _getUnique(dataId, attr) {
-    var uniq;
-    var items = this._collection[dataId].data;
-    //if it's an array, it will return a list of unique combinations.
+    let uniq;
+    const items = this._collection[dataId].data;
+    // if it's an array, it will return a list of unique combinations.
     if (utils.isArray(attr)) {
-      var values = items.map(d => utils.clone(d, attr) //pick attrs
-      );
+      const values = items.map(d => utils.clone(d, attr)); // pick attrs
       uniq = utils.unique(values, n => JSON.stringify(n));
-    } //if it's a string, it will return a list of values
+    } // if it's a string, it will return a list of values
     else {
-      var values = items.map(d => d[attr]);
+      const values = items.map(d => d[attr]);
       uniq = utils.unique(values);
     }
     return uniq;
@@ -871,12 +870,12 @@ var DataModel = Model.extend({
 
   _getLimits(dataId, attr) {
 
-    var items = this._collection[dataId].data;
+    const items = this._collection[dataId].data;
     // get only column attr and only rows with number or date
-    var filtered = items.reduce((filtered, d) => {
+    const filtered = items.reduce((filtered, d) => {
 
       // check for dates
-      var f = (utils.isDate(d[attr])) ? d[attr] : parseFloat(d[attr]);
+      const f = (utils.isDate(d[attr])) ? d[attr] : parseFloat(d[attr]);
 
       // if it is a number
       if (!isNaN(f)) {
@@ -888,11 +887,11 @@ var DataModel = Model.extend({
     }, []);
 
     // get min/max for the filtered rows
-    var min;
-    var max;
-    var limits = {};
-    for (var i = 0; i < filtered.length; i += 1) {
-      var c = filtered[i];
+    let min;
+    let max;
+    const limits = {};
+    for (let i = 0; i < filtered.length; i += 1) {
+      const c = filtered[i];
       if (typeof min === "undefined" || c < min) {
         min = c;
       }
@@ -910,7 +909,7 @@ var DataModel = Model.extend({
    */
   getDataId(query) {
     //encode in hashCode
-    var q = utils.hashCode([
+    const q = utils.hashCode([
       query
     ]);
     //simply check if we have this in internal data

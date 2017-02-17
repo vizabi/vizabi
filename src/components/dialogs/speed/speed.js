@@ -7,7 +7,7 @@ import simpleslider from "components/simpleslider/simpleslider";
  * Size dialog
  */
 
-var Speed = Dialog.extend({
+const Speed = Dialog.extend({
 
 /**
  * Initializes the dialog component

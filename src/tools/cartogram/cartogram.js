@@ -15,7 +15,7 @@ import datawarning from "components/datawarning/datawarning";
 import datanotes from "components/datanotes/datanotes";
 
   //CARTOGRAM TOOL
-var Cartogram = Tool.extend("Cartogram", {
+const Cartogram = Tool.extend("Cartogram", {
 
     /**
      * Initialized the tool

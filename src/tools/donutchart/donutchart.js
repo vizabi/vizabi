@@ -12,11 +12,11 @@ import dialogs from "components/dialogs/dialogs";
 import buttonlist from "components/buttonlist/buttonlist";
 import treemenu from "components/treemenu/treemenu";
 
-var comp_template = "barchart.html";
+const comp_template = "barchart.html";
 
 //BAR CHART TOOL
 //extend the base Tool class and register it in Vizabi tools under a name 'DunutChart'
-var DonutChart = Tool.extend("DonutChart", {
+const DonutChart = Tool.extend("DonutChart", {
 
   //Run when the tool is created
   init(placeholder, external_model) {

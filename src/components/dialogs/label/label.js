@@ -9,7 +9,7 @@ import simplecheckbox from "components/simplecheckbox/simplecheckbox";
  * Label dialog
  */
 
-var Label = Dialog.extend({
+const Label = Dialog.extend({
 
 /**
  * Initializes the dialog component

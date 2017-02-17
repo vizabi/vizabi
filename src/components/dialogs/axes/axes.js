@@ -9,7 +9,7 @@ import minmaxinputs from "components/minmaxinputs/minmaxinputs";
  * Axes dialog
  */
 
-var Axes = Dialog.extend({
+const Axes = Dialog.extend({
 
   /**
    * Initializes the dialog component
@@ -18,7 +18,7 @@ var Axes = Dialog.extend({
    */
   init(config, parent) {
     this.name = "axes";
-    var _this = this;
+    const _this = this;
 
     this.components = [{
       component: indicatorpicker,

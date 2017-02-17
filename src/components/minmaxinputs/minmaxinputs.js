@@ -5,12 +5,12 @@ import Component from "base/component";
  * VIZABI MIN MAX INPUT FIELDS
  */
 
-var DOMAINMIN = "domainMin";
-var DOMAINMAX = "domainMax";
-var ZOOMEDMIN = "zoomedMin";
-var ZOOMEDMAX = "zoomedMax";
+const DOMAINMIN = "domainMin";
+const DOMAINMAX = "domainMax";
+const ZOOMEDMIN = "zoomedMin";
+const ZOOMEDMAX = "zoomedMax";
 
-var MinMaxInputs = Component.extend({
+const MinMaxInputs = Component.extend({
 
     /**
      * Initializes the Component.
@@ -23,7 +23,7 @@ var MinMaxInputs = Component.extend({
     this.name = "gapminder-minmaxinputs";
     this.template = require("./minmaxinputs.html");
 
-    var _this = this;
+    const _this = this;
 
     this.model_expects = [{
       name: "marker",
@@ -66,7 +66,7 @@ var MinMaxInputs = Component.extend({
   },
 
   readyOnce() {
-    var _this = this;
+    const _this = this;
 
     this.element = d3.select(this.element);
 
@@ -104,7 +104,7 @@ var MinMaxInputs = Component.extend({
   },
 
   updateView() {
-    var _this = this;
+    const _this = this;
     this.translator = this.model.locale.getTFunction();
 
     this.el_domain_labelMin.text(this.translator("hints/min") + ":");
@@ -124,7 +124,7 @@ var MinMaxInputs = Component.extend({
     this.el_zoomed_fieldMin.classed("vzb-hidden", !this.ui.selectZoomedMinMax);
     this.el_zoomed_fieldMax.classed("vzb-hidden", !this.ui.selectZoomedMinMax);
 
-    var formatter = function(n) {
+    const formatter = function(n) {
       if (!n && n !== 0) return n;
       if (utils.isDate(n)) return _this.model.time.formatDate(n);
       return d3.format(".2r")(n);

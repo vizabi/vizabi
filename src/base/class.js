@@ -1,26 +1,26 @@
 import { forEach, warn } from "base/utils";
 
-var initializing = false;
-var fnTest = /xyz/.test(() => {
-  xyz;
+let initializing = false;
+const fnTest = /xyz/.test(() => {
+  let xyz;
 }) ? /\b_super\b/ : /.*/;
 
 function extend(name, extensions) {
 
   //in case there are two args
   extensions = arguments.length === 1 ? name : extensions;
-  var _super = this.prototype;
+  const _super = this.prototype;
   initializing = true;
-  var prototype = new this();
+  const prototype = new this();
   initializing = false;
 
   forEach(extensions, (method, name) => {
     if (typeof extensions[name] === "function" && typeof _super[name] === "function" && fnTest.test(extensions[name])) {
       prototype[name] = (function(name, fn) {
         return function() {
-          var tmp = this._super;
+          const tmp = this._super;
           this._super = _super[name];
-          var ret = fn.apply(this, arguments);
+          const ret = fn.apply(this, arguments);
           this._super = tmp;
           return ret;
         };
@@ -82,7 +82,7 @@ function extend(name, extensions) {
   return Class;
 }
 
-var Class = function() {};
+const Class = function() {};
 Class.extend = extend;
 
 export default Class;

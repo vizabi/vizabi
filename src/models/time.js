@@ -13,7 +13,7 @@ Date.prototype.utc = Date.prototype.toUTCString;
  * Time formats for internal data
  * all in UTC
  */
-var formats = {
+const formats = {
   "year": { data: d3.time.format.utc("%Y"),            ui: d3.time.format.utc("%Y") },
   "month": { data: d3.time.format.utc("%Y-%m"),         ui: d3.time.format.utc("%b %Y") }, // month needs separator according to ISO to not confuse YYYYMM with YYMMDD
   "day": { data: d3.time.format.utc("%Y%m%d"),        ui: d3.time.format.utc("%c") },
@@ -24,7 +24,7 @@ var formats = {
   "quarter": { data: quarterFormat(), ui: quarterFormat() } // %Yq%Q d3 does not support quarters
 };
 
-var TimeModel = DataConnected.extend({
+const TimeModel = DataConnected.extend({
 
   objectLeafs: ["autogenerate"],
 
@@ -32,7 +32,7 @@ var TimeModel = DataConnected.extend({
    * Default values for this model
    */
   getClassDefaults() {
-    var defaults = {
+    const defaults = {
       dim: null,
       value: null,
       start: null,
@@ -71,7 +71,7 @@ var TimeModel = DataConnected.extend({
 
     //same constructor
     this._super(name, values, parent, bind);
-    var _this = this;
+    const _this = this;
     this.initFormatters();
     this.dragging = false;
     this.postponePause = false;
@@ -116,7 +116,7 @@ var TimeModel = DataConnected.extend({
 
   afterPreload() {
     if (this.dim == null && this.autogenerate) {
-      var dataSource = this.getClosestModel(this.autogenerate.data);
+      const dataSource = this.getClosestModel(this.autogenerate.data);
       this.dim = dataSource.getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType).concept;
     }
   },
@@ -125,12 +125,12 @@ var TimeModel = DataConnected.extend({
    * Formats value, start and end dates to actual Date objects
    */
   _formatToDates() {
-    var persistentValues = ["value"];
-    var date_attr = ["value", "start", "end", "startSelected", "endSelected"];
-    for (var i = 0; i < date_attr.length; i++) {
-      var attr = date_attr[i];
+    const persistentValues = ["value"];
+    const date_attr = ["value", "start", "end", "startSelected", "endSelected"];
+    for (let i = 0; i < date_attr.length; i++) {
+      const attr = date_attr[i];
       if (!utils.isDate(this[attr])) {
-        var date = this.parse(this[attr]);
+        const date = this.parse(this[attr]);
         this.set(attr, date, null, (persistentValues.indexOf(attr) !== -1));
       }
     }
@@ -158,11 +158,11 @@ var TimeModel = DataConnected.extend({
 
   /* auto-determines unit from timestring */
   findFormat(timeString) {
-    var keys = Object.keys(formats), i = 0;
-    for (; i < keys.length; i++) {
-      var dateObject = formats[keys[i]].data.parse(timeString);
+    const keys = Object.keys(formats);
+    for (let i = 0; i < keys.length; i++) {
+      let dateObject = formats[keys[i]].data.parse(timeString);
       if (dateObject) return { unit: keys[i], time: dateObject, type: "data" };
-      var dateObject = formats[keys[i]].ui.parse(timeString);
+      dateObject = formats[keys[i]].ui.parse(timeString);
       if (dateObject) return { unit: keys[i], time: dateObject, type: "ui" };
     }
     return null;
@@ -274,7 +274,7 @@ var TimeModel = DataConnected.extend({
    * @returns range between start and end
    */
   getRange() {
-    var is = this.getIntervalAndStep();
+    const is = this.getIntervalAndStep();
     return d3["utc" + is.interval].range(this.start, this.end, is.step);
   },
 
@@ -283,7 +283,7 @@ var TimeModel = DataConnected.extend({
    * D3's week-interval starts on sunday and d3 does not support a quarter interval
    **/
   getIntervalAndStep() {
-    var d3Interval, step;
+    let d3Interval, step;
     switch (this.unit) {
       case "week": d3Interval = "monday"; step = this.step; break;
       case "quarter": d3Interval = "month"; step = this.step * 3; break;
@@ -298,11 +298,11 @@ var TimeModel = DataConnected.extend({
    * @returns {Object} time filter
    */
   getFilter(splash) {
-    var defaultStart = this.parse(this.startOrigin);
-    var defaultEnd = this.parse(this.endOrigin);
+    const defaultStart = this.parse(this.startOrigin);
+    const defaultEnd = this.parse(this.endOrigin);
 
-    var dim = this.getDimension();
-    var filter = null;
+    const dim = this.getDimension();
+    let filter = null;
 
     if (splash) {
       if (this.value != null) {
@@ -310,7 +310,7 @@ var TimeModel = DataConnected.extend({
         filter[dim] = this.formatters.data(this.value);
       }
     } else {
-      var gte, lte;
+      let gte, lte;
       if (defaultStart != null) {
         gte = this.formatters.data(defaultStart);
       }
@@ -352,15 +352,15 @@ var TimeModel = DataConnected.extend({
       utils.warn("getAllSteps(): invalid start/end time is detected: " + this.start + ", " + this.end);
       return [];
     }
-    var hash = "" + this.start + this.end + this.step;
+    const hash = "" + this.start + this.end + this.step;
 
     //return if cached
     if (this.allSteps[hash]) return this.allSteps[hash];
 
     this.allSteps[hash] = [];
-    var curr = this.start;
+    let curr = this.start;
     while (+curr <= +this.end) {
-      var is = this.getIntervalAndStep();
+      const is = this.getIntervalAndStep();
       this.allSteps[hash].push(curr);
       curr = d3["utc" + is.interval].offset(curr, is.step);
     }
@@ -374,11 +374,11 @@ var TimeModel = DataConnected.extend({
   snap(what) {
     if (!this.round) return;
     if (what == null) what = "value";
-    var op = "round";
+    let op = "round";
     if (this.round === "ceil") op = "ceil";
     if (this.round === "floor") op = "floor";
-    var is = this.getIntervalAndStep();
-    var time = d3["utc" + is.interval][op](this[what]);
+    const is = this.getIntervalAndStep();
+    const time = d3["utc" + is.interval][op](this[what]);
     if ((this.value - time) != 0 || (this.value - this.start) == 0 || (this.value - this.end) == 0) {
       this.set(what, time, true); //3rd argumennt forces update
     }
@@ -391,7 +391,7 @@ var TimeModel = DataConnected.extend({
     //don't play if it's not playable
     if (!this.playable) return;
 
-    var _this = this;
+    const _this = this;
 
     //go to start if we start from end point
     if (this.value >= this.endSelected) {
@@ -412,12 +412,12 @@ var TimeModel = DataConnected.extend({
 
   playInterval(immediatePlay) {
     if (!this.playing) return;
-    var _this = this;
+    const _this = this;
     this.delayAnimations = this.delay;
     if (this.delay < this.delayThresholdX2) this.delayAnimations *= 2;
     if (this.delay < this.delayThresholdX4) this.delayAnimations *= 2;
 
-    var delayAnimations = immediatePlay ? 1 : this.delayAnimations;
+    const delayAnimations = immediatePlay ? 1 : this.delayAnimations;
 
     this._intervals.setInterval("playInterval_" + this._id, () => {
       // when time is playing and it reached the end
@@ -439,10 +439,10 @@ var TimeModel = DataConnected.extend({
           _this.postponePause = false;
           _this.getModelObject("value").set(_this.value, true, true /*force the change and make it persistent for URL and history*/);
         } else {
-          var is = _this.getIntervalAndStep();
+          const is = _this.getIntervalAndStep();
           if (_this.delay < _this.delayThresholdX2) is.step *= 2;
           if (_this.delay < _this.delayThresholdX4) is.step *= 2;
-          var time = d3["utc" + is.interval].offset(_this.value, is.step);
+          const time = d3["utc" + is.interval].offset(_this.value, is.step);
           if (time >= _this.endSelected) {
             // if no playing needed anymore then make the last update persistent and not overshooting
             _this.getModelObject("value").set(_this.endSelected, null, true /*force the change and make it persistent for URL and history*/);
@@ -457,12 +457,12 @@ var TimeModel = DataConnected.extend({
   },
 
   incrementTime(time) {
-    var is = this.getIntervalAndStep();
+    const is = this.getIntervalAndStep();
     return d3["utc" + is.interval].offset(time, is.step);
   },
 
   decrementTime(time) {
-    var is = this.getIntervalAndStep();
+    const is = this.getIntervalAndStep();
     return d3["utc" + is.interval].offset(time, -is.step);
   },
 
@@ -484,39 +484,39 @@ var TimeModel = DataConnected.extend({
  */
 function weekFormat() {
 
-  var format = function(d) {
+  const format = function(d) {
     return formatWeekYear(d) + "w" + formatWeek(d);
   };
 
   format.parse = function parse(dateString) {
-    var matchedDate = dateString.match(/^(\d{4})w(\d{2})$/);
+    const matchedDate = dateString.match(/^(\d{4})w(\d{2})$/);
     return matchedDate ? getDateFromWeek(matchedDate[1], matchedDate[2]) : null;
   };
 
-  var formatWeekYear = function(d) {
-    var origin = +d;
+  const formatWeekYear = function(d) {
+    const origin = +d;
     return new Date(origin + ((4 - (d.getUTCDay() || 7)) * 86400000)).getUTCFullYear();
   };
 
-  var formatWeek = function(d) {
-    var origin = +d;
-    var quote = new Date(origin + ((4 - (d.getUTCDay() || 7)) * 86400000));
-    var week = Math.ceil(((quote.getTime() - quote.setUTCMonth(0, 1)) / 86400000 + 1) / 7);
+  const formatWeek = function(d) {
+    const origin = +d;
+    const quote = new Date(origin + ((4 - (d.getUTCDay() || 7)) * 86400000));
+    const week = Math.ceil(((quote.getTime() - quote.setUTCMonth(0, 1)) / 86400000 + 1) / 7);
     return week < 10 ? "0" + week : week;
   };
 
-  var getDateFromWeek = function(p1, p2) {
-    var week = parseInt(p2);
-    var year = p1;
-    var startDateOfYear = new Date(); // always 4th of January (according to standard ISO 8601)
+  const getDateFromWeek = function(p1, p2) {
+    const week = parseInt(p2);
+    const year = p1;
+    const startDateOfYear = new Date(); // always 4th of January (according to standard ISO 8601)
     startDateOfYear.setUTCFullYear(year);
     startDateOfYear.setUTCMonth(0);
     startDateOfYear.setUTCDate(4);
-    var startDayOfWeek = startDateOfYear.getUTCDay() || 7;
-    var dayOfWeek = 1; // Monday === 1
-    var dayOfYear = week * 7 + dayOfWeek - (startDayOfWeek + 4);
+    const startDayOfWeek = startDateOfYear.getUTCDay() || 7;
+    const dayOfWeek = 1; // Monday === 1
+    const dayOfYear = week * 7 + dayOfWeek - (startDayOfWeek + 4);
 
-    var date = formats["year"].parse(year);
+    let date = formats["year"].parse(year);
     date = new Date(date.getTime() + dayOfYear * 24 * 60 * 60 * 1000);
 
     return date;
@@ -533,23 +533,23 @@ function weekFormat() {
  */
 function quarterFormat() {
 
-  var format = function(d) {
+  const format = function(d) {
     return formats.year.data(d) + "q" + formatQuarter(d);
   };
 
   format.parse = function(dateString) {
-    var matchedDate = dateString.match(/^(\d{4})q(\d)$/);
+    const matchedDate = dateString.match(/^(\d{4})q(\d)$/);
     return matchedDate ? getDateFromQuarter(matchedDate[1], matchedDate[2]) : null;
   };
 
-  var formatQuarter = function(d) {
+  const formatQuarter = function(d) {
     return ((d.getUTCMonth() / 3) | 0) + 1;
   };
 
-  var getDateFromQuarter = function(p1, p2) {
-    var quarter = parseInt(p2);
-    var month = 3 * quarter - 2; // first month in quarter
-    var year = p1;
+  const getDateFromQuarter = function(p1, p2) {
+    const quarter = parseInt(p2);
+    const month = 3 * quarter - 2; // first month in quarter
+    const year = p1;
     return formats.month.data.parse([year, (month < 9 ? "0" : "") + month].join("-"));
   };
 

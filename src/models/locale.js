@@ -2,15 +2,15 @@ import * as utils from "base/utils";
 import DataConnected from "models/dataconnected";
 
 // this and many other locale information should at some point be stored in an external file with locale information (rtl, date formats etc)
-var rtlLocales = ["ar", "ar-SA"];
+const rtlLocales = ["ar", "ar-SA"];
 
-var LocaleModel = DataConnected.extend({
+const LocaleModel = DataConnected.extend({
 
   /**
    * Default values for this model
    */
   getClassDefaults() {
-    var defaults = {
+    const defaults = {
       id: "en",
       filePath: "assets/translation/"
     };
@@ -42,8 +42,6 @@ var LocaleModel = DataConnected.extend({
   },
 
   loadData() {
-    var promises;
-
     this.setReady(false);
     this._loadCall = true;
 
@@ -51,7 +49,7 @@ var LocaleModel = DataConnected.extend({
     // this should be done with listeners, but the load promise can't be returned
     // through the listeners
 
-    promises = [];
+    const promises = [];
     utils.forEach(this._root._data, mdl => {
       if (mdl._type === "data") promises.push(mdl.loadConceptProps());
     });
@@ -61,8 +59,7 @@ var LocaleModel = DataConnected.extend({
         this.handleNewStrings(strings);
         resolve();
       });
-    })
-    );
+    }));
 
     return Promise.all(promises)
       .then(() => this.trigger("translate"));

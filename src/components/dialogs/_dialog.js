@@ -9,7 +9,7 @@ const dialogTemplates = requireAll(require.context("components/dialogs/", true, 
  * Reusable Dialog component
  */
 
-var Dialog = Component.extend({
+const Dialog = Component.extend({
   /**
    * Initializes the dialog
    * @param {Object} config Initial config, with name and placeholder
@@ -45,7 +45,7 @@ var Dialog = Component.extend({
   },
 
   ready() {
-    var _this = this;
+    const _this = this;
     this.placeholderEl = d3.select(this.placeholder);
     this.rootEl = this.root.element instanceof Array ? this.root.element : d3.select(this.root.element);
     this.dragHandler = this.placeholderEl.select("[data-click='dragDialog']");
@@ -53,12 +53,12 @@ var Dialog = Component.extend({
     this.pinIcon = this.placeholderEl.select("[data-click='pinDialog']");
     this.pinIcon.html(iconPin);
     this.topPos = "";
-    var profile = this.getLayoutProfile();
+    const profile = this.getLayoutProfile();
 
-    var dg = dialogDrag(this.placeholderEl, this.rootEl, 10);
-    var dragBehavior = d3.drag()
+    const dg = dialogDrag(this.placeholderEl, this.rootEl, 10);
+    const dragBehavior = d3.drag()
       .on("start", () => {
-        var topPos = _this.placeholderEl.node().offsetTop;
+        const topPos = _this.placeholderEl.node().offsetTop;
         _this.placeholderEl.style("top", topPos + "px");
         _this.placeholderEl.style("bottom", "auto");
         _this.trigger("dragstart");
@@ -84,16 +84,16 @@ var Dialog = Component.extend({
     if (this.placeholderEl && this.rootEl && this.placeholderEl.classed("vzb-top-dialog")) {
       this.placeholderEl.classed("notransition", true);
 
-      var profile = this.getLayoutProfile();
+      const profile = this.getLayoutProfile();
 
       if (profile !== "small") {
-        var chartWidth = parseInt(this.rootEl.style("width"), 10);
-        var dialogRight = parseInt(this.rightPos, 10);
-        var chartHeight = parseInt(this.rootEl.style("height"), 10);
-        var dialogTop = parseInt(this.topPos, 10);
-        var dialogWidth = parseInt(this.placeholderEl.style("width"), 10);
-        var dialogHeight = parseInt(this.placeholderEl.style("height"), 10);
-        var dialogRightMargin = parseInt(this.placeholderEl.style("margin-right"), 10) || 0;
+        const chartWidth = parseInt(this.rootEl.style("width"), 10);
+        const dialogRight = parseInt(this.rightPos, 10);
+        const chartHeight = parseInt(this.rootEl.style("height"), 10);
+        const dialogTop = parseInt(this.topPos, 10);
+        const dialogWidth = parseInt(this.placeholderEl.style("width"), 10);
+        const dialogHeight = parseInt(this.placeholderEl.style("height"), 10);
+        const dialogRightMargin = parseInt(this.placeholderEl.style("margin-right"), 10) || 0;
         if (utils.isNumber(dialogRight) && dialogRight > chartWidth - dialogWidth - dialogRightMargin) {
           if (this.rightPos) {
             this.rightPos = (chartWidth - dialogWidth - dialogRightMargin) + "px";
@@ -143,13 +143,13 @@ var Dialog = Component.extend({
   },
 
   _setMaxHeight() {
-    var totalHeight = this.root.element.offsetHeight;
+    let totalHeight = this.root.element.offsetHeight;
     if (this.getLayoutProfile() !== "small") {
       if (!this.topPos && (this.getLayoutProfile() === "large" && this.rootEl.classed("vzb-dialog-expand-true"))) {
-        var dialogBottom = parseInt(this.placeholderEl.style("bottom"), 10);
+        const dialogBottom = parseInt(this.placeholderEl.style("bottom"), 10);
         totalHeight -= dialogBottom;
       } else {
-        var topPos = this.topPos ? parseInt(this.topPos, 10) : this.placeholderEl.node().offsetTop;
+        const topPos = this.topPos ? parseInt(this.topPos, 10) : this.placeholderEl.node().offsetTop;
         totalHeight -= topPos;
       }
     } else {
@@ -159,12 +159,12 @@ var Dialog = Component.extend({
     this.element.style("max-height", totalHeight + "px");
 
     //set 'max-height' to content for IE11
-    var contentHeight = totalHeight - this.titleEl.node().offsetHeight - this.buttonsEl.node().offsetHeight;
+    const contentHeight = totalHeight - this.titleEl.node().offsetHeight - this.buttonsEl.node().offsetHeight;
     this.contentEl.style("max-height", contentHeight + "px");
   },
 
   beforeOpen() {
-    var _this = this;
+    const _this = this;
 
     this.transitionEvents = ["webkitTransitionEnd", "transitionend", "msTransitionEnd", "oTransitionEnd"];
     this.transitionEvents.forEach(event => {
@@ -177,7 +177,7 @@ var Dialog = Component.extend({
     this.placeholderEl.style("bottom", ""); // issues: 369 & 442
 
     if (this.topPos && this.getLayoutProfile() === "large" && this.rootEl.classed("vzb-dialog-expand-true")) {
-      var topPos = this.placeholderEl.node().offsetTop;
+      const topPos = this.placeholderEl.node().offsetTop;
       this.placeholderEl.style("top", topPos + "px"); // issues: 369 & 442
       this.placeholderEl.style("bottom", "auto"); // issues: 369 & 442
     } else if (this.getLayoutProfile() !== "small") {
@@ -251,7 +251,7 @@ var Dialog = Component.extend({
 
 
   transitionEnd(eventName) {
-    var _this = this;
+    const _this = this;
 
     this.transitionEvents.forEach(event => {
       _this.placeholderEl.on(event, null);
@@ -264,7 +264,7 @@ var Dialog = Component.extend({
 });
 
 function dialogDrag(element, container, xOffset) {
-  var posX, posY, divTop, divRight, marginRight, marginLeft, xOffsetRight, xOffsetLeft, eWi, eHe, cWi, cHe, diffX, diffY;
+  let posX, posY, divTop, divRight, marginRight, marginLeft, xOffsetRight, xOffsetLeft, eWi, eHe, cWi, cHe, diffX, diffY;
 
   return {
     move(x, y) {
@@ -277,7 +277,7 @@ function dialogDrag(element, container, xOffset) {
         posX = evt.sourceEvent.clientX;
         posY = evt.sourceEvent.clientY;
       } else {
-        var touchCoord = d3.touches(container.node());
+        const touchCoord = d3.touches(container.node());
         posX = touchCoord[0][0];
         posY = touchCoord[0][1];
       }
@@ -300,11 +300,11 @@ function dialogDrag(element, container, xOffset) {
         posX = evt.sourceEvent.clientX;
         posY = evt.sourceEvent.clientY;
       } else {
-        var touchCoord = d3.touches(container.node());
+        const touchCoord = d3.touches(container.node());
         posX = touchCoord[0][0];
         posY = touchCoord[0][1];
       }
-      var aX = -posX + diffX,
+      let aX = -posX + diffX,
         aY = posY - diffY;
       if (aX < -xOffsetRight) aX = -xOffsetRight;
       if (aY < 0) aY = 0;

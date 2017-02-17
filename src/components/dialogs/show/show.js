@@ -7,11 +7,11 @@ import Dialog from "components/dialogs/_dialog";
  * Reusable show dialog
  */
 
-var Show = Dialog.extend({
+const Show = Dialog.extend({
 
   init(config, parent) {
     this.name = "show";
-    var _this = this;
+    const _this = this;
 
     this.model_binds = {
       "change:state.entities.show": function(evt) {
@@ -34,7 +34,7 @@ var Show = Dialog.extend({
     this.KEY = this.model.state.entities.getDimension();
     this.TIMEDIM = this.model.state.time.getDimension();
 
-    var _this = this;
+    const _this = this;
     this.input_search.on("input", () => {
       _this.showHideSearch();
     });
@@ -66,14 +66,14 @@ var Show = Dialog.extend({
 
   redraw() {
 
-    var _this = this;
+    const _this = this;
     this.translator = this.model.locale.getTFunction();
 
     this.model.state.marker_allpossible.getFrame(this.model.state.time.value, values => {
       if (!values) return;
-      var data = utils.keys(values.label)
+      const data = utils.keys(values.label)
         .map(d => {
-          var result = {};
+          const result = {};
           result[_this.KEY] = d;
           result["label"] = values.label[d];
           return result;
@@ -84,7 +84,7 @@ var Show = Dialog.extend({
 
       _this.list.html("");
 
-      var items = _this.list.selectAll(".vzb-show-item")
+      const items = _this.list.selectAll(".vzb-show-item")
       .data(data)
       .enter()
       .append("div")
@@ -116,18 +116,18 @@ var Show = Dialog.extend({
 
   showHideSearch() {
 
-    var search = this.input_search.node().value || "";
+    let search = this.input_search.node().value || "";
     search = search.toLowerCase();
 
     this.list.selectAll(".vzb-show-item")
       .classed("vzb-hidden", d => {
-        var lower = d.label.toLowerCase();
+        const lower = d.label.toLowerCase();
         return (lower.indexOf(search) === -1);
       });
   },
 
   showHideDeselect() {
-    var show = this.model.state.entities.show[this.KEY];
+    const show = this.model.state.entities.show[this.KEY];
     this.deselect_all.classed("vzb-hidden", !show || show.length == 0);
   },
 

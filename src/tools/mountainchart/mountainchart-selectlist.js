@@ -2,7 +2,7 @@ import * as utils from "base/utils";
 import Class from "base/class";
 import { close as iconClose } from "base/iconset";
 
-var MCSelectList = Class.extend({
+const MCSelectList = Class.extend({
 
   init(context) {
     this.context = context;
@@ -10,10 +10,10 @@ var MCSelectList = Class.extend({
   },
 
   rebuild(data) {
-    var _this = this.context;
-    var _local = this;
+    const _this = this.context;
+    const _local = this;
 
-    var listData = _this.mountainPointers
+    const listData = _this.mountainPointers
       .concat(_this.groupedPointers)
       .concat(_this.stackedPointers)
       .filter(f => _this.model.marker.isSelected(f)).sort((a, b) => {
@@ -38,7 +38,7 @@ var MCSelectList = Class.extend({
     _this.selectList = _this.selectList.enter().append("g")
       .attr("class", "vzb-mc-label")
       .each(function(d, i) {
-        var label = d3.select(this);
+        const label = d3.select(this);
         label.append("circle").attr("class", "vzb-mc-label-legend");
         label.append("text").attr("class", "vzb-mc-label-shadow vzb-mc-label-text");
         label.append("text").attr("class", "vzb-mc-label-text");
@@ -55,7 +55,7 @@ var MCSelectList = Class.extend({
             _this.model.marker.clearHighlighted();
             _this.model.marker.selectMarker(d);
           });
-        var labelCloseGroup = label.select("g.vzb-mc-label-x");
+        const labelCloseGroup = label.select("g.vzb-mc-label-x");
         if (!utils.isTouchDevice()) {
           utils.setIcon(labelCloseGroup, iconClose)
             .select("svg")
@@ -92,60 +92,60 @@ var MCSelectList = Class.extend({
   },
 
   redraw() {
-    var _this = this.context;
+    const _this = this.context;
     if (!_this.selectList || !_this.someSelected) return;
 
-    var sample = _this.mountainLabelContainer.append("g").attr("class", "vzb-mc-label").append("text").text("0");
-    var fontHeight = sample.node().getBBox().height * 1.2;
-    var fontSizeToFontHeight = parseFloat(sample.style("font-size")) / fontHeight;
+    const sample = _this.mountainLabelContainer.append("g").attr("class", "vzb-mc-label").append("text").text("0");
+    let fontHeight = sample.node().getBBox().height * 1.2;
+    const fontSizeToFontHeight = parseFloat(sample.style("font-size")) / fontHeight;
     d3.select(sample.node().parentNode).remove();
-    var formatter = _this.model.marker.axis_y.getTickFormatter();
+    const formatter = _this.model.marker.axis_y.getTickFormatter();
 
-    var titleHeight = _this.yTitleEl.select("text").node().getBBox().height || 0;
+    const titleHeight = _this.yTitleEl.select("text").node().getBBox().height || 0;
 
-    var maxFontHeight = (_this.height - titleHeight * 3) / (_this.selectList.data().length + 2);
+    const maxFontHeight = (_this.height - titleHeight * 3) / (_this.selectList.data().length + 2);
     if (fontHeight > maxFontHeight) fontHeight = maxFontHeight;
 
-    var currentAggrLevel = "null";
-    var aggrLevelSpacing = 0;
+    let currentAggrLevel = "null";
+    let aggrLevelSpacing = 0;
 
-    var groupLabels = _this.model.marker.color.getColorlegendMarker().label.getItems();
+    const groupLabels = _this.model.marker.color.getColorlegendMarker().label.getItems();
 
-    var isRTL = _this.model.locale.isRTL();
+    const isRTL = _this.model.locale.isRTL();
 
     _this.selectList
       .attr("transform", (d, i) => {
         if (d.aggrLevel != currentAggrLevel) aggrLevelSpacing += fontHeight;
-        var spacing = fontHeight * i + titleHeight * 1.5 + aggrLevelSpacing;
+        const spacing = fontHeight * i + titleHeight * 1.5 + aggrLevelSpacing;
         currentAggrLevel = d.aggrLevel;
         return "translate(" + (isRTL ? _this.width : 0) + "," + spacing + ")";
       })
       .each(function(d, i) {
 
-        var view = d3.select(this).attr("id", d.geo + "-label-" + _this._id);
-        var name = "";
+        const view = d3.select(this).attr("id", d.geo + "-label-" + _this._id);
+        let name = "";
         if (d.key) {
           name = d.key === "all" ? _this.translator("mount/merging/world") : groupLabels[d.key];
         } else {
           name = _this.values.label[d.KEY()];
         }
 
-        var number = _this.values.axis_y[d.KEY()];
+        const number = _this.values.axis_y[d.KEY()];
 
-        var string = name + ": " + formatter(number) + (i === 0 ? " " + _this.translator("mount/people") : "");
+        const string = name + ": " + formatter(number) + (i === 0 ? " " + _this.translator("mount/people") : "");
 
-        var text = view.selectAll(".vzb-mc-label-text")
+        const text = view.selectAll(".vzb-mc-label-text")
           .attr("x", (isRTL ? -1 : 1) * fontHeight)
           .attr("y", fontHeight)
           .text(string)
           .style("font-size", fontHeight === maxFontHeight ? (fontHeight * fontSizeToFontHeight + "px") : null);
 
-        var contentBBox = text.node().getBBox();
+        const contentBBox = text.node().getBBox();
 
-        var closeGroup = view.select(".vzb-mc-label-x");
+        const closeGroup = view.select(".vzb-mc-label-x");
 
         if (utils.isTouchDevice()) {
-          var closeTextBBox = closeGroup.select("text").node().getBBox();
+          const closeTextBBox = closeGroup.select("text").node().getBBox();
           closeGroup
             .classed("vzb-revert-color", true)
             .select(".vzb-mc-label-x-text")
@@ -194,8 +194,8 @@ var MCSelectList = Class.extend({
   },
 
   showCloseCross(d, show) {
-    var _this = this.context;
-    var KEY = _this.KEY;
+    const _this = this.context;
+    const KEY = _this.KEY;
     //show the little cross on the selected label
     _this.selectList
       .filter(f => f[KEY] == d[KEY])

@@ -9,7 +9,7 @@ import draggablelist from "components/draggablelist/draggablelist";
  * stack dialog
  */
 
-var Stack = Dialog.extend({
+const Stack = Dialog.extend({
 
     /**
      * Initializes the dialog component
@@ -18,7 +18,7 @@ var Stack = Dialog.extend({
      */
   init(config, parent) {
     this.name = "stack";
-    var _this = this;
+    const _this = this;
 
         // in dialog, this.model_expects = ["state", "ui", "locale"];
 
@@ -47,7 +47,7 @@ var Stack = Dialog.extend({
   readyOnce() {
     this._super();
 
-    var _this = this;
+    const _this = this;
     this.group = this.model.state.marker.group;
     this.stack = this.model.state.marker.stack;
 
@@ -79,7 +79,7 @@ var Stack = Dialog.extend({
   },
 
   updateView() {
-    var _this = this;
+    const _this = this;
 
     this.howToStackEl
       .property("checked", function() {
@@ -117,7 +117,7 @@ var Stack = Dialog.extend({
 
   setModel(what, value) {
 
-    var obj = { stack: {}, group: {} };
+    const obj = { stack: {}, group: {} };
 
     if (what === "merge") {
       switch (value) {

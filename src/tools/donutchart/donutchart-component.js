@@ -7,10 +7,10 @@ import Component from "base/component";
 
 
 //DONUT CHART COMPONENT
-var DonutComponent = Component.extend("donut", {
+const DonutComponent = Component.extend("donut", {
 
   init(config, context) {
-    var _this = this;
+    const _this = this;
 
     this.name = "donutchart";
     this.template = '<div class="vzb-donutchart"><svg class="vzb-donutchart-svg"></svg></div>';
@@ -50,7 +50,7 @@ var DonutComponent = Component.extend("donut", {
        * DOM is ready and the model is ready -- happens once on the load and never again
        */
   readyOnce() {
-    var _this = this;
+    const _this = this;
 
         //link DOM elements to the variables
     this.element = d3.select(this.element);
@@ -100,13 +100,13 @@ var DonutComponent = Component.extend("donut", {
        * Updates the visuals
        */
   redraw() {
-    var _this = this;
+    const _this = this;
 
         //request the values for the current time from the model
     this.values = this.model.marker.getValues({ time: _this.time }, ["geo"]);
 
         //prepare the data
-    var data = this.keys.map(d => ({
+    let data = this.keys.map(d => ({
       geo: d.geo,
       pop: _this.values.axis[d.geo],
       color: _this.values.color[d.geo],
@@ -137,9 +137,9 @@ var DonutComponent = Component.extend("donut", {
        */
   resize() {
 
-    var height = parseInt(this.element.style("height"), 10) || 0;
-    var width = parseInt(this.element.style("width"), 10) || 0;
-    var min = Math.min(height, width);
+    const height = parseInt(this.element.style("height"), 10) || 0;
+    const width = parseInt(this.element.style("width"), 10) || 0;
+    const min = Math.min(height, width);
 
     if (height <= 0 || width <= 0) return utils.warn("Donut chart resize() abort: vizabi container is too little or has display:none");
 

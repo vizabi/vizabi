@@ -9,7 +9,7 @@ import minmaxinputs from "components/minmaxinputs/minmaxinputs";
  */
 
 
-var Axes = Dialog.extend({
+const Axes = Dialog.extend({
 
   /**
    * Initializes the dialog component
@@ -18,7 +18,7 @@ var Axes = Dialog.extend({
    */
   init(config, parent) {
     this.name = "axesmc";
-    var _this = this;
+    const _this = this;
 
     this.model_binds = {
       "change:ui.chart.xLogStops": function() {
@@ -47,7 +47,7 @@ var Axes = Dialog.extend({
   readyOnce() {
     this._super();
 
-    var _this = this;
+    const _this = this;
 
     this.yMaxRadio = this.element.select(".vzb-yaxis-container").selectAll("input")
       .on("change", function() {
@@ -66,7 +66,7 @@ var Axes = Dialog.extend({
 
     this.probeFieldEl = this.element.select(".vzb-probe-field")
       .on("change", function() {
-        var result = parseFloat(this.value.replace(",", "."));
+        let result = parseFloat(this.value.replace(",", "."));
         if (!result || result <= _this.model.state.marker.axis_x.tailCutX) {
           this.value = _this.model.ui.chart.probeX;
           return;
@@ -82,7 +82,7 @@ var Axes = Dialog.extend({
   },
 
   updateView() {
-    var _this = this;
+    const _this = this;
 
     this.yMaxRadio.property("checked", function() {
       return d3.select(this).node().value === _this.model.ui.chart.yMaxMethod;
@@ -95,7 +95,7 @@ var Axes = Dialog.extend({
   },
 
   setModel(what, value) {
-    var result;
+    let result;
 
     if (what == "yMaxMethod") {
       result = value;

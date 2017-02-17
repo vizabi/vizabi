@@ -7,10 +7,10 @@ import axisSmart from "helpers/d3.axisWithLabelPicker";
  * VIZABI BUBBLE COLOR LEGEND COMPONENT
  */
 
-var ColorLegend = Component.extend({
+const ColorLegend = Component.extend({
 
   init(config, context) {
-    var _this = this;
+    const _this = this;
     this.template = '<div class="vzb-cl-outer"></div>';
     this.name = "colorlegend";
 
@@ -42,7 +42,7 @@ var ColorLegend = Component.extend({
 
         _this.model.marker.getFrame(_this.model.time.value, frame => {
           if (frame) {
-            var _hlEntities = _this.model.marker.getHighlighted(_this.KEY);
+            const _hlEntities = _this.model.marker.getHighlighted(_this.KEY);
             _this.updateGroupsOpacity(_hlEntities.map(d => frame[_this.colorModel._name][d]));
           } else {
             _this.updateGroupsOpacity();
@@ -59,7 +59,7 @@ var ColorLegend = Component.extend({
   },
 
   readyOnce() {
-    var _this = this;
+    const _this = this;
     this.element = d3.select(this.element);
 
     //make color in options scrollable
@@ -102,7 +102,7 @@ var ColorLegend = Component.extend({
 
 
   ready() {
-    var _this = this;
+    const _this = this;
 
     this.KEY = this.model.entities.getDimension();
     this.colorlegendDim = this.KEY;
@@ -134,21 +134,21 @@ var ColorLegend = Component.extend({
 
 
   updateView() {
-    var _this = this;
-    var KEY = this.KEY;
+    const _this = this;
+    const KEY = this.KEY;
 
-    var palette = this.colorModel.getPalette();
-    var canShowMap = this.canShowMap;
+    const palette = this.colorModel.getPalette();
+    const canShowMap = this.canShowMap;
 
-    var colorlegendKeys = this.colorlegendKeys || [];
+    const colorlegendKeys = this.colorlegendKeys || [];
 
-    var colorOptions = this.listColorsEl.selectAll(".vzb-cl-option");
+    let colorOptions = this.listColorsEl.selectAll(".vzb-cl-option");
 
     //Hide and show elements of the color legend
     //Hide color legend entries if showing minimap or if color hook is a constant
     //or if using a discrete palette that would map to all entities on the chart and therefore will be too long
     //in the latter case we should show colors in the "find" list instead
-    var hideColorOptions = canShowMap
+    const hideColorOptions = canShowMap
       || this.colorModel.which == "_default"
       || this.colorlegendMarker && this.colorlegendDim == this.KEY
         && utils.comparePlainObjects(this.colorModel.getColorlegendEntities().getFilter(), this.model.entities.getFilter());
@@ -163,51 +163,50 @@ var ColorLegend = Component.extend({
     this.minimapEl.classed("vzb-hidden", !canShowMap || !this.colorModel.isDiscrete());
 
     this.unitDiv.classed("vzb-hidden", true);
-    var cScale = this.colorModel.getScale();
+    const cScale = this.colorModel.getScale();
 
     if (!this.colorModel.isDiscrete()) {
 
-      var gradientWidth = this.rainbowEl.node().getBoundingClientRect().width;
-      var paletteKeys = Object.keys(palette).map(parseFloat);
+      const gradientWidth = this.rainbowEl.node().getBoundingClientRect().width;
+      const paletteKeys = Object.keys(palette).map(parseFloat);
 
-      var domain;
-      var range;
-      var labelScale;
-      var formatter = this.colorModel.getTickFormatter();
-      var fitIntoScale = null;
+      let domain;
+      let range;
+      const formatter = this.colorModel.getTickFormatter();
+      let fitIntoScale = null;
 
-      var paletteLabels = this.colorModel.paletteLabels;
+      const paletteLabels = this.colorModel.paletteLabels;
 
       if (paletteLabels) {
 
         fitIntoScale = "optimistic";
 
         domain = paletteLabels.map(val => parseFloat(val));
-        var paletteMax = d3.max(domain);
+        const paletteMax = d3.max(domain);
         range = domain.map(val => val / paletteMax * gradientWidth);
 
       } else {
 
         domain = cScale.domain();
-        var paletteMax = d3.max(paletteKeys);
+        const paletteMax = d3.max(paletteKeys);
         range = paletteKeys.map(val => val / paletteMax * gradientWidth);
 
       }
 
-      var labelScaletype = (d3.min(domain) <= 0 && d3.max(domain) >= 0 && this.colorModel.scaleType === "log") ? "genericLog" : this.colorModel.scaleType;
+      const labelScaletype = (d3.min(domain) <= 0 && d3.max(domain) >= 0 && this.colorModel.scaleType === "log") ? "genericLog" : this.colorModel.scaleType;
 
-      labelScale = d3.scale[labelScaletype == "time" ? "linear" : labelScaletype]()
+      const labelScale = d3.scale[labelScaletype == "time" ? "linear" : labelScaletype]()
         .domain(domain)
         .range(range);
 
-      var marginLeft = parseInt(this.rainbowEl.style("left"), 10) || 0;
-      var marginRight = parseInt(this.rainbowEl.style("right"), 10) || marginLeft;
+      const marginLeft = parseInt(this.rainbowEl.style("left"), 10) || 0;
+      const marginRight = parseInt(this.rainbowEl.style("right"), 10) || marginLeft;
 
       this.labelScaleSVG.style("width", marginLeft + gradientWidth + marginRight + "px");
       this.labelScaleG.attr("transform", "translate(" + marginLeft + ",0)");
       this.rainbowLegendSVG.style("width", marginLeft + gradientWidth + marginRight + "px");
       this.rainbowLegendG.attr("transform", "translate(" + marginLeft + ", " + 7 + ")");
-      var labelsAxis = axisSmart("bottom");
+      const labelsAxis = axisSmart("bottom");
       labelsAxis.scale(labelScale)
         //.tickFormat(formatter)
         .tickSizeOuter(0)
@@ -230,9 +229,9 @@ var ColorLegend = Component.extend({
 
       this.labelScaleG.call(labelsAxis);
 
-      var colorRange = cScale.range();
+      const colorRange = cScale.range();
 
-      var gIndicators = range.map((val, i) => ({ val, color: colorRange[i], paletteKey: paletteKeys[i] }));
+      const gIndicators = range.map((val, i) => ({ val, color: colorRange[i], paletteKey: paletteKeys[i] }));
       this.rainbowLegend = this.rainbowLegendG.selectAll("circle")
         .data(gIndicators);
       this.rainbowLegend.exit().remove();
@@ -247,12 +246,12 @@ var ColorLegend = Component.extend({
         d3.select(this).attr("cx", d.val);
       });
 
-      var gColors = paletteKeys.map((val, i) => colorRange[i] + " " + d3.format("%")(val * 0.01)).join(", ");
+      const gColors = paletteKeys.map((val, i) => colorRange[i] + " " + d3.format("%")(val * 0.01)).join(", ");
 
       this.rainbowEl
         .style("background", "linear-gradient(90deg," + gColors + ")");
 
-      var unit = this.colorModel.getConceptprops().unit || "";
+      const unit = this.colorModel.getConceptprops().unit || "";
 
       this.unitDiv.classed("vzb-hidden", unit == "");
       this.unitText.text(unit);
@@ -268,7 +267,7 @@ var ColorLegend = Component.extend({
           colorOptions = colorOptions.data([]);
         } else {
           colorOptions = colorOptions.data(hideColorOptions ? [] : colorlegendKeys.length ? colorlegendKeys : Object.keys(this.colorModel.getPalette()).map(value => {
-            var result = {};
+            const result = {};
             result[_this.colorlegendDim] = value;
             return result;
           }), d => d[_this.colorlegendDim]);
@@ -291,7 +290,7 @@ var ColorLegend = Component.extend({
             .style("background-color", cScale(d[_this.colorlegendDim]))
             .style("border", "1px solid " + cScale(d[_this.colorlegendDim]));
           //Apply names to color legend entries if color is a property
-          var label = _this.colorlegendMarker ? _this.frame.label[d[_this.colorlegendDim]] : null;
+          let label = _this.colorlegendMarker ? _this.frame.label[d[_this.colorlegendDim]] : null;
           if (!label && label !== 0) label = d[_this.colorlegendDim];
           d3.select(this).select(".vzb-cl-color-legend").text(label);
         });
@@ -300,7 +299,7 @@ var ColorLegend = Component.extend({
 
         //Drawing a minimap from the hook data
 
-        var tempdivEl = this.minimapEl.append("div").attr("class", "vzb-temp");
+        const tempdivEl = this.minimapEl.append("div").attr("class", "vzb-temp");
 
         this.minimapSVG.attr("viewBox", null);
         this.minimapSVG.selectAll("g").remove();
@@ -313,7 +312,7 @@ var ColorLegend = Component.extend({
           .on("click", _this._interact().clickToSelect)
           .on("dblclick", _this._interact().clickToShow)
           .each(function(d) {
-            var shapeString = _this.frame.hook_geoshape[d[_this.colorlegendDim]].trim();
+            let shapeString = _this.frame.hook_geoshape[d[_this.colorlegendDim]].trim();
 
             //check if shape string starts with svg tag -- then it's a complete svg
             if (shapeString.slice(0, 4) == "<svg") {
@@ -332,7 +331,7 @@ var ColorLegend = Component.extend({
             tempdivEl.html("");
           });
 
-        var gbbox = this.minimapG.node().getBBox();
+        const gbbox = this.minimapG.node().getBBox();
         this.minimapSVG.attr("viewBox", "0 0 " + gbbox.width * 1.05 + " " + gbbox.height * 1.05);
         tempdivEl.remove();
       }
@@ -342,19 +341,19 @@ var ColorLegend = Component.extend({
 
 
   _interact() {
-    var _this = this;
-    var KEY = this.KEY;
-    var colorlegendDim = this.colorlegendDim;
+    const _this = this;
+    const KEY = this.KEY;
+    const colorlegendDim = this.colorlegendDim;
 
     return {
       mouseover(d, i) {
         //disable interaction if so stated in concept properties
         if (!_this.colorModel.isDiscrete()) return;
 
-        var view = d3.select(this);
-        var target = d[colorlegendDim];
+        const view = d3.select(this);
+        const target = d[colorlegendDim];
 
-        var highlight = _this.colorModel.getValidItems()
+        const highlight = _this.colorModel.getValidItems()
           //filter so that only countries of the correct target remain
           .filter(f => f[_this.colorModel.which] == target)
           //fish out the "key" field, leave the rest behind
@@ -371,10 +370,10 @@ var ColorLegend = Component.extend({
       clickToChangeColor(d, i) {
         //disable interaction if so stated in concept properties
         if (!_this.colorModel.isUserSelectable()) return;
-        var palette = _this.colorModel.getPalette();
-        var defaultPalette = _this.colorModel.getDefaultPalette();
-        var view = d3.select(this);
-        var target = !_this.colorModel.isDiscrete() ? d.paletteKey : d[colorlegendDim];
+        const palette = _this.colorModel.getPalette();
+        const defaultPalette = _this.colorModel.getDefaultPalette();
+        const view = d3.select(this);
+        const target = !_this.colorModel.isDiscrete() ? d.paletteKey : d[colorlegendDim];
         _this.colorPicker
           .colorOld(palette[target])
           .colorDef(defaultPalette[target])
@@ -388,22 +387,21 @@ var ColorLegend = Component.extend({
         //disable interaction if so stated in concept properties
         if (!_this.colorModel.isDiscrete()) return;
 
-        var view = d3.select(this);
-        var target = d[colorlegendDim];
+        const view = d3.select(this);
+        const target = d[colorlegendDim];
 
-        if (_this.model.entities.show[colorlegendDim] && _this.model.entities.show[colorlegendDim]["$in"])
-          var oldShow = utils.clone(_this.model.entities.show[colorlegendDim]["$in"]);
-        else
-          var oldShow = [];
+        const oldShow = _this.model.entities.show[colorlegendDim] && _this.model.entities.show[colorlegendDim]["$in"] ?
+          utils.clone(_this.model.entities.show[colorlegendDim]["$in"]) :
+          [];
 
-        var entityIndex = oldShow.indexOf(d[colorlegendDim]);
+        const entityIndex = oldShow.indexOf(d[colorlegendDim]);
         if (entityIndex !== -1) {
           oldShow.splice(entityIndex, 1);
         } else {
           oldShow.push(d[colorlegendDim]);
         }
 
-        var show = {};
+        const show = {};
         if (oldShow.length > 0)
           show[colorlegendDim] = { "$in": oldShow };
 
@@ -414,10 +412,10 @@ var ColorLegend = Component.extend({
         //disable interaction if so stated in concept properties
         if (!_this.colorModel.isDiscrete()) return;
 
-        var view = d3.select(this);
-        var target = d[colorlegendDim];
+        const view = d3.select(this);
+        const target = d[colorlegendDim];
 
-        var select = _this.colorModel.getValidItems()
+        const select = _this.colorModel.getValidItems()
           //filter so that only countries of the correct target remain
           .filter(f => f[_this.colorModel.which] == target)
           //fish out the "key" field, leave the rest behind
@@ -444,14 +442,14 @@ var ColorLegend = Component.extend({
    * @param   {Array} value = [] array of highlighted elements
    */
   updateGroupsOpacity(highlight = []) {
-    var _this = this;
+    const _this = this;
 
-    var clMarker = this.colorModel.getColorlegendMarker() || {};
-    var OPACITY_REGULAR = clMarker.opacityRegular || 0.8;
-    var OPACITY_DIM = clMarker.opacityHighlightDim || 0.5;
-    var OPACITY_HIGHLIGHT = 1;
+    const clMarker = this.colorModel.getColorlegendMarker() || {};
+    const OPACITY_REGULAR = clMarker.opacityRegular || 0.8;
+    const OPACITY_DIM = clMarker.opacityHighlightDim || 0.5;
+    const OPACITY_HIGHLIGHT = 1;
 
-    var selection = _this.canShowMap ? ".vzb-cl-minimap path" : ".vzb-cl-option .vzb-cl-color-sample";
+    const selection = _this.canShowMap ? ".vzb-cl-minimap path" : ".vzb-cl-option .vzb-cl-color-sample";
 
     this.listColorsEl.selectAll(selection).style("opacity", d => {
       if (!highlight.length) return OPACITY_REGULAR;

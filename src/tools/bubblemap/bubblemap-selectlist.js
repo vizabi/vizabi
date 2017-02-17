@@ -2,7 +2,7 @@ import * as utils from "base/utils";
 import Class from "base/class";
 import { close as iconClose } from "base/iconset";
 
-var MCSelectList = Class.extend({
+const MCSelectList = Class.extend({
 
   init(context) {
     this.context = context;
@@ -10,7 +10,7 @@ var MCSelectList = Class.extend({
   },
 
   rebuild(data) {
-    var _this = this.context;
+    const _this = this.context;
 
     /*
     var listData = _this.mountainPointers
@@ -35,7 +35,7 @@ var MCSelectList = Class.extend({
         }
       });
     */
-    var listData = _this.pointers
+    const listData = _this.pointers
       .filter(f => _this.model.marker.isselected(f));
     _this.selectList = _this.labelListContainer.selectAll("g.vzb-bmc-label")
       .data(utils.unique(listData, d => d.KEY()));
@@ -43,7 +43,7 @@ var MCSelectList = Class.extend({
     _this.selectList = _this.selectList.enter().append("g")
       .attr("class", "vzb-bmc-label")
       .each(function(d, i) {
-        var label = d3.select(this);
+        const label = d3.select(this);
         label.append("circle").attr("class", "vzb-bmc-label-legend");
         label.append("text").attr("class", "vzb-bmc-label-shadow vzb-bmc-label-text");
         label.append("text").attr("class", "vzb-bmc-label-text");
@@ -60,7 +60,7 @@ var MCSelectList = Class.extend({
             _this.model.entities.clearHighlighted();
             _this.model.marker.selectMarker(d);
           });
-        var labelCloseGroup = label.select("g.vzb-bmc-label-x");
+        const labelCloseGroup = label.select("g.vzb-bmc-label-x");
         if (!utils.isTouchDevice()) {
           labelCloseGroup
             .html(iconClose)
@@ -96,46 +96,46 @@ var MCSelectList = Class.extend({
   },
 
   redraw() {
-    var _this = this.context;
+    const _this = this.context;
     if (!_this.selectList || !_this.someSelected) return;
 
-    var sample = _this.labelListContainer.append("g").attr("class", "vzb-bmc-label").append("text").text("0");
-    var fontHeight = sample.node().getBBox().height * 1.2;
-    var fontSizeToFontHeight = parseFloat(sample.style("font-size")) / fontHeight;
+    const sample = _this.labelListContainer.append("g").attr("class", "vzb-bmc-label").append("text").text("0");
+    let fontHeight = sample.node().getBBox().height * 1.2;
+    const fontSizeToFontHeight = parseFloat(sample.style("font-size")) / fontHeight;
     d3.select(sample.node().parentNode).remove();
-    var formatter = _this.model.marker.size.getTickFormatter();
+    const formatter = _this.model.marker.size.getTickFormatter();
 
-    var titleHeight = _this.yTitleEl.select("text").node().getBBox().height || 0;
+    const titleHeight = _this.yTitleEl.select("text").node().getBBox().height || 0;
 
-    var maxFontHeight = (_this.height - titleHeight * 3) / (_this.selectList.data().length + 2);
+    const maxFontHeight = (_this.height - titleHeight * 3) / (_this.selectList.data().length + 2);
     if (fontHeight > maxFontHeight) fontHeight = maxFontHeight;
 
     _this.selectList
       .attr("transform", (d, i) => {
-        var spacing = fontHeight * i + titleHeight * 1.5 + fontHeight;
+        const spacing = fontHeight * i + titleHeight * 1.5 + fontHeight;
         return "translate(0," + spacing + ")";
       })
       .each(function(d, i) {
 
-        var view = d3.select(this).attr("id", d.geo + "-label");
-        var name = d.key ? _this.translator("entity/geo.world_4region/" + d.key) : _this.values.label[d.KEY()];
+        const view = d3.select(this).attr("id", d.geo + "-label");
+        const name = d.key ? _this.translator("entity/geo.world_4region/" + d.key) : _this.values.label[d.KEY()];
         //var number = _this.values.axis_y[d.KEY()];
-        var number = _this.values.size[d.KEY()];
+        const number = _this.values.size[d.KEY()];
 
-        var string = name + ": " + formatter(number) + (i === 0 ? " " + _this.translator("unit/" + _this.model.marker.size.which) : "");
+        const string = name + ": " + formatter(number) + (i === 0 ? " " + _this.translator("unit/" + _this.model.marker.size.which) : "");
 
-        var text = view.selectAll(".vzb-bmc-label-text")
+        const text = view.selectAll(".vzb-bmc-label-text")
           .attr("x", fontHeight)
           .attr("y", fontHeight)
           .text(string)
           .style("font-size", fontHeight === maxFontHeight ? (fontHeight * fontSizeToFontHeight + "px") : null);
 
-        var contentBBox = text.node().getBBox();
+        const contentBBox = text.node().getBBox();
 
-        var closeGroup = view.select(".vzb-bmc-label-x");
+        const closeGroup = view.select(".vzb-bmc-label-x");
 
         if (utils.isTouchDevice()) {
-          var closeTextBBox = closeGroup.select("text").node().getBBox();
+          const closeTextBBox = closeGroup.select("text").node().getBBox();
           closeGroup
             .classed("vzb-revert-color", true)
             .select(".vzb-bmc-label-x-text")

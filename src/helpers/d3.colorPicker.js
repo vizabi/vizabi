@@ -1,7 +1,7 @@
 //d3.svg.colorPicker
 
 
-var instance = null;
+let instance = null;
 
 export default function colorPicker() {
 
@@ -15,38 +15,38 @@ export default function colorPicker() {
 
   function d3_color_picker() {
     // tuning defaults
-    var nCellsH = 15;
+    let nCellsH = 15;
     // number of cells by hues (angular)
-    var minH = 0;
+    let minH = 0;
     // which hue do we start from: 0 to 1 instead of 0 to 365
-    var nCellsL = 4;
+    let nCellsL = 4;
     // number of cells by lightness (radial)
-    var minL = 0.5;
+    let minL = 0.5;
     // which lightness to start from: 0 to 1. Recommended .3...0.5
-    var satConstant = 0.7;
+    let satConstant = 0.7;
     // constant saturation for color wheel: 0 to 1. Recommended .7...0.8
-    var outerL_display = 0.4;
+    let outerL_display = 0.4;
     // ecxeptional saturation of the outer circle. the one displayed 0 to 1
-    var outerL_meaning = 0.3;
+    let outerL_meaning = 0.3;
     // ecxeptional saturation of the outer circle. the one actually ment 0 to 1
-    var firstAngleSat = 0;
+    let firstAngleSat = 0;
     // exceptional saturation at first angular segment. Set 0 to have shades of grey
-    var minRadius = 15;
+    let minRadius = 15;
     //radius of the central hole in color wheel: px
-    var maxWidth = 280;
-    var maxHeight = 323;
-    var margin = {
+    const maxWidth = 280;
+    const maxHeight = 323;
+    let margin = {
       top: 0.1,
       bottom: 0.1,
       left: 0.1,
       right: 0.1
     };
     //margins in % of container's width and height
-    var colorOld = "#000";
-    var colorDef = "#000";
-    var colorWhite = "#f8f8f8";
+    let colorOld = "#000";
+    let colorDef = "#000";
+    const colorWhite = "#f8f8f8";
     // names of CSS classes
-    var css = {
+    const css = {
       INVISIBLE: "vzb-invisible",
       COLOR_POINTER: "vzb-colorpicker-pointer",
       COLOR_BUTTON: "vzb-colorpicker-cell",
@@ -58,7 +58,7 @@ export default function colorPicker() {
       COLOR_SEGMENT: "vzb-colorpicker-segment",
       COLOR_BACKGR: "vzb-colorpicker-background"
     };
-    var colorData = [];
+    let colorData = [];
     //here we store color data. formatted as follows:
     /*
      [
@@ -82,29 +82,29 @@ export default function colorPicker() {
      ]
      ]
      */
-    var arc = d3.arc();
-    var pie = d3.pie().sort(null).value(d => 1);
-    var svg = null;
-    var container = null;
-    var colorPointer = null;
-    var showColorPicker = false;
-    var sampleRect = null;
-    var sampleText = null;
-    var background = null;
-    var callback = function(value) {
+    const arc = d3.arc();
+    const pie = d3.pie().sort(null).value(d => 1);
+    let svg = null;
+    const container = null;
+    let colorPointer = null;
+    let showColorPicker = false;
+    let sampleRect = null;
+    let sampleText = null;
+    let background = null;
+    let callback = function(value) {
       console.info("Color picker callback example. Setting color to " + value);
     };
 
     function _generateColorData() {
-      var result = [];
+      const result = [];
       // loop across circles
-      for (var l = 0; l < nCellsL; l++) {
-        var lightness = minL + (1 - minL) / nCellsL * l;
+      for (let l = 0; l < nCellsL; l++) {
+        const lightness = minL + (1 - minL) / nCellsL * l;
         // new circle of cells
         result.push([]);
         // loop across angles
-        for (var h = 0; h <= nCellsH; h++) {
-          var hue = minH + (1 - minH) / nCellsH * h;
+        for (let h = 0; h <= nCellsH; h++) {
+          const hue = minH + (1 - minH) / nCellsH * h;
           // new cell
           result[l].push({
             display: _hslToRgb(hue, h == 0 ? firstAngleSat : satConstant, l == 0 ? outerL_display : lightness),
@@ -116,11 +116,11 @@ export default function colorPicker() {
     }
 
     function _hslToRgb(h, s, l) {
-      var r, g, b;
+      let r, g, b;
       if (s == 0) {
         r = g = b = l; // achromatic
       } else {
-        var _hue2rgb = function _hue2rgb(p, q, t) {
+        const _hue2rgb = function _hue2rgb(p, q, t) {
           if (t < 0)
             t += 1;
           if (t > 1)
@@ -133,8 +133,8 @@ export default function colorPicker() {
             return p + (q - p) * (2 / 3 - t) * 6;
           return p;
         };
-        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-        var p = 2 * l - q;
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
         r = _hue2rgb(p, q, h + 1 / 3);
         g = _hue2rgb(p, q, h);
         b = _hue2rgb(p, q, h - 1 / 3);
@@ -171,9 +171,9 @@ export default function colorPicker() {
         .classed(css.INVISIBLE, !showColorPicker)
         .on("mouseout", d => { _cellHover(colorOld); });
 
-      var width = parseInt(svg.style("width"));
-      var height = parseInt(svg.style("height"));
-      var maxRadius = width / 2 * (1 - margin.left - margin.right);
+      const width = parseInt(svg.style("width"));
+      const height = parseInt(svg.style("height"));
+      const maxRadius = width / 2 * (1 - margin.left - margin.right);
       background = svg.append("rect")
         .attr("width", width)
         .attr("height", maxHeight)
@@ -182,7 +182,7 @@ export default function colorPicker() {
           d => {
             _cellHover(colorOld);
           });
-      var circles = svg.append("g")
+      const circles = svg.append("g")
         .attr("class", css.COLOR_CIRCLES)
         .attr("transform", "translate(" + (maxRadius + width * margin.left) +
         "," + (maxRadius + height * margin.top) + ")");
@@ -241,7 +241,7 @@ export default function colorPicker() {
                 arc.outerRadius(minRadius + (maxRadius - minRadius) / nCellsL *
                   (nCellsL - index)).innerRadius(minRadius +
                   (maxRadius - minRadius) / nCellsL * (nCellsL - index - 1));
-                var segment = d3.select(this).selectAll("." + css.COLOR_SEGMENT)
+                const segment = d3.select(this).selectAll("." + css.COLOR_SEGMENT)
                   .data(pie(circleData)).enter().append("g")
                     .attr("class", css.COLOR_SEGMENT);
 
@@ -283,7 +283,7 @@ export default function colorPicker() {
       colorPicker.resize(svg);
     }
 
-    var _doTheStyling = function(svg) {
+    const _doTheStyling = function(svg) {
       //styling
       svg.select("." + css.COLOR_BACKGR)
         .style("fill", "white");
@@ -306,8 +306,8 @@ export default function colorPicker() {
         .style("stroke-width", 2);
     };
 
-    var _this = colorPicker;
-    var _cellHover = function(value, view) {
+    const _this = colorPicker;
+    const _cellHover = function(value, view) {
       // show color pointer if the view is set (a cell of colorwheel)
       if (view != null)
         colorPointer.classed(css.INVISIBLE, false)
@@ -318,12 +318,12 @@ export default function colorPicker() {
       sampleText.text(value);
       callback(value);
     };
-    var _cellUnHover = function() {
+    const _cellUnHover = function() {
       colorPointer.classed(css.INVISIBLE, true);
     };
     //Use this function to hide or show the color picker
     //true = show, false = hide, "toggle" or TOGGLE = toggle
-    var TOGGLE = "toggle";
+    const TOGGLE = "toggle";
     colorPicker.show = function(arg) {
       if (!arguments.length)
         return showColorPicker;
@@ -425,11 +425,11 @@ export default function colorPicker() {
      * @param {int[]} arg [x,y] of color picker position
      */
     colorPicker.fitToScreen = function(arg) {
-      var screen = colorPicker.container.node().getBoundingClientRect();
-      var xPos, yPos;
+      const screen = colorPicker.container.node().getBoundingClientRect();
+      let xPos, yPos;
 
-      var width = parseInt(svg.style("width"));
-      var height = parseInt(svg.style("height"));
+      const width = parseInt(svg.style("width"));
+      const height = parseInt(svg.style("height"));
 
       if (!arg) {
         xPos = screen.width - parseInt(svg.style("right")) - width;
@@ -439,7 +439,7 @@ export default function colorPicker() {
         yPos = arg[1] - screen.top;
       }
 
-      var styles = { left: "" };
+      const styles = { left: "" };
       if (screen.width * 0.8 <= width) {
         styles.right = (screen.width - width) * 0.5 + "px";
       } else if (xPos + width > screen.width) {
@@ -475,16 +475,16 @@ export default function colorPicker() {
       if (!arguments.length)
         return resize;
       if (typeof arg !== "undefined") {
-        var svg = arg;
-        var width = parseInt(svg.style("width"));
-        var height = parseInt(svg.style("height"));
-        var maxRadius = width / 2 * (1 - margin.left - margin.right);
-        var selectedColor = svg.select("." + css.COLOR_DEFAULT);
-        var defaultLabel = svg.select(".vzb-default-label");
-        var circles = svg.select("." + css.COLOR_CIRCLES);
+        const svg = arg;
+        const width = parseInt(svg.style("width"));
+        const height = parseInt(svg.style("height"));
+        const maxRadius = width / 2 * (1 - margin.left - margin.right);
+        const selectedColor = svg.select("." + css.COLOR_DEFAULT);
+        const defaultLabel = svg.select(".vzb-default-label");
+        const circles = svg.select("." + css.COLOR_CIRCLES);
 
-        var hPos = maxRadius + height * margin.top;
-        var hPosCenter = (1 + margin.top * 0.5) * height * 0.5;
+        let hPos = maxRadius + height * margin.top;
+        const hPosCenter = (1 + margin.top * 0.5) * height * 0.5;
         hPos = hPos > hPosCenter ? hPosCenter : hPos;
         circles.attr("transform", "translate(" + (maxRadius + width * margin.left) +
         "," + hPos + ")");

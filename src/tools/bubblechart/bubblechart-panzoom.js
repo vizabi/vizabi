@@ -29,8 +29,8 @@ export default Class.extend({
   },
 
   dragSubject() {
-    var _this = this.context;
-    var self = this;
+    const _this = this.context;
+    const self = this;
 
     return function(d) {
       if (!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey ||
@@ -48,8 +48,8 @@ export default Class.extend({
   },
 
   drag() {
-    var _this = this.context;
-    var self = this;
+    const _this = this.context;
+    const self = this;
 
     return {
       start(d, i) {
@@ -90,8 +90,8 @@ export default Class.extend({
           return;
         }
 
-        var origin = this.origin;
-        var mouse = {
+        const origin = this.origin;
+        const mouse = {
           x: d3.event.x,
           y: d3.event.y
         };
@@ -122,7 +122,7 @@ export default Class.extend({
                  * Only compensate for dragging when the Ctrl key or Meta key
                  * are pressed, or if the cursorMode is not in plus mode.
                  */
-        var compensateDragging = d3.event.sourceEvent.ctrlKey ||
+        const compensateDragging = d3.event.sourceEvent.ctrlKey ||
                     d3.event.sourceEvent.metaKey ||
                     _this.ui.cursorMode === "plus";
 
@@ -139,9 +139,9 @@ export default Class.extend({
   },
 
   zoom() {
-    var _this = this.context;
-    var zoomer = this.zoomer;
-    var self = this;
+    const _this = this.context;
+    const zoomer = this.zoomer;
+    const self = this;
 
     return {
       start() {
@@ -149,7 +149,7 @@ export default Class.extend({
       },
       go() {
 
-        var sourceEvent = d3.event.sourceEvent;
+        const sourceEvent = d3.event.sourceEvent;
 
         if (sourceEvent != null && (sourceEvent.ctrlKey || sourceEvent.metaKey)) return;
 
@@ -193,11 +193,11 @@ export default Class.extend({
                 //var transform = d3.zoomTransform(self.zoomSelection.node())
                   //  .translate(, )
                     //.scale(d3.event.transform.k);
-        var zoom = d3.event.transform.k;
+        let zoom = d3.event.transform.k;
 
-        var pan = [d3.event.transform.x, d3.event.transform.y];//d3.event.translate;
-        var ratioY = zoomer.ratioY;
-        var ratioX = zoomer.ratioX;
+        let pan = [d3.event.transform.x, d3.event.transform.y];//d3.event.translate;
+        let ratioY = zoomer.ratioY;
+        let ratioX = zoomer.ratioX;
 
         _this.draggingNow = true;
 
@@ -226,7 +226,7 @@ export default Class.extend({
         if (isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = [0, 0];
 
                 // limit the zooming, so that it never goes below min value of zoom for any of the axes
-        var minZoomScale = zoomer.scaleExtent()[0];
+        const minZoomScale = zoomer.scaleExtent()[0];
         if (zoom * ratioY < minZoomScale) {
           ratioY = minZoomScale / zoom;
           zoomer.ratioY = ratioY;
@@ -236,8 +236,8 @@ export default Class.extend({
           zoomer.ratioX = ratioX;
         }
 
-        var zoomXOut = zoom * ratioX < 1;
-        var zoomYOut = zoom * ratioY < 1;
+        const zoomXOut = zoom * ratioX < 1;
+        const zoomYOut = zoom * ratioY < 1;
 
                 //limit the panning, so that we are never outside the possible range
         if (!zoomXOut) {
@@ -256,14 +256,14 @@ export default Class.extend({
           if (pan[1] > (1 - zoom * ratioY) * _this.height) pan[1] = (1 - zoom * ratioY) * _this.height;
         }
 
-        var xPanOffset = _this.width * zoom * ratioX;
-        var yPanOffset = _this.height * zoom * ratioY;
+        const xPanOffset = _this.width * zoom * ratioX;
+        const yPanOffset = _this.height * zoom * ratioY;
 
-        var xRange = [0 * zoom * ratioX + pan[0], xPanOffset + pan[0]];
-        var yRange = [yPanOffset + pan[1], 0 * zoom * ratioY + pan[1]];
+        const xRange = [0 * zoom * ratioX + pan[0], xPanOffset + pan[0]];
+        const yRange = [yPanOffset + pan[1], 0 * zoom * ratioY + pan[1]];
 
-        var xRangeBumped = _this._rangeBump(xRange);
-        var yRangeBumped = _this._rangeBump(yRange);
+        const xRangeBumped = _this._rangeBump(xRange);
+        const yRangeBumped = _this._rangeBump(yRange);
 
                 /*
                  * Shift xRange and yRange by the difference between the bumped
@@ -271,11 +271,11 @@ export default Class.extend({
                  * the range bump, which controls a gutter around the
                  * bubblechart, while correctly zooming.
                  */
-        var xRangeMinOffset = (xRangeBumped[0] - xRange[0]) * zoom * ratioX;
-        var xRangeMaxOffset = (xRangeBumped[1] - xRange[1]) * zoom * ratioX;
+        const xRangeMinOffset = (xRangeBumped[0] - xRange[0]) * zoom * ratioX;
+        const xRangeMaxOffset = (xRangeBumped[1] - xRange[1]) * zoom * ratioX;
 
-        var yRangeMinOffset = (yRangeBumped[0] - yRange[0]) * zoom * ratioY;
-        var yRangeMaxOffset = (yRangeBumped[1] - yRange[1]) * zoom * ratioY;
+        const yRangeMinOffset = (yRangeBumped[0] - yRange[0]) * zoom * ratioY;
+        const yRangeMaxOffset = (yRangeBumped[1] - yRange[1]) * zoom * ratioY;
 
         xRange[0] += xRangeMinOffset;
         xRange[1] += xRangeMaxOffset;
@@ -284,11 +284,11 @@ export default Class.extend({
         yRange[1] += yRangeMaxOffset;
 
                 // Calculate the maximum xRange and yRange available.
-        var xRangeBounds = [0,  _this.width];
-        var yRangeBounds = [_this.height, 0];
+        const xRangeBounds = [0,  _this.width];
+        const yRangeBounds = [_this.height, 0];
 
-        var xRangeBoundsBumped = _this._rangeBump(xRangeBounds);
-        var yRangeBoundsBumped = _this._rangeBump(yRangeBounds);
+        const xRangeBoundsBumped = _this._rangeBump(xRangeBounds);
+        const yRangeBoundsBumped = _this._rangeBump(yRangeBounds);
 
                 /*
                  * Set the pan to account for the range bump by subtracting
@@ -377,10 +377,10 @@ export default Class.extend({
           _this.yScale.range(yRange);
         }
 
-        var formatter = function(n) { return utils.isDate(n) ? n : d3.round(n, 2); };
+        const formatter = function(n) { return utils.isDate(n) ? n : d3.round(n, 2); };
 
-        var zoomedXRange = xRangeBoundsBumped;
-        var zoomedYRange = yRangeBoundsBumped;
+        const zoomedXRange = xRangeBoundsBumped;
+        const zoomedYRange = yRangeBoundsBumped;
 
                 /*
                  * Set the zoomed min/max to the correct value depending on if the
@@ -416,8 +416,8 @@ export default Class.extend({
                 //                    _this.sScale.range([utils.radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
                 //                                        utils.radiusToArea(_this.maxRadius) * zoom * zoom * ratioY * ratioX ]);
 
-        var optionsY = _this.yAxis.labelerOptions();
-        var optionsX = _this.xAxis.labelerOptions();
+        const optionsY = _this.yAxis.labelerOptions();
+        const optionsX = _this.xAxis.labelerOptions();
         optionsY.limitMaxTickNumber = zoom * ratioY < 1.5 ? 8 : zoom * ratioY * 8;
         optionsX.limitMaxTickNumber = zoom * ratioX < 1.5 ? 8 : zoom * ratioX * 8;
         optionsY.transitionDuration = zoomer.duration;
@@ -445,13 +445,13 @@ export default Class.extend({
   },
 
   expandCanvas(duration) {
-    var _this = this.context;
+    const _this = this.context;
     if (!duration) duration = _this.duration;
 
         //d3 extent returns min and max of the input array as [min, max]
-    var mmX = d3.extent(utils.values(_this.frame.axis_x));
-    var mmY = d3.extent(utils.values(_this.frame.axis_y));
-    var radiusMax = utils.areaToRadius(_this.sScale(d3.extent(utils.values(_this.frame.size))[1])) || 0;
+    const mmX = d3.extent(utils.values(_this.frame.axis_x));
+    const mmY = d3.extent(utils.values(_this.frame.axis_y));
+    const radiusMax = utils.areaToRadius(_this.sScale(d3.extent(utils.values(_this.frame.size))[1])) || 0;
 
         //protection agains unreasonable min-max results -- abort function
     if (!mmX[0] && mmX[0] !== 0 || !mmX[1] && mmX[1] !== 0 || !mmY[0] && mmY[0] !== 0 || !mmY[1] && mmY[1] !== 0) {
@@ -461,24 +461,24 @@ export default Class.extend({
          * Use a range bumped scale to correctly accommodate the range bump
          * gutter.
          */
-    var suggestedFrame = {
+    const suggestedFrame = {
       x1: _this.xScale(mmX[0]) - radiusMax,
       y1: _this.yScale(mmY[0]) + radiusMax,
       x2: _this.xScale(mmX[1]) + radiusMax,
       y2: _this.yScale(mmY[1]) - radiusMax
     };
-    var xBounds = [0, _this.width];
-    var yBounds = [_this.height, 0];
+    const xBounds = [0, _this.width];
+    const yBounds = [_this.height, 0];
 
         // Get the current zoom frame based on the current dimensions.
-    var frame = {
+    const frame = {
       x1: xBounds[0],
       x2: xBounds[1],
       y1: yBounds[0],
       y2: yBounds[1]
     };
 
-    var TOLERANCE = 0.0;
+    const TOLERANCE = 0.0;
 
         /*
          * If there is no current zoom frame, or if any of the suggested frame
@@ -504,16 +504,16 @@ export default Class.extend({
                  * Calculate bounds and bumped scale for calculating the data boundaries
                  * to which the suggested frame points need to be clamped.
                  */
-        var xBoundsBumped = _this._rangeBump(xBounds);
-        var yBoundsBumped = _this._rangeBump(yBounds);
+        const xBoundsBumped = _this._rangeBump(xBounds);
+        const yBoundsBumped = _this._rangeBump(yBounds);
 
-        var xScaleBoundsBumped = _this.xScale.copy()
+        const xScaleBoundsBumped = _this.xScale.copy()
                     .range(xBoundsBumped);
-        var yScaleBoundsBumped = _this.yScale.copy()
+        const yScaleBoundsBumped = _this.yScale.copy()
                     .range(yBoundsBumped);
 
-        var xDataBounds = [xScaleBoundsBumped.invert(xBounds[0]), xScaleBoundsBumped.invert(xBounds[1])];
-        var yDataBounds = [yScaleBoundsBumped.invert(yBounds[0]), yScaleBoundsBumped.invert(yBounds[1])];
+        const xDataBounds = [xScaleBoundsBumped.invert(xBounds[0]), xScaleBoundsBumped.invert(xBounds[1])];
+        const yDataBounds = [yScaleBoundsBumped.invert(yBounds[0]), yScaleBoundsBumped.invert(yBounds[1])];
 
         if (suggestedFrame.x1 > 0)
           suggestedFrame.x1 = 0;
@@ -545,20 +545,20 @@ export default Class.extend({
   },
 
   zoomToMaxMin(zoomedMinX, zoomedMaxX, zoomedMinY, zoomedMaxY, duration, dontFeedToState) {
-    var _this = this.context;
-    var minX = zoomedMinX;
-    var maxX = zoomedMaxX;
-    var minY = zoomedMinY;
-    var maxY = zoomedMaxY;
-    var zoomer = this.zoomer;
+    const _this = this.context;
+    let minX = zoomedMinX;
+    let maxX = zoomedMaxX;
+    let minY = zoomedMinY;
+    let maxY = zoomedMaxY;
+    const zoomer = this.zoomer;
 
-    var xRangeBounds = [0, _this.width];
-    var yRangeBounds = [_this.height, 0];
-    var xRangeBoundsBumped = _this._rangeBump(xRangeBounds);
-    var yRangeBoundsBumped = _this._rangeBump(yRangeBounds);
+    const xRangeBounds = [0, _this.width];
+    const yRangeBounds = [_this.height, 0];
+    const xRangeBoundsBumped = _this._rangeBump(xRangeBounds);
+    const yRangeBoundsBumped = _this._rangeBump(yRangeBounds);
 
-    var xDomain = _this.xScale.domain();
-    var yDomain = _this.yScale.domain();
+    const xDomain = _this.xScale.domain();
+    const yDomain = _this.yScale.domain();
 
         /*
          * Prevent zoomout if only one of zoom edges set outside domain
@@ -568,14 +568,14 @@ export default Class.extend({
     if (minY < yDomain[0] && maxY < yDomain[1]) minY = yDomain[0];
     if (minY > yDomain[0] && maxY > yDomain[1]) maxY = yDomain[1];
 
-    var zoomXOut = minX <= xDomain[0] && xDomain[1] <= maxX && (xDomain[1] - xDomain[0]) < (maxX - zoomedMinX);
-    var zoomYOut = minY <= yDomain[0] && yDomain[1] <= maxY && (yDomain[1] - yDomain[0]) < (maxY - zoomedMinY);
+    const zoomXOut = minX <= xDomain[0] && xDomain[1] <= maxX && (xDomain[1] - xDomain[0]) < (maxX - zoomedMinX);
+    const zoomYOut = minY <= yDomain[0] && yDomain[1] <= maxY && (yDomain[1] - yDomain[0]) < (maxY - zoomedMinY);
 
         /*
          * Define TOLERANCE value as Number.EPSILON if exists, otherwise use
          * ES6 standard value.
          */
-    var TOLERANCE = Number.EPSILON ? Number.EPSILON : 2.220446049250313e-16;
+    const TOLERANCE = Number.EPSILON ? Number.EPSILON : 2.220446049250313e-16;
 
         /*
          * Check if the range bump region is currently displayed, i.e. for the
@@ -609,8 +609,8 @@ export default Class.extend({
         }
 */
 
-    var xRange = [_this.xScale(minX), _this.xScale(maxX)];
-    var yRange = [_this.yScale(minY), _this.yScale(maxY)];
+    const xRange = [_this.xScale(minX), _this.xScale(maxX)];
+    const yRange = [_this.yScale(minY), _this.yScale(maxY)];
 
         /*
          * Calculate correct pan for zoom out
@@ -648,14 +648,14 @@ export default Class.extend({
   },
 
   _zoomOnRectangle(element, zoomedX1, zoomedY1, zoomedX2, zoomedY2, compensateDragging, duration, dontFeedToState) {
-    var _this = this.context;
-    var zoomer = this.zoomer;
-    var transform = d3.zoomTransform(this.zoomSelection.node());
+    const _this = this.context;
+    const zoomer = this.zoomer;
+    const transform = d3.zoomTransform(this.zoomSelection.node());
 
-    var x1 = zoomedX1;
-    var y1 = zoomedY1;
-    var x2 = zoomedX2;
-    var y2 = zoomedY2;
+    const x1 = zoomedX1;
+    const y1 = zoomedY1;
+    const x2 = zoomedX2;
+    const y2 = zoomedY2;
 
         /*
          * When dragging to draw a rectangle, the translate vector has (x2 - x1)
@@ -678,18 +678,18 @@ export default Class.extend({
             // ]);
     }
 
-    var xRangeBounds = [0, _this.width];
-    var yRangeBounds = [_this.height, 0];
+    const xRangeBounds = [0, _this.width];
+    const yRangeBounds = [_this.height, 0];
 
-    var xRangeBoundsBumped = _this._rangeBump(xRangeBounds);
-    var yRangeBoundsBumped = _this._rangeBump(yRangeBounds);
+    const xRangeBoundsBumped = _this._rangeBump(xRangeBounds);
+    const yRangeBoundsBumped = _this._rangeBump(yRangeBounds);
 
 
-    var xDomain = _this.xScale.domain();
-    var yDomain = _this.yScale.domain();
+    const xDomain = _this.xScale.domain();
+    const yDomain = _this.yScale.domain();
 
-    var zoomXOut = transform.k * zoomer.ratioX < 1;
-    var zoomYOut = transform.k * zoomer.ratioY < 1;
+    const zoomXOut = transform.k * zoomer.ratioX < 1;
+    const zoomYOut = transform.k * zoomer.ratioY < 1;
 
         /*
          * If the min or max of one axis lies in the range bump region, then
@@ -723,42 +723,43 @@ export default Class.extend({
         }
 */
 
-    var minZoom = zoomer.scaleExtent()[0];
-    var maxZoom = zoomer.scaleExtent()[1];
+    const minZoom = zoomer.scaleExtent()[0];
+    const maxZoom = zoomer.scaleExtent()[1];
+    let zoom, ratioX, ratioY;
 
     if (Math.abs(x1 - x2) > Math.abs(y1 - y2)) {
-      var zoom =  Math.abs(yRangeBoundsBumped[0] - yRangeBoundsBumped[1]) / Math.abs(y1 - y2) * transform.k;
+      zoom =  Math.abs(yRangeBoundsBumped[0] - yRangeBoundsBumped[1]) / Math.abs(y1 - y2) * transform.k;
 
-            /*
-             * Clamp the zoom scalar to the maximum zoom allowed before
-             * calculating the next ratioX and ratioY.
-             */
+      /*
+       * Clamp the zoom scalar to the maximum zoom allowed before
+       * calculating the next ratioX and ratioY.
+       */
       if (zoom < minZoom) {
         zoomer.ratioY *= zoom / transform.k;
         zoom = minZoom;
       }
       if (zoom > maxZoom) zoom = maxZoom;
 
-      var ratioX = Math.abs(xRangeBoundsBumped[0] - xRangeBoundsBumped[1]) / Math.abs(x1 - x2) * transform.k / zoom * zoomer.ratioX;
-      var ratioY = zoomer.ratioY;
+      ratioX = Math.abs(xRangeBoundsBumped[0] - xRangeBoundsBumped[1]) / Math.abs(x1 - x2) * transform.k / zoom * zoomer.ratioX;
+      ratioY = zoomer.ratioY;
     } else {
-      var zoom = Math.abs(xRangeBoundsBumped[0] - xRangeBoundsBumped[1]) / Math.abs(x1 - x2) * transform.k;
+      zoom = Math.abs(xRangeBoundsBumped[0] - xRangeBoundsBumped[1]) / Math.abs(x1 - x2) * transform.k;
 
-            /*
-             * Clamp the zoom scalar to the maximum zoom allowed before
-             * calculating the next ratioX and ratioY.
-             */
+      /*
+       * Clamp the zoom scalar to the maximum zoom allowed before
+       * calculating the next ratioX and ratioY.
+       */
       if (zoom < minZoom) {
         zoomer.ratioX *= zoom / transform.k;
         zoom = minZoom;
       }
       if (zoom > maxZoom) zoom = maxZoom;
 
-      var ratioY = Math.abs(yRangeBoundsBumped[0] - yRangeBoundsBumped[1]) / Math.abs(y1 - y2) * transform.k / zoom * zoomer.ratioY;
-      var ratioX = zoomer.ratioX;
+      ratioY = Math.abs(yRangeBoundsBumped[0] - yRangeBoundsBumped[1]) / Math.abs(y1 - y2) * transform.k / zoom * zoomer.ratioY;
+      ratioX = zoomer.ratioX;
     }
 
-    var pan = [
+    const pan = [
       (transform.x - Math.min(x1, x2)) / transform.k / zoomer.ratioX * zoom * ratioX + (xRangeBoundsBumped[0] - xRangeBounds[0]),
       (transform.y - Math.min(y1, y2)) / transform.k / zoomer.ratioY * zoom * ratioY + (yRangeBoundsBumped[1] - yRangeBounds[1])
     ];
@@ -779,7 +780,7 @@ export default Class.extend({
      * distance between the given coordinate and the data boundary.
      */
   _scaleCoordinate(coordValue, scaleDifference, dataBoundary, viewportBoundary) {
-    var scalar = scaleDifference / Math.abs(dataBoundary - viewportBoundary);
+    const scalar = scaleDifference / Math.abs(dataBoundary - viewportBoundary);
     return (coordValue - dataBoundary) * (1 - scalar) + dataBoundary;
   },
 
@@ -790,9 +791,9 @@ export default Class.extend({
      * Return the larger of the two calculated values.
      */
   _scaleToMin(scalar, minScalar, proportion, constant) {
-    var scalarProportionDelta = (scalar - minScalar) * proportion;
-    var scalarDifferenceDelta = Math.max(constant, minScalar - constant);
-    var scalarDelta = Math.max(scalarProportionDelta, scalarDifferenceDelta);
+    const scalarProportionDelta = (scalar - minScalar) * proportion;
+    const scalarDifferenceDelta = Math.max(constant, minScalar - constant);
+    const scalarDelta = Math.max(scalarProportionDelta, scalarDifferenceDelta);
 
     return scalarDelta;
   },
@@ -804,24 +805,24 @@ export default Class.extend({
      * function dblclicked() and what it refers to
      */
   zoomByIncrement(direction, duration) {
-    var _this = this.context;
-    var transform = d3.zoomTransform(this.zoomSelection.node());
+    const _this = this.context;
+    const transform = d3.zoomTransform(this.zoomSelection.node());
 
-    var ratio = transform.k;
-    var pan = [transform.x, transform.y];
+    let ratio = transform.k;
+    const pan = [transform.x, transform.y];
 
-    var mouse = d3.mouse(_this.element.node());
-    var k = Math.log(ratio) / Math.LN2;
+    const mouse = d3.mouse(_this.element.node());
+    let k = Math.log(ratio) / Math.LN2;
 
         //change factor direction based on the input. default is no direction supplied
     if (direction == "plus" || !direction) k = Math.floor(k) + 1;
     if (direction == "minus") k = Math.ceil(k) - 1;
 
         //decode panning
-    var locus = [(mouse[0] - pan[0]) / ratio, (mouse[1] - pan[1]) / ratio];
+    let locus = [(mouse[0] - pan[0]) / ratio, (mouse[1] - pan[1]) / ratio];
 
         //recalculate zoom ratio
-    var scaleExtent = this.zoomer.scaleExtent();
+    const scaleExtent = this.zoomer.scaleExtent();
     if (ratio == scaleExtent[0]) {
       this.zoomer.ratioY = 1;
       this.zoomer.ratioX = 1;
@@ -855,7 +856,7 @@ export default Class.extend({
   },
 
   reset(element, duration) {
-    var _this = this.context;
+    const _this = this.context;
     _this.isCanvasPreviouslyExpanded = false;
 
         //this.zoomer.scale(1);
@@ -868,7 +869,7 @@ export default Class.extend({
   },
 
   rerun(element) {
-    var _this = this.context;
+    const _this = this.context;
         //this.zoomer.event(element || _this.element);
     (element || this.zoomSelection).call(this.zoomer.scaleBy, 1);
   },

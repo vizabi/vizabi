@@ -4,15 +4,15 @@ import Component from "base/component";
 import { warn as warnIcon } from "base/iconset";
 import EventSource, { DefaultEvent } from "base/events";
 
-var class_loading_first = "vzb-loading-first";
-var class_loading_data = "vzb-loading-data";
-var class_placeholder = "vzb-placeholder";
-var class_buttons_off = "vzb-buttonlist-off";
+const class_loading_first = "vzb-loading-first";
+const class_loading_data = "vzb-loading-data";
+const class_placeholder = "vzb-placeholder";
+const class_buttons_off = "vzb-buttonlist-off";
 
-var templates = {};
+const templates = {};
 
 //tool model is quite simple and doesn't need to be registered
-var ToolModel = Model.extend({
+const ToolModel = Model.extend({
   /**
    * Initializes the tool model.
    * @param {Tool}   the tool this tool model belongs to
@@ -28,7 +28,7 @@ var ToolModel = Model.extend({
     this.getClassDefaults = () => tool.default_model;
 
     // combine listeners from tool and external page to one object
-    var listeners = utils.extend(tool.getToolListeners(), external_model.bind);
+    const listeners = utils.extend(tool.getToolListeners(), external_model.bind);
     delete external_model.bind; // bind shouldn't go to model tree
 
     this._super(tool.name, external_model, null, listeners);
@@ -44,15 +44,15 @@ var ToolModel = Model.extend({
 
   validate() {
 
-    var max = 10;
-    var c = 0;
-    var _this = this;
+    const max = 10;
+    const c = 0;
+    const _this = this;
 
     function validate_func(c) {
       // ToolModel uses validate function declared on Tool so each Tool can have its own validation.
-      var model = JSON.stringify(_this.getPlainObject());
+      const model = JSON.stringify(_this.getPlainObject());
       _this._component.validate(_this);
-      var model2 = JSON.stringify(_this.getPlainObject());
+      const model2 = JSON.stringify(_this.getPlainObject());
 
       if (c >= max) {
         utils.error("Max validation loop.");
@@ -68,7 +68,7 @@ var ToolModel = Model.extend({
 
 
 //tool
-var Tool = Component.extend({
+const Tool = Component.extend({
  /**
    * Initializes the tool
    * @param {Object} placeholder object
@@ -129,7 +129,7 @@ var Tool = Component.extend({
   },
 
   getToolListeners() {
-    var _this = this;
+    const _this = this;
     return utils.extend(
       this.model_binds,
       {
@@ -208,8 +208,8 @@ var Tool = Component.extend({
 
   getPersistentModel() {
     //try to find functions in properties of model.
-    var removeFunctions = function(model) {
-      for (var childKey in model) {
+    const removeFunctions = function(model) {
+      for (const childKey in model) {
         if (typeof model[childKey] === "function") {
           delete model[childKey];
           utils.warn("minModel validation. Function found in enumerable properties of " + childKey + ". This key is deleted from minModel");
@@ -219,15 +219,15 @@ var Tool = Component.extend({
       }
     };
 
-    var currentToolModel = this.model.getPlainObject(true); // true = get only persistent model values
+    const currentToolModel = this.model.getPlainObject(true); // true = get only persistent model values
     removeFunctions(currentToolModel);
     return currentToolModel;
   },
 
   getPersistentMinimalModel(diffModel) {
-    var defaultModel = this.model.getDefaults();
-    var currentPersistentModel = this.getPersistentModel();
-    var redundantModel = utils.deepExtend(defaultModel, diffModel);
+    const defaultModel = this.model.getDefaults();
+    const currentPersistentModel = this.getPersistentModel();
+    const redundantModel = utils.deepExtend(defaultModel, diffModel);
     return utils.diffObject(currentPersistentModel, redundantModel);
   },
 

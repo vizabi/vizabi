@@ -12,10 +12,10 @@ import dialogs from "components/dialogs/dialogs";
 import buttonlist from "components/buttonlist/buttonlist";
 import treemenu from "components/treemenu/treemenu";
 
-var comp_template = "barchart.html";
+const comp_template = "barchart.html";
 
 //BAR CHART TOOL
-var BarChart = Tool.extend("BarChart", {
+const BarChart = Tool.extend("BarChart", {
 
   /**
    * Initializes the tool (Bar Chart Tool).

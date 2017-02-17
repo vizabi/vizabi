@@ -15,7 +15,7 @@ import datanotes from "components/datanotes/datanotes";
 import steppedSpeedSlider from "components/steppedspeedslider/steppedspeedslider";
 
 //BAR CHART TOOL
-var AgePyramid = Tool.extend("AgePyramid", {
+const AgePyramid = Tool.extend("AgePyramid", {
 
   /**
    * Initializes the tool (Bar Chart Tool).

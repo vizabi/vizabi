@@ -6,7 +6,7 @@ import globals from "base/globals";
  * Size dialog
  */
 
-var About = Dialog.extend({
+const About = Dialog.extend({
 
 /**
  * Initializes the dialog component
@@ -20,8 +20,8 @@ var About = Dialog.extend({
   },
 
   readyOnce() {
-    var version = globals.version;
-    var updated = new Date(parseInt(globals.build));
+    const version = globals.version;
+    const updated = new Date(parseInt(globals.build));
 
     this.element = d3.select(this.element);
     this.element.select(".vzb-about-text0")

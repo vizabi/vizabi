@@ -5,7 +5,7 @@ import Hook from "models/hook";
  * VIZABI Axis Model (hook)
  */
 
-var AxisModel = Hook.extend({
+const AxisModel = Hook.extend({
 
   //some hooks can be important. like axis x and y
   //that means, if X or Y doesn't have data at some point, we can't show markers
@@ -15,7 +15,7 @@ var AxisModel = Hook.extend({
    * Default values for this model
    */
   getClassDefaults() {
-    var defaults = {
+    const defaults = {
       use: null,
       which: null,
       domainMin: null,
@@ -33,7 +33,7 @@ var AxisModel = Hook.extend({
   autoGenerateModel() {
     if (this.which == null && this.autogenerate) {
 
-      var concept = this.dataSource.getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType);
+      let concept = this.dataSource.getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType);
 
       if (!concept) {
         concept = this.dataSource.getConceptByIndex(0, "time");
@@ -53,7 +53,7 @@ var AxisModel = Hook.extend({
 
     //restore the correct object type for time values
     if (this.scale && this.scaleType == "time") {
-      var obj = {};
+      const obj = {};
       if (this.zoomedMin != null && !utils.isDate(this.zoomedMin)) obj.zoomedMin = this._space.time.parse(this.zoomedMin.toString());
       if (this.zoomedMax != null && !utils.isDate(this.zoomedMax)) obj.zoomedMax = this._space.time.parse(this.zoomedMax.toString());
       this.set(obj);
@@ -66,12 +66,12 @@ var AxisModel = Hook.extend({
    * @returns {Array} domain
    */
   buildScale(scaleType = this.scaleType) {
-    var domain;
+    let domain;
 
     if (scaleType == "time") {
 
-      var timeMdl = this._space.time;
-      var limits = timeMdl.splash ?
+      const timeMdl = this._space.time;
+      const limits = timeMdl.splash ?
           { min: timeMdl.parse(timeMdl.startOrigin), max: timeMdl.parse(timeMdl.endOrigin) }
           :
           { min: timeMdl.start, max: timeMdl.end };
@@ -82,7 +82,7 @@ var AxisModel = Hook.extend({
     } else {
 
       if (!this.isDiscrete()) {
-        var limits = this.getLimits(this.which);
+        const limits = this.getLimits(this.which);
         //default domain is based on limits
         domain = [limits.min, limits.max];
         //min and max can override the domain if defined

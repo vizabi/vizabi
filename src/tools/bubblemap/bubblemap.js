@@ -16,7 +16,7 @@ import datanotes from "components/datanotes/datanotes";
 import steppedSpeedSlider from "components/steppedspeedslider/steppedspeedslider";
 
 //BAR CHART TOOL
-var BubbleMap = Tool.extend("BubbleMap", {
+const BubbleMap = Tool.extend("BubbleMap", {
 
 
   /**

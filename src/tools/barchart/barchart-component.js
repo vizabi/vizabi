@@ -5,7 +5,7 @@ import axisSmart from "helpers/d3.axisWithLabelPicker";
 
 
 //BAR CHART COMPONENT
-var BarComponent = Component.extend({
+const BarComponent = Component.extend({
 
   /**
    * Initializes the component (Bar Chart).
@@ -32,7 +32,7 @@ var BarComponent = Component.extend({
       type: "locale"
     }];
 
-    var _this = this;
+    const _this = this;
 
     this.model_binds = {
       "change:time.value": function(evt) {
@@ -79,7 +79,7 @@ var BarComponent = Component.extend({
     this.bars = this.graph.select(".vzb-bc-bars");
     this.year = this.element.select(".vzb-bc-year");
 
-    var _this = this;
+    const _this = this;
     this.on("resize", () => {
       _this.updateEntities();
     });
@@ -89,7 +89,7 @@ var BarComponent = Component.extend({
    * Both model and DOM are ready
    */
   ready() {
-    var _this = this;
+    const _this = this;
     this.model.marker.getFrame(this.model.time.value, values => {
       _this.values = values;
       _this.updateIndicators();
@@ -104,14 +104,14 @@ var BarComponent = Component.extend({
    */
   updateIndicators() {
 
-    var _this = this;
+    const _this = this;
     this.translator = this.model.locale.getTFunction();
     this.duration = this.model.time.delayAnimations;
 
-    var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
-    var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.which);
+    const titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
+    const titleStringX = this.translator("indicator/" + this.model.marker.axis_x.which);
 
-    var yTitle = this.yTitleEl.selectAll("text").data([0]);
+    const yTitle = this.yTitleEl.selectAll("text").data([0]);
     yTitle.enter().append("text");
     yTitle
       .attr("y", "-6px")
@@ -129,7 +129,7 @@ var BarComponent = Component.extend({
           .toggle();
       });
 
-    var xTitle = this.xTitleEl.selectAll("text").data([0]);
+    const xTitle = this.xTitleEl.selectAll("text").data([0]);
     xTitle.enter().append("text");
     xTitle
       .attr("y", "-3px")
@@ -150,7 +150,7 @@ var BarComponent = Component.extend({
     this.xScale = this.model.marker.axis_x.getScale();
     this.cScale = this.model.marker.color.getScale();
 
-    var xFormatter = this.model.marker.axis_x.which == "geo.world_4region" ?
+    const xFormatter = this.model.marker.axis_x.which == "geo.world_4region" ?
         function(x) { return _this.translator("entity/geo.world_4region/" + x); }
         :
         _this.model.marker.axis_x.getTickFormatter();
@@ -165,14 +165,14 @@ var BarComponent = Component.extend({
    */
   updateEntities() {
 
-    var _this = this;
-    var time = this.model.time;
-    var timeDim = time.getDimension();
-    var entityDim = this.model.entities.getDimension();
-    var duration = (time.playing) ? time.delayAnimations : 0;
-    var filter = {};
+    const _this = this;
+    const time = this.model.time;
+    const timeDim = time.getDimension();
+    const entityDim = this.model.entities.getDimension();
+    const duration = (time.playing) ? time.delayAnimations : 0;
+    const filter = {};
     filter[timeDim] = time.value;
-    var items = this.model.marker.getKeys(filter);
+    const items = this.model.marker.getKeys(filter);
 
     this.entityBars = this.bars.selectAll(".vzb-bc-bar")
       .data(items);
@@ -189,8 +189,8 @@ var BarComponent = Component.extend({
 
     //positioning and sizes of the bars
 
-    var bars = this.bars.selectAll(".vzb-bc-bar");
-    var barWidth = this.xScale.rangeBand();
+    const bars = this.bars.selectAll(".vzb-bc-bar");
+    const barWidth = this.xScale.rangeBand();
 
     this.bars.selectAll(".vzb-bc-bar")
       .attr("width", barWidth)
@@ -208,7 +208,7 @@ var BarComponent = Component.extend({
    */
   resize() {
 
-    var _this = this;
+    const _this = this;
 
     this.profiles = {
       "small": {
@@ -247,7 +247,7 @@ var BarComponent = Component.extend({
     };
 
     this.activeProfile = this.profiles[this.getLayoutProfile()];
-    var margin = this.activeProfile.margin;
+    const margin = this.activeProfile.margin;
 
 
     //stage
@@ -300,10 +300,10 @@ var BarComponent = Component.extend({
     this.yAxisEl.call(this.yAxis);
     this.xAxisEl.call(this.xAxis);
 
-    var xAxisSize = this.xAxisEl.node().getBoundingClientRect();
-    var xTitleSize = this.xTitleEl.node().getBoundingClientRect();
-    var xTitleXPos = xAxisSize.width / 2 - xTitleSize.width / 2;
-    var xTitleYPos = this.height + xAxisSize.height + xTitleSize.height;
+    const xAxisSize = this.xAxisEl.node().getBoundingClientRect();
+    const xTitleSize = this.xTitleEl.node().getBoundingClientRect();
+    const xTitleXPos = xAxisSize.width / 2 - xTitleSize.width / 2;
+    const xTitleYPos = this.height + xAxisSize.height + xTitleSize.height;
     this.xTitleEl.attr("transform", "translate(" + xTitleXPos + "," + xTitleYPos + ")");
     this.year.attr("x", this.width).attr("y", 0);
   }

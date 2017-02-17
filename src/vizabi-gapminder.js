@@ -24,8 +24,8 @@ import AxisLabeler from "tools/axislabeler/axislabeler";
 import AgePyramid from "tools/agepyramid/agepyramid";
 
 // Fallback in case if WS is not available - requesting data from local files
-var locationArray = window.location.href.split("/");
-var localUrl = locationArray.splice(0, locationArray.indexOf("preview")).join("/") + "/preview/";
+const locationArray = window.location.href.split("/");
+const localUrl = locationArray.splice(0, locationArray.indexOf("preview")).join("/") + "/preview/";
 
 globals.ext_resources = utils.deepExtend({
   host: localUrl,

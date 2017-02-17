@@ -14,7 +14,7 @@ import {
 
 
 //BUBBLE CHART COMPONENT
-var BubbleChartComp = Component.extend({
+const BubbleChartComp = Component.extend({
 
   /**
    * Initializes the component (Bubble Chart).
@@ -23,7 +23,7 @@ var BubbleChartComp = Component.extend({
    * @param {Object} context The component's parent
    */
   init(config, context) {
-    var _this = this;
+    const _this = this;
     this.name = "bubblechart";
     this.template = require("./bubblechart.html");
 
@@ -114,7 +114,7 @@ var BubbleChartComp = Component.extend({
           && utils.approxEqual(_this._zoomedXYMinMax.axis_y.zoomedMin, _this.model.marker.axis_y.zoomedMin, 0.01)
           && utils.approxEqual(_this._zoomedXYMinMax.axis_y.zoomedMax, _this.model.marker.axis_y.zoomedMax, 0.01)
           ) return;
-          var playAfterZoom = false;
+          let playAfterZoom = false;
           if (_this.model.time.playing) {
             playAfterZoom = true;
             _this.model.time.pause(true);
@@ -156,7 +156,7 @@ var BubbleChartComp = Component.extend({
         //path have values if trail is highlighted
         if (path != "highlight") {
           if (path !== null) {
-            var titles = _this._formatSTitleValues(path.size, path.color);
+            const titles = _this._formatSTitleValues(path.size, path.color);
             _this._updateSTitle(titles[0], titles[1]);
           } else {
             _this._updateSTitle();
@@ -177,7 +177,7 @@ var BubbleChartComp = Component.extend({
         //_this._bubblesInteract().mouseout();
           _this.model.marker.getFrame(time, (frame, time) => {
             if (!_this._frameIsValid(frame)) return utils.warn("change:time.value: empty data received from marker.getFrame(). doing nothing");
-            var index = _this.calculationQueue.indexOf(time.toString()); //
+            const index = _this.calculationQueue.indexOf(time.toString()); //
             if (index == -1) { // we was receive more recent frame before so we pass this frame
               return;
             } else {
@@ -223,7 +223,7 @@ var BubbleChartComp = Component.extend({
         _this._trails.run("opacityHandler");
       },
       "change:ui.cursorMode": function() {
-        var svg = _this.element.select("svg");
+        const svg = _this.element.select("svg");
         if (_this.model.ui.cursorMode === "plus") {
           svg.classed("vzb-zoomin", true);
           svg.classed("vzb-zoomout", false);
@@ -279,11 +279,11 @@ var BubbleChartComp = Component.extend({
   },
 
   _rangeBump(arg, undo) {
-    var bump = this.activeProfile.maxRadius / 2;
+    const bump = this.activeProfile.maxRadius / 2;
     undo = undo ? -1 : 1;
     if (utils.isArray(arg) && arg.length > 1) {
-      var z1 = arg[0];
-      var z2 = arg[arg.length - 1];
+      let z1 = arg[0];
+      let z2 = arg[arg.length - 1];
 
       //the sign of bump depends on the direction of the scale
       if (z1 < z2) {
@@ -324,7 +324,7 @@ var BubbleChartComp = Component.extend({
    * Executes right after the template is in place, but the model is not yet ready
    */
   readyOnce() {
-    var _this = this;
+    const _this = this;
     this._readyOnce = false;
     this.scrollableAncestor = utils.findScrollableAncestor(this.element);
     this.element = d3.select(this.element);
@@ -422,7 +422,7 @@ var BubbleChartComp = Component.extend({
         _this.draggingNow = false;
       })
       .on("click", () => {
-        var cursor = _this.model.ui.cursorMode;
+        const cursor = _this.model.ui.cursorMode;
         if (!d3.event.defaultPrevented && cursor !== "arrow") {
           _this._panZoom.zoomByIncrement(cursor, 500);
         }
@@ -450,9 +450,9 @@ var BubbleChartComp = Component.extend({
   },
 
   ready() {
-    var _this = this;
+    const _this = this;
     this.updateUIStrings();
-    var endTime = this.model.time.end;
+    const endTime = this.model.time.end;
     this.updateIndicators();
     this.updateTime();
     if (!_this.model.time.splash) {
@@ -495,20 +495,20 @@ var BubbleChartComp = Component.extend({
          */
     this._panZoom.resetZoomState();
 
-    var xAxis = this.model.marker.axis_x;
-    var yAxis = this.model.marker.axis_y;
+    const xAxis = this.model.marker.axis_x;
+    const yAxis = this.model.marker.axis_y;
 
-    var xDomain = xAxis.getScale().domain();
-    var yDomain = yAxis.getScale().domain();
+    const xDomain = xAxis.getScale().domain();
+    const yDomain = yAxis.getScale().domain();
 
         /*
          * The axes may return null when there is no value given for the zoomed
          * min and max values. In that case, fall back to the axes' domain values.
          */
-    var zoomedMinX = xAxis.zoomedMin ? xAxis.zoomedMin : xDomain[0];
-    var zoomedMaxX = xAxis.zoomedMax ? xAxis.zoomedMax : xDomain[1];
-    var zoomedMinY = yAxis.zoomedMin ? yAxis.zoomedMin : yDomain[0];
-    var zoomedMaxY = yAxis.zoomedMax ? yAxis.zoomedMax : yDomain[1];
+    const zoomedMinX = xAxis.zoomedMin ? xAxis.zoomedMin : xDomain[0];
+    const zoomedMaxX = xAxis.zoomedMax ? xAxis.zoomedMax : xDomain[1];
+    const zoomedMinY = yAxis.zoomedMin ? yAxis.zoomedMin : yDomain[0];
+    const zoomedMaxY = yAxis.zoomedMax ? yAxis.zoomedMax : yDomain[1];
 
         //by default this will apply no transition and feed values back to state
     this._panZoom.zoomToMaxMin(zoomedMinX, zoomedMaxX, zoomedMinY, zoomedMaxY, 0, "don't feed these zoom values back to state");
@@ -518,7 +518,7 @@ var BubbleChartComp = Component.extend({
    * UPDATE INDICATORS
    */
   updateIndicators() {
-    var _this = this;
+    const _this = this;
 
     //scales
     this.yScale = this.model.marker.axis_y.getScale();
@@ -549,12 +549,12 @@ var BubbleChartComp = Component.extend({
   },
 
   updateUIStrings() {
-    var _this = this;
+    const _this = this;
 
-    var conceptPropsY = _this.model.marker.axis_y.getConceptprops();
-    var conceptPropsX = _this.model.marker.axis_x.getConceptprops();
-    var conceptPropsS = _this.model.marker.size.getConceptprops();
-    var conceptPropsC = _this.model.marker.color.getConceptprops();
+    const conceptPropsY = _this.model.marker.axis_y.getConceptprops();
+    const conceptPropsX = _this.model.marker.axis_x.getConceptprops();
+    const conceptPropsS = _this.model.marker.size.getConceptprops();
+    const conceptPropsC = _this.model.marker.color.getConceptprops();
     this.translator = this.model.locale.getTFunction();
 
     this.strings = {
@@ -572,7 +572,7 @@ var BubbleChartComp = Component.extend({
       }
     };
 
-    var yTitle = this.yTitleEl.selectAll("text").data([0]);
+    const yTitle = this.yTitleEl.selectAll("text").data([0]);
     yTitle.enter().append("text");
     yTitle
       //.attr("y", "-6px")
@@ -586,7 +586,7 @@ var BubbleChartComp = Component.extend({
           .toggle();
       });
 
-    var xTitle = this.xTitleEl.selectAll("text").data([0]);
+    const xTitle = this.xTitleEl.selectAll("text").data([0]);
     xTitle.enter().append("text");
     xTitle
       .on("click", () => {
@@ -599,7 +599,7 @@ var BubbleChartComp = Component.extend({
           .toggle();
       });
 
-    var sTitle = this.sTitleEl.selectAll("text").data([0]);
+    const sTitle = this.sTitleEl.selectAll("text").data([0]);
     sTitle.enter().append("text");
     sTitle
       .attr("text-anchor", "end");
@@ -621,10 +621,10 @@ var BubbleChartComp = Component.extend({
       _this.parent.findChildByName("gapminder-datanotes").pin();
     });
     this.yInfoEl.on("mouseover", function() {
-      var rect = this.getBBox();
-      var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-      var toolRect = _this.root.element.getBoundingClientRect();
-      var chartRect = _this.element.node().getBoundingClientRect();
+      const rect = this.getBBox();
+      const coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+      const toolRect = _this.root.element.getBoundingClientRect();
+      const chartRect = _this.element.node().getBoundingClientRect();
       _this.parent.findChildByName("gapminder-datanotes").setHook("axis_y").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
     });
     this.yInfoEl.on("mouseout", () => {
@@ -635,10 +635,10 @@ var BubbleChartComp = Component.extend({
     });
     this.xInfoEl.on("mouseover", function() {
       if (_this.model.time.dragging) return;
-      var rect = this.getBBox();
-      var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-      var toolRect = _this.root.element.getBoundingClientRect();
-      var chartRect = _this.element.node().getBoundingClientRect();
+      const rect = this.getBBox();
+      const coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+      const toolRect = _this.root.element.getBoundingClientRect();
+      const chartRect = _this.element.node().getBoundingClientRect();
       _this.parent.findChildByName("gapminder-datanotes").setHook("axis_x").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
     });
     this.xInfoEl.on("mouseout", () => {
@@ -668,15 +668,15 @@ var BubbleChartComp = Component.extend({
    * Ideally should only update when show parameters change or data changes
    */
   updateEntities() {
-    var _this = this;
-    var KEY = this.KEY;
-    var TIMEDIM = this.TIMEDIM;
+    const _this = this;
+    const KEY = this.KEY;
+    const TIMEDIM = this.TIMEDIM;
 
-    var getKeys = function(prefix) {
+    const getKeys = function(prefix) {
       prefix = prefix || "";
       return _this.model.marker.getKeys()
         .map(d => {
-          var pointer = {};
+          const pointer = {};
           pointer[KEY] = d[KEY];
           pointer[TIMEDIM] = endTime;
           pointer.sortValue = _this.frame.size[d[KEY]] || 0;
@@ -688,8 +688,8 @@ var BubbleChartComp = Component.extend({
 
     // get array of GEOs, sorted by the size hook
     // that makes larger bubbles go behind the smaller ones
-    var endTime = this.model.time.end;
-    var markers = getKeys.call(this);
+    const endTime = this.model.time.end;
+    const markers = getKeys.call(this);
     this.model.marker.setVisible(markers);
 
     //unselecting bubbles with no data is used for the scenario when
@@ -732,12 +732,12 @@ var BubbleChartComp = Component.extend({
   },
 
   unselectBubblesWithNoData(entities) {
-    var _this = this;
-    var KEY = this.KEY;
+    const _this = this;
+    const KEY = this.KEY;
     if (!this.model.marker.select.length) return;
 
-    var _select = [];
-    var keys = entities.map(d => d[KEY]);
+    const _select = [];
+    const keys = entities.map(d => d[KEY]);
 
     this.model.marker.select.forEach(d => {
       if (keys.indexOf(d[KEY]) !== -1) _select.push(d);
@@ -747,12 +747,12 @@ var BubbleChartComp = Component.extend({
   },
 
   _reorderEntities() {
-    var _this = this;
-    var KEY = this.KEY;
+    const _this = this;
+    const KEY = this.KEY;
     this.bubbleContainer.selectAll(".vzb-bc-entity")
       .sort((a, b) => {
-        var sizeA = _this.frame.size[a[KEY]];
-        var sizeB = _this.frame.size[b[KEY]];
+        const sizeA = _this.frame.size[a[KEY]];
+        const sizeB = _this.frame.size[b[KEY]];
 
         if (typeof sizeA == "undefined" && typeof sizeB != "undefined") return -1;
         if (typeof sizeA != "undefined" && typeof sizeB == "undefined") return 1;
@@ -765,9 +765,9 @@ var BubbleChartComp = Component.extend({
   },
 
   _bubblesInteract() {
-    var _this = this;
-    var KEY = this.KEY;
-    var TIMEDIM = this.TIMEDIM;
+    const _this = this;
+    const KEY = this.KEY;
+    const TIMEDIM = this.TIMEDIM;
 
     return {
       mouseover(d, i) {
@@ -784,7 +784,7 @@ var BubbleChartComp = Component.extend({
 
       click(d, i) {
         if (_this.draggingNow) return;
-        var isSelected = _this.model.marker.isSelected(d);
+        const isSelected = _this.model.marker.isSelected(d);
         _this.model.marker.selectMarker(d);
         //return to highlighted state
         if (!utils.isTouchDevice()) {
@@ -801,7 +801,7 @@ var BubbleChartComp = Component.extend({
    * Ideally should only update when time or data changes
    */
   updateTime() {
-    var _this = this;
+    const _this = this;
 
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
@@ -816,7 +816,7 @@ var BubbleChartComp = Component.extend({
   updateSize() {
 
 
-    var profiles = {
+    const profiles = {
       small: {
         margin: { top: 30, right: 10, left: 40, bottom: 35 },
         padding: 2,
@@ -847,7 +847,7 @@ var BubbleChartComp = Component.extend({
       }
     };
 
-    var presentationProfileChanges = {
+    const presentationProfileChanges = {
       "medium": {
         margin: { top: 80, bottom: 80, left: 100 },
         yAxisTitleBottomMargin: 20,
@@ -863,11 +863,11 @@ var BubbleChartComp = Component.extend({
       }
     };
 
-    var _this = this;
+    const _this = this;
 
     this.activeProfile = this.getActiveProfile(profiles, presentationProfileChanges);
-    var margin = this.activeProfile.margin;
-    var infoElHeight = this.activeProfile.infoElHeight;
+    const margin = this.activeProfile.margin;
+    const infoElHeight = this.activeProfile.infoElHeight;
 
     //labels
     _this._labels.setCloseCrossHeight(_this.activeProfile.infoElHeight * 1.2);
@@ -963,7 +963,7 @@ var BubbleChartComp = Component.extend({
     this.sTitleEl
       .attr("transform", "translate(" + this.width + "," + 20 + ") rotate(-90)");
 
-    var isRTL = this.model.locale.isRTL();
+    const isRTL = this.model.locale.isRTL();
     this.yTitleEl
       .style("font-size", infoElHeight + "px")
       .attr("transform", "translate(" + (isRTL ? this.width : 10 - this.activeProfile.margin.left) + ", -" + this.activeProfile.yAxisTitleBottomMargin + ")");
@@ -972,18 +972,18 @@ var BubbleChartComp = Component.extend({
       .style("font-size", infoElHeight + "px")
       .attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + (this.height + margin.bottom - this.activeProfile.xAxisTitleBottomMargin) + ")");
 
-    var ySeparator = this.strings.unit.Y ? ", " : "";
-    var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + ySeparator + this.strings.unit.Y);
+    const ySeparator = this.strings.unit.Y ? ", " : "";
+    const yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + ySeparator + this.strings.unit.Y);
     if (yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
 
-    var xSeparator = this.strings.unit.Y ? ", " : "";
-    var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + xSeparator + this.strings.unit.X);
+    const xSeparator = this.strings.unit.Y ? ", " : "";
+    const xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + xSeparator + this.strings.unit.X);
     if (xTitleText.node().getBBox().width > this.width - 100) xTitleText.text(this.strings.title.X);
 
     if (this.yInfoEl.select("svg").node()) {
-      var titleBBox = this.yTitleEl.node().getBBox();
-      var t = utils.transform(this.yTitleEl.node());
-      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
+      const titleBBox = this.yTitleEl.node().getBBox();
+      const t = utils.transform(this.yTitleEl.node());
+      const hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
       this.yInfoEl.select("svg")
         .attr("width", infoElHeight + "px")
@@ -994,9 +994,9 @@ var BubbleChartComp = Component.extend({
     }
 
     if (this.xInfoEl.select("svg").node()) {
-      var titleBBox = this.xTitleEl.node().getBBox();
-      var t = utils.transform(this.xTitleEl.node());
-      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
+      const titleBBox = this.xTitleEl.node().getBBox();
+      const t = utils.transform(this.xTitleEl.node());
+      const hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
       this.xInfoEl.select("svg")
         .attr("width", infoElHeight + "px")
@@ -1011,12 +1011,12 @@ var BubbleChartComp = Component.extend({
 
 
   _updateLineEqualXY(duration) {
-    var oneMeasure = this.model.marker.axis_x.which == this.model.marker.axis_y.which;
+    const oneMeasure = this.model.marker.axis_x.which == this.model.marker.axis_y.which;
     this.lineEqualXY.classed("vzb-invisible", !oneMeasure);
     if (!oneMeasure) return;
 
-    var min = d3.min(this.yScale.domain().concat(this.xScale.domain()));
-    var max = d3.max(this.yScale.domain().concat(this.xScale.domain()));
+    const min = d3.min(this.yScale.domain().concat(this.xScale.domain()));
+    const max = d3.max(this.yScale.domain().concat(this.xScale.domain()));
 
     this.lineEqualXY
       .transition()
@@ -1029,16 +1029,16 @@ var BubbleChartComp = Component.extend({
 
   _resizeDataWarning() {
     // reset font size to remove jumpy measurement
-    var dataWarningText = this.dataWarningEl.select("text").style("font-size", null);
+    const dataWarningText = this.dataWarningEl.select("text").style("font-size", null);
 
     // reduce font size if the caption doesn't fit
-    var dataWarningWidth = dataWarningText.node().getBBox().width + dataWarningText.node().getBBox().height * 3;
-    var remainingWidth = this.width - this.xTitleEl.node().getBBox().width - this.activeProfile.infoElHeight;
-    var font = parseInt(dataWarningText.style("font-size")) * remainingWidth / dataWarningWidth;
+    const dataWarningWidth = dataWarningText.node().getBBox().width + dataWarningText.node().getBBox().height * 3;
+    const remainingWidth = this.width - this.xTitleEl.node().getBBox().width - this.activeProfile.infoElHeight;
+    const font = parseInt(dataWarningText.style("font-size")) * remainingWidth / dataWarningWidth;
     dataWarningText.style("font-size", dataWarningWidth > remainingWidth ? font + "px" : null);
 
     // position the warning icon
-    var warnBB = dataWarningText.node().getBBox();
+    const warnBB = dataWarningText.node().getBBox();
     this.dataWarningEl.select("svg")
       .attr("width", warnBB.height * 0.75)
       .attr("height", warnBB.height * 0.75)
@@ -1053,13 +1053,13 @@ var BubbleChartComp = Component.extend({
   },
 
   updateMarkerSizeLimits() {
-    var _this = this;
-    var extent = this.model.marker.size.extent || [0, 1];
+    const _this = this;
+    const extent = this.model.marker.size.extent || [0, 1];
 
     if (!this.activeProfile) return utils.warn("updateMarkerSizeLimits() is called before ready(). This can happen if events get unfrozen and getFrame() still didn't return data");
 
-    var minRadius = this.activeProfile.minRadius;
-    var maxRadius = this.activeProfile.maxRadius;
+    const minRadius = this.activeProfile.minRadius;
+    const maxRadius = this.activeProfile.maxRadius;
 
     this.minRadius = Math.max(maxRadius * extent[0], minRadius);
     this.maxRadius = Math.max(maxRadius * extent[1], minRadius);
@@ -1073,14 +1073,14 @@ var BubbleChartComp = Component.extend({
   },
 
   redrawDataPointsOnlyColors() {
-    var _this = this;
+    const _this = this;
     if (!this.entityBubbles) return utils.warn("redrawDataPointsOnlyColors(): no entityBubbles defined. likely a premature call, fix it!");
 
-    var valuesNow;
-    var KEY = this.KEY;
+    let valuesNow;
+    const KEY = this.KEY;
 
 
-    var time = this.model.time.value;
+    let time = this.model.time.value;
 
     if (this.model.ui.chart.lockNonSelected && this.someSelected) {
       time = this.model.time.parse("" + this.model.ui.chart.lockNonSelected);
@@ -1091,29 +1091,29 @@ var BubbleChartComp = Component.extend({
       valuesNow = _this.frame;
       _this.entityBubbles.each(function(d, index) {
 
-        var selected = _this.model.marker.isSelected(d);
+        const selected = _this.model.marker.isSelected(d);
 
-        var valueC = selected ? valuesNow.color[d[KEY]] : valuesLocked.color[d[KEY]];
+        const valueC = selected ? valuesNow.color[d[KEY]] : valuesLocked.color[d[KEY]];
 
-        var scaledC = valueC != null ? _this.cScale(valueC) : _this.COLOR_WHITEISH;
+        const scaledC = valueC != null ? _this.cScale(valueC) : _this.COLOR_WHITEISH;
 
         d3.select(this).style("fill", scaledC);
 
       //update lines of labels
         if (selected) {
 
-          var select = utils.find(_this.model.marker.select, f => f[KEY] == d[KEY]);
+          const select = utils.find(_this.model.marker.select, f => f[KEY] == d[KEY]);
 
-          var trailStartTime = _this.model.time.parse("" + select.trailStartTime);
+          const trailStartTime = _this.model.time.parse("" + select.trailStartTime);
 
           _this.model.marker.getFrame(trailStartTime, valuesTrailStart => {
             if (!valuesTrailStart) return utils.warn("redrawDataPointsOnlyColor: empty data received from marker.getFrames(). doing nothing");
 
-            var cache = {};
+            const cache = {};
             if (!_this.model.ui.chart.trails || trailStartTime - _this.time == 0) {
               cache.scaledC0 = scaledC;
             } else {
-              var valueC = valuesTrailStart.color[d[KEY]];
+              const valueC = valuesTrailStart.color[d[KEY]];
               cache.scaledC0 = valueC != null ? _this.cScale(valueC) : _this.COLOR_WHITEISH;
             }
 
@@ -1127,13 +1127,13 @@ var BubbleChartComp = Component.extend({
   },
 
   redrawDataPointsOnlySize() {
-    var _this = this;
+    const _this = this;
 
-    var valuesNow;
-    var KEY = this.KEY;
+    let valuesNow;
+    const KEY = this.KEY;
 
 
-    var time = this.model.time.value;
+    let time = this.model.time.value;
 
     if (this.model.ui.chart.lockNonSelected && this.someSelected) {
       time = this.model.time.parse("" + this.model.ui.chart.lockNonSelected);
@@ -1144,25 +1144,25 @@ var BubbleChartComp = Component.extend({
       valuesNow = _this.frame;
       _this.entityBubbles.each(function(d, index) {
 
-        var selected = _this.model.marker.isSelected(d);
+        const selected = _this.model.marker.isSelected(d);
 
-        var valueS = selected ? valuesNow.size[d[KEY]] : valuesLocked.size[d[KEY]];
+        const valueS = selected ? valuesNow.size[d[KEY]] : valuesLocked.size[d[KEY]];
         if (valueS == null) return;
 
-        var scaledS = utils.areaToRadius(_this.sScale(valueS));
+        const scaledS = utils.areaToRadius(_this.sScale(valueS));
         d3.select(this).attr("r", scaledS);
 
       //update lines of labels
         if (selected) {
 
-          var select = utils.find(_this.model.marker.select, f => f[KEY] == d[KEY]);
+          const select = utils.find(_this.model.marker.select, f => f[KEY] == d[KEY]);
 
-          var trailStartTime = _this.model.time.parse("" + select.trailStartTime);
+          const trailStartTime = _this.model.time.parse("" + select.trailStartTime);
 
           _this.model.marker.getFrame(trailStartTime, valuesTrailStart => {
             if (!valuesTrailStart) return utils.warn("redrawDataPointsOnlySize: empty data received from marker.getFrames(). doing nothing");
 
-            var cache = {};
+            const cache = {};
             if (!_this.model.ui.chart.trails || trailStartTime - _this.time == 0) {
               cache.scaledS0 = scaledS;
             } else {
@@ -1183,12 +1183,12 @@ var BubbleChartComp = Component.extend({
    * debouncing to improve performance: events might trigger it more than 1x
    */
   redrawDataPoints(duration) {
-    var _this = this;
-    var KEY = this.KEY;
+    const _this = this;
+    const KEY = this.KEY;
     if (duration == null) duration = _this.duration;
 
     if (this.model.ui.chart.lockNonSelected && this.someSelected) {
-      var time = this.model.time.parse("" + this.model.ui.chart.lockNonSelected);
+      const time = this.model.time.parse("" + this.model.ui.chart.lockNonSelected);
 
         //get values for locked frames
       this.model.marker.getFrame(time, lockedFrame => {
@@ -1196,7 +1196,7 @@ var BubbleChartComp = Component.extend({
 
             // each bubble
         _this.entityBubbles.each(function(d, index) {
-          var frame = _this.model.marker.isSelected(d) ? _this.frame : lockedFrame;
+          const frame = _this.model.marker.isSelected(d) ? _this.frame : lockedFrame;
           _this._updateBubble(d, frame, index, d3.select(this), duration);
         });
       });
@@ -1212,17 +1212,17 @@ var BubbleChartComp = Component.extend({
 
   //redraw Data Points
   _updateBubble(d, values, index, view, duration) {
-    var _this = this;
-    var KEY = this.KEY;
+    const _this = this;
+    const KEY = this.KEY;
 
-    var showhide = false;
+    let showhide = false;
 
-    var valueY = values.axis_y[d[KEY]];
-    var valueX = values.axis_x[d[KEY]];
-    var valueS = values.size[d[KEY]];
-    var valueL = values.label[d[KEY]];
-    var valueC = values.color[d[KEY]];
-    var valueLST = values.size_label[d[KEY]];
+    const valueY = values.axis_y[d[KEY]];
+    const valueX = values.axis_x[d[KEY]];
+    const valueS = values.size[d[KEY]];
+    const valueL = values.label[d[KEY]];
+    const valueC = values.color[d[KEY]];
+    const valueLST = values.size_label[d[KEY]];
 
     // check if fetching data succeeded
     if (!valueL && valueL !== 0 || !valueY && valueY !== 0 || !valueX && valueX !== 0 || !valueS && valueS !== 0) {
@@ -1234,7 +1234,7 @@ var BubbleChartComp = Component.extend({
 
       if (showhide) {
         if (duration) {
-          var opacity = view.style("opacity");
+          const opacity = view.style("opacity");
           view.transition().duration(duration).ease(d3.easeExp)
             .style("opacity", 0)
             .on("end", () => {
@@ -1255,13 +1255,13 @@ var BubbleChartComp = Component.extend({
 
 
       // if entity has all the data we update the visuals
-      var scaledS = utils.areaToRadius(_this.sScale(valueS));
+      const scaledS = utils.areaToRadius(_this.sScale(valueS));
 
       view.style("fill", valueC != null ? _this.cScale(valueC) : _this.COLOR_WHITEISH);
 
       if (duration) {
         if (showhide) {
-          var opacity = view.style("opacity");
+          const opacity = view.style("opacity");
           view.classed("vzb-invisible", d.hidden);
           view.style("opacity", 0)
             .attr("cy", _this.yScale(valueY))
@@ -1304,17 +1304,17 @@ var BubbleChartComp = Component.extend({
   },
 
   _updateLabel(d, index, valueX, valueY, valueS, valueC, valueL, valueLST, duration, showhide) {
-    var _this = this;
-    var KEY = this.KEY;
+    const _this = this;
+    const KEY = this.KEY;
 
     // only for selected markers
     if (_this.model.marker.isSelected(d)) {
 
-      var cache = {};
+      const cache = {};
 
-      var select = utils.find(_this.model.marker.select, f => f[KEY] == d[KEY]);
+      const select = utils.find(_this.model.marker.select, f => f[KEY] == d[KEY]);
 
-      var time = _this.model.time.formatDate(_this.time);
+      const time = _this.model.time.formatDate(_this.time);
       if (!this.model.ui.chart.trails || select.trailStartTime == time || select.trailStartTime == null) {
         if (this.model.ui.chart.trails && select.trailStartTime == null) select.trailStartTime = time; // need only when trailStartTime == null
 
@@ -1324,9 +1324,9 @@ var BubbleChartComp = Component.extend({
         cache.scaledS0 = (valueS || valueS === 0) ? utils.areaToRadius(_this.sScale(valueS)) : null;
       }
 
-      var trailStartTime = _this.model.time.parse("" + select.trailStartTime);
+      const trailStartTime = _this.model.time.parse("" + select.trailStartTime);
 
-      var labelText = valueL + (_this.model.ui.chart.trails ? " " + select.trailStartTime : "");
+      const labelText = valueL + (_this.model.ui.chart.trails ? " " + select.trailStartTime : "");
 
       if (showhide && d.hidden && _this.model.ui.chart.trails && trailStartTime && (trailStartTime < _this.time)) showhide = false;
       if (d.hidden && !_this.model.ui.chart.trails) showhide = true;
@@ -1337,12 +1337,12 @@ var BubbleChartComp = Component.extend({
   },
 
   _formatSTitleValues(titleS, titleC) {
-    var _this = this;
-    var unitS = this.strings.unit.S;
-    var unitC = this.strings.unit.C;
+    const _this = this;
+    const unitS = this.strings.unit.S;
+    const unitC = this.strings.unit.C;
 
-    var formatterS = this.model.marker.size.getTickFormatter();
-    var formatterC = this.model.marker.color.getTickFormatter();
+    const formatterS = this.model.marker.size.getTickFormatter();
+    const formatterC = this.model.marker.color.getTickFormatter();
 
     //resolve labels for colors via the color legend
     if (this.model.marker.color.isDiscrete() && this.model.marker.color.use !== "constant" && titleC && this.model.marker.color.getColorlegendMarker()) {
@@ -1365,9 +1365,9 @@ var BubbleChartComp = Component.extend({
     if (this.sTitleEl.classed("vzb-invisible")) {
       this.sTitleEl.classed("vzb-invisible", false);
     }
-    var sTitleContentON = this.model.marker.size.use !== "constant";
-    var cTitleContentON = this.model.marker.color.use !== "constant";
-    var sTitleText = this.sTitleEl.select("text")
+    const sTitleContentON = this.model.marker.size.use !== "constant";
+    const cTitleContentON = this.model.marker.color.use !== "constant";
+    const sTitleText = this.sTitleEl.select("text")
       // reset font size to remove jumpy measurement
       .style("font-size", null)
       .text(
@@ -1375,15 +1375,15 @@ var BubbleChartComp = Component.extend({
       (sTitleContentON && cTitleContentON ? ", " : "") +
       (cTitleContentON ? this.translator("buttons/colors") + ": " + (titleC ? titleC : this.strings.title.C) : "")
     );
-    var sTitleWidth = sTitleText.node().getBBox().width;
-    var remainigHeight = this.height - 30;
-    var font = parseInt(sTitleText.style("font-size")) * remainigHeight / sTitleWidth;
+    const sTitleWidth = sTitleText.node().getBBox().width;
+    const remainigHeight = this.height - 30;
+    const font = parseInt(sTitleText.style("font-size")) * remainigHeight / sTitleWidth;
     sTitleText.style("font-size", sTitleWidth > remainigHeight ? font + "px" : null);
   },
 
   selectDataPoints() {
-    var _this = this;
-    var KEY = this.KEY;
+    const _this = this;
+    const KEY = this.KEY;
 
     if (utils.isTouchDevice()) {
       _this.model.marker.clearHighlighted();
@@ -1420,7 +1420,7 @@ var BubbleChartComp = Component.extend({
 
   _setTooltip(tooltipText, x, y, offset, glow) {
     if (tooltipText) {
-      var xPos, yPos, xSign = -1,
+      let xPos, yPos, xSign = -1,
         ySign = -1,
         xOffset = 0,
         yOffset = 0;
@@ -1435,7 +1435,7 @@ var BubbleChartComp = Component.extend({
         .selectAll("text")
         .text(tooltipText);
 
-      var contentBBox = this.tooltip.select("text").node().getBBox();
+      const contentBBox = this.tooltip.select("text").node().getBBox();
       if (x - xOffset - contentBBox.width < 0) {
         xSign = 1;
         x += contentBBox.width + 5; // corrective to the block Radius and text padding
@@ -1477,17 +1477,17 @@ var BubbleChartComp = Component.extend({
    * Shows and hides axis projections
    */
   _axisProjections(d) {
-    var _this = this;
-    var TIMEDIM = this.TIMEDIM;
-    var KEY = this.KEY;
+    const _this = this;
+    const TIMEDIM = this.TIMEDIM;
+    const KEY = this.KEY;
 
     if (d != null) {
 
       this.model.marker.getFrame(d[TIMEDIM], values => {
-        var valueY = values.axis_y[d[KEY]];
-        var valueX = values.axis_x[d[KEY]];
-        var valueS = values.size[d[KEY]];
-        var radius = utils.areaToRadius(_this.sScale(valueS));
+        const valueY = values.axis_y[d[KEY]];
+        const valueX = values.axis_x[d[KEY]];
+        const valueS = values.size[d[KEY]];
+        const radius = utils.areaToRadius(_this.sScale(valueS));
 
         if (!valueY && valueY !== 0 || !valueX && valueX !== 0 || !valueS && valueS !== 0) return;
 
@@ -1535,16 +1535,16 @@ var BubbleChartComp = Component.extend({
    * Highlights all hovered bubbles
    */
   highlightDataPoints() {
-    var _this = this;
-    var TIMEDIM = this.TIMEDIM;
-    var KEY = this.KEY;
+    const _this = this;
+    const TIMEDIM = this.TIMEDIM;
+    const KEY = this.KEY;
 
     this.someHighlighted = (this.model.marker.highlight.length > 0);
 
     this.updateBubbleOpacity();
 
     if (this.model.marker.highlight.length === 1) {
-      var d = utils.clone(this.model.marker.highlight[0]);
+      const d = utils.clone(this.model.marker.highlight[0]);
 
       if (_this.model.ui.chart.lockNonSelected && _this.someSelected && !_this.model.marker.isSelected(d)) {
         d[TIMEDIM] = _this.model.time.parse("" + _this.model.ui.chart.lockNonSelected);
@@ -1554,24 +1554,24 @@ var BubbleChartComp = Component.extend({
 
       _this.model.marker.getFrame(d[TIMEDIM], values => {
         if (!values) return;
-        var x = _this.xScale(values.axis_x[d[KEY]]);
-        var y = _this.yScale(values.axis_y[d[KEY]]);
-        var s = utils.areaToRadius(_this.sScale(values.size[d[KEY]]));
-        var c = values.color[d[KEY]] != null ? _this.cScale(values.color[d[KEY]]) : _this.COLOR_WHITEISH;
-        var entityOutOfView = false;
+        const x = _this.xScale(values.axis_x[d[KEY]]);
+        const y = _this.yScale(values.axis_y[d[KEY]]);
+        const s = utils.areaToRadius(_this.sScale(values.size[d[KEY]]));
+        const c = values.color[d[KEY]] != null ? _this.cScale(values.color[d[KEY]]) : _this.COLOR_WHITEISH;
+        let entityOutOfView = false;
 
-        var titles = _this._formatSTitleValues(values.size[d[KEY]], values.color[d[KEY]]);
+        const titles = _this._formatSTitleValues(values.size[d[KEY]], values.color[d[KEY]]);
         _this._updateSTitle(titles[0], titles[1]);
         if (x + s < 0 || x - s > _this.width || y + s < 0 || y - s > _this.height) {
           entityOutOfView = true;
         }
 
           //show tooltip
-        var text = "";
-        var hoverTrail = false;
+        let text = "";
+        let hoverTrail = false;
         if (_this.model.marker.isSelected(d) && _this.model.ui.chart.trails) {
           text = _this.model.time.formatDate(_this.time);
-          var selectedData = utils.find(_this.model.marker.select, f => f[KEY] == d[KEY]);
+          const selectedData = utils.find(_this.model.marker.select, f => f[KEY] == d[KEY]);
           hoverTrail = text !== selectedData.trailStartTime && !d3.select(d3.event.target).classed("bubble-" + d[KEY]);
           text = text !== selectedData.trailStartTime && _this.time === d[TIMEDIM] ? text : "";
         } else {
@@ -1581,7 +1581,7 @@ var BubbleChartComp = Component.extend({
         _this._labels.highlight(null, false);
         _this._labels.highlight(d, true);
         if (_this.model.marker.isSelected(d)) {
-          var skipCrownInnerFill = !d.trailStartTime || d.trailStartTime == _this.model.time.formatDate(_this.time);
+          const skipCrownInnerFill = !d.trailStartTime || d.trailStartTime == _this.model.time.formatDate(_this.time);
           _this._setBubbleCrown(x, y, s, c, skipCrownInnerFill);
         }
 
@@ -1594,9 +1594,9 @@ var BubbleChartComp = Component.extend({
           _this._setTooltip(text, x, y, s + 3, c);
         }
 
-        var selectedData = utils.find(_this.model.marker.select, f => f[KEY] == d[KEY]);
+        const selectedData = utils.find(_this.model.marker.select, f => f[KEY] == d[KEY]);
         if (selectedData) {
-          var clonedSelectedData = utils.clone(selectedData);
+          const clonedSelectedData = utils.clone(selectedData);
             //change opacity to OPACITY_HIGHLT = 1.0;
           clonedSelectedData.opacity = 1.0;
           _this._trails.run(["opacityHandler"], clonedSelectedData);
@@ -1615,14 +1615,14 @@ var BubbleChartComp = Component.extend({
   },
 
   updateBubbleOpacity(duration) {
-    var _this = this;
+    const _this = this;
     //if(!duration)duration = 0;
 
-    var OPACITY_HIGHLT = 1.0;
-    var OPACITY_HIGHLT_DIM = this.model.marker.opacityHighlightDim;
-    var OPACITY_SELECT = this.model.marker.opacityRegular;
-    var OPACITY_REGULAR = this.model.marker.opacityRegular;
-    var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
+    const OPACITY_HIGHLT = 1.0;
+    const OPACITY_HIGHLT_DIM = this.model.marker.opacityHighlightDim;
+    const OPACITY_SELECT = this.model.marker.opacityRegular;
+    const OPACITY_REGULAR = this.model.marker.opacityRegular;
+    const OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
 
     this.entityBubbles
       //.transition().duration(duration)
@@ -1644,7 +1644,7 @@ var BubbleChartComp = Component.extend({
       });
 
 
-    var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
+    const nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
 
     // when pointer events need update...
     if (nonSelectedOpacityZero != this.nonSelectedOpacityZero) {

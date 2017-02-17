@@ -3,12 +3,12 @@ import Component from "base/component";
 
 import { warn as iconWarn, close as iconClose } from "base/iconset";
 
-var hidden = true;
+let hidden = true;
 
-var DataWarning = Component.extend({
+const DataWarning = Component.extend({
 
   init(config, context) {
-    var _this = this;
+    const _this = this;
 
     this.name = "gapminder-datawarning";
 
@@ -35,7 +35,7 @@ var DataWarning = Component.extend({
   },
 
   readyOnce() {
-    var _this = this;
+    const _this = this;
     this.element = d3.select(this.placeholder);
 
     this.element.selectAll("div").remove();
@@ -59,7 +59,7 @@ var DataWarning = Component.extend({
       .attr("height", "0px")
       .attr("class", "vzb-data-warning-close");
 
-    var icon = this.container.append("div")
+    const icon = this.container.append("div")
       .attr("class", "vzb-data-warning-link")
       .html(iconWarn);
 
@@ -78,7 +78,7 @@ var DataWarning = Component.extend({
     this.container.select(".vzb-data-warning-link div")
       .text(this.translator("hints/dataWarning"));
 
-    var title = this.translator("datawarning/title/" + this.parent.name);
+    const title = this.translator("datawarning/title/" + this.parent.name);
     this.container.select(".vzb-data-warning-title")
       .html(title)
       .classed("vzb-hidden", !title || title == ("datawarning/title/" + this.parent.name));
@@ -92,7 +92,7 @@ var DataWarning = Component.extend({
     hidden = arg;
     this.element.classed("vzb-hidden", hidden);
 
-    var _this = this;
+    const _this = this;
     this.parent.components.forEach(c => {
       c.element.classed("vzb-blur", c != _this && !hidden);
     });

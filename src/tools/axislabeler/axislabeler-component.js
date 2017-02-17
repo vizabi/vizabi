@@ -5,7 +5,7 @@ import axisSmart from "helpers/d3.axisWithLabelPicker";
 
 
 //BAR CHART COMPONENT
-var AxisLabelerComponent = Component.extend({
+const AxisLabelerComponent = Component.extend({
 
   /**
    * Initializes the component (Bar Chart).
@@ -20,7 +20,7 @@ var AxisLabelerComponent = Component.extend({
     //define expected models for this component
     this.model_expects = [{ name: "scales" }, { name: "show" }];
 
-    var _this = this;
+    const _this = this;
 
     this.model_binds = {
       "change:scales": function(evt) {
@@ -47,7 +47,7 @@ var AxisLabelerComponent = Component.extend({
    * DOM is ready
    */
   readyOnce() {
-    var _this = this;
+    const _this = this;
     this.element = d3.select(this.element);
 
     // reference elements
@@ -83,9 +83,9 @@ var AxisLabelerComponent = Component.extend({
   },
 
   initScales() {
-    var _this = this;
+    const _this = this;
 
-    var domain = this.model.scales.domain;
+    const domain = this.model.scales.domain;
 
     this.xScale = d3.scale[this.model.scales.xScaleType]();
     this.yScale = d3.scale[this.model.scales.yScaleType]();
@@ -100,13 +100,13 @@ var AxisLabelerComponent = Component.extend({
 
 
   update() {
-    var _this = this;
+    const _this = this;
 
-    var margin = this.model.show.toolMargin.getPlainObject();
+    const margin = this.model.show.toolMargin.getPlainObject();
 
     //stage
-    var height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
-    var width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
+    const height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
+    const width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
 
     if (height <= 0 || width <= 0) return utils.warn("Axis Labeler update() call interrupted for Vizabi container is too little or has display:none");
 
@@ -114,8 +114,8 @@ var AxisLabelerComponent = Component.extend({
     this.graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     //update scales to the new range
-    var xLength = this.xScale.domain().length;
-    var yLength = this.yScale.domain().length;
+    const xLength = this.xScale.domain().length;
+    const yLength = this.yScale.domain().length;
     this.xScale.range(d3.range(xLength).map(n => width / (xLength - 1) * n)); //.nice();
     this.yScale.range(d3.range(yLength).map(n => height / (yLength - 1) * n).reverse()); //.nice();
 
@@ -145,19 +145,19 @@ var AxisLabelerComponent = Component.extend({
     //this.yAxisEl.selectAll("text").style('font-size',this.model.show.labelSize);
 
 
-    var path = this.graph.selectAll(".vzb-al-line").data([0]);
+    const path = this.graph.selectAll(".vzb-al-line").data([0]);
     path.enter().append("path")
       .attr("class", "vzb-al-line");
     path.datum(this.mockData).attr("d", this.line);
 
-    var pathInvert = this.graph.selectAll(".vzb-al-line-invert").data([0]);
+    const pathInvert = this.graph.selectAll(".vzb-al-line-invert").data([0]);
     pathInvert.enter().append("path")
       .attr("class", "vzb-al-line-invert");
     pathInvert.datum(this.mockData).attr("d", this.lineInvert);
 
-    var format = d3.format(".4r");
+    const format = d3.format(".4r");
 
-    var dots = this.graph.selectAll(".vzb-al-dots").data(this.mockData);
+    const dots = this.graph.selectAll(".vzb-al-dots").data(this.mockData);
     dots.enter().append("circle")
       .attr("class", "vzb-al-dots")
       .attr("r", 5)
@@ -168,7 +168,7 @@ var AxisLabelerComponent = Component.extend({
     dots.attr("cx", d => _this.xScale(d))
       .attr("cy", d => _this.yScale(d));
 
-    var dotsInvert = this.graph.selectAll(".vzb-al-dots-invert").data(this.mockData);
+    const dotsInvert = this.graph.selectAll(".vzb-al-dots-invert").data(this.mockData);
     dotsInvert.enter().append("circle")
       .attr("class", "vzb-al-dots-invert")
       .attr("r", 5)

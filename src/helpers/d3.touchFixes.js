@@ -7,7 +7,7 @@ function touchcancel() {
   d3.event.target.dispatchEvent(new TouchEvent("touchend", d3.event));
 }
 
-var drag = (function(_d3_behaviour_drag) {
+const drag = (function(_d3_behaviour_drag) {
   if (!isTouchDevice()) return _d3_behaviour_drag;
 
   return function() {
@@ -26,7 +26,7 @@ var drag = (function(_d3_behaviour_drag) {
 })(d3.behavior.drag);
 
 
-var zoom = (function(_d3_behaviour_zoom) {
+const zoom = (function(_d3_behaviour_zoom) {
   if (!isTouchDevice()) return _d3_behaviour_zoom;
 
   return function() {
@@ -48,7 +48,7 @@ var zoom = (function(_d3_behaviour_zoom) {
 })(d3.behavior.zoom);
 
 
-var brush = (function(_d3_svg_brush) {
+const brush = (function(_d3_svg_brush) {
   if (!isTouchDevice()) return _d3_svg_brush;
 
   function d3_window(node) {
@@ -62,7 +62,7 @@ var brush = (function(_d3_svg_brush) {
       function brushstart() {
         brush.on("brushend.touchcancel", brushend);
 
-        var w = d3.select(d3_window(this));
+        const w = d3.select(d3_window(this));
         w.on("touchcancel.brush", touchcancel);
 
         function brushend() {
@@ -74,7 +74,7 @@ var brush = (function(_d3_svg_brush) {
       function brush(g) {
         _super(g);
         g.each(function() {
-          var g = d3.select(this).on("mousedown.brush", null);
+          const g = d3.select(this).on("mousedown.brush", null);
         });
         brush.on("brushstart.touchcancel", brushstart);
       }

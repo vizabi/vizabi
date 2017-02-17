@@ -6,7 +6,7 @@ import EventSource from "base/events";
  * HOOK MODEL
  */
 
-var Hook = DataConnected.extend({
+const Hook = DataConnected.extend({
 
   //some hooks can be important. like axis x and y
   //that means, if X or Y doesn't have data at some point, we can't show markers
@@ -16,7 +16,7 @@ var Hook = DataConnected.extend({
   dataConnectedChildren: ["use", "which"],
 
   getClassDefaults() {
-    var defaults = {
+    const defaults = {
       data: "data",
       which: null
     };
@@ -31,7 +31,7 @@ var Hook = DataConnected.extend({
    * After complete model tree is created, this allows models to listen to eachother.
    */
   setInterModelListeners() {
-    var spaceRefs = this._parent.getSpace(this);
+    const spaceRefs = this._parent.getSpace(this);
 
     //check what we want to hook this model to
     utils.forEach(spaceRefs, name => {
@@ -50,11 +50,11 @@ var Hook = DataConnected.extend({
 
   setWhich(newValue) {
 
-    var obj = { which: newValue.concept };
+    const obj = { which: newValue.concept };
 
     if (newValue.dataSource) obj.data = newValue.dataSource;
-    var newDataSource = this.getClosestModel(obj.data || this.data);
-    var conceptProps = newDataSource.getConceptprops(newValue.concept);
+    const newDataSource = this.getClosestModel(obj.data || this.data);
+    const conceptProps = newDataSource.getConceptprops(newValue.concept);
 
     if (newValue.which === "_default") {
       obj.use = "constant";
@@ -116,7 +116,7 @@ var Hook = DataConnected.extend({
     // TODO: should be set on data source switch, but load happens before change events
     this.dataSource = this.getClosestModel(this.data);
 
-    var query = this.getQuery(opts.splashScreen);
+    const query = this.getQuery(opts.splashScreen);
 
     if (query === true) return Promise.resolve();
 
@@ -127,8 +127,8 @@ var Hook = DataConnected.extend({
 
     utils.timeStamp("Vizabi Model: Loading Data: " + this._id);
 
-    var parsers = this._getAllParsers();
-    var dataPromise = this.dataSource.load(query, parsers);
+    const parsers = this._getAllParsers();
+    const dataPromise = this.dataSource.load(query, parsers);
 
     dataPromise.then(
       this.afterLoad.bind(this),
@@ -165,9 +165,7 @@ var Hook = DataConnected.extend({
    * @returns {Array} query
    */
   getQuery(splashScreen) {
-    var _this = this;
-
-    var dimensions, filters, select, from, order_by, q, animatable;
+    let filters;
 
     //error if there's nothing to hook to
     if (Object.keys(this._space).length < 1) {
@@ -175,13 +173,13 @@ var Hook = DataConnected.extend({
       return true;
     }
 
-    var prop = (this.use === "property") || (this.use === "constant");
-    var exceptions = (prop) ? { exceptType: "time" } : {};
+    const prop = (this.use === "property") || (this.use === "constant");
+    const exceptions = (prop) ? { exceptType: "time" } : {};
 
     // select
     // we remove this.which from values if it duplicates a dimension
-    var allDimensions = utils.unique(this._getAllDimensions(exceptions));
-    var dimensions = (prop && allDimensions.length > 1) ? [(this.spaceRef ? this._space[this.spaceRef].dim : this.which)] : allDimensions;
+    const allDimensions = utils.unique(this._getAllDimensions(exceptions));
+    let dimensions = (prop && allDimensions.length > 1) ? [(this.spaceRef ? this._space[this.spaceRef].dim : this.which)] : allDimensions;
 
     dimensions = dimensions.filter(f => f !== "_default");// && f!==null);
     if (!dimensions || !dimensions.length) {
@@ -189,40 +187,40 @@ var Hook = DataConnected.extend({
       return true;
     }
 
-    select = {
+    const select = {
       key: dimensions,
       value: dimensions.indexOf(this.which) != -1 || this.use === "constant" ? [] : [this.which]
     };
 
     // animatable
-    animatable = this._getFirstDimension({ type: "time" });
+    const animatable = this._getFirstDimension({ type: "time" });
 
     // from
-    from = prop ? "entities" : "datapoints";
+    const from = prop ? "entities" : "datapoints";
 
     // where
     filters = this._getAllFilters(exceptions, splashScreen);
     if (prop && allDimensions.length > 1) {
-      var f = {};
+      const f = {};
       if (filters[dimensions]) f[dimensions] = filters[dimensions];
       filters = f;
     }
 
     // make root $and explicit
-    var explicitAndFilters =  {};
+    const explicitAndFilters =  {};
     if (Object.keys(filters).length > 0) {
       explicitAndFilters["$and"] = [];
-      for (var filterKey in filters) {
-        var filter = {};
+      for (const filterKey in filters) {
+        const filter = {};
         filter[filterKey] = filters[filterKey];
         explicitAndFilters["$and"].push(filter);
       }
     }
 
     // join
-    var join = this._getAllJoins(exceptions, splashScreen);
+    let join = this._getAllJoins(exceptions, splashScreen);
     if (prop && allDimensions.length > 1) {
-      var j = {};
+      const j = {};
       if (join["$" + dimensions]) j["$" + dimensions] = join["$" + dimensions];
       join = j;
     }
@@ -272,8 +270,8 @@ var Hook = DataConnected.extend({
    */
   _getAllFilters(opts, splashScreen) {
     opts = opts || {};
-    var filters = {};
-    var _this = this;
+    let filters = {};
+    const _this = this;
     utils.forEach(this._space, h => {
       if (opts.exceptType && h.getType() === opts.exceptType) {
         return true;
@@ -286,9 +284,9 @@ var Hook = DataConnected.extend({
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
         filters = utils.extend(filters, h.getFilter(splashScreen));
       } else {
-        var joinFilter = h.getFilter(splashScreen);
+        const joinFilter = h.getFilter(splashScreen);
         if (joinFilter != null && !utils.isEmpty(joinFilter)) {
-          var filter = {};
+          const filter = {};
           filter[h.getDimension()] = "$"  + h.getDimension();
           filters = utils.extend(filters, filter);
         }
@@ -298,8 +296,8 @@ var Hook = DataConnected.extend({
   },
 
   _getAllJoins(opts, splashScreen) {
-    var joins = {};
-    var _this = this;
+    const joins = {};
+    const _this = this;
     utils.forEach(this._space, h => {
       if (opts.exceptType && h.getType() === opts.exceptType) {
         return true;
@@ -312,7 +310,7 @@ var Hook = DataConnected.extend({
       }
       if (h.skipFilter) return;
 
-      var filter = h.getFilter(splashScreen);
+      const filter = h.getFilter(splashScreen);
       if (filter != null && !utils.isEmpty(filter)) {
         joins["$" + h.getDimension()] = {
           key: h.getDimension(),
@@ -329,12 +327,12 @@ var Hook = DataConnected.extend({
    */
   _getAllParsers() {
 
-    var parsers = {};
+    const parsers = {};
 
     function addParser(model) {
       // get parsers from model
-      var parser = model.getParser();
-      var column = model.getDimensionOrWhich();
+      const parser = model.getParser();
+      const column = model.getDimensionOrWhich();
       if (parser && column) {
         parsers[column] = parser;
       }
@@ -351,18 +349,18 @@ var Hook = DataConnected.extend({
 
   /**
    * Gets tick values for this hook
-   * @returns {Number|String} value The value for this tick
+   * @returns {Function} That returns the value for this tick
    */
   getTickFormatter() {
 
-    var _this = this;
-    var SHARE = "share";
-    var PERCENT = "percent";
+    const _this = this;
+    const SHARE = "share";
+    const PERCENT = "percent";
 
     // percentageMode works like rounded if set to SHARE, but multiplies by 100 and suffixes with "%"
     // percentageMode works like rounded if set to PERCENT, but suffixes with "%"
 
-    return function format(x, index, group, removePrefix, percentageMode) {
+    return (x, index, group, removePrefix, percentageMode) => {
 
       percentageMode = _this.getConceptprops().format;
       if (percentageMode === SHARE) x *= 100;
@@ -381,10 +379,10 @@ var Hook = DataConnected.extend({
 
       if (Math.abs(x) < 0.00000000000001) return "0";
 
-      var format = "r"; //rounded format. use "f" for fixed
-      var prec = 3; //round to so many significant digits
+      const format = "r"; //rounded format. use "f" for fixed
+      const prec = 3; //round to so many significant digits
 
-      var prefix = "";
+      let prefix = "";
       if (removePrefix) return d3.format("." + prec + format)(x);
 
     //---------------------
@@ -423,7 +421,7 @@ var Hook = DataConnected.extend({
     }
     /* eslint-enable */
 
-      var formatted = d3.format("." + prec + format)(x);
+      let formatted = d3.format("." + prec + format)(x);
     //remove trailing zeros if dot exists to avoid numbers like 1.0M, 3.0B, 1.500, 0.9700, 0.0
       if (formatted.indexOf(".") > -1) formatted = formatted.replace(/0+$/, "").replace(/\.$/, "");
 
@@ -501,9 +499,9 @@ var Hook = DataConnected.extend({
    * gets hook values according dimension values
    */
   getItems() {
-    var _this = this;
-    var dim = this.spaceRef && this._space[this.spaceRef] ? this._space[this.spaceRef].dim : _this._getFirstDimension({ exceptType: "time" });
-    var items = {};
+    const _this = this;
+    const dim = this.spaceRef && this._space[this.spaceRef] ? this._space[this.spaceRef].dim : _this._getFirstDimension({ exceptType: "time" });
+    const items = {};
     this.getValidItems().forEach(d => {
       items[d[dim]] = d[_this.which];
     });
@@ -511,17 +509,17 @@ var Hook = DataConnected.extend({
   },
 
   getLimitsByDimensions(dims) {
-    var filtered = this.dataSource.getData(this._dataId, "nested", dims);
-    var values = {};
-    var limitsDim = {};
-    var attr = this.which;
+    const filtered = this.dataSource.getData(this._dataId, "nested", dims);
+    const values = {};
+    const limitsDim = {};
+    const attr = this.which;
 
-    var countLimits = function(items, limitsDim, id) {
+    const countLimits = function(items, limitsDim, id) {
 
-      var filtered = items.reduce((filtered, d) => {
+      const filtered = items.reduce((filtered, d) => {
 
         // check for dates
-        var f = (utils.isDate(d[attr])) ? d[attr] : parseFloat(d[attr]);
+        const f = (utils.isDate(d[attr])) ? d[attr] : parseFloat(d[attr]);
 
         // if it is a number
         if (!isNaN(f)) {
@@ -533,11 +531,11 @@ var Hook = DataConnected.extend({
       }, []);
 
       // get min/max for the filtered rows
-      var min;
-      var max;
-      var limits = {};
-      for (var i = 0; i < filtered.length; i += 1) {
-        var c = filtered[i];
+      let min;
+      let max;
+      const limits = {};
+      for (let i = 0; i < filtered.length; i += 1) {
+        const c = filtered[i];
         if (typeof min === "undefined" || c < min) {
           min = c;
         }
@@ -551,7 +549,7 @@ var Hook = DataConnected.extend({
 
     };
 
-    var iterateGroupKeys = function(data, deep, result, cb) {
+    const iterateGroupKeys = function(data, deep, result, cb) {
       deep--;
       utils.forEach(data, (d, id) => {
         if (deep) {
@@ -587,7 +585,7 @@ var Hook = DataConnected.extend({
   validate() {
     this._super();
 
-    var allowedScales = this.getConceptprops().scales;
+    const allowedScales = this.getConceptprops().scales;
     if (allowedScales && allowedScales.length > 0 && !allowedScales.includes(this.scaleType)) {
       this.set({ scaleType: allowedScales[0] === "nominal" ? "ordinal" : allowedScales[0] }, null, false);
     }

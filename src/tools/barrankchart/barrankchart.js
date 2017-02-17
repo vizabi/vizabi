@@ -11,7 +11,7 @@ import datanotes from "components/datanotes/datanotes";
 import datawarning from "components/datawarning/datawarning";
 import steppedSpeedSlider from "components/steppedspeedslider/steppedspeedslider";
 
-var BarRankChart = Tool.extend("BarRankChart", {
+const BarRankChart = Tool.extend("BarRankChart", {
 
   //Run when the tool is created
   init(placeholder, external_model) {

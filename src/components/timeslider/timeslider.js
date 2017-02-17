@@ -2,19 +2,19 @@ import * as utils from "base/utils";
 import Component from "base/component";
 
 
-var precision = 1;
+const precision = 1;
 
 //constants
-var class_playing = "vzb-playing";
-var class_loading = "vzb-ts-loading";
-var class_hide_play = "vzb-ts-hide-play-button";
-var class_dragging = "vzb-ts-dragging";
-var class_axis_aligned = "vzb-ts-axis-aligned";
-var class_show_value = "vzb-ts-show-value";
-var class_show_value_when_drag_play = "vzb-ts-show-value-when-drag-play";
+const class_playing = "vzb-playing";
+const class_loading = "vzb-ts-loading";
+const class_hide_play = "vzb-ts-hide-play-button";
+const class_dragging = "vzb-ts-dragging";
+const class_axis_aligned = "vzb-ts-axis-aligned";
+const class_show_value = "vzb-ts-show-value";
+const class_show_value_when_drag_play = "vzb-ts-show-value-when-drag-play";
 
 //margins for slider
-var profiles = {
+const profiles = {
   small: {
     margin: {
       top: 7,
@@ -48,7 +48,7 @@ var profiles = {
 };
 
 
-var presentationProfileChanges = {
+const presentationProfileChanges = {
   "medium": {
     margin: {
       top: 9
@@ -60,7 +60,7 @@ var presentationProfileChanges = {
   }
 };
 
-var TimeSlider = Component.extend({
+const TimeSlider = Component.extend({
   /**
    * Initializes the timeslider.
    * Executed once before any template is rendered.
@@ -87,7 +87,7 @@ var TimeSlider = Component.extend({
       type: "ui"
     }];
 
-    var _this = this;
+    const _this = this;
     //binds methods to this model
     this.model_binds = {
       "change:time": function(evt, path) {
@@ -156,7 +156,7 @@ var TimeSlider = Component.extend({
   //template is ready
   readyOnce() {
 
-    var _this = this;
+    const _this = this;
 
     //DOM to d3
     //TODO: remove this ugly hack
@@ -181,8 +181,8 @@ var TimeSlider = Component.extend({
     //Value
     this.valueText.attr("text-anchor", "middle").attr("dy", "-0.7em");
 
-    var brushed = _this._getBrushed(),
-      brushedEnd = _this._getBrushedEnd();
+    const brushed = _this._getBrushed();
+    const brushedEnd = _this._getBrushedEnd();
 
     //Brush for dragging
     // this.brush = d3.brushX()
@@ -235,7 +235,7 @@ var TimeSlider = Component.extend({
 
     // special for linechart: resize timeslider to match time x-axis length
     this.parent.on("myEvent", (evt, arg) => {
-      var layoutProfile = _this.getLayoutProfile();
+      const layoutProfile = _this.getLayoutProfile();
 
       if (arg.profile && arg.profile.margin) {
         profiles[layoutProfile].margin = arg.profile.margin;
@@ -259,10 +259,10 @@ var TimeSlider = Component.extend({
 
     this.element.classed(class_loading, false);
 
-    var play = this.element.select(".vzb-ts-btn-play");
-    var pause = this.element.select(".vzb-ts-btn-pause");
-    var _this = this;
-    var time = this.model.time;
+    const play = this.element.select(".vzb-ts-btn-play");
+    const pause = this.element.select(".vzb-ts-btn-pause");
+    const _this = this;
+    const time = this.model.time;
 
     play.on("click", () => {
 
@@ -285,8 +285,8 @@ var TimeSlider = Component.extend({
   },
 
   changeLimits() {
-    var minValue = this.model.time.start;
-    var maxValue = this.model.time.end;
+    const minValue = this.model.time.start;
+    const maxValue = this.model.time.end;
     //scale
     this.xScale.domain([minValue, maxValue]);
     //axis
@@ -296,7 +296,7 @@ var TimeSlider = Component.extend({
 
   changeTime() {
     //time slider should always receive a time model
-    var time = this.model.time.value;
+    const time = this.model.time.value;
     //special classes
     this._optionClasses();
   },
@@ -312,14 +312,14 @@ var TimeSlider = Component.extend({
 
     this.profile = this.getActiveProfile(profiles, presentationProfileChanges);
 
-    var slider_w = parseInt(this.slider_outer.style("width"), 10) || 0;
-    var slider_h = parseInt(this.slider_outer.style("height"), 10) || 0;
+    const slider_w = parseInt(this.slider_outer.style("width"), 10) || 0;
+    const slider_h = parseInt(this.slider_outer.style("height"), 10) || 0;
 
     if (!slider_h || !slider_w) return utils.warn("time slider resize() aborted because element is too small or has display:none");
 
     this.width = slider_w - this.profile.margin.left - this.profile.margin.right;
     this.height = slider_h - this.profile.margin.bottom - this.profile.margin.top;
-    var _this = this;
+    const _this = this;
 
     //translate according to margins
     this.slider.attr("transform", "translate(" + this.profile.margin.left + "," + this.profile.margin.top + ")");
@@ -360,11 +360,11 @@ var TimeSlider = Component.extend({
   },
 
   setSelectedLimits(force) {
-    var _this = this;
+    const _this = this;
     this._setSelectedLimitsId++;
-    var _setSelectedLimitsId = this._setSelectedLimitsId;
+    const _setSelectedLimitsId = this._setSelectedLimitsId;
 
-    var select = _this.model.marker.select;
+    const select = _this.model.marker.select;
     if (select.length == 0) {
       _this.model.time.set({
         startSelected: new Date(_this.model.time.start),
@@ -372,16 +372,16 @@ var TimeSlider = Component.extend({
       }, null, false  /*make change non-persistent for URL and history*/);
       return;
     }
-    var KEY = _this.model.entities.getDimension();
-    var proms = [];
+    const KEY = _this.model.entities.getDimension();
+    const proms = [];
     utils.forEach(select, entity => {
       proms.push(_this.model.marker.getEntityLimits(entity[KEY]));
     });
     Promise.all(proms).then(limits => {
       if (_setSelectedLimitsId != _this._setSelectedLimitsId) return;
-      var first = limits.shift();
-      var min = first.min;
-      var max = first.max;
+      const first = limits.shift();
+      let min = first.min;
+      let max = first.max;
       utils.forEach(limits, limit => {
         if (min - limit.min > 0) min = limit.min;
         if (max - limit.max < 0) max = limit.max;
@@ -395,7 +395,7 @@ var TimeSlider = Component.extend({
   },
 
   updateSelectedStartLimiter() {
-    var _this = this;
+    const _this = this;
     this.select.select("#clip-start-" + _this._id).remove();
     this.select.select(".selected-start").remove();
     if (this.model.time.startSelected && this.model.time.startSelected > this.model.time.start) {
@@ -410,7 +410,7 @@ var TimeSlider = Component.extend({
   },
 
   updateSelectedEndLimiter() {
-    var _this = this;
+    const _this = this;
     this.select.select("#clip-end-" + _this._id).remove();
     this.select.select(".selected-end").remove();
     if (this.model.time.endSelected && this.model.time.endSelected < this.model.time.end) {
@@ -425,7 +425,7 @@ var TimeSlider = Component.extend({
   },
 
   resizeSelectedLimiters() {
-    var _this = this;
+    const _this = this;
     this.select.select(".selected-start")
       .attr("d", "M0,0H" + this.xScale(this.model.time.startSelected));
     this.select.select("#clip-start-" + _this._id).select("rect")
@@ -443,7 +443,7 @@ var TimeSlider = Component.extend({
   },
 
   _resizeProgressBar() {
-    var _this = this;
+    const _this = this;
     this.progressBar.selectAll("path")
       .each(function(d) {
         d3.select(this)
@@ -452,12 +452,12 @@ var TimeSlider = Component.extend({
   },
 
   _updateProgressBar(time) {
-    var _this = this;
+    const _this = this;
     if (time) {
       if (_this.completedTimeFrames.indexOf(time) != -1) return;
       _this.completedTimeFrames.push(time);
-      var next = _this.model.time.incrementTime(time);
-      var prev = _this.model.time.decrementTime(time);
+      let next = _this.model.time.incrementTime(time);
+      const prev = _this.model.time.decrementTime(time);
       if (next > _this.model.time.end) {
         if (time - _this.model.time.end == 0) {
           next = time;
@@ -471,7 +471,7 @@ var TimeSlider = Component.extend({
       } else if (next < _this.availableTimeFrames[0][0]) {
         _this.availableTimeFrames.unshift([time, next]);
       } else {
-        for (var i = 0; i < _this.availableTimeFrames.length; i++) {
+        for (let i = 0; i < _this.availableTimeFrames.length; i++) {
           if (time - _this.availableTimeFrames[i][1] == 0) {
             if (i + 1 < _this.availableTimeFrames.length && next - _this.availableTimeFrames[i + 1][0] == 0) {
               _this.availableTimeFrames[i][1] = _this.availableTimeFrames[i + 1][1];
@@ -496,14 +496,14 @@ var TimeSlider = Component.extend({
       _this.completedTimeFrames = [];
     }
 
-    var progress = this.progressBar.selectAll("path").data(_this.availableTimeFrames);
+    const progress = this.progressBar.selectAll("path").data(_this.availableTimeFrames);
     progress.exit().remove();
     progress.enter()
       .append("path")
       .attr("class", "domain")
       .merge(progress)
       .each(function(d) {
-        var element = d3.select(this);
+        const element = d3.select(this);
         element.attr("d", "M" + _this.xScale(d[0]) + ",0H" + _this.xScale(d[1]))
           .classed("rounded", _this.availableTimeFrames.length == 1);
 
@@ -524,7 +524,7 @@ var TimeSlider = Component.extend({
    * @returns {Function} brushed function
    */
   _getBrushed() {
-    var _this = this;
+    const _this = this;
     return function() {
 
       if (_this.model.time.playing)
@@ -533,7 +533,7 @@ var TimeSlider = Component.extend({
       _this._optionClasses();
       _this.element.classed(class_dragging, true);
 
-      var value;// = _this.brush.extent()[0];
+      let value;// = _this.brush.extent()[0];
       //var value = d3.brushSelection(_this.slide.node());
 
       //if(!value) return;
@@ -545,9 +545,9 @@ var TimeSlider = Component.extend({
         d3.event.sourceEvent.preventDefault();
 
         _this.model.time.dragStart();
-        var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
+        let posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
         value = _this.xScale.invert(posX);
-        var maxPosX = _this.width;
+        const maxPosX = _this.width;
 
         if (posX > maxPosX) {
           posX = maxPosX;
@@ -573,7 +573,7 @@ var TimeSlider = Component.extend({
    * @returns {Function} brushedEnd function
    */
   _getBrushedEnd() {
-    var _this = this;
+    const _this = this;
     return function() {
       _this._setTime.recallLast();
       _this.element.classed(class_dragging, false);
@@ -587,10 +587,10 @@ var TimeSlider = Component.extend({
    * @param {Boolean} transition whether to use transition or not
    */
   _setHandle(transition) {
-    var _this = this;
-    var value = this.model.time.value;
+    const _this = this;
+    const value = this.model.time.value;
     //this.slide.call(this.brush.extent([value, value]));
-    var new_pos = this.xScale(value);
+    const new_pos = this.xScale(value);
     //this.brush.move(this.slide, [new_pos, new_pos])
 
     this.element.classed("vzb-ts-disabled", this.model.time.end <= this.model.time.start);
@@ -599,7 +599,7 @@ var TimeSlider = Component.extend({
 //    var old_pos = this.handle.attr("cx");
     //var new_pos = this.xScale(value);
     if (_this.prevPosition == null) _this.prevPosition = new_pos;
-    var delayAnimations = new_pos > _this.prevPosition ? this.model.time.delayAnimations : 0;
+    const delayAnimations = new_pos > _this.prevPosition ? this.model.time.delayAnimations : 0;
     if (transition) {
       this.handle.attr("cx", _this.prevPosition)
         .transition()
@@ -641,14 +641,14 @@ var TimeSlider = Component.extend({
    */
   _setTime(time) {
     //update state
-    var _this = this;
+    const _this = this;
     //  frameRate = 50;
 
     //avoid updating more than once in "frameRate"
     //var now = new Date();
     //if (this._updTime != null && now - this._updTime < frameRate) return;
     //this._updTime = now;
-    var persistent = !this.model.time.dragging && !this.model.time.playing;
+    const persistent = !this.model.time.dragging && !this.model.time.playing;
     _this.model.time.getModelObject("value").set(time, false, persistent); // non persistent
   },
 
@@ -659,11 +659,11 @@ var TimeSlider = Component.extend({
   _optionClasses() {
     //show/hide classes
 
-    var show_limits = this.ui.show_limits;
-    var show_value = this.ui.show_value;
-    var show_value_when_drag_play = this.ui.show_value_when_drag_play;
-    var axis_aligned = this.ui.axis_aligned;
-    var show_play = (this.ui.show_button) && (this.model.time.playable);
+    const show_limits = this.ui.show_limits;
+    const show_value = this.ui.show_value;
+    const show_value_when_drag_play = this.ui.show_value_when_drag_play;
+    const axis_aligned = this.ui.axis_aligned;
+    const show_play = (this.ui.show_button) && (this.model.time.playable);
 
     if (!show_limits) {
       this.xAxis.tickValues([]).ticks(0);

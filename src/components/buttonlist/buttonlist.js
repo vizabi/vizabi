@@ -8,16 +8,16 @@ import * as iconset from "base/iconset";
  */
 
 //default existing buttons
-var class_active = "vzb-active";
-var class_hidden = "vzb-hidden";
-var class_active_locked = "vzb-active-locked";
-var class_expand_dialog = "vzb-dialog-side";
-var class_hide_btn = "vzb-dialog-side-btn";
-var class_unavailable = "vzb-unavailable";
-var class_vzb_fullscreen = "vzb-force-fullscreen";
-var class_container_fullscreen = "vzb-container-fullscreen";
+const class_active = "vzb-active";
+const class_hidden = "vzb-hidden";
+const class_active_locked = "vzb-active-locked";
+const class_expand_dialog = "vzb-dialog-side";
+const class_hide_btn = "vzb-dialog-side-btn";
+const class_unavailable = "vzb-unavailable";
+const class_vzb_fullscreen = "vzb-force-fullscreen";
+const class_container_fullscreen = "vzb-container-fullscreen";
 
-var ButtonList = Component.extend({
+const ButtonList = Component.extend({
 
   /**
    * Initializes the buttonlist
@@ -27,7 +27,7 @@ var ButtonList = Component.extend({
   init(config, context) {
 
     //set properties
-    var _this = this;
+    const _this = this;
     this.name = this.name || "gapminder-buttonlist";
 //    this.template = '<div class="vzb-buttonlist"></div>';
 
@@ -165,7 +165,7 @@ var ButtonList = Component.extend({
     // config.ui is same as this.model.ui here but this.model.ui is not yet available because constructor hasn't been called.
     // can't call constructor earlier because this.model_binds needs to be complete before calling constructor
     config.ui.buttons.forEach(buttonId => {
-      var button = _this._available_buttons[buttonId];
+      const button = _this._available_buttons[buttonId];
       if (button && button.statebind) {
         _this.model_binds["change:" + button.statebind] = function(evt) {
           button.statebindfunc(buttonId, evt.source.value);
@@ -181,7 +181,7 @@ var ButtonList = Component.extend({
   },
 
   readyOnce() {
-    var _this = this;
+    const _this = this;
 
     this.element = d3.select(this.placeholder);
     this.element.selectAll("div").remove();
@@ -190,7 +190,7 @@ var ButtonList = Component.extend({
       _this.setButtonActive(params.id, false);
     });
 
-    var button_expand = (this.model.ui.dialogs || {}).sidebar || [];
+    const button_expand = (this.model.ui.dialogs || {}).sidebar || [];
 
     // // if button_expand has been passed in with boolean param or array must check and covert to array
     // if (button_expand){
@@ -201,7 +201,7 @@ var ButtonList = Component.extend({
     //     d3.select(this.root.element).classed("vzb-dialog-expand-true", true);
     // }
 
-    var button_list = [].concat(this.model.ui.buttons);
+    const button_list = [].concat(this.model.ui.buttons);
 
     // (button_expand||[]).forEach(function(button) {
     //   if (button_list.indexOf(button) === -1) {
@@ -227,18 +227,18 @@ var ButtonList = Component.extend({
   },
 
   proceedClick(id) {
-    var _this = this;
-    var btn = _this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
-      classes = btn.attr("class"),
-      btn_config = _this._available_buttons[id];
+    const _this = this;
+    const btn = _this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
+    const classes = btn.attr("class");
+    const btn_config = _this._available_buttons[id];
 
     if (btn_config && btn_config.func) {
       btn_config.func(id);
     } else {
-      var btn_active = classes.indexOf(class_active) === -1;
+      const btn_active = classes.indexOf(class_active) === -1;
 
       btn.classed(class_active, btn_active);
-      var evt = {};
+      const evt = {};
       evt["id"] = id;
       evt["active"] = btn_active;
       _this.trigger("click", evt);
@@ -246,11 +246,11 @@ var ButtonList = Component.extend({
   },
 
   validatePopupButtons(buttons, dialogs) {
-    var _this = this;
+    const _this = this;
 
-    var popupDialogs = dialogs.popup;
-    var popupButtons = buttons.filter(d => (_this._available_buttons[d] && !_this._available_buttons[d].func));
-    for (var i = 0, j = popupButtons.length; i < j; i++) {
+    const popupDialogs = dialogs.popup;
+    const popupButtons = buttons.filter(d => (_this._available_buttons[d] && !_this._available_buttons[d].func));
+    for (let i = 0, j = popupButtons.length; i < j; i++) {
       if (popupDialogs.indexOf(popupButtons[i]) == -1) {
         return utils.error('Buttonlist: bad buttons config: "' + popupButtons[i] + '" is missing in popups list');
       }
@@ -263,10 +263,10 @@ var ButtonList = Component.extend({
    */
   _showAllButtons() {
     // show all existing buttons
-    var _this = this;
-    var buttons = this.element.selectAll(".vzb-buttonlist-btn");
+    const _this = this;
+    const buttons = this.element.selectAll(".vzb-buttonlist-btn");
     buttons.each(function(d, i) {
-      var button = d3.select(this);
+      const button = d3.select(this);
       button.style("display", "");
     });
   },
@@ -275,32 +275,32 @@ var ButtonList = Component.extend({
   * determine which buttons are shown on the buttonlist
   */
   _toggleButtons() {
-    var _this = this;
-    var parent = this.parent.element.node ? this.parent.element : d3.select(this.parent.element);
+    const _this = this;
+    const parent = this.parent.element.node ? this.parent.element : d3.select(this.parent.element);
 
     //HERE
-    var button_expand = (this.model.ui.dialogs || {}).sidebar || [];
+    const button_expand = (this.model.ui.dialogs || {}).sidebar || [];
     _this._showAllButtons();
 
-    var buttons = this.element.selectAll(".vzb-buttonlist-btn");
+    const buttons = this.element.selectAll(".vzb-buttonlist-btn");
 
-    var container = this.element.node().getBoundingClientRect();
+    const container = this.element.node().getBoundingClientRect();
 
-    var not_required = [];
-    var required = [];
+    const not_required = [];
+    const required = [];
 
-    var button_width = 80;
-    var button_height = 80;
-    var container_width = this.element.node().getBoundingClientRect().width;
-    var container_height = this.element.node().getBoundingClientRect().height;
-    var buttons_width = 0;
-    var buttons_height = 0;
+    let button_width = 80;
+    let button_height = 80;
+    let container_width = this.element.node().getBoundingClientRect().width;
+    let container_height = this.element.node().getBoundingClientRect().height;
+    let buttons_width = 0;
+    let buttons_height = 0;
 
     buttons.each(function(d, i) {
-      var button_data = d;
-      var button = d3.select(this);
-      var expandable = button_expand.indexOf(button_data.id) !== -1;
-      var button_margin = { top: parseInt(button.style("margin-top")), right: parseInt(button.style("margin-right")), left: parseInt(button.style("margin-left")), bottom: parseInt(button.style("margin-bottom")) };
+      const button_data = d;
+      const button = d3.select(this);
+      const expandable = button_expand.indexOf(button_data.id) !== -1;
+      const button_margin = { top: parseInt(button.style("margin-top")), right: parseInt(button.style("margin-right")), left: parseInt(button.style("margin-left")), bottom: parseInt(button.style("margin-bottom")) };
       button_width = button.node().getBoundingClientRect().width + button_margin.right + button_margin.left;
       button_height = button.node().getBoundingClientRect().height + button_margin.top + button_margin.bottom;
 
@@ -320,9 +320,9 @@ var ButtonList = Component.extend({
         }
       }
     });
-    var width_diff = buttons_width - container_width;
-    var height_diff = buttons_height - container_height;
-    var number_of_buttons = 1;
+    const width_diff = buttons_width - container_width;
+    const height_diff = buttons_height - container_height;
+    let number_of_buttons = 1;
 
     //check if container is landscape or portrait
     // if portrait small or large with expand, use width
@@ -352,13 +352,13 @@ var ButtonList = Component.extend({
     //change the display property of non required buttons, from right to
     // left
     not_required.reverse();
-    var hiddenButtons = [];
-    for (var i = 0, j = not_required.length - number_of_buttons; i < j; i++) {
+    const hiddenButtons = [];
+    for (let i = 0, j = not_required.length - number_of_buttons; i < j; i++) {
       not_required[i].style("display", "none");
       hiddenButtons.push(not_required[i].attr("data-btn"));
     }
 
-    var evt = {};
+    const evt = {};
     evt["hiddenButtons"] = hiddenButtons;
     _this.trigger("toggle", evt);
 
@@ -369,19 +369,19 @@ var ButtonList = Component.extend({
    * @param {Array} button_list list of buttons to be added
    */
   _addButtons(button_list, button_expand) {
-    var _this = this;
+    const _this = this;
     this._components_config = [];
-    var details_btns = [];
+    const details_btns = [];
     if (!button_list.length) return;
     //add a component for each button
-    for (var i = 0; i < button_list.length; i++) {
+    for (let i = 0; i < button_list.length; i++) {
 
-      var btn = button_list[i];
-      var btn_config = this._available_buttons[btn];
+      const btn = button_list[i];
+      const btn_config = this._available_buttons[btn];
 
       //add template data
-      var d = (btn_config) ? btn : "_default";
-      var details_btn = utils.clone(this._available_buttons[d]);
+      const d = (btn_config) ? btn : "_default";
+      const details_btn = utils.clone(this._available_buttons[d]);
       if (d == "_default") {
         details_btn.title = "buttons/" + btn;
       }
@@ -390,12 +390,12 @@ var ButtonList = Component.extend({
       details_btns.push(details_btn);
     }
 
-    var t = this.getTranslationFunction(true);
+    const t = this.getTranslationFunction(true);
 
     this.element.selectAll("button").data(details_btns)
       .enter().append("button")
       .attr("class", d => {
-        var cls = "vzb-buttonlist-btn";
+        let cls = "vzb-buttonlist-btn";
         if (button_expand.length > 0) {
           if (button_expand.indexOf(d.id) > -1) {
             cls += " vzb-dialog-side-btn";
@@ -409,7 +409,7 @@ var ButtonList = Component.extend({
           btn.icon + "</span><span class='vzb-buttonlist-btn-title'>" +
           t(btn.title) + "</span>");
 
-    var buttons = this.element.selectAll(".vzb-buttonlist-btn");
+    const buttons = this.element.selectAll(".vzb-buttonlist-btn");
 
     //clicking the button
     buttons.on("click", function() {
@@ -417,7 +417,7 @@ var ButtonList = Component.extend({
       d3.event.preventDefault();
       d3.event.stopPropagation();
 
-      var id = d3.select(this).attr("data-btn");
+      const id = d3.select(this).attr("data-btn");
       _this.proceedClick(id);
     });
 
@@ -425,8 +425,8 @@ var ButtonList = Component.extend({
 
 
   scrollToEnd() {
-    var target = 0;
-    var parent = d3.select(".vzb-tool");
+    let target = 0;
+    const parent = d3.select(".vzb-tool");
 
     if (parent.classed("vzb-portrait") && parent.classed("vzb-small")) {
       if (this.model.state.marker.select.length > 0) target = this.element.node().scrollWidth;
@@ -455,7 +455,7 @@ var ButtonList = Component.extend({
   },
 
   setButtonActive(id, boolActive) {
-    var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
+    const btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
 
     btn.classed(class_active, boolActive);
   },
@@ -465,41 +465,41 @@ var ButtonList = Component.extend({
     this.setBubbleTrails();
   },
   setBubbleTrails() {
-    var trails = (this.model.ui.chart || {}).trails;
+    const trails = (this.model.ui.chart || {}).trails;
     if (!trails && trails !== false) return;
-    var id = "trails";
-    var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
+    const id = "trails";
+    const btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
     if (!btn.node()) return utils.warn("setBubbleTrails: no button '" + id + "' found in DOM. doing nothing");
 
     btn.classed(class_active_locked, trails);
     btn.classed(class_hidden, this.model.state.marker.select.length == 0);
   },
   toggleBubbleLock(id) {
-    var active = (this.model.ui.chart || {}).lockActive;
+    const active = (this.model.ui.chart || {}).lockActive;
 
     if (this.model.state.marker.select.length == 0 && !active) return;
 
-    var locked = this.model.ui.chart.lockNonSelected;
-    var time = this.model.state.time;
+    let locked = this.model.ui.chart.lockNonSelected;
+    const time = this.model.state.time;
     locked = locked ? 0 : time.formatDate(time.value);
     this.model.ui.chart.lockNonSelected = locked;
 
     this.setBubbleLock();
   },
   setBubbleLock() {
-    var locked = (this.model.ui.chart || {}).lockNonSelected;
-    var active = (this.model.ui.chart || {}).lockActive;
+    let locked = (this.model.ui.chart || {}).lockNonSelected;
+    const active = (this.model.ui.chart || {}).lockActive;
     if (!locked && locked !== 0) return;
 
     if (locked !== 0 && this.model.state.marker.select.length === 0 && !active) {
       locked = this.model.ui.chart.lockNonSelected = 0;
     }
 
-    var id = "lock";
-    var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
+    const id = "lock";
+    const btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
     if (!btn.node()) return utils.warn("setBubbleLock: no button '" + id + "' found in DOM. doing nothing");
 
-    var translator = this.model.locale.getTFunction();
+    const translator = this.model.locale.getTFunction();
 
     btn.classed(class_unavailable, this.model.state.marker.select.length == 0 && !active);
     if (typeof active == "undefined") {
@@ -521,9 +521,9 @@ var ButtonList = Component.extend({
   },
   setInpercent() {
     if (typeof ((this.model.ui.chart || {}).inpercent) == "undefined") return;
-    var id = "inpercent";
-    var translator = this.model.locale.getTFunction();
-    var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
+    const id = "inpercent";
+    const translator = this.model.locale.getTFunction();
+    const btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
 
     btn.classed(class_active_locked, this.model.ui.chart.inpercent);
   },
@@ -532,9 +532,9 @@ var ButtonList = Component.extend({
     this.setPresentationMode();
   },
   setPresentationMode() {
-    var id = "presentation";
-    var translator = this.model.locale.getTFunction();
-    var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
+    const id = "presentation";
+    const translator = this.model.locale.getTFunction();
+    const btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
 
     btn.classed(class_active_locked, this.model.ui.presentation);
   },
@@ -542,12 +542,12 @@ var ButtonList = Component.extend({
 
     if (!window) return;
 
-    var component = this;
-    var pholder = component.placeholder;
-    var pholder_found = false;
-    var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
-    var fs = !this.model.ui.fullscreen;
-    var body_overflow = (fs) ? "hidden" : this._prev_body_overflow;
+    let component = this;
+    let pholder = component.placeholder;
+    let pholder_found = false;
+    const btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
+    const fs = !this.model.ui.fullscreen;
+    const body_overflow = (fs) ? "hidden" : this._prev_body_overflow;
 
     while (!(pholder_found = utils.hasClass(pholder, "vzb-placeholder"))) {
       component = component.parent;
@@ -569,7 +569,7 @@ var ButtonList = Component.extend({
     }
 
     this.model.ui.fullscreen = fs;
-    var translator = this.model.locale.getTFunction();
+    const translator = this.model.locale.getTFunction();
     btn.classed(class_active_locked, fs);
 
     btn.select(".vzb-buttonlist-btn-icon").html(iconset[fs ? "unexpand" : "expand"]);
@@ -620,7 +620,7 @@ function exitHandler(emulateClickFunc) {
 
 function subscribeFullscreenChangeEvent(exitFunc) {
   if (!window) return;
-  var doc = window.document;
+  const doc = window.document;
 
   this.exitFullscreenHandler = exitHandler.bind(this, exitFunc);
   doc.addEventListener("webkitfullscreenchange", this.exitFullscreenHandler, false);
@@ -630,7 +630,7 @@ function subscribeFullscreenChangeEvent(exitFunc) {
 }
 
 function removeFullscreenChangeEvent() {
-  var doc = window.document;
+  const doc = window.document;
 
   doc.removeEventListener("webkitfullscreenchange", this.exitFullscreenHandler);
   doc.removeEventListener("mozfullscreenchange", this.exitFullscreenHandler);

@@ -1,11 +1,11 @@
 import * as utils from "base/utils";
 import Class from "base/class";
 
-var _freezeAllEvents = false;
-var _frozenEventInstances = [];
-var _freezeAllExceptions = {};
+let _freezeAllEvents = false;
+let _frozenEventInstances = [];
+let _freezeAllExceptions = {};
 
-export var DefaultEvent = Class.extend({
+export const DefaultEvent = Class.extend({
 
   source: "",
   type: "default",
@@ -17,7 +17,7 @@ export var DefaultEvent = Class.extend({
 
 });
 
-export var ChangeEvent = DefaultEvent.extend("change", {
+export const ChangeEvent = DefaultEvent.extend("change", {
 
   type: "change",
 
@@ -27,7 +27,7 @@ export var ChangeEvent = DefaultEvent.extend("change", {
 
 });
 
-var EventSource = Class.extend({
+const EventSource = Class.extend({
 
   /**
    * Initializes the event class
@@ -54,7 +54,7 @@ var EventSource = Class.extend({
       return;
 
     // get the target model
-    var target = this.traversePath(path);
+    const target = this.traversePath(path);
     if (!target) return;
 
     // register the event to this object
@@ -84,7 +84,7 @@ var EventSource = Class.extend({
       return;
 
     // get target model
-    var target = this.traversePath(path);
+    const target = this.traversePath(path);
     if (!target) return;
 
     // unbind events
@@ -94,7 +94,7 @@ var EventSource = Class.extend({
         target._events[type] = [];
         return;
       }
-      var index = target._events[type].indexOf(func);
+      const index = target._events[type].indexOf(func);
       if (index > -1) {
         target._events[type].splice(index, 1);
       } else {
@@ -113,8 +113,8 @@ var EventSource = Class.extend({
    * eventFunc is mostly arguments.callee but this is deprecated in ECMAscript 5: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments/callee
    */
   splitEventParameters(type, path, func, eventFunc) {
-    var i;
-    var calls = [];
+    let i;
+    const calls = [];
 
     // multiple at a time, array format: [{type: function}, {'type:path': function}, ... ]
     // seems redundant but used so that binding-sets won't be turned into models (which happens when it's a pure object). Used e.g. in Tool.init();
@@ -140,7 +140,7 @@ var EventSource = Class.extend({
       func = path; // put callback function in func variable
       // on('type:path', func)
       if (type.indexOf(":") !== -1) {
-        var split = type.split(":");
+        const split = type.split(":");
         type = split[0];
         path = split[1];
       }
@@ -194,7 +194,7 @@ var EventSource = Class.extend({
     }
 
     // descent to next child to find target object
-    var currentTarget = path.shift();
+    const currentTarget = path.shift();
     if (this[currentTarget] === undefined)
       utils.warn('Can\'t find child "' + currentTarget + '" of the model ' + this._name + ".");
     else
@@ -206,7 +206,7 @@ var EventSource = Class.extend({
       return evtType;
     }
 
-    var eventClass = DefaultEvent.get(evtType, true); // silent
+    const eventClass = DefaultEvent.get(evtType, true); // silent
     if (eventClass) {
       return new eventClass(this);
     }
@@ -220,8 +220,8 @@ var EventSource = Class.extend({
    * @param args Optional arguments (values to be passed)
    */
   trigger(evtType, args) {
-    var i;
-    var size;
+    let i;
+    let size;
 
     // split up eventType-paremeter for multiple event-triggers
     if (utils.isArray(evtType)) {
@@ -232,7 +232,7 @@ var EventSource = Class.extend({
     }
 
     // create an event-object if necessary
-    var evt = this.createEventFromType(evtType);
+    const evt = this.createEventFromType(evtType);
 
     // if this eventType has no events registered
     if (!this._events.hasOwnProperty(evt.type)) {
@@ -240,12 +240,12 @@ var EventSource = Class.extend({
     }
 
     // for each function registered to this eventType on this object
-    var _this = this;
+    const _this = this;
     utils.forEach(this._events[evt.type], func => {
 
       // prepare execution
-      var execute = function() {
-        var msg = "Vizabi Event: " + evt.type; // + ' - ' + eventPath;
+      const execute = function() {
+        const msg = "Vizabi Event: " + evt.type; // + ' - ' + eventPath;
         utils.timeStamp(msg);
         func.apply(_this, [
           evt,
@@ -285,7 +285,7 @@ var EventSource = Class.extend({
     if (!utils.isArray(exceptions)) {
       exceptions = [exceptions];
     }
-    for (var i = 0; i < exceptions.length; i += 1) {
+    for (let i = 0; i < exceptions.length; i += 1) {
       this._freezeExceptions[exceptions[i]] = true;
     }
   },
@@ -298,7 +298,7 @@ var EventSource = Class.extend({
     this._freezeExceptions = {};
     //execute old frozen events
     while (this._freezer.length) {
-      var execute = this._freezer.shift();
+      const execute = this._freezer.shift();
       execute();
     }
   },
@@ -340,9 +340,9 @@ function unfreezeAll() {
   _freezeAllEvents = false;
   _freezeAllExceptions = {};
   //unfreeze all instances
-  var keys = Object.keys(_frozenEventInstances);
-  for (var i = 0; i < keys.length; i++) {
-    var instance = _frozenEventInstances[keys[i]];
+  const keys = Object.keys(_frozenEventInstances);
+  for (let i = 0; i < keys.length; i++) {
+    const instance = _frozenEventInstances[keys[i]];
     if (!instance) {
       continue;
     }

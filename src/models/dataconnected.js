@@ -8,12 +8,12 @@ import EventSource from "base/events";
  * Any model which may trigger a reload of data is here. Dimensions, Time, Hooks and Locales are DataConnected
  */
 
-var DataConnected = Model.extend({
+const DataConnected = Model.extend({
 
   dataConnectedChildren: [],
 
   checkDataChanges(changedChildren) {
-    var _this = this;
+    const _this = this;
 
     if (!changedChildren || !this.dataConnectedChildren)
       return;
@@ -24,7 +24,7 @@ var DataConnected = Model.extend({
     if (changedChildren.length == 0 || this.dataConnectedChildren.length == 0)
       return;
 
-    var dataConnectedChangedChildren = changedChildren.filter(child => _this.dataConnectedChildren.indexOf(child) !== -1);
+    const dataConnectedChangedChildren = changedChildren.filter(child => _this.dataConnectedChildren.indexOf(child) !== -1);
 
     if (dataConnectedChangedChildren.length > 0) {
       this.trigger("dataConnectedChange");

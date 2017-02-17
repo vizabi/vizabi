@@ -2,7 +2,7 @@ import * as utils from "base/utils";
 import EventSource, { DefaultEvent, ChangeEvent } from "base/events";
 import Intervals from "base/intervals";
 
-var ModelLeaf = EventSource.extend({
+const ModelLeaf = EventSource.extend({
 
   _name: "",
   _parent: null,
@@ -67,7 +67,7 @@ var ModelLeaf = EventSource.extend({
 
 });
 
-var Model = EventSource.extend({
+const Model = EventSource.extend({
 
   getClassDefaults: () => ({}),
 
@@ -109,7 +109,7 @@ var Model = EventSource.extend({
 
     // initial values
     // add defaults to initialValues
-    var initialValues = utils.deepExtend({}, this.getClassDefaults(), values);
+    const initialValues = utils.deepExtend({}, this.getClassDefaults(), values);
     this.set(initialValues);
 
     // bind initial events
@@ -148,9 +148,9 @@ var Model = EventSource.extend({
    * @returns defer defer that will be resolved when set is done
    */
   set(attr, val, force, persistent) {
-    var setting = this._setting;
-    var attrs;
-    var freezeCall = false; // boolean, indicates if this .set()-call froze the modelTree
+    const setting = this._setting;
+    let attrs;
+    let freezeCall = false; // boolean, indicates if this .set()-call froze the modelTree
 
     //expect object as default
     if (!utils.isPlainObject(attr)) {
@@ -175,16 +175,16 @@ var Model = EventSource.extend({
     }
 
     // init/set all given values
-    var changes = [];
-    for (var attribute in attrs) {
+    const changes = [];
+    for (const attribute in attrs) {
       val = attrs[attribute];
 
-      var bothModel = utils.isPlainObject(val) && this._data[attribute] instanceof Model;
-      var bothModelLeaf = (!utils.isPlainObject(val) || this.isObjectLeaf(attribute)) && this._data[attribute] instanceof ModelLeaf;
+      const bothModel = utils.isPlainObject(val) && this._data[attribute] instanceof Model;
+      const bothModelLeaf = (!utils.isPlainObject(val) || this.isObjectLeaf(attribute)) && this._data[attribute] instanceof ModelLeaf;
 
       if (this._data[attribute] && (bothModel || bothModelLeaf)) {
         // data type does not change (model or leaf and can be set through set-function)
-        var setSuccess = this._data[attribute].set(val, force, persistent);
+        const setSuccess = this._data[attribute].set(val, force, persistent);
         if (bothModelLeaf && setSuccess) {
           changes.push(attribute);
         }
@@ -250,11 +250,11 @@ var Model = EventSource.extend({
    * @returns {Array} submodels
    */
   getSubmodels(object = false, validationFunction) {
-    var submodels = (object) ? {} : [];
-    var validationFunction = validationFunction || function() {
+    const submodels = (object) ? {} : [];
+    const validationFunction = validationFunction || function() {
       return true;
     };
-    var _this = this;
+    const _this = this;
     utils.forEach(this._data, (subModel, name) => {
       if (subModel && typeof subModel._id !== "undefined" && Model.isModel(subModel) && validationFunction(subModel)) {
         if (object) {
@@ -272,8 +272,8 @@ var Model = EventSource.extend({
    * @returns {Object} All model as JS object, leafs will return their values
    */
   getPlainObject(persistent) {
-    var obj = {};
-    var _this = this;
+    const obj = {};
+    const _this = this;
     utils.forEach(this._data, (dataItem, i) => {
       // if it's a submodel
       if (dataItem instanceof Model) {
@@ -284,7 +284,7 @@ var Model = EventSource.extend({
         //if asked for persistent then add value to result only if modelLeaf state is
         //persistent
         if (!persistent || dataItem.persistent) {
-          var leafValue = dataItem.get(persistent);
+          let leafValue = dataItem.get(persistent);
           if (utils.isDate(leafValue))
             leafValue = _this.formatDate(leafValue);
           obj[i] = leafValue;
@@ -313,8 +313,8 @@ var Model = EventSource.extend({
    * Clears this model, submodels, data and events
    */
   clear() {
-    var submodels = this.getSubmodels();
-    for (var i in submodels) {
+    const submodels = this.getSubmodels();
+    for (const i in submodels) {
       submodels[i].clear();
     }
     this.setReady(false);
@@ -350,8 +350,8 @@ var Model = EventSource.extend({
       return true;
 
     //if not loading anything, check submodels
-    var submodels = this.getSubmodels();
-    var i;
+    const submodels = this.getSubmodels();
+    let i;
     for (i = 0; i < submodels.length; i += 1) {
       if (submodels[i].isLoading()) {
         return true;
@@ -373,7 +373,7 @@ var Model = EventSource.extend({
       return;
     }
     //only ready if nothing is loading at all
-    var prev_ready = this._ready;
+    const prev_ready = this._ready;
     this._ready = !this.isLoading() && !this._setting;
     // if now ready and wasn't ready yet
     if (this._ready && prev_ready !== this._ready) {
@@ -393,7 +393,7 @@ var Model = EventSource.extend({
 
   startPreload() {
 
-    var promises = [];
+    const promises = [];
     promises.push(this.preloadData());
 
     utils.forEach(this.getSubmodels(),
@@ -418,7 +418,7 @@ var Model = EventSource.extend({
    */
   startLoading(opts) {
 
-    var promises = [];
+    const promises = [];
     promises.push(this.loadData(opts));
 
     utils.forEach(this.getSubmodels(),
@@ -443,8 +443,8 @@ var Model = EventSource.extend({
   },
 
   loadSubmodels(options) {
-    var promises = [];
-    var subModels = this.getSubmodels();
+    const promises = [];
+    const subModels = this.getSubmodels();
     utils.forEach(subModels, subModel => {
       promises.push(subModel.startLoading(options));
     });
@@ -477,7 +477,7 @@ var Model = EventSource.extend({
    * executes after preloading processing is done
    */
   afterPreload() {
-    var submodels = this.getSubmodels();
+    const submodels = this.getSubmodels();
     utils.forEach(submodels, s => {
       s.afterPreload();
     });
@@ -511,7 +511,7 @@ var Model = EventSource.extend({
    * @returns {Array} all unique values with specific hook use
    */
   getHookWhich(type) {
-    var values = [];
+    let values = [];
     if (this.use && this.use === type) {
       values.push(this.which);
     }
@@ -593,7 +593,7 @@ var Model = EventSource.extend({
    * @return {Object} All defaults coming from submodels
    */
   getSubmodelDefaults() {
-    var d = {};
+    const d = {};
     utils.forEach(this.getSubmodels(true), (model, name) => {
       d[name] = model.getDefaults();
     });
@@ -614,7 +614,7 @@ var Model = EventSource.extend({
    * @returns {Object} submodel
    */
   getClosestModel(name) {
-    var model = this.findSubmodel(name);
+    const model = this.findSubmodel(name);
     if (model) {
       return model;
     } else if (this._parent) {
@@ -629,7 +629,7 @@ var Model = EventSource.extend({
    * @returns {Object} submodel or false if nothing is found
    */
   findSubmodel(name) {
-    for (var i in this._data) {
+    for (const i in this._data) {
       //found submodel
       if (i === name && Model.isModel(this._data[i])) {
         return this._data[i];
@@ -681,12 +681,12 @@ function bindSetterGetter(model, prop) {
  */
 function initSubmodel(attr, val, ctx, persistent) {
 
-  var submodel;
+  let submodel;
 
   // if value is a value -> leaf
   if (!utils.isPlainObject(val) || utils.isArray(val) || ctx.isObjectLeaf(attr)) {
 
-    var binds = {
+    const binds = {
       //the submodel has changed (multiple times)
       "change": onChange
     };
@@ -696,7 +696,7 @@ function initSubmodel(attr, val, ctx, persistent) {
   // if value is an object -> model
   else {
 
-    var binds = {
+    const binds = {
       //the submodel has changed (multiple times)
       "change": onChange,
       //loading has started in this submodel (multiple times)
@@ -718,7 +718,7 @@ function initSubmodel(attr, val, ctx, persistent) {
     // if it's just a plain object, create a new model
     else {
       // construct model
-      var modelType = attr.split("_")[0];
+      const modelType = attr.split("_")[0];
 
       let Modl = Model.get(modelType, true);
       if (!Modl) {

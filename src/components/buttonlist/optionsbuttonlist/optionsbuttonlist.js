@@ -8,7 +8,7 @@ import * as iconset from "base/iconset";
  */
 
 //default existing buttons
-var class_active = "vzb-active";
+const class_active = "vzb-active";
 // var class_active_locked = "vzb-active-locked";
 // var class_expand_dialog = "vzb-dialog-side";
 // var class_hide_btn = "vzb-dialog-side-btn";
@@ -16,7 +16,7 @@ var class_active = "vzb-active";
 // var class_vzb_fullscreen = "vzb-force-fullscreen";
 // var class_container_fullscreen = "vzb-container-fullscreen";
 
-var OptionsButtonList = ButtonList.extend({
+const OptionsButtonList = ButtonList.extend({
 
   /**
    * Initializes the buttonlist
@@ -26,32 +26,32 @@ var OptionsButtonList = ButtonList.extend({
   init(config, context) {
 
     //set properties
-    var _this = this;
+    const _this = this;
     this.name = "gapminder-optionsbuttonlist";
 
     this._super(config, context);
   },
 
   readyOnce() {
-    var _this = this;
+    const _this = this;
     Object.keys(this._available_buttons).forEach(buttonId => {
-      var button = _this._available_buttons[buttonId];
+      const button = _this._available_buttons[buttonId];
       button.required = !button.required;
     });
 
     this.buttonListComp = this.root.findChildByName("gapminder-buttonlist");
 
     this.buttonListComp.on("click", (evt, button) => {
-      var btn = _this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + button.id + "']");
+      const btn = _this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + button.id + "']");
       btn.classed(class_active, button.active);
     });
 
     this.buttonListComp.on("toggle", (evt, params) => {
-      var btn = _this.element.selectAll(".vzb-buttonlist-btn");
-      var visibleButton = 0;
+      const btn = _this.element.selectAll(".vzb-buttonlist-btn");
+      let visibleButton = 0;
       btn.each(function(d) {
-        var button = d3.select(this);
-        var isHidden = params.hiddenButtons.indexOf(d.id) == -1;
+        const button = d3.select(this);
+        const isHidden = params.hiddenButtons.indexOf(d.id) == -1;
         button.style("display", isHidden ? "none" : "");
         if (!isHidden) visibleButton++;
       });
@@ -61,9 +61,9 @@ var OptionsButtonList = ButtonList.extend({
   },
 
   proceedClick(id) {
-    var _this = this;
+    const _this = this;
     this.buttonListComp.proceedClick(id);
-    var btn_data = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']").datum();
+    const btn_data = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']").datum();
     if (btn_data.func) {
       setTimeout(() => {
         _this.root.findChildByName("gapminder-dialogs").closeAllDialogs();

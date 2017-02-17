@@ -7,10 +7,10 @@ import Reader from "base/reader";
 import Events from "base/events";
 import globals from "base/globals";
 
-var Vzb = function(name, placeholder, external_model) {
-  var tool = Tool.get(name);
+const Vzb = function(name, placeholder, external_model) {
+  const tool = Tool.get(name);
   if (tool) {
-    var t = new tool(placeholder, external_model);
+    const t = new tool(placeholder, external_model);
     Vzb._instances[t._id] = t;
     return t;
   } else {
@@ -29,7 +29,7 @@ Vzb.clearInstances = function(id) {
   if (id) {
     Vzb._instances[id] = void 0;
   } else {
-    for (var i in Vzb._instances) {
+    for (const i in Vzb._instances) {
       Vzb._instances[i].clear();
     }
     Vzb._instances = {};
@@ -62,7 +62,8 @@ import { onTap, onLongTap } from "helpers/d3.touchEvents";
 
 // Copies a variable number of methods from source to target.
 d3.rebind = function(target, source) {
-  var i = 1, n = arguments.length, method;
+  let i = 1, method;
+  const n = arguments.length;
   while (++i < n) target[method = arguments[i]] = d3_rebind(target, source, source[method]);
   return target;
 };
@@ -72,7 +73,7 @@ d3.rebind = function(target, source) {
 // If passed with arguments, sets the value and returns the target.
 function d3_rebind(target, source, method) {
   return function() {
-    var value = method.apply(source, arguments);
+    const value = method.apply(source, arguments);
     return value === source ? target : value;
   };
 }
@@ -91,17 +92,17 @@ d3.time = {};
 d3.time.scale = d3.scaleTime;
 d3.time.scale.utc = d3.scaleUtc;
 d3.time.format = function(f) {
-  var format = d3.timeFormat(f);
+  const format = d3.timeFormat(f);
   format.parse = d3.timeParse(f);
   return format;
 };
 d3.time.format.utc = function(f) {
-  var format = d3.utcFormat(f);
+  const format = d3.utcFormat(f);
   format.parse = d3.utcParse(f);
   return format;
 };
 d3.time.format.iso = function(f) {
-  var format = d3.isoFormat(f);
+  const format = d3.isoFormat(f);
   format.parse = d3.isoParse(f);
   return format;
 };

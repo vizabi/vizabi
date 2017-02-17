@@ -13,7 +13,7 @@ import MapEngine from "tools/lbubblemap/bubblemap-map";
 //import Selectlist from 'bubblemap-selectlist';
 
 //BUBBLE MAP CHART COMPONENT
-var LBubbleMapComponent = Component.extend({
+const LBubbleMapComponent = Component.extend({
   /**
    * Initializes the component (Bubble Map Chart).
    * Executed once before any template is rendered.
@@ -27,8 +27,8 @@ var LBubbleMapComponent = Component.extend({
 
 
     //http://stackoverflow.com/questions/11381673/detecting-a-mobile-browser
-    var mobileAndTabletcheck = function() {
-      var check = false;
+    const mobileAndTabletcheck = function() {
+      let check = false;
       (function(a) { if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4)))check = true; })(navigator.userAgent || navigator.vendor || window.opera);
       return check;
     };
@@ -51,7 +51,7 @@ var LBubbleMapComponent = Component.extend({
       type: "ui"
     }];
 
-    var _this = this;
+    const _this = this;
     this.model_binds = {
       "change:time.value": function(evt) {
         if (!_this._readyOnce) return;
@@ -144,7 +144,7 @@ var LBubbleMapComponent = Component.extend({
     this.year = new DynamicBackground(this.yearEl);
     this.year.setConditions({ xAlign: "left", yAlign: "bottom" });
 
-    var _this = this;
+    const _this = this;
     this.on("resize", () => {
       //return if updatesize exists with error
       if (_this.updateSize()) return;
@@ -167,7 +167,7 @@ var LBubbleMapComponent = Component.extend({
    * Both model and DOM are ready
    */
   ready() {
-    var _this = this;
+    const _this = this;
     this.updateUIStrings();
     this.updateIndicators();
     this.updateSize();
@@ -209,11 +209,11 @@ var LBubbleMapComponent = Component.extend({
   },
 
   updateUIStrings() {
-    var _this = this;
+    const _this = this;
 
     this.translator = this.model.locale.getTFunction();
-    var conceptPropsS = _this.model.marker.size.getConceptprops();
-    var conceptPropsC = _this.model.marker.color.getConceptprops();
+    const conceptPropsS = _this.model.marker.size.getConceptprops();
+    const conceptPropsC = _this.model.marker.color.getConceptprops();
 
     this.strings = {
       title: {
@@ -271,10 +271,10 @@ var LBubbleMapComponent = Component.extend({
       _this.parent.findChildByName("gapminder-datanotes").pin();
     });
     this.yInfoEl.on("mouseover", function() {
-      var rect = this.getBBox();
-      var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-      var toolRect = _this.root.element.getBoundingClientRect();
-      var chartRect = _this.element.node().getBoundingClientRect();
+      const rect = this.getBBox();
+      const coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+      const toolRect = _this.root.element.getBoundingClientRect();
+      const chartRect = _this.element.node().getBoundingClientRect();
       _this.parent.findChildByName("gapminder-datanotes").setHook("size").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
     });
     this.yInfoEl.on("mouseout", () => {
@@ -290,10 +290,10 @@ var LBubbleMapComponent = Component.extend({
       _this.parent.findChildByName("gapminder-datanotes").pin();
     });
     this.cInfoEl.on("mouseover", function() {
-      var rect = this.getBBox();
-      var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-      var toolRect = _this.root.element.getBoundingClientRect();
-      var chartRect = _this.element.node().getBoundingClientRect();
+      const rect = this.getBBox();
+      const coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+      const toolRect = _this.root.element.getBoundingClientRect();
+      const chartRect = _this.element.node().getBoundingClientRect();
       _this.parent.findChildByName("gapminder-datanotes").setHook("color").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
     });
     this.cInfoEl.on("mouseout", () => {
@@ -303,26 +303,26 @@ var LBubbleMapComponent = Component.extend({
 
   // show size number on title when hovered on a bubble
   updateTitleNumbers() {
-    var _this = this;
+    const _this = this;
 
-    var mobile; // if is mobile device and only one bubble is selected, update the ytitle for the bubble
+    let mobile; // if is mobile device and only one bubble is selected, update the ytitle for the bubble
     if (_this.isMobile && _this.model.marker.select && _this.model.marker.select.length === 1) {
       mobile = _this.model.marker.select[0];
     }
 
     if (_this.hovered || mobile) {
-      var conceptPropsS = _this.model.marker.size.getConceptprops();
-      var conceptPropsC = _this.model.marker.color.getConceptprops();
+      const conceptPropsS = _this.model.marker.size.getConceptprops();
+      const conceptPropsC = _this.model.marker.color.getConceptprops();
 
-      var hovered = _this.hovered || mobile;
-      var formatterS = _this.model.marker.size.getTickFormatter();
-      var formatterC = _this.model.marker.color.getTickFormatter();
+      const hovered = _this.hovered || mobile;
+      const formatterS = _this.model.marker.size.getTickFormatter();
+      const formatterC = _this.model.marker.color.getTickFormatter();
 
-      var unitS = conceptPropsS.unit || "";
-      var unitC = conceptPropsC.unit || "";
+      const unitS = conceptPropsS.unit || "";
+      const unitC = conceptPropsC.unit || "";
 
-      var valueS = _this.values.size[hovered[_this.KEY]];
-      var valueC = _this.values.color[hovered[_this.KEY]];
+      const valueS = _this.values.size[hovered[_this.KEY]];
+      let valueC = _this.values.color[hovered[_this.KEY]];
 
       //resolve value for color from the color legend model
       if (_this.model.marker.color.isDiscrete() && valueC) {
@@ -356,18 +356,18 @@ var LBubbleMapComponent = Component.extend({
   },
 
   updateOpacity() {
-    var _this = this;
+    const _this = this;
     /*
      this.entityBubbles.classed("vzb-selected", function (d) {
      return _this.model.marker.isSelected(d);
      });
      */
 
-    var OPACITY_HIGHLT = 1.0;
-    var OPACITY_HIGHLT_DIM = 0.3;
-    var OPACITY_SELECT = this.model.marker.opacityRegular;
-    var OPACITY_REGULAR = this.model.marker.opacityRegular;
-    var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
+    const OPACITY_HIGHLT = 1.0;
+    const OPACITY_HIGHLT_DIM = 0.3;
+    const OPACITY_SELECT = this.model.marker.opacityRegular;
+    const OPACITY_REGULAR = this.model.marker.opacityRegular;
+    const OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
 
     this.entityBubbles.style("opacity", d => {
 
@@ -389,7 +389,7 @@ var LBubbleMapComponent = Component.extend({
 
     this.entityBubbles.classed("vzb-selected", d => _this.model.marker.isSelected(d));
 
-    var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
+    const nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
 
     // when pointer events need update...
     if (nonSelectedOpacityZero !== this.nonSelectedOpacityZero) {
@@ -413,15 +413,15 @@ var LBubbleMapComponent = Component.extend({
    */
   updateEntities() {
 
-    var _this = this;
-    var KEY = this.KEY;
-    var TIMEDIM = this.TIMEDIM;
+    const _this = this;
+    const KEY = this.KEY;
+    const TIMEDIM = this.TIMEDIM;
 
-    var getKeys = function(prefix) {
+    const getKeys = function(prefix) {
       prefix = prefix || "";
       return _this.model.marker.getKeys()
         .map(d => {
-          var pointer = {};
+          const pointer = {};
           pointer[KEY] = d[KEY];
           pointer[TIMEDIM] = endTime;
           pointer.sortValue = _this.values.size[d[KEY]] || 0;
@@ -433,7 +433,7 @@ var LBubbleMapComponent = Component.extend({
 
     // get array of GEOs, sorted by the size hook
     // that makes larger bubbles go behind the smaller ones
-    var endTime = this.model.time.end;
+    const endTime = this.model.time.end;
     this.model.marker.setVisible(getKeys.call(this));
 
     //unselecting bubbles with no data is used for the scenario when
@@ -492,8 +492,8 @@ var LBubbleMapComponent = Component.extend({
   },
 
   unselectBubblesWithNoData(frame) {
-    var _this = this;
-    var KEY = this.KEY;
+    const _this = this;
+    const KEY = this.KEY;
     if (!frame) frame = this.values;
 
     if (!frame || !frame.size) return;
@@ -505,19 +505,19 @@ var LBubbleMapComponent = Component.extend({
   },
 
   redrawDataPoints(duration, reposition) {
-    var _this = this;
+    const _this = this;
     if (!duration) duration = this.duration;
     if (!reposition) reposition = true;
     if (!this.entityBubbles) return utils.warn("redrawDataPoints(): no entityBubbles defined. likely a premature call, fix it!");
     this.entityBubbles.each(function(d, index) {
-      var view = d3.select(this);
-      var geo = d3.select("#" + d[_this.KEY]);
+      const view = d3.select(this);
+      const geo = d3.select("#" + d[_this.KEY]);
 
-      var valueX = _this.values.hook_lng[d[_this.KEY]];
-      var valueY = _this.values.hook_lat[d[_this.KEY]];
-      var valueS = _this.values.size[d[_this.KEY]];
-      var valueC = _this.values.color[d[_this.KEY]];
-      var valueL = _this.values.label[d[_this.KEY]];
+      const valueX = _this.values.hook_lng[d[_this.KEY]];
+      const valueY = _this.values.hook_lat[d[_this.KEY]];
+      const valueS = _this.values.size[d[_this.KEY]];
+      const valueC = _this.values.color[d[_this.KEY]];
+      const valueL = _this.values.label[d[_this.KEY]];
 
       d.hidden_1 = d.hidden;
       d.hidden = (!valueS && valueS !== 0) || valueX == null || valueY == null;
@@ -572,7 +572,7 @@ var LBubbleMapComponent = Component.extend({
    * Ideally should only update when time or data changes
    */
   updateTime() {
-    var _this = this;
+    const _this = this;
 
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
@@ -585,20 +585,17 @@ var LBubbleMapComponent = Component.extend({
 
 
   fitSizeOfTitles() {
+    // reset font sizes first to make the measurement consistent
+    const yTitleText = this.yTitleEl.select("text");
+    yTitleText.style("font-size", null);
 
-    //reset font sizes first to make the measurement consistent
-    var yTitleText = this.yTitleEl.select("text")
-        .style("font-size", null);
-    var cTitleText = this.cTitleEl.select("text")
-        .style("font-size", null);
+    const cTitleText = this.cTitleEl.select("text");
+    cTitleText.style("font-size", null);
 
-    var yTitleText = this.yTitleEl.select("text");
-    var cTitleText = this.cTitleEl.select("text");
+    const yTitleBB = yTitleText.node().getBBox();
+    const cTitleBB = this.cTitleEl.classed("vzb-hidden") ? yTitleBB : cTitleText.node().getBBox();
 
-    var yTitleBB = yTitleText.node().getBBox();
-    var cTitleBB = this.cTitleEl.classed("vzb-hidden") ? yTitleBB : cTitleText.node().getBBox();
-
-    var font =
+    const font =
         Math.max(parseInt(yTitleText.style("font-size")), parseInt(cTitleText.style("font-size")))
         * this.width / Math.max(yTitleBB.width, cTitleBB.width);
 
@@ -651,7 +648,7 @@ var LBubbleMapComponent = Component.extend({
   updateSize() {
 
     this.activeProfile = this.getActiveProfile(this.profiles, this.presentationProfileChanges);
-    var margin = this.activeProfile.margin;
+    const margin = this.activeProfile.margin;
 
     this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
     this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
@@ -670,10 +667,9 @@ var LBubbleMapComponent = Component.extend({
   },
 
   repositionElements() {
-
-    var margin = this.activeProfile.margin,
-      infoElHeight = this.activeProfile.infoElHeight,
-      isRTL = this.model.locale.isRTL();
+    const margin = this.activeProfile.margin;
+    const infoElHeight = this.activeProfile.infoElHeight;
+    const isRTL = this.model.locale.isRTL();
 
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -687,13 +683,13 @@ var LBubbleMapComponent = Component.extend({
       .style("font-size", infoElHeight)
       .attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + margin.top + ")");
 
-    var yTitleBB = this.yTitleEl.select("text").node().getBBox();
+    const yTitleBB = this.yTitleEl.select("text").node().getBBox();
 
     //hide the second line about color in large profile or when color is constant
     this.cTitleEl.attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + (margin.top + yTitleBB.height) + ")")
       .classed("vzb-hidden", this.getLayoutProfile() === "large" || this.model.marker.color.use == "constant");
 
-    var warnBB = this.dataWarningEl.select("text").node().getBBox();
+    const warnBB = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl.select("svg")
       .attr("width", warnBB.height * 0.75)
       .attr("height", warnBB.height * 0.75)
@@ -705,9 +701,9 @@ var LBubbleMapComponent = Component.extend({
       .select("text");
 
     if (this.yInfoEl.select("svg").node()) {
-      var titleBBox = this.yTitleEl.node().getBBox();
-      var t = utils.transform(this.yTitleEl.node());
-      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
+      const titleBBox = this.yTitleEl.node().getBBox();
+      const t = utils.transform(this.yTitleEl.node());
+      const hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
       this.yInfoEl.select("svg")
         .attr("width", infoElHeight)
@@ -720,9 +716,9 @@ var LBubbleMapComponent = Component.extend({
     this.cInfoEl.classed("vzb-hidden", this.cTitleEl.classed("vzb-hidden"));
 
     if (!this.cInfoEl.classed("vzb-hidden") && this.cInfoEl.select("svg").node()) {
-      var titleBBox = this.cTitleEl.node().getBBox();
-      var t = utils.transform(this.cTitleEl.node());
-      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
+      const titleBBox = this.cTitleEl.node().getBBox();
+      const t = utils.transform(this.cTitleEl.node());
+      const hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
       this.cInfoEl.select("svg")
         .attr("width", infoElHeight)
@@ -735,11 +731,11 @@ var LBubbleMapComponent = Component.extend({
 
 
   updateMarkerSizeLimits() {
-    var _this = this;
-    var extent = this.model.marker.size.extent || [0, 1];
+    const _this = this;
+    const extent = this.model.marker.size.extent || [0, 1];
 
-    var minRadius = this.activeProfile.minRadius;
-    var maxRadius = this.activeProfile.maxRadius;
+    const minRadius = this.activeProfile.minRadius;
+    const maxRadius = this.activeProfile.maxRadius;
 
     this.minRadius = Math.max(maxRadius * extent[0], minRadius);
     this.maxRadius = Math.max(maxRadius * extent[1], minRadius);
@@ -753,7 +749,7 @@ var LBubbleMapComponent = Component.extend({
   },
 
   _interact() {
-    var _this = this;
+    const _this = this;
 
     return {
       _mouseover(d, i) {
@@ -790,7 +786,7 @@ var LBubbleMapComponent = Component.extend({
 
 
   highlightMarkers() {
-    var _this = this;
+    const _this = this;
     this.someHighlighted = (this.model.marker.highlight.length > 0);
 
     if (utils.isTouchDevice()) {
@@ -819,17 +815,17 @@ var LBubbleMapComponent = Component.extend({
   },
 
   _updateLabel(d, index, valueX, valueY, valueS, valueC, valueL, duration) {
-    var _this = this;
-    var KEY = this.KEY;
+    const _this = this;
+    const KEY = this.KEY;
     if (d[KEY] == _this.druging) return;
     if (duration == null) duration = _this.duration;
 
     // only for selected entities
     if (_this.model.marker.isSelected(d)) {
 
-      var showhide = d.hidden !== d.hidden_1;
-      var valueLST = null;
-      var cache = {};
+      const showhide = d.hidden !== d.hidden_1;
+      const valueLST = null;
+      const cache = {};
       cache.labelX0 = valueX / this.width;
       cache.labelY0 = valueY / this.height;
       cache.scaledS0 = valueS ? utils.areaToRadius(_this.sScale(valueS)) : null;
@@ -840,8 +836,8 @@ var LBubbleMapComponent = Component.extend({
   },
 
   selectMarkers() {
-    var _this = this;
-    var KEY = this.KEY;
+    const _this = this;
+    const KEY = this.KEY;
     this.someSelected = (this.model.marker.select.length > 0);
 
 //      this._selectlist.rebuild();
@@ -864,14 +860,14 @@ var LBubbleMapComponent = Component.extend({
   },
 
   _setTooltip(d) {
-    var _this = this;
+    const _this = this;
     if (d) {
-      var tooltipText = d.label;
-      var x = d.cLoc[0];
-      var y = d.cLoc[1];
-      var offset = d.r;
-      var mouse = d3.mouse(this.graph.node()).map(d => parseInt(d));
-      var xPos, yPos, xSign = -1,
+      const tooltipText = d.label;
+      let x = d.cLoc[0];
+      let y = d.cLoc[1];
+      const offset = d.r;
+      const mouse = d3.mouse(this.graph.node()).map(d => parseInt(d));
+      let xPos, yPos, xSign = -1,
         ySign = -1,
         xOffset = 0,
         yOffset = 0;
@@ -886,7 +882,7 @@ var LBubbleMapComponent = Component.extend({
         .selectAll("text")
         .text(tooltipText);
 
-      var contentBBox = this.tooltip.select("text").node().getBBox();
+      const contentBBox = this.tooltip.select("text").node().getBBox();
       if (x - xOffset - contentBBox.width < 0) {
         xSign = 1;
         x += contentBBox.width + 5; // corrective to the block Radius and text padding
@@ -924,7 +920,7 @@ var LBubbleMapComponent = Component.extend({
   },
 
   preload() {
-    var _this = this;
+    const _this = this;
     this.map = new MapEngine(this).getMap();
     return this.map.initMap("#vzb-map-background");
   }

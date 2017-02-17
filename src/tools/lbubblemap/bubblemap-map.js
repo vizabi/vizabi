@@ -4,7 +4,7 @@ import * as utils from "base/utils";
 
 import topojson from "helpers/topojson";
 import d3_geo_projection from "helpers/d3.geoProjection";
-var GoogleMapsLoader = require("google-maps");
+const GoogleMapsLoader = require("google-maps");
 
 import mapboxgl from "mapbox-gl/dist/mapbox-gl.js";
 
@@ -56,7 +56,7 @@ export default Class.extend({
   },
 
   rescaleMap() {
-    var _this = this;
+    const _this = this;
     return this.mapInstance.rescaleMap();
   },
 
@@ -66,7 +66,7 @@ export default Class.extend({
 
 });
 
-var MapLayer = Class.extend({
+const MapLayer = Class.extend({
   init(context, parent) {
     this.shapes = null;
     this.parent = parent;
@@ -79,11 +79,11 @@ var MapLayer = Class.extend({
     this.mapGraph = this.mapSvg.html("").append("g")
       .attr("class", "vzb-bmc-map-graph");
 
-    var _this = this;
-    var shape_path = this.context.model.ui.map.topology.path
+    const _this = this;
+    const shape_path = this.context.model.ui.map.topology.path
         || globals.ext_resources.host + globals.ext_resources.preloadPath + "world-50m.json";
 
-    var projection = "geo" + utils.capitalize(this.context.model.ui.map.projection);
+    const projection = "geo" + utils.capitalize(this.context.model.ui.map.projection);
 
     this.zeroProjection = d3[projection]();
     this.zeroProjection
@@ -106,7 +106,7 @@ var MapLayer = Class.extend({
         _this.mapFeature = topojson.feature(_this.shapes, _this.shapes.objects[this.context.model.ui.map.topology.objects.geo]);
         _this.mapBounds = _this.mapPath.bounds(_this.mapFeature);
 
-        var boundaries = topojson.mesh(_this.shapes, _this.shapes.objects[_this.context.model.ui.map.topology.objects.boundaries], (a, b) => a !== b);
+        const boundaries = topojson.mesh(_this.shapes, _this.shapes.objects[_this.context.model.ui.map.topology.objects.boundaries], (a, b) => a !== b);
         if (_this.mapFeature.features) {
           _this.mapGraph.selectAll(".land")
             .data(_this.mapFeature.features)
@@ -138,22 +138,22 @@ var MapLayer = Class.extend({
 
   rescaleMap(canvas) {
     //var topoCanvas =
-    var emitEvent = false;
-    var offset = this.context.model.ui.map.offset;
-    var margin = this.context.activeProfile.margin;
-    var zero = this.zeroProjection([
+    let emitEvent = false;
+    const offset = this.context.model.ui.map.offset;
+    const margin = this.context.activeProfile.margin;
+    const zero = this.zeroProjection([
       this.context.model.ui.map.bounds.west,
       this.context.model.ui.map.bounds.north
     ]);
-    var currentNW = this.zeroProjection([
+    const currentNW = this.zeroProjection([
       this.context.model.ui.map.bounds.west,
       this.context.model.ui.map.bounds.north
     ]);
-    var currentSE = this.zeroProjection([
+    const currentSE = this.zeroProjection([
       this.context.model.ui.map.bounds.east,
       this.context.model.ui.map.bounds.south
     ]);
-    var scaleDelta = 1, mapTopOffset = 0, mapLeftOffset = 0;
+    let scaleDelta = 1, mapTopOffset = 0, mapLeftOffset = 0;
 
     if (!canvas) {
       emitEvent = true;
@@ -161,8 +161,8 @@ var MapLayer = Class.extend({
         [0, 0],
         [this.context.width, this.context.height]
       ];
-      var scaleX = (canvas[1][0] - canvas[0][0]) / (currentSE[0] - currentNW[0]);
-      var scaleY = (canvas[1][1] - canvas[0][1]) / (currentSE[1] - currentNW[1]);
+      const scaleX = (canvas[1][0] - canvas[0][0]) / (currentSE[0] - currentNW[0]);
+      const scaleY = (canvas[1][1] - canvas[0][1]) / (currentSE[1] - currentNW[1]);
       if (scaleX != scaleY) {
         if (scaleX > scaleY) {
           scaleDelta = scaleY;
@@ -179,15 +179,15 @@ var MapLayer = Class.extend({
 
     // scale to aspect ratio
     // http://bl.ocks.org/mbostock/4707858
-    var s = this.context.model.ui.map.scale / Math.max((this.mapBounds[1][0] - this.mapBounds[0][0]) / this.context.width, (this.mapBounds[1][1] - this.mapBounds[0][1]) / this.context.height),
+    const s = this.context.model.ui.map.scale / Math.max((this.mapBounds[1][0] - this.mapBounds[0][0]) / this.context.width, (this.mapBounds[1][1] - this.mapBounds[0][1]) / this.context.height);
 
     // dimensions of the map itself (regardless of cropping)
-      mapWidth = (s * (this.mapBounds[1][0] - this.mapBounds[0][0])),
-      mapHeight = (s * (this.mapBounds[1][1] - this.mapBounds[0][1])),
+    const mapWidth = (s * (this.mapBounds[1][0] - this.mapBounds[0][0]));
+    const mapHeight = (s * (this.mapBounds[1][1] - this.mapBounds[0][1]));
 
     // dimensions of the viewport in which the map is shown (can be bigger or smaller than map)
-      viewPortHeight = mapHeight * (1 + offset.top + offset.bottom),
-      viewPortWidth  = mapWidth  * (1 + offset.left + offset.right);
+    let viewPortHeight = mapHeight * (1 + offset.top + offset.bottom);
+    let viewPortWidth  = mapWidth  * (1 + offset.left + offset.right);
 
     // translate projection to the middle of map
     this.projection
@@ -199,7 +199,7 @@ var MapLayer = Class.extend({
       .selectAll("path").attr("d", this.mapPath);
 
     // handle scale to fit case
-    var widthScale, heightScale;
+    let widthScale, heightScale;
     if (!this.context.model.ui.map.preserveAspectRatio) {
 
 
@@ -233,15 +233,15 @@ var MapLayer = Class.extend({
       .attr("height", this.context.height);
 
     // set skew function used for bubbles in chart
-    var _this = this;
+    const _this = this;
     this.skew = (function() {
-      var w = _this.context.width;
-      var h = _this.context.height;
+      const w = _this.context.width;
+      const h = _this.context.height;
       //input pixel loc after projection, return pixel loc after skew;
       return function(points) {
         //      input       scale         translate                    translate offset
-        var x = points[0] * widthScale  + ((w - viewPortWidth) / 2)  + mapLeftOffset * widthScale;
-        var y = points[1] * heightScale + ((h - viewPortHeight) / 2) + mapTopOffset  * heightScale;
+        const x = points[0] * widthScale  + ((w - viewPortWidth) / 2)  + mapLeftOffset * widthScale;
+        const y = points[1] * heightScale + ((h - viewPortHeight) / 2) + mapTopOffset  * heightScale;
         return [x, y];
       };
     })();
@@ -258,7 +258,7 @@ var MapLayer = Class.extend({
 
 });
 
-var GoogleMapLayer = Class.extend({
+const GoogleMapLayer = Class.extend({
 
   init(context, parent) {
     this.context = context;
@@ -266,7 +266,7 @@ var GoogleMapLayer = Class.extend({
   },
 
   initMap(domSelector) {
-    var _this = this;
+    const _this = this;
     this.mapRoot = d3.select(this.context.element).select(domSelector);
     this.mapCanvas = this.mapRoot.html("").append("div");
 
@@ -285,7 +285,7 @@ var GoogleMapLayer = Class.extend({
           map: _this.map,
           title: "Hello World!"
         });
-        var rectangle = new google.maps.Rectangle({
+        const rectangle = new google.maps.Rectangle({
           bounds: {
             north: _this.context.model.ui.map.bounds.north,
             east: _this.context.model.ui.map.bounds.east,
@@ -307,8 +307,8 @@ var GoogleMapLayer = Class.extend({
   },
 
   rescaleMap() {
-    var _this = this;
-    var margin = this.context.activeProfile.margin;
+    const _this = this;
+    const margin = this.context.activeProfile.margin;
 
     this.mapCanvas
       .style("width", this.context.width + "px")
@@ -323,14 +323,14 @@ var GoogleMapLayer = Class.extend({
       .style("bottom", margin.bottom + "px");
     google.maps.event.trigger(this.map, "resize");
 
-    var rectBounds = new google.maps.LatLngBounds(
+    const rectBounds = new google.maps.LatLngBounds(
         new google.maps.LatLng(this.context.model.ui.map.bounds.north, this.context.model.ui.map.bounds.west),
         new google.maps.LatLng(this.context.model.ui.map.bounds.south, this.context.model.ui.map.bounds.east)
     );
     this.map.fitBounds(rectBounds);
   },
   invert(x, y) {
-    var coords = this.overlay.getProjection().fromLatLngToContainerPixel(new google.maps.LatLng(y, x));
+    const coords = this.overlay.getProjection().fromLatLngToContainerPixel(new google.maps.LatLng(y, x));
     return [coords.x, coords.y];
   },
 
@@ -346,13 +346,13 @@ var GoogleMapLayer = Class.extend({
   },
 
   getCenter() {
-    var center = this.map.getCenter();
+    const center = this.map.getCenter();
     this.centerMapker.setPosition(center);
     return { lat: center.lat(), lng: center.lng() };
   }
 });
 
-var MapboxLayer = Class.extend({
+const MapboxLayer = Class.extend({
 
   init(context, parent) {
     mapboxgl.accessToken = "pk.eyJ1Ijoic2VyZ2V5ZiIsImEiOiJjaXlqeWo5YnYwMDBzMzJwZnlwZXJ2bnA2In0.e711ku9KzcFW_x5wmOZTag";
@@ -361,7 +361,7 @@ var MapboxLayer = Class.extend({
   },
 
   initMap(domSelector) {
-    var _this = this;
+    const _this = this;
     this.mapRoot = d3.select(this.context.element).select(domSelector);
     this.mapCanvas = this.mapRoot.html("").append("div");
     return new Promise((resolve, reject) => {
@@ -384,11 +384,11 @@ var MapboxLayer = Class.extend({
   },
 
   rescaleMap() {
-    var _this = this;
-    var offset = this.context.model.ui.map.offset;
-    var margin = this.context.activeProfile.margin;
-    var viewPortHeight = this.context.height * this.context.model.ui.map.scale;
-    var viewPortWidth = this.context.width * this.context.model.ui.map.scale;
+    const _this = this;
+    const offset = this.context.model.ui.map.offset;
+    const margin = this.context.activeProfile.margin;
+    const viewPortHeight = this.context.height * this.context.model.ui.map.scale;
+    const viewPortWidth = this.context.width * this.context.model.ui.map.scale;
 
     this.mapCanvas
       .style("width", viewPortWidth + "px")
@@ -418,7 +418,7 @@ var MapboxLayer = Class.extend({
   },
 
   invert(x, y) {
-    var coords = this.map.project([x, y]);
+    const coords = this.map.project([x, y]);
     return [coords.x, coords.y];
   }
 

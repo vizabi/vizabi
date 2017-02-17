@@ -24,11 +24,11 @@ import Probe from "tools/mountainchart/mountainchart-probe";
 import DynamicBackground from "helpers/d3.dynamicBackground";
 import globals from "base/globals";
 
-var THICKNESS_THRESHOLD = 0.001;
+const THICKNESS_THRESHOLD = 0.001;
 const COLOR_WHITEISH = "#d3d3d3";
 
 //MOUNTAIN CHART COMPONENT
-var MountainChartComponent = Component.extend({
+const MountainChartComponent = Component.extend({
 
     /**
      * Initialize the component
@@ -38,7 +38,7 @@ var MountainChartComponent = Component.extend({
      */
   init(config, context) {
 
-    var _this = this;
+    const _this = this;
     this.name = "mountainchart";
     this.template = require("./mountainchart.html");
 
@@ -205,7 +205,7 @@ var MountainChartComponent = Component.extend({
   },
 
   domReady() {
-    var _this = this;
+    const _this = this;
 
         // reference elements
     this.element = d3.select(this.element);
@@ -236,18 +236,18 @@ var MountainChartComponent = Component.extend({
   },
 
   afterPreload() {
-    var _this = this;
+    const _this = this;
 
-    var yearNow = _this.model.time.formatDate(this.model.time.value);
-    var yearEnd = _this.model.time.formatDate(this.model.time.end);
+    const yearNow = _this.model.time.formatDate(this.model.time.value);
+    const yearEnd = _this.model.time.formatDate(this.model.time.end);
 
     this._math.xScaleFactor = this.model.marker.axis_x.xScaleFactor;
     this._math.xScaleShift = this.model.marker.axis_x.xScaleShift;
 
     if (!this.precomputedShapes || !this.precomputedShapes[yearNow] || !this.precomputedShapes[yearEnd]) return;
 
-    var yMax = this.precomputedShapes[this.model.ui.chart.yMaxMethod == "immediate" ? yearNow : yearEnd].yMax;
-    var shape = this.precomputedShapes[yearNow].shape;
+    const yMax = this.precomputedShapes[this.model.ui.chart.yMaxMethod == "immediate" ? yearNow : yearEnd].yMax;
+    let shape = this.precomputedShapes[yearNow].shape;
 
     if (!yMax || !shape || shape.length === 0) return;
 
@@ -287,7 +287,7 @@ var MountainChartComponent = Component.extend({
         _this._probe.redraw();
       });
 
-    var _this = this;
+    const _this = this;
     this.on("resize", () => {
             //console.log("acting on resize");
             //return if updatesize exists with error
@@ -310,7 +310,7 @@ var MountainChartComponent = Component.extend({
 
   ready() {
         //console.log("ready")
-    var _this = this;
+    const _this = this;
 
     this._math.xScaleFactor = this.model.marker.axis_x.xScaleFactor;
     this._math.xScaleShift = this.model.marker.axis_x.xScaleShift;
@@ -352,11 +352,7 @@ var MountainChartComponent = Component.extend({
 
 
   updateSize(meshLength) {
-
-    var margin, infoElHeight;
-    var padding = 2;
-
-    var profiles = {
+    const profiles = {
       small: {
         margin: { top: 10, right: 10, left: 10, bottom: 18 },
         infoElHeight: 16
@@ -371,7 +367,7 @@ var MountainChartComponent = Component.extend({
       }
     };
 
-    var presentationProfileChanges = {
+    const presentationProfileChanges = {
       medium: {
         margin: { top: 20, right: 20, left: 20, bottom: 50 },
         infoElHeight: 26
@@ -383,8 +379,8 @@ var MountainChartComponent = Component.extend({
     };
 
     this.activeProfile = this.getActiveProfile(profiles, presentationProfileChanges);
-    margin = this.activeProfile.margin;
-    infoElHeight = this.activeProfile.infoElHeight;
+    const { margin } = this.activeProfile;
+    const { infoElHeight } = this.activeProfile;
 
         //mesure width and height
     this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
@@ -395,9 +391,9 @@ var MountainChartComponent = Component.extend({
         //graph group is shifted according to margins (while svg element is at 100 by 100%)
     this.graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var isRTL = this.model.locale.isRTL();
+    const isRTL = this.model.locale.isRTL();
 
-    var yearLabelOptions = {
+    const yearLabelOptions = {
       topOffset: this.getLayoutProfile() === "large" ? margin.top * 2 : 0,
       xAlign: this.getLayoutProfile() === "large" ? (isRTL ? "left" : "right") : "center",
       yAlign: this.getLayoutProfile() === "large" ? "top" : "center",
@@ -415,7 +411,7 @@ var MountainChartComponent = Component.extend({
 
 
         //need to know scale type of X to move on
-    var scaleType = this._readyOnce ? this.model.marker.axis_x.scaleType : "log";
+    const scaleType = this._readyOnce ? this.model.marker.axis_x.scaleType : "log";
 
         //axis is updated
     this.xAxis.scale(this.xScale)
@@ -445,7 +441,7 @@ var MountainChartComponent = Component.extend({
       .attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + margin.top + ")");
 
 
-    var warnBB = this.dataWarningEl.select("text").node().getBBox();
+    const warnBB = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl.select("svg")
       .attr("width", warnBB.height)
       .attr("height", warnBB.height)
@@ -458,9 +454,9 @@ var MountainChartComponent = Component.extend({
       .attr("dx", warnBB.height * 1.5);
 
     if (this.infoEl.select("svg").node()) {
-      var titleBBox = this.yTitleEl.node().getBBox();
-      var t = utils.transform(this.yTitleEl.node());
-      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
+      const titleBBox = this.yTitleEl.node().getBBox();
+      const t = utils.transform(this.yTitleEl.node());
+      const hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
       this.infoEl.select("svg")
         .attr("width", infoElHeight + "px")
@@ -481,12 +477,12 @@ var MountainChartComponent = Component.extend({
 
 
   zoomToMaxMin() {
-    var _this = this;
+    const _this = this;
 
     if (this.model.marker.axis_x.zoomedMin == null || this.model.marker.axis_x.zoomedMax == null) return;
 
-    var x1 = this.xScale(this.model.marker.axis_x.zoomedMin);
-    var x2 = this.xScale(this.model.marker.axis_x.zoomedMax);
+    const x1 = this.xScale(this.model.marker.axis_x.zoomedMin);
+    const x2 = this.xScale(this.model.marker.axis_x.zoomedMax);
 
     this.rangeRatio = this.width / (x2 - x1) * this.rangeRatio;
     this.rangeShift = (this.rangeShift - x1) / (x2 - x1) * this.width;
@@ -498,10 +494,10 @@ var MountainChartComponent = Component.extend({
 
 
   updateUIStrings() {
-    var _this = this;
+    const _this = this;
 
     this.translator = this.model.locale.getTFunction();
-    var xConceptprops = this.model.marker.axis_x.getConceptprops();
+    const xConceptprops = this.model.marker.axis_x.getConceptprops();
 
 
     this.xTitleEl.select("text")
@@ -521,10 +517,10 @@ var MountainChartComponent = Component.extend({
       _this.parent.findChildByName("gapminder-datanotes").pin();
     });
     this.infoEl.on("mouseover", function() {
-      var rect = this.getBBox();
-      var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-      var toolRect = _this.root.element.getBoundingClientRect();
-      var chartRect = _this.element.node().getBoundingClientRect();
+      const rect = this.getBBox();
+      const coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+      const toolRect = _this.root.element.getBoundingClientRect();
+      const chartRect = _this.element.node().getBoundingClientRect();
       _this.parent.findChildByName("gapminder-datanotes").setHook("axis_y").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
     });
     this.infoEl.on("mouseout", () => {
@@ -551,7 +547,7 @@ var MountainChartComponent = Component.extend({
   },
 
   updateIndicators() {
-    var _this = this;
+    const _this = this;
 
         //fetch scales, or rebuild scales if there are none, then fetch
     this.yScale = this.model.marker.axis_y.getScale();
@@ -562,7 +558,7 @@ var MountainChartComponent = Component.extend({
   },
 
   updateEntities() {
-    var _this = this;
+    const _this = this;
 
         // construct pointers
     this.mountainPointers = this.model.marker.getKeys()
@@ -571,7 +567,7 @@ var MountainChartComponent = Component.extend({
                 && _this.values.axis_y[d[_this.KEY]]
                 && _this.values.axis_s[d[_this.KEY]])
             .map(d => {
-              var pointer = {};
+              const pointer = {};
               pointer[_this.KEY] = d[_this.KEY];
               pointer.KEY = function() {
                 return this[_this.KEY];
@@ -589,9 +585,9 @@ var MountainChartComponent = Component.extend({
             .entries(this.mountainPointers);
 
 
-    var groupManualSort = this.model.marker.group.manualSorting;
+    const groupManualSort = this.model.marker.group.manualSorting;
     this.groupedPointers.forEach(group => {
-      var groupSortValue = d3.sum(group.values.map(m => m.sortValue[0]));
+      let groupSortValue = d3.sum(group.values.map(m => m.sortValue[0]));
 
       if (groupManualSort && groupManualSort.length > 1) groupSortValue = groupManualSort.length - 1 - groupManualSort.indexOf(group.key);
 
@@ -606,7 +602,7 @@ var MountainChartComponent = Component.extend({
       group.aggrLevel = 1;
     });
 
-    var sortGroupKeys = {};
+    const sortGroupKeys = {};
     _this.groupedPointers.forEach(m => {
       sortGroupKeys[m.key] = m.values[0].sortValue[1];
     });
@@ -687,7 +683,7 @@ var MountainChartComponent = Component.extend({
   },
 
   _interact() {
-    var _this = this;
+    const _this = this;
 
     return {
       _mousemove(d, i) {
@@ -695,7 +691,7 @@ var MountainChartComponent = Component.extend({
 
         _this.model.marker.highlightMarker(d);
 
-        var mouse = d3.mouse(_this.graph.node()).map(d => parseInt(d));
+        const mouse = d3.mouse(_this.graph.node()).map(d => parseInt(d));
 
                 //position tooltip
         _this._setTooltip(d.key ? _this.model.marker.color.getColorlegendMarker().label.getItems()[d.key] : _this.values.label[d.KEY()]);
@@ -720,7 +716,7 @@ var MountainChartComponent = Component.extend({
   },
 
   highlightMarkers() {
-    var _this = this;
+    const _this = this;
     this.someHighlighted = (this.model.marker.highlight.length > 0);
 
     if (!this.selectList || !this.someSelected) return;
@@ -729,7 +725,7 @@ var MountainChartComponent = Component.extend({
   },
 
   selectMarkers() {
-    var _this = this;
+    const _this = this;
     this.someSelected = (this.model.marker.select.length > 0);
 
     this._selectlist.rebuild();
@@ -737,20 +733,20 @@ var MountainChartComponent = Component.extend({
   },
 
   _sumLeafPointersByMarker(branch, marker) {
-    var _this = this;
+    const _this = this;
     if (!branch.key) return _this.values[marker][branch.KEY()];
     return d3.sum(branch.values.map(m => _this._sumLeafPointersByMarker(m, marker)));
   },
 
   updateOpacity() {
-    var _this = this;
+    const _this = this;
         //if(!duration)duration = 0;
 
-    var OPACITY_HIGHLT = 1.0;
-    var OPACITY_HIGHLT_DIM = 0.3;
-    var OPACITY_SELECT = this.model.marker.opacityRegular;
-    var OPACITY_REGULAR = this.model.marker.opacityRegular;
-    var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
+    const OPACITY_HIGHLT = 1.0;
+    const OPACITY_HIGHLT_DIM = 0.3;
+    const OPACITY_SELECT = this.model.marker.opacityRegular;
+    const OPACITY_REGULAR = this.model.marker.opacityRegular;
+    const OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
 
     this.mountains.style("opacity", d => {
 
@@ -772,7 +768,7 @@ var MountainChartComponent = Component.extend({
 
     this.mountains.classed("vzb-selected", d => _this.model.marker.isSelected(d));
 
-    var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
+    const nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
 
         // when pointer events need update...
     if (nonSelectedOpacityZero !== this.nonSelectedOpacityZero) {
@@ -784,7 +780,7 @@ var MountainChartComponent = Component.extend({
   },
 
   updateTime() {
-    var _this = this;
+    const _this = this;
 
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
@@ -793,13 +789,13 @@ var MountainChartComponent = Component.extend({
   },
 
   updatePointers() {
-    var _this = this;
+    const _this = this;
     this.yMax = 0;
 
 
         //spawn the original mountains
     this.mountainPointers.forEach((d, i) => {
-      var vertices = _this._spawn(_this.values, d);
+      const vertices = _this._spawn(_this.values, d);
       _this.cached[d.KEY()] = vertices;
       d.hidden = vertices.length === 0;
     });
@@ -808,13 +804,13 @@ var MountainChartComponent = Component.extend({
         //recalculate stacking
     if (_this.model.marker.stack.which !== "none") {
       this.stackedPointers.forEach(group => {
-        var toStack = [];
+        let toStack = [];
         group.values.forEach(subgroup => {
           toStack = toStack.concat(subgroup.values.filter(f => !f.hidden));
         });
         _this.stack.keys(toStack.map(d => d.KEY()))(d3.range(_this.mesh.length))
           .forEach((vertices, keyIndex) => {
-            var key = toStack[keyIndex].KEY();
+            const key = toStack[keyIndex].KEY();
             vertices.forEach((d, verticesIndex) => {
               _this.cached[key][verticesIndex].y0 = d[0];
             });
@@ -827,13 +823,13 @@ var MountainChartComponent = Component.extend({
       if (_this.yMax < d.yMax) _this.yMax = d.yMax;
     });
 
-    var mergeGrouped = _this.model.marker.group.merge;
-    var mergeStacked = _this.model.marker.stack.merge;
+    const mergeGrouped = _this.model.marker.group.merge;
+    const mergeStacked = _this.model.marker.stack.merge;
         //var dragOrPlay = (_this.model.time.dragging || _this.model.time.playing) && this.model.marker.stack.which !== "none";
 
         //if(mergeStacked){
     this.stackedPointers.forEach(d => {
-      var firstLast = _this._getFirstLastPointersInStack(d);
+      const firstLast = _this._getFirstLastPointersInStack(d);
       _this.cached[d.key] = _this._getVerticesOfaMergedShape(firstLast);
       _this.values.color[d.key] = "_default";
       _this.values.axis_y[d.key] = _this._sumLeafPointersByMarker(d, "axis_y");
@@ -841,7 +837,7 @@ var MountainChartComponent = Component.extend({
     });
         //} else if (mergeGrouped || dragOrPlay){
     this.groupedPointers.forEach(d => {
-      var firstLast = _this._getFirstLastPointersInStack(d);
+      const firstLast = _this._getFirstLastPointersInStack(d);
       _this.cached[d.key] = _this._getVerticesOfaMergedShape(firstLast);
       _this.values.color[d.key] = _this.values.color[firstLast.first.KEY()];
       _this.values.axis_y[d.key] = _this._sumLeafPointersByMarker(d, "axis_y");
@@ -851,7 +847,7 @@ var MountainChartComponent = Component.extend({
 
     if (!mergeStacked && !mergeGrouped && this.model.marker.stack.use === "property") {
       this.groupedPointers.forEach(d => {
-        var visible = d.values.filter(f => !f.hidden);
+        const visible = d.values.filter(f => !f.hidden);
         d.yMax = visible[0].yMax;
         d.values.forEach(e => {
           e.yMaxGroup = d.yMax;
@@ -863,19 +859,18 @@ var MountainChartComponent = Component.extend({
   },
 
   _getFirstLastPointersInStack(group) {
-    var _this = this;
-
-    var visible, visible2;
+    let visible, visible2;
+    let first, last;
 
     if (group.values[0].values) {
       visible = group.values[0].values.filter(f => !f.hidden);
       visible2 = group.values[group.values.length - 1].values.filter(f => !f.hidden);
-      var first = visible[0];
-      var last = visible2[visible2.length - 1];
+      first = visible[0];
+      last = visible2[visible2.length - 1];
     } else {
       visible = group.values.filter(f => !f.hidden);
-      var first = visible[0];
-      var last = visible[visible.length - 1];
+      first = visible[0];
+      last = visible[visible.length - 1];
     }
 
     if (!visible.length || (visible2 && !visible2.length)) utils.warn("mountain chart failed to generate shapes. check the incoming data");
@@ -887,14 +882,14 @@ var MountainChartComponent = Component.extend({
   },
 
   _getVerticesOfaMergedShape(arg) {
-    var _this = this;
+    const _this = this;
 
-    var first = arg.first.KEY();
-    var last = arg.last.KEY();
+    const first = arg.first.KEY();
+    const last = arg.last.KEY();
 
     return _this.mesh.map((m, i) => {
-      var y = _this.cached[first][i].y0 + _this.cached[first][i].y - _this.cached[last][i].y0;
-      var y0 = _this.cached[last][i].y0;
+      const y = _this.cached[first][i].y0 + _this.cached[first][i].y - _this.cached[last][i].y0;
+      const y0 = _this.cached[last][i].y0;
       return {
         x: m,
         y0,
@@ -904,13 +899,13 @@ var MountainChartComponent = Component.extend({
   },
 
   _spawnMasks() {
-    var _this = this;
+    const _this = this;
 
-    var tailFatX = this._math.unscale(this.model.marker.axis_x.tailFatX);
-    var tailCutX = this._math.unscale(this.model.marker.axis_x.tailCutX);
-    var tailFade = this.model.marker.axis_x.tailFade;
-    var k = 2 * Math.PI / (Math.log(tailFatX) - Math.log(tailCutX));
-    var m = Math.PI - Math.log(tailFatX) * k;
+    const tailFatX = this._math.unscale(this.model.marker.axis_x.tailFatX);
+    const tailCutX = this._math.unscale(this.model.marker.axis_x.tailCutX);
+    const tailFade = this.model.marker.axis_x.tailFade;
+    const k = 2 * Math.PI / (Math.log(tailFatX) - Math.log(tailCutX));
+    const m = Math.PI - Math.log(tailFatX) * k;
 
 
     this.spawnMask = [];
@@ -925,23 +920,23 @@ var MountainChartComponent = Component.extend({
   },
 
   _spawn(values, d) {
-    var _this = this;
+    const _this = this;
 
-    var norm = values.axis_y[d.KEY()];
-    var sigma = _this._math.giniToSigma(values.axis_s[d.KEY()]);
-    var mu = _this._math.gdpToMu(values.axis_x[d.KEY()], sigma);
+    const norm = values.axis_y[d.KEY()];
+    const sigma = _this._math.giniToSigma(values.axis_s[d.KEY()]);
+    const mu = _this._math.gdpToMu(values.axis_x[d.KEY()], sigma);
 
     if (!norm || !mu || !sigma) return [];
 
-    var distribution = [];
-    var acc = 0;
+    const distribution = [];
+    let acc = 0;
 
     this.mesh.forEach((dX, i) => {
       distribution[i] = _this._math.pdf.lognormal(dX, mu, sigma);
       acc += _this.spawnMask[i] * distribution[i];
     });
 
-    var result = this.mesh.map((dX, i) => ({
+    const result = this.mesh.map((dX, i) => ({
       x: dX,
       y0: 0,
       y: norm * (distribution[i] * (1 - _this.spawnMask[i]) + _this.cosineShape[i] / _this.cosineArea * acc)
@@ -952,12 +947,12 @@ var MountainChartComponent = Component.extend({
 
   _adjustMaxY(options) {
     if (!options) options = {};
-    var _this = this;
-    var method = this.model.ui.chart.yMaxMethod;
+    const _this = this;
+    const method = this.model.ui.chart.yMaxMethod;
 
     if (method !== "immediate" && !options.force) return;
     if (method === "latest") {
-      var prevValues = _this.values;
+      const prevValues = _this.values;
       _this.model.marker.getFrame(_this.model.time.end, values => {
         if (!values) return;
 
@@ -978,33 +973,33 @@ var MountainChartComponent = Component.extend({
   },
 
   redrawDataPoints() {
-    var _this = this;
-    var mergeGrouped = this.model.marker.group.merge;
-    var mergeStacked = this.model.marker.stack.merge;
-    var stackMode = this.model.marker.stack.which;
+    const _this = this;
+    const mergeGrouped = this.model.marker.group.merge;
+    const mergeStacked = this.model.marker.stack.merge;
+    const stackMode = this.model.marker.stack.which;
         //it's important to know if the chart is dragging or playing at the moment.
         //because if that is the case, the mountain chart will merge the stacked entities to save performance
-    var dragOrPlay = (this.model.time.dragging || this.model.time.playing)
+    const dragOrPlay = (this.model.time.dragging || this.model.time.playing)
             //never merge when no entities are stacked
             && stackMode !== "none";
 
     this._adjustMaxY();
 
     this.mountainsMergeStacked.each(function(d) {
-      var view = d3.select(this);
-      var hidden = !mergeStacked;
+      const view = d3.select(this);
+      const hidden = !mergeStacked;
       _this._renderShape(view, d.KEY(), hidden);
     });
 
     this.mountainsMergeGrouped.each(function(d) {
-      var view = d3.select(this);
-      var hidden = (!mergeGrouped && !dragOrPlay) || (mergeStacked && !_this.model.marker.isSelected(d));
+      const view = d3.select(this);
+      const hidden = (!mergeGrouped && !dragOrPlay) || (mergeStacked && !_this.model.marker.isSelected(d));
       _this._renderShape(view, d.KEY(), hidden);
     });
 
     this.mountainsAtomic.each(function(d, i) {
-      var view = d3.select(this);
-      var hidden = d.hidden || ((mergeGrouped || mergeStacked || dragOrPlay) && !_this.model.marker.isSelected(d));
+      const view = d3.select(this);
+      const hidden = d.hidden || ((mergeGrouped || mergeStacked || dragOrPlay) && !_this.model.marker.isSelected(d));
       _this._renderShape(view, d.KEY(), hidden);
     });
 
@@ -1035,9 +1030,9 @@ var MountainChartComponent = Component.extend({
   },
 
   redrawDataPointsOnlyColors() {
-    var _this = this;
+    const _this = this;
     if (!this.mountains) return utils.warn("redrawDataPointsOnlyColors(): no mountains  defined. likely a premature call, fix it!");
-    var isColorUseIndicator = this.model.marker.color.use === "indicator";
+    const isColorUseIndicator = this.model.marker.color.use === "indicator";
     this.mountains.style("fill", d => _this.values.color[d.KEY()] ?
               (
                 isColorUseIndicator && _this.values.color[d.KEY()] == "_default" ?
@@ -1050,8 +1045,8 @@ var MountainChartComponent = Component.extend({
   },
 
   _renderShape(view, key, hidden) {
-    var stack = this.model.marker.stack.which;
-    var _this = this;
+    const stack = this.model.marker.stack.which;
+    const _this = this;
 
     view.classed("vzb-hidden", hidden);
 
@@ -1060,7 +1055,7 @@ var MountainChartComponent = Component.extend({
       return;
     }
 
-    var filter = {};
+    const filter = {};
     filter[this.KEY] = key;
     if (this.model.marker.isSelected(filter)) {
       view.attr("d", this.area(this.cached[key].filter(f => f.y > _this.values.axis_y[key] * THICKNESS_THRESHOLD)));
@@ -1097,7 +1092,7 @@ var MountainChartComponent = Component.extend({
 
   _setTooltip(tooltipText) {
     if (tooltipText) {
-      var mouse = d3.mouse(this.graph.node()).map(d => parseInt(d));
+      const mouse = d3.mouse(this.graph.node()).map(d => parseInt(d));
 
             //position tooltip
       this.tooltip.classed("vzb-hidden", false)
@@ -1107,7 +1102,7 @@ var MountainChartComponent = Component.extend({
         .attr("alignment-baseline", "middle")
         .text(tooltipText);
 
-      var contentBBox = this.tooltip.select("text").node().getBBox();
+      const contentBBox = this.tooltip.select("text").node().getBBox();
 
       this.tooltip.select("rect")
         .attr("width", contentBBox.width + 8)
@@ -1120,8 +1115,8 @@ var MountainChartComponent = Component.extend({
       this.tooltip.selectAll("text")
         .attr("x", -contentBBox.width - 25 + ((contentBBox.width + 8) / 2))
         .attr("y", -contentBBox.height - 25 + ((contentBBox.height + 11) / 2)); // 11 is 8 for margin + 3 for strokes
-      var translateX = (mouse[0] - contentBBox.width - 25) > 0 ? mouse[0] : (contentBBox.width + 25);
-      var translateY = (mouse[1] - contentBBox.height - 25) > 0 ? mouse[1] : (contentBBox.height + 25);
+      const translateX = (mouse[0] - contentBBox.width - 25) > 0 ? mouse[0] : (contentBBox.width + 25);
+      const translateY = (mouse[1] - contentBBox.height - 25) > 0 ? mouse[1] : (contentBBox.height + 25);
       this.tooltip
         .attr("transform", "translate(" + translateX + "," + translateY + ")");
 
@@ -1132,10 +1127,10 @@ var MountainChartComponent = Component.extend({
   },
 
   preload() {
-    var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
+    const shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
           globals.ext_resources.host + globals.ext_resources.preloadPath + "mc_precomputed_shapes.json";
 
-    var _this = this;
+    const _this = this;
 
     return new Promise((resolve, reject) => {
 

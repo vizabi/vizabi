@@ -6,7 +6,7 @@ import * as utils from "base/utils";
  * Reusable SLIDER
  */
 
-var SimpleSlider = Component.extend({
+const SimpleSlider = Component.extend({
 
   init(config, context) {
     this.template = '<div class="vzb-ss-holder"><input type="range" class="vzb-ss-slider vzb-ss-slider-normal" step="1"></div>';
@@ -15,7 +15,7 @@ var SimpleSlider = Component.extend({
       name: "submodel"
     }];
 
-    var _this = this;
+    const _this = this;
     this.name = "gapminder-simpleSlider";
 
     this.arg = config.arg;
@@ -41,13 +41,13 @@ var SimpleSlider = Component.extend({
   readyOnce() {
 
       //default values
-    var min = 0;
-    var max = 1;
-    var step = 0.1;
-    var value = min;
+    let min = 0;
+    let max = 1;
+    let step = 0.1;
+    let value = min;
 
       //selecting elements
-    var _this = this;
+    const _this = this;
     this.element = d3.select(this.element);
     this.slider = this.element.selectAll(".vzb-ss-slider");
 
@@ -81,11 +81,11 @@ var SimpleSlider = Component.extend({
       .attr("step", step)
       .attr("value", value)
       .on("input", () => {
-        var value = +d3.event.target.value;
+        const value = +d3.event.target.value;
         _this._setModel(value, false, false); // on drag - non-persistent changes while dragging
       })
       .on("change", () => {
-        var value = +d3.event.target.value;
+        const value = +d3.event.target.value;
         _this._setModel(value, true); // on drag end - value is probably same as last 'input'-event, so force change
       });
 
@@ -93,9 +93,9 @@ var SimpleSlider = Component.extend({
   },
 
   updateView() {
-    var value = this.model.submodel[this.arg];
-    var slider_properties = this.slider_properties;
-    var scale;
+    let value = this.model.submodel[this.arg];
+    const slider_properties = this.slider_properties;
+    let scale;
 
     if (slider_properties) {
       scale = slider_properties.scale;

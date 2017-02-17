@@ -4,13 +4,13 @@ import Hook from "models/hook";
  * VIZABI Group Model
  */
 
-var GroupModel = Hook.extend({
+const GroupModel = Hook.extend({
 
   /**
    * Default values for this model
    */
   getClassDefaults() {
-    var defaults = {
+    const defaults = {
       use: null,
       which: null,
       merge: false,

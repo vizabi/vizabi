@@ -5,14 +5,14 @@ import Hook from "models/hook";
  * VIZABI Data Model (options.data)
  */
 
-var SideModel = Hook.extend({
+const SideModel = Hook.extend({
 
   /**
    * Default values for this model
    */
 
   getClassDefaults() {
-    var defaults = {
+    const defaults = {
       use: null,
       which: null
     };
@@ -37,13 +37,13 @@ var SideModel = Hook.extend({
 
   readyOnce() {
     if (!this.spaceRef) return;
-    var dataConnChildren = this._space[this.spaceRef].dataConnectedChildren.slice(0);
+    const dataConnChildren = this._space[this.spaceRef].dataConnectedChildren.slice(0);
     dataConnChildren.splice(dataConnChildren.indexOf("show"), 1);
     this._space[this.spaceRef].dataConnectedChildren = dataConnChildren;
   },
 
   switchSideState() {
-    var left = this.state.left;
+    const left = this.state.left;
     this.state.left = this.state.right;
     this.state.right = left;
   },

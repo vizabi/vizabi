@@ -17,7 +17,7 @@ import steppedSpeedSlider from "components/steppedspeedslider/steppedspeedslider
 
 
   //LINE CHART TOOL
-var LineChart = Tool.extend("LineChart", {
+const LineChart = Tool.extend("LineChart", {
     /**
      * Initialized the tool
      * @param {Object} placeholder Placeholder element for the tool

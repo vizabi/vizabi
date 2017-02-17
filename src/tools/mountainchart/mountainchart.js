@@ -12,7 +12,7 @@ import datanotes from "components/datanotes/datanotes";
 import steppedSpeedSlider from "components/steppedspeedslider/steppedspeedslider";
 
 //MOUNTAIN CHART TOOL
-var MountainChart = Tool.extend("MountainChart", {
+const MountainChart = Tool.extend("MountainChart", {
 
   /**
    * Initializes the tool (MountainChart Tool).

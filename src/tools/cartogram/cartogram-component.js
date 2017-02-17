@@ -14,7 +14,7 @@ import globals from "base/globals";
 //import Selectlist from 'bubblemap-selectlist';
 
 //BUBBLE MAP CHART COMPONENT
-var CartogramComponent = Component.extend({
+const CartogramComponent = Component.extend({
   /**
    * Initializes the component (Bubble Map Chart).
    * Executed once before any template is rendered.
@@ -27,8 +27,8 @@ var CartogramComponent = Component.extend({
 
 
     //http://stackoverflow.com/questions/11381673/detecting-a-mobile-browser
-    var mobileAndTabletcheck = function() {
-      var check = false;
+    const mobileAndTabletcheck = function() {
+      let check = false;
       (function(a) { if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4)))check = true; })(navigator.userAgent || navigator.vendor || window.opera);
       return check;
     };
@@ -52,7 +52,7 @@ var CartogramComponent = Component.extend({
       type: "ui"
     }];
 
-    var _this = this;
+    const _this = this;
     this.model_binds = {
       "change:time.value": function(evt) {
         if (!_this._readyOnce) return;
@@ -63,7 +63,7 @@ var CartogramComponent = Component.extend({
         }
         (function(time) { // isolate timestamp
           _this.model.marker.getFrame(time, (frame, time) => {
-            var index = _this.calculationQueue.indexOf(time.toString()); //
+            const index = _this.calculationQueue.indexOf(time.toString()); //
             if (index == -1) { // we was receive more recent frame before so we pass this frame
               return;
             } else {
@@ -148,7 +148,7 @@ var CartogramComponent = Component.extend({
   },
 
   afterPreload() {
-    var _this = this;
+    const _this = this;
     if (!this.world) utils.warn("cartogram afterPreload: missing country shapes " + this.world);
     if (!this.geometries) utils.warn("cartogram afterPreload: missing country shapes " + this.geometries);
 
@@ -196,7 +196,7 @@ var CartogramComponent = Component.extend({
     this.KEY = this.model.entities.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
 
-    var _this = this;
+    const _this = this;
     this.updateUIStrings();
     this.on("resize", () => {
       if (_this.updateSize()) return;
@@ -234,7 +234,7 @@ var CartogramComponent = Component.extend({
         });
 
       if (_this.borderArcs) {
-        var data = _this.cartogram.stitchArcs(response, _this.borderArcs);
+        const data = _this.cartogram.stitchArcs(response, _this.borderArcs);
         _this.borders = _this.mapGraph.append("path")
           .datum(data)
           .attr("class", "boundary")
@@ -256,7 +256,7 @@ var CartogramComponent = Component.extend({
    * Both model and DOM are ready
    */
   ready() {
-    var _this = this;
+    const _this = this;
     this.cached = [];
     this.updateIndicators();
     this.updateUIStrings();
@@ -274,8 +274,8 @@ var CartogramComponent = Component.extend({
   },
 
   updateMarkerSizeLimits() {
-    var _this = this;
-    var extent = this.model.marker.size.extent || [0, 1];
+    const _this = this;
+    const extent = this.model.marker.size.extent || [0, 1];
     this.minRadius = Math.max(100 * extent[0], 0);
     this.maxRadius = Math.max(100 * extent[1], 0);
 
@@ -291,7 +291,7 @@ var CartogramComponent = Component.extend({
     if (this.cached[year]) {
       return this.cached[year];
     }
-    var _this = this;
+    const _this = this;
     this.cached[year] = 0;
     utils.forEach(frame, val => {
       _this.cached[year] += _this.sScale(val);
@@ -300,7 +300,7 @@ var CartogramComponent = Component.extend({
   },
 
   _redrawEntities() {
-    var _this = this;
+    const _this = this;
     if (this.updateEntitiesQueue.length == 0) return;
     if (this.redrawInProgress) {
       setTimeout(() => {
@@ -309,14 +309,14 @@ var CartogramComponent = Component.extend({
       return;
     }
     this.redrawInProgress = true;
-    var time = this.updateEntitiesQueue[this.updateEntitiesQueue.length - 1].time;
-    var duration = this.updateEntitiesQueue[this.updateEntitiesQueue.length - 1].duration;
+    let time = this.updateEntitiesQueue[this.updateEntitiesQueue.length - 1].time;
+    let duration = this.updateEntitiesQueue[this.updateEntitiesQueue.length - 1].duration;
     this.updateEntitiesQueue = [];
     if (this.model.ui.chart.lockNonSelected) {
       time = this.model.time.parse("" + this.model.ui.chart.lockNonSelected);
     }
     this.model.marker.getFrame(time, lockedFrame => {
-      var totValue = null;
+      const totValue = null;
       if (_this.model.marker.size.use == "constant") {
         _this.cartogram.iterations(0);
       } else {
@@ -324,8 +324,8 @@ var CartogramComponent = Component.extend({
         //var areas = _this.topo_features.map(d3.geo.path().projection(null).area);
         _this.cartogram.value(d => {
           if (_this.model.ui.chart.lockNonSelected) {
-            var size1 = _this.sScale(lockedFrame.size[_this._getKey(d)])/* * _this._calculateTotalSize(_this.model.time.value, _this.values.size)*/,
-              size2 = _this.sScale(_this.values.size[_this._getKey(d)])/* * _this._calculateTotalSize(time, lockedFrame.size)*/;
+            const size1 = _this.sScale(lockedFrame.size[_this._getKey(d)]);/* * _this._calculateTotalSize(_this.model.time.value, _this.values.size)*/
+            const size2 = _this.sScale(_this.values.size[_this._getKey(d)]);/* * _this._calculateTotalSize(time, lockedFrame.size)*/
             return d3.geo.path().projection(null).area(d) * Math.pow((size2 / size1), 2);
           } else {
             return _this.sScale(_this.values.size[_this._getKey(d)]);
@@ -337,16 +337,16 @@ var CartogramComponent = Component.extend({
          }
          */
       }
-      var calcDuration = 0;
-      var start = new Date().getTime();
+      const calcDuration = 0;
+      const start = new Date().getTime();
       _this.cartogram(_this.world, _this.geometries, totValue).then(response => {
-        var end = new Date().getTime();
+        const end = new Date().getTime();
         if (duration) { // increale duration for prevent gaps between frames
           duration = Math.max(duration, end - start);
         }
         _this.features = response.features;
         if (_this.borderArcs) {
-          var data = _this.cartogram.stitchArcs(response, _this.borderArcs);
+          const data = _this.cartogram.stitchArcs(response, _this.borderArcs);
           _this.borders.datum(data)
             .transition()
             .duration(duration)
@@ -389,14 +389,14 @@ var CartogramComponent = Component.extend({
   },
 
   updateEntities(duration) {
-    var time = this.model.time.value;
+    const time = this.model.time.value;
 
     this.updateEntitiesQueue.push({ time, duration });
     this._redrawEntities();
   },
 
   updateEntitityColor() {
-    var _this = this;
+    const _this = this;
     this.lands.transition()
       .duration(_this.duration)
       .ease(d3.easeLinear)
@@ -404,10 +404,10 @@ var CartogramComponent = Component.extend({
 
   },
   updateUIStrings() {
-    var _this = this;
+    const _this = this;
 
     this.translator = this.model.locale.getTFunction();
-    var sizeConceptprops = this.model.marker.size.getConceptprops();
+    const sizeConceptprops = this.model.marker.size.getConceptprops();
     this.strings = {
       title: {
         C: (_this.model.marker.size.use !== "constant" ? this.translator("buttons/color") + ": " : "") + this.translator("indicator/" + _this.model.marker.color.which),
@@ -465,8 +465,8 @@ var CartogramComponent = Component.extend({
       _this.parent.findChildByName("gapminder-datanotes").pin();
     });
     this.yInfoEl.on("mouseover", function() {
-      var rect = this.getBBox();
-      var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+      const rect = this.getBBox();
+      const coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
       _this.parent.findChildByName("gapminder-datanotes").setHook("size").show().setPos(coord.x, coord.y);
     });
     this.yInfoEl.on("mouseout", () => {
@@ -482,8 +482,8 @@ var CartogramComponent = Component.extend({
       _this.parent.findChildByName("gapminder-datanotes").pin();
     });
     this.sInfoEl.on("mouseover", function() {
-      var rect = this.getBBox();
-      var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+      const rect = this.getBBox();
+      const coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
       _this.parent.findChildByName("gapminder-datanotes").setHook("color").show().setPos(coord.x, coord.y);
     });
     this.sInfoEl.on("mouseout", () => {
@@ -502,7 +502,7 @@ var CartogramComponent = Component.extend({
    * Ideally should only update when time or data changes
    */
   updateTime() {
-    var _this = this;
+    const _this = this;
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
@@ -515,11 +515,7 @@ var CartogramComponent = Component.extend({
    * Ideally,it contains only operations related to size
    */
   updateSize() {
-
-    var _this = this;
-    var margin, infoElHeight;
-
-    var profiles = {
+    const profiles = {
       small: {
         margin: { top: 10, right: 10, left: 10, bottom: 0 },
         infoElHeight: 16,
@@ -534,7 +530,7 @@ var CartogramComponent = Component.extend({
       }
     };
 
-    var presentationProfileChanges = {
+    const presentationProfileChanges = {
       medium: {
         infoElHeight: 26
       },
@@ -544,17 +540,17 @@ var CartogramComponent = Component.extend({
     };
 
     this.activeProfile = this.getActiveProfile(profiles, presentationProfileChanges);
-    margin = this.activeProfile.margin;
-    infoElHeight = this.activeProfile.infoElHeight;
+    const { margin } = this.activeProfile;
+    const { infoElHeight } = this.activeProfile;
 
     //stage
-    var height = this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
-    var width = this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
+    const height = this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
+    const width = this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
 
     if (this.height <= 0 || this.width <= 0) return utils.warn("Bubble map updateSize() abort: vizabi container is too little or has display:none");
 
-    var boundBox = this.boundBox;
-    var viewBox = [boundBox[0][0] * this.defaultWidth,
+    const boundBox = this.boundBox;
+    const viewBox = [boundBox[0][0] * this.defaultWidth,
       boundBox[0][1] * this.defaultHeight,
       Math.abs(boundBox[1][0] - boundBox[0][0]) * this.defaultWidth,
       Math.abs(boundBox[1][1] - boundBox[0][1]) * this.defaultHeight];
@@ -577,12 +573,12 @@ var CartogramComponent = Component.extend({
       .style("font-size", infoElHeight)
       .attr("transform", "translate(0," + margin.top + ")");
 
-    var yTitleBB = this.yTitleEl.select("text").node().getBBox();
+    const yTitleBB = this.yTitleEl.select("text").node().getBBox();
 
     this.sTitleEl.attr("transform", "translate(" + 0 + "," + (margin.top + yTitleBB.height) + ")")
       .classed("vzb-hidden", this.model.marker.size.use == "constant");
 
-    var warnBB = this.dataWarningEl.select("text").node().getBBox();
+    const warnBB = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl.select("svg")
       .attr("width", warnBB.height * 0.75)
       .attr("height", warnBB.height * 0.75)
@@ -594,8 +590,8 @@ var CartogramComponent = Component.extend({
       .select("text");
 
     if (this.yInfoEl.select("svg").node()) {
-      var titleBBox = this.yTitleEl.node().getBBox();
-      var translate = d3.transform(this.yTitleEl.attr("transform")).translate;
+      const titleBBox = this.yTitleEl.node().getBBox();
+      const translate = d3.transform(this.yTitleEl.attr("transform")).translate;
 
       this.yInfoEl.select("svg")
         .attr("width", infoElHeight)
@@ -608,8 +604,8 @@ var CartogramComponent = Component.extend({
     this.sInfoEl.classed("vzb-hidden", this.sTitleEl.classed("vzb-hidden"));
 
     if (!this.sInfoEl.classed("vzb-hidden") && this.sInfoEl.select("svg").node()) {
-      var titleBBox = this.sTitleEl.node().getBBox();
-      var translate = d3.transform(this.sTitleEl.attr("transform")).translate;
+      const titleBBox = this.sTitleEl.node().getBBox();
+      const translate = d3.transform(this.sTitleEl.attr("transform")).translate;
 
       this.sInfoEl.select("svg")
         .attr("width", infoElHeight)
@@ -623,16 +619,16 @@ var CartogramComponent = Component.extend({
   fitSizeOfTitles() {
 
     //reset font sizes first to make the measurement consistent
-    var yTitleText = this.yTitleEl.select("text")
+    const yTitleText = this.yTitleEl.select("text")
       .style("font-size", null);
-    var sTitleText = this.sTitleEl.select("text")
+    const sTitleText = this.sTitleEl.select("text")
       .style("font-size", null);
 
 
-    var yTitleBB = yTitleText.node().getBBox();
-    var sTitleBB = this.sTitleEl.classed("vzb-hidden") ? yTitleBB : sTitleText.node().getBBox();
+    const yTitleBB = yTitleText.node().getBBox();
+    const sTitleBB = this.sTitleEl.classed("vzb-hidden") ? yTitleBB : sTitleText.node().getBBox();
 
-    var font =
+    const font =
       Math.max(parseInt(yTitleText.style("font-size")), parseInt(sTitleText.style("font-size")))
       * this.width / Math.max(yTitleBB.width, sTitleBB.width);
 
@@ -646,7 +642,7 @@ var CartogramComponent = Component.extend({
     }
   },
   _interact() {
-    var _this = this;
+    const _this = this;
 
     return {
       _mouseover(d, i) {
@@ -683,34 +679,34 @@ var CartogramComponent = Component.extend({
 
   // show size number on title when hovered on a bubble
   updateTitleNumbers() {
-    var _this = this;
+    const _this = this;
 
-    var mobile; // if is mobile device and only one bubble is selected, update the ytitle for the bubble
+    let mobile; // if is mobile device and only one bubble is selected, update the ytitle for the bubble
     if (_this.isMobile && _this.model.entities.select && _this.model.entities.select.length === 1) {
       mobile = _this.model.entities.select[0];
     }
 
     if (_this.hovered || mobile) {
-      var hovered = _this.hovered || mobile;
-      var formatterC = _this.model.marker.color.getTickFormatter();
+      const hovered = _this.hovered || mobile;
+      const formatterC = _this.model.marker.color.getTickFormatter();
 
-      var unitC = _this.translator("unit/" + _this.model.marker.color.which);
+      let unitC = _this.translator("unit/" + _this.model.marker.color.which);
       //suppress unit strings that found no translation (returns same thing as requested)
       if (unitC === "unit/" + _this.model.marker.color.which) unitC = "";
 
-      var valueC = _this.values.color[_this._getKey(hovered)];
+      const valueC = _this.values.color[_this._getKey(hovered)];
       _this.yTitleEl.select("text")
         .text(this.strings.title.C + ": " +
         (valueC || valueC === 0 ? formatterC(valueC) + " " + unitC : _this.translator("hints/nodata")));
 
       if (this.model.marker.size.use !== "constant") {
-        var formatterS = _this.model.marker.size.getTickFormatter();
+        const formatterS = _this.model.marker.size.getTickFormatter();
 
-        var unitS = _this.translator("unit/" + _this.model.marker.size.which);
+        let unitS = _this.translator("unit/" + _this.model.marker.size.which);
         //suppress unit strings that found no translation (returns same thing as requested)
         if (unitS === "unit/" + _this.model.marker.size.which) unitS = "";
 
-        var valueS = _this.values.size[_this._getKey(hovered)];
+        const valueS = _this.values.size[_this._getKey(hovered)];
         _this.sTitleEl.select("text")
           .text(this.strings.title.S + ": " + formatterS(valueS) + " " + unitS);
       }
@@ -729,16 +725,16 @@ var CartogramComponent = Component.extend({
   },
 
   _setTooltip(d) {
-    var _this = this;
+    const _this = this;
     if (d) {
-      var tooltipText = this.values.label[this._getKey(d)] ?
+      const tooltipText = this.values.label[this._getKey(d)] ?
         this.values.label[this._getKey(d)]
         : d.properties.MN_NAME;
-      var offset = 10;
-      var mouse = d3.mouse(this.graph.node()).map(d => parseInt(d));
-      var x = mouse[0];
-      var y = mouse[1];
-      var xPos, yPos, xSign = -1,
+      const offset = 10;
+      const mouse = d3.mouse(this.graph.node()).map(d => parseInt(d));
+      let x = mouse[0];
+      let y = mouse[1];
+      let xPos, yPos, xSign = -1,
         ySign = -1,
         xOffset = 0,
         yOffset = 0;
@@ -753,7 +749,7 @@ var CartogramComponent = Component.extend({
         .selectAll("text")
         .text(tooltipText);
 
-      var contentBBox = this.tooltip.select("text").node().getBBox();
+      const contentBBox = this.tooltip.select("text").node().getBBox();
       if (x - xOffset - contentBBox.width < 0) {
         xSign = 1;
         x += contentBBox.width + 5; // corrective to the block Radius and text padding
@@ -791,14 +787,14 @@ var CartogramComponent = Component.extend({
   },
 
   updateLandOpacity() {
-    var _this = this;
+    const _this = this;
     //if(!duration)duration = 0;
 
-    var OPACITY_HIGHLT = 0.8;
-    var OPACITY_HIGHLT_DIM = 0.3;
-    var OPACITY_SELECT = this.model.entities.opacityRegular;
-    var OPACITY_REGULAR = this.model.entities.opacityRegular;
-    var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
+    const OPACITY_HIGHLT = 0.8;
+    const OPACITY_HIGHLT_DIM = 0.3;
+    const OPACITY_SELECT = this.model.entities.opacityRegular;
+    const OPACITY_REGULAR = this.model.entities.opacityRegular;
+    const OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
     this.someHighlighted = (this.model.entities.highlight.length > 0);
     this.someSelected = (this.model.entities.select.length > 0);
     this.lands
@@ -820,7 +816,7 @@ var CartogramComponent = Component.extend({
       });
 
 
-    var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
+    const someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
 
     // when pointer events need update...
     if (someSelectedAndOpacityZero != this.someSelectedAndOpacityZero_1) {
@@ -832,8 +828,8 @@ var CartogramComponent = Component.extend({
   },
 
   preload() {
-    var _this = this;
-    var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
+    const _this = this;
+    const shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
         globals.ext_resources.host + globals.ext_resources.preloadPath + "municipalities.json";
 
     return new Promise((resolve, reject) => {

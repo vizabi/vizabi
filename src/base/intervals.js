@@ -1,6 +1,6 @@
 import Class from "base/class";
 
-var Intervals = Class.extend({
+const Intervals = Class.extend({
 
   /**
    * Initializes intervals
@@ -32,7 +32,7 @@ var Intervals = Class.extend({
    * Clears all intervals
    */
   clearAllIntervals() {
-    for (var i in this.intervals) {
+    for (const i in this.intervals) {
       this.clearInterval(i);
     }
   }

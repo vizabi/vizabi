@@ -5,13 +5,13 @@ import DataConnected from "models/dataconnected";
  * VIZABI Entities Model
  */
 
-var EntitiesModel = DataConnected.extend({
+const EntitiesModel = DataConnected.extend({
 
   /**
    * Default values for this model
    */
   getClassDefaults() {
-    var defaults = {
+    const defaults = {
       show: {},
       dim: null,
       skipFilter: false
@@ -37,7 +37,7 @@ var EntitiesModel = DataConnected.extend({
 
   afterPreload() {
     if (this.dim == null && this.autogenerate) {
-      var dataSource = this.getClosestModel(this.autogenerate.data);
+      const dataSource = this.getClosestModel(this.autogenerate.data);
       this.dim = dataSource.getConceptByIndex(this.autogenerate.conceptIndex).concept;
     }
   },
@@ -63,9 +63,9 @@ var EntitiesModel = DataConnected.extend({
    */
   showEntity(d) {
     //clear selected countries when showing something new
-    var newShow = utils.deepClone(this.show);
-    var dimension = this.getDimension();
-    var _d;
+    const newShow = utils.deepClone(this.show);
+    const dimension = this.getDimension();
+    let _d;
 
     if (!utils.isArray(d)) {
       _d = [d];
@@ -73,14 +73,14 @@ var EntitiesModel = DataConnected.extend({
       _d = d;
     }
 
-    var showArray = [];
+    let showArray = [];
 
     // get array from show
     if (this.show[dimension] && this.show[dimension]["$in"] && utils.isArray(this.show[dimension]["$in"]))
       showArray = this.show[dimension]["$in"];
 
     utils.forEach(_d, d => {
-      var value = d[dimension];
+      const value = d[dimension];
       if (this.isShown(d)) {
         showArray = showArray.filter(d => d !== value);
       } else {
@@ -101,7 +101,7 @@ var EntitiesModel = DataConnected.extend({
    * @returns {Boolean} whether the item is shown or not
    */
   isShown(d) {
-    var dimension = this.getDimension();
+    const dimension = this.getDimension();
     return this.show[dimension] && this.show[dimension]["$in"] && this.show[dimension]["$in"].indexOf(d[dimension]) !== -1;
   },
 
@@ -109,18 +109,18 @@ var EntitiesModel = DataConnected.extend({
    * Clears showing of items
    */
   clearShow() {
-    var dimension = this.getDimension();
-    var show = utils.deepClone(this.show);
+    const dimension = this.getDimension();
+    const show = utils.deepClone(this.show);
     delete show[dimension];
     this.show = show;
   },
 
   getFilteredEntities() {
-    var dimension = this.getDimension();
+    const dimension = this.getDimension();
     if (this.show[dimension] && this.show[dimension]["$in"] && utils.isArray(this.show[dimension]["$in"])) {
-      var showArray = this.show[dimension]["$in"];
+      const showArray = this.show[dimension]["$in"];
       return showArray.map(m => {
-        var _m = {};
+        const _m = {};
         _m[dimension] = m;
         return _m;
       });

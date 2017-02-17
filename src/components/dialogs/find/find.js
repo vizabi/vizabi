@@ -9,11 +9,11 @@ import simpleslider from "components/simpleslider/simpleslider";
  * Reusable find dialog
  */
 
-var Find = Dialog.extend({
+const Find = Dialog.extend({
 
   init(config, parent) {
     this.name = "find";
-    var _this = this;
+    const _this = this;
 
     this.components = [{
       component: simpleslider,
@@ -70,10 +70,10 @@ var Find = Dialog.extend({
 
     this.KEY = this.model.state.entities.getDimension();
 
-    var _this = this;
+    const _this = this;
 
     this.input_search.on("keyup", () => {
-      var event = d3.event;
+      const event = d3.event;
       if (event.keyCode == 13 && _this.input_search.node().value == "select all") {
         _this.input_search.node().value = "";
         //clear highlight so it doesn't get in the way when selecting an entity
@@ -101,7 +101,7 @@ var Find = Dialog.extend({
   },
 
   open() {
-    var _this = this;
+    const _this = this;
     this._super();
 
     this.input_search.node().value = "";
@@ -122,15 +122,15 @@ var Find = Dialog.extend({
   ready() {
     this._super();
 
-    var _this = this;
-    var KEY = this.KEY;
+    const _this = this;
+    const KEY = this.KEY;
 
     this.time = this.model.state.time.value;
     this.model.state.marker.getFrame(this.time, values => {
       if (!values) return;
 
-      var data = _this.model.state.marker.getKeys().map(d => {
-        var pointer = {};
+      const data = _this.model.state.marker.getKeys().map(d => {
+        const pointer = {};
         pointer[KEY] = d[KEY];
         pointer.brokenData = false;
         pointer.name = values.label[d[KEY]];
@@ -181,12 +181,12 @@ var Find = Dialog.extend({
   },
 
   redrawDataPoints(values) {
-    var _this = this;
-    var KEY = this.KEY;
+    const _this = this;
+    const KEY = this.KEY;
 
     _this.items
       .each(function(d) {
-        var view = d3.select(this).select("label");
+        const view = d3.select(this).select("label");
 
         d.brokenData = false;
         utils.forEach(values, (hook, name) => {
@@ -203,25 +203,25 @@ var Find = Dialog.extend({
   },
 
   selectDataPoints() {
-    var KEY = this.KEY;
-    var selected = this.model.state.marker.getSelected(KEY);
+    const KEY = this.KEY;
+    const selected = this.model.state.marker.getSelected(KEY);
     this.items.selectAll("input")
       .property("checked", d => (selected.indexOf(d[KEY]) !== -1));
   },
 
   showHideSearch() {
-    var search = this.input_search.node().value || "";
+    let search = this.input_search.node().value || "";
     search = search.toLowerCase();
 
     this.list.selectAll(".vzb-find-item")
       .classed("vzb-hidden", d => {
-        var lower = (d.name || "").toLowerCase();
+        const lower = (d.name || "").toLowerCase();
         return (lower.indexOf(search) === -1);
       });
   },
 
   showHideDeselect() {
-    var someSelected = !!this.model.state.marker.select.length;
+    const someSelected = !!this.model.state.marker.select.length;
     this.deselect_all.classed("vzb-hidden", !someSelected);
     this.opacity_nonselected.classed("vzb-hidden", !someSelected);
   },

@@ -11,7 +11,7 @@ import datawarning from "components/datawarning/datawarning";
 import datanotes from "components/datanotes/datanotes";
 import steppedSpeedSlider from "components/steppedspeedslider/steppedspeedslider";
 
-var BubbleChart = Tool.extend("BubbleChart", {
+const BubbleChart = Tool.extend("BubbleChart", {
 
   /**
    * Initializes the tool (Bubble Chart Tool).
@@ -68,7 +68,7 @@ var BubbleChart = Tool.extend("BubbleChart", {
     this._super(model);
 
     if (model.ui.chart.lockNonSelected) {
-      var time = model.state.time.parse("" + model.ui.chart.lockNonSelected);
+      const time = model.state.time.parse("" + model.ui.chart.lockNonSelected);
       if (time < model.state.time.start) model.ui.chart.lockNonSelected = model.state.time.formatDate(model.state.time.start);
       if (time > model.state.time.end) model.ui.chart.lockNonSelected = model.state.time.formatDate(model.state.time.end);
     }

@@ -84,13 +84,13 @@ export default Class.extend({
 
   _resizeText() {
 
-    var bbox = this.element.node().getBBox();
+    const bbox = this.element.node().getBBox();
 
     if (!bbox.width || !bbox.height || !this.width || !this.height) return this;
 
     // method from http://stackoverflow.com/a/22580176
-    var widthTransform = this.width * this.widthRatio / bbox.width;
-    var heightTransform = this.height * this.heightRatio / bbox.height;
+    const widthTransform = this.width * this.widthRatio / bbox.width;
+    const heightTransform = this.height * this.heightRatio / bbox.height;
     this.scalar = widthTransform < heightTransform ? widthTransform : heightTransform;
     this.element.attr("transform", "scale(" + this.scalar + ")");
 

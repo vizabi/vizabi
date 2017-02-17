@@ -7,7 +7,7 @@ import Component from "base/component";
  * Reusable bubble size slider
  */
 
-var OPTIONS = {
+const OPTIONS = {
   EXTENT_MIN: 0,
   EXTENT_MAX: 1,
   TEXT_PARAMS: { TOP: 18, LEFT: 10, MAX_WIDTH: 42, MAX_HEIGHT: 16 },
@@ -18,7 +18,7 @@ var OPTIONS = {
   MARGIN: { TOP: 2, LEFT: 5, RIGHT: 5 }
 };
 
-var profiles = {
+const profiles = {
   "small": {
     minLabelTextSize: 7,
     maxLabelTextSize: 21,
@@ -37,7 +37,7 @@ var profiles = {
 };
 
 
-var SizeSlider = Component.extend({
+const SizeSlider = Component.extend({
 
   /**
    * Initializes the timeslider.
@@ -61,7 +61,7 @@ var SizeSlider = Component.extend({
       type: "locale"
     }];
 
-    var _this = this;
+    const _this = this;
     this.model_binds = {
       "change:size.domainMin": changeMinMaxHandler,
       "change:size.domainMax": changeMinMaxHandler,
@@ -72,7 +72,7 @@ var SizeSlider = Component.extend({
     };
 
     function changeMinMaxHandler(evt, path) {
-      var extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
+      const extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
       _this._updateLabels(extent);
       _this._moveBrush(extent);
     }
@@ -83,9 +83,9 @@ var SizeSlider = Component.extend({
   },
 
   modelReady() {
-    var _this = this;
+    const _this = this;
     _this.modelUse = _this.model.size.use;
-    var extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
+    const extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
     if (_this.modelUse != "constant") {
       _this.sizeScaleMinMax = _this.model.size.getScale().domain();
       _this.sliderEl.selectAll(".w").classed("vzb-hidden", false);
@@ -97,7 +97,7 @@ var SizeSlider = Component.extend({
       _this.sliderEl.select(".selection").classed("vzb-hidden", true);
       _this.sliderEl.select(".overlay").classed("vzb-pointerevents-none", true);
       if (!_this.model.size.which) {
-        var p = _this.propertyActiveProfile;
+        const p = _this.propertyActiveProfile;
         extent[1] = (p.default - p.min) / (p.max - p.min);
         _this.model.size.which = "_default";
       }
@@ -111,28 +111,27 @@ var SizeSlider = Component.extend({
    * At this point, this.element and this.placeholder are available as a d3 object
    */
   readyOnce() {
-    var _this = this;
-    var extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
+    const _this = this;
+    const extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
     this.element = d3.select(this.element);
     this.sliderSvg = this.element.select(".vzb-szs-svg");
     this.sliderWrap = this.sliderSvg.select(".vzb-szs-slider-wrap");
     this.sliderEl = this.sliderWrap.select(".vzb-szs-slider");
 
-    var
-      textMargin = { v: OPTIONS.TEXT_PARAMS.TOP, h: OPTIONS.TEXT_PARAMS.LEFT },
-      textMaxWidth = OPTIONS.TEXT_PARAMS.MAX_WIDTH,
-      textMaxHeight = OPTIONS.TEXT_PARAMS.MAX_HEIGHT,
-      barWidth = OPTIONS.BAR_WIDTH,
-      thumbRadius = OPTIONS.THUMB_RADIUS,
-      thumbStrokeWidth = OPTIONS.THUMB_STROKE_WIDTH,
-      padding = {
-        top: OPTIONS.MARGIN.TOP + barWidth * 1.25,
-        left: thumbRadius,
-        right: thumbRadius,
-        bottom: barWidth + textMaxHeight
-      };
+    const  textMargin = { v: OPTIONS.TEXT_PARAMS.TOP, h: OPTIONS.TEXT_PARAMS.LEFT };
+    const textMaxWidth = OPTIONS.TEXT_PARAMS.MAX_WIDTH;
+    const textMaxHeight = OPTIONS.TEXT_PARAMS.MAX_HEIGHT;
+    const barWidth = OPTIONS.BAR_WIDTH;
+    const thumbRadius = OPTIONS.THUMB_RADIUS;
+    const thumbStrokeWidth = OPTIONS.THUMB_STROKE_WIDTH;
+    const padding = {
+      top: OPTIONS.MARGIN.TOP + barWidth * 1.25,
+      left: thumbRadius,
+      right: thumbRadius,
+      bottom: barWidth + textMaxHeight
+    };
 
-    var componentWidth = this.element.node().offsetWidth;
+    const componentWidth = this.element.node().offsetWidth;
 
     this.padding = padding;
 
@@ -155,7 +154,7 @@ var SizeSlider = Component.extend({
       .on("start", () => {
         if (_this.nonBrushChange || !d3.event.sourceEvent) return;
         if (d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
-          var brushDatum = _this.sliderEl.node().__brush;
+          const brushDatum = _this.sliderEl.node().__brush;
           brushDatum.selection[1][0] += 0.01;
         }
         _this._setFromExtent(false, false, false);
@@ -163,7 +162,7 @@ var SizeSlider = Component.extend({
       .on("brush", () => {
         if (_this.nonBrushChange || !d3.event.sourceEvent) return;
         if (d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
-          var brushDatum = _this.sliderEl.node().__brush;
+          const brushDatum = _this.sliderEl.node().__brush;
           brushDatum.selection[1][0] += 0.01;
         }
         _this._setFromExtent(true, false, false); // non persistent change
@@ -207,12 +206,12 @@ var SizeSlider = Component.extend({
       _this.propertyActiveProfile = _this.getPropertyActiveProfile();
       _this.propertyScale.range([_this.propertyActiveProfile.min, _this.propertyActiveProfile.max]);
 
-      var componentWidth = _this.element.node().offsetWidth;
+      const componentWidth = _this.element.node().offsetWidth;
 
       _this.xScale.range([0, componentWidth - _this.padding.left - _this.padding.right]);
       _this._updateSize();
       _this.sliderEl.call(_this.brush.extent([[0, 0], [componentWidth - padding.left - padding.right, barWidth]]));
-      var extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
+      const extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
       _this._moveBrush(extent);
     });
 
@@ -229,12 +228,12 @@ var SizeSlider = Component.extend({
   },
 
   getPropertyActiveProfile() {
-    var profile = profiles[this.getLayoutProfile()];
+    const profile = profiles[this.getLayoutProfile()];
     return { min: profile["min" + this.propertyName], max: profile["max" + this.propertyName], default: profile["default" + this.propertyName] };
   },
 
   _moveBrush(s) {
-    var _s = s.map(this.xScale);
+    const _s = s.map(this.xScale);
     this.nonBrushChange = true;
     this.sliderEl.call(this.brush.move, [_s[0], _s[1] + 0.01]);
     this.nonBrushChange = false;
@@ -254,11 +253,11 @@ var SizeSlider = Component.extend({
   },
 
   _updateLabels(s) {
-    var _this = this;
+    const _this = this;
     this.sliderLabelsEl.data(s)
       .attr("transform", (d, i) => {
-        var dX = _this.xScale(i),
-          dY = 0;//i ? -textMargin.v : 0;
+        const dX = _this.xScale(i);
+        const dY = 0;//i ? -textMargin.v : 0;
         return "translate(" + (dX) + "," + (dY) + ")";
       })
       .attr("font-size", (d, i) => _this.propertyScale(d));
@@ -267,7 +266,7 @@ var SizeSlider = Component.extend({
   },
 
   _setLabelsText() {
-    var _this = this;
+    const _this = this;
     _this.sliderLabelsEl
       .data([_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[0]), _this.model.size.getTickFormatter()(_this.sizeScaleMinMax[1])])
       .text(d => d);
@@ -280,7 +279,7 @@ var SizeSlider = Component.extend({
    * @param {boolean} persistent sets the persistency of the change event
    */
   _setFromExtent(setModel, force, persistent) {
-    var s = d3.brushSelection(this.sliderEl.node());
+    let s = d3.brushSelection(this.sliderEl.node());
     if (!s) return;
     s = [this.xScale.invert(s[0]), this.xScale.invert(+s[1].toFixed(1))];
     this._updateLabels(s);

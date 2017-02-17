@@ -1,11 +1,11 @@
 import * as utils from "base/utils";
 import Component from "base/component";
 
-var DraggableList = Component.extend({
+const DraggableList = Component.extend({
 
   init(config, context) {
     this.template = '<span class="vzb-dl-holder"><ul class="vzb-draggable list vzb-dialog-scrollable"></ul></span>';
-    var _this = this;
+    const _this = this;
     this.name = "draggableList";
 
     this.dataArrFn = config.dataArrFn;
@@ -61,7 +61,7 @@ var DraggableList = Component.extend({
         _this.element
           .selectAll("div")
           .each(function(d, i) {
-            var boundRect = this.getBoundingClientRect();
+            const boundRect = this.getBoundingClientRect();
             d._y = boundRect.top;
             d._top = 0;
             if (draggedData.data === d.data) {
@@ -76,13 +76,13 @@ var DraggableList = Component.extend({
       .on("drag", (draggedData, draggedIndex) => {
         if (_this.dataUpdateFlag || !_this.draggable) return;
         draggedData._top += d3.event.dy;
-        var newDraggedY = draggedData._y + draggedData._top;
+        const newDraggedY = draggedData._y + draggedData._top;
         if (newDraggedY > _this.parentBoundRect.top
           && newDraggedY + draggedData._height < _this.parentBoundRect.top + _this.parentBoundRect.height)
         {
           _this.itemsEl
             .style("top", (d, i) => {
-              var top = 0;
+              let top = 0;
 
               if (i < draggedIndex && d._y + draggedData._height * 0.5 > newDraggedY) {
                 top = draggedData._height;
@@ -105,9 +105,9 @@ var DraggableList = Component.extend({
   },
 
   ready() {
-    var _this = this;
+    const _this = this;
 
-    var labels = _this.model.color.getColorlegendMarker().label.getItems();
+    const labels = _this.model.color.getColorlegendMarker().label.getItems();
     this.dataArrFn(utils.keys(labels));
 
     this.updateView();
@@ -118,7 +118,7 @@ var DraggableList = Component.extend({
     this.itemsEl
       .call(_this.itemDragger);
 
-    var test = this.itemsEl.select("li")
+    const test = this.itemsEl.select("li")
       .on("mouseover", function() {
         d3.select(this).classed("hover", true);
       })
@@ -132,7 +132,7 @@ var DraggableList = Component.extend({
   },
 
   updateView() {
-    var _this = this;
+    const _this = this;
 
     this.items = this.element.selectAll("div").data(() => _this.dataArrFn().map(d => ({ data: d })));
     this.items.exit().remove();
@@ -141,12 +141,12 @@ var DraggableList = Component.extend({
       .append("li")
       .merge(this.items);
 
-    var labels = _this.model.color.getColorlegendMarker().label.getItems();
+    const labels = _this.model.color.getColorlegendMarker().label.getItems();
     this.items.select("li").classed("hover", false).each(function(val, index) {
       d3.select(this).attr("data", val["data"]).text(labels[val["data"]]);
     });
 
-    var draggable = _this.draggable ? true : null;
+    const draggable = _this.draggable ? true : null;
     this.element.selectAll("div")
       .style("top", "")
       .attr("draggable", draggable)
@@ -156,8 +156,8 @@ var DraggableList = Component.extend({
   },
 
   getData() {
-    var dataArr = [];
-    var data = this.element
+    let dataArr = [];
+    const data = this.element
       .selectAll("div").data();
 
     dataArr = data
@@ -176,7 +176,7 @@ var DraggableList = Component.extend({
   },
 
   readyOnce() {
-    var _this = this;
+    const _this = this;
 
     this.element = d3.select(this.element).select(".list");
 

@@ -3,18 +3,18 @@ import Component from "base/component";
 
 import { close as iconClose } from "base/iconset";
 
-var hidden = true;
-var showNotes = false;
-var pin = false;
-var left = 0;
-var top = 0;
-var hookName = null;
-var newHookName = null;
+let hidden = true;
+let showNotes = false;
+let pin = false;
+let left = 0;
+let top = 0;
+let hookName = null;
+let newHookName = null;
 
-var DataNotes = Component.extend({
+const DataNotes = Component.extend({
 
   init(config, context) {
-    var _this = this;
+    const _this = this;
 
     this.name = "gapminder-datanotes";
 
@@ -46,14 +46,14 @@ var DataNotes = Component.extend({
   },
 
   readyOnce() {
-    var _this = this;
+    const _this = this;
 
     this.translator = this.model.locale.getTFunction();
     this.element = d3.select(this.placeholder);
 
     this.element.selectAll("div").remove();
 
-    var container = this.element;
+    const container = this.element;
 
     container.append("div")
       .html(iconClose)
@@ -102,8 +102,8 @@ var DataNotes = Component.extend({
 
   setValues() {
     if (!hookName) return;
-    var hook = this.model.marker[hookName];
-    var concept = hook.getConceptprops();
+    const hook = this.model.marker[hookName];
+    const concept = hook.getConceptprops();
 
     this.element.select(".vzb-data-notes-body")
       .classed("vzb-hidden", !concept.description)
@@ -112,8 +112,8 @@ var DataNotes = Component.extend({
     this.element.select(".vzb-data-notes-link").classed("vzb-hidden", !concept.sourceLink);
 
     if (concept.sourceLink) {
-      var _source = this.translator("hints/source");
-      var sourceName = concept.sourceName || "";
+      const _source = this.translator("hints/source");
+      const sourceName = concept.sourceName || "";
       this.element.select(".vzb-data-notes-link").html("<span>" + (sourceName ? (_source + ":") : "") +
         '<a href="' + concept.sourceLink + '" target="_blank">' + (sourceName ? sourceName : _source) + "</a></span>");
     }
@@ -124,13 +124,13 @@ var DataNotes = Component.extend({
     left = _left;
     top = _top;
     if (pin && !force) return this;
-    var parentHeight = this.parent.element.offsetHeight;
-    var width = this.element.node().offsetWidth;
-    var height = this.element.node().offsetHeight;
-    var leftMove;
-    var topMove;
-    var leftPos = left - width;
-    var topPos = top;
+    const parentHeight = this.parent.element.offsetHeight;
+    const width = this.element.node().offsetWidth;
+    const height = this.element.node().offsetHeight;
+    let leftMove;
+    let topMove;
+    let leftPos = left - width;
+    let topPos = top;
     if (leftPos < 10) {
       leftPos = 10;
       leftMove = true;

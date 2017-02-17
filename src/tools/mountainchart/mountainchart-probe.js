@@ -1,7 +1,7 @@
 import * as utils from "base/utils";
 import Class from "base/class";
 
-var MCProbe = Class.extend({
+const MCProbe = Class.extend({
 
   init(context) {
     this.context = context;
@@ -9,7 +9,7 @@ var MCProbe = Class.extend({
   },
 
   redraw(options) {
-    var _this = this.context;
+    const _this = this.context;
     if (!options) options = {};
 
     if (!options.level) options.level = _this.model.ui.chart.probeX;
@@ -19,11 +19,11 @@ var MCProbe = Class.extend({
 
     _this.xAxisEl.call(_this.xAxis.highlightValue(options.full ? options.level : "none"));
 
-    var sumValue = 0;
-    var totalArea = 0;
-    var leftArea = 0;
+    let sumValue = 0;
+    let totalArea = 0;
+    let leftArea = 0;
 
-    var _computeAreas = function(d) {
+    const _computeAreas = function(d) {
       sumValue += _this.values.axis_y[d.KEY()];
       _this.cached[d.KEY()].forEach(d => {
         totalArea += d.y;
@@ -39,13 +39,13 @@ var MCProbe = Class.extend({
       _this.groupedPointers.forEach(_computeAreas);
     }
 
-    var formatter1 = d3.format(".3r");
-    var formatter2 = _this.model.marker.axis_y.getTickFormatter();
+    const formatter1 = d3.format(".3r");
+    const formatter2 = _this.model.marker.axis_y.getTickFormatter();
     _this.heightOfLabels = _this.heightOfLabels || (0.66 * _this.height);
 
     _this.probeTextEl.each(function(d, i) {
       if (i !== 8) return;
-      var view = d3.select(this);
+      const view = d3.select(this);
 
       if (!options.full && _this.model.ui.chart.probeX == _this.model.marker.axis_x.tailFatX) {
 
@@ -66,9 +66,9 @@ var MCProbe = Class.extend({
 
     _this.probeTextEl.each(function(d, i) {
       if (i === 8) return;
-      var view = d3.select(this);
+      const view = d3.select(this);
 
-      var string;
+      let string;
       if (i === 0 || i === 4) string = formatter1(leftArea / totalArea * 100) + "%";
       if (i === 1 || i === 5) string = formatter1(100 - leftArea / totalArea * 100) + "%";
       if (i === 2 || i === 6) string = formatter2(sumValue * leftArea / totalArea);
