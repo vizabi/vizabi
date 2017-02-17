@@ -392,6 +392,7 @@ var Hook = DataConnected.extend({
     // don't break formatting please
     //---------------------
     // the tiny constant compensates epsilon-error when doing logsrithms
+    /* eslint-disable */
     switch (Math.floor(Math.log(Math.abs(x)) / Math.LN10 + 0.00000000000001)) {
       case -13: x *= 1000000000000; prefix = "p"; break; //0.1p
       case -10: x *= 1000000000; prefix = "n"; break; //0.1n
@@ -420,6 +421,7 @@ var Hook = DataConnected.extend({
       //use the D3 SI formatting for the extreme cases
       default: return (d3.format("." + prec + "s")(x)).replace("G", "B");
     }
+    /* eslint-enable */
 
     var formatted = d3.format("." + prec + format)(x);
     //remove trailing zeros if dot exists to avoid numbers like 1.0M, 3.0B, 1.500, 0.9700, 0.0
