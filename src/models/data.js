@@ -470,11 +470,8 @@ var DataModel = Model.extend({
       this.queue.splice(0, 0, this.queue.splice(this.queue.length - 1, 1)[0]);
       this.key = 0;
       this.mute = function() {
-        var _this = this;
         this.isActive = false;
-        new Promise((resolve, reject) => {
-          _this.delayedAction = resolve;
-        });
+        this.delayedAction = Promise.resolve;
       };
 
       this.unMute = function() {
