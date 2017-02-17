@@ -41,7 +41,7 @@ var DraggableList = Component.extend({
     };
 
     this.model_binds["change:group." + this.groupID] = function(evt) {
-        _this.updateView();
+      _this.updateView();
     };
     this.model_binds["change:chart." + this.isEnabled] = function(evt) {
       _this.draggable = _this.model.chart[_this.isEnabled];
@@ -93,7 +93,7 @@ var DraggableList = Component.extend({
 
               if (i != draggedIndex) d._top = top;
               return d._top + "px";
-           });
+            });
         }
       })
 
@@ -143,8 +143,8 @@ var DraggableList = Component.extend({
 
     var labels = _this.model.color.getColorlegendMarker().label.getItems();
     this.items.select("li").classed("hover", false).each(function(val, index) {
-        d3.select(this).attr("data", val["data"]).text(labels[val["data"]]);
-      });
+      d3.select(this).attr("data", val["data"]).text(labels[val["data"]]);
+    });
 
     var draggable = _this.draggable ? true : null;
     this.element.selectAll("div")

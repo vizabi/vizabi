@@ -16,39 +16,39 @@ var Label = Dialog.extend({
  * @param config component configuration
  * @param context component context (parent)
  */
-init(config, parent) {
-  this.name = "label";
+  init(config, parent) {
+    this.name = "label";
 
   // in dialog, this.model_expects = ["state", "data"];
 
-  this.components = [
-  {
-    component: sizeslider,
-    placeholder: ".vzb-dialog-sizeslider",
-    model: ["state.marker.size_label",  "locale"],
-    propertyname: "LabelTextSize",
-    ui: {
-      constantUnit: "unit/pixels"
-    }
-  },
-  {
-    component: indicatorpicker,
-    placeholder: ".vzb-saxis-selector",
-    model: ["state.time", "state.entities", "state.marker", "locale"],
-    markerID: "size_label",
-    showHoverValues: true
-  },
-  {
-    component: simplecheckbox,
-    placeholder: ".vzb-removelabelbox-switch",
-    model: ["ui.chart", "locale"],
-    checkbox: "removeLabelBox",
-    submodel: "labels"
-  }
-  ];
+    this.components = [
+      {
+        component: sizeslider,
+        placeholder: ".vzb-dialog-sizeslider",
+        model: ["state.marker.size_label",  "locale"],
+        propertyname: "LabelTextSize",
+        ui: {
+          constantUnit: "unit/pixels"
+        }
+      },
+      {
+        component: indicatorpicker,
+        placeholder: ".vzb-saxis-selector",
+        model: ["state.time", "state.entities", "state.marker", "locale"],
+        markerID: "size_label",
+        showHoverValues: true
+      },
+      {
+        component: simplecheckbox,
+        placeholder: ".vzb-removelabelbox-switch",
+        model: ["ui.chart", "locale"],
+        checkbox: "removeLabelBox",
+        submodel: "labels"
+      }
+    ];
 
-  this._super(config, parent);
-}
+    this._super(config, parent);
+  }
 });
 
 export default Label;

@@ -364,28 +364,28 @@ var Hook = DataConnected.extend({
 
     return function format(x, index, group, removePrefix, percentageMode) {
 
-    percentageMode = _this.getConceptprops().format;
-    if (percentageMode === SHARE) x *= 100;
+      percentageMode = _this.getConceptprops().format;
+      if (percentageMode === SHARE) x *= 100;
 
     // Format time values
     // Assumption: a hook has always time in its space
-    if (utils.isDate(x)) return _this._space.time.formatDate(x);
+      if (utils.isDate(x)) return _this._space.time.formatDate(x);
 
     // Dealing with values that are supposed to be time
-    if (_this.scaleType === "time" && !utils.isDate(x)) {
+      if (_this.scaleType === "time" && !utils.isDate(x)) {
         return _this._space.time.formatDate(new Date(x));
-    }
+      }
 
     // Strings, null, NaN and undefined are bypassing any formatter
-    if (utils.isString(x) || !x && x !== 0) return x;
+      if (utils.isString(x) || !x && x !== 0) return x;
 
-    if (Math.abs(x) < 0.00000000000001) return "0";
+      if (Math.abs(x) < 0.00000000000001) return "0";
 
-    var format = "r"; //rounded format. use "f" for fixed
-    var prec = 3; //round to so many significant digits
+      var format = "r"; //rounded format. use "f" for fixed
+      var prec = 3; //round to so many significant digits
 
-    var prefix = "";
-    if (removePrefix) return d3.format("." + prec + format)(x);
+      var prefix = "";
+      if (removePrefix) return d3.format("." + prec + format)(x);
 
     //---------------------
     // BEAUTIFIERS GO HOME!
@@ -423,13 +423,13 @@ var Hook = DataConnected.extend({
     }
     /* eslint-enable */
 
-    var formatted = d3.format("." + prec + format)(x);
+      var formatted = d3.format("." + prec + format)(x);
     //remove trailing zeros if dot exists to avoid numbers like 1.0M, 3.0B, 1.500, 0.9700, 0.0
-    if (formatted.indexOf(".") > -1) formatted = formatted.replace(/0+$/, "").replace(/\.$/, "");
+      if (formatted.indexOf(".") > -1) formatted = formatted.replace(/0+$/, "").replace(/\.$/, "");
 
 
     // use manual formatting for the cases above
-    return (formatted + prefix + (percentageMode === PERCENT || percentageMode === SHARE ? "%" : ""));
+      return (formatted + prefix + (percentageMode === PERCENT || percentageMode === SHARE ? "%" : ""));
     };
   },
 

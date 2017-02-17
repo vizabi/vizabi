@@ -23,49 +23,49 @@ var LineChart = Tool.extend("LineChart", {
      * @param {Object} placeholder Placeholder element for the tool
      * @param {Object} external_model Model as given by the external page
      */
-    init(placeholder, external_model) {
+  init(placeholder, external_model) {
 
-      this.name = "linechart";
+    this.name = "linechart";
 
-      this.components = [{
-        component: LCComponent,
-        placeholder: ".vzb-tool-viz",
-        model: ["state.time", "state.entities", "state.marker", "locale", "ui"] //pass models to component
-      }, {
-        component: timeslider,
-        placeholder: ".vzb-tool-timeslider",
-        model: ["state.time", "state.entities", "state.marker", "ui"],
-        ui: { show_value_when_drag_play: false, axis_aligned: true }
-      }, {
-        component: dialogs,
-        placeholder: ".vzb-tool-dialogs",
-        model: ["state", "ui", "locale"]
-      }, {
-        component: buttonlist,
-        placeholder: ".vzb-tool-buttonlist",
-        model: ["state", "ui", "locale"]
-      }, {
-        component: treemenu,
-        placeholder: ".vzb-tool-treemenu",
-        model: ["state.marker", "state.marker_tags", "state.time", "locale"]
-      }, {
-        component: datawarning,
-        placeholder: ".vzb-tool-datawarning",
-        model: ["locale"]
-      }, {
-        component: datanotes,
-        placeholder: ".vzb-tool-datanotes",
-        model: ["state.marker", "locale"]
-      }, {
-        component: steppedSpeedSlider,
-        placeholder: ".vzb-tool-stepped-speed-slider",
-        model: ["state.time", "locale"]
-      }];
+    this.components = [{
+      component: LCComponent,
+      placeholder: ".vzb-tool-viz",
+      model: ["state.time", "state.entities", "state.marker", "locale", "ui"] //pass models to component
+    }, {
+      component: timeslider,
+      placeholder: ".vzb-tool-timeslider",
+      model: ["state.time", "state.entities", "state.marker", "ui"],
+      ui: { show_value_when_drag_play: false, axis_aligned: true }
+    }, {
+      component: dialogs,
+      placeholder: ".vzb-tool-dialogs",
+      model: ["state", "ui", "locale"]
+    }, {
+      component: buttonlist,
+      placeholder: ".vzb-tool-buttonlist",
+      model: ["state", "ui", "locale"]
+    }, {
+      component: treemenu,
+      placeholder: ".vzb-tool-treemenu",
+      model: ["state.marker", "state.marker_tags", "state.time", "locale"]
+    }, {
+      component: datawarning,
+      placeholder: ".vzb-tool-datawarning",
+      model: ["locale"]
+    }, {
+      component: datanotes,
+      placeholder: ".vzb-tool-datanotes",
+      model: ["state.marker", "locale"]
+    }, {
+      component: steppedSpeedSlider,
+      placeholder: ".vzb-tool-stepped-speed-slider",
+      model: ["state.time", "locale"]
+    }];
 
-      this._super(placeholder, external_model);
-    },
+    this._super(placeholder, external_model);
+  },
 
-    default_model: {
+  default_model: {
     state: {
       time: {},
       marker: {
@@ -102,6 +102,6 @@ var LineChart = Tool.extend("LineChart", {
     }
   }
 
-  });
+});
 
 export default LineChart;

@@ -58,7 +58,7 @@ var SizeModel = Axis.extend({
       }
     }
     if (this.scaleType == null) {
-        this.scaleType = this.dataSource
+      this.scaleType = this.dataSource
           .getConceptprops(this.which).scales[0];
     }
   }

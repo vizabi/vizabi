@@ -36,13 +36,13 @@ var Side = Dialog.extend({
     };
 
     this.components = [
-    {
-      component: indicatorpicker,
-      placeholder: ".vzb-side-selector",
-      model: ["state.time", "state.entities_side", "state.marker", "locale"],
-      markerID: "side",
-      showHoverValues: false
-    }
+      {
+        component: indicatorpicker,
+        placeholder: ".vzb-side-selector",
+        model: ["state.time", "state.entities_side", "state.marker", "locale"],
+        markerID: "side",
+        showHoverValues: false
+      }
     ];
 
     this._super(config, parent);
@@ -123,22 +123,22 @@ var Side = Dialog.extend({
 
     if (!_this.model.state.entities_allpossibleside.dim) return;
     this.model.state.marker_allpossibleside.getFrame(this.model.state.time.value, values => {
-    if (!values) return;
-    var data = utils.keys(values.label)
+      if (!values) return;
+      var data = utils.keys(values.label)
         .map(d => {
-            var result = {};
-            result[_this.KEY] = d;
-            result["label"] = values.label[d];
-            return result;
+          var result = {};
+          result[_this.KEY] = d;
+          result["label"] = values.label[d];
+          return result;
         });
 
     //sort data alphabetically
-    data.sort((a, b) => (a.label < b.label) ? -1 : 1);
+      data.sort((a, b) => (a.label < b.label) ? -1 : 1);
 
-    _this.listLeft.html("");
-    _this.listRight.html("");
-    _this.createList(_this.listLeft, "left", data);
-    _this.createList(_this.listRight, "right", data);
+      _this.listLeft.html("");
+      _this.listRight.html("");
+      _this.createList(_this.listLeft, "left", data);
+      _this.createList(_this.listRight, "right", data);
 
     });
   },

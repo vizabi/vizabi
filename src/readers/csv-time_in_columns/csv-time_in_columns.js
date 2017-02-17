@@ -43,12 +43,12 @@ const CSVTimeInColumnsReader = CSVReader.extend({
                 if (![entityDomain, indicatorKey].includes(key)) {
                   result.push(
                     Object.assign({
-                        [entityDomain]: row[entityDomain],
-                        [this.timeKey]: key,
-                      }, indicators.reduce((result, indicator) => {
-                        result[indicator] = row[indicatorKey] === indicator ? row[key] : null;
-                        return result;
-                      }, {})
+                      [entityDomain]: row[entityDomain],
+                      [this.timeKey]: key,
+                    }, indicators.reduce((result, indicator) => {
+                      result[indicator] = row[indicatorKey] === indicator ? row[key] : null;
+                      return result;
+                    }, {})
                     )
                   );
                 }

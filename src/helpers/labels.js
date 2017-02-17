@@ -158,9 +158,9 @@ var label = function(context) {
       //protect label and line from the broken data
       var brokenInputs = !_X && _X !== 0 || !_Y && _Y !== 0 || !_X0 && _X0 !== 0 || !_Y0 && _Y0 !== 0;
       if (brokenInputs) {
-          labelGroup.classed("vzb-invisible", brokenInputs);
-          lineGroup.classed("vzb-invisible", brokenInputs);
-          return;
+        labelGroup.classed("vzb-invisible", brokenInputs);
+        lineGroup.classed("vzb-invisible", brokenInputs);
+        return;
       }
 
       var viewWidth = _this.context.width;
@@ -194,73 +194,73 @@ var label = function(context) {
         if (showhide && !d.hidden) {
             //if need to show label
 
-            labelGroup.classed("vzb-invisible", d.hidden);
-            labelGroup
-                .attr("transform", "translate(" + _X + "," + _Y + ")")
-                .style("opacity", 0)
-                .transition().duration(duration).ease(d3.easeExp)
-                .style("opacity", 1)
+          labelGroup.classed("vzb-invisible", d.hidden);
+          labelGroup
+            .attr("transform", "translate(" + _X + "," + _Y + ")")
+            .style("opacity", 0)
+            .transition().duration(duration).ease(d3.easeExp)
+            .style("opacity", 1)
                 //i would like to set opactiy to null in the end of transition.
                 //but then fade in animation is not working for some reason
-                .on("interrupt", () => {
-                    labelGroup
-                        .style("opacity", 1);
-                });
-            lineGroup.classed("vzb-invisible", d.hidden);
-            lineGroup
-                .attr("transform", "translate(" + _X + "," + _Y + ")")
-                .style("opacity", 0)
-                .transition().duration(duration).ease(d3.easeExp)
-                .style("opacity", 1)
+            .on("interrupt", () => {
+              labelGroup
+                .style("opacity", 1);
+            });
+          lineGroup.classed("vzb-invisible", d.hidden);
+          lineGroup
+            .attr("transform", "translate(" + _X + "," + _Y + ")")
+            .style("opacity", 0)
+            .transition().duration(duration).ease(d3.easeExp)
+            .style("opacity", 1)
                 //i would like to set opactiy to null in the end of transition.
                 //but then fade in animation is not working for some reason
-                .on("interrupt", () => {
-                    lineGroup
-                        .style("opacity", 1);
-                });
+            .on("interrupt", () => {
+              lineGroup
+                .style("opacity", 1);
+            });
 
         } else if (showhide && d.hidden) {
             //if need to hide label
 
-            labelGroup
-                .style("opacity", 1)
-                .transition().duration(duration).ease(d3.easeExp)
-                .style("opacity", 0)
-                .on("end", () => {
-                    labelGroup
-                        .style("opacity", 1) //i would like to set it to null. but then fade in animation is not working for some reason
-                        .classed("vzb-invisible", d.hidden);
-                });
-            lineGroup
-                .style("opacity", 1)
-                .transition().duration(duration).ease(d3.easeExp)
-                .style("opacity", 0)
-                .on("end", () => {
-                    lineGroup
-                        .style("opacity", 1) //i would like to set it to null. but then fade in animation is not working for some reason
-                        .classed("vzb-invisible", d.hidden);
-                });
+          labelGroup
+            .style("opacity", 1)
+            .transition().duration(duration).ease(d3.easeExp)
+            .style("opacity", 0)
+            .on("end", () => {
+              labelGroup
+                .style("opacity", 1) //i would like to set it to null. but then fade in animation is not working for some reason
+                .classed("vzb-invisible", d.hidden);
+            });
+          lineGroup
+            .style("opacity", 1)
+            .transition().duration(duration).ease(d3.easeExp)
+            .style("opacity", 0)
+            .on("end", () => {
+              lineGroup
+                .style("opacity", 1) //i would like to set it to null. but then fade in animation is not working for some reason
+                .classed("vzb-invisible", d.hidden);
+            });
 
         } else {
             // just update the position
 
-            labelGroup
-                .transition().duration(duration).ease(d3.easeLinear)
-                .attr("transform", "translate(" + _X + "," + _Y + ")");
-            lineGroup
-                .transition().duration(duration).ease(d3.easeLinear)
-                .attr("transform", "translate(" + _X + "," + _Y + ")");
+          labelGroup
+            .transition().duration(duration).ease(d3.easeLinear)
+            .attr("transform", "translate(" + _X + "," + _Y + ")");
+          lineGroup
+            .transition().duration(duration).ease(d3.easeLinear)
+            .attr("transform", "translate(" + _X + "," + _Y + ")");
         }
 
       } else {
         labelGroup
-            .interrupt()
-            .attr("transform", "translate(" + _X + "," + _Y + ")")
-            .transition();
+          .interrupt()
+          .attr("transform", "translate(" + _X + "," + _Y + ")")
+          .transition();
         lineGroup
-            .interrupt()
-            .attr("transform", "translate(" + _X + "," + _Y + ")")
-            .transition();
+          .interrupt()
+          .attr("transform", "translate(" + _X + "," + _Y + ")")
+          .transition();
         if (showhide) labelGroup.classed("vzb-invisible", d.hidden);
         if (showhide) lineGroup.classed("vzb-invisible", d.hidden);
       }
@@ -373,10 +373,10 @@ var Labels = Class.extend({
     this.model = this.context.model;
 
     this.model.on("change:marker.select", () => {
-        if (!_this.context._readyOnce) return;
+      if (!_this.context._readyOnce) return;
         //console.log("EVENT change:entities:select");
-        _this.selectDataPoints();
-      });
+      _this.selectDataPoints();
+    });
 
     if (this.model.marker.size_label)
       this.model.on("change:marker.size_label.extent", (evt, path) => {
@@ -483,7 +483,7 @@ var Labels = Class.extend({
     this.entityLabels.exit()
       .each(d => {
         if (_this.cached[d[KEY]] != null) {
-            _this.cached[d[KEY]] = void 0;
+          _this.cached[d[KEY]] = void 0;
         }
       })
       .remove();
@@ -514,9 +514,9 @@ var Labels = Class.extend({
     var KEY = this.KEY;
     //show the little cross on the selected label
     this.entityLabels
-        .filter(f => d ? f[KEY] == d[KEY] : true)
-        .select("." + this.options.CSS_PREFIX + "-label-x")
-        .classed("vzb-transparent", !show);
+      .filter(f => d ? f[KEY] == d[KEY] : true)
+      .select("." + this.options.CSS_PREFIX + "-label-x")
+      .classed("vzb-transparent", !show);
   },
 
   highlight(d, highlight) {
@@ -598,8 +598,8 @@ var Labels = Class.extend({
 
     if (_this.labelSizeTextScale) {
       if (valueLST != null) {
-      var range = _this.labelSizeTextScale.range();
-      var fontSize = range[0] + Math.sqrt((_this.labelSizeTextScale(valueLST) - range[0]) * (range[1] - range[0]));
+        var range = _this.labelSizeTextScale.range();
+        var fontSize = range[0] + Math.sqrt((_this.labelSizeTextScale(valueLST) - range[0]) * (range[1] - range[0]));
         _text.attr("font-size", fontSize + "px");
       } else {
         _text.attr("font-size", "");
@@ -660,10 +660,10 @@ var Labels = Class.extend({
 
     this.entityLabels.each(function(d, index) {
       var cached = _this.cached[d[KEY]];
-        _this._updateLabelSize(d, index, d3.select(this), _this.context.frame.size_label[d[KEY]]);
-        var lineGroup = _this.entityLines.filter(f => f[KEY] == d[KEY]);
-        _this.positionLabel(d, index, this, 0, null, lineGroup);
-      });
+      _this._updateLabelSize(d, index, d3.select(this), _this.context.frame.size_label[d[KEY]]);
+      var lineGroup = _this.entityLines.filter(f => f[KEY] == d[KEY]);
+      _this.positionLabel(d, index, this, 0, null, lineGroup);
+    });
   },
 
   updateLabelOnlyPosition(d, index, cache) {

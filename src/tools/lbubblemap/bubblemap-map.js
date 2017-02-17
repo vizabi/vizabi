@@ -87,13 +87,13 @@ var MapLayer = Class.extend({
 
     this.zeroProjection = d3[projection]();
     this.zeroProjection
-        .scale(1)
-        .translate([0, 0]);
+      .scale(1)
+      .translate([0, 0]);
 
     this.projection = d3[projection]();
     this.projection
-        .scale(1)
-        .translate([0, 0]);
+      .scale(1)
+      .translate([0, 0]);
 
     this.mapPath = d3.geoPath()
         .projection(this.projection);
@@ -109,19 +109,19 @@ var MapLayer = Class.extend({
         var boundaries = topojson.mesh(_this.shapes, _this.shapes.objects[_this.context.model.ui.map.topology.objects.boundaries], (a, b) => a !== b);
         if (_this.mapFeature.features) {
           _this.mapGraph.selectAll(".land")
-              .data(_this.mapFeature.features)
-              .enter().insert("path")
-              .attr("d", _this.mapPath)
-              .attr("id", d => d.properties[_this.context.model.ui.map.topology.geoIdProperty].toLowerCase())
-              .attr("class", "land");
+            .data(_this.mapFeature.features)
+            .enter().insert("path")
+            .attr("d", _this.mapPath)
+            .attr("id", d => d.properties[_this.context.model.ui.map.topology.geoIdProperty].toLowerCase())
+            .attr("class", "land");
         } else {
           _this.mapGraph.insert("path")
-              .datum(_this.mapFeature)
-              .attr("class", "land");
+            .datum(_this.mapFeature)
+            .attr("class", "land");
         }
         _this.mapGraph.insert("path")
-            .datum(boundaries)
-            .attr("class", "boundary");
+          .datum(boundaries)
+          .attr("class", "boundary");
       }
     );
   },
@@ -182,21 +182,21 @@ var MapLayer = Class.extend({
     var s = this.context.model.ui.map.scale / Math.max((this.mapBounds[1][0] - this.mapBounds[0][0]) / this.context.width, (this.mapBounds[1][1] - this.mapBounds[0][1]) / this.context.height),
 
     // dimensions of the map itself (regardless of cropping)
-        mapWidth = (s * (this.mapBounds[1][0] - this.mapBounds[0][0])),
-        mapHeight = (s * (this.mapBounds[1][1] - this.mapBounds[0][1])),
+      mapWidth = (s * (this.mapBounds[1][0] - this.mapBounds[0][0])),
+      mapHeight = (s * (this.mapBounds[1][1] - this.mapBounds[0][1])),
 
     // dimensions of the viewport in which the map is shown (can be bigger or smaller than map)
-        viewPortHeight = mapHeight * (1 + offset.top + offset.bottom),
-        viewPortWidth  = mapWidth  * (1 + offset.left + offset.right);
+      viewPortHeight = mapHeight * (1 + offset.top + offset.bottom),
+      viewPortWidth  = mapWidth  * (1 + offset.left + offset.right);
 
     // translate projection to the middle of map
     this.projection
-        .translate([canvas[0][0] - (currentNW[0] * scaleDelta) + mapLeftOffset, canvas[0][1] - (currentNW[1] * scaleDelta) + mapTopOffset])
-        .scale(scaleDelta)
-        .precision(0.1);
+      .translate([canvas[0][0] - (currentNW[0] * scaleDelta) + mapLeftOffset, canvas[0][1] - (currentNW[1] * scaleDelta) + mapTopOffset])
+      .scale(scaleDelta)
+      .precision(0.1);
 
     this.mapGraph
-        .selectAll("path").attr("d", this.mapPath);
+      .selectAll("path").attr("d", this.mapPath);
 
     // handle scale to fit case
     var widthScale, heightScale;
@@ -228,9 +228,9 @@ var MapLayer = Class.extend({
 
     // resize and put in center
     this.mapSvg
-        .style("transform", "translate(" + margin.left + "px," + margin.top + "px)")
-        .attr("width", this.context.width)
-        .attr("height", this.context.height);
+      .style("transform", "translate(" + margin.left + "px," + margin.top + "px)")
+      .attr("width", this.context.width)
+      .attr("height", this.context.height);
 
     // set skew function used for bubbles in chart
     var _this = this;
@@ -253,7 +253,7 @@ var MapLayer = Class.extend({
   },
 
   invert(x, y) {
-     return this.projection([x || 0, y || 0]);
+    return this.projection([x || 0, y || 0]);
   }
 
 });
@@ -296,7 +296,7 @@ var GoogleMapLayer = Class.extend({
           draggable: true
         });
         google.maps.event.addListener(_this.map, "bounds_changed", () => {
-            _this.parent.boundsChanged();
+          _this.parent.boundsChanged();
         });
 
         //rectangle.setMap(_this.map);
@@ -304,23 +304,23 @@ var GoogleMapLayer = Class.extend({
         resolve();
       });
     });
-   },
+  },
 
   rescaleMap() {
     var _this = this;
     var margin = this.context.activeProfile.margin;
 
     this.mapCanvas
-        .style("width", this.context.width + "px")
-        .style("height", this.context.height + "px");
+      .style("width", this.context.width + "px")
+      .style("height", this.context.height + "px");
     this.mapRoot
-        .attr("width", this.context.width)
-        .attr("height", this.context.height)
-        .style("position", "absolute")
-        .style("left", margin.left + "px")
-        .style("right", margin.right + "px")
-        .style("top", margin.top + "px")
-        .style("bottom", margin.bottom + "px");
+      .attr("width", this.context.width)
+      .attr("height", this.context.height)
+      .style("position", "absolute")
+      .style("left", margin.left + "px")
+      .style("right", margin.right + "px")
+      .style("top", margin.top + "px")
+      .style("bottom", margin.bottom + "px");
     google.maps.event.trigger(this.map, "resize");
 
     var rectBounds = new google.maps.LatLngBounds(
@@ -391,17 +391,17 @@ var MapboxLayer = Class.extend({
     var viewPortWidth = this.context.width * this.context.model.ui.map.scale;
 
     this.mapCanvas
-        .style("width", viewPortWidth + "px")
-        .style("height", viewPortHeight + "px");
+      .style("width", viewPortWidth + "px")
+      .style("height", viewPortHeight + "px");
 
     this.mapRoot
-        .attr("width", viewPortWidth)
-        .attr("height", viewPortHeight)
-        .style("position", "absolute")
-        .style("left", margin.left + "px")
-        .style("right", margin.right + "px")
-        .style("top", margin.top + "px")
-        .style("bottom", margin.bottom + "px");
+      .attr("width", viewPortWidth)
+      .attr("height", viewPortHeight)
+      .style("position", "absolute")
+      .style("left", margin.left + "px")
+      .style("right", margin.right + "px")
+      .style("top", margin.top + "px")
+      .style("bottom", margin.bottom + "px");
 
     utils.defer(() => {
       _this.map.fitBounds(_this.bounds, { duration: 0 });

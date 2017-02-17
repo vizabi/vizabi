@@ -108,7 +108,7 @@ var Dialog = Component.extend({
         }
 
         if (this.topPos && (this.getLayoutProfile() === "large" && this.rootEl.classed("vzb-dialog-expand-true"))) {
-            this.placeholderEl.style("bottom", "auto");
+          this.placeholderEl.style("bottom", "auto");
         }
 
         if (this.rootEl.classed("vzb-landscape")) {
@@ -153,7 +153,7 @@ var Dialog = Component.extend({
         totalHeight -= topPos;
       }
     } else {
-        totalHeight = this.rootEl.classed("vzb-portrait") ? totalHeight - 50 : totalHeight - 10;
+      totalHeight = this.rootEl.classed("vzb-portrait") ? totalHeight - 50 : totalHeight - 10;
     }
 
     this.element.style("max-height", totalHeight + "px");

@@ -77,22 +77,22 @@ var LBubbleMapComponent = Component.extend({
         _this.redrawDataPoints(null, false);
       },
       "change:marker.color.palette": function(evt, path) {
-          if (!_this._readyOnce) return;
-          _this.redrawDataPoints(null, false);
+        if (!_this._readyOnce) return;
+        _this.redrawDataPoints(null, false);
       },
       "change:marker.select": function(evt) {
-          if (!_this._readyOnce) return;
-          _this.selectMarkers();
-          _this.redrawDataPoints(null, false);
-          _this.updateOpacity();
-          _this.updateDoubtOpacity();
+        if (!_this._readyOnce) return;
+        _this.selectMarkers();
+        _this.redrawDataPoints(null, false);
+        _this.updateOpacity();
+        _this.updateDoubtOpacity();
 
       },
       "change:marker.opacitySelectDim": function(evt) {
-          _this.updateOpacity();
+        _this.updateOpacity();
       },
       "change:marker.opacityRegular": function(evt) {
-          _this.updateOpacity();
+        _this.updateOpacity();
       },
     };
 
@@ -209,11 +209,11 @@ var LBubbleMapComponent = Component.extend({
   },
 
   updateUIStrings() {
-      var _this = this;
+    var _this = this;
 
-      this.translator = this.model.locale.getTFunction();
-      var conceptPropsS = _this.model.marker.size.getConceptprops();
-      var conceptPropsC = _this.model.marker.color.getConceptprops();
+    this.translator = this.model.locale.getTFunction();
+    var conceptPropsS = _this.model.marker.size.getConceptprops();
+    var conceptPropsC = _this.model.marker.color.getConceptprops();
 
     this.strings = {
       title: {
@@ -223,48 +223,48 @@ var LBubbleMapComponent = Component.extend({
     };
 
     this.yTitleEl.select("text")
-        .text(this.translator("buttons/size") + ": " + this.strings.title.S)
-        .on("click", () => {
-          _this.parent
-              .findChildByName("gapminder-treemenu")
-              .markerID("size")
-              .alignX(_this.model.locale.isRTL() ? "right" : "left")
-              .alignY("top")
-              .updateView()
-              .toggle();
-        });
+      .text(this.translator("buttons/size") + ": " + this.strings.title.S)
+      .on("click", () => {
+        _this.parent
+          .findChildByName("gapminder-treemenu")
+          .markerID("size")
+          .alignX(_this.model.locale.isRTL() ? "right" : "left")
+          .alignY("top")
+          .updateView()
+          .toggle();
+      });
 
     this.cTitleEl.select("text")
-        .text(this.translator("buttons/color") + ": " + this.strings.title.C)
-        .on("click", () => {
-          _this.parent
-              .findChildByName("gapminder-treemenu")
-              .markerID("color")
-              .alignX(_this.model.locale.isRTL() ? "right" : "left")
-              .alignY("top")
-              .updateView()
-              .toggle();
-        });
+      .text(this.translator("buttons/color") + ": " + this.strings.title.C)
+      .on("click", () => {
+        _this.parent
+          .findChildByName("gapminder-treemenu")
+          .markerID("color")
+          .alignX(_this.model.locale.isRTL() ? "right" : "left")
+          .alignY("top")
+          .updateView()
+          .toggle();
+      });
 
     utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
     this.dataWarningEl.append("text")
-        .attr("text-anchor", "end")
-        .text(this.translator("hints/dataWarning"));
+      .attr("text-anchor", "end")
+      .text(this.translator("hints/dataWarning"));
 
     this.dataWarningEl
-        .on("click", () => {
-          _this.parent.findChildByName("gapminder-datawarning").toggle();
-        })
-        .on("mouseover", () => {
-          _this.updateDoubtOpacity(1);
-        })
-        .on("mouseout", () => {
-          _this.updateDoubtOpacity();
-        });
+      .on("click", () => {
+        _this.parent.findChildByName("gapminder-datawarning").toggle();
+      })
+      .on("mouseover", () => {
+        _this.updateDoubtOpacity(1);
+      })
+      .on("mouseout", () => {
+        _this.updateDoubtOpacity();
+      });
 
     this.yInfoEl
-        .html(iconQuestion)
-        .select("svg").attr("width", "0px").attr("height", "0px");
+      .html(iconQuestion)
+      .select("svg").attr("width", "0px").attr("height", "0px");
 
     //TODO: move away from UI strings, maybe to ready or ready once
     this.yInfoEl.on("click", () => {
@@ -282,8 +282,8 @@ var LBubbleMapComponent = Component.extend({
     });
 
     this.cInfoEl
-        .html(iconQuestion)
-        .select("svg").attr("width", "0px").attr("height", "0px");
+      .html(iconQuestion)
+      .select("svg").attr("width", "0px").attr("height", "0px");
 
     //TODO: move away from UI strings, maybe to ready or ready once
     this.cInfoEl.on("click", () => {
@@ -330,19 +330,19 @@ var LBubbleMapComponent = Component.extend({
       }
 
       _this.yTitleEl.select("text")
-          .text(_this.translator("buttons/size") + ": " + formatterS(valueS) + " " + unitS);
+        .text(_this.translator("buttons/size") + ": " + formatterS(valueS) + " " + unitS);
 
       _this.cTitleEl.select("text")
-          .text(_this.translator("buttons/color") + ": " +
+        .text(_this.translator("buttons/color") + ": " +
           (valueC || valueC === 0 ? formatterC(valueC) + " " + unitC : _this.translator("hints/nodata")));
 
       this.yInfoEl.classed("vzb-hidden", true);
       this.cInfoEl.classed("vzb-hidden", true);
     } else {
       this.yTitleEl.select("text")
-          .text(this.translator("buttons/size") + ": " + this.strings.title.S);
+        .text(this.translator("buttons/size") + ": " + this.strings.title.S);
       this.cTitleEl.select("text")
-          .text(this.translator("buttons/color") + ": " + this.strings.title.C);
+        .text(this.translator("buttons/color") + ": " + this.strings.title.C);
 
       this.yInfoEl.classed("vzb-hidden", false);
       this.cInfoEl.classed("vzb-hidden", false || this.cTitleEl.classed("vzb-hidden"));
@@ -420,15 +420,15 @@ var LBubbleMapComponent = Component.extend({
     var getKeys = function(prefix) {
       prefix = prefix || "";
       return _this.model.marker.getKeys()
-          .map(d => {
-            var pointer = {};
-            pointer[KEY] = d[KEY];
-            pointer[TIMEDIM] = endTime;
-            pointer.sortValue = _this.values.size[d[KEY]] || 0;
-            pointer[KEY] = prefix + d[KEY];
-            return pointer;
-          })
-          .sort((a, b) => b.sortValue - a.sortValue);
+        .map(d => {
+          var pointer = {};
+          pointer[KEY] = d[KEY];
+          pointer[TIMEDIM] = endTime;
+          pointer.sortValue = _this.values.size[d[KEY]] || 0;
+          pointer[KEY] = prefix + d[KEY];
+          return pointer;
+        })
+        .sort((a, b) => b.sortValue - a.sortValue);
     };
 
     // get array of GEOs, sorted by the size hook
@@ -526,8 +526,8 @@ var LBubbleMapComponent = Component.extend({
       if (d.hidden !== d.hidden_1) {
         if (duration) {
           view.transition().duration(duration).ease(d3.easeLinear)
-              .style("opacity", 0)
-              .on("end", () => view.classed("vzb-hidden", d.hidden).style("opacity", _this.model.marker.opacityRegular));
+            .style("opacity", 0)
+            .on("end", () => view.classed("vzb-hidden", d.hidden).style("opacity", _this.model.marker.opacityRegular));
         } else {
           view.classed("vzb-hidden", d.hidden);
         }
@@ -538,25 +538,25 @@ var LBubbleMapComponent = Component.extend({
         d.label = valueL;
 
         view.classed("vzb-hidden", false)
-            .attr("fill", valueC != null ? _this.cScale(valueC) : _this.COLOR_WHITEISH);
+          .attr("fill", valueC != null ? _this.cScale(valueC) : _this.COLOR_WHITEISH);
 
         if (_this.model.ui.map.colorGeo)
           geo.style("fill", valueC != null ? _this.cScale(valueC) : "#999");
 
         if (reposition) {
-              d.cLoc = _this.map.invert(valueX, valueY);
+          d.cLoc = _this.map.invert(valueX, valueY);
 
           view.attr("cx", d.cLoc[0])
-              .attr("cy", d.cLoc[1]);
+            .attr("cy", d.cLoc[1]);
         }
 
         if (duration) {
           view.transition().duration(duration).ease(d3.easeLinear)
-              .attr("r", d.r);
+            .attr("r", d.r);
         } else {
           view.interrupt()
-              .attr("r", d.r)
-              .transition();
+            .attr("r", d.r)
+            .transition();
         }
 
         _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], valueS, valueC, d.label, duration);
@@ -672,11 +672,11 @@ var LBubbleMapComponent = Component.extend({
   repositionElements() {
 
     var margin = this.activeProfile.margin,
-        infoElHeight = this.activeProfile.infoElHeight,
-        isRTL = this.model.locale.isRTL();
+      infoElHeight = this.activeProfile.infoElHeight,
+      isRTL = this.model.locale.isRTL();
 
     this.graph
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     this.year.setConditions({
       widthRatio: 2 / 10
@@ -684,25 +684,25 @@ var LBubbleMapComponent = Component.extend({
     this.year.resize(this.width, this.height);
 
     this.yTitleEl
-        .style("font-size", infoElHeight)
-        .attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + margin.top + ")");
+      .style("font-size", infoElHeight)
+      .attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + margin.top + ")");
 
     var yTitleBB = this.yTitleEl.select("text").node().getBBox();
 
     //hide the second line about color in large profile or when color is constant
     this.cTitleEl.attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + (margin.top + yTitleBB.height) + ")")
-        .classed("vzb-hidden", this.getLayoutProfile() === "large" || this.model.marker.color.use == "constant");
+      .classed("vzb-hidden", this.getLayoutProfile() === "large" || this.model.marker.color.use == "constant");
 
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl.select("svg")
-        .attr("width", warnBB.height * 0.75)
-        .attr("height", warnBB.height * 0.75)
-        .attr("x", -warnBB.width - warnBB.height * 1.2)
-        .attr("y", -warnBB.height * 0.65);
+      .attr("width", warnBB.height * 0.75)
+      .attr("height", warnBB.height * 0.75)
+      .attr("x", -warnBB.width - warnBB.height * 1.2)
+      .attr("y", -warnBB.height * 0.65);
 
     this.dataWarningEl
-        .attr("transform", "translate(" + (this.width) + "," + (this.height - warnBB.height * 0.5) + ")")
-        .select("text");
+      .attr("transform", "translate(" + (this.width) + "," + (this.height - warnBB.height * 0.5) + ")")
+      .select("text");
 
     if (this.yInfoEl.select("svg").node()) {
       var titleBBox = this.yTitleEl.node().getBBox();
@@ -710,8 +710,8 @@ var LBubbleMapComponent = Component.extend({
       var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
       this.yInfoEl.select("svg")
-          .attr("width", infoElHeight)
-          .attr("height", infoElHeight);
+        .attr("width", infoElHeight)
+        .attr("height", infoElHeight);
       this.yInfoEl.attr("transform", "translate("
           + hTranslate + ","
           + (t.translateY - infoElHeight * 0.8) + ")");
@@ -725,8 +725,8 @@ var LBubbleMapComponent = Component.extend({
       var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
       this.cInfoEl.select("svg")
-          .attr("width", infoElHeight)
-          .attr("height", infoElHeight);
+        .attr("width", infoElHeight)
+        .attr("height", infoElHeight);
       this.cInfoEl.attr("transform", "translate("
           + hTranslate + ","
           + (t.translateY - infoElHeight * 0.8) + ")");
@@ -872,9 +872,9 @@ var LBubbleMapComponent = Component.extend({
       var offset = d.r;
       var mouse = d3.mouse(this.graph.node()).map(d => parseInt(d));
       var xPos, yPos, xSign = -1,
-          ySign = -1,
-          xOffset = 0,
-          yOffset = 0;
+        ySign = -1,
+        xOffset = 0,
+        yOffset = 0;
 
       if (offset) {
         xOffset = offset * 0.71; // .71 - sin and cos for 315
@@ -883,8 +883,8 @@ var LBubbleMapComponent = Component.extend({
       //position tooltip
       this.tooltip.classed("vzb-hidden", false)
         //.attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
-          .selectAll("text")
-          .text(tooltipText);
+        .selectAll("text")
+        .text(tooltipText);
 
       var contentBBox = this.tooltip.select("text").node().getBBox();
       if (x - xOffset - contentBBox.width < 0) {
@@ -910,11 +910,11 @@ var LBubbleMapComponent = Component.extend({
           ")");
 
       this.tooltip.select("rect").attr("width", contentBBox.width + 8)
-          .attr("height", contentBBox.height * 1.2)
-          .attr("x", -contentBBox.width - 4)
-          .attr("y", -contentBBox.height * 0.85)
-          .attr("rx", contentBBox.height * 0.2)
-          .attr("ry", contentBBox.height * 0.2);
+        .attr("height", contentBBox.height * 1.2)
+        .attr("x", -contentBBox.width - 4)
+        .attr("y", -contentBBox.height * 0.85)
+        .attr("rx", contentBBox.height * 0.2)
+        .attr("ry", contentBBox.height * 0.2);
 
 
     } else {

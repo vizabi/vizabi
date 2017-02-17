@@ -146,85 +146,85 @@ export var arrayEquals = function(a, b) {
 export var comparePlainObjects = function(a, b) {
 
     //Returns the object's class, Array, Date, RegExp, Object are of interest to us
-    var getClass = function(val) {
-        return Object.prototype.toString.call(val)
-            .match(/^\[object\s(.*)\]$/)[1];
-    };
+  var getClass = function(val) {
+    return Object.prototype.toString.call(val)
+      .match(/^\[object\s(.*)\]$/)[1];
+  };
 
     //Defines the type of the value, extended typeof
-    var whatis = function(val) {
+  var whatis = function(val) {
 
-        if (val === undefined) {
-            return "undefined";
-        }
-        if (val === null) {
-            return "null";
-        }
+    if (val === undefined) {
+      return "undefined";
+    }
+    if (val === null) {
+      return "null";
+    }
 
-        var type = typeof val;
+    var type = typeof val;
 
-        if (type === "object") {
-            type = getClass(val).toLowerCase();
-        }
+    if (type === "object") {
+      type = getClass(val).toLowerCase();
+    }
 
-        if (type === "number") {
-            if (val.toString().indexOf(".") > 0) {
-                return "float";
-            }
-            else {
-                return "integer";
-            }
-        }
+    if (type === "number") {
+      if (val.toString().indexOf(".") > 0) {
+        return "float";
+      }
+      else {
+        return "integer";
+      }
+    }
 
-        return type;
-    };
+    return type;
+  };
 
-    var compare = function(a, b) {
-        if (a === b) {
-            return true;
+  var compare = function(a, b) {
+    if (a === b) {
+      return true;
+    }
+    for (var i in a) {
+      if (b.hasOwnProperty(i)) {
+        if (!equal(a[i], b[i])) {
+          return false;
         }
-        for (var i in a) {
-            if (b.hasOwnProperty(i)) {
-                if (!equal(a[i], b[i])) {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        }
+      } else {
+        return false;
+      }
+    }
 
-        for (var i in b) {
-            if (!a.hasOwnProperty(i)) {
-                return false;
-            }
-        }
-        return true;
-    };
+    for (var i in b) {
+      if (!a.hasOwnProperty(i)) {
+        return false;
+      }
+    }
+    return true;
+  };
 
-    var compareArrays = function(a, b) {
-        if (a === b) {
-            return true;
-        }
-        if (a.length !== b.length) {
-            return false;
-        }
-        for (var i = 0; i < a.length; i++) {
-            if (!equal(a[i], b[i])) {
-                return false;
-            }
-        }
-        return true;
-    };
+  var compareArrays = function(a, b) {
+    if (a === b) {
+      return true;
+    }
+    if (a.length !== b.length) {
+      return false;
+    }
+    for (var i = 0; i < a.length; i++) {
+      if (!equal(a[i], b[i])) {
+        return false;
+      }
+    }
+    return true;
+  };
 
-    var _equal = {};
-    _equal.array = compareArrays;
-    _equal.object = compare;
-    _equal.date = function(a, b) {
-        return a.getTime() === b.getTime();
-    };
-    _equal.regexp = function(a, b) {
-        return a.toString() === b.toString();
-    };
+  var _equal = {};
+  _equal.array = compareArrays;
+  _equal.object = compare;
+  _equal.date = function(a, b) {
+    return a.getTime() === b.getTime();
+  };
+  _equal.regexp = function(a, b) {
+    return a.toString() === b.toString();
+  };
 
     /**
      * Are two values equal, deep compare for objects and arrays.
@@ -232,21 +232,21 @@ export var comparePlainObjects = function(a, b) {
      * @param b {any}
      * @return {boolean} Are equal?
      */
-    var equal = function(a, b) {
-        if (a !== b) {
-            var atype = whatis(a), btype = whatis(b);
+  var equal = function(a, b) {
+    if (a !== b) {
+      var atype = whatis(a), btype = whatis(b);
 
-            if (atype === btype) {
-                return _equal.hasOwnProperty(atype) ? _equal[atype](a, b) : a == b;
-            }
+      if (atype === btype) {
+        return _equal.hasOwnProperty(atype) ? _equal[atype](a, b) : a == b;
+      }
 
-            return false;
-        }
+      return false;
+    }
 
-        return true;
-    };
+    return true;
+  };
 
-    return compare(a, b);
+  return compare(a, b);
 };
 
 
@@ -272,9 +272,9 @@ export var findScrollableAncestor = function(node) {
   while (node = node.parentNode) {
     var scrollHeight = node.scrollHeight,
       height = node.clientHeight;
-      if (scrollHeight > height && scrollable.indexOf(d3.select(node).style("overflow")) !== -1) {
-        return node;
-      }
+    if (scrollHeight > height && scrollable.indexOf(d3.select(node).style("overflow")) !== -1) {
+      return node;
+    }
   }
   return null;
 };
@@ -306,9 +306,9 @@ export var forEach = function(obj, callback, ctx) {
     size = obj.length;
     for (i = 0; i < size; i += 1) {
       if (callback.apply(ctx, [
-          obj[i],
-          i
-        ]) === false) {
+        obj[i],
+        i
+      ]) === false) {
         break;
       }
     }
@@ -317,9 +317,9 @@ export var forEach = function(obj, callback, ctx) {
     size = keys.length;
     for (i = 0; i < size; i += 1) {
       if (callback.apply(ctx, [
-          obj[keys[i]],
-          keys[i]
-        ]) === false) {
+        obj[keys[i]],
+        keys[i]
+      ]) === false) {
         break;
       }
     }
@@ -802,17 +802,17 @@ export var mapRows = function(original, formatters) {
   // default formatter turns empty strings in null and converts numeric values into number
   //TODO: default formatter is moved to utils. need to return it to hook prototype class, but retest #1212 #1230 #1253
   var defaultFormatter = function(val) {
-      var newVal = val;
-      if (val === "") {
-        newVal = null;
-      } else {
+    var newVal = val;
+    if (val === "") {
+      newVal = null;
+    } else {
         // check for numeric
-        var numericVal = parseFloat(val);
-        if (!isNaN(numericVal) && isFinite(val)) {
-          newVal = numericVal;
-        }
+      var numericVal = parseFloat(val);
+      if (!isNaN(numericVal) && isFinite(val)) {
+        newVal = numericVal;
       }
-      return newVal;
+    }
+    return newVal;
   };
 
   original = original.map(row => {
@@ -1261,8 +1261,8 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
   // cast to time object if we are interpolating time
   if (which === dimTime) result = new Date(result);
   if (isNaN(result)) {
-      warn("interpolatePoint failed because result is NaN. It was " + which);
-      result = null;
+    warn("interpolatePoint failed because result is NaN. It was " + which);
+    result = null;
   }
 
   return result;
@@ -1444,41 +1444,41 @@ export function makeAbsoluteContext(element, svgDocument) {
  */
 export function firstBy() {
 
-    function identity(v) {return v;}
+  function identity(v) {return v;}
 
-    function ignoreCase(v) {return typeof (v) === "string" ? v.toLowerCase() : v;}
+  function ignoreCase(v) {return typeof (v) === "string" ? v.toLowerCase() : v;}
 
-    function makeCompareFunction(f, opt) {
-     opt = typeof (opt) === "number" ? { direction: opt } : opt || {};
-     if (typeof (f) != "function") {
-        var prop = f;
+  function makeCompareFunction(f, opt) {
+    opt = typeof (opt) === "number" ? { direction: opt } : opt || {};
+    if (typeof (f) != "function") {
+      var prop = f;
         // make unary function
-        f = function(v1) {return v1[prop] ? v1[prop] : "";};
-      }
-      if (f.length === 1) {
-        // f is a unary function mapping a single item to its sort score
-        var uf = f;
-        var preprocess = opt.ignoreCase ? ignoreCase : identity;
-        f = function(v1, v2) {return preprocess(uf(v1)) < preprocess(uf(v2)) ? -1 : preprocess(uf(v1)) > preprocess(uf(v2)) ? 1 : 0;};
-      }
-      if (opt.direction === -1) return function(v1, v2) {return -f(v1, v2);};
-      return f;
+      f = function(v1) {return v1[prop] ? v1[prop] : "";};
     }
+    if (f.length === 1) {
+        // f is a unary function mapping a single item to its sort score
+      var uf = f;
+      var preprocess = opt.ignoreCase ? ignoreCase : identity;
+      f = function(v1, v2) {return preprocess(uf(v1)) < preprocess(uf(v2)) ? -1 : preprocess(uf(v1)) > preprocess(uf(v2)) ? 1 : 0;};
+    }
+    if (opt.direction === -1) return function(v1, v2) {return -f(v1, v2);};
+    return f;
+  }
 
     /* adds a secondary compare function to the target function (`this` context)
        which is applied in case the first one returns 0 (equal)
        returns a new compare function, which has a `thenBy` method as well */
-    function tb(func, opt) {
-        var x = typeof (this) == "function" ? this : false;
-        var y = makeCompareFunction(func, opt);
-        var f = x ? function(a, b) {
-                        return x(a, b) || y(a, b);
-                    }
-                  : y;
-        f.thenBy = tb;
-        return f;
+  function tb(func, opt) {
+    var x = typeof (this) == "function" ? this : false;
+    var y = makeCompareFunction(func, opt);
+    var f = x ? function(a, b) {
+      return x(a, b) || y(a, b);
     }
-    return tb;
+                  : y;
+    f.thenBy = tb;
+    return f;
+  }
+  return tb;
 }
 
 export function transform(node) {

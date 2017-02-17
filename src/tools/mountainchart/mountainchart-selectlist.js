@@ -198,9 +198,9 @@ var MCSelectList = Class.extend({
     var KEY = _this.KEY;
     //show the little cross on the selected label
     _this.selectList
-        .filter(f => f[KEY] == d[KEY])
-        .select(".vzb-mc-label-x")
-        .classed("vzb-invisible", !show);
+      .filter(f => f[KEY] == d[KEY])
+      .select(".vzb-mc-label-x")
+      .classed("vzb-invisible", !show);
   },
 
 });

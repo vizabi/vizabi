@@ -123,26 +123,26 @@ var DataModel = Model.extend({
           _this.readerObject.read(query, parsers).then(response => {
 
               //success reading
-              _this.checkQueryResponse(query, response);
+            _this.checkQueryResponse(query, response);
 
-              _this._collection[dataId] = {};
-              _this._collectionPromises[dataId] = {};
-              var col = _this._collection[dataId];
-              col.data = response;
-              col.valid = {};
-              col.nested = {};
-              col.unique = {};
-              col.limits = {};
-              col.frames = {};
-              col.haveNoDataPointsPerKey = {};
-              col.query = query;
+            _this._collection[dataId] = {};
+            _this._collectionPromises[dataId] = {};
+            var col = _this._collection[dataId];
+            col.data = response;
+            col.valid = {};
+            col.nested = {};
+            col.unique = {};
+            col.limits = {};
+            col.frames = {};
+            col.haveNoDataPointsPerKey = {};
+            col.query = query;
               // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
 
               // remove query from queue
-              _this.queryQueue[queryMergeId] = null;
-              resolve(dataId);
+            _this.queryQueue[queryMergeId] = null;
+            resolve(dataId);
 
-            }, //error reading
+          }, //error reading
             err => {
               _this.queryQueue[queryMergeId] = null;
               reject(err);
@@ -335,15 +335,15 @@ var DataModel = Model.extend({
   },
 
   getConceptprops(which) {
-     if (which) {
-       if (this.conceptDictionary[which]) {
-         return this.conceptDictionary[which];
-       } else {
-         return utils.warn("The concept " + which + " is not found in the dictionary");
-       }
-     } else {
-       return this.conceptDictionary;
-     }
+    if (which) {
+      if (this.conceptDictionary[which]) {
+        return this.conceptDictionary[which];
+      } else {
+        return utils.warn("The concept " + which + " is not found in the dictionary");
+      }
+    } else {
+      return this.conceptDictionary;
+    }
   },
 
   getConceptByIndex(index, type) {
@@ -423,11 +423,11 @@ var DataModel = Model.extend({
 
   _muteAllQueues(except) {
     utils.forEach(this._collectionPromises, (queries, dataId) => {
-        utils.forEach(queries, (promise, whatId) => {
-          if (promise.queue.isActive == true && promise.queue.whatId != except) {
-            promise.queue.mute();
-          }
-        });
+      utils.forEach(queries, (promise, whatId) => {
+        if (promise.queue.isActive == true && promise.queue.whatId != except) {
+          promise.queue.mute();
+        }
+      });
     });
   },
 
@@ -665,82 +665,82 @@ var DataModel = Model.extend({
 
       var buildFrame = function(frameName, entitiesByKey, KEY, dataId, callback) {
         var frame = {};
-          if (query.from !== "datapoints") {
+        if (query.from !== "datapoints") {
             // we populate the regular set with a single value (unpack properties into constant time series)
-            var dataset = _this._collection[dataId].data;
-            for (c = 0; c < cLength; c++) frame[columns[c]] = {};
+          var dataset = _this._collection[dataId].data;
+          for (c = 0; c < cLength; c++) frame[columns[c]] = {};
 
-            for (var i = 0; i < dataset.length; i++) {
-              var d = dataset[i];
-              for (c = 0; c < cLength; c++) {
-                frame[columns[c]][d[KEY[0]]] = d[columns[c]];
+          for (var i = 0; i < dataset.length; i++) {
+            var d = dataset[i];
+            for (c = 0; c < cLength; c++) {
+              frame[columns[c]][d[KEY[0]]] = d[columns[c]];
                 //check data for properties with missed data. If founded then write key to haveNoDataPointsPerKey with
                 //count of broken datapoints
-                if (d[columns[c]] == null) {
-                  _this._collection[dataId].haveNoDataPointsPerKey[columns[c]][d[KEY[0]]] = dataset.length;
-                }
+              if (d[columns[c]] == null) {
+                _this._collection[dataId].haveNoDataPointsPerKey[columns[c]][d[KEY[0]]] = dataset.length;
               }
             }
+          }
 
-          } else {
+        } else {
             // If there is a time field in query.where clause, then we are dealing with indicators in this request
 
             // Put together a template for cached filtered sets (see below what's needed)
 
             // Now we run a 3-level loop: across frames, then across keys, then and across data columns (lex, gdp)
 
-            for (c = 0; c < cLength; c++) frame[columns[c]] = {};
+          for (c = 0; c < cLength; c++) frame[columns[c]] = {};
 
-            var iterateKeys = function(firstKeyObject, lastKeyObject, firstKey, nested, filtered, index) {
-              var keys = entitiesByKey[KEY[index]];
-              for (var i = 0, j = keys.length; i < j; i++) {
-                if (index == 0) {
-                  firstKey = keys[i];//root level
-                }
-                if (index == lastIndex) {
-                  for (c = 0; c < cLength; c++) {
-                    mapValue(columns[c], firstKey, keys[i], firstKeyObject, lastKeyObject, nested[keys[i]], filtered[keys[i]]);
-                  }
-                } else {
-                  if (index == 0) {
-                    lastKeyObject = firstKeyObject = {};
-                  }
-                  var nextIndex = index + 1;
-                  lastKeyObject[keys[i]] = {};
-                  iterateKeys(firstKeyObject, lastKeyObject[keys[i]], firstKey, nested[keys[i]], filtered[keys[i]], nextIndex);
-                }
+          var iterateKeys = function(firstKeyObject, lastKeyObject, firstKey, nested, filtered, index) {
+            var keys = entitiesByKey[KEY[index]];
+            for (var i = 0, j = keys.length; i < j; i++) {
+              if (index == 0) {
+                firstKey = keys[i];//root level
               }
-            };
+              if (index == lastIndex) {
+                for (c = 0; c < cLength; c++) {
+                  mapValue(columns[c], firstKey, keys[i], firstKeyObject, lastKeyObject, nested[keys[i]], filtered[keys[i]]);
+                }
+              } else {
+                if (index == 0) {
+                  lastKeyObject = firstKeyObject = {};
+                }
+                var nextIndex = index + 1;
+                lastKeyObject[keys[i]] = {};
+                iterateKeys(firstKeyObject, lastKeyObject[keys[i]], firstKey, nested[keys[i]], filtered[keys[i]], nextIndex);
+              }
+            }
+          };
 
-            iterateKeys(null, null, null, nested, filtered, 0);
+          iterateKeys(null, null, null, nested, filtered, 0);
 
-            function mapValue(column, firstKey, lastKey, firstKeyObject, lastKeyObject, nested, filtered) {
+          function mapValue(column, firstKey, lastKey, firstKeyObject, lastKeyObject, nested, filtered) {
 
                 //If there are some points in the array with valid numbers, then
                 //interpolate the missing point and save it to the “clean regular set”
-                method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
-                use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
+            method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
+            use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
 
 
-                if (firstKeyObject) {
-                  frame[column][firstKey] = firstKeyObject[firstKey];
-                } else {
-                  lastKeyObject = frame[column];
-                }
+            if (firstKeyObject) {
+              frame[column][firstKey] = firstKeyObject[firstKey];
+            } else {
+              lastKeyObject = frame[column];
+            }
 
                 // Inside of this 3-level loop is the following:
-                if (nested && nested[frameName] && (nested[frameName][0][column] || nested[frameName][0][column] === 0)) {
+            if (nested && nested[frameName] && (nested[frameName][0][column] || nested[frameName][0][column] === 0)) {
 
                   // Check if the piece of data for [this key][this frame][this column] exists
                   // and is valid. If so, then save it into a “clean regular set”
-                  lastKeyObject[lastKey] = nested[frameName][0][column];
+              lastKeyObject[lastKey] = nested[frameName][0][column];
 
-                } else if (method === "none") {
+            } else if (method === "none") {
 
                   // the piece of data is not available and the interpolation is set to "none"
-                  lastKeyObject[lastKey] = null;
+              lastKeyObject[lastKey] = null;
 
-                } else {
+            } else {
                   // If the piece of data doesn’t exist or is invalid, then we need to inter- or extapolate it
 
                   // Let’s take a slice of the nested set, corresponding to the current key nested[key]
@@ -748,61 +748,61 @@ var DataModel = Model.extend({
                   // At every frame the data in the current column might or might not exist.
                   // Thus, let’s filter out all the frames which don’t have the data for the current column.
                   // Let’s cache it because we will most likely encounter another gap in the same column for the same key
-                  items = filtered[column];
-                  if (items === null) {
-                    var givenFrames = Object.keys(nested);
-                    items = new Array(givenFrames.length);
-                    itemsIndex = 0;
+              items = filtered[column];
+              if (items === null) {
+                var givenFrames = Object.keys(nested);
+                items = new Array(givenFrames.length);
+                itemsIndex = 0;
 
-                    for (var z = 0, length = givenFrames.length; z < length; z++) {
-                      oneFrame = nested[givenFrames[z]];
-                      if (oneFrame[0][column] || oneFrame[0][column] === 0) items[itemsIndex++] = oneFrame[0];
-                    }
+                for (var z = 0, length = givenFrames.length; z < length; z++) {
+                  oneFrame = nested[givenFrames[z]];
+                  if (oneFrame[0][column] || oneFrame[0][column] === 0) items[itemsIndex++] = oneFrame[0];
+                }
 
                     //trim the length of the array
-                    items.length = itemsIndex;
+                items.length = itemsIndex;
 
-                    if (itemsIndex === 0) {
-                      filtered[column] = [];
-                    } else {
-                      filtered[column] = items;
-                    }
+                if (itemsIndex === 0) {
+                  filtered[column] = [];
+                } else {
+                  filtered[column] = items;
+                }
 
-                    if (items.length == 0) _this._collection[dataId].haveNoDataPointsPerKey[column][key] = items.length;
-                  }
+                if (items.length == 0) _this._collection[dataId].haveNoDataPointsPerKey[column][key] = items.length;
+              }
 
                   // Now we are left with a fewer frames in the filtered array. Let's check its length.
                   //If the array is empty, then the entire column is missing for the key
                   //So we let the key have missing values in this column for all frames
-                  if (items && items.length > 0) {
-                    next = null;
-                    lastKeyObject[lastKey] = utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
-                  }
-                }
+              if (items && items.length > 0) {
+                next = null;
+                lastKeyObject[lastKey] = utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
+              }
             }
           }
+        }
 
           // save the calcualted frame to global datamanager cache
-          _this._collection[dataId]["frames"][whatId][frameName] = frame;
+        _this._collection[dataId]["frames"][whatId][frameName] = frame;
 
           // fire the callback
-          if (typeof callback === "function") {
+        if (typeof callback === "function") {
             // runs the function frameComplete inside framesQueue.getNext()
-            callback(frameName);
-          }
+          callback(frameName);
+        }
 
           // recursively call the buildFrame again, this time for the next frame
           //QUESTION: FramesArray is probably not needed at this point. dataId and whatId is enough
-          _this._collectionPromises[dataId][whatId]["queue"].getNext().then(nextFrame => {
-            if (nextFrame) {
-              utils.defer(() => {
-                buildFrame(nextFrame, entitiesByKey, KEY, dataId, _this._collectionPromises[dataId][whatId]["queue"].frameComplete);
-              });
-            } else {
+        _this._collectionPromises[dataId][whatId]["queue"].getNext().then(nextFrame => {
+          if (nextFrame) {
+            utils.defer(() => {
+              buildFrame(nextFrame, entitiesByKey, KEY, dataId, _this._collectionPromises[dataId][whatId]["queue"].frameComplete);
+            });
+          } else {
               //this goes to marker.js as a "response"
-              resolve(_this._collection[dataId]["frames"][whatId]);
-            }
-          });
+            resolve(_this._collection[dataId]["frames"][whatId]);
+          }
+        });
       };
       _this._collectionPromises[dataId][whatId]["queue"].getNext().then(nextFrame => {
         if (nextFrame) {

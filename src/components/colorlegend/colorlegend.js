@@ -15,18 +15,18 @@ var ColorLegend = Component.extend({
     this.name = "colorlegend";
 
     this.model_expects = [{
-        name: "time",
-        type: "time"
-      }, {
-        name: "entities",
-        type: "entities"
-      }, {
-        name: "marker",
-        type: "model"
-      }, {
-        name: "locale",
-        type: "locale"
-      }];
+      name: "time",
+      type: "time"
+    }, {
+      name: "entities",
+      type: "entities"
+    }, {
+      name: "marker",
+      type: "model"
+    }, {
+      name: "locale",
+      type: "locale"
+    }];
 
     this.model_binds = {
       "change:marker.color.scaleType": function(evt, path) {

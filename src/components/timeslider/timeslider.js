@@ -212,12 +212,12 @@ var TimeSlider = Component.extend({
 
     this.slider_outer.on("mousewheel", () => {
         //do nothing and dont pass the event on if we are currently dragging the slider
-        if (_this.model.time.dragging) {
-            d3.event.stopPropagation();
-            d3.event.preventDefault();
-            d3.event.returnValue = false;
-            return false;
-        }
+      if (_this.model.time.dragging) {
+        d3.event.stopPropagation();
+        d3.event.preventDefault();
+        d3.event.returnValue = false;
+        return false;
+      }
     });
 
     //this.slide.selectAll(".extent,.resize")
@@ -445,7 +445,7 @@ var TimeSlider = Component.extend({
   _resizeProgressBar() {
     var _this = this;
     this.progressBar.selectAll("path")
-    .each(function(d) {
+      .each(function(d) {
         d3.select(this)
           .attr("d", "M" + _this.xScale(d[0]) + ",0H" + _this.xScale(d[1]));
       });
@@ -505,7 +505,7 @@ var TimeSlider = Component.extend({
       .each(function(d) {
         var element = d3.select(this);
         element.attr("d", "M" + _this.xScale(d[0]) + ",0H" + _this.xScale(d[1]))
-        .classed("rounded", _this.availableTimeFrames.length == 1);
+          .classed("rounded", _this.availableTimeFrames.length == 1);
 
       });
   },

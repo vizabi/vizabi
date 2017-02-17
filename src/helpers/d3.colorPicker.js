@@ -228,15 +228,15 @@ export default function colorPicker() {
           function() {
             d3.select(this).style("stroke", "#444");
             _cellHover(colorDef);
-        })
+          })
         .on("mouseout", function() {
           d3.select(this).style("stroke", "none");
         });
 
       circles.selectAll("." + css.COLOR_CIRCLE)
         .data(colorData).enter().append("g")
-          .attr("class", css.COLOR_CIRCLE)
-            .each(
+        .attr("class", css.COLOR_CIRCLE)
+        .each(
               function(circleData, index) {
                 arc.outerRadius(minRadius + (maxRadius - minRadius) / nCellsL *
                   (nCellsL - index)).innerRadius(minRadius +
@@ -245,18 +245,18 @@ export default function colorPicker() {
                   .data(pie(circleData)).enter().append("g")
                     .attr("class", css.COLOR_SEGMENT);
 
-              segment.append("path")
-                .attr("class", css.COLOR_BUTTON)
-                .attr("d", arc)
-                .style("fill", d => d.data.display)
-                .style("stroke", d => d.data.display)
-                .on("mouseover", function(d) {
-                  _cellHover(d.data.meaning, this);
-                })
-                .on("mouseout", d => {
-                  _cellUnHover();
-                });
-            });
+                segment.append("path")
+                  .attr("class", css.COLOR_BUTTON)
+                  .attr("d", arc)
+                  .style("fill", d => d.data.display)
+                  .style("stroke", d => d.data.display)
+                  .on("mouseover", function(d) {
+                    _cellHover(d.data.meaning, this);
+                  })
+                  .on("mouseout", d => {
+                    _cellUnHover();
+                  });
+              });
 
       circles.append("circle")
         .attr("r", minRadius)
@@ -266,7 +266,7 @@ export default function colorPicker() {
           function() {
             d3.select(this).style("stroke", "#555");
             _cellHover(colorWhite);
-        })
+          })
         .on("mouseout", function() {
           d3.select(this).style("stroke", "none");
         });
@@ -312,7 +312,7 @@ export default function colorPicker() {
       if (view != null)
         colorPointer.classed(css.INVISIBLE, false)
           .attr("d", d3.select(view)
-          .attr("d"));
+            .attr("d"));
 
       sampleRect.style("fill", value);
       sampleText.text(value);
@@ -489,9 +489,9 @@ export default function colorPicker() {
         circles.attr("transform", "translate(" + (maxRadius + width * margin.left) +
         "," + hPos + ")");
         selectedColor.attr("cx", width * margin.left * 1.5)
-                     .attr("cy", height * (1 - margin.bottom * 1.5));
+          .attr("cy", height * (1 - margin.bottom * 1.5));
         defaultLabel.attr("x", width * 0.1)
-                    .attr("y", height * (1 - margin.bottom));
+          .attr("y", height * (1 - margin.bottom));
       }
       colorPicker.fitToScreen();
 

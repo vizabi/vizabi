@@ -170,12 +170,12 @@ var Find = Dialog.extend({
         .on("mouseout", d => {
           if (!utils.isTouchDevice()) _this.model.state.marker.clearHighlighted();
         });
-        utils.preventAncestorScrolling(_this.element.select(".vzb-dialog-scrollable"));
+      utils.preventAncestorScrolling(_this.element.select(".vzb-dialog-scrollable"));
 
-        _this.redrawDataPoints(values);
-        _this.selectDataPoints();
-        _this.showHideSearch();
-        _this.showHideDeselect();
+      _this.redrawDataPoints(values);
+      _this.selectDataPoints();
+      _this.showHideSearch();
+      _this.showHideDeselect();
 
     });
   },
@@ -206,7 +206,7 @@ var Find = Dialog.extend({
     var KEY = this.KEY;
     var selected = this.model.state.marker.getSelected(KEY);
     this.items.selectAll("input")
-        .property("checked", d => (selected.indexOf(d[KEY]) !== -1));
+      .property("checked", d => (selected.indexOf(d[KEY]) !== -1));
   },
 
   showHideSearch() {

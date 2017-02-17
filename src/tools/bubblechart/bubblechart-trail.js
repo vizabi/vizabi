@@ -67,12 +67,12 @@ export default Class.extend({
         .merge(_trails)
         .each(function(d, index) {
           // used for prevent move trail start time forward when we have empty values at end of time range
-        var trail = this;
-        promises.push(new Promise((resolve, reject) => {
+          var trail = this;
+          promises.push(new Promise((resolve, reject) => {
             var trailSegmentData = timePoints.map(m => ({
-                t: m,
-                key: d[KEY]
-              }));
+              t: m,
+              key: d[KEY]
+            }));
             var entityTrails = d3.select(trail).selectAll("g")
               .data(trailSegmentData)
               .classed("vzb-invisible", true);
@@ -364,45 +364,45 @@ export default Class.extend({
           resolve1();
         }
       }).then(() => {
-          if (!d.selectedEntityData.trailStartTime) {
-            d.selectedEntityData.trailStartTime = _context.model.time.formatDate(_context.time);
-          }
-          var trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
-          if (_context.time - trailStartTime < 0 || d.limits.min - trailStartTime > 0) {
-            if (_context.time - trailStartTime < 0) {
+        if (!d.selectedEntityData.trailStartTime) {
+          d.selectedEntityData.trailStartTime = _context.model.time.formatDate(_context.time);
+        }
+        var trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
+        if (_context.time - trailStartTime < 0 || d.limits.min - trailStartTime > 0) {
+          if (_context.time - trailStartTime < 0) {
               // move trail start time with trail label back if need
-              d.selectedEntityData.trailStartTime = _context.model.time.formatDate(d3.max([_context.time, d.limits.min]));
-              trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
-            } else {
+            d.selectedEntityData.trailStartTime = _context.model.time.formatDate(d3.max([_context.time, d.limits.min]));
+            trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
+          } else {
               // move trail start time with trail label to start time if need
-              d.selectedEntityData.trailStartTime = _context.model.time.formatDate(d.limits.min);
-              trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
-            }
-            var cache = _context._labels.cached[d[KEY]];
-            var valueS = _context.frame.size[d[KEY]];
-            var valueC = _context.frame.color[d[KEY]];
-            cache.labelX0 = _context.frame.axis_x[d[KEY]];
-            cache.labelY0 = _context.frame.axis_y[d[KEY]];
-            cache.scaledS0 = (valueS || valueS === 0) ? utils.areaToRadius(_context.sScale(valueS)) : null;
-            cache.scaledC0 = valueC != null ? _context.cScale(valueC) : _context.COLOR_WHITEISH;
-            _context._updateLabel(d, 0, _context.frame.axis_x[d[KEY]], _context.frame.axis_y[d[KEY]], _context.frame.size[d[KEY]], _context.frame.color[d[KEY]], _context.frame.label[d[KEY]], _context.frame.size_label[d[KEY]], 0, true);
+            d.selectedEntityData.trailStartTime = _context.model.time.formatDate(d.limits.min);
+            trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
           }
-          trail.each((segment, index) => {
+          var cache = _context._labels.cached[d[KEY]];
+          var valueS = _context.frame.size[d[KEY]];
+          var valueC = _context.frame.color[d[KEY]];
+          cache.labelX0 = _context.frame.axis_x[d[KEY]];
+          cache.labelY0 = _context.frame.axis_y[d[KEY]];
+          cache.scaledS0 = (valueS || valueS === 0) ? utils.areaToRadius(_context.sScale(valueS)) : null;
+          cache.scaledC0 = valueC != null ? _context.cScale(valueC) : _context.COLOR_WHITEISH;
+          _context._updateLabel(d, 0, _context.frame.axis_x[d[KEY]], _context.frame.axis_y[d[KEY]], _context.frame.size[d[KEY]], _context.frame.color[d[KEY]], _context.frame.label[d[KEY]], _context.frame.size_label[d[KEY]], 0, true);
+        }
+        trail.each((segment, index) => {
             // segment is transparent if it is after current time or before trail StartTime
-            var segmentVisibility = segment.transparent;
-            segment.transparent = d.selectedEntityData.trailStartTime == null || (segment.t - _context.time > 0) || (trailStartTime - segment.t > 0)
+          var segmentVisibility = segment.transparent;
+          segment.transparent = d.selectedEntityData.trailStartTime == null || (segment.t - _context.time > 0) || (trailStartTime - segment.t > 0)
                 //no trail segment should be visible if leading bubble is shifted backwards, beyond start time
               || (d.selectedEntityData.trailStartTime - _context.model.time.formatDate(_context.time) >= 0);
             // always update nearest 2 points
-            if (segmentVisibility != segment.transparent || Math.abs(_context.model.time.formatDate(segment.t) - _context.model.time.formatDate(_context.time)) < 2) segment.visibilityChanged = true; // segment changed, so need to update it
-            if (segment.transparent) {
-              d3.select(trail._groups[0][index]).classed("vzb-invisible", segment.transparent);
-            }
-          });
-          _this.drawingQueue[d[KEY]] = {};
-          _this.delayedIterations[d[KEY]] = {};
-          resolve();
+          if (segmentVisibility != segment.transparent || Math.abs(_context.model.time.formatDate(segment.t) - _context.model.time.formatDate(_context.time)) < 2) segment.visibilityChanged = true; // segment changed, so need to update it
+          if (segment.transparent) {
+            d3.select(trail._groups[0][index]).classed("vzb-invisible", segment.transparent);
+          }
         });
+        _this.drawingQueue[d[KEY]] = {};
+        _this.delayedIterations[d[KEY]] = {};
+        resolve();
+      });
     });
   },
 
@@ -692,11 +692,11 @@ export default Class.extend({
           var point = JSON.parse(JSON.stringify(_this.drawingQueue[d[KEY]][pointIndex]));
           delete _this.drawingQueue[d[KEY]][pointIndex];
           addPointBetween(point.first, point.next, point.medium).then(() => {
-              if (Object.keys(_this.drawingQueue[d[KEY]]).length > 0) {
-                processPoint();
-              } else {
-                resolve();
-              }
+            if (Object.keys(_this.drawingQueue[d[KEY]]).length > 0) {
+              processPoint();
+            } else {
+              resolve();
+            }
           });
         };
         if (Object.keys(_this.drawingQueue[d[KEY]]).length > 0) {

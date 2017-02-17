@@ -74,7 +74,7 @@ var ColorModel = Hook.extend({
       }
     }
     if (this.scaleType == null) {
-        this.scaleType = this.dataSource
+      this.scaleType = this.dataSource
           .getConceptprops(this.which).scales[0];
     }
   },
@@ -211,41 +211,41 @@ var ColorModel = Hook.extend({
 
 
   getDefaultPalette() {
-      var conceptpropsColor = this.getConceptprops().color;
-      var palette;
+    var conceptpropsColor = this.getConceptprops().color;
+    var palette;
 
-      this.discreteDefaultPalette = false;
+    this.discreteDefaultPalette = false;
 
-      if (conceptpropsColor && conceptpropsColor.palette) {
+    if (conceptpropsColor && conceptpropsColor.palette) {
         //specific color palette from hook concept properties
-        palette = utils.clone(conceptpropsColor.palette);
-      } else if (defaultPalettes[this.which]) {
+      palette = utils.clone(conceptpropsColor.palette);
+    } else if (defaultPalettes[this.which]) {
         //color palette for this.which exists in palette defaults
-        palette = utils.clone(defaultPalettes[this.which]);
-      } else if (this.use === "constant") {
+      palette = utils.clone(defaultPalettes[this.which]);
+    } else if (this.use === "constant") {
         //an explicit hex color constant #abc or #adcdef is provided
-        if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/.test(this.which)) {
-          palette = { "_default": this.which };
-        } else {
-          palette = utils.clone(defaultPalettes["_default"]);
-        }
+      if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/.test(this.which)) {
+        palette = { "_default": this.which };
       } else {
-        palette = utils.clone(defaultPalettes[this.isDiscrete() ? "_discrete" : "_continuous"]);
-        this.discreteDefaultPalette = true;
-     }
+        palette = utils.clone(defaultPalettes["_default"]);
+      }
+    } else {
+      palette = utils.clone(defaultPalettes[this.isDiscrete() ? "_discrete" : "_continuous"]);
+      this.discreteDefaultPalette = true;
+    }
 
-      return palette;
+    return palette;
   },
 
   _getPaletteLabels() {
-      var conceptpropsColor = this.getConceptprops().color;
-      var paletteLabels = null;
+    var conceptpropsColor = this.getConceptprops().color;
+    var paletteLabels = null;
 
-      if (conceptpropsColor && conceptpropsColor.paletteLabels) {
+    if (conceptpropsColor && conceptpropsColor.paletteLabels) {
         //specific color palette from hook concept properties
-        paletteLabels = utils.clone(conceptpropsColor.paletteLabels);
-      }
-      return paletteLabels;
+      paletteLabels = utils.clone(conceptpropsColor.paletteLabels);
+    }
+    return paletteLabels;
   },
 
   getPaletteLabels() {

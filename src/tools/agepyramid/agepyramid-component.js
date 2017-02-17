@@ -374,7 +374,7 @@ var AgePyramid = Component.extend({
       _this.parent.findChildByName("gapminder-datanotes").setHook("axis_x").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
     });
     this.xInfoEl.on("mouseout", () => {
-       if (_this.model.time.dragging) return;
+      if (_this.model.time.dragging) return;
       _this.parent.findChildByName("gapminder-datanotes").hide();
     });
 
@@ -656,13 +656,13 @@ var AgePyramid = Component.extend({
 
 
     this.sideBars = this.entityBars.selectAll(".vzb-bc-side").data(d => _this.sideKeys.map(m => {
-        var r = {};
-        r[ageDim] = d[ageDim];
-        r[shiftedAgeDim] = d[shiftedAgeDim];
-        r[prefixedSideDim] = m;
-        r[sideDim] = m;
-        return r;
-      }), d => d[prefixedSideDim]);
+      var r = {};
+      r[ageDim] = d[ageDim];
+      r[shiftedAgeDim] = d[shiftedAgeDim];
+      r[prefixedSideDim] = m;
+      r[sideDim] = m;
+      return r;
+    }), d => d[prefixedSideDim]);
 
     this.sideBars.exit().remove();
     this.sideBars = this.sideBars.enter().append("g")
@@ -806,8 +806,8 @@ var AgePyramid = Component.extend({
   },
 
   _setYear(timeValue) {
-      var formattedTime = this.model.time.formatDate(timeValue);
-      return function() { d3.select(this).text(formattedTime);};
+    var formattedTime = this.model.time.formatDate(timeValue);
+    return function() { d3.select(this).text(formattedTime);};
   },
 
   _interaction() {

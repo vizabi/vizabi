@@ -18,18 +18,18 @@ var OPTIONS = {
 };
 
 var profiles = {
-    "small": {
-      minRadius: 0.5,
-      maxRadius: 40
-    },
-    "medium": {
-      minRadius: 1,
-      maxRadius: 55
-    },
-    "large": {
-      minRadius: 1,
-      maxRadius: 65
-    }
+  "small": {
+    minRadius: 0.5,
+    maxRadius: 40
+  },
+  "medium": {
+    minRadius: 1,
+    maxRadius: 55
+  },
+  "large": {
+    minRadius: 1,
+    maxRadius: 65
+  }
 };
 
 
@@ -67,8 +67,8 @@ var BubbleSize = Component.extend({
     }
 
     function readyHandler(evt) {
-        _this.sizeScaleMinMax = _this.model.size.getScale().domain();
-        _this._setLabelsText();
+      _this.sizeScaleMinMax = _this.model.size.getScale().domain();
+      _this._setLabelsText();
     }
 
     this._setModel = utils.throttle(this._setModel, 50);
@@ -255,17 +255,17 @@ var BubbleSize = Component.extend({
     this.sliderLabelsEl.data(s)
       .attr("transform", (d, i) => {
         var textMargin = { v: OPTIONS.TEXT_PARAMS.TOP, h: OPTIONS.TEXT_PARAMS.LEFT },
-            dX = textMargin.h * (i ? 0.5 : -1.0) + _this.xScale(d),
-            dY = 0;
+          dX = textMargin.h * (i ? 0.5 : -1.0) + _this.xScale(d),
+          dY = 0;
         return "translate(" + (dX) + "," + (dY) + ")";
       });
   },
 
   _setLabelsText() {
-      var _this = this;
-      _this.sliderLabelsEl
-        .data([_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[0]), _this.model.size.getTickFormatter()(_this.sizeScaleMinMax[1])])
-        .text(d => d);
+    var _this = this;
+    _this.sliderLabelsEl
+      .data([_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[0]), _this.model.size.getTickFormatter()(_this.sizeScaleMinMax[1])])
+      .text(d => d);
   },
 
   /**

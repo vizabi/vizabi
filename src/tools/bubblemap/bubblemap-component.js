@@ -79,22 +79,22 @@ var BubbleMapComponent = Component.extend({
         _this.redrawDataPoints(null, false);
       },
       "change:marker.color.palette": function(evt, path) {
-          if (!_this._readyOnce) return;
-          _this.redrawDataPoints(null, false);
+        if (!_this._readyOnce) return;
+        _this.redrawDataPoints(null, false);
       },
       "change:marker.select": function(evt) {
-          if (!_this._readyOnce) return;
-          _this.selectMarkers();
-          _this.redrawDataPoints(null, false);
-          _this.updateOpacity();
-          _this.updateDoubtOpacity();
+        if (!_this._readyOnce) return;
+        _this.selectMarkers();
+        _this.redrawDataPoints(null, false);
+        _this.updateOpacity();
+        _this.updateDoubtOpacity();
 
       },
       "change:marker.opacitySelectDim": function(evt) {
-          _this.updateOpacity();
+        _this.updateOpacity();
       },
       "change:marker.opacityRegular": function(evt) {
-          _this.updateOpacity();
+        _this.updateOpacity();
       },
     };
 
@@ -218,195 +218,195 @@ var BubbleMapComponent = Component.extend({
   },
 
   updateUIStrings() {
-      var _this = this;
+    var _this = this;
 
-      this.translator = this.model.locale.getTFunction();
-      var conceptPropsS = _this.model.marker.size.getConceptprops();
-      var conceptPropsC = _this.model.marker.color.getConceptprops();
+    this.translator = this.model.locale.getTFunction();
+    var conceptPropsS = _this.model.marker.size.getConceptprops();
+    var conceptPropsC = _this.model.marker.color.getConceptprops();
 
-      this.strings = {
-          title: {
-            S: conceptPropsS.name,
-            C: conceptPropsC.name
-          }
-      };
+    this.strings = {
+      title: {
+        S: conceptPropsS.name,
+        C: conceptPropsC.name
+      }
+    };
 
-      this.yTitleEl.select("text")
-          .text(this.translator("buttons/size") + ": " + this.strings.title.S)
-          .on("click", () => {
-            _this.parent
-              .findChildByName("gapminder-treemenu")
-              .markerID("size")
-              .alignX(_this.model.locale.isRTL() ? "right" : "left")
-              .alignY("top")
-              .updateView()
-              .toggle();
-          });
+    this.yTitleEl.select("text")
+      .text(this.translator("buttons/size") + ": " + this.strings.title.S)
+      .on("click", () => {
+        _this.parent
+          .findChildByName("gapminder-treemenu")
+          .markerID("size")
+          .alignX(_this.model.locale.isRTL() ? "right" : "left")
+          .alignY("top")
+          .updateView()
+          .toggle();
+      });
 
-      this.cTitleEl.select("text")
-          .text(this.translator("buttons/color") + ": " + this.strings.title.C)
-          .on("click", () => {
-            _this.parent
-              .findChildByName("gapminder-treemenu")
-              .markerID("color")
-              .alignX(_this.model.locale.isRTL() ? "right" : "left")
-              .alignY("top")
-              .updateView()
-              .toggle();
-          });
+    this.cTitleEl.select("text")
+      .text(this.translator("buttons/color") + ": " + this.strings.title.C)
+      .on("click", () => {
+        _this.parent
+          .findChildByName("gapminder-treemenu")
+          .markerID("color")
+          .alignX(_this.model.locale.isRTL() ? "right" : "left")
+          .alignY("top")
+          .updateView()
+          .toggle();
+      });
 
-      utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
-      this.dataWarningEl.append("text")
-          .attr("text-anchor", "end")
-          .text(this.translator("hints/dataWarning"));
+    utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
+    this.dataWarningEl.append("text")
+      .attr("text-anchor", "end")
+      .text(this.translator("hints/dataWarning"));
 
-      this.dataWarningEl
-          .on("click", () => {
-              _this.parent.findChildByName("gapminder-datawarning").toggle();
-          })
-          .on("mouseover", () => {
-              _this.updateDoubtOpacity(1);
-          })
-          .on("mouseout", () => {
-              _this.updateDoubtOpacity();
-          });
+    this.dataWarningEl
+      .on("click", () => {
+        _this.parent.findChildByName("gapminder-datawarning").toggle();
+      })
+      .on("mouseover", () => {
+        _this.updateDoubtOpacity(1);
+      })
+      .on("mouseout", () => {
+        _this.updateDoubtOpacity();
+      });
 
-      this.yInfoEl
-          .html(iconQuestion)
-          .select("svg").attr("width", "0px").attr("height", "0px");
+    this.yInfoEl
+      .html(iconQuestion)
+      .select("svg").attr("width", "0px").attr("height", "0px");
 
       //TODO: move away from UI strings, maybe to ready or ready once
-      this.yInfoEl.on("click", () => {
-        _this.parent.findChildByName("gapminder-datanotes").pin();
-      });
-      this.yInfoEl.on("mouseover", function() {
-        var rect = this.getBBox();
-        var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-        var toolRect = _this.root.element.getBoundingClientRect();
-        var chartRect = _this.element.node().getBoundingClientRect();
-        _this.parent.findChildByName("gapminder-datanotes").setHook("size").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
-      });
-      this.yInfoEl.on("mouseout", () => {
-        _this.parent.findChildByName("gapminder-datanotes").hide();
-      });
+    this.yInfoEl.on("click", () => {
+      _this.parent.findChildByName("gapminder-datanotes").pin();
+    });
+    this.yInfoEl.on("mouseover", function() {
+      var rect = this.getBBox();
+      var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+      var toolRect = _this.root.element.getBoundingClientRect();
+      var chartRect = _this.element.node().getBoundingClientRect();
+      _this.parent.findChildByName("gapminder-datanotes").setHook("size").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
+    });
+    this.yInfoEl.on("mouseout", () => {
+      _this.parent.findChildByName("gapminder-datanotes").hide();
+    });
 
-      this.cInfoEl
-          .html(iconQuestion)
-          .select("svg").attr("width", "0px").attr("height", "0px");
+    this.cInfoEl
+      .html(iconQuestion)
+      .select("svg").attr("width", "0px").attr("height", "0px");
 
       //TODO: move away from UI strings, maybe to ready or ready once
-      this.cInfoEl.on("click", () => {
-        _this.parent.findChildByName("gapminder-datanotes").pin();
-      });
-      this.cInfoEl.on("mouseover", function() {
-        var rect = this.getBBox();
-        var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
-        var toolRect = _this.root.element.getBoundingClientRect();
-        var chartRect = _this.element.node().getBoundingClientRect();
-        _this.parent.findChildByName("gapminder-datanotes").setHook("color").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
-      });
-      this.cInfoEl.on("mouseout", () => {
-        _this.parent.findChildByName("gapminder-datanotes").hide();
-      });
+    this.cInfoEl.on("click", () => {
+      _this.parent.findChildByName("gapminder-datanotes").pin();
+    });
+    this.cInfoEl.on("mouseover", function() {
+      var rect = this.getBBox();
+      var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
+      var toolRect = _this.root.element.getBoundingClientRect();
+      var chartRect = _this.element.node().getBoundingClientRect();
+      _this.parent.findChildByName("gapminder-datanotes").setHook("color").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
+    });
+    this.cInfoEl.on("mouseout", () => {
+      _this.parent.findChildByName("gapminder-datanotes").hide();
+    });
   },
 
   // show size number on title when hovered on a bubble
   updateTitleNumbers() {
-      var _this = this;
+    var _this = this;
 
-      var mobile; // if is mobile device and only one bubble is selected, update the ytitle for the bubble
-      if (_this.isMobile && _this.model.marker.select && _this.model.marker.select.length === 1) {
-        mobile = _this.model.marker.select[0];
-      }
+    var mobile; // if is mobile device and only one bubble is selected, update the ytitle for the bubble
+    if (_this.isMobile && _this.model.marker.select && _this.model.marker.select.length === 1) {
+      mobile = _this.model.marker.select[0];
+    }
 
-      if (_this.hovered || mobile) {
-        var conceptPropsS = _this.model.marker.size.getConceptprops();
-        var conceptPropsC = _this.model.marker.color.getConceptprops();
+    if (_this.hovered || mobile) {
+      var conceptPropsS = _this.model.marker.size.getConceptprops();
+      var conceptPropsC = _this.model.marker.color.getConceptprops();
 
-        var hovered = _this.hovered || mobile;
-        var formatterS = _this.model.marker.size.getTickFormatter();
-        var formatterC = _this.model.marker.color.getTickFormatter();
+      var hovered = _this.hovered || mobile;
+      var formatterS = _this.model.marker.size.getTickFormatter();
+      var formatterC = _this.model.marker.color.getTickFormatter();
 
-        var unitS = conceptPropsS.unit || "";
-        var unitC = conceptPropsC.unit || "";
+      var unitS = conceptPropsS.unit || "";
+      var unitC = conceptPropsC.unit || "";
 
-        var valueS = _this.values.size[hovered[_this.KEY]];
-        var valueC = _this.values.color[hovered[_this.KEY]];
+      var valueS = _this.values.size[hovered[_this.KEY]];
+      var valueC = _this.values.color[hovered[_this.KEY]];
 
         //resolve value for color from the color legend model
-        if (_this.model.marker.color.isDiscrete() && valueC) {
-          valueC = this.model.marker.color.getColorlegendMarker().label.getItems()[valueC] || "";
-        }
+      if (_this.model.marker.color.isDiscrete() && valueC) {
+        valueC = this.model.marker.color.getColorlegendMarker().label.getItems()[valueC] || "";
+      }
 
-        _this.yTitleEl.select("text")
-          .text(_this.translator("buttons/size") + ": " + formatterS(valueS) + " " + unitS);
+      _this.yTitleEl.select("text")
+        .text(_this.translator("buttons/size") + ": " + formatterS(valueS) + " " + unitS);
 
-        _this.cTitleEl.select("text")
-          .text(_this.translator("buttons/color") + ": " +
+      _this.cTitleEl.select("text")
+        .text(_this.translator("buttons/color") + ": " +
             (valueC || valueC === 0 ? formatterC(valueC) + " " + unitC : _this.translator("hints/nodata")));
 
-        this.yInfoEl.classed("vzb-hidden", true);
-        this.cInfoEl.classed("vzb-hidden", true);
-      } else {
-        this.yTitleEl.select("text")
-            .text(this.translator("buttons/size") + ": " + this.strings.title.S);
-        this.cTitleEl.select("text")
-            .text(this.translator("buttons/color") + ": " + this.strings.title.C);
+      this.yInfoEl.classed("vzb-hidden", true);
+      this.cInfoEl.classed("vzb-hidden", true);
+    } else {
+      this.yTitleEl.select("text")
+        .text(this.translator("buttons/size") + ": " + this.strings.title.S);
+      this.cTitleEl.select("text")
+        .text(this.translator("buttons/color") + ": " + this.strings.title.C);
 
-        this.yInfoEl.classed("vzb-hidden", false);
-        this.cInfoEl.classed("vzb-hidden", false || this.cTitleEl.classed("vzb-hidden"));
-      }
+      this.yInfoEl.classed("vzb-hidden", false);
+      this.cInfoEl.classed("vzb-hidden", false || this.cTitleEl.classed("vzb-hidden"));
+    }
   },
 
   updateDoubtOpacity(opacity) {
-      if (opacity == null) opacity = this.wScale(+this.time.getUTCFullYear().toString());
-      if (this.someSelected) opacity = 1;
-      this.dataWarningEl.style("opacity", opacity);
+    if (opacity == null) opacity = this.wScale(+this.time.getUTCFullYear().toString());
+    if (this.someSelected) opacity = 1;
+    this.dataWarningEl.style("opacity", opacity);
   },
 
   updateOpacity() {
-      var _this = this;
+    var _this = this;
       /*
       this.entityBubbles.classed("vzb-selected", function (d) {
           return _this.model.marker.isSelected(d);
       });
       */
 
-      var OPACITY_HIGHLT = 1.0;
-      var OPACITY_HIGHLT_DIM = 0.3;
-      var OPACITY_SELECT = this.model.marker.opacityRegular;
-      var OPACITY_REGULAR = this.model.marker.opacityRegular;
-      var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
+    var OPACITY_HIGHLT = 1.0;
+    var OPACITY_HIGHLT_DIM = 0.3;
+    var OPACITY_SELECT = this.model.marker.opacityRegular;
+    var OPACITY_REGULAR = this.model.marker.opacityRegular;
+    var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
 
-      this.entityBubbles.style("opacity", d => {
+    this.entityBubbles.style("opacity", d => {
 
-          if (_this.someHighlighted) {
+      if (_this.someHighlighted) {
               //highlight or non-highlight
-              if (_this.model.marker.isHighlighted(d)) return OPACITY_HIGHLT;
-          }
-
-          if (_this.someSelected) {
-              //selected or non-selected
-              return _this.model.marker.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
-          }
-
-          if (_this.someHighlighted) return OPACITY_HIGHLT_DIM;
-
-          return OPACITY_REGULAR;
-
-      });
-
-      this.entityBubbles.classed("vzb-selected", d => _this.model.marker.isSelected(d));
-
-      var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
-
-      // when pointer events need update...
-      if (nonSelectedOpacityZero !== this.nonSelectedOpacityZero) {
-          this.entityBubbles.style("pointer-events", d => (!_this.someSelected || !nonSelectedOpacityZero || _this.model.marker.isSelected(d)) ?
-                  "visible" : "none");
+        if (_this.model.marker.isHighlighted(d)) return OPACITY_HIGHLT;
       }
 
-      this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
+      if (_this.someSelected) {
+              //selected or non-selected
+        return _this.model.marker.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
+      }
+
+      if (_this.someHighlighted) return OPACITY_HIGHLT_DIM;
+
+      return OPACITY_REGULAR;
+
+    });
+
+    this.entityBubbles.classed("vzb-selected", d => _this.model.marker.isSelected(d));
+
+    var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
+
+      // when pointer events need update...
+    if (nonSelectedOpacityZero !== this.nonSelectedOpacityZero) {
+      this.entityBubbles.style("pointer-events", d => (!_this.someSelected || !nonSelectedOpacityZero || _this.model.marker.isSelected(d)) ?
+                  "visible" : "none");
+    }
+
+    this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
   },
 
   /**
@@ -478,21 +478,21 @@ var BubbleMapComponent = Component.extend({
     this.entityBubbles = this.entityBubbles.enter().append("circle")
       .attr("class", "vzb-bmc-bubble")
       .on("mouseover", (d, i) => {
-          if (utils.isTouchDevice()) return;
-          _this._interact()._mouseover(d, i);
+        if (utils.isTouchDevice()) return;
+        _this._interact()._mouseover(d, i);
       })
       .on("mouseout", (d, i) => {
-          if (utils.isTouchDevice()) return;
-          _this._interact()._mouseout(d, i);
+        if (utils.isTouchDevice()) return;
+        _this._interact()._mouseout(d, i);
       })
       .on("click", (d, i) => {
-          if (utils.isTouchDevice()) return;
-          _this._interact()._click(d, i);
-          _this.highlightMarkers();
+        if (utils.isTouchDevice()) return;
+        _this._interact()._click(d, i);
+        _this.highlightMarkers();
       })
       .onTap((d, i) => {
-          _this._interact()._click(d, i);
-          d3.event.stopPropagation();
+        _this._interact()._click(d, i);
+        d3.event.stopPropagation();
       })
       .onLongTap((d, i) => {
       })
@@ -501,16 +501,16 @@ var BubbleMapComponent = Component.extend({
   },
 
   unselectBubblesWithNoData(frame) {
-      var _this = this;
-      var KEY = this.KEY;
-      if (!frame) frame = this.values;
+    var _this = this;
+    var KEY = this.KEY;
+    if (!frame) frame = this.values;
 
-      if (!frame || !frame.size) return;
+    if (!frame || !frame.size) return;
 
-      this.model.marker.select.forEach(d => {
-        if (!frame.size[d[KEY]] && frame.size[d[KEY]] !== 0)
-            _this.model.marker.selectMarker(d);
-      });
+    this.model.marker.select.forEach(d => {
+      if (!frame.size[d[KEY]] && frame.size[d[KEY]] !== 0)
+        _this.model.marker.selectMarker(d);
+    });
   },
 
   redrawDataPoints(duration, reposition) {
@@ -534,46 +534,46 @@ var BubbleMapComponent = Component.extend({
 
       if (d.hidden !== d.hidden_1) {
         if (duration) {
-            view.transition().duration(duration).ease(d3.easeLinear)
-                .style("opacity", 0)
-                .on("end", () => view.classed("vzb-hidden", d.hidden).style("opacity", _this.model.marker.opacityRegular));
+          view.transition().duration(duration).ease(d3.easeLinear)
+            .style("opacity", 0)
+            .on("end", () => view.classed("vzb-hidden", d.hidden).style("opacity", _this.model.marker.opacityRegular));
         } else {
           view.classed("vzb-hidden", d.hidden);
         }
       }
       if (!d.hidden) {
 
-          d.r = utils.areaToRadius(_this.sScale(valueS || 0));
-          d.label = valueL;
+        d.r = utils.areaToRadius(_this.sScale(valueS || 0));
+        d.label = valueL;
 
-          view.classed("vzb-hidden", false)
-              .attr("fill", valueC != null ? _this.cScale(valueC) : _this.COLOR_WHITEISH);
+        view.classed("vzb-hidden", false)
+          .attr("fill", valueC != null ? _this.cScale(valueC) : _this.COLOR_WHITEISH);
 
-          if (_this.model.ui.map.colorGeo)
-            geo.style("fill", valueC != null ? _this.cScale(valueC) : "#999");
+        if (_this.model.ui.map.colorGeo)
+          geo.style("fill", valueC != null ? _this.cScale(valueC) : "#999");
 
-          if (reposition) {
-              d.cLoc = _this.skew(_this.projection([valueX || 0, valueY || 0]));
+        if (reposition) {
+          d.cLoc = _this.skew(_this.projection([valueX || 0, valueY || 0]));
 
-              view.attr("cx", d.cLoc[0])
-                  .attr("cy", d.cLoc[1]);
-          }
-
-          if (duration) {
-              view.transition().duration(duration).ease(d3.easeLinear)
-                  .attr("r", d.r);
-          } else {
-              view.interrupt()
-                  .attr("r", d.r)
-                  .transition();
-          }
-
-          _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], valueS, valueC, d.label, duration);
-        } else {
-          _this._updateLabel(d, index, 0, 0, valueS, valueC, valueL, duration);
+          view.attr("cx", d.cLoc[0])
+            .attr("cy", d.cLoc[1]);
         }
 
-      });
+        if (duration) {
+          view.transition().duration(duration).ease(d3.easeLinear)
+            .attr("r", d.r);
+        } else {
+          view.interrupt()
+            .attr("r", d.r)
+            .transition();
+        }
+
+        _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], valueS, valueC, d.label, duration);
+      } else {
+        _this._updateLabel(d, index, 0, 0, valueS, valueC, valueL, duration);
+      }
+
+    });
   },
 
   /*
@@ -645,27 +645,27 @@ var BubbleMapComponent = Component.extend({
 
     // project to bounding box https://bl.ocks.org/mbostock/4707858
     this.projection
-        .scale(1)
-        .translate([0, 0]);
+      .scale(1)
+      .translate([0, 0]);
 
     this.mapBounds = this.mapPath.bounds(this.mapFeature);
 
     if (this.mapFeature.features) {
       this.mapGraph.selectAll(".land")
-          .data(this.mapFeature.features)
-          .enter().insert("path")
-            .attr("d", this.mapPath)
-            .attr("id", d => d.properties[this.model.ui.map.topology.geoIdProperty].toLowerCase())
-            .attr("class", "land");
+        .data(this.mapFeature.features)
+        .enter().insert("path")
+        .attr("d", this.mapPath)
+        .attr("id", d => d.properties[this.model.ui.map.topology.geoIdProperty].toLowerCase())
+        .attr("class", "land");
     } else {
       this.mapGraph.insert("path")
-          .datum(this.mapFeature)
-          .attr("class", "land");
+        .datum(this.mapFeature)
+        .attr("class", "land");
     }
 
     this.mapGraph.insert("path")
-        .datum(boundaries)
-        .attr("class", "boundary");
+      .datum(boundaries)
+      .attr("class", "boundary");
   },
 
   profiles: {
@@ -720,8 +720,8 @@ var BubbleMapComponent = Component.extend({
   repositionElements() {
 
     var margin = this.activeProfile.margin,
-        infoElHeight = this.activeProfile.infoElHeight,
-        isRTL = this.model.locale.isRTL();
+      infoElHeight = this.activeProfile.infoElHeight,
+      isRTL = this.model.locale.isRTL();
 
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -732,35 +732,35 @@ var BubbleMapComponent = Component.extend({
     this.year.resize(this.width, this.height);
 
     this.yTitleEl
-        .style("font-size", infoElHeight)
-        .attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + margin.top + ")");
+      .style("font-size", infoElHeight)
+      .attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + margin.top + ")");
 
     var yTitleBB = this.yTitleEl.select("text").node().getBBox();
 
     //hide the second line about color in large profile or when color is constant
     this.cTitleEl.attr("transform", "translate(" + (isRTL ? this.width : 0) + "," + (margin.top + yTitleBB.height) + ")")
-        .classed("vzb-hidden", this.getLayoutProfile() === "large" || this.model.marker.color.use == "constant");
+      .classed("vzb-hidden", this.getLayoutProfile() === "large" || this.model.marker.color.use == "constant");
 
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl.select("svg")
-        .attr("width", warnBB.height * 0.75)
-        .attr("height", warnBB.height * 0.75)
-        .attr("x", -warnBB.width - warnBB.height * 1.2)
-        .attr("y", -warnBB.height * 0.65);
+      .attr("width", warnBB.height * 0.75)
+      .attr("height", warnBB.height * 0.75)
+      .attr("x", -warnBB.width - warnBB.height * 1.2)
+      .attr("y", -warnBB.height * 0.65);
 
     this.dataWarningEl
-        .attr("transform", "translate(" + (this.width) + "," + (this.height - warnBB.height * 0.5) + ")")
-        .select("text");
+      .attr("transform", "translate(" + (this.width) + "," + (this.height - warnBB.height * 0.5) + ")")
+      .select("text");
 
     if (this.yInfoEl.select("svg").node()) {
-        var titleBBox = this.yTitleEl.node().getBBox();
-        var t = utils.transform(this.yTitleEl.node());
-        var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
+      var titleBBox = this.yTitleEl.node().getBBox();
+      var t = utils.transform(this.yTitleEl.node());
+      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
-        this.yInfoEl.select("svg")
-            .attr("width", infoElHeight)
-            .attr("height", infoElHeight);
-        this.yInfoEl.attr("transform", "translate("
+      this.yInfoEl.select("svg")
+        .attr("width", infoElHeight)
+        .attr("height", infoElHeight);
+      this.yInfoEl.attr("transform", "translate("
             + hTranslate + ","
             + (t.translateY - infoElHeight * 0.8) + ")");
     }
@@ -768,14 +768,14 @@ var BubbleMapComponent = Component.extend({
     this.cInfoEl.classed("vzb-hidden", this.cTitleEl.classed("vzb-hidden"));
 
     if (!this.cInfoEl.classed("vzb-hidden") && this.cInfoEl.select("svg").node()) {
-        var titleBBox = this.cTitleEl.node().getBBox();
-        var t = utils.transform(this.cTitleEl.node());
-        var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
+      var titleBBox = this.cTitleEl.node().getBBox();
+      var t = utils.transform(this.cTitleEl.node());
+      var hTranslate = isRTL ? (titleBBox.x + t.translateX - infoElHeight * 1.4) : (titleBBox.x + t.translateX + titleBBox.width + infoElHeight * 0.4);
 
-        this.cInfoEl.select("svg")
-            .attr("width", infoElHeight)
-            .attr("height", infoElHeight);
-        this.cInfoEl.attr("transform", "translate("
+      this.cInfoEl.select("svg")
+        .attr("width", infoElHeight)
+        .attr("height", infoElHeight);
+      this.cInfoEl.attr("transform", "translate("
             + hTranslate + ","
             + (t.translateY - infoElHeight * 0.8) + ")");
     }
@@ -791,17 +791,17 @@ var BubbleMapComponent = Component.extend({
     var s = this.model.ui.map.scale / Math.max((this.mapBounds[1][0] - this.mapBounds[0][0]) / this.width, (this.mapBounds[1][1] - this.mapBounds[0][1]) / this.height),
 
         // dimensions of the map itself (regardless of cropping)
-        mapWidth = (s * (this.mapBounds[1][0] - this.mapBounds[0][0])),
-        mapHeight = (s * (this.mapBounds[1][1] - this.mapBounds[0][1])),
+      mapWidth = (s * (this.mapBounds[1][0] - this.mapBounds[0][0])),
+      mapHeight = (s * (this.mapBounds[1][1] - this.mapBounds[0][1])),
 
         // dimensions of the viewport in which the map is shown (can be bigger or smaller than map)
-        viewPortHeight = mapHeight * (1 + offset.top + offset.bottom),
-        viewPortWidth  = mapWidth  * (1 + offset.left + offset.right),
-        mapTopOffset   = mapHeight * offset.top,
-        mapLeftOffset  = mapWidth  * offset.left,
+      viewPortHeight = mapHeight * (1 + offset.top + offset.bottom),
+      viewPortWidth  = mapWidth  * (1 + offset.left + offset.right),
+      mapTopOffset   = mapHeight * offset.top,
+      mapLeftOffset  = mapWidth  * offset.left,
 
         // translate projection to the middle of map
-        t = [(mapWidth - s * (this.mapBounds[1][0] + this.mapBounds[0][0])) / 2, (mapHeight - s * (this.mapBounds[1][1] + this.mapBounds[0][1])) / 2];
+      t = [(mapWidth - s * (this.mapBounds[1][0] + this.mapBounds[0][0])) / 2, (mapHeight - s * (this.mapBounds[1][1] + this.mapBounds[0][1])) / 2];
 
     this.projection
       .scale(s)
@@ -884,55 +884,55 @@ var BubbleMapComponent = Component.extend({
   },
 
   _interact() {
-      var _this = this;
+    var _this = this;
 
-      return {
-          _mouseover(d, i) {
-              if (_this.model.time.dragging) return;
+    return {
+      _mouseover(d, i) {
+        if (_this.model.time.dragging) return;
 
-              _this.model.marker.highlightMarker(d);
+        _this.model.marker.highlightMarker(d);
 
-              _this.hovered = d;
+        _this.hovered = d;
               //put the exact value in the size title
-              _this.updateTitleNumbers();
-              _this.fitSizeOfTitles();
+        _this.updateTitleNumbers();
+        _this.fitSizeOfTitles();
 
-              if (_this.model.marker.isSelected(d)) { // if selected, not show hover tooltip
-                _this._setTooltip();
-              } else {
+        if (_this.model.marker.isSelected(d)) { // if selected, not show hover tooltip
+          _this._setTooltip();
+        } else {
                 //position tooltip
-                _this._setTooltip(d);
-              }
-          },
-          _mouseout(d, i) {
-              if (_this.model.time.dragging) return;
-              _this._setTooltip();
-              _this.hovered = null;
-              _this.updateTitleNumbers();
-              _this.fitSizeOfTitles();
-              _this.model.marker.clearHighlighted();
-          },
-          _click(d, i) {
-              _this.model.marker.selectMarker(d);
-          }
-      };
+          _this._setTooltip(d);
+        }
+      },
+      _mouseout(d, i) {
+        if (_this.model.time.dragging) return;
+        _this._setTooltip();
+        _this.hovered = null;
+        _this.updateTitleNumbers();
+        _this.fitSizeOfTitles();
+        _this.model.marker.clearHighlighted();
+      },
+      _click(d, i) {
+        _this.model.marker.selectMarker(d);
+      }
+    };
 
   },
 
 
   highlightMarkers() {
-      var _this = this;
-      this.someHighlighted = (this.model.marker.highlight.length > 0);
+    var _this = this;
+    this.someHighlighted = (this.model.marker.highlight.length > 0);
 
-      if (utils.isTouchDevice()) {
-        if (this.someHighlighted) {
-          _this.hovered = this.model.marker.highlight[0];
-        } else {
-          _this.hovered = null;
-        }
-        _this.updateTitleNumbers();
-        _this.fitSizeOfTitles();
+    if (utils.isTouchDevice()) {
+      if (this.someHighlighted) {
+        _this.hovered = this.model.marker.highlight[0];
+      } else {
+        _this.hovered = null;
       }
+      _this.updateTitleNumbers();
+      _this.fitSizeOfTitles();
+    }
 
 
 //      if (!this.selectList || !this.someSelected) return;
@@ -971,27 +971,27 @@ var BubbleMapComponent = Component.extend({
   },
 
   selectMarkers() {
-      var _this = this;
-      var KEY = this.KEY;
-      this.someSelected = (this.model.marker.select.length > 0);
+    var _this = this;
+    var KEY = this.KEY;
+    this.someSelected = (this.model.marker.select.length > 0);
 
 //      this._selectlist.rebuild();
-      if (utils.isTouchDevice()) {
-        _this._labels.showCloseCross(null, false);
-        if (_this.someHighlighted) {
-          _this.model.marker.clearHighlighted();
-        } else {
-          _this.updateTitleNumbers();
-          _this.fitSizeOfTitles();
-        }
+    if (utils.isTouchDevice()) {
+      _this._labels.showCloseCross(null, false);
+      if (_this.someHighlighted) {
+        _this.model.marker.clearHighlighted();
       } else {
-        // hide recent hover tooltip
-        if (!_this.hovered || _this.model.marker.isSelected(_this.hovered)) {
-          _this._setTooltip();
-        }
+        _this.updateTitleNumbers();
+        _this.fitSizeOfTitles();
       }
+    } else {
+        // hide recent hover tooltip
+      if (!_this.hovered || _this.model.marker.isSelected(_this.hovered)) {
+        _this._setTooltip();
+      }
+    }
 
-      this.nonSelectedOpacityZero = false;
+    this.nonSelectedOpacityZero = false;
   },
 
   _setTooltip(d) {

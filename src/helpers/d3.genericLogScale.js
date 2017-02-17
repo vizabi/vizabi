@@ -201,12 +201,12 @@ export default function genericLog() {
 
     //polyfill for IE11
     Math.sign = Math.sign || function(x) {
-        x = +x;
-        if (x === 0 || isNaN(x)) {
-          return x;
-        }
-        return x > 0 ? 1 : -1;
-      };
+      x = +x;
+      if (x === 0 || isNaN(x)) {
+        return x;
+      }
+      return x > 0 ? 1 : -1;
+    };
 
     function scale(x) {
       var currScale = _getScaleByDomain(x);

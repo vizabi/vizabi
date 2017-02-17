@@ -251,9 +251,9 @@ var ButtonList = Component.extend({
     var popupDialogs = dialogs.popup;
     var popupButtons = buttons.filter(d => (_this._available_buttons[d] && !_this._available_buttons[d].func));
     for (var i = 0, j = popupButtons.length; i < j; i++) {
-       if (popupDialogs.indexOf(popupButtons[i]) == -1) {
-           return utils.error('Buttonlist: bad buttons config: "' + popupButtons[i] + '" is missing in popups list');
-       }
+      if (popupDialogs.indexOf(popupButtons[i]) == -1) {
+        return utils.error('Buttonlist: bad buttons config: "' + popupButtons[i] + '" is missing in popups list');
+      }
     }
     return false; //all good
   },
@@ -354,8 +354,8 @@ var ButtonList = Component.extend({
     not_required.reverse();
     var hiddenButtons = [];
     for (var i = 0, j = not_required.length - number_of_buttons; i < j; i++) {
-        not_required[i].style("display", "none");
-        hiddenButtons.push(not_required[i].attr("data-btn"));
+      not_required[i].style("display", "none");
+      hiddenButtons.push(not_required[i].attr("data-btn"));
     }
 
     var evt = {};
@@ -492,7 +492,7 @@ var ButtonList = Component.extend({
     if (!locked && locked !== 0) return;
 
     if (locked !== 0 && this.model.state.marker.select.length === 0 && !active) {
-       locked = this.model.ui.chart.lockNonSelected = 0;
+      locked = this.model.ui.chart.lockNonSelected = 0;
     }
 
     var id = "lock";
@@ -577,7 +577,7 @@ var ButtonList = Component.extend({
     btn.select(".vzb-buttonlist-btn-title>span").text(
       translator("buttons/" + (fs ? "unexpand" : "expand"))
     )
-    .attr("data-vzb-translate", "buttons/" + (fs ? "unexpand" : "expand"));
+      .attr("data-vzb-translate", "buttons/" + (fs ? "unexpand" : "expand"));
 
     //restore body overflow
     document.body.style.overflow = body_overflow;

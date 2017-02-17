@@ -666,9 +666,9 @@ export default function axisSmart(_orient) {
         var avoidCollidingWith = [].concat(tickValues);
 
         if (labelsStackOnTop) {
-            ticksNumber = Math.max(Math.floor(lengthRange / (options.heightOfOneDigit + parseInt(options.cssMargin.top))), 2);
+          ticksNumber = Math.max(Math.floor(lengthRange / (options.heightOfOneDigit + parseInt(options.cssMargin.top))), 2);
         } else {
-            ticksNumber = Math.max(Math.floor(lengthRange / estLongestLabelLength), 2);
+          ticksNumber = Math.max(Math.floor(lengthRange / estLongestLabelLength), 2);
         }
 
         // limit maximum ticks number

@@ -655,7 +655,7 @@ Model.isModel = function(model, includeLeaf) {
 
 
 function bindSetterGetter(model, prop) {
-    Object.defineProperty(model, prop, {
+  Object.defineProperty(model, prop, {
     configurable: true,
     //allow reconfiguration
     get: function(p) {

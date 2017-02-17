@@ -39,18 +39,18 @@ var DonutChart = Tool.extend("DonutChart", {
       model: ["state.time", "state.entities", "state.marker", "ui"]
     }];
 
-      this._super(placeholder, external_model);
-    },
+    this._super(placeholder, external_model);
+  },
 
     //provide the default options
-    default_model: {
-      state: {
-      },
-      ui: {
-        presentation: false
-      },
-      locale: { }
-    }
+  default_model: {
+    state: {
+    },
+    ui: {
+      presentation: false
+    },
+    locale: { }
+  }
 });
 
 export default DonutChart;

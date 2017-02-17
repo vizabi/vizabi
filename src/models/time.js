@@ -494,8 +494,8 @@ function weekFormat() {
   };
 
   var formatWeekYear = function(d) {
-      var origin = +d;
-      return new Date(origin + ((4 - (d.getUTCDay() || 7)) * 86400000)).getUTCFullYear();
+    var origin = +d;
+    return new Date(origin + ((4 - (d.getUTCDay() || 7)) * 86400000)).getUTCFullYear();
   };
 
   var formatWeek = function(d) {

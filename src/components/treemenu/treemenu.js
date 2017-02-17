@@ -398,7 +398,7 @@ var Menu = Class.extend({
       };
 
       d3.select(treeMenuNode).transition().duration(20)
-      .tween("scrolltoptween", scrollTopTween(newScrollTop));
+        .tween("scrolltoptween", scrollTopTween(newScrollTop));
 
       //treeMenuNode.scrollTop = scrollTop;
     }
@@ -685,38 +685,38 @@ var TreeMenu = Component.extend({
 
 
   _buildIndicatorsTree(tagsArray) {
-      if (tagsArray === true || !tagsArray) tagsArray = [];
+    if (tagsArray === true || !tagsArray) tagsArray = [];
 
-      var _this = this;
-      var ROOT = "_root";
-      var DEFAULT = "_default";
-      var UNCLASSIFIED = "_unclassified";
-      var ADVANCED = "advanced";
+    var _this = this;
+    var ROOT = "_root";
+    var DEFAULT = "_default";
+    var UNCLASSIFIED = "_unclassified";
+    var ADVANCED = "advanced";
 
-      var indicatorsTree;
+    var indicatorsTree;
 
       //init the dictionary of tags
-      var tags = {};
-      tags[ROOT] = { id: ROOT, children: [] };
-      tags[UNCLASSIFIED] = { id: UNCLASSIFIED, type: "folder", name: this.translator("buttons/unclassified"), children: [] };
+    var tags = {};
+    tags[ROOT] = { id: ROOT, children: [] };
+    tags[UNCLASSIFIED] = { id: UNCLASSIFIED, type: "folder", name: this.translator("buttons/unclassified"), children: [] };
 
       //populate the dictionary of tags
-      tagsArray.forEach(tag => {tags[tag.tag] = { id: tag.tag, name: tag.name, type: "folder", children: [] };});
+    tagsArray.forEach(tag => {tags[tag.tag] = { id: tag.tag, name: tag.name, type: "folder", children: [] };});
 
       //init the tag tree
-      indicatorsTree = tags[ROOT];
-      indicatorsTree.children.push(tags[UNCLASSIFIED]);
+    indicatorsTree = tags[ROOT];
+    indicatorsTree.children.push(tags[UNCLASSIFIED]);
 
       //populate the tag tree
-      tagsArray.forEach(tag => {
-        if (!tag.parent || !tags[tag.parent]) {
+    tagsArray.forEach(tag => {
+      if (!tag.parent || !tags[tag.parent]) {
           // add tag to a root
-          indicatorsTree.children.push(tags[tag.tag]);
-        } else {
+        indicatorsTree.children.push(tags[tag.tag]);
+      } else {
           //add tag to a branch
-          tags[tag.parent].children.push(tags[tag.tag]);
-        }
-      });
+        tags[tag.parent].children.push(tags[tag.tag]);
+      }
+    });
 
     utils.forEach(this.model.marker._root._data, dataSource => {
       if (dataSource._type !== "data") return;
@@ -760,21 +760,21 @@ var TreeMenu = Component.extend({
     tree.children.sort(
       utils
       //in each folder including root: put subfolders below loose items
-      .firstBy()((a, b) => {a = a.type === "dataset" ? 1 : 0;  b = b.type === "dataset" ? 1 : 0; return b - a;})
-      .thenBy((a, b) => {a = a.children ? 1 : 0;  b = b.children ? 1 : 0; return a - b;})
-      .thenBy((a, b) => {
+        .firstBy()((a, b) => {a = a.type === "dataset" ? 1 : 0;  b = b.type === "dataset" ? 1 : 0; return b - a;})
+        .thenBy((a, b) => {a = a.children ? 1 : 0;  b = b.children ? 1 : 0; return a - b;})
+        .thenBy((a, b) => {
         //in the root level put "time" on top and send "anvanced" to the bottom
-        if (!isSubfolder) {
-          if (a.id == "time") return -1;
-          if (b.id == "time") return 1;
-          if (a.id == "advanced") return 1;
-          if (b.id == "advanced") return -1;
-          if (a.id == "_default") return 1;
-          if (b.id == "_default") return -1;
-        }
+          if (!isSubfolder) {
+            if (a.id == "time") return -1;
+            if (b.id == "time") return 1;
+            if (a.id == "advanced") return 1;
+            if (b.id == "advanced") return -1;
+            if (a.id == "_default") return 1;
+            if (b.id == "_default") return -1;
+          }
         //sort items alphabetically. folders go down because of the emoji folder in the beginning of the name
-        return a.name > b.name ? 1 : -1;
-      })
+          return a.name > b.name ? 1 : -1;
+        })
     );
 
     //recursively sort items in subfolders too
@@ -1051,20 +1051,20 @@ var TreeMenu = Component.extend({
     var searchValueNonEmpty = false;
 
     var searchIt = utils.debounce(() => {
-        var value = input.node().value;
+      var value = input.node().value;
 
         //Protection from unwanted IE11 input events.
         //IE11 triggers an 'input' event when 'placeholder' attr is set to input element and
         //on 'focusin' and on 'focusout', if nothing has been entered into the input.
-        if (!searchValueNonEmpty && value == "") return;
-        searchValueNonEmpty = value != "";
+      if (!searchValueNonEmpty && value == "") return;
+      searchValueNonEmpty = value != "";
 
-        if (value.length >= _this.OPTIONS.SEARCH_MIN_STR) {
-          _this.redraw(getMatches(value), true);
-        } else {
-          _this.redraw();
-        }
-      }, 250);
+      if (value.length >= _this.OPTIONS.SEARCH_MIN_STR) {
+        _this.redraw(getMatches(value), true);
+      } else {
+        _this.redraw();
+      }
+    }, 250);
 
     input.on("input", searchIt);
   },

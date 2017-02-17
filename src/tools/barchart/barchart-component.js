@@ -37,8 +37,8 @@ var BarComponent = Component.extend({
     this.model_binds = {
       "change:time.value": function(evt) {
         _this.model.marker.getFrame(_this.model.time.value, values => {
-        _this.values = values;
-        _this.updateEntities();
+          _this.values = values;
+          _this.updateEntities();
         });
       },
       "change:marker": function(evt, path) {
@@ -81,7 +81,7 @@ var BarComponent = Component.extend({
 
     var _this = this;
     this.on("resize", () => {
-        _this.updateEntities();
+      _this.updateEntities();
     });
   },
 
@@ -199,7 +199,7 @@ var BarComponent = Component.extend({
       .transition().duration(duration).ease(d3.easeLinear)
       .attr("y", d => _this.yScale(_this.values.axis_y[d[entityDim]]))
       .attr("height", d => _this.height - _this.yScale(_this.values.axis_y[d[entityDim]]));
-      this.year.text(this.model.time.formatDate(this.model.time.value));
+    this.year.text(this.model.time.formatDate(this.model.time.value));
   },
 
   /**

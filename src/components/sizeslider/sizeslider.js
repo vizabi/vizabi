@@ -19,21 +19,21 @@ var OPTIONS = {
 };
 
 var profiles = {
-    "small": {
-      minLabelTextSize: 7,
-      maxLabelTextSize: 21,
-      defaultLabelTextSize: 12
-    },
-    "medium": {
-      minLabelTextSize: 7,
-      maxLabelTextSize: 30,
-      defaultLabelTextSize: 15
-    },
-    "large": {
-      minLabelTextSize: 6,
-      maxLabelTextSize: 48,
-      defaultLabelTextSize: 20
-    }
+  "small": {
+    minLabelTextSize: 7,
+    maxLabelTextSize: 21,
+    defaultLabelTextSize: 12
+  },
+  "medium": {
+    minLabelTextSize: 7,
+    maxLabelTextSize: 30,
+    defaultLabelTextSize: 15
+  },
+  "large": {
+    minLabelTextSize: 6,
+    maxLabelTextSize: 48,
+    defaultLabelTextSize: 20
+  }
 };
 
 
@@ -258,7 +258,7 @@ var SizeSlider = Component.extend({
     this.sliderLabelsEl.data(s)
       .attr("transform", (d, i) => {
         var dX = _this.xScale(i),
-            dY = 0;//i ? -textMargin.v : 0;
+          dY = 0;//i ? -textMargin.v : 0;
         return "translate(" + (dX) + "," + (dY) + ")";
       })
       .attr("font-size", (d, i) => _this.propertyScale(d));

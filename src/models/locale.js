@@ -56,12 +56,12 @@ var LocaleModel = DataConnected.extend({
       if (mdl._type === "data") promises.push(mdl.loadConceptProps());
     });
     promises.push(new Promise((resolve, reject) => {
-        d3.json(this.filePath + this.id + ".json", (error, strings) => {
-          if (error) reject(error);
-          this.handleNewStrings(strings);
-          resolve();
-        });
-      })
+      d3.json(this.filePath + this.id + ".json", (error, strings) => {
+        if (error) reject(error);
+        this.handleNewStrings(strings);
+        resolve();
+      });
+    })
     );
 
     return Promise.all(promises)
@@ -95,9 +95,9 @@ var LocaleModel = DataConnected.extend({
   getTFunction() {
     return (stringId, payload = {}) => (
       Object.keys(payload).reduce((result, key) => {
-          const regexp = new RegExp("{{" + key + "}}", "g");
-          return result.replace(regexp, payload[key]);
-        },
+        const regexp = new RegExp("{{" + key + "}}", "g");
+        return result.replace(regexp, payload[key]);
+      },
         this.getUIString(stringId)
       )
     );

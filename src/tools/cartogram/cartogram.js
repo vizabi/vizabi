@@ -22,45 +22,45 @@ var Cartogram = Tool.extend("Cartogram", {
      * @param {Object} placeholder Placeholder element for the tool
      * @param {Object} external_model Model as given by the external page
      */
-    init(placeholder, external_model) {
+  init(placeholder, external_model) {
 
-      this.name = "cartogram";
+    this.name = "cartogram";
 
       //specifying components
-      this.components = [{
-        component: CartogramComponent,
-        placeholder: ".vzb-tool-viz",
-        model: ["state.time", "state.entities", "state.marker", "locale", "ui"] //pass models to component
-      }, {
-        component: timeslider,
-        placeholder: ".vzb-tool-timeslider",
-        model: ["state.time", "state.entities", "state.marker", "ui"]
-      }, {
-        component: dialogs,
-        placeholder: ".vzb-tool-dialogs",
-        model: ["state", "ui", "locale"]
-      }, {
-        component: buttonlist,
-        placeholder: ".vzb-tool-buttonlist",
-        model: ["state", "ui", "locale"]
-      }, {
-        component: treemenu,
-        placeholder: ".vzb-tool-treemenu",
-        model: ["state.marker", "locale"]
-      }, {
-        component: datawarning,
-        placeholder: ".vzb-tool-datawarning",
-        model: ["locale"]
-      }, {
-        component: datanotes,
-        placeholder: ".vzb-tool-datanotes",
-        model: ["state.marker", "locale"]
-      }
-      ];
+    this.components = [{
+      component: CartogramComponent,
+      placeholder: ".vzb-tool-viz",
+      model: ["state.time", "state.entities", "state.marker", "locale", "ui"] //pass models to component
+    }, {
+      component: timeslider,
+      placeholder: ".vzb-tool-timeslider",
+      model: ["state.time", "state.entities", "state.marker", "ui"]
+    }, {
+      component: dialogs,
+      placeholder: ".vzb-tool-dialogs",
+      model: ["state", "ui", "locale"]
+    }, {
+      component: buttonlist,
+      placeholder: ".vzb-tool-buttonlist",
+      model: ["state", "ui", "locale"]
+    }, {
+      component: treemenu,
+      placeholder: ".vzb-tool-treemenu",
+      model: ["state.marker", "locale"]
+    }, {
+      component: datawarning,
+      placeholder: ".vzb-tool-datawarning",
+      model: ["locale"]
+    }, {
+      component: datanotes,
+      placeholder: ".vzb-tool-datanotes",
+      model: ["state.marker", "locale"]
+    }
+    ];
 
       //constructor is the same as any tool
-      this._super(placeholder, external_model);
-    },
+    this._super(placeholder, external_model);
+  },
 
   default_model: {
     state: { },
