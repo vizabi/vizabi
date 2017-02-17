@@ -24,6 +24,10 @@
   direction: ltr;
   //text-align: left;
 
+  .vzb-dynamic-background {
+    font-family: "Lucida Console", "Monaco", monospace;
+  }
+
   &.vzb-rtl {
     direction: rtl;
   }
