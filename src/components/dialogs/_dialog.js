@@ -57,18 +57,18 @@ var Dialog = Component.extend({
 
     var dg = dialogDrag(this.placeholderEl, this.rootEl, 10);
     var dragBehavior = d3.drag()
-      .on("start", function D3dialogDragStart() {
+      .on("start", () => {
         var topPos = _this.placeholderEl.node().offsetTop;
         _this.placeholderEl.style("top", topPos + "px");
         _this.placeholderEl.style("bottom", "auto");
         _this.trigger("dragstart");
         dg.dragStart(d3.event);
       })
-      .on("drag", function D3dialogDrag() {
+      .on("drag", () => {
         _this.trigger("drag");
         dg.drag(d3.event);
       })
-      .on("end", function D3dialogDrag() {
+      .on("end", () => {
         _this.rightPos = _this.placeholderEl.style("right");
         _this.topPos = _this.placeholderEl.style("top");
         _this.trigger("dragend");
@@ -167,7 +167,7 @@ var Dialog = Component.extend({
     var _this = this;
 
     this.transitionEvents = ["webkitTransitionEnd", "transitionend", "msTransitionEnd", "oTransitionEnd"];
-    this.transitionEvents.forEach(function(event) {
+    this.transitionEvents.forEach(event => {
       _this.placeholderEl.on(event, _this.transitionEnd.bind(_this, event));
     });
 
@@ -253,7 +253,7 @@ var Dialog = Component.extend({
   transitionEnd(eventName) {
     var _this = this;
 
-    this.transitionEvents.forEach(function(event) {
+    this.transitionEvents.forEach(event => {
       _this.placeholderEl.on(event, null);
     });
     if (this.isOpen) {

@@ -149,7 +149,7 @@ var BubbleMapComponent = Component.extend({
     this.year.setConditions({ xAlign: "left", yAlign: "bottom" });
 
     var _this = this;
-    this.on("resize", function() {
+    this.on("resize", () => {
       //return if updatesize exists with error
       if (_this.updateSize()) return;
       _this.updateMarkerSizeLimits();
@@ -182,10 +182,10 @@ var BubbleMapComponent = Component.extend({
     this.updateIndicators();
     this.updateSize();
     this.updateMarkerSizeLimits();
-    this.model.marker.getFrame(this.model.time.value, function(values, time) {
+    this.model.marker.getFrame(this.model.time.value, (values, time) => {
       // TODO: temporary fix for case when after data loading time changed on validation
       if (time.toString() != _this.model.time.value.toString()) {
-        utils.defer(function() {
+        utils.defer(() => {
           _this.ready();
         });
         return;
@@ -233,7 +233,7 @@ var BubbleMapComponent = Component.extend({
 
       this.yTitleEl.select("text")
           .text(this.translator("buttons/size") + ": " + this.strings.title.S)
-          .on("click", function() {
+          .on("click", () => {
             _this.parent
               .findChildByName("gapminder-treemenu")
               .markerID("size")
@@ -245,7 +245,7 @@ var BubbleMapComponent = Component.extend({
 
       this.cTitleEl.select("text")
           .text(this.translator("buttons/color") + ": " + this.strings.title.C)
-          .on("click", function() {
+          .on("click", () => {
             _this.parent
               .findChildByName("gapminder-treemenu")
               .markerID("color")
@@ -261,13 +261,13 @@ var BubbleMapComponent = Component.extend({
           .text(this.translator("hints/dataWarning"));
 
       this.dataWarningEl
-          .on("click", function() {
+          .on("click", () => {
               _this.parent.findChildByName("gapminder-datawarning").toggle();
           })
-          .on("mouseover", function() {
+          .on("mouseover", () => {
               _this.updateDoubtOpacity(1);
           })
-          .on("mouseout", function() {
+          .on("mouseout", () => {
               _this.updateDoubtOpacity();
           });
 
@@ -276,7 +276,7 @@ var BubbleMapComponent = Component.extend({
           .select("svg").attr("width", "0px").attr("height", "0px");
 
       //TODO: move away from UI strings, maybe to ready or ready once
-      this.yInfoEl.on("click", function() {
+      this.yInfoEl.on("click", () => {
         _this.parent.findChildByName("gapminder-datanotes").pin();
       });
       this.yInfoEl.on("mouseover", function() {
@@ -286,7 +286,7 @@ var BubbleMapComponent = Component.extend({
         var chartRect = _this.element.node().getBoundingClientRect();
         _this.parent.findChildByName("gapminder-datanotes").setHook("size").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
       });
-      this.yInfoEl.on("mouseout", function() {
+      this.yInfoEl.on("mouseout", () => {
         _this.parent.findChildByName("gapminder-datanotes").hide();
       });
 
@@ -295,7 +295,7 @@ var BubbleMapComponent = Component.extend({
           .select("svg").attr("width", "0px").attr("height", "0px");
 
       //TODO: move away from UI strings, maybe to ready or ready once
-      this.cInfoEl.on("click", function() {
+      this.cInfoEl.on("click", () => {
         _this.parent.findChildByName("gapminder-datanotes").pin();
       });
       this.cInfoEl.on("mouseover", function() {
@@ -305,7 +305,7 @@ var BubbleMapComponent = Component.extend({
         var chartRect = _this.element.node().getBoundingClientRect();
         _this.parent.findChildByName("gapminder-datanotes").setHook("color").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
       });
-      this.cInfoEl.on("mouseout", function() {
+      this.cInfoEl.on("mouseout", () => {
         _this.parent.findChildByName("gapminder-datanotes").hide();
       });
   },
@@ -378,7 +378,7 @@ var BubbleMapComponent = Component.extend({
       var OPACITY_REGULAR = this.model.marker.opacityRegular;
       var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
 
-      this.entityBubbles.style("opacity", function(d) {
+      this.entityBubbles.style("opacity", d => {
 
           if (_this.someHighlighted) {
               //highlight or non-highlight
@@ -396,18 +396,14 @@ var BubbleMapComponent = Component.extend({
 
       });
 
-      this.entityBubbles.classed("vzb-selected", function(d) {
-          return _this.model.marker.isSelected(d);
-      });
+      this.entityBubbles.classed("vzb-selected", d => _this.model.marker.isSelected(d));
 
       var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
 
       // when pointer events need update...
       if (nonSelectedOpacityZero !== this.nonSelectedOpacityZero) {
-          this.entityBubbles.style("pointer-events", function(d) {
-              return (!_this.someSelected || !nonSelectedOpacityZero || _this.model.marker.isSelected(d)) ?
-                  "visible" : "none";
-          });
+          this.entityBubbles.style("pointer-events", d => (!_this.someSelected || !nonSelectedOpacityZero || _this.model.marker.isSelected(d)) ?
+                  "visible" : "none");
       }
 
       this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
@@ -433,7 +429,7 @@ var BubbleMapComponent = Component.extend({
     var getKeys = function(prefix) {
       prefix = prefix || "";
       return _this.model.marker.getKeys()
-        .map(function(d) {
+        .map(d => {
           var pointer = {};
           pointer[KEY] = d[KEY];
           pointer[TIMEDIM] = endTime;
@@ -441,9 +437,7 @@ var BubbleMapComponent = Component.extend({
           pointer[KEY] = prefix + d[KEY];
           return pointer;
         })
-        .sort(function(a, b) {
-          return b.sortValue - a.sortValue;
-        });
+        .sort((a, b) => b.sortValue - a.sortValue);
     };
 
     // get array of GEOs, sorted by the size hook
@@ -474,7 +468,7 @@ var BubbleMapComponent = Component.extend({
 
 
     this.entityBubbles = this.bubbleContainer.selectAll(".vzb-bmc-bubble")
-      .data(this.model.marker.getVisible(), function(d) { return d[KEY]; })
+      .data(this.model.marker.getVisible(), d => d[KEY])
       .order();
 
     //exit selection
@@ -483,24 +477,24 @@ var BubbleMapComponent = Component.extend({
     //enter selection -- init circles
     this.entityBubbles = this.entityBubbles.enter().append("circle")
       .attr("class", "vzb-bmc-bubble")
-      .on("mouseover", function(d, i) {
+      .on("mouseover", (d, i) => {
           if (utils.isTouchDevice()) return;
           _this._interact()._mouseover(d, i);
       })
-      .on("mouseout", function(d, i) {
+      .on("mouseout", (d, i) => {
           if (utils.isTouchDevice()) return;
           _this._interact()._mouseout(d, i);
       })
-      .on("click", function(d, i) {
+      .on("click", (d, i) => {
           if (utils.isTouchDevice()) return;
           _this._interact()._click(d, i);
           _this.highlightMarkers();
       })
-      .onTap(function(d, i) {
+      .onTap((d, i) => {
           _this._interact()._click(d, i);
           d3.event.stopPropagation();
       })
-      .onLongTap(function(d, i) {
+      .onLongTap((d, i) => {
       })
       .merge(this.entityBubbles);
 
@@ -513,7 +507,7 @@ var BubbleMapComponent = Component.extend({
 
       if (!frame || !frame.size) return;
 
-      this.model.marker.select.forEach(function(d) {
+      this.model.marker.select.forEach(d => {
         if (!frame.size[d[KEY]] && frame.size[d[KEY]] !== 0)
             _this.model.marker.selectMarker(d);
       });
@@ -647,7 +641,7 @@ var BubbleMapComponent = Component.extend({
     this.mapGraph.html("");
 
     this.mapFeature = topojson.feature(this.topology, this.topology.objects[this.model.ui.map.topology.objects.geo]);
-    var boundaries = topojson.mesh(this.topology, this.topology.objects[this.model.ui.map.topology.objects.boundaries], function(a, b) { return a !== b; });
+    var boundaries = topojson.mesh(this.topology, this.topology.objects[this.model.ui.map.topology.objects.boundaries], (a, b) => a !== b);
 
     // project to bounding box https://bl.ocks.org/mbostock/4707858
     this.projection
@@ -1007,9 +1001,7 @@ var BubbleMapComponent = Component.extend({
       var x = d.cLoc[0];
       var y = d.cLoc[1];
       var offset = d.r;
-      var mouse = d3.mouse(this.graph.node()).map(function(d) {
-        return parseInt(d);
-      });
+      var mouse = d3.mouse(this.graph.node()).map(d => parseInt(d));
       var xPos, yPos, xSign = -1,
         ySign = -1,
         xOffset = 0,
@@ -1068,8 +1060,8 @@ var BubbleMapComponent = Component.extend({
     var shape_path = this.model.ui.map.topology.path
       || globals.ext_resources.host + globals.ext_resources.preloadPath + "world-50m.json";
 
-    return new Promise(function(resolve, reject) {
-      d3.json(shape_path, function(error, json) {
+    return new Promise((resolve, reject) => {
+      d3.json(shape_path, (error, json) => {
         if (error) return console.warn("Failed loading json " + shape_path + ". " + error);
         _this.topology = json;
         resolve();

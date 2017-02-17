@@ -1,7 +1,7 @@
 import { forEach, warn } from "base/utils";
 
 var initializing = false;
-var fnTest = /xyz/.test(function() {
+var fnTest = /xyz/.test(() => {
   xyz;
 }) ? /\b_super\b/ : /.*/;
 
@@ -14,7 +14,7 @@ function extend(name, extensions) {
   var prototype = new this();
   initializing = false;
 
-  forEach(extensions, function(method, name) {
+  forEach(extensions, (method, name) => {
     if (typeof extensions[name] === "function" && typeof _super[name] === "function" && fnTest.test(extensions[name])) {
       prototype[name] = function(name, fn) {
         return function() {

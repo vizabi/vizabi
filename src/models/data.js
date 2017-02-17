@@ -109,10 +109,10 @@ var DataModel = Model.extend({
     } else {
 
       // set up base query
-      var promise = new Promise(function(resolve, reject) {
+      var promise = new Promise((resolve, reject) => {
 
         // wait one execution round for the queue to fill up
-        utils.defer(function() {
+        utils.defer(() => {
           // now the query queue is filled with all queries from one execution round
 
           // remove double columns from select (resulting from merging)
@@ -120,7 +120,7 @@ var DataModel = Model.extend({
           query.select.value = utils.unique(query.select.value);
 
           // execute the query with this reader
-          _this.readerObject.read(query, parsers).then(function(response) {
+          _this.readerObject.read(query, parsers).then(response => {
 
               //success reading
               _this.checkQueryResponse(query, response);
@@ -143,7 +143,7 @@ var DataModel = Model.extend({
               resolve(dataId);
 
             }, //error reading
-            function(err) {
+            err => {
               _this.queryQueue[queryMergeId] = null;
               reject(err);
             }
@@ -194,7 +194,7 @@ var DataModel = Model.extend({
         // all columns were found to have value in at least one of the rows then stop iterating
         if (!columnsMissing.length) break;
       }
-      columnsMissing.forEach(function(d) {
+      columnsMissing.forEach(d => {
         if (query.select.key.indexOf(d) == -1) {
           utils.warn('Reader result: Column "' + d + '" is missing from "' + query.from + '" data, but it might be ok');
         } else {
@@ -380,9 +380,9 @@ var DataModel = Model.extend({
     if (this._collectionPromises[dataId][whatId] && this._collectionPromises[dataId][whatId]["promise"] instanceof Promise) {
       return this._collectionPromises[dataId][whatId]["promise"];
     } else {
-      this._collectionPromises[dataId][whatId]["promise"] = new Promise(function(resolve, reject) {
+      this._collectionPromises[dataId][whatId]["promise"] = new Promise((resolve, reject) => {
         if (!dataId) reject(utils.warn("Data.js 'get' method doesn't like the dataId you gave it: " + dataId));
-        _this._getFrames(dataId, whatId, framesArray, keys).then(function(frames) {
+        _this._getFrames(dataId, whatId, framesArray, keys).then(frames => {
           _this._collection[dataId]["frames"][whatId] = frames;
           resolve(_this._collection[dataId]["frames"][whatId]);
         });
@@ -397,11 +397,11 @@ var DataModel = Model.extend({
     //can only be called after getFrames()
     var _this = this;
     var whatId = this._getCacheKey(framesArray, keys);
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       if (_this._collection[dataId]["frames"][whatId] && _this._collection[dataId]["frames"][whatId][neededFrame]) {
         resolve(_this._collection[dataId]["frames"][whatId]);
       } else {
-        _this._collectionPromises[dataId][whatId]["queue"].forceFrame(neededFrame, function() {
+        _this._collectionPromises[dataId][whatId]["queue"].forceFrame(neededFrame, () => {
           resolve(_this._collection[dataId]["frames"][whatId]);
         });
       }
@@ -411,19 +411,19 @@ var DataModel = Model.extend({
   listenFrame(dataId, framesArray, keys,  cb) {
     var _this = this;
     var whatId = this._getCacheKey(framesArray, keys);
-    this._collectionPromises[dataId][whatId]["queue"].defaultCallbacks.push(function(time) {
+    this._collectionPromises[dataId][whatId]["queue"].defaultCallbacks.push(time => {
       cb(dataId, time);
     });
     if (this._collection[dataId]["frames"][whatId]) {
-      utils.forEach(this._collection[dataId]["frames"][whatId], function(frame, key) {
+      utils.forEach(this._collection[dataId]["frames"][whatId], (frame, key) => {
         cb(dataId, new Date(key));
       });
     }
   },
 
   _muteAllQueues(except) {
-    utils.forEach(this._collectionPromises, function(queries, dataId) {
-        utils.forEach(queries, function(promise, whatId) {
+    utils.forEach(this._collectionPromises, (queries, dataId) => {
+        utils.forEach(queries, (promise, whatId) => {
           if (promise.queue.isActive == true && promise.queue.whatId != except) {
             promise.queue.mute();
           }
@@ -432,8 +432,8 @@ var DataModel = Model.extend({
   },
 
   _checkForcedQueuesExists() {
-    utils.forEach(this._collectionPromises, function(queries, dataId) {
-      utils.forEach(queries, function(promise, whatId) {
+    utils.forEach(this._collectionPromises, (queries, dataId) => {
+      utils.forEach(queries, (promise, whatId) => {
         if (promise.queue.forcedQueue.length > 0) {
           promise.queue.unMute();
         }
@@ -442,8 +442,8 @@ var DataModel = Model.extend({
   },
 
   _unmuteQueue() {
-    utils.forEach(this._collectionPromises, function(queries, dataId) {
-      utils.forEach(queries, function(promise, whatId) {
+    utils.forEach(this._collectionPromises, (queries, dataId) => {
+      utils.forEach(queries, (promise, whatId) => {
         if (promise.queue.isActive == false) {
           promise.queue.unMute();
         }
@@ -472,7 +472,7 @@ var DataModel = Model.extend({
       this.mute = function() {
         var _this = this;
         this.isActive = false;
-        new Promise(function(resolve, reject) {
+        new Promise((resolve, reject) => {
           _this.delayedAction = resolve;
         });
       };
@@ -502,7 +502,7 @@ var DataModel = Model.extend({
       };
       this._waitingForActivation = function() {
         var _this = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise((resolve, reject) => {
           if (_this.isActive) {
             return resolve();
           }
@@ -534,12 +534,12 @@ var DataModel = Model.extend({
       // returns the next frame in a queue
       this.getNext = function() {
         var _this = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise((resolve, reject) => {
           _this.checkForcedFrames();
           if (_this.isActive) {
             resolve(_this._getNextFrameName());
           } else {
-            _this._waitingForActivation().then(function() {
+            _this._waitingForActivation().then(() => {
               resolve(_this._getNextFrameName());
             });
           }
@@ -602,7 +602,7 @@ var DataModel = Model.extend({
     if (!_this._collection[dataId]["frames"][whatId]) {
       _this._collection[dataId]["frames"][whatId] = {};
     }
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
 
       //TODO: thses should come from state or from outside somehow
       // FramesArray in the input contains the array of keyframes in animatable dimension.
@@ -640,7 +640,7 @@ var DataModel = Model.extend({
       // Get the list of columns that are in the dataset, exclude key column and animatable column
       // Example: [“lex”, “gdp”, “u5mr"]
       var query = _this._collection[dataId].query;
-      var columns = query.select.value.filter(function(f) {return f !== "_default";});
+      var columns = query.select.value.filter(f => f !== "_default");
 
       var cLength = columns.length;
       var key, k, column, c;
@@ -793,9 +793,9 @@ var DataModel = Model.extend({
 
           // recursively call the buildFrame again, this time for the next frame
           //QUESTION: FramesArray is probably not needed at this point. dataId and whatId is enough
-          _this._collectionPromises[dataId][whatId]["queue"].getNext().then(function(nextFrame) {
+          _this._collectionPromises[dataId][whatId]["queue"].getNext().then(nextFrame => {
             if (nextFrame) {
-              utils.defer(function() {
+              utils.defer(() => {
                 buildFrame(nextFrame, entitiesByKey, KEY, dataId, _this._collectionPromises[dataId][whatId]["queue"].frameComplete);
               });
             } else {
@@ -804,7 +804,7 @@ var DataModel = Model.extend({
             }
           });
       };
-      _this._collectionPromises[dataId][whatId]["queue"].getNext().then(function(nextFrame) {
+      _this._collectionPromises[dataId][whatId]["queue"].getNext().then(nextFrame => {
         if (nextFrame) {
           buildFrame(nextFrame, entitiesByKey, KEY, dataId, _this._collectionPromises[dataId][whatId]["queue"].frameComplete);
         }
@@ -857,31 +857,26 @@ var DataModel = Model.extend({
     var items = this._collection[dataId].data;
     //if it's an array, it will return a list of unique combinations.
     if (utils.isArray(attr)) {
-      var values = items.map(function(d) {
-        return utils.clone(d, attr); //pick attrs
-      });
-      uniq = utils.unique(values, function(n) {
-        return JSON.stringify(n);
-      });
+      var values = items.map(d => utils.clone(d, attr) //pick attrs
+      );
+      uniq = utils.unique(values, n => JSON.stringify(n));
     } //if it's a string, it will return a list of values
     else {
-      var values = items.map(function(d) {
-        return d[attr];
-      });
+      var values = items.map(d => d[attr]);
       uniq = utils.unique(values);
     }
     return uniq;
   },
 
   _getValid(dataId, column) {
-    return this._collection[dataId].data.filter(function(f) {return f[column] || f[column] === 0;});
+    return this._collection[dataId].data.filter(f => f[column] || f[column] === 0);
   },
 
   _getLimits(dataId, attr) {
 
     var items = this._collection[dataId].data;
     // get only column attr and only rows with number or date
-    var filtered = items.reduce(function(filtered, d) {
+    var filtered = items.reduce((filtered, d) => {
 
       // check for dates
       var f = (utils.isDate(d[attr])) ? d[attr] : parseFloat(d[attr]);

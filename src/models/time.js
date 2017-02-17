@@ -419,7 +419,7 @@ var TimeModel = DataConnected.extend({
 
     var delayAnimations = immediatePlay ? 1 : this.delayAnimations;
 
-    this._intervals.setInterval("playInterval_" + this._id, function() {
+    this._intervals.setInterval("playInterval_" + this._id, () => {
       // when time is playing and it reached the end
       if (_this.value >= _this.endSelected) {
         // if looping

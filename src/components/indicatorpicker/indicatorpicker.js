@@ -66,7 +66,7 @@ var IndPicker = Component.extend({
                 if (_highlightedEntity.length > 1) return;
 
                 if (_highlightedEntity.length) {
-                    _this.model.marker.getFrame(_this.model.time.value, function(frame) {
+                    _this.model.marker.getFrame(_this.model.time.value, frame => {
                         if (_this._highlighted || !frame) return;
 
                         // should be replaced by dimension of entity set for this hook (if use == property)
@@ -116,7 +116,7 @@ var IndPicker = Component.extend({
 
         this.el_select = d3.select(this.element).select(".vzb-ip-select");
 
-        this.el_select.on("click", function() {
+        this.el_select.on("click", () => {
             var rect = _this.el_select.node().getBoundingClientRect();
             var rootEl = _this.root.element instanceof Array ? _this.root.element : d3.select(_this.root.element);
             var rootRect = rootEl.node().getBoundingClientRect();
@@ -141,10 +141,10 @@ var IndPicker = Component.extend({
         utils.setIcon(this.infoEl, iconQuestion)
           .select("svg").attr("width", "0px").attr("height", "0px");
 
-        this.infoEl.on("click", function() {
+        this.infoEl.on("click", () => {
           _this.root.findChildByName("gapminder-datanotes").pin();
         });
-        this.infoEl.on("mouseover", function() {
+        this.infoEl.on("mouseover", () => {
           var rect = _this.el_select.node().getBoundingClientRect();
           var rootRect = _this.root.element.getBoundingClientRect();
           var topPos = rect.bottom - rootRect.top;
@@ -152,7 +152,7 @@ var IndPicker = Component.extend({
 
           _this.root.findChildByName("gapminder-datanotes").setHook(_this.markerID).show().setPos(leftPos, topPos);
         });
-        this.infoEl.on("mouseout", function() {
+        this.infoEl.on("mouseout", () => {
           _this.root.findChildByName("gapminder-datanotes").hide();
         });
 

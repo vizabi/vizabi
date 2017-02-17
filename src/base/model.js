@@ -223,7 +223,7 @@ var Model = EventSource.extend({
   setTreeFreezer(freezerStatus) {
     // first traverse down
     // this ensures deepest events are triggered first
-    utils.forEach(this._data, function(submodel) {
+    utils.forEach(this._data, submodel => {
       submodel.setTreeFreezer(freezerStatus);
     });
 
@@ -255,7 +255,7 @@ var Model = EventSource.extend({
       return true;
     };
     var _this = this;
-    utils.forEach(this._data, function(subModel, name) {
+    utils.forEach(this._data, (subModel, name) => {
       if (subModel && typeof subModel._id !== "undefined" && Model.isModel(subModel) && validationFunction(subModel)) {
         if (object) {
           submodels[name] = subModel;
@@ -274,7 +274,7 @@ var Model = EventSource.extend({
   getPlainObject(persistent) {
     var obj = {};
     var _this = this;
-    utils.forEach(this._data, function(dataItem, i) {
+    utils.forEach(this._data, (dataItem, i) => {
       // if it's a submodel
       if (dataItem instanceof Model) {
         obj[i] = dataItem.getPlainObject(persistent);
@@ -445,7 +445,7 @@ var Model = EventSource.extend({
   loadSubmodels(options) {
     var promises = [];
     var subModels = this.getSubmodels();
-    utils.forEach(subModels, function(subModel) {
+    utils.forEach(subModels, subModel => {
       promises.push(subModel.startLoading(options));
     });
     return promises.length > 0 ? Promise.all(promises) : Promise.resolve();
@@ -478,7 +478,7 @@ var Model = EventSource.extend({
    */
   afterPreload() {
     var submodels = this.getSubmodels();
-    utils.forEach(submodels, function(s) {
+    utils.forEach(submodels, s => {
       s.afterPreload();
     });
   },
@@ -501,9 +501,7 @@ var Model = EventSource.extend({
    * @returns {Array|Object} hooks array or object
    */
   getSubhooks(object) {
-    return this.getSubmodels(object, function(s) {
-      return s.isHook();
-    });
+    return this.getSubmodels(object, s => s.isHook());
   },
 
   /**
@@ -518,7 +516,7 @@ var Model = EventSource.extend({
       values.push(this.which);
     }
     //repeat for each submodel
-    utils.forEach(this.getSubmodels(), function(s) {
+    utils.forEach(this.getSubmodels(), s => {
       values = utils.unique(values.concat(s.getHookWhich(type)));
     });
     //now we have an array with all values in a type of hook for hooks.
@@ -596,7 +594,7 @@ var Model = EventSource.extend({
    */
   getSubmodelDefaults() {
     var d = {};
-    utils.forEach(this.getSubmodels(true), function(model, name) {
+    utils.forEach(this.getSubmodels(true), (model, name) => {
       d[name] = model.getDefaults();
     });
     return d;
@@ -751,7 +749,7 @@ function initSubmodel(attr, val, ctx, persistent) {
     //trigger only for submodel
     ctx.setReady(false);
     //wait to make sure it's not set false again in the next execution loop
-    utils.defer(function() {
+    utils.defer(() => {
       ctx.setReady();
     });
     //ctx.trigger(evt, vals);

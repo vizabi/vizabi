@@ -61,12 +61,12 @@ var Side = Dialog.extend({
     this.state = {};
     var _this = this;
 
-    this.switchSides.on("click", function() {
+    this.switchSides.on("click", () => {
       _this.model.ui.chart.flipSides = !_this.model.ui.chart.flipSides;
     });
 
     //make sure it refreshes when all is reloaded
-    this.root.on("ready", function() {
+    this.root.on("ready", () => {
       _this.redraw();
     });
   },
@@ -95,9 +95,7 @@ var Side = Dialog.extend({
       var sides = this.model.state.marker.getKeys(sideDim);
       var sideKeys = [];
       var sideFiltered = !!this.model.state.marker.side.getEntity().show[sideDim];
-      sideKeys = sides.filter(f => !sideFiltered || _this.model.state.marker.side.getEntity().isShown(f)).map(function(m) {
-          return m[sideDim];
-        });
+      sideKeys = sides.filter(f => !sideFiltered || _this.model.state.marker.side.getEntity().isShown(f)).map(m => m[sideDim]);
 
       if (sideKeys.length > 2) sideKeys.length = 2;
       if (sideKeys.length > 1) {
@@ -124,10 +122,10 @@ var Side = Dialog.extend({
     this.translator = this.model.locale.getTFunction();
 
     if (!_this.model.state.entities_allpossibleside.dim) return;
-    this.model.state.marker_allpossibleside.getFrame(this.model.state.time.value, function(values) {
+    this.model.state.marker_allpossibleside.getFrame(this.model.state.time.value, values => {
     if (!values) return;
     var data = utils.keys(values.label)
-        .map(function(d) {
+        .map(d => {
             var result = {};
             result[_this.KEY] = d;
             result["label"] = values.label[d];
@@ -135,9 +133,7 @@ var Side = Dialog.extend({
         });
 
     //sort data alphabetically
-    data.sort(function(a, b) {
-      return (a.label < b.label) ? -1 : 1;
-    });
+    data.sort((a, b) => (a.label < b.label) ? -1 : 1);
 
     _this.listLeft.html("");
     _this.listRight.html("");
@@ -161,13 +157,9 @@ var Side = Dialog.extend({
       .attr("type", "radio")
       .attr("name", name + "-" + _this._id)
       .attr("class", "vzb-side-item")
-      .attr("id", function(d) {
-        return "-side-" + name + "-" + d[sideDim] + "-" + _this._id;
-      })
-      .property("checked", function(d) {
-        return _this.state[name][sideDim] === d[sideDim];
-      })
-      .on("change", function(d, i) {
+      .attr("id", d => "-side-" + name + "-" + d[sideDim] + "-" + _this._id)
+      .property("checked", d => _this.state[name][sideDim] === d[sideDim])
+      .on("change", (d, i) => {
         var sideEntities = _this.model.state.entities_side;
         var sideDim = sideEntities.getDimension();
         var otherSide = name == "left" ? "right" : "left";
@@ -205,12 +197,8 @@ var Side = Dialog.extend({
       });
 
     items.append("label")
-      .attr("for", function(d) {
-        return "-side-" + name + "-" + d[_this.KEY] + "-" + _this._id;
-      })
-      .text(function(d) {
-        return d.label;
-      });
+      .attr("for", d => "-side-" + name + "-" + d[_this.KEY] + "-" + _this._id)
+      .text(d => d.label);
   }
 
 });

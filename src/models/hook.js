@@ -274,7 +274,7 @@ var Hook = DataConnected.extend({
     opts = opts || {};
     var filters = {};
     var _this = this;
-    utils.forEach(this._space, function(h) {
+    utils.forEach(this._space, h => {
       if (opts.exceptType && h.getType() === opts.exceptType) {
         return true;
       }
@@ -300,7 +300,7 @@ var Hook = DataConnected.extend({
   _getAllJoins(opts, splashScreen) {
     var joins = {};
     var _this = this;
-    utils.forEach(this._space, function(h) {
+    utils.forEach(this._space, h => {
       if (opts.exceptType && h.getType() === opts.exceptType) {
         return true;
       }
@@ -341,7 +341,7 @@ var Hook = DataConnected.extend({
     }
 
     // loop through all models which can have filters
-    utils.forEach(this._space, function(h) {
+    utils.forEach(this._space, h => {
       addParser(h);
     });
     addParser(this);
@@ -504,7 +504,7 @@ var Hook = DataConnected.extend({
     var _this = this;
     var dim = this.spaceRef && this._space[this.spaceRef] ? this._space[this.spaceRef].dim : _this._getFirstDimension({ exceptType: "time" });
     var items = {};
-    this.getValidItems().forEach(function(d) {
+    this.getValidItems().forEach(d => {
       items[d[dim]] = d[_this.which];
     });
     return items;
@@ -518,7 +518,7 @@ var Hook = DataConnected.extend({
 
     var countLimits = function(items, limitsDim, id) {
 
-      var filtered = items.reduce(function(filtered, d) {
+      var filtered = items.reduce((filtered, d) => {
 
         // check for dates
         var f = (utils.isDate(d[attr])) ? d[attr] : parseFloat(d[attr]);
@@ -553,7 +553,7 @@ var Hook = DataConnected.extend({
 
     var iterateGroupKeys = function(data, deep, result, cb) {
       deep--;
-      utils.forEach(data, function(d, id) {
+      utils.forEach(data, (d, id) => {
         if (deep) {
           result[id] = {};
           iterateGroupKeys(d, deep, result[id], cb);

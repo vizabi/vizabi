@@ -37,9 +37,7 @@ var Component = Events.extend({
     this.root = this.parent ? this.parent.root : this;
 
     this.components = this.components || [];
-    this._components_config = this.components.map(function(x) {
-      return utils.clone(x);
-    });
+    this._components_config = this.components.map(x => utils.clone(x));
 
     //define expected models for this component
     this.model_expects = this.model_expects || [];
@@ -92,7 +90,7 @@ var Component = Events.extend({
     if (this.model) {
       this.model.afterPreload();
     }
-    utils.forEach(this.components, function(subcomp) {
+    utils.forEach(this.components, subcomp => {
       subcomp.afterPreload();
     });
   },
@@ -106,9 +104,9 @@ var Component = Events.extend({
     this.loadSubComponents();
 
     //render each subcomponent
-    utils.forEach(this.components, function(subcomp) {
+    utils.forEach(this.components, subcomp => {
       subcomp.render();
-      _this.on("resize", function() {
+      _this.on("resize", () => {
         subcomp.trigger("resize");
       });
     });
@@ -125,7 +123,7 @@ var Component = Events.extend({
     var _this = this;
 
     // if a componente's model is ready, the component is ready
-    this.model.on("ready", function() {
+    this.model.on("ready", () => {
       _this.loadingDone();
     });
 
@@ -231,7 +229,7 @@ var Component = Events.extend({
     this.components = [];
 
     // Loops through components, loading them.
-    utils.forEach(this._components_config, function(component_config) {
+    utils.forEach(this._components_config, component_config => {
 
       component_config.model = component_config.model || {};
 
@@ -259,9 +257,7 @@ var Component = Events.extend({
    * @returns {Boolean}
    */
   findChildByName(name) {
-    return utils.find(this.components, function(f) {
-      return f.name === name;
-    });
+    return utils.find(this.components, f => f.name === name);
   },
 
   /**
@@ -333,7 +329,7 @@ var Component = Events.extend({
           "Number of Models Expected: " + this.model_expects.length + "\nNumber of Models Received: " + model_config.length);
         utils.groupEnd();
       }
-      utils.forEach(model_config, function(m, i) {
+      utils.forEach(model_config, (m, i) => {
         var model_info = _mapOne(m);
         var new_name;
         if (_this.model_expects[i]) {
@@ -373,7 +369,7 @@ var Component = Events.extend({
         //skip existing
         this.model_expects.splice(0, existing);
         //adds new expected models if needed
-        utils.forEach(expected, function(m) {
+        utils.forEach(expected, m => {
           values[m.name] = {};
         });
       }
@@ -450,7 +446,7 @@ var Component = Events.extend({
     if (strings.length === 0) {
       return;
     }
-    utils.forEach(strings, function(str) {
+    utils.forEach(strings, str => {
       if (!str || !str.getAttribute) {
         return;
       }
@@ -489,7 +485,7 @@ var Component = Events.extend({
   clear() {
     this.freeze();
     if (this.model) this.model.freeze();
-    utils.forEach(this.components, function(c) {
+    utils.forEach(this.components, c => {
       c.clear();
     });
   }
@@ -501,7 +497,7 @@ var Component = Events.extend({
 function templateFunc(str, data) {
 
   var func = function(obj) {
-    return str.replace(/<%=([^\%]*)%>/g, function(match) {
+    return str.replace(/<%=([^\%]*)%>/g, match => {
       //match t("...")
       var s = match.match(/t\s*\(([^)]+)\)/g);
       //replace with translation

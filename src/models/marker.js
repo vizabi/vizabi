@@ -46,17 +46,11 @@ var Marker = Model.extend({
   validate() {
     var _this = this;
     var dimension = this.getDimension();
-    var visible_array = this._visible.map(function(d) {
-      return d[dimension];
-    });
+    var visible_array = this._visible.map(d => d[dimension]);
 
     if (visible_array.length) {
-      this.select = this.select.filter(function(f) {
-        return visible_array.indexOf(f[dimension]) !== -1;
-      });
-      this.setHighlight(this.highlight.filter(function(f) {
-        return visible_array.indexOf(f[dimension]) !== -1;
-      }));
+      this.select = this.select.filter(f => visible_array.indexOf(f[dimension]) !== -1);
+      this.setHighlight(this.highlight.filter(f => visible_array.indexOf(f[dimension]) !== -1));
     }
   },
 
@@ -93,9 +87,7 @@ var Marker = Model.extend({
     var _this = this;
     var value = this._createValue(d);
     if (this.isSelected(d)) {
-      this.select = this.select.filter(function(d) {
-        return JSON.stringify(_this._createValue(d)) !== JSON.stringify(value);
-      });
+      this.select = this.select.filter(d => JSON.stringify(_this._createValue(d)) !== JSON.stringify(value));
     } else {
       this.select = (this.allowSelectMultiple) ? this.select.concat(value) : [value];
     }
@@ -110,7 +102,7 @@ var Marker = Model.extend({
     var added,
       dimension = this._getFirstDimension({ exceptType: "time" });
 
-    var select = this._visible.map(function(d) {
+    var select = this._visible.map(d => {
       added = {};
       added[dimension] = d[dimension];
       return added;
@@ -124,15 +116,13 @@ var Marker = Model.extend({
     var value = this._createValue(d);
 
     return this.select
-      .map(function(d) {
-        return JSON.stringify(_this._createValue(d)) === JSON.stringify(value);
-      })
+      .map(d => JSON.stringify(_this._createValue(d)) === JSON.stringify(value))
       .indexOf(true) !== -1;
   },
 
   _createValue(d) {
     var dims = this._getAllDimensions({ exceptType: "time" });
-    return dims.reduce(function(value, key) {
+    return dims.reduce((value, key) => {
       value[key] = d[key];
       return value;
     }, {});
@@ -186,9 +176,7 @@ var Marker = Model.extend({
   unhighlightEntity(d) {
     var value = this._createValue(d);
     if (this.isHighlighted(d)) {
-      this.setHighlight(this.highlight.filter(function(d) {
-        return d[dimension] !== value;
-      }));
+      this.setHighlight(this.highlight.filter(d => d[dimension] !== value));
     }
   },
 
@@ -200,9 +188,7 @@ var Marker = Model.extend({
     var _this = this;
     var value = this._createValue(d);
     return this.highlight
-      .map(function(d) {
-        return JSON.stringify(_this._createValue(d)) === JSON.stringify(value);
-      })
+      .map(d => JSON.stringify(_this._createValue(d)) === JSON.stringify(value))
       .indexOf(true) !== -1;
   },
 
@@ -247,7 +233,7 @@ var Marker = Model.extend({
     time.set(newTime, false, false);
 
     if (newTime.start || newTime.end) {
-      utils.forEach(this.getSubhooks(), function(hook) {
+      utils.forEach(this.getSubhooks(), hook => {
         if (hook.which == "time") {
           hook.buildScale();
         }
@@ -270,7 +256,7 @@ var Marker = Model.extend({
       var time = this._parent.time;
       var min, max, minArray = [], maxArray = [], items = {};
       if (!this.cachedTimeLimits) this.cachedTimeLimits = {};
-      utils.forEach(this.getSubhooks(), function(hook) {
+      utils.forEach(this.getSubhooks(), hook => {
 
         //only indicators depend on time and therefore influence the limits
         if (hook.use !== "indicator" || !hook._important) return;
@@ -283,7 +269,7 @@ var Marker = Model.extend({
             max = cachedLimits.max;
         } else {
             //otherwise calculate own date limits (a costly operation)
-            items = hook.getValidItems().map(function(m) {return m[time.getDimension()];});
+            items = hook.getValidItems().map(m => m[time.getDimension()]);
             if (items.length == 0) utils.warn("getTimeLimits() was unable to work with an empty array of valid datapoints");
             min = d3.min(items);
             max = d3.max(items);
@@ -317,7 +303,7 @@ var Marker = Model.extend({
         KEY = KEY || this._getFirstDimension();
         var TIME = this._getFirstDimension({ type: "time" });
 
-        utils.forEach(this._dataCube || this.getSubhooks(true), function(hook, name) {
+        utils.forEach(this._dataCube || this.getSubhooks(true), (hook, name) => {
 
             // If hook use is constant, then we can provide no additional info about keys
             // We can just hope that we have something else than constants =)
@@ -336,11 +322,9 @@ var Marker = Model.extend({
             if (resultKeys.length == 0) resultKeys = keys;
 
             // Remove the keys from it that are not in this hook
-            if (hook._important) resultKeys = resultKeys.filter(function(f) {
-              return keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1;
-            });
+            if (hook._important) resultKeys = resultKeys.filter(f => keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1);
         });
-        return resultKeys.map(function(d) {var r = {}; r[KEY] = d; return r; });
+        return resultKeys.map(d => {var r = {}; r[KEY] = d; return r; });
     },
 
   /**
@@ -353,7 +337,7 @@ var Marker = Model.extend({
     var cachePath = steps[0] + " - " + steps[steps.length - 1];
     this._dataCube = this._dataCube || this.getSubhooks(true);
     var dataLoading = false;
-    utils.forEach(this._dataCube, function(hook, name) {
+    utils.forEach(this._dataCube, (hook, name) => {
       if (hook._loadCall) dataLoading = true;
       cachePath = cachePath + "_" +  hook._dataId + hook.which;
     });
@@ -370,7 +354,7 @@ var Marker = Model.extend({
 
     var models = [];
     var _this = this;
-    utils.forEach(this.space, function(name) {
+    utils.forEach(this.space, name => {
       models.push(_this.getClosestModel(name));
     });
 
@@ -378,7 +362,7 @@ var Marker = Model.extend({
     var dims = [];
     var dim;
 
-    utils.forEach(models, function(m) {
+    utils.forEach(models, m => {
       if (opts.exceptType && m.getType() === opts.exceptType) {
         return true;
       }
@@ -402,14 +386,14 @@ var Marker = Model.extend({
   _getFirstDimension(opts) {
     var models = [];
     var _this = this;
-    utils.forEach(this.space, function(name) {
+    utils.forEach(this.space, name => {
       models.push(_this.getClosestModel(name));
     });
 
     opts = opts || {};
 
     var dim = false;
-    utils.forEach(models, function(m) {
+    utils.forEach(models, m => {
       if (opts.exceptType && m.getType() !== opts.exceptType) {
         dim = m.getDimension();
         return false;
@@ -478,7 +462,7 @@ var Marker = Model.extend({
           if (steps[nextFrameIndex].toString() != time.toString()) {
 
             //interpolate between frames and fire the callback
-            this._interpolateBetweenFrames(time, nextFrameIndex, steps, function(response) {
+            this._interpolateBetweenFrames(time, nextFrameIndex, steps, response => {
               cb(response, time);
             }, keys);
             return null;
@@ -487,7 +471,7 @@ var Marker = Model.extend({
 
         //QUESTION: we don't need any further execution after we called for interpolation, right?
         //request preparing the data, wait until it's done
-        _this.getFrames(time, keys).then(function() {
+        _this.getFrames(time, keys).then(() => {
           if (!time && _this.cachedFrames[cachePath]) {
             //time can be null: then return all frames
             return cb(_this.cachedFrames[cachePath], time);
@@ -507,21 +491,19 @@ var Marker = Model.extend({
 
       if (nextFrameIndex == 0) {
         //getFrame makes sure the frane is ready because a frame with non-existing data might be adressed
-        this.getFrame(steps[nextFrameIndex], function(values) {
-          return cb(values);
-        }, keys);
+        this.getFrame(steps[nextFrameIndex], values => cb(values), keys);
       } else {
         var prevFrameTime = steps[nextFrameIndex - 1];
         var nextFrameTime = steps[nextFrameIndex];
 
         //getFrame makes sure the frane is ready because a frame with non-existing data might be adressed
-        this.getFrame(prevFrameTime, function(pValues) {
-          _this.getFrame(nextFrameTime, function(nValues) {
+        this.getFrame(prevFrameTime, pValues => {
+          _this.getFrame(nextFrameTime, nValues => {
             var fraction = (time - prevFrameTime) / (nextFrameTime - prevFrameTime);
             var dataBetweenFrames = {};
 
             //loop across the hooks
-            utils.forEach(pValues, function(values, hook) {
+            utils.forEach(pValues, (values, hook) => {
               dataBetweenFrames[hook] = {};
 
               if (_this._multiDim && _this[hook].use == "indicator") {
@@ -554,7 +536,7 @@ var Marker = Model.extend({
 
               } else {
                 //loop across the entities
-                utils.forEach(values, function(val1, key) {
+                utils.forEach(values, (val1, key) => {
                   var val2 = nValues[hook][key];
                   if (utils.isDate(val1)) {
                     dataBetweenFrames[hook][key] = time;
@@ -602,15 +584,15 @@ var Marker = Model.extend({
       var steps = this._parent.time.getAllSteps();
 
       var cachePath = this._getCachePath(selected);
-      if (!cachePath) return new Promise(function(resolve, reject) {resolve();});
+      if (!cachePath) return new Promise((resolve, reject) => {resolve();});
       //if the collection of frames for this data cube is not scheduled yet (otherwise no need to repeat calculation)
       if (!this.frameQueues[cachePath] || !(this.frameQueues[cachePath] instanceof Promise)) {
 
         //this is a promise nobody listens to - it prepares all the frames we need without forcing any
-        this.frameQueues[cachePath] = new Promise(function(resolve, reject) {
+        this.frameQueues[cachePath] = new Promise((resolve, reject) => {
 
           _this.partialResult[cachePath] = {};
-          steps.forEach(function(t) { _this.partialResult[cachePath][t] = {}; });
+          steps.forEach(t => { _this.partialResult[cachePath][t] = {}; });
 
           // Assemble the list of keys as an intersection of keys in all queries of all hooks
           var keys = _this.getKeys();
@@ -618,28 +600,28 @@ var Marker = Model.extend({
           var deferredHooks = [];
           // Assemble data from each hook. Each frame becomes a vector containing the current configuration of hooks.
           // frame -> hooks -> entities: values
-          utils.forEach(_this._dataCube, function(hook, name) {
+          utils.forEach(_this._dataCube, (hook, name) => {
             if (hook.use === "constant") {
               //special case: fill data with constant values
-              steps.forEach(function(t) {
+              steps.forEach(t => {
                 _this.partialResult[cachePath][t][name] = {};
-                keys.forEach(function(key) {
+                keys.forEach(key => {
                   _this.partialResult[cachePath][t][name][key[KEY]] = hook.which;
                 });
               });
             } else if (hook.which === KEY) {
               //special case: fill data with keys to data itself
-              steps.forEach(function(t) {
+              steps.forEach(t => {
                 _this.partialResult[cachePath][t][name] = {};
-                keys.forEach(function(key) {
+                keys.forEach(key => {
                   _this.partialResult[cachePath][t][name][key[KEY]] = key[KEY];
                 });
               });
             } else if (hook.which === TIME) {
               //special case: fill data with time points
-              steps.forEach(function(t) {
+              steps.forEach(t => {
                 _this.partialResult[cachePath][t][name] = {};
-                keys.forEach(function(key) {
+                keys.forEach(key => {
                   _this.partialResult[cachePath][t][name][key[KEY]] = new Date(t);
                 });
               });
@@ -653,8 +635,8 @@ var Marker = Model.extend({
           //check if we have any data to get from datamanager
           if (deferredHooks.length > 0) {
             var promises = [];
-            utils.forEach(deferredHooks, function(hook) {
-              promises.push(new Promise(function(res, rej) {
+            utils.forEach(deferredHooks, hook => {
+              promises.push(new Promise((res, rej) => {
                 // need to save the hook state before calling getFrames.
                 // `hook` state might change between calling and resolving the call.
                 // The result needs to be saved to the correct cache, so we need to save current hook state
@@ -662,15 +644,15 @@ var Marker = Model.extend({
                   name: hook._name,
                   which: hook.which
                 };
-                hook.getFrames(steps, selected).then(function(response) {
-                  utils.forEach(response, function(frame, t) {
+                hook.getFrames(steps, selected).then(response => {
+                  utils.forEach(response, (frame, t) => {
                     _this.partialResult[cachePath][t][currentHookState.name] = frame[currentHookState.which];
                   });
                   res();
                 });
               }));
             });
-            Promise.all(promises).then(function() {
+            Promise.all(promises).then(() => {
               _this.cachedFrames[cachePath] = _this.partialResult[cachePath];
               resolve();
             });
@@ -681,20 +663,20 @@ var Marker = Model.extend({
 
         });
       }
-      return new Promise(function(resolve, reject) {
+      return new Promise((resolve, reject) => {
         if (steps.length < 2 || !forceFrame) {
             //wait until the above promise is resolved, then resolve the current promise
-          _this.frameQueues[cachePath].then(function() {
+          _this.frameQueues[cachePath].then(() => {
             resolve(); //going back to getFrame(), to ".then"
           });
         } else {
           var promises = [];
-          utils.forEach(_this._dataCube, function(hook, name) {
+          utils.forEach(_this._dataCube, (hook, name) => {
             //exception: we know that these are knonwn, no need to calculate these
             if (hook.use !== "constant" && hook.which !== KEY && hook.which !== TIME) {
               (function(_hook, _name) {
-                promises.push(new Promise(function(res, rej) {
-                  _hook.getFrame(steps, forceFrame, selected).then(function(response) {
+                promises.push(new Promise((res, rej) => {
+                  _hook.getFrame(steps, forceFrame, selected).then(response => {
                     _this.partialResult[cachePath][forceFrame][_name] = response[forceFrame][_hook.which];
                     res();
                   });
@@ -703,7 +685,7 @@ var Marker = Model.extend({
             }
           });
           if (promises.length > 0) {
-            Promise.all(promises).then(function() {
+            Promise.all(promises).then(() => {
               if (!_this.cachedFrames[cachePath]) {
                 _this.cachedFrames[cachePath] = {};
               }
@@ -724,12 +706,12 @@ var Marker = Model.extend({
       var preparedFrames = {};
       this.getFrames();
       var dataIds = [];
-      utils.forEach(_this._dataCube, function(hook, name) {
+      utils.forEach(_this._dataCube, (hook, name) => {
         if (!(hook.use === "constant" || hook.which === KEY || hook.which === TIME)) {
           if (dataIds.indexOf(hook._dataId) == -1) {
             dataIds.push(hook._dataId);
 
-            hook.dataSource.listenFrame(hook._dataId, steps, keys, function(dataId, time) {
+            hook.dataSource.listenFrame(hook._dataId, steps, keys, (dataId, time) => {
               var keyName = time.toString();
               if (typeof preparedFrames[keyName] == "undefined") preparedFrames[keyName] = [];
               if (preparedFrames[keyName].indexOf(dataId) == -1) preparedFrames[keyName].push(dataId);
@@ -767,13 +749,11 @@ var Marker = Model.extend({
 
     var response = {};
     var f_keys = Object.keys(filter);
-    var f_values = f_keys.map(function(k) {
-      return filter[k];
-    });
+    var f_values = f_keys.map(k => filter[k]);
 
     //if there's a filter, interpolate only that
     if (f_keys.length) {
-      utils.forEach(this._dataCube, function(hook, name) {
+      utils.forEach(this._dataCube, (hook, name) => {
         u = hook.use;
         w = hook.which;
 
@@ -781,7 +761,7 @@ var Marker = Model.extend({
 
         method = hook.getConceptprops ? hook.getConceptprops().interpolation : null;
         filtered = hook.getNestedItems(f_keys);
-        utils.forEach(f_values, function(v) {
+        utils.forEach(f_values, v => {
           filtered = filtered[v]; //get precise array (leaf)
         });
         value = utils.interpolatePoint(filtered, u, w, next, dimTime, time, method);
@@ -789,18 +769,14 @@ var Marker = Model.extend({
 
         //concat previous data points
         if (previous) {
-          var values = utils.filter(filtered, filter).filter(function(d) {
-            return d[dimTime] <= time;
-          }).map(function(d) {
-            return hook.mapValue(d[w]);
-          }).concat(response[name]);
+          var values = utils.filter(filtered, filter).filter(d => d[dimTime] <= time).map(d => hook.mapValue(d[w])).concat(response[name]);
           response[name] = values;
         }
       });
     }
     //else, interpolate all with time
     else {
-      utils.forEach(this._dataCube, function(hook, name) {
+      utils.forEach(this._dataCube, (hook, name) => {
 
         filtered = hook.getNestedItems(group_by);
 
@@ -815,18 +791,14 @@ var Marker = Model.extend({
 
         var interpolate = function(arr, result, id) {
           //TODO: this saves when geos have different data length. line can be optimised.
-          next = d3.bisectLeft(arr.map(function(m) {return m[dimTime];}), time);
+          next = d3.bisectLeft(arr.map(m => m[dimTime]), time);
 
           value = utils.interpolatePoint(arr, u, w, next, dimTime, time, method);
           result[id] = hook.mapValue(value);
 
           //concat previous data points
           if (previous) {
-            var values = utils.filter(arr, filter).filter(function(d) {
-              return d[dimTime] <= time;
-            }).map(function(d) {
-              return hook.mapValue(d[w]);
-            }).concat(result[id]);
+            var values = utils.filter(arr, filter).filter(d => d[dimTime] <= time).map(d => hook.mapValue(d[w])).concat(result[id]);
             result[id] = values;
           }
 
@@ -834,7 +806,7 @@ var Marker = Model.extend({
 
         var iterateGroupKeys = function(data, deep, result, cb) {
           deep--;
-          utils.forEach(data, function(d, id) {
+          utils.forEach(data, (d, id) => {
             if (deep) {
               result[id] = {};
               iterateGroupKeys(d, deep, result[id], cb);
@@ -857,7 +829,7 @@ var Marker = Model.extend({
     var timePoints = this._parent.time.getAllSteps();
     var selectedEdgeTimes = [];
     var hooks = [];
-    utils.forEach(_this.getSubhooks(), function(hook) {
+    utils.forEach(_this.getSubhooks(), hook => {
       if (hook.use == "constant") return;
       if (hook._important) hooks.push(hook._name);
     });
@@ -873,7 +845,7 @@ var Marker = Model.extend({
     var findSelectedTime = function(iterator, findCB) {
       var point = iterator();
       if (point == null) return;
-      _this.getFrame(timePoints[point], function(values) {
+      _this.getFrame(timePoints[point], values => {
         if (findEntityWithCompleteHooks(values)) {
           findCB(point);
         } else {
@@ -882,7 +854,7 @@ var Marker = Model.extend({
       });
     };
     var promises = [];
-    promises.push(new Promise(function(resolve, reject) {
+    promises.push(new Promise((resolve, reject) => {
 
       //find startSelected time
       findSelectedTime(function() {
@@ -891,13 +863,13 @@ var Marker = Model.extend({
         return function() {
           return i < max ? i++ : null;
         };
-      }(), function(point) {
+      }(), point => {
         selectedEdgeTimes[0] = timePoints[point];
         resolve();
       });
     }));
 
-    promises.push(new Promise(function(resolve, reject) {
+    promises.push(new Promise((resolve, reject) => {
 
       //find endSelected time
       findSelectedTime(function() {
@@ -905,16 +877,14 @@ var Marker = Model.extend({
         return function() {
           return i >= 0 ? i-- : null;
         };
-      }(), function(point) {
+      }(), point => {
         selectedEdgeTimes[1] = timePoints[point];
         resolve();
       });
 
     }));
 
-    return Promise.all(promises).then(function() {
-      return ({ "min": selectedEdgeTimes[0], "max": selectedEdgeTimes[1] });
-    });
+    return Promise.all(promises).then(() => ({ "min": selectedEdgeTimes[0], "max": selectedEdgeTimes[1] }));
   },
 
 

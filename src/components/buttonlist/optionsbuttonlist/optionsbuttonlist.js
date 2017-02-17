@@ -34,19 +34,19 @@ var OptionsButtonList = ButtonList.extend({
 
   readyOnce() {
     var _this = this;
-    Object.keys(this._available_buttons).forEach(function(buttonId) {
+    Object.keys(this._available_buttons).forEach(buttonId => {
       var button = _this._available_buttons[buttonId];
       button.required = !button.required;
     });
 
     this.buttonListComp = this.root.findChildByName("gapminder-buttonlist");
 
-    this.buttonListComp.on("click", function(evt, button) {
+    this.buttonListComp.on("click", (evt, button) => {
       var btn = _this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + button.id + "']");
       btn.classed(class_active, button.active);
     });
 
-    this.buttonListComp.on("toggle", function(evt, params) {
+    this.buttonListComp.on("toggle", (evt, params) => {
       var btn = _this.element.selectAll(".vzb-buttonlist-btn");
       var visibleButton = 0;
       btn.each(function(d) {
@@ -65,7 +65,7 @@ var OptionsButtonList = ButtonList.extend({
     this.buttonListComp.proceedClick(id);
     var btn_data = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']").datum();
     if (btn_data.func) {
-      setTimeout(function() {
+      setTimeout(() => {
         _this.root.findChildByName("gapminder-dialogs").closeAllDialogs();
       }, 200);
     }

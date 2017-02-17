@@ -161,7 +161,7 @@ var Menu = Class.extend({
     var _this = this;
     if (!this.isActive()) {
       _this.parent.parentMenu.openSubmenuNow = true;
-      this.closeNeighbors(function() {
+      this.closeNeighbors(() => {
         if (_this.direction == MENU_HORIZONTAL) {
           _this._openHorizontal();
           _this.calculateMissingWidth(0);
@@ -185,9 +185,9 @@ var Menu = Class.extend({
         if (typeof cb === "function") cb(width - this.OPTIONS.MAX_MENU_WIDTH);
       }
     } else {
-      this.parent.parentMenu.calculateMissingWidth(width + this.width, function(widthToReduce) {
+      this.parent.parentMenu.calculateMissingWidth(width + this.width, widthToReduce => {
         if (widthToReduce > 0) {
-          _this.reduceWidth(widthToReduce, function(newWidth) {
+          _this.reduceWidth(widthToReduce, newWidth => {
             if (typeof cb === "function") cb(newWidth); // callback is not defined if it is emitted from this level
           });
         } else if (typeof cb === "function") cb(widthToReduce);
@@ -215,7 +215,7 @@ var Menu = Class.extend({
           .delay(0)
           .duration(duration)
           .style("width", newElementWidth + "px")
-          .on("end", function() {
+          .on("end", () => {
           });
         _this.parent.parentMenu.restoreWidth(width - newElementWidth, false, cb);
       } else {
@@ -244,7 +244,7 @@ var Menu = Class.extend({
         .delay(0)
         .duration(duration)
         .style("width", newElementWidth + "px")
-        .on("end", function() {
+        .on("end", () => {
           cb(width - _this.width + newElementWidth);
         });
     }
@@ -256,7 +256,7 @@ var Menu = Class.extend({
       .delay(0)
       .duration(250)
       .style("width", _this.width + "px")
-      .on("end", function() {
+      .on("end", () => {
         _this.marqueeToggle(true);
       });
   },
@@ -267,7 +267,7 @@ var Menu = Class.extend({
       .delay(0)
       .duration(250)
       .style("height", (36 * _this.menuItems.length) + "px")
-      .on("end", function() {
+      .on("end", () => {
         _this.entity.style("height", "auto");
         _this.marqueeToggle(true);
         _this.scrollToFitView();
@@ -279,7 +279,7 @@ var Menu = Class.extend({
     for (var i = 0; i < this.menuItems.length; i++) {
       if (this.menuItems[i].isActive()) {
         ++callbacks;
-        this.menuItems[i].submenu.close(function() {
+        this.menuItems[i].submenu.close(() => {
           if (--callbacks == 0) {
             if (typeof cb === "function") cb();
           }
@@ -299,7 +299,7 @@ var Menu = Class.extend({
   },
   close(cb) {
     var _this = this;
-    this.closeAllChildren(function() {
+    this.closeAllChildren(() => {
       if (_this.direction == MENU_HORIZONTAL) {
         _this._closeHorizontal(cb);
       } else {
@@ -315,11 +315,11 @@ var Menu = Class.extend({
       .delay(0)
       .duration(20)
       .style("width", 0 + "px")
-      .on("end", function() {
+      .on("end", () => {
         _this.marqueeToggle(false);
         _this.entity.classed("active", false);
         if (!openSubmenuNow) {
-          _this.restoreWidth(_this.OPTIONS.MAX_MENU_WIDTH, true, function() {
+          _this.restoreWidth(_this.OPTIONS.MAX_MENU_WIDTH, true, () => {
             if (typeof cb === "function") cb();
           });
         } else {
@@ -334,7 +334,7 @@ var Menu = Class.extend({
       .delay(0)
       .duration(100)
       .style("height", 0 + "px")
-      .on("end", function() {
+      .on("end", () => {
         _this.marqueeToggle(false);
         _this.entity.classed("active", false);
         if (typeof cb === "function") cb();
@@ -436,7 +436,7 @@ var MenuItem = Class.extend({
         if (!view.attr("children")) return;
         _this.toggleSubmenu();
       }
-    }).onTap(function(evt) {
+    }).onTap(evt => {
       d3.event.stopPropagation();
       if (_this.parentMenu.direction == MENU_VERTICAL) {
         var view = _this.entity.select("." + css.list_item_label);
@@ -622,7 +622,7 @@ var TreeMenu = Component.extend({
 
     this.element.append("div")
       .attr("class", css.background)
-      .on("click", function() {
+      .on("click", () => {
         d3.event.stopPropagation();
         _this.toggle();
       });
@@ -639,14 +639,14 @@ var TreeMenu = Component.extend({
       .classed("vzb-dialog-scrollable", true);
 
     this.wrapper
-      .on("click", function() {
+      .on("click", () => {
         d3.event.stopPropagation();
       });
 
     this.wrapper.append("div")
       .attr("class", css.close)
       .html(iconClose)
-      .on("click", function() {
+      .on("click", () => {
         d3.event.stopPropagation();
         _this.toggle();
       })
@@ -672,7 +672,7 @@ var TreeMenu = Component.extend({
 
     //init functions
     d3.select("body").on("mousemove", _this._mousemoveDocument);
-    this.wrapper.on("mouseleave", function() {
+    this.wrapper.on("mouseleave", () => {
       //if(_this.menuEntity.direction != MENU_VERTICAL) _this.menuEntity.closeAllChildren();
     });
 
@@ -701,14 +701,14 @@ var TreeMenu = Component.extend({
       tags[UNCLASSIFIED] = { id: UNCLASSIFIED, type: "folder", name: this.translator("buttons/unclassified"), children: [] };
 
       //populate the dictionary of tags
-      tagsArray.forEach(function(tag) {tags[tag.tag] = { id: tag.tag, name: tag.name, type: "folder", children: [] };});
+      tagsArray.forEach(tag => {tags[tag.tag] = { id: tag.tag, name: tag.name, type: "folder", children: [] };});
 
       //init the tag tree
       indicatorsTree = tags[ROOT];
       indicatorsTree.children.push(tags[UNCLASSIFIED]);
 
       //populate the tag tree
-      tagsArray.forEach(function(tag) {
+      tagsArray.forEach(tag => {
         if (!tag.parent || !tags[tag.parent]) {
           // add tag to a root
           indicatorsTree.children.push(tags[tag.tag]);
@@ -726,12 +726,12 @@ var TreeMenu = Component.extend({
       tags[datasetName] = { id: datasetName, type: "dataset", children: [] };
       tags[ROOT].children.push(tags[datasetName]);
 
-      utils.forEach(indicatorsDB, function(entry, id) {
+      utils.forEach(indicatorsDB, (entry, id) => {
         //if entry's tag are empty don't include it in the menu
         if (entry.tags == "_none") return;
         if (!entry.tags) entry.tags = datasetName || UNCLASSIFIED;
         var concept = { id, name: entry.name, unit: entry.unit, description: entry.description, dataSource: dataSource._name };
-        entry.tags.split(",").forEach(function(tag) {
+        entry.tags.split(",").forEach(tag => {
           if (tags[tag.trim()]) {
             tags[tag.trim()].children.push(concept);
           } else {
@@ -760,9 +760,9 @@ var TreeMenu = Component.extend({
     tree.children.sort(
       utils
       //in each folder including root: put subfolders below loose items
-      .firstBy()(function(a, b) {a = a.type === "dataset" ? 1 : 0;  b = b.type === "dataset" ? 1 : 0; return b - a;})
-      .thenBy(function(a, b) {a = a.children ? 1 : 0;  b = b.children ? 1 : 0; return a - b;})
-      .thenBy(function(a, b) {
+      .firstBy()((a, b) => {a = a.type === "dataset" ? 1 : 0;  b = b.type === "dataset" ? 1 : 0; return b - a;})
+      .thenBy((a, b) => {a = a.children ? 1 : 0;  b = b.children ? 1 : 0; return a - b;})
+      .thenBy((a, b) => {
         //in the root level put "time" on top and send "anvanced" to the bottom
         if (!isSubfolder) {
           if (a.id == "time") return -1;
@@ -778,7 +778,7 @@ var TreeMenu = Component.extend({
     );
 
     //recursively sort items in subfolders too
-    tree.children.forEach(function(d) {
+    tree.children.forEach(d => {
       _this._sortChildren(d, true);
     });
   },
@@ -918,7 +918,7 @@ var TreeMenu = Component.extend({
 
     this.wrapper.classed(css.noTransition, hidden);
 
-    this.parent.components.forEach(function(c) {
+    this.parent.components.forEach(c => {
       if (c.name == "gapminder-dialogs") {
         d3.select(c.placeholder.parentNode).classed("vzb-blur", !hidden);
       } else
@@ -947,7 +947,7 @@ var TreeMenu = Component.extend({
       _this.menuEntity.marqueeToggleAll(true);
     } else {
       var selectedItem = this.menuEntity.findItemById(d3.select(this.selectedNode).data().id);
-      selectedItem.submenu.calculateMissingWidth(0, function() {
+      selectedItem.submenu.calculateMissingWidth(0, () => {
         _this.menuEntity.marqueeToggleAll(true);
       });
 
@@ -1050,7 +1050,7 @@ var TreeMenu = Component.extend({
 
     var searchValueNonEmpty = false;
 
-    var searchIt = utils.debounce(function() {
+    var searchIt = utils.debounce(() => {
         var value = input.node().value;
 
         //Protection from unwanted IE11 input events.
@@ -1095,7 +1095,7 @@ var TreeMenu = Component.extend({
     } else {
       if (data == null) data = this._tree;
 
-      var allowedIDs = utils.keys(indicatorsDB).filter(function(f) {
+      var allowedIDs = utils.keys(indicatorsDB).filter(f => {
         //check if indicator is denied to show with allow->names->!indicator
         if (_this.model.marker[markerID].allow && _this.model.marker[markerID].allow.names) {
           if (_this.model.marker[markerID].allow.names.indexOf("!" + f) != -1) return false;
@@ -1117,9 +1117,7 @@ var TreeMenu = Component.extend({
         return false;
       });
 
-      dataFiltered = utils.pruneTree(data, function(f) {
-        return allowedIDs.indexOf(f.id) > -1;
-      });
+      dataFiltered = utils.pruneTree(data, f => allowedIDs.indexOf(f.id) > -1);
 
       this.dataFiltered = dataFiltered;
     }
@@ -1145,9 +1143,7 @@ var TreeMenu = Component.extend({
         .classed(css.list_top_level, toplevel)
         .classed("vzb-dialog-scrollable", true)
         .selectAll("li")
-        .data(data.children, function(d) {
-          return d["id"];
-        })
+        .data(data.children, d => d["id"])
         .enter()
         .append("li");
 
@@ -1156,12 +1152,8 @@ var TreeMenu = Component.extend({
         // .attr("info", function(d) {
         //   return d.id;
         // })
-        .attr("children", function(d) {
-          return d.children ? "true" : null;
-        })
-        .attr("type", function(d) {
-          return d.type ? d.type : null;
-        })
+        .attr("children", d => d.children ? "true" : null)
+        .attr("type", d => d.type ? d.type : null)
         .on("click", function(d) {
           var view = d3.select(this);
           //only for leaf nodes
@@ -1170,7 +1162,7 @@ var TreeMenu = Component.extend({
           _this._selectIndicator({ concept: d.id, dataSource: d.dataSource });
         })
         .append("span")
-        .text(function(d) {
+        .text(d => {
           //Let the indicator "_default" in tree menu be translated differnetly for every hook type
           var translated = d.id === "_default" ? _this.translator("indicator/_default/" + hookType) : d.name || d.id;
           if (!translated && translated !== "") utils.warn("translation missing: NAME of " + d.id);
@@ -1178,31 +1170,27 @@ var TreeMenu = Component.extend({
         });
 
       li.classed(css.list_item, true)
-        .classed(css.hasChild, function(d) {
-          return d["children"];
-        })
-        .classed(css.isSpecial, function(d) {
-          return d["special"];
-        })
+        .classed(css.hasChild, d => d["children"])
+        .classed(css.isSpecial, d => d["special"])
         .each(function(d) {
           var view = d3.select(this);
 
           //deepLeaf
           if (!d.children) {
             var deepLeaf = view.append("div").attr("class", css.menuHorizontal + " " + css.list_outer + " " + css.list_item_leaf);
-            deepLeaf.on("click", function(d) {
+            deepLeaf.on("click", d => {
               _this._selectIndicator({ concept: d.id, dataSource: d.dataSource });
             });
             var deepLeafContent = deepLeaf.append("div").classed(css.leaf + " " + css.leaf_content + " vzb-dialog-scrollable", true);
             deepLeafContent.append("span").classed(css.leaf_content_item + " " + css.leaf_content_item_title, true)
-              .text(function(d) {
+              .text(d => {
                 //Let the indicator "_default" in tree menu be translated differnetly for every hook type
                 var translated = d.id === "_default" ? _this.translator("indicator/_default/" + hookType) : d.name;
                 return translated || "";
               });
             var hideUnits;
             var units = deepLeafContent.append("span").classed(css.leaf_content_item, true)
-              .text(function(d) {
+              .text(d => {
                 //Let the indicator "_default" in tree menu be translated differnetly for every hook type
                 var translated = d.id === "_default" ? _this.translator("unit/_default/" + hookType) : d.unit;
                 hideUnits = !translated;
@@ -1211,7 +1199,7 @@ var TreeMenu = Component.extend({
             units.classed("vzb-hidden", hideUnits);
             var hideDescription;
             var description = deepLeafContent.append("span").classed(css.leaf_content_item + " " + css.leaf_content_item_descr, true)
-              .text(function(d) {
+              .text(d => {
                 //Let the indicator "_default" in tree menu be translated differnetly for every hook type
                 var translated = d.id === "_default" ? _this.translator("description/_default/" + hookType) : d.description;
                 hideDescription = !translated;
@@ -1277,7 +1265,7 @@ var TreeMenu = Component.extend({
         this.element.select("." + css.scaletypes).classed(css.hidden, true);
         return true;
       }
-      var scaleTypesData = indicatorsDB[pointer].scales.filter(function(f) {
+      var scaleTypesData = indicatorsDB[pointer].scales.filter(f => {
         if (!_this.model.marker[markerID].allow || !_this.model.marker[markerID].allow.scales) return true;
         if (_this.model.marker[markerID].allow.scales[0] == "*") return true;
         return _this.model.marker[markerID].allow.scales.indexOf(f) > -1;
@@ -1287,12 +1275,12 @@ var TreeMenu = Component.extend({
       } else {
 
         var scaleTypes = this.element.select("." + css.scaletypes).classed(css.hidden, false).selectAll("span")
-            .data(scaleTypesData, function(d) {return d;});
+            .data(scaleTypesData, d => d);
 
         scaleTypes.exit().remove();
 
         scaleTypes = scaleTypes.enter().append("span")
-          .on("click", function(d) {
+          .on("click", d => {
             d3.event.stopPropagation();
             _this._setModel("scaleType", d, _this._markerID);
           })
@@ -1302,12 +1290,8 @@ var TreeMenu = Component.extend({
 
         scaleTypes
           .classed(css.scaletypesDisabled, scaleTypesData.length < 2)
-          .classed(css.scaletypesActive, function(d) {
-            return (d == mdlScaleType || d === "log" && mdlScaleType === "genericLog") && scaleTypesData.length > 1;
-          })
-          .text(function(d) {
-            return _this.translator("scaletype/" + d);
-          });
+          .classed(css.scaletypesActive, d => (d == mdlScaleType || d === "log" && mdlScaleType === "genericLog") && scaleTypesData.length > 1)
+          .text(d => _this.translator("scaletype/" + d));
       }
 
     }

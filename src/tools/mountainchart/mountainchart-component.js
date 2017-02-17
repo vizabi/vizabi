@@ -180,22 +180,14 @@ var MountainChartComponent = Component.extend({
         // define path generator
         this.area = d3.area()
             .curve(d3.curveBasis)
-            .x(function(d) {
-                return _this.xScale(_this._math.rescale(d.x));
-            })
-            .y0(function(d) {
-                return _this.yScale(d.y0);
-            })
-            .y1(function(d) {
-                return _this.yScale(d.y0 + d.y);
-            });
+            .x(d => _this.xScale(_this._math.rescale(d.x)))
+            .y0(d => _this.yScale(d.y0))
+            .y1(d => _this.yScale(d.y0 + d.y));
 
         //define d3 stack layout
         this.stack = d3.stack()
             .order(d3.stackOrderReverse)
-            .value(function(d, key) {
-                return _this.cached[key][d].y;
-            });
+            .value((d, key) => _this.cached[key][d].y);
 
         // init internal variables
         this.xScale = null;
@@ -238,7 +230,7 @@ var MountainChartComponent = Component.extend({
         this.probeTextEl = this.probeEl.selectAll("text");
 
         this.element
-            .onTap(function(d, i) {
+            .onTap((d, i) => {
                 _this._interact()._mouseout(d, i);
             });
     },
@@ -265,7 +257,7 @@ var MountainChartComponent = Component.extend({
         _this.updateSize(shape.length);
         _this.zoomToMaxMin();
 
-        shape = shape.map(function(m, i) {return { x: _this.mesh[i], y0: 0, y: +m };});
+        shape = shape.map((m, i) => ({ x: _this.mesh[i], y0: 0, y: +m }));
 
         this.mountainAtomicContainer.selectAll(".vzb-mc-prerender")
             .data([0])
@@ -289,14 +281,14 @@ var MountainChartComponent = Component.extend({
                     full: true
                 });
             })
-            .on("mouseout", function() {
+            .on("mouseout", () => {
                 if (_this.model.time.dragging) return;
                 if (!_this.model.ui.chart.showProbeX) return;
                 _this._probe.redraw();
             });
 
         var _this = this;
-        this.on("resize", function() {
+        this.on("resize", () => {
             //console.log("acting on resize");
             //return if updatesize exists with error
             if (_this.updateSize()) return;
@@ -325,7 +317,7 @@ var MountainChartComponent = Component.extend({
 
         this.updateUIStrings();
         this.updateIndicators();
-        this.model.marker.getFrame(this.model.time.value, function(values) {
+        this.model.marker.getFrame(this.model.time.value, values => {
           if (!values) return;
           _this.values = values;
           _this.updateEntities();
@@ -525,7 +517,7 @@ updateSize(meshLength) {
         utils.setIcon(this.infoEl, iconQuestion).select("svg").attr("width", "0px").attr("height", "0px");
 
         //TODO: move away from UI strings, maybe to ready or ready once
-        this.infoEl.on("click", function() {
+        this.infoEl.on("click", () => {
           _this.parent.findChildByName("gapminder-datanotes").pin();
         });
         this.infoEl.on("mouseover", function() {
@@ -535,19 +527,19 @@ updateSize(meshLength) {
           var chartRect = _this.element.node().getBoundingClientRect();
           _this.parent.findChildByName("gapminder-datanotes").setHook("axis_y").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
         });
-        this.infoEl.on("mouseout", function() {
+        this.infoEl.on("mouseout", () => {
           _this.parent.findChildByName("gapminder-datanotes").hide();
         });
 
 
         this.dataWarningEl
-            .on("click", function() {
+            .on("click", () => {
                 _this.parent.findChildByName("gapminder-datawarning").toggle();
             })
-            .on("mouseover", function() {
+            .on("mouseover", () => {
                 _this.updateDoubtOpacity(1);
             })
-            .on("mouseout", function() {
+            .on("mouseout", () => {
                 _this.updateDoubtOpacity();
             });
     },
@@ -574,12 +566,11 @@ updateSize(meshLength) {
 
         // construct pointers
         this.mountainPointers = this.model.marker.getKeys()
-            .filter(function(d) { return 1
+            .filter(d => 1
                 && _this.values.axis_x[d[_this.KEY]]
                 && _this.values.axis_y[d[_this.KEY]]
-                && _this.values.axis_s[d[_this.KEY]];
-            })
-            .map(function(d) {
+                && _this.values.axis_s[d[_this.KEY]])
+            .map(d => {
                 var pointer = {};
                 pointer[_this.KEY] = d[_this.KEY];
                 pointer.KEY = function() {
@@ -593,24 +584,18 @@ updateSize(meshLength) {
 
         //TODO: optimise this!
         this.groupedPointers = d3.nest()
-            .key(function(d) {
-                return _this.model.marker.stack.use === "property" ? _this.values.stack[d.KEY()] : _this.values.group[d.KEY()];
-            })
-            .sortValues(function(a, b) {
-                return b.sortValue[0] - a.sortValue[0];
-            })
+            .key(d => _this.model.marker.stack.use === "property" ? _this.values.stack[d.KEY()] : _this.values.group[d.KEY()])
+            .sortValues((a, b) => b.sortValue[0] - a.sortValue[0])
             .entries(this.mountainPointers);
 
 
         var groupManualSort = this.model.marker.group.manualSorting;
-        this.groupedPointers.forEach(function(group) {
-            var groupSortValue = d3.sum(group.values.map(function(m) {
-                return m.sortValue[0];
-            }));
+        this.groupedPointers.forEach(group => {
+            var groupSortValue = d3.sum(group.values.map(m => m.sortValue[0]));
 
             if (groupManualSort && groupManualSort.length > 1) groupSortValue = groupManualSort.length - 1 - groupManualSort.indexOf(group.key);
 
-            group.values.forEach(function(d) {
+            group.values.forEach(d => {
                 d.sortValue[1] = groupSortValue;
             });
 
@@ -622,7 +607,7 @@ updateSize(meshLength) {
         });
 
         var sortGroupKeys = {};
-        _this.groupedPointers.forEach(function(m) {
+        _this.groupedPointers.forEach(m => {
             sortGroupKeys[m.key] = m.values[0].sortValue[1];
         });
 
@@ -630,32 +615,20 @@ updateSize(meshLength) {
         // update the stacked pointers
         if (_this.model.marker.stack.which === "none") {
             this.stackedPointers = [];
-            this.mountainPointers.sort(function(a, b) {
-                return b.sortValue[0] - a.sortValue[0];
-            });
+            this.mountainPointers.sort((a, b) => b.sortValue[0] - a.sortValue[0]);
 
         } else {
             this.stackedPointers = d3.nest()
-                .key(function(d) {
-                    return _this.values.stack[d.KEY()];
-                })
-                .key(function(d) {
-                    return _this.values.group[d.KEY()];
-                })
-                .sortKeys(function(a, b) {
-                    return sortGroupKeys[b] - sortGroupKeys[a];
-                })
-                .sortValues(function(a, b) {
-                    return b.sortValue[0] - a.sortValue[0];
-                })
+                .key(d => _this.values.stack[d.KEY()])
+                .key(d => _this.values.group[d.KEY()])
+                .sortKeys((a, b) => sortGroupKeys[b] - sortGroupKeys[a])
+                .sortValues((a, b) => b.sortValue[0] - a.sortValue[0])
                 .entries(this.mountainPointers);
 
-            this.mountainPointers.sort(function(a, b) {
-                return b.sortValue[1] - a.sortValue[1];
-            });
+            this.mountainPointers.sort((a, b) => b.sortValue[1] - a.sortValue[1]);
 
 
-            this.stackedPointers.forEach(function(stack) {
+            this.stackedPointers.forEach(stack => {
                 stack.KEY = function() {
                     return this.key;
                 };
@@ -692,24 +665,24 @@ updateSize(meshLength) {
         this.mountains = this.mountainAtomicContainer.selectAll(".vzb-mc-mountain");
 
         this.mountains
-            .on("mousemove", function(d, i) {
+            .on("mousemove", (d, i) => {
                 if (utils.isTouchDevice()) return;
                 _this._interact()._mousemove(d, i);
             })
-            .on("mouseout", function(d, i) {
+            .on("mouseout", (d, i) => {
                 if (utils.isTouchDevice()) return;
                 _this._interact()._mouseout(d, i);
             })
-            .on("click", function(d, i) {
+            .on("click", (d, i) => {
                 if (utils.isTouchDevice()) return;
                 _this._interact()._click(d, i);
                 _this.highlightMarkers();
             })
-            .onTap(function(d, i) {
+            .onTap((d, i) => {
                 _this._interact()._click(d, i);
                 d3.event.stopPropagation();
             })
-            .onLongTap(function(d, i) {
+            .onLongTap((d, i) => {
             });
     },
 
@@ -722,9 +695,7 @@ updateSize(meshLength) {
 
                 _this.model.marker.highlightMarker(d);
 
-                var mouse = d3.mouse(_this.graph.node()).map(function(d) {
-                    return parseInt(d);
-                });
+                var mouse = d3.mouse(_this.graph.node()).map(d => parseInt(d));
 
                 //position tooltip
                 _this._setTooltip(d.key ? _this.model.marker.color.getColorlegendMarker().label.getItems()[d.key] : _this.values.label[d.KEY()]);
@@ -753,9 +724,7 @@ updateSize(meshLength) {
         this.someHighlighted = (this.model.marker.highlight.length > 0);
 
         if (!this.selectList || !this.someSelected) return;
-        this.selectList.classed("vzb-highlight", function(d) {
-            return _this.model.marker.isHighlighted(d);
-        });
+        this.selectList.classed("vzb-highlight", d => _this.model.marker.isHighlighted(d));
 
     },
 
@@ -770,9 +739,7 @@ updateSize(meshLength) {
     _sumLeafPointersByMarker(branch, marker) {
         var _this = this;
         if (!branch.key) return _this.values[marker][branch.KEY()];
-        return d3.sum(branch.values.map(function(m) {
-            return _this._sumLeafPointersByMarker(m, marker);
-        }));
+        return d3.sum(branch.values.map(m => _this._sumLeafPointersByMarker(m, marker)));
     },
 
     updateOpacity() {
@@ -785,7 +752,7 @@ updateSize(meshLength) {
         var OPACITY_REGULAR = this.model.marker.opacityRegular;
         var OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
 
-        this.mountains.style("opacity", function(d) {
+        this.mountains.style("opacity", d => {
 
             if (_this.someHighlighted) {
                 //highlight or non-highlight
@@ -803,18 +770,14 @@ updateSize(meshLength) {
 
         });
 
-        this.mountains.classed("vzb-selected", function(d) {
-            return _this.model.marker.isSelected(d);
-        });
+        this.mountains.classed("vzb-selected", d => _this.model.marker.isSelected(d));
 
         var nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
 
         // when pointer events need update...
         if (nonSelectedOpacityZero !== this.nonSelectedOpacityZero) {
-            this.mountainsAtomic.style("pointer-events", function(d) {
-                return (!_this.someSelected || !nonSelectedOpacityZero || _this.model.marker.isSelected(d)) ?
-                    "visible" : "none";
-            });
+            this.mountainsAtomic.style("pointer-events", d => (!_this.someSelected || !nonSelectedOpacityZero || _this.model.marker.isSelected(d)) ?
+                    "visible" : "none");
         }
 
         this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
@@ -835,7 +798,7 @@ updateSize(meshLength) {
 
 
         //spawn the original mountains
-        this.mountainPointers.forEach(function(d, i) {
+        this.mountainPointers.forEach((d, i) => {
             var vertices = _this._spawn(_this.values, d);
             _this.cached[d.KEY()] = vertices;
             d.hidden = vertices.length === 0;
@@ -844,12 +807,10 @@ updateSize(meshLength) {
 
         //recalculate stacking
         if (_this.model.marker.stack.which !== "none") {
-            this.stackedPointers.forEach(function(group) {
+            this.stackedPointers.forEach(group => {
                 var toStack = [];
-                group.values.forEach(function(subgroup) {
-                    toStack = toStack.concat(subgroup.values.filter(function(f) {
-                        return !f.hidden;
-                    }));
+                group.values.forEach(subgroup => {
+                    toStack = toStack.concat(subgroup.values.filter(f => !f.hidden));
                 });
                 _this.stack.keys(toStack.map(d => d.KEY()))(d3.range(_this.mesh.length))
                     .forEach((vertices, keyIndex) => {
@@ -861,10 +822,8 @@ updateSize(meshLength) {
             });
         }
 
-        this.mountainPointers.forEach(function(d) {
-            d.yMax = d3.max(_this.cached[d.KEY()].map(function(m) {
-                return m.y0 + m.y;
-            }));
+        this.mountainPointers.forEach(d => {
+            d.yMax = d3.max(_this.cached[d.KEY()].map(m => m.y0 + m.y));
             if (_this.yMax < d.yMax) _this.yMax = d.yMax;
         });
 
@@ -873,7 +832,7 @@ updateSize(meshLength) {
         //var dragOrPlay = (_this.model.time.dragging || _this.model.time.playing) && this.model.marker.stack.which !== "none";
 
         //if(mergeStacked){
-        this.stackedPointers.forEach(function(d) {
+        this.stackedPointers.forEach(d => {
             var firstLast = _this._getFirstLastPointersInStack(d);
             _this.cached[d.key] = _this._getVerticesOfaMergedShape(firstLast);
             _this.values.color[d.key] = "_default";
@@ -881,7 +840,7 @@ updateSize(meshLength) {
             d.yMax = firstLast.first.yMax;
         });
         //} else if (mergeGrouped || dragOrPlay){
-        this.groupedPointers.forEach(function(d) {
+        this.groupedPointers.forEach(d => {
             var firstLast = _this._getFirstLastPointersInStack(d);
             _this.cached[d.key] = _this._getVerticesOfaMergedShape(firstLast);
             _this.values.color[d.key] = _this.values.color[firstLast.first.KEY()];
@@ -891,12 +850,10 @@ updateSize(meshLength) {
         //}
 
         if (!mergeStacked && !mergeGrouped && this.model.marker.stack.use === "property") {
-            this.groupedPointers.forEach(function(d) {
-                var visible = d.values.filter(function(f) {
-                    return !f.hidden;
-                });
+            this.groupedPointers.forEach(d => {
+                var visible = d.values.filter(f => !f.hidden);
                 d.yMax = visible[0].yMax;
-                d.values.forEach(function(e) {
+                d.values.forEach(e => {
                     e.yMaxGroup = d.yMax;
                 });
             });
@@ -911,18 +868,12 @@ updateSize(meshLength) {
         var visible, visible2;
 
         if (group.values[0].values) {
-            visible = group.values[0].values.filter(function(f) {
-                return !f.hidden;
-            });
-            visible2 = group.values[group.values.length - 1].values.filter(function(f) {
-                return !f.hidden;
-            });
+            visible = group.values[0].values.filter(f => !f.hidden);
+            visible2 = group.values[group.values.length - 1].values.filter(f => !f.hidden);
             var first = visible[0];
             var last = visible2[visible2.length - 1];
         } else {
-            visible = group.values.filter(function(f) {
-                return !f.hidden;
-            });
+            visible = group.values.filter(f => !f.hidden);
             var first = visible[0];
             var last = visible[visible.length - 1];
         }
@@ -941,7 +892,7 @@ updateSize(meshLength) {
         var first = arg.first.KEY();
         var last = arg.last.KEY();
 
-        return _this.mesh.map(function(m, i) {
+        return _this.mesh.map((m, i) => {
             var y = _this.cached[first][i].y0 + _this.cached[first][i].y - _this.cached[last][i].y0;
             var y0 = _this.cached[last][i].y0;
             return {
@@ -966,7 +917,7 @@ updateSize(meshLength) {
         this.cosineShape = [];
         this.cosineArea = 0;
 
-        this.mesh.forEach(function(dX, i) {
+        this.mesh.forEach((dX, i) => {
             _this.spawnMask[i] = dX < tailCutX ? 1 : (dX > tailFade * 7 ? 0 : Math.exp((tailCutX - dX) / tailFade));
             _this.cosineShape[i] = (dX > tailCutX && dX < tailFatX ? (1 + Math.cos(Math.log(dX) * k + m)) : 0);
             _this.cosineArea += _this.cosineShape[i];
@@ -985,18 +936,16 @@ updateSize(meshLength) {
         var distribution = [];
         var acc = 0;
 
-        this.mesh.forEach(function(dX, i) {
+        this.mesh.forEach((dX, i) => {
             distribution[i] = _this._math.pdf.lognormal(dX, mu, sigma);
             acc += _this.spawnMask[i] * distribution[i];
         });
 
-        var result = this.mesh.map(function(dX, i) {
-            return {
+        var result = this.mesh.map((dX, i) => ({
                 x: dX,
                 y0: 0,
                 y: norm * (distribution[i] * (1 - _this.spawnMask[i]) + _this.cosineShape[i] / _this.cosineArea * acc)
-            };
-        });
+            }));
 
         return result;
     },
@@ -1009,7 +958,7 @@ updateSize(meshLength) {
         if (method !== "immediate" && !options.force) return;
         if (method === "latest") {
           var prevValues = _this.values;
-          _this.model.marker.getFrame(_this.model.time.end, function(values) {
+          _this.model.marker.getFrame(_this.model.time.end, values => {
             if (!values) return;
 
             //below is a complicated issue when updatePointers() is first calculated for one set of values (at the end of time series), then yMax is taken from that data (assuming that population always grows, so the last year has the highest mountain)
@@ -1060,9 +1009,7 @@ updateSize(meshLength) {
         });
 
         if (stackMode === "none") {
-            this.mountainsAtomic.sort(function(a, b) {
-                return b.yMax - a.yMax;
-            });
+            this.mountainsAtomic.sort((a, b) => b.yMax - a.yMax);
 
         } else if (stackMode === "all") {
             // do nothing if everything is stacked
@@ -1073,9 +1020,7 @@ updateSize(meshLength) {
                 //     return b.yMax - a.yMax;
                 // });
             } else {
-                this.mountainsAtomic.sort(function(a, b) {
-                    return b.yMaxGroup - a.yMaxGroup;
-                });
+                this.mountainsAtomic.sort((a, b) => b.yMaxGroup - a.yMaxGroup);
             }
         }
 
@@ -1093,8 +1038,7 @@ updateSize(meshLength) {
         var _this = this;
         if (!this.mountains) return utils.warn("redrawDataPointsOnlyColors(): no mountains  defined. likely a premature call, fix it!");
         var isColorUseIndicator = this.model.marker.color.use === "indicator";
-        this.mountains.style("fill", function(d) {
-            return _this.values.color[d.KEY()] ?
+        this.mountains.style("fill", d => _this.values.color[d.KEY()] ?
               (
                 isColorUseIndicator && _this.values.color[d.KEY()] == "_default" ?
                  _this.model.marker.color.palette["_default"]
@@ -1102,8 +1046,7 @@ updateSize(meshLength) {
                  _this.cScale(_this.values.color[d.KEY()])
               )
             :
-            COLOR_WHITEISH;
-        });
+            COLOR_WHITEISH);
     },
 
     _renderShape(view, key, hidden) {
@@ -1120,7 +1063,7 @@ updateSize(meshLength) {
         var filter = {};
         filter[this.KEY] = key;
         if (this.model.marker.isSelected(filter)) {
-            view.attr("d", this.area(this.cached[key].filter(function(f) {return f.y > _this.values.axis_y[key] * THICKNESS_THRESHOLD; })));
+            view.attr("d", this.area(this.cached[key].filter(f => f.y > _this.values.axis_y[key] * THICKNESS_THRESHOLD)));
         } else {
             view.attr("d", this.area(this.cached[key]));
         }
@@ -1154,7 +1097,7 @@ updateSize(meshLength) {
 
     _setTooltip(tooltipText) {
         if (tooltipText) {
-            var mouse = d3.mouse(this.graph.node()).map(function(d) { return parseInt(d); });
+            var mouse = d3.mouse(this.graph.node()).map(d => parseInt(d));
 
             //position tooltip
             this.tooltip.classed("vzb-hidden", false)
@@ -1194,9 +1137,9 @@ updateSize(meshLength) {
 
       var _this = this;
 
-      return new Promise(function(resolve, reject) {
+      return new Promise((resolve, reject) => {
 
-        d3.json(shape_path, function(error, json) {
+        d3.json(shape_path, (error, json) => {
           if (error) return console.warn("Failed loading json " + shape_path + ". " + error);
           _this.precomputedShapes = json;
           resolve();

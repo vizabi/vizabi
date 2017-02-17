@@ -80,11 +80,11 @@ var SimpleSlider = Component.extend({
         .attr("max", max)
         .attr("step", step)
         .attr("value", value)
-        .on("input", function() {
+        .on("input", () => {
           var value = +d3.event.target.value;
           _this._setModel(value, false, false); // on drag - non-persistent changes while dragging
         })
-        .on("change", function() {
+        .on("change", () => {
           var value = +d3.event.target.value;
           _this._setModel(value, true); // on drag end - value is probably same as last 'input'-event, so force change
         });

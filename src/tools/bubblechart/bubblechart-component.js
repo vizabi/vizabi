@@ -56,13 +56,13 @@ var BubbleChartComp = Component.extend({
           _this.model.marker.color.scale = null;
         }
         if (!_this._readyOnce || _this.model.time.splash) return;
-        _this._trails.create().then(function() {
+        _this._trails.create().then(() => {
           _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
         });
       },
       "change:time.end": function(evt, original) {
         if (!_this._readyOnce || _this.model.time.splash) return;
-        _this._trails.create().then(function() {
+        _this._trails.create().then(() => {
           _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
         });
       },
@@ -145,7 +145,7 @@ var BubbleChartComp = Component.extend({
 
         _this.selectDataPoints();
         _this.redrawDataPoints();
-        _this._trails.create().then(function() {
+        _this._trails.create().then(() => {
           _this._trails.run(["findVisible", "reveal", "opacityHandler"]);
         });
         _this.updateBubbleOpacity();
@@ -175,7 +175,7 @@ var BubbleChartComp = Component.extend({
         }
         (function(time) { // isolate timestamp
         //_this._bubblesInteract().mouseout();
-          _this.model.marker.getFrame(time, function(frame, time) {
+          _this.model.marker.getFrame(time, (frame, time) => {
             if (!_this._frameIsValid(frame)) return utils.warn("change:time.value: empty data received from marker.getFrame(). doing nothing");
             var index = _this.calculationQueue.indexOf(time.toString()); //
             if (index == -1) { // we was receive more recent frame before so we pass this frame
@@ -375,7 +375,7 @@ var BubbleChartComp = Component.extend({
 
     this.tooltipMobile = this.element.select(".vzb-tooltip-mobile");
     //component events
-    this.on("resize", function() {
+    this.on("resize", () => {
       //console.log("EVENT: resize");
       //return if updatesize exists with error
       _this._trails.run("abortAnimation");
@@ -394,22 +394,22 @@ var BubbleChartComp = Component.extend({
 
     //keyboard listeners
     d3.select("body")
-      .on("keydown", function() {
+      .on("keydown", () => {
         if (_this.model.ui.cursorMode !== "arrow") return;
         if (d3.event.metaKey || d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", true);
       })
-      .on("keyup", function() {
+      .on("keyup", () => {
         if (_this.model.ui.cursorMode !== "arrow") return;
         if (!d3.event.metaKey && !d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", false);
       })
       //this is for the case when user would press ctrl and move away from the browser tab or window
       //keyup event would happen somewhere else and won't be captured, so zoomin class would get stuck
-      .on("mouseenter", function() {
+      .on("mouseenter", () => {
         if (_this.model.ui.cursorMode !== "arrow") return;
         if (!d3.event.metaKey && !d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", false);
       });
 
-    this.root.on("resetZoom", function() {
+    this.root.on("resetZoom", () => {
         _this._panZoom.reset(null, 500);
     });
 
@@ -418,10 +418,10 @@ var BubbleChartComp = Component.extend({
       .call(this._panZoom.dragRectangle)
       .call(this._panZoom.zoomer)
       .on("dblclick.zoom", null)
-      .on("mouseup", function() {
+      .on("mouseup", () => {
         _this.draggingNow = false;
       })
-      .on("click", function() {
+      .on("click", () => {
         var cursor = _this.model.ui.cursorMode;
         if (!d3.event.defaultPrevented && cursor !== "arrow") {
           _this._panZoom.zoomByIncrement(cursor, 500);
@@ -458,10 +458,10 @@ var BubbleChartComp = Component.extend({
     if (!_this.model.time.splash) {
       _this._trails.create();
     }
-    this.model.marker.getFrame(this.model.time.value, function(frame, time) {
+    this.model.marker.getFrame(this.model.time.value, (frame, time) => {
       // TODO: temporary fix for case when after data loading time changed on validation
       if (time.toString() != _this.model.time.value.toString()) {
-        utils.defer(function() {
+        utils.defer(() => {
           _this.ready();
         });
         return;
@@ -576,7 +576,7 @@ var BubbleChartComp = Component.extend({
     yTitle.enter().append("text");
     yTitle
       //.attr("y", "-6px")
-      .on("click", function() {
+      .on("click", () => {
         _this.parent
           .findChildByName("gapminder-treemenu")
           .markerID("axis_y")
@@ -589,7 +589,7 @@ var BubbleChartComp = Component.extend({
     var xTitle = this.xTitleEl.selectAll("text").data([0]);
     xTitle.enter().append("text");
     xTitle
-      .on("click", function() {
+      .on("click", () => {
         _this.parent
           .findChildByName("gapminder-treemenu")
           .markerID("axis_x")
@@ -617,7 +617,7 @@ var BubbleChartComp = Component.extend({
 
 
     //TODO: move away from UI strings, maybe to ready or ready once
-    this.yInfoEl.on("click", function() {
+    this.yInfoEl.on("click", () => {
       _this.parent.findChildByName("gapminder-datanotes").pin();
     });
     this.yInfoEl.on("mouseover", function() {
@@ -627,10 +627,10 @@ var BubbleChartComp = Component.extend({
       var chartRect = _this.element.node().getBoundingClientRect();
       _this.parent.findChildByName("gapminder-datanotes").setHook("axis_y").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
     });
-    this.yInfoEl.on("mouseout", function() {
+    this.yInfoEl.on("mouseout", () => {
       _this.parent.findChildByName("gapminder-datanotes").hide();
     });
-    this.xInfoEl.on("click", function() {
+    this.xInfoEl.on("click", () => {
       _this.parent.findChildByName("gapminder-datanotes").pin();
     });
     this.xInfoEl.on("mouseover", function() {
@@ -641,18 +641,18 @@ var BubbleChartComp = Component.extend({
       var chartRect = _this.element.node().getBoundingClientRect();
       _this.parent.findChildByName("gapminder-datanotes").setHook("axis_x").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
     });
-    this.xInfoEl.on("mouseout", function() {
+    this.xInfoEl.on("mouseout", () => {
        if (_this.model.time.dragging) return;
       _this.parent.findChildByName("gapminder-datanotes").hide();
     });
     this.dataWarningEl
-      .on("click", function() {
+      .on("click", () => {
         _this.parent.findChildByName("gapminder-datawarning").toggle();
       })
-      .on("mouseover", function() {
+      .on("mouseover", () => {
         _this._updateDoubtOpacity(1);
       })
-      .on("mouseout", function() {
+      .on("mouseout", () => {
         _this._updateDoubtOpacity();
       });
   },
@@ -675,7 +675,7 @@ var BubbleChartComp = Component.extend({
     var getKeys = function(prefix) {
       prefix = prefix || "";
       return _this.model.marker.getKeys()
-        .map(function(d) {
+        .map(d => {
           var pointer = {};
           pointer[KEY] = d[KEY];
           pointer[TIMEDIM] = endTime;
@@ -683,9 +683,7 @@ var BubbleChartComp = Component.extend({
           pointer[KEY] = prefix + d[KEY];
           return pointer;
         })
-        .sort(function(a, b) {
-          return b.sortValue - a.sortValue;
-        });
+        .sort((a, b) => b.sortValue - a.sortValue);
     };
 
     // get array of GEOs, sorted by the size hook
@@ -701,35 +699,33 @@ var BubbleChartComp = Component.extend({
       this.unselectBubblesWithNoData(markers);
     }
     this.entityBubbles = this.bubbleContainer.selectAll("circle.vzb-bc-entity")
-      .data(this.model.marker.getVisible(), function(d) {return d[KEY];}); // trails have not keys
+      .data(this.model.marker.getVisible(), d => d[KEY]); // trails have not keys
 
     //exit selection
     this.entityBubbles.exit().remove();
 
     //enter selection -- init circles
     this.entityBubbles = this.entityBubbles.enter().append("circle")
-      .attr("class", function(d) {
-        return "vzb-bc-entity " + "bubble-" + d[KEY];
-      })
-      .on("mouseover", function(d, i) {
+      .attr("class", d => "vzb-bc-entity " + "bubble-" + d[KEY])
+      .on("mouseover", (d, i) => {
         if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
         _this._bubblesInteract().mouseover(d, i);
       })
-      .on("mouseout", function(d, i) {
+      .on("mouseout", (d, i) => {
         if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
 
         _this._bubblesInteract().mouseout(d, i);
       })
-      .on("click", function(d, i) {
+      .on("click", (d, i) => {
         if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
 
         _this._bubblesInteract().click(d, i);
       })
-      .onTap(function(d, i) {
+      .onTap((d, i) => {
         d3.event.stopPropagation();
         _this._bubblesInteract().click(d, i);
       })
-      .onLongTap(function(d, i) {})
+      .onLongTap((d, i) => {})
       .merge(this.entityBubbles);
 
     this._reorderEntities();
@@ -741,11 +737,9 @@ var BubbleChartComp = Component.extend({
       if (!this.model.marker.select.length) return;
 
       var _select = [];
-      var keys = entities.map(function(d) {
-        return d[KEY];
-      });
+      var keys = entities.map(d => d[KEY]);
 
-      this.model.marker.select.forEach(function(d) {
+      this.model.marker.select.forEach(d => {
         if (keys.indexOf(d[KEY]) !== -1) _select.push(d);
       });
 
@@ -756,7 +750,7 @@ var BubbleChartComp = Component.extend({
     var _this = this;
     var KEY = this.KEY;
     this.bubbleContainer.selectAll(".vzb-bc-entity")
-      .sort(function(a, b) {
+      .sort((a, b) => {
         var sizeA = _this.frame.size[a[KEY]];
         var sizeB = _this.frame.size[b[KEY]];
 
@@ -1091,7 +1085,7 @@ var BubbleChartComp = Component.extend({
     if (this.model.ui.chart.lockNonSelected && this.someSelected) {
       time = this.model.time.parse("" + this.model.ui.chart.lockNonSelected);
     }
-    this.model.marker.getFrame(time, function(valuesLocked) {
+    this.model.marker.getFrame(time, valuesLocked => {
       if (!_this._frameIsValid(valuesLocked)) return utils.warn("redrawDataPointsOnlyColor: empty data received from marker.getFrame(). doing nothing");
 
       valuesNow = _this.frame;
@@ -1108,13 +1102,11 @@ var BubbleChartComp = Component.extend({
       //update lines of labels
       if (selected) {
 
-        var select = utils.find(_this.model.marker.select, function(f) {
-          return f[KEY] == d[KEY];
-        });
+        var select = utils.find(_this.model.marker.select, f => f[KEY] == d[KEY]);
 
         var trailStartTime = _this.model.time.parse("" + select.trailStartTime);
 
-        _this.model.marker.getFrame(trailStartTime, function(valuesTrailStart) {
+        _this.model.marker.getFrame(trailStartTime, valuesTrailStart => {
           if (!valuesTrailStart) return utils.warn("redrawDataPointsOnlyColor: empty data received from marker.getFrames(). doing nothing");
 
           var cache = {};
@@ -1146,7 +1138,7 @@ var BubbleChartComp = Component.extend({
     if (this.model.ui.chart.lockNonSelected && this.someSelected) {
       time = this.model.time.parse("" + this.model.ui.chart.lockNonSelected);
     }
-    this.model.marker.getFrame(time, function(valuesLocked) {
+    this.model.marker.getFrame(time, valuesLocked => {
       if (!_this._frameIsValid(valuesLocked)) return utils.warn("redrawDataPointsOnlySize: empty data received from marker.getFrame(). doing nothing");
 
       valuesNow = _this.frame;
@@ -1163,13 +1155,11 @@ var BubbleChartComp = Component.extend({
       //update lines of labels
       if (selected) {
 
-        var select = utils.find(_this.model.marker.select, function(f) {
-          return f[KEY] == d[KEY];
-        });
+        var select = utils.find(_this.model.marker.select, f => f[KEY] == d[KEY]);
 
         var trailStartTime = _this.model.time.parse("" + select.trailStartTime);
 
-        _this.model.marker.getFrame(trailStartTime, function(valuesTrailStart) {
+        _this.model.marker.getFrame(trailStartTime, valuesTrailStart => {
           if (!valuesTrailStart) return utils.warn("redrawDataPointsOnlySize: empty data received from marker.getFrames(). doing nothing");
 
           var cache = {};
@@ -1201,7 +1191,7 @@ var BubbleChartComp = Component.extend({
         var time = this.model.time.parse("" + this.model.ui.chart.lockNonSelected);
 
         //get values for locked frames
-        this.model.marker.getFrame(time, function(lockedFrame) {
+        this.model.marker.getFrame(time, lockedFrame => {
             if (!lockedFrame) return utils.warn("redrawDataPoints: empty data received from marker.getFrames(). doing nothing");
 
             // each bubble
@@ -1247,7 +1237,7 @@ var BubbleChartComp = Component.extend({
                var opacity = view.style("opacity");
                view.transition().duration(duration).ease(d3.easeExp)
                 .style("opacity", 0)
-                .on("end", function() {
+                .on("end", () => {
                     //to avoid transition from null state add class with a delay
                     view.classed("vzb-invisible", d.hidden);
                     view.style("opacity", opacity);
@@ -1322,9 +1312,7 @@ var BubbleChartComp = Component.extend({
 
       var cache = {};
 
-      var select = utils.find(_this.model.marker.select, function(f) {
-        return f[KEY] == d[KEY];
-      });
+      var select = utils.find(_this.model.marker.select, f => f[KEY] == d[KEY]);
 
       var time = _this.model.time.formatDate(_this.time);
       if (!this.model.ui.chart.trails || select.trailStartTime == time || select.trailStartTime == null) {
@@ -1495,7 +1483,7 @@ var BubbleChartComp = Component.extend({
 
     if (d != null) {
 
-      this.model.marker.getFrame(d[TIMEDIM], function(values) {
+      this.model.marker.getFrame(d[TIMEDIM], values => {
         var valueY = values.axis_y[d[KEY]];
         var valueX = values.axis_x[d[KEY]];
         var valueS = values.size[d[KEY]];
@@ -1564,7 +1552,7 @@ var BubbleChartComp = Component.extend({
         d[TIMEDIM] = _this.model.time.parse("" + d.trailStartTime) || _this.time;
       }
 
-      _this.model.marker.getFrame(d[TIMEDIM], function(values) {
+      _this.model.marker.getFrame(d[TIMEDIM], values => {
           if (!values) return;
           var x = _this.xScale(values.axis_x[d[KEY]]);
           var y = _this.yScale(values.axis_y[d[KEY]]);
@@ -1583,9 +1571,7 @@ var BubbleChartComp = Component.extend({
           var hoverTrail = false;
           if (_this.model.marker.isSelected(d) && _this.model.ui.chart.trails) {
             text = _this.model.time.formatDate(_this.time);
-            var selectedData = utils.find(_this.model.marker.select, function(f) {
-              return f[KEY] == d[KEY];
-            });
+            var selectedData = utils.find(_this.model.marker.select, f => f[KEY] == d[KEY]);
             hoverTrail = text !== selectedData.trailStartTime && !d3.select(d3.event.target).classed("bubble-" + d[KEY]);
             text = text !== selectedData.trailStartTime && _this.time === d[TIMEDIM] ? text : "";
           } else {
@@ -1608,9 +1594,7 @@ var BubbleChartComp = Component.extend({
             _this._setTooltip(text, x, y, s + 3, c);
           }
 
-          var selectedData = utils.find(_this.model.marker.select, function(f) {
-            return f[KEY] == d[KEY];
-          });
+          var selectedData = utils.find(_this.model.marker.select, f => f[KEY] == d[KEY]);
           if (selectedData) {
             var clonedSelectedData = utils.clone(selectedData);
             //change opacity to OPACITY_HIGHLT = 1.0;
@@ -1642,7 +1626,7 @@ var BubbleChartComp = Component.extend({
 
     this.entityBubbles
       //.transition().duration(duration)
-      .style("opacity", function(d) {
+      .style("opacity", d => {
 
         if (_this.someHighlighted) {
           //highlight or non-highlight
@@ -1664,10 +1648,8 @@ var BubbleChartComp = Component.extend({
 
     // when pointer events need update...
     if (nonSelectedOpacityZero != this.nonSelectedOpacityZero) {
-      this.entityBubbles.style("pointer-events", function(d) {
-        return (!_this.someSelected || !nonSelectedOpacityZero || _this.model.marker.isSelected(d)) ?
-          "visible" : "none";
-      });
+      this.entityBubbles.style("pointer-events", d => (!_this.someSelected || !nonSelectedOpacityZero || _this.model.marker.isSelected(d)) ?
+          "visible" : "none");
     }
 
     this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;

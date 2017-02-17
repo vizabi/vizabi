@@ -35,17 +35,17 @@ var Show = Dialog.extend({
     this.TIMEDIM = this.model.state.time.getDimension();
 
     var _this = this;
-    this.input_search.on("input", function() {
+    this.input_search.on("input", () => {
       _this.showHideSearch();
     });
 
-    this.deselect_all.on("click", function() {
+    this.deselect_all.on("click", () => {
       _this.deselectEntities();
     });
 
 
     //make sure it refreshes when all is reloaded
-    this.root.on("ready", function() {
+    this.root.on("ready", () => {
       _this.redraw();
     });
   },
@@ -69,10 +69,10 @@ var Show = Dialog.extend({
     var _this = this;
     this.translator = this.model.locale.getTFunction();
 
-    this.model.state.marker_allpossible.getFrame(this.model.state.time.value, function(values) {
+    this.model.state.marker_allpossible.getFrame(this.model.state.time.value, values => {
     if (!values) return;
     var data = utils.keys(values.label)
-        .map(function(d) {
+        .map(d => {
             var result = {};
             result[_this.KEY] = d;
             result["label"] = values.label[d];
@@ -80,9 +80,7 @@ var Show = Dialog.extend({
         });
 
     //sort data alphabetically
-    data.sort(function(a, b) {
-      return (a.label < b.label) ? -1 : 1;
-    });
+    data.sort((a, b) => (a.label < b.label) ? -1 : 1);
 
       _this.list.html("");
 
@@ -95,13 +93,9 @@ var Show = Dialog.extend({
     items.append("input")
       .attr("type", "checkbox")
       .attr("class", "vzb-show-item")
-      .attr("id", function(d) {
-        return "-show-" + d[_this.KEY] + "-" + _this._id;
-      })
-      .property("checked", function(d) {
-        return _this.model.state.entities.isShown(d);
-      })
-      .on("change", function(d) {
+      .attr("id", d => "-show-" + d[_this.KEY] + "-" + _this._id)
+      .property("checked", d => _this.model.state.entities.isShown(d))
+      .on("change", d => {
 
         _this.model.state.marker.clearSelected();
         _this.model.state.entities.showEntity(d);
@@ -109,12 +103,8 @@ var Show = Dialog.extend({
       });
 
     items.append("label")
-      .attr("for", function(d) {
-        return "-show-" + d[_this.KEY] + "-" + _this._id;
-      })
-      .text(function(d) {
-        return d.label;
-      });
+      .attr("for", d => "-show-" + d[_this.KEY] + "-" + _this._id)
+      .text(d => d.label);
 
       _this.input_search.attr("placeholder", _this.translator("placeholder/search") + "...");
 
@@ -130,7 +120,7 @@ var Show = Dialog.extend({
     search = search.toLowerCase();
 
     this.list.selectAll(".vzb-show-item")
-      .classed("vzb-hidden", function(d) {
+      .classed("vzb-hidden", d => {
         var lower = d.label.toLowerCase();
         return (lower.indexOf(search) === -1);
       });

@@ -210,7 +210,7 @@ var TimeSlider = Component.extend({
     //Slide
     this.slide.call(this.brush);
 
-    this.slider_outer.on("mousewheel", function() {
+    this.slider_outer.on("mousewheel", () => {
         //do nothing and dont pass the event on if we are currently dragging the slider
         if (_this.model.time.dragging) {
             d3.event.stopPropagation();
@@ -234,7 +234,7 @@ var TimeSlider = Component.extend({
     }
 
     // special for linechart: resize timeslider to match time x-axis length
-    this.parent.on("myEvent", function(evt, arg) {
+    this.parent.on("myEvent", (evt, arg) => {
       var layoutProfile = _this.getLayoutProfile();
 
       if (arg.profile && arg.profile.margin) {
@@ -248,7 +248,7 @@ var TimeSlider = Component.extend({
       _this.updateSize([0, arg.rangeMax]);
     });
 
-    this.on("resize", function() {
+    this.on("resize", () => {
       _this.updateSize();
     });
   },
@@ -264,12 +264,12 @@ var TimeSlider = Component.extend({
     var _this = this;
     var time = this.model.time;
 
-    play.on("click", function() {
+    play.on("click", () => {
 
       _this.model.time.play();
     });
 
-    pause.on("click", function() {
+    pause.on("click", () => {
       _this.model.time.pause("soft");
     });
 
@@ -278,7 +278,7 @@ var TimeSlider = Component.extend({
     this.updateSize();
 
     _this._updateProgressBar();
-    _this.model.marker.listenFramesQueue(null, function(time) {
+    _this.model.marker.listenFramesQueue(null, time => {
       _this._updateProgressBar(time);
     });
     _this.setSelectedLimits(true);
@@ -374,15 +374,15 @@ var TimeSlider = Component.extend({
     }
     var KEY = _this.model.entities.getDimension();
     var proms = [];
-    utils.forEach(select, function(entity) {
+    utils.forEach(select, entity => {
       proms.push(_this.model.marker.getEntityLimits(entity[KEY]));
     });
-    Promise.all(proms).then(function(limits) {
+    Promise.all(proms).then(limits => {
       if (_setSelectedLimitsId != _this._setSelectedLimitsId) return;
       var first = limits.shift();
       var min = first.min;
       var max = first.max;
-      utils.forEach(limits, function(limit) {
+      utils.forEach(limits, limit => {
         if (min - limit.min > 0) min = limit.min;
         if (max - limit.max < 0) max = limit.max;
       });

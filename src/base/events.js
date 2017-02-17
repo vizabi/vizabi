@@ -328,7 +328,7 @@ function freezeAll(exceptions) {
   if (!utils.isArray(exceptions)) {
     exceptions = [exceptions];
   }
-  utils.forEach(exceptions, function(e) {
+  utils.forEach(exceptions, e => {
     _freezeAllExceptions[e] = true;
   });
 }

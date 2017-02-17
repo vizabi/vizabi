@@ -32,7 +32,7 @@ var Find = Dialog.extend({
         if (!_this.model.state.time.playing) {
           _this.time = _this.model.state.time.value;
 
-          _this.model.state.marker.getFrame(_this.time, function(values, time) {
+          _this.model.state.marker.getFrame(_this.time, (values, time) => {
             if (!values || (_this.time - time)) return;
             _this.redrawDataPoints(values);
           });
@@ -44,7 +44,7 @@ var Find = Dialog.extend({
 
         _this.time = _this.model.state.time.value;
 
-        _this.model.state.marker.getFrame(_this.time, function(values) {
+        _this.model.state.marker.getFrame(_this.time, values => {
           if (!values) return;
           _this.redrawDataPoints(values);
         });
@@ -72,7 +72,7 @@ var Find = Dialog.extend({
 
     var _this = this;
 
-    this.input_search.on("keyup", function() {
+    this.input_search.on("keyup", () => {
       var event = d3.event;
       if (event.keyCode == 13 && _this.input_search.node().value == "select all") {
         _this.input_search.node().value = "";
@@ -82,11 +82,11 @@ var Find = Dialog.extend({
       }
     });
 
-    this.input_search.on("input", function() {
+    this.input_search.on("input", () => {
       _this.showHideSearch();
     });
 
-    this.deselect_all.on("click", function() {
+    this.deselect_all.on("click", () => {
       _this.deselectMarkers();
     });
 
@@ -94,7 +94,7 @@ var Find = Dialog.extend({
     this.input_search.attr("placeholder", this.translator("placeholder/search") + "...");
 
     //make sure it refreshes when all is reloaded
-    this.root.on("ready", function() {
+    this.root.on("ready", () => {
       _this.ready();
     });
 
@@ -109,7 +109,7 @@ var Find = Dialog.extend({
 
     this.time = this.model.state.time.value;
 
-    this.model.state.marker.getFrame(this.time, function(values) {
+    this.model.state.marker.getFrame(this.time, values => {
       if (!values) return;
       _this.redrawDataPoints(values);
     });
@@ -126,10 +126,10 @@ var Find = Dialog.extend({
     var KEY = this.KEY;
 
     this.time = this.model.state.time.value;
-    this.model.state.marker.getFrame(this.time, function(values) {
+    this.model.state.marker.getFrame(this.time, values => {
       if (!values) return;
 
-      var data = _this.model.state.marker.getKeys().map(function(d) {
+      var data = _this.model.state.marker.getKeys().map(d => {
         var pointer = {};
         pointer[KEY] = d[KEY];
         pointer.brokenData = false;
@@ -139,9 +139,7 @@ var Find = Dialog.extend({
       });
 
       //sort data alphabetically
-      data.sort(function(a, b) {
-        return (a.name < b.name) ? -1 : 1;
-      });
+      data.sort((a, b) => (a.name < b.name) ? -1 : 1);
 
       _this.list.html("");
 
@@ -154,10 +152,8 @@ var Find = Dialog.extend({
       _this.items.append("input")
         .attr("type", "checkbox")
         .attr("class", "vzb-find-item")
-        .attr("id", function(d) {
-          return "-find-" + d[KEY] + "-" + _this._id;
-        })
-        .on("change", function(d) {
+        .attr("id", d => "-find-" + d[KEY] + "-" + _this._id)
+        .on("change", d => {
           //clear highlight so it doesn't get in the way when selecting an entity
           if (!utils.isTouchDevice()) _this.model.state.marker.clearHighlighted();
           _this.model.state.marker.selectMarker(d);
@@ -166,14 +162,12 @@ var Find = Dialog.extend({
         });
 
       _this.items.append("label")
-        .attr("for", function(d) {
-          return "-find-" + d[KEY] + "-" + _this._id;
-        })
-        .text(function(d) {return d.name;})
-        .on("mouseover", function(d) {
+        .attr("for", d => "-find-" + d[KEY] + "-" + _this._id)
+        .text(d => d.name)
+        .on("mouseover", d => {
           if (!utils.isTouchDevice() && !d.brokenData) _this.model.state.marker.highlightMarker(d);
         })
-        .on("mouseout", function(d) {
+        .on("mouseout", d => {
           if (!utils.isTouchDevice()) _this.model.state.marker.clearHighlighted();
         });
         utils.preventAncestorScrolling(_this.element.select(".vzb-dialog-scrollable"));
@@ -195,7 +189,7 @@ var Find = Dialog.extend({
         var view = d3.select(this).select("label");
 
         d.brokenData = false;
-        utils.forEach(values, function(hook, name) {
+        utils.forEach(values, (hook, name) => {
           //TODO: remove the hack with hardcoded hook names (see discussion in #1389)
           if (name !== "color" && name !== "size_label" && _this.model.state.marker[name].use !== "constant" && !hook[d[KEY]] && hook[d[KEY]] !== 0) {
             d.brokenData = true;
@@ -212,9 +206,7 @@ var Find = Dialog.extend({
     var KEY = this.KEY;
     var selected = this.model.state.marker.getSelected(KEY);
     this.items.selectAll("input")
-        .property("checked", function(d) {
-          return (selected.indexOf(d[KEY]) !== -1);
-        });
+        .property("checked", d => (selected.indexOf(d[KEY]) !== -1));
   },
 
   showHideSearch() {
@@ -222,7 +214,7 @@ var Find = Dialog.extend({
     search = search.toLowerCase();
 
     this.list.selectAll(".vzb-find-item")
-      .classed("vzb-hidden", function(d) {
+      .classed("vzb-hidden", d => {
         var lower = (d.name || "").toLowerCase();
         return (lower.indexOf(search) === -1);
       });

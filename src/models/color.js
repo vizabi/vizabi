@@ -94,7 +94,7 @@ var ColorModel = Hook.extend({
     this._syncModelReferences = {};
     this._hasDefaultColor = false;
 
-    this.on("hook_change", function() {
+    this.on("hook_change", () => {
       if (_this._readyOnce) return;
 
       if (_this.palette && Object.keys(_this.palette._data).length !== 0) {
@@ -104,7 +104,7 @@ var ColorModel = Hook.extend({
         //extend partial current palette with default palette and
         //switch current palette elements which equals
         //default palette elments to nonpersistent state
-        Object.keys(defaultPalette).forEach(function(key) {
+        Object.keys(defaultPalette).forEach(key => {
           if (!currentPalette[key] || defaultPalette[key] == currentPalette[key]) palette[key] = defaultPalette[key];
         });
         _this.set("palette", palette, false, false);
@@ -152,7 +152,7 @@ var ColorModel = Hook.extend({
 
   _setSyncModels() {
     var _this = this;
-    this.syncModels.forEach(function(modelName) {
+    this.syncModels.forEach(modelName => {
       //fetch the model to sync, it's marker and entities
       var model = _this.getClosestModel(modelName);
       var marker = model.isHook() ? model._parent : model;

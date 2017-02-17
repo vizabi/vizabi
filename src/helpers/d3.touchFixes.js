@@ -37,7 +37,7 @@ var zoom = function(_d3_behaviour_zoom) {
         _super(g);
         g.on("mousedown.zoom", null);
         g.on("touchcancel", touchcancel);
-        zoom.on("zoomend.clearmousedown", function() {
+        zoom.on("zoomend.clearmousedown", () => {
           g.on("mousedown.zoom", null);
         });
       }

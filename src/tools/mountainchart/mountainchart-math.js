@@ -32,9 +32,9 @@ var MCMath = Class.extend({
             var mesh = d3.range(rangeFrom, rangeTo, rangeStep).concat(rangeTo);
 
             if (scaleType !== "linear") {
-                mesh = mesh.map(function(dX) { return Math.exp(dX); });
+                mesh = mesh.map(dX => Math.exp(dX));
             } else {
-                mesh = mesh.filter(function(dX) { return dX > 0; });
+                mesh = mesh.filter(dX => dX > 0);
             }
 
             return mesh;

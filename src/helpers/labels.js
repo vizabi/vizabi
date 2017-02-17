@@ -16,7 +16,7 @@ var label = function(context) {
     };
 
     var labelDragger = d3.drag()
-      .on("start", function(d, i) {
+      .on("start", (d, i) => {
         d3.event.sourceEvent.stopPropagation();
         var KEY = _this.KEY;
       })
@@ -39,13 +39,11 @@ var label = function(context) {
         var resolvedX0 = _this.xScale(cache.labelX0);
         var resolvedY0 = _this.yScale(cache.labelY0);
 
-        var lineGroup = _this.entityLines.filter(function(f) {
-          return f[KEY] == d[KEY];
-        });
+        var lineGroup = _this.entityLines.filter(f => f[KEY] == d[KEY]);
 
         label._repositionLabels(d, i, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0, null, lineGroup);
       })
-      .on("end", function(d, i) {
+      .on("end", (d, i) => {
         var KEY = _this.KEY;
         if (_this.druging) {
           var cache = _this.cached[d[KEY]];
@@ -99,7 +97,7 @@ var label = function(context) {
             .attr("width", "0px")
             .attr("height", "0px");
 
-          cross.on("click", function() {
+          cross.on("click", () => {
             //default prevented is needed to distinguish click from drag
             if (d3.event.defaultPrevented) return;
             _this.model.marker.clearHighlighted();
@@ -112,7 +110,7 @@ var label = function(context) {
           _this.model.marker.highlightMarker(d);
           var KEY = _this.KEY || _this.model.entities.getDimension();
           // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
-          _this.entityLabels.sort(function(a, b) { return a[KEY] != d[KEY] ? -1 : 1; });
+          _this.entityLabels.sort((a, b) => a[KEY] != d[KEY] ? -1 : 1);
           d3.select(this).selectAll("." + _cssPrefix + "-label-x")
             .classed("vzb-transparent", false);
         })
@@ -129,7 +127,7 @@ var label = function(context) {
           var hidden = cross.classed("vzb-transparent");
           if (hidden) {
             // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
-            _this.entityLabels.sort(function(a, b) { return a[KEY] != d[KEY] ? -1 : 1; });
+            _this.entityLabels.sort((a, b) => a[KEY] != d[KEY] ? -1 : 1);
             _this.showCloseCross(null, false);
           }
           cross.classed("vzb-transparent", !hidden);
@@ -204,7 +202,7 @@ var label = function(context) {
                 .style("opacity", 1)
                 //i would like to set opactiy to null in the end of transition.
                 //but then fade in animation is not working for some reason
-                .on("interrupt", function() {
+                .on("interrupt", () => {
                     labelGroup
                         .style("opacity", 1);
                 });
@@ -216,7 +214,7 @@ var label = function(context) {
                 .style("opacity", 1)
                 //i would like to set opactiy to null in the end of transition.
                 //but then fade in animation is not working for some reason
-                .on("interrupt", function() {
+                .on("interrupt", () => {
                     lineGroup
                         .style("opacity", 1);
                 });
@@ -228,7 +226,7 @@ var label = function(context) {
                 .style("opacity", 1)
                 .transition().duration(duration).ease(d3.easeExp)
                 .style("opacity", 0)
-                .on("end", function() {
+                .on("end", () => {
                     labelGroup
                         .style("opacity", 1) //i would like to set it to null. but then fade in animation is not working for some reason
                         .classed("vzb-invisible", d.hidden);
@@ -237,7 +235,7 @@ var label = function(context) {
                 .style("opacity", 1)
                 .transition().duration(duration).ease(d3.easeExp)
                 .style("opacity", 0)
-                .on("end", function() {
+                .on("end", () => {
                     lineGroup
                         .style("opacity", 1) //i would like to set it to null. but then fade in animation is not working for some reason
                         .classed("vzb-invisible", d.hidden);
@@ -374,14 +372,14 @@ var Labels = Class.extend({
 
     this.model = this.context.model;
 
-    this.model.on("change:marker.select", function() {
+    this.model.on("change:marker.select", () => {
         if (!_this.context._readyOnce) return;
         //console.log("EVENT change:entities:select");
         _this.selectDataPoints();
       });
 
     if (this.model.marker.size_label)
-      this.model.on("change:marker.size_label.extent", function(evt, path) {
+      this.model.on("change:marker.size_label.extent", (evt, path) => {
         //console.log("EVENT change:marker:size:max");
         if (!_this.context._readyOnce) return;
         _this.updateLabelSizeLimits();
@@ -390,7 +388,7 @@ var Labels = Class.extend({
       });
 
     if (this.model.ui.chart.labels.hasOwnProperty("removeLabelBox"))
-      this.model.on("change:ui.chart.labels.removeLabelBox", function(evt, path) {
+      this.model.on("change:ui.chart.labels.removeLabelBox", (evt, path) => {
         //console.log("EVENT change:marker:size:max");
         if (!_this.context._readyOnce) return;
         _this.updateLabelsOnlyTextSize();
@@ -478,16 +476,12 @@ var Labels = Class.extend({
     var _cssPrefix = this.options.CSS_PREFIX;
 
     this.entityLabels = this.labelsContainer.selectAll("." + _cssPrefix + "-entity")
-      .data(_this.model.marker.select, function(d) {
-        return (d[KEY]);
-      });
+      .data(_this.model.marker.select, d => (d[KEY]));
     this.entityLines = this.linesContainer.selectAll("g.entity-line." + _cssPrefix + "-entity")
-      .data(_this.model.marker.select, function(d) {
-        return (d[KEY]);
-      });
+      .data(_this.model.marker.select, d => (d[KEY]));
 
     this.entityLabels.exit()
-      .each(function(d) {
+      .each(d => {
         if (_this.cached[d[KEY]] != null) {
             _this.cached[d[KEY]] = void 0;
         }
@@ -500,7 +494,7 @@ var Labels = Class.extend({
       .enter().insert("g", function(d) {
         return this.querySelector("." + _this.options.LINES_CONTAINER_SELECTOR_PREFIX + d[KEY]);
       })
-      .attr("class", function(d, index) {return _cssPrefix + "-entity entity-line line-" + d[KEY];})
+      .attr("class", (d, index) => _cssPrefix + "-entity entity-line line-" + d[KEY])
       .each(function(d, index) {
         _this.label.line(d3.select(this));
       })
@@ -508,7 +502,7 @@ var Labels = Class.extend({
 
     this.entityLabels = this.entityLabels
       .enter().append("g")
-      .attr("class", function(d, index) {return _cssPrefix + "-entity label-" + d[KEY];})
+      .attr("class", (d, index) => _cssPrefix + "-entity label-" + d[KEY])
       .each(function(d, index) {
         _this.cached[d[KEY]] = { _new: true };
         _this.label(d3.select(this));
@@ -520,7 +514,7 @@ var Labels = Class.extend({
     var KEY = this.KEY;
     //show the little cross on the selected label
     this.entityLabels
-        .filter(function(f) {return d ? f[KEY] == d[KEY] : true;})
+        .filter(f => d ? f[KEY] == d[KEY] : true)
         .select("." + this.options.CSS_PREFIX + "-label-x")
         .classed("vzb-transparent", !show);
   },
@@ -529,9 +523,7 @@ var Labels = Class.extend({
     var KEY = this.KEY;
     var labels = this.entityLabels;
     if (d) {
-      labels = labels.filter(function(f) {
-          return d ? f[KEY] == d[KEY] : true;
-        });
+      labels = labels.filter(f => d ? f[KEY] == d[KEY] : true);
     }
     labels.classed("vzb-highlighted", highlight);
   },
@@ -562,21 +554,15 @@ var Labels = Class.extend({
 
       if (cached.labelX_ == null || cached.labelY_ == null)
       {
-        var select = utils.find(_this.model.marker.select, function(f) {
-          return f[KEY] == d[KEY];
-        });
+        var select = utils.find(_this.model.marker.select, f => f[KEY] == d[KEY]);
         cached.labelOffset = select.labelOffset || [0, 0];
       }
 
       var brokenInputs = !cached.labelX0 && cached.labelX0 !== 0 || !cached.labelY0 && cached.labelY0 !== 0 || !cached.scaledS0 && cached.scaledS0 !== 0;
 
-      var lineGroup = _this.entityLines.filter(function(f) {
-        return f[KEY] == d[KEY];
-      });
+      var lineGroup = _this.entityLines.filter(f => f[KEY] == d[KEY]);
       // reposition label
-      _this.entityLabels.filter(function(f) {
-          return f[KEY] == d[KEY];
-        })
+      _this.entityLabels.filter(f => f[KEY] == d[KEY])
         .each(function(groupData) {
 
           var labelGroup = d3.select(this);
@@ -675,9 +661,7 @@ var Labels = Class.extend({
     this.entityLabels.each(function(d, index) {
       var cached = _this.cached[d[KEY]];
         _this._updateLabelSize(d, index, d3.select(this), _this.context.frame.size_label[d[KEY]]);
-        var lineGroup = _this.entityLines.filter(function(f) {
-          return f[KEY] == d[KEY];
-        });
+        var lineGroup = _this.entityLines.filter(f => f[KEY] == d[KEY]);
         _this.positionLabel(d, index, this, 0, null, lineGroup);
       });
   },
@@ -688,13 +672,9 @@ var Labels = Class.extend({
     var cached = this.cached[d[KEY]];
     if (cache) utils.extend(cached, cache);
 
-    var lineGroup = _this.entityLines.filter(function(f) {
-      return f[KEY] == d[KEY];
-    });
+    var lineGroup = _this.entityLines.filter(f => f[KEY] == d[KEY]);
 
-    this.entityLabels.filter(function(f) {
-        return f[KEY] == d[KEY];
-      })
+    this.entityLabels.filter(f => f[KEY] == d[KEY])
       .each(function(groupData) {
         _this.positionLabel(d, index, this, 0, null, lineGroup);
       });
@@ -706,9 +686,7 @@ var Labels = Class.extend({
     var cached = this.cached[d[KEY]];
     if (cache) utils.extend(cached, cache);
 
-    var labelGroup = _this.entityLabels.filter(function(f) {
-      return f[KEY] == d[KEY];
-    });
+    var labelGroup = _this.entityLabels.filter(f => f[KEY] == d[KEY]);
 
     _this._updateLabelSize(d, index, labelGroup, null);
 

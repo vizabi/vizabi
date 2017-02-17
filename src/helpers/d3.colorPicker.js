@@ -83,9 +83,7 @@ export default function colorPicker() {
      ]
      */
     var arc = d3.arc();
-    var pie = d3.pie().sort(null).value(function(d) {
-      return 1;
-    });
+    var pie = d3.pie().sort(null).value(d => 1);
     var svg = null;
     var container = null;
     var colorPointer = null;
@@ -154,7 +152,7 @@ export default function colorPicker() {
       if (!svg.empty()) {
         return;
       }
-      container.on("click", function() {
+      container.on("click", () => {
         colorPicker.show(false);
         d3.event.stopPropagation();
       });
@@ -171,7 +169,7 @@ export default function colorPicker() {
         .style("z-index", 9999)
         .attr("class", css.COLOR_PICKER + " vzb-dialog-shadow")
         .classed(css.INVISIBLE, !showColorPicker)
-        .on("mouseout", function(d) { _cellHover(colorOld); });
+        .on("mouseout", d => { _cellHover(colorOld); });
 
       var width = parseInt(svg.style("width"));
       var height = parseInt(svg.style("height"));
@@ -181,7 +179,7 @@ export default function colorPicker() {
         .attr("height", maxHeight)
         .attr("class", css.COLOR_BUTTON + " " + css.COLOR_BACKGR)
         .on("mouseover",
-          function(d) {
+          d => {
             _cellHover(colorOld);
           });
       var circles = svg.append("g")
@@ -250,16 +248,12 @@ export default function colorPicker() {
               segment.append("path")
                 .attr("class", css.COLOR_BUTTON)
                 .attr("d", arc)
-                .style("fill", function(d) {
-                  return d.data.display;
-                })
-                .style("stroke", function(d) {
-                  return d.data.display;
-                })
+                .style("fill", d => d.data.display)
+                .style("stroke", d => d.data.display)
                 .on("mouseover", function(d) {
                   _cellHover(d.data.meaning, this);
                 })
-                .on("mouseout", function(d) {
+                .on("mouseout", d => {
                   _cellUnHover();
                 });
             });
@@ -281,7 +275,7 @@ export default function colorPicker() {
         .attr("class", css.COLOR_POINTER + " " + css.INVISIBLE);
 
       svg.selectAll("." + css.COLOR_BUTTON)
-        .on("click", function() {
+        .on("click", () => {
           d3.event.stopPropagation();
           _this.show(false);
         });

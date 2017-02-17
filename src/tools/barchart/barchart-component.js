@@ -36,7 +36,7 @@ var BarComponent = Component.extend({
 
     this.model_binds = {
       "change:time.value": function(evt) {
-        _this.model.marker.getFrame(_this.model.time.value, function(values) {
+        _this.model.marker.getFrame(_this.model.time.value, values => {
         _this.values = values;
         _this.updateEntities();
         });
@@ -48,7 +48,7 @@ var BarComponent = Component.extend({
 
         _this.ready();
       },
-      "change:marker.color.palette": utils.debounce(function(evt) {
+      "change:marker.color.palette": utils.debounce(evt => {
         if (!_this._readyOnce) return;
         _this.updateEntities();
       }, 200)
@@ -80,7 +80,7 @@ var BarComponent = Component.extend({
     this.year = this.element.select(".vzb-bc-year");
 
     var _this = this;
-    this.on("resize", function() {
+    this.on("resize", () => {
         _this.updateEntities();
     });
   },
@@ -90,7 +90,7 @@ var BarComponent = Component.extend({
    */
   ready() {
     var _this = this;
-    this.model.marker.getFrame(this.model.time.value, function(values) {
+    this.model.marker.getFrame(this.model.time.value, values => {
       _this.values = values;
       _this.updateIndicators();
       _this.resize();
@@ -118,7 +118,7 @@ var BarComponent = Component.extend({
       .attr("x", "-9px")
       .attr("dx", "-0.72em")
       .text(titleStringY)
-      .on("click", function() {
+      .on("click", () => {
         //TODO: Optimise updateView
         _this.parent
           .findChildByName("gapminder-treemenu")
@@ -135,7 +135,7 @@ var BarComponent = Component.extend({
       .attr("y", "-3px")
       .attr("dx", "-0.72em")
       .text(titleStringX)
-      .on("click", function() {
+      .on("click", () => {
         //TODO: Optimise updateView
         _this.parent
           .findChildByName("gapminder-treemenu")
@@ -183,9 +183,9 @@ var BarComponent = Component.extend({
     //enter selection -- init circles
     this.entityBars.enter().append("rect")
       .attr("class", "vzb-bc-bar")
-      .on("mousemove", function(d, i) {})
-      .on("mouseout", function(d, i) {})
-      .on("click", function(d, i) {});
+      .on("mousemove", (d, i) => {})
+      .on("mouseout", (d, i) => {})
+      .on("click", (d, i) => {});
 
     //positioning and sizes of the bars
 
@@ -194,19 +194,11 @@ var BarComponent = Component.extend({
 
     this.bars.selectAll(".vzb-bc-bar")
       .attr("width", barWidth)
-      .attr("fill", function(d) {
-        return _this.cScale(_this.values.color[d[entityDim]]);
-      })
-      .attr("x", function(d) {
-        return _this.xScale(_this.values.axis_x[d[entityDim]]);
-      })
+      .attr("fill", d => _this.cScale(_this.values.color[d[entityDim]]))
+      .attr("x", d => _this.xScale(_this.values.axis_x[d[entityDim]]))
       .transition().duration(duration).ease(d3.easeLinear)
-      .attr("y", function(d) {
-        return _this.yScale(_this.values.axis_y[d[entityDim]]);
-      })
-      .attr("height", function(d) {
-        return _this.height - _this.yScale(_this.values.axis_y[d[entityDim]]);
-      });
+      .attr("y", d => _this.yScale(_this.values.axis_y[d[entityDim]]))
+      .attr("height", d => _this.height - _this.yScale(_this.values.axis_y[d[entityDim]]));
       this.year.text(this.model.time.formatDate(this.model.time.value));
   },
 

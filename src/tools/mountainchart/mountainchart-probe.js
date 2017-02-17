@@ -25,7 +25,7 @@ var MCProbe = Class.extend({
 
             var _computeAreas = function(d) {
                 sumValue += _this.values.axis_y[d.KEY()];
-                _this.cached[d.KEY()].forEach(function(d) {
+                _this.cached[d.KEY()].forEach(d => {
                     totalArea += d.y;
                     if (_this._math.rescale(d.x) < options.level) leftArea += d.y;
                 });

@@ -40,14 +40,14 @@ Vzb.clearInstances = function(id) {
 const readers = requireAll(require.context("./readers", true, /\.js$/));
 
 //register available readers
-utils.forEach(readers, function(reader, name) {
+utils.forEach(readers, (reader, name) => {
   Reader.register(name, reader);
 });
 
 const components = requireAll(require.context("./components", true, /\.js$/), 1);
 
 //register available components
-utils.forEach(components, function(component, name) {
+utils.forEach(components, (component, name) => {
   Component.register(name, component);
 });
 

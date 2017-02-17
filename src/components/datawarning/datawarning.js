@@ -42,7 +42,7 @@ var DataWarning = Component.extend({
 
     this.element.append("div")
       .attr("class", "vzb-data-warning-background")
-      .on("click", function() {
+      .on("click", () => {
         _this.toggle(true);
       });
 
@@ -51,7 +51,7 @@ var DataWarning = Component.extend({
 
     this.container.append("div")
       .html(iconClose)
-      .on("click", function() {
+      .on("click", () => {
         _this.toggle();
       })
       .select("svg")
@@ -93,7 +93,7 @@ var DataWarning = Component.extend({
     this.element.classed("vzb-hidden", hidden);
 
     var _this = this;
-    this.parent.components.forEach(function(c) {
+    this.parent.components.forEach(c => {
       c.element.classed("vzb-blur", c != _this && !hidden);
     });
   }

@@ -24,9 +24,7 @@ var DataConnected = Model.extend({
     if (changedChildren.length == 0 || this.dataConnectedChildren.length == 0)
       return;
 
-    var dataConnectedChangedChildren = changedChildren.filter(function(child) {
-      return _this.dataConnectedChildren.indexOf(child) !== -1;
-    });
+    var dataConnectedChangedChildren = changedChildren.filter(child => _this.dataConnectedChildren.indexOf(child) !== -1);
 
     if (dataConnectedChangedChildren.length > 0) {
       this.trigger("dataConnectedChange");

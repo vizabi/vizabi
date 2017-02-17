@@ -196,7 +196,7 @@ const BarRankChart = Component.extend({
         .setPos(coord.x, coord.y);
     });
 
-    this.infoEl.on("mouseout", function() {
+    this.infoEl.on("mouseout", () => {
       _this.parent.findChildByName("gapminder-datanotes").hide();
     });
 

@@ -96,7 +96,7 @@ var UI = Model.extend({
     }
 
     // choose profile depending on size
-    utils.forEach(this.screen_profiles, function(range, size) {
+    utils.forEach(this.screen_profiles, (range, size) => {
       //remove class
       utils.removeClass(_this._container, class_prefix + size);
       //find best fit

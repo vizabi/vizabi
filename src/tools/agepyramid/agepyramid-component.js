@@ -63,7 +63,7 @@ var AgePyramid = Component.extend({
         }
         if (!_this.snapped) {
           if (_this.timeSteps.filter(t => (t - _this.model.time.value) == 0).length) {
-            _this.model.marker.getFrame(_this.model.time.value, function(frame) {
+            _this.model.marker.getFrame(_this.model.time.value, frame => {
               _this.frame = frame;
               _this.frameAxisX = frame.axis_x;
               _this._updateEntities();
@@ -74,8 +74,8 @@ var AgePyramid = Component.extend({
             var prevFrameTime = _this.timeSteps[nextIndex - 1];
             var nextFrameTime = _this.timeSteps[nextIndex];
             var fraction = (_this.model.time.value - prevFrameTime) / (nextFrameTime - prevFrameTime);
-            _this.model.marker.getFrame(nextFrameTime, function(nValues) {
-              _this.model.marker.getFrame(prevFrameTime, function(pValues) {
+            _this.model.marker.getFrame(nextFrameTime, nValues => {
+              _this.model.marker.getFrame(prevFrameTime, pValues => {
                 _this.frameAxisX = _this.interpolateDiagonal(pValues.axis_x, nValues.axis_x, fraction);
                 _this._updateEntities();
                 _this.updateBarsOpacity();
@@ -216,7 +216,7 @@ var AgePyramid = Component.extend({
     this.titleRight = this.element.select(".vzb-bc-title-right");
     this.year = this.element.select(".vzb-bc-year");
 
-    this.on("resize", function() {
+    this.on("resize", () => {
       _this._updateEntities();
     });
 
@@ -280,7 +280,7 @@ var AgePyramid = Component.extend({
     this.updateUIStrings();
     this._updateIndicators();
 
-    this.model.marker.getFrame(_this.model.time.value, function(frame) {
+    this.model.marker.getFrame(_this.model.time.value, frame => {
       _this.frame = frame;
       _this.frameAxisX = frame.axis_x;
 
@@ -300,9 +300,9 @@ var AgePyramid = Component.extend({
     var val1, val2, shiftedAge;
     var groupBy = this.groupBy;
     if (this.stackSkip) {
-      utils.forEach(_this.sideKeys, function(side) {
+      utils.forEach(_this.sideKeys, side => {
         data = dataBetweenFrames[side] = {};
-        utils.forEach(_this.ageKeys, function(age) {
+        utils.forEach(_this.ageKeys, age => {
           shiftedAge = +age + groupBy;
           val1 = pValues[side][age];
           val2 = nValues[side][shiftedAge] || 0;
@@ -311,9 +311,9 @@ var AgePyramid = Component.extend({
         data[0] = nValues[side][0] || 0;
       });
     } else if (this.sideSkip) {
-      utils.forEach(_this.stackKeys, function(stack) {
+      utils.forEach(_this.stackKeys, stack => {
         data = dataBetweenFrames[stack] = {};
-        utils.forEach(_this.ageKeys, function(age) {
+        utils.forEach(_this.ageKeys, age => {
           shiftedAge = +age + groupBy;
           val1 = pValues[stack][age];
           val2 = nValues[stack][shiftedAge] || 0;
@@ -322,11 +322,11 @@ var AgePyramid = Component.extend({
         data[0] = nValues[stack][0] || 0;
       });
     } else {
-      utils.forEach(_this.stackKeys, function(stack) {
+      utils.forEach(_this.stackKeys, stack => {
         dataBetweenFrames[stack] = {};
-        utils.forEach(_this.sideKeys, function(side) {
+        utils.forEach(_this.sideKeys, side => {
           data = dataBetweenFrames[stack][side] = {};
-          utils.forEach(_this.ageKeys, function(age) {
+          utils.forEach(_this.ageKeys, age => {
             shiftedAge = +age + groupBy;
             val1 = pValues[stack][side][age];
             val2 = nValues[stack][side][shiftedAge] || 0;
@@ -349,7 +349,7 @@ var AgePyramid = Component.extend({
     xTitle.enter().append("text");
     xTitle
       .text(titleStringX)
-      .on("click", function() {
+      .on("click", () => {
         _this.parent
           .findChildByName("gapminder-treemenu")
           .markerID("axis_x")
@@ -362,7 +362,7 @@ var AgePyramid = Component.extend({
     utils.setIcon(this.xInfoEl, iconQuestion)
       .select("svg").attr("width", "0px").attr("height", "0px");
 
-    this.xInfoEl.on("click", function() {
+    this.xInfoEl.on("click", () => {
       _this.parent.findChildByName("gapminder-datanotes").pin();
     });
     this.xInfoEl.on("mouseover", function() {
@@ -373,7 +373,7 @@ var AgePyramid = Component.extend({
       var chartRect = _this.element.node().getBoundingClientRect();
       _this.parent.findChildByName("gapminder-datanotes").setHook("axis_x").show().setPos(coord.x + chartRect.left - toolRect.left, coord.y);
     });
-    this.xInfoEl.on("mouseout", function() {
+    this.xInfoEl.on("mouseout", () => {
        if (_this.model.time.dragging) return;
       _this.parent.findChildByName("gapminder-datanotes").hide();
     });
@@ -408,12 +408,10 @@ var AgePyramid = Component.extend({
 
     var ages = this.model.marker.getKeys(ageDim);
     var ageKeys = [];
-    ageKeys = ages.map(function(m) {
-        return m[ageDim];
-      });
+    ageKeys = ages.map(m => m[ageDim]);
     this.ageKeys = ageKeys;
 
-    this.shiftedAgeKeys = this.timeSteps.map(function(m, i) {return -i * groupBy;}).slice(1).reverse().concat(ageKeys);
+    this.shiftedAgeKeys = this.timeSteps.map((m, i) => -i * groupBy).slice(1).reverse().concat(ageKeys);
 
     var sideItems = this.model.marker.label_side.getItems();
     //var sideKeys = Object.keys(sideItems);
@@ -422,9 +420,7 @@ var AgePyramid = Component.extend({
       var sideFiltered = !!this.model.marker.side.getEntity().show[sideDim];
       var sides = this.model.marker.getKeys(sideDim)
         .filter(f => !sideFiltered || this.model.marker.side.getEntity().isShown(f));
-      sideKeys = sides.map(function(m) {
-          return m[sideDim];
-        });
+      sideKeys = sides.map(m => m[sideDim]);
 
       if (sideKeys.length > 2) sideKeys.length = 2;
       if (sideKeys.length > 1) {
@@ -437,18 +433,18 @@ var AgePyramid = Component.extend({
 
     var stacks = this.model.marker.getKeys(stackDim);
     var stackKeys = [];
-    var stackKeys = utils.without(stacks.map(function(m) {
+    var stackKeys = utils.without(stacks.map(m => {
       if (m[stackDim] == _this.totalFieldName) _this.dataWithTotal = true;
       return m[stackDim];
     }), this.totalFieldName);
 
-    var sortedStackKeys = utils.keys(this.model.marker.color.getPalette()).reduce(function(arr, val) {
+    var sortedStackKeys = utils.keys(this.model.marker.color.getPalette()).reduce((arr, val) => {
       if (stackKeys.indexOf(val) != -1) arr.push(val);
       return arr;
     }, []);
 
     if (sortedStackKeys.length != stackKeys.length) {
-      sortedStackKeys = stackKeys.reduce(function(arr, val) {
+      sortedStackKeys = stackKeys.reduce((arr, val) => {
         if (arr.indexOf(val) == -1) arr.push(val);
         return arr;
       }, sortedStackKeys);
@@ -495,13 +491,13 @@ var AgePyramid = Component.extend({
     });
 
     if (_this.sideSkip) {
-      utils.forEach(timeKeys, function(time) {
+      utils.forEach(timeKeys, time => {
         totals[time] = {};
         var ageSum = 0;
         var sideMaxLimits = [];
-        utils.forEach(_this.ageKeys, function(age) {
+        utils.forEach(_this.ageKeys, age => {
           var stackSum = 0;
-          utils.forEach(_this.stackKeys, function(stack) {
+          utils.forEach(_this.stackKeys, stack => {
             if (limits[stack] && limits[stack][age] && limits[stack][age][time]) {
               stackSum += limits[stack][age][time].max;
               ageSum += stackSum;
@@ -515,12 +511,12 @@ var AgePyramid = Component.extend({
         maxLimits[sideKeysNF[0]].push(maxSideLimit);
       });
     } else if (_this.stackSkip) {
-      utils.forEach(timeKeys, function(time) {
+      utils.forEach(timeKeys, time => {
         totals[time] = {};
-        utils.forEach(sideKeysNF, function(side) {
+        utils.forEach(sideKeysNF, side => {
           var ageSum = 0;
           var sideMaxLimits = [];
-          utils.forEach(_this.ageKeys, function(age) {
+          utils.forEach(_this.ageKeys, age => {
             var stackSum = 0;
             if (limits[side] && limits[side][age] && limits[side][age][time]) {
               stackSum += limits[side][age][time].max;
@@ -535,14 +531,14 @@ var AgePyramid = Component.extend({
         });
       });
     } else {
-      utils.forEach(timeKeys, function(time) {
+      utils.forEach(timeKeys, time => {
         totals[time] = {};
-        utils.forEach(sideKeysNF, function(side) {
+        utils.forEach(sideKeysNF, side => {
           var ageSum = 0;
           var sideMaxLimits = [];
-          utils.forEach(_this.ageKeys, function(age) {
+          utils.forEach(_this.ageKeys, age => {
             var stackSum = 0;
-            utils.forEach(_this.stackKeys, function(stack) {
+            utils.forEach(_this.stackKeys, stack => {
               if (limits[stack][side] && limits[stack][side][age] && limits[stack][side][age][time]) {
                 stackSum += limits[stack][side][age][time].max;
                 ageSum += stackSum;
@@ -622,7 +618,7 @@ var AgePyramid = Component.extend({
 
     var shiftedAgeDim = this.SHIFTEDAGEDIM;
 
-    var markers = this.markers.map(function(data) {
+    var markers = this.markers.map(data => {
       var o = {};
       o[ageDim] = o[shiftedAgeDim] = +data[ageDim];
       o[ageDim] -= nextStep * groupBy;
@@ -640,7 +636,7 @@ var AgePyramid = Component.extend({
     if (nextStep) ageBars.push(outAge);
 
     this.entityBars = this.bars.selectAll(".vzb-bc-bar")
-      .data(ageBars, function(d) {return d[ageDim];});
+      .data(ageBars, d => d[ageDim]);
     //exit selection
     this.entityBars.exit().remove();
 
@@ -650,12 +646,8 @@ var AgePyramid = Component.extend({
 
     //enter selection -- init bars
     this.entityBars = this.entityBars.enter().append("g")
-      .attr("class", function(d) {
-        return "vzb-bc-bar " + "vzb-bc-bar-" + d[ageDim];
-      })
-      .attr("transform", function(d, i) {
-        return "translate(0," + (firstBarOffsetY - (d[shiftedAgeDim] - domain[0] - groupBy) * oneBarHeight) + ")";
-      })
+      .attr("class", d => "vzb-bc-bar " + "vzb-bc-bar-" + d[ageDim])
+      .attr("transform", (d, i) => "translate(0," + (firstBarOffsetY - (d[shiftedAgeDim] - domain[0] - groupBy) * oneBarHeight) + ")")
       .merge(this.entityBars);
 
     // this.entityBars.attr("class", function(d) {
@@ -663,39 +655,31 @@ var AgePyramid = Component.extend({
     //   })
 
 
-    this.sideBars = this.entityBars.selectAll(".vzb-bc-side").data(function(d) {
-      return _this.sideKeys.map(function(m) {
+    this.sideBars = this.entityBars.selectAll(".vzb-bc-side").data(d => _this.sideKeys.map(m => {
         var r = {};
         r[ageDim] = d[ageDim];
         r[shiftedAgeDim] = d[shiftedAgeDim];
         r[prefixedSideDim] = m;
         r[sideDim] = m;
         return r;
-      });
-    }, function(d) {return d[prefixedSideDim];});
+      }), d => d[prefixedSideDim]);
 
     this.sideBars.exit().remove();
     this.sideBars = this.sideBars.enter().append("g")
-      .attr("class", function(d, i) {
-        return "vzb-bc-side " + "vzb-bc-side-" + (!i != !_this.twoSided ? "right" : "left");
-      })
+      .attr("class", (d, i) => "vzb-bc-side " + "vzb-bc-side-" + (!i != !_this.twoSided ? "right" : "left"))
       .merge(this.sideBars);
 
-    this.sideBars.attr("transform", function(d, i) {
-      return i ? ("scale(-1,1) translate(" + _this.activeProfile.centerWidth + ",0)") : "";
-    });
+    this.sideBars.attr("transform", (d, i) => i ? ("scale(-1,1) translate(" + _this.activeProfile.centerWidth + ",0)") : "");
 
     if (reorder) {
-      this.sideBars.attr("transform", function(d, i) {
-        return i ? ("scale(-1,1) translate(" + _this.activeProfile.centerWidth + ",0)") : "";
-      });
+      this.sideBars.attr("transform", (d, i) => i ? ("scale(-1,1) translate(" + _this.activeProfile.centerWidth + ",0)") : "");
     }
 
     var _attributeUpdaters = this._attributeUpdaters;
 
-    this.stackBars = this.sideBars.selectAll(".vzb-bc-stack").data(function(d, i) {
+    this.stackBars = this.sideBars.selectAll(".vzb-bc-stack").data((d, i) => {
       var stacks = _this.stacked ? _this.stackKeys : [_this.totalFieldName];
-      return stacks.map(function(m) {
+      return stacks.map(m => {
         var r = {};
         r[ageDim] = d[ageDim];
         r[shiftedAgeDim] = d[shiftedAgeDim];
@@ -705,18 +689,14 @@ var AgePyramid = Component.extend({
         r[prefixedStackDim] = m;
         return r;
       });
-    }, function(d) {return d[prefixedStackDim];});
+    }, d => d[prefixedStackDim]);
 
     this.stackBars.exit().remove();
     this.stackBars = this.stackBars.enter().append("rect")
-      .attr("class", function(d, i) {
-        return "vzb-bc-stack " + "vzb-bc-stack-" + i + (_this.highlighted ? " vzb-dimmed" : "");
-      })
+      .attr("class", (d, i) => "vzb-bc-stack " + "vzb-bc-stack-" + i + (_this.highlighted ? " vzb-dimmed" : ""))
       .attr("y", 0)
       .attr("height", barHeight)
-      .attr("fill", function(d) {
-        return _this.cScale(d[prefixedStackDim]);
-      })
+      .attr("fill", d => _this.cScale(d[prefixedStackDim]))
       .attr("width", _attributeUpdaters._newWidth)
       .attr("x", _attributeUpdaters._newX)
       .on("mouseover", _this.interaction.mouseover)
@@ -776,18 +756,14 @@ var AgePyramid = Component.extend({
 
       this.entityBars
         .transition(transition)
-        .attr("transform", function(d, i) {
-          return "translate(0," + (firstBarOffsetY - (d[shiftedAgeDim] - domain[0] - stepShift) * oneBarHeight) + ")";
-        });
+        .attr("transform", (d, i) => "translate(0," + (firstBarOffsetY - (d[shiftedAgeDim] - domain[0] - stepShift) * oneBarHeight) + ")");
       this.stackBars
         .transition(transition)
         .attr("width", _attributeUpdaters._newWidth)
         .attr("x", _attributeUpdaters._newX);
     } else {
       this.entityBars.interrupt()
-        .attr("transform", function(d, i) {
-          return "translate(0," + (firstBarOffsetY - (d[shiftedAgeDim] - domain[0] - stepShift) * oneBarHeight) + ")";
-        });
+        .attr("transform", (d, i) => "translate(0," + (firstBarOffsetY - (d[shiftedAgeDim] - domain[0] - stepShift) * oneBarHeight) + ")");
       this.stackBars.interrupt()
         .attr("width", _attributeUpdaters._newWidth)
         .attr("x", _attributeUpdaters._newX);
@@ -800,13 +776,11 @@ var AgePyramid = Component.extend({
 
     this.entityLabels.enter().append("g")
       .attr("class", "vzb-bc-label")
-      .attr("id", function(d) {
-        return "vzb-bc-label-" + d[shiftedAgeDim] + "-" + _this._id;
-      })
+      .attr("id", d => "vzb-bc-label-" + d[shiftedAgeDim] + "-" + _this._id)
       .append("text")
       .attr("class", "vzb-bc-age")
       .merge(this.entityLabels)
-      .each(function(d, i) {
+      .each((d, i) => {
         var yearOlds = _this.translator("agepyramid/yearOlds");
 
         var age = parseInt(d[ageDim], 10);
@@ -817,9 +791,7 @@ var AgePyramid = Component.extend({
 
         d["text"] = age + yearOlds;
       })
-      .attr("y", function(d, i) {
-        return firstBarOffsetY - (d[shiftedAgeDim] - domain[0]) * oneBarHeight - 10;
-      });
+      .attr("y", (d, i) => firstBarOffsetY - (d[shiftedAgeDim] - domain[0]) * oneBarHeight - 10);
       // .style("fill", function(d) {
       //   var color = _this.cScale(values.color[d[ageDim]]);
       //   return d3.rgb(color).darker(2);
@@ -885,7 +857,7 @@ var AgePyramid = Component.extend({
     var left = _this.sideKeys.indexOf(d[sideDim]);
     var label = _this.labels.select("#vzb-bc-label-" + d[shiftedAgeDim] + "-" + _this._id);
     label.selectAll(".vzb-bc-age")
-      .text(function(textData) {
+      .text(textData => {
         //var total = _this.ui.chart.inpercent ? _this.totalValues[d[sideDim]] : 1;
         var text = _this.stackKeys.length > 1 ? _this.stackItems[d[stackDim]] : textData.text;
         text = _this.twoSided ? text : textData.text + " " + _this.stackItems[d[stackDim]];
@@ -995,9 +967,7 @@ var AgePyramid = Component.extend({
     if (this.stackBars) this.stackBars.attr("height", barHeight);
 
     if (this.sideBars) this.sideBars
-      .attr("transform", function(d, i) {
-        return i ? ("scale(-1,1) translate(" + _this.activeProfile.centerWidth + ",0)") : "";
-      });
+      .attr("transform", (d, i) => i ? ("scale(-1,1) translate(" + _this.activeProfile.centerWidth + ",0)") : "");
 
 
     //update scales to the new range
@@ -1128,7 +1098,7 @@ var AgePyramid = Component.extend({
 
     this.stackBars
       //.transition().duration(duration)
-      .style("opacity", function(d) {
+      .style("opacity", d => {
 
         if (_this.someHighlighted) {
           //highlight or non-highlight
@@ -1150,10 +1120,8 @@ var AgePyramid = Component.extend({
 
     // when pointer events need update...
     if (nonSelectedOpacityZero != this.nonSelectedOpacityZero) {
-      this.stackBars.style("pointer-events", function(d) {
-        return (!_this.someSelected || !nonSelectedOpacityZero || _this.model.marker.isSelected(d)) ?
-          "visible" : "none";
-      });
+      this.stackBars.style("pointer-events", d => (!_this.someSelected || !nonSelectedOpacityZero || _this.model.marker.isSelected(d)) ?
+          "visible" : "none");
     }
 
     this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;

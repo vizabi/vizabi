@@ -57,7 +57,7 @@ var DataNotes = Component.extend({
 
     container.append("div")
       .html(iconClose)
-      .on("click", function() {
+      .on("click", () => {
         d3.event.stopPropagation();
         _this.close();
       })

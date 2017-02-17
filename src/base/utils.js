@@ -335,8 +335,8 @@ export var extend = function(dest) {
   //objects to overwrite dest are next arguments
   var objs = Array.prototype.slice.call(arguments, 1);
   //loop through each obj and each argument, left to right
-  forEach(objs, function(obj, i) {
-    forEach(obj, function(value, k) {
+  forEach(objs, (obj, i) => {
+    forEach(obj, (value, k) => {
       if (obj.hasOwnProperty(k)) {
         dest[k] = value;
       }
@@ -370,7 +370,7 @@ function cloneSpecificValue(val) {
  */
 function deepCloneArray(arr) {
   var clone = [];
-  forEach(arr, function(item, index) {
+  forEach(arr, (item, index) => {
     if (typeof item === "object" && item !== null) {
       if (isArray(item)) {
         clone[index] = deepCloneArray(item);
@@ -411,13 +411,13 @@ export var deepExtend = function(/*obj_1, [obj_2], [obj_N]*/) {
 
   var val, src, clone;
 
-  forEach(args, function(obj) {
+  forEach(args, obj => {
     // skip argument if it is array or isn't object
     if (typeof obj !== "object" || isArray(obj)) {
       return;
     }
 
-    forEach(Object.keys(obj), function(key) {
+    forEach(Object.keys(obj), key => {
       src = target[key]; // source value
       val = obj[key]; // new value
 
@@ -472,8 +472,8 @@ export var merge = function(dest) {
   var objs = Array.prototype.slice.call(arguments, 1);
 
   // loop through each obj and each argument, left to right
-  forEach(objs, function(obj, i) {
-    forEach(obj, function(value, k) {
+  forEach(objs, (obj, i) => {
+    forEach(obj, (value, k) => {
       if (obj.hasOwnProperty(k)) {
         if (dest.hasOwnProperty(k)) {
           if (!isArray(dest[k])) {
@@ -501,7 +501,7 @@ export var clone = function(src, arr, exclude) {
     return src.slice(0);
   }
   var clone = {};
-  forEach(src, function(value, k) {
+  forEach(src, (value, k) => {
     if ((arr && arr.indexOf(k) === -1) || (exclude && exclude.indexOf(k) !== -1)) {
       return;
     }
@@ -521,7 +521,7 @@ export var deepClone = function(src) {
   var clone = {};
   if (isArray(src)) clone = [];
 
-  forEach(src, function(value, k) {
+  forEach(src, (value, k) => {
     if (isObject(value) || isArray(value)) {
       clone[k] = deepClone(value);
     } else {
@@ -604,7 +604,7 @@ export var uniqueLast = function(arr, func) {
  */
 export var find = function(arr, func) {
   var found;
-  forEach(arr, function(i) {
+  forEach(arr, i => {
     if (func(i)) {
       found = i;
       return false; //break
@@ -754,7 +754,7 @@ export var preventAncestorScrolling = function(element) {
         element.transition().delay(0).duration(0).tween("scrolltween", scrollTopTween(scrollHeight));
         //freeze scrolling on 2 seconds on bottom position
         preventScrolling = true;
-        setTimeout(function() {
+        setTimeout(() => {
           preventScrolling = false;
         }, 2000);
       } else if (scrollTop == 0) { //unfreeze when direction changed
@@ -766,7 +766,7 @@ export var preventAncestorScrolling = function(element) {
         //freeze scrolling on 2 seconds on top position
         element.transition().delay(0).duration(0).tween("scrolltween", scrollTopTween(0));
         preventScrolling = true;
-        setTimeout(function() {
+        setTimeout(() => {
           preventScrolling = false;
         }, 2000);
       } else if (scrollHeight == height + scrollTop) { //unfreeze when direction changed
@@ -815,7 +815,7 @@ export var mapRows = function(original, formatters) {
       return newVal;
   };
 
-  original = original.map(function(row) {
+  original = original.map(row => {
     var columns = Object.keys(row);
 
     for (var i = 0; i < columns.length; i++) {
@@ -862,7 +862,7 @@ export var timeStamp = function(message) {
  */
 export var warn = function(message) {
   message = Array.prototype.slice.call(arguments)
-    .map(function(m) {return m instanceof Object ? JSON.stringify(m, null, 4) : m; })
+    .map(m => m instanceof Object ? JSON.stringify(m, null, 4) : m)
     .join(" ");
   if (console && typeof console.warn === "function") {
 
@@ -1014,7 +1014,7 @@ export var throttle = function(func, ms) {
 
       func.apply(this, arguments);
 
-      setTimeout(function() {
+      setTimeout(() => {
         __recallLast();
       }, ms);
 
@@ -1063,9 +1063,7 @@ export var values = function(obj) {
  * @param {Array} arr
  */
 export var arrayMin = function(arr) {
-  return arr.reduce(function(p, v) {
-    return (p < v ? p : v);
-  });
+  return arr.reduce((p, v) => (p < v ? p : v));
 };
 
 /*
@@ -1073,9 +1071,7 @@ export var arrayMin = function(arr) {
  * @param {Array} arr
  */
 export var arrayMax = function(arr) {
-  return arr.reduce(function(p, v) {
-    return (p > v ? p : v);
-  });
+  return arr.reduce((p, v) => (p > v ? p : v));
 };
 
 /*
@@ -1091,9 +1087,7 @@ export var arrayMean = function(arr) {
  * @param {Array} arr
  */
 export var arraySum = function(arr) {
-  return arr.reduce(function(a, b) {
-    return a + b;
-  });
+  return arr.reduce((a, b) => a + b);
 };
 
 /*
@@ -1101,9 +1095,7 @@ export var arraySum = function(arr) {
  * @param {Array} arr
  */
 export var arrayMedian = function(arr) {
-  arr = arr.sort(function(a, b) {
-    return a - b;
-  });
+  arr = arr.sort((a, b) => a - b);
   var middle = Math.floor((arr.length - 1) / 2);
   if (arr.length % 2) {
     return arr[middle];
@@ -1129,7 +1121,7 @@ export var arrayLast = function(arr) {
  */
 export var diffObject = function(obj2, obj1) {
   var diff = {};
-  forEach(obj2, function(value, key) {
+  forEach(obj2, (value, key) => {
     if (!obj1.hasOwnProperty(key)) {
       diff[key] = value;
     } else if (value !== obj1[key]) {
@@ -1246,7 +1238,7 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
     if (time < items[0][dimTime] || time > items[items.length - 1][dimTime]) return null;
   }
 
-  if (!next && next !== 0) next = d3.bisectLeft(items.map(function(m) {return m[dimTime];}), time);
+  if (!next && next !== 0) next = d3.bisectLeft(items.map(m => m[dimTime]), time);
 
   if (next === 0) return items[0][which];
 
@@ -1318,7 +1310,7 @@ export var ajax = function(options) {
  */
 export var get = function(url, pars, success, error, json) {
   pars = pars || [];
-  forEach(pars, function(value, key) {
+  forEach(pars, (value, key) => {
     pars.push(key + "=" + value);
   });
   url = pars.length ? url + "?" + pars.join("&") : url;
@@ -1400,15 +1392,11 @@ export var pruneTree = function(tree, filterCallback) {
   var filteredTree = {};
   var filteredChildrens = [];
   if (tree.hasOwnProperty("children")) {
-    filteredChildrens = tree.children.map(function(childrenTree) {
-      return pruneTree(childrenTree, filterCallback);
-    }).filter(function(childrenTree) {
-      return Object.keys(childrenTree).length !== 0;
-    });
+    filteredChildrens = tree.children.map(childrenTree => pruneTree(childrenTree, filterCallback)).filter(childrenTree => Object.keys(childrenTree).length !== 0);
   }
   if (filteredChildrens.length != 0 || filterCallback(tree)) {
     //copy all the properties to the new tree
-    forEach(tree, function(value, key) {filteredTree[key] = value;});
+    forEach(tree, (value, key) => {filteredTree[key] = value;});
   }
   if (filteredChildrens.length != 0) {
     filteredTree["children"] = filteredChildrens;

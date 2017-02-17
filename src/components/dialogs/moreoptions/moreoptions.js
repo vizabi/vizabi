@@ -39,7 +39,7 @@ var MoreOptions = Dialog.extend({
     var _this = this;
     this.accordionEl = this.contentEl.select(".vzb-accordion");
 
-    this.on("dragend", function() {
+    this.on("dragend", () => {
       _this._setMaxHeight();
     });
 
@@ -58,7 +58,7 @@ var MoreOptions = Dialog.extend({
     if (this.accordionEl) {
       var titleEl = this.accordionEl.selectAll(".vzb-accordion-section")
         .select(".vzb-dialog-title>span:first-child");
-      titleEl.on("click", function(d) {
+      titleEl.on("click", d => {
         var element = _this.components[d.component].element;
         var sectionEl = _this.components[d.component].placeholderEl;
         var activeEl = _this.accordionEl.select(".vzb-accordion-active");
@@ -105,21 +105,19 @@ var MoreOptions = Dialog.extend({
 
     this.accordionEl.selectAll("div").data(details_dlgs)
       .enter().append("div")
-      .attr("class", function(d) {
+      .attr("class", d => {
         var cls = "vzb-dialogs-dialog vzb-moreoptions vzb-accordion-section";
         return cls;
       })
-      .attr("data-dlg", function(d) {
-        return d.id;
-      });
+      .attr("data-dlg", d => d.id);
 
     this.loadSubComponents();
 
     var _this = this;
     //render each subcomponent
-    utils.forEach(this.components, function(subcomp) {
+    utils.forEach(this.components, subcomp => {
       subcomp.render();
-      _this.on("resize", function() {
+      _this.on("resize", () => {
         subcomp.trigger("resize");
       });
     });

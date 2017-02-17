@@ -43,9 +43,7 @@ var DonutComponent = Component.extend("donut", {
         this.arc = d3.svg.arc();
         this.pie = d3.layout.pie()
           .sort(null)
-          .value(function(d) {
-            return d.pop;
-          });
+          .value(d => d.pop);
       },
 
       /**
@@ -61,7 +59,7 @@ var DonutComponent = Component.extend("donut", {
         this.titleEl = this.svgEl.append("text").attr("class", "title").style({ "font-size": "2em" });
 
         //bind the resize() and updateTime() events to container resize
-        this.on("resize", function() {
+        this.on("resize", () => {
           _this.resize();
           _this.redraw();
         });
@@ -108,12 +106,12 @@ var DonutComponent = Component.extend("donut", {
         this.values = this.model.marker.getValues({ time: _this.time }, ["geo"]);
 
         //prepare the data
-        var data = this.keys.map(function(d) { return {
+        var data = this.keys.map(d => ({
             geo: d.geo,
             pop: _this.values.axis[d.geo],
             color: _this.values.color[d.geo],
             label: _this.values.label[d.geo]
-        };});
+        }));
 
         data = this.pie(data);
 
@@ -122,9 +120,7 @@ var DonutComponent = Component.extend("donut", {
           .data(data)
           .select("path")
           .attr("d", this.arc)
-          .style("fill", function(d) {
-            return _this.colorScale(d.data.color);
-          })
+          .style("fill", d => _this.colorScale(d.data.color))
           .style("stroke", "white");
 
         this.entities
@@ -132,12 +128,8 @@ var DonutComponent = Component.extend("donut", {
           .style({
             "text-transform": "capitalize"
           })
-          .attr("transform", function(d) {
-            return "translate(" + _this.arc.centroid(d) + ")";
-          })
-          .text(function(d) {
-            return d.data.geo;
-          });
+          .attr("transform", d => "translate(" + _this.arc.centroid(d) + ")")
+          .text(d => d.data.geo);
       },
 
       /**

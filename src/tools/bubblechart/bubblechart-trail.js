@@ -20,12 +20,12 @@ export default Class.extend({
     var _context = this.context;
     if (arg) {
 
-      _context._trails.create().then(function() {
+      _context._trails.create().then(() => {
         _context._trails.run(["findVisible", "reveal", "opacityHandler"]);
       });
     } else {
       _context._trails.run("remove");
-      _context.model.marker.select.forEach(function(d) {
+      _context.model.marker.select.forEach(d => {
         d.trailStartTime = null;
       });
     }
@@ -36,7 +36,7 @@ export default Class.extend({
     var _this = this;
     var KEY = _context.KEY;
     var TIMEDIM = _context.TIMEDIM;
-    this._isCreated = new Promise(function(resolve, reject) {
+    this._isCreated = new Promise((resolve, reject) => {
       //quit if the function is called accidentally
       if (!_context.model.ui.chart.trails) return;
 
@@ -46,7 +46,7 @@ export default Class.extend({
       var promises = [];
       selection = selection == null ? _context.model.marker.select : [selection];
       _this._clearActions(selection);
-      _this.trailsData = _context.model.marker.select.map(function(d) {
+      _this.trailsData = _context.model.marker.select.map(d => {
         var r = {
           status: "created",
           selectedEntityData: d
@@ -56,29 +56,23 @@ export default Class.extend({
       });
       _this.trailTransitions = {};
       var _trails = _context.bubbleContainer.selectAll("g.vzb-bc-entity.entity-trail")
-        .data(_this.trailsData, function(d) {
-          return (d[KEY]);
-        });
+        .data(_this.trailsData, d => (d[KEY]));
 
       _trails.exit().remove();
       _trails.enter()
         .insert("g", function(d) {
           return this.querySelector(".bubble-" + d[KEY]);
         })
-        .attr("class", function(d) {
-          return "vzb-bc-entity entity-trail trail-" + d[KEY];
-        })
+        .attr("class", d => "vzb-bc-entity entity-trail trail-" + d[KEY])
         .merge(_trails)
         .each(function(d, index) {
           // used for prevent move trail start time forward when we have empty values at end of time range
         var trail = this;
-        promises.push(new Promise(function(resolve, reject) {
-            var trailSegmentData = timePoints.map(function(m) {
-              return {
+        promises.push(new Promise((resolve, reject) => {
+            var trailSegmentData = timePoints.map(m => ({
                 t: m,
                 key: d[KEY]
-              };
-            });
+              }));
             var entityTrails = d3.select(trail).selectAll("g")
               .data(trailSegmentData)
               .classed("vzb-invisible", true);
@@ -97,10 +91,8 @@ export default Class.extend({
                 _context._axisProjections(pointer);
                 _context._labels.highlight(d, true);
                 var text = _context.model.time.formatDate(segment.t);
-                var selectedData = utils.find(_context.model.marker.select, function(f) {
-                  return f[KEY] == d[KEY];
-                });
-                _context.model.marker.getFrame(pointer[TIMEDIM], function(values) {
+                var selectedData = utils.find(_context.model.marker.select, f => f[KEY] == d[KEY]);
+                _context.model.marker.getFrame(pointer[TIMEDIM], values => {
                   var x = _context.xScale(values.axis_x[pointer[KEY]]);
                   var y = _context.yScale(values.axis_y[pointer[KEY]]);
                   var s = utils.areaToRadius(_context.sScale(values.size[pointer[KEY]]));
@@ -133,7 +125,7 @@ export default Class.extend({
           }));
         });
       if (promises.length > 0) {
-        Promise.all(promises).then(function(segments) {
+        Promise.all(promises).then(segments => {
           resolve(true);
         });
       } else {
@@ -154,11 +146,9 @@ export default Class.extend({
     var _this = this;
     var KEY = _context.KEY;
 
-    selections.forEach(function(d) {
+    selections.forEach(d => {
       if (!_this.actionsQueue[d[KEY]]) _this.actionsQueue[d[KEY]] = [];
-      _this.actionsQueue[d[KEY]] = [].concat(_this.actionsQueue[d[KEY]].filter(function(value) {
-        return actions.indexOf(value) == -1;
-      }), actions);
+      _this.actionsQueue[d[KEY]] = [].concat(_this.actionsQueue[d[KEY]].filter(value => actions.indexOf(value) == -1), actions);
     });
   },
 
@@ -167,13 +157,13 @@ export default Class.extend({
     var _this = this;
     var KEY = _context.KEY;
 
-    selections.forEach(function(d) {
+    selections.forEach(d => {
       if (!_this.actionsQueue[d[KEY]]) _this.actionsQueue[d[KEY]] = [];
       _this.actionsQueue[d[KEY]] = [];
       _this.drawingQueue[d[KEY]] = {};
       _this.delayedIterations[d[KEY]] = {};
       if (!_this.activePromises[d[KEY]]) _this.activePromises[d[KEY]] = [];
-      utils.forEach(_this.activePromises[d[KEY]], function(promise, key) {
+      utils.forEach(_this.activePromises[d[KEY]], (promise, key) => {
         if (promise.status === "pending") promise.reject();
       });
       _this.trailsInProgress[d[KEY]] = null;
@@ -192,7 +182,7 @@ export default Class.extend({
     if (!this._isCreated || _context.model.time.splash) return;
     if (typeof actions == "string") actions = [actions];
 
-    this._isCreated.then(function() {
+    this._isCreated.then(() => {
       //quit if function is called accidentally
       if ((!_context.model.ui.chart.trails || !_context.model.marker.select.length) && actions != "remove") return;
 
@@ -204,7 +194,7 @@ export default Class.extend({
         if (["resize", "recolor"].indexOf(actions[i]) != -1) {
           var action = actions.splice(i, 1).pop();
           --i;
-          _this.trailsData.forEach(function(d) {
+          _this.trailsData.forEach(d => {
             var trail = _this.entityTrails[d[KEY]];
             _context._trails["_" + action](trail, duration, d);
           });
@@ -214,7 +204,7 @@ export default Class.extend({
         return;
       }
       _this._addActions(selection, actions);
-      _this.trailsData.forEach(function(d) {
+      _this.trailsData.forEach(d => {
         if (actions.indexOf("findVisible") != -1) {
           _this.drawingQueue[d[KEY]] = {};
           _this.delayedIterations[d[KEY]] = {};
@@ -227,10 +217,10 @@ export default Class.extend({
             _this.trailsInProgress[d[KEY]] = action;
             var response = _context._trails["_" + action](trail, duration, d);
             if (response && response instanceof Promise) {
-              response.then(function() {
+              response.then(() => {
                 _this.trailsInProgress[d[KEY]] = null;
                 executeSequential(index + 1);
-              }, function() {
+              }, () => {
                 _this.trailsInProgress[d[KEY]] = null;
               });
             } else {
@@ -363,17 +353,17 @@ export default Class.extend({
     var _context = this.context;
     var _this = this;
     var KEY = _context.KEY;
-    return new Promise(function(resolve, reject) {
-      new Promise(function(resolve1, reject1) {
+    return new Promise((resolve, reject) => {
+      new Promise((resolve1, reject1) => {
         if (!d.limits) {
-          _context.model.marker.getEntityLimits(d[KEY]).then(function(limits) {
+          _context.model.marker.getEntityLimits(d[KEY]).then(limits => {
             d.limits = limits;
             resolve1();
           });
         } else {
           resolve1();
         }
-      }).then(function() {
+      }).then(() => {
           if (!d.selectedEntityData.trailStartTime) {
             d.selectedEntityData.trailStartTime = _context.model.time.formatDate(_context.time);
           }
@@ -397,7 +387,7 @@ export default Class.extend({
             cache.scaledC0 = valueC != null ? _context.cScale(valueC) : _context.COLOR_WHITEISH;
             _context._updateLabel(d, 0, _context.frame.axis_x[d[KEY]], _context.frame.axis_y[d[KEY]], _context.frame.size[d[KEY]], _context.frame.color[d[KEY]], _context.frame.label[d[KEY]], _context.frame.size_label[d[KEY]], 0, true);
           }
-          trail.each(function(segment, index) {
+          trail.each((segment, index) => {
             // segment is transparent if it is after current time or before trail StartTime
             var segmentVisibility = segment.transparent;
             segment.transparent = d.selectedEntityData.trailStartTime == null || (segment.t - _context.time > 0) || (trailStartTime - segment.t > 0)
@@ -420,7 +410,7 @@ export default Class.extend({
     var _context = this.context;
     var _this = this;
     var KEY = _context.KEY;
-    _this.trailsData.forEach(function(d) {
+    _this.trailsData.forEach(d => {
       if (_this.trailTransitions[d[KEY]]) {
         _this.trailTransitions[d[KEY]].select("line").interrupt().transition();
       }
@@ -434,7 +424,7 @@ export default Class.extend({
     d.status = "reveal";
     var trailStartTime = _context.model.time.parse("" + d.selectedEntityData.trailStartTime);
     var generateTrailSegment = function(trail, index, nextIndex, level) {
-      return new Promise(function(resolve, reject) {
+      return new Promise((resolve, reject) => {
         var view = d3.select(trail._groups[0][index]);
 
         var segment = view.datum();
@@ -448,7 +438,7 @@ export default Class.extend({
             return resolve();
           }
         }
-        _context.model.marker.getFrame(segment.t, function(frame) {
+        _context.model.marker.getFrame(segment.t, frame => {
           if (d.status != "reveal") return resolve();
           if (!frame) return resolve();
           segment.valueY = frame.axis_y[d[KEY]];
@@ -502,7 +492,7 @@ export default Class.extend({
                 segment.visibilityChanged = true; // redraw needed next time because line not have full length
                 nextTime = _context.time;
               }
-              _context.model.marker.getFrame(nextTime, function(nextFrame) {
+              _context.model.marker.getFrame(nextTime, nextFrame => {
                 if (d.status != "reveal") return resolve();
                 if (!nextFrame || segment.valueY == null || segment.valueX == null || segment.valueS == null) {
                   return resolve();
@@ -554,7 +544,7 @@ export default Class.extend({
       });
     };
     var addPointBetween = function(previousIndex, nextIndex, index) {
-      return new Promise(function(resolve, reject) {
+      return new Promise((resolve, reject) => {
         var previous = d3.select(trail._groups[0][previousIndex]);
         var next = d3.select(trail._groups[0][nextIndex]);
         var view = d3.select(trail._groups[0][index]);
@@ -567,7 +557,7 @@ export default Class.extend({
           return resolve();
         }
 
-        _context.model.marker.getFrame(segment.t, function(frame) {
+        _context.model.marker.getFrame(segment.t, frame => {
           if (d.status != "reveal") return resolve();
           if (!frame ||
             (typeof frame.axis_x == "undefined") ||  frame.axis_x[d[KEY]] == null ||
@@ -674,7 +664,7 @@ export default Class.extend({
       var min = 0, max = 0;
       var maxValue = d3.min([d.limits.max, _context.time]);
       var minValue = d3.max([d.limits.min, _context.model.time.parse("" + d.selectedEntityData.trailStartTime)]);
-      utils.forEach(trail._groups[0], function(segment, index) {
+      utils.forEach(trail._groups[0], (segment, index) => {
         var data = segment.__data__;
         if (data.t -  minValue == 0) {
           min = index;
@@ -696,12 +686,12 @@ export default Class.extend({
     };
 
     var processPoints = function() {
-      return new Promise(function(resolve, reject) {
+      return new Promise((resolve, reject) => {
         var processPoint = function() {
           var pointIndex = Object.keys(_this.drawingQueue[d[KEY]])[Math.floor(Math.random() *  Object.keys(_this.drawingQueue[d[KEY]]).length)];
           var point = JSON.parse(JSON.stringify(_this.drawingQueue[d[KEY]][pointIndex]));
           delete _this.drawingQueue[d[KEY]][pointIndex];
-          addPointBetween(point.first, point.next, point.medium).then(function() {
+          addPointBetween(point.first, point.next, point.medium).then(() => {
               if (Object.keys(_this.drawingQueue[d[KEY]]).length > 0) {
                 processPoint();
               } else {
@@ -717,7 +707,7 @@ export default Class.extend({
       });
     };
 
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       /**
        * iteration for each point from first segment to last
        * @param trail
@@ -727,18 +717,16 @@ export default Class.extend({
         if (index < 0 || index >= trail._groups[0].length) {
           return resolve();
         }
-        generateTrailSegment(trail, index, index + 1).then(function() {
+        generateTrailSegment(trail, index, index + 1).then(() => {
           generateTrails(trail, index + 1);
-        }, function() {
-          return resolve();
-        });
+        }, () => resolve());
       };
 
       /**
        * recursive iteration for drawing point between points calculated in previous step
        */
       var processPointsBetween = function() {
-        processPoints().then(function() {
+        processPoints().then(() => {
           if (Object.keys(_this.delayedIterations[d[KEY]]).length == 0) {
             return resolve();
           } else {
@@ -746,9 +734,7 @@ export default Class.extend({
             _this.delayedIterations[d[KEY]] = {};
             processPointsBetween();
           }
-        }, function() {
-          return resolve();
-        });
+        }, () => resolve());
       };
 
       if (_context.model.marker.framesAreReady()) {
@@ -766,7 +752,7 @@ export default Class.extend({
         for (var i = 0; i < trailKeys.length - 1; i++) {
           segments.push(generateTrailSegment(trail, trailKeys[i], trailKeys[i + 1], 1));
         }
-        Promise.all(segments).then(function() {
+        Promise.all(segments).then(() => {
           if (Object.keys(_this.delayedIterations[d[KEY]]).length == 0) {
             resolve();
           } else {
@@ -774,7 +760,7 @@ export default Class.extend({
             _this.delayedIterations[d[KEY]] = {};
             processPointsBetween();
           }
-        }, function() {
+        }, () => {
           resolve();
         });
       }

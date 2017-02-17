@@ -164,7 +164,7 @@ var ButtonList = Component.extend({
 
     // config.ui is same as this.model.ui here but this.model.ui is not yet available because constructor hasn't been called.
     // can't call constructor earlier because this.model_binds needs to be complete before calling constructor
-    config.ui.buttons.forEach(function(buttonId) {
+    config.ui.buttons.forEach(buttonId => {
       var button = _this._available_buttons[buttonId];
       if (button && button.statebind) {
         _this.model_binds["change:" + button.statebind] = function(evt) {
@@ -186,7 +186,7 @@ var ButtonList = Component.extend({
     this.element = d3.select(this.placeholder);
     this.element.selectAll("div").remove();
 
-    this.root.findChildByName("gapminder-dialogs").on("close", function(evt, params) {
+    this.root.findChildByName("gapminder-dialogs").on("close", (evt, params) => {
       _this.setButtonActive(params.id, false);
     });
 
@@ -249,9 +249,7 @@ var ButtonList = Component.extend({
     var _this = this;
 
     var popupDialogs = dialogs.popup;
-    var popupButtons = buttons.filter(function(d) {
-      return (_this._available_buttons[d] && !_this._available_buttons[d].func);
-      });
+    var popupButtons = buttons.filter(d => (_this._available_buttons[d] && !_this._available_buttons[d].func));
     for (var i = 0, j = popupButtons.length; i < j; i++) {
        if (popupDialogs.indexOf(popupButtons[i]) == -1) {
            return utils.error('Buttonlist: bad buttons config: "' + popupButtons[i] + '" is missing in popups list');
@@ -396,7 +394,7 @@ var ButtonList = Component.extend({
 
     this.element.selectAll("button").data(details_btns)
       .enter().append("button")
-      .attr("class", function(d) {
+      .attr("class", d => {
         var cls = "vzb-buttonlist-btn";
         if (button_expand.length > 0) {
           if (button_expand.indexOf(d.id) > -1) {
@@ -406,14 +404,10 @@ var ButtonList = Component.extend({
 
         return cls;
       })
-      .attr("data-btn", function(d) {
-        return d.id;
-      })
-      .html(function(btn) {
-        return "<span class='vzb-buttonlist-btn-icon fa'>" +
+      .attr("data-btn", d => d.id)
+      .html(btn => "<span class='vzb-buttonlist-btn-icon fa'>" +
           btn.icon + "</span><span class='vzb-buttonlist-btn-title'>" +
-          t(btn.title) + "</span>";
-      });
+          t(btn.title) + "</span>");
 
     var buttons = this.element.selectAll(".vzb-buttonlist-btn");
 

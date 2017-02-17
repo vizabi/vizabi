@@ -43,7 +43,7 @@ var LCComponent = Component.extend({
     this.model_binds = {
       "change:time.value": function() {
         if (!_this._readyOnce) return;
-        _this.model.marker.getFrame(_this.model.time.value, function(frame, time) {
+        _this.model.marker.getFrame(_this.model.time.value, (frame, time) => {
           if (!_this._frameIsValid(frame)) return utils.warn("change:time.value: empty data received from marker.getFrame(). doing nothing");
           _this.frameChanged(frame, time);
         });
@@ -166,7 +166,7 @@ var LCComponent = Component.extend({
     utils.setIcon(this.yInfoEl, iconQuestion)
       .select("svg").attr("width", "0px").attr("height", "0px");
 
-    this.yInfoEl.on("click", function() {
+    this.yInfoEl.on("click", () => {
       _this.parent.findChildByName("gapminder-datanotes").pin();
     });
     this.yInfoEl.on("mouseover", function() {
@@ -174,7 +174,7 @@ var LCComponent = Component.extend({
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
       _this.parent.findChildByName("gapminder-datanotes").setHook("axis_y").show().setPos(coord.x, coord.y);
     });
-    this.yInfoEl.on("mouseout", function() {
+    this.yInfoEl.on("mouseout", () => {
       _this.parent.findChildByName("gapminder-datanotes").hide();
     });
 
@@ -182,7 +182,7 @@ var LCComponent = Component.extend({
       .domain(this.model.ui.datawarning.doubtDomain)
       .range(this.model.ui.datawarning.doubtRange);
 
-    this.on("resize", function() {
+    this.on("resize", () => {
       //return if updatesize exists with error
       if (_this.updateSize()) return;
       _this.updateTime();
@@ -198,9 +198,9 @@ var LCComponent = Component.extend({
     this.updateShow();
     var _this = this;
     //null means we need to calculate all frames before we get to the callback
-    this.model.marker.getFrame(null, function(allValues) {
+    this.model.marker.getFrame(null, allValues => {
       _this.all_values = allValues;
-      _this.model.marker.getFrame(_this.model.time.value, function(values) {
+      _this.model.marker.getFrame(_this.model.time.value, values => {
         if (!_this._frameIsValid(values)) return;
         _this.values = values;
         _this.updateShow();
@@ -266,13 +266,13 @@ var LCComponent = Component.extend({
       .text(this.translator("hints/dataWarning"));
 
     this.dataWarningEl
-      .on("click", function() {
+      .on("click", () => {
         _this.parent.findChildByName("gapminder-datawarning").toggle();
       })
-      .on("mouseover", function() {
+      .on("mouseover", () => {
         _this.updateDoubtOpacity(1);
       })
-      .on("mouseout", function() {
+      .on("mouseout", () => {
         _this.updateDoubtOpacity();
       });
 
@@ -282,7 +282,7 @@ var LCComponent = Component.extend({
     var yTitle = this.yTitleEl.selectAll("text").data([0]);
     yTitle = yTitle.enter().append("text").merge(yTitle);
     yTitle
-      .on("click", function() {
+      .on("click", () => {
         _this.parent
           .findChildByName("gapminder-treemenu")
           .markerID("axis_y")
@@ -398,12 +398,8 @@ var LCComponent = Component.extend({
       //see https://bl.ocks.org/mbostock/4342190
       //"monotone" can also work. "basis" would skip the points on the sharp turns. "linear" is ugly
       .curve(d3.curveCardinal)
-      .x(function(d) {
-        return _this.xScale(d[0]);
-      })
-      .y(function(d) {
-        return _this.yScale(d[1]);
-      });
+      .x(d => _this.xScale(d[0]))
+      .y(d => _this.yScale(d[1]));
   },
 
 
@@ -423,7 +419,7 @@ var LCComponent = Component.extend({
 
     filter[timeDim] = this.time;
 
-    this.prev_steps = this.all_steps.filter(function(f) {return f < _this.time;});
+    this.prev_steps = this.all_steps.filter(f => f < _this.time);
 
     this.timeUpdatedOnce = true;
 
@@ -703,7 +699,7 @@ var LCComponent = Component.extend({
 //    var values = this.values;
 
     if (!_this.all_values) return;
-    this.model.marker.getFrame(this.time, function(values, time) {
+    this.model.marker.getFrame(this.time, (values, time) => {
       if (!_this._frameIsValid(values)) return;
       _this.values = values;
       if (!_this.timeUpdatedOnce) {
@@ -733,10 +729,8 @@ var LCComponent = Component.extend({
           //TODO: optimization is possible if getValues would return both x and time
           //TODO: optimization is possible if getValues would return a limited number of points, say 1 point per screen pixel
 
-          var xy = _this.prev_steps.map(function(frame, i) {
-              return [frame, _this.all_values[frame] ? _this.all_values[frame].axis_y[d[KEY]] : null];
-            })
-            .filter(function(d) { return d[1] || d[1] === 0; });
+          var xy = _this.prev_steps.map((frame, i) => [frame, _this.all_values[frame] ? _this.all_values[frame].axis_y[d[KEY]] : null])
+            .filter(d => d[1] || d[1] === 0);
 
           // add last point
           if (values.axis_y[d[KEY]]) {
@@ -867,7 +861,7 @@ var LCComponent = Component.extend({
       // cancel previously queued simulation if we just ordered a new one
       // then order a new collision resolving
       clearTimeout(_this.collisionTimeout);
-      _this.collisionTimeout = setTimeout(function() {
+      _this.collisionTimeout = setTimeout(() => {
         _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
       }, _this.model.time.delayAnimations * 1.5);
 
@@ -879,9 +873,7 @@ var LCComponent = Component.extend({
     var KEY = _this.KEY;
     var values = _this.values;
 
-    var mouse = d3.mouse(_this.element.node()).map(function(d) {
-      return parseInt(d);
-    });
+    var mouse = d3.mouse(_this.element.node()).map(d => parseInt(d));
 
     var resolvedTime = _this.xScale.invert(mouse[0] - _this.margin.left);
     if (_this.time - resolvedTime < 0) {
@@ -896,7 +888,7 @@ var LCComponent = Component.extend({
 
     if (!utils.isDate(resolvedTime)) resolvedTime = this.model.time.parse(resolvedTime);
 
-    this.model.marker.getFrame(resolvedTime, function(data) {
+    this.model.marker.getFrame(resolvedTime, data => {
       if (!_this._frameIsValid(data)) return;
       var nearestKey = _this.getNearestKey(mousePos, data.axis_y, _this.yScale.bind(_this));
       resolvedValue = data.axis_y[nearestKey];
@@ -961,7 +953,7 @@ var LCComponent = Component.extend({
     if (d3.event.relatedTarget && d3.select(d3.event.relatedTarget).classed("vzb-tooltip")) return;
 
     // hide and show things like it was before hovering
-    _this.unhoverTimeout = setTimeout(function() {
+    _this.unhoverTimeout = setTimeout(() => {
       _this.tooltip.classed("vzb-hidden", true);
       _this.verticalNow.style("opacity", 1);
       _this.projectionX.style("opacity", 0);
@@ -992,7 +984,7 @@ var LCComponent = Component.extend({
     var someSelected = (this.model.marker.select.length > 0);
     this.graph.selectAll(".vzb-lc-entity").each(function() {
       d3.select(this)
-        .style("opacity", function(d) {
+        .style("opacity", d => {
           if (_this.model.marker.isHighlighted(d)) return OPACITY_HIGHLT;
           if (someSelected) {
             return _this.model.marker.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;

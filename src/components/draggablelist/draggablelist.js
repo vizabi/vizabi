@@ -54,7 +54,7 @@ var DraggableList = Component.extend({
     this.updateData = utils.debounce(this.updateData, 1000);
 
     this.itemDragger = d3.drag()
-      .on("start", function(draggedData, i) {
+      .on("start", (draggedData, i) => {
         if (_this.dataUpdateFlag || !_this.draggable) return;
         d3.event.sourceEvent.stopPropagation();
         _this.parentBoundRect = _this.element.node().getBoundingClientRect();
@@ -73,7 +73,7 @@ var DraggableList = Component.extend({
           .classed("dragged", true);
       })
 
-      .on("drag", function(draggedData, draggedIndex) {
+      .on("drag", (draggedData, draggedIndex) => {
         if (_this.dataUpdateFlag || !_this.draggable) return;
         draggedData._top += d3.event.dy;
         var newDraggedY = draggedData._y + draggedData._top;
@@ -81,7 +81,7 @@ var DraggableList = Component.extend({
           && newDraggedY + draggedData._height < _this.parentBoundRect.top + _this.parentBoundRect.height)
         {
           _this.itemsEl
-            .style("top", function(d, i) {
+            .style("top", (d, i) => {
               var top = 0;
 
               if (i < draggedIndex && d._y + draggedData._height * 0.5 > newDraggedY) {
@@ -97,7 +97,7 @@ var DraggableList = Component.extend({
         }
       })
 
-      .on("end", function(d, i) {
+      .on("end", (d, i) => {
         if (_this.dataUpdateFlag || !_this.draggable) return;
         _this.getData();
       });
@@ -125,7 +125,7 @@ var DraggableList = Component.extend({
       .on("mouseout", function() {
         d3.select(this).classed("hover", false);
       })
-      .on("touchstart", function() {
+      .on("touchstart", () => {
         d3.event.preventDefault();
       });
 
@@ -134,8 +134,7 @@ var DraggableList = Component.extend({
   updateView() {
     var _this = this;
 
-    this.items = this.element.selectAll("div").data(function() {
-      return _this.dataArrFn().map(function(d) { return { data: d };});});
+    this.items = this.element.selectAll("div").data(() => _this.dataArrFn().map(d => ({ data: d })));
     this.items.exit().remove();
     this.items = this.items.enter()
       .append("div")
@@ -162,12 +161,8 @@ var DraggableList = Component.extend({
       .selectAll("div").data();
 
     dataArr = data
-      .sort(function(a, b) {
-        return (a._y + a._top) - (b._y + b._top);
-      })
-      .map(function(d) {
-        return d.data;
-      });
+      .sort((a, b) => (a._y + a._top) - (b._y + b._top))
+      .map(d => d.data);
     if (utils.arrayEquals(this.dataArrFn(), dataArr)) {
       this.updateView();
     } else {

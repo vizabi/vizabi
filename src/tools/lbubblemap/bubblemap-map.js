@@ -106,15 +106,13 @@ var MapLayer = Class.extend({
         _this.mapFeature = topojson.feature(_this.shapes, _this.shapes.objects[this.context.model.ui.map.topology.objects.geo]);
         _this.mapBounds = _this.mapPath.bounds(_this.mapFeature);
 
-        var boundaries = topojson.mesh(_this.shapes, _this.shapes.objects[_this.context.model.ui.map.topology.objects.boundaries], function(a, b) { return a !== b; });
+        var boundaries = topojson.mesh(_this.shapes, _this.shapes.objects[_this.context.model.ui.map.topology.objects.boundaries], (a, b) => a !== b);
         if (_this.mapFeature.features) {
           _this.mapGraph.selectAll(".land")
               .data(_this.mapFeature.features)
               .enter().insert("path")
               .attr("d", _this.mapPath)
-              .attr("id", function(d) {
-                return d.properties[_this.context.model.ui.map.topology.geoIdProperty].toLowerCase();
-              })
+              .attr("id", d => d.properties[_this.context.model.ui.map.topology.geoIdProperty].toLowerCase())
               .attr("class", "land");
         } else {
           _this.mapGraph.insert("path")
@@ -129,8 +127,8 @@ var MapLayer = Class.extend({
   },
 
   _loadShapes(shape_path) {
-    return new Promise(function(resolve, reject) {
-      d3.json(shape_path, function(error, json) {
+    return new Promise((resolve, reject) => {
+      d3.json(shape_path, (error, json) => {
         if (error) return console.warn("Failed loading json " + shape_path + ". " + error);
         resolve(json);
       });
@@ -273,8 +271,8 @@ var GoogleMapLayer = Class.extend({
     this.mapCanvas = this.mapRoot.html("").append("div");
 
     GoogleMapsLoader.KEY = "AIzaSyAP0vMZwYojifwGYHTnEtYV40v6-MdLGFM";
-    return new Promise(function(resolve, reject) {
-      GoogleMapsLoader.load(function(google) {
+    return new Promise((resolve, reject) => {
+      GoogleMapsLoader.load(google => {
         _this.map = new google.maps.Map(_this.mapCanvas.node(), {
           disableDefaultUI: true,
           backgroundColor: "#FFFFFF"
@@ -297,7 +295,7 @@ var GoogleMapLayer = Class.extend({
           editable: true,
           draggable: true
         });
-        google.maps.event.addListener(_this.map, "bounds_changed", function() {
+        google.maps.event.addListener(_this.map, "bounds_changed", () => {
             _this.parent.boundsChanged();
         });
 
@@ -366,7 +364,7 @@ var MapboxLayer = Class.extend({
     var _this = this;
     this.mapRoot = d3.select(this.context.element).select(domSelector);
     this.mapCanvas = this.mapRoot.html("").append("div");
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       _this.map = new mapboxgl.Map({
         container: _this.mapCanvas.node(),
         interactive: false,
@@ -405,7 +403,7 @@ var MapboxLayer = Class.extend({
         .style("top", margin.top + "px")
         .style("bottom", margin.bottom + "px");
 
-    utils.defer(function() {
+    utils.defer(() => {
       _this.map.fitBounds(_this.bounds, { duration: 0 });
       _this.map.resize();
       _this.parent.boundsChanged();

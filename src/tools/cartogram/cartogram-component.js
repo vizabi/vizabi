@@ -62,7 +62,7 @@ var CartogramComponent = Component.extend({
           _this.calculationQueue.push(_this.model.time.value.toString());
         }
         (function(time) { // isolate timestamp
-          _this.model.marker.getFrame(time, function(frame, time) {
+          _this.model.marker.getFrame(time, (frame, time) => {
             var index = _this.calculationQueue.indexOf(time.toString()); //
             if (index == -1) { // we was receive more recent frame before so we pass this frame
               return;
@@ -136,9 +136,7 @@ var CartogramComponent = Component.extend({
 
     this.cartogram = d3.cartogram()
       .projection(this.projection)
-      .properties(function(d) {
-        return d.properties;
-      });
+      .properties(d => d.properties);
 
     this._labels = new Labels(this);
     this._labels.config({
@@ -158,9 +156,7 @@ var CartogramComponent = Component.extend({
     // http://bl.ocks.org/mbostock/3710566 robinson
     // map background
 
-    this.borderArcs = _this.cartogram.meshArcs(this.world, this.world.objects.topo, function(a, b) {
-      return a.properties.MN_NAME && a.properties.PR_NAME !== b.properties.PR_NAME;
-    });
+    this.borderArcs = _this.cartogram.meshArcs(this.world, this.world.objects.topo, (a, b) => a.properties.MN_NAME && a.properties.PR_NAME !== b.properties.PR_NAME);
 
   },
   _getKey(d) {
@@ -202,7 +198,7 @@ var CartogramComponent = Component.extend({
 
     var _this = this;
     this.updateUIStrings();
-    this.on("resize", function() {
+    this.on("resize", () => {
       if (_this.updateSize()) return;
     });
     this.wScale = d3.scale.linear()
@@ -212,28 +208,28 @@ var CartogramComponent = Component.extend({
     this.cartogram.iterations(0);
     this.redrawInProgress = true;
 
-    this.cartogram(this.world, this.geometries).then(function(response) {
+    this.cartogram(this.world, this.geometries).then(response => {
       _this.redrawInProgress = false;
 
       _this.features = _this.topo_features = response.features;
       _this.lands = _this.mapGraph.selectAll(".land")
         .data(_this.topo_features)
         .enter().append("path")
-        .attr("class", function(d) { return "land " + (d.properties[_this.id_lookup] ? d.properties[_this.id_lookup] : d.id); })
+        .attr("class", d => "land " + (d.properties[_this.id_lookup] ? d.properties[_this.id_lookup] : d.id))
         .attr("d", _this.cartogram.path)
-        .on("mouseover", function(d, i) {
+        .on("mouseover", (d, i) => {
           if (utils.isTouchDevice()) return;
           _this._interact()._mouseover(d, i);
         })
-        .on("mouseout", function(d, i) {
+        .on("mouseout", (d, i) => {
           if (utils.isTouchDevice()) return;
           _this._interact()._mouseout(d, i);
         })
-        .on("click", function(d, i) {
+        .on("click", (d, i) => {
           if (utils.isTouchDevice()) return;
           _this._interact()._click(d, i);
         })
-        .each(function(d) {
+        .each(d => {
           d[_this.KEY] = _this._getKey(d);
         });
 
@@ -297,7 +293,7 @@ var CartogramComponent = Component.extend({
     }
     var _this = this;
     this.cached[year] = 0;
-    utils.forEach(frame, function(val) {
+    utils.forEach(frame, val => {
       _this.cached[year] += _this.sScale(val);
     });
     return this.cached[year];
@@ -307,7 +303,7 @@ var CartogramComponent = Component.extend({
     var _this = this;
     if (this.updateEntitiesQueue.length == 0) return;
     if (this.redrawInProgress) {
-      setTimeout(function() {
+      setTimeout(() => {
         _this._redrawEntities();
       }, 100);
       return;
@@ -319,14 +315,14 @@ var CartogramComponent = Component.extend({
     if (this.model.ui.chart.lockNonSelected) {
       time = this.model.time.parse("" + this.model.ui.chart.lockNonSelected);
     }
-    this.model.marker.getFrame(time, function(lockedFrame) {
+    this.model.marker.getFrame(time, lockedFrame => {
       var totValue = null;
       if (_this.model.marker.size.use == "constant") {
         _this.cartogram.iterations(0);
       } else {
         _this.cartogram.iterations(8);
         //var areas = _this.topo_features.map(d3.geo.path().projection(null).area);
-        _this.cartogram.value(function(d) {
+        _this.cartogram.value(d => {
           if (_this.model.ui.chart.lockNonSelected) {
             var size1 = _this.sScale(lockedFrame.size[_this._getKey(d)])/* * _this._calculateTotalSize(_this.model.time.value, _this.values.size)*/,
               size2 = _this.sScale(_this.values.size[_this._getKey(d)])/* * _this._calculateTotalSize(time, lockedFrame.size)*/;
@@ -343,7 +339,7 @@ var CartogramComponent = Component.extend({
       }
       var calcDuration = 0;
       var start = new Date().getTime();
-      _this.cartogram(_this.world, _this.geometries, totValue).then(function(response) {
+      _this.cartogram(_this.world, _this.geometries, totValue).then(response => {
         var end = new Date().getTime();
         if (duration) { // increale duration for prevent gaps between frames
           duration = Math.max(duration, end - start);
@@ -358,7 +354,7 @@ var CartogramComponent = Component.extend({
             .attr("d", _this.cartogram.path);
         }
         _this.lands.data(_this.features)
-          .each(function(d) {
+          .each(d => {
             d[_this.KEY] = _this._getKey(d);
           });
         if (duration) {
@@ -366,9 +362,7 @@ var CartogramComponent = Component.extend({
             .transition()
             .duration(duration)
             .ease(d3.easeLinear)
-            .style("fill", function(d) {
-              return _this.values.color[_this._getKey(d)] != null ? _this.cScale(_this.values.color[_this._getKey(d)]) : _this.COLOR_LAND_DEFAULT;
-            })
+            .style("fill", d => _this.values.color[_this._getKey(d)] != null ? _this.cScale(_this.values.color[_this._getKey(d)]) : _this.COLOR_LAND_DEFAULT)
             .attr("d", _this.cartogram.path);
           if (_this.borderArcs) {
             _this.borders.interrupt()
@@ -383,9 +377,7 @@ var CartogramComponent = Component.extend({
             .attr("d", _this.cartogram.path);
 
           _this.lands
-            .style("fill", function(d) {
-              return _this.values.color[_this._getKey(d)] != null ? _this.cScale(_this.values.color[_this._getKey(d)]) : _this.COLOR_LAND_DEFAULT;
-            })
+            .style("fill", d => _this.values.color[_this._getKey(d)] != null ? _this.cScale(_this.values.color[_this._getKey(d)]) : _this.COLOR_LAND_DEFAULT)
             .attr("d", _this.cartogram.path);
 
         }
@@ -408,9 +400,7 @@ var CartogramComponent = Component.extend({
     this.lands.transition()
       .duration(_this.duration)
       .ease(d3.easeLinear)
-      .style("fill", function(d) {
-        return _this.values.color[_this._getKey(d)] != null ? _this.cScale(_this.values.color[_this._getKey(d)]) : _this.COLOR_LAND_DEFAULT;
-      });
+      .style("fill", d => _this.values.color[_this._getKey(d)] != null ? _this.cScale(_this.values.color[_this._getKey(d)]) : _this.COLOR_LAND_DEFAULT);
 
   },
   updateUIStrings() {
@@ -428,7 +418,7 @@ var CartogramComponent = Component.extend({
     this.yTitleEl.select("text")
       //don't show "Color:" when the size is constant and we are only showing color
       .text(this.strings.title.C)
-      .on("click", function() {
+      .on("click", () => {
         _this.parent
           .findChildByName("gapminder-treemenu")
           .markerID("color")
@@ -440,7 +430,7 @@ var CartogramComponent = Component.extend({
 
     this.sTitleEl.select("text")
       .text(this.strings.title.S)
-      .on("click", function() {
+      .on("click", () => {
         _this.parent
           .findChildByName("gapminder-treemenu")
           .markerID("size")
@@ -456,13 +446,13 @@ var CartogramComponent = Component.extend({
       .text(this.translator("hints/dataWarning"));
 
     this.dataWarningEl
-      .on("click", function() {
+      .on("click", () => {
         _this.parent.findChildByName("gapminder-datawarning").toggle();
       })
-      .on("mouseover", function() {
+      .on("mouseover", () => {
         _this.updateDoubtOpacity(1);
       })
-      .on("mouseout", function() {
+      .on("mouseout", () => {
         _this.updateDoubtOpacity();
       });
 
@@ -471,7 +461,7 @@ var CartogramComponent = Component.extend({
       .select("svg").attr("width", "0px").attr("height", "0px");
 
     //TODO: move away from UI strings, maybe to ready or ready once
-    this.yInfoEl.on("click", function() {
+    this.yInfoEl.on("click", () => {
       _this.parent.findChildByName("gapminder-datanotes").pin();
     });
     this.yInfoEl.on("mouseover", function() {
@@ -479,7 +469,7 @@ var CartogramComponent = Component.extend({
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
       _this.parent.findChildByName("gapminder-datanotes").setHook("size").show().setPos(coord.x, coord.y);
     });
-    this.yInfoEl.on("mouseout", function() {
+    this.yInfoEl.on("mouseout", () => {
       _this.parent.findChildByName("gapminder-datanotes").hide();
     });
 
@@ -488,7 +478,7 @@ var CartogramComponent = Component.extend({
       .select("svg").attr("width", "0px").attr("height", "0px");
 
     //TODO: move away from UI strings, maybe to ready or ready once
-    this.sInfoEl.on("click", function() {
+    this.sInfoEl.on("click", () => {
       _this.parent.findChildByName("gapminder-datanotes").pin();
     });
     this.sInfoEl.on("mouseover", function() {
@@ -496,7 +486,7 @@ var CartogramComponent = Component.extend({
       var coord = utils.makeAbsoluteContext(this, this.farthestViewportElement)(rect.x - 10, rect.y + rect.height + 10);
       _this.parent.findChildByName("gapminder-datanotes").setHook("color").show().setPos(coord.x, coord.y);
     });
-    this.sInfoEl.on("mouseout", function() {
+    this.sInfoEl.on("mouseout", () => {
       _this.parent.findChildByName("gapminder-datanotes").hide();
     });
   },
@@ -745,9 +735,7 @@ var CartogramComponent = Component.extend({
         this.values.label[this._getKey(d)]
         : d.properties.MN_NAME;
       var offset = 10;
-      var mouse = d3.mouse(this.graph.node()).map(function(d) {
-        return parseInt(d);
-      });
+      var mouse = d3.mouse(this.graph.node()).map(d => parseInt(d));
       var x = mouse[0];
       var y = mouse[1];
       var xPos, yPos, xSign = -1,
@@ -814,7 +802,7 @@ var CartogramComponent = Component.extend({
     this.someHighlighted = (this.model.entities.highlight.length > 0);
     this.someSelected = (this.model.entities.select.length > 0);
     this.lands
-      .style("opacity", function(d) {
+      .style("opacity", d => {
 
         if (_this.someHighlighted) {
           //highlight or non-highlight
@@ -836,10 +824,8 @@ var CartogramComponent = Component.extend({
 
     // when pointer events need update...
     if (someSelectedAndOpacityZero != this.someSelectedAndOpacityZero_1) {
-      this.lands.style("pointer-events", function(d) {
-        return (!someSelectedAndOpacityZero || _this.model.entities.isSelected(d)) ?
-          "visible" : "none";
-      });
+      this.lands.style("pointer-events", d => (!someSelectedAndOpacityZero || _this.model.entities.isSelected(d)) ?
+          "visible" : "none");
     }
 
     this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
@@ -850,8 +836,8 @@ var CartogramComponent = Component.extend({
     var shape_path = globals.ext_resources.shapePath ? globals.ext_resources.shapePath :
         globals.ext_resources.host + globals.ext_resources.preloadPath + "municipalities.json";
 
-    return new Promise(function(resolve, reject) {
-      d3.json(shape_path, function(error, json) {
+    return new Promise((resolve, reject) => {
+      d3.json(shape_path, (error, json) => {
         if (error) return console.warn("Failed loading json " + shape_path + ". " + error);
         _this.world = json;
         _this.geometries = json.objects.topo.geometries;

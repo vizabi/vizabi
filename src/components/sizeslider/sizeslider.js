@@ -152,7 +152,7 @@ var SizeSlider = Component.extend({
     this.brush = d3.brushX()
       .extent([[0, 0], [componentWidth - padding.left - padding.right, barWidth]])
       .handleSize(thumbRadius * 2 + barWidth * 2)
-      .on("start", function() {
+      .on("start", () => {
         if (_this.nonBrushChange || !d3.event.sourceEvent) return;
         if (d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
           var brushDatum = _this.sliderEl.node().__brush;
@@ -160,7 +160,7 @@ var SizeSlider = Component.extend({
         }
         _this._setFromExtent(false, false, false);
       })
-      .on("brush", function() {
+      .on("brush", () => {
         if (_this.nonBrushChange || !d3.event.sourceEvent) return;
         if (d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
           var brushDatum = _this.sliderEl.node().__brush;
@@ -168,14 +168,14 @@ var SizeSlider = Component.extend({
         }
         _this._setFromExtent(true, false, false); // non persistent change
       })
-      .on("end", function() {
+      .on("end", () => {
         if (_this.nonBrushChange || !d3.event.sourceEvent) return;
         _this._setFromExtent(true, true); // force a persistent change
       });
 
     this.sliderThumbs = this.sliderEl.selectAll(".handle")
-      .data([{ type: "w" }, { type: "e" }], function(d) { return d.type; })
-      .enter().append("svg").attr("class", function(d) { return "handle handle--" + d.type + " " + d.type; })
+      .data([{ type: "w" }, { type: "e" }], d => d.type)
+      .enter().append("svg").attr("class", d => "handle handle--" + d.type + " " + d.type)
       .classed("vzb-szs-slider-thumb", true);
 
     this.sliderThumbs.append("g")
@@ -188,11 +188,9 @@ var SizeSlider = Component.extend({
 
     this.sliderEl.selectAll("text").data([0, 0]).enter()
       .append("text")
-      .attr("class", function(d, i) {
-        return "vzb-szs-slider-thumb-label " + (i ? "e" : "w");})
+      .attr("class", (d, i) => "vzb-szs-slider-thumb-label " + (i ? "e" : "w"))
       .attr("dy", (-barWidth * 1.25) + "px")
-      .attr("text-anchor", function(d, i) {
-        return 1 - i ? "start" : "end";});
+      .attr("text-anchor", (d, i) => 1 - i ? "start" : "end");
 
     this.sliderLabelsEl = this.sliderEl.selectAll("text.vzb-szs-slider-thumb-label");
 
@@ -204,7 +202,7 @@ var SizeSlider = Component.extend({
     this.sliderEl.select(".extent")
       .classed("vzb-szs-slider-extent", true);
 
-    this.on("resize", function() {
+    this.on("resize", () => {
       //console.log("EVENT: resize");
       _this.propertyActiveProfile = _this.getPropertyActiveProfile();
       _this.propertyScale.range([_this.propertyActiveProfile.min, _this.propertyActiveProfile.max]);
@@ -258,25 +256,21 @@ var SizeSlider = Component.extend({
   _updateLabels(s) {
     var _this = this;
     this.sliderLabelsEl.data(s)
-      .attr("transform", function(d, i) {
+      .attr("transform", (d, i) => {
         var dX = _this.xScale(i),
             dY = 0;//i ? -textMargin.v : 0;
         return "translate(" + (dX) + "," + (dY) + ")";
       })
-      .attr("font-size", function(d, i) {
-        return _this.propertyScale(d);
-      });
+      .attr("font-size", (d, i) => _this.propertyScale(d));
     if (_this.model.size.use === "constant")
-      this.sliderLabelsEl.text(function(d) {
-        return ~~(_this.propertyScale(d)) + (_this.translator(_this.ui.constantUnit) || "");
-      });
+      this.sliderLabelsEl.text(d => ~~(_this.propertyScale(d)) + (_this.translator(_this.ui.constantUnit) || ""));
   },
 
   _setLabelsText() {
     var _this = this;
     _this.sliderLabelsEl
       .data([_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[0]), _this.model.size.getTickFormatter()(_this.sizeScaleMinMax[1])])
-      .text(function(d) { return d; });
+      .text(d => d);
   },
 
   /**

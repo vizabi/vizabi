@@ -52,10 +52,8 @@ export default function collisionResolver() {
     // CALCULATE OPTIMIZED POSITIONS BASED ON LABELS' HEIGHT AND THEIR PROXIMITY (DELTA)
     resolver.calculatePositions = function(data, value, height, scale) {
       var result = {};
-      var keys = Object.keys(data).sort(function(a, b) {
-        return data[a][value] - data[b][value];
-      });
-      keys.forEach(function(d, index) {
+      var keys = Object.keys(data).sort((a, b) => data[a][value] - data[b][value]);
+      keys.forEach((d, index) => {
         //initial positioning
         result[d] = scale(data[d][value]);
         // check the overlapping chain reaction all the way down

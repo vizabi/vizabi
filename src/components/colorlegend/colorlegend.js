@@ -40,7 +40,7 @@ var ColorLegend = Component.extend({
       "change:marker.highlight": function(evt, values) {
         if (!_this.colorModel.isDiscrete()) return;
 
-        _this.model.marker.getFrame(_this.model.time.value, function(frame) {
+        _this.model.marker.getFrame(_this.model.time.value, frame => {
           if (frame) {
             var _hlEntities = _this.model.marker.getHighlighted(_this.KEY);
             _this.updateGroupsOpacity(_hlEntities.map(d => frame[_this.colorModel._name][d]));
@@ -68,7 +68,7 @@ var ColorLegend = Component.extend({
     this.colorModel = this.model.marker.color;
     this.colorlegendMarker = this.colorModel.getColorlegendMarker();
     if (this.colorlegendMarker) {
-      this.colorlegendMarker.on("ready", function() {
+      this.colorlegendMarker.on("ready", () => {
         _this.ready();
       });
     }
@@ -113,13 +113,13 @@ var ColorLegend = Component.extend({
 
       this.colorlegendDim = this.colorModel.getColorlegendEntities().getDimension();
 
-      this.colorlegendMarker.getFrame(this.model.time.value, function(frame) {
+      this.colorlegendMarker.getFrame(this.model.time.value, frame => {
         _this.frame = frame;
         _this.canShowMap = utils.keys((_this.frame || {}).hook_geoshape || {}).length;
 
         _this.colorlegendKeys = _this.colorlegendMarker.getKeys(_this.colorlegendDim);
 
-        _this.colorlegendKeys.forEach(function(d) {
+        _this.colorlegendKeys.forEach(d => {
           if (!((_this.frame || {}).hook_geoshape || {})[d[_this.colorlegendDim]]) _this.canShowMap = false;
         });
         _this.updateView();
@@ -182,21 +182,15 @@ var ColorLegend = Component.extend({
 
         fitIntoScale = "optimistic";
 
-        domain = paletteLabels.map(function(val) {
-          return parseFloat(val);
-        });
+        domain = paletteLabels.map(val => parseFloat(val));
         var paletteMax = d3.max(domain);
-        range = domain.map(function(val) {
-          return val / paletteMax * gradientWidth;
-        });
+        range = domain.map(val => val / paletteMax * gradientWidth);
 
       } else {
 
         domain = cScale.domain();
         var paletteMax = d3.max(paletteKeys);
-        range = paletteKeys.map(function(val) {
-          return val / paletteMax * gradientWidth;
-        });
+        range = paletteKeys.map(val => val / paletteMax * gradientWidth);
 
       }
 
@@ -238,9 +232,7 @@ var ColorLegend = Component.extend({
 
       var colorRange = cScale.range();
 
-      var gIndicators = range.map(function(val, i) {
-        return { val, color: colorRange[i], paletteKey: paletteKeys[i] };
-      });
+      var gIndicators = range.map((val, i) => ({ val, color: colorRange[i], paletteKey: paletteKeys[i] }));
       this.rainbowLegend = this.rainbowLegendG.selectAll("circle")
         .data(gIndicators);
       this.rainbowLegend.exit().remove();
@@ -255,9 +247,7 @@ var ColorLegend = Component.extend({
         d3.select(this).attr("cx", d.val);
       });
 
-      var gColors = paletteKeys.map(function(val, i) {
-        return colorRange[i] + " " + d3.format("%")(val * 0.01);
-      }).join(", ");
+      var gColors = paletteKeys.map((val, i) => colorRange[i] + " " + d3.format("%")(val * 0.01)).join(", ");
 
       this.rainbowEl
         .style("background", "linear-gradient(90deg," + gColors + ")");
@@ -277,11 +267,11 @@ var ColorLegend = Component.extend({
         if (this.colorModel.which == "_default") {
           colorOptions = colorOptions.data([]);
         } else {
-          colorOptions = colorOptions.data(hideColorOptions ? [] : colorlegendKeys.length ? colorlegendKeys : Object.keys(this.colorModel.getPalette()).map(function(value) {
+          colorOptions = colorOptions.data(hideColorOptions ? [] : colorlegendKeys.length ? colorlegendKeys : Object.keys(this.colorModel.getPalette()).map(value => {
             var result = {};
             result[_this.colorlegendDim] = value;
             return result;
-          }), function(d) {return d[_this.colorlegendDim];});
+          }), d => d[_this.colorlegendDim]);
         }
 
         colorOptions.exit().remove();
@@ -316,7 +306,7 @@ var ColorLegend = Component.extend({
         this.minimapSVG.selectAll("g").remove();
         this.minimapG = this.minimapSVG.append("g");
         this.minimapG.selectAll("path")
-          .data(colorlegendKeys, function(d) {return d[_this.colorlegendDim];})
+          .data(colorlegendKeys, d => d[_this.colorlegendDim])
           .enter().append("path")
           .on("mouseover", _this._interact().mouseover)
           .on("mouseout", _this._interact().mouseout)
@@ -366,13 +356,9 @@ var ColorLegend = Component.extend({
 
         var highlight = _this.colorModel.getValidItems()
           //filter so that only countries of the correct target remain
-          .filter(function(f) {
-            return f[_this.colorModel.which] == target;
-          })
+          .filter(f => f[_this.colorModel.which] == target)
           //fish out the "key" field, leave the rest behind
-          .map(function(d) {
-            return utils.clone(d, [KEY]);
-          });
+          .map(d => utils.clone(d, [KEY]));
 
         _this.model.marker.setHighlight(highlight);
       },
@@ -392,7 +378,7 @@ var ColorLegend = Component.extend({
         _this.colorPicker
           .colorOld(palette[target])
           .colorDef(defaultPalette[target])
-          .callback(function(value, permanent) {
+          .callback((value, permanent) => {
             _this.colorModel.setColor(value, target);
           })
           .fitToScreen([d3.event.pageX, d3.event.pageY])
@@ -433,15 +419,11 @@ var ColorLegend = Component.extend({
 
         var select = _this.colorModel.getValidItems()
           //filter so that only countries of the correct target remain
-          .filter(function(f) {
-            return f[_this.colorModel.which] == target;
-          })
+          .filter(f => f[_this.colorModel.which] == target)
           //fish out the "key" field, leave the rest behind
-          .map(function(d) {
-            return utils.clone(d, [KEY]);
-          });
+          .map(d => utils.clone(d, [KEY]));
 
-        if (select.filter(function(d) {return _this.model.marker.isSelected(d); }).length == select.length) {
+        if (select.filter(d => _this.model.marker.isSelected(d)).length == select.length) {
           _this.model.marker.clearSelected();
         } else {
           _this.model.marker.setSelect(select);
@@ -471,7 +453,7 @@ var ColorLegend = Component.extend({
 
     var selection = _this.canShowMap ? ".vzb-cl-minimap path" : ".vzb-cl-option .vzb-cl-color-sample";
 
-    this.listColorsEl.selectAll(selection).style("opacity", function(d) {
+    this.listColorsEl.selectAll(selection).style("opacity", d => {
       if (!highlight.length) return OPACITY_REGULAR;
       return highlight.indexOf(d[_this.colorlegendDim]) > -1 ? OPACITY_HIGHLIGHT : OPACITY_DIM;
     });

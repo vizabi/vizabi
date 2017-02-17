@@ -36,13 +36,9 @@ var MCSelectList = Class.extend({
       });
     */
     var listData = _this.pointers
-      .filter(function(f) {
-        return _this.model.marker.isselected(f);
-      });
+      .filter(f => _this.model.marker.isselected(f));
     _this.selectList = _this.labelListContainer.selectAll("g.vzb-bmc-label")
-      .data(utils.unique(listData, function(d) {
-        return d.KEY();
-      }));
+      .data(utils.unique(listData, d => d.KEY()));
     _this.selectList.exit().remove();
     _this.selectList.enter().append("g")
       .attr("class", "vzb-bmc-label")
@@ -52,14 +48,14 @@ var MCSelectList = Class.extend({
         label.append("text").attr("class", "vzb-bmc-label-shadow vzb-bmc-label-text");
         label.append("text").attr("class", "vzb-bmc-label-text");
         label.append("g").attr("class", "vzb-bmc-label-x vzb-label-shadow vzb-invisible")
-          .on("click", function(d, i) {
+          .on("click", (d, i) => {
             if (utils.isTouchDevice()) return;
             d3.event.stopPropagation();
             _this.model.entities.clearHighlighted();
             _this.model.marker.selectMarker(d);
             d3.event.stopPropagation();
           })
-          .onTap(function(d, i) {
+          .onTap((d, i) => {
             d3.select("#" + d.geo + "-label").remove();
             _this.model.entities.clearHighlighted();
             _this.model.marker.selectMarker(d);
@@ -82,16 +78,16 @@ var MCSelectList = Class.extend({
             .text("Deselect");
         }
       })
-      .on("mousemove", function(d, i) {
+      .on("mousemove", (d, i) => {
         if (utils.isTouchDevice()) return;
         _this.model.marker.highlightMarker(d);
       })
-      .on("mouseout", function(d, i) {
+      .on("mouseout", (d, i) => {
         if (utils.isTouchDevice()) return;
         _this.model.marker.clearHighlighted();
 
       })
-      .on("click", function(d, i) {
+      .on("click", (d, i) => {
         if (utils.isTouchDevice()) return;
         _this.model.marker.clearHighlighted();
         _this.model.marker.selectMarker(d);
@@ -114,7 +110,7 @@ var MCSelectList = Class.extend({
     if (fontHeight > maxFontHeight) fontHeight = maxFontHeight;
 
     _this.selectList
-      .attr("transform", function(d, i) {
+      .attr("transform", (d, i) => {
         var spacing = fontHeight * i + titleHeight * 1.5 + fontHeight;
         return "translate(0," + spacing + ")";
       })
@@ -176,10 +172,10 @@ var MCSelectList = Class.extend({
           .attr("cy", fontHeight / 1.5)
           .style("fill", _this.cScale(_this.values.color[d.KEY()]));
 
-        view.onTap(function(d, i) {
+        view.onTap((d, i) => {
           d3.event.stopPropagation();
           _this.model.marker.highlightMarker(d);
-          setTimeout(function() {
+          setTimeout(() => {
             _this.model.marker.unhighlightMarker(d);
           }, 2000);
         });

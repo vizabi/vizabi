@@ -126,7 +126,7 @@ var Dialogs = Component.extend({
 
     if (this.dialog_popup.length !== 0) {
       this.root.findChildByName("gapminder-buttonlist")
-        .on("click", function(evt, button) {
+        .on("click", (evt, button) => {
           if (!_this._available_dialogs[button.id]) return;
 
           if (button.active) {
@@ -136,21 +136,19 @@ var Dialogs = Component.extend({
           }
         });
 
-      var popupDialogs = this.element.selectAll(".vzb-top-dialog").filter(function(d) {
-        return _this.dialog_popup.indexOf(d.id) > -1;
-      });
+      var popupDialogs = this.element.selectAll(".vzb-top-dialog").filter(d => _this.dialog_popup.indexOf(d.id) > -1);
 
       var close_buttons = popupDialogs.select(".vzb-top-dialog>.vzb-dialog-modal>.vzb-dialog-buttons>[data-click='closeDialog']");
-      close_buttons.on("click", function(d, i) {
+      close_buttons.on("click", (d, i) => {
         _this.closeDialog(d.id);
       });
 
       var pinDialog = popupDialogs.select(".vzb-top-dialog>.vzb-dialog-modal>[data-click='pinDialog']");
-      pinDialog.on("click", function(d, i) {
+      pinDialog.on("click", (d, i) => {
         _this.pinDialog(d.id);
       });
 
-      this.rootEl.node().addEventListener("click", function() {
+      this.rootEl.node().addEventListener("click", () => {
         _this.closeAllDialogs();
       });
 
@@ -172,7 +170,7 @@ var Dialogs = Component.extend({
       });
     }
 
-    this.element.on("click", function() {
+    this.element.on("click", () => {
       d3.event.stopPropagation();
     });
 
@@ -241,25 +239,23 @@ var Dialogs = Component.extend({
 
     this.element.selectAll("div").data(details_dlgs)
       .enter().append("div")
-      .attr("data-dlg", function(d) {
-        return d.id;
-      })
+      .attr("data-dlg", d => d.id)
       .attr("class", "vzb-top-dialog vzb-dialogs-dialog vzb-dialog-shadow");
 
     this.loadSubComponents();
 
     var _this = this;
     //render each subcomponent
-    utils.forEach(this.components, function(subcomp) {
+    utils.forEach(this.components, subcomp => {
       subcomp.render();
-      _this.on("resize", function() {
+      _this.on("resize", () => {
         subcomp.trigger("resize");
       });
-      subcomp.on("dragstart", function() {
+      subcomp.on("dragstart", () => {
         _this.bringForward(subcomp.name);
       });
       subcomp.on("close", function() {
-        this.placeholderEl.each(function(d) {
+        this.placeholderEl.each(d => {
           var evt = {};
           evt.id = d.id;
           _this.trigger("close", evt);
@@ -349,7 +345,7 @@ var Dialogs = Component.extend({
     //remove classes
     var dialogClass = forceclose ? ".vzb-popup.vzb-dialogs-dialog.vzb-active" : ".vzb-popup.vzb-dialogs-dialog.vzb-active:not(.pinned)";
     var all_dialogs = this.element.selectAll(dialogClass);
-    all_dialogs.each(function(d) {
+    all_dialogs.each(d => {
       _this.closeDialog(d.id);
     });
   }

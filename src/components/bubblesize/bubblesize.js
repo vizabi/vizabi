@@ -117,7 +117,7 @@ var BubbleSize = Component.extend({
     this.brush = d3.brushX()
       .extent([[0, 0], [minMaxBubbleRadius.max * 2, barWidth]])
       .handleSize(thumbRadius * 2 + barWidth * 2)
-      .on("start", function() {
+      .on("start", () => {
         if (_this.nonBrushChange || !d3.event.sourceEvent) return;
         if (d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
           var brushDatum = _this.sliderEl.node().__brush;
@@ -125,7 +125,7 @@ var BubbleSize = Component.extend({
         }
         _this._setFromExtent(false, false, false);
       })
-      .on("brush", function() {
+      .on("brush", () => {
         if (_this.nonBrushChange || !d3.event.sourceEvent) return;
         if (d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
           var brushDatum = _this.sliderEl.node().__brush;
@@ -133,14 +133,14 @@ var BubbleSize = Component.extend({
         }
         _this._setFromExtent(true, false, false); // non persistent change
       })
-      .on("end", function() {
+      .on("end", () => {
         if (_this.nonBrushChange || !d3.event.sourceEvent) return;
         _this._setFromExtent(true, true); // force a persistent change
       });
 
     this.sliderThumbs = this.sliderEl.selectAll(".handle")
-      .data([{ type: "w" }, { type: "e" }], function(d) { return d.type; })
-      .enter().append("svg").attr("class", function(d) { return "handle handle--" + d.type; })
+      .data([{ type: "w" }, { type: "e" }], d => d.type)
+      .enter().append("svg").attr("class", d => "handle handle--" + d.type)
       .classed("vzb-bs-slider-thumb", true);
 
     this.sliderThumbs.append("g")
@@ -174,10 +174,8 @@ var BubbleSize = Component.extend({
     this.sliderEl.selectAll("text").data([0, 0]).enter()
       .append("text")
       .attr("class", "vzb-bs-slider-thumb-label")
-      .attr("text-anchor", function(d, i) {
-        return i ? "start" : "end";})
-      .attr("dy", function(d, i) {
-        return i ? "-0.7em" : "1.4em";});
+      .attr("text-anchor", (d, i) => i ? "start" : "end")
+      .attr("dy", (d, i) => i ? "-0.7em" : "1.4em");
 
     this.sliderLabelsEl = this.sliderEl.selectAll("text.vzb-bs-slider-thumb-label");
 
@@ -194,7 +192,7 @@ var BubbleSize = Component.extend({
     //    return "translate(" + (dX) + "," + (dY) + ")";
     // }
 
-    this.on("resize", function() {
+    this.on("resize", () => {
       //console.log("EVENT: resize");
       var minMaxBubbleRadius = _this.getMinMaxBubbleRadius();
       _this.xScale.range([minMaxBubbleRadius.min * 2, minMaxBubbleRadius.max * 2]);
@@ -243,19 +241,19 @@ var BubbleSize = Component.extend({
     if (!this.showArcs) return;
     var _this = this;
     var valueArc = d3.arc()
-      .outerRadius(function(d) { return _this.xScale(d) * 0.5; })
-      .innerRadius(function(d) { return _this.xScale(d) * 0.5; })
+      .outerRadius(d => _this.xScale(d) * 0.5)
+      .innerRadius(d => _this.xScale(d) * 0.5)
       .startAngle(-Math.PI * 0.5)
       .endAngle(Math.PI * 0.5);
     this.sliderArcsEl.data(s)
       .attr("d", valueArc)
-      .attr("transform", function(d) {return "translate(" + (_this.xScale(d) * 0.5) + ",0)"; });
+      .attr("transform", d => "translate(" + (_this.xScale(d) * 0.5) + ",0)");
   },
 
   _updateLabels(s) {
     var _this = this;
     this.sliderLabelsEl.data(s)
-      .attr("transform", function(d, i) {
+      .attr("transform", (d, i) => {
         var textMargin = { v: OPTIONS.TEXT_PARAMS.TOP, h: OPTIONS.TEXT_PARAMS.LEFT },
             dX = textMargin.h * (i ? 0.5 : -1.0) + _this.xScale(d),
             dY = 0;
@@ -267,7 +265,7 @@ var BubbleSize = Component.extend({
       var _this = this;
       _this.sliderLabelsEl
         .data([_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[0]), _this.model.size.getTickFormatter()(_this.sizeScaleMinMax[1])])
-        .text(function(d) { return d; });
+        .text(d => d);
   },
 
   /**

@@ -98,7 +98,7 @@ var MinMaxInputs = Component.extend({
         });
 
         this.element.selectAll("input")
-            .on("keypress", function(e) {
+            .on("keypress", e => {
                 if (d3.event.which == 13) document.activeElement.blur();
             });
     },

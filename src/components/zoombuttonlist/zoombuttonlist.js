@@ -78,7 +78,7 @@ var ZoomButtonList = Component.extend({
 
     this.model_binds = {};
 
-    Object.keys(this._available_buttons).forEach(function(buttonId) {
+    Object.keys(this._available_buttons).forEach(buttonId => {
       var button = _this._available_buttons[buttonId];
       if (button && button.statebind) {
         _this.model_binds["change:" + button.statebind] = function(evt) {
@@ -130,7 +130,7 @@ var ZoomButtonList = Component.extend({
 
     this.element.selectAll("button").data(details_btns)
       .enter().append("button")
-      .attr("class", function(d) {
+      .attr("class", d => {
         var cls = "vzb-buttonlist-btn";
         if (button_expand.length > 0) {
           if (button_expand.indexOf(d.id) > -1) {
@@ -140,14 +140,10 @@ var ZoomButtonList = Component.extend({
 
         return cls;
       })
-      .attr("data-btn", function(d) {
-        return d.id;
-      })
-      .html(function(btn) {
-        return "<span class='vzb-buttonlist-btn-icon fa'>" +
+      .attr("data-btn", d => d.id)
+      .html(btn => "<span class='vzb-buttonlist-btn-icon fa'>" +
           btn.icon + "</span><span class='vzb-buttonlist-btn-title'>" +
-          t(btn.title) + "</span>";
-      });
+          t(btn.title) + "</span>");
 
     var buttons = this.element.selectAll(".vzb-buttonlist-btn");
 
@@ -196,9 +192,7 @@ var ZoomButtonList = Component.extend({
   setCursorMode(id) {
     var value = this.model.ui.cursorMode ? this.model.ui.cursorMode : "arrow";
     this.element.selectAll(".vzb-buttonlist-btn")
-      .classed(class_active, function(d) {
-        return d.id == value;
-      });
+      .classed(class_active, d => d.id == value);
   },
 
   toggleHundredPercent(id) {

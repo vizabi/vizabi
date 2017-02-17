@@ -60,15 +60,15 @@ var AxisLabelerComponent = Component.extend({
     this.yInvert = function(d) {return _this.yScale(_this.yScale.invert(_this.yScale(d)));};
 
     this.line = d3.svg.line()
-      .x(function(d) { return _this.xScale(d); })
-      .y(function(d) { return _this.yScale(d); });
+      .x(d => _this.xScale(d))
+      .y(d => _this.yScale(d));
 
     this.lineInvert = d3.svg.line()
-      .x(function(d) { return _this.xInvert(d); })
-      .y(function(d) { return _this.yInvert(d); });
+      .x(d => _this.xInvert(d))
+      .y(d => _this.yInvert(d));
 
     //component events
-    this.on("resize", function() {
+    this.on("resize", () => {
       _this.update();
     });
   },
@@ -116,8 +116,8 @@ var AxisLabelerComponent = Component.extend({
     //update scales to the new range
     var xLength = this.xScale.domain().length;
     var yLength = this.yScale.domain().length;
-    this.xScale.range(d3.range(xLength).map(function(n) { return width / (xLength - 1) * n; })); //.nice();
-    this.yScale.range(d3.range(yLength).map(function(n) { return height / (yLength - 1) * n; }).reverse()); //.nice();
+    this.xScale.range(d3.range(xLength).map(n => width / (xLength - 1) * n)); //.nice();
+    this.yScale.range(d3.range(yLength).map(n => height / (yLength - 1) * n).reverse()); //.nice();
 
     this.xAxis.scale(this.xScale)
       .tickSize(6, 0)
@@ -161,31 +161,23 @@ var AxisLabelerComponent = Component.extend({
     dots.enter().append("circle")
       .attr("class", "vzb-al-dots")
       .attr("r", 5)
-      .on("mouseenter", function(d, i) {
+      .on("mouseenter", (d, i) => {
         console.log("Point #" + i + ": " + d + " x=" + format(_this.xScale(d)) + " y=" + format(_this.yScale(d)));
       });
     dots.exit().remove();
-    dots.attr("cx", function(d) {
-        return _this.xScale(d);
-      })
-      .attr("cy", function(d) {
-        return _this.yScale(d);
-      });
+    dots.attr("cx", d => _this.xScale(d))
+      .attr("cy", d => _this.yScale(d));
 
     var dotsInvert = this.graph.selectAll(".vzb-al-dots-invert").data(this.mockData);
     dotsInvert.enter().append("circle")
       .attr("class", "vzb-al-dots-invert")
       .attr("r", 5)
-      .on("mouseenter", function(d, i) {
+      .on("mouseenter", (d, i) => {
         console.log("Point #" + i + ": " + d + " x=" + format(_this.xScale(d)) + " y=" + format(_this.yScale(d)));
       });
     dotsInvert.exit().remove();
-    dotsInvert.attr("cx", function(d) {
-        return _this.xInvert(d);
-      })
-      .attr("cy", function(d) {
-        return _this.yInvert(d);
-      });
+    dotsInvert.attr("cx", d => _this.xInvert(d))
+      .attr("cy", d => _this.yInvert(d));
   }
 });
 
