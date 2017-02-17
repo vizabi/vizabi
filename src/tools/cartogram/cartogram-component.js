@@ -72,7 +72,7 @@ var CartogramComponent = Component.extend({
             _this.frameChanged(frame, time);
           });
 
-        }(_this.model.time.value));
+        })(_this.model.time.value);
       },
       "change:marker.size.extent": function(evt, path) {
         //console.log("EVENT change:marker:size:max");

@@ -23,12 +23,12 @@ export var approxEqual = function(a, b, tolerance) {
  * @param {String} prefix
  * @returns {String} id
  */
-export var uniqueId = function() {
+export var uniqueId = (function() {
   var id = 0;
   return function(p) {
     return p ? p + (id += 1) : id += 1;
   };
-}();
+})();
 
 /*
  * checks whether obj is a DOM element
@@ -1485,7 +1485,7 @@ export function transform(node) {
 
   var { a, b, c, d, e, f } = node.transform.baseVal.consolidate().matrix;
 
-  return function(a, b, c, d, e, f) {
+  return (function(a, b, c, d, e, f) {
     var scaleX, scaleY, skewX;
     if (scaleX = Math.sqrt(a * a + b * b)) a /= scaleX, b /= scaleX;
     if (skewX = a * c + b * d) c -= a * skewX, d -= b * skewX;
@@ -1499,7 +1499,7 @@ export function transform(node) {
       scaleX,
       scaleY
     };
-  }(a, b, c, d, e, f);
+  })(a, b, c, d, e, f);
 }
 
 export function capitalize(string) { return string && string[0].toUpperCase() + string.slice(1).toLowerCase(); }

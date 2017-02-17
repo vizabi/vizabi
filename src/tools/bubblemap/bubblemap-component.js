@@ -860,7 +860,7 @@ var BubbleMapComponent = Component.extend({
         var y = points[1] * heightScale + ((h - viewPortHeight) / 2) + mapTopOffset  * heightScale;
         return [x, y];
       };
-    }());
+    })();
 
 
   },

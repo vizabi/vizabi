@@ -244,7 +244,7 @@ var MapLayer = Class.extend({
         var y = points[1] * heightScale + ((h - viewPortHeight) / 2) + mapTopOffset  * heightScale;
         return [x, y];
       };
-    }());
+    })();
 
     // if canvas not received this map is main and shound trigger redraw points on tool
     if (emitEvent) {

@@ -5,7 +5,7 @@ import { close as iconClose } from "base/iconset";
 
 var label = function(context) {
 
-  return function d3_label() {
+  return (function d3_label() {
 
     var _this = context;
 
@@ -336,7 +336,7 @@ var label = function(context) {
     }
 
     return label;
-  }();
+  })();
 };
 
 var OPTIONS = {

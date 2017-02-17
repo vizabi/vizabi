@@ -658,16 +658,16 @@ function bindSetterGetter(model, prop) {
   Object.defineProperty(model, prop, {
     configurable: true,
     //allow reconfiguration
-    get: function(p) {
+    get: (function(p) {
       return function() {
         return model.get(p);
       };
-    }(prop),
-    set: function(p) {
+    })(prop),
+    set: (function(p) {
       return function(value) {
         return model.set(p, value);
       };
-    }(prop)
+    })(prop)
   });
 }
 

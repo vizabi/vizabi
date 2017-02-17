@@ -6,12 +6,12 @@ var instance = null;
 export default function colorPicker() {
 
 
-  return function getInstance() {
+  return (function getInstance() {
     if (instance == null) {
       instance = d3_color_picker();
     }
     return instance;
-  }();
+  })();
 
   function d3_color_picker() {
     // tuning defaults

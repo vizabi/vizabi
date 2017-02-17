@@ -16,7 +16,7 @@ function extend(name, extensions) {
 
   forEach(extensions, (method, name) => {
     if (typeof extensions[name] === "function" && typeof _super[name] === "function" && fnTest.test(extensions[name])) {
-      prototype[name] = function(name, fn) {
+      prototype[name] = (function(name, fn) {
         return function() {
           var tmp = this._super;
           this._super = _super[name];
@@ -24,7 +24,7 @@ function extend(name, extensions) {
           this._super = tmp;
           return ret;
         };
-      }(name, extensions[name]);
+      })(name, extensions[name]);
     } else {
       prototype[name] = method;
     }

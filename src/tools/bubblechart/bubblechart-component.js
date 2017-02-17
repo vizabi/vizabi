@@ -186,7 +186,7 @@ var BubbleChartComp = Component.extend({
             _this.frameChanged(frame, time);
           });
 
-        }(_this.model.time.value));
+        })(_this.model.time.value);
       },
       "change:ui.adaptMinMaxZoom": function() {
         //console.log("EVENT change:ui:adaptMinMaxZoom");

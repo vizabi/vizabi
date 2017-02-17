@@ -1,7 +1,7 @@
 //d3.svg.collisionResolver
 
 export default function collisionResolver() {
-  return function collision_resolver() {
+  return (function collision_resolver() {
     var DURATION = 300;
     var labelHeight = {};
     var labelPosition = {};
@@ -150,5 +150,5 @@ export default function collisionResolver() {
       return resolver;
     };
     return resolver;
-  }();
+  })();
 }

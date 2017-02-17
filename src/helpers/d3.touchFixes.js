@@ -7,12 +7,12 @@ function touchcancel() {
   d3.event.target.dispatchEvent(new TouchEvent("touchend", d3.event));
 }
 
-var drag = function(_d3_behaviour_drag) {
+var drag = (function(_d3_behaviour_drag) {
   if (!isTouchDevice()) return _d3_behaviour_drag;
 
   return function() {
 
-    return function(_super) {
+    return (function(_super) {
 
       function drag() {
         _super.call(this);
@@ -21,17 +21,17 @@ var drag = function(_d3_behaviour_drag) {
       }
 
       return d3.rebind(drag, _super, "origin", "on");
-    }(_d3_behaviour_drag());
+    })(_d3_behaviour_drag());
   };
-}(d3.behavior.drag);
+})(d3.behavior.drag);
 
 
-var zoom = function(_d3_behaviour_zoom) {
+var zoom = (function(_d3_behaviour_zoom) {
   if (!isTouchDevice()) return _d3_behaviour_zoom;
 
   return function() {
 
-    return function(_super) {
+    return (function(_super) {
 
       function zoom(g) {
         _super(g);
@@ -43,12 +43,12 @@ var zoom = function(_d3_behaviour_zoom) {
       }
 
       return d3.rebind(zoom, _super, "translate", "scale", "scaleExtent", "center", "size", "x", "y", "on", "event");
-    }(_d3_behaviour_zoom());
+    })(_d3_behaviour_zoom());
   };
-}(d3.behavior.zoom);
+})(d3.behavior.zoom);
 
 
-var brush = function(_d3_svg_brush) {
+var brush = (function(_d3_svg_brush) {
   if (!isTouchDevice()) return _d3_svg_brush;
 
   function d3_window(node) {
@@ -57,7 +57,7 @@ var brush = function(_d3_svg_brush) {
 
   return function() {
 
-    return function(_super) {
+    return (function(_super) {
 
       function brushstart() {
         brush.on("brushend.touchcancel", brushend);
@@ -80,9 +80,9 @@ var brush = function(_d3_svg_brush) {
       }
 
       return d3.rebind(brush, _super, "x", "y", "extent", "clamp", "clear", "empty", "on", "event");
-    }(_d3_svg_brush());
+    })(_d3_svg_brush());
   };
-}(d3.svg.brush);
+})(d3.svg.brush);
 
 export default {
   brush,

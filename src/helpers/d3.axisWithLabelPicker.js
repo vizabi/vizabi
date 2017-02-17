@@ -3,7 +3,7 @@ import * as utils from "base/utils";
 
 export default function axisSmart(_orient) {
 
-  return function d3_axis_smart(_super) {
+  return (function d3_axis_smart(_super) {
 
     var VERTICAL = "vertical axis";
     var HORIZONTAL = "horizontal axis";
@@ -956,6 +956,6 @@ export default function axisSmart(_orient) {
       }
     }
 
-  }(d3["axis" + utils.capitalize(_orient)]());
+  })(d3["axis" + utils.capitalize(_orient)]());
 
 }

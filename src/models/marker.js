@@ -681,7 +681,7 @@ var Marker = Model.extend({
                   res();
                 });
               }));
-            }(hook, name)); //isolate this () code with its own hook and name
+            })(hook, name); //isolate this () code with its own hook and name
           }
         });
         if (promises.length > 0) {
@@ -857,13 +857,13 @@ var Marker = Model.extend({
     promises.push(new Promise((resolve, reject) => {
 
       //find startSelected time
-      findSelectedTime(function() {
+      findSelectedTime((function() {
         var max = timePoints.length;
         var i = 0;
         return function() {
           return i < max ? i++ : null;
         };
-      }(), point => {
+      })(), point => {
         selectedEdgeTimes[0] = timePoints[point];
         resolve();
       });
@@ -872,12 +872,12 @@ var Marker = Model.extend({
     promises.push(new Promise((resolve, reject) => {
 
       //find endSelected time
-      findSelectedTime(function() {
+      findSelectedTime((function() {
         var i = timePoints.length - 1;
         return function() {
           return i >= 0 ? i-- : null;
         };
-      }(), point => {
+      })(), point => {
         selectedEdgeTimes[1] = timePoints[point];
         resolve();
       });

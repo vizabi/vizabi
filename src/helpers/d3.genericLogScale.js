@@ -1,6 +1,6 @@
 //  d3.scale.genericLog
 export default function genericLog() {
-  return function d3_scale_genericLog(logScale) {
+  return (function d3_scale_genericLog(logScale) {
     var _this = this;
     var scales = [];
     var domainParts = [];
@@ -329,5 +329,5 @@ export default function genericLog() {
 
     return d3.rebind(scale, logScale, "base", "rangeRound", "clamp", "nice",
       "tickFormat");
-  }(d3.scale.log().domain([0.1, 200]).range([0, 1000]));
+  })(d3.scale.log().domain([0.1, 200]).range([0, 1000]));
 }
