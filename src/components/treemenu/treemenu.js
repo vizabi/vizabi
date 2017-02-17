@@ -1077,7 +1077,7 @@ const TreeMenu = Component.extend({
 
     const markerID = this._markerID;
 
-    let dataFiltered;
+    let dataFiltered, allowedIDs;
 
     const indicatorsDB = {};
     utils.forEach(this.model.marker._root._data, m => {
@@ -1091,7 +1091,7 @@ const TreeMenu = Component.extend({
     } else {
       if (data == null) data = this._tree;
 
-      const allowedIDs = utils.keys(indicatorsDB).filter(f => {
+      allowedIDs = utils.keys(indicatorsDB).filter(f => {
         //check if indicator is denied to show with allow->names->!indicator
         if (_this.model.marker[markerID].allow && _this.model.marker[markerID].allow.names) {
           if (_this.model.marker[markerID].allow.names.indexOf("!" + f) != -1) return false;
