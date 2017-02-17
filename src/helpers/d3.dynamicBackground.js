@@ -7,6 +7,8 @@ export default Class.extend({
 
   init(context, conditions) {
     this.context = context;
+    this.context.classed('vzb-dynamic-background', true);
+
     this.width = 0;
     this.height = 0;
     this.topOffset = 0;
