@@ -60,9 +60,8 @@ const CartogramComponent = Component.extend({
             const index = _this.calculationQueue.indexOf(time.toString()); //
             if (index == -1) { // we was receive more recent frame before so we pass this frame
               return;
-            } else {
-              _this.calculationQueue.splice(0, index + 1); // remove timestamps that added to queue before current timestamp
             }
+            _this.calculationQueue.splice(0, index + 1); // remove timestamps that added to queue before current timestamp
             _this.frameChanged(frame, time);
           });
 
@@ -319,9 +318,8 @@ const CartogramComponent = Component.extend({
             const size1 = _this.sScale(lockedFrame.size[_this._getKey(d)]);/* * _this._calculateTotalSize(_this.model.time.value, _this.values.size)*/
             const size2 = _this.sScale(_this.values.size[_this._getKey(d)]);/* * _this._calculateTotalSize(time, lockedFrame.size)*/
             return d3.geo.path().projection(null).area(d) * Math.pow((size2 / size1), 2);
-          } else {
-            return _this.sScale(_this.values.size[_this._getKey(d)]);
           }
+          return _this.sScale(_this.values.size[_this._getKey(d)]);
         });
         /*
          if (_this.model.ui.chart.lockNonSelected) {

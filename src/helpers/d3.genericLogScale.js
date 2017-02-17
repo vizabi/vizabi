@@ -148,25 +148,27 @@ export default function genericLog() {
           return scales[0];
         } else if (x > domain[domain.length - 1]) {
           return scales[scales.length - 1];
-        } else {
-          for (let i = 0; i < scales.length; i++) {
-            if (x >= scales[i].domain[0] && x <= scales[i].domain[scales[i].domain.length - 1]) {
-              return scales[i];
-            }
+        }
+
+        for (let i = 0; i < scales.length; i++) {
+          if (x >= scales[i].domain[0] && x <= scales[i].domain[scales[i].domain.length - 1]) {
+            return scales[i];
           }
         }
+
       } else {
         if (x > domain[0]) {
           return scales[0];
         } else if (x < domain[domain.length - 1]) {
           return scales[scales.length - 1];
-        } else {
-          for (let i = 0; i < scales.length; i++) {
-            if (x <= scales[i].domain[0] && x >= scales[i].domain[scales[i].domain.length - 1]) {
-              return scales[i];
-            }
+        }
+
+        for (let i = 0; i < scales.length; i++) {
+          if (x <= scales[i].domain[0] && x >= scales[i].domain[scales[i].domain.length - 1]) {
+            return scales[i];
           }
         }
+
       }
     };
 
@@ -176,25 +178,27 @@ export default function genericLog() {
           return scales[0];
         } else if (x > range[range.length - 1]) {
           return scales[scales.length - 1];
-        } else {
-          for (let i = 0; i < scales.length; i++) {
-            if (x >= scales[i].range[0] && x <= scales[i].range[scales[i].range.length - 1]) {
-              return scales[i];
-            }
+        }
+
+        for (let i = 0; i < scales.length; i++) {
+          if (x >= scales[i].range[0] && x <= scales[i].range[scales[i].range.length - 1]) {
+            return scales[i];
           }
         }
+
       } else {
         if (x > range[0]) {
           return scales[0];
         } else if (x < range[range.length - 1]) {
           return scales[scales.length - 1];
-        } else {
-          for (let i = 0; i < scales.length; i++) {
-            if (x <= scales[i].range[0] && x >= scales[i].range[1]) {
-              return scales[i];
-            }
+        }
+
+        for (let i = 0; i < scales.length; i++) {
+          if (x <= scales[i].range[0] && x >= scales[i].range[1]) {
+            return scales[i];
           }
         }
+
       }
     };
 
@@ -209,11 +213,10 @@ export default function genericLog() {
 
     function scale(x) {
       const currScale = _getScaleByDomain(x);
-      if (interpolator) {
-        return interpolator(currScale.scale(x * currScale.sign));
-      } else {
-        return currScale.scale(x * currScale.sign);
-      }
+
+      return interpolator ?
+        interpolator(currScale.scale(x * currScale.sign)) :
+        currScale.scale(x * currScale.sign);
     }
 
     scale.eps = function(arg) {

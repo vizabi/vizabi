@@ -177,9 +177,8 @@ const BubbleChartComp = Component.extend({
             const index = _this.calculationQueue.indexOf(time.toString()); //
             if (index == -1) { // we was receive more recent frame before so we pass this frame
               return;
-            } else {
-              _this.calculationQueue.splice(0, index + 1); // remove timestamps that added to queue before current timestamp
             }
+            _this.calculationQueue.splice(0, index + 1); // remove timestamps that added to queue before current timestamp
             _this.frameChanged(frame, time);
           });
 
@@ -297,9 +296,8 @@ const BubbleChartComp = Component.extend({
         utils.warn("rangeBump error: the input scale range has 0 length. that sucks");
       }
       return [z1, z2];
-    } else {
-      utils.warn("rangeBump error: input is not an array or empty");
     }
+    utils.warn("rangeBump error: input is not an array or empty");
   },
 
 //  _marginUnBump: function(arg) {

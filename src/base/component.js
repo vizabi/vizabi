@@ -265,12 +265,10 @@ const Component = Events.extend({
    * @returns {String} profile
    */
   getLayoutProfile() {
-    //get profile from parent if layout is not available
-    if (this.model.ui) {
-      return this.model.ui.currentProfile();
-    } else {
-      return this.parent.getLayoutProfile();
-    }
+    // get profile from parent if layout is not available
+    return this.model.ui ?
+      this.model.ui.currentProfile() :
+      this.parent.getLayoutProfile();
   },
 
   /**
@@ -278,12 +276,10 @@ const Component = Events.extend({
    * @returns {Bool} presentation mode
    */
   getPresentationMode() {
-    //get profile from parent if layout is not available
-    if (this.model.ui) {
-      return this.model.ui.getPresentationMode();
-    } else {
-      return this.parent.getPresentationMode();
-    }
+    // get profile from parent if layout is not available
+    return this.model.ui ?
+      this.model.ui.getPresentationMode() :
+      this.parent.getPresentationMode();
   },
 
   //TODO: make ui mapping more powerful
@@ -418,11 +414,10 @@ const Component = Events.extend({
         return s;
       };
     }
-    if (wrap) {
-      return this._translatedStringFunction(t_func);
-    } else {
-      return t_func;
-    }
+
+    return wrap ?
+      this._translatedStringFunction(t_func) :
+      t_func;
   },
 
   /**

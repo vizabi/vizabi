@@ -13,9 +13,8 @@ export const approxEqual = function(a, b, tolerance) {
     return (1 - tolerance) * b <= a && a <= b * (1 + tolerance);
   } else if (b < 0) {
     return (1 + tolerance) * b <= a && a <= b * (1 - tolerance);
-  } else {
-    return Math.abs(a) <= tolerance;
   }
+  return Math.abs(a) <= tolerance;
 };
 
 /*
@@ -168,12 +167,9 @@ export const comparePlainObjects = function(a, b) {
     }
 
     if (type === "number") {
-      if (val.toString().indexOf(".") > 0) {
-        return "float";
-      }
-      else {
-        return "integer";
-      }
+      return val.toString().indexOf(".") > 0 ?
+        "float" :
+        "integer";
     }
 
     return type;
@@ -361,9 +357,8 @@ function cloneSpecificValue(val) {
     return new Date(val.getTime());
   } else if (val instanceof RegExp) {
     return new RegExp(val);
-  } else {
-    throw new Error("Unexpected situation");
   }
+  throw new Error("Unexpected situation");
 }
 
 /**
@@ -784,13 +779,13 @@ export const mapRows = function(original, formatters) {
   function mapRow(value, fmt) {
     if (!isArray(value)) {
       return fmt(value);
-    } else {
-      const res = [];
-      for (let i = 0; i < value.length; i++) {
-        res[i] = mapRow(value[i], fmt);
-      }
-      return res;
     }
+
+    const res = [];
+    for (let i = 0; i < value.length; i++) {
+      res[i] = mapRow(value[i], fmt);
+    }
+    return res;
   }
 
   // default formatter turns empty strings in null and converts numeric values into number
@@ -970,14 +965,11 @@ export const classed = function(el, className, value) {
  * @param {String} className
  * @return {Boolean}
  */
-export const hasClass = function(el, className) {
-  if (el.classList) {
-    return el.classList.contains(className);
-  } else {
-    //IE<10
-    return new RegExp("(^| )" + className + "( |$)", "gi").test(el.className);
-  }
-};
+export const hasClass = (el, className) => (
+  el.classList ?
+    el.classList.contains(className) :
+    new RegExp("(^| )" + className + "( |$)", "gi").test(el.className)
+);
 
 /*
  * Throttles a function
@@ -1089,14 +1081,13 @@ export const arraySum = function(arr) {
  * Computes the median of an array
  * @param {Array} arr
  */
-export const arrayMedian = function(arr) {
+export const arrayMedian = arr => {
   arr = arr.sort((a, b) => a - b);
   const middle = Math.floor((arr.length - 1) / 2);
-  if (arr.length % 2) {
-    return arr[middle];
-  } else {
-    return (arr[middle] + arr[middle + 1]) / 2;
-  }
+
+  return arr.length % 2 ?
+    arr[middle] :
+    (arr[middle] + arr[middle + 1]) / 2;
 };
 
 /*

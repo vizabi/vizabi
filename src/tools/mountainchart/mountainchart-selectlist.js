@@ -22,15 +22,15 @@ const MCSelectList = Class.extend({
             return d3.descending(a.sortValue[0], b.sortValue[0]);
           }
           return d3.descending(a.sortValue[1], b.sortValue[1]);
-        } else {
-          if (a.aggrLevel != b.aggrLevel) {
-            return d3.descending(a.aggrLevel, b.aggrLevel);
-          } else if (a.aggrLevel && b.aggrLevel) {
-            return d3.descending(a.yMax, b.yMax);
-          } else {
-            return 0;
-          }
         }
+
+        if (a.aggrLevel != b.aggrLevel) {
+          return d3.descending(a.aggrLevel, b.aggrLevel);
+        } else if (a.aggrLevel && b.aggrLevel) {
+          return d3.descending(a.yMax, b.yMax);
+        }
+
+        return 0;
       });
     _this.selectList = _this.mountainLabelContainer.selectAll("g.vzb-mc-label")
       .data(utils.unique(listData, d => d.KEY()));

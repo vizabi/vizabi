@@ -197,9 +197,8 @@ const Tool = Component.extend({
       return this.model.startLoading({
         splashScreen: true
       });
-    } else {
-      return Promise.resolve();
     }
+    return Promise.resolve();
   },
 
   finishLoading() {

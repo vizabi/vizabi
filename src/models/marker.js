@@ -75,12 +75,7 @@ const Marker = Model.extend({
    * @returns {Array} Array of unique selected values
    */
   getSelected(dim) {
-    if (dim)
-      return this.select.map(
-        d => d[dim]
-      );
-    else
-      return this.select;
+    return dim ? this.select.map(d => d[dim]) : this.select;
   },
 
   selectMarker(d) {
@@ -132,12 +127,7 @@ const Marker = Model.extend({
    * @returns {Array} Array of unique highlighted values
    */
   getHighlighted(dim) {
-    if (dim)
-      return this.highlight.map(
-        d => d[dim]
-      );
-    else
-      return this.highlight;
+    return dim ? this.highlight.map(d => d[dim]) : this.highlight;
   },
 
   setHighlight(arg) {
@@ -443,46 +433,45 @@ const Marker = Model.extend({
         // if it does, then return that frame directly and stop here
         //QUESTION: can we call the callback and return the frame? this will allow callbackless API too
       return cb(_this.cachedFrames[cachePath][time], time);
-    } else {
-        // if it doesn't (the requested time point falls between animation frames or frame is not cached yet)
-        // check if interpolation makes sense: we've requested a particular time and we have more than one frame
-      if (time && steps.length > 1) {
+    }
 
-          //find the next frame after the requested time point
-        const nextFrameIndex = d3.bisectLeft(steps, time);
+    // if it doesn't (the requested time point falls between animation frames or frame is not cached yet)
+    // check if interpolation makes sense: we've requested a particular time and we have more than one frame
+    if (time && steps.length > 1) {
 
-        if (!steps[nextFrameIndex]) {
-          utils.warn("The requested frame is out of range: " + time);
-          cb(null, time);
-          return null;
-        }
+      //find the next frame after the requested time point
+      const nextFrameIndex = d3.bisectLeft(steps, time);
 
-          //if "time" doesn't hit the frame precisely
-        if (steps[nextFrameIndex].toString() != time.toString()) {
-
-            //interpolate between frames and fire the callback
-          this._interpolateBetweenFrames(time, nextFrameIndex, steps, response => {
-            cb(response, time);
-          }, keys);
-          return null;
-        }
+      if (!steps[nextFrameIndex]) {
+        utils.warn("The requested frame is out of range: " + time);
+        cb(null, time);
+        return null;
       }
 
-        //QUESTION: we don't need any further execution after we called for interpolation, right?
-        //request preparing the data, wait until it's done
-      _this.getFrames(time, keys).then(() => {
-        if (!time && _this.cachedFrames[cachePath]) {
-            //time can be null: then return all frames
-          return cb(_this.cachedFrames[cachePath], time);
-        } else if (_this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
-            //time can be !null: then a particular frame calculation was forced and now it's done
-          return cb(_this.cachedFrames[cachePath][time], time);
-        } else {
-          utils.warn("marker.js getFrame: Data is not available for frame: " + time);
-          return cb(null, time);
-        }
-      });
+      //if "time" doesn't hit the frame precisely
+      if (steps[nextFrameIndex].toString() != time.toString()) {
+
+        //interpolate between frames and fire the callback
+        this._interpolateBetweenFrames(time, nextFrameIndex, steps, response => {
+          cb(response, time);
+        }, keys);
+        return null;
+      }
     }
+
+    //QUESTION: we don't need any further execution after we called for interpolation, right?
+    //request preparing the data, wait until it's done
+    _this.getFrames(time, keys).then(() => {
+      if (!time && _this.cachedFrames[cachePath]) {
+        //time can be null: then return all frames
+        return cb(_this.cachedFrames[cachePath], time);
+      } else if (_this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
+        //time can be !null: then a particular frame calculation was forced and now it's done
+        return cb(_this.cachedFrames[cachePath][time], time);
+      }
+      utils.warn("marker.js getFrame: Data is not available for frame: " + time);
+      return cb(null, time);
+    });
   },
 
   _interpolateBetweenFrames(time, nextFrameIndex, steps, cb, keys) {

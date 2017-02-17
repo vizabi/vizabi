@@ -126,17 +126,19 @@ const Model = EventSource.extend({
 
   /**
    * Gets an attribute from this model or all fields.
-   * @param attr Optional attribute
+   * @param attribute Optional attribute
    * @returns attr value or all values if attr is undefined
    */
-  get(attr) {
-    if (!attr) {
-      return this._data;
+  get(attribute) {
+    if (attribute) {
+      const model = this._data[attribute];
+
+      return Model.isModel(model) ?
+        model :
+        model.value;
     }
-    if (Model.isModel(this._data[attr]))
-      return this._data[attr];
-    else
-      return this._data[attr].value; // return leaf value
+
+    return this._data;
   },
 
   /**
@@ -299,10 +301,9 @@ const Model = EventSource.extend({
    * @returns {Object} Model or ModelLeaf object.
    */
   getModelObject(name) {
-    if (name)
-      return this._data[name];
-    else
-      return this;
+    return name ?
+      this._data[name] :
+      this;
   },
 
   /**
@@ -757,13 +758,7 @@ function initSubmodel(attr, val, ctx, persistent) {
  * @returns {Object} Intervals object
  */
 function getIntervals(ctx) {
-  if (ctx._intervals) {
-    return ctx._intervals;
-  } else if (ctx._parent) {
-    return getIntervals(ctx._parent);
-  } else {
-    return new Intervals();
-  }
+  return ctx._intervals || (ctx._parent ? getIntervals(ctx._parent) : new Intervals());
 }
 
 
