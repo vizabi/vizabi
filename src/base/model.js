@@ -249,12 +249,8 @@ const Model = EventSource.extend({
    * @param {Function} validationFunction Validation function
    * @returns {Array} submodels
    */
-  getSubmodels(object = false, validationFunction) {
+  getSubmodels(object = false, validationFunction = () => true) {
     const submodels = (object) ? {} : [];
-    const validationFunction = validationFunction || function() {
-      return true;
-    };
-    const _this = this;
     utils.forEach(this._data, (subModel, name) => {
       if (subModel && typeof subModel._id !== "undefined" && Model.isModel(subModel) && validationFunction(subModel)) {
         if (object) {
