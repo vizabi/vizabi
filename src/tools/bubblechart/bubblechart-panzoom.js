@@ -451,7 +451,6 @@ export default Class.extend({
         //d3 extent returns min and max of the input array as [min, max]
     const mmX = d3.extent(utils.values(_this.frame.axis_x));
     const mmY = d3.extent(utils.values(_this.frame.axis_y));
-    const radiusMax = utils.areaToRadius(_this.sScale(d3.extent(utils.values(_this.frame.size))[1])) || 0;
 
         //protection agains unreasonable min-max results -- abort function
     if (!mmX[0] && mmX[0] !== 0 || !mmX[1] && mmX[1] !== 0 || !mmY[0] && mmY[0] !== 0 || !mmY[1] && mmY[1] !== 0) {
@@ -462,10 +461,10 @@ export default Class.extend({
          * gutter.
          */
     const suggestedFrame = {
-      x1: _this.xScale(mmX[0]) - radiusMax,
-      y1: _this.yScale(mmY[0]) + radiusMax,
-      x2: _this.xScale(mmX[1]) + radiusMax,
-      y2: _this.yScale(mmY[1]) - radiusMax
+      x1: _this.xScale(mmX[0]),
+      y1: _this.yScale(mmY[0]),
+      x2: _this.xScale(mmX[1]),
+      y2: _this.yScale(mmY[1])
     };
     const xBounds = [0, _this.width];
     const yBounds = [_this.height, 0];
@@ -507,33 +506,10 @@ export default Class.extend({
         const xBoundsBumped = _this._rangeBump(xBounds);
         const yBoundsBumped = _this._rangeBump(yBounds);
 
-        const xScaleBoundsBumped = _this.xScale.copy()
-                    .range(xBoundsBumped);
-        const yScaleBoundsBumped = _this.yScale.copy()
-                    .range(yBoundsBumped);
-
-        const xDataBounds = [xScaleBoundsBumped.invert(xBounds[0]), xScaleBoundsBumped.invert(xBounds[1])];
-        const yDataBounds = [yScaleBoundsBumped.invert(yBounds[0]), yScaleBoundsBumped.invert(yBounds[1])];
-
-        if (suggestedFrame.x1 > 0)
-          suggestedFrame.x1 = 0;
-        else if (_this.xScale.invert(suggestedFrame.x1) < xDataBounds[0])
-          suggestedFrame.x1 = _this.xScale(xDataBounds[0]);
-
-        if (suggestedFrame.x2 < _this.width)
-          suggestedFrame.x2 = _this.width;
-        else if (_this.xScale.invert(suggestedFrame.x2) > xDataBounds[1])
-          suggestedFrame.x2 = _this.xScale(xDataBounds[1]);
-
-        if (suggestedFrame.y1 < _this.height)
-          suggestedFrame.y1 = _this.height;
-        else if (_this.yScale.invert(suggestedFrame.y1) < yDataBounds[0])
-          suggestedFrame.y1 = _this.yScale(yDataBounds[0]);
-
-        if (suggestedFrame.y2 > 0)
-          suggestedFrame.y2 = 0;
-        else if (_this.yScale.invert(suggestedFrame.y2) > yDataBounds[1])
-          suggestedFrame.y2 = _this.yScale(yDataBounds[1]);
+        if (suggestedFrame.x1 > xBoundsBumped[0]) suggestedFrame.x1 = xBoundsBumped[0];
+        if (suggestedFrame.x2 < xBoundsBumped[1]) suggestedFrame.x2 = xBoundsBumped[1];
+        if (suggestedFrame.y1 < yBoundsBumped[0]) suggestedFrame.y1 = yBoundsBumped[0];
+        if (suggestedFrame.y2 > yBoundsBumped[0]) suggestedFrame.y2 = yBoundsBumped[1];
       }
 
       _this.isCanvasPreviouslyExpanded = true;
@@ -550,12 +526,6 @@ export default Class.extend({
     let maxX = zoomedMaxX;
     let minY = zoomedMinY;
     let maxY = zoomedMaxY;
-    const zoomer = this.zoomer;
-
-    const xRangeBounds = [0, _this.width];
-    const yRangeBounds = [_this.height, 0];
-    const xRangeBoundsBumped = _this._rangeBump(xRangeBounds);
-    const yRangeBoundsBumped = _this._rangeBump(yRangeBounds);
 
     const xDomain = _this.xScale.domain();
     const yDomain = _this.yScale.domain();
@@ -568,81 +538,10 @@ export default Class.extend({
     if (minY < yDomain[0] && maxY < yDomain[1]) minY = yDomain[0];
     if (minY > yDomain[0] && maxY > yDomain[1]) maxY = yDomain[1];
 
-    const zoomXOut = minX <= xDomain[0] && xDomain[1] <= maxX && (xDomain[1] - xDomain[0]) < (maxX - zoomedMinX);
-    const zoomYOut = minY <= yDomain[0] && yDomain[1] <= maxY && (yDomain[1] - yDomain[0]) < (maxY - zoomedMinY);
-
-        /*
-         * Define TOLERANCE value as Number.EPSILON if exists, otherwise use
-         * ES6 standard value.
-         */
-    const TOLERANCE = Number.EPSILON ? Number.EPSILON : 2.220446049250313e-16;
-
-        /*
-         * Check if the range bump region is currently displayed, i.e. for the
-         * minX range bump region, check:
-         * _this.xScale.invert(xRangeBounds[0]) < _this.xScale.domain()[0]
-         *
-         * Also check if the given min/max values equal the domain edges.
-         * If so, then set the min/max values according to their range bumped
-         * values. These values are used to calculate the correct rectangle
-         * points for zooming.
-         */
-/*
-        if (_this.xScale.invert(xRangeBounds[0]) < xDomain[0] && !zoomXOut
-            && Math.abs(minX - xDomain[0]) < TOLERANCE) {
-            minX = _this.xScale.invert(xRangeBounds[0]);
-        }
-
-        if (_this.xScale.invert(xRangeBounds[1]) > xDomain[1] && !zoomXOut
-            && Math.abs(maxX - xDomain[1]) < TOLERANCE) {
-            maxX = _this.xScale.invert(xRangeBounds[1]);
-        }
-
-        if (_this.yScale.invert(yRangeBounds[0]) < yDomain[0] && !zoomYOut
-            && Math.abs(minY - yDomain[0]) < TOLERANCE) {
-            minY = _this.yScale.invert(yRangeBounds[0]);
-        }
-
-        if (_this.yScale.invert(yRangeBounds[1]) > yDomain[1] && !zoomYOut
-            && Math.abs(maxY - yDomain[1]) < TOLERANCE) {
-            maxY = _this.yScale.invert(yRangeBounds[1]);
-        }
-*/
 
     const xRange = [_this.xScale(minX), _this.xScale(maxX)];
     const yRange = [_this.yScale(minY), _this.yScale(maxY)];
 
-        /*
-         * Calculate correct pan for zoom out
-         * Expand ranges to viewport and after shift them to pan
-         */
-/*
-        if(zoomXOut) {
-            if(zoomedMaxX >= xDomain[1] && zoomedMinX <= xDomain[0]) {
-                var scale = Math.abs(_this.xScale(xDomain[1]) - _this.xScale(xDomain[0])) / Math.abs(xRange[1] - xRange[0]);
-                var bump = Math.abs(xRangeBoundsBumped[0] - xRangeBounds[0]);
-                var deltaVB = Math.abs(xRangeBounds[1] - xRangeBounds[0]);
-                var deltaVBBumped = Math.abs(xRangeBoundsBumped[1] - xRangeBoundsBumped[0]);
-
-                var scaledPanX = zoomer.translate()[0] - zoomer.scale() * zoomer.ratioX * (1 / scale - 1) * (bump + deltaVBBumped * Math.abs(_this.xScale(xDomain[0]) - xRange[0]) / (Math.abs(xRange[1] - _this.xScale(xDomain[1]) + Math.abs(_this.xScale(xDomain[0]) - xRange[0]))));
-                xRange[1] = (xRange[1] - xRange[0]) * deltaVB / deltaVBBumped + scaledPanX;
-                xRange[0] = scaledPanX;
-            }
-        }
-
-        if(zoomYOut) {
-            if(zoomedMaxY >= yDomain[1] && zoomedMinY <= yDomain[0]) {
-                var scale = Math.abs(_this.yScale(yDomain[0]) - _this.yScale(yDomain[1])) / Math.abs(yRange[0] - yRange[1]);
-                var bump = Math.abs(yRangeBoundsBumped[1] - yRangeBounds[1]);
-                var deltaVB = Math.abs(yRangeBounds[0] - yRangeBounds[1]);
-                var deltaVBBumped = Math.abs(yRangeBoundsBumped[0] - yRangeBoundsBumped[1]);
-
-                var scaledPanY = zoomer.translate()[1] - zoomer.scale() * zoomer.ratioY * ( 1 / scale - 1) * (bump + deltaVBBumped * Math.abs(_this.yScale(yDomain[1]) - yRange[1]) / (Math.abs(_this.yScale(yDomain[0]) - yRange[0]) + Math.abs(yRange[1] - _this.yScale(yDomain[1]))));
-                yRange[0] = (yRange[0] - yRange[1]) * deltaVB / deltaVBBumped + scaledPanY;
-                yRange[1] = scaledPanY;
-            }
-        }
-*/
 
     this._zoomOnRectangle(_this.element, xRange[0], yRange[0], xRange[1], yRange[1], false, duration, dontFeedToState);
   },
@@ -683,45 +582,6 @@ export default Class.extend({
 
     const xRangeBoundsBumped = _this._rangeBump(xRangeBounds);
     const yRangeBoundsBumped = _this._rangeBump(yRangeBounds);
-
-
-    const xDomain = _this.xScale.domain();
-    const yDomain = _this.yScale.domain();
-
-    const zoomXOut = transform.k * zoomer.ratioX < 1;
-    const zoomYOut = transform.k * zoomer.ratioY < 1;
-
-        /*
-         * If the min or max of one axis lies in the range bump region, then
-         * changing the opposite end of that axis must correctly scale and
-         * maintain the range bump region.
-         */
-
-/*
-        if (_this.xScale.invert(x1) < xDomain[0] && x1 >= xRangeBounds[0] && !zoomXOut) {
-            x1 = this._scaleCoordinate(x1, xRangeBounds[1] - x2, _this.xScale.range()[0], xRangeBounds[1]);
-        } else if (_this.xScale.invert(x2) < xDomain[0] && x2 >= xRangeBounds[0] && !zoomXOut) {
-            x2 = this._scaleCoordinate(x2, xRangeBounds[1] - x1, _this.xScale.range()[0], xRangeBounds[1]);
-        }
-
-        if (_this.xScale.invert(x2) > xDomain[1] && x2 <= xRangeBounds[1] && !zoomXOut) {
-            x2 = this._scaleCoordinate(x2, x1 - xRangeBounds[0], _this.xScale.range()[1], xRangeBounds[0]);
-        } else if (_this.xScale.invert(x1) > xDomain[1] && x1 <= xRangeBounds[1] && !zoomXOut) {
-            x1 = this._scaleCoordinate(x1, x2 - xRangeBounds[0], _this.xScale.range()[1], xRangeBounds[0]);
-        }
-
-        if (_this.yScale.invert(y1) < yDomain[0] && y1 <= yRangeBounds[0] && !zoomYOut) {
-            y1 = this._scaleCoordinate(y1, y2 - yRangeBounds[1], _this.yScale.range()[0], yRangeBounds[1]);
-        } else if (_this.yScale.invert(y2) < yDomain[0] && y2 <= yRangeBounds[0] && !zoomYOut) {
-            y2 = this._scaleCoordinate(y2, y1 - yRangeBounds[1], _this.yScale.range()[0], yRangeBounds[1]);
-        }
-
-        if (_this.yScale.invert(y2) > yDomain[1] && y2 >= yRangeBounds[1] && !zoomYOut) {
-            y2 = this._scaleCoordinate(y2, yRangeBounds[0] - y1, _this.yScale.range()[1], yRangeBounds[0]);
-        } else if (_this.yScale.invert(y1) > yDomain[1] && y1 >= yRangeBounds[1] && !zoomYOut) {
-            y1 = this._scaleCoordinate(y1, yRangeBounds[0] - y2, _this.yScale.range()[1], yRangeBounds[0]);
-        }
-*/
 
     const minZoom = zoomer.scaleExtent()[0];
     const maxZoom = zoomer.scaleExtent()[1];
@@ -776,29 +636,6 @@ export default Class.extend({
   },
 
     /*
-     * Helper function that returns a scaled coordinate value based on the
-     * distance between the given coordinate and the data boundary.
-     */
-  _scaleCoordinate(coordValue, scaleDifference, dataBoundary, viewportBoundary) {
-    const scalar = scaleDifference / Math.abs(dataBoundary - viewportBoundary);
-    return (coordValue - dataBoundary) * (1 - scalar) + dataBoundary;
-  },
-
-    /*
-     * Calculate a proportional reduction of the scalar value. Also,
-     * calculate the reduction of the value by a constant of 1.
-     *
-     * Return the larger of the two calculated values.
-     */
-  _scaleToMin(scalar, minScalar, proportion, constant) {
-    const scalarProportionDelta = (scalar - minScalar) * proportion;
-    const scalarDifferenceDelta = Math.max(constant, minScalar - constant);
-    const scalarDelta = Math.max(scalarProportionDelta, scalarDifferenceDelta);
-
-    return scalarDelta;
-  },
-
-    /*
      * Incrementally zoom in or out and pan the view so that it never looses the point where click happened
      * this function is a modified d3's own zoom behavior on double click
      * for the original code see https://github.com/mbostock/d3/blob/master/src/behavior/zoom.js
@@ -811,7 +648,7 @@ export default Class.extend({
     let ratio = transform.k;
     const pan = [transform.x, transform.y];
 
-    const mouse = d3.mouse(_this.element.node());
+    const mouse = d3.mouse(this.zoomSelection.node());
     let k = Math.log(ratio) / Math.LN2;
 
         //change factor direction based on the input. default is no direction supplied
