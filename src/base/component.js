@@ -417,7 +417,7 @@ const Component = Events.extend({
 
     return wrap ?
       this._translatedStringFunction(t_func) :
-      t_func
+      t_func;
   },
 
   /**
