@@ -13,9 +13,8 @@ const Vzb = function(name, placeholder, external_model) {
     const t = new tool(placeholder, external_model);
     Vzb._instances[t._id] = t;
     return t;
-  } else {
-    utils.error('Tool "' + name + '" was not found.');
   }
+  utils.error('Tool "' + name + '" was not found.');
 };
 
 //stores reference to each tool on the page

@@ -371,11 +371,9 @@ const Menu = Class.extend({
     return null;
   },
   getTopMenu() {
-    if (this.parent) {
-      return this.parent.parentMenu.getTopMenu();
-    } else {
-      return this;
-    }
+    return this.parent ?
+      this.parent.parentMenu.getTopMenu() :
+      this;
   },
 
   scrollToFitView() {

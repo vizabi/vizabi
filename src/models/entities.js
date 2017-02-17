@@ -117,16 +117,9 @@ const EntitiesModel = DataConnected.extend({
 
   getFilteredEntities() {
     const dimension = this.getDimension();
-    if (this.show[dimension] && this.show[dimension]["$in"] && utils.isArray(this.show[dimension]["$in"])) {
-      const showArray = this.show[dimension]["$in"];
-      return showArray.map(m => {
-        const _m = {};
-        _m[dimension] = m;
-        return _m;
-      });
-    } else {
-      return false;
-    }
+    const { $in = [] } = this.show[dimension] || {};
+
+    return $in.map(m => ({ [dimension]: m }));
   }
 
 });

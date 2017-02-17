@@ -448,98 +448,97 @@ export default Class.extend({
 
           if (segment.valueY == null || segment.valueX == null || segment.valueS == null) {
             return resolve();
-          } else {
-            // fix label position if it not in correct place
-            if (trailStartTime && trailStartTime.toString() == segment.t.toString()) {
-              const cache = _context._labels.cached[d[KEY]];
-              cache.labelX0 = segment.valueX;
-              cache.labelY0 = segment.valueY;
-              const valueS = segment.valueS;
-              cache.scaledS0 = (valueS || valueS === 0) ? utils.areaToRadius(_context.sScale(valueS)) : null;
-              cache.scaledC0 = segment.valueC != null ? _context.cScale(segment.valueC) : _context.COLOR_WHITEISH;
-              _context._updateLabel(d, index, segment.valueX, segment.valueY, segment.valueS, segment.valueC, frame.label[d[KEY]], frame.size_label[d[KEY]], 0, true);
-            }
-            view.select("circle")
-              //.transition().duration(duration).ease(d3.easeLinear)
-              .attr("cy", _context.yScale(segment.valueY))
-              .attr("cx", _context.xScale(segment.valueX))
-              .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)))
-              .style("fill", segment.valueC != null ? _context.cScale(segment.valueC) : _context.COLOR_WHITEISH);
+          }
 
+          // fix label position if it not in correct place
+          if (trailStartTime && trailStartTime.toString() == segment.t.toString()) {
+            const cache = _context._labels.cached[d[KEY]];
+            cache.labelX0 = segment.valueX;
+            cache.labelY0 = segment.valueY;
+            const valueS = segment.valueS;
+            cache.scaledS0 = (valueS || valueS === 0) ? utils.areaToRadius(_context.sScale(valueS)) : null;
+            cache.scaledC0 = segment.valueC != null ? _context.cScale(segment.valueC) : _context.COLOR_WHITEISH;
+            _context._updateLabel(d, index, segment.valueX, segment.valueY, segment.valueS, segment.valueC, frame.label[d[KEY]], frame.size_label[d[KEY]], 0, true);
+          }
+          view.select("circle")
+          //.transition().duration(duration).ease(d3.easeLinear)
+            .attr("cy", _context.yScale(segment.valueY))
+            .attr("cx", _context.xScale(segment.valueX))
+            .attr("r", utils.areaToRadius(_context.sScale(segment.valueS)))
+            .style("fill", segment.valueC != null ? _context.cScale(segment.valueC) : _context.COLOR_WHITEISH);
+
+          view.select("line")
+            .attr("x2", _context.xScale(segment.valueX))
+            .attr("y2", _context.yScale(segment.valueY))
+            .attr("x1", _context.xScale(segment.valueX))
+            .attr("y1", _context.yScale(segment.valueY));
+
+          // last point should have data for line but it is invisible
+          if (_context.time - segment.t > 0) {
+            segment.visibilityChanged = false;
+            view.classed("vzb-invisible", segment.transparent);
+          } else {
+            view.classed("vzb-invisible", true);
+          }
+
+          if (!trail._groups[0][nextIndex] || _context.time.toString() == segment.t.toString()) {
+            return resolve();
+          }
+
+          const next = d3.select(trail._groups[0][nextIndex]);
+          const nextSegment = next.datum();
+          nextSegment.previous = segment;
+          segment.next = nextSegment;
+          let nextTime = nextSegment.t;
+          if (_context.time - nextSegment.t < 0) { // time is not equal start of year
+            segment.visibilityChanged = true; // redraw needed next time because line not have full length
+            nextTime = _context.time;
+          }
+          _context.model.marker.getFrame(nextTime, nextFrame => {
+            if (d.status != "reveal") return resolve();
+            if (!nextFrame || segment.valueY == null || segment.valueX == null || segment.valueS == null) {
+              return resolve();
+            }
+
+            if (nextFrame.axis_x[d[KEY]] == null || nextFrame.axis_y[d[KEY]] == null) {
+              return resolve();
+            }
+
+            nextSegment.valueY = nextFrame.axis_y[d[KEY]];
+            nextSegment.valueX = nextFrame.axis_x[d[KEY]];
+            nextSegment.valueS = nextFrame.size[d[KEY]];
+            nextSegment.valueC = nextFrame.color[d[KEY]];
+
+            _this.trailTransitions[d[KEY]] = view;
+            const strokeColor = _context.model.marker.color.which == "geo.world_4region" ?
+              //use predefined shades for color palette for "geo.world_4region" (hardcoded)
+              _context.model.marker.color.getColorShade({
+                colorID: segment.valueC,
+                shadeID: "shade"
+              })
+              :
+              //otherwise use color of the bubble with a fallback to bubble stroke color (blackish)
+              (segment.valueC != null ? _context.cScale(segment.valueC) : _context.COLOR_BLACKISH);
+
+            const lineLength = Math.sqrt(
+              Math.pow(_context.xScale(segment.valueX) - _context.xScale(nextFrame.axis_x[d[KEY]]), 2) +
+              Math.pow(_context.yScale(segment.valueY) - _context.yScale(nextFrame.axis_y[d[KEY]]), 2)
+            );
             view.select("line")
+              .transition().duration(duration).ease(d3.easeLinear)
+              .attr("x1", _context.xScale(nextSegment.valueX))
+              .attr("y1", _context.yScale(nextSegment.valueY))
               .attr("x2", _context.xScale(segment.valueX))
               .attr("y2", _context.yScale(segment.valueY))
-              .attr("x1", _context.xScale(segment.valueX))
-              .attr("y1", _context.yScale(segment.valueY));
-
-            // last point should have data for line but it is invisible
-            if (_context.time - segment.t > 0) {
-              segment.visibilityChanged = false;
-              view.classed("vzb-invisible", segment.transparent);
-            } else {
-              view.classed("vzb-invisible", true);
-            }
-
-            if (!trail._groups[0][nextIndex] || _context.time.toString() == segment.t.toString()) {
+              .attr("stroke-dasharray", lineLength)
+              .attr("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)))
+              .style("stroke", strokeColor);
+            if (nextIndex - index > 1) {
+              addNewIntervals(index, nextIndex);
               return resolve();
-            } else {
-              const next = d3.select(trail._groups[0][nextIndex]);
-              const nextSegment = next.datum();
-              nextSegment.previous = segment;
-              segment.next = nextSegment;
-              let nextTime = nextSegment.t;
-              if (_context.time - nextSegment.t < 0) { // time is not equal start of year
-                segment.visibilityChanged = true; // redraw needed next time because line not have full length
-                nextTime = _context.time;
-              }
-              _context.model.marker.getFrame(nextTime, nextFrame => {
-                if (d.status != "reveal") return resolve();
-                if (!nextFrame || segment.valueY == null || segment.valueX == null || segment.valueS == null) {
-                  return resolve();
-                } else {
-                  if (nextFrame.axis_x[d[KEY]] == null || nextFrame.axis_y[d[KEY]] == null) {
-                    return resolve();
-                  } else {
-                    nextSegment.valueY = nextFrame.axis_y[d[KEY]];
-                    nextSegment.valueX = nextFrame.axis_x[d[KEY]];
-                    nextSegment.valueS = nextFrame.size[d[KEY]];
-                    nextSegment.valueC = nextFrame.color[d[KEY]];
-
-                    _this.trailTransitions[d[KEY]] = view;
-                    const strokeColor = _context.model.marker.color.which == "geo.world_4region" ?
-                      //use predefined shades for color palette for "geo.world_4region" (hardcoded)
-                      _context.model.marker.color.getColorShade({
-                        colorID: segment.valueC,
-                        shadeID: "shade"
-                      })
-                      :
-                      //otherwise use color of the bubble with a fallback to bubble stroke color (blackish)
-                      (segment.valueC != null ? _context.cScale(segment.valueC) : _context.COLOR_BLACKISH);
-
-                    const lineLength = Math.sqrt(
-                      Math.pow(_context.xScale(segment.valueX) - _context.xScale(nextFrame.axis_x[d[KEY]]), 2) +
-                      Math.pow(_context.yScale(segment.valueY) - _context.yScale(nextFrame.axis_y[d[KEY]]), 2)
-                    );
-                    view.select("line")
-                      .transition().duration(duration).ease(d3.easeLinear)
-                      .attr("x1", _context.xScale(nextSegment.valueX))
-                      .attr("y1", _context.yScale(nextSegment.valueY))
-                      .attr("x2", _context.xScale(segment.valueX))
-                      .attr("y2", _context.yScale(segment.valueY))
-                      .attr("stroke-dasharray", lineLength)
-                      .attr("stroke-dashoffset", utils.areaToRadius(_context.sScale(segment.valueS)))
-                      .style("stroke", strokeColor);
-                    if (nextIndex - index > 1) {
-                      addNewIntervals(index, nextIndex);
-                      return resolve();
-                    } else {
-                      return resolve();
-                    }
-                  }
-                }
-              });
             }
-          }
+            return resolve();
+          });
         });
       });
     };
@@ -729,11 +728,10 @@ export default Class.extend({
         processPoints().then(() => {
           if (Object.keys(_this.delayedIterations[d[KEY]]).length == 0) {
             return resolve();
-          } else {
-            _this.drawingQueue[d[KEY]] = _this.delayedIterations[d[KEY]];
-            _this.delayedIterations[d[KEY]] = {};
-            processPointsBetween();
           }
+          _this.drawingQueue[d[KEY]] = _this.delayedIterations[d[KEY]];
+          _this.delayedIterations[d[KEY]] = {};
+          processPointsBetween();
         }, () => resolve());
       };
 

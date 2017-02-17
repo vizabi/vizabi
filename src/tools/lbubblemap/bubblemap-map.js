@@ -8,64 +8,6 @@ const GoogleMapsLoader = require("google-maps");
 
 import mapboxgl from "mapbox-gl/dist/mapbox-gl.js";
 
-export default Class.extend({
-  init(context) {
-    this.context = context;
-    this.topojsonMap = null;
-    this.mapInstance = null;
-  },
-
-  getMap() {
-    if (!this.mapInstance) {
-      switch (this.context.model.ui.map.mapEngine) {
-        case "google":
-          this.mapInstance = new GoogleMapLayer(this.context, this);
-          break;
-        case "mapbox":
-          this.mapInstance = new MapboxLayer(this.context, this);
-          break;
-      }
-      if (!this.context.model.ui.map.topojsonLayer && this.mapInstance) {
-        return this.mapInstance;
-      } else {
-        if (this.mapInstance) {
-          this.topojsonMap = new MapLayer(this.context, this);
-        } else {
-          this.mapInstance = new MapLayer(this.context, this);
-          return this.mapInstance;
-        }
-        return this;
-      }
-    }
-  },
-
-  initMap(domSelector) {
-    if (this.topojsonMap && this.mapInstance) {
-      return Promise.all([
-        this.mapInstance.initMap(domSelector),
-        this.topojsonMap.initMap(domSelector)
-      ]);
-    }
-  },
-
-  boundsChanged() {
-    if (this.topojsonMap) {
-      this.topojsonMap.rescaleMap(this.mapInstance.getCanvas());
-    }
-    this.context.mapBoundsChanged();
-  },
-
-  rescaleMap() {
-    const _this = this;
-    return this.mapInstance.rescaleMap();
-  },
-
-  invert(x, y) {
-    return this.mapInstance.invert(x, y);
-  }
-
-});
-
 const MapLayer = Class.extend({
   init(context, parent) {
     this.shapes = null;
@@ -424,4 +366,61 @@ const MapboxLayer = Class.extend({
 
 });
 
+export default Class.extend({
+  init(context) {
+    this.context = context;
+    this.topojsonMap = null;
+    this.mapInstance = null;
+  },
 
+  getMap() {
+    if (!this.mapInstance) {
+      switch (this.context.model.ui.map.mapEngine) {
+        case "google":
+          this.mapInstance = new GoogleMapLayer(this.context, this);
+          break;
+        case "mapbox":
+          this.mapInstance = new MapboxLayer(this.context, this);
+          break;
+      }
+      if (!this.context.model.ui.map.topojsonLayer && this.mapInstance) {
+        return this.mapInstance;
+      }
+
+
+      if (this.mapInstance) {
+        this.topojsonMap = new MapLayer(this.context, this);
+      } else {
+        this.mapInstance = new MapLayer(this.context, this);
+        return this.mapInstance;
+      }
+      return this;
+    }
+  },
+
+  initMap(domSelector) {
+    if (this.topojsonMap && this.mapInstance) {
+      return Promise.all([
+        this.mapInstance.initMap(domSelector),
+        this.topojsonMap.initMap(domSelector)
+      ]);
+    }
+  },
+
+  boundsChanged() {
+    if (this.topojsonMap) {
+      this.topojsonMap.rescaleMap(this.mapInstance.getCanvas());
+    }
+    this.context.mapBoundsChanged();
+  },
+
+  rescaleMap() {
+    const _this = this;
+    return this.mapInstance.rescaleMap();
+  },
+
+  invert(x, y) {
+    return this.mapInstance.invert(x, y);
+  }
+
+});

@@ -452,34 +452,34 @@ export default function axisSmart(_orient) {
               parseInt(options.cssMargin.top) +
               parseInt(options.cssMargin.bottom)
             );
-        } else {
-          //labels stack side by side. label width matters
-          const marginsLR = parseInt(options.cssMargin.left) + parseInt(options.cssMargin.right);
-          const maxLength = d3.max(tickValues.map(d => options.formatter(d).length));
-
-          // log scales need to rescale labels, so that 9 takes more space than 2
-          if (rescalingLabels == "log") {
-            // sometimes only a fragment of axis is used. in this case we want to limit the scope to that fragment
-            // yes, this is hacky and experimental
-            lengthRange = Math.abs(axis.scale()(d3.max(tickValues)) - axis.scale()(d3.min(tickValues)));
-
-            return lengthRange >
-              d3.sum(tickValues.map(d => (
-                    options.widthOfOneDigit * (approximationStyle == PESSIMISTIC ? maxLength : options.formatter(
-                      d).length) + marginsLR
-                  )
-                  // this is a logarithmic rescaling of labels
-                  * (1 + Math.log(d.toString().replace(/([0.])/g, "")[0]) / Math.LN10)));
-
-          } else {
-            return lengthRange >
-              tickValues.length * marginsLR + (approximationStyle == PESSIMISTIC ?
-                options.widthOfOneDigit * tickValues.length * maxLength : 0) + (approximationStyle == OPTIMISTIC ?
-                options.widthOfOneDigit * (
-                  tickValues.map(d => options.formatter(d)).join("").length
-                ) : 0);
-          }
         }
+
+        //labels stack side by side. label width matters
+        const marginsLR = parseInt(options.cssMargin.left) + parseInt(options.cssMargin.right);
+        const maxLength = d3.max(tickValues.map(d => options.formatter(d).length));
+
+        // log scales need to rescale labels, so that 9 takes more space than 2
+        if (rescalingLabels == "log") {
+          // sometimes only a fragment of axis is used. in this case we want to limit the scope to that fragment
+          // yes, this is hacky and experimental
+          lengthRange = Math.abs(axis.scale()(d3.max(tickValues)) - axis.scale()(d3.min(tickValues)));
+
+          return lengthRange >
+            d3.sum(tickValues.map(d => (
+              options.widthOfOneDigit * (approximationStyle == PESSIMISTIC ? maxLength : options.formatter(
+                  d).length) + marginsLR
+            )
+            // this is a logarithmic rescaling of labels
+            * (1 + Math.log(d.toString().replace(/([0.])/g, "")[0]) / Math.LN10)));
+
+        }
+
+        return lengthRange >
+          tickValues.length * marginsLR + (approximationStyle == PESSIMISTIC ?
+            options.widthOfOneDigit * tickValues.length * maxLength : 0) + (approximationStyle == OPTIMISTIC ?
+            options.widthOfOneDigit * (
+              tickValues.map(d => options.formatter(d)).join("").length
+            ) : 0);
       };
 
 

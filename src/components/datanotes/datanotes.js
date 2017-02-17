@@ -158,11 +158,10 @@ const DataNotes = Component.extend({
     this.element.classed("vzb-data-notes-pinned", pin);
     if (hookName != newHookName) this.setHook(newHookName);
     this.element.select(".vzb-data-notes-body").node().scrollTop = 0;
-    if (!showNotes) {
-      return this.hide();
-    } else {
-      return this.setPos(left, top, true);
-    }
+
+    return showNotes ?
+      this.setPos(left, top, true) :
+      this.hide();
   },
 
   toggle(arg) {

@@ -66,20 +66,20 @@ const DataModel = Model.extend({
 
     if (dataId) {
       return Promise.resolve(dataId);
-    } else {
-      utils.timeStamp("Vizabi Data: Loading Data");
-      EventSource.freezeAll([
-        "hook_change",
-        "resize"
-      ]);
-      return this.loadFromReader(query, parsers)
-        .then(dataId => {
-          EventSource.unfreezeAll();
-          return dataId;
-        })
-        .catch(error => this.handleReaderError(error, query));
     }
 
+    utils.timeStamp("Vizabi Data: Loading Data");
+    EventSource.freezeAll([
+      "hook_change",
+      "resize"
+    ]);
+
+    return this.loadFromReader(query, parsers)
+      .then(dataId => {
+        EventSource.unfreezeAll();
+        return dataId;
+      })
+      .catch(error => this.handleReaderError(error, query));
   },
 
   /**
@@ -106,23 +106,23 @@ const DataModel = Model.extend({
       utils.extend(this.queryQueue[queryMergeId].parsers, parsers);
       return this.queryQueue[queryMergeId].promise;
 
-    } else {
+    }
 
-      // set up base query
-      const promise = new Promise((resolve, reject) => {
+    // set up base query
+    const promise = new Promise((resolve, reject) => {
 
-        // wait one execution round for the queue to fill up
-        utils.defer(() => {
-          // now the query queue is filled with all queries from one execution round
+      // wait one execution round for the queue to fill up
+      utils.defer(() => {
+        // now the query queue is filled with all queries from one execution round
 
-          // remove double columns from select (resulting from merging)
-          // no double columns in formatter because it's an object, extend would've overwritten doubles
-          query.select.value = utils.unique(query.select.value);
+        // remove double columns from select (resulting from merging)
+        // no double columns in formatter because it's an object, extend would've overwritten doubles
+        query.select.value = utils.unique(query.select.value);
 
-          // execute the query with this reader
-          _this.readerObject.read(query, parsers).then(response => {
-
-              //success reading
+        // execute the query with this reader
+        _this.readerObject.read(query, parsers)
+          .then(response => {
+            //success reading
             _this.checkQueryResponse(query, response);
 
             _this._collection[dataId] = {};
@@ -136,33 +136,29 @@ const DataModel = Model.extend({
             col.frames = {};
             col.haveNoDataPointsPerKey = {};
             col.query = query;
-              // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
+            // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
 
-              // remove query from queue
+            // remove query from queue
             _this.queryQueue[queryMergeId] = null;
             resolve(dataId);
 
-          }, //error reading
-            err => {
-              _this.queryQueue[queryMergeId] = null;
-              reject(err);
-            }
-          );
+          })
+          .catch(err => {
+            _this.queryQueue[queryMergeId] = null;
+            reject(err);
+          });
 
-        });
       });
+    });
 
 
-      this.queryQueue[queryMergeId] = {
-        query,
-        parsers,
-        promise
-      };
+    this.queryQueue[queryMergeId] = {
+      query,
+      parsers,
+      promise
+    };
 
-      return this.queryQueue[queryMergeId].promise;
-
-    }
-
+    return this.queryQueue[queryMergeId].promise;
   },
 
   getReader() {
@@ -335,21 +331,14 @@ const DataModel = Model.extend({
   },
 
   getConceptprops(which) {
-    if (which) {
-      if (this.conceptDictionary[which]) {
-        return this.conceptDictionary[which];
-      } else {
-        return utils.warn("The concept " + which + " is not found in the dictionary");
-      }
-    } else {
-      return this.conceptDictionary;
-    }
+    return which ?
+      this.conceptDictionary[which] || utils.warn("The concept " + which + " is not found in the dictionary") :
+      this.conceptDictionary;
   },
 
   getConceptByIndex(index, type) {
-    const concept = this.conceptArray.filter(f => !type || !f.concept_type || f.concept_type === type)[index];
     //if(!concept && type == "measure") concept = this.conceptArray.filter(f => f.concept_type==="time")[0];
-    return concept;
+    return this.conceptArray.filter(f => !type || !f.concept_type || f.concept_type === type)[index];
   },
 
   getDatasetName() {
@@ -379,16 +368,16 @@ const DataModel = Model.extend({
     }
     if (this._collectionPromises[dataId][whatId] && this._collectionPromises[dataId][whatId]["promise"] instanceof Promise) {
       return this._collectionPromises[dataId][whatId]["promise"];
-    } else {
-      this._collectionPromises[dataId][whatId]["promise"] = new Promise((resolve, reject) => {
-        if (!dataId) reject(utils.warn("Data.js 'get' method doesn't like the dataId you gave it: " + dataId));
-        _this._getFrames(dataId, whatId, framesArray, keys).then(frames => {
-          _this._collection[dataId]["frames"][whatId] = frames;
-          resolve(_this._collection[dataId]["frames"][whatId]);
-        });
-      });
-
     }
+
+    this._collectionPromises[dataId][whatId]["promise"] = new Promise((resolve, reject) => {
+      if (!dataId) reject(utils.warn("Data.js 'get' method doesn't like the dataId you gave it: " + dataId));
+      _this._getFrames(dataId, whatId, framesArray, keys).then(frames => {
+        _this._collection[dataId]["frames"][whatId] = frames;
+        resolve(_this._collection[dataId]["frames"][whatId]);
+      });
+    });
+
     return this._collectionPromises[dataId][whatId]["promise"];
   },
 
