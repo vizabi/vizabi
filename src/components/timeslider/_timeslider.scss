@@ -124,6 +124,8 @@ $vzb-ts-value-width: 40px;
       }
       .vzb-ts-slider-slide {
         pointer-events: stroke;
+        stroke: #fff;
+        stroke-opacity: 0;
         stroke-linecap: round;
         cursor: pointer;
       }
