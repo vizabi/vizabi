@@ -24,10 +24,19 @@
       }
     }
 
+    .vzb-bc-bubbles-crop {
+      cursor: url('../../assets/cursors/grab.cur'), auto;
+    }
+
+    .vzb-zooming .vzb-bc-bubbles-crop {
+      cursor: url('../../assets/cursors/grabbing.cur'), auto;
+    }
+
     .vzb-bubblechart-svg {
       @extend %vzb-chart-svg;
 
       .vzb-bc-bubbles-crop {
+        cursor: grab;
         touch-action: none;
       }
 
@@ -63,6 +72,10 @@
             stroke: $vzb-color-grey;
           }
         }
+      }
+
+      &.vzb-zooming .vzb-bc-bubbles-crop {
+        cursor: grabbing;
       }
 
       &.vzb-zoomin .vzb-bc-bubbles-crop,
