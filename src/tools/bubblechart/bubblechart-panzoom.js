@@ -146,6 +146,9 @@ export default Class.extend({
     return {
       start() {
                 //this.savedScale = zoomer.scale;
+        if((_this.ui.cursorMode !== "plus") && (_this.ui.cursorMode !== "minus")) {
+          _this.chartSvg.classed("vzb-zooming", true);
+        }
       },
       go() {
 
@@ -432,6 +435,7 @@ export default Class.extend({
       },
 
       stop() {
+        _this.chartSvg.classed("vzb-zooming", false);
 
         _this.draggingNow = false;
 

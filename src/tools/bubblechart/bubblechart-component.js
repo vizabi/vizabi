@@ -219,7 +219,7 @@ const BubbleChartComp = Component.extend({
         _this._trails.run("opacityHandler");
       },
       "change:ui.cursorMode": function() {
-        const svg = _this.element.select("svg");
+        const svg = _this.chartSvg;
         if (_this.model.ui.cursorMode === "plus") {
           svg.classed("vzb-zoomin", true);
           svg.classed("vzb-zoomout", false);
@@ -325,6 +325,7 @@ const BubbleChartComp = Component.extend({
     this.element = d3.select(this.element);
 
     // reference elements
+    this.chartSvg = this.element.select("svg");
     this.graph = this.element.select(".vzb-bc-graph");
     this.yAxisElContainer = this.graph.select(".vzb-bc-axis-y");
     this.yAxisEl = this.yAxisElContainer.select("g");
