@@ -346,6 +346,12 @@ const LCComponent = Component.extend({
     this.entityLabels.exit().remove();
     this.entityLabels = this.entityLabels.enter().append("g")
       .attr("class", "vzb-lc-entity")
+      .on("mouseover", (d) => {
+        _this.model.marker.highlightMarker(d);
+      })
+      .on("mouseout", (d) => {
+        _this.model.marker.clearHighlighted();
+      })
       .each(function(d, index) {
         const entity = d3.select(this);
 
