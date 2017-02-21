@@ -397,10 +397,9 @@ const BarRankChart = Component.extend({
       if (entitiesCountChanged) {
         this._entitiesCount = this.sortedEntities.length;
       }
-      this._resizeSvg();
     }
 
-
+    this._resizeSvg();
     this._scroll(duration);
 
 
