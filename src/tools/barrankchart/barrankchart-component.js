@@ -370,11 +370,16 @@ const BarRankChart = Component.extend({
   },
 
   drawData(duration = 0, force = false) {
+    const bars = this.barContainer.selectAll(".vzb-br-bar");
+
+    const localeChanged = this._localeId !== this.model.locale.id;
+    if (localeChanged) {
+      this._localeId = this.model.locale.id;
+      bars.remove();
+    }
+
     // update the shown bars for new data-set
-    this._createAndDeleteBars(
-      this.barContainer.selectAll(".vzb-br-bar")
-        .data(this.sortedEntities, d => d.entity)
-    );
+    this._createAndDeleteBars(bars.data(this.sortedEntities, d => d.entity));
 
 
     const { presentation } = this.model.ui;
