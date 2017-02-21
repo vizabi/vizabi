@@ -116,6 +116,7 @@ const BarRankChart = Component.extend({
     // set up formatters
     this.xAxis.tickFormat(this.model.marker.axis_x.getTickFormatter());
 
+    this._localeId = this.model.locale.id;
     this._presentation = !this.model.ui.presentation;
     this._formatter = this.model.marker.axis_x.getTickFormatter();
 
@@ -370,16 +371,17 @@ const BarRankChart = Component.extend({
   },
 
   drawData(duration = 0, force = false) {
-    const bars = this.barContainer.selectAll(".vzb-br-bar");
-
     const localeChanged = this._localeId !== this.model.locale.id;
     if (localeChanged) {
       this._localeId = this.model.locale.id;
-      bars.remove();
+      this.barContainer.selectAll(".vzb-br-bar").remove();
     }
 
     // update the shown bars for new data-set
-    this._createAndDeleteBars(bars.data(this.sortedEntities, d => d.entity));
+    this._createAndDeleteBars(
+      this.barContainer.selectAll(".vzb-br-bar")
+        .data(this.sortedEntities, d => d.entity)
+    );
 
 
     const { presentation } = this.model.ui;
