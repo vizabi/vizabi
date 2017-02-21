@@ -645,12 +645,8 @@ function launchIntoFullscreen(elem) {
     elem.msRequestFullscreen();
   } else if (elem.mozRequestFullScreen) {
     elem.mozRequestFullScreen();
-  } else if (elem.webkitRequestFullscreen) {
-    if (!(navigator.vendor && navigator.vendor.indexOf("Apple") > -1 &&
-    navigator.userAgent && !navigator.userAgent.match("CriOS"))) {
-      elem.webkitRequestFullscreen();
-    }
-
+  } else if (elem.webkitRequestFullscreen && allowWebkitFullscreenAPI()) {
+    elem.webkitRequestFullscreen();
   }
 }
 
@@ -661,12 +657,17 @@ function exitFullscreen() {
     document.msExitFullscreen();
   } else if (document.mozCancelFullScreen) {
     document.mozCancelFullScreen();
-  } else if (document.webkitExitFullscreen) {
+  } else if (document.webkitExitFullscreen && allowWebkitFullscreenAPI()) {
     document.webkitExitFullscreen();
   } else {
     removeFullscreenChangeEvent.call(this);
     this.resizeInExitHandler = false;
   }
+}
+
+function allowWebkitFullscreenAPI() {
+  return !(navigator.vendor && navigator.vendor.indexOf("Apple") > -1 &&
+    navigator.userAgent && !navigator.userAgent.match("CriOS"));
 }
 
 export default ButtonList;
