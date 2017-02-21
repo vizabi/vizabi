@@ -191,7 +191,7 @@ export default Class.extend({
       //work with marker.select (all selected entities), if no particular selection is specified
       selection = selection == null ? _context.model.marker.select : [selection];
       for (let i = 0; i < actions.length; i++) {
-        if (["resize", "recolor"].indexOf(actions[i]) != -1) {
+        if (["resize", "recolor", "remove"].indexOf(actions[i]) != -1) {
           const action = actions.splice(i, 1).pop();
           --i;
           _this.trailsData.forEach(d => {
