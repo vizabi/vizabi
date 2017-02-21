@@ -460,7 +460,7 @@ const DataModel = Model.extend({
       this.key = 0;
       this.mute = function() {
         this.isActive = false;
-        this.delayedAction = Promise.resolve;
+        this.delayedAction = Promise.resolve.bind(Promise);
       };
 
       this.unMute = function() {
