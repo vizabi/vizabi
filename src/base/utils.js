@@ -731,9 +731,10 @@ export const preventAncestorScrolling = function(element) {
 
     const scrollTopTween = function(scrollTop) {
       return function() {
+        const _this = this;
         const i = d3.interpolateNumber(this.scrollTop, scrollTop);
         return function(t) {
-          this.scrollTop = i(t);
+          _this.scrollTop = i(t);
         };
       };
     };
