@@ -323,7 +323,7 @@ const Marker = Model.extend({
   _getCachePath(keys) {
     //array of steps -- names of all frames
     const steps = this._parent.time.getAllSteps();
-    let cachePath = steps[0] + " - " + steps[steps.length - 1];
+    let cachePath = `${this.getClosestModel("locale").id} - ${steps[0]} - ${steps[steps.length - 1]}`;
     this._dataCube = this._dataCube || this.getSubhooks(true);
     let dataLoading = false;
     utils.forEach(this._dataCube, (hook, name) => {
