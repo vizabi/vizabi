@@ -372,7 +372,7 @@ const BarRankChart = Component.extend({
 
   drawData(duration = 0, force = false) {
     const localeChanged = this._localeId !== this.model.locale.id;
-    if (localeChanged) {
+    if (force || localeChanged) {
       this._localeId = this.model.locale.id;
       this.barContainer.selectAll(".vzb-br-bar").remove();
     }
