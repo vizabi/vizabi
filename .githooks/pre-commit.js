@@ -5,7 +5,10 @@ const silent = true;
 
 const modifiedFiles = exec('git diff-index --name-only HEAD', { silent })
   .grep(/\.js$/)
-  .stdout.replace(/[\n\r]/g, ' ');
+  .stdout
+  .split(/[\n\r]/)
+  .filter(path => path.startsWith('src/'))
+  .join(' ');
 
 const result = exec(`npm run lint ${FIX} ${modifiedFiles}`, { silent });
 
