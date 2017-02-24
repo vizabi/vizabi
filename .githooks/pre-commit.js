@@ -4,7 +4,7 @@ const FIX = process.env.FIX ? '-- --fix' : '';
 const silent = true;
 
 const modifiedFiles = exec('git diff-index --name-only HEAD', { silent })
-  .grep(/\.js$/)
+  .grep(/^src\/.+\.js$/)
   .stdout
   .split(/[\n\r]/)
   .filter(path => path.startsWith('src/'))
