@@ -1,4 +1,4 @@
-var VIZABI_MODEL = {
+const VIZABI_MODEL = {
   "state": {
     "time": {
       "startOrigin": "1800",
@@ -51,7 +51,7 @@ var VIZABI_MODEL = {
         "syncModels": ["marker_colorlegend"]
       }
     },
-    "marker_colorlegend":{
+    "marker_colorlegend": {
       "space": ["entities_colorlegend"],
       "opacityRegular": 0.8,
       "opacityHighlightDim": 0.3,
@@ -85,11 +85,11 @@ var VIZABI_MODEL = {
       "doubtDomain": [1800, 1950, 2015],
       "doubtRange": [1.0, 0.3, 0.2]
     },
-    "buttons": ["colors","find","size","moreoptions","fullscreen","presentation"],
+    "buttons": ["colors", "find", "size", "moreoptions", "fullscreen", "presentation"],
     "dialogs": {
-      "popup": ["colors","find","size","moreoptions"],
-      "sidebar": ["colors","find","size"],
-      "moreoptions": ["opacity","speed","size","colors","presentation","about"]
+      "popup": ["colors", "find", "size", "moreoptions"],
+      "sidebar": ["colors", "find", "size"],
+      "moreoptions": ["mapoptions", "opacity", "speed", "size", "colors", "presentation", "about"]
     },
     "map": {
       "scale": 1,

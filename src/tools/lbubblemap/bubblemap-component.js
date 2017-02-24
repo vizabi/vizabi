@@ -89,6 +89,9 @@ const LBubbleMapComponent = Component.extend({
       "change:marker.opacityRegular": function(evt) {
         _this.updateOpacity();
       },
+      "change:ui.map.mapLayer": function(evt) {
+        _this.map.layerChanged();
+      }
     };
 
     //this._selectlist = new Selectlist(this);
@@ -915,12 +918,13 @@ const LBubbleMapComponent = Component.extend({
   },
 
   preload() {
-    const _this = this;
-    this.map = new MapEngine(this).getMap();
-    return this.map.initMap("#vzb-map-background");
+    this.initMap();
+  },
+
+  initMap() {
+    this.map = new MapEngine(this, "#vzb-map-background").getMap();
+    return this.map.initMap();
   }
-
 });
-
 
 export default LBubbleMapComponent;

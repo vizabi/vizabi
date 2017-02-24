@@ -1,0 +1,14 @@
+.vzb-tool-dialogs {
+  .vzb-dialogs-dialog {
+    &[data-dlg='mapoptions'] {
+      >.vzb-dialog-modal {
+        >.vzb-dialog-content {
+          label {
+            display: block;
+            
+          }
+        }
+      }
+    }
+  }
+}
