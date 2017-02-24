@@ -28,6 +28,11 @@ const Zoom = Dialog.extend({
       model: ["state", "ui", "locale"]
     }, {
       component: simplecheckbox,
+      placeholder: ".vzb-panwitharrow-switch",
+      model: ["ui", "locale"],
+      checkbox: "panWithArrow"
+    }, {
+      component: simplecheckbox,
       placeholder: ".vzb-zoomonscrolling-switch",
       model: ["ui", "locale"],
       checkbox: "zoomOnScrolling"

@@ -65,6 +65,14 @@ const ZoomButtonList = Component.extend({
         statebind: "ui.cursorMode",
         statebindfunc: this.setCursorMode.bind(this)
       },
+      "hand": {
+        title: "buttons/cursorhand",
+        icon: "cursorHand",
+        func: this.toggleCursorMode.bind(this),
+        required: true,
+        statebind: "ui.cursorMode",
+        statebindfunc: this.setCursorMode.bind(this)
+      },
       "hundredpercent": {
         title: "buttons/hundredpercent",
         icon: "hundredPercent",
