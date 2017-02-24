@@ -1,0 +1,26 @@
+<div class='vzb-dialog-modal'>
+    <span class="thumb-tack-class thumb-tack-class-ico-pin fa" data-dialogtype="mapoptions" data-click="pinDialog"></span>
+    <span class="thumb-tack-class thumb-tack-class-ico-drag fa" data-dialogtype="mapoptions" data-click="dragDialog"></span>
+    <div class="vzb-dialog-title">
+        <%=t ("buttons/mapoptions") %>
+    </div>
+    <div class="vzb-dialog-content">
+        <div class="vzb-lmap-container">
+            <p class="vzb-dialog-sublabel"><%=t ("hints/lbubblemap/mapApi") %></p>
+            <form class="vzb-dialog-paragraph map-api">
+            </form>
+        </div>
+        <div class="vzb-lmap-container">
+            <p class="vzb-dialog-sublabel">
+                <%=t ("hints/lbubblemap/mapView") %>
+            </p>
+            <form class="vzb-dialog-paragraph  map-layer">
+            </form>
+        </div>
+    </div>
+    <div class="vzb-dialog-buttons">
+        <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary">
+            <%=t ("buttons/ok") %>
+        </div>
+    </div>
+</div>

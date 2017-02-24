@@ -89,6 +89,9 @@ const Dialogs = Component.extend({
       },
       "about": {
         dialog: dialogs.about
+      },
+      "mapoptions": {
+        dialog: dialogs.mapoptions
       }
     };
 

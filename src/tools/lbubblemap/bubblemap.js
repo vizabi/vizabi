@@ -57,9 +57,7 @@ const LBubbleMap = Tool.extend("LBubbleMap", {
       component: datanotes,
       placeholder: ".vzb-tool-datanotes",
       model: ["state.marker", "locale"]
-    }
-    ];
-
+    }];
     //constructor is the same as any tool
     this._super(placeholder, external_model);
   },
@@ -83,6 +81,7 @@ const LBubbleMap = Tool.extend("LBubbleMap", {
         colorGeo: false,
         preserveAspectRatio: true,
         mapEngine: "google",
+        mapLayer: "terrain",
         topojsonLayer: true,
         bounds: {
           north: 37,
@@ -98,12 +97,12 @@ const LBubbleMap = Tool.extend("LBubbleMap", {
         },
         projection: "mercator",
         topology: {
-          path: "data/zaf-municipalities-2016.json",
+          path: null,
           objects: {
-            geo: "LocalMunicipalities2016",
-            boundaries: "LocalMunicipalities2016"
+            geo: "countries",
+            boundaries: "countries"
           },
-          geoIdProperty: "CAT_B"
+          geoIdProperty: null
         }
       },
       chart: {
