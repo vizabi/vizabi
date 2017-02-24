@@ -21,15 +21,16 @@ import DonutChart from 'tools/donutchart/donutchart';
 import Cartogram from 'tools/cartogram/cartogram';
 import AxisLabeler from 'tools/axislabeler/axislabeler';
 import AgePyramid from 'tools/agepyramid/agepyramid';
+import SankeyChart from 'tools/sankeydiagram/sankeydiagram';
 
 // Fallback in case if WS is not available - requesting data from local files
 var locationArray = window.location.href.split("/");
 var localUrl = locationArray.splice(0, locationArray.indexOf("preview")).join("/") + "/preview/";
 
 globals.ext_resources = utils.deepExtend({
-  host: localUrl,
-  preloadPath: 'data/',
-  dataPath: 'data/waffles/'
+	host: localUrl,
+	preloadPath: 'data/',
+	dataPath: 'data/waffles/'
 }, globals.ext_resources);
 
 export default Vzb;

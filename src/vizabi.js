@@ -8,14 +8,14 @@ import Events from 'base/events';
 import globals from 'base/globals';
 
 var Vzb = function(name, placeholder, external_model) {
-  var tool = Tool.get(name);
-  if(tool) {
-    var t = new tool(placeholder, external_model);
-    Vzb._instances[t._id] = t;
-    return t;
-  } else {
-    utils.error('Tool "' + name + '" was not found.');
-  }
+	var tool = Tool.get(name);
+	if(tool) {
+		var t = new tool(placeholder, external_model);
+		Vzb._instances[t._id] = t;
+		return t;
+	} else {
+		utils.error('Tool "' + name + '" was not found.');
+	}
 };
 
 //stores reference to each tool on the page
@@ -26,14 +26,14 @@ Vzb._globals = globals;
 //TODO: clear all objects and intervals as well
 //garbage collection
 Vzb.clearInstances = function(id) {
-  if(id) {
-    Vzb._instances[id] = void 0;
-  } else {
-    for(var i in Vzb._instances) {
-      Vzb._instances[i].clear();
-    }
-    Vzb._instances = {};
-  }
+	if(id) {
+		Vzb._instances[id] = void 0;
+	} else {
+		for(var i in Vzb._instances) {
+			Vzb._instances[i].clear();
+		}
+		Vzb._instances = {};
+	}
 };
 
 //available readers = all
@@ -41,40 +41,45 @@ const readers = requireAll(require.context('./readers', true, /\.js$/));
 
 //register available readers
 utils.forEach(readers, function(reader, name) {
-  Reader.register(name, reader);
+	Reader.register(name, reader);
 });
 
 const components = requireAll(require.context('./components', true, /\.js$/), 1);
 
 //register available components
 utils.forEach(components, function(component, name) {
-  Component.register(name, component);
+	Component.register(name, component);
 });
 
 
 //d3 addons
 
 import genericLog from 'helpers/d3.genericLogScale';
-import { onTap, onLongTap } from 'helpers/d3.touchEvents';
+import {
+	onTap,
+	onLongTap
+} from 'helpers/d3.touchEvents';
 //import * as touchFixes from 'helpers/d3.touchFixes';
 
 //d3 v3 -> v4
 
 // Copies a variable number of methods from source to target.
 d3.rebind = function(target, source) {
-  var i = 1, n = arguments.length, method;
-  while (++i < n) target[method = arguments[i]] = d3_rebind(target, source, source[method]);
-  return target;
+	var i = 1,
+		n = arguments.length,
+		method;
+	while(++i < n) target[method = arguments[i]] = d3_rebind(target, source, source[method]);
+	return target;
 };
 
 // Method is assumed to be a standard D3 getter-setter:
 // If passed with no arguments, gets the value.
 // If passed with arguments, sets the value and returns the target.
 function d3_rebind(target, source, method) {
-  return function() {
-    var value = method.apply(source, arguments);
-    return value === source ? target : value;
-  };
+	return function() {
+		var value = method.apply(source, arguments);
+		return value === source ? target : value;
+	};
 }
 
 d3.scale = {};
@@ -90,23 +95,23 @@ d3.scale.ordinal = d3.scaleOrdinal
 d3.time = {}
 d3.time.scale = d3.scaleTime
 d3.time.scale.utc = d3.scaleUtc
-d3.time.format = function(f) { 
-  var format = d3.timeFormat(f);
-  format.parse = d3.timeParse(f);
-  return format;
+d3.time.format = function(f) {
+	var format = d3.timeFormat(f);
+	format.parse = d3.timeParse(f);
+	return format;
 }
-d3.time.format.utc = function(f) { 
-  var format = d3.utcFormat(f);
-  format.parse = d3.utcParse(f);
-  return format;
+d3.time.format.utc = function(f) {
+	var format = d3.utcFormat(f);
+	format.parse = d3.utcParse(f);
+	return format;
 }
-d3.time.format.iso = function(f) { 
-  var format = d3.isoFormat(f);
-  format.parse = d3.isoParse(f);
-  return format;
+d3.time.format.iso = function(f) {
+	var format = d3.isoFormat(f);
+	format.parse = d3.isoParse(f);
+	return format;
 }
 d3.round = function(x, n) {
-  return n ? Math.round(x * (n = Math.pow(10, n))) / n : Math.round(x);
+	return n ? Math.round(x * (n = Math.pow(10, n))) / n : Math.round(x);
 };
 
 

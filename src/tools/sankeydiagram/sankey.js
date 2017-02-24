@@ -65,5 +65,5 @@ const SankeyChart = Tool.extend("SankeyChart", {
 	}
 });
 
-export default BarChart;
+export default SankeyChart;
 })
