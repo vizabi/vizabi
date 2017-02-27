@@ -72,6 +72,7 @@
   "scaletype/genericLog":"двухсторонний лог.",
   "scaletype/time":"Время",
   "scaletype/ordinal":"Ordinal",
+  "check/panWithArrow":"Allow panning with arrow cursor",
   "check/adaptMinMaxZoom":"Подогнать масштаб и отдалять, когда надо",
   "check/presentation":"Увеличить шрифт для презентаций",
   "check/removeLabelBox":"Убрать фон у надписей",
