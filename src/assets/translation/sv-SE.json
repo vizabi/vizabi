@@ -72,6 +72,7 @@
   "scaletype/genericLog":"Generic log",
   "scaletype/time":"Tid",
   "scaletype/ordinal":"Ordning",
+  "check/panWithArrow":"Allow panning with arrow cursor",
   "check/adaptMinMaxZoom":"Följ bubblar med zoom",
   "check/presentation":"Göra texten stor och presentera",
   "check/removeLabelBox":"Inga rutor på etikett",
