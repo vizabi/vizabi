@@ -13,6 +13,8 @@ const MapLayer = Class.extend({
     this.shapes = null;
     this.parent = parent;
     this.context = context;
+    this.parent = parent;
+    this.paths = {};
     d3_geo_projection();
   },
 
@@ -53,7 +55,12 @@ const MapLayer = Class.extend({
             .data(_this.mapFeature.features)
             .enter().insert("path")
             .attr("d", _this.mapPath)
-            .attr("id", d => d.properties[_this.context.model.ui.map.topology.geoIdProperty] ? d.properties[_this.context.model.ui.map.topology.geoIdProperty].toLowerCase() : d.id)
+            .attr("id", d => {
+              const id = d.properties[_this.context.model.ui.map.topology.geoIdProperty] ?
+                d.properties[_this.context.model.ui.map.topology.geoIdProperty].toString().toLowerCase() : d.id;
+              _this.paths[id] = d;
+              return id;
+            })
             .attr("class", "land");
         } else {
           _this.mapGraph.insert("path")
@@ -137,6 +144,10 @@ const MapLayer = Class.extend({
     }
   },
 
+  centroid(key) {
+    return this.mapPath.centroid(this.paths[key]);
+  },
+
   invert(x, y) {
     return this.projection([x || 0, y || 0]);
   }
@@ -172,6 +183,19 @@ const GoogleMapLayer = Class.extend({
             _this.parent.boundsChanged();
           }
         });
+/*
+        const rectangle = new google.maps.Rectangle({
+          bounds: {
+            north: _this.context.model.ui.map.bounds.north,
+            east: _this.context.model.ui.map.bounds.east,
+            south: _this.context.model.ui.map.bounds.south,
+            west: _this.context.model.ui.map.bounds.west
+          },
+          editable: true,
+          draggable: true
+        });
+        rectangle.setMap(_this.map);
+*/
         resolve();
       });
     });
@@ -390,6 +414,13 @@ export default Class.extend({
       this.topojsonMap.rescaleMap(this.mapInstance.getCanvas());
     }
     this.context.mapBoundsChanged();
+  },
+
+  centroid(key) {
+    if (this.topojsonMap) {
+      return this.topojsonMap.centroid(key);
+    }
+    return [0, 0];
   },
 
   invert(x, y) {

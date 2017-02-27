@@ -185,7 +185,7 @@ const LBubbleMapComponent = Component.extend({
       _this.updateEntities();
       _this.updateTime();
       _this._labels.ready();
-      _this.redrawDataPoints();
+      _this.redrawDataPoints(null, true);
       _this.highlightMarkers();
       _this.selectMarkers();
 //    this._selectlist.redraw();
@@ -505,20 +505,19 @@ const LBubbleMapComponent = Component.extend({
   redrawDataPoints(duration, reposition) {
     const _this = this;
     if (!duration) duration = this.duration;
-    if (!reposition) reposition = true;
     if (!this.entityBubbles) return utils.warn("redrawDataPoints(): no entityBubbles defined. likely a premature call, fix it!");
+    _this.map.centroid(5660000);
+
     this.entityBubbles.each(function(d, index) {
       const view = d3.select(this);
-      const geo = d3.select("#" + d[_this.KEY]);
 
-      const valueX = _this.values.hook_lng[d[_this.KEY]];
-      const valueY = _this.values.hook_lat[d[_this.KEY]];
       const valueS = _this.values.size[d[_this.KEY]];
       const valueC = _this.values.color[d[_this.KEY]];
       const valueL = _this.values.label[d[_this.KEY]];
+      const valueCentroid = _this.values.hook_centroid[d[_this.KEY]];
 
       d.hidden_1 = d.hidden;
-      d.hidden = (!valueS && valueS !== 0) || valueX == null || valueY == null;
+      d.hidden = (!valueS && valueS !== 0) || valueCentroid == null;
 
 
       if (d.hidden !== d.hidden_1) {
@@ -538,11 +537,8 @@ const LBubbleMapComponent = Component.extend({
         view.classed("vzb-hidden", false)
           .attr("fill", valueC != null ? _this.cScale(valueC) : _this.COLOR_WHITEISH);
 
-        if (_this.model.ui.map.colorGeo)
-          geo.style("fill", valueC != null ? _this.cScale(valueC) : "#999");
-
         if (reposition) {
-          d.cLoc = _this.map.invert(valueX, valueY);
+          d.cLoc = _this.map.centroid(valueCentroid);
 
           view.attr("cx", d.cLoc[0])
             .attr("cy", d.cLoc[1]);
@@ -557,7 +553,9 @@ const LBubbleMapComponent = Component.extend({
             .transition();
         }
 
-        _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], valueS, valueC, d.label, duration);
+        if (d.cLoc && (d.cLoc[0] || d.cLoc[0] === 0) && (d.cLoc[1] === 1)) {
+          _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], valueS, valueC, d.label, duration);
+        }
       } else {
         _this._updateLabel(d, index, 0, 0, valueS, valueC, valueL, duration);
       }
@@ -659,7 +657,7 @@ const LBubbleMapComponent = Component.extend({
   mapBoundsChanged() {
     this.updateMarkerSizeLimits();
     this._labels.updateSize();
-    this.redrawDataPoints();
+    this.redrawDataPoints(null, true);
     //_this._selectlist.redraw();
 
   },

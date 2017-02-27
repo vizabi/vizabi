@@ -1,19 +1,18 @@
-const VIZABI_MODEL = {
+let VIZABI_MODEL = {
   "state": {
     "time": {
-      "startOrigin": "1800",
+      "startOrigin": "1993",
       "endOrigin": "2015",
-      "value": "2015",
-      "dim": "time"
+      "value": "2014",
+      "dim": "year",
+      "delay": 700
     },
     "entities": {
-      "dim": "geo",
-      "show": {
-        "is--country": true
-      }
+      "dim": "basomrade",
+      "show": { }
     },
     "entities_colorlegend": {
-      "dim": "world_4region"
+      "dim": "municipality"
     },
     "entities_tags": {
       "dim": "tag"
@@ -24,29 +23,23 @@ const VIZABI_MODEL = {
         "use": "property",
         "which": "name"
       },
+      "hook_centroid": {
+        "use": "property",
+        "which": "baskod2010",
+        "_important": true
+      },
       "size": {
+        "which": "population_20xx_12_31",
         "use": "indicator",
-        "which": "population_total",
         "scaleType": "linear",
-        "domainMin": 15,
-        "domainMax": 1400000000,
+        "extent": [0, 0.4],
         "allow": {
           "scales": ["linear"]
         }
       },
-      "hook_lat": {
-        "use": "property",
-        "which": "latitude",
-        "_important": true
-      },
-      "hook_lng": {
-        "use": "property",
-        "which": "longitude",
-        "_important": true
-      },
       "color": {
         "use": "property",
-        "which": "world_4region",
+        "which": "municipality",
         "scaleType": "ordinal",
         "syncModels": ["marker_colorlegend"]
       }
@@ -82,8 +75,8 @@ const VIZABI_MODEL = {
   },
   "ui": {
     "datawarning": {
-      "doubtDomain": [1800, 1950, 2015],
-      "doubtRange": [1.0, 0.3, 0.2]
+      "doubtDomain": [1993, 2015],
+      "doubtRange": [0, 0]
     },
     "buttons": ["colors", "find", "size", "moreoptions", "fullscreen", "presentation"],
     "dialogs": {
@@ -103,7 +96,8 @@ const VIZABI_MODEL = {
     "splash": true
   },
   "data": {
-    "reader": "waffle",
-    "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/"
+    reader: 'waffle',
+    path: 'https://waffle-server-dev.gapminderdev.org/api/ddf',
+    dataset: 'open-numbers/ddf--sodertorn--stockholm_lan_basomrade'
   }
 };

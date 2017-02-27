@@ -78,16 +78,15 @@ const LBubbleMap = Tool.extend("LBubbleMap", {
     ui: {
       map: {
         path: null,
-        colorGeo: false,
         preserveAspectRatio: true,
         mapEngine: "google",
         mapLayer: "terrain",
         topojsonLayer: true,
         bounds: {
-          north: 37,
-          west: -30,
-          south: -39,
-          east: 58
+          north: 60.25,
+          west: 17.5,
+          south: 59,
+          east: 19.5
         },
         offset: {
           top: 0,
@@ -97,12 +96,12 @@ const LBubbleMap = Tool.extend("LBubbleMap", {
         },
         projection: "mercator",
         topology: {
-          path: null,
+          path: "data/sodertorn-basomr2010.json",
           objects: {
-            geo: "countries",
-            boundaries: "countries"
+            geo: "c1e171fae817c0bfc26dc7df82219e08",
+            boundaries: "c1e171fae817c0bfc26dc7df82219e08"
           },
-          geoIdProperty: null
+          geoIdProperty: "BASKOD2010"
         }
       },
       chart: {
