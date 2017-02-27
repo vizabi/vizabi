@@ -24,6 +24,14 @@
       }
     }
 
+    .vzb-panhand .vzb-bc-bubbles-crop {
+      cursor: url('../../assets/cursors/grab.cur'), auto;
+    }
+
+    .vzb-panhand.vzb-zooming .vzb-bc-bubbles-crop {
+      cursor: url('../../assets/cursors/grabbing.cur'), auto;
+    }
+
     .vzb-bubblechart-svg {
       @extend %vzb-chart-svg;
 
@@ -65,6 +73,14 @@
         }
       }
 
+      &.vzb-panhand .vzb-bc-bubbles-crop {
+        cursor: grab;
+      }
+
+      &.vzb-panhand.vzb-zooming .vzb-bc-bubbles-crop {
+        cursor: grabbing;
+      }
+
       &.vzb-zoomin .vzb-bc-bubbles-crop,
       &.vzb-zoomin .vzb-bc-labels-crop {
         cursor: zoom-in;
@@ -91,12 +107,19 @@
 
       .vzb-bc-labels {
         @extend %vzb-chart-tooltip;
+        @include rtl {
+          text {
+            direction: rtl;
+            text-anchor: start;
+            unicode-bidi: embed;
+          }
+        }
         .vzb-label-fill {
           pointer-events: visible;
         }
         .vzb-bc-entity {
           .vzb-bc-label-x {
-            @include transition(opacity 200ms linear);
+            transition: opacity 200ms linear;
             fill: $vzb-color-primary;
             text-anchor: middle;
             dominant-baseline: middle;
@@ -107,7 +130,7 @@
           }
 
           .vzb-bc-label-x-icon {
-            @include transition(opacity 200ms linear);
+            transition: opacity 200ms linear;
             fill: $vzb-color-white;
             //pointer-events: none;
           }
@@ -155,6 +178,13 @@
       }
       .vzb-bc-tooltip {
         @extend %vzb-chart-tooltip;
+        @include rtl {
+          text {
+            direction: rtl;
+            text-anchor: start;
+            unicode-bidi: embed;
+          }
+        }
         .vzb-tooltip-glow {
           stroke-width: 8px;
           fill: none;
@@ -179,11 +209,24 @@
       .vzb-bc-axis-x-title,
       .vzb-bc-axis-y-title {
         @extend %vzb-chart-axis-title;
+        @include rtl {
+          text {
+            direction: rtl;
+            unicode-bidi: embed;
+          }
+        }
       }
 
       .vzb-bc-axis-s-title,
       .vzb-bc-axis-c-title {
         @extend %vzb-chart-axis-title;
+        @include rtl {
+          text {
+            direction: rtl;
+            text-anchor: start;
+            unicode-bidi: embed;
+          }
+        }
         opacity: .3;
       }
 
@@ -192,10 +235,15 @@
         @extend %vzb-chart-info;
       }
 
+      .vzb-bc-line-equal-xy {
+        stroke-dasharray: 4 4;
+        stroke: $vzb-color-black;
+      }
+
       .vzb-bc-projection-x,
       .vzb-bc-projection-y {
-        stroke-dasharray: 2 4;
-        stroke: $vzb-color-grey;
+        stroke-dasharray: 4 4;
+        stroke: $vzb-color-black;
         opacity: 0;
       }
       .vzb-bc-line {
@@ -316,6 +364,7 @@
 
       .vzb-bc-axis-x,
       .vzb-bc-axis-y {
+        @extend %vzb-chart-axis-presentation;
         text {
           font-size: $vzb-font-size-larger;
         }

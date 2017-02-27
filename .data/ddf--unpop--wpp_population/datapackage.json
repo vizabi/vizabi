@@ -1,0 +1,508 @@
+{
+    "name": "ddf--unpop--wpp_pop",
+    "title": "Population by age group from WPP",
+    "description": "",
+    "license": "BSD-3",
+    "author": "Gapminder",
+    "resources": [
+        {
+            "path": "ddf--concepts.csv",
+            "name": "ddf--concepts",
+            "schema": {
+                "primaryKey": "concept",
+                "fields": [
+                    {
+                        "name": "concept_type"
+                    },
+                    {
+                        "name": "name"
+                    }
+                ]
+            }
+        },
+        {
+            "path": "ddf--datapoints--population--by--country_code-900--year--age.csv",
+            "name": "ddf--datapoints--population--by--country_code-900--year--age",
+            "schema": {
+                "primaryKey": [
+                    "country_code",
+                    "year",
+                    "age"
+                ],
+                "fields": [
+                    {
+                        "name": "country_code",
+                        "constraints": {
+                            "enum": [
+                                "900"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "year"
+                    },
+                    {
+                        "name": "age"
+                    },
+                    {
+                        "name": "population"
+                    }
+                ]
+            }
+        },
+        {
+            "path": "ddf--datapoints--population--by--country_code-900--year--gender--age.csv",
+            "name": "ddf--datapoints--population--by--country_code-900--year--gender--age",
+            "schema": {
+                "primaryKey": [
+                    "country_code",
+                    "year",
+                    "gender",
+                    "age"
+                ],
+                "fields": [
+                    {
+                        "name": "country_code",
+                        "constraints": {
+                            "enum": [
+                                "900"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "year"
+                    },
+                    {
+                        "name": "gender"
+                    },
+                    {
+                        "name": "age"
+                    },
+                    {
+                        "name": "population"
+                    }
+                ]
+            }
+        },
+        {
+            "path": "ddf--datapoints--population--by--country_code-903--year--age.csv",
+            "name": "ddf--datapoints--population--by--country_code-903--year--age",
+            "schema": {
+                "primaryKey": [
+                    "country_code",
+                    "year",
+                    "age"
+                ],
+                "fields": [
+                    {
+                        "name": "country_code",
+                        "constraints": {
+                            "enum": [
+                                "903"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "year"
+                    },
+                    {
+                        "name": "age"
+                    },
+                    {
+                        "name": "population"
+                    }
+                ]
+            }
+        },
+        {
+            "path": "ddf--datapoints--population--by--country_code-903--year--gender--age.csv",
+            "name": "ddf--datapoints--population--by--country_code-903--year--gender--age",
+            "schema": {
+                "primaryKey": [
+                    "country_code",
+                    "year",
+                    "gender",
+                    "age"
+                ],
+                "fields": [
+                    {
+                        "name": "country_code",
+                        "constraints": {
+                            "enum": [
+                                "903"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "year"
+                    },
+                    {
+                        "name": "gender"
+                    },
+                    {
+                        "name": "age"
+                    },
+                    {
+                        "name": "population"
+                    }
+                ]
+            }
+        },
+        {
+            "path": "ddf--datapoints--population--by--country_code-904--year--age.csv",
+            "name": "ddf--datapoints--population--by--country_code-904--year--age",
+            "schema": {
+                "primaryKey": [
+                    "country_code",
+                    "year",
+                    "age"
+                ],
+                "fields": [
+                    {
+                        "name": "country_code",
+                        "constraints": {
+                            "enum": [
+                                "904"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "year"
+                    },
+                    {
+                        "name": "age"
+                    },
+                    {
+                        "name": "population"
+                    }
+                ]
+            }
+        },
+        {
+            "path": "ddf--datapoints--population--by--country_code-904--year--gender--age.csv",
+            "name": "ddf--datapoints--population--by--country_code-904--year--gender--age",
+            "schema": {
+                "primaryKey": [
+                    "country_code",
+                    "year",
+                    "gender",
+                    "age"
+                ],
+                "fields": [
+                    {
+                        "name": "country_code",
+                        "constraints": {
+                            "enum": [
+                                "904"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "year"
+                    },
+                    {
+                        "name": "gender"
+                    },
+                    {
+                        "name": "age"
+                    },
+                    {
+                        "name": "population"
+                    }
+                ]
+            }
+        },
+        {
+            "path": "ddf--datapoints--population--by--country_code-905--year--age.csv",
+            "name": "ddf--datapoints--population--by--country_code-905--year--age",
+            "schema": {
+                "primaryKey": [
+                    "country_code",
+                    "year",
+                    "age"
+                ],
+                "fields": [
+                    {
+                        "name": "country_code",
+                        "constraints": {
+                            "enum": [
+                                "905"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "year"
+                    },
+                    {
+                        "name": "age"
+                    },
+                    {
+                        "name": "population"
+                    }
+                ]
+            }
+        },
+        {
+            "path": "ddf--datapoints--population--by--country_code-905--year--gender--age.csv",
+            "name": "ddf--datapoints--population--by--country_code-905--year--gender--age",
+            "schema": {
+                "primaryKey": [
+                    "country_code",
+                    "year",
+                    "gender",
+                    "age"
+                ],
+                "fields": [
+                    {
+                        "name": "country_code",
+                        "constraints": {
+                            "enum": [
+                                "905"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "year"
+                    },
+                    {
+                        "name": "gender"
+                    },
+                    {
+                        "name": "age"
+                    },
+                    {
+                        "name": "population"
+                    }
+                ]
+            }
+        },
+        {
+            "path": "ddf--datapoints--population--by--country_code-908--year--age.csv",
+            "name": "ddf--datapoints--population--by--country_code-908--year--age",
+            "schema": {
+                "primaryKey": [
+                    "country_code",
+                    "year",
+                    "age"
+                ],
+                "fields": [
+                    {
+                        "name": "country_code",
+                        "constraints": {
+                            "enum": [
+                                "908"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "year"
+                    },
+                    {
+                        "name": "age"
+                    },
+                    {
+                        "name": "population"
+                    }
+                ]
+            }
+        },
+        {
+            "path": "ddf--datapoints--population--by--country_code-908--year--gender--age.csv",
+            "name": "ddf--datapoints--population--by--country_code-908--year--gender--age",
+            "schema": {
+                "primaryKey": [
+                    "country_code",
+                    "year",
+                    "gender",
+                    "age"
+                ],
+                "fields": [
+                    {
+                        "name": "country_code",
+                        "constraints": {
+                            "enum": [
+                                "908"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "year"
+                    },
+                    {
+                        "name": "gender"
+                    },
+                    {
+                        "name": "age"
+                    },
+                    {
+                        "name": "population"
+                    }
+                ]
+            }
+        },
+        {
+            "path": "ddf--datapoints--population--by--country_code-909--year--age.csv",
+            "name": "ddf--datapoints--population--by--country_code-909--year--age",
+            "schema": {
+                "primaryKey": [
+                    "country_code",
+                    "year",
+                    "age"
+                ],
+                "fields": [
+                    {
+                        "name": "country_code",
+                        "constraints": {
+                            "enum": [
+                                "909"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "year"
+                    },
+                    {
+                        "name": "age"
+                    },
+                    {
+                        "name": "population"
+                    }
+                ]
+            }
+        },
+        {
+            "path": "ddf--datapoints--population--by--country_code-909--year--gender--age.csv",
+            "name": "ddf--datapoints--population--by--country_code-909--year--gender--age",
+            "schema": {
+                "primaryKey": [
+                    "country_code",
+                    "year",
+                    "gender",
+                    "age"
+                ],
+                "fields": [
+                    {
+                        "name": "country_code",
+                        "constraints": {
+                            "enum": [
+                                "909"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "year"
+                    },
+                    {
+                        "name": "gender"
+                    },
+                    {
+                        "name": "age"
+                    },
+                    {
+                        "name": "population"
+                    }
+                ]
+            }
+        },
+        {
+            "path": "ddf--datapoints--population--by--country_code-935--year--age.csv",
+            "name": "ddf--datapoints--population--by--country_code-935--year--age",
+            "schema": {
+                "primaryKey": [
+                    "country_code",
+                    "year",
+                    "age"
+                ],
+                "fields": [
+                    {
+                        "name": "country_code",
+                        "constraints": {
+                            "enum": [
+                                "935"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "year"
+                    },
+                    {
+                        "name": "age"
+                    },
+                    {
+                        "name": "population"
+                    }
+                ]
+            }
+        },
+        {
+            "path": "ddf--datapoints--population--by--country_code-935--year--gender--age.csv",
+            "name": "ddf--datapoints--population--by--country_code-935--year--gender--age",
+            "schema": {
+                "primaryKey": [
+                    "country_code",
+                    "year",
+                    "gender",
+                    "age"
+                ],
+                "fields": [
+                    {
+                        "name": "country_code",
+                        "constraints": {
+                            "enum": [
+                                "935"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "year"
+                    },
+                    {
+                        "name": "gender"
+                    },
+                    {
+                        "name": "age"
+                    },
+                    {
+                        "name": "population"
+                    }
+                ]
+            }
+        },
+        {
+            "path": "ddf--entities--age.csv",
+            "name": "ddf--entities--age",
+            "schema": {
+                "primaryKey": "age",
+                "fields": [
+                    {
+                        "name": "name"
+                    }
+                ]
+            }
+        },
+        {
+            "path": "ddf--entities--country_code.csv",
+            "name": "ddf--entities--country_code",
+            "schema": {
+                "primaryKey": "country_code",
+                "fields": [
+                    {
+                        "name": "name"
+                    }
+                ]
+            }
+        },
+        {
+            "path": "ddf--entities--gender.csv",
+            "name": "ddf--entities--gender",
+            "schema": {
+                "primaryKey": "gender",
+                "fields": [
+                    {
+                        "name": "name"
+                    }
+                ]
+            }
+        }
+    ]
+}

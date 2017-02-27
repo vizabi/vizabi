@@ -1,15 +1,15 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import axisWithLabelPicker from 'helpers/d3.axisWithLabelPicker';
+import * as utils from "base/utils";
+import Component from "base/component";
+import axisWithLabelPicker from "helpers/d3.axisWithLabelPicker";
+import {
+  question as iconQuestion,
+  warn as iconWarn
+} from "base/iconset";
 
+const COLOR_BLACKISH = "#333";
+const COLOR_WHITEISH = "#fdfdfd";
 
-/*!
- * VIZABI POP BY AGE Component
- */
-
-
-//POP BY AGE CHART COMPONENT
-var BarRankChart = Component.extend({
+const BarRankChart = Component.extend({
 
   /**
    * Initializes the component (Bar Chart).
@@ -17,10 +17,10 @@ var BarRankChart = Component.extend({
    * @param {Object} config The config passed to the component
    * @param {Object} context The component's parent
    */
-  init: function(config, context) {
+  init(config, context) {
 
-    this.name = 'barrankchart-component';
-    this.template = require('./barrank.html');
+    this.name = "barrankchart-component";
+    this.template = require("./barrank.html");
 
     //define expected models for this component
     this.model_expects = [{
@@ -33,30 +33,44 @@ var BarRankChart = Component.extend({
       name: "marker",
       type: "model"
     }, {
-      name: "language",
-      type: "language"
+      name: "locale",
+      type: "locale"
     }, {
       name: "ui",
       type: "ui"
     }];
 
-    var _this = this;
     this.model_binds = {
-      "change:time.value": function(evt) {
-        if(!_this._readyOnce) return;
-        _this.onTimeChange();
+      "change:time.value": () => {
+        if (this._readyOnce) {
+          this.onTimeChange();
+        }
       },
-      "change:entities.select": function(evt) {
-        if(!_this._readyOnce) return;
-        _this.selectBars();
+      "change:marker.select": () => {
+        if (this._readyOnce) {
+          this._selectBars();
+          this._updateOpacity();
+          this._updateDoubtOpacity();
+          this._scroll();
+        }
       },
-      "change:marker.axis_x.scaleType": function(evt) {
-        if(!_this._readyOnce) return;
-        _this.draw();
+      "change:marker.axis_x.scaleType": () => {
+        if (this._readyOnce) {
+          this.loadData();
+          this.draw(true);
+        }
       },
-      'change:marker.color.palette': function() {
-        //console.log("EVENT change:marker:color:palette");
-        //_this.drawColors();
+      "change:marker.color.palette": () => {
+        this._drawColors();
+      },
+      "change:marker.highlight": () => {
+        this._updateOpacity();
+      },
+      "change:marker.opacitySelectDim": () => {
+        this._updateOpacity();
+      },
+      "change:marker.opacityRegular": () => {
+        this._updateOpacity();
       },
     };
 
@@ -65,382 +79,661 @@ var BarRankChart = Component.extend({
 
     // set up the scales
     this.xScale = null;
-    this.cScale = d3.scale.category10();
+    this.cScale = d3.scaleOrdinal(d3.schemeCategory10);
 
     // set up the axes
-    this.xAxis = axisWithLabelPicker();
+    this.xAxis = axisWithLabelPicker("bottom");
   },
 
-  onTimeChange: function() {
-    //this.year.setText(this.model.time.timeFormat(this.model.time.value));
-    var _this = this;
-    this.model.marker.getFrame(this.model.time.value, function(values) {
-      _this.values = values;
-      _this.loadData();
-      _this.draw();
+  onTimeChange() {
+    this.model.marker.getFrame(this.model.time.value, values => {
+      this.values = values;
+      this.loadData();
+      this.draw();
     });
   },
 
   /**
    * DOM and model are ready
    */
-  readyOnce: function() {
+  readyOnce() {
     this.element = d3.select(this.element);
 
     // reference elements
     //this.graph = this.element.select('.vzb-br-graph');
     //this.yearEl = this.element.select('.vzb-br-year');
     //this.year = new DynamicBackground(this.yearEl);
-    this.header = this.element.select('.vzb-br-header');
-    this.barViewport = this.element.select('.barsviewport');
-    this.barSvg = this.element.select('.vzb-br-bars-svg');
-    this.barContainer = this.element.select('.vzb-br-bars');
+    this.header = this.element.select(".vzb-br-header");
+    this.infoEl = this.element.select(".vzb-br-axis-info");
+    this.barViewport = this.element.select(".vzb-br-barsviewport");
+    this.barSvg = this.element.select(".vzb-br-bars-svg");
+    this.barContainer = this.element.select(".vzb-br-bars");
+    this.dataWarningEl = this.element.select(".vzb-data-warning");
+    this.wScale = d3.scale.linear()
+      .domain(this.model.ui.datawarning.doubtDomain)
+      .range(this.model.ui.datawarning.doubtRange);
 
     // set up formatters
     this.xAxis.tickFormat(this.model.marker.axis_x.getTickFormatter());
 
+    this._localeId = this.model.locale.id;
+    this._presentation = !this.model.ui.presentation;
+    this._formatter = this.model.marker.axis_x.getTickFormatter();
+
     this.ready();
 
-    this.selectBars();
+    this._selectBars();
 
   },
 
-  readyRuns: 0,
-
-  /*
+  /**
    * Both model and DOM are ready
    */
-  ready: function() {
-    var _this = this;
-    // hack: second run is right after readyOnce (in which ready() is also called)
-    // then it's not necessary to run ready()
-    // (without hack it's impossible to run things in readyOnce áfter ready has ran)
-    if (++this.readyRuns == 2) return;
-    this.model.marker.getFrame(this.model.time.value, function(values) {
-      _this.values =values;
-      _this.loadData();
-      _this.draw();
+  ready() {
+    this.model.marker.getFrame(this.model.time.value, values => {
+
+      this.values = values;
+      this.loadData();
+      this.draw(true);
+      this._updateOpacity();
+      this._drawColors();
     });
   },
 
-  resize: function() {
-    this.draw();
+  resize() {
+    this.draw(true);
   },
 
-  loadData: function() {
+  loadData() {
+    const _this = this;
 
+    this.translator = this.model.locale.getTFunction();
     // sort the data (also sets this.total)
-    this.sortedEntities = this.sortByIndicator(this.values.axis_x);
+    this.sortedEntities = this._sortByIndicator(this.values.axis_x);
 
-    // change header titles for new data
-    var conceptProps = this.model.marker.getConceptprops();
-    this.header.select('.vzb-br-title')
-      .text(conceptProps[this.model.marker.axis_x.which].name
-            + ' '
-            + this.model.time.timeFormat(this.model.time.value)
-      )
-    this.header.select('.vzb-br-total')
-      .text('Σ = ' + this.model.marker.axis_x.getTickFormatter()(this.total))
+    this.header
+      .select(".vzb-br-title")
+      .select("text")
+      .on("click", () =>
+        this.parent
+          .findChildByName("gapminder-treemenu")
+          .markerID("axis_x")
+          .alignX("left")
+          .alignY("top")
+          .updateView()
+          .toggle()
+      );
 
     // new scales and axes
-    this.xScale = this.model.marker.axis_x.getScale(false);
+    this.xScale = this.model.marker.axis_x.getScale();
     this.cScale = this.model.marker.color.getScale();
+
+    utils.setIcon(this.dataWarningEl, iconWarn)
+      .select("svg")
+      .attr("width", 0).attr("height", 0);
+
+    this.dataWarningEl.append("text")
+      .text(this.translator("hints/dataWarning"));
+
+    this.dataWarningEl
+      .on("click", () => this.parent.findChildByName("gapminder-datawarning").toggle())
+      .on("mouseover", () => this._updateDoubtOpacity(1))
+      .on("mouseout", () => this._updateDoubtOpacity());
+
+    utils.setIcon(this.infoEl, iconQuestion)
+      .select("svg").attr("width", 0).attr("height", 0);
+
+    this.infoEl.on("click", () => {
+      this.parent.findChildByName("gapminder-datanotes").pin();
+    });
+
+    this.infoEl.on("mouseover", function() {
+      const rect = this.getBBox();
+      const ctx = utils.makeAbsoluteContext(this, this.farthestViewportElement);
+      const coord = ctx(rect.x - 10, rect.y + rect.height + 10);
+      _this.parent.findChildByName("gapminder-datanotes")
+        .setHook("axis_y")
+        .show()
+        .setPos(coord.x, coord.y);
+    });
+
+    this.infoEl.on("mouseout", () => {
+      _this.parent.findChildByName("gapminder-datanotes").hide();
+    });
 
   },
 
-  draw: function() {
+  draw(force = false) {
+    this.time_1 = this.time == null ? this.model.time.value : this.time;
+    this.time = this.model.time.value;
+    //smooth animation is needed when playing, except for the case when time jumps from end to start
+    const duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
+
     //return if drawAxes exists with error
-    if(this.drawAxes()) return;
-    this.drawData();
+    if (this.drawAxes(duration, force)) return;
+    this.drawData(duration, force);
   },
 
   /*
-  * draw the chart/stage
-  */
-  drawAxes: function() {
+   * draw the chart/stage
+   */
+  drawAxes(duration = 0) {
+    const profiles = {
+      small: {
+        margin: { top: 60, right: 5, left: 5, bottom: 20 },
+        headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
+        infoElHeight: 16,
+        infoElMargin: 5,
+        barHeight: 18,
+        barMargin: 3,
+        barRectMargin: 5,
+        barValueMargin: 5,
+        scrollMargin: 20,
+      },
+      medium: {
+        margin: { top: 60, right: 5, left: 5, bottom: 20 },
+        headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
+        infoElHeight: 16,
+        infoElMargin: 5,
+        barHeight: 21,
+        barMargin: 3,
+        barRectMargin: 5,
+        barValueMargin: 5,
+        scrollMargin: 25,
+      },
+      large: {
+        margin: { top: 60, right: 5, left: 5, bottom: 20 },
+        headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
+        infoElHeight: 16,
+        infoElMargin: 5,
+        barHeight: 28,
+        barMargin: 4,
+        barRectMargin: 5,
+        barValueMargin: 5,
+        scrollMargin: 25,
+      }
+    };
 
-    // these should go in some style-config
-    this.barHeight = 20;
-    var margin = {top: 60, bottom: 40, left: 90, right: 20}; // need right margin for scroll bar
+    const presentationProfileChanges = {
+      medium: {
+        margin: { top: 60, right: 10, left: 10, bottom: 40 },
+        headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
+        infoElHeight: 25,
+        infoElMargin: 10,
+        barHeight: 25,
+        barMargin: 6
+      },
+      large: {
+        margin: { top: 60, right: 10, left: 10, bottom: 40 },
+        headerMargin: { top: 10, right: 20, bottom: 20, left: 20 },
+        infoElHeight: 16,
+        infoElMargin: 10,
+        barHeight: 30,
+        barMargin: 6
+      }
+    };
 
-    // draw the stage - copied from popbyage, should figure out what it exactly does and what is necessary.
-    this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
-    this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
+    this.activeProfile = this.getActiveProfile(profiles, presentationProfileChanges);
 
-    if(this.height<=0 || this.width<=0) return utils.warn("Bar rank chart drawAxes() abort: vizabi container is too little or has display:none");
+    const {
+      margin,
+      headerMargin,
+      infoElHeight,
+      infoElMargin,
+    } = this.activeProfile;
 
-    this.barContainer.attr('transform', 'translate(' + margin.left + ', 0)');
-    this.barViewport.style('height', this.height + 'px');
+    this.height = +this.element.style("height").replace("px", "");
+    this.width = +this.element.style("width").replace("px", "");
+
+    this.barViewport
+      .style("height", `${this.height - margin.bottom - margin.top}px`);
 
     // header
-    this.header.attr('height', margin.top);
+    this.header.attr("height", margin.top);
+    const headerTitle = this.header.select(".vzb-br-title");
 
-    var headerTitle = this.header.select('.vzb-br-title');
-    var headerTotal = this.header.select('.vzb-br-total');
-    var headerTitleBBox = headerTitle.node().getBBox();
-    var headerTotalBBox = headerTotal.node().getBBox();
+    // change header titles for new data
+    const { name, unit } = this.model.marker.axis_x.getConceptprops();
+
+    const headerTitleText = headerTitle
+      .select("text");
+
+    if (unit) {
+      headerTitleText.text(`${name}, ${unit}`);
+
+      const rightEdgeOfLeftText = headerMargin.left
+        + headerTitle.node().getBBox().width
+        + infoElMargin
+        + infoElHeight;
+
+      if (rightEdgeOfLeftText > this.width - headerMargin.right) {
+        headerTitleText.text(name);
+      }
+    }
+
+    const headerTitleBBox = headerTitle.node().getBBox();
+
+    const titleTx = headerMargin.left;
+    const titleTy = headerMargin.top + headerTitleBBox.height;
     headerTitle
-      .attr('y', margin.top/2)
-      .attr('x', margin.left);
+      .attr("transform", `translate(${titleTx}, ${titleTy})`);
+
+    const headerInfo = this.infoEl;
+
+    headerInfo.select("svg")
+      .attr("width", `${infoElHeight}px`)
+      .attr("height", `${infoElHeight}px`);
+
+    const infoTx = titleTx + headerTitle.node().getBBox().width + infoElMargin;
+    const infoTy = headerMargin.top + infoElHeight / 4;
+    headerInfo.attr("transform", `translate(${infoTx}, ${infoTy})`);
+
+
+    const headerTotal = this.header.select(".vzb-br-total");
+
+    if (duration) {
+      headerTotal.select("text")
+        .transition("text")
+        .delay(duration)
+        .text(this.model.time.formatDate(this.time));
+    } else {
+      headerTotal.select("text")
+        .interrupt()
+        .text(this.model.time.formatDate(this.time));
+    }
+    headerTotal.style("opacity", Number(this.getLayoutProfile() !== "large"));
+
+    const headerTotalBBox = headerTotal.node().getBBox();
+
+    const totalTx = this.width - headerMargin.right - headerTotalBBox.width;
+    const totalTy = headerMargin.top + headerTotalBBox.height;
     headerTotal
-      .attr('text-anchor', 'end')
-      .attr('y', margin.top/2)
-      .attr('x', this.width + margin.left)
+      .attr("transform", `translate(${totalTx}, ${totalTy})`)
       .classed("vzb-transparent", headerTitleBBox.width + headerTotalBBox.width + 10 > this.width);
 
-    // although axes are not drawn, need the xScale for bar width
-    this.xScale.range([0, this.width]);
+    this.element.select(".vzb-data-warning-svg")
+      .style("height", `${margin.bottom}px`);
+
+
+    const warningBBox = this.dataWarningEl.select("text").node().getBBox();
+    this.dataWarningEl
+      .attr("transform", `translate(${this.width - margin.right - warningBBox.width}, ${warningBBox.height})`)
+      .select("text");
+
+    this.dataWarningEl
+      .select("svg")
+      .attr("width", warningBBox.height)
+      .attr("height", warningBBox.height)
+      .attr("x", -warningBBox.height - 5)
+      .attr("y", -warningBBox.height + 1);
+
+    this._updateDoubtOpacity();
   },
 
-  drawData: function() {
-
-    var _this = this;
-    var bar_margin = 2; // should go in some config
-    var duration = (this.model.time.playing) ? this.model.time.delayAnimations : 0;
-
-    // apply the current data to the bars (including ordering)
-    var updatedBars = this.barContainer
-      .selectAll('.vzb-br-bar')
-      .data(this.sortedEntities, getDataKey)
-      .order();
+  drawData(duration = 0, force = false) {
+    const localeChanged = this._localeId !== this.model.locale.id;
+    if (force || localeChanged) {
+      this._localeId = this.model.locale.id;
+      this.barContainer.selectAll(".vzb-br-bar").remove();
+    }
 
     // update the shown bars for new data-set
-    this.createAndDeleteBars(updatedBars);
+    this._createAndDeleteBars(
+      this.barContainer.selectAll(".vzb-br-bar")
+        .data(this.sortedEntities, d => d.entity)
+    );
 
 
-    this.barContainer
-      .selectAll('.vzb-br-bar')
-      .data(this.sortedEntities, getDataKey)
-      .order()
-      .each(function (d, i) {
+    const { presentation } = this.model.ui;
+    const presentationModeChanged = this._presentation !== presentation;
 
-        var bar = d3.select(this);
-        var barWidth = _this.xScale(d.value);
-        var xValue = _this.model.marker.axis_x.getTickFormatter()(d.value);
+    if (presentationModeChanged) {
+      this._presentation = presentation;
+    }
 
-        // save the current index in the bar datum
-        d.index = i;
 
-        // set width of the bars
-        bar.selectAll('rect')
-          .transition().duration(duration).ease("linear")
-          .attr("width", (barWidth > 0) ? barWidth : 0)
+    const entitiesCountChanged = typeof this._entitiesCount === "undefined"
+      || this._entitiesCount !== this.sortedEntities.length;
 
-        // set positions of the bar-values
-        bar.selectAll('.vzb-br-value')
-          .text(xValue)
+    if (presentationModeChanged || entitiesCountChanged) {
+      if (entitiesCountChanged) {
+        this._entitiesCount = this.sortedEntities.length;
+      }
+    }
 
-        // set title (tooltip)
-        bar.selectAll('title')
-          .text(_this.values.label[d.entity] + ' (' + xValue + ')');
+    this._resizeSvg();
+    this._scroll(duration);
 
-      })
-      .transition().duration(duration).ease("linear")
-      .attr("transform", function(d, i) {
-        return 'translate(0, '+ getBarPosition(d,i) + ')'
-      })
-      .call(endAll, function() {
-        // when all the transitions have ended
 
-        // set the height of the svg so it resizes according to its children
-        var height = _this.barContainer.node().getBoundingClientRect().height
-        _this.barSvg.attr('height', height + "px");
+    const { barRectMargin, barValueMargin, scrollMargin, margin } = this.activeProfile;
+    const { axis_x } = this.model.marker;
+    const limits = axis_x.getLimits(axis_x.which);
+    const ltr = Math.abs(limits.max) >= Math.abs(limits.min);
 
-        // move along with a selection if playing
-        if (_this.model.time.playing) {
-          var follow = _this.barContainer.select('.vzb-selected');
-          if (!follow.empty()) {
-            var d = follow.datum();
-            var yPos = getBarPosition(d, d.index);
 
-            var currentTop = _this.barViewport.node().scrollTop;
-            var currentBottom = currentTop + _this.height;
+    const rightEdge = this.width
+      - margin.right
+      - margin.left
+      - this._getWidestLabelWidth()
+      - barRectMargin
+      - scrollMargin;
+    this.xScale.range([0, rightEdge]);
 
-            var scrollTo = false;
-            if (yPos < currentTop)
-              scrollTo = yPos;
-            if ((yPos + _this.barHeight) > currentBottom)
-              scrollTo = yPos + _this.barHeight - _this.height;
+    let zeroValueWidth = this.xScale(0) || 0;
+    let shift = this._getWidestLabelWidth();
 
-            if (scrollTo)
-              _this.barViewport.transition().duration(duration)
-                .tween('scrollfor' + d.entity, scrollTopTween(scrollTo));
+    if (zeroValueWidth > ((ltr ? margin.left : margin.right) + this._getWidestLabelWidth())) {
+      shift = zeroValueWidth;
+    }
 
-          }
+    if (zeroValueWidth < 0) {
+      this.xScale.range([0, rightEdge - Math.abs(zeroValueWidth)]);
+      zeroValueWidth = this.xScale(0) || 0;
+    }
 
+    const barWidth = value => this.xScale(value) - zeroValueWidth;
+
+    const labelAnchor = ltr ? "end" : "start";
+    const valueAnchor = ltr ? "start" : "end";
+
+    const labelX = ltr ?
+      (margin.left + shift) :
+      (this.width - shift - scrollMargin - margin.right);
+
+    const barX = ltr ?
+      (labelX + barRectMargin) :
+      (labelX - barRectMargin);
+
+    const valueX = ltr ?
+      (barX + barValueMargin) :
+      (barX - barValueMargin);
+
+    const isLabelBig = (this._getWidestLabelWidth(true) + (ltr ? margin.left : margin.right)) < shift;
+    this.sortedEntities.forEach(bar => {
+      const { value } = bar;
+
+      if (force || presentationModeChanged || bar.isNew) {
+        bar.barLabel
+          .attr("x", labelX)
+          .attr("y", this.activeProfile.barHeight / 2)
+          .attr("text-anchor", labelAnchor)
+          .text(isLabelBig ? bar.labelFull : bar.labelSmall);
+
+        bar.barRect
+          .attr("rx", this.activeProfile.barHeight / 4)
+          .attr("ry", this.activeProfile.barHeight / 4)
+          .attr("height", this.activeProfile.barHeight);
+
+        bar.barValue
+          .attr("x", valueX)
+          .attr("y", this.activeProfile.barHeight / 2)
+          .attr("text-anchor", valueAnchor);
+      }
+
+      if (force || bar.changedWidth || presentationModeChanged) {
+        const width = Math.max(0, value && barWidth(Math.abs(value)));
+
+        if (force || bar.changedWidth || presentationModeChanged) {
+          bar.barRect
+            .transition().duration(duration).ease(d3.easeLinear)
+            .attr("width", width);
         }
 
-        function scrollTopTween(scrollTop) {
-          return function() {
-            var i = d3.interpolateNumber(this.scrollTop, scrollTop);
-            return function(t) { this.scrollTop = i(t); };
-          };
+        bar.barRect
+          .attr("x", barX - (value < 0 ? width : 0));
+
+        if (force || bar.changedValue) {
+          bar.barValue
+            .text(this._formatter(value) || this.translator("hints/nodata"));
         }
+      }
 
-      });
-
-
-    // helper functions
-    function getBarPosition(d, i) {
-        return (_this.barHeight+bar_margin)*i;
-    }
-    function getDataKey(d) {
-      return d.entity;
-    }
-    // http://stackoverflow.com/questions/10692100/invoke-a-callback-at-the-end-of-a-transition
-    function endAll(transition, callback) {
-      if (transition.size() === 0) { callback() }
-      var n = 0;
-      transition
-          .each(function() { ++n; })
-          .each("end", function() { if (!--n) callback.apply(this, arguments); });
-    }
-
+      if (force || bar.changedIndex || presentationModeChanged) {
+        bar.self
+          .transition().duration(duration).ease(d3.easeLinear)
+          .attr("transform", `translate(0, ${this._getBarPosition(bar.index)})`);
+      }
+    });
   },
 
-  createAndDeleteBars: function(updatedBars) {
+  _resizeSvg() {
+    const { barHeight, barMargin } = this.activeProfile;
+    this.barSvg.attr("height", `${(barHeight + barMargin) * this.sortedEntities.length}px`);
+  },
 
-    var _this = this;
+  _scroll(duration = 0) {
+    const follow = this.barContainer.select(".vzb-selected");
+    if (!follow.empty()) {
+      const d = follow.datum();
+      const yPos = this._getBarPosition(d.index);
+
+      const { margin } = this.activeProfile;
+      const height = this.height - margin.top - margin.bottom;
+
+      const scrollTo = yPos - (height + this.activeProfile.barHeight) / 2;
+      this.barViewport.transition().duration(duration)
+        .tween("scrollfor" + d.entity, this._scrollTopTween(scrollTo));
+    }
+  },
+
+  _createAndDeleteBars(updatedBars) {
+    const _this = this;
 
     // remove groups for entities that are gone
     updatedBars.exit().remove();
 
     // make the groups for the entities which were not drawn yet (.data.enter() does this)
-    var newGroups = updatedBars.enter().append("g")
-        .attr("class", 'vzb-br-bar')
-        .attr("id", function(d) {
-          return "vzb-br-bar-" + d.entity + "-" + _this._id;
-        })
-        .on("mousemove", function(bar) { _this.setHover(bar, true)  })
-        .on("mouseout",  function(bar) { _this.setHover(bar, false) })
-        .on("click", function(d) {
+    updatedBars = updatedBars.enter()
+      .append("g")
+      .each(function(d) {
+        const self = d3.select(this);
 
-          utils.forEach(_this.model.marker.space, function(entity) {
-            if (_this.model[entity].getDimension() !== 'time')
-              _this.model[entity].selectEntity(d); // this will trigger a change in the model, which the tool listens to
+        self
+          .attr("class", "vzb-br-bar")
+          .classed("vzb-selected", _this.model.marker.isSelected(d))
+          .attr("id", `vzb-br-bar-${d.entity}-${_this._id}`)
+          .on("mousemove", d => _this.model.marker.highlightMarker(d))
+          .on("mouseout", () => _this.model.marker.clearHighlighted())
+          .on("click", d => {
+            _this.model.marker.selectMarker(d);
           });
 
-        });
+        const barRect = self.append("rect")
+          .attr("stroke", "transparent");
 
-    // draw new bars per group
-    newGroups.append('rect')
-        .attr("x", 0)
-        .attr("rx", this.barHeight/4)
-        .attr("ry", this.barHeight/4)
-        .attr("stroke", "white")
-        .attr("stroke-opacity", 0)
-        .attr("stroke-width", 2)
-        .attr("height", this.barHeight)
-        .style("fill", function(d) {
-          var color = _this.cScale(_this.values.color[d.entity]);
-          return d3.rgb(color);
-        });
+        const labelFull = _this.values.label[d.entity];
+        const labelSmall = labelFull.length < 12 ? labelFull : `${labelFull.substring(0, 9)}...`;
+        const barLabel = self.append("text")
+          .attr("class", "vzb-br-label")
+          .attr("dy", ".325em");
 
-    // draw new labels per group
-    newGroups.append('text')
-        .attr("class", "vzb-br-label")
-        .attr("x", -5)
-        .attr("y", this.barHeight/2)
-        .attr("text-anchor", "end")
-        .attr("dominant-baseline", "middle")
-        .text(function(d, i) {
-          var label = _this.values.label[d.entity];
-          return label.length < 12 ? label : label.substring(0, 9) + '...';
-        })
-        .style("fill", function(d) {
-          var color = _this.cScale(_this.values.color[d.entity]);
-          return d3.rgb(color).darker(2);
-        })
-        .append('title'); // watch out: might be overwritten if changing the labeltext later on
+        const labelFullWidth = barLabel.text(labelFull).node().getBBox().width;
+        const labelSmallWidth = barLabel.text(labelSmall).node().getBBox().width;
 
-    // draw new values on each bar
-    newGroups.append('text')
-        .attr("class", "vzb-br-value")
-        .attr("x", 5)
-        .attr("y", this.barHeight/2)
-        .attr("dominant-baseline", "middle")
-        .style("fill", function(d) {
-          var color = _this.cScale(_this.values.color[d.entity]);
-          return d3.rgb(color).darker(2);
+        const barValue = self.append("text")
+          .attr("class", "vzb-br-value")
+          .attr("dy", ".325em");
+
+        Object.assign(d, {
+          self,
+          barRect,
+          barLabel,
+          barValue,
+          isNew: true,
+          labelFullWidth,
+          labelSmallWidth,
+          labelFull,
+          labelSmall,
         });
+      })
+      .merge(updatedBars);
   },
 
-  drawColors: function() {
-    var _this = this;
+  _getWidestLabelWidth(big = false) {
+    const widthKey = big ? "labelFullWidth" : "labelSmallWidth";
+    const labelKey = big ? "labelFull" : "labelSmall";
 
-    this.barContainer.selectAll('.vzb-br-bar>rect')
-      .style("fill", getColor);
-    this.barContainer.selectAll('.vzb-br-bar>text')
-      .style("fill", getDarkerColor);
+    const bar = this.sortedEntities
+      .reduce((a, b) => a[widthKey] < b[widthKey] ? b : a);
 
-    function getColor(d) {
-      var color = _this.cScale(_this.values.color[d.entity]);
-      return d3.rgb(color);
-    }
-    function getDarkerColor(d) {
-      return getColor(d).darker(2);
-    }
+    const text = bar.barLabel.text();
+    const width = bar.barLabel.text(bar[labelKey]).node().getBBox().width;
+    bar.barLabel.text(text);
+
+    return width;
+  },
+
+  _drawColors() {
+    const _this = this;
+
+    this.barContainer.selectAll(".vzb-br-bar>rect")
+      .each(function({ entity }) {
+        const self = d3.select(this);
+        const color = _this.values.color[entity];
+
+        if (!color && color !== 0) {
+          self
+            .style("fill", COLOR_WHITEISH)
+            .attr("stroke", COLOR_BLACKISH);
+        } else {
+          self
+            .style("fill", _this._getColor(color))
+            .attr("stroke", "transparent");
+        }
+      });
+
+    this.barContainer.selectAll(".vzb-br-bar>text")
+      .style("fill", ({ entity }) => this._getDarkerColor(this.values.color[entity]));
+  },
+
+  _getColor(value) {
+    return d3.rgb(this.cScale(value));
+  },
+
+  _getDarkerColor(d) {
+    return this._getColor(d).darker(2);
   },
 
 
   /**
-  * DATA HELPER FUNCTIONS
-  */
-
-  sortByIndicator: function(values) {
-
-    var _this = this;
-    var data_array = [];
-    this.total = 0; // setting this.total for efficiency at the same time
-
-    // first put the data in an array (objects aren't sortable)
-    utils.forEach(values, function(indicator_value, entity) {
-      var row = { entity: entity, value: indicator_value };
-      row[_this.model.entities.dim] = entity;
-      data_array.push(row);
-
-      // setting this.total for efficiency at the same time
-      _this.total += indicator_value;
-    });
-    data_array.sort(function(a, b) {
-      // if a is bigger, a comes first, i.e. descending sort
-      return b.value - a.value;
-    });
-    return data_array;
-  },
-
-  /**
-  * UI METHODS
-  */
-
-  /**
-   * setting hover
+   * DATA HELPER FUNCTIONS
    */
-  setHover: function(bar, hover) {
-    this.barContainer.classed('vzb-dimmed', hover);
-    this.barContainer.select("#vzb-br-bar-" + bar.entity + "-" + this._id).classed('vzb-hovered', hover);
+
+  _scrollTopTween(scrollTop) {
+    return function() {
+      const node = this, i = d3.interpolateNumber(this.scrollTop, scrollTop);
+      return function(t) {
+        node.scrollTop = i(t);
+      };
+    };
   },
 
-  /**
-   * Select Entities
-   */
-  selectBars: function() {
-    var _this = this;
-    var entityDim = this.model.entities.dim;
-    var selected = this.model.entities.select;
+  _getBarPosition(i) {
+    return (this.activeProfile.barHeight + this.activeProfile.barMargin) * i;
+  },
+
+  _entities: {},
+
+  _sortByIndicator(values) {
+    return Object.keys(values).map(entity => {
+      const cached = this._entities[entity];
+      const value = values[entity];
+      const formattedValue = this._formatter(value);
+
+      if (cached) {
+        return Object.assign(cached, {
+          value,
+          formattedValue,
+          changedValue: formattedValue !== cached.formattedValue,
+          changedWidth: value !== cached.value,
+          isNew: false
+        });
+      }
+
+      return this._entities[entity] = {
+        entity,
+        value,
+        formattedValue,
+        [this.model.entities.dim]: entity,
+        changedValue: true,
+        changedWidth: true,
+        isNew: true
+      };
+    }).sort(({ value: a }, { value: b }) => b - a)
+      .map((entity, index) =>
+        Object.assign(entity, {
+          index,
+          changedIndex: index !== entity.index
+        }));
+  },
+
+  _selectBars() {
+    const entityDim = this.model.entities.dim;
+    const selected = this.model.marker.select;
 
     // unselect all bars
-    this.barContainer.classed('vzb-dimmed-selected', false);
-    this.barContainer.selectAll('.vzb-br-bar.vzb-selected').classed('vzb-selected', false);
+    this.barContainer.classed("vzb-dimmed-selected", false);
+    this.barContainer.selectAll(".vzb-br-bar.vzb-selected").classed("vzb-selected", false);
 
     // select the selected ones
-    if(selected.length) {
-      this.barContainer.classed('vzb-dimmed-selected', true);
-      utils.forEach(selected, function(selectedBar) {
-        _this.barContainer.select("#vzb-br-bar-" + selectedBar[entityDim] + "-" + _this._id).classed('vzb-selected', true);
+    if (selected.length) {
+      this.barContainer.classed("vzb-dimmed-selected", true);
+      selected.forEach(selectedBar => {
+        this.barContainer
+          .select(`#vzb-br-bar-${selectedBar[entityDim]}-${this._id}`)
+          .classed("vzb-selected", true);
       });
     }
 
+  },
+
+  _updateOpacity() {
+    const { model: { marker } } =  this;
+
+    const OPACITY_HIGHLIGHT_DEFAULT = 1;
+    const {
+      highlight,
+      select,
+
+      opacityHighlightDim: OPACITY_HIGHLIGHT_DIM,
+      opacitySelectDim: OPACITY_SELECT_DIM,
+      opacityRegular: OPACITY_REGULAR,
+    } = marker;
+
+    const [
+      someHighlighted,
+      someSelected
+    ] = [
+      highlight.length > 0,
+      select.length > 0
+    ];
+
+    this.barContainer.selectAll(".vzb-br-bar")
+      .style("opacity", d => {
+        if (someHighlighted && marker.isHighlighted(d)) {
+          return OPACITY_HIGHLIGHT_DEFAULT;
+        }
+
+        if (someSelected) {
+          return marker.isSelected(d) ? OPACITY_REGULAR : OPACITY_SELECT_DIM;
+        }
+
+        if (someHighlighted) {
+          return OPACITY_HIGHLIGHT_DIM;
+        }
+
+        return OPACITY_REGULAR;
+      });
+  },
+
+  _updateDoubtOpacity(opacity) {
+    this.dataWarningEl.style("opacity",
+      opacity || (
+        !this.model.marker.select.length ?
+          this.wScale(+this.model.time.value.getUTCFullYear().toString()) :
+          1
+      )
+    );
   },
 
 });

@@ -10,5 +10,4 @@ test.html
 .idea/
 .vscode/
 npm-debug.log
-**/*/_index.js
 .DS_Store

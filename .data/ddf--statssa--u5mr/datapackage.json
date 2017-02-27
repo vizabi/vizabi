@@ -1,0 +1,174 @@
+{
+	"name": "ddf--statssa-u5mr",
+	"title": "ddf--statssa-u5mr",
+	"description": "",
+	"version": "0.0.1",
+	"language": {
+		"id": "en",
+		"name": "English"
+	},
+	"translations": [],
+	"license": "",
+	"author": "",
+	"resources": [
+		{
+			"path": "ddf--concepts.csv",
+			"name": "ddf--concepts",
+			"schema": {
+				"fields": [
+					{
+						"name": "concept"
+					},
+					{
+						"name": "concept_type"
+					},
+					{
+						"name": "domain"
+					}
+				],
+				"primaryKey": "concept"
+			}
+		},
+		{
+			"path": "ddf--datapoints--population--by--municipality2011--year.csv",
+			"name": "ddf--datapoints--population--by--municipality2011--year",
+			"schema": {
+				"fields": [
+					{
+						"name": "municipality2011"
+					},
+					{
+						"name": "year"
+					},
+					{
+						"name": "population"
+					}
+				],
+				"primaryKey": [
+					"municipality2011",
+					"year"
+				]
+			}
+		},
+		{
+			"path": "ddf--datapoints--population--by--municipality2016--year.csv",
+			"name": "ddf--datapoints--population--by--municipality2016--year",
+			"schema": {
+				"fields": [
+					{
+						"name": "municipality2016"
+					},
+					{
+						"name": "year"
+					},
+					{
+						"name": "population"
+					}
+				],
+				"primaryKey": [
+					"municipality2016",
+					"year"
+				]
+			}
+		},
+		{
+			"path": "ddf--datapoints--u5mr--cd--by--municipality2011--year.csv",
+			"name": "ddf--datapoints--u5mr--cd--by--municipality2011--year",
+			"schema": {
+				"fields": [
+					{
+						"name": "municipality2011"
+					},
+					{
+						"name": "year"
+					},
+					{
+						"name": "u5mr"
+					},
+					{
+						"name": "cd"
+					}
+				],
+				"primaryKey": [
+					"municipality2011",
+					"year"
+				]
+			}
+		},
+		{
+			"path": "ddf--datapoints--u5mr--cd--by--municipality2016--year.csv",
+			"name": "ddf--datapoints--u5mr--cd--by--municipality2016--year",
+			"schema": {
+				"fields": [
+					{
+						"name": "municipality2016"
+					},
+					{
+						"name": "year"
+					},
+					{
+						"name": "u5mr"
+					},
+					{
+						"name": "cd"
+					}
+				],
+				"primaryKey": [
+					"municipality2016",
+					"year"
+				]
+			}
+		},
+		{
+			"path": "ddf--entities--municipality2011.csv",
+			"name": "ddf--entities--municipality2011",
+			"schema": {
+				"fields": [
+					{
+						"name": "municipality2011"
+					},
+					{
+						"name": "id"
+					},
+					{
+						"name": "lat"
+					},
+					{
+						"name": "lng"
+					},
+					{
+						"name": "name"
+					},
+					{
+						"name": "province"
+					}
+				],
+				"primaryKey": "municipality2011"
+			}
+		},
+		{
+			"path": "ddf--entities--municipality2016.csv",
+			"name": "ddf--entities--municipality2016",
+			"schema": {
+				"fields": [
+					{
+						"name": "municipality2016"
+					},
+					{
+						"name": "lat"
+					},
+					{
+						"name": "lng"
+					},
+					{
+						"name": "name"
+					},
+					{
+						"name": "province"
+					}
+				],
+				"primaryKey": "municipality2016"
+			}
+		}
+	]
+}

@@ -1,24 +1,131 @@
 .vzb-tool {
   $vzb-br-year-size: 16em;
 
-  .vzb-barrankchart {
-    @extend %vzb-chart-wrapper;
-
-    .vzb-br-header {
-      width: 100%;
-      display: block; // svg is standard inline 
-
-      .vzb-br-title {
-        fill: $vzb-color-black;
-      }
+  &.vzb-small {
+    .vzb-barrankchart {
       .vzb-br-total {
-        fill: $vzb-color-black;
+        font-size: $vzb-font-size-small;
+      }
+
+      .vzb-br-label {
+        font-size: $vzb-font-size-small;
+      }
+
+      .vzb-br-value {
+        font-size: $vzb-font-size-tiny;
+      }
+      
+      .vzb-br-title {
         font-size: $vzb-font-size-small;
       }
     }
+  }
 
-    .barsviewport {
+  &.vzb-medium {
+    .vzb-barrankchart {
+      .vzb-br-total {
+        font-size: $vzb-font-size-medium;
+      }
+
+      .vzb-br-label {
+        font-size: $vzb-font-size-medium;
+      }
+
+      .vzb-br-value {
+        font-size: $vzb-font-size-small;
+      }
+      
+      .vzb-br-title {
+        font-size: $vzb-font-size-medium;
+      }
+    }
+  }
+
+  &.vzb-large {
+    .vzb-barrankchart {
+      .vzb-br-total {
+        font-size: $vzb-font-size-large;
+      }
+
+      .vzb-br-label {
+        font-size: $vzb-font-size-large;
+      }
+
+      .vzb-br-value {
+        font-size: $vzb-font-size-small;
+      }
+      
+      .vzb-br-title {
+        font-size: $vzb-font-size-large;
+      }
+    }
+  }
+  
+  &.vzb-presentation {
+    &.vzb-medium {
+      .vzb-barrankchart {
+        .vzb-br-total {
+          font-size: $vzb-font-size-large;
+        }
+
+        .vzb-br-label {
+          font-size: $vzb-font-size-large;
+        }
+
+        .vzb-br-value {
+          font-size: $vzb-font-size-medium;
+        }
+
+        .vzb-br-title {
+          font-size: $vzb-font-size-large;
+        }
+      }
+    }
+
+    &.vzb-large {
+      .vzb-barrankchart {
+        .vzb-br-total {
+          font-size: $vzb-font-size-larger;
+        }
+
+        .vzb-br-label {
+          font-size: $vzb-font-size-larger;
+        }
+
+        .vzb-br-value {
+          font-size: $vzb-font-size-medium;
+        }
+
+        .vzb-br-title {
+          font-size: $vzb-font-size-larger;
+        }
+      }
+    }  
+  }
+
+  .vzb-barrankchart {
+    @extend %vzb-chart-wrapper;
+
+    .vzb-br-axis-info {
+      @extend %vzb-chart-info;
+    }
+
+    .vzb-br-header {
+      width: 100%;
+      display: block; // svg is standard inline
+
+      .vzb-br-title {
+        @extend %vzb-chart-axis-title;
+      }
+      .vzb-br-total {
+        fill: $vzb-color-black;
+      }
+    }
+
+    .vzb-br-barsviewport {
+      margin-right: 5px;
       overflow-y: auto;
+      overflow-x: hidden;
       position: relative;
     }
 
@@ -34,16 +141,9 @@
         user-select: none;
       }
 
-      .vzb-br-label {
-        font-size: $vzb-font-size-small;
-      }
-
-      .vzb-br-value {
-        font-size: $vzb-font-size-tiny;
-      }
       .vzb-dimmed {
         > .vzb-br-bar {
-          opacity: .8;
+          opacity: .5;
           &.vzb-hovered {
             opacity: 1;
           }
@@ -60,6 +160,9 @@
           }
         }
       }
+    }
+    .vzb-data-warning-svg {
+      width: 100%;
     }
   }
 }

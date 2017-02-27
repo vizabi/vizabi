@@ -25,6 +25,10 @@
   	  }
       &.vzb-moreoptions {
         .vzb-dialog-content {
+          @include rtl {
+            padding-left: 10px;
+            padding-right: 20px;
+          }
           padding-right: 10px;
         }
       }

@@ -1,11 +1,13 @@
 //general styles
 .vzb-ss-holder {
-
   height: 20px;
   margin: 0 auto;
   position: relative;
 
   &::before {
+    @include rtl {
+      right: 0;
+    }
     @include border-radius(5px 5px 5px 5px);
     content: '';
     position: absolute;
@@ -20,13 +22,16 @@
     &::before {
       background-color: rgba($vzb-color-grey, .2);
     }
-    .vzb-ss-slider-normal, 
+    .vzb-ss-slider-normal,
     .vzb-ss-slider-small {
       opacity: .5;
     }
   }
 
   .vzb-ss-slider-normal {
+    @include rtl {
+      left: 0 !important;
+    }
     position: absolute;
     top: 50%;
     margin-top: -10px;
@@ -43,7 +48,7 @@
     // Slider Handle
     &::-webkit-slider-thumb {
       @include border-radius(20px);
-      @include transition(left .1s ease-in-out);
+      transition: left .1s ease-in-out;
       -webkit-appearance: none;
       cursor: pointer;
       background-color: $vzb-color-primary;
@@ -54,7 +59,7 @@
     }
     &::-moz-range-thumb {
       @include border-radius(14px);
-      @include transition(left .1s ease-in-out);
+      transition: left .1s ease-in-out;
       cursor: pointer;
       background: $vzb-color-primary;
       //top: -12px;
@@ -64,7 +69,7 @@
     }
     &::-ms-thumb {
       @include border-radius(14px);
-      @include transition(left .1s ease-in-out);
+      transition: left .1s ease-in-out;
       cursor: pointer;
       background: $vzb-color-primary;
       height: 14px;

@@ -1,0 +1,28 @@
+<div class='vzb-dialog-modal'>
+  <span class="thumb-tack-class thumb-tack-class-ico-pin fa" data-dialogtype="side" data-click="pinDialog"></span>
+  <span class="thumb-tack-class thumb-tack-class-ico-drag fa" data-dialogtype="side" data-click="dragDialog"></span>
+  <div class="vzb-dialog-title">
+    <%=t ("buttons/side") %>
+    <span class="vzb-side-selector"></span>
+  </div>
+  
+  <div class="vzb-dialog-content vzb-dialog-scrollable">
+    <div class="vzb-side-list vzb-side-list-left">
+      <!-- list will be placed here -->
+    </div>
+    <div class="vzb-side-list vzb-side-list-right">
+      <!-- list will be placed here -->
+    </div>
+  </div>
+
+  <div class="vzb-dialog-buttons">
+    <div class="vzb-dialog-button vzb-label-primary vzb-side-switch-sides">
+      <%=t ("buttons/leftright") %>
+    </div>
+
+    <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary">
+      <%=t ("buttons/ok") %>
+    </div>
+  </div>
+
+</div>

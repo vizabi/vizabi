@@ -2,64 +2,78 @@
  * VIZABI LINECHART
  */
 
-import * as utils from 'base/utils';
-import Tool from 'base/tool';
+import * as utils from "base/utils";
+import Tool from "base/tool";
 
-import LCComponent from 'tools/linechart/linechart-component';
+import LCComponent from "tools/linechart/linechart-component";
 
-import timeslider from 'components/timeslider/timeslider';
-import dialogs from 'components/dialogs/dialogs';
-import buttonlist from 'components/buttonlist/buttonlist';
-import treemenu from 'components/treemenu/treemenu';
-import datanotes from 'components/datanotes/datanotes';
+import timeslider from "components/timeslider/timeslider";
+import dialogs from "components/dialogs/dialogs";
+import buttonlist from "components/buttonlist/buttonlist";
+import treemenu from "components/treemenu/treemenu";
+import datawarning from "components/datawarning/datawarning";
+import datanotes from "components/datanotes/datanotes";
+import steppedSpeedSlider from "components/steppedspeedslider/steppedspeedslider";
 
 
   //LINE CHART TOOL
-var LineChart = Tool.extend('LineChart', {
+const LineChart = Tool.extend("LineChart", {
     /**
      * Initialized the tool
      * @param {Object} placeholder Placeholder element for the tool
      * @param {Object} external_model Model as given by the external page
      */
-    init: function(placeholder, external_model) {
+  init(placeholder, external_model) {
 
-      this.name = 'linechart';
+    this.name = "linechart";
 
-      this.components = [{
-        component: LCComponent,
-        placeholder: '.vzb-tool-viz',
-        model: ["state.time", "state.entities", "state.marker", "language"] //pass models to component
-      }, {
-        component: timeslider,
-        placeholder: '.vzb-tool-timeslider',
-        model: ["state.time", "state.entities", "state.marker", "ui"],
-        ui: {show_value_when_drag_play: false, axis_aligned: true}
-      }, {
-        component: dialogs,
-        placeholder: '.vzb-tool-dialogs',
-        model: ['state', 'ui', 'language']
-      }, {
-        component: buttonlist,
-        placeholder: '.vzb-tool-buttonlist',
-        model: ['state', 'ui', 'language']
-      }, {
-        component: treemenu,
-        placeholder: '.vzb-tool-treemenu',
-        model: ['state.marker', 'state.marker_tags', 'state.time', 'language']
-      }, {
-        component: datanotes,
-        placeholder: '.vzb-tool-datanotes',
-        model: ['state.marker', 'language']
-      }];
+    this.components = [{
+      component: LCComponent,
+      placeholder: ".vzb-tool-viz",
+      model: ["state.time", "state.entities", "state.marker", "locale", "ui"] //pass models to component
+    }, {
+      component: timeslider,
+      placeholder: ".vzb-tool-timeslider",
+      model: ["state.time", "state.entities", "state.marker", "ui"],
+      ui: { show_value_when_drag_play: false, axis_aligned: true }
+    }, {
+      component: dialogs,
+      placeholder: ".vzb-tool-dialogs",
+      model: ["state", "ui", "locale"]
+    }, {
+      component: buttonlist,
+      placeholder: ".vzb-tool-buttonlist",
+      model: ["state", "ui", "locale"]
+    }, {
+      component: treemenu,
+      placeholder: ".vzb-tool-treemenu",
+      model: ["state.marker", "state.marker_tags", "state.time", "locale"]
+    }, {
+      component: datawarning,
+      placeholder: ".vzb-tool-datawarning",
+      model: ["locale"]
+    }, {
+      component: datanotes,
+      placeholder: ".vzb-tool-datanotes",
+      model: ["state.marker", "locale"]
+    }, {
+      component: steppedSpeedSlider,
+      placeholder: ".vzb-tool-stepped-speed-slider",
+      model: ["state.time", "locale"]
+    }];
 
-      this._super(placeholder, external_model);
-    },
+    this._super(placeholder, external_model);
+  },
 
-    default_model: {
+  default_model: {
     state: {
       time: {},
+      marker: {
+        axis_x: { allow: { scales: ["time"] } },
+        axis_y: { allow: { scales: ["linear", "log"] } }
+      }
     },
-    language: { },
+    locale: { },
     "ui": {
       "chart": {
         "labels": {
@@ -74,10 +88,20 @@ var LineChart = Tool.extend('LineChart', {
           "showTooltip": false
         }
       },
+      datawarning: {
+        doubtDomain: [],
+        doubtRange: []
+      },
+      "buttons": ["colors", "find", "show", "moreoptions", "fullscreen", "presentation"],
+      "dialogs": {
+        "popup": ["colors", "find", "show", "moreoptions"],
+        "sidebar": ["colors", "show"],
+        "moreoptions": ["opacity", "speed", "axes", "colors", "presentation", "about"]
+      },
       "presentation": false
     }
   }
 
-  });
+});
 
 export default LineChart;

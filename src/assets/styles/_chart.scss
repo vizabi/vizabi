@@ -61,17 +61,29 @@
   color: $vzb-color-grey;
   fill: none;
   stroke: $vzb-color-grey;
-
   path,
   line {
     fill: none;
     shape-rendering: crispEdges;
     stroke: $vzb-color-grey;
   }
-  
+  .tick line, 
+  .tick-minor {
+    stroke-dasharray: 1 3;
+  }  
   text {
     @extend %vzb-chart-ticks;
   } 
+}
+%vzb-chart-axis-presentation {
+  .tick line {
+    stroke: $vzb-color-black;
+    stroke-width: 1;
+    stroke-dasharray: 2 3;
+  } 
+  .tick-minor {
+    stroke: $vzb-color-grey;
+  }
 }
 
 %vzb-chart-info {

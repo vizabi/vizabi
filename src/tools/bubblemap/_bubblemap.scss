@@ -12,30 +12,30 @@
         stroke-width: .5px;
         stroke-opacity: .3;
       }
-  
+
       .fill {
         fill: none;
       }
-  
+
       .graticule {
         fill: none;
         stroke: $vzb-color-grey;
         stroke-width: .5px;
         stroke-opacity: .3;
       }
-  
+
       .land {
         fill: $vzb-color-grey;
         opacity: .4;
       }
-  
+
       .boundary {
         fill: none;
         stroke: #fff;
         stroke-width: .5px;
       }
     }
-    
+
     .vzb-bubblemap-svg {
       @extend %vzb-chart-svg;
 
@@ -63,7 +63,7 @@
       }
 
       .vzb-bmc-bubble-labels .vzb-bmc-label .vzb-bmc-label-x-text {
-        @include transition(opacity 200ms linear);
+        transition: opacity 200ms linear;
         cursor: pointer;
         fill: $vzb-color-primary;
         text-anchor: middle;
@@ -76,13 +76,13 @@
       }
 
       .vzb-bmc-bubble-labels .vzb-bmc-label .vzb-bmc-label-x-icon {
-        @include transition(opacity 200ms linear);
+        transition: opacity 200ms linear;
         fill: $vzb-color-white;
         pointer-events: none;
       }
 
       .vzb-bmc-bubble-labels .vzb-bmc-label .vzb-bmc-label-x {
-        @include transition(opacity 200ms linear);
+        transition: opacity 200ms linear;
         cursor: pointer;
         pointer-events: all;
         fill: $vzb-color-primary;
@@ -97,12 +97,19 @@
 
       .vzb-bmc-labels {
         @extend %vzb-chart-tooltip;
+        @include rtl {
+          text {
+            direction: rtl;
+            text-anchor: start;
+            unicode-bidi: embed;
+          }
+        }
         rect {
           pointer-events: visible;
         }
         .vzb-bmc-entity {
           .vzb-bmc-label-x {
-            @include transition(opacity 200ms linear);
+            transition: opacity 200ms linear;
             fill: $vzb-color-primary;
             text-anchor: middle;
             dominant-baseline: middle;
@@ -118,7 +125,7 @@
           }
 
           .vzb-bmc-label-x-icon {
-            @include transition(opacity 200ms linear);
+            transition: opacity 200ms linear;
             fill: $vzb-color-white;
             //pointer-events: none;
           }
@@ -127,8 +134,8 @@
             fill: rgb(255, 252, 185);
           }
         }
-      } 
-      
+      }
+
       .vzb-bmc-lines .vzb-bmc-entity line {
         stroke: $vzb-color-grey-dark;
         opacity: .8;
@@ -136,10 +143,22 @@
 
       .vzb-bmc-axis-y-title {
         @extend %vzb-chart-axis-title;
+        @include rtl {
+          text {
+            direction: rtl;
+            unicode-bidi: embed;
+          }
+        }
       }
-        
+
       .vzb-bmc-axis-c-title {
         @extend %vzb-chart-axis-title;
+        @include rtl {
+          text {
+            direction: rtl;
+            unicode-bidi: embed;
+          }
+        }
       }
 
       .vzb-bmc-axis-y-info,
@@ -149,8 +168,12 @@
 
       .vzb-bmc-tooltip {
         @extend %vzb-chart-tooltip;
-        text {
-          text-anchor: end;
+        @include rtl {
+          text {
+            direction: rtl;
+            text-anchor: start;
+            unicode-bidi: embed;
+          }
         }
       }
 

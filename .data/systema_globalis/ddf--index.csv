@@ -542,14 +542,12 @@ concept,tags,ddf--concepts.csv
 "geo,time",year_categorization_1820_2010,ddf--datapoints--year_categorization_1820_2010--by--geo--time.csv
 "geo,time",year_categorization_1950,ddf--datapoints--year_categorization_1950--by--geo--time.csv
 "geo,time",yearly_co2_emissions_1000_tonnes,ddf--datapoints--yearly_co2_emissions_1000_tonnes--by--geo--time.csv
-"geo,time",yearly_co2_emissions_tonnes,ddf--datapoints--yearly_co2_emissions_tonnes--by--geo--time.csv
 country,gwid,ddf--entities--geo--country.csv
 country,name,ddf--entities--geo--country.csv
 country,world_6region,ddf--entities--geo--country.csv
 country,income_groups,ddf--entities--geo--country.csv
 country,landlocked,ddf--entities--geo--country.csv
 country,g77_and_oecd_countries,ddf--entities--geo--country.csv
-country,geographic_regions_in_4_colors,ddf--entities--geo--country.csv
 country,main_religion_2008,ddf--entities--geo--country.csv
 country,gapminder_list,ddf--entities--geo--country.csv
 country,alternative_1,ddf--entities--geo--country.csv
@@ -572,6 +570,7 @@ country,is--country,ddf--entities--geo--country.csv
 country,world_4region,ddf--entities--geo--country.csv
 country,latitude,ddf--entities--geo--country.csv
 country,longitude,ddf--entities--geo--country.csv
+g77_and_oecd_countries,rank,ddf--entities--geo--g77_and_oecd_countries.csv
 g77_and_oecd_countries,name,ddf--entities--geo--g77_and_oecd_countries.csv
 g77_and_oecd_countries,gwid,ddf--entities--geo--g77_and_oecd_countries.csv
 g77_and_oecd_countries,is--g77_and_oecd_countries,ddf--entities--geo--g77_and_oecd_countries.csv
@@ -582,12 +581,16 @@ geo,longitude,ddf--entities--geo--global.csv
 income_groups,name,ddf--entities--geo--income_groups.csv
 income_groups,gwid,ddf--entities--geo--income_groups.csv
 income_groups,is--income_groups,ddf--entities--geo--income_groups.csv
+income_groups,rank,ddf--entities--geo--income_groups.csv
+landlocked,rank,ddf--entities--geo--landlocked.csv
 landlocked,name,ddf--entities--geo--landlocked.csv
 landlocked,gwid,ddf--entities--geo--landlocked.csv
 landlocked,is--landlocked,ddf--entities--geo--landlocked.csv
+main_religion_2008,rank,ddf--entities--geo--main_religion_2008.csv
 main_religion_2008,name,ddf--entities--geo--main_religion_2008.csv
 main_religion_2008,gwid,ddf--entities--geo--main_religion_2008.csv
 main_religion_2008,is--main_religion_2008,ddf--entities--geo--main_religion_2008.csv
+geo,rank,ddf--entities--geo--world_4region.csv
 geo,is--world_4region,ddf--entities--geo--world_4region.csv
 geo,name,ddf--entities--geo--world_4region.csv
 geo,name_short,ddf--entities--geo--world_4region.csv
@@ -597,6 +600,7 @@ geo,latitude,ddf--entities--geo--world_4region.csv
 geo,longitude,ddf--entities--geo--world_4region.csv
 geo,color,ddf--entities--geo--world_4region.csv
 geo,shape_lores_svg,ddf--entities--geo--world_4region.csv
+geo,rank,ddf--entities--geo--world_6region.csv
 geo,is--world_6region,ddf--entities--geo--world_6region.csv
 geo,name,ddf--entities--geo--world_6region.csv
 geo,name_short,ddf--entities--geo--world_6region.csv

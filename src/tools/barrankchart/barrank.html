@@ -1,13 +1,25 @@
 <!-- Bar Chart Component -->
 <div class="vzb-barrankchart">
   <svg class="vzb-br-header">
-      <text class="vzb-br-title"></text>
-      <text class="vzb-br-total"></text>
+    <g class="vzb-br-title">
+      <text></text>
+    </g>
+    <g class="vzb-br-total">
+      <text></text>
+    </g>
+    <g class="vzb-br-axis-info vzb-noexport"></g>
   </svg>
 
-  <div class="barsviewport">
+  <div class="vzb-br-barsviewport vzb-dialog-scrollable">
     <svg class="vzb-br-bars-svg">
       <g class="vzb-br-bars"></g>
     </svg>
   </div>
+
+  <svg class="vzb-data-warning-svg">
+    <g class="vzb-data-warning vzb-noexport">
+      <svg></svg>
+      <text></text>
+    </g>
+  </svg>
 </div>

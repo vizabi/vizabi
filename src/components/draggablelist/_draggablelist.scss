@@ -1,6 +1,6 @@
 .vzb-dl-holder {
   .vzb-draggable {
-    @include user-select(none);
+    user-select: none;
     margin: auto;
     padding: 5px 0;
     width: 200px;

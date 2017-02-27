@@ -1,21 +1,20 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import Promise from 'base/promise';
+import * as utils from "base/utils";
+import Component from "base/component";
 
 
-var precision = 1;
+const precision = 1;
 
 //constants
-var class_playing = "vzb-playing";
-var class_loading = "vzb-ts-loading";
-var class_hide_play = "vzb-ts-hide-play-button";
-var class_dragging = "vzb-ts-dragging";
-var class_axis_aligned = "vzb-ts-axis-aligned";
-var class_show_value = "vzb-ts-show-value";
-var class_show_value_when_drag_play = "vzb-ts-show-value-when-drag-play";
+const class_playing = "vzb-playing";
+const class_loading = "vzb-ts-loading";
+const class_hide_play = "vzb-ts-hide-play-button";
+const class_dragging = "vzb-ts-dragging";
+const class_axis_aligned = "vzb-ts-axis-aligned";
+const class_show_value = "vzb-ts-show-value";
+const class_show_value_when_drag_play = "vzb-ts-show-value-when-drag-play";
 
 //margins for slider
-var profiles = {
+const profiles = {
   small: {
     margin: {
       top: 7,
@@ -49,7 +48,7 @@ var profiles = {
 };
 
 
-var presentationProfileChanges = {
+const presentationProfileChanges = {
   "medium": {
     margin: {
       top: 9
@@ -59,19 +58,19 @@ var presentationProfileChanges = {
     margin: {
     }
   }
-}
+};
 
-var TimeSlider = Component.extend({
+const TimeSlider = Component.extend({
   /**
    * Initializes the timeslider.
    * Executed once before any template is rendered.
    * @param model The model passed to the component
    * @param context The component's parent
    */
-  init: function(model, context) {
+  init(model, context) {
 
     this.name = "gapminder-timeslider";
-    this.template = this.template || require('./timeslider.html');
+    this.template = this.template || require("./timeslider.html");
     this.prevPosition = null;
     //define expected models/hooks for this component
     this.model_expects = [{
@@ -88,63 +87,52 @@ var TimeSlider = Component.extend({
       type: "ui"
     }];
 
-    var _this = this;
+    const _this = this;
     //binds methods to this model
     this.model_binds = {
-      'change:time': function(evt, path) {
-
-        //TODO: readyOnce CANNOT be run twice
-        if(_this._splash !== _this.model.time.splash) {
-          _this._splash = _this.model.time.splash;
-          _this.readyOnce();
-          _this.ready();
-        }
-
-        if(!_this._splash && _this.slide) {
-
-          if((['time.start', 'time.end']).indexOf(path) !== -1) {
+      "change:time": function(evt, path) {
+        if (_this.slide) {
+          if ((["time.start", "time.end"]).indexOf(path) !== -1) {
             if (!_this.xScale) return;
             _this.changeLimits();
           }
           _this._optionClasses();
           //only set handle position if change is external
-          if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
+          if (!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
-      'change:time.start': function(evt, path) {
-        if(!_this._splash && _this.slide) {
+      "change:time.start": function(evt, path) {
+        if (_this.slide) {
           //only set handle position if change is external
-          if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
+          if (!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
-      'change:time.end': function(evt, path) {
-        if(!_this._splash && _this.slide) {
+      "change:time.end": function(evt, path) {
+        if (_this.slide) {
           //only set handle position if change is external
-          if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
+          if (!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
-      'change:time.startSelected': function(evt, path) {
-        if(!_this._splash && _this.slide) {
+      "change:time.startSelected": function(evt, path) {
+        if (_this.slide) {
           _this.updateSelectedStartLimiter();
         }
       },
-      'change:time.endSelected': function(evt, path) {
-        if(!_this._splash && _this.slide) {
+      "change:time.endSelected": function(evt, path) {
+        if (_this.slide) {
           _this.updateSelectedEndLimiter();
         }
       },
-      'change:entities.select': function(evt, path) {
+      "change:marker.select": function(evt, path) {
         _this.setSelectedLimits();
       }
     };
 
+
     // Same constructor as the superclass
     this._super(model, context);
 
-    //starts as splash if this is the option
-    this._splash = this.model.ui.splash;
-
-    // Sort of defaults. Actually should be in ui default or bubblechart. 
+    // Sort of defaults. Actually should be in ui default or bubblechart.
     // By not having "this.model.ui =" we prevent it from going to url (not defined in defaults)
     // Should be in defaults when we make components config part of external config (& every component gets own config)
     this.ui = utils.extend({
@@ -166,16 +154,13 @@ var TimeSlider = Component.extend({
   },
 
   //template is ready
-  readyOnce: function () {
+  readyOnce() {
 
-    if(this._splash) return;
-
-    var _this = this;
+    const _this = this;
 
     //DOM to d3
     //TODO: remove this ugly hack
     this.element = utils.isArray(this.element) ? this.element : d3.select(this.element);
-    this.element.classed(class_loading, false);
 
     //html elements
     this.slider_outer = this.element.select(".vzb-ts-slider");
@@ -184,83 +169,73 @@ var TimeSlider = Component.extend({
     this.select = this.element.select(".vzb-ts-slider-select");
     this.progressBar = this.element.select(".vzb-ts-slider-progress");
     this.slide = this.element.select(".vzb-ts-slider-slide");
-    this.handle = this.slide.select(".vzb-ts-slider-handle");
-    this.valueText = this.slide.select('.vzb-ts-slider-value');
+    this.handle = this.element.select(".vzb-ts-slider-handle");
+    this.valueText = this.element.select(".vzb-ts-slider-value");
     //Scale
     this.xScale = d3.time.scale.utc()
       .clamp(true);
 
     //Axis
-    this.xAxis = d3.svg.axis()
-      .orient("bottom")
+    this.xAxis = d3.axisBottom()
       .tickSize(0);
     //Value
     this.valueText.attr("text-anchor", "middle").attr("dy", "-0.7em");
 
-    var brushed = _this._getBrushed(),
-      brushedEnd = _this._getBrushedEnd();
+    const brushed = _this._getBrushed();
+    const brushedEnd = _this._getBrushedEnd();
 
     //Brush for dragging
-    this.brush = d3.svg.brush()
-      .x(this.xScale)
-      .extent([0, 0])
-      .on("brush", function () {
+    // this.brush = d3.brushX()
+    //   //.x(this.xScale)
+    //   .extent([[0, 0], [0, 0]])
+    //   .on("start brush", function () {
+    //     brushed.call(this);
+    //   })
+    //   .on("end", function () {
+    //     brushedEnd.call(this);
+    //   });
+
+    // //Slide
+    // this.slide.call(this.brush);
+
+    this.brush = d3.drag()
+      //.on("start.interrupt", function() { _this.slide.interrupt(); })
+      .on("start drag", function() {
         brushed.call(this);
       })
-      .on("brushend", function () {
+      .on("end", function() {
         brushedEnd.call(this);
       });
 
     //Slide
     this.slide.call(this.brush);
 
-    this.slider_outer.on("mousewheel", function () {
+    this.slider_outer.on("mousewheel", () => {
         //do nothing and dont pass the event on if we are currently dragging the slider
-        if(_this.model.time.dragging){
-            d3.event.stopPropagation();
-            d3.event.preventDefault();
-            d3.event.returnValue = false;
-            return false;
-        }
-    });
-
-    this.slide.selectAll(".extent,.resize")
-      .remove();
-
-    this._setSelectedLimitsId = 0; //counter for setSelectedLimits
-    this._needRecalcSelectedLimits = true;
-
-    utils.forEach(_this.model.marker.getSubhooks(), function(hook) {
-      if(hook._important) hook.on('change:which', function() {
-        _this._needRecalcSelectedLimits = true;
-        _this.model.time.set({
-          startSelected: _this.model.time.start,
-          endSelected: _this.model.time.end
-        }, null, false  /*make change non-persistent for URL and history*/);
-      });
-    });
-
-    this.root.on('ready', function() {
-      _this._updateProgressBar();
-      _this.model.marker.listenFramesQueue(null, function(time) {
-        _this._updateProgressBar(time);
-      });
-      if(_this._needRecalcSelectedLimits) {
-        _this._needRecalcSelectedLimits = false;
-        _this.setSelectedLimits(true);
+      if (_this.model.time.dragging) {
+        d3.event.stopPropagation();
+        d3.event.preventDefault();
+        d3.event.returnValue = false;
+        return false;
       }
     });
 
-    if(this.model.time.startSelected > this.model.time.start) {
+    //this.slide.selectAll(".extent,.resize")
+    //  .remove();
+
+    this._setSelectedLimitsId = 0; //counter for setSelectedLimits
+
+    if (this.model.time.startSelected > this.model.time.start) {
       _this.updateSelectedStartLimiter();
     }
 
-    if(this.model.time.endSelected < this.model.time.end) {
+    if (this.model.time.endSelected < this.model.time.end) {
       _this.updateSelectedEndLimiter();
     }
 
-    this.parent.on('myEvent', function (evt, arg) {
-      var layoutProfile = _this.getLayoutProfile();
+    // special for linechart: resize timeslider to match time x-axis length
+    this.parent.on("myEvent", (evt, arg) => {
+      const layoutProfile = _this.getLayoutProfile();
 
       if (arg.profile && arg.profile.margin) {
         profiles[layoutProfile].margin = arg.profile.margin;
@@ -270,48 +245,58 @@ var TimeSlider = Component.extend({
       _this.element.select(".vzb-ts-slider-wrapper")
         .style("right", (arg.mRight - profiles[layoutProfile].margin.right) + "px");
 
-      _this.xScale.range([0, arg.rangeMax]);
-      _this.resize();
+      _this.updateSize([0, arg.rangeMax]);
+    });
+
+    this.on("resize", () => {
+      _this.updateSize();
     });
   },
 
   //template and model are ready
-  ready: function () {
-    if(this._splash) return;
+  ready() {
+    if (this.model.time.splash) return;
 
-    var play = this.element.select(".vzb-ts-btn-play");
-    var pause = this.element.select(".vzb-ts-btn-pause");
-    var _this = this;
-    var time = this.model.time;
+    this.element.classed(class_loading, false);
 
-    play.on('click', function () {
+    const play = this.element.select(".vzb-ts-btn-play");
+    const pause = this.element.select(".vzb-ts-btn-pause");
+    const _this = this;
+    const time = this.model.time;
+
+    play.on("click", () => {
 
       _this.model.time.play();
     });
 
-    pause.on('click', function () {
+    pause.on("click", () => {
       _this.model.time.pause("soft");
     });
 
     this.changeLimits();
     this.changeTime();
-    this.resize();
+    this.updateSize();
 
+    _this._updateProgressBar();
+    _this.model.marker.listenFramesQueue(null, time => {
+      _this._updateProgressBar(time);
+    });
+    _this.setSelectedLimits(true);
   },
 
-  changeLimits: function() {
-    var minValue = this.model.time.start;
-    var maxValue = this.model.time.end;
+  changeLimits() {
+    const minValue = this.model.time.start;
+    const maxValue = this.model.time.end;
     //scale
     this.xScale.domain([minValue, maxValue]);
     //axis
     this.xAxis.tickValues([minValue, maxValue])
-      .tickFormat(this.model.time.timeFormat);
+      .tickFormat(this.model.time.getFormatter());
   },
 
-  changeTime: function() {
+  changeTime() {
     //time slider should always receive a time model
-    var time = this.model.time.value;
+    const time = this.model.time.value;
     //special classes
     this._optionClasses();
   },
@@ -320,24 +305,34 @@ var TimeSlider = Component.extend({
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
    */
-  resize: function () {
-    if(this._splash) return;
+  updateSize(range) {
+    if (this.model.time.splash) return;
 
     this.model.time.pause();
 
     this.profile = this.getActiveProfile(profiles, presentationProfileChanges);
 
-    var slider_w = parseInt(this.slider_outer.style("width"), 10) || 0;
-    var slider_h = parseInt(this.slider_outer.style("height"), 10) || 0;
+    const slider_w = parseInt(this.slider_outer.style("width"), 10) || 0;
+    const slider_h = parseInt(this.slider_outer.style("height"), 10) || 0;
+
+    if (!slider_h || !slider_w) return utils.warn("time slider resize() aborted because element is too small or has display:none");
+
     this.width = slider_w - this.profile.margin.left - this.profile.margin.right;
     this.height = slider_h - this.profile.margin.bottom - this.profile.margin.top;
-    var _this = this;
+    const _this = this;
 
     //translate according to margins
     this.slider.attr("transform", "translate(" + this.profile.margin.left + "," + this.profile.margin.top + ")");
 
-    //adjust scale width if it was not set manually before
-    if (this.xScale.range()[1] = 1) this.xScale.range([0, this.width]);
+    this.xScale.range(range || [0, this.width]);
+
+    this.slide
+      .attr("transform", "translate(0," + this.height / 2 + ")")
+      .attr("x1", this.xScale.range()[0])
+      .attr("x2", this.xScale.range()[1])
+      .style("stroke-width", this.profile.radius * 2 + "px");
+    //.call(this.brush
+    //.extent([[this.xScale.range()[0], 0], [this.xScale.range()[1], this.height]]));
 
     //adjust axis with scale
     this.xAxis = this.xAxis.scale(this.xScale)
@@ -364,30 +359,30 @@ var TimeSlider = Component.extend({
 
   },
 
-  setSelectedLimits: function(force) {
-    var _this = this;
+  setSelectedLimits(force) {
+    const _this = this;
     this._setSelectedLimitsId++;
-    var _setSelectedLimitsId = this._setSelectedLimitsId;
+    const _setSelectedLimitsId = this._setSelectedLimitsId;
 
-    var select = _this.model.entities.select;
-    if(select.length == 0) {
+    const select = _this.model.marker.select;
+    if (select.length == 0) {
       _this.model.time.set({
         startSelected: new Date(_this.model.time.start),
         endSelected: new Date(_this.model.time.end)
       }, null, false  /*make change non-persistent for URL and history*/);
       return;
     }
-    var KEY = _this.model.entities.getDimension();
-    var proms = [];
-    utils.forEach(select, function(entity) {
+    const KEY = _this.model.entities.getDimension();
+    const proms = [];
+    utils.forEach(select, entity => {
       proms.push(_this.model.marker.getEntityLimits(entity[KEY]));
     });
-    Promise.all(proms).then(function(limits) {
-      if(_setSelectedLimitsId != _this._setSelectedLimitsId) return;
-      var first = limits.shift();
-      var min = first.min;
-      var max = first.max;
-      utils.forEach(limits, function(limit) {
+    Promise.all(proms).then(limits => {
+      if (_setSelectedLimitsId != _this._setSelectedLimitsId) return;
+      const first = limits.shift();
+      let min = first.min;
+      let max = first.max;
+      utils.forEach(limits, limit => {
         if (min - limit.min > 0) min = limit.min;
         if (max - limit.max < 0) max = limit.max;
       });
@@ -399,70 +394,70 @@ var TimeSlider = Component.extend({
     });
   },
 
-  updateSelectedStartLimiter: function() {
-    var _this = this;
-    this.select.select('#clip-start-' + _this._id).remove();
+  updateSelectedStartLimiter() {
+    const _this = this;
+    this.select.select("#clip-start-" + _this._id).remove();
     this.select.select(".selected-start").remove();
-    if(this.model.time.startSelected > this.model.time.start) {
+    if (this.model.time.startSelected && this.model.time.startSelected > this.model.time.start) {
       this.select.append("clipPath")
         .attr("id", "clip-start-" + _this._id)
-        .append('rect')
-      this.select.append('path')
+        .append("rect");
+      this.select.append("path")
         .attr("clip-path", "url(" + location.pathname + "#clip-start-" + _this._id + ")")
-        .classed('selected-start', true);
+        .classed("selected-start", true);
       this.resizeSelectedLimiters();
     }
   },
 
-  updateSelectedEndLimiter: function() {
-    var _this = this;
-    this.select.select('#clip-end-' + _this._id).remove();
+  updateSelectedEndLimiter() {
+    const _this = this;
+    this.select.select("#clip-end-" + _this._id).remove();
     this.select.select(".selected-end").remove();
-    if(this.model.time.endSelected < this.model.time.end) {
+    if (this.model.time.endSelected && this.model.time.endSelected < this.model.time.end) {
       this.select.append("clipPath")
         .attr("id", "clip-end-" + _this._id)
-        .append('rect')
-      this.select.append('path')
+        .append("rect");
+      this.select.append("path")
         .attr("clip-path", "url(" + location.pathname + "#clip-end-" + _this._id + ")")
-        .classed('selected-end', true);
+        .classed("selected-end", true);
       this.resizeSelectedLimiters();
     }
   },
 
-  resizeSelectedLimiters: function() {
-    var _this = this;
-    this.select.select('.selected-start')
-      .attr('d', "M0,0H" + this.xScale(this.model.time.startSelected));
-    this.select.select("#clip-start-" + _this._id).select('rect')
+  resizeSelectedLimiters() {
+    const _this = this;
+    this.select.select(".selected-start")
+      .attr("d", "M0,0H" + this.xScale(this.model.time.startSelected));
+    this.select.select("#clip-start-" + _this._id).select("rect")
       .attr("x", -this.height / 2)
       .attr("y", -this.height / 2)
       .attr("height", this.height)
       .attr("width", this.xScale(this.model.time.startSelected) + this.height / 2);
-    this.select.select('.selected-end')
-      .attr('d', "M" + this.xScale(this.model.time.endSelected) + ",0H" + this.xScale(this.model.time.end));
-    this.select.select("#clip-end-" + _this._id).select('rect')
+    this.select.select(".selected-end")
+      .attr("d", "M" + this.xScale(this.model.time.endSelected) + ",0H" + this.xScale(this.model.time.end));
+    this.select.select("#clip-end-" + _this._id).select("rect")
       .attr("x", this.xScale(this.model.time.endSelected))
       .attr("y", -this.height / 2)
       .attr("height", this.height)
       .attr("width", this.xScale(this.model.time.end) - this.xScale(this.model.time.endSelected) + this.height / 2);
   },
 
-  _resizeProgressBar: function() {
-    var _this = this;
-    this.progressBar.selectAll('path')
-    .each(function(d) {
+  _resizeProgressBar() {
+    const _this = this;
+    this.progressBar.selectAll("path")
+      .each(function(d) {
         d3.select(this)
-          .attr('d', "M" + _this.xScale(d[0]) + ",0H" + _this.xScale(d[1]));
+          .attr("d", "M" + _this.xScale(d[0]) + ",0H" + _this.xScale(d[1]));
       });
   },
 
-  _updateProgressBar: function(time) {
-    var _this = this;
+  _updateProgressBar(time) {
+    const _this = this;
     if (time) {
       if (_this.completedTimeFrames.indexOf(time) != -1) return;
       _this.completedTimeFrames.push(time);
-      var next = _this.model.time.incrementTime(time);
-      var prev = _this.model.time.decrementTime(time);
+      let next = _this.model.time.incrementTime(time);
+      const prev = _this.model.time.decrementTime(time);
       if (next > _this.model.time.end) {
         if (time - _this.model.time.end == 0) {
           next = time;
@@ -476,7 +471,7 @@ var TimeSlider = Component.extend({
       } else if (next < _this.availableTimeFrames[0][0]) {
         _this.availableTimeFrames.unshift([time, next]);
       } else {
-        for (var i = 0; i < _this.availableTimeFrames.length; i++) {
+        for (let i = 0; i < _this.availableTimeFrames.length; i++) {
           if (time - _this.availableTimeFrames[i][1] == 0) {
             if (i + 1 < _this.availableTimeFrames.length && next - _this.availableTimeFrames[i + 1][0] == 0) {
               _this.availableTimeFrames[i][1] = _this.availableTimeFrames[i + 1][1];
@@ -498,16 +493,19 @@ var TimeSlider = Component.extend({
       }
     } else {
       _this.availableTimeFrames = [];
-      _this.completedTimeFrames = []
+      _this.completedTimeFrames = [];
     }
 
-    var progress = this.progressBar.selectAll('path').data(_this.availableTimeFrames);
+    const progress = this.progressBar.selectAll("path").data(_this.availableTimeFrames);
     progress.exit().remove();
-    progress.enter().append('path').attr('class', 'domain');
-    progress.each(function(d) {
-        var element = d3.select(this);
-        element.attr('d', "M" + _this.xScale(d[0]) + ",0H" + _this.xScale(d[1]))
-        .classed("rounded", _this.availableTimeFrames.length == 1);
+    progress.enter()
+      .append("path")
+      .attr("class", "domain")
+      .merge(progress)
+      .each(function(d) {
+        const element = d3.select(this);
+        element.attr("d", "M" + _this.xScale(d[0]) + ",0H" + _this.xScale(d[1]))
+          .classed("rounded", _this.availableTimeFrames.length == 1);
 
       });
   },
@@ -517,7 +515,7 @@ var TimeSlider = Component.extend({
    * Returns width of slider text value.
    * Parameters in this function needed for memoize function, so they are not redundant.
    */
-  getValueWidth: function(layout, value) {
+  getValueWidth(layout, value) {
     return this.valueText.node().getBoundingClientRect().width;
   },
 
@@ -525,8 +523,8 @@ var TimeSlider = Component.extend({
    * Gets brushed function to be executed when dragging
    * @returns {Function} brushed function
    */
-  _getBrushed: function() {
-    var _this = this;
+  _getBrushed() {
+    const _this = this;
     return function() {
 
       if (_this.model.time.playing)
@@ -535,33 +533,36 @@ var TimeSlider = Component.extend({
       _this._optionClasses();
       _this.element.classed(class_dragging, true);
 
-      var value = _this.brush.extent()[0];
+      let value;// = _this.brush.extent()[0];
+      //var value = d3.brushSelection(_this.slide.node());
+
+      //if(!value) return;
 
       //set brushed properties
 
-      if(d3.event.sourceEvent) {
+      if (d3.event.sourceEvent) {
         // Prevent window scrolling on cursor drag in Chrome/Chromium.
         d3.event.sourceEvent.preventDefault();
 
         _this.model.time.dragStart();
-        var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
+        let posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
         value = _this.xScale.invert(posX);
-        var maxPosX = _this.width;
+        const maxPosX = _this.width;
 
-        if(posX > maxPosX) {
+        if (posX > maxPosX) {
           posX = maxPosX;
-        } else if(posX < 0) {
+        } else if (posX < 0) {
           posX = 0;
         }
 
         //set handle position
         _this.handle.attr("cx", posX);
         _this.valueText.attr("transform", "translate(" + posX + "," + (_this.height / 2) + ")");
-        _this.valueText.text(_this.model.time.timeFormat(value));
+        _this.valueText.text(_this.model.time.formatDate(value, "ui"));
       }
 
       //set time according to dragged position
-      if(value - _this.model.time.value !== 0) {
+      if (value - _this.model.time.value !== 0) {
         _this._setTime(value);
       }
     };
@@ -571,8 +572,8 @@ var TimeSlider = Component.extend({
    * Gets brushedEnd function to be executed when dragging ends
    * @returns {Function} brushedEnd function
    */
-  _getBrushedEnd: function() {
-    var _this = this;
+  _getBrushedEnd() {
+    const _this = this;
     return function() {
       _this._setTime.recallLast();
       _this.element.classed(class_dragging, false);
@@ -585,33 +586,35 @@ var TimeSlider = Component.extend({
    * Sets the handle to the correct position
    * @param {Boolean} transition whether to use transition or not
    */
-  _setHandle: function(transition) {
-    var _this = this;
-    var value = this.model.time.value;
-    this.slide.call(this.brush.extent([value, value]));
+  _setHandle(transition) {
+    const _this = this;
+    const value = this.model.time.value;
+    //this.slide.call(this.brush.extent([value, value]));
+    const new_pos = this.xScale(value);
+    //this.brush.move(this.slide, [new_pos, new_pos])
 
     this.element.classed("vzb-ts-disabled", this.model.time.end <= this.model.time.start);
-//    this.valueText.text(this.model.time.timeFormat(value));
+//    this.valueText.text(this.model.time.formatDate(value));
 
 //    var old_pos = this.handle.attr("cx");
-    var new_pos = this.xScale(value);
-    if(_this.prevPosition == null) _this.prevPosition = new_pos;
-    var delayAnimations = new_pos > _this.prevPosition ? this.model.time.delayAnimations : 0;
-    if(transition) {
+    //var new_pos = this.xScale(value);
+    if (_this.prevPosition == null) _this.prevPosition = new_pos;
+    const delayAnimations = new_pos > _this.prevPosition ? this.model.time.delayAnimations : 0;
+    if (transition) {
       this.handle.attr("cx", _this.prevPosition)
         .transition()
         .duration(delayAnimations)
-        .ease("linear")
+        .ease(d3.easeLinear)
         .attr("cx", new_pos);
 
       this.valueText.attr("transform", "translate(" + _this.prevPosition + "," + (this.height / 2) + ")")
-        .transition('text')
+        .transition("text")
         .delay(delayAnimations)
-        .text(this.model.time.timeFormat(value));
+        .text(this.model.time.formatDate(value, "ui"));
       this.valueText
         .transition()
         .duration(delayAnimations)
-        .ease("linear")
+        .ease(d3.easeLinear)
         .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")");
     } else {
       this.handle
@@ -622,11 +625,11 @@ var TimeSlider = Component.extend({
       this.valueText
         //cancel active transition
         .interrupt()
-        .interrupt('text')
-        .transition('text');
+        .interrupt("text")
+        .transition("text");
       this.valueText
         .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")")
-        .text(this.model.time.timeFormat(value));
+        .text(this.model.time.formatDate(value, "ui"));
     }
     _this.prevPosition = new_pos;
 
@@ -636,33 +639,33 @@ var TimeSlider = Component.extend({
    * Sets the current time model to time
    * @param {number} time The time
    */
-  _setTime: function(time) {
+  _setTime(time) {
     //update state
-    var _this = this;
+    const _this = this;
     //  frameRate = 50;
 
     //avoid updating more than once in "frameRate"
     //var now = new Date();
     //if (this._updTime != null && now - this._updTime < frameRate) return;
     //this._updTime = now;
-    var persistent = !this.model.time.dragging && !this.model.time.playing;
-    _this.model.time.getModelObject('value').set(time, false, persistent); // non persistent
+    const persistent = !this.model.time.dragging && !this.model.time.playing;
+    _this.model.time.getModelObject("value").set(time, false, persistent); // non persistent
   },
 
 
   /**
    * Applies some classes to the element according to options
    */
-  _optionClasses: function() {
+  _optionClasses() {
     //show/hide classes
 
-    var show_limits = this.ui.show_limits;
-    var show_value = this.ui.show_value;
-    var show_value_when_drag_play = this.ui.show_value_when_drag_play;
-    var axis_aligned = this.ui.axis_aligned;
-    var show_play = (this.ui.show_button) && (this.model.time.playable);
+    const show_limits = this.ui.show_limits;
+    const show_value = this.ui.show_value;
+    const show_value_when_drag_play = this.ui.show_value_when_drag_play;
+    const axis_aligned = this.ui.axis_aligned;
+    const show_play = (this.ui.show_button) && (this.model.time.playable);
 
-    if(!show_limits) {
+    if (!show_limits) {
       this.xAxis.tickValues([]).ticks(0);
     }
 

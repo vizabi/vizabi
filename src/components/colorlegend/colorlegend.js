@@ -1,69 +1,56 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import colorPicker from 'helpers/d3.colorPicker';
-import axisSmart from 'helpers/d3.axisWithLabelPicker';
+import * as utils from "base/utils";
+import Component from "base/component";
+import colorPicker from "helpers/d3.colorPicker";
+import axisSmart from "helpers/d3.axisWithLabelPicker";
 
 /*!
  * VIZABI BUBBLE COLOR LEGEND COMPONENT
  */
 
-var OPACITY_REGULAR = 0.8;
-var OPACITY_DIM = 0.5;
-var OPACITY_HIGHLIGHT = 1;
+const ColorLegend = Component.extend({
 
-var ColorLegend = Component.extend({
-
-  init: function(config, context) {
-    var _this = this;
+  init(config, context) {
+    const _this = this;
     this.template = '<div class="vzb-cl-outer"></div>';
-    this.name = 'colorlegend';
+    this.name = "colorlegend";
 
     this.model_expects = [{
-        name: "time",
-        type: "time"
-      }, {
-        name: "entities",
-        type: "entities"
-      }, {
-        name: "marker",
-        type: "model"
-      }, {
-        name: "language",
-        type: "language"
-      }];
-
-    this.needsUpdate = false;
-    this.which_1 = false;
-    this.scaleType_1 = false;
+      name: "time",
+      type: "time"
+    }, {
+      name: "entities",
+      type: "entities"
+    }, {
+      name: "marker",
+      type: "model"
+    }, {
+      name: "locale",
+      type: "locale"
+    }];
 
     this.model_binds = {
       "change:marker.color.scaleType": function(evt, path) {
-        if(!_this._readyOnce || _this.colorModel.use !== "indicator") return;
+        if (!_this._readyOnce || _this.colorModel.isDiscrete()) return;
         _this.updateView();
       },
       "change:marker.color.palette": function(evt, path) {
-        if(!_this._readyOnce || !_this.frame) return;
+        if (!_this._readyOnce || (_this.colorModel.isDiscrete() && !_this.frame)) return;
         _this.updateView();
       },
-      "change:entities.highlight": function(evt, values) {
-        if(_this.colorModel.use !== "property") return;
-        var _highlightedEntity = _this.model.entities.getHighlighted();
-        if(_highlightedEntity.length > 1) return;
+      "change:marker.highlight": function(evt, values) {
+        if (!_this.colorModel.isDiscrete()) return;
 
-        if(_highlightedEntity.length) {
-            _this.model.marker.getFrame(_this.model.time.value, function(frame) {
-              if(!frame) return;
-
-              var _highlightedEntity = _this.model.entities.getHighlighted();
-              if(_highlightedEntity.length) {
-                _this.updateGroupsOpacity(frame["color"][_highlightedEntity[0]]);
-              }
-            });
-        } else if (values !== null && values !== "highlight") {
-          _this.updateGroupsOpacity(values["color"]);
-        } else {
-          _this.updateGroupsOpacity();
-        }
+        _this.model.marker.getFrame(_this.model.time.value, frame => {
+          if (frame) {
+            const _hlEntities = _this.model.marker.getHighlighted(_this.KEY);
+            _this.updateGroupsOpacity(_hlEntities.map(d => frame[_this.colorModel._name][d]));
+          } else {
+            _this.updateGroupsOpacity();
+          }
+        });
+      },
+      "translate:locale": function() {
+        _this.colorPicker.translate(_this.model.locale.getTFunction());
       }
     };
 
@@ -71,8 +58,8 @@ var ColorLegend = Component.extend({
     this._super(config, context);
   },
 
-  readyOnce: function() {
-    var _this = this;
+  readyOnce() {
+    const _this = this;
     this.element = d3.select(this.element);
 
     //make color in options scrollable
@@ -80,14 +67,14 @@ var ColorLegend = Component.extend({
 
     this.colorModel = this.model.marker.color;
     this.colorlegendMarker = this.colorModel.getColorlegendMarker();
-    if(this.colorlegendMarker) {
-      this.colorlegendMarker.on('ready', function() {
+    if (this.colorlegendMarker) {
+      this.colorlegendMarker.on("ready", () => {
         _this.ready();
       });
     }
     this.listColorsEl = this.element
       .append("div").attr("class", "vzb-cl-holder")
-      .append("div").attr("class","vzb-cl-colorlist");
+      .append("div").attr("class", "vzb-cl-colorlist");
 
     this.rainbowEl = this.listColorsEl.append("div").attr("class", "vzb-cl-rainbow");
     this.minimapEl = this.listColorsEl.append("div").attr("class", "vzb-cl-minimap");
@@ -100,7 +87,7 @@ var ColorLegend = Component.extend({
     this.labelScaleSVG = this.labelScaleEl.append("svg");
     this.labelScaleG = this.labelScaleSVG.append("g");
     this.unitDiv = this.listColorsEl.append("div").attr("class", "vzb-cl-unit");
-    this.unitText = this.unitDiv.append("text").attr("class", "vzb-cl-unit-text");
+    this.unitText = this.unitDiv.append("span").attr("class", "vzb-cl-unit-text");
 
     this.minimapSVG = this.minimapEl.append("svg");
     this.minimapG = this.minimapSVG.append("g");
@@ -108,59 +95,60 @@ var ColorLegend = Component.extend({
     this.colorPicker = colorPicker();
 
     // append color picker to the tool DOM. need to check if element is already a d3 selection to not do it twice
-    this.root.element instanceof Array? this.root.element : d3.select(this.root.element)
+    this.root.element instanceof Array ? this.root.element : d3.select(this.root.element)
       .call(this.colorPicker);
-
-    OPACITY_DIM = this.model.entities.opacitySelectDim;
+    this.colorPicker.translate(this.model.locale.getTFunction());
   },
 
 
-  ready: function(){
-    var _this = this;
+  ready() {
+    const _this = this;
 
     this.KEY = this.model.entities.getDimension();
     this.colorlegendDim = this.KEY;
     this.canShowMap = false;
 
-    if(this.colorModel.use == "property" && this.colorlegendMarker) {
-      if(!this.colorlegendMarker._ready) return;
+    if (this.colorModel.isDiscrete() && this.colorModel.use !== "constant" && this.colorlegendMarker) {
+      if (!this.colorlegendMarker._ready) return;
 
       this.colorlegendDim = this.colorModel.getColorlegendEntities().getDimension();
 
-      this.colorlegendMarker.getFrame(this.model.time.value, function(frame) {
+      this.colorlegendMarker.getFrame(this.model.time.value, frame => {
         _this.frame = frame;
-        _this.canShowMap = utils.keys((_this.frame||{}).hook_geoshape||{}).length;
+        _this.canShowMap = utils.keys((_this.frame || {}).hook_geoshape || {}).length;
 
         _this.colorlegendKeys = _this.colorlegendMarker.getKeys(_this.colorlegendDim);
 
-        _this.colorlegendKeys.forEach(function(d){
-          if(!((_this.frame||{}).hook_geoshape||{})[d[_this.colorlegendDim]]) _this.canShowMap = false;
+        _this.colorlegendKeys.forEach(d => {
+          if (!((_this.frame || {}).hook_geoshape || {})[d[_this.colorlegendDim]]) _this.canShowMap = false;
         });
         _this.updateView();
+        _this.updateGroupsOpacity();
       });
       return;
     }
 
     _this.updateView();
+    _this.updateGroupsOpacity();
   },
 
 
-  updateView: function() {
-    var _this = this;
-    var KEY = this.KEY;
+  updateView() {
+    const _this = this;
+    const KEY = this.KEY;
 
-    var palette = this.colorModel.getPalette();
-    var canShowMap = this.canShowMap;
+    const palette = this.colorModel.getPalette();
+    const canShowMap = this.canShowMap;
 
-    var colorlegendKeys = this.colorlegendKeys || [];
+    const colorlegendKeys = this.colorlegendKeys || [];
 
-    var colorOptions = this.listColorsEl.selectAll(".vzb-cl-option");
+    let colorOptions = this.listColorsEl.selectAll(".vzb-cl-option");
 
     //Hide and show elements of the color legend
     //Hide color legend entries if showing minimap or if color hook is a constant
     //or if using a discrete palette that would map to all entities on the chart and therefore will be too long
     //in the latter case we should show colors in the "find" list instead
-    var hideColorOptions = canShowMap
+    const hideColorOptions = canShowMap
       || this.colorModel.which == "_default"
       || this.colorlegendMarker && this.colorlegendDim == this.KEY
         && utils.comparePlainObjects(this.colorModel.getColorlegendEntities().getFilter(), this.model.entities.getFilter());
@@ -168,68 +156,61 @@ var ColorLegend = Component.extend({
     colorOptions.classed("vzb-hidden", hideColorOptions);
 
     //Hide rainbow element if showing minimap or if color is discrete
-    this.rainbowEl.classed("vzb-hidden", this.colorModel.use !== "indicator");
-    this.labelScaleEl.classed("vzb-hidden", this.colorModel.use !== "indicator")
-    this.rainbowLegendEl.classed("vzb-hidden", this.colorModel.use !== "indicator");
+    this.rainbowEl.classed("vzb-hidden", this.colorModel.isDiscrete());
+    this.labelScaleEl.classed("vzb-hidden", this.colorModel.isDiscrete());
+    this.rainbowLegendEl.classed("vzb-hidden", this.colorModel.isDiscrete());
     //Hide minimap if no data to draw it
-    this.minimapEl.classed("vzb-hidden", !canShowMap || this.colorModel.use == "indicator");
+    this.minimapEl.classed("vzb-hidden", !canShowMap || !this.colorModel.isDiscrete());
 
     this.unitDiv.classed("vzb-hidden", true);
-    var cScale = this.colorModel.getScale();
+    const cScale = this.colorModel.getScale();
 
-    if(this.colorModel.use == "indicator") {
+    if (!this.colorModel.isDiscrete()) {
 
-      var gradientWidth = this.rainbowEl.node().getBoundingClientRect().width;
-      var paletteKeys = Object.keys(palette).map(parseFloat);
+      const gradientWidth = this.rainbowEl.node().getBoundingClientRect().width;
+      const paletteKeys = Object.keys(palette).map(parseFloat);
 
-      var domain;
-      var range;
-      var labelScale;
-      var formatter = this.colorModel.getTickFormatter();
-      var fitIntoScale = null;
+      let domain;
+      let range;
+      const formatter = this.colorModel.getTickFormatter();
+      let fitIntoScale = null;
 
-      var paletteLabels = this.colorModel.paletteLabels;
+      const paletteLabels = this.colorModel.paletteLabels;
 
-      if(paletteLabels) {
+      if (paletteLabels) {
 
         fitIntoScale = "optimistic";
 
-        domain = paletteLabels.map(function(val) {
-          return parseFloat(val);
-        });
-        var paletteMax = d3.max(domain);
-        range = domain.map(function(val) {
-          return val / paletteMax * gradientWidth;
-        });
+        domain = paletteLabels.map(val => parseFloat(val));
+        const paletteMax = d3.max(domain);
+        range = domain.map(val => val / paletteMax * gradientWidth);
 
       } else {
 
         domain = cScale.domain();
-        var paletteMax = d3.max(paletteKeys);
-        range = paletteKeys.map(function(val) {
-          return val / paletteMax * gradientWidth;
-        });
+        const paletteMax = d3.max(paletteKeys);
+        range = paletteKeys.map(val => val / paletteMax * gradientWidth);
 
       }
 
-      var labelScaletype = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.colorModel.scaleType === "log")? "genericLog" : this.colorModel.scaleType;
+      const labelScaletype = (d3.min(domain) <= 0 && d3.max(domain) >= 0 && this.colorModel.scaleType === "log") ? "genericLog" : this.colorModel.scaleType;
 
-      labelScale = d3.scale[labelScaletype == "time" ? "linear" : labelScaletype]()
+      const labelScale = d3.scale[labelScaletype == "time" ? "linear" : labelScaletype]()
         .domain(domain)
         .range(range);
 
-      var marginLeft = parseInt(this.rainbowEl.style('left'), 10) || 0;
-      var marginRight = parseInt(this.rainbowEl.style('right'), 10) || marginLeft;
+      const marginLeft = parseInt(this.rainbowEl.style("left"), 10) || 0;
+      const marginRight = parseInt(this.rainbowEl.style("right"), 10) || marginLeft;
 
       this.labelScaleSVG.style("width", marginLeft + gradientWidth + marginRight + "px");
-      this.labelScaleG.attr("transform","translate(" + marginLeft + ",0)");
+      this.labelScaleG.attr("transform", "translate(" + marginLeft + ",0)");
       this.rainbowLegendSVG.style("width", marginLeft + gradientWidth + marginRight + "px");
-      this.rainbowLegendG.attr("transform","translate(" + marginLeft + ", " + 7 + ")");
-      var labelsAxis = axisSmart();
+      this.rainbowLegendG.attr("transform", "translate(" + marginLeft + ", " + 7 + ")");
+      const labelsAxis = axisSmart("bottom");
       labelsAxis.scale(labelScale)
-        .orient("bottom")
         //.tickFormat(formatter)
-        .tickSize(6, 0)
+        .tickSizeOuter(0)
+        .tickPadding(6)
         .tickSizeMinor(3, 0)
         .labelerOptions({
           scaleType: this.colorModel.scaleType,
@@ -240,129 +221,118 @@ var ColorLegend = Component.extend({
           showOuter: true,
           //bump: this.activeProfile.maxRadius/2,
           //viewportLength: gradientWidth,
-          formatter: formatter,
+          formatter,
           bump: marginLeft,
           cssFontSize: "11px",
-          fitIntoScale: fitIntoScale
+          fitIntoScale
         });
 
       this.labelScaleG.call(labelsAxis);
 
-      var colorRange = cScale.range();
+      const colorRange = cScale.range();
 
-      var gIndicators = range.map(function(val, i) {
-        return {val: val, color: colorRange[i], paletteKey: paletteKeys[i]}
-      });
-      this.rainbowLegend = this.rainbowLegendG.selectAll('circle')
+      const gIndicators = range.map((val, i) => ({ val, color: colorRange[i], paletteKey: paletteKeys[i] }));
+      this.rainbowLegend = this.rainbowLegendG.selectAll("circle")
         .data(gIndicators);
       this.rainbowLegend.exit().remove();
-      this.rainbowLegend.enter().append("circle")
-        .attr('r', "6px")
-        .attr('stroke', '#000')
-        .on("click", _this._interact().click);
+      this.rainbowLegend = this.rainbowLegend.enter().append("circle")
+        .attr("r", "6px")
+        .attr("stroke", "#000")
+        .on("click", _this._interact().clickToChangeColor)
+        .merge(this.rainbowLegend);
 
       this.rainbowLegend.each(function(d, i) {
-        d3.select(this).attr('fill', d.color);
-        d3.select(this).attr('cx', d.val);
+        d3.select(this).attr("fill", d.color);
+        d3.select(this).attr("cx", d.val);
       });
 
-      var gColors = paletteKeys.map(function(val, i) {
-        return colorRange[i] + " " + d3.format("%")(val * .01);
-      }).join(", ");
+      const gColors = paletteKeys.map((val, i) => colorRange[i] + " " + d3.format("%")(val * 0.01)).join(", ");
 
       this.rainbowEl
         .style("background", "linear-gradient(90deg," + gColors + ")");
 
-      var unit = this.colorModel.getConceptprops().unit || "";
+      const unit = this.colorModel.getConceptprops().unit || "";
 
       this.unitDiv.classed("vzb-hidden", unit == "");
       this.unitText.text(unit);
 
-      //Apply names as formatted numbers
-      // colorOptions.each(function(d, index) {
-      //   d3.select(this).select(".vzb-cl-color-legend")
-      //     .text(_this.colorModel.getTickFormatter()(domain[index]))
-      // });
       colorOptions.classed("vzb-hidden", true);
 
     } else {
 
       //Check if geoshape is provided
-      if(!canShowMap) {
+      if (!canShowMap) {
 
-        if(this.colorModel.which == "_default") {
+        if (this.colorModel.which == "_default") {
           colorOptions = colorOptions.data([]);
-        }else{
-          colorOptions = colorOptions.data(hideColorOptions? [] : colorlegendKeys.length ? colorlegendKeys : Object.keys(this.colorModel.getPalette()).map(function(value) {
-            var result = {};
+        } else {
+          colorOptions = colorOptions.data(hideColorOptions ? [] : colorlegendKeys.length ? colorlegendKeys : Object.keys(this.colorModel.getPalette()).map(value => {
+            const result = {};
             result[_this.colorlegendDim] = value;
             return result;
-          }), function(d) {return d[_this.colorlegendDim]});
+          }), d => d[_this.colorlegendDim]);
         }
 
         colorOptions.exit().remove();
 
         colorOptions.enter().append("div").attr("class", "vzb-cl-option")
           .each(function() {
-            d3.select(this).append("div").attr("class", "vzb-cl-color-sample");
+            d3.select(this).append("div").attr("class", "vzb-cl-color-sample")
+              .on("click", _this._interact().clickToShow);
             d3.select(this).append("div").attr("class", "vzb-cl-color-legend");
           })
           .on("mouseover", _this._interact().mouseover)
           .on("mouseout", _this._interact().mouseout)
-          .on("click", _this._interact().click);
-
-        var labelsAvailable = !!(_this.frame||{}).label;
+          .on("click", _this._interact().clickToSelect);
 
         colorOptions.each(function(d, index) {
           d3.select(this).select(".vzb-cl-color-sample")
             .style("background-color", cScale(d[_this.colorlegendDim]))
             .style("border", "1px solid " + cScale(d[_this.colorlegendDim]));
           //Apply names to color legend entries if color is a property
-          var label = _this.colorlegendMarker ? _this.frame.label[d[_this.colorlegendDim]] : null;
-          if(!label && label!==0) labelsAvailable = false;
+          let label = _this.colorlegendMarker ? _this.frame.label[d[_this.colorlegendDim]] : null;
+          if (!label && label !== 0) label = d[_this.colorlegendDim];
           d3.select(this).select(".vzb-cl-color-legend").text(label);
         });
-
-        //switch to compact mode (remove labels) when we have no labels to show
-        colorOptions.classed("vzb-cl-compact", !labelsAvailable);
 
       } else {
 
         //Drawing a minimap from the hook data
 
-        var tempdivEl = this.minimapEl.append("div").attr("class","vzb-temp");
+        const tempdivEl = this.minimapEl.append("div").attr("class", "vzb-temp");
 
-        this.minimapSVG.attr("viewBox",null)
-        this.minimapSVG.selectAll("g").remove()
+        this.minimapSVG.attr("viewBox", null);
+        this.minimapSVG.selectAll("g").remove();
         this.minimapG = this.minimapSVG.append("g");
         this.minimapG.selectAll("path")
-          .data(colorlegendKeys, function(d) {return d[_this.colorlegendDim]})
+          .data(colorlegendKeys, d => d[_this.colorlegendDim])
           .enter().append("path")
-          .style("opacity", OPACITY_REGULAR)
           .on("mouseover", _this._interact().mouseover)
           .on("mouseout", _this._interact().mouseout)
-          .on("click", _this._interact().click)
-          .each(function(d){
-            var shapeString = _this.frame.hook_geoshape[d[_this.colorlegendDim]].trim();
+          .on("click", _this._interact().clickToSelect)
+          .on("dblclick", _this._interact().clickToShow)
+          .each(function(d) {
+            let shapeString = _this.frame.hook_geoshape[d[_this.colorlegendDim]].trim();
 
             //check if shape string starts with svg tag -- then it's a complete svg
-            if(shapeString.slice(0,4) == "<svg"){
+            if (shapeString.slice(0, 4) == "<svg") {
               //append svg element from string to the temporary div
               tempdivEl.html(shapeString);
               //replace the shape string with just the path data from svg
               //TODO: this is not very resilient. potentially only the first path will be taken!
-              shapeString = tempdivEl.select("svg").select("path").attr("d")
+              shapeString = tempdivEl.select("svg").select("path").attr("d");
             }
 
             d3.select(this)
               .attr("d", shapeString)
               .style("fill", cScale(d[_this.colorlegendDim]))
+              .append("title").html(_this.frame.label[d[_this.colorlegendDim]]);
 
             tempdivEl.html("");
-          })
+          });
 
-        var gbbox = this.minimapG.node().getBBox();
-        this.minimapSVG.attr("viewBox", "0 0 " + gbbox.width*1.05 + " " + gbbox.height*1.05);
+        const gbbox = this.minimapG.node().getBBox();
+        this.minimapSVG.attr("viewBox", "0 0 " + gbbox.width * 1.05 + " " + gbbox.height * 1.05);
         tempdivEl.remove();
       }
     }
@@ -370,87 +340,121 @@ var ColorLegend = Component.extend({
   },
 
 
-  _interact: function() {
-    var _this = this;
-    var KEY = this.KEY;
-    var colorlegendDim = this.colorlegendDim;
+  _interact() {
+    const _this = this;
+    const KEY = this.KEY;
+    const colorlegendDim = this.colorlegendDim;
 
     return {
-      mouseover: function(d, i) {
+      mouseover(d, i) {
         //disable interaction if so stated in concept properties
-        if(_this.colorModel.use === "indicator") return;
+        if (!_this.colorModel.isDiscrete()) return;
 
-        var view = d3.select(this);
-        var target = d[colorlegendDim];
-        _this.listColorsEl.selectAll(".vzb-cl-option").style("opacity", OPACITY_DIM);
-        _this.minimapG.selectAll("path").style("opacity", OPACITY_DIM);
-        view.style("opacity", OPACITY_HIGHLIGHT);
+        const view = d3.select(this);
+        const target = d[colorlegendDim];
 
-        var highlight = _this.colorModel.getValidItems()
+        const highlight = _this.colorModel.getValidItems()
           //filter so that only countries of the correct target remain
-          .filter(function(f) {
-            return f[_this.colorModel.which] == target
-          })
+          .filter(f => f[_this.colorModel.which] == target)
           //fish out the "key" field, leave the rest behind
-          .map(function(d) {
-            return utils.clone(d, [KEY]);
-          });
+          .map(d => utils.clone(d, [KEY]));
 
-        _this.model.entities.setHighlight(highlight);
+        _this.model.marker.setHighlight(highlight);
       },
 
-      mouseout: function(d, i) {
+      mouseout(d, i) {
         //disable interaction if so stated in concept properties
-        if(_this.colorModel.use === "indicator") return;
-
-        _this.listColorsEl.selectAll(".vzb-cl-option").style("opacity", OPACITY_REGULAR);
-        _this.minimapG.selectAll("path").style("opacity", OPACITY_REGULAR);
-        _this.model.entities.clearHighlighted();
+        if (!_this.colorModel.isDiscrete()) return;
+        _this.model.marker.clearHighlighted();
       },
-      click: function(d, i) {
+      clickToChangeColor(d, i) {
         //disable interaction if so stated in concept properties
-        if(!_this.colorModel.isUserSelectable()) return;
-        var palette = _this.colorModel.getPalette();
-        var defaultPalette = _this.colorModel.getDefaultPalette();
-        var view = d3.select(this);
-        var target = _this.colorModel.use === "indicator"? d.paletteKey : d[colorlegendDim];
+        if (!_this.colorModel.isUserSelectable()) return;
+        const palette = _this.colorModel.getPalette();
+        const defaultPalette = _this.colorModel.getDefaultPalette();
+        const view = d3.select(this);
+        const target = !_this.colorModel.isDiscrete() ? d.paletteKey : d[colorlegendDim];
         _this.colorPicker
           .colorOld(palette[target])
           .colorDef(defaultPalette[target])
-          .callback(function(value, permanent) {
-            _this.colorModel.setColor(value, target)
+          .callback((value, permanent) => {
+            _this.colorModel.setColor(value, target);
           })
           .fitToScreen([d3.event.pageX, d3.event.pageY])
           .show(true);
+      },
+      clickToShow(d, i) {
+        //disable interaction if so stated in concept properties
+        if (!_this.colorModel.isDiscrete()) return;
+
+        const view = d3.select(this);
+        const target = d[colorlegendDim];
+
+        const oldShow = _this.model.entities.show[colorlegendDim] && _this.model.entities.show[colorlegendDim]["$in"] ?
+          utils.clone(_this.model.entities.show[colorlegendDim]["$in"]) :
+          [];
+
+        const entityIndex = oldShow.indexOf(d[colorlegendDim]);
+        if (entityIndex !== -1) {
+          oldShow.splice(entityIndex, 1);
+        } else {
+          oldShow.push(d[colorlegendDim]);
+        }
+
+        const show = {};
+        if (oldShow.length > 0)
+          show[colorlegendDim] = { "$in": oldShow };
+
+        _this.model.entities.set({ show });
+
+      },
+      clickToSelect(d, i) {
+        //disable interaction if so stated in concept properties
+        if (!_this.colorModel.isDiscrete()) return;
+
+        const view = d3.select(this);
+        const target = d[colorlegendDim];
+
+        const select = _this.colorModel.getValidItems()
+          //filter so that only countries of the correct target remain
+          .filter(f => f[_this.colorModel.which] == target)
+          //fish out the "key" field, leave the rest behind
+          .map(d => utils.clone(d, [KEY]));
+
+        if (select.filter(d => _this.model.marker.isSelected(d)).length == select.length) {
+          _this.model.marker.clearSelected();
+        } else {
+          _this.model.marker.setSelect(select);
+        }
       }
-    }
+    };
   },
 
-  resize: function() {
-    if(this.colorModel.use == "indicator") {
+  resize() {
+    if (!this.colorModel.isDiscrete()) {
       this.updateView();
     }
-    this.colorPicker.resize(d3.select('.vzb-colorpicker-svg'));
+    this.colorPicker.resize(d3.select(".vzb-colorpicker-svg"));
   },
 
-  updateGroupsOpacity: function(value) {
-    var _this = this;
-    var selection = _this.canShowMap ? ".vzb-cl-minimap path" : ".vzb-cl-option";
+  /**
+   * Function updates the opacity of color legend elements
+   * @param   {Array} value = [] array of highlighted elements
+   */
+  updateGroupsOpacity(highlight = []) {
+    const _this = this;
 
-    if(arguments.length) {
-      this.listColorsEl.selectAll(".vzb-cl-option").style("opacity", OPACITY_DIM);
-      this.minimapG.selectAll("path").style("opacity", OPACITY_DIM);
-      this.listColorsEl.selectAll(selection).filter(function(d) {
-        return d[_this.colorlegendDim] == value;
-      }).each(function(d, i) {
-        var view = d3.select(this);
-        view.style("opacity", OPACITY_HIGHLIGHT);
-      });
-    } else {
-      this.listColorsEl.selectAll(".vzb-cl-option").style("opacity", OPACITY_HIGHLIGHT);
-      this.minimapG.selectAll("path").style("opacity", OPACITY_REGULAR);
-    }
+    const clMarker = this.colorModel.getColorlegendMarker() || {};
+    const OPACITY_REGULAR = clMarker.opacityRegular || 0.8;
+    const OPACITY_DIM = clMarker.opacityHighlightDim || 0.5;
+    const OPACITY_HIGHLIGHT = 1;
 
+    const selection = _this.canShowMap ? ".vzb-cl-minimap path" : ".vzb-cl-option .vzb-cl-color-sample";
+
+    this.listColorsEl.selectAll(selection).style("opacity", d => {
+      if (!highlight.length) return OPACITY_REGULAR;
+      return highlight.indexOf(d[_this.colorlegendDim]) > -1 ? OPACITY_HIGHLIGHT : OPACITY_DIM;
+    });
   }
 
 });

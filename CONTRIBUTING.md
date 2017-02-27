@@ -4,15 +4,12 @@ You can contribute to the development of tools or the framework. Read the manual
 
 ## Cloning the repository
 
-Vizabi depends on [Git] (http://git-scm.com/), [Npm](https://github.com/npm/npm), [Gulp](http://gulpjs.com/) [Sass](http://sass-lang.com/install), and [SCSS Lint](https://github.com/brigade/scss-lint).
+Vizabi depends on [Git](http://git-scm.com/) and [Npm](https://github.com/npm/npm).
 
 **Installation Requirements For Mac Users**
 
 1. Install git http://git-scm.com/download/mac
 2. Install nodejs https://nodejs.org/en/
-3. Install Gulp `npm install --global gulp` (run with sudo if needed)
-4. Install sass `gem install sass` (run with sudo if needed)
-5. Install scss_lint `gem install scss_lint` (run with sudo if needed)
 
 Alternative:
 Install [docker](https://docs.docker.com/engine/installation/)
@@ -32,10 +29,10 @@ If you are still puzzled what it is or it just doesn't work, read a [more detail
 In order to run the project in **development mode**, type the following:
 
 ```shell
-gulp
+npm start
 ```
 
-Open browser on `http://localhost:9000/preview`
+Open browser on `http://localhost:8080/preview/`
 
 In order to only build the project, type the following (you'll rarely need this).
 Build will be created using Docker (Image of Ubuntu 14.04):
@@ -47,7 +44,7 @@ npm run build
 Build without Docker can be done via:
 
 ```shell
-gulp build
+npm run build:prod
 ```
 
 In both cases find the build output under ```build/``` folder.

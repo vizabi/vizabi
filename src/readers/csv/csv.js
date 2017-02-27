@@ -1,85 +1,67 @@
-import * as utils from 'base/utils';
-import Reader from 'base/reader';
+import Reader from "base/reader";
 
 const cached = {};
 
 const CSVReader = Reader.extend({
 
-  QUERY_FROM_CONCEPTS: 'concepts',
-  QUERY_FROM_DATAPOINTS: 'datapoints',
-  QUERY_FROM_ENTITIES: 'entities',
-  DATA_QUERIES() {
-    return [
-      this.QUERY_FROM_DATAPOINTS,
-      this.QUERY_FROM_ENTITIES
-    ];
-  },
-
-  CONDITION_CALLBACKS: {
-    $gt: (configValue, rowValue) => rowValue > configValue,
-    $gte: (configValue, rowValue) => rowValue >= configValue,
-    $lt: (configValue, rowValue) => rowValue < configValue,
-    $lte: (configValue, rowValue) => rowValue <= configValue,
-    $in: (configValue, rowValue) => configValue.includes(rowValue)
-  },
+  _name: "csv",
 
   /**
    * Initializes the reader.
    * @param {Object} readerInfo Information about the reader
    */
   init(readerInfo) {
-    this._name = 'csv';
     this._data = [];
     this._basepath = readerInfo.path;
-    this._parsers = readerInfo.parsers;
+    this.delimiter = readerInfo.delimiter;
+    this.keySize = readerInfo.keySize || 1;
 
-    if (!this._basepath) {
-      utils.error('Missing base path for csv reader');
+    Object.assign(this.ERRORS, {
+      WRONG_TIME_COLUMN_OR_UNITS: "reader/error/wrongTimeUnitsOrColumn",
+      NOT_ENOUGH_ROWS_IN_FILE: "reader/error/notEnoughRows",
+      UNDEFINED_DELIMITER: "reader/error/undefinedDelimiter",
+      EMPTY_HEADERS: "reader/error/emptyHeaders"
+    });
+  },
+
+  ensureDataIsCorrect({ columns, data }, parsers) {
+    const timeKey = columns[this.keySize];
+    const [firstRow] = data;
+    const parser = parsers[timeKey];
+
+    const time = firstRow[timeKey];
+    if (parser && !parser(time)) {
+      throw this.error(this.ERRORS.WRONG_TIME_COLUMN_OR_UNITS, undefined, {
+        currentYear: new Date().getFullYear(),
+        foundYear: time
+      });
+    }
+
+    if (!columns.filter(Boolean).length) {
+      throw this.error(this.ERRORS.EMPTY_HEADERS);
     }
   },
 
   /**
-   * Reads from source
-   * @param {Object} query to be performed
-   * @returns a promise that will be resolved when data is read
+   * This function returns info about the dataset
+   * in case of CSV reader it's just the name of the file
+   * @returns {object} object of info about the dataset
    */
-  read(query) {
-    const {
-      select,
-      from,
-      order_by = []
-    } = query;
-
-    const [orderBy] = order_by;
-
-    return this.load()
-      .then(data => {
-        switch (true) {
-          case from === this.QUERY_FROM_CONCEPTS:
-            this._data = this._getConcepts(data[0]);
-            break;
-
-          case this.DATA_QUERIES().includes(from) && select.key.length > 0:
-            this._data = data
-              .reduce(this._reduceData(query), [])
-              .sort((prev, next) => prev[orderBy] - next[orderBy]);
-            break;
-
-          default:
-            this._data = [];
-        }
-
-        this._data = utils.mapRows(this._data, this._parsers);
-      })
-      .catch(utils.warn);
+  getDatasetInfo() {
+    return { name: this._basepath.split("/").pop() };
   },
 
-  load(path = this._basepath) {
-    return cached[path] ?
-      Promise.resolve(cached[path]) :
-      new Promise((resolve, reject) => {
-        d3.csv(path, (error, result) => {
-          if (!result) {
+  load() {
+    const { _basepath: path } = this;
+
+    return new Promise((resolve, reject) => {
+      const cachedData = cached[path];
+
+      if (cachedData) {
+        resolve(cachedData);
+      } else {
+        d3.text(path).get((error, text) => {
+          if (!text) {
             return reject(`No permissions or empty file: ${path}. ${error}`);
           }
 
@@ -87,92 +69,83 @@ const CSVReader = Reader.extend({
             return reject(`Error happened while loading csv file: ${path}. ${error}`);
           }
 
-          resolve(cached[path] = result);
+          try {
+            const { delimiter = this._guessDelimiter(text) } = this;
+            const parser = d3.dsvFormat(delimiter);
+            const data = parser.parse(text);
+
+            const result = { columns: data.columns, data };
+            cached[path] = result;
+            resolve(result);
+          } catch (e) {
+            return reject(e);
+          }
         });
-      });
-  },
-
-  /**
-   * Gets the data
-   * @returns all data
-   */
-  getData() {
-    return this._data;
-  },
-
-  _getConcepts(firstRow) {
-    return Object.keys(firstRow)
-      .map(concept => ({ concept }));
-  },
-
-  _reduceData(query) {
-    const {
-      select,
-      from
-    } = query;
-
-    const [uniqueKey] = select.key;
-    const uniqueValues = [];
-
-    return (result, row) => {
-      const unique = row[uniqueKey];
-      const isUnique = from !== this.QUERY_FROM_ENTITIES || !uniqueValues.includes(unique);
-      const isSuitable = this._isSuitableRow(query, row);
-
-      if (isSuitable && isUnique) {
-        if (from === this.QUERY_FROM_ENTITIES) {
-          uniqueValues.push(unique);
-        }
-
-        const rowFilteredByKeys = Object.keys(row)
-          .reduce((resultRow, rowKey) => {
-            if (select.key.includes(rowKey) || select.value.includes(rowKey)) {
-              resultRow[rowKey] = row[rowKey];
-            }
-
-            return resultRow;
-          }, {});
-
-        result.push(rowFilteredByKeys);
       }
-
-      return result;
-    };
+    });
   },
 
-  _isSuitableRow(query, row) {
-    const { where } = query;
+  _guessDelimiter(text) {
+    const stringsToCheck = 2;
+    const rows = this._getRows(text, stringsToCheck).map(row => row.replace(/".*?"/g, ""));
 
-    return !where.$and || where.$and.every(binding =>
-        Object.keys(binding).every(conditionKey =>
-          this._checkCondition(query, row, binding[conditionKey], conditionKey)
-        )
-      );
-  },
-
-  _checkCondition(query, row, bindingKey, conditionKey) {
-    const { join } = query;
-
-    switch (true) {
-      case typeof bindingKey === 'string' && bindingKey.startsWith('$'):
-        const { where: conditions } = join[bindingKey];
-
-        return Object.keys(conditions).every(rowKey => {
-          return this._checkCondition(query, row, conditions[rowKey], rowKey);
-        });
-
-      case typeof bindingKey === 'object':
-        return this._checkConditionCallbacks(bindingKey, row, conditionKey);
-
-      default:
-        return row[conditionKey] === bindingKey;
+    if (rows.length !== stringsToCheck) {
+      throw this.error(this.ERRORS.NOT_ENOUGH_ROWS_IN_FILE);
     }
+
+    const [header, firstRow] = rows;
+    const [comma, semicolon] = [",", ";"];
+    const commasCountInHeader = this._countCharsInLine(header, comma);
+    const semicolonsCountInHeader = this._countCharsInLine(header, semicolon);
+    const commasCountInFirstRow = this._countCharsInLine(firstRow, comma);
+    const semicolonsCountInFirstRow = this._countCharsInLine(firstRow, semicolon);
+
+    if (
+      commasCountInHeader === commasCountInFirstRow
+      && commasCountInHeader > 1
+      && (
+        (semicolonsCountInHeader !== semicolonsCountInFirstRow)
+        || (!semicolonsCountInHeader && !semicolonsCountInFirstRow)
+        || (commasCountInHeader > semicolonsCountInHeader && commasCountInFirstRow > semicolonsCountInFirstRow)
+      )
+    ) {
+      return comma;
+    } else if (
+      semicolonsCountInHeader === semicolonsCountInFirstRow
+      && semicolonsCountInHeader > 1
+      && (
+        (commasCountInHeader !== commasCountInFirstRow)
+        || (!commasCountInHeader && !commasCountInFirstRow)
+        || (semicolonsCountInHeader > commasCountInHeader && semicolonsCountInFirstRow > commasCountInFirstRow)
+      )
+    ) {
+      return semicolon;
+    }
+
+    throw this.error(this.ERRORS.UNDEFINED_DELIMITER);
   },
 
-  _checkConditionCallbacks(conditions, row, rowKey) {
-    return Object.keys(conditions).every(conditionKey =>
-      this.CONDITION_CALLBACKS[conditionKey](conditions[conditionKey], row[rowKey])
-    );
+  _getRows(text, count = 0) {
+    const re = /([^\r\n]+)/g;
+    const rows = [];
+    let rowsCount = 0;
+
+    let matches = true;
+    while (matches && rowsCount !== count) {
+      matches = re.exec(text);
+      if (matches && matches.length > 1) {
+        ++rowsCount;
+        rows.push(matches[1]);
+      }
+    }
+
+    return rows;
+  },
+
+  _countCharsInLine(text, char) {
+    const re = new RegExp(char, "g");
+    const matches = text.match(re);
+    return matches ? matches.length : 0;
   }
 
 });
