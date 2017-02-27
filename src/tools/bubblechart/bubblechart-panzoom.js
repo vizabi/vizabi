@@ -9,7 +9,7 @@ export default Class.extend({
     this.dragRectangle = d3.drag();
     this.zoomer = d3.zoom();
 
-    this.dragLock = false;
+    // this.dragLock = false;
 
     this.dragRectangle
       .subject(this.dragSubject())
@@ -18,6 +18,7 @@ export default Class.extend({
       .on("end", this.drag().stop);
 
     this.zoomer
+      .filter(this.zoomFilter())
       .on("start", this.zoom().start)
       .on("zoom", this.zoom().go)
       .on("end", this.zoom().stop);
@@ -33,10 +34,15 @@ export default Class.extend({
     const self = this;
 
     return function(d) {
+      /*
+       * Do not drag if the Ctrl key, Meta key, or plus cursor mode is
+       * not enabled. Also do not drag if zoom-pinching on touchmove
+       * events.
+       */
       if (!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey ||
-                    _this.ui.cursorMode === "plus") || (_this.ui.cursorMode === "minus") ||
-                    (d3.event.sourceEvent.type === "touchmove" || d3.event.sourceEvent.type === "touchstart") &&
-                    (d3.event.sourceEvent.touches.length > 1 || d3.event.sourceEvent.targetTouches.length > 1)) {
+          _this.ui.cursorMode === "plus") || (_this.ui.cursorMode === "minus") ||
+          (d3.event.sourceEvent.type === "touchmove" || d3.event.sourceEvent.type === "touchstart") &&
+          (d3.event.sourceEvent.touches.length > 1 || d3.event.sourceEvent.targetTouches.length > 1)) {
         return null;
       }
 
@@ -53,7 +59,7 @@ export default Class.extend({
 
     return {
       start(d, i) {
-                /*
+                        /*
                  * Do not drag if the Ctrl key, Meta key, or plus cursor mode is
                  * not enabled. Also do not drag if zoom-pinching on touchmove
                  * events.
@@ -65,7 +71,7 @@ export default Class.extend({
             //         return;
             //     }
 
-        self.dragLock = true;
+        // self.dragLock = true;
         this.origin = {
           x: d3.mouse(this)[0],
           y: d3.mouse(this)[1]
@@ -78,17 +84,17 @@ export default Class.extend({
                  * Cancel drag if drag lock is false, or when zoom-pinching via
                  * touchmove events.
                  */
-        if (!self.dragLock || (d3.event.sourceEvent.type === "touchmove" || d3.event.sourceEvent.type === "touchstart") &&
-                    (d3.event.sourceEvent.touches.length > 1 || d3.event.sourceEvent.targetTouches.length > 1)) {
-          self.dragLock = false;
+        // if (!self.dragLock || (d3.event.sourceEvent.type === "touchmove" || d3.event.sourceEvent.type === "touchstart") &&
+        //             (d3.event.sourceEvent.touches.length > 1 || d3.event.sourceEvent.targetTouches.length > 1)) {
+        //   self.dragLock = false;
 
-          _this.zoomRect
-            .attr("width", 0)
-            .attr("height", 0)
-            .classed("vzb-invisible", true);
+        //   _this.zoomRect
+        //     .attr("width", 0)
+        //     .attr("height", 0)
+        //     .classed("vzb-invisible", true);
 
-          return;
-        }
+        //   return;
+        // }
 
         const origin = this.origin;
         const mouse = {
@@ -104,8 +110,8 @@ export default Class.extend({
       },
 
       stop(e) {
-        if (!self.dragLock) return;
-        self.dragLock = false;
+        // if (!self.dragLock) return;
+        // self.dragLock = false;
 
         _this.zoomRect
           .attr("width", 0)
@@ -137,7 +143,36 @@ export default Class.extend({
       }
     };
   },
+  zoomFilter() {
+    const _this = this.context;
+    const self = this;
 
+    return function(d) {
+      const event = d3.event;
+
+      if (event.ctrlKey || event.metaKey) return false;
+
+      // Cancel drag lock when zoom-pinching via touchmove events.
+      if ((event.type === "touchmove" || event.type === "touchstart") &&
+          (event.touches.length > 1 || event.targetTouches.length > 1)) return true;
+
+      if ((event.type === "wheel" || event.type === "mousewheel") &&
+          _this.ui.zoomOnScrolling) {
+        // if (_this.scrollableAncestor) {
+        //   _this.scrollableAncestor.scrollTop -= (event.deltaY || -event.wheelDelta);
+        // }
+        // d3.event.scale = null;
+              //zoomer.scale(this.savedScale);
+        return true;
+      }
+
+      if ((event.type === "mousedown" || event.type === "touchstart") &&
+          (_this.ui.cursorMode !== "plus") && (_this.ui.cursorMode !== "minus") &&
+          (_this.ui.panWithArrow || _this.ui.cursorMode === "hand")) return true;
+
+      return false;
+    };
+  },
   zoom() {
     const _this = this.context;
     const zoomer = this.zoomer;
@@ -146,24 +181,28 @@ export default Class.extend({
     return {
       start() {
                 //this.savedScale = zoomer.scale;
-        if((_this.ui.cursorMode !== "plus") && (_this.ui.cursorMode !== "minus")) {
+        if ((_this.ui.cursorMode !== "plus") && (_this.ui.cursorMode !== "minus")) {
           _this.chartSvg.classed("vzb-zooming", true);
         }
+
+        _this.model._data.marker.clearHighlighted();
+        _this._setTooltip();
+
       },
       go() {
 
         const sourceEvent = d3.event.sourceEvent;
 
-        if (sourceEvent != null && (sourceEvent.ctrlKey || sourceEvent.metaKey)) return;
+        //if (sourceEvent != null && (sourceEvent.ctrlKey || sourceEvent.metaKey)) return;
 
                 // Cancel drag lock when zoom-pinching via touchmove events.
-        if (sourceEvent !== null &&
-                    (sourceEvent.type === "touchmove" || sourceEvent.type === "touchstart") &&
-                    (sourceEvent.touches.length > 1 || sourceEvent.targetTouches.length > 1)) {
-          self.dragLock = false;
-        }
+        // if (sourceEvent !== null &&
+        //             (sourceEvent.type === "touchmove" || sourceEvent.type === "touchstart") &&
+        //             (sourceEvent.touches.length > 1 || sourceEvent.targetTouches.length > 1)) {
+        //   self.dragLock = false;
+        // }
 
-        if (self.dragLock) return;
+        //if (self.dragLock) return;
 
                 //send the event to the page if fully zoomed our or page not scrolled into view
 //
@@ -178,20 +217,20 @@ export default Class.extend({
                  * scroll. Instead, redirect the scroll event to the scrollable
                  * ancestor
                  */
-        if (sourceEvent != null && (sourceEvent.type === "wheel" || sourceEvent.type === "mousewheel") &&
-                    !_this.ui.zoomOnScrolling) {
-          if (_this.scrollableAncestor) {
-            _this.scrollableAncestor.scrollTop += (sourceEvent.deltaY || -sourceEvent.wheelDelta);
-          }
-          d3.event.scale = null;
-                    //zoomer.scale(this.savedScale);
-          this.quitZoom = true;
-          return;
-        }
-        this.quitZoom = false;
+        // if (sourceEvent != null && (sourceEvent.type === "wheel" || sourceEvent.type === "mousewheel") &&
+        //             !_this.ui.zoomOnScrolling) {
+        //   if (_this.scrollableAncestor) {
+        //     _this.scrollableAncestor.scrollTop += (sourceEvent.deltaY || -sourceEvent.wheelDelta);
+        //   }
+        //   d3.event.scale = null;
+        //             //zoomer.scale(this.savedScale);
+        //   this.quitZoom = true;
+        //   return;
+        // }
+        // this.quitZoom = false;
 
-        _this.model._data.marker.clearHighlighted();
-        _this._setTooltip();
+        //_this.model._data.marker.clearHighlighted();
+        //_this._setTooltip();
 
                 //var transform = d3.zoomTransform(self.zoomSelection.node())
                   //  .translate(, )
@@ -439,7 +478,7 @@ export default Class.extend({
 
         _this.draggingNow = false;
 
-        if (this.quitZoom) return;
+        // if (this.quitZoom) return;
 
                 //Force the update of the URL and history, with the same values
         if (!zoomer.dontFeedToState) _this.model.marker.set(_this._zoomedXYMinMax, true, true);
