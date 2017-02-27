@@ -14,6 +14,9 @@ let VIZABI_MODEL = {
     "entities_colorlegend": {
       "dim": "municipality"
     },
+    "entities_map_colorlegend": {
+      "dim": "municipality"
+    },
     "entities_tags": {
       "dim": "tag"
     },
@@ -42,10 +45,33 @@ let VIZABI_MODEL = {
         "which": "municipality",
         "scaleType": "ordinal",
         "syncModels": ["marker_colorlegend"]
+      },
+      "mapcolor": {
+        "use": "property",
+        "which": "municipality",
+        "scaleType": "ordinal",
+        "syncModels": ["marker_map_colorlegend"]
       }
     },
     "marker_colorlegend": {
       "space": ["entities_colorlegend"],
+      "opacityRegular": 0.8,
+      "opacityHighlightDim": 0.3,
+      "label": {
+        "use": "property",
+        "which": "name"
+      },
+      "hook_rank": {
+        "use": "property",
+        "which": "rank"
+      },
+      "hook_geoshape": {
+        "use": "property",
+        "which": "shape_lores_svg"
+      }
+    },
+    "marker_map_colorlegend": {
+      "space": ["entities_map_colorlegend"],
       "opacityRegular": 0.8,
       "opacityHighlightDim": 0.3,
       "label": {
@@ -78,11 +104,11 @@ let VIZABI_MODEL = {
       "doubtDomain": [1993, 2015],
       "doubtRange": [0, 0]
     },
-    "buttons": ["colors", "find", "size", "moreoptions", "fullscreen", "presentation"],
+    "buttons": ["colors", "find", "size", "moreoptions", "mapcolors", "fullscreen", "presentation"],
     "dialogs": {
-      "popup": ["colors", "find", "size", "moreoptions"],
+      "popup": ["colors", "mapcolors", "find", "size", "moreoptions"],
       "sidebar": ["colors", "find", "size"],
-      "moreoptions": ["mapoptions", "opacity", "speed", "size", "colors", "presentation", "about"]
+      "moreoptions": ["mapoptions", "opacity", "speed", "size", "colors", "mapcolors", "presentation", "about"]
     },
     "map": {
       "scale": 1,

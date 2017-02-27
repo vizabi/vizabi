@@ -1,0 +1,105 @@
+//general styles
+
+.vzb-cl-rainbow-legend {
+  display: none;
+}
+
+[data-dlg="moreoptions"] {
+  .vzb-cl-rainbow-legend {
+    display: block;
+  }
+}
+
+.vzb-cl-outer {
+
+  .vzb-cl-holder {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .vzb-cl-colorlist {
+    overflow: hidden;
+  }
+
+  .vzb-cl-option {
+    padding-bottom: 5px;
+    padding-top: 5px;
+    cursor: pointer;
+    padding-left: 15px;
+      
+    .vzb-cl-color-sample {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border-radius: 10px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+    .vzb-cl-color-legend {
+      display: inline-block;
+      vertical-align: super;
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+      
+    &.vzb-cl-compact {
+      display: inline-block;
+      float: left;
+      .vzb-cl-color-legend {
+        display: none;
+      }
+    }
+  }
+  .vzb-cl-labelscale {
+    top: 5px;
+    padding-top: 20px;
+    padding-bottom: 10px;
+    height: 50px;
+    svg {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 25px;
+      height: 20px;
+      .tick line {
+        stroke: none;
+      }
+    }
+    .vzb-cl-unit {
+      top: 30px;
+      position: relative;
+      padding-bottom: 5px;
+    }
+  }
+
+  .vzb-cl-rainbow-legend {
+    top: 0;
+    left: 0;
+    height: 12px;
+    position: absolute;
+    circle {
+      cursor: pointer;
+    }
+  }
+
+  .vzb-cl-rainbow {
+    height: 20px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 6px;
+  }
+  .vzb-cl-minimap {
+    height: 145px;
+    width: 100%;
+    svg {height: 100%;}
+  }
+  .vzb-cl-unit-text {
+    display: block;
+    white-space: normal;
+  }
+
+}

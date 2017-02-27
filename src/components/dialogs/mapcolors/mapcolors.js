@@ -1,0 +1,40 @@
+import * as utils from "base/utils";
+import Component from "base/component";
+import Dialog from "components/dialogs/_dialog";
+
+import mapcolorlegend from "components/mapcolorlegend/mapcolorlegend";
+import indicatorpicker from "components/indicatorpicker/indicatorpicker";
+
+/*!
+ * VIZABI COLOR DIALOG
+ */
+
+const Mapcolors = Dialog.extend({
+
+  /**
+   * Initializes the dialog component
+   * @param config component configuration
+   * @param parent component context (parent)
+   */
+  init(config, parent) {
+    this.name = "mapcolors";
+
+    this.components = [{
+      component: indicatorpicker,
+      placeholder: ".vzb-caxis-selector",
+      model: ["state.time", "state.entities", "state.marker", "locale"],
+      markerID: "mapcolor",
+      showHoverValues: true
+    }, {
+      component: mapcolorlegend,
+      placeholder: ".vzb-clegend-container",
+      model: ["state.time", "state.entities", "state.marker", "locale"]
+    }];
+
+
+    this._super(config, parent);
+  }
+
+});
+
+export default Mapcolors;

@@ -11,6 +11,7 @@ import mapboxgl from "mapbox-gl/dist/mapbox-gl.js";
 const MapLayer = Class.extend({
   init(context, parent) {
     this.shapes = null;
+    this.mapLands = [];
     this.parent = parent;
     this.context = context;
     this.parent = parent;
@@ -51,17 +52,19 @@ const MapLayer = Class.extend({
 
         const boundaries = topojson.mesh(_this.shapes, _this.shapes.objects[_this.context.model.ui.map.topology.objects.boundaries], (a, b) => a !== b);
         if (_this.mapFeature.features) {
-          _this.mapGraph.selectAll(".land")
+          _this.mapLands = _this.mapGraph.selectAll(".land")
             .data(_this.mapFeature.features)
             .enter().insert("path")
             .attr("d", _this.mapPath)
-            .attr("id", d => {
-              const id = d.properties[_this.context.model.ui.map.topology.geoIdProperty] ?
-                d.properties[_this.context.model.ui.map.topology.geoIdProperty].toString().toLowerCase() : d.id;
-              _this.paths[id] = d;
-              return id;
-            })
-            .attr("class", "land");
+            .attr("class", "land")
+            .each(function(d, i) {
+              const view = d3.select(this);
+              d.key = d.properties[_this.context.model.ui.map.topology.geoIdProperty] ?
+                  d.properties[_this.context.model.ui.map.topology.geoIdProperty].toString().toLowerCase() : d.id;
+              _this.paths[d.key] = d;
+              view
+                .attr("id", d.key);
+            });
         } else {
           _this.mapGraph.insert("path")
             .datum(_this.mapFeature)
@@ -73,6 +76,12 @@ const MapLayer = Class.extend({
           .attr("class", "boundary");
       }
     );
+  },
+
+  updateMapColors() {
+    const _this = this;
+    this.mapLands
+      .style("fill", d => _this.parent.getMapColor(d.key));
   },
 
   _loadShapes(shape_path) {
@@ -339,6 +348,7 @@ export default Class.extend({
     this.context = context;
     this.domSelector = domSelector;
     this.topojsonMap = null;
+    this.keys = {};
     this.mapEngine = this.context.model.ui.map.mapEngine;
     this.mapInstance = null;
     if (this.context.element instanceof d3.selection) {
@@ -351,6 +361,24 @@ export default Class.extend({
     this.mapRoot.html("");
     this.mapSvg.html("");
     return this;
+  },
+
+  ready() {
+    const _this = this;
+    this.keys = Object.keys(_this.context.values.hook_centroid)
+      .reduce((obj, key) => {
+        obj[_this.context.values.hook_centroid[key]] = key;
+        return obj;
+      }, {});
+    if (this.topojsonMap) {
+      this.topojsonMap.updateMapColors();
+    }
+  },
+  getMapColor(key) {
+    if (this.keys[key]) {
+      return this.context.mcScale(this.context.values.mapcolor[this.keys[key]]);
+    }
+    return this.context.COLOR_WHITEISH;
   },
 
   getMap() {

@@ -104,7 +104,6 @@ const LBubbleMapComponent = Component.extend({
 
     _this.COLOR_WHITEISH = "#fdfdfd";
 
-
     this._labels = new Labels(this);
 
     this._labels.config({
@@ -182,8 +181,10 @@ const LBubbleMapComponent = Component.extend({
 
       if (!values) return;
       _this.values = values;
+
       _this.updateEntities();
       _this.updateTime();
+      _this.map.ready();
       _this._labels.ready();
       _this.redrawDataPoints(null, true);
       _this.highlightMarkers();
@@ -404,6 +405,7 @@ const LBubbleMapComponent = Component.extend({
   updateIndicators() {
     this.sScale = this.model.marker.size.getScale();
     this.cScale = this.model.marker.color.getScale();
+    this.mcScale = this.model.marker.mapcolor.getScale();
   },
 
   /**
@@ -506,7 +508,6 @@ const LBubbleMapComponent = Component.extend({
     const _this = this;
     if (!duration) duration = this.duration;
     if (!this.entityBubbles) return utils.warn("redrawDataPoints(): no entityBubbles defined. likely a premature call, fix it!");
-    _this.map.centroid(5660000);
 
     this.entityBubbles.each(function(d, index) {
       const view = d3.select(this);
@@ -538,6 +539,7 @@ const LBubbleMapComponent = Component.extend({
           .attr("fill", valueC != null ? _this.cScale(valueC) : _this.COLOR_WHITEISH);
 
         if (reposition) {
+
           d.cLoc = _this.map.centroid(valueCentroid);
 
           view.attr("cx", d.cLoc[0])
