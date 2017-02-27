@@ -187,6 +187,7 @@ const BubbleChart = Tool.extend("BubbleChart", {
         doubtRange: []
       },
       presentation: false,
+      panWithArrow: false,
       adaptMinMaxZoom: false,
       cursorMode: "arrow",
       zoomOnScrolling: false,

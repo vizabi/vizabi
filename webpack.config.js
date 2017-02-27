@@ -101,7 +101,6 @@ const plugins = [
 
 if (__PROD__) {
   plugins.push(
-    new webpack.optimize.DedupePlugin(),
     new webpack.optimize.UglifyJsPlugin({
       sourceMap: true,
       compressor: {
@@ -241,7 +240,7 @@ const loaders = [
     }
   },
   {
-    test: /(d3|\.web)\.js$/, // TODO: we need another way to extract vendor files
+    test: /(d3|\.web|vizabi-ddfcsv-reader)\.js$/, // TODO: we need another way to extract vendor files
     include: [
       path.resolve(__dirname, 'node_modules')
     ],

@@ -87,6 +87,13 @@ const SimpleSlider = Component.extend({
       .on("change", () => {
         const value = +d3.event.target.value;
         _this._setModel(value, true); // on drag end - value is probably same as last 'input'-event, so force change
+      })
+      .on("touchstart", () => {
+        _this.scrollAncestor = utils.findScrollableAncestor(d3.event.target);
+        d3.select(_this.scrollAncestor).style("pointer-events", "none");
+      })
+      .on("touchend touchcancel", () => {
+        d3.select(_this.scrollAncestor).style("pointer-events", null);
       });
 
     this.updateView();

@@ -100,6 +100,7 @@ const label = function(context) {
           cross.on("click", () => {
             //default prevented is needed to distinguish click from drag
             if (d3.event.defaultPrevented) return;
+            d3.event.stopPropagation();
             _this.model.marker.clearHighlighted();
             _this.model.marker.selectMarker(d);
           });

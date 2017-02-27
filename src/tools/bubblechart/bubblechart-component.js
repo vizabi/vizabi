@@ -223,12 +223,19 @@ const BubbleChartComp = Component.extend({
         if (_this.model.ui.cursorMode === "plus") {
           svg.classed("vzb-zoomin", true);
           svg.classed("vzb-zoomout", false);
+          svg.classed("vzb-panhand", false);
         } else if (_this.model.ui.cursorMode === "minus") {
           svg.classed("vzb-zoomin", false);
           svg.classed("vzb-zoomout", true);
+          svg.classed("vzb-panhand", false);
+        } else if (_this.model.ui.cursorMode === "hand") {
+          svg.classed("vzb-zoomin", false);
+          svg.classed("vzb-zoomout", false);
+          svg.classed("vzb-panhand", true);
         } else {
           svg.classed("vzb-zoomin", false);
           svg.classed("vzb-zoomout", false);
+          svg.classed("vzb-panhand", false);
         }
       },
       "ready": function() {
@@ -391,17 +398,17 @@ const BubbleChartComp = Component.extend({
     //keyboard listeners
     d3.select("body")
       .on("keydown", () => {
-        if (_this.model.ui.cursorMode !== "arrow") return;
+        if (_this.model.ui.cursorMode !== "arrow" && _this.model.ui.cursorMode !== "hand") return;
         if (d3.event.metaKey || d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", true);
       })
       .on("keyup", () => {
-        if (_this.model.ui.cursorMode !== "arrow") return;
+        if (_this.model.ui.cursorMode !== "arrow" && _this.model.ui.cursorMode !== "hand") return;
         if (!d3.event.metaKey && !d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", false);
       })
       //this is for the case when user would press ctrl and move away from the browser tab or window
       //keyup event would happen somewhere else and won't be captured, so zoomin class would get stuck
       .on("mouseenter", () => {
-        if (_this.model.ui.cursorMode !== "arrow") return;
+        if (_this.model.ui.cursorMode !== "arrow" && _this.model.ui.cursorMode !== "hand") return;
         if (!d3.event.metaKey && !d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", false);
       });
 
@@ -419,7 +426,7 @@ const BubbleChartComp = Component.extend({
       })
       .on("click", () => {
         const cursor = _this.model.ui.cursorMode;
-        if (!d3.event.defaultPrevented && cursor !== "arrow") {
+        if (!d3.event.defaultPrevented && cursor !== "arrow" && cursor !== "hand") {
           _this._panZoom.zoomByIncrement(cursor, 500);
         }
       });
@@ -704,16 +711,16 @@ const BubbleChartComp = Component.extend({
     this.entityBubbles = this.entityBubbles.enter().append("circle")
       .attr("class", d => "vzb-bc-entity " + "bubble-" + d[KEY])
       .on("mouseover", (d, i) => {
-        if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
+        if (utils.isTouchDevice() || (_this.model.ui.cursorMode !== "arrow" && _this.model.ui.cursorMode !== "hand")) return;
         _this._bubblesInteract().mouseover(d, i);
       })
       .on("mouseout", (d, i) => {
-        if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
+        if (utils.isTouchDevice() || (_this.model.ui.cursorMode !== "arrow" && _this.model.ui.cursorMode !== "hand")) return;
 
         _this._bubblesInteract().mouseout(d, i);
       })
       .on("click", (d, i) => {
-        if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
+        if (utils.isTouchDevice() || (_this.model.ui.cursorMode !== "arrow" && _this.model.ui.cursorMode !== "hand")) return;
 
         _this._bubblesInteract().click(d, i);
       })
