@@ -92,7 +92,7 @@ var TimeModel = DataConnected.extend({
       "change:format": function() {
         _this.initFormatters();
       }
-
+      
     });
   },
 
@@ -275,7 +275,7 @@ var TimeModel = DataConnected.extend({
    */
   getRange: function() {
     var is = this.getIntervalAndStep();
-    return d3.time[is.interval].utc.range(this.start, this.end, is.step);
+    return d3["utc" + is.interval].range(this.start, this.end, is.step);
   },
 
   /**
@@ -289,7 +289,7 @@ var TimeModel = DataConnected.extend({
       case 'quarter': d3Interval = 'month'; step = this.step*3; break;
       default: d3Interval = this.unit; step = this.step; break;
     }
-    return { interval: d3Interval, step: step };
+    return { interval: utils.capitalize(d3Interval), step: step };
   },
 
   /**
@@ -359,10 +359,10 @@ var TimeModel = DataConnected.extend({
 
     this.allSteps[hash] = [];
     var curr = this.start;
-    while(curr <= this.end) {
+    while(+curr <= +this.end) {
       var is = this.getIntervalAndStep();
       this.allSteps[hash].push(curr);
-      curr = d3.time[is.interval].utc.offset(curr, is.step);
+      curr = d3["utc" + is.interval].offset(curr, is.step);
     }
     return this.allSteps[hash];
   },
@@ -378,8 +378,10 @@ var TimeModel = DataConnected.extend({
     if(this.round === 'ceil') op = 'ceil';
     if(this.round === 'floor') op = 'floor';
     var is = this.getIntervalAndStep();
-    var time = d3.time[is.interval].utc[op](this[what]);
-    this.set(what, time, true); //3rd argumennt forces update
+    var time = d3["utc" + is.interval][op](this[what]);
+    if((this.value - time) != 0 || (this.value - this.start) == 0 || (this.value - this.end) == 0) {
+      this.set(what, time, true); //3rd argumennt forces update
+    }
   },
 
   /**
@@ -440,7 +442,7 @@ var TimeModel = DataConnected.extend({
           var is = _this.getIntervalAndStep();
           if(_this.delay < _this.delayThresholdX2) is.step*=2;
           if(_this.delay < _this.delayThresholdX4) is.step*=2;
-          var time = d3.time[is.interval].utc.offset(_this.value, is.step);
+          var time = d3["utc" + is.interval].offset(_this.value, is.step);
           if(time >= _this.endSelected) {
             // if no playing needed anymore then make the last update persistent and not overshooting
             _this.getModelObject('value').set(_this.endSelected, null, true /*force the change and make it persistent for URL and history*/);
@@ -456,12 +458,12 @@ var TimeModel = DataConnected.extend({
 
   incrementTime: function(time) {
     var is = this.getIntervalAndStep();
-    return d3.time[is.interval].utc.offset(time, is.step);
+    return d3["utc" + is.interval].offset(time, is.step);
   },
 
   decrementTime: function(time) {
     var is = this.getIntervalAndStep();
-    return d3.time[is.interval].utc.offset(time, -is.step);
+    return d3["utc" + is.interval].offset(time, -is.step);
   },
 
   /**

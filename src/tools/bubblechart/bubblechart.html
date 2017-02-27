@@ -10,6 +10,7 @@
       <line class="vzb-bc-projection-y"></line>
 
       <svg class="vzb-bc-bubbles-crop">
+      <g class="vzb-zoom-selection"></g>
         <line class="vzb-bc-line-equal-xy vzb-invisible"></line>
         <rect class="vzb-bc-eventarea"></rect>
         <g class="vzb-bc-trails"></g>
@@ -45,6 +46,13 @@
         <text class="vzb-tooltip-text"></text>
       </g>
     </g>
+  </svg>
+  <svg>
+    <defs>
+      <filter id="vzb-glow-filter" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2"></feGaussianBlur>
+      </filter>
+    </defs>
   </svg>
   <!-- This could possibly be another component -->
   <div class="vzb-tooltip vzb-hidden vzb-tooltip-mobile"></div>

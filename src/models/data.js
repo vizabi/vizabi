@@ -266,7 +266,8 @@ var DataModel = Model.extend({
           'tags',
           'name',
           'unit',
-          'description'
+          'description',
+          'format'
         ]
       },
       from: 'concepts',
@@ -324,6 +325,7 @@ var DataModel = Model.extend({
       concept["concept"] = d.concept;
       concept["domain"] = d.domain;
       concept["tags"] = d.tags;
+      concept["format"] = d.format;
       concept["name"] = d.name||d.concept||"";
       concept["unit"] = d.unit||"";
       concept["description"] = d.description;

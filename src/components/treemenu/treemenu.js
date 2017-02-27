@@ -215,7 +215,7 @@ var Menu = Class.extend({
           .delay(0)
           .duration(duration)
           .style('width', newElementWidth + "px")
-          .each('end', function() {
+          .on('end', function() {
           });
         _this.parent.parentMenu.restoreWidth(width - newElementWidth, false, cb);
       } else {
@@ -244,7 +244,7 @@ var Menu = Class.extend({
         .delay(0)
         .duration(duration)
         .style('width', newElementWidth + "px")
-        .each('end', function() {
+        .on('end', function() {
           cb(width - _this.width + newElementWidth);
         });
     }
@@ -256,7 +256,7 @@ var Menu = Class.extend({
       .delay(0)
       .duration(250)
       .style('width', _this.width + "px")
-      .each('end', function() {
+      .on('end', function() {
         _this.marqueeToggle(true);
       });
   },
@@ -267,7 +267,7 @@ var Menu = Class.extend({
       .delay(0)
       .duration(250)
       .style('height', (36 * _this.menuItems.length) + "px")
-      .each('end', function() {
+      .on('end', function() {
         _this.entity.style('height', 'auto');
         _this.marqueeToggle(true);
         _this.scrollToFitView();
@@ -315,7 +315,7 @@ var Menu = Class.extend({
       .delay(0)
       .duration(20)
       .style('width', 0 + "px")
-      .each('end', function() {
+      .on('end', function() {
         _this.marqueeToggle(false);
         _this.entity.classed('active', false);
         if(!openSubmenuNow) {
@@ -334,7 +334,7 @@ var Menu = Class.extend({
       .delay(0)
       .duration(100)
       .style('height', 0 + "px")
-      .each('end', function() {
+      .on('end', function() {
         _this.marqueeToggle(false);
         _this.entity.classed('active', false);
         if (typeof cb === "function") cb();
@@ -342,6 +342,11 @@ var Menu = Class.extend({
   },
   isActive: function() {
     return this.entity.classed('active');
+  },
+  hasActiveParentNeighbour() {
+    return this.menuItems
+      .filter((item) => item.isActive())
+      .some((item) => !!d3.select(item.entity).node().classed(css.hasChild));
   },
   marqueeToggle: function(toggle) {
     for (var i = 0; i < this.menuItems.length; i++) {
@@ -411,11 +416,14 @@ var MenuItem = Class.extend({
     if (submenu.node()) {
       this.submenu = new Menu(this, submenu, options);
     }
-    var label = this.entity.select('.' + css.list_item_label).on('mouseenter', function() {
-      if(utils.isTouchDevice()) return;
+    this.entity.select('.' + css.list_item_label).on('mouseenter', function () {
+      if (utils.isTouchDevice()) return;
+
       if (_this.parentMenu.direction == MENU_HORIZONTAL && !d3.select(this).attr('children')) {
         _this.openSubmenu();
         _this.marqueeToggle(true);
+      } else if (!_this.parentMenu.hasActiveParentNeighbour()) {
+        _this.closeNeighbors();
       }
     }).on('click.item', function() {
       if(utils.isTouchDevice()) return;
@@ -697,7 +705,6 @@ var TreeMenu = Component.extend({
 
       //init the tag tree
       indicatorsTree = tags[ROOT];
-      indicatorsTree.children.push({"id": DEFAULT});
       indicatorsTree.children.push(tags[UNCLASSIFIED]);
 
       //populate the tag tree
@@ -762,6 +769,8 @@ var TreeMenu = Component.extend({
           if (b.id == "time") return 1;
           if (a.id == "advanced") return 1;
           if (b.id == "advanced") return -1;
+          if (a.id == "_default") return 1;
+          if (b.id == "_default") return -1;
         }
         //sort items alphabetically. folders go down because of the emoji folder in the beginning of the name
         return a.name > b.name? 1:-1
@@ -832,7 +841,8 @@ var TreeMenu = Component.extend({
             if(containerHeight > this.height) {
               containerHeight = this.height - 20;
             }
-            this.wrapperOuter.style({'top' : (this.height - containerHeight - 10) + 'px', 'bottom' : 'auto'});
+            this.wrapperOuter.style('top', (this.height - containerHeight - 10) + 'px');
+            this.wrapperOuter.style('bottom', 'auto');
           }
           if(top) top = _this.wrapperOuter.node().offsetTop;
         }
@@ -870,7 +880,8 @@ var TreeMenu = Component.extend({
           left = leftPos;
         } else {
           if(leftPos != this.wrapperOuter.node().offsetLeft) {
-            this.wrapperOuter.style({'left': 'auto', 'right': (this.width - leftPos - rect.width) + 'px'});
+            this.wrapperOuter.style('left', 'auto');
+            this.wrapperOuter.style('right', (this.width - leftPos - rect.width) + 'px');
           }
         }
 
@@ -958,13 +969,15 @@ var TreeMenu = Component.extend({
     var rect = this.wrapperOuter.node().getBoundingClientRect();
 
     if(top) {
-      this.wrapperOuter.style({'top': top + 'px', 'bottom': 'auto'});
+      this.wrapperOuter.style('top', top + 'px');
+      this.wrapperOuter.style('bottom', 'auto');
       this.wrapperOuter.classed(css.absPosVert, top);
     }
     if(left) {
       var right = this.element.node().offsetWidth - left - rect.width;
       right = right < 10 ? 10 : right;
-      this.wrapperOuter.style({'right': right + 'px', 'left': 'auto'});
+      this.wrapperOuter.style('right', right + 'px');
+      this.wrapperOuter.style('left', 'auto');
       this.wrapperOuter.classed(css.absPosHoriz, right);
     }
 
@@ -1084,8 +1097,10 @@ var TreeMenu = Component.extend({
 
       var allowedIDs = utils.keys(indicatorsDB).filter(function(f) {
         //check if indicator is denied to show with allow->names->!indicator
-        if(_this.model.marker[markerID].allow && _this.model.marker[markerID].allow.names
-          && _this.model.marker[markerID].allow.names.indexOf('!' + f) != -1) return false;
+        if(_this.model.marker[markerID].allow && _this.model.marker[markerID].allow.names) {
+          if(_this.model.marker[markerID].allow.names.indexOf('!' + f) != -1) return false;
+          if(_this.model.marker[markerID].allow.names.indexOf(f) != -1) return true;
+        }
         //keep indicator if nothing is specified in tool properties
         if(!_this.model.marker[markerID].allow || !_this.model.marker[markerID].allow.scales) return true;
         //keep indicator if any scale is allowed in tool properties
@@ -1276,11 +1291,12 @@ var TreeMenu = Component.extend({
 
         scaleTypes.exit().remove();
 
-        scaleTypes.enter().append("span")
+        scaleTypes = scaleTypes.enter().append("span")
           .on("click", function(d){
             d3.event.stopPropagation();
             _this._setModel("scaleType", d, _this._markerID);
-          });
+          })
+          .merge(scaleTypes);
 
         var mdlScaleType = _this.model.marker[markerID].scaleType;
 

@@ -71,12 +71,10 @@ const CSVReader = Reader.extend({
 
           try {
             const { delimiter = this._guessDelimiter(text) } = this;
-            const parser = d3.dsv(delimiter);
-            const [header] = this._getRows(text, 1);
-            const [columns] = parser.parseRows(header);
+            const parser = d3.dsvFormat(delimiter);
             const data = parser.parse(text);
 
-            const result = { columns, data };
+            const result = { columns: data.columns, data };
             cached[path] = result;
             resolve(result);
           } catch (e) {

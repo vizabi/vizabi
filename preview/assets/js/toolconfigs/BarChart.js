@@ -39,6 +39,7 @@ var VIZABI_MODEL = {
       "color": {
         "use": "property",
         "which": "world_4region",
+        "scaleType": "ordinal",
         "colorlegend": "marker_colorlegend"
       }
     },
@@ -73,10 +74,6 @@ var VIZABI_MODEL = {
     "datawarning": {
       "doubtDomain": [1800, 1950, 2015],
       "doubtRange": [1.0, 0.8, 0.6]
-    },
-    "buttons": ['axes', 'colors', 'fullscreen'],
-    "dialogs": { 
-      'popup': ['axes', 'colors'] 
     },
     "splash": false
   },

@@ -56,7 +56,59 @@ utils.forEach(components, function(component, name) {
 
 import genericLog from 'helpers/d3.genericLogScale';
 import { onTap, onLongTap } from 'helpers/d3.touchEvents';
-import * as touchFixes from 'helpers/d3.touchFixes';
+//import * as touchFixes from 'helpers/d3.touchFixes';
+
+//d3 v3 -> v4
+
+// Copies a variable number of methods from source to target.
+d3.rebind = function(target, source) {
+  var i = 1, n = arguments.length, method;
+  while (++i < n) target[method = arguments[i]] = d3_rebind(target, source, source[method]);
+  return target;
+};
+
+// Method is assumed to be a standard D3 getter-setter:
+// If passed with no arguments, gets the value.
+// If passed with arguments, sets the value and returns the target.
+function d3_rebind(target, source, method) {
+  return function() {
+    var value = method.apply(source, arguments);
+    return value === source ? target : value;
+  };
+}
+
+d3.scale = {};
+d3.scale.linear = d3.scaleLinear
+d3.scale.sqrt = d3.scaleSqrt
+d3.scale.pow = d3.scalePow
+d3.scale.log = d3.scaleLog
+d3.scale.quantize = d3.scaleQuantize
+d3.scale.threshold = d3.scaleThreshold
+d3.scale.quantile = d3.scaleQuantile
+d3.scale.identity = d3.scaleIdentity
+d3.scale.ordinal = d3.scaleOrdinal
+d3.time = {}
+d3.time.scale = d3.scaleTime
+d3.time.scale.utc = d3.scaleUtc
+d3.time.format = function(f) { 
+  var format = d3.timeFormat(f);
+  format.parse = d3.timeParse(f);
+  return format;
+}
+d3.time.format.utc = function(f) { 
+  var format = d3.utcFormat(f);
+  format.parse = d3.utcParse(f);
+  return format;
+}
+d3.time.format.iso = function(f) { 
+  var format = d3.isoFormat(f);
+  format.parse = d3.isoParse(f);
+  return format;
+}
+d3.round = function(x, n) {
+  return n ? Math.round(x * (n = Math.pow(10, n))) / n : Math.round(x);
+};
+
 
 d3.scale.genericLog = genericLog;
 d3.selection.prototype.onTap = onTap;
@@ -64,9 +116,9 @@ d3.selection.prototype.onLongTap = onLongTap;
 
 //TODO: Fix for scroll on mobile chrome on d3 v3.5.17. It must be retested/removed on d3 v4.x.x
 //see explanation here https://github.com/vizabi/vizabi/issues/2020#issuecomment-250205191
-d3.svg.brush = touchFixes.brush;
-d3.behavior.drag = touchFixes.drag;
-d3.behavior.zoom = touchFixes.zoom;
+//d3.svg.brush = touchFixes.brush;
+//d3.drag = touchFixes.drag;
+//d3.behavior.zoom = touchFixes.zoom;
 
 //makes all objects accessible
 Vzb.Tool = Tool;

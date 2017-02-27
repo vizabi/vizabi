@@ -48,6 +48,7 @@ var VIZABI_MODEL = {
       "color": {
         "use": "property",
         "which": "world_4region",
+        "scaleType": "ordinal",
         "syncModels": ["marker_colorlegend"]
       }
     },
@@ -84,12 +85,6 @@ var VIZABI_MODEL = {
     "datawarning": {
       "doubtDomain": [1800, 1950, 2015],
       "doubtRange": [1.0, 0.8, 0.6]
-    },
-    "buttons": ['colors', 'find', 'show', 'moreoptions', 'fullscreen', 'presentation'],
-    "dialogs": {
-      'popup': ['timedisplay', 'colors', 'find', 'axes', 'show', 'moreoptions'],
-      'sidebar': ['timedisplay', 'colors', 'find'],
-      'moreoptions': ['opacity', 'speed', 'colors', 'presentation', 'about']
     },
     "splash": true
   },

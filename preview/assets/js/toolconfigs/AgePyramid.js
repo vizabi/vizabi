@@ -62,6 +62,7 @@ var VIZABI_MODEL = {
       "color": {
         "use": "property",
         "which": "country_code",
+        "scaleType": "ordinal",
         "spaceRef": "entities",
         "allow": {
           "scales": ["ordinal"]
@@ -120,12 +121,6 @@ var VIZABI_MODEL = {
     }
   },
   "ui": {
-    "buttons":['colors', 'inpercent', 'side', 'moreoptions', 'fullscreen'],
-    "dialogs": {
-      'popup': ['timedisplay', 'colors', 'side', 'moreoptions'], 
-      'sidebar': ['timedisplay', 'colors', 'show'], 
-    'moreoptions': ['opacity', 'speed', 'colors', 'side', 'presentation', 'about']
-    },
     "splash": true
   },
 //  "data": {

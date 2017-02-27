@@ -144,7 +144,8 @@ var DataNotes = Component.extend({
       topPos = top - height - 30;
     }
 
-    this.element.style({'top': topPos + 'px', 'left': leftPos + 'px'});
+    this.element.style('top', topPos + 'px')
+    this.element.style('left', leftPos + 'px');
 
     return this;
   },

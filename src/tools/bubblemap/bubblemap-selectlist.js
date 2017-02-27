@@ -44,7 +44,7 @@ var MCSelectList = Class.extend({
         return d.KEY();
       }));
     _this.selectList.exit().remove();
-    _this.selectList.enter().append("g")
+    _this.selectList = _this.selectList.enter().append("g")
       .attr("class", "vzb-bmc-label")
       .each(function (d, i) {
         var label = d3.select(this);
@@ -95,7 +95,8 @@ var MCSelectList = Class.extend({
         if (utils.isTouchDevice()) return;
         _this.model.marker.clearHighlighted();
         _this.model.marker.selectMarker(d);
-      });
+      })
+      .merge(_this.selectList);
   },
 
   redraw: function () {
@@ -103,9 +104,9 @@ var MCSelectList = Class.extend({
     if (!_this.selectList || !_this.someSelected) return;
 
     var sample = _this.labelListContainer.append("g").attr("class", "vzb-bmc-label").append("text").text("0");
-    var fontHeight = sample[0][0].getBBox().height*1.2;
+    var fontHeight = sample.node().getBBox().height*1.2;
     var fontSizeToFontHeight = parseFloat(sample.style("font-size")) / fontHeight;
-    d3.select(sample[0][0].parentNode).remove();
+    d3.select(sample.node().parentNode).remove();
     var formatter = _this.model.marker.size.getTickFormatter();
 
     var titleHeight = _this.yTitleEl.select("text").node().getBBox().height || 0;
@@ -133,7 +134,7 @@ var MCSelectList = Class.extend({
           .text(string)
           .style("font-size", fontHeight === maxFontHeight ? (fontHeight * fontSizeToFontHeight + "px") : null);
 
-        var contentBBox = text[0][0].getBBox();
+        var contentBBox = text.node().getBBox();
 
         var closeGroup = view.select(".vzb-bmc-label-x");
 

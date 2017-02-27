@@ -1,7 +1,7 @@
 import * as utils from 'base/utils';
-//d3.svg.axisSmart
+//d3.axisSmart
 
-export default function axisSmart() {
+export default function axisSmart(_orient) {
 
   return function d3_axis_smart(_super) {
 
@@ -23,7 +23,7 @@ export default function axisSmart() {
       var checkRng = axis.scale().range();
       if(!checkDmn[0] && checkDmn[0]!==0 || !checkDmn[1] && checkDmn[1]!==0
       || !checkRng[0] && checkRng[0]!==0 || !checkRng[1] && checkRng[1]!==0){
-        return utils.warn("d3.svg.axisSmart() skips action because of invalid domain " + JSON.stringify(checkDmn) + " or range " + JSON.stringify(checkRng) + " of the attached scale");
+        return utils.warn("d3.axisSmart() skips action because of invalid domain " + JSON.stringify(checkDmn) + " or range " + JSON.stringify(checkRng) + " of the attached scale");
       }
 
       if(highlightValue != null) {
@@ -39,8 +39,8 @@ export default function axisSmart() {
       options.cssMargin.bottom = widthSampleT.style("margin-bottom");
       options.cssMargin.left = widthSampleT.style("margin-left");
       options.cssMargin.right = widthSampleT.style("margin-right");
-      options.widthOfOneDigit = widthSampleT[0][0].getBBox().width;
-      options.heightOfOneDigit = widthSampleT[0][0].getBBox().height;
+      options.widthOfOneDigit = widthSampleT.node().getBBox().width;
+      options.heightOfOneDigit = widthSampleT.node().getBBox().height;
       widthSampleG.remove();
 
       // run label factory - it will store labels in tickValues property of axis
@@ -50,8 +50,14 @@ export default function axisSmart() {
       if(options.transitionDuration > 0) {
         _super(g.transition().duration(options.transitionDuration));
       } else {
-       _super(g);
+        _super(g);
       }
+
+      //remove axis d3v4 hardcoded attributes
+      g.attr("fill", null);
+      g.attr("font-size", null);
+      g.attr("font-family", null);
+      g.attr("text-anchor", null);
 
       //identify the orientation of axis and the direction of labels
       var orient = axis.orient() == "top" || axis.orient() == "bottom" ? HORIZONTAL : VERTICAL;
@@ -102,8 +108,9 @@ export default function axisSmart() {
       if(axis.tickValuesMinor() == null) axis.tickValuesMinor([]);
       var minorTicks = g.selectAll(".tick-minor").data(tickValuesMinor);
       minorTicks.exit().remove();
-      minorTicks.enter().append("line")
-        .attr("class", "tick-minor");
+      minorTicks = minorTicks.enter().append("line")
+        .attr("class", "tick-minor")
+        .merge(minorTicks);
 
       var tickLengthOut = axis.tickSizeMinor().outbound;
       var tickLengthIn = axis.tickSizeMinor().inbound;
@@ -118,8 +125,9 @@ export default function axisSmart() {
       g.selectAll("path").remove();
       var rake = g.selectAll(".vzb-axis-line").data([0]);
       rake.exit().remove();
-      rake.enter().append("line")
-        .attr("class", "vzb-axis-line");
+      rake = rake.enter().append("line")
+        .attr("class", "vzb-axis-line")
+        .merge(rake);
 
       if(options.viewportLength){
         rake
@@ -207,7 +215,7 @@ export default function axisSmart() {
         g.select('.vzb-axis-value')
           .transition()
           .duration(highlightTransDuration)
-          .ease("linear")
+          .ease(d3.easeLinear)
           .attr("transform", getTransform);
 
         g.select('.vzb-axis-value')
@@ -220,7 +228,7 @@ export default function axisSmart() {
           d3.select(this).select("text")
             .transition()
             .duration(highlightTransDuration)
-            .ease("linear")
+            .ease(d3.easeLinear)
             .style("opacity", getOpacity(d,t, this))
         })
 
@@ -980,13 +988,17 @@ export default function axisSmart() {
 
 
     axis.copy = function() {
-      return d3_axis_smart(d3.svg.axis());
+      return d3_axis_smart(d3["axis" + utils.capitalize(_orient)]());
     };
 
+    axis.orient = function() {
+      if(!arguments.length) return _orient;
+      return axis;
+    }
+
     return d3.rebind(axis, _super,
-      "scale", "orient", "ticks", "tickValues", "tickFormat",
-      "tickSize", "innerTickSize", "outerTickSize", "tickPadding",
-      "tickSubdivide"
+      "scale", "ticks", "tickArguments", "tickValues", "tickFormat",
+      "tickSize", "tickSizeInner", "tickSizeOuter", "tickPadding"
     );
 
 
@@ -1014,6 +1026,6 @@ export default function axisSmart() {
       }
     }
 
-  }(d3.svg.axis());
+  }(d3["axis" + utils.capitalize(_orient)]());
 
 };

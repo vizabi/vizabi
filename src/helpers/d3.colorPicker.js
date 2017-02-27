@@ -82,8 +82,8 @@ export default function colorPicker() {
      ]
      ]
      */
-    var arc = d3.svg.arc();
-    var pie = d3.layout.pie().sort(null).value(function(d) {
+    var arc = d3.arc();
+    var pie = d3.pie().sort(null).value(function(d) {
       return 1;
     });
     var svg = null;
@@ -453,6 +453,7 @@ export default function colorPicker() {
       } else {
         styles.right = screen.width - xPos - width + "px";
       }
+      if(styles.right) { svg.style("right", styles.right); }
       if (screen.height * 0.8 <= height) {
         styles.top = (screen.height - height) * 0.5 + "px";
       } else if (yPos + height * 1.2 > screen.height) {
@@ -460,8 +461,8 @@ export default function colorPicker() {
       } else {
         styles.top = yPos + "px";
       }
-
-      svg.style(styles);
+      if(styles.top) { svg.style("top", styles.top); }
+      svg.style("left", styles.left);
       return colorPicker;
     };
     colorPicker.colorOld = function(arg) {

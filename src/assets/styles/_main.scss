@@ -45,15 +45,21 @@
     direction: ltr;
 
     transform: translate3d(0, 0, 0);
-
     .vzb-tool-viz {
       flex: 1 auto;
       position: relative;
     }
 
-    .vzb-tool-timeslider {
+    .vzb-tool-time-speed-sliders {
       flex: 0 0 $size-timeslider; 
       height: $size-timeslider;
+      display: flex;
+      .vzb-tool-timeslider {
+        flex: 1 1 auto;
+      }
+      .vzb-tool-stepped-speed-slider {
+        flex: 0 0 35px;
+      }
     }
   }
 
@@ -92,7 +98,7 @@
   }
 
   &.vzb-timeslider-off {
-    .vzb-tool-timeslider {
+    .vzb-tool-time-speed-sliders {
       display: none;
     }
   }
@@ -109,7 +115,7 @@
     //@include position(absolute, $pos-top 0 0 0);
 
     .vzb-tool-stage {
-      .vzb-tool-timeslider {
+      .vzb-tool-time-speed-sliders {
         flex: 0 0 $size-timeslider-small;
         height: $size-timeslider-small;
       }
@@ -140,7 +146,7 @@
     }
 
     &.vzb-timeslider-off {
-      .vzb-tool-timeslider {
+      .vzb-tool-time-speed-sliders {
         display: none;
       }
     }
@@ -152,7 +158,7 @@
   
   &.vzb-medium {
     .vzb-tool-stage {
-      .vzb-tool-timeslider {
+      .vzb-tool-time-speed-sliders {
         flex: 0 0 $size-timeslider-medium; 
         height: $size-timeslider-medium;
       }
@@ -275,4 +281,5 @@
   @import '../../components/treemenu/treemenu';
   @import '../../components/datawarning/datawarning';
   @import '../../components/datanotes/datanotes';
+  @import '../../components/steppedspeedslider/steppedspeedslider';
 }

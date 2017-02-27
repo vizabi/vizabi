@@ -39,8 +39,8 @@ var AxisLabelerComponent = Component.extend({
     this.xScale = null;
     this.yScale = null;
 
-    this.xAxis = axisSmart();
-    this.yAxis = axisSmart();
+    this.xAxis = axisSmart("bottom");
+    this.yAxis = axisSmart("left");
   },
 
   /**
@@ -121,7 +121,6 @@ var AxisLabelerComponent = Component.extend({
     this.yScale.range(d3.range(yLength).map(function(n) { return height/(yLength-1) * n }).reverse()) //.nice();
 
     this.xAxis.scale(this.xScale)
-      .orient("bottom")
       .tickSize(6, 0)
       .tickSizeMinor(3, 0)
       .labelerOptions({
@@ -130,7 +129,6 @@ var AxisLabelerComponent = Component.extend({
       });
 
     this.yAxis.scale(this.yScale)
-      .orient("left")
       .tickSize(6, 0)
       .tickSizeMinor(3, 0)
       .labelerOptions({
