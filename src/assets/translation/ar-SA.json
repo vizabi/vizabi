@@ -72,7 +72,7 @@
   "scaletype/genericLog":"سجل عام",
   "scaletype/time":"الوقت",
   "scaletype/ordinal":"ترتيبي",
-  "check/panWithArrow":"Allow panning with arrow cursor",
+  "check/panWithArrow":"تسمح بالغسل مع مؤشر الماوس",
   "check/adaptMinMaxZoom":"احتوِ الفقاعات, صغر الصورة عندما تذهب",
   "check/presentation":"زيادة حجم النص للعرض",
   "check/removeLabelBox":"إزالة خانات التسمية",
