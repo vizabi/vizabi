@@ -24,11 +24,11 @@
       }
     }
 
-    .vzb-bc-bubbles-crop {
+    .vzb-panhand .vzb-bc-bubbles-crop {
       cursor: url('../../assets/cursors/grab.cur'), auto;
     }
 
-    .vzb-zooming .vzb-bc-bubbles-crop {
+    .vzb-panhand.vzb-zooming .vzb-bc-bubbles-crop {
       cursor: url('../../assets/cursors/grabbing.cur'), auto;
     }
 
@@ -36,7 +36,6 @@
       @extend %vzb-chart-svg;
 
       .vzb-bc-bubbles-crop {
-        cursor: grab;
         touch-action: none;
       }
 
@@ -74,7 +73,11 @@
         }
       }
 
-      &.vzb-zooming .vzb-bc-bubbles-crop {
+      &.vzb-panhand .vzb-bc-bubbles-crop {
+        cursor: grab;
+      }
+
+      &.vzb-panhand.vzb-zooming .vzb-bc-bubbles-crop {
         cursor: grabbing;
       }
 
