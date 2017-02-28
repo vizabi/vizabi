@@ -575,14 +575,10 @@ const LBubbleMapComponent = Component.extend({
             .attr("r", d.r)
             .transition();
         }
-
-        if (d.cLoc && (d.cLoc[0] || d.cLoc[0] === 0) && (d.cLoc[1] === 1)) {
-          _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], valueS, valueC, d.label, duration);
-        }
+        _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], valueS, valueC, d.label, duration);
       } else {
         _this._updateLabel(d, index, 0, 0, valueS, valueC, valueL, duration);
       }
-
     });
   },
 
@@ -665,7 +661,6 @@ const LBubbleMapComponent = Component.extend({
    * Ideally,it contains only operations related to size
    */
   updateSize() {
-
     this.activeProfile = this.getActiveProfile(this.profiles, this.presentationProfileChanges);
     const margin = this.activeProfile.margin;
 

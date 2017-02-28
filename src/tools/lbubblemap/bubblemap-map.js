@@ -175,7 +175,7 @@ const GoogleMapLayer = Class.extend({
 
   initMap(domSelector) {
     const _this = this;
-    this.mapCanvas = this.parent.mapRoot.append("div");
+    this.mapCanvas = this.parent.mapRoot;
 
     GoogleMapsLoader.KEY = "AIzaSyAP0vMZwYojifwGYHTnEtYV40v6-MdLGFM";
     return new Promise((resolve, reject) => {
@@ -224,16 +224,9 @@ const GoogleMapLayer = Class.extend({
     const margin = this.context.activeProfile.margin;
 
     this.mapCanvas
-      .style("width", this.context.width + "px")
-      .style("height", this.context.height + "px");
-    this.parent.mapRoot
-      .attr("width", this.context.width)
-      .attr("height", this.context.height)
-      .style("position", "absolute")
-      .style("left", margin.left + "px")
-      .style("right", margin.right + "px")
-      .style("top", margin.top + "px")
-      .style("bottom", margin.bottom + "px");
+      .style("width", "100%")
+      .style("height", "100%");
+
     google.maps.event.trigger(this.map, "resize");
 
     const rectBounds = new google.maps.LatLngBounds(
@@ -279,7 +272,7 @@ const MapboxLayer = Class.extend({
 
   initMap(domSelector) {
     const _this = this;
-    this.mapCanvas = this.parent.mapRoot.append("div");
+    this.mapCanvas = this.parent.mapRoot;
     return new Promise((resolve, reject) => {
       _this.map = new mapboxgl.Map({
         container: _this.mapCanvas.node(),
@@ -305,19 +298,6 @@ const MapboxLayer = Class.extend({
     const margin = this.context.activeProfile.margin;
     const viewPortHeight = this.context.height * this.context.model.ui.map.scale;
     const viewPortWidth = this.context.width * this.context.model.ui.map.scale;
-
-    this.mapCanvas
-      .style("width", viewPortWidth + "px")
-      .style("height", viewPortHeight + "px");
-
-    this.parent.mapRoot
-      .attr("width", viewPortWidth)
-      .attr("height", viewPortHeight)
-      .style("position", "absolute")
-      .style("left", margin.left + "px")
-      .style("right", margin.right + "px")
-      .style("top", margin.top + "px")
-      .style("bottom", margin.bottom + "px");
 
     utils.defer(() => {
       _this.map.fitBounds(_this.bounds, { duration: 0 });
@@ -439,6 +419,17 @@ export default Class.extend({
 
   rescaleMap() {
     if (this.mapInstance) {
+      const margin = this.context.activeProfile.margin;
+      const _this = this;
+      this.mapRoot
+        .attr("width", this.context.width + margin.left + margin.right)
+        .attr("height", this.context.height + margin.top + margin.bottom)
+        .style("position", "absolute")
+        .style("left", 0)
+        .style("right", 0)
+        .style("top", 0)
+        .style("bottom", 0);
+
       this.mapInstance.rescaleMap();
     } else {
       this.topojsonMap.rescaleMap();
