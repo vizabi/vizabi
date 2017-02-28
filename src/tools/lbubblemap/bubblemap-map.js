@@ -154,7 +154,10 @@ const MapLayer = Class.extend({
   },
 
   centroid(key) {
-    return this.mapPath.centroid(this.paths[key]);
+    if ((key || key == 0) && this.paths[key]) {
+      return this.mapPath.centroid(this.paths[key]);
+    }
+    return null;
   },
 
   invert(x, y) {
@@ -370,15 +373,20 @@ export default Class.extend({
         obj[_this.context.values.hook_centroid[key]] = key;
         return obj;
       }, {});
+    this.updateColors();
+  },
+
+  getMapColor(key) {
+    if (this.keys[key]) {
+      return this.context.mcScale(this.context.values.color_map[this.keys[key]]);
+    }
+    return this.context.COLOR_WHITEISH;
+  },
+
+  updateColors() {
     if (this.topojsonMap) {
       this.topojsonMap.updateMapColors();
     }
-  },
-  getMapColor(key) {
-    if (this.keys[key]) {
-      return this.context.mcScale(this.context.values.mapcolor[this.keys[key]]);
-    }
-    return this.context.COLOR_WHITEISH;
   },
 
   getMap() {
@@ -448,7 +456,7 @@ export default Class.extend({
     if (this.topojsonMap) {
       return this.topojsonMap.centroid(key);
     }
-    return [0, 0];
+    return null;
   },
 
   invert(x, y) {

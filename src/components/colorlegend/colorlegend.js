@@ -24,16 +24,19 @@ const ColorLegend = Component.extend({
       name: "marker",
       type: "model"
     }, {
+      name: "color",
+      type: "color"
+    }, {
       name: "locale",
       type: "locale"
     }];
 
     this.model_binds = {
-      "change:marker.color.scaleType": function(evt, path) {
+      "change:color.scaleType": function(evt, path) {
         if (!_this._readyOnce || _this.colorModel.isDiscrete()) return;
         _this.updateView();
       },
-      "change:marker.color.palette": function(evt, path) {
+      "change:color.palette": function(evt, path) {
         if (!_this._readyOnce || (_this.colorModel.isDiscrete() && !_this.frame)) return;
         _this.updateView();
       },
@@ -65,7 +68,7 @@ const ColorLegend = Component.extend({
     //make color in options scrollable
     d3.select(this.placeholder.parentNode).classed("vzb-dialog-scrollable", true);
 
-    this.colorModel = this.model.marker.color;
+    this.colorModel = this.model.color;
     this.colorlegendMarker = this.colorModel.getColorlegendMarker();
     if (this.colorlegendMarker) {
       this.colorlegendMarker.on("ready", () => {

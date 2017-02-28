@@ -204,7 +204,8 @@ const LBubbleMapComponent = Component.extend({
     this.updateTime();
     this.updateDoubtOpacity();
     this.redrawDataPoints(null, false);
-
+    this._reorderEntities();
+    this.map.updateColors();
   },
 
   updateUIStrings() {
@@ -405,7 +406,7 @@ const LBubbleMapComponent = Component.extend({
   updateIndicators() {
     this.sScale = this.model.marker.size.getScale();
     this.cScale = this.model.marker.color.getScale();
-    this.mcScale = this.model.marker.mapcolor.getScale();
+    this.mcScale = this.model.marker.color_map.getScale();
   },
 
   /**
@@ -459,8 +460,7 @@ const LBubbleMapComponent = Component.extend({
 
 
     this.entityBubbles = this.bubbleContainer.selectAll(".vzb-bmc-bubble")
-        .data(this.model.marker.getVisible(), d => d[KEY])
-        .order();
+        .data(this.model.marker.getVisible(), d => d[KEY]);
 
     //exit selection
     this.entityBubbles.exit().remove();
@@ -489,6 +489,22 @@ const LBubbleMapComponent = Component.extend({
         })
         .merge(this.entityBubbles);
 
+    this._reorderEntities();
+
+  },
+
+  _reorderEntities() {
+    const _this = this;
+    const KEY = this.KEY;
+    this.bubbleContainer.selectAll(".vzb-bmc-bubble")
+      .sort((a, b) => {
+        const sizeA = _this.values.size[a[KEY]];
+        const sizeB = _this.values.size[b[KEY]];
+
+        if (typeof sizeA == "undefined" && typeof sizeB != "undefined") return -1;
+        if (typeof sizeA != "undefined" && typeof sizeB == "undefined") return 1;
+        return d3.descending(sizeA, sizeB);
+      });
   },
 
   unselectBubblesWithNoData(frame) {
@@ -518,8 +534,16 @@ const LBubbleMapComponent = Component.extend({
       const valueCentroid = _this.values.hook_centroid[d[_this.KEY]];
 
       d.hidden_1 = d.hidden;
-      d.hidden = (!valueS && valueS !== 0) || valueCentroid == null;
 
+      if (reposition) {
+        const cLoc = _this.map.centroid(valueCentroid);
+        if (cLoc) {
+          d.cLoc = cLoc;
+          view.attr("cx", d.cLoc[0])
+            .attr("cy", d.cLoc[1]);
+        }
+      }
+      d.hidden = (!valueS && valueS !== 0) || valueCentroid == null || !d.cLoc;
 
       if (d.hidden !== d.hidden_1) {
         if (duration) {
@@ -527,24 +551,21 @@ const LBubbleMapComponent = Component.extend({
             .style("opacity", 0)
             .on("end", () => view.classed("vzb-hidden", d.hidden).style("opacity", _this.model.marker.opacityRegular));
         } else {
-          view.classed("vzb-hidden", d.hidden);
+          if (!d.hidden) {
+            if (d.cLoc) {
+              view.classed("vzb-hidden", d.hidden);
+            }
+          } else {
+            view.classed("vzb-hidden", d.hidden);
+          }
         }
       }
       if (!d.hidden) {
-
         d.r = utils.areaToRadius(_this.sScale(valueS || 0));
         d.label = valueL;
 
         view.classed("vzb-hidden", false)
           .attr("fill", valueC != null ? _this.cScale(valueC) : _this.COLOR_WHITEISH);
-
-        if (reposition) {
-
-          d.cLoc = _this.map.centroid(valueCentroid);
-
-          view.attr("cx", d.cLoc[0])
-            .attr("cy", d.cLoc[1]);
-        }
 
         if (duration) {
           view.transition().duration(duration).ease(d3.easeLinear)

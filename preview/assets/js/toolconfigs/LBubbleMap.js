@@ -46,32 +46,15 @@ let VIZABI_MODEL = {
         "scaleType": "ordinal",
         "syncModels": ["marker_colorlegend"]
       },
-      "mapcolor": {
+      "color_map": {
         "use": "property",
         "which": "municipality",
         "scaleType": "ordinal",
-        "syncModels": ["marker_map_colorlegend"]
+        "syncModels": ["marker_colorlegend"]
       }
     },
     "marker_colorlegend": {
       "space": ["entities_colorlegend"],
-      "opacityRegular": 0.8,
-      "opacityHighlightDim": 0.3,
-      "label": {
-        "use": "property",
-        "which": "name"
-      },
-      "hook_rank": {
-        "use": "property",
-        "which": "rank"
-      },
-      "hook_geoshape": {
-        "use": "property",
-        "which": "shape_lores_svg"
-      }
-    },
-    "marker_map_colorlegend": {
-      "space": ["entities_map_colorlegend"],
       "opacityRegular": 0.8,
       "opacityHighlightDim": 0.3,
       "label": {

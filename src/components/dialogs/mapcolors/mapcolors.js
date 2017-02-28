@@ -1,8 +1,7 @@
 import * as utils from "base/utils";
 import Component from "base/component";
 import Dialog from "components/dialogs/_dialog";
-
-import mapcolorlegend from "components/mapcolorlegend/mapcolorlegend";
+import colorlegend from "components/colorlegend/colorlegend";
 import indicatorpicker from "components/indicatorpicker/indicatorpicker";
 
 /*!
@@ -23,12 +22,12 @@ const Mapcolors = Dialog.extend({
       component: indicatorpicker,
       placeholder: ".vzb-caxis-selector",
       model: ["state.time", "state.entities", "state.marker", "locale"],
-      markerID: "mapcolor",
+      markerID: "color_map",
       showHoverValues: true
     }, {
-      component: mapcolorlegend,
+      component: colorlegend,
       placeholder: ".vzb-clegend-container",
-      model: ["state.time", "state.entities", "state.marker", "locale"]
+      model: ["state.time", "state.entities", "state.marker", "state.marker.color_map", "locale"]
     }];
 
 
