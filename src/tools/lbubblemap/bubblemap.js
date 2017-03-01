@@ -104,6 +104,16 @@ const LBubbleMap = Tool.extend("LBubbleMap", {
           geoIdProperty: "BASKOD2010"
         }
       },
+      cursorMode: "arrow",
+      panWithArrow: false,
+      adaptMinMaxZoom: false,
+      zoomOnScrolling: false,
+      "buttons": ["colors", "find", "size", "moreoptions", "mapcolors", "fullscreen", "presentation"],
+      "dialogs": {
+        "popup": ["colors", "mapcolors", "find", "size", "moreoptions"],
+        "sidebar": ["colors", "find", "size", "zoom"],
+        "moreoptions": ["mapoptions", "opacity", "speed", "size", "colors", "mapcolors", "presentation", "about"]
+      },
       chart: {
         labels: {
           dragging: true

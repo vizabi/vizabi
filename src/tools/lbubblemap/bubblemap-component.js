@@ -91,7 +91,27 @@ const LBubbleMapComponent = Component.extend({
       },
       "change:ui.map.mapLayer": function(evt) {
         _this.map.layerChanged();
-      }
+      },
+      "change:ui.cursorMode": function() {
+        const svg = _this.chartSvg;
+        if (_this.model.ui.cursorMode === "plus") {
+          svg.classed("vzb-zoomin", true);
+          svg.classed("vzb-zoomout", false);
+          svg.classed("vzb-panhand", false);
+        } else if (_this.model.ui.cursorMode === "minus") {
+          svg.classed("vzb-zoomin", false);
+          svg.classed("vzb-zoomout", true);
+          svg.classed("vzb-panhand", false);
+        } else if (_this.model.ui.cursorMode === "hand") {
+          svg.classed("vzb-zoomin", false);
+          svg.classed("vzb-zoomout", false);
+          svg.classed("vzb-panhand", true);
+        } else {
+          svg.classed("vzb-zoomin", false);
+          svg.classed("vzb-zoomout", false);
+          svg.classed("vzb-panhand", false);
+        }
+      },
     };
 
     //this._selectlist = new Selectlist(this);
@@ -123,6 +143,7 @@ const LBubbleMapComponent = Component.extend({
 
     this.graph = this.element.select(".vzb-bmc-graph");
 
+    this.chartSvg = this.element.select("svg");
     this.bubbleContainerCrop = this.graph.select(".vzb-bmc-bubbles-crop");
     this.bubbleContainer = this.graph.select(".vzb-bmc-bubbles");
     this.labelListContainer = this.graph.select(".vzb-bmc-bubble-labels");
@@ -158,6 +179,22 @@ const LBubbleMapComponent = Component.extend({
         .range(this.model.ui.datawarning.doubtRange);
 
     this._labels.readyOnce();
+
+    const mapDragger = d3.drag()
+      .on("start", (d, i) => {
+        if (_this.model.ui.cursorMode == "hand")
+          _this.chartSvg.classed("vzb-zooming", true);
+      })
+      .on("drag", (d, i) => {
+        if (_this.model.ui.cursorMode == "hand")
+          _this.map.moveOver(d3.event.dx, d3.event.dy);
+      })
+      .on("end", (d, i) => {
+        if (_this.model.ui.cursorMode == "hand")
+          _this.chartSvg.classed("vzb-zooming", false);
+      });
+
+    this.element.call(mapDragger);
   },
 
   /*

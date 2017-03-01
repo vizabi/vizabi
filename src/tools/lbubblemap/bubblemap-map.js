@@ -176,6 +176,9 @@ const GoogleMapLayer = Class.extend({
   initMap(domSelector) {
     const _this = this;
     this.mapCanvas = this.parent.mapRoot;
+    this.mapCanvas
+      .style("width", "100%")
+      .style("height", "100%");
 
     GoogleMapsLoader.KEY = "AIzaSyAP0vMZwYojifwGYHTnEtYV40v6-MdLGFM";
     return new Promise((resolve, reject) => {
@@ -220,12 +223,6 @@ const GoogleMapLayer = Class.extend({
   },
 
   rescaleMap() {
-    const _this = this;
-    const margin = this.context.activeProfile.margin;
-
-    this.mapCanvas
-      .style("width", "100%")
-      .style("height", "100%");
 
     google.maps.event.trigger(this.map, "resize");
 
@@ -242,6 +239,18 @@ const GoogleMapLayer = Class.extend({
     }
     const coords = projection.fromLatLngToContainerPixel(new google.maps.LatLng(y, x));
     return [coords.x, coords.y];
+  },
+
+  moveOver(x, y) {
+    const scale = Math.pow(2, this.map.getZoom());
+    const pointDiff = new google.maps.Point(x / scale, y / scale);
+    this.context.model.ui.map.bounds = {
+      west: this.context.model.ui.map.bounds.west - pointDiff.x,
+      north: this.context.model.ui.map.bounds.north + pointDiff.y,
+      east: this.context.model.ui.map.bounds.east - pointDiff.x,
+      south: this.context.model.ui.map.bounds.south + pointDiff.y
+    };
+    this.rescaleMap();
   },
 
   getZoom() {
@@ -294,16 +303,30 @@ const MapboxLayer = Class.extend({
 
   rescaleMap() {
     const _this = this;
-    const offset = this.context.model.ui.map.offset;
-    const margin = this.context.activeProfile.margin;
-    const viewPortHeight = this.context.height * this.context.model.ui.map.scale;
-    const viewPortWidth = this.context.width * this.context.model.ui.map.scale;
-
+    _this.bounds = [[
+      _this.context.model.ui.map.bounds.west,
+      _this.context.model.ui.map.bounds.south
+    ], [
+      _this.context.model.ui.map.bounds.east,
+      _this.context.model.ui.map.bounds.north
+    ]];
     utils.defer(() => {
       _this.map.fitBounds(_this.bounds, { duration: 0 });
       _this.map.resize();
       _this.parent.boundsChanged();
     });
+  },
+
+  moveOver(dx, dy) {
+    const zeroPoint = this.map.unproject([0, 0]);
+    const newPoint = this.map.unproject([dx, dy]);
+    this.context.model.ui.map.bounds = {
+      west: this.context.model.ui.map.bounds.west + (zeroPoint.lng - newPoint.lng),
+      north: this.context.model.ui.map.bounds.north + (zeroPoint.lat - newPoint.lat),
+      east: this.context.model.ui.map.bounds.east + (zeroPoint.lng - newPoint.lng),
+      south: this.context.model.ui.map.bounds.south + (zeroPoint.lat - newPoint.lat)
+    };
+    this.rescaleMap();
   },
 
   updateLayer() {
@@ -386,6 +409,10 @@ export default Class.extend({
       }
       return this;
     }
+  },
+
+  moveOver(dx, dy) {
+    this.mapInstance.moveOver(dx, dy);
   },
 
   layerChanged() {
