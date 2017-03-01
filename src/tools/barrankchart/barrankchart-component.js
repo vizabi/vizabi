@@ -282,8 +282,10 @@ const BarRankChart = Component.extend({
       infoElMargin,
     } = this.activeProfile;
 
-    this.height = +this.element.style("height").replace("px", "");
-    this.width = +this.element.style("width").replace("px", "");
+    this.height = parseInt(this.element.style("height"), 10) || 0;
+    this.width = parseInt(this.element.style("width"), 10) || 0;
+
+    if (!this.height || !this.width) return utils.warn("Dialog resize() abort: vizabi container is too little or has display:none");
 
     this.barViewport
       .style("height", `${this.height - margin.bottom - margin.top}px`);

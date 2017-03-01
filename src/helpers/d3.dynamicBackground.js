@@ -7,7 +7,7 @@ export default Class.extend({
 
   init(context, conditions) {
     this.context = context;
-    this.context.classed('vzb-dynamic-background', true);
+    this.context.classed("vzb-dynamic-background", true);
 
     this.width = 0;
     this.height = 0;
@@ -57,13 +57,13 @@ export default Class.extend({
   },
 
   resize(width, height, topOffset, leftOffset) {
-    [
-      this.width,
-      this.height
-    ] = [
-      width,
-      height
-    ].map(v => Number(String(v).replace("px", "")));
+    width = parseInt(width, 10) || 0;
+    height = parseInt(height, 10) || 0;
+
+    if (!width || !height) return utils.warn("DynamicBackground resize() abort: received ugly width/height parameters which may be because container is too little or has display:none");
+
+    this.width = width;
+    this.height = height;
 
     if (topOffset) {
       this.topOffset = topOffset;

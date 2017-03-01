@@ -87,12 +87,17 @@ const Dialog = Component.extend({
       const profile = this.getLayoutProfile();
 
       if (profile !== "small") {
-        const chartWidth = parseInt(this.rootEl.style("width"), 10);
+        const chartWidth = parseInt(this.rootEl.style("width"), 10) || 0;
+        const chartHeight = parseInt(this.rootEl.style("height"), 10) || 0;
+        const dialogWidth = parseInt(this.placeholderEl.style("width"), 10) || 0;
+        const dialogHeight = parseInt(this.placeholderEl.style("height"), 10) || 0;
+
+        if (!chartWidth || !chartHeight || !dialogWidth || !dialogHeight) {
+          return utils.warn("Dialog resize() abort: vizabi container is too little or has display:none");
+        }
+
         const dialogRight = parseInt(this.rightPos, 10);
-        const chartHeight = parseInt(this.rootEl.style("height"), 10);
         const dialogTop = parseInt(this.topPos, 10);
-        const dialogWidth = parseInt(this.placeholderEl.style("width"), 10);
-        const dialogHeight = parseInt(this.placeholderEl.style("height"), 10);
         const dialogRightMargin = parseInt(this.placeholderEl.style("margin-right"), 10) || 0;
         if (utils.isNumber(dialogRight) && dialogRight > chartWidth - dialogWidth - dialogRightMargin) {
           if (this.rightPos) {
