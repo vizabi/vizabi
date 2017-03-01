@@ -185,11 +185,11 @@ const SizeSlider = Component.extend({
     this.sliderEl
       .call(_this.brush);
 
-    this.sliderEl.selectAll("text").data([0, 0]).enter()
+    this.sliderLabelsWrapperEl = this.sliderEl.append("g");
+    this.sliderLabelsWrapperEl.selectAll("text").data([0, 0]).enter()
       .append("text")
       .attr("class", (d, i) => "vzb-szs-slider-thumb-label " + (i ? "e" : "w"))
-      .attr("dy", (-barWidth * 1.25) + "px")
-      .attr("text-anchor", (d, i) => 1 - i ? "start" : "end");
+      .attr("dy", (-barWidth * 1.25) + "px");
 
     this.sliderLabelsEl = this.sliderEl.selectAll("text.vzb-szs-slider-thumb-label");
 
@@ -215,7 +215,6 @@ const SizeSlider = Component.extend({
       _this._moveBrush(extent);
     });
 
-    this._updateSize();
     this._moveBrush(extent);
 
     _this.sizeScaleMinMax = _this.model.size.getScale().domain();
@@ -225,6 +224,12 @@ const SizeSlider = Component.extend({
     }
 
     if (_this.model._ready) this.modelReady();
+  },
+
+  ready() {
+    this.isRTL = this.model.locale.isRTL();
+    this._updateSize();
+    this._updateLabels();
   },
 
   getPropertyActiveProfile() {
@@ -245,20 +250,29 @@ const SizeSlider = Component.extend({
    * Executed whenever the container is resized
    */
   _updateSize() {
+    const isRTL = this.model.locale.isRTL();
+    const componentWidth = this.element.node().offsetWidth;
+
     this.sliderSvg
       .attr("height", this.propertyActiveProfile.max + this.padding.top + this.padding.bottom)
       .attr("width", "100%");
     this.sliderWrap
-      .attr("transform", "translate(" + this.padding.left + "," + (this.propertyActiveProfile.max + this.padding.top) + ")");
+      .attr("transform", isRTL ? "translate(" + (componentWidth - this.padding.right) + "," + (this.propertyActiveProfile.max + this.padding.top) + ") scale(-1,1)" :
+        "translate(" + this.padding.left + "," + (this.propertyActiveProfile.max + this.padding.top) + ")");
+    this.sliderLabelsWrapperEl
+      .attr("transform", isRTL ? "scale(-1,1)" : null);
+    this.sliderLabelsEl
+      .attr("text-anchor", (d, i) => (isRTL ? i : !i) ? "start" : "end");
   },
 
   _updateLabels(s) {
     const _this = this;
-    this.sliderLabelsEl.data(s)
+    if (s) { this.sliderLabelsEl.data(s); }
+    this.sliderLabelsEl
       .attr("transform", (d, i) => {
         const dX = _this.xScale(i);
         const dY = 0;//i ? -textMargin.v : 0;
-        return "translate(" + (dX) + "," + (dY) + ")";
+        return "translate(" + ((_this.isRTL ? -1 : 1) * dX) + "," + (dY) + ")";
       })
       .attr("font-size", (d, i) => _this.propertyScale(d));
     if (_this.model.size.use === "constant")
@@ -267,9 +281,9 @@ const SizeSlider = Component.extend({
 
   _setLabelsText() {
     const _this = this;
+    const texts = [_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[0]), _this.model.size.getTickFormatter()(_this.sizeScaleMinMax[1])];
     _this.sliderLabelsEl
-      .data([_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[0]), _this.model.size.getTickFormatter()(_this.sizeScaleMinMax[1])])
-      .text(d => d);
+      .text((d, i) => texts[i]);
   },
 
   /**
