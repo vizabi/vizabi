@@ -36,7 +36,7 @@ const Size = Dialog.extend({
       this.components.push({
         component: bubblesize,
         placeholder: ".vzb-dialog-bubblesize",
-        model: ["state.marker.size"],
+        model: ["state.marker.size", "locale"],
         ui: {
           show_button: false
         }
