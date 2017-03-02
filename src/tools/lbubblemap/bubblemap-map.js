@@ -9,6 +9,80 @@ const GoogleMapsLoader = require("google-maps");
 import mapboxgl from "mapbox-gl/dist/mapbox-gl.js";
 
 const MapLayer = Class.extend({
+  /**
+  * Map Instance initialization
+  * @param context tool object
+  * @param parent map factory instance
+  */
+  init(context, parent) {
+    console.warn("init method should be implemented in map instance");
+  },
+
+  /**
+   * Drawing map in their dom element
+  */
+  initMap() {
+    console.warn("initMap method should be implemented in map instance");
+  },
+
+  /**
+   * fit map to screen using ne-sw coordinates
+  */
+  rescaleMap() {
+    console.warn("rescaleMap method should be implemented in map instance");
+  },
+
+  /**
+   * Move map layer in pixels
+   * @param {Integer} x
+   * @param {Integer} y
+  */
+  moveOver(x, y) {
+    console.warn("moveOver method should be implemented in map instance");
+  },
+
+  /**
+   * return current canvas [[left, top], [right, bottom]]
+   * @return {Array} []
+  */
+  getCanvas() {
+    console.warn("getCanvas method should be implemented in map instance");
+    return [[0, 0], [0, 0]];
+  },
+
+  /**
+   * return map center {lat: lat, lng lng}
+   * @return {Object} {}
+  */
+  getCenter() {
+    console.warn("getCenter method should be implemented in map instance");
+    return { lat: 0, lng: 0 };
+  },
+
+  /**
+   * Translate lat, lon into x, y
+   * @param lon
+   * @param lat
+   * @return {Array} [x, y]
+  */
+  geo2Point(lon, lat) {
+    console.warn("geo2Point method should be implemented in map instance");
+    return [0, 0];
+  },
+
+  /**
+   * Translate x, y  into lat, lon
+   * @param x
+   * @param y
+   * @return {Array} [lon, lat]
+   */
+  point2Geo(x, y) {
+    console.warn("point2Geo method should be implemented in map instance");
+    return [0, 0];
+  }
+});
+
+const TopojsonLayer = MapLayer.extend({
   init(context, parent) {
     this.shapes = null;
     this.mapLands = [];
@@ -160,13 +234,12 @@ const MapLayer = Class.extend({
     return null;
   },
 
-  invert(x, y) {
-    return this.projection([x || 0, y || 0]);
+  geo2Point(lon, lat) {
+    return this.projection([lon || 0, lat || 0]);
   }
-
 });
 
-const GoogleMapLayer = Class.extend({
+const GoogleMapLayer = MapLayer.extend({
 
   init(context, parent) {
     this.context = context;
@@ -184,6 +257,10 @@ const GoogleMapLayer = Class.extend({
     return new Promise((resolve, reject) => {
       GoogleMapsLoader.load(google => {
         _this.map = new google.maps.Map(_this.mapCanvas.node(), {
+          draggable: false,
+          zoomControl: false,
+          scrollwheel: false,
+          disableDoubleClickZoom: true,
           disableDefaultUI: true,
           backgroundColor: "#FFFFFF",
           mapTypeId: _this.context.model.ui.map.mapLayer
@@ -223,16 +300,15 @@ const GoogleMapLayer = Class.extend({
   },
 
   rescaleMap() {
-
-    google.maps.event.trigger(this.map, "resize");
-
     const rectBounds = new google.maps.LatLngBounds(
         new google.maps.LatLng(this.context.model.ui.map.bounds.north, this.context.model.ui.map.bounds.west),
         new google.maps.LatLng(this.context.model.ui.map.bounds.south, this.context.model.ui.map.bounds.east)
     );
     this.map.fitBounds(rectBounds);
+    google.maps.event.trigger(this.map, "resize");
   },
-  invert(x, y) {
+
+  geo2Point(x, y) {
     const projection = this.overlay.getProjection();
     if (!projection) {
       return [0, 0];
@@ -241,16 +317,19 @@ const GoogleMapLayer = Class.extend({
     return [coords.x, coords.y];
   },
 
-  moveOver(x, y) {
+  point2Geo(x, y) {
+    const projection = this.map.getProjection();
+    const ne = this.map.getBounds().getNorthEast();
+    const sw = this.map.getBounds().getSouthWest();
+    const topRight = projection.fromLatLngToPoint(ne);
+    const bottomLeft = projection.fromLatLngToPoint(sw);
     const scale = Math.pow(2, this.map.getZoom());
-    const pointDiff = new google.maps.Point(x / scale, y / scale);
-    this.context.model.ui.map.bounds = {
-      west: this.context.model.ui.map.bounds.west - pointDiff.x,
-      north: this.context.model.ui.map.bounds.north + pointDiff.y,
-      east: this.context.model.ui.map.bounds.east - pointDiff.x,
-      south: this.context.model.ui.map.bounds.south + pointDiff.y
-    };
-    this.rescaleMap();
+    const point = projection.fromPointToLatLng(new google.maps.Point(x / scale + bottomLeft.x, y / scale + topRight.y));
+    return [point.lng(), point.lat()];
+  },
+
+  moveOver(x, y) {
+    this.map.panBy(-x, -y);
   },
 
   getZoom() {
@@ -259,19 +338,18 @@ const GoogleMapLayer = Class.extend({
 
   getCanvas() {
     return [
-      this.invert(this.context.model.ui.map.bounds.west, this.context.model.ui.map.bounds.north),
-      this.invert(this.context.model.ui.map.bounds.east, this.context.model.ui.map.bounds.south)
+      this.geo2Point(this.context.model.ui.map.bounds.west, this.context.model.ui.map.bounds.north),
+      this.geo2Point(this.context.model.ui.map.bounds.east, this.context.model.ui.map.bounds.south)
     ];
   },
 
   getCenter() {
     const center = this.map.getCenter();
-    this.centerMapker.setPosition(center);
     return { lat: center.lat(), lng: center.lng() };
   }
 });
 
-const MapboxLayer = Class.extend({
+const MapboxLayer = MapLayer.extend({
 
   init(context, parent) {
     mapboxgl.accessToken = "pk.eyJ1Ijoic2VyZ2V5ZiIsImEiOiJjaXlqeWo5YnYwMDBzMzJwZnlwZXJ2bnA2In0.e711ku9KzcFW_x5wmOZTag";
@@ -279,7 +357,7 @@ const MapboxLayer = Class.extend({
     this.parent = parent;
   },
 
-  initMap(domSelector) {
+  initMap() {
     const _this = this;
     this.mapCanvas = this.parent.mapRoot;
     return new Promise((resolve, reject) => {
@@ -317,7 +395,14 @@ const MapboxLayer = Class.extend({
     });
   },
 
+  getCenter() {
+    const center = this.map.getCenter();
+    return { lat: center.lat, lng: center.lng };
+  },
+
   moveOver(dx, dy) {
+    this.map.panBy([-dx, -dy], { duration: 0 });
+/*
     const zeroPoint = this.map.unproject([0, 0]);
     const newPoint = this.map.unproject([dx, dy]);
     this.context.model.ui.map.bounds = {
@@ -327,6 +412,7 @@ const MapboxLayer = Class.extend({
       south: this.context.model.ui.map.bounds.south + (zeroPoint.lat - newPoint.lat)
     };
     this.rescaleMap();
+*/
   },
 
   updateLayer() {
@@ -337,15 +423,21 @@ const MapboxLayer = Class.extend({
 
   getCanvas() {
     return [
-      this.invert(this.context.model.ui.map.bounds.west, this.context.model.ui.map.bounds.north),
-      this.invert(this.context.model.ui.map.bounds.east, this.context.model.ui.map.bounds.south)
+      this.geo2Point(this.context.model.ui.map.bounds.west, this.context.model.ui.map.bounds.north),
+      this.geo2Point(this.context.model.ui.map.bounds.east, this.context.model.ui.map.bounds.south)
     ];
   },
 
-  invert(x, y) {
-    const coords = this.map.project([x, y]);
+  geo2Point(lon, lat) {
+    const coords = this.map.project([lon, lat]);
     return [coords.x, coords.y];
+  },
+
+  point2Geo(x, y) {
+    const geo = this.map.unproject([x, y]);
+    return [geo.lng, geo.lat];
   }
+
 
 });
 
@@ -353,6 +445,7 @@ export default Class.extend({
   init(context, domSelector) {
     this.context = context;
     this.domSelector = domSelector;
+    this.zooming = false;
     this.topojsonMap = null;
     this.keys = {};
     this.mapEngine = this.context.model.ui.map.mapEngine;
@@ -403,12 +496,54 @@ export default Class.extend({
           break;
       }
       if (this.mapInstance) {
-        this.topojsonMap = new MapLayer(this.context, this);
+        if (this.context.model.ui.map.topojsonLayer) {
+          this.topojsonMap = new TopojsonLayer(this.context, this);
+        }
       } else {
-        this.mapInstance = new MapLayer(this.context, this);
+        this.topojsonMap = new TopojsonLayer(this.context, this);
       }
       return this;
     }
+  },
+
+  _getCenter() {
+    if (this.mapInstance) {
+      return this.mapInstance.getCenter();
+    }
+    return this.topojsonMap.getCenter();
+  },
+
+  panStarted() {
+    this.zooming = true;
+    if (this.topojsonMap) {
+      this.topojsonMap.mapGraph
+        .transition()
+        .duration(300)
+        .style("opacity", 0);
+    } 
+    this.canvasBefore = this.mapInstance.getCanvas();
+  },
+
+  panFinished() {
+    const nw = this.point2Geo(this.canvasBefore[0][0], this.canvasBefore[0][1]);
+    const se = this.point2Geo(this.canvasBefore[1][0], this.canvasBefore[1][1]);
+    this.context.model.ui.map.bounds = {
+      west: nw[0],
+      north: nw[1],
+      east: se[0],
+      south: se[1]
+    };
+    this.zooming = false;
+    if (this.mapInstance) {
+      this.mapInstance.rescaleMap();
+    } else {
+      this.topojsonMap.rescaleMap();
+    }
+    this.topojsonMap.mapGraph
+      .transition()
+      .duration(300)
+      .style("opacity", 1);
+
   },
 
   moveOver(dx, dy) {
@@ -464,10 +599,12 @@ export default Class.extend({
   },
 
   boundsChanged() {
-    if (this.topojsonMap) {
-      this.topojsonMap.rescaleMap(this.mapInstance.getCanvas());
+    if (!this.zooming) {
+      if (this.topojsonMap) {
+        this.topojsonMap.rescaleMap(this.mapInstance.getCanvas());
+      }
+      this.context.mapBoundsChanged();
     }
-    this.context.mapBoundsChanged();
   },
 
   centroid(key) {
@@ -477,11 +614,18 @@ export default Class.extend({
     return null;
   },
 
-  invert(x, y) {
+  point2Geo(lon, lat) {
     if (this.mapInstance) {
-      return this.mapInstance.invert(x, y);
+      return this.mapInstance.point2Geo(lon, lat);
     }
-    return this.topojsonMap.invert(x, y);
+    return this.topojsonMap.point2Geo(lon, lat);
+  },
+
+  geo2Point(x, y) {
+    if (this.mapInstance) {
+      return this.mapInstance.geo2Point(x, y);
+    }
+    return this.topojsonMap.geo2Point(x, y);
   }
 
 });

@@ -182,16 +182,48 @@ const LBubbleMapComponent = Component.extend({
 
     const mapDragger = d3.drag()
       .on("start", (d, i) => {
-        if (_this.model.ui.cursorMode == "hand")
+        if (_this.model.ui.cursorMode == "hand") {
+          this.graph.select("." + this._labels.options.LABELS_CONTAINER_CLASS)
+            .transition()
+            .duration(300)
+            .style("opacity", 0);
+          this.graph.select("." + this._labels.options.LINES_CONTAINER_CLASS)
+            .transition()
+            .duration(300)
+            .style("opacity", 0);
+          this.bubbleContainer
+            .transition()
+            .duration(300)
+            .style("opacity", 0);
+
+          _this.map.panStarted();
           _this.chartSvg.classed("vzb-zooming", true);
+        }
       })
       .on("drag", (d, i) => {
-        if (_this.model.ui.cursorMode == "hand")
+        if (_this.model.ui.cursorMode == "hand") {
           _this.map.moveOver(d3.event.dx, d3.event.dy);
+        }
       })
       .on("end", (d, i) => {
-        if (_this.model.ui.cursorMode == "hand")
+        if (_this.model.ui.cursorMode == "hand") {
+          _this.map.panFinished();
+
+          this.graph.select("." + this._labels.options.LABELS_CONTAINER_CLASS)
+            .transition()
+            .duration(300)
+            .style("opacity", 1);
+          this.graph.select("." + this._labels.options.LINES_CONTAINER_CLASS)
+            .transition()
+            .duration(300)
+            .style("opacity", 1);
+          this.bubbleContainer
+            .transition()
+            .duration(300)
+            .style("opacity", 1);
+
           _this.chartSvg.classed("vzb-zooming", false);
+        }
       });
 
     this.element.call(mapDragger);
