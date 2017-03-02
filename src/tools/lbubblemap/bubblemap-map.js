@@ -563,6 +563,7 @@ export default Class.extend({
       this.initMap().then(
         map => {
           this.rescaleMap();
+          this.updateColors();
         });
     }
   },
