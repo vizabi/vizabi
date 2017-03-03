@@ -117,6 +117,7 @@ const BarRankChart = Component.extend({
     this.xAxis.tickFormat(this.model.marker.axis_x.getTickFormatter());
 
     this._localeId = this.model.locale.id;
+    this._entityLabels = {};
     this._presentation = !this.model.ui.presentation;
     this._formatter = this.model.marker.axis_x.getTickFormatter();
 
@@ -373,12 +374,6 @@ const BarRankChart = Component.extend({
   },
 
   drawData(duration = 0, force = false) {
-    const localeChanged = this._localeId !== this.model.locale.id;
-    if (force || localeChanged) {
-      this._localeId = this.model.locale.id;
-      this.barContainer.selectAll(".vzb-br-bar").remove();
-    }
-
     // update the shown bars for new data-set
     this._createAndDeleteBars(
       this.barContainer.selectAll(".vzb-br-bar")
@@ -521,52 +516,70 @@ const BarRankChart = Component.extend({
   _createAndDeleteBars(updatedBars) {
     const _this = this;
 
+    // TODO: revert this commit after fixing https://github.com/vizabi/vizabi/issues/2450
+    const [entity] = this.sortedEntities;
+    if (!this._entityLabels[entity.entity]) {
+      this._entityLabels[entity.entity] = entity.label;
+    }
+
+    const localeChanged = this._entityLabels[entity.entity] !== this.values.label[entity.entity]
+      && this.model.locale.id !== this._localeId;
+
+    if (localeChanged) {
+      this._localeId = this.model.locale.id;
+      this._entityLabels[entity.entity] = this.values.label[entity.entity];
+    }
+
     // remove groups for entities that are gone
     updatedBars.exit().remove();
 
     // make the groups for the entities which were not drawn yet (.data.enter() does this)
-    updatedBars = updatedBars.enter()
-      .append("g")
+    updatedBars = (localeChanged ? updatedBars : updatedBars.enter().append("g"))
       .each(function(d) {
         const self = d3.select(this);
 
-        self
-          .attr("class", "vzb-br-bar")
-          .classed("vzb-selected", _this.model.marker.isSelected(d))
-          .attr("id", `vzb-br-bar-${d.entity}-${_this._id}`)
-          .on("mousemove", d => _this.model.marker.highlightMarker(d))
-          .on("mouseout", () => _this.model.marker.clearHighlighted())
-          .on("click", d => {
-            _this.model.marker.selectMarker(d);
-          });
-
-        const barRect = self.append("rect")
-          .attr("stroke", "transparent");
-
         const labelFull = _this.values.label[d.entity];
         const labelSmall = labelFull.length < 12 ? labelFull : `${labelFull.substring(0, 9)}...`;
-        const barLabel = self.append("text")
+        const barLabel = (d.barLabel || self.append("text"))
           .attr("class", "vzb-br-label")
           .attr("dy", ".325em");
 
         const labelFullWidth = barLabel.text(labelFull).node().getBBox().width;
         const labelSmallWidth = barLabel.text(labelSmall).node().getBBox().width;
 
-        const barValue = self.append("text")
-          .attr("class", "vzb-br-value")
-          .attr("dy", ".325em");
-
         Object.assign(d, {
-          self,
-          barRect,
-          barLabel,
-          barValue,
-          isNew: true,
           labelFullWidth,
           labelSmallWidth,
           labelFull,
           labelSmall,
+          barLabel,
         });
+
+        if (!localeChanged) {
+          self
+            .attr("class", "vzb-br-bar")
+            .classed("vzb-selected", _this.model.marker.isSelected(d))
+            .attr("id", `vzb-br-bar-${d.entity}-${_this._id}`)
+            .on("mousemove", d => _this.model.marker.highlightMarker(d))
+            .on("mouseout", () => _this.model.marker.clearHighlighted())
+            .on("click", d => {
+              _this.model.marker.selectMarker(d);
+            });
+
+          const barRect = self.append("rect")
+            .attr("stroke", "transparent");
+
+          const barValue = self.append("text")
+            .attr("class", "vzb-br-value")
+            .attr("dy", ".325em");
+
+          Object.assign(d, {
+            self,
+            isNew: true,
+            barRect,
+            barValue,
+          });
+        }
       })
       .merge(updatedBars);
   },
@@ -640,11 +653,13 @@ const BarRankChart = Component.extend({
     return Object.keys(values).map(entity => {
       const cached = this._entities[entity];
       const value = values[entity];
+      const label = this.values.label[entity];
       const formattedValue = this._formatter(value);
 
       if (cached) {
         return Object.assign(cached, {
           value,
+          label,
           formattedValue,
           changedValue: formattedValue !== cached.formattedValue,
           changedWidth: value !== cached.value,
