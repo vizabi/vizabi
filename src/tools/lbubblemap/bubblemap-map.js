@@ -213,7 +213,7 @@ const TopojsonLayer = MapLayer.extend({
     }
     // translate projection to the middle of map
     this.projection
-      .translate([canvas[0][0] - (currentNW[0] * scaleDelta) + mapLeftOffset, canvas[0][1] - (currentNW[1] * scaleDelta) + mapTopOffset])
+      .translate([canvas[0][0] - (currentNW[0] * scaleDelta) + mapLeftOffset - margin.left, canvas[0][1] - (currentNW[1] * scaleDelta) + mapTopOffset - margin.top])
       .scale(scaleDelta)
       .precision(0.1);
 
