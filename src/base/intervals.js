@@ -25,7 +25,14 @@ const Intervals = Class.extend({
    * @param {String} name name of interval to be removed
    */
   clearInterval(name) {
-    return name ? clearInterval(this.intervals[name]) : this.clearAllIntervals();
+    if (name) {
+      if (this.intervals[name]) {
+        clearInterval(this.intervals[name]);
+        delete this.intervals[name];
+      }
+    } else { 
+      this.clearAllIntervals(); 
+    }
   },
 
   /**
