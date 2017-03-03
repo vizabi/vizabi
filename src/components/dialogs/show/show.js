@@ -46,6 +46,7 @@ const Show = Dialog.extend({
 
     //make sure it refreshes when all is reloaded
     this.root.on("ready", () => {
+      _this.KEY = _this.model.state.entities.getDimension();
       _this.redraw();
     });
   },
@@ -59,6 +60,7 @@ const Show = Dialog.extend({
 
   ready() {
     this._super();
+    this.KEY = this.model.state.entities.getDimension();
     this.redraw();
     utils.preventAncestorScrolling(this.element.select(".vzb-dialog-scrollable"));
 
@@ -68,6 +70,11 @@ const Show = Dialog.extend({
 
     const _this = this;
     this.translator = this.model.locale.getTFunction();
+
+    if (!this.KEY) {
+      _this.list.html("");
+      return;
+    }
 
     this.model.state.marker_allpossible.getFrame(this.model.state.time.value, values => {
       if (!values) return;
