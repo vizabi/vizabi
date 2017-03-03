@@ -60,6 +60,14 @@ const MapLayer = Class.extend({
   },
 
   /**
+   * @param {Array} center
+   * @param {bool} increment increase zoom if true
+   */
+  zoomMap(center, increment) {
+    console.warn("zoomMap method should be implemented in map instance");
+  },
+
+  /**
    * Translate lat, lon into x, y
    * @param lon
    * @param lat
@@ -301,12 +309,26 @@ const GoogleMapLayer = MapLayer.extend({
 
   rescaleMap() {
     const rectBounds = new google.maps.LatLngBounds(
-        new google.maps.LatLng(this.context.model.ui.map.bounds.north, this.context.model.ui.map.bounds.west),
-        new google.maps.LatLng(this.context.model.ui.map.bounds.south, this.context.model.ui.map.bounds.east)
+      new google.maps.LatLng(this.context.model.ui.map.bounds.north, this.context.model.ui.map.bounds.west),
+      new google.maps.LatLng(this.context.model.ui.map.bounds.south, this.context.model.ui.map.bounds.east)
     );
     this.map.fitBounds(rectBounds);
     google.maps.event.trigger(this.map, "resize");
   },
+
+  zoomMap(center, increment) {
+    const _this = this;
+    return new Promise((resolve, reject) => {
+      _this.map.panTo({ lat: center[1], lng: center[0] });
+      google.maps.event.addListenerOnce(_this.map, "idle", () => {
+        google.maps.event.addListenerOnce(_this.map, "zoom_changed", () => {
+          resolve();
+        });
+        _this.map.setZoom(_this.map.getZoom() + 1 * increment);
+      });
+    });
+  },
+
 
   geo2Point(x, y) {
     const projection = this.overlay.getProjection();
@@ -402,17 +424,21 @@ const MapboxLayer = MapLayer.extend({
 
   moveOver(dx, dy) {
     this.map.panBy([-dx, -dy], { duration: 0 });
-/*
-    const zeroPoint = this.map.unproject([0, 0]);
-    const newPoint = this.map.unproject([dx, dy]);
-    this.context.model.ui.map.bounds = {
-      west: this.context.model.ui.map.bounds.west + (zeroPoint.lng - newPoint.lng),
-      north: this.context.model.ui.map.bounds.north + (zeroPoint.lat - newPoint.lat),
-      east: this.context.model.ui.map.bounds.east + (zeroPoint.lng - newPoint.lng),
-      south: this.context.model.ui.map.bounds.south + (zeroPoint.lat - newPoint.lat)
-    };
-    this.rescaleMap();
-*/
+  },
+
+  zoomMap(center, increment) {
+    const _this = this;
+    return new Promise((resolve, reject) => {
+      this.map.panTo(center, {
+        duration: 300,
+        zoom: _this.map.getZoom() + 1 * increment
+      });
+      utils.delay(300).then(
+          () => {
+            resolve();
+          }
+      );
+    });
   },
 
   updateLayer() {
@@ -515,12 +541,7 @@ export default Class.extend({
 
   panStarted() {
     this.zooming = true;
-    if (this.topojsonMap) {
-      this.topojsonMap.mapGraph
-        .transition()
-        .duration(300)
-        .style("opacity", 0);
-    } 
+    this._hideTopojson(300);
     this.canvasBefore = this.mapInstance.getCanvas();
   },
 
@@ -539,11 +560,7 @@ export default Class.extend({
     } else {
       this.topojsonMap.rescaleMap();
     }
-    this.topojsonMap.mapGraph
-      .transition()
-      .duration(300)
-      .style("opacity", 1);
-
+    this._showTopojson(300);
   },
 
   moveOver(dx, dy) {
@@ -599,6 +616,57 @@ export default Class.extend({
     }
   },
 
+  _hideTopojson(duration) {
+    if (this.topojsonMap) {
+      this.topojsonMap.mapGraph
+        .transition()
+        .duration(duration)
+        .style("opacity", 0);
+    }
+  },
+
+  _showTopojson(duration) {
+    if (this.topojsonMap) {
+      this.topojsonMap.mapGraph
+        .transition()
+        .duration(duration)
+        .style("opacity", duration);
+    }
+  },
+
+  /**
+   * @param {Array} center
+   * @param {Integer} increment increase zoom if 1 decrease if -1
+   */
+  zoomMap(center, increment) {
+    const _this = this;
+    const geoCenter = this.point2Geo(center[0], center[1]);
+    this.canvasBefore = this.mapInstance.getCanvas();
+    this.zooming = true;
+    this._hideTopojson(100);
+    if (this.mapInstance) {
+      return this.mapInstance.zoomMap(geoCenter, increment).then(
+        bounds => {
+          const nw = this.point2Geo(this.canvasBefore[0][0], this.canvasBefore[0][1]);
+          const se = this.point2Geo(this.canvasBefore[1][0], this.canvasBefore[1][1]);
+          _this.context.model.ui.map.bounds = {
+            west: nw[0],
+            north: nw[1],
+            east: se[0],
+            south: se[1]
+          };
+          this.zooming = false;
+          if (_this.mapInstance) {
+            _this.mapInstance.rescaleMap();
+          } else {
+            _this.topojsonMap.rescaleMap();
+          }
+          this._showTopojson(300);
+        }
+      );
+    }
+  },
+
   boundsChanged() {
     if (!this.zooming) {
       if (this.topojsonMap) {
@@ -615,18 +683,18 @@ export default Class.extend({
     return null;
   },
 
-  point2Geo(lon, lat) {
+  point2Geo(x, y) {
     if (this.mapInstance) {
-      return this.mapInstance.point2Geo(lon, lat);
+      return this.mapInstance.point2Geo(x, y);
     }
-    return this.topojsonMap.point2Geo(lon, lat);
+    return this.topojsonMap.point2Geo(x, y);
   },
 
-  geo2Point(x, y) {
+  geo2Point(lon, lat) {
     if (this.mapInstance) {
-      return this.mapInstance.geo2Point(x, y);
+      return this.mapInstance.geo2Point(lon, lat);
     }
-    return this.topojsonMap.geo2Point(x, y);
+    return this.topojsonMap.geo2Point(lon, lat);
   }
 
 });

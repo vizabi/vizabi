@@ -183,19 +183,7 @@ const LBubbleMapComponent = Component.extend({
     const mapDragger = d3.drag()
       .on("start", (d, i) => {
         if (_this.model.ui.cursorMode == "hand") {
-          this.graph.select("." + this._labels.options.LABELS_CONTAINER_CLASS)
-            .transition()
-            .duration(300)
-            .style("opacity", 0);
-          this.graph.select("." + this._labels.options.LINES_CONTAINER_CLASS)
-            .transition()
-            .duration(300)
-            .style("opacity", 0);
-          this.bubbleContainer
-            .transition()
-            .duration(300)
-            .style("opacity", 0);
-
+          _this._hideEntities(300);
           _this.map.panStarted();
           _this.chartSvg.classed("vzb-zooming", true);
         }
@@ -208,26 +196,58 @@ const LBubbleMapComponent = Component.extend({
       .on("end", (d, i) => {
         if (_this.model.ui.cursorMode == "hand") {
           _this.map.panFinished();
-
-          this.graph.select("." + this._labels.options.LABELS_CONTAINER_CLASS)
-            .transition()
-            .duration(300)
-            .style("opacity", 1);
-          this.graph.select("." + this._labels.options.LINES_CONTAINER_CLASS)
-            .transition()
-            .duration(300)
-            .style("opacity", 1);
-          this.bubbleContainer
-            .transition()
-            .duration(300)
-            .style("opacity", 1);
-
+          _this._showEntities(300);
           _this.chartSvg.classed("vzb-zooming", false);
         }
       });
 
     this.element.call(mapDragger);
+    this.element
+      .on("click", () => {
+        const cursor = _this.model.ui.cursorMode;
+        if (cursor !== "arrow" && cursor !== "hand") {
+          const mouse = d3.mouse(_this.element.node());
+          _this._hideEntities(100);
+          _this.map.zoomMap(mouse, (cursor == "plus" ? 1 : -1)).then(
+              () => {
+                _this._showEntities(300);
+              }
+          );
+        }
+      });
   },
+
+  _hideEntities(duration) {
+    this.graph.select("." + this._labels.options.LABELS_CONTAINER_CLASS)
+      .transition()
+      .duration(duration)
+      .style("opacity", 0);
+    this.graph.select("." + this._labels.options.LINES_CONTAINER_CLASS)
+      .transition()
+      .duration(duration)
+      .style("opacity", 0);
+    this.bubbleContainer
+      .transition()
+      .duration(duration)
+      .style("opacity", 0);
+  },
+
+  _showEntities(duration) {
+    this.graph.select("." + this._labels.options.LABELS_CONTAINER_CLASS)
+      .transition()
+      .duration(duration)
+      .style("opacity", 1);
+    this.graph.select("." + this._labels.options.LINES_CONTAINER_CLASS)
+      .transition()
+      .duration(duration)
+      .style("opacity", 1);
+    this.bubbleContainer
+      .transition()
+      .duration(duration)
+      .style("opacity", 1);
+
+  },
+
 
   /*
    * Both model and DOM are ready
@@ -538,15 +558,15 @@ const LBubbleMapComponent = Component.extend({
     this.entityBubbles = this.entityBubbles.enter().append("circle")
         .attr("class", "vzb-bmc-bubble")
         .on("mouseover", (d, i) => {
-          if (utils.isTouchDevice()) return;
+          if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
           _this._interact()._mouseover(d, i);
         })
         .on("mouseout", (d, i) => {
-          if (utils.isTouchDevice()) return;
+          if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
           _this._interact()._mouseout(d, i);
         })
         .on("click", (d, i) => {
-          if (utils.isTouchDevice()) return;
+          if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
           _this._interact()._click(d, i);
           _this.highlightMarkers();
         })
