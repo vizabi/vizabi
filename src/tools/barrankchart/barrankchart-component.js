@@ -201,6 +201,8 @@ const BarRankChart = Component.extend({
       _this.parent.findChildByName("gapminder-datanotes").hide();
     });
 
+    this.barViewport
+      .on("scroll", () => this.drawData(0, false, true));
   },
 
   draw(force = false) {
@@ -372,13 +374,7 @@ const BarRankChart = Component.extend({
     this._updateDoubtOpacity();
   },
 
-  drawData(duration = 0, force = false) {
-    const localeChanged = this._localeId !== this.model.locale.id;
-    if (force || localeChanged) {
-      this._localeId = this.model.locale.id;
-      this.barContainer.selectAll(".vzb-br-bar").remove();
-    }
-
+  drawData(duration = 0, force = false, scroll = false) {
     // update the shown bars for new data-set
     this._createAndDeleteBars(
       this.barContainer.selectAll(".vzb-br-bar")
@@ -451,42 +447,44 @@ const BarRankChart = Component.extend({
       (barX - barValueMargin);
 
     const isLabelBig = (this._getWidestLabelWidth(true) + (ltr ? margin.left : margin.right)) < shift;
+    const isBarVisible = this._getIsBarVisible();
     this.sortedEntities.forEach(bar => {
-      const { value } = bar;
+      if (force || isBarVisible(bar)) {
+        if (force || scroll || presentationModeChanged || bar.isNew) {
+          bar.barLabel
+            .attr("x", labelX)
+            .attr("y", this.activeProfile.barHeight / 2)
+            .attr("text-anchor", labelAnchor)
+            .text(isLabelBig ? bar.labelFull : bar.labelSmall);
 
-      if (force || presentationModeChanged || bar.isNew) {
-        bar.barLabel
-          .attr("x", labelX)
-          .attr("y", this.activeProfile.barHeight / 2)
-          .attr("text-anchor", labelAnchor)
-          .text(isLabelBig ? bar.labelFull : bar.labelSmall);
-
-        bar.barRect
-          .attr("rx", this.activeProfile.barHeight / 4)
-          .attr("ry", this.activeProfile.barHeight / 4)
-          .attr("height", this.activeProfile.barHeight);
-
-        bar.barValue
-          .attr("x", valueX)
-          .attr("y", this.activeProfile.barHeight / 2)
-          .attr("text-anchor", valueAnchor);
-      }
-
-      if (force || bar.changedWidth || presentationModeChanged) {
-        const width = Math.max(0, value && barWidth(Math.abs(value)));
-
-        if (force || bar.changedWidth || presentationModeChanged) {
           bar.barRect
-            .transition().duration(duration).ease(d3.easeLinear)
-            .attr("width", width);
+            .attr("rx", this.activeProfile.barHeight / 4)
+            .attr("ry", this.activeProfile.barHeight / 4)
+            .attr("height", this.activeProfile.barHeight);
+
+          bar.barValue
+            .attr("x", valueX)
+            .attr("y", this.activeProfile.barHeight / 2)
+            .attr("text-anchor", valueAnchor);
         }
 
-        bar.barRect
-          .attr("x", barX - (value < 0 ? width : 0));
+        if (force || scroll || bar.changedWidth || presentationModeChanged) {
+          const { value } = bar;
+          const width = Math.max(0, value && barWidth(Math.abs(value)));
 
-        if (force || bar.changedValue) {
-          bar.barValue
-            .text(this._formatter(value) || this.translator("hints/nodata"));
+          if (force || scroll || bar.changedWidth || presentationModeChanged) {
+            bar.barRect
+              .transition().duration(duration).ease(d3.easeLinear)
+              .attr("width", width);
+          }
+
+          bar.barRect
+            .attr("x", barX - (value < 0 ? width : 0));
+
+          if (force || scroll || bar.changedValue) {
+            bar.barValue
+              .text(this._formatter(value) || this.translator("hints/nodata"));
+          }
         }
       }
 
@@ -513,60 +511,68 @@ const BarRankChart = Component.extend({
       const height = this.height - margin.top - margin.bottom;
 
       const scrollTo = yPos - (height + this.activeProfile.barHeight) / 2;
-      this.barViewport.transition().duration(duration)
+      this.barViewport
+        .transition().duration(duration)
         .tween("scrollfor" + d.entity, this._scrollTopTween(scrollTo));
     }
   },
 
   _createAndDeleteBars(updatedBars) {
     const _this = this;
-
+    const localeChanged = this._localeId !== this.model.locale.id;
+    if (localeChanged) {
+      this._localeId = this.model.locale.id;
+    }
     // remove groups for entities that are gone
     updatedBars.exit().remove();
 
     // make the groups for the entities which were not drawn yet (.data.enter() does this)
-    updatedBars = updatedBars.enter()
-      .append("g")
+    updatedBars = (localeChanged ? updatedBars : updatedBars.enter().append("g"))
       .each(function(d) {
         const self = d3.select(this);
 
-        self
-          .attr("class", "vzb-br-bar")
-          .classed("vzb-selected", _this.model.marker.isSelected(d))
-          .attr("id", `vzb-br-bar-${d.entity}-${_this._id}`)
-          .on("mousemove", d => _this.model.marker.highlightMarker(d))
-          .on("mouseout", () => _this.model.marker.clearHighlighted())
-          .on("click", d => {
-            _this.model.marker.selectMarker(d);
-          });
-
-        const barRect = self.append("rect")
-          .attr("stroke", "transparent");
-
         const labelFull = _this.values.label[d.entity];
         const labelSmall = labelFull.length < 12 ? labelFull : `${labelFull.substring(0, 9)}...`;
-        const barLabel = self.append("text")
+        const barLabel = (d.barLabel || self.append("text"))
           .attr("class", "vzb-br-label")
           .attr("dy", ".325em");
 
         const labelFullWidth = barLabel.text(labelFull).node().getBBox().width;
         const labelSmallWidth = barLabel.text(labelSmall).node().getBBox().width;
 
-        const barValue = self.append("text")
-          .attr("class", "vzb-br-value")
-          .attr("dy", ".325em");
-
         Object.assign(d, {
-          self,
-          barRect,
-          barLabel,
-          barValue,
-          isNew: true,
           labelFullWidth,
           labelSmallWidth,
           labelFull,
           labelSmall,
         });
+
+        if (!localeChanged) {
+          self
+            .attr("class", "vzb-br-bar")
+            .classed("vzb-selected", _this.model.marker.isSelected(d))
+            .attr("id", `vzb-br-bar-${d.entity}-${_this._id}`)
+            .on("mousemove", d => _this.model.marker.highlightMarker(d))
+            .on("mouseout", () => _this.model.marker.clearHighlighted())
+            .on("click", d => {
+              _this.model.marker.selectMarker(d);
+            });
+
+          const barRect = self.append("rect")
+            .attr("stroke", "transparent");
+
+          const barValue = self.append("text")
+            .attr("class", "vzb-br-value")
+            .attr("dy", ".325em");
+
+          Object.assign(d, {
+            self,
+            isNew: true,
+            barRect,
+            barValue,
+            barLabel,
+          });
+        }
       })
       .merge(updatedBars);
   },
@@ -623,15 +629,24 @@ const BarRankChart = Component.extend({
 
   _scrollTopTween(scrollTop) {
     return function() {
-      const node = this, i = d3.interpolateNumber(this.scrollTop, scrollTop);
-      return function(t) {
-        node.scrollTop = i(t);
-      };
+      const i = d3.interpolateNumber(this.scrollTop, scrollTop);
+      return t => this.scrollTop = i(t);
     };
   },
 
   _getBarPosition(i) {
     return (this.activeProfile.barHeight + this.activeProfile.barMargin) * i;
+  },
+
+  _getIsBarVisible() {
+    const { margin, barHeight } = this.activeProfile;
+    const currentTop = this.barViewport.node().scrollTop;
+    const currentBottom = currentTop + (this.height - margin.top - margin.bottom);
+
+    return bar => {
+      const y = this._getBarPosition(bar.index);
+      return !(y + barHeight < currentTop || y > currentBottom);
+    };
   },
 
   _entities: {},
