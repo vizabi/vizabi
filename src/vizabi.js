@@ -6,6 +6,7 @@ import Model from "base/model";
 import Reader from "base/reader";
 import Events from "base/events";
 import globals from "base/globals";
+import * as iconset from "base/iconset";
 
 const Vzb = function(name, placeholder, external_model) {
   const tool = Tool.get(name);
@@ -50,6 +51,9 @@ utils.forEach(components, (component, name) => {
   Component.register(name, component);
 });
 
+
+Vzb.helpers = requireAll(require.context('helpers', false, /\.js$/));
+Vzb.iconset = iconset;
 
 //d3 addons
 
