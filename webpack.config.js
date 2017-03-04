@@ -42,7 +42,7 @@ const stats = {
 function AfterBuildPlugin(callback) {
   this.callback = callback;
 }
-AfterBuildPlugin.prototype.apply = function (compiler) {
+AfterBuildPlugin.prototype.apply = function(compiler) {
   compiler.plugin('done', this.callback);
 };
 
@@ -61,32 +61,33 @@ const plugins = [
   extractSrc,
   extractPreview,
   new CopyWebpackPlugin([
+    //   {
+    //     from: '.data/',
+    //     to: 'preview/data/'
+    //   },
+    //   {
+    //     from: 'preview/assets/js/',
+    //     to: 'preview/assets/js/'
+    //   },
+    // TODO: replace with file-loader
     {
-      from: '.data/',
-      to: 'preview/data/'
-    },
-    {
-      from: 'preview/assets/js/',
-      to: 'preview/assets/js/'
-    },
-    {
-      from: 'src/assets/translation/',
-      to: 'preview/assets/translation/'
+      from: path.resolve(__dirname, 'src', 'assets', 'translation'),
+      to: path.resolve(__dirname, 'build', 'dist', 'assets', 'translation'),
     }
   ]),
-  new CopyWebpackPlugin([
-    {
-      from: 'src/assets/translation/',
-      to: 'dist/assets/translation/'
-    },
-    {
-      from: 'src/assets/cursors/',
-      to: 'dist/assets/cursors/'
-    }
-  ]),
-  new OpenBrowserPlugin({
-    url: 'http://localhost:8080/preview/'
-  }),
+  // new CopyWebpackPlugin([
+  //   {
+  //     from: 'src/assets/translation/',
+  //     to: 'dist/assets/translation/'
+  //   },
+  //   {
+  //     from: 'src/assets/cursors/',
+  //     to: 'dist/assets/cursors/'
+  //   }
+  // ]),
+  // new OpenBrowserPlugin({
+  //   url: 'http://localhost:8080/preview/'
+  // }),
   new SassLintPlugin({
     quiet: false,
     syntax: 'scss',
@@ -271,8 +272,8 @@ module.exports = {
   devtool: 'source-map',
 
   entry: {
-    'dist/vizabi': './src/vizabi-gapminder',
-    'preview': './preview/index'
+    'dist/vizabi': path.resolve(__dirname, 'src', 'vizabi-gapminder'),
+    // 'preview': './preview/index'
   },
 
   output: {
@@ -283,6 +284,15 @@ module.exports = {
     umdNamedDefine: true
   },
 
+  resolveLoader: {
+    modules: [
+      'web_loaders',
+      'web_modules',
+      'node_loaders',
+      'node_modules',
+      path.resolve(__dirname, 'node_modules'),
+    ],
+  },
   resolve: {
     modules: [
       path.resolve(__dirname, 'src'),
@@ -296,9 +306,9 @@ module.exports = {
 
   plugins,
 
-  stats,
-  devServer: {
-    stats,
-    host: '0.0.0.0'
-  }
+  // stats,
+  // devServer: {
+  //   stats,
+  //   host: '0.0.0.0'
+  // }
 };
