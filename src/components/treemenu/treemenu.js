@@ -992,7 +992,7 @@ const TreeMenu = Component.extend({
   setHorizontalMenuHeight() {
     let wrapperHeight = null;
     if (this.menuEntity && this.OPTIONS.MENU_DIRECTION == MENU_HORIZONTAL && this.menuEntity.menuItems.length) {
-      const oneItemHeight = parseInt(this.menuEntity.menuItems[0].entity.style("height"), 10);
+      const oneItemHeight = parseInt(this.menuEntity.menuItems[0].entity.style("height"), 10) || 0;
       const menuMaxHeight = oneItemHeight * this._maxChildCount;
       const rootMenuHeight = Math.max(this.menuEntity.menuItems.length, 3) * oneItemHeight + this.menuEntity.entity.node().offsetTop + parseInt(this.wrapper.style("padding-bottom"), 10);
       wrapperHeight = "" + Math.max(menuMaxHeight, rootMenuHeight) + "px";
