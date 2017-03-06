@@ -134,6 +134,8 @@ const ColorLegend = Component.extend({
 
 
   updateView() {
+    if (!this.element.selectAll) return utils.warn("colorlegend resize() aborted because element is not yet defined");
+
     const _this = this;
     const KEY = this.KEY;
 
@@ -431,9 +433,7 @@ const ColorLegend = Component.extend({
   },
 
   resize() {
-    if (!this.colorModel.isDiscrete()) {
-      this.updateView();
-    }
+    this.updateView();
     this.colorPicker.resize(d3.select(".vzb-colorpicker-svg"));
   },
 

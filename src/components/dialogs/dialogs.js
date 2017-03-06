@@ -180,6 +180,8 @@ const Dialogs = Component.extend({
   },
 
   resize() {
+    if (!this.element.selectAll) return utils.warn("dialogs resize() aborted because element is not yet defined");
+
     const _this = this;
     const profile = this.getLayoutProfile();
 

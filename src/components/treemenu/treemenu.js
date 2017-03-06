@@ -798,6 +798,8 @@ const TreeMenu = Component.extend({
     let top = this._top;
     let left = this._left;
 
+    if (!this.wrapper) return utils.warn("treemenu resize() abort because container is undefined");
+
     this.wrapper.classed(css.noTransition, true);
     this.wrapper.node().scrollTop = 0;
 
