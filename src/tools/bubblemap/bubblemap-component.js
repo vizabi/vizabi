@@ -701,7 +701,11 @@ const BubbleMapComponent = Component.extend({
     this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
     this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
 
-    if (this.height <= 0 || this.width <= 0) return utils.warn("Bubble map updateSize() abort: vizabi container is too little or has display:none");
+    if (this.height <= 0 || this.width <= 0) {
+      this.height = 0;
+      this.width = 0;
+      utils.warn("Bubble map chart updateSize(): vizabi container is too little or has display:none");
+    }
 
     this.repositionElements();
     this.rescaleMap();
@@ -818,8 +822,8 @@ const BubbleMapComponent = Component.extend({
         .attr("viewBox", [0, 0, viewBoxWidth, viewBoxHeight].join(" "));
 
       //            ratio between map, viewport and offset (for bubbles)
-      widthScale  = viewPortWidth  / mapWidth  / (1 + offset.left + offset.right);
-      heightScale = viewPortHeight / mapHeight / (1 + offset.top  + offset.bottom);
+      widthScale  = viewPortWidth  / (mapWidth || 1) / (1 + offset.left + offset.right);
+      heightScale = viewPortHeight / (mapHeight || 1) / (1 + offset.top  + offset.bottom);
 
     } else {
 

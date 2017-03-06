@@ -630,6 +630,10 @@ export default Class.extend({
     const maxZoom = zoomer.scaleExtent()[1];
     let zoom, ratioX, ratioY;
 
+    if (x1 == x2 || y1 == y2 || xRangeBoundsBumped[0] == xRangeBoundsBumped[1] || yRangeBoundsBumped[0] == yRangeBoundsBumped[1]) {
+      return utils.warn("_zoomOnRectangle(): can not proceed because this may result in infinity zooms");
+    }
+
     if (Math.abs(x1 - x2) > Math.abs(y1 - y2)) {
       zoom =  Math.abs(yRangeBoundsBumped[0] - yRangeBoundsBumped[1]) / Math.abs(y1 - y2) * transform.k;
 
@@ -669,8 +673,8 @@ export default Class.extend({
 
     zoomer.dontFeedToState = dontFeedToState;
         //zoomer.scale(zoom);
-    zoomer.ratioY = ratioY;
-    zoomer.ratioX = ratioX;
+    zoomer.ratioY = ratioY || 1; //NaN defaults to 1
+    zoomer.ratioX = ratioX || 1; //NaN defaults to 1
         //zoomer.translate(pan);
     zoomer.duration = duration ? duration : 0;
 

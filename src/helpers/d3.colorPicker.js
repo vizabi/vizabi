@@ -171,9 +171,8 @@ export default function colorPicker() {
         .classed(css.INVISIBLE, !showColorPicker)
         .on("mouseout", d => { _cellHover(colorOld); });
 
-      const width = parseInt(svg.style("width")) || 0;
-      const height = parseInt(svg.style("height")) || 0;
-      if (!height || !width) return utils.warn("colorPicker() abort: container is too little or has display:none");
+      const width = parseInt(svg.style("width"), 10) || 0;
+      const height = parseInt(svg.style("height"), 10) || 0;
 
       const maxRadius = width / 2 * (1 - margin.left - margin.right);
       background = svg.append("rect")
@@ -430,9 +429,8 @@ export default function colorPicker() {
       const screen = colorPicker.container.node().getBoundingClientRect();
       let xPos, yPos;
 
-      const width = parseInt(svg.style("width")) || 0;
-      const height = parseInt(svg.style("height")) || 0;
-      if (!height || !width) return utils.warn("colorPicker.fitToScreen() abort: container is too little or has display:none");
+      const width = parseInt(svg.style("width"), 10) || 0;
+      const height = parseInt(svg.style("height"), 10) || 0;
 
       if (!arg) {
         xPos = screen.width - parseInt(svg.style("right")) - width;
@@ -479,9 +477,8 @@ export default function colorPicker() {
         return resize;
       if (typeof arg !== "undefined") {
         const svg = arg;
-        const width = parseInt(svg.style("width")) || 0;
-        const height = parseInt(svg.style("height")) || 0;
-        if (!height || !width) return utils.warn("colorPicker.resize() abort: container is too little or has display:none");
+        const width = parseInt(svg.style("width"), 10) || 0;
+        const height = parseInt(svg.style("height"), 10) || 0;
 
         const maxRadius = width / 2 * (1 - margin.left - margin.right);
         const selectedColor = svg.select("." + css.COLOR_DEFAULT);

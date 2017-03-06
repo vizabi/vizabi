@@ -445,6 +445,7 @@ const ButtonList = Component.extend({
    */
   resize() {
     //TODO: what to do when resizing?
+    if (!this.element.selectAll) return utils.warn("buttonlist resize() aborted because element is not yet defined");
 
     //toggle presentaion off is switch to 'small' profile
     if (this.getLayoutProfile() === "small" && this.model.ui.presentation) {

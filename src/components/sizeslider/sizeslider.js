@@ -131,7 +131,8 @@ const SizeSlider = Component.extend({
       bottom: barWidth + textMaxHeight
     };
 
-    const componentWidth = this.element.node().offsetWidth;
+    let componentWidth = (this.element.node().offsetWidth  - padding.left - padding.right) || 0;
+    if (componentWidth < 0) componentWidth = 0;
 
     this.padding = padding;
 
@@ -145,11 +146,11 @@ const SizeSlider = Component.extend({
 
     this.xScale = d3.scale.linear()
       .domain([OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX])
-      .range([0, componentWidth - padding.left - padding.right])
+      .range([0, componentWidth])
       .clamp(true);
 
     this.brush = d3.brushX()
-      .extent([[0, 0], [componentWidth - padding.left - padding.right, barWidth]])
+      .extent([[0, 0], [componentWidth, barWidth]])
       .handleSize(thumbRadius * 2 + barWidth * 2)
       .on("start", () => {
         if (_this.nonBrushChange || !d3.event.sourceEvent) return;
@@ -206,11 +207,12 @@ const SizeSlider = Component.extend({
       _this.propertyActiveProfile = _this.getPropertyActiveProfile();
       _this.propertyScale.range([_this.propertyActiveProfile.min, _this.propertyActiveProfile.max]);
 
-      const componentWidth = _this.element.node().offsetWidth;
+      let componentWidth = _this.element.node().offsetWidth || 0  - padding.left - padding.right;
+      if (componentWidth < 0) componentWidth = 0;
 
-      _this.xScale.range([0, componentWidth - _this.padding.left - _this.padding.right]);
+      _this.xScale.range([0, componentWidth]);
       _this._updateSize();
-      _this.sliderEl.call(_this.brush.extent([[0, 0], [componentWidth - padding.left - padding.right, barWidth]]));
+      _this.sliderEl.call(_this.brush.extent([[0, 0], [componentWidth, barWidth]]));
       const extent = _this.model.size.extent || [OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX];
       _this._moveBrush(extent);
     });
@@ -251,13 +253,14 @@ const SizeSlider = Component.extend({
    */
   _updateSize() {
     const isRTL = this.model.locale.isRTL();
-    const componentWidth = this.element.node().offsetWidth;
+    let componentWidth = (this.element.node().offsetWidth - this.padding.right) || 0;
+    if (componentWidth < 0) componentWidth = 0;
 
     this.sliderSvg
       .attr("height", this.propertyActiveProfile.max + this.padding.top + this.padding.bottom)
       .attr("width", "100%");
     this.sliderWrap
-      .attr("transform", isRTL ? "translate(" + (componentWidth - this.padding.right) + "," + (this.propertyActiveProfile.max + this.padding.top) + ") scale(-1,1)" :
+      .attr("transform", isRTL ? "translate(" + componentWidth + "," + (this.propertyActiveProfile.max + this.padding.top) + ") scale(-1,1)" :
         "translate(" + this.padding.left + "," + (this.propertyActiveProfile.max + this.padding.top) + ")");
     this.sliderLabelsWrapperEl
       .attr("transform", isRTL ? "scale(-1,1)" : null);

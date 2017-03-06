@@ -300,7 +300,7 @@ const BubbleChartComp = Component.extend({
         // if the scale gets inverted because of bump, set it to avg between z1 and z2
         if (z1 < z2) z1 = z2 = (z1 + z2) / 2;
       } else {
-        utils.warn("rangeBump error: the input scale range has 0 length. that sucks");
+        // rangeBump error: the input scale range has 0 length. that sucks but we keep cool
       }
       return [z1, z2];
     }
@@ -879,7 +879,11 @@ const BubbleChartComp = Component.extend({
     this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
     this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
 
-    if (this.height <= 0 || this.width <= 0) return utils.warn("Bubble chart updateSize() abort: vizabi container is too little or has display:none");
+    if (this.height <= 0 || this.width <= 0) {
+      this.height = 0;
+      this.width = 0;
+      utils.warn("Bubble chart updateSize(): vizabi container is too little or has display:none");
+    }
 
     //graph group is shifted according to margins (while svg element is at 100 by 100%)
     this.graph
