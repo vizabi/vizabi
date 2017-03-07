@@ -12,8 +12,8 @@ var SankeyComponent = Component.extend({
 	 * @param {Object} context The component's parent
 	 */
 	init: function(config, context) {
-		this.name = 'sankeychart';
-		this.template = require('./barchart.html');
+		this.name = 'sankeydiagram';
+		this.template = require('./sankeydiagram.html');
 
 		// expectectations for model
 		this.model_expects = [{
