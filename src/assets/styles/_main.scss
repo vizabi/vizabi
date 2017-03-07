@@ -70,6 +70,11 @@
   .vzb-tool-sidebar {
     display: flex;
     flex: 0 0 auto;
+    position: static;
+
+    .vzb-tool-dialogs {
+      position: static;
+    }
 
     .vzb-tool-buttonlist {
       flex: 1 0 auto;
@@ -179,7 +184,6 @@
           flex: 1 auto;
           display: flex;
           flex-direction: column;
-          position: static;
           background-color: $vzb-color-primary-lightest;
           overflow-x: hidden;
           overflow-y: auto;
