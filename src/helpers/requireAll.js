@@ -5,7 +5,7 @@ const requireAll = (_require, depth) => {
 
   if (depth) {
     keys = keys.filter(
-      typeof depth === 'function' ?
+      typeof depth === "function" ?
         key => depth(getDepth(key)) :
         key => getDepth(key) === depth + 1
     );
@@ -18,7 +18,7 @@ const requireAll = (_require, depth) => {
       const required = _require(key);
       result[name] = required.default || required;
     } catch (err) {
-      console.warn('Import error', key, err);
+      console.warn("Import error", key, err);
     }
 
     return result;

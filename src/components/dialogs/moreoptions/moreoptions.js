@@ -1,93 +1,93 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import Dialog from 'components/dialogs/_dialog';
+import * as utils from "base/utils";
+import Component from "base/component";
+import Dialog from "components/dialogs/_dialog";
 
-import simpleslider from 'components/simpleslider/simpleslider';
-import bubblesize from 'components/bubblesize/bubblesize';
-import colorlegend from 'components/colorlegend/colorlegend';
-import indicatorpicker from 'components/indicatorpicker/indicatorpicker';
-import simplecheckbox from 'components/simplecheckbox/simplecheckbox';
-import optionsbuttonlist from 'components/buttonlist/optionsbuttonlist/optionsbuttonlist';
+import simpleslider from "components/simpleslider/simpleslider";
+import bubblesize from "components/bubblesize/bubblesize";
+import colorlegend from "components/colorlegend/colorlegend";
+import indicatorpicker from "components/indicatorpicker/indicatorpicker";
+import simplecheckbox from "components/simplecheckbox/simplecheckbox";
+import optionsbuttonlist from "components/buttonlist/optionsbuttonlist/optionsbuttonlist";
 
 /*
  * More options dialog
  */
 
-var MoreOptions = Dialog.extend({
+const MoreOptions = Dialog.extend({
 
   /**
    * Initializes the dialog component
    * @param config component configuration
    * @param context component context (parent)
    */
-  init: function(config, parent) {
-    this.name = 'moreoptions';
+  init(config, parent) {
+    this.name = "moreoptions";
 
     //specifying components
     this.components = [{
       component: optionsbuttonlist,
-      placeholder: '.vzb-dialog-options-buttonlist',
-      model: ['state', 'ui', 'locale']
+      placeholder: ".vzb-dialog-options-buttonlist",
+      model: ["state", "ui", "locale"]
     }];
 
     this._super(config, parent);
   },
 
-  readyOnce: function() {
+  readyOnce() {
     this._super();
 
-    var _this = this;
-    this.accordionEl = this.contentEl.select('.vzb-accordion');
+    const _this = this;
+    this.accordionEl = this.contentEl.select(".vzb-accordion");
 
-    this.on('dragend', function() {
+    this.on("dragend", () => {
       _this._setMaxHeight();
     });
 
-    var dialog_popup = (this.model.ui.dialogs||{}).popup || [];
-    var dialog_moreoptions = (this.model.ui.dialogs||{}).moreoptions || [];
+    const dialog_popup = (this.model.ui.dialogs || {}).popup || [];
+    let dialog_moreoptions = (this.model.ui.dialogs || {}).moreoptions || [];
 
     // if dialog_moreoptions has been passed in with boolean param or array must check and covert to array
     if (dialog_moreoptions === true) {
       dialog_moreoptions = dialog_popup;
-      (this.model.ui.dialogs||{}).moreoptions = dialog_moreoptions;
+      (this.model.ui.dialogs || {}).moreoptions = dialog_moreoptions;
     }
 
     this._addDialogs(dialog_moreoptions);
 
     //accordion
-    if(this.accordionEl) {
-      var titleEl = this.accordionEl.selectAll('.vzb-accordion-section')
-        .select('.vzb-dialog-title>span:first-child')
-      titleEl.on('click', function(d) {
-        var element = _this.components[d.component].element;
-        var sectionEl = _this.components[d.component].placeholderEl;
-        var activeEl = _this.accordionEl.select('.vzb-accordion-active');
-        if(activeEl) {
-          activeEl.classed('vzb-accordion-active', false);
+    if (this.accordionEl) {
+      const titleEl = this.accordionEl.selectAll(".vzb-accordion-section")
+        .select(".vzb-dialog-title>span:first-child");
+      titleEl.on("click", d => {
+        const element = _this.components[d.component].element;
+        const sectionEl = _this.components[d.component].placeholderEl;
+        const activeEl = _this.accordionEl.select(".vzb-accordion-active");
+        if (activeEl) {
+          activeEl.classed("vzb-accordion-active", false);
         }
-        if(sectionEl.node() !== activeEl.node()) {
-          sectionEl.classed('vzb-accordion-active', true);
+        if (sectionEl.node() !== activeEl.node()) {
+          sectionEl.classed("vzb-accordion-active", true);
         }
-      })
+      });
     }
   },
 
-  _addDialogs: function(dialog_list) {
+  _addDialogs(dialog_list) {
     this._components_config = [];
-    var details_dlgs = [];
-    if(!dialog_list.length) return;
+    const details_dlgs = [];
+    if (!dialog_list.length) return;
     //add a component for each dialog
-    for(var i = 0; i < dialog_list.length; i++) {
+    for (let i = 0; i < dialog_list.length; i++) {
 
       //check moreoptions in dialog.moreoptions
-      if(dialog_list[i] === "moreoptions") continue;
+      if (dialog_list[i] === "moreoptions") continue;
 
-      var dlg = dialog_list[i];
-      var dlg_config = utils.deepClone(this.parent._available_dialogs[dlg]);
+      const dlg = dialog_list[i];
+      const dlg_config = utils.deepClone(this.parent._available_dialogs[dlg]);
 
       //if it's a dialog, add component
-      if(dlg_config && dlg_config.dialog) {
-        var comps = this._components_config;
+      if (dlg_config && dlg_config.dialog) {
+        const comps = this._components_config;
 
         //add corresponding component
         comps.push({
@@ -101,26 +101,24 @@ var MoreOptions = Dialog.extend({
         dlg_config.id = dlg;
         details_dlgs.push(dlg_config);
       }
-    };
+    }
 
-    this.accordionEl.selectAll('div').data(details_dlgs)
+    this.accordionEl.selectAll("div").data(details_dlgs)
       .enter().append("div")
-      .attr('class', function (d) {
-        var cls = 'vzb-dialogs-dialog vzb-moreoptions vzb-accordion-section';
+      .attr("class", d => {
+        const cls = "vzb-dialogs-dialog vzb-moreoptions vzb-accordion-section";
         return cls;
       })
-      .attr('data-dlg', function(d) {
-        return d.id;
-      });
+      .attr("data-dlg", d => d.id);
 
     this.loadSubComponents();
 
-    var _this = this;
+    const _this = this;
     //render each subcomponent
-    utils.forEach(this.components, function(subcomp) {
+    utils.forEach(this.components, subcomp => {
       subcomp.render();
-      _this.on('resize', function() {
-        subcomp.trigger('resize');
+      _this.on("resize", () => {
+        subcomp.trigger("resize");
       });
     });
   }

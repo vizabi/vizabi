@@ -22,11 +22,15 @@
   &:-webkit-scrollbar {
     display: none;
   }
-  
+
   .vzb-buttonlist-btn {
     > .vzb-buttonlist-btn-icon {
-      @include transition(background-color 100ms ease-in, 
-      color 100ms ease-in, border 100ms ease-in, opacity 100ms ease-in);
+      transition: (
+        background-color 100ms ease-in,
+        color 100ms ease-in,
+        border 100ms ease-in,
+        opacity 100ms ease-in
+      );
     }
   }
 }

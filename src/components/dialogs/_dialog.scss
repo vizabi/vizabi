@@ -1,7 +1,7 @@
 $vzb-dialog-content-height: 250px;
 .vzb-dialog-shadow {
   @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, .24));
-  @include transition(all 300ms ease-in-out);
+  transition: 300ms ease-in-out;
   border-top: 1px solid #f7f7f7;
 }
 .vzb-tool-dialogs {
@@ -253,10 +253,6 @@ $vzb-dialog-content-height: 250px;
           border-top: 0;
           border-right: 0;
         }
-
-        &:hover::after {
-          @include opacity(.3);
-        }
       }
 
       input[type=checkbox]:checked + label {
@@ -269,7 +265,7 @@ $vzb-dialog-content-height: 250px;
     }
 
     &.notransition {
-      @include transition(max-height);
+      transition: max-height;
     }
 
     .vzb-dialog-sublabel {
@@ -299,6 +295,14 @@ $vzb-dialog-content-height: 250px;
       .thumb-tack-class-ico::before {
         color: #fff !important;
 
+      }
+    }
+  }
+
+  &:not(.vzb-no-hover) {
+    .vzb-dialog-checkbox {
+      label:hover::after {
+        @include opacity(.3);
       }
     }
   }
@@ -575,4 +579,5 @@ $vzb-dialog-content-height: 250px;
 @import 'zoom/zoom';
 @import 'stack/stack';
 @import 'moreoptions/moreoptions';
+@import 'mapoptions/mapoptions';
 @import 'timedisplay/timedisplay';

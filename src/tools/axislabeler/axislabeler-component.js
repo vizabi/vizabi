@@ -1,11 +1,11 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
+import * as utils from "base/utils";
+import Component from "base/component";
 
-import axisSmart from 'helpers/d3.axisWithLabelPicker';
+import axisSmart from "helpers/d3.axisWithLabelPicker";
 
 
 //BAR CHART COMPONENT
-var AxisLabelerComponent = Component.extend({
+const AxisLabelerComponent = Component.extend({
 
   /**
    * Initializes the component (Bar Chart).
@@ -13,21 +13,21 @@ var AxisLabelerComponent = Component.extend({
    * @param {Object} config The options passed to the component
    * @param {Object} context The component's parent
    */
-  init: function(config, context) {
-    this.name = 'axislabeler';
-    this.template = require('./axislabeler.html');
+  init(config, context) {
+    this.name = "axislabeler";
+    this.template = require("./axislabeler.html");
 
     //define expected models for this component
-    this.model_expects = [{name: "scales"}, {name: "show"}];
+    this.model_expects = [{ name: "scales" }, { name: "show" }];
 
-    var _this = this;
+    const _this = this;
 
     this.model_binds = {
       "change:scales": function(evt) {
         _this.initScales();
         _this.update();
       },
-      'change:show': function(evt, path) {
+      "change:show": function(evt, path) {
         _this.initScales();
         _this.update();
       }
@@ -46,46 +46,46 @@ var AxisLabelerComponent = Component.extend({
   /**
    * DOM is ready
    */
-  readyOnce: function() {
-    var _this = this;
+  readyOnce() {
+    const _this = this;
     this.element = d3.select(this.element);
 
     // reference elements
-    this.graph = this.element.select('.vzb-al-graph');
-    this.xAxisEl = this.graph.select('.vzb-al-axis-x');
-    this.yAxisEl = this.graph.select('.vzb-al-axis-y');
+    this.graph = this.element.select(".vzb-al-graph");
+    this.xAxisEl = this.graph.select(".vzb-al-axis-x");
+    this.yAxisEl = this.graph.select(".vzb-al-axis-y");
 
     //$(".vzb-bc-axis-x, .vzb-bc-axis-y").css('font-size',this.model.show.labelSize);
-    this.xInvert = function(d){return _this.xScale(_this.xScale.invert(_this.xScale(d)));}
-    this.yInvert = function(d){return _this.yScale(_this.yScale.invert(_this.yScale(d)));}
+    this.xInvert = function(d) { return _this.xScale(_this.xScale.invert(_this.xScale(d))); };
+    this.yInvert = function(d) { return _this.yScale(_this.yScale.invert(_this.yScale(d))); };
 
     this.line = d3.svg.line()
-      .x(function(d) { return _this.xScale(d); })
-      .y(function(d) { return _this.yScale(d); });
+      .x(d => _this.xScale(d))
+      .y(d => _this.yScale(d));
 
     this.lineInvert = d3.svg.line()
-      .x(function(d) { return _this.xInvert(d); })
-      .y(function(d) { return _this.yInvert(d); });
+      .x(d => _this.xInvert(d))
+      .y(d => _this.yInvert(d));
 
     //component events
-    this.on("resize", function() {
+    this.on("resize", () => {
       _this.update();
-    })
+    });
   },
 
   /*
    * Both model and DOM are ready
    */
-  ready: function() {
+  ready() {
     console.log("Model ready");
     this.initScales();
     this.update();
   },
 
-  initScales: function() {
-    var _this = this;
+  initScales() {
+    const _this = this;
 
-    var domain = this.model.scales.domain;
+    const domain = this.model.scales.domain;
 
     this.xScale = d3.scale[this.model.scales.xScaleType]();
     this.yScale = d3.scale[this.model.scales.yScaleType]();
@@ -99,26 +99,25 @@ var AxisLabelerComponent = Component.extend({
   },
 
 
+  update() {
+    const _this = this;
 
-  update: function() {
-    var _this = this;
-
-    var margin = this.model.show.toolMargin.getPlainObject();
+    const margin = this.model.show.toolMargin.getPlainObject();
 
     //stage
-    var height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
-    var width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
+    const height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
+    const width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
 
-    if(height<=0 || width<=0) return utils.warn("Axis Labeler update() call interrupted for Vizabi container is too little or has display:none");
+    if (height <= 0 || width <= 0) return utils.warn("Axis Labeler update() call interrupted for Vizabi container is too little or has display:none");
 
     //graph group is shifted according to margins (while svg element is at 100 by 100%)
     this.graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     //update scales to the new range
-    var xLength = this.xScale.domain().length;
-    var yLength = this.yScale.domain().length;
-    this.xScale.range(d3.range(xLength).map(function(n) { return width/(xLength-1) * n })) //.nice();
-    this.yScale.range(d3.range(yLength).map(function(n) { return height/(yLength-1) * n }).reverse()) //.nice();
+    const xLength = this.xScale.domain().length;
+    const yLength = this.yScale.domain().length;
+    this.xScale.range(d3.range(xLength).map(n => width / (xLength - 1) * n)); //.nice();
+    this.yScale.range(d3.range(yLength).map(n => height / (yLength - 1) * n).reverse()); //.nice();
 
     this.xAxis.scale(this.xScale)
       .tickSize(6, 0)
@@ -137,7 +136,6 @@ var AxisLabelerComponent = Component.extend({
       });
 
 
-
     this.xAxisEl.attr("transform", "translate(0," + height + ")");
     this.xAxisEl.call(this.xAxis);
     this.yAxisEl.call(this.yAxis);
@@ -147,47 +145,39 @@ var AxisLabelerComponent = Component.extend({
     //this.yAxisEl.selectAll("text").style('font-size',this.model.show.labelSize);
 
 
-    var path = this.graph.selectAll(".vzb-al-line").data([0]);
+    const path = this.graph.selectAll(".vzb-al-line").data([0]);
     path.enter().append("path")
-      .attr("class", "vzb-al-line")
+      .attr("class", "vzb-al-line");
     path.datum(this.mockData).attr("d", this.line);
 
-    var pathInvert = this.graph.selectAll(".vzb-al-line-invert").data([0]);
+    const pathInvert = this.graph.selectAll(".vzb-al-line-invert").data([0]);
     pathInvert.enter().append("path")
-      .attr("class", "vzb-al-line-invert")
+      .attr("class", "vzb-al-line-invert");
     pathInvert.datum(this.mockData).attr("d", this.lineInvert);
 
-    var format = d3.format(".4r");
+    const format = d3.format(".4r");
 
-    var dots = this.graph.selectAll(".vzb-al-dots").data(this.mockData);
+    const dots = this.graph.selectAll(".vzb-al-dots").data(this.mockData);
     dots.enter().append("circle")
       .attr("class", "vzb-al-dots")
       .attr("r", 5)
-      .on("mouseenter", function(d, i){
-        console.log("Point #" + i + ": " + d + " x=" + format(_this.xScale(d)) + " y=" + format(_this.yScale(d)))
+      .on("mouseenter", (d, i) => {
+        console.log("Point #" + i + ": " + d + " x=" + format(_this.xScale(d)) + " y=" + format(_this.yScale(d)));
       });
     dots.exit().remove();
-    dots.attr("cx", function(d) {
-        return _this.xScale(d)
-      })
-      .attr("cy", function(d) {
-        return _this.yScale(d)
-      });
+    dots.attr("cx", d => _this.xScale(d))
+      .attr("cy", d => _this.yScale(d));
 
-    var dotsInvert = this.graph.selectAll(".vzb-al-dots-invert").data(this.mockData);
+    const dotsInvert = this.graph.selectAll(".vzb-al-dots-invert").data(this.mockData);
     dotsInvert.enter().append("circle")
       .attr("class", "vzb-al-dots-invert")
       .attr("r", 5)
-      .on("mouseenter", function(d, i){
-        console.log("Point #" + i + ": " + d + " x=" + format(_this.xScale(d)) + " y=" + format(_this.yScale(d)))
+      .on("mouseenter", (d, i) => {
+        console.log("Point #" + i + ": " + d + " x=" + format(_this.xScale(d)) + " y=" + format(_this.yScale(d)));
       });
     dotsInvert.exit().remove();
-    dotsInvert.attr("cx", function(d) {
-        return _this.xInvert(d)
-      })
-      .attr("cy", function(d) {
-        return _this.yInvert(d)
-      });
+    dotsInvert.attr("cx", d => _this.xInvert(d))
+      .attr("cy", d => _this.yInvert(d));
   }
 });
 

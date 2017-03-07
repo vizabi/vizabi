@@ -1,23 +1,22 @@
-import * as utils from 'base/utils';
-import Model from 'base/model';
-import Reader from 'base/reader';
-import EventSource from 'base/events';
-import { isObject } from 'base/utils';
+import * as utils from "base/utils";
+import Model from "base/model";
+import Reader from "base/reader";
+import EventSource from "base/events";
 
 /*
  * VIZABI Data Model (model.data)
  */
 
-var DataModel = Model.extend({
+const DataModel = Model.extend({
 
   /**
    * Default values for this model
    */
-  getClassDefaults: function() {
-    var defaults = {
+  getClassDefaults() {
+    const defaults = {
       reader: "csv"
     };
-    return utils.deepExtend(this._super(), defaults)
+    return utils.deepExtend(this._super(), defaults);
   },
 
   trackInstances: true,
@@ -28,7 +27,7 @@ var DataModel = Model.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(name, values, parent, bind) {
+  init(name, values, parent, bind) {
 
     this._type = "data";
 
@@ -47,7 +46,7 @@ var DataModel = Model.extend({
    * Loads concept properties when all other models are also starting to load data
    * @return {Promise} Promise which resolves when concepts are loaded
    */
-  preloadData: function() {
+  preloadData() {
     return this.loadConceptProps();
   },
 
@@ -57,30 +56,30 @@ var DataModel = Model.extend({
    * @param {Object} parsers An object with concepts as key and parsers as value
    * @param {*} evts ?
    */
-  load: function(query, parsers = {}) {
+  load(query, parsers = {}) {
 
     // add waffle server specific query clauses if set
     if (this.dataset) query.dataset = this.dataset;
     if (this.version) query.version = this.version;
 
-    var dataId = this.getDataId(query);
+    const dataId = this.getDataId(query);
 
     if (dataId) {
       return Promise.resolve(dataId);
-    } else {
-      utils.timeStamp('Vizabi Data: Loading Data');
-      EventSource.freezeAll([
-        'hook_change',
-        'resize'
-      ]);
-      return this.loadFromReader(query, parsers)
-        .then(dataId => {
-          EventSource.unfreezeAll();
-          return dataId;
-        })
-        .catch((error) => this.handleReaderError(error, query));
     }
 
+    utils.timeStamp("Vizabi Data: Loading Data");
+    EventSource.freezeAll([
+      "hook_change",
+      "resize"
+    ]);
+
+    return this.loadFromReader(query, parsers)
+      .then(dataId => {
+        EventSource.unfreezeAll();
+        return dataId;
+      })
+      .catch(error => this.handleReaderError(error, query));
   },
 
   /**
@@ -88,13 +87,13 @@ var DataModel = Model.extend({
    * @param {Array} query Array with queries to be loaded
    * @param {Object} parsers An object with concepts as key and parsers as value
    */
-  loadFromReader: function(query, parsers) {
-    var _this = this;
+  loadFromReader(query, parsers) {
+    const _this = this;
 
-    var dataId = utils.hashCode([
+    const dataId = utils.hashCode([
       query
     ]);
-    var queryMergeId = utils.hashCode([
+    const queryMergeId = utils.hashCode([
       query.select.key,
       query.where,
       query.join
@@ -107,70 +106,66 @@ var DataModel = Model.extend({
       utils.extend(this.queryQueue[queryMergeId].parsers, parsers);
       return this.queryQueue[queryMergeId].promise;
 
-    } else {
-
-      // set up base query
-      var promise = new Promise(function(resolve, reject) {
-
-        // wait one execution round for the queue to fill up
-        utils.defer(function() {
-          // now the query queue is filled with all queries from one execution round
-
-          // remove double columns from select (resulting from merging)
-          // no double columns in formatter because it's an object, extend would've overwritten doubles
-          query.select.value = utils.unique(query.select.value);
-
-          // execute the query with this reader
-          _this.readerObject.read(query, parsers).then(function(response) {
-
-              //success reading
-              _this.checkQueryResponse(query, response);
-
-              _this._collection[dataId] = {};
-              _this._collectionPromises[dataId] = {};
-              var col = _this._collection[dataId];
-              col.data = response;
-              col.valid = {};
-              col.nested = {};
-              col.unique = {};
-              col.limits = {};
-              col.frames = {};
-              col.haveNoDataPointsPerKey = {};
-              col.query = query;
-              // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
-
-              // remove query from queue
-              _this.queryQueue[queryMergeId] = null;
-              resolve(dataId);
-
-            }, //error reading
-            function(err) {
-              _this.queryQueue[queryMergeId] = null;
-              reject(err);
-            }
-          );
-
-        });
-      });
-
-
-      this.queryQueue[queryMergeId] = {
-        query: query,
-        parsers: parsers,
-        promise: promise
-      };
-
-      return this.queryQueue[queryMergeId].promise;
-
     }
 
+    // set up base query
+    const promise = new Promise((resolve, reject) => {
+
+      // wait one execution round for the queue to fill up
+      utils.defer(() => {
+        // now the query queue is filled with all queries from one execution round
+
+        // remove double columns from select (resulting from merging)
+        // no double columns in formatter because it's an object, extend would've overwritten doubles
+        query.select.value = utils.unique(query.select.value);
+
+        // execute the query with this reader
+        _this.readerObject.read(query, parsers)
+          .then(response => {
+            //success reading
+            _this.checkQueryResponse(query, response);
+
+            _this._collection[dataId] = {};
+            _this._collectionPromises[dataId] = {};
+            const col = _this._collection[dataId];
+            col.data = response;
+            col.valid = {};
+            col.nested = {};
+            col.unique = {};
+            col.limits = {};
+            col.frames = {};
+            col.haveNoDataPointsPerKey = {};
+            col.query = query;
+            // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
+
+            // remove query from queue
+            _this.queryQueue[queryMergeId] = null;
+            resolve(dataId);
+
+          })
+          .catch(err => {
+            _this.queryQueue[queryMergeId] = null;
+            reject(err);
+          });
+
+      });
+    });
+
+
+    this.queryQueue[queryMergeId] = {
+      query,
+      parsers,
+      promise
+    };
+
+    return this.queryQueue[queryMergeId].promise;
   },
 
-  getReader: function() {
+  getReader() {
     // Create a new reader for this query
-    var readerClass = Reader.get(this.reader);
+    const readerClass = Reader.get(this.reader);
     if (!readerClass) {
-      throw new Error('Unknown reader: ' + this.reader);
+      throw new Error("Unknown reader: " + this.reader);
     }
 
     return new readerClass({
@@ -181,22 +176,22 @@ var DataModel = Model.extend({
     });
   },
 
-  checkQueryResponse: function(query, response) {
-    if (response.length == 0) utils.warn("Reader for data source '" + this._name + "' returned empty array for query:", JSON.stringify(query, null, 2))
+  checkQueryResponse(query, response) {
+    if (response.length == 0) utils.warn("Reader for data source '" + this._name + "' returned empty array for query:", JSON.stringify(query, null, 2));
 
     if (response.length > 0) {
       // search data for the entirely missing columns
-      var columnsMissing = (query.select.key||[]).concat(query.select.value||[]);
-      for (var i = response.length-1; i>=0; i--){
-        for (var c = columnsMissing.length-1; c>=0; c--){
+      const columnsMissing = (query.select.key || []).concat(query.select.value || []);
+      for (let i = response.length - 1; i >= 0; i--) {
+        for (let c = columnsMissing.length - 1; c >= 0; c--) {
           // if found value for column c in row i then remove that column name from the list of missing columns
-          if (response[i][columnsMissing[c]] || response[i][columnsMissing[c]]===0) columnsMissing.splice(c,1);
+          if (response[i][columnsMissing[c]] || response[i][columnsMissing[c]] === 0) columnsMissing.splice(c, 1);
         }
         // all columns were found to have value in at least one of the rows then stop iterating
         if (!columnsMissing.length) break;
       }
-      columnsMissing.forEach(function(d) {
-        if (query.select.key.indexOf(d)==-1){
+      columnsMissing.forEach(d => {
+        if (query.select.key.indexOf(d) == -1) {
           utils.warn('Reader result: Column "' + d + '" is missing from "' + query.from + '" data, but it might be ok');
         } else {
           utils.error('Reader result: Key column "' + d + '" is missing from "' + query.from + '" data for query:', JSON.stringify(query));
@@ -209,13 +204,13 @@ var DataModel = Model.extend({
   /**
    * get data
    */
-  getData: function(dataId, what, whatId, args) {
+  getData(dataId, what, whatId, args) {
     // if not specified data from what query, return nothing
-    if(!dataId) return utils.warn("Data.js 'get' method doesn't like the dataId you gave it: " + dataId);
+    if (!dataId) return utils.warn("Data.js 'get' method doesn't like the dataId you gave it: " + dataId);
 
     // if they want data, return the data
-    if(!what || what == 'data') {
-      return this._collection[dataId]['data'];
+    if (!what || what == "data") {
+      return this._collection[dataId]["data"];
     }
 
     // if they didn't give an instruction, give them the whole thing
@@ -226,26 +221,26 @@ var DataModel = Model.extend({
     }
 
     // if they want a certain processing of the data, see if it's already in cache
-    var id = (typeof whatId == "string")? whatId : JSON.stringify(whatId);
-    if(this._collection[dataId][what][id]) {
+    const id = (typeof whatId == "string") ? whatId : JSON.stringify(whatId);
+    if (this._collection[dataId][what][id]) {
       return this._collection[dataId][what][id];
     }
 
     // if it's not cached, process the data and then return it
-    switch(what) {
-      case 'unique':
+    switch (what) {
+      case "unique":
         this._collection[dataId][what][id] = this._getUnique(dataId, whatId);
         break;
-      case 'valid':
+      case "valid":
         this._collection[dataId][what][id] = this._getValid(dataId, whatId);
         break;
-      case 'limits':
+      case "limits":
         this._collection[dataId][what][id] = this._getLimits(dataId, whatId);
         break;
-      case 'nested':
+      case "nested":
         this._collection[dataId][what][id] = this._getNested(dataId, whatId);
         break;
-      case 'haveNoDataPointsPerKey':
+      case "haveNoDataPointsPerKey":
         //do nothing. no caching is available for this option, served directly from collection
         break;
     }
@@ -255,41 +250,41 @@ var DataModel = Model.extend({
   loadConceptProps() {
     const query = {
       select: {
-        key: ['concept'],
+        key: ["concept"],
         value: [
-          'concept_type',
-          'domain',
-          'indicator_url',
-          'color',
-          'scales',
-          'interpolation',
-          'tags',
-          'name',
-          'unit',
-          'description',
-          'format'
+          "concept_type",
+          "domain",
+          "indicator_url",
+          "color",
+          "scales",
+          "interpolation",
+          "tags",
+          "name",
+          "unit",
+          "description",
+          "format"
         ]
       },
-      from: 'concepts',
+      from: "concepts",
       where: {},
-      language: this.getClosestModel('locale').id,
+      language: this.getClosestModel("locale").id,
     };
 
     return this.load(query)
       .then(this.handleConceptPropsResponse.bind(this))
-      .catch((error) => this.handleReaderError(error, query));
+      .catch(error => this.handleReaderError(error, query));
 
   },
 
-  handleConceptPropsResponse: function(dataId) {
+  handleConceptPropsResponse(dataId) {
 
-    this.conceptDictionary = {_default: {concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root"}};
+    this.conceptDictionary = { _default: { concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root" } };
     this.conceptArray = [];
 
     this.getData(dataId).forEach(d => {
-      var concept = {};
+      const concept = {};
 
-      if(d.concept_type) concept["use"] = (d.concept_type=="measure" || d.concept_type=="time")?"indicator":"property";
+      if (d.concept_type) concept["use"] = (d.concept_type == "measure" || d.concept_type == "time") ? "indicator" : "property";
 
       concept["concept_type"] = d.concept_type;
       concept["sourceLink"] = d.indicator_url;
@@ -303,31 +298,31 @@ var DataModel = Model.extend({
       } catch (e) {
         concept["scales"] = null;
       }
-      if(!concept.scales){
-        switch (d.concept_type){
-          case "measure": concept.scales=["linear", "log"]; break;
-          case "string": concept.scales=["nominal"]; break;
-          case "entity_domain": concept.scales=["ordinal"]; break;
-          case "entity_set": concept.scales=["ordinal"]; break;
-          case "time": concept.scales=["time"]; break;
+      if (!concept.scales) {
+        switch (d.concept_type) {
+          case "measure": concept.scales = ["linear", "log"]; break;
+          case "string": concept.scales = ["nominal"]; break;
+          case "entity_domain": concept.scales = ["ordinal"]; break;
+          case "entity_set": concept.scales = ["ordinal"]; break;
+          case "time": concept.scales = ["time"]; break;
         }
       }
-      if(concept["scales"]==null) concept["scales"] = ["linear", "log"];
-      if(d.interpolation){
+      if (concept["scales"] == null) concept["scales"] = ["linear", "log"];
+      if (d.interpolation) {
         concept["interpolation"] = d.interpolation;
-      }else if(d.concept_type == "measure"){
-        concept["interpolation"] = concept.scales && concept.scales[0]=="log"? "exp" : "linear";
-      }else if(d.concept_type == "time"){
+      } else if (d.concept_type == "measure") {
+        concept["interpolation"] = concept.scales && concept.scales[0] == "log" ? "exp" : "linear";
+      } else if (d.concept_type == "time") {
         concept["interpolation"] = "linear";
-      }else{
+      } else {
         concept["interpolation"] = "stepMiddle";
       }
       concept["concept"] = d.concept;
       concept["domain"] = d.domain;
       concept["tags"] = d.tags;
       concept["format"] = d.format;
-      concept["name"] = d.name||d.concept||"";
-      concept["unit"] = d.unit||"";
+      concept["name"] = d.name || d.concept || "";
+      concept["unit"] = d.unit || "";
       concept["description"] = d.description;
       this.conceptDictionary[d.concept] = concept;
       this.conceptArray.push(concept);
@@ -335,43 +330,36 @@ var DataModel = Model.extend({
 
   },
 
-  getConceptprops: function(which){
-     if(which) {
-       if(this.conceptDictionary[which]) {
-         return this.conceptDictionary[which];
-       }else{
-         return utils.warn("The concept " + which + " is not found in the dictionary");
-       }
-     }else{
-       return this.conceptDictionary;
-     }
+  getConceptprops(which) {
+    return which ?
+      this.conceptDictionary[which] || utils.warn("The concept " + which + " is not found in the dictionary") :
+      this.conceptDictionary;
   },
 
-  getConceptByIndex: function(index, type) {
-    var concept = this.conceptArray.filter(f => !type || !f.concept_type || f.concept_type===type)[index];
+  getConceptByIndex(index, type) {
     //if(!concept && type == "measure") concept = this.conceptArray.filter(f => f.concept_type==="time")[0];
-    return concept;
+    return this.conceptArray.filter(f => !type || !f.concept_type || f.concept_type === type)[index];
   },
 
-  getDatasetName: function(){
-    if(this.readerObject.getDatasetInfo) {
-      var meta = this.readerObject.getDatasetInfo();
+  getDatasetName() {
+    if (this.readerObject.getDatasetInfo) {
+      const meta = this.readerObject.getDatasetInfo();
       return meta.name + (meta.version ? " " + meta.version : "");
     }
     return this._name;
   },
 
-  _getCacheKey: function(frames, keys) {
-    var result = frames[0] + " - " + frames[frames.length-1];
+  _getCacheKey(frames, keys) {
+    let result = frames[0] + " - " + frames[frames.length - 1];
     if (keys) {
       result = result + "_" + keys.join();
     }
     return result;
   },
 
-  getFrames: function(dataId, framesArray, keys) {
-    var _this = this;
-    var whatId = this._getCacheKey(framesArray, keys);
+  getFrames(dataId, framesArray, keys) {
+    const _this = this;
+    const whatId = this._getCacheKey(framesArray, keys);
     if (!this._collectionPromises[dataId][whatId]) {
       this._collectionPromises[dataId][whatId] = {
         queue: this.framesQueue(framesArray, whatId),
@@ -380,72 +368,72 @@ var DataModel = Model.extend({
     }
     if (this._collectionPromises[dataId][whatId] && this._collectionPromises[dataId][whatId]["promise"] instanceof Promise) {
       return this._collectionPromises[dataId][whatId]["promise"];
-    } else {
-      this._collectionPromises[dataId][whatId]["promise"] = new Promise(function (resolve, reject) {
-        if (!dataId) reject(utils.warn("Data.js 'get' method doesn't like the dataId you gave it: " + dataId));
-        _this._getFrames(dataId, whatId, framesArray, keys).then(function (frames) {
-          _this._collection[dataId]["frames"][whatId] = frames;
-          resolve(_this._collection[dataId]["frames"][whatId]);
-        });
-      })
-
     }
+
+    this._collectionPromises[dataId][whatId]["promise"] = new Promise((resolve, reject) => {
+      if (!dataId) reject(utils.warn("Data.js 'get' method doesn't like the dataId you gave it: " + dataId));
+      _this._getFrames(dataId, whatId, framesArray, keys).then(frames => {
+        _this._collection[dataId]["frames"][whatId] = frames;
+        resolve(_this._collection[dataId]["frames"][whatId]);
+      });
+    });
+
     return this._collectionPromises[dataId][whatId]["promise"];
   },
 
 
-  getFrame: function(dataId, framesArray, neededFrame, keys) {
+  getFrame(dataId, framesArray, neededFrame, keys) {
     //can only be called after getFrames()
-    var _this = this;
-    var whatId = this._getCacheKey(framesArray, keys);
-    return new Promise(function(resolve, reject) {
+    const _this = this;
+    const whatId = this._getCacheKey(framesArray, keys);
+    return new Promise((resolve, reject) => {
       if (_this._collection[dataId]["frames"][whatId] && _this._collection[dataId]["frames"][whatId][neededFrame]) {
         resolve(_this._collection[dataId]["frames"][whatId]);
       } else {
-        _this._collectionPromises[dataId][whatId]["queue"].forceFrame(neededFrame, function() {
+        _this._collectionPromises[dataId][whatId]["queue"].forceFrame(neededFrame, () => {
           resolve(_this._collection[dataId]["frames"][whatId]);
         });
       }
     });
   },
 
-  listenFrame: function(dataId, framesArray, keys,  cb) {
-    var _this = this;
-    var whatId = this._getCacheKey(framesArray, keys);
-    this._collectionPromises[dataId][whatId]["queue"].defaultCallbacks.push(function(time) {
+  listenFrame(dataId, framesArray, keys,  cb) {
+    const _this = this;
+    const whatId = this._getCacheKey(framesArray, keys);
+    this._collectionPromises[dataId][whatId]["queue"].defaultCallbacks.push(time => {
       cb(dataId, time);
     });
     if (this._collection[dataId]["frames"][whatId]) {
-      utils.forEach(this._collection[dataId]["frames"][whatId], function(frame, key) {
+      utils.forEach(this._collection[dataId]["frames"][whatId], (frame, key) => {
         cb(dataId, new Date(key));
       });
     }
   },
 
-  _muteAllQueues: function(except) {
-    utils.forEach(this._collectionPromises, function(queries, dataId) {
-        utils.forEach(queries, function(promise, whatId) {
-          if(promise.queue.isActive == true && promise.queue.whatId != except) {
-            promise.queue.mute();
-          }
-        });
+  _muteAllQueues(except) {
+    utils.forEach(this._collectionPromises, (queries, dataId) => {
+      utils.forEach(queries, (promise, whatId) => {
+        if (promise.queue.isActive == true && promise.queue.whatId != except) {
+          promise.queue.mute();
+        }
+      });
     });
   },
 
-  _checkForcedQueuesExists: function() {
-    utils.forEach(this._collectionPromises, function(queries, dataId) {
-      utils.forEach(queries, function(promise, whatId) {
-        if(promise.queue.forcedQueue.length > 0) {
+  _checkForcedQueuesExists() {
+    utils.forEach(this._collectionPromises, (queries, dataId) => {
+      utils.forEach(queries, (promise, whatId) => {
+        if (promise.queue.forcedQueue.length > 0) {
           promise.queue.unMute();
         }
       });
     });
   },
 
-  _unmuteQueue: function() {
-    utils.forEach(this._collectionPromises, function(queries, dataId) {
-      utils.forEach(queries, function(promise, whatId) {
-        if(promise.queue.isActive == false) {
+  _unmuteQueue() {
+    utils.forEach(this._collectionPromises, (queries, dataId) => {
+      utils.forEach(queries, (promise, whatId) => {
+        if (promise.queue.isActive == false) {
           promise.queue.unMute();
         }
       });
@@ -456,8 +444,8 @@ var DataModel = Model.extend({
    * @param framesArray
    * @returns {*}
    */
-  framesQueue: function(framesArray, whatId) {
-    var _context = this;
+  framesQueue(framesArray, whatId) {
+    const _context = this;
     return new function() {
       this.defaultCallbacks = [];
       this.callbacks = {};
@@ -466,16 +454,13 @@ var DataModel = Model.extend({
       this.delayedAction = null;
       this.whatId = whatId;
       this.queue = framesArray.slice(0); //clone array
-      var queue = this;
+      const queue = this;
       //put the last element to the start of the queue because we are likely to need it first
       this.queue.splice(0, 0, this.queue.splice(this.queue.length - 1, 1)[0]);
       this.key = 0;
       this.mute = function() {
-        var _this = this;
         this.isActive = false;
-        new Promise(function(resolve, reject){
-          _this.delayedAction = resolve;
-        });
+        this.delayedAction = Promise.resolve.bind(Promise);
       };
 
       this.unMute = function() {
@@ -489,7 +474,7 @@ var DataModel = Model.extend({
         }
       };
       this.frameComplete = function(frameName) { //function called after build each frame with name of frame build
-        var i;
+        let i;
         if (queue.defaultCallbacks.length > 0) {
           for (i = 0; i < queue.defaultCallbacks.length; i++) {
             queue.defaultCallbacks[i](frameName);
@@ -502,8 +487,8 @@ var DataModel = Model.extend({
         }
       };
       this._waitingForActivation = function() {
-        var _this = this;
-        return new Promise(function(resolve, reject) {
+        const _this = this;
+        return new Promise((resolve, reject) => {
           if (_this.isActive) {
             return resolve();
           }
@@ -512,7 +497,7 @@ var DataModel = Model.extend({
       };
 
       this._getNextFrameName = function() {
-        var frameName = null;
+        let frameName = null;
         if (this.forcedQueue.length > 0 || this.queue.length > 0) {
           if (this.forcedQueue.length > 0) {
             frameName = this.forcedQueue.shift();
@@ -534,13 +519,13 @@ var DataModel = Model.extend({
 
       // returns the next frame in a queue
       this.getNext = function() {
-        var _this = this;
-        return new Promise(function(resolve, reject) {
+        const _this = this;
+        return new Promise((resolve, reject) => {
           _this.checkForcedFrames();
           if (_this.isActive) {
             resolve(_this._getNextFrameName());
           } else {
-            _this._waitingForActivation().then(function() {
+            _this._waitingForActivation().then(() => {
               resolve(_this._getNextFrameName());
             });
           }
@@ -549,10 +534,10 @@ var DataModel = Model.extend({
 
       // force the particular frame up the queue
       this.forceFrame = function(frameName, cb) {
-        var objIndexOf = function(obj, need) {
-          var search = need.toString();
-          var index = -1;
-          for(var i = 0, len = obj.length; i < len; i++) {
+        const objIndexOf = function(obj, need) {
+          const search = need.toString();
+          let index = -1;
+          for (let i = 0, len = obj.length; i < len; i++) {
             if (obj[i].toString() == search) {
               index = i;
               break;
@@ -564,7 +549,7 @@ var DataModel = Model.extend({
 
           this.callbacks[frameName].push(cb);
         } else {
-          var newKey = objIndexOf(this.queue, frameName);//this.queue.indexOf(frameName.toString());
+          const newKey = objIndexOf(this.queue, frameName);//this.queue.indexOf(frameName.toString());
           if (newKey !== -1) {
             this.forcedQueue.unshift(this.queue.splice(newKey, 1).pop());
             _context._muteAllQueues(this.whatId);
@@ -584,7 +569,7 @@ var DataModel = Model.extend({
             }
           }
         }
-      }
+      };
     }();
   },
 
@@ -597,13 +582,13 @@ var DataModel = Model.extend({
    * @param {Array} keys -- array of keys
    * @returns {Object} regularised dataset, nested by [animatable, column, key]
    */
-  _getFrames: function(dataId, whatId, framesArray, keys) {
-    var _this = this;
+  _getFrames(dataId, whatId, framesArray, keys) {
+    const _this = this;
 
     if (!_this._collection[dataId]["frames"][whatId]) {
       _this._collection[dataId]["frames"][whatId] = {};
     }
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
 
       //TODO: thses should come from state or from outside somehow
       // FramesArray in the input contains the array of keyframes in animatable dimension.
@@ -613,135 +598,135 @@ var DataModel = Model.extend({
 
       // Check if query.where clause is missing a time field
 
-      var indicatorsDB = _this.getConceptprops();
+      const indicatorsDB = _this.getConceptprops();
 
-      if(!indicatorsDB) utils.warn("_getFrames in data.js is missing indicatorsDB, it's needed for gap filling");
-      if(!framesArray) utils.warn("_getFrames in data.js is missing framesArray, it's needed so much");
+      if (!indicatorsDB) utils.warn("_getFrames in data.js is missing indicatorsDB, it's needed for gap filling");
+      if (!framesArray) utils.warn("_getFrames in data.js is missing framesArray, it's needed so much");
 
-      var TIME = _this._collection[dataId].query.animatable;
-      var KEY = _this._collection[dataId].query.select.key.slice(0);
-      if(TIME && KEY.indexOf(TIME) != -1) KEY.splice(KEY.indexOf(TIME), 1);
+      const TIME = _this._collection[dataId].query.animatable;
+      const KEY = _this._collection[dataId].query.select.key.slice(0);
+      if (TIME && KEY.indexOf(TIME) != -1) KEY.splice(KEY.indexOf(TIME), 1);
 
-      var filtered = {};
-      var k, items, itemsIndex, oneFrame, method, use, next;
+      const filtered = {};
+      let k, items, itemsIndex, oneFrame, method, use, next;
 
-      var entitiesByKey = {};
-      if(KEY.length > 1) {
+      const entitiesByKey = {};
+      if (KEY.length > 1) {
         for (k = 1; k < KEY.length; k++) {
-          var nested = _this.getData(dataId, 'nested', [KEY[k]].concat([TIME]));
+          const nested = _this.getData(dataId, "nested", [KEY[k]].concat([TIME]));
           entitiesByKey[KEY[k]] = Object.keys(nested);
         }
       }
 
       // We _nest_ the flat dataset in two levels: first by “key” (example: geo), then by “animatable” (example: year)
       // See the _getNested function for more details
-      var nested = _this.getData(dataId, 'nested', KEY.concat([TIME]));
+      const nested = _this.getData(dataId, "nested", KEY.concat([TIME]));
       keys = keys ? keys : Object.keys(nested);
       entitiesByKey[KEY[0]] = keys;
       // Get the list of columns that are in the dataset, exclude key column and animatable column
       // Example: [“lex”, “gdp”, “u5mr"]
-      var query = _this._collection[dataId].query;
-      var columns = query.select.value.filter(function(f){return f !== "_default"});
+      const query = _this._collection[dataId].query;
+      const columns = query.select.value.filter(f => f !== "_default");
 
-      var cLength = columns.length;
-      var key, k, column, c;
+      const cLength = columns.length;
+      let key, c;
 
-      var lastIndex = KEY.length - 1;
-      var createFiltered = function(parent, index) {
-        var keys = entitiesByKey[KEY[index]];
-        for(var i = 0, j = keys.length; i < j; i++) {
+      const lastIndex = KEY.length - 1;
+      const createFiltered = function(parent, index) {
+        const keys = entitiesByKey[KEY[index]];
+        for (let i = 0, j = keys.length; i < j; i++) {
           parent[keys[i]] = {};
-          if(index == lastIndex) {
+          if (index == lastIndex) {
             for (c = 0; c < cLength; c++) parent[keys[i]][columns[c]] = null;
           } else {
-            var nextIndex = index + 1;
+            const nextIndex = index + 1;
             createFiltered(parent[keys[i]], nextIndex);
           }
         }
-      }
+      };
 
       createFiltered(filtered, 0);
 
       for (c = 0; c < cLength; c++) _this._collection[dataId].haveNoDataPointsPerKey[columns[c]] = {};
 
-      var buildFrame = function(frameName, entitiesByKey, KEY, dataId, callback) {
-        var frame = {};
-          if (query.from !== "datapoints") {
+      const buildFrame = function(frameName, entitiesByKey, KEY, dataId, callback) {
+        const frame = {};
+        if (query.from !== "datapoints") {
             // we populate the regular set with a single value (unpack properties into constant time series)
-            var dataset = _this._collection[dataId].data;
-            for (c = 0; c < cLength; c++) frame[columns[c]] = {};
+          const dataset = _this._collection[dataId].data;
+          for (c = 0; c < cLength; c++) frame[columns[c]] = {};
 
-            for (var i = 0; i < dataset.length; i++) {
-              var d = dataset[i];
-              for (c = 0; c < cLength; c++) {
-                frame[columns[c]][d[KEY[0]]] = d[columns[c]];
+          for (let i = 0; i < dataset.length; i++) {
+            const d = dataset[i];
+            for (c = 0; c < cLength; c++) {
+              frame[columns[c]][d[KEY[0]]] = d[columns[c]];
                 //check data for properties with missed data. If founded then write key to haveNoDataPointsPerKey with
                 //count of broken datapoints
-                if(d[columns[c]] == null) {
-                  _this._collection[dataId].haveNoDataPointsPerKey[columns[c]][d[KEY[0]]] = dataset.length;
-                }
+              if (d[columns[c]] == null) {
+                _this._collection[dataId].haveNoDataPointsPerKey[columns[c]][d[KEY[0]]] = dataset.length;
               }
             }
+          }
 
-          } else {
+        } else {
             // If there is a time field in query.where clause, then we are dealing with indicators in this request
 
             // Put together a template for cached filtered sets (see below what's needed)
 
             // Now we run a 3-level loop: across frames, then across keys, then and across data columns (lex, gdp)
 
-            for (c = 0; c < cLength; c++) frame[columns[c]] = {};
+          for (c = 0; c < cLength; c++) frame[columns[c]] = {};
 
-            var iterateKeys = function(firstKeyObject, lastKeyObject, firstKey, nested, filtered, index) {
-              var keys = entitiesByKey[KEY[index]];
-              for(var i = 0, j = keys.length; i < j; i++) {
-                if(index == 0) {
-                  firstKey = keys[i];//root level
+          const iterateKeys = function(firstKeyObject, lastKeyObject, firstKey, nested, filtered, index) {
+            const keys = entitiesByKey[KEY[index]];
+            for (let i = 0, j = keys.length; i < j; i++) {
+              if (index == 0) {
+                firstKey = keys[i];//root level
+              }
+              if (index == lastIndex) {
+                for (c = 0; c < cLength; c++) {
+                  mapValue(columns[c], firstKey, keys[i], firstKeyObject, lastKeyObject, nested[keys[i]], filtered[keys[i]]);
                 }
-                if(index == lastIndex) {
-                  for (c = 0; c < cLength; c++) {
-                    mapValue(columns[c], firstKey, keys[i], firstKeyObject, lastKeyObject, nested[keys[i]], filtered[keys[i]]);
-                  }
-                } else {
-                  if(index == 0) {
-                    lastKeyObject = firstKeyObject = {};
-                  }
-                  var nextIndex = index + 1;
-                  lastKeyObject[keys[i]] = {};
-                  iterateKeys(firstKeyObject, lastKeyObject[keys[i]], firstKey, nested[keys[i]], filtered[keys[i]], nextIndex);
+              } else {
+                if (index == 0) {
+                  lastKeyObject = firstKeyObject = {};
                 }
+                const nextIndex = index + 1;
+                lastKeyObject[keys[i]] = {};
+                iterateKeys(firstKeyObject, lastKeyObject[keys[i]], firstKey, nested[keys[i]], filtered[keys[i]], nextIndex);
               }
             }
+          };
 
-            iterateKeys(null, null, null, nested, filtered, 0);
+          iterateKeys(null, null, null, nested, filtered, 0);
 
-            function mapValue(column, firstKey, lastKey, firstKeyObject, lastKeyObject, nested, filtered) {
+          function mapValue(column, firstKey, lastKey, firstKeyObject, lastKeyObject, nested, filtered) {
 
                 //If there are some points in the array with valid numbers, then
                 //interpolate the missing point and save it to the “clean regular set”
-                method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
-                use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
+            method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
+            use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
 
-                
-                if(firstKeyObject) {
-                  frame[column][firstKey] = firstKeyObject[firstKey];
-                } else {
-                  lastKeyObject = frame[column];
-                }
-                
+
+            if (firstKeyObject) {
+              frame[column][firstKey] = firstKeyObject[firstKey];
+            } else {
+              lastKeyObject = frame[column];
+            }
+
                 // Inside of this 3-level loop is the following:
-                if (nested && nested[frameName] && (nested[frameName][0][column] || nested[frameName][0][column] === 0)) {
+            if (nested && nested[frameName] && (nested[frameName][0][column] || nested[frameName][0][column] === 0)) {
 
                   // Check if the piece of data for [this key][this frame][this column] exists
                   // and is valid. If so, then save it into a “clean regular set”
-                  lastKeyObject[lastKey] = nested[frameName][0][column];
+              lastKeyObject[lastKey] = nested[frameName][0][column];
 
-                } else if (method === "none") {
+            } else if (method === "none") {
 
                   // the piece of data is not available and the interpolation is set to "none"
-                  lastKeyObject[lastKey] = null;
+              lastKeyObject[lastKey] = null;
 
-                } else {
+            } else {
                   // If the piece of data doesn’t exist or is invalid, then we need to inter- or extapolate it
 
                   // Let’s take a slice of the nested set, corresponding to the current key nested[key]
@@ -749,63 +734,63 @@ var DataModel = Model.extend({
                   // At every frame the data in the current column might or might not exist.
                   // Thus, let’s filter out all the frames which don’t have the data for the current column.
                   // Let’s cache it because we will most likely encounter another gap in the same column for the same key
-                  items = filtered[column];
-                  if (items === null) {
-                    var givenFrames = Object.keys(nested);
-                    items = new Array(givenFrames.length);
-                    itemsIndex = 0;
+              items = filtered[column];
+              if (items === null) {
+                const givenFrames = Object.keys(nested);
+                items = new Array(givenFrames.length);
+                itemsIndex = 0;
 
-                    for (var z = 0, length = givenFrames.length; z < length; z++) {
-                      oneFrame = nested[givenFrames[z]];
-                      if (oneFrame[0][column] || oneFrame[0][column] === 0) items[itemsIndex++] = oneFrame[0];
-                    }
+                for (let z = 0, length = givenFrames.length; z < length; z++) {
+                  oneFrame = nested[givenFrames[z]];
+                  if (oneFrame[0][column] || oneFrame[0][column] === 0) items[itemsIndex++] = oneFrame[0];
+                }
 
                     //trim the length of the array
-                    items.length = itemsIndex;
+                items.length = itemsIndex;
 
-                    if (itemsIndex === 0) {
-                      filtered[column] = [];
-                    } else {
-                      filtered[column] = items;
-                    }
+                if (itemsIndex === 0) {
+                  filtered[column] = [];
+                } else {
+                  filtered[column] = items;
+                }
 
-                    if(items.length==0) _this._collection[dataId].haveNoDataPointsPerKey[column][key] = items.length;
-                  }
+                if (items.length == 0) _this._collection[dataId].haveNoDataPointsPerKey[column][key] = items.length;
+              }
 
                   // Now we are left with a fewer frames in the filtered array. Let's check its length.
                   //If the array is empty, then the entire column is missing for the key
                   //So we let the key have missing values in this column for all frames
-                  if (items && items.length > 0) {
-                    next = null;
-                    lastKeyObject[lastKey] = utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
-                  }
-                }
+              if (items && items.length > 0) {
+                next = null;
+                lastKeyObject[lastKey] = utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
+              }
             }
           }
+        }
 
           // save the calcualted frame to global datamanager cache
-          _this._collection[dataId]["frames"][whatId][frameName] = frame;
+        _this._collection[dataId]["frames"][whatId][frameName] = frame;
 
           // fire the callback
-          if (typeof callback === "function") {
+        if (typeof callback === "function") {
             // runs the function frameComplete inside framesQueue.getNext()
-            callback(frameName);
-          }
+          callback(frameName);
+        }
 
           // recursively call the buildFrame again, this time for the next frame
           //QUESTION: FramesArray is probably not needed at this point. dataId and whatId is enough
-          _this._collectionPromises[dataId][whatId]["queue"].getNext().then(function(nextFrame) {
-            if (nextFrame) {
-              utils.defer(function() {
-                buildFrame(nextFrame, entitiesByKey, KEY, dataId, _this._collectionPromises[dataId][whatId]["queue"].frameComplete);
-              });
-            } else {
+        _this._collectionPromises[dataId][whatId]["queue"].getNext().then(nextFrame => {
+          if (nextFrame) {
+            utils.defer(() => {
+              buildFrame(nextFrame, entitiesByKey, KEY, dataId, _this._collectionPromises[dataId][whatId]["queue"].frameComplete);
+            });
+          } else {
               //this goes to marker.js as a "response"
-              resolve(_this._collection[dataId]["frames"][whatId]);
-            }
-          });
+            resolve(_this._collection[dataId]["frames"][whatId]);
+          }
+        });
       };
-      _this._collectionPromises[dataId][whatId]["queue"].getNext().then(function(nextFrame) {
+      _this._collectionPromises[dataId][whatId]["queue"].getNext().then(nextFrame => {
         if (nextFrame) {
           buildFrame(nextFrame, entitiesByKey, KEY, dataId, _this._collectionPromises[dataId][whatId]["queue"].frameComplete);
         }
@@ -814,7 +799,7 @@ var DataModel = Model.extend({
   },
 
 
-  _getNested: function(dataId, order) {
+  _getNested(dataId, order) {
     // Nests are objects of key-value pairs
     // Example:
     //
@@ -838,8 +823,8 @@ var DataModel = Model.extend({
     //   }
     // };
 
-    var nest = d3.nest();
-    for(var i = 0; i < order.length; i++) {
+    let nest = d3.nest();
+    for (let i = 0; i < order.length; i++) {
       nest = nest.key(
         (function(k) {
           return function(d) {
@@ -847,48 +832,42 @@ var DataModel = Model.extend({
           };
         })(order[i])
       );
-    };
+    }
 
-    return utils.nestArrayToObj(nest.entries(this._collection[dataId]['data']));
+    return utils.nestArrayToObj(nest.entries(this._collection[dataId]["data"]));
   },
 
 
-  _getUnique: function(dataId, attr) {
-    var uniq;
-    var items = this._collection[dataId].data;
-    //if it's an array, it will return a list of unique combinations.
-    if(utils.isArray(attr)) {
-      var values = items.map(function(d) {
-        return utils.clone(d, attr); //pick attrs
-      });
-      uniq = utils.unique(values, function(n) {
-        return JSON.stringify(n);
-      });
-    } //if it's a string, it will return a list of values
+  _getUnique(dataId, attr) {
+    let uniq;
+    const items = this._collection[dataId].data;
+    // if it's an array, it will return a list of unique combinations.
+    if (utils.isArray(attr)) {
+      const values = items.map(d => utils.clone(d, attr)); // pick attrs
+      uniq = utils.unique(values, n => JSON.stringify(n));
+    } // if it's a string, it will return a list of values
     else {
-      var values = items.map(function(d) {
-        return d[attr];
-      });
+      const values = items.map(d => d[attr]);
       uniq = utils.unique(values);
     }
     return uniq;
   },
 
-  _getValid: function(dataId, column) {
-    return this._collection[dataId].data.filter(function(f){return f[column] || f[column]===0});
+  _getValid(dataId, column) {
+    return this._collection[dataId].data.filter(f => f[column] || f[column] === 0);
   },
 
-  _getLimits: function(dataId, attr) {
+  _getLimits(dataId, attr) {
 
-    var items = this._collection[dataId].data;
+    const items = this._collection[dataId].data;
     // get only column attr and only rows with number or date
-    var filtered = items.reduce(function(filtered, d) {
+    const filtered = items.reduce((filtered, d) => {
 
       // check for dates
-      var f = (utils.isDate(d[attr])) ? d[attr] : parseFloat(d[attr]);
+      const f = (utils.isDate(d[attr])) ? d[attr] : parseFloat(d[attr]);
 
       // if it is a number
-      if(!isNaN(f)) {
+      if (!isNaN(f)) {
         filtered.push(f);
       }
 
@@ -897,15 +876,15 @@ var DataModel = Model.extend({
     }, []);
 
     // get min/max for the filtered rows
-    var min;
-    var max;
-    var limits = {};
-    for(var i = 0; i < filtered.length; i += 1) {
-      var c = filtered[i];
-      if(typeof min === 'undefined' || c < min) {
+    let min;
+    let max;
+    const limits = {};
+    for (let i = 0; i < filtered.length; i += 1) {
+      const c = filtered[i];
+      if (typeof min === "undefined" || c < min) {
         min = c;
       }
-      if(typeof max === 'undefined' || c > max) {
+      if (typeof max === "undefined" || c > max) {
         max = c;
       }
     }
@@ -917,26 +896,26 @@ var DataModel = Model.extend({
   /**
    * checks whether this combination is cached or not
    */
-  getDataId: function(query) {
+  getDataId(query) {
     //encode in hashCode
-    var q = utils.hashCode([
+    const q = utils.hashCode([
       query
     ]);
     //simply check if we have this in internal data
-    if(Object.keys(this._collection).indexOf(q) !== -1) {
+    if (Object.keys(this._collection).indexOf(q) !== -1) {
       return q;
     }
     return false;
   },
 
   handleReaderError(error, query) {
-    if (isObject(error)) {
-      const locale = this.getClosestModel('locale');
-      const translation = locale.getTFunction()(error.code, error.payload) || '';
-      error = `${translation} ${error.message || ''}`.trim();
+    if (utils.isObject(error)) {
+      const locale = this.getClosestModel("locale");
+      const translation = locale.getTFunction()(error.code, error.payload) || "";
+      error = `${translation} ${error.message || ""}`.trim();
     }
 
-    utils.warn('Problem with query: ', query);
+    utils.warn("Problem with query: ", query);
     throw error;
   },
 

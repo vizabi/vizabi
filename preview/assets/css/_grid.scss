@@ -45,7 +45,7 @@ a {
 #vzbp-main {
   @include prefixer(box-sizing, border-box, webkit moz spec);
   @include position(absolute, 0 $vzbp-width-sidebar 0 0);
-  @include transition(right 0.2s linear);
+  transition: right 0.2s linear;
   @include prefixer(transform, translate3d(0, 0, 0), webkit moz spec);
   &.vzbp-fullscreen {
     @include position(absolute, 0 0 0 0);
@@ -64,7 +64,7 @@ a {
   width: $vzbp-width-sidebar;
   background-color: $vzbp-color-sidebar;
   padding: 20px 5px 20px 15px;
-  @include transition(right 0.2s linear);
+  transition: right 0.2s linear;
   @include prefixer(transform, translate3d(0, 0, 0), webkit moz spec);
 }
 
@@ -76,7 +76,7 @@ a {
   background-color: $vzbp-color-editor;
   color: white;
   padding: 20px;
-  @include transition(right 0.2s linear);
+  transition: right 0.2s linear;
   @include prefixer(transform, translate3d(0, 0, 0), webkit moz spec);
 }
 
@@ -101,6 +101,6 @@ a {
   }
   #vzbp-main {
     @include position(absolute, 0 0 0 0);
-    @include transition(none);
+    transition: none;
   }
 }

@@ -18,7 +18,7 @@ const extractSrc = new ExtractTextPlugin('dist/vizabi.css');
 const extractPreview = new ExtractTextPlugin('preview/assets/css/main.css');
 
 const __PROD__ = process.env.NODE_ENV === 'production';
-const __FAST__ = !!process.env.FAST;
+const __FIX__ = !!process.env.FIX;
 const timestamp = new Date();
 
 const sep = '\\' + path.sep;
@@ -35,7 +35,7 @@ const stats = {
   source: false,
   errors: true,
   errorDetails: true,
-  warnings: false,
+  warnings: true,
   publicPath: false
 };
 
@@ -101,7 +101,6 @@ const plugins = [
 
 if (__PROD__) {
   plugins.push(
-    new webpack.optimize.DedupePlugin(),
     new webpack.optimize.UglifyJsPlugin({
       sourceMap: true,
       compressor: {
@@ -137,8 +136,8 @@ if (__PROD__) {
       archive.pipe(
         fs.createWriteStream(path.resolve('build', 'download', 'vizabi.zip'))
       );
-      archive.glob("**/*", { cwd: 'src/assets/cursors', dot: true }, { prefix: 'assets/cursors' });
-      archive.glob("en.json", { cwd: 'src/assets/translation', dot: true }, { prefix: 'assets/translation' });
+      archive.glob('**/*', { cwd: 'src/assets/cursors', dot: true }, { prefix: 'assets/cursors' });
+      archive.glob('en.json', { cwd: 'src/assets/translation', dot: true }, { prefix: 'assets/translation' });
       archive.finalize();
     }),
     new webpack.BannerPlugin({
@@ -159,19 +158,44 @@ if (__PROD__) {
 
 const loaders = [
   {
+    test: /\.js$/,
+    exclude: /node_modules/,
+    loaders: [
+      {
+        loader: 'babel-loader',
+        query: {
+          cacheDirectory: !__PROD__,
+          presets: ['es2015']
+        }
+      },
+      // {
+      //   loader: 'eslint-loader',
+      //   options: {
+      //     fix: __FIX__
+      //   }
+      // }
+    ]
+  },
+  {
     test: /\.scss$/,
     include: [
       path.resolve(__dirname, 'src')
     ],
-    loader: extractSrc.extract([{
-      loader: "css-loader",
-      options: {
-        minimize: __PROD__,
-        sourceMap: true
+    loader: extractSrc.extract([
+      {
+        loader: 'css-loader',
+        options: {
+          minimize: __PROD__,
+          sourceMap: true
+        }
+      },
+      {
+        loader: 'postcss-loader'
+      },
+      {
+        loader: 'sass-loader'
       }
-    }, {
-      loader: 'sass-loader'
-    }])
+    ])
   },
   {
     test: /\.scss$/,
@@ -216,7 +240,7 @@ const loaders = [
     }
   },
   {
-    test: /(d3|\.web)\.js$/, // TODO: we need another way to extract vendor files
+    test: /(d3|\.web|vizabi-ddfcsv-reader)\.js$/, // TODO: we need another way to extract vendor files
     include: [
       path.resolve(__dirname, 'node_modules')
     ],
@@ -242,18 +266,6 @@ const loaders = [
     ]
   },
 ];
-
-if (!__FAST__) {
-  loaders.push({
-    test: /\.js$/,
-    exclude: /node_modules/,
-    loader: 'babel-loader',
-    query: {
-      cacheDirectory: !__PROD__,
-      presets: ['es2015']
-    }
-  });
-}
 
 module.exports = {
   devtool: 'source-map',

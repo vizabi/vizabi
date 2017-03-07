@@ -22,7 +22,7 @@
     &::before {
       background-color: rgba($vzb-color-grey, .2);
     }
-    .vzb-ss-slider-normal, 
+    .vzb-ss-slider-normal,
     .vzb-ss-slider-small {
       opacity: .5;
     }
@@ -48,7 +48,7 @@
     // Slider Handle
     &::-webkit-slider-thumb {
       @include border-radius(20px);
-      @include transition(left .1s ease-in-out);
+      transition: left .1s ease-in-out;
       -webkit-appearance: none;
       cursor: pointer;
       background-color: $vzb-color-primary;
@@ -59,7 +59,7 @@
     }
     &::-moz-range-thumb {
       @include border-radius(14px);
-      @include transition(left .1s ease-in-out);
+      transition: left .1s ease-in-out;
       cursor: pointer;
       background: $vzb-color-primary;
       //top: -12px;
@@ -69,7 +69,7 @@
     }
     &::-ms-thumb {
       @include border-radius(14px);
-      @include transition(left .1s ease-in-out);
+      transition: left .1s ease-in-out;
       cursor: pointer;
       background: $vzb-color-primary;
       height: 14px;

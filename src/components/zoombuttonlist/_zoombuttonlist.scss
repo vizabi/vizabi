@@ -28,7 +28,7 @@ $vzb-button-bg: $vzb-color-white;
   &:-webkit-scrollbar {
     display: none;
   }
-  
+
   .vzb-buttonlist-btn {
     width: 40px;
     &[data-btn="hundredpercent"] {
@@ -65,8 +65,12 @@ $vzb-button-bg: $vzb-color-white;
       }
     }
     >.vzb-buttonlist-btn-icon {
-      @include transition(background-color 100ms ease-in, 
-      color 100ms ease-in, border 100ms ease-in, opacity 100ms ease-in);
+      transition: (
+        background-color 100ms ease-in,
+        color 100ms ease-in,
+        border 100ms ease-in,
+        opacity 100ms ease-in
+      );
     }
     >.vzb-buttonlist-btn-title {
       display: none;

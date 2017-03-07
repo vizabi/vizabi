@@ -1,11 +1,11 @@
-import Component from 'base/component';
-import { throttle, transform } from 'base/utils';
+import Component from "base/component";
+import { throttle, transform } from "base/utils";
 
 const SteppedSlider = Component.extend({
 
   init(config, context) {
-    this.name = 'steppedSlider';
-    this.template = require('./steppedspeedslider.html');
+    this.name = "steppedSlider";
+    this.template = require("./steppedspeedslider.html");
 
     this.config = Object.assign({
       triangleWidth: 10,
@@ -20,17 +20,17 @@ const SteppedSlider = Component.extend({
 
     this.model_expects = [
       {
-        name: 'time',
-        type: 'time'
+        name: "time",
+        type: "time"
       },
       {
-        name: 'locale',
-        type: 'locale'
+        name: "locale",
+        type: "locale"
       }
     ];
 
     this.model_binds = {
-      'change:time.delay': () => {
+      "change:time.delay": () => {
         this.redraw();
       }
     };
@@ -48,7 +48,7 @@ const SteppedSlider = Component.extend({
     } = this.config;
 
     this.element = d3.select(this.element);
-    this.svg = this.element.select('svg');
+    this.svg = this.element.select("svg");
 
     this.axisScale = d3.scale.log()
       .domain(d3.extent(domain))
@@ -74,33 +74,33 @@ const SteppedSlider = Component.extend({
 
     const axis = d3.axisLeft()
       .scale(this.axisScale)
-      .tickFormat(() => '')
+      .tickFormat(() => "")
       .tickSizeInner(lineWidth)
       .tickSizeOuter(0);
 
     const tx = triangleWidth + lineWidth / 2;
     const ty = triangleHeight / 2;
     this.svg
-      .on('mousedown', () => {
+      .on("mousedown", () => {
         const { offsetY } = d3.event;
         const y = Math.max(0, Math.min(offsetY - ty, height));
 
         this.setDelay(Math.round(this.delayScale(this.axisScale.invert(y))), true, true);
       })
-      .select('.vzb-stepped-speed-slider-axis')
-      .attr('transform', `translate(${tx}, ${ty})`)
+      .select(".vzb-stepped-speed-slider-axis")
+      .attr("transform", `translate(${tx}, ${ty})`)
       .call(axis);
 
     this.drag = d3.drag()
-      .on('drag', () => {
+      .on("drag", () => {
         const { dy } = d3.event;
-        const {translateY} = transform(this.slide.node());
+        const { translateY } = transform(this.slide.node());
         const y = Math.max(0, Math.min(dy + translateY, height));
 
         this.setDelay(Math.round(this.delayScale(this.axisScale.invert(y))));
         this.redraw(y);
       })
-      .on('end', () => {
+      .on("end", () => {
         this.setDelay(this.model.time.delay, true, true);
       });
 
@@ -114,12 +114,12 @@ const SteppedSlider = Component.extend({
       lineWidth
     } = this.config;
 
-    this.slide = this.svg.select('.vzb-stepped-speed-slider-triangle');
+    this.slide = this.svg.select(".vzb-stepped-speed-slider-triangle");
 
     this.slide
-      .append('g')
-      .append('path')
-      .attr('d', this.getTrianglePath());
+      .append("g")
+      .append("path")
+      .attr("d", this.getTrianglePath());
   },
 
   getTrianglePath() {
@@ -132,11 +132,11 @@ const SteppedSlider = Component.extend({
   },
 
   setDelay(value, force = false, persistent = false) {
-    this.model.time.set('delay', value, force, persistent);
+    this.model.time.set("delay", value, force, persistent);
   },
 
   redraw(y = this.axisScale(this.delayScale.invert(this.model.time.delay))) {
-    this.slide.attr('transform', `translate(0, ${y})`);
+    this.slide.attr("transform", `translate(0, ${y})`);
   }
 
 });

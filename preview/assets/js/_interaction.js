@@ -52,7 +52,6 @@ function recstop() {
 }
 
 function download(){
-  window.URL = null;
   var e = document.createElement('script');
   e.setAttribute('src', 'assets/js/svg-crowbar-2.js');
   e.setAttribute('class', 'svg-crowbar');

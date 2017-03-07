@@ -11,9 +11,9 @@
   $size-timeslider-medium: 50px;
   $size-timeslider-small: 40px;
   $vzb-button-expand-width: 290px;
- 
 
-  @include user-select(none);
+
+  user-select: none;
   display: flex;
   position: relative;
   width: 100%;
@@ -23,6 +23,10 @@
   overflow: hidden;
   direction: ltr;
   //text-align: left;
+
+  .vzb-dynamic-background {
+    font-family: "Lucida Console", "Monaco", monospace;
+  }
 
   &.vzb-rtl {
     direction: rtl;
@@ -51,7 +55,7 @@
     }
 
     .vzb-tool-time-speed-sliders {
-      flex: 0 0 $size-timeslider; 
+      flex: 0 0 $size-timeslider;
       height: $size-timeslider;
       display: flex;
       .vzb-tool-timeslider {
@@ -66,6 +70,11 @@
   .vzb-tool-sidebar {
     display: flex;
     flex: 0 0 auto;
+    position: static;
+
+    .vzb-tool-dialogs {
+      position: static;
+    }
 
     .vzb-tool-buttonlist {
       flex: 1 0 auto;
@@ -76,7 +85,7 @@
       position: relative;
       //overflow: visible;
       text-align: center;
-    
+
       input,
       textarea,
       keygen,
@@ -84,7 +93,7 @@
       button {
         font-family: $vzb-font-family;
       }
-    
+
       &:-webkit-scrollbar {
         display: none;
       }
@@ -123,7 +132,7 @@
 
     &.vzb-portrait {
       flex-direction: column;
-        
+
       .vzb-tool-sidebar {
         flex-direction: column;
         .vzb-tool-buttonlist {
@@ -155,11 +164,11 @@
       font-size: $vzb-font-size-tiny;
     }
   }
-  
+
   &.vzb-medium {
     .vzb-tool-stage {
       .vzb-tool-time-speed-sliders {
-        flex: 0 0 $size-timeslider-medium; 
+        flex: 0 0 $size-timeslider-medium;
         height: $size-timeslider-medium;
       }
     }
@@ -175,12 +184,11 @@
           flex: 1 auto;
           display: flex;
           flex-direction: column;
-          position: static;
           background-color: $vzb-color-primary-lightest;
           overflow-x: hidden;
           overflow-y: auto;
         }
-  
+
         .vzb-tool-buttonlist {
           flex: 0 0 auto;
           width: $vzb-button-expand-width;
@@ -189,7 +197,7 @@
       }
     }
   }
-  
+
   //tooltip
   .vzb-tooltip {
     @include border-radius(3px);
@@ -243,14 +251,14 @@
   input[type=range]:focus::-ms-fill-upper {
     background: transparent;
   }
-  
+
   input[type=range]::-ms-tooltip {
-    display: none;  
+    display: none;
   }
-  
+
   input[type=range]::-moz-focus-outer {
     border: 0;
-  }    
+  }
   //Data warning
   .vzb-data-warning {
     cursor: pointer;

@@ -24,6 +24,14 @@
       }
     }
 
+    .vzb-panhand .vzb-bc-bubbles-crop {
+      cursor: url('../../assets/cursors/grab.cur'), auto;
+    }
+
+    .vzb-panhand.vzb-zooming .vzb-bc-bubbles-crop {
+      cursor: url('../../assets/cursors/grabbing.cur'), auto;
+    }
+
     .vzb-bubblechart-svg {
       @extend %vzb-chart-svg;
 
@@ -65,6 +73,14 @@
         }
       }
 
+      &.vzb-panhand .vzb-bc-bubbles-crop {
+        cursor: grab;
+      }
+
+      &.vzb-panhand.vzb-zooming .vzb-bc-bubbles-crop {
+        cursor: grabbing;
+      }
+
       &.vzb-zoomin .vzb-bc-bubbles-crop,
       &.vzb-zoomin .vzb-bc-labels-crop {
         cursor: zoom-in;
@@ -103,7 +119,7 @@
         }
         .vzb-bc-entity {
           .vzb-bc-label-x {
-            @include transition(opacity 200ms linear);
+            transition: opacity 200ms linear;
             fill: $vzb-color-primary;
             text-anchor: middle;
             dominant-baseline: middle;
@@ -114,7 +130,7 @@
           }
 
           .vzb-bc-label-x-icon {
-            @include transition(opacity 200ms linear);
+            transition: opacity 200ms linear;
             fill: $vzb-color-white;
             //pointer-events: none;
           }
@@ -223,7 +239,7 @@
         stroke-dasharray: 4 4;
         stroke: $vzb-color-black;
       }
-      
+
       .vzb-bc-projection-x,
       .vzb-bc-projection-y {
         stroke-dasharray: 4 4;
