@@ -139,6 +139,21 @@ const TopojsonLayer = MapLayer.extend({
             .enter().insert("path")
             .attr("d", _this.mapPath)
             .attr("class", "land")
+            .style("opacity", _this.context.model.marker.opacitySelectDim)
+            .on("mouseover", (d, i) => {
+              _this.parent._interact()._mouseover(d.key);
+            })
+            .on("mouseout", (d, i) => {
+              _this.parent._interact()._mouseout(d.key);
+            })
+            .on("click", (d, i) => {
+              _this.parent._interact()._click(d.key);
+              _this.highlightMarkers();
+            })
+            .onTap((d, i) => {
+              _this.parent._interact()._click(d.key);
+              d3.event.stopPropagation();
+            })
             .each(function(d, i) {
               const view = d3.select(this);
               d.key = d.properties[_this.context.model.ui.map.topology.geoIdProperty] ?
@@ -158,6 +173,12 @@ const TopojsonLayer = MapLayer.extend({
           .attr("class", "boundary");
       }
     );
+  },
+
+  updateOpacity() {
+    const _this = this;
+    this.mapLands
+      .style("opacity", d => _this.parent.getOpacity(d.key));
   },
 
   updateMapColors() {
@@ -308,12 +329,15 @@ const GoogleMapLayer = MapLayer.extend({
   },
 
   rescaleMap() {
-    const rectBounds = new google.maps.LatLngBounds(
-      new google.maps.LatLng(this.context.model.ui.map.bounds.north, this.context.model.ui.map.bounds.west),
-      new google.maps.LatLng(this.context.model.ui.map.bounds.south, this.context.model.ui.map.bounds.east)
-    );
-    this.map.fitBounds(rectBounds);
-    google.maps.event.trigger(this.map, "resize");
+    const _this = this;
+    google.maps.event.addListenerOnce(_this.map, "idle", () => {
+      const rectBounds = new google.maps.LatLngBounds(
+        new google.maps.LatLng(_this.context.model.ui.map.bounds.north, _this.context.model.ui.map.bounds.west),
+        new google.maps.LatLng(_this.context.model.ui.map.bounds.south, _this.context.model.ui.map.bounds.east)
+      );
+      _this.map.fitBounds(rectBounds);
+      google.maps.event.trigger(_this.map, "resize");
+    });
   },
 
   zoomMap(center, increment) {
@@ -504,6 +528,12 @@ export default Class.extend({
     }
     return this.context.COLOR_WHITEISH;
   },
+  getOpacity(key) {
+    if (this.keys[key]) {
+      return this.context.getMapOpacity(this.keys[key]);
+    }
+    return this.context.COLOR_WHITEISH;
+  },
 
   updateColors() {
     if (this.topojsonMap) {
@@ -522,7 +552,7 @@ export default Class.extend({
           break;
       }
       if (this.mapInstance) {
-        if (this.context.model.ui.map.topojsonLayer) {
+        if (this.context.model.ui.map.showTopojson) {
           this.topojsonMap = new TopojsonLayer(this.context, this);
         }
       } else {
@@ -613,6 +643,16 @@ export default Class.extend({
       this.mapInstance.rescaleMap();
     } else {
       this.topojsonMap.rescaleMap();
+    }
+  },
+
+  _interact() {
+    return this.context._mapIteract();
+  },
+
+  updateOpacity() {
+    if (this.topojsonMap) {
+      this.topojsonMap.updateOpacity();
     }
   },
 

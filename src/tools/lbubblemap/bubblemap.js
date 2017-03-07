@@ -81,7 +81,8 @@ const LBubbleMap = Tool.extend("LBubbleMap", {
         preserveAspectRatio: true,
         mapEngine: "google",
         mapLayer: "terrain",
-        topojsonLayer: true,
+        showTopojson: true,
+        showBubbles: true,
         bounds: {
           north: 60.25,
           west: 17.5,

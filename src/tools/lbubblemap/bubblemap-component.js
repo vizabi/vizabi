@@ -92,6 +92,13 @@ const LBubbleMapComponent = Component.extend({
       "change:ui.map.mapLayer": function(evt) {
         _this.map.layerChanged();
       },
+      "change:ui.map.showBubbles": function(evt) {
+        _this.updateEntities();
+        _this.redrawDataPoints(null, true);
+        _this._reorderEntities();
+        _this.updateOpacity();
+      },
+
       "change:ui.cursorMode": function() {
         const svg = _this.chartSvg;
         if (_this.model.ui.cursorMode === "plus") {
@@ -122,6 +129,7 @@ const LBubbleMapComponent = Component.extend({
     this.sScale = null;
     this.cScale = d3.scaleOrdinal(d3.schemeCategory10);
 
+    _this.COLOR_WHITEISH = "#fdfdfd";
     _this.COLOR_WHITEISH = "#fdfdfd";
 
     this._labels = new Labels(this);
@@ -434,7 +442,7 @@ const LBubbleMapComponent = Component.extend({
         .text(this.translator("buttons/color") + ": " + this.strings.title.C);
 
       this.yInfoEl.classed("vzb-hidden", false);
-      this.cInfoEl.classed("vzb-hidden", false || this.cTitleEl.classed("vzb-hidden"));
+      this.cInfoEl.classed("vzb-hidden", this.cTitleEl.classed("vzb-hidden"));
     }
   },
 
@@ -451,30 +459,8 @@ const LBubbleMapComponent = Component.extend({
      return _this.model.marker.isSelected(d);
      });
      */
-
-    const OPACITY_HIGHLT = 1.0;
-    const OPACITY_HIGHLT_DIM = 0.3;
-    const OPACITY_SELECT = this.model.marker.opacityRegular;
-    const OPACITY_REGULAR = this.model.marker.opacityRegular;
-    const OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
-
-    this.entityBubbles.style("opacity", d => {
-
-      if (_this.someHighlighted) {
-        //highlight or non-highlight
-        if (_this.model.marker.isHighlighted(d)) return OPACITY_HIGHLT;
-      }
-
-      if (_this.someSelected) {
-        //selected or non-selected
-        return _this.model.marker.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
-      }
-
-      if (_this.someHighlighted) return OPACITY_HIGHLT_DIM;
-
-      return OPACITY_REGULAR;
-
-    });
+    this.map.updateOpacity();
+    this.entityBubbles.style("opacity", d => _this.getOpacity(d));
 
     this.entityBubbles.classed("vzb-selected", d => _this.model.marker.isSelected(d));
 
@@ -487,6 +473,31 @@ const LBubbleMapComponent = Component.extend({
     }
 
     this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
+  },
+
+  getMapOpacity(key) {
+    if (this.model.ui.map.showBubbles) {
+      return this.model.marker.opacitySelectDim;
+    }
+    const d = {};
+    d[this.KEY] = key;
+    return this.getOpacity(d);
+  },
+
+  getOpacity(d) {
+    if (this.someHighlighted) {
+      //highlight or non-highlight
+      if (this.model.marker.isHighlighted(d)) return this.model.marker.opacityRegular;
+    }
+
+    if (this.someSelected) {
+      //selected or non-selected
+      return this.model.marker.isSelected(d) ? this.model.marker.opacityRegular : this.model.marker.opacitySelectDim;
+    }
+
+    if (this.someHighlighted) return this.model.marker.opacitySelectDim;
+
+    return this.model.marker.opacityRegular;
   },
 
   /**
@@ -532,51 +543,40 @@ const LBubbleMapComponent = Component.extend({
     if (!this.model.time.splash) {
       this.unselectBubblesWithNoData();
     }
-
-    // TODO: add to csv
-    //Africa 9.1021° N, 18.2812°E
-    //Europe 53.0000° N, 9.0000° E
-    //Asia 49.8380° N, 105.8203° E
-    //north American 48.1667° N and longitude 100.1667° W
-    /*
-     var pos = {
-     "afr": {lat: 9.1, lng: 18.3},
-     "eur": {lat: 53.0, lng: 9.0},
-     "asi": {lat: 49.8, lng: 105.8},
-     "ame": {lat: 48.2, lng: -100.2},
-     };
-     */
-
+    let bubbles = [];
+    if (this.model.ui.map.showBubbles) {
+      bubbles = this.model.marker.getVisible();
+    }
 
     this.entityBubbles = this.bubbleContainer.selectAll(".vzb-bmc-bubble")
-        .data(this.model.marker.getVisible(), d => d[KEY]);
+        .data(bubbles, d => d[KEY]);
 
     //exit selection
     this.entityBubbles.exit().remove();
 
     //enter selection -- init circles
     this.entityBubbles = this.entityBubbles.enter().append("circle")
-        .attr("class", "vzb-bmc-bubble")
-        .on("mouseover", (d, i) => {
-          if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
-          _this._interact()._mouseover(d, i);
-        })
-        .on("mouseout", (d, i) => {
-          if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
-          _this._interact()._mouseout(d, i);
-        })
-        .on("click", (d, i) => {
-          if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
-          _this._interact()._click(d, i);
-          _this.highlightMarkers();
-        })
-        .onTap((d, i) => {
-          _this._interact()._click(d, i);
-          d3.event.stopPropagation();
-        })
-        .onLongTap((d, i) => {
-        })
-        .merge(this.entityBubbles);
+      .attr("class", "vzb-bmc-bubble")
+      .on("mouseover", (d, i) => {
+        if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
+        _this._interact()._mouseover(d, i);
+      })
+      .on("mouseout", (d, i) => {
+        if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
+        _this._interact()._mouseout(d, i);
+      })
+      .on("click", (d, i) => {
+        if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
+        _this._interact()._click(d, i);
+        _this.highlightMarkers();
+      })
+      .onTap((d, i) => {
+        _this._interact()._click(d, i);
+        d3.event.stopPropagation();
+      })
+      .onLongTap((d, i) => {
+      })
+      .merge(this.entityBubbles);
 
     this._reorderEntities();
 
@@ -616,7 +616,6 @@ const LBubbleMapComponent = Component.extend({
 
     this.entityBubbles.each(function(d, index) {
       const view = d3.select(this);
-
       const valueS = _this.values.size[d[_this.KEY]];
       const valueC = _this.values.color[d[_this.KEY]];
       const valueL = _this.values.label[d[_this.KEY]];
@@ -849,6 +848,40 @@ const LBubbleMapComponent = Component.extend({
       this.sScale.rangePoints([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)], 0).range();
     }
 
+  },
+
+  _mapIteract() {
+    const _this = this;
+    const d = {};
+    return {
+      _mouseover(key, i) {
+        if (utils.isTouchDevice()
+            || _this.model.ui.cursorMode !== "arrow"
+            || _this.model.ui.map.showBubbles
+            || !_this.map.keys[key]
+        ) return;
+        d[_this.KEY] = _this.map.keys[key];
+        _this._interact()._mouseover(d);
+      },
+      _mouseout(key, i) {
+        if (utils.isTouchDevice()
+            || _this.model.ui.cursorMode !== "arrow"
+            || _this.model.ui.map.showBubbles
+            || !_this.map.keys[key]
+        ) return;
+        d[_this.KEY] = _this.map.keys[key];
+        _this._interact()._mouseout(d);
+      },
+      _click(key, i) {
+        if (utils.isTouchDevice()
+            || _this.model.ui.cursorMode !== "arrow"
+            || _this.model.ui.map.showBubbles
+            || !_this.map.keys[key]
+        ) return;
+        d[_this.KEY] = _this.map.keys[key];
+        _this._interact()._click(d);
+      }
+    };
   },
 
   _interact() {

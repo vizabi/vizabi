@@ -78,6 +78,17 @@ const Mapoptions = Dialog.extend({
 
     this.mapEngineForm.exit().remove();
 
+    this.element.select(".show-layer").select("input[name='showBubbles']")
+      .property("checked",  _this.model.ui.map.showBubbles)
+      .on("change", function() {
+        _this.setModel("showBubbles", d3.select(this).property("checked"));
+      });
+    this.element.select(".show-layer").select("input[name='showTopojson']")
+      .property("checked",  _this.model.ui.map.showTopojson)
+      .on("change", function() {
+        _this.setModel("showTopojson", d3.select(this).property("checked"));
+      });
+
     this.mapEngineForm.enter().append("label")
       .attr("for", (d, i) => "a" + i)
       .each(function(d, i) {
@@ -132,6 +143,9 @@ const Mapoptions = Dialog.extend({
     if (what == "mapLayer") {
       this.selectedLayer[this.model.ui.map.mapEngine] = value;
       this.model.ui.map.mapLayer = value;
+    }
+    if (what == "showBubbles" || what == "showTopojson") {
+      this.model.ui.map[what] = value;
     }
   }
 });
