@@ -7,7 +7,6 @@ const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const OpenBrowserPlugin = require('open-browser-webpack-plugin');
 const SassLintPlugin = require('sasslint-webpack-plugin');
 const UnminifiedWebpackPlugin = require('unminified-webpack-plugin');
 const customLoader = require('custom-loader');
@@ -15,13 +14,10 @@ const customLoader = require('custom-loader');
 const archiver = require('archiver');
 
 const extractSrc = new ExtractTextPlugin('dist/vizabi.css');
-const extractPreview = new ExtractTextPlugin('preview/assets/css/main.css');
 
 const __PROD__ = process.env.NODE_ENV === 'production';
-const __FIX__ = !!process.env.FIX;
 const timestamp = new Date();
 
-const sep = '\\' + path.sep;
 const stats = {
   colors: true,
   hash: false,
@@ -67,13 +63,7 @@ const loaders = [
           cacheDirectory: !__PROD__,
           presets: ['es2015']
         }
-      },
-      // {
-      //   loader: 'eslint-loader',
-      //   options: {
-      //     fix: __FIX__
-      //   }
-      // }
+      }
     ]
   },
   {
@@ -98,13 +88,6 @@ const loaders = [
     ])
   },
   {
-    test: /\.scss$/,
-    include: [
-      path.resolve(__dirname, 'preview')
-    ],
-    loader: extractPreview.extract(['css-loader', 'sass-loader'])
-  },
-  {
     test: /\.cur$/,
     loader: 'file-loader',
     query: {
@@ -113,57 +96,9 @@ const loaders = [
     }
   },
   {
-    test: /\.pug$/,
-    loaders: [
-      'file-loader?name=[path][name].html',
-      'pug-html-loader?exports=false'
-    ]
-  },
-  {
-    test: /\.css$/,
-    include: [
-      path.resolve(__dirname, 'node_modules')
-    ],
-    loader: 'file-loader',
-    query: {
-      name: 'preview/assets/vendor/css/[name].[ext]'
-    }
-  },
-  {
-    test: /\.(otf|eot|svg|ttf|woff2?)$/,
-    include: [
-      path.resolve(__dirname, 'node_modules')
-    ],
-    loader: 'file-loader',
-    query: {
-      name: 'preview/assets/vendor/fonts/[name].[ext]'
-    }
-  },
-  {
-    test: /(d3|\.web|vizabi-ddfcsv-reader)\.js$/, // TODO: we need another way to extract vendor files
-    include: [
-      path.resolve(__dirname, 'node_modules')
-    ],
-    loader: 'file-loader',
-    query: {
-      name: 'preview/assets/vendor/js/[1]/[name].[ext]',
-      regExp: new RegExp(`${sep}node_modules${sep}([^${sep}]+?)${sep}`)
-    }
-  },
-  {
     test: /\.html$/,
     include: [path.resolve(__dirname, 'src')],
     loader: 'html-loader'
-  },
-  {
-    test: /\.json$/,
-    include: [
-      path.resolve(__dirname, 'node_modules')
-    ],
-    loaders: [
-      'file-loader?name=preview/assets/js/toolconfigs/[name].js',
-      'custom-loader?name=config-loader'
-    ]
   },
 ];
 
@@ -171,35 +106,18 @@ module.exports = output => {
   const plugins = [
     new CleanWebpackPlugin(['build']),
     extractSrc,
-    extractPreview,
     new CopyWebpackPlugin([
-      //   {
-      //     from: '.data/',
-      //     to: 'preview/data/'
-      //   },
-      //   {
-      //     from: 'preview/assets/js/',
-      //     to: 'preview/assets/js/'
-      //   },
-      // TODO: replace with file-loader
       {
         from: path.resolve(__dirname, 'src', 'assets', 'translation'),
         to: path.resolve(output || path.resolve(__dirname, 'build'), 'dist', 'assets', 'translation'),
       }
     ]),
-    // new CopyWebpackPlugin([
-    //   {
-    //     from: 'src/assets/translation/',
-    //     to: 'dist/assets/translation/'
-    //   },
-    //   {
-    //     from: 'src/assets/cursors/',
-    //     to: 'dist/assets/cursors/'
-    //   }
-    // ]),
-    // new OpenBrowserPlugin({
-    //   url: 'http://localhost:8080/preview/'
-    // }),
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(__dirname, 'src', 'assets', 'cursors'),
+        to: path.resolve(output || path.resolve(__dirname, 'build'), 'dist', 'assets', 'cursors')
+      }
+    ]),
     new SassLintPlugin({
       quiet: false,
       syntax: 'scss',
