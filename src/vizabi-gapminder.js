@@ -22,6 +22,7 @@ import DonutChart from "tools/donutchart/donutchart";
 import Cartogram from "tools/cartogram/cartogram";
 import AxisLabeler from "tools/axislabeler/axislabeler";
 import AgePyramid from "tools/agepyramid/agepyramid";
+import SankeyChart from "tools/sankeydiagram/sankeydiagram";
 
 // Fallback in case if WS is not available - requesting data from local files
 const locationArray = window.location.href.split("/");
