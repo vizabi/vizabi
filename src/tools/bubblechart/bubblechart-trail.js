@@ -180,7 +180,7 @@ export default Class.extend({
     const _this = this;
     const KEY = _context.KEY;
     if (!this._isCreated || _context.model.time.splash) return;
-    if (typeof actions == "string") actions = [actions];
+    if (typeof actions === "string") actions = [actions];
 
     this._isCreated.then(() => {
       //quit if function is called accidentally
@@ -559,8 +559,8 @@ export default Class.extend({
         _context.model.marker.getFrame(segment.t, frame => {
           if (d.status != "reveal") return resolve();
           if (!frame ||
-            (typeof frame.axis_x == "undefined") ||  frame.axis_x[d[KEY]] == null ||
-            (typeof frame.axis_y == "undefined") ||  frame.axis_y[d[KEY]] == null)
+            (typeof frame.axis_x === "undefined") ||  frame.axis_x[d[KEY]] == null ||
+            (typeof frame.axis_y === "undefined") ||  frame.axis_y[d[KEY]] == null)
           {
             utils.warn("Frame for trail missed: " + segment.t);
             return resolve();

@@ -110,6 +110,7 @@
       "error",
       "never"
     ],
+    "eqeqeq": 0,
     "no-floating-decimal": 1,
     "no-trailing-spaces": 1,
     "no-debugger": 1,

@@ -221,7 +221,7 @@ const DataModel = Model.extend({
     }
 
     // if they want a certain processing of the data, see if it's already in cache
-    const id = (typeof whatId == "string") ? whatId : JSON.stringify(whatId);
+    const id = (typeof whatId === "string") ? whatId : JSON.stringify(whatId);
     if (this._collection[dataId][what][id]) {
       return this._collection[dataId][what][id];
     }
@@ -465,7 +465,7 @@ const DataModel = Model.extend({
 
       this.unMute = function() {
         this.isActive = true;
-        if (typeof this.delayedAction == "function") {
+        if (typeof this.delayedAction === "function") {
           this.delayedAction();
         }
         this.delayedAction = null;
@@ -555,7 +555,7 @@ const DataModel = Model.extend({
             _context._muteAllQueues(this.whatId);
             this.unMute();
             if (typeof cb === "function") {
-              if (typeof this.callbacks[frameName] != "object") {
+              if (typeof this.callbacks[frameName] !== "object") {
                 this.callbacks[frameName] = [];
               }
               this.callbacks[frameName].push(cb);

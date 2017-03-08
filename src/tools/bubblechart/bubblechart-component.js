@@ -757,12 +757,12 @@ const BubbleChartComp = Component.extend({
         const sizeA = _this.frame.size[a[KEY]];
         const sizeB = _this.frame.size[b[KEY]];
 
-        if (typeof sizeA == "undefined" && typeof sizeB != "undefined") return -1;
-        if (typeof sizeA != "undefined" && typeof sizeB == "undefined") return 1;
+        if (typeof sizeA === "undefined" && typeof sizeB !== "undefined") return -1;
+        if (typeof sizeA !== "undefined" && typeof sizeB === "undefined") return 1;
         if (sizeA != sizeB) return d3.descending(sizeA, sizeB);
         if (a[KEY] != b[KEY]) return d3.ascending(a[KEY], b[KEY]);
-        if (typeof a.trailStartTime != "undefined" || typeof b.trailStartTime != "undefined") return typeof a.trailStartTime != "undefined" ? -1 : 1; // only lines has trailStartTime
-        if (typeof a.limits != "undefined" || typeof b.limits != "undefined") return typeof a.limits != "undefined" ? -1 : 1; // only trails has attribute limits
+        if (typeof a.trailStartTime !== "undefined" || typeof b.trailStartTime !== "undefined") return typeof a.trailStartTime !== "undefined" ? -1 : 1; // only lines has trailStartTime
+        if (typeof a.limits !== "undefined" || typeof b.limits !== "undefined") return typeof a.limits !== "undefined" ? -1 : 1; // only trails has attribute limits
         return d3.descending(sizeA, sizeB);
       });
   },

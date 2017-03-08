@@ -101,7 +101,7 @@ const TimeModel = DataConnected.extend({
       this.formatters = formats[this.unit];
     }
     // specifically set formats overwrite unit defaults
-    if (typeof this.format == "string") {
+    if (typeof this.format === "string") {
       this.formatters.data = this.formatters.ui = d3.time.format.utc(this.format);
     } else {
       if (this.format.data) {

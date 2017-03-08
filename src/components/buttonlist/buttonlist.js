@@ -503,7 +503,7 @@ const ButtonList = Component.extend({
     const translator = this.model.locale.getTFunction();
 
     btn.classed(class_unavailable, this.model.state.marker.select.length == 0 && !active);
-    if (typeof active == "undefined") {
+    if (typeof active === "undefined") {
       btn.classed(class_hidden, this.model.state.marker.select.length == 0);
     } else {
       btn.classed(class_hidden, !active);
@@ -521,7 +521,7 @@ const ButtonList = Component.extend({
     this.setInpercent();
   },
   setInpercent() {
-    if (typeof ((this.model.ui.chart || {}).inpercent) == "undefined") return;
+    if (typeof ((this.model.ui.chart || {}).inpercent) === "undefined") return;
     const id = "inpercent";
     const translator = this.model.locale.getTFunction();
     const btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
@@ -565,7 +565,7 @@ const ButtonList = Component.extend({
       exitFullscreen.call(this);
     }
     utils.classed(pholder, class_vzb_fullscreen, fs);
-    if (typeof container != "undefined") {
+    if (typeof container !== "undefined") {
       utils.classed(container, class_container_fullscreen, fs);
     }
 

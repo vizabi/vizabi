@@ -1443,7 +1443,7 @@ export function firstBy() {
 
   function makeCompareFunction(f, opt) {
     opt = typeof (opt) === "number" ? { direction: opt } : opt || {};
-    if (typeof (f) != "function") {
+    if (typeof (f) !== "function") {
       const prop = f;
       // make unary function
       f = function(v1) {
@@ -1468,7 +1468,7 @@ export function firstBy() {
    which is applied in case the first one returns 0 (equal)
    returns a new compare function, which has a `thenBy` method as well */
   function tb(func, opt) {
-    const x = typeof (this) == "function" ? this : false;
+    const x = typeof (this) === "function" ? this : false;
     const y = makeCompareFunction(func, opt);
     const f = x ? function(a, b) {
       return x(a, b) || y(a, b);

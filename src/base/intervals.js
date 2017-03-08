@@ -30,8 +30,8 @@ const Intervals = Class.extend({
         clearInterval(this.intervals[name]);
         delete this.intervals[name];
       }
-    } else { 
-      this.clearAllIntervals(); 
+    } else {
+      this.clearAllIntervals();
     }
   },
 
