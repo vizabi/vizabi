@@ -148,7 +148,6 @@ const TopojsonLayer = MapLayer.extend({
             })
             .on("click", (d, i) => {
               _this.parent._interact()._click(d.key);
-              _this.highlightMarkers();
             })
             .onTap((d, i) => {
               _this.parent._interact()._click(d.key);
@@ -599,6 +598,19 @@ export default Class.extend({
 
   layerChanged() {
     if (this.mapEngine == this.context.model.ui.map.mapEngine) {
+      if (this.topojsonMap && !this.context.model.ui.map.showTopojson) {
+        this.topojsonMap = null;
+        this.mapSvg.html("");
+        this.boundsChanged();
+      } else if (!this.topojsonMap && this.context.model.ui.map.showTopojson) {
+        this.topojsonMap = new TopojsonLayer(this.context, this);
+        this.topojsonMap.initMap(this.domSelector).then(
+          map => {
+            this.topojsonMap.rescaleMap();
+            this.updateColors();
+            this.updateOpacity();
+          });
+      }
       this.mapInstance.updateLayer();
     } else {
       this.mapEngine = this.context.model.ui.map.mapEngine;
@@ -609,8 +621,9 @@ export default Class.extend({
       this.getMap();
       this.initMap().then(
         map => {
-          this.rescaleMap();
+          this.boundsChanged();
           this.updateColors();
+          this.updateOpacity();
         });
     }
   },

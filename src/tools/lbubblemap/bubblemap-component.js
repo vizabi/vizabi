@@ -79,6 +79,7 @@ const LBubbleMapComponent = Component.extend({
         if (!_this._readyOnce) return;
         _this.selectMarkers();
         _this.redrawDataPoints(null, false);
+        _this.updateLabels(null);
         _this.updateOpacity();
         _this.updateDoubtOpacity();
 
@@ -98,7 +99,9 @@ const LBubbleMapComponent = Component.extend({
         _this._reorderEntities();
         _this.updateOpacity();
       },
-
+      "change:ui.map.showTopojson": function(evt) {
+        _this.map.layerChanged();
+      },
       "change:ui.cursorMode": function() {
         const svg = _this.chartSvg;
         if (_this.model.ui.cursorMode === "plus") {
@@ -608,7 +611,15 @@ const LBubbleMapComponent = Component.extend({
         _this.model.marker.selectMarker(d);
     });
   },
-
+  _getPosition(d) {
+    const KEY = this.KEY;
+    if (this.values.hook_centroid && this.values.hook_centroid[d[KEY]]) {
+      return this.map.centroid(this.values.hook_centroid[d[KEY]]);
+    } else {
+      return this.map.geo2Point(this.values.hook_lat[d[KEY]], this.values.hook_lng[d[KEY]]);
+    }
+  },
+  
   redrawDataPoints(duration, reposition) {
     const _this = this;
     if (!duration) duration = this.duration;
@@ -624,7 +635,7 @@ const LBubbleMapComponent = Component.extend({
       d.hidden_1 = d.hidden;
 
       if (reposition) {
-        const cLoc = _this.map.centroid(valueCentroid);
+        const cLoc = _this._getPosition(d);
         if (cLoc) {
           d.cLoc = cLoc;
           view.attr("cx", d.cLoc[0])
@@ -670,6 +681,28 @@ const LBubbleMapComponent = Component.extend({
     });
   },
 
+  updateLabels(duration) {
+    const _this = this;
+    const KEY = this.KEY;
+    this.model.marker.getSelected().map(d => {
+      let x, y;
+      const tooltipText = this.values.label[d[KEY]];
+      if (d.cLoc) {
+        x = d.cLoc[0];
+        y = d.cLoc[1];
+      } else {
+        const cLoc = _this._getPosition(d);
+        if (cLoc) {
+          x = cLoc[0];
+          y = cLoc[1];
+        }
+      }
+      const offset = utils.areaToRadius(_this.sScale(_this.values.size[d[KEY]] || 0));
+      const color = _this.values.color[d[KEY]] != null ? _this.cScale(_this.values.color[d[KEY]]) : _this.COLOR_WHITEISH;
+      _this._updateLabel(d, null, x, y, offset, color, tooltipText, duration);
+    }); 
+  },
+  
   /*
    * UPDATE TIME:
    * Ideally should only update when time or data changes
@@ -762,10 +795,8 @@ const LBubbleMapComponent = Component.extend({
 
   mapBoundsChanged() {
     this.updateMarkerSizeLimits();
-    this._labels.updateSize();
     this.redrawDataPoints(null, true);
-    //_this._selectlist.redraw();
-
+    this.updateLabels(null);
   },
 
   repositionElements() {
@@ -997,11 +1028,26 @@ const LBubbleMapComponent = Component.extend({
 
   _setTooltip(d) {
     const _this = this;
+    const KEY = this.KEY;
     if (d) {
-      const tooltipText = d.label;
-      let x = d.cLoc[0];
-      let y = d.cLoc[1];
-      const offset = d.r;
+      const tooltipText = this.values.label[d[KEY]];
+      let x, y, offset;
+      if (d.cLoc) {
+        x = d.cLoc[0];
+        y = d.cLoc[1];
+      } else  {
+        const cLoc = _this._getPosition(d);
+        if (cLoc) {
+          x = cLoc[0];
+          y = cLoc[1];
+        }
+      }
+      if (d.r) {
+        offset = d.r;  
+      } else {
+        offset = utils.areaToRadius(_this.sScale(_this.values.size[d[KEY]] || 0));
+      }
+      
       const mouse = d3.mouse(this.graph.node()).map(d => parseInt(d));
       let xPos, yPos, xSign = -1,
         ySign = -1,
