@@ -4,11 +4,11 @@ Python: false
 PHP: false
 
 exclude_paths:
-  - **/helpers/cartogram.js
-  - **/helpers/d3.geoProjection.js
-  - **/helpers/d3.touchEvents.js
-  - **/helpers/svgexport.js
-  - **/helpers/topojson.js
+  - "**/helpers/cartogram.js"
+  - "**/helpers/d3.geoProjection.js"
+  - "**/helpers/d3.touchEvents.js"
+  - "**/helpers/svgexport.js"
+  - "**/helpers/topojson.js"
   - tests/**/*
   - .data/**/*
   - .cicd/**/*
