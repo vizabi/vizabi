@@ -1,8 +1,10 @@
----
-engines:
-  eslint:
-    enabled: true
-ratings:
-  paths:
-  - "**.js"
-exclude_paths: 
+exclude_paths:
+  - **/helpers/cartogram.js
+  - **/helpers/d3.geoProjection.js
+  - **/helpers/d3.touchEvents.js
+  - **/helpers/svgexport.js
+  - **/helpers/topojson.js
+  - tests/**/*
+  - .data/**/*
+  - .cicd/**/*
+  - preview/**/*
