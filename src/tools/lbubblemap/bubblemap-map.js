@@ -159,7 +159,9 @@ const TopojsonLayer = MapLayer.extend({
                   d.properties[_this.context.model.ui.map.topology.geoIdProperty].toString().toLowerCase() : d.id;
               _this.paths[d.key] = d;
               view
-                .attr("id", d.key);
+                .attr("id", d.key)
+                .style("opacity", d => _this.parent.getOpacity(d.key))
+                .style("fill", d => _this.parent.getMapColor(d.key));
             });
         } else {
           _this.mapGraph.insert("path")
@@ -251,7 +253,7 @@ const TopojsonLayer = MapLayer.extend({
 
     // if canvas not received this map is main and shound trigger redraw points on tool
     if (emitEvent) {
-      this.parent.boundsChanged();
+      this.parent.boundsChanged(false);
     }
   },
 
@@ -264,7 +266,47 @@ const TopojsonLayer = MapLayer.extend({
 
   geo2Point(lon, lat) {
     return this.projection([lon || 0, lat || 0]);
+  },
+
+  point2Geo(x, y) {
+    return this.projection.invert([x || 0, y || 0]);
+  },
+
+  getCanvas() {
+    return [
+      this.geo2Point(this.context.model.ui.map.bounds.west, this.context.model.ui.map.bounds.north),
+      this.geo2Point(this.context.model.ui.map.bounds.east, this.context.model.ui.map.bounds.south)
+    ];
+  },
+
+  moveOver(x, y) {
+    const translate = this.projection.translate();
+    this.projection
+      .translate([translate[0] + x, translate[1] + y]);
+
+    this.mapGraph
+      .selectAll("path").attr("d", this.mapPath);
+  },
+
+  zoomMap(center, increment) {
+    const coords = this.geo2Point(center[0], center[1]);
+    return new Promise(resolve => resolve());
+/*
+    const translate = this.projection.translate();
+    const scale = this.projection.scale();
+    this.projection
+        .center(center)
+        .translate([0, 0]);
+
+    this.mapGraph
+        .transition()
+        .duration(300)
+        .selectAll("path").attr("d", this.mapPath);
+
+    return new Promise(function(resolve) { resolve()});
+*/
   }
+
 });
 
 const GoogleMapLayer = MapLayer.extend({
@@ -570,8 +612,10 @@ export default Class.extend({
 
   panStarted() {
     this.zooming = true;
-    this._hideTopojson(300);
-    this.canvasBefore = this.mapInstance.getCanvas();
+    if (this.context.model.ui.map.mapEngine != "topojson") {
+      this._hideTopojson(300);
+    }
+    this.canvasBefore = this.getCanvas();
   },
 
   panFinished() {
@@ -593,7 +637,10 @@ export default Class.extend({
   },
 
   moveOver(dx, dy) {
-    this.mapInstance.moveOver(dx, dy);
+    if (this.mapInstance) {
+      return this.mapInstance.moveOver(dx, dy);
+    }
+    this.topojsonMap.moveOver(dx, dy);
   },
 
   layerChanged() {
@@ -621,9 +668,11 @@ export default Class.extend({
       this.getMap();
       this.initMap().then(
         map => {
-          this.boundsChanged();
-          this.updateColors();
-          this.updateOpacity();
+          if (this.mapInstance) {
+            this.mapInstance.rescaleMap();
+          } else {
+            this.topojsonMap.rescaleMap();
+          }
         });
     }
   },
@@ -694,36 +743,44 @@ export default Class.extend({
   zoomMap(center, increment) {
     const _this = this;
     const geoCenter = this.point2Geo(center[0], center[1]);
-    this.canvasBefore = this.mapInstance.getCanvas();
+    this.canvasBefore = this.getCanvas();
     this.zooming = true;
     this._hideTopojson(100);
+    let response;
     if (this.mapInstance) {
-      return this.mapInstance.zoomMap(geoCenter, increment).then(
-        bounds => {
-          const nw = this.point2Geo(this.canvasBefore[0][0], this.canvasBefore[0][1]);
-          const se = this.point2Geo(this.canvasBefore[1][0], this.canvasBefore[1][1]);
-          _this.context.model.ui.map.bounds = {
-            west: nw[0],
-            north: nw[1],
-            east: se[0],
-            south: se[1]
-          };
-          this.zooming = false;
-          if (_this.mapInstance) {
-            _this.mapInstance.rescaleMap();
-          } else {
-            _this.topojsonMap.rescaleMap();
-          }
-          this._showTopojson(300);
-        }
-      );
+      response = this.mapInstance.zoomMap(geoCenter, increment);
+    } else {
+      response = this.topojsonMap.zoomMap(geoCenter, increment);
     }
+    return response.then(
+      bounds => {
+        const nw = this.point2Geo(this.canvasBefore[0][0], this.canvasBefore[0][1]);
+        const se = this.point2Geo(this.canvasBefore[1][0], this.canvasBefore[1][1]);
+        _this.context.model.ui.map.bounds = {
+          west: nw[0],
+          north: nw[1],
+          east: se[0],
+          south: se[1]
+        };
+        this.zooming = false;
+        if (_this.mapInstance) {
+          _this.mapInstance.rescaleMap();
+        } else {
+          _this.topojsonMap.rescaleMap();
+        }
+        this._showTopojson(300);
+      }
+    );
   },
 
-  boundsChanged() {
+  boundsChanged(rescaleTopojson = true) {
     if (!this.zooming) {
-      if (this.topojsonMap) {
-        this.topojsonMap.rescaleMap(this.mapInstance.getCanvas());
+      if (this.topojsonMap && rescaleTopojson) {
+        let canvas;
+        if (this.mapInstance) {
+          canvas = this.mapInstance.getCanvas();
+        }
+        this.topojsonMap.rescaleMap(canvas);
       }
       this.context.mapBoundsChanged();
     }
@@ -736,6 +793,12 @@ export default Class.extend({
     return null;
   },
 
+  getCanvas() {
+    if (this.mapInstance) {
+      return this.mapInstance.getCanvas();
+    }
+    return this.topojsonMap.getCanvas();
+  },
   point2Geo(x, y) {
     if (this.mapInstance) {
       return this.mapInstance.point2Geo(x, y);
