@@ -52,7 +52,7 @@ utils.forEach(components, (component, name) => {
 });
 
 
-Vzb.helpers = requireAll(require.context('helpers', false, /\.js$/));
+Vzb.helpers = requireAll(require.context("helpers", false, /\.js$/));
 Vzb.iconset = iconset;
 
 //d3 addons
