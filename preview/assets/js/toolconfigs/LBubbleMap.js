@@ -90,7 +90,11 @@ let VIZABI_MODEL = {
     "map": {
       "scale": 1,
       "preserveAspectRatio": true,
-      "showGoogleMap": true,
+      "mapEngine": "google",
+      "mapStyle": "terrain",
+      "showBubbles": true,
+      "showAreas": true,
+      "showMap": true,
       "offset": {
         "top": 0.05,
         "bottom": -0.12

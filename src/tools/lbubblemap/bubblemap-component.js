@@ -90,7 +90,7 @@ const LBubbleMapComponent = Component.extend({
       "change:marker.opacityRegular": function(evt) {
         _this.updateOpacity();
       },
-      "change:ui.map.mapLayer": function(evt) {
+      "change:ui.map.mapStyle": function(evt) {
         _this.map.layerChanged();
       },
       "change:ui.map.showBubbles": function(evt) {
@@ -99,7 +99,7 @@ const LBubbleMapComponent = Component.extend({
         _this._reorderEntities();
         _this.updateOpacity();
       },
-      "change:ui.map.showTopojson": function(evt) {
+      "change:ui.map.showAreas": function(evt) {
         _this.map.layerChanged();
       },
       "change:ui.cursorMode": function() {
@@ -615,11 +615,11 @@ const LBubbleMapComponent = Component.extend({
     const KEY = this.KEY;
     if (this.values.hook_centroid && this.values.hook_centroid[d[KEY]]) {
       return this.map.centroid(this.values.hook_centroid[d[KEY]]);
-    } else {
-      return this.map.geo2Point(this.values.hook_lat[d[KEY]], this.values.hook_lng[d[KEY]]);
     }
+    return this.map.geo2Point(this.values.hook_lat[d[KEY]], this.values.hook_lng[d[KEY]]);
+
   },
-  
+
   redrawDataPoints(duration, reposition) {
     const _this = this;
     if (!duration) duration = this.duration;
@@ -700,9 +700,9 @@ const LBubbleMapComponent = Component.extend({
       const offset = utils.areaToRadius(_this.sScale(_this.values.size[d[KEY]] || 0));
       const color = _this.values.color[d[KEY]] != null ? _this.cScale(_this.values.color[d[KEY]]) : _this.COLOR_WHITEISH;
       _this._updateLabel(d, null, x, y, offset, color, tooltipText, duration);
-    }); 
+    });
   },
-  
+
   /*
    * UPDATE TIME:
    * Ideally should only update when time or data changes
@@ -1043,11 +1043,11 @@ const LBubbleMapComponent = Component.extend({
         }
       }
       if (d.r) {
-        offset = d.r;  
+        offset = d.r;
       } else {
         offset = utils.areaToRadius(_this.sScale(_this.values.size[d[KEY]] || 0));
       }
-      
+
       const mouse = d3.mouse(this.graph.node()).map(d => parseInt(d));
       let xPos, yPos, xSign = -1,
         ySign = -1,

@@ -79,10 +79,6 @@ const LBubbleMap = Tool.extend("LBubbleMap", {
       map: {
         path: null,
         preserveAspectRatio: true,
-        mapEngine: "google",
-        mapLayer: "terrain",
-        showTopojson: true,
-        showBubbles: true,
         bounds: {
           north: 60.25,
           west: 17.5,
@@ -109,10 +105,10 @@ const LBubbleMap = Tool.extend("LBubbleMap", {
       panWithArrow: false,
       adaptMinMaxZoom: false,
       zoomOnScrolling: false,
-      "buttons": ["colors", "find", "size", "moreoptions", "mapcolors", "fullscreen", "presentation"],
+      "buttons": ["colors", "size", "find", "moreoptions", "mapcolors", "fullscreen", "presentation"],
       "dialogs": {
         "popup": ["colors", "mapcolors", "find", "size", "moreoptions"],
-        "sidebar": ["colors", "find", "size", "zoom"],
+        "sidebar": ["colors", "find", "mapoptions", "zoom"],
         "moreoptions": ["mapoptions", "opacity", "speed", "size", "colors", "mapcolors", "presentation", "about"]
       },
       chart: {

@@ -333,7 +333,7 @@ const GoogleMapLayer = MapLayer.extend({
           disableDoubleClickZoom: true,
           disableDefaultUI: true,
           backgroundColor: "#FFFFFF",
-          mapTypeId: _this.context.model.ui.map.mapLayer
+          mapTypeId: _this.context.model.ui.map.mapStyle
         });
 
         _this.overlay = new google.maps.OverlayView();
@@ -365,7 +365,7 @@ const GoogleMapLayer = MapLayer.extend({
 
   updateLayer() {
     if (this.map) {
-      this.map.setMapTypeId(this.context.model.ui.map.mapLayer);
+      this.map.setMapTypeId(this.context.model.ui.map.mapStyle);
     }
   },
 
@@ -451,7 +451,7 @@ const MapboxLayer = MapLayer.extend({
       _this.map = new mapboxgl.Map({
         container: _this.mapCanvas.node(),
         interactive: false,
-        style: this.context.model.ui.map.mapLayer,
+        style: this.context.model.ui.map.mapStyle,
         hash: false
       });
       _this.bounds = [[
@@ -508,7 +508,7 @@ const MapboxLayer = MapLayer.extend({
 
   updateLayer() {
     if (this.map) {
-      this.map.setStyle(this.context.model.ui.map.mapLayer);
+      this.map.setStyle(this.context.model.ui.map.mapStyle);
     }
   },
 
@@ -593,7 +593,7 @@ export default Class.extend({
           break;
       }
       if (this.mapInstance) {
-        if (this.context.model.ui.map.showTopojson) {
+        if (this.context.model.ui.map.showAreas) {
           this.topojsonMap = new TopojsonLayer(this.context, this);
         }
       } else {
@@ -612,7 +612,7 @@ export default Class.extend({
 
   panStarted() {
     this.zooming = true;
-    if (this.context.model.ui.map.mapEngine != "topojson") {
+    if (this.context.model.ui.map.showMap) {
       this._hideTopojson(300);
     }
     this.canvasBefore = this.getCanvas();
@@ -645,11 +645,11 @@ export default Class.extend({
 
   layerChanged() {
     if (this.mapEngine == this.context.model.ui.map.mapEngine) {
-      if (this.topojsonMap && !this.context.model.ui.map.showTopojson) {
+      if (this.topojsonMap && !this.context.model.ui.map.showAreas) {
         this.topojsonMap = null;
         this.mapSvg.html("");
         this.boundsChanged();
-      } else if (!this.topojsonMap && this.context.model.ui.map.showTopojson) {
+      } else if (!this.topojsonMap && this.context.model.ui.map.showAreas) {
         this.topojsonMap = new TopojsonLayer(this.context, this);
         this.topojsonMap.initMap(this.domSelector).then(
           map => {
