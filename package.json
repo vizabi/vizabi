@@ -16,6 +16,7 @@
     "lint:diff"
   ],
   "files": [
+    "src",
     "build/dist"
   ],
   "repository": {
