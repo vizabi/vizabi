@@ -185,8 +185,7 @@
           display: flex;
           flex-direction: column;
           background-color: $vzb-color-primary-lightest;
-          overflow-x: hidden;
-          overflow-y: auto;
+          overflow: hidden;
         }
 
         .vzb-tool-buttonlist {
