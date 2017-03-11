@@ -493,7 +493,7 @@ const Labels = Class.extend({
 
     this.entityLines = this.entityLines
       .enter().insert("g", function(d) {
-        return this.querySelector("." + _this.options.LINES_CONTAINER_SELECTOR_PREFIX + d[KEY]);
+        return this.querySelector("." + _this.options.LINES_CONTAINER_SELECTOR_PREFIX + CSS.escape(d[KEY]));
       })
       .attr("class", (d, index) => _cssPrefix + "-entity entity-line line-" + d[KEY])
       .each(function(d, index) {

@@ -61,7 +61,7 @@ export default Class.extend({
       _trails.exit().remove();
       _trails.enter()
         .insert("g", function(d) {
-          return this.querySelector(".bubble-" + d[KEY]);
+          return this.querySelector(".bubble-" + CSS.escape(d[KEY]));
         })
         .attr("class", d => "vzb-bc-entity entity-trail trail-" + d[KEY])
         .merge(_trails)
