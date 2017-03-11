@@ -75,6 +75,7 @@
     "vizabi-ddfcsv-reader": "0.7.2",
     "vizabi-ws-reader": "0.1.2",
     "webpack": "2.2.1",
-    "webpack-dev-server": "2.4.1"
+    "webpack-dev-server": "2.4.1",
+    "css.escape": "^1.5.1"
   }
 }
