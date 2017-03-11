@@ -277,7 +277,7 @@ const ColorLegend = Component.extend({
 
         colorOptions.exit().remove();
 
-        colorOptions.enter().append("div").attr("class", "vzb-cl-option")
+        colorOptions = colorOptions.enter().append("div").attr("class", "vzb-cl-option")
           .each(function() {
             d3.select(this).append("div").attr("class", "vzb-cl-color-sample")
               .on("click", _this._interact().clickToShow);
@@ -285,7 +285,8 @@ const ColorLegend = Component.extend({
           })
           .on("mouseover", _this._interact().mouseover)
           .on("mouseout", _this._interact().mouseout)
-          .on("click", _this._interact().clickToSelect);
+          .on("click", _this._interact().clickToSelect)
+          .merge(colorOptions);
 
         colorOptions.each(function(d, index) {
           d3.select(this).select(".vzb-cl-color-sample")
