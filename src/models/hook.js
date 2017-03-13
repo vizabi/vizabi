@@ -44,6 +44,7 @@ const Hook = DataConnected.extend({
   },
 
   onSuccessfullLoad() {
+    this.validate();
     this.buildScale();
     this._super();
   },
