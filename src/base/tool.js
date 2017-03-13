@@ -168,6 +168,21 @@ const Tool = Component.extend({
     this.model.ui.setContainer(this.element);
   },
 
+  /**
+   * Returns width and height of the area excluding time slider and toolbar/sidebar
+   */
+  getVizWidthHeight() {
+    let width = 0, height = 0;
+    if (this.element) {
+      width = d3.select(this.element).select(".vzb-tool-viz").node().clientWidth;
+      height = d3.select(this.element).select(".vzb-tool-viz").node().clientHeight;
+    } else {
+      utils.warn("Tool getVizWidthHeight(): missing this.element");
+    }
+
+    return { width, height };
+  },
+
   triggerResize: utils.throttle(function() {
     this.trigger("resize");
   }, 100),

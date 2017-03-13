@@ -454,10 +454,6 @@ export default Class.extend({
 
         if (!zoomer.dontFeedToState) _this.model.marker.set(_this._zoomedXYMinMax, null, false /*avoid storing it in URL*/);
 
-                // Keep the min and max size (pixels) constant, when zooming.
-                //                    _this.sScale.range([utils.radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
-                //                                        utils.radiusToArea(_this.maxRadius) * zoom * zoom * ratioY * ratioX ]);
-
         const optionsY = _this.yAxis.labelerOptions();
         const optionsX = _this.xAxis.labelerOptions();
         optionsY.limitMaxTickNumber = zoom * ratioY < 1.5 ? 8 : zoom * ratioY * 8;
