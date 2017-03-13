@@ -86,11 +86,20 @@ const Mapoptions = Dialog.extend({
       });
 
     this.mapLayersEl.select("input[name='showBubbles']")
-      .on("change", () => this.setModel("showBubbles", d3.select(this).property("checked")));
+      .property("checked", d => _this.model.ui.map.showBubbles)
+      .on("change", function() {
+        _this.setModel("showBubbles", d3.select(this).property("checked"));
+      });
     this.mapLayersEl.select("input[name='showAreas']")
-      .on("change", () => this.setModel("showAreas", d3.select(this).property("checked")));
+      .property("checked",  _this.model.ui.map.showAreas)
+      .on("change", function() {
+        _this.setModel("showAreas", d3.select(this).property("checked"));
+      });
     this.mapLayersEl.select("input[name='showMap']")
-      .on("change", () => this.setModel("showMap", d3.select(this).property("checked")));
+      .property("checked",  _this.model.ui.map.showMap)
+      .on("change", function() {
+        _this.setModel("showMap", d3.select(this).property("checked"));
+      });
 
     this.updateView();
   },

@@ -198,7 +198,7 @@ const TopojsonLayer = MapLayer.extend({
 
   },
 
-  rescaleMap(canvas) {
+  rescaleMap(canvas, preserveAspectRatio) {
     //var topoCanvas =
     let emitEvent = false;
     const margin = this.context.activeProfile.margin;
@@ -213,21 +213,23 @@ const TopojsonLayer = MapLayer.extend({
     ]);
     let scaleDelta = 1, mapTopOffset = 0, mapLeftOffset = 0;
 
-    if (!canvas) {
-      emitEvent = true;
-      canvas = [
-        [0, 0],
-        [this.context.width, this.context.height]
-      ];
+    if (!canvas || preserveAspectRatio) {
+      if (!canvas) {
+        emitEvent = true;
+        canvas = [
+          [0, 0],
+          [this.context.width, this.context.height]
+        ];
+      }
       const scaleX = (canvas[1][0] - canvas[0][0]) / (currentSE[0] - currentNW[0]);
       const scaleY = (canvas[1][1] - canvas[0][1]) / (currentSE[1] - currentNW[1]);
       if (scaleX != scaleY) {
         if (scaleX > scaleY) {
           scaleDelta = scaleY;
-          mapLeftOffset = (this.context.width - Math.abs(scaleDelta * (currentNW[1] - currentSE[1]))) / 2;
+          mapLeftOffset = (Math.abs(canvas[1][0] - canvas[0][0]) - Math.abs(scaleDelta * (currentNW[1] - currentSE[1]))) / 2;
         } else {
           scaleDelta = scaleX;
-          mapTopOffset = (this.context.height - Math.abs(scaleDelta * (currentNW[0] - currentSE[0]))) / 2;
+          mapTopOffset = (Math.abs(canvas[1][1] - canvas[0][1]) - Math.abs(scaleDelta * (currentNW[0] - currentSE[0]))) / 2;
         }
       }
     } else {
@@ -289,24 +291,20 @@ const TopojsonLayer = MapLayer.extend({
   },
 
   zoomMap(center, increment) {
-    const coords = this.geo2Point(center[0], center[1]);
-    return new Promise(resolve => resolve());
-/*
-    const translate = this.projection.translate();
-    const scale = this.projection.scale();
-    this.projection
-        .center(center)
-        .translate([0, 0]);
-
-    this.mapGraph
-        .transition()
-        .duration(300)
-        .selectAll("path").attr("d", this.mapPath);
-
-    return new Promise(function(resolve) { resolve()});
-*/
+    return new Promise(resolve => {
+      const point = this.geo2Point(center[0], center[1]);
+      const leftOffset = this.context.width / 2 - point[0];
+      const topOffset = this.context.height / 2 - point[1];
+      this.rescaleMap([
+        [-this.context.width * 0.1 * increment + leftOffset, -this.context.height * 0.1 * increment + topOffset],
+        [
+          this.context.width + this.context.width * 0.1 * increment + leftOffset,
+          this.context.height + this.context.height * 0.1 * increment + topOffset
+        ]
+      ], true);
+      resolve();
+    });
   }
-
 });
 
 const GoogleMapLayer = MapLayer.extend({
@@ -584,13 +582,15 @@ export default Class.extend({
 
   getMap() {
     if (!this.mapInstance) {
-      switch (this.context.model.ui.map.mapEngine) {
-        case "google":
-          this.mapInstance = new GoogleMapLayer(this.context, this);
-          break;
-        case "mapbox":
-          this.mapInstance = new MapboxLayer(this.context, this);
-          break;
+      if (this.context.model.ui.map.showMap) {
+        switch (this.context.model.ui.map.mapEngine) {
+          case "google":
+            this.mapInstance = new GoogleMapLayer(this.context, this);
+            break;
+          case "mapbox":
+            this.mapInstance = new MapboxLayer(this.context, this);
+            break;
+        }
       }
       if (this.mapInstance) {
         if (this.context.model.ui.map.showAreas) {
@@ -644,18 +644,21 @@ export default Class.extend({
   },
 
   layerChanged() {
-    if (this.mapEngine == this.context.model.ui.map.mapEngine) {
+    if (this.mapEngine == this.context.model.ui.map.mapEngine &&
+      this.context.model.ui.map.showMap &&
+      this.mapInstance) {
       if (this.topojsonMap && !this.context.model.ui.map.showAreas) {
         this.topojsonMap = null;
         this.mapSvg.html("");
-        this.boundsChanged();
       } else if (!this.topojsonMap && this.context.model.ui.map.showAreas) {
         this.topojsonMap = new TopojsonLayer(this.context, this);
         this.topojsonMap.initMap(this.domSelector).then(
           map => {
-            this.topojsonMap.rescaleMap();
+            this.boundsChanged();
+/*
             this.updateColors();
             this.updateOpacity();
+*/
           });
       }
       this.mapInstance.updateLayer();
@@ -745,7 +748,9 @@ export default Class.extend({
     const geoCenter = this.point2Geo(center[0], center[1]);
     this.canvasBefore = this.getCanvas();
     this.zooming = true;
-    this._hideTopojson(100);
+    if (this.context.model.ui.map.showMap) {
+      this._hideTopojson(100);
+    }
     let response;
     if (this.mapInstance) {
       response = this.mapInstance.zoomMap(geoCenter, increment);

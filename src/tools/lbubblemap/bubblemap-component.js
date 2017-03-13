@@ -102,6 +102,9 @@ const LBubbleMapComponent = Component.extend({
       "change:ui.map.showAreas": function(evt) {
         _this.map.layerChanged();
       },
+      "change:ui.map.showMap": function(evt) {
+        _this.map.layerChanged();
+      },
       "change:ui.cursorMode": function() {
         const svg = _this.chartSvg;
         if (_this.model.ui.cursorMode === "plus") {
