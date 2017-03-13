@@ -1,4 +1,4 @@
-import Class from 'base/class'
+import Class from 'base/class';
 
 var prefix = "";
 var deleteClasses = [];
@@ -23,12 +23,12 @@ export default Class.extend({
   },
 
   prefix: function(arg) {
-    if(!arguments.length) return prefix;
+    if (!arguments.length) return prefix;
     prefix = arg;
     return this;
   },
   deleteClasses: function(arg) {
-    if(!arguments.length) return deleteClasses;
+    if (!arguments.length) return deleteClasses;
     deleteClasses = arg;
     return this;
   },
@@ -37,10 +37,10 @@ export default Class.extend({
     var _this = this;
 
     //reset if some exports exists on opening
-    if(this.svg) this.reset();
+    if (this.svg) this.reset();
 
-    if(!element) element = this.context.element;
-    if(!name) name = this.context.name;
+    if (!element) element = this.context.element;
+    if (!name) name = this.context.name;
     this.name = name;
 
     var width = parseInt(element.style("width"), 10) || 0;
@@ -83,7 +83,7 @@ export default Class.extend({
         _this.counterEl.text(_this.label);
       })
       .on("click", function() {
-        _this.close()
+        _this.close();
       });
 
     this.counterEl = element.append("div")
@@ -95,8 +95,7 @@ export default Class.extend({
       .style("opacity", .8)
       .style("line-height", "20px")
       .style("font-size", "14px")
-      .style("text-align", "center")
-
+      .style("text-align", "center");
 
 
     this.root = this.svg.select("." + prefix + "graph");
@@ -107,7 +106,7 @@ export default Class.extend({
         var result = false;
         deleteClasses.forEach(function(one) {
           result = result || view.classed(one);
-        })
+        });
         return result;
       })
       .remove();
@@ -126,23 +125,23 @@ export default Class.extend({
   write: function(me) {
     var groupBy = "time";
 
-    if(!this.root) this.open();
+    if (!this.root) this.open();
 
     //avoid writing the same thing again
-    if(this.shapes.indexOf(me.id + "_" + me.time) > -1) return;
+    if (this.shapes.indexOf(me.id + "_" + me.time) > -1) return;
 
     this.shapes.push(me.id + "_" + me.time);
 
 
     // check if need to create a new group and do so
-    if(this.groups.indexOf(me[groupBy]) == -1) {
+    if (this.groups.indexOf(me[groupBy]) == -1) {
       this.root.append("g").attr("id", "g_" + me[groupBy]);
       this.groups.push(me[groupBy]);
     }
 
     // put a marker into the group
-    if(me.opacity == null) me.opacity = .5;
-    if(me.fill == null) me.fill = "#ff80dd";
+    if (me.opacity == null) me.opacity = .5;
+    if (me.fill == null) me.fill = "#ff80dd";
 
     var marker = this.root.select("#g_" + me[groupBy])
       .append(me.type)
@@ -150,7 +149,7 @@ export default Class.extend({
       .style("fill", me.fill)
       .style("opacity", me.opacity);
 
-    switch(me.type) {
+    switch (me.type) {
       case "path":
         marker
           .attr("d", me.d);
@@ -177,14 +176,14 @@ export default Class.extend({
       .replace("param2", "xmlns:xlink")
       //round all numbers in SVG code
       .replace(/\d+(\.\d+)/g, function(x) {
-        return Math.round(+x * 100) / 100 + ""
+        return Math.round(+x * 100) / 100 + "";
       });
 
 
-    if(result.length / 1024 / 1024 > 2) {
+    if (result.length / 1024 / 1024 > 2) {
 
       alert("The file size is " + Math.round(result.length / 1024) +
-        "kB, which is too large to download. Will try to print it in the console instead...")
+        "kB, which is too large to download. Will try to print it in the console instead...");
       console.log(result);
 
     } else {
@@ -195,7 +194,6 @@ export default Class.extend({
       link.click();
     }
   }
-
 
 
 });

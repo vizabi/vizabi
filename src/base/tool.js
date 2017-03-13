@@ -1,27 +1,26 @@
-import * as utils from 'base/utils'
-import Model from 'base/model'
-import Component from 'base/component'
-import { DefaultEvent } from 'base/events'
-import { warn as warnIcon } from 'base/iconset'
-import EventSource from 'base/events';
+import * as utils from "base/utils";
+import Model from "base/model";
+import Component from "base/component";
+import { warn as warnIcon } from "base/iconset";
+import EventSource, { DefaultEvent } from "base/events";
 
-var class_loading_first = 'vzb-loading-first';
-var class_loading_data = 'vzb-loading-data';
-var class_placeholder = 'vzb-placeholder';
-var class_buttons_off = 'vzb-buttonlist-off';
+const class_loading_first = "vzb-loading-first";
+const class_loading_data = "vzb-loading-data";
+const class_placeholder = "vzb-placeholder";
+const class_buttons_off = "vzb-buttonlist-off";
 
-var templates = {};
+const templates = {};
 
 //tool model is quite simple and doesn't need to be registered
-var ToolModel = Model.extend({
+const ToolModel = Model.extend({
   /**
    * Initializes the tool model.
    * @param {Tool}   the tool this tool model belongs to
    * @param {Object} values The initial values of this model
    */
-  init: function(tool, external_model) {
-    this._id = utils.uniqueId('tm');
-    this._type = 'tool';
+  init(tool, external_model) {
+    this._id = utils.uniqueId("tm");
+    this._type = "tool";
     this._component = tool;
 
     // defaults are defined on the Tool
@@ -29,7 +28,7 @@ var ToolModel = Model.extend({
     this.getClassDefaults = () => tool.default_model;
 
     // combine listeners from tool and external page to one object
-    var listeners = utils.extend(tool.getToolListeners(), external_model.bind);
+    const listeners = utils.extend(tool.getToolListeners(), external_model.bind);
     delete external_model.bind; // bind shouldn't go to model tree
 
     this._super(tool.name, external_model, null, listeners);
@@ -39,25 +38,25 @@ var ToolModel = Model.extend({
    * @return {object} Defaults of tool model and children
    * Tool defaults overwrite other models' default
    */
-  getDefaults: function() {
+  getDefaults() {
     return utils.deepExtend({}, this.getSubmodelDefaults(), this.getClassDefaults());
   },
 
-  validate: function() {
+  validate() {
 
-    var max = 10;
-    var c = 0;
-    var _this = this;
+    const max = 10;
+    const c = 0;
+    const _this = this;
 
     function validate_func(c) {
       // ToolModel uses validate function declared on Tool so each Tool can have its own validation.
-      var model = JSON.stringify(_this.getPlainObject());
+      const model = JSON.stringify(_this.getPlainObject());
       _this._component.validate(_this);
-      var model2 = JSON.stringify(_this.getPlainObject());
+      const model2 = JSON.stringify(_this.getPlainObject());
 
-      if(c >= max) {
-        utils.error('Max validation loop.');
-      } else if(model !== model2) {
+      if (c >= max) {
+        utils.error("Max validation loop.");
+      } else if (model !== model2) {
         validate_func(c++);
       }
     }
@@ -69,20 +68,20 @@ var ToolModel = Model.extend({
 
 
 //tool
-var Tool = Component.extend({
+const Tool = Component.extend({
  /**
    * Initializes the tool
    * @param {Object} placeholder object
    * @param {Object} external_model External model such as state, data, etc
    */
-  init: function(placeholder, external_model) {
-    this._id = utils.uniqueId('t');
+  init(placeholder, external_model) {
+    this._id = utils.uniqueId("t");
 
     this.template = this.getToolTemplate();
 
     // super also calls createModel
     this._super({
-      placeholder: placeholder,
+      placeholder,
       model: external_model
     });
 
@@ -92,87 +91,87 @@ var Tool = Component.extend({
     this.setResizeHandler();
   },
 
-  createModel: function(external_model) {
+  createModel(external_model) {
     external_model      = external_model      || {}; //external model can be undefined
     external_model.bind = external_model.bind || {}; //bind functions can be undefined
     this.model = new ToolModel(this, external_model);
     this.model.setInterModelListeners();
   },
 
-  getToolTemplate: function() {
+  getToolTemplate() {
     return this.template ||
       '<div class="vzb-tool vzb-tool-' + this.name + '">' +
         '<div class="vzb-tool-stage">' +
           '<div class="vzb-tool-viz">' +
-          '</div>' +
+          "</div>" +
           '<div class="vzb-tool-time-speed-sliders">' +
             '<div class="vzb-tool-timeslider">' +
-            '</div>' +
+            "</div>" +
             '<div class="vzb-tool-stepped-speed-slider">' +
-            '</div>' +
-          '</div>' +
-        '</div>' +
+            "</div>" +
+          "</div>" +
+        "</div>" +
         '<div class="vzb-tool-sidebar">' +
           '<div class="vzb-tool-dialogs">' +
-          '</div>' +
+          "</div>" +
           '<div class="vzb-tool-buttonlist">' +
-          '</div>' +
-        '</div>' +
+          "</div>" +
+        "</div>" +
         '<div class="vzb-tool-datanotes vzb-hidden">' +
-        '</div>' +
+        "</div>" +
         '<div class="vzb-tool-treemenu vzb-hidden">' +
-        '</div>' +
+        "</div>" +
         '<div class="vzb-tool-datawarning vzb-hidden">' +
-        '</div>' +
+        "</div>" +
         '<div class="vzb-tool-labels vzb-hidden">' +
-        '</div>' +
-      '</div>';
+        "</div>" +
+      "</div>";
   },
 
-  getToolListeners: function() {
-    var _this = this;
+  getToolListeners() {
+    const _this = this;
     return utils.extend(
       this.model_binds,
       {
-        'change': function(evt, path) {
-          if(_this._ready) {
+        "change": function(evt, path) {
+          if (_this._ready) {
             _this.model.validate();
 
             if (evt.source.persistent)
-              _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'));
+              _this.model.trigger(new DefaultEvent(evt.source, "persistentChange"));
           }
         },
-        'hook_change': function() {
+        "hook_change": function() {
           if (!_this.model.state.time.splash) { // not block when it initial splash screen
             _this.beforeLoading();
           }
         },
-        'resize:ui': function() {
-          if(_this._ready) {
+        "resize:ui": function() {
+          if (_this._ready) {
             _this.triggerResize();
           }
         },
-        'translate:locale': function() {
+        "translate:locale": function() {
           _this.translateStrings();
           _this.model.ui.setRTL(_this.model.locale.isRTL());
         },
-        'load_error': (...args) => {
+        "load_error": (...args) => {
           this.renderError();
           this.error(...args);
         }
       });
   },
 
-  setResizeHandler: function() {
+  setResizeHandler() {
     //only tools have layout (manage sizes)
     this.model.ui.setContainer(this.element);
   },
 
   triggerResize: utils.throttle(function() {
-    this.trigger('resize');
+    this.trigger("resize");
   }, 100),
 
-  startLoading: function() {
+  startLoading() {
     this._super();
 
     Promise.all([
@@ -184,51 +183,50 @@ var Tool = Component.extend({
       .then(() => utils.delay(300))
       .then(this.model.startLoading.bind(this.model))
       .then(this.finishLoading.bind(this))
-      .catch((error) => {
+      .catch(error => {
         EventSource.unfreezeAll();
         this.model.triggerLoadError(error);
       });
 
   },
 
-  loadSplashScreen: function() {
-    if(this.model.ui.splash) {
+  loadSplashScreen() {
+    if (this.model.ui.splash) {
       //TODO: cleanup hardcoded splash screen
       this.model.state.time.splash = true;
       return this.model.startLoading({
         splashScreen: true
       });
-    } else {
-      return Promise.resolve();
     }
+    return Promise.resolve();
   },
 
-  finishLoading: function() {
+  finishLoading() {
     this.model.state.time.splash = false;
   },
 
-  getPersistentModel: function() {
+  getPersistentModel() {
     //try to find functions in properties of model.
-    var removeFunctions = function(model) {
-      for(var childKey in model) {
-        if(typeof model[childKey] === 'function') {
+    const removeFunctions = function(model) {
+      for (const childKey in model) {
+        if (typeof model[childKey] === "function") {
           delete model[childKey];
-          utils.warn('minModel validation. Function found in enumerable properties of ' + childKey + ". This key is deleted from minModel");
+          utils.warn("minModel validation. Function found in enumerable properties of " + childKey + ". This key is deleted from minModel");
         }
-        else if(typeof model[childKey] === 'object')
+        else if (typeof model[childKey] === "object")
           removeFunctions(model[childKey]);
       }
-    }
+    };
 
-    var currentToolModel = this.model.getPlainObject(true); // true = get only persistent model values
+    const currentToolModel = this.model.getPlainObject(true); // true = get only persistent model values
     removeFunctions(currentToolModel);
     return currentToolModel;
   },
 
-  getPersistentMinimalModel: function(diffModel) {
-    var defaultModel = this.model.getDefaults();
-    var currentPersistentModel = this.getPersistentModel();
-    var redundantModel = utils.deepExtend(defaultModel, diffModel);
+  getPersistentMinimalModel(diffModel) {
+    const defaultModel = this.model.getDefaults();
+    const currentPersistentModel = this.getPersistentModel();
+    const redundantModel = utils.deepExtend(defaultModel, diffModel);
     return utils.diffObject(currentPersistentModel, redundantModel);
   },
 
@@ -236,11 +234,9 @@ var Tool = Component.extend({
    * Clears a tool
    */
 
-  clear: function() {
+  clear() {
     this.model.ui.clear();
-    this.setModel = this.getModel = function() {
-      return;
-    };
+    this.setModel = this.getModel = () => void 0;
     this._super();
   },
 
@@ -249,9 +245,9 @@ var Tool = Component.extend({
    */
   error(options, message) {
     if (!message) {
-      message = options && options.type === 'data' ?
-        'Error loading chart data. <br>Please, try again later.' :
-        'Error loading chart';
+      message = options && options.type === "data" ?
+        "Error loading chart data. <br>Please, try again later." :
+        "Error loading chart";
     }
 
     this.placeholder.innerHTML = `<div class="vzb-error-message"><h1>${warnIcon}</h1><p>${message}</p></div>`;
@@ -262,8 +258,8 @@ var Tool = Component.extend({
    * @param {Object} JSONModel new model in JSON format
    * @param {Boolean} overwrite overwrite everything instead of extending
    */
-  setModel: function(newModelJSON, overwrite) {
-    if(overwrite) {
+  setModel(newModelJSON, overwrite) {
+    if (overwrite) {
       this.model.reset(newModelJSON);
     } else {
       this.model.set(newModelJSON);
@@ -275,13 +271,13 @@ var Tool = Component.extend({
    * get model
    * @return {Object} JSON object of model
    */
-  getModel: function() {
+  getModel() {
     return this.model.getPlainObject() || {};
   },
   /**
    * Displays loading class
    */
-  beforeLoading: function() {
+  beforeLoading() {
     utils.addClass(this.placeholder, class_loading_data);
   },
 
@@ -293,17 +289,17 @@ var Tool = Component.extend({
    * Validating the tool model
    * @param model the current tool model to be validated
    */
-  validate: function(model) {
+  validate(model) {
     model = this.model || model;
 
-    if(!model || !model.state) return utils.warn("tool validation aborted: model.state looks wrong: " + model);
+    if (!model || !model.state) return utils.warn("tool validation aborted: model.state looks wrong: " + model);
   },
 
-  setCSSClasses: function() {
+  setCSSClasses() {
     //add placeholder class
     utils.addClass(this.placeholder, class_placeholder);
     //add-remove buttonlist class
-    if(!this.model.ui || !this.model.ui.buttons || !this.model.ui.buttons.length) {
+    if (!this.model.ui || !this.model.ui.buttons || !this.model.ui.buttons.length) {
       utils.addClass(this.element, class_buttons_off);
     } else {
       utils.removeClass(this.element, class_buttons_off);

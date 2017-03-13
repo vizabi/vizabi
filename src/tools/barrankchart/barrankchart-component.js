@@ -1,10 +1,10 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import axisWithLabelPicker from 'helpers/d3.axisWithLabelPicker';
+import * as utils from "base/utils";
+import Component from "base/component";
+import axisWithLabelPicker from "helpers/d3.axisWithLabelPicker";
 import {
   question as iconQuestion,
   warn as iconWarn
-} from 'base/iconset';
+} from "base/iconset";
 
 const COLOR_BLACKISH = "#333";
 const COLOR_WHITEISH = "#fdfdfd";
@@ -19,34 +19,34 @@ const BarRankChart = Component.extend({
    */
   init(config, context) {
 
-    this.name = 'barrankchart-component';
-    this.template = require('./barrank.html');
+    this.name = "barrankchart-component";
+    this.template = require("./barrank.html");
 
     //define expected models for this component
     this.model_expects = [{
-      name: 'time',
-      type: 'time'
+      name: "time",
+      type: "time"
     }, {
-      name: 'entities',
-      type: 'entities'
+      name: "entities",
+      type: "entities"
     }, {
-      name: 'marker',
-      type: 'model'
+      name: "marker",
+      type: "model"
     }, {
-      name: 'locale',
-      type: 'locale'
+      name: "locale",
+      type: "locale"
     }, {
-      name: 'ui',
-      type: 'ui'
+      name: "ui",
+      type: "ui"
     }];
 
     this.model_binds = {
-      'change:time.value': () => {
+      "change:time.value": () => {
         if (this._readyOnce) {
           this.onTimeChange();
         }
       },
-      'change:marker.select': () => {
+      "change:marker.select": () => {
         if (this._readyOnce) {
           this._selectBars();
           this._updateOpacity();
@@ -54,22 +54,22 @@ const BarRankChart = Component.extend({
           this._scroll();
         }
       },
-      'change:marker.axis_x.scaleType': () => {
+      "change:marker.axis_x.scaleType": () => {
         if (this._readyOnce) {
           this.loadData();
           this.draw(true);
         }
       },
-      'change:marker.color.palette': () => {
+      "change:marker.color.palette": () => {
         this._drawColors();
       },
-      'change:marker.highlight': () => {
+      "change:marker.highlight": () => {
         this._updateOpacity();
       },
-      'change:marker.opacitySelectDim': () => {
+      "change:marker.opacitySelectDim": () => {
         this._updateOpacity();
       },
-      'change:marker.opacityRegular': () => {
+      "change:marker.opacityRegular": () => {
         this._updateOpacity();
       },
     };
@@ -103,12 +103,12 @@ const BarRankChart = Component.extend({
     //this.graph = this.element.select('.vzb-br-graph');
     //this.yearEl = this.element.select('.vzb-br-year');
     //this.year = new DynamicBackground(this.yearEl);
-    this.header = this.element.select('.vzb-br-header');
-    this.infoEl = this.element.select('.vzb-br-axis-info');
-    this.barViewport = this.element.select('.vzb-br-barsviewport');
-    this.barSvg = this.element.select('.vzb-br-bars-svg');
-    this.barContainer = this.element.select('.vzb-br-bars');
-    this.dataWarningEl = this.element.select('.vzb-data-warning');
+    this.header = this.element.select(".vzb-br-header");
+    this.infoEl = this.element.select(".vzb-br-axis-info");
+    this.barViewport = this.element.select(".vzb-br-barsviewport");
+    this.barSvg = this.element.select(".vzb-br-bars-svg");
+    this.barContainer = this.element.select(".vzb-br-bars");
+    this.dataWarningEl = this.element.select(".vzb-data-warning");
     this.wScale = d3.scale.linear()
       .domain(this.model.ui.datawarning.doubtDomain)
       .range(this.model.ui.datawarning.doubtRange);
@@ -116,6 +116,7 @@ const BarRankChart = Component.extend({
     // set up formatters
     this.xAxis.tickFormat(this.model.marker.axis_x.getTickFormatter());
 
+    this._localeId = this.model.locale.id;
     this._presentation = !this.model.ui.presentation;
     this._formatter = this.model.marker.axis_x.getTickFormatter();
 
@@ -151,14 +152,14 @@ const BarRankChart = Component.extend({
     this.sortedEntities = this._sortByIndicator(this.values.axis_x);
 
     this.header
-      .select('.vzb-br-title')
-      .select('text')
-      .on('click', () =>
+      .select(".vzb-br-title")
+      .select("text")
+      .on("click", () =>
         this.parent
-          .findChildByName('gapminder-treemenu')
-          .markerID('axis_x')
-          .alignX('left')
-          .alignY('top')
+          .findChildByName("gapminder-treemenu")
+          .markerID("axis_x")
+          .alignX("left")
+          .alignY("top")
           .updateView()
           .toggle()
       );
@@ -168,36 +169,36 @@ const BarRankChart = Component.extend({
     this.cScale = this.model.marker.color.getScale();
 
     utils.setIcon(this.dataWarningEl, iconWarn)
-      .select('svg')
-      .attr('width', 0).attr('height', 0);
+      .select("svg")
+      .attr("width", 0).attr("height", 0);
 
-    this.dataWarningEl.append('text')
-      .text(this.translator('hints/dataWarning'));
+    this.dataWarningEl.append("text")
+      .text(this.translator("hints/dataWarning"));
 
     this.dataWarningEl
-      .on('click', () => this.parent.findChildByName('gapminder-datawarning').toggle())
-      .on('mouseover', () => this._updateDoubtOpacity(1))
-      .on('mouseout', () => this._updateDoubtOpacity());
+      .on("click", () => this.parent.findChildByName("gapminder-datawarning").toggle())
+      .on("mouseover", () => this._updateDoubtOpacity(1))
+      .on("mouseout", () => this._updateDoubtOpacity());
 
     utils.setIcon(this.infoEl, iconQuestion)
-      .select('svg').attr('width', 0).attr('height', 0);
+      .select("svg").attr("width", 0).attr("height", 0);
 
-    this.infoEl.on('click', () => {
-      this.parent.findChildByName('gapminder-datanotes').pin();
+    this.infoEl.on("click", () => {
+      this.parent.findChildByName("gapminder-datanotes").pin();
     });
 
-    this.infoEl.on('mouseover', function () {
+    this.infoEl.on("mouseover", function() {
       const rect = this.getBBox();
       const ctx = utils.makeAbsoluteContext(this, this.farthestViewportElement);
       const coord = ctx(rect.x - 10, rect.y + rect.height + 10);
-      _this.parent.findChildByName('gapminder-datanotes')
-        .setHook('axis_y')
+      _this.parent.findChildByName("gapminder-datanotes")
+        .setHook("axis_y")
         .show()
         .setPos(coord.x, coord.y);
     });
 
-    this.infoEl.on('mouseout', function () {
-      _this.parent.findChildByName('gapminder-datanotes').hide();
+    this.infoEl.on("mouseout", () => {
+      _this.parent.findChildByName("gapminder-datanotes").hide();
     });
 
   },
@@ -281,21 +282,21 @@ const BarRankChart = Component.extend({
       infoElMargin,
     } = this.activeProfile;
 
-    this.height = +this.element.style('height').replace('px', '');
-    this.width = +this.element.style('width').replace('px', '');
+    this.height = +this.element.style("height").replace("px", "");
+    this.width = +this.element.style("width").replace("px", "");
 
     this.barViewport
-      .style('height', `${this.height - margin.bottom - margin.top}px`);
+      .style("height", `${this.height - margin.bottom - margin.top}px`);
 
     // header
-    this.header.attr('height', margin.top);
-    const headerTitle = this.header.select('.vzb-br-title');
+    this.header.attr("height", margin.top);
+    const headerTitle = this.header.select(".vzb-br-title");
 
     // change header titles for new data
     const { name, unit } = this.model.marker.axis_x.getConceptprops();
 
     const headerTitleText = headerTitle
-      .select('text');
+      .select("text");
 
     if (unit) {
       headerTitleText.text(`${name}, ${unit}`);
@@ -315,64 +316,70 @@ const BarRankChart = Component.extend({
     const titleTx = headerMargin.left;
     const titleTy = headerMargin.top + headerTitleBBox.height;
     headerTitle
-      .attr('transform', `translate(${titleTx}, ${titleTy})`);
+      .attr("transform", `translate(${titleTx}, ${titleTy})`);
 
     const headerInfo = this.infoEl;
 
-    headerInfo.select('svg')
-      .attr('width', `${infoElHeight}px`)
-      .attr('height', `${infoElHeight}px`);
+    headerInfo.select("svg")
+      .attr("width", `${infoElHeight}px`)
+      .attr("height", `${infoElHeight}px`);
 
     const infoTx = titleTx + headerTitle.node().getBBox().width + infoElMargin;
     const infoTy = headerMargin.top + infoElHeight / 4;
-    headerInfo.attr('transform', `translate(${infoTx}, ${infoTy})`);
+    headerInfo.attr("transform", `translate(${infoTx}, ${infoTy})`);
 
 
-    const headerTotal = this.header.select('.vzb-br-total');
+    const headerTotal = this.header.select(".vzb-br-total");
 
     if (duration) {
-      headerTotal.select('text')
-        .transition('text')
+      headerTotal.select("text")
+        .transition("text")
         .delay(duration)
         .text(this.model.time.formatDate(this.time));
     } else {
-      headerTotal.select('text')
+      headerTotal.select("text")
         .interrupt()
         .text(this.model.time.formatDate(this.time));
     }
-    headerTotal.style('opacity', Number(this.getLayoutProfile() !== 'large'));
+    headerTotal.style("opacity", Number(this.getLayoutProfile() !== "large"));
 
     const headerTotalBBox = headerTotal.node().getBBox();
 
     const totalTx = this.width - headerMargin.right - headerTotalBBox.width;
     const totalTy = headerMargin.top + headerTotalBBox.height;
     headerTotal
-      .attr('transform', `translate(${totalTx}, ${totalTy})`)
-      .classed('vzb-transparent', headerTitleBBox.width + headerTotalBBox.width + 10 > this.width);
+      .attr("transform", `translate(${totalTx}, ${totalTy})`)
+      .classed("vzb-transparent", headerTitleBBox.width + headerTotalBBox.width + 10 > this.width);
 
-    this.element.select('.vzb-data-warning-svg')
-      .style('height', `${margin.bottom}px`);
+    this.element.select(".vzb-data-warning-svg")
+      .style("height", `${margin.bottom}px`);
 
 
-    const warningBBox = this.dataWarningEl.select('text').node().getBBox();
+    const warningBBox = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl
-      .attr('transform', `translate(${this.width - margin.right - warningBBox.width}, ${warningBBox.height})`)
-      .select('text');
+      .attr("transform", `translate(${this.width - margin.right - warningBBox.width}, ${warningBBox.height})`)
+      .select("text");
 
     this.dataWarningEl
-      .select('svg')
-      .attr('width', warningBBox.height)
-      .attr('height', warningBBox.height)
-      .attr('x', -warningBBox.height - 5)
-      .attr('y', -warningBBox.height + 1);
+      .select("svg")
+      .attr("width", warningBBox.height)
+      .attr("height", warningBBox.height)
+      .attr("x", -warningBBox.height - 5)
+      .attr("y", -warningBBox.height + 1);
 
     this._updateDoubtOpacity();
   },
 
   drawData(duration = 0, force = false) {
+    const localeChanged = this._localeId !== this.model.locale.id;
+    if (force || localeChanged) {
+      this._localeId = this.model.locale.id;
+      this.barContainer.selectAll(".vzb-br-bar").remove();
+    }
+
     // update the shown bars for new data-set
     this._createAndDeleteBars(
-      this.barContainer.selectAll('.vzb-br-bar')
+      this.barContainer.selectAll(".vzb-br-bar")
         .data(this.sortedEntities, d => d.entity)
     );
 
@@ -385,17 +392,16 @@ const BarRankChart = Component.extend({
     }
 
 
-    const entitiesCountChanged = typeof this._entitiesCount === 'undefined'
+    const entitiesCountChanged = typeof this._entitiesCount === "undefined"
       || this._entitiesCount !== this.sortedEntities.length;
 
     if (presentationModeChanged || entitiesCountChanged) {
       if (entitiesCountChanged) {
         this._entitiesCount = this.sortedEntities.length;
       }
-      this._resizeSvg();
     }
 
-
+    this._resizeSvg();
     this._scroll(duration);
 
 
@@ -425,10 +431,10 @@ const BarRankChart = Component.extend({
       zeroValueWidth = this.xScale(0) || 0;
     }
 
-    const barWidth = (value) => this.xScale(value) - zeroValueWidth;
+    const barWidth = value => this.xScale(value) - zeroValueWidth;
 
-    const labelAnchor = ltr ? 'end' : 'start';
-    const valueAnchor = ltr ? 'start' : 'end';
+    const labelAnchor = ltr ? "end" : "start";
+    const valueAnchor = ltr ? "start" : "end";
 
     const labelX = ltr ?
       (margin.left + shift) :
@@ -443,25 +449,25 @@ const BarRankChart = Component.extend({
       (barX - barValueMargin);
 
     const isLabelBig = (this._getWidestLabelWidth(true) + (ltr ? margin.left : margin.right)) < shift;
-    this.sortedEntities.forEach((bar) => {
+    this.sortedEntities.forEach(bar => {
       const { value } = bar;
 
       if (force || presentationModeChanged || bar.isNew) {
         bar.barLabel
-          .attr('x', labelX)
-          .attr('y', this.activeProfile.barHeight / 2)
-          .attr('text-anchor', labelAnchor)
+          .attr("x", labelX)
+          .attr("y", this.activeProfile.barHeight / 2)
+          .attr("text-anchor", labelAnchor)
           .text(isLabelBig ? bar.labelFull : bar.labelSmall);
 
         bar.barRect
-          .attr('rx', this.activeProfile.barHeight / 4)
-          .attr('ry', this.activeProfile.barHeight / 4)
-          .attr('height', this.activeProfile.barHeight);
+          .attr("rx", this.activeProfile.barHeight / 4)
+          .attr("ry", this.activeProfile.barHeight / 4)
+          .attr("height", this.activeProfile.barHeight);
 
         bar.barValue
-          .attr('x', valueX)
-          .attr('y', this.activeProfile.barHeight / 2)
-          .attr('text-anchor', valueAnchor);
+          .attr("x", valueX)
+          .attr("y", this.activeProfile.barHeight / 2)
+          .attr("text-anchor", valueAnchor);
       }
 
       if (force || bar.changedWidth || presentationModeChanged) {
@@ -470,33 +476,33 @@ const BarRankChart = Component.extend({
         if (force || bar.changedWidth || presentationModeChanged) {
           bar.barRect
             .transition().duration(duration).ease(d3.easeLinear)
-            .attr('width', width)
+            .attr("width", width);
         }
 
         bar.barRect
-          .attr('x', barX - (value < 0 ? width : 0));
+          .attr("x", barX - (value < 0 ? width : 0));
 
         if (force || bar.changedValue) {
           bar.barValue
-            .text(this._formatter(value) || this.translator('hints/nodata'));
+            .text(this._formatter(value) || this.translator("hints/nodata"));
         }
       }
 
       if (force || bar.changedIndex || presentationModeChanged) {
         bar.self
           .transition().duration(duration).ease(d3.easeLinear)
-          .attr('transform', `translate(0, ${this._getBarPosition(bar.index)})`);
+          .attr("transform", `translate(0, ${this._getBarPosition(bar.index)})`);
       }
     });
   },
 
   _resizeSvg() {
     const { barHeight, barMargin } = this.activeProfile;
-    this.barSvg.attr('height', `${(barHeight + barMargin) * this.sortedEntities.length}px`);
+    this.barSvg.attr("height", `${(barHeight + barMargin) * this.sortedEntities.length}px`);
   },
 
   _scroll(duration = 0) {
-    const follow = this.barContainer.select('.vzb-selected');
+    const follow = this.barContainer.select(".vzb-selected");
     if (!follow.empty()) {
       const d = follow.datum();
       const yPos = this._getBarPosition(d.index);
@@ -506,7 +512,7 @@ const BarRankChart = Component.extend({
 
       const scrollTo = yPos - (height + this.activeProfile.barHeight) / 2;
       this.barViewport.transition().duration(duration)
-        .tween('scrollfor' + d.entity, this._scrollTopTween(scrollTo));
+        .tween("scrollfor" + d.entity, this._scrollTopTween(scrollTo));
     }
   },
 
@@ -518,35 +524,35 @@ const BarRankChart = Component.extend({
 
     // make the groups for the entities which were not drawn yet (.data.enter() does this)
     updatedBars = updatedBars.enter()
-      .append('g')
-      .each(function (d) {
+      .append("g")
+      .each(function(d) {
         const self = d3.select(this);
 
         self
-          .attr('class', 'vzb-br-bar')
-          .classed('vzb-selected', _this.model.marker.isSelected(d))
-          .attr('id', `vzb-br-bar-${d.entity}-${_this._id}`)
-          .on('mousemove', d => _this.model.marker.highlightMarker(d))
-          .on('mouseout', () => _this.model.marker.clearHighlighted())
-          .on('click', d => {
-            _this.model.marker.selectMarker(d)
+          .attr("class", "vzb-br-bar")
+          .classed("vzb-selected", _this.model.marker.isSelected(d))
+          .attr("id", `vzb-br-bar-${d.entity}-${_this._id}`)
+          .on("mousemove", d => _this.model.marker.highlightMarker(d))
+          .on("mouseout", () => _this.model.marker.clearHighlighted())
+          .on("click", d => {
+            _this.model.marker.selectMarker(d);
           });
 
-        const barRect = self.append('rect')
-          .attr('stroke', 'transparent');
+        const barRect = self.append("rect")
+          .attr("stroke", "transparent");
 
         const labelFull = _this.values.label[d.entity];
         const labelSmall = labelFull.length < 12 ? labelFull : `${labelFull.substring(0, 9)}...`;
-        const barLabel = self.append('text')
-          .attr('class', 'vzb-br-label')
-          .attr('dy', '.325em')
+        const barLabel = self.append("text")
+          .attr("class", "vzb-br-label")
+          .attr("dy", ".325em");
 
         const labelFullWidth = barLabel.text(labelFull).node().getBBox().width;
         const labelSmallWidth = barLabel.text(labelSmall).node().getBBox().width;
 
-        const barValue = self.append('text')
-          .attr('class', 'vzb-br-value')
-          .attr('dy', '.325em')
+        const barValue = self.append("text")
+          .attr("class", "vzb-br-value")
+          .attr("dy", ".325em");
 
         Object.assign(d, {
           self,
@@ -564,13 +570,11 @@ const BarRankChart = Component.extend({
   },
 
   _getWidestLabelWidth(big = false) {
-    const widthKey = big ? 'labelFullWidth' : 'labelSmallWidth';
-    const labelKey = big ? 'labelFull' : 'labelSmall';
+    const widthKey = big ? "labelFullWidth" : "labelSmallWidth";
+    const labelKey = big ? "labelFull" : "labelSmall";
 
     const bar = this.sortedEntities
-      .reduce((a, b) => {
-        return a[widthKey] < b[widthKey] ? b : a;
-      });
+      .reduce((a, b) => a[widthKey] < b[widthKey] ? b : a);
 
     const text = bar.barLabel.text();
     const width = bar.barLabel.text(bar[labelKey]).node().getBBox().width;
@@ -582,24 +586,24 @@ const BarRankChart = Component.extend({
   _drawColors() {
     const _this = this;
 
-    this.barContainer.selectAll('.vzb-br-bar>rect')
-      .each(function ({ entity }) {
+    this.barContainer.selectAll(".vzb-br-bar>rect")
+      .each(function({ entity }) {
         const self = d3.select(this);
         const color = _this.values.color[entity];
 
         if (!color && color !== 0) {
           self
-            .style('fill', COLOR_WHITEISH)
-            .attr('stroke', COLOR_BLACKISH)
+            .style("fill", COLOR_WHITEISH)
+            .attr("stroke", COLOR_BLACKISH);
         } else {
           self
-            .style('fill', _this._getColor(color))
-            .attr('stroke', 'transparent');
+            .style("fill", _this._getColor(color))
+            .attr("stroke", "transparent");
         }
       });
 
-    this.barContainer.selectAll('.vzb-br-bar>text')
-      .style('fill', ({ entity }) => this._getDarkerColor(this.values.color[entity]));
+    this.barContainer.selectAll(".vzb-br-bar>text")
+      .style("fill", ({ entity }) => this._getDarkerColor(this.values.color[entity]));
   },
 
   _getColor(value) {
@@ -616,9 +620,9 @@ const BarRankChart = Component.extend({
    */
 
   _scrollTopTween(scrollTop) {
-    return function () {
+    return function() {
       const node = this, i = d3.interpolateNumber(this.scrollTop, scrollTop);
-      return function (t) {
+      return function(t) {
         node.scrollTop = i(t);
       };
     };
@@ -656,12 +660,11 @@ const BarRankChart = Component.extend({
         isNew: true
       };
     }).sort(({ value: a }, { value: b }) => b - a)
-      .map((entity, index) => {
-        return Object.assign(entity, {
+      .map((entity, index) =>
+        Object.assign(entity, {
           index,
           changedIndex: index !== entity.index
-        });
-      });
+        }));
   },
 
   _selectBars() {
@@ -669,16 +672,16 @@ const BarRankChart = Component.extend({
     const selected = this.model.marker.select;
 
     // unselect all bars
-    this.barContainer.classed('vzb-dimmed-selected', false);
-    this.barContainer.selectAll('.vzb-br-bar.vzb-selected').classed('vzb-selected', false);
+    this.barContainer.classed("vzb-dimmed-selected", false);
+    this.barContainer.selectAll(".vzb-br-bar.vzb-selected").classed("vzb-selected", false);
 
     // select the selected ones
     if (selected.length) {
-      this.barContainer.classed('vzb-dimmed-selected', true);
+      this.barContainer.classed("vzb-dimmed-selected", true);
       selected.forEach(selectedBar => {
         this.barContainer
           .select(`#vzb-br-bar-${selectedBar[entityDim]}-${this._id}`)
-          .classed('vzb-selected', true);
+          .classed("vzb-selected", true);
       });
     }
 
@@ -705,8 +708,8 @@ const BarRankChart = Component.extend({
       select.length > 0
     ];
 
-    this.barContainer.selectAll('.vzb-br-bar')
-      .style('opacity', d => {
+    this.barContainer.selectAll(".vzb-br-bar")
+      .style("opacity", d => {
         if (someHighlighted && marker.isHighlighted(d)) {
           return OPACITY_HIGHLIGHT_DEFAULT;
         }
@@ -724,7 +727,7 @@ const BarRankChart = Component.extend({
   },
 
   _updateDoubtOpacity(opacity) {
-    this.dataWarningEl.style('opacity',
+    this.dataWarningEl.style("opacity",
       opacity || (
         !this.model.marker.select.length ?
           this.wScale(+this.model.time.value.getUTCFullYear().toString()) :

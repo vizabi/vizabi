@@ -70,8 +70,8 @@ var VIZABI_MODEL = {
     },
     "buttons": ['colors', 'find', 'size', 'lock', 'moreoptions', 'fullscreen'],
     "dialogs": {
-      'popup': ['colors', 'find', 'size', 'moreoptions'], 
-      'sidebar': ['colors', 'find', 'size'], 
+      'popup': ['colors', 'find', 'size', 'moreoptions'],
+      'sidebar': ['colors', 'find', 'size'],
       'moreoptions': ['size', 'colors', 'about']
     },
     "splash": false

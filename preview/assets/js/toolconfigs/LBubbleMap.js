@@ -1,4 +1,4 @@
-var VIZABI_MODEL = {
+const VIZABI_MODEL = {
   "state": {
     "time": {
       "startOrigin": "1800",
@@ -12,74 +12,49 @@ var VIZABI_MODEL = {
         "is--country": true
       }
     },
-    "entities_allpossible": {
-      "dim": "geo",
-      "show": {
-        "is--country": true
-      }
-    },
-    "entities_colorlegend": {     
+    "entities_colorlegend": {
       "dim": "world_4region"
     },
     "entities_tags": {
       "dim": "tag"
     },
-    "marker_allpossible": {
-      "space": ["entities_allpossible"],
-      "label": {
-        "use": "property",
-        "which": "name"
-      }
-    },
     "marker": {
       "space": ["entities", "time"],
-      "opacityRegular": 0.8,
       "label": {
         "use": "property",
         "which": "name"
       },
-      "axis_y": {
+      "size": {
         "use": "indicator",
         "which": "population_total",
-        "scaleType": "linear"
+        "scaleType": "linear",
+        "domainMin": 15,
+        "domainMax": 1400000000,
+        "allow": {
+          "scales": ["linear"]
+        }
       },
-      "axis_x": {
-        "use": "indicator",
-        "which": "income_per_person_gdppercapita_ppp_inflation_adjusted",
-        "scaleType": "log",
-        "domainMin": 0.11,
-        "domainMax": 500,
-        "tailFatX": 1.85,
-        "tailCutX": 0.2,
-        "tailFade": 0.7,
-        "xScaleFactor": 1.039781626,
-        "xScaleShift": -1.127066411
+      "hook_lat": {
+        "use": "property",
+        "which": "latitude",
+        "_important": true
       },
-      "axis_s": {
-        "use": "indicator",
-        "which": "gapminder_gini",
-        "scaleType": "linear"
+      "hook_lng": {
+        "use": "property",
+        "which": "longitude",
+        "_important": true
       },
       "color": {
         "use": "property",
         "which": "world_4region",
         "scaleType": "ordinal",
-        "syncModels": ["marker_colorlegend", "stack", "group"]
-      },
-      "stack": {
-        "use": "constant",
-        "which": "all"
-      },
-      "group": {
-        "use": "property",
-        "which": "world_4region",
-        "merge": false
+        "syncModels": ["marker_colorlegend"]
       }
     },
     "marker_colorlegend": {
       "space": ["entities_colorlegend"],
       "opacityRegular": 0.8,
-      "opacityHighlightDim": 0.3, 
+      "opacityHighlightDim": 0.3,
       "label": {
         "use": "property",
         "which": "name"
@@ -108,7 +83,22 @@ var VIZABI_MODEL = {
   "ui": {
     "datawarning": {
       "doubtDomain": [1800, 1950, 2015],
-      "doubtRange": [1.0, 0.8, 0.6]
+      "doubtRange": [1.0, 0.3, 0.2]
+    },
+    "buttons": ["colors", "find", "size", "moreoptions", "fullscreen", "presentation"],
+    "dialogs": {
+      "popup": ["colors", "find", "size", "moreoptions"],
+      "sidebar": ["colors", "find", "size"],
+      "moreoptions": ["mapoptions", "opacity", "speed", "size", "colors", "presentation", "about"]
+    },
+    "map": {
+      "scale": 1,
+      "preserveAspectRatio": true,
+      "showGoogleMap": true,
+      "offset": {
+        "top": 0.05,
+        "bottom": -0.12
+      }
     },
     "splash": true
   },

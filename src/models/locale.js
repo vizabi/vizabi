@@ -1,20 +1,20 @@
-import * as utils from 'base/utils';
-import DataConnected from 'models/dataconnected';
+import * as utils from "base/utils";
+import DataConnected from "models/dataconnected";
 
 // this and many other locale information should at some point be stored in an external file with locale information (rtl, date formats etc)
-var rtlLocales = ['ar', 'ar-SA'];
+const rtlLocales = ["ar", "ar-SA"];
 
-var LocaleModel = DataConnected.extend({
+const LocaleModel = DataConnected.extend({
 
   /**
    * Default values for this model
    */
-  getClassDefaults: function() {
-    var defaults = {
+  getClassDefaults() {
+    const defaults = {
       id: "en",
       filePath: "assets/translation/"
     };
-    return utils.deepExtend(this._super(), defaults)
+    return utils.deepExtend(this._super(), defaults);
   },
 
   dataConnectedChildren: ["id"],
@@ -26,14 +26,14 @@ var LocaleModel = DataConnected.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(name, values, parent, bind) {
+  init(name, values, parent, bind) {
     this._type = "locale";
 
     //same constructor, with same arguments
     this._super(name, values, parent, bind);
   },
 
-  _isLoading: function() {
+  _isLoading() {
     return (!this._loadedOnce || this._loadCall);
   },
 
@@ -41,9 +41,7 @@ var LocaleModel = DataConnected.extend({
     return this.loadData();
   },
 
-  loadData: function() {
-    var promises;
-
+  loadData() {
     this.setReady(false);
     this._loadCall = true;
 
@@ -51,24 +49,23 @@ var LocaleModel = DataConnected.extend({
     // this should be done with listeners, but the load promise can't be returned
     // through the listeners
 
-    promises = [];
-    utils.forEach(this._root._data, (mdl)=>{
-      if(mdl._type === "data") promises.push(mdl.loadConceptProps())
-    })
+    const promises = [];
+    utils.forEach(this._root._data, mdl => {
+      if (mdl._type === "data") promises.push(mdl.loadConceptProps());
+    });
     promises.push(new Promise((resolve, reject) => {
-        d3.json(this.filePath + this.id + ".json", (error, strings) => {
-          if (error) reject(error);
-          this.handleNewStrings(strings)
-          resolve();
-        });
-      })
-    );
+      d3.json(this.filePath + this.id + ".json", (error, strings) => {
+        if (error) reject(error);
+        this.handleNewStrings(strings);
+        resolve();
+      });
+    }));
 
     return Promise.all(promises)
-      .then(() => this.trigger('translate'));
+      .then(() => this.trigger("translate"));
   },
 
-  handleNewStrings: function(receivedStrings) {
+  handleNewStrings(receivedStrings) {
     this.strings[this.id] = this.strings[this.id]
       ? utils.extend(this.strings[this.id], receivedStrings)
       : receivedStrings;
@@ -76,16 +73,15 @@ var LocaleModel = DataConnected.extend({
 
   /**
    * Gets a certain UI string
-   * @param {String} id string identifier
+   * @param {String} stringId string identifier
    * @returns {string} translated string
    */
-  getUIString: function(stringId) {
-    if(this.strings && this.strings[this.id] && (this.strings[this.id][stringId] || this.strings[this.id][stringId]==="")) {
+  getUIString(stringId) {
+    if (this.strings && this.strings[this.id] && (this.strings[this.id][stringId] || this.strings[this.id][stringId] === "")) {
       return this.strings[this.id][stringId];
-    } else {
-      if(!this.strings || !this.strings[this.id]) utils.warn("Strings are not loaded for the " + this.id + " locale. Check if translation JSON is valid");
-      return stringId;
     }
+    if (!this.strings || !this.strings[this.id]) utils.warn("Strings are not loaded for the " + this.id + " locale. Check if translation JSON is valid");
+    return stringId;
   },
 
   /**
@@ -95,15 +91,15 @@ var LocaleModel = DataConnected.extend({
   getTFunction() {
     return (stringId, payload = {}) => (
       Object.keys(payload).reduce((result, key) => {
-          const regexp = new RegExp('{{' + key + '}}', 'g');
-          return result.replace(regexp, payload[key]);
-        },
+        const regexp = new RegExp("{{" + key + "}}", "g");
+        return result.replace(regexp, payload[key]);
+      },
         this.getUIString(stringId)
       )
     );
   },
 
-  isRTL: function() {
+  isRTL() {
     return (rtlLocales.indexOf(this.id) !== -1);
   }
 

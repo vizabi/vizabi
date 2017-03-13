@@ -1,42 +1,42 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import Dialog from 'components/dialogs/_dialog';
+import * as utils from "base/utils";
+import Component from "base/component";
+import Dialog from "components/dialogs/_dialog";
 
-import simpleslider from 'components/simpleslider/simpleslider';
+import simpleslider from "components/simpleslider/simpleslider";
 /*
  * Size dialog
  */
 
-var Opacity = Dialog.extend({
+const Opacity = Dialog.extend({
 
 /**
  * Initializes the dialog component
  * @param config component configuration
  * @param context component context (parent)
  */
-init: function(config, parent) {
-  this.name = 'opacity';
+  init(config, parent) {
+    this.name = "opacity";
 
   // in dialog, this.model_expects = ["state", "data"];
 
-  this.components = [
-  {
-    component: simpleslider,
-    placeholder: '.vzb-dialog-bubbleopacity-regular',
-    model: ["state.marker"],
-    arg: "opacityRegular",
-    properties: {step: 0.01}
-  }, {
-    component: simpleslider,
-    placeholder: '.vzb-dialog-bubbleopacity-selectdim',
-    model: ["state.marker"],
-    arg: "opacitySelectDim",
-    properties: {step: 0.01}
-  }
-  ];
+    this.components = [
+      {
+        component: simpleslider,
+        placeholder: ".vzb-dialog-bubbleopacity-regular",
+        model: ["state.marker"],
+        arg: "opacityRegular",
+        properties: { step: 0.01 }
+      }, {
+        component: simpleslider,
+        placeholder: ".vzb-dialog-bubbleopacity-selectdim",
+        model: ["state.marker"],
+        arg: "opacitySelectDim",
+        properties: { step: 0.01 }
+      }
+    ];
 
-  this._super(config, parent);
-}
+    this._super(config, parent);
+  }
 });
 
 export default Opacity;

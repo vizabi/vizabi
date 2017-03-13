@@ -1,13 +1,13 @@
-import CSVReader from 'readers/csv/csv';
-import { isNumber } from 'base/utils';
+import CSVReader from "readers/csv/csv";
+import { isNumber } from "base/utils";
 
 const CSVTimeInColumnsReader = CSVReader.extend({
 
-  _name: 'csv-time_in_columns',
+  _name: "csv-time_in_columns",
 
   init(readerInfo) {
     this._super(readerInfo);
-    this.timeKey = 'time';
+    this.timeKey = "time";
   },
 
   load() {
@@ -15,8 +15,8 @@ const CSVTimeInColumnsReader = CSVReader.extend({
       .then(({ data, columns }) => {
         const indicatorKey = columns[this.keySize];
 
-        let concepts = data.reduce((result, row) => {
-          Object.keys(row).forEach((concept) => {
+        const concepts = data.reduce((result, row) => {
+          Object.keys(row).forEach(concept => {
             concept = concept === indicatorKey ? row[indicatorKey] : concept;
 
             if (Number(concept) != concept && !result.includes(concept)) {
@@ -33,26 +33,26 @@ const CSVTimeInColumnsReader = CSVReader.extend({
         return {
           columns: concepts,
           data: data.reduce((result, row) => {
-            const resultRows = result.filter((resultRow) => resultRow[entityDomain] === row[entityDomain]);
+            const resultRows = result.filter(resultRow => resultRow[entityDomain] === row[entityDomain]);
             if (resultRows.length) {
-              resultRows.forEach((resultRow) => {
+              resultRows.forEach(resultRow => {
                 resultRow[row[indicatorKey]] = row[resultRow[this.timeKey]];
               });
             } else {
-              Object.keys(row).forEach((key) => {
+              Object.keys(row).forEach(key => {
                 if (![entityDomain, indicatorKey].includes(key)) {
                   result.push(
                     Object.assign({
-                        [entityDomain]: row[entityDomain],
-                        [this.timeKey]: key,
-                      }, indicators.reduce((result, indicator) => {
-                        result[indicator] = row[indicatorKey] === indicator ? row[key] : null;
-                        return result;
-                      }, {})
+                      [entityDomain]: row[entityDomain],
+                      [this.timeKey]: key,
+                    }, indicators.reduce((result, indicator) => {
+                      result[indicator] = row[indicatorKey] === indicator ? row[key] : null;
+                      return result;
+                    }, {})
                     )
                   );
                 }
-              })
+              });
             }
 
             return result;

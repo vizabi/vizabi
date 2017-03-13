@@ -1,7 +1,7 @@
 (function() {
   var doctype = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
 
-  window.URL = (window.URL || window.webkitURL);
+//  window.URL = (window.URL || window.webkitURL);
 
   var body = document.body,
       emptySvg,
@@ -130,7 +130,6 @@
 
   function download(source) {
     var filename = "untitled";
-
     if (source.id) {
       filename = source.id;
     } else if (source.class) {

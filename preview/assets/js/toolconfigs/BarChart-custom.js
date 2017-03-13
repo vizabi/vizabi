@@ -1,35 +1,22 @@
 var VIZABI_MODEL = {
   "state": {
     "time": {
-      "startOrigin": "1950",
-      "endOrigin": "2015",
-      "value": "2015",
+      "startOrigin": "1800",
+      "endOrigin": "2012",
+      "value": "2000",
       "dim": "time"
     },
     "entities": {
       "dim": "geo",
       "show": {
-        "is--country": true
+        "geo": {"$in": ["usa", "swe", "nor"]}
       }
     },
     "entities_colorlegend": {
-      "dim": "world_4region"
+      "dim": "geo"
     },
     "entities_tags": {
       "dim": "tag"
-    },
-    "entities_allpossible": {
-      "dim": "geo",
-      "show": {
-        "is--country": true
-      }
-    },
-    "marker_allpossible": {
-      "space": ["entities_allpossible"],
-      "label": {
-        "use": "property",
-        "which": "name"
-      }
     },
     "marker": {
       "space": ["entities", "time"],
@@ -37,25 +24,27 @@ var VIZABI_MODEL = {
         "use": "property",
         "which": "name"
       },
-      "axis_x": {
-        "use": "indicator",
-        "which": "population_total"
-      },
       "axis_y": {
+        "use": "indicator",
+        "which": "  ",
+        "scaleType": "log"
+      },
+      "axis_x": {
         "use": "property",
-        "which": "name"
+        "which": "name",
+        "allow": {
+          "names": ["name"]
+        }
       },
       "color": {
         "use": "property",
         "which": "world_4region",
         "scaleType": "ordinal",
-        "syncModels": ["marker_colorlegend"]
+        "colorlegend": "marker_colorlegend"
       }
     },
-    "marker_colorlegend": {
+    "marker_colorlegend":{
       "space": ["entities_colorlegend"],
-      "opacityRegular": 0.8,
-      "opacityHighlightDim": 0.3,
       "label": {
         "use": "property",
         "which": "name"
@@ -86,7 +75,7 @@ var VIZABI_MODEL = {
       "doubtDomain": [1800, 1950, 2015],
       "doubtRange": [1.0, 0.8, 0.6]
     },
-    "splash": true
+    "splash": false
   },
   "data": {
     "reader": "waffle",

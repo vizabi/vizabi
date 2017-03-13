@@ -1,22 +1,21 @@
-var VIZABI_MODEL = { 
+var VIZABI_MODEL = {
   "state": {
+    "time": {
+      "startOrigin": "1993",
+      "endOrigin": "2015",
+      "value": "2014",
+      "dim": "year",
+      "delay": 700
+    },
     "entities": {
-      "dim": "geo",
-      "show": {
-        "is--country": true
-      }      
+      "dim": "basomrade",
+      "show": { }
     },
     "entities_colorlegend": {
-      "dim": "world_4region"
+      "dim": "municipality"
     },
     "entities_tags": {
       "dim": "tag"
-    },
-    "time": {
-      "startOrigin": "1800",
-      "endOrigin": "2015",
-      "value": "2015",
-      "dim": "time"
     },
     "marker": {
       "space": ["entities", "time"],
@@ -25,36 +24,29 @@ var VIZABI_MODEL = {
         "which": "name"
       },
       "axis_y": {
-        "use": "indicator",
-        "which": "life_expectancy_years",
-        "zoomedMin": 19,
-        "zoomedMax": 86,
-        "domainMin": 0,
-        "domainMax": 100
+        "which": "higher_education_min_3_years_percent_of_population_aged_25_64",
+        "use": "indicator"
       },
       "axis_x": {
+        "which": "mean_income_aged_lt_20",
         "use": "indicator",
         "scaleType": "log",
-        "domainMax": 150000,
-        "domainMin": 300,
-        "zoomedMax": 150000,
-        "zoomedMin": 300,
-        "which": "income_per_person_gdppercapita_ppp_inflation_adjusted"
+        "zoomedMin": "64000",
+        "zoomedMax": "700000"
       },
       "size": {
+        "which": "population_20xx_12_31",
         "use": "indicator",
-        "which": "population_total",
-        "domainMin": 15,
-        "domainMax": 1400000000,
         "scaleType": "linear",
+        "extent": [0, 0.4],
         "allow": {
           "scales": ["linear"]
         }
       },
       "color": {
         "use": "property",
+        "which": "municipality",
         "scaleType": "ordinal",
-        "which": "world_4region",
         "syncModels": ["marker_colorlegend"]
       }
     },
@@ -87,15 +79,20 @@ var VIZABI_MODEL = {
       }
     }
   },
+  "data": {
+    reader: 'waffle',
+    path: 'https://waffle-server-dev.gapminderdev.org/api/ddf',
+    dataset: 'open-numbers/ddf--sodertorn--stockholm_lan_basomrade'
+  },
   "ui": {
     "datawarning": {
-      "doubtDomain": [1800, 1950, 2015],
-      "doubtRange": [1.0, 0.3, 0.2]
+      "doubtDomain": [1993, 2015],
+      "doubtRange": [0, 0]
+    },
+    "chart": {
+      "labels": {"removeLabelBox": true},
+      "trails": false
     },
     "splash": true
-  },
-  "data": {
-    "reader": "waffle",
-    "path": "https://waffle-server-dev.gapminderdev.org/api/ddf/"
   }
 };

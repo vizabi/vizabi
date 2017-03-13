@@ -1,17 +1,17 @@
-import * as utils from 'base/utils';
-import Tool from 'base/tool';
+import * as utils from "base/utils";
+import Tool from "base/tool";
 
-import BubbleChartComponent from 'tools/bubblechart/bubblechart-component';
+import BubbleChartComponent from "tools/bubblechart/bubblechart-component";
 
-import timeslider from 'components/timeslider/timeslider';
-import dialogs from 'components/dialogs/dialogs';
-import buttonlist from 'components/buttonlist/buttonlist';
-import treemenu from 'components/treemenu/treemenu';
-import datawarning from 'components/datawarning/datawarning';
-import datanotes from 'components/datanotes/datanotes';
-import steppedSpeedSlider from 'components/steppedspeedslider/steppedspeedslider';
+import timeslider from "components/timeslider/timeslider";
+import dialogs from "components/dialogs/dialogs";
+import buttonlist from "components/buttonlist/buttonlist";
+import treemenu from "components/treemenu/treemenu";
+import datawarning from "components/datawarning/datawarning";
+import datanotes from "components/datanotes/datanotes";
+import steppedSpeedSlider from "components/steppedspeedslider/steppedspeedslider";
 
-var BubbleChart = Tool.extend('BubbleChart', {
+const BubbleChart = Tool.extend("BubbleChart", {
 
   /**
    * Initializes the tool (Bubble Chart Tool).
@@ -19,58 +19,58 @@ var BubbleChart = Tool.extend('BubbleChart', {
    * @param {Object} placeholder Placeholder element for the tool
    * @param {Object} external_model Model as given by the external page
    */
-  init: function(placeholder, external_model) {
+  init(placeholder, external_model) {
 
     this.name = "bubblechart";
 
     //specifying components
     this.components = [{
       component: BubbleChartComponent,
-      placeholder: '.vzb-tool-viz',
+      placeholder: ".vzb-tool-viz",
       model: ["state.time", "state.entities", "state.marker", "locale", "ui"] //pass models to component
     }, {
       component: timeslider,
-      placeholder: '.vzb-tool-timeslider',
+      placeholder: ".vzb-tool-timeslider",
       model: ["state.time", "state.entities", "state.marker", "ui"]
     }, {
       component: dialogs,
-      placeholder: '.vzb-tool-dialogs',
-      model: ['state', 'ui', 'locale']
+      placeholder: ".vzb-tool-dialogs",
+      model: ["state", "ui", "locale"]
     }, {
       component: buttonlist,
-      placeholder: '.vzb-tool-buttonlist',
-      model: ['state', 'ui', 'locale']
+      placeholder: ".vzb-tool-buttonlist",
+      model: ["state", "ui", "locale"]
     }, {
       component: treemenu,
-      placeholder: '.vzb-tool-treemenu',
-      model: ['state.marker', 'state.marker_tags', 'state.time', 'locale']
+      placeholder: ".vzb-tool-treemenu",
+      model: ["state.marker", "state.marker_tags", "state.time", "locale"]
     }, {
       component: datawarning,
-      placeholder: '.vzb-tool-datawarning',
-      model: ['locale']
+      placeholder: ".vzb-tool-datawarning",
+      model: ["locale"]
     }, {
       component: datanotes,
-      placeholder: '.vzb-tool-datanotes',
-      model: ['state.marker', 'locale']
+      placeholder: ".vzb-tool-datanotes",
+      model: ["state.marker", "locale"]
     }, {
       component: steppedSpeedSlider,
-      placeholder: '.vzb-tool-stepped-speed-slider',
-      model: ['state.time', 'locale']
+      placeholder: ".vzb-tool-stepped-speed-slider",
+      model: ["state.time", "locale"]
     }];
 
     this._super(placeholder, external_model);
 
   },
 
-  validate: function(model){
+  validate(model) {
     model = this.model || model;
 
     this._super(model);
 
-    if(model.ui.chart.lockNonSelected) {
-       var time = model.state.time.parse("" + model.ui.chart.lockNonSelected);
-       if(time < model.state.time.start) model.ui.chart.lockNonSelected = model.state.time.formatDate(model.state.time.start);
-       if(time > model.state.time.end) model.ui.chart.lockNonSelected = model.state.time.formatDate(model.state.time.end);
+    if (model.ui.chart.lockNonSelected) {
+      const time = model.state.time.parse("" + model.ui.chart.lockNonSelected);
+      if (time < model.state.time.start) model.ui.chart.lockNonSelected = model.state.time.formatDate(model.state.time.start);
+      if (time > model.state.time.end) model.ui.chart.lockNonSelected = model.state.time.formatDate(model.state.time.end);
     }
   },
 
@@ -120,7 +120,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
             conceptType: "measure"
           }
         },
-        label:  {
+        label: {
           use: "property",
           autogenerate: {
             conceptIndex: 0
@@ -144,10 +144,13 @@ var BubbleChart = Tool.extend('BubbleChart', {
           which: "_default",
           scaleType: "ordinal",
           _important: false,
-          extent: [0, 0.33]
+          extent: [0, 0.33],
+          allow: {
+            names: ["_default"]
+          }
         },
       },
-      "marker_colorlegend":{
+      "marker_colorlegend": {
         "space": ["entities_colorlegend"],
         "label": {
           "use": "property",
@@ -184,14 +187,15 @@ var BubbleChart = Tool.extend('BubbleChart', {
         doubtRange: []
       },
       presentation: false,
+      panWithArrow: false,
       adaptMinMaxZoom: false,
-      cursorMode: 'arrow',
+      cursorMode: "arrow",
       zoomOnScrolling: false,
-      buttons: ['colors', 'find', 'trails', 'lock', 'moreoptions', 'fullscreen', 'presentation'],
+      buttons: ["colors", "find", "trails", "lock", "moreoptions", "fullscreen", "presentation"],
       dialogs: {
-        popup: ['colors', 'find', 'size', 'zoom', 'moreoptions'],
-        sidebar: ['colors', 'find', 'size', 'zoom'],
-        moreoptions: ['opacity', 'speed', 'axes', 'size', 'colors', 'label', 'zoom','presentation', 'about']
+        popup: ["colors", "find", "size", "zoom", "moreoptions"],
+        sidebar: ["colors", "find", "size", "zoom"],
+        moreoptions: ["opacity", "speed", "axes", "size", "colors", "label", "zoom", "presentation", "about"]
       }
     }
   }

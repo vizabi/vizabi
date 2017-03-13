@@ -1,10 +1,10 @@
-import Reader from 'base/reader';
+import Reader from "base/reader";
 
 const cached = {};
 
 const CSVReader = Reader.extend({
 
-  _name: 'csv',
+  _name: "csv",
 
   /**
    * Initializes the reader.
@@ -17,10 +17,10 @@ const CSVReader = Reader.extend({
     this.keySize = readerInfo.keySize || 1;
 
     Object.assign(this.ERRORS, {
-      WRONG_TIME_COLUMN_OR_UNITS: 'reader/error/wrongTimeUnitsOrColumn',
-      NOT_ENOUGH_ROWS_IN_FILE: 'reader/error/notEnoughRows',
-      UNDEFINED_DELIMITER: 'reader/error/undefinedDelimiter',
-      EMPTY_HEADERS: 'reader/error/emptyHeaders'
+      WRONG_TIME_COLUMN_OR_UNITS: "reader/error/wrongTimeUnitsOrColumn",
+      NOT_ENOUGH_ROWS_IN_FILE: "reader/error/notEnoughRows",
+      UNDEFINED_DELIMITER: "reader/error/undefinedDelimiter",
+      EMPTY_HEADERS: "reader/error/emptyHeaders"
     });
   },
 
@@ -48,7 +48,7 @@ const CSVReader = Reader.extend({
    * @returns {object} object of info about the dataset
    */
   getDatasetInfo() {
-    return { name: this._basepath.split('/').pop() };
+    return { name: this._basepath.split("/").pop() };
   },
 
   load() {
@@ -87,14 +87,14 @@ const CSVReader = Reader.extend({
 
   _guessDelimiter(text) {
     const stringsToCheck = 2;
-    const rows = this._getRows(text, stringsToCheck).map((row) => row.replace(/".*?"/g, ''));
+    const rows = this._getRows(text, stringsToCheck).map(row => row.replace(/".*?"/g, ""));
 
     if (rows.length !== stringsToCheck) {
       throw this.error(this.ERRORS.NOT_ENOUGH_ROWS_IN_FILE);
     }
 
     const [header, firstRow] = rows;
-    const [comma, semicolon] = [',', ';'];
+    const [comma, semicolon] = [",", ";"];
     const commasCountInHeader = this._countCharsInLine(header, comma);
     const semicolonsCountInHeader = this._countCharsInLine(header, semicolon);
     const commasCountInFirstRow = this._countCharsInLine(firstRow, comma);
@@ -143,7 +143,7 @@ const CSVReader = Reader.extend({
   },
 
   _countCharsInLine(text, char) {
-    const re = new RegExp(char, 'g');
+    const re = new RegExp(char, "g");
     const matches = text.match(re);
     return matches ? matches.length : 0;
   }

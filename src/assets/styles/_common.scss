@@ -85,12 +85,12 @@ $vzb-loader-bgcolor: $vzb-color-white;
 }
 
 %vzb-loader {
-  @include animation-duration($vzb-loader-speed);
-  @include animation-iteration-count(infinite);
-  @include animation-name(rotate-forever);
-  @include animation-timing-function(linear);
   @include size($vzb-loader-size);
   @include position(absolute, 50% null 0 50%);
+  animation-timing-function: linear;
+  animation-name: rotate-forever;
+  animation-iteration-count: infinite;
+  animation-duration: $vzb-loader-speed;
   border: $vzb-loader-thickness solid rgba($vzb-color-primary, .1);
   border-radius: 100%;
   border-top: $vzb-loader-thickness solid rgba($vzb-color-primary, .6);
@@ -162,9 +162,6 @@ $vzb-loader-bgcolor: $vzb-color-white;
   }
 
   &.vzb-error {
-
-    @include user-select(none);
-
     display: table;
     height: 100%;
 

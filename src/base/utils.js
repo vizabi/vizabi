@@ -1,4 +1,4 @@
-import interpolator from 'vizabi-interpolators/interpolators';
+import interpolator from "vizabi-interpolators/interpolators";
 
 /*
  * Check if value A is in +- proximity of value B
@@ -7,15 +7,14 @@ import interpolator from 'vizabi-interpolators/interpolators';
  * @param {Number} tolerance
  * @returns {Boolean} true if values are approximately equal or false otherwise
  */
-export var approxEqual = function(a, b, tolerance) {
-  tolerance = tolerance||0;
-  if(b > 0){
+export const approxEqual = function(a, b, tolerance) {
+  tolerance = tolerance || 0;
+  if (b > 0) {
     return (1 - tolerance) * b <= a && a <= b * (1 + tolerance);
-  }else if(b < 0){
+  } else if (b < 0) {
     return (1 + tolerance) * b <= a && a <= b * (1 - tolerance);
-  }else{
-    return Math.abs(a) <= tolerance;
   }
+  return Math.abs(a) <= tolerance;
 };
 
 /*
@@ -23,12 +22,12 @@ export var approxEqual = function(a, b, tolerance) {
  * @param {String} prefix
  * @returns {String} id
  */
-export var uniqueId = function() {
-  var id = 0;
+export const uniqueId = (function() {
+  let id = 0;
   return function(p) {
     return p ? p + (id += 1) : id += 1;
   };
-}();
+})();
 
 /*
  * checks whether obj is a DOM element
@@ -36,7 +35,7 @@ export var uniqueId = function() {
  * @returns {Boolean}
  * from underscore: https://github.com/jashkenas/underscore/blob/master/underscore.js
  */
-export var isElement = function(obj) {
+export const isElement = function(obj) {
   return !!(obj && obj.nodeType === 1);
 };
 
@@ -46,8 +45,8 @@ export var isElement = function(obj) {
  * @returns {Boolean}
  * from underscore: https://github.com/jashkenas/underscore/blob/master/underscore.js
  */
-export var isArray = Array.isArray || function(obj) {
-  return toString.call(obj) === '[object Array]';
+export const isArray = Array.isArray || function(obj) {
+  return toString.call(obj) === "[object Array]";
 };
 
 /*
@@ -56,9 +55,9 @@ export var isArray = Array.isArray || function(obj) {
  * @returns {Boolean}
  * from underscore: https://github.com/jashkenas/underscore/blob/master/underscore.js
  */
-export var isObject = function(obj) {
-  var type = typeof obj;
-  return type === 'object' && !!obj;
+export const isObject = function(obj) {
+  const type = typeof obj;
+  return type === "object" && !!obj;
 };
 
 /*
@@ -66,7 +65,7 @@ export var isObject = function(obj) {
  * @param {Object} arg
  * @returns {Boolean}
  */
-export var isDate = function(arg) {
+export const isDate = function(arg) {
   return arg instanceof Date;
 };
 
@@ -75,8 +74,8 @@ export var isDate = function(arg) {
  * @param {Object} arg
  * @returns {Boolean}
  */
-export var isString = function(arg) {
-  return typeof arg === 'string';
+export const isString = function(arg) {
+  return typeof arg === "string";
 };
 
 /*
@@ -85,12 +84,12 @@ export var isString = function(arg) {
  * @returns {Boolean}
  * from lodash: https://github.com/lodash/lodash/blob/master/lodash.js
  */
-export var isNaN = function(arg) {
+export const isNaN = function(arg) {
   // A `NaN` primitive is the only number that is not equal to itself
   return isNumber(arg) && arg !== +arg;
 };
 
-export var isEmpty = function(obj) {
+export const isEmpty = function(obj) {
   return Object.keys(obj).length === 0 && obj.constructor === Object;
 };
 
@@ -101,9 +100,9 @@ export var isEmpty = function(obj) {
  * from lodash: https://github.com/lodash/lodash/blob/master/lodash.js
  * dependencies are resolved and included here
  */
-export var isNumber = function(arg) {
-  return typeof arg === 'number' || !!arg && typeof arg === 'object' && Object.prototype.toString.call(arg) ===
-    '[object Number]';
+export const isNumber = function(arg) {
+  return typeof arg === "number" || !!arg && typeof arg === "object" && Object.prototype.toString.call(arg) ===
+    "[object Number]";
 };
 
 /*
@@ -111,8 +110,8 @@ export var isNumber = function(arg) {
  * @param {Object} obj
  * @returns {Boolean}
  */
-export var isPlainObject = function(obj) {
-  return obj !== null && Object.prototype.toString.call(obj) === '[object Object]';
+export const isPlainObject = function(obj) {
+  return obj !== null && Object.prototype.toString.call(obj) === "[object Object]";
 };
 
 /*
@@ -121,12 +120,12 @@ export var isPlainObject = function(obj) {
  * @param {Array} b
  * @returns {Boolean}
  */
-export var arrayEquals = function(a, b) {
-  if(a === b) return true;
-  if(a == null || b == null) return false;
-  if(a.length != b.length) return false;
-  for(var i = 0; i < a.length; ++i) {
-    if(a[i] !== b[i]) return false;
+export const arrayEquals = function(a, b) {
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  if (a.length != b.length) return false;
+  for (let i = 0; i < a.length; ++i) {
+    if (a[i] !== b[i]) return false;
   }
   return true;
 };
@@ -143,118 +142,116 @@ export var arrayEquals = function(a, b) {
  * @param b
  * @returns {boolean} if objects are equal
  */
-export var comparePlainObjects = function (a, b) {
+export const comparePlainObjects = function(a, b) {
 
-    //Returns the object's class, Array, Date, RegExp, Object are of interest to us
-    var getClass = function (val) {
-        return Object.prototype.toString.call(val)
-            .match(/^\[object\s(.*)\]$/)[1];
-    };
+  //Returns the object's class, Array, Date, RegExp, Object are of interest to us
+  const getClass = function(val) {
+    return Object.prototype.toString.call(val)
+      .match(/^\[object\s(.*)\]$/)[1];
+  };
 
-    //Defines the type of the value, extended typeof
-    var whatis = function (val) {
+  //Defines the type of the value, extended typeof
+  const whatis = function(val) {
 
-        if (val === undefined) {
-            return 'undefined';
+    if (val === undefined) {
+      return "undefined";
+    }
+    if (val === null) {
+      return "null";
+    }
+
+    let type = typeof val;
+
+    if (type === "object") {
+      type = getClass(val).toLowerCase();
+    }
+
+    if (type === "number") {
+      return val.toString().indexOf(".") > 0 ?
+        "float" :
+        "integer";
+    }
+
+    return type;
+  };
+
+  const compare = function(a, b) {
+    if (a === b) {
+      return true;
+    }
+    for (const i in a) {
+      if (b.hasOwnProperty(i)) {
+        if (!equal(a[i], b[i])) {
+          return false;
         }
-        if (val === null) {
-            return 'null';
-        }
+      } else {
+        return false;
+      }
+    }
 
-        var type = typeof val;
+    for (const i in b) {
+      if (!a.hasOwnProperty(i)) {
+        return false;
+      }
+    }
+    return true;
+  };
 
-        if (type === 'object') {
-            type = getClass(val).toLowerCase();
-        }
+  const compareArrays = function(a, b) {
+    if (a === b) {
+      return true;
+    }
+    if (a.length !== b.length) {
+      return false;
+    }
+    for (let i = 0; i < a.length; i++) {
+      if (!equal(a[i], b[i])) {
+        return false;
+      }
+    }
+    return true;
+  };
 
-        if (type === 'number') {
-            if (val.toString().indexOf('.') > 0) {
-                return 'float';
-            }
-            else {
-                return 'integer';
-            }
-        }
+  const _equal = {};
+  _equal.array = compareArrays;
+  _equal.object = compare;
+  _equal.date = function(a, b) {
+    return a.getTime() === b.getTime();
+  };
+  _equal.regexp = function(a, b) {
+    return a.toString() === b.toString();
+  };
 
-        return type;
-    };
+  /**
+   * Are two values equal, deep compare for objects and arrays.
+   * @param a {any}
+   * @param b {any}
+   * @return {boolean} Are equal?
+   */
+  const equal = function(a, b) {
+    if (a !== b) {
+      const atype = whatis(a);
+      const btype = whatis(b);
 
-    var compare = function (a, b) {
-        if (a === b) {
-            return true;
-        }
-        for (var i in a) {
-            if (b.hasOwnProperty(i)) {
-                if (!equal(a[i], b[i])) {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        }
+      if (atype === btype) {
+        return _equal.hasOwnProperty(atype) ? _equal[atype](a, b) : a == b;
+      }
 
-        for (var i in b) {
-            if (!a.hasOwnProperty(i)) {
-                return false;
-            }
-        }
-        return true;
-    };
+      return false;
+    }
 
-    var compareArrays = function (a, b) {
-        if (a === b) {
-            return true;
-        }
-        if (a.length !== b.length) {
-            return false;
-        }
-        for (var i = 0; i < a.length; i++) {
-            if (!equal(a[i], b[i])) {
-                return false;
-            }
-        }
-        return true;
-    };
+    return true;
+  };
 
-    var _equal = {};
-    _equal.array = compareArrays;
-    _equal.object = compare;
-    _equal.date = function (a, b) {
-        return a.getTime() === b.getTime();
-    };
-    _equal.regexp = function (a, b) {
-        return a.toString() === b.toString();
-    };
-
-    /**
-     * Are two values equal, deep compare for objects and arrays.
-     * @param a {any}
-     * @param b {any}
-     * @return {boolean} Are equal?
-     */
-    var equal = function (a, b) {
-        if (a !== b) {
-            var atype = whatis(a), btype = whatis(b);
-
-            if (atype === btype) {
-                return _equal.hasOwnProperty(atype) ? _equal[atype](a, b) : a == b;
-            }
-
-            return false;
-        }
-
-        return true;
-    };
-
-    return compare(a, b);
+  return compare(a, b);
 };
 
 
-export var getViewportPosition = function(element) {
-  var xPosition = 0;
-  var yPosition = 0;
+export const getViewportPosition = function(element) {
+  let xPosition = 0;
+  let yPosition = 0;
 
-  while(element) {
+  while (element) {
     xPosition += (element.offsetLeft - element.scrollLeft + element.clientLeft);
     yPosition += (element.offsetTop - element.scrollTop + element.clientTop);
     element = element.offsetParent;
@@ -267,19 +264,19 @@ export var getViewportPosition = function(element) {
 };
 
 
-export var findScrollableAncestor = function(node) {
-  var scrollable = ["scroll", "auto"];
-  while(node = node.parentNode) {
-    var scrollHeight = node.scrollHeight,
-      height = node.clientHeight;
-      if (scrollHeight > height && scrollable.indexOf(d3.select(node).style("overflow")) !== -1) {
-        return node;
-      }
+export const findScrollableAncestor = function(node) {
+  const scrollable = ["scroll", "auto"];
+  while (node = node.parentNode) {
+    const scrollHeight = node.scrollHeight;
+    const height = node.clientHeight;
+    if (scrollHeight > height && scrollable.indexOf(d3.select(node).style("overflow")) !== -1) {
+      return node;
+    }
   }
   return null;
 };
 
-export var roundStep = function(number, step) {
+export const roundStep = function(number, step) {
   return Math.round(number / step) * step;
 };
 
@@ -287,8 +284,8 @@ export var roundStep = function(number, step) {
  * transforms a string into a validated fload value
  * @param {string} string to be transformed
  */
-export var strToFloat = function(string) {
-  return +string.replace(/[^\d.-]/g, '');
+export const strToFloat = function(string) {
+  return +string.replace(/[^\d.-]/g, "");
 };
 
 /*
@@ -297,29 +294,29 @@ export var strToFloat = function(string) {
  * @param {Function} callback callback function
  * @param {Object} ctx context object
  */
-export var forEach = function(obj, callback, ctx) {
-  if(!obj) {
+export const forEach = function(obj, callback, ctx) {
+  if (!obj) {
     return;
   }
-  var i, size;
-  if(isArray(obj)) {
+  let i, size;
+  if (isArray(obj)) {
     size = obj.length;
-    for(i = 0; i < size; i += 1) {
-      if(callback.apply(ctx, [
-          obj[i],
-          i
-        ]) === false) {
+    for (i = 0; i < size; i += 1) {
+      if (callback.apply(ctx, [
+        obj[i],
+        i
+      ]) === false) {
         break;
       }
     }
   } else {
-    var keys = Object.keys(obj);
+    const keys = Object.keys(obj);
     size = keys.length;
-    for(i = 0; i < size; i += 1) {
-      if(callback.apply(ctx, [
-          obj[keys[i]],
-          keys[i]
-        ]) === false) {
+    for (i = 0; i < size; i += 1) {
+      if (callback.apply(ctx, [
+        obj[keys[i]],
+        keys[i]
+      ]) === false) {
         break;
       }
     }
@@ -331,13 +328,13 @@ export var forEach = function(obj, callback, ctx) {
  * @param {Object} destination object
  * @returns {Object} extented object
  */
-export var extend = function(dest) {
+export const extend = function(dest) {
   //objects to overwrite dest are next arguments
-  var objs = Array.prototype.slice.call(arguments, 1);
+  const objs = Array.prototype.slice.call(arguments, 1);
   //loop through each obj and each argument, left to right
-  forEach(objs, function(obj, i) {
-    forEach(obj, function(value, k) {
-      if(obj.hasOwnProperty(k)) {
+  forEach(objs, (obj, i) => {
+    forEach(obj, (value, k) => {
+      if (obj.hasOwnProperty(k)) {
         dest[k] = value;
       }
     });
@@ -349,10 +346,10 @@ export var extend = function(dest) {
 // https://github.com/unclechu/node-deep-extend/blob/master/lib/deep-extend.js
 
 function isSpecificValue(val) {
-  return (
+  return Boolean((
     val instanceof Date
     || val instanceof RegExp
-  ) ? true : false;
+  ));
 }
 
 function cloneSpecificValue(val) {
@@ -360,18 +357,17 @@ function cloneSpecificValue(val) {
     return new Date(val.getTime());
   } else if (val instanceof RegExp) {
     return new RegExp(val);
-  } else {
-    throw new Error('Unexpected situation');
   }
+  throw new Error("Unexpected situation");
 }
 
 /**
  * Recursive cloning array.
  */
 function deepCloneArray(arr) {
-  var clone = [];
-  forEach(arr, function (item, index) {
-    if (typeof item === 'object' && item !== null) {
+  const clone = [];
+  forEach(arr, (item, index) => {
+    if (typeof item === "object" && item !== null) {
       if (isArray(item)) {
         clone[index] = deepCloneArray(item);
       } else if (isSpecificValue(item)) {
@@ -395,8 +391,8 @@ function deepCloneArray(arr) {
  * object as first argument, like this:
  *   deepExtend({}, yourObj_1, [yourObj_N]);
  */
-export var deepExtend = function(/*obj_1, [obj_2], [obj_N]*/) {
-  if (arguments.length < 1 || typeof arguments[0] !== 'object') {
+export const deepExtend = function(/*obj_1, [obj_2], [obj_N]*/) {
+  if (arguments.length < 1 || typeof arguments[0] !== "object") {
     return false;
   }
 
@@ -404,79 +400,72 @@ export var deepExtend = function(/*obj_1, [obj_2], [obj_N]*/) {
     return arguments[0];
   }
 
-  var target = arguments[0];
+  const target = arguments[0];
 
   // convert arguments to array and cut off target object
-  var args = Array.prototype.slice.call(arguments, 1);
+  const args = Array.prototype.slice.call(arguments, 1);
 
-  var val, src, clone;
+  let val, src, clone;
 
-  forEach(args, function (obj) {
+  forEach(args, obj => {
     // skip argument if it is array or isn't object
-    if (typeof obj !== 'object' || isArray(obj)) {
+    if (typeof obj !== "object" || isArray(obj)) {
       return;
     }
 
-    forEach(Object.keys(obj), function (key) {
+    forEach(Object.keys(obj), key => {
       src = target[key]; // source value
       val = obj[key]; // new value
 
       // recursion prevention
       if (val === target) {
-        return;
-
-      /**
-       * if new value isn't object then just overwrite by new value
-       * instead of extending.
-       * 2016-11-07 / Jasper: Added specific check for val instanceof Model for merging defaults & values of ComponentModels
-       * 2016-11-07 / Jasper: Hack because importing Model doesn't work: instead check for val._data
-       */
-      } else if (typeof val !== 'object' || val === null || val._data) {
+        /*
+         * if new value isn't object then just overwrite by new value
+         * instead of extending.
+         * 2016-11-07 / Jasper: Added specific check for val instanceof Model for merging defaults & values of ComponentModels
+         * 2016-11-07 / Jasper: Hack because importing Model doesn't work: instead check for val._data
+         */
+      } else if (typeof val !== "object" || val === null || val._data) {
         target[key] = val;
-        return;
 
-      // just clone arrays (and recursive clone objects inside)
+        // just clone arrays (and recursive clone objects inside)
       } else if (isArray(val)) {
         target[key] = deepCloneArray(val);
-        return;
 
-      // custom cloning and overwrite for specific objects
+        // custom cloning and overwrite for specific objects
       } else if (isSpecificValue(val)) {
         target[key] = cloneSpecificValue(val);
-        return;
 
-      // overwrite by new value if source isn't object or array
-      } else if (typeof src !== 'object' || src === null || isArray(src)) {
+        // overwrite by new value if source isn't object or array
+      } else if (typeof src !== "object" || src === null || isArray(src)) {
         target[key] = deepExtend({}, val);
-        return;
 
-      // source value and new value is objects both, extending...
+        // source value and new value is objects both, extending...
       } else {
         target[key] = deepExtend(src, val);
-        return;
       }
     });
   });
 
   return target;
-}
+};
 
 /*
  * merges objects instead of replacing
  * @param {Object} destination object
  * @returns {Object} merged object
  */
-export var merge = function(dest) {
+export const merge = function(dest) {
 
   // objects to overwrite dest are next arguments
-  var objs = Array.prototype.slice.call(arguments, 1);
+  const objs = Array.prototype.slice.call(arguments, 1);
 
   // loop through each obj and each argument, left to right
-  forEach(objs, function(obj, i) {
-    forEach(obj, function(value, k) {
-      if(obj.hasOwnProperty(k)) {
-        if(dest.hasOwnProperty(k)) {
-          if(!isArray(dest[k])) {
+  forEach(objs, (obj, i) => {
+    forEach(obj, (value, k) => {
+      if (obj.hasOwnProperty(k)) {
+        if (dest.hasOwnProperty(k)) {
+          if (!isArray(dest[k])) {
             dest[k] = [dest[k]];
           }
           dest[k].push(value);
@@ -496,16 +485,16 @@ export var merge = function(dest) {
  * @param {Array} arr filter keys
  * @returns {Object} cloned object
  */
-export var clone = function(src, arr, exclude) {
-  if(isArray(src)) {
+export const clone = function(src, arr, exclude) {
+  if (isArray(src)) {
     return src.slice(0);
   }
-  var clone = {};
-  forEach(src, function(value, k) {
-    if((arr && arr.indexOf(k) === -1) || (exclude && exclude.indexOf(k) !== -1)) {
+  const clone = {};
+  forEach(src, (value, k) => {
+    if ((arr && arr.indexOf(k) === -1) || (exclude && exclude.indexOf(k) !== -1)) {
       return;
     }
-    if(src.hasOwnProperty(k)) {
+    if (src.hasOwnProperty(k)) {
       clone[k] = value;
     }
   });
@@ -517,12 +506,12 @@ export var clone = function(src, arr, exclude) {
  * @param {Object} src original object
  * @returns {Object} cloned object
  */
-export var deepClone = function(src) {
-  var clone = {};
-  if(isArray(src)) clone = [];
+export const deepClone = function(src) {
+  let clone = {};
+  if (isArray(src)) clone = [];
 
-  forEach(src, function(value, k) {
-    if(isObject(value) || isArray(value)) {
+  forEach(src, (value, k) => {
+    if (isObject(value) || isArray(value)) {
       clone[k] = deepClone(value);
     } else {
       clone[k] = value;
@@ -536,9 +525,9 @@ export var deepClone = function(src) {
  * @param {Arr} arr
  * @param {Object} el
  */
-export var without = function(arr, el) {
-  var idx = arr.indexOf(el);
-  if(idx !== -1) {
+export const without = function(arr, el) {
+  const idx = arr.indexOf(el);
+  if (idx !== -1) {
     arr.splice(idx, 1);
   }
   return arr;
@@ -552,17 +541,17 @@ export var without = function(arr, el) {
  * Based on:
  * http://stackoverflow.com/questions/1960473/unique-values-in-an-array
  */
-export var unique = function(arr, func) {
-  var u = {};
-  var a = [];
-  if(!func) {
+export const unique = function(arr, func) {
+  const u = {};
+  const a = [];
+  if (!func) {
     func = function(d) {
       return d;
     };
   }
-  for(var i = 0, l = arr.length; i < l; i += 1) {
-    var key = func(arr[i]);
-    if(u.hasOwnProperty(key)) {
+  for (let i = 0, l = arr.length; i < l; i += 1) {
+    const key = func(arr[i]);
+    if (u.hasOwnProperty(key)) {
       continue;
     }
     a.push(arr[i]);
@@ -578,17 +567,17 @@ export var unique = function(arr, func) {
  * @returns {Array} unique items
  * Based on the previous method
  */
-export var uniqueLast = function(arr, func) {
-  var u = {};
-  var a = [];
-  if(!func) {
+export const uniqueLast = function(arr, func) {
+  const u = {};
+  const a = [];
+  if (!func) {
     func = function(d) {
       return d;
     };
   }
-  for(var i = 0, l = arr.length; i < l; i += 1) {
-    var key = func(arr[i]);
-    if(u.hasOwnProperty(key)) {
+  for (let i = 0, l = arr.length; i < l; i += 1) {
+    const key = func(arr[i]);
+    if (u.hasOwnProperty(key)) {
       a.splice(u[key], 1); //remove old item from array
     }
     a.push(arr[i]);
@@ -602,10 +591,10 @@ export var uniqueLast = function(arr, func) {
  * @param {Array} arr original collection
  * @returns {Function} func test function
  */
-export var find = function(arr, func) {
-  var found;
-  forEach(arr, function(i) {
-    if(func(i)) {
+export const find = function(arr, func) {
+  let found;
+  forEach(arr, i => {
+    if (func(i)) {
       found = i;
       return false; //break
     }
@@ -618,26 +607,26 @@ export var find = function(arr, func) {
  * @param {Array} arr original array
  * @returns {Object} filter properties to use as filter
  */
-export var filter = function(arr, filter) {
-  var index = -1;
-  var length = arr.length;
-  var resIndex = -1;
-  var result = [];
-  var keys = Object.keys(filter);
-  var s_keys = keys.length;
-  var i;
-  var f;
-  while((index += 1) < length) {
-    var value = arr[index];
-    var match = true;
-    for(i = 0; i < s_keys; i += 1) {
+export const filter = function(arr, filter) {
+  let index = -1;
+  const length = arr.length;
+  let resIndex = -1;
+  const result = [];
+  const keys = Object.keys(filter);
+  const s_keys = keys.length;
+  let i;
+  let f;
+  while ((index += 1) < length) {
+    const value = arr[index];
+    let match = true;
+    for (i = 0; i < s_keys; i += 1) {
       f = keys[i];
-      if(!value.hasOwnProperty(f) || value[f] !== filter[f]) {
+      if (!value.hasOwnProperty(f) || value[f] !== filter[f]) {
         match = false;
         break;
       }
     }
-    if(match) {
+    if (match) {
       result[resIndex += 1] = value;
     }
   }
@@ -650,26 +639,26 @@ export var filter = function(arr, filter) {
  * @param {Array} arr original array
  * @returns {Object} filter properties to use as filter
  */
-export var filterAny = function(arr, filter, wildcard) {
-  var index = -1;
-  var length = arr.length;
-  var resIndex = -1;
-  var result = [];
-  var keys = Object.keys(filter);
-  var s_keys = keys.length;
-  var i, f;
-  while((index += 1) < length) {
-    var value = arr[index];
+export const filterAny = function(arr, filter, wildcard) {
+  let index = -1;
+  const length = arr.length;
+  let resIndex = -1;
+  const result = [];
+  const keys = Object.keys(filter);
+  const s_keys = keys.length;
+  let i, f;
+  while ((index += 1) < length) {
+    const value = arr[index];
     //normalize to array
-    var match = true;
-    for(i = 0; i < s_keys; i += 1) {
+    let match = true;
+    for (i = 0; i < s_keys; i += 1) {
       f = keys[i];
-      if(!value.hasOwnProperty(f) || !matchAny(value[f], filter[f], wildcard)) {
+      if (!value.hasOwnProperty(f) || !matchAny(value[f], filter[f], wildcard)) {
         match = false;
         break;
       }
     }
-    if(match) {
+    if (match) {
       result[resIndex += 1] = value;
     }
   }
@@ -684,34 +673,34 @@ export var filterAny = function(arr, filter, wildcard) {
  * @param {String} wildc wildcard value
  * @returns {Boolean} try
  */
-export var matchAny = function(values, compare, wildc) {
+export const matchAny = function(values, compare, wildc) {
   //normalize value
-  if(!isArray(values)) values = [values];
-  if(!wildc) wildc = "*"; //star by default
-  var match = false;
-  for(var e = 0; e < values.length; e++) {
-    var value = values[e];
+  if (!isArray(values)) values = [values];
+  if (!wildc) wildc = "*"; //star by default
+  let match = false;
+  for (let e = 0; e < values.length; e++) {
+    const value = values[e];
 
-    if(!isArray(compare) && value == compare) {
+    if (!isArray(compare) && value == compare) {
       match = true;
       break;
-    } else if(isArray(compare)) {
-      var found = -1;
-      for(var i = 0; i < compare.length; i++) {
-        var c = compare[i];
-        if(!isArray(c) && (c == value || c === wildc)) {
+    } else if (isArray(compare)) {
+      let found = -1;
+      for (let i = 0; i < compare.length; i++) {
+        const c = compare[i];
+        if (!isArray(c) && (c == value || c === wildc)) {
           found = i;
           break;
-        } else if(isArray(c)) { //range
-          var min = c[0];
-          var max = c[1] || min;
-          if(value >= min && value <= max) {
+        } else if (isArray(c)) { //range
+          const min = c[0];
+          const max = c[1] || min;
+          if (value >= min && value <= max) {
             found = i;
             break;
           }
         }
       }
-      if(found !== -1) {
+      if (found !== -1) {
         match = true;
         break;
       }
@@ -725,28 +714,29 @@ export var matchAny = function(values, compare, wildc) {
  * @param node
  */
 
-export var preventAncestorScrolling = function(element) {
-  var preventScrolling = false;
-  element.on('mousewheel', function(d, i) {
-    var scrollTop = this.scrollTop,
-      scrollHeight = this.scrollHeight,
-      height = element.node().offsetHeight,
-      delta = d3.event.wheelDelta,
-      up = delta > 0;
-    var prevent = function() {
+export const preventAncestorScrolling = function(element) {
+  let preventScrolling = false;
+  element.on("mousewheel", function(d, i) {
+    const scrollTop = this.scrollTop;
+    const scrollHeight = this.scrollHeight;
+    const height = element.node().offsetHeight;
+    const delta = d3.event.wheelDelta;
+    const up = delta > 0;
+    const prevent = function() {
       d3.event.stopPropagation();
       d3.event.preventDefault();
       d3.event.returnValue = false;
       return false;
     };
 
-    var scrollTopTween = function(scrollTop) {
-      return function () {
-        var i = d3.interpolateNumber(this.scrollTop, scrollTop);
-        return function (t) {
-          this.scrollTop = i(t);
+    const scrollTopTween = function(scrollTop) {
+      return function() {
+        const _this = this;
+        const i = d3.interpolateNumber(this.scrollTop, scrollTop);
+        return function(t) {
+          _this.scrollTop = i(t);
         };
-      }
+      };
     };
     if (!up) {
       // Scrolling down
@@ -754,7 +744,7 @@ export var preventAncestorScrolling = function(element) {
         element.transition().delay(0).duration(0).tween("scrolltween", scrollTopTween(scrollHeight));
         //freeze scrolling on 2 seconds on bottom position
         preventScrolling = true;
-        setTimeout(function() {
+        setTimeout(() => {
           preventScrolling = false;
         }, 2000);
       } else if (scrollTop == 0) { //unfreeze when direction changed
@@ -766,7 +756,7 @@ export var preventAncestorScrolling = function(element) {
         //freeze scrolling on 2 seconds on top position
         element.transition().delay(0).duration(0).tween("scrolltween", scrollTopTween(0));
         preventScrolling = true;
-        setTimeout(function() {
+        setTimeout(() => {
           preventScrolling = false;
         }, 2000);
       } else if (scrollHeight == height + scrollTop) { //unfreeze when direction changed
@@ -785,41 +775,41 @@ export var preventAncestorScrolling = function(element) {
  * @param {Object} formatters formatters object
  * @returns {Boolean} try
  */
-export var mapRows = function(original, formatters) {
+export const mapRows = function(original, formatters) {
 
   function mapRow(value, fmt) {
-    if(!isArray(value)) {
+    if (!isArray(value)) {
       return fmt(value);
-    } else {
-      var res = [];
-      for(var i = 0; i < value.length; i++) {
-        res[i] = mapRow(value[i], fmt);
-      }
-      return res;
     }
+
+    const res = [];
+    for (let i = 0; i < value.length; i++) {
+      res[i] = mapRow(value[i], fmt);
+    }
+    return res;
   }
 
   // default formatter turns empty strings in null and converts numeric values into number
   //TODO: default formatter is moved to utils. need to return it to hook prototype class, but retest #1212 #1230 #1253
-  var defaultFormatter = function (val) {
-      var newVal = val;
-      if(val === ""){
-        newVal = null;
-      } else {
-        // check for numeric
-        var numericVal = parseFloat(val);
-        if (!isNaN(numericVal) && isFinite(val)) {
-          newVal = numericVal;
-        }
+  const defaultFormatter = function(val) {
+    let newVal = val;
+    if (val === "") {
+      newVal = null;
+    } else {
+      // check for numeric
+      const numericVal = parseFloat(val);
+      if (!isNaN(numericVal) && isFinite(val)) {
+        newVal = numericVal;
       }
-      return newVal;
-  }
+    }
+    return newVal;
+  };
 
-  original = original.map(function(row) {
-    var columns = Object.keys(row);
+  original = original.map(row => {
+    const columns = Object.keys(row);
 
-    for(var i = 0; i < columns.length; i++) {
-      var col = columns[i];
+    for (let i = 0; i < columns.length; i++) {
+      const col = columns[i];
       row[col] = mapRow(row[col], formatters[col] || defaultFormatter);
     }
     return row;
@@ -833,7 +823,7 @@ export var mapRows = function(original, formatters) {
  * @param {Number} radius
  * @returns {Number} area
  */
-export var radiusToArea = function(r) {
+export const radiusToArea = function(r) {
   return r * r * Math.PI;
 };
 
@@ -842,7 +832,7 @@ export var radiusToArea = function(r) {
  * @param {Number} area
  * @returns {Number} radius
  */
-export var areaToRadius = function(a) {
+export const areaToRadius = function(a) {
   return Math.sqrt(a / Math.PI);
 };
 
@@ -850,8 +840,8 @@ export var areaToRadius = function(a) {
  * Prints message to timestamp
  * @param {String} message
  */
-export var timeStamp = function(message) {
-  if(console && typeof console.timeStamp === 'function') {
+export const timeStamp = function(message) {
+  if (console && typeof console.timeStamp === "function") {
     console.timeStamp(message);
   }
 };
@@ -860,11 +850,11 @@ export var timeStamp = function(message) {
  * Prints warning
  * @param {String} message
  */
-export var warn = function(message) {
+export const warn = function(message) {
   message = Array.prototype.slice.call(arguments)
-    .map(function(m){return m instanceof Object? JSON.stringify(m, null, 4) : m })
-    .join(' ');
-  if(console && typeof console.warn === 'function') {
+    .map(m => m instanceof Object ? JSON.stringify(m, null, 4) : m)
+    .join(" ");
+  if (console && typeof console.warn === "function") {
 
     console.warn(message);
   }
@@ -880,9 +870,9 @@ export var warn = function(message) {
  * Prints message for group
  * @param {String} message
  */
-export var groupCollapsed = function(message) {
-  message = Array.prototype.slice.call(arguments).join(' ');
-  if(console && typeof console.groupCollapsed === 'function') {
+export const groupCollapsed = function(message) {
+  message = Array.prototype.slice.call(arguments).join(" ");
+  if (console && typeof console.groupCollapsed === "function") {
     console.groupCollapsed(message);
   }
 };
@@ -891,8 +881,8 @@ export var groupCollapsed = function(message) {
  * Prints end of group
  * @param {String} message
  */
-export var groupEnd = function() {
-  if(console && typeof console.groupEnd === 'function') {
+export const groupEnd = function() {
+  if (console && typeof console.groupEnd === "function") {
     console.groupEnd();
   }
 };
@@ -901,8 +891,8 @@ export var groupEnd = function() {
  * Prints error
  * @param {String} message
  */
-export var error = function(err) {
-  if(console && typeof console.error === 'function') {
+export const error = function(err) {
+  if (console && typeof console.error === "function") {
     if (err.stack) {
       console.error(err.stack);
     } else {
@@ -918,11 +908,11 @@ export var error = function(err) {
  * Count the number of decimal numbers
  * @param {Number} number
  */
-export var countDecimals = function(number) {
-  if(Math.floor(number.valueOf()) === number.valueOf()) {
+export const countDecimals = function(number) {
+  if (Math.floor(number.valueOf()) === number.valueOf()) {
     return 0;
   }
-  return number.toString().split('.')[1].length || 0;
+  return number.toString().split(".")[1].length || 0;
 };
 
 /*
@@ -930,12 +920,12 @@ export var countDecimals = function(number) {
  * @param {Element} el
  * @param {String} className
  */
-export var addClass = function(el, className) {
-  if(el.classList) {
+export const addClass = function(el, className) {
+  if (el.classList) {
     el.classList.add(className);
   } else {
     //IE<10
-    el.className += ' ' + className;
+    el.className += " " + className;
   }
 };
 
@@ -944,13 +934,13 @@ export var addClass = function(el, className) {
  * @param {Element} el
  * @param {String} className
  */
-export var removeClass = function(el, className) {
-  if(el.classList) {
+export const removeClass = function(el, className) {
+  if (el.classList) {
     el.classList.remove(className);
   } else {
     //IE<10
-    el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'),
-      ' ');
+    el.className = el.className.replace(new RegExp("(^|\\b)" + className.split(" ").join("|") + "(\\b|$)", "gi"),
+      " ");
   }
 };
 
@@ -960,10 +950,10 @@ export var removeClass = function(el, className) {
  * @param {String} className
  * @param {Boolean} value
  */
-export var classed = function(el, className, value) {
-  if(value === true) {
+export const classed = function(el, className, value) {
+  if (value === true) {
     addClass(el, className);
-  } else if(value === false) {
+  } else if (value === false) {
     removeClass(el, className);
   } else {
     return hasClass(el, className);
@@ -976,14 +966,11 @@ export var classed = function(el, className, value) {
  * @param {String} className
  * @return {Boolean}
  */
-export var hasClass = function(el, className) {
-  if(el.classList) {
-    return el.classList.contains(className);
-  } else {
-    //IE<10
-    return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
-  }
-};
+export const hasClass = (el, className) => (
+  el.classList ?
+    el.classList.contains(className) :
+    new RegExp("(^| )" + className + "( |$)", "gi").test(el.className)
+);
 
 /*
  * Throttles a function
@@ -994,38 +981,39 @@ export var hasClass = function(el, className) {
  * Call Function.recallLast() - immediate recall func with last saved arguments,
  *                              else func will be called automaticly after ms duration
  */
-export var throttle = function(func, ms) {
+export const throttle = function(func, ms) {
 
-  var throttled = false,
-    savedArgs,
-    savedThis,
-    nextTime,
-    wrapper = function() {
+  let throttled = false;
+  let savedArgs;
+  let savedThis;
+  let nextTime;
 
-      if(nextTime > Date.now()) {
-        throttled = true;
-        savedArgs = arguments;
-        savedThis = this;
-        return;
-      }
-
-      nextTime = Date.now() + ms;
+  const __recallLast = function() {
+    if (throttled) {
       throttled = false;
+      func.apply(savedThis, savedArgs);
+    }
+  };
 
-      func.apply(this, arguments);
+  const wrapper = function() {
 
-      setTimeout(function() {
-        __recallLast();
-      }, ms);
+    if (nextTime > Date.now()) {
+      throttled = true;
+      savedArgs = arguments;
+      savedThis = this;
+      return;
+    }
 
-    },
+    nextTime = Date.now() + ms;
+    throttled = false;
 
-    __recallLast = function() {
-      if(throttled) {
-        throttled = false;
-        func.apply(savedThis, savedArgs);
-      }
-    };
+    func.apply(this, arguments);
+
+    setTimeout(() => {
+      __recallLast();
+    }, ms);
+
+  };
 
   wrapper.recallLast = __recallLast;
 
@@ -1038,7 +1026,7 @@ export var throttle = function(func, ms) {
  * @param {Object} arg
  * @returns {Array} keys
  */
-export var keys = function(arg) {
+export const keys = function(arg) {
   return Object.keys(arg);
 };
 
@@ -1047,11 +1035,11 @@ export var keys = function(arg) {
  * @param {Object} obj
  * @return {Array}
  */
-export var values = function(obj) {
-  var arr = [];
-  var keys = Object.keys(obj);
-  var size = keys.length;
-  for(var i = 0; i < size; i += 1) {
+export const values = function(obj) {
+  const arr = [];
+  const keys = Object.keys(obj);
+  const size = keys.length;
+  for (let i = 0; i < size; i += 1) {
     arr.push(obj[keys[i]]);
   }
   return arr;
@@ -1062,27 +1050,23 @@ export var values = function(obj) {
  * Computes the minumum value in an array
  * @param {Array} arr
  */
-export var arrayMin = function(arr) {
-  return arr.reduce(function(p, v) {
-    return(p < v ? p : v);
-  });
+export const arrayMin = function(arr) {
+  return arr.reduce((p, v) => (p < v ? p : v));
 };
 
 /*
  * Computes the minumum value in an array
  * @param {Array} arr
  */
-export var arrayMax = function(arr) {
-  return arr.reduce(function(p, v) {
-    return(p > v ? p : v);
-  });
+export const arrayMax = function(arr) {
+  return arr.reduce((p, v) => (p > v ? p : v));
 };
 
 /*
  * Computes the mean of an array
  * @param {Array} arr
  */
-export var arrayMean = function(arr) {
+export const arrayMean = function(arr) {
   return arraySum(arr) / arr.length;
 };
 
@@ -1090,34 +1074,29 @@ export var arrayMean = function(arr) {
  * Computes the sum of an array
  * @param {Array} arr
  */
-export var arraySum = function(arr) {
-  return arr.reduce(function(a, b) {
-    return a + b;
-  });
+export const arraySum = function(arr) {
+  return arr.reduce((a, b) => a + b);
 };
 
 /*
  * Computes the median of an array
  * @param {Array} arr
  */
-export var arrayMedian = function(arr) {
-  arr = arr.sort(function(a, b) {
-    return a - b;
-  });
-  var middle = Math.floor((arr.length - 1) / 2);
-  if(arr.length % 2) {
-    return arr[middle];
-  } else {
-    return(arr[middle] + arr[middle + 1]) / 2;
-  }
+export const arrayMedian = arr => {
+  arr = arr.sort((a, b) => a - b);
+  const middle = Math.floor((arr.length - 1) / 2);
+
+  return arr.length % 2 ?
+    arr[middle] :
+    (arr[middle] + arr[middle + 1]) / 2;
 };
 
 /*
  * Returns the last value of array
  * @param {Array} arr
  */
-export var arrayLast = function(arr) {
-  if(!arr.length) return null;
+export const arrayLast = function(arr) {
+  if (!arr.length) return null;
   return arr[arr.length - 1];
 };
 
@@ -1127,18 +1106,18 @@ export var arrayLast = function(arr) {
  * @param {Object} obj1
  * @returns {Object}
  */
-export var diffObject = function(obj2, obj1) {
-  var diff = {};
-  forEach(obj2, function(value, key) {
-    if(!obj1.hasOwnProperty(key)) {
+export const diffObject = function(obj2, obj1) {
+  const diff = {};
+  forEach(obj2, (value, key) => {
+    if (!obj1.hasOwnProperty(key)) {
       diff[key] = value;
-    } else if(value !== obj1[key]) {
-      if(isPlainObject(value) && isPlainObject(obj1[key])) {
-        var d = diffObject(value, obj1[key]);
-        if(Object.keys(d).length > 0) {
+    } else if (value !== obj1[key]) {
+      if (isPlainObject(value) && isPlainObject(obj1[key])) {
+        const d = diffObject(value, obj1[key]);
+        if (Object.keys(d).length > 0) {
           diff[key] = d;
         }
-      } else if(!isArray(value) || !isArray(obj1[key]) || !arrayEquals(value, obj1[key])) {
+      } else if (!isArray(value) || !isArray(obj1[key]) || !arrayEquals(value, obj1[key])) {
         diff[key] = value;
       }
     }
@@ -1150,7 +1129,7 @@ export var diffObject = function(obj2, obj1) {
  * Defers a function
  * @param {Function} func
  */
-export var defer = function(func) {
+export const defer = function(func) {
   setTimeout(func, 1);
 };
 
@@ -1158,11 +1137,11 @@ export var defer = function(func) {
  * Defers a function
  * @param {Function} func
  */
-export var delay = function(delay) {
+export const delay = function(delay) {
   return new Promise(resolve => setTimeout(resolve, delay));
 };
 
-export var clearDelay = function(delayId) {
+export const clearDelay = function(delayId) {
   return clearTimeout(delayId);
 };
 
@@ -1171,20 +1150,20 @@ export var clearDelay = function(delayId) {
  * @param {String|Array} str
  * @return {Number} hashCode
  */
-export var hashCode = function(str) {
-  if(!isString(str)) {
+export const hashCode = function(str) {
+  if (!isString(str)) {
     str = JSON.stringify(str);
   }
-  var hash = 0;
-  var size = str.length;
-  var c;
-  if(size === 0) {
+  let hash = 0;
+  const size = str.length;
+  let c;
+  if (size === 0) {
     return hash;
   }
-  for(var i = 0; i < size; i += 1) {
+  for (let i = 0; i < size; i += 1) {
     c = str.charCodeAt(i);
     hash = (hash << 5) - hash + c;
-    hash = hash & hash; // Convert to 32bit integer
+    hash &= hash; // Convert to 32bit integer
   }
   return hash.toString();
 };
@@ -1196,19 +1175,19 @@ export var hashCode = function(str) {
  * @return {Object} object like this {k: [a, b, ...], ...}
  */
 //
-export var nestArrayToObj = function(arr) {
-  if(!arr || !arr.length || !arr[0].key) return arr;
-  var res = {};
-  for(var i = 0; i < arr.length; i++) {
+export const nestArrayToObj = function(arr) {
+  if (!arr || !arr.length || !arr[0].key) return arr;
+  const res = {};
+  for (let i = 0; i < arr.length; i++) {
     res[arr[i].key] = nestArrayToObj(arr[i].values);
-  };
+  }
   return res;
-}
+};
 
 
-export var interpolateVector = function(){
+export const interpolateVector = function() {
 
-}
+};
 
 /**
  * interpolates the specific value
@@ -1222,43 +1201,43 @@ export var interpolateVector = function(){
  * @param {Boolean} extrapolate indicates if we should use zero-order extrapolation outside the range of available data
  * @returns {Number} interpolated value
  */
-export var interpolatePoint = function(items, use, which, next, dimTime, time, method, extrapolate){
+export const interpolatePoint = function(items, use, which, next, dimTime, time, method, extrapolate) {
 
 
-  if(!items || items.length === 0) {
-    warn('interpolatePoint failed because incoming array is empty. It was ' + which);
+  if (!items || items.length === 0) {
+    warn("interpolatePoint failed because incoming array is empty. It was " + which);
     return null;
   }
   // return constant for the use of "constant"
-  if(use === 'constant') return which;
+  if (use === "constant") return which;
 
   // zero-order interpolation for the use of properties
-  if(use === 'property') return items[0][which];
+  if (use === "property") return items[0][which];
 
   // the rest is for the continuous measurements
 
-  if (extrapolate){
+  if (extrapolate) {
     // check if the desired value is out of range. 0-order extrapolation
-    if(time - items[0][dimTime] <= 0) return items[0][which];
-    if(time - items[items.length - 1][dimTime] >= 0) return items[items.length - 1][which];
+    if (time - items[0][dimTime] <= 0) return items[0][which];
+    if (time - items[items.length - 1][dimTime] >= 0) return items[items.length - 1][which];
   } else {
     // no extrapolation according to Ola's request
-    if(time < items[0][dimTime] || time > items[items.length - 1][dimTime]) return null;
+    if (time < items[0][dimTime] || time > items[items.length - 1][dimTime]) return null;
   }
 
-  if(!next && next !== 0) next = d3.bisectLeft(items.map(function(m){return m[dimTime]}), time);
+  if (!next && next !== 0) next = d3.bisectLeft(items.map(m => m[dimTime]), time);
 
-  if(next === 0) return items[0][which];
+  if (next === 0) return items[0][which];
 
   //return null if data is missing
-  if(items[next]===undefined || items[next][which] === null || items[next - 1][which] === null || items[next][which] === "") {
-    warn('interpolatePoint failed because next/previous points are bad in ' + which);
+  if (items[next] === undefined || items[next][which] === null || items[next - 1][which] === null || items[next][which] === "") {
+    warn("interpolatePoint failed because next/previous points are bad in " + which);
     return null;
   }
 
 
   //do the math to calculate a value between the two points
-  var result = interpolator[method||"linear"](
+  let result = interpolator[method || "linear"](
     items[next - 1][dimTime],
     items[next][dimTime],
     items[next - 1][which],
@@ -1267,15 +1246,15 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
   );
 
   // cast to time object if we are interpolating time
-  if(which === dimTime) result = new Date(result);
-  if(isNaN(result)) {
-      warn('interpolatePoint failed because result is NaN. It was ' + which);
-      result = null;
+  if (which === dimTime) result = new Date(result);
+  if (isNaN(result)) {
+    warn("interpolatePoint failed because result is NaN. It was " + which);
+    result = null;
   }
 
   return result;
 
-}
+};
 
 
 /*
@@ -1284,29 +1263,29 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
  * @param {String} className
  * @return {Boolean}
  */
-export var ajax = function(options) {
-  var request = new XMLHttpRequest();
+export const ajax = function(options) {
+  const request = new XMLHttpRequest();
   request.open(options.method, options.url, true);
-  if(options.method === 'POST' && !options.json) {
-    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-  } else if(options.method === 'POST' && options.json) {
-    request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+  if (options.method === "POST" && !options.json) {
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+  } else if (options.method === "POST" && options.json) {
+    request.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
   }
   request.onload = function() {
-    if(request.status >= 200 && request.status < 400) {
+    if (request.status >= 200 && request.status < 400) {
       // Success!
-      var data = options.json ? JSON.parse(request.responseText) : request.responseText;
-      if(options.success) {
+      const data = options.json ? JSON.parse(request.responseText) : request.responseText;
+      if (options.success) {
         options.success(data);
       }
     } else {
-      if(options.error) {
+      if (options.error) {
         options.error();
       }
     }
   };
   request.onerror = function() {
-    if(options.error) {
+    if (options.error) {
       options.error();
     }
   };
@@ -1316,31 +1295,31 @@ export var ajax = function(options) {
 /*
  * Performs a GET http request
  */
-export var get = function(url, pars, success, error, json) {
+export const get = function(url, pars, success, error, json) {
   pars = pars || [];
-  forEach(pars, function(value, key) {
-    pars.push(key + '=' + value);
+  forEach(pars, (value, key) => {
+    pars.push(key + "=" + value);
   });
-  url = pars.length ? url + '?' + pars.join('&') : url;
+  url = pars.length ? url + "?" + pars.join("&") : url;
   ajax({
-    method: 'GET',
-    url: url,
-    success: success,
-    error: error,
-    json: json
+    method: "GET",
+    url,
+    success,
+    error,
+    json
   });
 };
 
 /*
  * Performs a POST http request
  */
-export var post = function(url, pars, success, error, json) {
+export const post = function(url, pars, success, error, json) {
   ajax({
-    method: 'POST',
-    url: url,
-    success: success,
-    error: error,
-    json: json,
+    method: "POST",
+    url,
+    success,
+    error,
+    json,
     data: pars
   });
 };
@@ -1350,20 +1329,20 @@ export var post = function(url, pars, success, error, json) {
  * @param {Function} fn
  * @returns {Function}
  */
-export var memoize = function(fn) {
+export const memoize = function(fn) {
   return function() {
-    var args = Array.prototype.slice.call(arguments);
-    var hash = '';
-    var i = args.length;
-    var currentArg = null;
+    const args = Array.prototype.slice.call(arguments);
+    let hash = "";
+    let i = args.length;
+    let currentArg = null;
 
-    while(i--) {
+    while (i--) {
       currentArg = args[i];
       hash += (currentArg === Object(currentArg)) ? JSON.stringify(currentArg) : currentArg;
       fn.memoize || (fn.memoize = {});
     }
 
-    return(hash in fn.memoize) ? fn.memoize[hash] : fn.memoize[hash] = fn.apply(this, args);
+    return (hash in fn.memoize) ? fn.memoize[hash] : fn.memoize[hash] = fn.apply(this, args);
   };
 };
 
@@ -1371,66 +1350,64 @@ export var memoize = function(fn) {
 // be triggered. The function will be called after it stops being called for
 // N milliseconds. If `immediate` is passed, trigger the function on the
 // leading edge, instead of the trailing.
-export var debounce = function(func, wait, immediate) {
-  var timeout;
+export const debounce = function(func, wait, immediate) {
+  let timeout;
   return function() {
-    var context = this,
-      args = arguments;
-    var later = function() {
+    const context = this;
+    const args = arguments;
+    const later = function() {
       timeout = null;
-      if(!immediate) func.apply(context, args);
+      if (!immediate) func.apply(context, args);
     };
-    var callNow = immediate && !timeout;
+    const callNow = immediate && !timeout;
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
-    if(callNow) func.apply(context, args);
-  }
+    if (callNow) func.apply(context, args);
+  };
 };
 
-export var isTouchDevice = function() {
+export const isTouchDevice = function() {
   //'ontouchstart' is not reliable in Google Chrome #2116, but Chrome has this firesTouchEvents flag
-  if(((d3.event||{}).sourceCapabilities||{}).firesTouchEvents != null ) {
+  if (((d3.event || {}).sourceCapabilities || {}).firesTouchEvents != null) {
     return d3.event.sourceCapabilities.firesTouchEvents;
   }
-  return !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
+  return !!(("ontouchstart" in window) || window.DocumentTouch && document instanceof DocumentTouch);
 };
 
 //return a pruneed tree
-export var pruneTree = function(tree, filterCallback) {
-  var filteredTree = {};
-  var filteredChildrens = [];
-  if(tree.hasOwnProperty("children")) {
-    filteredChildrens = tree.children.map(function(childrenTree) {
-      return pruneTree(childrenTree, filterCallback);
-    }).filter(function(childrenTree) {
-      return Object.keys(childrenTree).length !== 0;
+export const pruneTree = function(tree, filterCallback) {
+  const filteredTree = {};
+  let filteredChildrens = [];
+  if (tree.hasOwnProperty("children")) {
+    filteredChildrens = tree.children.map(childrenTree => pruneTree(childrenTree, filterCallback)).filter(childrenTree => Object.keys(childrenTree).length !== 0);
+  }
+  if (filteredChildrens.length != 0 || filterCallback(tree)) {
+    //copy all the properties to the new tree
+    forEach(tree, (value, key) => {
+      filteredTree[key] = value;
     });
   }
-  if(filteredChildrens.length != 0 || filterCallback(tree)) {
-    //copy all the properties to the new tree
-    forEach(tree, function(value, key) {filteredTree[key] = value;})
-  }
-  if(filteredChildrens.length != 0) {
+  if (filteredChildrens.length != 0) {
     filteredTree["children"] = filteredChildrens;
   }
   return filteredTree;
 };
 
-export var setIcon = function(element, icon) {
-  element.selectAll('*').remove();
+export const setIcon = function(element, icon) {
+  element.selectAll("*").remove();
   element.node().appendChild(
     element.node().ownerDocument.importNode(
       new DOMParser().parseFromString(
-        icon, 'application/xml').documentElement, true)
+        icon, "application/xml").documentElement, true)
   );
   return element;
 };
 
 //http://stackoverflow.com/questions/26049488/how-to-get-absolute-coordinates-of-object-inside-a-g-group
 export function makeAbsoluteContext(element, svgDocument) {
-  return function(x,y) {
-    var offset = svgDocument.getBoundingClientRect();
-    var matrix = element.getScreenCTM();
+  return function(x, y) {
+    const offset = svgDocument.getBoundingClientRect();
+    const matrix = element.getScreenCTM();
     return {
       x: (matrix.a * x) + (matrix.c * y) + matrix.e - offset.left,
       y: (matrix.b * x) + (matrix.d * y) + matrix.f - offset.top
@@ -1439,69 +1416,77 @@ export function makeAbsoluteContext(element, svgDocument) {
 }
 
 
-
-
-
 /***
-   thenBy.js
-   Copyright 2013 Teun Duynstee
-   https://github.com/Teun/thenBy.js/blob/master/thenBy.module.js
+ thenBy.js
+ Copyright 2013 Teun Duynstee
+ https://github.com/Teun/thenBy.js/blob/master/thenBy.module.js
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-     http://www.apache.org/licenses/LICENSE-2.0
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
  */
-export function firstBy(){
+export function firstBy() {
 
-    function identity(v){return v;}
+  function identity(v) {
+    return v;
+  }
 
-    function ignoreCase(v){return typeof(v)==="string" ? v.toLowerCase() : v;}
+  function ignoreCase(v) {
+    return typeof (v) === "string" ? v.toLowerCase() : v;
+  }
 
-    function makeCompareFunction(f, opt){
-     opt = typeof(opt)==="number" ? {direction:opt} : opt||{};
-     if(typeof(f)!="function"){
-        var prop = f;
-        // make unary function
-        f = function(v1){return !!v1[prop] ? v1[prop] : "";}
-      }
-      if(f.length === 1) {
-        // f is a unary function mapping a single item to its sort score
-        var uf = f;
-        var preprocess = opt.ignoreCase?ignoreCase:identity;
-        f = function(v1,v2) {return preprocess(uf(v1)) < preprocess(uf(v2)) ? -1 : preprocess(uf(v1)) > preprocess(uf(v2)) ? 1 : 0;}
-      }
-      if(opt.direction === -1)return function(v1,v2){return -f(v1,v2)};
-      return f;
+  function makeCompareFunction(f, opt) {
+    opt = typeof (opt) === "number" ? { direction: opt } : opt || {};
+    if (typeof (f) != "function") {
+      const prop = f;
+      // make unary function
+      f = function(v1) {
+        return v1[prop] ? v1[prop] : "";
+      };
     }
-
-    /* adds a secondary compare function to the target function (`this` context)
-       which is applied in case the first one returns 0 (equal)
-       returns a new compare function, which has a `thenBy` method as well */
-    function tb(func, opt) {
-        var x = typeof(this) == "function" ? this : false;
-        var y = makeCompareFunction(func, opt);
-        var f = x ? function(a, b) {
-                        return x(a,b) || y(a,b);
-                    }
-                  : y;
-        f.thenBy = tb;
-        return f;
+    if (f.length === 1) {
+      // f is a unary function mapping a single item to its sort score
+      const uf = f;
+      const preprocess = opt.ignoreCase ? ignoreCase : identity;
+      f = function(v1, v2) {
+        return preprocess(uf(v1)) < preprocess(uf(v2)) ? -1 : preprocess(uf(v1)) > preprocess(uf(v2)) ? 1 : 0;
+      };
     }
-    return tb;
+    if (opt.direction === -1) return function(v1, v2) {
+      return -f(v1, v2);
+    };
+    return f;
+  }
+
+  /* adds a secondary compare function to the target function (`this` context)
+   which is applied in case the first one returns 0 (equal)
+   returns a new compare function, which has a `thenBy` method as well */
+  function tb(func, opt) {
+    const x = typeof (this) == "function" ? this : false;
+    const y = makeCompareFunction(func, opt);
+    const f = x ? function(a, b) {
+      return x(a, b) || y(a, b);
+    }
+      : y;
+    f.thenBy = tb;
+    return f;
+  }
+
+  return tb;
 }
 
 export function transform(node) {
 
-  var {a, b, c, d, e, f} = node.transform.baseVal.consolidate().matrix;
+  const { a, b, c, d, e, f } = node.transform.baseVal.consolidate().matrix;
 
-  return function(a, b, c, d, e, f) {
-    var scaleX, scaleY, skewX;
+  return (function(a, b, c, d, e, f) {
+    let scaleX, scaleY, skewX;
     if (scaleX = Math.sqrt(a * a + b * b)) a /= scaleX, b /= scaleX;
     if (skewX = a * c + b * d) c -= a * skewX, d -= b * skewX;
     if (scaleY = Math.sqrt(c * c + d * d)) c /= scaleY, d /= scaleY, skewX /= scaleY;
@@ -1509,12 +1494,15 @@ export function transform(node) {
     return {
       translateX: e,
       translateY: f,
-      rotate: Math.atan2(b, a) * Math.PI/180,
-      skewX: Math.atan(skewX) * Math.PI/180,
-      scaleX: scaleX,
-      scaleY: scaleY
+      rotate: Math.atan2(b, a) * Math.PI / 180,
+      skewX: Math.atan(skewX) * Math.PI / 180,
+      scaleX,
+      scaleY
     };
-  }(a, b, c, d, e, f);
+  })(a, b, c, d, e, f);
 }
 
-export function capitalize(string) { return string && string[0].toUpperCase() + string.slice(1).toLowerCase(); };
+export const capitalize = string => string.slice(0, 1).toUpperCase() + string.slice(1).toLowerCase();
+
+// http://stackoverflow.com/questions/11381673/detecting-a-mobile-browser
+export const isMobileOrTablet = (agent = navigator.userAgent || navigator.vendor || window.opera) => /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(agent) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw-(n|u)|c55\/|capi|ccwa|cdm-|cell|chtm|cldc|cmd-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc-s|devi|dica|dmob|do(c|p)o|ds(12|-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(-|_)|g1 u|g560|gene|gf-5|g-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd-(m|p|t)|hei-|hi(pt|ta)|hp( i|ip)|hs-c|ht(c(-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i-(20|go|ma)|i230|iac( |-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|-[a-w])|libw|lynx|m1-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|-([1-8]|c))|phil|pire|pl(ay|uc)|pn-2|po(ck|rt|se)|prox|psio|pt-g|qa-a|qc(07|12|21|32|60|-[2-7]|i-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h-|oo|p-)|sdk\/|se(c(-|0|1)|47|mc|nd|ri)|sgh-|shar|sie(-|m)|sk-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h-|v-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl-|tdg-|tel(i|m)|tim-|t-mo|to(pl|sh)|ts(70|m-|m3|m5)|tx-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas-|your|zeto|zte-/i.test(agent.substr(0, 4));

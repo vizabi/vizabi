@@ -1,4 +1,4 @@
-import topojson from 'helpers/topojson'
+import topojson from 'helpers/topojson';
 import * as utils from 'base/utils';
 (function(exports) {
 
@@ -41,26 +41,26 @@ import * as utils from 'base/utils';
 
           var calculateMeta = function(index, cb) {
             var area = Math.abs(areas[index]), // XXX: why do we have negative areas?
-              v = + values[index],
+              v = +values[index],
               desired = totalArea * v / totalValue,
               radius = Math.sqrt(area / Math.PI),
               mass = Math.sqrt(desired / Math.PI) - radius,
               sizeError = Math.max(area, desired) / Math.min(area, desired);
             // console.log(o.id, "@", j, "area:", area, "value:", v, "->", desired, radius, mass, sizeError);
-            cb( {
-              id:         objects[index].id,
-              area:       area,
-              centroid:   path.centroid(objects[index]),
-              value:      v,
-              desired:    desired,
-              radius:     radius,
-              mass:       mass,
-              sizeError:  sizeError
+            cb({
+              id: objects[index].id,
+              area: area,
+              centroid: path.centroid(objects[index]),
+              value: v,
+              desired: desired,
+              radius: radius,
+              mass: mass,
+              sizeError: sizeError
             });
           };
           var calculateMetaSequence = function(index) {
             if (index >= objects.length) {
-              return resolve({meta: meta, sizeError: (sizeErrorsTot/sizeErrorsNum)})
+              return resolve({ meta: meta, sizeError: (sizeErrorsTot/sizeErrorsNum) });
             }
             calculateMeta(index, function(response) {
               meta.push(response);
@@ -86,13 +86,13 @@ import * as utils from 'base/utils';
         // objects are projected into screen coordinates
 
         // project the arcs into screen space
-        var tf = transformer(topology.transform),x,y,len1,i1,out1,len2=topology.arcs.length,i2=0,
+        var tf = transformer(topology.transform), x, y, len1, i1, out1, len2=topology.arcs.length, i2=0,
           projectedArcs = new Array(len2);
         var projectedArcsDefer = new Promise();
         var generateTopologySegment = function(segmentIndex, segmentLength) {
           return new Promise(function(resolve, reject) {
             i1 = 0;
-            while(i1<segmentLength){
+            while (i1<segmentLength) {
               topology.arcs[segmentIndex][i1][0] = (x += topology.arcs[segmentIndex][i1][0]);
               topology.arcs[segmentIndex][i1][1] = (y += topology.arcs[segmentIndex][i1][1]);
               out1[i1] = projection === null ? tf(topology.arcs[segmentIndex][i1]) : projection(tf(topology.arcs[segmentIndex][i1]));
@@ -117,7 +117,7 @@ import * as utils from 'base/utils';
             if (index % 400 == 0) {
               utils.defer(function() {
                 generateTopologyArcs(index, totalLength);
-              })
+              });
             } else {
               generateTopologyArcs(index, totalLength);
             }
@@ -129,7 +129,7 @@ import * as utils from 'base/utils';
           // path with identity projection
           var path = d3.geo.path()
             .projection(null);
-          var objects = object(projectedArcs, {type: "GeometryCollection", geometries: geometries})
+          var objects = object(projectedArcs, { type: "GeometryCollection", geometries: geometries })
             .geometries.map(function(geom) {
               return {
                 type: "Feature",
@@ -144,7 +144,7 @@ import * as utils from 'base/utils';
           }
           // no iterations; just return the features
           if (iterations <= 0) {
-            resolve( {
+            resolve({
               features: objects,
               arcs: projectedArcs
             });
@@ -160,18 +160,18 @@ import * as utils from 'base/utils';
               // console.log("meta:", meta);
               // console.log("  total area:", totalArea);
               // console.log("  force reduction factor:", forceReductionFactor, "mean error:", sizeError);
-              var delta,centroid,mass,radius,rSquared,dx,dy,distSquared,dist,Fij;
+              var delta, centroid, mass, radius, rSquared, dx, dy, distSquared, dist, Fij;
               var updatePoint = function(i2, len2) {
-                var len1,i1,delta,len3,i3,centroid,mass,radius,rSquared,dx,dy,distSquared,dist,Fij;
-                while(i2<len2){
+                var len1, i1, delta, len3, i3, centroid, mass, radius, rSquared, dx, dy, distSquared, dist, Fij;
+                while (i2<len2) {
                   len1=projectedArcs[i2].length;
                   i1=0;
-                  while(i1<len1){
+                  while (i1<len1) {
                     // create an array of vectors: [x, y]
-                    delta = [0,0];
+                    delta = [0, 0];
                     len3 = response.meta.length;
                     i3=0;
-                    while(i3<len3) {
+                    while (i3<len3) {
                       centroid =  response.meta[i3].centroid;
                       mass =      response.meta[i3].mass;
                       radius =    response.meta[i3].radius;
@@ -185,8 +185,8 @@ import * as utils from 'base/utils';
                         : mass *
                       (distSquared / rSquared) *
                       (4 - 3 * dist / radius);
-                      delta[0]+=(Fij * cosArctan(dy,dx));
-                      delta[1]+=(Fij * sinArctan(dy,dx));
+                      delta[0]+=(Fij * cosArctan(dy, dx));
+                      delta[1]+=(Fij * sinArctan(dy, dx));
                       i3++;
                     }
                     projectedArcs[i2][i1][0] += (delta[0]*forceReductionFactor);
@@ -204,7 +204,7 @@ import * as utils from 'base/utils';
                   }
                   utils.defer(function() {
                     resizeSegments(++index, iterations);
-                  })
+                  });
                   return;
                 }
                 var end = Math.min(start + 400, projectedArcs.length);
@@ -221,7 +221,7 @@ import * as utils from 'base/utils';
 
           resizeSegments(0, iterations);
           iterationsDefer.then(function() {
-            resolve( {
+            resolve({
               features: objects,
               arcs: projectedArcs
             });
@@ -321,11 +321,11 @@ import * as utils from 'base/utils';
       }
 
       function geometry(o) {
-        if(o.type === "GeometryCollection") o.geometries.forEach(geometry);
-        else if(o.type in geometryType) geom = o, geometryType[o.type](o.arcs);
+        if (o.type === "GeometryCollection") o.geometries.forEach(geometry);
+        else if (o.type in geometryType) geom = o, geometryType[o.type](o.arcs);
       }
 
-      if(arguments.length > 1) {
+      if (arguments.length > 1) {
         var geomsByArc = [],
           geom;
 
@@ -343,10 +343,10 @@ import * as utils from 'base/utils';
         geomsByArc.forEach(arguments.length < 3 ? function(geoms) {
           arcs.push(geoms[0].i);
         } : function(geoms) {
-          if(filter(geoms[0].g, geoms[geoms.length - 1].g)) arcs.push(geoms[0].i);
+          if (filter(geoms[0].g, geoms[geoms.length - 1].g)) arcs.push(geoms[0].i);
         });
       } else {
-        for(var i = 0, n = topology.arcs.length; i < n; ++i) arcs.push(i);
+        for (var i = 0, n = topology.arcs.length; i < n; ++i) arcs.push(i);
       }
 
       return arcs;
@@ -363,7 +363,7 @@ import * as utils from 'base/utils';
       arcs.forEach(function(i, j) {
         var arc = topology.arcs[i < 0 ? ~i : i],
           t;
-        if(arc.length < 3 && !arc[1][0] && !arc[1][1]) {
+        if (arc.length < 3 && !arc[1][0] && !arc[1][1]) {
           t = arcs[++emptyIndex], arcs[emptyIndex] = i, arcs[j] = t;
         }
       });
@@ -374,22 +374,22 @@ import * as utils from 'base/utils';
           end = e[1],
           f, g;
 
-        if(f = fragmentByEnd[start]) {
+        if (f = fragmentByEnd[start]) {
           delete fragmentByEnd[f.end];
           f.push(i);
           f.end = end;
-          if(g = fragmentByStart[end]) {
+          if (g = fragmentByStart[end]) {
             delete fragmentByStart[g.start];
             var fg = g === f ? f : f.concat(g);
             fragmentByStart[fg.start = f.start] = fragmentByEnd[fg.end = g.end] = fg;
           } else {
             fragmentByStart[f.start] = fragmentByEnd[f.end] = f;
           }
-        } else if(f = fragmentByStart[end]) {
+        } else if (f = fragmentByStart[end]) {
           delete fragmentByStart[f.start];
           f.unshift(i);
           f.start = start;
-          if(g = fragmentByEnd[start]) {
+          if (g = fragmentByEnd[start]) {
             delete fragmentByEnd[g.end];
             var gf = g === f ? f : g.concat(f);
             fragmentByStart[gf.start = g.start] = fragmentByEnd[gf.end = f.end] = gf;
@@ -406,7 +406,7 @@ import * as utils from 'base/utils';
         var arc = topology.arcs[i < 0 ? ~i : i],
           p0 = arc[0],
           p1;
-        if(topology.transform) p1 = [0, 0], arc.forEach(function(dp) {
+        if (topology.transform) p1 = [0, 0], arc.forEach(function(dp) {
           p1[0] += dp[0], p1[1] += dp[1];
         });
         else p1 = arc[arc.length - 1];
@@ -414,7 +414,7 @@ import * as utils from 'base/utils';
       }
 
       function flush(fragmentByEnd, fragmentByStart) {
-        for(var k in fragmentByEnd) {
+        for (var k in fragmentByEnd) {
           var f = fragmentByEnd[k];
           delete fragmentByStart[f.start];
           delete f.start;
@@ -429,13 +429,13 @@ import * as utils from 'base/utils';
       flush(fragmentByEnd, fragmentByStart);
       flush(fragmentByStart, fragmentByEnd);
       arcs.forEach(function(i) {
-        if(!stitchedArcs[i < 0 ? ~i : i]) fragments.push([i]);
+        if (!stitchedArcs[i < 0 ? ~i : i]) fragments.push([i]);
       });
 
       return object(topology, {
         type: "MultiLineString",
         arcs: fragments
-      })
+      });
     };
 
     carto.features = function(topo, geometries) {
@@ -503,14 +503,14 @@ import * as utils from 'base/utils';
       return types[geom.type](geom.coordinates);
     };
   }
-  function cosArctan(dx,dy){
+  function cosArctan(dx, dy) {
     if (dy===0) return 0;
     var div = dx/dy;
     return (dy>0)?
       (1/Math.sqrt(1+(div*div))):
       (-1/Math.sqrt(1+(div*div)));
   }
-  function sinArctan(dx,dy){
+  function sinArctan(dx, dy) {
     if (dy===0) return 1;
     var div = dx/dy;
     return (dy>0)?

@@ -1,22 +1,22 @@
-import * as utils from 'base/utils';
-import Component from 'base/component';
-import { drag as iconDrag, pin as iconPin } from 'base/iconset'
-import requireAll from 'helpers/requireAll';
-const dialogTemplates = requireAll(require.context('components/dialogs/', true, /\.html$/));
+import * as utils from "base/utils";
+import Component from "base/component";
+import { drag as iconDrag, pin as iconPin } from "base/iconset";
+import requireAll from "helpers/requireAll";
+const dialogTemplates = requireAll(require.context("components/dialogs/", true, /\.html$/));
 
 /*!
  * VIZABI DIALOG
  * Reusable Dialog component
  */
 
-var Dialog = Component.extend({
+const Dialog = Component.extend({
   /**
    * Initializes the dialog
    * @param {Object} config Initial config, with name and placeholder
    * @param {Object} parent Reference to tool
    */
-  init: function(config, parent) {
-    this.name = this.name || '';
+  init(config, parent) {
+    this.name = this.name || "";
 
     this.model_expects = this.model_expects || [{
       name: "state",
@@ -37,81 +37,81 @@ var Dialog = Component.extend({
   /**
    * Executed when the dialog has been rendered
    */
-  readyOnce: function() {
+  readyOnce() {
     this.element = d3.select(this.element);
-    this.titleEl = this.element.selectAll('.vzb-top-dialog > .vzb-dialog-modal > .vzb-dialog-title');
-    this.buttonsEl = this.element.selectAll('.vzb-top-dialog > .vzb-dialog-modal > .vzb-dialog-buttons');
-    this.contentEl = this.element.selectAll('.vzb-top-dialog > .vzb-dialog-modal > .vzb-dialog-content');
+    this.titleEl = this.element.selectAll(".vzb-top-dialog > .vzb-dialog-modal > .vzb-dialog-title");
+    this.buttonsEl = this.element.selectAll(".vzb-top-dialog > .vzb-dialog-modal > .vzb-dialog-buttons");
+    this.contentEl = this.element.selectAll(".vzb-top-dialog > .vzb-dialog-modal > .vzb-dialog-content");
   },
 
-  ready: function() {
-    var _this = this;
+  ready() {
+    const _this = this;
     this.placeholderEl = d3.select(this.placeholder);
-    this.rootEl = this.root.element instanceof Array? this.root.element : d3.select(this.root.element)
+    this.rootEl = this.root.element instanceof Array ? this.root.element : d3.select(this.root.element);
     this.dragHandler = this.placeholderEl.select("[data-click='dragDialog']");
     this.dragHandler.html(iconDrag);
     this.pinIcon = this.placeholderEl.select("[data-click='pinDialog']");
     this.pinIcon.html(iconPin);
-    this.topPos = '';
-    var profile = this.getLayoutProfile();
+    this.topPos = "";
+    const profile = this.getLayoutProfile();
 
-    var dg = dialogDrag(this.placeholderEl, this.rootEl, 10);
-    var dragBehavior = d3.drag()
-      .on('start', function D3dialogDragStart() {
-        var topPos = _this.placeholderEl.node().offsetTop;
-        _this.placeholderEl.style('top', topPos + 'px');
-        _this.placeholderEl.style('bottom', 'auto');
-        _this.trigger('dragstart');
+    const dg = dialogDrag(this.placeholderEl, this.rootEl, 10);
+    const dragBehavior = d3.drag()
+      .on("start", () => {
+        const topPos = _this.placeholderEl.node().offsetTop;
+        _this.placeholderEl.style("top", topPos + "px");
+        _this.placeholderEl.style("bottom", "auto");
+        _this.trigger("dragstart");
         dg.dragStart(d3.event);
       })
-      .on('drag', function D3dialogDrag() {
-        _this.trigger('drag');
+      .on("drag", () => {
+        _this.trigger("drag");
         dg.drag(d3.event);
       })
-      .on('end', function D3dialogDrag() {
-        _this.rightPos = _this.placeholderEl.style('right');
-        _this.topPos = _this.placeholderEl.style('top');
-        _this.trigger('dragend');
+      .on("end", () => {
+        _this.rightPos = _this.placeholderEl.style("right");
+        _this.topPos = _this.placeholderEl.style("top");
+        _this.trigger("dragend");
       });
     this.dragHandler.call(dragBehavior);
 
-    this.dragHandler.classed("vzb-hidden", profile === 'small');
-    this.pinIcon.classed("vzb-hidden", profile === 'small');
+    this.dragHandler.classed("vzb-hidden", profile === "small");
+    this.pinIcon.classed("vzb-hidden", profile === "small");
     this.resize();
   },
 
-  resize: function() {
-    if(this.placeholderEl && this.rootEl && this.placeholderEl.classed('vzb-top-dialog')) {
-      this.placeholderEl.classed('notransition', true);
+  resize() {
+    if (this.placeholderEl && this.rootEl && this.placeholderEl.classed("vzb-top-dialog")) {
+      this.placeholderEl.classed("notransition", true);
 
-      var profile = this.getLayoutProfile();
+      const profile = this.getLayoutProfile();
 
-      if(profile !== 'small') {
-        var chartWidth = parseInt(this.rootEl.style('width'), 10);
-        var dialogRight = parseInt(this.rightPos, 10);
-        var chartHeight = parseInt(this.rootEl.style('height'), 10);
-        var dialogTop = parseInt(this.topPos, 10);
-        var dialogWidth = parseInt(this.placeholderEl.style('width'), 10);
-        var dialogHeight = parseInt(this.placeholderEl.style('height'), 10);
-        var dialogRightMargin = parseInt(this.placeholderEl.style('margin-right'), 10) || 0;
-        if(utils.isNumber(dialogRight) && dialogRight > chartWidth - dialogWidth - dialogRightMargin) {
-          if(this.rightPos) {
-            this.rightPos = (chartWidth - dialogWidth - dialogRightMargin) + 'px';
-            if(this.isOpen) this.placeholderEl.style('right', this.rightPos);
+      if (profile !== "small") {
+        const chartWidth = parseInt(this.rootEl.style("width"), 10);
+        const dialogRight = parseInt(this.rightPos, 10);
+        const chartHeight = parseInt(this.rootEl.style("height"), 10);
+        const dialogTop = parseInt(this.topPos, 10);
+        const dialogWidth = parseInt(this.placeholderEl.style("width"), 10);
+        const dialogHeight = parseInt(this.placeholderEl.style("height"), 10);
+        const dialogRightMargin = parseInt(this.placeholderEl.style("margin-right"), 10) || 0;
+        if (utils.isNumber(dialogRight) && dialogRight > chartWidth - dialogWidth - dialogRightMargin) {
+          if (this.rightPos) {
+            this.rightPos = (chartWidth - dialogWidth - dialogRightMargin) + "px";
+            if (this.isOpen) this.placeholderEl.style("right", this.rightPos);
           }
         }
-        if(utils.isNumber(dialogTop) && utils.isNumber(dialogHeight) && dialogTop >= 0 && dialogTop > chartHeight - dialogHeight) {
-          if(this.topPos) {
-            this.topPos = ((chartHeight - dialogHeight) > 0 ? (chartHeight - dialogHeight) : 0)  + 'px';
-            if(this.isOpen) this.placeholderEl.style('top', this.topPos);
+        if (utils.isNumber(dialogTop) && utils.isNumber(dialogHeight) && dialogTop >= 0 && dialogTop > chartHeight - dialogHeight) {
+          if (this.topPos) {
+            this.topPos = ((chartHeight - dialogHeight) > 0 ? (chartHeight - dialogHeight) : 0)  + "px";
+            if (this.isOpen) this.placeholderEl.style("top", this.topPos);
           }
         }
 
-        if(this.topPos && (this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true"))) {
-            this.placeholderEl.style('bottom', 'auto');
+        if (this.topPos && (this.getLayoutProfile() === "large" && this.rootEl.classed("vzb-dialog-expand-true"))) {
+          this.placeholderEl.style("bottom", "auto");
         }
 
-        if(this.rootEl.classed('vzb-landscape')) {
+        if (this.rootEl.classed("vzb-landscape")) {
           // var contentHeight = parseInt(this.rootEl.style('height'));
           // var placeholderHeight = parseInt(this.placeholderEl.style('height'));
           // if (contentHeight < placeholderHeight) {
@@ -125,71 +125,71 @@ var Dialog = Component.extend({
           // }
         }
         //this.placeholderEl.style('top', this.topPos);
-        this.element.style('max-height', '');
+        this.element.style("max-height", "");
       } else {
-        this.rightPos = '';
-        this.topPos = '';
-        this.placeholderEl.attr('style', '');
+        this.rightPos = "";
+        this.topPos = "";
+        this.placeholderEl.attr("style", "");
         // var totalHeight = this.root.element.offsetHeight;
         // if(this.rootEl.classed('vzb-portrait')) totalHeight = totalHeight - 50;
         // this.element.style('max-height', (totalHeight - 10) + 'px');
       }
 
-      this.dragHandler.classed("vzb-hidden", profile === 'small');
-      this.pinIcon.classed("vzb-hidden", profile === 'small');
+      this.dragHandler.classed("vzb-hidden", profile === "small");
+      this.pinIcon.classed("vzb-hidden", profile === "small");
 
       this._setMaxHeight();
     }
   },
 
-  _setMaxHeight: function() {
-    var totalHeight = this.root.element.offsetHeight;
-    if(this.getLayoutProfile() !== 'small') {
-      if(!this.topPos && (this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true"))) {
-        var dialogBottom = parseInt(this.placeholderEl.style('bottom'), 10);
-        totalHeight = totalHeight - dialogBottom;
+  _setMaxHeight() {
+    let totalHeight = this.root.element.offsetHeight;
+    if (this.getLayoutProfile() !== "small") {
+      if (!this.topPos && (this.getLayoutProfile() === "large" && this.rootEl.classed("vzb-dialog-expand-true"))) {
+        const dialogBottom = parseInt(this.placeholderEl.style("bottom"), 10);
+        totalHeight -= dialogBottom;
       } else {
-        var topPos = this.topPos ? parseInt(this.topPos, 10) : this.placeholderEl.node().offsetTop;
-        totalHeight = totalHeight - topPos;
+        const topPos = this.topPos ? parseInt(this.topPos, 10) : this.placeholderEl.node().offsetTop;
+        totalHeight -= topPos;
       }
     } else {
-        totalHeight = this.rootEl.classed('vzb-portrait') ? totalHeight - 50 : totalHeight - 10;
+      totalHeight = this.rootEl.classed("vzb-portrait") ? totalHeight - 50 : totalHeight - 10;
     }
 
-    this.element.style('max-height', totalHeight + 'px');
+    this.element.style("max-height", totalHeight + "px");
 
     //set 'max-height' to content for IE11
-    var contentHeight = totalHeight - this.titleEl.node().offsetHeight - this.buttonsEl.node().offsetHeight;
-    this.contentEl.style('max-height', contentHeight + 'px');
+    const contentHeight = totalHeight - this.titleEl.node().offsetHeight - this.buttonsEl.node().offsetHeight;
+    this.contentEl.style("max-height", contentHeight + "px");
   },
 
-  beforeOpen: function() {
-    var _this = this;
+  beforeOpen() {
+    const _this = this;
 
-    this.transitionEvents = ['webkitTransitionEnd', 'transitionend', 'msTransitionEnd', 'oTransitionEnd'];
-    this.transitionEvents.forEach(function(event) {
+    this.transitionEvents = ["webkitTransitionEnd", "transitionend", "msTransitionEnd", "oTransitionEnd"];
+    this.transitionEvents.forEach(event => {
       _this.placeholderEl.on(event, _this.transitionEnd.bind(_this, event));
     });
 
-    this.placeholderEl.classed('notransition', true);
+    this.placeholderEl.classed("notransition", true);
 
-    this.placeholderEl.style('top', ''); // issues: 369 & 442
-    this.placeholderEl.style('bottom', ''); // issues: 369 & 442
+    this.placeholderEl.style("top", ""); // issues: 369 & 442
+    this.placeholderEl.style("bottom", ""); // issues: 369 & 442
 
-    if(this.topPos && this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true")) {
-      var topPos = this.placeholderEl.node().offsetTop;
-      this.placeholderEl.style('top', topPos + 'px'); // issues: 369 & 442
-      this.placeholderEl.style('bottom', 'auto'); // issues: 369 & 442
-    } else if(this.getLayoutProfile() !== 'small') {
+    if (this.topPos && this.getLayoutProfile() === "large" && this.rootEl.classed("vzb-dialog-expand-true")) {
+      const topPos = this.placeholderEl.node().offsetTop;
+      this.placeholderEl.style("top", topPos + "px"); // issues: 369 & 442
+      this.placeholderEl.style("bottom", "auto"); // issues: 369 & 442
+    } else if (this.getLayoutProfile() !== "small") {
       //if(this.rightPos) this.placeholderEl.style('right', this.rightPos);
     }
 
     this.placeholderEl.node().offsetTop;
-    this.placeholderEl.classed('notransition', false);
+    this.placeholderEl.classed("notransition", false);
 
-    if(this.getLayoutProfile() === 'small') {
-      this.placeholderEl.style('top', ''); // issues: 369 & 442
-    } else if(this.rootEl.classed('vzb-landscape')) { // need to recalculate popup position (Safari 8 bug)
+    if (this.getLayoutProfile() === "small") {
+      this.placeholderEl.style("top", ""); // issues: 369 & 442
+    } else if (this.rootEl.classed("vzb-landscape")) { // need to recalculate popup position (Safari 8 bug)
       // var contentHeight = parseInt(this.rootEl.style('height'));
       // var placeholderHeight = parseInt(this.placeholderEl.style('height'));
       // if (contentHeight < placeholderHeight) {
@@ -209,111 +209,111 @@ var Dialog = Component.extend({
   /**
    * User has clicked to open this dialog
    */
-  open: function() {
+  open() {
     this.isOpen = true;
-    if(this.getLayoutProfile() !== 'small') {
-      if(this.topPos) {
-        this.placeholderEl.style('top', this.topPos);
-        this.placeholderEl.style('right', this.rightPos);
+    if (this.getLayoutProfile() !== "small") {
+      if (this.topPos) {
+        this.placeholderEl.style("top", this.topPos);
+        this.placeholderEl.style("right", this.rightPos);
       }
     }
   },
 
-  beforeClose: function() {
+  beforeClose() {
 //issues: 369 & 442
-    if(this.rootEl.classed('vzb-portrait') && this.getLayoutProfile() === 'small') {
-      this.placeholderEl.style('top', 'auto'); // issues: 369 & 442
+    if (this.rootEl.classed("vzb-portrait") && this.getLayoutProfile() === "small") {
+      this.placeholderEl.style("top", "auto"); // issues: 369 & 442
     }
-    if(this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true")) {
-      this.topPos0 = this.topPos ? (this.placeholderEl.node().parentNode.offsetHeight - this.placeholderEl.node().offsetHeight) + 'px' : '';
+    if (this.getLayoutProfile() === "large" && this.rootEl.classed("vzb-dialog-expand-true")) {
+      this.topPos0 = this.topPos ? (this.placeholderEl.node().parentNode.offsetHeight - this.placeholderEl.node().offsetHeight) + "px" : "";
     }
-    this.placeholderEl.classed('notransition', false);
+    this.placeholderEl.classed("notransition", false);
     this.placeholderEl.node().offsetHeight; // trigger a reflow (flushing the css changes)
   },
 
   /**
    * User has closed this dialog
    */
-  close: function() {
+  close() {
 //issues: 369 & 442
-    if(!(this.rootEl.classed('vzb-portrait') && this.getLayoutProfile() === 'small')) {
-      this.placeholderEl.style('top', ''); // issues: 369 & 442
-      this.placeholderEl.style('right', ''); // issues: 369 & 442
+    if (!(this.rootEl.classed("vzb-portrait") && this.getLayoutProfile() === "small")) {
+      this.placeholderEl.style("top", ""); // issues: 369 & 442
+      this.placeholderEl.style("right", ""); // issues: 369 & 442
     }
 
-    if(this.getLayoutProfile() === 'large' && this.rootEl.classed("vzb-dialog-expand-true")) {
-      this.placeholderEl.style('top', this.topPos0);
-      this.placeholderEl.style('right', '');
+    if (this.getLayoutProfile() === "large" && this.rootEl.classed("vzb-dialog-expand-true")) {
+      this.placeholderEl.style("top", this.topPos0);
+      this.placeholderEl.style("right", "");
     }
     this.isOpen = false;
-    this.trigger('close');
+    this.trigger("close");
   },
 
 
-  transitionEnd: function(eventName) {
-    var _this = this;
+  transitionEnd(eventName) {
+    const _this = this;
 
-    this.transitionEvents.forEach(function(event) {
+    this.transitionEvents.forEach(event => {
       _this.placeholderEl.on(event, null);
     });
-    if(this.isOpen) {
-      this.placeholderEl.classed('notransition', true);
+    if (this.isOpen) {
+      this.placeholderEl.classed("notransition", true);
     }
   }
 
 });
 
 function dialogDrag(element, container, xOffset) {
-  var posX, posY, divTop, divRight, marginRight, marginLeft, xOffsetRight, xOffsetLeft, eWi, eHe, cWi, cHe, diffX, diffY;
+  let posX, posY, divTop, divRight, marginRight, marginLeft, xOffsetRight, xOffsetLeft, eWi, eHe, cWi, cHe, diffX, diffY;
 
   return {
-    move: function(x, y) {
-      element.style('right', x + 'px');
-      element.style('top', y + 'px');
+    move(x, y) {
+      element.style("right", x + "px");
+      element.style("top", y + "px");
     },
 
-    dragStart: function(evt) {
-      if(!utils.isTouchDevice()) {
+    dragStart(evt) {
+      if (!utils.isTouchDevice()) {
         posX = evt.sourceEvent.clientX;
         posY = evt.sourceEvent.clientY;
       } else {
-        var touchCoord = d3.touches(container.node());
+        const touchCoord = d3.touches(container.node());
         posX = touchCoord[0][0];
         posY = touchCoord[0][1];
       }
-      divTop = parseInt(element.style('top')) || 0;
-      divRight = parseInt(element.style('right')) || 0;
-      marginLeft = parseInt(element.style('margin-left')) || 0;
-      marginRight = parseInt(element.style('margin-right')) || 0;
+      divTop = parseInt(element.style("top")) || 0;
+      divRight = parseInt(element.style("right")) || 0;
+      marginLeft = parseInt(element.style("margin-left")) || 0;
+      marginRight = parseInt(element.style("margin-right")) || 0;
       xOffsetLeft = Math.min(xOffset, marginLeft);
       xOffsetRight = Math.min(xOffset, marginRight);
-      eWi = parseInt(element.style('width')) + marginLeft - xOffsetLeft;
-      eHe = parseInt(element.style('height'));
-      cWi = parseInt(container.style('width')) - marginRight;
-      cHe = parseInt(container.style('height'));
+      eWi = parseInt(element.style("width")) + marginLeft - xOffsetLeft;
+      eHe = parseInt(element.style("height"));
+      cWi = parseInt(container.style("width")) - marginRight;
+      cHe = parseInt(container.style("height"));
       diffX = posX + divRight;
       diffY = posY - divTop;
     },
 
-    drag: function(evt) {
-      if(!utils.isTouchDevice()) {
+    drag(evt) {
+      if (!utils.isTouchDevice()) {
         posX = evt.sourceEvent.clientX;
         posY = evt.sourceEvent.clientY;
       } else {
-        var touchCoord = d3.touches(container.node());
+        const touchCoord = d3.touches(container.node());
         posX = touchCoord[0][0];
         posY = touchCoord[0][1];
       }
-      var aX = -posX + diffX,
+      let aX = -posX + diffX,
         aY = posY - diffY;
-      if(aX < -xOffsetRight) aX = -xOffsetRight;
-      if(aY < 0) aY = 0;
-      if(aX + eWi > cWi) aX = cWi - eWi;
-      if(aY + eHe > cHe) aY = cHe - eHe;
+      if (aX < -xOffsetRight) aX = -xOffsetRight;
+      if (aY < 0) aY = 0;
+      if (aX + eWi > cWi) aX = cWi - eWi;
+      if (aY + eHe > cHe) aY = cHe - eHe;
 
       this.move(aX, aY);
     }
-  }
+  };
 }
 
 export default Dialog;

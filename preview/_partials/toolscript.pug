@@ -1,5 +1,6 @@
 script.
   var locationArray = window.location.href.split("/");
+  window.URL = null;
   var LOCAL_URL = locationArray.splice(0, locationArray.indexOf("preview")).join("/") + "/preview/";
   VIZABI_MODEL = {};
   EXT_RESOURCES = {};
@@ -83,22 +84,15 @@ script.
     preloadPath: '/api/vizabi/',
     dataPath: '/api/ddf/',
     //shapePath: localUrl + "data/mc_precomputed_shapes.json"
-    shapePath: localUrl + "data/world-50m.json"
+    shapePath: localUrl + "data/zaf-municipalities-2016.json"
   }, EXT_RESOURCES);
-  
-  VIZABI_MODEL = Vizabi.utils.deepExtend({}, VIZABI_MODEL, {
-    locale: {
-      //filePath: "assets/translation/"
-    },
-    data: {
-      //"reader": "waffle",
-      //"reader": "ddf",
-      //"path": EXT_RESOURCES.host + EXT_RESOURCES.dataPath
-      //"path": "data/systema_globalis"
-    }
-  });
+
+  VIZABI_MODEL = Vizabi.utils.deepExtend({}, {
+    locale: {},
+    data: #{chart_data}
+  }, VIZABI_MODEL);
 
   Vizabi._globals.ext_resources = EXT_RESOURCES;
   VIZABI_PAGE_MODEL = Vizabi.utils.deepExtend({}, VIZABI_MODEL);
 
-  VIZ = Vizabi("#{tool}", placeholder, Vizabi.utils.deepExtend({}, VIZABI_MODEL, URL.model));
+  VIZ = Vizabi("#{tool}", placeholder, Vizabi.utils.deepExtend({}, VIZABI_MODEL, URLI.model));

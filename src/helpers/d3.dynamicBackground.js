@@ -1,12 +1,14 @@
 //d3.svg.dynamicBackground
 
 
-import Class from 'base/class'
+import Class from "base/class";
 
 export default Class.extend({
 
-  init: function (context, conditions) {
+  init(context, conditions) {
     this.context = context;
+    this.context.classed('vzb-dynamic-background', true);
+
     this.width = 0;
     this.height = 0;
     this.topOffset = 0;
@@ -17,20 +19,16 @@ export default Class.extend({
     this.textHeight = 0;
     this.widthRatio = 0.9;
     this.heightRatio = 0.9;
-    this.xAlign = 'center';
-    this.yAlign = 'center';
-    this.element = this.context.append('text').style("font-size", '20px');
-
-    this.element.text('0');
-    this.letterBBox = this.element.node().getBBox();
-    this.element.text('');
+    this.xAlign = "center";
+    this.yAlign = "center";
+    this.element = this.context.append("text").style("font-size", "20px");
 
     if (conditions) {
       this.setConditions(conditions);
     }
   },
 
-  setConditions: function (conditions) {
+  setConditions(conditions) {
     if (!isNaN(parseFloat(conditions.rightOffset)) && isFinite(conditions.rightOffset)) {
       this.rightOffset = conditions.rightOffset;
     }
@@ -58,14 +56,14 @@ export default Class.extend({
     return this;
   },
 
-  resize: function (width, height, topOffset, leftOffset) {
+  resize(width, height, topOffset, leftOffset) {
     [
       this.width,
       this.height
     ] = [
       width,
       height
-    ].map(v => Number(String(v).replace('px', '')));
+    ].map(v => Number(String(v).replace("px", "")));
 
     if (topOffset) {
       this.topOffset = topOffset;
@@ -77,43 +75,34 @@ export default Class.extend({
     this._resizeText();
   },
 
-  setText: function (text, delay) {
-
+  setText(text, delay) {
     setTimeout(() => {
-      this.element.selectAll('tspan').remove();
-      text.split('').forEach((char, index) => {
-        this.element.append('tspan').text(char)
-          .attr('x', (index - text.length / 2) * this.letterBBox.width + this.letterBBox.width / 2);
-      });
-
+      this.element.text(text);
       this._resizeText();
     }, delay);
 
     return this;
-
   },
 
-  _resizeText: function () {
+  _resizeText() {
 
-    var bbox = {};
-    bbox.height = this.element.node().getBBox().height;
-    bbox.width =  this.letterBBox.width * this.element.text().length;
+    const bbox = this.element.node().getBBox();
 
     if (!bbox.width || !bbox.height || !this.width || !this.height) return this;
 
     // method from http://stackoverflow.com/a/22580176
-    var widthTransform = this.width * this.widthRatio / bbox.width;
-    var heightTransform = this.height * this.heightRatio / bbox.height;
+    const widthTransform = this.width * this.widthRatio / bbox.width;
+    const heightTransform = this.height * this.heightRatio / bbox.height;
     this.scalar = widthTransform < heightTransform ? widthTransform : heightTransform;
-    this.element.attr("transform", "scale("+this.scalar+")");
+    this.element.attr("transform", "scale(" + this.scalar + ")");
 
     this.textHeight = bbox.height * this.scalar;
     this.textWidth = bbox.width * this.scalar;
 
-    switch(this.yAlign) {
-      case 'bottom': this.context.select("text").attr("dy", ".325em"); break;
-      case 'center': this.context.select("text").attr("dy", ".325em"); break;
-      case 'top': this.context.select("text").attr("dy", "0"); break;
+    switch (this.yAlign) {
+      case "bottom": this.context.select("text").attr("dy", ".325em"); break;
+      case "center": this.context.select("text").attr("dy", ".325em"); break;
+      case "top": this.context.select("text").attr("dy", "0"); break;
     }
 
     this.context.attr("transform", "translate(" + this._getLeftOffset() + "," + this._getTopOffset() + ")");
@@ -121,27 +110,23 @@ export default Class.extend({
     return this;
   },
 
-  _getLeftOffset: function () {
+  _getLeftOffset() {
     switch (this.xAlign) {
-      case 'right':
+      case "right":
         return this.width - this.textWidth / 2 - this.rightOffset;
-        break;
-      case 'left':
+      case "left":
         return this.textWidth / 2 + this.leftOffset;
-        break;
       default :
         return this.width / 2;
     }
   },
 
-  _getTopOffset: function () {
+  _getTopOffset() {
     switch (this.yAlign) {
-      case 'top':
+      case "top":
         return this.textHeight / 2 + this.topOffset;
-        break;
-      case 'bottom':
+      case "bottom":
         return this.height - this.textHeight / 2 - this.bottomOffset;
-        break;
       default :
         return this.height / 2;
     }
