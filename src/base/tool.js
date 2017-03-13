@@ -85,10 +85,11 @@ const Tool = Component.extend({
       model: external_model
     });
 
-    this.render();
-
+    this.prerender();
     this.setCSSClasses();
     this.setResizeHandler();
+
+    this.postrender();
   },
 
   createModel(external_model) {
