@@ -1,7 +1,3 @@
-/**
- * Created by tvaleriy on 8/30/16.
- */
-
 'use strict';
 
 exports.config = {
@@ -9,7 +5,7 @@ exports.config = {
   chromeDriver: '/usr/lib/node_modules/webdriver-manager/selenium/chromedriver_2.28',
   noGlobals: false,
   specs: [
-    './tests/nginx/*.js'
+    '../tests/nginx/tools-page-tests.js'
   ],
   capabilities: {
     browserName: 'chrome',
@@ -17,11 +13,11 @@ exports.config = {
       args: ['show-fps-counter=true']
     }
   },
-  baseUrl: 'https://www.gapminder.org',
+  baseUrl: 'http://tools-dev.gapminderdev.org',
   useAllAngular2AppRoots: true,
   allScriptsTimeout: 5000000,
   getPageTimeout: 10000,
-  restartBrowserBetweenTests: false,
+  restartBrowserBetweenTests: true,
   untrackOutstandingTimeouts: true,
   framework: 'jasmine',
   jasmineNodeOpts: {
@@ -30,12 +26,17 @@ exports.config = {
     isVerbose: false,
     includeStackTrace: false,
     defaultTimeoutInterval: 30000,
+    print: function() {}
   },
+
   onPrepare: () => {
-    browser.driver.manage().window().maximize();
-    browser.driver.get(browser.baseUrl);
-    browser.ignoreSynchronization = true;
-    const SpecReporter = require('jasmine-spec-reporter');
-    jasmine.getEnv().addReporter(new SpecReporter({displayStacktrace: 'all'}));
+
+    let SpecReporter = require('jasmine-spec-reporter').SpecReporter;
+
+    jasmine.getEnv().addReporter(new SpecReporter({
+      spec: {
+        displayStacktrace: true
+      }
+    }))
   }
 };
