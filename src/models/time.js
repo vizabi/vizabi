@@ -205,11 +205,11 @@ const TimeModel = DataConnected.extend({
       this.value = new Date(this.endSelected);
     }
     if (this.splash === false) {
-      if (this.startSelected < this.start && this.start != null) {
+      if ((!this.startSelected || this.startSelected < this.start) && this.start != null) {
         this.set({ startSelected: new Date(this.start) }, null, false /*make change non-persistent for URL and history*/);
       }
 
-      if (this.endSelected > this.end && this.end != null) {
+      if ((!this.endSelected || this.endSelected > this.end) && this.end != null) {
         this.set({ endSelected: new Date(this.end) }, null, false /*make change non-persistent for URL and history*/);
       }
     }
