@@ -4,7 +4,7 @@ import { throttle, transform } from "base/utils";
 const SteppedSlider = Component.extend({
 
   init(config, context) {
-    this.name = "steppedSlider";
+    this.name = "steppedSpeedSlider";
     this.template = require("./steppedspeedslider.html");
 
     this.config = Object.assign({

@@ -10,8 +10,7 @@ import Vzb from "vizabi";
 import "assets/styles/vizabi.scss";
 import requireAll from "helpers/requireAll";
 
-//import tools
-import BubbleChart from "tools/bubblechart/bubblechart";
+// import tools
 import MountainChart from "tools/mountainchart/mountainchart";
 import BarChart from "tools/barchart/barchart";
 import BubbleMap from "tools/bubblemap/bubblemap";
