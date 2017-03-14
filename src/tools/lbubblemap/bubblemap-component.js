@@ -1105,7 +1105,7 @@ const LBubbleMapComponent = Component.extend({
   },
 
   preload() {
-    this.initMap();
+    return this.initMap();
   },
 
   initMap() {

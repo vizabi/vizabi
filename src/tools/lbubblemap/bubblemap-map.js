@@ -369,25 +369,21 @@ const GoogleMapLayer = MapLayer.extend({
 
   rescaleMap() {
     const _this = this;
-    google.maps.event.addListenerOnce(_this.map, "idle", () => {
-      const rectBounds = new google.maps.LatLngBounds(
-        new google.maps.LatLng(_this.context.model.ui.map.bounds.north, _this.context.model.ui.map.bounds.west),
-        new google.maps.LatLng(_this.context.model.ui.map.bounds.south, _this.context.model.ui.map.bounds.east)
-      );
-      _this.map.fitBounds(rectBounds);
-      google.maps.event.trigger(_this.map, "resize");
-    });
+    const rectBounds = new google.maps.LatLngBounds(
+      new google.maps.LatLng(_this.context.model.ui.map.bounds.north, _this.context.model.ui.map.bounds.west),
+      new google.maps.LatLng(_this.context.model.ui.map.bounds.south, _this.context.model.ui.map.bounds.east)
+    );
+    _this.map.fitBounds(rectBounds);
+    google.maps.event.trigger(_this.map, "resize");
   },
 
   zoomMap(center, increment) {
     const _this = this;
     return new Promise((resolve, reject) => {
       _this.map.panTo({ lat: center[1], lng: center[0] });
+      _this.map.setZoom(_this.map.getZoom() + 1 * increment);
       google.maps.event.addListenerOnce(_this.map, "idle", () => {
-        google.maps.event.addListenerOnce(_this.map, "zoom_changed", () => {
-          resolve();
-        });
-        _this.map.setZoom(_this.map.getZoom() + 1 * increment);
+        resolve();
       });
     });
   },
@@ -414,7 +410,13 @@ const GoogleMapLayer = MapLayer.extend({
   },
 
   moveOver(x, y) {
-    this.map.panBy(-x, -y);
+    const _this = this;
+    return new Promise((resolve, reject) => {
+      _this.map.panBy(-x, -y);
+      google.maps.event.addListenerOnce(_this.map, "idle", () => {
+        resolve();
+      });
+    });
   },
 
   getZoom() {
@@ -613,7 +615,7 @@ export default Class.extend({
   panStarted() {
     this.zooming = true;
     if (this.context.model.ui.map.showMap) {
-      this._hideTopojson(300);
+      this._hideTopojson();
     }
     this.canvasBefore = this.getCanvas();
   },
@@ -723,16 +725,22 @@ export default Class.extend({
 
   _hideTopojson(duration) {
     if (this.topojsonMap) {
-      this.topojsonMap.mapGraph
-        .transition()
-        .duration(duration)
-        .style("opacity", 0);
+      if (duration) {
+        this.topojsonMap.mapGraph
+          .transition()
+          .duration(duration)
+          .style("opacity", 0);
+      } else {
+        this.topojsonMap.mapGraph
+          .style("opacity", 0);
+      }
     }
   },
 
   _showTopojson(duration) {
     if (this.topojsonMap) {
       this.topojsonMap.mapGraph
+        .interrupt()
         .transition()
         .duration(duration)
         .style("opacity", duration);
@@ -768,11 +776,14 @@ export default Class.extend({
           south: se[1]
         };
         this.zooming = false;
+        this.boundsChanged();
+/*
         if (_this.mapInstance) {
           _this.mapInstance.rescaleMap();
         } else {
-          _this.topojsonMap.rescaleMap();
-        }
+*/
+//          _this.topojsonMap.rescaleMap();
+//        }
         this._showTopojson(300);
       }
     );
