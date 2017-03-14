@@ -1,6 +1,7 @@
 import requireAll from "helpers/requireAll";
 import * as utils from "base/utils";
 import Tool from "base/tool";
+import Class from "base/class";
 import Component from "base/component";
 import Model from "base/model";
 import Reader from "base/reader";
@@ -127,6 +128,7 @@ d3.selection.prototype.onLongTap = onLongTap;
 //d3.behavior.zoom = touchFixes.zoom;
 
 //makes all objects accessible
+Vzb.Class = Class;
 Vzb.Tool = Tool;
 Vzb.Component = Component;
 Vzb.Model = Model;
