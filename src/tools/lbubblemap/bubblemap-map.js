@@ -375,6 +375,7 @@ const GoogleMapLayer = MapLayer.extend({
     );
     _this.map.fitBounds(rectBounds);
     google.maps.event.trigger(_this.map, "resize");
+    
   },
 
   zoomMap(center, increment) {
@@ -630,11 +631,7 @@ export default Class.extend({
       south: se[1]
     };
     this.zooming = false;
-    if (this.mapInstance) {
-      this.mapInstance.rescaleMap();
-    } else {
-      this.topojsonMap.rescaleMap();
-    }
+    this.boundsChanged();
     this._showTopojson(300);
   },
 
