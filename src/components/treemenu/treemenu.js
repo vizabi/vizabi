@@ -1321,13 +1321,22 @@ const TreeMenu = Component.extend({
     return this;
   },
 
+  focusSearch(focus = true) {
+    const searchInput = this.wrapper.select("." + css.search).node();
+
+    if (focus) {
+      searchInput.focus();
+    } else {
+      searchInput.blur();
+    }
+  },
+
   _setModel(what, value, hookID) {
 
     const mdl = this.model.marker[hookID];
     if (what == "which") mdl.setWhich(value);
     if (what == "scaleType") mdl.setScaleType(value);
   }
-
 
 });
 
