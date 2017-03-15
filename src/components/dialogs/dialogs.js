@@ -125,6 +125,9 @@ const Dialogs = Component.extend({
 
     this.element = d3.select(this.placeholder);
     this.element.selectAll("div").remove();
+    if (utils.isTouchDevice()) {
+      this.element.classed("vzb-no-hover", true);
+    }
 
     this._addDialogs(this.dialog_popup, this.dialog_sidebar);
 
@@ -183,6 +186,8 @@ const Dialogs = Component.extend({
   },
 
   resize() {
+    if (!this.element.selectAll) return utils.warn("dialogs resize() aborted because element is not yet defined");
+
     const _this = this;
     const profile = this.getLayoutProfile();
 

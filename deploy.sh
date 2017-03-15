@@ -19,6 +19,6 @@ secret_key = $AWS_SECRET_KEY
 acl_public = True" > /tmp/.$AWS_BUCKET-s3.s3cfg
 
 # Upload to S3
-s3cmd -v --config=/tmp/.$AWS_BUCKET-s3.s3cfg --acl-public --recursive sync build/ "$DEST_DIR/"
+s3cmd -v --config=/tmp/.$AWS_BUCKET-s3.s3cfg --acl-public --recursive --no-mime-magic --guess-mime-type sync build/ "$DEST_DIR/"
 
 rm -rf /.tmp

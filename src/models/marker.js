@@ -701,7 +701,7 @@ const Marker = Model.extend({
 
           hook.dataSource.listenFrame(hook._dataId, steps, keys, (dataId, time) => {
             const keyName = time.toString();
-            if (typeof preparedFrames[keyName] == "undefined") preparedFrames[keyName] = [];
+            if (typeof preparedFrames[keyName] === "undefined") preparedFrames[keyName] = [];
             if (preparedFrames[keyName].indexOf(dataId) == -1) preparedFrames[keyName].push(dataId);
             if (preparedFrames[keyName].length == dataIds.length)  {
               cb(time);

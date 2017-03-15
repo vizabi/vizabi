@@ -798,6 +798,8 @@ const TreeMenu = Component.extend({
     let top = this._top;
     let left = this._left;
 
+    if (!this.wrapper) return utils.warn("treemenu resize() abort because container is undefined");
+
     this.wrapper.classed(css.noTransition, true);
     this.wrapper.node().scrollTop = 0;
 
@@ -907,7 +909,8 @@ const TreeMenu = Component.extend({
       this.clearPos();
       this.menuEntity.marqueeToggle(false);
     } else {
-      if (top || left) this.setPos();
+      this.setPos();
+      !utils.isTouchDevice() && this.focusSearch();
       this.resize();
       this.scrollToSelected();
     }
@@ -992,7 +995,7 @@ const TreeMenu = Component.extend({
   setHorizontalMenuHeight() {
     let wrapperHeight = null;
     if (this.menuEntity && this.OPTIONS.MENU_DIRECTION == MENU_HORIZONTAL && this.menuEntity.menuItems.length) {
-      const oneItemHeight = parseInt(this.menuEntity.menuItems[0].entity.style("height"), 10);
+      const oneItemHeight = parseInt(this.menuEntity.menuItems[0].entity.style("height"), 10) || 0;
       const menuMaxHeight = oneItemHeight * this._maxChildCount;
       const rootMenuHeight = Math.max(this.menuEntity.menuItems.length, 3) * oneItemHeight + this.menuEntity.entity.node().offsetTop + parseInt(this.wrapper.style("padding-bottom"), 10);
       wrapperHeight = "" + Math.max(menuMaxHeight, rootMenuHeight) + "px";
@@ -1319,13 +1322,22 @@ const TreeMenu = Component.extend({
     return this;
   },
 
+  focusSearch(focus = true) {
+    const searchInput = this.wrapper.select("." + css.search).node();
+
+    if (focus) {
+      searchInput.focus();
+    } else {
+      searchInput.blur();
+    }
+  },
+
   _setModel(what, value, hookID) {
 
     const mdl = this.model.marker[hookID];
     if (what == "which") mdl.setWhich(value);
     if (what == "scaleType") mdl.setScaleType(value);
   }
-
 
 });
 

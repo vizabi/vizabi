@@ -29,7 +29,7 @@ const CSVReader = Reader.extend({
     const [firstRow] = data;
     const parser = parsers[timeKey];
 
-    const time = firstRow[timeKey];
+    const time = firstRow[timeKey].trim();
     if (parser && !parser(time)) {
       throw this.error(this.ERRORS.WRONG_TIME_COLUMN_OR_UNITS, undefined, {
         currentYear: new Date().getFullYear(),

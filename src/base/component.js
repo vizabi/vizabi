@@ -99,9 +99,17 @@ const Component = Events.extend({
    * Renders the component (after data is ready)
    */
   render() {
-    const _this = this;
+    this.prerender();
+    this.postrender();
+  },
+
+  prerender() {
     this.loadTemplate();
     this.loadSubComponents();
+  },
+
+  postrender() {
+    const _this = this;
 
     //render each subcomponent
     utils.forEach(this.components, subcomp => {
@@ -112,7 +120,6 @@ const Component = Events.extend({
     });
 
     this.startLoading();
-
   },
 
   /**

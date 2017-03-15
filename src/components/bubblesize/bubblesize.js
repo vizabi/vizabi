@@ -19,16 +19,16 @@ const OPTIONS = {
 
 const profiles = {
   "small": {
-    minRadius: 0.5,
-    maxRadius: 40
+    minRadiusPx: 0.5,
+    maxRadiusEm: 0.05
   },
   "medium": {
-    minRadius: 1,
-    maxRadius: 55
+    minRadiusPx: 1,
+    maxRadiusEm: 0.05
   },
   "large": {
-    minRadius: 1,
-    maxRadius: 65
+    minRadiusPx: 1,
+    maxRadiusEm: 0.05
   }
 };
 
@@ -220,7 +220,10 @@ const BubbleSize = Component.extend({
   },
 
   getMinMaxBubbleRadius() {
-    return { min: profiles[this.getLayoutProfile()].minRadius, max: profiles[this.getLayoutProfile()].maxRadius };
+    const containerWH = this.root.getVizWidthHeight();
+    const minWH = utils.hypotenuse(containerWH.width, containerWH.height);
+    return { min: profiles[this.getLayoutProfile()].minRadiusPx,
+      max: profiles[this.getLayoutProfile()].maxRadiusEm * minWH };
   },
 
   _moveBrush(s) {

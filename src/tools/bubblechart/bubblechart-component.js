@@ -282,7 +282,7 @@ const BubbleChartComp = Component.extend({
   },
 
   _rangeBump(arg, undo) {
-    const bump = this.activeProfile.maxRadius / 2;
+    const bump = this.activeProfile.maxRadiusPx / 2;
     undo = undo ? -1 : 1;
     if (utils.isArray(arg) && arg.length > 1) {
       let z1 = arg[0];
@@ -300,26 +300,12 @@ const BubbleChartComp = Component.extend({
         // if the scale gets inverted because of bump, set it to avg between z1 and z2
         if (z1 < z2) z1 = z2 = (z1 + z2) / 2;
       } else {
-        utils.warn("rangeBump error: the input scale range has 0 length. that sucks");
+        // rangeBump error: the input scale range has 0 length. that sucks but we keep cool
       }
       return [z1, z2];
     }
     utils.warn("rangeBump error: input is not an array or empty");
   },
-
-//  _marginUnBump: function(arg) {
-//    var bump = this.profiles[this.getLayoutProfile()].maxRadius/2;
-//    if(utils.isObject(arg)) {
-//      return {
-//        left: arg.left - bump,
-//        right: arg.right - bump,
-//        top: arg.top - bump,
-//        bottom: arg.bottom - bump
-//      };
-//    } else {
-//      utils.warn("marginUnBump error: input is not an object {left top bottom right}");
-//    }
-//  },
 
 
   /**
@@ -757,12 +743,12 @@ const BubbleChartComp = Component.extend({
         const sizeA = _this.frame.size[a[KEY]];
         const sizeB = _this.frame.size[b[KEY]];
 
-        if (typeof sizeA == "undefined" && typeof sizeB != "undefined") return -1;
-        if (typeof sizeA != "undefined" && typeof sizeB == "undefined") return 1;
+        if (typeof sizeA === "undefined" && typeof sizeB !== "undefined") return -1;
+        if (typeof sizeA !== "undefined" && typeof sizeB === "undefined") return 1;
         if (sizeA != sizeB) return d3.descending(sizeA, sizeB);
         if (a[KEY] != b[KEY]) return d3.ascending(a[KEY], b[KEY]);
-        if (typeof a.trailStartTime != "undefined" || typeof b.trailStartTime != "undefined") return typeof a.trailStartTime != "undefined" ? -1 : 1; // only lines has trailStartTime
-        if (typeof a.limits != "undefined" || typeof b.limits != "undefined") return typeof a.limits != "undefined" ? -1 : 1; // only trails has attribute limits
+        if (typeof a.trailStartTime !== "undefined" || typeof b.trailStartTime !== "undefined") return typeof a.trailStartTime !== "undefined" ? -1 : 1; // only lines has trailStartTime
+        if (typeof a.limits !== "undefined" || typeof b.limits !== "undefined") return typeof a.limits !== "undefined" ? -1 : 1; // only trails has attribute limits
         return d3.descending(sizeA, sizeB);
       });
   },
@@ -823,8 +809,8 @@ const BubbleChartComp = Component.extend({
       small: {
         margin: { top: 30, right: 10, left: 40, bottom: 35 },
         padding: 2,
-        minRadius: 0.5,
-        maxRadius: 30,
+        minRadiusPx: 0.5,
+        maxRadiusEm: 0.05,
         infoElHeight: 16,
         yAxisTitleBottomMargin: 6,
         xAxisTitleBottomMargin: 4
@@ -832,8 +818,8 @@ const BubbleChartComp = Component.extend({
       medium: {
         margin: { top: 40, right: 15, left: 60, bottom: 55 },
         padding: 2,
-        minRadius: 1,
-        maxRadius: 55,
+        minRadiusPx: 1,
+        maxRadiusEm: 0.05,
         infoElHeight: 20,
         yAxisTitleBottomMargin: 6,
         xAxisTitleBottomMargin: 5
@@ -841,8 +827,8 @@ const BubbleChartComp = Component.extend({
       large: {
         margin: { top: 50, right: 20, left: 60, bottom: 60 },
         padding: 2,
-        minRadius: 1,
-        maxRadius: 65,
+        minRadiusPx: 1,
+        maxRadiusEm: 0.05,
         infoElHeight: 22,
         yAxisTitleBottomMargin: 6,
         xAxisTitleBottomMargin: 5,
@@ -869,6 +855,10 @@ const BubbleChartComp = Component.extend({
     const _this = this;
 
     this.activeProfile = this.getActiveProfile(profiles, presentationProfileChanges);
+
+    const containerWH = this.root.getVizWidthHeight();
+    this.activeProfile.maxRadiusPx = this.activeProfile.maxRadiusEm * utils.hypotenuse(containerWH.width, containerWH.height);
+
     const margin = this.activeProfile.margin;
     const infoElHeight = this.activeProfile.infoElHeight;
 
@@ -879,7 +869,11 @@ const BubbleChartComp = Component.extend({
     this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
     this.width = (parseInt(this.element.style("width"), 10) - margin.left - margin.right) || 0;
 
-    if (this.height <= 0 || this.width <= 0) return utils.warn("Bubble chart updateSize() abort: vizabi container is too little or has display:none");
+    if (this.height <= 0 || this.width <= 0) {
+      this.height = 0;
+      this.width = 0;
+      utils.warn("Bubble chart updateSize(): vizabi container is too little or has display:none");
+    }
 
     //graph group is shifted according to margins (while svg element is at 100 by 100%)
     this.graph
@@ -912,7 +906,7 @@ const BubbleChartComp = Component.extend({
         scaleType: this.model.marker.axis_y.scaleType,
         toolMargin: margin,
         limitMaxTickNumber: 6,
-        bump: this.activeProfile.maxRadius / 2,
+        bump: this.activeProfile.maxRadiusPx / 2,
         viewportLength: this.height,
         formatter: this.model.marker.axis_y.getTickFormatter()
       });
@@ -925,7 +919,7 @@ const BubbleChartComp = Component.extend({
       .labelerOptions({
         scaleType: this.model.marker.axis_x.scaleType,
         toolMargin: margin,
-        bump: this.activeProfile.maxRadius / 2,
+        bump: this.activeProfile.maxRadiusPx / 2,
         viewportLength: this.width,
         formatter: this.model.marker.axis_x.getTickFormatter()
       });
@@ -957,8 +951,8 @@ const BubbleChartComp = Component.extend({
     this.yAxisEl.call(this.yAxis);
     this.xAxisEl.call(this.xAxis);
 
-    this.projectionX.attr("y1", _this.yScale.range()[0] + this.activeProfile.maxRadius / 2);
-    this.projectionY.attr("x2", _this.xScale.range()[0] - this.activeProfile.maxRadius / 2);
+    this.projectionX.attr("y1", _this.yScale.range()[0] + this.activeProfile.maxRadiusPx / 2);
+    this.projectionY.attr("x2", _this.xScale.range()[0] - this.activeProfile.maxRadiusPx / 2);
 
 
     // reduce font size if the caption doesn't fit
@@ -1061,16 +1055,16 @@ const BubbleChartComp = Component.extend({
 
     if (!this.activeProfile) return utils.warn("updateMarkerSizeLimits() is called before ready(). This can happen if events get unfrozen and getFrame() still didn't return data");
 
-    const minRadius = this.activeProfile.minRadius;
-    const maxRadius = this.activeProfile.maxRadius;
+    let minRadius = this.activeProfile.minRadiusPx;
+    let maxRadius = this.activeProfile.maxRadiusPx;
 
-    this.minRadius = Math.max(maxRadius * extent[0], minRadius);
-    this.maxRadius = Math.max(maxRadius * extent[1], minRadius);
+    minRadius = Math.max(maxRadius * extent[0], minRadius);
+    maxRadius = Math.max(maxRadius * extent[1], minRadius);
 
     if (this.model.marker.size.scaleType !== "ordinal") {
-      this.sScale.range([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)]);
+      this.sScale.range([utils.radiusToArea(minRadius), utils.radiusToArea(maxRadius)]);
     } else {
-      this.sScale.rangePoints([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)], _this.activeProfile.padding).range();
+      this.sScale.rangePoints([utils.radiusToArea(minRadius), utils.radiusToArea(maxRadius)], _this.activeProfile.padding).range();
     }
 
   },

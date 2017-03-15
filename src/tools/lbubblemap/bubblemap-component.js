@@ -806,20 +806,20 @@ const LBubbleMapComponent = Component.extend({
     small: {
       margin: { top: 10, right: 10, left: 10, bottom: 0 },
       infoElHeight: 16,
-      minRadius: 0.5,
-      maxRadius: 30
+      minRadiusPx: 0.5,
+      maxRadiusEm: 0.05
     },
     medium: {
       margin: { top: 20, right: 20, left: 20, bottom: 30 },
       infoElHeight: 20,
-      minRadius: 1,
-      maxRadius: 55
+      minRadiusPx: 1,
+      maxRadiusEm: 0.05
     },
     large: {
       margin: { top: 30, right: 30, left: 30, bottom: 35 },
       infoElHeight: 22,
-      minRadius: 1,
-      maxRadius: 65
+      minRadiusPx: 1,
+      maxRadiusEm: 0.05
     }
   },
 
@@ -838,6 +838,10 @@ const LBubbleMapComponent = Component.extend({
    */
   updateSize() {
     this.activeProfile = this.getActiveProfile(this.profiles, this.presentationProfileChanges);
+
+    const containerWH = this.root.getVizWidthHeight();
+    this.activeProfile.maxRadiusPx = this.activeProfile.maxRadiusEm * utils.hypotenuse(containerWH.width, containerWH.height);
+
     const margin = this.activeProfile.margin;
 
     this.height = (parseInt(this.element.style("height"), 10) - margin.top - margin.bottom) || 0;
@@ -922,16 +926,18 @@ const LBubbleMapComponent = Component.extend({
     const _this = this;
     const extent = this.model.marker.size.extent || [0, 1];
 
-    const minRadius = this.activeProfile.minRadius;
-    const maxRadius = this.activeProfile.maxRadius;
+    if (!this.activeProfile) return utils.warn("updateMarkerSizeLimits() is called before ready(). This can happen if events get unfrozen and getFrame() still didn't return data");
 
-    this.minRadius = Math.max(maxRadius * extent[0], minRadius);
-    this.maxRadius = Math.max(maxRadius * extent[1], minRadius);
+    let minRadius = this.activeProfile.minRadiusPx;
+    let maxRadius = this.activeProfile.maxRadiusPx;
+
+    minRadius = Math.max(maxRadius * extent[0], minRadius);
+    maxRadius = Math.max(maxRadius * extent[1], minRadius);
 
     if (this.model.marker.size.scaleType !== "ordinal") {
-      this.sScale.range([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)]);
+      this.sScale.range([utils.radiusToArea(minRadius), utils.radiusToArea(maxRadius)]);
     } else {
-      this.sScale.rangePoints([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)], 0).range();
+      this.sScale.rangePoints([utils.radiusToArea(minRadius), utils.radiusToArea(maxRadius)], 0).range();
     }
 
   },
