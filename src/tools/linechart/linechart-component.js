@@ -688,7 +688,7 @@ const LCComponent = Component.extend({
     }
     const opts = {
       rangeMax: this.xScale.range()[1],
-      mRight: this.margin.right,
+      mRight: longestLabelWidth,
       profile: this.timeSliderProfiles[this.getLayoutProfile()]
     };
     this.parent.trigger("myEvent", opts);
