@@ -4,6 +4,24 @@
   .vzb-bubblemap {
     @extend %vzb-chart-wrapper;
 
+    //ie11 support for zoom-in, zoom-out cursors
+    //ie11 only:The base URI is considered to be the URI of the document containing the element
+    //and not the URI of the style sheet in which the declaration appears.
+    .vzb-bubblemap-svg.vzb-zoomin {
+      cursor: url('../../assets/cursors/zoom-in.cur'), auto;
+    }
+    .vzb-bubblemap-svg.vzb-zoomout {
+      cursor: url('../../assets/cursors/zoom-out.cur'), auto;
+    }
+
+    .vzb-bubblemap-svg.vzb-panhand {
+      cursor: url('../../assets/cursors/grab.cur'), auto;
+    }
+
+    .vzb-bubblemap-svg.vzb-panhand.vzb-zooming {
+      cursor: url('../../assets/cursors/grabbing.cur'), auto;
+    }
+
     .vzb-bmc-map-background {
 
       .stroke {
@@ -37,6 +55,18 @@
     }
 
     .vzb-bubblemap-svg {
+      &.vzb-zoomin {
+        cursor: zoom-in;
+      }
+      &.vzb-zoomout {
+        cursor: zoom-out;
+      }
+      &.vzb-panhand {
+        cursor: grab;
+      }
+      &.vzb-panhand.vzb-zooming {
+        cursor: grabbing;
+      }
       @extend %vzb-chart-svg;
 
       .vzb-bmc-year {
