@@ -30,6 +30,8 @@
     "buttons/unclassified": "Unclassified",
     "buttons/side": "Side",
     "buttons/leftright": "LEFT ⇿ RIGHT",
+    "buttons/mapcolors": "Areas",
+    "dialogs/mapcolors": "Area colors",
     "dialogs/find": "Select",
     "dialogs/presentation": "Presentation",
     "hints/bubbl/setminsize": "Minimum bubble size:",
