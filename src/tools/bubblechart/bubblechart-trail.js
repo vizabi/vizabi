@@ -1,5 +1,6 @@
 import * as utils from "base/utils";
 import Class from "base/class";
+import cssEscape from "css.escape";
 
 export default Class.extend({
 
@@ -61,7 +62,7 @@ export default Class.extend({
       _trails.exit().remove();
       _trails.enter()
         .insert("g", function(d) {
-          return this.querySelector(".bubble-" + CSS.escape(d[KEY]));
+          return this.querySelector(".bubble-" + cssEscape(d[KEY]));
         })
         .attr("class", d => "vzb-bc-entity entity-trail trail-" + d[KEY])
         .merge(_trails)
