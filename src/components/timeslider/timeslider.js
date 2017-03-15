@@ -234,18 +234,19 @@ const TimeSlider = Component.extend({
     }
 
     // special for linechart: resize timeslider to match time x-axis length
-    this.parent.on("myEvent", (evt, arg) => {
+    this.parent.on("myEvent", (evt, params) => {
       const layoutProfile = _this.getLayoutProfile();
+      const profile = profiles[layoutProfile];
 
-      if (arg.profile && arg.profile.margin) {
-        profiles[layoutProfile].margin = arg.profile.margin;
+      if (params.profile && params.profile.margin) {
+        profile.margin = params.profile.margin;
       }
 
       // set the right margin that depends on longest label width
       _this.element.select(".vzb-ts-slider-wrapper")
-        .style("right", (arg.mRight - profiles[layoutProfile].margin.right) + "px");
+        .style("right", `${params.mRight - profile.margin.right}px`);
 
-      _this.updateSize([0, arg.rangeMax]);
+      _this.updateSize([0, params.rangeMax]);
     });
 
     this.on("resize", () => {

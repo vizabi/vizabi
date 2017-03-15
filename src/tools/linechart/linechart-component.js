@@ -553,7 +553,8 @@ const LCComponent = Component.extend({
     this.entityLabels.selectAll(".vzb-lc-circle")
       .attr("r", _this.activeProfile.lollipopRadius);
 
-    this.margin.right  = Math.max(this.margin.right, longestLabelWidth + this.activeProfile.text_padding + 20);
+    const magicMargin = 20;
+    this.margin.right = Math.max(this.margin.right, longestLabelWidth + this.activeProfile.text_padding + magicMargin);
 
 
     //stage
@@ -688,7 +689,7 @@ const LCComponent = Component.extend({
     }
     const opts = {
       rangeMax: this.xScale.range()[1],
-      mRight: this.margin.right,
+      mRight: longestLabelWidth - magicMargin,
       profile: this.timeSliderProfiles[this.getLayoutProfile()]
     };
     this.parent.trigger("myEvent", opts);
