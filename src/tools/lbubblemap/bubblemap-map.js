@@ -98,6 +98,7 @@ const TopojsonLayer = MapLayer.extend({
     this.context = context;
     this.parent = parent;
     this.paths = {};
+    this.areasAreShown = false;
     d3_geo_projection();
   },
 
@@ -131,49 +132,62 @@ const TopojsonLayer = MapLayer.extend({
         _this.shapes = shapes;
         _this.mapFeature = topojson.feature(_this.shapes, _this.shapes.objects[this.context.model.ui.map.topology.objects.geo]);
         _this.mapBounds = _this.mapPath.bounds(_this.mapFeature);
-
-        const boundaries = topojson.mesh(_this.shapes, _this.shapes.objects[_this.context.model.ui.map.topology.objects.boundaries], (a, b) => a !== b);
+        _this.boundaries = topojson.mesh(_this.shapes, _this.shapes.objects[_this.context.model.ui.map.topology.objects.boundaries], (a, b) => a !== b);
         if (_this.mapFeature.features) {
-          _this.mapLands = _this.mapGraph.selectAll(".land")
-            .data(_this.mapFeature.features)
-            .enter().insert("path")
-            .attr("d", _this.mapPath)
-            .attr("class", "land")
-            .style("opacity", _this.context.model.marker.opacitySelectDim)
-            .on("mouseover", (d, i) => {
-              _this.parent._interact()._mouseover(d.key);
-            })
-            .on("mouseout", (d, i) => {
-              _this.parent._interact()._mouseout(d.key);
-            })
-            .on("click", (d, i) => {
-              _this.parent._interact()._click(d.key);
-            })
-            .onTap((d, i) => {
-              _this.parent._interact()._click(d.key);
-              d3.event.stopPropagation();
-            })
-            .each(function(d, i) {
-              const view = d3.select(this);
-              d.key = d.properties[_this.context.model.ui.map.topology.geoIdProperty] ?
-                  d.properties[_this.context.model.ui.map.topology.geoIdProperty].toString().toLowerCase() : d.id;
-              _this.paths[d.key] = d;
-              view
-                .attr("id", d.key)
-                .style("opacity", d => _this.parent.getOpacity(d.key))
-                .style("fill", d => _this.parent.getMapColor(d.key));
-            });
-        } else {
-          _this.mapGraph.insert("path")
-            .datum(_this.mapFeature)
-            .attr("class", "land");
-
+          utils.forEach(_this.mapFeature.features, (feature, key) => {
+            feature.key = feature.properties[_this.context.model.ui.map.topology.geoIdProperty] ?
+              feature.properties[_this.context.model.ui.map.topology.geoIdProperty].toString().toLowerCase() : feature.id;
+            _this.paths[feature.key] = feature;
+          });
         }
-        _this.mapGraph.insert("path")
-          .datum(boundaries)
-          .attr("class", "boundary");
       }
     );
+  },
+
+  showAreas() {
+    const _this = this;
+    this.areasAreShown = true;
+    if (_this.mapFeature.features) {
+      _this.mapLands = _this.mapGraph.selectAll(".land")
+        .data(_this.mapFeature.features)
+        .enter().insert("path")
+        .attr("d", _this.mapPath)
+        .attr("class", "land")
+        .style("opacity", _this.context.model.marker.opacitySelectDim)
+        .on("mouseover", (d, i) => {
+          _this.parent._interact()._mouseover(d.key);
+        })
+        .on("mouseout", (d, i) => {
+          _this.parent._interact()._mouseout(d.key);
+        })
+        .on("click", (d, i) => {
+          _this.parent._interact()._click(d.key);
+        })
+        .onTap((d, i) => {
+          _this.parent._interact()._click(d.key);
+          d3.event.stopPropagation();
+        })
+        .each(function(d, i) {
+          const view = d3.select(this);
+          view
+            .attr("id", d.key)
+            .style("opacity", d => _this.parent.getOpacity(d.key))
+            .style("fill", d => _this.parent.getMapColor(d.key));
+        });
+    } else {
+      _this.mapGraph.insert("path")
+        .datum(_this.mapFeature)
+        .attr("class", "land");
+
+    }
+    _this.mapGraph.insert("path")
+      .datum(_this.boundaries)
+      .attr("class", "boundary");
+  },
+
+  hideAreas() {
+    this.areasAreShown = false;
+    this.mapGraph.selectAll("*").remove();
   },
 
   updateOpacity() {
@@ -312,6 +326,7 @@ const GoogleMapLayer = MapLayer.extend({
   init(context, parent) {
     this.context = context;
     this.parent = parent;
+    this.bounds = null;
   },
 
   initMap(domSelector) {
@@ -338,11 +353,6 @@ const GoogleMapLayer = MapLayer.extend({
         _this.overlay.draw = function() {};
         _this.overlay.setMap(_this.map);
 
-        google.maps.event.addListener(_this.map, "bounds_changed", () => {
-          if (_this.map.getBounds()) {
-            _this.parent.boundsChanged();
-          }
-        });
 /*
         const rectangle = new google.maps.Rectangle({
           bounds: {
@@ -369,13 +379,23 @@ const GoogleMapLayer = MapLayer.extend({
 
   rescaleMap() {
     const _this = this;
-    const rectBounds = new google.maps.LatLngBounds(
-      new google.maps.LatLng(_this.context.model.ui.map.bounds.north, _this.context.model.ui.map.bounds.west),
-      new google.maps.LatLng(_this.context.model.ui.map.bounds.south, _this.context.model.ui.map.bounds.east)
-    );
-    _this.map.fitBounds(rectBounds);
-    google.maps.event.trigger(_this.map, "resize");
-    
+    const bounds = this.map.getBounds();
+    if (!this.bounds || bounds !== this.bounds) {
+      this.bounds = bounds;
+      google.maps.event.addListenerOnce(_this.map, "idle", () => {
+        const rectBounds = new google.maps.LatLngBounds(
+          new google.maps.LatLng(_this.context.model.ui.map.bounds.north, _this.context.model.ui.map.bounds.west),
+          new google.maps.LatLng(_this.context.model.ui.map.bounds.south, _this.context.model.ui.map.bounds.east)
+        );
+        _this.map.fitBounds(rectBounds);
+        google.maps.event.trigger(_this.map, "resize");
+        google.maps.event.addListenerOnce(_this.map, "idle", () => {
+          if (_this.map.getBounds()) {
+            _this.parent.boundsChanged();
+          }
+        });
+      });
+    }
   },
 
   zoomMap(center, increment) {
@@ -554,35 +574,6 @@ export default Class.extend({
     return this;
   },
 
-  ready() {
-    const _this = this;
-    this.keys = Object.keys(_this.context.values.hook_centroid)
-      .reduce((obj, key) => {
-        obj[_this.context.values.hook_centroid[key]] = key;
-        return obj;
-      }, {});
-    this.updateColors();
-  },
-
-  getMapColor(key) {
-    if (this.keys[key]) {
-      return this.context.mcScale(this.context.values.color_map[this.keys[key]]);
-    }
-    return this.context.COLOR_WHITEISH;
-  },
-  getOpacity(key) {
-    if (this.keys[key]) {
-      return this.context.getMapOpacity(this.keys[key]);
-    }
-    return this.context.COLOR_WHITEISH;
-  },
-
-  updateColors() {
-    if (this.topojsonMap) {
-      this.topojsonMap.updateMapColors();
-    }
-  },
-
   getMap() {
     if (!this.mapInstance) {
       if (this.context.model.ui.map.showMap) {
@@ -595,14 +586,101 @@ export default Class.extend({
             break;
         }
       }
-      if (this.mapInstance) {
-        if (this.context.model.ui.map.showAreas) {
-          this.topojsonMap = new TopojsonLayer(this.context, this);
-        }
-      } else {
+      if (!this.topojsonMap) {
         this.topojsonMap = new TopojsonLayer(this.context, this);
       }
       return this;
+    }
+  },
+
+  initMap() {
+    if (!this.mapInstance) {
+      return this.topojsonMap.initMap(this.domSelector);
+    }
+    const topojsonPromise = this.topojsonMap.initMap(this.domSelector);
+    if (this.context.model.ui.map.showAreas) {
+      topojsonPromise.then(() => {
+        this.topojsonMap.showAreas();
+      });
+    }
+    return Promise.all([
+      this.mapInstance.initMap(this.domSelector),
+      topojsonPromise
+    ]);
+  },
+
+  ready() {
+    const _this = this;
+    this.keys = Object.keys(_this.context.values.hook_centroid)
+      .reduce((obj, key) => {
+        obj[_this.context.values.hook_centroid[key]] = key;
+        return obj;
+      }, {});
+  },
+
+  rescaleMap() {
+    if (this.mapInstance) {
+      const margin = this.context.activeProfile.margin;
+      const _this = this;
+      this.mapRoot
+        .attr("width", this.context.width + margin.left + margin.right)
+        .attr("height", this.context.height + margin.top + margin.bottom)
+        .style("position", "absolute")
+        .style("left", 0)
+        .style("right", 0)
+        .style("top", 0)
+        .style("bottom", 0);
+      this.mapInstance.rescaleMap();
+    } else {
+      this.topojsonMap.rescaleMap();
+    }
+  },
+
+  layerChanged() {
+    if (this.mapEngine == this.context.model.ui.map.mapEngine &&
+      this.context.model.ui.map.showMap &&
+      this.mapInstance) {
+      if (this.topojsonMap.areasAreShown != this.context.model.ui.map.showAreas) {
+        if (!this.context.model.ui.map.showAreas) {
+          this.topojsonMap.hideAreas();
+        } else {
+          this.topojsonMap.showAreas();
+        }
+      }
+      this.mapInstance.updateLayer();
+    } else {
+      this.mapEngine = this.context.model.ui.map.mapEngine;
+      this.mapInstance = null;
+      this.mapRoot.html("");
+      this.getMap();
+      this.mapInstance.initMap(this.domSelector).then(
+        () => {
+          if (this.mapInstance) {
+            this.mapInstance.rescaleMap();
+          } else {
+            this.topojsonMap.rescaleMap();
+          }
+        });
+    }
+  },
+
+  getMapColor(key) {
+    if (this.keys[key]) {
+      return this.context.mcScale(this.context.values.color_map[this.keys[key]]);
+    }
+    return this.context.COLOR_WHITEISH;
+  },
+
+  getOpacity(key) {
+    if (this.keys[key]) {
+      return this.context.getMapOpacity(this.keys[key]);
+    }
+    return this.context.COLOR_WHITEISH;
+  },
+
+  updateColors() {
+    if (this.context.model.ui.map.showAreas) {
+      this.topojsonMap.updateMapColors();
     }
   },
 
@@ -635,6 +713,24 @@ export default Class.extend({
     this._showTopojson(300);
   },
 
+  zoomRectangle(x1, y1, x2, y2) {
+    const nw = this.point2Geo(Math.min(x1, x2), Math.max(y1, y2));
+    const se = this.point2Geo(Math.max(x1, x2), Math.min(y1, y2));
+    this.context.model.ui.map.bounds = {
+      west: nw[0],
+      north: nw[1],
+      east: se[0],
+      south: se[1]
+    };
+    this.zooming = false;
+    if (this.mapInstance) {
+      this.mapInstance.rescaleMap();
+    } else {
+      this.topojsonMap.rescaleMap();
+    }
+    this._showTopojson(300);
+  },
+
   moveOver(dx, dy) {
     if (this.mapInstance) {
       return this.mapInstance.moveOver(dx, dy);
@@ -642,86 +738,18 @@ export default Class.extend({
     this.topojsonMap.moveOver(dx, dy);
   },
 
-  layerChanged() {
-    if (this.mapEngine == this.context.model.ui.map.mapEngine &&
-      this.context.model.ui.map.showMap &&
-      this.mapInstance) {
-      if (this.topojsonMap && !this.context.model.ui.map.showAreas) {
-        this.topojsonMap = null;
-        this.mapSvg.html("");
-      } else if (!this.topojsonMap && this.context.model.ui.map.showAreas) {
-        this.topojsonMap = new TopojsonLayer(this.context, this);
-        this.topojsonMap.initMap(this.domSelector).then(
-          map => {
-            this.boundsChanged();
-/*
-            this.updateColors();
-            this.updateOpacity();
-*/
-          });
-      }
-      this.mapInstance.updateLayer();
-    } else {
-      this.mapEngine = this.context.model.ui.map.mapEngine;
-      this.topojsonMap = null;
-      this.mapInstance = null;
-      this.mapRoot.html("");
-      this.mapSvg.html("");
-      this.getMap();
-      this.initMap().then(
-        map => {
-          if (this.mapInstance) {
-            this.mapInstance.rescaleMap();
-          } else {
-            this.topojsonMap.rescaleMap();
-          }
-        });
-    }
-  },
-
-  initMap() {
-    if (!this.topojsonMap) {
-      return this.mapInstance.initMap(this.domSelector);
-    } else if (!this.mapInstance) {
-      return this.topojsonMap.initMap(this.domSelector);
-    }
-    return Promise.all([
-      this.mapInstance.initMap(this.domSelector),
-      this.topojsonMap.initMap(this.domSelector)
-    ]);
-  },
-
-  rescaleMap() {
-    if (this.mapInstance) {
-      const margin = this.context.activeProfile.margin;
-      const _this = this;
-      this.mapRoot
-        .attr("width", this.context.width + margin.left + margin.right)
-        .attr("height", this.context.height + margin.top + margin.bottom)
-        .style("position", "absolute")
-        .style("left", 0)
-        .style("right", 0)
-        .style("top", 0)
-        .style("bottom", 0);
-
-      this.mapInstance.rescaleMap();
-    } else {
-      this.topojsonMap.rescaleMap();
-    }
-  },
-
   _interact() {
     return this.context._mapIteract();
   },
 
   updateOpacity() {
-    if (this.topojsonMap) {
+    if (this.context.model.ui.map.showAreas) {
       this.topojsonMap.updateOpacity();
     }
   },
 
   _hideTopojson(duration) {
-    if (this.topojsonMap) {
+    if (this.context.model.ui.map.showAreas) {
       if (duration) {
         this.topojsonMap.mapGraph
           .transition()
@@ -735,7 +763,7 @@ export default Class.extend({
   },
 
   _showTopojson(duration) {
-    if (this.topojsonMap) {
+    if (this.context.model.ui.map.showAreas) {
       this.topojsonMap.mapGraph
         .interrupt()
         .transition()
@@ -759,7 +787,7 @@ export default Class.extend({
     let response;
     if (this.mapInstance) {
       response = this.mapInstance.zoomMap(geoCenter, increment);
-    } else {
+    } else if (this.context.model.ui.map.showAreas) {
       response = this.topojsonMap.zoomMap(geoCenter, increment);
     }
     return response.then(
@@ -788,7 +816,7 @@ export default Class.extend({
 
   boundsChanged(rescaleTopojson = true) {
     if (!this.zooming) {
-      if (this.topojsonMap && rescaleTopojson) {
+      if (rescaleTopojson) {
         let canvas;
         if (this.mapInstance) {
           canvas = this.mapInstance.getCanvas();
@@ -809,21 +837,27 @@ export default Class.extend({
   getCanvas() {
     if (this.mapInstance) {
       return this.mapInstance.getCanvas();
+    } else if (this.context.model.ui.map.showAreas) {
+      return this.topojsonMap.getCanvas();
     }
-    return this.topojsonMap.getCanvas();
+    return [[0, 0], [0, 0]];
   },
   point2Geo(x, y) {
     if (this.mapInstance) {
       return this.mapInstance.point2Geo(x, y);
+    } else if (this.context.model.ui.map.showAreas) {
+      return this.topojsonMap.point2Geo(x, y);
     }
-    return this.topojsonMap.point2Geo(x, y);
+    return [0, 0];
   },
 
   geo2Point(lon, lat) {
     if (this.mapInstance) {
       return this.mapInstance.geo2Point(lon, lat);
+    } else if (this.context.model.ui.map.showAreas) {
+      return this.topojsonMap.geo2Point(lon, lat);
     }
-    return this.topojsonMap.geo2Point(lon, lat);
+    return [0, 0];
   }
 
 });

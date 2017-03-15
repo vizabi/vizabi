@@ -124,7 +124,7 @@ const LBubbleMapComponent = Component.extend({
           svg.classed("vzb-zoomout", false);
           svg.classed("vzb-panhand", false);
         }
-      },
+      }
     };
 
     //this._selectlist = new Selectlist(this);
@@ -162,7 +162,7 @@ const LBubbleMapComponent = Component.extend({
     this.bubbleContainer = this.graph.select(".vzb-bmc-bubbles");
     this.labelListContainer = this.graph.select(".vzb-bmc-bubble-labels");
     this.dataWarningEl = this.graph.select(".vzb-data-warning");
-
+    this.zoomRect = this.element.select(".vzb-bc-zoom-rect");
     this.yTitleEl = this.graph.select(".vzb-bmc-axis-y-title");
     this.cTitleEl = this.graph.select(".vzb-bmc-axis-c-title");
     this.yInfoEl = this.graph.select(".vzb-bmc-axis-y-info");
@@ -196,19 +196,47 @@ const LBubbleMapComponent = Component.extend({
 
     const mapDragger = d3.drag()
       .on("start", (d, i) => {
-        if (_this.model.ui.cursorMode == "hand") {
+        if ((d3.event.sourceEvent.metaKey || d3.event.sourceEvent.ctrlKey) && _this.model.ui.cursorMode == "arrow") {
+          _this.zooming = true;
+          _this.origin = {
+            x: d3.event.x,
+            y: d3.event.y
+          };
+          _this.zoomRect.classed("vzb-invisible", false);
+        } else if (_this.model.ui.cursorMode == "hand") {
           _this._hideEntities(300);
           _this.map.panStarted();
           _this.chartSvg.classed("vzb-zooming", true);
         }
       })
       .on("drag", (d, i) => {
-        if (_this.model.ui.cursorMode == "hand") {
+        if ((d3.event.sourceEvent.metaKey || d3.event.sourceEvent.ctrlKey) && _this.model.ui.cursorMode == "arrow") {
+          const mouse = {
+            x: d3.event.x,
+            y: d3.event.y
+          };
+          _this.zoomRect
+            .attr("x", Math.min(mouse.x, _this.origin.x))
+            .attr("y", Math.min(mouse.y, _this.origin.y))
+            .attr("width", Math.abs(mouse.x - _this.origin.x))
+            .attr("height", Math.abs(mouse.y - _this.origin.y));
+
+        } else if (_this.model.ui.cursorMode == "hand") {
           _this.map.moveOver(d3.event.dx, d3.event.dy);
         }
       })
       .on("end", (d, i) => {
-        if (_this.model.ui.cursorMode == "hand") {
+        if (_this.model.ui.cursorMode == "arrow") {
+          _this.zoomRect
+            .attr("width", 0)
+            .attr("height", 0)
+            .classed("vzb-invisible", true);
+          if (_this.zooming) {
+            console.log("zoom end");
+            _this.map.zoomRectangle(_this.origin.x, _this.origin.y, d3.event.x, d3.event.y);
+            _this.zooming = false;
+          }
+        } else if (_this.model.ui.cursorMode == "hand") {
           _this.map.panFinished();
           _this._showEntities(300);
           _this.chartSvg.classed("vzb-zooming", false);
@@ -216,6 +244,29 @@ const LBubbleMapComponent = Component.extend({
       });
 
     this.element.call(mapDragger);
+    d3.select("body")
+      .on("keydown", () => {
+        if (_this.model.ui.cursorMode !== "arrow" && _this.model.ui.cursorMode !== "hand") return;
+        if (d3.event.metaKey || d3.event.ctrlKey) {
+          _this.element.select("svg").classed("vzb-zoomin", true);
+          //_this.model.ui.set("cursorMode", "plus", false, false);
+        }
+      })
+      .on("keyup", () => {
+        if (_this.model.ui.cursorMode !== "arrow" && _this.model.ui.cursorMode !== "hand") return;
+        if (!d3.event.metaKey && !d3.event.ctrlKey) {
+          _this.element.select("svg").classed("vzb-zoomin", false);
+          //_this.model.ui.set("cursorMode", "arrow", false, false);
+        }
+      })
+      //this is for the case when user would press ctrl and move away from the browser tab or window
+      //keyup event would happen somewhere else and won't be captured, so zoomin class would get stuck
+      .on("mouseenter", () => {
+        if (_this.model.ui.cursorMode !== "arrow" && _this.model.ui.cursorMode !== "hand") return;
+        if (!d3.event.metaKey && !d3.event.ctrlKey) {
+          _this.model.ui.cursorMode = "arrow";
+        }
+      });
     this.element
       .on("click", () => {
         const cursor = _this.model.ui.cursorMode;
@@ -288,6 +339,7 @@ const LBubbleMapComponent = Component.extend({
       _this.updateEntities();
       _this.updateTime();
       _this.map.ready();
+      _this.map.updateColors();
       _this._labels.ready();
       _this.redrawDataPoints(null, true);
       _this.highlightMarkers();

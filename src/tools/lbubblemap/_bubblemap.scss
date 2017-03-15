@@ -21,7 +21,10 @@
     .vzb-bubblemap-svg.vzb-panhand.vzb-zooming {
       cursor: url('../../assets/cursors/grabbing.cur'), auto;
     }
-    
+    .vzb-bc-zoom-rect {
+      fill: none;
+      stroke: $vzb-color-grey;
+    }
     .vzb-bmc-map-background {
 
       .stroke {
