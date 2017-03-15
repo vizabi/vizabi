@@ -8,8 +8,6 @@ import Events from "base/events";
 import globals from "base/globals";
 import * as iconset from "base/iconset";
 
-require("css.escape");
-
 const Vzb = function(name, placeholder, external_model) {
   const tool = Tool.get(name);
   if (tool) {
