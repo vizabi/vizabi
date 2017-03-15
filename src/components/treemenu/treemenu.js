@@ -909,7 +909,8 @@ const TreeMenu = Component.extend({
       this.clearPos();
       this.menuEntity.marqueeToggle(false);
     } else {
-      if (top || left) this.setPos();
+      this.setPos();
+      !utils.isTouchDevice() && this.focusSearch();
       this.resize();
       this.scrollToSelected();
     }
