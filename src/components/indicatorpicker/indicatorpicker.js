@@ -135,10 +135,6 @@ const IndPicker = Component.extend({
         .left(leftPos)
         .updateView()
         .toggle();
-
-      if (!utils.isTouchDevice()) {
-        treemenuComp.focusSearch();
-      }
     });
 
     this.infoEl = d3.select(this.element).select(".vzb-ip-info");
