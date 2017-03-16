@@ -465,6 +465,15 @@ const Model = EventSource.extend({
     );
   },
 
+  handleLoadError(error = this.getDefaultErrorMessage()) {
+    throw error;
+  },
+
+  getDefaultErrorMessage() {
+    return this.getClosestModel("locale")
+      .getTFunction()("connection/error");
+  },
+
   triggerLoadError(error) {
     utils.error(error);
     this.trigger("load_error", error);
