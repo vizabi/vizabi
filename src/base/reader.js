@@ -151,7 +151,7 @@ const Reader = Class.extend({
 
       const result = Object.keys(row).reduce((result, key) => {
         if (correct) {
-          const value = row[key].trim();
+          const value = utils.isString(row[key]) ? row[key].trim() : row[key];
           const parser = parsers[key];
           let resultValue;
 
