@@ -12,7 +12,6 @@ import requireAll from "helpers/requireAll";
 
 //import tools
 import BubbleChart from "tools/bubblechart/bubblechart";
-import MountainChart from "tools/mountainchart/mountainchart";
 import BarChart from "tools/barchart/barchart";
 import BubbleMap from "tools/bubblemap/bubblemap";
 import LBubbleMap from "tools/lbubblemap/bubblemap";
