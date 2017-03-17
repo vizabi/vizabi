@@ -79,7 +79,7 @@ const DataModel = Model.extend({
         EventSource.unfreezeAll();
         return dataId;
       })
-      .catch(error => this.handleReaderError(error, query));
+      .catch(error => this.handleLoadError(error, query));
   },
 
   /**
@@ -272,7 +272,7 @@ const DataModel = Model.extend({
 
     return this.load(query)
       .then(this.handleConceptPropsResponse.bind(this))
-      .catch(error => this.handleReaderError(error, query));
+      .catch(error => this.handleLoadError(error, query));
 
   },
 
@@ -908,7 +908,7 @@ const DataModel = Model.extend({
     return false;
   },
 
-  handleReaderError(error, query) {
+  handleLoadError(error, query) {
     if (utils.isObject(error)) {
       const locale = this.getClosestModel("locale");
       const translation = locale.getTFunction()(error.code, error.payload) || "";
@@ -916,7 +916,7 @@ const DataModel = Model.extend({
     }
 
     utils.warn("Problem with query: ", query);
-    throw error;
+    this._super(error);
   },
 
 });
