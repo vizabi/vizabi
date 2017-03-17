@@ -13,7 +13,6 @@ import requireAll from "helpers/requireAll";
 // import tools
 import BarChart from "tools/barchart/barchart";
 import BubbleMap from "tools/bubblemap/bubblemap";
-import LBubbleMap from "tools/lbubblemap/bubblemap";
 import DonutChart from "tools/donutchart/donutchart";
 import AxisLabeler from "tools/axislabeler/axislabeler";
 
