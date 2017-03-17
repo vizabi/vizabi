@@ -55,14 +55,15 @@ const LocaleModel = DataConnected.extend({
     });
     promises.push(new Promise((resolve, reject) => {
       d3.json(this.filePath + this.id + ".json", (error, strings) => {
-        if (error) reject(error);
+        if (error) return reject(error);
         this.handleNewStrings(strings);
         resolve();
       });
     }));
 
     return Promise.all(promises)
-      .then(() => this.trigger("translate"));
+      .then(() => this.trigger("translate"))
+      .catch(() => this.handleLoadError());
   },
 
   handleNewStrings(receivedStrings) {
@@ -86,7 +87,7 @@ const LocaleModel = DataConnected.extend({
 
   /**
    * Gets the translation function
-   * @returns {string} translation function
+   * @returns {Function} translation function
    */
   getTFunction() {
     return (stringId, payload = {}) => (

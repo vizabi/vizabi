@@ -79,6 +79,7 @@ const LBubbleMapComponent = Component.extend({
         if (!_this._readyOnce) return;
         _this.selectMarkers();
         _this.redrawDataPoints(null, false);
+        _this.updateLabels(null);
         _this.updateOpacity();
         _this.updateDoubtOpacity();
 
@@ -89,8 +90,40 @@ const LBubbleMapComponent = Component.extend({
       "change:marker.opacityRegular": function(evt) {
         _this.updateOpacity();
       },
-      "change:ui.map.mapLayer": function(evt) {
+      "change:ui.map.mapStyle": function(evt) {
         _this.map.layerChanged();
+      },
+      "change:ui.map.showBubbles": function(evt) {
+        _this.updateEntities();
+        _this.redrawDataPoints(null, true);
+        _this._reorderEntities();
+        _this.updateOpacity();
+      },
+      "change:ui.map.showAreas": function(evt) {
+        _this.map.layerChanged();
+      },
+      "change:ui.map.showMap": function(evt) {
+        _this.map.layerChanged();
+      },
+      "change:ui.cursorMode": function() {
+        const svg = _this.chartSvg;
+        if (_this.model.ui.cursorMode === "plus") {
+          svg.classed("vzb-zoomin", true);
+          svg.classed("vzb-zoomout", false);
+          svg.classed("vzb-panhand", false);
+        } else if (_this.model.ui.cursorMode === "minus") {
+          svg.classed("vzb-zoomin", false);
+          svg.classed("vzb-zoomout", true);
+          svg.classed("vzb-panhand", false);
+        } else if (_this.model.ui.cursorMode === "hand") {
+          svg.classed("vzb-zoomin", false);
+          svg.classed("vzb-zoomout", false);
+          svg.classed("vzb-panhand", true);
+        } else {
+          svg.classed("vzb-zoomin", false);
+          svg.classed("vzb-zoomout", false);
+          svg.classed("vzb-panhand", false);
+        }
       }
     };
 
@@ -103,7 +136,7 @@ const LBubbleMapComponent = Component.extend({
     this.cScale = d3.scaleOrdinal(d3.schemeCategory10);
 
     _this.COLOR_WHITEISH = "#fdfdfd";
-
+    _this.COLOR_WHITEISH = "#fdfdfd";
 
     this._labels = new Labels(this);
 
@@ -124,11 +157,12 @@ const LBubbleMapComponent = Component.extend({
 
     this.graph = this.element.select(".vzb-bmc-graph");
 
+    this.chartSvg = this.element.select("svg");
     this.bubbleContainerCrop = this.graph.select(".vzb-bmc-bubbles-crop");
     this.bubbleContainer = this.graph.select(".vzb-bmc-bubbles");
     this.labelListContainer = this.graph.select(".vzb-bmc-bubble-labels");
     this.dataWarningEl = this.graph.select(".vzb-data-warning");
-
+    this.zoomRect = this.element.select(".vzb-bc-zoom-rect");
     this.yTitleEl = this.graph.select(".vzb-bmc-axis-y-title");
     this.cTitleEl = this.graph.select(".vzb-bmc-axis-c-title");
     this.yInfoEl = this.graph.select(".vzb-bmc-axis-y-info");
@@ -159,7 +193,126 @@ const LBubbleMapComponent = Component.extend({
         .range(this.model.ui.datawarning.doubtRange);
 
     this._labels.readyOnce();
+
+    const mapDragger = d3.drag()
+      .on("start", (d, i) => {
+        if ((d3.event.sourceEvent.metaKey || d3.event.sourceEvent.ctrlKey) && _this.model.ui.cursorMode == "arrow") {
+          _this.zooming = true;
+          _this.origin = {
+            x: d3.event.x,
+            y: d3.event.y
+          };
+          _this.zoomRect.classed("vzb-invisible", false);
+        } else if (_this.model.ui.cursorMode == "hand") {
+          _this._hideEntities(300);
+          _this.map.panStarted();
+          _this.chartSvg.classed("vzb-zooming", true);
+        }
+      })
+      .on("drag", (d, i) => {
+        if ((d3.event.sourceEvent.metaKey || d3.event.sourceEvent.ctrlKey) && _this.model.ui.cursorMode == "arrow") {
+          const mouse = {
+            x: d3.event.x,
+            y: d3.event.y
+          };
+          _this.zoomRect
+            .attr("x", Math.min(mouse.x, _this.origin.x))
+            .attr("y", Math.min(mouse.y, _this.origin.y))
+            .attr("width", Math.abs(mouse.x - _this.origin.x))
+            .attr("height", Math.abs(mouse.y - _this.origin.y));
+
+        } else if (_this.model.ui.cursorMode == "hand") {
+          _this.map.moveOver(d3.event.dx, d3.event.dy);
+        }
+      })
+      .on("end", (d, i) => {
+        if (_this.model.ui.cursorMode == "arrow") {
+          _this.zoomRect
+            .attr("width", 0)
+            .attr("height", 0)
+            .classed("vzb-invisible", true);
+          if (_this.zooming) {
+            console.log("zoom end");
+            _this.map.zoomRectangle(_this.origin.x, _this.origin.y, d3.event.x, d3.event.y);
+            _this.zooming = false;
+          }
+        } else if (_this.model.ui.cursorMode == "hand") {
+          _this.map.panFinished();
+          _this._showEntities(300);
+          _this.chartSvg.classed("vzb-zooming", false);
+        }
+      });
+
+    this.element.call(mapDragger);
+    d3.select("body")
+      .on("keydown", () => {
+        if (_this.model.ui.cursorMode !== "arrow" && _this.model.ui.cursorMode !== "hand") return;
+        if (d3.event.metaKey || d3.event.ctrlKey) {
+          _this.element.select("svg").classed("vzb-zoomin", true);
+          //_this.model.ui.set("cursorMode", "plus", false, false);
+        }
+      })
+      .on("keyup", () => {
+        if (_this.model.ui.cursorMode !== "arrow" && _this.model.ui.cursorMode !== "hand") return;
+        if (!d3.event.metaKey && !d3.event.ctrlKey) {
+          _this.element.select("svg").classed("vzb-zoomin", false);
+          //_this.model.ui.set("cursorMode", "arrow", false, false);
+        }
+      })
+      //this is for the case when user would press ctrl and move away from the browser tab or window
+      //keyup event would happen somewhere else and won't be captured, so zoomin class would get stuck
+      .on("mouseenter", () => {
+        if (_this.model.ui.cursorMode !== "arrow" && _this.model.ui.cursorMode !== "hand") return;
+        if (!d3.event.metaKey && !d3.event.ctrlKey) {
+          _this.model.ui.cursorMode = "arrow";
+        }
+      });
+    this.element
+      .on("click", () => {
+        const cursor = _this.model.ui.cursorMode;
+        if (cursor !== "arrow" && cursor !== "hand") {
+          const mouse = d3.mouse(_this.element.node());
+          _this._hideEntities(100);
+          _this.map.zoomMap(mouse, (cursor == "plus" ? 1 : -1)).then(
+              () => {
+                _this._showEntities(300);
+              }
+          );
+        }
+      });
   },
+
+  _hideEntities(duration) {
+    this.graph.select("." + this._labels.options.LABELS_CONTAINER_CLASS)
+      .transition()
+      .duration(duration)
+      .style("opacity", 0);
+    this.graph.select("." + this._labels.options.LINES_CONTAINER_CLASS)
+      .transition()
+      .duration(duration)
+      .style("opacity", 0);
+    this.bubbleContainer
+      .transition()
+      .duration(duration)
+      .style("opacity", 0);
+  },
+
+  _showEntities(duration) {
+    this.graph.select("." + this._labels.options.LABELS_CONTAINER_CLASS)
+      .transition()
+      .duration(duration)
+      .style("opacity", 1);
+    this.graph.select("." + this._labels.options.LINES_CONTAINER_CLASS)
+      .transition()
+      .duration(duration)
+      .style("opacity", 1);
+    this.bubbleContainer
+      .transition()
+      .duration(duration)
+      .style("opacity", 1);
+
+  },
+
 
   /*
    * Both model and DOM are ready
@@ -182,10 +335,13 @@ const LBubbleMapComponent = Component.extend({
 
       if (!values) return;
       _this.values = values;
+
       _this.updateEntities();
       _this.updateTime();
+      _this.map.ready();
+      _this.map.updateColors();
       _this._labels.ready();
-      _this.redrawDataPoints();
+      _this.redrawDataPoints(null, true);
       _this.highlightMarkers();
       _this.selectMarkers();
 //    this._selectlist.redraw();
@@ -203,7 +359,8 @@ const LBubbleMapComponent = Component.extend({
     this.updateTime();
     this.updateDoubtOpacity();
     this.redrawDataPoints(null, false);
-
+    this._reorderEntities();
+    this.map.updateColors();
   },
 
   updateUIStrings() {
@@ -343,7 +500,7 @@ const LBubbleMapComponent = Component.extend({
         .text(this.translator("buttons/color") + ": " + this.strings.title.C);
 
       this.yInfoEl.classed("vzb-hidden", false);
-      this.cInfoEl.classed("vzb-hidden", false || this.cTitleEl.classed("vzb-hidden"));
+      this.cInfoEl.classed("vzb-hidden", this.cTitleEl.classed("vzb-hidden"));
     }
   },
 
@@ -360,30 +517,8 @@ const LBubbleMapComponent = Component.extend({
      return _this.model.marker.isSelected(d);
      });
      */
-
-    const OPACITY_HIGHLT = 1.0;
-    const OPACITY_HIGHLT_DIM = 0.3;
-    const OPACITY_SELECT = this.model.marker.opacityRegular;
-    const OPACITY_REGULAR = this.model.marker.opacityRegular;
-    const OPACITY_SELECT_DIM = this.model.marker.opacitySelectDim;
-
-    this.entityBubbles.style("opacity", d => {
-
-      if (_this.someHighlighted) {
-        //highlight or non-highlight
-        if (_this.model.marker.isHighlighted(d)) return OPACITY_HIGHLT;
-      }
-
-      if (_this.someSelected) {
-        //selected or non-selected
-        return _this.model.marker.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
-      }
-
-      if (_this.someHighlighted) return OPACITY_HIGHLT_DIM;
-
-      return OPACITY_REGULAR;
-
-    });
+    this.map.updateOpacity();
+    this.entityBubbles.style("opacity", d => _this.getOpacity(d));
 
     this.entityBubbles.classed("vzb-selected", d => _this.model.marker.isSelected(d));
 
@@ -398,12 +533,38 @@ const LBubbleMapComponent = Component.extend({
     this.nonSelectedOpacityZero = _this.model.marker.opacitySelectDim < 0.01;
   },
 
+  getMapOpacity(key) {
+    if (this.model.ui.map.showBubbles) {
+      return this.model.marker.opacitySelectDim;
+    }
+    const d = {};
+    d[this.KEY] = key;
+    return this.getOpacity(d);
+  },
+
+  getOpacity(d) {
+    if (this.someHighlighted) {
+      //highlight or non-highlight
+      if (this.model.marker.isHighlighted(d)) return this.model.marker.opacityRegular;
+    }
+
+    if (this.someSelected) {
+      //selected or non-selected
+      return this.model.marker.isSelected(d) ? this.model.marker.opacityRegular : this.model.marker.opacitySelectDim;
+    }
+
+    if (this.someHighlighted) return this.model.marker.opacitySelectDim;
+
+    return this.model.marker.opacityRegular;
+  },
+
   /**
    * Changes labels for indicators
    */
   updateIndicators() {
     this.sScale = this.model.marker.size.getScale();
     this.cScale = this.model.marker.color.getScale();
+    this.mcScale = this.model.marker.color_map.getScale();
   },
 
   /**
@@ -440,53 +601,57 @@ const LBubbleMapComponent = Component.extend({
     if (!this.model.time.splash) {
       this.unselectBubblesWithNoData();
     }
-
-    // TODO: add to csv
-    //Africa 9.1021° N, 18.2812°E
-    //Europe 53.0000° N, 9.0000° E
-    //Asia 49.8380° N, 105.8203° E
-    //north American 48.1667° N and longitude 100.1667° W
-    /*
-     var pos = {
-     "afr": {lat: 9.1, lng: 18.3},
-     "eur": {lat: 53.0, lng: 9.0},
-     "asi": {lat: 49.8, lng: 105.8},
-     "ame": {lat: 48.2, lng: -100.2},
-     };
-     */
-
+    let bubbles = [];
+    if (this.model.ui.map.showBubbles) {
+      bubbles = this.model.marker.getVisible();
+    }
 
     this.entityBubbles = this.bubbleContainer.selectAll(".vzb-bmc-bubble")
-        .data(this.model.marker.getVisible(), d => d[KEY])
-        .order();
+        .data(bubbles, d => d[KEY]);
 
     //exit selection
     this.entityBubbles.exit().remove();
 
     //enter selection -- init circles
     this.entityBubbles = this.entityBubbles.enter().append("circle")
-        .attr("class", "vzb-bmc-bubble")
-        .on("mouseover", (d, i) => {
-          if (utils.isTouchDevice()) return;
-          _this._interact()._mouseover(d, i);
-        })
-        .on("mouseout", (d, i) => {
-          if (utils.isTouchDevice()) return;
-          _this._interact()._mouseout(d, i);
-        })
-        .on("click", (d, i) => {
-          if (utils.isTouchDevice()) return;
-          _this._interact()._click(d, i);
-          _this.highlightMarkers();
-        })
-        .onTap((d, i) => {
-          _this._interact()._click(d, i);
-          d3.event.stopPropagation();
-        })
-        .onLongTap((d, i) => {
-        })
-        .merge(this.entityBubbles);
+      .attr("class", "vzb-bmc-bubble")
+      .on("mouseover", (d, i) => {
+        if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
+        _this._interact()._mouseover(d, i);
+      })
+      .on("mouseout", (d, i) => {
+        if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
+        _this._interact()._mouseout(d, i);
+      })
+      .on("click", (d, i) => {
+        if (utils.isTouchDevice() || _this.model.ui.cursorMode !== "arrow") return;
+        _this._interact()._click(d, i);
+        _this.highlightMarkers();
+      })
+      .onTap((d, i) => {
+        _this._interact()._click(d, i);
+        d3.event.stopPropagation();
+      })
+      .onLongTap((d, i) => {
+      })
+      .merge(this.entityBubbles);
 
+    this._reorderEntities();
+
+  },
+
+  _reorderEntities() {
+    const _this = this;
+    const KEY = this.KEY;
+    this.bubbleContainer.selectAll(".vzb-bmc-bubble")
+      .sort((a, b) => {
+        const sizeA = _this.values.size[a[KEY]];
+        const sizeB = _this.values.size[b[KEY]];
+
+        if (typeof sizeA == "undefined" && typeof sizeB != "undefined") return -1;
+        if (typeof sizeA != "undefined" && typeof sizeB == "undefined") return 1;
+        return d3.descending(sizeA, sizeB);
+      });
   },
 
   unselectBubblesWithNoData(frame) {
@@ -501,25 +666,38 @@ const LBubbleMapComponent = Component.extend({
         _this.model.marker.selectMarker(d);
     });
   },
+  _getPosition(d) {
+    const KEY = this.KEY;
+    if (this.values.hook_centroid && this.values.hook_centroid[d[KEY]]) {
+      return this.map.centroid(this.values.hook_centroid[d[KEY]]);
+    }
+    return this.map.geo2Point(this.values.hook_lat[d[KEY]], this.values.hook_lng[d[KEY]]);
+
+  },
 
   redrawDataPoints(duration, reposition) {
     const _this = this;
     if (!duration) duration = this.duration;
-    if (!reposition) reposition = true;
     if (!this.entityBubbles) return utils.warn("redrawDataPoints(): no entityBubbles defined. likely a premature call, fix it!");
+
     this.entityBubbles.each(function(d, index) {
       const view = d3.select(this);
-      const geo = d3.select("#" + d[_this.KEY]);
-
-      const valueX = _this.values.hook_lng[d[_this.KEY]];
-      const valueY = _this.values.hook_lat[d[_this.KEY]];
       const valueS = _this.values.size[d[_this.KEY]];
       const valueC = _this.values.color[d[_this.KEY]];
       const valueL = _this.values.label[d[_this.KEY]];
+      const valueCentroid = _this.values.hook_centroid[d[_this.KEY]];
 
       d.hidden_1 = d.hidden;
-      d.hidden = (!valueS && valueS !== 0) || valueX == null || valueY == null;
 
+      if (reposition) {
+        const cLoc = _this._getPosition(d);
+        if (cLoc) {
+          d.cLoc = cLoc;
+          view.attr("cx", d.cLoc[0])
+            .attr("cy", d.cLoc[1]);
+        }
+      }
+      d.hidden = (!valueS && valueS !== 0) || valueCentroid == null || !d.cLoc;
 
       if (d.hidden !== d.hidden_1) {
         if (duration) {
@@ -527,26 +705,21 @@ const LBubbleMapComponent = Component.extend({
             .style("opacity", 0)
             .on("end", () => view.classed("vzb-hidden", d.hidden).style("opacity", _this.model.marker.opacityRegular));
         } else {
-          view.classed("vzb-hidden", d.hidden);
+          if (!d.hidden) {
+            if (d.cLoc) {
+              view.classed("vzb-hidden", d.hidden);
+            }
+          } else {
+            view.classed("vzb-hidden", d.hidden);
+          }
         }
       }
       if (!d.hidden) {
-
         d.r = utils.areaToRadius(_this.sScale(valueS || 0));
         d.label = valueL;
 
         view.classed("vzb-hidden", false)
           .attr("fill", valueC != null ? _this.cScale(valueC) : _this.COLOR_WHITEISH);
-
-        if (_this.model.ui.map.colorGeo)
-          geo.style("fill", valueC != null ? _this.cScale(valueC) : "#999");
-
-        if (reposition) {
-          d.cLoc = _this.map.invert(valueX, valueY);
-
-          view.attr("cx", d.cLoc[0])
-            .attr("cy", d.cLoc[1]);
-        }
 
         if (duration) {
           view.transition().duration(duration).ease(d3.easeLinear)
@@ -556,12 +729,32 @@ const LBubbleMapComponent = Component.extend({
             .attr("r", d.r)
             .transition();
         }
-
         _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], valueS, valueC, d.label, duration);
       } else {
         _this._updateLabel(d, index, 0, 0, valueS, valueC, valueL, duration);
       }
+    });
+  },
 
+  updateLabels(duration) {
+    const _this = this;
+    const KEY = this.KEY;
+    this.model.marker.getSelected().map(d => {
+      let x, y;
+      const tooltipText = this.values.label[d[KEY]];
+      if (d.cLoc) {
+        x = d.cLoc[0];
+        y = d.cLoc[1];
+      } else {
+        const cLoc = _this._getPosition(d);
+        if (cLoc) {
+          x = cLoc[0];
+          y = cLoc[1];
+        }
+      }
+      const offset = utils.areaToRadius(_this.sScale(_this.values.size[d[KEY]] || 0));
+      const color = _this.values.color[d[KEY]] != null ? _this.cScale(_this.values.color[d[KEY]]) : _this.COLOR_WHITEISH;
+      _this._updateLabel(d, null, x, y, offset, color, tooltipText, duration);
     });
   },
 
@@ -644,7 +837,6 @@ const LBubbleMapComponent = Component.extend({
    * Ideally,it contains only operations related to size
    */
   updateSize() {
-
     this.activeProfile = this.getActiveProfile(this.profiles, this.presentationProfileChanges);
 
     const containerWH = this.root.getVizWidthHeight();
@@ -662,10 +854,8 @@ const LBubbleMapComponent = Component.extend({
 
   mapBoundsChanged() {
     this.updateMarkerSizeLimits();
-    this._labels.updateSize();
-    this.redrawDataPoints();
-    //_this._selectlist.redraw();
-
+    this.redrawDataPoints(null, true);
+    this.updateLabels(null);
   },
 
   repositionElements() {
@@ -750,6 +940,40 @@ const LBubbleMapComponent = Component.extend({
       this.sScale.rangePoints([utils.radiusToArea(minRadius), utils.radiusToArea(maxRadius)], 0).range();
     }
 
+  },
+
+  _mapIteract() {
+    const _this = this;
+    const d = {};
+    return {
+      _mouseover(key, i) {
+        if (utils.isTouchDevice()
+            || _this.model.ui.cursorMode !== "arrow"
+            || _this.model.ui.map.showBubbles
+            || !_this.map.keys[key]
+        ) return;
+        d[_this.KEY] = _this.map.keys[key];
+        _this._interact()._mouseover(d);
+      },
+      _mouseout(key, i) {
+        if (utils.isTouchDevice()
+            || _this.model.ui.cursorMode !== "arrow"
+            || _this.model.ui.map.showBubbles
+            || !_this.map.keys[key]
+        ) return;
+        d[_this.KEY] = _this.map.keys[key];
+        _this._interact()._mouseout(d);
+      },
+      _click(key, i) {
+        if (utils.isTouchDevice()
+            || _this.model.ui.cursorMode !== "arrow"
+            || _this.model.ui.map.showBubbles
+            || !_this.map.keys[key]
+        ) return;
+        d[_this.KEY] = _this.map.keys[key];
+        _this._interact()._click(d);
+      }
+    };
   },
 
   _interact() {
@@ -865,11 +1089,26 @@ const LBubbleMapComponent = Component.extend({
 
   _setTooltip(d) {
     const _this = this;
+    const KEY = this.KEY;
     if (d) {
-      const tooltipText = d.label;
-      let x = d.cLoc[0];
-      let y = d.cLoc[1];
-      const offset = d.r;
+      const tooltipText = this.values.label[d[KEY]];
+      let x, y, offset;
+      if (d.cLoc) {
+        x = d.cLoc[0];
+        y = d.cLoc[1];
+      } else  {
+        const cLoc = _this._getPosition(d);
+        if (cLoc) {
+          x = cLoc[0];
+          y = cLoc[1];
+        }
+      }
+      if (d.r) {
+        offset = d.r;
+      } else {
+        offset = utils.areaToRadius(_this.sScale(_this.values.size[d[KEY]] || 0));
+      }
+
       const mouse = d3.mouse(this.graph.node()).map(d => parseInt(d));
       let xPos, yPos, xSign = -1,
         ySign = -1,
@@ -924,7 +1163,7 @@ const LBubbleMapComponent = Component.extend({
   },
 
   preload() {
-    this.initMap();
+    return this.initMap();
   },
 
   initMap() {

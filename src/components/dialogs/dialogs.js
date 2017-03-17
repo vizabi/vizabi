@@ -46,37 +46,40 @@ const Dialogs = Component.extend({
         dialog: dialogs.timedisplay
       },
       "find": {
-        dialog: dialogs.find,
+        dialog: dialogs.find
       },
       "show": {
-        dialog: dialogs.show,
+        dialog: dialogs.show
       },
       "moreoptions": {
-        dialog: dialogs.moreoptions,
+        dialog: dialogs.moreoptions
       },
       "colors": {
-        dialog: dialogs.colors,
+        dialog: dialogs.colors
+      },
+      "mapcolors": {
+        dialog: dialogs.mapcolors
       },
       "size": {
-        dialog: dialogs.size,
+        dialog: dialogs.size
       },
       "side": {
-        dialog: dialogs.side,
+        dialog: dialogs.side
       },
       "label": {
-        dialog: dialogs.label,
+        dialog: dialogs.label
       },
       "zoom": {
-        dialog: dialogs.zoom,
+        dialog: dialogs.zoom
       },
       "axes": {
-        dialog: dialogs.axes,
+        dialog: dialogs.axes
       },
       "axesmc": {
-        dialog: dialogs.axesmc,
+        dialog: dialogs.axesmc
       },
       "stack": {
-        dialog: dialogs.stack,
+        dialog: dialogs.stack
       },
       "speed": {
         dialog: dialogs.speed
