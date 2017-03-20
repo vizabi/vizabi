@@ -154,10 +154,10 @@ const Reader = Class.extend({
           const defaultValue = row[key];
           const value = !utils.isString(defaultValue) ?
             defaultValue :
-            defaultValue.replace(",", ".")
+            defaultValue.trim()
+              .replace(",", ".")
               .replace(new RegExp(defaultValue.includes(".") ? "0+$" : ""), "")
-              .replace(/\.$/, "")
-              .trim();
+              .replace(/\.$/, "");
 
           const parser = parsers[key];
           let resultValue;
