@@ -151,14 +151,14 @@ const Reader = Class.extend({
 
       const result = Object.keys(row).reduce((result, key) => {
         if (correct) {
-          const value = utils.isString(row[key]) ? row[key].trim() : row[key];
+          const value = utils.isString(row[key]) ? row[key].replace(",", ".").trim() : row[key];
           const parser = parsers[key];
           let resultValue;
 
           if (parser) {
             resultValue = parser(value);
           } else {
-            const numeric = parseFloat(value && value.replace(",", "."));
+            const numeric = parseFloat(value);
             resultValue = String(numeric) === value && !isNaN(numeric) && isFinite(numeric) ?
               numeric :
               value;
