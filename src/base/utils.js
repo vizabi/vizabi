@@ -402,8 +402,10 @@ export const deepExtend = function(/*obj_1, [obj_2], [obj_N]*/) {
 
   const target = arguments[0];
 
+  const lastArgIsBool = typeof arguments[arguments.length - 1] === "boolean";
+  const overwriteByEmpty = lastArgIsBool && arguments[arguments.length - 1];
   // convert arguments to array and cut off target object
-  const args = Array.prototype.slice.call(arguments, 1);
+  const args = Array.prototype.slice.call(arguments, 1, (lastArgIsBool ? -1 : arguments.length));
 
   let val, src, clone;
 
@@ -440,9 +442,13 @@ export const deepExtend = function(/*obj_1, [obj_2], [obj_N]*/) {
       } else if (typeof src !== "object" || src === null || isArray(src)) {
         target[key] = deepExtend({}, val);
 
+        // new value is empty object
+      } else if (overwriteByEmpty && isEmpty(val)) {
+        target[key] = {};
+
         // source value and new value is objects both, extending...
       } else {
-        target[key] = deepExtend(src, val);
+        target[key] = deepExtend(src, val, overwriteByEmpty);
       }
     });
   });
@@ -1118,14 +1124,25 @@ export const arrayLast = function(arr) {
  */
 export const diffObject = function(obj2, obj1) {
   const diff = {};
+  forEach(obj1, (value, key) => {
+    if (!obj2.hasOwnProperty(key) && isPlainObject(value)) {
+      diff[key] = diffObject({}, value);
+    }
+  });
   forEach(obj2, (value, key) => {
     if (!obj1.hasOwnProperty(key)) {
       diff[key] = value;
     } else if (value !== obj1[key]) {
       if (isPlainObject(value) && isPlainObject(obj1[key])) {
-        const d = diffObject(value, obj1[key]);
-        if (Object.keys(d).length > 0) {
-          diff[key] = d;
+        if (isEmpty(value)) {
+          if (!isEmpty(obj1[key])) {
+            diff[key] = {};
+          }
+        } else {
+          const d = diffObject(value, obj1[key]);
+          if (Object.keys(d).length > 0) {
+            diff[key] = d;
+          }
         }
       } else if (!isArray(value) || !isArray(obj1[key]) || !arrayEquals(value, obj1[key])) {
         diff[key] = value;
