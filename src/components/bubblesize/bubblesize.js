@@ -19,16 +19,16 @@ const OPTIONS = {
 
 const profiles = {
   "small": {
-    minRadius: 0.5,
-    maxRadius: 40
+    minRadiusPx: 0.5,
+    maxRadiusEm: 0.05
   },
   "medium": {
-    minRadius: 1,
-    maxRadius: 55
+    minRadiusPx: 1,
+    maxRadiusEm: 0.05
   },
   "large": {
-    minRadius: 1,
-    maxRadius: 65
+    minRadiusPx: 1,
+    maxRadiusEm: 0.05
   }
 };
 
@@ -50,6 +50,9 @@ const BubbleSize = Component.extend({
     this.model_expects = [{
       name: "size",
       type: "size"
+    }, {
+      name: "locale",
+      type: "locale"
     }];
 
     const _this = this;
@@ -169,7 +172,8 @@ const BubbleSize = Component.extend({
 
     this.sliderArcsEl = this.sliderEl.selectAll(".vzb-bs-slider-thumb-arc");
 
-    this.sliderEl.selectAll("text").data([0, 0]).enter()
+    this.sliderLabelsWrapperEl = this.sliderEl.append("g");
+    this.sliderLabelsWrapperEl.selectAll("text").data([0, 0]).enter()
       .append("text")
       .attr("class", "vzb-bs-slider-thumb-label")
       .attr("text-anchor", (d, i) => i ? "start" : "end")
@@ -200,7 +204,6 @@ const BubbleSize = Component.extend({
       _this._moveBrush(extent);
     });
 
-    this._updateSize();
     this._moveBrush(extent);
 
     this.sizeScaleMinMax = this.model.size.getScale().domain();
@@ -210,8 +213,17 @@ const BubbleSize = Component.extend({
     }
   },
 
+  ready() {
+    this.isRTL = this.model.locale.isRTL();
+    this._updateSize();
+    this._updateLabels();
+  },
+
   getMinMaxBubbleRadius() {
-    return { min: profiles[this.getLayoutProfile()].minRadius, max: profiles[this.getLayoutProfile()].maxRadius };
+    const containerWH = this.root.getVizWidthHeight();
+    const minWH = utils.hypotenuse(containerWH.width, containerWH.height);
+    return { min: profiles[this.getLayoutProfile()].minRadiusPx,
+      max: profiles[this.getLayoutProfile()].maxRadiusEm * minWH };
   },
 
   _moveBrush(s) {
@@ -228,11 +240,19 @@ const BubbleSize = Component.extend({
    */
   _updateSize() {
     const maxBubbleRadius = this.showArcs ? this.getMinMaxBubbleRadius().max : OPTIONS.TEXT_PARAMS.TOP * 2;
+    const isRTL = this.model.locale.isRTL();
+    const svgWidth = this.getMinMaxBubbleRadius().max * 2 + this.padding.left + this.padding.right;
+
     this.sliderSvg
       .attr("height", maxBubbleRadius + this.padding.top + this.padding.bottom)
-      .attr("width", this.getMinMaxBubbleRadius().max * 2 + this.padding.left + this.padding.right);
+      .attr("width", svgWidth);
     this.sliderWrap
-      .attr("transform", "translate(" + this.padding.left + "," + (maxBubbleRadius + this.padding.top) + ")");
+      .attr("transform", isRTL ? "translate(" + (svgWidth - this.padding.right) + "," + (maxBubbleRadius + this.padding.top) + ") scale(-1,1)" :
+        "translate(" + this.padding.left + "," + (maxBubbleRadius + this.padding.top) + ")");
+    this.sliderLabelsWrapperEl
+      .attr("transform", isRTL ? "scale(-1,1)" : null);
+    this.sliderLabelsEl
+      .attr("text-anchor", (d, i) => (isRTL ? !i : i) ? "start" : "end");
   },
 
   _updateArcs(s) {
@@ -250,20 +270,21 @@ const BubbleSize = Component.extend({
 
   _updateLabels(s) {
     const _this = this;
-    this.sliderLabelsEl.data(s)
+    if (s) { this.sliderLabelsEl.data(s); }
+    this.sliderLabelsEl
       .attr("transform", (d, i) => {
         const textMargin = { v: OPTIONS.TEXT_PARAMS.TOP, h: OPTIONS.TEXT_PARAMS.LEFT };
         const dX = textMargin.h * (i ? 0.5 : -1.0) + _this.xScale(d);
         const dY = 0;
-        return "translate(" + (dX) + "," + (dY) + ")";
+        return "translate(" + ((_this.isRTL ? -1 : 1) * dX) + "," + (dY) + ")";
       });
   },
 
   _setLabelsText() {
     const _this = this;
+    const texts = [_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[0]), _this.model.size.getTickFormatter()(_this.sizeScaleMinMax[1])];
     _this.sliderLabelsEl
-      .data([_this.model.size.getTickFormatter()(_this.sizeScaleMinMax[0]), _this.model.size.getTickFormatter()(_this.sizeScaleMinMax[1])])
-      .text(d => d);
+      .text((d, i) => texts[i]);
   },
 
   /**

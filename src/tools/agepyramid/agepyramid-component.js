@@ -896,8 +896,6 @@ const AgePyramid = Component.extend({
         bottom: 40
       },
       infoElHeight: 16,
-      minRadius: 2,
-      maxRadius: 40,
       centerWidth: 2,
       titlesSpacing: 5
     },
@@ -909,8 +907,6 @@ const AgePyramid = Component.extend({
         bottom: 40
       },
       infoElHeight: 20,
-      minRadius: 3,
-      maxRadius: 60,
       centerWidth: 2,
       titlesSpacing: 10
     },
@@ -922,8 +918,6 @@ const AgePyramid = Component.extend({
         bottom: 40
       },
       infoElHeight: 22,
-      minRadius: 4,
-      maxRadius: 80,
       centerWidth: 2,
       titlesSpacing: 20
     }

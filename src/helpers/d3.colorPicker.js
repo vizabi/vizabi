@@ -171,8 +171,9 @@ export default function colorPicker() {
         .classed(css.INVISIBLE, !showColorPicker)
         .on("mouseout", d => { _cellHover(colorOld); });
 
-      const width = parseInt(svg.style("width"));
-      const height = parseInt(svg.style("height"));
+      const width = parseInt(svg.style("width"), 10) || 0;
+      const height = parseInt(svg.style("height"), 10) || 0;
+
       const maxRadius = width / 2 * (1 - margin.left - margin.right);
       background = svg.append("rect")
         .attr("width", width)
@@ -428,8 +429,8 @@ export default function colorPicker() {
       const screen = colorPicker.container.node().getBoundingClientRect();
       let xPos, yPos;
 
-      const width = parseInt(svg.style("width"));
-      const height = parseInt(svg.style("height"));
+      const width = parseInt(svg.style("width"), 10) || 0;
+      const height = parseInt(svg.style("height"), 10) || 0;
 
       if (!arg) {
         xPos = screen.width - parseInt(svg.style("right")) - width;
@@ -476,8 +477,9 @@ export default function colorPicker() {
         return resize;
       if (typeof arg !== "undefined") {
         const svg = arg;
-        const width = parseInt(svg.style("width"));
-        const height = parseInt(svg.style("height"));
+        const width = parseInt(svg.style("width"), 10) || 0;
+        const height = parseInt(svg.style("height"), 10) || 0;
+
         const maxRadius = width / 2 * (1 - margin.left - margin.right);
         const selectedColor = svg.select("." + css.COLOR_DEFAULT);
         const defaultLabel = svg.select(".vzb-default-label");

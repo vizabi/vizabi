@@ -253,10 +253,6 @@ $vzb-dialog-content-height: 250px;
           border-top: 0;
           border-right: 0;
         }
-
-        &:hover::after {
-          @include opacity(.3);
-        }
       }
 
       input[type=checkbox]:checked + label {
@@ -299,6 +295,14 @@ $vzb-dialog-content-height: 250px;
       .thumb-tack-class-ico::before {
         color: #fff !important;
 
+      }
+    }
+  }
+
+  &:not(.vzb-no-hover) {
+    .vzb-dialog-checkbox {
+      label:hover::after {
+        @include opacity(.3);
       }
     }
   }

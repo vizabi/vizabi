@@ -1,21 +1,23 @@
 {
   "name": "vizabi",
-  "version": "0.19.1-1",
+  "version": "0.20.1-27",
   "description": "Vizabi Framework, Interactive charts and visualization tools animated through time",
   "main": "build/dist/vizabi.js",
   "scripts": {
     "start": "webpack-dev-server",
     "lint:diff": "shjs ./.githooks/pre-commit.js",
     "lint:diff:fix": "cross-env FIX=1 npm run lint:diff",
-    "lint": "eslint -c .eslintrc --ignore-path .eslintignore",
+    "lint": "eslint -c .eslintrc --ignore-path .eslintignore src",
     "build:prod": "cross-env NODE_ENV=production webpack",
     "e2e:local": "./node_modules/protractor/bin/webdriver-manager update && ./node_modules/.bin/protractor .cicd/protractor.conf.js",
+    "e2e:dev": "./node_modules/.bin/protractor .cicd/protractor_dev.conf.js",
     "build": "sh ./docker_run.sh"
   },
   "pre-commit": [
     "lint:diff"
   ],
   "files": [
+    "src",
     "build/dist"
   ],
   "repository": {
@@ -71,9 +73,10 @@
     "sasslint-webpack-plugin": "^1.0.4",
     "shelljs": "0.7.6",
     "unminified-webpack-plugin": "^1.1.1",
-    "vizabi-ddfcsv-reader": "0.7.0",
+    "vizabi-ddfcsv-reader": "0.7.2",
     "vizabi-ws-reader": "0.1.2",
     "webpack": "2.2.1",
-    "webpack-dev-server": "2.4.1"
+    "webpack-dev-server": "2.4.1",
+    "css.escape": "^1.5.1"
   }
 }

@@ -346,10 +346,10 @@ const LCComponent = Component.extend({
     this.entityLabels.exit().remove();
     this.entityLabels = this.entityLabels.enter().append("g")
       .attr("class", "vzb-lc-entity")
-      .on("mouseover", (d) => {
+      .on("mouseover", d => {
         _this.model.marker.highlightMarker(d);
       })
-      .on("mouseout", (d) => {
+      .on("mouseout", d => {
         _this.model.marker.clearHighlighted();
       })
       .each(function(d, index) {
@@ -559,6 +559,9 @@ const LCComponent = Component.extend({
     //stage
     this.height = (parseInt(this.element.style("height"), 10) - this.margin.top - this.margin.bottom) || 0;
     this.width = (parseInt(this.element.style("width"), 10) - this.margin.left - this.margin.right) || 0;
+
+    if (this.height <= 0 || this.width <= 0) return utils.warn("Line chart updateSize() abort: vizabi container is too little or has display:none");
+
     this.linesContainerCrop
       .attr("width", this.width)
       .attr("height", Math.max(0, this.height));
@@ -566,8 +569,6 @@ const LCComponent = Component.extend({
     this.labelsContainerCrop
       .attr("width", this.width + this.margin.right)
       .attr("height", Math.max(0, this.height));
-
-    if (this.height <= 0 || this.width <= 0) return utils.warn("Line chart updateSize() abort: vizabi container is too little or has display:none");
 
     this.collisionResolver.height(this.height);
 

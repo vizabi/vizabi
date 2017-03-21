@@ -61,16 +61,22 @@ const ColorModel = Hook.extend({
           .getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType);
 
         if (concept) {
-          this.which = concept.concept;
-          this.use = "indicator";
-          this.scaleType = "linear";
+          const obj = {
+            which: concept.concept,
+            use: concept.use || "indicator",
+            scaleType: (concept.scales && concept.scales[0] ? concept.scales[0] : "linear")
+          };
+          this.set(obj);
         }
 
       }
       if (!concept) {
-        this.which = "_default";
-        this.use = "constant";
-        this.scaleType = "ordinal";
+        const obj = {
+          which: "_default",
+          use: "constant",
+          scaleType: "ordinal"
+        };
+        this.set(obj);
       }
     }
     if (this.scaleType == null) {
@@ -95,7 +101,9 @@ const ColorModel = Hook.extend({
     this._hasDefaultColor = false;
 
     this.on("hook_change", () => {
-      if (_this._readyOnce) return;
+      if (_this._readyOnce || _this._loadCall) return;
+
+      _this._setSyncModels();
 
       if (_this.palette && Object.keys(_this.palette._data).length !== 0) {
         const defaultPalette = _this.getDefaultPalette();

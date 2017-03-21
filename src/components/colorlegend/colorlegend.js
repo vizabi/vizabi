@@ -134,6 +134,8 @@ const ColorLegend = Component.extend({
 
 
   updateView() {
+    if (!this.element.selectAll) return utils.warn("colorlegend resize() aborted because element is not yet defined");
+
     const _this = this;
     const KEY = this.KEY;
 
@@ -219,8 +221,6 @@ const ColorLegend = Component.extend({
             left: marginLeft
           },
           showOuter: true,
-          //bump: this.activeProfile.maxRadius/2,
-          //viewportLength: gradientWidth,
           formatter,
           bump: marginLeft,
           cssFontSize: "11px",
@@ -275,7 +275,7 @@ const ColorLegend = Component.extend({
 
         colorOptions.exit().remove();
 
-        colorOptions.enter().append("div").attr("class", "vzb-cl-option")
+        colorOptions = colorOptions.enter().append("div").attr("class", "vzb-cl-option")
           .each(function() {
             d3.select(this).append("div").attr("class", "vzb-cl-color-sample")
               .on("click", _this._interact().clickToShow);
@@ -283,7 +283,8 @@ const ColorLegend = Component.extend({
           })
           .on("mouseover", _this._interact().mouseover)
           .on("mouseout", _this._interact().mouseout)
-          .on("click", _this._interact().clickToSelect);
+          .on("click", _this._interact().clickToSelect)
+          .merge(colorOptions);
 
         colorOptions.each(function(d, index) {
           d3.select(this).select(".vzb-cl-color-sample")
@@ -431,9 +432,7 @@ const ColorLegend = Component.extend({
   },
 
   resize() {
-    if (!this.colorModel.isDiscrete()) {
-      this.updateView();
-    }
+    this.updateView();
     this.colorPicker.resize(d3.select(".vzb-colorpicker-svg"));
   },
 
