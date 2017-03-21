@@ -12,18 +12,16 @@ const ZOOMEDMAX = "zoomedMax";
 
 const MinMaxInputs = Component.extend({
 
-    /**
-     * Initializes the Component.
-     * Executed once before any template is rendered.
-     * @param config The options passed to the component
-     * @param context The component's parent
-     */
+  /**
+   * Initializes the Component.
+   * Executed once before any template is rendered.
+   * @param config The options passed to the component
+   * @param context The component's parent
+   */
   init(config, context) {
 
     this.name = "gapminder-minmaxinputs";
     this.template = require("./minmaxinputs.html");
-
-    const _this = this;
 
     this.model_expects = [{
       name: "marker",
@@ -39,21 +37,24 @@ const MinMaxInputs = Component.extend({
     this.markerID = config.markerID;
     if (!config.markerID) utils.warn("minmaxinputs.js complains on 'markerID' property: " + config.markerID);
 
-    this.model_binds = {};
-    this.model_binds["translate:locale"] = function(evt) {
-      _this.updateView();
-    };
-    this.model_binds["change:marker." + this.markerID] = function(evt) {
-      _this.updateView();
-    };
-    this.model_binds["ready"] = function(evt) {
-      _this.updateView();
+    this.model_binds = {
+      "translate:locale": () => {
+        this.updateView();
+      },
+
+      [`change:marker.${this.markerID}`]: () => {
+        this.updateView();
+      },
+
+      ready: () => {
+        this.updateView();
+      }
     };
 
-        //contructor is the same as any component
+    // contructor is the same as any component
     this._super(config, context);
 
-        // SPECIFIC COMPONENT UI! NOT TOOLMODEL UI!
+    // SPECIFIC COMPONENT UI! NOT TOOLMODEL UI!
     this.ui = utils.extend({
       selectDomainMinMax: false,
       selectZoomedMinMax: false
@@ -98,7 +99,7 @@ const MinMaxInputs = Component.extend({
     });
 
     this.element.selectAll("input")
-      .on("keypress", e => {
+      .on("keypress", () => {
         if (d3.event.which == 13) document.activeElement.blur();
       });
   },
@@ -130,10 +131,14 @@ const MinMaxInputs = Component.extend({
       return d3.format(".2r")(n);
     };
 
-    this.el_domain_fieldMin.property("value", formatter(this.model.marker[this.markerID].getScale().domain()[0]));
-    this.el_domain_fieldMax.property("value", formatter(this.model.marker[this.markerID].getScale().domain()[1]));
-    this.el_zoomed_fieldMin.property("value", formatter(this.model.marker[this.markerID].zoomedMin));
-    this.el_zoomed_fieldMax.property("value", formatter(this.model.marker[this.markerID].zoomedMax));
+    const marker = this.model.marker[this.markerID];
+    const [domainMin, domainMax] = marker.getScale().domain();
+    const { zoomedMin, zoomedMax } = marker;
+
+    this.el_domain_fieldMin.property("value", formatter(domainMin));
+    this.el_domain_fieldMax.property("value", formatter(domainMax));
+    this.el_zoomed_fieldMin.property("value", formatter(zoomedMin === null ? domainMin : zoomedMin));
+    this.el_zoomed_fieldMax.property("value", formatter(zoomedMax === null ? domainMax : zoomedMax));
   },
 
   _setModel(what, value) {
