@@ -375,6 +375,12 @@
   input[type=range]::-moz-focus-outer {
     border: 0;
   }
+
+  button::-moz-focus-inner {
+    padding: 0;
+    border: 0
+  }
+
   //Data warning
   .vzb-data-warning {
     cursor: pointer;
