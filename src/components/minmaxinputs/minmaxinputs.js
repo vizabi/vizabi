@@ -131,10 +131,13 @@ const MinMaxInputs = Component.extend({
       return d3.format(".2r")(n);
     };
 
-    this.el_domain_fieldMin.property("value", formatter(this.model.marker[this.markerID].getScale().domain()[0]));
-    this.el_domain_fieldMax.property("value", formatter(this.model.marker[this.markerID].getScale().domain()[1]));
-    this.el_zoomed_fieldMin.property("value", formatter(this.model.marker[this.markerID].zoomedMin));
-    this.el_zoomed_fieldMax.property("value", formatter(this.model.marker[this.markerID].zoomedMax));
+    const marker = this.model.marker[this.markerID];
+    const [domainMin, domainMax] = marker.getScale().domain();
+    const { zoomedMin, zoomedMax } = marker;
+    this.el_domain_fieldMin.property("value", formatter(domainMin));
+    this.el_domain_fieldMax.property("value", formatter(domainMax));
+    this.el_zoomed_fieldMin.property("value", formatter(zoomedMin === null ? domainMin : zoomedMin));
+    this.el_zoomed_fieldMax.property("value", formatter(zoomedMax === null ? domainMax : zoomedMax));
   },
 
   _setModel(what, value) {
