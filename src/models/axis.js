@@ -108,7 +108,20 @@ const AxisModel = Hook.extend({
     // improvement would be to check concept type of each space-dimension if it's time.
     // Below code works as long we have one time model: time.
     return this._space.time.formatDate(dateObject);
-  }
+  },
+
+  _getZoomed(type) {
+    const zoomed = this[`zoomed${type}`];
+    return zoomed !== null ? zoomed : Math[type.toLowerCase()](...this.getScale().domain());
+  },
+
+  getZoomedMin() {
+    return this._getZoomed("Min");
+  },
+
+  getZoomedMax() {
+    return this._getZoomed("Max");
+  },
 
 });
 
