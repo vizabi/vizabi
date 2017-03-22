@@ -132,13 +132,14 @@ const MinMaxInputs = Component.extend({
     };
 
     const marker = this.model.marker[this.markerID];
-    const [domainMin, domainMax] = marker.getScale().domain();
-    const { zoomedMin, zoomedMax } = marker;
+    const domain = marker.getScale().domain();
+    const domainMin = Math.min(...domain);
+    const domainMax = Math.max(...domain);
 
     this.el_domain_fieldMin.property("value", formatter(domainMin));
     this.el_domain_fieldMax.property("value", formatter(domainMax));
-    this.el_zoomed_fieldMin.property("value", formatter(zoomedMin === null ? domainMin : zoomedMin));
-    this.el_zoomed_fieldMax.property("value", formatter(zoomedMax === null ? domainMax : zoomedMax));
+    this.el_zoomed_fieldMin.property("value", formatter(marker.getZoomedMin()));
+    this.el_zoomed_fieldMax.property("value", formatter(marker.getZoomedMax()));
   },
 
   _setModel(what, value) {
