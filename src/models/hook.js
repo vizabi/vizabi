@@ -592,7 +592,7 @@ const Hook = DataConnected.extend({
     const scaleTypeIsAllowed = scales.includes(scaleType);
     const genericLogIsAllowed = scales.includes("log") && scaleType === "genericLog";
 
-    if (!scaleTypeIsAllowed || !genericLogIsAllowed) {
+    if (!(scaleTypeIsAllowed || genericLogIsAllowed)) {
       const [firstAllowedScaleType] = scales;
       this.set({ scaleType: firstAllowedScaleType === "nominal" ? "ordinal" : firstAllowedScaleType }, null, false);
     }
