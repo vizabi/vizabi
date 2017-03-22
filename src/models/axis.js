@@ -112,7 +112,7 @@ const AxisModel = Hook.extend({
 
   _getZoomed(type) {
     const zoomed = this[`zoomed${type}`];
-    return zoomed !== null ? zoomed : Math[type.toLowerCase()](...this.getScale().domain());
+    return zoomed !== null ? zoomed : d3[type.toLowerCase()](this.getScale().domain());
   },
 
   getZoomedMin() {
