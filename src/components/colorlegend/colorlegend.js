@@ -1,6 +1,6 @@
 import * as utils from "base/utils";
 import Component from "base/component";
-import colorPicker from "helpers/d3.colorPicker";
+import ColorPicker from "helpers/d3.colorPicker";
 import axisSmart from "helpers/d3.axisWithLabelPicker";
 
 /*!
@@ -95,11 +95,12 @@ const ColorLegend = Component.extend({
     this.minimapSVG = this.minimapEl.append("svg");
     this.minimapG = this.minimapSVG.append("g");
 
-    this.colorPicker = colorPicker();
+    this.colorPicker = new ColorPicker(
+      utils.isArray(this.root.element) ?
+        this.root.element :
+        d3.select(this.root.element)
+    );
 
-    // append color picker to the tool DOM. need to check if element is already a d3 selection to not do it twice
-    this.root.element instanceof Array ? this.root.element : d3.select(this.root.element)
-      .call(this.colorPicker);
     this.colorPicker.translate(this.model.locale.getTFunction());
   },
 
