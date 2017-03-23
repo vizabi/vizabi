@@ -1,17 +1,9 @@
-//d3.svg.colorPicker
 
-
-let instance = null;
 
 export default function colorPicker() {
 
 
-  return (function getInstance() {
-    if (instance == null) {
-      instance = d3_color_picker();
-    }
-    return instance;
-  })();
+  return d3_color_picker();
 
   function d3_color_picker() {
     // tuning defaults
