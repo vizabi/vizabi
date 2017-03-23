@@ -1,5 +1,5 @@
 //d3.svg.colorPicker
-
+import * as utils from "base/utils";
 
 let instance = null;
 
@@ -84,6 +84,7 @@ export default function colorPicker() {
      */
     const arc = d3.arc();
     const pie = d3.pie().sort(null).value(d => 1);
+    let wrapper = null;
     let svg = null;
     const container = null;
     let colorPointer = null;
@@ -148,8 +149,8 @@ export default function colorPicker() {
     // that div should have !=0 width and height in its style
     function colorPicker(container) {
       colorPicker.container = container;
-      svg = container.select("." + css.COLOR_PICKER);
-      if (!svg.empty()) {
+      wrapper = container.select("." + css.COLOR_PICKER);
+      if (!wrapper.empty()) {
         return;
       }
       container.on("click", () => {
@@ -158,7 +159,7 @@ export default function colorPicker() {
       });
       colorData = _generateColorData();
 
-      svg = container.append("svg")
+      wrapper = container.append("div")
         .style("position", "absolute")
         .style("top", "0")
         .style("left", "0")
@@ -170,6 +171,9 @@ export default function colorPicker() {
         .attr("class", css.COLOR_PICKER + " vzb-dialog-shadow")
         .classed(css.INVISIBLE, !showColorPicker)
         .on("mouseout", d => { _cellHover(colorOld); });
+      svg = wrapper.append("svg")
+        .style("width", "100%")
+        .style("height", "100%");
 
       const width = parseInt(svg.style("width"), 10) || 0;
       const height = parseInt(svg.style("height"), 10) || 0;
@@ -299,12 +303,15 @@ export default function colorPicker() {
         .style("cursor", "pointer");
 
       svg.selectAll("text")
+        .style("pointer-events", "none")
         .style("fill", "#D9D9D9")
         .style("font-size", "0.7em")
         .style("text-transform", "uppercase");
 
       svg.selectAll("circle." + css.COLOR_BUTTON)
         .style("stroke-width", 2);
+      svg.selectAll("rect." + css.COLOR_SAMPLE)
+        .style("pointer-events", "none");
     };
 
     const _this = colorPicker;
@@ -318,6 +325,9 @@ export default function colorPicker() {
       sampleRect.style("fill", value);
       sampleText.text(value);
       callback(value);
+      if (utils.isTouchDevice()) {
+        _this.show(false);
+      }
     };
     const _cellUnHover = function() {
       colorPointer.classed(css.INVISIBLE, true);
@@ -334,7 +344,7 @@ export default function colorPicker() {
       if (!showColorPicker) {
         callback = function() {};
       }
-      svg.classed(css.INVISIBLE, !showColorPicker);
+      wrapper.classed(css.INVISIBLE, !showColorPicker);
     };
     // getters and setters
     colorPicker.nCellsH = function(arg) {
@@ -429,12 +439,12 @@ export default function colorPicker() {
       const screen = colorPicker.container.node().getBoundingClientRect();
       let xPos, yPos;
 
-      const width = parseInt(svg.style("width"), 10) || 0;
-      const height = parseInt(svg.style("height"), 10) || 0;
+      const width = parseInt(wrapper.style("width"), 10) || 0;
+      const height = parseInt(wrapper.style("height"), 10) || 0;
 
       if (!arg) {
-        xPos = screen.width - parseInt(svg.style("right")) - width;
-        yPos = parseInt(svg.style("top"));
+        xPos = screen.width - parseInt(wrapper.style("right")) - width;
+        yPos = parseInt(wrapper.style("top"));
       } else {
         xPos = arg[0] - screen.left;
         yPos = arg[1] - screen.top;
@@ -448,7 +458,7 @@ export default function colorPicker() {
       } else {
         styles.right = screen.width - xPos - width + "px";
       }
-      if (styles.right) { svg.style("right", styles.right); }
+      if (styles.right) { wrapper.style("right", styles.right); }
       if (screen.height * 0.8 <= height) {
         styles.top = (screen.height - height) * 0.5 + "px";
       } else if (yPos + height * 1.2 > screen.height) {
@@ -456,8 +466,8 @@ export default function colorPicker() {
       } else {
         styles.top = yPos + "px";
       }
-      if (styles.top) { svg.style("top", styles.top); }
-      svg.style("left", styles.left);
+      if (styles.top) { wrapper.style("top", styles.top); }
+      wrapper.style("left", styles.left);
       return colorPicker;
     };
     colorPicker.colorOld = function(arg) {
