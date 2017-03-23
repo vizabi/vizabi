@@ -80,22 +80,43 @@ export default class ColorPicker {
   }
 
   _generateColorData() {
+    const {
+      _minL,
+      _minH,
+      _nCellsL,
+      _nCellsH,
+      _firstAngleSat,
+      _satConstant,
+      _outerL_display,
+      _outerL_meaning,
+    } = this;
+
     const result = [];
     // loop across circles
-    for (let l = 0; l < this._nCellsL; l++) {
-      const lightness = this._minL + (1 - this._minL) / this._nCellsL * l;
+    for (let l = 0; l < _nCellsL; l++) {
+      const lightness = _minL + (1 - _minL) / _nCellsL * l;
       // new circle of cells
       result.push([]);
       // loop across angles
-      for (let h = 0; h <= this._nCellsH; h++) {
-        const hue = this._minH + (1 - this._minH) / this._nCellsH * h;
+      for (let h = 0; h <= _nCellsH; h++) {
+        const hue = _minH + (1 - _minH) / _nCellsH * h;
         // new cell
         result[l].push({
-          display: this.constructor.hsl2rgb(hue, h == 0 ? this._firstAngleSat : this._satConstant, l == 0 ? this._outerL_display : lightness),
-          meaning: this.constructor.hsl2rgb(hue, h == 0 ? this._firstAngleSat : this._satConstant, l == 0 ? this._outerL_meaning : lightness)
+          display: this.constructor.hsl2rgb(
+            hue,
+            h === 0 ? _firstAngleSat : _satConstant,
+            l === 0 ? _outerL_display : lightness
+          ),
+
+          meaning: this.constructor.hsl2rgb(
+            hue,
+            h === 0 ? _firstAngleSat : _satConstant,
+            l === 0 ? _outerL_meaning : lightness
+          )
         });
       }
     }
+
     return result;
   }
 
