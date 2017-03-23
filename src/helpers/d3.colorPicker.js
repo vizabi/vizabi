@@ -153,15 +153,13 @@ export default class ColorPicker {
       _minRadius,
       _maxRadius,
       _colorWhite,
-      _colorOld,
-      _colorDef,
     } = this;
 
     _svg.append("rect")
       .attr("width", _width)
       .attr("height", _maxHeight)
       .attr("class", css.COLOR_BUTTON + " " + css.COLOR_BACKGR)
-      .on("mouseover", () => this._cellHover(_colorOld));
+      .on("mouseover", () => this._cellHover(this._colorOld));
 
     const tx = _maxRadius + _width * _margin.left;
     const ty = _maxRadius + _height * _margin.top;
@@ -209,7 +207,7 @@ export default class ColorPicker {
       .attr("cy", _height * (1 - _margin.bottom * 1.5))
       .on("mouseover", function() {
         d3.select(this).style("stroke", "#444");
-        self._cellHover(_colorDef);
+        self._cellHover(self._colorDef);
       })
       .on("mouseout", function() {
         d3.select(this).style("stroke", "none");
