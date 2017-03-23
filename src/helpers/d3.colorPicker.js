@@ -1,3 +1,5 @@
+import { isTouchDevice } from "base/utils";
+
 const css = {
   INVISIBLE: "vzb-invisible",
   COLOR_POINTER: "vzb-colorpicker-pointer",
@@ -14,7 +16,7 @@ const css = {
 export default class ColorPicker {
   constructor(container) {
     this._container = container;
-    this._svg = this._container.select("." + css.COLOR_PICKER);
+    this._wrapper = this._container.select("." + css.COLOR_PICKER);
 
     this._init();
   }
@@ -121,7 +123,7 @@ export default class ColorPicker {
   }
 
   _initSvg() {
-    this._svg = this._container.append("svg")
+    this._wrapper = this._container.append("div")
       .style("position", "absolute")
       .style("top", "0")
       .style("left", "0")
@@ -133,6 +135,10 @@ export default class ColorPicker {
       .attr("class", css.COLOR_PICKER + " vzb-dialog-shadow")
       .classed(css.INVISIBLE, !this._showColorPicker)
       .on("mouseout", () => this._cellHover(this._colorOld));
+
+    this._svg = this._wrapper.append("svg")
+      .style("width", "100%")
+      .style("height", "100%");
   }
 
   _initCircles() {
@@ -147,15 +153,13 @@ export default class ColorPicker {
       _minRadius,
       _maxRadius,
       _colorWhite,
-      _colorOld,
-      _colorDef,
     } = this;
 
     _svg.append("rect")
       .attr("width", _width)
       .attr("height", _maxHeight)
       .attr("class", css.COLOR_BUTTON + " " + css.COLOR_BACKGR)
-      .on("mouseover", () => this._cellHover(_colorOld));
+      .on("mouseover", () => this._cellHover(this._colorOld));
 
     const tx = _maxRadius + _width * _margin.left;
     const ty = _maxRadius + _height * _margin.top;
@@ -203,7 +207,7 @@ export default class ColorPicker {
       .attr("cy", _height * (1 - _margin.bottom * 1.5))
       .on("mouseover", function() {
         d3.select(this).style("stroke", "#444");
-        this._cellHover(_colorDef);
+        self._cellHover(self._colorDef);
       })
       .on("mouseout", function() {
         d3.select(this).style("stroke", "none");
@@ -274,12 +278,16 @@ export default class ColorPicker {
       .style("cursor", "pointer");
 
     _svg.selectAll("text")
+      .style("pointer-events", "none")
       .style("fill", "#D9D9D9")
       .style("font-size", "0.7em")
       .style("text-transform", "uppercase");
 
     _svg.selectAll("circle." + css.COLOR_BUTTON)
       .style("stroke-width", 2);
+
+    _svg.selectAll("rect." + css.COLOR_SAMPLE)
+      .style("pointer-events", "none");
   }
 
   _cellHover(value, view) {
@@ -292,6 +300,7 @@ export default class ColorPicker {
     this._sampleRect.style("fill", value);
     this._sampleText.text(value);
     this._callback(value);
+    isTouchDevice() && this.show(false);
   }
 
   _cellUnhover() {
@@ -334,12 +343,12 @@ export default class ColorPicker {
     const screen = this._container.node().getBoundingClientRect();
     let xPos, yPos;
 
-    const width = this.constructor.px2num(this._svg.style("width"));
-    const height = this.constructor.px2num(this._svg.style("height"));
+    const width = this.constructor.px2num(this._wrapper.style("width"));
+    const height = this.constructor.px2num(this._wrapper.style("height"));
 
     if (!arg) {
-      xPos = screen.width - this.constructor.px2num(this._svg.style("right")) - width;
-      yPos = this.constructor.px2num(this._svg.style("top"));
+      xPos = screen.width - this.constructor.px2num(this._wrapper.style("right")) - width;
+      yPos = this.constructor.px2num(this._wrapper.style("top"));
     } else {
       xPos = arg[0] - screen.left;
       yPos = arg[1] - screen.top;
@@ -355,7 +364,7 @@ export default class ColorPicker {
     }
 
     if (styles.right) {
-      this._svg.style("right", styles.right);
+      this._wrapper.style("right", styles.right);
     }
 
     if (screen.height * 0.8 <= height) {
@@ -367,10 +376,10 @@ export default class ColorPicker {
     }
 
     if (styles.top) {
-      this._svg.style("top", styles.top);
+      this._wrapper.style("top", styles.top);
     }
 
-    this._svg.style("left", styles.left);
+    this._wrapper.style("left", styles.left);
 
     return this;
   }
@@ -390,7 +399,7 @@ export default class ColorPicker {
       this._callback = () => void 0;
     }
 
-    this._svg.classed(css.INVISIBLE, !this._showColorPicker);
+    this._wrapper.classed(css.INVISIBLE, !this._showColorPicker);
   }
 
   _getOrSet(property, value) {
