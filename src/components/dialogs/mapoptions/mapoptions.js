@@ -15,8 +15,11 @@ const mapEngines = [{
 
 const mapStyles = {
   "google": [{
-    title: "Land",
+    title: "Terrain",
     value: "terrain"
+  }, {
+    title: "Grayscale",
+    value: "terrain grayscale"
   }, {
     title: "Satellite",
     value: "satellite"
@@ -24,6 +27,9 @@ const mapStyles = {
   mapbox: [{
     title: "Land",
     value: "mapbox://styles/mapbox/streets-v9"
+  }, {
+    title: "Grayscale",
+    value: "mapbox://styles/mapbox/light-v9"
   }, {
     title: "Satellite",
     value: "mapbox://styles/mapbox/satellite-v9"
@@ -106,7 +112,7 @@ const Mapoptions = Dialog.extend({
 
   updateView() {
     const _this = this;
-
+    this.mapStyleFormEl.selectAll("label").remove();
     const mapStyleForm = this.mapStyleFormEl.selectAll("label")
       .data(mapStyles[this.model.ui.map.mapEngine] || []);
 
