@@ -15,10 +15,10 @@ const mapEngines = [{
 
 const mapStyles = {
   "google": [{
-    title: "Land",
+    title: "Terrain",
     value: "terrain"
   }, {
-    title: "Land Grauscale",
+    title: "Grayscale",
     value: "terrain grayscale"
   }, {
     title: "Satellite",
@@ -28,7 +28,7 @@ const mapStyles = {
     title: "Land",
     value: "mapbox://styles/mapbox/streets-v9"
   }, {
-    title: "Lang Grayscale",
+    title: "Grayscale",
     value: "mapbox://styles/mapbox/light-v9"
   }, {
     title: "Satellite",
