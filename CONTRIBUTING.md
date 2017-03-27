@@ -27,4 +27,4 @@ Vizabi tools are now moved to their own repos. To build the tools, clone them in
 
 Go to vizabi-preview, run `npm link ../vizabi-tool-name`, `npm start`   
 
-For convenience we have a script link.sh, that links all the tools. You can run it by calling `npm run link`
+For convenience we have a script link.sh, that links all the tools. You can edit it so that it only includes tools you've cloned and run it by calling `npm run link`
