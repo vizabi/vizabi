@@ -2,51 +2,29 @@
 
 You can contribute to the development of tools or the framework. Read the manual [how we collaborate](https://docs.google.com/document/d/1UOXjD0SKxN7vDQGC31ddVd-kaVXClSCzfGPvYjqQrFQ/edit?usp=sharing)
 
-## Cloning the repository
+## Running vizabi locally
 
-Vizabi depends on [Git](http://git-scm.com/) and [Npm](https://github.com/npm/npm).
+**Dependencies**
 
-**Installation Requirements For Mac Users**
+Vizabi depends on [Git](http://git-scm.com/) and [Npm](https://github.com/npm/npm).  
 
 1. Install git http://git-scm.com/download/mac
 2. Install nodejs https://nodejs.org/en/
 
-Alternative:
-Install [docker](https://docs.docker.com/engine/installation/)
+**Building the project**
 
+Clone this repo and [vizabi-preview](https://github.com/vizabi/vizabi-preview), so that they end up in the adjacent folders:
+Go to vizabi. Run `npm install` 
+Go to vizabi-preview. Run `npm install`, `npm link ../vizabi`, `npm start`
+Open browser on `http://localhost:8080/`
 
-**Clone this repo** and run the following commands in vizabi root folder:
+In order to only build the project for distribution/publishing, run `npm run build:prod` in vizabi
+The build output will be under ```build/``` folder.
 
-```shell
-npm install
-```
+**Adding tools**
 
-If you are still puzzled what it is or it just doesn't work, read a [more detailed instruction](https://github.com/Gapminder/vizabi/wiki/Quickstart-for-Windows)
-(it's for Windows, but you'll figure things out if you have a Mac or Linux)
+Vizabi tools are now moved to their own repos. To build the tools, clone them into respective folders next to vizabi and vizabi-preview, run `npm install` in each tool folder.
 
-## Build the project
+Go to vizabi-preview, run `npm link ../vizabi-tool-name`, `npm start` 
 
-In order to run the project in **development mode**, type the following:
-
-```shell
-npm start
-```
-
-Open browser on `http://localhost:8080/preview/`
-
-In order to only build the project, type the following (you'll rarely need this).
-Build will be created using Docker (Image of Ubuntu 14.04):
-
-```shell
-npm run build
-```
-
-Build without Docker can be done via:
-
-```shell
-npm run build:prod
-```
-
-In both cases find the build output under ```build/``` folder.
-
-**Note:** On Vizabi publishing build will be done using Docker (```npm run build```).
+For convenience we have a script link.sh, that links all the tools. You can run it by calling `npm run link`
