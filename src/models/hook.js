@@ -586,15 +586,25 @@ const Hook = DataConnected.extend({
   validate() {
     this._super();
 
-    const allowedScales = this.getConceptprops().scales;
-    if (allowedScales && allowedScales.length > 0 && !allowedScales.includes(this.scaleType)) {
-      this.set({ scaleType: allowedScales[0] === "nominal" ? "ordinal" : allowedScales[0] }, null, false);
+    // validate scale type: only makes sense if which is defined
+    if (this.which) {
+      const { scaleType } = this;
+      const { scales = [] } = this.getConceptprops();
+
+      const scaleTypeIsAllowed = scales.includes(scaleType);
+      const genericLogIsAllowed = scales.includes("log") && scaleType === "genericLog";
+
+      if (!(scaleTypeIsAllowed || genericLogIsAllowed) && scales.length > 0) {
+        const [firstAllowedScaleType] = scales;
+        this.set({ scaleType: firstAllowedScaleType === "nominal" ? "ordinal" : firstAllowedScaleType }, null, false);
+      }
     }
   },
 
   getEntity() {
-    return  this._space[this.spaceRef ? this.spaceRef : this._parent.getSpace()[0]];
-  }
+    return this._space[this.spaceRef || this._parent.getSpace()[0]];
+  },
+
 });
 
 export default Hook;

@@ -1,7 +1,6 @@
 import * as utils from "base/utils";
 import Component from "base/component";
 import Dialog from "components/dialogs/_dialog";
-
 import colorlegend from "components/colorlegend/colorlegend";
 import indicatorpicker from "components/indicatorpicker/indicatorpicker";
 
@@ -9,26 +8,26 @@ import indicatorpicker from "components/indicatorpicker/indicatorpicker";
  * VIZABI COLOR DIALOG
  */
 
-const Colors = Dialog.extend({
+const Mapcolors = Dialog.extend({
 
   /**
    * Initializes the dialog component
    * @param config component configuration
-   * @param context component context (parent)
+   * @param parent component context (parent)
    */
   init(config, parent) {
-    this.name = "colors";
+    this.name = "mapcolors";
 
     this.components = [{
       component: indicatorpicker,
       placeholder: ".vzb-caxis-selector",
       model: ["state.time", "state.entities", "state.marker", "locale"],
-      markerID: "color",
+      markerID: "color_map",
       showHoverValues: true
     }, {
       component: colorlegend,
       placeholder: ".vzb-clegend-container",
-      model: ["state.time", "state.entities", "state.marker", "state.marker.color", "locale"]
+      model: ["state.time", "state.entities", "state.marker", "state.marker.color_map", "locale"]
     }];
 
 
@@ -37,4 +36,4 @@ const Colors = Dialog.extend({
 
 });
 
-export default Colors;
+export default Mapcolors;

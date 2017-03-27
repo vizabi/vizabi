@@ -207,7 +207,7 @@ const SizeSlider = Component.extend({
       _this.propertyActiveProfile = _this.getPropertyActiveProfile();
       _this.propertyScale.range([_this.propertyActiveProfile.min, _this.propertyActiveProfile.max]);
 
-      let componentWidth = _this.element.node().offsetWidth || 0  - padding.left - padding.right;
+      let componentWidth = (_this.element.node().offsetWidth || 0) - padding.left - padding.right;
       if (componentWidth < 0) componentWidth = 0;
 
       _this.xScale.range([0, componentWidth]);

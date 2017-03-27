@@ -151,7 +151,14 @@ const Reader = Class.extend({
 
       const result = Object.keys(row).reduce((result, key) => {
         if (correct) {
-          const value = row[key];
+          const defaultValue = row[key];
+          const value = !utils.isString(defaultValue) ?
+            defaultValue :
+            defaultValue.trim()
+              .replace(",", ".")
+              .replace(new RegExp(defaultValue.includes(".") ? "0+$" : ""), "")
+              .replace(/\.$/, "");
+
           const parser = parsers[key];
           let resultValue;
 
@@ -159,7 +166,9 @@ const Reader = Class.extend({
             resultValue = parser(value);
           } else {
             const numeric = parseFloat(value);
-            resultValue = !isNaN(numeric) && isFinite(numeric) ? parseFloat(value.replace(",", ".")) : value;
+            resultValue = String(numeric) === value && !isNaN(numeric) && isFinite(numeric) ?
+              numeric :
+              value;
           }
 
           if (!resultValue && resultValue !== 0) {

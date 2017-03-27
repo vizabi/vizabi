@@ -909,7 +909,8 @@ const TreeMenu = Component.extend({
       this.clearPos();
       this.menuEntity.marqueeToggle(false);
     } else {
-      if (top || left) this.setPos();
+      this.setPos();
+      !utils.isTouchDevice() && this.focusSearch();
       this.resize();
       this.scrollToSelected();
     }
@@ -1321,13 +1322,22 @@ const TreeMenu = Component.extend({
     return this;
   },
 
+  focusSearch(focus = true) {
+    const searchInput = this.wrapper.select("." + css.search).node();
+
+    if (focus) {
+      searchInput.focus();
+    } else {
+      searchInput.blur();
+    }
+  },
+
   _setModel(what, value, hookID) {
 
     const mdl = this.model.marker[hookID];
     if (what == "which") mdl.setWhich(value);
     if (what == "scaleType") mdl.setScaleType(value);
   }
-
 
 });
 

@@ -1,6 +1,7 @@
 import requireAll from "helpers/requireAll";
 import * as utils from "base/utils";
 import Tool from "base/tool";
+import Class from "base/class";
 import Component from "base/component";
 import Model from "base/model";
 import Reader from "base/reader";
@@ -81,6 +82,34 @@ function d3_rebind(target, source, method) {
   };
 }
 
+d3.functor = v => typeof v === "function" ? v : () => v;
+d3.geo = {};
+d3.geo.graticule = d3.geoGraticule;
+d3.geo.circle = d3.geoCircle;
+d3.geo.area = d3.geoArea;
+d3.geo.bounds = d3.geoBounds;
+d3.geo.centroid = d3.geoCentroid;
+d3.geo.distance = d3.geoDistance;
+d3.geo.interpolate = d3.geoInterpolate;
+d3.geo.length = d3.geoLength;
+d3.geo.rotation = d3.geoRotation;
+d3.geo.stream = d3.geoStream;
+d3.geo.path = d3.geoPath;
+d3.geo.projection = d3.geoProjection;
+d3.geo.projectionMutator = d3.geoProjectionMutator;
+d3.geo.albers = d3.geoAlbers;
+d3.geo.albersUsa = d3.geoAlbersUsa;
+d3.geo.azimuthalEqualArea = d3.geoAzimuthalEqualArea;
+d3.geo.azimuthalEquidistant = d3.geoAzimuthalEquidistant;
+d3.geo.conicConformal = d3.geoConicConformal;
+d3.geo.conicEqualArea = d3.geoConicEqualArea;
+d3.geo.conicEquidistant = d3.geoConicEquidistant;
+d3.geo.equirectangular = d3.geoEquirectangular;
+d3.geo.gnomonic = d3.geoGnomonic;
+d3.geo.mercator = d3.geoMercator;
+d3.geo.orthographic = d3.geoOrthographic;
+d3.geo.stereographic = d3.geoStereographic;
+d3.geo.transverseMercator = d3.geoTransverseMercator;
 d3.scale = {};
 d3.scale.linear = d3.scaleLinear;
 d3.scale.sqrt = d3.scaleSqrt;
@@ -125,6 +154,7 @@ d3.selection.prototype.onLongTap = onLongTap;
 //d3.behavior.zoom = touchFixes.zoom;
 
 //makes all objects accessible
+Vzb.Class = Class;
 Vzb.Tool = Tool;
 Vzb.Component = Component;
 Vzb.Model = Model;

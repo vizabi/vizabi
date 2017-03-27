@@ -55,7 +55,16 @@ const EntitiesModel = DataConnected.extend({
    * @returns {Array} Array of unique values
    */
   getFilter() {
-    return this.skipFilter ? [] : this.show;
+    let show;
+    if (this.skipFilter) {
+      show = {};
+    } else {
+      show = utils.deepClone(this.show);
+      if (show[this.dim] && utils.isEmpty(show[this.dim])) {
+        delete show[this.dim];
+      }
+    }
+    return show;
   },
 
   /**

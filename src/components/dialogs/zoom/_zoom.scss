@@ -14,6 +14,8 @@
       &.vzb-sidebar {
         >.vzb-dialog-modal {
           >.vzb-dialog-title {
+            display: flex;
+            align-items: center;
             padding-top: 0;
             .vzb-dialog-zoom-buttonlist {
               @include rtl {

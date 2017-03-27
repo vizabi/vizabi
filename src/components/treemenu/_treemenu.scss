@@ -488,21 +488,20 @@
             }
           }
           > .vzb-treemenu-list-item-children {
-            padding-left: 16px;
             &::after {
               @include rtl {
-                right: calc(100% + 2px);
+                right: calc(100% - 14px);
               }
-              left: -14px;
+              left: 2px;
               border: 6px solid transparent;
               border-right: 6px solid $vzb-color-grey-dark;
             }
             .vzb-treemenu-list-item-label[children="true"] {
               @include rtl {
-                padding-left: 0;
+                padding-left: 16px;
                 padding-right: 0;
               }
-              padding-left: 18px;
+              padding-left: 34px;
             }
           }
         }

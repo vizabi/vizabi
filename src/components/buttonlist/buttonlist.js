@@ -63,6 +63,11 @@ const ButtonList = Component.extend({
         icon: "paintbrush",
         required: false
       },
+      "mapcolors": {
+        title: "buttons/mapcolors",
+        icon: "paintbrush",
+        required: false
+      },
       "size": {
         title: "buttons/size",
         icon: "circle",

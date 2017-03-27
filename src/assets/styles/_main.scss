@@ -3,6 +3,123 @@
 @import 'reset';
 @import 'chart';
 
+.vzb-placeholder {
+  background-color: $vzb-color-white;
+  position: relative;
+
+  &.vzb-loading-first,
+  &.vzb-loading-data {
+
+    &::before {
+      background-color: $vzb-loader-bgcolor;
+      bottom: 0;
+      content: ' ';
+      display: block;
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+      z-index: 9998;
+    }
+
+    &::after {
+      @extend %vzb-loader;
+    }
+  }
+
+  //the first load would hide the internal div, so no chart will be visible
+  &.vzb-loading-first {
+    > div {
+      visibility: hidden;
+    }
+  }
+  //all other loadings would not hide the div and be semi-transparent
+  &.vzb-loading-data {
+    &::before {
+      @include opacity(.8);
+    }
+  }
+
+  //loading anything
+  &.vzb-force-fullscreen {
+    @include position(fixed, 0 0 0 0);
+    display: block;
+    height: auto !important;
+    margin: 0;
+    width: auto !important;
+    z-index: 9997;
+  }
+
+
+  .vzb-icon {
+    height: 15px;
+    width: 15px;
+
+    path {
+      fill: $vzb-color-primary;
+    }
+  }
+
+  .fa {
+    direction: ltr;
+  }
+
+  &.vzb-error {
+    display: table;
+    height: 100%;
+
+    > div {
+      color: $vzb-color-grey;
+      display: table-cell;
+      line-height: 1.8;
+      text-align: center;
+      vertical-align: middle;
+      visibility: visible;
+    }
+
+    p {
+      font-size: .75em;
+      white-space: normal;
+      display: block;
+      margin: 0 10px;
+    }
+
+    .vzb-icon {
+      height: 25px;
+      width: 25px;
+    }
+
+    path {
+      fill: $vzb-color-accent-orange;
+    }
+
+    &::before,
+    &::after {
+      display: none;
+    }
+  }
+}
+
+.vzb-dialog-scrollable {
+  @include overflow-mobile;
+  &::-webkit-scrollbar {
+    width: 6px;
+    -webkit-appearance: none;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: lighten($vzb-color-primary, 30%);
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  &::-webkit-scrollbar-track {
+    width: 5px;
+    background: lighten($vzb-color-primary, 30%);
+    border-radius: 2px;
+    background-clip: content-box;
+    border: 2px solid transparent;
+  }
+}
+
 .vzb-tool {
   $height-title: 8px;
   $size-button-list: 60px;
@@ -258,6 +375,12 @@
   input[type=range]::-moz-focus-outer {
     border: 0;
   }
+
+  button::-moz-focus-inner {
+    padding: 0;
+    border: 0
+  }
+
   //Data warning
   .vzb-data-warning {
     cursor: pointer;
