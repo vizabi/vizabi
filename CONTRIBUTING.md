@@ -11,17 +11,17 @@ Vizabi depends on [Git](http://git-scm.com/) and [Npm](https://github.com/npm/np
 1. Install git http://git-scm.com/download/mac
 2. Install nodejs https://nodejs.org/en/
 
-**Building the project**
+**Building barebones Vizabi with preview page**
 
 Clone this repo and [vizabi-preview](https://github.com/vizabi/vizabi-preview), so that they end up in the adjacent folders:
-Go to vizabi. Run `npm install` 
+Go to vizabi. Run `npm install`
 Go to vizabi-preview. Run `npm install`, `npm link ../vizabi`, `npm start`
 Open browser on `http://localhost:8080/`
 
 In order to only build the project for distribution/publishing, run `npm run build:prod` in vizabi
 The build output will be under ```build/``` folder.
 
-**Adding tools**
+**Building Vizabi with tools and preview page**
 
 Vizabi tools are now moved to their own repos. To build the tools, clone them into respective folders next to vizabi and vizabi-preview, run `npm install` in each tool folder.
 
