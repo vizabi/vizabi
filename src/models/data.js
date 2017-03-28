@@ -675,44 +675,34 @@ const DataModel = Model.extend({
 
             // Now we run a 3-level loop: across frames, then across keys, then and across data columns (lex, gdp)
 
-          for (c = 0; c < cLength; c++) frame[columns[c]] = {};
+          const firstKeyObject = {};
+          for (c = 0; c < cLength; c++) firstKeyObject[c] = frame[columns[c]] = {};
 
-          const iterateKeys = function(firstKeyObject, lastKeyObject, firstKey, nested, filtered, index) {
+          const iterateKeys = function(lastKeyObject, nested, filtered, index) {
+            const _lastKeyObject = {};
             const keys = entitiesByKey[KEY[index]];
             for (let i = 0, j = keys.length; i < j; i++) {
-              if (index == 0) {
-                firstKey = keys[i];//root level
-              }
               if (index == lastIndex) {
                 for (c = 0; c < cLength; c++) {
-                  mapValue(columns[c], firstKey, keys[i], firstKeyObject, lastKeyObject, nested[keys[i]], filtered[keys[i]]);
+                  mapValue(columns[c], keys[i], lastKeyObject[c], nested[keys[i]], filtered[keys[i]]);
                 }
               } else {
-                if (index == 0) {
-                  lastKeyObject = firstKeyObject = {};
+                for (c = 0; c < cLength; c++) {
+                  _lastKeyObject[c] = lastKeyObject[c][keys[i]] = {};
                 }
-                const nextIndex = index + 1;
-                lastKeyObject[keys[i]] = {};
-                iterateKeys(firstKeyObject, lastKeyObject[keys[i]], firstKey, nested[keys[i]], filtered[keys[i]], nextIndex);
+                iterateKeys(_lastKeyObject, nested[keys[i]], filtered[keys[i]], index + 1);
               }
             }
           };
 
-          iterateKeys(null, null, null, nested, filtered, 0);
+          iterateKeys(firstKeyObject, nested, filtered, 0);
 
-          function mapValue(column, firstKey, lastKey, firstKeyObject, lastKeyObject, nested, filtered) {
+          function mapValue(column, lastKey, lastKeyObject, nested, filtered) {
 
                 //If there are some points in the array with valid numbers, then
                 //interpolate the missing point and save it to the “clean regular set”
             method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
             use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
-
-
-            if (firstKeyObject) {
-              frame[column][firstKey] = firstKeyObject[firstKey];
-            } else {
-              lastKeyObject = frame[column];
-            }
 
                 // Inside of this 3-level loop is the following:
             if (nested && nested[frameName] && (nested[frameName][0][column] || nested[frameName][0][column] === 0)) {
