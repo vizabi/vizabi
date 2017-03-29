@@ -382,9 +382,7 @@ const ColorLegend = Component.extend({
         _this.colorPicker
           .colorOld(palette[target])
           .colorDef(defaultPalette[target])
-          .callback((value, permanent) => {
-            _this.colorModel.setColor(value, target);
-          })
+          .callback((value, isClick) => _this.colorModel.setColor(value, target, isClick))
           .fitToScreen([d3.event.pageX, d3.event.pageY])
           .show(true);
       },

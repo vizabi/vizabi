@@ -253,8 +253,9 @@ export default class ColorPicker {
       .attr("class", css.COLOR_POINTER + " " + css.INVISIBLE);
 
     _svg.selectAll("." + css.COLOR_BUTTON)
-      .on("click", () => {
+      .on("click", d => {
         d3.event.stopPropagation();
+        this._changeColor(d.data.meaning, true);
         this.show(false);
       });
   }
@@ -299,8 +300,17 @@ export default class ColorPicker {
 
     this._sampleRect.style("fill", value);
     this._sampleText.text(value);
-    this._callback(value);
-    isTouchDevice() && this.show(false);
+
+    const isTouch = isTouchDevice();
+    if (isTouch) {
+      this.show(false);
+    }
+
+    this._changeColor(value, isTouch);
+  }
+
+  _changeColor(color, isClick = false) {
+    this._callback(color, isClick);
   }
 
   _cellUnhover() {
