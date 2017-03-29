@@ -337,7 +337,7 @@ export default function axisSmart(_orient) {
           .pivot(null)
           .repositionLabels(null);
       }
-      if (options.scaleType == "ordinal") return axis.tickValues(null);
+      if (options.scaleType == "ordinal") return axis;
 
       if (options.logBase == null) options.logBase = DEFAULT_LOGBASE;
       if (options.stops == null) options.stops = [1, 2, 5, 3, 7, 4, 6, 8, 9];
