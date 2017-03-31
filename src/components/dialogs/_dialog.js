@@ -10,6 +10,9 @@ const dialogTemplates = requireAll(require.context("components/dialogs/", true, 
  */
 
 const Dialog = Component.extend({
+
+  isDialog: true,
+
   /**
    * Initializes the dialog
    * @param {Object} config Initial config, with name and placeholder
