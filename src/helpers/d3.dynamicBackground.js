@@ -71,7 +71,8 @@ export default Class.extend({
   },
 
   setText(text, delay) {
-    setTimeout(() => {
+    this._timeout && clearTimeout(this._timeout);
+    this._timeout = setTimeout(() => {
       this.element.text(text);
       this._resizeText();
     }, delay);

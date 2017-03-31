@@ -529,7 +529,7 @@ const TimeSlider = Component.extend({
     return function() {
 
       if (_this.model.time.playing)
-        _this.model.time.pause();
+        _this.model.time.set("playing", false, null, false);
 
       _this._optionClasses();
       _this.element.classed(class_dragging, true);
