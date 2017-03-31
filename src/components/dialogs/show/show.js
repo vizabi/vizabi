@@ -7,7 +7,7 @@ import Dialog from "components/dialogs/_dialog";
  * Reusable show dialog
  */
 
-const Show = Dialog.extend({
+const Show = Dialog.extend("show", {
 
   init(config, parent) {
     this.name = "show";

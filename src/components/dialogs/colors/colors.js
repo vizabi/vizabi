@@ -9,7 +9,7 @@ import indicatorpicker from "components/indicatorpicker/indicatorpicker";
  * VIZABI COLOR DIALOG
  */
 
-const Colors = Dialog.extend({
+const Colors = Dialog.extend("colors", {
 
   /**
    * Initializes the dialog component

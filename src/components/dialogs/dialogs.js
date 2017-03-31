@@ -1,3 +1,4 @@
+import Dialog from "./_dialog";
 import * as utils from "base/utils";
 import Component from "base/component";
 
@@ -35,7 +36,7 @@ const Dialogs = Component.extend({
       type: "locale"
     }];
 
-    const components = Component.getCollection();
+    const components = Dialog.getCollection();
     this._available_dialogs = Object.keys(components)
       .reduce((result, key) => {
         const component = components[key];

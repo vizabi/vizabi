@@ -9,7 +9,7 @@ import simplecheckbox from "components/simplecheckbox/simplecheckbox";
  * Reusable side dialog
  */
 
-const Side = Dialog.extend({
+const Side = Dialog.extend("side", {
 
   init(config, parent) {
     this.name = "side";

@@ -8,7 +8,7 @@ import indicatorpicker from "components/indicatorpicker/indicatorpicker";
  * Size dialog
  */
 
-const Size = Dialog.extend({
+const Size = Dialog.extend("size", {
 
 /**
  * Initializes the dialog component
