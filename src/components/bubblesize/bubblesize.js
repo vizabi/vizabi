@@ -223,9 +223,9 @@ const BubbleSize = Component.extend({
     const containerWH = this.root.getVizWidthHeight();
     const minWH = utils.hypotenuse(containerWH.width, containerWH.height);
 
-    let min = profiles[this.getLayoutProfile()].minRadiusPx;
+    const min = profiles[this.getLayoutProfile()].minRadiusPx;
     let max = profiles[this.getLayoutProfile()].maxRadiusEm * minWH;
-    if (min > max) [min, max] = [max, min];
+    if (min > max) max = min;
 
     return { min, max };
   },
