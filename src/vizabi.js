@@ -45,12 +45,15 @@ utils.forEach(readers, (reader, name) => {
   Reader.register(name, reader);
 });
 
-const components = requireAll(require.context("./components", true, /\.js$/));
+
+const components = requireAll(require.context("./components", true, /\.js$/), 1);
 
 //register available components
 utils.forEach(components, (component, name) => {
   Component.register(name, component);
 });
+
+requireAll(require.context("./components/dialogs", true, /\.js$/));
 
 
 Vzb.helpers = requireAll(require.context("helpers", false, /\.js$/));
