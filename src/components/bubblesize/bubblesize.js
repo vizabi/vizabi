@@ -222,8 +222,12 @@ const BubbleSize = Component.extend({
   getMinMaxBubbleRadius() {
     const containerWH = this.root.getVizWidthHeight();
     const minWH = utils.hypotenuse(containerWH.width, containerWH.height);
-    return { min: profiles[this.getLayoutProfile()].minRadiusPx,
-      max: profiles[this.getLayoutProfile()].maxRadiusEm * minWH };
+
+    let min = profiles[this.getLayoutProfile()].minRadiusPx;
+    let max = profiles[this.getLayoutProfile()].maxRadiusEm * minWH;
+    if (min > max) [min, max] = [max, min];
+
+    return { min, max };
   },
 
   _moveBrush(s) {
