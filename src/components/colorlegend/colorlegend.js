@@ -157,7 +157,7 @@ const ColorLegend = Component.extend({
     const hideColorOptions = canShowMap
       || this.colorModel.which == "_default"
       || this.colorlegendMarker && this.colorlegendDim == this.KEY
-        && utils.comparePlainObjects(this.colorModel.getColorlegendEntities().getFilter(), this.model.entities.getFilter());
+        && colorlegendKeys.length > 10 && utils.comparePlainObjects(this.colorModel.getColorlegendEntities().getFilter(), this.model.entities.getFilter());
 
     colorOptions.classed("vzb-hidden", hideColorOptions);
 
