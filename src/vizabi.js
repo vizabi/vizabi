@@ -45,7 +45,7 @@ utils.forEach(readers, (reader, name) => {
   Reader.register(name, reader);
 });
 
-const components = requireAll(require.context("./components", true, /\.js$/), 1);
+const components = requireAll(require.context("./components", true, /\.js$/));
 
 //register available components
 utils.forEach(components, (component, name) => {
