@@ -134,6 +134,7 @@ const Tool = Component.extend({
     return utils.extend(
       this.model_binds,
       {
+        "readyOnce": () => this.setResizeHandler(),
         "change": function(evt, path) {
           if (_this._ready) {
             _this.model.validate();
