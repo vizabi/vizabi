@@ -152,7 +152,7 @@ const Reader = Class.extend({
       const result = Object.keys(row).reduce((result, key) => {
         if (correct) {
           const defaultValue = row[key];
-          const value = (!utils.isString(defaultValue) ? defaultValue : defaultValue.replace(",", ".")).trim();
+          const value = !utils.isString(defaultValue) ? defaultValue : defaultValue.replace(",", ".").trim();
 
           const parser = parsers[key];
           let resultValue;
