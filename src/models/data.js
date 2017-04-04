@@ -632,7 +632,7 @@ const DataModel = Model.extend({
       let key, c;
 
       const lastIndex = KEY.length - 1;
-      const createFiltered = function(parent, index) {
+      function createFiltered(parent, index) {
         const keys = entitiesByKey[KEY[index]];
         for (let i = 0, j = keys.length; i < j; i++) {
           parent[keys[i]] = {};
@@ -643,7 +643,7 @@ const DataModel = Model.extend({
             createFiltered(parent[keys[i]], nextIndex);
           }
         }
-      };
+      }
 
       createFiltered(filtered, 0);
 
