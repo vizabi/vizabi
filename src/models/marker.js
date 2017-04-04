@@ -280,7 +280,71 @@ const Marker = Model.extend({
     return !min && !max ? false : { min: resultMin, max: resultMax };
   },
 
+  getImportantHooks() {
+    const importantHooks = [];
+    utils.forEach(this._dataCube || this.getSubhooks(true), (hook, name) => {
+      if (hook._important) {
+        importantHooks.push(name);
+      }
+    });
+    return importantHooks;
+  },
 
+  getLabelHookNames() {
+    const _this = this;
+    const KEYS = utils.unique(this._getAllDimensions({ exceptType: "time" }));
+
+    return KEYS.map(key => {
+      const names = {};
+      utils.forEach(_this._dataCube || _this.getSubhooks(true), (hook, name) => {
+        if (hook._type === "label" && hook.getEntity().dim === key) {
+          names.label = name;
+        }
+        if (hook._type !== "label" && hook.getEntity().dim === key) {
+          names.key = name;
+        }
+        return !names.label || !names.key;
+      });
+      return names.label || names.key;
+    });
+  },
+
+  getKeysMD() {
+    const _this = this;
+    const resultKeys = [];
+
+    const KEYS = utils.unique(this._getAllDimensions({ exceptType: "time" }));
+    const TIME = this._getFirstDimension({ type: "time" });
+
+    utils.forEach(this._dataCube || this.getSubhooks(true), (hook, name) => {
+      if (hook.use === "constant" || hook.use === "property" || !hook._important) return;
+
+      const nested = hook.getNestedItems(KEYS.concat(TIME));
+
+      iterateKeys({}, nested, KEYS, 0, KEYS.length - 1);
+
+      function iterateKeys(keyObj, nested, keyNames, deep, deepMax) {
+        const keys = Object.keys(nested);
+        if (deep < deepMax) {
+          const _deep = deep + 1;
+          for (let i = 0, j = keys.length; i < j; i++) {
+            const _keyObj = {};
+            _keyObj[keyNames[deep]] = keys[i];
+            iterateKeys(_keyObj, nested[keys[i]], keyNames, _deep, deepMax);
+          }
+        } else {
+          resultKeys.push(...keys.map(key => {
+            const obj = Object.assign({}, keyObj);
+            obj[keyNames[deep]] = key;
+            return obj;
+          }));
+        }
+      }
+
+    });
+
+    return resultKeys;
+  },
   /**
    * Computes the intersection of keys in all hooks: a set of keys that have data in each hook
    * @returns array of keys that have data in all hooks of this._datacube

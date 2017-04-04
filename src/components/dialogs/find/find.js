@@ -124,12 +124,25 @@ const Find = Dialog.extend("find", {
 
     const _this = this;
     const KEY = this.KEY;
+    const KEYS = this.KEYS = utils.unique(this.model.state.marker._getAllDimensions({ exceptType: "time" }));
+    this.multiDim = KEYS.length > 1;
+
+    this.importantHooks = _this.model.state.marker.getImportantHooks();
+    const labelNames = _this.model.state.marker.getLabelHookNames();
 
     this.time = this.model.state.time.value;
     this.model.state.marker.getFrame(this.time, values => {
       if (!values) return;
 
-      const data = _this.model.state.marker.getKeys().map(d => {
+      const data = _this.multiDim ? _this.model.state.marker.getKeysMD()
+        .map(pointer => {
+          pointer.brokenData = false;
+          pointer.name = KEYS.map((key, index) => values[labelNames[index]][pointer[key]])
+            .join(", ");
+
+          return pointer;
+        })
+      : _this.model.state.marker.getKeys().map(d => {
         const pointer = {};
         pointer[KEY] = d[KEY];
         pointer.brokenData = false;
@@ -152,7 +165,7 @@ const Find = Dialog.extend("find", {
       _this.items.append("input")
         .attr("type", "checkbox")
         .attr("class", "vzb-find-item")
-        .attr("id", d => "-find-" + d[KEY] + "-" + _this._id)
+        .attr("id", (d, i) => "-find-" + i + "-" + _this._id)
         .on("change", d => {
           //clear highlight so it doesn't get in the way when selecting an entity
           if (!utils.isTouchDevice()) _this.model.state.marker.clearHighlighted();
@@ -162,7 +175,7 @@ const Find = Dialog.extend("find", {
         });
 
       _this.items.append("label")
-        .attr("for", d => "-find-" + d[KEY] + "-" + _this._id)
+        .attr("for", (d, i) => "-find-" + i + "-" + _this._id)
         .text(d => d.name)
         .on("mouseover", d => {
           if (!utils.isTouchDevice() && !d.brokenData) _this.model.state.marker.highlightMarker(d);
@@ -180,33 +193,67 @@ const Find = Dialog.extend("find", {
     });
   },
 
+  findKeyMD(d, values, keysArray) {
+    let value = values;
+    for (let i = 0, j = keysArray.length; i < j; i++) {
+      value = value[d[keysArray[i]]];
+      if (!value) break;
+    }
+    return value;
+  },
+
   redrawDataPoints(values) {
     const _this = this;
     const KEY = this.KEY;
+    const KEYS = this.KEYS;
 
-    _this.items
-      .each(function(d) {
-        const view = d3.select(this).select("label");
+    if (this.multiDim) {
+      _this.items
+        .each(function(d) {
+          const view = d3.select(this).select("label");
+          d.brokenData = false;
 
-        d.brokenData = false;
-        utils.forEach(values, (hook, name) => {
-          //TODO: remove the hack with hardcoded hook names (see discussion in #1389)
-          if (name !== "color" && name !== "size_label" && _this.model.state.marker[name].use !== "constant" && !hook[d[KEY]] && hook[d[KEY]] !== 0) {
-            d.brokenData = true;
-          }
+          utils.forEach(_this.importantHooks, name => {
+            const hook = values[name];
+            if (!hook) return;
+            const value = _this.findKeyMD(d, hook, KEYS) || false;
+            if (!value && value !== 0) {
+              d.brokenData = true;
+              return false;
+            }
+          });
+
+          view
+            .classed("vzb-find-item-brokendata", d.brokenData)
+            .attr("title", d.brokenData ? _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : "");
         });
+    } else {
+      _this.items
+        .each(function(d) {
+          const view = d3.select(this).select("label");
 
-        view
-          .classed("vzb-find-item-brokendata", d.brokenData)
-          .attr("title", d.brokenData ? _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : "");
-      });
+          d.brokenData = false;
+          utils.forEach(values, (hook, name) => {
+            //TODO: remove the hack with hardcoded hook names (see discussion in #1389)
+            if (name !== "color" && name !== "size_label" && _this.model.state.marker[name].use !== "constant" && !hook[d[KEY]] && hook[d[KEY]] !== 0) {
+              d.brokenData = true;
+            }
+          });
+
+          view
+            .classed("vzb-find-item-brokendata", d.brokenData)
+            .attr("title", d.brokenData ? _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : "");
+        });
+    }
   },
 
   selectDataPoints() {
     const KEY = this.KEY;
-    const selected = this.model.state.marker.getSelected(KEY);
+//    const selected = this.model.state.marker.getSelected(KEY);
+    const selected = this.model.state.marker;
     this.items.selectAll("input")
-      .property("checked", d => (selected.indexOf(d[KEY]) !== -1));
+//      .property("checked", d => (selected.indexOf(d[KEY]) !== -1));
+      .property("checked", d => selected.isSelected(d));
   },
 
   showHideSearch() {
