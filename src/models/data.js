@@ -678,7 +678,7 @@ const DataModel = Model.extend({
           const firstKeyObject = {};
           for (c = 0; c < cLength; c++) firstKeyObject[c] = frame[columns[c]] = {};
 
-          const iterateKeys = function(lastKeyObject, nested, filtered, index) {
+          function iterateKeys(lastKeyObject, nested, filtered, index) {
             const _lastKeyObject = {};
             const keys = entitiesByKey[KEY[index]];
             for (let i = 0, j = keys.length; i < j; i++) {
