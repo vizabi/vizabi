@@ -224,7 +224,7 @@ const Tool = Component.extend({
 
   getPersistentModel() {
     //try to find functions in properties of model.
-    const removeFunctions = function(model) {
+    function removeFunctions(model) {
       for (const childKey in model) {
         if (typeof model[childKey] === "function") {
           delete model[childKey];
@@ -233,7 +233,7 @@ const Tool = Component.extend({
         else if (typeof model[childKey] === "object")
           removeFunctions(model[childKey]);
       }
-    };
+    }
 
     const currentToolModel = this.model.getPlainObject(true); // true = get only persistent model values
     removeFunctions(currentToolModel);
