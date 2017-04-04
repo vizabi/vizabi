@@ -3,14 +3,6 @@ import Component from "base/component";
 
 import { close as iconClose } from "base/iconset";
 
-let hidden = true;
-let showNotes = false;
-let pin = false;
-let left = 0;
-let top = 0;
-let hookName = null;
-let newHookName = null;
-
 const DataNotes = Component.extend({
 
   init(config, context) {
@@ -39,6 +31,14 @@ const DataNotes = Component.extend({
     this._super(config, context);
 
     this.close = this.close.bind(this);
+
+    this.hidden = true;
+    this.showNotes = false;
+    this.pinned = false;
+    this.left = 0;
+    this.top = 0;
+    this.hookName = null;
+    this.newHookName = null;
   },
 
   ready() {
@@ -80,20 +80,20 @@ const DataNotes = Component.extend({
   },
 
   close() {
-    if (!hidden) {
+    if (!this.hidden) {
       this.pin(false).hide();
     }
   },
 
   setHook(_hookName) {
     if (!this._readyOnce) return this;
-    if (pin) {
-      newHookName = _hookName;
+    if (this.pinned) {
+      this.newHookName = _hookName;
       return this;
     }
-    if (hookName) this.model.marker[hookName].off("change:which", this.close);
-    hookName = newHookName = _hookName;
-    this.model.marker[hookName].on("change:which", this.close);
+    if (this.hookName) this.model.marker[this.hookName].off("change:which", this.close);
+    this.hookName = this.newHookName = _hookName;
+    this.model.marker[this.hookName].on("change:which", this.close);
 
     this.setValues();
 
@@ -101,8 +101,8 @@ const DataNotes = Component.extend({
   },
 
   setValues() {
-    if (!hookName) return;
-    const hook = this.model.marker[hookName];
+    if (!this.hookName) return;
+    const hook = this.model.marker[this.hookName];
     const concept = hook.getConceptprops();
 
     this.element.select(".vzb-data-notes-body")
@@ -117,20 +117,20 @@ const DataNotes = Component.extend({
       this.element.select(".vzb-data-notes-link").html("<span>" + (sourceName ? (_source + ":") : "") +
         '<a href="' + concept.sourceLink + '" target="_blank">' + (sourceName ? sourceName : _source) + "</a></span>");
     }
-    showNotes = concept.sourceLink || concept.description;
+    this.showNotes = concept.sourceLink || concept.description;
   },
 
   setPos(_left, _top, force) {
-    left = _left;
-    top = _top;
-    if (pin && !force) return this;
+    this.left = _left;
+    this.top = _top;
+    if (this.pinned && !force) return this;
     const parentHeight = this.parent.element.offsetHeight;
     const width = this.element.node().offsetWidth;
     const height = this.element.node().offsetHeight;
     let leftMove;
     let topMove;
-    let leftPos = left - width;
-    let topPos = top;
+    let leftPos = this.left - width;
+    let topPos = this.top;
     if (leftPos < 10) {
       leftPos = 10;
       leftMove = true;
@@ -141,7 +141,7 @@ const DataNotes = Component.extend({
     }
 
     if (leftMove && topMove) {
-      topPos = top - height - 30;
+      topPos = this.top - height - 30;
     }
 
     this.element.style("top", topPos + "px");
@@ -151,24 +151,24 @@ const DataNotes = Component.extend({
   },
 
   pin(arg) {
-    if (hidden) return this;
-    pin = !pin;
-    if (arg != null) pin = arg;
-    this.element.select(".vzb-data-notes-close").classed("vzb-hidden", !pin);
-    this.element.classed("vzb-data-notes-pinned", pin);
-    if (hookName != newHookName) this.setHook(newHookName);
+    if (this.hidden) return this;
+    this.pinned = !this.pinned;
+    if (arg != null) this.pinned = arg;
+    this.element.select(".vzb-data-notes-close").classed("vzb-hidden", !this.pinned);
+    this.element.classed("vzb-data-notes-pinned", this.pinned);
+    if (this.hookName != this.newHookName) this.setHook(this.newHookName);
     this.element.select(".vzb-data-notes-body").node().scrollTop = 0;
 
-    return showNotes ?
-      this.setPos(left, top, true) :
+    return this.showNotes ?
+      this.setPos(this.left, this.top, true) :
       this.hide();
   },
 
   toggle(arg) {
-    if (pin || !hookName) return this;
-    if (arg == null) arg = !hidden;
-    hidden = arg;
-    this.element.classed("vzb-hidden", hidden || !showNotes);
+    if (this.pinned || !this.hookName) return this;
+    if (arg == null) arg = !this.hidden;
+    this.hidden = arg;
+    this.element.classed("vzb-hidden", this.hidden || !this.showNotes);
     return this;
   },
 

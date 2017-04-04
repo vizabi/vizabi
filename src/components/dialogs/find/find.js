@@ -9,7 +9,7 @@ import simpleslider from "components/simpleslider/simpleslider";
  * Reusable find dialog
  */
 
-const Find = Dialog.extend({
+const Find = Dialog.extend("find", {
 
   init(config, parent) {
     this.name = "find";

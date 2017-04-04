@@ -7,7 +7,7 @@ import simpleslider from "components/simpleslider/simpleslider";
  * Size dialog
  */
 
-const Opacity = Dialog.extend({
+const Opacity = Dialog.extend("opacity", {
 
 /**
  * Initializes the dialog component

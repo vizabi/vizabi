@@ -9,7 +9,7 @@ import minmaxinputs from "components/minmaxinputs/minmaxinputs";
  * Axes dialog
  */
 
-const Axes = Dialog.extend({
+const Axes = Dialog.extend("axes", {
 
   /**
    * Initializes the dialog component

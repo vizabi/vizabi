@@ -156,7 +156,7 @@ const Reader = Class.extend({
             defaultValue :
             defaultValue.trim()
               .replace(",", ".")
-              .replace(new RegExp(defaultValue.includes(".") ? "0+$" : ""), "")
+              .replace(new RegExp(defaultValue.replace(",", ".").includes(".") ? "0+$" : ""), "")
               .replace(/\.$/, "");
 
           const parser = parsers[key];

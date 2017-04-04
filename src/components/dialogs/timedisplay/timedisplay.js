@@ -4,7 +4,7 @@ import DynamicBackground from "helpers/d3.dynamicBackground";
 /*
  * Timedisplay dialog
  */
-const TimeDisplay = Dialog.extend({
+const TimeDisplay = Dialog.extend("timedisplay", {
 
   init(config, parent) {
     this.name = "timedisplay";

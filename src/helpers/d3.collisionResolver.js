@@ -60,7 +60,7 @@ export default function collisionResolver() {
         for (let j = index; j > 0; j--) {
           // if overlap found shift the overlapped label downwards
           const delta = result[keys[j - 1]] - result[keys[j]] - labelHeight[keys[j]];
-          if (delta < 0)
+          if (delta < 0 && filter(data[keys[j]], time))
             result[keys[j - 1]] -= delta;
           // if the chain reaction stopped because found some gap in the middle, then quit
           if (delta > 0)
@@ -77,7 +77,7 @@ export default function collisionResolver() {
         for (let j = 0; j < keys.length - 1; j++) {
           // if overlap found shift the overlapped label upwards
           delta = result[keys[j]] - result[keys[j + 1]] - labelHeight[keys[j + 1]];
-          if (delta < 0)
+          if (delta < 0 && filter(data[keys[j]], time))
             result[keys[j + 1]] += delta;
           // if the chain reaction stopped because found some gap in the middle, then quit
           if (delta > 0)
@@ -122,6 +122,20 @@ export default function collisionResolver() {
       if (!arguments.length)
         return value;
       value = arg;
+      return resolver;
+    };
+    let time = null;
+    resolver.time = function(arg) {
+      if (!arguments.length)
+        return time;
+      time = arg;
+      return resolver;
+    };
+    let filter = function() { return true; };
+    resolver.filter = function(arg) {
+      if (!arguments.length)
+        return filter;
+      filter = arg;
       return resolver;
     };
     let fixed = null;

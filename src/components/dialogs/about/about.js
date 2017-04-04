@@ -6,7 +6,7 @@ import globals from "base/globals";
  * Size dialog
  */
 
-const About = Dialog.extend({
+const About = Dialog.extend("about", {
 
 /**
  * Initializes the dialog component

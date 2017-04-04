@@ -93,7 +93,7 @@ const AxisModel = Hook.extend({
       }
 
       scaleType = (d3.min(domain) <= 0 && d3.max(domain) >= 0 && scaleType === "log") ? "genericLog" : scaleType;
-      this.scale = d3.scale[scaleType || "linear"]().domain(domain);
+      this.scale = d3.scale[(scaleType === "ordinal" ? "point" : scaleType) || "linear"]().domain(domain);
     }
 
     this.scaleType = scaleType;

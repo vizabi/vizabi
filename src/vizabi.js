@@ -45,12 +45,15 @@ utils.forEach(readers, (reader, name) => {
   Reader.register(name, reader);
 });
 
+
 const components = requireAll(require.context("./components", true, /\.js$/), 1);
 
 //register available components
 utils.forEach(components, (component, name) => {
   Component.register(name, component);
 });
+
+requireAll(require.context("./components/dialogs", true, /\.js$/));
 
 
 Vzb.helpers = requireAll(require.context("helpers", false, /\.js$/));
@@ -120,6 +123,8 @@ d3.scale.threshold = d3.scaleThreshold;
 d3.scale.quantile = d3.scaleQuantile;
 d3.scale.identity = d3.scaleIdentity;
 d3.scale.ordinal = d3.scaleOrdinal;
+d3.scale.point = d3.scalePoint;
+d3.scale.band = d3.scaleBand;
 d3.time = {};
 d3.time.scale = d3.scaleTime;
 d3.time.scale.utc = d3.scaleUtc;
