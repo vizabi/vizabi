@@ -1131,7 +1131,7 @@ const TreeMenu = Component.extend({
 
     this._maxChildCount = 0;
 
-    const createSubmeny = function(select, data, toplevel) {
+    function createSubmeny(select, data, toplevel) {
       if (!data.children) return;
       _this._maxChildCount = Math.max(_this._maxChildCount, data.children.length);
       const _select = toplevel ? select : select.append("div")
@@ -1240,7 +1240,7 @@ const TreeMenu = Component.extend({
           }
           createSubmeny(view, d);
         });
-    };
+    }
 
     if (this.OPTIONS.IS_MOBILE) {
       this.OPTIONS.MENU_DIRECTION = MENU_VERTICAL;
