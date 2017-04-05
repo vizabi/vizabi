@@ -25,6 +25,7 @@ const Find = Dialog.extend("find", {
 
     this.model_binds = {
       "change:state.marker.select": function(evt) {
+        _this.items.order();
         _this.selectDataPoints();
         _this.showHideDeselect();
       },
@@ -193,15 +194,6 @@ const Find = Dialog.extend("find", {
     });
   },
 
-  findKeyMD(d, values, keysArray) {
-    let value = values;
-    for (let i = 0, j = keysArray.length; i < j; i++) {
-      value = value[d[keysArray[i]]];
-      if (!value) break;
-    }
-    return value;
-  },
-
   redrawDataPoints(values) {
     const _this = this;
     const KEY = this.KEY;
@@ -216,7 +208,7 @@ const Find = Dialog.extend("find", {
           utils.forEach(_this.importantHooks, name => {
             const hook = values[name];
             if (!hook) return;
-            const value = _this.findKeyMD(d, hook, KEYS) || false;
+            const value = utils.getValueMD(d, hook, KEYS) || false;
             if (!value && value !== 0) {
               d.brokenData = true;
               return false;
@@ -248,12 +240,23 @@ const Find = Dialog.extend("find", {
   },
 
   selectDataPoints() {
+    const _this = this;
     const KEY = this.KEY;
 //    const selected = this.model.state.marker.getSelected(KEY);
     const selected = this.model.state.marker;
     this.items.selectAll("input")
 //      .property("checked", d => (selected.indexOf(d[KEY]) !== -1));
-      .property("checked", d => selected.isSelected(d));
+      .property("checked", function(d) {
+        const isSelected = selected.isSelected(d);
+        d3.select(this.parentNode).classed("vzb-checked", isSelected);
+        return isSelected;
+      });
+    const lastCheckedNode = this.list.selectAll(".vzb-checked")
+      .classed("vzb-separator", false)
+      .lower()
+      .nodes()[0];
+    d3.select(lastCheckedNode).classed("vzb-separator", true);
+    this.contentEl.node().scrollTop = 0;
   },
 
   showHideSearch() {
