@@ -1542,3 +1542,5 @@ export function getValueMD(d, values, keysArray) {
   }
   return value;
 }
+
+export const isFunction = value => typeof value === "function";

@@ -1333,10 +1333,10 @@ const TreeMenu = Component.extend({
   },
 
   _setModel(what, value, hookID) {
-
     const mdl = this.model.marker[hookID];
+
     if (what == "which") mdl.setWhich(value);
-    if (what == "scaleType") mdl.setScaleType(value);
+    if (what == "scaleType") mdl.setScaletype(value);
   }
 
 });
