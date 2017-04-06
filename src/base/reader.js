@@ -161,8 +161,9 @@ const Reader = Class.extend({
             resultValue = parser(value);
           } else {
             const numeric = parseFloat(value);
-            const dotRegex = value.includes(".") ? /0+$/ : "";
-            const validatedValue = value.replace(dotRegex, "").replace(/\.+$/, "");
+            const strValue = String(value);
+            const dotRegex = strValue.includes(".") ? /0+$/ : "";
+            const validatedValue = strValue.replace(dotRegex, "").replace(/\.+$/, "");
             resultValue = String(numeric) === validatedValue && !isNaN(numeric) && isFinite(numeric) ? numeric : value;
           }
 
