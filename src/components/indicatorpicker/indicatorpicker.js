@@ -74,7 +74,10 @@ const IndPicker = Component.extend({
             const _highlightedEntity = _this.model.marker.getHighlighted(dimension);
             if (_highlightedEntity.length) {
 
-              let value = frame[_this.markerID][_highlightedEntity[0]];
+              let value = _this.multiDim && !mdl.isDiscrete() ? 
+                utils.getValueMD(_highlightedEntity[0], frame[_this.markerID], _this.KEYS)
+                :
+                frame[_this.markerID][_highlightedEntity[0]];
 
                             // resolve strings via the color legend model
               if (value && mdl._type === "color" && mdl.isDiscrete()) {
@@ -107,9 +110,10 @@ const IndPicker = Component.extend({
   },
 
   ready() {
+    this.KEYS = utils.unique(this.model.marker._getAllDimensions({ exceptType: "time" }));
+    this.multiDim = this.KEYS.length > 1;
     this.updateView();
   },
-
 
   readyOnce() {
     const _this = this;
