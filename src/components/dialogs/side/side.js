@@ -80,7 +80,7 @@ const Side = Dialog.extend("side", {
       const sideKeys = this.model.state.marker_allpossibleside.getKeys().map(d => d[key]);
       const filterKeys = sideKeys.sort(d3.ascending).slice(0, 2);
       if (filterKeys.length > 0) {
-        const show = {};
+        const show = Object.assign({}, this.model.state.entities_side.show);
         show[this.KEY] = { "$in": filterKeys };
         this.model.state.entities_side.set("show", show);
       }
