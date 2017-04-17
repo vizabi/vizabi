@@ -59,7 +59,9 @@ const CSVTimeInColumnsReader = CSVReader.extend({
           }, [])
         };
       });
-  }
+  },
+
+  versionInfo: { version: __VERSION, build: __BUILD }
 
 });
 

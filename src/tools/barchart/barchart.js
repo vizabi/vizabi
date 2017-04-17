@@ -74,7 +74,9 @@ const BarChart = Tool.extend("BarChart", {
         "popup": ["axes", "colors"]
       },
     }
-  }
+  },
+
+  versionInfo: { version: __VERSION, build: __BUILD }
 });
 
 export default BarChart;
