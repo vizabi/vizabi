@@ -127,6 +127,10 @@ module.exports = output => {
     new webpack.DefinePlugin({
       __VERSION: JSON.stringify(pkg.version),
       __BUILD: +timestamp
+    }),
+    new webpack.BannerPlugin({
+      banner: "((function(){})({version: '" + JSON.stringify(pkg.version) + "'}));",
+      raw: true
     })
   ];
 
