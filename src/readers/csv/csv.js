@@ -146,7 +146,9 @@ const CSVReader = Reader.extend({
     const re = new RegExp(char, "g");
     const matches = text.match(re);
     return matches ? matches.length : 0;
-  }
+  },
+
+  versionInfo: { version: __VERSION, build: __BUILD }
 
 });
 

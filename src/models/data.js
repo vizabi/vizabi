@@ -693,7 +693,7 @@ const DataModel = Model.extend({
                 iterateKeys(_lastKeyObject, nested[keys[i]], filtered[keys[i]], index + 1);
               }
             }
-          };
+          }
 
           iterateKeys(firstKeyObject, nested, filtered, 0);
 
