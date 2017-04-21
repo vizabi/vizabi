@@ -642,6 +642,13 @@ const Model = EventSource.extend({
       }
     }
     return null;
+  },
+
+  /**
+   * is this entities type model ?
+   */
+  isEntities() {
+    return false;
   }
 
 });

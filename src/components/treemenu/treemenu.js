@@ -532,6 +532,27 @@ const TreeMenu = Component.extend({
   markerID(input) {
     if (!arguments.length) return this._markerID;
     this._markerID = input;
+    this.targetModel(this.model.marker[this._markerID]);
+    return this;
+  },
+  targetModel(input) {
+    if (!arguments.length) return this._targetModel;
+    if (this._targetModel) {
+      this._targetModel.off("change", this.change);
+    }
+    this._targetModel = input;
+    this._targetModel.on("change", this.change);
+    if (this._targetModel.isHook()) {
+      this._targetProp = "which";
+    }
+    if (this._targetModel.isEntities()) {
+      this._targetProp = "dim";
+    }
+    return this;
+  },
+  targetProp(input) {
+    if (!arguments.length) return this._targetProp;
+    this._targetProp = input;
     return this;
   },
   alignX(input) {
@@ -577,12 +598,6 @@ const TreeMenu = Component.extend({
     this.context = context;
     // object for manipulation with menu representation level
     this.menuEntity = null;
-    this.model_binds = {
-      "change:marker": function(evt, path) {
-        if (path.indexOf(_this._markerID + ".which") == -1 && path.indexOf(_this._markerID + ".scaleType") == -1) return;
-        _this.updateView();
-      }
-    };
 
     //contructor is the same as any component
     this._super(config, context);
@@ -597,6 +612,12 @@ const TreeMenu = Component.extend({
     //options
     this.OPTIONS = utils.deepClone(OPTIONS);
 
+    this.change = this.change.bind(this);
+  },
+
+  change(evt, path) {
+    if (path.indexOf("." + this._targetProp) == -1 && (!this._targetModel.isHook() || path.indexOf(".scaleType") == -1)) return;
+    this.updateView();
   },
 
   ready() {
@@ -714,7 +735,7 @@ const TreeMenu = Component.extend({
       }
     });
 
-    utils.forEach(this.model.marker._root._data, dataSource => {
+    utils.forEach(this.model.marker_tags._root._data, dataSource => {
       if (dataSource._type !== "data") return;
 
       const indicatorsDB = dataSource.getConceptprops();
@@ -932,6 +953,7 @@ const TreeMenu = Component.extend({
   },
 
   scrollToSelected() {
+    if (!this.selectedNode) return;
     const _this = this;
     const scrollToItem = function(listNode, itemNode) {
       listNode.scrollTop = 0;
@@ -1024,7 +1046,7 @@ const TreeMenu = Component.extend({
 
         let translate = data[i].name;
         if (!translate && _this.translator) {
-          const t1 = _this.translator("indicator" + "/" + data[i][_this.OPTIONS.SEARCH_PROPERTY] + "/" + _this.model.marker[_this._markerID]._type);
+          const t1 = _this.translator("indicator" + "/" + data[i][_this.OPTIONS.SEARCH_PROPERTY] + "/" + _this._targetModel._type);
           translate =  t1 || _this.translator("indicator/" + data[i][_this.OPTIONS.SEARCH_PROPERTY]);
         }
         return translate && translate.toLowerCase().indexOf(value.toLowerCase()) >= 0;
@@ -1069,7 +1091,7 @@ const TreeMenu = Component.extend({
   },
 
   _selectIndicator(value) {
-    this._callback("which", value, this._markerID);
+    this._callback(this._targetProp, value);
     this.toggle();
   },
 
@@ -1078,43 +1100,50 @@ const TreeMenu = Component.extend({
   redraw(data, useDataFiltered) {
     const _this = this;
 
-    const markerID = this._markerID;
+    const isHook = _this._targetModel.isHook();
 
     let dataFiltered, allowedIDs;
 
     const indicatorsDB = {};
-    utils.forEach(this.model.marker._root._data, m => {
+    utils.forEach(this.model.marker_tags._root._data, m => {
       if (m._type === "data") utils.deepExtend(indicatorsDB, m.getConceptprops());
     });
 
-    const hookType = _this.model.marker[markerID]._type;
+    const targetModelType = _this._targetModel._type;
 
     if (useDataFiltered) {
       dataFiltered = data;
     } else {
       if (data == null) data = this._tree;
 
-      allowedIDs = utils.keys(indicatorsDB).filter(f => {
-        //check if indicator is denied to show with allow->names->!indicator
-        if (_this.model.marker[markerID].allow && _this.model.marker[markerID].allow.names) {
-          if (_this.model.marker[markerID].allow.names.indexOf("!" + f) != -1) return false;
-          if (_this.model.marker[markerID].allow.names.indexOf(f) != -1) return true;
-        }
-        //keep indicator if nothing is specified in tool properties
-        if (!_this.model.marker[markerID].allow || !_this.model.marker[markerID].allow.scales) return true;
-        //keep indicator if any scale is allowed in tool properties
-        if (_this.model.marker[markerID].allow.scales[0] == "*") return true;
+      if (isHook) {
+        allowedIDs = utils.keys(indicatorsDB).filter(f => {
+          //check if indicator is denied to show with allow->names->!indicator
+          if (_this._targetModel.allow && _this._targetModel.allow.names) {
+            if (_this._targetModel.allow.names.indexOf("!" + f) != -1) return false;
+            if (_this._targetModel.allow.names.indexOf(f) != -1) return true;
+          }
+          //keep indicator if nothing is specified in tool properties
+          if (!_this._targetModel.allow || !_this._targetModel.allow.scales) return true;
+          //keep indicator if any scale is allowed in tool properties
+          if (_this._targetModel.allow.scales[0] == "*") return true;
 
-        // if no scales defined, all are allowed
-        if (!indicatorsDB[f].scales) return true;
+          // if no scales defined, all are allowed
+          if (!indicatorsDB[f].scales) return true;
 
-        //check if there is an intersection between the allowed tool scale types and the ones of indicator
-        for (let i = indicatorsDB[f].scales.length - 1; i >= 0; i--) {
-          if (_this.model.marker[markerID].allow.scales.indexOf(indicatorsDB[f].scales[i]) > -1) return true;
-        }
+          //check if there is an intersection between the allowed tool scale types and the ones of indicator
+          for (let i = indicatorsDB[f].scales.length - 1; i >= 0; i--) {
+            if (_this._targetModel.allow.scales.indexOf(indicatorsDB[f].scales[i]) > -1) return true;
+          }
 
-        return false;
-      });
+          return false;
+        });
+      } else if (_this._targetModel.isEntities()) {
+        const entityTypes = ["entity_domain", "entity_set"];
+        allowedIDs = utils.keys(indicatorsDB).filter(f => entityTypes.indexOf(indicatorsDB[f].concept_type) > -1);
+      } else {
+        allowedIDs = utils.keys(indicatorsDB);
+      }
 
       dataFiltered = utils.pruneTree(data, f => allowedIDs.indexOf(f.id) > -1);
 
@@ -1124,7 +1153,9 @@ const TreeMenu = Component.extend({
     this.wrapper.select("ul").remove();
 
     this.element.select("." + css.title).select("span")
-      .text(this.translator("buttons/" + markerID));
+      .text(this.translator(_this._targetModel.isEntities() ? _this._targetModel._root._name + "/" + _this._targetModel._name
+        : "buttons/" + (isHook ? _this._targetModel._name : (targetModelType + "/" + _this._targetProp)))
+        );
 
     this.element.select("." + css.search)
       .attr("placeholder", this.translator("placeholder/search") + "...");
@@ -1163,7 +1194,7 @@ const TreeMenu = Component.extend({
         .append("span")
         .text(d => {
           //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-          const translated = d.id === "_default" ? _this.translator("indicator/_default/" + hookType) : d.name || d.id;
+          const translated = d.id === "_default" ? _this.translator("indicator/_default/" + targetModelType) : d.name || d.id;
           if (!translated && translated !== "") utils.warn("translation missing: NAME of " + d.id);
           return translated || "";
         });
@@ -1184,14 +1215,14 @@ const TreeMenu = Component.extend({
             deepLeafContent.append("span").classed(css.leaf_content_item + " " + css.leaf_content_item_title, true)
               .text(d => {
                 //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-                const translated = d.id === "_default" ? _this.translator("indicator/_default/" + hookType) : d.name;
+                const translated = d.id === "_default" ? _this.translator("indicator/_default/" + targetModelType) : d.name;
                 return translated || "";
               });
             let hideUnits;
             const units = deepLeafContent.append("span").classed(css.leaf_content_item, true)
               .text(d => {
                 //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-                const translated = d.id === "_default" ? _this.translator("unit/_default/" + hookType) : d.unit;
+                const translated = d.id === "_default" ? _this.translator("unit/_default/" + targetModelType) : d.unit;
                 hideUnits = !translated;
                 return _this.translator("hints/units") + ": " + translated || "";
               });
@@ -1200,14 +1231,14 @@ const TreeMenu = Component.extend({
             const description = deepLeafContent.append("span").classed(css.leaf_content_item + " " + css.leaf_content_item_descr, true)
               .text(d => {
                 //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-                const translated = d.id === "_default" ? _this.translator("description/_default/" + hookType) : d.description;
+                const translated = d.id === "_default" ? _this.translator("description/_default/" + targetModelType) : d.description;
                 hideDescription = !translated;
                 return (hideUnits && hideDescription) ? _this.translator("hints/nodescr") : translated || "";
               });
             description.classed("vzb-hidden", hideDescription && !hideUnits);
           }
 
-          if (d.id == _this.model.marker[markerID].which) {
+          if (d.id == _this._targetModel[_this._targetProp]) {
             let parent;
             if (_this.selectedNode && toplevel) {
               parent = _this.selectedNode.parentNode;
@@ -1257,18 +1288,18 @@ const TreeMenu = Component.extend({
 
     if (!useDataFiltered) {
       let pointer = "_default";
-      if (allowedIDs.indexOf(this.model.marker[markerID].which) > -1) pointer = this.model.marker[markerID].which;
+      if (allowedIDs.indexOf(this._targetModel[_this._targetProp]) > -1) pointer = this._targetModel[_this._targetProp];
       if (!indicatorsDB[pointer]) utils.error("Concept properties of " + pointer + " are missing from the set, or the set is empty. Put a breakpoint here and check what you have in indicatorsDB");
 
       if (!indicatorsDB[pointer].scales) {
         this.element.select("." + css.scaletypes).classed(css.hidden, true);
         return true;
       }
-      const scaleTypesData = indicatorsDB[pointer].scales.filter(f => {
-        if (!_this.model.marker[markerID].allow || !_this.model.marker[markerID].allow.scales) return true;
-        if (_this.model.marker[markerID].allow.scales[0] == "*") return true;
-        return _this.model.marker[markerID].allow.scales.indexOf(f) > -1;
-      });
+      const scaleTypesData = isHook ? indicatorsDB[pointer].scales.filter(f => {
+        if (!_this._targetModel.allow || !_this._targetModel.allow.scales) return true;
+        if (_this._targetModel.allow.scales[0] == "*") return true;
+        return _this._targetModel.allow.scales.indexOf(f) > -1;
+      }) : [];
       if (scaleTypesData.length == 0) {
         this.element.select("." + css.scaletypes).classed(css.hidden, true);
       } else {
@@ -1281,11 +1312,11 @@ const TreeMenu = Component.extend({
         scaleTypes = scaleTypes.enter().append("span")
           .on("click", d => {
             d3.event.stopPropagation();
-            _this._setModel("scaleType", d, _this._markerID);
+            _this._setModel("scaleType", d);
           })
           .merge(scaleTypes);
 
-        const mdlScaleType = _this.model.marker[markerID].scaleType;
+        const mdlScaleType = _this._targetModel.scaleType;
 
         scaleTypes
           .classed(css.scaletypesDisabled, scaleTypesData.length < 2)
@@ -1302,7 +1333,7 @@ const TreeMenu = Component.extend({
   updateView() {
     const _this = this;
 
-    if (!this._markerID) return;
+    if (!this._targetModel) return;
 
     this.wrapperOuter.classed(css.absPosVert, this._top);
     this.wrapperOuter.classed(css.alignYt, this._alignY === "top");
@@ -1332,11 +1363,12 @@ const TreeMenu = Component.extend({
     }
   },
 
-  _setModel(what, value, hookID) {
+  _setModel(what, value) {
 
-    const mdl = this.model.marker[hookID];
+    const mdl = this._targetModel;
     if (what == "which") mdl.setWhich(value);
     if (what == "scaleType") mdl.setScaleType(value);
+    if (what == "dim") mdl.setDimension(value);
   }
 
 });
