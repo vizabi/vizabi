@@ -39,8 +39,7 @@ const Side = Dialog.extend("side", {
       {
         component: indicatorpicker,
         placeholder: ".vzb-side-selector",
-        model: ["state.time", "state.entities_side", "state.marker", "locale"],
-        markerID: "side",
+        model: ["state.time", "state.marker.side", "locale"],
         showHoverValues: false
       }
     ];

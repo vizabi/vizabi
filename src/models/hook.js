@@ -280,7 +280,7 @@ const Hook = DataConnected.extend({
       if (opts.onlyType && h.getType() !== opts.onlyType) {
         return true;
       }
-      if (h.skipFilter) return;
+      if (h.skipFilter || _this._parent.skipFilter) return;
       // if query's dimensions are the same as the hook's, no join
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
         filters = utils.extend(filters, h.getFilter(splashScreen));
@@ -309,7 +309,7 @@ const Hook = DataConnected.extend({
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
         return true;
       }
-      if (h.skipFilter) return;
+      if (h.skipFilter || _this._parent.skipFilter) return;
 
       const filter = h.getFilter(splashScreen);
       if (filter != null && !utils.isEmpty(filter)) {

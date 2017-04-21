@@ -3,6 +3,7 @@ import Component from "base/component";
 import Dialog from "components/dialogs/_dialog";
 
 import simpleslider from "components/simpleslider/simpleslider";
+import indicatorpicker from "components/indicatorpicker/indicatorpicker";
 
 /*!
  * VIZABI FIND CONTROL
@@ -22,6 +23,15 @@ const Find = Dialog.extend("find", {
       arg: "opacitySelectDim",
       properties: { step: 0.01 }
     }];
+
+    this.enablePicker = ((config.ui.dialogs.dialog || {}).find || {}).enablePicker;
+    if (this.enablePicker) {
+      this.components.push({
+        component: indicatorpicker,
+        placeholder: ".vzb-find-filter-selector",
+        model: ["state.time", "state.entities", "locale"]
+      });
+    }
 
     this.model_binds = {
       "change:state.marker.select": function(evt) {
@@ -68,6 +78,9 @@ const Find = Dialog.extend("find", {
     this.input_search = this.element.select(".vzb-find-search");
     this.deselect_all = this.element.select(".vzb-find-deselect");
     this.opacity_nonselected = this.element.select(".vzb-dialog-bubbleopacity");
+
+    this.element.select(".vzb-find-filter-selector").classed("vzb-hidden", !this.enablePicker);
+    this.element.select(".vzb-dialog-title").classed("vzb-title-two-rows", this.enablePicker);
 
     this.KEY = this.model.state.entities.getDimension();
 
@@ -124,7 +137,7 @@ const Find = Dialog.extend("find", {
     this._super();
 
     const _this = this;
-    const KEY = this.KEY;
+    const KEY = this.KEY = this.model.state.entities.getDimension();
     const KEYS = this.KEYS = utils.unique(this.model.state.marker._getAllDimensions({ exceptType: "time" }));
     this.multiDim = KEYS.length > 1;
 

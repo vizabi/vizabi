@@ -50,6 +50,13 @@ const EntitiesModel = DataConnected.extend({
     return this.dim;
   },
 
+  setDimension(dim) {
+    if (this.dim === dim.concept) return;
+    const props = {};
+    props.show = {};
+    props.dim = dim.concept;
+    this.set(props);
+  },
   /**
    * Gets the filter in this entities
    * @returns {Array} Array of unique values
@@ -129,6 +136,10 @@ const EntitiesModel = DataConnected.extend({
     const { $in = [] } = this.show[dimension] || {};
 
     return $in.map(m => ({ [dimension]: m }));
+  },
+
+  isEntities() {
+    return true;
   }
 
 });
