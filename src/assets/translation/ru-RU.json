@@ -61,6 +61,7 @@
   "hints/lbubblemap/showAreas":"Areas",
   "hints/lbubblemap/showMap":"Map",
   "colorpicker/default":"СТАНДАРТН.",
+  "bubblechart/entities":"Bubbles",
   "mount/maxYmode/immediate":"Текущему",
   "mount/maxYmode/latest":"Последнему",
   "mount/maxYmode/total":"Всего",
