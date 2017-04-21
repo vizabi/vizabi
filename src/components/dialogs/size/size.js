@@ -24,8 +24,7 @@ const Size = Dialog.extend("size", {
       {
         component: indicatorpicker,
         placeholder: ".vzb-saxis-selector",
-        model: ["state.time", "state.entities", "state.marker", "locale"],
-        markerID: "size",
+        model: ["state.time", "state.marker.size", "locale"],
         showHoverValues: true
       }
     ];

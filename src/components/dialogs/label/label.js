@@ -34,8 +34,7 @@ const Label = Dialog.extend("label", {
       {
         component: indicatorpicker,
         placeholder: ".vzb-saxis-selector",
-        model: ["state.time", "state.entities", "state.marker", "locale"],
-        markerID: "size_label",
+        model: ["state.time", "state.marker.size_label", "locale"],
         showHoverValues: true
       },
       {
