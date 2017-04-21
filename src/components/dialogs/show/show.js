@@ -1,6 +1,7 @@
 import * as utils from "base/utils";
 import Component from "base/component";
 import Dialog from "components/dialogs/_dialog";
+import indicatorpicker from "components/indicatorpicker/indicatorpicker";
 
 /*!
  * VIZABI SHOW CONTROL
@@ -19,6 +20,16 @@ const Show = Dialog.extend("show", {
       }
     };
 
+    this.enablePicker = ((config.ui.dialogs.dialog || {}).show || {}).enablePicker;
+    if (this.enablePicker) {
+      this.components = [{
+        component: indicatorpicker,
+        placeholder: ".vzb-show-filter-selector",
+        model: ["state.time", "state.entities", "locale"]
+      }];
+    }
+
+
     this._super(config, parent);
   },
 
@@ -27,8 +38,11 @@ const Show = Dialog.extend("show", {
    */
   readyOnce() {
     this._super();
-    
+
     this.resetFilter = utils.deepExtend({}, this.model.state.entities.show);
+
+    this.element.select(".vzb-show-filter-selector").classed("vzb-hidden", !this.enablePicker);
+    this.element.select(".vzb-dialog-title").classed("vzb-title-two-rows", this.enablePicker);
 
     this.list = this.element.select(".vzb-show-list");
     this.input_search = this.element.select(".vzb-show-search");
@@ -107,7 +121,7 @@ const Show = Dialog.extend("show", {
         .property("checked", function(d) {
           const isShown = _this.model.state.entities.isShown(d);
           d3.select(this.parentNode).classed("vzb-checked", isShown);
-          return isShown;        
+          return isShown;
         })
         .on("change", d => {
           _this.model.state.marker.clearSelected();
@@ -118,13 +132,13 @@ const Show = Dialog.extend("show", {
       items.append("label")
         .attr("for", d => "-show-" + d[_this.KEY] + "-" + _this._id)
         .text(d => d.label);
-      
+
       const lastCheckedNode = _this.list.selectAll(".vzb-checked")
         .classed("vzb-separator", false)
         .lower()
         .nodes()[0];
       d3.select(lastCheckedNode).classed("vzb-separator", true);
-      _this.contentEl.node().scrollTop = 0;      
+      _this.contentEl.node().scrollTop = 0;
 
       _this.input_search.attr("placeholder", _this.translator("placeholder/search") + "...");
 

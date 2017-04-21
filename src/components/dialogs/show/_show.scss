@@ -12,9 +12,24 @@
         border-bottom: 1px solid;
         border-bottom-color: $vzb-color-primary-light;
       }
+      &.vzb-popup {
+        .vzb-dialog-title {
+          &.vzb-title-two-rows {
+            @include rtl {
+              padding-left: 5px;
+              padding-right: 25px;
+            }
+            padding-right: 5px;
+            .vzb-show-filter {
+              flex: 1 1 auto;
+              max-width: 240px;
+            }
+          }
+        }
+      }
       &.vzb-moreoptions {
         .vzb-dialog-title {
-          .vzb-find-filter {
+          .vzb-show-filter {
             padding-top: 20px;
             margin-bottom: 0; 
           }
@@ -22,6 +37,34 @@
         .vzb-dialog-content {
           padding-bottom: 0;
           margin-bottom: 15px;
+        }
+      }
+
+      &.vzb-popup,
+      &.vzb-sidebar {
+        .vzb-dialog-title {
+          &.vzb-title-two-rows {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            flex-wrap: wrap;
+            > span:first-child {
+              display: block;
+              flex: 0 0 auto;
+            }
+            .vzb-show-filter-selector {
+              display: block;
+              flex: 1 1 auto;
+              min-width: 1px;
+            }
+            .vzb-show-filter {
+              @include rtl {
+                padding-right: 0;
+              }
+              padding-left: 0;
+              padding-top: 5px;
+            }
+          }
         }
       }
     }
@@ -60,7 +103,7 @@
               margin-bottom: 10px;
             }
           }
-          
+
           .vzb-dialog-title {
             display: flex;
             flex-direction: row;
@@ -69,9 +112,9 @@
             > span:first-child {
               display: block;
               flex: 0 0 auto;
-            } 
+            }
           }
-          
+                    
           .vzb-show-filter {
             @include rtl {
               padding-left: 20px;
