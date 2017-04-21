@@ -8,10 +8,9 @@
     "lint:diff": "shjs ./.githooks/pre-commit.js",
     "lint:diff:fix": "cross-env FIX=1 npm run lint:diff",
     "lint": "eslint -c .eslintrc --ignore-path .eslintignore src",
-    "build:prod": "cross-env NODE_ENV=production webpack",
+    "build": "cross-env NODE_ENV=production webpack",
     "e2e:local": "./node_modules/protractor/bin/webdriver-manager update && ./node_modules/.bin/protractor .cicd/protractor.conf.js",
     "e2e:dev": "./node_modules/.bin/protractor .cicd/protractor_dev.conf.js",
-    "build": "sh ./docker_run.sh"
   },
   "pre-commit": [
     "lint:diff"
