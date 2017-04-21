@@ -364,6 +364,7 @@ const Labels = Class.extend({
   },
 
   ready() {
+    this.KEY = this.context.model.entities.getDimension();
     this.updateIndicators();
     this.updateLabelSizeLimits();
     //this.updateLabelsOnlyTextSize();
