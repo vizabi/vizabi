@@ -50,13 +50,6 @@ const bump = () => {
 };
 
 const upload = (path) => {
-  shell.ShellString([
-    '[default]',
-    `access_key = ${AWS_ACCESS_KEY_ID}`,
-    `secret_key = ${AWS_SECRET_KEY}`,
-    `acl_public = True`
-  ].join('\n'));
-
   shell.exec(
     `s3cmd -v --config=/tmp/.${AWS_BUCKET}-s3.s3cfg` +
     ` --acl-public` +
@@ -68,6 +61,13 @@ const upload = (path) => {
 };
 
 const deploy = () => {
+  shell.ShellString([
+    '[default]',
+    `access_key = ${AWS_ACCESS_KEY_ID}`,
+    `secret_key = ${AWS_SECRET_KEY}`,
+    `acl_public = True`
+  ].join('\n')).to(`/tmp/.${AWS_BUCKET}-s3.s3cfg`);
+
   upload(`s3://${AWS_BUCKET}/${AWS_SUBFOLDER}/${TRAVIS_BRANCH}/`);
   versionBump && upload(`s3://${AWS_BUCKET}/`);
 
@@ -75,7 +75,13 @@ const deploy = () => {
   if (withoutRelease !== TRAVIS_BRANCH) {
     shell.exec(
       `s3cmd -v --config=/tmp/.${AWS_BUCKET}-s3.s3cfg` +
-      ` put s3://${AWS_BUCKET}/* s3://${AWS_BUCKET}/${withoutRelease}`
+      ' --recursive' +
+      ` cp s3://${AWS_BUCKET}/assets/ s3://${AWS_BUCKET}/${withoutRelease}/assets/`
+    );
+
+    shell.exec(
+      `s3cmd -v --config=/tmp/.${AWS_BUCKET}-s3.s3cfg` +
+      ` cp s3://${AWS_BUCKET}/* s3://${AWS_BUCKET}/${withoutRelease}/`
     );
   }
 
