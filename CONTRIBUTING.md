@@ -18,7 +18,7 @@ Go to vizabi. Run `npm install`
 Go to vizabi-preview. Run `npm install`, `npm link ../vizabi`, `npm start`  
 Open browser on `http://localhost:8080/`  
   
-In order to only build the project for distribution/publishing, run `npm run build:prod` in vizabi  
+In order to only build the project for distribution/publishing, run `npm run build` in vizabi  
 The build output will be under ```build/``` folder.  
 
 **Building Vizabi with tools and preview page**
