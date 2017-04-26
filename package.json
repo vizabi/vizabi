@@ -2,7 +2,7 @@
   "name": "vizabi",
   "version": "0.22.0-1",
   "description": "Vizabi Framework, Interactive charts and visualization tools animated through time",
-  "main": "build/dist/vizabi.js",
+  "main": "build/vizabi.js",
   "scripts": {
     "start": "webpack-dev-server",
     "lint:diff": "shjs ./.githooks/pre-commit.js",
@@ -18,7 +18,7 @@
   ],
   "files": [
     "src",
-    "build/dist"
+    "build"
   ],
   "repository": {
     "type": "git",
