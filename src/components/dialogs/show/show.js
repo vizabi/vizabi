@@ -167,9 +167,12 @@ const Show = Dialog.extend("show", {
 
   deselectEntities() {
     const KEY = this.KEY;
-    this.model.state.entities.clearShow();
     if (this.resetFilter[KEY]) {
-      this.model.state.entities.show[KEY] = this.resetFilter[KEY];
+      const newShow = Object.assign({}, this.model.state.entities.show);
+      newShow[KEY] = this.resetFilter[KEY];
+      this.model.state.entities.show = newShow;
+    } else {
+      this.model.state.entities.clearShow();
     }
     this.showHideDeselect();
   },
