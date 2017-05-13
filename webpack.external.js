@@ -130,7 +130,8 @@ module.exports = output => {
     }),
     new webpack.BannerPlugin({
       banner: "((function(){})({version: '" + JSON.stringify(pkg.version) + "'}));",
-      raw: true
+      raw: true,
+      test: /\.js$/
     })
   ];
 
