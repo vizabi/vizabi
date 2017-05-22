@@ -158,6 +158,12 @@ const Hook = DataConnected.extend({
    */
   afterLoad(dataId) {
     this._dataId = dataId;
+
+    const grouping = this._parent._getGrouping();
+    if (grouping) {
+      this.dataSource._collection[dataId].grouping = grouping;
+    }
+
     utils.timeStamp("Vizabi Model: Data loaded: " + this._id);
   },
 
