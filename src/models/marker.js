@@ -357,6 +357,8 @@ const Marker = Model.extend({
     KEY = KEY || this._getFirstDimension();
     const TIME = this._getFirstDimension({ type: "time" });
 
+    const grouping = this._getGrouping();
+
     utils.forEach(this._dataCube || this.getSubhooks(true), (hook, name) => {
 
             // If hook use is constant, then we can provide no additional info about keys
@@ -369,9 +371,13 @@ const Marker = Model.extend({
 
       if (nested["undefined"]) delete nested["undefined"];
 
-      const keys = Object.keys(nested);
+      let keys = Object.keys(nested);
       const keysNoDP = Object.keys(noDataPoints || []);
 
+      if (keys.length > 0 && grouping && grouping.key === KEY) {
+        const _grouping = grouping.grouping;
+        keys = keys.filter(key => (+key % _grouping) === 0);
+      }
             // If ain't got nothing yet, set the list of keys to result
       if (resultKeys.length == 0) resultKeys = keys;
 
@@ -391,6 +397,7 @@ const Marker = Model.extend({
     let cachePath = `${this.getClosestModel("locale").id} - ${steps[0]} - ${steps[steps.length - 1]}`;
     this._dataCube = this._dataCube || this.getSubhooks(true);
     let dataLoading = false;
+    const grouping = this._getGrouping();
     utils.forEach(this._dataCube, (hook, name) => {
       if (hook._loadCall) dataLoading = true;
       cachePath = cachePath + "_" +  hook._dataId + hook.which;
@@ -398,10 +405,27 @@ const Marker = Model.extend({
     if (dataLoading) {
       return null;
     }
+    if (grouping) {
+      cachePath = cachePath + "_grouping_" + grouping.key + ":" + grouping.grouping;
+    }
     if (keys) {
       cachePath = cachePath + "_" + keys.join(",");
     }
     return cachePath;
+  },
+
+  _getGrouping() {
+    const subHooks = this._dataCube || this.getSubhooks(true);
+    const space = subHooks[Object.keys(subHooks)[0]]._space;
+    const result = {};
+    utils.forEach(space, entities => {
+      if (entities.grouping) {
+        result.grouping = entities.grouping;
+        result.key = entities.dim;
+        return false;
+      }
+    });
+    return result.grouping ? result : false;
   },
 
   _getAllDimensions(opts) {

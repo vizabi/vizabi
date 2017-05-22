@@ -44,6 +44,7 @@ const SimpleSlider = Component.extend({
     let min = 0;
     let max = 1;
     let step = 0.1;
+    let suppressInput = false;
     let value = min;
 
       //selecting elements
@@ -60,6 +61,7 @@ const SimpleSlider = Component.extend({
       if (this.slider_properties.min != null) min = this.slider_properties.min;
       if (this.slider_properties.max != null) max = this.slider_properties.max;
       if (this.slider_properties.step != null) step = this.slider_properties.step;
+      if (this.slider_properties.suppressInput != null) suppressInput  = this.slider_properties.suppressInput;
 
       if (this.slider_properties.scale) {
         value = this.slider_properties.scale(min);
@@ -81,6 +83,7 @@ const SimpleSlider = Component.extend({
       .attr("step", step)
       .attr("value", value)
       .on("input", () => {
+        if (suppressInput) return;
         const value = +d3.event.target.value;
         _this._setModel(value, false, false); // on drag - non-persistent changes while dragging
       })
@@ -119,7 +122,8 @@ const SimpleSlider = Component.extend({
       // rescale value if scale is supplied in slider_properties
     if (this.slider_properties && this.slider_properties.scale) value = this.slider_properties.scale(value);
 
-    this.model.submodel.getModelObject(this.arg).set(value.toFixed(this.roundTo), force, persistent);
+    //this.model.submodel.getModelObject(this.arg).set(value.toFixed(this.roundTo), force, persistent);
+    this.model.submodel.set(this.arg, value.toFixed(this.roundTo), force, persistent);
   }
 
 });
