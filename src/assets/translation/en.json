@@ -78,6 +78,7 @@
     "mount/extremepoverty": "extreme poverty",
     "popbyage/yearOlds": "-year-olds",
     "popbyage/locked": "locked year",
+    "popbyage/title": "Population by age",
     "placeholder/search": "Search",
     "scaletype/linear": "linear",
     "scaletype/log": "log",
