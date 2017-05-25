@@ -78,6 +78,7 @@
   "mount/extremepoverty":"extrem fattighet",
   "popbyage/yearOlds":"-year-olds",
   "popbyage/locked":"locked year",
+  "popbyage/title":"Population by age",
   "placeholder/search":"Sök",
   "scaletype/linear":"linjär",
   "scaletype/log":"log",
