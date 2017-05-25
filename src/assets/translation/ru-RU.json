@@ -78,6 +78,7 @@
   "mount/extremepoverty":"нищета",
   "popbyage/yearOlds":"-year-olds",
   "popbyage/locked":"locked year",
+  "popbyage/title":"Population by age",
   "placeholder/search":"Поиск",
   "scaletype/linear":"лин.",
   "scaletype/log":"лог.",
