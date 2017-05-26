@@ -191,6 +191,9 @@ const Find = Dialog.extend("find", {
       _this.items.append("label")
         .attr("for", (d, i) => "-find-" + i + "-" + _this._id)
         .text(d => d.name)
+        .attr("title", function(d) {
+          return this.offsetWidth < this.scrollWidth ? d.name : null;
+        })
         .on("mouseover", d => {
           if (!utils.isTouchDevice() && !d.brokenData) _this.model.state.marker.highlightMarker(d);
         })
@@ -228,9 +231,10 @@ const Find = Dialog.extend("find", {
             }
           });
 
+          const nameIfEllipsis = this.offsetWidth < this.scrollWidth ? d.name : "";
           view
             .classed("vzb-find-item-brokendata", d.brokenData)
-            .attr("title", d.brokenData ? _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : "");
+            .attr("title", nameIfEllipsis + (d.brokenData ? (nameIfEllipsis ? " | " : "") + _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : ""));
         });
     } else {
       _this.items
@@ -245,9 +249,10 @@ const Find = Dialog.extend("find", {
             }
           });
 
+          const nameIfEllipsis = this.offsetWidth < this.scrollWidth ? d.name : "";
           view
             .classed("vzb-find-item-brokendata", d.brokenData)
-            .attr("title", d.brokenData ? _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : "");
+            .attr("title", nameIfEllipsis + (d.brokenData ? (nameIfEllipsis ? " | " : "") + _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : ""));
         });
     }
   },

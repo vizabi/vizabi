@@ -226,6 +226,11 @@ $vzb-dialog-content-height: 250px;
 
       label {
         @include position(absolute, 0 null null null);
+        @include rtl {
+          padding-left: 1px;
+          padding-right: 0;
+        }
+        padding-right: 1px;//IE, Edge workaround for issue with scrollWidth(so:30900154)
         white-space: nowrap;
         cursor: pointer;
         max-width: 100%;

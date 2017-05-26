@@ -197,7 +197,11 @@ const IndPicker = Component.extend({
       selectText = (which === "_default") ? translator("indicator/_default/" + type) : (concept.name);
     }
 
-    this.el_select.text(selectText);
+    this.el_select.text(selectText)
+      .attr("title", function(d) {
+        return this.offsetWidth < this.scrollWidth ? selectText : null;
+      });
+
 
         // hide info el if no data is available for it to make sense
     const hideInfoEl = !concept.description && !concept.sourceName && !concept.sourceLink;
