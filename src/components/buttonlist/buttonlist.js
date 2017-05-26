@@ -73,6 +73,11 @@ const ButtonList = Component.extend({
         icon: "circle",
         required: false
       },
+      "zoom": {
+        title: "buttons/zoom",
+        icon: "cursorPlus",
+        required: false
+      },
       "fullscreen": {
         title: "buttons/expand",
         icon: "expand",
