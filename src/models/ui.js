@@ -58,9 +58,9 @@ const UI = Model.extend({
     this._super(name, values, parent, bind);
   },
 
-  resizeHandler() {
+  resizeHandler(args = {}) {
     if (this._container) {
-      this.setSize();
+      this.setSize(args.force || false);
     }
   },
 
@@ -91,7 +91,8 @@ const UI = Model.extend({
       }
     }
 
-    if (!force && this._prev_size && this._prev_size.width === width && this._prev_size.height === height) {
+    if (!force && this._prev_size && this._prev_size.width === width && this._prev_size.height === height
+       || !width || !height) {
       return;
     }
 

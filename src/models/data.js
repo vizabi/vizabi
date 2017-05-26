@@ -79,7 +79,7 @@ const DataModel = Model.extend({
         EventSource.unfreezeAll();
         return dataId;
       })
-      .catch(error => this.handleReaderError(error, query));
+      .catch(error => this.handleLoadError(error, query));
   },
 
   /**
@@ -221,7 +221,7 @@ const DataModel = Model.extend({
     }
 
     // if they want a certain processing of the data, see if it's already in cache
-    const id = (typeof whatId == "string") ? whatId : JSON.stringify(whatId);
+    const id = (typeof whatId === "string") ? whatId : JSON.stringify(whatId);
     if (this._collection[dataId][what][id]) {
       return this._collection[dataId][what][id];
     }
@@ -272,7 +272,7 @@ const DataModel = Model.extend({
 
     return this.load(query)
       .then(this.handleConceptPropsResponse.bind(this))
-      .catch(error => this.handleReaderError(error, query));
+      .catch(error => this.handleLoadError(error, query));
 
   },
 
@@ -349,8 +349,12 @@ const DataModel = Model.extend({
     return this._name;
   },
 
-  _getCacheKey(frames, keys) {
+  _getCacheKey(dataId, frames, keys) {
     let result = frames[0] + " - " + frames[frames.length - 1];
+    const grouping = this._collection[dataId]["grouping"];
+    if (grouping) {
+      result = result + "_grouping(" + grouping.key + ":" + grouping.grouping + ")";
+    }
     if (keys) {
       result = result + "_" + keys.join();
     }
@@ -359,7 +363,7 @@ const DataModel = Model.extend({
 
   getFrames(dataId, framesArray, keys) {
     const _this = this;
-    const whatId = this._getCacheKey(framesArray, keys);
+    const whatId = this._getCacheKey(dataId, framesArray, keys);
     if (!this._collectionPromises[dataId][whatId]) {
       this._collectionPromises[dataId][whatId] = {
         queue: this.framesQueue(framesArray, whatId),
@@ -385,7 +389,7 @@ const DataModel = Model.extend({
   getFrame(dataId, framesArray, neededFrame, keys) {
     //can only be called after getFrames()
     const _this = this;
-    const whatId = this._getCacheKey(framesArray, keys);
+    const whatId = this._getCacheKey(dataId, framesArray, keys);
     return new Promise((resolve, reject) => {
       if (_this._collection[dataId]["frames"][whatId] && _this._collection[dataId]["frames"][whatId][neededFrame]) {
         resolve(_this._collection[dataId]["frames"][whatId]);
@@ -399,7 +403,7 @@ const DataModel = Model.extend({
 
   listenFrame(dataId, framesArray, keys,  cb) {
     const _this = this;
-    const whatId = this._getCacheKey(framesArray, keys);
+    const whatId = this._getCacheKey(dataId, framesArray, keys);
     this._collectionPromises[dataId][whatId]["queue"].defaultCallbacks.push(time => {
       cb(dataId, time);
     });
@@ -465,7 +469,7 @@ const DataModel = Model.extend({
 
       this.unMute = function() {
         this.isActive = true;
-        if (typeof this.delayedAction == "function") {
+        if (typeof this.delayedAction === "function") {
           this.delayedAction();
         }
         this.delayedAction = null;
@@ -555,7 +559,7 @@ const DataModel = Model.extend({
             _context._muteAllQueues(this.whatId);
             this.unMute();
             if (typeof cb === "function") {
-              if (typeof this.callbacks[frameName] != "object") {
+              if (typeof this.callbacks[frameName] !== "object") {
                 this.callbacks[frameName] = [];
               }
               this.callbacks[frameName].push(cb);
@@ -632,7 +636,7 @@ const DataModel = Model.extend({
       let key, c;
 
       const lastIndex = KEY.length - 1;
-      const createFiltered = function(parent, index) {
+      function createFiltered(parent, index) {
         const keys = entitiesByKey[KEY[index]];
         for (let i = 0, j = keys.length; i < j; i++) {
           parent[keys[i]] = {};
@@ -643,7 +647,7 @@ const DataModel = Model.extend({
             createFiltered(parent[keys[i]], nextIndex);
           }
         }
-      };
+      }
 
       createFiltered(filtered, 0);
 
@@ -675,56 +679,79 @@ const DataModel = Model.extend({
 
             // Now we run a 3-level loop: across frames, then across keys, then and across data columns (lex, gdp)
 
-          for (c = 0; c < cLength; c++) frame[columns[c]] = {};
+          const { key: groupKey, grouping: groupValue } = _this._collection[dataId].grouping || {};
 
-          const iterateKeys = function(firstKeyObject, lastKeyObject, firstKey, nested, filtered, index) {
+          const firstKeyObject = {};
+          for (c = 0; c < cLength; c++) firstKeyObject[c] = frame[columns[c]] = {};
+
+          if (groupKey) {
+            iterateKeysWithGrouping(firstKeyObject, nested, filtered, 0);
+          } else {
+            iterateKeys(firstKeyObject, nested, filtered, 0);
+          }
+
+          function iterateKeys(lastKeyObject, nested, filtered, index) {
+            const _lastKeyObject = {};
             const keys = entitiesByKey[KEY[index]];
-            for (let i = 0, j = keys.length; i < j; i++) {
-              if (index == 0) {
-                firstKey = keys[i];//root level
-              }
+            for (let i = 0, j = keys.length, key; i < j; i++) {
+              key = keys[i];
               if (index == lastIndex) {
                 for (c = 0; c < cLength; c++) {
-                  mapValue(columns[c], firstKey, keys[i], firstKeyObject, lastKeyObject, nested[keys[i]], filtered[keys[i]]);
+                  lastKeyObject[c][key] = mapValue(columns[c], nested[key], filtered[key]);
                 }
               } else {
-                if (index == 0) {
-                  lastKeyObject = firstKeyObject = {};
+                for (c = 0; c < cLength; c++) {
+                  _lastKeyObject[c] = lastKeyObject[c][key] = {};
                 }
-                const nextIndex = index + 1;
-                lastKeyObject[keys[i]] = {};
-                iterateKeys(firstKeyObject, lastKeyObject[keys[i]], firstKey, nested[keys[i]], filtered[keys[i]], nextIndex);
+                iterateKeys(_lastKeyObject, nested[key], filtered[key], index + 1);
               }
             }
-          };
+          }
 
-          iterateKeys(null, null, null, nested, filtered, 0);
+          function iterateKeysWithGrouping(lastKeyObject, nested, filtered, index) {
+            const _lastKeyObject = {};
+            const keys = entitiesByKey[KEY[index]];
+            const grouping = KEY[index] === groupKey;
+            for (let i = 0, j = keys.length, key, gKey; i < j; i++) {
+              key = keys[i];
+              gKey = grouping ? ~~(+key / groupValue) * groupValue : key;
+              if (index == lastIndex) {
+                let value;
+                for (c = 0; c < cLength; c++) {
+                  value = mapValue(columns[c], nested[key], filtered[key]);
+                  if (value !== null) {
+                    lastKeyObject[c][gKey] = (lastKeyObject[c][gKey] || 0) + value;
+                  } else if (lastKeyObject[c][gKey] === undefined) {
+                    lastKeyObject[c][gKey] = value;
+                  }
+                }
+              } else {
+                for (c = 0; c < cLength; c++) {
+                  _lastKeyObject[c] = lastKeyObject[c][gKey] = lastKeyObject[c][gKey] || {};
+                }
+                iterateKeysWithGrouping(_lastKeyObject, nested[key], filtered[key], index + 1);
+              }
+            }
+          }
 
-          function mapValue(column, firstKey, lastKey, firstKeyObject, lastKeyObject, nested, filtered) {
+          function mapValue(column, nested, filtered) {
 
                 //If there are some points in the array with valid numbers, then
                 //interpolate the missing point and save it to the “clean regular set”
             method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
             use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
 
-
-            if (firstKeyObject) {
-              frame[column][firstKey] = firstKeyObject[firstKey];
-            } else {
-              lastKeyObject = frame[column];
-            }
-
                 // Inside of this 3-level loop is the following:
             if (nested && nested[frameName] && (nested[frameName][0][column] || nested[frameName][0][column] === 0)) {
 
                   // Check if the piece of data for [this key][this frame][this column] exists
                   // and is valid. If so, then save it into a “clean regular set”
-              lastKeyObject[lastKey] = nested[frameName][0][column];
+              return nested[frameName][0][column];
 
             } else if (method === "none") {
 
                   // the piece of data is not available and the interpolation is set to "none"
-              lastKeyObject[lastKey] = null;
+              return null;
 
             } else {
                   // If the piece of data doesn’t exist or is invalid, then we need to inter- or extapolate it
@@ -762,7 +789,7 @@ const DataModel = Model.extend({
                   //So we let the key have missing values in this column for all frames
               if (items && items.length > 0) {
                 next = null;
-                lastKeyObject[lastKey] = utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
+                return utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
               }
             }
           }
@@ -908,7 +935,7 @@ const DataModel = Model.extend({
     return false;
   },
 
-  handleReaderError(error, query) {
+  handleLoadError(error, query) {
     if (utils.isObject(error)) {
       const locale = this.getClosestModel("locale");
       const translation = locale.getTFunction()(error.code, error.payload) || "";
@@ -916,7 +943,7 @@ const DataModel = Model.extend({
     }
 
     utils.warn("Problem with query: ", query);
-    throw error;
+    this._super(error);
   },
 
 });

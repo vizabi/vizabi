@@ -9,7 +9,7 @@ import simplecheckbox from "components/simplecheckbox/simplecheckbox";
  * Reusable side dialog
  */
 
-const Side = Dialog.extend({
+const Side = Dialog.extend("side", {
 
   init(config, parent) {
     this.name = "side";
@@ -39,8 +39,7 @@ const Side = Dialog.extend({
       {
         component: indicatorpicker,
         placeholder: ".vzb-side-selector",
-        model: ["state.time", "state.entities_side", "state.marker", "locale"],
-        markerID: "side",
+        model: ["state.time", "state.marker.side", "locale"],
         showHoverValues: false
       }
     ];
@@ -75,6 +74,17 @@ const Side = Dialog.extend({
     this._super();
 
     this.KEY = this.model.state.entities_side.getDimension();
+    if (this.model.state.marker.side.use !== "constant" && !(this.model.state.entities_side.show[this.KEY] || {})["$in"]) {
+      const key = this.model.state.entities_allpossibleside.dim;
+      const sideKeys = this.model.state.marker_allpossibleside.getKeys().map(d => d[key]);
+      const filterKeys = sideKeys.sort(d3.ascending).slice(0, 2);
+      if (filterKeys.length > 0) {
+        const show = Object.assign({}, this.model.state.entities_side.show);
+        show[this.KEY] = { "$in": filterKeys };
+        this.model.state.entities_side.set("show", show);
+      }
+    }
+
     this.updateState();
     this.redraw();
     utils.preventAncestorScrolling(this.element.select(".vzb-dialog-scrollable"));

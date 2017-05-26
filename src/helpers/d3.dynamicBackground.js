@@ -7,7 +7,7 @@ export default Class.extend({
 
   init(context, conditions) {
     this.context = context;
-    this.context.classed('vzb-dynamic-background', true);
+    this.context.classed("vzb-dynamic-background", true);
 
     this.width = 0;
     this.height = 0;
@@ -57,13 +57,8 @@ export default Class.extend({
   },
 
   resize(width, height, topOffset, leftOffset) {
-    [
-      this.width,
-      this.height
-    ] = [
-      width,
-      height
-    ].map(v => Number(String(v).replace("px", "")));
+    this.width = parseInt(width, 10) || 0;
+    this.height = parseInt(height, 10) || 0;
 
     if (topOffset) {
       this.topOffset = topOffset;
@@ -76,7 +71,8 @@ export default Class.extend({
   },
 
   setText(text, delay) {
-    setTimeout(() => {
+    this._timeout && !delay && clearTimeout(this._timeout);
+    this._timeout = setTimeout(() => {
       this.element.text(text);
       this._resizeText();
     }, delay);

@@ -10,6 +10,9 @@ const dialogTemplates = requireAll(require.context("components/dialogs/", true, 
  */
 
 const Dialog = Component.extend({
+
+  isDialog: true,
+
   /**
    * Initializes the dialog
    * @param {Object} config Initial config, with name and placeholder
@@ -87,12 +90,13 @@ const Dialog = Component.extend({
       const profile = this.getLayoutProfile();
 
       if (profile !== "small") {
-        const chartWidth = parseInt(this.rootEl.style("width"), 10);
+        const chartWidth = parseInt(this.rootEl.style("width"), 10) || 0;
+        const chartHeight = parseInt(this.rootEl.style("height"), 10) || 0;
+        const dialogWidth = parseInt(this.placeholderEl.style("width"), 10) || 0;
+        const dialogHeight = parseInt(this.placeholderEl.style("height"), 10) || 0;
+
         const dialogRight = parseInt(this.rightPos, 10);
-        const chartHeight = parseInt(this.rootEl.style("height"), 10);
         const dialogTop = parseInt(this.topPos, 10);
-        const dialogWidth = parseInt(this.placeholderEl.style("width"), 10);
-        const dialogHeight = parseInt(this.placeholderEl.style("height"), 10);
         const dialogRightMargin = parseInt(this.placeholderEl.style("margin-right"), 10) || 0;
         if (utils.isNumber(dialogRight) && dialogRight > chartWidth - dialogWidth - dialogRightMargin) {
           if (this.rightPos) {
@@ -287,10 +291,10 @@ function dialogDrag(element, container, xOffset) {
       marginRight = parseInt(element.style("margin-right")) || 0;
       xOffsetLeft = Math.min(xOffset, marginLeft);
       xOffsetRight = Math.min(xOffset, marginRight);
-      eWi = parseInt(element.style("width")) + marginLeft - xOffsetLeft;
-      eHe = parseInt(element.style("height"));
-      cWi = parseInt(container.style("width")) - marginRight;
-      cHe = parseInt(container.style("height"));
+      eWi = (parseInt(element.style("width"), 10) + marginLeft - xOffsetLeft) || 0;
+      eHe = parseInt(element.style("height"), 10) || 0;
+      cWi = (parseInt(container.style("width"), 10) - marginRight) || 0;
+      cHe = parseInt(container.style("height"), 10) || 0;
       diffX = posX + divRight;
       diffY = posY - divTop;
     },

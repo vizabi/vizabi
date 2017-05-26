@@ -9,7 +9,7 @@ import simplecheckbox from "components/simplecheckbox/simplecheckbox";
  * Label dialog
  */
 
-const Label = Dialog.extend({
+const Label = Dialog.extend("label", {
 
 /**
  * Initializes the dialog component
@@ -34,8 +34,7 @@ const Label = Dialog.extend({
       {
         component: indicatorpicker,
         placeholder: ".vzb-saxis-selector",
-        model: ["state.time", "state.entities", "state.marker", "locale"],
-        markerID: "size_label",
+        model: ["state.time", "state.marker.size_label", "locale"],
         showHoverValues: true
       },
       {

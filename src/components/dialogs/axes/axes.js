@@ -9,7 +9,7 @@ import minmaxinputs from "components/minmaxinputs/minmaxinputs";
  * Axes dialog
  */
 
-const Axes = Dialog.extend({
+const Axes = Dialog.extend("axes", {
 
   /**
    * Initializes the dialog component
@@ -23,8 +23,7 @@ const Axes = Dialog.extend({
     this.components = [{
       component: indicatorpicker,
       placeholder: ".vzb-xaxis-selector",
-      model: ["state.time", "state.entities", "state.marker", "locale"],
-      markerID: "axis_x"
+      model: ["state.time", "state.marker.axis_x", "locale"]
     }, {
       component: minmaxinputs,
       placeholder: ".vzb-xaxis-minmax",
@@ -37,8 +36,7 @@ const Axes = Dialog.extend({
     }, {
       component: indicatorpicker,
       placeholder: ".vzb-yaxis-selector",
-      model: ["state.time", "state.entities", "state.marker", "locale"],
-      markerID: "axis_y"
+      model: ["state.time", "state.marker.axis_y", "locale"]
     }, {
       component: minmaxinputs,
       placeholder: ".vzb-yaxis-minmax",

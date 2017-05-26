@@ -3,16 +3,9 @@
 export default function collisionResolver() {
   return (function collision_resolver() {
     const DURATION = 300;
-    const labelHeight = {};
-    let labelPosition = {};
+    let labelHeight = 0;
     // MAINN FUNCTION. RUN COLLISION RESOLVER ON A GROUP g
     function resolver(g) {
-      if (data == null) {
-        console.warn(
-          "D3 collision resolver stopped: missing data to work with. Example: data = {asi: {valueY: 45, valueX: 87}, ame: {valueY: 987, valueX: 767}}"
-        );
-        return;
-      }
       if (selector == null) {
         console.warn("D3 collision resolver stopped: missing a CSS slector");
         return;
@@ -30,70 +23,67 @@ export default function collisionResolver() {
         console.warn("D3 collision resolver stopped: missing a key for data. Example: key = 'geo' ");
         return;
       }
-      g.each(function(d, index) {
-        labelHeight[d[KEY]] = d3.select(this).select(selector).node().getBBox().height;
-      });
-      labelPosition = resolver.calculatePositions(data, value, height, scale);
+      labelHeight = g.node().getBBox().height * 0.8;
       //actually reposition the labels
-      g.each(function(d, i) {
-        if ((!data[d[KEY]]) || data[d[KEY]][fixed])
-          return;
-        const resolvedY = labelPosition[d[KEY]] || scale(data[d[KEY]][value]) || 0;
-        const resolvedX = null;
-        if (handleResult != null) {
-          handleResult(d, i, this, resolvedX, resolvedY);
-          return;
+      const data = g.filter(d => filter(d, time))
+        .sort((x, y) => d3.ascending(x.valueY, y.valueY))
+        .data();
+      const keys = {};
+      for (let i = 0; i < data.length - 1; i++) {
+        const first = data[i];
+        const second = data[i + 1];
+        if (!first.shiftY) first.shiftY = 0;
+        second.shiftY = 0;
+        if ((second.valueY - first.valueY - first.shiftY) >= labelHeight) continue;
+        let upperAvailable = 0;
+        // calculate available space above first element
+        if (first.valueY > labelHeight) {
+          if (i == 0) {
+            upperAvailable = Math.min(labelHeight, first.valueY);
+          } else if (first.valueY - data[i - 1].valueY + data[i - 1].shiftY > labelHeight) {
+            upperAvailable = Math.min(labelHeight, first.valueY - data[i - 1].valueY + data[i - 1].shiftY);
+          }
         }
-        d3.select(this).selectAll(selector).transition().duration(DURATION).attr("transform", "translate(0," +
-          resolvedY + ")");
+        first.upperAvailable = upperAvailable;
+        let underAvailable = 0;
+        // calculate available space under second element
+        if (second.valueY < height) {
+          if (i == data.length - 2) {
+            underAvailable = Math.min(labelHeight, height - second.valueY);
+          } else if (data[i + 2].valueY - second.valueY > labelHeight) {
+            underAvailable = Math.min(labelHeight, data[i + 2].valueY - second.valueY);
+          }
+        }
+        second.underAvailable = underAvailable;
+        const neededSpace = labelHeight - (second.valueY - first.valueY - first.shiftY);
+        keys[first[KEY]] = {};
+        keys[second[KEY]] = {};
+        if (upperAvailable >= neededSpace / 2 && underAvailable >= neededSpace / 2) {
+          first.shiftY = -neededSpace / 2;
+          second.shiftY = neededSpace / 2;
+        } else if (upperAvailable >= neededSpace / 2) {
+          second.shiftY = underAvailable;
+          first.shiftY = -Math.min(upperAvailable, neededSpace - underAvailable);
+        } else if (underAvailable >= neededSpace / 2) {
+          first.shiftY -= upperAvailable;
+          second.shiftY = Math.min(underAvailable, neededSpace - upperAvailable);
+        } else {
+          first.shiftY = -upperAvailable;
+          second.shiftY = underAvailable;
+        }
+        keys[first[KEY]].valueY = first.valueY + first.shiftY;
+        keys[second[KEY]].valueY = second.valueY + second.shiftY;
+      }
+      g.each(function(d, i) {
+        if (keys[d[KEY]] && keys[d[KEY]].valueY) {
+          d3.select(this).selectAll(selector).transition().duration(DURATION).attr("transform", "translate(0," +
+            keys[d[KEY]].valueY + ")");
+        }
       });
     }
 
-    // CALCULATE OPTIMIZED POSITIONS BASED ON LABELS' HEIGHT AND THEIR PROXIMITY (DELTA)
-    resolver.calculatePositions = function(data, value, height, scale) {
-      const result = {};
-      const keys = Object.keys(data).sort((a, b) => data[a][value] - data[b][value]);
-      keys.forEach((d, index) => {
-        //initial positioning
-        result[d] = scale(data[d][value]);
-        // check the overlapping chain reaction all the way down
-        for (let j = index; j > 0; j--) {
-          // if overlap found shift the overlapped label downwards
-          const delta = result[keys[j - 1]] - result[keys[j]] - labelHeight[keys[j]];
-          if (delta < 0)
-            result[keys[j - 1]] -= delta;
-          // if the chain reaction stopped because found some gap in the middle, then quit
-          if (delta > 0)
-            break;
-        }
-      });
-      // check if the lowest label is breaking the boundary...
-      let delta = height - result[keys[0]] - labelHeight[keys[0]];
-      // if it does, then
-      if (delta < 0) {
-        // shift the lowest up
-        result[keys[0]] += delta;
-        // check the overlapping chain reaction all the way up
-        for (let j = 0; j < keys.length - 1; j++) {
-          // if overlap found shift the overlapped label upwards
-          delta = result[keys[j]] - result[keys[j + 1]] - labelHeight[keys[j + 1]];
-          if (delta < 0)
-            result[keys[j + 1]] += delta;
-          // if the chain reaction stopped because found some gap in the middle, then quit
-          if (delta > 0)
-            break;
-        }
-      }
-      return result;
-    };
     // GETTERS AND SETTERS
-    let data = null;
-    resolver.data = function(arg) {
-      if (!arguments.length)
-        return data;
-      data = arg;
-      return resolver;
-    };
+
     let selector = null;
     resolver.selector = function(arg) {
       if (!arguments.length)
@@ -122,6 +112,20 @@ export default function collisionResolver() {
       if (!arguments.length)
         return value;
       value = arg;
+      return resolver;
+    };
+    let time = null;
+    resolver.time = function(arg) {
+      if (!arguments.length)
+        return time;
+      time = arg;
+      return resolver;
+    };
+    let filter = function() { return true; };
+    resolver.filter = function(arg) {
+      if (!arguments.length)
+        return filter;
+      filter = arg;
       return resolver;
     };
     let fixed = null;

@@ -9,7 +9,7 @@ import indicatorpicker from "components/indicatorpicker/indicatorpicker";
  * VIZABI COLOR DIALOG
  */
 
-const Colors = Dialog.extend({
+const Colors = Dialog.extend("colors", {
 
   /**
    * Initializes the dialog component
@@ -22,13 +22,12 @@ const Colors = Dialog.extend({
     this.components = [{
       component: indicatorpicker,
       placeholder: ".vzb-caxis-selector",
-      model: ["state.time", "state.entities", "state.marker", "locale"],
-      markerID: "color",
+      model: ["state.time", "state.marker.color", "locale"],
       showHoverValues: true
     }, {
       component: colorlegend,
       placeholder: ".vzb-clegend-container",
-      model: ["state.time", "state.entities", "state.marker", "locale"]
+      model: ["state.time", "state.entities", "state.marker", "state.marker.color", "locale"]
     }];
 
 

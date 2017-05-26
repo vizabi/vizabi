@@ -85,10 +85,11 @@ const Tool = Component.extend({
       model: external_model
     });
 
-    this.render();
-
+    this.prerender();
     this.setCSSClasses();
     this.setResizeHandler();
+
+    this.postrender();
   },
 
   createModel(external_model) {
@@ -133,6 +134,7 @@ const Tool = Component.extend({
     return utils.extend(
       this.model_binds,
       {
+        "readyOnce": () => this.setResizeHandler(),
         "change": function(evt, path) {
           if (_this._ready) {
             _this.model.validate();
@@ -165,6 +167,21 @@ const Tool = Component.extend({
   setResizeHandler() {
     //only tools have layout (manage sizes)
     this.model.ui.setContainer(this.element);
+  },
+
+  /**
+   * Returns width and height of the area excluding time slider and toolbar/sidebar
+   */
+  getVizWidthHeight() {
+    let width = 0, height = 0;
+    if (this.element) {
+      width = d3.select(this.element).select(".vzb-tool-viz").node().clientWidth;
+      height = d3.select(this.element).select(".vzb-tool-viz").node().clientHeight;
+    } else {
+      utils.warn("Tool getVizWidthHeight(): missing this.element");
+    }
+
+    return { width, height };
   },
 
   triggerResize: utils.throttle(function() {
@@ -207,7 +224,7 @@ const Tool = Component.extend({
 
   getPersistentModel() {
     //try to find functions in properties of model.
-    const removeFunctions = function(model) {
+    function removeFunctions(model) {
       for (const childKey in model) {
         if (typeof model[childKey] === "function") {
           delete model[childKey];
@@ -216,7 +233,7 @@ const Tool = Component.extend({
         else if (typeof model[childKey] === "object")
           removeFunctions(model[childKey]);
       }
-    };
+    }
 
     const currentToolModel = this.model.getPlainObject(true); // true = get only persistent model values
     removeFunctions(currentToolModel);

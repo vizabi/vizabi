@@ -9,7 +9,7 @@ import draggablelist from "components/draggablelist/draggablelist";
  * stack dialog
  */
 
-const Stack = Dialog.extend({
+const Stack = Dialog.extend("stack", {
 
     /**
      * Initializes the dialog component

@@ -1,0 +1,9 @@
+.vzb-tool-dialogs {
+  .vzb-dialogs-dialog {
+    &[data-dlg="about"] {
+      &.vzb-moreoptions.vzb-accordion-section.vzb-accordion-active {
+        max-height: 2000px !important;
+      }
+    }
+  }
+}

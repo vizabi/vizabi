@@ -4,10 +4,9 @@ sudo: true
 node_js:
   - '6.9.2'
 addons:
-  firefox: "42.0"
   apt:
     packages:
-    - s3cmd
+    - python-pip
 
 notifications:
   email: false
@@ -23,18 +22,15 @@ cache:
 
 before_install:
   - npm install -g npm@latest
+  - sudo pip install s3cmd
 
 before_script:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
-  - npm run build:prod
+  - npm run build
 
 script:
-#  - npm run e2e:local
-  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && sh deploy.sh || true'
-
-after_success:
-  .cicd/beta_npm_ver.js
+- npm run deploy
 
 deploy:
   skip_cleanup: true

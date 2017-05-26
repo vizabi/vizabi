@@ -1,5 +1,6 @@
 import * as utils from "base/utils";
 import Class from "base/class";
+import cssEscape from "css.escape";
 
 import { close as iconClose } from "base/iconset";
 
@@ -363,6 +364,7 @@ const Labels = Class.extend({
   },
 
   ready() {
+    this.KEY = this.context.model.entities.getDimension();
     this.updateIndicators();
     this.updateLabelSizeLimits();
     //this.updateLabelsOnlyTextSize();
@@ -493,7 +495,7 @@ const Labels = Class.extend({
 
     this.entityLines = this.entityLines
       .enter().insert("g", function(d) {
-        return this.querySelector("." + _this.options.LINES_CONTAINER_SELECTOR_PREFIX + d[KEY]);
+        return this.querySelector("." + _this.options.LINES_CONTAINER_SELECTOR_PREFIX + cssEscape(d[KEY]));
       })
       .attr("class", (d, index) => _cssPrefix + "-entity entity-line line-" + d[KEY])
       .each(function(d, index) {

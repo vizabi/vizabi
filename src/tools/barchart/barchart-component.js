@@ -218,9 +218,7 @@ const BarComponent = Component.extend({
           left: 40,
           bottom: 50
         },
-        padding: 2,
-        minRadius: 2,
-        maxRadius: 40
+        padding: 2
       },
       "medium": {
         margin: {
@@ -229,9 +227,7 @@ const BarComponent = Component.extend({
           left: 60,
           bottom: 60
         },
-        padding: 2,
-        minRadius: 3,
-        maxRadius: 60
+        padding: 2
       },
       "large": {
         margin: {
@@ -240,9 +236,7 @@ const BarComponent = Component.extend({
           left: 60,
           bottom: 80
         },
-        padding: 2,
-        minRadius: 4,
-        maxRadius: 80
+        padding: 2
       }
     };
 

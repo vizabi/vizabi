@@ -21,7 +21,7 @@ const SizeModel = Axis.extend({
       extent: [0, 0.85],
       scaleType: null,
       allow: {
-        scales: ["linear", "log", "genericLog", "pow"]
+        scales: ["ordinal", "linear", "log", "genericLog", "pow"]
       }
     };
     return utils.deepExtend(this._super(), defaults);

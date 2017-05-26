@@ -7,7 +7,7 @@ import simplecheckbox from "components/simplecheckbox/simplecheckbox";
  * Size dialog
  */
 
-const Presentation = Dialog.extend({
+const Presentation = Dialog.extend("presentation", {
 
 /**
  * Initializes the dialog component

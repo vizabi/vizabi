@@ -10,7 +10,7 @@ import simplecheckbox from "components/simplecheckbox/simplecheckbox";
  * Zoom dialog
  */
 
-const Zoom = Dialog.extend({
+const Zoom = Dialog.extend("zoom", {
 
 /**
  * Initializes the dialog component

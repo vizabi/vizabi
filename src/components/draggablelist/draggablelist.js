@@ -107,9 +107,6 @@ const DraggableList = Component.extend({
   ready() {
     const _this = this;
 
-    const labels = _this.model.color.getColorlegendMarker().label.getItems();
-    this.dataArrFn(utils.keys(labels));
-
     this.updateView();
 
     this.itemsEl = this.element
@@ -134,6 +131,12 @@ const DraggableList = Component.extend({
   updateView() {
     const _this = this;
 
+    const labels = _this.model.color.getColorlegendMarker().label.getItems();
+
+    if (!this.dataArrFn()) {
+      this.dataArrFn(utils.keys(labels));
+    }
+
     this.items = this.element.selectAll("div").data(() => _this.dataArrFn().map(d => ({ data: d })));
     this.items.exit().remove();
     this.items = this.items.enter()
@@ -141,7 +144,6 @@ const DraggableList = Component.extend({
       .append("li")
       .merge(this.items);
 
-    const labels = _this.model.color.getColorlegendMarker().label.getItems();
     this.items.select("li").classed("hover", false).each(function(val, index) {
       d3.select(this).attr("data", val["data"]).text(labels[val["data"]]);
     });

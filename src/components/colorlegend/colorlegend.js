@@ -1,6 +1,6 @@
 import * as utils from "base/utils";
 import Component from "base/component";
-import colorPicker from "helpers/d3.colorPicker";
+import ColorPicker from "helpers/d3.colorPicker";
 import axisSmart from "helpers/d3.axisWithLabelPicker";
 
 /*!
@@ -24,16 +24,19 @@ const ColorLegend = Component.extend({
       name: "marker",
       type: "model"
     }, {
+      name: "color",
+      type: "color"
+    }, {
       name: "locale",
       type: "locale"
     }];
 
     this.model_binds = {
-      "change:marker.color.scaleType": function(evt, path) {
+      "change:color.scaleType": function(evt, path) {
         if (!_this._readyOnce || _this.colorModel.isDiscrete()) return;
         _this.updateView();
       },
-      "change:marker.color.palette": function(evt, path) {
+      "change:color.palette": function(evt, path) {
         if (!_this._readyOnce || (_this.colorModel.isDiscrete() && !_this.frame)) return;
         _this.updateView();
       },
@@ -65,7 +68,7 @@ const ColorLegend = Component.extend({
     //make color in options scrollable
     d3.select(this.placeholder.parentNode).classed("vzb-dialog-scrollable", true);
 
-    this.colorModel = this.model.marker.color;
+    this.colorModel = this.model.color;
     this.colorlegendMarker = this.colorModel.getColorlegendMarker();
     if (this.colorlegendMarker) {
       this.colorlegendMarker.on("ready", () => {
@@ -92,11 +95,12 @@ const ColorLegend = Component.extend({
     this.minimapSVG = this.minimapEl.append("svg");
     this.minimapG = this.minimapSVG.append("g");
 
-    this.colorPicker = colorPicker();
+    this.colorPicker = new ColorPicker(
+      utils.isArray(this.root.element) ?
+        this.root.element :
+        d3.select(this.root.element)
+    );
 
-    // append color picker to the tool DOM. need to check if element is already a d3 selection to not do it twice
-    this.root.element instanceof Array ? this.root.element : d3.select(this.root.element)
-      .call(this.colorPicker);
     this.colorPicker.translate(this.model.locale.getTFunction());
   },
 
@@ -134,6 +138,8 @@ const ColorLegend = Component.extend({
 
 
   updateView() {
+    if (!this.element.selectAll) return utils.warn("colorlegend resize() aborted because element is not yet defined");
+
     const _this = this;
     const KEY = this.KEY;
 
@@ -151,7 +157,7 @@ const ColorLegend = Component.extend({
     const hideColorOptions = canShowMap
       || this.colorModel.which == "_default"
       || this.colorlegendMarker && this.colorlegendDim == this.KEY
-        && utils.comparePlainObjects(this.colorModel.getColorlegendEntities().getFilter(), this.model.entities.getFilter());
+        && colorlegendKeys.length > 10 && utils.comparePlainObjects(this.colorModel.getColorlegendEntities().getFilter(), this.model.entities.getFilter());
 
     colorOptions.classed("vzb-hidden", hideColorOptions);
 
@@ -219,8 +225,6 @@ const ColorLegend = Component.extend({
             left: marginLeft
           },
           showOuter: true,
-          //bump: this.activeProfile.maxRadius/2,
-          //viewportLength: gradientWidth,
           formatter,
           bump: marginLeft,
           cssFontSize: "11px",
@@ -275,7 +279,7 @@ const ColorLegend = Component.extend({
 
         colorOptions.exit().remove();
 
-        colorOptions.enter().append("div").attr("class", "vzb-cl-option")
+        colorOptions = colorOptions.enter().append("div").attr("class", "vzb-cl-option")
           .each(function() {
             d3.select(this).append("div").attr("class", "vzb-cl-color-sample")
               .on("click", _this._interact().clickToShow);
@@ -283,7 +287,8 @@ const ColorLegend = Component.extend({
           })
           .on("mouseover", _this._interact().mouseover)
           .on("mouseout", _this._interact().mouseout)
-          .on("click", _this._interact().clickToSelect);
+          .on("click", _this._interact().clickToSelect)
+          .merge(colorOptions);
 
         colorOptions.each(function(d, index) {
           d3.select(this).select(".vzb-cl-color-sample")
@@ -377,9 +382,7 @@ const ColorLegend = Component.extend({
         _this.colorPicker
           .colorOld(palette[target])
           .colorDef(defaultPalette[target])
-          .callback((value, permanent) => {
-            _this.colorModel.setColor(value, target);
-          })
+          .callback((value, isClick) => _this.colorModel.setColor(value, target, isClick))
           .fitToScreen([d3.event.pageX, d3.event.pageY])
           .show(true);
       },
@@ -431,9 +434,7 @@ const ColorLegend = Component.extend({
   },
 
   resize() {
-    if (!this.colorModel.isDiscrete()) {
-      this.updateView();
-    }
+    this.updateView();
     this.colorPicker.resize(d3.select(".vzb-colorpicker-svg"));
   },
 

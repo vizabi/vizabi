@@ -1,10 +1,6 @@
-import requireAll from "helpers/requireAll";
+import Dialog from "./_dialog";
 import * as utils from "base/utils";
 import Component from "base/component";
-import * as iconset from "base/iconset";
-
-//dialogs
-const dialogs = requireAll(require.context("../../components/dialogs", true, /\.js$/), 1);
 
 /*!
  * VIZABI DIALOGS
@@ -24,8 +20,7 @@ const Dialogs = Component.extend({
    */
   init(config, context) {
 
-    //set properties
-    const _this = this;
+    // set properties
     this.name = "gapminder-dialogs";
     this._curr_dialog_index = 20;
 
@@ -41,59 +36,17 @@ const Dialogs = Component.extend({
       type: "locale"
     }];
 
-    this._available_dialogs = {
-      "timedisplay": {
-        dialog: dialogs.timedisplay
-      },
-      "find": {
-        dialog: dialogs.find,
-      },
-      "show": {
-        dialog: dialogs.show,
-      },
-      "moreoptions": {
-        dialog: dialogs.moreoptions,
-      },
-      "colors": {
-        dialog: dialogs.colors,
-      },
-      "size": {
-        dialog: dialogs.size,
-      },
-      "side": {
-        dialog: dialogs.side,
-      },
-      "label": {
-        dialog: dialogs.label,
-      },
-      "zoom": {
-        dialog: dialogs.zoom,
-      },
-      "axes": {
-        dialog: dialogs.axes,
-      },
-      "axesmc": {
-        dialog: dialogs.axesmc,
-      },
-      "stack": {
-        dialog: dialogs.stack,
-      },
-      "speed": {
-        dialog: dialogs.speed
-      },
-      "opacity": {
-        dialog: dialogs.opacity
-      },
-      "presentation": {
-        dialog: dialogs.presentation
-      },
-      "about": {
-        dialog: dialogs.about
-      },
-      "mapoptions": {
-        dialog: dialogs.mapoptions
-      }
-    };
+    const components = Dialog.getCollection();
+    this._available_dialogs = Object.keys(components)
+      .reduce((result, key) => {
+        const component = components[key];
+
+        if (component.prototype.isDialog && !key.startsWith("_")) {
+          result[key] = { dialog: component };
+        }
+
+        return result;
+      }, {});
 
     this._super(config, context);
 
@@ -122,6 +75,9 @@ const Dialogs = Component.extend({
 
     this.element = d3.select(this.placeholder);
     this.element.selectAll("div").remove();
+    if (utils.isTouchDevice()) {
+      this.element.classed("vzb-no-hover", true);
+    }
 
     this._addDialogs(this.dialog_popup, this.dialog_sidebar);
 
@@ -180,6 +136,8 @@ const Dialogs = Component.extend({
   },
 
   resize() {
+    if (!this.element.selectAll) return utils.warn("dialogs resize() aborted because element is not yet defined");
+
     const _this = this;
     const profile = this.getLayoutProfile();
 

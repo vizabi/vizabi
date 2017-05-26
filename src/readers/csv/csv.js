@@ -29,7 +29,7 @@ const CSVReader = Reader.extend({
     const [firstRow] = data;
     const parser = parsers[timeKey];
 
-    const time = firstRow[timeKey];
+    const time = firstRow[timeKey].trim();
     if (parser && !parser(time)) {
       throw this.error(this.ERRORS.WRONG_TIME_COLUMN_OR_UNITS, undefined, {
         currentYear: new Date().getFullYear(),
@@ -72,7 +72,7 @@ const CSVReader = Reader.extend({
           try {
             const { delimiter = this._guessDelimiter(text) } = this;
             const parser = d3.dsvFormat(delimiter);
-            const data = parser.parse(text);
+            const data = parser.parse(text, row => Object.keys(row).every(key => !row[key]) ? null : row);
 
             const result = { columns: data.columns, data };
             cached[path] = result;
@@ -146,7 +146,9 @@ const CSVReader = Reader.extend({
     const re = new RegExp(char, "g");
     const matches = text.match(re);
     return matches ? matches.length : 0;
-  }
+  },
+
+  versionInfo: { version: __VERSION, build: __BUILD }
 
 });
 

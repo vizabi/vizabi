@@ -8,7 +8,7 @@ import indicatorpicker from "components/indicatorpicker/indicatorpicker";
  * Size dialog
  */
 
-const Size = Dialog.extend({
+const Size = Dialog.extend("size", {
 
 /**
  * Initializes the dialog component
@@ -24,8 +24,7 @@ const Size = Dialog.extend({
       {
         component: indicatorpicker,
         placeholder: ".vzb-saxis-selector",
-        model: ["state.time", "state.entities", "state.marker", "locale"],
-        markerID: "size",
+        model: ["state.time", "state.marker.size", "locale"],
         showHoverValues: true
       }
     ];
@@ -36,7 +35,7 @@ const Size = Dialog.extend({
       this.components.push({
         component: bubblesize,
         placeholder: ".vzb-dialog-bubblesize",
-        model: ["state.marker.size"],
+        model: ["state.marker.size", "locale"],
         ui: {
           show_button: false
         }

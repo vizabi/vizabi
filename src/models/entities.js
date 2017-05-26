@@ -20,7 +20,7 @@ const EntitiesModel = DataConnected.extend({
   },
 
   objectLeafs: ["show", "autogenerate"],
-  dataConnectedChildren: ["show", "dim"],
+  dataConnectedChildren: ["show", "dim", "grouping"],
 
   /**
    * Initializes the entities model.
@@ -50,12 +50,28 @@ const EntitiesModel = DataConnected.extend({
     return this.dim;
   },
 
+  setDimension(dim) {
+    if (this.dim === dim.concept) return;
+    const props = {};
+    props.show = {};
+    props.dim = dim.concept;
+    this.set(props);
+  },
   /**
    * Gets the filter in this entities
    * @returns {Array} Array of unique values
    */
   getFilter() {
-    return this.skipFilter ? [] : this.show;
+    let show;
+    if (this.skipFilter) {
+      show = {};
+    } else {
+      show = utils.deepClone(this.show);
+      if (show[this.dim] && utils.isEmpty(show[this.dim])) {
+        delete show[this.dim];
+      }
+    }
+    return show;
   },
 
   /**
@@ -120,6 +136,10 @@ const EntitiesModel = DataConnected.extend({
     const { $in = [] } = this.show[dimension] || {};
 
     return $in.map(m => ({ [dimension]: m }));
+  },
+
+  isEntities() {
+    return true;
   }
 
 });

@@ -13,7 +13,7 @@ import optionsbuttonlist from "components/buttonlist/optionsbuttonlist/optionsbu
  * More options dialog
  */
 
-const MoreOptions = Dialog.extend({
+const MoreOptions = Dialog.extend("moreoptions", {
 
   /**
    * Initializes the dialog component

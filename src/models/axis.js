@@ -93,7 +93,7 @@ const AxisModel = Hook.extend({
       }
 
       scaleType = (d3.min(domain) <= 0 && d3.max(domain) >= 0 && scaleType === "log") ? "genericLog" : scaleType;
-      this.scale = d3.scale[scaleType || "linear"]().domain(domain);
+      this.scale = d3.scale[(scaleType === "ordinal" ? "point" : scaleType) || "linear"]().domain(domain);
     }
 
     this.scaleType = scaleType;
@@ -108,7 +108,20 @@ const AxisModel = Hook.extend({
     // improvement would be to check concept type of each space-dimension if it's time.
     // Below code works as long we have one time model: time.
     return this._space.time.formatDate(dateObject);
-  }
+  },
+
+  _getZoomed(type) {
+    const zoomed = this[`zoomed${type}`];
+    return zoomed !== null ? zoomed : d3[type.toLowerCase()](this.getScale().domain());
+  },
+
+  getZoomedMin() {
+    return this._getZoomed("Min");
+  },
+
+  getZoomedMax() {
+    return this._getZoomed("Max");
+  },
 
 });
 

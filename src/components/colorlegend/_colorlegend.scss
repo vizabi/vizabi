@@ -23,12 +23,20 @@
   }
 
   .vzb-cl-option {
+    @include rtl {
+      padding-left: 0;
+      padding-right: 15px;
+    }
     padding-bottom: 5px;
     padding-top: 5px;
     cursor: pointer;
     padding-left: 15px;
       
     .vzb-cl-color-sample {
+      @include rtl {
+        margin-left: 10px;
+        margin-right: 0;        
+      }
       display: inline-block;
       width: 20px;
       height: 20px;

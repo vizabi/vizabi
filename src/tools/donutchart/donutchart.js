@@ -50,7 +50,9 @@ const DonutChart = Tool.extend("DonutChart", {
       presentation: false
     },
     locale: { }
-  }
+  },
+
+  versionInfo: { version: __VERSION, build: __BUILD }
 });
 
 export default DonutChart;
