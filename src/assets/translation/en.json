@@ -36,6 +36,7 @@
     "dialogs/mapcolors": "Area colors",
     "dialogs/color/select-all": "Select all in that group",
     "dialogs/color/remove-else": "Remove everything else",
+    "dialogs/color/edit-color": "Edit color",
     "dialogs/find": "Select",
     "dialogs/presentation": "Presentation",
     "hints/bubbl/setminsize": "Minimum bubble size:",
