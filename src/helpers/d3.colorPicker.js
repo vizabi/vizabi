@@ -158,8 +158,13 @@ export default class ColorPicker {
     _svg.append("rect")
       .attr("width", _width)
       .attr("height", _maxHeight)
-      .attr("class", css.COLOR_BUTTON + " " + css.COLOR_BACKGR)
-      .on("mouseover", () => this._cellHover(this._colorOld));
+      .attr("class", css.COLOR_BACKGR)
+      .on("mouseover", () => this._cellHover(this._colorOld))
+      .on("click", () => {
+        d3.event.stopPropagation();
+        this._changeColor(this._colorOld);
+        this.show(false);
+      });
 
     const tx = _maxRadius + _width * _margin.left;
     const ty = _maxRadius + _height * _margin.top;
@@ -255,7 +260,7 @@ export default class ColorPicker {
     _svg.selectAll("." + css.COLOR_BUTTON)
       .on("click", d => {
         d3.event.stopPropagation();
-        this._changeColor(d.data.meaning, true);
+        this._changeColor(d ? d.data.meaning : this._colorDef, true);
         this.show(false);
       });
   }
