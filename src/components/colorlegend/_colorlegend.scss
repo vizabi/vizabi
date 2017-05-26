@@ -140,6 +140,16 @@
       &-moreoptions {
         display: none;
       }
+
+      &-disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+
+      &-tooltip {
+        white-space: normal;
+        font-size: $vzb-font-size-small;
+      }
     }
 
     &-close {

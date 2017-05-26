@@ -136,6 +136,10 @@ const ColorLegend = Component.extend({
     this.editColorButton = this.selectDialog.append("div")
       .classed("vzb-cl-select-dialog-item vzb-cl-select-dialog-item-moreoptions", true)
       .text("🎨 " + t("dialogs/color/edit-color"));
+
+    this.editColorButtonTooltip = this.editColorButton.append("div")
+      .classed("vzb-cl-select-dialog-item-tooltip", true)
+      .text("Dataset author doesn't want you to change this");
   },
 
   _bindSelectDialogItems(...args) {
@@ -201,6 +205,8 @@ const ColorLegend = Component.extend({
         && colorlegendKeys.length > 10 && utils.comparePlainObjects(this.colorModel.getColorlegendEntities().getFilter(), this.model.entities.getFilter());
 
     colorOptions.classed("vzb-hidden", hideColorOptions);
+
+    this._updateSelectDialog();
 
     //Hide rainbow element if showing minimap or if color is discrete
     this.rainbowEl.classed("vzb-hidden", this.colorModel.isDiscrete());
@@ -393,6 +399,11 @@ const ColorLegend = Component.extend({
 
   },
 
+  _updateSelectDialog() {
+    const isColorSelectable = this.colorModel.isUserSelectable();
+    this.editColorButtonTooltip.classed("vzb-hidden", isColorSelectable);
+    this.editColorButton.classed("vzb-cl-select-dialog-item-disabled", !isColorSelectable);
+  },
 
   _interact() {
     const _this = this;
