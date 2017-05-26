@@ -653,6 +653,8 @@ const DataModel = Model.extend({
 
       for (c = 0; c < cLength; c++) _this._collection[dataId].haveNoDataPointsPerKey[columns[c]] = {};
 
+      const { key: groupKey, grouping: groupValue } = _this._collection[dataId].grouping || {};
+
       const buildFrame = function(frameName, entitiesByKey, KEY, dataId, callback) {
         const frame = {};
         if (query.from !== "datapoints") {
@@ -678,8 +680,6 @@ const DataModel = Model.extend({
             // Put together a template for cached filtered sets (see below what's needed)
 
             // Now we run a 3-level loop: across frames, then across keys, then and across data columns (lex, gdp)
-
-          const { key: groupKey, grouping: groupValue } = _this._collection[dataId].grouping || {};
 
           const firstKeyObject = {};
           for (c = 0; c < cLength; c++) firstKeyObject[c] = frame[columns[c]] = {};
