@@ -114,27 +114,32 @@
     position: absolute;
     bottom: 0;
     opacity: 0.5;
-    left: 50%;
-    transform: translate(-50%, 0);
+    right: 0;
+    font-size: $vzb-font-size-small;
   }
 
   .vzb-cl-select-dialog {
     opacity: 1;
     position: absolute;
     display: block;
-    padding: 10px 15px;
+    padding: 8px 15px;
     top: 50%;
     transform: translate(0, -50%);
     left: 20px;
     right: 20px;
     border: 1px solid black;
     border-radius: 7px;
-    background: #f2fafc; // TODO: replace with variable
+    background: $vzb-color-primary-lightest;
+    z-index: 1;
 
     &-item {
       float: left;
       margin: 5px auto;
       cursor: pointer;
+
+      &-moreoptions {
+        display: none;
+      }
     }
 
     &-close {
@@ -150,4 +155,10 @@
     }
   }
 
+}
+
+.vzb-moreoptions {
+  .vzb-cl-select-dialog-item-moreoptions {
+    display: block;
+  }
 }

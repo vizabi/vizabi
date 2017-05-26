@@ -132,6 +132,18 @@ const ColorLegend = Component.extend({
     this.removeElseButton = this.selectDialog.append("div")
       .classed("vzb-cl-select-dialog-item", true)
       .text("🗑️ " + t("dialogs/color/remove-else"));
+
+    this.editColorButton = this.selectDialog.append("div")
+      .classed("vzb-cl-select-dialog-item vzb-cl-select-dialog-item-moreoptions", true)
+      .text("🎨 " + t("dialogs/color/edit-color"));
+  },
+
+  _bindSelectDialogItems(...args) {
+    this.selectAllButton.on("click", () => this._interact().clickToSelect(...args));
+
+    this.removeElseButton.on("click", () => this._interact().clickToShow(...args));
+
+    this.editColorButton.on("click", () => this._interact().clickToChangeColor(...args));
   },
 
   ready() {
@@ -311,12 +323,18 @@ const ColorLegend = Component.extend({
         colorOptions = colorOptions.enter().append("div").attr("class", "vzb-cl-option")
           .each(function() {
             d3.select(this).append("div").attr("class", "vzb-cl-color-sample")
-              .on("click", _this._interact().clickToShow);
+              .on("click", (...args) => {
+                this._bindSelectDialogItems(...args);
+                this.selectDialog.classed("vzb-hidden", false);
+              });
             d3.select(this).append("div").attr("class", "vzb-cl-color-legend");
           })
           .on("mouseover", _this._interact().mouseover)
           .on("mouseout", _this._interact().mouseout)
-          .on("click", _this._interact().clickToSelect)
+          .on("click", (...args) => {
+            this._bindSelectDialogItems(...args);
+            this.selectDialog.classed("vzb-hidden", false);
+          })
           .merge(colorOptions);
 
         colorOptions.each(function(d, index) {
@@ -344,8 +362,7 @@ const ColorLegend = Component.extend({
           .on("mouseover", _this._interact().mouseover)
           .on("mouseout", _this._interact().mouseout)
           .on("click", (...args) => {
-            this.selectAllButton.on("click", () => this._interact().clickToSelect(...args));
-            this.removeElseButton.on("click", () => this._interact().clickToShow(...args));
+            this._bindSelectDialogItems(...args);
             this.selectDialog.classed("vzb-hidden", false);
           })
           .each(function(d) {
