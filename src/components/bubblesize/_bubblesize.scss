@@ -7,29 +7,29 @@
   margin: 0 auto;
   position: relative;
   //height: 116px;
-  
+
   .vzb-bs-svg {
     margin: 0 auto;
     display: block;
     position: relative;
   }
 
-  .vzb-bs-slider { 
+  .vzb-bs-slider {
     fill: #000;
-        
+
     .vzb-bs-slider-thumb-arc {
       fill: none;
-      pointer-events: none; 
+      pointer-events: none;
       stroke: rgba($vzb-color-primary, 1);
       stroke-width: 2px;
       stroke-linejoin: round;
     }
-        
+
     .vzb-bs-slider-thumb-label {
       direction: ltr;
-      pointer-events: none; 	
+      pointer-events: none;
     }
-  
+
     .vzb-bs-slider-thumb-badge {
       fill: rgba($vzb-color-primary, 1);
       stroke: $vzb-color-white;
@@ -37,7 +37,7 @@
       stroke-linejoin: round;
       stroke-opacity: 1;
     }
-    
+
     .overlay {
       fill-opacity: .1;
       shape-rendering: crispEdges;
