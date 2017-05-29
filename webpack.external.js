@@ -13,7 +13,7 @@ const customLoader = require('custom-loader');
 
 const archiver = require('archiver');
 
-const extractSrc = new ExtractTextPlugin('dist/vizabi.css');
+const extractSrc = new ExtractTextPlugin('vizabi.css');
 
 const __PROD__ = process.env.NODE_ENV === 'production';
 const timestamp = new Date();
@@ -109,13 +109,13 @@ module.exports = output => {
     new CopyWebpackPlugin([
       {
         from: path.resolve(__dirname, 'src', 'assets', 'translation'),
-        to: path.resolve(output || path.resolve(__dirname, 'build'), 'dist', 'assets', 'translation'),
+        to: path.resolve(output || path.resolve(__dirname, 'build'), 'assets', 'translation'),
       }
     ]),
     new CopyWebpackPlugin([
       {
         from: path.resolve(__dirname, 'src', 'assets', 'cursors'),
-        to: path.resolve(output || path.resolve(__dirname, 'build'), 'dist', 'assets', 'cursors')
+        to: path.resolve(output || path.resolve(__dirname, 'build'), 'assets', 'cursors')
       }
     ]),
     new SassLintPlugin({
@@ -127,6 +127,11 @@ module.exports = output => {
     new webpack.DefinePlugin({
       __VERSION: JSON.stringify(pkg.version),
       __BUILD: +timestamp
+    }),
+    new webpack.BannerPlugin({
+      banner: "((function(){})({version: '" + JSON.stringify(pkg.version) + "'}));",
+      raw: true,
+      test: /\.js$/
     })
   ];
 
@@ -148,8 +153,6 @@ module.exports = output => {
       }),
       new UnminifiedWebpackPlugin(),
       new AfterBuildPlugin(() => {
-        fs.mkdirSync(path.resolve(__dirname, 'build', 'download'));
-
         const archive = archiver('zip');
         const files = [
           'vizabi.css',
@@ -159,13 +162,13 @@ module.exports = output => {
 
         files.forEach(name =>
           archive.append(
-            fs.createReadStream(path.resolve('build', 'dist', name)),
+            fs.createReadStream(path.resolve('build', name)),
             { name }
           )
         );
 
         archive.pipe(
-          fs.createWriteStream(path.resolve('build', 'download', 'vizabi.zip'))
+          fs.createWriteStream(path.resolve('build', 'vizabi.zip'))
         );
         archive.glob('**/*', { cwd: 'src/assets/cursors', dot: true }, { prefix: 'assets/cursors' });
         archive.glob('en.json', { cwd: 'src/assets/translation', dot: true }, { prefix: 'assets/translation' });
@@ -192,7 +195,7 @@ module.exports = output => {
     devtool: 'source-map',
 
     entry: {
-      'dist/vizabi': path.resolve(__dirname, 'src', 'vizabi-gapminder'),
+      'vizabi': path.resolve(__dirname, 'src', 'vizabi-gapminder'),
     },
 
     output: {

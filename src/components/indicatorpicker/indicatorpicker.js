@@ -29,19 +29,15 @@ const IndPicker = Component.extend({
       name: "time",
       type: "time"
     }, {
-      name: "entities",
-      type: "entities"
-    }, {
-      name: "marker",
-      type: "model"
+      name: "targetModel"
     }, {
       name: "locale",
       type: "locale"
     }];
 
-    this.markerID = config.markerID;
+    //this.markerID = config.markerID;
     this.showHoverValues = config.showHoverValues || false;
-    if (!config.markerID) utils.warn("indicatorpicker.js complains on 'markerID' property: " + config.markerID);
+    //if (!config.markerID) utils.warn("indicatorpicker.js complains on 'markerID' property: " + config.markerID);
 
     this.model_binds = {
       "translate:locale": function(evt) {
@@ -52,29 +48,36 @@ const IndPicker = Component.extend({
       }
     };
 
-    if (this.markerID) {
-      this.model_binds["change:marker." + this.markerID + ".which"] = function(evt) {
-        _this.updateView();
-      };
-    }
+    this.model_binds["change:targetModel"] = function(evt, path) {
+      if (path.indexOf("." + _this.targetProp) == -1) return;
+      _this.updateView();
+    };
 
-    if (this.showHoverValues) {
-      this.model_binds["change:marker.highlight"] = function(evt, values) {
-        const mdl = _this.model.marker[_this.markerID];
+    //contructor is the same as any component
+    this._super(config, context);
+
+    if (this.model.targetModel.isHook() && this.showHoverValues) {
+      this.model.targetModel._parent.on("change:highlight", (evt, values) => {
+        const mdl = _this.model.targetModel;
+        if (!mdl.isHook()) return;
+        const marker = mdl._parent;
         if (!_this.showHoverValues || mdl.use == "constant") return;
-        const _highlightedEntity = _this.model.marker.getHighlighted();
+        const _highlightedEntity = marker.getHighlighted();
         if (_highlightedEntity.length > 1) return;
 
         if (_highlightedEntity.length) {
-          _this.model.marker.getFrame(_this.model.time.value, frame => {
+          marker.getFrame(_this.model.time.value, frame => {
             if (_this._highlighted || !frame) return;
 
                         // should be replaced by dimension of entity set for this hook (if use == property)
-            const dimension = _this.model.entities.getDimension();
-            const _highlightedEntity = _this.model.marker.getHighlighted(dimension);
+            const dimension = mdl.getEntity().getDimension();
+            const _highlightedEntity = marker.getHighlighted(dimension);
             if (_highlightedEntity.length) {
 
-              let value = frame[_this.markerID][_highlightedEntity[0]];
+              let value = _this.multiDim && !mdl.isDiscrete() ?
+                utils.getValueMD(_highlightedEntity[0], frame[mdl._name], _this.KEYS)
+                :
+                frame[mdl._name][_highlightedEntity[0]];
 
                             // resolve strings via the color legend model
               if (value && mdl._type === "color" && mdl.isDiscrete()) {
@@ -91,7 +94,7 @@ const IndPicker = Component.extend({
         } else {
           if (values !== null && values !== "highlight") {
             if (values) {
-              _this._highlightedValue = values[_this.markerID];
+              _this._highlightedValue = values[mdl._name];
               _this._highlighted = (!_this._highlightedValue && _this._highlightedValue !== 0) || mdl.use !== "constant";
             }
           } else {
@@ -99,17 +102,17 @@ const IndPicker = Component.extend({
           }
           _this.updateView();
         }
-      };
+      });
     }
 
-        //contructor is the same as any component
-    this._super(config, context);
+    this.targetProp = config.targetProp || this.model.targetModel.isHook() ? "which" : (this.model.targetModel.isEntities() ? "dim" : null);
   },
 
   ready() {
+    this.KEYS = this.model.targetModel.isHook() ? utils.unique(this.model.targetModel._parent._getAllDimensions({ exceptType: "time" })) : [];
+    this.multiDim = this.KEYS.length > 1;
     this.updateView();
   },
-
 
   readyOnce() {
     const _this = this;
@@ -128,7 +131,7 @@ const IndPicker = Component.extend({
       const leftPos = rect.left - rootRect.left - (treemenuPaddLeft + treemenuPaddRight + treemenuColWidth - rect.width) * 0.5;
 
       treemenuComp
-        .markerID(_this.markerID)
+        .targetModel(_this.model.targetModel)
         .alignX("left")
         .alignY("top")
         .top(topPos)
@@ -138,24 +141,25 @@ const IndPicker = Component.extend({
     });
 
     this.infoEl = d3.select(this.element).select(".vzb-ip-info");
-    utils.setIcon(this.infoEl, iconQuestion)
-      .select("svg").attr("width", "0px").attr("height", "0px");
+    if (_this.model.targetModel.isHook()) {
+      utils.setIcon(this.infoEl, iconQuestion)
+        .select("svg").attr("width", "0px").attr("height", "0px");
 
-    this.infoEl.on("click", () => {
-      _this.root.findChildByName("gapminder-datanotes").pin();
-    });
-    this.infoEl.on("mouseover", () => {
-      const rect = _this.el_select.node().getBoundingClientRect();
-      const rootRect = _this.root.element.getBoundingClientRect();
-      const topPos = rect.bottom - rootRect.top;
-      const leftPos = rect.left - rootRect.left + rect.width;
+      this.infoEl.on("click", () => {
+        _this.root.findChildByName("gapminder-datanotes").pin();
+      });
+      this.infoEl.on("mouseover", () => {
+        const rect = _this.el_select.node().getBoundingClientRect();
+        const rootRect = _this.root.element.getBoundingClientRect();
+        const topPos = rect.bottom - rootRect.top;
+        const leftPos = rect.left - rootRect.left + rect.width;
 
-      _this.root.findChildByName("gapminder-datanotes").setHook(_this.markerID).show().setPos(leftPos, topPos);
-    });
-    this.infoEl.on("mouseout", () => {
-      _this.root.findChildByName("gapminder-datanotes").hide();
-    });
-
+        _this.root.findChildByName("gapminder-datanotes").setHook(_this.model.targetModel._name).show().setPos(leftPos, topPos);
+      });
+      this.infoEl.on("mouseout", () => {
+        _this.root.findChildByName("gapminder-datanotes").hide();
+      });
+    }
 
   },
 
@@ -166,28 +170,42 @@ const IndPicker = Component.extend({
     const _this = this;
     const translator = this.model.locale.getTFunction();
 
-    const which = this.model.marker[this.markerID].which;
-    const type = this.model.marker[this.markerID]._type;
-    const concept = this.model.marker[this.markerID].getConceptprops();
+    const mdl = _this.model.targetModel;
+    const which = mdl[_this.targetProp];
+    const type = mdl._type;
+
+    let concept;
+
+    if (mdl.isHook()) {
+      concept = mdl.getConceptprops();
+    } else {
+      utils.forEach(mdl._root._data, m => {
+        if (m._type === "data") concept = m.getConceptprops(mdl[_this.targetProp]);
+      });
+    }
 
     let selectText;
 
-    if (this.showHoverValues && this._highlighted) {
+    if (this.showHoverValues && mdl.isHook() && this._highlighted) {
       const unit = !concept.unit ? "" : " " + concept.unit;
-      const formatter = _this.model.marker[this.markerID].getTickFormatter();
+      const formatter = mdl.getTickFormatter();
 
       selectText = (this._highlightedValue || this._highlightedValue === 0) ? formatter(this._highlightedValue) + unit : translator("hints/nodata");
 
     } else {
-            //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-      selectText = (which === "_default") ? translator("indicator/_default/" + type) : concept.name;
+          //Let the indicator "_default" in tree menu be translated differnetly for every hook type
+      selectText = (which === "_default") ? translator("indicator/_default/" + type) : (concept.name);
     }
 
-    this.el_select.text(selectText);
+    this.el_select.text(selectText)
+      .attr("title", function(d) {
+        return this.offsetWidth < this.scrollWidth ? selectText : null;
+      });
+
 
         // hide info el if no data is available for it to make sense
     const hideInfoEl = !concept.description && !concept.sourceName && !concept.sourceLink;
-    this.infoEl.classed("vzb-hidden", hideInfoEl);
+    this.infoEl.classed("vzb-invisible", hideInfoEl);
   }
 
 });

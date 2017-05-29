@@ -4,7 +4,7 @@ $vzb-button-bg: $vzb-color-white;
 .vzb-dialog-zoom-buttonlist {
   @include rtl {
     padding-left: 0;
-    padding-right: 15px;
+    padding-right: 5px;
   }
   display: inline-flex;
   justify-content: flex-start;
@@ -14,7 +14,7 @@ $vzb-button-bg: $vzb-color-white;
   text-align: center;
   width: 100%;
   white-space: nowrap;
-  padding-left: 15px;
+  padding-left: 5px;
 
   input,
   textarea,

@@ -8,15 +8,16 @@
           padding-left: 15px;
           padding-right: 15px;
           overflow: visible;
+          min-height: 90px;
         }
         .vzb-cl-rainbow {
           left: 15px;
           right: 15px;
         }
       }
-     
+
       &.vzb-popup {
-        .vzb-dialog-modal {        
+        .vzb-dialog-modal {
           .vzb-dialog-title {
             @include rtl {
               padding-left: 5px;
@@ -35,9 +36,13 @@
           }
         }
       }
-      
+
       &.vzb-moreoptions {
-        .vzb-dialog-modal {        
+        .vzb-cl-colorlist {
+          min-height: 115px;
+        }
+
+        .vzb-dialog-modal {
           .vzb-dialog-content {
             padding-left: 10px;
             padding-right: 10px;
@@ -50,7 +55,7 @@
             }
             .vzb-cl-unit {
               padding-left: 1px;
-            }       
+            }
           }
           .vzb-caxis-selector {
             .vzb-ip-select {
@@ -71,7 +76,7 @@
           > span:first-child {
             display: block;
             flex: 0 0 auto;
-          } 
+          }
         }
 
         .vzb-caxis-selector {
@@ -84,7 +89,7 @@
     }
   }
 }
-  
+
 //responsiveness
 &.vzb-large {
   &.vzb-dialog-expand-true {
@@ -103,7 +108,7 @@
               z-index: 10;
             }
           }
-                
+
           .vzb-cl-outer {
             max-height: 145px;
             .vzb-cl-holder {
@@ -113,7 +118,7 @@
               overflow-y: hidden;
               overflow-x: hidden;
             }
-      
+
           }
         }
       }

@@ -18,7 +18,9 @@ const InlineReader = Reader.extend({
       columns: Object.keys(this._data[0]),
       data: this._data
     });
-  }
+  },
+
+  versionInfo: { version: __VERSION, build: __BUILD }
 
 });
 
