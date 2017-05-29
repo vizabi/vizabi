@@ -113,7 +113,7 @@
   .vzb-cl-more-hint {
     position: absolute;
     bottom: 0;
-    opacity: 0.5;
+    opacity: 0.3;
     right: 0;
     font-size: $vzb-font-size-small;
   }
@@ -122,20 +122,24 @@
     opacity: 1;
     position: absolute;
     display: block;
-    padding: 8px 15px;
+    padding: 5px 15px;
     top: 50%;
     transform: translate(0, -50%);
     left: 20px;
     right: 20px;
     border: 1px solid black;
-    border-radius: 7px;
+    border-radius: 4px;
     background: $vzb-color-primary-lightest;
     z-index: 1;
 
     &-item {
       float: left;
-      margin: 5px auto;
+      margin: 3px auto;
       cursor: pointer;
+      
+      &:hover {
+        text-decoration: underline;
+      }
 
       &-moreoptions {
         display: none;
