@@ -205,7 +205,7 @@ const IndPicker = Component.extend({
 
         // hide info el if no data is available for it to make sense
     const hideInfoEl = !concept.description && !concept.sourceName && !concept.sourceLink;
-    this.infoEl.classed("vzb-hidden", hideInfoEl);
+    this.infoEl.classed("vzb-invisible", hideInfoEl);
   }
 
 });
