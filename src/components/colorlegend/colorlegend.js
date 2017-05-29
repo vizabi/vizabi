@@ -120,6 +120,9 @@ const ColorLegend = Component.extend({
   _initSelectDialogItems() {
     const t = this.model.locale.getTFunction();
 
+    this.selectDialogTitle = this.selectDialog.append("div")
+      .classed("vzb-cl-select-dialog-title", true);
+
     this.selectDialog.append("div")
       .classed("vzb-cl-select-dialog-close", true)
       .html(iconClose)
@@ -143,6 +146,9 @@ const ColorLegend = Component.extend({
   },
 
   _bindSelectDialogItems(...args) {
+    const [, index, indicators] = args;
+    this.selectDialogTitle.text(indicators[index].textContent);
+
     this.selectAllButton.on("click", () => this._interact().clickToSelect(...args));
 
     this.removeElseButton.on("click", () => this._interact().clickToShow(...args));
@@ -403,6 +409,8 @@ const ColorLegend = Component.extend({
     const isColorSelectable = this.colorModel.isUserSelectable();
     this.editColorButtonTooltip.classed("vzb-hidden", isColorSelectable);
     this.editColorButton.classed("vzb-cl-select-dialog-item-disabled", !isColorSelectable);
+
+    this.selectDialog.classed("vzb-hidden", true);
   },
 
   _interact() {
