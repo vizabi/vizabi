@@ -22,6 +22,7 @@ export default Class.extend({
     this.xAlign = "center";
     this.yAlign = "center";
     this.element = this.context.append("text").style("font-size", "20px");
+    this.sample = this.context.append("text").style("font-size", "20px").style("opacity", 0);
 
     if (conditions) {
       this.setConditions(conditions);
@@ -73,23 +74,23 @@ export default Class.extend({
   setText(text, delay) {
     this._timeout && !delay && clearTimeout(this._timeout);
     this._timeout = setTimeout(() => {
-      this.element.text(text);
+      this.sample.text(text);
       this._resizeText();
+      this.element.text(text);
     }, delay);
 
     return this;
   },
 
+
   _resizeText() {
-
-    const bbox = this.element.node().getBBox();
-
+    const bbox = this.sample.node().getBBox();
     if (!bbox.width || !bbox.height || !this.width || !this.height) return this;
 
     // method from http://stackoverflow.com/a/22580176
     const widthTransform = this.width * this.widthRatio / bbox.width;
     const heightTransform = this.height * this.heightRatio / bbox.height;
-    this.scalar = Math.round(Math.min(widthTransform, heightTransform));
+    this.scalar = Math.min(widthTransform, heightTransform);
     this.element.attr("transform", "scale(" + this.scalar + ")");
 
     this.textHeight = bbox.height * this.scalar;
