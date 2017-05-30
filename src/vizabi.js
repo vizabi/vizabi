@@ -9,7 +9,8 @@ import Events from "base/events";
 import globals from "base/globals";
 import * as iconset from "base/iconset";
 
-const Vzb = function(name, placeholder, external_model) {
+const Vzb = globals;
+Vzb.init = (name, placeholder, external_model) => {
   const tool = Tool.get(name);
   if (tool) {
     const t = new tool(placeholder, external_model);
@@ -21,8 +22,6 @@ const Vzb = function(name, placeholder, external_model) {
 
 //stores reference to each tool on the page
 Vzb._instances = {};
-//stores global variables accessible by any tool or component
-Vzb._globals = globals;
 
 //TODO: clear all objects and intervals as well
 //garbage collection
