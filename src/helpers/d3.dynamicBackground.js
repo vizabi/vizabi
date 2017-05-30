@@ -89,7 +89,7 @@ export default Class.extend({
     // method from http://stackoverflow.com/a/22580176
     const widthTransform = this.width * this.widthRatio / bbox.width;
     const heightTransform = this.height * this.heightRatio / bbox.height;
-    this.scalar = widthTransform < heightTransform ? widthTransform : heightTransform;
+    this.scalar = Math.round(Math.min(widthTransform, heightTransform));
     this.element.attr("transform", "scale(" + this.scalar + ")");
 
     this.textHeight = bbox.height * this.scalar;
