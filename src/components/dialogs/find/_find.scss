@@ -31,7 +31,7 @@
         .vzb-dialog-title {
           .vzb-find-filter {
             padding-top: 20px;
-            margin-bottom: 0; 
+            margin-bottom: 0;
           }
         }
         .vzb-dialog-content {
@@ -104,11 +104,10 @@
             display: flex;
             flex-direction: row;
             align-items: center;
-            padding: 0 0 0 20px;
             > span:first-child {
               display: block;
               flex: 0 0 auto;
-            } 
+            }
           }
 
           .vzb-find-filter {
@@ -118,7 +117,7 @@
             }
             display: block;
             flex: 1 1 auto;
-            min-width: 1px;            
+            min-width: 1px;
             max-width: 260px;
             padding-right: 20px;
           }

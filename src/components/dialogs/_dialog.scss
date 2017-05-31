@@ -456,7 +456,7 @@ $vzb-dialog-content-height: 250px;
   // issues: 369 & 442
   .vzb-tool-dialogs {
     .vzb-dialogs-dialog {
-      
+
       &.vzb-popup {
         >.vzb-dialog-modal {
           >.vzb-dialog-title {
@@ -585,8 +585,7 @@ $vzb-dialog-content-height: 250px;
               padding-left: 0;
               padding-right: 20px;
             }
-            padding: 5px 0 5px 20px;
-            margin: 0;
+            margin: 5px 0 5px 20px;
             flex: none;
           }
 
