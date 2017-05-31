@@ -433,14 +433,14 @@ const ColorLegend = Component.extend({
           //fish out the "key" field, leave the rest behind
           .map(d => utils.clone(d, [KEY]));
 
-        _this.model.marker.setHighlight(highlight);
+        _this.model.marker.setSuperHighlight(highlight);
       },
 
       mouseout(d, i) {
         _this.moreOptionsHint.classed("vzb-hidden", true);
         //disable interaction if so stated in concept properties
         if (!_this.colorModel.isDiscrete()) return;
-        _this.model.marker.clearHighlighted();
+        _this.model.marker.clearSuperHighlighted();
       },
       clickToChangeColor(d, i) {
         //disable interaction if so stated in concept properties
