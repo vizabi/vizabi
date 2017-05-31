@@ -456,9 +456,18 @@ $vzb-dialog-content-height: 250px;
   // issues: 369 & 442
   .vzb-tool-dialogs {
     .vzb-dialogs-dialog {
-      .vzb-dialog-title {
-        padding: 0;
-        margin: 20px;
+      
+      &.vzb-popup {
+        >.vzb-dialog-modal {
+          >.vzb-dialog-title {
+            padding: 0;
+            margin: 20px 20px 10px;
+          }
+
+          >.vzb-dialog-buttons {
+            padding: 0 0 5px 0;
+          }
+        }
       }
 
       &.vzb-popup.vzb-active {
@@ -512,15 +521,6 @@ $vzb-dialog-content-height: 250px;
             right: auto;
           }
           @include position(absolute, 5px -10px auto auto);
-        }
-        >.vzb-dialog-modal {
-          >.vzb-dialog-buttons {
-            padding: 3px 25px;
-          }
-
-          >.vzb-dialog-title {
-            padding: 15px 25px 10px;
-          }
         }
       }
     }
