@@ -20,7 +20,7 @@ $vzb-dialog-content-height: 250px;
       color: $vzb-color-primary;
       font-size: $vzb-font-size-regular;
       //font-weight: bold;
-      padding: 45px 25px 16px;
+      margin: 48px 20px 15px;
       display: inline-block;
       //align-self: flex-start;
 
@@ -107,7 +107,7 @@ $vzb-dialog-content-height: 250px;
     .vzb-dialog-buttons {
       display: table;
       width: 100%;
-      padding: 15px 25px;
+      padding: 7px 0;
     }
 
     .vzb-dialog-control {
@@ -452,9 +452,15 @@ $vzb-dialog-content-height: 250px;
 }
 
 &.vzb-small {
+
   // issues: 369 & 442
   .vzb-tool-dialogs {
     .vzb-dialogs-dialog {
+      .vzb-dialog-title {
+        padding: 0;
+        margin: 20px;
+      }
+
       &.vzb-popup.vzb-active {
         top: auto;
       }
