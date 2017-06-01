@@ -11,6 +11,7 @@ const Marker = Model.extend({
     const defaults = {
       select: [],
       highlight: [],
+      superHighlight: [],
       opacityHighlightDim: 0.1,
       opacitySelectDim: 0.3,
       opacityRegular: 1,
@@ -137,6 +138,21 @@ const Marker = Model.extend({
       return;
     }
     this.getModelObject("highlight").set(arg, false, false); // highlights are always non persistent changes
+  },
+
+  setSuperHighlight(value) {
+    this.getModelObject("superHighlight")
+      .set(utils.isArray(value) ? value : [value], false, false);
+  },
+
+  clearSuperHighlighted() {
+    this.setSuperHighlight([]);
+  },
+
+  isSuperHighlighted(d) {
+    const value = JSON.stringify(this._createValue(d));
+
+    return ~this.superHighlight.findIndex(d => JSON.stringify(d) === value);
   },
 
   setSelect(arg) {

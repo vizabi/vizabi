@@ -30,6 +30,9 @@ const ColorLegend = Component.extend({
     }, {
       name: "locale",
       type: "locale"
+    }, {
+      name: "ui",
+      type: "ui",
     }];
 
     this.model_binds = {
@@ -413,6 +416,18 @@ const ColorLegend = Component.extend({
     this.selectDialog.classed("vzb-hidden", true);
   },
 
+  _highlight(values) {
+    utils.getProp(["model", "ui", "chart", "superhighlightOnMinimapHover"], this) ?
+      this.model.marker.setSuperHighlight(values) :
+      this.model.marker.setHighlight(values);
+  },
+
+  _unhighlight() {
+    utils.getProp(["model", "ui", "chart", "superhighlightOnMinimapHover"], this) ?
+      this.model.marker.clearSuperHighlighted() :
+      this.model.marker.clearHighlighted();
+  },
+
   _interact() {
     const _this = this;
     const KEY = this.KEY;
@@ -427,20 +442,19 @@ const ColorLegend = Component.extend({
         const view = d3.select(this);
         const target = d[colorlegendDim];
 
-        const highlight = _this.colorModel.getValidItems()
+        const values = _this.colorModel.getValidItems()
           //filter so that only countries of the correct target remain
           .filter(f => f[_this.colorModel.which] == target)
           //fish out the "key" field, leave the rest behind
           .map(d => utils.clone(d, [KEY]));
-
-        _this.model.marker.setHighlight(highlight);
+        _this._highlight(values);
       },
 
       mouseout(d, i) {
         _this.moreOptionsHint.classed("vzb-hidden", true);
         //disable interaction if so stated in concept properties
         if (!_this.colorModel.isDiscrete()) return;
-        _this.model.marker.clearHighlighted();
+        _this._unhighlight();
       },
       clickToChangeColor(d, i) {
         //disable interaction if so stated in concept properties
