@@ -14,7 +14,8 @@ const Marker = Model.extend({
       opacityHighlightDim: 0.1,
       opacitySelectDim: 0.3,
       opacityRegular: 1,
-      allowSelectMultiple: true
+      allowSelectMultiple: true,
+      skipFilter: false
     };
     return utils.deepExtend(this._super(), defaults);
   },
@@ -280,7 +281,71 @@ const Marker = Model.extend({
     return !min && !max ? false : { min: resultMin, max: resultMax };
   },
 
+  getImportantHooks() {
+    const importantHooks = [];
+    utils.forEach(this._dataCube || this.getSubhooks(true), (hook, name) => {
+      if (hook._important) {
+        importantHooks.push(name);
+      }
+    });
+    return importantHooks;
+  },
 
+  getLabelHookNames() {
+    const _this = this;
+    const KEYS = utils.unique(this._getAllDimensions({ exceptType: "time" }));
+
+    return KEYS.map(key => {
+      const names = {};
+      utils.forEach(_this._dataCube || _this.getSubhooks(true), (hook, name) => {
+        if (hook._type === "label" && hook.getEntity().dim === key) {
+          names.label = name;
+        }
+        if (hook._type !== "label" && hook.getEntity().dim === key) {
+          names.key = name;
+        }
+        return !names.label || !names.key;
+      });
+      return names.label || names.key;
+    });
+  },
+
+  getKeysMD() {
+    const _this = this;
+    const resultKeys = [];
+
+    const KEYS = utils.unique(this._getAllDimensions({ exceptType: "time" }));
+    const TIME = this._getFirstDimension({ type: "time" });
+
+    utils.forEach(this._dataCube || this.getSubhooks(true), (hook, name) => {
+      if (hook.use === "constant" || hook.use === "property" || !hook._important) return;
+
+      const nested = hook.getNestedItems(KEYS.concat(TIME));
+
+      iterateKeys({}, nested, KEYS, 0, KEYS.length - 1);
+
+      function iterateKeys(keyObj, nested, keyNames, deep, deepMax) {
+        const keys = Object.keys(nested);
+        if (deep < deepMax) {
+          const _deep = deep + 1;
+          for (let i = 0, j = keys.length; i < j; i++) {
+            const _keyObj = {};
+            _keyObj[keyNames[deep]] = keys[i];
+            iterateKeys(_keyObj, nested[keys[i]], keyNames, _deep, deepMax);
+          }
+        } else {
+          resultKeys.push(...keys.map(key => {
+            const obj = Object.assign({}, keyObj);
+            obj[keyNames[deep]] = key;
+            return obj;
+          }));
+        }
+      }
+
+    });
+
+    return resultKeys;
+  },
   /**
    * Computes the intersection of keys in all hooks: a set of keys that have data in each hook
    * @returns array of keys that have data in all hooks of this._datacube
@@ -291,6 +356,8 @@ const Marker = Model.extend({
 
     KEY = KEY || this._getFirstDimension();
     const TIME = this._getFirstDimension({ type: "time" });
+
+    const grouping = this._getGrouping();
 
     utils.forEach(this._dataCube || this.getSubhooks(true), (hook, name) => {
 
@@ -304,9 +371,13 @@ const Marker = Model.extend({
 
       if (nested["undefined"]) delete nested["undefined"];
 
-      const keys = Object.keys(nested);
+      let keys = Object.keys(nested);
       const keysNoDP = Object.keys(noDataPoints || []);
 
+      if (keys.length > 0 && grouping && grouping.key === KEY) {
+        const _grouping = grouping.grouping;
+        keys = keys.filter(key => (+key % _grouping) === 0);
+      }
             // If ain't got nothing yet, set the list of keys to result
       if (resultKeys.length == 0) resultKeys = keys;
 
@@ -326,6 +397,7 @@ const Marker = Model.extend({
     let cachePath = `${this.getClosestModel("locale").id} - ${steps[0]} - ${steps[steps.length - 1]}`;
     this._dataCube = this._dataCube || this.getSubhooks(true);
     let dataLoading = false;
+    const grouping = this._getGrouping();
     utils.forEach(this._dataCube, (hook, name) => {
       if (hook._loadCall) dataLoading = true;
       cachePath = cachePath + "_" +  hook._dataId + hook.which;
@@ -333,10 +405,27 @@ const Marker = Model.extend({
     if (dataLoading) {
       return null;
     }
+    if (grouping) {
+      cachePath = cachePath + "_grouping_" + grouping.key + ":" + grouping.grouping;
+    }
     if (keys) {
       cachePath = cachePath + "_" + keys.join(",");
     }
     return cachePath;
+  },
+
+  _getGrouping() {
+    const subHooks = this._dataCube || this.getSubhooks(true);
+    const space = subHooks[Object.keys(subHooks)[0]]._space;
+    const result = {};
+    utils.forEach(space, entities => {
+      if (entities.grouping) {
+        result.grouping = entities.grouping;
+        result.key = entities.dim;
+        return false;
+      }
+    });
+    return result.grouping ? result : false;
   },
 
   _getAllDimensions(opts) {

@@ -1,6 +1,7 @@
 import * as utils from "base/utils";
 import Component from "base/component";
 import Dialog from "components/dialogs/_dialog";
+import indicatorpicker from "components/indicatorpicker/indicatorpicker";
 
 /*!
  * VIZABI SHOW CONTROL
@@ -19,6 +20,16 @@ const Show = Dialog.extend("show", {
       }
     };
 
+    this.enablePicker = ((config.ui.dialogs.dialog || {}).show || {}).enablePicker;
+    if (this.enablePicker) {
+      this.components = [{
+        component: indicatorpicker,
+        placeholder: ".vzb-show-filter-selector",
+        model: ["state.time", "state.entities", "locale"]
+      }];
+    }
+
+
     this._super(config, parent);
   },
 
@@ -27,6 +38,12 @@ const Show = Dialog.extend("show", {
    */
   readyOnce() {
     this._super();
+
+    this.resetFilter = utils.deepExtend({}, this.model.state.entities.show);
+
+    this.element.select(".vzb-show-filter-selector").classed("vzb-hidden", !this.enablePicker);
+    this.element.select(".vzb-dialog-title").classed("vzb-title-two-rows", this.enablePicker);
+
     this.list = this.element.select(".vzb-show-list");
     this.input_search = this.element.select(".vzb-show-search");
     this.deselect_all = this.element.select(".vzb-show-deselect");
@@ -101,9 +118,12 @@ const Show = Dialog.extend("show", {
         .attr("type", "checkbox")
         .attr("class", "vzb-show-item")
         .attr("id", d => "-show-" + d[_this.KEY] + "-" + _this._id)
-        .property("checked", d => _this.model.state.entities.isShown(d))
+        .property("checked", function(d) {
+          const isShown = _this.model.state.entities.isShown(d);
+          d3.select(this.parentNode).classed("vzb-checked", isShown);
+          return isShown;
+        })
         .on("change", d => {
-
           _this.model.state.marker.clearSelected();
           _this.model.state.entities.showEntity(d);
           _this.showHideDeselect();
@@ -112,6 +132,13 @@ const Show = Dialog.extend("show", {
       items.append("label")
         .attr("for", d => "-show-" + d[_this.KEY] + "-" + _this._id)
         .text(d => d.label);
+
+      const lastCheckedNode = _this.list.selectAll(".vzb-checked")
+        .classed("vzb-separator", false)
+        .lower()
+        .nodes()[0];
+      d3.select(lastCheckedNode).classed("vzb-separator", true);
+      _this.contentEl.node().scrollTop = 0;
 
       _this.input_search.attr("placeholder", _this.translator("placeholder/search") + "...");
 
@@ -139,7 +166,14 @@ const Show = Dialog.extend("show", {
   },
 
   deselectEntities() {
-    this.model.state.entities.clearShow();
+    const KEY = this.KEY;
+    if (this.resetFilter[KEY]) {
+      const newShow = Object.assign({}, this.model.state.entities.show);
+      newShow[KEY] = this.resetFilter[KEY];
+      this.model.state.entities.show = newShow;
+    } else {
+      this.model.state.entities.clearShow();
+    }
     this.showHideDeselect();
   },
 

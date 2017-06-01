@@ -152,12 +152,7 @@ const Reader = Class.extend({
       const result = Object.keys(row).reduce((result, key) => {
         if (correct) {
           const defaultValue = row[key];
-          const value = !utils.isString(defaultValue) ?
-            defaultValue :
-            defaultValue.trim()
-              .replace(",", ".")
-              .replace(new RegExp(defaultValue.replace(",", ".").includes(".") ? "0+$" : ""), "")
-              .replace(/\.$/, "");
+          const value = !utils.isString(defaultValue) ? defaultValue : defaultValue.replace(",", ".").trim();
 
           const parser = parsers[key];
           let resultValue;
@@ -166,9 +161,10 @@ const Reader = Class.extend({
             resultValue = parser(value);
           } else {
             const numeric = parseFloat(value);
-            resultValue = String(numeric) === value && !isNaN(numeric) && isFinite(numeric) ?
-              numeric :
-              value;
+            const strValue = String(value);
+            const dotRegex = strValue.includes(".") ? /0+$/ : "";
+            const validatedValue = strValue.replace(dotRegex, "").replace(/\.+$/, "");
+            resultValue = String(numeric) === validatedValue && !isNaN(numeric) && isFinite(numeric) ? numeric : value;
           }
 
           if (!resultValue && resultValue !== 0) {

@@ -3,6 +3,7 @@ import Component from "base/component";
 import Dialog from "components/dialogs/_dialog";
 
 import simpleslider from "components/simpleslider/simpleslider";
+import indicatorpicker from "components/indicatorpicker/indicatorpicker";
 
 /*!
  * VIZABI FIND CONTROL
@@ -23,8 +24,18 @@ const Find = Dialog.extend("find", {
       properties: { step: 0.01 }
     }];
 
+    this.enablePicker = ((config.ui.dialogs.dialog || {}).find || {}).enablePicker;
+    if (this.enablePicker) {
+      this.components.push({
+        component: indicatorpicker,
+        placeholder: ".vzb-find-filter-selector",
+        model: ["state.time", "state.entities", "locale"]
+      });
+    }
+
     this.model_binds = {
       "change:state.marker.select": function(evt) {
+        _this.items.order();
         _this.selectDataPoints();
         _this.showHideDeselect();
       },
@@ -67,6 +78,9 @@ const Find = Dialog.extend("find", {
     this.input_search = this.element.select(".vzb-find-search");
     this.deselect_all = this.element.select(".vzb-find-deselect");
     this.opacity_nonselected = this.element.select(".vzb-dialog-bubbleopacity");
+
+    this.element.select(".vzb-find-filter-selector").classed("vzb-hidden", !this.enablePicker);
+    this.element.select(".vzb-dialog-title").classed("vzb-title-two-rows", this.enablePicker);
 
     this.KEY = this.model.state.entities.getDimension();
 
@@ -123,13 +137,26 @@ const Find = Dialog.extend("find", {
     this._super();
 
     const _this = this;
-    const KEY = this.KEY;
+    const KEY = this.KEY = this.model.state.entities.getDimension();
+    const KEYS = this.KEYS = utils.unique(this.model.state.marker._getAllDimensions({ exceptType: "time" }));
+    this.multiDim = KEYS.length > 1;
+
+    this.importantHooks = _this.model.state.marker.getImportantHooks();
+    const labelNames = _this.model.state.marker.getLabelHookNames();
 
     this.time = this.model.state.time.value;
     this.model.state.marker.getFrame(this.time, values => {
       if (!values) return;
 
-      const data = _this.model.state.marker.getKeys().map(d => {
+      const data = _this.multiDim ? _this.model.state.marker.getKeysMD()
+        .map(pointer => {
+          pointer.brokenData = false;
+          pointer.name = KEYS.map((key, index) => values[labelNames[index]][pointer[key]])
+            .join(", ");
+
+          return pointer;
+        })
+      : _this.model.state.marker.getKeys().map(d => {
         const pointer = {};
         pointer[KEY] = d[KEY];
         pointer.brokenData = false;
@@ -152,7 +179,7 @@ const Find = Dialog.extend("find", {
       _this.items.append("input")
         .attr("type", "checkbox")
         .attr("class", "vzb-find-item")
-        .attr("id", d => "-find-" + d[KEY] + "-" + _this._id)
+        .attr("id", (d, i) => "-find-" + i + "-" + _this._id)
         .on("change", d => {
           //clear highlight so it doesn't get in the way when selecting an entity
           if (!utils.isTouchDevice()) _this.model.state.marker.clearHighlighted();
@@ -162,7 +189,7 @@ const Find = Dialog.extend("find", {
         });
 
       _this.items.append("label")
-        .attr("for", d => "-find-" + d[KEY] + "-" + _this._id)
+        .attr("for", (d, i) => "-find-" + i + "-" + _this._id)
         .text(d => d.name)
         .on("mouseover", d => {
           if (!utils.isTouchDevice() && !d.brokenData) _this.model.state.marker.highlightMarker(d);
@@ -183,30 +210,66 @@ const Find = Dialog.extend("find", {
   redrawDataPoints(values) {
     const _this = this;
     const KEY = this.KEY;
+    const KEYS = this.KEYS;
 
-    _this.items
-      .each(function(d) {
-        const view = d3.select(this).select("label");
+    if (this.multiDim) {
+      _this.items
+        .each(function(d) {
+          const view = d3.select(this).select("label");
+          d.brokenData = false;
 
-        d.brokenData = false;
-        utils.forEach(values, (hook, name) => {
-          //TODO: remove the hack with hardcoded hook names (see discussion in #1389)
-          if (name !== "color" && name !== "size_label" && _this.model.state.marker[name].use !== "constant" && !hook[d[KEY]] && hook[d[KEY]] !== 0) {
-            d.brokenData = true;
-          }
+          utils.forEach(_this.importantHooks, name => {
+            const hook = values[name];
+            if (!hook) return;
+            const value = utils.getValueMD(d, hook, KEYS) || false;
+            if (!value && value !== 0) {
+              d.brokenData = true;
+              return false;
+            }
+          });
+
+          view
+            .classed("vzb-find-item-brokendata", d.brokenData)
+            .attr("title", d.brokenData ? _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : "");
         });
+    } else {
+      _this.items
+        .each(function(d) {
+          const view = d3.select(this).select("label");
 
-        view
-          .classed("vzb-find-item-brokendata", d.brokenData)
-          .attr("title", d.brokenData ? _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : "");
-      });
+          d.brokenData = false;
+          utils.forEach(values, (hook, name) => {
+            //TODO: remove the hack with hardcoded hook names (see discussion in #1389)
+            if (name !== "color" && name !== "size_label" && _this.model.state.marker[name].use !== "constant" && !hook[d[KEY]] && hook[d[KEY]] !== 0) {
+              d.brokenData = true;
+            }
+          });
+
+          view
+            .classed("vzb-find-item-brokendata", d.brokenData)
+            .attr("title", d.brokenData ? _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : "");
+        });
+    }
   },
 
   selectDataPoints() {
+    const _this = this;
     const KEY = this.KEY;
-    const selected = this.model.state.marker.getSelected(KEY);
+//    const selected = this.model.state.marker.getSelected(KEY);
+    const selected = this.model.state.marker;
     this.items.selectAll("input")
-      .property("checked", d => (selected.indexOf(d[KEY]) !== -1));
+//      .property("checked", d => (selected.indexOf(d[KEY]) !== -1));
+      .property("checked", function(d) {
+        const isSelected = selected.isSelected(d);
+        d3.select(this.parentNode).classed("vzb-checked", isSelected);
+        return isSelected;
+      });
+    const lastCheckedNode = this.list.selectAll(".vzb-checked")
+      .classed("vzb-separator", false)
+      .lower()
+      .nodes()[0];
+    d3.select(lastCheckedNode).classed("vzb-separator", true);
+    this.contentEl.node().scrollTop = 0;
   },
 
   showHideSearch() {

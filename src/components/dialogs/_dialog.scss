@@ -226,14 +226,13 @@ $vzb-dialog-content-height: 250px;
 
       label {
         @include position(absolute, 0 null null null);
-        @include border-radius(4px);
         white-space: nowrap;
         cursor: pointer;
-        width: 18px;
-        height: 18px;
-        background: $vzb-color-primary-lightest;
-        border: 1px solid rgba($vzb-color-primary, .2);
-        text-indent: 26px;
+        max-width: 100%;
+        text-indent: 27px;
+        line-height: 22px;
+        overflow: hidden;
+        text-overflow: ellipsis;
         transition: color .3s;
 
         &.vzb-find-item-brokendata {
@@ -241,10 +240,29 @@ $vzb-dialog-content-height: 250px;
           text-decoration: line-through;
         }
 
+        &::before {
+          @include position(absolute, 0 null null 0);
+          @include border-radius(4px);
+          @include rtl {
+            left: auto;
+            right: 0;
+          }
+          content: '';
+          cursor: pointer;
+          width: 18px;
+          height: 18px;
+          background: $vzb-color-primary-lightest;
+          border: 1px solid rgba($vzb-color-primary, .2);
+        }
+
         &::after {
-          @include position(absolute, 4px null null 4px);
+          @include position(absolute, 5px null null 5px);
           @include opacity(0);
           @include rotate(-45deg);
+          @include rtl {
+            left: auto;
+            right: 5px;
+          }
           content: '';
           width: 8px;
           height: 4px;
@@ -255,7 +273,7 @@ $vzb-dialog-content-height: 250px;
         }
       }
 
-      input[type=checkbox]:checked + label {
+      input[type=checkbox]:checked + label::before {
         border: 1px solid rgba($vzb-color-primary, .5);
       }
 
@@ -569,6 +587,7 @@ $vzb-dialog-content-height: 250px;
   }
 }
 
+@import 'about/about';
 @import 'colors/colors';
 @import 'axes/axes';
 @import 'find/find';
@@ -580,3 +599,4 @@ $vzb-dialog-content-height: 250px;
 @import 'stack/stack';
 @import 'moreoptions/moreoptions';
 @import 'timedisplay/timedisplay';
+@import 'grouping/grouping';

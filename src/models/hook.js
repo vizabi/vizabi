@@ -158,6 +158,12 @@ const Hook = DataConnected.extend({
    */
   afterLoad(dataId) {
     this._dataId = dataId;
+
+    const grouping = this._parent._getGrouping();
+    if (grouping) {
+      this.dataSource._collection[dataId].grouping = grouping;
+    }
+
     utils.timeStamp("Vizabi Model: Data loaded: " + this._id);
   },
 
@@ -280,7 +286,7 @@ const Hook = DataConnected.extend({
       if (opts.onlyType && h.getType() !== opts.onlyType) {
         return true;
       }
-      if (h.skipFilter) return;
+      if (h.skipFilter || _this._parent.skipFilter) return;
       // if query's dimensions are the same as the hook's, no join
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
         filters = utils.extend(filters, h.getFilter(splashScreen));
@@ -309,7 +315,7 @@ const Hook = DataConnected.extend({
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
         return true;
       }
-      if (h.skipFilter) return;
+      if (h.skipFilter || _this._parent.skipFilter) return;
 
       const filter = h.getFilter(splashScreen);
       if (filter != null && !utils.isEmpty(filter)) {
@@ -589,11 +595,13 @@ const Hook = DataConnected.extend({
     // validate scale type: only makes sense if which is defined
     if (this.which) {
       const { scaleType } = this;
-      const { scales = [] } = this.getConceptprops();
-
+      let { scales = [] } = this.getConceptprops();
+      if (this.allow && this.allow.scales && this.allow.scales.length > 0) {
+        scales = scales.filter(val => this.allow.scales.indexOf(val) != -1);
+      }
+      
       const scaleTypeIsAllowed = scales.includes(scaleType);
       const genericLogIsAllowed = scales.includes("log") && scaleType === "genericLog";
-
       if (!(scaleTypeIsAllowed || genericLogIsAllowed) && scales.length > 0) {
         const [firstAllowedScaleType] = scales;
         this.set({ scaleType: firstAllowedScaleType === "nominal" ? "ordinal" : firstAllowedScaleType }, null, false);

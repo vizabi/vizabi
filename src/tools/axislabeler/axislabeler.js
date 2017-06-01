@@ -83,7 +83,9 @@ const AxisLabeler = Tool.extend("AxisLabeler", {
     data: { noConceptprops: true },
     locale: { },
     ui: { }
-  }
+  },
+
+  versionInfo: { version: __VERSION, build: __BUILD }
 });
 
 export default AxisLabeler;
