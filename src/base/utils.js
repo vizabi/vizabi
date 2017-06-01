@@ -1545,6 +1545,23 @@ export function getValueMD(d, values, keysArray) {
 
 export const isFunction = value => typeof value === "function";
 
+
+/**
+ * This is helper for getting some deep props in object. It's added to remove code like
+ * this.show[dimension]
+ *   && this.show[dimension]["$in"]
+ *   && this.show[dimension]["$in"].indexOf(d[dimension]) !== -1;
+ * when you need to get (+check) nested properties.
+
+ * @param {Array} names of properties for nesting
+ * @param {context} the root object where we start to look for the props
+ * @param {*} defaultValue default value that will be returned if there is no such properties in object
+ * @returns {property} the property we're looking for or a default value
+
+ * Usage:
+ * const object = { one: { two: "your value" } };
+ * utils.getProp(["one", "two"], object); // "your value"
+*/
 export const getProp = (props, object, defaultValue) => {
   while (props.length) {
     const prop = props.shift();
