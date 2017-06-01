@@ -1544,3 +1544,15 @@ export function getValueMD(d, values, keysArray) {
 }
 
 export const isFunction = value => typeof value === "function";
+
+export const getProp = (props, object, defaultValue) => {
+  while (props.length) {
+    const prop = props.shift();
+    if (object.hasOwnProperty(prop)) {
+      object = object[prop];
+    } else {
+      return defaultValue;
+    }
+  }
+  return object;
+};
