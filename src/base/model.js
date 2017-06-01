@@ -723,8 +723,10 @@ function initSubmodel(attr, val, ctx, persistent) {
       "hook_change": onHookChange,
       // error triggered in loading
       "load_error": (...args) => ctx.trigger(...args),
-        //loading has ended in this submodel (multiple times)
-      "ready": onReady
+      // interpolation completed
+      "dataLoaded": (...args) => ctx.trigger(...args),
+      //loading has ended in this submodel (multiple times)
+      "ready": onReady,
     };
 
     // if the value is an already instantiated submodel (Model or ModelLeaf)
