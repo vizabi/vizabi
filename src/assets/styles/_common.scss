@@ -16,8 +16,8 @@ $vzb-font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 $vzb-font-family-alt: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 $vzb-font-size-base: 16px;
 $vzb-font-size-regular: 1em;
-$vzb-font-size-tiny: .625em;
-$vzb-font-size-small: .8em;
+$vzb-font-size-tiny: 0.625em;
+$vzb-font-size-small: 0.8em;
 $vzb-font-size-medium: 1.24em;
 $vzb-font-size-large: 1.38em;
 $vzb-font-size-larger: 1.6em;
@@ -56,7 +56,7 @@ $vzb-color-accent-yellow: #ff0;
 // ----------------------------------------------------------------------------
 //   Loader (spinner)
 // ----------------------------------------------------------------------------
-$vzb-loader-speed: .6s;
+$vzb-loader-speed: 0.6s;
 $vzb-loader-thickness: 4px;
 $vzb-loader-size: 30px;
 $vzb-loader-bgcolor: $vzb-color-white;
@@ -91,9 +91,9 @@ $vzb-loader-bgcolor: $vzb-color-white;
   animation-name: rotate-forever;
   animation-iteration-count: infinite;
   animation-duration: $vzb-loader-speed;
-  border: $vzb-loader-thickness solid rgba($vzb-color-primary, .1);
+  border: $vzb-loader-thickness solid rgba($vzb-color-primary, 0.1);
   border-radius: 100%;
-  border-top: $vzb-loader-thickness solid rgba($vzb-color-primary, .6);
+  border-top: $vzb-loader-thickness solid rgba($vzb-color-primary, 0.6);
   content: ' ';
   display: inline-block;
   margin: -1 * $vzb-loader-size / 2;

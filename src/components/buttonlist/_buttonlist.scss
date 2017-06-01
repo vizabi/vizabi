@@ -85,11 +85,11 @@ $vzb-button-color-border: #cce6ed;
     &.vzb-unavailable {
       > .vzb-buttonlist-btn-icon {
         border: 1px solid $vzb-button-color-border;
-        opacity: .4;
+        opacity: 0.4;
       }
 
       > .vzb-buttonlist-btn-title {
-        opacity: .4;
+        opacity: 0.4;
       }
     }
   }
@@ -103,17 +103,17 @@ $vzb-button-color-border: #cce6ed;
       pointer-events: none;
 
       > .vzb-buttonlist-btn-icon {
-        background-color: rgba($vzb-color-grey-lightest, .5);
+        background-color: rgba($vzb-color-grey-lightest, 0.5);
 
         .vzb-icon {
           path {
-            fill: rgba($vzb-color-primary-light, .4);
+            fill: rgba($vzb-color-primary-light, 0.4);
           }
         }
       }
 
       > .vzb-buttonlist-btn-title {
-        color: rgba($vzb-color-primary-light, .4);
+        color: rgba($vzb-color-primary-light, 0.4);
       }
     }
   }

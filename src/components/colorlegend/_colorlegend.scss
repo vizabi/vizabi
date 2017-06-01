@@ -127,7 +127,7 @@
     transform: translate(0, -50%);
     left: 20px;
     right: 20px;
-    border: 1px solid black;
+    border: 1px solid #000;
     border-radius: 4px;
     background: $vzb-color-primary-lightest;
     z-index: 1;
@@ -136,7 +136,7 @@
       float: left;
       margin: 3px auto;
       cursor: pointer;
-      
+
       &:hover {
         text-decoration: underline;
       }
