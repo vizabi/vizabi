@@ -799,16 +799,25 @@ const Marker = Model.extend({
     const preparedFrames = {};
     this.getFrames();
     const dataIds = [];
+
+    const stepsCount = steps.length;
+    let isDataLoaded = false;
+
     utils.forEach(_this._dataCube, (hook, name) => {
       if (!(hook.use === "constant" || hook.which === KEY || hook.which === TIME)) {
-        if (dataIds.indexOf(hook._dataId) == -1) {
+        if (!dataIds.includes(hook._dataId)) {
           dataIds.push(hook._dataId);
 
           hook.dataSource.listenFrame(hook._dataId, steps, keys, (dataId, time) => {
             const keyName = time.toString();
             if (typeof preparedFrames[keyName] === "undefined") preparedFrames[keyName] = [];
-            if (preparedFrames[keyName].indexOf(dataId) == -1) preparedFrames[keyName].push(dataId);
-            if (preparedFrames[keyName].length == dataIds.length)  {
+            if (!preparedFrames[keyName].includes(dataId)) preparedFrames[keyName].push(dataId);
+            if (preparedFrames[keyName].length === dataIds.length)  {
+              if (!isDataLoaded && stepsCount === Object.keys(preparedFrames).length) {
+                isDataLoaded = true;
+                _this.trigger("dataLoaded");
+              }
+
               cb(time);
             }
           });
