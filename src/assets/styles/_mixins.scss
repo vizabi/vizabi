@@ -68,12 +68,12 @@
 
 //converts pixels to em
 @mixin font-size($size: 12px) {
-  font-size: (.06 * $size / 1px) + em;
+  font-size: (0.06 * $size / 1px) + em;
 }
 
 //same with line height
 @mixin line-height($height: 12px) {
-  line-height: (.125 * $height / 1px) + em;
+  line-height: (0.125 * $height / 1px) + em;
 }
 
 // ----------------------------------------------------------------------------
@@ -105,9 +105,9 @@
 
 //TODO: evaluate if this mixin should be included at all
 @mixin tooltip($background-color: $vzb-color-white,
-               $padding: .5em,
+               $padding: 0.5em,
                $arrow-base: 1em,
-               $arrow-length: .5em,
+               $arrow-length: 0.5em,
                $border-width: 0,
                $border-color: false) {
 
