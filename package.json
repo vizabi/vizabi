@@ -75,7 +75,7 @@
     "sasslint-webpack-plugin": "^1.0.4",
     "shelljs": "0.7.7",
     "unminified-webpack-plugin": "^1.2.0",
-    "vizabi-ddfcsv-reader": "0.9.0",
+    "vizabi-ddfcsv-reader": "0.9.1",
     "vizabi-ws-reader": "0.2.0",
     "webpack": "2.6.0",
     "webpack-dev-server": "2.4.5"
