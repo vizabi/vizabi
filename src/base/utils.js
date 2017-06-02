@@ -1577,5 +1577,3 @@ export const px2num = pixels => (
     parseFloat(pixels) :
     console.warn(`Strange pixels value: ${pixels}`) || pixels
 );
-
-export const calcDiagonal = (a, b) => Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
