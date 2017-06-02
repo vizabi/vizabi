@@ -1551,16 +1551,16 @@ export const isFunction = value => typeof value === "function";
  *   && this.show[dimension]["$in"].indexOf(d[dimension]) !== -1;
  * when you need to get (+check) nested properties.
 
- * @param {Array} props Names of properties for nesting
  * @param {context} object The root object where we start to look for the props
+ * @param {Array} props Names of properties for nesting
  * @param {*} defaultValue Default value that will be returned if there is no such properties in object
  * @returns {property} The property we're looking for or a default value
 
  * Usage:
  * const object = { one: { two: "your value" } };
- * utils.getProp(["one", "two"], object); // "your value"
+ * utils.getProp(object, ["one", "two"]); // "your value"
 */
-export const getProp = (props, object, defaultValue) => {
+export const getProp = (object, props, defaultValue) => {
   while (props.length) {
     const prop = props.shift();
     if (object.hasOwnProperty(prop)) {

@@ -417,13 +417,13 @@ const ColorLegend = Component.extend({
   },
 
   _highlight(values) {
-    utils.getProp(["model", "ui", "chart", "superhighlightOnMinimapHover"], this) ?
+    utils.getProp(this, ["model", "ui", "chart", "superhighlightOnMinimapHover"]) ?
       this.model.marker.setSuperHighlight(values) :
       this.model.marker.setHighlight(values);
   },
 
   _unhighlight() {
-    utils.getProp(["model", "ui", "chart", "superhighlightOnMinimapHover"], this) ?
+    utils.getProp(this, ["model", "ui", "chart", "superhighlightOnMinimapHover"]) ?
       this.model.marker.clearSuperHighlighted() :
       this.model.marker.clearHighlighted();
   },
