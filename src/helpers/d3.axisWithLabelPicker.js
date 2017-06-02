@@ -413,7 +413,7 @@ export default function axisSmart(_orient) {
       // estimate the longest formatted label in pixels
       const estLongestLabelLength =
         //take 17 sample values and measure the longest formatted label
-        d3.max(d3.range(min, max, (max - min) / 17).concat(max).map(d => options.formatter(d).replace(".","").length)) * options.widthOfOneDigit + parseInt(options.cssMargin.left);
+        d3.max(d3.range(min, max, (max - min) / 17).concat(max).map(d => options.formatter(d).replace(".", "").length)) * options.widthOfOneDigit + parseInt(options.cssMargin.left);
 
       const pivot = options.isPivotAuto && (
         (estLongestLabelLength > options.pivotingLimit) && (orient == VERTICAL)
