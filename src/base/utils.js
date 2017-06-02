@@ -74,9 +74,7 @@ export const isDate = function(arg) {
  * @param {Object} arg
  * @returns {Boolean}
  */
-export const isString = function(arg) {
-  return typeof arg === "string";
-};
+export const isString = value => typeof value === "string";
 
 /*
  * checks whether arg is a NaN
@@ -1573,3 +1571,11 @@ export const getProp = (props, object, defaultValue) => {
   }
   return object;
 };
+
+export const px2num = pixels => (
+  isString(pixels) && pixels.endsWith("px") ?
+    parseFloat(pixels) :
+    console.warn(`Strange pixels value: ${pixels}`) || pixels
+);
+
+export const calcDiagonal = (a, b) => Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
