@@ -2,7 +2,7 @@ language: node_js
 dist: trusty
 sudo: true
 node_js:
-  - '6.9.2'
+  - "node"
 addons:
   apt:
     packages:
