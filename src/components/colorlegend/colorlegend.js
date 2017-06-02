@@ -129,7 +129,7 @@ const ColorLegend = Component.extend({
     this.selectDialog.append("div")
       .classed("vzb-cl-select-dialog-close", true)
       .html(iconClose)
-      .on("click", () => this.selectDialog.classed("vzb-hidden", true));
+      .on("click", () => this._closeSelectDialog);
 
     this.selectAllButton = this.selectDialog.append("div")
       .classed("vzb-cl-select-dialog-item", true)
@@ -148,15 +148,28 @@ const ColorLegend = Component.extend({
       .text("Dataset author doesn't want you to change this");
   },
 
+  _closeSelectDialog() {
+    this.selectDialog.classed("vzb-hidden", true);
+  },
+
   _bindSelectDialogItems(...args) {
     const [, index, indicators] = args;
     this.selectDialogTitle.text(indicators[index].textContent);
 
-    this.selectAllButton.on("click", () => this._interact().clickToSelect(...args));
+    this.selectAllButton.on("click", () => {
+      this._interact().clickToSelect(...args);
+      this._closeSelectDialog();
+    });
 
-    this.removeElseButton.on("click", () => this._interact().clickToShow(...args));
+    this.removeElseButton.on("click", () => {
+      this._interact().clickToShow(...args);
+      this._closeSelectDialog();
+    });
 
-    this.editColorButton.on("click", () => this._interact().clickToChangeColor(...args));
+    this.editColorButton.on("click", () => {
+      this._interact().clickToChangeColor(...args);
+      this._closeSelectDialog();
+    });
   },
 
   ready() {
