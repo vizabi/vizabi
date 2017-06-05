@@ -83,6 +83,7 @@ $vzb-button-color-border: #cce6ed;
     }
 
     &.vzb-unavailable {
+      pointer-events: none;
       > .vzb-buttonlist-btn-icon {
         border: 1px solid $vzb-button-color-border;
         opacity: 0.4;
