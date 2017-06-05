@@ -396,7 +396,7 @@ export default function axisSmart(_orient) {
 
       const min = d3.min([domain[0], domain[domain.length - 1]]);
       const max = d3.max([domain[0], domain[domain.length - 1]]);
-      const bothSidesUsed = (min <= 0 && max >= 0) && options.scaleType != "time";
+      const bothSidesUsed = ((options.scaleType == "linear" ? min < 0 : min <= 0) && max >= 0) && options.scaleType != "time";
 
       let tickValues = options.showOuter ? [min, max] : [];
       let tickValuesMinor = []; //[min, max];
