@@ -22,7 +22,7 @@ export default Class.extend({
     this.xAlign = "center";
     this.yAlign = "center";
     this.element = this.context.append("text").style("font-size", "20px");
-    this.sample = this.context.append("text").style("font-size", "20px").style("opacity", 0);
+    this._sample = this.context.append("text").style("font-size", "20px").style("opacity", 0);
 
     if (conditions) {
       this.setConditions(conditions);
@@ -71,20 +71,43 @@ export default Class.extend({
     this._resizeText();
   },
 
-  setText(text, delay) {
-    this._timeout && !delay && clearTimeout(this._timeout);
-    this._timeout = setTimeout(() => {
-      this.sample.text(text);
+  setText(text, delay = 0) {
+    const callback = () => {
+      this._sample.text(text);
       this._resizeText();
       this.element.text(text);
-    }, delay);
+    };
+
+    const clear = () => {
+      clearTimeout(this._text.timeout);
+      delete this._text;
+    };
+
+    if (!delay) {
+      if (this._text) {
+        clear();
+      }
+      callback();
+    } else {
+      if (this._text) {
+        this._text.callback();
+        clear();
+      }
+      this._text = {
+        callback,
+        timeout: setTimeout(() => {
+          callback();
+          clear();
+        }, delay)
+      };
+    }
 
     return this;
   },
 
 
   _resizeText() {
-    const bbox = this.sample.node().getBBox();
+    const bbox = this._sample.node().getBBox();
     if (!bbox.width || !bbox.height || !this.width || !this.height) return this;
 
     // method from http://stackoverflow.com/a/22580176
