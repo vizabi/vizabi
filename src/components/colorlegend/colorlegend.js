@@ -330,7 +330,7 @@ const ColorLegend = Component.extend({
           .range([domainMin, domainMax])
           .invert;
       } else {
-        logRescale = (d) => d;
+        logRescale = d => d;
       }
 
       this.rainbowCanvasEl
