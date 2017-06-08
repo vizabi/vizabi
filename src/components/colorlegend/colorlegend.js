@@ -84,6 +84,7 @@ const ColorLegend = Component.extend({
       .append("div").attr("class", "vzb-cl-colorlist");
 
     this.rainbowEl = this.listColorsEl.append("div").attr("class", "vzb-cl-rainbow");
+    this.rainbowCanvasEl = this.rainbowEl.append("canvas");
     this.minimapEl = this.listColorsEl.append("div").attr("class", "vzb-cl-minimap");
     this.rainbowLegendEl = this.listColorsEl.append("div").attr("class", "vzb-cl-rainbow-legend");
     this.rainbowLegendSVG = this.rainbowLegendEl.append("svg");
@@ -319,10 +320,36 @@ const ColorLegend = Component.extend({
         d3.select(this).attr("cx", d.val);
       });
 
-      const gColors = paletteKeys.map((val, i) => colorRange[i] + " " + d3.format("%")(val * 0.01)).join(", ");
+      const domainMin = d3.min(cScale.domain());
+      const domainMax = d3.max(cScale.domain());
+      let s;
 
-      this.rainbowEl
-        .style("background", "linear-gradient(90deg," + gColors + ")");
+      if (this.colorModel.scaleType == "log" || this.colorModel.scaleType == "genericLog") {
+        s = d3.scale.genericLog()
+          .domain([domainMin, domainMax])
+          .range([domainMin, domainMax]);
+      } else {
+        s = d3.scale.linear()
+          .domain([domainMin, domainMax])
+          .range([domainMin, domainMax]);
+      }
+
+      this.rainbowCanvasEl
+        .attr("width", gradientWidth)
+        .attr("height", 1)
+        .style("width", gradientWidth + "px")
+        .style("height", "100%");
+
+      const context = this.rainbowCanvasEl.node().getContext("2d");
+      const image = context.createImageData(gradientWidth, 1);
+      for (let i = 0, j = -1, c; i < gradientWidth; ++i) {
+        c = d3.rgb(cScale(s.invert(i / (gradientWidth - 1) * (domainMax - domainMin))));
+        image.data[++j] = c.r;
+        image.data[++j] = c.g;
+        image.data[++j] = c.b;
+        image.data[++j] = 255;
+      }
+      context.putImageData(image, 0, 0);
 
       const unit = this.colorModel.getConceptprops().unit || "";
 
