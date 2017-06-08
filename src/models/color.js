@@ -8,9 +8,11 @@ import Hook from "models/hook";
 const defaultPalettes = {
   "_continuous": {
     "_default": "#ffb600",
-    "0": "#B4DE79",
-    "50": "#E1CE00",
-    "100": "#F77481"
+    "0": "hsl(270, 80%, 55%)",
+    "25": "hsl(202.5, 80%, 55%)",
+    "50": "hsl(135, 80%, 55%)",
+    "75": "hsl(67.5, 80%, 55%)",
+    "100": "hsl(0, 80%, 55%)"
   },
   "_discrete": {
     "_default": "#ffb600",
@@ -305,15 +307,13 @@ const ColorModel = Hook.extend({
       this.scale = d3.time.scale.utc()
         .domain(domain)
         .range(range)
-        .interpolate(d3.interpolateRgb);
+        .interpolate(d3.interpolateCubehelix);
 
     } else if (!this.isDiscrete()) {
 
       let limits = this.getLimits(this.which);
       //default domain is based on limits
       limits = [limits.min, limits.max];
-      //domain from concept properties can override it if defined
-      limits = this.getConceptprops().domain ? this.getConceptprops().domain : limits;
 
       const singlePoint = (limits[1] - limits[0] == 0);
 
@@ -332,7 +332,7 @@ const ColorModel = Hook.extend({
       this.scale = d3.scale[scaleType]()
         .domain(domain)
         .range(range)
-        .interpolate(d3.interpolateRgb);
+        .interpolate(d3.interpolateCubehelix);
 
     } else {
       range = range.map(m => utils.isArray(m) ? m[0] : m);
