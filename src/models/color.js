@@ -153,8 +153,8 @@ const ColorModel = Hook.extend({
   },
 
   setWhich(newValue) {
-    this._super(newValue);
     if (this.palette) this.palette._data = {};
+    this._super(newValue);
     this._setSyncModels();
   },
 
