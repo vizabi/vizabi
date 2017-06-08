@@ -319,7 +319,13 @@ const ColorLegend = Component.extend({
         d3.select(this).attr("cx", d.val);
       });
 
-      const gColors = paletteKeys.map((val, i) => colorRange[i] + " " + d3.format("%")(val * 0.01)).join(", ");
+      const gColors = paletteKeys.map((val, i) => (
+        Object.assign(
+          d3.hcl(colorRange[i]),
+          { c: 0 }
+        ) +
+        " " + d3.format("%")(val * 0.01)
+      )).join(", ");
 
       this.rainbowEl
         .style("background", "linear-gradient(90deg," + gColors + ")");

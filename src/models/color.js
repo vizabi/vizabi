@@ -8,9 +8,20 @@ import Hook from "models/hook";
 const defaultPalettes = {
   "_continuous": {
     "_default": "#ffb600",
-    "0": "#B4DE79",
-    "50": "#E1CE00",
-    "100": "#F77481"
+    // "0": "#ccc",
+    // "50": "#ccc",
+    // "100": "#ccc",
+    "0": "#c027d4",
+    "10": "#c027d4",
+    "20": "#c027d4",
+    "30": "#c027d4",
+    "40": "#c027d4",
+    "50": "#c027d4",
+    "60": "#c027d4",
+    "70": "#c027d4",
+    "80": "#c027d4",
+    "90": "#c027d4",
+    "100": "#c027d4",
   },
   "_discrete": {
     "_default": "#ffb600",
@@ -329,10 +340,25 @@ const ColorModel = Hook.extend({
           .range(limits);
         domain = domain.map(d => s.invert(d));
       }
+
+
+      // d3.hsl(-100, 0.75, 0.35),
+      // d3.hsl(80, 1.50, 0.80),
+      // d3.hsl(260, 0.75, 0.35)
       this.scale = d3.scale[scaleType]()
         .domain(domain)
-        .range(range)
-        .interpolate(d3.interpolateRgb);
+        .range(
+          d3.range(domain.length).map(
+            d3.scaleLinear()
+              .domain([0, (domain.length - 1) / 2, domain.length - 1])
+              .range([
+                d3.hsl(-100, 0.95, 0.52),
+                d3.hsl(80, 1.15, 0.62),
+                d3.hsl(0, 0.55, 0.52)
+              ])
+              .interpolate(d3.interpolateCubehelix)
+          )
+        );
 
     } else {
       range = range.map(m => utils.isArray(m) ? m[0] : m);
