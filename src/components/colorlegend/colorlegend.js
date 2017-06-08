@@ -322,16 +322,15 @@ const ColorLegend = Component.extend({
 
       const domainMin = d3.min(cScale.domain());
       const domainMax = d3.max(cScale.domain());
-      let s;
+      let logRescale;
 
       if (this.colorModel.scaleType == "log" || this.colorModel.scaleType == "genericLog") {
-        s = d3.scale.genericLog()
+        logRescale = d3.scale.genericLog()
           .domain([domainMin, domainMax])
-          .range([domainMin, domainMax]);
+          .range([domainMin, domainMax])
+          .invert;
       } else {
-        s = d3.scale.linear()
-          .domain([domainMin, domainMax])
-          .range([domainMin, domainMax]);
+        logRescale = (d) => d;
       }
 
       this.rainbowCanvasEl
@@ -343,7 +342,7 @@ const ColorLegend = Component.extend({
       const context = this.rainbowCanvasEl.node().getContext("2d");
       const image = context.createImageData(gradientWidth, 1);
       for (let i = 0, j = -1, c; i < gradientWidth; ++i) {
-        c = d3.rgb(cScale(s.invert(i / (gradientWidth - 1) * (domainMax - domainMin))));
+        c = d3.rgb(cScale(+domainMin + logRescale(i / (gradientWidth - 1) * (domainMax - domainMin))));
         image.data[++j] = c.r;
         image.data[++j] = c.g;
         image.data[++j] = c.b;
