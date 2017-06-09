@@ -110,9 +110,9 @@ const Stack = Dialog.extend("stack", {
 
   },
 
-  manualSorting(value) {
+  manualSorting(value, persistent = false) {
     if (arguments.length === 0) return this.model.state.marker.group.manualSorting;
-    this.model.state.marker.group.manualSorting = value;
+    this.model.state.marker.group.set({ manualSorting: value }, false, persistent);
   },
 
   setModel(what, value) {

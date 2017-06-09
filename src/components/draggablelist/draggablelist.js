@@ -166,12 +166,12 @@ const DraggableList = Component.extend({
       this.updateView();
     } else {
       this.dataUpdateFlag = true;
-      this.updateData(dataArr);
+      this.updateData(dataArr, true);
     }
   },
 
-  updateData(dataArr) {
-    this.dataArrFn(dataArr);
+  updateData(dataArr, persistent) {
+    this.dataArrFn(dataArr, persistent);
   },
 
   readyOnce() {
