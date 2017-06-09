@@ -132,10 +132,7 @@ const DraggableList = Component.extend({
     const _this = this;
 
     const labels = _this.model.color.getColorlegendMarker().label.getItems();
-
-    if (!this.dataArrFn()) {
-      this.dataArrFn(utils.keys(labels));
-    }
+    this.dataArrFn(utils.keys(labels));
 
     this.items = this.element.selectAll("div").data(() => _this.dataArrFn().map(d => ({ data: d })));
     this.items.exit().remove();
