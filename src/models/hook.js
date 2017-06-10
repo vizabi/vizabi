@@ -77,7 +77,7 @@ const Hook = DataConnected.extend({
     this.set(obj);
   },
 
-  setScaletype(newValue) {
+  setScaleType(newValue) {
     this.buildScale(newValue);
   },
 
