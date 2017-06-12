@@ -4,6 +4,7 @@ import Class from "base/class";
 
 export class Storage {
   constructor() {
+    this.queryIds = {};
     this.queryQueue = {};
     this._collection = {};
     this._collectionPromises = {}; // stores promises, making sure we don't do one calulation twice
@@ -17,23 +18,16 @@ export class Storage {
    */
   loadFromReader(query, parsers, readerObject) {
     const _this = this;
-
-    const dataId = utils.hashCode([
-      query
-    ]);
-    const queryMergeId = utils.hashCode([
-      query.select.key,
-      query.where,
-      query.join
-    ]);
-
+    const queryMergeId = this._getQueryId(query);
     if (this.queryQueue[queryMergeId]) {
-
       // add select to base query and return the base query promise
-      Array.prototype.push.apply(this.queryQueue[queryMergeId].query.select.value, query.select.value);
-      utils.extend(this.queryQueue[queryMergeId].parsers, parsers);
-      return this.queryQueue[queryMergeId].promise;
-
+      if (query.select.value.filter(x => this.queryQueue[queryMergeId].query.select.value.indexOf(x) == -1).length == 0) { //check if this query have all needed values
+/*
+        Array.prototype.push.apply(this.queryQueue[queryMergeId].query.select.value, query.select.value);
+        utils.extend(this.queryQueue[queryMergeId].parsers, parsers);
+*/
+        return this.queryQueue[queryMergeId].promise;
+      }
     }
 
     // set up base query
@@ -45,41 +39,46 @@ export class Storage {
 
         // remove double columns from select (resulting from merging)
         // no double columns in formatter because it's an object, extend would've overwritten doubles
-        query.select.value = utils.unique(query.select.value);
+        (function(_query, _parsers) {
 
-        // execute the query with this reader
-        readerObject.read(query, parsers)
-          .then(response => {
-            //success reading
-            _this.checkQueryResponse(query, response);
+          // execute the query with this reader
+          readerObject.read(_query, _parsers)
+            .then(response => {
+              //success reading
+              const dataId = utils.hashCode([
+                _query
+              ]);
 
-            _this._collection[dataId] = {};
-            _this._collectionPromises[dataId] = {};
-            const col = _this._collection[dataId];
-            col.data = response;
-            col.valid = {};
-            col.nested = {};
-            col.unique = {};
-            col.limits = {};
-            col.frames = {};
-            col.haveNoDataPointsPerKey = {};
-            col.query = query;
-            // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
+              _this.checkQueryResponse(_query, response);
+              _this._collection[dataId] = {};
+              _this._collectionPromises[dataId] = {};
+              const col = _this._collection[dataId];
+              col.data = response;
+              col.valid = {};
+              col.nested = {};
+              col.unique = {};
+              col.limits = {};
+              col.frames = {};
+              col.haveNoDataPointsPerKey = {};
+              col.query = _query;
+              const queryId = _this._getQueryId(_query);
+              if (!_this.queryIds[queryId]) _this.queryIds[queryId] = {};
+              _this.queryIds[queryId][dataId] = _query;
+              // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
 
-            // remove query from queue
-            _this.queryQueue[queryMergeId] = null;
-            resolve(dataId);
+              // remove query from queue
+              _this.queryQueue[queryMergeId] = null;
+              resolve(dataId);
 
-          })
-          .catch(err => {
-            console.log("throw error");
-            _this.queryQueue[queryMergeId] = null;
-            reject(err);
-          });
+            })
+            .catch(err => {
+              _this.queryQueue[queryMergeId] = null;
+              reject(err);
+            });
+        })(query, parsers); //isolate this () code with its own query and parsers
 
       });
     });
-
     this.queryQueue[queryMergeId] = {
       query,
       parsers,
@@ -111,6 +110,44 @@ export class Storage {
         }
       });
     }
+  }
+
+  _getQueryId(query) {
+    return utils.hashCode([
+      query.select.key,
+      query.where,
+      query.join,
+      query.dataset,
+      query.version,
+      query.path
+    ]);
+  }
+
+  /**
+   * checks whether this combination is cached or not
+   */
+  getDataId(query) {
+    //encode in hashCode
+    const q = utils.hashCode([
+      query
+    ]);
+    //simply check if we have this in internal data
+    if (Object.keys(this._collection).indexOf(q) !== -1) {
+      return q;
+    }
+    const cache = this._getQueryId(query);
+    if (!this.queryIds[cache]) return false;
+    let result = false;
+    utils.forEach(this.queryIds[cache], (values, queryId) => {
+      if (query.select.value.filter(x => values.select.value.indexOf(x) == -1).length == 0) { //check if we have cached data with needed values
+        result = queryId;
+      }
+    });
+    return result;
+  }
+
+  setGrouping(dataId, grouping) {
+    this._collection[dataId].grouping = grouping;
   }
 
   getData(dataId, what, whatId, args) {
@@ -244,21 +281,6 @@ export class Storage {
     }
 
     return utils.nestArrayToObj(nest.entries(this._collection[dataId]["data"]));
-  }
-
-  /**
-   * checks whether this combination is cached or not
-   */
-  getDataId(query) {
-    //encode in hashCode
-    const q = utils.hashCode([
-      query
-    ]);
-    //simply check if we have this in internal data
-    if (Object.keys(this._collection).indexOf(q) !== -1) {
-      return q;
-    }
-    return false;
   }
 
   getFrames(dataId, framesArray, keys, conceptprops) {
@@ -487,7 +509,6 @@ export class Storage {
    */
   _getFrames(dataId, whatId, framesArray, keys, indicatorsDB) {
     const _this = this;
-
     if (!_this._collection[dataId]["frames"][whatId]) {
       _this._collection[dataId]["frames"][whatId] = {};
     }

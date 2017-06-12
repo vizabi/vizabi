@@ -60,7 +60,8 @@ const DataModel = Model.extend({
     // add waffle server specific query clauses if set
     if (this.dataset) query.dataset = this.dataset;
     if (this.version) query.version = this.version;
-
+    if (this.path) query.path = this.path;
+    query.select.value = utils.unique(query.select.value);
     const dataId = DataStorage.getDataId(query);
     if (dataId) {
       return Promise.resolve(dataId);
@@ -231,6 +232,10 @@ const DataModel = Model.extend({
     return this._name;
   },
 
+  setGrouping(dataId, grouping) {
+    DataStorage.setGrouping(dataId, grouping);
+  },
+  
   getFrames(dataId, framesArray, keys) {
     return DataStorage.getFrames(dataId, framesArray, keys, this.getConceptprops());
   },
@@ -243,22 +248,6 @@ const DataModel = Model.extend({
 
   listenFrame(dataId, framesArray, keys,  cb) {
     DataStorage.listenFrame(dataId, framesArray, keys,  cb);
-  },
-
-
-  /**
-   * checks whether this combination is cached or not
-   */
-  getDataId(query) {
-    //encode in hashCode
-    const q = utils.hashCode([
-      query
-    ]);
-    //simply check if we have this in internal data
-    if (Object.keys(this._collection).indexOf(q) !== -1) {
-      return q;
-    }
-    return false;
   },
 
   handleLoadError(error, query) {
