@@ -19,15 +19,23 @@ export class Storage {
   loadFromReader(query, parsers, readerObject) {
     const _this = this;
     const queryMergeId = this._getQueryId(query);
+
+    const dataId = utils.hashCode([
+      query
+    ]);
+    let result = null;
     if (this.queryQueue[queryMergeId]) {
+      utils.forEach(this.queryQueue[queryMergeId], (queue, queryId) => {
+        if (query.select.value.filter(x => queue.query.select.value.indexOf(x) == -1).length == 0) { //check if this query have all needed values
+          result = queue;
+        }
+      });
       // add select to base query and return the base query promise
-      if (query.select.value.filter(x => this.queryQueue[queryMergeId].query.select.value.indexOf(x) == -1).length == 0) { //check if this query have all needed values
-/*
-        Array.prototype.push.apply(this.queryQueue[queryMergeId].query.select.value, query.select.value);
-        utils.extend(this.queryQueue[queryMergeId].parsers, parsers);
-*/
-        return this.queryQueue[queryMergeId].promise;
-      }
+    }
+    if (result) {
+      Array.prototype.push.apply(result.query.select.value, query.select.value);
+      utils.extend(result.parsers, parsers);
+      return result.promise;
     }
 
     // set up base query
@@ -67,24 +75,25 @@ export class Storage {
               // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
 
               // remove query from queue
-              _this.queryQueue[queryMergeId] = null;
+              //_this.queryQueue[queryMergeId][dataId] = null;
               resolve(dataId);
 
             })
             .catch(err => {
-              _this.queryQueue[queryMergeId] = null;
+              _this.queryQueue[queryMergeId][dataId] = null;
               reject(err);
             });
         })(query, parsers); //isolate this () code with its own query and parsers
 
       });
     });
-    this.queryQueue[queryMergeId] = {
+    if (!this.queryQueue[queryMergeId]) this.queryQueue[queryMergeId] = {};
+    this.queryQueue[queryMergeId][dataId] = {
       query,
       parsers,
       promise
     };
-    return this.queryQueue[queryMergeId].promise;
+    return this.queryQueue[queryMergeId][dataId].promise;
   }
 
   checkQueryResponse(query, response) {
