@@ -525,7 +525,7 @@ export class Storage {
 
       //TODO: thses should come from state or from outside somehow
       // FramesArray in the input contains the array of keyframes in animatable dimension.
-      // Example: array of years like [1800, 1801 … 2100]
+      // Example: array of years like [1800, 1801 ï¿½ 2100]
       // these will be the points where we need data
       // (some of which might already exist in the set. in regular datasets all the points would exist!)
 
@@ -549,13 +549,13 @@ export class Storage {
         }
       }
 
-      // We _nest_ the flat dataset in two levels: first by “key” (example: geo), then by “animatable” (example: year)
+      // We _nest_ the flat dataset in two levels: first by ï¿½keyï¿½ (example: geo), then by ï¿½animatableï¿½ (example: year)
       // See the _getNested function for more details
       const nested = _this.getData(dataId, "nested", KEY.concat([TIME]));
       keys = keys ? keys : Object.keys(nested);
       entitiesByKey[KEY[0]] = keys;
       // Get the list of columns that are in the dataset, exclude key column and animatable column
-      // Example: [“lex”, “gdp”, “u5mr"]
+      // Example: [ï¿½lexï¿½, ï¿½gdpï¿½, ï¿½u5mr"]
       const query = _this._collection[dataId].query;
       const columns = query.select.value.filter(f => f !== "_default");
 
@@ -664,7 +664,7 @@ export class Storage {
           function mapValue(column, nested, filtered) {
 
             //If there are some points in the array with valid numbers, then
-            //interpolate the missing point and save it to the “clean regular set”
+            //interpolate the missing point and save it to the ï¿½clean regular setï¿½
             method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
             use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
 
@@ -672,7 +672,7 @@ export class Storage {
             if (nested && nested[frameName] && (nested[frameName][0][column] || nested[frameName][0][column] === 0)) {
 
               // Check if the piece of data for [this key][this frame][this column] exists
-              // and is valid. If so, then save it into a “clean regular set”
+              // and is valid. If so, then save it into a ï¿½clean regular setï¿½
               return nested[frameName][0][column];
 
             } else if (method === "none") {
@@ -681,13 +681,13 @@ export class Storage {
               return null;
 
             } else {
-              // If the piece of data doesn’t exist or is invalid, then we need to inter- or extapolate it
+              // If the piece of data doesnï¿½t exist or is invalid, then we need to inter- or extapolate it
 
-              // Let’s take a slice of the nested set, corresponding to the current key nested[key]
+              // Letï¿½s take a slice of the nested set, corresponding to the current key nested[key]
               // As you remember it has the data nested further by frames.
               // At every frame the data in the current column might or might not exist.
-              // Thus, let’s filter out all the frames which don’t have the data for the current column.
-              // Let’s cache it because we will most likely encounter another gap in the same column for the same key
+              // Thus, letï¿½s filter out all the frames which donï¿½t have the data for the current column.
+              // Letï¿½s cache it because we will most likely encounter another gap in the same column for the same key
               items = filtered[column];
               if (items === null) {
                 const givenFrames = Object.keys(nested);
