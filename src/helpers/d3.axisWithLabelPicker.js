@@ -47,8 +47,9 @@ export default function axisSmart(_orient) {
       axis.labelFactory(options);
 
       // construct the view (d3 constructor is used)
+      let transition = null;
       if (options.transitionDuration > 0) {
-        _super(g.transition().duration(options.transitionDuration));
+        _super(transition = g.transition().duration(options.transitionDuration));
       } else {
         _super(g);
       }
@@ -88,13 +89,16 @@ export default function axisSmart(_orient) {
 
       //apply label repositioning: first and last visible values would shift away from the borders
       if (axis.repositionLabels() != null) {
-        g.selectAll(".tick")
-          .each(function(d) {
-            const view = d3.select(this).select("text");
-            const shift = axis.repositionLabels()[d] || { x: 0, y: 0 };
-            view.attr("x", +view.attr("x") + shift.x);
-            view.attr("y", +view.attr("y") + shift.y);
-          });
+        const patchLabelsPosition = () => {
+          g.selectAll(".tick")
+            .each(function(d) {
+              const view = d3.select(this).select("text");
+              const shift = axis.repositionLabels()[d] || { x: 0, y: 0 };
+              view.attr("x", +view.attr("x") + shift.x);
+              view.attr("y", +view.attr("y") + shift.y);
+            });
+        };
+        transition ? transition.on("end", () => patchLabelsPosition()) : patchLabelsPosition();
       }
 
       //hide axis labels that are outside the available viewport
