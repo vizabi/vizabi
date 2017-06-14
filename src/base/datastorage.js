@@ -525,7 +525,7 @@ export class Storage {
 
       //TODO: thses should come from state or from outside somehow
       // FramesArray in the input contains the array of keyframes in animatable dimension.
-      // Example: array of years like [1800, 1801 � 2100]
+      // Example: array of years like [1800, 1801 … 2100]
       // these will be the points where we need data
       // (some of which might already exist in the set. in regular datasets all the points would exist!)
 
@@ -549,13 +549,13 @@ export class Storage {
         }
       }
 
-      // We _nest_ the flat dataset in two levels: first by �key� (example: geo), then by �animatable� (example: year)
+      // We _nest_ the flat dataset in two levels: first by “key” (example: geo), then by “animatable” (example: year)
       // See the _getNested function for more details
       const nested = _this.getData(dataId, "nested", KEY.concat([TIME]));
       keys = keys ? keys : Object.keys(nested);
       entitiesByKey[KEY[0]] = keys;
       // Get the list of columns that are in the dataset, exclude key column and animatable column
-      // Example: [�lex�, �gdp�, �u5mr"]
+      // Example: [“lex”, “gdp”, “u5mr"]
       const query = _this._collection[dataId].query;
       const columns = query.select.value.filter(f => f !== "_default");
 
@@ -664,7 +664,7 @@ export class Storage {
           function mapValue(column, nested, filtered) {
 
             //If there are some points in the array with valid numbers, then
-            //interpolate the missing point and save it to the �clean regular set�
+            //interpolate the missing point and save it to the “clean regular set”
             method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
             use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
 
@@ -672,52 +672,49 @@ export class Storage {
             if (nested && nested[frameName] && (nested[frameName][0][column] || nested[frameName][0][column] === 0)) {
 
               // Check if the piece of data for [this key][this frame][this column] exists
-              // and is valid. If so, then save it into a �clean regular set�
+              // and is valid. If so, then save it into a “clean regular set”
               return nested[frameName][0][column];
+            }
 
-            } else if (method === "none") {
+            // the piece of data is not available and the interpolation is set to "none"
+            if (method === "none") return null;
 
-              // the piece of data is not available and the interpolation is set to "none"
-              return null;
+            // If the piece of data doesn’t exist or is invalid, then we need to inter- or extapolate it
 
-            } else {
-              // If the piece of data doesn�t exist or is invalid, then we need to inter- or extapolate it
+            // Let’s take a slice of the nested set, corresponding to the current key nested[key]
+            // As you remember it has the data nested further by frames.
+            // At every frame the data in the current column might or might not exist.
+            // Thus, let’s filter out all the frames which don’t have the data for the current column.
+            // Let’s cache it because we will most likely encounter another gap in the same column for the same key
+            items = filtered[column];
+            if (items === null) {
+              const givenFrames = Object.keys(nested);
+              items = new Array(givenFrames.length);
+              itemsIndex = 0;
 
-              // Let�s take a slice of the nested set, corresponding to the current key nested[key]
-              // As you remember it has the data nested further by frames.
-              // At every frame the data in the current column might or might not exist.
-              // Thus, let�s filter out all the frames which don�t have the data for the current column.
-              // Let�s cache it because we will most likely encounter another gap in the same column for the same key
-              items = filtered[column];
-              if (items === null) {
-                const givenFrames = Object.keys(nested);
-                items = new Array(givenFrames.length);
-                itemsIndex = 0;
-
-                for (let z = 0, length = givenFrames.length; z < length; z++) {
-                  oneFrame = nested[givenFrames[z]];
-                  if (oneFrame[0][column] || oneFrame[0][column] === 0) items[itemsIndex++] = oneFrame[0];
-                }
-
-                //trim the length of the array
-                items.length = itemsIndex;
-
-                if (itemsIndex === 0) {
-                  filtered[column] = [];
-                } else {
-                  filtered[column] = items;
-                }
-
-                if (items.length == 0) _this._collection[dataId].haveNoDataPointsPerKey[column][key] = items.length;
+              for (let z = 0, length = givenFrames.length; z < length; z++) {
+                oneFrame = nested[givenFrames[z]];
+                if (oneFrame[0][column] || oneFrame[0][column] === 0) items[itemsIndex++] = oneFrame[0];
               }
 
-              // Now we are left with a fewer frames in the filtered array. Let's check its length.
-              //If the array is empty, then the entire column is missing for the key
-              //So we let the key have missing values in this column for all frames
-              if (items && items.length > 0) {
-                next = null;
-                return utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
+              //trim the length of the array
+              items.length = itemsIndex;
+
+              if (itemsIndex === 0) {
+                filtered[column] = [];
+              } else {
+                filtered[column] = items;
               }
+
+              if (items.length == 0) _this._collection[dataId].haveNoDataPointsPerKey[column][key] = items.length;
+            }
+
+            // Now we are left with a fewer frames in the filtered array. Let's check its length.
+            //If the array is empty, then the entire column is missing for the key
+            //So we let the key have missing values in this column for all frames
+            if (items && items.length > 0) {
+              next = null;
+              return utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
             }
           }
         }
