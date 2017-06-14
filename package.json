@@ -1,6 +1,6 @@
 {
   "name": "vizabi",
-  "version": "0.23.0-1",
+  "version": "0.23.0-30",
   "description": "Vizabi Framework, Interactive charts and visualization tools animated through time",
   "main": "build/vizabi.js",
   "scripts": {
@@ -34,7 +34,7 @@
     "> 1%"
   ],
   "dependencies": {
-    "vizabi-config-systema_globalis": "^1.2.4",
+    "vizabi-config-systema_globalis": "^1.2.6",
     "vizabi-interpolators": "^2.0.0"
   },
   "devDependencies": {
@@ -49,14 +49,14 @@
     "compare-version": "^0.1.2",
     "copy-webpack-plugin": "^4.0.1",
     "cross-env": "^5.0.0",
-    "css-loader": "^0.28.2",
+    "css-loader": "^0.28.4",
     "css.escape": "^1.5.1",
     "custom-loader": "^0.1.3",
     "d3": "^4.9.1",
     "eslint": "^3.19.0",
     "eslint-loader": "^1.7.1",
     "extract-text-webpack-plugin": "^2.1.0",
-    "file-loader": "^0.11.1",
+    "file-loader": "^0.11.2",
     "font-awesome": "^4.7.0",
     "glob": "7.1.2",
     "google-maps": "3.2.1",
@@ -68,16 +68,16 @@
     "postcss-loader": "^2.0.5",
     "pre-commit": "^1.2.2",
     "protractor": "5.1.2",
-    "pug-html-loader": "^1.1.4",
+    "pug-html-loader": "^1.1.5",
     "rimraf": "^2.6.1",
     "sass-lint": "^1.10.2",
     "sass-loader": "^6.0.5",
     "sasslint-webpack-plugin": "^1.0.4",
     "shelljs": "0.7.7",
     "unminified-webpack-plugin": "^1.2.0",
-    "vizabi-ddfcsv-reader": "0.9.0",
+    "vizabi-ddfcsv-reader": "0.9.1",
     "vizabi-ws-reader": "0.2.0",
-    "webpack": "2.6.0",
+    "webpack": "2.6.1",
     "webpack-dev-server": "2.4.5"
   }
 }

@@ -14,7 +14,8 @@ const GroupModel = Hook.extend({
       use: null,
       which: null,
       merge: false,
-      manualSorting: null
+      manualSorting: null,
+      scaleType: "ordinal" // the only one possible, right?
     };
     return utils.deepExtend(this._super(), defaults);
   },

@@ -4,7 +4,7 @@
     padding-right: 25px;
   }
   @include position(absolute, 0 null null null);
-  @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, .24));
+  @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, 0.24));
   //transition: all 300ms ease-in-out;
   z-index: 9997;
   background-color: #fff;
@@ -70,7 +70,7 @@
     }
     cursor: pointer;
     fill: $vzb-color-primary;
-    fill-opacity: .7;
+    fill-opacity: 0.7;
     height: 25px;
     position: absolute;
     right: 5px;

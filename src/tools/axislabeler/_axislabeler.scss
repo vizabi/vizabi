@@ -7,12 +7,12 @@ $vzb-al-year-size: 300px;
 
 .vzb-tool {
   border-bottom: 1px solid #ccc;
-    
+
   .vzb-axislabeler {
     @extend %vzb-chart-svg;
     margin: 0;
     font-family: $vzb-font-family;
-    
+
     .vzb-al-axis {
       path,
       line {
@@ -25,12 +25,12 @@ $vzb-al-year-size: 300px;
         //@include font-size(15px);
       }
     }
-    
+
     .vzb-al-axis-x,
     .vzb-al-axis-y {
       @extend .vzb-al-axis;
     }
-    
+
     .vzb-al-line {
       fill: none;
       stroke: #3fb500;
@@ -45,7 +45,7 @@ $vzb-al-year-size: 300px;
       cursor: pointer;
       fill: none;
       stroke: #3fb500;
-      opacity: .5;
+      opacity: 0.5;
       &:hover {
         fill: #3fb500;
       }
@@ -54,13 +54,13 @@ $vzb-al-year-size: 300px;
       cursor: pointer;
       fill: none;
       stroke: #00f;
-      opacity: .5;
+      opacity: 0.5;
       &:hover {
         fill: #00f;
       }
     }
   }
-  
+
   &.vzb-medium {
     .vzb-axis-labeler {
       .vzb-al-year {
@@ -68,7 +68,7 @@ $vzb-al-year-size: 300px;
       }
     }
   }
-  
+
   &.vzb-small {
     .vzb-axis-labeler {
       .vzb-al-axis-x text,

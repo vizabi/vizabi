@@ -47,8 +47,9 @@ export default function axisSmart(_orient) {
       axis.labelFactory(options);
 
       // construct the view (d3 constructor is used)
+      let transition = null;
       if (options.transitionDuration > 0) {
-        _super(g.transition().duration(options.transitionDuration));
+        _super(transition = g.transition().duration(options.transitionDuration));
       } else {
         _super(g);
       }
@@ -88,13 +89,16 @@ export default function axisSmart(_orient) {
 
       //apply label repositioning: first and last visible values would shift away from the borders
       if (axis.repositionLabels() != null) {
-        g.selectAll(".tick")
-          .each(function(d) {
-            const view = d3.select(this).select("text");
-            const shift = axis.repositionLabels()[d] || { x: 0, y: 0 };
-            view.attr("x", +view.attr("x") + shift.x);
-            view.attr("y", +view.attr("y") + shift.y);
-          });
+        const patchLabelsPosition = () => {
+          g.selectAll(".tick")
+            .each(function(d) {
+              const view = d3.select(this).select("text");
+              const shift = axis.repositionLabels()[d] || { x: 0, y: 0 };
+              view.attr("x", +view.attr("x") + shift.x);
+              view.attr("y", +view.attr("y") + shift.y);
+            });
+        };
+        transition ? transition.on("end", () => patchLabelsPosition()) : patchLabelsPosition();
       }
 
       //hide axis labels that are outside the available viewport
@@ -396,7 +400,7 @@ export default function axisSmart(_orient) {
 
       const min = d3.min([domain[0], domain[domain.length - 1]]);
       const max = d3.max([domain[0], domain[domain.length - 1]]);
-      const bothSidesUsed = (min <= 0 && max >= 0) && options.scaleType != "time";
+      const bothSidesUsed = ((options.scaleType == "linear" ? min < 0 : min <= 0) && max >= 0) && options.scaleType != "time";
 
       let tickValues = options.showOuter ? [min, max] : [];
       let tickValuesMinor = []; //[min, max];
@@ -413,12 +417,12 @@ export default function axisSmart(_orient) {
       // estimate the longest formatted label in pixels
       const estLongestLabelLength =
         //take 17 sample values and measure the longest formatted label
-        d3.max(d3.range(min, max, (max - min) / 17).concat(max).map(d => options.formatter(d).length)) * options.widthOfOneDigit + parseInt(options.cssMargin.left);
+        d3.max(d3.range(min, max, (max - min) / 17).concat(max).map(d => options.formatter(d).replace(".", "").length)) * options.widthOfOneDigit + parseInt(options.cssMargin.left);
 
       const pivot = options.isPivotAuto && (
-        (estLongestLabelLength + axis.tickPadding() > options.pivotingLimit) && (orient == VERTICAL)
+        (estLongestLabelLength > options.pivotingLimit) && (orient == VERTICAL)
         ||
-        !(estLongestLabelLength + axis.tickPadding() > options.pivotingLimit) && !(orient == VERTICAL)
+        !(estLongestLabelLength > options.pivotingLimit) && !(orient == VERTICAL)
       );
 
       const labelsStackOnTop = (orient == HORIZONTAL && pivot || orient == VERTICAL && !pivot);
@@ -705,7 +709,12 @@ export default function axisSmart(_orient) {
       }
 
 
-      if (tickValues != null && tickValues.length <= 2 && !bothSidesUsed) tickValues = [min, max];
+      if (tickValues != null && tickValues.length <= 2 && !bothSidesUsed) {
+        //remove min tick if min, max ticks have collision between them
+        tickValues = Math.abs(axis.scale()(min) - axis.scale()(max)) < (labelsStackOnTop ?
+          (options.heightOfOneDigit) :
+          (options.formatter(min).length + options.formatter(max).length) * options.widthOfOneDigit) ? [max] : [min, max];
+      }
 
       if (tickValues != null && tickValues.length <= 3 && bothSidesUsed) {
         if (!collisionBetween(0, [min, max])) {

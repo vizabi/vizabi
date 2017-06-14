@@ -30,4 +30,7 @@ rules:
   attribute-quotes: 0
   quotes: 0
   indentation: 0
-  
+  leading-zero:
+    - 2
+    -
+      include: true

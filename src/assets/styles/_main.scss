@@ -36,7 +36,7 @@
   //all other loadings would not hide the div and be semi-transparent
   &.vzb-loading-data {
     &::before {
-      @include opacity(.8);
+      @include opacity(0.8);
     }
   }
 
@@ -78,7 +78,7 @@
     }
 
     p {
-      font-size: .75em;
+      font-size: 0.75em;
       white-space: normal;
       display: block;
       margin: 0 10px;
@@ -317,7 +317,7 @@
   //tooltip
   .vzb-tooltip {
     @include border-radius(3px);
-    @include opacity(.9);
+    @include opacity(0.9);
     background: $vzb-color-grey-dark;
     color: $vzb-color-white;
     font-size: $vzb-font-size-regular;

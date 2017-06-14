@@ -103,7 +103,7 @@ const DonutComponent = Component.extend("donut", {
     const _this = this;
 
         //request the values for the current time from the model
-    this.values = this.model.marker.getValues({ time: _this.time }, ["geo"]);
+    this.values = this.model.marker.getFrame({ time: _this.time }, ["geo"]);
 
         //prepare the data
     let data = this.keys.map(d => ({

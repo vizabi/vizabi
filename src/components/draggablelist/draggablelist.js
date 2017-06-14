@@ -132,9 +132,12 @@ const DraggableList = Component.extend({
     const _this = this;
 
     const labels = _this.model.color.getColorlegendMarker().label.getItems();
+    const labelsKeys = utils.keys(labels);
 
-    if (!this.dataArrFn()) {
-      this.dataArrFn(utils.keys(labels));
+    const labelsKeysSorted = labelsKeys.slice().sort();
+    const prevLabelsKeysSorted = (this.dataArrFn() || []).slice().sort();
+    if (utils.arrayEquals(labelsKeysSorted, prevLabelsKeysSorted) === false) {
+      this.dataArrFn(labelsKeys);
     }
 
     this.items = this.element.selectAll("div").data(() => _this.dataArrFn().map(d => ({ data: d })));
@@ -169,12 +172,12 @@ const DraggableList = Component.extend({
       this.updateView();
     } else {
       this.dataUpdateFlag = true;
-      this.updateData(dataArr);
+      this.updateData(dataArr, true);
     }
   },
 
-  updateData(dataArr) {
-    this.dataArrFn(dataArr);
+  updateData(dataArr, persistent) {
+    this.dataArrFn(dataArr, persistent);
   },
 
   readyOnce() {

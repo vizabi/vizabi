@@ -215,7 +215,7 @@ const DataModel = Model.extend({
 
   getConceptprops(which) {
     return which ?
-      this.conceptDictionary[which] || utils.warn("The concept " + which + " is not found in the dictionary") :
+      utils.getProp(this, ["conceptDictionary", which]) || utils.warn("The concept " + which + " is not found in the dictionary") :
       this.conceptDictionary;
   },
 

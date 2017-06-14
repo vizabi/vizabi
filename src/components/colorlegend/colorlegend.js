@@ -30,6 +30,9 @@ const ColorLegend = Component.extend({
     }, {
       name: "locale",
       type: "locale"
+    }, {
+      name: "ui",
+      type: "ui",
     }];
 
     this.model_binds = {
@@ -81,6 +84,7 @@ const ColorLegend = Component.extend({
       .append("div").attr("class", "vzb-cl-colorlist");
 
     this.rainbowEl = this.listColorsEl.append("div").attr("class", "vzb-cl-rainbow");
+    this.rainbowCanvasEl = this.rainbowEl.append("canvas");
     this.minimapEl = this.listColorsEl.append("div").attr("class", "vzb-cl-minimap");
     this.rainbowLegendEl = this.listColorsEl.append("div").attr("class", "vzb-cl-rainbow-legend");
     this.rainbowLegendSVG = this.rainbowLegendEl.append("svg");
@@ -126,7 +130,7 @@ const ColorLegend = Component.extend({
     this.selectDialog.append("div")
       .classed("vzb-cl-select-dialog-close", true)
       .html(iconClose)
-      .on("click", () => this.selectDialog.classed("vzb-hidden", true));
+      .on("click", () => this._closeSelectDialog);
 
     this.selectAllButton = this.selectDialog.append("div")
       .classed("vzb-cl-select-dialog-item", true)
@@ -145,15 +149,28 @@ const ColorLegend = Component.extend({
       .text("Dataset author doesn't want you to change this");
   },
 
+  _closeSelectDialog() {
+    this.selectDialog.classed("vzb-hidden", true);
+  },
+
   _bindSelectDialogItems(...args) {
     const [, index, indicators] = args;
     this.selectDialogTitle.text(indicators[index].textContent);
 
-    this.selectAllButton.on("click", () => this._interact().clickToSelect(...args));
+    this.selectAllButton.on("click", () => {
+      this._interact().clickToSelect(...args);
+      this._closeSelectDialog();
+    });
 
-    this.removeElseButton.on("click", () => this._interact().clickToShow(...args));
+    this.removeElseButton.on("click", () => {
+      this._interact().clickToShow(...args);
+      this._closeSelectDialog();
+    });
 
-    this.editColorButton.on("click", () => this._interact().clickToChangeColor(...args));
+    this.editColorButton.on("click", () => {
+      this._interact().clickToChangeColor(...args);
+      this._closeSelectDialog();
+    });
   },
 
   ready() {
@@ -303,10 +320,35 @@ const ColorLegend = Component.extend({
         d3.select(this).attr("cx", d.val);
       });
 
-      const gColors = paletteKeys.map((val, i) => colorRange[i] + " " + d3.format("%")(val * 0.01)).join(", ");
+      const domainMin = d3.min(cScale.domain());
+      const domainMax = d3.max(cScale.domain());
+      let logRescale;
 
-      this.rainbowEl
-        .style("background", "linear-gradient(90deg," + gColors + ")");
+      if (this.colorModel.scaleType == "log" || this.colorModel.scaleType == "genericLog") {
+        logRescale = d3.scale.genericLog()
+          .domain([domainMin, domainMax])
+          .range([domainMin, domainMax])
+          .invert;
+      } else {
+        logRescale = d => d;
+      }
+
+      this.rainbowCanvasEl
+        .attr("width", gradientWidth)
+        .attr("height", 1)
+        .style("width", gradientWidth + "px")
+        .style("height", "100%");
+
+      const context = this.rainbowCanvasEl.node().getContext("2d");
+      const image = context.createImageData(gradientWidth, 1);
+      for (let i = 0, j = -1, c; i < gradientWidth; ++i) {
+        c = d3.rgb(cScale(+domainMin + logRescale(i / (gradientWidth - 1) * (domainMax - domainMin))));
+        image.data[++j] = c.r;
+        image.data[++j] = c.g;
+        image.data[++j] = c.b;
+        image.data[++j] = 255;
+      }
+      context.putImageData(image, 0, 0);
 
       const unit = this.colorModel.getConceptprops().unit || "";
 
@@ -413,6 +455,18 @@ const ColorLegend = Component.extend({
     this.selectDialog.classed("vzb-hidden", true);
   },
 
+  _highlight(values) {
+    utils.getProp(this, ["model", "ui", "chart", "superhighlightOnMinimapHover"]) ?
+      this.model.marker.setSuperHighlight(values) :
+      this.model.marker.setHighlight(values);
+  },
+
+  _unhighlight() {
+    utils.getProp(this, ["model", "ui", "chart", "superhighlightOnMinimapHover"]) ?
+      this.model.marker.clearSuperHighlighted() :
+      this.model.marker.clearHighlighted();
+  },
+
   _interact() {
     const _this = this;
     const KEY = this.KEY;
@@ -427,20 +481,19 @@ const ColorLegend = Component.extend({
         const view = d3.select(this);
         const target = d[colorlegendDim];
 
-        const highlight = _this.colorModel.getValidItems()
+        const values = _this.colorModel.getValidItems()
           //filter so that only countries of the correct target remain
           .filter(f => f[_this.colorModel.which] == target)
           //fish out the "key" field, leave the rest behind
           .map(d => utils.clone(d, [KEY]));
-
-        _this.model.marker.setHighlight(highlight);
+        _this._highlight(values);
       },
 
       mouseout(d, i) {
         _this.moreOptionsHint.classed("vzb-hidden", true);
         //disable interaction if so stated in concept properties
         if (!_this.colorModel.isDiscrete()) return;
-        _this.model.marker.clearHighlighted();
+        _this._unhighlight();
       },
       clickToChangeColor(d, i) {
         //disable interaction if so stated in concept properties

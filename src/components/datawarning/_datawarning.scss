@@ -6,7 +6,7 @@
   .vzb-data-warning-background {
     background-color: $vzb-color-grey-lightest;
     height: 100%;
-    opacity: .4;
+    opacity: 0.4;
     width: 100%;
   }
 
@@ -16,7 +16,7 @@
       padding-left: 15px;
       padding-right: 25px;
     }
-    @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, .24));
+    @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, 0.24));
     transition: 300ms ease-in-out;
     background-color: #fff;
     border-top: 1px solid #f7f7f7;
@@ -96,7 +96,7 @@
       }
       cursor: pointer;
       fill: $vzb-color-primary;
-      fill-opacity: .7;
+      fill-opacity: 0.7;
       height: 25px;
       position: absolute;
       right: 10px;

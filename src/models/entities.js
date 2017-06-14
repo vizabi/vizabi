@@ -118,7 +118,8 @@ const EntitiesModel = DataConnected.extend({
    */
   isShown(d) {
     const dimension = this.getDimension();
-    return this.show[dimension] && this.show[dimension]["$in"] && this.show[dimension]["$in"].indexOf(d[dimension]) !== -1;
+
+    return utils.getProp(this.show, [dimension, "$in"], []).includes(d[dimension]);
   },
 
   /**

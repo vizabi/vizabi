@@ -1,6 +1,6 @@
 $vzb-dialog-content-height: 250px;
 .vzb-dialog-shadow {
-  @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, .24));
+  @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, 0.24));
   transition: 300ms ease-in-out;
   border-top: 1px solid #f7f7f7;
 }
@@ -20,7 +20,7 @@ $vzb-dialog-content-height: 250px;
       color: $vzb-color-primary;
       font-size: $vzb-font-size-regular;
       //font-weight: bold;
-      padding: 45px 25px 16px;
+      margin: 48px 20px 15px;
       display: inline-block;
       //align-self: flex-start;
 
@@ -56,12 +56,12 @@ $vzb-dialog-content-height: 250px;
 
         &[disabled=true] {
           cursor: default;
-          opacity: .7;
+          opacity: 0.7;
 
           +span {
             cursor: default;
             color: $vzb-color-primary-light;
-            opacity: .7;
+            opacity: 0.7;
           }
         }
       }
@@ -72,7 +72,7 @@ $vzb-dialog-content-height: 250px;
       @include border-radius(4px);
       @include box-sizing(border-box);
       font-size: 1em; //inherit from dialog content
-      border: 1px solid rgba($vzb-color-grey, .4);
+      border: 1px solid rgba($vzb-color-grey, 0.4);
       padding: 9px;
       display: block;
       width: 100%;
@@ -80,7 +80,7 @@ $vzb-dialog-content-height: 250px;
       font-family: $vzb-font-family-alt;
 
       &:focus {
-        border: 1px solid rgba($vzb-color-grey, .6);
+        border: 1px solid rgba($vzb-color-grey, 0.6);
       }
     }
 
@@ -107,7 +107,7 @@ $vzb-dialog-content-height: 250px;
     .vzb-dialog-buttons {
       display: table;
       width: 100%;
-      padding: 15px 25px;
+      padding: 7px 0;
     }
 
     .vzb-dialog-control {
@@ -238,7 +238,7 @@ $vzb-dialog-content-height: 250px;
         line-height: 22px;
         overflow: hidden;
         text-overflow: ellipsis;
-        transition: color .3s;
+        transition: color 0.3s;
 
         &.vzb-find-item-brokendata {
           color: $vzb-color-primary-light;
@@ -257,7 +257,7 @@ $vzb-dialog-content-height: 250px;
           width: 18px;
           height: 18px;
           background: $vzb-color-primary-lightest;
-          border: 1px solid rgba($vzb-color-primary, .2);
+          border: 1px solid rgba($vzb-color-primary, 0.2);
         }
 
         &::after {
@@ -279,7 +279,7 @@ $vzb-dialog-content-height: 250px;
       }
 
       input[type=checkbox]:checked + label::before {
-        border: 1px solid rgba($vzb-color-primary, .5);
+        border: 1px solid rgba($vzb-color-primary, 0.5);
       }
 
       input[type=checkbox]:checked + label::after {
@@ -325,7 +325,7 @@ $vzb-dialog-content-height: 250px;
   &:not(.vzb-no-hover) {
     .vzb-dialog-checkbox {
       label:hover::after {
-        @include opacity(.3);
+        @include opacity(0.3);
       }
     }
   }
@@ -452,9 +452,24 @@ $vzb-dialog-content-height: 250px;
 }
 
 &.vzb-small {
+
   // issues: 369 & 442
   .vzb-tool-dialogs {
     .vzb-dialogs-dialog {
+
+      &.vzb-popup {
+        >.vzb-dialog-modal {
+          >.vzb-dialog-title {
+            padding: 0;
+            margin: 20px 20px 10px;
+          }
+
+          >.vzb-dialog-buttons {
+            padding: 0 0 5px;
+          }
+        }
+      }
+
       &.vzb-popup.vzb-active {
         top: auto;
       }
@@ -467,7 +482,7 @@ $vzb-dialog-content-height: 250px;
     .vzb-dialog-checkbox {
       input[type=checkbox] + label {
         background-color: $vzb-color-grey;
-        border: 1px solid rgba($vzb-color-grey-dark, .5);
+        border: 1px solid rgba($vzb-color-grey-dark, 0.5);
       }
 
       input[type=checkbox] + label::after {
@@ -507,15 +522,6 @@ $vzb-dialog-content-height: 250px;
           }
           @include position(absolute, 5px -10px auto auto);
         }
-        >.vzb-dialog-modal {
-          >.vzb-dialog-buttons {
-            padding: 3px 25px;
-          }
-
-          >.vzb-dialog-title {
-            padding: 15px 25px 10px;
-          }
-        }
       }
     }
   }
@@ -552,7 +558,7 @@ $vzb-dialog-content-height: 250px;
           position: static;
           box-shadow: none;
           background-color: $vzb-color-primary-lightest;
-          border-bottom: 1px solid rgba(200, 200, 200, .4);
+          border-bottom: 1px solid rgba(200, 200, 200, 0.4);
           z-index: initial;
 
           .vzb-dialog-buttons {
@@ -579,7 +585,7 @@ $vzb-dialog-content-height: 250px;
               padding-left: 0;
               padding-right: 20px;
             }
-            padding: 5px 0 5px 20px;
+            margin: 5px 0 5px 20px;
             flex: none;
           }
 

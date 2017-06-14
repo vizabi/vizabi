@@ -166,7 +166,7 @@ const ButtonList = Component.extend({
         // _this.entitiesSelected_1 = _this.model.state.marker.select.length > 0;
       },
       "change:ui.chart": function(evt, path) {
-        if (path.indexOf("lockActive") > -1) {
+        if (path.indexOf("lockActive") > -1 || path.indexOf("lockUnavailable") > -1) {
           _this.setBubbleLock();
         }
       }
@@ -500,6 +500,7 @@ const ButtonList = Component.extend({
   setBubbleLock() {
     let locked = (this.model.ui.chart || {}).lockNonSelected;
     const active = (this.model.ui.chart || {}).lockActive;
+    const unavailable = (this.model.ui.chart || {}).lockUnavailable || false;
     if (!locked && locked !== 0) return;
 
     if (locked !== 0 && this.model.state.marker.select.length === 0 && !active) {
@@ -512,7 +513,8 @@ const ButtonList = Component.extend({
 
     const translator = this.model.locale.getTFunction();
 
-    btn.classed(class_unavailable, this.model.state.marker.select.length == 0 && !active);
+    //btn.classed(class_unavailable, this.model.state.marker.select.length == 0 && !active);
+    btn.classed(class_unavailable, unavailable);
     if (typeof active === "undefined") {
       btn.classed(class_hidden, this.model.state.marker.select.length == 0);
     } else {

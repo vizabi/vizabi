@@ -77,7 +77,7 @@ const Hook = DataConnected.extend({
     this.set(obj);
   },
 
-  setScaletype(newValue) {
+  setScaleType(newValue) {
     this.buildScale(newValue);
   },
 
@@ -599,7 +599,7 @@ const Hook = DataConnected.extend({
       if (this.allow && this.allow.scales && this.allow.scales.length > 0) {
         scales = scales.filter(val => this.allow.scales.indexOf(val) != -1);
       }
-      
+
       const scaleTypeIsAllowed = scales.includes(scaleType);
       const genericLogIsAllowed = scales.includes("log") && scaleType === "genericLog";
       if (!(scaleTypeIsAllowed || genericLogIsAllowed) && scales.length > 0) {

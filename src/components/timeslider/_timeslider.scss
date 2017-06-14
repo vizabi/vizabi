@@ -9,7 +9,7 @@ $vzb-ts-value-width: 40px;
   position: relative;
 
   &.vzb-ts-disabled {
-    opacity: .4;
+    opacity: 0.4;
     pointer-events: none;
     .vzb-ts-slider-slide {
       .background {
@@ -74,7 +74,7 @@ $vzb-ts-value-width: 40px;
         cursor: pointer !important;
       }
       .vzb-ts-slider-axis {
-        @include opacity(.6);
+        @include opacity(0.6);
         user-select: none;
         fill: $vzb-ts-slider-color;
         font-weight: bold;
@@ -84,13 +84,13 @@ $vzb-ts-value-width: 40px;
           @include opacity(1);
           fill: none;
           stroke: $vzb-ts-slider-color;
-          stroke-opacity: .1;
+          stroke-opacity: 0.1;
           stroke-width: 5px;
           stroke-linecap: round;
         }
       }
       .vzb-ts-slider-progress {
-        @include opacity(.6);
+        @include opacity(0.6);
         user-select: none;
         fill: $vzb-ts-slider-color;
         font-weight: bold;
@@ -100,7 +100,7 @@ $vzb-ts-value-width: 40px;
           @include opacity(1);
           fill: none;
           stroke: $vzb-ts-slider-color;
-          stroke-opacity: .2;
+          stroke-opacity: 0.2;
           stroke-width: 5px;
         }
         .rounded {
@@ -109,7 +109,7 @@ $vzb-ts-value-width: 40px;
       }
 
       .vzb-ts-slider-select {
-        @include opacity(.8);
+        @include opacity(0.8);
         user-select: none;
         cursor: default;
         .selected-start,
@@ -117,7 +117,7 @@ $vzb-ts-value-width: 40px;
           @include opacity(1);
           fill: none;
           stroke: $vzb-ts-slider-color;
-          stroke-opacity: .8;
+          stroke-opacity: 0.8;
           stroke-width: 5px;
           stroke-linecap: round;
         }
@@ -170,13 +170,13 @@ $vzb-ts-value-width: 40px;
     .vzb-loader {
       @extend %vzb-loader;
       @include size(28px);
-      border-color: rgba($vzb-color-white, .2);
-      border-top-color: rgba($vzb-color-white, .7);
+      border-color: rgba($vzb-color-white, 0.2);
+      border-top-color: rgba($vzb-color-white, 0.7);
       margin: -1 * 28px/2;
     }
   }
   &.vzb-ts-loading {
-    @include opacity(.3);
+    @include opacity(0.3);
     .vzb-ts-btn-play,
     .vzb-ts-btn-pause {
       @extend .vzb-hidden;

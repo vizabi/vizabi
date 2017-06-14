@@ -8,7 +8,7 @@
   margin-bottom: 15px;
   position: relative;
   //height: 116px;
-  
+
   .vzb-szs-svg {
     margin: 0 auto;
     display: block;
@@ -17,12 +17,12 @@
 
   .vzb-szs-slider {
     fill: #000;
-              
+
     .vzb-szs-slider-thumb-label {
       direction: ltr;
-      pointer-events: none; 	
+      pointer-events: none;
     }
-  
+
     .vzb-szs-slider-thumb-badge {
       fill: rgba($vzb-color-primary, 1);
       stroke: $vzb-color-white;
@@ -30,16 +30,16 @@
       stroke-linejoin: round;
       stroke-opacity: 1;
     }
-    
+
     .overlay {
-      fill-opacity: .1;
+      fill-opacity: 0.1;
       shape-rendering: crispEdges;
       cursor: pointer !important;
     }
-    
+
     .selection {
       fill: unset;
-      fill-opacity: .125;
+      fill-opacity: 0.125;
       stroke-width: 0;
       cursor: col-resize !important;
     }
