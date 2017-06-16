@@ -5,7 +5,7 @@ import Class from "base/class";
 export class Storage {
   constructor() {
     this.queryIds = {};
-    this.queryQueue = {};
+    this.queries = {};
     this._collection = {};
     this._collectionPromises = {}; // stores promises, making sure we don't do one calulation twice
   }
@@ -18,141 +18,122 @@ export class Storage {
    */
   loadFromReader(query, parsers, readerObject) {
     const _this = this;
-    const queryMergeId = this._getQueryId(query);
+    const queryMergeId = this._getQueryId(query, readerObject._basepath);
 
-    const dataId = utils.hashCode([
-      query
-    ]);
-    let result = null;
-    if (this.queryQueue[queryMergeId]) {
-      utils.forEach(this.queryQueue[queryMergeId], (queue, queryId) => {
-        if (query.select.value.filter(x => queue.query.select.value.indexOf(x) == -1).length == 0) { //check if this query have all needed values
-          result = queue;
-        }
-      });
-      // add select to base query and return the base query promise
+    if (!this.queries[queryMergeId]) {
+      this.queries[queryMergeId] = this.queryQueue(readerObject, queryMergeId);
     }
-    if (result) {
-      Array.prototype.push.apply(result.query.select.value, query.select.value);
-      utils.extend(result.parsers, parsers);
-      return result.promise;
-    }
-
-    // set up base query
-    const promise = new Promise((resolve, reject) => {
-
-      // wait one execution round for the queue to fill up
-      utils.defer(() => {
-        // now the query queue is filled with all queries from one execution round
-
-        // remove double columns from select (resulting from merging)
-        // no double columns in formatter because it's an object, extend would've overwritten doubles
-        (function(_query, _parsers) {
-
-          // execute the query with this reader
-          readerObject.read(_query, _parsers)
-            .then(response => {
-              //success reading
-              const dataId = utils.hashCode([
-                _query
-              ]);
-
-              _this.checkQueryResponse(_query, response);
-              _this._collection[dataId] = {};
-              _this._collectionPromises[dataId] = {};
-              const col = _this._collection[dataId];
-              col.data = response;
-              col.valid = {};
-              col.nested = {};
-              col.unique = {};
-              col.limits = {};
-              col.frames = {};
-              col.haveNoDataPointsPerKey = {};
-              col.query = _query;
-              const queryId = _this._getQueryId(_query);
-              if (!_this.queryIds[queryId]) _this.queryIds[queryId] = {};
-              _this.queryIds[queryId][dataId] = _query;
-              // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
-
-              // remove query from queue
-              //_this.queryQueue[queryMergeId][dataId] = null;
-              resolve(dataId);
-
-            })
-            .catch(err => {
-              _this.queryQueue[queryMergeId][dataId] = null;
-              reject(err);
-            });
-        })(query, parsers); //isolate this () code with its own query and parsers
-
-      });
-    });
-    if (!this.queryQueue[queryMergeId]) this.queryQueue[queryMergeId] = {};
-    this.queryQueue[queryMergeId][dataId] = {
-      query,
-      parsers,
-      promise
-    };
-    return this.queryQueue[queryMergeId][dataId].promise;
+    return this.queries[queryMergeId].getPromise(query, parsers);
   }
 
-  checkQueryResponse(query, response) {
-    if (response.length == 0) utils.warn("Reader for data source '" + this._name + "' returned empty array for query:", JSON.stringify(query, null, 2));
-
-    if (response.length > 0) {
-      // search data for the entirely missing columns
-      const columnsMissing = (query.select.key || []).concat(query.select.value || []);
-      for (let i = response.length - 1; i >= 0; i--) {
-        for (let c = columnsMissing.length - 1; c >= 0; c--) {
-          // if found value for column c in row i then remove that column name from the list of missing columns
-          if (response[i][columnsMissing[c]] || response[i][columnsMissing[c]] === 0) columnsMissing.splice(c, 1);
+  queryQueue(readerObject, queryMergeId) {
+    const _context = this;
+    return new function() {
+      this.readerObject = readerObject;
+      this.queries = [];
+      this.query = null;
+      this.parsers = null;
+      this.defer = {};
+      this.getPromise = function(query, parsers) {
+        for (const reader of this.queries) {
+          if (query.select.value.filter(x => reader.query.select.value.indexOf(x) == -1).length == 0) { //check if this query have all needed values
+            return reader.defer.promise;
+          }
         }
-        // all columns were found to have value in at least one of the rows then stop iterating
-        if (!columnsMissing.length) break;
-      }
-      columnsMissing.forEach(d => {
-        if (query.select.key.indexOf(d) == -1) {
-          utils.warn('Reader result: Column "' + d + '" is missing from "' + query.from + '" data, but it might be ok');
+        if (!this.query) {
+          this.query = query;
+          this.parsers = parsers;
         } else {
-          utils.error('Reader result: Key column "' + d + '" is missing from "' + query.from + '" data for query:', JSON.stringify(query));
-          console.log(response);
+          this.query.select.value = utils.unique(this.query.select.value.concat(query.select.value));
+          utils.extend(this.parsers, parsers);
         }
-      });
-    }
+        utils.debounce(() => {
+          this.runQuery();
+        }, 10)();
+        if (!this.defer.promise || !(this.defer.promise instanceof Promise)) {
+          this.defer.promise = new Promise((resolve, reject) => {
+            this.defer.resolve = resolve;
+            this.defer.reject = reject;
+          });
+        }
+        return this.defer.promise;
+      };
+      this.runQuery = function() {
+        if (this.query) {
+          this.queries.push(this.reader(this.query, this.parsers, this.defer));
+          this.query = null;
+          this.parsers = null;
+          this.defer = {};
+        }
+      };
+
+      this.reader = function(query, parsers, defer) {
+        const _queue = this;
+        return new function() {
+          this.defer = defer;
+          this.query = query;
+          this.parsers = parsers;
+          this.dataId = null;
+          _queue.readerObject.read(this.query, this.parsers).then(response => {
+            //success reading
+            this.dataId = utils.hashCode([
+              query, _queue.readerObject._basepath
+            ]);
+            this.checkQueryResponse(query, response);
+            _context._collection[this.dataId] = {};
+            _context._collectionPromises[this.dataId] = {};
+            const col = _context._collection[this.dataId];
+            col.data = response;
+            col.valid = {};
+            col.nested = {};
+            col.unique = {};
+            col.limits = {};
+            col.frames = {};
+            col.haveNoDataPointsPerKey = {};
+            col.query = query;
+            this.defer.resolve(this.dataId);
+          }).catch(err => {
+            this.defer.reject(err);
+          });
+
+          this.checkQueryResponse = function(query, response) {
+            if (response.length == 0) utils.warn("Reader for data source '" + this._name + "' returned empty array for query:", JSON.stringify(query, null, 2));
+
+            if (response.length > 0) {
+              // search data for the entirely missing columns
+              const columnsMissing = (query.select.key || []).concat(query.select.value || []);
+              for (let i = response.length - 1; i >= 0; i--) {
+                for (let c = columnsMissing.length - 1; c >= 0; c--) {
+                  // if found value for column c in row i then remove that column name from the list of missing columns
+                  if (response[i][columnsMissing[c]] || response[i][columnsMissing[c]] === 0) columnsMissing.splice(c, 1);
+                }
+                // all columns were found to have value in at least one of the rows then stop iterating
+                if (!columnsMissing.length) break;
+              }
+              columnsMissing.forEach(d => {
+                if (query.select.key.indexOf(d) == -1) {
+                  utils.warn('Reader result: Column "' + d + '" is missing from "' + query.from + '" data, but it might be ok');
+                } else {
+                  utils.error('Reader result: Key column "' + d + '" is missing from "' + query.from + '" data for query:', JSON.stringify(query));
+                  console.log(response);
+                }
+              });
+            }
+          };
+        }();
+      };
+    }();
   }
 
-  _getQueryId(query) {
+  _getQueryId(query, path) {
     return utils.hashCode([
       query.select.key,
       query.where,
       query.join,
       query.dataset,
       query.version,
-      query.path
+      path
     ]);
-  }
-
-  /**
-   * checks whether this combination is cached or not
-   */
-  getDataId(query) {
-    //encode in hashCode
-    const q = utils.hashCode([
-      query
-    ]);
-    //simply check if we have this in internal data
-    if (Object.keys(this._collection).indexOf(q) !== -1) {
-      return q;
-    }
-    const cache = this._getQueryId(query);
-    if (!this.queryIds[cache]) return false;
-    let result = false;
-    utils.forEach(this.queryIds[cache], (values, queryId) => {
-      if (query.select.value.filter(x => values.select.value.indexOf(x) == -1).length == 0) { //check if we have cached data with needed values
-        result = queryId;
-      }
-    });
-    return result;
   }
 
   setGrouping(dataId, grouping) {

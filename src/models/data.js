@@ -60,12 +60,6 @@ const DataModel = Model.extend({
     // add waffle server specific query clauses if set
     if (this.dataset) query.dataset = this.dataset;
     if (this.version) query.version = this.version;
-    if (this.path) query.path = this.path;
-    query.select.value = utils.unique(query.select.value);
-    const dataId = DataStorage.getDataId(query);
-    if (dataId) {
-      return Promise.resolve(dataId);
-    }
 
     utils.timeStamp("Vizabi Data: Loading Data");
     EventSource.freezeAll([
