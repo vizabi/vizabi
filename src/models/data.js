@@ -172,7 +172,8 @@ const DataModel = Model.extend({
       path: this.path,
       delimiter: this.delimiter,
       keySize: this.keySize,
-      data: this.data
+      data: this.data,
+      endpoint: this.endpoint,
     });
   },
 
