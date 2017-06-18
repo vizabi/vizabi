@@ -168,13 +168,7 @@ const DataModel = Model.extend({
       throw new Error("Unknown reader: " + this.reader);
     }
 
-    return new readerClass({
-      path: this.path,
-      delimiter: this.delimiter,
-      keySize: this.keySize,
-      data: this.data,
-      endpoint: this.endpoint,
-    });
+    return new readerClass(this.getPlainObject());
   },
 
   checkQueryResponse(query, response) {
