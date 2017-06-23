@@ -333,7 +333,9 @@ const Component = Events.extend({
         utils.groupEnd();
       }
       utils.forEach(model_config, (m, i) => {
+        if (!m) return;
         const model_info = _mapOne(m);
+        
         let new_name;
         if (_this.model_expects[i]) {
           new_name = _this.model_expects[i].name;

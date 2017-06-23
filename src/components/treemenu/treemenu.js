@@ -391,14 +391,15 @@ const Menu = Class.extend({
       const scrollTopTween = function(scrollTop) {
         return function() {
           const i = d3.interpolateNumber(this.scrollTop, scrollTop);
-          return function(t) { this.scrollTop = i(t); };
+          return function(t) {
+            treeMenuNode.scrollTop = i(t); 
+          };
         };
       };
 
-      d3.select(treeMenuNode).transition().duration(20)
+      d3.select(treeMenuNode).transition().duration(100)
         .tween("scrolltoptween", scrollTopTween(newScrollTop));
 
-      //treeMenuNode.scrollTop = scrollTop;
     }
 
   }
@@ -624,7 +625,10 @@ const TreeMenu = Component.extend({
     this.updateView();
 
     //TODO: hack! potentially unsafe operation here
-    const tags = this.model.marker_tags.label.getData();
+    let tags;
+    if (this.model.marker_tags) {
+      tags = this.model.marker_tags.label.getData();
+    }
     this._buildIndicatorsTree(tags);
   },
 
@@ -735,7 +739,7 @@ const TreeMenu = Component.extend({
       }
     });
 
-    utils.forEach(this.model.marker_tags._root._data, dataSource => {
+    utils.forEach(this.model.marker._root._data, dataSource => {
       if (dataSource._type !== "data") return;
 
       const indicatorsDB = dataSource.getConceptprops();
@@ -1105,7 +1109,7 @@ const TreeMenu = Component.extend({
     let dataFiltered, allowedIDs;
 
     const indicatorsDB = {};
-    utils.forEach(this.model.marker_tags._root._data, m => {
+    utils.forEach(this.model.marker._root._data, m => {
       if (m._type === "data") utils.deepExtend(indicatorsDB, m.getConceptprops());
     });
 
