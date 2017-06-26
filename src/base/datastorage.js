@@ -26,6 +26,15 @@ export class Storage {
     return this.queries[queryMergeId].getPromise(query, parsers);
   }
 
+  getDataId(query, readerObject) {
+    const queryMergeId = this._getQueryId(query, readerObject._basepath);
+    if (this.queries[queryMergeId]) {
+      return this.queries[queryMergeId].getDataId(query);
+    }
+    return false;
+
+  }
+  
   queryQueue(readerObject, queryMergeId) {
     const _context = this;
     return new function() {
@@ -66,7 +75,16 @@ export class Storage {
           this.defer = {};
         }
       };
-
+      
+      this.getDataId = function(query) {
+        for (const reader of this.queries) {
+          if (query.select.value.filter(x => reader.query.select.value.indexOf(x) == -1).length == 0 && reader.dataId) { //check if this query have all needed values
+            return reader.dataId;
+          }
+        }
+        return false;
+      };
+      
       this.reader = function(query, parsers, defer) {
         const _queue = this;
         return new function() {
@@ -76,10 +94,10 @@ export class Storage {
           this.dataId = null;
           _queue.readerObject.read(this.query, this.parsers).then(response => {
             //success reading
+            this.checkQueryResponse(query, response);
             this.dataId = utils.hashCode([
               query, _queue.readerObject._basepath
             ]);
-            this.checkQueryResponse(query, response);
             _context._collection[this.dataId] = {};
             _context._collectionPromises[this.dataId] = {};
             const col = _context._collection[this.dataId];
