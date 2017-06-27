@@ -299,7 +299,16 @@ export default function genericLog() {
     };
 
     scale.interpolate = function(arg) {
-      interpolator = d3.scale.linear().domain(domain).range(range).interpolate(arg);
+      let interpolatorDomain = domain;
+      if (domainParts.length > 1) {
+        const _domain = domain;
+        const _range = range;
+        const limits = [domain[0], domain[domain.length - 1]];
+        scale.domain(limits).range(limits);
+        interpolatorDomain = _domain.map(d => scale(d));
+        scale.domain(_domain).range(_range);
+      }
+      interpolator = d3.scale.linear().domain(interpolatorDomain).range(range).interpolate(arg);
       scale.range(interpolator.domain(), true);
       return scale;
     };

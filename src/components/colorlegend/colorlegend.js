@@ -2,6 +2,7 @@ import * as utils from "base/utils";
 import Component from "base/component";
 import ColorPicker from "helpers/d3.colorPicker";
 import axisSmart from "helpers/d3.axisWithLabelPicker";
+import { close as iconClose } from "base/iconset";
 
 /*!
  * VIZABI BUBBLE COLOR LEGEND COMPONENT
@@ -29,6 +30,9 @@ const ColorLegend = Component.extend({
     }, {
       name: "locale",
       type: "locale"
+    }, {
+      name: "ui",
+      type: "ui",
     }];
 
     this.model_binds = {
@@ -80,6 +84,7 @@ const ColorLegend = Component.extend({
       .append("div").attr("class", "vzb-cl-colorlist");
 
     this.rainbowEl = this.listColorsEl.append("div").attr("class", "vzb-cl-rainbow");
+    this.rainbowCanvasEl = this.rainbowEl.append("canvas");
     this.minimapEl = this.listColorsEl.append("div").attr("class", "vzb-cl-minimap");
     this.rainbowLegendEl = this.listColorsEl.append("div").attr("class", "vzb-cl-rainbow-legend");
     this.rainbowLegendSVG = this.rainbowLegendEl.append("svg");
@@ -102,8 +107,71 @@ const ColorLegend = Component.extend({
     );
 
     this.colorPicker.translate(this.model.locale.getTFunction());
+    this._initSelectDialog();
   },
 
+  _initSelectDialog() {
+    const t = this.model.locale.getTFunction();
+
+    this.moreOptionsHint = this.listColorsEl.append("span")
+      .classed("vzb-cl-more-hint vzb-hidden", true)
+      .text(t("hints/color/more"));
+
+    this.selectDialog = this.listColorsEl.append("div").classed("vzb-cl-select-dialog vzb-hidden", true);
+    this._initSelectDialogItems();
+  },
+
+  _initSelectDialogItems() {
+    const t = this.model.locale.getTFunction();
+
+    this.selectDialogTitle = this.selectDialog.append("div")
+      .classed("vzb-cl-select-dialog-title", true);
+
+    this.selectDialog.append("div")
+      .classed("vzb-cl-select-dialog-close", true)
+      .html(iconClose)
+      .on("click", () => this._closeSelectDialog);
+
+    this.selectAllButton = this.selectDialog.append("div")
+      .classed("vzb-cl-select-dialog-item", true)
+      .text("✅ " + t("dialogs/color/select-all"));
+
+    this.removeElseButton = this.selectDialog.append("div")
+      .classed("vzb-cl-select-dialog-item", true)
+      .text("🗑️ " + t("dialogs/color/remove-else"));
+
+    this.editColorButton = this.selectDialog.append("div")
+      .classed("vzb-cl-select-dialog-item vzb-cl-select-dialog-item-moreoptions", true)
+      .text("🎨 " + t("dialogs/color/edit-color"));
+
+    this.editColorButtonTooltip = this.editColorButton.append("div")
+      .classed("vzb-cl-select-dialog-item-tooltip", true)
+      .text("Dataset author doesn't want you to change this");
+  },
+
+  _closeSelectDialog() {
+    this.selectDialog.classed("vzb-hidden", true);
+  },
+
+  _bindSelectDialogItems(...args) {
+    const [, index, indicators] = args;
+    this.selectDialogTitle.text(indicators[index].textContent);
+
+    this.selectAllButton.on("click", () => {
+      this._interact().clickToSelect(...args);
+      this._closeSelectDialog();
+    });
+
+    this.removeElseButton.on("click", () => {
+      this._interact().clickToShow(...args);
+      this._closeSelectDialog();
+    });
+
+    this.editColorButton.on("click", () => {
+      this._interact().clickToChangeColor(...args);
+      this._closeSelectDialog();
+    });
+  },
 
   ready() {
     const _this = this;
@@ -160,6 +228,8 @@ const ColorLegend = Component.extend({
         && colorlegendKeys.length > 10 && utils.comparePlainObjects(this.colorModel.getColorlegendEntities().getFilter(), this.model.entities.getFilter());
 
     colorOptions.classed("vzb-hidden", hideColorOptions);
+
+    this._updateSelectDialog();
 
     //Hide rainbow element if showing minimap or if color is discrete
     this.rainbowEl.classed("vzb-hidden", this.colorModel.isDiscrete());
@@ -250,10 +320,22 @@ const ColorLegend = Component.extend({
         d3.select(this).attr("cx", d.val);
       });
 
-      const gColors = paletteKeys.map((val, i) => colorRange[i] + " " + d3.format("%")(val * 0.01)).join(", ");
+      this.rainbowCanvasEl
+        .attr("width", gradientWidth)
+        .attr("height", 1)
+        .style("width", gradientWidth + "px")
+        .style("height", "100%");
 
-      this.rainbowEl
-        .style("background", "linear-gradient(90deg," + gColors + ")");
+      const context = this.rainbowCanvasEl.node().getContext("2d");
+      const image = context.createImageData(gradientWidth, 1);
+      for (let i = 0, j = -1, c; i < gradientWidth; ++i) {
+        c = d3.rgb(cScale(labelScale.invert(i)));
+        image.data[++j] = c.r;
+        image.data[++j] = c.g;
+        image.data[++j] = c.b;
+        image.data[++j] = 255;
+      }
+      context.putImageData(image, 0, 0);
 
       const unit = this.colorModel.getConceptprops().unit || "";
 
@@ -282,12 +364,18 @@ const ColorLegend = Component.extend({
         colorOptions = colorOptions.enter().append("div").attr("class", "vzb-cl-option")
           .each(function() {
             d3.select(this).append("div").attr("class", "vzb-cl-color-sample")
-              .on("click", _this._interact().clickToShow);
+              .on("click", (...args) => {
+                this._bindSelectDialogItems(...args);
+                this.selectDialog.classed("vzb-hidden", false);
+              });
             d3.select(this).append("div").attr("class", "vzb-cl-color-legend");
           })
           .on("mouseover", _this._interact().mouseover)
           .on("mouseout", _this._interact().mouseout)
-          .on("click", _this._interact().clickToSelect)
+          .on("click", (...args) => {
+            this._bindSelectDialogItems(...args);
+            this.selectDialog.classed("vzb-hidden", false);
+          })
           .merge(colorOptions);
 
         colorOptions.each(function(d, index) {
@@ -314,8 +402,10 @@ const ColorLegend = Component.extend({
           .enter().append("path")
           .on("mouseover", _this._interact().mouseover)
           .on("mouseout", _this._interact().mouseout)
-          .on("click", _this._interact().clickToSelect)
-          .on("dblclick", _this._interact().clickToShow)
+          .on("click", (...args) => {
+            this._bindSelectDialogItems(...args);
+            this.selectDialog.classed("vzb-hidden", false);
+          })
           .each(function(d) {
             let shapeString = _this.frame.hook_geoshape[d[_this.colorlegendDim]].trim();
 
@@ -344,6 +434,25 @@ const ColorLegend = Component.extend({
 
   },
 
+  _updateSelectDialog() {
+    const isColorSelectable = this.colorModel.isUserSelectable();
+    this.editColorButtonTooltip.classed("vzb-hidden", isColorSelectable);
+    this.editColorButton.classed("vzb-cl-select-dialog-item-disabled", !isColorSelectable);
+
+    this.selectDialog.classed("vzb-hidden", true);
+  },
+
+  _highlight(values) {
+    utils.getProp(this, ["model", "ui", "chart", "superhighlightOnMinimapHover"]) ?
+      this.model.marker.setSuperHighlight(values) :
+      this.model.marker.setHighlight(values);
+  },
+
+  _unhighlight() {
+    utils.getProp(this, ["model", "ui", "chart", "superhighlightOnMinimapHover"]) ?
+      this.model.marker.clearSuperHighlighted() :
+      this.model.marker.clearHighlighted();
+  },
 
   _interact() {
     const _this = this;
@@ -352,25 +461,26 @@ const ColorLegend = Component.extend({
 
     return {
       mouseover(d, i) {
+        _this.moreOptionsHint.classed("vzb-hidden", false);
         //disable interaction if so stated in concept properties
         if (!_this.colorModel.isDiscrete()) return;
 
         const view = d3.select(this);
         const target = d[colorlegendDim];
 
-        const highlight = _this.colorModel.getValidItems()
+        const values = _this.colorModel.getValidItems()
           //filter so that only countries of the correct target remain
           .filter(f => f[_this.colorModel.which] == target)
           //fish out the "key" field, leave the rest behind
           .map(d => utils.clone(d, [KEY]));
-
-        _this.model.marker.setHighlight(highlight);
+        _this._highlight(values);
       },
 
       mouseout(d, i) {
+        _this.moreOptionsHint.classed("vzb-hidden", true);
         //disable interaction if so stated in concept properties
         if (!_this.colorModel.isDiscrete()) return;
-        _this.model.marker.clearHighlighted();
+        _this._unhighlight();
       },
       clickToChangeColor(d, i) {
         //disable interaction if so stated in concept properties

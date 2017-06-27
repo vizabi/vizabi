@@ -131,7 +131,10 @@ const Show = Dialog.extend("show", {
 
       items.append("label")
         .attr("for", d => "-show-" + d[_this.KEY] + "-" + _this._id)
-        .text(d => d.label);
+        .text(d => d.label)
+        .attr("title", function(d) {
+          return this.offsetWidth < this.scrollWidth ? d.label : null;
+        });
 
       const lastCheckedNode = _this.list.selectAll(".vzb-checked")
         .classed("vzb-separator", false)

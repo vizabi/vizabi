@@ -17,7 +17,7 @@
         overflow: hidden;
       }
       .vzb-flipsides-switch {
-        border-top: 1px solid rgba($vzb-color-primary-light, .5); 
+        border-top: 1px solid rgba($vzb-color-primary-light, 0.5);
       }
       .vzb-side-switch-sides {
         text-align: unset;
@@ -49,7 +49,7 @@
           > span:first-child {
             display: block;
             flex: 0 0 auto;
-          } 
+          }
           .vzb-side-selector {
             flex: 1 1 auto;
           }
@@ -94,7 +94,7 @@
               margin-bottom: 10px;
             }
           }
-          
+
           .vzb-dialog-title {
             display: flex;
             flex-direction: row;
@@ -103,9 +103,9 @@
             > span:first-child {
               display: block;
               flex: 0 0 auto;
-            } 
+            }
           }
-          
+
           .vzb-side-filter {
             @include rtl {
               padding-left: 20px;
@@ -113,7 +113,7 @@
             }
             display: block;
             flex: 1 1 auto;
-            min-width: 1px;            
+            min-width: 1px;
             max-width: 260px;
             padding-right: 20px;
           }

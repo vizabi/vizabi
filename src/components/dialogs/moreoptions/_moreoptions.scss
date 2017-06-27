@@ -7,7 +7,7 @@
           padding: 0;
           >.vzb-accordion {
             margin-top: 1px;
-            .vzb-accordion-section { 
+            .vzb-accordion-section {
               transition: none;
               overflow: hidden;
               max-height: 41px;
@@ -19,7 +19,7 @@
                   padding-left: 15px;
                   padding-right: 10px;
                 }
-                display: block;     
+                display: block;
                 padding: 9px 15px 10px 10px;
                 height: 40px;
                 background-color: $vzb-color-primary-lightest;
@@ -44,7 +44,7 @@
               }
               &.vzb-accordion-active {
                 max-height: 500px;
-                transition: max-height .3s ease-in-out;
+                transition: max-height 0.3s ease-in-out;
                 .vzb-dialog-title>span:first-child::after {
                   @include rotate(135deg);
                 }

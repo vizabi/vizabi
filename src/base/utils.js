@@ -74,9 +74,7 @@ export const isDate = function(arg) {
  * @param {Object} arg
  * @returns {Boolean}
  */
-export const isString = function(arg) {
-  return typeof arg === "string";
-};
+export const isString = value => typeof value === "string";
 
 /*
  * checks whether arg is a NaN
@@ -1542,3 +1540,40 @@ export function getValueMD(d, values, keysArray) {
   }
   return value;
 }
+
+export const isFunction = value => typeof value === "function";
+
+
+/**
+ * This is helper for getting some deep props in object. It's added to remove code like
+ * this.show[dimension]
+ *   && this.show[dimension]["$in"]
+ *   && this.show[dimension]["$in"].indexOf(d[dimension]) !== -1;
+ * when you need to get (+check) nested properties.
+
+ * @param {context} object The root object where we start to look for the props
+ * @param {Array} props Names of properties for nesting
+ * @param {*} defaultValue Default value that will be returned if there is no such properties in object
+ * @returns {property} The property we're looking for or a default value
+
+ * Usage:
+ * const object = { one: { two: "your value" } };
+ * utils.getProp(object, ["one", "two"]); // "your value"
+*/
+export const getProp = (object, props, defaultValue) => {
+  while (props.length) {
+    const prop = props.shift();
+    if (object.hasOwnProperty(prop)) {
+      object = object[prop];
+    } else {
+      return defaultValue;
+    }
+  }
+  return object;
+};
+
+export const px2num = pixels => (
+  isString(pixels) && pixels.endsWith("px") ?
+    parseFloat(pixels) :
+    console.warn(`Strange pixels value: ${pixels}`) || pixels
+);

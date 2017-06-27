@@ -332,7 +332,7 @@ const DataModel = Model.extend({
 
   getConceptprops(which) {
     return which ?
-      this.conceptDictionary[which] || utils.warn("The concept " + which + " is not found in the dictionary") :
+      utils.getProp(this, ["conceptDictionary", which]) || utils.warn("The concept " + which + " is not found in the dictionary") :
       this.conceptDictionary;
   },
 
@@ -747,50 +747,47 @@ const DataModel = Model.extend({
                   // Check if the piece of data for [this key][this frame][this column] exists
                   // and is valid. If so, then save it into a “clean regular set”
               return nested[frameName][0][column];
+            }
 
-            } else if (method === "none") {
+            // the piece of data is not available and the interpolation is set to "none"
+            if (method === "none") return null;
 
-                  // the piece of data is not available and the interpolation is set to "none"
-              return null;
+                // If the piece of data doesn’t exist or is invalid, then we need to inter- or extapolate it
 
-            } else {
-                  // If the piece of data doesn’t exist or is invalid, then we need to inter- or extapolate it
+                // Let’s take a slice of the nested set, corresponding to the current key nested[key]
+                // As you remember it has the data nested further by frames.
+                // At every frame the data in the current column might or might not exist.
+                // Thus, let’s filter out all the frames which don’t have the data for the current column.
+                // Let’s cache it because we will most likely encounter another gap in the same column for the same key
+            items = filtered[column];
+            if (items === null) {
+              const givenFrames = Object.keys(nested);
+              items = new Array(givenFrames.length);
+              itemsIndex = 0;
 
-                  // Let’s take a slice of the nested set, corresponding to the current key nested[key]
-                  // As you remember it has the data nested further by frames.
-                  // At every frame the data in the current column might or might not exist.
-                  // Thus, let’s filter out all the frames which don’t have the data for the current column.
-                  // Let’s cache it because we will most likely encounter another gap in the same column for the same key
-              items = filtered[column];
-              if (items === null) {
-                const givenFrames = Object.keys(nested);
-                items = new Array(givenFrames.length);
-                itemsIndex = 0;
-
-                for (let z = 0, length = givenFrames.length; z < length; z++) {
-                  oneFrame = nested[givenFrames[z]];
-                  if (oneFrame[0][column] || oneFrame[0][column] === 0) items[itemsIndex++] = oneFrame[0];
-                }
-
-                    //trim the length of the array
-                items.length = itemsIndex;
-
-                if (itemsIndex === 0) {
-                  filtered[column] = [];
-                } else {
-                  filtered[column] = items;
-                }
-
-                if (items.length == 0) _this._collection[dataId].haveNoDataPointsPerKey[column][key] = items.length;
+              for (let z = 0, length = givenFrames.length; z < length; z++) {
+                oneFrame = nested[givenFrames[z]];
+                if (oneFrame[0][column] || oneFrame[0][column] === 0) items[itemsIndex++] = oneFrame[0];
               }
 
-                  // Now we are left with a fewer frames in the filtered array. Let's check its length.
-                  //If the array is empty, then the entire column is missing for the key
-                  //So we let the key have missing values in this column for all frames
-              if (items && items.length > 0) {
-                next = null;
-                return utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
+                  //trim the length of the array
+              items.length = itemsIndex;
+
+              if (itemsIndex === 0) {
+                filtered[column] = [];
+              } else {
+                filtered[column] = items;
               }
+
+              if (items.length == 0) _this._collection[dataId].haveNoDataPointsPerKey[column][key] = items.length;
+            }
+
+                // Now we are left with a fewer frames in the filtered array. Let's check its length.
+                //If the array is empty, then the entire column is missing for the key
+                //So we let the key have missing values in this column for all frames
+            if (items && items.length > 0) {
+              next = null;
+              return utils.interpolatePoint(items, use, column, next, TIME, frameName, method);
             }
           }
         }

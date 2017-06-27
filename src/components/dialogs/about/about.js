@@ -31,7 +31,7 @@ const About = Dialog.extend("about", {
     this.element.select(".vzb-about-text1")
       .html("a project by <a href='http://gapminder.org'>Gapminder Foundation</a>");
     this.element.select(".vzb-about-version")
-      .html("<a href='https://github.com/Gapminder/vizabi/releases/tag/v" + version + "'>Version: " + version + " (alpha)</a>");
+      .html("<a href='https://github.com/Gapminder/vizabi/releases/tag/v" + version + "'>Version: " + version + "</a>");
     this.element.select(".vzb-about-updated")
       .html("Build: " + d3.time.format("%Y-%m-%d at %H:%M")(updated));
     this.element.select(".vzb-about-report")

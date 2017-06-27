@@ -3,13 +3,29 @@
   .vzb-dialogs-dialog {
     &[data-dlg="zoom"] {
       @import '../../zoombuttonlist/zoombuttonlist';
+      .vzb-panwitharrow-switch,
+      .vzb-zoomonscrolling-switch,
+      .vzb-adaptminmaxzoom-switch {
+        display: none;
+      }
       &.vzb-moreoptions {
         .vzb-dialog-title {
           margin-bottom: 15px;
           .vzb-dialog-zoom-buttonlist {
             padding-top: 10px;
           }
-        }          
+        }
+        .vzb-dialog-zoom-buttonlist {
+          @include rtl {
+            padding-right: 15px;
+          }
+          padding-left: 15px;
+        }
+        .vzb-panwitharrow-switch,
+        .vzb-zoomonscrolling-switch,
+        .vzb-adaptminmaxzoom-switch {
+          display: block;
+        }
       }
       &.vzb-sidebar {
         >.vzb-dialog-modal {
@@ -20,18 +36,11 @@
             .vzb-dialog-zoom-buttonlist {
               @include rtl {
                 padding-left: 0;
-                padding-right: 5px;
               }
               background-color: $vzb-color-primary-lightest;
-              padding-left: 5px;
               vertical-align: middle;
             }
           }
-        }
-        .vzb-panwitharrow-switch,
-        .vzb-zoomonscrolling-switch,
-        .vzb-adaptminmaxzoom-switch {
-          display: none;
         }
   	  }
     }

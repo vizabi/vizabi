@@ -1,8 +1,8 @@
-language: node_js
 dist: trusty
 sudo: true
+language: node_js
 node_js:
-  - '6.9.2'
+  - "7"
 addons:
   apt:
     packages:
@@ -40,5 +40,5 @@ deploy:
     secure: "XVJ/QwnTYMNEUMtAcvmVdh6EHndHcEqzdJUe7JYYRXmA2qxhRGIC8VlnK9GKZOS3ACSDygp1lCam+BA5ZYy4QhvsMsPQukWeon6K8Zcerg8Lg3XfxXBilKATf83DQ0PZslus1XgynZmNgUCkJ61rhAhLVOx0iIpetMOHTZ3oJak="
   on:
     branch: develop
-    node: 6.9.2
+    node: "7"
     condition: "-e /tmp/deployment.flag"

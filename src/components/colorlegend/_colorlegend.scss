@@ -31,7 +31,7 @@
     padding-top: 5px;
     cursor: pointer;
     padding-left: 15px;
-      
+
     .vzb-cl-color-sample {
       @include rtl {
         margin-left: 10px;
@@ -52,7 +52,7 @@
         text-decoration: underline;
       }
     }
-      
+
     &.vzb-cl-compact {
       display: inline-block;
       float: left;
@@ -110,4 +110,74 @@
     white-space: normal;
   }
 
+  .vzb-cl-more-hint {
+    position: absolute;
+    bottom: 0;
+    opacity: 0.3;
+    right: 0;
+    font-size: $vzb-font-size-small;
+  }
+
+  .vzb-cl-select-dialog {
+    opacity: 1;
+    position: absolute;
+    display: block;
+    padding: 5px 15px;
+    top: 50%;
+    transform: translate(0, -50%);
+    left: 20px;
+    right: 20px;
+    border: 1px solid #000;
+    border-radius: 4px;
+    background: $vzb-color-primary-lightest;
+    z-index: 1;
+
+    &-item {
+      float: left;
+      margin: 3px auto;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+
+      &-moreoptions {
+        display: none;
+      }
+
+      &-disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+
+      &-tooltip {
+        white-space: normal;
+        font-size: $vzb-font-size-small;
+      }
+    }
+
+    &-close {
+      cursor: pointer;
+      position: absolute;
+      right: 5px;
+      top: 5px;
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    &-title {
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+  }
+
+}
+
+.vzb-moreoptions {
+  .vzb-cl-select-dialog-item-moreoptions {
+    display: block;
+  }
 }
