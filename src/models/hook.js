@@ -129,6 +129,7 @@ const Hook = DataConnected.extend({
     utils.timeStamp("Vizabi Model: Loading Data: " + this._id);
 
     const parsers = this._getAllParsers();
+    
     const dataPromise = this.dataSource.load(query, parsers);
 
     dataPromise.then(
@@ -161,7 +162,7 @@ const Hook = DataConnected.extend({
 
     const grouping = this._parent._getGrouping();
     if (grouping) {
-      this.dataSource._collection[dataId].grouping = grouping;
+      this.dataSource.setGrouping(dataId, grouping);
     }
 
     utils.timeStamp("Vizabi Model: Data loaded: " + this._id);
@@ -201,7 +202,6 @@ const Hook = DataConnected.extend({
 
     // animatable
     const animatable = this._getFirstDimension({ type: "time" });
-
     // from
     const from = prop ? "entities" : "datapoints";
 
