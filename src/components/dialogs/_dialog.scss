@@ -107,7 +107,7 @@ $vzb-dialog-content-height: 250px;
     .vzb-dialog-buttons {
       display: table;
       width: 100%;
-      padding: 7px 0;
+      padding: 7px 20px;
     }
 
     .vzb-dialog-control {
@@ -465,7 +465,7 @@ $vzb-dialog-content-height: 250px;
           }
 
           >.vzb-dialog-buttons {
-            padding: 0 0 5px;
+            padding: 0 20px 5px;
           }
         }
       }
