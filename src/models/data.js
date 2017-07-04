@@ -88,31 +88,6 @@ const DataModel = Model.extend({
     return new readerClass(this.getPlainObject());
   },
 
-  checkQueryResponse(query, response) {
-    if (response.length == 0) utils.warn("Reader for data source '" + this._name + "' returned empty array for query:", JSON.stringify(query, null, 2));
-
-    if (response.length > 0) {
-      // search data for the entirely missing columns
-      const columnsMissing = (query.select.key || []).concat(query.select.value || []);
-      for (let i = response.length - 1; i >= 0; i--) {
-        for (let c = columnsMissing.length - 1; c >= 0; c--) {
-          // if found value for column c in row i then remove that column name from the list of missing columns
-          if (response[i][columnsMissing[c]] || response[i][columnsMissing[c]] === 0) columnsMissing.splice(c, 1);
-        }
-        // all columns were found to have value in at least one of the rows then stop iterating
-        if (!columnsMissing.length) break;
-      }
-      columnsMissing.forEach(d => {
-        if (query.select.key.indexOf(d) == -1) {
-          utils.warn('Reader result: Column "' + d + '" is missing from "' + query.from + '" data, but it might be ok');
-        } else {
-          utils.error('Reader result: Key column "' + d + '" is missing from "' + query.from + '" data for query:', JSON.stringify(query));
-          console.log(response);
-        }
-      });
-    }
-  },
-
   /**
    * get data
    */
