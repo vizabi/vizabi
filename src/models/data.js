@@ -690,15 +690,17 @@ const DataModel = Model.extend({
             const keys = entitiesByKey[KEY[index]];
             for (let i = 0, j = keys.length, key; i < j; i++) {
               key = keys[i];
-              if (index == lastIndex) {
-                for (c = 0; c < cLength; c++) {
-                  lastKeyObject[c][key] = mapValue(columns[c], nested[key], filtered[key]);
+              if (nested[key]) {
+                if (index == lastIndex) {
+                  for (c = 0; c < cLength; c++) {
+                    lastKeyObject[c][key] = mapValue(columns[c], nested[key], filtered[key]);
+                  }
+                } else {
+                  for (c = 0; c < cLength; c++) {
+                    _lastKeyObject[c] = lastKeyObject[c][key] = {};
+                  }
+                  iterateKeys(_lastKeyObject, nested[key], filtered[key], index + 1);
                 }
-              } else {
-                for (c = 0; c < cLength; c++) {
-                  _lastKeyObject[c] = lastKeyObject[c][key] = {};
-                }
-                iterateKeys(_lastKeyObject, nested[key], filtered[key], index + 1);
               }
             }
           }
