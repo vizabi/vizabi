@@ -69,7 +69,7 @@ const ToolModel = Model.extend({
 
 //tool
 const Tool = Component.extend({
- /**
+  /**
    * Initializes the tool
    * @param {Object} placeholder object
    * @param {Object} external_model External model such as state, data, etc

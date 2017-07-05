@@ -17,7 +17,7 @@ const Grouping = Dialog.extend("grouping", {
   init(config, parent) {
     this.name = "grouping";
 
-  // in dialog, this.model_expects = ["state", "data"];
+    // in dialog, this.model_expects = ["state", "data"];
 
     this.groupStops = [1, 5, 10, 15];
 
@@ -28,8 +28,8 @@ const Grouping = Dialog.extend("grouping", {
         model: ["state.entities_age"],
         arg: "grouping",
         properties: { min: 1, max: this.groupStops.length, step: 1, suppressInput: true, scale: d3.scale.linear()
-      .domain(d3.range(1, this.groupStops.length))
-      .range(this.groupStops)
+          .domain(d3.range(1, this.groupStops.length))
+          .range(this.groupStops)
         }
       }
     ];
@@ -39,7 +39,7 @@ const Grouping = Dialog.extend("grouping", {
 
   readyOnce() {
     this._super();
-//    this.element = d3.select(this.element);
+    //    this.element = d3.select(this.element);
     const groups = this.element.select(".vzb-dialog-groups");
 
     groups.selectAll(".vzb-dialog-groups-title")

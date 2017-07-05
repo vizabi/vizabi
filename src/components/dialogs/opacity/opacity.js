@@ -17,7 +17,7 @@ const Opacity = Dialog.extend("opacity", {
   init(config, parent) {
     this.name = "opacity";
 
-  // in dialog, this.model_expects = ["state", "data"];
+    // in dialog, this.model_expects = ["state", "data"];
 
     this.components = [
       {

@@ -83,7 +83,7 @@ const ColorModel = Hook.extend({
     }
     if (this.scaleType == null) {
       this.scaleType = this.dataSource
-          .getConceptprops(this.which).scales[0];
+        .getConceptprops(this.which).scales[0];
     }
   },
 
@@ -227,13 +227,13 @@ const ColorModel = Hook.extend({
     this.discreteDefaultPalette = false;
 
     if (conceptpropsColor && conceptpropsColor.palette) {
-        //specific color palette from hook concept properties
+      //specific color palette from hook concept properties
       palette = utils.clone(conceptpropsColor.palette);
     } else if (defaultPalettes[this.which]) {
-        //color palette for this.which exists in palette defaults
+      //color palette for this.which exists in palette defaults
       palette = utils.clone(defaultPalettes[this.which]);
     } else if (this.use === "constant") {
-        //an explicit hex color constant #abc or #adcdef is provided
+      //an explicit hex color constant #abc or #adcdef is provided
       if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/.test(this.which)) {
         palette = { "_default": this.which };
       } else {
@@ -252,7 +252,7 @@ const ColorModel = Hook.extend({
     let paletteLabels = null;
 
     if (conceptpropsColor && conceptpropsColor.paletteLabels) {
-        //specific color palette from hook concept properties
+      //specific color palette from hook concept properties
       paletteLabels = utils.clone(conceptpropsColor.paletteLabels);
     }
     return paletteLabels;
@@ -294,9 +294,9 @@ const ColorModel = Hook.extend({
 
       const timeMdl = this._space.time;
       const limits = timeMdl.splash ?
-          { min: timeMdl.parse(timeMdl.startOrigin), max: timeMdl.parse(timeMdl.endOrigin) }
-          :
-          { min: timeMdl.start, max: timeMdl.end };
+        { min: timeMdl.parse(timeMdl.startOrigin), max: timeMdl.parse(timeMdl.endOrigin) }
+        :
+        { min: timeMdl.start, max: timeMdl.end };
 
       const singlePoint = (limits.max - limits.min == 0);
 

@@ -20,7 +20,7 @@ const Zoom = Dialog.extend("zoom", {
   init(config, parent) {
     this.name = "zoom";
 
-  // in dialog, this.model_expects = ["state", "data"];
+    // in dialog, this.model_expects = ["state", "data"];
 
     this.components = [{
       component: zoombuttonlist,

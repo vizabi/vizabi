@@ -19,7 +19,7 @@ const Label = Dialog.extend("label", {
   init(config, parent) {
     this.name = "label";
 
-  // in dialog, this.model_expects = ["state", "data"];
+    // in dialog, this.model_expects = ["state", "data"];
 
     this.components = [
       {

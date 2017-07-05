@@ -264,17 +264,17 @@ const Marker = Model.extend({
     if (!this.cachedTimeLimits) this.cachedTimeLimits = {};
     utils.forEach(this.getSubhooks(), hook => {
 
-        //only indicators depend on time and therefore influence the limits
+      //only indicators depend on time and therefore influence the limits
       if (hook.use !== "indicator" || !hook._important) return;
 
       const cachedLimits = _this.cachedTimeLimits[hook._dataId + hook.which];
 
       if (cachedLimits) {
-            //if already calculated the limits then no ned to do it again
+        //if already calculated the limits then no ned to do it again
         min = cachedLimits.min;
         max = cachedLimits.max;
       } else {
-            //otherwise calculate own date limits (a costly operation)
+        //otherwise calculate own date limits (a costly operation)
         items = hook.getValidItems().map(m => m[time.getDimension()]);
         if (items.length == 0) utils.warn("getTimeLimits() was unable to work with an empty array of valid datapoints");
         min = d3.min(items);
@@ -293,7 +293,7 @@ const Marker = Model.extend({
       resultMax = d3.max(maxArray);
     }
 
-      //return false for the case when neither of hooks was an "indicator" or "important"
+    //return false for the case when neither of hooks was an "indicator" or "important"
     return !min && !max ? false : { min: resultMin, max: resultMax };
   },
 
@@ -377,11 +377,11 @@ const Marker = Model.extend({
 
     utils.forEach(this._dataCube || this.getSubhooks(true), (hook, name) => {
 
-            // If hook use is constant, then we can provide no additional info about keys
-            // We can just hope that we have something else than constants =)
+      // If hook use is constant, then we can provide no additional info about keys
+      // We can just hope that we have something else than constants =)
       if (hook.use === "constant") return;
 
-            // Get keys in data of this hook
+      // Get keys in data of this hook
       const nested = hook.getNestedItems([KEY, TIME]);
       const noDataPoints = hook.getHaveNoDataPointsPerKey();
 
@@ -394,10 +394,10 @@ const Marker = Model.extend({
         const _grouping = grouping.grouping;
         keys = keys.filter(key => (+key % _grouping) === 0);
       }
-            // If ain't got nothing yet, set the list of keys to result
+      // If ain't got nothing yet, set the list of keys to result
       if (resultKeys.length == 0) resultKeys = keys;
 
-            // Remove the keys from it that are not in this hook
+      // Remove the keys from it that are not in this hook
       if (hook._important) resultKeys = resultKeys.filter(f => keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1);
     });
     return resultKeys.map(d => { const r = {}; r[KEY] = d; return r; });
@@ -517,26 +517,26 @@ const Marker = Model.extend({
    * @return null
    */
   getFrame(time, cb, keys) {
-      //keys = null;
+    //keys = null;
     const _this = this;
     if (!this.cachedFrames) this.cachedFrames = {};
 
     const steps = this._parent.time.getAllSteps();
-      // try to get frame from cache without keys
+    // try to get frame from cache without keys
     let cachePath = this._getCachePath();
     if (!cachePath) return cb(null, time);
     if (time && _this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
-        // if it does, then return that frame directly and stop here
-        //QUESTION: can we call the callback and return the frame? this will allow callbackless API too
+      // if it does, then return that frame directly and stop here
+      //QUESTION: can we call the callback and return the frame? this will allow callbackless API too
       return cb(_this.cachedFrames[cachePath][time], time);
     }
     cachePath = this._getCachePath(keys);
     if (!cachePath) return cb(null, time);
 
-      // check if the requested time point has a cached animation frame
+    // check if the requested time point has a cached animation frame
     if (time && _this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
-        // if it does, then return that frame directly and stop here
-        //QUESTION: can we call the callback and return the frame? this will allow callbackless API too
+      // if it does, then return that frame directly and stop here
+      //QUESTION: can we call the callback and return the frame? this will allow callbackless API too
       return cb(_this.cachedFrames[cachePath][time], time);
     }
 
@@ -583,19 +583,19 @@ const Marker = Model.extend({
     const _this = this;
 
     if (nextFrameIndex == 0) {
-        //getFrame makes sure the frane is ready because a frame with non-existing data might be adressed
+      //getFrame makes sure the frane is ready because a frame with non-existing data might be adressed
       this.getFrame(steps[nextFrameIndex], values => cb(values), keys);
     } else {
       const prevFrameTime = steps[nextFrameIndex - 1];
       const nextFrameTime = steps[nextFrameIndex];
 
-        //getFrame makes sure the frane is ready because a frame with non-existing data might be adressed
+      //getFrame makes sure the frane is ready because a frame with non-existing data might be adressed
       this.getFrame(prevFrameTime, pValues => {
         _this.getFrame(nextFrameTime, nValues => {
           const fraction = (time - prevFrameTime) / (nextFrameTime - prevFrameTime);
           const dataBetweenFrames = {};
 
-            //loop across the hooks
+          //loop across the hooks
           utils.forEach(pValues, (values, hook) => {
             dataBetweenFrames[hook] = {};
 
@@ -628,16 +628,16 @@ const Marker = Model.extend({
               iterateKeys(null, null, null, values, nValues[hook], 0);
 
             } else {
-                //loop across the entities
+              //loop across the entities
               utils.forEach(values, (val1, key) => {
                 const val2 = nValues[hook][key];
                 if (utils.isDate(val1)) {
                   dataBetweenFrames[hook][key] = time;
                 } else if (!utils.isNumber(val1)) {
-                    //we can be interpolating string values
+                  //we can be interpolating string values
                   dataBetweenFrames[hook][key] = val1;
                 } else {
-                    //interpolation between number and null should rerurn null, not a value in between (#1350)
+                  //interpolation between number and null should rerurn null, not a value in between (#1350)
                   dataBetweenFrames[hook][key] = (val1 == null || val2 == null) ? null : val1 + ((val2 - val1) * fraction);
                 }
               });
@@ -650,10 +650,10 @@ const Marker = Model.extend({
             if (utils.isDate(val1)) {
               lastKeyObject[lastKey] = time;
             } else if (!utils.isNumber(val1)) {
-                //we can be interpolating string values
+              //we can be interpolating string values
               lastKeyObject[lastKey] = val1;
             } else {
-                //interpolation between number and null should rerurn null, not a value in between (#1350)
+              //interpolation between number and null should rerurn null, not a value in between (#1350)
               lastKeyObject[lastKey] = (val1 == null || val2 == null) ? null : val1 + ((val2 - val1) * fraction);
             }
           }
@@ -673,29 +673,29 @@ const Marker = Model.extend({
     if (!this.frameQueues) this.frameQueues = {}; //static queue of frames
     if (!this.partialResult) this.partialResult = {};
 
-      //array of steps -- names of all frames
+    //array of steps -- names of all frames
     const steps = this._parent.time.getAllSteps();
 
     const cachePath = this._getCachePath(selected);
     if (!cachePath) return new Promise((resolve, reject) => { resolve(); });
-      //if the collection of frames for this data cube is not scheduled yet (otherwise no need to repeat calculation)
+    //if the collection of frames for this data cube is not scheduled yet (otherwise no need to repeat calculation)
     if (!this.frameQueues[cachePath] || !(this.frameQueues[cachePath] instanceof Promise)) {
 
-        //this is a promise nobody listens to - it prepares all the frames we need without forcing any
+      //this is a promise nobody listens to - it prepares all the frames we need without forcing any
       this.frameQueues[cachePath] = new Promise((resolve, reject) => {
 
         _this.partialResult[cachePath] = {};
         steps.forEach(t => { _this.partialResult[cachePath][t] = {}; });
 
-          // Assemble the list of keys as an intersection of keys in all queries of all hooks
+        // Assemble the list of keys as an intersection of keys in all queries of all hooks
         const keys = _this.getKeys();
 
         const deferredHooks = [];
-          // Assemble data from each hook. Each frame becomes a vector containing the current configuration of hooks.
-          // frame -> hooks -> entities: values
+        // Assemble data from each hook. Each frame becomes a vector containing the current configuration of hooks.
+        // frame -> hooks -> entities: values
         utils.forEach(_this._dataCube, (hook, name) => {
           if (hook.use === "constant") {
-              //special case: fill data with constant values
+            //special case: fill data with constant values
             steps.forEach(t => {
               _this.partialResult[cachePath][t][name] = {};
               keys.forEach(key => {
@@ -703,7 +703,7 @@ const Marker = Model.extend({
               });
             });
           } else if (hook.which === KEY) {
-              //special case: fill data with keys to data itself
+            //special case: fill data with keys to data itself
             steps.forEach(t => {
               _this.partialResult[cachePath][t][name] = {};
               keys.forEach(key => {
@@ -711,7 +711,7 @@ const Marker = Model.extend({
               });
             });
           } else if (hook.which === TIME) {
-              //special case: fill data with time points
+            //special case: fill data with time points
             steps.forEach(t => {
               _this.partialResult[cachePath][t][name] = {};
               keys.forEach(key => {
@@ -719,20 +719,20 @@ const Marker = Model.extend({
               });
             });
           } else {
-              //calculation of async frames is taken outside the loop
-              //hooks with real data that needs to be fetched from datamanager
+            //calculation of async frames is taken outside the loop
+            //hooks with real data that needs to be fetched from datamanager
             deferredHooks.push(hook);
           }
         });
 
-          //check if we have any data to get from datamanager
+        //check if we have any data to get from datamanager
         if (deferredHooks.length > 0) {
           const promises = [];
           utils.forEach(deferredHooks, hook => {
             promises.push(new Promise((res, rej) => {
-                // need to save the hook state before calling getFrames.
-                // `hook` state might change between calling and resolving the call.
-                // The result needs to be saved to the correct cache, so we need to save current hook state
+              // need to save the hook state before calling getFrames.
+              // `hook` state might change between calling and resolving the call.
+              // The result needs to be saved to the correct cache, so we need to save current hook state
               const currentHookState = {
                 name: hook._name,
                 which: hook.which
@@ -758,14 +758,14 @@ const Marker = Model.extend({
     }
     return new Promise((resolve, reject) => {
       if (steps.length < 2 || !forceFrame) {
-            //wait until the above promise is resolved, then resolve the current promise
+        //wait until the above promise is resolved, then resolve the current promise
         _this.frameQueues[cachePath].then(() => {
           resolve(); //going back to getFrame(), to ".then"
         });
       } else {
         const promises = [];
         utils.forEach(_this._dataCube, (hook, name) => {
-            //exception: we know that these are knonwn, no need to calculate these
+          //exception: we know that these are knonwn, no need to calculate these
           if (hook.use !== "constant" && hook.which !== KEY && hook.which !== TIME) {
             (function(_hook, _name) {
               promises.push(new Promise((res, rej) => {

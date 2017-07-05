@@ -211,7 +211,7 @@ const TimeSlider = Component.extend({
     this.slide.call(this.brush);
 
     this.slider_outer.on("mousewheel", () => {
-        //do nothing and dont pass the event on if we are currently dragging the slider
+      //do nothing and dont pass the event on if we are currently dragging the slider
       if (_this.model.time.dragging) {
         d3.event.stopPropagation();
         d3.event.preventDefault();
@@ -595,9 +595,9 @@ const TimeSlider = Component.extend({
     //this.brush.move(this.slide, [new_pos, new_pos])
 
     this.element.classed("vzb-ts-disabled", this.model.time.end <= this.model.time.start);
-//    this.valueText.text(this.model.time.formatDate(value));
+    //    this.valueText.text(this.model.time.formatDate(value));
 
-//    var old_pos = this.handle.attr("cx");
+    //    var old_pos = this.handle.attr("cx");
     //var new_pos = this.xScale(value);
     if (_this.prevPosition == null) _this.prevPosition = new_pos;
     const delayAnimations = new_pos > _this.prevPosition ? this.model.time.delayAnimations : 0;

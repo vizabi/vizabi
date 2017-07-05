@@ -95,7 +95,7 @@ const LocaleModel = DataConnected.extend({
         const regexp = new RegExp("{{" + key + "}}", "g");
         return result.replace(regexp, payload[key]);
       },
-        this.getUIString(stringId)
+      this.getUIString(stringId)
       )
     );
   },

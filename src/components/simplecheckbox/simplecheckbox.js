@@ -13,7 +13,7 @@ export default Component.extend({
 
     this.model_expects = [{
       name: "mdl"
-        //TODO: learn how to expect model "axis" or "size" or "color"
+      //TODO: learn how to expect model "axis" or "size" or "color"
     }, {
       name: "locale",
       type: "locale"

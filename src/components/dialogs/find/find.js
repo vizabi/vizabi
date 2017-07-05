@@ -156,14 +156,14 @@ const Find = Dialog.extend("find", {
 
           return pointer;
         })
-      : _this.model.state.marker.getKeys().map(d => {
-        const pointer = {};
-        pointer[KEY] = d[KEY];
-        pointer.brokenData = false;
-        pointer.name = values.label[d[KEY]];
+        : _this.model.state.marker.getKeys().map(d => {
+          const pointer = {};
+          pointer[KEY] = d[KEY];
+          pointer.brokenData = false;
+          pointer.name = values.label[d[KEY]];
 
-        return pointer;
-      });
+          return pointer;
+        });
 
       //sort data alphabetically
       data.sort((a, b) => (a.name < b.name) ? -1 : 1);
@@ -260,10 +260,10 @@ const Find = Dialog.extend("find", {
   selectDataPoints() {
     const _this = this;
     const KEY = this.KEY;
-//    const selected = this.model.state.marker.getSelected(KEY);
+    //    const selected = this.model.state.marker.getSelected(KEY);
     const selected = this.model.state.marker;
     this.items.selectAll("input")
-//      .property("checked", d => (selected.indexOf(d[KEY]) !== -1));
+    //      .property("checked", d => (selected.indexOf(d[KEY]) !== -1));
       .property("checked", function(d) {
         const isSelected = selected.isSelected(d);
         d3.select(this.parentNode).classed("vzb-checked", isSelected);

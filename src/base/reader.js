@@ -234,14 +234,14 @@ const Reader = Class.extend({
         // if the column is missing, then don't apply filter
         return rowValue === undefined
           || (typeof condition !== "object" ?
-            (rowValue === condition
+          (rowValue === condition
               //resolve booleans via strings
               || condition === true && utils.isString(rowValue) && rowValue.toLowerCase().trim() === "true"
               || condition === false && utils.isString(rowValue) && rowValue.toLowerCase().trim() === "false"
-            ) :
-            Object.keys(condition).every(callbackKey =>
-              this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], rowValue)
-            ));
+          ) :
+          Object.keys(condition).every(callbackKey =>
+            this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], rowValue)
+          ));
       });
   },
 

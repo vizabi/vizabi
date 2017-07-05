@@ -202,7 +202,7 @@ const DataModel = Model.extend({
   setGrouping(dataId, grouping) {
     DataStorage.setGrouping(dataId, grouping);
   },
-  
+
   getFrames(dataId, framesArray, keys) {
     return DataStorage.getFrames(dataId, framesArray, keys, this.getConceptprops());
   },

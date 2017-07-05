@@ -392,7 +392,7 @@ const Menu = Class.extend({
         return function() {
           const i = d3.interpolateNumber(this.scrollTop, scrollTop);
           return function(t) {
-            treeMenuNode.scrollTop = i(t); 
+            treeMenuNode.scrollTop = i(t);
           };
         };
       };
@@ -716,25 +716,25 @@ const TreeMenu = Component.extend({
     const UNCLASSIFIED = "_unclassified";
     const ADVANCED = "advanced";
 
-      //init the dictionary of tags
+    //init the dictionary of tags
     const tags = {};
     tags[ROOT] = { id: ROOT, children: [] };
     tags[UNCLASSIFIED] = { id: UNCLASSIFIED, type: "folder", name: this.translator("buttons/unclassified"), children: [] };
 
-      //populate the dictionary of tags
+    //populate the dictionary of tags
     tagsArray.forEach(tag => { tags[tag.tag] = { id: tag.tag, name: tag.name, type: "folder", children: [] }; });
 
-      //init the tag tree
+    //init the tag tree
     const indicatorsTree = tags[ROOT];
     indicatorsTree.children.push(tags[UNCLASSIFIED]);
 
-      //populate the tag tree
+    //populate the tag tree
     tagsArray.forEach(tag => {
       if (!tag.parent || !tags[tag.parent]) {
-          // add tag to a root
+        // add tag to a root
         indicatorsTree.children.push(tags[tag.tag]);
       } else {
-          //add tag to a branch
+        //add tag to a branch
         tags[tag.parent].children.push(tags[tag.tag]);
       }
     });
@@ -793,7 +793,7 @@ const TreeMenu = Component.extend({
             if (a.id == "_default") return 1;
             if (b.id == "_default") return -1;
           }
-        //sort items alphabetically. folders go down because of the emoji folder in the beginning of the name
+          //sort items alphabetically. folders go down because of the emoji folder in the beginning of the name
           return a.name > b.name ? 1 : -1;
         })
     );
@@ -946,11 +946,11 @@ const TreeMenu = Component.extend({
       if (c.name == "gapminder-dialogs") {
         d3.select(c.placeholder.parentNode).classed("vzb-blur", !hidden);
       } else
-        if (c.element.classed) {
-          c.element.classed("vzb-blur", c != _this && !hidden);
-        } else {
-          d3.select(c.element).classed("vzb-blur", c != _this && !hidden);
-        }
+      if (c.element.classed) {
+        c.element.classed("vzb-blur", c != _this && !hidden);
+      } else {
+        d3.select(c.element).classed("vzb-blur", c != _this && !hidden);
+      }
     });
 
     this.width = _this.element.node().offsetWidth;
@@ -1078,9 +1078,9 @@ const TreeMenu = Component.extend({
     const searchIt = utils.debounce(() => {
       const value = input.node().value;
 
-        //Protection from unwanted IE11 input events.
-        //IE11 triggers an 'input' event when 'placeholder' attr is set to input element and
-        //on 'focusin' and on 'focusout', if nothing has been entered into the input.
+      //Protection from unwanted IE11 input events.
+      //IE11 triggers an 'input' event when 'placeholder' attr is set to input element and
+      //on 'focusin' and on 'focusout', if nothing has been entered into the input.
       if (!searchValueNonEmpty && value == "") return;
       searchValueNonEmpty = value != "";
 
@@ -1159,7 +1159,7 @@ const TreeMenu = Component.extend({
     this.element.select("." + css.title).select("span")
       .text(this.translator(_this._targetModel.isEntities() ? _this._targetModel._root._name + "/" + _this._targetModel._name
         : "buttons/" + (isHook ? _this._targetModel._name : (targetModelType + "/" + _this._targetProp)))
-        );
+      );
 
     this.element.select("." + css.search)
       .attr("placeholder", this.translator("placeholder/search") + "...");
@@ -1309,7 +1309,7 @@ const TreeMenu = Component.extend({
       } else {
 
         let scaleTypes = this.element.select("." + css.scaletypes).classed(css.hidden, false).selectAll("span")
-            .data(scaleTypesData, d => d);
+          .data(scaleTypesData, d => d);
 
         scaleTypes.exit().remove();
 

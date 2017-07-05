@@ -339,7 +339,7 @@ const Model = EventSource.extend({
    * ==========================
    */
 
-   // normal model is never loading
+  // normal model is never loading
   _isLoading() {
     return false;
   },

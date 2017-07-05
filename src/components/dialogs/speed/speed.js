@@ -17,7 +17,7 @@ const Speed = Dialog.extend("speed", {
   init(config, parent) {
     this.name = "speed";
 
-  // in dialog, this.model_expects = ["state", "data"];
+    // in dialog, this.model_expects = ["state", "data"];
 
     this.components = [
       {
@@ -26,8 +26,8 @@ const Speed = Dialog.extend("speed", {
         model: ["state.time"],
         arg: "delay",
         properties: { min: 1, max: 6, step: 0.1, scale: d3.scale.linear()
-      .domain([1, 2, 3, 4, 5, 6])
-      .range([1200, 900, 450, 200, 150, 100])
+          .domain([1, 2, 3, 4, 5, 6])
+          .range([1200, 900, 450, 200, 150, 100])
         }
       }
     ];

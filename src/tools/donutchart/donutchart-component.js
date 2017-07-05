@@ -15,7 +15,7 @@ const DonutComponent = Component.extend("donut", {
     this.name = "donutchart";
     this.template = '<div class="vzb-donutchart"><svg class="vzb-donutchart-svg"></svg></div>';
 
-        //define expected models for this component
+    //define expected models for this component
     this.model_expects = [{
       name: "time",
       type: "time"
@@ -24,53 +24,53 @@ const DonutComponent = Component.extend("donut", {
       type: "model"
     }];
 
-        //bind the function updateTime() to the change of time value in the model
+    //bind the function updateTime() to the change of time value in the model
     this.model_binds = {
       "change:time:value": function(evt) {
         if (!_this._readyOnce) return;
-            //fetch the time from the model and update the text on screen
+        //fetch the time from the model and update the text on screen
         _this.time = _this.model.time.value;
         _this.yearEl.text(_this.timeFormatter(_this.time));
         _this.redraw();
       }
     };
 
-        //call the prototype constructor of the component
+    //call the prototype constructor of the component
     this._super(config, context);
 
-        //init variables for d3 pie layout
+    //init variables for d3 pie layout
     this.colorScale = null;
     this.arc = d3.svg.arc();
     this.pie = d3.layout.pie()
-          .sort(null)
-          .value(d => d.pop);
+      .sort(null)
+      .value(d => d.pop);
   },
 
-      /**
+  /**
        * DOM is ready and the model is ready -- happens once on the load and never again
        */
   readyOnce() {
     const _this = this;
 
-        //link DOM elements to the variables
+    //link DOM elements to the variables
     this.element = d3.select(this.element);
     this.svgEl = this.element.select("svg").append("g");
     this.yearEl = this.svgEl.append("text").attr("class", "year").style({ "font-size": "4em" });
     this.titleEl = this.svgEl.append("text").attr("class", "title").style({ "font-size": "2em" });
 
-        //bind the resize() and updateTime() events to container resize
+    //bind the resize() and updateTime() events to container resize
     this.on("resize", () => {
       _this.resize();
       _this.redraw();
     });
 
-        //run a startup sequence
+    //run a startup sequence
     this.resize();
     this.update();
     this.redraw();
   },
 
-      /**
+  /**
        * Populate the visuals according to the number of entities
        */
   update() {
@@ -81,12 +81,12 @@ const DonutComponent = Component.extend("donut", {
     this.keys = this.model.marker.getKeys();
 
     this.entities = this.svgEl.selectAll(".vzb-dc-entity")
-          .data(this.keys);
+      .data(this.keys);
 
-        //exit selection
+    //exit selection
     this.entities.exit().remove();
 
-        //enter selection
+    //enter selection
     this.entities
       .enter().append("g")
       .attr("class", "vzb-dc-entity")
@@ -96,16 +96,16 @@ const DonutComponent = Component.extend("donut", {
       });
   },
 
-      /**
+  /**
        * Updates the visuals
        */
   redraw() {
     const _this = this;
 
-        //request the values for the current time from the model
+    //request the values for the current time from the model
     this.values = this.model.marker.getFrame({ time: _this.time }, ["geo"]);
 
-        //prepare the data
+    //prepare the data
     let data = this.keys.map(d => ({
       geo: d.geo,
       pop: _this.values.axis[d.geo],
@@ -115,7 +115,7 @@ const DonutComponent = Component.extend("donut", {
 
     data = this.pie(data);
 
-        //set the properties of the donuts and text labels
+    //set the properties of the donuts and text labels
     this.entities
       .data(data)
       .select("path")
@@ -132,7 +132,7 @@ const DonutComponent = Component.extend("donut", {
       .text(d => d.data.geo);
   },
 
-      /**
+  /**
        * Executes every time the container or vizabi is resized
        */
   resize() {
