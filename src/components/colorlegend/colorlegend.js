@@ -130,7 +130,7 @@ const ColorLegend = Component.extend({
     this.selectDialog.append("div")
       .classed("vzb-cl-select-dialog-close", true)
       .html(iconClose)
-      .on("click", () => this._closeSelectDialog);
+      .on("click", () => this._closeSelectDialog());
 
     this.selectAllButton = this.selectDialog.append("div")
       .classed("vzb-cl-select-dialog-item", true)
