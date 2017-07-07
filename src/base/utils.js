@@ -545,23 +545,20 @@ export const without = function(arr, el) {
  * Based on:
  * http://stackoverflow.com/questions/1960473/unique-values-in-an-array
  */
-export const unique = function(arr, func) {
-  const u = {};
-  const a = [];
-  if (!func) {
-    func = function(d) {
-      return d;
-    };
-  }
-  for (let i = 0, l = arr.length; i < l; i += 1) {
-    const key = func(arr[i]);
-    if (u.hasOwnProperty(key)) {
-      continue;
+export const unique = (array, map = data => data) => {
+  const uniqueValues = [];
+
+  return array.filter(item => {
+    const value = map(item);
+
+    if (uniqueValues.includes(value)) {
+      return false;
     }
-    a.push(arr[i]);
-    u[key] = 1;
-  }
-  return a;
+
+    uniqueValues.push(value);
+
+    return true;
+  });
 };
 
 /*
@@ -1577,19 +1574,3 @@ export const px2num = pixels => (
     parseFloat(pixels) :
     console.warn(`Strange pixels value: ${pixels}`) || pixels
 );
-
-export const uniqueBy = (array, property) => {
-  const propValues = [];
-
-  return array.filter(object => {
-    const value = object[property];
-
-    if (propValues.includes(value)) {
-      return false;
-    }
-
-    propValues.push(value);
-
-    return true;
-  });
-};
