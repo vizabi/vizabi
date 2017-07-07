@@ -1577,3 +1577,19 @@ export const px2num = pixels => (
     parseFloat(pixels) :
     console.warn(`Strange pixels value: ${pixels}`) || pixels
 );
+
+export const uniqueBy = (array, property) => {
+  const propValues = [];
+
+  return array.filter(object => {
+    const value = object[property];
+
+    if (propValues.includes(value)) {
+      return false;
+    }
+
+    propValues.push(value);
+
+    return true;
+  });
+};
