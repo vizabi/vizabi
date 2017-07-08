@@ -1070,6 +1070,8 @@ const TreeMenu = Component.extend({
         }
       };
       matching(_this.dataFiltered.children);
+
+      matches.children = utils.unique(matches.children, child => child.id);
       return matches;
     };
 
