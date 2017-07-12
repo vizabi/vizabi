@@ -62,7 +62,6 @@
     "google-maps": "3.2.1",
     "html-loader": "^0.4.5",
     "jasmine-spec-reporter": "4.1.1",
-    "mapbox-gl": "0.38.0",
     "node-sass": "^4.5.3",
     "open-browser-webpack-plugin": "0.0.5",
     "postcss-loader": "^2.0.5",
