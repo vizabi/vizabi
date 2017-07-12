@@ -163,7 +163,9 @@ export class Storage {
     if (!what || what == "data") {
       return this._collection[dataId]["data"];
     }
-
+    if (what == "query") {
+      return this._collection[dataId]["query"];
+    }
     // if they didn't give an instruction, give them the whole thing
     // it's probably old code which modifies the data outside this class
     // TODO: move these methods inside (e.g. model.getNestedItems())

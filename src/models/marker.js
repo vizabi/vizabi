@@ -601,8 +601,9 @@ const Marker = Model.extend({
 
             if (_this._multiDim && _this[hook].use == "indicator") {
               const hookDataBF = dataBetweenFrames[hook];
-              const TIME = _this[hook].dataSource._collection[_this[hook]._dataId].query.animatable;
-              const KEY = _this[hook].dataSource._collection[_this[hook]._dataId].query.select.key.slice(0);
+              const query = _this[hook].dataSource.getData(_this[hook]._dataId, "query");
+              const TIME = query.animatable;
+              const KEY = query.select.key.slice(0);
               if (TIME && KEY.indexOf(TIME) != -1) KEY.splice(KEY.indexOf(TIME), 1);
 
               const lastIndex = KEY.length - 1;
