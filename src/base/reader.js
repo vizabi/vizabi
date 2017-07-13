@@ -154,18 +154,7 @@ const Reader = Class.extend({
           const defaultValue = row[key];
           const value = !utils.isString(defaultValue) ? defaultValue : defaultValue.replace(",", ".").trim();
 
-          const parser = parsers[key];
-          let resultValue;
-
-          if (parser) {
-            resultValue = parser(value);
-          } else {
-            const numeric = parseFloat(value);
-            const strValue = String(value);
-            const dotRegex = strValue.includes(".") ? /0+$/ : "";
-            const validatedValue = strValue.replace(dotRegex, "").replace(/\.+$/, "");
-            resultValue = String(numeric) === validatedValue && !isNaN(numeric) && isFinite(numeric) ? numeric : value;
-          }
+          const resultValue = parsers[key](value);
 
           if (!resultValue && resultValue !== 0) {
             if (select.key.includes(key)) {

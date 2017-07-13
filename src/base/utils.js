@@ -770,53 +770,13 @@ export const preventAncestorScrolling = function(element) {
   });
 };
 
-/*
- * maps all rows according to the formatters
- * @param {Array} original original dataset
- * @param {Object} formatters formatters object
- * @returns {Boolean} try
- */
-export const mapRows = function(original, formatters) {
+export const defaultFormatter = value => {
+  const numeric = parseFloat(value);
+  const strValue = String(value);
+  const dotRegex = strValue.includes(".") ? /0+$/ : "";
+  const validatedValue = strValue.replace(dotRegex, "").replace(/\.+$/, "");
 
-  function mapRow(value, fmt) {
-    if (!isArray(value)) {
-      return fmt(value);
-    }
-
-    const res = [];
-    for (let i = 0; i < value.length; i++) {
-      res[i] = mapRow(value[i], fmt);
-    }
-    return res;
-  }
-
-  // default formatter turns empty strings in null and converts numeric values into number
-  //TODO: default formatter is moved to utils. need to return it to hook prototype class, but retest #1212 #1230 #1253
-  const defaultFormatter = function(val) {
-    let newVal = val;
-    if (val === "") {
-      newVal = null;
-    } else {
-      // check for numeric
-      const numericVal = parseFloat(val);
-      if (!isNaN(numericVal) && isFinite(val)) {
-        newVal = numericVal;
-      }
-    }
-    return newVal;
-  };
-
-  original = original.map(row => {
-    const columns = Object.keys(row);
-
-    for (let i = 0; i < columns.length; i++) {
-      const col = columns[i];
-      row[col] = mapRow(row[col], formatters[col] || defaultFormatter);
-    }
-    return row;
-  });
-
-  return original;
+  return String(numeric) === validatedValue && !isNaN(numeric) && isFinite(numeric) ? numeric : value;
 };
 
 /*
