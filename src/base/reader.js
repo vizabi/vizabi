@@ -118,12 +118,12 @@ const Reader = Class.extend({
       if (index < this.keySize) {
         result.concept_type = "entity_domain";
       } else if (index === this.keySize) {
-        //the column after is expected to have time
+        // the column after is expected to have time
         result.concept_type = "time";
       } else {
         result.concept_type = "measure";
 
-        for (let i = data.length - 1; i >= 0; i--) {
+        for (let i = data.length - 1; i > -1; --i) {
           if (utils.isString(data[i][concept]) && data[i][concept] !== "") {
             result.concept_type = "entity_set";
             [result.domain] = columns;
@@ -151,10 +151,7 @@ const Reader = Class.extend({
 
       const result = Object.keys(row).reduce((result, key) => {
         if (correct) {
-          const defaultValue = row[key];
-          const value = !utils.isString(defaultValue) ? defaultValue : defaultValue.replace(",", ".").trim();
-
-          const resultValue = parsers[key](value);
+          const resultValue = (parsers[key] || parsers["*"])(row[key]);
 
           if (!resultValue && resultValue !== 0) {
             if (select.key.includes(key)) {
@@ -221,16 +218,16 @@ const Reader = Class.extend({
         const rowValue = row[conditionKey];
 
         // if the column is missing, then don't apply filter
-        return rowValue === undefined
-          || (typeof condition !== "object" ?
-          (rowValue === condition
-              //resolve booleans via strings
+        return typeof rowValue === "undefined" ||
+          (typeof condition !== "object" ?
+            (rowValue === condition
+              // resolve booleans via strings
               || condition === true && utils.isString(rowValue) && rowValue.toLowerCase().trim() === "true"
               || condition === false && utils.isString(rowValue) && rowValue.toLowerCase().trim() === "false"
-          ) :
-          Object.keys(condition).every(callbackKey =>
-            this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], rowValue)
-          ));
+            ) :
+            Object.keys(condition).every(callbackKey =>
+              this.CONDITION_CALLBACKS[callbackKey](condition[callbackKey], rowValue)
+            ));
       });
   },
 

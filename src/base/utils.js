@@ -41,13 +41,11 @@ export const isElement = function(obj) {
 
 /*
  * checks whether obj is an Array
- * @param {Object} obj
+ * @param {Object} target
  * @returns {Boolean}
  * from underscore: https://github.com/jashkenas/underscore/blob/master/underscore.js
  */
-export const isArray = Array.isArray || function(obj) {
-  return toString.call(obj) === "[object Array]";
-};
+export const isArray = Array.isArray || (target => Object.prototype.toString.call(target) === "[object Array]");
 
 /*
  * checks whether obj is an object
@@ -300,10 +298,8 @@ export const forEach = function(obj, callback, ctx) {
   if (isArray(obj)) {
     size = obj.length;
     for (i = 0; i < size; i += 1) {
-      if (callback.apply(ctx, [
-        obj[i],
-        i
-      ]) === false) {
+      const result = callback.apply(ctx, [obj[i], i]);
+      if (result === false) {
         break;
       }
     }
@@ -311,10 +307,8 @@ export const forEach = function(obj, callback, ctx) {
     const keys = Object.keys(obj);
     size = keys.length;
     for (i = 0; i < size; i += 1) {
-      if (callback.apply(ctx, [
-        obj[keys[i]],
-        keys[i]
-      ]) === false) {
+      const result = callback.apply(ctx, [obj[keys[i]], keys[i]]);
+      if (result === false) {
         break;
       }
     }
@@ -770,13 +764,26 @@ export const preventAncestorScrolling = function(element) {
   });
 };
 
-export const defaultFormatter = value => {
-  const numeric = parseFloat(value);
-  const strValue = String(value);
-  const dotRegex = strValue.includes(".") ? /0+$/ : "";
-  const validatedValue = strValue.replace(dotRegex, "").replace(/\.+$/, "");
+export const countSymbols = (value, symbols = "") =>
+  (String(value).match(new RegExp(`[${symbols}]`, "g")) || []).length;
 
-  return String(numeric) === validatedValue && !isNaN(numeric) && isFinite(numeric) ? numeric : value;
+export const defaultParser = value => {
+  const sanitizedValue = String(value).replace(/,/g, countSymbols(value, ",") > 1 ? "" : ".").trim();
+
+  const numeric = parseFloat(sanitizedValue);
+
+  const strValue = String(sanitizedValue);
+  const validatedValue = strValue.includes(".") ?
+    strValue.replace(/0+$/, "").replace(/\.+$/, "") :
+    strValue;
+
+  return (
+    String(numeric) === validatedValue
+    && !isNaN(numeric)
+    && isFinite(numeric) ?
+      numeric :
+      value
+  );
 };
 
 /*
@@ -1516,7 +1523,7 @@ export const isFunction = value => typeof value === "function";
  * Usage:
  * const object = { one: { two: "your value" } };
  * utils.getProp(object, ["one", "two"]); // "your value"
-*/
+ */
 export const getProp = (object, props, defaultValue) => {
   while (props.length) {
     const prop = props.shift();

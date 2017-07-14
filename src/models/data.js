@@ -70,7 +70,7 @@ const DataModel = Model.extend({
       "resize"
     ]);
 
-    return DataStorage.loadFromReader(query, parsers, this.readerObject)
+    return DataStorage.loadFromReader(query, Object.assign({ "*": utils.defaultParser }, parsers), this.readerObject)
       .then(dataId => {
         EventSource.unfreezeAll();
         return dataId;

@@ -214,7 +214,7 @@ const Hook = DataConnected.extend({
     }
 
     // make root $and explicit
-    const explicitAndFilters =  {};
+    const explicitAndFilters = {};
     if (Object.keys(filters).length > 0) {
       explicitAndFilters["$and"] = [];
       for (const filterKey in filters) {
@@ -294,7 +294,7 @@ const Hook = DataConnected.extend({
         const joinFilter = h.getFilter(splashScreen);
         if (joinFilter != null && !utils.isEmpty(joinFilter)) {
           const filter = {};
-          filter[h.getDimension()] = "$"  + h.getDimension();
+          filter[h.getDimension()] = "$" + h.getDimension();
           filters = utils.extend(filters, filter);
         }
       }
@@ -333,25 +333,15 @@ const Hook = DataConnected.extend({
    * @returns {Object} filters
    */
   _getAllParsers() {
+    return Object.values(this._space).concat(this)
+      .reduce((result, model) => {
+        const parser = model.getParser();
+        const column = model.getDimensionOrWhich();
 
-    const parsers = {};
+        parser && column && !(column in result) && (result[column] = parser);
 
-    function addParser(model) {
-      // get parsers from model
-      const parser = model.getParser();
-      const column = model.getDimensionOrWhich();
-      if (parser && column) {
-        parsers[column] = parser;
-      }
-    }
-
-    // loop through all models which can have filters
-    utils.forEach(this._space, h => {
-      addParser(h);
-    });
-    addParser(this);
-
-    return parsers;
+        return result;
+      }, {});
   },
 
   /**
