@@ -30,7 +30,7 @@ const defaultPalettes = {
     "11": "#7fb5ed"
   },
   "_default": {
-    "_default": "#93daec"
+    "_default": "#ffb600"
   }
 };
 
