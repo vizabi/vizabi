@@ -12,14 +12,14 @@ const CSVTimeInColumnsReader = CSVReader.extend({
 
   load() {
     return this._super()
-      .then(({ data, columns }) => {
+      .then(({ rows, columns }) => {
         const indicatorKey = columns[this.keySize];
 
-        const concepts = data.reduce((result, row) => {
+        const concepts = rows.reduce((result, row) => {
           Object.keys(row).forEach(concept => {
             concept = concept === indicatorKey ? row[indicatorKey] : concept;
 
-            if (Number(concept) != concept && !result.includes(concept)) {
+            if (String(Number(concept)) !== String(concept) && !result.includes(concept)) {
               result.push(concept);
             }
           });
@@ -32,8 +32,9 @@ const CSVTimeInColumnsReader = CSVReader.extend({
         const [entityDomain] = concepts;
         return {
           columns: concepts,
-          data: data.reduce((result, row) => {
+          rows: rows.reduce((result, row) => {
             const resultRows = result.filter(resultRow => resultRow[entityDomain] === row[entityDomain]);
+
             if (resultRows.length) {
               resultRows.forEach(resultRow => {
                 resultRow[row[indicatorKey]] = row[resultRow[this.timeKey]];
@@ -41,16 +42,18 @@ const CSVTimeInColumnsReader = CSVReader.extend({
             } else {
               Object.keys(row).forEach(key => {
                 if (![entityDomain, indicatorKey].includes(key)) {
-                  result.push(
-                    Object.assign({
-                      [entityDomain]: row[entityDomain],
-                      [this.timeKey]: key,
-                    }, indicators.reduce((result, indicator) => {
-                      result[indicator] = row[indicatorKey] === indicator ? row[key] : null;
-                      return result;
-                    }, {})
-                    )
-                  );
+
+                  const domainAndTime = {
+                    [entityDomain]: row[entityDomain],
+                    [this.timeKey]: key,
+                  };
+
+                  const indicatorsObject = indicators.reduce((result, indicator) => {
+                    result[indicator] = row[indicatorKey] === indicator ? row[key] : null;
+                    return result;
+                  }, {});
+
+                  result.push(Object.assign(domainAndTime, indicatorsObject));
                 }
               });
             }

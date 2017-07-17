@@ -764,28 +764,6 @@ export const preventAncestorScrolling = function(element) {
   });
 };
 
-export const countSymbols = (value, symbols = "") =>
-  (String(value).match(new RegExp(`[${symbols}]`, "g")) || []).length;
-
-export const defaultParser = value => {
-  const sanitizedValue = String(value).replace(/,/g, countSymbols(value, ",") > 1 ? "" : ".").trim();
-
-  const numeric = parseFloat(sanitizedValue);
-
-  const strValue = String(sanitizedValue);
-  const validatedValue = strValue.includes(".") ?
-    strValue.replace(/0+$/, "").replace(/\.+$/, "") :
-    strValue;
-
-  return (
-    String(numeric) === validatedValue
-    && !isNaN(numeric)
-    && isFinite(numeric) ?
-      numeric :
-      value
-  );
-};
-
 /*
  * Converts radius to area, simple math
  * @param {Number} radius

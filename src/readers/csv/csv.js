@@ -1,3 +1,4 @@
+import parseDecimal from "parse-decimal-number";
 import Reader from "base/reader";
 
 const cached = {};
@@ -16,6 +17,11 @@ const CSVReader = Reader.extend({
     this.delimiter = readerInfo.delimiter;
     this.keySize = readerInfo.keySize || 1;
 
+    this._parseStrategies = [
+      ...[",.", ".,"].map(separator => this._createParseStrategy(separator)),
+      number => number,
+    ];
+
     Object.assign(this.ERRORS, {
       WRONG_TIME_COLUMN_OR_UNITS: "reader/error/wrongTimeUnitsOrColumn",
       NOT_ENOUGH_ROWS_IN_FILE: "reader/error/notEnoughRows",
@@ -24,9 +30,9 @@ const CSVReader = Reader.extend({
     });
   },
 
-  ensureDataIsCorrect({ columns, data }, parsers) {
+  ensureDataIsCorrect({ columns, rows }, parsers) {
     const timeKey = columns[this.keySize];
-    const [firstRow] = data;
+    const [firstRow] = rows;
     const parser = parsers[timeKey];
 
     const time = firstRow[timeKey].trim();
@@ -72,9 +78,10 @@ const CSVReader = Reader.extend({
           try {
             const { delimiter = this._guessDelimiter(text) } = this;
             const parser = d3.dsvFormat(delimiter);
-            const data = parser.parse(text, row => Object.keys(row).every(key => !row[key]) ? null : row);
+            const rows = parser.parse(text, row => Object.keys(row).every(key => !row[key]) ? null : row);
+            const { columns } = rows;
 
-            const result = { columns: data.columns, data };
+            const result = { columns, rows };
             cached[path] = result;
             resolve(result);
           } catch (e) {
@@ -101,28 +108,41 @@ const CSVReader = Reader.extend({
     const semicolonsCountInFirstRow = this._countCharsInLine(firstRow, semicolon);
 
     if (
-      commasCountInHeader === commasCountInFirstRow
-      && commasCountInHeader > 1
-      && (
-        (semicolonsCountInHeader !== semicolonsCountInFirstRow)
-        || (!semicolonsCountInHeader && !semicolonsCountInFirstRow)
-        || (commasCountInHeader > semicolonsCountInHeader && commasCountInFirstRow > semicolonsCountInFirstRow)
+      this._checkDelimiters(
+        commasCountInHeader,
+        commasCountInFirstRow,
+        semicolonsCountInHeader,
+        semicolonsCountInFirstRow
       )
     ) {
       return comma;
     } else if (
-      semicolonsCountInHeader === semicolonsCountInFirstRow
-      && semicolonsCountInHeader > 1
-      && (
-        (commasCountInHeader !== commasCountInFirstRow)
-        || (!commasCountInHeader && !commasCountInFirstRow)
-        || (semicolonsCountInHeader > commasCountInHeader && semicolonsCountInFirstRow > commasCountInFirstRow)
+      this._checkDelimiters(
+        semicolonsCountInHeader,
+        semicolonsCountInFirstRow,
+        commasCountInHeader,
+        commasCountInFirstRow
       )
     ) {
       return semicolon;
     }
 
     throw this.error(this.ERRORS.UNDEFINED_DELIMITER);
+  },
+
+  _checkDelimiters(
+    firstDelimiterInHeader,
+    firstDelimiterInFirstRow,
+    secondDelimiterInHeader,
+    secondDelimiterInFirstRow
+  ) {
+    return firstDelimiterInHeader === firstDelimiterInFirstRow
+      && firstDelimiterInHeader > 1
+      && (
+        (secondDelimiterInHeader !== secondDelimiterInFirstRow)
+        || (!secondDelimiterInHeader && !secondDelimiterInFirstRow)
+        || (firstDelimiterInHeader > secondDelimiterInHeader && firstDelimiterInFirstRow > secondDelimiterInFirstRow)
+      );
   },
 
   _getRows(text, count = 0) {
@@ -146,6 +166,48 @@ const CSVReader = Reader.extend({
     const re = new RegExp(char, "g");
     const matches = text.match(re);
     return matches ? matches.length : 0;
+  },
+
+  _createParseStrategy(separators) {
+    return value => {
+      const hasOnlyNumbersOrSeparators = !(new RegExp(`[^\\d${separators}]`).test(value));
+
+      if (hasOnlyNumbersOrSeparators && value) {
+        const result = parseDecimal(value, separators);
+
+        if (!isFinite(result) || isNaN(result)) {
+          this._isParseSuccessful = false;
+        }
+
+        return result;
+      }
+
+      return value;
+    };
+  },
+
+  _mapRows(rows, query, parsers) {
+    const mapRow = this._getRowMapper(query, parsers);
+
+    for (const parseStrategy of this._parseStrategies) {
+      this._parse = parseStrategy;
+      this._isParseSuccessful = true;
+
+      const result = [];
+      for (const row of rows) {
+        const parsed = mapRow(row);
+
+        if (!this._isParseSuccessful) {
+          break;
+        }
+
+        result.push(parsed);
+      }
+
+      if (this._isParseSuccessful) {
+        return result;
+      }
+    }
   },
 
   versionInfo: { version: __VERSION, build: __BUILD }
