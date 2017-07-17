@@ -27,7 +27,7 @@ const Reader = Class.extend({
 
   load() {
     return Promise.resolve({
-      data: [],
+      rows: [],
       columns: []
     });
   },
@@ -37,25 +37,20 @@ const Reader = Class.extend({
 
     const {
       select,
-      from,
-      order_by = []
+      from
     } = query;
-
-    const [orderBy] = order_by;
 
     return this.load()
       .then(result => {
-        const { data, columns } = result;
+        const { rows, columns } = result;
         this.ensureDataIsCorrect(result, parsers);
 
         switch (true) {
           case from === this.QUERY_FROM_CONCEPTS:
-            return this._getConcepts(columns, data.map(this._getRowMapper(query, parsers)));
+            return this._getConcepts(columns, this._mapRows(rows, query, parsers));
 
           case this._isDataQuery(from) && select.key.length > 0:
-            return data
-              .reduce(this._applyQuery(query, parsers), [])
-              .sort((prev, next) => prev[orderBy] - next[orderBy]);
+            return this._getData(rows, query, parsers);
 
           default:
             return [];
@@ -111,7 +106,7 @@ const Reader = Class.extend({
     return query;
   },
 
-  _getConcepts(columns, data) {
+  _getConcepts(columns, rows) {
     return columns.map((concept, index) => {
       const result = { concept };
 
@@ -123,8 +118,8 @@ const Reader = Class.extend({
       } else {
         result.concept_type = "measure";
 
-        for (let i = data.length - 1; i > -1; --i) {
-          if (utils.isString(data[i][concept]) && data[i][concept] !== "") {
+        for (let i = rows.length - 1; i > -1; --i) {
+          if (utils.isString(rows[i][concept]) && rows[i][concept] !== "") {
             result.concept_type = "entity_set";
             [result.domain] = columns;
             break;
@@ -136,6 +131,15 @@ const Reader = Class.extend({
     });
   },
 
+  _getData(rows, query, parsers) {
+    const { order_by = [] } = query;
+    const [orderBy] = order_by;
+
+    return this._mapRows(rows, query, parsers)
+      .reduce(this._applyQuery(query), [])
+      .sort((prev, next) => prev[orderBy] - next[orderBy]);
+  },
+
   _isDataQuery(from) {
     return [
       this.QUERY_FROM_DATAPOINTS,
@@ -143,24 +147,28 @@ const Reader = Class.extend({
     ].includes(from);
   },
 
-  _getRowMapper(query, parsers) {
-    const { select } = query;
+  _mapRows(rows, query, parsers) {
+    return rows.map(this._getRowMapper(query, parsers));
+  },
 
+  _getRowMapper(query, parsers) {
     return row => {
       let correct = true;
 
       const result = Object.keys(row).reduce((result, key) => {
         if (correct) {
           const defaultValue = row[key];
+          const defaultValueString = String(defaultValue).trim();
+
           const parser = parsers[key];
           const resultValue = !utils.isString(defaultValue) ?
             defaultValue :
             parser ?
-              parser(defaultValue) :
-              this._parse(defaultValue);
+              parser(defaultValueString) :
+              this._parse(defaultValueString);
 
           if (!resultValue && resultValue !== 0) {
-            if (select.key.includes(key)) {
+            if (query.select.key.includes(key)) {
               correct = false;
             }
           } else {
@@ -175,11 +183,11 @@ const Reader = Class.extend({
     };
   },
 
-  _parse(data) {
-    return data;
+  _parse(value) {
+    return value;
   },
 
-  _applyQuery(query, parsers) {
+  _applyQuery(query) {
     const {
       select,
       from
@@ -187,10 +195,8 @@ const Reader = Class.extend({
 
     const [uniqueKey] = select.key;
     const uniqueValues = [];
-    const mapRow = this._getRowMapper(query, parsers);
 
     return (result, row) => {
-      row = mapRow(row);
 
       if (row) {
         const unique = row[uniqueKey];
