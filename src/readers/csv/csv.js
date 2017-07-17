@@ -170,7 +170,7 @@ const CSVReader = Reader.extend({
 
   _createParseStrategy(separators) {
     return value => {
-      const hasOnlyNumbersOrSeparators = !/[^\d,.]/.test(value);
+      const hasOnlyNumbersOrSeparators = !(new RegExp(`[^\\d${separators}]`).test(value));
 
       if (hasOnlyNumbersOrSeparators && value) {
         const result = parseDecimal(value, separators);
