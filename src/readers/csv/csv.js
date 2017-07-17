@@ -1,3 +1,4 @@
+import parseDecimal from "parse-decimal-number";
 import Reader from "base/reader";
 
 const cached = {};
@@ -15,6 +16,7 @@ const CSVReader = Reader.extend({
     this._basepath = readerInfo.path;
     this.delimiter = readerInfo.delimiter;
     this.keySize = readerInfo.keySize || 1;
+    this._separators = "";
 
     Object.assign(this.ERRORS, {
       WRONG_TIME_COLUMN_OR_UNITS: "reader/error/wrongTimeUnitsOrColumn",
@@ -146,6 +148,30 @@ const CSVReader = Reader.extend({
     const re = new RegExp(char, "g");
     const matches = text.match(re);
     return matches ? matches.length : 0;
+  },
+
+  _parse(data) {
+    if (this._separators) {
+      const result = parseDecimal(data, this._separators);
+      return isNaN(result) ? data : result;
+    }
+
+    const separators = ",.";
+    const result = parseDecimal(data, separators);
+    if (isNaN(result)) {
+
+      const separators = ".,";
+      const result = parseDecimal(data, separators);
+      if (isNaN(result)) {
+        return data;
+      }
+
+      this._separators = separators;
+      return result;
+    }
+
+    this._separators = separators;
+    return result;
   },
 
   versionInfo: { version: __VERSION, build: __BUILD }

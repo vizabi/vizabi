@@ -151,7 +151,13 @@ const Reader = Class.extend({
 
       const result = Object.keys(row).reduce((result, key) => {
         if (correct) {
-          const resultValue = (parsers[key] || parsers["*"])(row[key]);
+          const defaultValue = row[key];
+          const parser = parsers[key];
+          const resultValue = !utils.isString(defaultValue) ?
+            defaultValue :
+            parser ?
+              parser(defaultValue) :
+              this._parse(defaultValue);
 
           if (!resultValue && resultValue !== 0) {
             if (select.key.includes(key)) {
@@ -167,6 +173,10 @@ const Reader = Class.extend({
 
       return correct && result;
     };
+  },
+
+  _parse(data) {
+    return data;
   },
 
   _applyQuery(query, parsers) {

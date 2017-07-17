@@ -591,7 +591,7 @@ const Model = EventSource.extend({
    * @returns {Function} formatter function
    */
   getParser() {
-    return utils.defaultParser;
+    return null;
   },
 
   /**

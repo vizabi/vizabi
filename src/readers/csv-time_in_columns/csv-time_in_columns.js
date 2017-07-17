@@ -19,7 +19,7 @@ const CSVTimeInColumnsReader = CSVReader.extend({
           Object.keys(row).forEach(concept => {
             concept = concept === indicatorKey ? row[indicatorKey] : concept;
 
-            if (Number(concept) != concept && !result.includes(concept)) {
+            if (String(Number(concept)) !== String(concept) && !result.includes(concept)) {
               result.push(concept);
             }
           });
