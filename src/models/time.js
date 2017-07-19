@@ -52,7 +52,8 @@ const TimeModel = DataConnected.extend({
       format: { data: null, ui: null }, // overwrite of default formats
       step: 1, //step must be integer, and expressed in units
       immediatePlay: true,
-      record: false
+      record: false,
+      offset: 0
     };
     return utils.deepExtend(this._super(), defaults);
   },
@@ -352,13 +353,14 @@ const TimeModel = DataConnected.extend({
       utils.warn("getAllSteps(): invalid start/end time is detected: " + this.start + ", " + this.end);
       return [];
     }
-    const hash = "" + this.start + this.end + this.step;
+    const hash = "" + this.offset + this.start + this.end + this.step;
 
     //return if cached
     if (this.allSteps[hash]) return this.allSteps[hash];
 
     this.allSteps[hash] = [];
-    let curr = this.start;
+    const is = this.getIntervalAndStep();
+    let curr = d3["utc" + is.interval].offset(this.start, this.offset);
     while (+curr <= +this.end) {
       const is = this.getIntervalAndStep();
       this.allSteps[hash].push(curr);
