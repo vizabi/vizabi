@@ -714,6 +714,9 @@ export default function axisSmart(_orient) {
         tickValues = Math.abs(axis.scale()(min) - axis.scale()(max)) < (labelsStackOnTop ?
           (options.heightOfOneDigit) :
           (options.formatter(min).length + options.formatter(max).length) * options.widthOfOneDigit) ? [max] : [min, max];
+        if (tickValues.length == 1 && (options.scaleType == "linear" || options.scaleType == "time")) {
+          tickValuesMinor = [];
+        }
       }
 
       if (tickValues != null && tickValues.length <= 3 && bothSidesUsed) {
