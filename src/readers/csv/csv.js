@@ -139,10 +139,10 @@ const CSVReader = Reader.extend({
     return firstDelimiterInHeader === firstDelimiterInFirstRow
       && firstDelimiterInHeader > 1
       && (
-        (secondDelimiterInHeader !== secondDelimiterInFirstRow)
+      (secondDelimiterInHeader !== secondDelimiterInFirstRow)
         || (!secondDelimiterInHeader && !secondDelimiterInFirstRow)
         || (firstDelimiterInHeader > secondDelimiterInHeader && firstDelimiterInFirstRow > secondDelimiterInFirstRow)
-      );
+    );
   },
 
   _getRows(text, count = 0) {
