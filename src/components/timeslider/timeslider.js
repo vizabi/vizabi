@@ -113,6 +113,12 @@ const TimeSlider = Component.extend({
           if (!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       },
+      "change:time.offset": function(evt, path) {
+        _this._updateProgressBar();
+        _this.model.marker.listenFramesQueue(null, time => {
+          _this._updateProgressBar(time);
+        });        
+      },
       "change:time.startSelected": function(evt, path) {
         if (_this.slide) {
           _this.updateSelectedStartLimiter();
