@@ -9,6 +9,7 @@ function _getQueryId(query, path) {
     query.join,
     query.dataset,
     query.version,
+    query.language,
     path
   ]);
 }
