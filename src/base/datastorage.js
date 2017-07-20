@@ -1,6 +1,4 @@
-
 import * as utils from "base/utils";
-import Class from "base/class";
 
 function _getQueryId(query, path) {
   return utils.hashCode([
@@ -14,9 +12,266 @@ function _getQueryId(query, path) {
   ]);
 }
 
-export class Storage {
+class Queue {
+  constructor(_context, framesArray, whatId) {
+    this._context = _context;
+
+    this.defaultCallbacks = [];
+    this.callbacks = {};
+    this.forcedQueue = [];
+    this.isActive = true;
+    this.delayedAction = null;
+    this.whatId = whatId;
+    this.queue = framesArray.slice(0); //clone array
+    // put the last element to the start of the queue because we are likely to need it first
+    this.queue.splice(0, 0, this.queue.splice(this.queue.length - 1, 1)[0]);
+    this.key = 0;
+  }
+
+  mute() {
+    this.isActive = false;
+    this.delayedAction = Promise.resolve.bind(Promise);
+  }
+
+  unMute() {
+    this.isActive = true;
+    if (typeof this.delayedAction === "function") {
+      this.delayedAction();
+    }
+    this.delayedAction = null;
+    if (!this.forcedQueue.length && !this.queue.length) {
+      this._context._unmuteQueue();
+    }
+  }
+
+  _getNextFrameName() {
+    let frameName = null;
+    if (this.forcedQueue.length > 0 || this.queue.length > 0) {
+      if (this.forcedQueue.length > 0) {
+        frameName = this.forcedQueue.shift();
+      } else {
+        if (!this.forcedQueue.length && this.key >= this.queue.length - 1) {
+          this.key = 0;
+        }
+        frameName = this.queue.splice(this.key, 1).pop();
+      }
+    } else {
+      this._context._unmuteQueue();
+    }
+    return frameName;
+  }
+
+  // force the particular frame up the queue
+  forceFrame(frameName, cb) {
+    const objIndexOf = function(obj, need) {
+      const search = need.toString();
+      let index = -1;
+      for (let i = 0, len = obj.length; i < len; i++) {
+        if (obj[i].toString() === search) {
+          index = i;
+          break;
+        }
+      }
+      return index;
+    };
+    if (this.callbacks[frameName]) {
+
+      this.callbacks[frameName].push(cb);
+    } else {
+      const newKey = objIndexOf(this.queue, frameName);//this.queue.indexOf(frameName.toString());
+      if (newKey !== -1) {
+        this.forcedQueue.unshift(this.queue.splice(newKey, 1).pop());
+        this._context._muteAllQueues(this.whatId);
+        this.unMute();
+        if (typeof cb === "function") {
+          if (typeof this.callbacks[frameName] !== "object") {
+            this.callbacks[frameName] = [];
+          }
+          this.callbacks[frameName].push(cb);
+        }
+        this.key = newKey; //set key to next year after gorced element (preload if user click play)
+      } else {
+        if (typeof this.callbacks[frameName] === "object") {
+          this.callbacks[frameName].push(cb);
+        } else {
+          this.callbacks[frameName] = [cb];
+        }
+      }
+    }
+  }
+
+  checkForcedFrames() {
+    if (this.forcedQueue.length > 0) return;
+    this._context._checkForcedQueuesExists();
+  }
+
+  // returns the next frame in a queue
+  getNext() {
+    return new Promise(resolve => {
+      this.checkForcedFrames();
+      if (this.isActive) {
+        resolve(this._getNextFrameName());
+      } else {
+        this._waitingForActivation().then(() => {
+          resolve(this._getNextFrameName());
+        });
+      }
+    });
+  }
+
+  _waitingForActivation() {
+    return new Promise(resolve => {
+      if (this.isActive) {
+        return resolve();
+      }
+      this.delayedAction = resolve;
+    });
+  }
+
+  //function called after build each frame with name of frame build
+  frameComplete(frameName) {
+    let i;
+    if (this.defaultCallbacks.length > 0) {
+      for (i = 0; i < this.defaultCallbacks.length; i++) {
+        this.defaultCallbacks[i](frameName);
+      }
+    }
+    if (this.callbacks[frameName] && this.callbacks[frameName].length > 0) {
+      for (i = 0; i < this.callbacks[frameName].length; i++) {
+        this.callbacks[frameName][i]();
+      }
+    }
+  }
+}
+
+class Request {
+  constructor(context) {
+    const { query, parsers, defer } = context;
+    this._context = context;
+
+    this.defer = defer;
+    this.query = query;
+    this.parsers = parsers;
+    this.dataId = null;
+
+    this._read();
+  }
+
+  _read() {
+    this._context._reader.read(this.query, this.parsers)
+      .then(response => {
+        //success reading
+        this._checkQueryResponse(this.query, response);
+        this.dataId = utils.hashCode([
+          this.query, this._context._reader._basepath
+        ]);
+        this._context._context._collection[this.dataId] = {};
+        this._context._context._collectionPromises[this.dataId] = {};
+        const col = this._context._context._collection[this.dataId];
+        col.data = response;
+        col.valid = {};
+        col.nested = {};
+        col.unique = {};
+        col.limits = {};
+        col.frames = {};
+        col.haveNoDataPointsPerKey = {};
+        col.query = this.query;
+        this.defer.resolve(this.dataId);
+      })
+      .catch(err => {
+        this.defer.reject(err);
+      });
+  }
+
+  _checkQueryResponse(query, response) {
+    if (true || !response.length) {
+      const formattedQuery = JSON.stringify(query, null, 2);
+      // TODO: fix this name
+      const readerName = this._context._reader._name;
+      utils.warn(`Reader for data source '${readerName}' returned empty array for query:`, formattedQuery);
+    }
+
+    if (response.length > 0) {
+      // search data for the entirely missing columns
+      const columnsMissing = (query.select.key || []).concat(query.select.value || []);
+      for (let i = response.length - 1; i >= 0; i--) {
+        for (let c = columnsMissing.length - 1; c >= 0; c--) {
+          // if found value for column c in row i then remove that column name from the list of missing columns
+          if (response[i][columnsMissing[c]] || response[i][columnsMissing[c]] === 0) columnsMissing.splice(c, 1);
+        }
+        // all columns were found to have value in at least one of the rows then stop iterating
+        if (!columnsMissing.length) break;
+      }
+      columnsMissing.forEach(d => {
+        if (!query.select.key.includes(d)) {
+          utils.warn('Reader result: Column "' + d + '" is missing from "' + query.from + '" data, but it might be ok');
+        } else {
+          utils.error('Reader result: Key column "' + d + '" is missing from "' + query.from + '" data for query:', JSON.stringify(query));
+          console.log(response);
+        }
+      });
+    }
+  }
+}
+
+class Query {
+  constructor(_context, reader) {
+    this._context = _context;
+    this._reader = reader;
+
+    this.queries = [];
+    this.query = null;
+    this.parsers = null;
+    this.defer = {};
+  }
+
+  getPromise(query, parsers) {
+    for (const reader of this.queries) {
+      if (query.select.value.every(x => reader.query.select.value.includes(x))) { //check if this query have all needed values
+        return reader.defer.promise;
+      }
+    }
+    if (!this.query) {
+      this.query = query;
+      this.parsers = parsers;
+    } else {
+      this.query.select.value = utils.unique(this.query.select.value.concat(query.select.value));
+      utils.extend(this.parsers, parsers);
+    }
+    utils.debounce(() => {
+      this.runQuery();
+    }, 10)();
+    if (!this.defer.promise || !(this.defer.promise instanceof Promise)) {
+      this.defer.promise = new Promise((resolve, reject) => {
+        this.defer.resolve = resolve;
+        this.defer.reject = reject;
+      });
+    }
+    return this.defer.promise;
+  }
+
+  runQuery() {
+    if (this.query) {
+      this.queries.push(new Request(this));
+      this.query = null;
+      this.parsers = null;
+      this.defer = {};
+    }
+  }
+
+  getDataId(query) {
+    for (const reader of this.queries) {
+      //check if this query have all needed values
+      if (query.select.value.every(value => reader.query.select.value.includes(value)) && reader.dataId) {
+        return reader.dataId;
+      }
+    }
+    return false;
+  }
+}
+
+export default class DataStorage {
   constructor() {
-    this.queryIds = {};
     this.queries = {};
     this._collection = {};
     this._collectionPromises = {}; // stores promises, making sure we don't do one calulation twice
@@ -29,11 +284,10 @@ export class Storage {
    * @param {Object} readerObject for this query
    */
   loadFromReader(query, parsers, readerObject) {
-    const _this = this;
     const queryMergeId = _getQueryId(query, readerObject._basepath);
 
     if (!this.queries[queryMergeId]) {
-      this.queries[queryMergeId] = this.queryQueue(readerObject, queryMergeId);
+      this.queries[queryMergeId] = new Query(this, readerObject, queryMergeId);
     }
     return this.queries[queryMergeId].getPromise(query, parsers);
   }
@@ -47,121 +301,13 @@ export class Storage {
 
   }
 
-  queryQueue(readerObject, queryMergeId) {
-    const _context = this;
-    return new function() {
-      this.readerObject = readerObject;
-      this.queries = [];
-      this.query = null;
-      this.parsers = null;
-      this.defer = {};
-      this.getPromise = function(query, parsers) {
-        for (const reader of this.queries) {
-          if (query.select.value.filter(x => reader.query.select.value.indexOf(x) == -1).length == 0) { //check if this query have all needed values
-            return reader.defer.promise;
-          }
-        }
-        if (!this.query) {
-          this.query = query;
-          this.parsers = parsers;
-        } else {
-          this.query.select.value = utils.unique(this.query.select.value.concat(query.select.value));
-          utils.extend(this.parsers, parsers);
-        }
-        utils.debounce(() => {
-          this.runQuery();
-        }, 10)();
-        if (!this.defer.promise || !(this.defer.promise instanceof Promise)) {
-          this.defer.promise = new Promise((resolve, reject) => {
-            this.defer.resolve = resolve;
-            this.defer.reject = reject;
-          });
-        }
-        return this.defer.promise;
-      };
-      this.runQuery = function() {
-        if (this.query) {
-          this.queries.push(this.reader(this.query, this.parsers, this.defer));
-          this.query = null;
-          this.parsers = null;
-          this.defer = {};
-        }
-      };
-
-      this.getDataId = function(query) {
-        for (const reader of this.queries) {
-          if (query.select.value.filter(x => reader.query.select.value.indexOf(x) == -1).length == 0 && reader.dataId) { //check if this query have all needed values
-            return reader.dataId;
-          }
-        }
-        return false;
-      };
-
-      this.reader = function(query, parsers, defer) {
-        const _queue = this;
-        return new function() {
-          this.defer = defer;
-          this.query = query;
-          this.parsers = parsers;
-          this.dataId = null;
-          _queue.readerObject.read(this.query, this.parsers).then(response => {
-            //success reading
-            this.checkQueryResponse(query, response);
-            this.dataId = utils.hashCode([
-              query, _queue.readerObject._basepath
-            ]);
-            _context._collection[this.dataId] = {};
-            _context._collectionPromises[this.dataId] = {};
-            const col = _context._collection[this.dataId];
-            col.data = response;
-            col.valid = {};
-            col.nested = {};
-            col.unique = {};
-            col.limits = {};
-            col.frames = {};
-            col.haveNoDataPointsPerKey = {};
-            col.query = query;
-            this.defer.resolve(this.dataId);
-          }).catch(err => {
-            this.defer.reject(err);
-          });
-
-          this.checkQueryResponse = function(query, response) {
-            if (response.length == 0) utils.warn("Reader for data source '" + this._name + "' returned empty array for query:", JSON.stringify(query, null, 2));
-
-            if (response.length > 0) {
-              // search data for the entirely missing columns
-              const columnsMissing = (query.select.key || []).concat(query.select.value || []);
-              for (let i = response.length - 1; i >= 0; i--) {
-                for (let c = columnsMissing.length - 1; c >= 0; c--) {
-                  // if found value for column c in row i then remove that column name from the list of missing columns
-                  if (response[i][columnsMissing[c]] || response[i][columnsMissing[c]] === 0) columnsMissing.splice(c, 1);
-                }
-                // all columns were found to have value in at least one of the rows then stop iterating
-                if (!columnsMissing.length) break;
-              }
-              columnsMissing.forEach(d => {
-                if (query.select.key.indexOf(d) == -1) {
-                  utils.warn('Reader result: Column "' + d + '" is missing from "' + query.from + '" data, but it might be ok');
-                } else {
-                  utils.error('Reader result: Key column "' + d + '" is missing from "' + query.from + '" data for query:', JSON.stringify(query));
-                  console.log(response);
-                }
-              });
-            }
-          };
-        }();
-      };
-    }();
-  }
-
   setGrouping(dataId, grouping) {
     this._collection[dataId].grouping = grouping;
   }
 
-  getData(dataId, what, whatId, args) {
+  getData(dataId, what, whatId) {
     // if they want data, return the data
-    if (!what || what == "data") {
+    if (!what || what === "data") {
       return this._collection[dataId]["data"];
     }
     if (what == "query") {
@@ -299,12 +445,13 @@ export class Storage {
     const whatId = this._getCacheKey(dataId, framesArray, keys);
     if (!this._collectionPromises[dataId][whatId]) {
       this._collectionPromises[dataId][whatId] = {
-        queue: this.framesQueue(framesArray, whatId),
+        queue: new Queue(this, framesArray, whatId),
         promise: null
       };
     }
-    if (this._collectionPromises[dataId][whatId] && this._collectionPromises[dataId][whatId]["promise"] instanceof Promise) {
-      return this._collectionPromises[dataId][whatId]["promise"];
+    const promise = utils.getProps(this, ["_collectionPromises", dataId, whatId, "promise"]);
+    if (promise && promise instanceof Promise) {
+      return promise;
     }
 
     this._collectionPromises[dataId][whatId]["promise"] = new Promise((resolve, reject) => {
@@ -321,7 +468,7 @@ export class Storage {
   getFrame(dataId, framesArray, neededFrame, keys) {
     const _this = this;
     const whatId = this._getCacheKey(dataId, framesArray, keys);
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       if (_this._collection[dataId]["frames"][whatId] && _this._collection[dataId]["frames"][whatId][neededFrame]) {
         resolve(_this._collection[dataId]["frames"][whatId]);
       } else {
@@ -332,7 +479,7 @@ export class Storage {
     });
   }
 
-  listenFrame(dataId, framesArray, keys,  cb) {
+  listenFrame(dataId, framesArray, keys, cb) {
     const whatId = this._getCacheKey(dataId, framesArray, keys);
     this._collectionPromises[dataId][whatId]["queue"].defaultCallbacks.push(time => {
       cb(dataId, time);
@@ -345,9 +492,9 @@ export class Storage {
   }
 
   _muteAllQueues(except) {
-    utils.forEach(this._collectionPromises, (queries, dataId) => {
-      utils.forEach(queries, (promise, whatId) => {
-        if (promise.queue.isActive == true && promise.queue.whatId != except) {
+    utils.forEach(this._collectionPromises, queries => {
+      utils.forEach(queries, promise => {
+        if (promise.queue.isActive && promise.queue.whatId !== except) {
           promise.queue.mute();
         }
       });
@@ -355,8 +502,8 @@ export class Storage {
   }
 
   _checkForcedQueuesExists() {
-    utils.forEach(this._collectionPromises, (queries, dataId) => {
-      utils.forEach(queries, (promise, whatId) => {
+    utils.forEach(this._collectionPromises, queries => {
+      utils.forEach(queries, promise => {
         if (promise.queue.forcedQueue.length > 0) {
           promise.queue.unMute();
         }
@@ -365,148 +512,13 @@ export class Storage {
   }
 
   _unmuteQueue() {
-    utils.forEach(this._collectionPromises, (queries, dataId) => {
-      utils.forEach(queries, (promise, whatId) => {
-        if (promise.queue.isActive == false) {
+    utils.forEach(this._collectionPromises, queries => {
+      utils.forEach(queries, promise => {
+        if (!promise.queue.isActive) {
           promise.queue.unMute();
         }
       });
     });
-  }
-
-  /**
-   * set priority for generate each year frame
-   * @param framesArray
-   * @param whatId
-   * @returns {*}
-   */
-  framesQueue(framesArray, whatId) {
-    const _context = this;
-    return new function() {
-      this.defaultCallbacks = [];
-      this.callbacks = {};
-      this.forcedQueue = [];
-      this.isActive = true;
-      this.delayedAction = null;
-      this.whatId = whatId;
-      this.queue = framesArray.slice(0); //clone array
-      const queue = this;
-      //put the last element to the start of the queue because we are likely to need it first
-      this.queue.splice(0, 0, this.queue.splice(this.queue.length - 1, 1)[0]);
-      this.key = 0;
-      this.mute = function() {
-        this.isActive = false;
-        this.delayedAction = Promise.resolve.bind(Promise);
-      };
-
-      this.unMute = function() {
-        this.isActive = true;
-        if (typeof this.delayedAction === "function") {
-          this.delayedAction();
-        }
-        this.delayedAction = null;
-        if (this.forcedQueue.length == 0 && this.queue.length == 0) {
-          _context._unmuteQueue();
-        }
-      };
-      this.frameComplete = function(frameName) { //function called after build each frame with name of frame build
-        let i;
-        if (queue.defaultCallbacks.length > 0) {
-          for (i = 0; i < queue.defaultCallbacks.length; i++) {
-            queue.defaultCallbacks[i](frameName);
-          }
-        }
-        if (queue.callbacks[frameName] && queue.callbacks[frameName].length > 0) {
-          for (i = 0; i < queue.callbacks[frameName].length; i++) {
-            queue.callbacks[frameName][i]();
-          }
-        }
-      };
-      this._waitingForActivation = function() {
-        const _this = this;
-        return new Promise((resolve, reject) => {
-          if (_this.isActive) {
-            return resolve();
-          }
-          _this.delayedAction = resolve;
-        });
-      };
-
-      this._getNextFrameName = function() {
-        let frameName = null;
-        if (this.forcedQueue.length > 0 || this.queue.length > 0) {
-          if (this.forcedQueue.length > 0) {
-            frameName = this.forcedQueue.shift();
-          } else {
-            if (this.forcedQueue.length == 0 && this.key >= this.queue.length - 1) {
-              this.key = 0;
-            }
-            frameName = this.queue.splice(this.key, 1).pop();
-          }
-        } else {
-          _context._unmuteQueue();
-        }
-        return frameName;
-      };
-      this.checkForcedFrames = function() {
-        if (this.forcedQueue.length > 0) return;
-        _context._checkForcedQueuesExists();
-      };
-
-      // returns the next frame in a queue
-      this.getNext = function() {
-        const _this = this;
-        return new Promise((resolve, reject) => {
-          _this.checkForcedFrames();
-          if (_this.isActive) {
-            resolve(_this._getNextFrameName());
-          } else {
-            _this._waitingForActivation().then(() => {
-              resolve(_this._getNextFrameName());
-            });
-          }
-        });
-      };
-
-      // force the particular frame up the queue
-      this.forceFrame = function(frameName, cb) {
-        const objIndexOf = function(obj, need) {
-          const search = need.toString();
-          let index = -1;
-          for (let i = 0, len = obj.length; i < len; i++) {
-            if (obj[i].toString() == search) {
-              index = i;
-              break;
-            }
-          }
-          return index;
-        };
-        if (this.callbacks[frameName]) {
-
-          this.callbacks[frameName].push(cb);
-        } else {
-          const newKey = objIndexOf(this.queue, frameName);//this.queue.indexOf(frameName.toString());
-          if (newKey !== -1) {
-            this.forcedQueue.unshift(this.queue.splice(newKey, 1).pop());
-            _context._muteAllQueues(this.whatId);
-            this.unMute();
-            if (typeof cb === "function") {
-              if (typeof this.callbacks[frameName] !== "object") {
-                this.callbacks[frameName] = [];
-              }
-              this.callbacks[frameName].push(cb);
-            }
-            this.key = newKey; //set key to next year after gorced element (preload if user click play)
-          } else {
-            if (typeof this.callbacks[frameName] === "object") {
-              this.callbacks[frameName].push(cb);
-            } else {
-              this.callbacks[frameName] = [cb];
-            }
-          }
-        }
-      };
-    }();
   }
 
   /**
@@ -515,7 +527,7 @@ export class Storage {
    * @param {String} whatId hash code for cache
    * @param {Array} framesArray -- array of keyframes across animatable
    * @param {Array} keys -- array of keys
-   * @param {Array} indicatorsDB 
+   * @param {Array} indicatorsDB
    * @returns {Object} regularised dataset, nested by [animatable, column, key]
    */
   _getFrames(dataId, whatId, framesArray, keys, indicatorsDB) {
@@ -523,7 +535,7 @@ export class Storage {
     if (!_this._collection[dataId]["frames"][whatId]) {
       _this._collection[dataId]["frames"][whatId] = {};
     }
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
 
       //TODO: thses should come from state or from outside somehow
       // FramesArray in the input contains the array of keyframes in animatable dimension.
@@ -538,7 +550,7 @@ export class Storage {
 
       const TIME = _this._collection[dataId].query.animatable;
       const KEY = _this._collection[dataId].query.select.key.slice(0);
-      if (TIME && KEY.indexOf(TIME) != -1) KEY.splice(KEY.indexOf(TIME), 1);
+      if (TIME && KEY.includes(TIME)) KEY.splice(KEY.indexOf(TIME), 1);
 
       const filtered = {};
       let k, items, itemsIndex, oneFrame, method, use, next;
@@ -565,11 +577,12 @@ export class Storage {
       let key, c;
 
       const lastIndex = KEY.length - 1;
+
       function createFiltered(parent, index) {
         const keys = entitiesByKey[KEY[index]];
         for (let i = 0, j = keys.length; i < j; i++) {
           parent[keys[i]] = {};
-          if (index == lastIndex) {
+          if (index === lastIndex) {
             for (c = 0; c < cLength; c++) parent[keys[i]][columns[c]] = null;
           } else {
             const nextIndex = index + 1;
@@ -597,7 +610,7 @@ export class Storage {
               frame[columns[c]][d[KEY[0]]] = d[columns[c]];
               //check data for properties with missed data. If founded then write key to haveNoDataPointsPerKey with
               //count of broken datapoints
-              if (d[columns[c]] == null) {
+              if (!d[columns[c]]) {
                 _this._collection[dataId].haveNoDataPointsPerKey[columns[c]][d[KEY[0]]] = dataset.length;
               }
             }
@@ -625,7 +638,7 @@ export class Storage {
             for (let i = 0, j = keys.length, key; i < j; i++) {
               key = keys[i];
               if (nested[key]) {
-                if (index == lastIndex) {
+                if (index === lastIndex) {
                   for (c = 0; c < cLength; c++) {
                     lastKeyObject[c][key] = mapValue(columns[c], nested[key], filtered[key]);
                   }
@@ -646,7 +659,7 @@ export class Storage {
             for (let i = 0, j = keys.length, key, gKey; i < j; i++) {
               key = keys[i];
               gKey = grouping ? ~~(+key / groupValue) * groupValue : key;
-              if (index == lastIndex) {
+              if (index === lastIndex) {
                 let value;
                 for (c = 0; c < cLength; c++) {
                   value = mapValue(columns[c], nested[key], filtered[key]);
@@ -710,7 +723,7 @@ export class Storage {
                 filtered[column] = items;
               }
 
-              if (items.length == 0) _this._collection[dataId].haveNoDataPointsPerKey[column][key] = items.length;
+              if (!items.length) _this._collection[dataId].haveNoDataPointsPerKey[column][key] = items.length;
             }
 
             // Now we are left with a fewer frames in the filtered array. Let's check its length.
@@ -737,7 +750,13 @@ export class Storage {
         _this._collectionPromises[dataId][whatId]["queue"].getNext().then(nextFrame => {
           if (nextFrame) {
             utils.defer(() => {
-              buildFrame(nextFrame, entitiesByKey, KEY, dataId, _this._collectionPromises[dataId][whatId]["queue"].frameComplete);
+              buildFrame(
+                nextFrame,
+                entitiesByKey,
+                KEY,
+                dataId,
+                (...args) => _this._collectionPromises[dataId][whatId]["queue"].frameComplete(...args)
+              );
             });
           } else {
             //this goes to marker.js as a "response"
@@ -747,7 +766,13 @@ export class Storage {
       };
       _this._collectionPromises[dataId][whatId]["queue"].getNext().then(nextFrame => {
         if (nextFrame) {
-          buildFrame(nextFrame, entitiesByKey, KEY, dataId, _this._collectionPromises[dataId][whatId]["queue"].frameComplete);
+          buildFrame(
+            nextFrame,
+            entitiesByKey,
+            KEY,
+            dataId,
+            (...args) => _this._collectionPromises[dataId][whatId]["queue"].frameComplete(...args)
+          );
         }
       });
     });
@@ -765,5 +790,3 @@ export class Storage {
     return result;
   }
 }
-
-export const DataStorage = new Storage();

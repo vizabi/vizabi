@@ -2,7 +2,7 @@ import * as utils from "base/utils";
 import Model from "base/model";
 import Reader from "base/reader";
 import EventSource from "base/events";
-import { DataStorage } from "base/datastorage";
+import DataStorage from "base/datastorage";
 /*
  * VIZABI Data Model (model.data)
  */
@@ -39,7 +39,7 @@ const DataModel = Model.extend({
     this._super(name, values, parent, bind);
 
     this.readerObject = this.getReader();
-
+    this.dataStorage = new DataStorage();
   },
 
   /**
@@ -60,7 +60,7 @@ const DataModel = Model.extend({
     // add waffle server specific query clauses if set
     if (this.dataset) query.dataset = this.dataset;
     if (this.version) query.version = this.version;
-    const dataId = DataStorage.getDataId(query, this.readerObject);
+    const dataId = this.dataStorage.getDataId(query, this.readerObject);
     if (dataId) {
       return Promise.resolve(dataId);
     }
@@ -70,7 +70,7 @@ const DataModel = Model.extend({
       "resize"
     ]);
 
-    return DataStorage.loadFromReader(query, parsers, this.readerObject)
+    return this.dataStorage.loadFromReader(query, parsers, this.readerObject)
       .then(dataId => {
         EventSource.unfreezeAll();
         return dataId;
@@ -94,7 +94,7 @@ const DataModel = Model.extend({
   getData(dataId, what, whatId, args) {
     // if not specified data from what query, return nothing
     if (!dataId) return utils.warn("Data.js 'get' method doesn't like the dataId you gave it: " + dataId);
-    return DataStorage.getData(dataId, what, whatId, args);
+    return this.dataStorage.getData(dataId, what, whatId, args);
   },
 
   loadConceptProps() {
@@ -200,21 +200,21 @@ const DataModel = Model.extend({
   },
 
   setGrouping(dataId, grouping) {
-    DataStorage.setGrouping(dataId, grouping);
+    this.dataStorage.setGrouping(dataId, grouping);
   },
 
   getFrames(dataId, framesArray, keys) {
-    return DataStorage.getFrames(dataId, framesArray, keys, this.getConceptprops());
+    return this.dataStorage.getFrames(dataId, framesArray, keys, this.getConceptprops());
   },
 
 
   getFrame(dataId, framesArray, neededFrame, keys) {
     //can only be called after getFrames()
-    return DataStorage.getFrame(dataId, framesArray, neededFrame, keys);
+    return this.dataStorage.getFrame(dataId, framesArray, neededFrame, keys);
   },
 
   listenFrame(dataId, framesArray, keys,  cb) {
-    DataStorage.listenFrame(dataId, framesArray, keys,  cb);
+    this.dataStorage.listenFrame(dataId, framesArray, keys,  cb);
   },
 
   handleLoadError(error, query) {
