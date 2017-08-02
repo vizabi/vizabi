@@ -41,6 +41,14 @@
       border: 1px solid $vzb-color-primary-light;
       list-style: none;
       padding: 2px 8px 5px 6px;
+
+      .label-circle {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 5px;
+      }
     }
   }
 
