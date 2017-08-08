@@ -499,9 +499,14 @@ const Hook = DataConnected.extend({
     const _this = this;
     const dim = this.spaceRef && this._space[this.spaceRef] ? this._space[this.spaceRef].dim : _this._getFirstDimension({ exceptType: "time" });
     const items = {};
-    this.getValidItems().forEach(d => {
-      items[d[dim]] = d[_this.which];
-    });
+    const validItems = this.getValidItems();
+
+    if (utils.isArray(validItems)) {
+      validItems.forEach(d => {
+        items[d[dim]] = d[_this.which];
+      });
+    }
+
     return items;
   },
 
