@@ -149,12 +149,12 @@ const DraggableList = Component.extend({
       .append("div")
       .append("li")
       .each(function() {
-        const $this = d3.select(this);
+        const view = d3.select(this);
 
-        $this.append("span")
+        view.append("span")
           .classed("label-circle", true);
 
-        $this.append("span")
+        view.append("span")
           .classed("label-text", true);
       })
       .merge(this.items);
@@ -162,16 +162,16 @@ const DraggableList = Component.extend({
     const colorScale = this.model.color.getScale();
     this.items.select("li")
       .each(function({ data }) {
-        const $this = d3.select(this);
+        const view = d3.select(this);
 
-        $this
+        view
           .classed("hover", false)
           .attr("data", data);
 
-        $this.select(".label-circle")
+        view.select(".label-circle")
           .style("background", colorScale(data));
 
-        $this
+        view
           .select(".label-text")
           .text(labels[data]);
       });
