@@ -489,12 +489,15 @@ const MenuItem = Class.extend({
       parent.classed("marquee", false);
       label.style("left", "");
       label.style("right", "");
+      label.style("width", "");
       if (toggle) {
         if (label.node().scrollWidth > label.node().offsetWidth) {
           label.attr("data-content", label.text());
           const space = 30;
-          label.style("left", (-space - label.node().scrollWidth) + "px");
-          label.style("right", (-space - label.node().scrollWidth) + "px");
+          const offset = space + label.node().scrollWidth;
+          label.style("left", -offset + "px");
+          label.style("right", -offset + "px");
+          label.style("width", offset + "px");
           parent.classed("marquee", true);
         }
       }
@@ -505,12 +508,15 @@ const MenuItem = Class.extend({
     this.entity.classed("marquee", false);
     label.style("left", "");
     label.style("right", "");
+    label.style("width", "");
     if (toggle) {
       if (label.node().scrollWidth > label.node().offsetWidth) {
         label.attr("data-content", label.text());
         const space = 30;
-        label.style("left", (-space - label.node().scrollWidth) + "px");
-        label.style("right", (-space - label.node().scrollWidth) + "px");
+        const offset = space + label.node().scrollWidth;
+        label.style("left", -offset + "px");
+        label.style("right", -offset + "px");
+        label.style("width", offset + "px");
         this.entity.classed("marquee", true);
       }
     }

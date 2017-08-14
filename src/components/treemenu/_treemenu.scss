@@ -406,6 +406,11 @@
         }
 
         &:hover {
+          > .vzb-treemenu-list-item-label {
+            span {
+              text-overflow: clip;
+            }
+          }
           background-color: $vzb-color-grey-light;
         }
         &.item-active:not(.vzb-treemenu-list-item-children) {
@@ -426,6 +431,7 @@
             }
             left: 0 !important;
             right: auto !important;
+            width: auto !important;
             //text-overflow: ellipsis;
           }
         }
@@ -462,6 +468,11 @@
         font-size: $vzb-font-size-small;
         font-family: $vzb-font-family-alt;
         span {
+          @include rtl {
+            padding-right: 0;
+            padding-left: 1px;
+          }
+          padding-right: 1px;
           display: block;
           position: relative;
           overflow: hidden;

@@ -311,11 +311,9 @@ export default class ColorPicker {
     this._sampleText.text(value);
 
     const isTouch = isTouchDevice();
-    if (isTouch) {
-      this.show(false);
-    }
 
     this._changeColor(value, isTouch);
+    isTouch && this.show(false);
   }
 
   _changeColor(color, isClick = false) {
