@@ -26,7 +26,14 @@ const TimeDisplay = Dialog.extend("timedisplay", {
     this._super();
     this.timeLabel = new DynamicBackground(this.element.select(".vzb-timedisplay"));
     this.timeLabel.setConditions({ widthRatio: 1, heightRatio: 1 });
-    this.timeLabel.resize(this.contentEl.style("width"), this.contentEl.style("height"));
+    this.resize();
+  },
+
+  resize() {
+    if (this.timeLabel) {
+      this.timeLabel
+        .resize(this.contentEl.style("width"), this.contentEl.style("height"));
+    }
   },
 
   updateTime() {
