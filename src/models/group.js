@@ -38,6 +38,12 @@ const GroupModel = Hook.extend({
   validate() {
     //there must be no scale
     if (this.scale) this.scale = null;
+
+    //use must be "property"
+    if (this.use != "property" && this.use != "constant") {
+      utils.warn("group model: use must be 'property' or 'constant'. Resetting to property...");
+      this.use = "property";
+    }
   }
 
 });
