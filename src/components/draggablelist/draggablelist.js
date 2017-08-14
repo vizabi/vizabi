@@ -140,16 +140,41 @@ const DraggableList = Component.extend({
       this.dataArrFn(labelsKeys);
     }
 
-    this.items = this.element.selectAll("div").data(() => _this.dataArrFn().map(d => ({ data: d })));
+    this.items = this.element.selectAll("div")
+      .data(() => this.dataArrFn().map(data => ({ data })));
+
     this.items.exit().remove();
+
     this.items = this.items.enter()
       .append("div")
       .append("li")
+      .each(function() {
+        const view = d3.select(this);
+
+        view.append("span")
+          .classed("label-circle", true);
+
+        view.append("span")
+          .classed("label-text", true);
+      })
       .merge(this.items);
 
-    this.items.select("li").classed("hover", false).each(function(val, index) {
-      d3.select(this).attr("data", val["data"]).text(labels[val["data"]]);
-    });
+    const colorScale = this.model.color.getScale();
+    this.items.select("li")
+      .each(function({ data }) {
+        const view = d3.select(this);
+
+        view
+          .classed("hover", false)
+          .attr("data", data);
+
+        view.select(".label-circle")
+          .style("background", colorScale(data));
+
+        view
+          .select(".label-text")
+          .text(labels[data]);
+      });
 
     const draggable = _this.draggable ? true : null;
     this.element.selectAll("div")
