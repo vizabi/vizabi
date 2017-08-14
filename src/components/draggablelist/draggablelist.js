@@ -140,8 +140,7 @@ const DraggableList = Component.extend({
       this.dataArrFn(labelsKeys);
     }
 
-    this.items = this.element.selectAll("div")
-      .data(() => this.dataArrFn().map(data => ({ data })));
+    this.items = this.element.selectAll("div").data(() => (_this.dataArrFn() || []).map(d => ({ data: d })));
 
     this.items.exit().remove();
 
