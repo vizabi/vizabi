@@ -406,12 +406,12 @@
         }
 
         &:hover {
+          background-color: $vzb-color-grey-light;
           > .vzb-treemenu-list-item-label {
             span {
               text-overflow: clip;
             }
           }
-          background-color: $vzb-color-grey-light;
         }
         &.item-active:not(.vzb-treemenu-list-item-children) {
           > span {
