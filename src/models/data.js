@@ -78,6 +78,12 @@ const DataModel = Model.extend({
       .catch(error => this.handleLoadError(error, query));
   },
 
+  getAsset(assetName, callback) {
+    return this.readerObject.getAsset(assetName)
+      .then(response => callback(response))
+      .catch(error => this.handleLoadError(error, assetName));
+  },
+
   getReader() {
     // Create a new reader for this query
     const readerClass = Reader.get(this.reader);
