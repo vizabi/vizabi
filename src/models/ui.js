@@ -123,8 +123,8 @@ const UI = Model.extend({
    * @param container DOM element
    */
   setContainer(container) {
-    if(!container.clientWidth || !container.clientHeight) utils.warn("Vizabi is being initialised with a container of incorrect width or height. While this may be handled without a crash, it's not considered a healthy behavior. You should call Vizabi(placeholder,...) function when placeholder is not display:none and has some >0 !=auto width and height");
-    
+    if (!container.clientWidth || !container.clientHeight) utils.warn("Vizabi is being initialised with a container of incorrect width or height. While this may be handled without a crash, it's not considered a healthy behavior. You should call Vizabi(placeholder,...) function when placeholder is not display:none and has some >0 !=auto width and height");
+
     this._container = container;
     this.setSize();
     this.updatePresentation();
