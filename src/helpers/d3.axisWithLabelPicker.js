@@ -261,7 +261,7 @@ export default function axisSmart(_orient) {
     };
 
 
-    let hlOpacityScale = d3.scale.linear().domain([0, 5]).range([0, 1]).clamp(true);
+    let hlOpacityScale = d3.scaleLinear().domain([0, 5]).range([0, 1]).clamp(true);
     axis.hlOpacityScale = function(arg) {
       if (!arguments.length) return hlOpacityScale;
       hlOpacityScale = arg;

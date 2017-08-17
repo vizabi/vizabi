@@ -50,11 +50,11 @@ const SteppedSlider = Component.extend({
     this.element = d3.select(this.element);
     this.svg = this.element.select("svg");
 
-    this.axisScale = d3.scale.log()
+    this.axisScale = d3.scaleLog()
       .domain(d3.extent(domain))
       .range([height, 0]);
 
-    this.delayScale = d3.scale.linear()
+    this.delayScale = d3.scaleLinear()
       .domain(domain)
       .range(range);
 

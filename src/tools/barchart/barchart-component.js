@@ -59,7 +59,7 @@ const BarComponent = Component.extend({
 
     this.xScale = null;
     this.yScale = null;
-    this.cScale = d3.scale.category10();
+    this.cScale = d3.scaleOrdinal(d3.schemeCategory10);
 
     this.xAxis = axisSmart("bottom");
     this.yAxis = axisSmart("left");

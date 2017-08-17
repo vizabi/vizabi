@@ -110,7 +110,7 @@ const BubbleSize = Component.extend({
 
     const minMaxBubbleRadius = this.getMinMaxBubbleRadius();
 
-    this.xScale = d3.scale.linear()
+    this.xScale = d3.scaleLinear()
       .domain([OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX])
       .range([minMaxBubbleRadius.min * 2, minMaxBubbleRadius.max * 2])
       .clamp(true);
