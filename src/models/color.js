@@ -137,7 +137,7 @@ const ColorModel = Hook.extend({
     if (!args.colorID || !palette[args.colorID]) args.colorID = "_default";
 
     // if the resolved colr value is not an array (has only one shade) -- return it
-    if (!utils.isArray(palette[args.colorID])) return palette[args.colorID];
+    if (!utils.isArray(palette[args.colorID])) return args.shadeID == "shade" ? d3.rgb(palette[args.colorID]).darker(0.5).toString() : palette[args.colorID];
 
     const conceptpropsColor = this.getConceptprops().color;
     const shade = args.shadeID && conceptpropsColor && conceptpropsColor.shades && conceptpropsColor.shades[args.shadeID] ? conceptpropsColor.shades[args.shadeID] : 0;
