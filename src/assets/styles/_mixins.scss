@@ -157,3 +157,12 @@
     }
   }
 }
+
+@mixin stroke($stroke, $color: $vzb-color-stroke, $opacity: $vzb-stroke-opacity) {
+  paint-order: stroke;
+  stroke: $color;
+  stroke-opacity: $opacity;
+  stroke-width: $stroke;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+}
