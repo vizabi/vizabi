@@ -520,8 +520,8 @@ export default function axisSmart(_orient) {
             Math.floor(getBaseLog(Math.max(eps, min))),
             Math.ceil(getBaseLog(max)),
             1)
-          .concat(Math.ceil(getBaseLog(max)))
-          .map(d => Math.pow(options.logBase, d))
+            .concat(Math.ceil(getBaseLog(max)))
+            .map(d => Math.pow(options.logBase, d))
         );
 
         // check if spawn negative is needed. if yes then spawn!
@@ -530,8 +530,8 @@ export default function axisSmart(_orient) {
             Math.floor(getBaseLog(Math.max(eps, -max))),
             Math.ceil(getBaseLog(-min)),
             1)
-          .concat(Math.ceil(getBaseLog(-min)))
-          .map(d => -Math.pow(options.logBase, d))
+            .concat(Math.ceil(getBaseLog(-min)))
+            .map(d => -Math.pow(options.logBase, d))
         );
 
 
