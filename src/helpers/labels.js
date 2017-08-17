@@ -84,8 +84,13 @@ const label = function(context) {
           //              false, 500);
           //          });
 
-          view.append("text").attr("class", _cssPrefix + "-label-content " + _cssPrefix + "-label-shadow vzb-noexport");
-          view.append("text").attr("class", _cssPrefix + "-label-content");
+          const text = view.append("text").attr("class", _cssPrefix + "-label-content stroke");
+          if (!view.style("paint-order").length) {
+            view.insert("text", `.${_cssPrefix}-label-content`)
+              .attr("class", _cssPrefix + "-label-content " + _cssPrefix + "-label-shadow vzb-noexport");
+
+            text.classed("stroke", false);
+          }
 
           const cross = view.append("g").attr("class", _cssPrefix + "-label-x vzb-transparent");
           utils.setIcon(cross, iconClose);

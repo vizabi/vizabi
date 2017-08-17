@@ -107,6 +107,10 @@
 }
 
 %vzb-chart-tooltip {
+  .stroke {
+    @include stroke(3px);
+  }
+
   text {
     fill: $vzb-color-black;
     pointer-events: none;
