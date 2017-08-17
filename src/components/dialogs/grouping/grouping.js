@@ -27,7 +27,7 @@ const Grouping = Dialog.extend("grouping", {
         placeholder: ".vzb-dialog-placeholder",
         model: ["state.entities_age"],
         arg: "grouping",
-        properties: { min: 1, max: this.groupStops.length, step: 1, suppressInput: true, scale: d3.scale.linear()
+        properties: { min: 1, max: this.groupStops.length, step: 1, suppressInput: true, scale: d3.scaleLinear()
           .domain(d3.range(1, this.groupStops.length))
           .range(this.groupStops)
         }

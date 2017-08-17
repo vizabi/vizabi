@@ -304,7 +304,7 @@ const ColorModel = Hook.extend({
       range = domain.map(m => singlePoint ? paletteObject[domain[0]] : paletteObject[m]);
       domain = domain.map(m => limits.min.valueOf() + m / 100 * (limits.max.valueOf() - limits.min.valueOf()));
 
-      this.scale = d3.time.scale.utc()
+      this.scale = d3.scaleUtc()
         .domain(domain)
         .range(range)
         .interpolate(d3.interpolateCubehelix);
@@ -324,12 +324,12 @@ const ColorModel = Hook.extend({
       if (d3.min(domain) <= 0 && d3.max(domain) >= 0 && scaleType === "log") scaleType = "genericLog";
 
       if (scaleType == "log" || scaleType == "genericLog") {
-        const s = d3.scale.genericLog()
+        const s = d3.genericLog()
           .domain(limits)
           .range(limits);
         domain = domain.map(d => s.invert(d));
       }
-      this.scale = d3.scale[scaleType]()
+      this.scale = d3[`scale${utils.capitalize(scaleType)}`]()
         .domain(domain)
         .range(range)
         .interpolate(d3.interpolateCubehelix);
@@ -340,7 +340,7 @@ const ColorModel = Hook.extend({
       scaleType = "ordinal";
 
       if (this.discreteDefaultPalette) domain = domain.concat(this.getUnique(this.which));
-      this.scale = d3.scale[scaleType]()
+      this.scale = d3[`scale${utils.capitalize(scaleType)}`]()
         .domain(domain)
         .range(range);
     }

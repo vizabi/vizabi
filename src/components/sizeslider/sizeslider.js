@@ -139,12 +139,12 @@ const SizeSlider = Component.extend({
     this.propertyActiveProfile = this.getPropertyActiveProfile();
     this.translator = this.model.locale.getTFunction();
 
-    this.propertyScale = d3.scale.linear()
+    this.propertyScale = d3.scaleLinear()
       .domain([OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX])
       .range([this.propertyActiveProfile.min, this.propertyActiveProfile.max])
       .clamp(true);
 
-    this.xScale = d3.scale.linear()
+    this.xScale = d3.scaleLinear()
       .domain([OPTIONS.EXTENT_MIN, OPTIONS.EXTENT_MAX])
       .range([0, componentWidth])
       .clamp(true);

@@ -269,9 +269,9 @@ const ColorLegend = Component.extend({
 
       }
 
-      const labelScaletype = (d3.min(domain) <= 0 && d3.max(domain) >= 0 && this.colorModel.scaleType === "log") ? "genericLog" : this.colorModel.scaleType;
+      const labelScaleType = (d3.min(domain) <= 0 && d3.max(domain) >= 0 && this.colorModel.scaleType === "log") ? "genericLog" : this.colorModel.scaleType;
 
-      const labelScale = d3.scale[labelScaletype == "time" ? "linear" : labelScaletype]()
+      const labelScale = d3[`scale${utils.capitalize(labelScaleType === "time" ? "linear" : labelScaleType)}`]()
         .domain(domain)
         .range(range);
 

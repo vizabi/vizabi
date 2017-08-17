@@ -85,18 +85,6 @@ function d3_rebind(target, source, method) {
   };
 }
 
-d3.scale = {};
-d3.scale.linear = d3.scaleLinear;
-d3.scale.sqrt = d3.scaleSqrt;
-d3.scale.pow = d3.scalePow;
-d3.scale.log = d3.scaleLog;
-d3.scale.quantize = d3.scaleQuantize;
-d3.scale.threshold = d3.scaleThreshold;
-d3.scale.quantile = d3.scaleQuantile;
-d3.scale.identity = d3.scaleIdentity;
-d3.scale.ordinal = d3.scaleOrdinal;
-d3.scale.point = d3.scalePoint;
-d3.scale.band = d3.scaleBand;
 d3.time = {};
 d3.time.scale = d3.scaleTime;
 d3.time.scale.utc = d3.scaleUtc;
@@ -117,7 +105,7 @@ d3.time.format.iso = function(f) {
 };
 
 
-d3.scale.genericLog = genericLog;
+d3.scaleGenericlog = genericLog;
 d3.selection.prototype.onTap = onTap;
 d3.selection.prototype.onLongTap = onLongTap;
 
