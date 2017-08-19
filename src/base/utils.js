@@ -540,16 +540,16 @@ export const without = function(arr, el) {
  * http://stackoverflow.com/questions/1960473/unique-values-in-an-array
  */
 export const unique = (array, map = data => data) => {
-  const uniqueValues = [];
+  const uniqueValues = {};
 
   return array.filter(item => {
     const value = map(item);
 
-    if (uniqueValues.includes(value)) {
+    if (uniqueValues.hasOwnProperty(value)) {
       return false;
     }
 
-    uniqueValues.push(value);
+    uniqueValues[value] = 1;
 
     return true;
   });
