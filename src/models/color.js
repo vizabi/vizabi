@@ -323,8 +323,8 @@ const ColorModel = Hook.extend({
 
       if (d3.min(domain) <= 0 && d3.max(domain) >= 0 && scaleType === "log") scaleType = "genericLog";
 
-      if (scaleType == "log" || scaleType == "genericLog") {
-        const s = d3.genericLog()
+      if (scaleType === "log" || scaleType === "genericLog") {
+        const s = d3.scaleGenericlog()
           .domain(limits)
           .range(limits);
         domain = domain.map(d => s.invert(d));
