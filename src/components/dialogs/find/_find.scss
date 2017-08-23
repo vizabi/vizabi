@@ -7,10 +7,13 @@
         max-width: 170px;
         padding: 0 10px;
       }
-      .vzb-find-item.vzb-checked.vzb-separator {
-        padding-bottom: 25px;
-        border-bottom: 1px solid;
-        border-bottom-color: $vzb-color-primary-light;
+      .vzb-find-list {
+        transform: translateZ(0);        
+        .vzb-find-item.vzb-checked.vzb-separator {
+          padding-bottom: 25px;
+          border-bottom: 1px solid;
+          border-bottom-color: $vzb-color-primary-light;
+        }
       }
       &.vzb-popup {
         .vzb-dialog-title {
