@@ -283,7 +283,7 @@ const Find = Dialog.extend("find", {
 
     this.list.selectAll(".vzb-find-item")
       .classed("vzb-hidden", d => {
-        const lower = (d.name || "").toLowerCase();
+        const lower = (d.name || "").toString().toLowerCase();
         return (lower.indexOf(search) === -1);
       });
   },

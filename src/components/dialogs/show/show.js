@@ -158,7 +158,7 @@ const Show = Dialog.extend("show", {
 
     this.list.selectAll(".vzb-show-item")
       .classed("vzb-hidden", d => {
-        const lower = d.label.toLowerCase();
+        const lower = (d.label || "").toString().toLowerCase();
         return (lower.indexOf(search) === -1);
       });
   },
