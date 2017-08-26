@@ -599,7 +599,7 @@ const Marker = Model.extend({
           utils.forEach(pValues, (values, hook) => {
             dataBetweenFrames[hook] = {};
 
-            if (_this._multiDim && _this[hook].use == "indicator") {
+            if (_this._multiDim && _this[hook].use == "indicator" && _this[hook].which !== _this._getFirstDimension({ type: "time" })) {
               const hookDataBF = dataBetweenFrames[hook];
               const query = _this[hook].dataSource.getData(_this[hook]._dataId, "query");
               const TIME = query.animatable;
@@ -786,6 +786,8 @@ const Marker = Model.extend({
             _this.cachedFrames[cachePath][forceFrame] = _this.partialResult[cachePath][forceFrame];
             resolve();
           });
+        } else {
+          resolve();
         }
       }
     });

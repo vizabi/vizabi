@@ -69,12 +69,13 @@ const IndPicker = Component.extend({
           marker.getFrame(_this.model.time.value, frame => {
             if (_this._highlighted || !frame) return;
 
+            const isHookFrameValuesMD = _this.multiDim && !mdl.isDiscrete() && mdl.which !== marker._getFirstDimension({ type: "time" });
             // should be replaced by dimension of entity set for this hook (if use == property)
-            const dimension = mdl.getEntity().getDimension();
+            const dimension = isHookFrameValuesMD ? null : mdl.getEntity().getDimension();
             const _highlightedEntity = marker.getHighlighted(dimension);
             if (_highlightedEntity.length) {
 
-              let value = _this.multiDim && !mdl.isDiscrete() ?
+              let value = isHookFrameValuesMD ?
                 utils.getValueMD(_highlightedEntity[0], frame[mdl._name], _this.KEYS)
                 :
                 frame[mdl._name][_highlightedEntity[0]];
