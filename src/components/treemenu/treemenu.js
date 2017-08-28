@@ -1134,6 +1134,7 @@ const TreeMenu = Component.extend({
           if (_this._targetModel.allow && _this._targetModel.allow.names) {
             if (_this._targetModel.allow.names.indexOf("!" + f) != -1) return false;
             if (_this._targetModel.allow.names.indexOf(f) != -1) return true;
+            if (_this._targetModel.allow.namesOnlyThese) return false;
           }
           //keep indicator if nothing is specified in tool properties
           if (!_this._targetModel.allow || !_this._targetModel.allow.scales) return true;
