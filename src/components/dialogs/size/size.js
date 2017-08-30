@@ -2,7 +2,7 @@ import * as utils from "base/utils";
 import Component from "base/component";
 import Dialog from "components/dialogs/_dialog";
 
-import bubblesize from "components/bubblesize/bubblesize";
+import bubblesize from "components/brushslider/bubblesize/bubblesize";
 import indicatorpicker from "components/indicatorpicker/indicatorpicker";
 /*
  * Size dialog

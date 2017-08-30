@@ -2,7 +2,8 @@ import * as utils from "base/utils";
 import Component from "base/component";
 import Dialog from "components/dialogs/_dialog";
 
-import simpleslider from "components/simpleslider/simpleslider";
+//import simpleslider from "components/simpleslider/simpleslider";
+import simpleslider from "components/brushslider/singlehandleslider/singlehandleslider";
 /*
  * Size dialog
  */
@@ -23,7 +24,7 @@ const Speed = Dialog.extend("speed", {
       {
         component: simpleslider,
         placeholder: ".vzb-dialog-placeholder",
-        model: ["state.time"],
+        model: ["state.time", "locale"],
         arg: "delay",
         properties: { min: 1, max: 6, step: 0.1, scale: d3.scaleLinear()
           .domain([1, 2, 3, 4, 5, 6])

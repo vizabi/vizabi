@@ -2,7 +2,7 @@ import * as utils from "base/utils";
 import Component from "base/component";
 import Dialog from "components/dialogs/_dialog";
 
-import sizeslider from "components/sizeslider/sizeslider";
+import sizeslider from "components/brushslider/sizeslider/sizeslider";
 import indicatorpicker from "components/indicatorpicker/indicatorpicker";
 import simplecheckbox from "components/simplecheckbox/simplecheckbox";
 /*
