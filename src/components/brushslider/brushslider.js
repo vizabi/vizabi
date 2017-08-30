@@ -104,7 +104,7 @@ const BrushSlider = Component.extend({
     let componentWidth = this._getComponentWidth() || 0;
     if (componentWidth < 0) componentWidth = 0;
 
-    this.rescaler = d3.scale.linear()
+    this.rescaler = d3.scaleLinear()
       .domain([options.EXTENT_MIN, options.EXTENT_MAX])
       .range([0, componentWidth])
       .clamp(true);

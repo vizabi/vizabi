@@ -2,7 +2,6 @@ import * as utils from "base/utils";
 import Component from "base/component";
 import Dialog from "components/dialogs/_dialog";
 
-//import simpleslider from "components/simpleslider/simpleslider";
 import simpleslider from "components/brushslider/singlehandleslider/singlehandleslider";
 /*
  * Size dialog

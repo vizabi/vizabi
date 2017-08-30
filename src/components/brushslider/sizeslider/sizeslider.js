@@ -114,7 +114,7 @@ const SizeSlider = BrushSlider.extend({
 
     this.propertyActiveProfile = this.getPropertyActiveProfile();
 
-    this.propertyScale = d3.scale.linear()
+    this.propertyScale = d3.scaleLinear()
       .domain([options.EXTENT_MIN, options.EXTENT_MAX])
       .range([this.propertyActiveProfile.min, this.propertyActiveProfile.max])
       .clamp(true);
