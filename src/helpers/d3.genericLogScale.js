@@ -1,4 +1,4 @@
-//  d3.scale.genericLog
+//  d3.scaleGenericlog
 export default function genericLog() {
   return (function d3_scale_genericLog(logScale) {
     const _this = this;
