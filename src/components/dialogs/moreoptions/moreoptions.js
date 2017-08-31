@@ -3,7 +3,6 @@ import Component from "base/component";
 import Dialog from "components/dialogs/_dialog";
 
 import simpleslider from "components/simpleslider/simpleslider";
-import bubblesize from "components/bubblesize/bubblesize";
 import colorlegend from "components/colorlegend/colorlegend";
 import indicatorpicker from "components/indicatorpicker/indicatorpicker";
 import simplecheckbox from "components/simplecheckbox/simplecheckbox";

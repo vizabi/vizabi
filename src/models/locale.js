@@ -53,20 +53,24 @@ const LocaleModel = DataConnected.extend({
     utils.forEach(this._root._data, mdl => {
       if (mdl._type === "data") promises.push(mdl.loadConceptProps());
     });
-    promises.push(new Promise((resolve, reject) => {
-      d3.json(this.filePath + this.id + ".json", (error, strings) => {
-        if (error) return reject(error);
-        this.handleNewStrings(strings);
-        resolve();
-      });
-    }));
-
+    
+    // load UI strings only if we don't have them already
+    if (!this.strings[this.id]) {
+      promises.push(new Promise((resolve, reject) => {
+        d3.json(this.filePath + this.id + ".json", (error, strings) => {
+          if (error) return reject(error);
+          this._handleNewStrings(strings);
+          resolve();
+        });
+      }));
+    }
+    
     return Promise.all(promises)
       .then(() => this.trigger("translate"))
       .catch(() => this.handleLoadError());
   },
 
-  handleNewStrings(receivedStrings) {
+  _handleNewStrings(receivedStrings) {
     this.strings[this.id] = this.strings[this.id]
       ? utils.extend(this.strings[this.id], receivedStrings)
       : receivedStrings;
