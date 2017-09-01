@@ -186,6 +186,7 @@ const ColorLegend = Component.extend({
       this.colorlegendDim = this.colorModel.getColorlegendEntities().getDimension();
 
       this.colorlegendMarker.getFrame(this.model.time.value, frame => {
+        if (!frame) return utils.warn("colorlegend received empty frame in ready()");
         _this.frame = frame;
         _this.canShowMap = utils.keys((_this.frame || {}).hook_geoshape || {}).length;
 
