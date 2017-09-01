@@ -53,7 +53,7 @@ const LocaleModel = DataConnected.extend({
     utils.forEach(this._root._data, mdl => {
       if (mdl._type === "data") promises.push(mdl.loadConceptProps());
     });
-    
+
     // load UI strings only if we don't have them already
     if (!this.strings[this.id]) {
       promises.push(new Promise((resolve, reject) => {
@@ -64,7 +64,7 @@ const LocaleModel = DataConnected.extend({
         });
       }));
     }
-    
+
     return Promise.all(promises)
       .then(() => this.trigger("translate"))
       .catch(() => this.handleLoadError());

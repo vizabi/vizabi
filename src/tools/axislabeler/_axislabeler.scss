@@ -71,10 +71,6 @@ $vzb-al-year-size: 300px;
 
   &.vzb-small {
     .vzb-axis-labeler {
-      .vzb-al-axis-x text,
-      .vzb-al-axis-y text {
-        //@include font-size(14px);
-      }
       .vzb-al-year {
         @include font-size($vzb-al-year-size / 3);
       }
