@@ -1,14 +1,11 @@
 //general styles
 .vzb-slider-holder {
-
-  $vzb-slider-width: 240px;
-
-  width: $vzb-slider-width;
   margin: 0 auto;
   position: relative;
-  //height: 116px;
 
   .vzb-slider-svg {
+    max-width: 100%;
+    max-height: 100%;
     margin: 0 auto;
     display: block;
     position: relative;
@@ -27,7 +24,7 @@
 
     .overlay {
       fill-opacity: 0.1;
-      shape-rendering: crispEdges;
+      //shape-rendering: crispEdges;
       cursor: pointer !important;
     }
 
@@ -36,6 +33,10 @@
       fill-opacity: 0.125;
       stroke-width: 0;
       cursor: col-resize !important;
+    }
+
+    .handle {
+      cursor: pointer !important;
     }
   }
 }
