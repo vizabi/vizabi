@@ -81,7 +81,8 @@ const Dialogs = Component.extend({
 
     this._addDialogs(this.dialog_popup, this.dialog_sidebar);
 
-    this.resize();
+    //this.resize();
+    utils.defer(() => { _this.trigger("resize"); });
 
     if (this.dialog_popup.length !== 0) {
       this.root.findChildByName("gapminder-buttonlist")

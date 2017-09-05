@@ -35,6 +35,8 @@ const Dialog = Component.extend({
     this.template = dialogTemplates[this.name];
 
     this._super(config, parent);
+
+    this.transitionEvents = ["webkitTransitionEnd", "transitionend", "msTransitionEnd", "oTransitionEnd"];
   },
 
   /**
@@ -170,7 +172,6 @@ const Dialog = Component.extend({
   beforeOpen() {
     const _this = this;
 
-    this.transitionEvents = ["webkitTransitionEnd", "transitionend", "msTransitionEnd", "oTransitionEnd"];
     this.transitionEvents.forEach(event => {
       _this.placeholderEl.on(event, _this.transitionEnd.bind(_this, event));
     });

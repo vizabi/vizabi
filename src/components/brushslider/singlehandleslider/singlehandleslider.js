@@ -40,15 +40,17 @@ const SingleHandleSlider = BrushSlider.extend({
 
     //this.template = this.template || require("./brushslider.html");
 
-    this.thumb_size = config.thumb_size;
-    this.slider_properties = config.properties;
+    this.slider_properties = config.properties || {};
+    const roundDigits = this.slider_properties.roundDigits;
+    if (roundDigits || roundDigits == 0) {
+      this.options.ROUND_DIGITS = roundDigits;
+    }
+    if (this.slider_properties.domain) {
+      this.options.EXTENT_MIN = this.slider_properties.domain[0];
+      this.options.EXTENT_MAX = this.slider_properties.domain[1];
+    }
 
     this._super(config, context);
-  },
-
-  readyHandler(evt) {
-    this.sliderEl.selectAll(".w").classed("vzb-hidden", true);
-    this.sliderEl.select(".selection").classed("vzb-hidden", true);
   },
 
   /**
@@ -58,9 +60,6 @@ const SingleHandleSlider = BrushSlider.extend({
    */
   readyOnce() {
     const _this = this;
-    this.options.EXTENT_MIN = this.slider_properties.scale.range()[0];
-    this.options.EXTENT_MAX = this.slider_properties.scale.range()[1];
-
     this._super();
 
     const options = this.options;
@@ -74,12 +73,14 @@ const SingleHandleSlider = BrushSlider.extend({
     let componentWidth = this._getComponentWidth();
     if (componentWidth < 0) componentWidth = 0;
 
-    this.rescaler
-      .domain(this.slider_properties.scale.range())
-      .range(d3.range(0, componentWidth, componentWidth / (this.slider_properties.scale.range().length - 1)).concat([componentWidth]));
+    this.rescaler.domain(this.slider_properties.domain || [this.options.EXTENT_MIN, this.options.EXTENT_MAX]);
+    this.rescaler.range(d3.range(0, componentWidth, componentWidth / (this.rescaler.domain().length - 1)).concat([componentWidth]));
 
     this.sliderEl
       .call(this.brush.handleSize(options.THUMB_HEIGHT + options.THUMB_STROKE_WIDTH));
+
+    this.sliderEl.selectAll(".w").classed("vzb-hidden", true);
+    this.sliderEl.select(".selection").classed("vzb-hidden", true);
 
     this.sliderEl.select(".overlay")
       .lower()
@@ -91,6 +92,39 @@ const SingleHandleSlider = BrushSlider.extend({
     this.sliderEl.selectAll(".vzb-slider-thumb-badge")
       .style("stroke-width", this.options.THUMB_STROKE_WIDTH + "px");
 
+  },
+
+  _getBrushEventListeners() {
+    const _this = this;
+    const _superListeners = this._super();
+
+    return {
+      start: _superListeners.start,
+      brush: (...args) => {
+        if (_this.nonBrushChange || !d3.event.sourceEvent) return;
+        if (!_this.slider_properties.suppressInput) {
+          _superListeners.brush(...args);
+        } else {
+          _this._snap(d3.event.selection);
+        }
+      },
+      end: () => {
+        if (_this.nonBrushChange || !d3.event.sourceEvent) return;
+        if (_this.slider_properties.snapValue) {
+          this._snap(d3.event.selection);
+        }
+        _this._setFromExtent(true, true); // force a persistent change
+      }
+    };
+  },
+
+  _snap(selection) {
+    let value = this.rescaler.invert(this._extentToValue(selection));
+    const domain = this.rescaler.domain();
+    const ascendingDomain = domain[domain.length - 1] > domain[0];
+    const next = d3.bisector(d3[ascendingDomain ? "ascending" : "descending"]).left(domain, value) || 1;
+    value = (ascendingDomain ? 1 : -1) * ((value - domain[next - 1]) - (domain[next] - value)) > 0 ? domain[next] : domain[next - 1];
+    this._moveBrush(this._valueToExtent(value));
   },
 
   _createThumbs(thumbsEl) {
@@ -108,6 +142,13 @@ const SingleHandleSlider = BrushSlider.extend({
       .attr("d", thumbArc);
   },
 
+  _resize() {
+    this._super();
+
+    const componentWidth = this._getComponentWidth();
+    this.rescaler.range(d3.range(0, componentWidth || 1, (componentWidth / (this.rescaler.domain().length - 1)) || 1).concat([componentWidth]));
+  },
+
   _valueToExtent(value) {
     return [this.rescaler.domain()[0], value];
   },
@@ -116,6 +157,13 @@ const SingleHandleSlider = BrushSlider.extend({
     return extent[1];
   },
 
+  _setModel(value, force, persistent) {
+    if (this.slider_properties.suppressInput) {
+      const _value = this._extentToValue(value).toFixed(this.options.ROUND_DIGITS);
+      if (_value == this.model.submodel[this.arg]) return;
+    }
+    this._super(value, force, persistent);
+  }
 });
 
 export default SingleHandleSlider;

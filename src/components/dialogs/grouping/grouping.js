@@ -2,7 +2,7 @@ import * as utils from "base/utils";
 import Component from "base/component";
 import Dialog from "components/dialogs/_dialog";
 
-import simpleslider from "components/simpleslider/simpleslider";
+import singlehandleslider from "components/brushslider/singlehandleslider/singlehandleslider";
 /*
  * Size dialog
  */
@@ -23,13 +23,14 @@ const Grouping = Dialog.extend("grouping", {
 
     this.components = [
       {
-        component: simpleslider,
+        component: singlehandleslider,
         placeholder: ".vzb-dialog-placeholder",
-        model: ["state.entities_age"],
+        model: ["state.entities_age", "locale"],
         arg: "grouping",
-        properties: { min: 1, max: this.groupStops.length, step: 1, suppressInput: true, scale: d3.scaleLinear()
-          .domain(d3.range(1, this.groupStops.length))
-          .range(this.groupStops)
+        properties: {
+          snapValue: true,
+          suppressInput: true,
+          domain: this.groupStops
         }
       }
     ];

@@ -13,7 +13,8 @@ const OPTIONS = {
   BAR_WIDTH: 6,
   THUMB_HEIGHT: 20,
   THUMB_STROKE_WIDTH: 4,
-  INTRO_DURATION: 250
+  INTRO_DURATION: 250,
+  ROUND_DIGITS: 2
 };
 
 const PROFILES = {
@@ -109,28 +110,13 @@ const BrushSlider = Component.extend({
       .range([0, componentWidth])
       .clamp(true);
 
+    this.brushEventListeners = this._getBrushEventListeners();
+
     this.brush = d3.brushX()
       .handleSize(halfThumbHeight * 2 + barWidth * 2)
-      .on("start", () => {
-        if (_this.nonBrushChange || !d3.event.sourceEvent) return;
-        if (d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
-          const brushDatum = _this.sliderEl.node().__brush;
-          brushDatum.selection[1][0] += 0.01;
-        }
-        _this._setFromExtent(false, false, false);
-      })
-      .on("brush", () => {
-        if (_this.nonBrushChange || !d3.event.sourceEvent) return;
-        if (d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
-          const brushDatum = _this.sliderEl.node().__brush;
-          brushDatum.selection[1][0] += 0.01;
-        }
-        _this._setFromExtent(true, false, false); // non persistent change
-      })
-      .on("end", () => {
-        if (_this.nonBrushChange || !d3.event.sourceEvent) return;
-        _this._setFromExtent(true, true); // force a persistent change
-      });
+      .on("start", this.brushEventListeners.start)
+      .on("brush", this.brushEventListeners.brush)
+      .on("end", this.brushEventListeners.end);
 
     this.sliderThumbs = this.sliderEl.selectAll(".handle")
       .data([{ type: "w" }, { type: "e" }], d => d.type)
@@ -164,6 +150,33 @@ const BrushSlider = Component.extend({
     this._updateView();
   },
 
+  _getBrushEventListeners() {
+    const _this = this;
+
+    return {
+      start: () => {
+        if (_this.nonBrushChange || !d3.event.sourceEvent) return;
+        if (d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
+          const brushDatum = _this.sliderEl.node().__brush;
+          brushDatum.selection[1][0] += 0.01;
+        }
+        _this._setFromExtent(false, false, false);
+      },
+      brush: () => {
+        if (_this.nonBrushChange || !d3.event.sourceEvent) return;
+        if (d3.event.selection && d3.event.selection[0] == d3.event.selection[1]) {
+          const brushDatum = _this.sliderEl.node().__brush;
+          brushDatum.selection[1][0] += 0.01;
+        }
+        _this._setFromExtent(true, false, false); // non persistent change
+      },
+      end: () => {
+        if (_this.nonBrushChange || !d3.event.sourceEvent) return;
+        _this._setFromExtent(true, true); // force a persistent change
+      }
+    };
+  },
+
   _createThumbs(thumbsEl) {
     const barWidth = this.options.BAR_WIDTH;
     const halfThumbHeight = this.options.THUMB_HEIGHT * 0.5;
@@ -191,6 +204,9 @@ const BrushSlider = Component.extend({
    */
   _resize() {
     this._updateSize();
+
+    const componentWidth = this._getComponentWidth();
+    this.rescaler.range([0, componentWidth]);
   },
 
   _getComponentWidth() {
@@ -245,7 +261,8 @@ const BrushSlider = Component.extend({
    * @param {boolean} persistent sets the persistency of the change event
    */
   _setModel(value, force, persistent) {
-    value = [+value[0].toFixed(2), +value[1].toFixed(2)];
+    const roundDigits = this.options.ROUND_DIGITS;
+    value = [+value[0].toFixed(roundDigits), +value[1].toFixed(roundDigits)];
     const newValue = {};
     newValue[this.arg] = this._extentToValue(value);
     this.model.submodel.set(newValue, force, persistent);
