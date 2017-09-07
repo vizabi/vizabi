@@ -757,10 +757,11 @@ const TreeMenu = Component.extend({
         //if entry's tag are empty don't include it in the menu
         if (entry.tags == "_none") return;
         if (!entry.tags) entry.tags = datasetName || UNCLASSIFIED;
-        const concept = { id, name: entry.name, unit: entry.unit, description: entry.description, dataSource: dataSource._name };
+        const concept = { id, name: entry.name, name_catalog: entry.name_catalog, description: entry.description, dataSource: dataSource._name };
         entry.tags.split(",").forEach(tag => {
-          if (tags[tag.trim()]) {
-            tags[tag.trim()].children.push(concept);
+          tag = tag.trim();
+          if (tags[tag]) {
+            tags[tag].children.push(concept);
           } else {
             //if entry's tag is not found in the tag dictionary
             if (!_this.consoleGroupOpen) {
@@ -800,7 +801,7 @@ const TreeMenu = Component.extend({
             if (b.id == "_default") return -1;
           }
           //sort items alphabetically. folders go down because of the emoji folder in the beginning of the name
-          return a.name > b.name ? 1 : -1;
+          return (a.name_catalog || a.name) > (b.name_catalog || b.name) ? 1 : -1;
         })
     );
 
@@ -1207,7 +1208,7 @@ const TreeMenu = Component.extend({
         .append("span")
         .text(d => {
           //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-          const translated = d.id === "_default" ? _this.translator("indicator/_default/" + targetModelType) : d.name || d.id;
+          const translated = d.id === "_default" ? _this.translator("indicator/_default/" + targetModelType) : d.name_catalog || d.name || d.id;
           if (!translated && translated !== "") utils.warn("translation missing: NAME of " + d.id);
           return translated || "";
         });
