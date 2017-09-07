@@ -61,9 +61,9 @@ const UI = Model.extend({
     //https://openradar.appspot.com/31725316
     const detectIOS_10_3 = () => {
       const version = /(?:iPad|iPhone|iPod).+OS\s+(\d+)_(\d+)/.exec(navigator.userAgent);
-      return (version && +version[1] >= 10 && +version[2] > 2 && !window.MSStream) ? true : false;
-    }
-    if(detectIOS_10_3()) {
+      return version && +version[1] >= 10 && +version[2] > 2 && !window.MSStream;
+    };
+    if (detectIOS_10_3()) {
       this.setSize = utils.debounce(this.setSize, 500);
     }
   },
