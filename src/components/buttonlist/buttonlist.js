@@ -522,11 +522,14 @@ const ButtonList = Component.extend({
     }
 
     btn.classed(class_active_locked, locked);
-    btn.select(".vzb-buttonlist-btn-title")
-      .text(locked ? locked : translator("buttons/lock"));
 
     btn.select(".vzb-buttonlist-btn-icon")
       .html(iconset[locked ? "lock" : "unlock"]);
+
+    btn.select(".vzb-buttonlist-btn-title>span").text(
+      locked ? locked : translator("buttons/lock")
+    )
+      .attr("data-vzb-translate", locked ? null : "buttons/lock");
   },
   toggleInpercent() {
     this.model.ui.chart.inpercent = !this.model.ui.chart.inpercent;
