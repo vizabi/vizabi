@@ -1,6 +1,6 @@
 import * as utils from "base/utils";
 import Component from "base/component";
-
+import axisSmart from "helpers/d3.axisWithLabelPicker";
 
 const precision = 1;
 
@@ -23,27 +23,27 @@ const profiles = {
       left: 15
     },
     radius: 8,
-    label_spacing: 10
+    label_spacing: 5
   },
   medium: {
     margin: {
       top: 16,
       right: 15,
       bottom: 10,
-      left: 15
+      left: 75
     },
     radius: 9,
-    label_spacing: 12
+    label_spacing: 5
   },
   large: {
     margin: {
       top: 14,
       right: 15,
       bottom: 10,
-      left: 15
+      left: 75
     },
     radius: 11,
-    label_spacing: 14
+    label_spacing: 8
   }
 };
 
@@ -133,6 +133,16 @@ const TimeSlider = Component.extend({
       },
       "change:marker.select": function(evt, path) {
         _this.setSelectedLimits();
+      },
+      "change:ui.chart.margin.left": function(evt, path) {
+        const layoutProfile = _this.getLayoutProfile();
+        if (layoutProfile !== "small") {
+          const profile = profiles[layoutProfile];
+          profile.margin.left = _this.model.ui.chart.margin.left;
+        }
+        if (_this.slide) {
+          _this.updateSize();
+        }
       }
     };
 
@@ -144,12 +154,13 @@ const TimeSlider = Component.extend({
     // By not having "this.model.ui =" we prevent it from going to url (not defined in defaults)
     // Should be in defaults when we make components config part of external config (& every component gets own config)
     this.ui = utils.extend({
+      show_ticks: false,
       show_limits: false,
       show_value: false,
       show_value_when_drag_play: true,
       show_button: true,
-      class_axis_aligned: false
-    }, model.ui, this.ui);
+      axis_aligned: false
+    }, model.ui.getPlainObject(), this.ui);
 
 
     //defaults
@@ -179,14 +190,23 @@ const TimeSlider = Component.extend({
     this.slide = this.element.select(".vzb-ts-slider-slide");
     this.handle = this.element.select(".vzb-ts-slider-handle");
     this.valueText = this.element.select(".vzb-ts-slider-value");
+    this.playButtons = this.element.select(".vzb-ts-btns");
     //Scale
     this.xScale = d3.scaleUtc()
       .clamp(true);
 
     //Axis
-    this.xAxis = d3.axisBottom()
-      .tickSize(0);
+    this.xAxis = axisSmart("bottom");
+
     //Value
+    this.valueText.classed("stroke", true);
+    if (!this.slider.style("paint-order").length) {
+      this.slider.insert("text", ".vzb-ts-slider-value")
+        .attr("class", "vzb-ts-slider-value stroke");
+
+      this.valueText.classed("stroke", false);
+    }
+    this.valueText = this.element.selectAll(".vzb-ts-slider-value");
     this.valueText.attr("text-anchor", "middle").attr("dy", "-0.7em");
 
     const brushed = _this._getBrushed();
@@ -345,7 +365,10 @@ const TimeSlider = Component.extend({
 
     //adjust axis with scale
     this.xAxis = this.xAxis.scale(this.xScale)
-      .tickPadding(this.profile.label_spacing);
+      .tickSizeInner(0)
+      .tickSizeOuter(0)
+      .tickPadding(this.profile.label_spacing)
+      .tickSizeMinor(0, 0);
 
     this.axis.attr("transform", "translate(0," + this.height / 2 + ")")
       .call(this.xAxis);
@@ -366,6 +389,7 @@ const TimeSlider = Component.extend({
     this._resizeProgressBar();
     this._setHandle();
 
+    this.playButtons.style("width", this.profile.margin.left + "px");
   },
 
   setSelectedLimits(force) {
@@ -668,15 +692,28 @@ const TimeSlider = Component.extend({
   _optionClasses() {
     //show/hide classes
 
+    const show_ticks = this.ui.show_ticks;
     const show_limits = this.ui.show_limits;
     const show_value = this.ui.show_value;
     const show_value_when_drag_play = this.ui.show_value_when_drag_play;
     const axis_aligned = this.ui.axis_aligned;
     const show_play = (this.ui.show_button) && (this.model.time.playable);
 
-    if (!show_limits) {
-      this.xAxis.tickValues([]).ticks(0);
-    }
+    this.xAxis.labelerOptions({
+      scaleType: !show_limits && !show_ticks ? null : "time",
+      limitMaxTickNumber: !show_limits && !show_ticks ? 0 : show_limits && !show_ticks ? 1 : 3,
+      toolMargin: {
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 30
+      },
+      fitIntoScale: "optimistic"
+    });
+
+    // if (!show_limits && !show_ticks) {
+    //   this.xAxis.tickValues([]).ticks(0);
+    // }
 
     this.element.classed(class_hide_play, !show_play);
     this.element.classed(class_playing, this.model.time.playing);

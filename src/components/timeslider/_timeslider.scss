@@ -80,13 +80,24 @@ $vzb-ts-value-width: 40px;
         font-weight: bold;
         cursor: pointer;
 
-        .domain {
+        .vzb-axis-line {
           @include opacity(1);
           fill: none;
           stroke: $vzb-ts-slider-color;
           stroke-opacity: 0.1;
           stroke-width: 5px;
           stroke-linecap: round;
+        }
+
+        .tick {
+          pointer-events: none;
+          font-weight: normal;
+          color: $vzb-ts-slider-color;
+          opacity: 0.35;
+          text {
+            fill: currentColor;
+            font-size: 0.9em;
+          }
         }
       }
       .vzb-ts-slider-progress {
@@ -130,15 +141,18 @@ $vzb-ts-value-width: 40px;
         cursor: pointer;
       }
       .vzb-ts-slider-handle {
-        fill: $vzb-ts-slider-color;
+        fill: $vzb-ts-btn-bg;
         stroke: #fff;
         stroke-width: 4px;
       }
       .vzb-ts-slider-value {
         user-select: none;
         display: none;
-        fill: $vzb-ts-slider-color;
+        fill: $vzb-ts-btn-bg;
         font-weight: bold;
+        &.stroke {
+          @include stroke(5px);
+        }
       }
     }
   }
@@ -256,11 +270,18 @@ $vzb-ts-value-width: 40px;
   .vzb-timeslider {
     min-height: $vzb-ts-btn-area + 5;
     .vzb-ts-slider-wrapper {
-      .vzb-ts-slider-axis .domain {
+      left: 5px;
+      .vzb-ts-slider-axis .vzb-axis-line {
         stroke-width: 7px;
       }
       .vzb-ts-slider-handle {
         stroke-width: 5px;
+      }
+    }
+    .vzb-ts-btns {
+      .vzb-ts-btn {
+        margin-left: auto;
+        margin-right: 15px;
       }
     }
     &.vzb-ts-axis-aligned {
@@ -279,10 +300,11 @@ $vzb-ts-value-width: 40px;
   .vzb-timeslider {
     min-height: $vzb-ts-btn-area + 10;
     .vzb-ts-slider-wrapper {
+      left: 5px;
       .vzb-ts-slider {
         font-size: $vzb-font-size-regular;
       }
-      .vzb-ts-slider-axis .domain {
+      .vzb-ts-slider-axis .vzb-axis-line {
         stroke-width: 9px;
       }
       .vzb-ts-slider-progress .domain {
@@ -296,6 +318,21 @@ $vzb-ts-value-width: 40px;
       }
       .vzb-ts-slider-handle {
         stroke-width: 6px;
+      }
+    }
+    .vzb-ts-btns {
+      @include position(absolute, -5px 0 0 5px);
+      width: $vzb-ts-btn-width + 20;
+      height: $vzb-ts-btn-width + 20;
+      .vzb-ts-btn {
+        width: $vzb-ts-btn-width + 20;
+        height: $vzb-ts-btn-width + 20;
+        margin: 0 15px 0 auto;
+
+        .vzb-icon {
+          width: $vzb-ts-btn-width + 20;
+          height: $vzb-ts-btn-width + 20;
+        }
       }
     }
     &.vzb-ts-axis-aligned {
