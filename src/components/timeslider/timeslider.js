@@ -20,24 +20,24 @@ const profiles = {
       top: 7,
       right: 15,
       bottom: 10,
-      left: 15
+      left: 60
     },
     radius: 8,
     label_spacing: 5
   },
   medium: {
     margin: {
-      top: 16,
+      top: 10,
       right: 15,
       bottom: 10,
-      left: 75
+      left: 50
     },
     radius: 9,
     label_spacing: 5
   },
   large: {
     margin: {
-      top: 14,
+      top: 5,
       right: 15,
       bottom: 10,
       left: 75
@@ -133,8 +133,14 @@ const TimeSlider = Component.extend({
       },
       "change:marker.select": function(evt, path) {
         _this.setSelectedLimits();
-      },
-      "change:ui.chart.margin.left": function(evt, path) {
+      }
+    };
+
+    // Same constructor as the superclass
+    this._super(model, context);
+
+    if ((this.model.ui.chart || {}).margin) {
+      this.model.on("change:ui.chart.margin", (evt, path) => {
         const layoutProfile = _this.getLayoutProfile();
         if (layoutProfile !== "small") {
           const profile = profiles[layoutProfile];
@@ -143,12 +149,8 @@ const TimeSlider = Component.extend({
         if (_this.slide) {
           _this.updateSize();
         }
-      }
-    };
-
-
-    // Same constructor as the superclass
-    this._super(model, context);
+      });
+    }
 
     // Sort of defaults. Actually should be in ui default or bubblechart.
     // By not having "this.model.ui =" we prevent it from going to url (not defined in defaults)

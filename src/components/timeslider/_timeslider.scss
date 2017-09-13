@@ -23,8 +23,10 @@ $vzb-ts-value-width: 40px;
   }
 
   .vzb-ts-btns {
-    @include position(absolute, 0 null 0 5px);
+    @include position(absolute, 0 null 0 0);
+    margin-left: 5px;
     width: $vzb-ts-btn-area;
+    pointer-events: none;
     .vzb-ts-btn {
       @include border-radius(40px);
       font-size: $vzb-font-size-regular;
@@ -36,6 +38,7 @@ $vzb-ts-value-width: 40px;
       padding: 0;
       margin: 5px;
       cursor: pointer;
+      pointer-events: auto;
 
       .vzb-icon {
         width: $vzb-ts-btn-width;
@@ -60,7 +63,7 @@ $vzb-ts-value-width: 40px;
     }
   }
   .vzb-ts-slider-wrapper {
-    @include position(absolute, 0 9px 0 $vzb-ts-btn-area+5);
+    @include position(absolute, 0 9px 0 0);
     // margin: 17px 7px;
     // Slider
     .vzb-ts-slider {
@@ -268,9 +271,12 @@ $vzb-ts-value-width: 40px;
 
 &.vzb-medium {
   .vzb-timeslider {
-    min-height: $vzb-ts-btn-area + 5;
+    min-height: $vzb-ts-btn-area + 10;
+    .vzb-ts-slider {
+      margin-left: 5px;
+    }
     .vzb-ts-slider-wrapper {
-      left: 5px;
+      margin-right: 5px;
       .vzb-ts-slider-axis .vzb-axis-line {
         stroke-width: 7px;
       }
@@ -289,8 +295,8 @@ $vzb-ts-value-width: 40px;
         @include position(absolute, 0 0 5px 5px);
       }
       .vzb-ts-slider-wrapper {
-        $pos-left: $vzb-ts-btn-area + 10;
-        @include position(absolute, 0 0 5px $pos-left);
+        //$pos-left: $vzb-ts-btn-area + 10;
+        //@include position(absolute, 0 0 5px $pos-left);
       }
     }
   }
@@ -298,10 +304,11 @@ $vzb-ts-value-width: 40px;
 
 &.vzb-large {
   .vzb-timeslider {
-    min-height: $vzb-ts-btn-area + 10;
+    min-height: $vzb-ts-btn-area + 20;
     .vzb-ts-slider-wrapper {
-      left: 5px;
+      margin-right: 5px;
       .vzb-ts-slider {
+        margin-left: 5px;
         font-size: $vzb-font-size-regular;
       }
       .vzb-ts-slider-axis .vzb-axis-line {
@@ -321,7 +328,7 @@ $vzb-ts-value-width: 40px;
       }
     }
     .vzb-ts-btns {
-      @include position(absolute, -5px 0 0 5px);
+      @include position(absolute, -5px 0 0 0);
       width: $vzb-ts-btn-width + 20;
       height: $vzb-ts-btn-width + 20;
       .vzb-ts-btn {
@@ -341,7 +348,7 @@ $vzb-ts-value-width: 40px;
       }
       .vzb-ts-slider-wrapper {
         $pos-left: $vzb-ts-btn-area + 10;
-        @include position(absolute, 0 0 5px $pos-left);
+        @include position(absolute, 0 0 5px 0);
       }
     }
   }
