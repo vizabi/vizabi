@@ -105,9 +105,16 @@ $vzb-dialog-content-height: 250px;
     }
 
     .vzb-dialog-buttons {
-      display: table;
-      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
       padding: 7px 20px;
+      .vzb-dialog-control {
+        flex: 100 1 auto;
+        width: auto;
+        min-width: 0;
+        display: block;
+      }
     }
 
     .vzb-dialog-control {
@@ -361,6 +368,10 @@ $vzb-dialog-content-height: 250px;
         }
         >.vzb-dialog-buttons {
           flex: none;
+          .vzb-dialog-button {
+            flex: 1 1 auto;
+            display: block;
+          }    
         }
         >.vzb-dialog-content {
           flex: 1 1 auto;
