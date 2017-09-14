@@ -392,10 +392,6 @@
         }
       }
 
-      .vzb-treemenu-list.active,
-      .vzb-treemenu-list-top {
-        //overflow-y: scroll;
-      }
       .vzb-treemenu-list-item {
         padding: 5px 0;
         background-color: $vzb-color-white;
@@ -407,6 +403,11 @@
 
         &:hover {
           background-color: $vzb-color-grey-light;
+          > .vzb-treemenu-list-item-label {
+            span {
+              text-overflow: clip;
+            }
+          }
         }
         &.item-active:not(.vzb-treemenu-list-item-children) {
           > span {
@@ -426,6 +427,7 @@
             }
             left: 0 !important;
             right: auto !important;
+            width: auto !important;
             //text-overflow: ellipsis;
           }
         }
@@ -462,6 +464,11 @@
         font-size: $vzb-font-size-small;
         font-family: $vzb-font-family-alt;
         span {
+          @include rtl {
+            padding-right: 0;
+            padding-left: 1px;
+          }
+          padding-right: 1px;
           display: block;
           position: relative;
           overflow: hidden;

@@ -2,7 +2,7 @@ import * as utils from "base/utils";
 import Component from "base/component";
 import Dialog from "components/dialogs/_dialog";
 
-import sizeslider from "components/sizeslider/sizeslider";
+import sizeslider from "components/brushslider/sizeslider/sizeslider";
 import indicatorpicker from "components/indicatorpicker/indicatorpicker";
 import simplecheckbox from "components/simplecheckbox/simplecheckbox";
 /*
@@ -19,7 +19,7 @@ const Label = Dialog.extend("label", {
   init(config, parent) {
     this.name = "label";
 
-  // in dialog, this.model_expects = ["state", "data"];
+    // in dialog, this.model_expects = ["state", "data"];
 
     this.components = [
       {

@@ -29,7 +29,7 @@ const ButtonList = Component.extend({
     //set properties
     const _this = this;
     this.name = this.name || "gapminder-buttonlist";
-//    this.template = '<div class="vzb-buttonlist"></div>';
+    //    this.template = '<div class="vzb-buttonlist"></div>';
 
     this.model_expects = [{
       name: "state",

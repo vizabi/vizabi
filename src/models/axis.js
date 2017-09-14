@@ -72,12 +72,12 @@ const AxisModel = Hook.extend({
 
       const timeMdl = this._space.time;
       const limits = timeMdl.splash ?
-          { min: timeMdl.parse(timeMdl.startOrigin), max: timeMdl.parse(timeMdl.endOrigin) }
-          :
-          { min: timeMdl.start, max: timeMdl.end };
+        { min: timeMdl.parse(timeMdl.startOrigin), max: timeMdl.parse(timeMdl.endOrigin) }
+        :
+        { min: timeMdl.start, max: timeMdl.end };
 
       domain = [limits.min, limits.max];
-      this.scale = d3.time.scale.utc().domain(domain);
+      this.scale = d3.scaleUtc().domain(domain);
 
     } else {
 
@@ -93,7 +93,10 @@ const AxisModel = Hook.extend({
       }
 
       scaleType = (d3.min(domain) <= 0 && d3.max(domain) >= 0 && scaleType === "log") ? "genericLog" : scaleType;
-      this.scale = d3.scale[(scaleType === "ordinal" ? "point" : scaleType) || "linear"]().domain(domain);
+
+      const _scaleType = (scaleType === "ordinal" ? "point" : scaleType) || "linear";
+      this.scale = d3[`scale${utils.capitalize(_scaleType)}`]()
+        .domain(domain);
     }
 
     this.scaleType = scaleType;

@@ -142,7 +142,7 @@ const Side = Dialog.extend("side", {
           return result;
         });
 
-    //sort data alphabetically
+      //sort data alphabetically
       data.sort((a, b) => (a.label < b.label) ? -1 : 1);
 
       _this.listLeft.html("");

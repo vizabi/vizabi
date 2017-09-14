@@ -392,11 +392,6 @@ $vzb-dialog-content-height: 250px;
           margin-top: 25px;
           margin-left: 15px;
           margin-right: 10px;
-          .vzb-ip-select {
-            //margin-left: 0;
-            //font-weight: normal;
-            //line-height: 20px;
-          }
         }
       }
       >.vzb-dialog-content {
@@ -413,11 +408,12 @@ $vzb-dialog-content-height: 250px;
     }
   }
 
-  @import '../bubblesize/bubblesize';
-  @import '../sizeslider/sizeslider';
+  @import '../brushslider/brushslider';
+  @import '../brushslider/bubblesize/bubblesize';
+  @import '../brushslider/sizeslider/sizeslider';
+  @import '../brushslider/singlehandleslider/singlehandleslider';
   @import '../indicatorpicker/indicatorpicker';
   @import '../minmaxinputs/minmaxinputs';
-  @import '../simpleslider/simpleslider';
   @import '../colorlegend/colorlegend';
   @import '../simplecheckbox/simplecheckbox';
   @import '../draggablelist/draggablelist';
@@ -582,8 +578,8 @@ $vzb-dialog-content-height: 250px;
 
           .vzb-dialog-title {
             @include rtl {
-              padding-left: 0;
-              padding-right: 20px;
+              margin-left: 0;
+              margin-right: 20px;
             }
             margin: 5px 0 5px 20px;
             flex: none;

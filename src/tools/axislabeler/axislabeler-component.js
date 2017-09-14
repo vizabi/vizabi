@@ -87,8 +87,8 @@ const AxisLabelerComponent = Component.extend({
 
     const domain = this.model.scales.domain;
 
-    this.xScale = d3.scale[this.model.scales.xScaleType]();
-    this.yScale = d3.scale[this.model.scales.yScaleType]();
+    this.xScale = d3[`scale${utils.capitalize(this.model.scales.xScaleType)}`]();
+    this.yScale = d3[`scale${utils.capitalize(this.model.scales.yScaleType)}`]();
 
     this.xScale.domain(domain);
 

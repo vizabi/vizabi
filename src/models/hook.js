@@ -129,7 +129,7 @@ const Hook = DataConnected.extend({
     utils.timeStamp("Vizabi Model: Loading Data: " + this._id);
 
     const parsers = this._getAllParsers();
-    
+
     const dataPromise = this.dataSource.load(query, parsers);
 
     dataPromise.then(
@@ -214,7 +214,7 @@ const Hook = DataConnected.extend({
     }
 
     // make root $and explicit
-    const explicitAndFilters =  {};
+    const explicitAndFilters = {};
     if (Object.keys(filters).length > 0) {
       explicitAndFilters["$and"] = [];
       for (const filterKey in filters) {
@@ -294,7 +294,7 @@ const Hook = DataConnected.extend({
         const joinFilter = h.getFilter(splashScreen);
         if (joinFilter != null && !utils.isEmpty(joinFilter)) {
           const filter = {};
-          filter[h.getDimension()] = "$"  + h.getDimension();
+          filter[h.getDimension()] = "$" + h.getDimension();
           filters = utils.extend(filters, filter);
         }
       }
@@ -333,25 +333,15 @@ const Hook = DataConnected.extend({
    * @returns {Object} filters
    */
   _getAllParsers() {
+    return Object.values(this._space).concat(this)
+      .reduce((result, model) => {
+        const parser = model.getParser();
+        const column = model.getDimensionOrWhich();
 
-    const parsers = {};
+        parser && column && !(column in result) && (result[column] = parser);
 
-    function addParser(model) {
-      // get parsers from model
-      const parser = model.getParser();
-      const column = model.getDimensionOrWhich();
-      if (parser && column) {
-        parsers[column] = parser;
-      }
-    }
-
-    // loop through all models which can have filters
-    utils.forEach(this._space, h => {
-      addParser(h);
-    });
-    addParser(this);
-
-    return parsers;
+        return result;
+      }, {});
   },
 
   /**
@@ -372,16 +362,16 @@ const Hook = DataConnected.extend({
       percentageMode = _this.getConceptprops().format;
       if (percentageMode === SHARE) x *= 100;
 
-    // Format time values
-    // Assumption: a hook has always time in its space
+      // Format time values
+      // Assumption: a hook has always time in its space
       if (utils.isDate(x)) return _this._space.time.formatDate(x);
 
-    // Dealing with values that are supposed to be time
+      // Dealing with values that are supposed to be time
       if (_this.scaleType === "time" && !utils.isDate(x)) {
         return _this._space.time.formatDate(new Date(x));
       }
 
-    // Strings, null, NaN and undefined are bypassing any formatter
+      // Strings, null, NaN and undefined are bypassing any formatter
       if (utils.isString(x) || !x && x !== 0) return x;
 
       if (Math.abs(x) < 0.00000000000001) return "0";
@@ -392,12 +382,12 @@ const Hook = DataConnected.extend({
       let prefix = "";
       if (removePrefix) return d3.format("." + prec + format)(x);
 
-    //---------------------
-    // BEAUTIFIERS GO HOME!
-    // don't break formatting please
-    //---------------------
-    // the tiny constant compensates epsilon-error when doing logsrithms
-    /* eslint-disable */
+      //---------------------
+      // BEAUTIFIERS GO HOME!
+      // don't break formatting please
+      //---------------------
+      // the tiny constant compensates epsilon-error when doing logsrithms
+      /* eslint-disable */
     switch (Math.floor(Math.log(Math.abs(x)) / Math.LN10 + 0.00000000000001)) {
       case -13: x *= 1000000000000; prefix = "p"; break; //0.1p
       case -10: x *= 1000000000; prefix = "n"; break; //0.1n
@@ -429,11 +419,11 @@ const Hook = DataConnected.extend({
     /* eslint-enable */
 
       let formatted = d3.format("." + prec + format)(x);
-    //remove trailing zeros if dot exists to avoid numbers like 1.0M, 3.0B, 1.500, 0.9700, 0.0
+      //remove trailing zeros if dot exists to avoid numbers like 1.0M, 3.0B, 1.500, 0.9700, 0.0
       if (formatted.indexOf(".") > -1) formatted = formatted.replace(/0+$/, "").replace(/\.$/, "");
 
 
-    // use manual formatting for the cases above
+      // use manual formatting for the cases above
       return (formatted + prefix + (percentageMode === PERCENT || percentageMode === SHARE ? "%" : ""));
     };
   },
@@ -447,7 +437,7 @@ const Hook = DataConnected.extend({
     return this.scale;
   },
 
-   /**
+  /**
    * Gets unique values in a column
    * @param {String|Array} attr parameter
    * @returns {Array} unique values
@@ -463,7 +453,7 @@ const Hook = DataConnected.extend({
     return this.dataSource.getData(this._dataId);
   },
 
-      /**
+  /**
    * gets dataset without null or nan values with respect to this hook's which
    * @returns {Object} filtered items object
    */
@@ -509,9 +499,14 @@ const Hook = DataConnected.extend({
     const _this = this;
     const dim = this.spaceRef && this._space[this.spaceRef] ? this._space[this.spaceRef].dim : _this._getFirstDimension({ exceptType: "time" });
     const items = {};
-    this.getValidItems().forEach(d => {
-      items[d[dim]] = d[_this.which];
-    });
+    const validItems = this.getValidItems();
+
+    if (utils.isArray(validItems)) {
+      validItems.forEach(d => {
+        items[d[dim]] = d[_this.which];
+      });
+    }
+
     return items;
   },
 

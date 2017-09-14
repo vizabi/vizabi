@@ -98,7 +98,7 @@ export default function collisionResolver() {
       height = arg;
       return resolver;
     };
-    let scale = d3.scale.linear()
+    let scale = d3.scaleLinear()
       .domain([0, 1])
       .range([0, 1]);
     resolver.scale = function(arg) {

@@ -35,6 +35,8 @@ const Dialog = Component.extend({
     this.template = dialogTemplates[this.name];
 
     this._super(config, parent);
+
+    this.transitionEvents = ["webkitTransitionEnd", "transitionend", "msTransitionEnd", "oTransitionEnd"];
   },
 
   /**
@@ -170,7 +172,6 @@ const Dialog = Component.extend({
   beforeOpen() {
     const _this = this;
 
-    this.transitionEvents = ["webkitTransitionEnd", "transitionend", "msTransitionEnd", "oTransitionEnd"];
     this.transitionEvents.forEach(event => {
       _this.placeholderEl.on(event, _this.transitionEnd.bind(_this, event));
     });
@@ -224,7 +225,7 @@ const Dialog = Component.extend({
   },
 
   beforeClose() {
-//issues: 369 & 442
+    //issues: 369 & 442
     if (this.rootEl.classed("vzb-portrait") && this.getLayoutProfile() === "small") {
       this.placeholderEl.style("top", "auto"); // issues: 369 & 442
     }
@@ -239,7 +240,7 @@ const Dialog = Component.extend({
    * User has closed this dialog
    */
   close() {
-//issues: 369 & 442
+    //issues: 369 & 442
     if (!(this.rootEl.classed("vzb-portrait") && this.getLayoutProfile() === "small")) {
       this.placeholderEl.style("top", ""); // issues: 369 & 442
       this.placeholderEl.style("right", ""); // issues: 369 & 442

@@ -1,4 +1,4 @@
-//  d3.scale.genericLog
+//  d3.scaleGenericlog
 export default function genericLog() {
   return (function d3_scale_genericLog(logScale) {
     const _this = this;
@@ -22,7 +22,7 @@ export default function genericLog() {
         domain: fakeDomain,
         sign: 1,
         range: fakeRange,
-        scale: d3.scale.linear().domain(fakeDomain).range(fakeRange)
+        scale: d3.scaleLinear().domain(fakeDomain).range(fakeRange)
       };
     };
 
@@ -37,7 +37,7 @@ export default function genericLog() {
         domain: fakeDomain,
         sign: revertDomain ? -1 : 1,
         range: fakeRange,
-        scale: d3.scale.log().domain(normalizedDomain).range(fakeRange)
+        scale: d3.scaleLog().domain(normalizedDomain).range(fakeRange)
       };
     };
 
@@ -308,7 +308,7 @@ export default function genericLog() {
         interpolatorDomain = _domain.map(d => scale(d));
         scale.domain(_domain).range(_range);
       }
-      interpolator = d3.scale.linear().domain(interpolatorDomain).range(range).interpolate(arg);
+      interpolator = d3.scaleLinear().domain(interpolatorDomain).range(range).interpolate(arg);
       scale.range(interpolator.domain(), true);
       return scale;
     };
@@ -341,5 +341,5 @@ export default function genericLog() {
 
     return d3.rebind(scale, logScale, "base", "rangeRound", "clamp", "nice",
       "tickFormat");
-  })(d3.scale.log().domain([0.1, 200]).range([0, 1000]));
+  })(d3.scaleLog().domain([0.1, 200]).range([0, 1000]));
 }

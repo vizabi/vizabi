@@ -1,0 +1,18 @@
+//general styles
+.vzb-slider-holder {
+
+  .vzb-slider {
+ 
+    .vzb-bs-slider-thumb-arc {
+      fill: none;
+      pointer-events: none;
+      stroke: rgba($vzb-color-primary, 1);
+      stroke-width: 2px;
+    }
+
+    .vzb-bs-slider-thumb-label {
+      direction: ltr;
+      pointer-events: none;
+    }
+  }
+}

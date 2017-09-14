@@ -186,6 +186,7 @@ const ColorLegend = Component.extend({
       this.colorlegendDim = this.colorModel.getColorlegendEntities().getDimension();
 
       this.colorlegendMarker.getFrame(this.model.time.value, frame => {
+        if (!frame) return utils.warn("colorlegend received empty frame in ready()");
         _this.frame = frame;
         _this.canShowMap = utils.keys((_this.frame || {}).hook_geoshape || {}).length;
 
@@ -269,9 +270,9 @@ const ColorLegend = Component.extend({
 
       }
 
-      const labelScaletype = (d3.min(domain) <= 0 && d3.max(domain) >= 0 && this.colorModel.scaleType === "log") ? "genericLog" : this.colorModel.scaleType;
+      const labelScaleType = (d3.min(domain) <= 0 && d3.max(domain) >= 0 && this.colorModel.scaleType === "log") ? "genericLog" : this.colorModel.scaleType;
 
-      const labelScale = d3.scale[labelScaletype == "time" ? "linear" : labelScaletype]()
+      const labelScale = d3[`scale${utils.capitalize(labelScaleType === "time" ? "linear" : labelScaleType)}`]()
         .domain(domain)
         .range(range);
 

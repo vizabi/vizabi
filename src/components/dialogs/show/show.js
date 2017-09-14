@@ -103,16 +103,16 @@ const Show = Dialog.extend("show", {
           return result;
         });
 
-    //sort data alphabetically
+      //sort data alphabetically
       data.sort((a, b) => (a.label < b.label) ? -1 : 1);
 
       _this.list.html("");
 
       const items = _this.list.selectAll(".vzb-show-item")
-      .data(data)
-      .enter()
-      .append("div")
-      .attr("class", "vzb-show-item vzb-dialog-checkbox");
+        .data(data)
+        .enter()
+        .append("div")
+        .attr("class", "vzb-show-item vzb-dialog-checkbox");
 
       items.append("input")
         .attr("type", "checkbox")
@@ -158,7 +158,7 @@ const Show = Dialog.extend("show", {
 
     this.list.selectAll(".vzb-show-item")
       .classed("vzb-hidden", d => {
-        const lower = d.label.toLowerCase();
+        const lower = (d.label || "").toString().toLowerCase();
         return (lower.indexOf(search) === -1);
       });
   },

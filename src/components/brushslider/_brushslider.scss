@@ -1,35 +1,20 @@
 //general styles
-.vzb-bs-holder {
-
-  $vzb-bs-width: 240px;
-
-  width: $vzb-bs-width;
+.vzb-slider-holder {
   margin: 0 auto;
   position: relative;
-  //height: 116px;
 
-  .vzb-bs-svg {
+  .vzb-slider-svg {
+    max-width: 100%;
+    max-height: 100%;
     margin: 0 auto;
     display: block;
     position: relative;
   }
 
-  .vzb-bs-slider {
+  .vzb-slider {
     fill: #000;
 
-    .vzb-bs-slider-thumb-arc {
-      fill: none;
-      pointer-events: none;
-      stroke: rgba($vzb-color-primary, 1);
-      stroke-width: 2px;
-    }
-
-    .vzb-bs-slider-thumb-label {
-      direction: ltr;
-      pointer-events: none;
-    }
-
-    .vzb-bs-slider-thumb-badge {
+    .vzb-slider-thumb-badge {
       fill: rgba($vzb-color-primary, 1);
       stroke: $vzb-color-white;
       stroke-width: 2px;
@@ -39,7 +24,7 @@
 
     .overlay {
       fill-opacity: 0.1;
-      shape-rendering: crispEdges;
+      //shape-rendering: crispEdges;
       cursor: pointer !important;
     }
 
@@ -49,13 +34,17 @@
       stroke-width: 0;
       cursor: col-resize !important;
     }
+
+    .handle {
+      cursor: pointer !important;
+    }
   }
 }
 
 //large specific styles
 &.vzb-large,
 &.vzb-presentation {
-  .vzb-bs-holder {
+  .vzb-slider-holder {
     //...
     height: 150px;
   }
@@ -63,7 +52,7 @@
 
 //medium specific styles
 &.vzb-medium {
-  .vzb-bs-holder {
+  .vzb-slider-holder {
     //...
     height: 120px;
   }
@@ -71,7 +60,7 @@
 
 //small specific styles
 &.vzb-small {
-  .vzb-bs-holder {
+  .vzb-slider-holder {
     //...
     height: 90px;
   }

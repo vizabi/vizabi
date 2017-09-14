@@ -59,7 +59,7 @@ const BarComponent = Component.extend({
 
     this.xScale = null;
     this.yScale = null;
-    this.cScale = d3.scale.category10();
+    this.cScale = d3.scaleOrdinal(d3.schemeCategory10);
 
     this.xAxis = axisSmart("bottom");
     this.yAxis = axisSmart("left");
@@ -151,9 +151,9 @@ const BarComponent = Component.extend({
     this.cScale = this.model.marker.color.getScale();
 
     const xFormatter = this.model.marker.axis_x.which == "geo.world_4region" ?
-        function(x) { return _this.translator("entity/geo.world_4region/" + x); }
-        :
-        _this.model.marker.axis_x.getTickFormatter();
+      function(x) { return _this.translator("entity/geo.world_4region/" + x); }
+      :
+      _this.model.marker.axis_x.getTickFormatter();
 
     this.yAxis.tickFormat(_this.model.marker.axis_y.getTickFormatter());
     this.xAxis.tickFormat(xFormatter);

@@ -339,7 +339,7 @@ const Model = EventSource.extend({
    * ==========================
    */
 
-   // normal model is never loading
+  // normal model is never loading
   _isLoading() {
     return false;
   },
@@ -588,10 +588,9 @@ const Model = EventSource.extend({
 
   /**
    * Gets formatter for this model
-   * @returns {Function|Boolean} formatter function
+   * @returns {Function} formatter function
    */
   getParser() {
-    //TODO: default formatter is moved to utils. need to return it to hook prototype class, but retest #1212 #1230 #1253
     return null;
   },
 

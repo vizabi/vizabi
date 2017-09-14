@@ -41,13 +41,11 @@ export const isElement = function(obj) {
 
 /*
  * checks whether obj is an Array
- * @param {Object} obj
+ * @param {Object} target
  * @returns {Boolean}
  * from underscore: https://github.com/jashkenas/underscore/blob/master/underscore.js
  */
-export const isArray = Array.isArray || function(obj) {
-  return toString.call(obj) === "[object Array]";
-};
+export const isArray = Array.isArray || (target => Object.prototype.toString.call(target) === "[object Array]");
 
 /*
  * checks whether obj is an object
@@ -300,10 +298,8 @@ export const forEach = function(obj, callback, ctx) {
   if (isArray(obj)) {
     size = obj.length;
     for (i = 0; i < size; i += 1) {
-      if (callback.apply(ctx, [
-        obj[i],
-        i
-      ]) === false) {
+      const result = callback.apply(ctx, [obj[i], i]);
+      if (result === false) {
         break;
       }
     }
@@ -311,10 +307,8 @@ export const forEach = function(obj, callback, ctx) {
     const keys = Object.keys(obj);
     size = keys.length;
     for (i = 0; i < size; i += 1) {
-      if (callback.apply(ctx, [
-        obj[keys[i]],
-        keys[i]
-      ]) === false) {
+      const result = callback.apply(ctx, [obj[keys[i]], keys[i]]);
+      if (result === false) {
         break;
       }
     }
@@ -545,23 +539,20 @@ export const without = function(arr, el) {
  * Based on:
  * http://stackoverflow.com/questions/1960473/unique-values-in-an-array
  */
-export const unique = function(arr, func) {
-  const u = {};
-  const a = [];
-  if (!func) {
-    func = function(d) {
-      return d;
-    };
-  }
-  for (let i = 0, l = arr.length; i < l; i += 1) {
-    const key = func(arr[i]);
-    if (u.hasOwnProperty(key)) {
-      continue;
+export const unique = (array, map = data => data) => {
+  const uniqueValues = {};
+
+  return array.filter(item => {
+    const value = map(item);
+
+    if (uniqueValues.hasOwnProperty(value)) {
+      return false;
     }
-    a.push(arr[i]);
-    u[key] = 1;
-  }
-  return a;
+
+    uniqueValues[value] = 1;
+
+    return true;
+  });
 };
 
 /*
@@ -771,55 +762,6 @@ export const preventAncestorScrolling = function(element) {
       return prevent();
     }
   });
-};
-
-/*
- * maps all rows according to the formatters
- * @param {Array} original original dataset
- * @param {Object} formatters formatters object
- * @returns {Boolean} try
- */
-export const mapRows = function(original, formatters) {
-
-  function mapRow(value, fmt) {
-    if (!isArray(value)) {
-      return fmt(value);
-    }
-
-    const res = [];
-    for (let i = 0; i < value.length; i++) {
-      res[i] = mapRow(value[i], fmt);
-    }
-    return res;
-  }
-
-  // default formatter turns empty strings in null and converts numeric values into number
-  //TODO: default formatter is moved to utils. need to return it to hook prototype class, but retest #1212 #1230 #1253
-  const defaultFormatter = function(val) {
-    let newVal = val;
-    if (val === "") {
-      newVal = null;
-    } else {
-      // check for numeric
-      const numericVal = parseFloat(val);
-      if (!isNaN(numericVal) && isFinite(val)) {
-        newVal = numericVal;
-      }
-    }
-    return newVal;
-  };
-
-  original = original.map(row => {
-    const columns = Object.keys(row);
-
-    for (let i = 0; i < columns.length; i++) {
-      const col = columns[i];
-      row[col] = mapRow(row[col], formatters[col] || defaultFormatter);
-    }
-    return row;
-  });
-
-  return original;
 };
 
 /*
@@ -1559,7 +1501,7 @@ export const isFunction = value => typeof value === "function";
  * Usage:
  * const object = { one: { two: "your value" } };
  * utils.getProp(object, ["one", "two"]); // "your value"
-*/
+ */
 export const getProp = (object, props, defaultValue) => {
   while (props.length) {
     const prop = props.shift();

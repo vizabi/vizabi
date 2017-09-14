@@ -83,7 +83,7 @@ const ColorModel = Hook.extend({
     }
     if (this.scaleType == null) {
       this.scaleType = this.dataSource
-          .getConceptprops(this.which).scales[0];
+        .getConceptprops(this.which).scales[0];
     }
   },
 
@@ -137,7 +137,7 @@ const ColorModel = Hook.extend({
     if (!args.colorID || !palette[args.colorID]) args.colorID = "_default";
 
     // if the resolved colr value is not an array (has only one shade) -- return it
-    if (!utils.isArray(palette[args.colorID])) return palette[args.colorID];
+    if (!utils.isArray(palette[args.colorID])) return args.shadeID == "shade" ? d3.rgb(palette[args.colorID]).darker(0.5).toString() : palette[args.colorID];
 
     const conceptpropsColor = this.getConceptprops().color;
     const shade = args.shadeID && conceptpropsColor && conceptpropsColor.shades && conceptpropsColor.shades[args.shadeID] ? conceptpropsColor.shades[args.shadeID] : 0;
@@ -227,13 +227,13 @@ const ColorModel = Hook.extend({
     this.discreteDefaultPalette = false;
 
     if (conceptpropsColor && conceptpropsColor.palette) {
-        //specific color palette from hook concept properties
+      //specific color palette from hook concept properties
       palette = utils.clone(conceptpropsColor.palette);
     } else if (defaultPalettes[this.which]) {
-        //color palette for this.which exists in palette defaults
+      //color palette for this.which exists in palette defaults
       palette = utils.clone(defaultPalettes[this.which]);
     } else if (this.use === "constant") {
-        //an explicit hex color constant #abc or #adcdef is provided
+      //an explicit hex color constant #abc or #adcdef is provided
       if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/.test(this.which)) {
         palette = { "_default": this.which };
       } else {
@@ -252,7 +252,7 @@ const ColorModel = Hook.extend({
     let paletteLabels = null;
 
     if (conceptpropsColor && conceptpropsColor.paletteLabels) {
-        //specific color palette from hook concept properties
+      //specific color palette from hook concept properties
       paletteLabels = utils.clone(conceptpropsColor.paletteLabels);
     }
     return paletteLabels;
@@ -294,9 +294,9 @@ const ColorModel = Hook.extend({
 
       const timeMdl = this._space.time;
       const limits = timeMdl.splash ?
-          { min: timeMdl.parse(timeMdl.startOrigin), max: timeMdl.parse(timeMdl.endOrigin) }
-          :
-          { min: timeMdl.start, max: timeMdl.end };
+        { min: timeMdl.parse(timeMdl.startOrigin), max: timeMdl.parse(timeMdl.endOrigin) }
+        :
+        { min: timeMdl.start, max: timeMdl.end };
 
       const singlePoint = (limits.max - limits.min == 0);
 
@@ -304,7 +304,7 @@ const ColorModel = Hook.extend({
       range = domain.map(m => singlePoint ? paletteObject[domain[0]] : paletteObject[m]);
       domain = domain.map(m => limits.min.valueOf() + m / 100 * (limits.max.valueOf() - limits.min.valueOf()));
 
-      this.scale = d3.time.scale.utc()
+      this.scale = d3.scaleUtc()
         .domain(domain)
         .range(range)
         .interpolate(d3.interpolateCubehelix);
@@ -323,13 +323,13 @@ const ColorModel = Hook.extend({
 
       if (d3.min(domain) <= 0 && d3.max(domain) >= 0 && scaleType === "log") scaleType = "genericLog";
 
-      if (scaleType == "log" || scaleType == "genericLog") {
-        const s = d3.scale.genericLog()
+      if (scaleType === "log" || scaleType === "genericLog") {
+        const s = d3.scaleGenericlog()
           .domain(limits)
           .range(limits);
         domain = domain.map(d => s.invert(d));
       }
-      this.scale = d3.scale[scaleType]()
+      this.scale = d3[`scale${utils.capitalize(scaleType)}`]()
         .domain(domain)
         .range(range)
         .interpolate(d3.interpolateCubehelix);
@@ -340,7 +340,7 @@ const ColorModel = Hook.extend({
       scaleType = "ordinal";
 
       if (this.discreteDefaultPalette) domain = domain.concat(this.getUnique(this.which));
-      this.scale = d3.scale[scaleType]()
+      this.scale = d3[`scale${utils.capitalize(scaleType)}`]()
         .domain(domain)
         .range(range);
     }

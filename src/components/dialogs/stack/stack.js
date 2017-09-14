@@ -11,7 +11,7 @@ import draggablelist from "components/draggablelist/draggablelist";
 
 const Stack = Dialog.extend("stack", {
 
-    /**
+  /**
      * Initializes the dialog component
      * @param config component configuration
      * @param context component context (parent)
@@ -20,7 +20,7 @@ const Stack = Dialog.extend("stack", {
     this.name = "stack";
     const _this = this;
 
-        // in dialog, this.model_expects = ["state", "ui", "locale"];
+    // in dialog, this.model_expects = ["state", "ui", "locale"];
 
     this.components = [{
       component: draggablelist,
@@ -34,7 +34,7 @@ const Stack = Dialog.extend("stack", {
 
     this.model_binds = {
       "change:state.marker.group": function(evt) {
-            //console.log("group change " + evt);
+        //console.log("group change " + evt);
         if (!_this._ready) return;
         _this.updateView();
       }
@@ -52,13 +52,13 @@ const Stack = Dialog.extend("stack", {
     this.stack = this.model.state.marker.stack;
 
     this.howToStackEl = this.element.select(".vzb-howtostack").selectAll("input")
-          .on("change", function() {
-            _this.setModel("stack", d3.select(this).node().value);
-          });
+      .on("change", function() {
+        _this.setModel("stack", d3.select(this).node().value);
+      });
     this.howToMergeEl = this.element.select(".vzb-howtomerge").selectAll("input")
-          .on("change", function() {
-            _this.setModel("merge", d3.select(this).node().value);
-          });
+      .on("change", function() {
+        _this.setModel("merge", d3.select(this).node().value);
+      });
 
     this.updateView();
   },
@@ -152,7 +152,7 @@ const Stack = Dialog.extend("stack", {
           break;
       }
 
-            //validate possible merge values in group and stack hooks
+      //validate possible merge values in group and stack hooks
       if (value === "none" && this.group.merge) obj.group.merge = false;
       if (value !== "all" && this.stack.merge) obj.stack.merge = false;
     }

@@ -42,7 +42,7 @@ const DonutChart = Tool.extend("DonutChart", {
     this._super(placeholder, external_model);
   },
 
-    //provide the default options
+  //provide the default options
   default_model: {
     state: {
     },

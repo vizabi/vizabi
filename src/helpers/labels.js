@@ -61,32 +61,36 @@ const label = function(context) {
         .each(function(d, index) {
           const view = d3.select(this);
 
-  // Ola: Clicking bubble label should not zoom to countries boundary #811
-  // It's too easy to accidentally zoom
-  // This feature will be activated later, by making the label into a "context menu" where users can click Split, or zoom,.. hide others etc....
+          // Ola: Clicking bubble label should not zoom to countries boundary #811
+          // It's too easy to accidentally zoom
+          // This feature will be activated later, by making the label into a "context menu" where users can click Split, or zoom,.. hide others etc....
 
           view.append("rect")
             .attr("class", "vzb-label-glow")
             .attr("filter", "url(" + location.pathname + "#vzb-glow-filter)");
           view.append("rect")
             .attr("class", "vzb-label-fill vzb-tooltip-border");
-  //          .on("click", function(d, i) {
-  //            //default prevented is needed to distinguish click from drag
-  //            if(d3.event.defaultPrevented) return;
-  //
-  //            var maxmin = _this.cached[d[KEY]].maxMinValues;
-  //            var radius = utils.areaToRadius(_this.sScale(maxmin.valueSmax));
-  //            _this._panZoom._zoomOnRectangle(_this.element,
-  //              _this.xScale(maxmin.valueXmin) - radius,
-  //              _this.yScale(maxmin.valueYmin) + radius,
-  //              _this.xScale(maxmin.valueXmax) + radius,
-  //              _this.yScale(maxmin.valueYmax) - radius,
-  //              false, 500);
-  //          });
+          //          .on("click", function(d, i) {
+          //            //default prevented is needed to distinguish click from drag
+          //            if(d3.event.defaultPrevented) return;
+          //
+          //            var maxmin = _this.cached[d[KEY]].maxMinValues;
+          //            var radius = utils.areaToRadius(_this.sScale(maxmin.valueSmax));
+          //            _this._panZoom._zoomOnRectangle(_this.element,
+          //              _this.xScale(maxmin.valueXmin) - radius,
+          //              _this.yScale(maxmin.valueYmin) + radius,
+          //              _this.xScale(maxmin.valueXmax) + radius,
+          //              _this.yScale(maxmin.valueYmax) - radius,
+          //              false, 500);
+          //          });
 
-          view.append("text").attr("class", _cssPrefix + "-label-content " + _cssPrefix + "-label-shadow vzb-noexport");
+          const text = view.append("text").attr("class", _cssPrefix + "-label-content stroke");
+          if (!view.style("paint-order").length) {
+            view.insert("text", `.${_cssPrefix}-label-content`)
+              .attr("class", _cssPrefix + "-label-content " + _cssPrefix + "-label-shadow vzb-noexport");
 
-          view.append("text").attr("class", _cssPrefix + "-label-content");
+            text.classed("stroke", false);
+          }
 
           const cross = view.append("g").attr("class", _cssPrefix + "-label-x vzb-transparent");
           utils.setIcon(cross, iconClose);
@@ -194,7 +198,7 @@ const label = function(context) {
       }
       if (duration) {
         if (showhide && !d.hidden) {
-            //if need to show label
+          //if need to show label
 
           labelGroup.classed("vzb-invisible", d.hidden);
           labelGroup
@@ -202,8 +206,8 @@ const label = function(context) {
             .style("opacity", 0)
             .transition().duration(duration).ease(d3.easeExp)
             .style("opacity", 1)
-                //i would like to set opactiy to null in the end of transition.
-                //but then fade in animation is not working for some reason
+          //i would like to set opactiy to null in the end of transition.
+          //but then fade in animation is not working for some reason
             .on("interrupt", () => {
               labelGroup
                 .style("opacity", 1);
@@ -214,15 +218,15 @@ const label = function(context) {
             .style("opacity", 0)
             .transition().duration(duration).ease(d3.easeExp)
             .style("opacity", 1)
-                //i would like to set opactiy to null in the end of transition.
-                //but then fade in animation is not working for some reason
+          //i would like to set opactiy to null in the end of transition.
+          //but then fade in animation is not working for some reason
             .on("interrupt", () => {
               lineGroup
                 .style("opacity", 1);
             });
 
         } else if (showhide && d.hidden) {
-            //if need to hide label
+          //if need to hide label
 
           labelGroup
             .style("opacity", 1)
@@ -244,7 +248,7 @@ const label = function(context) {
             });
 
         } else {
-            // just update the position
+          // just update the position
 
           labelGroup
             .transition().duration(duration).ease(d3.easeLinear)
@@ -384,7 +388,7 @@ const Labels = Class.extend({
 
     this.model.on("change:marker.select", () => {
       if (!_this.context._readyOnce) return;
-        //console.log("EVENT change:entities:select");
+      //console.log("EVENT change:entities:select");
       _this.selectDataPoints();
     });
 

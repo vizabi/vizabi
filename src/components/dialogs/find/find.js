@@ -2,7 +2,7 @@ import * as utils from "base/utils";
 import Component from "base/component";
 import Dialog from "components/dialogs/_dialog";
 
-import simpleslider from "components/simpleslider/simpleslider";
+import singlehandleslider from "components/brushslider/singlehandleslider/singlehandleslider";
 import indicatorpicker from "components/indicatorpicker/indicatorpicker";
 
 /*!
@@ -17,11 +17,10 @@ const Find = Dialog.extend("find", {
     const _this = this;
 
     this.components = [{
-      component: simpleslider,
+      component: singlehandleslider,
       placeholder: ".vzb-dialog-bubbleopacity",
-      model: ["state.marker"],
-      arg: "opacitySelectDim",
-      properties: { step: 0.01 }
+      model: ["state.marker", "locale"],
+      arg: "opacitySelectDim"
     }];
 
     this.enablePicker = ((config.ui.dialogs.dialog || {}).find || {}).enablePicker;
@@ -156,14 +155,14 @@ const Find = Dialog.extend("find", {
 
           return pointer;
         })
-      : _this.model.state.marker.getKeys().map(d => {
-        const pointer = {};
-        pointer[KEY] = d[KEY];
-        pointer.brokenData = false;
-        pointer.name = values.label[d[KEY]];
+        : _this.model.state.marker.getKeys().map(d => {
+          const pointer = {};
+          pointer[KEY] = d[KEY];
+          pointer.brokenData = false;
+          pointer.name = values.label[d[KEY]];
 
-        return pointer;
-      });
+          return pointer;
+        });
 
       //sort data alphabetically
       data.sort((a, b) => (a.name < b.name) ? -1 : 1);
@@ -260,10 +259,10 @@ const Find = Dialog.extend("find", {
   selectDataPoints() {
     const _this = this;
     const KEY = this.KEY;
-//    const selected = this.model.state.marker.getSelected(KEY);
+    //    const selected = this.model.state.marker.getSelected(KEY);
     const selected = this.model.state.marker;
     this.items.selectAll("input")
-//      .property("checked", d => (selected.indexOf(d[KEY]) !== -1));
+    //      .property("checked", d => (selected.indexOf(d[KEY]) !== -1));
       .property("checked", function(d) {
         const isSelected = selected.isSelected(d);
         d3.select(this.parentNode).classed("vzb-checked", isSelected);
@@ -283,7 +282,7 @@ const Find = Dialog.extend("find", {
 
     this.list.selectAll(".vzb-find-item")
       .classed("vzb-hidden", d => {
-        const lower = (d.name || "").toLowerCase();
+        const lower = (d.name || "").toString().toLowerCase();
         return (lower.indexOf(search) === -1);
       });
   },
@@ -292,6 +291,9 @@ const Find = Dialog.extend("find", {
     const someSelected = !!this.model.state.marker.select.length;
     this.deselect_all.classed("vzb-hidden", !someSelected);
     this.opacity_nonselected.classed("vzb-hidden", !someSelected);
+    if (someSelected) {
+      this.components[0].trigger("resize");
+    }
   },
 
   deselectMarkers() {

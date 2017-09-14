@@ -2,6 +2,18 @@
 import * as utils from "base/utils";
 import Class from "base/class";
 
+function _getQueryId(query, path) {
+  return utils.hashCode([
+    query.select.key,
+    query.where,
+    query.join,
+    query.dataset,
+    query.version,
+    query.language,
+    path
+  ]);
+}
+
 export class Storage {
   constructor() {
     this.queryIds = {};
@@ -18,7 +30,7 @@ export class Storage {
    */
   loadFromReader(query, parsers, readerObject) {
     const _this = this;
-    const queryMergeId = this._getQueryId(query, readerObject._basepath);
+    const queryMergeId = _getQueryId(query, readerObject._basepath);
 
     if (!this.queries[queryMergeId]) {
       this.queries[queryMergeId] = this.queryQueue(readerObject, queryMergeId);
@@ -27,14 +39,14 @@ export class Storage {
   }
 
   getDataId(query, readerObject) {
-    const queryMergeId = this._getQueryId(query, readerObject._basepath);
+    const queryMergeId = _getQueryId(query, readerObject._basepath);
     if (this.queries[queryMergeId]) {
       return this.queries[queryMergeId].getDataId(query);
     }
     return false;
 
   }
-  
+
   queryQueue(readerObject, queryMergeId) {
     const _context = this;
     return new function() {
@@ -75,7 +87,7 @@ export class Storage {
           this.defer = {};
         }
       };
-      
+
       this.getDataId = function(query) {
         for (const reader of this.queries) {
           if (query.select.value.filter(x => reader.query.select.value.indexOf(x) == -1).length == 0 && reader.dataId) { //check if this query have all needed values
@@ -84,7 +96,7 @@ export class Storage {
         }
         return false;
       };
-      
+
       this.reader = function(query, parsers, defer) {
         const _queue = this;
         return new function() {
@@ -143,17 +155,6 @@ export class Storage {
     }();
   }
 
-  _getQueryId(query, path) {
-    return utils.hashCode([
-      query.select.key,
-      query.where,
-      query.join,
-      query.dataset,
-      query.version,
-      path
-    ]);
-  }
-
   setGrouping(dataId, grouping) {
     this._collection[dataId].grouping = grouping;
   }
@@ -163,7 +164,9 @@ export class Storage {
     if (!what || what == "data") {
       return this._collection[dataId]["data"];
     }
-
+    if (what == "query") {
+      return this._collection[dataId]["query"];
+    }
     // if they didn't give an instruction, give them the whole thing
     // it's probably old code which modifies the data outside this class
     // TODO: move these methods inside (e.g. model.getNestedItems())

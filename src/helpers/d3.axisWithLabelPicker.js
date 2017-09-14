@@ -186,12 +186,12 @@ export default function axisSmart(_orient) {
 
       // this will give additive shifting for the hovered value in case it sticks out a little outside viewport
       const hlValueShift = (highlightValue == "none" ? { x: 0, y: 0 } :
-          repositionLabelsThatStickOut([highlightValue], o, orient, axis.scale(), dimension)[highlightValue])[dimension];
+        repositionLabelsThatStickOut([highlightValue], o, orient, axis.scale(), dimension)[highlightValue])[dimension];
 
       // this function will help to move the hovered value to the right place
       const getTransform = function(d) {
         return highlightValue == "none" ? "translate(0,0)" :
-            "translate("
+          "translate("
             + (orient == HORIZONTAL ? axis.scale()(highlightValue) + hlValueShift * pivot : 0) + ","
             + (orient == VERTICAL ? axis.scale()(highlightValue) + hlValueShift * pivot : 0)
             + ")";
@@ -261,7 +261,7 @@ export default function axisSmart(_orient) {
     };
 
 
-    let hlOpacityScale = d3.scale.linear().domain([0, 5]).range([0, 1]).clamp(true);
+    let hlOpacityScale = d3.scaleLinear().domain([0, 5]).range([0, 1]).clamp(true);
     axis.hlOpacityScale = function(arg) {
       if (!arguments.length) return hlOpacityScale;
       hlOpacityScale = arg;
@@ -471,7 +471,7 @@ export default function axisSmart(_orient) {
           return lengthRange >
             d3.sum(tickValues.map(d => (
               options.widthOfOneDigit * (approximationStyle == PESSIMISTIC ? maxLength : options.formatter(
-                  d).length) + marginsLR
+                d).length) + marginsLR
             )
             // this is a logarithmic rescaling of labels
             * (1 + Math.log(d.toString().replace(/([0.])/g, "")[0]) / Math.LN10)));
@@ -481,9 +481,9 @@ export default function axisSmart(_orient) {
         return lengthRange >
           tickValues.length * marginsLR + (approximationStyle == PESSIMISTIC ?
             options.widthOfOneDigit * tickValues.length * maxLength : 0) + (approximationStyle == OPTIMISTIC ?
-            options.widthOfOneDigit * (
-              tickValues.map(d => options.formatter(d)).join("").length
-            ) : 0);
+              options.widthOfOneDigit * (
+                tickValues.map(d => options.formatter(d)).join("").length
+              ) : 0);
       };
 
 
@@ -520,8 +520,8 @@ export default function axisSmart(_orient) {
             Math.floor(getBaseLog(Math.max(eps, min))),
             Math.ceil(getBaseLog(max)),
             1)
-          .concat(Math.ceil(getBaseLog(max)))
-          .map(d => Math.pow(options.logBase, d))
+            .concat(Math.ceil(getBaseLog(max)))
+            .map(d => Math.pow(options.logBase, d))
         );
 
         // check if spawn negative is needed. if yes then spawn!
@@ -530,8 +530,8 @@ export default function axisSmart(_orient) {
             Math.floor(getBaseLog(Math.max(eps, -max))),
             Math.ceil(getBaseLog(-min)),
             1)
-          .concat(Math.ceil(getBaseLog(-min)))
-          .map(d => -Math.pow(options.logBase, d))
+            .concat(Math.ceil(getBaseLog(-min)))
+            .map(d => -Math.pow(options.logBase, d))
         );
 
 
@@ -714,6 +714,9 @@ export default function axisSmart(_orient) {
         tickValues = Math.abs(axis.scale()(min) - axis.scale()(max)) < (labelsStackOnTop ?
           (options.heightOfOneDigit) :
           (options.formatter(min).length + options.formatter(max).length) * options.widthOfOneDigit) ? [max] : [min, max];
+        if (tickValues.length == 1 && (options.scaleType == "linear" || options.scaleType == "time")) {
+          tickValuesMinor = [];
+        }
       }
 
       if (tickValues != null && tickValues.length <= 3 && bothSidesUsed) {
