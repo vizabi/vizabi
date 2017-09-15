@@ -50,6 +50,8 @@ const SizeModel = Axis.extend({
           this.scaleType = "linear";
         }
 
+        utils.printAutoconfigResult(this);
+
       }
       if (!concept) {
         this.which = "_default";

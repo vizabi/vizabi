@@ -18,6 +18,18 @@ export const approxEqual = function(a, b, tolerance) {
 };
 
 /*
+ * prints out a string like this "AUTOCONFIG: axis_x choses armed_conflicts_internal from data to be WHICH"
+ */
+export const printAutoconfigResult = (function(mdl) {
+  console.info(
+    "AUTOCONFIG: " + mdl._name
+    + " choses " + (mdl.dim || mdl.which)
+    + " from " + (mdl.dataSource ? mdl.dataSource._name : mdl.getClosestModel(mdl.autogenerate.data)._name)
+    + " to be " + (mdl.dim ? "DIM" : "WHICH")
+  );
+});
+
+/*
  * returns unique id with optional prefix
  * @param {String} prefix
  * @returns {String} id

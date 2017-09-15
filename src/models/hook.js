@@ -95,6 +95,8 @@ const Hook = DataConnected.extend({
       this.which = this.dataSource
         .getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType)
         .concept;
+
+      utils.printAutoconfigResult(this);
     }
   },
 

@@ -71,6 +71,8 @@ const ColorModel = Hook.extend({
           this.set(obj);
         }
 
+        utils.printAutoconfigResult(this);
+
       }
       if (!concept) {
         const obj = {

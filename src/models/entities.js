@@ -38,7 +38,8 @@ const EntitiesModel = DataConnected.extend({
   afterPreload() {
     if (this.dim == null && this.autogenerate) {
       const dataSource = this.getClosestModel(this.autogenerate.data);
-      this.dim = dataSource.getConceptByIndex(this.autogenerate.conceptIndex).concept;
+      this.dim = dataSource.getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType).concept;
+      utils.printAutoconfigResult(this);
     }
   },
 

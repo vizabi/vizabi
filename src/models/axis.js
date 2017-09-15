@@ -40,6 +40,7 @@ const AxisModel = Hook.extend({
       }
 
       this.which = concept.concept;
+      utils.printAutoconfigResult(this);
     }
   },
 
