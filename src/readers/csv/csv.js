@@ -13,6 +13,7 @@ const CSVReader = Reader.extend({
    */
   init(readerInfo) {
     this._data = [];
+    this._lastModified = readerInfo.lastModified || "";
     this._basepath = readerInfo.path;
     this.delimiter = readerInfo.delimiter;
     this.keySize = readerInfo.keySize || 1;
@@ -58,10 +59,10 @@ const CSVReader = Reader.extend({
   },
 
   load() {
-    const { _basepath: path } = this;
+    const { _basepath: path, _lastModified } = this;
 
     return new Promise((resolve, reject) => {
-      const cachedData = cached[path];
+      const cachedData = cached[path + _lastModified];
 
       if (cachedData) {
         resolve(cachedData);
@@ -82,7 +83,7 @@ const CSVReader = Reader.extend({
             const { columns } = rows;
 
             const result = { columns, rows };
-            cached[path] = result;
+            cached[path + _lastModified] = result;
             resolve(result);
           } catch (e) {
             return reject(e);

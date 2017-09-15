@@ -2,7 +2,7 @@
 import * as utils from "base/utils";
 import Class from "base/class";
 
-function _getQueryId(query, path) {
+function _getQueryId(query, path, lastModified) {
   return utils.hashCode([
     query.select.key,
     query.where,
@@ -10,7 +10,8 @@ function _getQueryId(query, path) {
     query.dataset,
     query.version,
     query.language,
-    path
+    path,
+    lastModified
   ]);
 }
 
@@ -30,7 +31,7 @@ export class Storage {
    */
   loadFromReader(query, parsers, readerObject) {
     const _this = this;
-    const queryMergeId = _getQueryId(query, readerObject._basepath);
+    const queryMergeId = _getQueryId(query, readerObject._basepath, readerObject._lastModified);
 
     if (!this.queries[queryMergeId]) {
       this.queries[queryMergeId] = this.queryQueue(readerObject, queryMergeId);
@@ -39,7 +40,7 @@ export class Storage {
   }
 
   getDataId(query, readerObject) {
-    const queryMergeId = _getQueryId(query, readerObject._basepath);
+    const queryMergeId = _getQueryId(query, readerObject._basepath, readerObject._lastModified);
     if (this.queries[queryMergeId]) {
       return this.queries[queryMergeId].getDataId(query);
     }
