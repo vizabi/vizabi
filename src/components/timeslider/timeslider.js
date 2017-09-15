@@ -157,7 +157,6 @@ const TimeSlider = Component.extend({
     // Should be in defaults when we make components config part of external config (& every component gets own config)
     this.ui = utils.extend({
       show_ticks: false,
-      show_limits: false,
       show_value: false,
       show_value_when_drag_play: true,
       show_button: true,
@@ -695,27 +694,24 @@ const TimeSlider = Component.extend({
     //show/hide classes
 
     const show_ticks = this.ui.show_ticks;
-    const show_limits = this.ui.show_limits;
     const show_value = this.ui.show_value;
     const show_value_when_drag_play = this.ui.show_value_when_drag_play;
     const axis_aligned = this.ui.axis_aligned;
     const show_play = (this.ui.show_button) && (this.model.time.playable);
 
     this.xAxis.labelerOptions({
-      scaleType: !show_limits && !show_ticks ? null : "time",
-      limitMaxTickNumber: !show_limits && !show_ticks ? 0 : show_limits && !show_ticks ? 1 : 3,
+      scaleType: "time",
+      removeAllLabels: !show_ticks,
+      limitMaxTickNumber: 1,
+      showOuter: true,
       toolMargin: {
-        left: 0,
-        right: 0,
+        left: 10,
+        right: 10,
         top: 0,
         bottom: 30
       },
       fitIntoScale: "optimistic"
     });
-
-    // if (!show_limits && !show_ticks) {
-    //   this.xAxis.tickValues([]).ticks(0);
-    // }
 
     this.element.classed(class_hide_play, !show_play);
     this.element.classed(class_playing, this.model.time.playing);
