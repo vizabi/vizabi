@@ -180,7 +180,7 @@ const DataModel = Model.extend({
       concept["format"] = d.format;
       concept["name"] = d.name || d.concept || "";
       concept["name_catalog"] = d.name_catalog || "";
-      concept["name_short"] = d.name_short || "";
+      concept["name_short"] = d.name_short || d.name || d.concept || "";
       concept["description"] = d.description;
       this.conceptDictionary[d.concept] = concept;
       this.conceptArray.push(concept);
