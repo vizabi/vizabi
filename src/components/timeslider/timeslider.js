@@ -702,8 +702,8 @@ const TimeSlider = Component.extend({
     this.xAxis.labelerOptions({
       scaleType: "time",
       removeAllLabels: !show_ticks,
-      limitMaxTickNumber: 1,
-      showOuter: true,
+      limitMaxTickNumber: 3,
+      showOuter: false,
       toolMargin: {
         left: 10,
         right: 10,
