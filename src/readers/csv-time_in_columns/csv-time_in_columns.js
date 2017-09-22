@@ -16,10 +16,10 @@ const CSVTimeInColumnsReader = CSVReader.extend({
         const indicatorKey = columns[this.keySize];
 
         const concepts = rows.reduce((result, row) => {
-          Object.keys(row).forEach(concept => {
-            concept = concept === indicatorKey ? row[indicatorKey] : concept;
+          Object.keys(row).forEach(header => {
+            const concept = header === indicatorKey ? row[indicatorKey] : header;
 
-            if (String(Number(concept)) !== String(concept) && !result.includes(concept)) {
+            if (String(Number(concept)) !== String(concept) && !result.includes(concept) && concept) {
               result.push(concept);
             }
           });
