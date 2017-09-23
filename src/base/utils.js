@@ -786,7 +786,7 @@ export const radiusToArea = function(r) {
 };
 
 /*
- * Computes hypotenuse of a right triangle, given the cathetuses
+ * Computes hypotenuse of a right triangle, given the catheti
  * @param {Number} x
  * @param {Number} y
  * @returns {Number} square root of sum of the squares of x and y
