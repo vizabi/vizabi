@@ -35,8 +35,10 @@ const SingleHandleSlider = BrushSlider.extend({
 
     this.name = "singlehandleslider";
 
-    this.options = utils.extend(OPTIONS, {});
-    this.profiles = utils.extend(PROFILES, {});
+    const options = utils.extend({}, OPTIONS);
+    this.options = utils.extend(options, this.options || {});
+    const profiles = utils.extend({}, PROFILES);
+    this.profiles = utils.extend(profiles, this.profiles || {});
 
     //this.template = this.template || require("./brushslider.html");
 
