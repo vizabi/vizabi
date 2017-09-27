@@ -618,22 +618,28 @@ const Labels = Class.extend({
     if (tooltipText) {
       let position = 0;
       const _cssPrefix = this.options.CSS_PREFIX;
-      this.tooltipEl.raise().html(null);
+      this.tooltipEl.raise().text(null);
       this.label(this.tooltipEl, true);
       if (d) {
         const cache = {};
         this._initNewCache(cache, labelValues.valueX, labelValues.valueY, labelValues.valueS, labelValues.valueC, labelValues.valueLST);
-        this.tooltipEl.selectAll("." + _cssPrefix + "-label-content")
+        this.tooltipEl
+          .classed(this.options.CSS_PREFIX + "-tooltip", false)
+          .classed(this.options.CSS_PREFIX + "-entity", true)
+          .selectAll("." + _cssPrefix + "-label-content")
           .text(labelValues.labelText);
         this._updateLabelSize(d, null, cache, this.tooltipEl, labelValues.valueLST);
-        position = this.positionLabel(d, null, cache, this.tooltipEl.node(), null, null, this.tooltipEl.select(".lineemptygroup"));
+        position = this.positionLabel(d, null, cache, this.tooltipEl.node(), 0, null, this.tooltipEl.select(".lineemptygroup"));
       }
-      this.tooltipEl.selectAll("." + _cssPrefix + "-label-content")
+      this.tooltipEl
+        .classed(this.options.CSS_PREFIX + "-entity", false)
+        .classed(this.options.CSS_PREFIX + "-tooltip", true)
+        .selectAll("." + _cssPrefix + "-label-content")
         .text(tooltipText);
       this._updateLabelSize(d, null, tooltipCache, this.tooltipEl, null);
-      this.positionLabel(d, null, tooltipCache, this.tooltipEl.node(), null, null, this.tooltipEl.select(".lineemptygroup"), position);
+      this.positionLabel(d, null, tooltipCache, this.tooltipEl.node(), 0, null, this.tooltipEl.select(".lineemptygroup"), position);
     } else {
-      this.tooltipEl.html(null);
+      this.tooltipEl.text(null);
     }
   },
 
