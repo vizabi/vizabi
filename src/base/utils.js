@@ -24,7 +24,7 @@ export const printAutoconfigResult = (function(mdl) {
   console.info(
     "AUTOCONFIG: " + mdl._name
     + " choses " + (mdl.dim || mdl.which)
-    + " from " + (mdl.dataSource ? mdl.dataSource._name : mdl.getClosestModel(mdl.autogenerate.data)._name)
+    + " from " + (mdl.dataSource ? mdl.dataSource._name : "<DATA SOURCE MISSING!>")
     + " to be " + (mdl.dim ? "DIM" : "WHICH")
   );
 });

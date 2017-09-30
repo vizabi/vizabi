@@ -12,7 +12,7 @@ const Hook = DataConnected.extend({
   //that means, if X or Y doesn't have data at some point, we can't show markers
   _important: false,
 
-  objectLeafs: ["autogenerate"],
+  objectLeafs: ["autoconfig"],
   dataConnectedChildren: ["use", "which"],
 
   getClassDefaults() {
@@ -87,18 +87,10 @@ const Hook = DataConnected.extend({
   },
 
   afterPreload() {
-    this.autoGenerateModel();
+    this.autoconfigureModel();
   },
 
-  autoGenerateModel() {
-    if (this.which == null && this.autogenerate) {
-      this.which = this.dataSource
-        .getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType)
-        .concept;
-
-      utils.printAutoconfigResult(this);
-    }
-  },
+  autoconfigureModel() {},
 
   /**
    * Hooks loads data, models ask children to load data

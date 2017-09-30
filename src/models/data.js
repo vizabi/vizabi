@@ -194,9 +194,17 @@ const DataModel = Model.extend({
       this.conceptDictionary;
   },
 
-  getConceptByIndex(index, type) {
-    //if(!concept && type == "measure") concept = this.conceptArray.filter(f => f.concept_type==="time")[0];
-    return this.conceptArray.filter(f => !type || !f.concept_type || f.concept_type === type)[index];
+  getConcept({ index: index = 0, type: type = null, includeOnlyIDs: includeOnlyIDs = [], excludeIDs: excludeIDs = [] } = { }) {
+    if (!type && includeOnlyIDs.length == 0 && excludeIDs.length == 0) {
+      return null;
+    }
+
+    const filtered = this.conceptArray.filter(f =>
+      (!type || !f.concept_type || f.concept_type === type)
+      && (includeOnlyIDs.length == 0 || includeOnlyIDs.indexOf(f) !== -1)
+      && (excludeIDs.length == 0 || excludeIDs.indexOf(f) == -1)
+    );
+    return filtered[index] || filtered[filtered.length - 1];
   },
 
   getDatasetName() {

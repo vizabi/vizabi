@@ -26,7 +26,7 @@ const formats = {
 
 const TimeModel = DataConnected.extend({
 
-  objectLeafs: ["autogenerate"],
+  objectLeafs: ["autoconfig"],
 
   /**
    * Default values for this model
@@ -115,11 +115,21 @@ const TimeModel = DataConnected.extend({
     this.validateFormatting();
   },
 
-  afterPreload() {
-    if (this.dim == null && this.autogenerate) {
-      const dataSource = this.getClosestModel(this.autogenerate.data);
-      this.dim = dataSource.getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType).concept;
+  preloadData() {
+    this.dataSource = this.getClosestModel(this.data || "data");
+    return this._super();
+  },
 
+  afterPreload() {
+    this.autoconfigureModel();
+  },
+
+  autoconfigureModel() {
+    if (!this.dim) {
+      const concept = this.dataSource.getConcept(this.autoconfig)
+        || this.dataSource.getConcept({ type: "time" });
+
+      if (concept) this.dim = concept.concept;
       utils.printAutoconfigResult(this);
     }
   },

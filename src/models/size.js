@@ -37,31 +37,22 @@ const SizeModel = Axis.extend({
 
   },
 
-  autoGenerateModel() {
-    if (this.which == null) {
-      let concept;
-      if (this.autogenerate) {
-        concept = this.dataSource
-          .getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType);
+  autoconfigureModel() {
+    if (!this.which) {
+      const concept = this.dataSource.getConcept(this.autoconfig)
+        || this.dataSource.getConcept({ type: "measure" });
 
-        if (concept) {
-          this.which = concept.concept;
-          this.use = "indicator";
-          this.scaleType = "linear";
-        }
-
-        utils.printAutoconfigResult(this);
-
-      }
-      if (!concept) {
+      if (concept) {
+        this.which = concept.concept;
+        this.use = "indicator";
+        this.scaleType = "linear";
+      } else {
         this.which = "_default";
         this.use = "constant";
         this.scaleType = "ordinal";
       }
-    }
-    if (this.scaleType == null) {
-      this.scaleType = this.dataSource
-        .getConceptprops(this.which).scales[0];
+
+      utils.printAutoconfigResult(this);
     }
   }
 
