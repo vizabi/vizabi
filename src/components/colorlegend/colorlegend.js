@@ -422,7 +422,7 @@ const ColorLegend = Component.extend({
             d3.select(this)
               .attr("d", shapeString)
               .style("fill", cScale(d[_this.colorlegendDim]))
-              .append("title").html(_this.frame.label[d[_this.colorlegendDim]]);
+              .append("title").text(_this.frame.label[d[_this.colorlegendDim]]);
 
             tempdivEl.html("");
           });
