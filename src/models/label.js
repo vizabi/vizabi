@@ -36,7 +36,6 @@ const LabelModel = Hook.extend({
     if (!this.which) {
 
       const concept = this.dataSource.getConcept(this.autoconfig)
-          || this.dataSource.getConcept({ type: "string" })
           || this.dataSource.getConcept({ type: "entity_domain" });
 
       if (concept) this.which = concept.concept;

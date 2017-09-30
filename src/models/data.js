@@ -201,8 +201,8 @@ const DataModel = Model.extend({
 
     const filtered = this.conceptArray.filter(f =>
       (!type || !f.concept_type || f.concept_type === type)
-      && (includeOnlyIDs.length == 0 || includeOnlyIDs.indexOf(f) !== -1)
-      && (excludeIDs.length == 0 || excludeIDs.indexOf(f) == -1)
+      && (includeOnlyIDs.length == 0 || includeOnlyIDs.indexOf(f.concept) !== -1)
+      && (excludeIDs.length == 0 || excludeIDs.indexOf(f.concept) == -1)
     );
     return filtered[index] || filtered[filtered.length - 1];
   },

@@ -90,7 +90,13 @@ const Hook = DataConnected.extend({
     this.autoconfigureModel();
   },
 
-  autoconfigureModel() {},
+  autoconfigureModel() {
+    if (!this.which) {
+      const concept = this.dataSource.getConcept(this.autoconfig);
+      if (concept) this.which = concept.concept;
+      utils.printAutoconfigResult(this);
+    }
+  },
 
   /**
    * Hooks loads data, models ask children to load data
