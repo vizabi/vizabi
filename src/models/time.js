@@ -546,6 +546,7 @@ function quarterFormat() {
   };
 
   const formatQuarter = function(d) {
+    if (!(d instanceof Date)) d = new Date(+d);
     return ((d.getUTCMonth() / 3) | 0) + 1;
   };
 
