@@ -786,13 +786,23 @@ export const radiusToArea = function(r) {
 };
 
 /*
- * Computes hypotenuse of a right triangle, given the catets
+ * Computes hypotenuse of a right triangle, given the catheti
  * @param {Number} x
  * @param {Number} y
  * @returns {Number} square root of sum of the squares of x and y
  */
 export const hypotenuse = function(x, y) {
   return Math.sqrt(x * x + y * y);
+};
+
+/*
+ * Computes cathetus of a right triangle, given the hypotenuse and cathetus
+ * @param {Number} h
+ * @param {Number} c
+ * @returns {Number} square root of difference of the squares of h and c
+ */
+export const cathetus = function(h, c) {
+  return Math.sqrt(h * h - c * c);
 };
 
 /*
