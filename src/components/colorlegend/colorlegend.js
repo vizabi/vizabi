@@ -545,7 +545,7 @@ const ColorLegend = Component.extend({
   },
 
   resize() {
-    this.updateView();
+    if (this.frame) this.updateView();
     this.colorPicker.resize(d3.select(".vzb-colorpicker-svg"));
   },
 
