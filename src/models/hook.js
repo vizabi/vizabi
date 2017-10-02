@@ -91,7 +91,7 @@ const Hook = DataConnected.extend({
   },
 
   autoconfigureModel() {
-    if (!this.which) {
+    if (!this.which && this.autoconfig) {
       const concept = this.dataSource.getConcept(this.autoconfig);
       if (concept) this.which = concept.concept;
       utils.printAutoconfigResult(this);

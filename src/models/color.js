@@ -56,7 +56,7 @@ const ColorModel = Hook.extend({
   },
 
   autoconfigureModel() {
-    if (!this.which) {
+    if (!this.which && this.autoconfig) {
       const concept = this.dataSource.getConcept(this.autoconfig);
 
       if (concept) {

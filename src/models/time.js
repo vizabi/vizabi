@@ -125,7 +125,7 @@ const TimeModel = DataConnected.extend({
   },
 
   autoconfigureModel() {
-    if (!this.dim) {
+    if (!this.dim && this.autoconfig) {
       const concept = this.dataSource.getConcept(this.autoconfig)
         || this.dataSource.getConcept({ type: "time" });
 
