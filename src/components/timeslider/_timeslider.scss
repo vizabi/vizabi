@@ -187,7 +187,7 @@ $vzb-ts-value-width: 40px;
     .vzb-loader {
       @extend %vzb-loader;
       @include size(38px);
-      border-color: rgba($vzb-color-white, 0.0);
+      border-color: rgba($vzb-color-white, 0);
       border-top-color: rgba($vzb-color-white, 1);
       margin-top: -1 * 38px/2;
       margin-left: -1 * 38px/2;
@@ -239,6 +239,14 @@ $vzb-ts-value-width: 40px;
       }
     }
 
+    .vzb-ts-btn-loading {
+      .vzb-loader {
+        @include size(33px);
+        margin-top: -1 * 33px/2;
+        margin-left: -1 * 33px/2;
+      }
+    }
+  
     &.vzb-ts-axis-aligned {
       .vzb-ts-btns {
         @include position(absolute, 0 0 5px 5px);
