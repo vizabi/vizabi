@@ -24,6 +24,7 @@ const Marker = Model.extend({
   init(name, value, parent, binds, persistent) {
     const _this = this;
 
+    this._type = "marker";
     this._visible = [];
 
     this._super(name, value, parent, binds, persistent);

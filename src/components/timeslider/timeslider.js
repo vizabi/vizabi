@@ -81,7 +81,7 @@ const TimeSlider = Component.extend({
       type: "entities"
     }, {
       name: "marker",
-      type: "model"
+      type: "marker"
     }, {
       name: "ui",
       type: "ui"

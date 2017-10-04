@@ -23,7 +23,7 @@ const ColorLegend = Component.extend({
       type: "entities"
     }, {
       name: "marker",
-      type: "model"
+      type: "marker"
     }, {
       name: "color",
       type: "color"

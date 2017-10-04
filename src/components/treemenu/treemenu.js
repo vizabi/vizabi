@@ -590,10 +590,10 @@ const TreeMenu = Component.extend({
     this.name = "gapminder-treemenu";
     this.model_expects = [{
       name: "marker",
-      type: "model"
+      type: "marker"
     }, {
       name: "marker_tags",
-      type: "model"
+      type: "marker"
     }, {
       name: "time",
       type: "time"
