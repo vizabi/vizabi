@@ -28,7 +28,6 @@ const Marker = Model.extend({
     this._visible = [];
 
     this._super(name, value, parent, binds, persistent);
-    this.on("ready", this.checkTimeLimits.bind(this));
     this.on("readyOnce", () => {
       const exceptions = { exceptType: "time" };
       const allDimensions = _this._getAllDimensions(exceptions);
@@ -217,37 +216,6 @@ const Marker = Model.extend({
 
     //force the model to trigger events even if value is the same
     this.set("select", this.select, true);
-  },
-
-  checkTimeLimits() {
-
-    const time = this._parent.time;
-
-    if (!time) return;
-
-    const tLimits = this.getTimeLimits();
-
-    if (!tLimits) return;
-    if (!utils.isDate(tLimits.min) || !utils.isDate(tLimits.max))
-      return utils.warn("checkTimeLimits(): min-max look wrong: " + tLimits.min + " " + tLimits.max + ". Expecting Date objects. Ensure that time is properly parsed in the data from reader");
-
-    // change start and end (but keep startOrigin and endOrigin for furhter requests)
-    const newTime = {};
-    if (time.start - tLimits.min != 0 || !time.start && !this.startOrigin) newTime["start"] = d3.max([tLimits.min, time.parse(time.startOrigin)]);
-    if (time.end - tLimits.max != 0 || !time.end && !this.endOrigin) newTime["end"] = d3.min([tLimits.max, time.parse(time.endOrigin)]);
-
-    time.set(newTime, false, false);
-
-    if (newTime.start || newTime.end) {
-      utils.forEach(this.getSubhooks(), hook => {
-        if (hook.which == "time") {
-          hook.buildScale();
-        }
-      });
-    }
-
-    //force time validation because time.value might now fall outside of start-end
-    time.validate();
   },
 
   /**
