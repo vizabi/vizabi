@@ -34,7 +34,6 @@ const AxisModel = Hook.extend({
     if (!this.which && this.autoconfig) {
 
       const concept = this.dataSource.getConcept(this.autoconfig)
-        || this.dataSource.getConcept({ type: "measure" })
         || this.dataSource.getConcept({ type: "time" });
 
       if (concept) this.which = concept.concept;

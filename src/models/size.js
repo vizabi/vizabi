@@ -39,8 +39,7 @@ const SizeModel = Axis.extend({
 
   autoconfigureModel() {
     if (!this.which && this.autoconfig) {
-      const concept = this.dataSource.getConcept(this.autoconfig)
-        || this.dataSource.getConcept({ type: "measure" });
+      const concept = this.dataSource.getConcept(this.autoconfig);
 
       if (concept) {
         this.which = concept.concept;

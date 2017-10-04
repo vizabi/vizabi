@@ -46,8 +46,7 @@ const EntitiesModel = DataConnected.extend({
 
   autoconfigureModel() {
     if (!this.dim && this.autoconfig) {
-      const concept = this.dataSource.getConcept(this.autoconfig)
-        || this.dataSource.getConcept({ type: "entity_domain" });
+      const concept = this.dataSource.getConcept(this.autoconfig);
 
       if (concept) this.dim = concept.concept;
       utils.printAutoconfigResult(this);
