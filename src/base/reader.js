@@ -43,7 +43,7 @@ const Reader = Class.extend({
       from
     } = query;
 
-    return this.load()
+    return this.load(parsers)
       .then(result => {
         const { rows, columns } = result;
         this.ensureDataIsCorrect(result, parsers);

@@ -127,7 +127,11 @@ const DataModel = Model.extend({
       language: this.getClosestModel("locale").id,
     };
 
-    return this.load(query)
+    const timeModel = this._root.state.time;
+    const parsers = {};
+    parsers[timeModel.getDimensionOrWhich() || timeModel._type] = timeModel.getParser();
+
+    return this.load(query, parsers)
       .then(this.handleConceptPropsResponse.bind(this))
       .catch(error => this.handleLoadError(error, query));
 
