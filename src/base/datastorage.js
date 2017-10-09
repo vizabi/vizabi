@@ -6,6 +6,7 @@ function _getQueryId(query, path, lastModified) {
   return utils.hashCode([
     query.select.key,
     query.where,
+    query.from,
     query.join,
     query.dataset,
     query.version,
