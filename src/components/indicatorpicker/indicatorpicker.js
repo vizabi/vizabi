@@ -1,5 +1,8 @@
 import * as utils from "base/utils";
 import Component from "base/component";
+import Entities from "models/entities";
+import Hook from "models/hook";
+import Marker from "models/marker";
 
 import {
   question as iconQuestion
@@ -106,7 +109,11 @@ const IndPicker = Component.extend({
       });
     }
 
-    this.targetProp = config.targetProp || this.model.targetModel.isHook() ? "which" : (this.model.targetModel.isEntities() ? "dim" : null);
+    this.targetProp = config.targetProp
+      || this.model.targetModel instanceof Hook ? "which"
+      : (this.model.targetModel instanceof Entities ? "dim"
+        : (this.model.targetModel instanceof Marker ? "space"
+          : null));
   },
 
   ready() {
@@ -171,31 +178,47 @@ const IndPicker = Component.extend({
     const _this = this;
     const translator = this.model.locale.getTFunction();
 
-    const mdl = _this.model.targetModel;
-    const which = mdl[_this.targetProp];
-    const type = mdl._type;
+    const targetModel = _this.model.targetModel;
+    const which = targetModel[_this.targetProp];
+    const type = targetModel._type;
 
     let concept;
-
-    if (mdl.isHook()) {
-      concept = mdl.getConceptprops();
-    } else {
-      utils.forEach(mdl._root._data, m => {
-        if (m._type === "data") concept = m.getConceptprops(mdl[_this.targetProp]);
-      });
-    }
-
     let selectText;
 
-    if (this.showHoverValues && mdl.isHook() && this._highlighted) {
-      const unit = !concept.unit ? "" : " " + concept.unit;
-      const formatter = mdl.getTickFormatter();
+    if (targetModel instanceof Hook) {
+      concept = targetModel.getConceptprops();
 
-      selectText = (this._highlightedValue || this._highlightedValue === 0) ? formatter(this._highlightedValue) + unit : translator("hints/nodata");
+      if (this.showHoverValues && this._highlighted) {
+        const unit = !concept.unit ? "" : " " + concept.unit;
+        const formatter = targetModel.getTickFormatter();
+
+        selectText = (this._highlightedValue || this._highlightedValue === 0) ? formatter(this._highlightedValue) + unit : translator("hints/nodata");
+
+      } else {
+        //Let the indicator "_default" in tree menu be translated differnetly for every hook type
+        selectText = (which === "_default") ? translator("indicator/_default/" + type) : (concept.name);
+
+      }
 
     } else {
-      //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-      selectText = (which === "_default") ? translator("indicator/_default/" + type) : (concept.name);
+
+      function findConceptName(conceptid) {
+        let conceptName;
+        for (const model of Object.values(targetModel._root._data)) {
+          if (model._type === "data") {
+            const concept = model.getConceptprops(conceptid);
+            if (concept) return concept.name;
+          }
+        }
+        return "Concept not found";
+      }
+
+      if (this.showHoverValues && this._highlighted) {
+        selectText = targetModel.space.map(dim => findConceptName(targetModel._space[dim].dim)).join(", ");
+      } else {
+        selectText = targetModel.space.map(dim => findConceptName(targetModel._space[dim].dim)).join(", ");
+      }
+
     }
 
     this.el_select.text(selectText)
@@ -203,9 +226,8 @@ const IndPicker = Component.extend({
         return this.offsetWidth < this.scrollWidth ? selectText : null;
       });
 
-
     // hide info el if no data is available for it to make sense
-    const hideInfoEl = !concept.description && !concept.sourceName && !concept.sourceLink;
+    const hideInfoEl = concept && !concept.description && !concept.sourceName && !concept.sourceLink;
     this.infoEl.classed("vzb-invisible", hideInfoEl);
   }
 

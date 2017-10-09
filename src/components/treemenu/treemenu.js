@@ -1,6 +1,8 @@
 import * as utils from "base/utils";
 import Component from "base/component";
 import Class from "base/class";
+import Hook from "models/hook";
+import Marker from "models/marker";
 import { close as iconClose } from "base/iconset";
 
 /*!
@@ -745,19 +747,28 @@ const TreeMenu = Component.extend({
       }
     });
 
-    utils.forEach(this.model.marker._root._data, dataSource => {
-      if (dataSource._type !== "data") return;
 
-      const indicatorsDB = dataSource.getConceptprops();
-      const datasetName = dataSource.getDatasetName();
-      tags[datasetName] = { id: datasetName, type: "dataset", children: [] };
-      tags[ROOT].children.push(tags[datasetName]);
+    const properties = this.model.marker.space.length > 1;
+    this.model.marker.getAvailableData().forEach(kvPair => {
+      const entry = kvPair.value;
+      //if entry's tag are empty don't include it in the menu
+      if (entry.tags == "_none") return;
+      if (!entry.tags) entry.tags = datasetName || UNCLASSIFIED;
+      const concept = { id: entry.concept, name: entry.name, name_catalog: entry.name_catalog, description: entry.description, dataSource: kvPair.dataSource._name };
 
-      utils.forEach(indicatorsDB, (entry, id) => {
-        //if entry's tag are empty don't include it in the menu
-        if (entry.tags == "_none") return;
-        if (!entry.tags) entry.tags = datasetName || UNCLASSIFIED;
-        const concept = { id, name: entry.name, name_catalog: entry.name_catalog, description: entry.description, dataSource: dataSource._name };
+      if (properties && kvPair.key.length == 1) {
+
+        const folderName = kvPair.key[0].concept + "_properties";
+        if (!tags[folderName]) {
+          const dim = kvPair.key[0];
+          tags[folderName] = { id: folderName, name: dim.name + " properties", type: "folder", children: [] };
+          tags[folderName].children.push({ id: dim.concept, name: dim.name, name_catalog: dim.name_catalog, description: dim.description, dataSource: kvPair.dataSource._name });
+          tags[ROOT].children.push(tags[folderName]);
+        }
+        tags[folderName].children.push(concept);
+
+      } else {
+
         entry.tags.split(",").forEach(tag => {
           tag = tag.trim();
           if (tags[tag]) {
@@ -765,15 +776,31 @@ const TreeMenu = Component.extend({
           } else {
             //if entry's tag is not found in the tag dictionary
             if (!_this.consoleGroupOpen) {
-              console.groupCollapsed("Some tags were are not found, so indicators went under 'Unclassified' menu");
+              console.groupCollapsed("Some tags were not found, so indicators went under 'Unclassified' menu");
               _this.consoleGroupOpen = true;
             }
             utils.warn("tag '" + tag + "' for indicator '" + id + "'");
             tags[UNCLASSIFIED].children.push(concept);
           }
         });
+
+      }
+    });
+
+    /**
+     * KEY-AVAILABILITY (dimensions for space-menu)
+     */
+    this.model.marker.getAvailableSpaces().forEach((space, str) => {
+      indicatorsTree.children.push({
+        id: space.map(dim => dim.id).join(""),
+        name: space.map(dim => dim.name).join(", "),
+        name_catalog: space.map(dim => dim.name).join(", "),
+        description: "no description",
+        dataSource: "All data sources",
+        type: "space"
       });
     });
+
     if (_this.consoleGroupOpen) {
       console.groupEnd();
       delete _this.consoleGroupOpen;
@@ -1152,14 +1179,14 @@ const TreeMenu = Component.extend({
 
           return false;
         });
-      } else if (_this._targetModel.isEntities()) {
-        const entityTypes = ["entity_domain", "entity_set"];
-        allowedIDs = utils.keys(indicatorsDB).filter(f => entityTypes.indexOf(indicatorsDB[f].concept_type) > -1);
+        dataFiltered = utils.pruneTree(data, f => allowedIDs.indexOf(f.id) > -1);
+      } else if (_this._targetModel instanceof Marker) {
+        allowedIDs = data.children.map(child => child.id);
+        dataFiltered = utils.pruneTree(data, f => f.type == "space");
       } else {
         allowedIDs = utils.keys(indicatorsDB);
+        dataFiltered = utils.pruneTree(data, f => allowedIDs.indexOf(f.id) > -1);
       }
-
-      dataFiltered = utils.pruneTree(data, f => allowedIDs.indexOf(f.id) > -1);
 
       this.dataFiltered = dataFiltered;
     }
@@ -1167,7 +1194,7 @@ const TreeMenu = Component.extend({
     this.wrapper.select("ul").remove();
 
     this.element.select("." + css.title).select("span")
-      .text(this.translator(_this._targetModel.isEntities() ? _this._targetModel._root._name + "/" + _this._targetModel._name
+      .text(this.translator(_this._targetModel instanceof Marker ? _this._targetModel._root._name + "/" + _this._targetModel._name
         : "buttons/" + (isHook ? _this._targetModel._name : (targetModelType + "/" + _this._targetProp)))
       );
 

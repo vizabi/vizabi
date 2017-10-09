@@ -32,7 +32,71 @@ const Marker = Model.extend({
       const exceptions = { exceptType: "time" };
       const allDimensions = _this._getAllDimensions(exceptions);
       _this._multiDim = allDimensions.length > 1;
+
+      this.updateSpaceReferences();
     });
+    this.on("change", "space", this.updateSpaceReferences.bind(this));
+  },
+
+  updateSpaceReferences() {
+    utils.forEach(this.getSpace(), dimensionModel => {
+      // make reference to dimension
+      this._space[dimensionModel] = this.getClosestModel(dimensionModel);
+    });
+  },
+
+  getAvailableSpaces() {
+    const spaces = new Map();
+    utils.forEach(this._root._data, dataSource => {
+      if (dataSource._type !== "data") return;
+
+      const indicatorsDB = dataSource.getConceptprops();
+
+      dataSource.keyAvailability.forEach((space, str) => {
+        if (space.length == this.space.length) { // only same dimension as marker already has for now. Supported dimensions might later depend on tool.
+          spaces.set(str, space.map(dimension => indicatorsDB[dimension]));
+        }
+      });
+    });
+    return spaces;
+  },
+
+  getAvailableData() {
+    const data = [];
+    const dimensions = this.space.map(dim => this._space[dim].dim);
+
+    utils.forEach(this._root._data, dataSource => {
+      if (dataSource._type !== "data") return;
+
+      const indicatorsDB = dataSource.getConceptprops();
+
+      dataSource.dataAvailability.datapoints.forEach(kvPair => {
+        if (dimensions.length == kvPair.key.size && dimensions.every(dim => kvPair.key.has(dim))) {
+          data.push({
+            key: kvPair.key,
+            value: indicatorsDB[kvPair.value],
+            dataSource
+          });
+        }
+      });
+
+      // get all available entity properties for current marker space
+      const entitiesAvailability = [];
+      dataSource.dataAvailability.entities.forEach(kvPair => {
+        dimensions.forEach(dim => {
+          if (kvPair.key.has(dim) && kvPair.value.indexOf("is--") === -1) {
+            data.push({
+              key: Array.from(kvPair.key).map(concept => indicatorsDB[concept]),
+              value: indicatorsDB[kvPair.value],
+              dataSource
+            });
+          }
+        });
+      });
+
+    });
+
+    return data;
   },
 
   setDataSourceForAllSubhooks(data) {
