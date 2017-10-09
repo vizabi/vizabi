@@ -67,7 +67,7 @@ export class Storage {
           this.query = query;
           this.parsers = parsers;
         } else {
-          this.query.select.value = utils.unique(this.query.select.value.concat(query.select.value));
+          this.query.select.value = (this.query.select.value) ? utils.unique(this.query.select.value.concat(query.select.value)) : [];
           utils.extend(this.parsers, parsers);
         }
         utils.debounce(() => {
@@ -92,7 +92,7 @@ export class Storage {
 
       this.getDataId = function(query) {
         for (const reader of this.queries) {
-          if (query.select.value.filter(x => reader.query.select.value.indexOf(x) == -1).length == 0 && reader.dataId) { //check if this query have all needed values
+          if ((!query.select.value || query.select.value.filter(x => reader.query.select.value.indexOf(x) == -1).length == 0) && reader.dataId) { //check if this query have all needed values
             return reader.dataId;
           }
         }
