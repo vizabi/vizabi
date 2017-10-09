@@ -60,7 +60,7 @@ const DataModel = Model.extend({
     // add waffle server specific query clauses if set
     if (this.dataset) query.dataset = this.dataset;
     if (this.version) query.version = this.version;
-    const dataId = DataStorage.getDataId(query, this.readerObject);
+    const dataId = DataStorage.getDataId(query, this.readerObject, parsers);
     if (dataId) {
       return Promise.resolve(dataId);
     }
@@ -75,7 +75,10 @@ const DataModel = Model.extend({
         EventSource.unfreezeAll();
         return dataId;
       })
-      .catch(error => this.handleLoadError(error, query));
+      .catch(error => {
+        EventSource.unfreezeAll();
+        this.handleLoadError(error, query);
+      });
   },
 
   getAsset(assetName, callback) {
