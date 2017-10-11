@@ -2,7 +2,7 @@
 import * as utils from "base/utils";
 import Class from "base/class";
 
-function _getQueryId(query, path, lastModified) {
+function _getQueryId(query, path, lastModified, readerName) {
   return utils.hashCode([
     query.select.key,
     query.where,
@@ -11,7 +11,8 @@ function _getQueryId(query, path, lastModified) {
     query.version,
     query.language,
     path,
-    lastModified
+    lastModified,
+    readerName
   ]);
 }
 
@@ -31,7 +32,7 @@ export class Storage {
    */
   loadFromReader(query, parsers, readerObject) {
     const _this = this;
-    const queryMergeId = _getQueryId(query, readerObject._basepath, readerObject._lastModified);
+    const queryMergeId = _getQueryId(query, readerObject._basepath, readerObject._lastModified, readerObject._name);
 
     if (!this.queries[queryMergeId]) {
       this.queries[queryMergeId] = this.queryQueue(readerObject, queryMergeId);
@@ -39,10 +40,10 @@ export class Storage {
     return this.queries[queryMergeId].getPromise(query, parsers);
   }
 
-  getDataId(query, readerObject) {
-    const queryMergeId = _getQueryId(query, readerObject._basepath, readerObject._lastModified);
+  getDataId(query, readerObject, parsers) {
+    const queryMergeId = _getQueryId(query, readerObject._basepath, readerObject._lastModified, readerObject._name);
     if (this.queries[queryMergeId]) {
-      return this.queries[queryMergeId].getDataId(query);
+      return this.queries[queryMergeId].getDataId(query, parsers);
     }
     return false;
 
@@ -50,6 +51,10 @@ export class Storage {
 
   queryQueue(readerObject, queryMergeId) {
     const _context = this;
+    const _parsersCompare = function(readerParsers, queryParcers) {
+      return Object.keys(queryParcers).filter(p => queryParcers[p] !== readerParsers[p]).length == 0 &&
+      (Object.keys(readerParsers).length == 0 || Object.keys(queryParcers).length != 0);
+    };
     return new function() {
       this.readerObject = readerObject;
       this.queries = [];
@@ -58,7 +63,8 @@ export class Storage {
       this.defer = {};
       this.getPromise = function(query, parsers) {
         for (const reader of this.queries) {
-          if (query.select.value.filter(x => reader.query.select.value.indexOf(x) == -1).length == 0) { //check if this query have all needed values
+          if (query.select.value.filter(x => reader.query.select.value.indexOf(x) == -1).length == 0 &&
+            _parsersCompare(reader.parsers, parsers)) { //check if this query have all needed values
             return reader.defer.promise;
           }
         }
@@ -89,9 +95,10 @@ export class Storage {
         }
       };
 
-      this.getDataId = function(query) {
+      this.getDataId = function(query, parsers) {
         for (const reader of this.queries) {
-          if (query.select.value.filter(x => reader.query.select.value.indexOf(x) == -1).length == 0 && reader.dataId) { //check if this query have all needed values
+          if (query.select.value.filter(x => reader.query.select.value.indexOf(x) == -1).length == 0 &&
+            _parsersCompare(reader.parsers, parsers) && reader.dataId) { //check if this query have all needed values
             return reader.dataId;
           }
         }
