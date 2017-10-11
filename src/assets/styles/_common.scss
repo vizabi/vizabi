@@ -90,6 +90,7 @@ $vzb-loader-bgcolor: $vzb-color-white;
 %vzb-loader-spinner {
   @include size($vzb-loader-size);
   @include position(absolute, 50% null 0 50%);
+  content: ' ';
   animation-timing-function: linear;
   animation-name: rotate-forever;
   animation-iteration-count: infinite;
@@ -99,7 +100,7 @@ $vzb-loader-bgcolor: $vzb-color-white;
   z-index: 9999;
 }
 
- %vzb-loader {
+%vzb-loader {
   @include size($vzb-loader-size);
   @include position(absolute, 50% null 0 50%);
   animation-timing-function: linear;
