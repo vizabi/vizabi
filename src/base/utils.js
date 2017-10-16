@@ -22,7 +22,7 @@ export const approxEqual = function(a, b, tolerance) {
  */
 export const printAutoconfigResult = (function(mdl) {
   console.info(
-    "AUTOCONFIG: " + mdl._name 
+    "AUTOCONFIG: " + mdl._name
     + (mdl.use ? " of " + mdl._parent._name : "")
     + " choses " + (mdl.dim || mdl.which)
     + " from " + (mdl.dataSource ? mdl.dataSource._name : "<DATA SOURCE MISSING!>")
