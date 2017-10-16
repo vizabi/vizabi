@@ -23,7 +23,7 @@
     }
 
     &::after {
-      @extend %vzb-loader;
+      @extend %vzb-loader-spinner;
     }
   }
 

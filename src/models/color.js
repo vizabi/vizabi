@@ -55,26 +55,18 @@ const ColorModel = Hook.extend({
     return utils.deepExtend(this._super(), defaults);
   },
 
-  autoGenerateModel() {
-    if (this.which == null) {
-      let concept;
-      if (this.autogenerate) {
-        concept = this.dataSource
-          .getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType);
+  autoconfigureModel() {
+    if (!this.which && this.autoconfig) {
+      const concept = this.dataSource.getConcept(this.autoconfig);
 
-        if (concept) {
-          const obj = {
-            which: concept.concept,
-            use: concept.use || "indicator",
-            scaleType: (concept.scales && concept.scales[0] ? concept.scales[0] : "linear")
-          };
-          this.set(obj);
-        }
-
-        utils.printAutoconfigResult(this);
-
-      }
-      if (!concept) {
+      if (concept) {
+        const obj = {
+          which: concept.concept,
+          use: concept.use || "indicator",
+          scaleType: (concept.scales && concept.scales[0] ? concept.scales[0] : "linear")
+        };
+        this.set(obj);
+      } else {
         const obj = {
           which: "_default",
           use: "constant",
@@ -82,10 +74,8 @@ const ColorModel = Hook.extend({
         };
         this.set(obj);
       }
-    }
-    if (this.scaleType == null) {
-      this.scaleType = this.dataSource
-        .getConceptprops(this.which).scales[0];
+
+      utils.printAutoconfigResult(this);
     }
   },
 

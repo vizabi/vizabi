@@ -42,7 +42,7 @@ const label = function(context) {
 
         const lineGroup = _this.entityLines.filter(f => f[KEY] == d[KEY]);
 
-        label._repositionLabels(d, i, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0, null, lineGroup);
+        label._repositionLabels(d, i, null, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0, null, lineGroup);
       })
       .on("end", (d, i) => {
         const KEY = _this.KEY;
@@ -55,9 +55,8 @@ const label = function(context) {
         }
       });
 
-    function label(container) {
+    function label(container, isTooltip) {
       container
-        .call(labelDragger)
         .each(function(d, index) {
           const view = d3.select(this);
 
@@ -92,59 +91,66 @@ const label = function(context) {
             text.classed("stroke", false);
           }
 
-          const cross = view.append("g").attr("class", _cssPrefix + "-label-x vzb-transparent");
-          utils.setIcon(cross, iconClose);
+          if (!isTooltip) {
+            const cross = view.append("g").attr("class", _cssPrefix + "-label-x vzb-transparent");
+            utils.setIcon(cross, iconClose);
 
-          cross.insert("circle", "svg");
+            cross.insert("circle", "svg");
 
-          cross.select("svg")
-            .attr("class", _cssPrefix + "-label-x-icon")
-            .attr("width", "0px")
-            .attr("height", "0px");
+            cross.select("svg")
+              .attr("class", _cssPrefix + "-label-x-icon")
+              .attr("width", "0px")
+              .attr("height", "0px");
 
-          cross.on("click", () => {
-            //default prevented is needed to distinguish click from drag
-            if (d3.event.defaultPrevented) return;
-            d3.event.stopPropagation();
-            _this.model.marker.clearHighlighted();
-            _this.model.marker.selectMarker(d);
-          });
+            cross.on("click", () => {
+              //default prevented is needed to distinguish click from drag
+              if (d3.event.defaultPrevented) return;
+              d3.event.stopPropagation();
+              _this.model.marker.clearHighlighted();
+              _this.model.marker.selectMarker(d);
+            });
+          }
 
-        })
-        .on("mouseover", function(d) {
-          if (utils.isTouchDevice()) return;
-          _this.model.marker.highlightMarker(d);
-          const KEY = _this.KEY || _this.model.entities.getDimension();
-          // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
-          _this.entityLabels.sort((a, b) => a[KEY] != d[KEY] ? -1 : 1);
-          d3.select(this).selectAll("." + _cssPrefix + "-label-x")
-            .classed("vzb-transparent", false);
-        })
-        .on("mouseout", function(d) {
-          if (utils.isTouchDevice()) return;
-          _this.model.marker.clearHighlighted();
-          d3.select(this).selectAll("." + _cssPrefix + "-label-x")
-            .classed("vzb-transparent", true);
-        })
-        .on("click", function(d) {
-          if (!utils.isTouchDevice()) return;
-          const cross = d3.select(this).selectAll("." + _cssPrefix + "-label-x");
-          const KEY = _this.KEY || _this.model.entities.getDimension();
-          const hidden = cross.classed("vzb-transparent");
-          if (hidden) {
+        });
+
+      if (!isTooltip) {
+        container
+          .call(labelDragger)
+          .on("mouseover", function(d) {
+            if (utils.isTouchDevice()) return;
+            _this.model.marker.highlightMarker(d);
+            const KEY = _this.KEY || _this.model.entities.getDimension();
             // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
             _this.entityLabels.sort((a, b) => a[KEY] != d[KEY] ? -1 : 1);
-            _this.showCloseCross(null, false);
-          }
-          cross.classed("vzb-transparent", !hidden);
-          if (!_this.options.SUPPRESS_HIGHLIGHT_DURING_PLAY || !_this.model.time.playing) {
+            d3.select(this).selectAll("." + _cssPrefix + "-label-x")
+              .classed("vzb-transparent", false);
+          })
+          .on("mouseout", function(d) {
+            if (utils.isTouchDevice()) return;
+            _this.model.marker.clearHighlighted();
+            d3.select(this).selectAll("." + _cssPrefix + "-label-x")
+              .classed("vzb-transparent", true);
+          })
+          .on("click", function(d) {
+            if (!utils.isTouchDevice()) return;
+            const cross = d3.select(this).selectAll("." + _cssPrefix + "-label-x");
+            const KEY = _this.KEY || _this.model.entities.getDimension();
+            const hidden = cross.classed("vzb-transparent");
             if (hidden) {
-              _this.model.marker.setHighlight(d);
-            } else {
-              _this.model.marker.clearHighlighted();
+              // hovered label should be on top of other labels: if "a" is not the hovered element "d", send "a" to the back
+              _this.entityLabels.sort((a, b) => a[KEY] != d[KEY] ? -1 : 1);
+              _this.showCloseCross(null, false);
             }
-          }
-        });
+            cross.classed("vzb-transparent", !hidden);
+            if (!_this.options.SUPPRESS_HIGHLIGHT_DURING_PLAY || !_this.model.time.playing) {
+              if (hidden) {
+                _this.model.marker.setHighlight(d);
+              } else {
+                _this.model.marker.clearHighlighted();
+              }
+            }
+          });
+      }
 
       return label;
     }
@@ -155,9 +161,9 @@ const label = function(context) {
 
 
     label._repositionLabels = _repositionLabels;
-    function _repositionLabels(d, i, labelContext, _X, _Y, _X0, _Y0, duration, showhide, lineGroup) {
+    function _repositionLabels(d, i, _cache, labelContext, _X, _Y, _X0, _Y0, duration, showhide, lineGroup) {
 
-      const cache = _this.cached[d[_this.KEY]];
+      const cache = _cache || _this.cached[d[_this.KEY]];
 
       const labelGroup = d3.select(labelContext);
 
@@ -172,24 +178,32 @@ const label = function(context) {
       const viewWidth = _this.context.width;
       const viewHeight = _this.context.height;
       const rectBBox = cache.rectBBox;
-      const width = rectBBox.width;
       const height = rectBBox.height;
+      const offsetX = cache.rectOffsetX;
+      const offsetY = cache.rectOffsetY;
 
       //apply limits so that the label doesn't stick out of the visible field
-      if (_X - width <= 0) { //check left
-        _X = width;
+      if (_X + rectBBox.x <= 0) { //check left
+        _X = -rectBBox.x;
         cache.labelX_ = (_X - _this.xScale(cache.labelX0)) / viewWidth;
-      } else if (_X + 5 > viewWidth) { //check right
-        _X = viewWidth - 5;
+      } else if (_X + offsetX > viewWidth) { //check right
+        _X = viewWidth - offsetX;
         cache.labelX_ = (_X - _this.xScale(cache.labelX0)) / viewWidth;
       }
-      if (_Y - height * 0.75 <= 0) { // check top
-        _Y = height * 0.75;
+      if (_Y + rectBBox.y <= 0) { // check top
+        _Y = -rectBBox.y;
         cache.labelY_ = (_Y - _this.yScale(cache.labelY0)) / viewHeight;
-      } else if (_Y + height * 0.35 > viewHeight) { //check bottom
-        _Y = viewHeight - height * 0.35;
+      } else if (_Y + offsetY > viewHeight) { //check bottom
+        _Y = viewHeight - offsetY;
         cache.labelY_ = (_Y - _this.yScale(cache.labelY0)) / viewHeight;
       }
+      // if (_Y - height * 0.75 <= 0) { // check top
+      //   _Y = height * 0.75;
+      //   cache.labelY_ = (_Y - _this.yScale(cache.labelY0)) / viewHeight;
+      // } else if (_Y + height * 0.35 > viewHeight) { //check bottom
+      //   _Y = viewHeight - height * 0.35;
+      //   cache.labelY_ = (_Y - _this.yScale(cache.labelY0)) / viewHeight;
+      // }
 
       if (duration == null) duration = _this.context.duration;
       if (cache._new) {
@@ -413,6 +427,7 @@ const Labels = Class.extend({
     this.updateIndicators();
     this.updateSize();
     this.selectDataPoints();
+    this._initLabelTooltip();
   },
 
   config(newOptions) {
@@ -552,11 +567,7 @@ const Labels = Class.extend({
 
 
       if (cached.scaledS0 == null || cached.labelX0 == null || cached.labelY0 == null) { //initialize label once
-        if (valueS || valueS === 0) cached.scaledS0 = utils.areaToRadius(this.context.sScale(valueS));
-        cached.labelX0 = valueX;
-        cached.labelY0 = valueY;
-        cached.valueLST = valueLST;
-        cached.scaledC0 = valueC != null ? this.context.cScale(valueC) : this.context.COLOR_WHITEISH;
+        this._initNewCache(cached, valueX, valueY, valueS, valueC, valueLST);
       }
 
       if (cached.labelX_ == null || cached.labelY_ == null)
@@ -583,17 +594,63 @@ const Labels = Class.extend({
           const text = labelGroup.selectAll("." + _cssPrefix + "-label-content")
             .text(valueL);
 
-          _this._updateLabelSize(d, index, labelGroup, valueLST, text);
+          _this._updateLabelSize(d, index, null, labelGroup, valueLST, text);
 
-          _this.positionLabel(d, index, this, duration, showhide, lineGroup);
+          _this.positionLabel(d, index, null, this, duration, showhide, lineGroup);
         });
     }
   },
 
-  _updateLabelSize(d, index, labelGroup, valueLST, text) {
+  _initNewCache(cached, valueX, valueY, valueS, valueC, valueLST) {
+    if (valueS || valueS === 0) cached.scaledS0 = utils.areaToRadius(this.context.sScale(valueS));
+    cached.labelX0 = valueX;
+    cached.labelY0 = valueY;
+    cached.valueLST = valueLST;
+    cached.scaledC0 = valueC != null ? this.context.cScale(valueC) : this.context.COLOR_WHITEISH;
+  },
+
+  _initLabelTooltip() {
+    this.tooltipEl = this.labelsContainer.append("g")
+      .attr("class", this.options.CSS_PREFIX + "-tooltip");
+  },
+
+  setTooltip(d, tooltipText, tooltipCache, labelValues) {
+    if (tooltipText) {
+      let position = 0;
+      const _cssPrefix = this.options.CSS_PREFIX;
+      this.tooltipEl.raise().text(null);
+      this.label(this.tooltipEl, true);
+      if (d) {
+        const cache = {};
+        this._initNewCache(cache, labelValues.valueX, labelValues.valueY, labelValues.valueS, labelValues.valueC, labelValues.valueLST);
+        this.tooltipEl
+          .classed(this.options.CSS_PREFIX + "-tooltip", false)
+          .classed(this.options.CSS_PREFIX + "-entity", true)
+          .selectAll("." + _cssPrefix + "-label-content")
+          .text(labelValues.labelText);
+        this._updateLabelSize(d, null, cache, this.tooltipEl, labelValues.valueLST);
+        position = this.positionLabel(d, null, cache, this.tooltipEl.node(), 0, null, this.tooltipEl.select(".lineemptygroup"));
+      }
+      this.tooltipEl
+        .classed(this.options.CSS_PREFIX + "-entity", false)
+        .classed(this.options.CSS_PREFIX + "-tooltip", true)
+        .selectAll("." + _cssPrefix + "-label-content")
+        .text(tooltipText);
+      this._updateLabelSize(d, null, tooltipCache, this.tooltipEl, null);
+      this.positionLabel(d, null, tooltipCache, this.tooltipEl.node(), 0, null, this.tooltipEl.select(".lineemptygroup"), position);
+    } else {
+      this.tooltipEl.text(null);
+    }
+  },
+
+  setTooltipFontSize(fontSize) {
+    this.tooltipEl.style("font-size", fontSize);
+  },
+
+  _updateLabelSize(d, index, cache, labelGroup, valueLST, text) {
     const _this = this;
     const KEY = this.KEY;
-    const cached = _this.cached[d[KEY]];
+    const cached = cache || _this.cached[d[KEY]];
 
 
     const _cssPrefix = this.options.CSS_PREFIX;
@@ -637,8 +694,8 @@ const Labels = Class.extend({
 
       //cache label bound rect for reposition
       cached.rectBBox = rect.node().getBBox();
-      //cached.moveX = 5;
-      //cached.moveY = contentBBox.height * .3;
+      cached.rectOffsetX = cached.rectBBox.width + cached.rectBBox.x;
+      cached.rectOffsetY = cached.rectBBox.height + cached.rectBBox.y;
     }
 
     const glowRect = labelGroup.select(".vzb-label-glow");
@@ -667,9 +724,9 @@ const Labels = Class.extend({
 
     this.entityLabels.each(function(d, index) {
       const cached = _this.cached[d[KEY]];
-      _this._updateLabelSize(d, index, d3.select(this), _this.context.frame.size_label[d[KEY]]);
+      _this._updateLabelSize(d, index, null, d3.select(this), _this.context.frame.size_label[d[KEY]]);
       const lineGroup = _this.entityLines.filter(f => f[KEY] == d[KEY]);
-      _this.positionLabel(d, index, this, 0, null, lineGroup);
+      _this.positionLabel(d, index, null, this, 0, null, lineGroup);
     });
   },
 
@@ -683,7 +740,7 @@ const Labels = Class.extend({
 
     this.entityLabels.filter(f => f[KEY] == d[KEY])
       .each(function(groupData) {
-        _this.positionLabel(d, index, this, 0, null, lineGroup);
+        _this.positionLabel(d, index, null, this, 0, null, lineGroup);
       });
   },
 
@@ -695,48 +752,103 @@ const Labels = Class.extend({
 
     const labelGroup = _this.entityLabels.filter(f => f[KEY] == d[KEY]);
 
-    _this._updateLabelSize(d, index, labelGroup, null);
+    _this._updateLabelSize(d, index, null, labelGroup, null);
 
   },
 
-  positionLabel(d, index, context, duration, showhide, lineGroup) {
+  positionLabel(d, index, cache, context, duration, showhide, lineGroup, position) {
     const KEY = this.KEY;
-    const cached = this.cached[d[KEY]];
+    const cached = cache || this.cached[d[KEY]];
 
+    const lockPosition = (position || position === 0);
+    const hPos = (position || 0) & 1;
+    const vPos = ((position || 0) & 2) >> 1;
+    let hPosNew = 0;
+    let vPosNew = 0;
     const viewWidth = this.context.width;
     const viewHeight = this.context.height;
 
     const resolvedX0 = this.xScale(cached.labelX0);
     const resolvedY0 = this.yScale(cached.labelY0);
 
+    const offsetX = cached.rectOffsetX;
+    const offsetY = cached.rectOffsetY;
+
     if (!cached.labelOffset) cached.labelOffset = [0, 0];
-    cached.labelX_ = cached.labelOffset[0] || (-cached.scaledS0 * 0.75 - 5) / viewWidth;
-    cached.labelY_ = cached.labelOffset[1] || (-cached.scaledS0 * 0.75 - 11) / viewHeight;
+
+    cached.labelX_ = cached.labelOffset[0] || (-cached.scaledS0 * 0.75 - offsetX) / viewWidth;
+    cached.labelY_ = cached.labelOffset[1] || (-cached.scaledS0 * 0.75 - offsetY) / viewHeight;
 
     //check default label position and switch to mirror position if position
     //does not bind to visible field
-
     let resolvedX = resolvedX0 + cached.labelX_ * viewWidth;
-    if (cached.labelOffset[0] == 0) {
-      if (resolvedX - cached.rectBBox.width <= 0) { //check left
-        cached.labelX_ = (cached.scaledS0 * 0.75 + cached.rectBBox.width) / viewWidth;
-        resolvedX = resolvedX0 + cached.labelX_ * viewWidth;
-      } else if (resolvedX + 15 > viewWidth) { //check right
-        cached.labelX_ = (viewWidth - 15 - resolvedX0) / viewWidth;
-        resolvedX = resolvedX0 + cached.labelX_ * viewWidth;
-      }
-    }
     let resolvedY = resolvedY0 + cached.labelY_ * viewHeight;
-    if (cached.labelOffset[1] == 0) {
-      if (resolvedY - cached.rectBBox.height <= 0) { // check top
-        cached.labelY_ = (cached.scaledS0 * 0.75 + cached.rectBBox.height) / viewHeight;
-        resolvedY = resolvedY0 + cached.labelY_ * viewHeight;
-      } else if (resolvedY + 10 > viewHeight) { //check bottom
-        cached.labelY_ = (viewHeight - 10 - resolvedY0) / viewHeight;
+    if (cached.labelOffset[0] + cached.labelOffset[1] == 0) {
+      if ((!lockPosition && (resolvedY - cached.rectBBox.height + offsetY <= 0)) || vPos) { // check top
+        vPosNew = 1;
+        cached.labelY_ = (cached.scaledS0 * 0.75 + cached.rectBBox.height - offsetY) / viewHeight;
         resolvedY = resolvedY0 + cached.labelY_ * viewHeight;
       }
+      //  else if (resolvedY + 10 > viewHeight) { //check bottom
+      //   cached.labelY_ = (viewHeight - 10 - resolvedY0) / viewHeight;
+      //   resolvedY = resolvedY0 + cached.labelY_ * viewHeight;
+      // }
+
+      if ((!lockPosition && (resolvedX - cached.rectBBox.width + offsetX <= 0)) || hPos) { //check left
+        hPosNew = 1;
+        cached.labelX_ = (cached.scaledS0 * 0.75 + cached.rectBBox.width - offsetX) / viewWidth;
+        resolvedX = resolvedX0 + cached.labelX_ * viewWidth;
+        if (resolvedX > viewWidth) {
+          hPosNew = 0;
+          vPosNew = (vPosNew == 0 && (resolvedY0 - offsetY * 0.5 - cached.scaledS0) < cached.rectBBox.height) ? 1 : vPosNew;
+          cached.labelY_ = vPosNew ? -offsetY * 0.5 + cached.rectBBox.height + cached.scaledS0 : -offsetY * 1.5 - cached.scaledS0;
+          cached.labelY_ /= viewHeight;
+          resolvedY = resolvedY0 + cached.labelY_ * viewHeight;
+          cached.labelX_ = (cached.rectBBox.width - offsetX - resolvedX0) / viewWidth;
+          resolvedX = resolvedX0 + cached.labelX_ * viewWidth;
+        }
+
+      }
+      //  else if (resolvedX + 15 > viewWidth) { //check right
+      //   cached.labelX_ = (viewWidth - 15 - resolvedX0) / viewWidth;
+      //   resolvedX = resolvedX0 + cached.labelX_ * viewWidth;
+      // }
     }
-    this.label._repositionLabels(d, index, context, resolvedX, resolvedY, resolvedX0, resolvedY0, duration, showhide, lineGroup);
+
+    if (lockPosition) {
+      let topCornerCase = false;
+      if (resolvedX - cached.rectBBox.width + offsetX <= 0) {
+        const deltaX = resolvedX0 - cached.rectBBox.width;
+        const deltaY = deltaX > 0 ? utils.cathetus(cached.scaledS0, deltaX) : cached.scaledS0;
+        resolvedY = vPosNew ?
+          resolvedY0 + cached.rectBBox.height - offsetY * 0.5 + deltaY
+          :
+          resolvedY0 - offsetY * 1.5 - deltaY;
+        if (resolvedY - cached.rectBBox.height < 0) {
+          topCornerCase = true;
+        }
+      }
+      if (resolvedY - cached.rectBBox.height + offsetY <= 0) {
+        const deltaY = resolvedY0 - cached.rectBBox.height;
+        const deltaX = deltaY > 0 ? utils.cathetus(cached.scaledS0, deltaY) : cached.scaledS0;
+        resolvedX = hPosNew ?
+          resolvedX0 + cached.rectBBox.width + deltaX
+          :
+          resolvedX0 - offsetX * 2 - deltaX;
+        if (resolvedX - cached.rectBBox.width < 0 || resolvedX > viewWidth) {
+          topCornerCase = true;
+        }
+      }
+      if (topCornerCase) {
+        vPosNew++;
+        const deltaX = resolvedX0 - cached.rectBBox.width;
+        resolvedY = resolvedY0 + cached.rectBBox.height - offsetY * 0.5 + (deltaX > 0 ? utils.cathetus(cached.scaledS0, deltaX) : cached.scaledS0);
+      }
+    }
+
+    this.label._repositionLabels(d, index, cache, context, resolvedX, resolvedY, resolvedX0, resolvedY0, duration, showhide, lineGroup);
+
+    return vPosNew * 2 + hPosNew;
   },
 
   updateSize() {

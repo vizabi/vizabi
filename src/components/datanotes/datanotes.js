@@ -12,7 +12,7 @@ const DataNotes = Component.extend({
 
     this.model_expects = [{
       name: "marker",
-      type: "model"
+      type: "marker"
     }, {
       name: "locale",
       type: "locale"

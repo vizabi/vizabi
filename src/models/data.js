@@ -61,7 +61,7 @@ const DataModel = Model.extend({
     // add waffle server specific query clauses if set
     if (this.dataset) query.dataset = this.dataset;
     if (this.version) query.version = this.version;
-    const dataId = DataStorage.getDataId(query, this.readerObject);
+    const dataId = DataStorage.getDataId(query, this.readerObject, parsers);
     if (dataId) {
       return Promise.resolve(dataId);
     }
@@ -76,7 +76,10 @@ const DataModel = Model.extend({
         EventSource.unfreezeAll();
         return dataId;
       })
-      .catch(error => this.handleLoadError(error, query));
+      .catch(error => {
+        EventSource.unfreezeAll();
+        this.handleLoadError(error, query);
+      });
   },
 
   getAsset(assetName, callback) {
@@ -248,9 +251,17 @@ const DataModel = Model.extend({
     return this.conceptDictionary;
   },
 
-  getConceptByIndex(index, type) {
-    //if(!concept && type == "measure") concept = this.conceptArray.filter(f => f.concept_type==="time")[0];
-    return this.conceptArray.filter(f => !type || !f.concept_type || f.concept_type === type)[index];
+  getConcept({ index: index = 0, type: type = null, includeOnlyIDs: includeOnlyIDs = [], excludeIDs: excludeIDs = [] } = { }) {
+    if (!type && includeOnlyIDs.length == 0 && excludeIDs.length == 0) {
+      return null;
+    }
+
+    const filtered = this.conceptArray.filter(f =>
+      (!type || !f.concept_type || f.concept_type === type)
+      && (includeOnlyIDs.length == 0 || includeOnlyIDs.indexOf(f.concept) !== -1)
+      && (excludeIDs.length == 0 || excludeIDs.indexOf(f.concept) == -1)
+    );
+    return filtered[index] || filtered[filtered.length - 1];
   },
 
   getDatasetName() {

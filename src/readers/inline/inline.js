@@ -16,7 +16,7 @@ const InlineReader = Reader.extend({
   load() {
     return Promise.resolve({
       columns: Object.keys(this._data[0]),
-      data: this._data
+      rows: this._data
     });
   },
 

@@ -10,6 +10,9 @@ const Reader = Class.extend({
   QUERY_FROM_CONCEPTS: "concepts",
   QUERY_FROM_DATAPOINTS: "datapoints",
   QUERY_FROM_ENTITIES: "entities",
+  SCHEMA_QUERY_FROM_CONCEPTS: "concepts.schema",
+  SCHEMA_QUERY_FROM_DATAPOINTS: "datapoints.schema",
+  SCHEMA_QUERY_FROM_ENTITIES: "entities.schema",
 
   CONDITION_CALLBACKS: {
     $gt: (configValue, rowValue) => rowValue > configValue,
@@ -40,12 +43,22 @@ const Reader = Class.extend({
       from
     } = query;
 
-    return this.load()
+    return this.load(parsers)
       .then(result => {
         const { rows, columns } = result;
         this.ensureDataIsCorrect(result, parsers);
 
         switch (true) {
+          case from === this.SCHEMA_QUERY_FROM_CONCEPTS:
+            return { key: ["concept"], value: "concept_type" };
+
+          case from === this.SCHEMA_QUERY_FROM_ENTITIES:
+            return columns.slice(0, this.keySize).map(key => ({ key: [key] }));
+
+          case from === this.SCHEMA_QUERY_FROM_DATAPOINTS: {
+            const key = columns.slice(0, this.keySize + 1);
+            return columns.slice(this.keySize + 1).map(value => ({ key, value }));
+          }
           case from === this.QUERY_FROM_CONCEPTS:
             return this._getConcepts(columns, this._mapRows(rows, query, parsers));
 
