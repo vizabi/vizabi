@@ -134,7 +134,7 @@ const DataModel = Model.extend({
       const collection = this.getData(dataId, "query").from.split(".")[0];
       this.dataAvailability[collection] = [];
       this.getData(dataId).forEach(kvPair => {
-        const key = (kvPair.key instanceof String ? JSON.parse(kvPair.key) : kvPair.key).sort(); // sort to get canonical form (can be removed when reader gives back canonical)
+        const key = (typeof kvPair.key === "string" ? JSON.parse(kvPair.key) : kvPair.key).sort(); // sort to get canonical form (can be removed when reader gives back canonical)
 
         this.dataAvailability[collection].push({
           key: new Set(key),
