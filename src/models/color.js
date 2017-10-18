@@ -192,9 +192,18 @@ const ColorModel = Hook.extend({
    * set color
    */
   setColor(value, pointer, persistent) {
-    const temp = this.getPalette();
-    temp[pointer] = value;
-    this.scale.range(utils.values(temp));
+    let newRange;
+    const palette = this.getPalette();
+    if (this.isDiscrete()) {
+      const paletteLength = Object.keys(palette).length;
+      const index = this.scale.domain().indexOf(pointer) % paletteLength;
+      newRange = this.scale.range();
+      newRange[index] = value;
+    } else {
+      palette[pointer] = value;
+      newRange = utils.values(palette);
+    }
+    this.scale.range(newRange);
     this.palette.set(pointer, value, persistent, persistent);
   },
 
