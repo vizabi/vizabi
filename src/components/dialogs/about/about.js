@@ -29,15 +29,15 @@ const About = Dialog.extend("about", {
     this.element.select(".vzb-about-text0")
       .html("This chart is made with Vizabi,");
     this.element.select(".vzb-about-text1")
-      .html("a project by <a href='http://gapminder.org'>Gapminder Foundation</a>");
+      .html("a project by <a href='http://gapminder.org' target='_blank'>Gapminder Foundation</a>");
     this.element.select(".vzb-about-version")
-      .html("<a href='https://github.com/Gapminder/vizabi/releases/tag/v" + version + "'>Version: " + version + "</a>");
+      .html("<a href='https://github.com/Gapminder/vizabi/releases/tag/v" + version + "' target='_blank'>Version: " + version + "</a>");
     this.element.select(".vzb-about-updated")
       .html("Build: " + d3.time.format("%Y-%m-%d at %H:%M")(updated));
     this.element.select(".vzb-about-report")
-      .html("<a href='https://getsatisfaction.com/gapminder/'>Report a problem</a>");
+      .html("<a href='https://getsatisfaction.com/gapminder/' target='_blank'>Report a problem</a>");
     this.element.select(".vzb-about-credits")
-      .html("<a href='https://github.com/Gapminder/vizabi/graphs/contributors'>Contributors</a>");
+      .html("<a href='https://github.com/Gapminder/vizabi/graphs/contributors' target='_blank'>Contributors</a>");
 
     //versions
     const data = Data;
