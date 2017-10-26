@@ -26,7 +26,7 @@ const formats = {
 
 const TimeModel = DataConnected.extend({
 
-  objectLeafs: ["autogenerate"],
+  objectLeafs: ["autoconfig"],
 
   /**
    * Default values for this model
@@ -115,10 +115,21 @@ const TimeModel = DataConnected.extend({
     this.validateFormatting();
   },
 
+  preloadData() {
+    this.dataSource = this.getClosestModel(this.data || "data");
+    return this._super();
+  },
+
   afterPreload() {
-    if (this.dim == null && this.autogenerate) {
-      const dataSource = this.getClosestModel(this.autogenerate.data);
-      this.dim = dataSource.getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType).concept;
+    this.autoconfigureModel();
+  },
+
+  autoconfigureModel() {
+    if (!this.dim && this.autoconfig) {
+      const concept = this.dataSource.getConcept(this.autoconfig);
+
+      if (concept) this.dim = concept.concept;
+      utils.printAutoconfigResult(this);
     }
   },
 
@@ -544,6 +555,7 @@ function quarterFormat() {
   };
 
   const formatQuarter = function(d) {
+    if (!(d instanceof Date)) d = new Date(+d);
     return ((d.getUTCMonth() / 3) | 0) + 1;
   };
 

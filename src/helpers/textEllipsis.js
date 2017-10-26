@@ -17,7 +17,7 @@ const TextEllipsis = Class.extend({
       mouseOver() {
         const evt = d3.event;
         const mouse = d3.mouse(_this.context.element.node());
-        _this._setTooltip(d3.select(evt.srcElement).attr("data-text"), mouse[0], mouse[1]);
+        _this._setTooltip(d3.select(evt.target).attr("data-text"), mouse[0], mouse[1]);
       },
       mouseOut() {
         _this._setTooltip();

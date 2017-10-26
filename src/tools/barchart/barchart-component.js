@@ -26,7 +26,7 @@ const BarComponent = Component.extend({
       type: "entities"
     }, {
       name: "marker",
-      type: "model"
+      type: "marker"
     }, {
       name: "locale",
       type: "locale"

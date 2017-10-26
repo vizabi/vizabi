@@ -60,7 +60,7 @@ const DataModel = Model.extend({
     // add waffle server specific query clauses if set
     if (this.dataset) query.dataset = this.dataset;
     if (this.version) query.version = this.version;
-    const dataId = DataStorage.getDataId(query, this.readerObject);
+    const dataId = DataStorage.getDataId(query, this.readerObject, parsers);
     if (dataId) {
       return Promise.resolve(dataId);
     }
@@ -75,7 +75,10 @@ const DataModel = Model.extend({
         EventSource.unfreezeAll();
         return dataId;
       })
-      .catch(error => this.handleLoadError(error, query));
+      .catch(error => {
+        EventSource.unfreezeAll();
+        this.handleLoadError(error, query);
+      });
   },
 
   getAsset(assetName, callback) {
@@ -116,7 +119,8 @@ const DataModel = Model.extend({
           "interpolation",
           "tags",
           "name",
-          "unit",
+          "name_short",
+          "name_catalog",
           "description",
           "format"
         ]
@@ -126,7 +130,11 @@ const DataModel = Model.extend({
       language: this.getClosestModel("locale").id,
     };
 
-    return this.load(query)
+    const timeModel = this._root.state.time;
+    const parsers = {};
+    parsers[timeModel.getDimensionOrWhich() || timeModel._type] = timeModel.getParser();
+
+    return this.load(query, parsers)
       .then(this.handleConceptPropsResponse.bind(this))
       .catch(error => this.handleLoadError(error, query));
 
@@ -178,7 +186,8 @@ const DataModel = Model.extend({
       concept["tags"] = d.tags;
       concept["format"] = d.format;
       concept["name"] = d.name || d.concept || "";
-      concept["unit"] = d.unit || "";
+      concept["name_catalog"] = d.name_catalog || "";
+      concept["name_short"] = d.name_short || d.name || d.concept || "";
       concept["description"] = d.description;
       this.conceptDictionary[d.concept] = concept;
       this.conceptArray.push(concept);
@@ -192,9 +201,17 @@ const DataModel = Model.extend({
       this.conceptDictionary;
   },
 
-  getConceptByIndex(index, type) {
-    //if(!concept && type == "measure") concept = this.conceptArray.filter(f => f.concept_type==="time")[0];
-    return this.conceptArray.filter(f => !type || !f.concept_type || f.concept_type === type)[index];
+  getConcept({ index: index = 0, type: type = null, includeOnlyIDs: includeOnlyIDs = [], excludeIDs: excludeIDs = [] } = { }) {
+    if (!type && includeOnlyIDs.length == 0 && excludeIDs.length == 0) {
+      return null;
+    }
+
+    const filtered = this.conceptArray.filter(f =>
+      (!type || !f.concept_type || f.concept_type === type)
+      && (includeOnlyIDs.length == 0 || includeOnlyIDs.indexOf(f.concept) !== -1)
+      && (excludeIDs.length == 0 || excludeIDs.indexOf(f.concept) == -1)
+    );
+    return filtered[index] || filtered[filtered.length - 1];
   },
 
   getDatasetName() {

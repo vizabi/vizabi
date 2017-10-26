@@ -21,7 +21,7 @@ const DonutComponent = Component.extend("donut", {
       type: "time"
     }, {
       name: "marker",
-      type: "model"
+      type: "marker"
     }];
 
     //bind the function updateTime() to the change of time value in the model

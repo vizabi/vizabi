@@ -334,7 +334,7 @@ export default function axisSmart(_orient) {
         options.scaleType != "genericLog" &&
         options.scaleType != "log" &&
         options.scaleType != "ordinal") {
-        return axis.ticks(ticksNumber)
+        return axis.ticks(options.limitMaxTickNumber)
           .tickFormat(null)
           .tickValues(null)
           .tickValuesMinor(null)
