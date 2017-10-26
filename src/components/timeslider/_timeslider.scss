@@ -303,10 +303,6 @@ $vzb-ts-value-width: 40px;
       .vzb-ts-btns {
         @include position(absolute, 0 0 5px 5px);
       }
-      .vzb-ts-slider-wrapper {
-        //$pos-left: $vzb-ts-btn-area + 10;
-        //@include position(absolute, 0 0 5px $pos-left);
-      }
     }
   }
 }

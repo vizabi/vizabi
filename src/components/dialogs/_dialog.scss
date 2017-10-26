@@ -108,7 +108,7 @@ $vzb-dialog-content-height: 250px;
         margin: 0;
       }
 
-      &:not(:focus) ~ button[type=reset]{
+      &:not(:focus) ~ button[type=reset] {
         visibility: hidden;
       }
 
@@ -122,8 +122,8 @@ $vzb-dialog-content-height: 250px;
         width: 10px;
         margin-left: -18px;
         padding: 3px 1px;
-        border: none;
-        outline:none;
+        border: 0;
+        outline: none;
         color: $vzb-color-primary-dark;
         background: $vzb-color-white;
         transition: visibility 0.1s;
@@ -141,7 +141,7 @@ $vzb-dialog-content-height: 250px;
         }
       }
 
-      &:not(:valid) ~ button[type=reset]{
+      &:not(:valid) ~ button[type=reset] {
         visibility: hidden;
       }
     }
