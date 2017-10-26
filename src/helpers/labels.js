@@ -388,15 +388,8 @@ const Labels = Class.extend({
     //this.updateLabelsOnlyTextSize();
   },
 
-<<<<<<< HEAD
-  readyOnce: function() {
-    if(this._readyRace) return;
-
-    var _this = this;
-=======
   readyOnce() {
     const _this = this;
->>>>>>> release/v0.19.1
 
     this.model = this.context.model;
 
@@ -557,22 +550,10 @@ const Labels = Class.extend({
     labels.classed("vzb-highlighted", highlight);
   },
 
-<<<<<<< HEAD
-  updateLabel: function(d, index, cache, valueX, valueY, valueS, valueC, valueL, valueLST, duration, showhide) {
-    if(!this._readyOnce) {
-      this.readyOnce(); //run readyOnce if tool component is ready but labels component is not ready
-      this._readyRace = true;
-    }
-  
-    var _this = this;
-    var KEY = this.KEY;
-    if(d[KEY] == _this.druging)
-=======
   updateLabel(d, index, cache, valueX, valueY, valueS, valueC, valueL, valueLST, duration, showhide) {
     const _this = this;
     const KEY = this.KEY;
     if (d[KEY] == _this.druging)
->>>>>>> release/v0.19.1
       return;
 
     const _cssPrefix = this.options.CSS_PREFIX;
