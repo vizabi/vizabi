@@ -99,6 +99,10 @@ const Find = Dialog.extend("find", {
       _this.showHideSearch();
     });
 
+    d3.select(this.input_search.node().parentNode).on("reset", () => {
+      utils.defer(() => _this.showHideSearch());
+    });
+
     this.deselect_all.on("click", () => {
       _this.deselectMarkers();
     });

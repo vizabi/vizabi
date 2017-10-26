@@ -86,21 +86,63 @@ $vzb-dialog-content-height: 250px;
 
     input[type=search] {
       @include rtl {
-        padding-left: 1px;
+        padding-left: 14px;
         padding-right: 9px;
       }
       -webkit-appearance: none;
-      padding-right: 1px;
+      -moz-appearance: none;
+      display: inline-block;
+      padding-right: 14px;
+      box-shadow: none;
+
+      &::-webkit-search-cancel-button,
       &::-webkit-search-decoration {
         -webkit-appearance: none;
       }
-      &::-ms-value {
-        margin-right: 8px;
+      &::-webkit-search-cancel-button {
+        margin: 0;
       }
-      &:focus {
-        &::-ms-value {
-          margin-right: 0;
+
+      &::-ms-clear {
+        display: none;
+        margin: 0;
+      }
+
+      &:not(:focus) ~ button[type=reset] {
+        visibility: hidden;
+      }
+
+      ~ button[type=reset] {
+        @include rtl {
+          margin-left: 0;
+          margin-right: -18px;
         }
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        width: 10px;
+        margin-left: -18px;
+        padding: 3px 1px;
+        border: 0;
+        outline: none;
+        color: $vzb-color-primary-dark;
+        background: $vzb-color-white;
+        transition: visibility 0.1s;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 900;
+        opacity: 0.7;
+        &:hover {
+          opacity: 1;
+          visibility: visible;
+        }
+        &::after {
+          content: "✕";
+          position: relative;
+        }
+      }
+
+      &:not(:valid) ~ button[type=reset] {
+        visibility: hidden;
       }
     }
 
