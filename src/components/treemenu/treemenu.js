@@ -753,7 +753,7 @@ const TreeMenu = Component.extend({
       const entry = kvPair.value;
       //if entry's tag are empty don't include it in the menu
       if (entry.tags == "_none") return;
-      if (!entry.tags) entry.tags = datasetName || UNCLASSIFIED;
+      if (!entry.tags) entry.tags = kvPair.dataSource.getDatasetName() || UNCLASSIFIED;
       const concept = { id: entry.concept, name: entry.name, name_catalog: entry.name_catalog, description: entry.description, dataSource: kvPair.dataSource._name };
 
       if (properties && kvPair.key.length == 1) {
@@ -779,7 +779,7 @@ const TreeMenu = Component.extend({
               console.groupCollapsed("Some tags were not found, so indicators went under 'Unclassified' menu");
               _this.consoleGroupOpen = true;
             }
-            utils.warn("tag '" + tag + "' for indicator '" + id + "'");
+            utils.warn("tag '" + tag + "' for indicator '" + concept.id + "'");
             tags[UNCLASSIFIED].children.push(concept);
           }
         });

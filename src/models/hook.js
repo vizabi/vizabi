@@ -590,7 +590,7 @@ const Hook = DataConnected.extend({
     // validate scale type: only makes sense if which is defined
     if (this.which) {
       const { scaleType } = this;
-      let { scales = [] } = this.getConceptprops();
+      let { scales = [] } = this.getConceptprops() || {};
       if (this.allow && this.allow.scales && this.allow.scales.length > 0) {
         scales = scales.filter(val => this.allow.scales.indexOf(val) != -1);
       }
