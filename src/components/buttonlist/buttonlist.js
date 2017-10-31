@@ -166,6 +166,8 @@ const ButtonList = Component.extend({
         // _this.entitiesSelected_1 = _this.model.state.marker.select.length > 0;
       },
       "change:ui.chart": function(evt, path) {
+        if (!_this._readyOnce) return;
+
         if (path.indexOf("lockActive") > -1 || path.indexOf("lockUnavailable") > -1) {
           _this.setBubbleLock();
         }
@@ -178,6 +180,7 @@ const ButtonList = Component.extend({
       const button = _this._available_buttons[buttonId];
       if (button && button.statebind) {
         _this.model_binds["change:" + button.statebind] = function(evt) {
+          if (!_this._readyOnce) return;
           button.statebindfunc(buttonId, evt.source.value);
         };
       }
