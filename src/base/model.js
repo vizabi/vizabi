@@ -110,7 +110,13 @@ const Model = EventSource.extend({
     // initial values
     // add defaults to initialValues
     const initialValues = utils.deepExtend({}, this.getClassDefaults(), values);
+
+    // freeze model before set initial values to prevent unfroze of submodels
+    this.freeze();
+
     this.set(initialValues);
+
+    this.clearFrozen();
 
     // bind initial events
     // bind after setting, so no events are fired by setting initial values
