@@ -6,12 +6,12 @@
 
   .vzb-treemenu-background {
     background-color: $vzb-color-grey-lightest;
-    opacity: .4;
+    opacity: 0.4;
     width: 100%;
     height: 100%;
   }
   .vzb-treemenu-wrap-outer {
-    @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, .24));
+    @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, 0.24));
     position: absolute;
     background-color: #fff;
     border-top: 1px solid #f7f7f7;
@@ -50,7 +50,7 @@
         right: -15px;
         .vzb-treemenu-close-icon {
           fill: $vzb-color-primary;
-          fill-opacity: .7;
+          fill-opacity: 0.7;
           width: 25px;
           height: 25px;
           cursor: pointer;
@@ -127,14 +127,14 @@
         @include box-sizing(border-box);
         width: 100%;
         display: block;
-        border: 1px solid rgba($vzb-color-grey, .4);
+        border: 1px solid rgba($vzb-color-grey, 0.4);
         padding: 9px;
         outline: none;
         font-size: $vzb-font-size-small;
         font-family: $vzb-font-family-alt;
 
         &:focus {
-          border: 1px solid rgba($vzb-color-grey, .6);
+          border: 1px solid rgba($vzb-color-grey, 0.6);
         }
         + .vzb-treemenu-list {
           position: relative;
@@ -317,7 +317,7 @@
         }
 
         &.vzb-treemenu-horizontal {
-          @include box-shadow(4px, 8px, 15px, rgba(0, 0, 0, .2));
+          @include box-shadow(4px, 8px, 15px, rgba(0, 0, 0, 0.2));
           width: 0;
           top: 0;
           bottom: 0;
@@ -392,10 +392,6 @@
         }
       }
 
-      .vzb-treemenu-list.active,
-      .vzb-treemenu-list-top {
-        //overflow-y: scroll;
-      }
       .vzb-treemenu-list-item {
         padding: 5px 0;
         background-color: $vzb-color-white;
@@ -407,6 +403,11 @@
 
         &:hover {
           background-color: $vzb-color-grey-light;
+          > .vzb-treemenu-list-item-label {
+            span {
+              text-overflow: clip;
+            }
+          }
         }
         &.item-active:not(.vzb-treemenu-list-item-children) {
           > span {
@@ -426,6 +427,7 @@
             }
             left: 0 !important;
             right: auto !important;
+            width: auto !important;
             //text-overflow: ellipsis;
           }
         }
@@ -462,6 +464,11 @@
         font-size: $vzb-font-size-small;
         font-family: $vzb-font-family-alt;
         span {
+          @include rtl {
+            padding-right: 0;
+            padding-left: 1px;
+          }
+          padding-right: 1px;
           display: block;
           position: relative;
           overflow: hidden;

@@ -30,16 +30,14 @@ const AxisModel = Hook.extend({
     return utils.deepExtend(this._super(), defaults);
   },
 
-  autoGenerateModel() {
-    if (this.which == null && this.autogenerate) {
+  autoconfigureModel() {
+    if (!this.which && this.autoconfig) {
 
-      let concept = this.dataSource.getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType);
+      const concept = this.dataSource.getConcept(this.autoconfig)
+        || this.dataSource.getConcept({ type: "time" });
 
-      if (!concept) {
-        concept = this.dataSource.getConceptByIndex(0, "time");
-      }
-
-      this.which = concept.concept;
+      if (concept) this.which = concept.concept;
+      utils.printAutoconfigResult(this);
     }
   },
 
@@ -72,12 +70,12 @@ const AxisModel = Hook.extend({
 
       const timeMdl = this._space.time;
       const limits = timeMdl.splash ?
-          { min: timeMdl.parse(timeMdl.startOrigin), max: timeMdl.parse(timeMdl.endOrigin) }
-          :
-          { min: timeMdl.start, max: timeMdl.end };
+        { min: timeMdl.parse(timeMdl.startOrigin), max: timeMdl.parse(timeMdl.endOrigin) }
+        :
+        { min: timeMdl.start, max: timeMdl.end };
 
       domain = [limits.min, limits.max];
-      this.scale = d3.time.scale.utc().domain(domain);
+      this.scale = d3.scaleUtc().domain(domain);
 
     } else {
 
@@ -93,7 +91,10 @@ const AxisModel = Hook.extend({
       }
 
       scaleType = (d3.min(domain) <= 0 && d3.max(domain) >= 0 && scaleType === "log") ? "genericLog" : scaleType;
-      this.scale = d3.scale[(scaleType === "ordinal" ? "point" : scaleType) || "linear"]().domain(domain);
+
+      const _scaleType = (scaleType === "ordinal" ? "point" : scaleType) || "linear";
+      this.scale = d3[`scale${utils.capitalize(_scaleType)}`]()
+        .domain(domain);
     }
 
     this.scaleType = scaleType;

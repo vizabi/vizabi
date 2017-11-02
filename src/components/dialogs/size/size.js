@@ -2,7 +2,7 @@ import * as utils from "base/utils";
 import Component from "base/component";
 import Dialog from "components/dialogs/_dialog";
 
-import bubblesize from "components/bubblesize/bubblesize";
+import bubblesize from "components/brushslider/bubblesize/bubblesize";
 import indicatorpicker from "components/indicatorpicker/indicatorpicker";
 /*
  * Size dialog
@@ -18,7 +18,7 @@ const Size = Dialog.extend("size", {
   init(config, parent) {
     this.name = "size";
 
-  // in dialog, this.model_expects = ["state", "ui", "locale"];
+    // in dialog, this.model_expects = ["state", "ui", "locale"];
 
     this.components = [
       {
@@ -29,8 +29,8 @@ const Size = Dialog.extend("size", {
       }
     ];
 
-  // config.ui is same as this.model.ui here but this.model.ui is not yet available because constructor hasn't been called.
-  // can't call constructor earlier because this.components needs to be complete before calling constructor
+    // config.ui is same as this.model.ui here but this.model.ui is not yet available because constructor hasn't been called.
+    // can't call constructor earlier because this.components needs to be complete before calling constructor
     if (!config.ui.chart || config.ui.chart.sizeSelectorActive !== 0) {
       this.components.push({
         component: bubblesize,

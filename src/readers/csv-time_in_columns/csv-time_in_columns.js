@@ -1,56 +1,69 @@
 import CSVReader from "readers/csv/csv";
-import { isNumber } from "base/utils";
+import { isNumber, warn, capitalize } from "base/utils";
 
 const CSVTimeInColumnsReader = CSVReader.extend({
+
+  MISSED_INDICATOR_NAME: "indicator",
 
   _name: "csv-time_in_columns",
 
   init(readerInfo) {
     this._super(readerInfo);
     this.timeKey = "time";
+
+    Object.assign(this.ERRORS, {
+      REPEATED_KEYS: "reader/error/repeatedKeys"
+    });
   },
 
-  load() {
+  load(parsers) {
     return this._super()
-      .then(({ data, columns }) => {
-        const indicatorKey = columns[this.keySize];
+      .then(({ rows, columns }) => {
+        const missedIndicator = parsers[this.timeKey] && !!parsers[this.timeKey](columns[this.keySize]);
+        if (missedIndicator) warn("Indicator column is missed.");
+        const indicatorKey = missedIndicator ? this.MISSED_INDICATOR_NAME : columns[this.keySize];
 
-        const concepts = data.reduce((result, row) => {
-          Object.keys(row).forEach(concept => {
-            concept = concept === indicatorKey ? row[indicatorKey] : concept;
-
-            if (Number(concept) != concept && !result.includes(concept)) {
-              result.push(concept);
-            }
-          });
-
+        const concepts = columns.slice(0, this.keySize).concat(missedIndicator ? capitalize(this.MISSED_INDICATOR_NAME) : rows.reduce((result, row) => {
+          const concept = row[indicatorKey];
+          if (!result.includes(concept) && concept) {
+            result.push(concept);
+          }
           return result;
-        }, []);
-        concepts.splice(1, 0, this.timeKey);
+        }, []));
+        concepts.splice(this.keySize, 0, this.timeKey);
 
-        const indicators = concepts.slice(2);
+        const indicators = concepts.slice(this.keySize + 1);
         const [entityDomain] = concepts;
         return {
           columns: concepts,
-          data: data.reduce((result, row) => {
+          rows: rows.reduce((result, row) => {
             const resultRows = result.filter(resultRow => resultRow[entityDomain] === row[entityDomain]);
+
             if (resultRows.length) {
+              if (resultRows[0][row[indicatorKey]] !== null) {
+                throw this.error(this.ERRORS.REPEATED_KEYS, undefined, {
+                  indicator: row[indicatorKey],
+                  key: row[entityDomain]
+                });
+              }
               resultRows.forEach(resultRow => {
                 resultRow[row[indicatorKey]] = row[resultRow[this.timeKey]];
               });
             } else {
               Object.keys(row).forEach(key => {
                 if (![entityDomain, indicatorKey].includes(key)) {
-                  result.push(
-                    Object.assign({
-                      [entityDomain]: row[entityDomain],
-                      [this.timeKey]: key,
-                    }, indicators.reduce((result, indicator) => {
-                      result[indicator] = row[indicatorKey] === indicator ? row[key] : null;
-                      return result;
-                    }, {})
-                    )
-                  );
+
+                  const domainAndTime = {
+                    [entityDomain]: row[entityDomain],
+                    [this.timeKey]: key,
+                  };
+
+                  const indicatorsObject = indicators.reduce((result, indicator) => {
+                    result[indicator] = missedIndicator || row[indicatorKey] === indicator ? row[key] : null;
+                    return result;
+                  }, {});
+
+                  result.push(Object.assign(domainAndTime, indicatorsObject));
                 }
               });
             }

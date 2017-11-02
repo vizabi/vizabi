@@ -11,6 +11,7 @@ const Marker = Model.extend({
     const defaults = {
       select: [],
       highlight: [],
+      superHighlight: [],
       opacityHighlightDim: 0.1,
       opacitySelectDim: 0.3,
       opacityRegular: 1,
@@ -23,10 +24,10 @@ const Marker = Model.extend({
   init(name, value, parent, binds, persistent) {
     const _this = this;
 
+    this._type = "marker";
     this._visible = [];
 
     this._super(name, value, parent, binds, persistent);
-    this.on("ready", this.checkTimeLimits.bind(this));
     this.on("readyOnce", () => {
       const exceptions = { exceptType: "time" };
       const allDimensions = _this._getAllDimensions(exceptions);
@@ -139,6 +140,21 @@ const Marker = Model.extend({
     this.getModelObject("highlight").set(arg, false, false); // highlights are always non persistent changes
   },
 
+  setSuperHighlight(value) {
+    this.getModelObject("superHighlight")
+      .set(utils.isArray(value) ? value : [value], false, false);
+  },
+
+  clearSuperHighlighted() {
+    this.setSuperHighlight([]);
+  },
+
+  isSuperHighlighted(d) {
+    const value = JSON.stringify(this._createValue(d));
+
+    return ~this.superHighlight.findIndex(d => JSON.stringify(d) === value);
+  },
+
   setSelect(arg) {
     if (!utils.isArray(arg)) {
       this.setSelect([].concat(arg));
@@ -202,37 +218,6 @@ const Marker = Model.extend({
     this.set("select", this.select, true);
   },
 
-  checkTimeLimits() {
-
-    const time = this._parent.time;
-
-    if (!time) return;
-
-    const tLimits = this.getTimeLimits();
-
-    if (!tLimits) return;
-    if (!utils.isDate(tLimits.min) || !utils.isDate(tLimits.max))
-      return utils.warn("checkTimeLimits(): min-max look wrong: " + tLimits.min + " " + tLimits.max + ". Expecting Date objects. Ensure that time is properly parsed in the data from reader");
-
-    // change start and end (but keep startOrigin and endOrigin for furhter requests)
-    const newTime = {};
-    if (time.start - tLimits.min != 0 || !time.start && !this.startOrigin) newTime["start"] = d3.max([tLimits.min, time.parse(time.startOrigin)]);
-    if (time.end - tLimits.max != 0 || !time.end && !this.endOrigin) newTime["end"] = d3.min([tLimits.max, time.parse(time.endOrigin)]);
-
-    time.set(newTime, false, false);
-
-    if (newTime.start || newTime.end) {
-      utils.forEach(this.getSubhooks(), hook => {
-        if (hook.which == "time") {
-          hook.buildScale();
-        }
-      });
-    }
-
-    //force time validation because time.value might now fall outside of start-end
-    time.validate();
-  },
-
   /**
    * Gets the narrowest limits of the subhooks with respect to the provided data column
    * @param {String} attr parameter (data column)
@@ -248,17 +233,17 @@ const Marker = Model.extend({
     if (!this.cachedTimeLimits) this.cachedTimeLimits = {};
     utils.forEach(this.getSubhooks(), hook => {
 
-        //only indicators depend on time and therefore influence the limits
-      if (hook.use !== "indicator" || !hook._important) return;
+      //only indicators depend on time and therefore influence the limits
+      if (hook.use !== "indicator" || !hook._important || !hook._dataId) return;
 
       const cachedLimits = _this.cachedTimeLimits[hook._dataId + hook.which];
 
       if (cachedLimits) {
-            //if already calculated the limits then no ned to do it again
+        //if already calculated the limits then no ned to do it again
         min = cachedLimits.min;
         max = cachedLimits.max;
       } else {
-            //otherwise calculate own date limits (a costly operation)
+        //otherwise calculate own date limits (a costly operation)
         items = hook.getValidItems().map(m => m[time.getDimension()]);
         if (items.length == 0) utils.warn("getTimeLimits() was unable to work with an empty array of valid datapoints");
         min = d3.min(items);
@@ -277,7 +262,7 @@ const Marker = Model.extend({
       resultMax = d3.max(maxArray);
     }
 
-      //return false for the case when neither of hooks was an "indicator" or "important"
+    //return false for the case when neither of hooks was an "indicator" or "important"
     return !min && !max ? false : { min: resultMin, max: resultMax };
   },
 
@@ -361,11 +346,11 @@ const Marker = Model.extend({
 
     utils.forEach(this._dataCube || this.getSubhooks(true), (hook, name) => {
 
-            // If hook use is constant, then we can provide no additional info about keys
-            // We can just hope that we have something else than constants =)
+      // If hook use is constant, then we can provide no additional info about keys
+      // We can just hope that we have something else than constants =)
       if (hook.use === "constant") return;
 
-            // Get keys in data of this hook
+      // Get keys in data of this hook
       const nested = hook.getNestedItems([KEY, TIME]);
       const noDataPoints = hook.getHaveNoDataPointsPerKey();
 
@@ -378,10 +363,10 @@ const Marker = Model.extend({
         const _grouping = grouping.grouping;
         keys = keys.filter(key => (+key % _grouping) === 0);
       }
-            // If ain't got nothing yet, set the list of keys to result
+      // If ain't got nothing yet, set the list of keys to result
       if (resultKeys.length == 0) resultKeys = keys;
 
-            // Remove the keys from it that are not in this hook
+      // Remove the keys from it that are not in this hook
       if (hook._important) resultKeys = resultKeys.filter(f => keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1);
     });
     return resultKeys.map(d => { const r = {}; r[KEY] = d; return r; });
@@ -501,26 +486,26 @@ const Marker = Model.extend({
    * @return null
    */
   getFrame(time, cb, keys) {
-      //keys = null;
+    //keys = null;
     const _this = this;
     if (!this.cachedFrames) this.cachedFrames = {};
 
     const steps = this._parent.time.getAllSteps();
-      // try to get frame from cache without keys
+    // try to get frame from cache without keys
     let cachePath = this._getCachePath();
     if (!cachePath) return cb(null, time);
     if (time && _this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
-        // if it does, then return that frame directly and stop here
-        //QUESTION: can we call the callback and return the frame? this will allow callbackless API too
+      // if it does, then return that frame directly and stop here
+      //QUESTION: can we call the callback and return the frame? this will allow callbackless API too
       return cb(_this.cachedFrames[cachePath][time], time);
     }
     cachePath = this._getCachePath(keys);
     if (!cachePath) return cb(null, time);
 
-      // check if the requested time point has a cached animation frame
+    // check if the requested time point has a cached animation frame
     if (time && _this.cachedFrames[cachePath] && _this.cachedFrames[cachePath][time]) {
-        // if it does, then return that frame directly and stop here
-        //QUESTION: can we call the callback and return the frame? this will allow callbackless API too
+      // if it does, then return that frame directly and stop here
+      //QUESTION: can we call the callback and return the frame? this will allow callbackless API too
       return cb(_this.cachedFrames[cachePath][time], time);
     }
 
@@ -567,26 +552,27 @@ const Marker = Model.extend({
     const _this = this;
 
     if (nextFrameIndex == 0) {
-        //getFrame makes sure the frane is ready because a frame with non-existing data might be adressed
+      //getFrame makes sure the frane is ready because a frame with non-existing data might be adressed
       this.getFrame(steps[nextFrameIndex], values => cb(values), keys);
     } else {
       const prevFrameTime = steps[nextFrameIndex - 1];
       const nextFrameTime = steps[nextFrameIndex];
 
-        //getFrame makes sure the frane is ready because a frame with non-existing data might be adressed
+      //getFrame makes sure the frane is ready because a frame with non-existing data might be adressed
       this.getFrame(prevFrameTime, pValues => {
         _this.getFrame(nextFrameTime, nValues => {
           const fraction = (time - prevFrameTime) / (nextFrameTime - prevFrameTime);
           const dataBetweenFrames = {};
 
-            //loop across the hooks
+          //loop across the hooks
           utils.forEach(pValues, (values, hook) => {
             dataBetweenFrames[hook] = {};
 
-            if (_this._multiDim && _this[hook].use == "indicator") {
+            if (_this._multiDim && _this[hook].use == "indicator" && _this[hook].which !== _this._getFirstDimension({ type: "time" })) {
               const hookDataBF = dataBetweenFrames[hook];
-              const TIME = _this[hook].dataSource._collection[_this[hook]._dataId].query.animatable;
-              const KEY = _this[hook].dataSource._collection[_this[hook]._dataId].query.select.key.slice(0);
+              const query = _this[hook].dataSource.getData(_this[hook]._dataId, "query");
+              const TIME = query.animatable;
+              const KEY = query.select.key.slice(0);
               if (TIME && KEY.indexOf(TIME) != -1) KEY.splice(KEY.indexOf(TIME), 1);
 
               const lastIndex = KEY.length - 1;
@@ -612,16 +598,16 @@ const Marker = Model.extend({
               iterateKeys(null, null, null, values, nValues[hook], 0);
 
             } else {
-                //loop across the entities
+              //loop across the entities
               utils.forEach(values, (val1, key) => {
                 const val2 = nValues[hook][key];
                 if (utils.isDate(val1)) {
                   dataBetweenFrames[hook][key] = time;
                 } else if (!utils.isNumber(val1)) {
-                    //we can be interpolating string values
+                  //we can be interpolating string values
                   dataBetweenFrames[hook][key] = val1;
                 } else {
-                    //interpolation between number and null should rerurn null, not a value in between (#1350)
+                  //interpolation between number and null should rerurn null, not a value in between (#1350)
                   dataBetweenFrames[hook][key] = (val1 == null || val2 == null) ? null : val1 + ((val2 - val1) * fraction);
                 }
               });
@@ -634,10 +620,10 @@ const Marker = Model.extend({
             if (utils.isDate(val1)) {
               lastKeyObject[lastKey] = time;
             } else if (!utils.isNumber(val1)) {
-                //we can be interpolating string values
+              //we can be interpolating string values
               lastKeyObject[lastKey] = val1;
             } else {
-                //interpolation between number and null should rerurn null, not a value in between (#1350)
+              //interpolation between number and null should rerurn null, not a value in between (#1350)
               lastKeyObject[lastKey] = (val1 == null || val2 == null) ? null : val1 + ((val2 - val1) * fraction);
             }
           }
@@ -657,29 +643,29 @@ const Marker = Model.extend({
     if (!this.frameQueues) this.frameQueues = {}; //static queue of frames
     if (!this.partialResult) this.partialResult = {};
 
-      //array of steps -- names of all frames
+    //array of steps -- names of all frames
     const steps = this._parent.time.getAllSteps();
 
     const cachePath = this._getCachePath(selected);
     if (!cachePath) return new Promise((resolve, reject) => { resolve(); });
-      //if the collection of frames for this data cube is not scheduled yet (otherwise no need to repeat calculation)
+    //if the collection of frames for this data cube is not scheduled yet (otherwise no need to repeat calculation)
     if (!this.frameQueues[cachePath] || !(this.frameQueues[cachePath] instanceof Promise)) {
 
-        //this is a promise nobody listens to - it prepares all the frames we need without forcing any
+      //this is a promise nobody listens to - it prepares all the frames we need without forcing any
       this.frameQueues[cachePath] = new Promise((resolve, reject) => {
 
         _this.partialResult[cachePath] = {};
         steps.forEach(t => { _this.partialResult[cachePath][t] = {}; });
 
-          // Assemble the list of keys as an intersection of keys in all queries of all hooks
+        // Assemble the list of keys as an intersection of keys in all queries of all hooks
         const keys = _this.getKeys();
 
         const deferredHooks = [];
-          // Assemble data from each hook. Each frame becomes a vector containing the current configuration of hooks.
-          // frame -> hooks -> entities: values
+        // Assemble data from each hook. Each frame becomes a vector containing the current configuration of hooks.
+        // frame -> hooks -> entities: values
         utils.forEach(_this._dataCube, (hook, name) => {
           if (hook.use === "constant") {
-              //special case: fill data with constant values
+            //special case: fill data with constant values
             steps.forEach(t => {
               _this.partialResult[cachePath][t][name] = {};
               keys.forEach(key => {
@@ -687,7 +673,7 @@ const Marker = Model.extend({
               });
             });
           } else if (hook.which === KEY) {
-              //special case: fill data with keys to data itself
+            //special case: fill data with keys to data itself
             steps.forEach(t => {
               _this.partialResult[cachePath][t][name] = {};
               keys.forEach(key => {
@@ -695,7 +681,7 @@ const Marker = Model.extend({
               });
             });
           } else if (hook.which === TIME) {
-              //special case: fill data with time points
+            //special case: fill data with time points
             steps.forEach(t => {
               _this.partialResult[cachePath][t][name] = {};
               keys.forEach(key => {
@@ -703,20 +689,20 @@ const Marker = Model.extend({
               });
             });
           } else {
-              //calculation of async frames is taken outside the loop
-              //hooks with real data that needs to be fetched from datamanager
+            //calculation of async frames is taken outside the loop
+            //hooks with real data that needs to be fetched from datamanager
             deferredHooks.push(hook);
           }
         });
 
-          //check if we have any data to get from datamanager
+        //check if we have any data to get from datamanager
         if (deferredHooks.length > 0) {
           const promises = [];
           utils.forEach(deferredHooks, hook => {
             promises.push(new Promise((res, rej) => {
-                // need to save the hook state before calling getFrames.
-                // `hook` state might change between calling and resolving the call.
-                // The result needs to be saved to the correct cache, so we need to save current hook state
+              // need to save the hook state before calling getFrames.
+              // `hook` state might change between calling and resolving the call.
+              // The result needs to be saved to the correct cache, so we need to save current hook state
               const currentHookState = {
                 name: hook._name,
                 which: hook.which
@@ -742,14 +728,14 @@ const Marker = Model.extend({
     }
     return new Promise((resolve, reject) => {
       if (steps.length < 2 || !forceFrame) {
-            //wait until the above promise is resolved, then resolve the current promise
+        //wait until the above promise is resolved, then resolve the current promise
         _this.frameQueues[cachePath].then(() => {
           resolve(); //going back to getFrame(), to ".then"
         });
       } else {
         const promises = [];
         utils.forEach(_this._dataCube, (hook, name) => {
-            //exception: we know that these are knonwn, no need to calculate these
+          //exception: we know that these are knonwn, no need to calculate these
           if (hook.use !== "constant" && hook.which !== KEY && hook.which !== TIME) {
             (function(_hook, _name) {
               promises.push(new Promise((res, rej) => {
@@ -769,6 +755,8 @@ const Marker = Model.extend({
             _this.cachedFrames[cachePath][forceFrame] = _this.partialResult[cachePath][forceFrame];
             resolve();
           });
+        } else {
+          resolve();
         }
       }
     });
@@ -783,122 +771,31 @@ const Marker = Model.extend({
     const preparedFrames = {};
     this.getFrames();
     const dataIds = [];
+
+    const stepsCount = steps.length;
+    let isDataLoaded = false;
+
     utils.forEach(_this._dataCube, (hook, name) => {
       if (!(hook.use === "constant" || hook.which === KEY || hook.which === TIME)) {
-        if (dataIds.indexOf(hook._dataId) == -1) {
+        if (!dataIds.includes(hook._dataId)) {
           dataIds.push(hook._dataId);
 
           hook.dataSource.listenFrame(hook._dataId, steps, keys, (dataId, time) => {
             const keyName = time.toString();
             if (typeof preparedFrames[keyName] === "undefined") preparedFrames[keyName] = [];
-            if (preparedFrames[keyName].indexOf(dataId) == -1) preparedFrames[keyName].push(dataId);
-            if (preparedFrames[keyName].length == dataIds.length)  {
+            if (!preparedFrames[keyName].includes(dataId)) preparedFrames[keyName].push(dataId);
+            if (preparedFrames[keyName].length === dataIds.length)  {
+              if (!isDataLoaded && stepsCount === Object.keys(preparedFrames).length) {
+                isDataLoaded = true;
+                _this.trigger("dataLoaded");
+              }
+
               cb(time);
             }
           });
         }
       }
     });
-  },
-
-  /**
-   * gets multiple values from the hook
-   * @param {Object} filter Reference to the row. e.g: {geo: "swe", time: "1999", ... }
-   * @param {Array} group_by How to nest e.g: ["geo"]
-   * @param {Boolean} [previous = false] previous Append previous data points
-   * @returns an array of values
-   */
-  getValues(filter, group_by, previous) {
-    const _this = this;
-
-    if (this.isHook()) {
-      return [];
-    }
-
-    let filtered, next, method, u, w, value;
-    this._dataCube = this._dataCube || this.getSubhooks(true);
-    filter = utils.clone(filter, this._getAllDimensions());
-    const dimTime = this._getFirstDimension({
-      type: "time"
-    });
-    const time = new Date(filter[dimTime]); //clone date
-    filter = utils.clone(filter, null, dimTime);
-
-    const response = {};
-    const f_keys = Object.keys(filter);
-    const f_values = f_keys.map(k => filter[k]);
-
-    //if there's a filter, interpolate only that
-    if (f_keys.length) {
-      utils.forEach(this._dataCube, (hook, name) => {
-        u = hook.use;
-        w = hook.which;
-
-        if (hook.use !== "property") next = next || d3.bisectLeft(hook.getUnique(dimTime), time);
-
-        method = hook.getConceptprops ? hook.getConceptprops().interpolation : null;
-        filtered = hook.getNestedItems(f_keys);
-        utils.forEach(f_values, v => {
-          filtered = filtered[v]; //get precise array (leaf)
-        });
-        value = utils.interpolatePoint(filtered, u, w, next, dimTime, time, method);
-        response[name] = hook.mapValue(value);
-
-        //concat previous data points
-        if (previous) {
-          const values = utils.filter(filtered, filter).filter(d => d[dimTime] <= time).map(d => hook.mapValue(d[w])).concat(response[name]);
-          response[name] = values;
-        }
-      });
-    }
-    //else, interpolate all with time
-    else {
-      utils.forEach(this._dataCube, (hook, name) => {
-
-        filtered = hook.getNestedItems(group_by);
-
-        response[name] = {};
-        //find position from first hook
-        u = hook.use;
-        w = hook.which;
-
-        if (hook.use !== "property") next = (typeof next === "undefined") ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
-
-        method = hook.getConceptprops ? hook.getConceptprops().interpolation : null;
-
-        const interpolate = function(arr, result, id) {
-          //TODO: this saves when geos have different data length. line can be optimised.
-          next = d3.bisectLeft(arr.map(m => m[dimTime]), time);
-
-          value = utils.interpolatePoint(arr, u, w, next, dimTime, time, method);
-          result[id] = hook.mapValue(value);
-
-          //concat previous data points
-          if (previous) {
-            const values = utils.filter(arr, filter).filter(d => d[dimTime] <= time).map(d => hook.mapValue(d[w])).concat(result[id]);
-            result[id] = values;
-          }
-
-        };
-
-        const iterateGroupKeys = function(data, deep, result, cb) {
-          deep--;
-          utils.forEach(data, (d, id) => {
-            if (deep) {
-              result[id] = {};
-              iterateGroupKeys(d, deep, result[id], cb);
-            } else {
-              cb(d, result, id);
-            }
-          });
-        };
-
-        iterateGroupKeys(filtered, group_by.length, response[name], interpolate);
-
-      });
-    }
-
-    return response;
   },
 
   getEntityLimits(entity) {

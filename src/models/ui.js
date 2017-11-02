@@ -47,7 +47,7 @@ const UI = Model.extend({
     this._type = "ui";
     this._container = null;
     //dom element
-    this._curr_profile = null;
+    this._curr_profile = "small";
     this._prev_size = {};
 
     //resize when window resizes
@@ -56,6 +56,16 @@ const UI = Model.extend({
     bind["change:presentation"] = this.updatePresentation.bind(this);
 
     this._super(name, values, parent, bind);
+
+    //TODO: remove later if IOS >10.3.2
+    //https://openradar.appspot.com/31725316
+    const detectIOS_10_3 = () => {
+      const version = /(?:iPad|iPhone|iPod).+OS\s+(\d+)_(\d+)/.exec(navigator.userAgent);
+      return version && +version[1] >= 10 && +version[2] > 2 && !window.MSStream;
+    };
+    if (detectIOS_10_3()) {
+      this.setSize = utils.debounce(this.setSize, 500);
+    }
   },
 
   resizeHandler(args = {}) {
@@ -123,6 +133,8 @@ const UI = Model.extend({
    * @param container DOM element
    */
   setContainer(container) {
+    if (!container.clientWidth || !container.clientHeight) utils.warn("Vizabi is being initialised with a container of incorrect width or height. While this may be handled without a crash, it's not considered a healthy behavior. You should call Vizabi(placeholder,...) function when placeholder is not display:none and has some >0 !=auto width and height");
+
     this._container = container;
     this.setSize();
     this.updatePresentation();

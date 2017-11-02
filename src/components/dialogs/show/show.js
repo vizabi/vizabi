@@ -56,6 +56,10 @@ const Show = Dialog.extend("show", {
       _this.showHideSearch();
     });
 
+    d3.select(this.input_search.node().parentNode).on("reset", () => {
+      utils.defer(() => _this.showHideSearch());
+    });
+
     this.deselect_all.on("click", () => {
       _this.deselectEntities();
     });
@@ -103,16 +107,16 @@ const Show = Dialog.extend("show", {
           return result;
         });
 
-    //sort data alphabetically
+      //sort data alphabetically
       data.sort((a, b) => (a.label < b.label) ? -1 : 1);
 
       _this.list.html("");
 
       const items = _this.list.selectAll(".vzb-show-item")
-      .data(data)
-      .enter()
-      .append("div")
-      .attr("class", "vzb-show-item vzb-dialog-checkbox");
+        .data(data)
+        .enter()
+        .append("div")
+        .attr("class", "vzb-show-item vzb-dialog-checkbox");
 
       items.append("input")
         .attr("type", "checkbox")
@@ -131,7 +135,10 @@ const Show = Dialog.extend("show", {
 
       items.append("label")
         .attr("for", d => "-show-" + d[_this.KEY] + "-" + _this._id)
-        .text(d => d.label);
+        .text(d => d.label)
+        .attr("title", function(d) {
+          return this.offsetWidth < this.scrollWidth ? d.label : null;
+        });
 
       const lastCheckedNode = _this.list.selectAll(".vzb-checked")
         .classed("vzb-separator", false)
@@ -155,7 +162,7 @@ const Show = Dialog.extend("show", {
 
     this.list.selectAll(".vzb-show-item")
       .classed("vzb-hidden", d => {
-        const lower = d.label.toLowerCase();
+        const lower = (d.label || "").toString().toLowerCase();
         return (lower.indexOf(search) === -1);
       });
   },

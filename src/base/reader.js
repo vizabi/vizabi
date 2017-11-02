@@ -10,6 +10,9 @@ const Reader = Class.extend({
   QUERY_FROM_CONCEPTS: "concepts",
   QUERY_FROM_DATAPOINTS: "datapoints",
   QUERY_FROM_ENTITIES: "entities",
+  SCHEMA_QUERY_FROM_CONCEPTS: "concepts.schema",
+  SCHEMA_QUERY_FROM_DATAPOINTS: "datapoints.schema",
+  SCHEMA_QUERY_FROM_ENTITIES: "entities.schema",
 
   CONDITION_CALLBACKS: {
     $gt: (configValue, rowValue) => rowValue > configValue,
@@ -27,7 +30,7 @@ const Reader = Class.extend({
 
   load() {
     return Promise.resolve({
-      data: [],
+      rows: [],
       columns: []
     });
   },
@@ -37,25 +40,30 @@ const Reader = Class.extend({
 
     const {
       select,
-      from,
-      order_by = []
+      from
     } = query;
 
-    const [orderBy] = order_by;
-
-    return this.load()
+    return this.load(parsers)
       .then(result => {
-        const { data, columns } = result;
+        const { rows, columns } = result;
         this.ensureDataIsCorrect(result, parsers);
 
         switch (true) {
+          case from === this.SCHEMA_QUERY_FROM_CONCEPTS:
+            return { key: ["concept"], value: "concept_type" };
+
+          case from === this.SCHEMA_QUERY_FROM_ENTITIES:
+            return columns.slice(0, this.keySize).map(key => ({ key: [key] }));
+
+          case from === this.SCHEMA_QUERY_FROM_DATAPOINTS: {
+            const key = columns.slice(0, this.keySize + 1);
+            return columns.slice(this.keySize + 1).map(value => ({ key, value }));
+          }
           case from === this.QUERY_FROM_CONCEPTS:
-            return this._getConcepts(columns, data.map(this._getRowMapper(query, parsers)));
+            return this._getConcepts(columns, this._mapRows(rows, query, parsers));
 
           case this._isDataQuery(from) && select.key.length > 0:
-            return data
-              .reduce(this._applyQuery(query, parsers), [])
-              .sort((prev, next) => prev[orderBy] - next[orderBy]);
+            return this._getData(rows, query, parsers);
 
           default:
             return [];
@@ -111,20 +119,20 @@ const Reader = Class.extend({
     return query;
   },
 
-  _getConcepts(columns, data) {
+  _getConcepts(columns, rows) {
     return columns.map((concept, index) => {
       const result = { concept };
 
       if (index < this.keySize) {
         result.concept_type = "entity_domain";
       } else if (index === this.keySize) {
-        //the column after is expected to have time
+        // the column after is expected to have time
         result.concept_type = "time";
       } else {
         result.concept_type = "measure";
 
-        for (let i = data.length - 1; i >= 0; i--) {
-          if (utils.isString(data[i][concept]) && data[i][concept] !== "") {
+        for (let i = rows.length - 1; i > -1; --i) {
+          if (utils.isString(rows[i][concept]) && rows[i][concept] !== "") {
             result.concept_type = "entity_set";
             [result.domain] = columns;
             break;
@@ -136,6 +144,15 @@ const Reader = Class.extend({
     });
   },
 
+  _getData(rows, query, parsers) {
+    const { order_by = [] } = query;
+    const [orderBy] = order_by;
+
+    return this._mapRows(rows, query, parsers)
+      .reduce(this._applyQuery(query), [])
+      .sort((prev, next) => prev[orderBy] - next[orderBy]);
+  },
+
   _isDataQuery(from) {
     return [
       this.QUERY_FROM_DATAPOINTS,
@@ -143,32 +160,28 @@ const Reader = Class.extend({
     ].includes(from);
   },
 
-  _getRowMapper(query, parsers) {
-    const { select } = query;
+  _mapRows(rows, query, parsers) {
+    return rows.map(this._getRowMapper(query, parsers));
+  },
 
+  _getRowMapper(query, parsers) {
     return row => {
       let correct = true;
 
       const result = Object.keys(row).reduce((result, key) => {
         if (correct) {
           const defaultValue = row[key];
-          const value = !utils.isString(defaultValue) ? defaultValue : defaultValue.replace(",", ".").trim();
+          const defaultValueString = String(defaultValue).trim();
 
           const parser = parsers[key];
-          let resultValue;
-
-          if (parser) {
-            resultValue = parser(value);
-          } else {
-            const numeric = parseFloat(value);
-            const strValue = String(value);
-            const dotRegex = strValue.includes(".") ? /0+$/ : "";
-            const validatedValue = strValue.replace(dotRegex, "").replace(/\.+$/, "");
-            resultValue = String(numeric) === validatedValue && !isNaN(numeric) && isFinite(numeric) ? numeric : value;
-          }
+          const resultValue = !utils.isString(defaultValue) ?
+            defaultValue :
+            parser ?
+              parser(defaultValueString) :
+              this._parse(defaultValueString);
 
           if (!resultValue && resultValue !== 0) {
-            if (select.key.includes(key)) {
+            if (query.select.key.includes(key)) {
               correct = false;
             }
           } else {
@@ -183,7 +196,11 @@ const Reader = Class.extend({
     };
   },
 
-  _applyQuery(query, parsers) {
+  _parse(value) {
+    return value;
+  },
+
+  _applyQuery(query) {
     const {
       select,
       from
@@ -191,10 +208,8 @@ const Reader = Class.extend({
 
     const [uniqueKey] = select.key;
     const uniqueValues = [];
-    const mapRow = this._getRowMapper(query, parsers);
 
     return (result, row) => {
-      row = mapRow(row);
 
       if (row) {
         const unique = row[uniqueKey];
@@ -232,10 +247,10 @@ const Reader = Class.extend({
         const rowValue = row[conditionKey];
 
         // if the column is missing, then don't apply filter
-        return rowValue === undefined
-          || (typeof condition !== "object" ?
+        return typeof rowValue === "undefined" ||
+          (typeof condition !== "object" ?
             (rowValue === condition
-              //resolve booleans via strings
+              // resolve booleans via strings
               || condition === true && utils.isString(rowValue) && rowValue.toLowerCase().trim() === "true"
               || condition === false && utils.isString(rowValue) && rowValue.toLowerCase().trim() === "false"
             ) :

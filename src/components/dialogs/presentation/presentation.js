@@ -17,7 +17,7 @@ const Presentation = Dialog.extend("presentation", {
   init(config, parent) {
     this.name = "presentation";
 
-  // in dialog, this.model_expects = ["state", "data"];
+    // in dialog, this.model_expects = ["state", "data"];
 
     this.components = [
       {

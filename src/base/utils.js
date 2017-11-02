@@ -18,6 +18,19 @@ export const approxEqual = function(a, b, tolerance) {
 };
 
 /*
+ * prints out a string like this "AUTOCONFIG: axis_x choses armed_conflicts_internal from data to be WHICH"
+ */
+export const printAutoconfigResult = (function(mdl) {
+  console.info(
+    "AUTOCONFIG: " + mdl._name
+    + (mdl.use ? " of " + mdl._parent._name : "")
+    + " choses " + (mdl.dim || mdl.which)
+    + " from " + (mdl.dataSource ? mdl.dataSource._name : "<DATA SOURCE MISSING!>")
+    + " to be " + (mdl._type === "entities" || mdl._type === "time" ? "DIM" : "WHICH")
+  );
+});
+
+/*
  * returns unique id with optional prefix
  * @param {String} prefix
  * @returns {String} id
@@ -41,13 +54,11 @@ export const isElement = function(obj) {
 
 /*
  * checks whether obj is an Array
- * @param {Object} obj
+ * @param {Object} target
  * @returns {Boolean}
  * from underscore: https://github.com/jashkenas/underscore/blob/master/underscore.js
  */
-export const isArray = Array.isArray || function(obj) {
-  return toString.call(obj) === "[object Array]";
-};
+export const isArray = Array.isArray || (target => Object.prototype.toString.call(target) === "[object Array]");
 
 /*
  * checks whether obj is an object
@@ -74,9 +85,7 @@ export const isDate = function(arg) {
  * @param {Object} arg
  * @returns {Boolean}
  */
-export const isString = function(arg) {
-  return typeof arg === "string";
-};
+export const isString = value => typeof value === "string";
 
 /*
  * checks whether arg is a NaN
@@ -302,10 +311,8 @@ export const forEach = function(obj, callback, ctx) {
   if (isArray(obj)) {
     size = obj.length;
     for (i = 0; i < size; i += 1) {
-      if (callback.apply(ctx, [
-        obj[i],
-        i
-      ]) === false) {
+      const result = callback.apply(ctx, [obj[i], i]);
+      if (result === false) {
         break;
       }
     }
@@ -313,10 +320,8 @@ export const forEach = function(obj, callback, ctx) {
     const keys = Object.keys(obj);
     size = keys.length;
     for (i = 0; i < size; i += 1) {
-      if (callback.apply(ctx, [
-        obj[keys[i]],
-        keys[i]
-      ]) === false) {
+      const result = callback.apply(ctx, [obj[keys[i]], keys[i]]);
+      if (result === false) {
         break;
       }
     }
@@ -547,23 +552,20 @@ export const without = function(arr, el) {
  * Based on:
  * http://stackoverflow.com/questions/1960473/unique-values-in-an-array
  */
-export const unique = function(arr, func) {
-  const u = {};
-  const a = [];
-  if (!func) {
-    func = function(d) {
-      return d;
-    };
-  }
-  for (let i = 0, l = arr.length; i < l; i += 1) {
-    const key = func(arr[i]);
-    if (u.hasOwnProperty(key)) {
-      continue;
+export const unique = (array, map = data => data) => {
+  const uniqueValues = {};
+
+  return array.filter(item => {
+    const value = map(item);
+
+    if (uniqueValues.hasOwnProperty(value)) {
+      return false;
     }
-    a.push(arr[i]);
-    u[key] = 1;
-  }
-  return a;
+
+    uniqueValues[value] = 1;
+
+    return true;
+  });
 };
 
 /*
@@ -776,55 +778,6 @@ export const preventAncestorScrolling = function(element) {
 };
 
 /*
- * maps all rows according to the formatters
- * @param {Array} original original dataset
- * @param {Object} formatters formatters object
- * @returns {Boolean} try
- */
-export const mapRows = function(original, formatters) {
-
-  function mapRow(value, fmt) {
-    if (!isArray(value)) {
-      return fmt(value);
-    }
-
-    const res = [];
-    for (let i = 0; i < value.length; i++) {
-      res[i] = mapRow(value[i], fmt);
-    }
-    return res;
-  }
-
-  // default formatter turns empty strings in null and converts numeric values into number
-  //TODO: default formatter is moved to utils. need to return it to hook prototype class, but retest #1212 #1230 #1253
-  const defaultFormatter = function(val) {
-    let newVal = val;
-    if (val === "") {
-      newVal = null;
-    } else {
-      // check for numeric
-      const numericVal = parseFloat(val);
-      if (!isNaN(numericVal) && isFinite(val)) {
-        newVal = numericVal;
-      }
-    }
-    return newVal;
-  };
-
-  original = original.map(row => {
-    const columns = Object.keys(row);
-
-    for (let i = 0; i < columns.length; i++) {
-      const col = columns[i];
-      row[col] = mapRow(row[col], formatters[col] || defaultFormatter);
-    }
-    return row;
-  });
-
-  return original;
-};
-
-/*
  * Converts radius to area, simple math
  * @param {Number} radius
  * @returns {Number} area
@@ -834,13 +787,23 @@ export const radiusToArea = function(r) {
 };
 
 /*
- * Computes hypotenuse of a right triangle, given the catets
+ * Computes hypotenuse of a right triangle, given the catheti
  * @param {Number} x
  * @param {Number} y
  * @returns {Number} square root of sum of the squares of x and y
  */
 export const hypotenuse = function(x, y) {
   return Math.sqrt(x * x + y * y);
+};
+
+/*
+ * Computes cathetus of a right triangle, given the hypotenuse and cathetus
+ * @param {Number} h
+ * @param {Number} c
+ * @returns {Number} square root of difference of the squares of h and c
+ */
+export const cathetus = function(h, c) {
+  return Math.sqrt(h * h - c * c);
 };
 
 /*
@@ -1542,3 +1505,40 @@ export function getValueMD(d, values, keysArray) {
   }
   return value;
 }
+
+export const isFunction = value => typeof value === "function";
+
+
+/**
+ * This is helper for getting some deep props in object. It's added to remove code like
+ * this.show[dimension]
+ *   && this.show[dimension]["$in"]
+ *   && this.show[dimension]["$in"].indexOf(d[dimension]) !== -1;
+ * when you need to get (+check) nested properties.
+
+ * @param {context} object The root object where we start to look for the props
+ * @param {Array} props Names of properties for nesting
+ * @param {*} defaultValue Default value that will be returned if there is no such properties in object
+ * @returns {property} The property we're looking for or a default value
+
+ * Usage:
+ * const object = { one: { two: "your value" } };
+ * utils.getProp(object, ["one", "two"]); // "your value"
+ */
+export const getProp = (object, props, defaultValue) => {
+  while (props.length) {
+    const prop = props.shift();
+    if (object.hasOwnProperty(prop)) {
+      object = object[prop];
+    } else {
+      return defaultValue;
+    }
+  }
+  return object;
+};
+
+export const px2num = pixels => (
+  isString(pixels) && pixels.endsWith("px") ?
+    parseFloat(pixels) :
+    console.warn(`Strange pixels value: ${pixels}`) || pixels
+);

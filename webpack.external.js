@@ -119,6 +119,7 @@ module.exports = output => {
       }
     ]),
     new SassLintPlugin({
+      configFile: path.resolve(__dirname, '.sass-lint.yml'),
       quiet: false,
       syntax: 'scss',
       glob: 'src/**/*.s?(a|c)ss',

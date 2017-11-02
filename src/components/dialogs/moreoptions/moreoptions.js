@@ -2,11 +2,6 @@ import * as utils from "base/utils";
 import Component from "base/component";
 import Dialog from "components/dialogs/_dialog";
 
-import simpleslider from "components/simpleslider/simpleslider";
-import bubblesize from "components/bubblesize/bubblesize";
-import colorlegend from "components/colorlegend/colorlegend";
-import indicatorpicker from "components/indicatorpicker/indicatorpicker";
-import simplecheckbox from "components/simplecheckbox/simplecheckbox";
 import optionsbuttonlist from "components/buttonlist/optionsbuttonlist/optionsbuttonlist";
 
 /*
@@ -67,6 +62,14 @@ const MoreOptions = Dialog.extend("moreoptions", {
         }
         if (sectionEl.node() !== activeEl.node()) {
           sectionEl.classed("vzb-accordion-active", true);
+          _this.transitionEvents.forEach(event => {
+            sectionEl.on(event, () => {
+              _this.transitionEvents.forEach(event => {
+                sectionEl.on(event, null);
+              });
+              _this.components[d.component].trigger("resize");
+            });
+          });
         }
       });
     }

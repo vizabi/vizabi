@@ -3,8 +3,8 @@
   .vzb-dialogs-dialog {
     &[data-dlg="label"] {
       .vzb-dialog-content {
-        .vzb-bs-slider-thumb-arc {
-          display: none; 
+        .vzb-dialog-sizeslider {
+          margin-bottom: 15px;
         }
       }
     }

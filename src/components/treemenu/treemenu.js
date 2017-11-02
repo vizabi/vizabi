@@ -391,14 +391,15 @@ const Menu = Class.extend({
       const scrollTopTween = function(scrollTop) {
         return function() {
           const i = d3.interpolateNumber(this.scrollTop, scrollTop);
-          return function(t) { this.scrollTop = i(t); };
+          return function(t) {
+            treeMenuNode.scrollTop = i(t);
+          };
         };
       };
 
-      d3.select(treeMenuNode).transition().duration(20)
+      d3.select(treeMenuNode).transition().duration(100)
         .tween("scrolltoptween", scrollTopTween(newScrollTop));
 
-      //treeMenuNode.scrollTop = scrollTop;
     }
 
   }
@@ -488,12 +489,15 @@ const MenuItem = Class.extend({
       parent.classed("marquee", false);
       label.style("left", "");
       label.style("right", "");
+      label.style("width", "");
       if (toggle) {
         if (label.node().scrollWidth > label.node().offsetWidth) {
           label.attr("data-content", label.text());
           const space = 30;
-          label.style("left", (-space - label.node().scrollWidth) + "px");
-          label.style("right", (-space - label.node().scrollWidth) + "px");
+          const offset = space + label.node().scrollWidth;
+          label.style("left", -offset + "px");
+          label.style("right", -offset + "px");
+          label.style("width", offset + "px");
           parent.classed("marquee", true);
         }
       }
@@ -504,12 +508,15 @@ const MenuItem = Class.extend({
     this.entity.classed("marquee", false);
     label.style("left", "");
     label.style("right", "");
+    label.style("width", "");
     if (toggle) {
       if (label.node().scrollWidth > label.node().offsetWidth) {
         label.attr("data-content", label.text());
         const space = 30;
-        label.style("left", (-space - label.node().scrollWidth) + "px");
-        label.style("right", (-space - label.node().scrollWidth) + "px");
+        const offset = space + label.node().scrollWidth;
+        label.style("left", -offset + "px");
+        label.style("right", -offset + "px");
+        label.style("width", offset + "px");
         this.entity.classed("marquee", true);
       }
     }
@@ -583,10 +590,10 @@ const TreeMenu = Component.extend({
     this.name = "gapminder-treemenu";
     this.model_expects = [{
       name: "marker",
-      type: "model"
+      type: "marker"
     }, {
       name: "marker_tags",
-      type: "model"
+      type: "marker"
     }, {
       name: "time",
       type: "time"
@@ -624,7 +631,10 @@ const TreeMenu = Component.extend({
     this.updateView();
 
     //TODO: hack! potentially unsafe operation here
-    const tags = this.model.marker_tags.label.getData();
+    let tags;
+    if (this.model.marker_tags) {
+      tags = this.model.marker_tags.label.getData();
+    }
     this._buildIndicatorsTree(tags);
   },
 
@@ -712,30 +722,30 @@ const TreeMenu = Component.extend({
     const UNCLASSIFIED = "_unclassified";
     const ADVANCED = "advanced";
 
-      //init the dictionary of tags
+    //init the dictionary of tags
     const tags = {};
     tags[ROOT] = { id: ROOT, children: [] };
     tags[UNCLASSIFIED] = { id: UNCLASSIFIED, type: "folder", name: this.translator("buttons/unclassified"), children: [] };
 
-      //populate the dictionary of tags
+    //populate the dictionary of tags
     tagsArray.forEach(tag => { tags[tag.tag] = { id: tag.tag, name: tag.name, type: "folder", children: [] }; });
 
-      //init the tag tree
+    //init the tag tree
     const indicatorsTree = tags[ROOT];
     indicatorsTree.children.push(tags[UNCLASSIFIED]);
 
-      //populate the tag tree
+    //populate the tag tree
     tagsArray.forEach(tag => {
       if (!tag.parent || !tags[tag.parent]) {
-          // add tag to a root
+        // add tag to a root
         indicatorsTree.children.push(tags[tag.tag]);
       } else {
-          //add tag to a branch
+        //add tag to a branch
         tags[tag.parent].children.push(tags[tag.tag]);
       }
     });
 
-    utils.forEach(this.model.marker_tags._root._data, dataSource => {
+    utils.forEach(this.model.marker._root._data, dataSource => {
       if (dataSource._type !== "data") return;
 
       const indicatorsDB = dataSource.getConceptprops();
@@ -747,10 +757,11 @@ const TreeMenu = Component.extend({
         //if entry's tag are empty don't include it in the menu
         if (entry.tags == "_none") return;
         if (!entry.tags) entry.tags = datasetName || UNCLASSIFIED;
-        const concept = { id, name: entry.name, unit: entry.unit, description: entry.description, dataSource: dataSource._name };
+        const concept = { id, name: entry.name, name_catalog: entry.name_catalog, description: entry.description, dataSource: dataSource._name };
         entry.tags.split(",").forEach(tag => {
-          if (tags[tag.trim()]) {
-            tags[tag.trim()].children.push(concept);
+          tag = tag.trim();
+          if (tags[tag]) {
+            tags[tag].children.push(concept);
           } else {
             //if entry's tag is not found in the tag dictionary
             if (!_this.consoleGroupOpen) {
@@ -789,8 +800,8 @@ const TreeMenu = Component.extend({
             if (a.id == "_default") return 1;
             if (b.id == "_default") return -1;
           }
-        //sort items alphabetically. folders go down because of the emoji folder in the beginning of the name
-          return a.name > b.name ? 1 : -1;
+          //sort items alphabetically. folders go down because of the emoji folder in the beginning of the name
+          return (a.name_catalog || a.name) > (b.name_catalog || b.name) ? 1 : -1;
         })
     );
 
@@ -942,11 +953,11 @@ const TreeMenu = Component.extend({
       if (c.name == "gapminder-dialogs") {
         d3.select(c.placeholder.parentNode).classed("vzb-blur", !hidden);
       } else
-        if (c.element.classed) {
-          c.element.classed("vzb-blur", c != _this && !hidden);
-        } else {
-          d3.select(c.element).classed("vzb-blur", c != _this && !hidden);
-        }
+      if (c.element.classed) {
+        c.element.classed("vzb-blur", c != _this && !hidden);
+      } else {
+        d3.select(c.element).classed("vzb-blur", c != _this && !hidden);
+      }
     });
 
     this.width = _this.element.node().offsetWidth;
@@ -1066,6 +1077,8 @@ const TreeMenu = Component.extend({
         }
       };
       matching(_this.dataFiltered.children);
+
+      matches.children = utils.unique(matches.children, child => child.id);
       return matches;
     };
 
@@ -1074,9 +1087,9 @@ const TreeMenu = Component.extend({
     const searchIt = utils.debounce(() => {
       const value = input.node().value;
 
-        //Protection from unwanted IE11 input events.
-        //IE11 triggers an 'input' event when 'placeholder' attr is set to input element and
-        //on 'focusin' and on 'focusout', if nothing has been entered into the input.
+      //Protection from unwanted IE11 input events.
+      //IE11 triggers an 'input' event when 'placeholder' attr is set to input element and
+      //on 'focusin' and on 'focusout', if nothing has been entered into the input.
       if (!searchValueNonEmpty && value == "") return;
       searchValueNonEmpty = value != "";
 
@@ -1105,7 +1118,7 @@ const TreeMenu = Component.extend({
     let dataFiltered, allowedIDs;
 
     const indicatorsDB = {};
-    utils.forEach(this.model.marker_tags._root._data, m => {
+    utils.forEach(this.model.marker._root._data, m => {
       if (m._type === "data") utils.deepExtend(indicatorsDB, m.getConceptprops());
     });
 
@@ -1122,6 +1135,7 @@ const TreeMenu = Component.extend({
           if (_this._targetModel.allow && _this._targetModel.allow.names) {
             if (_this._targetModel.allow.names.indexOf("!" + f) != -1) return false;
             if (_this._targetModel.allow.names.indexOf(f) != -1) return true;
+            if (_this._targetModel.allow.namesOnlyThese) return false;
           }
           //keep indicator if nothing is specified in tool properties
           if (!_this._targetModel.allow || !_this._targetModel.allow.scales) return true;
@@ -1155,7 +1169,7 @@ const TreeMenu = Component.extend({
     this.element.select("." + css.title).select("span")
       .text(this.translator(_this._targetModel.isEntities() ? _this._targetModel._root._name + "/" + _this._targetModel._name
         : "buttons/" + (isHook ? _this._targetModel._name : (targetModelType + "/" + _this._targetProp)))
-        );
+      );
 
     this.element.select("." + css.search)
       .attr("placeholder", this.translator("placeholder/search") + "...");
@@ -1194,7 +1208,7 @@ const TreeMenu = Component.extend({
         .append("span")
         .text(d => {
           //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-          const translated = d.id === "_default" ? _this.translator("indicator/_default/" + targetModelType) : d.name || d.id;
+          const translated = d.id === "_default" ? _this.translator("indicator/_default/" + targetModelType) : d.name_catalog || d.name || d.id;
           if (!translated && translated !== "") utils.warn("translation missing: NAME of " + d.id);
           return translated || "";
         });
@@ -1305,7 +1319,7 @@ const TreeMenu = Component.extend({
       } else {
 
         let scaleTypes = this.element.select("." + css.scaletypes).classed(css.hidden, false).selectAll("span")
-            .data(scaleTypesData, d => d);
+          .data(scaleTypesData, d => d);
 
         scaleTypes.exit().remove();
 

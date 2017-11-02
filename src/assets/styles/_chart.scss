@@ -39,7 +39,7 @@
   color: $vzb-color-primary-darkest;
   cursor: pointer;
   fill: currentColor;
-  
+
   &:hover {
     text-decoration: underline;
   }
@@ -67,20 +67,20 @@
     shape-rendering: crispEdges;
     stroke: $vzb-color-grey;
   }
-  .tick line, 
+  .tick line,
   .tick-minor {
     stroke-dasharray: 1 3;
-  }  
+  }
   text {
     @extend %vzb-chart-ticks;
-  } 
+  }
 }
 %vzb-chart-axis-presentation {
   .tick line {
     stroke: $vzb-color-black;
     stroke-width: 1;
     stroke-dasharray: 2 3;
-  } 
+  }
   .tick-minor {
     stroke: $vzb-color-grey;
   }
@@ -88,35 +88,39 @@
 
 %vzb-chart-info {
   cursor: pointer;
-  opacity: .3;
+  opacity: 0.3;
   pointer-events: visible;
 
   path {
     fill: $vzb-color-primary;
     stroke: none;
   }
-  
+
   circle {
     fill: none;
     stroke: $vzb-color-primary;
   }
-  
+
   &:hover {
     opacity: 1;
   }
 }
 
 %vzb-chart-tooltip {
+  .stroke {
+    @include stroke(3px);
+  }
+
   text {
     fill: $vzb-color-black;
     pointer-events: none;
     text-anchor: end;
   }
-  
+
   rect {
     cursor: pointer;
     pointer-events: none;
-  }  
+  }
 
   .vzb-tooltip-border {
     fill: $vzb-color-white;
@@ -126,7 +130,7 @@
 }
 
 %vzb-chart-label-shadow {
-  @include opacity(.7);
+  @include opacity(0.7);
   fill: $vzb-color-white;
   stroke: $vzb-color-white;
 }

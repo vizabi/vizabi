@@ -2,7 +2,7 @@ import * as utils from "base/utils";
 import Component from "base/component";
 import Dialog from "components/dialogs/_dialog";
 
-import simpleslider from "components/simpleslider/simpleslider";
+import singlehandleslider from "components/brushslider/singlehandleslider/singlehandleslider";
 /*
  * Size dialog
  */
@@ -17,17 +17,17 @@ const Speed = Dialog.extend("speed", {
   init(config, parent) {
     this.name = "speed";
 
-  // in dialog, this.model_expects = ["state", "data"];
+    // in dialog, this.model_expects = ["state", "data"];
 
     this.components = [
       {
-        component: simpleslider,
+        component: singlehandleslider,
         placeholder: ".vzb-dialog-placeholder",
-        model: ["state.time"],
+        model: ["state.time", "locale"],
         arg: "delay",
-        properties: { min: 1, max: 6, step: 0.1, scale: d3.scale.linear()
-      .domain([1, 2, 3, 4, 5, 6])
-      .range([1200, 900, 450, 200, 150, 100])
+        properties: {
+          domain: [1200, 900, 450, 200, 150, 100],
+          roundDigits: 0
         }
       }
     ];

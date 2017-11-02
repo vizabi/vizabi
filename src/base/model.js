@@ -186,10 +186,17 @@ const Model = EventSource.extend({
 
       if (this._data[attribute] && (bothModel || bothModelLeaf)) {
         // data type does not change (model or leaf and can be set through set-function)
+        const prevValue = this._data[attribute].value;
         const setSuccess = this._data[attribute].set(val, force, persistent);
         if (bothModelLeaf && setSuccess) {
           changes.push(attribute);
         }
+
+        const fn = "set" + utils.capitalize(attribute);
+        if (this.isHook() && utils.isFunction(this[fn]) && val !== prevValue) {
+          this[fn](attribute === "which" ? { concept: val, dataSource: this.data } : val);
+        }
+
       } else {
         // data type has changed or is new, so initializing the model/leaf
         this._data[attribute] = initSubmodel(attribute, val, this, persistent);
@@ -332,7 +339,7 @@ const Model = EventSource.extend({
    * ==========================
    */
 
-   // normal model is never loading
+  // normal model is never loading
   _isLoading() {
     return false;
   },
@@ -581,10 +588,9 @@ const Model = EventSource.extend({
 
   /**
    * Gets formatter for this model
-   * @returns {Function|Boolean} formatter function
+   * @returns {Function} formatter function
    */
   getParser() {
-    //TODO: default formatter is moved to utils. need to return it to hook prototype class, but retest #1212 #1230 #1253
     return null;
   },
 
@@ -716,8 +722,10 @@ function initSubmodel(attr, val, ctx, persistent) {
       "hook_change": onHookChange,
       // error triggered in loading
       "load_error": (...args) => ctx.trigger(...args),
-        //loading has ended in this submodel (multiple times)
-      "ready": onReady
+      // interpolation completed
+      "dataLoaded": (...args) => ctx.trigger(...args),
+      //loading has ended in this submodel (multiple times)
+      "ready": onReady,
     };
 
     // if the value is an already instantiated submodel (Model or ModelLeaf)

@@ -12,7 +12,7 @@ import {
 
 const IndPicker = Component.extend({
 
-    /**
+  /**
      * Initializes the Indicator Picker.
      * Executed once before any template is rendered.
      * @param config The options passed to the component
@@ -69,17 +69,18 @@ const IndPicker = Component.extend({
           marker.getFrame(_this.model.time.value, frame => {
             if (_this._highlighted || !frame) return;
 
-                        // should be replaced by dimension of entity set for this hook (if use == property)
-            const dimension = mdl.getEntity().getDimension();
+            const isHookFrameValuesMD = _this.multiDim && !mdl.isDiscrete() && mdl.which !== marker._getFirstDimension({ type: "time" });
+            // should be replaced by dimension of entity set for this hook (if use == property)
+            const dimension = isHookFrameValuesMD ? null : mdl.getEntity().getDimension();
             const _highlightedEntity = marker.getHighlighted(dimension);
             if (_highlightedEntity.length) {
 
-              let value = _this.multiDim && !mdl.isDiscrete() ?
+              let value = isHookFrameValuesMD ?
                 utils.getValueMD(_highlightedEntity[0], frame[mdl._name], _this.KEYS)
                 :
                 frame[mdl._name][_highlightedEntity[0]];
 
-                            // resolve strings via the color legend model
+              // resolve strings via the color legend model
               if (value && mdl._type === "color" && mdl.isDiscrete()) {
                 const clModel = mdl.getColorlegendMarker();
                 if (clModel.label.getItems()[value]) value = clModel.label.getItems()[value];
@@ -193,15 +194,19 @@ const IndPicker = Component.extend({
       selectText = (this._highlightedValue || this._highlightedValue === 0) ? formatter(this._highlightedValue) + unit : translator("hints/nodata");
 
     } else {
-          //Let the indicator "_default" in tree menu be translated differnetly for every hook type
+      //Let the indicator "_default" in tree menu be translated differnetly for every hook type
       selectText = (which === "_default") ? translator("indicator/_default/" + type) : (concept.name);
     }
 
-    this.el_select.text(selectText);
+    this.el_select.text(selectText)
+      .attr("title", function(d) {
+        return this.offsetWidth < this.scrollWidth ? selectText : null;
+      });
 
-        // hide info el if no data is available for it to make sense
+
+    // hide info el if no data is available for it to make sense
     const hideInfoEl = !concept.description && !concept.sourceName && !concept.sourceLink;
-    this.infoEl.classed("vzb-hidden", hideInfoEl);
+    this.infoEl.classed("vzb-invisible", hideInfoEl);
   }
 
 });

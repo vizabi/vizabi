@@ -19,7 +19,7 @@ const EntitiesModel = DataConnected.extend({
     return utils.deepExtend(this._super(), defaults);
   },
 
-  objectLeafs: ["show", "autogenerate"],
+  objectLeafs: ["show", "autoconfig"],
   dataConnectedChildren: ["show", "dim", "grouping"],
 
   /**
@@ -35,10 +35,21 @@ const EntitiesModel = DataConnected.extend({
     this._super(name, values, parent, bind);
   },
 
+  preloadData() {
+    this.dataSource = this.getClosestModel(this.data || "data");
+    return this._super();
+  },
+
   afterPreload() {
-    if (this.dim == null && this.autogenerate) {
-      const dataSource = this.getClosestModel(this.autogenerate.data);
-      this.dim = dataSource.getConceptByIndex(this.autogenerate.conceptIndex).concept;
+    this.autoconfigureModel();
+  },
+
+  autoconfigureModel() {
+    if (!this.dim && this.autoconfig) {
+      const concept = this.dataSource.getConcept(this.autoconfig);
+
+      if (concept) this.dim = concept.concept;
+      utils.printAutoconfigResult(this);
     }
   },
 
@@ -118,7 +129,8 @@ const EntitiesModel = DataConnected.extend({
    */
   isShown(d) {
     const dimension = this.getDimension();
-    return this.show[dimension] && this.show[dimension]["$in"] && this.show[dimension]["$in"].indexOf(d[dimension]) !== -1;
+
+    return utils.getProp(this.show, [dimension, "$in"], []).includes(d[dimension]);
   },
 
   /**

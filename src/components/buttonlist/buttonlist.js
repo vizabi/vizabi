@@ -29,7 +29,7 @@ const ButtonList = Component.extend({
     //set properties
     const _this = this;
     this.name = this.name || "gapminder-buttonlist";
-//    this.template = '<div class="vzb-buttonlist"></div>';
+    //    this.template = '<div class="vzb-buttonlist"></div>';
 
     this.model_expects = [{
       name: "state",
@@ -166,7 +166,9 @@ const ButtonList = Component.extend({
         // _this.entitiesSelected_1 = _this.model.state.marker.select.length > 0;
       },
       "change:ui.chart": function(evt, path) {
-        if (path.indexOf("lockActive") > -1) {
+        if (!_this._readyOnce) return;
+
+        if (path.indexOf("lockActive") > -1 || path.indexOf("lockUnavailable") > -1) {
           _this.setBubbleLock();
         }
       }
@@ -178,6 +180,7 @@ const ButtonList = Component.extend({
       const button = _this._available_buttons[buttonId];
       if (button && button.statebind) {
         _this.model_binds["change:" + button.statebind] = function(evt) {
+          if (!_this._readyOnce) return;
           button.statebindfunc(buttonId, evt.source.value);
         };
       }
@@ -500,6 +503,7 @@ const ButtonList = Component.extend({
   setBubbleLock() {
     let locked = (this.model.ui.chart || {}).lockNonSelected;
     const active = (this.model.ui.chart || {}).lockActive;
+    const unavailable = (this.model.ui.chart || {}).lockUnavailable || false;
     if (!locked && locked !== 0) return;
 
     if (locked !== 0 && this.model.state.marker.select.length === 0 && !active) {
@@ -512,7 +516,8 @@ const ButtonList = Component.extend({
 
     const translator = this.model.locale.getTFunction();
 
-    btn.classed(class_unavailable, this.model.state.marker.select.length == 0 && !active);
+    //btn.classed(class_unavailable, this.model.state.marker.select.length == 0 && !active);
+    btn.classed(class_unavailable, unavailable);
     if (typeof active === "undefined") {
       btn.classed(class_hidden, this.model.state.marker.select.length == 0);
     } else {
@@ -520,11 +525,14 @@ const ButtonList = Component.extend({
     }
 
     btn.classed(class_active_locked, locked);
-    btn.select(".vzb-buttonlist-btn-title")
-      .text(locked ? locked : translator("buttons/lock"));
 
     btn.select(".vzb-buttonlist-btn-icon")
       .html(iconset[locked ? "lock" : "unlock"]);
+
+    btn.select(".vzb-buttonlist-btn-title>span").text(
+      locked ? locked : translator("buttons/lock")
+    )
+      .attr("data-vzb-translate", locked ? null : "buttons/lock");
   },
   toggleInpercent() {
     this.model.ui.chart.inpercent = !this.model.ui.chart.inpercent;

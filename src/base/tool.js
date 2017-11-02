@@ -62,14 +62,58 @@ const ToolModel = Model.extend({
     }
 
     validate_func(c);
-  }
+  },
+
+  setReady(arg) {
+    if (arg !== false) this.checkTimeLimits();
+    this._super(arg);
+  },
+
+
+  checkTimeLimits() {
+
+    const time = this.state.time;
+    const timeDependentMarkers = this.state.getSubmodels(false /*return as array*/, f => f._type == "marker" && f.space.includes("time"));
+
+    if (!time || !timeDependentMarkers.length) return;
+
+    const tLimits = {};
+    timeDependentMarkers.forEach(marker => {
+      const l = marker.getTimeLimits();
+      tLimits.min = d3.max([tLimits.min, l.min]);
+      tLimits.max = d3.min([tLimits.max, l.max]);
+    });
+
+    if (!utils.isDate(tLimits.min) || !utils.isDate(tLimits.max))
+      return utils.warn("checkTimeLimits(): min-max look wrong: " + tLimits.min + " " + tLimits.max + ". Expecting Date objects. Ensure that time is properly parsed in the data from reader");
+
+    // change start and end (but keep startOrigin and endOrigin for furhter requests)
+    const newTime = {};
+    if (time.start - tLimits.min != 0 || !time.start && !time.startOrigin) newTime["start"] = d3.max([tLimits.min, time.parse(time.startOrigin)]);
+    if (time.end - tLimits.max != 0 || !time.end && !time.endOrigin) newTime["end"] = d3.min([tLimits.max, time.parse(time.endOrigin)]);
+
+    time.set(newTime, false, false);
+
+    if (newTime.start || newTime.end) {
+      timeDependentMarkers.forEach(marker => {
+        utils.forEach(marker.getSubhooks(), hook => {
+          if (hook.which == time.dim) {
+            hook.buildScale();
+          }
+        });
+      });
+    }
+
+    //force time validation because time.value might now fall outside of start-end
+    time.validate();
+  },
 
 });
 
 
 //tool
 const Tool = Component.extend({
- /**
+  /**
    * Initializes the tool
    * @param {Object} placeholder object
    * @param {Object} external_model External model such as state, data, etc

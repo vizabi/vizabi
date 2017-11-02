@@ -26,7 +26,7 @@ const formats = {
 
 const TimeModel = DataConnected.extend({
 
-  objectLeafs: ["autogenerate"],
+  objectLeafs: ["autoconfig"],
 
   /**
    * Default values for this model
@@ -52,7 +52,8 @@ const TimeModel = DataConnected.extend({
       format: { data: null, ui: null }, // overwrite of default formats
       step: 1, //step must be integer, and expressed in units
       immediatePlay: true,
-      record: false
+      record: false,
+      offset: 0
     };
     return utils.deepExtend(this._super(), defaults);
   },
@@ -114,10 +115,21 @@ const TimeModel = DataConnected.extend({
     this.validateFormatting();
   },
 
+  preloadData() {
+    this.dataSource = this.getClosestModel(this.data || "data");
+    return this._super();
+  },
+
   afterPreload() {
-    if (this.dim == null && this.autogenerate) {
-      const dataSource = this.getClosestModel(this.autogenerate.data);
-      this.dim = dataSource.getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType).concept;
+    this.autoconfigureModel();
+  },
+
+  autoconfigureModel() {
+    if (!this.dim && this.autoconfig) {
+      const concept = this.dataSource.getConcept(this.autoconfig);
+
+      if (concept) this.dim = concept.concept;
+      utils.printAutoconfigResult(this);
     }
   },
 
@@ -352,13 +364,14 @@ const TimeModel = DataConnected.extend({
       utils.warn("getAllSteps(): invalid start/end time is detected: " + this.start + ", " + this.end);
       return [];
     }
-    const hash = "" + this.start + this.end + this.step;
+    const hash = "" + this.offset + this.start + this.end + this.step;
 
     //return if cached
     if (this.allSteps[hash]) return this.allSteps[hash];
 
     this.allSteps[hash] = [];
-    let curr = this.start;
+    const is = this.getIntervalAndStep();
+    let curr = d3["utc" + is.interval].offset(this.start, this.offset);
     while (+curr <= +this.end) {
       const is = this.getIntervalAndStep();
       this.allSteps[hash].push(curr);
@@ -493,13 +506,13 @@ function weekFormat() {
   };
 
   const formatWeekYear = function(d) {
-    const origin = +d;
-    return new Date(origin + ((4 - (d.getUTCDay() || 7)) * 86400000)).getUTCFullYear();
+    if (!(d instanceof Date)) d = new Date(+d);
+    return new Date(+d + ((4 - (d.getUTCDay() || 7)) * 86400000)).getUTCFullYear();
   };
 
   const formatWeek = function(d) {
-    const origin = +d;
-    const quote = new Date(origin + ((4 - (d.getUTCDay() || 7)) * 86400000));
+    if (!(d instanceof Date)) d = new Date(+d);
+    const quote = new Date(+d + ((4 - (d.getUTCDay() || 7)) * 86400000));
     const week = Math.ceil(((quote.getTime() - quote.setUTCMonth(0, 1)) / 86400000 + 1) / 7);
     return week < 10 ? "0" + week : week;
   };
@@ -515,7 +528,7 @@ function weekFormat() {
     const dayOfWeek = 1; // Monday === 1
     const dayOfYear = week * 7 + dayOfWeek - (startDayOfWeek + 4);
 
-    let date = formats["year"].parse(year);
+    let date = formats["year"].data.parse(year);
     date = new Date(date.getTime() + dayOfYear * 24 * 60 * 60 * 1000);
 
     return date;
@@ -542,6 +555,7 @@ function quarterFormat() {
   };
 
   const formatQuarter = function(d) {
+    if (!(d instanceof Date)) d = new Date(+d);
     return ((d.getUTCMonth() / 3) | 0) + 1;
   };
 

@@ -7,10 +7,13 @@
         max-width: 170px;
         padding: 0 10px;
       }
-      .vzb-find-item.vzb-checked.vzb-separator {
-        padding-bottom: 25px;
-        border-bottom: 1px solid;
-        border-bottom-color: $vzb-color-primary-light;
+      .vzb-find-list {
+        transform: translateZ(0);        
+        .vzb-find-item.vzb-checked.vzb-separator {
+          padding-bottom: 25px;
+          border-bottom: 1px solid;
+          border-bottom-color: $vzb-color-primary-light;
+        }
       }
       &.vzb-popup {
         .vzb-dialog-title {
@@ -31,7 +34,7 @@
         .vzb-dialog-title {
           .vzb-find-filter {
             padding-top: 20px;
-            margin-bottom: 0; 
+            margin-bottom: 0;
           }
         }
         .vzb-dialog-content {
@@ -82,7 +85,7 @@
           flex: auto;
 
           .vzb-dialog-buttons {
-            display: block;
+            display: flex;
             flex: none;
           }
 
@@ -104,11 +107,10 @@
             display: flex;
             flex-direction: row;
             align-items: center;
-            padding: 0 0 0 20px;
             > span:first-child {
               display: block;
               flex: 0 0 auto;
-            } 
+            }
           }
 
           .vzb-find-filter {
@@ -118,7 +120,7 @@
             }
             display: block;
             flex: 1 1 auto;
-            min-width: 1px;            
+            min-width: 1px;
             max-width: 260px;
             padding-right: 20px;
           }

@@ -30,6 +30,17 @@ const LabelModel = Hook.extend({
     this._type = "label";
 
     this._super(name, values, parent, bind);
+  },
+
+  autoconfigureModel() {
+    if (!this.which && this.autoconfig) {
+
+      const concept = this.dataSource.getConcept(this.autoconfig)
+          || this.dataSource.getConcept({ type: "entity_domain" });
+
+      if (concept) this.which = concept.concept;
+      utils.printAutoconfigResult(this);
+    }
   }
 
 

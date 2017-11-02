@@ -47,8 +47,12 @@ export default class ColorPicker {
 
     this._initSvg();
 
-    this._width = this.constructor.px2num(this._svg.style("width"));
-    this._height = this.constructor.px2num(this._svg.style("height"));
+    const {
+      width: svgWidth,
+      height: svgHeight
+    } = getComputedStyle(this._svg.node());
+    this._width = this.constructor.px2num(svgWidth);
+    this._height = this.constructor.px2num(svgHeight);
     this._maxRadius = this._width / 2 * (1 - this._margin.left - this._margin.right);
 
     // tuning defaults
@@ -158,8 +162,13 @@ export default class ColorPicker {
     _svg.append("rect")
       .attr("width", _width)
       .attr("height", _maxHeight)
-      .attr("class", css.COLOR_BUTTON + " " + css.COLOR_BACKGR)
-      .on("mouseover", () => this._cellHover(this._colorOld));
+      .attr("class", css.COLOR_BACKGR)
+      .on("mouseover", () => this._cellHover(this._colorOld))
+      .on("click", () => {
+        d3.event.stopPropagation();
+        this._changeColor(this._colorOld);
+        this.show(false);
+      });
 
     const tx = _maxRadius + _width * _margin.left;
     const ty = _maxRadius + _height * _margin.top;
@@ -255,7 +264,7 @@ export default class ColorPicker {
     _svg.selectAll("." + css.COLOR_BUTTON)
       .on("click", d => {
         d3.event.stopPropagation();
-        this._changeColor(d.data.meaning, true);
+        this._changeColor(d ? d.data.meaning : this._colorDef, true);
         this.show(false);
       });
   }
@@ -302,11 +311,9 @@ export default class ColorPicker {
     this._sampleText.text(value);
 
     const isTouch = isTouchDevice();
-    if (isTouch) {
-      this.show(false);
-    }
 
     this._changeColor(value, isTouch);
+    isTouch && this.show(false);
   }
 
   _changeColor(color, isClick = false) {
@@ -324,8 +331,13 @@ export default class ColorPicker {
     if (typeof arg !== "undefined") {
       const { _margin } = this;
       const svg = arg;
-      const width = this.constructor.px2num(svg.style("width"));
-      const height = this.constructor.px2num(svg.style("height"));
+
+      const {
+        width: svgWidth,
+        height: svgHeight,
+      } = getComputedStyle(svg.node());
+      const width = this.constructor.px2num(svgWidth);
+      const height = this.constructor.px2num(svgHeight);
 
       const maxRadius = width / 2 * (1 - _margin.left - _margin.right);
       const selectedColor = svg.select("." + css.COLOR_DEFAULT);
@@ -353,12 +365,18 @@ export default class ColorPicker {
     const screen = this._container.node().getBoundingClientRect();
     let xPos, yPos;
 
-    const width = this.constructor.px2num(this._wrapper.style("width"));
-    const height = this.constructor.px2num(this._wrapper.style("height"));
+    const {
+      width: wrapperWidth,
+      height: wrapperHeight,
+      right: wrapperRight,
+      top: wrapperTop
+    } = getComputedStyle(this._wrapper.node());
+    const width = this.constructor.px2num(wrapperWidth);
+    const height = this.constructor.px2num(wrapperHeight);
 
     if (!arg) {
-      xPos = screen.width - this.constructor.px2num(this._wrapper.style("right")) - width;
-      yPos = this.constructor.px2num(this._wrapper.style("top"));
+      xPos = screen.width - this.constructor.px2num(wrapperRight) - width;
+      yPos = this.constructor.px2num(wrapperTop);
     } else {
       xPos = arg[0] - screen.left;
       yPos = arg[1] - screen.top;

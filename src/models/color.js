@@ -8,9 +8,11 @@ import Hook from "models/hook";
 const defaultPalettes = {
   "_continuous": {
     "_default": "#ffb600",
-    "0": "#B4DE79",
-    "50": "#E1CE00",
-    "100": "#F77481"
+    "0": "hsl(270, 80%, 55%)",
+    "25": "hsl(202.5, 80%, 55%)",
+    "50": "hsl(135, 80%, 55%)",
+    "75": "hsl(48, 70%, 62%)",
+    "100": "hsl(0, 80%, 55%)"
   },
   "_discrete": {
     "_default": "#ffb600",
@@ -28,7 +30,7 @@ const defaultPalettes = {
     "11": "#7fb5ed"
   },
   "_default": {
-    "_default": "#93daec"
+    "_default": "#ffb600"
   }
 };
 
@@ -53,24 +55,18 @@ const ColorModel = Hook.extend({
     return utils.deepExtend(this._super(), defaults);
   },
 
-  autoGenerateModel() {
-    if (this.which == null) {
-      let concept;
-      if (this.autogenerate) {
-        concept = this.dataSource
-          .getConceptByIndex(this.autogenerate.conceptIndex, this.autogenerate.conceptType);
+  autoconfigureModel() {
+    if (!this.which && this.autoconfig) {
+      const concept = this.dataSource.getConcept(this.autoconfig);
 
-        if (concept) {
-          const obj = {
-            which: concept.concept,
-            use: concept.use || "indicator",
-            scaleType: (concept.scales && concept.scales[0] ? concept.scales[0] : "linear")
-          };
-          this.set(obj);
-        }
-
-      }
-      if (!concept) {
+      if (concept) {
+        const obj = {
+          which: concept.concept,
+          use: concept.use || "indicator",
+          scaleType: (concept.scales && concept.scales[0] ? concept.scales[0] : "linear")
+        };
+        this.set(obj);
+      } else {
         const obj = {
           which: "_default",
           use: "constant",
@@ -78,10 +74,8 @@ const ColorModel = Hook.extend({
         };
         this.set(obj);
       }
-    }
-    if (this.scaleType == null) {
-      this.scaleType = this.dataSource
-          .getConceptprops(this.which).scales[0];
+
+      utils.printAutoconfigResult(this);
     }
   },
 
@@ -135,7 +129,7 @@ const ColorModel = Hook.extend({
     if (!args.colorID || !palette[args.colorID]) args.colorID = "_default";
 
     // if the resolved colr value is not an array (has only one shade) -- return it
-    if (!utils.isArray(palette[args.colorID])) return palette[args.colorID];
+    if (!utils.isArray(palette[args.colorID])) return args.shadeID == "shade" ? d3.rgb(palette[args.colorID]).darker(0.5).toString() : palette[args.colorID];
 
     const conceptpropsColor = this.getConceptprops().color;
     const shade = args.shadeID && conceptpropsColor && conceptpropsColor.shades && conceptpropsColor.shades[args.shadeID] ? conceptpropsColor.shades[args.shadeID] : 0;
@@ -153,8 +147,8 @@ const ColorModel = Hook.extend({
   },
 
   setWhich(newValue) {
-    this._super(newValue);
     if (this.palette) this.palette._data = {};
+    this._super(newValue);
     this._setSyncModels();
   },
 
@@ -198,9 +192,16 @@ const ColorModel = Hook.extend({
    * set color
    */
   setColor(value, pointer, persistent) {
-    const temp = this.getPalette();
-    temp[pointer] = value;
-    this.scale.range(utils.values(temp));
+    let range;
+    const palette = this.getPalette();
+    if (this.isDiscrete()) {
+      range = this.scale.range();
+      range[this.scale.domain().indexOf(pointer)] = value;
+    } else {
+      palette[pointer] = value;
+      range = utils.values(palette);
+    }
+    this.scale.range(range);
     this.palette.set(pointer, value, persistent, persistent);
   },
 
@@ -225,13 +226,13 @@ const ColorModel = Hook.extend({
     this.discreteDefaultPalette = false;
 
     if (conceptpropsColor && conceptpropsColor.palette) {
-        //specific color palette from hook concept properties
+      //specific color palette from hook concept properties
       palette = utils.clone(conceptpropsColor.palette);
     } else if (defaultPalettes[this.which]) {
-        //color palette for this.which exists in palette defaults
+      //color palette for this.which exists in palette defaults
       palette = utils.clone(defaultPalettes[this.which]);
     } else if (this.use === "constant") {
-        //an explicit hex color constant #abc or #adcdef is provided
+      //an explicit hex color constant #abc or #adcdef is provided
       if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/.test(this.which)) {
         palette = { "_default": this.which };
       } else {
@@ -250,7 +251,7 @@ const ColorModel = Hook.extend({
     let paletteLabels = null;
 
     if (conceptpropsColor && conceptpropsColor.paletteLabels) {
-        //specific color palette from hook concept properties
+      //specific color palette from hook concept properties
       paletteLabels = utils.clone(conceptpropsColor.paletteLabels);
     }
     return paletteLabels;
@@ -292,9 +293,9 @@ const ColorModel = Hook.extend({
 
       const timeMdl = this._space.time;
       const limits = timeMdl.splash ?
-          { min: timeMdl.parse(timeMdl.startOrigin), max: timeMdl.parse(timeMdl.endOrigin) }
-          :
-          { min: timeMdl.start, max: timeMdl.end };
+        { min: timeMdl.parse(timeMdl.startOrigin), max: timeMdl.parse(timeMdl.endOrigin) }
+        :
+        { min: timeMdl.start, max: timeMdl.end };
 
       const singlePoint = (limits.max - limits.min == 0);
 
@@ -302,18 +303,16 @@ const ColorModel = Hook.extend({
       range = domain.map(m => singlePoint ? paletteObject[domain[0]] : paletteObject[m]);
       domain = domain.map(m => limits.min.valueOf() + m / 100 * (limits.max.valueOf() - limits.min.valueOf()));
 
-      this.scale = d3.time.scale.utc()
+      this.scale = d3.scaleUtc()
         .domain(domain)
         .range(range)
-        .interpolate(d3.interpolateRgb);
+        .interpolate(d3.interpolateCubehelix);
 
     } else if (!this.isDiscrete()) {
 
       let limits = this.getLimits(this.which);
       //default domain is based on limits
       limits = [limits.min, limits.max];
-      //domain from concept properties can override it if defined
-      limits = this.getConceptprops().domain ? this.getConceptprops().domain : limits;
 
       const singlePoint = (limits[1] - limits[0] == 0);
 
@@ -323,24 +322,34 @@ const ColorModel = Hook.extend({
 
       if (d3.min(domain) <= 0 && d3.max(domain) >= 0 && scaleType === "log") scaleType = "genericLog";
 
-      if (scaleType == "log" || scaleType == "genericLog") {
-        const s = d3.scale.genericLog()
+      if (scaleType === "log" || scaleType === "genericLog") {
+        const s = d3.scaleGenericlog()
           .domain(limits)
           .range(limits);
         domain = domain.map(d => s.invert(d));
       }
-      this.scale = d3.scale[scaleType]()
+      this.scale = d3[`scale${utils.capitalize(scaleType)}`]()
         .domain(domain)
         .range(range)
-        .interpolate(d3.interpolateRgb);
+        .interpolate(d3.interpolateCubehelix);
 
     } else {
       range = range.map(m => utils.isArray(m) ? m[0] : m);
 
       scaleType = "ordinal";
 
-      if (this.discreteDefaultPalette) domain = domain.concat(this.getUnique(this.which));
-      this.scale = d3.scale[scaleType]()
+      if (this.discreteDefaultPalette) {
+        const defaultPalette = utils.extend({}, defaultPalettes["_discrete"]);
+        delete defaultPalette["_default"];
+        const defaultPaletteKeys = Object.keys(defaultPalette);
+
+        domain = [].concat(this.getUnique(this.which));
+        range = domain.map((d, i) => paletteObject[d] || defaultPalette[defaultPaletteKeys[i % defaultPaletteKeys.length]]);
+        domain.push("_default");
+        range.push(paletteObject["_default"]);
+      }
+
+      this.scale = d3[`scale${utils.capitalize(scaleType)}`]()
         .domain(domain)
         .range(range);
     }
