@@ -234,7 +234,7 @@ const Marker = Model.extend({
     utils.forEach(this.getSubhooks(), hook => {
 
       //only indicators depend on time and therefore influence the limits
-      if (hook.use !== "indicator" || !hook._important || !hook._dataId) return;
+      if (hook.use !== "indicator" || hook.which == time.dim || !hook._important || !hook._dataId) return;
 
       const cachedLimits = _this.cachedTimeLimits[hook._dataId + hook.which];
 

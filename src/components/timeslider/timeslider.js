@@ -105,12 +105,14 @@ const TimeSlider = Component.extend({
         if (_this.slide) {
           //only set handle position if change is external
           if (!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
+          _this.ready();
         }
       },
       "change:time.end": function(evt, path) {
         if (_this.slide) {
           //only set handle position if change is external
           if (!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
+          _this.ready();
         }
       },
       "change:time.offset": function(evt, path) {
@@ -192,6 +194,15 @@ const TimeSlider = Component.extend({
     this.handle = this.element.select(".vzb-ts-slider-handle");
     this.valueText = this.element.select(".vzb-ts-slider-value");
     this.playButtons = this.element.select(".vzb-ts-btns");
+
+    this.element.select(".vzb-ts-btn-play").on("click", () => {
+      _this.model.time.play();
+    });
+
+    this.element.select(".vzb-ts-btn-pause").on("click", () => {
+      _this.model.time.pause("soft");
+    });
+
     //Scale
     this.xScale = d3.scaleUtc()
       .clamp(true);
@@ -287,21 +298,9 @@ const TimeSlider = Component.extend({
   ready() {
     if (this.model.time.splash) return;
 
-    this.element.classed(class_loading, false);
-
-    const play = this.element.select(".vzb-ts-btn-play");
-    const pause = this.element.select(".vzb-ts-btn-pause");
     const _this = this;
-    const time = this.model.time;
 
-    play.on("click", () => {
-
-      _this.model.time.play();
-    });
-
-    pause.on("click", () => {
-      _this.model.time.pause("soft");
-    });
+    this.element.classed(class_loading, false);
 
     this.changeLimits();
     this.changeTime();

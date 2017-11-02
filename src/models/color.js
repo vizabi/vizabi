@@ -192,9 +192,16 @@ const ColorModel = Hook.extend({
    * set color
    */
   setColor(value, pointer, persistent) {
-    const temp = this.getPalette();
-    temp[pointer] = value;
-    this.scale.range(utils.values(temp));
+    let range;
+    const palette = this.getPalette();
+    if (this.isDiscrete()) {
+      range = this.scale.range();
+      range[this.scale.domain().indexOf(pointer)] = value;
+    } else {
+      palette[pointer] = value;
+      range = utils.values(palette);
+    }
+    this.scale.range(range);
     this.palette.set(pointer, value, persistent, persistent);
   },
 
@@ -331,7 +338,17 @@ const ColorModel = Hook.extend({
 
       scaleType = "ordinal";
 
-      if (this.discreteDefaultPalette) domain = domain.concat(this.getUnique(this.which));
+      if (this.discreteDefaultPalette) {
+        const defaultPalette = utils.extend({}, defaultPalettes["_discrete"]);
+        delete defaultPalette["_default"];
+        const defaultPaletteKeys = Object.keys(defaultPalette);
+
+        domain = [].concat(this.getUnique(this.which));
+        range = domain.map((d, i) => paletteObject[d] || defaultPalette[defaultPaletteKeys[i % defaultPaletteKeys.length]]);
+        domain.push("_default");
+        range.push(paletteObject["_default"]);
+      }
+
       this.scale = d3[`scale${utils.capitalize(scaleType)}`]()
         .domain(domain)
         .range(range);

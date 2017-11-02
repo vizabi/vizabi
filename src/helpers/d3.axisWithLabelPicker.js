@@ -202,7 +202,7 @@ export default function axisSmart(_orient) {
         if (highlightValue == "none") return 1;
 
         const wh = orient == HORIZONTAL ? "width" : "height";
-        const shift = (axis.repositionLabels()[d] || { x: 0, y: 0 })[dimension];
+        const shift = ((axis.repositionLabels() || {})[d] || { x: 0, y: 0 })[dimension];
 
         // opacity depends on the collision between label's boundary boxes
         return axis.hlOpacityScale()(
