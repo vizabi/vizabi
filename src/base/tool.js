@@ -92,6 +92,7 @@ const ToolModel = Model.extend({
     if (time.start - tLimits.min != 0 || !time.start && !time.startOrigin) newTime["start"] = d3.max([tLimits.min, time.parse(time.startOrigin)]);
     if (time.end - tLimits.max != 0 || !time.end && !time.endOrigin) newTime["end"] = d3.min([tLimits.max, time.parse(time.endOrigin)]);
 
+    time.setTreeFreezer(true); 
     time.set(newTime, false, false);
 
     if (newTime.start || newTime.end) {
@@ -103,9 +104,10 @@ const ToolModel = Model.extend({
         });
       });
     }
-
+    time.setTreeFreezer(false); 
+    
     //force time validation because time.value might now fall outside of start-end
-    time.validate();
+    //time.validate();
   },
 
 });

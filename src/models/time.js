@@ -506,13 +506,13 @@ function weekFormat() {
   };
 
   const formatWeekYear = function(d) {
-    const origin = +d;
-    return new Date(origin + ((4 - (d.getUTCDay() || 7)) * 86400000)).getUTCFullYear();
+    if (!(d instanceof Date)) d = new Date(+d);
+    return new Date(+d + ((4 - (d.getUTCDay() || 7)) * 86400000)).getUTCFullYear();
   };
 
   const formatWeek = function(d) {
-    const origin = +d;
-    const quote = new Date(origin + ((4 - (d.getUTCDay() || 7)) * 86400000));
+    if (!(d instanceof Date)) d = new Date(+d);
+    const quote = new Date(+d + ((4 - (d.getUTCDay() || 7)) * 86400000));
     const week = Math.ceil(((quote.getTime() - quote.setUTCMonth(0, 1)) / 86400000 + 1) / 7);
     return week < 10 ? "0" + week : week;
   };
@@ -528,7 +528,7 @@ function weekFormat() {
     const dayOfWeek = 1; // Monday === 1
     const dayOfYear = week * 7 + dayOfWeek - (startDayOfWeek + 4);
 
-    let date = formats["year"].parse(year);
+    let date = formats["year"].data.parse(year);
     date = new Date(date.getTime() + dayOfYear * 24 * 60 * 60 * 1000);
 
     return date;
