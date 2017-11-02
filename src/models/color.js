@@ -48,7 +48,6 @@ const ColorModel = Hook.extend({
       palette: {},
       paletteLabels: null,
       allow: {
-        //this is almost everything, but not "nominal", so no random strings like "name"
         scales: ["linear", "log", "genericLog", "time", "pow", "ordinal"]
       }
     };

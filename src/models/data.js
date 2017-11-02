@@ -193,8 +193,17 @@ const DataModel = Model.extend({
     this.getData(dataId).forEach(d => {
       const concept = {};
 
-      if (d.concept_type) concept["use"] = (d.concept_type == "measure" || d.concept_type == "time") ? "indicator" : "property";
+      if (this.dataAvailability) {
+        if (d.concept_type === "time" || this.dataAvailability.datapoints.map(m => m.value).includes(d.concept)) {
+          concept["use"] = "indicator";
+        } else {
+          concept["use"] = "property";
+        }
+      } else {
+        utils.warn("data.handleConceptPropsResponse(): this.dataAvailability is missing to identify concept.use of " + d.concept);
+      }
 
+      concept["concept"] = d.concept;
       concept["concept_type"] = d.concept_type;
       concept["sourceLink"] = d.indicator_url;
       try {
@@ -210,13 +219,14 @@ const DataModel = Model.extend({
       if (!concept.scales) {
         switch (d.concept_type) {
           case "measure": concept.scales = ["linear", "log"]; break;
-          case "string": concept.scales = ["nominal"]; break;
+          case "string": concept.scales = ["ordinal"]; break;
           case "entity_domain": concept.scales = ["ordinal"]; break;
           case "entity_set": concept.scales = ["ordinal"]; break;
+          case "boolean": concept.scales = ["ordinal"]; break;
           case "time": concept.scales = ["time"]; break;
+          default: concept.scales = ["linear", "log"];
         }
       }
-      if (concept["scales"] == null) concept["scales"] = ["linear", "log"];
       if (d.interpolation) {
         concept["interpolation"] = d.interpolation;
       } else if (d.concept_type == "measure") {
@@ -226,7 +236,6 @@ const DataModel = Model.extend({
       } else {
         concept["interpolation"] = "stepMiddle";
       }
-      concept["concept"] = d.concept;
       concept["domain"] = d.domain;
       concept["tags"] = d.tags;
       concept["format"] = d.format;

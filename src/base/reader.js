@@ -133,7 +133,7 @@ const Reader = Class.extend({
 
         for (let i = rows.length - 1; i > -1; --i) {
           if (utils.isString(rows[i][concept]) && rows[i][concept] !== "") {
-            result.concept_type = "entity_set";
+            result.concept_type = "string";
             [result.domain] = columns;
             break;
           }
