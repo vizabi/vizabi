@@ -1542,3 +1542,5 @@ export const px2num = pixels => (
     parseFloat(pixels) :
     console.warn(`Strange pixels value: ${pixels}`) || pixels
 );
+
+export const replaceNumberSpacesToNonBreak = numString => numString ? numString.replace(/\d{1,3}(?: \d{3})+(?=\W)/g, match => match.replace(/ /g, "\xa0")) : numString;

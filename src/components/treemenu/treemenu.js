@@ -102,6 +102,9 @@ const Menu = Class.extend({
       .each(function() {
         _this.addSubmenu(d3.select(this));
       });
+    if (!this.menuItems.length && this.isActive()) {
+      this.buildLeaf();
+    }
     return this;
   },
   setWidth(width, recursive, immediate) {
@@ -165,6 +168,7 @@ const Menu = Class.extend({
       _this.parent.parentMenu.openSubmenuNow = true;
       this.closeNeighbors(() => {
         if (_this.direction == MENU_HORIZONTAL) {
+          if (!this.menuItems.length) _this.buildLeaf();
           _this._openHorizontal();
           _this.calculateMissingWidth(0);
         } else {
@@ -404,8 +408,22 @@ const Menu = Class.extend({
 
     }
 
-  }
+  },
 
+  buildLeaf() {
+    const leafDatum = this.entity.datum();
+
+    this.entity.selectAll("div").data([leafDatum]).enter()
+      .append("div").classed(css.leaf + " " + css.leaf_content + " vzb-dialog-scrollable", true)
+      .style("width", this.width + "px")
+      .each(function(d) {
+        const leafContent = d3.select(this);
+        leafContent.append("span").classed(css.leaf_content_item + " " + css.leaf_content_item_title, true)
+          .text(utils.replaceNumberSpacesToNonBreak(d.name) || "");
+        leafContent.append("span").classed(css.leaf_content_item + " " + css.leaf_content_item_descr, true)
+          .text(utils.replaceNumberSpacesToNonBreak(d.description) || "");
+      });
+  }
 });
 
 const MenuItem = Class.extend({
@@ -1203,6 +1221,8 @@ const TreeMenu = Component.extend({
 
     this._maxChildCount = 0;
 
+    const noDescription = _this.translator("hints/nodescr");
+
     function createSubmeny(select, data, toplevel) {
       if (!data.children) return;
       _this._maxChildCount = Math.max(_this._maxChildCount, data.children.length);
@@ -1248,35 +1268,15 @@ const TreeMenu = Component.extend({
 
           //deepLeaf
           if (!d.children) {
+            if (d.id === "_default") {
+              d.name = _this.translator("indicator/_default/" + targetModelType);
+              d.description = _this.translator("description/_default/" + targetModelType);
+            }
+            if (!d.description) d.description = noDescription;
             const deepLeaf = view.append("div").attr("class", css.menuHorizontal + " " + css.list_outer + " " + css.list_item_leaf);
             deepLeaf.on("click", d => {
               _this._selectIndicator({ concept: d.id, dataSource: d.dataSource });
             });
-            const deepLeafContent = deepLeaf.append("div").classed(css.leaf + " " + css.leaf_content + " vzb-dialog-scrollable", true);
-            deepLeafContent.append("span").classed(css.leaf_content_item + " " + css.leaf_content_item_title, true)
-              .text(d => {
-                //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-                const translated = d.id === "_default" ? _this.translator("indicator/_default/" + targetModelType) : d.name;
-                return translated || "";
-              });
-            let hideUnits;
-            const units = deepLeafContent.append("span").classed(css.leaf_content_item, true)
-              .text(d => {
-                //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-                const translated = d.id === "_default" ? _this.translator("unit/_default/" + targetModelType) : d.unit;
-                hideUnits = !translated;
-                return _this.translator("hints/units") + ": " + translated || "";
-              });
-            units.classed("vzb-hidden", hideUnits);
-            let hideDescription;
-            const description = deepLeafContent.append("span").classed(css.leaf_content_item + " " + css.leaf_content_item_descr, true)
-              .text(d => {
-                //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-                const translated = d.id === "_default" ? _this.translator("description/_default/" + targetModelType) : d.description;
-                hideDescription = !translated;
-                return (hideUnits && hideDescription) ? _this.translator("hints/nodescr") : translated || "";
-              });
-            description.classed("vzb-hidden", hideDescription && !hideUnits);
           }
 
           if (d.id == _this._targetModel[_this._targetProp]) {
