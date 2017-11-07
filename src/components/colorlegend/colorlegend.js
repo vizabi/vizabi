@@ -57,6 +57,7 @@ const ColorLegend = Component.extend({
         });
       },
       "translate:locale": function() {
+        _this._translateSelectDialog(_this.model.locale.getTFunction());        
         _this.colorPicker.translate(_this.model.locale.getTFunction());
       }
     };
@@ -111,19 +112,15 @@ const ColorLegend = Component.extend({
   },
 
   _initSelectDialog() {
-    const t = this.model.locale.getTFunction();
-
     this.moreOptionsHint = this.listColorsEl.append("span")
-      .classed("vzb-cl-more-hint vzb-hidden", true)
-      .text(t("hints/color/more"));
+      .classed("vzb-cl-more-hint vzb-hidden", true);
 
     this.selectDialog = this.listColorsEl.append("div").classed("vzb-cl-select-dialog vzb-hidden", true);
     this._initSelectDialogItems();
+    this._translateSelectDialog(this.model.locale.getTFunction());
   },
 
   _initSelectDialogItems() {
-    const t = this.model.locale.getTFunction();
-
     this.selectDialogTitle = this.selectDialog.append("div")
       .classed("vzb-cl-select-dialog-title", true);
 
@@ -133,20 +130,24 @@ const ColorLegend = Component.extend({
       .on("click", () => this._closeSelectDialog());
 
     this.selectAllButton = this.selectDialog.append("div")
-      .classed("vzb-cl-select-dialog-item", true)
-      .text("✅ " + t("dialogs/color/select-all"));
+      .classed("vzb-cl-select-dialog-item", true);
 
     this.removeElseButton = this.selectDialog.append("div")
-      .classed("vzb-cl-select-dialog-item", true)
-      .text("🗑️ " + t("dialogs/color/remove-else"));
+      .classed("vzb-cl-select-dialog-item", true);
 
     this.editColorButton = this.selectDialog.append("div")
-      .classed("vzb-cl-select-dialog-item vzb-cl-select-dialog-item-moreoptions", true)
-      .text("🎨 " + t("dialogs/color/edit-color"));
+      .classed("vzb-cl-select-dialog-item vzb-cl-select-dialog-item-moreoptions", true);
 
     this.editColorButtonTooltip = this.editColorButton.append("div")
-      .classed("vzb-cl-select-dialog-item-tooltip", true)
-      .text("Dataset author doesn't want you to change this");
+      .classed("vzb-cl-select-dialog-item-tooltip", true);
+  },
+
+  _translateSelectDialog(t) {
+    this.moreOptionsHint.text(t("hints/color/more"));
+    this.selectAllButton.text("✅ " + t("dialogs/color/select-all"));
+    this.removeElseButton.text("🗑️ " + t("dialogs/color/remove-else"));
+    this.editColorButton.text("🎨 " + t("dialogs/color/edit-color"));
+    this.editColorButtonTooltip.text("Dataset author doesn't want you to change this");
   },
 
   _closeSelectDialog() {
