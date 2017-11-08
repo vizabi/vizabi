@@ -772,7 +772,7 @@ const TreeMenu = Component.extend({
       //if entry's tag are empty don't include it in the menu
       if (entry.tags == "_none") return;
       if (!entry.tags) entry.tags = kvPair.dataSource.getDatasetName() || UNCLASSIFIED;
-      const concept = { id: entry.concept, name: entry.name, name_catalog: entry.name_catalog, description: entry.description, dataSource: kvPair.dataSource._name };
+      const concept = { id: entry.concept, name: entry.name, name_catalog: entry.name_catalog, description: entry.description, dataSource: kvPair.dataSource._name, use: (kvPair.key.size > 1 ? "indicator" : "property") };
 
       if (properties && kvPair.key.length == 1) {
 
@@ -780,7 +780,7 @@ const TreeMenu = Component.extend({
         if (!tags[folderName]) {
           const dim = kvPair.key[0];
           tags[folderName] = { id: folderName, name: dim.name + " properties", type: "folder", children: [] };
-          tags[folderName].children.push({ id: dim.concept, name: dim.name, name_catalog: dim.name_catalog, description: dim.description, dataSource: kvPair.dataSource._name });
+          tags[folderName].children.push({ id: dim.concept, name: dim.name, name_catalog: dim.name_catalog, description: dim.description, dataSource: kvPair.dataSource._name, use: (kvPair.key.size > 1 ? "indicator" : "property") });
           tags[ROOT].children.push(tags[folderName]);
         }
         tags[folderName].children.push(concept);
@@ -1250,7 +1250,7 @@ const TreeMenu = Component.extend({
           //only for leaf nodes
           if (view.attr("children")) return;
           d3.event.stopPropagation();
-          _this._selectIndicator({ concept: d.id, dataSource: d.dataSource });
+          _this._selectIndicator({ concept: d.id, dataSource: d.dataSource, use: d.use });
         })
         .append("span")
         .text(d => {
@@ -1275,7 +1275,7 @@ const TreeMenu = Component.extend({
             if (!d.description) d.description = noDescription;
             const deepLeaf = view.append("div").attr("class", css.menuHorizontal + " " + css.list_outer + " " + css.list_item_leaf);
             deepLeaf.on("click", d => {
-              _this._selectIndicator({ concept: d.id, dataSource: d.dataSource });
+              _this._selectIndicator({ concept: d.id, dataSource: d.dataSource, use: d.use });
             });
           }
 

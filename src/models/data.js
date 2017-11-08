@@ -193,16 +193,6 @@ const DataModel = Model.extend({
     this.getData(dataId).forEach(d => {
       const concept = {};
 
-      if (this.dataAvailability) {
-        if (d.concept_type === "time" || this.dataAvailability.datapoints.map(m => m.value).includes(d.concept)) {
-          concept["use"] = "indicator";
-        } else {
-          concept["use"] = "property";
-        }
-      } else {
-        utils.warn("data.handleConceptPropsResponse(): this.dataAvailability is missing to identify concept.use of " + d.concept);
-      }
-
       concept["concept"] = d.concept;
       concept["concept_type"] = d.concept_type;
       concept["sourceLink"] = d.indicator_url;

@@ -104,6 +104,20 @@ const Marker = Model.extend({
     return data;
   },
 
+
+  getAvailableConcept({ index: index = 0, type: type = null, includeOnlyIDs: includeOnlyIDs = [], excludeIDs: excludeIDs = [] } = { }) {
+    if (!type && includeOnlyIDs.length == 0 && excludeIDs.length == 0) {
+      return null;
+    }
+
+    const filtered = this.getAvailableData().filter(f =>
+      (!type || !f.value.concept_type || f.value.concept_type === type)
+      && (includeOnlyIDs.length == 0 || includeOnlyIDs.indexOf(f.value.concept) !== -1)
+      && (excludeIDs.length == 0 || excludeIDs.indexOf(f.value.concept) == -1)
+    );
+    return filtered[index] || filtered[filtered.length - 1];
+  },
+
   setDataSourceForAllSubhooks(data) {
     const obj = {};
     this.getSubhooks().forEach(hook => { obj[hook._name] = { data }; });

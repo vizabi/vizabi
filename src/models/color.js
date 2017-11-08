@@ -54,30 +54,6 @@ const ColorModel = Hook.extend({
     return utils.deepExtend(this._super(), defaults);
   },
 
-  autoconfigureModel() {
-    if (!this.which && this.autoconfig) {
-      const concept = this.dataSource.getConcept(this.autoconfig);
-
-      if (concept) {
-        const obj = {
-          which: concept.concept,
-          use: concept.use || "indicator",
-          scaleType: (concept.scales && concept.scales[0] ? concept.scales[0] : "linear")
-        };
-        this.set(obj);
-      } else {
-        const obj = {
-          which: "_default",
-          use: "constant",
-          scaleType: "ordinal"
-        };
-        this.set(obj);
-      }
-
-      utils.printAutoconfigResult(this);
-    }
-  },
-
   /**
    * Initializes the color hook
    * @param {Object} values The initial values of this model

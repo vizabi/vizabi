@@ -680,7 +680,6 @@ export class Storage {
             //If there are some points in the array with valid numbers, then
             //interpolate the missing point and save it to the “clean regular set”
             method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
-            use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
 
             // Inside of this 3-level loop is the following:
             if (nested && nested[frameName] && (nested[frameName][0][column] || nested[frameName][0][column] === 0)) {
