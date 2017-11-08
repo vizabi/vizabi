@@ -551,7 +551,7 @@ export class Storage {
       if (TIME && KEY.indexOf(TIME) != -1) KEY.splice(KEY.indexOf(TIME), 1);
 
       const filtered = {};
-      let k, items, itemsIndex, oneFrame, method, use, next;
+      let k, c, items, itemsIndex, oneFrame, method, use, next;
 
       const entitiesByKey = {};
       if (KEY.length > 1) {
@@ -572,7 +572,6 @@ export class Storage {
       const columns = query.select.value.filter(f => f !== "_default");
 
       const cLength = columns.length;
-      let key, c;
 
       const lastIndex = KEY.length - 1;
       function createFiltered(parent, index) {
@@ -637,7 +636,7 @@ export class Storage {
               if (nested[key]) {
                 if (index == lastIndex) {
                   for (c = 0; c < cLength; c++) {
-                    lastKeyObject[c][key] = mapValue(columns[c], nested[key], filtered[key]);
+                    lastKeyObject[c][key] = mapValue(columns[c], nested[key], filtered[key], key);
                   }
                 } else {
                   for (c = 0; c < cLength; c++) {
@@ -659,7 +658,7 @@ export class Storage {
               if (index == lastIndex) {
                 let value;
                 for (c = 0; c < cLength; c++) {
-                  value = mapValue(columns[c], nested[key], filtered[key]);
+                  value = mapValue(columns[c], nested[key], filtered[key], key);
                   if (value !== null) {
                     lastKeyObject[c][gKey] = (lastKeyObject[c][gKey] || 0) + value;
                   } else if (lastKeyObject[c][gKey] === undefined) {
@@ -675,7 +674,7 @@ export class Storage {
             }
           }
 
-          function mapValue(column, nested, filtered) {
+          function mapValue(column, nested, filtered, key) {
 
             //If there are some points in the array with valid numbers, then
             //interpolate the missing point and save it to the “clean regular set”
