@@ -17,8 +17,20 @@ const Size = Dialog.extend("size", {
  */
   init(config, parent) {
     this.name = "size";
+    const _this = this;
 
     // in dialog, this.model_expects = ["state", "ui", "locale"];
+
+    this.model_binds = {
+      "change:state.marker.size.which": function(evt) {
+        if (!_this._readyOnce) return;
+        _this.updateSubtitle();
+      },
+      "translate:locale": function() {
+        if (!_this._readyOnce) return;
+        _this.updateSubtitle();
+      }
+    };
 
     this.components = [
       {
@@ -43,6 +55,18 @@ const Size = Dialog.extend("size", {
     }
 
     this._super(config, parent);
+  },
+
+  readyOnce() {
+    this._super();
+    this.updateSubtitle();
+  },
+
+  updateSubtitle() {
+    const conceptProps = this.model.state.marker.size.getConceptprops();
+    const subtitle = utils.getSubtitle(conceptProps.name, conceptProps.name_short);
+
+    this.element.select(".vzb-dialog-subtitle").text(subtitle);
   }
 });
 

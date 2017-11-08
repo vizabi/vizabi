@@ -34,6 +34,7 @@
 
       //hiding elements when in sidebar mode
       &.vzb-sidebar {
+        .vzb-dialog-subtitle,          
         .vzb-dialog-bubblesize {
           display: none;
         }
