@@ -56,6 +56,20 @@ const ColorLegend = Component.extend({
           }
         });
       },
+      "change:time.start": function(evt, original) {
+        if (!_this._readyOnce || _this.model.time.splash) return;
+        if (_this.colorModel.which == _this.model.time.dim) {
+          _this.ready();
+          return;          
+        };
+      },
+      "change:time.end": function(evt, original) {
+        if (!_this._readyOnce || _this.model.time.splash) return;
+        if (_this.colorModel.which == _this.model.time.dim) {
+          _this.ready();
+          return;          
+        };
+      },
       "translate:locale": function() {
         _this.colorPicker.translate(_this.model.locale.getTFunction());
       }
