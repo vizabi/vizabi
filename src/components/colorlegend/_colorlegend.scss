@@ -133,6 +133,9 @@
     z-index: 1;
 
     &-item {
+      @include rtl {
+        float: right;
+      }
       float: left;
       margin: 3px auto;
       cursor: pointer;
@@ -157,6 +160,10 @@
     }
 
     &-close {
+      @include rtl {
+        left: 5px;
+        right: auto;
+      }
       cursor: pointer;
       position: absolute;
       right: 5px;
