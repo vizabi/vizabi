@@ -26,8 +26,6 @@ const formats = {
 
 const TimeModel = DataConnected.extend({
 
-  objectLeafs: ["autoconfig"],
-
   /**
    * Default values for this model
    */
@@ -58,6 +56,7 @@ const TimeModel = DataConnected.extend({
     return utils.deepExtend(this._super(), defaults);
   },
 
+  objectLeafs: ["autoconfig"],
   dataConnectedChildren: ["startOrigin", "endOrigin", "dim"],
 
   /**

@@ -3,6 +3,8 @@ import Model from "base/model";
 import Component from "base/component";
 import { warn as warnIcon } from "base/iconset";
 import EventSource, { DefaultEvent } from "base/events";
+import DimensionManager from "base/dimensionmanager";
+import DataManager from "base/datamanager";
 
 const class_loading_first = "vzb-loading-first";
 const class_loading_data = "vzb-loading-data";
@@ -22,6 +24,8 @@ const ToolModel = Model.extend({
     this._id = utils.uniqueId("tm");
     this._type = "tool";
     this._component = tool;
+    this.dimensionManager = DimensionManager(this);
+    this.dataManager = DataManager(this);
 
     // defaults are defined on the Tool
     // this way, each tool can have it's own default model

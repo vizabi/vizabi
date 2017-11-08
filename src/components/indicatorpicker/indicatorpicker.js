@@ -202,22 +202,9 @@ const IndPicker = Component.extend({
 
     } else {
 
-      function findConceptName(conceptid) {
-        let conceptName;
-        for (const model of Object.values(targetModel._root._data)) {
-          if (model._type === "data") {
-            const concept = model.getConceptprops(conceptid);
-            if (concept) return concept.name;
-          }
-        }
-        return "Concept not found";
-      }
-
-      if (this.showHoverValues && this._highlighted) {
-        selectText = targetModel.space.map(dim => findConceptName(targetModel._space[dim].dim)).join(", ");
-      } else {
-        selectText = targetModel.space.map(dim => findConceptName(targetModel._space[dim].dim)).join(", ");
-      }
+      // targetModel is marker
+      const dataManager = targetModel._root.dataManager;
+      selectText = targetModel.space.map(dim => dataManager.getConceptProperty(targetModel._space[dim].dim, "name")).join(", ");
 
     }
 

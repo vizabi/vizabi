@@ -572,8 +572,8 @@ const TreeMenu = Component.extend({
     if (this._targetModel.isHook()) {
       this._targetProp = "which";
     }
-    if (this._targetModel.isEntities()) {
-      this._targetProp = "dim";
+    if (this._targetModel instanceof Marker) {
+      this._targetProp = "space";
     }
     return this;
   },
@@ -810,7 +810,7 @@ const TreeMenu = Component.extend({
      */
     this.model.marker.getAvailableSpaces().forEach((space, str) => {
       indicatorsTree.children.push({
-        id: space.map(dim => dim.id).join(""),
+        id: str,
         name: space.map(dim => dim.name).join(", "),
         name_catalog: space.map(dim => dim.name).join(", "),
         description: "no description",
@@ -1409,7 +1409,7 @@ const TreeMenu = Component.extend({
     const mdl = this._targetModel;
     if (what == "which") mdl.setWhich(value);
     if (what == "scaleType") mdl.setScaleType(value);
-    if (what == "dim") mdl.setDimension(value);
+    if (what == "space") mdl.setSpace(value.concept.split(","));
   }
 
 });

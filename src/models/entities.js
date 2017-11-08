@@ -62,10 +62,10 @@ const EntitiesModel = DataConnected.extend({
   },
 
   setDimension(dim) {
-    if (this.dim === dim.concept) return;
+    if (this.dim === dim) return;
     const props = {};
     props.show = {};
-    props.dim = dim.concept;
+    props.dim = dim;
     this.set(props);
   },
   /**

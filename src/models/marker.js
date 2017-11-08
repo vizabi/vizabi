@@ -32,10 +32,9 @@ const Marker = Model.extend({
       const exceptions = { exceptType: "time" };
       const allDimensions = _this._getAllDimensions(exceptions);
       _this._multiDim = allDimensions.length > 1;
-
-      this.updateSpaceReferences();
     });
     this.on("change", "space", this.updateSpaceReferences.bind(this));
+    this.updateSpaceReferences();
   },
 
   updateSpaceReferences() {
@@ -43,6 +42,10 @@ const Marker = Model.extend({
       // make reference to dimension
       this._space[dimensionModel] = this.getClosestModel(dimensionModel);
     });
+  },
+
+  setSpace(newSpace) {
+    this.space = this._root.dimensionManager.getDimensionModelsForSpace(this._space, newSpace);
   },
 
   getAvailableSpaces() {
