@@ -189,14 +189,13 @@ const IndPicker = Component.extend({
       concept = targetModel.getConceptprops();
 
       if (this.showHoverValues && this._highlighted) {
-        const unit = !concept.unit ? "" : " " + concept.unit;
         const formatter = targetModel.getTickFormatter();
 
-        selectText = (this._highlightedValue || this._highlightedValue === 0) ? formatter(this._highlightedValue) + unit : translator("hints/nodata");
+        selectText = (this._highlightedValue || this._highlightedValue === 0) ? formatter(this._highlightedValue) : translator("hints/nodata");
 
       } else {
         //Let the indicator "_default" in tree menu be translated differnetly for every hook type
-        selectText = (which === "_default") ? translator("indicator/_default/" + type) : (concept.name);
+        selectText = (which === "_default") ? translator("indicator/_default/" + type) : (concept.name_short);
 
       }
 

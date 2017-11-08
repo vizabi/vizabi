@@ -1544,3 +1544,10 @@ export const px2num = pixels => (
 );
 
 export const replaceNumberSpacesToNonBreak = numString => numString ? numString.replace(/\d{1,3}(?: \d{3})+(?=\W)/g, match => match.replace(/ /g, "\xa0")) : numString;
+
+export const getSubtitle = (title, shortTitle) => {
+  let subtitle = title.replace(shortTitle, "");
+  if (subtitle[0] === ",") subtitle = subtitle.slice(1);
+  const regexpResult = /^\((.*)\)$|.*/.exec(subtitle.trim());
+  return regexpResult[1] || regexpResult[0] || "";
+};

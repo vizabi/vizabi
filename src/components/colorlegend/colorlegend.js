@@ -109,8 +109,8 @@ const ColorLegend = Component.extend({
     this.labelScaleEl = this.listColorsEl.append("div").attr("class", "vzb-cl-labelscale");
     this.labelScaleSVG = this.labelScaleEl.append("svg");
     this.labelScaleG = this.labelScaleSVG.append("g");
-    this.unitDiv = this.listColorsEl.append("div").attr("class", "vzb-cl-unit");
-    this.unitText = this.unitDiv.append("span").attr("class", "vzb-cl-unit-text");
+    this.subtitleDiv = this.listColorsEl.append("div").attr("class", "vzb-cl-subtitle");
+    this.subtitleText = this.subtitleDiv.append("span").attr("class", "vzb-cl-subtitle-text");
 
     this.minimapSVG = this.minimapEl.append("svg");
     this.minimapG = this.minimapSVG.append("g");
@@ -254,7 +254,7 @@ const ColorLegend = Component.extend({
     //Hide minimap if no data to draw it
     this.minimapEl.classed("vzb-hidden", !canShowMap || !this.colorModel.isDiscrete());
 
-    this.unitDiv.classed("vzb-hidden", true);
+    this.subtitleDiv.classed("vzb-hidden", true);
     const cScale = this.colorModel.getScale();
 
     if (!this.colorModel.isDiscrete()) {
@@ -353,10 +353,11 @@ const ColorLegend = Component.extend({
       }
       context.putImageData(image, 0, 0);
 
-      const unit = this.colorModel.getConceptprops().unit || "";
+      const conceptProps = this.colorModel.getConceptprops();
+      const subtitle = utils.getSubtitle(conceptProps.name, conceptProps.name_short);
 
-      this.unitDiv.classed("vzb-hidden", unit == "");
-      this.unitText.text(unit);
+      this.subtitleDiv.classed("vzb-hidden", subtitle == "");
+      this.subtitleText.text(subtitle);
 
       colorOptions.classed("vzb-hidden", true);
 
