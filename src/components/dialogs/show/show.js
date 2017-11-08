@@ -25,7 +25,7 @@ const Show = Dialog.extend("show", {
       this.components = [{
         component: indicatorpicker,
         placeholder: ".vzb-show-filter-selector",
-        model: ["state.time", "state.entities", "locale"]
+        model: ["state.time", "state.marker", "locale"]
       }];
     }
 

@@ -30,15 +30,11 @@ const AxisModel = Hook.extend({
     return utils.deepExtend(this._super(), defaults);
   },
 
-  autoconfigureModel() {
-    if (!this.which && this.autoconfig) {
-
-      const concept = this.dataSource.getConcept(this.autoconfig)
-        || this.dataSource.getConcept({ type: "time" });
-
-      if (concept) this.which = concept.concept;
-      utils.printAutoconfigResult(this);
+  autoconfigureModel(autoconfigResult) {
+    if (!this.which && this.autoconfig && this._type === "axis") {
+      autoconfigResult = this._parent.getAvailableConcept(this.autoconfig) || this._parent.getAvailableConcept({ type: "time" });
     }
+    this._super(autoconfigResult);
   },
 
   _type: "axis",

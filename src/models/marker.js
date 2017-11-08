@@ -33,6 +33,89 @@ const Marker = Model.extend({
       const allDimensions = _this._getAllDimensions(exceptions);
       _this._multiDim = allDimensions.length > 1;
     });
+    this.on("change", "space", this.updateSpaceReferences.bind(this));
+    this.updateSpaceReferences();
+  },
+
+  updateSpaceReferences() {
+    utils.forEach(this.getSpace(), dimensionModel => {
+      // make reference to dimension
+      this._space[dimensionModel] = this.getClosestModel(dimensionModel);
+    });
+  },
+
+  setSpace(newSpace) {
+    this.space = this._root.dimensionManager.getDimensionModelsForSpace(this._space, newSpace);
+  },
+
+  getAvailableSpaces() {
+    const spaces = new Map();
+    utils.forEach(this._root._data, dataSource => {
+      if (dataSource._type !== "data") return;
+
+      const indicatorsDB = dataSource.getConceptprops();
+
+      dataSource.keyAvailability.forEach((space, str) => {
+        if (space.length == this.space.length) { // only same dimension as marker already has for now. Supported dimensions might later depend on tool.
+          spaces.set(str, space.map(dimension => indicatorsDB[dimension]));
+        }
+      });
+    });
+    return spaces;
+  },
+
+  getAvailableData() {
+    const data = [];
+
+    if (d3.keys(this._space).length === 0) return utils.warn("getAvailableData() is trying to access missing _space items of marker '" + this._name + "' which likely haven't been resoled in time");
+    const dimensions = this.space.map(dim => this._space[dim].dim);
+
+    utils.forEach(this._root._data, dataSource => {
+      if (dataSource._type !== "data") return;
+
+      const indicatorsDB = dataSource.getConceptprops();
+
+      dataSource.dataAvailability.datapoints.forEach(kvPair => {
+        if (dimensions.length == kvPair.key.size && dimensions.every(dim => kvPair.key.has(dim))) {
+          data.push({
+            key: kvPair.key,
+            value: indicatorsDB[kvPair.value],
+            dataSource
+          });
+        }
+      });
+
+      // get all available entity properties for current marker space
+      const entitiesAvailability = [];
+      dataSource.dataAvailability.entities.forEach(kvPair => {
+        dimensions.forEach(dim => {
+          if (kvPair.key.has(dim) && kvPair.value.indexOf("is--") === -1) {
+            data.push({
+              key: Array.from(kvPair.key).map(concept => indicatorsDB[concept]),
+              value: indicatorsDB[kvPair.value],
+              dataSource
+            });
+          }
+        });
+      });
+
+    });
+
+    return data;
+  },
+
+
+  getAvailableConcept({ index: index = 0, type: type = null, includeOnlyIDs: includeOnlyIDs = [], excludeIDs: excludeIDs = [] } = { }) {
+    if (!type && includeOnlyIDs.length == 0 && excludeIDs.length == 0) {
+      return null;
+    }
+
+    const filtered = this.getAvailableData().filter(f =>
+      (!type || !f.value.concept_type || f.value.concept_type === type)
+      && (includeOnlyIDs.length == 0 || includeOnlyIDs.indexOf(f.value.concept) !== -1)
+      && (excludeIDs.length == 0 || excludeIDs.indexOf(f.value.concept) == -1)
+    );
+    return filtered[index] || filtered[filtered.length - 1];
   },
 
   setDataSourceForAllSubhooks(data) {

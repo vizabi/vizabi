@@ -23,7 +23,7 @@ export const approxEqual = function(a, b, tolerance) {
 export const printAutoconfigResult = (function(mdl) {
   console.info(
     "AUTOCONFIG: " + mdl._name
-    + (mdl.use ? " of " + mdl._parent._name : "")
+    + (mdl.isHook() ? " of " + mdl._parent._name : "")
     + " choses " + (mdl.dim || mdl.which)
     + " from " + (mdl.dataSource ? mdl.dataSource._name : "<DATA SOURCE MISSING!>")
     + " to be " + (mdl._type === "entities" || mdl._type === "time" ? "DIM" : "WHICH")
@@ -1542,3 +1542,5 @@ export const px2num = pixels => (
     parseFloat(pixels) :
     console.warn(`Strange pixels value: ${pixels}`) || pixels
 );
+
+export const replaceNumberSpacesToNonBreak = numString => numString ? numString.replace(/\d{1,3}(?: \d{3})+(?=\W)/g, match => match.replace(/ /g, "\xa0")) : numString;

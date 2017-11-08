@@ -6,6 +6,7 @@ function _getQueryId(query, path, lastModified, readerName) {
   return utils.hashCode([
     query.select.key,
     query.where,
+    query.from,
     query.join,
     query.dataset,
     query.version,
@@ -72,7 +73,7 @@ export class Storage {
           this.query = query;
           this.parsers = parsers;
         } else {
-          this.query.select.value = utils.unique(this.query.select.value.concat(query.select.value));
+          this.query.select.value = (this.query.select.value) ? utils.unique(this.query.select.value.concat(query.select.value)) : [];
           utils.extend(this.parsers, parsers);
         }
         utils.debounce(() => {
@@ -97,8 +98,9 @@ export class Storage {
 
       this.getDataId = function(query, parsers) {
         for (const reader of this.queries) {
-          if (query.select.value.filter(x => reader.query.select.value.indexOf(x) == -1).length == 0 &&
-            _parsersCompare(reader.parsers, parsers) && reader.dataId) { //check if this query have all needed values
+          if ((!query.select.value || query.select.value.filter(x => reader.query.select.value.indexOf(x) == -1).length == 0)
+              && _parsersCompare(reader.parsers, parsers)
+              && reader.dataId) { //check if this query have all needed values
             return reader.dataId;
           }
         }
@@ -677,7 +679,6 @@ export class Storage {
             //If there are some points in the array with valid numbers, then
             //interpolate the missing point and save it to the “clean regular set”
             method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
-            use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
 
             // Inside of this 3-level loop is the following:
             if (nested && nested[frameName] && (nested[frameName][0][column] || nested[frameName][0][column] === 0)) {

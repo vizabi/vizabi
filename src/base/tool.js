@@ -3,6 +3,8 @@ import Model from "base/model";
 import Component from "base/component";
 import { warn as warnIcon } from "base/iconset";
 import EventSource, { DefaultEvent } from "base/events";
+import DimensionManager from "base/dimensionmanager";
+import DataManager from "base/datamanager";
 
 const class_loading_first = "vzb-loading-first";
 const class_loading_data = "vzb-loading-data";
@@ -22,6 +24,8 @@ const ToolModel = Model.extend({
     this._id = utils.uniqueId("tm");
     this._type = "tool";
     this._component = tool;
+    this.dimensionManager = DimensionManager(this);
+    this.dataManager = DataManager(this);
 
     // defaults are defined on the Tool
     // this way, each tool can have it's own default model
@@ -92,7 +96,7 @@ const ToolModel = Model.extend({
     if (time.start - tLimits.min != 0 || !time.start && !time.startOrigin) newTime["start"] = d3.max([tLimits.min, time.parse(time.startOrigin)]);
     if (time.end - tLimits.max != 0 || !time.end && !time.endOrigin) newTime["end"] = d3.min([tLimits.max, time.parse(time.endOrigin)]);
 
-    time.setTreeFreezer(true); 
+    time.setTreeFreezer(true);
     time.set(newTime, false, false);
 
     if (newTime.start || newTime.end) {
@@ -104,8 +108,8 @@ const ToolModel = Model.extend({
         });
       });
     }
-    time.setTreeFreezer(false); 
-    
+    time.setTreeFreezer(false);
+
     //force time validation because time.value might now fall outside of start-end
     //time.validate();
   },

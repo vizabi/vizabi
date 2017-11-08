@@ -28,7 +28,7 @@ const Find = Dialog.extend("find", {
       this.components.push({
         component: indicatorpicker,
         placeholder: ".vzb-find-filter-selector",
-        model: ["state.time", "state.entities", "locale"]
+        model: ["state.time", "state.marker", "locale"]
       });
     }
 
