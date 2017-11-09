@@ -32,28 +32,28 @@ const DimensionManagerPrototype = {
     const oldSpaceEntities = Object.keys(oldSpace).filter(dim => oldSpace[dim]._type == "entities");
     const newSpace = newSpaceDimensions.map((dim, index) => {
 
-    	/** 
-    	 * HEURISTIC 1: use old space and map new space on those entities (works only for same-dimensional)
-    	 */
-    	let modelName;
-    	if (this.model.dataManager.isConceptType(dim, "time")) {
-    		modelName = "time";
-  			oldSpace[modelName].dim = dim;
-    	} else {
-    		modelName = oldSpaceEntities.pop();
-    		if (typeof modelName != "undefined") {
-    			// entities model found
-  				oldSpace[modelName].setDimension(dim);
-  			} else {
-  				// no more entities models left
-		    	modelName = "entities_" + dim;
+      /** 
+       * HEURISTIC 1: use old space and map new space on those entities (works only for same-dimensional)
+       */
+      let modelName;
+      if (this.model.dataManager.isConceptType(dim, "time")) {
+        modelName = "time";
+        oldSpace[modelName].dim = dim;
+      } else {
+        modelName = oldSpaceEntities.pop();
+        if (typeof modelName != "undefined") {
+          // entities model found
+          oldSpace[modelName].setDimension(dim);
+        } else {
+          // no more entities models left
+          modelName = "entities_" + dim;
           const newEntities = {
-		    		[modelName]: Object.assign(Entities.getClassDefaults(),	{ dim })
-		    	};
-		    	this.model.state.set(newEntities);
-    		}
-    	}
-  		return modelName;
+            [modelName]: Object.assign(Entities.getClassDefaults(), { dim })
+          };
+          this.model.state.set(newEntities);
+        }
+      }
+      return modelName;
 
       /** 
        * HEURISTIC 2 (unused/untested): Look for entities models which already have dimensions, use time or create new entities model
@@ -66,23 +66,23 @@ const DimensionManagerPrototype = {
         }
       }
 
-    	// if time, change the one time model
-    	if (this.model.dataManager.isConceptType(dim, "time")) {
-    		// we expect only one time model and update this (baaad, but state.time is still hardcoded in quite some places)
-	    	for (const [name, dimensionModel] of this.dimensionModels.entries()) {
-	    		if (dimensionModel.type == "time") {
-	    			dimensionModel.dim = dim;
-	    			return name;
-	    		}
-	    	}
-    	}
+      // if time, change the one time model
+      if (this.model.dataManager.isConceptType(dim, "time")) {
+        // we expect only one time model and update this (baaad, but state.time is still hardcoded in quite some places)
+        for (const [name, dimensionModel] of this.dimensionModels.entries()) {
+          if (dimensionModel.type == "time") {
+            dimensionModel.dim = dim;
+            return name;
+          }
+        }
+      }
 
-    	// for others, create entities model for new dimension
+      // for others, create entities model for new dimension
       const newEntities = {
-    		["entities_" + dim]: Object.assign(Entities.getClassDefaults(),	{ dim })
-    	};
-    	this.model.state.set(newEntities);
-    	return "entities_" + dim;
+        ["entities_" + dim]: Object.assign(Entities.getClassDefaults(), { dim })
+      };
+      this.model.state.set(newEntities);
+      return "entities_" + dim;
     });
 
     return newSpace;
