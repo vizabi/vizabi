@@ -88,6 +88,7 @@ const Marker = Model.extend({
       // get all available entity properties for current marker space
       const entitiesAvailability = [];
       dataSource.dataAvailability.entities.forEach(kvPair => {
+        if (kvPair.value == null) return;
         dimensions.forEach(dim => {
           if (kvPair.key.has(dim) && kvPair.value.indexOf("is--") === -1) {
             data.push({
@@ -99,6 +100,19 @@ const Marker = Model.extend({
         });
       });
 
+    });
+
+    // just first dataModel, can lead to problems if first data source doesn't contain dim-concept
+    const firstDataModel = this._root.dataManager.getDataModels().values().next().value;
+    dimensions.forEach(dim => data.push({
+      key: [firstDataModel.getConceptprops(dim)],
+      value: firstDataModel.getConceptprops(dim),
+      dataSource: firstDataModel 
+    }));
+    data.push({
+      key: [firstDataModel.getConceptprops('_default')],
+      value: firstDataModel.getConceptprops('_default'),
+      dataSource: firstDataModel 
     });
 
     return data;

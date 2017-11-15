@@ -5,6 +5,11 @@ const DataManagerPrototype = {
   model: null,
   dataModels: new Map(),
 
+  getDataModels() {
+    this.updateDataModels();
+    return this.dataModels;
+  },
+
   updateDataModels() {
     this.dataModels.clear();
     utils.forEach(this.model._data, (model, name) => {
