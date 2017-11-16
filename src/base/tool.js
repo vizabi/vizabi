@@ -251,7 +251,6 @@ const Tool = Component.extend({
       .then(this.model.startLoading.bind(this.model))
       .then(this.finishLoading.bind(this))
       .catch(error => {
-        EventSource.unfreezeAll();
         this.model.triggerLoadError(error);
       });
 
@@ -316,8 +315,10 @@ const Tool = Component.extend({
         "Error loading chart data. <br>Please, try again later." :
         "Error loading chart";
     }
+    
+    const stringify = typeof message === "string"? message : d3.values(message).join("<br/><br/>");
 
-    this.placeholder.innerHTML = `<div class="vzb-error-message"><h1>${warnIcon}</h1><p>${message}</p></div>`;
+    this.placeholder.innerHTML = `<div class="vzb-error-message"><h1>${warnIcon}</h1><p>${stringify}</p></div>`;
   },
 
   /**
