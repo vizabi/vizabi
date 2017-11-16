@@ -772,15 +772,16 @@ const TreeMenu = Component.extend({
       //if entry's tag are empty don't include it in the menu
       if (entry.tags == "_none") return;
       if (!entry.tags) entry.tags = kvPair.dataSource.getDatasetName() || UNCLASSIFIED;
-      const concept = { id: entry.concept, name: entry.name, name_catalog: entry.name_catalog, description: entry.description, dataSource: kvPair.dataSource._name, use: (kvPair.key.size > 1 ? "indicator" : "property") };
 
-      if (properties && kvPair.key.length == 1) {
+      const use = entry.concept == "_default" ? "constant" : (kvPair.key.size > 1 ? "indicator" : "property")
+      const concept = { id: entry.concept, name: entry.name, name_catalog: entry.name_catalog, description: entry.description, dataSource: kvPair.dataSource._name, use: use };
+
+      if (properties && kvPair.key.length == 1 && entry.concept != "_default" && entry.concept_type != "time") {
 
         const folderName = kvPair.key[0].concept + "_properties";
         if (!tags[folderName]) {
           const dim = kvPair.key[0];
           tags[folderName] = { id: folderName, name: dim.name + " properties", type: "folder", children: [] };
-          tags[folderName].children.push({ id: dim.concept, name: dim.name, name_catalog: dim.name_catalog, description: dim.description, dataSource: kvPair.dataSource._name, use: (kvPair.key.size > 1 ? "indicator" : "property") });
           tags[ROOT].children.push(tags[folderName]);
         }
         tags[folderName].children.push(concept);
@@ -833,7 +834,7 @@ const TreeMenu = Component.extend({
     tree.children.sort(
       utils
       //in each folder including root: put subfolders below loose items
-        .firstBy()((a, b) => { a = a.type === "dataset" ? 1 : 0;  b = b.type === "dataset" ? 1 : 0; return b - a; })
+        .firstBy()((a, b) => { a = (a.type === "dataset" ? 1 : 0;  b = b.type === "dataset" ? 1 : 0; return b - a; })
         .thenBy((a, b) => { a = a.children ? 1 : 0;  b = b.children ? 1 : 0; return a - b; })
         .thenBy((a, b) => {
         //in the root level put "time" on top and send "anvanced" to the bottom
