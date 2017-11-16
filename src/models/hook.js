@@ -57,15 +57,8 @@ const Hook = DataConnected.extend({
     const newDataSource = this.getClosestModel(obj.data || this.data);
     const conceptProps = newDataSource.getConceptprops(newValue.concept);
 
-    if (newValue.which === "_default") {
-      obj.use = "constant";
-    } else {
-      if (newValue.use) obj.use = newValue.use;
-    }
-
-    if (conceptProps.scales) {
-      obj.scaleType = conceptProps.scales[0];
-    }
+    if (newValue.use) obj.use = newValue.use;
+    if (conceptProps.scales) obj.scaleType = conceptProps.scales[0];
 
     if (this.getType() === "axis" || this.getType() === "size") {
       obj.domainMin = null;
