@@ -739,20 +739,17 @@ const TreeMenu = Component.extend({
     const _this = this;
     const ROOT = "_root";
     const DEFAULT = "_default";
-    const UNCLASSIFIED = "_unclassified";
     const ADVANCED = "advanced";
 
     //init the dictionary of tags
     const tags = {};
     tags[ROOT] = { id: ROOT, children: [] };
-    tags[UNCLASSIFIED] = { id: UNCLASSIFIED, type: "folder", name: this.translator("buttons/unclassified"), children: [] };
 
     //populate the dictionary of tags
     tagsArray.forEach(tag => { tags[tag.tag] = { id: tag.tag, name: tag.name, type: "folder", children: [] }; });
 
     //init the tag tree
     const indicatorsTree = tags[ROOT];
-    indicatorsTree.children.push(tags[UNCLASSIFIED]);
 
     //populate the tag tree
     tagsArray.forEach(tag => {
@@ -771,7 +768,7 @@ const TreeMenu = Component.extend({
       const entry = kvPair.value;
       //if entry's tag are empty don't include it in the menu
       if (entry.tags == "_none") return;
-      if (!entry.tags) entry.tags = kvPair.dataSource.getDatasetName() || UNCLASSIFIED;
+      if (!entry.tags) entry.tags = kvPair.dataSource.getDatasetName() || ROOT;
 
       const use = entry.concept == "_default" ? "constant" : (kvPair.key.size > 1 ? "indicator" : "property")
       const concept = { id: entry.concept, name: entry.name, name_catalog: entry.name_catalog, description: entry.description, dataSource: kvPair.dataSource._name, use: use };
@@ -795,11 +792,11 @@ const TreeMenu = Component.extend({
           } else {
             //if entry's tag is not found in the tag dictionary
             if (!_this.consoleGroupOpen) {
-              console.groupCollapsed("Some tags were not found, so indicators went under 'Unclassified' menu");
+              console.groupCollapsed("Some tags were not found, so indicators went under menu root");
               _this.consoleGroupOpen = true;
             }
             utils.warn("tag '" + tag + "' for indicator '" + concept.id + "'");
-            tags[UNCLASSIFIED].children.push(concept);
+            tags[ROOT].children.push(concept);
           }
         });
 
