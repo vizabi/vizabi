@@ -315,8 +315,8 @@ const Tool = Component.extend({
         "Error loading chart data. <br>Please, try again later." :
         "Error loading chart";
     }
-    
-    const stringify = typeof message === "string"? message : d3.values(message).join("<br/><br/>");
+
+    const stringify = typeof message === "string" ? message : d3.values(message).join("<br/><br/>");
 
     this.placeholder.innerHTML = `<div class="vzb-error-message"><h1>${warnIcon}</h1><p>${stringify}</p></div>`;
   },

@@ -107,12 +107,12 @@ const Marker = Model.extend({
     dimensions.forEach(dim => data.push({
       key: [firstDataModel.getConceptprops(dim)],
       value: firstDataModel.getConceptprops(dim),
-      dataSource: firstDataModel 
+      dataSource: firstDataModel
     }));
     data.push({
-      key: [firstDataModel.getConceptprops('_default')],
-      value: firstDataModel.getConceptprops('_default'),
-      dataSource: firstDataModel 
+      key: [firstDataModel.getConceptprops("_default")],
+      value: firstDataModel.getConceptprops("_default"),
+      dataSource: firstDataModel
     });
 
     return data;

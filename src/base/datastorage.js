@@ -525,7 +525,7 @@ export class Storage {
    * @param {String} whatId hash code for cache
    * @param {Array} framesArray -- array of keyframes across animatable
    * @param {Array} keys -- array of keys
-   * @param {Array} indicatorsDB 
+   * @param {Array} indicatorsDB
    * @returns {Object} regularised dataset, nested by [animatable, column, key]
    */
   _getFrames(dataId, whatId, framesArray, keys, indicatorsDB) {

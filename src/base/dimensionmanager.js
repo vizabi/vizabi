@@ -1,9 +1,9 @@
 import * as utils from "base/utils";
 
-/* Factory pattern for object creation as in 
+/* Factory pattern for object creation as in
  * https://medium.com/javascript-scene/javascript-factory-functions-vs-constructor-functions-vs-classes-2f22ceddf33e
  * https://medium.com/javascript-scene/common-misconceptions-about-inheritance-in-javascript-d5d9bab29b0a
- * 
+ *
  * We may want to have one DimensionManager singleton object for Vizabi. That way entities can be shared throughout instances.
  */
 
@@ -32,7 +32,7 @@ const DimensionManagerPrototype = {
     const oldSpaceEntities = Object.keys(oldSpace).filter(dim => oldSpace[dim]._type == "entities");
     const newSpace = newSpaceDimensions.map((dim, index) => {
 
-      /** 
+      /**
        * HEURISTIC 1: use old space and map new space on those entities (works only for same-dimensional)
        */
       let modelName;
@@ -55,7 +55,7 @@ const DimensionManagerPrototype = {
       }
       return modelName;
 
-      /** 
+      /**
        * HEURISTIC 2 (unused/untested): Look for entities models which already have dimensions, use time or create new entities model
        */
 

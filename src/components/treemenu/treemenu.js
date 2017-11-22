@@ -747,7 +747,7 @@ const TreeMenu = Component.extend({
     tags[ROOT] = { id: ROOT, children: [] };
 
     //if more than one dataset is present then make folders by dataset names
-    if (dataModels.size > 1) dataModels.forEach(m => { 
+    if (dataModels.size > 1) dataModels.forEach(m => {
       const dsname = m.getDatasetName();
       tags[dsname] = { id: dsname, type: "dataset", children: [] };
       tags[ROOT].children.push(tags[dsname]);
@@ -778,8 +778,8 @@ const TreeMenu = Component.extend({
       if (entry.tags == "_none") return;
       if (!entry.tags) entry.tags = kvPair.dataSource.getDatasetName() || ROOT;
 
-      const use = entry.concept == "_default" ? "constant" : (kvPair.key.size > 1 ? "indicator" : "property")
-      const concept = { id: entry.concept, name: entry.name, name_catalog: entry.name_catalog, description: entry.description, dataSource: kvPair.dataSource._name, use: use };
+      const use = entry.concept == "_default" ? "constant" : (kvPair.key.size > 1 ? "indicator" : "property");
+      const concept = { id: entry.concept, name: entry.name, name_catalog: entry.name_catalog, description: entry.description, dataSource: kvPair.dataSource._name, use };
 
       if (properties && kvPair.key.length == 1 && entry.concept != "_default" && entry.concept_type != "time") {
 
