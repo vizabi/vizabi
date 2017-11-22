@@ -68,7 +68,7 @@ const Marker = Model.extend({
     const data = [];
 
     if (d3.keys(this._space).length === 0) return utils.warn("getAvailableData() is trying to access missing _space items of marker '" + this._name + "' which likely haven't been resoled in time");
-    const dimensions = this.space.map(dim => this._space[dim].dim);
+    const dimensions = utils.unique(this.space.map(dim => this._space[dim].dim));
 
     utils.forEach(this._root._data, dataSource => {
       if (dataSource._type !== "data") return;
