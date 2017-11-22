@@ -104,11 +104,13 @@ const Marker = Model.extend({
 
     // just first dataModel, can lead to problems if first data source doesn't contain dim-concept
     const firstDataModel = this._root.dataManager.getDataModels().values().next().value;
-    dimensions.forEach(dim => data.push({
-      key: [firstDataModel.getConceptprops(dim)],
-      value: firstDataModel.getConceptprops(dim),
-      dataSource: firstDataModel
-    }));
+    dimensions
+      .filter(dim => dim != null)
+      .forEach(dim => data.push({
+        key: [firstDataModel.getConceptprops(dim)],
+        value: firstDataModel.getConceptprops(dim),
+        dataSource: firstDataModel
+      }));
     data.push({
       key: [firstDataModel.getConceptprops("_default")],
       value: firstDataModel.getConceptprops("_default"),
