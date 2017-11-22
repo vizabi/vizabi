@@ -58,7 +58,7 @@ const Hook = DataConnected.extend({
     const conceptProps = newDataSource.getConceptprops(newValue.concept);
 
     if (newValue.use) obj.use = newValue.use;
-    if (conceptProps.scales) obj.scaleType = conceptProps.scales[0];
+    if (conceptProps && conceptProps.scales) obj.scaleType = conceptProps.scales[0];
 
     if (this.getType() === "axis" || this.getType() === "size") {
       obj.domainMin = null;

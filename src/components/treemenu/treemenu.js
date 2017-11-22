@@ -740,10 +740,18 @@ const TreeMenu = Component.extend({
     const ROOT = "_root";
     const DEFAULT = "_default";
     const ADVANCED = "advanced";
+    const dataModels = _this.model.marker._root.dataManager.getDataModels();
 
     //init the dictionary of tags
     const tags = {};
     tags[ROOT] = { id: ROOT, children: [] };
+
+    //if more than one dataset is present then make folders by dataset names
+    if (dataModels.size > 1) dataModels.forEach(m => { 
+      const dsname = m.getDatasetName();
+      tags[dsname] = { id: dsname, type: "dataset", children: [] };
+      tags[ROOT].children.push(tags[dsname]);
+    });
 
     //populate the dictionary of tags
     tagsArray.forEach(tag => { tags[tag.tag] = { id: tag.tag, name: tag.name, type: "folder", children: [] }; });

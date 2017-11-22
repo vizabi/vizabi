@@ -194,7 +194,7 @@ const Model = EventSource.extend({
 
         const fn = "set" + utils.capitalize(attribute);
         if (this.isHook() && utils.isFunction(this[fn]) && val !== prevValue) {
-          this[fn](attribute === "which" ? { concept: val, dataSource: this.data } : val);
+          this[fn](attribute === "which" ? { concept: val } : val);
         }
 
       } else {
