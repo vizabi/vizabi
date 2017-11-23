@@ -50,10 +50,10 @@ const Reader = Class.extend({
 
         switch (true) {
           case from === this.SCHEMA_QUERY_FROM_CONCEPTS:
-            return { key: ["concept"], value: "concept_type" };
+            return [{ key: ["concept"], value: "concept_type" }];
 
           case from === this.SCHEMA_QUERY_FROM_ENTITIES:
-            return columns.slice(0, this.keySize).map(key => ({ key: [key] }));
+            return columns.slice(0, this.keySize).map(key => ({ key: [key], value: key }));
 
           case from === this.SCHEMA_QUERY_FROM_DATAPOINTS: {
             const key = columns.slice(0, this.keySize + 1);
@@ -82,7 +82,7 @@ const Reader = Class.extend({
 
   _normalizeQuery(_query, parsers) {
     const query = Object.assign({}, _query);
-    const { where, join } = query;
+    const { where = {}, join = {} } = query;
 
     if (where.$and) {
       where.$and = where.$and.reduce((whereResult, condition) => {
@@ -133,7 +133,7 @@ const Reader = Class.extend({
 
         for (let i = rows.length - 1; i > -1; --i) {
           if (utils.isString(rows[i][concept]) && rows[i][concept] !== "") {
-            result.concept_type = "entity_set";
+            result.concept_type = "string";
             [result.domain] = columns;
             break;
           }

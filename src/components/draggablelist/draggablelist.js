@@ -146,9 +146,8 @@ const DraggableList = Component.extend({
 
     this.items = this.items.enter()
       .append("div")
-      .append("li")
       .each(function() {
-        const view = d3.select(this);
+        const view = d3.select(this).append("li");
 
         view.append("span")
           .classed("label-circle", true);

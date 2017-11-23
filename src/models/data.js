@@ -47,7 +47,8 @@ const DataModel = Model.extend({
    * @return {Promise} Promise which resolves when concepts are loaded
    */
   preloadData() {
-    return this.loadConceptProps();
+    return this.loadDataAvailability()
+      .then(this.loadConceptProps.bind(this));
   },
 
   /**
@@ -106,11 +107,51 @@ const DataModel = Model.extend({
     return DataStorage.getData(dataId, what, whatId, args);
   },
 
-  loadConceptProps() {
-    const query = {
+  loadDataAvailability() {
+    const conceptsQuery = {
       select: {
-        key: ["concept"],
-        value: [
+        key: ["key", "value"],
+        value: []
+      },
+      from: "concepts.schema"
+    };
+    const entitiesQuery = utils.extend({}, conceptsQuery, { from: "entities.schema" });
+    const datapointsQuery = utils.extend({}, conceptsQuery, { from: "datapoints.schema" });
+
+    return Promise.all([
+      this.load(conceptsQuery),
+      this.load(entitiesQuery),
+      this.load(datapointsQuery)
+    ])
+      .then(this.handleDataAvailabilityResponse.bind(this))
+      .catch(error => this.handleLoadError(error, {}));
+  },
+
+  handleDataAvailabilityResponse(dataIds) {
+    this.keyAvailability = new Map();
+    this.dataAvailability = [];
+    dataIds.forEach(dataId => {
+      const collection = this.getData(dataId, "query").from.split(".")[0];
+      this.dataAvailability[collection] = [];
+      this.getData(dataId).forEach(kvPair => {
+        const key = (typeof kvPair.key === "string" ? JSON.parse(kvPair.key) : kvPair.key).sort(); // sort to get canonical form (can be removed when reader gives back canonical)
+
+        this.dataAvailability[collection].push({
+          key: new Set(key),
+          value: kvPair.value
+        });
+
+        this.keyAvailability.set(key.join(","), key);
+      });
+    });
+  },
+
+  loadConceptProps() {
+    return this.loadDataAvailability()
+      .then(() => {
+
+        // only selecting concept properties which Vizabi needs and are available in dataset
+        const vizabiConceptProps = [
           "concept_type",
           "domain",
           "indicator_url",
@@ -123,33 +164,36 @@ const DataModel = Model.extend({
           "name_catalog",
           "description",
           "format"
-        ]
-      },
-      from: "concepts",
-      where: {},
-      language: this.getClosestModel("locale").id,
-    };
+        ];
+        const availableConceptProps = this.dataAvailability.concepts.map(m => m.value);
+        const availableVizabiConceptProps = vizabiConceptProps.filter(n => availableConceptProps.includes(n));
 
-    const timeModel = this._root.state.time;
-    const parsers = {};
-    parsers[timeModel.getDimensionOrWhich() || timeModel._type] = timeModel.getParser();
+        const query = {
+          select: {
+            key: ["concept"],
+            value: availableVizabiConceptProps
+          },
+          from: "concepts",
+          where: {},
+          language: this.getClosestModel("locale").id,
+        };
 
-    return this.load(query, parsers)
-      .then(this.handleConceptPropsResponse.bind(this))
-      .catch(error => this.handleLoadError(error, query));
+        return this.load(query)
+          .then(this.handleConceptPropsResponse.bind(this))
+          .catch(error => this.handleLoadError(error, query));
+      });
 
   },
 
   handleConceptPropsResponse(dataId) {
 
-    this.conceptDictionary = { _default: { concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root" } };
+    this.conceptDictionary = { _default: { concept: "_default", concept_type: "string", use: "constant", scales: ["ordinal"], tags: "_root" } };
     this.conceptArray = [];
 
     this.getData(dataId).forEach(d => {
       const concept = {};
 
-      if (d.concept_type) concept["use"] = (d.concept_type == "measure" || d.concept_type == "time") ? "indicator" : "property";
-
+      concept["concept"] = d.concept;
       concept["concept_type"] = d.concept_type;
       concept["sourceLink"] = d.indicator_url;
       try {
@@ -165,13 +209,14 @@ const DataModel = Model.extend({
       if (!concept.scales) {
         switch (d.concept_type) {
           case "measure": concept.scales = ["linear", "log"]; break;
-          case "string": concept.scales = ["nominal"]; break;
+          case "string": concept.scales = ["ordinal"]; break;
           case "entity_domain": concept.scales = ["ordinal"]; break;
           case "entity_set": concept.scales = ["ordinal"]; break;
+          case "boolean": concept.scales = ["ordinal"]; break;
           case "time": concept.scales = ["time"]; break;
+          default: concept.scales = ["linear", "log"];
         }
       }
-      if (concept["scales"] == null) concept["scales"] = ["linear", "log"];
       if (d.interpolation) {
         concept["interpolation"] = d.interpolation;
       } else if (d.concept_type == "measure") {
@@ -181,7 +226,6 @@ const DataModel = Model.extend({
       } else {
         concept["interpolation"] = "stepMiddle";
       }
-      concept["concept"] = d.concept;
       concept["domain"] = d.domain;
       concept["tags"] = d.tags;
       concept["format"] = d.format;
@@ -196,9 +240,14 @@ const DataModel = Model.extend({
   },
 
   getConceptprops(which) {
-    return which ?
-      utils.getProp(this, ["conceptDictionary", which]) || utils.warn("The concept " + which + " is not found in the dictionary") :
-      this.conceptDictionary;
+    if (typeof which !== "undefined") {
+      if (!this.conceptDictionary[which]) {
+        utils.warn("The concept " + which + " is not found in the dictionary");
+        return null;
+      }
+      return this.conceptDictionary[which];
+    }
+    return this.conceptDictionary;
   },
 
   getConcept({ index: index = 0, type: type = null, includeOnlyIDs: includeOnlyIDs = [], excludeIDs: excludeIDs = [] } = { }) {

@@ -57,15 +57,8 @@ const Hook = DataConnected.extend({
     const newDataSource = this.getClosestModel(obj.data || this.data);
     const conceptProps = newDataSource.getConceptprops(newValue.concept);
 
-    if (newValue.which === "_default") {
-      obj.use = "constant";
-    } else {
-      if (conceptProps.use) obj.use = conceptProps.use;
-    }
-
-    if (conceptProps.scales) {
-      obj.scaleType = conceptProps.scales[0];
-    }
+    if (newValue.use) obj.use = newValue.use;
+    if (conceptProps && conceptProps.scales) obj.scaleType = conceptProps.scales[0];
 
     if (this.getType() === "axis" || this.getType() === "size") {
       obj.domainMin = null;
@@ -90,10 +83,29 @@ const Hook = DataConnected.extend({
     this.autoconfigureModel();
   },
 
-  autoconfigureModel() {
+  autoconfigureModel(autoconfigResult) {
+
     if (!this.which && this.autoconfig) {
-      const concept = this.dataSource.getConcept(this.autoconfig);
-      if (concept) this.which = concept.concept;
+      if (!autoconfigResult) autoconfigResult = this._parent.getAvailableConcept(this.autoconfig);
+
+      if (autoconfigResult) {
+        const concept = autoconfigResult.value;
+        const obj = {
+          //dataSource: autoconfigResult.dataSource,
+          which: concept.concept,
+          use: (autoconfigResult.key.size || autoconfigResult.key.length) > 1 ? "indicator" : "property",
+          scaleType: concept.scales[0] || "linear"
+        };
+        this.set(obj);
+      } else {
+        const obj = {
+          which: "_default",
+          use: "constant",
+          scaleType: "ordinal"
+        };
+        this.set(obj);
+      }
+
       utils.printAutoconfigResult(this);
     }
   },
@@ -590,7 +602,7 @@ const Hook = DataConnected.extend({
     // validate scale type: only makes sense if which is defined
     if (this.which) {
       const { scaleType } = this;
-      let { scales = [] } = this.getConceptprops();
+      let { scales = [] } = this.getConceptprops() || {};
       if (this.allow && this.allow.scales && this.allow.scales.length > 0) {
         scales = scales.filter(val => this.allow.scales.indexOf(val) != -1);
       }
@@ -599,7 +611,7 @@ const Hook = DataConnected.extend({
       const genericLogIsAllowed = scales.includes("log") && scaleType === "genericLog";
       if (!(scaleTypeIsAllowed || genericLogIsAllowed) && scales.length > 0) {
         const [firstAllowedScaleType] = scales;
-        this.set({ scaleType: firstAllowedScaleType === "nominal" ? "ordinal" : firstAllowedScaleType }, null, false);
+        this.set({ scaleType: firstAllowedScaleType }, null, false);
       }
     }
   },

@@ -107,7 +107,7 @@ const DataNotes = Component.extend({
 
     this.element.select(".vzb-data-notes-body")
       .classed("vzb-hidden", !concept.description)
-      .text(concept.description || "");
+      .text(utils.replaceNumberSpacesToNonBreak(concept.description) || "");
 
     this.element.select(".vzb-data-notes-link").classed("vzb-hidden", !concept.sourceLink);
 

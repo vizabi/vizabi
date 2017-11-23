@@ -194,7 +194,7 @@ const Model = EventSource.extend({
 
         const fn = "set" + utils.capitalize(attribute);
         if (this.isHook() && utils.isFunction(this[fn]) && val !== prevValue) {
-          this[fn](attribute === "which" ? { concept: val, dataSource: this.data } : val);
+          this[fn](attribute === "which" ? { concept: val } : val);
         }
 
       } else {
@@ -433,11 +433,12 @@ const Model = EventSource.extend({
       .then(this.onSuccessfullLoad.bind(this))
       .catch(error => {
         const translator = this.getClosestModel("locale").getTFunction();
-        this.triggerLoadError([
-          translator("crash/error"),
-          window.navigator.userAgent,
-          error
-        ].join("<br>"));
+        this.triggerLoadError({
+          message: translator("crash/error"),
+          userAgent: window.navigator.userAgent,
+          stack: error.stack,
+          additionalInfo: error
+        });
       });
   },
 
@@ -482,8 +483,9 @@ const Model = EventSource.extend({
   },
 
   triggerLoadError(error) {
+    EventSource.unfreezeAll();
+    this._root.trigger("load_error", error);
     utils.error(error);
-    this.trigger("load_error", error);
   },
 
   /**

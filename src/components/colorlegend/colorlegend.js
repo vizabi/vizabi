@@ -56,7 +56,20 @@ const ColorLegend = Component.extend({
           }
         });
       },
+      "change:time.start": function(evt, original) {
+        if (!_this._readyOnce || _this.model.time.splash) return;
+        if (_this.colorModel.which == _this.model.time.dim) {
+          _this.ready();
+        }
+      },
+      "change:time.end": function(evt, original) {
+        if (!_this._readyOnce || _this.model.time.splash) return;
+        if (_this.colorModel.which == _this.model.time.dim) {
+          _this.ready();
+        }
+      },
       "translate:locale": function() {
+        _this._translateSelectDialog(_this.model.locale.getTFunction());
         _this.colorPicker.translate(_this.model.locale.getTFunction());
       }
     };
@@ -94,8 +107,8 @@ const ColorLegend = Component.extend({
     this.labelScaleEl = this.listColorsEl.append("div").attr("class", "vzb-cl-labelscale");
     this.labelScaleSVG = this.labelScaleEl.append("svg");
     this.labelScaleG = this.labelScaleSVG.append("g");
-    this.unitDiv = this.listColorsEl.append("div").attr("class", "vzb-cl-unit");
-    this.unitText = this.unitDiv.append("span").attr("class", "vzb-cl-unit-text");
+    this.subtitleDiv = this.listColorsEl.append("div").attr("class", "vzb-cl-subtitle");
+    this.subtitleText = this.subtitleDiv.append("span").attr("class", "vzb-cl-subtitle-text");
 
     this.minimapSVG = this.minimapEl.append("svg");
     this.minimapG = this.minimapSVG.append("g");
@@ -111,19 +124,15 @@ const ColorLegend = Component.extend({
   },
 
   _initSelectDialog() {
-    const t = this.model.locale.getTFunction();
-
     this.moreOptionsHint = this.listColorsEl.append("span")
-      .classed("vzb-cl-more-hint vzb-hidden", true)
-      .text(t("hints/color/more"));
+      .classed("vzb-cl-more-hint vzb-hidden", true);
 
     this.selectDialog = this.listColorsEl.append("div").classed("vzb-cl-select-dialog vzb-hidden", true);
     this._initSelectDialogItems();
+    this._translateSelectDialog(this.model.locale.getTFunction());
   },
 
   _initSelectDialogItems() {
-    const t = this.model.locale.getTFunction();
-
     this.selectDialogTitle = this.selectDialog.append("div")
       .classed("vzb-cl-select-dialog-title", true);
 
@@ -133,20 +142,24 @@ const ColorLegend = Component.extend({
       .on("click", () => this._closeSelectDialog());
 
     this.selectAllButton = this.selectDialog.append("div")
-      .classed("vzb-cl-select-dialog-item", true)
-      .text("✅ " + t("dialogs/color/select-all"));
+      .classed("vzb-cl-select-dialog-item", true);
 
     this.removeElseButton = this.selectDialog.append("div")
-      .classed("vzb-cl-select-dialog-item", true)
-      .text("🗑️ " + t("dialogs/color/remove-else"));
+      .classed("vzb-cl-select-dialog-item", true);
 
     this.editColorButton = this.selectDialog.append("div")
-      .classed("vzb-cl-select-dialog-item vzb-cl-select-dialog-item-moreoptions", true)
-      .text("🎨 " + t("dialogs/color/edit-color"));
+      .classed("vzb-cl-select-dialog-item vzb-cl-select-dialog-item-moreoptions", true);
 
     this.editColorButtonTooltip = this.editColorButton.append("div")
-      .classed("vzb-cl-select-dialog-item-tooltip", true)
-      .text("Dataset author doesn't want you to change this");
+      .classed("vzb-cl-select-dialog-item-tooltip", true);
+  },
+
+  _translateSelectDialog(t) {
+    this.moreOptionsHint.text(t("hints/color/more"));
+    this.selectAllButton.text("✅ " + t("dialogs/color/select-all"));
+    this.removeElseButton.text("🗑️ " + t("dialogs/color/remove-else"));
+    this.editColorButton.text("🎨 " + t("dialogs/color/edit-color"));
+    this.editColorButtonTooltip.text("Dataset author doesn't want you to change this");
   },
 
   _closeSelectDialog() {
@@ -239,7 +252,7 @@ const ColorLegend = Component.extend({
     //Hide minimap if no data to draw it
     this.minimapEl.classed("vzb-hidden", !canShowMap || !this.colorModel.isDiscrete());
 
-    this.unitDiv.classed("vzb-hidden", true);
+    this.subtitleDiv.classed("vzb-hidden", true);
     const cScale = this.colorModel.getScale();
 
     if (!this.colorModel.isDiscrete()) {
@@ -338,10 +351,11 @@ const ColorLegend = Component.extend({
       }
       context.putImageData(image, 0, 0);
 
-      const unit = this.colorModel.getConceptprops().unit || "";
+      const conceptProps = this.colorModel.getConceptprops();
+      const subtitle = utils.getSubtitle(conceptProps.name, conceptProps.name_short);
 
-      this.unitDiv.classed("vzb-hidden", unit == "");
-      this.unitText.text(unit);
+      this.subtitleDiv.classed("vzb-hidden", subtitle == "");
+      this.subtitleText.text(subtitle);
 
       colorOptions.classed("vzb-hidden", true);
 

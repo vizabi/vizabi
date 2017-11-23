@@ -61,7 +61,7 @@ const BarChart = Tool.extend("BarChart", {
       marker: {
         label: { },
         axis_y: { allow: { scales: ["linear", "log"] } },
-        axis_x: { allow: { scales: ["ordinal", "nominal"] } },
+        axis_x: { allow: { scales: ["ordinal"] } },
         color: { }
       }
     },

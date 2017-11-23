@@ -6,6 +6,7 @@ function _getQueryId(query, path, lastModified, readerName) {
   return utils.hashCode([
     query.select.key,
     query.where,
+    query.from,
     query.join,
     query.dataset,
     query.version,
@@ -72,7 +73,7 @@ export class Storage {
           this.query = query;
           this.parsers = parsers;
         } else {
-          this.query.select.value = utils.unique(this.query.select.value.concat(query.select.value));
+          this.query.select.value = (this.query.select.value) ? utils.unique(this.query.select.value.concat(query.select.value)) : [];
           utils.extend(this.parsers, parsers);
         }
         utils.debounce(() => {
@@ -97,8 +98,9 @@ export class Storage {
 
       this.getDataId = function(query, parsers) {
         for (const reader of this.queries) {
-          if (query.select.value.filter(x => reader.query.select.value.indexOf(x) == -1).length == 0 &&
-            _parsersCompare(reader.parsers, parsers) && reader.dataId) { //check if this query have all needed values
+          if ((!query.select.value || query.select.value.filter(x => reader.query.select.value.indexOf(x) == -1).length == 0)
+              && _parsersCompare(reader.parsers, parsers)
+              && reader.dataId) { //check if this query have all needed values
             return reader.dataId;
           }
         }
@@ -523,7 +525,7 @@ export class Storage {
    * @param {String} whatId hash code for cache
    * @param {Array} framesArray -- array of keyframes across animatable
    * @param {Array} keys -- array of keys
-   * @param {Array} indicatorsDB 
+   * @param {Array} indicatorsDB
    * @returns {Object} regularised dataset, nested by [animatable, column, key]
    */
   _getFrames(dataId, whatId, framesArray, keys, indicatorsDB) {
@@ -549,7 +551,7 @@ export class Storage {
       if (TIME && KEY.indexOf(TIME) != -1) KEY.splice(KEY.indexOf(TIME), 1);
 
       const filtered = {};
-      let k, items, itemsIndex, oneFrame, method, use, next;
+      let k, c, items, itemsIndex, oneFrame, method, use, next;
 
       const entitiesByKey = {};
       if (KEY.length > 1) {
@@ -570,7 +572,6 @@ export class Storage {
       const columns = query.select.value.filter(f => f !== "_default");
 
       const cLength = columns.length;
-      let key, c;
 
       const lastIndex = KEY.length - 1;
       function createFiltered(parent, index) {
@@ -635,7 +636,7 @@ export class Storage {
               if (nested[key]) {
                 if (index == lastIndex) {
                   for (c = 0; c < cLength; c++) {
-                    lastKeyObject[c][key] = mapValue(columns[c], nested[key], filtered[key]);
+                    lastKeyObject[c][key] = mapValue(columns[c], nested[key], filtered[key], key);
                   }
                 } else {
                   for (c = 0; c < cLength; c++) {
@@ -657,7 +658,7 @@ export class Storage {
               if (index == lastIndex) {
                 let value;
                 for (c = 0; c < cLength; c++) {
-                  value = mapValue(columns[c], nested[key], filtered[key]);
+                  value = mapValue(columns[c], nested[key], filtered[key], key);
                   if (value !== null) {
                     lastKeyObject[c][gKey] = (lastKeyObject[c][gKey] || 0) + value;
                   } else if (lastKeyObject[c][gKey] === undefined) {
@@ -673,12 +674,11 @@ export class Storage {
             }
           }
 
-          function mapValue(column, nested, filtered) {
+          function mapValue(column, nested, filtered, key) {
 
             //If there are some points in the array with valid numbers, then
             //interpolate the missing point and save it to the “clean regular set”
             method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
-            use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
 
             // Inside of this 3-level loop is the following:
             if (nested && nested[frameName] && (nested[frameName][0][column] || nested[frameName][0][column] === 0)) {
