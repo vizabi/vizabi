@@ -76,7 +76,7 @@ const ColorModel = Hook.extend({
 
       if (_this.palette && Object.keys(_this.palette._data).length !== 0) {
         const defaultPalette = _this.getDefaultPalette();
-        const currentPalette = _this.getPalette(true);
+        const currentPalette = _this.getPalette();
         const palette = {};
         //extend partial current palette with default palette and
         //switch current palette elements which equals
@@ -236,7 +236,7 @@ const ColorModel = Hook.extend({
     return this.paletteLabels.getPlainObject();
   },
 
-  getPalette(includeDefault) {
+  getPalette() {
     //rebuild palette if it's empty
     if (!this.palette || Object.keys(this.palette._data).length === 0) {
       const palette = this.getDefaultPalette();
@@ -245,7 +245,7 @@ const ColorModel = Hook.extend({
       this.set("paletteLabels", paletteLabels, false, false);
     }
     const palette = this.palette.getPlainObject();
-    if (this.use === "indicator" && !includeDefault) {
+    if (this.scaleType !== "ordinal") {
       delete palette["_default"];
     }
     return palette;
