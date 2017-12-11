@@ -370,7 +370,7 @@ const TimeModel = DataConnected.extend({
 
     this.allSteps[hash] = [];
     const is = this.getIntervalAndStep();
-    let curr = d3["utc" + is.interval].offset(this.start, this.offset);
+    let curr = d3["utc" + is.interval].count(this.start, this.end) < this.offset ? new Date(this.start) : d3["utc" + is.interval].offset(this.start, this.offset);
     while (+curr <= +this.end) {
       const is = this.getIntervalAndStep();
       this.allSteps[hash].push(curr);
