@@ -77,9 +77,6 @@ const TimeSlider = Component.extend({
       name: "time",
       type: "time"
     }, {
-      name: "entities",
-      type: "entities"
-    }, {
       name: "marker",
       type: "marker"
     }, {
@@ -405,10 +402,10 @@ const TimeSlider = Component.extend({
       }, null, false  /*make change non-persistent for URL and history*/);
       return;
     }
-    const KEY = _this.model.entities.getDimension();
+    const KEYS = utils.unique(this.model.marker._getAllDimensions({ exceptType: "time" }));
     const proms = [];
     utils.forEach(select, entity => {
-      proms.push(_this.model.marker.getEntityLimits(entity[KEY]));
+      proms.push(_this.model.marker.getEntityLimits(utils.getKey(entity, KEYS)));
     });
     Promise.all(proms).then(limits => {
       if (_setSelectedLimitsId != _this._setSelectedLimitsId) return;
