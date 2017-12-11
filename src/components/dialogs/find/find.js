@@ -140,9 +140,7 @@ const Find = Dialog.extend("find", {
     this._super();
 
     const _this = this;
-    const KEY = this.KEY = this.model.state.entities.getDimension();
     const KEYS = this.KEYS = utils.unique(this.model.state.marker._getAllDimensions({ exceptType: "time" }));
-    this.multiDim = KEYS.length > 1;
 
     this.importantHooks = _this.model.state.marker.getImportantHooks();
     const labelNames = _this.model.state.marker.getLabelHookNames();
@@ -151,22 +149,12 @@ const Find = Dialog.extend("find", {
     this.model.state.marker.getFrame(this.time, values => {
       if (!values) return;
 
-      const data = _this.multiDim ? _this.model.state.marker.getKeysMD()
-        .map(pointer => {
-          pointer.brokenData = false;
-          pointer.name = KEYS.map((key, index) => values[labelNames[index]][pointer[key]])
-            .join(", ");
+      const data = _this.model.state.marker.getKeys().map(d => {
+        d.brokenData = false;
+        d.name = KEYS.map(key => values[labelNames[key]] ? values[labelNames[key]][d[key]] : d[key]).join(", ");
 
-          return pointer;
-        })
-        : _this.model.state.marker.getKeys().map(d => {
-          const pointer = {};
-          pointer[KEY] = d[KEY];
-          pointer.brokenData = false;
-          pointer.name = values.label[d[KEY]];
-
-          return pointer;
-        });
+        return d;
+      });
 
       //sort data alphabetically
       data.sort((a, b) => (a.name < b.name) ? -1 : 1);
@@ -215,49 +203,29 @@ const Find = Dialog.extend("find", {
 
   redrawDataPoints(values) {
     const _this = this;
-    const KEY = this.KEY;
     const KEYS = this.KEYS;
 
-    if (this.multiDim) {
-      _this.items
-        .each(function(d) {
-          const view = d3.select(this).select("label");
-          d.brokenData = false;
+    _this.items
+      .each(function(d) {
+        const view = d3.select(this).select("label");
+        d.brokenData = false;
 
-          utils.forEach(_this.importantHooks, name => {
-            const hook = values[name];
-            if (!hook) return;
-            const value = utils.getValueMD(d, hook, KEYS) || false;
-            if (!value && value !== 0) {
-              d.brokenData = true;
-              return false;
-            }
-          });
-
-          const nameIfEllipsis = this.offsetWidth < this.scrollWidth ? d.name : "";
-          view
-            .classed("vzb-find-item-brokendata", d.brokenData)
-            .attr("title", nameIfEllipsis + (d.brokenData ? (nameIfEllipsis ? " | " : "") + _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : ""));
+        utils.forEach(_this.importantHooks, name => {
+          if (_this.model.state.marker[name].use == "constant") return;
+          const hook = values[name];
+          if (!hook) return;
+          const value = hook[utils.getKey(d, KEYS)];
+          if (!value && value !== 0) {
+            d.brokenData = true;
+            return false;
+          }
         });
-    } else {
-      _this.items
-        .each(function(d) {
-          const view = d3.select(this).select("label");
 
-          d.brokenData = false;
-          utils.forEach(values, (hook, name) => {
-            //TODO: remove the hack with hardcoded hook names (see discussion in #1389)
-            if (name !== "color" && name !== "size_label" && _this.model.state.marker[name].use !== "constant" && !hook[d[KEY]] && hook[d[KEY]] !== 0) {
-              d.brokenData = true;
-            }
-          });
-
-          const nameIfEllipsis = this.offsetWidth < this.scrollWidth ? d.name : "";
-          view
-            .classed("vzb-find-item-brokendata", d.brokenData)
-            .attr("title", nameIfEllipsis + (d.brokenData ? (nameIfEllipsis ? " | " : "") + _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : ""));
-        });
-    }
+        const nameIfEllipsis = this.offsetWidth < this.scrollWidth ? d.name : "";
+        view
+          .classed("vzb-find-item-brokendata", d.brokenData)
+          .attr("title", nameIfEllipsis + (d.brokenData ? (nameIfEllipsis ? " | " : "") + _this.model.state.time.formatDate(_this.time) + ": " + _this.translator("hints/nodata") : ""));
+      });
   },
 
   selectDataPoints() {
