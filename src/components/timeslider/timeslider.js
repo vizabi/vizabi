@@ -141,11 +141,14 @@ const TimeSlider = Component.extend({
     // Same constructor as the superclass
     this._super(model, context);
 
+    this.profiles = utils.deepClone(profiles);
+    this.presentationProfileChanges = utils.deepClone(presentationProfileChanges);
+
     if ((this.model.ui.chart || {}).margin) {
       this.model.on("change:ui.chart.margin", (evt, path) => {
         const layoutProfile = _this.getLayoutProfile();
         if (layoutProfile !== "small") {
-          const profile = profiles[layoutProfile];
+          const profile = _this.profiles[layoutProfile];
           profile.margin.left = _this.model.ui.chart.margin.left;
         }
         if (_this.slide) {
@@ -276,7 +279,7 @@ const TimeSlider = Component.extend({
     // special for linechart: resize timeslider to match time x-axis length
     this.parent.on("myEvent", (evt, params) => {
       const layoutProfile = _this.getLayoutProfile();
-      const profile = profiles[layoutProfile];
+      const profile = _this.profiles[layoutProfile];
 
       if (params.profile && params.profile.margin) {
         profile.margin = params.profile.margin;
@@ -339,7 +342,7 @@ const TimeSlider = Component.extend({
 
     this.model.time.pause();
 
-    this.profile = this.getActiveProfile(profiles, presentationProfileChanges);
+    this.profile = this.getActiveProfile(this.profiles, this.presentationProfileChanges);
 
     const slider_w = parseInt(this.slider_outer.style("width"), 10) || 0;
     const slider_h = parseInt(this.slider_outer.style("height"), 10) || 0;
