@@ -17,6 +17,7 @@ const CSVReader = Reader.extend({
     this._basepath = readerInfo.path;
     this.delimiter = readerInfo.delimiter;
     this.keySize = readerInfo.keySize || 1;
+    this.assetsPath = readerInfo.assetsPath || "";
 
     this._parseStrategies = [
       ...[",.", ".,"].map(separator => this._createParseStrategy(separator)),
@@ -90,6 +91,18 @@ const CSVReader = Reader.extend({
           }
         });
       }
+    });
+  },
+
+  getAsset(asset, options = {}) {
+    const path = this.assetsPath + asset;
+
+    return new Promise((resolve, reject) => {
+      d3.json(path).get((error, text) => {
+        if (!text) return reject(`No permissions or empty file: ${path}. ${error}`);
+        if (error) return reject(error);
+        resolve(text);
+      });
     });
   },
 
