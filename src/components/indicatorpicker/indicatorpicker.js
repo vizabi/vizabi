@@ -72,16 +72,10 @@ const IndPicker = Component.extend({
           marker.getFrame(_this.model.time.value, frame => {
             if (_this._highlighted || !frame) return;
 
-            const isHookFrameValuesMD = _this.multiDim && !mdl.isDiscrete() && mdl.which !== marker._getFirstDimension({ type: "time" });
-            // should be replaced by dimension of entity set for this hook (if use == property)
-            const dimension = isHookFrameValuesMD ? null : mdl.getEntity().getDimension();
-            const _highlightedEntity = marker.getHighlighted(dimension);
+            const _highlightedEntity = marker.getHighlighted();
             if (_highlightedEntity.length) {
-
-              let value = isHookFrameValuesMD ?
-                utils.getValueMD(_highlightedEntity[0], frame[mdl._name], _this.KEYS)
-                :
-                frame[mdl._name][_highlightedEntity[0]];
+              const KEYS = mdl.getDataKeys();
+              let value = frame[mdl._name][utils.getKey(_highlightedEntity[0], KEYS)];
 
               // resolve strings via the color legend model
               if (value && mdl._type === "color" && mdl.isDiscrete()) {
@@ -117,8 +111,6 @@ const IndPicker = Component.extend({
   },
 
   ready() {
-    this.KEYS = this.model.targetModel.isHook() ? utils.unique(this.model.targetModel._parent._getAllDimensions({ exceptType: "time" })) : [];
-    this.multiDim = this.KEYS.length > 1;
     this.updateView();
   },
 

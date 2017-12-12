@@ -63,7 +63,8 @@ const DataModel = Model.extend({
     if (this.version) query.version = this.version;
     const dataId = DataStorage.getDataId(query, this.readerObject, parsers);
     if (dataId) {
-      return Promise.resolve(dataId);
+      if (!query.grouping) return Promise.resolve(dataId);
+      return DataStorage.aggregateData(dataId, query, this.readerObject, this.getConceptprops());
     }
     utils.timeStamp("Vizabi Data: Loading Data");
     EventSource.freezeAll([
@@ -72,6 +73,10 @@ const DataModel = Model.extend({
     ]);
 
     return DataStorage.loadFromReader(query, parsers, this.readerObject)
+      .then(dataId => {
+        if (!query.grouping) return dataId;
+        return DataStorage.aggregateData(dataId, query, this.readerObject, this.getConceptprops());
+      })
       .then(dataId => {
         EventSource.unfreezeAll();
         return dataId;

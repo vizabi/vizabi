@@ -28,13 +28,9 @@ const Marker = Model.extend({
     this._visible = [];
 
     this._super(name, value, parent, binds, persistent);
-    this.on("readyOnce", () => {
-      const exceptions = { exceptType: "time" };
-      const allDimensions = _this._getAllDimensions(exceptions);
-      _this._multiDim = allDimensions.length > 1;
-    });
+
     this.on("change", "space", this.updateSpaceReferences.bind(this));
-    this.updateSpaceReferences();
+    utils.defer(() => _this.updateSpaceReferences());
   },
 
   updateSpaceReferences() {
@@ -196,11 +192,11 @@ const Marker = Model.extend({
     if (!this.allowSelectMultiple) return;
 
     let added;
-    const dimension = this._getFirstDimension({ exceptType: "time" });
+    const dimensions = utils.unique(this._getAllDimensions({ exceptType: "time" }));
 
     this.select = this._visible.map(d => {
       added = {};
-      added[dimension] = d[dimension];
+      dimensions.forEach(dimension => added[dimension] = d[dimension]);
       return added;
     });
   },
@@ -309,8 +305,11 @@ const Marker = Model.extend({
   setLabelOffset(d, xy) {
     if (xy[0] === 0 && xy[1] === 1) return;
 
+    const KEYS = utils.unique(this._getAllDimensions({ exceptType: "time" }));
+    const KEY = KEYS.join(",");
+
     this.select
-      .find(selectedMarker => utils.comparePlainObjects(selectedMarker, d))
+      .find(selectedMarker => utils.getKey(selectedMarker, KEYS) == d[KEY])
       .labelOffset = [Math.round(xy[0] * 1000) / 1000, Math.round(xy[1] * 1000) / 1000];
 
     //force the model to trigger events even if value is the same
@@ -379,7 +378,7 @@ const Marker = Model.extend({
     const _this = this;
     const KEYS = utils.unique(this._getAllDimensions({ exceptType: "time" }));
 
-    return KEYS.map(key => {
+    return KEYS.reduce((result, key) => {
       const names = {};
       utils.forEach(_this._dataCube || _this.getSubhooks(true), (hook, name) => {
         if (hook._type === "label" && hook.getEntity().dim === key) {
@@ -390,85 +389,104 @@ const Marker = Model.extend({
         }
         return !names.label || !names.key;
       });
-      return names.label || names.key;
-    });
+      result[key] = names.label || names.key;
+      return result;
+    }, {});
   },
 
-  getKeysMD() {
-    const _this = this;
-    const resultKeys = [];
-
+  getDataKeysPerHook() {
     const KEYS = utils.unique(this._getAllDimensions({ exceptType: "time" }));
-    const TIME = this._getFirstDimension({ type: "time" });
-
+    const result = {};
     utils.forEach(this._dataCube || this.getSubhooks(true), (hook, name) => {
-      if (hook.use === "constant" || hook.use === "property" || !hook._important) return;
-
-      const nested = hook.getNestedItems(KEYS.concat(TIME));
-
-      iterateKeys({}, nested, KEYS, 0, KEYS.length - 1);
-
-      function iterateKeys(keyObj, nested, keyNames, deep, deepMax) {
-        const keys = Object.keys(nested);
-        if (deep < deepMax) {
-          const _deep = deep + 1;
-          for (let i = 0, j = keys.length; i < j; i++) {
-            const _keyObj = {};
-            _keyObj[keyNames[deep]] = keys[i];
-            iterateKeys(_keyObj, nested[keys[i]], keyNames, _deep, deepMax);
-          }
-        } else {
-          resultKeys.push(...keys.map(key => {
-            const obj = Object.assign({}, keyObj);
-            obj[keyNames[deep]] = key;
-            return obj;
-          }));
-        }
-      }
-
+      result[name] = hook._dataId ? hook.getDataKeys() : KEYS;
     });
-
-    return resultKeys;
+    return result;
   },
+
   /**
    * Computes the intersection of keys in all hooks: a set of keys that have data in each hook
    * @returns array of keys that have data in all hooks of this._datacube
    */
-  getKeys(KEY) {
+  getKeys(KEYS) {
     const _this = this;
-    let resultKeys = [];
+    let resultKeys;
 
-    KEY = KEY || this._getFirstDimension();
+    KEYS = KEYS || utils.unique(this._getAllDimensions({ exceptType: "time" }));
+    KEYS = Array.isArray(KEYS) ? KEYS : [KEYS];
     const TIME = this._getFirstDimension({ type: "time" });
 
-    const grouping = this._getGrouping();
+    const subHooks = this._dataCube || this.getSubhooks(true);
 
-    utils.forEach(this._dataCube || this.getSubhooks(true), (hook, name) => {
+    const hooksPerKey = KEYS.map(_ => []);
+    const dataSourcePerKey = KEYS.map(_ => []);
+    //try to find hooks with entity queries for each subkey of KEYS
+    utils.forEach(subHooks, (hook, name) => {
+      if (hook.use === "property") {
+        const keyIndex = KEYS.indexOf(hook.getEntity().dim);
+        if (keyIndex !== -1 && !dataSourcePerKey[keyIndex].includes(hook.dataSource)) {
+          hooksPerKey[keyIndex].push(hook);
+          dataSourcePerKey[keyIndex].push(hook.dataSource);
+        }
+      }
+    });
 
+    //try to get keys from indicators if marker does not have hooks with entity queries
+    //in each dataSource for some subkey of KEYS
+    utils.forEach(subHooks, (hook, name) => {
+      if (hook.use === "indicator") {
+        hook.getDataKeys().forEach(key => {
+          const keyIndex = KEYS.indexOf(key);
+          if (keyIndex !== -1 && !dataSourcePerKey[keyIndex].includes(hook.dataSource)) {
+            hooksPerKey[keyIndex].push(hook);
+          }
+        });
+      }
+    });
+
+    hooksPerKey.forEach((hooks, keyIndex) => {
+      let keys = [];
+      hooks.forEach(hook => {
+        const hookKeys = hook.getDataKeys();
+        const hookKeyIndex = hookKeys.indexOf(KEYS[keyIndex]);
+        keys = keys.concat(Object.keys(hook.getNestedItems(hookKeys.concat(TIME))).map(key => [JSON.parse(key)[hookKeyIndex]]));
+      });
+      keys = utils.unique(keys);
+      resultKeys = resultKeys ? d3.cross(resultKeys, keys, (a, b) => a.concat(b)) : keys;
+    });
+
+    utils.forEach(subHooks, (hook, name) => {
       // If hook use is constant, then we can provide no additional info about keys
       // We can just hope that we have something else than constants =)
-      if (hook.use === "constant") return;
+      if (!hook._important || hook.use === "constant") return;
+
+      const hookKEYS = hook.getDataKeys();
+      const hookKEYSIndexes = hookKEYS.map(key => KEYS.indexOf(key)).reduce((indexes, index, i) => {
+        if (index !== -1) indexes[i] = index;
+        return indexes;
+      }, []);
+
+      if (!hookKEYSIndexes.length) return;
 
       // Get keys in data of this hook
-      const nested = hook.getNestedItems([KEY, TIME]);
+      const nested = hook.getNestedItems(hookKEYS.concat(TIME));
       const noDataPoints = hook.getHaveNoDataPointsPerKey();
 
-      if (nested["undefined"]) delete nested["undefined"];
-
-      let keys = Object.keys(nested);
+      const keys = Object.keys(nested);
       const keysNoDP = Object.keys(noDataPoints || []);
 
-      if (keys.length > 0 && grouping && grouping.key === KEY) {
-        const _grouping = grouping.grouping;
-        keys = keys.filter(key => (+key % _grouping) === 0);
-      }
-      // If ain't got nothing yet, set the list of keys to result
-      if (resultKeys.length == 0) resultKeys = keys;
+      // Remove the keys with no timepoints
+      const keysSizeEqual = KEYS.every((key, i) => key === hookKEYS[i]);
+      const filteredKeys = keys.reduce((keys, key) => {
+        if (keysNoDP.indexOf(key) == -1) keys[JSON.stringify(hookKEYSIndexes.map((_, i) => JSON.parse(key)[i]))] = true;
+        return keys;
+      }, {});
 
-      // Remove the keys from it that are not in this hook
-      if (hook._important) resultKeys = resultKeys.filter(f => keys.indexOf(f) > -1 && keysNoDP.indexOf(f) == -1);
+      const resultKeysMapped = resultKeys.map(key => JSON.stringify(hookKEYSIndexes.map(index => key[index])));
+
+      resultKeys = resultKeys.filter((_, i) => filteredKeys[resultKeysMapped[i]]);
     });
-    return resultKeys.map(d => { const r = {}; r[KEY] = d; return r; });
+
+    return resultKeys.map(key => { const r = {}; KEYS.map((KEY, i) => r[KEY] = key[i]); return r; });
   },
 
   /**
@@ -478,19 +496,15 @@ const Marker = Model.extend({
   _getCachePath(keys) {
     //array of steps -- names of all frames
     const steps = this._parent.time.getAllSteps();
-    let cachePath = `${this.getClosestModel("locale").id} - ${steps[0]} - ${steps[steps.length - 1]}`;
+    let cachePath = `${this.getClosestModel("locale").id} - ${steps[0]} - ${steps[steps.length - 1]} - step:${this._parent.time.step}`;
     this._dataCube = this._dataCube || this.getSubhooks(true);
     let dataLoading = false;
-    const grouping = this._getGrouping();
     utils.forEach(this._dataCube, (hook, name) => {
       if (hook._loadCall) dataLoading = true;
       cachePath = cachePath + "_" +  hook._dataId + hook.which;
     });
     if (dataLoading) {
       return null;
-    }
-    if (grouping) {
-      cachePath = cachePath + "_grouping_" + grouping.key + ":" + grouping.grouping;
     }
     if (keys) {
       cachePath = cachePath + "_" + keys.join(",");
@@ -504,12 +518,10 @@ const Marker = Model.extend({
     const result = {};
     utils.forEach(space, entities => {
       if (entities.grouping) {
-        result.grouping = entities.grouping;
-        result.key = entities.dim;
-        return false;
+        result[entities.dim] = { grouping: entities.grouping };
       }
     });
-    return result.grouping ? result : false;
+    return utils.isEmpty(result) ? false : result;
   },
 
   _getAllDimensions(opts) {
@@ -667,65 +679,21 @@ const Marker = Model.extend({
           utils.forEach(pValues, (values, hook) => {
             dataBetweenFrames[hook] = {};
 
-            if (_this._multiDim && _this[hook].use == "indicator" && _this[hook].which !== _this._getFirstDimension({ type: "time" })) {
-              const hookDataBF = dataBetweenFrames[hook];
-              const query = _this[hook].dataSource.getData(_this[hook]._dataId, "query");
-              const TIME = query.animatable;
-              const KEY = query.select.key.slice(0);
-              if (TIME && KEY.indexOf(TIME) != -1) KEY.splice(KEY.indexOf(TIME), 1);
-
-              const lastIndex = KEY.length - 1;
-              const iterateKeys = function(firstKeyObject, lastKeyObject, firstKey, pValues, nValues, index) {
-                const keys = Object.keys(pValues);
-                for (let i = 0, j = keys.length; i < j; i++) {
-                  if (index == 0) {
-                    firstKey = keys[i];//root level
-                  }
-                  if (index == lastIndex) {
-                    mapValue(hookDataBF, firstKey, keys[i], firstKeyObject, lastKeyObject, pValues[keys[i]], nValues[keys[i]]);
-                  } else {
-                    if (index == 0) {
-                      lastKeyObject = firstKeyObject = {};
-                    }
-                    const nextIndex = index + 1;
-                    lastKeyObject[keys[i]] = {};
-                    iterateKeys(firstKeyObject, lastKeyObject[keys[i]], firstKey, pValues[keys[i]], nValues[keys[i]], nextIndex);
-                  }
-                }
-              };
-
-              iterateKeys(null, null, null, values, nValues[hook], 0);
-
-            } else {
-              //loop across the entities
-              utils.forEach(values, (val1, key) => {
-                const val2 = nValues[hook][key];
-                if (utils.isDate(val1)) {
-                  dataBetweenFrames[hook][key] = time;
-                } else if (!utils.isNumber(val1)) {
-                  //we can be interpolating string values
-                  dataBetweenFrames[hook][key] = val1;
-                } else {
-                  //interpolation between number and null should rerurn null, not a value in between (#1350)
-                  dataBetweenFrames[hook][key] = (val1 == null || val2 == null) ? null : val1 + ((val2 - val1) * fraction);
-                }
-              });
-            }
+            //loop across the entities
+            utils.forEach(values, (val1, key) => {
+              const val2 = nValues[hook][key];
+              if (utils.isDate(val1)) {
+                dataBetweenFrames[hook][key] = time;
+              } else if (!utils.isNumber(val1)) {
+                //we can be interpolating string values
+                dataBetweenFrames[hook][key] = val1;
+              } else {
+                //interpolation between number and null should rerurn null, not a value in between (#1350)
+                dataBetweenFrames[hook][key] = (val1 == null || val2 == null) ? null : val1 + ((val2 - val1) * fraction);
+              }
+            });
           });
           cb(dataBetweenFrames);
-
-          function mapValue(hookDataBF, firstKey, lastKey, firstKeyObject, lastKeyObject, val1, val2) {
-            hookDataBF[firstKey] = firstKeyObject[firstKey];
-            if (utils.isDate(val1)) {
-              lastKeyObject[lastKey] = time;
-            } else if (!utils.isNumber(val1)) {
-              //we can be interpolating string values
-              lastKeyObject[lastKey] = val1;
-            } else {
-              //interpolation between number and null should rerurn null, not a value in between (#1350)
-              lastKeyObject[lastKey] = (val1 == null || val2 == null) ? null : val1 + ((val2 - val1) * fraction);
-            }
-          }
 
         }, keys);
       }, keys);
@@ -736,7 +704,7 @@ const Marker = Model.extend({
     const _this = this;
     if (!this.cachedFrames) this.cachedFrames = {};
 
-    const KEY = this._getFirstDimension();
+    const KEYS = utils.unique(this._getAllDimensions({ exceptType: "time" }));
     const TIME = this._getFirstDimension({ type: "time" });
 
     if (!this.frameQueues) this.frameQueues = {}; //static queue of frames
@@ -768,15 +736,15 @@ const Marker = Model.extend({
             steps.forEach(t => {
               _this.partialResult[cachePath][t][name] = {};
               keys.forEach(key => {
-                _this.partialResult[cachePath][t][name][key[KEY]] = hook.which;
+                _this.partialResult[cachePath][t][name][utils.getKey(key, KEYS)] = hook.which;
               });
             });
-          } else if (hook.which === KEY) {
+          } else if (KEYS.includes(hook.which)) {
             //special case: fill data with keys to data itself
             steps.forEach(t => {
               _this.partialResult[cachePath][t][name] = {};
               keys.forEach(key => {
-                _this.partialResult[cachePath][t][name][key[KEY]] = key[KEY];
+                _this.partialResult[cachePath][t][name][utils.getKey(key, KEYS)] = key[hook.which];
               });
             });
           } else if (hook.which === TIME) {
@@ -784,7 +752,7 @@ const Marker = Model.extend({
             steps.forEach(t => {
               _this.partialResult[cachePath][t][name] = {};
               keys.forEach(key => {
-                _this.partialResult[cachePath][t][name][key[KEY]] = new Date(t);
+                _this.partialResult[cachePath][t][name][utils.getKey(key, KEYS)] = new Date(t);
               });
             });
           } else {
@@ -835,7 +803,7 @@ const Marker = Model.extend({
         const promises = [];
         utils.forEach(_this._dataCube, (hook, name) => {
           //exception: we know that these are knonwn, no need to calculate these
-          if (hook.use !== "constant" && hook.which !== KEY && hook.which !== TIME) {
+          if (hook.use !== "constant" && !KEYS.includes(hook.which) && hook.which !== TIME) {
             (function(_hook, _name) {
               promises.push(new Promise((res, rej) => {
                 _hook.getFrame(steps, forceFrame, selected).then(response => {
@@ -864,7 +832,7 @@ const Marker = Model.extend({
 
   listenFramesQueue(keys, cb) {
     const _this = this;
-    const KEY = this._getFirstDimension();
+    const KEYS = utils.unique(this._getAllDimensions({ exceptType: "time" }));
     const TIME = this._getFirstDimension({ type: "time" });
     const steps = this._parent.time.getAllSteps();
     const preparedFrames = {};
@@ -875,7 +843,7 @@ const Marker = Model.extend({
     let isDataLoaded = false;
 
     utils.forEach(_this._dataCube, (hook, name) => {
-      if (!(hook.use === "constant" || hook.which === KEY || hook.which === TIME)) {
+      if (!(hook.use === "constant" || KEYS.includes(hook.which) || hook.which === TIME)) {
         if (!dataIds.includes(hook._dataId)) {
           dataIds.push(hook._dataId);
 

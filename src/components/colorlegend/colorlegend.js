@@ -189,12 +189,16 @@ const ColorLegend = Component.extend({
   ready() {
     const _this = this;
 
+    this.KEYS = utils.unique(this.model.marker._getAllDimensions({ exceptType: "time" }));
     this.KEY = this.model.entities.getDimension();
     this.colorlegendDim = this.KEY;
     this.canShowMap = false;
 
     if (this.colorModel.isDiscrete() && this.colorModel.use !== "constant" && this.colorlegendMarker) {
       if (!this.colorlegendMarker._ready) return;
+
+      this.markerKeys = _this.model.marker.getKeys();
+      this.colorDataKey = _this.colorModel.getDataKeys()[0];
 
       this.colorlegendDim = this.colorModel.getColorlegendEntities().getDimension();
 
@@ -483,12 +487,17 @@ const ColorLegend = Component.extend({
         const view = d3.select(this);
         const target = d[colorlegendDim];
 
-        const values = _this.colorModel.getValidItems()
+        const colorDataKey = _this.colorDataKey;
+
+        const filterHash = _this.colorModel.getValidItems()
           //filter so that only countries of the correct target remain
           .filter(f => f[_this.colorModel.which] == target)
-          //fish out the "key" field, leave the rest behind
-          .map(d => utils.clone(d, [KEY]));
-        _this._highlight(values);
+          .reduce((result, item) => {
+            result[item[colorDataKey]] = true;
+            return result;
+          }, {});
+
+        _this._highlight(_this.markerKeys.filter(key => filterHash[key[colorDataKey]]));
       },
 
       mouseout(d, i) {
