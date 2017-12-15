@@ -27,7 +27,7 @@ const profiles = {
   },
   medium: {
     margin: {
-      top: 10,
+      top: 0,
       right: 15,
       bottom: 10,
       left: 50
@@ -37,7 +37,7 @@ const profiles = {
   },
   large: {
     margin: {
-      top: 5,
+      top: -5,
       right: 15,
       bottom: 10,
       left: 75
