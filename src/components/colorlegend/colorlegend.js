@@ -190,7 +190,7 @@ const ColorLegend = Component.extend({
     const _this = this;
 
     this.KEYS = utils.unique(this.model.marker._getAllDimensions({ exceptType: "time" }));
-    this.KEY = this.model.entities.getDimension();
+    this.KEY = this.KEYS.join(",");
     this.colorlegendDim = this.KEY;
     this.canShowMap = false;
 
@@ -198,7 +198,7 @@ const ColorLegend = Component.extend({
       if (!this.colorlegendMarker._ready) return;
 
       this.markerKeys = _this.model.marker.getKeys();
-      this.colorDataKey = _this.colorModel.getDataKeys()[0];
+      this.KEY = _this.colorModel.getDataKeys()[0];
 
       this.colorlegendDim = this.colorModel.getColorlegendEntities().getDimension();
 
@@ -371,7 +371,7 @@ const ColorLegend = Component.extend({
         if (this.colorModel.which == "_default") {
           colorOptions = colorOptions.data([]);
         } else {
-          colorOptions = colorOptions.data(hideColorOptions ? [] : colorlegendKeys.length ? colorlegendKeys : Object.keys(this.colorModel.getPalette()).map(value => {
+          colorOptions = colorOptions.data(hideColorOptions ? [] : colorlegendKeys.length ? _this.colorlegendDim == KEY ? utils.unique(_this.markerKeys, key => key[KEY]) : colorlegendKeys : Object.keys(this.colorModel.getPalette()).map(value => {
             const result = {};
             result[_this.colorlegendDim] = value;
             return result;
@@ -475,6 +475,7 @@ const ColorLegend = Component.extend({
 
   _interact() {
     const _this = this;
+    const KEYS = this.KEYS;
     const KEY = this.KEY;
     const colorlegendDim = this.colorlegendDim;
 
@@ -487,17 +488,15 @@ const ColorLegend = Component.extend({
         const view = d3.select(this);
         const target = d[colorlegendDim];
 
-        const colorDataKey = _this.colorDataKey;
-
         const filterHash = _this.colorModel.getValidItems()
           //filter so that only countries of the correct target remain
           .filter(f => f[_this.colorModel.which] == target)
-          .reduce((result, item) => {
-            result[item[colorDataKey]] = true;
+          .reduce((result, d) => {
+            result[d[KEY]] = true;
             return result;
           }, {});
 
-        _this._highlight(_this.markerKeys.filter(key => filterHash[key[colorDataKey]]));
+        _this._highlight(_this.markerKeys.filter(key => filterHash[key[KEY]]));
       },
 
       mouseout(d, i) {
@@ -552,11 +551,17 @@ const ColorLegend = Component.extend({
         const view = d3.select(this);
         const target = d[colorlegendDim];
 
-        const select = _this.colorModel.getValidItems()
+        const filterHash = _this.colorModel.getValidItems()
           //filter so that only countries of the correct target remain
           .filter(f => f[_this.colorModel.which] == target)
           //fish out the "key" field, leave the rest behind
-          .map(d => utils.clone(d, [KEY]));
+          .reduce((result, d) => {
+            result[d[KEY]] = true;
+            return result;
+          }, {});
+
+        const select = _this.markerKeys.filter(f => filterHash[f[KEY]])
+          .map(d => utils.clone(d, KEYS));
 
         if (select.filter(d => _this.model.marker.isSelected(d)).length == select.length) {
           _this.model.marker.clearSelected();

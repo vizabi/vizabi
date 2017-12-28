@@ -203,10 +203,10 @@ const Marker = Model.extend({
 
   isSelected(d) {
     const _this = this;
-    const value = this._createValue(d);
+    const value = JSON.stringify(this._createValue(d));
 
     return this.select
-      .map(d => JSON.stringify(_this._createValue(d)) === JSON.stringify(value))
+      .map(d => JSON.stringify(_this._createValue(d)) === value)
       .indexOf(true) !== -1;
   },
 
@@ -286,9 +286,9 @@ const Marker = Model.extend({
    */
   isHighlighted(d) {
     const _this = this;
-    const value = this._createValue(d);
+    const value = JSON.stringify(this._createValue(d));
     return this.highlight
-      .map(d => JSON.stringify(_this._createValue(d)) === JSON.stringify(value))
+      .map(d => JSON.stringify(_this._createValue(d)) === value)
       .indexOf(true) !== -1;
   },
 
@@ -453,7 +453,7 @@ const Marker = Model.extend({
       keys = utils.unique(keys);
       resultKeys = resultKeys ? d3.cross(resultKeys, keys, (a, b) => a.concat(b)) : keys;
     });
-
+  
     utils.forEach(subHooks, (hook, name) => {
       // If hook use is constant, then we can provide no additional info about keys
       // We can just hope that we have something else than constants =)
@@ -744,7 +744,7 @@ const Marker = Model.extend({
             steps.forEach(t => {
               _this.partialResult[cachePath][t][name] = {};
               keys.forEach(key => {
-                _this.partialResult[cachePath][t][name][utils.getKey(key, KEYS)] = key[hook.which];
+                _this.partialResult[cachePath][t][name][key[hook.which]] = key[hook.which];
               });
             });
           } else if (hook.which === TIME) {
