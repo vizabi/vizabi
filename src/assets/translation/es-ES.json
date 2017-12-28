@@ -1,7 +1,7 @@
 {
     "buttons/expand": "Expandir",
     "buttons/unexpand": "Restaurar",
-    "buttons/trails": "Rutas",
+    "buttons/trails": "Trayectorias",
     "buttons/lock": "Bloquear",
     "buttons/find": "Buscar",
     "buttons/show": "Mostrar",
@@ -42,7 +42,7 @@
     "hints/bubbl/setminsize": "Tamaño mínimo de burbuja:",
     "hints/bubbl/setmaxsize": "Tamaño máximo de burbuja:",
     "hints/bubbl/setsize": "Tamaño de burbuja:",
-    "hints/mount/maxYvalue": "Maximum Y value:",
+    "hints/mount/maxYvalue": "Valor máximo de Y:",
     "hints/mount/logXstops": "X-axis log labels (if they fit):",
     "hints/mount/howtostack": "Stack mountains:",
     "hints/mount/howtomerge": "Merge mountains:",
