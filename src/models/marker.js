@@ -48,6 +48,29 @@ const Marker = Model.extend({
     this.space = this._root.dimensionManager.getDimensionModelsForSpace(this._space, newSpace);
   },
 
+  getSpaceDimensions() {
+    return this.getSpace().map(modelName => this._space[modelName].dim);
+  },
+
+  /**
+   * @param  {array/set} Each element is a concept (string) or Dimension Model (Entities/Time Model)
+   * @return {array} Each element is a string containing the name of a Dimension Model (Entities/Time Model)
+   */
+  spaceToDimensionModelNames(space = this.space) {
+    space = [...space.values()]; // Make sets and maps into array
+    // no entities model creation yet, just return possible name
+    return space.map(dim => (typeof dim == "string") ? "entities_" + dim : dim._name);
+  },
+
+  /**
+   * @param  {array/set} Each element is a concept (string) or Dimension Model (Entities/Time Model)
+   * @return {array} Each element is a string containing the concept set as dimension in a Dimension Model
+   */
+  spaceToDimensionConcepts(space = this.space) {
+    space = [...space.values()]; // Make sets and maps into array
+    return space.map(dim => (typeof dim == "string") ? dim : dim.dim);
+  },  
+
   getAvailableSpaces() {
     const spaces = new Map();
     utils.forEach(this._root._data, dataSource => {
@@ -64,58 +87,45 @@ const Marker = Model.extend({
     return spaces;
   },
 
-  getAvailableData() {
-    const data = [];
+  getAvailableValues() {
 
     if (d3.keys(this._space).length === 0) return utils.warn("getAvailableData() is trying to access missing _space items of marker '" + this._name + "' which likely haven't been resoled in time");
-    const dimensions = this.space.map(dim => this._space[dim].dim);
+    const spaceModelMap = new Map(this.space.map(dim => [this._space[dim].dim, this._space[dim]]));
 
-    utils.forEach(this._root._data, dataSource => {
+    const values = new Map();
+    this._root.dataManager.getDataModels().forEach((dataSource, modelName) => {
       if (dataSource._type !== "data") return;
 
       const indicatorsDB = dataSource.getConceptprops();
 
-      dataSource.dataAvailability.datapoints.forEach(kvPair => {
-        if (dimensions.length == kvPair.key.size && dimensions.every(dim => kvPair.key.has(dim))) {
-          data.push({
-            key: kvPair.key,
-            value: indicatorsDB[kvPair.value],
-            dataSource
-          });
-        }
-      });
-
-      // get all available entity properties for current marker space
-      const entitiesAvailability = [];
-      dataSource.dataAvailability.entities.forEach(kvPair => {
-        if (kvPair.value == null) return;
-        dimensions.forEach(dim => {
-          if (kvPair.key.has(dim) && kvPair.value.indexOf("is--") === -1) {
-            data.push({
-              key: Array.from(kvPair.key).map(concept => indicatorsDB[concept]),
+      let processKvPair = (kvPair) => {
+        if (kvPair.value == null || // null kvPair
+            kvPair.value.indexOf("is--") !== -1) // entity set membership property
+          return;
+        // if key is subset or superset of marker space
+        if ([...spaceModelMap].every(([dim,model]) => kvPair.key.has(dim)) || [...kvPair.key].every(dim => spaceModelMap.has(dim))) {
+          const mappedKey = new Set([...kvPair.key].map(dim => spaceModelMap.has(dim) ? spaceModelMap.get(dim) : dim));
+          if (values.has(kvPair.value)) {
+            values.get(kvPair.value).keys.add(mappedKey);
+          } else {
+            values.set(kvPair.value, {
               value: indicatorsDB[kvPair.value],
-              dataSource
+              dataSource,
+              keys: new Set([mappedKey])
             });
-          }
-        });
-      });
+          } 
+        }
+      };
+
+      dataSource.dataAvailability.datapoints.forEach(processKvPair);
+      dataSource.dataAvailability.entities.forEach(processKvPair);
+
+      spaceModelMap.forEach((model, dim) => processKvPair({ value: dim, key: new Set([dim]), dataSource }));
+      processKvPair({ key: new Set([]), value: '_default',  dataSource });
 
     });
+    return values;
 
-    // just first dataModel, can lead to problems if first data source doesn't contain dim-concept
-    const firstDataModel = this._root.dataManager.getDataModels().values().next().value;
-    dimensions.forEach(dim => data.push({
-      key: [firstDataModel.getConceptprops(dim)],
-      value: firstDataModel.getConceptprops(dim),
-      dataSource: firstDataModel 
-    }));
-    data.push({
-      key: [firstDataModel.getConceptprops('_default')],
-      value: firstDataModel.getConceptprops('_default'),
-      dataSource: firstDataModel 
-    });
-
-    return data;
   },
 
 
@@ -123,13 +133,18 @@ const Marker = Model.extend({
     if (!type && includeOnlyIDs.length == 0 && excludeIDs.length == 0) {
       return null;
     }
-
-    const filtered = this.getAvailableData().filter(f =>
-      (!type || !f.value.concept_type || f.value.concept_type === type)
+    const filtered = [];
+    this.getAvailableValues().forEach(f => {
+      if ((!type || (f.value && (!f.value.concept_type || f.value.concept_type === type)))
       && (includeOnlyIDs.length == 0 || includeOnlyIDs.indexOf(f.value.concept) !== -1)
-      && (excludeIDs.length == 0 || excludeIDs.indexOf(f.value.concept) == -1)
-    );
-    return filtered[index] || filtered[filtered.length - 1];
+      && (excludeIDs.length == 0 || excludeIDs.indexOf(f.value.concept) == -1))
+        filtered.push(f);
+    });
+    const kvPair = filtered[index] || filtered[filtered.length - 1];
+    return {
+      value: kvPair.value,
+      key: [...kvPair.keys][0]
+    }
   },
 
   setDataSourceForAllSubhooks(data) {

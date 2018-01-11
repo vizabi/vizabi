@@ -76,8 +76,9 @@ const OPTIONS = {
 };
 
 const Menu = Class.extend({
-  init(parent, menu, options) {
+  init(parent, treemenu, menu, options) {
     const _this = this;
+    this.treemenu = treemenu;
     this.parent = parent;
     this.entity = menu;
     this.OPTIONS = options;
@@ -412,6 +413,8 @@ const Menu = Class.extend({
 
   buildLeaf() {
     const leafDatum = this.entity.datum();
+    const _this = this;
+    const spaceDimensions = this.treemenu.targetModel().getSpaceDimensions();
 
     this.entity.selectAll("div").data([leafDatum]).enter()
       .append("div").classed(css.leaf + " " + css.leaf_content + " vzb-dialog-scrollable", true)
@@ -422,6 +425,57 @@ const Menu = Class.extend({
           .text(utils.replaceNumberSpacesToNonBreak(d.name) || "");
         leafContent.append("span").classed(css.leaf_content_item + " " + css.leaf_content_item_descr, true)
           .text(utils.replaceNumberSpacesToNonBreak(d.description) || "");
+
+        if (d.type != "space") {
+          const spaceSelect = leafContent.append("select")
+            .classed(css.leaf_content_item, true)
+            .on("change", spaceSelectChangeHandler);
+
+          let options = spaceSelect
+            .selectAll('option')
+            .data(d => {
+              return [...d.spaces.values()].map(space => [...space]);
+            }).enter()
+            .append('option')
+              .text(d => d.map(dim => typeof dim == "string" ? dim : dim.dim).join(', '))
+              .property('selected', function(d) {
+                return (spaceDimensions.join(', ') == this.value)
+              });
+
+          let dimSelectContainer = leafContent.append("div")
+            .classed("additionalDimensionsSelectContainer", true);
+
+          leafContent.append("button")
+            .classed(css.leaf_content_item, true)
+            .text("Apply")
+            .on("click", d => {
+              const selectedSpaceOption = d3.select(spaceSelect.node().options[spaceSelect.node().selectedIndex]);
+              _this.treemenu._selectIndicator({ 
+                concept: d.id, 
+                dataSource: d.dataSource, 
+                use: d.use, 
+                space: selectedSpaceOption.datum(), 
+                entity_filters: dimSelectContainer.selectAll("select").nodes().reduce((obj, select) => Object.assign(obj, { [d3.select(select).datum()]: select.value }), {})
+              });
+            });
+
+          function spaceSelectChangeHandler(e) {
+            const dimensions = d3.select(this.options[this.selectedIndex]).datum().map(dim => typeof dim == "string" ? dim : dim.dim);
+            const marker = _this.treemenu.model.marker;
+            const spaceDiff = dimensions.filter(dim => !marker.getSpaceDimensions().includes(dim));
+            dimSelectContainer.selectAll("select").remove();
+            spaceDiff.forEach(dim => {
+              marker._root.dimensionManager.getDimensionValues(dim).then(values => {
+                dimSelectContainer.append("select")
+                  .datum(dim)
+                  .selectAll("option")
+                  .data([...values]).enter()
+                  .append("option")
+                    .text(d => d);
+              });
+            });
+          }
+        }
       });
   }
 });
@@ -433,7 +487,7 @@ const MenuItem = Class.extend({
     this.entity = item;
     const submenu = item.select("." + css.list_outer);
     if (submenu.node()) {
-      this.submenu = new Menu(this, submenu, options);
+      this.submenu = new Menu(this, parent.treemenu, submenu, options);
     }
     this.entity.select("." + css.list_item_label).on("mouseenter", function() {
       if (utils.isTouchDevice()) return;
@@ -767,44 +821,46 @@ const TreeMenu = Component.extend({
 
 
     const properties = this.model.marker.space.length > 1;
-    this.model.marker.getAvailableData().forEach(kvPair => {
+    for(let [valueString, kvPair] of this.model.marker.getAvailableValues()) {
       const entry = kvPair.value;
       //if entry's tag are empty don't include it in the menu
-      if (entry.tags == "_none") return;
+      if (entry.tags == "_none") continue;
       if (!entry.tags) entry.tags = kvPair.dataSource.getDatasetName() || UNCLASSIFIED;
 
-      const use = entry.concept == "_default" ? "constant" : (kvPair.key.size > 1 ? "indicator" : "property")
-      const concept = { id: entry.concept, name: entry.name, name_catalog: entry.name_catalog, description: entry.description, dataSource: kvPair.dataSource._name, use: use };
-
-      if (properties && kvPair.key.length == 1 && entry.concept != "_default" && entry.concept_type != "time") {
+      const concept = { id: entry.concept, name: entry.name, name_catalog: entry.name_catalog, description: entry.description, dataSource: kvPair.dataSource._name, spaces: kvPair.keys };
+/*
+      if (properties && kvPair.key.length == 1) {
 
         const folderName = kvPair.key[0].concept + "_properties";
         if (!tags[folderName]) {
           const dim = kvPair.key[0];
           tags[folderName] = { id: folderName, name: dim.name + " properties", type: "folder", children: [] };
+
+          tags[folderName].children.push({ id: dim.concept, name: dim.name, name_catalog: dim.name_catalog, description: dim.description, dataSource: kvPair.dataSource._name });
+
           tags[ROOT].children.push(tags[folderName]);
         }
         tags[folderName].children.push(concept);
 
       } else {
-
-        entry.tags.split(",").forEach(tag => {
-          tag = tag.trim();
-          if (tags[tag]) {
-            tags[tag].children.push(concept);
-          } else {
-            //if entry's tag is not found in the tag dictionary
-            if (!_this.consoleGroupOpen) {
-              console.groupCollapsed("Some tags were not found, so indicators went under 'Unclassified' menu");
-              _this.consoleGroupOpen = true;
-            }
-            utils.warn("tag '" + tag + "' for indicator '" + concept.id + "'");
-            tags[UNCLASSIFIED].children.push(concept);
+*/
+      entry.tags.split(",").forEach(tag => {
+        tag = tag.trim();
+        if (tags[tag]) {
+          tags[tag].children.push(concept);
+        } else {
+          //if entry's tag is not found in the tag dictionary
+          if (!_this.consoleGroupOpen) {
+            console.groupCollapsed("Some tags were not found, so indicators went under 'Unclassified' menu");
+            _this.consoleGroupOpen = true;
           }
-        });
+          utils.warn("tag '" + tag + "' for indicator '" + concept.id + "'");
+          tags[UNCLASSIFIED].children.push(concept);
+        }
+      });
 
-      }
-    });
+      //}
+    };
 
     /**
      * KEY-AVAILABILITY (dimensions for space-menu)
@@ -834,7 +890,7 @@ const TreeMenu = Component.extend({
     tree.children.sort(
       utils
       //in each folder including root: put subfolders below loose items
-        .firstBy()((a, b) => { a = (a.type === "dataset" ? 1 : 0;  b = b.type === "dataset" ? 1 : 0; return b - a; })
+        .firstBy()((a, b) => { a = a.type === "dataset" ? 1 : 0;  b = b.type === "dataset" ? 1 : 0; return b - a; })
         .thenBy((a, b) => { a = a.children ? 1 : 0;  b = b.children ? 1 : 0; return a - b; })
         .thenBy((a, b) => {
         //in the root level put "time" on top and send "anvanced" to the bottom
@@ -1275,9 +1331,6 @@ const TreeMenu = Component.extend({
             }
             if (!d.description) d.description = noDescription;
             const deepLeaf = view.append("div").attr("class", css.menuHorizontal + " " + css.list_outer + " " + css.list_item_leaf);
-            deepLeaf.on("click", d => {
-              _this._selectIndicator({ concept: d.id, dataSource: d.dataSource, use: d.use });
-            });
           }
 
           if (d.id == _this._targetModel[_this._targetProp]) {
@@ -1322,7 +1375,7 @@ const TreeMenu = Component.extend({
     }
     this.selectedNode = null;
     createSubmeny(this.wrapper, dataFiltered, true);
-    this.menuEntity = new Menu(null, this.wrapper.selectAll("." + css.list_top_level), this.OPTIONS);
+    this.menuEntity = new Menu(null, this, this.wrapper.selectAll("." + css.list_top_level), this.OPTIONS);
     if (this.menuEntity) this.menuEntity.setDirection(this.OPTIONS.MENU_DIRECTION);
     if (this.menuEntity) this.menuEntity.setWidth(this.activeProfile.col_width, true, true);
 

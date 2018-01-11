@@ -13,11 +13,12 @@ const Hook = DataConnected.extend({
   _important: false,
 
   objectLeafs: ["autoconfig"],
-  dataConnectedChildren: ["use", "which"],
+  dataConnectedChildren: ["use", "which", "space", "entity_filters"],
 
   getClassDefaults() {
     const defaults = {
       data: "data",
+      space: null,
       which: null
     };
     return utils.deepExtend(this._super(), defaults);
@@ -57,11 +58,14 @@ const Hook = DataConnected.extend({
     const newDataSource = this.getClosestModel(obj.data || this.data);
     const conceptProps = newDataSource.getConceptprops(newValue.concept);
 
-    if (newValue.which === "_default") {
+    if (obj.which === "_default") {
       obj.use = "constant";
     } else {
-      if (newValue.use) obj.use = newValue.use;
+      if (newValue.space) obj.use = (newValue.space.length == 1) ? "property" : "indicator";
     }
+
+    if (typeof newValue.space !== "undefined") obj.space = this._parent.spaceToDimensionModelNames(newValue.space);
+    if (typeof newValue.entity_filters !== "undefined") obj.entity_filters = newValue.entity_filters;
 
     if (conceptProps.scales) {
       obj.scaleType = conceptProps.scales[0];
@@ -97,10 +101,14 @@ const Hook = DataConnected.extend({
 
       if (autoconfigResult) {
         const concept = autoconfigResult.value;
+        const use = autoconfigResult.key.size > 1 ? "indicator" : "property";
+        // assumption: indicator is available in marker space
+        const space = (use == "indicator") ? null : [...autoconfigResult.key].map(dim => (typeof dim == "string") ? "entities_" + dim : dim._name);
         const obj = {
           //dataSource: autoconfigResult.dataSource,
           which: concept.concept,
-          use: (autoconfigResult.key.size || autoconfigResult.key.length) > 1 ? "indicator" : "property",
+          use,
+          space,
           scaleType: concept.scales[0] || "linear"
         };
         this.set(obj);
@@ -108,6 +116,7 @@ const Hook = DataConnected.extend({
         const obj = {
           which: "_default",
           use: "constant",
+          space: [],
           scaleType: "ordinal"
         };
         this.set(obj);
@@ -187,20 +196,29 @@ const Hook = DataConnected.extend({
     utils.timeStamp("Vizabi Model: Data loaded: " + this._id);
   },
 
+  getSpaceDimensions() {
+    if (this.space == null) {
+      return this._parent.getSpaceDimensions();
+    }
+    return this.space.map(modelName => this._space[modelName].dim);
+
+  },
+
   /**
    * gets query that this model/hook needs to get data
    * @returns {Array} query
    */
   getQuery(splashScreen) {
     let filters;
+    const keys = this.getSpaceDimensions();
 
     //error if there's nothing to hook to
-    if (Object.keys(this._space).length < 1) {
+    if (typeof keys == "undefined") {
       utils.error("Error:", this._id, "can't find the space");
       return true;
     }
 
-    const prop = (this.use === "property") || (this.use === "constant");
+    const prop = keys.length == 1 || (this.use === "property") || (this.use === "constant");
     const exceptions = (prop) ? { exceptType: "time" } : {};
 
     // select

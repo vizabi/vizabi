@@ -18,10 +18,29 @@ const DataManagerPrototype = {
     });
   },
 
+  getDataModels() {
+    this.updateDataModels();
+    return this.dataModels;
+  },
+
+  getDimensionValues(conceptID) {
+    const query = {
+      select: {
+        key: [conceptID],
+        value: []
+      },
+      from: "entities"
+    };
+    return Promise.all(
+      [...this.getDataModels().values()].map(
+        dataModel => dataModel.load(query).then(dataId => dataModel.getData(dataId))
+      )
+    );
+  },
+
   // heuristic: if concept is typed as such in one of the datasources, it's of that type
   isConceptType(conceptID, concept_type) {
-    this.updateDataModels();
-    for (const dataModel of this.dataModels.values()) {
+    for (const dataModel of this.getDataModels().values()) {
       if (dataModel.conceptDictionary[conceptID] && dataModel.conceptDictionary[conceptID].concept_type == concept_type)
         return true;
     }
@@ -30,8 +49,7 @@ const DataManagerPrototype = {
 
   // assumption: all datasources have identical concept properties if they are set
   getConceptProperty(conceptID, property) {
-    this.updateDataModels();
-    for (const dataModel of this.dataModels.values()) {
+    for (const dataModel of this.getDataModels().values()) {
       const concept = dataModel.getConceptprops(conceptID);
       if (concept && concept[property]) return concept[property];
     }
