@@ -28,7 +28,8 @@ const CSVReader = Reader.extend({
       WRONG_TIME_COLUMN_OR_UNITS: "reader/error/wrongTimeUnitsOrColumn",
       NOT_ENOUGH_ROWS_IN_FILE: "reader/error/notEnoughRows",
       UNDEFINED_DELIMITER: "reader/error/undefinedDelimiter",
-      EMPTY_HEADERS: "reader/error/emptyHeaders"
+      EMPTY_HEADERS: "reader/error/emptyHeaders",
+      DIFFERENT_SEPARATORS: "reader/error/differentSeparators"
     });
   },
 
@@ -202,7 +203,7 @@ const CSVReader = Reader.extend({
 
   _mapRows(rows, query, parsers) {
     const mapRow = this._getRowMapper(query, parsers);
-
+    this._failedParseStrategies = 0;
     for (const parseStrategy of this._parseStrategies) {
       this._parse = parseStrategy;
       this._isParseSuccessful = true;
@@ -212,6 +213,7 @@ const CSVReader = Reader.extend({
         const parsed = mapRow(row);
 
         if (!this._isParseSuccessful) {
+          this._failedParseStrategies++;
           break;
         }
 
@@ -219,6 +221,9 @@ const CSVReader = Reader.extend({
       }
 
       if (this._isParseSuccessful) {
+        if (this._failedParseStrategies === this._parseStrategies.length - 1) {
+          throw this.error(this.ERRORS.DIFFERENT_SEPARATORS);
+        }
         return result;
       }
     }
