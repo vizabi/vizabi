@@ -57,7 +57,7 @@ const DataModel = Model.extend({
    * @param {Object} parsers An object with concepts as key and parsers as value
    * @param {*} evts ?
    */
-  load(query, parsers = {}) {
+  load(query, parsers = this._root.dimensionManager.getAllParsers()) {
     // add waffle server specific query clauses if set
     if (this.dataset) query.dataset = this.dataset;
     if (this.version) query.version = this.version;
