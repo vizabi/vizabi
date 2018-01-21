@@ -30,7 +30,11 @@ const Marker = Model.extend({
     this._super(name, value, parent, binds, persistent);
 
     this.on("change", "space", this.updateSpaceReferences.bind(this));
-    utils.defer(() => _this.updateSpaceReferences());
+  },
+
+  setInterModelListeners() {
+    this._super();
+    this.updateSpaceReferences()
   },
 
   updateSpaceReferences() {
