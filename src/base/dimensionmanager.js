@@ -87,6 +87,22 @@ const DimensionManagerPrototype = {
 
     return newSpace;
 
+  },
+
+  getAllParsers() {
+    this.updateDimensionModels();
+
+    const result = {};
+
+    this.dimensionModels.forEach((model, name) => {
+      const parser = model.getParser();
+      const column = model._type === "time" ? "time" : model.getDimensionOrWhich();
+
+      parser && column && !(column in result) && (result[column] = parser);
+
+    });
+
+    return result;
   }
 };
 
