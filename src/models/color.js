@@ -138,7 +138,7 @@ const ColorModel = Hook.extend({
       //save the references here locally
       _this._syncModelReferences[modelName] = { model, marker, entities };
 
-      if (_this.isDiscrete()) _this._setSyncModel(model, marker, entities);
+      if (_this.isDiscrete() && _this.use !== "constant") _this._setSyncModel(model, marker, entities);
     });
   },
 
