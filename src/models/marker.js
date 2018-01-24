@@ -34,7 +34,7 @@ const Marker = Model.extend({
 
   setInterModelListeners() {
     this._super();
-    this.updateSpaceReferences()
+    this.updateSpaceReferences();
   },
 
   updateSpaceReferences() {
@@ -457,7 +457,7 @@ const Marker = Model.extend({
       keys = utils.unique(keys);
       resultKeys = resultKeys ? d3.cross(resultKeys, keys, (a, b) => a.concat(b)) : keys;
     });
-  
+
     utils.forEach(subHooks, (hook, name) => {
       // If hook use is constant, then we can provide no additional info about keys
       // We can just hope that we have something else than constants =)

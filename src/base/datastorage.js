@@ -17,6 +17,14 @@ function _getQueryId(query, path, lastModified, readerName) {
   ]);
 }
 
+function getCacheKey(dataId, frames, keys) {
+  let result = `${frames[0]} - ${frames[frames.length - 1]} (${frames.length})`;
+  if (keys) {
+    result = result + "_" + keys.join();
+  }
+  return result;
+}
+
 export class Storage {
   constructor() {
     this.queryIds = {};
@@ -381,7 +389,7 @@ export class Storage {
 
   getFrames(dataId, framesArray, keys, conceptprops) {
     const _this = this;
-    const whatId = this._getCacheKey(dataId, framesArray, keys);
+    const whatId = getCacheKey(dataId, framesArray, keys);
     if (!this._collectionPromises[dataId][whatId]) {
       this._collectionPromises[dataId][whatId] = {
         queue: this.framesQueue(framesArray, whatId),
@@ -405,7 +413,7 @@ export class Storage {
 
   getFrame(dataId, framesArray, neededFrame, keys) {
     const _this = this;
-    const whatId = this._getCacheKey(dataId, framesArray, keys);
+    const whatId = getCacheKey(dataId, framesArray, keys);
     return new Promise((resolve, reject) => {
       if (_this._collection[dataId]["frames"][whatId] && _this._collection[dataId]["frames"][whatId][neededFrame]) {
         resolve(_this._collection[dataId]["frames"][whatId]);
@@ -418,7 +426,7 @@ export class Storage {
   }
 
   listenFrame(dataId, framesArray, keys,  cb) {
-    const whatId = this._getCacheKey(dataId, framesArray, keys);
+    const whatId = getCacheKey(dataId, framesArray, keys);
     this._collectionPromises[dataId][whatId]["queue"].defaultCallbacks.push(time => {
       cb(dataId, time);
     });
@@ -772,14 +780,6 @@ export class Storage {
         }
       });
     });
-  }
-
-  _getCacheKey(dataId, frames, keys) {
-    let result = `${frames[0]} - ${frames[frames.length - 1]} (${frames.length})`;
-    if (keys) {
-      result = result + "_" + keys.join();
-    }
-    return result;
   }
 }
 
