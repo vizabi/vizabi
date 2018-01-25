@@ -46,6 +46,7 @@ const Reader = Class.extend({
     return this.load(parsers)
       .then(result => {
         const { rows, columns } = result;
+        this._checkTimeParser(columns, parsers);
         this.ensureDataIsCorrect(result, parsers);
 
         switch (true) {
@@ -78,6 +79,11 @@ const Reader = Class.extend({
 
   ensureDataIsCorrect() {
 
+  },
+
+  _checkTimeParser(columns, parsers) {
+    const timeKey = columns[this.keySize];
+    if (!parsers[timeKey]) parsers[timeKey] = t => t;
   },
 
   _normalizeQuery(_query, parsers) {
