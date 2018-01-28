@@ -30,7 +30,11 @@ const Marker = Model.extend({
     this._super(name, value, parent, binds, persistent);
 
     this.on("change", "space", this.updateSpaceReferences.bind(this));
-    utils.defer(() => _this.updateSpaceReferences());
+  },
+
+  setInterModelListeners() {
+    this._super();
+    this.updateSpaceReferences();
   },
 
   updateSpaceReferences() {
@@ -203,10 +207,10 @@ const Marker = Model.extend({
 
   isSelected(d) {
     const _this = this;
-    const value = this._createValue(d);
+    const value = JSON.stringify(this._createValue(d));
 
     return this.select
-      .map(d => JSON.stringify(_this._createValue(d)) === JSON.stringify(value))
+      .map(d => JSON.stringify(_this._createValue(d)) === value)
       .indexOf(true) !== -1;
   },
 
@@ -286,9 +290,9 @@ const Marker = Model.extend({
    */
   isHighlighted(d) {
     const _this = this;
-    const value = this._createValue(d);
+    const value = JSON.stringify(this._createValue(d));
     return this.highlight
-      .map(d => JSON.stringify(_this._createValue(d)) === JSON.stringify(value))
+      .map(d => JSON.stringify(_this._createValue(d)) === value)
       .indexOf(true) !== -1;
   },
 
@@ -744,7 +748,7 @@ const Marker = Model.extend({
             steps.forEach(t => {
               _this.partialResult[cachePath][t][name] = {};
               keys.forEach(key => {
-                _this.partialResult[cachePath][t][name][utils.getKey(key, KEYS)] = key[hook.which];
+                _this.partialResult[cachePath][t][name][key[hook.which]] = key[hook.which];
               });
             });
           } else if (hook.which === TIME) {

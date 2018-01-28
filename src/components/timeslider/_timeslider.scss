@@ -280,7 +280,7 @@ $vzb-ts-value-width: 40px;
 
 &.vzb-medium {
   .vzb-timeslider {
-    min-height: $vzb-ts-btn-area + 10;
+    min-height: $vzb-ts-btn-area;
     .vzb-ts-slider {
       margin-left: 5px;
     }
@@ -294,6 +294,7 @@ $vzb-ts-value-width: 40px;
       }
     }
     .vzb-ts-btns {
+      @include position(absolute, -10px null 0 0);
       .vzb-ts-btn {
         margin-left: auto;
         margin-right: 15px;
@@ -309,7 +310,7 @@ $vzb-ts-value-width: 40px;
 
 &.vzb-large {
   .vzb-timeslider {
-    min-height: $vzb-ts-btn-area + 20;
+    min-height: $vzb-ts-btn-area + 10;
     .vzb-ts-slider-wrapper {
       margin-right: 5px;
       .vzb-ts-slider {
@@ -333,7 +334,7 @@ $vzb-ts-value-width: 40px;
       }
     }
     .vzb-ts-btns {
-      @include position(absolute, -5px 0 0 0);
+      @include position(absolute, -15px 0 0 0);
       width: $vzb-ts-btn-width + 20;
       height: $vzb-ts-btn-width + 20;
       .vzb-ts-btn {
