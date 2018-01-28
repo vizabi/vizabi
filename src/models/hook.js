@@ -77,7 +77,7 @@ const Hook = DataConnected.extend({
       obj.spaceRef = null;
     }
 
-    this.set(obj);
+    this.set(obj, null, null, null, this.setWhich);
   },
 
   setScaleType(newValue) {

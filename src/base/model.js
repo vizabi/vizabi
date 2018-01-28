@@ -147,9 +147,10 @@ const Model = EventSource.extend({
    * @param val property value (object or value)
    * @param {Boolean} force force setting of property to value and triggers set event
    * @param {Boolean} persistent true if the change is a persistent change
+   * @param {Function} caller — the outer function that has called this setter might want to identify itself to avoid recursive call
    * @returns defer defer that will be resolved when set is done
    */
-  set(attr, val, force, persistent) {
+  set(attr, val, force, persistent, caller) {
     const setting = this._setting;
     let attrs;
     let freezeCall = false; // boolean, indicates if this .set()-call froze the modelTree
@@ -192,8 +193,11 @@ const Model = EventSource.extend({
           changes.push(attribute);
         }
 
+        //if a hook has "setAttribute" funation, then call it from here, except when the Caller is that particular function
+        //avoiding double calling prevents side effects
+        //TODO: this was introduced to handle back button, but it looks like a hack really
         const fn = "set" + utils.capitalize(attribute);
-        if (this.isHook() && utils.isFunction(this[fn]) && val !== prevValue) {
+        if (this.isHook() && utils.isFunction(this[fn]) && caller !== this[fn] && val !== prevValue) {
           this[fn](attribute === "which" ? { concept: val } : val);
         }
 
