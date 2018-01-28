@@ -399,10 +399,9 @@ const Marker = Model.extend({
   },
 
   getDataKeysPerHook() {
-    const KEYS = utils.unique(this._getAllDimensions({ exceptType: "time" }));
     const result = {};
     utils.forEach(this._dataCube || this.getSubhooks(true), (hook, name) => {
-      result[name] = hook._dataId ? hook.getDataKeys() : KEYS;
+      result[name] = hook.getDataKeys();
     });
     return result;
   },

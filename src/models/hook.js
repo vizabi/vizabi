@@ -636,8 +636,7 @@ const Hook = DataConnected.extend({
   },
 
   getDataKeys() {
-    const query = this.dataSource.getData(this._dataId, "query");
-    return query.select.key.filter(key => key !== query.animatable);
+    return this.spaceRef ? [this._space[this.spaceRef].dim] : this._getAllDimensions({ exceptType: "time" });
   }
 });
 
