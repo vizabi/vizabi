@@ -141,7 +141,7 @@ const Hook = DataConnected.extend({
 
     // then start loading data
 
-    if (!this.which) return Promise.resolve();
+    if (!this.which || this.use === "constant") return Promise.resolve();
 
     this.trigger("hook_change");
 
