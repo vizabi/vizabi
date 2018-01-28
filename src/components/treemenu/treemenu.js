@@ -779,7 +779,7 @@ const TreeMenu = Component.extend({
       if (!entry.tags) entry.tags = kvPair.dataSource.getDatasetName() || ROOT;
 
       const use = entry.concept == "_default" ? "constant" : (kvPair.key.size > 1 ? "indicator" : "property");
-      const concept = { id: entry.concept, name: entry.name, name_catalog: entry.name_catalog, description: entry.description, dataSource: kvPair.dataSource._name, use };
+      const concept = { id: entry.concept, key: kvPair.key, name: entry.name, name_catalog: entry.name_catalog, description: entry.description, dataSource: kvPair.dataSource._name, use };
 
       if (properties && kvPair.key.length == 1 && entry.concept != "_default" && entry.concept_type != "time") {
 
@@ -1256,7 +1256,7 @@ const TreeMenu = Component.extend({
           //only for leaf nodes
           if (view.attr("children")) return;
           d3.event.stopPropagation();
-          _this._selectIndicator({ concept: d.id, dataSource: d.dataSource, use: d.use });
+          _this._selectIndicator({ concept: d.id, key: d.key, dataSource: d.dataSource, use: d.use });
         })
         .append("span")
         .text(d => {
@@ -1281,7 +1281,7 @@ const TreeMenu = Component.extend({
             if (!d.description) d.description = noDescription;
             const deepLeaf = view.append("div").attr("class", css.menuHorizontal + " " + css.list_outer + " " + css.list_item_leaf);
             deepLeaf.on("click", d => {
-              _this._selectIndicator({ concept: d.id, dataSource: d.dataSource, use: d.use });
+              _this._selectIndicator({ concept: d.id, key: d.key, dataSource: d.dataSource, use: d.use });
             });
           }
 

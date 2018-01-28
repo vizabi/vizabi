@@ -67,6 +67,16 @@ const Hook = DataConnected.extend({
       obj.zoomedMax = null;
     }
 
+    //FIXME: this will set spaceRef ofa hook when there are multiple dimensions to chose from
+    //this has a limitation because hook can only be 1-dimensional here (but now it can point to any of the dimensions)
+    //when we introduce hook spaces this should be replaced by setting space of a hook based on newValue
+    if (newValue.use === "property" && newValue.key && newValue.key.length === 1) {
+      obj.spaceRef = utils.find(this._space, entityMdl => entityMdl.dim === newValue.key[0].concept)._name;
+    }
+    if (newValue.use === "constant" || newValue.use === "indicator") {
+      obj.spaceRef = null;
+    }
+
     this.set(obj);
   },
 
