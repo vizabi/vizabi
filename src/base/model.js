@@ -196,7 +196,7 @@ const Model = EventSource.extend({
         //if a hook has "setAttribute" funation, then call it from here, except when the Caller is that particular function
         //avoiding double calling prevents side effects
         //TODO: this was introduced to handle back button, but it looks like a hack really
-        const fn = "set" + utils.capitalize(attribute);
+        const fn = "set" + utils.capitalize(attribute[0]) + attribute.slice(1);
         if (this.isHook() && utils.isFunction(this[fn]) && caller !== this[fn] && val !== prevValue) {
           this[fn](attribute === "which" ? { concept: val } : val);
         }
