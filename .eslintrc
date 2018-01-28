@@ -183,7 +183,7 @@
     ],
     "max-depth": [
       "error",
-      5
+      7
     ],
     "no-array-constructor": 1,
     "no-new-object": 1,

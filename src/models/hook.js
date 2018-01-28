@@ -76,6 +76,8 @@ const Hook = DataConnected.extend({
 
   preloadData() {
     this.dataSource = this.getClosestModel(this.data);
+    //TODO
+    if (!this.spaceRef) this.spaceRef = this.updateSpaceReference();
     return this._super();
   },
 
@@ -108,6 +110,13 @@ const Hook = DataConnected.extend({
 
       utils.printAutoconfigResult(this);
     }
+  },
+
+  updateSpaceReference() {
+    if (this.use !== "property") return null;
+    const newSpaceRef = "entities" + this._name.replace(this._type, "");
+
+    return  this._space[newSpaceRef] ? newSpaceRef : this._parent.getSpace()[0]._name;
   },
 
   /**
@@ -172,11 +181,6 @@ const Hook = DataConnected.extend({
   afterLoad(dataId) {
     this._dataId = dataId;
 
-    const grouping = this._parent._getGrouping();
-    if (grouping) {
-      this.dataSource.setGrouping(dataId, grouping);
-    }
-
     utils.timeStamp("Vizabi Model: Data loaded: " + this._id);
   },
 
@@ -199,9 +203,8 @@ const Hook = DataConnected.extend({
     // select
     // we remove this.which from values if it duplicates a dimension
     const allDimensions = utils.unique(this._getAllDimensions(exceptions));
-    let dimensions = (prop && allDimensions.length > 1) ? [(this.spaceRef ? this._space[this.spaceRef].dim : this.which)] : allDimensions;
+    const dimensions = (this.use === "property" && allDimensions.length > 1) ? [(this.spaceRef ? this._space[this.spaceRef].dim : this.which)] : allDimensions;
 
-    dimensions = dimensions.filter(f => f !== "_default");// && f!==null);
     if (!dimensions || !dimensions.length) {
       utils.warn("getQuery() produced no query because no keys are available");
       return true;
@@ -244,8 +247,15 @@ const Hook = DataConnected.extend({
       join = j;
     }
 
+    // grouping
+    let grouping = this._parent._getGrouping();
+    if (grouping) {
+      grouping = utils.clone(grouping, dimensions);
+      if (utils.isEmpty(grouping)) grouping = false;
+    }
+
     //return query
-    return {
+    const query = {
       "language": this.getClosestModel("locale").id,
       "from": from,
       "animatable": animatable,
@@ -254,6 +264,8 @@ const Hook = DataConnected.extend({
       "join": join,
       "order_by": prop ? ["rank"] : [this._space.time.dim]
     };
+    if (grouping) query["grouping"] = grouping;
+    return query;
   },
 
 
@@ -563,19 +575,12 @@ const Hook = DataConnected.extend({
 
     };
 
-    const iterateGroupKeys = function(data, deep, result, cb) {
-      deep--;
-      utils.forEach(data, (d, id) => {
-        if (deep) {
-          result[id] = {};
-          iterateGroupKeys(d, deep, result[id], cb);
-        } else {
-          cb(d, result, id);
-        }
+    utils.forEach(filtered, (times, key) => {
+      const limit = limitsDim[JSON.parse(key).join(",")] = {};
+      utils.forEach(times, (item, time) => {
+        countLimits(item, limit, time);
       });
-    };
-
-    iterateGroupKeys(filtered, dims.length, limitsDim, countLimits);
+    });
 
     return limitsDim;
   },
@@ -620,6 +625,10 @@ const Hook = DataConnected.extend({
     return this._space[this.spaceRef || this._parent.getSpace()[0]];
   },
 
+  getDataKeys() {
+    const query = this.dataSource.getData(this._dataId, "query");
+    return query.select.key.filter(key => key !== query.animatable);
+  }
 });
 
 export default Hook;
