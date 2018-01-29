@@ -1,7 +1,7 @@
 import * as utils from "base/utils";
-import Component from "base/component";
 import Dialog from "components/dialogs/_dialog";
 
+import show from "./show";
 import singlehandleslider from "components/brushslider/singlehandleslider/singlehandleslider";
 import indicatorpicker from "components/indicatorpicker/indicatorpicker";
 
@@ -17,12 +17,17 @@ const Find = Dialog.extend("find", {
     const _this = this;
 
     this.components = [{
+      component: show,
+      placeholder: ".vzb-dialog-panel-show",
+      model: ["state", "locale"]
+    }, {
       component: singlehandleslider,
       placeholder: ".vzb-dialog-bubbleopacity",
       model: ["state.marker", "locale"],
       arg: "opacitySelectDim"
     }];
 
+    this.panelMode = ((config.ui.dialogs.dialog || {}).find || {}).panelMode || "find";
     this.enablePicker = ((config.ui.dialogs.dialog || {}).find || {}).enablePicker;
     if (this.enablePicker) {
       this.components.push({
@@ -36,7 +41,7 @@ const Find = Dialog.extend("find", {
       "change:state.marker.select": function(evt) {
         _this.items.order();
         _this.selectDataPoints();
-        _this.showHideDeselect();
+        _this.showHideButtons();
       },
       "change:state.time.playing": function(evt) {
         if (!_this.model.state.time.playing) {
@@ -73,6 +78,10 @@ const Find = Dialog.extend("find", {
   readyOnce() {
     this._super();
 
+    this.panelComps = { find: this, show: this.findChildByName("show") };
+
+    this.titleSwitch = this.element.select(".vzb-dialog-title-switch input");
+    this.panelsEl = this.contentEl.selectAll(".vzb-dialog-content");
     this.list = this.element.select(".vzb-find-list");
     this.input_search = this.element.select(".vzb-find-search");
     this.deselect_all = this.element.select(".vzb-find-deselect");
@@ -85,6 +94,16 @@ const Find = Dialog.extend("find", {
 
     const _this = this;
 
+    this.titleSwitch.on("change", () => {
+      _this.panelMode = _this.titleSwitch.property("checked") ? "show" : "find";
+      _this.panelsEl.classed("vzb-active", false);
+      _this.contentEl.select(".vzb-dialog-panel-" + _this.panelMode).classed("vzb-active", true);
+      _this._buttonAdjust();
+      _this.panelComps[_this.panelMode].showHideButtons();
+    });
+    this.titleSwitch.property("checked", this.panelMode !== "find");
+    this.titleSwitch.dispatch("change");
+
     this.input_search.on("keyup", () => {
       const event = d3.event;
       if (event.keyCode == 13 && _this.input_search.node().value == "select all") {
@@ -96,11 +115,11 @@ const Find = Dialog.extend("find", {
     });
 
     this.input_search.on("input", () => {
-      _this.showHideSearch();
+      _this.panelComps[_this.panelMode].showHideSearch();
     });
 
     d3.select(this.input_search.node().parentNode).on("reset", () => {
-      utils.defer(() => _this.showHideSearch());
+      utils.defer(() => _this.panelComps[_this.panelMode].showHideSearch());
     });
 
     this.deselect_all.on("click", () => {
@@ -115,6 +134,15 @@ const Find = Dialog.extend("find", {
       _this.ready();
     });
 
+  },
+
+  _updatePanels() {
+
+  },
+
+  _buttonAdjust() {
+    this.buttonsEl.selectAll(".vzb-dialog-buttons > :not([data-dialogtype])").classed("vzb-hidden", true);
+    this.buttonsEl.selectAll(`[data-panel=${this.panelMode}]`).classed("vzb-hidden", false);
   },
 
   open() {
@@ -196,7 +224,7 @@ const Find = Dialog.extend("find", {
       _this.redrawDataPoints(values);
       _this.selectDataPoints();
       _this.showHideSearch();
-      _this.showHideDeselect();
+      _this.showHideButtons();
 
     });
   },
@@ -259,12 +287,12 @@ const Find = Dialog.extend("find", {
       });
   },
 
-  showHideDeselect() {
+  showHideButtons() {
     const someSelected = !!this.model.state.marker.select.length;
     this.deselect_all.classed("vzb-hidden", !someSelected);
     this.opacity_nonselected.classed("vzb-hidden", !someSelected);
     if (someSelected) {
-      this.components[0].trigger("resize");
+      this.findChildByName("singlehandleslider").trigger("resize");
     }
   },
 

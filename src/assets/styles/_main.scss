@@ -327,6 +327,54 @@
     z-index: 11;
   }
 
+  //accordion
+  .vzb-accordion {
+    margin-top: 1px;
+    .vzb-accordion-section {
+      position: relative;
+      transition: none;
+      overflow: hidden;
+      max-height: 2.5em;
+      padding-bottom: 11px;
+      width: auto;
+      border: 0;
+      .vzb-accordion-section-title>span:first-child {
+        @include rtl {
+        }
+        display: block;
+        height: 2em;
+        vertical-align: middle;
+        background-color: $vzb-color-primary-lightest;
+        cursor: pointer;
+        &::after {
+          @include rtl {
+            @include rotate(225deg);
+            left: .75em;
+            right: auto;
+          }
+          @include rotate(45deg);
+          content: '';
+          position: absolute;
+          top: .75em;
+          right: .75em;
+          width: 5px;
+          height: 5px;
+          border-right: 1px solid $vzb-color-primary;
+          border-top: 1px solid $vzb-color-primary;
+        }
+      }
+      &.vzb-accordion-active {
+        max-height: unset;
+        transition: max-height 0.3s ease-in-out;
+        .vzb-accordion-section-title>span:first-child::after {
+          @include rotate(135deg);
+        }
+      }
+    }
+  }
+
+
+
   input[type=range]::-webkit-slider-runnable-track {
     background: transparent;
     cursor: pointer;

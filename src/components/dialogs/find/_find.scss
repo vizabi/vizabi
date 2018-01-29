@@ -1,6 +1,89 @@
 .vzb-tool-dialogs {
   .vzb-dialogs-dialog {
     &[data-dlg='find'] {
+      
+      .vzb-dialog-title-switch {
+        @include rtl {
+          margin-left: 10px;
+          margin-right: 0;
+        }
+        position: relative;
+        display: block;
+        height: 34px;
+        margin-right: 10px;
+        align-self: flex-end;
+        cursor: pointer;
+
+        input {display:none;}
+
+        .vzb-switch-slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 0;
+          margin-top: 1.8em;
+          border-top: 1px solid;
+          border-bottom: 1px solid;
+          border-color: $vzb-color-primary;
+
+          transition: .4s;
+        }
+
+        .vzb-switch-slider:before {
+          position: absolute;
+          content: "";
+          height: 6px;
+          width: 50%;
+          left: 0;
+          bottom: -3px;
+          background-color: $vzb-color-primary;
+
+          -webkit-transition: .4s;
+          transition: .4s;
+        }
+
+        input:checked + .vzb-switch-slider {
+          //background-color: #2196F3;
+        }
+
+        input:checked ~ .vzb-switch-off {
+          display: none;
+        }
+
+        input:checked ~ .vzb-switch-on {
+          display: unset;
+        }
+
+        .vzb-switch-off {
+          display: unset;
+        }
+
+        .vzb-switch-on {
+          display: none;
+        }
+
+        input:checked + .vzb-switch-slider:before {
+          // -webkit-transform: translateX(30px);
+          // -ms-transform: translateX(30px);
+          // transform: translateX(30px);
+          -webkit-transform: translateX(100%);
+          -ms-transform: translateX(100%);
+          transform: translateX(100%);
+        }
+
+        .vzb-switch-slider.round:before {
+          border-radius: 3px;
+        }
+      }
+
+
+
+
+
+
       .vzb-find-filter {
         display: inline-block;
         position: relative;
@@ -15,6 +98,37 @@
           border-bottom-color: $vzb-color-primary-light;
         }
       }
+      .vzb-show-list {
+        .vzb-show-category {
+          display: block;
+          width: 100%;
+          padding: 3px;
+          background-color: rgba($vzb-color-primary-light, .5);
+        }
+        transform: translateZ(0);        
+        .vzb-show-item.vzb-checked.vzb-separator {
+          padding-bottom: 25px;
+          border-bottom: 1px solid;
+          border-bottom-color: $vzb-color-primary-light;
+        }
+      }
+
+      > .vzb-dialog-modal > .vzb-dialog-content {
+        display: flex;
+        font-size: 1em;
+        margin: 0;
+        padding: 0;
+        > .vzb-dialog-content {
+          &.vzb-active {
+            order: -1;
+          }
+        }
+      }
+
+      .vzb-dialog-panel {
+        min-width: 100%;
+      }
+
       &.vzb-popup {
         .vzb-dialog-title {
           &.vzb-title-two-rows {
@@ -47,20 +161,19 @@
       &.vzb-sidebar {
         .vzb-dialog-title {
           &.vzb-title-two-rows {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
             flex-wrap: wrap;
             > span:first-child {
               display: block;
               flex: 0 0 auto;
             }
             .vzb-find-filter-selector {
+              order: -1;
               display: block;
               flex: 1 1 auto;
               min-width: 1px;
             }
             .vzb-find-filter {
+              flex: 1 1;
               @include rtl {
                 padding-right: 0;
               }
