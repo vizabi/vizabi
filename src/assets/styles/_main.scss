@@ -339,8 +339,8 @@
       width: auto;
       border: 0;
       .vzb-accordion-section-title>span:first-child {
-        @include rtl {
-        }
+        //@include rtl {
+        //}
         display: block;
         height: 2em;
         vertical-align: middle;
@@ -349,14 +349,14 @@
         &::after {
           @include rtl {
             @include rotate(225deg);
-            left: .75em;
+            left: 0.75em;
             right: auto;
           }
           @include rotate(45deg);
           content: '';
           position: absolute;
-          top: .75em;
-          right: .75em;
+          top: 0.75em;
+          right: 0.75em;
           width: 5px;
           height: 5px;
           border-right: 1px solid $vzb-color-primary;

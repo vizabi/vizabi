@@ -14,7 +14,7 @@
         align-self: flex-end;
         cursor: pointer;
 
-        input {display:none;}
+        input {display: none;}
 
         .vzb-switch-slider {
           position: absolute;
@@ -29,10 +29,10 @@
           border-bottom: 1px solid;
           border-color: $vzb-color-primary;
 
-          transition: .4s;
+          transition: 0.4s;
         }
 
-        .vzb-switch-slider:before {
+        .vzb-switch-slider::before {
           position: absolute;
           content: "";
           height: 6px;
@@ -41,13 +41,13 @@
           bottom: -3px;
           background-color: $vzb-color-primary;
 
-          -webkit-transition: .4s;
-          transition: .4s;
+          -webkit-transition: 0.4s;
+          transition: 0.4s;
         }
 
-        input:checked + .vzb-switch-slider {
+        //input:checked + .vzb-switch-slider {
           //background-color: #2196F3;
-        }
+        //}
 
         input:checked ~ .vzb-switch-off {
           display: none;
@@ -65,7 +65,7 @@
           display: none;
         }
 
-        input:checked + .vzb-switch-slider:before {
+        input:checked + .vzb-switch-slider::before {
           // -webkit-transform: translateX(30px);
           // -ms-transform: translateX(30px);
           // transform: translateX(30px);
@@ -74,7 +74,7 @@
           transform: translateX(100%);
         }
 
-        .vzb-switch-slider.round:before {
+        .vzb-switch-slider.round::before {
           border-radius: 3px;
         }
       }
@@ -99,13 +99,13 @@
         }
       }
       .vzb-show-list {
+        transform: translateZ(0);        
         .vzb-show-category {
           display: block;
           width: 100%;
           padding: 3px;
-          background-color: rgba($vzb-color-primary-light, .5);
+          background-color: rgba($vzb-color-primary-light, 0.5);
         }
-        transform: translateZ(0);        
         .vzb-show-item.vzb-checked.vzb-separator {
           padding-bottom: 25px;
           border-bottom: 1px solid;
@@ -173,10 +173,10 @@
               min-width: 1px;
             }
             .vzb-find-filter {
-              flex: 1 1;
               @include rtl {
                 padding-right: 0;
               }
+              flex: 1 1;
               padding-left: 0;
               padding-top: 5px;
             }
