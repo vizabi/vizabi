@@ -308,7 +308,7 @@ const TimeModel = DataConnected.extend({
    * @param {Boolean} splash: get filter for current year only
    * @returns {Object} time filter
    */
-  getFilter(splash) {
+  getFilter({ splash }) {
     const defaultStart = this.parse(this.startOrigin);
     const defaultEnd = this.parse(this.endOrigin);
 

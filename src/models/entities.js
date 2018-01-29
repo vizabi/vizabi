@@ -13,13 +13,13 @@ const EntitiesModel = DataConnected.extend({
   getClassDefaults() {
     const defaults = {
       show: {},
-      dim: null,
-      skipFilter: false
+      filter: {},
+      dim: null
     };
     return utils.deepExtend(this._super(), defaults);
   },
 
-  objectLeafs: ["show", "autoconfig"],
+  objectLeafs: ["show", "filter", "autoconfig"],
   dataConnectedChildren: ["show", "dim", "grouping"],
 
   /**
@@ -72,17 +72,23 @@ const EntitiesModel = DataConnected.extend({
    * Gets the filter in this entities
    * @returns {Array} Array of unique values
    */
-  getFilter() {
-    let show;
-    if (this.skipFilter) {
-      show = {};
-    } else {
-      show = utils.deepClone(this.show);
-      if (show[this.dim] && utils.isEmpty(show[this.dim])) {
-        delete show[this.dim];
-      }
+  getFilter({ entityTypeRequest }) {
+    const filter = utils.deepClone(this.filter);
+    if (entityTypeRequest) return filter;
+
+    const show = utils.deepClone(this.show);
+    if (show[this.dim] && utils.isEmpty(show[this.dim])) {
+      delete show[this.dim];
     }
-    return show;
+
+    const $and = [];
+    if (!utils.isEmpty(filter)) $and.push(filter);
+    if (!utils.isEmpty(show)) $and.push(show);
+    if ($and.length > 1) {
+      return { $and };
+    }
+
+    return $and[0] || {};
   },
 
   /**

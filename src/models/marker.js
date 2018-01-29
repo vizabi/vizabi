@@ -15,8 +15,7 @@ const Marker = Model.extend({
       opacityHighlightDim: 0.1,
       opacitySelectDim: 0.3,
       opacityRegular: 1,
-      allowSelectMultiple: true,
-      skipFilter: false
+      allowSelectMultiple: true
     };
     return utils.deepExtend(this._super(), defaults);
   },
