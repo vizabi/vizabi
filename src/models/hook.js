@@ -105,7 +105,7 @@ const Hook = DataConnected.extend({
         const obj = {
           //dataSource: autoconfigResult.dataSource,
           which: concept.concept,
-          use: (autoconfigResult.key.size || autoconfigResult.key.length) > 1 ? "indicator" : "property",
+          use: ((autoconfigResult.key.size || autoconfigResult.key.length) > 1 || this.autoconfig.type === "time") ? "indicator" : "property",
           scaleType: concept.scales[0] || "linear"
         };
         this.set(obj);
