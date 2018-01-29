@@ -78,7 +78,7 @@ const Show = Component.extend({
 
   ready() {
     this._super();
-    this.labelNames = this.model.state.marker_allpossible.getLabelHookNames();
+    this.labelNames = this.model.state.marker.getLabelHookNames();
     this.redraw();
     utils.preventAncestorScrolling(this.element.select(".vzb-dialog-scrollable"));
 
@@ -89,10 +89,10 @@ const Show = Component.extend({
     const _this = this;
     this.translator = this.model.locale.getTFunction();
 
-    this.model.state.marker_allpossible.getFrame(this.model.state.time.value, values => {
+    this.model.state.marker.getFrame(this.model.state.time.value, values => {
       if (!values) return;
 
-      const subHooks =  this.model.state.marker_allpossible.getSubhooks(true);
+      const subHooks =  this.model.state.marker.getSubhooks(true);
 
       _this.list.html("");
 

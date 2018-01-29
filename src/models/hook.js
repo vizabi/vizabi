@@ -231,7 +231,7 @@ const Hook = DataConnected.extend({
     const from = prop ? "entities" : "datapoints";
 
     // where
-    filters = this._getAllFilters(exceptions, splashScreen);
+    filters = this._getAllFilters(exceptions, { splash: splashScreen, entityTypeRequest: prop });
     if (prop && allDimensions.length > 1) {
       const f = {};
       if (filters[dimensions]) f[dimensions] = filters[dimensions];
@@ -250,7 +250,7 @@ const Hook = DataConnected.extend({
     }
 
     // join
-    let join = this._getAllJoins(exceptions, splashScreen);
+    let join = this._getAllJoins(exceptions, { splash: splashScreen, entityTypeRequest: prop });
     if (prop && allDimensions.length > 1) {
       const j = {};
       if (join["$" + dimensions]) j["$" + dimensions] = join["$" + dimensions];
@@ -306,10 +306,10 @@ const Hook = DataConnected.extend({
 
   /**
    * gets all hook filters
-   * @param {Boolean} splashScreen get filters for first screen only
+   * @param {Boolean} filterOpts get filters for first screen only
    * @returns {Object} filters
    */
-  _getAllFilters(opts, splashScreen) {
+  _getAllFilters(opts, filterOpts) {
     opts = opts || {};
     let filters = {};
     const _this = this;
@@ -320,12 +320,11 @@ const Hook = DataConnected.extend({
       if (opts.onlyType && h.getType() !== opts.onlyType) {
         return true;
       }
-      if (h.skipFilter || _this._parent.skipFilter) return;
       // if query's dimensions are the same as the hook's, no join
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
-        filters = utils.extend(filters, h.getFilter(splashScreen));
+        filters = utils.extend(filters, h.getFilter(filterOpts));
       } else {
-        const joinFilter = h.getFilter(splashScreen);
+        const joinFilter = h.getFilter(filterOpts);
         if (joinFilter != null && !utils.isEmpty(joinFilter)) {
           const filter = {};
           filter[h.getDimension()] = "$" + h.getDimension();
@@ -336,7 +335,7 @@ const Hook = DataConnected.extend({
     return filters;
   },
 
-  _getAllJoins(opts, splashScreen) {
+  _getAllJoins(opts, filterOpts) {
     const joins = {};
     const _this = this;
     utils.forEach(this._space, h => {
@@ -349,13 +348,12 @@ const Hook = DataConnected.extend({
       if (utils.arrayEquals(_this._getAllDimensions(opts), [h.getDimension()])) {
         return true;
       }
-      if (h.skipFilter || _this._parent.skipFilter) return;
 
-      const filter = h.getFilter(splashScreen);
+      const filter = h.getFilter(filterOpts);
       if (filter != null && !utils.isEmpty(filter)) {
         joins["$" + h.getDimension()] = {
           key: h.getDimension(),
-          where: h.getFilter(splashScreen)
+          where: h.getFilter(filterOpts)
         };
       }
     });
