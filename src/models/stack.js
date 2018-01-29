@@ -19,7 +19,8 @@ const StackModel = Hook.extend({
     const defaults = {
       use: null,
       which: null,
-      merge: false
+      merge: false,
+      spaceRef: null
     };
     return utils.deepExtend(this._super(), defaults);
   },
@@ -55,7 +56,8 @@ const StackModel = Hook.extend({
     if (this.use === "constant" && utils.values(palettes).indexOf(this.which) == -1) {
       utils.warn("stack model: the requested value '" + this.which + "' is not allowed. resetting to '" +
         palettes._default);
-      this.which == palettes._default;
+      this.which = palettes._default;
+      this.spaceRef = null;
     }
   },
 

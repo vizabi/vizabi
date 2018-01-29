@@ -151,7 +151,7 @@ const ColorModel = Hook.extend({
       marker.setDataSourceForAllSubhooks(this.data);
       entities.set(newFilter, false, false);
     } else {
-      if (model.isDiscrete()) model.set({ which: this.which, data: this.data }, false, false);
+      if (model.isDiscrete()) model.set({ which: this.which, data: this.data, spaceRef: this.spaceRef }, false, false);
     }
   },
 
