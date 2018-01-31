@@ -58,6 +58,7 @@
     "hints/nodata": "لا توجد بيانات",
     "hints/units": "وحدة",
     "hints/nodescr": "لا يوجد وصف",
+    "hints/grandtotal": "Total by all dimensions",
     "hints/ap/onlyshowthefollowingsides": "إخفاء جميع الأطراف ما عدا:",
     "buttons/mapoptions": "طبقات الخريطة",
     "hints/extapimap/mapEngine": "Map engine",
