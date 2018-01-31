@@ -44,7 +44,40 @@ const Marker = Model.extend({
   },
 
   setSpace(newSpace) {
-    this.space = this._root.dimensionManager.getDimensionModelsForSpace(this._space, newSpace);
+    const subHooks = Object.keys(this.getSubhooks(true));
+    const setProps = {};
+    const setWhichProps = {};
+    const newDimModels = setProps["space"] = this._root.dimensionManager.getDimensionModelsForSpace(this._space, newSpace);
+    const addedDimModels = newDimModels.filter(f => !this.space.includes(f));
+    addedDimModels.forEach(dimensionModel => {
+      const dimModel = this.getClosestModel(dimensionModel);
+      const labelModelName = "label" + dimensionModel.replace(dimModel._type, "");
+      const props = { which: dimModel.dim, use: "property" };
+      //change which to 'name' if 'name' property available for dimension
+      const nameData = this._root.dataManager.getAvailableDataForKey(dimModel.dim, "name", "entities");
+      if (nameData) {
+        props.which = nameData.value;
+        props.data = nameData.data;
+      }
+      if (subHooks.includes(labelModelName)) {
+        props.spaceRef = dimensionModel;
+        setProps[labelModelName] = props;
+      } else {
+        props.key = [{ concept: dimModel.dim }];
+        props.dataSource = props.data;
+        props.concept = props.which;
+        setWhichProps[labelModelName] = props;
+        setProps[labelModelName] = {};
+      }
+    });
+    this.set(setProps);
+
+    utils.forEach(setWhichProps, (props, hookName) => {
+      this[hookName].setInterModelListeners();
+      this[hookName].setWhich(props);
+    });
+
+    this._dataCube = this.getSubhooks(true);
   },
 
   getAvailableSpaces() {
@@ -384,6 +417,7 @@ const Marker = Model.extend({
     return KEYS.reduce((result, key) => {
       const names = {};
       utils.forEach(_this._dataCube || _this.getSubhooks(true), (hook, name) => {
+        if (hook.use !== "property") return;
         if (hook._type === "label" && hook.getEntity().dim === key) {
           names.label = name;
         }
