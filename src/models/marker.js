@@ -965,6 +965,22 @@ const Marker = Model.extend({
   },
 
 
+  getMarksLabelText(mark, values) {
+    const DATAMANAGER = this._root.dataManager;
+    const KEYS = utils.unique(this._getAllDimensions({ exceptType: "time" }));
+    const labelNames = this.getLabelHookNames();
+
+    let text = KEYS
+      .filter(key => mark[key] !== DATAMANAGER.getConceptProperty(key, "totals_among_entities"))
+      .map(key => values[labelNames[key]] ? values[labelNames[key]][mark[key]] : mark[key])
+      .join(", ");
+
+    if (text === "") text = this._root.locale.getTFunction()("hints/grandtotal");
+
+    return text;
+  },
+
+
   /**
    * Learn what this model should hook to
    * @returns {Array} space array

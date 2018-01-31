@@ -159,6 +159,7 @@ const DataModel = Model.extend({
         const vizabiConceptProps = [
           "concept_type",
           "domain",
+          "totals_among_entities",
           "indicator_url",
           "color",
           "scales",
@@ -232,6 +233,7 @@ const DataModel = Model.extend({
         concept["interpolation"] = "stepMiddle";
       }
       concept["domain"] = d.domain;
+      concept["totals_among_entities"] = d.totals_among_entities;
       concept["tags"] = d.tags;
       concept["format"] = d.format;
       concept["name"] = d.name || d.concept || "";

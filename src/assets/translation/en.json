@@ -58,6 +58,7 @@
     "hints/nodata": "No data",
     "hints/units": "Unit",
     "hints/nodescr": "No description",
+    "hints/grandtotal": "Total by all dimensions",
     "hints/ap/onlyshowthefollowingsides": "Hide all sides except:",
     "buttons/mapoptions":"Map layers",
     "hints/extapimap/mapEngine":"Map engine",

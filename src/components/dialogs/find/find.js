@@ -171,7 +171,6 @@ const Find = Dialog.extend("find", {
     const KEYS = this.KEYS = utils.unique(this.model.state.marker._getAllDimensions({ exceptType: "time" }));
 
     this.importantHooks = _this.model.state.marker.getImportantHooks();
-    const labelNames = _this.model.state.marker.getLabelHookNames();
 
     this.time = this.model.state.time.value;
     this.model.state.marker.getFrame(this.time, values => {
@@ -179,8 +178,7 @@ const Find = Dialog.extend("find", {
 
       const data = _this.model.state.marker.getKeys().map(d => {
         d.brokenData = false;
-        d.name = KEYS.map(key => values[labelNames[key]] ? values[labelNames[key]][d[key]] : d[key]).join(", ");
-
+        d.name = _this.model.state.marker.getMarksLabelText(d, values);
         return d;
       });
 
