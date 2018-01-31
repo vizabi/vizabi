@@ -99,12 +99,14 @@
         }
       }
       .vzb-show-list {
-        transform: translateZ(0);        
         .vzb-show-category {
           display: block;
           width: 100%;
           padding: 3px;
           background-color: rgba($vzb-color-primary-light, 0.5);
+        }
+        .vzb-show-category-list {
+          transform: translateZ(0);
         }
         .vzb-show-item.vzb-checked.vzb-separator {
           padding-bottom: 25px;
