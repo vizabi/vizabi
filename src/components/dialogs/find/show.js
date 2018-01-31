@@ -38,7 +38,7 @@ const Show = Component.extend({
     this.KEYS.forEach(key => {
       this.resetFilter[key] = utils.find(spaceModels, model => model.dim === key).show;
     });
-    
+
     this.parentElement = d3.select(this.parent.element);
     this.contentEl = this.element = d3.select(this.element.parentNode);
 
@@ -195,7 +195,7 @@ const Show = Component.extend({
         return (lower.indexOf(search) === -1);
       });
   },
- 
+
   showHideButtons() {
     this.deselect_all.classed("vzb-hidden", this.hideResetButton());
     //
@@ -209,7 +209,7 @@ const Show = Component.extend({
       showEquals = utils.comparePlainObjects(this.resetFilter[key] || {}, utils.find(spaceModels, model => model.dim === key).show);
       return showEquals;
     });
-    
+
     return showEquals;
   },
 
