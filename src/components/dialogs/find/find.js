@@ -98,6 +98,7 @@ const Find = Dialog.extend("find", {
       _this.panelMode = _this.titleSwitch.property("checked") ? "show" : "find";
       _this.panelsEl.classed("vzb-active", false);
       _this.contentEl.select(".vzb-dialog-panel-" + _this.panelMode).classed("vzb-active", true);
+      _this.panelComps[_this.panelMode].showHideSearch();
       _this._buttonAdjust();
       _this.panelComps[_this.panelMode].showHideButtons();
     });

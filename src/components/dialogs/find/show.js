@@ -22,12 +22,6 @@ const Show = Component.extend({
       type: "locale"
     }];
 
-    // this.model_binds = {
-    //   "change:state.entities.show": function(evt) {
-    //     _this.redraw();
-    //   }
-    // };
-
     this._super(config, parent);
   },
 
@@ -37,12 +31,16 @@ const Show = Component.extend({
   readyOnce() {
     this._super();
 
-    this.resetFilter = utils.deepExtend({}, this.model.state.entities.show);
+    this.KEYS = utils.unique(this.model.state.marker._getAllDimensions({ exceptType: "time" }));
 
+    this.resetFilter = {};
+    const spaceModels = this.model.state.marker._space;
+    this.KEYS.forEach(key => {
+      this.resetFilter[key] = utils.find(spaceModels, model => model.dim === key).show;
+    });
+    
     this.parentElement = d3.select(this.parent.element);
     this.contentEl = this.element = d3.select(this.element.parentNode);
-    this.element.select(".vzb-show-filter-selector").classed("vzb-hidden", !this.enablePicker);
-    this.element.select(".vzb-dialog-title").classed("vzb-title-two-rows", this.enablePicker);
 
     this.list = this.element.select(".vzb-show-list");
     this.input_search = this.parentElement.select(".vzb-find-search");
@@ -50,18 +48,14 @@ const Show = Component.extend({
     this.apply = this.parentElement.select(".vzb-show-apply");
 
     const _this = this;
-    // this.input_search.on("input", () => {
-    //   _this.showHideSearch();
-    // });
-
-    // d3.select(this.input_search.node().parentNode).on("reset", () => {
-    //   utils.defer(() => _this.showHideSearch());
-    // });
 
     this.deselect_all.on("click", () => {
-      _this.deselectEntities();
+      _this.resetShow();
     });
 
+    this.apply.on("click", () => {
+      _this.applyShowChanges();
+    });
 
     //make sure it refreshes when all is reloaded
     this.root.on("ready", () => {
@@ -69,17 +63,18 @@ const Show = Component.extend({
     });
   },
 
-  open() {
-    this._super();
-
-    this.input_search.node().value = "";
-    this.showHideSearch();
-  },
-
   ready() {
     this._super();
+    this.KEYS = utils.unique(this.model.state.marker._getAllDimensions({ exceptType: "time" }));
     this.labelNames = this.model.state.marker.getLabelHookNames();
+    const subHooks =  this.model.state.marker.getSubhooks(true);
+    this.previewShow = {};
+    utils.forEach(this.labelNames, labelName => {
+      this.previewShow[subHooks[labelName].getEntity()._name] = {};
+    });
     this.redraw();
+    this.showHideButtons();
+
     utils.preventAncestorScrolling(this.element.select(".vzb-dialog-scrollable"));
 
   },
@@ -103,7 +98,7 @@ const Show = Component.extend({
 
         const data = utils.keys(values[labelName])
           .map(d => {
-            const result = { entities };
+            const result = { entities, category: key };
             result[key] = d;
             result["label"] = values[labelName][d];
             return result;
@@ -144,10 +139,12 @@ const Show = Component.extend({
             return isShown;
           })
           .on("change", d => {
-            _this.model.state.marker.clearSelected();
-
-            _this.model.state[d.entities].showEntity(d);
-            _this.showHideButtons();
+            if (!this.previewShow[d.entities][d.category]) {
+              const show = _this.model.state[d.entities].show;
+              this.previewShow[d.entities][d.category] = ((show[d.category] || ((show.$and || {})[d.category] || {})).$in || []).slice(0);
+            }
+            const index = this.previewShow[d.entities][d.category].indexOf(d[d.category]);
+            index === -1 ? this.previewShow[d.entities][d.category].push(d[d.category]) : this.previewShow[d.entities][d.category].splice(index, 1);
           });
 
         items.append("label")
@@ -168,44 +165,62 @@ const Show = Component.extend({
 
       _this.input_search.attr("placeholder", _this.translator("placeholder/search") + "...");
 
-      // _this.showHideSearch();
-      // _this.showHideButtons();
-
     });
   },
 
   applyShowChanges() {
+    this.model.state.marker.clearSelected();
+
+    const setObj = {};
+    utils.forEach(this.previewShow, (showObj, entities) => {
+      const $and = [];
+      utils.forEach(showObj, (entitiesArray, category) => {
+        $and.push({ [category]: entitiesArray.length ? { $in: entitiesArray } : {} });
+      });
+      if (!$and.length) return;
+      setObj[entities] = { show: $and.length > 1 ? { $and } : $and[0] };
+    });
+    this.model.state.set(setObj);
   },
 
   showHideSearch() {
 
     let search = this.input_search.node().value || "";
     search = search.toLowerCase();
-
+    this.list.selectAll(".vzb-accordion-section")
+      .classed("vzb-accordion-active", true);
     this.list.selectAll(".vzb-show-item")
       .classed("vzb-hidden", d => {
         const lower = (d.label || "").toString().toLowerCase();
         return (lower.indexOf(search) === -1);
       });
   },
-
+ 
   showHideButtons() {
-    //const show = this.model.state.entities.show[this.KEY];
-    this.deselect_all.classed("vzb-hidden", true);//!show || show.length == 0);
+    this.deselect_all.classed("vzb-hidden", this.hideResetButton());
     //
-    this.apply.classed("vzb-hidden", true);
+    this.apply.classed("vzb-hidden", false);
   },
 
-  deselectEntities() {
-    // const KEY = this.KEY;
-    // if (this.resetFilter[KEY]) {
-    //   const newShow = Object.assign({}, this.model.state.entities.show);
-    //   newShow[KEY] = this.resetFilter[KEY];
-    //   this.model.state.entities.show = newShow;
-    // } else {
-    //   this.model.state.entities.clearShow();
-    // }
-    // this.showHideButtons();
+  hideResetButton() {
+    let showEquals = true;
+    const spaceModels = this.model.state.marker._space;
+    utils.forEach(this.KEYS, key => {
+      showEquals = utils.comparePlainObjects(this.resetFilter[key] || {}, utils.find(spaceModels, model => model.dim === key).show);
+      return showEquals;
+    });
+    
+    return showEquals;
+  },
+
+  resetShow() {
+    const setProps = {};
+    const spaceModels = this.model.state.marker._space;
+    this.KEYS.forEach(key => {
+      const entities = utils.find(spaceModels, model => model.dim === key)._name;
+      setProps[entities] = { show: this.resetFilter[key] || {} };
+    });
+    this.model.state.set(setProps);
   },
 
 });
