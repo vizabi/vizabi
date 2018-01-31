@@ -88,7 +88,7 @@ const Marker = Model.extend({
       const indicatorsDB = dataSource.getConceptprops();
 
       dataSource.keyAvailability.forEach((space, str) => {
-        if (space.length == this.space.length) { // only same dimension as marker already has for now. Supported dimensions might later depend on tool.
+        if (space.length > 1) { // supported dimensions might later depend on tool.
           spaces.set(str, space.map(dimension => indicatorsDB[dimension]));
         }
       });
