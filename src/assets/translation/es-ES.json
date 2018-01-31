@@ -58,6 +58,7 @@
     "hints/nodata": "Sin datos",
     "hints/units": "Unidad",
     "hints/nodescr": "Sin descripción",
+    "hints/grandtotal": "Total by all dimensions",
     "hints/ap/onlyshowthefollowingsides": "Ocultar todos los lados excepto:",
     "buttons/mapoptions": "Capas del mapa",
     "hints/extapimap/mapEngine": "Motor del mapa",
