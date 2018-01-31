@@ -213,7 +213,7 @@ const Hook = DataConnected.extend({
     // select
     // we remove this.which from values if it duplicates a dimension
     const allDimensions = utils.unique(this._getAllDimensions(exceptions));
-    const dimensions = (this.use === "property" && allDimensions.length > 1) ? [(this.spaceRef ? this._space[this.spaceRef].dim : this.which)] : allDimensions;
+    const dimensions = (this.use === "property" && allDimensions.length > 1) ? [allDimensions.indexOf(this.which) !== -1 ? this.which : this.getEntity().dim] : allDimensions;
 
     if (!dimensions || !dimensions.length) {
       utils.warn("getQuery() produced no query because no keys are available");
@@ -630,7 +630,7 @@ const Hook = DataConnected.extend({
   },
 
   getEntity() {
-    return this._space[this.spaceRef || this._parent.getSpace()[0]];
+    return this._space[this.spaceRef] || this._parent._space[this.spaceRef] || this._parent._space[this._parent.getSpace()[0]];
   },
 
   getDataKeys() {

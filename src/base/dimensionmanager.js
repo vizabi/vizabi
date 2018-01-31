@@ -29,7 +29,19 @@ const DimensionManagerPrototype = {
     // - no overlapping dimensionModels between markers or changing dimension models is fine
     // - one entities model per dimension
     // - only one time model (state.time)
-    const oldSpaceEntities = Object.keys(oldSpace).filter(dim => oldSpace[dim]._type == "entities");
+
+    //split old non time entities to recycled and 'free to use'(dim can change)
+    const freeToUseOldEntities = [];
+    const recycledOldEntitiesByDim = Object.keys(oldSpace).reduce((result, modelName) => {
+      if (oldSpace[modelName]._type == "entities") {
+        if (newSpaceDimensions.includes(oldSpace[modelName].dim)) {
+          result[oldSpace[modelName].dim] = modelName;
+        } else {
+          freeToUseOldEntities.push(modelName);
+        }
+      }
+      return result;
+    }, {});
     const newSpace = newSpaceDimensions.map((dim, index) => {
 
       /**
@@ -39,8 +51,10 @@ const DimensionManagerPrototype = {
       if (this.model.dataManager.isConceptType(dim, "time")) {
         modelName = "time";
         oldSpace[modelName].dim = dim;
+      } else if (recycledOldEntitiesByDim[dim]) {
+        return recycledOldEntitiesByDim[dim];
       } else {
-        modelName = oldSpaceEntities.pop();
+        modelName = freeToUseOldEntities.pop();
         if (typeof modelName != "undefined") {
           // entities model found
           oldSpace[modelName].setDimension(dim);
@@ -48,7 +62,7 @@ const DimensionManagerPrototype = {
           // no more entities models left
           modelName = "entities_" + dim;
           const newEntities = {
-            [modelName]: Object.assign(Entities.getClassDefaults(), { dim })
+            [modelName]: { dim }
           };
           this.model.state.set(newEntities);
         }
@@ -79,7 +93,7 @@ const DimensionManagerPrototype = {
 
       // for others, create entities model for new dimension
       const newEntities = {
-        ["entities_" + dim]: Object.assign(Entities.getClassDefaults(), { dim })
+        ["entities_" + dim]: { dim }
       };
       this.model.state.set(newEntities);
       return "entities_" + dim;

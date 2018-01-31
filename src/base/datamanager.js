@@ -36,7 +36,21 @@ const DataManagerPrototype = {
       if (concept && concept[property]) return concept[property];
     }
     return "Concept not found";
+  },
+
+  getAvailableDataForKey(key, value, dataType) {
+    this.updateDataModels();
+    for (const dataModel of this.dataModels.values()) {
+      for (const { key: dKey, value: dValue } of dataModel.dataAvailability[dataType]) {
+        if (dKey.has(key) && dValue === value) {
+          return { data: dataModel._name, key, value };
+        }
+      }
+    }
+
+    return false;
   }
+
 };
 
 function DataManager(model) {
