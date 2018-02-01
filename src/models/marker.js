@@ -15,6 +15,7 @@ const Marker = Model.extend({
       opacityHighlightDim: 0.1,
       opacitySelectDim: 0.3,
       opacityRegular: 1,
+      marksLimit: 1000,
       allowSelectMultiple: true
     };
     return utils.deepExtend(this._super(), defaults);
@@ -522,6 +523,10 @@ const Marker = Model.extend({
       resultKeys = resultKeys.filter((_, i) => filteredKeys[resultKeysMapped[i]]);
     });
 
+    if (resultKeys.length > _this.marksLimit) {
+      utils.warn("MARKER getKeys(): only showing the first " + _this.marksLimit + " marks. The rest are not displayed because chart may become slow and crash. Set a higher number in marker.marksLimit or apply entity filters");
+      resultKeys = resultKeys.slice(0, _this.marksLimit);
+    }
     return resultKeys.map(key => { const r = {}; KEYS.map((KEY, i) => r[KEY] = key[i]); return r; });
   },
 
