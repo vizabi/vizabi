@@ -72,7 +72,7 @@ const EntitiesModel = DataConnected.extend({
    * Gets the filter in this entities
    * @returns {Array} Array of unique values
    */
-  getFilter({ entityTypeRequest }) {
+  getFilter({ entityTypeRequest } = {}) {
     const filter = utils.deepClone(this.filter);
     if (entityTypeRequest) return filter;
 

@@ -172,7 +172,7 @@
               order: -1;
               display: block;
               flex: 1 1 auto;
-              min-width: 1px;
+              min-width: 100%;
             }
             .vzb-find-filter {
               @include rtl {
