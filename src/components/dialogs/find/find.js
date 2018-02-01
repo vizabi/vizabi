@@ -137,8 +137,8 @@ const Find = Dialog.extend("find", {
 
   },
 
-  _updatePanels() {
-
+  getPanelMode() {
+    return this.panelMode;
   },
 
   _buttonAdjust() {
@@ -276,6 +276,8 @@ const Find = Dialog.extend("find", {
   },
 
   showHideSearch() {
+    if (this.getPanelMode() !== "find") return;
+
     let search = this.input_search.node().value || "";
     search = search.toLowerCase();
 
@@ -287,6 +289,8 @@ const Find = Dialog.extend("find", {
   },
 
   showHideButtons() {
+    if (this.getPanelMode() !== "find") return;
+
     const someSelected = !!this.model.state.marker.select.length;
     this.deselect_all.classed("vzb-hidden", !someSelected);
     this.opacity_nonselected.classed("vzb-hidden", !someSelected);

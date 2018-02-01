@@ -184,19 +184,25 @@ const Show = Component.extend({
   },
 
   showHideSearch() {
+    if (this.parent.getPanelMode() !== "show") return;
 
     let search = this.input_search.node().value || "";
     search = search.toLowerCase();
-    this.list.selectAll(".vzb-accordion-section")
-      .classed("vzb-accordion-active", true);
     this.list.selectAll(".vzb-show-item")
       .classed("vzb-hidden", d => {
         const lower = (d.label || "").toString().toLowerCase();
         return (lower.indexOf(search) === -1);
       });
+
+    if (search !== "") {
+      this.list.selectAll(".vzb-accordion-section")
+        .classed("vzb-accordion-active", true);
+    }
   },
 
   showHideButtons() {
+    if (this.parent.getPanelMode() !== "show") return;
+
     this.deselect_all.classed("vzb-hidden", this.hideResetButton());
     //
     this.apply.classed("vzb-hidden", false);
