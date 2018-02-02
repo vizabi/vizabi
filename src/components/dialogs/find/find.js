@@ -179,7 +179,7 @@ const Find = Dialog.extend("find", {
 
       const data = _this.model.state.marker.getKeys().map(d => {
         d.brokenData = false;
-        d.name = _this.model.state.marker.getMarksLabelText(d, values);
+        d.name = _this.model.state.marker.getCompoundLabelText(d, values);
         return d;
       });
 

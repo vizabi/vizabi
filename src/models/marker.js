@@ -15,7 +15,7 @@ const Marker = Model.extend({
       opacityHighlightDim: 0.1,
       opacitySelectDim: 0.3,
       opacityRegular: 1,
-      marksLimit: 1000,
+      limit: 1000,
       allowSelectMultiple: true
     };
     return utils.deepExtend(this._super(), defaults);
@@ -523,9 +523,9 @@ const Marker = Model.extend({
       resultKeys = resultKeys.filter((_, i) => filteredKeys[resultKeysMapped[i]]);
     });
 
-    if (resultKeys.length > _this.marksLimit) {
-      utils.warn("MARKER getKeys(): only showing the first " + _this.marksLimit + " marks. The rest are not displayed because chart may become slow and crash. Set a higher number in marker.marksLimit or apply entity filters");
-      resultKeys = resultKeys.slice(0, _this.marksLimit);
+    if (resultKeys.length > _this.limit) {
+      utils.warn("MARKER getKeys(): only showing the first " + _this.limit + " markerElements of " + _this._name + ". The rest are not displayed because chart may become slow and crash. Set a higher number in marker.limit or apply entity filters");
+      resultKeys = resultKeys.slice(0, _this.limit);
     }
     return resultKeys.map(key => { const r = {}; KEYS.map((KEY, i) => r[KEY] = key[i]); return r; });
   },
@@ -970,14 +970,14 @@ const Marker = Model.extend({
   },
 
 
-  getMarksLabelText(mark, values) {
+  getCompoundLabelText(d, values) {
     const DATAMANAGER = this._root.dataManager;
     const KEYS = utils.unique(this._getAllDimensions({ exceptType: "time" }));
     const labelNames = this.getLabelHookNames();
 
     let text = KEYS
-      .filter(key => mark[key] !== DATAMANAGER.getConceptProperty(key, "totals_among_entities"))
-      .map(key => values[labelNames[key]] ? values[labelNames[key]][mark[key]] : mark[key])
+      .filter(key => d[key] !== DATAMANAGER.getConceptProperty(key, "totals_among_entities"))
+      .map(key => values[labelNames[key]] ? values[labelNames[key]][d[key]] : d[key])
       .join(", ");
 
     if (text === "") text = this._root.locale.getTFunction()("hints/grandtotal");
