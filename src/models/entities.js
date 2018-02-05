@@ -135,7 +135,7 @@ const EntitiesModel = DataConnected.extend({
       this._entitySets = {};
       this._entitySetsData = {};
       this._entitySetsValues = {};
-      return Propmise.resolve();
+      return Promise.resolve();
     }
 
     const dim = this.dim;
