@@ -634,7 +634,7 @@ const Hook = DataConnected.extend({
   },
 
   getDataKeys() {
-    return this.spaceRef ? [this._space[this.spaceRef].dim] : this._getAllDimensions({ exceptType: "time" });
+    return this.spaceRef ? [this.getEntity().dim] : this._getAllDimensions({ exceptType: "time" });
   }
 });
 

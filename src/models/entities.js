@@ -129,14 +129,60 @@ const EntitiesModel = DataConnected.extend({
     this.show = newShow;
   },
 
+  loadData() {
+    const _this = this;
+    if (!this.dim) {
+      this._entitySets = {};
+      this._entitySetsData = {};
+      this._entitySetsValues = {};
+      return Propmise.resolve();
+    }
+
+    const dim = this.dim;
+    this._entitySets = { [dim]: this._root.dataManager.getAvailableDataForKey(dim, null, "entities")
+      .filter(d => ["entity_set", "entity_domain"].includes(this._root.dataManager.getConceptProperty(d.value, "concept_type")))
+      .map(d => d.value) };
+
+    const loadPromises = [this._root.dataManager.getDimensionValues(dim, this._entitySets[dim])]
+      .concat(this._entitySets[dim].map(entitySetName => this._root.dataManager.getDimensionValues(entitySetName, ["name"])));
+
+    return Promise.all(loadPromises).then(data => {
+      _this._entitySetsValues = data[0];
+      _this._entitySetsData = data.slice(1);
+    });
+  },
+
   /**
    * Selects an entity from the set
    * @returns {Boolean} whether the item is shown or not
    */
   isShown(d) {
-    const dimension = this.getDimension();
+    const dim = this.getDimension();
+    const key = d[dim];
 
-    return utils.getProp(this.show, [dimension, "$in"], []).includes(d[dimension]);
+    const props = this._entitySetsValues[0].filter(v => v[dim] === key)[0] || {};
+
+    const showFilter = this.show.$and || [this.show];
+
+    let result = true;
+
+    utils.forEach(showFilter, filter => {
+      utils.forEach(Object.keys(filter), fKey => {
+        result = utils.getProp(filter, [fKey, "$in"], []).includes(props[fKey]);
+        return result;
+      });
+      return result;
+    });
+
+    return result;
+  },
+
+  isInShowFilter(d, category) {
+    const dim = this.getDimension();
+    const key = d[dim];
+    const filter = (this.show.$and || [this.show]).filter(f => f[category])[0] || {};
+
+    return utils.getProp(filter, [category, "$in"], []).includes(d[category]);
   },
 
   /**

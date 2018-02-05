@@ -57,7 +57,7 @@ const DataModel = Model.extend({
    * @param {Object} parsers An object with concepts as key and parsers as value
    * @param {*} evts ?
    */
-  load(query, parsers = {}) {
+  load(query, parsers = {}, sideLoad) {
     // add waffle server specific query clauses if set
     if (this.dataset) query.dataset = this.dataset;
     if (this.version) query.version = this.version;
@@ -67,10 +67,12 @@ const DataModel = Model.extend({
       return DataStorage.aggregateData(dataId, query, this.readerObject, this.getConceptprops());
     }
     utils.timeStamp("Vizabi Data: Loading Data");
-    EventSource.freezeAll([
-      "hook_change",
-      "resize"
-    ]);
+    if (!sideLoad) {
+      EventSource.freezeAll([
+        "hook_change",
+        "resize"
+      ]);
+    }
 
     return DataStorage.loadFromReader(query, parsers, this.readerObject)
       .then(dataId => {
@@ -78,11 +80,11 @@ const DataModel = Model.extend({
         return DataStorage.aggregateData(dataId, query, this.readerObject, this.getConceptprops());
       })
       .then(dataId => {
-        EventSource.unfreezeAll();
+        if (!sideLoad) EventSource.unfreezeAll();
         return dataId;
       })
       .catch(error => {
-        EventSource.unfreezeAll();
+        if (!sideLoad) EventSource.unfreezeAll();
         this.handleLoadError(error, query);
       });
   },

@@ -59,7 +59,7 @@ const Show = Component.extend({
 
     //make sure it refreshes when all is reloaded
     this.root.on("ready", () => {
-      _this.redraw();
+      _this.ready();
     });
   },
 
@@ -70,7 +70,13 @@ const Show = Component.extend({
     const subHooks =  this.model.state.marker.getSubhooks(true);
     this.previewShow = {};
     utils.forEach(this.labelNames, labelName => {
-      this.previewShow[subHooks[labelName].getEntity()._name] = {};
+      const entities = subHooks[labelName].getEntity();
+      const showFilter = this.previewShow[entities._name] = {};
+      utils.forEach(entities.show.$and || [entities.show], show$and => {
+        utils.forEach(show$and, (filter, key) => {
+          showFilter[key] = (filter.$in || []).slice(0);
+        });
+      });
     });
     this.redraw();
     this.showHideButtons();
@@ -91,24 +97,54 @@ const Show = Component.extend({
 
       _this.list.html("");
 
-      utils.forEach(this.labelNames, (labelName, key) => {
+      const categories = [];
+      const loadPromises = [];
+      utils.forEach(this.labelNames, (labelName, dim) => {
+        const entitiesModel = subHooks[labelName].getEntity();
+        const entities = entitiesModel._name;
 
-        const entities = subHooks[labelName].getEntity()._name;
-        const category = _this.root.model.dataManager.getConceptProperty(key, "name");
+        categories.push({ dim, entities, labelName,
+          key: dim,
+          category: this.root.model.dataManager.getConceptProperty(dim, "name")
+        });
 
-        const data = utils.keys(values[labelName])
-          .map(d => {
+        const entitySetData = entitiesModel._entitySets[dim]
+          .map((key, index) => ({
+            entities,
+            key,
+            dim,
+            index,
+            isSet: true,
+            category: this.root.model.dataManager.getConceptProperty(key, "name")
+          }));
+
+        categories.push(...entitySetData);
+      });
+
+      utils.forEach(categories, ({ dim, key, category, labelName, entities, isSet, index }) => {
+
+        const data = isSet ?
+          this.model.state[entities]._entitySetsData[index][0].map(d => {
             const result = { entities, category: key };
-            result[key] = d;
-            result["label"] = values[labelName][d];
+            result[key] = d[key];
+            result["label"] = d.name;
             return result;
-          });
+          })
+          :
+          utils.keys(values[labelName])
+            .map(d => {
+              const result = { entities, category: key };
+              result[key] = d;
+              result["label"] = values[labelName][d];
+              return result;
+            });
 
         //sort data alphabetically
         data.sort((a, b) => (a.label < b.label) ? -1 : 1);
 
         const section = _this.list.append("div")
-          .attr("class", "vzb-accordion-section");
+          .attr("class", "vzb-accordion-section")
+          .datum({ key, isSet });
 
         section.append("div")
           .attr("class", "vzb-accordion-section-title")
@@ -116,9 +152,19 @@ const Show = Component.extend({
             const parentEl = d3.select(this.parentNode);
             parentEl.classed("vzb-accordion-active", !parentEl.classed("vzb-accordion-active"));
           })
-          .append("span")
-          .attr("class", "vzb-show-category")
-          .text(category);
+          .call(elem => elem.append("span")
+            .attr("class", "vzb-show-category")
+            .text(d => (d.isSet ? "➥ " : "") + category))
+          .call(elem => elem.append("span")
+            .attr("class", "vzb-show-clear-cross")
+            .text("✖")
+            .on("click", () => {
+              d3.event.stopPropagation();
+              section.selectAll(".vzb-checked input")
+                .dispatch("change")
+                .property("checked", false);
+            })
+          );
 
         const list = section.append("div")
           .attr("class", "vzb-show-category-list");
@@ -134,7 +180,7 @@ const Show = Component.extend({
           .attr("class", "vzb-show-item")
           .attr("id", d => "-show-" + d[key] + "-" + _this._id)
           .property("checked", function(d) {
-            const isShown = _this.model.state[d.entities].isShown(d);
+            const isShown = _this.model.state[d.entities].isInShowFilter(d, d.category);
             d3.select(this.parentNode).classed("vzb-checked", isShown);
             return isShown;
           })
@@ -157,8 +203,25 @@ const Show = Component.extend({
         const lastCheckedNode = list.selectAll(".vzb-checked")
           .classed("vzb-separator", false)
           .lower()
+          // .each(function() {
+          //   this.parentNode.insertBefore(this, items.nodes()[0]);
+          // })
           .nodes()[0];
-        d3.select(lastCheckedNode).classed("vzb-separator", true);
+        const lastCheckedEl = d3.select(lastCheckedNode).classed("vzb-separator", true);
+
+        if (lastCheckedNode) {
+          const maxHeight = lastCheckedNode.parentNode.offsetTop + lastCheckedNode.offsetTop + lastCheckedNode.offsetHeight + 5;
+          d3.select(lastCheckedNode.parentNode.parentNode).style("max-height", maxHeight + "px");
+        } else {
+          section.select(".vzb-show-clear-cross").classed("vzb-hidden", true);
+        }
+
+        // section.append("span")
+        //   .on("click", (d) => {
+        //     const data = this.root.model.dataManager.getAvailableDataForKey1(d.key, null, "entities")
+        //       .filter(d => ["entity_set", "entity_domain"].includes(this.root.model.dataManager.getConceptProperty(d.value, "concept_type")))
+        //   })
+        //   .text("add filter ⮿");
       });
 
       _this.contentEl.node().scrollTop = 0;
@@ -168,16 +231,28 @@ const Show = Component.extend({
     });
   },
 
+
   applyShowChanges() {
     this.model.state.marker.clearSelected();
 
     const setObj = {};
     utils.forEach(this.previewShow, (showObj, entities) => {
       const $and = [];
+      const $andKeys = [];
       utils.forEach(showObj, (entitiesArray, category) => {
+        $andKeys.push(category);
         $and.push({ [category]: entitiesArray.length ? { $in: entitiesArray } : {} });
       });
       if (!$and.length) return;
+
+      utils.forEach(this.model.state[entities].show.$and || [this.model.state[entities].show], show$and => {
+        utils.forEach(show$and, (filter, key) => {
+          if (!$andKeys.includes(key)) {
+            $and.push(utils.deepClone(filter));
+          }
+        });
+      });
+
       setObj[entities] = { show: $and.length > 1 ? { $and } : $and[0] };
     });
     this.model.state.set(setObj);

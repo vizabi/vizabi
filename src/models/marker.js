@@ -55,7 +55,7 @@ const Marker = Model.extend({
       const labelModelName = "label" + dimensionModel.replace(dimModel._type, "");
       const props = { which: dimModel.dim, use: "property" };
       //change which to 'name' if 'name' property available for dimension
-      const nameData = this._root.dataManager.getAvailableDataForKey(dimModel.dim, "name", "entities");
+      const nameData = this._root.dataManager.getAvailableDataForKey(dimModel.dim, "name", "entities")[0];
       if (nameData) {
         props.which = nameData.value;
         props.data = nameData.data;

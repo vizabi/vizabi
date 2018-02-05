@@ -38,19 +38,35 @@ const DataManagerPrototype = {
     return "Concept not found";
   },
 
-  getAvailableDataForKey(key, value, dataType) {
+  getAvailableDataForKey(pKey, pValue, dataType) {
     this.updateDataModels();
+
+    const result = [];
     for (const dataModel of this.dataModels.values()) {
-      for (const { key: dKey, value: dValue } of dataModel.dataAvailability[dataType]) {
-        if (dKey.has(key) && dValue === value) {
-          return { data: dataModel._name, key, value };
+      for (const { key, value } of dataModel.dataAvailability[dataType]) {
+        if (key.has(pKey) && (!pValue || value === pValue)) {
+          result.push({ data: dataModel._name, pKey, value });
         }
       }
     }
 
-    return false;
-  }
+    return result;
+  },
 
+  getDimensionValues(conceptID, value = []) {
+    const query = {
+      select: {
+        key: [conceptID],
+        value
+      },
+      from: "entities"
+    };
+    return Promise.all(
+      [...this.getDataModels().values()].map(
+        dataModel => dataModel.load(query, undefined, true).then(dataId => dataModel.getData(dataId))
+      )
+    );
+  },
 };
 
 function DataManager(model) {

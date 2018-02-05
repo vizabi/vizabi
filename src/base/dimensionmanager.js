@@ -54,7 +54,7 @@ const DimensionManagerPrototype = {
       } else if (recycledOldEntitiesByDim[dim]) {
         return recycledOldEntitiesByDim[dim];
       } else {
-        modelName = freeToUseOldEntities.pop();
+        modelName = freeToUseOldEntities.shift();
         if (typeof modelName != "undefined") {
           // entities model found
           oldSpace[modelName].setDimension(dim);
