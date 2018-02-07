@@ -14,7 +14,8 @@ const EntitiesModel = DataConnected.extend({
     const defaults = {
       show: {},
       filter: {},
-      dim: null
+      dim: null,
+      skipFilter: false
     };
     return utils.deepExtend(this._super(), defaults);
   },
@@ -74,7 +75,7 @@ const EntitiesModel = DataConnected.extend({
    */
   getFilter({ entityTypeRequest } = {}) {
     const filter = utils.deepClone(this.filter);
-    if (entityTypeRequest) return filter;
+    if (entityTypeRequest || this.skipFilter) return this.dim ? filter : {};
 
     const show = utils.deepClone(this.show);
     if (show[this.dim] && utils.isEmpty(show[this.dim])) {

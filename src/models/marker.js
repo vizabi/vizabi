@@ -427,7 +427,8 @@ const Marker = Model.extend({
         }
         return !names.label || !names.key;
       });
-      result[key] = names.label || names.key;
+      const name = names.label || names.key;
+      if (name) result[key] = name;
       return result;
     }, {});
   },

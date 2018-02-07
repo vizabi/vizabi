@@ -241,7 +241,7 @@ const Show = Component.extend({
       const $andKeys = [];
       utils.forEach(showObj, (entitiesArray, category) => {
         $andKeys.push(category);
-        $and.push({ [category]: entitiesArray.length ? { $in: entitiesArray } : {} });
+        $and.push({ [category]: entitiesArray.length ? { $in: entitiesArray.slice(0) } : {} });
       });
       if (!$and.length) return;
 

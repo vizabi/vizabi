@@ -527,14 +527,18 @@ const Hook = DataConnected.extend({
   /**
    * gets hook values according dimension values
    */
-  getItems() {
+  getItems(filtered) {
     const _this = this;
     const dim = this.spaceRef && this._space[this.spaceRef] ? this._space[this.spaceRef].dim : _this._getFirstDimension({ exceptType: "time" });
     const items = {};
     const validItems = this.getValidItems();
 
+    const filterItems = filtered ? this.getEntity().getFilteredEntities().map(d => d[dim]) : [];
+    const filterLength = filterItems.length;
+
     if (utils.isArray(validItems)) {
       validItems.forEach(d => {
+        if (filterLength && !filterItems.includes(d[dim])) return;
         items[d[dim]] = d[_this.which];
       });
     }
