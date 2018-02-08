@@ -18,6 +18,7 @@ const SizeModel = Axis.extend({
       domainMax: null,
       zoomedMin: null,
       zoomedMax: null,
+      fixBaseline: 0,
       extent: [0, 0.85],
       scaleType: null,
       allow: {
