@@ -108,12 +108,11 @@ const Show = Component.extend({
           category: this.root.model.dataManager.getConceptProperty(dim, "name")
         });
 
-        const entitySetData = entitiesModel._entitySets[dim]
-          .map((key, index) => ({
+        const entitySetData = entitiesModel.getEntitySets()
+          .map(key => ({
             entities,
             key,
             dim,
-            index,
             isSet: true,
             category: this.root.model.dataManager.getConceptProperty(key, "name")
           }));
@@ -121,10 +120,10 @@ const Show = Component.extend({
         categories.push(...entitySetData);
       });
 
-      utils.forEach(categories, ({ dim, key, category, labelName, entities, isSet, index }) => {
+      utils.forEach(categories, ({ dim, key, category, labelName, entities, isSet }) => {
 
         const data = isSet ?
-          this.model.state[entities]._entitySetsData[index][0].map(d => {
+          this.model.state[entities].getEntitySets("data")[key][0].map(d => {
             const result = { entities, category: key };
             result[key] = d[key];
             result["label"] = d.name;

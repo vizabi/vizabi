@@ -74,8 +74,8 @@ const EntitiesModel = DataConnected.extend({
    * @returns {Array} Array of unique values
    */
   getFilter({ entityTypeRequest } = {}) {
-    const filter = utils.deepClone(this.filter);
-    if (entityTypeRequest || this.skipFilter) return this.dim ? filter : {};
+    const filter = utils.deepClone(this.filter[this.dim] || {});
+    if (entityTypeRequest || this.skipFilter) return filter;
 
     const show = utils.deepClone(this.show);
     if (show[this.dim] && utils.isEmpty(show[this.dim])) {
@@ -90,44 +90,6 @@ const EntitiesModel = DataConnected.extend({
     }
 
     return $and[0] || {};
-  },
-
-  /**
-   * Shows or unshows an entity from the set
-   */
-  showEntity(d) {
-    //clear selected countries when showing something new
-    const newShow = utils.deepClone(this.show);
-    const dimension = this.getDimension();
-    let _d;
-
-    if (!utils.isArray(d)) {
-      _d = [d];
-    } else {
-      _d = d;
-    }
-
-    let showArray = [];
-
-    // get array from show
-    if (this.show[dimension] && this.show[dimension]["$in"] && utils.isArray(this.show[dimension]["$in"]))
-      showArray = this.show[dimension]["$in"];
-
-    utils.forEach(_d, d => {
-      const value = d[dimension];
-      if (this.isShown(d)) {
-        showArray = showArray.filter(d => d !== value);
-      } else {
-        showArray = showArray.concat(value);
-      }
-    });
-
-    if (showArray.length === 0)
-      delete newShow[dimension];
-    else
-      newShow[dimension] = { "$in": showArray };
-
-    this.show = newShow;
   },
 
   loadData() {
@@ -148,9 +110,59 @@ const EntitiesModel = DataConnected.extend({
       .concat(this._entitySets[dim].map(entitySetName => this._root.dataManager.getDimensionValues(entitySetName, ["name"])));
 
     return Promise.all(loadPromises).then(data => {
-      _this._entitySetsValues = data[0];
-      _this._entitySetsData = data.slice(1);
+      _this._entitySetsValues = {};
+      _this._entitySetsValues[dim] = data[0];
+      _this._entitySetsData = { [dim]: {} };
+      _this._entitySets[dim].forEach((key, index) => {
+        _this._entitySetsData[dim][key] = data.slice(1)[index];
+      });
     });
+  },
+
+  getEntitySets(type = "") {
+    return this["_entitySets" + utils.capitalize(type)][this.dim];
+  },
+  /**
+   * Shows or unshows an entity from the set
+   */
+  showEntity(d) {
+    //clear selected countries when showing something new
+    const newShow = utils.deepClone(this.show);
+    const dimension = this.getDimension();
+    let _d;
+
+    if (!utils.isArray(d)) {
+      _d = [d];
+    } else {
+      _d = d;
+    }
+
+    const showFilter = newShow[dimension] || (newShow.$and || []).filter(f => f[dimension])[0] || { $in: [] };
+
+    utils.forEach(_d, d => {
+      const value = d[dimension];
+      if (this.isShown(d)) {
+        showFilter["$in"] = showFilter["$in"].filter(d => d !== value);
+      } else {
+        showFilter["$in"] = showFilter["$in"].concat(value);
+      }
+    });
+
+    if (showFilter["$in"].length === 0) {
+      if (newShow.$and) {
+        newShow.$and = newShow.$and.filter(f => !f[dimension]);
+      } else {
+        delete newShow[dimension];
+      }
+    } else {
+      if (newShow.$and) {
+        newShow.$and.push({ [dimension]: showFilter });
+      } else {
+        newShow[dimension] = showFilter;
+      }
+    }
+
+    this.show = newShow;
   },
 
   /**
@@ -158,24 +170,11 @@ const EntitiesModel = DataConnected.extend({
    * @returns {Boolean} whether the item is shown or not
    */
   isShown(d) {
-    const dim = this.getDimension();
-    const key = d[dim];
+    const dimension = this.getDimension();
 
-    const props = this._entitySetsValues[0].filter(v => v[dim] === key)[0] || {};
+    const { $in = [] } = this.show[dimension] || (this.show.$and || []).filter(f => f[dimension])[0] || {};
 
-    const showFilter = this.show.$and || [this.show];
-
-    let result = true;
-
-    utils.forEach(showFilter, filter => {
-      utils.forEach(Object.keys(filter), fKey => {
-        result = utils.getProp(filter, [fKey, "$in"], []).includes(props[fKey]);
-        return result;
-      });
-      return result;
-    });
-
-    return result;
+    return $in.includes(d[dimension]);
   },
 
   isInShowFilter(d, category) {

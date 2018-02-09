@@ -783,10 +783,11 @@ const Marker = Model.extend({
             });
           } else if (KEYS.includes(hook.which)) {
             //special case: fill data with keys to data itself
+            const items = hook.getValidItems();
             steps.forEach(t => {
               _this.partialResult[cachePath][t][name] = {};
-              keys.forEach(key => {
-                _this.partialResult[cachePath][t][name][key[hook.which]] = key[hook.which];
+              items.forEach(item => {
+                _this.partialResult[cachePath][t][name][item[hook.which]] = item[hook.which];
               });
             });
           } else if (hook.which === TIME) {
