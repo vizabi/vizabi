@@ -86,13 +86,12 @@ const Hook = DataConnected.extend({
 
   preloadData() {
     this.dataSource = this.getClosestModel(this.data);
-    //TODO
-    if (!this.spaceRef) this.spaceRef = this.updateSpaceReference();
     return this._super();
   },
 
   afterPreload() {
     this.autoconfigureModel();
+    if (!this.spaceRef) this.spaceRef = this.updateSpaceReference();
   },
 
   autoconfigureModel(autoconfigResult) {
