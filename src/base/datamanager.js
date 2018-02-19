@@ -45,7 +45,7 @@ const DataManagerPrototype = {
     for (const dataModel of this.dataModels.values()) {
       for (const { key, value } of (dataModel.dataAvailability || {})[dataType] || []) {
         if (key.has(pKey) && (!pValue || value === pValue)) {
-          result.push({ data: dataModel._name, pKey, value });
+          result.push({ data: dataModel._name, key: pKey, value });
         }
       }
     }

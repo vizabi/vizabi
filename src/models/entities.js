@@ -103,13 +103,12 @@ const EntitiesModel = DataConnected.extend({
 
     const dim = this.dim;
     this._entitySets = { [dim]: this._root.dataManager.getAvailableDataForKey(dim, null, "entities")
-      .filter(d => ["entity_set", "entity_domain"].includes(this._root.dataManager.getConceptProperty(d.value, "concept_type")))
+      .filter(d => d.value !== dim && ["entity_set", "entity_domain"].includes(this._root.dataManager.getConceptProperty(d.value, "concept_type")))
       .map(d => d.value) };
 
-    this._entitySetsValues = { [dim]: [] };
-    this._entitySetsData = { [dim]: {} };
-
     if (!this._entitySets[dim].length) {
+      this._entitySetsValues = { [dim]: [] };
+      this._entitySetsData = { [dim]: {} };
       return Promise.resolve();
     }
 
@@ -117,9 +116,10 @@ const EntitiesModel = DataConnected.extend({
       .concat(this._entitySets[dim].map(entitySetName => this._root.dataManager.getDimensionValues(entitySetName, ["name"])));
 
     return Promise.all(loadPromises).then(data => {
-      _this._entitySetsValues[dim] = data[0];
+      _this._entitySetsValues = { [dim]: data[0] };
+      _this._entitySetsData = { [dim]: {} };
       _this._entitySets[dim].forEach((key, index) => {
-        _this._entitySetsData[dim][key] = data.slice(1)[index];
+        _this._entitySetsData[dim][key] = data[index + 1];
       });
     });
   },
