@@ -858,7 +858,7 @@ const Marker = Model.extend({
         }
       }
     });
-    
+
     function fillFromTimeOrConstantHooks() {
       if (!_this.partialResult[cachePath].timeOrConstantHooks) return;
 
