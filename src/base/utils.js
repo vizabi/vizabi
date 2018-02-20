@@ -139,6 +139,17 @@ export const arrayEquals = function(a, b) {
   return true;
 };
 
+export const deepArrayEquals = function(a, b) {
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  if (a.length != b.length) return false;
+  for (let i = 0; i < a.length; ++i) {
+    if (isPlainObject(a[i]) && isPlainObject(b[i])) {
+      if (!comparePlainObjects(a[i], b[i])) return false;
+    } else if (a[i] !== b[i]) return false;
+  }
+  return true;
+};
 
 /**
  * Object Comparison
@@ -1107,7 +1118,7 @@ export const diffObject = function(obj2, obj1) {
             diff[key] = d;
           }
         }
-      } else if (!isArray(value) || !isArray(obj1[key]) || !arrayEquals(value, obj1[key])) {
+      } else if (!isArray(value) || !isArray(obj1[key]) || !deepArrayEquals(value, obj1[key])) {
         diff[key] = value;
       }
     }
