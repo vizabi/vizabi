@@ -28,8 +28,6 @@
           border-top: 1px solid;
           border-bottom: 1px solid;
           border-color: $vzb-color-primary;
-
-          transition: 0.4s;
         }
 
         .vzb-switch-slider::before {
@@ -41,8 +39,8 @@
           bottom: -3px;
           background-color: $vzb-color-primary;
 
-          -webkit-transition: 0.4s;
-          transition: 0.4s;
+          -webkit-transition: transform 0.4s;
+          transition: transform 0.4s;
         }
 
         //input:checked + .vzb-switch-slider {
@@ -54,11 +52,11 @@
         }
 
         input:checked ~ .vzb-switch-on {
-          display: unset;
+          display: inline;
         }
 
         .vzb-switch-off {
-          display: unset;
+          display: inline;
         }
 
         .vzb-switch-on {
@@ -79,11 +77,6 @@
         }
       }
 
-
-
-
-
-
       .vzb-find-filter {
         display: inline-block;
         position: relative;
@@ -100,7 +93,7 @@
       }
       .vzb-show-list {
         .vzb-accordion-section.vzb-accordion-active {
-          max-height: unset !important;
+          max-height: none !important;
         }
         .vzb-show-clear-cross {
           font-size: 1.5em;
@@ -159,6 +152,7 @@
 
       &.vzb-popup {
         .vzb-dialog-title {
+          display: flex;
           &.vzb-title-two-rows {
             @include rtl {
               padding-left: 5px;
@@ -170,6 +164,9 @@
               max-width: 240px;
             }
           }
+        }
+        .vzb-dialog-button.vzb-show-apply {
+          display:none;
         }
       }
       &.vzb-moreoptions {

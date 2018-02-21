@@ -303,6 +303,10 @@ const Show = Component.extend({
     this.model.state.set(setProps);
   },
 
+  closeClick() {
+    this.applyShowChanges();
+  }
+
 });
 
 export default Show;
