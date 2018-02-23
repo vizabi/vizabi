@@ -54,6 +54,10 @@ const EntitiesModel = DataConnected.extend({
     }
   },
 
+  setInterModelListeners() {
+    this.getClosestModel("locale").on("dataConnectedChange", this.loadData.bind(this));
+  },
+
   /**
    * Gets the dimensions in this entities
    * @returns {String} String with dimension
@@ -112,8 +116,9 @@ const EntitiesModel = DataConnected.extend({
       return Promise.resolve();
     }
 
-    const loadPromises = [this._root.dataManager.getDimensionValues(dim, this._entitySets[dim])]
-      .concat(this._entitySets[dim].map(entitySetName => this._root.dataManager.getDimensionValues(entitySetName, ["name"])));
+    const queryAddition = { "language": this.getClosestModel("locale").id };
+    const loadPromises = [this._root.dataManager.getDimensionValues(dim, this._entitySets[dim], queryAddition)]
+      .concat(this._entitySets[dim].map(entitySetName => this._root.dataManager.getDimensionValues(entitySetName, ["name"], queryAddition)));
 
     return Promise.all(loadPromises).then(data => {
       _this._entitySetsValues = { [dim]: data[0] };

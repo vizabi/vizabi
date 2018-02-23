@@ -153,7 +153,11 @@ const Show = Component.extend({
           })
           .call(elem => elem.append("span")
             .attr("class", "vzb-show-category")
-            .text(d => (d.isSet ? "➥ " : "") + category))
+            .classed("vzb-show-category-set", d => d.isSet)
+            .text(category)
+            .attr("title", function(d) {
+              return this.offsetWidth < this.scrollWidth ? category : null;
+            }))
           .call(elem => elem.append("span")
             .attr("class", "vzb-show-clear-cross")
             .text("✖")

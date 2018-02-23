@@ -92,10 +92,20 @@
         }
       }
       .vzb-show-list {
-        .vzb-accordion-section.vzb-accordion-active {
-          max-height: none !important;
+        .vzb-accordion-section {
+          cursor: pointer;
+          &.vzb-accordion-active {
+            max-height: none !important;
+          }
+          .vzb-accordion-section-title {
+            background-color: rgba($vzb-color-primary-light, 0.5);
+          }
         }
         .vzb-show-clear-cross {
+          @include rtl {
+            left: 2px;
+            right: auto;
+          }
           font-size: 1.5em;
           line-height: 100%;
           display: block;
@@ -106,10 +116,30 @@
           cursor: pointer;
         }
         .vzb-show-category {
+          @include rtl {
+            margin-left: 1.5em;
+            margin-right: 3px;
+          }
           display: block;
-          width: 100%;
-          padding: 3px;
-          background-color: rgba($vzb-color-primary-light, 0.5);
+          margin-left: 3px;
+          margin-right: 1.5em;
+          padding: 3px 0;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          background: none;
+          &.vzb-show-category-set {
+            @include rtl {
+              &::before {
+                transform: translate(1.25em,0) scale(-1,1);
+              }
+            }
+            margin: 0 1.5em;
+            &::before {
+              content: "➥";
+              position: absolute;
+              transform: translate(-1.25em,0);
+            }
+          }
         }
         .vzb-show-category-list {
           transform: translateZ(0);

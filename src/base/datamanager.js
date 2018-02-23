@@ -53,14 +53,14 @@ const DataManagerPrototype = {
     return result;
   },
 
-  getDimensionValues(conceptID, value = []) {
-    const query = {
+  getDimensionValues(conceptID, value = [], queryAddition = {}) {
+    const query = Object.assign({
       select: {
         key: [conceptID],
         value
       },
       from: "entities"
-    };
+    }, queryAddition);
     return Promise.all(
       [...this.getDataModels().values()].map(
         dataModel => dataModel.load(query, undefined, true).then(dataId => dataModel.getData(dataId))
