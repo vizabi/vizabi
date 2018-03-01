@@ -57,11 +57,25 @@ const LocaleModel = DataConnected.extend({
     // load UI strings only if we don't have them already
     if (!this.strings[this.id]) {
       promises.push(new Promise((resolve, reject) => {
-        d3.json(this.filePath + this.id + ".json", (error, strings) => {
-          if (error) return reject(error);
-          this._handleNewStrings(strings);
-          resolve();
-        });
+        if (window.fetch) {
+          // Chrome Canary issue fix: avoid XMLHttpRequest
+          // we should use fetch as often as possible
+          fetch(this.filePath + this.id + ".json")
+            .then(response => response.json())
+            .then(jsonData => {
+              this._handleNewStrings(jsonData);
+
+              resolve();
+            })
+            .catch(error => reject(error));
+        } else {
+          // we should use d3/XMLHttpRequest functionality for old browsers
+          d3.json(this.filePath + this.id + ".json", (error, strings) => {
+            if (error) return reject(error);
+            this._handleNewStrings(strings);
+            resolve();
+          });
+        }
       }));
     }
 
