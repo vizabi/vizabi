@@ -1,5 +1,38 @@
 import interpolator from "vizabi-interpolators/interpolators";
 
+
+export const d3json = function(path, callback) {
+  if (window.fetch) {
+    // Chrome Canary issue fix: avoid XMLHttpRequest
+    // we should use fetch as often as possible
+    fetch(path)
+      .then(response => response.json())
+      .then(jsonData => {
+        callback(null, jsonData);
+      })
+      .catch(error => callback(error));
+  } else {
+    // we should use d3/XMLHttpRequest functionality for old browsers
+    d3.json(path, callback);
+  }
+};
+
+export const d3text = function(path, callback) {
+  if (window.fetch) {
+    // Chrome Canary issue fix: avoid XMLHttpRequest
+    // we should use fetch as often as possible
+    fetch(path)
+      .then(response => response.text())
+      .then(data => {
+        callback(null, data);
+      })
+      .catch(error => callback(error));
+  } else {
+    // we should use d3/XMLHttpRequest functionality for old browsers
+    d3.text(path, callback);
+  }
+};
+
 /*
  * Check if value A is in +- proximity of value B
  * @param {Number} a
