@@ -1,5 +1,6 @@
 import parseDecimal from "parse-decimal-number";
 import Reader from "base/reader";
+import * as utils from "base/utils";
 
 const cached = {};
 
@@ -67,7 +68,7 @@ const CSVReader = Reader.extend({
       if (cachedData) {
         resolve(cachedData);
       } else {
-        d3.text(path).get((error, text) => {
+        utils.d3text(path, (error, text) => {
           if (!text) {
             return reject(`No permissions or empty file: ${path}. ${error}`);
           }
@@ -90,6 +91,18 @@ const CSVReader = Reader.extend({
           }
         });
       }
+    });
+  },
+
+  getAsset(asset, options = {}) {
+    const path = this.assetsPath + asset;
+
+    return new Promise((resolve, reject) => {
+      utils.d3json(path, (error, text) => {
+        if (!text) return reject(`No permissions or empty file: ${path}. ${error}`);
+        if (error) return reject(error);
+        resolve(text);
+      });
     });
   },
 

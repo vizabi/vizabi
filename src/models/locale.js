@@ -57,7 +57,7 @@ const LocaleModel = DataConnected.extend({
     // load UI strings only if we don't have them already
     if (!this.strings[this.id]) {
       promises.push(new Promise((resolve, reject) => {
-        d3.json(this.filePath + this.id + ".json", (error, strings) => {
+        utils.d3json(this.filePath + this.id + ".json", (error, strings) => {
           if (error) return reject(error);
           this._handleNewStrings(strings);
           resolve();
