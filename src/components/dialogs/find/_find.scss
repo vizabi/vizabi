@@ -130,21 +130,22 @@
           &.vzb-show-category-set {
             @include rtl {
               &::before {
-                transform: translate(1.25em,0) scale(-1,1);
+                transform: translate(1.25em, 0) scale(-1, 1);
               }
             }
             margin: 0 1.5em;
             &::before {
               content: "➥";
               position: absolute;
-              transform: translate(-1.25em,0);
+              transform: translate(-1.25em, 0);
             }
           }
         }
         .vzb-show-category-list {
           transform: translateZ(0);
           pointer-events: none;
-            input, label {
+            input, 
+            label {
             pointer-events: all;
           }
         }
@@ -196,7 +197,7 @@
           }
         }
         .vzb-dialog-button.vzb-show-apply {
-          display:none;
+          display: none;
         }
       }
       &.vzb-moreoptions {
