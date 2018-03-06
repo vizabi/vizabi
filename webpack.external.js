@@ -61,7 +61,7 @@ const loaders = [
         loader: 'babel-loader',
         query: {
           cacheDirectory: !__PROD__,
-          presets: ['es2015']
+          presets: ['env']
         }
       }
     ]
