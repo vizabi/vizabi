@@ -127,6 +127,9 @@ const Find = Dialog.extend("find", {
       _this.deselectMarkers();
     });
 
+    const closeButton = this.buttonsEl.select(".vzb-dialog-button[data-click='closeDialog']");
+    closeButton.on("click.panel", () => _this.panelComps[_this.panelMode].closeClick());
+
     this.translator = this.model.locale.getTFunction();
     this.input_search.attr("placeholder", this.translator("placeholder/search") + "...");
 
@@ -307,6 +310,10 @@ const Find = Dialog.extend("find", {
     this._super(event);
 
     if (!utils.isTouchDevice()) this.input_search.node().focus();
+  },
+
+  closeClick() {
+
   }
 
 });

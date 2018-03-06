@@ -132,6 +132,10 @@ const TimeSlider = Component.extend({
       },
       "change:marker.select": function(evt, path) {
         _this.setSelectedLimits();
+      },
+      "dataLoaded:marker": function() {
+        _this.availableTimeFrames = [[_this.model.time.startSelected || _this.model.time.start, _this.model.time.endSelected || _this.model.time.end]];
+        _this._updateProgressBar(true);
       }
     };
 

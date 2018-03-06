@@ -440,10 +440,10 @@ const MenuItem = Class.extend({
 
       if (_this.parentMenu.direction == MENU_HORIZONTAL && !d3.select(this).attr("children")) {
         _this.openSubmenu();
-        _this.marqueeToggle(true);
       } else if (!_this.parentMenu.hasActiveParentNeighbour()) {
         _this.closeNeighbors();
       }
+      _this.marqueeToggle(true);
     }).on("click.item", function() {
       if (utils.isTouchDevice()) return;
       d3.event.stopPropagation();
@@ -507,16 +507,12 @@ const MenuItem = Class.extend({
       const label = d3.select(this).select("span");
       const parent = d3.select(this.parentNode);
       parent.classed("marquee", false);
-      label.style("left", "");
-      label.style("right", "");
       label.style("width", "");
       if (toggle) {
         if (label.node().scrollWidth > label.node().offsetWidth) {
           label.attr("data-content", label.text());
           const space = 30;
           const offset = space + label.node().scrollWidth;
-          label.style("left", -offset + "px");
-          label.style("right", -offset + "px");
           label.style("width", offset + "px");
           parent.classed("marquee", true);
         }
@@ -526,16 +522,12 @@ const MenuItem = Class.extend({
   marqueeToggle(toggle) {
     const label = this.entity.select("." + css.list_item_label).select("span");
     this.entity.classed("marquee", false);
-    label.style("left", "");
-    label.style("right", "");
     label.style("width", "");
     if (toggle) {
       if (label.node().scrollWidth > label.node().offsetWidth) {
         label.attr("data-content", label.text());
         const space = 30;
         const offset = space + label.node().scrollWidth;
-        label.style("left", -offset + "px");
-        label.style("right", -offset + "px");
         label.style("width", offset + "px");
         this.entity.classed("marquee", true);
       }

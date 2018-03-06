@@ -77,7 +77,7 @@ const Hook = DataConnected.extend({
       obj.spaceRef = null;
     }
 
-    this.set(obj, null, null, null, this.setWhich);
+    this.set(obj, undefined, undefined, undefined, this.setWhich);
   },
 
   setScaleType(newValue) {
@@ -86,13 +86,12 @@ const Hook = DataConnected.extend({
 
   preloadData() {
     this.dataSource = this.getClosestModel(this.data);
-    //TODO
-    if (!this.spaceRef) this.spaceRef = this.updateSpaceReference();
     return this._super();
   },
 
   afterPreload() {
     this.autoconfigureModel();
+    if (!this.spaceRef) this.spaceRef = this.updateSpaceReference();
   },
 
   autoconfigureModel(autoconfigResult) {
@@ -527,14 +526,18 @@ const Hook = DataConnected.extend({
   /**
    * gets hook values according dimension values
    */
-  getItems() {
+  getItems(filtered) {
     const _this = this;
     const dim = this.spaceRef && this._space[this.spaceRef] ? this._space[this.spaceRef].dim : _this._getFirstDimension({ exceptType: "time" });
     const items = {};
     const validItems = this.getValidItems();
 
+    const filterItems = filtered ? this.getEntity().getFilteredEntities().map(d => d[dim]) : [];
+    const filterLength = filterItems.length;
+
     if (utils.isArray(validItems)) {
       validItems.forEach(d => {
+        if (filterLength && !filterItems.includes(d[dim])) return;
         items[d[dim]] = d[_this.which];
       });
     }
@@ -634,7 +637,7 @@ const Hook = DataConnected.extend({
   },
 
   getDataKeys() {
-    return this.spaceRef ? [this._space[this.spaceRef].dim] : this._getAllDimensions({ exceptType: "time" });
+    return this.spaceRef ? [this.getEntity().dim] : this._getAllDimensions({ exceptType: "time" });
   }
 });
 

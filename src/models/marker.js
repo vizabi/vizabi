@@ -55,7 +55,7 @@ const Marker = Model.extend({
       const labelModelName = "label" + dimensionModel.replace(dimModel._type, "");
       const props = { which: dimModel.dim, use: "property" };
       //change which to 'name' if 'name' property available for dimension
-      const nameData = this._root.dataManager.getAvailableDataForKey(dimModel.dim, "name", "entities");
+      const nameData = this._root.dataManager.getAvailableDataForKey(dimModel.dim, "name", "entities")[0];
       if (nameData) {
         props.which = nameData.value;
         props.data = nameData.data;
@@ -427,7 +427,8 @@ const Marker = Model.extend({
         }
         return !names.label || !names.key;
       });
-      result[key] = names.label || names.key;
+      const name = names.label || names.key;
+      if (name) result[key] = name;
       return result;
     }, {});
   },
@@ -763,37 +764,23 @@ const Marker = Model.extend({
       this.frameQueues[cachePath] = new Promise((resolve, reject) => {
 
         _this.partialResult[cachePath] = {};
+        _this.partialResult[cachePath].timeOrConstantHooks = [];
         steps.forEach(t => { _this.partialResult[cachePath][t] = {}; });
-
-        // Assemble the list of keys as an intersection of keys in all queries of all hooks
-        const keys = _this.getKeys();
 
         const deferredHooks = [];
         // Assemble data from each hook. Each frame becomes a vector containing the current configuration of hooks.
         // frame -> hooks -> entities: values
         utils.forEach(_this._dataCube, (hook, name) => {
-          if (hook.use === "constant") {
-            //special case: fill data with constant values
-            steps.forEach(t => {
-              _this.partialResult[cachePath][t][name] = {};
-              keys.forEach(key => {
-                _this.partialResult[cachePath][t][name][utils.getKey(key, KEYS)] = hook.which;
-              });
-            });
+          if (hook.use === "constant" || hook.which === TIME) {
+            //data from hooks with use 'constant' or which 'time dimension' will be filled last
+            _this.partialResult[cachePath].timeOrConstantHooks.push({ name, which: hook.which });
           } else if (KEYS.includes(hook.which)) {
             //special case: fill data with keys to data itself
+            const items = hook.getValidItems();
             steps.forEach(t => {
               _this.partialResult[cachePath][t][name] = {};
-              keys.forEach(key => {
-                _this.partialResult[cachePath][t][name][key[hook.which]] = key[hook.which];
-              });
-            });
-          } else if (hook.which === TIME) {
-            //special case: fill data with time points
-            steps.forEach(t => {
-              _this.partialResult[cachePath][t][name] = {};
-              keys.forEach(key => {
-                _this.partialResult[cachePath][t][name][utils.getKey(key, KEYS)] = new Date(t);
+              items.forEach(item => {
+                _this.partialResult[cachePath][t][name][item[hook.which]] = item[hook.which];
               });
             });
           } else {
@@ -824,10 +811,12 @@ const Marker = Model.extend({
             }));
           });
           Promise.all(promises).then(() => {
+            fillFromTimeOrConstantHooks();
             _this.cachedFrames[cachePath] = _this.partialResult[cachePath];
             resolve();
           });
         } else {
+          fillFromTimeOrConstantHooks();
           _this.cachedFrames[cachePath] = _this.partialResult[cachePath];
           resolve();
         }
@@ -857,6 +846,7 @@ const Marker = Model.extend({
         });
         if (promises.length > 0) {
           Promise.all(promises).then(() => {
+            fillFromTimeOrConstantHooks();
             if (!_this.cachedFrames[cachePath]) {
               _this.cachedFrames[cachePath] = {};
             }
@@ -868,6 +858,26 @@ const Marker = Model.extend({
         }
       }
     });
+
+    function fillFromTimeOrConstantHooks() {
+      if (!_this.partialResult[cachePath].timeOrConstantHooks) return;
+
+      const { timeOrConstantHooks } = _this.partialResult[cachePath];
+      // Assemble the list of keys as an intersection of keys in all queries of all hooks
+      const keys = _this.getKeys();
+
+      //special case: fill data with time points or fill data with constant values
+      timeOrConstantHooks.forEach(({ which, name }) => {
+        const isTimeWhich = which === TIME;
+        steps.forEach(t => {
+          _this.partialResult[cachePath][t][name] = {};
+          keys.forEach(key => {
+            _this.partialResult[cachePath][t][name][utils.getKey(key, KEYS)] = isTimeWhich ? new Date(t) : which;
+          });
+        });
+      });
+      delete _this.partialResult[cachePath].timeOrConstantHooks;
+    }
 
   },
 

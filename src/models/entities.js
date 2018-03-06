@@ -14,7 +14,8 @@ const EntitiesModel = DataConnected.extend({
     const defaults = {
       show: {},
       filter: {},
-      dim: null
+      dim: null,
+      skipFilter: false
     };
     return utils.deepExtend(this._super(), defaults);
   },
@@ -53,6 +54,10 @@ const EntitiesModel = DataConnected.extend({
     }
   },
 
+  setInterModelListeners() {
+    this.getClosestModel("locale").on("dataConnectedChange", this.loadData.bind(this));
+  },
+
   /**
    * Gets the dimensions in this entities
    * @returns {String} String with dimension
@@ -73,8 +78,8 @@ const EntitiesModel = DataConnected.extend({
    * @returns {Array} Array of unique values
    */
   getFilter({ entityTypeRequest } = {}) {
-    const filter = utils.deepClone(this.filter);
-    if (entityTypeRequest) return filter;
+    const filter = utils.deepClone(this.filter[this.dim] || {});
+    if (entityTypeRequest || this.skipFilter) return filter;
 
     const show = utils.deepClone(this.show);
     if (show[this.dim] && utils.isEmpty(show[this.dim])) {
@@ -91,6 +96,42 @@ const EntitiesModel = DataConnected.extend({
     return $and[0] || {};
   },
 
+  loadData() {
+    const _this = this;
+    if (!this.dim) {
+      this._entitySets = {};
+      this._entitySetsData = {};
+      this._entitySetsValues = {};
+      return Promise.resolve();
+    }
+
+    const dim = this.dim;
+    this._entitySets = { [dim]: this._root.dataManager.getAvailableDataForKey(dim, null, "entities")
+      .filter(d => d.value !== dim && ["entity_set", "entity_domain"].includes(this._root.dataManager.getConceptProperty(d.value, "concept_type")))
+      .map(d => d.value) };
+
+    if (!this._entitySets[dim].length) {
+      this._entitySetsValues = { [dim]: [] };
+      this._entitySetsData = { [dim]: {} };
+      return Promise.resolve();
+    }
+
+    const queryAddition = { "language": this.getClosestModel("locale").id };
+    const loadPromises = [this._root.dataManager.getDimensionValues(dim, this._entitySets[dim], queryAddition)]
+      .concat(this._entitySets[dim].map(entitySetName => this._root.dataManager.getDimensionValues(entitySetName, ["name"], queryAddition)));
+
+    return Promise.all(loadPromises).then(data => {
+      _this._entitySetsValues = { [dim]: data[0] };
+      _this._entitySetsData = { [dim]: {} };
+      _this._entitySets[dim].forEach((key, index) => {
+        _this._entitySetsData[dim][key] = data[index + 1];
+      });
+    });
+  },
+
+  getEntitySets(type = "") {
+    return this["_entitySets" + utils.capitalize(type)][this.dim];
+  },
   /**
    * Shows or unshows an entity from the set
    */
@@ -106,25 +147,30 @@ const EntitiesModel = DataConnected.extend({
       _d = d;
     }
 
-    let showArray = [];
-
-    // get array from show
-    if (this.show[dimension] && this.show[dimension]["$in"] && utils.isArray(this.show[dimension]["$in"]))
-      showArray = this.show[dimension]["$in"];
+    const showFilter = newShow[dimension] || (newShow.$and || []).filter(f => f[dimension])[0] || { $in: [] };
 
     utils.forEach(_d, d => {
       const value = d[dimension];
       if (this.isShown(d)) {
-        showArray = showArray.filter(d => d !== value);
+        showFilter["$in"] = showFilter["$in"].filter(d => d !== value);
       } else {
-        showArray = showArray.concat(value);
+        showFilter["$in"] = showFilter["$in"].concat(value);
       }
     });
 
-    if (showArray.length === 0)
-      delete newShow[dimension];
-    else
-      newShow[dimension] = { "$in": showArray };
+    if (showFilter["$in"].length === 0) {
+      if (newShow.$and) {
+        newShow.$and = newShow.$and.filter(f => !f[dimension]);
+      } else {
+        delete newShow[dimension];
+      }
+    } else {
+      if (newShow.$and) {
+        newShow.$and.push({ [dimension]: showFilter });
+      } else {
+        newShow[dimension] = showFilter;
+      }
+    }
 
     this.show = newShow;
   },
@@ -136,7 +182,17 @@ const EntitiesModel = DataConnected.extend({
   isShown(d) {
     const dimension = this.getDimension();
 
-    return utils.getProp(this.show, [dimension, "$in"], []).includes(d[dimension]);
+    const { $in = [] } = this.show[dimension] || (this.show.$and || []).filter(f => f[dimension])[0] || {};
+
+    return $in.includes(d[dimension]);
+  },
+
+  isInShowFilter(d, category) {
+    const dim = this.getDimension();
+    const key = d[dim];
+    const filter = (this.show.$and || [this.show]).filter(f => f[category])[0] || {};
+
+    return utils.getProp(filter, [category, "$in"], []).includes(d[category]);
   },
 
   /**
