@@ -2,43 +2,37 @@ dist: trusty
 sudo: true
 language: node_js
 node_js:
-  - "7"
+- '8'
 addons:
   apt:
     packages:
     - python-pip
-
 notifications:
   email: false
   slack:
     rooms:
-      - gapminder:siB4Z9ymsYR6qHnRPpgUoB2Q#vizabi-spam
+    - gapminder:siB4Z9ymsYR6qHnRPpgUoB2Q#vizabi-spam
     on_success: change
     on_failure: always
-
 cache:
   directories:
-    - node_modules
-
+  - node_modules
 before_install:
-  - npm install -g npm@latest
-  - sudo pip install s3cmd
-
+- npm install -g npm@latest
+- sudo pip install s3cmd
 before_script:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
-  - npm run build
-
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+- npm run build
 script:
 - npm run deploy
-
 deploy:
   skip_cleanup: true
   provider: npm
-  email: "konzeptmeister@gmail.com"
+  email: konzeptmeister@gmail.com
   api_key:
-    secure: "XVJ/QwnTYMNEUMtAcvmVdh6EHndHcEqzdJUe7JYYRXmA2qxhRGIC8VlnK9GKZOS3ACSDygp1lCam+BA5ZYy4QhvsMsPQukWeon6K8Zcerg8Lg3XfxXBilKATf83DQ0PZslus1XgynZmNgUCkJ61rhAhLVOx0iIpetMOHTZ3oJak="
+    secure: TY1DWvEbEDyVe3Kgo4R9FEyWACi40JLkrD/r795rNv3Z0JiQvaAgO4m2hBHWqH4xxdGcAgnrdLaRiIaZcGxEONzQOHDS4yGEz+l8Yaiqee4sA5whu3v0I+wwnNeHcbNcGU30bUAczn7pgFGPEQ8t+WxWp0JRFAduPOuvC/b3i3w=
   on:
     branch: develop
-    node: "7"
+    node: '8'
     condition: "-e /tmp/deployment.flag"
