@@ -2,7 +2,7 @@ import interpolator from "vizabi-interpolators/interpolators";
 
 
 export const d3json = function(path, callback) {
-  if (window.fetch) {
+  if (window.fetch && navigator.userAgent.toLowerCase().indexOf(" electron/") === -1) {
     // Chrome Canary issue fix: avoid XMLHttpRequest
     // we should use fetch as often as possible
     fetch(path)
@@ -18,7 +18,7 @@ export const d3json = function(path, callback) {
 };
 
 export const d3text = function(path, callback) {
-  if (window.fetch) {
+  if (window.fetch && navigator.userAgent.toLowerCase().indexOf(" electron/") === -1) {
     // Chrome Canary issue fix: avoid XMLHttpRequest
     // we should use fetch as often as possible
     fetch(path)
