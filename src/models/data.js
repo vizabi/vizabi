@@ -205,12 +205,12 @@ const DataModel = Model.extend({
       concept["concept_type"] = d.concept_type;
       concept["sourceLink"] = d.indicator_url;
       try {
-        concept["color"] = d.color && d.color !== "" ? JSON.parse(d.color) : null;
+        concept["color"] = d.color && d.color !== "" ? (typeof d.color === "string" ? JSON.parse(d.color) : d.color) : null; //
       } catch (e) {
         concept["color"] = null;
       }
       try {
-        concept["scales"] = d.scales ? JSON.parse(d.scales) : null;
+        concept["scales"] = d.scales && d.color !== "" ? (typeof d.scales === "string" ? JSON.parse(d.scales) : d.scales) : null;
       } catch (e) {
         concept["scales"] = null;
       }
