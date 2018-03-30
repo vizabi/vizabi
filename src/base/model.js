@@ -92,6 +92,7 @@ const Model = EventSource.extend({
     this._parent = parent;
     this._root = parent ? parent._root : this;
     this._name = name;
+    this._inError = false;
     this._ready = false;
     this._readyOnce = false;
     //has this model ever been ready?
@@ -436,13 +437,8 @@ const Model = EventSource.extend({
     return Promise.all(promises)
       .then(this.onSuccessfullLoad.bind(this))
       .catch(error => {
-        const translator = this.getClosestModel("locale").getTFunction();
-        this.triggerLoadError({
-          message: translator("crash/error"),
-          userAgent: window.navigator.userAgent,
-          stack: error.stack,
-          additionalInfo: error
-        });
+        utils.error("error in model " + this._name);
+        this.triggerLoadError(error);
       });
   },
 
@@ -477,19 +473,22 @@ const Model = EventSource.extend({
     );
   },
 
-  handleLoadError(error = this.getDefaultErrorMessage()) {
-    throw error;
+  handleLoadError(error = this.getDefaultError()) {
+    this.triggerLoadError(error);
   },
 
-  getDefaultErrorMessage() {
-    return this.getClosestModel("locale")
-      .getTFunction()("connection/error");
+  getDefaultError() {
+    const error = new Error;
+    error.message = this.getClosestModel("locale").getTFunction()("connection/error");
+    return error;
   },
 
   triggerLoadError(error) {
     EventSource.unfreezeAll();
+    if (this._inError) return utils.error("Model " + this._name + " already in error");
+    this._inError = true;
     this._root.trigger("load_error", error);
-    utils.error(error);
+    this._root.trigger("load_error1", error);
   },
 
   /**

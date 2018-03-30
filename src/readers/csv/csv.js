@@ -30,7 +30,8 @@ const CSVReader = Reader.extend({
       NOT_ENOUGH_ROWS_IN_FILE: "reader/error/notEnoughRows",
       UNDEFINED_DELIMITER: "reader/error/undefinedDelimiter",
       EMPTY_HEADERS: "reader/error/emptyHeaders",
-      DIFFERENT_SEPARATORS: "reader/error/differentSeparators"
+      DIFFERENT_SEPARATORS: "reader/error/differentSeparators",
+      FILE_NOT_FOUND: "reader/error/fileNotFoundOrPermissionsOrEmpty"
     });
   },
 
@@ -41,10 +42,7 @@ const CSVReader = Reader.extend({
 
     const time = firstRow[timeKey].trim();
     if (parser && !parser(time)) {
-      throw this.error(this.ERRORS.WRONG_TIME_COLUMN_OR_UNITS, undefined, {
-        currentYear: new Date().getFullYear(),
-        foundYear: time
-      });
+      throw this.error(this.ERRORS.WRONG_TIME_COLUMN_OR_UNITS, undefined, time);
     }
 
     if (!columns.filter(Boolean).length) {
@@ -71,12 +69,11 @@ const CSVReader = Reader.extend({
         resolve(cachedData);
       } else {
         utils.d3text(path, (error, text) => {
-          if (!text) {
-            return reject(`No permissions or empty file: ${path}. ${error}`);
-          }
-
           if (error) {
-            return reject(`Error happened while loading csv file: ${path}. ${error}`);
+            error.name = this.ERRORS.FILE_NOT_FOUND;
+            error.message = `No permissions, missing or empty file: ${path}`;
+            error.endpoint = path;
+            return reject(error);
           }
 
           try {
@@ -101,8 +98,12 @@ const CSVReader = Reader.extend({
 
     return new Promise((resolve, reject) => {
       utils.d3json(path, (error, text) => {
-        if (!text) return reject(`No permissions or empty file: ${path}. ${error}`);
-        if (error) return reject(error);
+        if (error) {
+          error.name = this.ERRORS.FILE_NOT_FOUND;
+          error.message = `No permissions, missing or empty file: ${path}`;
+          error.endpoint = path;
+          return reject(error);
+        }
         resolve(text);
       });
     });

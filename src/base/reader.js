@@ -36,6 +36,7 @@ const Reader = Class.extend({
   },
 
   read(query, parsers = {}) {
+    const originalQuery = query;
     query = this._normalizeQuery(query, parsers);
 
     const {
@@ -71,9 +72,11 @@ const Reader = Class.extend({
         }
       })
       .catch(error => {
-        throw ({}).toString.call(error) === "[object Error]" ?
-          this.error(this.ERRORS.GENERIC_ERROR, error) :
-          error;
+        if (!utils.find(this.ERRORS, f => f === error.name)) error = this.error(this.ERRORS.GENERIC_ERROR, error);
+        if (!error.endpoint) error.endpoint = this._basepath;
+        if (!error.ddfql) error.ddfql = originalQuery;
+        if (!error.details) error.details = this._name;
+        throw error;
       });
   },
 
@@ -266,12 +269,14 @@ const Reader = Class.extend({
       });
   },
 
-  error(code, message, payload) {
-    return {
-      code,
-      message,
-      payload
-    };
+  error(code, message, payload, query, file) {
+    const error = new Error;
+    error.name = code;
+    error.message = message;
+    error.details = payload;
+    error.ddfql = query;
+    error.endpoint = file;
+    return error;
   }
 
 });

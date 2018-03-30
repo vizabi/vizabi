@@ -6,7 +6,10 @@ export const d3json = function(path, callback) {
     // Chrome Canary issue fix: avoid XMLHttpRequest
     // we should use fetch as often as possible
     fetch(path)
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok) return response.json();
+        callback(new Error);
+      })
       .then(jsonData => {
         callback(null, jsonData);
       })
@@ -22,7 +25,10 @@ export const d3text = function(path, callback) {
     // Chrome Canary issue fix: avoid XMLHttpRequest
     // we should use fetch as often as possible
     fetch(path)
-      .then(response => response.text())
+      .then(response => {
+        if (response.ok) return response.text();
+        callback(new Error);
+      })
       .then(data => {
         callback(null, data);
       })
@@ -1621,4 +1627,83 @@ export const getSubtitle = (title = "", shortTitle) => {
   if (subtitle[0] === ",") subtitle = subtitle.slice(1);
   const regexpResult = /^\((.*)\)$|.*/.exec(subtitle.trim());
   return regexpResult[1] || regexpResult[0] || "";
+};
+
+export const getBrowserDetails = () => {
+
+  const nVer = navigator.appVersion;
+  const nAgt = navigator.userAgent;
+  let browserName = navigator.appName;
+  let fullVersion = "" + parseFloat(navigator.appVersion);
+  let majorVersion = parseInt(navigator.appVersion, 10);
+  let nameOffset, verOffset, ix;
+  const isElectron = navigator.userAgent.toLowerCase().indexOf(" electron/") > -1;
+
+  // In Opera, the true version is after "Opera" or after "Version"
+  if ((verOffset = nAgt.indexOf("Opera")) != -1) {
+    browserName = "Opera";
+    fullVersion = nAgt.substring(verOffset + 6);
+    if ((verOffset = nAgt.indexOf("Version")) != -1)
+      fullVersion = nAgt.substring(verOffset + 8);
+  }
+  // In MSIE, the true version is after "MSIE" in userAgent
+  else if ((verOffset = nAgt.indexOf("MSIE")) != -1) {
+    browserName = "Microsoft Internet Explorer";
+    fullVersion = nAgt.substring(verOffset + 5);
+  }
+  // In Chrome, the true version is after "Chrome"
+  else if ((verOffset = nAgt.indexOf("Chrome")) != -1) {
+    browserName = "Chrome";
+    fullVersion = nAgt.substring(verOffset + 7);
+  }
+  // In Safari, the true version is after "Safari" or after "Version"
+  else if ((verOffset = nAgt.indexOf("Safari")) != -1) {
+    browserName = "Safari";
+    fullVersion = nAgt.substring(verOffset + 7);
+    if ((verOffset = nAgt.indexOf("Version")) != -1)
+      fullVersion = nAgt.substring(verOffset + 8);
+  }
+  // In Firefox, the true version is after "Firefox"
+  else if ((verOffset = nAgt.indexOf("Firefox")) != -1) {
+    browserName = "Firefox";
+    fullVersion = nAgt.substring(verOffset + 8);
+  }
+  // In most other browsers, "name/version" is at the end of userAgent
+  else if ((nameOffset = nAgt.lastIndexOf(" ") + 1) <
+    (verOffset = nAgt.lastIndexOf("/"))) {
+    browserName = nAgt.substring(nameOffset, verOffset);
+    fullVersion = nAgt.substring(verOffset + 1);
+    if (browserName.toLowerCase() == browserName.toUpperCase()) {
+      browserName = navigator.appName;
+    }
+  }
+  // trim the fullVersion string at semicolon/space if present
+  if ((ix = fullVersion.indexOf(";")) != -1)
+    fullVersion = fullVersion.substring(0, ix);
+  if ((ix = fullVersion.indexOf(" ")) != -1)
+    fullVersion = fullVersion.substring(0, ix);
+
+  majorVersion = parseInt("" + fullVersion, 10);
+  if (isNaN(majorVersion)) {
+    fullVersion = "" + parseFloat(navigator.appVersion);
+    majorVersion = parseInt(navigator.appVersion, 10);
+  }
+
+  return (isElectron ? "Electron " : "") + browserName + " " + majorVersion + " (" + fullVersion + ")";
+};
+
+
+export const getOSname = () => {
+  let OSName = "Unknown";
+  if (window.navigator.userAgent.indexOf("Windows NT 10.0") != -1) OSName = "Windows 10";
+  if (window.navigator.userAgent.indexOf("Windows NT 6.2")  != -1) OSName = "Windows 8";
+  if (window.navigator.userAgent.indexOf("Windows NT 6.1")  != -1) OSName = "Windows 7";
+  if (window.navigator.userAgent.indexOf("Windows NT 6.0")  != -1) OSName = "Windows Vista";
+  if (window.navigator.userAgent.indexOf("Windows NT 5.1")  != -1) OSName = "Windows XP";
+  if (window.navigator.userAgent.indexOf("Windows NT 5.0")  != -1) OSName = "Windows 2000";
+  if (window.navigator.userAgent.indexOf("Mac")             != -1) OSName = "Mac/iOS";
+  if (window.navigator.userAgent.indexOf("X11")             != -1) OSName = "UNIX";
+  if (window.navigator.userAgent.indexOf("Linux")           != -1) OSName = "Linux";
+
+  return OSName;
 };

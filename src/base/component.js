@@ -3,6 +3,7 @@ import Events from "base/events";
 import Model from "base/model";
 import globals from "base/globals";
 
+import { close as iconClose } from "base/iconset";
 const class_loading_first = "vzb-loading-first";
 const class_loading_data = "vzb-loading-data";
 const class_error = "vzb-error";
@@ -147,20 +148,53 @@ const Component = Events.extend({
     this.setReady();
   },
 
-  renderError() {
+  /**
+   * Visually display errors
+   * @param {Error} error — object of type class Error or its extension
+   */
+  renderError(error) {
+    if (!error) return utils.warn("renderError() was called without any specific error. Not rendering anything then.");
+    if (utils.hasClass(this.placeholder, class_error)) return utils.warn("The app is already showing error dialog. Not rendering again.");
+
     utils.removeClass(this.placeholder, class_loading_first);
     utils.removeClass(this.placeholder, class_loading_data);
     utils.addClass(this.placeholder, class_error);
-    this.setError({
-      type: "data"
+
+    const translator = this.model._root.locale.getTFunction();
+    const mailto = `mailto:angie@gapminder.org?subject=Gapminder Vizabi error report&body=Hi Angie! Please have a look at this! %0D%0A %0D%0A %0D%0A
+      These are the steps to reproduce the error: %0D%0A 
+      1. Go to ` + window.location.origin + ` %0D%0A 
+      2. %5Bplease write here what you did%5D %0D%0A %0D%0A %0D%0A`
+      + encodeURIComponent(JSON.stringify(error, null, 4));
+
+    this.errorMessageEl.classed("vzb-hidden", false);
+    const technical = this.errorMessageEl.select(".vzb-error-message-technical").html(JSON.stringify(error, null, 2));
+    this.errorMessageEl.select(".vzb-error-message-expand")
+      .on("click", () => technical.classed("vzb-hidden", !technical.classed("vzb-hidden")))
+      .html(translator("crash/expand"));
+    this.errorMessageEl.select(".vzb-error-message-close").on("click", () => {
+      this.errorMessageEl.classed("vzb-hidden", true);
+      utils.removeClass(this.placeholder, class_error);
     });
+    this.errorMessageEl.select(".vzb-error-message-title").select("h1").html(error.icon || "🙄");
+
+    let crashIntro = "crash/intro";
+    let crashOutro = "crash/outro";
+    let template = {};
+    if (translator(error.name) !== error.name) {
+      crashIntro = "reader/error/generic";
+      crashOutro = error.name;
+
+      if (error.name === "reader/error/wrongTimeUnitsOrColumn") template = { expected: this.model._root.state.time.getFormatter()(new Date), found: error.details };
+      if (error.name === "reader/error/repeatedKeys") template = error.details;
+      if (error.name === "reader/error/undefinedDelimiter") template = { file: error.endpoint };
+    }
+    this.errorMessageEl.select(".vzb-error-message-intro").html(translator(crashIntro, template).replace("mailto", mailto));
+    this.errorMessageEl.select(".vzb-error-message-outro").html(translator(crashOutro, template).replace("mailto", mailto));
+
+    utils.error(JSON.stringify(error, null, 2));
   },
 
-  setError(opts) {
-    if (typeof this.error === "function") {
-      this.error(opts);
-    }
-  },
 
   setReady(value) {
     if (!this._readyOnce) {
@@ -191,14 +225,11 @@ const Component = Events.extend({
       try {
         rendered = templateFunc(tmpl, data);
       } catch (e) {
-        utils.error("Templating error for component: '" + this.name +
-          "' - Check if template name is unique and correct. E.g.: 'bubblechart'");
-
-        utils.removeClass(this.placeholder, class_loading_data);
-        utils.addClass(this.placeholder, class_error);
-        this.setError({
-          type: "template"
-        });
+        const error = new Error;
+        error.name = "template";
+        error.message = "Templating error for component. Check if template name is unique and correct";
+        error.details = this.name;
+        this.renderError(error);
       }
     }
     //add loading class and html
@@ -206,6 +237,23 @@ const Component = Events.extend({
     utils.addClass(this.placeholder, class_loading_first);
     this.placeholder.innerHTML = rendered;
     this.element = this.placeholder.children[0];
+    this.errorMessageEl = d3.select(this.element).append("div").attr("class", "vzb-error-message vzb-hidden")
+      .html(`
+        <div class="vzb-error-message-background"></div>
+        <div class="vzb-error-message-box">
+          <div class="vzb-error-message-close">${iconClose}</div>
+          <div class="vzb-error-message-title"><h1></h1></div>
+          <div class="vzb-error-message-body">
+            <p class="vzb-error-message-intro"></p>
+            <br>
+            <p class="vzb-error-message-expand"></p>
+            <textarea class="vzb-error-message-technical vzb-hidden"></textarea>
+            <br>
+            <p class="vzb-error-message-outro"></p>
+          </div>
+        </div>
+      `);
+
 
     //template is ready
     this.trigger("domReady");
