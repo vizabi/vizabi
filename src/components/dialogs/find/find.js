@@ -65,6 +65,7 @@ const Find = Dialog.extend("find", {
         });
       },
       "translate:locale": function() {
+        if (!_this._readyOnce) return;
         _this.input_search.attr("placeholder", _this.translator("placeholder/search") + "...");
       }
     };

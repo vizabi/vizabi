@@ -93,66 +93,94 @@
       }
       .vzb-show-list {
         .vzb-accordion-section {
-          cursor: pointer;
-          &.vzb-accordion-active {
-            max-height: none !important;
+          &:not(.vzb-accordion-active) {
+            max-height: 2.5em !important;
           }
           .vzb-accordion-section-title {
-            background-color: rgba($vzb-color-primary-light, 0.5);
+            cursor: pointer;
+            background-color: rgba($vzb-color-primary-light, 0.15);
+            border-radius: 2px;
           }
-        }
-        .vzb-show-clear-cross {
-          @include rtl {
-            left: 2px;
-            right: auto;
+          &.vzb-filtered {
+            .vzb-show-clear-cross {
+              display: block;
+            }
+            .vzb-accordion-section-title {
+              font-weight: bold;
+            }
           }
-          font-size: 1.5em;
-          line-height: 100%;
-          display: block;
-          text-align: end;
-          position: absolute;
-          right: 2px;
-          margin-top: 5px;
-          cursor: pointer;
-        }
-        .vzb-show-category {
-          @include rtl {
-            margin-left: 1.5em;
-            margin-right: 3px;
+          &.vzb-fullexpand {
+            max-height: none !important;
+            .vzb-show-more {
+              display: none;
+            }
           }
-          display: block;
-          margin-left: 3px;
-          margin-right: 1.5em;
-          padding: 3px 0;
-          text-overflow: ellipsis;
-          overflow: hidden;
-          background: none;
-          &.vzb-show-category-set {
+          &:not(.vzb-fullexpand) {
+            .vzb-show-item.vzb-checked.vzb-separator {
+              margin-bottom: 2em;
+            }
+          }
+          .vzb-show-more {
+            padding: 0;
+            font-weight: normal;
+            position: absolute;
+            text-align: center;
+            width: 100%;
+            text-transform: uppercase;
+          }
+          .vzb-show-clear-cross {
+              @include rtl {
+              left: 2px;
+              right: auto;
+            }
+            font-size: 1.5em;
+            line-height: 100%;
+            display: none;
+            text-align: end;
+            position: absolute;
+            right: 2px;
+            margin-top: 5px;
+            cursor: pointer;
+          }
+          .vzb-show-category {
             @include rtl {
+              margin-left: 1.5em;
+              margin-right: 3px;
+            }
+            display: block;
+            margin-left: 3px;
+            margin-right: 1.5em;
+            padding: 3px 0;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            background: none;
+            &.vzb-show-category-set {
+              @include rtl {
+                &::before {
+                  transform: translate(1.25em, 0) scale(-1, 1);
+                }
+              }
+              margin: 0 1.5em;
               &::before {
-                transform: translate(1.25em, 0) scale(-1, 1);
+                content: "➥";
+                position: absolute;
+                transform: translate(-1.25em, 0);
               }
             }
-            margin: 0 1.5em;
-            &::before {
-              content: "➥";
-              position: absolute;
-              transform: translate(-1.25em, 0);
+          }
+          .vzb-show-category-list {
+            transform: translateZ(0);
+            pointer-events: none;
+              input,
+              label {
+              pointer-events: all;
             }
           }
-        }
-        .vzb-show-category-list {
-          transform: translateZ(0);
-          pointer-events: none;
-            input, 
-            label {
-            pointer-events: all;
+          .vzb-show-item.vzb-checked.vzb-separator {
+            padding-bottom: 25px;
+            border-bottom: 1px solid;
+            border-bottom-color: $vzb-color-primary-light;
           }
-        }
-        .vzb-show-item.vzb-checked.vzb-separator {
-          padding-bottom: 25px;
-          border-bottom: 1px solid;
-          border-bottom-color: $vzb-color-primary-light;
         }
       }
 
@@ -172,7 +200,17 @@
 
         > .vzb-dialog-buttons {
           .vzb-show-apply {
+            @include rtl {
+              margin-left: 0;
+              margin-right: auto;
+            }
             margin-left: auto;
+            transition: 0.1s ease-in-out;
+            transition-property: opacity;
+            &.vzb-disabled {
+              opacity: 0.3;
+              pointer-events: none;
+            }
           }
         }
       }
