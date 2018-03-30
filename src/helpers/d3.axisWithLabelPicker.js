@@ -452,10 +452,10 @@ export default function axisSmart(_orient) {
           //labels stack on top of each other. digit height matters
           return lengthRange >
             tickValues.length * (
-            options.heightOfOneDigit +
+              options.heightOfOneDigit +
             parseInt(options.cssMargin.top) +
             parseInt(options.cssMargin.bottom)
-          );
+            );
         }
 
         //labels stack side by side. label width matters
@@ -480,10 +480,10 @@ export default function axisSmart(_orient) {
 
         return lengthRange >
           tickValues.length * marginsLR + (approximationStyle == PESSIMISTIC ?
-          options.widthOfOneDigit * tickValues.length * maxLength : 0) + (approximationStyle == OPTIMISTIC ?
-          options.widthOfOneDigit * (
-            tickValues.map(d => options.formatter(d)).join("").length
-          ) : 0);
+            options.widthOfOneDigit * tickValues.length * maxLength : 0) + (approximationStyle == OPTIMISTIC ?
+            options.widthOfOneDigit * (
+              tickValues.map(d => options.formatter(d)).join("").length
+            ) : 0);
       };
 
 
