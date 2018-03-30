@@ -6,7 +6,10 @@ export const d3json = function(path, callback) {
     // Chrome Canary issue fix: avoid XMLHttpRequest
     // we should use fetch as often as possible
     fetch(path)
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok) return response.json();
+        callback(new Error);
+      })
       .then(jsonData => {
         callback(null, jsonData);
       })
@@ -22,7 +25,10 @@ export const d3text = function(path, callback) {
     // Chrome Canary issue fix: avoid XMLHttpRequest
     // we should use fetch as often as possible
     fetch(path)
-      .then(response => response.text())
+      .then(response => {
+        if (response.ok) return response.text();
+        callback(new Error);
+      })
       .then(data => {
         callback(null, data);
       })

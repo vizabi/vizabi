@@ -142,8 +142,8 @@ export class Storage {
             col.haveNoDataPointsPerKey = {};
             col.query = query;
             this.defer.resolve(this.dataId);
-          }).catch(err => {
-            this.defer.reject(err);
+          }).catch(error => {
+            this.defer.reject(error);
           });
 
           this.checkQueryResponse = function(query, response) {
@@ -162,9 +162,16 @@ export class Storage {
               }
               columnsMissing.forEach(d => {
                 if (query.select.key.indexOf(d) == -1) {
-                  utils.warn('Reader result: Column "' + d + '" is missing from "' + query.from + '" data, but it might be ok');
+                  utils.warn("Reader result: Column '" + d + "' is missing from '" + query.from + "' data, but it might be ok");
                 } else {
-                  utils.error('Reader result: Key column "' + d + '" is missing from "' + query.from + '" data for query:', JSON.stringify(query));
+                  utils.error("Reader result: Key column '" + d + "' is missing from '" + query.from + "' response", JSON.stringify(query));
+                  const err = new Error;
+                  err.name = "reader/error/keyColumnMissingInReaderResult";
+                  err.message = "Reader result: Key column '" + d + "' is missing from '" + query.from + "' response";
+                  err.details = d;
+                  err.ddfql = query;
+
+                  this.defer.reject(err);
                   console.log(response);
                 }
               });
