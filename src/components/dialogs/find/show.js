@@ -69,6 +69,7 @@ const Show = Component.extend({
     this.labelNames = this.model.state.marker.getLabelHookNames();
     const subHooks =  this.model.state.marker.getSubhooks(true);
     this.previewShow = {};
+    this.checkedDifference = {};
     utils.forEach(this.labelNames, labelName => {
       const entities = subHooks[labelName].getEntity();
       const showFilter = this.previewShow[entities._name] = {};
@@ -127,6 +128,7 @@ const Show = Component.extend({
             const result = { entities, category: key };
             result[key] = d[key];
             result["label"] = d.name;
+            result["isShown"] = _this.model.state[entities].isInShowFilter(d, key);
             return result;
           })
           :
@@ -135,6 +137,7 @@ const Show = Component.extend({
               const result = { entities, category: key };
               result[key] = d;
               result["label"] = values[labelName][d];
+              result["isShown"] = _this.model.state[entities].isInShowFilter(result, key);
               return result;
             });
 
@@ -149,7 +152,8 @@ const Show = Component.extend({
           .attr("class", "vzb-accordion-section-title")
           .on("click", function(d) {
             const parentEl = d3.select(this.parentNode);
-            parentEl.classed("vzb-accordion-active", !parentEl.classed("vzb-accordion-active"));
+            parentEl.classed("vzb-fullexpand", false)
+              .classed("vzb-accordion-active", !parentEl.classed("vzb-accordion-active"));
           })
           .call(elem => elem.append("span")
             .attr("class", "vzb-show-category")
@@ -157,15 +161,24 @@ const Show = Component.extend({
             .text(category)
             .attr("title", function(d) {
               return this.offsetWidth < this.scrollWidth ? category : null;
-            }))
+            })
+          )
           .call(elem => elem.append("span")
             .attr("class", "vzb-show-clear-cross")
             .text("✖")
             .on("click", () => {
               d3.event.stopPropagation();
               section.selectAll(".vzb-checked input")
-                .dispatch("change")
-                .property("checked", false);
+                .property("checked", false)
+                .dispatch("change");
+            })
+          )
+          .call(elem => elem.append("span")
+            .attr("class", "vzb-show-more vzb-dialog-button")
+            .text(_this.translator("buttons/moreellipsis"))
+            .on("click", () => {
+              d3.event.stopPropagation();
+              section.classed("vzb-fullexpand", true);
             })
           );
 
@@ -176,20 +189,24 @@ const Show = Component.extend({
           .data(data)
           .enter()
           .append("div")
-          .attr("class", "vzb-show-item vzb-dialog-checkbox");
+          .attr("class", "vzb-show-item vzb-dialog-checkbox")
+          .classed("vzb-checked", d => d.isShown);
 
         items.append("input")
           .attr("type", "checkbox")
           .attr("class", "vzb-show-item")
-          .attr("id", d => "-show-" + d[key] + "-" + _this._id)
-          .property("checked", function(d) {
-            const isShown = _this.model.state[d.entities].isInShowFilter(d, d.category);
-            d3.select(this.parentNode).classed("vzb-checked", isShown);
-            return isShown;
-          })
-          .on("change", d => {
+          .attr("id", d => "-show-" + d.category + "-" + d[key] + "-" + _this._id)
+          .property("checked",  d => d.isShown)
+          .on("change", (d, i, group) => {
+            if (d.isShown !== group[i].checked) {
+              this.checkedDifference[d.category + d[key]] = true;
+            } else {
+              delete this.checkedDifference[d.category + d[key]];
+            }
+            this.apply.classed("vzb-disabled", !Object.keys(this.checkedDifference).length);
+
             if (!this.previewShow[d.entities][d.category]) {
-              const show = _this.model.state[d.entities].show;
+              const show = this.model.state[d.entities].show;
               this.previewShow[d.entities][d.category] = ((show[d.category] || ((show.$and || {})[d.category] || {})).$in || []).slice(0);
             }
             const index = this.previewShow[d.entities][d.category].indexOf(d[d.category]);
@@ -197,7 +214,7 @@ const Show = Component.extend({
           });
 
         items.append("label")
-          .attr("for", d => "-show-" + d[key] + "-" + _this._id)
+          .attr("for", d => "-show-" + d.category + "-" + d[key] + "-" + _this._id)
           .text(d => d.label)
           .attr("title", function(d) {
             return this.offsetWidth < this.scrollWidth ? d.label : null;
@@ -206,25 +223,18 @@ const Show = Component.extend({
         const lastCheckedNode = list.selectAll(".vzb-checked")
           .classed("vzb-separator", false)
           .lower()
-          // .each(function() {
-          //   this.parentNode.insertBefore(this, items.nodes()[0]);
-          // })
           .nodes()[0];
-        const lastCheckedEl = d3.select(lastCheckedNode).classed("vzb-separator", true);
 
-        if (lastCheckedNode) {
-          const maxHeight = lastCheckedNode.parentNode.offsetTop + lastCheckedNode.offsetTop + lastCheckedNode.offsetHeight + 5;
-          d3.select(lastCheckedNode.parentNode.parentNode).style("max-height", maxHeight + "px");
+        if (lastCheckedNode && lastCheckedNode.nextSibling) {
+          const lastCheckedEl = d3.select(lastCheckedNode).classed("vzb-separator", !!lastCheckedNode.nextSibling);
+          const offsetTop = lastCheckedNode.parentNode.offsetTop + lastCheckedNode.offsetTop;
+          d3.select(lastCheckedNode.parentNode.parentNode).style("max-height", (offsetTop + lastCheckedNode.offsetHeight + 25) + "px")
+            .select(".vzb-show-more").style("transform", `translate(0, ${offsetTop}px)`);
         } else {
-          section.select(".vzb-show-clear-cross").classed("vzb-hidden", true);
+          section.select(".vzb-show-more").classed("vzb-hidden", true);
         }
 
-        // section.append("span")
-        //   .on("click", (d) => {
-        //     const data = this.root.model.dataManager.getAvailableDataForKey1(d.key, null, "entities")
-        //       .filter(d => ["entity_set", "entity_domain"].includes(this.root.model.dataManager.getConceptProperty(d.value, "concept_type")))
-        //   })
-        //   .text("add filter ⮿");
+        section.classed("vzb-filtered", !!lastCheckedNode);
       });
 
       _this.contentEl.node().scrollTop = 0;
@@ -244,9 +254,10 @@ const Show = Component.extend({
       const $andKeys = [];
       utils.forEach(showObj, (entitiesArray, category) => {
         $andKeys.push(category);
-        $and.push({ [category]: entitiesArray.length ? { $in: entitiesArray.slice(0) } : {} });
+        if (entitiesArray.length) {
+          $and.push({ [category]: { $in: entitiesArray.slice(0) } });
+        }
       });
-      if (!$and.length) return;
 
       utils.forEach(this.model.state[entities].show.$and || [this.model.state[entities].show], show$and => {
         utils.forEach(show$and, (filter, key) => {
@@ -256,7 +267,7 @@ const Show = Component.extend({
         });
       });
 
-      setObj[entities] = { show: $and.length > 1 ? { $and } : $and[0] };
+      setObj[entities] = { show: $and.length > 1 ? { $and } : ($and[0] || {}) };
     });
     this.model.state.set(setObj);
   },
@@ -283,7 +294,8 @@ const Show = Component.extend({
 
     this.deselect_all.classed("vzb-hidden", this.hideResetButton());
     //
-    this.apply.classed("vzb-hidden", false);
+    this.apply.classed("vzb-hidden", false)
+      .classed("vzb-disabled", true);
   },
 
   hideResetButton() {
