@@ -767,7 +767,7 @@ const TreeMenu = Component.extend({
     this.model.marker.getAvailableData().forEach(kvPair => {
       const entry = kvPair.value;
       //if entry's tag are empty don't include it in the menu
-      if (entry.tags == "_none") return;
+      if (!entry || entry.tags == "_none") return;
       if (!entry.tags) entry.tags = kvPair.dataSource.getDatasetName() || ROOT;
 
       const use = entry.concept == "_default" ? "constant" : (kvPair.key.size > 1 ? "indicator" : "property");
