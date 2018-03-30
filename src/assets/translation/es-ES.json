@@ -34,6 +34,7 @@
     "buttons/side": "Lado",
     "buttons/leftright": "IZQUIERDA ⇿ DERECHA",
     "buttons/mapcolors": "Áreas",
+    "buttons/moreellipsis": "more...",
     "dialogs/mapcolors": "Colores de área",
     "dialogs/color/select-all": "Seleccionar todos en ese grupo",
     "dialogs/color/remove-else": "Remover todo lo demás",
