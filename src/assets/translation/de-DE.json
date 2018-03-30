@@ -34,6 +34,7 @@
     "buttons/side": "Seite",
     "buttons/leftright": "LINKS ⇿ RECHTS",
     "buttons/mapcolors": "Bereiche",
+    "buttons/moreellipsis": "more...",
     "dialogs/mapcolors": "Area colors",
     "dialogs/color/select-all": "Select all in that group",
     "dialogs/color/remove-else": "Remove everything else",
