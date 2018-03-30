@@ -1,7 +1,6 @@
 import * as utils from "base/utils";
 import Model from "base/model";
 import Component from "base/component";
-import { warn as warnIcon } from "base/iconset";
 import EventSource, { DefaultEvent } from "base/events";
 import DimensionManager from "base/dimensionmanager";
 import DataManager from "base/datamanager";
@@ -207,9 +206,8 @@ const Tool = Component.extend({
           _this.translateStrings();
           _this.model.ui.setRTL(_this.model.locale.isRTL());
         },
-        "load_error": (...args) => {
-          this.renderError();
-          this.error(...args);
+        "load_error1": (evt, error) => {
+          this.renderError(error);
         }
       });
   },
@@ -251,7 +249,8 @@ const Tool = Component.extend({
       .then(this.model.startLoading.bind(this.model))
       .then(this.finishLoading.bind(this))
       .catch(error => {
-        this.model.triggerLoadError(error);
+        utils.error("error in tool promise chain");
+        this.triggerLoadError(error);
       });
 
   },
@@ -306,20 +305,6 @@ const Tool = Component.extend({
     this._super();
   },
 
-  /**
-   * Visually display errors
-   */
-  error(options, message) {
-    if (!message) {
-      message = options && options.type === "data" ?
-        "Error loading chart data. <br>Please, try again later." :
-        "Error loading chart";
-    }
-
-    const stringify = typeof message === "string" ? message : d3.values(message).join("<br/><br/>");
-
-    this.placeholder.innerHTML = `<div class="vzb-error-message"><h1>${warnIcon}</h1><p>${stringify}</p></div>`;
-  },
 
   /**
    * Sets model from external page

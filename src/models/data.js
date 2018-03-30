@@ -85,14 +85,14 @@ const DataModel = Model.extend({
       })
       .catch(error => {
         if (!sideLoad) EventSource.unfreezeAll();
-        this.handleLoadError(error, query);
+        this.handleLoadError(error);
       });
   },
 
   getAsset(assetName, callback) {
     return this.readerObject.getAsset(assetName)
       .then(response => callback(response))
-      .catch(error => this.handleLoadError(error, assetName));
+      .catch(error => this.handleLoadError(error));
   },
 
   getReader() {
@@ -131,7 +131,7 @@ const DataModel = Model.extend({
       this.load(datapointsQuery)
     ])
       .then(this.handleDataAvailabilityResponse.bind(this))
-      .catch(error => this.handleLoadError(error, {}));
+      .catch(error => this.handleLoadError(error));
   },
 
   handleDataAvailabilityResponse(dataIds) {
@@ -188,7 +188,7 @@ const DataModel = Model.extend({
 
         return this.load(query)
           .then(this.handleConceptPropsResponse.bind(this))
-          .catch(error => this.handleLoadError(error, query));
+          .catch(error => this.handleLoadError(error));
       });
 
   },
@@ -298,14 +298,11 @@ const DataModel = Model.extend({
     DataStorage.listenFrame(dataId, framesArray, keys,  cb);
   },
 
-  handleLoadError(error, query) {
-    if (utils.isObject(error)) {
-      const locale = this.getClosestModel("locale");
-      const translation = locale.getTFunction()(error.code, error.payload) || "";
-      error = `${translation} ${error.message || ""}`.trim();
-    }
-
-    utils.warn("Problem with query: ", query);
+  handleLoadError(error) {
+    error.browserDetails = utils.getBrowserDetails();
+    error.osName = utils.getOSname();
+    error.homepoint = window.location.href;
+    error.time = (new Date()).toString();
     this._super(error);
   },
 

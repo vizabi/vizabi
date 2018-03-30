@@ -67,7 +67,7 @@ const LocaleModel = DataConnected.extend({
 
     return Promise.all(promises)
       .then(() => this.trigger("translate"))
-      .catch(() => this.handleLoadError());
+      .catch(error => this.handleLoadError(error));
   },
 
   _handleNewStrings(receivedStrings) {

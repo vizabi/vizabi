@@ -63,39 +63,87 @@
   .fa {
     direction: ltr;
   }
-
-  &.vzb-error {
-    display: table;
+  
+  .vzb-error-message {
+    position: absolute;
+    top: 0;
+    right: 0;
     height: 100%;
-
-    > div {
-      color: $vzb-color-grey;
-      display: table-cell;
-      line-height: 1.8;
+    width: 100%;
+    
+    .vzb-error-message-background {
+      background-color: #fdfdfd;
+      height: 100%;
+      opacity: 0.4;
+      width: 100%;
+    }
+    
+    .vzb-error-message-box {
+      @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, 0.24));
+      z-index: 9997;
+      background-color: #fff;
+      border-top: 1px solid #f7f7f7;
+      padding: 30px 15px 10px 15px;
+      overflow: hidden;
+      position: absolute;
+      top: 10%;
+      left: 5%;
+      bottom: 60px;
+      width: 90%;
+      height: 80%;
       text-align: center;
-      vertical-align: middle;
-      visibility: visible;
+    }
+    
+    .vzb-error-message-close  {
+      @include rtl {
+        left: 5px;
+        right: auto;
+      }
+      cursor: pointer;
+      fill: $vzb-color-primary;
+      fill-opacity: 0.7;
+      height: 25px;
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      width: 25px;
+
+      &:hover {
+        fill-opacity: 1;
+      }
+      
+      svg {
+        width: 25px;
+        height: 25px;
+      }
+    }
+    
+    a {
+      cursor: pointer;
+      text-decoration: underline;
     }
 
     p {
-      font-size: 0.75em;
+      max-width: 600px;
+      color: $vzb-color-grey;
       white-space: normal;
       display: block;
-      margin: 0 10px;
+      margin: auto;
+      font-size: $vzb-font-size-regular;
+      line-height: 1.5;
+      
     }
-
-    .vzb-icon {
-      height: 25px;
-      width: 25px;
-    }
-
-    path {
-      fill: $vzb-color-accent-orange;
-    }
-
-    &::before,
-    &::after {
-      display: none;
+    
+    .vzb-error-message-expand {font-size: $vzb-font-size-small;}
+    .vzb-error-message-outro {font-size: $vzb-font-size-small;}
+    
+    textarea {
+      margin: 10px;
+      max-width: 600px;
+      min-height: 60px;
+      width: calc(100% - 30px);
+      font-size: $vzb-font-size-tiny;
+      font-family: monospace;
     }
   }
 }
