@@ -34,6 +34,7 @@
     "buttons/side": "جانب",
     "buttons/leftright": "يمين ⇿ يسار",
     "buttons/mapcolors": "المناطق",
+    "buttons/moreellipsis": "more...",
     "dialogs/mapcolors": "ألوان المناطق",
     "dialogs/color/select-all": "تحديد كل محتويات هذه المجموعة",
     "dialogs/color/remove-else": "إزالة كل شيء آخر",
