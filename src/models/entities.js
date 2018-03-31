@@ -13,6 +13,8 @@ const EntitiesModel = DataConnected.extend({
   getClassDefaults() {
     const defaults = {
       show: {},
+      showFallback: {},
+      showItemsMaxCount: null,
       filter: {},
       dim: null,
       skipFilter: false
@@ -20,7 +22,7 @@ const EntitiesModel = DataConnected.extend({
     return utils.deepExtend(this._super(), defaults);
   },
 
-  objectLeafs: ["show", "filter", "autoconfig"],
+  objectLeafs: ["show", "showFallback", "filter", "autoconfig"],
   dataConnectedChildren: ["show", "dim", "grouping"],
 
   /**
@@ -56,6 +58,21 @@ const EntitiesModel = DataConnected.extend({
 
   setInterModelListeners() {
     this.getClosestModel("locale").on("dataConnectedChange", this.loadData.bind(this));
+  },
+
+  validate() {
+    this._super();
+    if (!this.showFallback[this.dim] && !this.showItemsMaxCount) return;
+
+    const dimShowFilter = this.show[this.dim] || (this.show.$and && this.show.$and.filter(f => f[this.dim])[0]);
+    if (!dimShowFilter) {
+      if (this.showFallback[this.dim]) {
+        this.show = { [this.dim]: utils.deepClone(this.showFallback[this.dim]) };
+      }
+    } else if (dimShowFilter.$in && this.showItemsMaxCount && dimShowFilter.$in.length > this.showItemsMaxCount) {
+      dimShowFilter.$in.splice(0, dimShowFilter.$in.length - this.showItemsMaxCount);
+      this.show = utils.deepClone(this.show);
+    }
   },
 
   /**
