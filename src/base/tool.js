@@ -250,7 +250,7 @@ const Tool = Component.extend({
       .then(this.finishLoading.bind(this))
       .catch(error => {
         utils.error("error in tool promise chain");
-        this.triggerLoadError(error);
+        this.model.triggerLoadError(error);
       });
 
   },
