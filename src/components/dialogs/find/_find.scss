@@ -100,12 +100,14 @@
             cursor: pointer;
             background-color: rgba($vzb-color-primary-light, 0.15);
             border-radius: 2px;
+            line-height: 19px;
+            height: 26px;
           }
           &.vzb-filtered {
             .vzb-show-clear-cross {
               display: block;
             }
-            .vzb-accordion-section-title {
+            .vzb-show-category {
               font-weight: bold;
             }
           }
@@ -170,6 +172,7 @@
           }
           .vzb-show-category-list {
             transform: translateZ(0);
+            position: relative;
             pointer-events: none;
               input,
               label {
