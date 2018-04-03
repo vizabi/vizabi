@@ -99,6 +99,7 @@
     "check/panWithArrow": "Allow panning with arrow cursor",
     "check/adaptMinMaxZoom": "Följ bubblar med zoom",
     "check/presentation": "Göra texten stor och presentera",
+    "check/enabled": "Chart decorations",
     "check/removeLabelBox": "Inga rutor på etikett",
     "check/zoomOnScrolling": "Zooma med hjulen",
     "check/flipSides": "Flip sides",
