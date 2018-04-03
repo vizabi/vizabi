@@ -99,6 +99,7 @@
     "check/panWithArrow": "Allow panning with arrow cursor",
     "check/adaptMinMaxZoom": "Fit bubbles, zoom out as they go",
     "check/presentation": "Increase text size for presentation",
+    "check/enabled": "Chart decorations",
     "check/removeLabelBox": "Remove label boxes",
     "check/zoomOnScrolling": "Zoom with mouse wheel",
     "check/flipSides": "Flip sides",
