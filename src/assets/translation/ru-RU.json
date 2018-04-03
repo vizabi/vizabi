@@ -99,6 +99,7 @@
     "check/panWithArrow": "Allow panning with arrow cursor",
     "check/adaptMinMaxZoom": "Подогнать масштаб и отдалять, когда надо",
     "check/presentation": "Увеличить шрифт для презентаций",
+    "check/enabled": "Chart decorations",
     "check/removeLabelBox": "Убрать фон у надписей",
     "check/zoomOnScrolling": "Масштабирование колесом мышки",
     "check/flipSides": "Flip sides",
