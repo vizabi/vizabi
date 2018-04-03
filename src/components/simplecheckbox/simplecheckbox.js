@@ -56,8 +56,12 @@ export default Component.extend({
 
   updateView() {
     this.translator = this.model.locale.getTFunction();
-    this.labelEl.text(this.translator("check/" + this.checkbox));
-    this.checkEl.property("checked", !!this.parentModel[this.checkbox]);
+    const modelExists = this.parentModel && (this.parentModel[this.checkbox] || this.parentModel[this.checkbox] === false);
+    this.labelEl.classed("vzb-hidden", !modelExists);
+    if (modelExists) {
+      this.labelEl.text(this.translator("check/" + this.checkbox));
+      this.checkEl.property("checked", !!this.parentModel[this.checkbox]);
+    }
   },
 
   _setModel(value) {
