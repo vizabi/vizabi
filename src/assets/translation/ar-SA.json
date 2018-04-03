@@ -99,6 +99,7 @@
     "check/panWithArrow": "إسمح بالتحريك بإستعمال مؤشر الماوس",
     "check/adaptMinMaxZoom": "احتوِ الفقاعات, صغر الصورة عندما تذهب",
     "check/presentation": "زيادة حجم النص للعرض",
+    "check/enabled": "Chart decorations",
     "check/removeLabelBox": "إزالة خانات التسمية",
     "check/zoomOnScrolling": "التكبير والتصغير باستخدام عجلة الماوس",
     "check/flipSides": "قلب الجوانب",
