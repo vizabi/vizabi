@@ -99,6 +99,7 @@
     "check/panWithArrow": "Permitir modo panorámico con el cursor",
     "check/adaptMinMaxZoom": "Ajustar burbujas, alejar mientras llegan",
     "check/presentation": "Aumentar tamaño del texto para la presentación",
+    "check/enabled": "Chart decorations",
     "check/removeLabelBox": "Eliminar cajas de etiquetas",
     "check/zoomOnScrolling": "Zoom con la rueda del ratón",
     "check/flipSides": "Voltear caras",
