@@ -67,9 +67,9 @@ const ToolModel = Model.extend({
     validate_func(c);
   },
 
-  setReady(arg) {
-    if (arg !== false) this.checkTimeLimits();
-    this._super(arg);
+  onSuccessfullLoad() {
+    this.checkTimeLimits();
+    this._super();
   },
 
 
