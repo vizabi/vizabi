@@ -75,6 +75,50 @@ const EntitiesModel = DataConnected.extend({
     }
   },
 
+  _isLoading() {
+    return (!this._loadedOnce || this._loadCall);
+  },
+
+  loadData() {
+    this.setReady(false);
+    this._loadCall = true;
+
+    const _this = this;
+
+    if (!this.dim) {
+      this._entitySets = {};
+      this._entitySetsData = {};
+      this._entitySetsValues = {};
+      return Promise.resolve();
+    }
+
+    const dim = this.dim;
+    this._entitySets = { [dim]: this._root.dataManager.getAvailableDataForKey(dim, null, "entities")
+      .filter(d => d.value !== dim && ["entity_set", "entity_domain"].includes(this._root.dataManager.getConceptProperty(d.value, "concept_type")))
+      .map(d => d.value) };
+
+    if (!this._entitySets[dim].length) {
+      this._entitySetsValues = { [dim]: [] };
+      this._entitySetsData = { [dim]: {} };
+      return Promise.resolve();
+    }
+
+    const queryAddition = { "language": this.getClosestModel("locale").id };
+    const loadPromises = [this._root.dataManager.getDimensionValues(dim, this._entitySets[dim], queryAddition)]
+      .concat(this._entitySets[dim].map(entitySetName => this._root.dataManager.getDimensionValues(entitySetName, ["name"], queryAddition)));
+
+    return Promise.all(loadPromises).then(data => {
+      _this._entitySetsValues = { [dim]: data[0] };
+      _this._entitySetsData = { [dim]: {} };
+      _this._entitySets[dim].forEach((key, index) => {
+        _this._entitySetsData[dim][key] = data[index + 1];
+      });
+    });
+  },
+
+  getEntitySets(type = "") {
+    return this["_entitySets" + utils.capitalize(type)][this.dim];
+  },
   /**
    * Gets the dimensions in this entities
    * @returns {String} String with dimension
@@ -113,42 +157,6 @@ const EntitiesModel = DataConnected.extend({
     return $and[0] || {};
   },
 
-  loadData() {
-    const _this = this;
-    if (!this.dim) {
-      this._entitySets = {};
-      this._entitySetsData = {};
-      this._entitySetsValues = {};
-      return Promise.resolve();
-    }
-
-    const dim = this.dim;
-    this._entitySets = { [dim]: this._root.dataManager.getAvailableDataForKey(dim, null, "entities")
-      .filter(d => d.value !== dim && ["entity_set", "entity_domain"].includes(this._root.dataManager.getConceptProperty(d.value, "concept_type")))
-      .map(d => d.value) };
-
-    if (!this._entitySets[dim].length) {
-      this._entitySetsValues = { [dim]: [] };
-      this._entitySetsData = { [dim]: {} };
-      return Promise.resolve();
-    }
-
-    const queryAddition = { "language": this.getClosestModel("locale").id };
-    const loadPromises = [this._root.dataManager.getDimensionValues(dim, this._entitySets[dim], queryAddition)]
-      .concat(this._entitySets[dim].map(entitySetName => this._root.dataManager.getDimensionValues(entitySetName, ["name"], queryAddition)));
-
-    return Promise.all(loadPromises).then(data => {
-      _this._entitySetsValues = { [dim]: data[0] };
-      _this._entitySetsData = { [dim]: {} };
-      _this._entitySets[dim].forEach((key, index) => {
-        _this._entitySetsData[dim][key] = data[index + 1];
-      });
-    });
-  },
-
-  getEntitySets(type = "") {
-    return this["_entitySets" + utils.capitalize(type)][this.dim];
-  },
   /**
    * Shows or unshows an entity from the set
    */

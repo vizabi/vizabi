@@ -22,6 +22,8 @@ const Show = Component.extend({
       type: "locale"
     }];
 
+    this.tabsConfig = ((config.ui.dialogs.dialog || {}).find || {}).showTabs || {};
+
     this._super(config, parent);
   },
 
@@ -32,7 +34,6 @@ const Show = Component.extend({
     this._super();
 
     this.KEYS = utils.unique(this.model.state.marker._getAllDimensions({ exceptType: "time" }));
-
     this.resetFilter = {};
     const spaceModels = this.model.state.marker._space;
     this.KEYS.forEach(key => {
@@ -146,6 +147,7 @@ const Show = Component.extend({
 
         const section = _this.list.append("div")
           .attr("class", "vzb-accordion-section")
+          .classed("vzb-accordion-active", this.tabsConfig[key] === "open")
           .datum({ key, isSet });
 
         section.append("div")
@@ -235,6 +237,7 @@ const Show = Component.extend({
         }
 
         section.classed("vzb-filtered", !!lastCheckedNode);
+        section.classed("vzb-fullexpand", !!lastCheckedNode && this.tabsConfig[key] === "open");
       });
 
       _this.contentEl.node().scrollTop = 0;
