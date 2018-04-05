@@ -18,6 +18,11 @@ cache:
   directories:
   - node_modules
 before_install:
+- ssh-keyscan -H $TOOLSPAGE_HOST 2>&1 | tee -a $HOME/.ssh/known_hosts
+- openssl aes-256-cbc -K $encrypted_f95faa06982d_key -iv $encrypted_f95faa06982d_iv -in deploy_rsa.enc -out /tmp/deploy_rsa -d
+- eval "$(ssh-agent -s)"
+- chmod 600 /tmp/deploy_rsa
+- ssh-add /tmp/deploy_rsa
 - npm install -g npm@latest
 - sudo pip install s3cmd
 before_script:
@@ -27,8 +32,8 @@ before_script:
 script:
 - npm run deploy
 deploy:
+- provider: npm
   skip_cleanup: true
-  provider: npm
   email: konzeptmeister@gmail.com
   api_key:
     secure: TY1DWvEbEDyVe3Kgo4R9FEyWACi40JLkrD/r795rNv3Z0JiQvaAgO4m2hBHWqH4xxdGcAgnrdLaRiIaZcGxEONzQOHDS4yGEz+l8Yaiqee4sA5whu3v0I+wwnNeHcbNcGU30bUAczn7pgFGPEQ8t+WxWp0JRFAduPOuvC/b3i3w=
@@ -36,3 +41,8 @@ deploy:
     branch: develop
     node: '8'
     condition: "-e /tmp/deployment.flag"
+- provider: script
+  skip_cleanup: true
+  script: ssh $TOOLSPAGE_USER@$TOOLSPAGE_HOST 'sh /home/root/redeploy.sh "$TRAVIS_REPO_SLUG"'
+  on:
+    branch: development
