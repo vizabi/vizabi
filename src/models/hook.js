@@ -78,6 +78,9 @@ const Hook = DataConnected.extend({
     }
 
     this.set(obj, undefined, undefined, undefined, this.setWhich);
+
+    //support external page indicator frequency tracking
+    this._root.trigger("change_hook_which", { "which": obj.which, "hook": this._name });
   },
 
   setScaleType(newValue) {
