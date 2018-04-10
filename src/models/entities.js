@@ -57,7 +57,7 @@ const EntitiesModel = DataConnected.extend({
   },
 
   setInterModelListeners() {
-    this.getClosestModel("locale").on("dataConnectedChange", this.loadData.bind(this));
+    this.getClosestModel("locale").on("dataConnectedChange", this.handleDataConnectedChange.bind(this));
   },
 
   validate() {
@@ -73,6 +73,15 @@ const EntitiesModel = DataConnected.extend({
       dimShowFilter.$in.splice(0, dimShowFilter.$in.length - this.showItemsMaxCount);
       this.show = utils.deepClone(this.show);
     }
+  },
+
+  handleDataConnectedChange(evt) {
+    //defer is necessary because other events might be queued.
+    //load right after such events
+    utils.defer(() => {
+      this.startLoading()
+        .catch(utils.warn);
+    });
   },
 
   _isLoading() {
