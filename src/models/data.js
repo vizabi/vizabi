@@ -154,43 +154,38 @@ const DataModel = Model.extend({
   },
 
   loadConceptProps() {
-    return this.loadDataAvailability()
-      .then(() => {
+    // only selecting concept properties which Vizabi needs and are available in dataset
+    const vizabiConceptProps = [
+      "concept_type",
+      "domain",
+      "totals_among_entities",
+      "indicator_url",
+      "color",
+      "scales",
+      "interpolation",
+      "tags",
+      "name",
+      "name_short",
+      "name_catalog",
+      "description",
+      "format"
+    ];
+    const availableConceptProps = this.dataAvailability.concepts.map(m => m.value);
+    const availableVizabiConceptProps = vizabiConceptProps.filter(n => availableConceptProps.includes(n));
 
-        // only selecting concept properties which Vizabi needs and are available in dataset
-        const vizabiConceptProps = [
-          "concept_type",
-          "domain",
-          "totals_among_entities",
-          "indicator_url",
-          "color",
-          "scales",
-          "interpolation",
-          "tags",
-          "name",
-          "name_short",
-          "name_catalog",
-          "description",
-          "format"
-        ];
-        const availableConceptProps = this.dataAvailability.concepts.map(m => m.value);
-        const availableVizabiConceptProps = vizabiConceptProps.filter(n => availableConceptProps.includes(n));
+    const query = {
+      select: {
+        key: ["concept"],
+        value: availableVizabiConceptProps
+      },
+      from: "concepts",
+      where: {},
+      language: this.getClosestModel("locale").id,
+    };
 
-        const query = {
-          select: {
-            key: ["concept"],
-            value: availableVizabiConceptProps
-          },
-          from: "concepts",
-          where: {},
-          language: this.getClosestModel("locale").id,
-        };
-
-        return this.load(query)
-          .then(this.handleConceptPropsResponse.bind(this))
-          .catch(error => this.handleLoadError(error));
-      });
-
+    return this.load(query)
+      .then(this.handleConceptPropsResponse.bind(this))
+      .catch(error => this.handleLoadError(error));
   },
 
   handleConceptPropsResponse(dataId) {
